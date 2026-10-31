@@ -1,21 +1,27 @@
 import { and, eq, inArray, sql } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { aiCreditBalance } from "./schema/ai-credit.ts";
-import { entitlements, quotaUsage } from "./schema/billing.ts";
+import {
+  entitlements,
+  quotaUsage,
+  recurringSubscriptions,
+} from "./schema/billing.ts";
 import { childProfiles } from "./schema/child.ts";
 import { customGames } from "./schema/custom-game.ts";
+import { exportJobs } from "./schema/exports.ts";
 import {
   activeSessions,
   mfaRecoveryCodes,
+  mfaRecoveryRequests,
   mfaSettings,
   socialIdentities,
   users,
   verificationTokens,
 } from "./schema/identity.ts";
+import { collections, libraryItems } from "./schema/library.ts";
 import { notificationEndpoints, notifications } from "./schema/ops.ts";
 import { personalCurricula } from "./schema/personal-curriculum.ts";
 import { telemetryEvents } from "./schema/play.ts";
-import { userTags } from "./schema/tagging.ts";
 
 export interface PurgeResult {
   purged: boolean;
@@ -102,91 +108,111 @@ export async function hardPurgeUser(
     return { purged: false, reason: "RETENTION_PERIOD_ACTIVE" };
   }
 
-  // 1. Fetch child profiles to get UUIDs for telemetry anonymization
-  const children = await db
-    .select({ id: childProfiles.id, uuid: childProfiles.uuid })
-    .from(childProfiles)
-    .where(eq(childProfiles.userId, userId));
+  const runPurge = async (tx: PostgresJsDatabase) => {
+    // 1. Fetch child profiles to get UUIDs for telemetry anonymization
+    const children = await tx
+      .select({ id: childProfiles.id, uuid: childProfiles.uuid })
+      .from(childProfiles)
+      .where(eq(childProfiles.userId, userId));
 
-  const childUuids = children.map((c) => c.uuid);
+    const childUuids = children.map((c) => c.uuid);
 
-  // 2. Anonymize telemetry_events (SET child_uuid = NULL)
-  if (childUuids.length > 0) {
-    await db
-      .update(telemetryEvents)
-      .set({ childUuid: null })
-      .where(inArray(telemetryEvents.childUuid, childUuids));
+    // 2. Anonymize telemetry_events (SET child_uuid = NULL)
+    if (childUuids.length > 0) {
+      await tx
+        .update(telemetryEvents)
+        .set({ childUuid: null })
+        .where(inArray(telemetryEvents.childUuid, childUuids));
+    }
+
+    // 3. Hard delete child_profiles (DB cascade handles child_session_summaries, play_sessions, mastery_state, etc.)
+    await tx.delete(childProfiles).where(eq(childProfiles.userId, userId));
+
+    // 4. Hard delete social_identities (BR-ADL-10) and user-scoped operational tables
+    await tx
+      .delete(socialIdentities)
+      .where(eq(socialIdentities.userId, userId));
+    await tx
+      .delete(activeSessions)
+      .where(
+        and(
+          eq(activeSessions.accountType, "user"),
+          eq(activeSessions.accountId, userId)
+        )
+      );
+    await tx
+      .delete(verificationTokens)
+      .where(
+        and(
+          eq(verificationTokens.accountType, "user"),
+          eq(verificationTokens.accountId, userId)
+        )
+      );
+    await tx
+      .delete(mfaSettings)
+      .where(
+        and(
+          eq(mfaSettings.accountType, "user"),
+          eq(mfaSettings.accountId, userId)
+        )
+      );
+    await tx
+      .delete(mfaRecoveryCodes)
+      .where(
+        and(
+          eq(mfaRecoveryCodes.accountType, "user"),
+          eq(mfaRecoveryCodes.accountId, userId)
+        )
+      );
+    await tx
+      .delete(notifications)
+      .where(
+        and(
+          eq(notifications.recipientType, "user"),
+          eq(notifications.recipientId, userId)
+        )
+      );
+    await tx
+      .delete(notificationEndpoints)
+      .where(eq(notificationEndpoints.userId, userId));
+    await tx
+      .delete(recurringSubscriptions)
+      .where(eq(recurringSubscriptions.userId, userId));
+    await tx.delete(entitlements).where(eq(entitlements.userId, userId));
+    await tx.delete(quotaUsage).where(eq(quotaUsage.userId, userId));
+    await tx
+      .delete(personalCurricula)
+      .where(eq(personalCurricula.userId, userId));
+    await tx.delete(customGames).where(eq(customGames.userId, userId));
+    await tx.delete(libraryItems).where(eq(libraryItems.userId, userId));
+    await tx.delete(collections).where(eq(collections.userId, userId));
+    await tx
+      .delete(mfaRecoveryRequests)
+      .where(eq(mfaRecoveryRequests.userId, userId));
+    await tx.delete(exportJobs).where(eq(exportJobs.userId, userId));
+    await tx.delete(aiCreditBalance).where(eq(aiCreditBalance.userId, userId));
+
+    // 5. Anonymize users PII in-place and clear purge_at (BR-ADL-09)
+    await tx
+      .update(users)
+      .set({
+        email: sql`'deleted+' || ${users.uuid} || '@mindkid.invalid'`,
+        displayName: "Đã xoá",
+        passwordHash: null,
+        status: "deleted",
+        purgeAt: null,
+        updatedAt: currentDate,
+      })
+      .where(eq(users.id, userId));
+  };
+
+  if (typeof db.transaction === "function") {
+    await db.transaction(async (tx) => {
+      await runPurge(tx as PostgresJsDatabase);
+    });
+  } else {
+    await runPurge(db);
   }
-
-  // 3. Hard delete child_profiles (DB cascade handles child_session_summaries, play_sessions, mastery_state, etc.)
-  await db.delete(childProfiles).where(eq(childProfiles.userId, userId));
-
-  // 4. Hard delete social_identities (BR-ADL-10) and user-scoped operational tables
-  await db.delete(socialIdentities).where(eq(socialIdentities.userId, userId));
-  await db
-    .delete(activeSessions)
-    .where(
-      and(
-        eq(activeSessions.accountType, "user"),
-        eq(activeSessions.accountId, userId)
-      )
-    );
-  await db
-    .delete(verificationTokens)
-    .where(
-      and(
-        eq(verificationTokens.accountType, "user"),
-        eq(verificationTokens.accountId, userId)
-      )
-    );
-  await db
-    .delete(mfaSettings)
-    .where(
-      and(
-        eq(mfaSettings.accountType, "user"),
-        eq(mfaSettings.accountId, userId)
-      )
-    );
-  await db
-    .delete(mfaRecoveryCodes)
-    .where(
-      and(
-        eq(mfaRecoveryCodes.accountType, "user"),
-        eq(mfaRecoveryCodes.accountId, userId)
-      )
-    );
-  await db
-    .delete(notifications)
-    .where(
-      and(
-        eq(notifications.recipientType, "user"),
-        eq(notifications.recipientId, userId)
-      )
-    );
-  await db
-    .delete(notificationEndpoints)
-    .where(eq(notificationEndpoints.userId, userId));
-  await db.delete(entitlements).where(eq(entitlements.userId, userId));
-  await db.delete(quotaUsage).where(eq(quotaUsage.userId, userId));
-  await db
-    .delete(personalCurricula)
-    .where(eq(personalCurricula.userId, userId));
-  await db.delete(customGames).where(eq(customGames.userId, userId));
-  await db.delete(userTags).where(eq(userTags.userId, userId));
-  await db.delete(aiCreditBalance).where(eq(aiCreditBalance.userId, userId));
-
-  // 5. Anonymize users PII in-place and clear purge_at (BR-ADL-09)
-  await db
-    .update(users)
-    .set({
-      email: sql`'deleted+' || ${users.uuid} || '@mindkid.invalid'`,
-      displayName: "Đã xoá",
-      passwordHash: null,
-      status: "deleted",
-      purgeAt: null,
-      updatedAt: currentDate,
-    })
-    .where(eq(users.id, userId));
 
   return { purged: true };
 }
@@ -200,10 +226,20 @@ export async function hardPurgeChildProfile(
   childId: number,
   childUuid: string
 ): Promise<void> {
-  await db
-    .update(telemetryEvents)
-    .set({ childUuid: null })
-    .where(eq(telemetryEvents.childUuid, childUuid));
+  const runChildPurge = async (tx: PostgresJsDatabase) => {
+    await tx
+      .update(telemetryEvents)
+      .set({ childUuid: null })
+      .where(eq(telemetryEvents.childUuid, childUuid));
 
-  await db.delete(childProfiles).where(eq(childProfiles.id, childId));
+    await tx.delete(childProfiles).where(eq(childProfiles.id, childId));
+  };
+
+  if (typeof db.transaction === "function") {
+    await db.transaction(async (tx) => {
+      await runChildPurge(tx as PostgresJsDatabase);
+    });
+  } else {
+    await runChildPurge(db);
+  }
 }

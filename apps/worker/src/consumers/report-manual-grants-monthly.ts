@@ -69,7 +69,7 @@ export async function runManualGrantReportJob(
   }
 
   // 1. Query manual grants in target month
-  const grantRows = await db
+  const grantQuery = db
     .select({
       id: entitlements.id,
       key: entitlements.entitlementKey,
@@ -93,6 +93,8 @@ export async function runManualGrantReportJob(
         lt(entitlements.grantedAt, endOfMonth)
       )
     );
+
+  const grantRows = await grantQuery.limit(1000);
 
   // 2. Find super_admin recipient email (closed Q1: single super_admin email at MVP)
   const [superAdmin] = await db

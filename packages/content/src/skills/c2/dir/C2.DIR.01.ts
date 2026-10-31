@@ -42,61 +42,168 @@ export const C2_DIR_01_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "spoon",
-      label: "cái thìa",
+      id: "arrow_up",
+      label: "mũi tên đi lên",
       image: {
         kind: "emoji",
-        ref: "🥄",
+        ref: "⬆️",
       },
       category: {
-        type: "đồ dùng",
+        type: "đi lên",
       },
+      contrast_group: "up",
+      value: 1,
+      ordering: 1,
     },
     {
-      id: "cup",
-      label: "cái cốc",
+      id: "rocket_up",
+      label: "tên lửa bay lên",
       image: {
         kind: "emoji",
-        ref: "🥤",
+        ref: "🚀",
       },
       category: {
-        type: "đồ dùng",
+        type: "đi lên",
       },
+      contrast_group: "up",
+      value: 2,
+      ordering: 2,
     },
     {
-      id: "bed",
-      label: "cái giường",
+      id: "balloon_up",
+      label: "bóng bay lên cao",
       image: {
         kind: "emoji",
-        ref: "🛏️",
+        ref: "🎈",
       },
       category: {
-        type: "đồ dùng",
+        type: "đi lên",
       },
+      contrast_group: "up",
+      value: 3,
+      ordering: 3,
     },
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "ladder_up",
+      label: "leo thang đi lên",
       image: {
         kind: "emoji",
-        ref: "🪑",
+        ref: "🪜",
       },
       category: {
-        type: "đồ dùng",
+        type: "đi lên",
       },
+      contrast_group: "up",
+      value: 4,
+      ordering: 4,
     },
     {
-      id: "apple",
-      label: "quả táo",
+      id: "arrow_down",
+      label: "mũi tên đi xuống",
       image: {
         kind: "emoji",
-        ref: "🍎",
+        ref: "⬇️",
       },
       category: {
-        type: "hoa quả",
+        type: "đi xuống",
       },
+      contrast_group: "down",
+      value: 5,
+      ordering: 5,
+    },
+    {
+      id: "leaf_down",
+      label: "lá vàng rơi xuống",
+      image: {
+        kind: "emoji",
+        ref: "🍂",
+      },
+      category: {
+        type: "đi xuống",
+      },
+      contrast_group: "down",
+      value: 6,
+      ordering: 6,
+    },
+    {
+      id: "rain_down",
+      label: "giọt mưa rơi xuống",
+      image: {
+        kind: "emoji",
+        ref: "💧",
+      },
+      category: {
+        type: "đi xuống",
+      },
+      contrast_group: "down",
+      value: 7,
+      ordering: 7,
+    },
+    {
+      id: "anchor_down",
+      label: "mỏ neo thả xuống",
+      image: {
+        kind: "emoji",
+        ref: "⚓",
+      },
+      category: {
+        type: "đi xuống",
+      },
+      contrast_group: "down",
+      value: 8,
+      ordering: 8,
+    },
+    {
+      id: "cave_lantern",
+      label: "chiếc đèn hang đá",
+      image: {
+        kind: "emoji",
+        ref: "🏮",
+      },
+      category: {
+        type: "đi lên",
+      },
+      contrast_group: "up",
+      value: 9,
+      ordering: 9,
     },
   ],
+  relations: [
+    {
+      type: "pair",
+      source_id: "arrow_up",
+      target_id: "arrow_down",
+    },
+    {
+      type: "pair",
+      source_id: "rocket_up",
+      target_id: "leaf_down",
+    },
+    {
+      type: "pair",
+      source_id: "balloon_up",
+      target_id: "rain_down",
+    },
+    {
+      type: "pair",
+      source_id: "ladder_up",
+      target_id: "anchor_down",
+    },
+    {
+      type: "contrast",
+      source_id: "arrow_up",
+      target_id: "arrow_down",
+    },
+  ],
+  axes: {
+    category: {
+      values: ["đi lên", "đi xuống"],
+    },
+    order: {
+      values: ["1", "2", "3", "4", "5", "6", "7", "8"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
@@ -128,7 +235,17 @@ export const C2_DIR_01_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Đi lên nhé",
   },
-  ordering: ["spoon", "cup", "bed", "chair", "apple"],
+  ordering: [
+    "arrow_up",
+    "rocket_up",
+    "balloon_up",
+    "ladder_up",
+    "arrow_down",
+    "leaf_down",
+    "rain_down",
+    "anchor_down",
+    "cave_lantern",
+  ],
 };
 
 export const C2_DIR_01_SEED: SkillSeed = {
@@ -152,30 +269,6 @@ export const C2_DIR_01_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C2-DIR-SHAD-0003",
-      template: "GT-007",
-      band: "3-4",
-      difficulty: 1,
-      theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-DIR-SHAD-0004",
-      template: "GT-007",
-      band: "3-4",
-      difficulty: 2,
-      theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-DIR-SHAD-0005",
-      template: "GT-007",
-      band: "3-4",
-      difficulty: 1,
-      theme: "school",
-      rounds: 3,
-    },
-    {
       code: "GL-C2-DIR-GRID-0001",
       template: "GT-020",
       band: "3-4",
@@ -184,36 +277,14 @@ export const C2_DIR_01_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C2-DIR-GRID-0002",
-      template: "GT-020",
-      band: "3-4",
-      difficulty: 2,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-DIR-GRID-0003",
-      template: "GT-020",
-      band: "3-4",
+      code: "GL-C2-DIR-MAZE-0181",
+      template: "GT-013",
+      band: "4-5",
       difficulty: 1,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-DIR-GRID-0004",
-      template: "GT-020",
-      band: "3-4",
-      difficulty: 2,
+      access_tier: "free",
       theme: "nature",
       rounds: 3,
-    },
-    {
-      code: "GL-C2-DIR-GRID-0005",
-      template: "GT-020",
-      band: "3-4",
-      difficulty: 1,
-      theme: "ocean",
-      rounds: 3,
+      montessori_ref: "WB09-D1",
     },
   ],
 };

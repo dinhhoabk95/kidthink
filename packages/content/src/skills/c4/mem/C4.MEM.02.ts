@@ -42,59 +42,151 @@ export const C4_MEM_02_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "star",
+      label: "ngôi sao vàng",
       image: {
         kind: "emoji",
-        ref: "🪑",
+        ref: "⭐",
       },
       category: {
-        type: "đồ dùng",
+        type: "hình cong tròn",
       },
+      value: 1,
+      ordering: 1,
+      contrast_group: "curve",
+      audio_path: "/audio/vi/c4/star.mp3",
     },
     {
-      id: "apple",
-      label: "quả táo",
+      id: "heart",
+      label: "trái tim đỏ",
       image: {
         kind: "emoji",
-        ref: "🍎",
+        ref: "❤️",
       },
       category: {
-        type: "hoa quả",
+        type: "hình cong tròn",
       },
+      value: 2,
+      ordering: 2,
+      contrast_group: "curve",
+      audio_path: "/audio/vi/c4/heart.mp3",
     },
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "moon",
+      label: "mặt trăng khuyết",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "🌙",
       },
       category: {
-        type: "hoa quả",
+        type: "hình cong tròn",
       },
+      value: 3,
+      ordering: 3,
+      contrast_group: "curve",
+      audio_path: "/audio/vi/c4/moon.mp3",
     },
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "sun",
+      label: "mặt trời tròn",
       image: {
         kind: "emoji",
-        ref: "🍉",
+        ref: "☀️",
       },
       category: {
-        type: "hoa quả",
+        type: "hình cong tròn",
       },
+      value: 4,
+      ordering: 4,
+      contrast_group: "curve",
+      audio_path: "/audio/vi/c4/sun.mp3",
     },
     {
-      id: "carrot",
-      label: "củ cà rốt",
+      id: "square",
+      label: "hình vuông xanh",
       image: {
         kind: "emoji",
-        ref: "🥕",
+        ref: "🟩",
       },
       category: {
-        type: "rau củ",
+        type: "hình góc cạnh",
       },
+      value: 1,
+      ordering: 5,
+      contrast_group: "angular",
+      audio_path: "/audio/vi/c4/square.mp3",
+    },
+    {
+      id: "triangle",
+      label: "hình tam giác",
+      image: {
+        kind: "emoji",
+        ref: "🔺",
+      },
+      category: {
+        type: "hình góc cạnh",
+      },
+      value: 2,
+      ordering: 6,
+      contrast_group: "angular",
+      audio_path: "/audio/vi/c4/triangle.mp3",
+    },
+    {
+      id: "rectangle",
+      label: "quyển sách nhỏ",
+      image: {
+        kind: "emoji",
+        ref: "📕",
+      },
+      category: {
+        type: "hình góc cạnh",
+      },
+      value: 3,
+      ordering: 7,
+      contrast_group: "angular",
+      audio_path: "/audio/vi/c4/rectangle.mp3",
+    },
+    {
+      id: "diamond",
+      label: "hình thoi lam",
+      image: {
+        kind: "emoji",
+        ref: "🔷",
+      },
+      category: {
+        type: "hình góc cạnh",
+      },
+      value: 4,
+      ordering: 8,
+      contrast_group: "angular",
+      audio_path: "/audio/vi/c4/diamond.mp3",
+    },
+  ],
+  axes: {
+    category: {
+      values: ["hình cong tròn", "hình góc cạnh"],
+    },
+  },
+  relations: [
+    {
+      type: "contrast",
+      source_id: "star",
+      target_id: "square",
+    },
+    {
+      type: "contrast",
+      source_id: "heart",
+      target_id: "triangle",
+    },
+    {
+      type: "contrast",
+      source_id: "moon",
+      target_id: "rectangle",
+    },
+    {
+      type: "contrast",
+      source_id: "sun",
+      target_id: "diamond",
     },
   ],
   ladder: [
@@ -128,7 +220,16 @@ export const C4_MEM_02_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Nhớ chuỗi hình nhé",
   },
-  ordering: ["chair", "apple", "banana", "watermelon", "carrot"],
+  ordering: [
+    "star",
+    "heart",
+    "moon",
+    "sun",
+    "square",
+    "triangle",
+    "rectangle",
+    "diamond",
+  ],
 };
 
 export const C4_MEM_02_SEED: SkillSeed = {
@@ -136,12 +237,10 @@ export const C4_MEM_02_SEED: SkillSeed = {
   dataset: C4_MEM_02_DATASET,
   levels: [
     {
-      code: "GL-C4-MEM-SEQ-0001",
-      template: "GT-011",
-      band: "5-6",
-      difficulty: 2,
-      theme: "food",
-      rounds: 3,
+      template: "GT-000",
+      band: "4-5",
+      difficulty: 1,
+      theme: "school",
     },
     {
       code: "GL-C4-MEM-SEQ-0002",
@@ -149,38 +248,6 @@ export const C4_MEM_02_SEED: SkillSeed = {
       band: "4-5",
       difficulty: 2,
       theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-MEM-PATT-0003",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 2,
-      theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-MEM-PATT-0004",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 3,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-MEM-SLOT-0003",
-      template: "GT-008",
-      band: "3-4",
-      difficulty: 2,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-MEM-SLOT-0004",
-      template: "GT-008",
-      band: "3-4",
-      difficulty: 3,
-      theme: "art",
       rounds: 3,
     },
     {
@@ -213,22 +280,6 @@ export const C4_MEM_02_SEED: SkillSeed = {
       band: "4-5",
       difficulty: 3,
       theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-MEM-MEMO-0003",
-      template: "GT-012",
-      band: "3-4",
-      difficulty: 2,
-      theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-MEM-MEMO-0004",
-      template: "GT-012",
-      band: "3-4",
-      difficulty: 3,
-      theme: "homeland",
       rounds: 3,
     },
     {

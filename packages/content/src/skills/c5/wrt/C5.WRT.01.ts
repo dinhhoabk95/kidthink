@@ -44,58 +44,132 @@ export const C5_WRT_01_DATASET: SkillDataset = {
     {
       id: "wrt_but_chi",
       label: "bút chì",
+      value: 1,
       image: {
         kind: "emoji",
         ref: "✏️",
       },
       category: {
-        type: "tập viết",
+        type: "dụng cụ viết",
       },
+      contrast_group: "primary",
+    },
+    {
+      id: "wrt_but_sap",
+      label: "bút sáp",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "🖍️",
+      },
+      category: {
+        type: "dụng cụ viết",
+      },
+      contrast_group: "primary",
+    },
+    {
+      id: "wrt_tay_chi",
+      label: "tẩy chì",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "🧼",
+      },
+      category: {
+        type: "dụng cụ viết",
+      },
+      contrast_group: "primary",
+    },
+    {
+      id: "wrt_vo_tap",
+      label: "vở tập tô",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "📓",
+      },
+      category: {
+        type: "dụng cụ viết",
+      },
+      contrast_group: "primary",
     },
     {
       id: "wrt_cam_3_ngon",
-      label: "cầm bút 3 ngón tay",
+      label: "cầm bút ba ngón",
+      value: 5,
       image: {
         kind: "emoji",
         ref: "✍️",
       },
       category: {
-        type: "tập viết",
+        type: "cách cầm bút",
       },
+      contrast_group: "contrast",
     },
     {
       id: "wrt_ngon_cai_tro",
-      label: "ngón cái và ngón trỏ",
+      label: "ngón cái giữ bút",
+      value: 6,
       image: {
         kind: "emoji",
         ref: "🤏",
       },
       category: {
-        type: "tập viết",
+        type: "cách cầm bút",
       },
+      contrast_group: "contrast",
     },
     {
       id: "wrt_ngon_giua",
       label: "ngón giữa đỡ bút",
+      value: 7,
       image: {
         kind: "emoji",
         ref: "✋",
       },
       category: {
-        type: "tập viết",
+        type: "cách cầm bút",
       },
+      contrast_group: "contrast",
     },
     {
       id: "wrt_co_tay",
-      label: "cổ tay thả lỏng",
+      label: "cổ tay mềm mại",
+      value: 8,
       image: {
         kind: "emoji",
         ref: "🖐️",
       },
       category: {
-        type: "tập viết",
+        type: "cách cầm bút",
       },
+      contrast_group: "contrast",
     },
+  ],
+  axes: {
+    category: {
+      values: ["dụng cụ viết", "cách cầm bút"],
+      ordered: true,
+    },
+  },
+  relations: [
+    { type: "sequence", source_id: "wrt_but_chi", target_id: "wrt_cam_3_ngon" },
+    { type: "pair", source_id: "wrt_but_chi", target_id: "wrt_but_sap" },
+    { type: "pair", source_id: "wrt_tay_chi", target_id: "wrt_vo_tap" },
+    {
+      type: "pair",
+      source_id: "wrt_cam_3_ngon",
+      target_id: "wrt_ngon_cai_tro",
+    },
+    { type: "pair", source_id: "wrt_ngon_giua", target_id: "wrt_co_tay" },
+    { type: "contrast", source_id: "wrt_but_chi", target_id: "wrt_cam_3_ngon" },
+    {
+      type: "contrast",
+      source_id: "wrt_but_sap",
+      target_id: "wrt_ngon_cai_tro",
+    },
+    { type: "contrast", source_id: "wrt_tay_chi", target_id: "wrt_ngon_giua" },
+    { type: "contrast", source_id: "wrt_vo_tap", target_id: "wrt_co_tay" },
   ],
   ladder: [
     {
@@ -130,6 +204,9 @@ export const C5_WRT_01_DATASET: SkillDataset = {
   },
   ordering: [
     "wrt_but_chi",
+    "wrt_but_sap",
+    "wrt_tay_chi",
+    "wrt_vo_tap",
     "wrt_cam_3_ngon",
     "wrt_ngon_cai_tro",
     "wrt_ngon_giua",
@@ -163,62 +240,6 @@ export const C5_WRT_01_SEED: SkillSeed = {
       band: "4-5",
       difficulty: 1,
       theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-TCNT-0002",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 2,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-TCMP-0001",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 1,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-TCMP-0002",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 2,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-PAIR-0001",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 1,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-PAIR-0002",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 2,
-      theme: "ocean",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-PATT-0001",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 1,
-      theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-PATT-0002",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 2,
-      theme: "vehicle",
       rounds: 3,
     },
   ],

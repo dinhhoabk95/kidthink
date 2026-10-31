@@ -1,6 +1,6 @@
 import { gameLevels, getOwnerDb } from "@mindkid/db";
 import { CONTENT_THEMES } from "@mindkid/shared";
-import { count, eq } from "drizzle-orm";
+import { count } from "drizzle-orm";
 import { defineEventHandler, setHeader } from "h3";
 
 export default defineEventHandler(async (event) => {
@@ -13,7 +13,6 @@ export default defineEventHandler(async (event) => {
       levelCount: count(),
     })
     .from(gameLevels)
-    .where(eq(gameLevels.status, "published"))
     .groupBy(gameLevels.themeId);
 
   const countMap = new Map<string, number>();

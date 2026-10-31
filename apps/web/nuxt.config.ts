@@ -1,13 +1,15 @@
 import { fileURLToPath } from "node:url";
-import { requireEnv } from "@mindkid/config";
 import { defineNuxtConfig } from "nuxt/config";
+import { env } from "./env";
 import {
   SESSION_MAX_AGE_SECONDS,
   USER_SESSION_COOKIE,
 } from "./server/utils/session-runtime";
 
-const allowedOrigins = requireEnv("NUXT_ALLOWED_ORIGINS")
-  .split(",")
+const isDevelopment = env.NODE_ENV === "development";
+const isProduction = env.NODE_ENV === "production";
+
+const allowedOrigins = env.NUXT_ALLOWED_ORIGINS.split(",")
   .map((origin) => origin.trim())
   .filter(Boolean);
 
@@ -31,7 +33,7 @@ export default defineNuxtConfig({
       // build chết ngay lúc khởi động: "__dirname is not defined in ES module
       // scope". Nó tới qua @mindkid/auth (workspace package nên bị inline mặc
       // định), vì vậy phải khai external tường minh.
-      external: ["argon2"],
+      external: ["argon2", "sharp"],
     },
     // ERROR-CODES §4 + §8: chỗ duy nhất dựng body lỗi cho `/api/*`.
     // Nitro nối handler mặc định vào cuối chuỗi, nên trang lỗi Nuxt (SSR, 404
@@ -40,16 +42,46 @@ export default defineNuxtConfig({
     errorHandler: fileURLToPath(new URL("./server/error.ts", import.meta.url)),
   },
   security: {
+    nonce: true,
+    sri: true,
+    hidePoweredBy: true,
     headers: {
-      crossOriginEmbedderPolicy:
-        process.env.NODE_ENV === "development" ? "unsafe-none" : "require-corp",
+      crossOriginResourcePolicy: "same-origin",
+      crossOriginOpenerPolicy: "same-origin",
+      crossOriginEmbedderPolicy: isDevelopment ? "unsafe-none" : "require-corp",
+      originAgentCluster: "?1",
+      referrerPolicy: "strict-origin-when-cross-origin",
+      strictTransportSecurity: isDevelopment
+        ? false
+        : {
+            maxAge: 31_536_000,
+            includeSubdomains: true,
+            preload: true,
+          },
+      xContentTypeOptions: "nosniff",
+      xDNSPrefetchControl: "off",
+      xDownloadOptions: "noopen",
+      xFrameOptions: "DENY",
+      xPermittedCrossDomainPolicies: "none",
+      xXSSProtection: "0",
+      permissionsPolicy: {
+        camera: [],
+        "display-capture": [],
+        fullscreen: ["self"],
+        geolocation: [],
+        microphone: [],
+        payment: [],
+        usb: [],
+      },
       contentSecurityPolicy: {
         "default-src": ["'self'"],
         "base-uri": ["'self'"],
+        "connect-src": ["'self'", "https:"],
         "font-src": ["'self'", "https:", "data:"],
         "form-action": ["'self'"],
         "frame-ancestors": ["'self'"],
-        "img-src": ["'self'", "data:", "https:"],
+        "img-src": ["'self'", "data:", "blob:", "https:"],
+        "media-src": ["'self'", "data:", "blob:", "https:"],
         "object-src": ["'none'"],
         "script-src-attr": ["'none'"],
         "style-src": ["'self'", "https:", "'unsafe-inline'"],
@@ -70,22 +102,27 @@ export default defineNuxtConfig({
           "'strict-dynamic'",
           "'nonce-{{nonce}}'",
         ],
+        "worker-src": ["'self'", "blob:"],
         "upgrade-insecure-requests": true,
       },
     },
+    // BR-SEC-10: Rate limit thuộc @mindkid/cache, CSRF thuộc @mindkid/auth,
+    // input validation thuộc Zod (BR-SEC-04) + @mindkid/moderation. Tắt
+    // xssValidator nội bộ để không nuốt multipart stream/webhook raw body hay
+    // chặn ký tự toán học (<, >).
     rateLimiter: false,
     csrf: false,
+    xssValidator: false,
     removeLoggers: false,
     requestSizeLimiter: {
       maxRequestSizeInBytes: 10 * 1024 * 1024,
       maxUploadFileRequestInBytes: 10 * 1024 * 1024,
+      throwError: true,
     },
-    corsHandler: {
-      origin: allowedOrigins,
-      credentials: true,
-      methods: ["GET", "HEAD", "OPTIONS", "PUT", "PATCH", "POST", "DELETE"],
-      allowHeaders: ["Content-Type", "Authorization", "x-csrf-token"],
-    },
+    // CORS xử lý ở server/middleware/00-cors.ts để chạy đầu chuỗi middleware
+    // và tránh lỗi corsHandler của nuxt-security@2.7.0 trả về boolean true
+    // khiến h3 ghi đè header sau khi đã gửi 204 No Content cho OPTIONS preflight.
+    corsHandler: false,
   },
   // BR-SEO2-01: Bề mặt tài khoản và bề mặt trẻ không được index
   routeRules: {
@@ -121,14 +158,14 @@ export default defineNuxtConfig({
       cookie: {
         name: USER_SESSION_COOKIE,
         sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
+        secure: isProduction,
         httpOnly: true,
       },
     },
     // Ranh giới public/private rõ ràng (BR-CFO-12)
     public: {
-      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL ?? "",
-      siteUrl: process.env.SITE_URL ?? "https://mindkid.vn",
+      apiBaseUrl: env.NUXT_PUBLIC_API_BASE_URL ?? "",
+      siteUrl: env.SITE_URL,
     },
   },
 });

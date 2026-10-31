@@ -25,8 +25,7 @@
     "test": "vitest run",
     "generate": "drizzle-kit generate --config drizzle.config.ts",
     "migrate": "tsx scripts/migrate.ts",
-    "seed": "tsx src/seed.ts",
-    "replay:adaptive": "tsx scripts/replay-adaptive.ts"
+    "seed": "tsx src/seed.ts"
   },
   "imports": {
     "#src/*": "./src/*.ts",

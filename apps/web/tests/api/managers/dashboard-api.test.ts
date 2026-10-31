@@ -86,7 +86,6 @@ describe("Task 4 — GET /api/managers/dashboard (BR-DSH-01..06, D-IY, D-IZ, D-I
       .insert(levelDailyStats)
       .values({
         levelCode: "GL-C1-CNT-TEST-0001",
-        contentVersion: 1,
         dateIct: "2026-08-14",
         playsCount: 5,
         completionsCount: 3,
@@ -96,11 +95,7 @@ describe("Task 4 — GET /api/managers/dashboard (BR-DSH-01..06, D-IY, D-IZ, D-I
         updatedAt: testRollupDate,
       })
       .onConflictDoUpdate({
-        target: [
-          levelDailyStats.levelCode,
-          levelDailyStats.contentVersion,
-          levelDailyStats.dateIct,
-        ],
+        target: [levelDailyStats.levelCode, levelDailyStats.dateIct],
         set: { updatedAt: testRollupDate },
       });
 
@@ -141,9 +136,6 @@ describe("Task 4 — GET /api/managers/dashboard (BR-DSH-01..06, D-IY, D-IZ, D-I
       status: "pending_source",
       owner_step: "P3.3",
       is_feedback: true,
-    });
-    expect(res.content.published_lessons).toEqual({
-      count: expect.any(Number),
     });
     expect(res.system.llm_cost_month).toEqual({
       status: "pending_source",

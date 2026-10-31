@@ -16,7 +16,6 @@ describe("Play Schema Integration Tests", () => {
       .values({
         sessionUuid,
         seq: 1,
-        contentVersion: 1,
         eventName: "game_start",
       })
       .onConflictDoNothing();
@@ -25,19 +24,17 @@ describe("Play Schema Integration Tests", () => {
       db.insert(telemetryEvents).values({
         sessionUuid,
         seq: 1,
-        contentVersion: 1,
         eventName: "game_start_duplicate",
       })
     ).rejects.toThrow();
   });
 
-  it("BR-SPT-06 & CHECK: play_sessions enforces NOT NULL content_version and child_profile_id OR guest_device_id", async () => {
+  it("BR-SPT-06 & CHECK: play_sessions enforces child_profile_id OR guest_device_id", async () => {
     // Missing both child_profile_id and guest_device_id must fail CHECK constraint
     const db = getOwnerDb();
     await expect(
       db.insert(playSessions).values({
         gameLevelId: 1,
-        contentVersion: 1,
         templateCode: "GT-001",
       })
     ).rejects.toThrow();
@@ -86,15 +83,12 @@ describe("Play Schema Integration Tests", () => {
     let [gl] = await db
       .insert(gameLevels)
       .values({
-        entityId: Math.floor(Math.random() * 900_000) + 100_000,
         code: glCode,
-        contentVersion: 1,
         templateCode: gtCode,
         title: "Level Play Test",
         contentPack: { test: true },
         difficultyParams: { speed: 1 },
         accessTier: "free",
-        status: "published",
       })
       .onConflictDoNothing()
       .returning();
@@ -118,7 +112,6 @@ describe("Play Schema Integration Tests", () => {
       .values({
         childProfileId: child.id,
         gameLevelId: gl.id,
-        contentVersion: 1,
         templateCode: gtCode,
         completionStatus: "in_progress",
       })
@@ -148,27 +141,23 @@ describe("Play Schema Integration Tests", () => {
         .update(playSessions)
         .set({ score: 999 })
         .where(eq(playSessions.id, ps.id))
-    ).rejects.toSatisfy((err: unknown) => {
-      const e = err as { message?: string; cause?: { message?: string } };
-      return ((e.message ?? "") + (e.cause?.message ?? "")).includes(
-        "BR-SPT-07"
-      );
-    });
+    ).rejects.toSatisfy(
+      (err: { message?: string; cause?: { message?: string } }) =>
+        ((err.message ?? "") + (err.cause?.message ?? "")).includes("BR-SPT-07")
+    );
   });
 
   it("BR-CDC-05 & §7.3: telemetry_events columns match allow-list strictly", async () => {
     const db = getOwnerDb();
 
-    const cols = await db.execute(sql`
+    const cols = await db.execute<{ column_name: string }>(sql`
       SELECT column_name, data_type 
       FROM information_schema.columns 
       WHERE table_name = 'telemetry_events'
       ORDER BY ordinal_position
     `);
 
-    const colNames = Array.from(cols).map((r: unknown) =>
-      String((r as { column_name: string }).column_name)
-    );
+    const colNames = Array.from(cols).map((r) => String(r.column_name));
 
     // Bất biến: bảng telemetry_events CẤM chứa PII hoặc foreign key
     expect(colNames).not.toContain("child_id");
@@ -191,7 +180,6 @@ describe("Play Schema Integration Tests", () => {
     await db.insert(telemetryEvents).values({
       sessionUuid,
       seq: 1,
-      contentVersion: 1,
       childUuid: "c1111111-1111-1111-1111-111111111111",
       eventName: "step_complete",
     });
@@ -220,16 +208,14 @@ describe("Play Schema Integration Tests", () => {
   it("D-Z: schema has no foreign key pointing to telemetry_events table", async () => {
     const db = getOwnerDb();
 
-    const result = await db.execute(sql`
+    const result = await db.execute<{ constraint_name: string }>(sql`
       SELECT constraint_name 
       FROM information_schema.referential_constraints 
       WHERE constraint_schema = 'public'
     `);
 
     // Verify telemetry_events is not target of any FK constraint
-    const fkNames = Array.from(result).map((r: unknown) =>
-      String((r as { constraint_name: string }).constraint_name)
-    );
+    const fkNames = Array.from(result).map((r) => String(r.constraint_name));
     for (const fk of fkNames) {
       expect(fk).not.toContain("telemetry_events");
     }

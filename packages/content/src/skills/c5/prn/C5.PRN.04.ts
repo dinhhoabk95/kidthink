@@ -43,54 +43,88 @@ export const C5_PRN_04_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "let_a",
-      label: "chữ a",
-      glyph: "a",
+      id: "prn_tu_ngan_cach",
+      label: "khoảng cách chữ o",
+      value: 1,
       image: {
         kind: "emoji",
-        ref: "🅰️",
+        ref: "📏",
+      },
+      audio_path: "/audio/vi/c5/prn/khoang_cach_chu_o.mp3",
+      category: {
+        type: "khoảng cách đều",
       },
       contrast_group: "primary",
     },
     {
-      id: "let_ă",
-      label: "chữ ă",
-      glyph: "ă",
+      id: "prn_cach_mot_ngon",
+      label: "khoảng cách ngón tay",
+      value: 2,
       image: {
         kind: "emoji",
-        ref: "🅰️",
+        ref: "☝️",
+      },
+      audio_path: "/audio/vi/c5/prn/khoang_cach_ngon_tay.mp3",
+      category: {
+        type: "khoảng cách đều",
+      },
+      contrast_group: "primary",
+    },
+    {
+      id: "prn_dong_chu_dep",
+      label: "hàng chữ cách đều",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "✨",
+      },
+      audio_path: "/audio/vi/c5/prn/hang_chu_cach_deu.mp3",
+      category: {
+        type: "khoảng cách đều",
+      },
+      contrast_group: "primary",
+    },
+    {
+      id: "prn_chu_dinh_nhau",
+      label: "từ dính sát",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "🧩",
+      },
+      audio_path: "/audio/vi/c5/prn/tu_dinh_sat_nhau.mp3",
+      category: {
+        type: "khoảng cách lệch",
       },
       contrast_group: "contrast",
     },
     {
-      id: "let_â",
-      label: "chữ â",
-      glyph: "â",
+      id: "prn_chu_qua_xa",
+      label: "từ cách xa",
+      value: 5,
       image: {
         kind: "emoji",
-        ref: "🅰️",
+        ref: "🕳️",
       },
-      contrast_group: "primary",
-    },
-    {
-      id: "let_b",
-      label: "chữ b",
-      glyph: "b",
-      image: {
-        kind: "emoji",
-        ref: "🅱️",
+      audio_path: "/audio/vi/c5/prn/tu_cach_qua_xa.mp3",
+      category: {
+        type: "khoảng cách lệch",
       },
       contrast_group: "contrast",
     },
     {
-      id: "let_c",
-      label: "chữ c",
-      glyph: "c",
+      id: "prn_dong_khong_deu",
+      label: "khoảng cách lệch",
+      value: 6,
       image: {
         kind: "emoji",
-        ref: "🅲",
+        ref: "〰️",
       },
-      contrast_group: "primary",
+      audio_path: "/audio/vi/c5/prn/khoang_cach_khong_deu.mp3",
+      category: {
+        type: "khoảng cách lệch",
+      },
+      contrast_group: "contrast",
     },
   ],
   ladder: [
@@ -125,7 +159,47 @@ export const C5_PRN_04_DATASET: SkillDataset = {
     narration_template:
       "Chúng mình cùng tìm hiểu về Khoảng cách giữa các từ nhé",
   },
-  ordering: ["let_a", "let_ă", "let_â", "let_b", "let_c"],
+  ordering: [
+    "prn_tu_ngan_cach",
+    "prn_cach_mot_ngon",
+    "prn_dong_chu_dep",
+    "prn_chu_dinh_nhau",
+    "prn_chu_qua_xa",
+    "prn_dong_khong_deu",
+  ],
+  axes: {
+    category: {
+      values: ["khoảng cách đều", "khoảng cách lệch"],
+      ordered: true,
+    },
+  },
+  relations: [
+    {
+      type: "pair",
+      source_id: "prn_tu_ngan_cach",
+      target_id: "prn_cach_mot_ngon",
+    },
+    {
+      type: "pair",
+      source_id: "prn_chu_dinh_nhau",
+      target_id: "prn_chu_qua_xa",
+    },
+    {
+      type: "contrast",
+      source_id: "prn_tu_ngan_cach",
+      target_id: "prn_chu_dinh_nhau",
+    },
+    {
+      type: "contrast",
+      source_id: "prn_cach_mot_ngon",
+      target_id: "prn_chu_qua_xa",
+    },
+    {
+      type: "contrast",
+      source_id: "prn_dong_chu_dep",
+      target_id: "prn_dong_khong_deu",
+    },
+  ],
 };
 
 export const C5_PRN_04_SEED: SkillSeed = {
@@ -154,62 +228,6 @@ export const C5_PRN_04_SEED: SkillSeed = {
       band: "4-5",
       difficulty: 2,
       theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-PRN-TCNT-0008",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 3,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-PRN-TCMP-0007",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 2,
-      theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-PRN-TCMP-0008",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 3,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-PRN-PAIR-0007",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 2,
-      theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-PRN-PAIR-0008",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 3,
-      theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-PRN-PATT-0007",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 2,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-PRN-PATT-0008",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 3,
-      theme: "farm",
       rounds: 3,
     },
   ],

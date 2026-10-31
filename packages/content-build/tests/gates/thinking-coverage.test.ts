@@ -113,8 +113,8 @@ describe("Task #94 — Thinking Coverage Matrix (BR-TCM-01..11)", () => {
   it("BR-TCM-01 & BR-TCM-02: CA ÂM — rejects fabricated tag outside closed vocabulary with error violation", () => {
     const items: ContentItem[] = [
       {
-        code: "LES-C1-0001",
-        kind: "lesson",
+        code: "GL-C1-0001",
+        kind: "game_level",
         status: "published",
         competencyCode: "C1",
         ageBand: "3-4",
@@ -342,7 +342,6 @@ describe("Task #94 — Thinking Coverage Matrix (BR-TCM-01..11)", () => {
       mechanicPerCellFloor: 3, // Custom higher mechanic floor
       thinkingTagFloor: 8,
       balanceRatioCeiling: 2.5,
-      lessonPerCellFloor: 2,
       enforceFloors: true,
     };
 

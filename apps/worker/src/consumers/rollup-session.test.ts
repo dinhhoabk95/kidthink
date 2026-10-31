@@ -54,15 +54,12 @@ describe("Task 5 & #293 S2 — rollup:session Integration Suite (BR-TLM-04, BR-J
     let [gl] = await db
       .insert(gameLevels)
       .values({
-        entityId: Math.floor(Math.random() * 899_000 + 100_000),
         code: glCode,
-        contentVersion: 1,
         templateCode: gtCode,
         title: "Level Rollup Test",
         contentPack: { test: true },
         difficultyParams: { speed: 1 },
         accessTier: "free",
-        status: "draft",
       })
       .onConflictDoNothing()
       .returning();
@@ -87,7 +84,6 @@ describe("Task 5 & #293 S2 — rollup:session Integration Suite (BR-TLM-04, BR-J
         sessionUuid,
         childProfileId: child.id,
         gameLevelId: gl.id,
-        contentVersion: 1,
         templateCode: gtCode,
         completionStatus: "in_progress",
       })
@@ -98,28 +94,24 @@ describe("Task 5 & #293 S2 — rollup:session Integration Suite (BR-TLM-04, BR-J
       {
         sessionUuid,
         seq: 1,
-        contentVersion: 1,
         eventName: "game_started",
         occurredAtMs: 0,
       },
       {
         sessionUuid,
         seq: 2,
-        contentVersion: 1,
         eventName: "round_started",
         occurredAtMs: 100,
       },
       {
         sessionUuid,
         seq: 3,
-        contentVersion: 1,
         eventName: "hint_requested",
         occurredAtMs: 200,
       },
       {
         sessionUuid,
         seq: 4,
-        contentVersion: 1,
         eventName: "answer_selected",
         occurredAtMs: 300,
         payload: { fakeClientScore: 9999 },
@@ -127,7 +119,6 @@ describe("Task 5 & #293 S2 — rollup:session Integration Suite (BR-TLM-04, BR-J
       {
         sessionUuid,
         seq: 5,
-        contentVersion: 1,
         eventName: "answer_correct",
         occurredAtMs: 400,
         payload: { score: 9999 },
@@ -135,14 +126,12 @@ describe("Task 5 & #293 S2 — rollup:session Integration Suite (BR-TLM-04, BR-J
       {
         sessionUuid,
         seq: 6,
-        contentVersion: 1,
         eventName: "round_completed",
         occurredAtMs: 500,
       },
       {
         sessionUuid,
         seq: 7,
-        contentVersion: 1,
         eventName: "game_completed",
         occurredAtMs: 1000,
         payload: { score: 9999 },
@@ -224,19 +213,16 @@ describe("Task 5 & #293 S2 — rollup:session Integration Suite (BR-TLM-04, BR-J
       extraTimeGrantedMinutes: 15,
     });
 
-    const suffix = Math.floor(Math.random() * 899_000 + 100_000);
+    const randNum = String(Math.floor(Math.random() * 8999 + 1000));
     const [gl] = await db
       .insert(gameLevels)
       .values({
-        entityId: suffix,
-        code: `GL-C1-PAUSE-${suffix}`,
-        contentVersion: 1,
+        code: `GL-C1-NUM-PAUS-${randNum}`,
         templateCode: "GT-001",
         title: "Level Pause Test",
         contentPack: { test: true },
         difficultyParams: {},
         accessTier: "free",
-        status: "published",
       })
       .returning();
     expect(gl).toBeDefined();
@@ -249,7 +235,6 @@ describe("Task 5 & #293 S2 — rollup:session Integration Suite (BR-TLM-04, BR-J
       sessionUuid,
       childProfileId: child.id,
       gameLevelId: gl.id,
-      contentVersion: 1,
       templateCode: "GT-001",
       completionStatus: "in_progress",
       startedAt: new Date(),
@@ -260,14 +245,12 @@ describe("Task 5 & #293 S2 — rollup:session Integration Suite (BR-TLM-04, BR-J
       {
         sessionUuid,
         seq: 1,
-        contentVersion: 1,
         eventName: "game_started",
         occurredAtMs: 0,
       },
       {
         sessionUuid,
         seq: 2,
-        contentVersion: 1,
         eventName: "game_paused",
         occurredAtMs: 120_000,
         payload: { reason: "tab_hidden" },
@@ -275,7 +258,6 @@ describe("Task 5 & #293 S2 — rollup:session Integration Suite (BR-TLM-04, BR-J
       {
         sessionUuid,
         seq: 3,
-        contentVersion: 1,
         eventName: "game_resumed",
         occurredAtMs: 360_000,
         payload: { paused_ms: 240_000 },
@@ -283,7 +265,6 @@ describe("Task 5 & #293 S2 — rollup:session Integration Suite (BR-TLM-04, BR-J
       {
         sessionUuid,
         seq: 4,
-        contentVersion: 1,
         eventName: "game_completed",
         occurredAtMs: 600_000,
         payload: { duration_ms: 600_000, rounds_total: 1, rounds_correct: 1 },

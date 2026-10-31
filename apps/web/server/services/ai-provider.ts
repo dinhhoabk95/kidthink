@@ -783,6 +783,7 @@ export const aiProvider = {
     const audienceTitle =
       targetAudience === "home" ? "người dạy tại nhà" : "người dạy trên lớp";
     const sanitizedGuide = stripChildPii(guideText);
+    assertNoEgressViolation(sanitizedGuide, "rewriteGuide");
 
     if (shouldUseHttpAdapter()) {
       const prompt = `Hãy viết lại hướng dẫn hoạt động sau dành cho ${audienceTitle}: ${sanitizedGuide}`;

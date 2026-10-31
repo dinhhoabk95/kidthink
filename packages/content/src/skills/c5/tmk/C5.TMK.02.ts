@@ -43,22 +43,94 @@ export const C5_TMK_02_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "tmk_sac",
-      label: "dấu sắc",
-      glyph: "ˊ",
+      id: "tmk_ca_sac",
+      label: "dấu sắc (con cá)",
+      glyph: "cá",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🐟",
       },
+      category: {
+        type: "dấu sắc",
+        label: "Tiếng có dấu sắc",
+      },
+      value: 1,
+      contrast_group: "primary",
     },
     {
-      id: "tmk_nang",
-      label: "dấu nặng",
-      glyph: "﹒",
+      id: "tmk_la_sac",
+      label: "dấu sắc (chiếc lá)",
+      glyph: "lá",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🍃",
       },
+      category: {
+        type: "dấu sắc",
+        label: "Tiếng có dấu sắc",
+      },
+      value: 2,
+      contrast_group: "primary",
+    },
+    {
+      id: "tmk_non_sac",
+      label: "dấu sắc (cái nón)",
+      glyph: "nón",
+      image: {
+        kind: "emoji",
+        ref: "👒",
+      },
+      category: {
+        type: "dấu sắc",
+        label: "Tiếng có dấu sắc",
+      },
+      value: 3,
+      contrast_group: "primary",
+    },
+    {
+      id: "tmk_vit_nang",
+      label: "dấu nặng (con vịt)",
+      glyph: "vịt",
+      image: {
+        kind: "emoji",
+        ref: "🦆",
+      },
+      category: {
+        type: "dấu nặng",
+        label: "Tiếng có dấu nặng",
+      },
+      value: 4,
+      contrast_group: "contrast",
+    },
+    {
+      id: "tmk_keo_nang",
+      label: "dấu nặng (viên kẹo)",
+      glyph: "kẹo",
+      image: {
+        kind: "emoji",
+        ref: "🍬",
+      },
+      category: {
+        type: "dấu nặng",
+        label: "Tiếng có dấu nặng",
+      },
+      value: 5,
+      contrast_group: "contrast",
+    },
+    {
+      id: "tmk_ngua_nang",
+      label: "dấu nặng (con ngựa)",
+      glyph: "ngựa",
+      image: {
+        kind: "emoji",
+        ref: "🐴",
+      },
+      category: {
+        type: "dấu nặng",
+        label: "Tiếng có dấu nặng",
+      },
+      value: 6,
+      contrast_group: "contrast",
     },
   ],
   ladder: [
@@ -92,7 +164,37 @@ export const C5_TMK_02_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Dấu sắc và dấu nặng nhé",
   },
-  ordering: ["tmk_sac", "tmk_nang"],
+  ordering: [
+    "tmk_ca_sac",
+    "tmk_la_sac",
+    "tmk_non_sac",
+    "tmk_vit_nang",
+    "tmk_keo_nang",
+    "tmk_ngua_nang",
+  ],
+  axes: {
+    category: {
+      values: ["dấu sắc", "dấu nặng"],
+      ordered: true,
+    },
+  },
+  relations: [
+    {
+      type: "pair",
+      source_id: "tmk_ca_sac",
+      target_id: "tmk_la_sac",
+    },
+    {
+      type: "pair",
+      source_id: "tmk_vit_nang",
+      target_id: "tmk_keo_nang",
+    },
+    {
+      type: "contrast",
+      source_id: "tmk_ca_sac",
+      target_id: "tmk_vit_nang",
+    },
+  ],
 };
 
 export const C5_TMK_02_SEED: SkillSeed = {
@@ -118,14 +220,6 @@ export const C5_TMK_02_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-TMK-TAP-0007",
-      template: "GT-001",
-      band: "5-6",
-      difficulty: 2,
-      theme: "family",
-      rounds: 3,
-    },
-    {
       code: "GL-C5-TMK-TAP-0008",
       template: "GT-001",
       band: "5-6",
@@ -134,59 +228,11 @@ export const C5_TMK_02_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-TMK-TAP-0009",
-      template: "GT-001",
-      band: "5-6",
-      difficulty: 3,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-TMK-TAP-0010",
-      template: "GT-001",
-      band: "5-6",
-      difficulty: 4,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
       code: "GL-C5-TMK-PAIR-0006",
       template: "GT-003",
       band: "5-6",
       difficulty: 2,
       theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-TMK-PAIR-0007",
-      template: "GT-003",
-      band: "5-6",
-      difficulty: 2,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-TMK-PAIR-0008",
-      template: "GT-003",
-      band: "5-6",
-      difficulty: 3,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-TMK-PAIR-0009",
-      template: "GT-003",
-      band: "5-6",
-      difficulty: 3,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-TMK-PAIR-0010",
-      template: "GT-003",
-      band: "5-6",
-      difficulty: 4,
-      theme: "weather",
       rounds: 3,
     },
   ],

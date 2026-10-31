@@ -19,7 +19,7 @@ describe("P3.8 Program Showcase Invariants (BR-PSH)", () => {
       expect(isPubliclyVisible).toBe(true);
     });
 
-    it("Scenario: BR-PSH-03 — program detail preview exposes activity titles for weeks 1-2 only and structural summaries for weeks 3+", () => {
+    it("Scenario: BR-PSH-03 — program detail preview exposes game level titles for weeks 1-2 only and structural summaries for weeks 3+", () => {
       const week1 = { week_no: 1, items: [{ title: "Đếm hạt" }] };
       const week3 = { week_no: 3, goal: "Phát triển tư duy nhóm" };
       expect(week1.items).toBeDefined();

@@ -86,23 +86,14 @@ describe("Task 4 — Package Catalog Admin & Subscribers Suite (BR-PCA-01..06, D
 
     expect(res).toBeDefined();
     expect(Array.isArray(res.packages)).toBe(true);
-    expect(res.packages.length).toBeGreaterThanOrEqual(6);
+    expect(res.packages.length).toBeGreaterThanOrEqual(5);
 
     // Verify standard and premium packages
     const standard = res.packages.find((p) => p.code === "PKG-standard");
     expect(standard).toBeDefined();
     expect(standard?.is_public).toBe(true);
 
-    // Verify 4 add-on packages with is_public = false and requires_spec
-    const addonLessonPlan = res.packages.find(
-      (p) => p.code === "PKG-addon_lesson_plan"
-    );
-    expect(addonLessonPlan).toBeDefined();
-    expect(addonLessonPlan?.is_public).toBe(false);
-    expect(addonLessonPlan?.requires_spec).toBe(
-      "07-addon/lesson-plan-creator.md"
-    );
-
+    // Verify 3 add-on packages with is_public = false and requires_spec
     const addonCurriculum = res.packages.find(
       (p) => p.code === "PKG-addon_curriculum"
     );

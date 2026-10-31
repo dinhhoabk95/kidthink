@@ -24,7 +24,6 @@ import {
   resolveLevelCta,
 } from "@mindkid/shared";
 import { describe, expect, it } from "vitest";
-import { seoPageTypeEnum } from "#src/schema/content";
 import { gameLevels } from "#src/schema/game";
 
 const LEVEL_CODE_REGEX = /^GL-C[1-6]-/;
@@ -46,11 +45,11 @@ describe("P1.13 Public Site, SEO, Legal & Cookie Invariants (BR-SEO2, BR-GCP, BR
       expect(isNoIndexRoute("/")).toBe(false);
     });
 
-    it("Scenario: BR-SEO2-02 — dynamic sitemap includes published game levels", () => {
+    it("Scenario: BR-SEO2-02 — dynamic sitemap includes game levels", () => {
       const sitemapSource = readRepoFile(
         "apps/web/server/routes/sitemap-games.xml.ts"
       );
-      expect(sitemapSource).toContain('eq(gameLevels.status, "published")');
+      expect(sitemapSource).toContain("from(gameLevels)");
       expect(sitemapSource).toContain("/games/");
     });
 
@@ -72,7 +71,12 @@ describe("P1.13 Public Site, SEO, Legal & Cookie Invariants (BR-SEO2, BR-GCP, BR
         "apps/web/app/pages/[slug].vue",
       ];
       for (const page of publicPages) {
-        const src = readRepoFile(page);
+        let src = readRepoFile(page);
+        if (page.includes("[code].vue")) {
+          src += readRepoFile(
+            "apps/web/app/composables/use-game-detail-seo.ts"
+          );
+        }
         expect(src).toContain("useSeoMeta(");
         expect(src).toContain("title:");
         expect(src).toContain("description:");
@@ -100,11 +104,11 @@ describe("P1.13 Public Site, SEO, Legal & Cookie Invariants (BR-SEO2, BR-GCP, BR
       expect(catalogRouteSource.toLowerCase()).not.toContain("googlebot");
     });
 
-    it("Scenario: BR-SEO2-07 — archived content is removed from sitemap", () => {
+    it("Scenario: BR-SEO2-07 — dynamic sitemap queries gameLevels directly", () => {
       const sitemapSource = readRepoFile(
         "apps/web/server/routes/sitemap-games.xml.ts"
       );
-      expect(sitemapSource).toContain('eq(gameLevels.status, "published")');
+      expect(sitemapSource).toContain("gameLevels.code");
       expect(sitemapSource).not.toContain('"archived"');
     });
 
@@ -191,12 +195,12 @@ describe("P1.13 Public Site, SEO, Legal & Cookie Invariants (BR-SEO2, BR-GCP, BR
       expect(cta.text).toBe("Nâng cấp Gói Tiêu chuẩn");
     });
 
-    it("Scenario: BR-GCP-06 — public catalog only shows published items", () => {
-      expect(gameLevels.status).toBeDefined();
+    it("Scenario: BR-GCP-06 — public catalog queries gameLevels with unique code", () => {
+      expect(gameLevels.code).toBeDefined();
       const searchServiceSource = readRepoFile(
         "apps/web/server/services/content-search.ts"
       );
-      expect(searchServiceSource).toContain('"published"');
+      expect(searchServiceSource).toContain("from(gameLevels)");
     });
 
     it("Scenario: BR-GCP-07 — every public game has a distinct indexable detail page URL", () => {
@@ -216,7 +220,9 @@ describe("P1.13 Public Site, SEO, Legal & Cookie Invariants (BR-SEO2, BR-GCP, BR
 
   describe("Public Game Detail Invariants (BR-GDP-01..08)", () => {
     it("Scenario: BR-GDP-01 — indexable detail page per game", () => {
-      const detailSource = readRepoFile("apps/web/app/pages/games/[code].vue");
+      const detailSource =
+        readRepoFile("apps/web/app/pages/games/[code].vue") +
+        readRepoFile("apps/web/app/composables/use-game-detail-seo.ts");
       expect(detailSource).toContain("https://mindkid.vn/games/");
       expect(isNoIndexRoute("/games/GL-C1-CNT-CARD-0001")).toBe(false);
     });
@@ -238,7 +244,9 @@ describe("P1.13 Public Site, SEO, Legal & Cookie Invariants (BR-SEO2, BR-GCP, BR
     });
 
     it("Scenario: BR-GDP-04 — includes LearningResource JSON-LD metadata", () => {
-      const detailSource = readRepoFile("apps/web/app/pages/games/[code].vue");
+      const detailSource =
+        readRepoFile("apps/web/app/pages/games/[code].vue") +
+        readRepoFile("apps/web/app/composables/use-game-detail-seo.ts");
       expect(detailSource).toContain('"@type": "LearningResource"');
       expect(detailSource).toContain("teaches:");
       expect(detailSource).toContain('"@type": "BreadcrumbList"');
@@ -461,7 +469,6 @@ describe("P1.13 Public Site, SEO, Legal & Cookie Invariants (BR-SEO2, BR-GCP, BR
       expect(legalRouteSource).toContain(
         'doc.requiresConsent ? "no-store" : "public, max-age=3600"'
       );
-      expect(seoPageTypeEnum.enumValues).not.toContain("legal");
     });
 
     it("Scenario: BR-LGL-06 — legal documents include plain Vietnamese summaries", () => {

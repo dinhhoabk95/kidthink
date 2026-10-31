@@ -62,7 +62,6 @@ export const C1_PROB_06_DATASET: SkillDataset = {
     {
       id: "answer_three",
       label: "số ba",
-      glyph: "3",
       value: 3,
       audio_path: "/audio/voice/common/numbers/3.mp3",
       image: {
@@ -78,7 +77,6 @@ export const C1_PROB_06_DATASET: SkillDataset = {
     {
       id: "distractor_four",
       label: "số bốn",
-      glyph: "4",
       value: 4,
       audio_path: "/audio/voice/common/numbers/4.mp3",
       image: {
@@ -94,7 +92,6 @@ export const C1_PROB_06_DATASET: SkillDataset = {
     {
       id: "distractor_seven",
       label: "số bảy",
-      glyph: "7",
       value: 7,
       audio_path: "/audio/voice/common/numbers/7.mp3",
       image: {
@@ -105,6 +102,132 @@ export const C1_PROB_06_DATASET: SkillDataset = {
       category: {
         range: "từ năm trở lên",
         parity: "lẻ",
+      },
+    },
+    {
+      id: "ws_gear_teal",
+      label: "bánh răng xanh ngọc",
+      value: 1,
+      image: {
+        kind: "emoji",
+        ref: "⚙️",
+      },
+    },
+    {
+      id: "ws_strawberry_red",
+      label: "dâu tây đỏ",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "🍓",
+      },
+    },
+    {
+      id: "ws_cupcake_pink",
+      label: "bánh cupcake dâu",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "🧁",
+      },
+    },
+    {
+      id: "ws_wrench_orange",
+      label: "cờ lê cam",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "🔧",
+      },
+    },
+    {
+      id: "ws_screw_gold",
+      label: "đai ốc vàng",
+      value: 1,
+      image: {
+        kind: "emoji",
+        ref: "🔩",
+      },
+    },
+    {
+      id: "ws_toolbox_blue",
+      label: "hộp đồ nghề xanh",
+      value: 6,
+      image: {
+        kind: "emoji",
+        ref: "🧰",
+      },
+    },
+    {
+      id: "ws_battery_green",
+      label: "bình pin năng lượng",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "🔋",
+      },
+    },
+    {
+      id: "ws_lightning_yellow",
+      label: "tia chớp điện lực",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "⚡️",
+      },
+    },
+    {
+      id: "ws_gem_emerald",
+      label: "viên ngọc xanh lá",
+      value: 8,
+      image: {
+        kind: "emoji",
+        ref: "💎",
+      },
+    },
+    {
+      id: "ws_spring_spiral",
+      label: "lò xo xoắn vàng",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "🌀",
+      },
+    },
+    {
+      id: "ws_button_round",
+      label: "nút bấm công tắc",
+      value: 1,
+      image: {
+        kind: "emoji",
+        ref: "🔘",
+      },
+    },
+    {
+      id: "ws_flask_purple",
+      label: "bình cầu tím",
+      value: 7,
+      image: {
+        kind: "emoji",
+        ref: "🧪",
+      },
+    },
+    {
+      id: "ws_alembic_gold",
+      label: "bình tam giác vàng",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "⚗️",
+      },
+    },
+    {
+      id: "ws_crystal_cyan",
+      label: "tinh thể pha lê xanh",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "🔮",
       },
     },
   ],
@@ -347,6 +470,66 @@ export const C1_PROB_06_SEED: SkillSeed = {
       difficulty: 5,
       theme: "body",
       rounds: 3,
+    },
+    {
+      code: "GL-C1-PROB-SLOT-0201",
+      template: "GT-008",
+      band: "4-5",
+      difficulty: 1,
+      access_tier: "free",
+      theme: "job",
+      rounds: 3,
+      montessori_ref: "WB12-D1",
+    },
+    {
+      code: "GL-C1-PROB-SUBST-0202",
+      template: "GT-010",
+      band: "4-5",
+      difficulty: 2,
+      access_tier: "login",
+      theme: "job",
+      rounds: 3,
+      montessori_ref: "WB12-D1",
+    },
+    {
+      code: "GL-C1-PROB-SLOT-0203",
+      template: "GT-008",
+      band: "4-5",
+      difficulty: 2,
+      access_tier: "login",
+      theme: "job",
+      rounds: 3,
+      montessori_ref: "WB12-D1",
+    },
+    {
+      code: "GL-C1-PROB-SUBST-0204",
+      template: "GT-010",
+      band: "4-5",
+      difficulty: 3,
+      access_tier: "standard",
+      theme: "art",
+      rounds: 3,
+      montessori_ref: "WB12-D1",
+    },
+    {
+      code: "GL-C1-PROB-SUBST-0205",
+      template: "GT-010",
+      band: "4-5",
+      difficulty: 3,
+      access_tier: "standard",
+      theme: "job",
+      rounds: 3,
+      montessori_ref: "WB12-D2",
+    },
+    {
+      code: "GL-C1-PROB-SUBST-0206",
+      template: "GT-010",
+      band: "5-6",
+      difficulty: 4,
+      access_tier: "premium",
+      theme: "job",
+      rounds: 3,
+      montessori_ref: "WB12-D3",
     },
   ],
 };

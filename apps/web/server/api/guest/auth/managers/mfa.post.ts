@@ -6,6 +6,7 @@ import {
   getAuthRedisClient,
   getBrowserSessionService,
   hashRecoveryCode,
+  type MfaChallengePayload,
   verifyTotpCode,
 } from "@mindkid/auth";
 import {
@@ -20,6 +21,7 @@ import {
   InsufficientRoleError,
   InvalidCredentialsError,
   MfaSecretCorruptedError,
+  TokenExpiredError,
 } from "@mindkid/errors/auth";
 import { enforceTwoAxisRateLimit } from "@mindkid/shared";
 import { and, eq, isNull } from "drizzle-orm";
@@ -89,6 +91,12 @@ async function verifyManagerMfa(
 }
 
 export default defineEventHandler(async (event) => {
+  const ipRateLimit = await enforceTwoAxisRateLimit({
+    routeClass: "auth:mfa",
+    remoteIp: getVerifiedRemoteIp(event),
+  });
+  assertManagerRateLimitAllowed(ipRateLimit.statusCode);
+
   const rawBody =
     (event.context as { body?: Record<string, string> })?.body ??
     (await readBody(event).catch(() => null)) ??
@@ -111,68 +119,78 @@ export default defineEventHandler(async (event) => {
   };
 
   // Enforce MfaAttemptGuard + keep challenge on failed attempt up to 5 failures (BR-AUT-35, BR-MME-03)
-  const challengePayload = await completeMfaChallenge({
-    redis: getAuthRedisClient(),
-    namespace: "manager",
-    challengeToken: challenge,
-    verify: async (payload) => {
-      const [manager] = await db
-        .select()
-        .from(managers)
-        .where(eq(managers.id, payload.accountId));
+  let challengePayload: MfaChallengePayload;
+  try {
+    challengePayload = await completeMfaChallenge({
+      redis: getAuthRedisClient(),
+      namespace: "manager",
+      challengeToken: challenge,
+      verify: async (payload) => {
+        const [manager] = await db
+          .select()
+          .from(managers)
+          .where(eq(managers.id, payload.accountId));
 
-      if (!manager) {
-        throw new InvalidCredentialsError();
-      }
+        if (!manager) {
+          throw new InvalidCredentialsError();
+        }
 
-      if (!manager.isActive) {
-        throw new InsufficientRoleError();
-      }
+        if (!manager.isActive) {
+          throw new InsufficientRoleError();
+        }
 
-      const rateLimit = await enforceTwoAxisRateLimit({
-        routeClass: "auth:mfa",
-        remoteIp: getVerifiedRemoteIp(event),
-        accountIdentifier: String(manager.id),
-      });
-      assertManagerRateLimitAllowed(rateLimit.statusCode);
-
-      const [mfaSetting] = await db
-        .select()
-        .from(mfaSettings)
-        .where(
-          and(
-            eq(mfaSettings.accountType, "manager"),
-            eq(mfaSettings.accountId, manager.id)
-          )
-        );
-
-      const isFirstEnrollment =
-        !manager.mfaEnabled && (!mfaSetting || mfaSetting.confirmedAt === null);
-
-      const mfaResult = await verifyManagerMfa(db, manager.id, code);
-      if (
-        !mfaResult.verified ||
-        (isFirstEnrollment && mfaResult.recoveryCodeId !== null)
-      ) {
-        await db.transaction(async (tx) => {
-          await writeAudit(tx, {
-            actor_type: "manager",
-            actor_id: manager.id,
-            action: "manager_mfa_failed",
-            entity_type: "manager",
-            entity_id: manager.id.toString(),
-            reason: "Invalid MFA code or recovery code",
-          });
+        const rateLimit = await enforceTwoAxisRateLimit({
+          routeClass: "auth:mfa",
+          remoteIp: getVerifiedRemoteIp(event),
+          accountIdentifier: String(manager.id),
+          skipIpCheck: true,
         });
-        return false;
-      }
+        assertManagerRateLimitAllowed(rateLimit.statusCode);
 
-      state.manager = manager;
-      state.isFirstEnrollment = isFirstEnrollment;
-      state.recoveryCodeId = mfaResult.recoveryCodeId;
-      return true;
-    },
-  });
+        const [mfaSetting] = await db
+          .select()
+          .from(mfaSettings)
+          .where(
+            and(
+              eq(mfaSettings.accountType, "manager"),
+              eq(mfaSettings.accountId, manager.id)
+            )
+          );
+
+        const isFirstEnrollment =
+          !manager.mfaEnabled &&
+          (!mfaSetting || mfaSetting.confirmedAt === null);
+
+        const mfaResult = await verifyManagerMfa(db, manager.id, code);
+        if (
+          !mfaResult.verified ||
+          (isFirstEnrollment && mfaResult.recoveryCodeId !== null)
+        ) {
+          await db.transaction(async (tx) => {
+            await writeAudit(tx, {
+              actor_type: "manager",
+              actor_id: manager.id,
+              action: "manager_mfa_failed",
+              entity_type: "manager",
+              entity_id: manager.id.toString(),
+              reason: "Invalid MFA code or recovery code",
+            });
+          });
+          return false;
+        }
+
+        state.manager = manager;
+        state.isFirstEnrollment = isFirstEnrollment;
+        state.recoveryCodeId = mfaResult.recoveryCodeId;
+        return true;
+      },
+    });
+  } catch (error) {
+    if (error instanceof TokenExpiredError) {
+      throw new InvalidCredentialsError();
+    }
+    throw error;
+  }
 
   const manager = state.manager;
   if (!manager) {

@@ -5,13 +5,23 @@ import {
   entitlements,
   gameLevels,
   getOwnerDb,
-  lessons,
   levelDailyStats,
   paymentOrders,
   skills,
   users,
 } from "@mindkid/db";
-import { and, count, desc, eq, gt, gte, inArray, lt, sql } from "drizzle-orm";
+import {
+  and,
+  count,
+  countDistinct,
+  desc,
+  eq,
+  gt,
+  gte,
+  inArray,
+  lt,
+  sql,
+} from "drizzle-orm";
 import { defineEventHandler } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
@@ -54,7 +64,6 @@ export interface DashboardResponseSuperAdmin {
     curriculum_weeks_incomplete: PendingSourceMetric & { is_feedback: true };
     published_levels: { count: number };
     draft_levels: { count: number };
-    published_lessons: { count: number };
   };
   system: {
     last_backup: {
@@ -74,7 +83,6 @@ export interface DashboardResponseContentReviewer {
     curriculum_weeks_incomplete: PendingSourceMetric & { is_feedback: true };
     published_levels: { count: number };
     draft_levels: { count: number };
-    published_lessons: { count: number };
   };
 }
 
@@ -85,17 +93,18 @@ export type DashboardApiResponse =
 type OwnerDb = ReturnType<typeof getOwnerDb>;
 
 async function resolveDashboardAsOf(db: OwnerDb): Promise<string> {
-  const latestChildRollup = await db
-    .select({ updatedAt: childDailyStats.updatedAt })
-    .from(childDailyStats)
-    .orderBy(desc(childDailyStats.updatedAt))
-    .limit(1);
-
-  const latestLevelRollup = await db
-    .select({ updatedAt: levelDailyStats.updatedAt })
-    .from(levelDailyStats)
-    .orderBy(desc(levelDailyStats.updatedAt))
-    .limit(1);
+  const [latestChildRollup, latestLevelRollup] = await Promise.all([
+    db
+      .select({ updatedAt: childDailyStats.updatedAt })
+      .from(childDailyStats)
+      .orderBy(desc(childDailyStats.updatedAt))
+      .limit(1),
+    db
+      .select({ updatedAt: levelDailyStats.updatedAt })
+      .from(levelDailyStats)
+      .orderBy(desc(levelDailyStats.updatedAt))
+      .limit(1),
+  ]);
 
   const candidateDates = [
     latestChildRollup[0]?.updatedAt,
@@ -112,63 +121,39 @@ async function resolveDashboardAsOf(db: OwnerDb): Promise<string> {
 }
 
 async function queryContentMetrics(db: OwnerDb) {
-  // 1. Skills without levels (gap feedback)
-  const skillsWithPubLevels = await db
-    .select({ skillId: contentSkillMap.skillId })
-    .from(contentSkillMap)
-    .innerJoin(
-      gameLevels,
-      and(
-        eq(contentSkillMap.entityId, gameLevels.id),
-        eq(contentSkillMap.entityType, "game_level")
-      )
-    )
-    .where(eq(gameLevels.status, "published"))
-    .groupBy(contentSkillMap.skillId);
+  const [skillsWithPubLevels, allSkillsList, highDropRows, levelCountRows] =
+    await Promise.all([
+      db
+        .select({ skillId: contentSkillMap.skillId })
+        .from(contentSkillMap)
+        .innerJoin(
+          gameLevels,
+          and(
+            eq(contentSkillMap.entityId, gameLevels.id),
+            eq(contentSkillMap.entityType, "game_level")
+          )
+        )
+        .groupBy(contentSkillMap.skillId),
+      db.select({ id: skills.id }).from(skills),
+      db
+        .select({ count: countDistinct(levelDailyStats.levelCode) })
+        .from(levelDailyStats)
+        .where(
+          and(
+            gt(levelDailyStats.playsCount, 0),
+            sql`${levelDailyStats.abandonedCount}::float / ${levelDailyStats.playsCount} > 0.4`
+          )
+        ),
+      db.select({ count: count(gameLevels.id) }).from(gameLevels),
+    ]);
 
   const pubSkillIdSet = new Set(skillsWithPubLevels.map((r) => r.skillId));
-  const allSkillsList = await db.select({ id: skills.id }).from(skills);
   const skillsWithoutLevelsCount = allSkillsList.filter(
     (s) => !pubSkillIdSet.has(s.id)
   ).length;
-
-  // 2. Levels high drop rate (> 40% abandoned)
-  const highDropRows = await db
-    .select({ count: count() })
-    .from(levelDailyStats)
-    .where(
-      and(
-        gt(levelDailyStats.playsCount, 0),
-        sql`${levelDailyStats.abandonedCount}::float / ${levelDailyStats.playsCount} > 0.4`
-      )
-    );
   const levelsHighDropRateCount = highDropRows[0]?.count ?? 0;
-
-  // 3. Published & draft level counts
-  const levelStatusRows = await db
-    .select({
-      status: gameLevels.status,
-      count: count(gameLevels.id),
-    })
-    .from(gameLevels)
-    .groupBy(gameLevels.status);
-
-  let publishedLevelsCount = 0;
-  let draftLevelsCount = 0;
-  for (const row of levelStatusRows) {
-    if (row.status === "published") {
-      publishedLevelsCount = row.count;
-    } else if (row.status === "draft") {
-      draftLevelsCount = row.count;
-    }
-  }
-
-  // 4. Published lesson counts (P3.1)
-  const [publishedLessonsRow] = await db
-    .select({ count: count(lessons.id) })
-    .from(lessons)
-    .where(eq(lessons.status, "published"));
-  const publishedLessonsCount = publishedLessonsRow?.count ?? 0;
+  const publishedLevelsCount = levelCountRows[0]?.count ?? 0;
+  const draftLevelsCount = 0;
 
   return {
     skills_without_levels: {
@@ -190,9 +175,6 @@ async function queryContentMetrics(db: OwnerDb) {
     draft_levels: {
       count: draftLevelsCount,
     },
-    published_lessons: {
-      count: publishedLessonsCount,
-    },
   };
 }
 
@@ -200,21 +182,63 @@ async function queryGrowthMetrics(db: OwnerDb) {
   const nowMs = Date.now();
   const sevenDaysAgo = new Date(nowMs - 7 * 24 * 60 * 60 * 1000);
   const fourteenDaysAgo = new Date(nowMs - 14 * 24 * 60 * 60 * 1000);
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-  // New users 7d
-  const recentUsersRows = await db
-    .select({ count: count(users.id) })
-    .from(users)
-    .where(gte(users.createdAt, sevenDaysAgo));
-  const prevUsersRows = await db
-    .select({ count: count(users.id) })
-    .from(users)
-    .where(
-      and(
-        gte(users.createdAt, fourteenDaysAgo),
-        lt(users.createdAt, sevenDaysAgo)
-      )
-    );
+  const [
+    recentUsersRows,
+    prevUsersRows,
+    activeChildRows,
+    prevActiveChildRows,
+    activeSubsRows,
+    revenueRows,
+  ] = await Promise.all([
+    db
+      .select({ count: count(users.id) })
+      .from(users)
+      .where(gte(users.createdAt, sevenDaysAgo)),
+    db
+      .select({ count: count(users.id) })
+      .from(users)
+      .where(
+        and(
+          gte(users.createdAt, fourteenDaysAgo),
+          lt(users.createdAt, sevenDaysAgo)
+        )
+      ),
+    db
+      .select({
+        current: countDistinct(childDailyStats.childProfileId),
+      })
+      .from(childDailyStats)
+      .where(gte(childDailyStats.updatedAt, sevenDaysAgo)),
+    db
+      .select({
+        prev: countDistinct(childDailyStats.childProfileId),
+      })
+      .from(childDailyStats)
+      .where(
+        and(
+          gte(childDailyStats.updatedAt, fourteenDaysAgo),
+          lt(childDailyStats.updatedAt, sevenDaysAgo)
+        )
+      ),
+    db
+      .select({ count: count(entitlements.id) })
+      .from(entitlements)
+      .where(eq(entitlements.status, "active")),
+    db
+      .select({
+        totalRevenue: sql<string>`coalesce(sum(${paymentOrders.amountVnd}), 0)`,
+      })
+      .from(paymentOrders)
+      .where(
+        and(
+          eq(paymentOrders.status, "approved"),
+          gte(paymentOrders.reviewedAt, startOfMonth)
+        )
+      ),
+  ]);
 
   const newUsersCurrent = recentUsersRows[0]?.count ?? 0;
   const newUsersPrev = prevUsersRows[0]?.count ?? 0;
@@ -223,37 +247,16 @@ async function queryGrowthMetrics(db: OwnerDb) {
       ? Math.round(((newUsersCurrent - newUsersPrev) / newUsersPrev) * 100)
       : null;
 
-  // Active child profiles & active users from childDailyStats
-  const activeChildRows = await db
-    .select({
-      current: count(childDailyStats.childProfileId),
-    })
-    .from(childDailyStats)
-    .where(gte(childDailyStats.updatedAt, sevenDaysAgo));
-
   const activeChildCurrent = activeChildRows[0]?.current ?? 0;
+  const activeChildPrev = prevActiveChildRows[0]?.prev ?? 0;
+  const activeChildChange =
+    activeChildPrev > 0
+      ? Math.round(
+          ((activeChildCurrent - activeChildPrev) / activeChildPrev) * 100
+        )
+      : null;
 
-  // Active subscriptions from entitlements
-  const activeSubsRows = await db
-    .select({ count: count(entitlements.id) })
-    .from(entitlements)
-    .where(eq(entitlements.status, "active"));
   const activeSubsCurrent = activeSubsRows[0]?.count ?? 0;
-
-  // Monthly revenue from approved payment orders
-  const now = new Date();
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-  const revenueRows = await db
-    .select({
-      totalRevenue: sql<string>`coalesce(sum(${paymentOrders.amountVnd}), 0)`,
-    })
-    .from(paymentOrders)
-    .where(
-      and(
-        eq(paymentOrders.status, "approved"),
-        gte(paymentOrders.reviewedAt, startOfMonth)
-      )
-    );
   const monthlyRevenueVnd = Number(revenueRows[0]?.totalRevenue || 0);
 
   return {
@@ -269,8 +272,8 @@ async function queryGrowthMetrics(db: OwnerDb) {
     },
     active_child_profiles: {
       current: activeChildCurrent,
-      prev: 0,
-      change_percent: null,
+      prev: activeChildPrev,
+      change_percent: activeChildChange,
     },
     active_subscriptions: {
       current: activeSubsCurrent,
@@ -324,8 +327,10 @@ export default defineEventHandler(
     const manager = requireManagerSession(event);
     const db = getOwnerDb();
 
-    const asOf = await resolveDashboardAsOf(db);
-    const content = await queryContentMetrics(db);
+    const [asOf, content] = await Promise.all([
+      resolveDashboardAsOf(db),
+      queryContentMetrics(db),
+    ]);
 
     // If actor is content_reviewer, strictly return ONLY as_of and content (D-IY, BR-DSH-06)
     if (manager.role === "content_reviewer") {
@@ -336,26 +341,17 @@ export default defineEventHandler(
     }
 
     // For super_admin: query Growth, Todo, System from rollups & status tables
-    const growth = await queryGrowthMetrics(db);
-    const system = await querySystemMetrics(db);
+    const [growth, system, pendingOrdersRows] = await Promise.all([
+      queryGrowthMetrics(db),
+      querySystemMetrics(db),
+      db
+        .select({ count: count() })
+        .from(paymentOrders)
+        .where(inArray(paymentOrders.status, ["submitted", "under_review"])),
+    ]);
 
-    const pendingOrdersRows = await db
-      .select({ count: count() })
-      .from(paymentOrders)
-      .where(inArray(paymentOrders.status, ["submitted", "under_review"]));
     const pendingPaymentsCount = Number(pendingOrdersRows[0]?.count || 0);
-
-    const pendingContentRows = await db
-      .select({ count: count(gameLevels.id) })
-      .from(gameLevels)
-      .where(eq(gameLevels.status, "in_review"));
-    const pendingLessonsRows = await db
-      .select({ count: count(lessons.id) })
-      .from(lessons)
-      .where(eq(lessons.status, "in_review"));
-    const pendingContentCount =
-      Number(pendingContentRows[0]?.count || 0) +
-      Number(pendingLessonsRows[0]?.count || 0);
+    const pendingContentCount = 0;
 
     const todo = {
       pending_payments: {

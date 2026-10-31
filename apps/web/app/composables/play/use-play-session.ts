@@ -209,6 +209,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
   let engine: GameEngine | null = null;
   let roundRunner: RoundRunner | null = null;
   const roundTimers = createTimerBag();
+  let sessionStartGen = 0;
   let cachedPayload: ConfigPayload | null = null;
 
   const isLoading = ref(true);
@@ -290,6 +291,27 @@ export function usePlaySession(options: UsePlaySessionOptions) {
     };
   }
 
+  let lastUploadedTelemetryCount = -1;
+
+  async function uploadTelemetrySafely(sessionUuid: string): Promise<void> {
+    if (!roundRunner) {
+      return;
+    }
+    const events = roundRunner.getAllTelemetry();
+    const currentCount = events.length;
+    if (currentCount > 0 && currentCount === lastUploadedTelemetryCount) {
+      return;
+    }
+    await uploadTelemetry(
+      sessionUuid,
+      roundRunner,
+      loggedIn.value,
+      cachedPayload?.session?.started_at,
+      events
+    );
+    lastUploadedTelemetryCount = currentCount;
+  }
+
   async function resolveCompletionOutcome(
     sessionUuid: string
   ): Promise<{ celebration: CelebrationTier; stars: number | null }> {
@@ -297,12 +319,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
       return { celebration: "nice_try", stars: null };
     }
     try {
-      await uploadTelemetry(
-        sessionUuid,
-        roundRunner,
-        loggedIn.value,
-        cachedPayload?.session?.started_at
-      );
+      await uploadTelemetrySafely(sessionUuid);
     } catch (err) {
       console.error(
         `[play-session] uploadTelemetry thất bại trước complete — session: ${sessionUuid}, error: ${err instanceof Error ? err.message : String(err)}`
@@ -340,14 +357,10 @@ export function usePlaySession(options: UsePlaySessionOptions) {
     if (!roundRunner) {
       return;
     }
+    engine?.resetScaffolding();
     const sessionUuid = cachedPayload?.session?.uuid;
     if (sessionUuid) {
-      uploadTelemetry(
-        sessionUuid,
-        roundRunner,
-        loggedIn.value,
-        cachedPayload?.session?.started_at
-      ).catch((err) => {
+      uploadTelemetrySafely(sessionUuid).catch((err) => {
         console.error(
           `[play-session] uploadTelemetry thất bại ở round won — session: ${sessionUuid}, error: ${err instanceof Error ? err.message : String(err)}`
         );
@@ -442,6 +455,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
         canSkipRound.value = false;
         if (engine) {
           engine.roundIndex = roundIndex;
+          engine.resetScaffolding();
           // Chặn cử chỉ tới khi câu dẫn đọc xong (BR-PNR-11) — mở lại ở
           // `onNarrationSettled` bên trên. GT-000 tự quản lý gate riêng.
           engine.acceptingInput = cachedPayload?.template_code === "GT-000";
@@ -455,17 +469,12 @@ export function usePlaySession(options: UsePlaySessionOptions) {
         syncView();
       },
       onRoundCompleted: () => {
-        engine?.scaffolding?.resetOnSuccess();
+        engine?.resetScaffolding();
         canSkipRound.value = false;
         syncView();
         const sessionUuid = cachedPayload?.session?.uuid;
         if (sessionUuid && roundRunner && !roundRunner.getState().isFinished) {
-          uploadTelemetry(
-            sessionUuid,
-            roundRunner,
-            loggedIn.value,
-            cachedPayload?.session?.started_at
-          ).catch((err) => {
+          uploadTelemetrySafely(sessionUuid).catch((err) => {
             console.error(
               `[play-session] uploadTelemetry thất bại ở round completed — session: ${sessionUuid}, error: ${err instanceof Error ? err.message : String(err)}`
             );
@@ -474,7 +483,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
       },
       onAllRoundsCompleted: () => {
         engine?.audio.playLevelCelebrateSound();
-        setTimeout(() => {
+        roundTimers.set(() => {
           completeSessionOnFinish().catch((err) => {
             console.error(
               `[play-session] completeSessionOnFinish gặp lỗi — session: ${cachedPayload?.session?.uuid}, error: ${err instanceof Error ? err.message : String(err)}`
@@ -621,14 +630,22 @@ export function usePlaySession(options: UsePlaySessionOptions) {
 
     // BR-OFF-02: Tải trọn vẹn tài nguyên của toàn bộ các vòng + template session
     // trước khi tắt màn hình chờ và bắt đầu Vòng 1.
+    const gen = ++sessionStartGen;
     const allAssets = collectSessionAssets(payload);
     await Promise.all([
       preloadPlayAssets(allAssets),
       preloadGameSession(payload.template_code),
     ]);
 
+    if (gen !== sessionStartGen || !canvasRef.value) {
+      return;
+    }
+
     isLoading.value = false;
     await nextTick();
+    if (gen !== sessionStartGen || !canvasRef.value) {
+      return;
+    }
 
     startRounds(
       payload,
@@ -646,7 +663,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
     // `handleRoundWonInternal` sẽ đóng nó như một vòng hoàn thành.
     if (skipCurrentRoundIfUnwon(roundRunner, "scaffold_exhausted")) {
       engine?.audio.playTapSound();
-      engine?.scaffolding?.resetOnSuccess();
+      engine?.resetScaffolding();
     }
   }
 
@@ -660,7 +677,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
       return;
     }
     if (skipCurrentRoundIfUnwon(roundRunner, "retry_disallowed")) {
-      engine?.scaffolding?.resetOnSuccess();
+      engine?.resetScaffolding();
     }
   }
 
@@ -680,6 +697,8 @@ export function usePlaySession(options: UsePlaySessionOptions) {
   }
 
   function cleanupSession(): void {
+    sessionStartGen++;
+    lastUploadedTelemetryCount = -1;
     roundTimers.clearAll();
     stopNarrationAudio();
     setActiveRoundRunner(null);

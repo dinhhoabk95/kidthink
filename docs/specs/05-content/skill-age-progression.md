@@ -11,7 +11,6 @@ owns:
 depends_on:
   - TAXONOMY-SERVICE
   - CURRICULUM-MODEL
-  - LESSON-FLOW-MODEL
   - PRESCHOOL-AGE-BANDS
 ---
 

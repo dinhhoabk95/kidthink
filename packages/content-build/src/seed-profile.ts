@@ -23,17 +23,11 @@ export function parseSeedProfile(raw: string | undefined): SeedProfile {
   return value;
 }
 
-function isLevelSeed(seed: AnyContentSeed): boolean {
-  return seed.kind !== "lesson" && seed.kind !== "activity";
-}
-
 function ledgerLevelCodes(ledger: ContentDemandLedger): ReadonlySet<string> {
   const codes = new Set<string>();
   for (const cell of ledger.cells) {
-    if (cell.role === "practice") {
-      for (const code of cell.filled_by) {
-        codes.add(code);
-      }
+    for (const code of cell.filled_by) {
+      codes.add(code);
     }
   }
   return codes;
@@ -48,7 +42,5 @@ export function selectSeedContent(
     return [...seeds];
   }
   const named = ledgerLevelCodes(ledger);
-  return seeds.filter(
-    (seed) => !isLevelSeed(seed) || named.has(seed.header.code)
-  );
+  return seeds.filter((seed) => named.has(seed.header.code));
 }

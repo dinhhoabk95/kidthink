@@ -11,6 +11,7 @@ import {
   smallint,
   timestamp,
   unique,
+  uniqueIndex,
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
@@ -34,7 +35,6 @@ export const playSessions = pgTable(
     gameLevelId: bigint("game_level_id", { mode: "number" })
       .notNull()
       .references(() => gameLevels.id),
-    contentVersion: integer("content_version").notNull(),
     templateCode: varchar("template_code", { length: 20 }).notNull(),
     isPreview: boolean("is_preview").notNull().default(false),
     completionStatus: varchar("completion_status", { length: 20 })
@@ -60,7 +60,12 @@ export const playSessions = pgTable(
       "check_play_sessions_layout_seed",
       sql`${table.layoutSeed} IS NULL OR (${table.layoutSeed} >= 0 AND ${table.layoutSeed} <= 4294967295)`
     ),
-    index("idx_play_sessions_session_uuid").on(table.sessionUuid),
+    uniqueIndex("idx_play_sessions_session_uuid").on(table.sessionUuid),
+    index("idx_play_sessions_game_level_id").on(table.gameLevelId),
+    index("idx_play_sessions_status_started_at").on(
+      table.completionStatus,
+      table.startedAt
+    ),
     index("idx_play_sessions_child_started_at").on(
       table.childProfileId,
       table.startedAt
@@ -79,7 +84,6 @@ export const telemetryEvents = pgTable(
     seq: integer("seq").notNull(),
     childUuid: uuid("child_uuid"),
     gameLevelId: bigint("game_level_id", { mode: "number" }),
-    contentVersion: integer("content_version").notNull(),
     templateCode: varchar("template_code", { length: 20 }),
     eventName: varchar("event_name", { length: 100 }).notNull(),
     occurredAtMs: integer("occurred_at_ms"),
@@ -93,6 +97,9 @@ export const telemetryEvents = pgTable(
   (table) => [
     primaryKey({ columns: [table.sessionUuid, table.seq] }),
     index("idx_telemetry_events_created_at").on(table.createdAt),
+    index("idx_telemetry_events_child_uuid")
+      .on(table.childUuid)
+      .where(sql`${table.childUuid} IS NOT NULL`),
   ]
 );
 
@@ -109,7 +116,6 @@ export const childSessionSummaries = pgTable(
     gameLevelId: bigint("game_level_id", { mode: "number" })
       .notNull()
       .references(() => gameLevels.id),
-    contentVersion: integer("content_version").notNull(),
     templateCode: varchar("template_code", { length: 20 }).notNull(),
     completionStatus: varchar("completion_status", { length: 20 }).notNull(),
     score: integer("score").notNull().default(0),
@@ -125,6 +131,8 @@ export const childSessionSummaries = pgTable(
       table.childProfileId,
       table.sessionUuid
     ),
+    index("idx_child_session_summaries_game_level_id").on(table.gameLevelId),
+    index("idx_child_session_summaries_session_uuid").on(table.sessionUuid),
   ]
 );
 
@@ -165,8 +173,7 @@ export const levelDailyStats = pgTable(
     id: bigint("id", { mode: "number" })
       .primaryKey()
       .generatedAlwaysAsIdentity(),
-    levelCode: varchar("level_code", { length: 40 }).notNull(),
-    contentVersion: integer("content_version").notNull(),
+    levelCode: varchar("level_code", { length: 50 }).notNull(),
     dateIct: varchar("date_ict", { length: 10 }).notNull(),
     playsCount: integer("plays_count").notNull().default(0),
     completionsCount: integer("completions_count").notNull().default(0),
@@ -176,9 +183,8 @@ export const levelDailyStats = pgTable(
     ...timestamps(),
   },
   (table) => [
-    unique("level_daily_stats_level_version_date_unique").on(
+    unique("level_daily_stats_level_date_unique").on(
       table.levelCode,
-      table.contentVersion,
       table.dateIct
     ),
   ]

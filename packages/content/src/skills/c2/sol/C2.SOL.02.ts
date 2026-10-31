@@ -42,50 +42,150 @@ export const C2_SOL_02_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "circle",
-      label: "hình tròn",
+      id: "ball_roll",
+      label: "quả bóng lăn",
+      value: 1,
       image: {
         kind: "emoji",
-        ref: "🔴",
+        ref: "⚽",
       },
       category: {
-        type: "shape",
+        type: "khối lăn được",
+      },
+      contrast_group: "rolling_solid",
+    },
+    {
+      id: "marble_roll",
+      label: "viên bi lăn",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "🔮",
+      },
+      category: {
+        type: "khối lăn được",
+      },
+      contrast_group: "rolling_solid",
+    },
+    {
+      id: "can_roll",
+      label: "lon nước lăn",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "🥫",
+      },
+      category: {
+        type: "khối lăn được",
+      },
+      contrast_group: "rolling_solid",
+    },
+    {
+      id: "wheel_roll",
+      label: "bánh xe lăn",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "🛞",
+      },
+      category: {
+        type: "khối lăn được",
+      },
+      contrast_group: "rolling_solid",
+    },
+    {
+      id: "dice_stand",
+      label: "xúc xắc đứng yên",
+      value: 5,
+      image: {
+        kind: "emoji",
+        ref: "🎲",
+      },
+      category: {
+        type: "khối đứng yên",
+      },
+      contrast_group: "standing_solid",
+    },
+    {
+      id: "ice_stand",
+      label: "khối đá đứng yên",
+      value: 6,
+      image: {
+        kind: "emoji",
+        ref: "🧊",
+      },
+      category: {
+        type: "khối đứng yên",
+      },
+      contrast_group: "standing_solid",
+    },
+    {
+      id: "brick_stand",
+      label: "viên gạch đứng yên",
+      value: 7,
+      image: {
+        kind: "emoji",
+        ref: "🧱",
+      },
+      category: {
+        type: "khối đứng yên",
+      },
+      contrast_group: "standing_solid",
+    },
+    {
+      id: "box_stand",
+      label: "thùng gỗ đứng yên",
+      value: 8,
+      image: {
+        kind: "emoji",
+        ref: "📦",
+      },
+      category: {
+        type: "khối đứng yên",
+      },
+      contrast_group: "standing_solid",
+    },
+  ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "ball_roll",
+      target_id: "dice_stand",
+      metadata: {
+        dimension: "motion_type",
       },
     },
     {
-      id: "square",
-      label: "hình vuông",
-      image: {
-        kind: "emoji",
-        ref: "🟦",
-      },
-      category: {
-        type: "shape",
+      type: "contrast",
+      source_id: "can_roll",
+      target_id: "brick_stand",
+      metadata: {
+        dimension: "motion_type",
       },
     },
     {
-      id: "triangle",
-      label: "hình tam giác",
-      image: {
-        kind: "emoji",
-        ref: "🔺",
-      },
-      category: {
-        type: "shape",
+      type: "pair",
+      source_id: "ball_roll",
+      target_id: "marble_roll",
+      metadata: {
+        relation: "cùng lăn được",
       },
     },
     {
-      id: "rectangle",
-      label: "hình chữ nhật",
-      image: {
-        kind: "emoji",
-        ref: "🟧",
-      },
-      category: {
-        type: "shape",
+      type: "pair",
+      source_id: "dice_stand",
+      target_id: "ice_stand",
+      metadata: {
+        relation: "cùng đứng yên",
       },
     },
   ],
+  axes: {
+    motion_type: {
+      values: ["khối lăn được", "khối đứng yên"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
@@ -117,7 +217,16 @@ export const C2_SOL_02_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Lăn được – đứng yên nhé",
   },
-  ordering: ["circle", "square", "triangle", "rectangle"],
+  ordering: [
+    "ball_roll",
+    "marble_roll",
+    "can_roll",
+    "wheel_roll",
+    "dice_stand",
+    "ice_stand",
+    "brick_stand",
+    "box_stand",
+  ],
 };
 
 export const C2_SOL_02_SEED: SkillSeed = {
@@ -146,62 +255,6 @@ export const C2_SOL_02_SEED: SkillSeed = {
       band: "4-5",
       difficulty: 1,
       theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-TCNT-0004",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 2,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-TCMP-0003",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 1,
-      theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-TCMP-0004",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 2,
-      theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-PAIR-0003",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 1,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-PAIR-0004",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 2,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-PATT-0003",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 1,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-PATT-0004",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 2,
-      theme: "animal",
       rounds: 3,
     },
   ],

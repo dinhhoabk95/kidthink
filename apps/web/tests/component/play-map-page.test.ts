@@ -126,7 +126,7 @@ describe("Bản đồ chủ đề tuần của trẻ /play/map (BR-WTM-01..08)",
     expect(buttons).toHaveLength(2);
   });
 
-  it("bấm vào trạm bài học điều hướng trực tiếp sang /play/lesson/[code] (BR-WTM-06)", async () => {
+  it("bấm vào trạm bài học điều hướng trực tiếp sang /play/[code] (BR-WTM-06)", async () => {
     const page = await mountMapPage();
     const firstLessonBtn = page.findAll("section button")[0];
     expect(firstLessonBtn).toBeDefined();
@@ -134,6 +134,6 @@ describe("Bản đồ chủ đề tuần của trẻ /play/map (BR-WTM-01..08)",
     await firstLessonBtn?.trigger("click");
     await flushPromises();
 
-    expect(pushMock).toHaveBeenCalledWith("/play/lesson/LES-0001");
+    expect(pushMock).toHaveBeenCalledWith("/play/LES-0001");
   });
 });

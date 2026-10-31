@@ -1,0 +1,1903 @@
+{
+  "stage_id": "chang-02",
+  "workbook_code": "WB02",
+  "title": "Chặng 2: Đường Ray Số Thứ Tự",
+  "subtitle": "Điền số còn thiếu – Tìm đường theo dãy số",
+  "mission": "Khôi phục những biển số bị thất lạc",
+  "series": "Gấu Logic & Thỏ Quan Sát - Chuyến Tàu Toán Học (Phần 2)",
+  "target_age": "3–6 tuổi",
+  "total_pages": 23,
+  "pedagogy": {
+    "framework": "Montessori, CPA (Concrete - Pictorial - Abstract) & Number Line Theory",
+    "approach": "Tư duy trình tự & Đếm tiếp (Sequential Thinking, Ordinality & Counting-On)",
+    "competency": "C1 - Cảm thức số học & Đếm (Number Sense & Counting)",
+    "skills_targeted": [
+      {
+        "code": "C1.NREC.09",
+        "name": "Thứ tự số (Number Sequence)",
+        "description": "Nhận biết và xếp đặt dãy số tự nhiên theo chiều tăng dần hoặc giảm dần."
+      },
+      {
+        "code": "C1.NREC.10",
+        "name": "Số trước (Predecessor)",
+        "description": "Xác định số liền trước (n - 1) trong chuỗi số đếm hoặc đếm lùi."
+      },
+      {
+        "code": "C1.NREC.11",
+        "name": "Số sau (Successor)",
+        "description": "Xác định số liền sau (n + 1) bằng chiến lược đếm tiếp (counting-on)."
+      },
+      {
+        "code": "C1.NREC.12",
+        "name": "Số ở giữa (In-between numbers)",
+        "description": "Nhận biết số bị kẹp giữa hai số mốc đã biết (ví dụ số 2 kẹp giữa 1 và 3)."
+      },
+      {
+        "code": "C1.CNT.04",
+        "name": "Đếm ngược (Countdown / Reverse counting)",
+        "description": "Đếm lùi từ một mốc số về 1 (ví dụ 10 về 1) trên đường ray."
+      },
+      {
+        "code": "C1.CNT.06",
+        "name": "Đếm đến 5 (Counting up to 5)",
+        "description": "Làm chủ trật tự và số lượng trong phạm vi 1–5."
+      },
+      {
+        "code": "C1.CNT.07",
+        "name": "Đếm đến 10 (Counting up to 10)",
+        "description": "Mở rộng dãy số tự nhiên liên tiếp từ 1 đến 10."
+      },
+      {
+        "code": "C1.CNT.08",
+        "name": "Đếm đến 20 (Counting up to 20)",
+        "description": "Đếm và hoàn thiện đường số liên tục trong phạm vi 20."
+      },
+      {
+        "code": "C1.CNT.10",
+        "name": "Đếm cách 2 (Skip counting by 2 / Odd & Even numbers)",
+        "description": "Nhận diện dãy số chẵn và số lẻ cách nhật bước nhảy 2."
+      },
+      {
+        "code": "C1.ORD.03",
+        "name": "Thứ tự đến thứ năm (Ordinality up to 5th)",
+        "description": "Nhận thức vị trí thứ nhất, thứ hai... trong chuỗi tuyến tính."
+      }
+    ],
+    "learning_progression": "Tiến trình sư phạm xoắn ốc 4 giai đoạn rõ rệt: (1) Khởi động nhận diện dãy 1-5 với khuyết xen kẽ đơn/kép (Trang 2-6); (2) Mở rộng phạm vi 1-10, 1-12 và đếm ngược 10-1 (Trang 7-11); (3) Chinh phục đại lộ số 1-20, phân nhánh và quy luật nhảy cóc số chẵn/số lẻ (Trang 12-16); (4) Ứng dụng tư duy thứ tự vào không gian ma trận 2D qua chuỗi 6 mê cung số 1-16 với bẫy số nhiễu (Trang 17-22); (5) Tổng kết, tự đánh giá và trao thưởng huy hiệu (Trang 23)."
+  },
+  "problem_groups": [
+    {
+      "group_id": "D1",
+      "name": "Điền số còn thiếu trên đường ray & vật thể trực quan (Missing Numbers on Sequential Track)",
+      "description": "Dạng bài điền số vào các ô trống trên chuỗi đối tượng tự nhiên (quả bí ngô, hoa súng, hoa, đàn cú, quả dưa, toa tàu, biển vòm, cột dọc). Rèn luyện tư duy trật tự tuyến tính, số liền trước, số liền sau và số ở giữa.",
+      "applicable_pages": [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+      "sub_types": [
+        {
+          "sub_id": "D1.1",
+          "name": "Điền số phạm vi 1–5 (Single/multi-gap in 1–5)",
+          "pages": [2, 3, 4, 5, 6],
+          "visual_objects": "Bí ngô trên dây leo, lá súng dưới hồ, hoa tím, hoa hồng, đàn cú cầm biển trên dây cờ",
+          "missing_patterns": [
+            "[1, _, 3, _, 5] (khuyết 2, 4)",
+            "[1, _, _, 4, _] (khuyết 2, 3, 5)",
+            "[_, 2, 3, _, _] (khuyết 1, 4, 5)",
+            "[_, 2, _, 4, _] (khuyết 1, 3, 5 - toàn bộ số lẻ)",
+            "[1, 2, _, _, 5] (khuyết 3, 4)"
+          ],
+          "pedagogical_focus": "Rèn luyện số liền trước, số liền sau và số ở giữa phạm vi mầm non cơ bản."
+        },
+        {
+          "sub_id": "D1.2",
+          "name": "Điền số phạm vi 1–10 và 1–12 (Multi-gap track 1–10 / 1–12)",
+          "pages": [7, 8, 9, 11],
+          "visual_objects": "Giàn dưa lưới 12 quả, đường ray xanh uốn lượn 10 điểm dừng, hai nhánh ray song song 1-5 và 6-10, đường ray chữ S 10 điểm",
+          "missing_patterns": [
+            "Giàn dưa 1-12: khuyết 5 quả (2, 5, 7, 8, 11)",
+            "Đường ray xanh 1-10: khuyết 6 điểm (2, 3, 4, 6, 7, 10)",
+            "Hai nhánh 1-5 và 6-10: khuyết 2, 3 và 6, 7, 9",
+            "Đường ray chữ S 1-10: khuyết 1, 3, 4 và 6, 7, 10"
+          ],
+          "pedagogical_focus": "Theo dõi hướng mũi tên đảo chiều (zic-zac/boustrophedon), nhận diện dãy số vượt mốc 10."
+        },
+        {
+          "sub_id": "D1.3",
+          "name": "Đếm ngược / Thứ tự giảm dần 10 về 1 (Countdown Sequence)",
+          "pages": [10],
+          "visual_objects": "Đoàn tàu hỏa chạy lùi trên đường ray tím về nhà ga ĐÍCH",
+          "missing_patterns": [
+            "Tuyến 10 đến 6: [10, _, _, 7, _] -> điền 9, 8, 6",
+            "Tuyến 5 đến 1: [_, _, _, 2, 1] -> điền 5, 4, 3"
+          ],
+          "pedagogical_focus": "Đếm lùi (Reverse counting), xác định số tiền nhiệm liên tục (predecessor chaining n - 1)."
+        },
+        {
+          "sub_id": "D1.4",
+          "name": "Điền số mở rộng phạm vi 1–15 và 1–20 (Extended Sequences 1–15 & 1–20)",
+          "pages": [12, 13, 14],
+          "visual_objects": "Hai tuyến nối tiếp 1-8 & 9-15, ba cột ray dọc từ trên xuống 1-5, 6-10, 11-15, Đại lộ số 4 chặng 1-20",
+          "missing_patterns": [
+            "Hai tuyến 1-15: khuyết 5 số tuyến xanh (1, 2, 4, 5, 6) và 5 số tuyến lá (9, 10, 11, 13, 14)",
+            "Ba cột dọc 1-15: khuyết 6 số (2, 4; 6, 8; 12, 14)",
+            "Đại lộ 1-20: khuyết 11 ô (1, 3, 5; 6, 9, 10; 12, 13, 15; 16, 19)"
+          ],
+          "pedagogical_focus": "Vượt ngưỡng chục (crossing 10), định vị cột dọc và hoàn thiện thang số đầy đủ đến 20."
+        },
+        {
+          "sub_id": "D1.5",
+          "name": "Dãy số nhảy cách 2 / Số chẵn và số lẻ (Skip Counting by 2 - Even & Odd)",
+          "pages": [15, 16],
+          "visual_objects": "4 hàng số x 5 ô phạm vi 1–20",
+          "missing_patterns": [
+            "Tìm số chẵn: cho sẵn 10 số lẻ [1, 3, 5, 7, 9, 11, 13, 15, 17, 19], điền 10 số chẵn [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]",
+            "Tìm số lẻ: cho sẵn 10 số chẵn [2, 4, 6, 8, 10, 12, 14, 16, 18, 20], điền 10 số lẻ [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]"
+          ],
+          "pedagogical_focus": "Nhận diện quy luật bước nhảy +2, phân biệt thuộc tính chẵn - lẻ của dãy số tự nhiên."
+        }
+      ],
+      "engine_mapping": {
+        "primary_gt": "GT-008",
+        "primary_name": "Kéo vào ô chứa (drag-to-slot)",
+        "fallback_gt": "GT-001",
+        "fallback_name": "Chọn một đáp án (tap-select)",
+        "mechanic_summary": "Trẻ kéo số từ khay số thả vào ô tròn trống trên đường ray, hoặc tap vào ô trống rồi chọn số từ khay nổi (fallback tap-tap cho trẻ 3-4 tuổi). Khi điền đúng, ô snap phát sáng, âm thanh leng keng đọc to số, tàu hỏa hoặc nhân vật tiến lên 1 bước."
+      }
+    },
+    {
+      "group_id": "D2",
+      "name": "Tìm đường mê cung theo dãy số thứ tự 1–16 (Number Maze Route 1–16)",
+      "description": "Bài tập tìm đường trên lưới ma trận 5x5 (25 ô tròn). Trẻ phải tìm và nối liên tiếp các ô số từ 1 đến 16 theo đúng thứ tự tăng dần để dẫn đường từ điểm xuất phát đến đích.",
+      "applicable_pages": [17, 18, 19, 20, 21, 22],
+      "grid_specs": {
+        "dimensions": "5 hàng x 5 cột = 25 ô tròn",
+        "target_sequence_length": 16,
+        "target_sequence_values": [
+          1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
+        ],
+        "distractors_count": 9,
+        "distractors_values": [17, 18, 19, 20, 21, 22, 23, 24, 25],
+        "adjacency_rule": "Chỉ đi qua các ô chung cạnh (trên, dưới, trái, phải). CẤM ĐI CHÉO."
+      },
+      "sub_types": [
+        {
+          "sub_id": "D2.1",
+          "name": "Mê cung đến Cầu Vồng (Trang 17)",
+          "start_pos": "r1c1 (góc trên trái)",
+          "end_pos": "r5c2 (ô 16 đáy) -> Cầu Vồng",
+          "path_summary": "(1,1) -> (1,2) -> (1,3) -> (2,3) -> (2,2) -> (3,2) -> (3,1) -> (4,1) -> (4,2) -> (4,3) -> (4,4) -> (4,5) -> (5,5) -> (5,4) -> (5,3) -> (5,2)"
+        },
+        {
+          "sub_id": "D2.2",
+          "name": "Mê cung đến Ngôi Sao (Trang 18, 19)",
+          "start_pos": "r1c5 (góc trên phải)",
+          "end_pos": "r4c1 (ô 16 mép trái) -> Ngôi Sao",
+          "path_summary": "(1,5) -> (1,4) -> (2,4) -> (2,3) -> (2,2) -> (3,2) -> (3,3) -> (3,4) -> (3,5) -> (4,5) -> (4,4) -> (4,3) -> (5,3) -> (5,2) -> (5,1) -> (4,1)"
+        },
+        {
+          "sub_id": "D2.3",
+          "name": "Mê cung đến Vườn Hoa (Trang 20)",
+          "start_pos": "r5c1 (góc dưới trái)",
+          "end_pos": "r4c5 (ô 16 mép phải) -> Vườn Hoa",
+          "path_summary": "(5,1) -> (4,1) -> (3,1) -> (3,2) -> (2,2) -> (1,2) -> (1,3) -> (2,3) -> (3,3) -> (4,3) -> (4,4) -> (3,4) -> (2,4) -> (2,5) -> (3,5) -> (4,5)"
+        },
+        {
+          "sub_id": "D2.4",
+          "name": "Mê cung đến Nhà Ga (Trang 21)",
+          "start_pos": "r3c1 (mép trái giữa)",
+          "end_pos": "r5c4 (ô 16 đáy) -> Nhà Ga",
+          "path_summary": "(3,1) -> (2,1) -> (1,1) -> (1,2) -> (2,2) -> (3,2) -> (4,2) -> (4,3) -> (3,3) -> (2,3) -> (1,3) -> (1,4) -> (2,4) -> (3,4) -> (4,4) -> (5,4)"
+        },
+        {
+          "sub_id": "D2.5",
+          "name": "Mê cung đến Hộp Quà (Trang 22)",
+          "start_pos": "r1c1 (góc trên trái)",
+          "end_pos": "r4c3 (ô 16 trung tâm đáy) -> Hộp Quà",
+          "path_summary": "(1,1) -> (2,1) -> (2,2) -> (1,2) -> (1,3) -> (1,4) -> (2,4) -> (2,3) -> (3,3) -> (3,2) -> (3,1) -> (4,1) -> (5,1) -> (5,2) -> (4,2) -> (4,3)"
+        }
+      ],
+      "engine_mapping": {
+        "primary_gt": "GT-013",
+        "primary_name": "Tìm đường mê cung (maze-route)",
+        "secondary_gt": "GT-024",
+        "secondary_name": "Vẽ theo nét (trace-path)",
+        "mechanic_summary": "Trẻ dùng ngón tay quẹt đường nối hoặc tap lần lượt vào các ô số cạnh nhau từ 1 đến 16. Mỗi bước đúng, đường ray sáng lên màu vàng ánh kim nối hai ô, phát âm đọc tên số. Nếu chọn ô không kề cạnh hoặc chọn số sai thứ tự (hoặc chạm vào số bẫy 17-25), đường ray phát nhịp thở hổ phách nhẹ, chặn không cho đi tiếp và yêu cầu thử lại."
+      }
+    },
+    {
+      "group_id": "D3",
+      "name": "Quan hệ Số đứng trước – Số đứng sau – Số ở giữa (Predecessor, Successor & In-Between Relations)",
+      "description": "Khái niệm sư phạm hạt nhân định hình toàn bộ thiết kế bài tập trong chặng: Xây dựng mối quan hệ tương quan vị trí giữa các số tự nhiên (n - 1, n, n + 1) và cơ chế nối liên tiếp theo thứ tự.",
+      "applicable_pages": [
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+        21, 22, 23
+      ],
+      "relation_components": [
+        {
+          "relation": "Số liền trước (Predecessor: n - 1)",
+          "skill_code": "C1.NREC.10",
+          "exercise_manifestations": "Trang 4 (tìm số 1 đứng trước 2); Trang 5 (tìm số 1 trước 2, 3 trước 4); Trang 10 (chuỗi số lùi 10->9->8->7...); Trang 14 (tìm 6 trước 7, 16 trước 17)"
+        },
+        {
+          "relation": "Số liền sau (Successor: n + 1)",
+          "skill_code": "C1.NREC.11",
+          "exercise_manifestations": "Trang 2 (tìm 2 sau 1, 4 sau 3); Trang 3 (tìm 5 sau 4); Trang 6 (tìm 3 sau 2); Trang 7, 8 (đếm tiếp counting-on); Trang 17-22 (bước nhảy kế tiếp kề cạnh trong mê cung)"
+        },
+        {
+          "relation": "Số ở giữa (In-between numbers)",
+          "skill_code": "C1.NREC.12",
+          "exercise_manifestations": "Trang 2 ([1, _, 3] -> 2; [3, _, 5] -> 4); Trang 5 ([2, _, 4] -> 3); Trang 6 ([2, _, _, 5] -> 3, 4); Trang 9 ([7, _, 9] -> 8); Trang 13 ([1, _, 3], [7, _, 9], [11, _, 13]); Trang 15 (số chẵn kẹp giữa 2 số lẻ)"
+        }
+      ],
+      "engine_mapping": {
+        "primary_gt": "GT-008",
+        "primary_name": "Kéo vào ô chứa (drag-to-slot)",
+        "companion_gt": "GT-006",
+        "companion_name": "Sắp xếp thứ tự (sequence-order)",
+        "mechanic_summary": "Tạo các tương tác động nhấn mạnh vị trí tương đối: khi trẻ tap vào ô trống kẹp giữa 1 và 3, hệ thống highlight cả ô 1 và ô 3 để kích hoạt tư duy 'số nào đứng giữa 1 và 3'."
+      }
+    }
+  ],
+  "pages": [
+    {
+      "page_number": 1,
+      "file_path": "pages/page-01.jpg",
+      "group_id": "OVERVIEW",
+      "page_type": "stage_overview_map",
+      "title": "Hành trình Chuyến Tàu Toán Học - Chặng 2: Đường Ray Số Thứ Tự",
+      "theme": "Sân ga cổ tích và đường ray núi dẫn đến Đỉnh Kim Cương",
+      "characters": [
+        {
+          "name": "Gấu Logic",
+          "appearance": "Gấu nâu đeo kính gọng tròn xanh dương, áo gile xanh, đứng trong buồng lái đầu tàu hơi nước vẫy tay chào bé"
+        },
+        {
+          "name": "Thỏ Quan Sát",
+          "appearance": "Thỏ trắng đeo túi chéo vàng, cầm kính lúp viền đỏ cam, ngồi trước mui tàu chỉ dẫn hành trình"
+        }
+      ],
+      "header_elements": {
+        "title": "HÀNH TRÌNH CHUYẾN TÀU TOÁN HỌC",
+        "parent_objectives_box": {
+          "title": "MỤC TIÊU CHO BA MẸ",
+          "points": [
+            "Nhận biết số đứng trước - đứng sau",
+            "Điền số còn thiếu trong phạm vi 20",
+            "Rèn quan sát và tư duy trình tự"
+          ]
+        },
+        "stage_sign": {
+          "main_text": "CHẶNG 2",
+          "stage_name": "ĐƯỜNG RAY SỐ THỨ TỰ",
+          "subtitle_banner": "ĐIỀN SỐ CÒN THIẾU – TÌM ĐƯỜNG THEO DÃY SỐ",
+          "mission_ribbon": "NHIỆM VỤ: KHÔI PHỤC NHỮNG BIỂN SỐ BỊ THẤT LẠC"
+        }
+      },
+      "footer_banner": "CÙNG GẤU LOGIC VÀ THỎ QUAN SÁT LÊN ĐƯỜNG!",
+      "visual_elements": {
+        "station": "Ga Toán Học phong cách gỗ mộc cổ tích, tháp đồng hồ tròn chỉ 12h, đỉnh tháp sao vàng, vòm sáng rực rỡ",
+        "train": "Đầu tàu hơi nước màu xanh dương cổ điển viền vàng, gắn sao vàng ở thân toa",
+        "track_and_environment": "Tuyến đường ray gỗ uốn lượn ven sông suối trong vắt, hoa dại nở rực rỡ, dẫn lên ngọn núi cao",
+        "destination": "Viên Kim Cương khổng lồ tỏa hào quang sáng chói trên đỉnh núi (biểu tượng phần thưởng hoàn thành)"
+      },
+      "number_track_details": {
+        "track_type": "Đường số uốn lượn (Winding Number Track)",
+        "markers": [
+          {
+            "position": 1,
+            "status": "visible",
+            "value": 1,
+            "type": "number_sign"
+          },
+          {
+            "position": 2,
+            "status": "visible",
+            "value": 2,
+            "type": "number_sign"
+          },
+          {
+            "position": 3,
+            "status": "missing",
+            "value": null,
+            "type": "question_mark_sign",
+            "placeholder": "?"
+          },
+          {
+            "position": 4,
+            "status": "visible",
+            "value": 4,
+            "type": "number_sign"
+          },
+          {
+            "position": 5,
+            "status": "visible",
+            "value": 5,
+            "type": "number_sign"
+          },
+          {
+            "position": 6,
+            "status": "missing",
+            "value": null,
+            "type": "question_mark_sign",
+            "placeholder": "?"
+          },
+          {
+            "position": 8,
+            "status": "visible",
+            "value": 8,
+            "type": "number_sign"
+          },
+          {
+            "position": 9,
+            "status": "visible",
+            "value": 9,
+            "type": "number_sign"
+          },
+          {
+            "position": 10,
+            "status": "visible",
+            "value": 10,
+            "type": "number_sign"
+          }
+        ]
+      },
+      "digital_game_potential": {
+        "gt_code": "GT-000",
+        "gt_name": "Làm quen khái niệm (concept-intro)",
+        "mechanic": "World Map & Stage Intro Hub",
+        "interactions": [
+          {
+            "target": "Đầu tàu hỏa",
+            "action": "Tap",
+            "feedback": "Còi tàu hụ 'Tu tu xình xịch', khói trắng bốc lên, tàu nhún nhảy vui vẻ"
+          },
+          {
+            "target": "Gấu Logic & Thỏ Quan Sát",
+            "action": "Tap",
+            "feedback": "Phát âm thanh lồng tiếng giới thiệu chặng 2, khích lệ bé lên đường tìm các biển số bị thất lạc"
+          },
+          {
+            "target": "Các biển số và biển hỏi chấm (?)",
+            "action": "Tap",
+            "feedback": "Đọc to số hiển thị; với biển '?' phát âm tò mò kèm gợi ý mở màn chơi tiếp theo"
+          }
+        ]
+      }
+    },
+    {
+      "page_number": 2,
+      "file_path": "pages/page-02.jpg",
+      "group_id": "D1",
+      "sub_group": "D1.1",
+      "page_type": "missing_number_activity",
+      "title": "Những Quả Bí Ngô Mất Số",
+      "category_tag": "ĐIỀN SỐ CÒN THIẾU",
+      "instruction": "VIẾT SỐ CÒN THIẾU VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Đường ray đầu tiên bị thiếu số rồi!",
+        "tho_quan_sat": "Bé điền số từ 1 đến 5 nhé!"
+      },
+      "footer_guidance": "TÌM ĐƯỢC SỐ 2 VÀ SỐ 4 LÀ ĐƯỜNG RAY SẼ SÁNG LÊN!",
+      "pedagogical_concept": "Nhận biết trật tự số tự nhiên liên tiếp 1–5. Khuyết số xen kẽ kẹp giữa hai mốc (In-between numbers). Rèn tư duy xác định số ở giữa (in-between), số liền sau (successor) và số liền trước (predecessor).",
+      "sequence_spec": {
+        "range": [1, 5],
+        "total_items": 5,
+        "direction": "Tăng dần (Ascending)",
+        "step": 1,
+        "given_elements": [
+          {
+            "position": 1,
+            "value": 1,
+            "state": "given"
+          },
+          {
+            "position": 3,
+            "value": 3,
+            "state": "given"
+          },
+          {
+            "position": 5,
+            "value": 5,
+            "state": "given"
+          }
+        ],
+        "missing_elements": [
+          {
+            "position": 2,
+            "expected_value": 2,
+            "context": "Nằm giữa 1 và 3",
+            "reasoning": "Số liền sau 1 (1 + 1 = 2) và liền trước 3 (3 - 1 = 2)"
+          },
+          {
+            "position": 4,
+            "expected_value": 4,
+            "context": "Nằm giữa 3 và 5",
+            "reasoning": "Số liền sau 3 (3 + 1 = 4) và liền trước 5 (5 - 1 = 4)"
+          }
+        ]
+      },
+      "visual_elements": {
+        "start_point": "Đầu tàu hỏa xanh dương phun khói cạnh biển gỗ 'BẮT ĐẦU'",
+        "pathway": "Dây leo bí ngô màu xanh uốn lượn hình chữ Z/S, có mũi tên xanh lá chỉ đường liên tục từ trái sang phải, ngoặt xuống trái rồi sang phải",
+        "items": "5 quả bí ngô màu cam tròn mọng nước, ở giữa mỗi quả có ô tròn màu trắng mang số hoặc để trống",
+        "end_point": "Ngôi nhà ga nhỏ màu nâu ấm cúng cắm cờ đỏ thêu chữ 'ĐÍCH'"
+      },
+      "digital_game_potential": {
+        "gt_code": "GT-008",
+        "gt_name": "Kéo vào ô chứa (drag-to-slot)",
+        "fallback_gt": "GT-001 (tap-select)",
+        "layout": {
+          "board": "Đường dây leo bí ngô 5 quả bố trí theo tọa độ logic 960x540",
+          "number_bank": "Khay số nổi chứa các viên số [2, 4] cùng các thẻ nhiễu [1, 3, 5] đặt ở cạnh dưới"
+        },
+        "states_and_feedback": {
+          "idle": "Các quả bí ngô ô trống thở nhẹ (breathing pulse) với viền nhạt nhấp nháy thu hút sự chú ý của trẻ",
+          "action_drag": "Trẻ chạm hoặc kéo số thả vào ô tròn trắng của quả bí ngô mục tiêu",
+          "correct_drop": "Số snap khóa chặt vào tâm quả bí ngô, quả bí ngô nảy nhẹ, dây leo phát sáng vàng ánh kim, đọc to: 'Số hai!'",
+          "incorrect_drop": "Nhịp thở hổ phách (amber pulse) nhẹ trên quả bí ngô, số trôi êm về khay",
+          "level_completion": "Toàn bộ dây leo phát sáng rực rỡ, đoàn tàu hụ còi chạy xình xịch qua 1->2->3->4->5 về đích"
+        }
+      }
+    },
+    {
+      "page_number": 3,
+      "file_path": "pages/page-03.jpg",
+      "group_id": "D1",
+      "sub_group": "D1.1",
+      "page_type": "missing_number_activity",
+      "title": "Bước Qua Hồ Hoa Súng",
+      "category_tag": "ĐIỀN SỐ CÒN THIẾU",
+      "instruction": "VIẾT SỐ CÒN THIẾU VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Chú ếch cần qua hồ theo đúng thứ tự!",
+        "tho_quan_sat": "Bé hoàn thành dãy từ 1 đến 5 nhé!"
+      },
+      "footer_guidance": "BA Ô TRỐNG ĐANG CHỜ BÉ HOÀN THÀNH!",
+      "pedagogical_concept": "Nâng cao độ khó: Dãy số 1–5 với cụm khuyết liên tiếp (Multi-gap consecutive missing numbers) và khuyết phần tử biên chốt chặn (Terminal missing number). Trẻ rèn chiến lược đếm tiếp liên tục (Counting-on).",
+      "sequence_spec": {
+        "range": [1, 5],
+        "total_items": 5,
+        "direction": "Tăng dần (Ascending)",
+        "step": 1,
+        "given_elements": [
+          {
+            "position": 1,
+            "value": 1,
+            "state": "given"
+          },
+          {
+            "position": 4,
+            "value": 4,
+            "state": "given"
+          }
+        ],
+        "missing_elements": [
+          {
+            "position": 2,
+            "expected_value": 2,
+            "context": "Lá súng thứ hai sau số 1",
+            "reasoning": "Số liền sau số 1 (1 + 1 = 2)"
+          },
+          {
+            "position": 3,
+            "expected_value": 3,
+            "context": "Lá súng thứ ba đứng trước số 4",
+            "reasoning": "Số liền trước 4 (4 - 1 = 3) hoặc đếm tiếp từ 2 lên 3"
+          },
+          {
+            "position": 5,
+            "expected_value": 5,
+            "context": "Lá súng cuối cùng trước đích",
+            "reasoning": "Số liền sau số 4 (4 + 1 = 5)"
+          }
+        ]
+      },
+      "visual_elements": {
+        "start_point": "Bờ hồ với biển gỗ 'BẮT ĐẦU' và một chú ếch xanh ngồi mỉm cười trên lá súng đầu dòng",
+        "pathway": "Dòng sông xanh biếc uốn lượn hình chữ S, có mũi tên xanh dương chỉ hướng nhảy",
+        "items": "5 chiếc lá hoa súng xanh ngọc nổi bồng bềnh có khía chữ V, tâm lá có ô tròn màu trắng",
+        "end_point": "Bông hoa súng vàng nở rực rỡ nổi trên mặt nước cạnh biển gỗ cắm cờ 'ĐÍCH'"
+      },
+      "digital_game_potential": {
+        "gt_code": "GT-008",
+        "gt_name": "Kéo vào ô chứa (drag-to-slot) / Frog-Hop Mechanic",
+        "mechanic": "Điền đúng ô nào thì chú ếch nhảy tót 'Bõm... Oong!' sang lá súng đó, phát nốt nhạc thăng tiến Đô-Rê-Mi-Pha-Son"
+      }
+    },
+    {
+      "page_number": 4,
+      "file_path": "pages/page-04.jpg",
+      "group_id": "D1",
+      "sub_group": "D1.1",
+      "page_type": "missing_number_activity",
+      "title": "Dây Hoa Số Thứ Tự",
+      "category_tag": "ĐIỀN SỐ CÒN THIẾU",
+      "instruction": "VIẾT SỐ CÒN THIẾU VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Ba bông hoa bị mất biển số!",
+        "tho_quan_sat": "Bé điền đủ dãy từ 1 đến 5 nhé!"
+      },
+      "footer_guidance": "BA BÔNG HOA ĐANG CHỜ BÉ ĐIỀN SỐ!",
+      "pedagogical_concept": "Khuyết phần tử đầu tiên (Predecessor of first given element) và khuyết 2 phần tử cuối dãy. Trẻ phải suy luận số đứng trước số 2 (2 - 1 = 1) và đếm tiếp 3 -> 4 -> 5.",
+      "sequence_spec": {
+        "range": [1, 5],
+        "total_items": 5,
+        "direction": "Tăng dần (Ascending)",
+        "step": 1,
+        "given_elements": [
+          {
+            "position": 2,
+            "value": 2,
+            "state": "given"
+          },
+          {
+            "position": 3,
+            "value": 3,
+            "state": "given"
+          }
+        ],
+        "missing_elements": [
+          {
+            "position": 1,
+            "expected_value": 1,
+            "context": "Bông hoa đầu tiên ở vạch xuất phát",
+            "reasoning": "Số đứng trước số 2 (Predecessor: C1.NREC.10)"
+          },
+          {
+            "position": 4,
+            "expected_value": 4,
+            "context": "Bông hoa thứ tư",
+            "reasoning": "Số đứng sau số 3 (Successor: C1.NREC.11)"
+          },
+          {
+            "position": 5,
+            "expected_value": 5,
+            "context": "Bông hoa thứ năm ở cạnh giỏ hoa đích",
+            "reasoning": "Số đứng sau số 4"
+          }
+        ]
+      },
+      "visual_elements": {
+        "start_point": "Biển gỗ 'BẮT ĐẦU' trên thảm cỏ xanh",
+        "pathway": "Cành hoa leo xanh lá uốn lượn hình chữ Z ngược có mũi tên dẫn hướng",
+        "items": "5 bông hoa màu tím cánh tròn nhụy vàng lớn mang ô số tròn",
+        "end_point": "Giỏ hoa cúc rực rỡ nhiều màu sắc cạnh biển 'ĐÍCH'"
+      },
+      "digital_game_potential": {
+        "gt_code": "GT-008",
+        "gt_name": "Kéo vào ô chứa (drag-to-slot)",
+        "mechanic": "Kéo cánh hoa số gắn vào nhụy hoa trống, hoa nở bừng và rung rinh khi điền đúng"
+      }
+    },
+    {
+      "page_number": 5,
+      "file_path": "pages/page-05.jpg",
+      "group_id": "D1",
+      "sub_group": "D1.1",
+      "page_type": "missing_number_activity",
+      "title": "Lối Hoa Dẫn Đường",
+      "category_tag": "ĐIỀN SỐ CÒN THIẾU",
+      "instruction": "VIẾT SỐ CÒN THIẾU VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Các bông hoa chưa đủ biển số!",
+        "tho_quan_sat": "Bé đi theo thứ tự từ 1 đến 5 nhé!"
+      },
+      "footer_guidance": "ĐIỀN ĐỦ BA Ô TRỐNG ĐỂ ĐOÀN TÀU ĐI TIẾP!",
+      "pedagogical_concept": "Quy luật khuyết toàn bộ các số lẻ [1, _, 3, _, 5] -> bé cần điền [1, 3, 5] xen kẽ với 2 số chẵn cho sẵn [2, 4]. Tích hợp toàn diện: Số trước (1 trước 2), Số ở giữa (3 giữa 2 và 4), Số sau (5 sau 4).",
+      "sequence_spec": {
+        "range": [1, 5],
+        "total_items": 5,
+        "direction": "Tăng dần (Ascending)",
+        "step": 1,
+        "given_elements": [
+          {
+            "position": 2,
+            "value": 2,
+            "state": "given"
+          },
+          {
+            "position": 4,
+            "value": 4,
+            "state": "given"
+          }
+        ],
+        "missing_elements": [
+          {
+            "position": 1,
+            "expected_value": 1,
+            "context": "Bông hoa đầu tiên cạnh hàng rào",
+            "reasoning": "Số đứng trước số 2 (C1.NREC.10)"
+          },
+          {
+            "position": 3,
+            "expected_value": 3,
+            "context": "Bông hoa ở giữa số 2 và 4",
+            "reasoning": "Số ở giữa (In-between: C1.NREC.12)"
+          },
+          {
+            "position": 5,
+            "expected_value": 5,
+            "context": "Bông hoa cuối cùng cạnh trạm dừng",
+            "reasoning": "Số đứng sau số 4 (C1.NREC.11)"
+          }
+        ]
+      },
+      "visual_elements": {
+        "start_point": "Cổng hàng rào gỗ nâu cắm biển 'BẮT ĐẦU'",
+        "pathway": "Dây hoa hồng uốn lượn mềm mại từ trái sang phải, ngoặt xuống dưới",
+        "items": "5 bông hoa màu hồng cánh mềm mại nhụy tròn màu vàng kem",
+        "end_point": "Trạm dừng chân có mái che màu xanh và ghế băng gỗ nâu cắm cờ 'ĐÍCH'"
+      },
+      "digital_game_potential": {
+        "gt_code": "GT-008",
+        "gt_name": "Kéo vào ô chứa (drag-to-slot)",
+        "mechanic": "Điền đủ 3 số lẻ thì lối hoa bừng nở rộ, đầu tàu lăn bánh qua các bông hoa về trạm nghỉ"
+      }
+    },
+    {
+      "page_number": 6,
+      "file_path": "pages/page-06.jpg",
+      "group_id": "D1",
+      "sub_group": "D1.1",
+      "page_type": "missing_number_activity",
+      "title": "Đàn Cú Treo Biển Số",
+      "category_tag": "ĐIỀN SỐ CÒN THIẾU",
+      "instruction": "VIẾT SỐ CÒN THIẾU VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Hai chú cú làm rơi biển số!",
+        "tho_quan_sat": "Bé điền đủ dãy từ 1 đến 5 nhé!"
+      },
+      "footer_guidance": "GIÚP HAI CHÚ CÚ TÌM LẠI BIỂN SỐ NHÉ!",
+      "pedagogical_concept": "Khuyết 2 số liên tiếp ở giữa chuỗi [1, 2, _, _, 5]. Trẻ phải vận dụng đếm tiếp kép: từ 2 lên 3, từ 3 lên 4 và kiểm tra chốt chặn trước số 5.",
+      "sequence_spec": {
+        "range": [1, 5],
+        "total_items": 5,
+        "direction": "Tăng dần (Ascending)",
+        "step": 1,
+        "given_elements": [
+          {
+            "position": 1,
+            "value": 1,
+            "state": "given"
+          },
+          {
+            "position": 2,
+            "value": 2,
+            "state": "given"
+          },
+          {
+            "position": 5,
+            "value": 5,
+            "state": "given"
+          }
+        ],
+        "missing_elements": [
+          {
+            "position": 3,
+            "expected_value": 3,
+            "context": "Chú cú thứ ba",
+            "reasoning": "Số liền sau số 2 (2 + 1 = 3)"
+          },
+          {
+            "position": 4,
+            "expected_value": 4,
+            "context": "Chú cú thứ tư",
+            "reasoning": "Số liền sau 3 và liền trước 5"
+          }
+        ]
+      },
+      "visual_elements": {
+        "start_point": "Vầng trăng lưỡi liềm vàng cắm biển gỗ 'BẮT ĐẦU'",
+        "pathway": "Dây thừng đỏ treo cờ uốn lượn trên nền trời mây tím sao đêm",
+        "items": "5 chú cú mèo màu nâu cánh cam tròn trịa, hai mắt to tròn ngộ nghĩnh đang cầm bảng số hình chữ nhật bo tròn",
+        "end_point": "Cột đèn bão cổ điển tỏa ánh sáng vàng ấm áp cắm biển 'ĐÍCH'"
+      },
+      "digital_game_potential": {
+        "gt_code": "GT-008",
+        "gt_name": "Kéo vào ô chứa (drag-to-slot)",
+        "mechanic": "Mỗi chú cú nhận đúng biển số sẽ vỗ cánh bay nhẹ lên và kêu 'Cú... Cú!' vui vẻ; khi đủ 5 cú, ngọn đèn bão bừng sáng soi rọi cả khu rừng"
+      }
+    },
+    {
+      "page_number": 7,
+      "file_path": "pages/page-07.jpg",
+      "group_id": "D1",
+      "sub_group": "D1.2",
+      "page_type": "missing_number_activity",
+      "title": "Giàn Dưa Số Nối Dài",
+      "category_tag": "ĐIỀN SỐ CÒN THIẾU",
+      "instruction": "HOÀN THÀNH DÃY SỐ TỪ 1 ĐẾN 12",
+      "dialogue": {
+        "gau_logic": "Đường ray đã dài đến số 12!",
+        "tho_quan_sat": "Bé theo mũi tên và điền số nhé!"
+      },
+      "footer_guidance": "NĂM Ô TRỐNG ĐANG CHỜ BÉ HOÀN THÀNH!",
+      "pedagogical_concept": "Mở rộng giới hạn đếm lên 12 (vượt ngưỡng 10). Dây leo bố trí theo quy luật đảo chiều zic-zac (boustrophedon): Hàng 1 trái sang phải (1..4), Hàng 2 phải sang trái (5..8), Hàng 3 trái sang phải (9..12). Rèn luyện khả năng bám theo hướng mũi tên và thứ tự số liên tục.",
+      "sequence_spec": {
+        "range": [1, 12],
+        "total_items": 12,
+        "direction": "Tăng dần theo mũi tên zic-zac (Z-path)",
+        "step": 1,
+        "given_elements": [
+          {
+            "position": 1,
+            "value": 1
+          },
+          {
+            "position": 3,
+            "value": 3
+          },
+          {
+            "position": 4,
+            "value": 4
+          },
+          {
+            "position": 6,
+            "value": 6
+          },
+          {
+            "position": 9,
+            "value": 9
+          },
+          {
+            "position": 10,
+            "value": 10
+          },
+          {
+            "position": 12,
+            "value": 12
+          }
+        ],
+        "missing_elements": [
+          {
+            "position": 2,
+            "expected_value": 2,
+            "context": "Hàng 1, kẹp giữa 1 và 3"
+          },
+          {
+            "position": 5,
+            "expected_value": 5,
+            "context": "Hàng 2 đầu bên phải, ngay sau 4"
+          },
+          {
+            "position": 7,
+            "expected_value": 7,
+            "context": "Hàng 2, sau 6 theo hướng mũi tên"
+          },
+          {
+            "position": 8,
+            "expected_value": 8,
+            "context": "Hàng 2 đầu bên trái, trước khi ngoặt xuống hàng 3"
+          },
+          {
+            "position": 11,
+            "expected_value": 11,
+            "context": "Hàng 3, kẹp giữa 10 và 12"
+          }
+        ]
+      },
+      "visual_elements": {
+        "start_point": "Đầu tàu hỏa xanh tím cắm biển 'BẮT ĐẦU'",
+        "pathway": "Dây leo dưa xanh 3 tầng zic-zac có mũi tên xanh đậm chỉ hướng rõ ràng",
+        "items": "12 quả dưa lưới tròn màu xanh vân lưới đẹp mắt mang ô số trắng",
+        "end_point": "Nhà ga nhỏ màu vàng mái xanh cắm cờ đỏ 'ĐÍCH'"
+      },
+      "digital_game_potential": {
+        "gt_code": "GT-008",
+        "gt_name": "Kéo vào ô chứa (drag-to-slot)",
+        "mechanic": "Trẻ điền 5 quả dưa còn thiếu, đường ray dây leo sáng lên theo luồng chuyển động từ 1 đến 12"
+      }
+    },
+    {
+      "page_number": 8,
+      "file_path": "pages/page-08.jpg",
+      "group_id": "D1",
+      "sub_group": "D1.2",
+      "page_type": "missing_number_activity",
+      "title": "Đường Ray Xanh Uốn Lượn",
+      "category_tag": "ĐIỀN SỐ CÒN THIẾU",
+      "instruction": "HOÀN THÀNH DÃY SỐ TỪ 1 ĐẾN 10",
+      "dialogue": {
+        "gau_logic": "Con đường này có mười điểm dừng!",
+        "tho_quan_sat": "Đi từ 1 đến 10 theo mũi tên nhé!"
+      },
+      "footer_guidance": "SÁU ĐIỂM DỪNG ĐANG CHỜ ĐƯỢC GẮN SỐ!",
+      "pedagogical_concept": "Củng cố vững chắc chuỗi 1–10 trên mô hình thanh đường ray sắt thực tế. Tỉ lệ khuyết cao (6/10 ô khuyết), đòi hỏi trẻ phải đếm tiếp liên tục từ 1 qua các mốc trung gian 5, 8, 9 để về 10.",
+      "sequence_spec": {
+        "range": [1, 10],
+        "total_items": 10,
+        "direction": "Tăng dần theo đường ray uốn lượn",
+        "step": 1,
+        "given_elements": [
+          {
+            "position": 1,
+            "value": 1
+          },
+          {
+            "position": 5,
+            "value": 5
+          },
+          {
+            "position": 8,
+            "value": 8
+          },
+          {
+            "position": 9,
+            "value": 9
+          }
+        ],
+        "missing_elements": [
+          {
+            "position": 2,
+            "expected_value": 2
+          },
+          {
+            "position": 3,
+            "expected_value": 3
+          },
+          {
+            "position": 4,
+            "expected_value": 4
+          },
+          {
+            "position": 6,
+            "expected_value": 6
+          },
+          {
+            "position": 7,
+            "expected_value": 7
+          },
+          {
+            "position": 10,
+            "expected_value": 10
+          }
+        ]
+      },
+      "visual_elements": {
+        "start_point": "Đầu tàu hỏa xanh viền vàng biển 'BẮT ĐẦU'",
+        "pathway": "Đường ray sắt màu xanh dương có tà vẹt gỗ trắng uốn 4 khúc quanh",
+        "items": "10 ô tròn lớn viền xanh dương mang số điểm dừng",
+        "end_point": "Nhà ga xe lửa vàng mái xanh cắm cờ xanh 'ĐÍCH' có đồng hồ tròn"
+      },
+      "digital_game_potential": {
+        "gt_code": "GT-008",
+        "gt_name": "Kéo vào ô chứa (drag-to-slot)",
+        "mechanic": "Lắp các biển số vào điểm dừng ray tàu; đoàn tàu chạy qua từng điểm phát âm thanh 'Tu tu!'"
+      }
+    },
+    {
+      "page_number": 9,
+      "file_path": "pages/page-09.jpg",
+      "group_id": "D1",
+      "sub_group": "D1.2",
+      "page_type": "missing_number_activity",
+      "title": "Hai Nhánh Đường Ray",
+      "category_tag": "ĐIỀN SỐ CÒN THIẾU",
+      "instruction": "VIẾT SỐ CÒN THIẾU VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Hai tuyến đường bị mất biển số!",
+        "tho_quan_sat": "Hoàn thành từng tuyến một nhé!"
+      },
+      "footer_guidance": "HOÀN THÀNH CẢ HAI TUYẾN ĐỂ MỞ ĐƯỜNG!",
+      "pedagogical_concept": "Tư duy phân nhóm và phân tách đoạn số: Tuyến 1 (1–5) và Tuyến 2 (6–10). Trẻ hiểu rằng hệ thống số đếm có thể chia nhỏ thành các chặng 5 đơn vị cơ sở.",
+      "sequence_spec": {
+        "tracks": [
+          {
+            "name": "Tuyến 1: Từ 1 đến 5",
+            "theme_color": "Xanh lá",
+            "range": [1, 5],
+            "given": [1, 4, 5],
+            "missing": [2, 3]
+          },
+          {
+            "name": "Tuyến 2: Từ 6 đến 10",
+            "theme_color": "Đỏ cam",
+            "range": [6, 10],
+            "given": [8, 10],
+            "missing": [6, 7, 9]
+          }
+        ]
+      },
+      "visual_elements": {
+        "track_1": "Khung viền xanh lá, đầu tàu hơi nước xanh kéo 5 tấm biển vòm cổng đứng trên thanh ray xanh, kết thúc cờ xanh lá",
+        "track_2": "Khung viền đỏ, đầu tàu hơi nước xanh kéo 5 tấm biển vòm cổng đứng trên thanh ray đỏ, kết thúc cờ đỏ cam"
+      },
+      "digital_game_potential": {
+        "gt_code": "GT-008",
+        "gt_name": "Kéo vào ô chứa (drag-to-slot)",
+        "mechanic": "Trẻ lần lượt hoàn thành tuyến 1 để đoàn tàu xanh chạy qua, sau đó mở khóa tuyến 2"
+      }
+    },
+    {
+      "page_number": 10,
+      "file_path": "pages/page-10.jpg",
+      "group_id": "D1",
+      "sub_group": "D1.3",
+      "page_type": "missing_number_activity",
+      "title": "Đếm Ngược Về Nhà Ga",
+      "category_tag": "ĐIỀN SỐ CÒN THIẾU",
+      "instruction": "HOÀN THÀNH DÃY SỐ TỪ 10 VỀ 1",
+      "dialogue": {
+        "gau_logic": "Lần này đoàn tàu đi ngược!",
+        "tho_quan_sat": "Bắt đầu từ 10 và về số 1 nhé!"
+      },
+      "footer_guidance": "ĐẾM LÙI TỪNG BƯỚC ĐỂ VỀ ĐÚNG NHÀ GA!",
+      "pedagogical_concept": "Kỹ năng đếm lùi (Reverse counting / Countdown) - bước chuyển biến tư duy khó trong giai đoạn mầm non, làm nền tảng trực tiếp cho phép trừ (Subtraction as counting back).",
+      "sequence_spec": {
+        "range": [10, 1],
+        "direction": "Giảm dần (Descending)",
+        "step": -1,
+        "tracks": [
+          {
+            "name": "Từ 10 đến 6",
+            "given": [10, 7],
+            "missing": [9, 8, 6],
+            "reasoning": "10 -> 9 (10-1) -> 8 (9-1) -> 7 -> 6 (7-1)"
+          },
+          {
+            "name": "Từ 5 đến 1",
+            "given": [2, 1],
+            "missing": [5, 4, 3],
+            "reasoning": "5 -> 4 -> 3 -> 2 -> 1"
+          }
+        ]
+      },
+      "visual_elements": {
+        "track_style": "Đường ray màu tím mộng mơ, tà vẹt tím sẫm",
+        "train": "Đầu tàu hỏa xanh tím kéo các toa tròn đánh số lùi",
+        "transition": "Biển chỉ dẫn vát góc 'TIẾP TỤC' màu tím",
+        "destination": "Nhà ga xe lửa vàng tím có đồng hồ tròn chỉ giờ cắm cờ tím 'ĐÍCH'"
+      },
+      "digital_game_potential": {
+        "gt_code": "GT-008",
+        "gt_name": "Kéo vào ô chứa (drag-to-slot) / Reverse Sequence",
+        "mechanic": "Đầu tàu hỏa chạy lùi 'xình xịch... xình xịch' theo âm thanh nốt nhạc đi xuống (Son-Pha-Mi-Rê-Đô) khi trẻ điền đúng số lùi"
+      }
+    },
+    {
+      "page_number": 11,
+      "file_path": "pages/page-11.jpg",
+      "group_id": "D1",
+      "sub_group": "D1.2",
+      "page_type": "missing_number_activity",
+      "title": "Đường Ray Chữ S",
+      "category_tag": "ĐIỀN SỐ CÒN THIẾU",
+      "instruction": "HOÀN THÀNH DÃY SỐ TỪ 1 ĐẾN 10",
+      "dialogue": {
+        "gau_logic": "Đường ray này uốn thành chữ S!",
+        "tho_quan_sat": "Nhìn mũi tên để không đi nhầm nhé!"
+      },
+      "footer_guidance": "THEO ĐÚNG CHỮ S ĐỂ TÌM ĐỦ CÁC SỐ!",
+      "pedagogical_concept": "Điều chỉnh hướng đọc trong không gian: Hàng trên đi từ trái sang phải (1..5), uốn cong nửa vòng tròn, hàng dưới đi ngược từ phải sang trái (6..10). Trẻ rèn khả năng ức chế phản xạ đọc xuôi thông thường để tuân theo dấu vết đường ray.",
+      "sequence_spec": {
+        "range": [1, 10],
+        "shape": "Đường cong chữ S (S-curve)",
+        "upper_row": {
+          "direction": "Trái sang Phải",
+          "given": [2, 5],
+          "missing": [1, 3, 4]
+        },
+        "lower_row": {
+          "direction": "Phải sang Trái",
+          "given": [8, 9],
+          "missing": [6, 7, 10]
+        }
+      },
+      "visual_elements": {
+        "track": "Đường ray màu đỏ hồng uốn lượn hình chữ S lớn mềm mại",
+        "circles": "10 vòng tròn viền đỏ nối với nhau bằng các ống nối có mũi tên đỏ",
+        "endpoints": "Biển xanh 'BẮT ĐẦU' ở góc trên trái, biển xanh 'ĐÍCH' ở góc dưới trái"
+      },
+      "digital_game_potential": {
+        "gt_code": "GT-008",
+        "gt_name": "Kéo vào ô chứa (drag-to-slot)",
+        "mechanic": "Toa xe lửa nhỏ trượt dọc theo đường cong chữ S mượt mà 60fps"
+      }
+    },
+    {
+      "page_number": 12,
+      "file_path": "pages/page-12.jpg",
+      "group_id": "D1",
+      "sub_group": "D1.4",
+      "page_type": "missing_number_activity",
+      "title": "Hai Tuyến Số Gặp Nhau",
+      "category_tag": "ĐIỀN SỐ CÒN THIẾU",
+      "instruction": "HOÀN THÀNH CẢ HAI TUYẾN SỐ",
+      "dialogue": {
+        "gau_logic": "Tuyến xanh đi từ 1 đến 8!",
+        "tho_quan_sat": "Tuyến lá đi tiếp từ 9 đến 15!"
+      },
+      "footer_guidance": "ĐIỀN ĐỦ 15 VỊ TRÍ ĐỂ HAI TUYẾN NỐI LIỀN!",
+      "pedagogical_concept": "Nối tiếp 2 phân đoạn liên tục tạo thành chuỗi 1–15: Tuyến xanh dương (1–8) giao thoa với Tuyến xanh lá (9–15). Giúp trẻ nắm vững khái niệm chuyển tiếp hàng chục (từ 8 qua 9 sang 10..15).",
+      "sequence_spec": {
+        "route_1": {
+          "name": "Tuyến xanh (1 đến 8)",
+          "given": [3, 7, 8],
+          "missing": [1, 2, 4, 5, 6]
+        },
+        "route_2": {
+          "name": "Tuyến lá (9 đến 15)",
+          "given": [12, 15],
+          "missing": [9, 10, 11, 13, 14]
+        }
+      },
+      "visual_elements": {
+        "route_1_ui": "Khung bo góc màu xanh dương, 2 hàng ô tròn viền xanh nối nhau qua mũi tên 'TIẾP'",
+        "route_2_ui": "Khung bo góc màu xanh lá cây, 2 hàng ô tròn viền xanh lá nối nhau qua mũi tên 'TIẾP'"
+      },
+      "digital_game_potential": {
+        "gt_code": "GT-008",
+        "gt_name": "Kéo vào ô chứa (drag-to-slot)",
+        "mechanic": "Khi điền đủ cả 15 số, hai đoàn tàu màu xanh dương và xanh lá chạm đầu vào nhau, pháo hoa ngôi sao nở rộ"
+      }
+    },
+    {
+      "page_number": 13,
+      "file_path": "pages/page-13.jpg",
+      "group_id": "D1",
+      "sub_group": "D1.4",
+      "page_type": "missing_number_activity",
+      "title": "Ba Đường Ray Bí Mật",
+      "category_tag": "ĐIỀN SỐ CÒN THIẾU",
+      "instruction": "ĐI TỪ TRÊN XUỐNG DƯỚI",
+      "dialogue": {
+        "gau_logic": "Ba đường ray lần này đi từ trên xuống!",
+        "tho_quan_sat": "Đọc từng cột và điền số nhé!"
+      },
+      "footer_guidance": "SÁU Ô TRỐNG ĐANG CHỜ BÉ GIẢI MÃ!",
+      "pedagogical_concept": "Định hướng cột dọc (Vertical orientation). Phá vỡ thói quen chỉ tư duy theo hàng ngang, rèn luyện đọc số và đếm xuôi từ đỉnh xuống đáy cho 3 cột song song (1-5, 6-10, 11-15).",
+      "sequence_spec": {
+        "columns": [
+          {
+            "col": 1,
+            "range": [1, 5],
+            "color": "Xanh dương",
+            "given": [1, 3, 5],
+            "missing": [2, 4]
+          },
+          {
+            "col": 2,
+            "range": [6, 10],
+            "color": "Xanh lá",
+            "given": [7, 9, 10],
+            "missing": [6, 8]
+          },
+          {
+            "col": 3,
+            "range": [11, 15],
+            "color": "Đỏ",
+            "given": [11, 13, 15],
+            "missing": [12, 14]
+          }
+        ]
+      },
+      "visual_elements": {
+        "layout": "3 cột thẳng đứng song song",
+        "top_elements": "3 đầu tàu mini (xanh dương, xanh lá, đỏ) ở đỉnh mỗi cột",
+        "bottom_elements": "3 lá cờ đích thêu ở chân mỗi cột"
+      },
+      "digital_game_potential": {
+        "gt_code": "GT-008",
+        "gt_name": "Kéo vào ô chứa (drag-to-slot)",
+        "mechanic": "Đầu tàu trượt từ trên đỉnh dốc xuống đáy khi các ô số trong cột được lắp đầy đủ"
+      }
+    },
+    {
+      "page_number": 14,
+      "file_path": "pages/page-14.jpg",
+      "group_id": "D1",
+      "sub_group": "D1.4",
+      "page_type": "missing_number_activity",
+      "title": "Đại Lộ Số Đến 20",
+      "category_tag": "THỬ THÁCH LỚN - ĐIỀN SỐ CÒN THIẾU TỪ 1 ĐẾN 20",
+      "instruction": "ĐIỀN SỐ CÒN THIẾU TỪ 1 ĐẾN 20",
+      "dialogue": {
+        "gau_logic": "Đường ray dài nhất đã xuất hiện!",
+        "tho_quan_sat": "Bé hoàn thành bốn chặng đến số 20 nhé!"
+      },
+      "footer_guidance": "MƯỜI MỘT Ô TRỐNG - BÉ CÓ THỂ HOÀN THÀNH!",
+      "pedagogical_concept": "Đỉnh cao của D1: Hoàn thiện toàn bộ thang số 1–20 phân bố qua 4 chặng màu sắc (1-5 xanh dương, 6-10 xanh lá, 11-15 cam đỏ, 16-20 tím). Đánh giá toàn diện năng lực đếm đến 20 và định vị số thiếu.",
+      "sequence_spec": {
+        "stages": [
+          {
+            "stage": 1,
+            "range": [1, 5],
+            "given": [2, 4],
+            "missing": [1, 3, 5]
+          },
+          {
+            "stage": 2,
+            "range": [6, 10],
+            "given": [7, 8],
+            "missing": [6, 9, 10]
+          },
+          {
+            "stage": 3,
+            "range": [11, 15],
+            "given": [11, 14],
+            "missing": [12, 13, 15]
+          },
+          {
+            "stage": 4,
+            "range": [16, 20],
+            "given": [17, 18, 20],
+            "missing": [16, 19]
+          }
+        ],
+        "total_missing": 11
+      },
+      "visual_elements": {
+        "layout": "4 hàng chặng màu sắc nối tiếp bằng mũi tên đỏ 'TIẾP'",
+        "colors": ["Xanh dương", "Xanh lá", "Đỏ cam", "Tím"]
+      },
+      "digital_game_potential": {
+        "gt_code": "GT-008",
+        "gt_name": "Kéo vào ô chứa (drag-to-slot)",
+        "mechanic": "Mỗi chặng hoàn thành sẽ thắp sáng một đoạn đường hầm ánh sáng đa sắc"
+      }
+    },
+    {
+      "page_number": 15,
+      "file_path": "pages/page-15.jpg",
+      "group_id": "D1",
+      "sub_group": "D1.5",
+      "page_type": "missing_number_activity",
+      "title": "Tìm Những Số Chẵn",
+      "category_tag": "ĐIỀN SỐ CÒN THIẾU",
+      "instruction": "HOÀN THÀNH DÃY SỐ TỪ 1 ĐẾN 20",
+      "dialogue": {
+        "gau_logic": "Các số lẻ đã có mặt!",
+        "tho_quan_sat": "Bé điền những số chẵn còn thiếu nhé!"
+      },
+      "footer_guidance": "ĐIỀN ĐỦ 10 SỐ CHẴN ĐỂ MỞ ĐƯỜNG!",
+      "pedagogical_concept": "Quy luật đếm cách 2 (Skip counting by 2) - Dãy số chẵn. Giữ cố định 10 số lẻ [1, 3, 5, 7, 9, 11, 13, 15, 17, 19], trẻ phải điền chính xác 10 số chẵn xen kẽ [2, 4, 6, 8, 10, 12, 14, 16, 18, 20].",
+      "sequence_spec": {
+        "given_odd_numbers": [1, 3, 5, 7, 9, 11, 13, 15, 17, 19],
+        "missing_even_numbers": [2, 4, 6, 8, 10, 12, 14, 16, 18, 20],
+        "total_missing": 10
+      },
+      "visual_elements": {
+        "layout": "4 hàng x 5 ô tròn viền màu tương ứng các dải 1-5, 6-10, 11-15, 16-20",
+        "highlight": "Các ô số lẻ có số in đậm rõ ràng, các ô số chẵn để trống nền trắng"
+      },
+      "digital_game_potential": {
+        "gt_code": "GT-008",
+        "gt_name": "Kéo vào ô chứa (drag-to-slot)",
+        "mechanic": "Khay số chỉ cấp các viên số chẵn; trẻ kéo thả hoặc tap vào ô trống để lắp đúng vị trí kẹp giữa hai số lẻ"
+      }
+    },
+    {
+      "page_number": 16,
+      "file_path": "pages/page-16.jpg",
+      "group_id": "D1",
+      "sub_group": "D1.5",
+      "page_type": "missing_number_activity",
+      "title": "Tìm Những Số Lẻ",
+      "category_tag": "ĐIỀN SỐ CÒN THIẾU",
+      "instruction": "HOÀN THÀNH DÃY SỐ TỪ 1 ĐẾN 20",
+      "dialogue": {
+        "gau_logic": "Các số chẵn đã có mặt!",
+        "tho_quan_sat": "Bé điền những số lẻ còn thiếu nhé!"
+      },
+      "footer_guidance": "ĐIỀN ĐỦ 10 SỐ LẺ ĐỂ HOÀN THÀNH NHIỆM VỤ!",
+      "pedagogical_concept": "Quy luật đếm cách 2 (Skip counting by 2) - Dãy số lẻ đối ngẫu với Trang 15. Giữ cố định 10 số chẵn, trẻ điền toàn bộ 10 số lẻ [1, 3, 5, 7, 9, 11, 13, 15, 17, 19].",
+      "sequence_spec": {
+        "given_even_numbers": [2, 4, 6, 8, 10, 12, 14, 16, 18, 20],
+        "missing_odd_numbers": [1, 3, 5, 7, 9, 11, 13, 15, 17, 19],
+        "total_missing": 10
+      },
+      "visual_elements": {
+        "layout": "4 hàng x 5 ô tròn viền màu tương ứng các dải 1-5, 6-10, 11-15, 16-20",
+        "highlight": "Các ô số chẵn có số in đậm rõ ràng, các ô số lẻ để trống nền trắng"
+      },
+      "digital_game_potential": {
+        "gt_code": "GT-008",
+        "gt_name": "Kéo vào ô chứa (drag-to-slot)",
+        "mechanic": "Điền đủ 10 số lẻ, toàn bộ 20 ô số bừng sáng nhịp nhàng theo chu kỳ chẵn-lẻ lấp lánh"
+      }
+    },
+    {
+      "page_number": 17,
+      "file_path": "pages/page-17.jpg",
+      "group_id": "D2",
+      "sub_group": "D2.1",
+      "page_type": "maze_route_activity",
+      "title": "Mê Cung Số 1 – 16: Tìm Đường Đến Cầu Vồng",
+      "category_tag": "MÊ CUNG SỐ 1 - 16",
+      "instruction": "NỐI CÁC SỐ LIÊN TIẾP TỪ 1 ĐẾN 16",
+      "dialogue": {
+        "gau_logic": "Bắt đầu ở số 1!",
+        "tho_quan_sat": "Đi lần lượt đến số 16 nhé!"
+      },
+      "footer_guidance": "CHỈ ĐI QUA CÁC Ô CẠNH NHAU – KHÔNG ĐI CHÉO!",
+      "pedagogical_concept": "Chuyển đổi biểu diễn thứ tự số từ đường thẳng 1D sang lưới không gian 2D. Rèn luyện tư duy định hướng không gian, nhận diện số liền sau kề cạnh và loại trừ các ô số bẫy (17-25).",
+      "grid_matrix": [
+        [1, 2, 3, 17, 18],
+        [20, 5, 4, 19, 21],
+        [7, 6, 22, 23, 24],
+        [8, 9, 10, 11, 12],
+        [25, 16, 15, 14, 13]
+      ],
+      "path_coordinates": [
+        {
+          "val": 1,
+          "r": 1,
+          "c": 1
+        },
+        {
+          "val": 2,
+          "r": 1,
+          "c": 2
+        },
+        {
+          "val": 3,
+          "r": 1,
+          "c": 3
+        },
+        {
+          "val": 4,
+          "r": 2,
+          "c": 3
+        },
+        {
+          "val": 5,
+          "r": 2,
+          "c": 2
+        },
+        {
+          "val": 6,
+          "r": 3,
+          "c": 2
+        },
+        {
+          "val": 7,
+          "r": 3,
+          "c": 1
+        },
+        {
+          "val": 8,
+          "r": 4,
+          "c": 1
+        },
+        {
+          "val": 9,
+          "r": 4,
+          "c": 2
+        },
+        {
+          "val": 10,
+          "r": 4,
+          "c": 3
+        },
+        {
+          "val": 11,
+          "r": 4,
+          "c": 4
+        },
+        {
+          "val": 12,
+          "r": 4,
+          "c": 5
+        },
+        {
+          "val": 13,
+          "r": 5,
+          "c": 5
+        },
+        {
+          "val": 14,
+          "r": 5,
+          "c": 4
+        },
+        {
+          "val": 15,
+          "r": 5,
+          "c": 3
+        },
+        {
+          "val": 16,
+          "r": 5,
+          "c": 2
+        }
+      ],
+      "destination": "Cầu Vồng bảy sắc tỏa sáng ở đáy lưới dưới ô 16",
+      "distractors": [17, 18, 19, 20, 21, 22, 23, 24, 25],
+      "digital_game_potential": {
+        "gt_code": "GT-013",
+        "gt_name": "Tìm đường mê cung (maze-route)",
+        "companion_gt": "GT-024 (trace-path)",
+        "mechanic": "Ngón tay vuốt hoặc chạm từng ô kề cạnh từ 1..16; vệt sáng vàng kim nối giữa các ô; cấm đi chéo"
+      }
+    },
+    {
+      "page_number": 18,
+      "file_path": "pages/page-18.jpg",
+      "group_id": "D2",
+      "sub_group": "D2.2",
+      "page_type": "maze_route_activity",
+      "title": "Mê Cung Số 1 – 16: Tìm Đường Đến Ngôi Sao",
+      "category_tag": "MÊ CUNG SỐ 1 - 16",
+      "instruction": "NỐI CÁC SỐ LIÊN TIẾP TỪ 1 ĐẾN 16",
+      "dialogue": {
+        "gau_logic": "Số 1 nằm ở phía bên phải!",
+        "tho_quan_sat": "Tìm lần lượt đến số 16 nhé!"
+      },
+      "footer_guidance": "CHỈ ĐI QUA CÁC Ô CẠNH NHAU – KHÔNG ĐI CHÉO!",
+      "pedagogical_concept": "Biến thể xuất phát từ góc trên bên phải (r1c5). Trẻ phải đổi góc nhìn xuất phát, quét mắt sang phải và dò đường theo chiều ngược lại.",
+      "grid_matrix": [
+        [17, 18, 19, 2, 1],
+        [20, 5, 4, 3, 21],
+        [22, 6, 7, 8, 9],
+        [16, 23, 12, 11, 10],
+        [15, 14, 13, 24, 25]
+      ],
+      "path_coordinates": [
+        {
+          "val": 1,
+          "r": 1,
+          "c": 5
+        },
+        {
+          "val": 2,
+          "r": 1,
+          "c": 4
+        },
+        {
+          "val": 3,
+          "r": 2,
+          "c": 4
+        },
+        {
+          "val": 4,
+          "r": 2,
+          "c": 3
+        },
+        {
+          "val": 5,
+          "r": 2,
+          "c": 2
+        },
+        {
+          "val": 6,
+          "r": 3,
+          "c": 2
+        },
+        {
+          "val": 7,
+          "r": 3,
+          "c": 3
+        },
+        {
+          "val": 8,
+          "r": 3,
+          "c": 4
+        },
+        {
+          "val": 9,
+          "r": 3,
+          "c": 5
+        },
+        {
+          "val": 10,
+          "r": 4,
+          "c": 5
+        },
+        {
+          "val": 11,
+          "r": 4,
+          "c": 4
+        },
+        {
+          "val": 12,
+          "r": 4,
+          "c": 3
+        },
+        {
+          "val": 13,
+          "r": 5,
+          "c": 3
+        },
+        {
+          "val": 14,
+          "r": 5,
+          "c": 2
+        },
+        {
+          "val": 15,
+          "r": 5,
+          "c": 1
+        },
+        {
+          "val": 16,
+          "r": 4,
+          "c": 1
+        }
+      ],
+      "destination": "Ngôi Sao vàng mỉm cười 'ĐÍCH' ở mép trái hàng 4",
+      "distractors": [17, 18, 19, 20, 21, 22, 23, 24, 25],
+      "digital_game_potential": {
+        "gt_code": "GT-013",
+        "gt_name": "Tìm đường mê cung (maze-route)",
+        "mechanic": "Dẫn đường đầu tàu hơi nước chạy từ góc phải sang góc trái chạm Ngôi Sao"
+      }
+    },
+    {
+      "page_number": 19,
+      "file_path": "pages/page-19.jpg",
+      "group_id": "D2",
+      "sub_group": "D2.2",
+      "page_type": "maze_route_activity",
+      "title": "Mê Cung Số 1 – 16: Tìm Đường Đến Ngôi Sao (Biến Thể Biển Bắt Đầu)",
+      "category_tag": "MÊ CUNG SỐ 1 - 16",
+      "instruction": "NỐI CÁC SỐ LIÊN TIẾP TỪ 1 ĐẾN 16",
+      "dialogue": {
+        "gau_logic": "Số 1 nằm ở phía bên phải!",
+        "tho_quan_sat": "Tìm lần lượt đến số 16 nhé!"
+      },
+      "footer_guidance": "CHỈ ĐI QUA CÁC Ô CẠNH NHAU – KHÔNG ĐI CHÉO!",
+      "pedagogical_concept": "Củng cố nhận diện điểm xuất phát góc phải kèm mũi tên 'BẮT ĐẦU' nổi bật, giúp trẻ tự tin dò đường trong lưới.",
+      "grid_matrix": [
+        [17, 18, 19, 2, 1],
+        [20, 5, 4, 3, 21],
+        [22, 6, 7, 8, 9],
+        [16, 23, 12, 11, 10],
+        [15, 14, 13, 24, 25]
+      ],
+      "destination": "Ngôi Sao vàng 'ĐÍCH' ở r4c1",
+      "distractors": [17, 18, 19, 20, 21, 22, 23, 24, 25],
+      "digital_game_potential": {
+        "gt_code": "GT-013",
+        "gt_name": "Tìm đường mê cung (maze-route)",
+        "mechanic": "Hệ thống hỗ trợ highlight nhẹ ô (1) để dẫn dắt trẻ mới bắt đầu"
+      }
+    },
+    {
+      "page_number": 20,
+      "file_path": "pages/page-20.jpg",
+      "group_id": "D2",
+      "sub_group": "D2.3",
+      "page_type": "maze_route_activity",
+      "title": "Mê Cung Số 1 – 16: Tìm Đường Đến Vườn Hoa",
+      "category_tag": "MÊ CUNG SỐ 1 - 16",
+      "instruction": "NỐI CÁC SỐ LIÊN TIẾP TỪ 1 ĐẾN 16",
+      "dialogue": {
+        "gau_logic": "Bắt đầu từ số 1 ở góc dưới nhé!",
+        "tho_quan_sat": "Dẫn đường đến Vườn Hoa thật đẹp nào!"
+      },
+      "footer_guidance": "CHỈ ĐI QUA CÁC Ô CẠNH NHAU – KHÔNG ĐI CHÉO!",
+      "pedagogical_concept": "Xuất phát từ góc dưới bên trái (r5c1) và đi lên đỉnh rồi vòng sang phải. Thử thách khả năng tư duy không gian ngược hướng trọng lực (Bottom-up navigation).",
+      "grid_matrix": [
+        [17, 6, 7, 18, 19],
+        [20, 5, 8, 13, 14],
+        [3, 4, 9, 12, 15],
+        [2, 21, 10, 11, 16],
+        [1, 22, 23, 24, 25]
+      ],
+      "path_coordinates": [
+        {
+          "val": 1,
+          "r": 5,
+          "c": 1
+        },
+        {
+          "val": 2,
+          "r": 4,
+          "c": 1
+        },
+        {
+          "val": 3,
+          "r": 3,
+          "c": 1
+        },
+        {
+          "val": 4,
+          "r": 3,
+          "c": 2
+        },
+        {
+          "val": 5,
+          "r": 2,
+          "c": 2
+        },
+        {
+          "val": 6,
+          "r": 1,
+          "c": 2
+        },
+        {
+          "val": 7,
+          "r": 1,
+          "c": 3
+        },
+        {
+          "val": 8,
+          "r": 2,
+          "c": 3
+        },
+        {
+          "val": 9,
+          "r": 3,
+          "c": 3
+        },
+        {
+          "val": 10,
+          "r": 4,
+          "c": 3
+        },
+        {
+          "val": 11,
+          "r": 4,
+          "c": 4
+        },
+        {
+          "val": 12,
+          "r": 3,
+          "c": 4
+        },
+        {
+          "val": 13,
+          "r": 2,
+          "c": 4
+        },
+        {
+          "val": 14,
+          "r": 2,
+          "c": 5
+        },
+        {
+          "val": 15,
+          "r": 3,
+          "c": 5
+        },
+        {
+          "val": 16,
+          "r": 4,
+          "c": 5
+        }
+      ],
+      "destination": "Vườn hoa có hàng rào gỗ 'ĐÍCH' ở mép phải hàng 4 cạnh ô 16",
+      "distractors": [17, 18, 19, 20, 21, 22, 23, 24, 25],
+      "digital_game_potential": {
+        "gt_code": "GT-013",
+        "gt_name": "Tìm đường mê cung (maze-route)",
+        "mechanic": "Mỗi bước đi đúng, hoa trên đường nở rực rỡ, đưa đoàn tàu đến cổng Vườn Hoa"
+      }
+    },
+    {
+      "page_number": 21,
+      "file_path": "pages/page-21.jpg",
+      "group_id": "D2",
+      "sub_group": "D2.4",
+      "page_type": "maze_route_activity",
+      "title": "Mê Cung Số 1 – 16: Tìm Đường Đến Nhà Ga",
+      "category_tag": "MÊ CUNG SỐ 1 - 16",
+      "instruction": "NỐI CÁC SỐ LIÊN TIẾP TỪ 1 ĐẾN 16",
+      "dialogue": {
+        "gau_logic": "Điểm xuất phát ở giữa mép trái!",
+        "tho_quan_sat": "Cùng về đích ở Nhà Ga xe lửa nhé!"
+      },
+      "footer_guidance": "CHỈ ĐI QUA CÁC Ô CẠNH NHAU – KHÔNG ĐI CHÉO!",
+      "pedagogical_concept": "Xuất phát ở điểm giữa mép trái (r3c1), đường đi uốn lượn vòng cung lên trên rồi lượn 2 lượt sóng xuống đáy. Đòi hỏi tầm nhìn bao quát (visual scanning) rộng trên toàn ma trận.",
+      "grid_matrix": [
+        [3, 4, 11, 12, 17],
+        [2, 5, 10, 13, 18],
+        [1, 6, 9, 14, 19],
+        [20, 7, 8, 15, 21],
+        [22, 23, 24, 16, 25]
+      ],
+      "path_coordinates": [
+        {
+          "val": 1,
+          "r": 3,
+          "c": 1
+        },
+        {
+          "val": 2,
+          "r": 2,
+          "c": 1
+        },
+        {
+          "val": 3,
+          "r": 1,
+          "c": 1
+        },
+        {
+          "val": 4,
+          "r": 1,
+          "c": 2
+        },
+        {
+          "val": 5,
+          "r": 2,
+          "c": 2
+        },
+        {
+          "val": 6,
+          "r": 3,
+          "c": 2
+        },
+        {
+          "val": 7,
+          "r": 4,
+          "c": 2
+        },
+        {
+          "val": 8,
+          "r": 4,
+          "c": 3
+        },
+        {
+          "val": 9,
+          "r": 3,
+          "c": 3
+        },
+        {
+          "val": 10,
+          "r": 2,
+          "c": 3
+        },
+        {
+          "val": 11,
+          "r": 1,
+          "c": 3
+        },
+        {
+          "val": 12,
+          "r": 1,
+          "c": 4
+        },
+        {
+          "val": 13,
+          "r": 2,
+          "c": 4
+        },
+        {
+          "val": 14,
+          "r": 3,
+          "c": 4
+        },
+        {
+          "val": 15,
+          "r": 4,
+          "c": 4
+        },
+        {
+          "val": 16,
+          "r": 5,
+          "c": 4
+        }
+      ],
+      "destination": "Nhà Ga xe lửa mái ngói đỏ có tháp đồng hồ 'ĐÍCH' ở đáy dưới ô 16",
+      "distractors": [17, 18, 19, 20, 21, 22, 23, 24, 25],
+      "digital_game_potential": {
+        "gt_code": "GT-013",
+        "gt_name": "Tìm đường mê cung (maze-route)",
+        "mechanic": "Đoàn tàu hỏa lướt trên đường ray ma trận về đến cổng Ga an toàn"
+      }
+    },
+    {
+      "page_number": 22,
+      "file_path": "pages/page-22.jpg",
+      "group_id": "D2",
+      "sub_group": "D2.5",
+      "page_type": "maze_route_activity",
+      "title": "Mê Cung Số 1 – 16: Tìm Đường Đến Hộp Quà",
+      "category_tag": "MÊ CUNG SỐ 1 - 16",
+      "instruction": "NỐI CÁC SỐ LIÊN TIẾP TỪ 1 ĐẾN 16",
+      "dialogue": {
+        "gau_logic": "Bắt đầu ở số 1 góc trên bên trái!",
+        "tho_quan_sat": "Hộp quà bí mật đang chờ ở đích đấy!"
+      },
+      "footer_guidance": "CHỈ ĐI QUA CÁC Ô CẠNH NHAU – KHÔNG ĐI CHÉO!",
+      "pedagogical_concept": "Mê cung đường xoắn ốc phức tạp: xuất phát r1c1, xoắn vòng quanh các ô số, kết thúc tại ô 16 ở trung tâm hàng 4 (r4c3) trỏ xuống Hộp Quà. Rèn luyện sự kiên nhẫn và khả năng dự đoán trước nhiều bước (look-ahead).",
+      "grid_matrix": [
+        [1, 4, 5, 6, 17],
+        [2, 3, 8, 7, 18],
+        [11, 10, 9, 19, 20],
+        [12, 15, 16, 21, 22],
+        [13, 14, null, 24, 25]
+      ],
+      "path_coordinates": [
+        {
+          "val": 1,
+          "r": 1,
+          "c": 1
+        },
+        {
+          "val": 2,
+          "r": 2,
+          "c": 1
+        },
+        {
+          "val": 3,
+          "r": 2,
+          "c": 2
+        },
+        {
+          "val": 4,
+          "r": 1,
+          "c": 2
+        },
+        {
+          "val": 5,
+          "r": 1,
+          "c": 3
+        },
+        {
+          "val": 6,
+          "r": 1,
+          "c": 4
+        },
+        {
+          "val": 7,
+          "r": 2,
+          "c": 4
+        },
+        {
+          "val": 8,
+          "r": 2,
+          "c": 3
+        },
+        {
+          "val": 9,
+          "r": 3,
+          "c": 3
+        },
+        {
+          "val": 10,
+          "r": 3,
+          "c": 2
+        },
+        {
+          "val": 11,
+          "r": 3,
+          "c": 1
+        },
+        {
+          "val": 12,
+          "r": 4,
+          "c": 1
+        },
+        {
+          "val": 13,
+          "r": 5,
+          "c": 1
+        },
+        {
+          "val": 14,
+          "r": 5,
+          "c": 2
+        },
+        {
+          "val": 15,
+          "r": 4,
+          "c": 2
+        },
+        {
+          "val": 16,
+          "r": 4,
+          "c": 3
+        }
+      ],
+      "destination": "Hộp Quà bí mật thắt nơ vàng rực rỡ 'ĐÍCH' đặt ở đáy dưới ô 16",
+      "distractors": [17, 18, 19, 20, 21, 22, 24, 25],
+      "digital_game_potential": {
+        "gt_code": "GT-013",
+        "gt_name": "Tìm đường mê cung (maze-route)",
+        "mechanic": "Khi chạm vào ô 16, Hộp Quà mở nắp tung ra những ngôi sao lấp lánh và huy hiệu thưởng"
+      }
+    },
+    {
+      "page_number": 23,
+      "file_path": "pages/page-23.jpg",
+      "group_id": "SUMMARY",
+      "page_type": "stage_reward_summary",
+      "title": "Hoàn Thành Phần 2 - Đường Ray Số Thứ Tự",
+      "theme": "Lễ hội ga Toán Học mừng hoàn thành Chặng 2",
+      "dialogue": {
+        "gau_logic": "Bé đã hoàn thành các dãy số thật chính xác!",
+        "tho_quan_sat": "Đường Ray Số Thứ Tự đã sáng lên rồi!"
+      },
+      "visual_elements": {
+        "station": "Ga Toán Học rực rỡ với đầu tàu hơi nước kéo đủ 10 toa tàu đánh số 1 đến 10",
+        "progress_map": "Bản đồ Hành Trình Chuyến Tàu Toán Học gồm 20 chặng: Chặng 1 & Chặng 2 được đóng dấu tích xanh (Checkmark), Chặng 2 có huy hiệu 'BÉ ĐANG Ở ĐÂY'",
+        "parent_rating": "Khung 'BA MẸ CÙNG BÉ TÔ 3 NGÔI SAO NHÉ!' với 3 ngôi sao lớn",
+        "reward_gem": "Khung 'BÉ HÃY TÔ MÀU VIÊN NGỌC THỨ TỰ' với hình vẽ Viên Kim Cương khổng lồ nhiều giác cắt",
+        "call_to_action": "Banner 'SẴN SÀNG LÊN TÀU ĐẾN CHẶNG 3!'"
+      },
+      "digital_game_potential": {
+        "gt_code": "GT-000",
+        "gt_name": "Stage Completion Screen & Reward",
+        "mechanic": "Màn hình tổng kết chặng: Đọc lời chúc mừng của Gấu Logic & Thỏ Quan Sát, mở khóa huy hiệu 'Viên Ngọc Thứ Tự', ghi nhận mastery state BKT cho C1.NREC.09, điều hướng sang Chặng 3"
+      }
+    }
+  ],
+  "digital_conversion_matrix": {
+    "engine_gt_mapping": [
+      {
+        "gt_code": "GT-000",
+        "name": "Làm quen khái niệm (concept-intro)",
+        "used_in": ["Trang 1 (Bản đồ tổng quan)", "Trang 23 (Tổng kết chặng)"],
+        "mechanic": "Khám phá tương tác, nghe lồng tiếng dẫn truyện của Gấu Logic và Thỏ Quan Sát"
+      },
+      {
+        "gt_code": "GT-008",
+        "name": "Kéo vào ô chứa (drag-to-slot)",
+        "used_in": ["Trang 2..16 (Toàn bộ nhóm bài D1: điền số còn thiếu)"],
+        "mechanic": "Kéo thẻ số từ khay thả vào ô trống trên đường ray; hỗ trợ fallback tap-tap cho trẻ 3-4 tuổi"
+      },
+      {
+        "gt_code": "GT-001",
+        "name": "Chọn một đáp án (tap-select)",
+        "used_in": ["Trang 2..16 (Chế độ tap-tap fallback)"],
+        "mechanic": "Tap vào ô trống, khay số pop-up 3-4 lựa chọn để bé tap chọn số đúng"
+      },
+      {
+        "gt_code": "GT-013",
+        "name": "Tìm đường mê cung (maze-route)",
+        "used_in": ["Trang 17..22 (Toàn bộ nhóm bài D2: mê cung số 1-16)"],
+        "mechanic": "Quẹt hoặc tap nối chuỗi số tăng dần liên tiếp trên lưới 5x5 từ điểm xuất phát đến đích"
+      },
+      {
+        "gt_code": "GT-024",
+        "name": "Vẽ theo nét (trace-path)",
+        "used_in": ["Trang 17..22 (Chế độ quẹt ngón tay liên tục nối số)"],
+        "mechanic": "Vẽ đường ray liên tục qua các tâm ô số 1 -> 2 -> 3 ... -> 16"
+      },
+      {
+        "gt_code": "GT-006",
+        "name": "Sắp xếp thứ tự (sequence-order)",
+        "used_in": ["Trang 10 (Đếm ngược), Trang 13 (Ba cột dọc)"],
+        "mechanic": "Sắp xếp và hoán đổi vị trí các toa tàu / thẻ số theo thứ tự đúng"
+      }
+    ],
+    "skills_coverage": [
+      {
+        "skill_code": "C1.NREC.09",
+        "skill_name": "Thứ tự số",
+        "primary_pages": [
+          1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+          22, 23
+        ]
+      },
+      {
+        "skill_code": "C1.NREC.10",
+        "skill_name": "Số trước",
+        "primary_pages": [4, 5, 10, 14, 16]
+      },
+      {
+        "skill_code": "C1.NREC.11",
+        "skill_name": "Số sau",
+        "primary_pages": [2, 3, 4, 5, 6, 7, 8, 14, 15, 17, 18, 19, 20, 21, 22]
+      },
+      {
+        "skill_code": "C1.NREC.12",
+        "skill_name": "Số ở giữa",
+        "primary_pages": [2, 5, 6, 9, 13, 14, 15]
+      },
+      {
+        "skill_code": "C1.CNT.04",
+        "skill_name": "Đếm ngược",
+        "primary_pages": [10]
+      },
+      {
+        "skill_code": "C1.CNT.06",
+        "skill_name": "Đếm đến 5",
+        "primary_pages": [2, 3, 4, 5, 6, 9, 13]
+      },
+      {
+        "skill_code": "C1.CNT.07",
+        "skill_name": "Đếm đến 10",
+        "primary_pages": [8, 9, 10, 11, 13]
+      },
+      {
+        "skill_code": "C1.CNT.08",
+        "skill_name": "Đếm đến 20",
+        "primary_pages": [7, 8, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
+      },
+      {
+        "skill_code": "C1.CNT.10",
+        "skill_name": "Đếm cách 2",
+        "primary_pages": [15, 16]
+      }
+    ]
+  }
+}

@@ -20,6 +20,7 @@ import {
 import { VersionConflictError } from "@mindkid/errors/content";
 import { CustomGameNotFoundError } from "@mindkid/errors/game-level";
 import { getGameTemplate } from "@mindkid/game-engine/registry";
+import { moderateCustomGameMetadata } from "@mindkid/moderation";
 import {
   type CreateCustomGameInput,
   type CustomGameValidationResult,
@@ -30,11 +31,15 @@ import { and, desc, eq, sql } from "drizzle-orm";
 
 export const DEFAULT_CUSTOM_GAMES_SAVED_QUOTA = 10;
 
+type JsonPrimitive = string | number | boolean | null;
+type JsonValue = JsonPrimitive | { [key: string]: JsonValue } | JsonValue[];
+type JsonRecord = Record<string, JsonValue>;
+
 /**
  * Checks the user's custom game saved quota (BR-CGB-08).
  */
 export async function checkCustomGamesQuota(
-  db: ReturnType<typeof getDb>,
+  db: Pick<ReturnType<typeof getDb>, "select">,
   userId: number,
   quotaLimit = DEFAULT_CUSTOM_GAMES_SAVED_QUOTA
 ): Promise<number> {
@@ -56,6 +61,30 @@ export async function checkCustomGamesQuota(
   return currentCount;
 }
 
+function assertMetadataModerationPassed(
+  title: string | undefined,
+  instruction: string | undefined,
+  status: "draft" | "ready" | undefined
+): void {
+  const modResult = moderateCustomGameMetadata(title || "", instruction || "");
+  const isDraft = (status || "draft") === "draft";
+  const blockingIssues = isDraft
+    ? modResult.issues.filter(
+        (i) => i.category !== "negative_assertion" && i.severity === "block"
+      )
+    : modResult.issues.filter((i) => i.severity === "block");
+
+  if (blockingIssues.length > 0) {
+    throw new ValidationError({
+      message: "Tiêu đề hoặc chỉ dẫn chứa nội dung không phù hợp.",
+      issues: blockingIssues.map(
+        (i) => `Kiểm duyệt nội dung: ${i.message} (${i.term}).`
+      ),
+      missing: ["content_moderation_failed"],
+    });
+  }
+}
+
 /**
  * Creates a new custom game for the user (BR-CGB-01, BR-CGB-05, BR-CGB-08).
  */
@@ -65,19 +94,18 @@ export async function createCustomGame(
 ): Promise<CustomGame> {
   const db = getDb();
 
-  // 1. Quota check (BR-CGB-08)
-  await checkCustomGamesQuota(db, userId);
+  // Moderate metadata even in draft (profane/unsafe UGC metadata is never persisted in drafts)
+  assertMetadataModerationPassed(input.title, input.instruction, input.status);
 
-  // 2. If status is 'ready', enforce validation before saving (BR-CGB-05)
+  // 1. If status is 'ready', enforce validation before saving (BR-CGB-05)
   if (input.status === "ready") {
     const valResult = validateCustomGameContent(
       {
         template_code: input.template_code,
         title: input.title,
         instruction: input.instruction,
-        content_pack: input.content_pack as Record<string, unknown>,
-        difficulty_params:
-          (input.difficulty_params as Record<string, unknown>) || {},
+        content_pack: input.content_pack as JsonRecord,
+        difficulty_params: (input.difficulty_params as JsonRecord) || {},
         theme_id: input.theme_id,
         age_min: input.age_min,
         age_max: input.age_max,
@@ -95,8 +123,10 @@ export async function createCustomGame(
     }
   }
 
-  // 3. Insert record & audit in transaction
+  // 2. Insert record & audit in transaction with quota check inside
   const inserted = await db.transaction(async (tx) => {
+    await checkCustomGamesQuota(tx, userId);
+
     const [row] = await tx
       .insert(customGames)
       .values({
@@ -179,16 +209,17 @@ export async function listCustomGames(
     conditions.push(eq(customGames.templateId, filters.template_id));
   }
 
-  const items = await db
-    .select()
-    .from(customGames)
-    .where(and(...conditions))
-    .orderBy(desc(customGames.createdAt));
-
-  const [countResult] = await db
-    .select({ count: sql<number>`count(*)::int` })
-    .from(customGames)
-    .where(eq(customGames.userId, userId));
+  const [items, [countResult]] = await Promise.all([
+    db
+      .select()
+      .from(customGames)
+      .where(and(...conditions))
+      .orderBy(desc(customGames.createdAt)),
+    db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(customGames)
+      .where(eq(customGames.userId, userId)),
+  ]);
 
   return {
     items,
@@ -226,17 +257,24 @@ export async function updateCustomGame(
     title: input.title ?? existing.title,
     instruction: input.instruction ?? existing.instruction,
     content_pack:
-      (input.content_pack as Record<string, unknown>) ??
-      (existing.contentPack as Record<string, unknown>),
+      (input.content_pack as JsonRecord) ??
+      (existing.contentPack as JsonRecord),
     difficulty_params:
-      (input.difficulty_params as Record<string, unknown>) ??
-      (existing.difficultyParams as Record<string, unknown>),
+      (input.difficulty_params as JsonRecord) ??
+      (existing.difficultyParams as JsonRecord),
     theme_id: input.theme_id ?? existing.themeId,
     age_min: input.age_min ?? existing.ageMin,
     age_max: input.age_max ?? existing.ageMax,
     skill_ids: input.skill_ids ?? existing.skillIds,
     status: input.status ?? existing.status,
   };
+
+  // Moderate metadata even in draft (profane/unsafe UGC metadata is never persisted in drafts)
+  assertMetadataModerationPassed(
+    merged.title,
+    merged.instruction,
+    merged.status as "draft" | "ready" | undefined
+  );
 
   // If status is ready, enforce validation
   if (merged.status === "ready") {
@@ -267,15 +305,33 @@ export async function updateCustomGame(
         updatedAt: new Date(),
       })
       .where(
-        and(eq(customGames.id, existing.id), eq(customGames.userId, userId))
+        and(
+          eq(customGames.id, existing.id),
+          eq(customGames.userId, userId),
+          eq(customGames.version, existing.version)
+        )
       )
       .returning();
 
     if (!row) {
-      throw new ServiceUnavailableError(
-        "Không thể cập nhật trò chơi tùy chỉnh."
+      throw new VersionConflictError(
+        "Trò chơi đã được cập nhật bởi một phiên làm việc khác. Vui lòng tải lại trang."
       );
     }
+
+    await writeAudit(tx, {
+      actor_type: "user",
+      actor_id: userId,
+      action:
+        merged.status === "ready" ? "content_submitted" : "content_created",
+      entity_type: "custom_game",
+      entity_id: existing.uuid,
+      after_data: {
+        uuid: row.uuid,
+        status: row.status,
+        version: row.version,
+      },
+    });
 
     return row;
   });
@@ -330,8 +386,8 @@ export async function validateCustomGameRecord(
       template_code: game.templateId,
       title: game.title,
       instruction: game.instruction,
-      content_pack: game.contentPack as Record<string, unknown>,
-      difficulty_params: game.difficultyParams as Record<string, unknown>,
+      content_pack: game.contentPack as JsonRecord,
+      difficulty_params: game.difficultyParams as JsonRecord,
       theme_id: game.themeId,
       age_min: game.ageMin,
       age_max: game.ageMax,
@@ -352,28 +408,28 @@ export async function getCustomGamePlayConfig(
 ) {
   const db = getDb();
 
-  // 1. Verify child belongs to caller (BR-CGB-01, BR-ERR-05)
-  const [child] = await db
-    .select()
-    .from(childProfiles)
-    .where(
-      and(
-        eq(childProfiles.uuid, childUuid),
-        eq(childProfiles.userId, userId),
-        eq(childProfiles.status, "active")
-      )
-    );
+  // 1 & 2. Verify child and custom game in parallel (BR-CGB-01, BR-ERR-05)
+  const [[child], game] = await Promise.all([
+    db
+      .select()
+      .from(childProfiles)
+      .where(
+        and(
+          eq(childProfiles.uuid, childUuid),
+          eq(childProfiles.userId, userId),
+          eq(childProfiles.status, "active")
+        )
+      ),
+    getCustomGameByUuid(userId, gameUuid),
+  ]);
 
   if (!child) {
     throw new ChildNotFoundError(childUuid);
   }
 
-  // 2. Verify custom game belongs to caller (BR-CGB-01)
-  const game = await getCustomGameByUuid(userId, gameUuid);
-
   if (game.status !== "ready") {
     throw new ValidationError(
-      "Trò chơi này đang ở trạng thái bản nháp (draft);, chưa sẵn sàng để chơi."
+      "Trò chơi này đang ở trạng thái bản nháp (draft), chưa sẵn sàng để chơi."
     );
   }
 

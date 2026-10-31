@@ -46,7 +46,7 @@ describe("PDF Vietnamese TrueType Subset Font & ToUnicode CMap (BR-PDF-07)", () 
       items: [
         {
           position: 0,
-          item_type: "activity",
+          item_type: "game_level",
           snapshot: {
             title: "Bé đếm quả táo",
             description: "Hoạt động đếm từ 1 đến 5 cùng cô giáo.",

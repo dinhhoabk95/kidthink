@@ -42,59 +42,151 @@ export const C4_TOO_01_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "bowl",
-      label: "cái bát",
-      image: {
-        kind: "emoji",
-        ref: "🥣",
-      },
-      category: {
-        type: "đồ dùng",
-      },
-    },
-    {
-      id: "spoon",
-      label: "cái thìa",
-      image: {
-        kind: "emoji",
-        ref: "🥄",
-      },
-      category: {
-        type: "đồ dùng",
-      },
-    },
-    {
-      id: "cup",
-      label: "cái cốc",
-      image: {
-        kind: "emoji",
-        ref: "🥤",
-      },
-      category: {
-        type: "đồ dùng",
-      },
-    },
-    {
-      id: "bed",
-      label: "cái giường",
-      image: {
-        kind: "emoji",
-        ref: "🛏️",
-      },
-      category: {
-        type: "đồ dùng",
-      },
-    },
-    {
-      id: "chair",
-      label: "cái ghế",
+      id: "sit_straight",
+      label: "ghế ngồi thẳng",
       image: {
         kind: "emoji",
         ref: "🪑",
       },
       category: {
-        type: "đồ dùng",
+        type: "thói quen mắt",
       },
+      value: 1,
+      ordering: 1,
+      contrast_group: "habit",
+      audio_path: "/audio/vi/c4/sit_straight.mp3",
+    },
+    {
+      id: "safe_distance",
+      label: "thước canh chuẩn",
+      image: {
+        kind: "emoji",
+        ref: "📏",
+      },
+      category: {
+        type: "thói quen mắt",
+      },
+      value: 2,
+      ordering: 2,
+      contrast_group: "habit",
+      audio_path: "/audio/vi/c4/safe_distance.mp3",
+    },
+    {
+      id: "look_green",
+      label: "cây xanh mát",
+      image: {
+        kind: "emoji",
+        ref: "🌳",
+      },
+      category: {
+        type: "thói quen mắt",
+      },
+      value: 3,
+      ordering: 3,
+      contrast_group: "habit",
+      audio_path: "/audio/vi/c4/look_green.mp3",
+    },
+    {
+      id: "blink_rest",
+      label: "đôi mắt sáng",
+      image: {
+        kind: "emoji",
+        ref: "👀",
+      },
+      category: {
+        type: "thói quen mắt",
+      },
+      value: 4,
+      ordering: 4,
+      contrast_group: "habit",
+      audio_path: "/audio/vi/c4/blink_rest.mp3",
+    },
+    {
+      id: "study_lamp",
+      label: "đèn bàn sáng",
+      image: {
+        kind: "emoji",
+        ref: "💡",
+      },
+      category: {
+        type: "đồ dùng học",
+      },
+      value: 1,
+      ordering: 5,
+      contrast_group: "item",
+      audio_path: "/audio/vi/c4/study_lamp.mp3",
+    },
+    {
+      id: "safe_glasses",
+      label: "kính bảo vệ",
+      image: {
+        kind: "emoji",
+        ref: "👓",
+      },
+      category: {
+        type: "đồ dùng học",
+      },
+      value: 2,
+      ordering: 6,
+      contrast_group: "item",
+      audio_path: "/audio/vi/c4/safe_glasses.mp3",
+    },
+    {
+      id: "timer_clock",
+      label: "đồng hồ hẹn",
+      image: {
+        kind: "emoji",
+        ref: "⏰",
+      },
+      category: {
+        type: "đồ dùng học",
+      },
+      value: 3,
+      ordering: 7,
+      contrast_group: "item",
+      audio_path: "/audio/vi/c4/timer_clock.mp3",
+    },
+    {
+      id: "sun_window",
+      label: "cửa sổ sáng",
+      image: {
+        kind: "emoji",
+        ref: "🪟",
+      },
+      category: {
+        type: "đồ dùng học",
+      },
+      value: 4,
+      ordering: 8,
+      contrast_group: "item",
+      audio_path: "/audio/vi/c4/sun_window.mp3",
+    },
+  ],
+  axes: {
+    category: {
+      values: ["thói quen mắt", "đồ dùng học"],
+    },
+  },
+  relations: [
+    {
+      type: "contrast",
+      source_id: "sit_straight",
+      target_id: "study_lamp",
+    },
+    {
+      type: "contrast",
+      source_id: "safe_distance",
+      target_id: "safe_glasses",
+    },
+    {
+      type: "contrast",
+      source_id: "look_green",
+      target_id: "timer_clock",
+    },
+    {
+      type: "contrast",
+      source_id: "blink_rest",
+      target_id: "sun_window",
     },
   ],
   ladder: [
@@ -128,7 +220,16 @@ export const C4_TOO_01_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Ngồi đúng, nghỉ mắt nhé",
   },
-  ordering: ["bowl", "spoon", "cup", "bed", "chair"],
+  ordering: [
+    "sit_straight",
+    "safe_distance",
+    "look_green",
+    "blink_rest",
+    "study_lamp",
+    "safe_glasses",
+    "timer_clock",
+    "sun_window",
+  ],
 };
 
 export const C4_TOO_01_SEED: SkillSeed = {
@@ -157,62 +258,6 @@ export const C4_TOO_01_SEED: SkillSeed = {
       band: "4-5",
       difficulty: 1,
       theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-TOO-SIZE-0002",
-      template: "GT-009",
-      band: "4-5",
-      difficulty: 2,
-      theme: "space",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-TOO-MAZE-0001",
-      template: "GT-013",
-      band: "4-5",
-      difficulty: 1,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-TOO-MAZE-0002",
-      template: "GT-013",
-      band: "4-5",
-      difficulty: 2,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-TOO-BOND-0001",
-      template: "GT-018",
-      band: "4-5",
-      difficulty: 1,
-      theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-TOO-BOND-0002",
-      template: "GT-018",
-      band: "4-5",
-      difficulty: 2,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-TOO-TFRA-0001",
-      template: "GT-019",
-      band: "4-5",
-      difficulty: 1,
-      theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-TOO-TFRA-0002",
-      template: "GT-019",
-      band: "4-5",
-      difficulty: 2,
-      theme: "homeland",
       rounds: 3,
     },
   ],

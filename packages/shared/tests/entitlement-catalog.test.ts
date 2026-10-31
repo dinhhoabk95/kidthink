@@ -38,16 +38,16 @@ function collectSourceFiles(dir: string): string[] {
 }
 
 describe("Task 2 & 4: Entitlement and Catalog Registry (BR-ENT-01, BR-ENT-03, BR-MVP-02, BR-MVP-03, BR-PKG-01..08)", () => {
-  it("BR-ENT-01 & BR-ENT-03: ENTITLEMENT_KEYS has exactly 16 keys, 8 MVP and 8 pre-declared", () => {
-    expect(ENTITLEMENT_KEYS).toHaveLength(16);
+  it("BR-ENT-01 & BR-ENT-03: ENTITLEMENT_KEYS has exactly 13 keys, 8 MVP and 5 pre-declared", () => {
+    expect(ENTITLEMENT_KEYS).toHaveLength(13);
     const mvpKeys = ENTITLEMENT_KEYS.filter((k) => k.is_mvp);
     expect(mvpKeys).toHaveLength(8);
     const nonMvpKeys = ENTITLEMENT_KEYS.filter((k) => !k.is_mvp);
-    expect(nonMvpKeys).toHaveLength(8);
+    expect(nonMvpKeys).toHaveLength(5);
   });
 
-  it("QUOTA_KEYS has exactly 8 keys with units and cycles", () => {
-    expect(QUOTA_KEYS).toHaveLength(8);
+  it("QUOTA_KEYS has exactly 7 keys with units and cycles", () => {
+    expect(QUOTA_KEYS).toHaveLength(7);
   });
 
   it("assertEntitlementKey throws UNKNOWN_ENTITLEMENT_KEY for invalid keys", () => {
@@ -56,7 +56,7 @@ describe("Task 2 & 4: Entitlement and Catalog Registry (BR-ENT-01, BR-ENT-03, BR
     );
   });
 
-  it("BR-PKG-01 & BR-PKG-04: PACKAGE_CATALOG has exactly 2 public active MVP SKUs (PKG-standard, PKG-premium) and 4 hidden add-ons", () => {
+  it("BR-PKG-01 & BR-PKG-04: PACKAGE_CATALOG has exactly 2 public active MVP SKUs (PKG-standard, PKG-premium) and 3 hidden add-ons", () => {
     const packages = Object.values(PACKAGE_CATALOG);
     const publicPkgs = packages.filter(
       (p) => p.is_public && p.status === "active"
@@ -67,7 +67,7 @@ describe("Task 2 & 4: Entitlement and Catalog Registry (BR-ENT-01, BR-ENT-03, BR
       "PKG-standard",
       "PKG-premium",
     ]);
-    expect(addOnPkgs).toHaveLength(4);
+    expect(addOnPkgs).toHaveLength(3);
   });
 
   it("BR-MVP-02: public/sellable packages only grant MVP entitlement keys (is_mvp = true)", () => {
@@ -89,7 +89,7 @@ describe("Task 2 & 4: Entitlement and Catalog Registry (BR-ENT-01, BR-ENT-03, BR
     const addOnPkgs = Object.values(PACKAGE_CATALOG).filter(
       (p) => !p.is_public
     );
-    expect(addOnPkgs).toHaveLength(4);
+    expect(addOnPkgs).toHaveLength(3);
     for (const pkg of addOnPkgs) {
       expect(pkg.is_public).toBe(false);
       expect(pkg.requires_spec).toBeTruthy();

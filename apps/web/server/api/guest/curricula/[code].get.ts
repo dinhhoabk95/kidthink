@@ -4,33 +4,26 @@ import {
   curriculumWeeks,
   gameLevels,
   getOwnerDb,
-  lessons,
 } from "@mindkid/db";
-import { ContentArchivedError } from "@mindkid/errors/content";
 import { CurriculumNotFoundError } from "@mindkid/errors/curriculum";
 import {
   type AccessTier,
   COMPETENCY_LABELS,
-  type ProgramAlternativeSuggestion,
   type ProgramCompetencyShare,
   type RawCurriculumItemRecord,
   toProgramDetailPublic,
 } from "@mindkid/shared";
-import { and, asc, eq, inArray, ne, or } from "drizzle-orm";
+import { asc, eq, inArray } from "drizzle-orm";
 import { defineEventHandler, getRouterParam, setHeader } from "h3";
 
 const CURRICULUM_CODE_REGEX = /^CUR-[A-Za-z0-9_-]+$/;
-const COMPETENCY_REGEX = /^(?:GL-|LES-)?(C[1-6])/i;
+const COMPETENCY_REGEX = /^(?:GL-)?(C[1-6])/i;
 const ALL_COMPETENCIES = ["C1", "C2", "C3", "C4", "C5", "C6"];
 
 interface GameLevelMapEntry {
   code: string;
   title: string;
   accessTier: AccessTier;
-}
-
-interface LessonMapEntry extends GameLevelMapEntry {
-  estimatedMinutes?: number | null;
 }
 
 async function loadGameLevelsMap(
@@ -45,21 +38,12 @@ async function loadGameLevelsMap(
   const rows = await db
     .select({
       id: gameLevels.id,
-      entityId: gameLevels.entityId,
       code: gameLevels.code,
       title: gameLevels.title,
       accessTier: gameLevels.accessTier,
     })
     .from(gameLevels)
-    .where(
-      and(
-        or(
-          inArray(gameLevels.id, entityIds),
-          inArray(gameLevels.entityId, entityIds)
-        ),
-        eq(gameLevels.status, "published")
-      )
-    );
+    .where(inArray(gameLevels.id, entityIds));
 
   for (const row of rows) {
     const entry: GameLevelMapEntry = {
@@ -68,88 +52,8 @@ async function loadGameLevelsMap(
       accessTier: row.accessTier as AccessTier,
     };
     map.set(row.id, entry);
-    map.set(row.entityId, entry);
   }
   return map;
-}
-
-async function loadLessonsMap(
-  db: ReturnType<typeof getOwnerDb>,
-  entityIds: number[]
-): Promise<Map<number, LessonMapEntry>> {
-  const map = new Map<number, LessonMapEntry>();
-  if (entityIds.length === 0) {
-    return map;
-  }
-
-  const rows = await db
-    .select({
-      id: lessons.id,
-      entityId: lessons.entityId,
-      code: lessons.code,
-      title: lessons.title,
-      accessTier: lessons.accessTier,
-      estimatedMinutes: lessons.estimatedMinutes,
-    })
-    .from(lessons)
-    .where(
-      and(
-        or(
-          inArray(lessons.id, entityIds),
-          inArray(lessons.entityId, entityIds)
-        ),
-        eq(lessons.status, "published")
-      )
-    );
-
-  for (const row of rows) {
-    const entry: LessonMapEntry = {
-      code: row.code,
-      title: row.title,
-      accessTier: row.accessTier as AccessTier,
-      estimatedMinutes: row.estimatedMinutes,
-    };
-    map.set(row.id, entry);
-    map.set(row.entityId, entry);
-  }
-  return map;
-}
-
-async function handleArchivedCurriculum(
-  db: ReturnType<typeof getOwnerDb>,
-  curriculumCode: string
-): Promise<never> {
-  const alternativeRows = await db
-    .select({
-      code: curricula.code,
-      title: curricula.title,
-      accessTier: curricula.accessTier,
-      targetAgeMin: curricula.targetAgeMin,
-      targetAgeMax: curricula.targetAgeMax,
-    })
-    .from(curricula)
-    .where(
-      and(eq(curricula.status, "published"), ne(curricula.code, curriculumCode))
-    )
-    .orderBy(asc(curricula.targetAgeMin), asc(curricula.code))
-    .limit(3);
-
-  const suggestions: ProgramAlternativeSuggestion[] = alternativeRows.map(
-    (alt) => ({
-      code: alt.code,
-      title: alt.title,
-      access_tier: alt.accessTier as AccessTier,
-      target_age: {
-        min: alt.targetAgeMin ?? 3,
-        max: alt.targetAgeMax ?? 6,
-      },
-    })
-  );
-
-  throw new ContentArchivedError("Chương trình học này đã ngừng phát hành.", {
-    curriculum_code: curriculumCode,
-    suggestions,
-  });
 }
 
 function resolveSingleItem(
@@ -164,41 +68,18 @@ function resolveSingleItem(
   gameLevelsMap: Map<
     number,
     { code: string; title: string; accessTier: AccessTier }
-  >,
-  lessonsMap: Map<
-    number,
-    {
-      code: string;
-      title: string;
-      accessTier: AccessTier;
-      estimatedMinutes?: number | null;
-    }
   >
 ): RawCurriculumItemRecord {
-  if (item.entityType === "game_level") {
-    const gl = gameLevelsMap.get(item.entityId);
-    return {
-      weekNo: item.weekNo,
-      sessionNo: item.sessionNo,
-      position: item.position,
-      entityType: item.entityType,
-      code: gl?.code || "",
-      title: gl?.title || "",
-      estimatedMinutes: 10,
-      accessTier: gl?.accessTier || defaultTier,
-    };
-  }
-
-  const les = lessonsMap.get(item.entityId);
+  const gl = gameLevelsMap.get(item.entityId);
   return {
     weekNo: item.weekNo,
     sessionNo: item.sessionNo,
     position: item.position,
-    entityType: item.entityType,
-    code: les?.code || "",
-    title: les?.title || "",
-    estimatedMinutes: les?.estimatedMinutes || 20,
-    accessTier: les?.accessTier || defaultTier,
+    entityType: "game_level",
+    code: gl?.code || "",
+    title: gl?.title || "",
+    estimatedMinutes: 10,
+    accessTier: gl?.accessTier || defaultTier,
   };
 }
 
@@ -224,20 +105,12 @@ export default defineEventHandler(async (event) => {
       durationWeeks: curricula.durationWeeks,
       sessionsPerWeek: curricula.sessionsPerWeek,
       accessTier: curricula.accessTier,
-      status: curricula.status,
     })
     .from(curricula)
     .where(eq(curricula.code, code));
 
-  if (
-    !curriculum ||
-    (curriculum.status !== "published" && curriculum.status !== "archived")
-  ) {
+  if (!curriculum) {
     throw new CurriculumNotFoundError(code);
-  }
-
-  if (curriculum.status === "archived") {
-    await handleArchivedCurriculum(db, curriculum.code);
   }
 
   const rawWeeks = await db
@@ -269,26 +142,15 @@ export default defineEventHandler(async (event) => {
   const gameLevelIds = rawItems
     .filter((i) => i.entityType === "game_level")
     .map((i) => i.entityId);
-  const lessonIds = rawItems
-    .filter((i) => i.entityType === "lesson")
-    .map((i) => i.entityId);
 
-  const [gameLevelsMap, lessonsMap] = await Promise.all([
-    loadGameLevelsMap(db, gameLevelIds),
-    loadLessonsMap(db, lessonIds),
-  ]);
+  const gameLevelsMap = await loadGameLevelsMap(db, gameLevelIds);
 
   const defaultTier = curriculum.accessTier as AccessTier;
   const competencyCounts = new Map<string, number>();
   let totalCountedItems = 0;
 
   const resolvedItems: RawCurriculumItemRecord[] = rawItems.map((item) => {
-    const resolved = resolveSingleItem(
-      item,
-      defaultTier,
-      gameLevelsMap,
-      lessonsMap
-    );
+    const resolved = resolveSingleItem(item, defaultTier, gameLevelsMap);
     if (resolved.code) {
       const match = resolved.code.match(COMPETENCY_REGEX);
       const matchedComp = match?.[1];

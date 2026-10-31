@@ -8,7 +8,6 @@ import {
   childProfiles,
   gameLevels,
   getDb,
-  lessons,
   masteryState,
   playSessions,
   skills,
@@ -89,38 +88,38 @@ export class AiAssistantService {
     const ageBand: AgeBand = deriveAgeBand(birthYear, currentYear);
     const sinceDate = new Date(Date.now() - periodDays * 24 * 60 * 60 * 1000);
 
-    // Fetch aggregate sessions
-    const [sessionStats] = await db
-      .select({
-        totalSessions: sql<number>`count(*)::int`,
-        totalMinutes: sql<number>`coalesce(sum(${playSessions.durationSeconds}), 0)::int / 60`,
-        completedSessions: sql<number>`coalesce(sum(case when ${playSessions.completionStatus} = 'completed' then 1 else 0 end), 0)::int`,
-      })
-      .from(playSessions)
-      .where(
-        and(
-          eq(playSessions.childProfileId, childId),
-          gte(playSessions.startedAt, sinceDate)
-        )
-      );
+    // Fetch aggregate sessions & recent mastery skills in parallel
+    const [[sessionStats], masteryRows] = await Promise.all([
+      db
+        .select({
+          totalSessions: sql<number>`count(*)::int`,
+          totalMinutes: sql<number>`coalesce(sum(${playSessions.durationSeconds}), 0)::int / 60`,
+          completedSessions: sql<number>`coalesce(sum(case when ${playSessions.completionStatus} = 'completed' then 1 else 0 end), 0)::int`,
+        })
+        .from(playSessions)
+        .where(
+          and(
+            eq(playSessions.childProfileId, childId),
+            gte(playSessions.startedAt, sinceDate)
+          )
+        ),
+      db
+        .select({
+          skillCode: skills.code,
+          skillName: skills.name,
+          pLearn: masteryState.pLearn,
+          attempts: masteryState.attemptsTotal,
+        })
+        .from(masteryState)
+        .innerJoin(skills, eq(masteryState.skillId, skills.id))
+        .where(eq(masteryState.childProfileId, childId))
+        .limit(5),
+    ]);
 
     const sessions = sessionStats?.totalSessions ?? 0;
     const minutes = sessionStats?.totalMinutes ?? 0;
     const completionRate =
       sessions > 0 ? (sessionStats?.completedSessions ?? 0) / sessions : 1.0;
-
-    // Fetch child's recent mastery skills
-    const masteryRows = await db
-      .select({
-        skillCode: skills.code,
-        skillName: skills.name,
-        pLearn: masteryState.pLearn,
-        attempts: masteryState.attemptsTotal,
-      })
-      .from(masteryState)
-      .innerJoin(skills, eq(masteryState.skillId, skills.id))
-      .where(eq(masteryState.childProfileId, childId))
-      .limit(5);
 
     const formattedSkills = masteryRows.map((m) => {
       const p = Number(m.pLearn ?? 0);
@@ -186,7 +185,7 @@ export class AiAssistantService {
     let completion: Awaited<ReturnType<typeof aiProvider.summarizeReport>>;
     try {
       completion = await aiProvider.summarizeReport(payload);
-    } catch {
+    } catch (err) {
       await refundCredits({
         userId,
         cost: 1,
@@ -194,6 +193,9 @@ export class AiAssistantService {
         reason: "Lỗi kết nối nhà cung cấp AI",
         idempotencyKey: `refund-sum:${debit.ledgerEntry.id}`,
       });
+      if (err instanceof ModerationBlockedError) {
+        throw err;
+      }
       throw new ServiceUnavailableError(
         "Dịch vụ trợ lý AI tạm thời không khả dụng. Credit đã được hoàn trả."
       );
@@ -274,7 +276,7 @@ export class AiAssistantService {
     let completion: Awaited<ReturnType<typeof aiProvider.explainReport>>;
     try {
       completion = await aiProvider.explainReport(payload);
-    } catch {
+    } catch (err) {
       await refundCredits({
         userId,
         cost: 1,
@@ -282,6 +284,9 @@ export class AiAssistantService {
         reason: "Lỗi kết nối nhà cung cấp AI",
         idempotencyKey: `refund-exp:${debit.ledgerEntry.id}`,
       });
+      if (err instanceof ModerationBlockedError) {
+        throw err;
+      }
       throw new ServiceUnavailableError(
         "Dịch vụ trợ lý AI tạm thời không khả dụng. Credit đã được hoàn trả."
       );
@@ -337,7 +342,7 @@ export class AiAssistantService {
   }
 
   /**
-   * Suggests published games or lessons from library (BR-AIA-05, BR-AIA-06, BR-AIA-10).
+   * Suggests published games from library (BR-AIA-05, BR-AIA-06, BR-AIA-10).
    * Read-only against catalog; NEVER mutates curriculum enrollments or authors new content.
    */
   async suggestContent(
@@ -345,7 +350,7 @@ export class AiAssistantService {
     options: {
       childUuid?: string;
       targetSkillCode?: string;
-      contentType?: "game" | "lesson";
+      contentType?: "game";
       limit?: number;
     } = {}
   ) {
@@ -374,47 +379,6 @@ export class AiAssistantService {
       activeKeys
     );
 
-    if (options.contentType === "lesson") {
-      const lessonRows = await db
-        .select({
-          code: lessons.code,
-          title: lessons.title,
-          accessTier: lessons.accessTier,
-        })
-        .from(lessons)
-        .where(eq(lessons.status, "published"))
-        .orderBy(desc(lessons.id))
-        .limit(safeLimit);
-
-      const suggestions = lessonRows.map((item) => ({
-        code: item.code,
-        title: item.title,
-        type: "lesson",
-        access_tier: item.accessTier,
-        locked: !allowed.includes(item.accessTier as AccessTier),
-      }));
-
-      await db.insert(aiUsageLog).values({
-        userId,
-        feature: "content_recommendation",
-        creditsSpent: 1,
-        model: "system-recommender",
-        promptVersion: "v1.0",
-        inputTokens: 40,
-        outputTokens: 40,
-        costUsdMicros: 0,
-        moderationPassed: true,
-      });
-
-      return {
-        suggestions,
-        label: AI_SUGGESTION_LABEL, // BR-AIA-03
-        credits_spent: 1,
-        remaining_balance: debit.newBalance,
-      };
-    }
-
-    // Default to game levels
     const levels = await db
       .select({
         code: gameLevels.code,
@@ -423,7 +387,6 @@ export class AiAssistantService {
         accessTier: gameLevels.accessTier,
       })
       .from(gameLevels)
-      .where(eq(gameLevels.status, "published"))
       .orderBy(desc(gameLevels.id))
       .limit(safeLimit);
 
@@ -457,7 +420,7 @@ export class AiAssistantService {
   }
 
   /**
-   * Rewrites an activity or lesson guide in clear, friendly language (BR-AIA-05, BR-AIA-07..11).
+   * Rewrites a game guide in clear, friendly language (BR-AIA-05, BR-AIA-07..11).
    */
   async rewriteGuide(
     userId: number,
@@ -477,7 +440,7 @@ export class AiAssistantService {
     let completion: Awaited<ReturnType<typeof aiProvider.rewriteGuide>>;
     try {
       completion = await aiProvider.rewriteGuide(guideText, targetAudience);
-    } catch {
+    } catch (err) {
       await refundCredits({
         userId,
         cost: 2,
@@ -485,6 +448,9 @@ export class AiAssistantService {
         reason: "Lỗi kết nối nhà cung cấp AI",
         idempotencyKey: `refund-rew:${debit.ledgerEntry.id}`,
       });
+      if (err instanceof ModerationBlockedError) {
+        throw err;
+      }
       throw new ServiceUnavailableError(
         "Dịch vụ trợ lý AI tạm thời không khả dụng. Credit đã được hoàn trả."
       );

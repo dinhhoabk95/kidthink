@@ -1,10 +1,15 @@
 import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 
 import { EventPayloadSchema, ingestPlayEvents } from "@mindkid/play";
-import { defineEventHandler, getRouterParam, readBody } from "h3";
+import { defineEventHandler, getRouterParam } from "h3";
 import { z } from "zod";
 
-import { requireWebUserSession } from "#server/utils/auth-runtime";
+import {
+  enforceTwoAxisRateLimit,
+  getOrSetGuestDeviceId,
+  requireWebUserSession,
+} from "#server/utils/auth-runtime";
+import { readJsonBodyWithLimit } from "#server/utils/request-body";
 
 const EventsSchema = z
   .object({
@@ -26,13 +31,16 @@ const EventsSchema = z
   .strict();
 
 export default defineEventHandler(async (event) => {
-  const user = await requireWebUserSession(event);
+  const user = requireWebUserSession(event);
   const uuid = getRouterParam(event, "uuid");
   if (!uuid) {
     throw new NotFoundError("NOT_FOUND");
   }
 
-  const parsed = EventsSchema.safeParse((await readBody(event)) || {});
+  await enforceTwoAxisRateLimit(event, "play:events", String(user.user_id));
+
+  const rawBody = await readJsonBodyWithLimit(event);
+  const parsed = EventsSchema.safeParse(rawBody);
   if (!parsed.success) {
     throw new ValidationError();
   }
@@ -41,6 +49,7 @@ export default defineEventHandler(async (event) => {
   const result = await ingestPlayEvents(uuid, events, {
     isUserCall: true,
     callerAccountId: user.user_id,
+    guestDeviceId: getOrSetGuestDeviceId(event),
   });
 
   return result;

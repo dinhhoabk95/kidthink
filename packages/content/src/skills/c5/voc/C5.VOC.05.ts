@@ -49,8 +49,10 @@ export const C5_VOC_05_DATASET: SkillDataset = {
         ref: "🚲",
       },
       category: {
-        type: "phương tiện",
+        type: "xe đường bộ",
       },
+      value: 1,
+      contrast_group: "primary",
     },
     {
       id: "voc_xe_may",
@@ -60,8 +62,10 @@ export const C5_VOC_05_DATASET: SkillDataset = {
         ref: "🛵",
       },
       category: {
-        type: "phương tiện",
+        type: "xe đường bộ",
       },
+      value: 2,
+      contrast_group: "primary",
     },
     {
       id: "voc_o_to",
@@ -71,8 +75,10 @@ export const C5_VOC_05_DATASET: SkillDataset = {
         ref: "🚗",
       },
       category: {
-        type: "phương tiện",
+        type: "xe đường bộ",
       },
+      value: 3,
+      contrast_group: "primary",
     },
     {
       id: "voc_xe_bus",
@@ -82,8 +88,36 @@ export const C5_VOC_05_DATASET: SkillDataset = {
         ref: "🚌",
       },
       category: {
-        type: "phương tiện",
+        type: "xe đường bộ",
       },
+      value: 4,
+      contrast_group: "primary",
+    },
+    {
+      id: "voc_tau_hoa",
+      label: "tàu hỏa",
+      image: {
+        kind: "emoji",
+        ref: "🚂",
+      },
+      category: {
+        type: "tàu máy bay",
+      },
+      value: 5,
+      contrast_group: "contrast",
+    },
+    {
+      id: "voc_tau_thuy",
+      label: "tàu thủy",
+      image: {
+        kind: "emoji",
+        ref: "🚢",
+      },
+      category: {
+        type: "tàu máy bay",
+      },
+      value: 6,
+      contrast_group: "contrast",
     },
     {
       id: "voc_may_bay",
@@ -93,9 +127,40 @@ export const C5_VOC_05_DATASET: SkillDataset = {
         ref: "✈️",
       },
       category: {
-        type: "phương tiện",
+        type: "tàu máy bay",
       },
+      value: 7,
+      contrast_group: "contrast",
     },
+    {
+      id: "voc_truc_thang",
+      label: "trực thăng",
+      image: {
+        kind: "emoji",
+        ref: "🚁",
+      },
+      category: {
+        type: "tàu máy bay",
+      },
+      value: 8,
+      contrast_group: "contrast",
+    },
+  ],
+  axes: {
+    category: {
+      values: ["xe đường bộ", "tàu máy bay"],
+      ordered: true,
+    },
+  },
+  relations: [
+    { type: "pair", source_id: "voc_xe_dap", target_id: "voc_xe_may" },
+    { type: "pair", source_id: "voc_o_to", target_id: "voc_xe_bus" },
+    { type: "pair", source_id: "voc_tau_hoa", target_id: "voc_tau_thuy" },
+    { type: "pair", source_id: "voc_may_bay", target_id: "voc_truc_thang" },
+    { type: "contrast", source_id: "voc_xe_dap", target_id: "voc_tau_hoa" },
+    { type: "contrast", source_id: "voc_xe_may", target_id: "voc_tau_thuy" },
+    { type: "contrast", source_id: "voc_o_to", target_id: "voc_may_bay" },
+    { type: "contrast", source_id: "voc_xe_bus", target_id: "voc_truc_thang" },
   ],
   ladder: [
     {
@@ -133,7 +198,10 @@ export const C5_VOC_05_DATASET: SkillDataset = {
     "voc_xe_may",
     "voc_o_to",
     "voc_xe_bus",
+    "voc_tau_hoa",
+    "voc_tau_thuy",
     "voc_may_bay",
+    "voc_truc_thang",
   ],
 };
 
@@ -163,62 +231,6 @@ export const C5_VOC_05_SEED: SkillSeed = {
       band: "3-4",
       difficulty: 1,
       theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-TCMP-0010",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 2,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-PATT-0009",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 1,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-PATT-0010",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 2,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-SLOT-0007",
-      template: "GT-008",
-      band: "3-4",
-      difficulty: 1,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-SLOT-0008",
-      template: "GT-008",
-      band: "3-4",
-      difficulty: 2,
-      theme: "ocean",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-MEMO-0007",
-      template: "GT-012",
-      band: "3-4",
-      difficulty: 1,
-      theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-MEMO-0008",
-      template: "GT-012",
-      band: "3-4",
-      difficulty: 2,
-      theme: "vehicle",
       rounds: 3,
     },
   ],

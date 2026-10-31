@@ -42,59 +42,94 @@ export const C5_QUE_04_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "que_buoi_sang",
-      label: "buổi sáng thức dậy",
+      id: "que_sang_som",
+      label: "sáng sớm thức dậy",
+      value: 1,
+      ordering: 1,
       image: {
         kind: "emoji",
         ref: "🌅",
       },
+      audio_path: "/audio/vi/c5/que/buoi_sang.mp3",
       category: {
-        type: "câu hỏi khi nào",
+        type: "buổi ban ngày",
       },
+      contrast_group: "primary",
+    },
+    {
+      id: "que_buoi_sang",
+      label: "buổi sáng đi học",
+      value: 2,
+      ordering: 2,
+      image: {
+        kind: "emoji",
+        ref: "🎒",
+      },
+      audio_path: "/audio/vi/c5/que/buoi_sang.mp3",
+      category: {
+        type: "buổi ban ngày",
+      },
+      contrast_group: "primary",
     },
     {
       id: "que_buoi_trua",
       label: "buổi trưa ăn cơm",
+      value: 3,
+      ordering: 3,
       image: {
         kind: "emoji",
         ref: "☀️",
       },
+      audio_path: "/audio/vi/c5/que/buoi_trua.mp3",
       category: {
-        type: "câu hỏi khi nào",
+        type: "buổi ban ngày",
       },
+      contrast_group: "primary",
     },
     {
       id: "que_buoi_chieu",
       label: "buổi chiều tan trường",
+      value: 4,
+      ordering: 4,
       image: {
         kind: "emoji",
         ref: "🌇",
       },
+      audio_path: "/audio/vi/c5/que/buoi_chieu.mp3",
       category: {
-        type: "câu hỏi khi nào",
+        type: "buổi chiều tối",
       },
+      contrast_group: "contrast",
     },
     {
       id: "que_buoi_toi",
-      label: "buổi tối đi ngủ",
+      label: "buổi tối ăn cơm",
+      value: 5,
+      ordering: 5,
+      image: {
+        kind: "emoji",
+        ref: "🍲",
+      },
+      audio_path: "/audio/vi/c5/que/buoi_toi.mp3",
+      category: {
+        type: "buổi chiều tối",
+      },
+      contrast_group: "contrast",
+    },
+    {
+      id: "que_ban_dem",
+      label: "ban đêm đi ngủ",
+      value: 6,
+      ordering: 6,
       image: {
         kind: "emoji",
         ref: "🌙",
       },
+      audio_path: "/audio/vi/c5/que/buoi_toi.mp3",
       category: {
-        type: "câu hỏi khi nào",
+        type: "buổi chiều tối",
       },
-    },
-    {
-      id: "que_tet_den",
-      label: "ngày Tết sum vầy",
-      image: {
-        kind: "emoji",
-        ref: "🎆",
-      },
-      category: {
-        type: "câu hỏi khi nào",
-      },
+      contrast_group: "contrast",
     },
   ],
   ladder: [
@@ -129,11 +164,40 @@ export const C5_QUE_04_DATASET: SkillDataset = {
     narration_template: 'Chúng mình cùng tìm hiểu về Trả lời "Khi nào?" nhé',
   },
   ordering: [
+    "que_sang_som",
     "que_buoi_sang",
     "que_buoi_trua",
     "que_buoi_chieu",
     "que_buoi_toi",
-    "que_tet_den",
+    "que_ban_dem",
+  ],
+  axes: {
+    category: {
+      values: ["buổi ban ngày", "buổi chiều tối"],
+      ordered: true,
+    },
+  },
+  relations: [
+    {
+      type: "sequence",
+      source_id: "que_sang_som",
+      target_id: "que_buoi_sang",
+    },
+    {
+      type: "sequence",
+      source_id: "que_buoi_chieu",
+      target_id: "que_buoi_toi",
+    },
+    {
+      type: "pair",
+      source_id: "que_sang_som",
+      target_id: "que_buoi_trua",
+    },
+    {
+      type: "contrast",
+      source_id: "que_sang_som",
+      target_id: "que_ban_dem",
+    },
   ],
 };
 
@@ -163,62 +227,6 @@ export const C5_QUE_04_SEED: SkillSeed = {
       band: "4-5",
       difficulty: 3,
       theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-QUE-SLOT-0002",
-      template: "GT-008",
-      band: "4-5",
-      difficulty: 4,
-      theme: "space",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-QUE-MAZE-0001",
-      template: "GT-013",
-      band: "4-5",
-      difficulty: 3,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-QUE-MAZE-0002",
-      template: "GT-013",
-      band: "4-5",
-      difficulty: 4,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-QUE-BAL-0001",
-      template: "GT-016",
-      band: "5-6",
-      difficulty: 3,
-      theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-QUE-BAL-0002",
-      template: "GT-016",
-      band: "5-6",
-      difficulty: 4,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-QUE-BOND-0001",
-      template: "GT-018",
-      band: "4-5",
-      difficulty: 3,
-      theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-QUE-BOND-0002",
-      template: "GT-018",
-      band: "4-5",
-      difficulty: 4,
-      theme: "homeland",
       rounds: 3,
     },
   ],

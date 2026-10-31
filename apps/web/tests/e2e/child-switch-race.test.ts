@@ -6,7 +6,6 @@ import {
   curriculumItems,
   curriculumWeeks,
   gameLevels,
-  gameTemplates,
   getOwnerDb,
   users,
 } from "@mindkid/db";
@@ -87,22 +86,8 @@ describe("Task #82 E2E Simulation — Multi-Child Switch Race & Isolation (BR-MD
       .returning();
     childBId = cB.id;
 
-    // 3. Seed template & level
+    // 3. Seed level
     const templateCode = "GT-001";
-    await db
-      .insert(gameTemplates)
-      .values({
-        code: templateCode,
-        name: "Game template test Race",
-        mechanic: "drag_drop",
-        contentContract: {},
-      })
-      .onConflictDoNothing();
-    const [gt] = await db
-      .select({ id: gameTemplates.id })
-      .from(gameTemplates)
-      .where(eq(gameTemplates.code, templateCode));
-    const templateId = gt?.id ?? 1;
 
     let glCode = `GL-C1-NUM-CNT-${String(Math.floor(1000 + Math.random() * 8999))}`;
     for (let attempt = 0; attempt < 50; attempt++) {
@@ -122,12 +107,10 @@ describe("Task #82 E2E Simulation — Multi-Child Switch Race & Isolation (BR-MD
       .insert(gameLevels)
       .values({
         code: glCode,
-        entityId: Math.floor(100_000 + Math.random() * 800_000),
-        templateId,
+        templateCode,
         difficulty: 1,
         title: "Đếm số trái cây",
         accessTier: "standard",
-        status: "published",
         contentPack: { items: ["apple"] },
         difficultyParams: { count: 3 },
       })
@@ -138,10 +121,8 @@ describe("Task #82 E2E Simulation — Multi-Child Switch Race & Isolation (BR-MD
       .insert(curricula)
       .values({
         code: `CUR-RACE-A-${ts}-${rand}`.slice(0, 50),
-        entityId: Math.floor(100_000 + Math.random() * 800_000),
         title: "Lộ trình tư duy mầm non 4-5 tuổi",
         accessTier: "standard",
-        status: "published",
         durationWeeks: 4,
         sessionsPerWeek: 3,
       })

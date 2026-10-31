@@ -1,8 +1,13 @@
 // @vitest-environment happy-dom
 import { COMPLIMENTS } from "@mindkid/game-engine";
-import { mount } from "@vue/test-utils";
+import { config, mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
 import VictoryModal from "~/components/kid/victory-modal.vue";
+
+config.global.stubs = {
+  UIcon: { template: '<span :class="$attrs.class"><slot /></span>' },
+  NuxtLink: { template: "<a><slot /></a>" },
+};
 
 const DIGIT_REGEX = /\d/;
 

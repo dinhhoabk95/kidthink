@@ -73,9 +73,15 @@ export const PURGE_TABLE_CLASSIFICATIONS: readonly TablePurgeMetadata[] = [
     legalBasis: "BR-CDC-10 & BR-ADL-01",
   },
   {
-    tableName: "level_params",
+    tableName: "child_badges",
     classification: "delete",
-    reason: "Xoá tham số độ khó thích ứng ZPD của trẻ",
+    reason: "Xoá huy hiệu đạt được của trẻ khi xoá hồ sơ trẻ",
+    legalBasis: "BR-CDC-10 & BR-ADL-01",
+  },
+  {
+    tableName: "child_stickers",
+    classification: "delete",
+    reason: "Xoá bộ sưu tập sticker của trẻ khi xoá hồ sơ trẻ",
     legalBasis: "BR-CDC-10 & BR-ADL-01",
   },
   {
@@ -139,10 +145,34 @@ export const PURGE_TABLE_CLASSIFICATIONS: readonly TablePurgeMetadata[] = [
     legalBasis: "BR-ADL-01 & BR-CGB-01",
   },
   {
-    tableName: "user_tags",
+    tableName: "collections",
     classification: "delete",
-    reason: "Xoá gắn thẻ cá nhân hoá người dùng",
+    reason: "Xoá bộ sưu tập thư viện cá nhân của người dùng",
     legalBasis: "BR-ADL-01",
+  },
+  {
+    tableName: "library_items",
+    classification: "delete",
+    reason: "Xoá các mục đã lưu trong thư viện cá nhân của người dùng",
+    legalBasis: "BR-ADL-01",
+  },
+  {
+    tableName: "mfa_recovery_requests",
+    classification: "delete",
+    reason: "Xoá yêu cầu khôi phục MFA của người dùng",
+    legalBasis: "BR-ADL-01",
+  },
+  {
+    tableName: "export_jobs",
+    classification: "delete",
+    reason: "Xoá tiến trình xuất báo cáo PDF của người dùng",
+    legalBasis: "BR-ADL-01 & BR-PDF-01",
+  },
+  {
+    tableName: "recurring_subscriptions",
+    classification: "delete",
+    reason: "Xoá đăng ký gia hạn định kỳ khi đóng tài khoản",
+    legalBasis: "BR-ADL-01 & BR-RBL-01",
   },
   {
     tableName: "notifications",
@@ -193,6 +223,13 @@ export const PURGE_TABLE_CLASSIFICATIONS: readonly TablePurgeMetadata[] = [
 
   // --- Group 3: RETAIN ---
   {
+    tableName: "ai_usage_log",
+    classification: "retain",
+    reason:
+      "Nhật ký thống kê token và chi phí AI (không chứa PII, liên kết tới bản ghi user đã ẩn danh)",
+    legalBasis: "BR-AIA-05 & BR-ADL-05",
+  },
+  {
     tableName: "audit_logs",
     classification: "retain",
     reason:
@@ -226,18 +263,6 @@ export const PURGE_TABLE_CLASSIFICATIONS: readonly TablePurgeMetadata[] = [
     legalBasis: "BR-ADA-01",
   },
   {
-    tableName: "content_review_log",
-    classification: "retain",
-    reason: "Nhật ký duyệt nội dung của ban biên tập",
-    legalBasis: "BR-AUD-01",
-  },
-  {
-    tableName: "content_seed_batches",
-    classification: "retain",
-    reason: "Lịch sử nạp dữ liệu mầm nội dung",
-    legalBasis: "BR-SDB-01",
-  },
-  {
     tableName: "backup_log",
     classification: "retain",
     reason: "Nhật ký sao lưu và kiểm thử khôi phục cơ sở dữ liệu",
@@ -256,10 +281,47 @@ export const PURGE_TABLE_CLASSIFICATIONS: readonly TablePurgeMetadata[] = [
     legalBasis: "BR-PKG-01",
   },
   {
-    tableName: "package_entitlements",
+    tableName: "payment_transactions",
     classification: "retain",
-    reason: "Cấu hình quyền theo gói sản phẩm",
-    legalBasis: "BR-PKG-01",
+    reason:
+      "Chứng từ giao dịch cổng thanh toán lưu trữ phục vụ đối soát kế toán",
+    legalBasis: "BR-RBL-05 & Luật Kế toán",
+  },
+  {
+    tableName: "consent_requirements",
+    classification: "retain",
+    reason: "Cấu hình yêu cầu đồng ý pháp lý cấp hệ thống",
+    legalBasis: "BR-LCA-01",
+  },
+  {
+    tableName: "curriculum_weeks",
+    classification: "retain",
+    reason: "Cấu trúc tuần của lộ trình học sư phạm",
+    legalBasis: "BR-CUR-01",
+  },
+  {
+    tableName: "game_level_rounds",
+    classification: "retain",
+    reason: "Cấu hình vòng chơi của màn chơi tương tác",
+    legalBasis: "BR-GDP-01",
+  },
+  {
+    tableName: "skill_datasets",
+    classification: "retain",
+    reason: "Bộ dữ liệu khái niệm kỹ năng sư phạm",
+    legalBasis: "BR-SDS-01",
+  },
+  {
+    tableName: "feature_flags",
+    classification: "retain",
+    reason: "Cấu hình cờ tính năng toàn hệ thống",
+    legalBasis: "BR-FLG-01",
+  },
+  {
+    tableName: "error_logs",
+    classification: "retain",
+    reason: "Nhật ký lỗi vận hành hệ thống đã ẩn danh PII",
+    legalBasis: "BR-ERR-01",
   },
   {
     tableName: "competencies",
@@ -308,42 +370,6 @@ export const PURGE_TABLE_CLASSIFICATIONS: readonly TablePurgeMetadata[] = [
     classification: "retain",
     reason: "Màn chơi tương tác được biên soạn",
     legalBasis: "BR-GDP-01",
-  },
-  {
-    tableName: "lessons",
-    classification: "retain",
-    reason: "Bài học sư phạm tương tác",
-    legalBasis: "BR-LSN-01",
-  },
-  {
-    tableName: "activities",
-    classification: "retain",
-    reason: "Hoạt động học tập mầm non",
-    legalBasis: "BR-ACT-01",
-  },
-  {
-    tableName: "lesson_activities",
-    classification: "retain",
-    reason: "Liên kết bài học và hoạt động",
-    legalBasis: "BR-LSN-01",
-  },
-  {
-    tableName: "worksheets",
-    classification: "retain",
-    reason: "Phiếu bài tập in ấn",
-    legalBasis: "BR-WSK-01",
-  },
-  {
-    tableName: "content_images",
-    classification: "retain",
-    reason: "Kho hình ảnh minh hoạ bài học",
-    legalBasis: "BR-AST-01",
-  },
-  {
-    tableName: "content_audio",
-    classification: "retain",
-    reason: "Kho âm thanh thuyết minh và hiệu ứng bài học",
-    legalBasis: "BR-AST-01",
   },
   {
     tableName: "content_tags",

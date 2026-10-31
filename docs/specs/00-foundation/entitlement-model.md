@@ -74,7 +74,7 @@ if (await hasEntitlement(userId, "play_premium_games")) { … }
 | `BR-ENT-02` | Năng lực = **hợp** của mọi entitlement hiệu lực. Không gói nào ghi đè gói khác | Một người dùng sản phẩm ở nhà và trên lớp là ca dùng chính |
 | `BR-ENT-03` | `entitlement_keys` là **Lớp 1** — admin không tạo/sửa/xoá qua UI | Key là hằng số mà code tham chiếu. Sửa từ UI làm code gate một key không tồn tại |
 | `BR-ENT-04` | Key được khai báo nhưng **không gói MVP nào cấp** vẫn hợp lệ (key add-on) | Khai báo trước giữ contract ổn định; nhưng không được bán |
-| `BR-ENT-05` | Hết hạn **không xoá dữ liệu**. `child_profiles`, `mastery_state`, `lesson_plans` giữ nguyên | Mua lại là mở lại, không phải bắt đầu lại |
+| `BR-ENT-05` | Hết hạn **không xoá dữ liệu**. `child_profiles`, `mastery_state` giữ nguyên | Mua lại là mở lại, không phải bắt đầu lại |
 | `BR-ENT-06` | Đọc năng lực từ **DB/cache**, không từ session projection | Session sống một giờ; thu hồi phải có hiệu lực ngay |
 | `BR-ENT-07` | Quota cạn → **402**, không degrade âm thầm | Degrade im lặng biến vấn đề thanh toán thành báo cáo lỗi chất lượng |
 | `BR-ENT-08` | Add-on là **trục độc lập** — không mở `access_tier` nào | Chi phí add-on là biến phí; gộp vào tier cố định mất kiểm soát chi phí |
@@ -95,16 +95,13 @@ if (await hasEntitlement(userId, "play_premium_games")) { … }
 | `manage_children` | account | Có | mọi User đã đăng nhập |
 | `view_basic_report` | report | Có | mọi User đã đăng nhập |
 | `view_advanced_report` | report | Có | `standard`, `premium` |
-| `create_lesson_plan` | creator | Không | `addon_lesson_plan` |
-| `duplicate_lesson` | creator | Không | `addon_lesson_plan` |
-| `customize_lesson` | creator | Không | `addon_lesson_plan` |
-| `export_pdf` | creator | Không | `addon_lesson_plan` |
+| `export_pdf` | creator | Không | `addon_curriculum` |
 | `create_custom_curriculum` | creator | Không | `addon_curriculum` |
 | `create_custom_game` | creator | Không | `addon_custom_game` |
 | `use_ai_analysis` | ai | Không | `addon_ai` |
 | `use_ai_search` | ai | Không | `addon_ai` |
 
-**16 key. 8 mở được ở MVP, 8 khai báo trước.** Key add-on tồn tại trong registry nhưng
+**13 key. 8 mở được ở MVP, 5 khai báo trước.** Key add-on tồn tại trong registry nhưng
 `package_entitlements` không có hàng nào cấp chúng ở MVP.
 
 ### 7.2 Bảng `entitlements`
@@ -128,7 +125,6 @@ Index: `(user_id, status, expires_at)`.
 | `child_profiles` | hồ sơ | không reset | 1 | 3 | 5 |
 | `daily_play_minutes` | phút / trẻ | ngày (ICT) | 30 | 60 | 90 |
 | `data_export` | lượt | 24h | 1 | 1 | 1 |
-| `lesson_plans_per_month` | giáo án | tháng | — | — | — *(add-on)* |
 | `custom_games_saved` | game | không reset | — | — | — *(add-on)* |
 | `ai_calls` | lượt | tháng | — | — | — *(add-on)* |
 | `upload_mb` | MB | không reset | — | — | — *(add-on)* |
@@ -183,7 +179,7 @@ vẫn kiểm lại ở mọi hành động.
 ```gherkin
 Scenario: BR-ENT-02 — hợp của nhiều gói
   Given user có entitlement play_standard_games từ gói standard
-  And user có entitlement create_lesson_plan từ một add-on
+  And user có entitlement create_custom_curriculum từ một add-on
   When phân giải năng lực
   Then tập key chứa cả hai
   And không key nào bị gói kia ghi đè
@@ -215,7 +211,7 @@ Scenario: BR-ENT-03 — admin không sửa được registry key
   Then route không tồn tại hoặc trả 405
 
 Scenario: BR-ENT-08 — add-on không mở tier game
-  Given user chỉ có entitlement create_lesson_plan
+  Given user chỉ có entitlement create_custom_curriculum
   When user gọi một game level access_tier = standard
   Then hệ thống trả 403
 

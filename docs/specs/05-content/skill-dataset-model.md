@@ -102,7 +102,6 @@ sai, và đó là việc của người.
 | Kỹ năng cần vật là chữ số, chữ cái, hoặc tiếng | Dataset khai `glyph`; asset đi ra `kind: "text"` (mục 7.2). Cấm — NEVER thay bằng ảnh rời từng chữ                 |
 | Khuôn không có khe cho vật (nhóm G)            | Bộ chiếu không tồn tại. Level soạn tay, khai `authored: "manual"`, vẫn phải trỏ về `skill_code`                    |
 | Dataset có ít vật hơn `limits` của khuôn       | Bộ chiếu **từ chối**, in kỹ năng, khuôn, số vật thiếu. Cấm độn vật ngoài dataset                                   |
-| Kỹ năng cần vật thật (xúc giác, viết tay)      | Khai `surface: "worksheet"`; không sinh game level, sinh worksheet theo [`worksheet-model.md`](worksheet-model.md) |
 | Hai kỹ năng dùng chung một dataset             | Cấm. Một dataset thuộc đúng một kỹ năng; muốn dùng lại thì `extends: "<skill_code>"` và khai delta                 |
 | Chạy lại bộ chiếu với cùng seed                | Ra **byte giống hệt**, theo [`deterministic-randomness.md`](../01-platform/deterministic-randomness.md)            |
 
@@ -123,9 +122,9 @@ sai, và đó là việc của người.
 | `BR-SDS-11` (chỉ dẫn theo kỹ năng)           | Câu chỉ dẫn dựng từ `dataset.phrasing`, không từ bảng câu theo khuôn                                         | 182 câu phân biệt cho 5.013 level là câu của khuôn, không phải câu của bài. Không nới `BR-LGK-08` (câu tiếng Việt do người viết)                                                                                     |
 | `BR-SDS-12` (cổng có ca âm)                  | `BR-SDS-02` và `BR-SDS-03` mỗi luật phải có ≥1 ca âm dựng nội dung vi phạm và khẳng định cổng đỏ             | `BR-CSA-15` (mỗi cổng có ca âm). Cổng không có ca âm là cổng in "đạt" mãi mãi                                                                                                                                        |
 | `BR-SDS-13` (cổng chạy lúc gieo)             | `content-build` phải chạy 10 cổng                                                                            | `packages/content-build/src/cli/seed-content.ts:9` mặc định `skipGates = false` để bắt buộc qua đủ 10 cổng trước khi ghi DB |
-| `BR-SDS-14` (mã level bất biến)              | Đổi bố cục seeder cấm — NEVER đổi `game_levels.code` đã publish                                              | `BR-ID-01` (mã bất biến sau khi phát hành), mục 5 của [`id-conventions.md`](../00-foundation/id-conventions.md). Mã mã hoá lịch sử, không mã hoá phân loại                                                           |
-| `BR-SDS-15` (mục tiêu học tập phải ghi được) | `learning_objective_codes` của một level phải ghi xuống database                                             | Hiện chỉ được cổng kiểm rồi vứt; không bảng nào giữ, nên lộ trình học không truy được về mục tiêu                                                                                                                    |
-| `BR-SDS-16` (tên level theo kỹ năng và chủ đề) | `title` của level dựng từ tên kỹ năng + đối tượng hoặc nhãn của `theme`. Cấm — NEVER lộ mã khuôn (`GT-xxx`) hay `Cấp N`. Nhiều level của một kỹ năng ra cùng tên thì thêm ` · Bài N` theo thứ tự trong `levels[]`, nên tên duy nhất trong một kỹ năng; level mới thêm vào **cuối** danh sách. `theme` không có nhãn thì build **ném**, cấm — NEVER lùi về tên kỹ năng trần | Tên là thứ phụ huynh và trẻ đọc trên thẻ danh mục. `Đếm đồ vật - GT-004 (Cấp 2)` là tên của máy, không phải của bài; nhưng bỏ bậc khó mà không thay gì làm 11 thẻ cùng tên `Đếm con vật nông trại`. Đổi tên cho corpus đã gieo đi bằng `content_version` mới (mục 5 của [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md)): bản cũ archive, bản mới publish trong một transaction, rollback qua studio; cấm — NEVER UPDATE tại chỗ hàng `published` |
+| `BR-SDS-14` (mã level bất biến)              | Đổi bố cục seeder cấm — NEVER đổi `game_levels.code` đã phát hành (`code` UNIQUE)                            | `BR-ID-01` (mã bất biến sau khi phát hành), mục 5 của [`id-conventions.md`](../00-foundation/id-conventions.md). Mã mã hoá lịch sử, không mã hoá phân loại                                                           |
+| `BR-SDS-15` (mục tiêu học tập kiểm ở cổng)   | `learning_objective_codes` của một level được kiểm ở cổng 5 (khớp với `skills.id`), còn DB chỉ lưu `content_skill_map` (đã bỏ `content_objective_map`) | Giữ kiểm tra LO ở tầng seeder mà không phình bảng liên kết trung gian trong DB                                                                                                                    |
+| `BR-SDS-16` (tên level theo kỹ năng và chủ đề) | `title` của level dựng từ tên kỹ năng + đối tượng hoặc nhãn của `theme`. Cấm — NEVER lộ mã khuôn (`GT-xxx`) hay `Cấp N`. Nhiều level của một kỹ năng ra cùng tên thì thêm ` · Bài N` theo thứ tự trong `levels[]`, nên tên duy nhất trong một kỹ năng; level mới thêm vào **cuối** danh sách. `theme` không có nhãn thì build **ném**, cấm — NEVER lùi về tên kỹ năng trần | Tên là thứ phụ huynh và trẻ đọc trên thẻ danh mục. `Đếm đồ vật - GT-004 (Cấp 2)` là tên của máy, không phải của bài; nhưng bỏ bậc khó mà không thay gì làm 11 thẻ cùng tên `Đếm con vật nông trại`. Đổi tên cho corpus đã gieo thực hiện qua upsert theo `code` UNIQUE trong seeder (mục 5 của [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md)) |
 | `BR-STA-01` (tương thích theo thinking & age) | Khuôn hợp lệ khi `thinking_processes ∩ template.thinking ≠ ∅` và tuổi không thuộc `banned_age_bands`         | Tránh sinh bài chơi không phù hợp lứa tuổi hoặc sai mục tiêu tư duy                                                                                                                   |
 | `BR-STA-02` (sàn khuôn cho kỹ năng)          | Mỗi kỹ năng C1 có ≥4 khuôn hợp lệ, C2–C6 có ≥2 khuôn hợp lệ                                                  | Đảm bảo độ đa dạng hình thức chơi theo `BR-SKQ-03`                                                                                                                                     |
 | `BR-ALC-01` (trần level mỗi cặp kỹ năng-khuôn) | Một cặp (kỹ năng, khuôn) tối đa 5 level                                                                      | Đảm bảo không dồn level vào một khuôn duy nhất (`BR-SKQ-04`)                                                                                                                          |
@@ -136,7 +135,7 @@ sai, và đó là việc của người.
 **Đọc:** `docs/taxonomy/*.md` · `skills` · `strands` · `game_templates` · từ vựng theme ở
 [`content-theme-registry.md`](content-theme-registry.md).
 **Ghi:** `skill_datasets` · `game_levels` · `game_level_rounds` · `content_skill_map` ·
-`content_objective_map` · `content_tag_map`. Cột và bảng mới ở mục 7.4 của
+`content_tag_map`. Cột và bảng mới ở mục 7.4 của
 [`schema-content-taxonomy.md`](../01-platform/schema-content-taxonomy.md).
 
 ### 7.1 `SkillDataset` — hình dạng
@@ -320,7 +319,6 @@ Không sở hữu route. Giao diện là CLI:
 ```ts
 interface SkillSeedResult {
   skill_code: string;
-  dataset_version: number;
   levels_projected: number;
   levels_rejected: { template: string; reason: string }[]; // BR-SDS-05: không thử lại
   gate_failures: {
@@ -382,8 +380,8 @@ Scenario: BR-SDS-13 — db:seed chạy cổng
   Then lệnh thoát khác 0
   And không hàng nào được ghi
 
-Scenario: BR-SDS-14 — mã đã publish không đổi
-  Given level GL-C1-NREC-TAP-0001 đang published
+Scenario: BR-SDS-14 — mã đã phát hành không đổi
+  Given level GL-C1-NREC-TAP-0001 đã có trong seeder
   When bố cục seeder chuyển sang trục kỹ năng
   Then mã đó vẫn tồn tại và không đổi
 ```
@@ -408,8 +406,7 @@ Scenario: BR-SDS-14 — mã đã publish không đổi
 - Sinh lại cho tới khi qua cổng (`BR-SDS-05`).
 - Lấy vật từ vốn từ chủ đề làm nội dung kỹ năng (`BR-SDS-10`).
 - Viết literal `content_pack` cho khuôn đã có bộ chiếu (`BR-SDS-04`).
-- Đổi mã level đã publish (`BR-SDS-14`).
-- Đổi `title` level đã gieo mà giữ nguyên `content_version`, hay UPDATE tại chỗ hàng `published` (`BR-SDS-16`).
+- Đổi mã level đã phát hành (`BR-SDS-14`).
 - Nuốt lỗi nạp dataset (`BR-SDS-08`).
 
 ## 11. Open questions

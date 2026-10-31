@@ -45,59 +45,145 @@ export const C6_ATT_01_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "owl",
+      label: "chú cú mèo",
+      value: 1,
+      ordering: 1,
       image: {
         kind: "emoji",
-        ref: "🪑",
+        ref: "🦉",
       },
       category: {
-        type: "đồ dùng",
+        type: "chim muông",
       },
+      contrast_group: "birds",
     },
     {
-      id: "apple",
-      label: "quả táo",
+      id: "eagle",
+      label: "chim đại bàng",
+      value: 2,
+      ordering: 2,
       image: {
         kind: "emoji",
-        ref: "🍎",
+        ref: "🦅",
       },
       category: {
-        type: "hoa quả",
+        type: "chim muông",
       },
+      contrast_group: "birds",
     },
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "duck",
+      label: "chú vịt con",
+      value: 3,
+      ordering: 3,
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "🦆",
       },
       category: {
-        type: "hoa quả",
+        type: "chim muông",
       },
+      contrast_group: "birds",
     },
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "swan",
+      label: "chim thiên nga",
+      value: 4,
+      ordering: 4,
       image: {
         kind: "emoji",
-        ref: "🍉",
+        ref: "🦢",
       },
       category: {
-        type: "hoa quả",
+        type: "chim muông",
       },
+      contrast_group: "birds",
     },
     {
-      id: "carrot",
-      label: "củ cà rốt",
+      id: "book",
+      label: "quyển sách",
+      value: 5,
+      ordering: 5,
       image: {
         kind: "emoji",
-        ref: "🥕",
+        ref: "📚",
       },
       category: {
-        type: "rau củ",
+        type: "đồ học tập",
       },
+      contrast_group: "study_tools",
+    },
+    {
+      id: "notebook",
+      label: "quyển vở kẻ",
+      value: 6,
+      ordering: 6,
+      image: {
+        kind: "emoji",
+        ref: "📓",
+      },
+      category: {
+        type: "đồ học tập",
+      },
+      contrast_group: "study_tools",
+    },
+    {
+      id: "pencil",
+      label: "chiếc bút chì",
+      value: 7,
+      ordering: 7,
+      image: {
+        kind: "emoji",
+        ref: "✏️",
+      },
+      category: {
+        type: "đồ học tập",
+      },
+      contrast_group: "study_tools",
+    },
+    {
+      id: "crayon",
+      label: "bút sáp màu",
+      value: 8,
+      ordering: 8,
+      image: {
+        kind: "emoji",
+        ref: "🖍️",
+      },
+      category: {
+        type: "đồ học tập",
+      },
+      contrast_group: "study_tools",
+    },
+  ],
+  axes: {
+    type: ["chim muông", "đồ học tập"],
+  },
+  relations: [
+    {
+      type: "pair",
+      source_id: "owl",
+      target_id: "eagle",
+      metadata: { reason: "confusable" },
+    },
+    {
+      type: "pair",
+      source_id: "duck",
+      target_id: "swan",
+      metadata: { reason: "confusable" },
+    },
+    {
+      type: "pair",
+      source_id: "book",
+      target_id: "notebook",
+      metadata: { reason: "confusable" },
+    },
+    {
+      type: "pair",
+      source_id: "pencil",
+      target_id: "crayon",
+      metadata: { reason: "confusable" },
     },
   ],
   ladder: [
@@ -130,9 +216,18 @@ export const C6_ATT_01_DATASET: SkillDataset = {
   phrasing: {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template:
-      "Chúng mình cùng tìm hiểu về Duy trì chú ý tới hết nhiệm vụ nhé",
+      "Chúng mình cùng tập trung chú ý hoàn thành nhiệm vụ nhé",
   },
-  ordering: ["chair", "apple", "banana", "watermelon", "carrot"],
+  ordering: [
+    "owl",
+    "eagle",
+    "duck",
+    "swan",
+    "book",
+    "notebook",
+    "pencil",
+    "crayon",
+  ],
 };
 
 export const C6_ATT_01_SEED: SkillSeed = {
@@ -140,19 +235,17 @@ export const C6_ATT_01_SEED: SkillSeed = {
   dataset: C6_ATT_01_DATASET,
   levels: [
     {
+      template: "GT-000",
+      band: "3-4",
+      difficulty: 1,
+      theme: "school",
+    },
+    {
       code: "GL-C6-ATT-TAP-0001",
       template: "GT-001",
       band: "3-4",
       difficulty: 1,
       theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C6-ATT-TAP-0002",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 2,
-      theme: "farm",
       rounds: 3,
     },
     {
@@ -164,27 +257,11 @@ export const C6_ATT_01_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C6-ATT-TCMP-0002",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 2,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
       code: "GL-C6-ATT-PATT-0001",
       template: "GT-005",
       band: "3-4",
       difficulty: 1,
       theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C6-ATT-PATT-0002",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 2,
-      theme: "ocean",
       rounds: 3,
     },
     {
@@ -196,26 +273,10 @@ export const C6_ATT_01_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C6-ATT-SLOT-0002",
-      template: "GT-008",
-      band: "3-4",
-      difficulty: 2,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
       code: "GL-C6-ATT-MEMO-0001",
       template: "GT-012",
       band: "3-4",
       difficulty: 1,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C6-ATT-MEMO-0002",
-      template: "GT-012",
-      band: "3-4",
-      difficulty: 2,
       theme: "art",
       rounds: 3,
     },

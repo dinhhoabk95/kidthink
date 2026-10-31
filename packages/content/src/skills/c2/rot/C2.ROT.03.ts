@@ -4,8 +4,8 @@ export const C2_ROT_03_IDENTITY: SkillIdentity = {
   code: "C2.ROT.03",
   strand_code: "C2.ROT",
   competency_code: "C2",
-  name: "Xoay 270°",
-  age_min: 6,
+  name: "Xoay hình nhiều bước",
+  age_min: 5,
   age_max: 6,
   difficulty: 5,
   thinking_processes: ["predict"],
@@ -38,75 +38,164 @@ export const C2_ROT_03_IDENTITY: SkillIdentity = {
 
 export const C2_ROT_03_DATASET: SkillDataset = {
   skill_code: "C2.ROT.03",
-  concept_label: "Xoay 270°",
+  concept_label: "Xoay hình nhiều bước",
   surface: "game",
   items: [
     {
-      id: "bed",
-      label: "cái giường",
+      id: "pinwheel_rot",
+      label: "kim la bàn xoay",
+      value: 1,
       image: {
         kind: "emoji",
-        ref: "🛏️",
+        ref: "🧭",
       },
       category: {
-        type: "đồ dùng",
+        type: "kim xoay tròn",
+      },
+      contrast_group: "pointer_rot",
+    },
+    {
+      id: "clock_rot",
+      label: "kim đồng hồ xoay",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "⏰",
+      },
+      category: {
+        type: "kim xoay tròn",
+      },
+      contrast_group: "pointer_rot",
+    },
+    {
+      id: "wheel_rot",
+      label: "vòng đu quay xoay",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "🎡",
+      },
+      category: {
+        type: "kim xoay tròn",
+      },
+      contrast_group: "pointer_rot",
+    },
+    {
+      id: "steering_rot",
+      label: "bánh xe lăn tròn",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "🛞",
+      },
+      category: {
+        type: "kim xoay tròn",
+      },
+      contrast_group: "pointer_rot",
+    },
+    {
+      id: "plane_tilt",
+      label: "máy bay lượn vòng",
+      value: 5,
+      image: {
+        kind: "emoji",
+        ref: "✈️",
+      },
+      category: {
+        type: "phương tiện lượn",
+      },
+      contrast_group: "vehicle_rot",
+    },
+    {
+      id: "rocket_tilt",
+      label: "tên lửa nghiêng góc",
+      value: 6,
+      image: {
+        kind: "emoji",
+        ref: "🚀",
+      },
+      category: {
+        type: "phương tiện lượn",
+      },
+      contrast_group: "vehicle_rot",
+    },
+    {
+      id: "boat_tilt",
+      label: "thuyền buồm lướt sóng",
+      value: 7,
+      image: {
+        kind: "emoji",
+        ref: "⛵",
+      },
+      category: {
+        type: "phương tiện lượn",
+      },
+      contrast_group: "vehicle_rot",
+    },
+    {
+      id: "helicopter_tilt",
+      label: "trực thăng liệng cánh",
+      value: 8,
+      image: {
+        kind: "emoji",
+        ref: "🚁",
+      },
+      category: {
+        type: "phương tiện lượn",
+      },
+      contrast_group: "vehicle_rot",
+    },
+  ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "pinwheel_rot",
+      target_id: "plane_tilt",
+      metadata: {
+        dimension: "rotation_type",
       },
     },
     {
-      id: "chair",
-      label: "cái ghế",
-      image: {
-        kind: "emoji",
-        ref: "🪑",
-      },
-      category: {
-        type: "đồ dùng",
+      type: "contrast",
+      source_id: "clock_rot",
+      target_id: "rocket_tilt",
+      metadata: {
+        dimension: "rotation_type",
       },
     },
     {
-      id: "apple",
-      label: "quả táo",
-      image: {
-        kind: "emoji",
-        ref: "🍎",
-      },
-      category: {
-        type: "hoa quả",
+      type: "pair",
+      source_id: "pinwheel_rot",
+      target_id: "clock_rot",
+      metadata: {
+        relation: "cùng kim chỉ góc",
       },
     },
     {
-      id: "banana",
-      label: "quả chuối",
-      image: {
-        kind: "emoji",
-        ref: "🍌",
-      },
-      category: {
-        type: "hoa quả",
-      },
-    },
-    {
-      id: "watermelon",
-      label: "dưa hấu",
-      image: {
-        kind: "emoji",
-        ref: "🍉",
-      },
-      category: {
-        type: "hoa quả",
+      type: "pair",
+      source_id: "plane_tilt",
+      target_id: "rocket_tilt",
+      metadata: {
+        relation: "cùng góc bay lượn",
       },
     },
   ],
+  axes: {
+    rotation_type: {
+      values: ["kim xoay tròn", "phương tiện lượn"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Xoay 270°",
+      description: "Làm quen cơ bản với Xoay hình nhiều bước",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Xoay 270°",
+      description: "Nhận biết và chọn đúng Xoay hình nhiều bước",
     },
     {
       rung: 3,
@@ -128,7 +217,16 @@ export const C2_ROT_03_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Xoay 270° nhé",
   },
-  ordering: ["bed", "chair", "apple", "banana", "watermelon"],
+  ordering: [
+    "pinwheel_rot",
+    "clock_rot",
+    "wheel_rot",
+    "steering_rot",
+    "plane_tilt",
+    "rocket_tilt",
+    "boat_tilt",
+    "helicopter_tilt",
+  ],
 };
 
 export const C2_ROT_03_SEED: SkillSeed = {
@@ -141,14 +239,6 @@ export const C2_ROT_03_SEED: SkillSeed = {
       band: "5-6",
       difficulty: 4,
       theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ROT-DOTS-0006",
-      template: "GT-011",
-      band: "5-6",
-      difficulty: 5,
-      theme: "space",
       rounds: 3,
     },
     {
@@ -165,54 +255,6 @@ export const C2_ROT_03_SEED: SkillSeed = {
       band: "5-6",
       difficulty: 5,
       theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ROT-DIFF-0005",
-      template: "GT-014",
-      band: "5-6",
-      difficulty: 4,
-      theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ROT-DIFF-0006",
-      template: "GT-014",
-      band: "5-6",
-      difficulty: 5,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ROT-ISO-0005",
-      template: "GT-017",
-      band: "5-6",
-      difficulty: 4,
-      theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ROT-ISO-0006",
-      template: "GT-017",
-      band: "5-6",
-      difficulty: 5,
-      theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ROT-TFRA-0005",
-      template: "GT-019",
-      band: "5-6",
-      difficulty: 4,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ROT-TFRA-0006",
-      template: "GT-019",
-      band: "5-6",
-      difficulty: 5,
-      theme: "farm",
       rounds: 3,
     },
   ],

@@ -27,8 +27,14 @@ export const projectGT014: Projection<"GT-014"> = {
 
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
     const shuffled = shuffleDeterministic(dataset.items, rng);
-    const itemHeavy = safeGetItem(shuffled, 0);
-    const itemLight = safeGetItem(shuffled, 1);
+    const firstItem = safeGetItem(shuffled, 0);
+    const secondItem = safeGetItem(shuffled, 1);
+    const shouldSwap =
+      typeof firstItem.value === "number" &&
+      typeof secondItem.value === "number" &&
+      firstItem.value < secondItem.value;
+    const itemHeavy = shouldSwap ? secondItem : firstItem;
+    const itemLight = shouldSwap ? firstItem : secondItem;
 
     const leftPan = [
       {

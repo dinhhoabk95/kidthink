@@ -89,7 +89,6 @@ describe("P0.0 Quality & Governance Rules (BR-TST, BR-AIG, BR-MVP)", () => {
     const contractFiles = [
       path.join(ROOT_DIR, "docs/SPEC.md"),
       path.join(ROOT_DIR, "docs/specs/01-platform/ai-codegen-pipeline.md"),
-      path.join(ROOT_DIR, "docs/tasks/14-implementation-sequence-plan.md"),
       fs.existsSync(localAgentsMd)
         ? localAgentsMd
         : path.resolve(ROOT_DIR, "../.agents/AGENTS.md"),

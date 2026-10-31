@@ -63,22 +63,6 @@ export const GameLevelCodeSchema = z
   .brand("GameLevelCode");
 export type GameLevelCode = z.infer<typeof GameLevelCodeSchema>;
 
-// ─── Lesson ──────────────────────────────────────────────────────────
-export const LESSON_CODE_REGEX = /^LES-\d{4}$/;
-export const LessonCodeSchema = z
-  .string()
-  .regex(LESSON_CODE_REGEX)
-  .brand("LessonCode");
-export type LessonCode = z.infer<typeof LessonCodeSchema>;
-
-// ─── Activity ────────────────────────────────────────────────────────
-export const ACTIVITY_CODE_REGEX = /^ACT-\d{4}$/;
-export const ActivityCodeSchema = z
-  .string()
-  .regex(ACTIVITY_CODE_REGEX)
-  .brand("ActivityCode");
-export type ActivityCode = z.infer<typeof ActivityCodeSchema>;
-
 // ─── Curriculum ──────────────────────────────────────────────────────
 export const CURRICULUM_CODE_REGEX = /^CUR-\d{3}$/;
 export const CurriculumCodeSchema = z

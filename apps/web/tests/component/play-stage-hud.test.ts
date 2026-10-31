@@ -101,6 +101,7 @@ vi.stubGlobal("useRoute", () => ({
   query: {},
 }));
 vi.stubGlobal("useRouter", () => ({ push: vi.fn(), replace: vi.fn() }));
+vi.stubGlobal("useCookie", () => ref(null));
 vi.stubGlobal("useUserSession", () => ({
   loggedIn: ref(false),
   fetch: vi.fn(() => Promise.resolve()),
@@ -111,6 +112,7 @@ const stubs = {
   NuxtLink: { template: "<a><slot /></a>" },
   KidRoundProgressIndicator: { template: "<div />" },
   KidVictoryModal: { template: "<div />" },
+  KidPlayLimitModal: { template: "<div />" },
   ParentGateModal: { template: "<div />" },
   ClientOnly: { template: "<div><slot /></div>" },
 };

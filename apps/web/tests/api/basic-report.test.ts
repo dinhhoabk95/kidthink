@@ -137,7 +137,7 @@ describe("Basic Child Report API — GET /api/users/children/[uuid]/reports/basi
         expect(isAppError(err)).toBe(true);
         if (isAppError(err)) {
           expect(err.status).toBe(404);
-          expect(err.code).toBe("CHILD_NOT_FOUND");
+          expect(err.code).toBe("NOT_FOUND");
         }
       }
     } catch (err) {
@@ -223,12 +223,10 @@ describe("Basic Child Report API — GET /api/users/children/[uuid]/reports/basi
     const now = new Date("2026-10-18T10:00:00.000Z");
     const mockLevel = {
       id: 101,
-      entityId: 101,
       version: 1,
       code: "GL-C1-CNT-0001",
       templateCode: "GT-001",
       title: "Đếm sao trên trời",
-      status: "published",
       accessTier: "free",
       difficulty: 1,
       thumbnailEmoji: "⭐",
@@ -281,7 +279,6 @@ describe("Basic Child Report API — GET /api/users/children/[uuid]/reports/basi
           id: 1,
           sessionUuid: "00000000-0000-4000-8000-000000000101",
           gameLevelId: 101,
-          contentVersion: 1,
           templateCode: "GT-001",
           completionStatus: "completed",
           score: 100,
@@ -296,7 +293,6 @@ describe("Basic Child Report API — GET /api/users/children/[uuid]/reports/basi
           id: 2,
           sessionUuid: "00000000-0000-4000-8000-000000000102",
           gameLevelId: 101,
-          contentVersion: 1,
           templateCode: "GT-001",
           completionStatus: "completed",
           score: 95,
@@ -328,12 +324,10 @@ describe("Basic Child Report API — GET /api/users/children/[uuid]/reports/basi
     const now = new Date("2026-10-18T10:00:00.000Z");
     const mockLevel = {
       id: 102,
-      entityId: 102,
       version: 2,
       code: "GL-C1-CNT-0002",
       templateCode: "GT-001",
       title: "Đếm số táo đỏ",
-      status: "published",
       accessTier: "free",
       difficulty: 1,
       thumbnailEmoji: "🍎",
@@ -396,7 +390,6 @@ describe("Basic Child Report API — GET /api/users/children/[uuid]/reports/basi
           id: 1,
           sessionUuid: "00000000-0000-4000-8000-000000000201",
           gameLevelId: 102,
-          contentVersion: 1,
           templateCode: "GT-001",
           completionStatus: "completed",
           score: 95,
@@ -411,7 +404,6 @@ describe("Basic Child Report API — GET /api/users/children/[uuid]/reports/basi
           id: 2,
           sessionUuid: "00000000-0000-4000-8000-000000000202",
           gameLevelId: 102,
-          contentVersion: 1,
           templateCode: "GT-001",
           completionStatus: "completed",
           score: 90,
@@ -426,7 +418,6 @@ describe("Basic Child Report API — GET /api/users/children/[uuid]/reports/basi
           id: 3,
           sessionUuid: "00000000-0000-4000-8000-000000000203",
           gameLevelId: 102,
-          contentVersion: 2,
           templateCode: "GT-001",
           completionStatus: "completed",
           score: 92,
@@ -441,7 +432,6 @@ describe("Basic Child Report API — GET /api/users/children/[uuid]/reports/basi
           id: 4,
           sessionUuid: "00000000-0000-4000-8000-000000000204",
           gameLevelId: 102,
-          contentVersion: 2,
           templateCode: "GT-001",
           completionStatus: "abandoned",
           score: 40,
@@ -480,7 +470,7 @@ describe("Basic Child Report API — GET /api/users/children/[uuid]/reports/basi
       report.sections.suggestions.items.some((i) => i.kind === "offline")
     ).toBe(true);
     expect(report.sections.suggestions.explanation.length).toBeGreaterThan(0);
-    expect(report.version_markers).toHaveLength(1);
+    expect(report.version_markers).toHaveLength(0);
 
     const serialized = JSON.stringify(report);
     expect(serialized).not.toContain("p_learn");

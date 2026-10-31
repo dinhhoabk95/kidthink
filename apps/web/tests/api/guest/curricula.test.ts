@@ -3,9 +3,7 @@ import {
   curriculumItems,
   curriculumWeeks,
   gameLevels,
-  gameTemplates,
   getOwnerDb,
-  lessons,
 } from "@mindkid/db";
 import {
   buildCourseJsonLd,
@@ -13,7 +11,7 @@ import {
   toProgramCardPublic,
   toProgramDetailPublic,
 } from "@mindkid/shared";
-import { eq, inArray } from "drizzle-orm";
+import { inArray } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import getCurriculumDetailHandler from "#server/api/guest/curricula/[code].get";
 import getCurriculaListHandler from "#server/api/guest/curricula/index.get";
@@ -60,78 +58,52 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
 
   const glCode1 = `GL-C1-CNT-NUM-${num4}`;
   const glCode2 = `GL-C2-GEO-SHP-${num4}`;
-  const lesCode1 = `LES-${num4}`;
+  const glCode3 = `GL-C3-MEAS-LEN-${num4}`;
 
   beforeAll(async () => {
-    // 1. Template (Code must match ^GT-\d{3}$)
-    const [template] = await db
-      .insert(gameTemplates)
-      .values({
-        code: "GT-001",
-        name: "Template Showcase",
-        mechanic: "tap_target",
-      })
-      .onConflictDoNothing()
-      .returning();
+    const templateCode = "GT-001";
 
-    const templateId = template
-      ? template.id
-      : (
-          await db
-            .select()
-            .from(gameTemplates)
-            .where(eq(gameTemplates.code, "GT-001"))
-        )[0]?.id || 1;
-
-    // 2. Published game levels & lessons
+    // 2. Published game levels
     await db
       .delete(gameLevels)
-      .where(inArray(gameLevels.code, [glCode1, glCode2]));
-    await db.delete(lessons).where(eq(lessons.code, lesCode1));
+      .where(inArray(gameLevels.code, [glCode1, glCode2, glCode3]));
 
     const [gl1] = await db
       .insert(gameLevels)
       .values({
-        entityId: testRunId + 101,
         code: glCode1,
-        contentVersion: 1,
-        templateId,
+        templateCode,
         title: "Đếm sao quả",
         instruction: "Hướng dẫn đếm",
         contentPack: { secret: 123 },
         difficultyParams: { difficulty: 1 },
         accessTier: "free",
-        status: "published",
       })
       .returning();
 
     const [gl2] = await db
       .insert(gameLevels)
       .values({
-        entityId: testRunId + 102,
         code: glCode2,
-        contentVersion: 1,
-        templateId,
+        templateCode,
         title: "Phân loại hình khối",
         instruction: "Hướng dẫn hình",
         contentPack: { shapes: ["circle", "square"] },
         difficultyParams: { difficulty: 2 },
         accessTier: "standard",
-        status: "published",
       })
       .returning();
 
-    const [les1] = await db
-      .insert(lessons)
+    const [gl3] = await db
+      .insert(gameLevels)
       .values({
-        entityId: testRunId + 201,
-        code: lesCode1,
-        contentVersion: 1,
+        code: glCode3,
+        templateCode,
         title: "Bài học đo lường bước chân",
-        guide: "Hướng dẫn người dạy",
-        estimatedMinutes: 25,
+        instruction: "Hướng dẫn người dạy",
+        contentPack: {},
+        difficultyParams: { difficulty: 1 },
         accessTier: "free",
-        status: "published",
       })
       .returning();
 
@@ -139,9 +111,7 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
     const [pubCur] = await db
       .insert(curricula)
       .values({
-        entityId: testRunId + 10,
         code: publishedCode,
-        contentVersion: 1,
         programType: "age_based",
         targetAgeMin: 4,
         targetAgeMax: 5,
@@ -150,7 +120,6 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
         title: "Chương trình Tư duy Toán 4 tuổi",
         description: "Phát triển năng lực số học và hình học cho trẻ 4 tuổi.",
         accessTier: "standard",
-        status: "published",
       })
       .returning();
 
@@ -171,7 +140,7 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
         sessionNo: 1,
         position: 1,
         entityType: "game_level",
-        entityId: gl1.entityId,
+        entityId: gl1.id,
         isRequired: true,
       },
       {
@@ -179,8 +148,8 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
         weekNo: 1,
         sessionNo: 2,
         position: 1,
-        entityType: "lesson",
-        entityId: les1.entityId,
+        entityType: "game_level",
+        entityId: gl3.id,
         isRequired: true,
       },
       {
@@ -189,7 +158,7 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
         sessionNo: 1,
         position: 1,
         entityType: "game_level",
-        entityId: gl2.entityId,
+        entityId: gl2.id,
         isRequired: true,
       },
       {
@@ -198,7 +167,7 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
         sessionNo: 1,
         position: 1,
         entityType: "game_level",
-        entityId: gl1.entityId,
+        entityId: gl1.id,
         isRequired: true,
       },
       {
@@ -206,17 +175,15 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
         weekNo: 4,
         sessionNo: 1,
         position: 1,
-        entityType: "lesson",
-        entityId: les1.entityId,
+        entityType: "game_level",
+        entityId: gl3.id,
         isRequired: true,
       },
     ]);
 
     // 4. Published Journey Curriculum (42 weeks)
     await db.insert(curricula).values({
-      entityId: testRunId + 11,
       code: journeyCode,
-      contentVersion: 1,
       programType: "journey",
       targetAgeMin: 3,
       targetAgeMax: 6,
@@ -225,42 +192,6 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
       title: "Hành trình Toán Mầm non 42 Tuần",
       description: "Hành trình phát triển toàn diện 6 năng lực toán học.",
       accessTier: "premium",
-      status: "published",
-    });
-
-    // 5. Archived Curriculum
-    await db
-      .insert(curricula)
-      .values({
-        entityId: testRunId + 12,
-        code: archivedCode,
-        contentVersion: 1,
-        programType: "age_based",
-        targetAgeMin: 3,
-        targetAgeMax: 4,
-        durationWeeks: 8,
-        sessionsPerWeek: 3,
-        title: "Chương trình cũ đã lưu trữ",
-        description: "Chương trình không còn hỗ trợ.",
-        accessTier: "free",
-        status: "archived",
-      })
-      .returning();
-
-    // 6. Draft Curriculum
-    await db.insert(curricula).values({
-      entityId: testRunId + 13,
-      code: draftCode,
-      contentVersion: 1,
-      programType: "age_based",
-      targetAgeMin: 5,
-      targetAgeMax: 6,
-      durationWeeks: 12,
-      sessionsPerWeek: 3,
-      title: "Chương trình nháp đang soạn",
-      description: "Chưa công bố.",
-      accessTier: "standard",
-      status: "draft",
     });
   });
 
@@ -277,8 +208,7 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
       );
     await db
       .delete(gameLevels)
-      .where(inArray(gameLevels.code, [glCode1, glCode2]));
-    await db.delete(lessons).where(eq(lessons.code, lesCode1));
+      .where(inArray(gameLevels.code, [glCode1, glCode2, glCode3]));
   });
 
   describe("Task 3: GET /api/guest/curricula (BR-PSH-01, D-NG, D-NI)", () => {
@@ -354,9 +284,9 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
         access_tier: "free",
       });
       expect(res.weeks[0].items[1]).toMatchObject({
-        entity_type: "lesson",
+        entity_type: "game_level",
         title: "Bài học đo lường bước chân",
-        estimated_minutes: 25,
+        estimated_minutes: 10,
         access_tier: "free",
       });
 
@@ -384,7 +314,7 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
       expect(audit.found).toBe(false);
     });
 
-    it("returns 404 NOT_FOUND for unknown or draft curriculum", async () => {
+    it("returns 404 NOT_FOUND for unknown or unseeded curriculum", async () => {
       const draftEvent = makeGuestEvent({ code: draftCode });
       await expect(
         getCurriculumDetailHandler(draftEvent)
@@ -398,34 +328,6 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
       ).rejects.toMatchObject({
         statusCode: 404,
       });
-    });
-
-    it("BR-PSH-05 & D-NJ: returns 410 CONTENT_ARCHIVED with safe published suggestions for archived curriculum", async () => {
-      const event = makeGuestEvent({ code: archivedCode });
-
-      let thrownError: any;
-      try {
-        await getCurriculumDetailHandler(event);
-      } catch (err) {
-        thrownError = err;
-      }
-
-      expect(thrownError).toBeDefined();
-      expect(thrownError.statusCode).toBe(410);
-      expect(thrownError.data?.code).toBe("CONTENT_ARCHIVED");
-      expect(thrownError.data?.curriculum_code).toBe(archivedCode);
-      expect(Array.isArray(thrownError.data?.suggestions)).toBe(true);
-      expect(thrownError.data.suggestions.length).toBeGreaterThan(0);
-
-      const sug = thrownError.data.suggestions[0];
-      expect(sug.code).toBeDefined();
-      expect(sug.title).toBeDefined();
-      expect(sug.access_tier).toBeDefined();
-      expect(sug.target_age).toBeDefined();
-
-      // Deep scan error body for forbidden keys
-      const audit = hasForbiddenPublicKeys(thrownError.data);
-      expect(audit.found).toBe(false);
     });
   });
 

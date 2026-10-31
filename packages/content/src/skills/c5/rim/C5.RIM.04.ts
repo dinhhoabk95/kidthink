@@ -5,8 +5,8 @@ export const C5_RIM_04_IDENTITY: SkillIdentity = {
   strand_code: "C5.RIM",
   competency_code: "C5",
   name: "Vần đóng bằng c · t · p: ac ăc âc at ăt ât ap ăp âp",
-  age_min: 6,
-  age_max: 7,
+  age_min: 5,
+  age_max: 6,
   difficulty: 4,
   thinking_processes: ["observe", "sort"],
   tier: "advanced",
@@ -46,84 +46,129 @@ export const C5_RIM_04_DATASET: SkillDataset = {
   items: [
     {
       id: "rim_ac",
-      label: "vần ac",
+      label: "vần ac (chim hạc)",
       glyph: "ac",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🦩",
       },
+      value: 1,
+      category: {
+        type: "vần có c",
+      },
+      contrast_group: "primary",
     },
     {
       id: "rim_ăc",
-      label: "vần ăc",
+      label: "vần ăc (mặc áo)",
       glyph: "ăc",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🧥",
       },
+      value: 2,
+      category: {
+        type: "vần có c",
+      },
+      contrast_group: "primary",
     },
     {
       id: "rim_âc",
-      label: "vần âc",
+      label: "vần âc (bậc thang)",
       glyph: "âc",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🪜",
       },
+      value: 3,
+      category: {
+        type: "vần có c",
+      },
+      contrast_group: "primary",
     },
     {
       id: "rim_at",
-      label: "vần at",
+      label: "vần at (cái bát)",
       glyph: "at",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🥣",
       },
+      value: 4,
+      category: {
+        type: "vần t p",
+      },
+      contrast_group: "contrast",
     },
     {
       id: "rim_ăt",
-      label: "vần ăt",
+      label: "vần ăt (đôi mắt)",
       glyph: "ăt",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "👀",
       },
+      value: 5,
+      category: {
+        type: "vần t p",
+      },
+      contrast_group: "contrast",
     },
     {
       id: "rim_ât",
-      label: "vần ât",
+      label: "vần ât (đôi tất)",
       glyph: "ât",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🧦",
       },
+      value: 6,
+      category: {
+        type: "vần t p",
+      },
+      contrast_group: "contrast",
     },
     {
       id: "rim_ap",
-      label: "vần ap",
+      label: "vần ap (ngọn tháp)",
       glyph: "ap",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🗼",
       },
+      value: 7,
+      category: {
+        type: "vần t p",
+      },
+      contrast_group: "contrast",
     },
     {
       id: "rim_ăp",
-      label: "vần ăp",
+      label: "vần ăp (bắp ngô)",
       glyph: "ăp",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🌽",
       },
+      value: 8,
+      category: {
+        type: "vần t p",
+      },
+      contrast_group: "contrast",
     },
     {
       id: "rim_âp",
-      label: "vần âp",
+      label: "vần âp (tàu tập)",
       glyph: "âp",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🚂",
       },
+      value: 9,
+      category: {
+        type: "vần t p",
+      },
+      contrast_group: "contrast",
     },
   ],
   ladder: [
@@ -171,6 +216,29 @@ export const C5_RIM_04_DATASET: SkillDataset = {
     "rim_ăp",
     "rim_âp",
   ],
+  axes: {
+    category: {
+      values: ["vần có c", "vần t p"],
+      ordered: true,
+    },
+  },
+  relations: [
+    {
+      type: "pair",
+      source_id: "rim_ac",
+      target_id: "rim_ăc",
+    },
+    {
+      type: "pair",
+      source_id: "rim_at",
+      target_id: "rim_ăt",
+    },
+    {
+      type: "contrast",
+      source_id: "rim_ac",
+      target_id: "rim_at",
+    },
+  ],
 };
 
 export const C5_RIM_04_SEED: SkillSeed = {
@@ -196,14 +264,6 @@ export const C5_RIM_04_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-RIM-TAP-0017",
-      template: "GT-001",
-      band: "5-6",
-      difficulty: 3,
-      theme: "family",
-      rounds: 3,
-    },
-    {
       code: "GL-C5-RIM-TAP-0018",
       template: "GT-001",
       band: "5-6",
@@ -212,59 +272,11 @@ export const C5_RIM_04_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-RIM-TAP-0019",
-      template: "GT-001",
-      band: "5-6",
-      difficulty: 4,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RIM-TAP-0020",
-      template: "GT-001",
-      band: "5-6",
-      difficulty: 5,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
       code: "GL-C5-RIM-MULTI-0016",
       template: "GT-002",
       band: "5-6",
       difficulty: 3,
       theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RIM-MULTI-0017",
-      template: "GT-002",
-      band: "5-6",
-      difficulty: 3,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RIM-MULTI-0018",
-      template: "GT-002",
-      band: "5-6",
-      difficulty: 4,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RIM-MULTI-0019",
-      template: "GT-002",
-      band: "5-6",
-      difficulty: 4,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RIM-MULTI-0020",
-      template: "GT-002",
-      band: "5-6",
-      difficulty: 5,
-      theme: "weather",
       rounds: 3,
     },
   ],

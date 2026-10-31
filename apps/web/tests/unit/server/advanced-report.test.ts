@@ -70,21 +70,16 @@ describe("P3.7 Advanced Report Invariants (BR-ARP)", () => {
   });
 });
 
-describe("buildVersionMarkers — gộp theo mã level qua các bản archive (BR-ARP-08)", () => {
-  it("đánh dấu đổi phiên bản khi hai phiên nằm ở hai dòng game_levels cùng mã", () => {
+describe("buildVersionMarkers — single-version schema (BR-ARP-08)", () => {
+  it("trả về mảng rỗng khi không có đa phiên bản", () => {
     const levelById = new Map([
       [1, { code: "GL-X-1" }],
       [2, { code: "GL-X-1" }],
     ]);
-    const sessions = [
-      { gameLevelId: 1, contentVersion: 1 },
-      { gameLevelId: 2, contentVersion: 3 },
-    ];
+    const sessions = [{ gameLevelId: 1 }, { gameLevelId: 2 }];
 
     const markers = buildVersionMarkers(sessions, levelById);
 
-    expect(markers).toHaveLength(1);
-    expect(markers[0]?.level_code).toBe("GL-X-1");
-    expect(markers[0]?.played_versions).toEqual([1, 3]);
+    expect(markers).toEqual([]);
   });
 });

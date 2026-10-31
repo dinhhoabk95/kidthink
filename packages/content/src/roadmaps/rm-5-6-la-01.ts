@@ -8,7 +8,7 @@ const PLN_01 = "C6.PLN.01";
 const MEM_04 = "C4.MEM.04";
 const MTX_01 = "C3.MTX.01";
 const CNT_10 = "C1.CNT.10";
-const PLN_03 = "C6.PLN.03";
+const LET_03 = "C5.LET.03";
 const CON_04 = "C2.CON.04";
 
 export const RM_5_6_LA_01: RoadmapSeed = {
@@ -57,29 +57,29 @@ export const RM_5_6_LA_01: RoadmapSeed = {
       session(2, "practice", CNT_10),
       session(3, "offscreen", MTX_01),
     ]),
-    week(8, "Bé thử trước trong đầu rồi mới thao tác thật.", [
-      session(1, "introduce", PLN_03),
-      session(2, "practice", PLN_03),
+    week(8, "Bé nhận biết các phụ âm b, c, d, đ, g, h trong từ.", [
+      session(1, "introduce", LET_03),
+      session(2, "practice", LET_03),
       session(3, "offscreen", CNT_10),
     ]),
     week(9, "Bé ghép các khối thành một hình khối ba chiều.", [
       session(1, "introduce", CON_04),
       session(2, "practice", CON_04),
-      session(3, "offscreen", PLN_03),
+      session(3, "offscreen", LET_03),
     ]),
     week(10, "Bé ôn lại đếm, tách âm và lập kế hoạch.", [
       session(1, "review", CNT_07),
-      session(2, "practice", ONS_01),
+      session(2, "review", ONS_01),
       session(3, "offscreen", PLN_01),
     ]),
     week(11, "Bé ôn lại hình xoay, nhớ âm thanh và tìm quy luật.", [
       session(1, "review", ROT_01),
-      session(2, "practice", MEM_04),
+      session(2, "review", MEM_04),
       session(3, "offscreen", MTX_01),
     ]),
-    week(12, "Bé ôn lại kiểm tra kết quả, thử trong đầu và ghép khối.", [
+    week(12, "Bé ôn lại kiểm tra kết quả đếm, chữ cái và ghép khối.", [
       session(1, "review", CNT_10),
-      session(2, "practice", PLN_03),
+      session(2, "review", LET_03),
       session(3, "offscreen", CON_04),
     ]),
   ],

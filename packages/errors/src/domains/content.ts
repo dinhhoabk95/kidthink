@@ -39,28 +39,10 @@ export const UnsupportedMediaTypeError = defineError({
   status: 415,
 });
 
-export const LessonNotFoundError = defineModelNotFound(
-  "LessonNotFoundError",
-  "lessons",
-  "Không tìm thấy bài học."
-);
-
-export const ActivityNotFoundError = defineModelNotFound(
-  "ActivityNotFoundError",
-  "activities",
-  "Không tìm thấy hoạt động."
-);
-
 export const WorksheetNotFoundError = defineModelNotFound(
   "WorksheetNotFoundError",
   "worksheets",
   "Không tìm thấy phiếu bài tập."
-);
-
-export const LessonPlanNotFoundError = defineModelNotFound(
-  "LessonPlanNotFoundError",
-  "lesson_plans",
-  "Không tìm thấy giáo án."
 );
 
 export const SkillNotFoundError = defineModelNotFound(

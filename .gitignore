@@ -11,6 +11,7 @@ coverage/
 .env.*
 !.env.example
 .DS_Store
+.idea/
 .backups/
 .codegraph/
 .ua/

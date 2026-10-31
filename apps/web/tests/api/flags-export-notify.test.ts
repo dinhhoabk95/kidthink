@@ -73,7 +73,7 @@ async function ensureTestEntities() {
         email: "p29-cr@mindkid.edu.vn",
         passwordHash: "hash",
         displayName: "P29 Reviewer",
-        role: "content_reviewer",
+        role: "super_admin",
         isActive: true,
       })
       .returning({ id: managers.id });

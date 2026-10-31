@@ -2,8 +2,8 @@ import { sql } from "drizzle-orm";
 import {
   bigint,
   check,
+  index,
   integer,
-  jsonb,
   numeric,
   pgTable,
   timestamp,
@@ -12,7 +12,6 @@ import {
 } from "drizzle-orm/pg-core";
 import { childProfiles } from "./child.ts";
 import { timestamps } from "./columns.ts";
-import { gameLevels } from "./game.ts";
 import { skills } from "./taxonomy.ts";
 
 export const masteryState = pgTable(
@@ -51,6 +50,7 @@ export const masteryState = pgTable(
       table.childProfileId,
       table.skillId
     ),
+    index("idx_mastery_state_skill_id").on(table.skillId),
     check(
       "check_mastery_state_p_learn",
       sql`${table.pLearn} >= 0 AND ${table.pLearn} <= 1`
@@ -66,32 +66,6 @@ export const masteryState = pgTable(
     check(
       "check_mastery_state_best_p_learn",
       sql`${table.bestPLearn} >= 0 AND ${table.bestPLearn} <= 1`
-    ),
-  ]
-);
-
-export const levelParams = pgTable(
-  "level_params",
-  {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
-    childProfileId: bigint("child_profile_id", { mode: "number" })
-      .notNull()
-      .references(() => childProfiles.id, { onDelete: "cascade" }),
-    gameLevelId: bigint("game_level_id", { mode: "number" })
-      .notNull()
-      .references(() => gameLevels.id, { onDelete: "cascade" }),
-    paramOverrides: jsonb("param_overrides"),
-    adaptiveFactor: numeric("adaptive_factor", { precision: 5, scale: 4 })
-      .notNull()
-      .default("1.0000"),
-    ...timestamps(),
-  },
-  (table) => [
-    unique("level_params_child_game_level_unique").on(
-      table.childProfileId,
-      table.gameLevelId
     ),
   ]
 );

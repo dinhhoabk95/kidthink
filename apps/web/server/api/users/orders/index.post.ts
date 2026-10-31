@@ -16,14 +16,16 @@ import {
   type VietQrPayloadResult,
 } from "@mindkid/shared";
 import { and, eq, inArray } from "drizzle-orm";
-import { defineEventHandler, getHeader, readBody, setResponseStatus } from "h3";
+import { defineEventHandler, getHeader, setResponseStatus } from "h3";
 import { z } from "zod";
 import { throwValidationError } from "#server/utils/api-error";
 import {
   assertUnrestrictedUser,
+  enforceTwoAxisRateLimit,
   getVerifiedRemoteIp,
   requireWebUserSession,
 } from "#server/utils/auth-runtime";
+import { readJsonBodyWithLimit } from "#server/utils/request-body";
 
 const createOrderSchema = z.object({
   package_code: z.string().min(1),
@@ -34,6 +36,11 @@ const createOrderSchema = z.object({
 
 export default defineEventHandler(async (event) => {
   const session = requireWebUserSession(event);
+  await enforceTwoAxisRateLimit(
+    event,
+    "payment:create",
+    String(session.user_id)
+  );
   const db = getDb();
 
   // Verify user is not pending verification
@@ -49,10 +56,7 @@ export default defineEventHandler(async (event) => {
 
   assertUnrestrictedUser(userRecord.status);
 
-  const rawBody =
-    (await readBody(event).catch(() => undefined)) ??
-    Reflect.get(event, "_body") ??
-    Reflect.get(event.context ?? {}, "body");
+  const rawBody = await readJsonBodyWithLimit(event);
   const parsed = createOrderSchema.safeParse(rawBody);
   if (!parsed.success) {
     throwValidationError(parsed.error);

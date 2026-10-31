@@ -220,7 +220,7 @@
   import { getTouchFloor } from "@mindkid/game-engine";
   import { type AccessTier, findCompetency } from "@mindkid/shared/client";
   import { computed, onMounted, ref } from "vue";
-  import type { ChildCompetencyResponse } from "#server/services/child-competency-explorer";
+  import { useUserSession } from "#imports";
   import KidMascot from "~/components/kid/mascot.vue";
   import KidParentLockButton from "~/components/kid/parent-lock-button.vue";
   import ParentGateModal from "~/components/parent-gate-modal.vue";
@@ -237,6 +237,32 @@
     readonly cardBorderClass: string;
     readonly iconBgClass: string;
     readonly pillClass: string;
+  }
+
+  interface CompetencyGameItem {
+    readonly code: string;
+    readonly title: string;
+    readonly thumbnail_emoji: string;
+    readonly theme_id: string;
+    readonly access_tier: AccessTier;
+    readonly is_locked: boolean;
+    readonly best_stars: number;
+    readonly play_count: number;
+  }
+
+  interface ChildCompetencyResponse {
+    readonly competency: {
+      readonly code: string;
+      readonly name: string;
+      readonly tagline: string;
+      readonly icon_path: string;
+    };
+    readonly child: {
+      readonly uuid: string;
+      readonly display_name: string;
+      readonly age_band: string;
+    };
+    readonly games: CompetencyGameItem[];
   }
 
   interface GuestLevelItem {
@@ -318,6 +344,7 @@
   const route = useRoute();
   const router = useRouter();
   const apiFetch = useApi();
+  const { loggedIn } = useUserSession();
   const { speak } = useSpeech();
   const activeChildCookie = useCookie<string | null>("active_child_id");
   const code = String(route.params.code ?? "").toUpperCase();
@@ -401,7 +428,7 @@
 
     try {
       isLoading.value = true;
-      if (activeChildCookie.value) {
+      if (loggedIn.value && activeChildCookie.value) {
         competencyData.value = await apiFetch<ChildCompetencyResponse>(
           `/api/users/play/competency/${entry.code}`
         );

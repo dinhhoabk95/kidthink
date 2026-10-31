@@ -6,7 +6,6 @@ import {
   entitlements,
   gameLevels,
   getOwnerDb,
-  lessons,
   users,
 } from "@mindkid/db";
 import { eq } from "drizzle-orm";
@@ -73,7 +72,7 @@ describe("Personal Curriculum API Endpoints (Task #65 / P4.4)", () => {
   let childAUuid: string;
   let childBUuid: string;
   let standardGameLevelId: number;
-  let publishedLessonId: number;
+  let secondGameLevelId: number;
   let systemCurriculumCode: string;
 
   beforeEach(async () => {
@@ -177,46 +176,44 @@ describe("Personal Curriculum API Endpoints (Task #65 / P4.4)", () => {
       .insert(gameLevels)
       .values({
         code: glCode,
-        entityId: Math.floor(100_000 + Math.random() * 800_000),
         templateCode: "GT-001",
         difficulty: 1,
         title: "Đếm số mẫu",
         accessTier: "standard",
-        status: "published",
         contentPack: {},
         difficultyParams: {},
       })
       .returning();
     standardGameLevelId = gl.id;
 
-    // 4. Seed lesson
-    let lesCode = `LES-${String(Math.floor(1000 + Math.random() * 8999))}`;
+    // 4. Seed second game level
+    let gl2Code = `GL-C1-NUM-CNT-${String(Math.floor(1000 + Math.random() * 8999))}`;
     for (let attempt = 0; attempt < 50; attempt++) {
-      const candidate = `LES-${String(Math.floor(1000 + Math.random() * 8999))}`;
+      const candidate = `GL-C1-NUM-CNT-${String(Math.floor(1000 + Math.random() * 8999))}`;
       const existing = await db
-        .select({ id: lessons.id })
-        .from(lessons)
-        .where(eq(lessons.code, candidate))
+        .select({ id: gameLevels.id })
+        .from(gameLevels)
+        .where(eq(gameLevels.code, candidate))
         .limit(1);
       if (existing.length === 0) {
-        lesCode = candidate;
+        gl2Code = candidate;
         break;
       }
     }
 
-    const [les] = await db
-      .insert(lessons)
+    const [gl2] = await db
+      .insert(gameLevels)
       .values({
-        code: lesCode,
-        entityId: Math.floor(100_000 + Math.random() * 800_000),
-        title: "Bài học hình khối",
+        code: gl2Code,
+        templateCode: "GT-001",
+        difficulty: 1,
+        title: "Trò chơi hình khối",
         accessTier: "standard",
-        status: "published",
-        estimatedMinutes: 20,
-        version: 1,
+        contentPack: {},
+        difficultyParams: {},
       })
       .returning();
-    publishedLessonId = les.id;
+    secondGameLevelId = gl2.id;
 
     // 5. Seed system curriculum
     systemCurriculumCode =
@@ -228,10 +225,8 @@ describe("Personal Curriculum API Endpoints (Task #65 / P4.4)", () => {
       .insert(curricula)
       .values({
         code: systemCurriculumCode,
-        entityId: Math.floor(100_000 + Math.random() * 800_000),
         title: "Chương trình mẫu hệ thống",
         accessTier: "standard",
-        status: "published",
         durationWeeks: 4,
         sessionsPerWeek: 3,
       })
@@ -332,8 +327,8 @@ describe("Personal Curriculum API Endpoints (Task #65 / P4.4)", () => {
             week_no: 1,
             session_no: 2,
             position: 1,
-            entity_type: "lesson",
-            entity_id: publishedLessonId,
+            entity_type: "game_level",
+            entity_id: secondGameLevelId,
           },
         ],
         expected_version: 2,

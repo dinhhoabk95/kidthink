@@ -355,7 +355,10 @@ export class OAuthProviderRegistry {
         issuerUrl,
         clientId,
         clientSecret
-      );
+      ).catch((err) => {
+        this.googleOidcConfigPromise = null;
+        throw err;
+      });
     }
     return this.googleOidcConfigPromise;
   }

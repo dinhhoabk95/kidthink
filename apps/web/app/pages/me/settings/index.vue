@@ -514,31 +514,32 @@
 </template>
 
 <script lang="ts" setup>
-  import { getFieldErrors, normalizeApiError } from "@mindkid/errors/client";
+  import { normalizeApiError } from "@mindkid/errors/client";
   import { computed, onMounted, reactive, ref } from "vue";
   import { useApi } from "~/composables/use-api";
   import {
     buildPasswordModalFields,
+    DEFAULT_SETTINGS_PROVIDERS,
     EMAIL_MODAL_FIELDS,
+    type ErrorInput,
     type LinkedIdentityItem,
     NOTIF_TOGGLE_ITEMS,
     PRIVACY_LINKS,
     type ProviderItem,
+    resetEmailModalState,
+    resetPasswordModalState,
+    resolvePasswordSubmitLabel,
     resolveVisibleProviders,
     SETTINGS_TABS,
+    syncSettingsInitialState,
+    toFieldErrorMap,
+    type UserSessionData,
+    validatePasswordForm,
   } from "~/utils/account-settings-config";
 
   definePageMeta({
     middleware: ["user-auth"],
   });
-
-  type ErrorInput = Parameters<typeof getFieldErrors>[0];
-
-  function toFieldErrorMap(err: ErrorInput): Record<string, string> {
-    return Object.fromEntries(
-      getFieldErrors(err).map((f) => [f.field, f.message])
-    );
-  }
 
   const api = useApi();
   const isSavingProfile = ref(false);
@@ -563,12 +564,9 @@
     buildPasswordModalFields(hasPassword.value)
   );
 
-  const passwordSubmitLabel = computed(() => {
-    if (isSubmittingPassword.value) {
-      return "Đang xử lý...";
-    }
-    return hasPassword.value ? "Cập nhật mật khẩu" : "Đặt mật khẩu";
-  });
+  const passwordSubmitLabel = computed(() =>
+    resolvePasswordSubmitLabel(isSubmittingPassword.value, hasPassword.value)
+  );
 
   const isEmailModalOpen = ref(false);
   const isSubmittingEmail = ref(false);
@@ -579,10 +577,7 @@
     newEmail: "",
   });
 
-  const providers = ref<ProviderItem[]>([
-    { provider: "google", label: "Google", is_enabled: true },
-    { provider: "facebook", label: "Facebook", is_enabled: false },
-  ]);
+  const providers = ref<ProviderItem[]>([...DEFAULT_SETTINGS_PROVIDERS]);
   const linkedIdentities = ref<LinkedIdentityItem[]>([]);
 
   const visibleProviders = computed(() =>
@@ -597,7 +592,8 @@
 
   onMounted(async () => {
     try {
-      const [provRes, identRes, notifRes] = await Promise.all([
+      const [user, prov, ident, notif] = await Promise.all([
+        api<UserSessionData>("/api/users/auth/session").catch(() => null),
         api<{ providers: ProviderItem[] }>(
           "/api/guest/auth/oauth/providers"
         ).catch(() => null),
@@ -608,18 +604,18 @@
           "/api/users/notification-preferences"
         ).catch(() => null),
       ]);
-      if (provRes?.providers) {
-        providers.value = provRes.providers;
-      }
-      if (identRes?.items) {
-        linkedIdentities.value = identRes.items;
-      }
-      if (typeof notifRes?.weekly_progress === "boolean") {
-        notifPreferences.weekly_progress = notifRes.weekly_progress;
-      }
-      if (typeof notifRes?.content_new === "boolean") {
-        notifPreferences.content_new = notifRes.content_new;
-      }
+      syncSettingsInitialState(
+        {
+          userEmail,
+          displayNameTarget: profileForm,
+          hasPassword,
+          pendingEmail,
+          providers,
+          linkedIdentities,
+          notifPreferences,
+        },
+        { user, prov, ident, notif }
+      );
     } catch {
       // Ignore initial optional fetch failure
     }
@@ -677,11 +673,11 @@
   }
 
   function openPasswordModal(): void {
-    passwordForm.currentPassword = "";
-    passwordForm.newPassword = "";
-    passwordForm.confirmPassword = "";
-    passwordModalError.value = "";
-    passwordFieldErrors.value = {};
+    resetPasswordModalState(
+      passwordForm,
+      passwordModalError,
+      passwordFieldErrors
+    );
     isPasswordModalOpen.value = true;
   }
 
@@ -693,17 +689,14 @@
     passwordModalError.value = "";
     passwordFieldErrors.value = {};
 
-    if (passwordForm.newPassword.length < 8) {
-      passwordFieldErrors.value = {
-        new_password: "Mật khẩu mới phải có ít nhất 8 ký tự.",
-      };
-      return;
-    }
-
-    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      passwordFieldErrors.value = {
-        confirm_password: "Mật khẩu xác nhận không khớp.",
-      };
+    const validation = validatePasswordForm({
+      hasPassword: hasPassword.value,
+      currentPassword: passwordForm.currentPassword,
+      newPassword: passwordForm.newPassword,
+      confirmPassword: passwordForm.confirmPassword,
+    });
+    if (!validation.valid) {
+      passwordFieldErrors.value = validation.fieldErrors;
       return;
     }
 
@@ -737,10 +730,7 @@
   }
 
   function openEmailModal(): void {
-    emailForm.currentPassword = "";
-    emailForm.newEmail = "";
-    emailModalError.value = "";
-    emailFieldErrors.value = {};
+    resetEmailModalState(emailForm, emailModalError, emailFieldErrors);
     isEmailModalOpen.value = true;
   }
 
@@ -781,6 +771,3 @@
     }
   }
 </script>
-
-<style scoped>
-</style>

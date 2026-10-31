@@ -3,7 +3,6 @@ import { describe, expect, it } from "vitest";
 import { getAppDb, getOwnerDb } from "#src/index";
 import {
   auditLogs,
-  contentReviewLog,
   notificationDeliveries,
   notifications,
 } from "#src/schema/ops";
@@ -40,28 +39,6 @@ describe("Ops Schema Integration Tests", () => {
     await expect(
       appDb.delete(auditLogs).where(eq(auditLogs.id, log.id))
     ).rejects.toThrow();
-  });
-
-  it("BR-CRV-01: content_review_log supports foreign key references to managers", async () => {
-    const db = getOwnerDb();
-
-    const [log] = await db
-      .insert(contentReviewLog)
-      .values({
-        entityType: "game_level",
-        entityId: 999_999_999,
-        contentVersion: 1,
-        fromStatus: "draft",
-        toStatus: "in_review",
-        reason: "Test review log entry",
-      })
-      .returning();
-    if (!log) {
-      throw new Error("Failed to insert log");
-    }
-
-    expect(log).toBeDefined();
-    expect(log.entityId).toBe(999_999_999);
   });
 
   it("BR-NOT-04: notifications transaction rollback test", async () => {

@@ -233,8 +233,13 @@
     sanitizeRedirectTarget,
   } from "@mindkid/shared/client";
   import { computed, ref } from "vue";
-  import { useRoute, useRouter } from "vue-router";
-  import { definePageMeta, useSeoMeta, useUserSession } from "#imports";
+  import {
+    definePageMeta,
+    useRoute,
+    useRouter,
+    useSeoMeta,
+    useUserSession,
+  } from "#imports";
   import { useApi } from "~/composables/use-api";
 
   definePageMeta({

@@ -6,6 +6,7 @@ import type {
   SkillDataset,
 } from "@mindkid/shared";
 import {
+  assetKey,
   createRng,
   resolveItemAsset,
   safeGetItem,
@@ -26,17 +27,41 @@ export const projectGT004: Projection<"GT-004"> = {
     const targetItemCount = params.item_count;
 
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
-    const shuffled = shuffleDeterministic(dataset.items, rng);
-    let itemA = safeGetItem(shuffled, 0);
-    const itemB = safeGetItem(shuffled, 1);
+    const baseShuffled = shuffleDeterministic(
+      dataset.items,
+      createRng(opts.seed)
+    );
+    const roundIdx = opts.round_index ?? 0;
+    let itemA = safeGetItem(baseShuffled, roundIdx % baseShuffled.length);
+    const keyA = assetKey(resolveItemAsset(itemA, true));
+    const distinctCandidates = baseShuffled.filter(
+      (i) =>
+        i.id !== itemA.id &&
+        assetKey(resolveItemAsset(i, true)) !== keyA &&
+        ((i.contrast_group && i.contrast_group !== itemA.contrast_group) ||
+          (i.category?.type && i.category.type !== itemA.category?.type))
+    );
+    const fallbackCandidates = baseShuffled.filter(
+      (i) => i.id !== itemA.id && assetKey(resolveItemAsset(i, true)) !== keyA
+    );
+    let candidatePool = baseShuffled.filter((i) => i.id !== itemA.id);
+    if (distinctCandidates.length > 0) {
+      candidatePool = distinctCandidates;
+    } else if (fallbackCandidates.length > 0) {
+      candidatePool = fallbackCandidates;
+    }
+    const itemB =
+      candidatePool.length > 0
+        ? safeGetItem(candidatePool, roundIdx % candidatePool.length)
+        : safeGetItem(baseShuffled, (roundIdx + 1) % baseShuffled.length);
 
     // Dataset có ký hiệu thì bàn chơi phải cho trẻ thấy ký hiệu đó (`BR-SDS-03`).
     // Chỉ đổi khi cả hai nhóm đều không có, nên level đã đạt giữ nguyên.
-    const glyphCandidates = shuffled.filter(
+    const glyphCandidates = baseShuffled.filter(
       (i) => i.glyph && i.id !== itemB.id
     );
     if (!(itemA.glyph || itemB.glyph) && glyphCandidates.length > 0) {
-      itemA = safeGetItem(glyphCandidates, rng.nextInt(glyphCandidates.length));
+      itemA = safeGetItem(glyphCandidates, roundIdx % glyphCandidates.length);
     }
 
     const groups = [

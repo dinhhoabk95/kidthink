@@ -246,7 +246,7 @@
                       <div class="flex items-center gap-2 min-w-0">
                         <UIcon
                           class="w-4 h-4 text-brand-600 shrink-0"
-                          :name="it.entity_type === 'lesson' ? 'i-lucide-book-open' : 'i-lucide-gamepad-2'"
+                          name="i-lucide-gamepad-2"
                         />
                         <div class="truncate">
                           <div
@@ -340,28 +340,11 @@
           <!-- Type Filter -->
           <div class="flex flex-wrap gap-2">
             <button
-              class="px-4 py-2 rounded-2xl font-bold text-sm min-h-11 transition-all"
+              class="px-4 py-2 rounded-2xl font-bold text-sm min-h-11 transition-all bg-brand-600 text-white"
               type="button"
-              :class="
-                selectedType === 'game_level'
-                  ? 'bg-brand-600 text-white'
-                  : 'bg-surface-100 dark:bg-surface-700 text-surface-700 dark:text-surface-300'
-              "
               @click="selectedType = 'game_level'"
             >
               Trò chơi (Game Levels)
-            </button>
-            <button
-              class="px-4 py-2 rounded-2xl font-bold text-sm min-h-11 transition-all"
-              type="button"
-              :class="
-                selectedType === 'lesson'
-                  ? 'bg-brand-600 text-white'
-                  : 'bg-surface-100 dark:bg-surface-700 text-surface-700 dark:text-surface-300'
-              "
-              @click="selectedType = 'lesson'"
-            >
-              Bài học (Lessons)
             </button>
           </div>
 
@@ -441,7 +424,7 @@
     week_no: number;
     session_no: number;
     position: number;
-    entity_type: "lesson" | "game_level";
+    entity_type: "game_level";
     entity_id: number;
     code?: string;
     title?: string;
@@ -465,7 +448,7 @@
 
   interface CatalogEntry {
     id: number;
-    entity_type: "game_level" | "lesson";
+    entity_type: "game_level";
     code: string;
     title: string;
     access_tier: string;
@@ -545,7 +528,7 @@
   const showAddModal = ref(false);
   const targetWeek = ref(1);
   const targetSession = ref(1);
-  const selectedType = ref<"game_level" | "lesson">("game_level");
+  const selectedType = ref<"game_level">("game_level");
   const selectedCatalogItem = ref<CatalogEntry | null>(null);
 
   const CATALOG_ITEMS: readonly CatalogEntry[] = [
@@ -561,13 +544,6 @@
       entity_type: "game_level",
       code: "GL-C1-NUM-CNT-0002",
       title: "Ghép cặp quả táo",
-      access_tier: "standard",
-    },
-    {
-      id: 3,
-      entity_type: "lesson",
-      code: "LES-0001",
-      title: "Khám phá các hình khối",
       access_tier: "standard",
     },
   ];

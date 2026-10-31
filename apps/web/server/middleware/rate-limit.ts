@@ -56,6 +56,7 @@ export default defineEventHandler(async (event) => {
   });
 
   if (result.statusCode === 200) {
+    (event.context as { _rateLimitChecked?: boolean })._rateLimitChecked = true;
     return;
   }
 

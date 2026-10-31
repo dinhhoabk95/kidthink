@@ -1,53 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { loadGoLiveConfig } from "#src/gates/go-live-readiness";
-import { evaluateLessonSupply } from "#src/gates/lesson-supply";
-import { ALL_SEED_LESSONS, ALL_SEED_LEVELS } from "#src/index";
-import { ROADMAP_CURRICULA_CONFIGS } from "#src/seed-master/roadmap-curricula";
-
-/**
- * Cổng phải quét **corpus thật**, không phải mock.
- *
- * `lesson-supply.test.ts` và `go-live-readiness.test.ts` dựng 100% dữ liệu giả,
- * và mock của chúng mang `header.status` cùng `metadata.target_skill_code` —
- * hai trường **không tồn tại** trên kiểu seed nào của repo. Đó là lý do cả hai
- * cổng đọc ra 0 mà không test nào đỏ.
- */
-describe("Cổng cung giáo án chạy trên corpus thật (BR-LCD-01, BR-LCD-10)", () => {
-  const result = evaluateLessonSupply({
-    curriculaConfigs: ROADMAP_CURRICULA_CONFIGS,
-    lessons: [...ALL_SEED_LESSONS],
-    gameLevels: ALL_SEED_LEVELS,
-  });
-
-  it("corpus thật không rỗng — nếu rỗng thì mọi phép đo dưới đây vô nghĩa", () => {
-    expect(ALL_SEED_LESSONS.length).toBeGreaterThan(0);
-    expect(ALL_SEED_LEVELS.length).toBeGreaterThan(0);
-  });
-
-  it("ca âm: cung tiết phải khớp số lesson thật, Cấm — NEVER là 0", () => {
-    // Trước sửa đổi này cổng lọc `l.header.status === "published"` trên một
-    // kiểu không có trường `status`, nên nó báo 0 tiết trong khi corpus có 81.
-    expect(result.metrics.publishedLessonCount).toBe(ALL_SEED_LESSONS.length);
-    expect(result.metrics.publishedLessonCount).toBeGreaterThan(0);
-  });
-
-  it("ca âm: tập kỹ năng phải đọc được từ header.skill_codes", () => {
-    // Trước sửa đổi này cổng đọc `les.metadata.target_skill_code` — luôn
-    // `undefined` — nên `min_levels_per_skill` là luật không thể vi phạm.
-    const skillsInCorpus = new Set(
-      ALL_SEED_LESSONS.flatMap((l) => l.header.skill_codes)
-    );
-    expect(skillsInCorpus.size).toBeGreaterThan(0);
-    expect(result.metrics.totalUniqueSkills).toBe(skillsInCorpus.size);
-  });
-
-  it("số level đếm cho mỗi kỹ năng phải khác 0 ở ít nhất một kỹ năng", () => {
-    const covered =
-      result.metrics.skillsWithOneLevel.length +
-      result.metrics.skillsWithSufficientLevels.length;
-    expect(covered).toBeGreaterThan(0);
-  });
-});
+import { ALL_SEED_LEVELS } from "#src/index";
 
 describe("Cấu hình go-live được parse, không ép kiểu (BR-GLR-06)", () => {
   it("đọc được và có đủ ngưỡng bắt buộc", () => {

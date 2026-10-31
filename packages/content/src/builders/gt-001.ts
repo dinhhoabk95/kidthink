@@ -7,12 +7,44 @@ import type {
 } from "@mindkid/shared";
 import { formatPromptLabel } from "@mindkid/shared";
 import {
+  assetKey,
   createRng,
   type KeywordAsset,
   keywordAsset,
   safeGetItem,
   shuffleDeterministic,
 } from "./utils.js";
+
+function getOrderedDatasetItems(
+  items: SkillDataset["items"]
+): SkillDataset["items"] {
+  const hasOrder = items.some(
+    (i) => typeof i.ordering === "number" || typeof i.value === "number"
+  );
+  if (!hasOrder) {
+    return items;
+  }
+  return items
+    .slice()
+    .sort(
+      (a, b) => (a.ordering ?? a.value ?? 0) - (b.ordering ?? b.value ?? 0)
+    );
+}
+
+function selectDistractorPool(
+  orderedItems: SkillDataset["items"],
+  targetId: string,
+  targetKey: string
+): SkillDataset["items"] {
+  const distractorPool = orderedItems.filter((item) => item.id !== targetId);
+  const distinctVisualPool = distractorPool.filter(
+    (item) => assetKey(keywordAsset(item)) !== targetKey
+  );
+  if (distinctVisualPool.length > 0) {
+    return distinctVisualPool;
+  }
+  return distractorPool.length > 0 ? distractorPool : orderedItems;
+}
 
 export const projectGT001: Projection<"GT-001"> = {
   template: "GT-001",
@@ -29,17 +61,23 @@ export const projectGT001: Projection<"GT-001"> = {
     const expectedDistractorCount =
       params.distractor_count ?? Math.max(1, expectedItemCount - 1);
 
-    const rng = createRng(opts.seed + (opts.round_index ?? 0));
-    const targetIdx = rng.nextInt(dataset.items.length);
-    const targetItem = safeGetItem(dataset.items, targetIdx);
+    const orderedItems = getOrderedDatasetItems(dataset.items);
 
-    const distractorPool = dataset.items.filter((_, idx) => idx !== targetIdx);
-    const pool = distractorPool.length > 0 ? distractorPool : dataset.items;
+    const baseRng = createRng(opts.seed);
+    const baseIdx = baseRng.nextInt(orderedItems.length);
+    const targetIdx = (baseIdx + (opts.round_index ?? 0)) % orderedItems.length;
+    const targetItem = safeGetItem(orderedItems, targetIdx);
+    const targetAsset = keywordAsset(targetItem);
+    const targetKey = assetKey(targetAsset);
+
+    const rng = createRng(opts.seed + (opts.round_index ?? 0));
+    const pool = selectDistractorPool(orderedItems, targetItem.id, targetKey);
     const shuffledPool = shuffleDeterministic(pool, rng);
 
     const chosenDistractors: Array<{
       id: string;
       asset: KeywordAsset;
+      hasGlyph: boolean;
     }> = [];
     for (let i = 0; i < expectedDistractorCount; i++) {
       const d = safeGetItem(shuffledPool, i % shuffledPool.length);
@@ -47,10 +85,26 @@ export const projectGT001: Projection<"GT-001"> = {
       chosenDistractors.push({
         id: uniqueId,
         asset: keywordAsset(d),
+        hasGlyph: Boolean(d.glyph),
       });
     }
 
-    const targetAsset = keywordAsset(targetItem);
+    const glyphItems = orderedItems.filter(
+      (i) => Boolean(i.glyph) && i.id !== targetItem.id
+    );
+    const showsGlyph =
+      Boolean(targetItem.glyph) || chosenDistractors.some((d) => d.hasGlyph);
+    if (!showsGlyph && glyphItems.length > 0 && chosenDistractors.length > 0) {
+      const glyphChoice = safeGetItem(
+        glyphItems,
+        (opts.round_index ?? 0) % glyphItems.length
+      );
+      chosenDistractors[chosenDistractors.length - 1] = {
+        id: glyphChoice.id,
+        asset: keywordAsset(glyphChoice),
+        hasGlyph: true,
+      };
+    }
 
     const options = [
       {

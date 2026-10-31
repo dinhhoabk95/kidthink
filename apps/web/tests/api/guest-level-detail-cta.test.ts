@@ -1,4 +1,4 @@
-import { gameLevels, gameTemplates, getOwnerDb } from "@mindkid/db";
+import { gameLevels, getOwnerDb } from "@mindkid/db";
 import type { AccessTier, LevelCta } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import type { H3Event } from "h3";
@@ -62,29 +62,8 @@ describe("GET /api/guest/levels/[code] — Detail CTA by Session (BR-GDP-09, BR-
   const loginCode = `GL-C1-CNT-CARD-${baseNum + 2}`;
   const standardCode = `GL-C1-CNT-CARD-${baseNum + 3}`;
   const premiumCode = `GL-C1-CNT-CARD-${baseNum + 4}`;
-  const archivedCode = `GL-C1-CNT-CARD-${baseNum + 5}`;
 
   beforeAll(async () => {
-    // Ensure template exists
-    const [template] = await db
-      .insert(gameTemplates)
-      .values({
-        code: "GT-001",
-        name: "Test Template",
-        mechanic: "tap_target",
-      })
-      .onConflictDoNothing()
-      .returning();
-
-    const templateId = template
-      ? template.id
-      : (
-          await db
-            .select({ id: gameTemplates.id })
-            .from(gameTemplates)
-            .where(eq(gameTemplates.code, "GT-001"))
-        )[0]?.id || 1;
-
     const [existingAllowlist] = await db
       .select({ id: gameLevels.id })
       .from(gameLevels)
@@ -93,16 +72,14 @@ describe("GET /api/guest/levels/[code] — Detail CTA by Session (BR-GDP-09, BR-
 
     if (!existingAllowlist) {
       await db.insert(gameLevels).values({
-        entityId: baseNum + 1999,
         code: allowlistFreeCode,
         title: "Allowlist Free Level",
-        status: "published",
         accessTier: "free",
         difficulty: 1,
         ageMin: 3,
         ageMax: 4,
         themeId: "farm",
-        templateId,
+        templateCode: "GT-001",
         contentPack: { items: [] },
         difficultyParams: { count: 3 },
       });
@@ -111,72 +88,50 @@ describe("GET /api/guest/levels/[code] — Detail CTA by Session (BR-GDP-09, BR-
 
     await db.insert(gameLevels).values([
       {
-        entityId: baseNum + 2000,
         code: freeCode,
         title: "Test Free Level",
-        status: "published",
         accessTier: "free",
         difficulty: 1,
         ageMin: 3,
         ageMax: 4,
         themeId: "farm",
-        templateId,
+        templateCode: "GT-001",
         contentPack: { items: [] },
         difficultyParams: { count: 3 },
       },
       {
-        entityId: baseNum + 2001,
         code: loginCode,
         title: "Test Login Level",
-        status: "published",
         accessTier: "login",
         difficulty: 1,
         ageMin: 3,
         ageMax: 4,
         themeId: "farm",
-        templateId,
+        templateCode: "GT-001",
         contentPack: { items: [] },
         difficultyParams: { count: 3 },
       },
       {
-        entityId: baseNum + 2002,
         code: standardCode,
         title: "Test Standard Level",
-        status: "published",
         accessTier: "standard",
         difficulty: 2,
         ageMin: 4,
         ageMax: 5,
         themeId: "farm",
-        templateId,
+        templateCode: "GT-001",
         contentPack: { items: [] },
         difficultyParams: { count: 3 },
       },
       {
-        entityId: baseNum + 2003,
         code: premiumCode,
         title: "Test Premium Level",
-        status: "published",
         accessTier: "premium",
         difficulty: 3,
         ageMin: 5,
         ageMax: 6,
         themeId: "farm",
-        templateId,
-        contentPack: { items: [] },
-        difficultyParams: { count: 3 },
-      },
-      {
-        entityId: baseNum + 2004,
-        code: archivedCode,
-        title: "Test Archived Level",
-        status: "archived",
-        accessTier: "free",
-        difficulty: 1,
-        ageMin: 3,
-        ageMax: 4,
-        themeId: "farm",
-        templateId,
+        templateCode: "GT-001",
         contentPack: { items: [] },
         difficultyParams: { count: 3 },
       },
@@ -191,7 +146,6 @@ describe("GET /api/guest/levels/[code] — Detail CTA by Session (BR-GDP-09, BR-
     await db.delete(gameLevels).where(eq(gameLevels.code, loginCode));
     await db.delete(gameLevels).where(eq(gameLevels.code, standardCode));
     await db.delete(gameLevels).where(eq(gameLevels.code, premiumCode));
-    await db.delete(gameLevels).where(eq(gameLevels.code, archivedCode));
   });
 
   it("BR-LAD-07: guest xem free level trong allow-list -> locked: false, action: play", async () => {
@@ -261,10 +215,10 @@ describe("GET /api/guest/levels/[code] — Detail CTA by Session (BR-GDP-09, BR-
     expect(res.cta.href).toBe("/pricing");
   });
 
-  it("archived level ném 410 GONE", async () => {
-    const event = makeMockEvent({ code: archivedCode });
+  it("level không tồn tại ném 404 NOT_FOUND", async () => {
+    const event = makeMockEvent({ code: `GL-C1-CNT-CARD-${baseNum + 99}` });
     await expect(guestLevelDetailHandler(event)).rejects.toMatchObject({
-      statusCode: 410,
+      statusCode: 404,
     });
   });
 });

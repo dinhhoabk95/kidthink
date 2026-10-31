@@ -36,7 +36,7 @@ const VALIDATES_BODY =
  * service validator nhận nguyên `query` và chạy Zod `.safeParse` bên trong).
  */
 const VALIDATES_QUERY =
-  /\.safeParse\s*\(|\bquery:\s*[a-zA-Z0-9_]+|\bgetValidatedQuery\s*\(|\bsearchGameLevels\s*\(|\bsearchLessons\s*\(|\bsearchActivities\s*\(|\blistWorksheets\s*\(|\blistCustomGames\s*\(|\bparseExportDateRange\s*\(|\bvalidateAuditDateRange\s*\(|\bparseAndValidateState\s*\(/;
+  /\.safeParse\s*\(|\bquery:\s*[a-zA-Z0-9_]+|\bgetValidatedQuery\s*\(|\bsearchGameLevels\s*\(|\blistWorksheets\s*\(|\blistCustomGames\s*\(|\bparseExportDateRange\s*\(|\bvalidateAuditDateRange\s*\(|\bparseAndValidateState\s*\(/;
 
 /**
  * Bằng chứng đã validate router params (Zod `.safeParse`, `getValidatedRouterParams`,

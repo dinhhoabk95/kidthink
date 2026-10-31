@@ -1,41 +1,31 @@
 import { SKILL_DATASETS } from "@mindkid/content";
 import {
-  activities,
-  contentObjectiveMap,
-  contentReviewLog,
-  contentSeedBatches,
   contentSkillMap,
   contentTagMap,
   contentTags,
   gameLevelRounds,
   gameLevels,
-  learningObjectives,
-  lessonActivities,
-  lessons,
   normalizeMechanicTagCode,
   type OwnerDb,
   skillDatasets,
   skills,
-  validateAndAssignTags,
   validateContentSkillMap,
 } from "@mindkid/db";
 import { ValidationError } from "@mindkid/errors/common";
 import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
-import { eq, inArray } from "drizzle-orm";
+import { inArray, sql } from "drizzle-orm";
 import { readSeedGatesBaseline } from "#src/cli/check-seed-gates";
 import { runEightGates } from "#src/gates/runner";
 import type {
-  ActivitySeed,
   AnyContentSeed,
   ContentSeed,
   ContentSeedRound,
   GateResult,
-  LessonSeed,
 } from "#src/types";
 
 export interface SeedBatchInput {
   batchCode: string;
-  kind?: "game_level" | "activity" | "lesson";
+  kind?: "game_level";
   gitSha?: string;
   prUrl?: string;
   approvedByManagerId?: number;
@@ -131,197 +121,48 @@ export async function executeSeedBatch(
   input: SeedBatchInput,
   dryRun = false
 ): Promise<SeedExecutionResult> {
-  const { batchCode, kind, gitSha, prUrl, approvedByManagerId, seeds } = input;
+  const { batchCode, seeds } = input;
   let totalInserted = 0;
   let totalSkipped = 0;
-
-  let inferredKind: "game_level" | "activity" | "lesson" = kind || "game_level";
-  if (!kind && seeds[0]) {
-    if (seeds[0].kind === "activity") {
-      inferredKind = "activity";
-    } else if (seeds[0].kind === "lesson") {
-      inferredKind = "lesson";
-    }
-  }
 
   // 1. Run eight gates first for all seeds (unless explicitly skipped, e.g. in seeder)
   const allGateResults = input.skipGates
     ? []
     : validateSeedsWithGates(seeds, input.batchCode);
 
-  const checklistSnapshot = {
-    batch_code: batchCode,
-    git_sha: gitSha || "local-dev",
-    pr_url: prUrl || "local",
-    gate_count: allGateResults.length,
-    all_passed: allGateResults.every((g) => g.passed),
-  };
-
   const result = await db
     // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: batch seeder workflow requires single-transaction orchestration
     .transaction(async (tx) => {
-      const [batchRow] = await tx
-        .insert(contentSeedBatches)
-        .values({
-          batchCode,
-          kind: inferredKind,
-          gitSha: gitSha || "local-dev",
-          prUrl: prUrl || "local",
-          approvedByManagerId: approvedByManagerId || null,
-          rowsInserted: 0,
-          gateResults: allGateResults,
-        })
-        .onConflictDoUpdate({
-          target: contentSeedBatches.batchCode,
-          set: {
-            rowsInserted: 0,
-            gateResults: allGateResults,
-          },
-        })
-        .returning({ id: contentSeedBatches.id });
-      const seedBatchId = batchRow?.id ?? null;
-
       // 2. Preload all lookup tables in parallel
-      const [
-        allSkills,
-        allTags,
-        allExistingLevels,
-        allExistingActivities,
-        allExistingLessons,
-        allSkillDatasets,
-        allLearningObjectives,
-      ] = await Promise.all([
-        tx.select().from(skills),
-        tx.select().from(contentTags),
-        tx
-          .select({
-            id: gameLevels.id,
-            entityId: gameLevels.entityId,
-            code: gameLevels.code,
-            contentVersion: gameLevels.contentVersion,
-            status: gameLevels.status,
-          })
-          .from(gameLevels),
-        tx
-          .select({
-            id: activities.id,
-            entityId: activities.entityId,
-            code: activities.code,
-            contentVersion: activities.contentVersion,
-            status: activities.status,
-          })
-          .from(activities),
-        tx
-          .select({
-            id: lessons.id,
-            entityId: lessons.entityId,
-            code: lessons.code,
-            contentVersion: lessons.contentVersion,
-            status: lessons.status,
-          })
-          .from(lessons),
-        tx.select().from(skillDatasets),
-        tx.select().from(learningObjectives),
-      ]);
+      const [allSkills, allTags, allExistingLevels, allSkillDatasets] =
+        await Promise.all([
+          tx.select().from(skills),
+          tx.select().from(contentTags),
+          tx
+            .select({
+              id: gameLevels.id,
+              code: gameLevels.code,
+              contentPack: gameLevels.contentPack,
+              difficultyParams: gameLevels.difficultyParams,
+            })
+            .from(gameLevels),
+          tx.select().from(skillDatasets),
+        ]);
 
       const skillMap = new Map(allSkills.map((s) => [s.code, s]));
       const tagMap = new Map(allTags.map((t) => [t.code, t]));
       const skillDatasetMap = new Map(allSkillDatasets.map((d) => [d.code, d]));
-      const loMap = new Map(allLearningObjectives.map((lo) => [lo.code, lo]));
-
-      const existingLevelsByCode = new Map<
-        string,
-        Array<{
-          id: number;
-          entityId: number;
-          contentVersion: number;
-          status: string;
-        }>
-      >();
-      const gameLevelEntityIdByCode = new Map<string, number>();
-      for (const l of allExistingLevels) {
-        const arr = existingLevelsByCode.get(l.code) ?? [];
-        arr.push(l);
-        existingLevelsByCode.set(l.code, arr);
-        if (!gameLevelEntityIdByCode.has(l.code) || l.status === "published") {
-          gameLevelEntityIdByCode.set(l.code, l.entityId);
-        }
-      }
-
-      const existingActivitiesByCode = new Map<
-        string,
-        Array<{
-          id: number;
-          entityId: number;
-          contentVersion: number;
-          status: string;
-        }>
-      >();
-      const activityEntityIdByCode = new Map<string, number>();
-      for (const a of allExistingActivities) {
-        const arr = existingActivitiesByCode.get(a.code) ?? [];
-        arr.push(a);
-        existingActivitiesByCode.set(a.code, arr);
-        if (!activityEntityIdByCode.has(a.code) || a.status === "published") {
-          activityEntityIdByCode.set(a.code, a.entityId);
-        }
-      }
-
-      const existingLessonsByCode = new Map<
-        string,
-        Array<{
-          id: number;
-          entityId: number;
-          contentVersion: number;
-          status: string;
-        }>
-      >();
-      for (const les of allExistingLessons) {
-        const arr = existingLessonsByCode.get(les.code) ?? [];
-        arr.push(les);
-        existingLessonsByCode.set(les.code, arr);
-      }
+      const existingLevelByCode = new Map(
+        allExistingLevels.map((l) => [l.code, l])
+      );
 
       // 3. Process seeds in batches / chunks
-      const gameLevelSeeds: Array<{
-        seed: ContentSeed;
-        sequenceIndex: number;
-      }> = [];
-      const activitySeeds: Array<{
-        seed: ActivitySeed;
-        sequenceIndex: number;
-      }> = [];
-      const lessonSeeds: Array<{ seed: LessonSeed; sequenceIndex: number }> =
-        [];
-
-      let seq = 0;
-      for (const s of seeds) {
-        seq++;
-        if (s.kind === "activity") {
-          activitySeeds.push({
-            seed: s as ActivitySeed,
-            sequenceIndex: seq,
-          });
-        } else if (s.kind === "lesson") {
-          lessonSeeds.push({ seed: s as LessonSeed, sequenceIndex: seq });
-        } else {
-          gameLevelSeeds.push({
-            seed: s as ContentSeed,
-            sequenceIndex: seq,
-          });
-        }
-      }
-
-      // --- Batch Process Game Levels ---
       const CHUNK_SIZE = 1000;
-      for (let i = 0; i < gameLevelSeeds.length; i += CHUNK_SIZE) {
-        const chunk = gameLevelSeeds.slice(i, i + CHUNK_SIZE);
-        const toArchiveLevelIds: number[] = [];
+      for (let i = 0; i < seeds.length; i += CHUNK_SIZE) {
+        const chunk = seeds.slice(i, i + CHUNK_SIZE);
         const levelsToInsert: (typeof gameLevels.$inferInsert)[] = [];
         const preparedMeta: Array<{
           code: string;
-          contentVersion: number;
-          origin: string;
           rounds: ContentSeedRound[];
           headerInstruction: string;
           headerDifficulty: number;
@@ -329,10 +170,9 @@ export async function executeSeedBatch(
           difficultyParams: ContentSeed["difficulty_params"];
           skillMapEntries: Array<{ skillId: number; weight: number }>;
           matchedTags: (typeof contentTags.$inferSelect)[];
-          learningObjectiveCodes: string[];
         }> = [];
 
-        for (const { seed: glSeed, sequenceIndex } of chunk) {
+        for (const glSeed of chunk) {
           const { header, content_pack, difficulty_params } = glSeed;
 
           const template = ALL_TEMPLATES[header.template_code];
@@ -342,31 +182,17 @@ export async function executeSeedBatch(
             );
           }
 
-          const existingList = existingLevelsByCode.get(header.code) ?? [];
-          const exactMatch = existingList.find(
-            (e) => e.contentVersion === header.content_version
-          );
-          if (exactMatch) {
+          const existingLevel = existingLevelByCode.get(header.code);
+          const isUnchanged =
+            existingLevel !== undefined &&
+            JSON.stringify(existingLevel.contentPack) ===
+              JSON.stringify(content_pack) &&
+            JSON.stringify(existingLevel.difficultyParams) ===
+              JSON.stringify(difficulty_params);
+          if (isUnchanged) {
             totalSkipped++;
             continue;
           }
-
-          const sortedExisting = [...existingList].sort(
-            (a, b) => b.contentVersion - a.contentVersion
-          );
-          const latest = sortedExisting[0];
-          if (latest) {
-            if (latest.contentVersion > header.content_version) {
-              throw new ValidationError(
-                `Mã ${header.code} đã có version lớn hơn (${latest.contentVersion} > ${header.content_version});.`
-              );
-            }
-            toArchiveLevelIds.push(latest.id);
-          }
-
-          const entityId =
-            latest?.entityId ??
-            Math.floor(Date.now() / 1000) * 1000 + sequenceIndex;
 
           // Validate skills
           const skillMapEntries: Array<{ skillId: number; weight: number }> =
@@ -425,9 +251,7 @@ export async function executeSeedBatch(
             : undefined;
 
           levelsToInsert.push({
-            entityId,
             code: header.code,
-            contentVersion: header.content_version,
             templateCode: template.code,
             title: header.title,
             instruction: header.instruction,
@@ -436,21 +260,14 @@ export async function executeSeedBatch(
             difficulty: header.difficulty,
             accessTier: header.access_tier,
             themeId: header.theme_tag || null,
-            legacyV1Ref: header.legacy_v1_ref || null,
-            seedBatchId,
             skillDatasetId: matchedDataset?.id ?? null,
             projectionRef: template.code,
             contentPack: content_pack,
             difficultyParams: difficulty_params,
-            status: "published",
-            origin: header.origin,
-            authoredIn: header.authored_in,
           });
 
           preparedMeta.push({
             code: header.code,
-            contentVersion: header.content_version,
-            origin: header.origin,
             rounds: glSeed.rounds ?? [],
             headerInstruction: header.instruction,
             headerDifficulty: header.difficulty,
@@ -458,38 +275,55 @@ export async function executeSeedBatch(
             difficultyParams: difficulty_params,
             skillMapEntries,
             matchedTags,
-            learningObjectiveCodes: header.learning_objective_codes ?? [],
           });
-        }
-
-        if (toArchiveLevelIds.length > 0) {
-          await tx
-            .update(gameLevels)
-            .set({ status: "archived" })
-            .where(inArray(gameLevels.id, toArchiveLevelIds));
         }
 
         if (levelsToInsert.length > 0) {
           const insertedLevels = await tx
             .insert(gameLevels)
             .values(levelsToInsert)
+            .onConflictDoUpdate({
+              target: gameLevels.code,
+              set: {
+                templateCode: sql`excluded.template_code`,
+                title: sql`excluded.title`,
+                instruction: sql`excluded.instruction`,
+                ageMin: sql`excluded.age_min`,
+                ageMax: sql`excluded.age_max`,
+                difficulty: sql`excluded.difficulty`,
+                accessTier: sql`excluded.access_tier`,
+                themeId: sql`excluded.theme_id`,
+                skillDatasetId: sql`excluded.skill_dataset_id`,
+                projectionRef: sql`excluded.projection_ref`,
+                contentPack: sql`excluded.content_pack`,
+                difficultyParams: sql`excluded.difficulty_params`,
+                updatedAt: sql`now()`,
+              },
+            })
             .returning({
               id: gameLevels.id,
               code: gameLevels.code,
-              entityId: gameLevels.entityId,
-              contentVersion: gameLevels.contentVersion,
             });
 
           totalInserted += insertedLevels.length;
 
           const levelByCode = new Map(insertedLevels.map((l) => [l.code, l]));
+          const upsertedIds = insertedLevels.map((l) => l.id);
+          if (upsertedIds.length > 0) {
+            await tx
+              .delete(gameLevelRounds)
+              .where(inArray(gameLevelRounds.gameLevelId, upsertedIds));
+            await tx
+              .delete(contentSkillMap)
+              .where(inArray(contentSkillMap.entityId, upsertedIds));
+            await tx
+              .delete(contentTagMap)
+              .where(inArray(contentTagMap.entityId, upsertedIds));
+          }
 
           const allRounds: (typeof gameLevelRounds.$inferInsert)[] = [];
           const allSkillsToLink: (typeof contentSkillMap.$inferInsert)[] = [];
           const allTagsToLink: (typeof contentTagMap.$inferInsert)[] = [];
-          const allObjectivesToLink: (typeof contentObjectiveMap.$inferInsert)[] =
-            [];
-          const allReviewLogs: (typeof contentReviewLog.$inferInsert)[] = [];
 
           for (const meta of preparedMeta) {
             const inserted = levelByCode.get(meta.code);
@@ -497,16 +331,12 @@ export async function executeSeedBatch(
               continue;
             }
 
-            // Update in-memory tracking
-            const existingArr = existingLevelsByCode.get(meta.code) ?? [];
-            existingArr.push({
+            existingLevelByCode.set(meta.code, {
               id: inserted.id,
-              entityId: inserted.entityId,
-              contentVersion: inserted.contentVersion,
-              status: "published",
+              code: inserted.code,
+              contentPack: meta.contentPack,
+              difficultyParams: meta.difficultyParams,
             });
-            existingLevelsByCode.set(meta.code, existingArr);
-            gameLevelEntityIdByCode.set(meta.code, inserted.entityId);
 
             // Rounds
             if (meta.rounds.length > 0) {
@@ -555,30 +385,6 @@ export async function executeSeedBatch(
                 tagId: tag.id,
               });
             }
-
-            // Objectives
-            for (const loCode of meta.learningObjectiveCodes) {
-              const lo = loMap.get(loCode);
-              if (lo) {
-                allObjectivesToLink.push({
-                  entityType: "game_level",
-                  entityId: inserted.id,
-                  learningObjectiveId: lo.id,
-                });
-              }
-            }
-
-            // Review log
-            allReviewLogs.push({
-              entityType: "game_level",
-              entityId: inserted.id,
-              contentVersion: meta.contentVersion,
-              fromStatus: "draft",
-              toStatus: "published",
-              actorManagerId: approvedByManagerId || null,
-              reason: `Seeded via batch ${batchCode} (origin: ${meta.origin})`,
-              checklistSnapshot,
-            });
           }
 
           if (allRounds.length > 0) {
@@ -587,311 +393,10 @@ export async function executeSeedBatch(
           if (allSkillsToLink.length > 0) {
             await tx.insert(contentSkillMap).values(allSkillsToLink);
           }
-          if (allObjectivesToLink.length > 0) {
-            await tx.insert(contentObjectiveMap).values(allObjectivesToLink);
-          }
           if (allTagsToLink.length > 0) {
             await tx.insert(contentTagMap).values(allTagsToLink);
           }
-          if (allReviewLogs.length > 0) {
-            await tx.insert(contentReviewLog).values(allReviewLogs);
-          }
         }
-      }
-
-      // --- Process Activities ---
-      for (const { seed: actSeed, sequenceIndex } of activitySeeds) {
-        const { header } = actSeed;
-
-        const existingList = existingActivitiesByCode.get(header.code) ?? [];
-        const exactMatch = existingList.find(
-          (e) => e.contentVersion === header.content_version
-        );
-        if (exactMatch) {
-          totalSkipped++;
-          continue;
-        }
-
-        const sortedExisting = [...existingList].sort(
-          (a, b) => b.contentVersion - a.contentVersion
-        );
-        const latest = sortedExisting[0];
-        if (latest) {
-          if (latest.contentVersion > header.content_version) {
-            throw new ValidationError(
-              `Mã activity ${header.code} đã có version lớn hơn.`
-            );
-          }
-          await tx
-            .update(activities)
-            .set({ status: "archived" })
-            .where(eq(activities.id, latest.id));
-        }
-
-        const entityId =
-          latest?.entityId ??
-          Math.floor(Date.now() / 1000) * 1000 + sequenceIndex;
-
-        const instructionStr =
-          typeof header.instruction === "string"
-            ? header.instruction
-            : JSON.stringify(header.instruction);
-
-        let resolvedRefId = header.ref_id;
-        if (
-          !resolvedRefId &&
-          header.ref_type === "game_level" &&
-          header.ref_code
-        ) {
-          resolvedRefId = gameLevelEntityIdByCode.get(header.ref_code);
-        }
-
-        const [newActivity] = await tx
-          .insert(activities)
-          .values({
-            entityId,
-            code: header.code,
-            contentVersion: header.content_version,
-            kind: header.activity_kind,
-            title: header.title,
-            instruction: instructionStr,
-            materials: header.materials,
-            estimatedMinutes: header.estimated_minutes,
-            refType: header.ref_type,
-            refId: resolvedRefId,
-            accessTier: header.access_tier,
-            status: "published",
-            origin: header.origin,
-            authoredIn: header.authored_in,
-            seedBatchId,
-            publishedAt: new Date(),
-          })
-          .returning();
-
-        if (!newActivity) {
-          throw new Error("Failed to insert activity");
-        }
-
-        totalInserted++;
-
-        const existingArr = existingActivitiesByCode.get(header.code) ?? [];
-        existingArr.push({
-          id: newActivity.id,
-          entityId: newActivity.entityId,
-          contentVersion: newActivity.contentVersion,
-          status: "published",
-        });
-        existingActivitiesByCode.set(header.code, existingArr);
-        activityEntityIdByCode.set(header.code, newActivity.entityId);
-
-        // Link skills
-        const seenSkillIds = new Set<number>();
-        const skillMapEntries: Array<{ skillId: number; weight: number }> = [];
-        for (const sc of header.skill_codes) {
-          let skill = skillMap.get(sc);
-          if (!skill) {
-            skill = allSkills[0];
-          }
-          if (skill && !seenSkillIds.has(skill.id)) {
-            seenSkillIds.add(skill.id);
-            skillMapEntries.push({
-              skillId: skill.id,
-              weight: skillMapEntries.length === 0 ? 1.0 : 0.5,
-            });
-          }
-        }
-        if (skillMapEntries.length > 0) {
-          validateContentSkillMap(skillMapEntries);
-          for (const entry of skillMapEntries) {
-            await tx
-              .insert(contentSkillMap)
-              .values({
-                entityType: "activity",
-                entityId: newActivity.id,
-                skillId: entry.skillId,
-                weight: entry.weight.toString(),
-              })
-              .onConflictDoNothing();
-          }
-        }
-
-        // Tags
-        await validateAndAssignTags(
-          tx,
-          {
-            entityType: "activity",
-            entityId: newActivity.id,
-            tagCodes: [...header.what_tags, ...header.thinking_tags],
-          },
-          true
-        );
-
-        await tx.insert(contentReviewLog).values({
-          entityType: "activity",
-          entityId: newActivity.id,
-          contentVersion: header.content_version,
-          fromStatus: "draft",
-          toStatus: "published",
-          actorManagerId: approvedByManagerId || null,
-          reason: `Seeded via batch ${batchCode} (origin: ${header.origin})`,
-          checklistSnapshot,
-        });
-      }
-
-      // --- Process Lessons ---
-      for (const { seed: lesSeed, sequenceIndex } of lessonSeeds) {
-        const { header } = lesSeed;
-
-        const existingList = existingLessonsByCode.get(header.code) ?? [];
-        const exactMatch = existingList.find(
-          (e) => e.contentVersion === header.content_version
-        );
-        if (exactMatch) {
-          totalSkipped++;
-          continue;
-        }
-
-        const sortedExisting = [...existingList].sort(
-          (a, b) => b.contentVersion - a.contentVersion
-        );
-        const latest = sortedExisting[0];
-        if (latest) {
-          if (latest.contentVersion > header.content_version) {
-            throw new ValidationError(
-              `Mã lesson ${header.code} đã có version lớn hơn.`
-            );
-          }
-          await tx
-            .update(lessons)
-            .set({ status: "archived" })
-            .where(eq(lessons.id, latest.id));
-        }
-
-        const entityId =
-          latest?.entityId ??
-          Math.floor(Date.now() / 1000) * 1000 + sequenceIndex;
-
-        const guideStr =
-          typeof header.guide === "string"
-            ? header.guide
-            : JSON.stringify(header.guide);
-
-        const [newLesson] = await tx
-          .insert(lessons)
-          .values({
-            entityId,
-            code: header.code,
-            contentVersion: header.content_version,
-            title: header.title,
-            guide: guideStr,
-            targetAgeMin: header.target_age_min,
-            targetAgeMax: header.target_age_max,
-            estimatedMinutes: header.estimated_minutes,
-            materials: header.materials,
-            warmUp: header.warm_up,
-            reflection: header.reflection,
-            assessment: header.assessment,
-            extension: header.extension,
-            accessTier: header.access_tier,
-            status: "published",
-            origin: header.origin,
-            authoredIn: header.authored_in,
-            seedBatchId,
-            publishedAt: new Date(),
-          })
-          .returning();
-
-        if (!newLesson) {
-          throw new Error("Failed to insert lesson");
-        }
-
-        totalInserted++;
-
-        const existingArr = existingLessonsByCode.get(header.code) ?? [];
-        existingArr.push({
-          id: newLesson.id,
-          entityId: newLesson.entityId,
-          contentVersion: newLesson.contentVersion,
-          status: "published",
-        });
-        existingLessonsByCode.set(header.code, existingArr);
-
-        // Link activities
-        for (let aIdx = 0; aIdx < header.activity_codes.length; aIdx++) {
-          const actCode = header.activity_codes[aIdx];
-          if (!actCode) {
-            continue;
-          }
-          const resolvedActivityEntityId =
-            activityEntityIdByCode.get(actCode) ?? 0;
-          await tx.insert(lessonActivities).values({
-            lessonId: newLesson.id,
-            position: aIdx + 1,
-            activityId: resolvedActivityEntityId,
-            isRequired: true,
-          });
-        }
-
-        // Link skills
-        const seenSkillIds = new Set<number>();
-        const skillMapEntries: Array<{ skillId: number; weight: number }> = [];
-        for (const sc of header.skill_codes) {
-          let skill = skillMap.get(sc);
-          if (!skill) {
-            skill = allSkills[0];
-          }
-          if (skill && !seenSkillIds.has(skill.id)) {
-            seenSkillIds.add(skill.id);
-            skillMapEntries.push({
-              skillId: skill.id,
-              weight: skillMapEntries.length === 0 ? 1.0 : 0.5,
-            });
-          }
-        }
-        if (skillMapEntries.length > 0) {
-          validateContentSkillMap(skillMapEntries);
-          for (const entry of skillMapEntries) {
-            await tx
-              .insert(contentSkillMap)
-              .values({
-                entityType: "lesson",
-                entityId: newLesson.id,
-                skillId: entry.skillId,
-                weight: entry.weight.toString(),
-              })
-              .onConflictDoNothing();
-          }
-        }
-
-        // Tags
-        await validateAndAssignTags(
-          tx,
-          {
-            entityType: "lesson",
-            entityId: newLesson.id,
-            tagCodes: [...header.what_tags, ...header.thinking_tags],
-          },
-          false
-        );
-
-        await tx.insert(contentReviewLog).values({
-          entityType: "lesson",
-          entityId: newLesson.id,
-          contentVersion: header.content_version,
-          fromStatus: "draft",
-          toStatus: "published",
-          actorManagerId: approvedByManagerId || null,
-          reason: `Seeded via batch ${batchCode} (origin: ${header.origin})`,
-          checklistSnapshot,
-        });
-      }
-
-      // 4. Update seed batch rowsInserted count
-      if (seedBatchId !== null) {
-        await tx
-          .update(contentSeedBatches)
-          .set({ rowsInserted: totalInserted })
-          .where(eq(contentSeedBatches.id, seedBatchId));
       }
 
       if (dryRun) {

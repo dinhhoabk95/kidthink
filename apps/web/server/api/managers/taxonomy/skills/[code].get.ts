@@ -9,7 +9,7 @@ import {
   strands,
 } from "@mindkid/db";
 import { NotFoundError, ValidationError } from "@mindkid/errors/common";
-import { and, eq, or } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { defineEventHandler, getRouterParams } from "h3";
 import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
@@ -90,13 +90,12 @@ export default defineEventHandler(async (event) => {
     .innerJoin(skills, eq(skillPrerequisites.skillId, skills.id))
     .where(eq(skillPrerequisites.prerequisiteId, skill.id));
 
-  // 4. Fetch attached content (game levels & lessons)
+  // 4. Fetch attached content (game levels)
   const attachedLevelsRows = await db
     .select({
       id: gameLevels.id,
       code: gameLevels.code,
       title: gameLevels.title,
-      status: gameLevels.status,
       access_tier: gameLevels.accessTier,
       weight: contentSkillMap.weight,
     })
@@ -105,21 +104,18 @@ export default defineEventHandler(async (event) => {
       gameLevels,
       and(
         eq(contentSkillMap.entityType, "game_level"),
-        or(
-          eq(contentSkillMap.entityId, gameLevels.id),
-          eq(contentSkillMap.entityId, gameLevels.entityId)
-        )
+        eq(contentSkillMap.entityId, gameLevels.id)
       )
     )
     .where(eq(contentSkillMap.skillId, skill.id));
 
   const uniqueLevelsMap = new Map<
     number,
-    (typeof attachedLevelsRows)[number]
+    (typeof attachedLevelsRows)[number] & { status: "published" }
   >();
   for (const row of attachedLevelsRows) {
     if (!uniqueLevelsMap.has(row.id)) {
-      uniqueLevelsMap.set(row.id, row);
+      uniqueLevelsMap.set(row.id, { ...row, status: "published" });
     }
   }
   const attachedLevels = Array.from(uniqueLevelsMap.values());
@@ -158,9 +154,8 @@ export default defineEventHandler(async (event) => {
     },
     attached_content: {
       levels: attachedLevels,
-      total_published: attachedLevels.filter((l) => l.status === "published")
-        .length,
-      total_draft: attachedLevels.filter((l) => l.status === "draft").length,
+      total_published: attachedLevels.length,
+      total_draft: 0,
     },
     actions: {
       author_url: `/studio/levels?skill_code=${skill.code}`,

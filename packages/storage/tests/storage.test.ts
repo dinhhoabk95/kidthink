@@ -171,6 +171,9 @@ describe("url & signedUrl (BR-IMG-05, BR-IMG-10)", () => {
         signature
       )
     ).toBe(false);
+    expect(
+      verifySignedUrlToken("proofs/../../etc/passwd", expires, signature)
+    ).toBe(false);
   });
 });
 

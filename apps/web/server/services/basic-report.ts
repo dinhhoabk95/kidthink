@@ -26,7 +26,6 @@ import {
   type BasicReportSuggestionsSection,
   type BasicReportVersionMarker,
   FEATURED_GUEST_LEVELS,
-  OFFLINE_ACTIVITIES,
 } from "@mindkid/shared";
 import { and, asc, desc, eq, gte, lte } from "drizzle-orm";
 
@@ -34,7 +33,7 @@ interface SessionSummaryRow {
   id: number;
   sessionUuid: string;
   gameLevelId: number;
-  contentVersion: number;
+  contentVersion?: number;
   templateCode: string;
   completionStatus: string;
   score: number;
@@ -239,8 +238,11 @@ function computeSkillsTouchedSection(params: {
 
 export type BasicReportLevelRow = Pick<
   typeof gameLevels.$inferSelect,
-  "id" | "entityId" | "code" | "title" | "thumbnailEmoji" | "status"
->;
+  "id" | "code" | "title" | "thumbnailEmoji"
+> & {
+  entityId?: number;
+  status?: string;
+};
 
 function computeFavoriteGamesSection(params: {
   sessionRows: SessionSummaryRow[];
@@ -303,7 +305,7 @@ function computeVersionMarkersAndRecentSessions(params: {
     const level = levelById.get(Number(s.gameLevelId));
     const code = level?.code ?? `GL-LEVEL-${s.gameLevelId}`;
     const vSet = versionsByCode.get(code) ?? new Set<number>();
-    vSet.add(s.contentVersion);
+    vSet.add(s.contentVersion ?? 1);
     versionsByCode.set(code, vSet);
   }
 
@@ -342,7 +344,7 @@ function computeVersionMarkersAndRecentSessions(params: {
       stars_earned: s.starsEarned,
       duration_seconds: s.durationSeconds,
       completed_at: (s.completedAt ?? s.createdAt).toISOString(),
-      content_version: s.contentVersion,
+      content_version: s.contentVersion ?? 1,
       version_updated_note: hasVersionChange ? "Nội dung đã cập nhật" : null,
     };
   });
@@ -364,7 +366,9 @@ function computeVersionMarkersAndRecentSessions(params: {
 function buildSuggestedInitialGames(
   allLevels: BasicReportLevelRow[]
 ): BasicReportSuggestedGame[] {
-  const published = allLevels.filter((l) => l.status === "published");
+  const published = allLevels.filter(
+    (l) => !l.status || l.status === "published"
+  );
   if (published.length >= 3) {
     return published.slice(0, 3).map((l) => ({
       level_code: l.code,
@@ -382,6 +386,15 @@ function buildSuggestedInitialGames(
   }));
 }
 
+const HOME_SUGGESTIONS = [
+  {
+    id: "count-household",
+    title: "Đếm đồ vật quanh nhà",
+    description: "Cùng bé đếm thìa, cốc hoặc đồ chơi từ 1 đến 10 khi dọn bàn.",
+    emoji: "🥄",
+  },
+] as const;
+
 function computeSuggestionsSection(
   initialGames: BasicReportSuggestedGame[]
 ): BasicReportSuggestionsSection {
@@ -398,16 +411,16 @@ function computeSuggestionsSection(
     });
   }
 
-  for (const offline of OFFLINE_ACTIVITIES) {
+  for (const homeItem of HOME_SUGGESTIONS) {
     if (items.length >= 3) {
       break;
     }
     items.push({
-      id: `offline-${offline.id}`,
+      id: `offline-${homeItem.id}`,
       kind: "offline",
-      title: offline.title,
-      description: offline.description,
-      emoji: offline.emoji,
+      title: homeItem.title,
+      description: homeItem.description,
+      emoji: homeItem.emoji,
     });
   }
 
@@ -433,7 +446,7 @@ function buildLevelSkillMaps(params: {
   for (const l of allLevels) {
     const lId = Number(l.id);
     levelById.set(lId, l);
-    const eId = Number(l.entityId);
+    const eId = Number(l.entityId ?? l.id);
     const list = levelIdsByEntityId.get(eId) ?? [];
     list.push(lId);
     levelIdsByEntityId.set(eId, list);
@@ -637,11 +650,9 @@ export async function buildBasicReport(params: {
       db
         .select({
           id: gameLevels.id,
-          entityId: gameLevels.entityId,
           code: gameLevels.code,
           title: gameLevels.title,
           thumbnailEmoji: gameLevels.thumbnailEmoji,
-          status: gameLevels.status,
         })
         .from(gameLevels),
       db

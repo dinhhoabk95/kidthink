@@ -9,7 +9,7 @@ import {
   getDateIct,
   type TelemetryEventInput,
 } from "@mindkid/shared";
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import { applyAbandonedSessionMastery } from "#src/mastery";
 
 const DEFAULT_SWEEP_LIMIT = 100;
@@ -18,6 +18,47 @@ function isTelemetryPayloadRecord(
   val: typeof telemetryEvents.$inferSelect.payload
 ): val is NonNullable<TelemetryEventInput["payload"]> {
   return typeof val === "object" && val !== null && !Array.isArray(val);
+}
+
+async function recordAbandonedSessionStats(params: {
+  readonly db: ReturnType<typeof getOwnerDb>;
+  readonly session: typeof playSessions.$inferSelect;
+  readonly playTimeSec: number;
+  readonly now: Date;
+}): Promise<void> {
+  const { db, session, playTimeSec, now } = params;
+  if (!session.childProfileId) {
+    return;
+  }
+  const statDate = getDateIct(session.startedAt);
+  await db
+    .insert(childDailyStats)
+    .values({
+      childProfileId: Number(session.childProfileId),
+      dateIct: statDate,
+      totalPlayTimeSeconds: playTimeSec,
+      levelsAttempted: 1,
+      levelsCompleted: 0,
+      starsEarned: 0,
+      updatedAt: now,
+    })
+    .onConflictDoUpdate({
+      target: [childDailyStats.childProfileId, childDailyStats.dateIct],
+      set: {
+        totalPlayTimeSeconds: sql`${childDailyStats.totalPlayTimeSeconds} + ${playTimeSec}`,
+        levelsAttempted: sql`${childDailyStats.levelsAttempted} + 1`,
+        updatedAt: now,
+      },
+    });
+
+  if (!session.isPreview && session.templateCode !== "GT-000") {
+    await applyAbandonedSessionMastery({
+      db,
+      childId: Number(session.childProfileId),
+      gameLevelId: session.gameLevelId,
+      now,
+    });
+  }
 }
 
 export async function sweepAbandonedSessions(
@@ -38,17 +79,36 @@ export async function sweepAbandonedSessions(
     )
     .limit(limit);
 
+  if (candidateSessions.length === 0) {
+    return 0;
+  }
+
+  const sessionUuids = candidateSessions.map((s) => s.sessionUuid);
+  const events =
+    sessionUuids.length > 0
+      ? await db
+          .select()
+          .from(telemetryEvents)
+          .where(inArray(telemetryEvents.sessionUuid, sessionUuids))
+          .orderBy(telemetryEvents.seq)
+      : [];
+
+  const eventsBySession = new Map<string, typeof events>();
+  for (const e of events) {
+    const list = eventsBySession.get(e.sessionUuid);
+    if (list) {
+      list.push(e);
+    } else {
+      eventsBySession.set(e.sessionUuid, [e]);
+    }
+  }
+
   let sweptCount = 0;
-  const dateIctStr = getDateIct(now);
 
   for (const session of candidateSessions) {
-    const events = await db
-      .select()
-      .from(telemetryEvents)
-      .where(eq(telemetryEvents.sessionUuid, session.sessionUuid))
-      .orderBy(telemetryEvents.seq);
+    const sessionEvents = eventsBySession.get(session.sessionUuid) ?? [];
 
-    const mappedEvents: TelemetryEventInput[] = events.map((e) => ({
+    const mappedEvents: TelemetryEventInput[] = sessionEvents.map((e) => ({
       sessionUuid: e.sessionUuid,
       seq: e.seq,
       eventName: e.eventName,
@@ -86,34 +146,12 @@ export async function sweepAbandonedSessions(
 
     sweptCount++;
 
-    if (session.childProfileId) {
-      await db
-        .insert(childDailyStats)
-        .values({
-          childProfileId: Number(session.childProfileId),
-          dateIct: dateIctStr,
-          totalPlayTimeSeconds: playTimeSec,
-          levelsAttempted: 1,
-          levelsCompleted: 0,
-          starsEarned: 0,
-          updatedAt: now,
-        })
-        .onConflictDoUpdate({
-          target: [childDailyStats.childProfileId, childDailyStats.dateIct],
-          set: {
-            totalPlayTimeSeconds: sql`${childDailyStats.totalPlayTimeSeconds} + ${playTimeSec}`,
-            levelsAttempted: sql`${childDailyStats.levelsAttempted} + 1`,
-            updatedAt: now,
-          },
-        });
-
-      await applyAbandonedSessionMastery({
-        db,
-        childId: Number(session.childProfileId),
-        gameLevelId: session.gameLevelId,
-        now,
-      });
-    }
+    await recordAbandonedSessionStats({
+      db,
+      session,
+      playTimeSec,
+      now,
+    });
   }
 
   return sweptCount;

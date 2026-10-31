@@ -25,11 +25,17 @@ vi.mock("@mindkid/db", () => ({
         }),
       }),
     }),
+    insert: vi.fn(() => ({
+      values: vi.fn(() => ({
+        returning: vi.fn().mockResolvedValue([{ id: 1 }]),
+      })),
+    })),
   }),
   hardPurgeUser: vi.fn(() => Promise.resolve({ purged: true })),
   hardPurgeChildProfile: vi.fn(() => Promise.resolve()),
   childProfiles: { id: "id", uuid: "uuid", status: "status", purgeAt: "pa" },
   users: { id: "id", status: "status", purgeAt: "purge_at" },
+  auditLogs: { id: "id" },
 }));
 
 vi.mock("@mindkid/queue", () => ({ alert: vi.fn() }));

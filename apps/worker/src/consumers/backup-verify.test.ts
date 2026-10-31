@@ -166,8 +166,8 @@ describe("apps/worker/backup/verify", () => {
 
   it("restored_rows = 0 là fail, gọi alert mức cao", async () => {
     // Modify the postgres mock to return 0 count for this test
-    const pgMock = postgres as unknown as any;
-    pgMock.mockImplementation(() => ({
+    const pgMock = vi.mocked(postgres);
+    pgMock.mockImplementation((() => ({
       unsafe: vi.fn((query: string) => {
         if (query.includes("information_schema.tables")) {
           return Promise.resolve([{ count: "0" }]);
@@ -175,7 +175,7 @@ describe("apps/worker/backup/verify", () => {
         return Promise.resolve([]);
       }),
       end: vi.fn().mockResolvedValue(true),
-    }));
+    })) as never);
 
     await expect(
       runVerifyBackup("test-job-verify-fail-0", { directory: verifyDir })
@@ -190,11 +190,11 @@ describe("apps/worker/backup/verify", () => {
 
   it("Restore bản mã hoá mới nhất → verify schema → select count → xoá → ghi log", async () => {
     // Reset the postgres mock to return 10 count for this test
-    const pgMock = postgres as unknown as any;
-    pgMock.mockImplementation(() => ({
+    const pgMock = vi.mocked(postgres);
+    pgMock.mockImplementation((() => ({
       unsafe: vi.fn().mockResolvedValue([{ count: "10" }]),
       end: vi.fn().mockResolvedValue(true),
-    }));
+    })) as never);
 
     await runVerifyBackup("test-job-verify-success", { directory: verifyDir });
 

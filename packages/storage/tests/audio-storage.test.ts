@@ -1,6 +1,4 @@
 import { Buffer } from "node:buffer";
-import fs from "node:fs";
-import path from "node:path";
 import { beforeAll, describe, expect, it } from "vitest";
 import {
   AUDIO_LOUDNESS_TARGET_LUFS,
@@ -19,7 +17,6 @@ import {
 } from "#src/index";
 
 const BASE_URL = "https://assets.example.test";
-const ROOT_DIR = path.resolve(import.meta.dirname, "../../..");
 
 beforeAll(() => {
   process.env.STORAGE_BASE_URL = BASE_URL;
@@ -186,30 +183,5 @@ describe("buildRelativeAudioPath & uploadPublicAudio (BR-AST-05, BR-AST-06)", ()
 
     expect(deletePublicAudio(key)).toBe(true);
     expect(getPublicAudio(key)).toBeUndefined();
-  });
-
-  it("BR-AST-08 (#306): xác nhận schema content_audio và các route /api/managers/audio tuân thủ writeAudit + CONTENT_IN_USE", () => {
-    const schemaSource = fs.readFileSync(
-      path.join(ROOT_DIR, "packages/db/src/schema/assets.ts"),
-      "utf-8"
-    );
-    expect(schemaSource).toContain('pgTable(\n  "content_audio"');
-    expect(schemaSource).toContain("duration_ms");
-    expect(schemaSource).toContain("file_size_bytes");
-
-    const postRoute = fs.readFileSync(
-      path.join(ROOT_DIR, "apps/web/server/api/managers/audio/index.post.ts"),
-      "utf-8"
-    );
-    expect(postRoute).toContain("AudioSizeLimitExceededError");
-    expect(postRoute).toContain("AudioFormatInvalidError");
-    expect(postRoute).toContain("writeAudit");
-
-    const deleteRoute = fs.readFileSync(
-      path.join(ROOT_DIR, "apps/web/server/api/managers/audio/[id].delete.ts"),
-      "utf-8"
-    );
-    expect(deleteRoute).toContain("ContentInUseError");
-    expect(deleteRoute).toContain("writeAudit");
   });
 });

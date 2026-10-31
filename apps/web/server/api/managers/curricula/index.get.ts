@@ -7,7 +7,6 @@ import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 const CurriculaListQuerySchema = z.object({
   search: z.string().optional(),
   program_type: z.string().optional(),
-  status: z.string().optional(),
   access_tier: z.string().optional(),
   page: z.coerce.number().optional(),
   limit: z.coerce.number().optional(),
@@ -22,7 +21,6 @@ export default defineEventHandler(async (event) => {
   const programType = query.program_type
     ? String(query.program_type)
     : undefined;
-  const status = query.status ? String(query.status) : undefined;
   const accessTier = query.access_tier ? String(query.access_tier) : undefined;
   const page = Math.max(1, Number(query.page) || 1);
   const limit = Math.min(50, Math.max(1, Number(query.limit) || 20));
@@ -41,11 +39,6 @@ export default defineEventHandler(async (event) => {
     (programType === "age_based" || programType === "journey")
   ) {
     conditions.push(eq(curricula.programType, programType));
-  }
-  if (status) {
-    conditions.push(
-      eq(curricula.status, status as typeof curricula.$inferSelect.status)
-    );
   }
   if (accessTier) {
     conditions.push(

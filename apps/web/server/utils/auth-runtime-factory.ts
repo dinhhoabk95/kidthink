@@ -25,6 +25,23 @@ const CSRF_TOKEN = /^[0-9a-f]{64}$/;
 const INTEGER_TEXT = /^\d+$/;
 const ORIGIN_TRAILING_SLASH = /\/$/;
 
+let cachedAllowedOriginsRaw: string | undefined;
+let cachedAllowedOriginsSet: Set<string> | undefined;
+
+export function resolveAllowedOrigins(): Set<string> {
+  const raw = process.env.NUXT_ALLOWED_ORIGINS ?? "";
+  if (cachedAllowedOriginsSet && cachedAllowedOriginsRaw === raw) {
+    return cachedAllowedOriginsSet;
+  }
+  const configured = requireEnv("NUXT_ALLOWED_ORIGINS")
+    .split(",")
+    .map((value) => value.trim().replace(ORIGIN_TRAILING_SLASH, ""))
+    .filter(Boolean);
+  cachedAllowedOriginsRaw = raw;
+  cachedAllowedOriginsSet = new Set(configured);
+  return cachedAllowedOriginsSet;
+}
+
 export function factoryIsAllowedApiOrigin(
   origin: string,
   requestHost: string
@@ -34,17 +51,15 @@ export function factoryIsAllowedApiOrigin(
     return true;
   }
 
-  const configuredOrigins = requireEnv("NUXT_ALLOWED_ORIGINS")
-    .split(",")
-    .map((value) => value.trim().replace(ORIGIN_TRAILING_SLASH, ""))
-    .filter(Boolean);
-
-  return configuredOrigins.includes(parsedOrigin.origin);
+  const allowed = resolveAllowedOrigins();
+  return allowed.has(parsedOrigin.origin);
 }
+
+export const DEFAULT_MAX_JSON_BODY_BYTES = 128 * 1024;
 
 export function factoryAssertRequestBodySize(
   event: H3Event,
-  maxBytes = 128 * 1024
+  maxBytes = DEFAULT_MAX_JSON_BODY_BYTES
 ): void {
   const rawLength = getHeader(event, "content-length");
   if (
@@ -52,6 +67,22 @@ export function factoryAssertRequestBodySize(
     INTEGER_TEXT.test(rawLength) &&
     Number(rawLength) > maxBytes
   ) {
+    throw new PayloadTooLargeError();
+  }
+}
+
+export function factoryAssertPayloadSize(
+  payload: object | string | number | boolean | null | undefined,
+  maxBytes = DEFAULT_MAX_JSON_BODY_BYTES
+): void {
+  if (payload === null || payload === undefined) {
+    return;
+  }
+  const size =
+    typeof payload === "string"
+      ? Buffer.byteLength(payload)
+      : Buffer.byteLength(JSON.stringify(payload));
+  if (size > maxBytes) {
     throw new PayloadTooLargeError();
   }
 }
@@ -96,7 +127,9 @@ export function factoryAssertSameOriginRequest(event: H3Event): void {
   }
 }
 
-function toHeaderList(value: unknown): string[] {
+type HeaderRawValue = number | string | readonly string[] | undefined;
+
+function toHeaderList(value: HeaderRawValue): string[] {
   if (value === undefined) {
     return [];
   }
@@ -108,7 +141,7 @@ function toHeaderList(value: unknown): string[] {
 
 function ensureResponseAppendHeader(response: {
   setHeader?: (name: string, value: string | string[]) => void;
-  getHeader?: (name: string) => unknown;
+  getHeader?: (name: string) => HeaderRawValue;
   appendHeader?: (name: string, value: string | readonly string[]) => void;
 }): boolean {
   if (typeof response.setHeader !== "function") {
@@ -142,7 +175,7 @@ export function createAuthRuntime(namespace: AuthNamespace) {
     const response = event.node?.res as
       | {
           setHeader?: (name: string, value: string | string[]) => void;
-          getHeader?: (name: string) => unknown;
+          getHeader?: (name: string) => HeaderRawValue;
           appendHeader?: (
             name: string,
             value: string | readonly string[]
@@ -174,6 +207,19 @@ export function createAuthRuntime(namespace: AuthNamespace) {
     namespace === "manager" ? ("strict" as const) : ("lax" as const);
 
   function setRememberCookie(event: H3Event, rememberToken: string): void {
+    const response = event.node?.res as
+      | {
+          setHeader?: (name: string, value: string | string[]) => void;
+          getHeader?: (name: string) => HeaderRawValue;
+          appendHeader?: (
+            name: string,
+            value: string | readonly string[]
+          ) => void;
+        }
+      | undefined;
+    if (!(response && ensureResponseAppendHeader(response))) {
+      return;
+    }
     setCookie(event, rememberCookieName, rememberToken, {
       httpOnly: true,
       maxAge: 365 * 24 * 3600,
@@ -197,7 +243,7 @@ export function createAuthRuntime(namespace: AuthNamespace) {
     return token;
   }
 
-  function respondToAuthError(_event: H3Event, error: unknown): never {
+  function respondToAuthError(_event: H3Event, error: Error): never {
     throw error;
   }
 

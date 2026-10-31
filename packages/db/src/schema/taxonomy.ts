@@ -3,6 +3,7 @@ import {
   type AnyPgColumn,
   bigint,
   check,
+  index,
   integer,
   jsonb,
   numeric,
@@ -66,6 +67,8 @@ export const strands = pgTable(
     ...timestamps(),
   },
   (table) => [
+    index("idx_strands_competency_id").on(table.competencyId),
+    index("idx_strands_parent_strand_id").on(table.parentStrandId),
     check(
       "check_strands_code_format",
       sql`${table.code} ~ '^C[1-6]\\.[A-Z]{2,5}$'`
@@ -95,6 +98,7 @@ export const skills = pgTable(
     ...timestamps(),
   },
   (table) => [
+    index("idx_skills_strand_id").on(table.strandId),
     check(
       "check_skills_code_format",
       sql`${table.code} ~ '^C[1-6]\\.[A-Z]{2,5}\\.\\d{2}$'`
@@ -131,6 +135,7 @@ export const skillPrerequisites = pgTable(
   },
   (table) => [
     primaryKey({ columns: [table.skillId, table.prerequisiteId] }),
+    index("idx_skill_prerequisites_prerequisite_id").on(table.prerequisiteId),
     check(
       "check_skill_prerequisites_strength",
       sql`${table.strength} >= 0 AND ${table.strength} <= 1`
@@ -154,17 +159,13 @@ export const learningObjectives = pgTable(
     ...timestamps(),
   },
   (table) => [
+    index("idx_learning_objectives_skill_id").on(table.skillId),
     check(
       "check_learning_objectives_code_format",
       sql`${table.code} ~ '^LO-C[1-6]\\.[A-Z]{2,5}\\.\\d{2}-\\d{2}$'`
     ),
   ]
 );
-
-export const skillDatasetSurfaceEnum = pgEnum("skill_dataset_surface", [
-  "game",
-  "worksheet",
-]);
 
 export const skillDatasets = pgTable(
   "skill_datasets",
@@ -176,9 +177,7 @@ export const skillDatasets = pgTable(
     skillId: bigint("skill_id", { mode: "number" })
       .notNull()
       .references(() => skills.id, { onDelete: "cascade" }),
-    contentVersion: integer("content_version").notNull().default(1),
     conceptLabel: varchar("concept_label", { length: 200 }).notNull(),
-    surface: skillDatasetSurfaceEnum("surface").notNull().default("game"),
     items: jsonb("items").notNull(),
     relations: jsonb("relations"),
     ordering: jsonb("ordering"),
@@ -186,15 +185,10 @@ export const skillDatasets = pgTable(
     ladder: jsonb("ladder"),
     phrasing: jsonb("phrasing"),
     extendsSkillCode: varchar("extends_skill_code", { length: 50 }),
-    status: varchar("status", { length: 50 }).notNull().default("draft"),
-    seedBatchId: bigint("seed_batch_id", { mode: "number" }),
-    origin: varchar("origin", { length: 50 }).notNull().default("human"),
-    authoredIn: varchar("authored_in", { length: 50 })
-      .notNull()
-      .default("repo_seed"),
     ...timestamps(),
   },
   (table) => [
+    index("idx_skill_datasets_skill_id").on(table.skillId),
     check(
       "check_skill_datasets_code_format",
       sql`${table.code} ~ '^C[1-6]\\.[A-Z]{2,5}\\.\\d{2}$'`

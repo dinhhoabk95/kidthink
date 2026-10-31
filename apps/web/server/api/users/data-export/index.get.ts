@@ -3,7 +3,10 @@ import { NotFoundError } from "@mindkid/errors/common";
 import { eq } from "drizzle-orm";
 import { defineEventHandler, setHeader } from "h3";
 
-import { requireWebUserSession } from "#server/utils/auth-runtime";
+import {
+  enforceTwoAxisRateLimit,
+  requireWebUserSession,
+} from "#server/utils/auth-runtime";
 import { requireReauth } from "#server/utils/reauth-runtime";
 
 export default defineEventHandler(async (event) => {
@@ -12,6 +15,8 @@ export default defineEventHandler(async (event) => {
 
   // Require reauth (≤ 5 min)
   requireReauth(event);
+
+  await enforceTwoAxisRateLimit(event, "export:data", String(userId));
 
   const db = getOwnerDb();
   const [userRows, children, consents] = await Promise.all([

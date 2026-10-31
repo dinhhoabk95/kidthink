@@ -6,9 +6,7 @@ import { defineApiRoute } from "#server/utils/define-api-route";
 import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
 
 const LibraryQuerySchema = z.object({
-  entity_type: z
-    .enum(["game_level", "lesson", "curriculum", "activity"])
-    .optional(),
+  entity_type: z.enum(["game_level", "curriculum"]).optional(),
   collection_id: z.coerce.number().optional(),
   tag: z.string().optional(),
   q: z.string().optional(),

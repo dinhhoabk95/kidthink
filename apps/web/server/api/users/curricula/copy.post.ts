@@ -2,13 +2,15 @@ import { copySystemCurriculumSchema } from "@mindkid/shared";
 import {
   defineEventHandler,
   getRequestHeader,
-  getRequestIP,
   readBody,
   setResponseStatus,
 } from "h3";
 import { copySystemCurriculum } from "#server/services/index.js";
 import { throwValidationError } from "#server/utils/api-error";
-import { requireWebUserSession } from "#server/utils/auth-runtime";
+import {
+  getVerifiedRemoteIp,
+  requireWebUserSession,
+} from "#server/utils/auth-runtime";
 import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
 
 export default defineEventHandler(async (event) => {
@@ -29,7 +31,7 @@ export default defineEventHandler(async (event) => {
     {
       userId,
       entitlements,
-      ip: getRequestIP(event),
+      ip: getVerifiedRemoteIp(event),
       userAgent: getRequestHeader(event, "user-agent"),
     },
     parsed.data

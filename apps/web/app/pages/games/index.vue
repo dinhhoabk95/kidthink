@@ -385,7 +385,7 @@
     type LevelCta,
     resolveLevelCta,
   } from "@mindkid/shared/client";
-  import { computed, onMounted, ref, watch } from "vue";
+  import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
   import {
     definePageMeta,
     useFetch,
@@ -403,6 +403,7 @@
   import { useApi } from "~/composables/use-api";
   import {
     AGE_BAND_OPTIONS,
+    type CatalogFacets,
     type CatalogItem,
     type CatalogResponse,
     COMPETENCY_OPTIONS,
@@ -568,10 +569,11 @@
   // Hai pha: SSR dùng cta từ server (guest); client hydrate cập nhật lại theo session (BR-GCP-09)
   const levels = computed<CatalogItem[]>(() => {
     const rawItems = data.value?.items ?? [];
+    const completedSet = new Set(completedLevelCodes.value);
     if (!userAccessContext.value) {
       return rawItems.map((item) => ({
         ...item,
-        is_completed: completedLevelCodes.value.includes(item.code),
+        is_completed: completedSet.has(item.code),
       }));
     }
 
@@ -587,7 +589,7 @@
       const isLocked = !ctx.allowed_tiers.includes(tier);
       return {
         ...item,
-        is_completed: completedLevelCodes.value.includes(item.code),
+        is_completed: completedSet.has(item.code),
         locked: isLocked,
         cta: resolveLevelCta(item.code, tier, viewer),
       };
@@ -733,6 +735,13 @@
       cursor.value = (newQuery.cursor as string) || "";
     }
   );
+
+  onBeforeUnmount(() => {
+    if (searchTimer) {
+      clearTimeout(searchTimer);
+      searchTimer = null;
+    }
+  });
 
   useSeoMeta({
     title: "Thư viện trò chơi tư duy cho bé 3–6 tuổi — MindKid",

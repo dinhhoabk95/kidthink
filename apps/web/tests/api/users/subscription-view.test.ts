@@ -108,10 +108,10 @@ describe("Task 6 — User Subscription View Suite (BR-SBV-01..07, D-JQ)", () => 
       expiresAt: futureExpiry,
     });
 
-    // 2. Grant manual add-on entitlement (create_lesson_plan)
+    // 2. Grant manual add-on entitlement (create_custom_curriculum)
     await db.insert(entitlements).values({
       userId: user.id,
-      entitlementKey: "create_lesson_plan",
+      entitlementKey: "create_custom_curriculum",
       source: "manual_grant",
       status: "active",
       expiresAt: futureExpiry,
@@ -126,10 +126,10 @@ describe("Task 6 — User Subscription View Suite (BR-SBV-01..07, D-JQ)", () => 
 
     const keys = res.entitlements.map((e) => e.key);
     expect(keys).toContain("play_standard_games");
-    expect(keys).toContain("create_lesson_plan");
+    expect(keys).toContain("create_custom_curriculum");
 
     const manualAddon = res.entitlements.find(
-      (e) => e.key === "create_lesson_plan"
+      (e) => e.key === "create_custom_curriculum"
     );
     expect(manualAddon?.source_label).toBe("Được cấp");
   });

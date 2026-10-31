@@ -1,3 +1,4 @@
+import { deleteCached, getCached, setCached } from "@mindkid/cache";
 import {
   competencies,
   contentSkillMap,
@@ -87,23 +88,21 @@ interface CachedTaxonomyData {
 
 let taxonomyCache: CachedTaxonomyData | null = null;
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes (BR-TXB-06)
+const TAXONOMY_MANAGER_CACHE_KEY = "taxonomy:manager:summary:v1";
 
 export function invalidateTaxonomyManagerCache(): void {
   taxonomyCache = null;
+  deleteCached(TAXONOMY_MANAGER_CACHE_KEY).catch(() => null);
 }
 
 async function fetchRawTaxonomyHierarchy() {
   const db = getOwnerDb();
-  const dbCompetencies = await db
-    .select()
-    .from(competencies)
-    .orderBy(competencies.position);
-  const dbStrands = await db.select().from(strands).orderBy(strands.position);
-  const dbSkills = await db.select().from(skills).orderBy(skills.position);
-  const dbLos = await db
-    .select()
-    .from(learningObjectives)
-    .orderBy(learningObjectives.position);
+  const [dbCompetencies, dbStrands, dbSkills, dbLos] = await Promise.all([
+    db.select().from(competencies).orderBy(competencies.position),
+    db.select().from(strands).orderBy(strands.position),
+    db.select().from(skills).orderBy(skills.position),
+    db.select({ skillId: learningObjectives.skillId }).from(learningObjectives),
+  ]);
   return { dbCompetencies, dbStrands, dbSkills, dbLos };
 }
 
@@ -112,15 +111,14 @@ async function fetchLevelCountsMap() {
   const levelMappings = await db
     .select({
       skillId: contentSkillMap.skillId,
-      status: gameLevels.status,
       count: sql<number>`count(distinct ${gameLevels.id})::int`,
     })
     .from(contentSkillMap)
     .innerJoin(
       gameLevels,
-      sql`(${contentSkillMap.entityType} = 'game_level') AND (${contentSkillMap.entityId} = ${gameLevels.id} OR ${contentSkillMap.entityId} = ${gameLevels.entityId})`
+      sql`(${contentSkillMap.entityType} = 'game_level') AND (${contentSkillMap.entityId} = ${gameLevels.id})`
     )
-    .groupBy(contentSkillMap.skillId, gameLevels.status);
+    .groupBy(contentSkillMap.skillId);
 
   const skillCountsMap = new Map<
     number,
@@ -132,11 +130,7 @@ async function fetchLevelCountsMap() {
       draft: 0,
       total: 0,
     };
-    if (m.status === "published") {
-      current.published += Number(m.count);
-    } else if (m.status === "draft") {
-      current.draft += Number(m.count);
-    }
+    current.published += Number(m.count);
     current.total += Number(m.count);
     skillCountsMap.set(m.skillId, current);
   }
@@ -281,17 +275,30 @@ export default defineEventHandler(async (event) => {
   if (taxonomyCache && now - taxonomyCache.timestamp < CACHE_TTL_MS) {
     baseData = taxonomyCache.data;
   } else {
-    const rawHierarchy = await fetchRawTaxonomyHierarchy();
-    const skillCountsMap = await fetchLevelCountsMap();
-    const enhanced = computeEnhancedTaxonomy(rawHierarchy, skillCountsMap);
+    const valkeyCached = await getCached<CachedTaxonomyData["data"]>(
+      TAXONOMY_MANAGER_CACHE_KEY
+    ).catch(() => null);
+    if (valkeyCached) {
+      baseData = valkeyCached;
+      taxonomyCache = { timestamp: now, data: baseData };
+    } else {
+      const [rawHierarchy, skillCountsMap] = await Promise.all([
+        fetchRawTaxonomyHierarchy(),
+        fetchLevelCountsMap(),
+      ]);
+      const enhanced = computeEnhancedTaxonomy(rawHierarchy, skillCountsMap);
 
-    baseData = {
-      as_of: new Date(now).toISOString(),
-      threshold_sufficient: TAXONOMY_SUFFICIENT_THRESHOLD,
-      ...enhanced,
-    };
+      baseData = {
+        as_of: new Date(now).toISOString(),
+        threshold_sufficient: TAXONOMY_SUFFICIENT_THRESHOLD,
+        ...enhanced,
+      };
 
-    taxonomyCache = { timestamp: now, data: baseData };
+      taxonomyCache = { timestamp: now, data: baseData };
+      await setCached(TAXONOMY_MANAGER_CACHE_KEY, baseData, 300).catch(
+        () => null
+      );
+    }
   }
 
   const returnSkills = gapsOnly

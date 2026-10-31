@@ -103,7 +103,7 @@ export function startBacklogMonitor(): NodeJS.Timeout {
       .then((next) => {
         state = next;
       })
-      .catch((error: unknown) => {
+      .catch((error) => {
         console.error(
           `[worker] Không đo được sức khoẻ hàng đợi: ${readErrorMessage(error)}`
         );

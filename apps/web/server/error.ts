@@ -4,7 +4,13 @@ import {
   isAppError,
 } from "@mindkid/errors/base";
 import { isModelBoundError, modelErrorContext } from "@mindkid/errors/model";
-import { getRequestURL, send, setResponseHeaders, setResponseStatus } from "h3";
+import {
+  getRequestURL,
+  type H3Event,
+  send,
+  setResponseHeaders,
+  setResponseStatus,
+} from "h3";
 import type { NitroErrorHandler } from "nitropack";
 import { readPostgresErrorCode } from "#server/utils/pg-error";
 
@@ -161,6 +167,14 @@ function logServerSide(
   console.error("[api error]", context, error);
 }
 
+function isResponseAlreadySent(event: H3Event): boolean {
+  return Boolean(
+    event.handled ||
+      event.node?.res?.headersSent ||
+      event.node?.res?.writableEnded
+  );
+}
+
 const errorHandler: NitroErrorHandler = (error, event) => {
   const url = getRequestURL(event, {
     xForwardedHost: true,
@@ -183,6 +197,10 @@ const errorHandler: NitroErrorHandler = (error, event) => {
       : SERVER_ERROR_STATUS);
 
   logServerSide(appError ?? error, statusCode, event.method ?? "GET", url.href);
+
+  if (isResponseAlreadySent(event)) {
+    return;
+  }
 
   let body: ApiErrorBody;
   if (appError && (statusCode < SERVER_ERROR_STATUS || statusCode === 503)) {

@@ -35,11 +35,7 @@
         <NuxtLink
           class="inline-flex items-center justify-center min-h-16 min-w-16 px-5 text-base font-bold text-white bg-cta rounded-2xl no-underline active:scale-95 transition-transform"
           v-if="nextStep.item && !nextStep.item.locked"
-          :to="
-            nextStep.item.entity_type === 'game_level'
-              ? `/play/${nextStep.item.entity_code}`
-              : `/play/lesson/${nextStep.item.entity_code}`
-          "
+          :to="`/play/${nextStep.item.entity_code}`"
         >
           <span>Học tiếp</span>
         </NuxtLink>
@@ -102,7 +98,7 @@
     session_no: number;
     item: {
       id: number;
-      entity_type: "lesson" | "game_level";
+      entity_type: "game_level";
       entity_code: string;
       title: string;
       locked: boolean;

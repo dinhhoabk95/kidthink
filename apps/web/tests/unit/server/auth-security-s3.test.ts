@@ -294,7 +294,9 @@ describe("Security Remediation Slice S3 ([H-01], [H-02], [H-04], [M-01..M-06])",
           limit: () => {
             selectCount += 1;
             if (selectCount === 1) {
-              return Promise.resolve([{ passwordHash: null }]);
+              return Promise.resolve([
+                { email: "oauth@example.com", passwordHash: null },
+              ]);
             }
             return Promise.resolve([{ id: 10, provider: "google" }]);
           },
@@ -320,6 +322,24 @@ describe("Security Remediation Slice S3 ([H-01], [H-02], [H-04], [M-01..M-06])",
       },
       body: { method: "social", provider: "google" },
     });
+
+    const { encodeOAuthTicket } = await import("@mindkid/auth");
+    const { requireEnv } = await import("@mindkid/config");
+    const ticketStr = encodeOAuthTicket(
+      {
+        profile: {
+          provider: "google",
+          provider_user_id: "google_12345",
+          email_at_provider: "oauth@example.com",
+          email_verified_at_provider: true,
+          display_name_at_provider: "OAuth User",
+        },
+        created_at: Date.now(),
+      },
+      requireEnv("NUXT_SESSION_PASSWORD")
+    );
+    (event.node.req.headers as Record<string, string>).cookie =
+      `tm_u_csrf=${TEST_CSRF}; tm_oauth_ticket=${ticketStr}`;
 
     const res = await userReauthHandler(event);
     expect(res.ok).toBe(true);

@@ -1,12 +1,10 @@
 <template>
   <div :class="['game-play-container', `theme-${currentThemeId}`]">
-    <!-- Ambient theme background decorative elements -->
     <div aria-hidden="true" class="ambient-theme-layer">
       <div class="ambient-shape shape-1" />
       <div class="ambient-shape shape-2" />
     </div>
 
-    <!-- Loading State -->
     <div class="loading-state" v-if="isLoading">
       <div class="loading-box">
         <KidMascot :pose="'listen'" :size="96" />
@@ -14,7 +12,6 @@
       </div>
     </div>
 
-    <!-- Error State (Pre-reader friendly) -->
     <div class="error-state" v-else-if="errorMessage">
       <div class="error-card">
         <KidMascot :pose="'encourage'" :size="96" />
@@ -46,8 +43,6 @@
     </div>
     <!-- Active Game Viewport -->
     <div class="game-viewport" v-show="!(isLoading || errorMessage)">
-      <!-- TOP HUD BAR — đúng ba nút: khoá phụ huynh, hạt tiến độ, loa nghe
-           lại (`BR-PSZ-07`). Nhãn chữ chỉ là aria-label. -->
       <header
         class="top-hud-bar"
         :class="{ 'ring-4 ring-brand-400 animate-pulse': isPromptPillPulsing }"
@@ -119,8 +114,6 @@
             @pointermove="handlePointerMove"
             @pointerup="handlePointerUp"
           />
-          <!-- Bàn không vừa ở khung ngang thấp (`BR-PSZ-14`): lớp xoay máy dọc phủ
-               canvas, chặn chạm, chỉ icon — chữ ở aria-label (`BR-FBK-12`). -->
           <div
             class="portrait-gate"
             role="alert"
@@ -139,8 +132,6 @@
               name="i-lucide-rotate-cw"
             />
             <span class="sr-only">{{ PORTRAIT_GATE_LABEL }}</span>
-            <!-- Sau vài giây vẫn ngang: nhắc phụ huynh tắt khoá xoay. Icon vẫn là
-                 tín hiệu chính cho trẻ; dòng này không chuyển động. -->
             <p
               aria-live="polite"
               class="portrait-gate__hint"
@@ -149,10 +140,6 @@
               {{ PORTRAIT_GATE_PARENT_HINT }}
             </p>
           </div>
-          <!-- Accessible DOM buttons for assistive tech & keyboard navigation -->
-          <!-- Vùng thông báo riêng: `aria-live` Cấm — NEVER đặt trên container
-               chứa button, vì mỗi lần đổi vòng screen reader sẽ đọc lại cả
-               danh sách đối tượng (BR-A11). -->
           <div aria-live="polite" class="sr-only" role="status">
             {{ liveAnnouncement }}
           </div>
@@ -183,9 +170,6 @@
                 (Đang chọn)
               </span>
             </button>
-            <!-- Nút hành động ở `zones.action` (`BR-PSZ-05`): canvas chỉ vẽ nút,
-                 DOM này cho Tab + Enter/Space và trình đọc màn hình. Không dùng
-                 `disabled` để Tab vẫn dừng được và đọc "chưa bấm được". -->
             <button
               class="sr-only focus:not-sr-only focus:fixed focus:z-40 focus:px-4 focus:py-2 focus:rounded-2xl focus:bg-white focus:text-surface-900 focus:border-[3px] focus:border-brand-600 focus:shadow-2xl focus:ring-4 focus:ring-brand-500/30 focus:ring-offset-2 focus:outline-none focus:font-heading focus:font-bold focus:text-base pointer-events-auto"
               type="button"
@@ -199,9 +183,6 @@
               {{ actionButton.label }}
             </button>
           </section>
-          <!-- Bỏ qua câu này — chỗ tạm ở góc đối diện nút hành động tương lai
-               (`D-277-7`, `zones.action` dựng ở #277 S4). Ra khỏi HUD để giữ
-               đúng ba nút của `BR-PSZ-07`. -->
           <button
             aria-label="Bỏ qua câu này"
             class="btn-skip-floating clay-button min-h-16 min-w-16"
@@ -245,7 +226,6 @@
           </div>
         </div>
       </main>
-      <!-- Victory Celebration Modal -->
       <KidVictoryModal
         :celebration="earnedCelebration"
         :is-guest="!loggedIn"
@@ -256,14 +236,12 @@
         @continue="handleContinueNext"
         @replay="handleReplayGame"
       />
-      <!-- Parent Gate Exit Modal -->
       <ParentGateModal
         v-if="showParentGate"
         :client-only="true"
         @cancel="showParentGate = false"
         @verified="handleParentVerified"
       />
-      <!-- Healthy Play Limits Modal (`BR-HPL-01..08`) -->
       <KidPlayLimitModal
         v-if="isPlayLimitReached"
         :child-uuid="activeChildUuid"
@@ -314,26 +292,23 @@
   const router = useRouter();
   const levelCode = route.params.code as string;
 
-  const LESSON_CODE_PATTERN = /^LES-\d{4}$/;
+  const SAFE_RETURN_TARGET_PATTERN = /^[A-Za-z0-9_-]{1,64}$/;
 
-  /** Mã bài khi trang chơi là một bước của bài (`child-lesson-flow.md`); sai định dạng thì bỏ qua. */
-  function lessonCodeFromQuery(): string | null {
-    const raw = route.query.lesson;
-    return typeof raw === "string" && LESSON_CODE_PATTERN.test(raw)
+  function sanitizeCurriculumWeekCode(raw: string | undefined): string | null {
+    return typeof raw === "string" && SAFE_RETURN_TARGET_PATTERN.test(raw)
       ? raw
       : null;
   }
 
-  /** Đích quay về sau một level: level gốc của bài làm quen, rồi trang bài, rồi danh mục. */
   function nextDestination(): string {
-    const lessonCode = lessonCodeFromQuery();
-    const returnTo = route.query.return_to || route.query.return_level_code;
-    if (typeof returnTo === "string" && returnTo) {
-      return lessonCode
-        ? `/play/${returnTo}?lesson=${lessonCode}`
-        : `/play/${returnTo}`;
+    const rawReturn = route.query.return_to || route.query.return_level_code;
+    const safeReturn = sanitizeCurriculumWeekCode(
+      typeof rawReturn === "string" ? rawReturn : undefined
+    );
+    if (safeReturn) {
+      return `/play/${safeReturn}`;
     }
-    return lessonCode ? `/play/lesson/${lessonCode}` : "/play";
+    return "/play";
   }
   const { loggedIn, fetch: fetchSession } = useUserSession();
 
@@ -353,11 +328,9 @@
   let resizeTimer: ReturnType<typeof setTimeout> | null = null;
   let canvasObserver: ResizeObserver | null = null;
 
-  /** Lớp phủ phản hồi chung cho mọi engine (`BR-FBK-11`). */
   const feedbackOverlay = new FeedbackOverlay();
   const mascotSprites = useMascotSprites();
 
-  /** Dáng nền khi không có phản hồi đang giữ: nghe lời dẫn, trợ giúp, hay nghỉ (§7.4). */
   function baseMascotPose(engine: GameEngine | null): MascotPose {
     if (!engine?.acceptingInput) {
       return "listen";
@@ -376,7 +349,7 @@
     errorActionText,
     isPlayLimitReached,
     handleApiError,
-  } = usePlayError({ lessonCode: lessonCodeFromQuery() });
+  } = usePlayError();
 
   const activeChildCookie = useCookie<string | null>("active_child_id");
   const activeChildUuid = computed(() => activeChildCookie.value ?? "");
@@ -404,7 +377,6 @@
     syncView: () => gesture.syncView(),
     refreshStageZones: updateStageZones,
     onAfterRender: (ctx, rs, now) => {
-      syncPortraitGate();
       const zones = stageZones.value ?? updateStageZones();
       if (!zones) {
         return;
@@ -462,21 +434,13 @@
     cleanupSession,
   } = playSession;
 
-  /** Màn tổng kết đọc lời khen thành tiếng (`BR-FBK-12`). */
   function speakCelebration(phrase: string): void {
     getEngine()?.audio.speakPrompt(phrase);
   }
 
-  /** Sàn chạm HUD theo band tuổi, trên px CSS thật — HUD là DOM (`D-277-2`, `BR-PSZ-04`). */
   const hudTouchFloorPx = computed(() => getTouchFloor(ageBand.value));
-
-  /** Vùng của bàn chơi (`play-stage-zones.md`, `BR-PSZ-01..04`). */
   const stageZones = ref<StageZones | null>(null);
-
-  /** Lớp xoay máy dọc đang phủ canvas (`BR-PSZ-14`). */
   const needsPortrait = ref(false);
-
-  /** Dòng nhắc phụ huynh tắt khoá xoay, hiện sau `PORTRAIT_GATE_PARENT_HINT_DELAY_MS`. */
   const showPortraitParentHint = ref(false);
   let portraitHintTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -487,7 +451,6 @@
     }
   }
 
-  /** Thử khoá hướng dọc; lỗi nuốt im, lớp xoay máy vẫn là nền (`BR-PSZ-14`). */
   function attemptPortraitLock(): void {
     const env = readOrientationEnv();
     if (env) {
@@ -640,12 +603,19 @@
     if (pendingParentNavigation.value) {
       const target = pendingParentNavigation.value;
       pendingParentNavigation.value = "";
-      navigateTo(target || "/play");
+      if (target.startsWith("/") && !target.startsWith("//")) {
+        navigateTo(target);
+      } else {
+        navigateTo("/play");
+      }
       return;
     }
-    const returnTo = route.query.return_to || route.query.return_level_code;
-    if (typeof returnTo === "string" && returnTo) {
-      router.push(`/play/${returnTo}`);
+    const rawReturn = route.query.return_to || route.query.return_level_code;
+    const safeReturn = sanitizeCurriculumWeekCode(
+      typeof rawReturn === "string" ? rawReturn : undefined
+    );
+    if (safeReturn) {
+      router.push(`/play/${safeReturn}`);
       return;
     }
     router.push("/play");
@@ -654,10 +624,6 @@
   function replayInstructionAudio(): void {
     const engine = getEngine();
     engine?.audio.playTapSound();
-    // Đi qua RoundRunner để "Nghe lại" dùng đúng nguồn giọng đã phát lúc mở
-    // vòng (BR-PNR-03, BR-PNR-07). Gọi thẳng đường phát của trang thì bản ghi
-    // mp3 của vòng chưa bao giờ được nạp vào đó, nên trẻ chỉ nghe được giọng
-    // máy đọc lại chữ.
     getRoundRunner()?.replayCurrentRoundNarration();
   }
 
@@ -701,9 +667,6 @@
             roundRunner.setLogicSpace(vp.logicSpace);
           }
         }
-        // Slot vừa tính lại theo logic space mới — danh sách nút ẩn cho bàn
-        // phím/screen reader phải trỏ toạ độ mới trong cùng nhịp (`BR-PSZ-12`),
-        // không phải chờ vòng chơi kế tiếp mới đồng bộ (H11).
         gesture.syncView();
         syncPortraitGate();
       }
@@ -723,7 +686,6 @@
     }
   }
 
-  // Vòng mới không mang pop hay dáng của vòng trước.
   watch(currentRound, () => feedbackOverlay.reset());
 
   watch(
@@ -747,12 +709,6 @@
     }
   );
 
-  /**
-   * Canvas đổi cỡ mà cửa sổ không đổi (lưới HUD xếp xong sau lần đo đầu, ảnh
-   * đầu vòng nạp xong, thanh địa chỉ co lại): `resize` của window không bắn nên
-   * backing store lệch hộp CSS và engine tính slot trên logic space cũ
-   * (`BR-PSZ-12`). Quan sát chính phần tử canvas.
-   */
   function observeCanvasSize(): void {
     if (typeof ResizeObserver === "undefined" || !canvasRef.value) {
       return;

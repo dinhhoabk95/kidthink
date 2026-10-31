@@ -22,7 +22,7 @@ export interface SeedMasterViolation {
 
 const MODULE_SCOPE = "<module>";
 const FUNCTION_NAME_REGEX = /function\s+([A-Za-z_$][\w$]*)/g;
-const CONTENT_TABLE_REGEX = /\.from\(\s*(?:lessons|gameLevels)\s*\)/;
+const CONTENT_TABLE_REGEX = /\.from\(\s*gameLevels\s*\)/;
 const LIMIT_OR_ORDER_REGEX = /\.(?:limit|orderBy)\(/;
 
 const NON_NEWLINE_REGEX = /[^\n]/g;
@@ -155,6 +155,6 @@ export function formatSeedMasterViolation(
   const what =
     violation.kind === "modulo"
       ? "phép chia lấy dư (%)"
-      : "LIMIT/orderBy trên lessons/game_levels";
+      : "LIMIT/orderBy trên game_levels";
   return `${violation.path}:${violation.line} hàm ${violation.functionName}: ${what} chọn nội dung cho tiết (BR-LRM-02)`;
 }

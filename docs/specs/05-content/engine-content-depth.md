@@ -104,10 +104,10 @@ check:skill-quota`.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-SKQ-01` (chỉ đếm level hợp lệ) | Chỉ đếm level đã qua `content_contract` của template tương ứng | Level không parse được thì không cho trẻ thêm lượt chơi nào |
-| `BR-SKQ-02` (hạn ngạch level) | Kỹ năng **đã có ≥1 level**: C1 ≥ 20 level, C2–C6 ≥ 10 | Ngăn kỹ năng xây dở. Kỹ năng chưa có level nào Cấm — NEVER tính ở đây, xem `BR-SKQ-06` |
-| `BR-SKQ-03` (đa dạng khuôn) | Cùng phạm vi `BR-SKQ-02`: C1 ≥ 4 khuôn, C2–C6 ≥ 2 | Một kỹ năng chỉ gặp qua một khuôn là một kỹ năng trẻ học thuộc thao tác, không học nội dung |
-| `BR-SKQ-04` (trần cặp) | Mỗi cặp (kỹ năng, khuôn) ≤ 5 level | Chống lấp hạn ngạch bằng cách nhân bản một khuôn |
-| `BR-SKQ-05` (sàn cặp toàn catalog) | Số cặp (kỹ năng, khuôn) phân biệt ≥ sàn đã ghi | Đo độ phủ ngang, không chỉ độ sâu dọc |
+| `BR-SKQ-02` (hạn ngạch level) | Kỹ năng **đã có ≥1 level**: mọi năng lực C1–C6 ≥ 3 level chơi theo 3 bậc CPA (Concrete → Pictorial → Abstract) | Ngăn kỹ năng xây dở hoặc nhồi biến thể cơ học. Kỹ năng chưa có level nào Cấm — NEVER tính ở đây, xem `BR-SKQ-06` |
+| `BR-SKQ-03` (đa dạng khuôn) | Cùng phạm vi `BR-SKQ-02`: mọi năng lực C1–C6 ≥ 2 khuôn chơi phân biệt | Một kỹ năng chỉ gặp qua một khuôn là một kỹ năng trẻ học thuộc thao tác, không học nội dung |
+| `BR-SKQ-04` (trần cặp) | Mỗi cặp (kỹ năng, khuôn) ≤ 3 level | Chống lấp hạn ngạch bằng cách nhân bản một khuôn |
+| `BR-SKQ-05` (sàn cặp toàn catalog) | Số cặp (kỹ năng, khuôn) phân biệt ≥ 886 (443 kỹ năng × 2 khuôn) | Đo độ phủ ngang, không chỉ độ sâu dọc |
 | `BR-SKQ-06` (bậc thang nợ nội dung) | Số kỹ năng **0 level** ≤ trần trong `skill-coverage-ratchet.json`. Trần **chỉ giảm**; tăng phải sửa file kèm lý do trong PR | Không tách khỏi `BR-SKQ-02` thì mỗi kỹ năng vừa khai báo lập tức đẻ 10–20 level nợ và kho không mở được. Cùng khuôn bậc thang đã đưa nợ typecheck từ 2.931 về 0 |
 | `BR-SKQ-07` (cổng có ca âm) | Phải có ca âm cho `BR-SKQ-02` **và** `BR-SKQ-06`, cộng một ca chứng minh kỹ năng 0 level Cấm — NEVER bị báo là thiếu hạn ngạch | Nới cổng mà không có ca âm là tắt cổng. `BR-TYP-07` |
 | `BR-SKQ-08` (level dạy ngoài hạn ngạch) | Level thuộc template `kind = 'teach'` Cấm — NEVER được tính vào số level hay số khuôn phân biệt của `BR-SKQ-02` · `BR-SKQ-03` · `BR-SKQ-04` · `BR-SKQ-05`. Kỹ năng chỉ có level dạy thì tính như kỹ năng 0 level ở `BR-SKQ-06` | Hạn ngạch đo **cầu chơi** của một kỹ năng. Từ 2026-09-06 level dạy gắn thẳng vào kỹ năng chơi (`BR-CTM-01`), nên nếu đếm chung thì một kỹ năng C1 có 19 bài chơi cộng 1 bài dạy sẽ báo đủ 20 trong khi thiếu một bài chơi. Trước đó level dạy nằm trên kỹ năng bậc `pre` riêng nên lỗ này không tồn tại |

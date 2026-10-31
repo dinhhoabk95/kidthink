@@ -57,7 +57,26 @@ function validateAuditDateRange(
   const fromDate = fromStr ? new Date(fromStr) : undefined;
   const toDate = toStr ? new Date(toStr) : undefined;
 
+  if (fromDate && Number.isNaN(fromDate.getTime())) {
+    throw ValidationError.field(
+      "from",
+      "Ngày bắt đầu (from) không đúng định dạng hợp lệ"
+    );
+  }
+  if (toDate && Number.isNaN(toDate.getTime())) {
+    throw ValidationError.field(
+      "to",
+      "Ngày kết thúc (to) không đúng định dạng hợp lệ"
+    );
+  }
+
   if (fromDate && toDate) {
+    if (toDate.getTime() < fromDate.getTime()) {
+      throw ValidationError.field(
+        "from",
+        "Ngày bắt đầu (from) phải nhỏ hơn hoặc bằng ngày kết thúc (to)"
+      );
+    }
     const diffDays =
       (toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24);
     if (diffDays > 90) {
@@ -140,12 +159,17 @@ function buildAuditConditions(
   return conditions;
 }
 
+export const MAX_EXPORT_ROWS = 10_000;
+
 export default defineEventHandler(async (event) => {
   const session = await requireSuperAdminSession(event);
   const query = getQuery(event);
 
   const rawLimit = Number(readQueryString(query, "limit"));
-  const limit = Math.min(Math.max(rawLimit || 5000, 1), 10_000);
+  const limit = Math.min(
+    Math.max(rawLimit || MAX_EXPORT_ROWS, 1),
+    MAX_EXPORT_ROWS
+  );
   const dates = validateAuditDateRange(
     readQueryString(query, "from"),
     readQueryString(query, "to")
@@ -156,7 +180,18 @@ export default defineEventHandler(async (event) => {
   const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
   const rows = await db
-    .select()
+    .select({
+      id: auditLogs.id,
+      uuid: auditLogs.uuid,
+      actorType: auditLogs.actorType,
+      actorId: auditLogs.actorId,
+      action: auditLogs.action,
+      entityType: auditLogs.entityType,
+      entityId: auditLogs.entityId,
+      reason: auditLogs.reason,
+      ipAddress: auditLogs.ipAddress,
+      createdAt: auditLogs.createdAt,
+    })
     .from(auditLogs)
     .where(whereClause)
     .orderBy(desc(auditLogs.createdAt))
@@ -195,10 +230,7 @@ export default defineEventHandler(async (event) => {
     "Loại Entity",
     "Mã Entity",
     "Lý do",
-    "Dữ liệu trước",
-    "Dữ liệu sau",
     "IP Address",
-    "User Agent",
   ];
 
   const lines: string[] = [headers.join(",")];
@@ -214,10 +246,7 @@ export default defineEventHandler(async (event) => {
         escapeCsvField(r.entityType),
         escapeCsvField(r.entityId),
         escapeCsvField(r.reason),
-        escapeCsvField(r.beforeData),
-        escapeCsvField(r.afterData),
         escapeCsvField(r.ipAddress),
-        escapeCsvField(r.userAgent),
       ].join(",")
     );
   }

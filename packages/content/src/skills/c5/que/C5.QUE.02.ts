@@ -42,59 +42,88 @@ export const C5_QUE_02_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "que_cai_che_mua",
-      label: "cái ô dùng để che mưa",
-      image: {
-        kind: "emoji",
-        ref: "☂️",
-      },
-      category: {
-        type: "câu hỏi cái gì",
-      },
-    },
-    {
-      id: "que_cai_uong_nuoc",
-      label: "cái cốc để uống nước",
-      image: {
-        kind: "emoji",
-        ref: "🥛",
-      },
-      category: {
-        type: "câu hỏi cái gì",
-      },
-    },
-    {
       id: "que_cai_doi_dau",
-      label: "cái mũ dùng để đội đầu",
+      label: "cái mũ đội đầu",
+      value: 1,
       image: {
         kind: "emoji",
         ref: "🧢",
       },
+      audio_path: "/audio/vi/c5/que/cai_mu.mp3",
       category: {
-        type: "câu hỏi cái gì",
+        type: "đồ để mặc",
       },
+      contrast_group: "primary",
     },
     {
       id: "que_cai_di_chan",
-      label: "đôi dép để đi vào chân",
+      label: "đôi giày đi chân",
+      value: 2,
       image: {
         kind: "emoji",
-        ref: "🩴",
+        ref: "👟",
       },
+      audio_path: "/audio/vi/c5/que/doi_giay.mp3",
       category: {
-        type: "câu hỏi cái gì",
+        type: "đồ để mặc",
       },
+      contrast_group: "primary",
     },
     {
-      id: "que_cai_de_viet",
-      label: "chiếc bút để vẽ tranh",
+      id: "que_cai_mac_ao",
+      label: "chiếc áo ấm",
+      value: 3,
       image: {
         kind: "emoji",
-        ref: "✏️",
+        ref: "🧥",
       },
+      audio_path: "/audio/vi/c5/que/chiec_ao.mp3",
       category: {
-        type: "câu hỏi cái gì",
+        type: "đồ để mặc",
       },
+      contrast_group: "primary",
+    },
+    {
+      id: "que_cai_che_mua",
+      label: "cái ô che mưa",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "☂️",
+      },
+      audio_path: "/audio/vi/c5/que/cai_o.mp3",
+      category: {
+        type: "đồ sinh hoạt",
+      },
+      contrast_group: "contrast",
+    },
+    {
+      id: "que_cai_uong_nuoc",
+      label: "cái cốc uống nước",
+      value: 5,
+      image: {
+        kind: "emoji",
+        ref: "🥛",
+      },
+      audio_path: "/audio/vi/c5/que/cai_coc.mp3",
+      category: {
+        type: "đồ sinh hoạt",
+      },
+      contrast_group: "contrast",
+    },
+    {
+      id: "que_cai_ve_tranh",
+      label: "bút sáp màu",
+      value: 6,
+      image: {
+        kind: "emoji",
+        ref: "🖍️",
+      },
+      audio_path: "/audio/vi/c5/que/but_sap_mau.mp3",
+      category: {
+        type: "đồ sinh hoạt",
+      },
+      contrast_group: "contrast",
     },
   ],
   ladder: [
@@ -129,11 +158,45 @@ export const C5_QUE_02_DATASET: SkillDataset = {
     narration_template: 'Chúng mình cùng tìm hiểu về Trả lời "Cái gì?" nhé',
   },
   ordering: [
-    "que_cai_che_mua",
-    "que_cai_uong_nuoc",
     "que_cai_doi_dau",
     "que_cai_di_chan",
-    "que_cai_de_viet",
+    "que_cai_mac_ao",
+    "que_cai_che_mua",
+    "que_cai_uong_nuoc",
+    "que_cai_ve_tranh",
+  ],
+  axes: {
+    category: {
+      values: ["đồ để mặc", "đồ sinh hoạt"],
+      ordered: true,
+    },
+  },
+  relations: [
+    {
+      type: "pair",
+      source_id: "que_cai_doi_dau",
+      target_id: "que_cai_di_chan",
+    },
+    {
+      type: "pair",
+      source_id: "que_cai_che_mua",
+      target_id: "que_cai_uong_nuoc",
+    },
+    {
+      type: "contrast",
+      source_id: "que_cai_doi_dau",
+      target_id: "que_cai_che_mua",
+    },
+    {
+      type: "contrast",
+      source_id: "que_cai_di_chan",
+      target_id: "que_cai_uong_nuoc",
+    },
+    {
+      type: "contrast",
+      source_id: "que_cai_mac_ao",
+      target_id: "que_cai_ve_tranh",
+    },
   ],
 };
 
@@ -158,67 +221,11 @@ export const C5_QUE_02_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-QUE-SHAD-0008",
-      template: "GT-007",
-      band: "3-4",
-      difficulty: 3,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-QUE-SHAD-0009",
-      template: "GT-007",
-      band: "3-4",
-      difficulty: 1,
-      theme: "ocean",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-QUE-SHAD-0010",
-      template: "GT-007",
-      band: "3-4",
-      difficulty: 2,
-      theme: "food",
-      rounds: 3,
-    },
-    {
       code: "GL-C5-QUE-TAP-0006",
       template: "GT-001",
       band: "3-4",
       difficulty: 1,
       theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-QUE-TAP-0007",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 2,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-QUE-TAP-0008",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 3,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-QUE-TAP-0009",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 1,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-QUE-TAP-0010",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 2,
-      theme: "body",
       rounds: 3,
     },
   ],

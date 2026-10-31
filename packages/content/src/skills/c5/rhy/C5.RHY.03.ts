@@ -42,54 +42,82 @@ export const C5_RHY_03_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "let_â",
-      label: "chữ â",
-      glyph: "â",
+      id: "rhy_dung_dang",
+      label: "dung dăng dung dẻ",
       image: {
         kind: "emoji",
-        ref: "🅰️",
+        ref: "👧",
       },
+      category: {
+        type: "đồng dao quen",
+      },
+      value: 1,
       contrast_group: "primary",
     },
     {
-      id: "let_b",
-      label: "chữ b",
-      glyph: "b",
+      id: "rhy_keo_cua",
+      label: "kéo cưa lừa xẻ",
       image: {
         kind: "emoji",
-        ref: "🅱️",
+        ref: "🪚",
       },
+      category: {
+        type: "đồng dao quen",
+      },
+      value: 2,
+      contrast_group: "primary",
+    },
+    {
+      id: "rhy_chi_chi",
+      label: "chi chi chành chành",
+      image: {
+        kind: "emoji",
+        ref: "🖐️",
+      },
+      category: {
+        type: "đồng dao quen",
+      },
+      value: 3,
+      contrast_group: "primary",
+    },
+    {
+      id: "rhy_nu_na",
+      label: "nu na nu nống",
+      image: {
+        kind: "emoji",
+        ref: "🥁",
+      },
+      category: {
+        type: "đồng dao vui",
+      },
+      value: 4,
       contrast_group: "contrast",
     },
     {
-      id: "let_c",
-      label: "chữ c",
-      glyph: "c",
+      id: "rhy_rong_ran",
+      label: "rồng rắn lên mây",
       image: {
         kind: "emoji",
-        ref: "🅲",
+        ref: "🐉",
       },
-      contrast_group: "primary",
-    },
-    {
-      id: "let_d",
-      label: "chữ d",
-      glyph: "d",
-      image: {
-        kind: "emoji",
-        ref: "🅳",
+      category: {
+        type: "đồng dao vui",
       },
+      value: 5,
       contrast_group: "contrast",
     },
     {
-      id: "let_đ",
-      label: "chữ đ",
-      glyph: "đ",
+      id: "rhy_tap_tam",
+      label: "tập tầm vông",
       image: {
         kind: "emoji",
-        ref: "🅳",
+        ref: "🙌",
       },
-      contrast_group: "primary",
+      category: {
+        type: "đồng dao vui",
+      },
+      value: 6,
+      contrast_group: "contrast",
     },
   ],
   ladder: [
@@ -123,7 +151,37 @@ export const C5_RHY_03_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Đọc đồng dao có vần nhé",
   },
-  ordering: ["let_â", "let_b", "let_c", "let_d", "let_đ"],
+  ordering: [
+    "rhy_dung_dang",
+    "rhy_keo_cua",
+    "rhy_chi_chi",
+    "rhy_nu_na",
+    "rhy_rong_ran",
+    "rhy_tap_tam",
+  ],
+  axes: {
+    category: {
+      values: ["đồng dao quen", "đồng dao vui"],
+      ordered: true,
+    },
+  },
+  relations: [
+    {
+      type: "pair",
+      source_id: "rhy_dung_dang",
+      target_id: "rhy_keo_cua",
+    },
+    {
+      type: "pair",
+      source_id: "rhy_nu_na",
+      target_id: "rhy_rong_ran",
+    },
+    {
+      type: "contrast",
+      source_id: "rhy_dung_dang",
+      target_id: "rhy_nu_na",
+    },
+  ],
 };
 
 export const C5_RHY_03_SEED: SkillSeed = {
@@ -152,62 +210,6 @@ export const C5_RHY_03_SEED: SkillSeed = {
       band: "4-5",
       difficulty: 2,
       theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RHY-SIZE-0002",
-      template: "GT-009",
-      band: "4-5",
-      difficulty: 3,
-      theme: "ocean",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RHY-PUZZ-0005",
-      template: "GT-010",
-      band: "4-5",
-      difficulty: 2,
-      theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RHY-PUZZ-0006",
-      template: "GT-010",
-      band: "4-5",
-      difficulty: 3,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RHY-MEMO-0001",
-      template: "GT-012",
-      band: "3-4",
-      difficulty: 2,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RHY-MEMO-0002",
-      template: "GT-012",
-      band: "3-4",
-      difficulty: 3,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RHY-BOND-0001",
-      template: "GT-018",
-      band: "4-5",
-      difficulty: 2,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RHY-BOND-0002",
-      template: "GT-018",
-      band: "4-5",
-      difficulty: 3,
-      theme: "body",
       rounds: 3,
     },
   ],

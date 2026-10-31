@@ -88,7 +88,6 @@ describe("User Play Recommendations API (BR-REC-01..08, D-MQ..D-MV)", () => {
       })
       .returning();
 
-    let randEntityId = crypto.randomInt(100_000, 999_999);
     let randCode = `GL-C1-REC-API-${String(crypto.randomInt(1000, 9999))}`;
     let codeExists = true;
     while (codeExists) {
@@ -99,16 +98,13 @@ describe("User Play Recommendations API (BR-REC-01..08, D-MQ..D-MV)", () => {
         .limit(1);
       if (existing) {
         randCode = `GL-C1-REC-API-${String(crypto.randomInt(1000, 9999))}`;
-        randEntityId = crypto.randomInt(100_000, 999_999);
       } else {
         codeExists = false;
       }
     }
 
     await db.insert(gameLevels).values({
-      entityId: randEntityId,
       code: randCode,
-      contentVersion: 1,
       templateCode: "GT-001",
       title: "Đếm hoa quả API",
       contentPack: {},
@@ -117,7 +113,6 @@ describe("User Play Recommendations API (BR-REC-01..08, D-MQ..D-MV)", () => {
       ageMin: 3,
       ageMax: 5,
       difficulty: 1,
-      status: "published",
       thumbnailEmoji: "🍎",
     });
 

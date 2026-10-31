@@ -43,58 +43,155 @@ export const C5_WRT_05_DATASET: SkillDataset = {
   items: [
     {
       id: "wrt_to_net_thang",
-      label: "tô nét chấm thẳng",
+      label: "tô nét thẳng",
       image: {
         kind: "emoji",
         ref: "📏",
       },
       category: {
-        type: "tô nét chấm",
+        type: "tô nét vẽ",
       },
+      value: 1,
+      contrast_group: "primary",
     },
     {
       id: "wrt_to_net_cong",
-      label: "tô nét chấm cong",
+      label: "tô nét cong",
       image: {
         kind: "emoji",
         ref: "🌙",
       },
       category: {
-        type: "tô nét chấm",
+        type: "tô nét vẽ",
       },
+      value: 2,
+      contrast_group: "primary",
     },
     {
       id: "wrt_to_net_hinh_tron",
-      label: "tô nét chấm tròn",
+      label: "tô nét tròn",
       image: {
         kind: "emoji",
         ref: "⭕",
       },
       category: {
-        type: "tô nét chấm",
+        type: "tô nét vẽ",
       },
+      value: 3,
+      contrast_group: "primary",
+    },
+    {
+      id: "wrt_to_net_song",
+      label: "tô nét lượn sóng",
+      image: {
+        kind: "emoji",
+        ref: "〰️",
+      },
+      category: {
+        type: "tô nét vẽ",
+      },
+      value: 4,
+      contrast_group: "primary",
     },
     {
       id: "wrt_to_chu_cai",
-      label: "tô chữ cái chấm",
+      label: "tô chữ cái",
       image: {
         kind: "emoji",
         ref: "🔤",
       },
       category: {
-        type: "tô nét chấm",
+        type: "tô chữ hình",
       },
+      value: 5,
+      contrast_group: "contrast",
     },
     {
       id: "wrt_to_chu_so",
-      label: "tô chữ số chấm",
+      label: "tô chữ số",
       image: {
         kind: "emoji",
         ref: "🔢",
       },
       category: {
-        type: "tô nét chấm",
+        type: "tô chữ hình",
       },
+      value: 6,
+      contrast_group: "contrast",
+    },
+    {
+      id: "wrt_to_hinh_sao",
+      label: "tô ngôi sao",
+      image: {
+        kind: "emoji",
+        ref: "⭐",
+      },
+      category: {
+        type: "tô chữ hình",
+      },
+      value: 7,
+      contrast_group: "contrast",
+    },
+    {
+      id: "wrt_to_trai_tim",
+      label: "tô trái tim",
+      image: {
+        kind: "emoji",
+        ref: "❤️",
+      },
+      category: {
+        type: "tô chữ hình",
+      },
+      value: 8,
+      contrast_group: "contrast",
+    },
+  ],
+  axes: {
+    category: {
+      values: ["tô nét vẽ", "tô chữ hình"],
+      ordered: true,
+    },
+  },
+  relations: [
+    {
+      type: "pair",
+      source_id: "wrt_to_net_thang",
+      target_id: "wrt_to_net_cong",
+    },
+    {
+      type: "pair",
+      source_id: "wrt_to_net_hinh_tron",
+      target_id: "wrt_to_net_song",
+    },
+    {
+      type: "pair",
+      source_id: "wrt_to_chu_cai",
+      target_id: "wrt_to_chu_so",
+    },
+    {
+      type: "pair",
+      source_id: "wrt_to_hinh_sao",
+      target_id: "wrt_to_trai_tim",
+    },
+    {
+      type: "contrast",
+      source_id: "wrt_to_net_thang",
+      target_id: "wrt_to_chu_cai",
+    },
+    {
+      type: "contrast",
+      source_id: "wrt_to_net_cong",
+      target_id: "wrt_to_chu_so",
+    },
+    {
+      type: "contrast",
+      source_id: "wrt_to_net_hinh_tron",
+      target_id: "wrt_to_hinh_sao",
+    },
+    {
+      type: "contrast",
+      source_id: "wrt_to_net_song",
+      target_id: "wrt_to_trai_tim",
     },
   ],
   ladder: [
@@ -132,8 +229,11 @@ export const C5_WRT_05_DATASET: SkillDataset = {
     "wrt_to_net_thang",
     "wrt_to_net_cong",
     "wrt_to_net_hinh_tron",
+    "wrt_to_net_song",
     "wrt_to_chu_cai",
     "wrt_to_chu_so",
+    "wrt_to_hinh_sao",
+    "wrt_to_trai_tim",
   ],
 };
 
@@ -163,62 +263,6 @@ export const C5_WRT_05_SEED: SkillSeed = {
       band: "4-5",
       difficulty: 2,
       theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-TCNT-0010",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 3,
-      theme: "space",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-TCMP-0009",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 2,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-TCMP-0010",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 3,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-PAIR-0009",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 2,
-      theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-PAIR-0010",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 3,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-PATT-0009",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 2,
-      theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-PATT-0010",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 3,
-      theme: "homeland",
       rounds: 3,
     },
   ],

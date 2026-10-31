@@ -13,14 +13,10 @@ import { describe, expect, it } from "vitest";
 // biome-ignore lint/performance/noNamespaceImport: dynamically iterates all schema tables
 import * as schema from "#src/schema/index";
 import { SEED_MANAGERS, SEED_USERS } from "#src/seed-accounts";
-import {
-  SEED_ENTITLEMENT_KEYS,
-  SEED_PACKAGE_ENTITLEMENTS,
-  SEED_PACKAGES,
-} from "#src/seed-catalog";
+import { SEED_ENTITLEMENT_KEYS, SEED_PACKAGES } from "#src/seed-catalog";
 import { extractTableNamesFromSchema, TABLES } from "#tests/global-setup";
 
-function findTablesMissingUpdatedAt(schemaObj: object): string[] {
+function findTablesMissingTimestamps(schemaObj: object): string[] {
   const missing: string[] = [];
   for (const value of Object.values(schemaObj)) {
     if (!is(value, PgTable)) {
@@ -29,7 +25,7 @@ function findTablesMissingUpdatedAt(schemaObj: object): string[] {
     const tableName = getTableName(value);
     const cols = getTableColumns(value);
     const colNames = new Set(Object.values(cols).map((col) => col.name));
-    if (colNames.has("created_at") && !colNames.has("updated_at")) {
+    if (!(colNames.has("created_at") && colNames.has("updated_at"))) {
       missing.push(tableName);
     }
   }
@@ -43,13 +39,19 @@ function getColumnSqlNames(table: PgTable): string[] {
 
 describe("Dynamic Schema Tables Extraction (G6, Task #208)", () => {
   it("trích xuất đủ các bảng từ schema/ và không thiếu bảng mới", () => {
-    expect(TABLES.length).toBeGreaterThanOrEqual(84);
+    expect(TABLES.length).toBe(62);
     expect(TABLES).toContain("skill_datasets");
-    expect(TABLES).toContain("content_objective_map");
+    expect(TABLES).toContain("content_skill_map");
     expect(TABLES).toContain("users");
     expect(TABLES).toContain("game_levels");
-    expect(TABLES).toContain("child_lesson_plays");
     expect(TABLES).toContain("child_stickers");
+    expect(TABLES).not.toContain("content_objective_map");
+    expect(TABLES).not.toContain("worksheets");
+    expect(TABLES).not.toContain("seo_pages");
+    expect(TABLES).not.toContain("level_params");
+    expect(TABLES).not.toContain("user_tags");
+    expect(TABLES).not.toContain("user_tag_map");
+    expect(TABLES).not.toContain("package_entitlements");
   });
 
   it("test chứng minh bắt lỗi: thêm bảng giả vào schema ⟹ xuất hiện trong danh sách trích xuất", () => {
@@ -67,36 +69,30 @@ describe("Dynamic Schema Tables Extraction (G6, Task #208)", () => {
     expect(extracted).toEqual(["fake_table_for_test"]);
   });
 
-  it("BR-DM-08: lesson_run_observations và mọi bảng có created_at đều có cả updated_at NOT NULL", () => {
-    const obsCols = getTableColumns(schema.lessonRunObservations);
-    expect(obsCols.createdAt.name).toBe("created_at");
-    expect(obsCols.createdAt.notNull).toBe(true);
-    expect(obsCols.updatedAt.name).toBe("updated_at");
-    expect(obsCols.updatedAt.notNull).toBe(true);
-
-    expect(findTablesMissingUpdatedAt(schema)).toEqual([]);
+  it("BR-DM-08: mọi bảng đều có cả created_at và updated_at NOT NULL", () => {
+    expect(findTablesMissingTimestamps(schema)).toEqual([]);
 
     const tableWithoutUpdatedAt = pgTable("missing_updated_at_table", {
       id: text("id").primaryKey(),
       createdAt: timestamp("created_at", { withTimezone: true }).notNull(),
     });
     expect(
-      findTablesMissingUpdatedAt({ broken: tableWithoutUpdatedAt })
+      findTablesMissingTimestamps({ broken: tableWithoutUpdatedAt })
     ).toEqual(["missing_updated_at_table"]);
   });
 
-  it("BR-VER-03 / BR-EVT-06: play_sessions.content_version và telemetry_events.content_version đều NOT NULL", () => {
-    const playCols = getTableColumns(schema.playSessions);
-    const telemetryCols = getTableColumns(schema.telemetryEvents);
-
-    expect(playCols.contentVersion.name).toBe("content_version");
-    expect(playCols.contentVersion.notNull).toBe(true);
-
-    expect(telemetryCols.contentVersion.name).toBe("content_version");
-    expect(telemetryCols.contentVersion.notNull).toBe(true);
+  it("play_sessions, telemetry_events, child_session_summaries, level_daily_stats đã bỏ cột content_version", () => {
+    for (const table of [
+      schema.playSessions,
+      schema.telemetryEvents,
+      schema.childSessionSummaries,
+      schema.levelDailyStats,
+    ]) {
+      expect(getColumnSqlNames(table)).not.toContain("content_version");
+    }
   });
 
-  it("BR-CLC-01 / BR-SCT-05: migration 0009 và migrate.ts gắn BEFORE UPDATE trigger bảo vệ hàng published trên cả 5 bảng nội dung", () => {
+  it("migration 0000_initial_schema hợp nhất toàn bộ schema, không chứa bảng/trigger đa phiên bản nội dung và giữ UNIQUE(code) trực tiếp", () => {
     const migrationSql = readFileSync(
       resolve(
         import.meta.dirname,
@@ -104,20 +100,17 @@ describe("Dynamic Schema Tables Extraction (G6, Task #208)", () => {
         "..",
         "src",
         "migrations",
-        "0009_published_content_immutable_triggers.sql"
+        "0000_initial_schema.sql"
       ),
       "utf8"
     );
-    expect(migrationSql).toContain("BR-CLC-01 / BR-SCT-05");
-    for (const table of [
-      "game_levels",
-      "lessons",
-      "activities",
-      "curricula",
-      "worksheets",
-    ]) {
-      expect(migrationSql).toContain(`BEFORE UPDATE ON ${table}`);
-    }
+    expect(migrationSql).not.toContain("prevent_published_update");
+    expect(migrationSql).toContain(
+      'CONSTRAINT "game_levels_code_unique" UNIQUE("code")'
+    );
+    expect(migrationSql).toContain(
+      'CONSTRAINT "curricula_code_unique" UNIQUE("code")'
+    );
   });
 });
 
@@ -138,69 +131,36 @@ describe("Schema Content & Taxonomy Rules (BR-SCT-01..BR-SCT-08)", () => {
     expect(tagCols.status.enumValues).toEqual(["active", "deprecated"]);
   });
 
-  it("BR-SCT-02 & BR-SCT-03: Layer 2 (game_levels, lessons, activities, curricula, worksheets, seo_pages) có content_version + content_lifecycle_status 6 trạng thái + UNIQUE (code/slug, content_version) + partial UNIQUE published", () => {
-    const expectedLifecycle = [
-      "draft",
-      "in_review",
-      "approved",
-      "published",
-      "archived",
-      "rejected",
-    ];
-    expect(schema.contentLifecycleStatusEnum.enumValues).toEqual(
-      expectedLifecycle
-    );
-
-    const layer2Specs = [
-      {
-        table: schema.gameLevels,
-        uqName: "game_levels_code_version_unique",
-        pubIdxName: "idx_game_levels_published_code",
-      },
-      {
-        table: schema.lessons,
-        uqName: "lessons_code_version_unique",
-        pubIdxName: "idx_lessons_published_code",
-      },
-      {
-        table: schema.activities,
-        uqName: "activities_code_version_unique",
-        pubIdxName: "idx_activities_published_code",
-      },
-      {
-        table: schema.curricula,
-        uqName: "curricula_code_version_unique",
-        pubIdxName: "idx_curricula_published_code",
-      },
-      {
-        table: schema.worksheets,
-        uqName: "worksheets_code_version_unique",
-        pubIdxName: "idx_worksheets_published_code",
-      },
-      {
-        table: schema.seoPages,
-        uqName: "seo_pages_slug_version_unique",
-        pubIdxName: "idx_seo_pages_published_slug",
-      },
+  it("BR-SCT-02 & BR-SCT-03: game_levels, curricula, skill_datasets dùng UNIQUE(code) trực tiếp và bỏ đa version / vòng đời duyệt", () => {
+    const removedLifecycleColumns = [
+      "entity_id",
+      "content_version",
+      "status",
+      "origin",
+      "authored_in",
+      "seed_batch_id",
+      "created_by_manager_id",
+      "reviewed_by_manager_id",
+      "published_at",
+      "archived_at",
     ];
 
-    for (const { table, uqName, pubIdxName } of layer2Specs) {
+    for (const table of [
+      schema.gameLevels,
+      schema.curricula,
+      schema.skillDatasets,
+    ]) {
       const cols = getTableColumns(table);
-      expect(cols.contentVersion.name).toBe("content_version");
-      expect(cols.contentVersion.notNull).toBe(true);
-      expect(cols.status.name).toBe("status");
-      expect(cols.status.notNull).toBe(true);
-      expect(cols.status.enumValues).toEqual(expectedLifecycle);
+      expect(cols.code.name).toBe("code");
+      expect(cols.code.notNull).toBe(true);
+      expect(cols.code.isUnique).toBe(true);
 
-      const cfg = getTableConfig(table);
-      const uqNames = cfg.uniqueConstraints.map((u) => u.name);
-      expect(uqNames).toContain(uqName);
-
-      const pubIdx = cfg.indexes.find((idx) => idx.config.name === pubIdxName);
-      expect(pubIdx).toBeDefined();
-      expect(pubIdx?.config.unique).toBe(true);
-      expect(pubIdx?.config.where).toBeDefined();
+      const colNames = getColumnSqlNames(table);
+      for (const removedCol of removedLifecycleColumns) {
+        expect(colNames).not.toContain(removedCol);
+      }
     }
+    expect(getColumnSqlNames(schema.gameLevels)).not.toContain("legacy_v1_ref");
   });
 
   it("BR-SCT-04: game_levels tách riêng content_pack và difficulty_params (JSONB NOT NULL) và access_tier NOT NULL không có default", () => {
@@ -220,19 +180,7 @@ describe("Schema Content & Taxonomy Rules (BR-SCT-01..BR-SCT-08)", () => {
     ]);
   });
 
-  it("BR-SCT-06: 5 bảng nội dung có entity_id NOT NULL làm neo dòng dõi và curriculum_items tham chiếu qua (entity_type, entity_id)", () => {
-    for (const table of [
-      schema.gameLevels,
-      schema.lessons,
-      schema.activities,
-      schema.curricula,
-      schema.worksheets,
-    ]) {
-      const cols = getTableColumns(table);
-      expect(cols.entityId.name).toBe("entity_id");
-      expect(cols.entityId.notNull).toBe(true);
-    }
-
+  it("BR-SCT-06: curriculum_items tham chiếu trực tiếp qua cặp đa hình (entity_type, entity_id)", () => {
     const itemCols = getTableColumns(schema.curriculumItems);
     expect(itemCols.entityType.name).toBe("entity_type");
     expect(itemCols.entityType.notNull).toBe(true);
@@ -242,31 +190,21 @@ describe("Schema Content & Taxonomy Rules (BR-SCT-01..BR-SCT-08)", () => {
     const itemCfg = getTableConfig(schema.curriculumItems);
     const idxNames = itemCfg.indexes.map((idx) => idx.config.name);
     expect(idxNames).toContain("idx_curriculum_items_entity");
-    expect(idxNames).toContain("idx_curriculum_items_entity_id");
+    expect(idxNames).not.toContain("idx_curriculum_items_entity_id");
 
     const itemColNames = getColumnSqlNames(schema.curriculumItems);
-    expect(itemColNames).not.toContain("lesson_id");
     expect(itemColNames).not.toContain("game_level_id");
-    expect(itemColNames).not.toContain("activity_id");
   });
 
-  it("BR-SCT-07 & BR-SCT-08: content_skill_map có check weight (0, 1] và cả 3 bảng map dùng content_entity_type enum 5 giá trị", () => {
-    const expectedEntities = [
-      "game_level",
-      "lesson",
-      "activity",
-      "curriculum",
-      "worksheet",
-    ];
+  it("BR-SCT-07 & BR-SCT-08: content_skill_map có check weight (0, 1] và cả 2 bảng map dùng content_entity_type enum 2 giá trị", () => {
+    const expectedEntities = ["game_level", "curriculum"];
     expect(schema.contentEntityTypeEnum.enumValues).toEqual(expectedEntities);
 
     const tagMapCols = getTableColumns(schema.contentTagMap);
     const skillMapCols = getTableColumns(schema.contentSkillMap);
-    const objMapCols = getTableColumns(schema.contentObjectiveMap);
 
     expect(tagMapCols.entityType.enumValues).toEqual(expectedEntities);
     expect(skillMapCols.entityType.enumValues).toEqual(expectedEntities);
-    expect(objMapCols.entityType.enumValues).toEqual(expectedEntities);
 
     expect(skillMapCols.weight.name).toBe("weight");
     expect(skillMapCols.weight.notNull).toBe(true);
@@ -288,29 +226,22 @@ describe("Schema Identity & Billing Rules (BR-SIB-01..BR-SIB-13)", () => {
     expect(userColNames).not.toContain("tenant_id");
   });
 
-  it("BR-SIB-02: seed catalog chứa đúng 16 entitlement_keys (8 MVP + 8 P2) và 2 gói MVP công khai PKG-standard, PKG-premium", () => {
-    expect(SEED_ENTITLEMENT_KEYS.length).toBe(16);
+  it("BR-SIB-02: seed catalog chứa đúng 13 entitlement_keys (8 MVP + 5 P2) và 2 gói MVP công khai PKG-standard, PKG-premium", () => {
+    expect(SEED_ENTITLEMENT_KEYS.length).toBe(13);
     expect(SEED_ENTITLEMENT_KEYS.filter((k) => k.isMvp).length).toBe(8);
-    expect(SEED_ENTITLEMENT_KEYS.filter((k) => !k.isMvp).length).toBe(8);
+    expect(SEED_ENTITLEMENT_KEYS.filter((k) => !k.isMvp).length).toBe(5);
     expect(
       SEED_PACKAGES.filter((p) => p.isPublic)
         .map((p) => p.code)
         .sort()
     ).toEqual(["PKG-premium", "PKG-standard"]);
-    expect(SEED_PACKAGES.length).toBe(6);
-    expect(SEED_PACKAGE_ENTITLEMENTS.length).toBeGreaterThanOrEqual(16);
+    expect(SEED_PACKAGES.length).toBe(5);
   });
 
-  it("BR-SIB-03: manager_role enum đóng ở đúng 2 giá trị super_admin và content_reviewer", () => {
-    expect(schema.managerRoleEnum.enumValues).toEqual([
-      "super_admin",
-      "content_reviewer",
-    ]);
+  it("BR-SIB-03: manager_role enum đóng ở giá trị super_admin", () => {
+    expect(schema.managerRoleEnum.enumValues).toEqual(["super_admin"]);
     const managerCols = getTableColumns(schema.managers);
-    expect(managerCols.role.enumValues).toEqual([
-      "super_admin",
-      "content_reviewer",
-    ]);
+    expect(managerCols.role.enumValues).toEqual(["super_admin"]);
   });
 
   it("BR-SIB-04: 4 bảng auth phụ dùng cặp đa hình (account_type, account_id) với enum ['user', 'manager']", () => {
@@ -368,19 +299,19 @@ describe("Schema Identity & Billing Rules (BR-SIB-01..BR-SIB-13)", () => {
       expect(userFk?.onDelete).toBe("restrict");
     }
 
-    const migration0012 = readFileSync(
+    const migration0000 = readFileSync(
       resolve(
         import.meta.dirname,
         "..",
         "..",
         "src",
         "migrations",
-        "0012_audit_consent_immutable_and_fk_restrict.sql"
+        "0000_initial_schema.sql"
       ),
       "utf8"
     );
-    expect(migration0012).toContain("prevent_insert_only_mutation");
-    expect(migration0012).toContain("ON DELETE restrict");
+    expect(migration0000).toContain("prevent_insert_only_mutation");
+    expect(migration0000).toContain("ON DELETE restrict");
   });
 
   it("BR-SIB-07: users và managers đều dùng kiểu citext UNIQUE cho cột email (case-insensitive)", () => {
@@ -435,12 +366,9 @@ describe("Schema Identity & Billing Rules (BR-SIB-01..BR-SIB-13)", () => {
     expect(colNames).not.toContain("user_id");
   });
 
-  it("BR-SIB-13: SEED_MANAGERS và SEED_USERS định nghĩa đủ 2 Managers (mfaEnabled=false) và 3 Users phủ đủ free, standard, premium", () => {
-    expect(SEED_MANAGERS.length).toBe(2);
-    expect(SEED_MANAGERS.map((m) => m.role).sort()).toEqual([
-      "content_reviewer",
-      "super_admin",
-    ]);
+  it("BR-SIB-13: SEED_MANAGERS và SEED_USERS định nghĩa đủ 1 Super Admin Manager (mfaEnabled=false) và 3 Users phủ đủ free, standard, premium", () => {
+    expect(SEED_MANAGERS.length).toBe(1);
+    expect(SEED_MANAGERS.map((m) => m.role)).toEqual(["super_admin"]);
     for (const mgr of SEED_MANAGERS) {
       expect(mgr.mfaEnabled).toBe(false);
     }
@@ -518,14 +446,15 @@ describe("Schema Play & Telemetry Rules (BR-SPT-01..BR-SPT-08)", () => {
     expect(checkNames).toContain("check_mastery_state_best_p_learn");
   });
 
-  it("BR-SPT-06, BR-SPT-07, BR-SPT-08: play_sessions gắn (template_code, game_level_id, content_version), cascade khi xoá child_profiles/users, và dùng JSONB cho telemetry payload", () => {
+  it("BR-SPT-06, BR-SPT-07, BR-SPT-08: play_sessions gắn (template_code, game_level_id), cascade khi xoá child_profiles/users, và dùng JSONB cho telemetry payload", () => {
     const playCols = getTableColumns(schema.playSessions);
     expect(playCols.templateCode.name).toBe("template_code");
     expect(playCols.templateCode.notNull).toBe(true);
     expect(playCols.gameLevelId.name).toBe("game_level_id");
     expect(playCols.gameLevelId.notNull).toBe(true);
-    expect(playCols.contentVersion.name).toBe("content_version");
-    expect(playCols.contentVersion.notNull).toBe(true);
+    expect(getColumnSqlNames(schema.playSessions)).not.toContain(
+      "content_version"
+    );
 
     const tlmCols = getTableColumns(schema.telemetryEvents);
     expect(tlmCols.payload.dataType).toBe("json");
@@ -547,13 +476,51 @@ describe("Schema Play & Telemetry Rules (BR-SPT-01..BR-SPT-08)", () => {
     expect(userFk?.onDelete).toBe("cascade");
   });
 
-  it("Performance Hot Indexes: play_sessions, telemetry_events, content_tag_map, content_skill_map có đủ B-Tree index cho các truy vấn nóng", () => {
+  it("Performance Hot Indexes: các bảng nóng và FK có đủ B-Tree index chuẩn", () => {
     const playIdxNames = getTableConfig(schema.playSessions).indexes.map(
       (i) => i.config.name
     );
     expect(playIdxNames).toContain("idx_play_sessions_session_uuid");
+    expect(playIdxNames).toContain("idx_play_sessions_game_level_id");
     expect(playIdxNames).toContain("idx_play_sessions_child_started_at");
     expect(playIdxNames).toContain("idx_play_sessions_guest_status");
+    expect(playIdxNames).not.toContain("idx_play_sessions_started_at");
+
+    const summaryIdxNames = getTableConfig(
+      schema.childSessionSummaries
+    ).indexes.map((i) => i.config.name);
+    expect(summaryIdxNames).toContain(
+      "idx_child_session_summaries_game_level_id"
+    );
+    expect(summaryIdxNames).toContain(
+      "idx_child_session_summaries_session_uuid"
+    );
+
+    const masteryIdxNames = getTableConfig(schema.masteryState).indexes.map(
+      (i) => i.config.name
+    );
+    expect(masteryIdxNames).toContain("idx_mastery_state_skill_id");
+
+    const strandIdxNames = getTableConfig(schema.strands).indexes.map(
+      (i) => i.config.name
+    );
+    expect(strandIdxNames).toContain("idx_strands_competency_id");
+    expect(strandIdxNames).toContain("idx_strands_parent_strand_id");
+
+    const skillIdxNames = getTableConfig(schema.skills).indexes.map(
+      (i) => i.config.name
+    );
+    expect(skillIdxNames).toContain("idx_skills_strand_id");
+
+    const loIdxNames = getTableConfig(schema.learningObjectives).indexes.map(
+      (i) => i.config.name
+    );
+    expect(loIdxNames).toContain("idx_learning_objectives_skill_id");
+
+    const datasetIdxNames = getTableConfig(schema.skillDatasets).indexes.map(
+      (i) => i.config.name
+    );
+    expect(datasetIdxNames).toContain("idx_skill_datasets_skill_id");
 
     const tlmIdxNames = getTableConfig(schema.telemetryEvents).indexes.map(
       (i) => i.config.name

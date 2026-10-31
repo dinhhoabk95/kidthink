@@ -155,7 +155,7 @@ describe("P2.9 Feature Flags, Data Export & Notification Admin Invariants (BR-FL
     });
 
     it("Scenario: BR-FFA-04 — source code declarations remain authoritative for feature flag metadata", () => {
-      expect(Object.keys(CODE_FEATURE_FLAGS).length).toBe(6);
+      expect(Object.keys(CODE_FEATURE_FLAGS).length).toBe(5);
     });
   });
 

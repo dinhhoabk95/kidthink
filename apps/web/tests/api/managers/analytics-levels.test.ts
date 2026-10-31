@@ -63,7 +63,6 @@ describe("Task 7 — GET /api/managers/analytics/levels (BR-TLM-01, BR-PRF-06)",
     const testDate = `2099-08-${String(Math.floor(10 + Math.random() * 18))}`;
     await db.insert(levelDailyStats).values({
       levelCode: glCode,
-      contentVersion: 1,
       dateIct: testDate,
       playsCount: 10,
       completionsCount: 2, // 20% completion -> low_accuracy flag true (<30%)

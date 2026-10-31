@@ -181,7 +181,7 @@ async function main() {
         finishedAt: new Date(),
       })
       .where(eq(backupLog.id, log.id));
-  } catch (error: unknown) {
+  } catch (error) {
     console.error("Restore failed:", error);
     await getOwnerDb()
       .update(backupLog)
@@ -195,7 +195,6 @@ async function main() {
   } finally {
     await sql.end();
     rl.close();
-    process.exit(0);
   }
 }
 

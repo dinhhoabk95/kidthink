@@ -1,0 +1,1228 @@
+{
+  "stage_id": "chang-09",
+  "stage_number": 9,
+  "workbook_id": "WB09",
+  "title": "Chặng 9: Khu rừng ngã rẽ",
+  "subtitle": "Mê cung • Định hướng • Tìm đường",
+  "mission": "Định hướng không gian, lập kế hoạch đường đi, kiên trì vượt qua các ngã rẽ mê cung và thắp sáng Viên Ngọc Dẫn Lối (Viên Ngọc Định Hướng)",
+  "total_pages": 19,
+  "target_age": "3–6 tuổi",
+  "series": "Gấu Logic & Thỏ Quan Sát - Chuyến Tàu Toán Học (Phần 9)",
+  "gem_reward": {
+    "name": "Viên Ngọc Định Hướng (Viên Ngọc Dẫn Lối)",
+    "english_name": "Direction Gem / Orientation Jewel",
+    "symbol": "compass_star_emerald",
+    "pedagogical_meaning": "Tượng trưng cho năng lực định hướng không gian, khả năng nhìn trước dự đoán đường đi (lookahead planning), tính kiên trì và tư duy quay lui (backtracking) khi gặp đường cụt mà không nản lòng."
+  },
+  "pedagogy": {
+    "framework": "Montessori Sensorial, CPA (Concrete - Pictorial - Abstract) & Spatial Cognition Theory",
+    "approach": "Concrete Exploration (Dò ngón tay trên đường đi) -> Pictorial Planning (Quét mắt toàn cục, phân tích ngã rẽ & loại trừ ngõ cụt) -> Abstract Navigation (Lập kế hoạch lộ trình trong tâm trí, điều hướng chính xác)",
+    "competencies": [
+      {
+        "id": "C2",
+        "name": "Tư duy không gian (Spatial Thinking)",
+        "role": "Mục tiêu trọng tâm: Định hướng vị trí, rẽ trái/phải, lần theo lộ trình, vượt qua mê cung đơn và đa nhánh"
+      },
+      {
+        "id": "C6",
+        "name": "Chức năng điều hành (Executive Function)",
+        "role": "Mục tiêu kiểm soát: Lập kế hoạch đường đi (planning), ức chế phản xạ vội vàng (inhibition), chuyển đổi linh hoạt khi gặp đường cụt (cognitive flexibility)"
+      },
+      {
+        "id": "C3",
+        "name": "Tư duy logic (Logical Thinking)",
+        "role": "Mục tiêu suy luận: Phân tích nguyên nhân ngõ cụt, suy luận tuyến đường hợp lệ duy nhất"
+      },
+      {
+        "id": "C1",
+        "name": "Cảm thức số học & So sánh (Number Sense & Comparison)",
+        "role": "Mục tiêu mở rộng: So sánh độ dài đường đi, đếm số bước, đếm và thu thập vật phẩm trên tuyến đường"
+      }
+    ],
+    "skills_targeted": [
+      {
+        "code": "C2.MAZ.01",
+        "name": "Mê cung một đường",
+        "age": 3,
+        "difficulty": 2,
+        "description": "Lần theo một đường đi duy nhất từ điểm xuất phát đến đích, không bị phân tâm bởi các viền ranh giới"
+      },
+      {
+        "code": "C2.MAZ.02",
+        "name": "Mê cung nhiều nhánh",
+        "age": 5,
+        "difficulty": 4,
+        "description": "Giải mê cung có nhiều ngã ba, ngã tư và các nhánh cụt; biết dừng lại quan sát trước khi rẽ và quay lui khi gặp đường cụt"
+      },
+      {
+        "code": "C2.MAZ.03",
+        "name": "Tìm đường ngắn nhất",
+        "age": 6,
+        "difficulty": 5,
+        "description": "So sánh 2-3 tuyến đường hợp lệ để chọn lộ trình tối ưu về độ dài hoặc số vật phẩm thu thập"
+      },
+      {
+        "code": "C2.DIR.01",
+        "name": "Đi lên",
+        "age": 3,
+        "difficulty": 1,
+        "description": "Điều hướng di chuyển theo phương thẳng đứng hướng lên đỉnh trang"
+      },
+      {
+        "code": "C2.DIR.02",
+        "name": "Đi xuống",
+        "age": 3,
+        "difficulty": 1,
+        "description": "Điều hướng di chuyển theo phương thẳng đứng hướng xuống đáy trang"
+      },
+      {
+        "code": "C2.DIR.03",
+        "name": "Rẽ trái",
+        "age": 4,
+        "difficulty": 3,
+        "description": "Xác định và thực hiện chuyển hướng sang phía bên trái của lối đi"
+      },
+      {
+        "code": "C2.DIR.04",
+        "name": "Rẽ phải",
+        "age": 4,
+        "difficulty": 3,
+        "description": "Xác định và thực hiện chuyển hướng sang phía bên phải của lối đi"
+      },
+      {
+        "code": "C2.DIR.05",
+        "name": "Theo mũi tên",
+        "age": 4,
+        "difficulty": 2,
+        "description": "Đọc và tuân thủ chỉ dẫn hướng xuất phát từ ký hiệu mũi tên đỏ tại điểm bắt đầu"
+      },
+      {
+        "code": "C2.DIR.06",
+        "name": "Theo bản đồ",
+        "age": 5,
+        "difficulty": 4,
+        "description": "Đọc cấu trúc sơ đồ lưới mê cung thu nhỏ, xác định tọa độ xuất phát và đích đến"
+      },
+      {
+        "code": "C2.DIR.07",
+        "name": "Theo lộ trình nhiều bước",
+        "age": 5,
+        "difficulty": 4,
+        "description": "Lập kế hoạch và thực hiện một chuỗi liên hoàn các bước: tiến, rẽ trái, rẽ phải, đi vòng"
+      },
+      {
+        "code": "C6.PLN.02",
+        "name": "Chọn đường đi tối ưu",
+        "age": 5,
+        "difficulty": 4,
+        "description": "Ức chế việc lao ngay vào lối đi đầu tiên nhìn thấy; quét mắt nhìn xa 1-2 bước trước khi quyết định"
+      },
+      {
+        "code": "C6.INH.01",
+        "name": "Ức chế phản xạ vội vã",
+        "age": 4,
+        "difficulty": 3,
+        "description": "Dừng lại trước mỗi ngã rẽ để đánh giá nhánh cụt thay vì vẽ vội theo quán tính"
+      }
+    ],
+    "strategy_ladder": [
+      {
+        "level": 1,
+        "name": "Thử nghiệm xúc giác (Finger Tracing)",
+        "guide_quote": "Dùng ngón tay thử đường trước khi tô bút",
+        "pages": [2, 3, 4],
+        "cognitive_load": "Thấp: lưới 5x5 - 6x6, 1-2 ngã rẽ, nhánh cụt cạn (1 ô)"
+      },
+      {
+        "level": 2,
+        "name": "Dự đoán trước ngã rẽ & Quay lui (Lookahead & Backtracking)",
+        "guide_quote": "Có những nhánh cụt - Bé hãy quay lại khi cần / Hãy nhìn xa hơn một đoạn",
+        "pages": [5, 6, 7, 8],
+        "cognitive_load": "Trung bình: lưới 7x7 - 8x8, xuất phát đa hướng (đáy giữa, sườn trái), nhánh cụt 2-3 ô"
+      },
+      {
+        "level": 3,
+        "name": "Lập kế hoạch toàn cục & Xử lý lưới phi đối xứng (Global Route Planning)",
+        "guide_quote": "Quan sát cả đường dài trước khi chọn lối / Kiểm tra lại đường đi trước khi tô màu",
+        "pages": [9, 10, 11, 12, 13, 14],
+        "cognitive_load": "Nâng cao: lưới 8x8 - 10x7, lưới khuyết chữ L hẻm núi, nhiều tường chắn ngang sâu"
+      },
+      {
+        "level": 4,
+        "name": "Kiên trì vượt thử thách đỉnh cao (Mastery & Resilience)",
+        "guide_quote": "Quan sát, kiên trì và không vội vàng / Kiểm tra các nhánh cụt trước khi đi",
+        "pages": [15, 16, 17, 18],
+        "cognitive_load": "Cực đại: lưới 10x10 - 11x11, 10-12 ngã rẽ liên hoàn, mê cung mật độ cao"
+      }
+    ]
+  },
+  "characters": {
+    "gau_logic": {
+      "name": "Gấu Logic",
+      "role": "Nhà thám hiểm phân tích bản đồ, định vị phương hướng, cảnh báo ngã rẽ và phân tích cấu trúc mê cung",
+      "visual": "Gấu nâu đeo kính tròn xanh trí tuệ, đội mũ tai bèo thám hiểm, mặc áo vest xanh lam viền vàng, hai tay cầm tấm bản đồ kho báu cổ kính"
+    },
+    "tho_quan_sat": {
+      "name": "Thỏ Quan Sát",
+      "role": "Người bạn đồng hành tinh mắt, nhắc nhở bé quan sát cẩn thận, đi chậm trước ngã rẽ, không nản lòng khi gặp đường cụt",
+      "visual": "Thỏ trắng tinh anh, đeo túi chéo da màu xanh rêu, tay cầm ống nhòm thám hiểm viền vàng hướng về phía trước"
+    }
+  },
+  "activity_groups": [
+    {
+      "group_id": "D1",
+      "name": "Tìm đường mê cung cơ bản — Tránh ngõ cụt (Single-goal Maze Route Navigation)",
+      "page_range": "Trang 1..18 (PDF page-02..page-18)",
+      "mechanic_description": "Trẻ điều khiển nhân vật hoặc vạch đường ngón tay từ điểm xuất phát (mũi tên đỏ 'BẮT ĐẦU') qua mạng lưới mê cung hàng rào cây xanh, quan sát trước ngã rẽ để tránh đi vào ngõ cụt (dead ends), tìm ra tuyến đường thông suốt duy nhất dẫn đến vật thể đích nằm ở góc đối diện hoặc đỉnh đối diện.",
+      "sample_prompts": [
+        "Tìm đường từ điểm bắt đầu đến cánh cổng",
+        "Tìm đường tới bông hoa mặt trời",
+        "Giúp Gấu và Thỏ tìm đến cây cầu gỗ",
+        "Tìm đường qua hang đá tới chiếc đèn",
+        "Tìm đường tới hũ mật ong",
+        "Tìm đường qua các ngã rẽ gió",
+        "Tìm đường tới tháp cú quan sát",
+        "Vượt mê cung đến cửa rừng sương mờ",
+        "Tìm đường tới khối pha lê phát sáng",
+        "Đi từ chân đường tới bờ suối ánh trăng",
+        "Tìm đường tới góc hoa bốn mùa",
+        "Tìm lối từ chân núi lên đỉnh có lá cờ",
+        "Tìm đường tới chiếc đèn đom đóm",
+        "Tìm đường tới chiếc lá phong đỏ",
+        "Đi qua đường hầm tới cây cổ thụ",
+        "Vượt mê cung tới cổng mây cuối rừng",
+        "Vượt mê cung cuối để nhận huy hiệu"
+      ],
+      "visual_objects": [
+        {
+          "name": "Cánh cổng lá xanh",
+          "emoji": "🚪🌿",
+          "role": "Đích đến trang 1 (page-02)"
+        },
+        {
+          "name": "Bông hoa mặt trời",
+          "emoji": "🌻",
+          "role": "Đích đến trang 2 (page-03)"
+        },
+        {
+          "name": "Cây cầu gỗ",
+          "emoji": "🪵🌉",
+          "role": "Đích đến trang 3 (page-04)"
+        },
+        {
+          "name": "Chiếc đèn lồng hang đá",
+          "emoji": "🏮",
+          "role": "Đích đến trang 5 (page-05)"
+        },
+        {
+          "name": "Hũ mật ong",
+          "emoji": "🍯",
+          "role": "Đích đến trang 6 (page-06)"
+        },
+        {
+          "name": "Chong chóng xanh",
+          "emoji": "🎐🌀",
+          "role": "Đích đến trang 8 (page-07)"
+        },
+        {
+          "name": "Tháp cú quan sát",
+          "emoji": "🦉🏯",
+          "role": "Đích đến trang 9 (page-08)"
+        },
+        {
+          "name": "Cửa rừng sương mờ",
+          "emoji": "⛩️🌲",
+          "role": "Đích đến trang 10 (page-09)"
+        },
+        {
+          "name": "Khối pha lê bí ẩn",
+          "emoji": "💎✨",
+          "role": "Đích đến trang 11 (page-10)"
+        },
+        {
+          "name": "Bờ suối ánh trăng",
+          "emoji": "🌙🌊",
+          "role": "Đích đến trang 12 (page-11)"
+        },
+        {
+          "name": "Giỏ hoa bốn mùa",
+          "emoji": "🧺💐",
+          "role": "Đích đến trang 13 (page-12)"
+        },
+        {
+          "name": "Đỉnh núi lá cờ",
+          "emoji": "🏔️🚩",
+          "role": "Đích đến trang 15 (page-13)"
+        },
+        {
+          "name": "Đèn đom đóm thung lũng",
+          "emoji": "🪔✨",
+          "role": "Đích đến trang 16 (page-14)"
+        },
+        {
+          "name": "Chiếc lá phong đỏ",
+          "emoji": "🍁",
+          "role": "Đích đến trang 17 (page-15)"
+        },
+        {
+          "name": "Cây cổ thụ",
+          "emoji": "🌳🚪",
+          "role": "Đích đến trang 18 (page-16)"
+        },
+        {
+          "name": "Cổng mây cuối rừng",
+          "emoji": "☁️⛩️",
+          "role": "Đích đến trang 20 (page-17)"
+        },
+        {
+          "name": "Huy hiệu thám hiểm",
+          "emoji": "🏅🏵️",
+          "role": "Đích đến trang 21 (page-18)"
+        }
+      ],
+      "quantities_and_ranges": {
+        "grid_dimensions": "Từ 5x5 (cơ bản) đến 11x11 (cực đại)",
+        "branching_points": "2 đến 12 ngã rẽ",
+        "dead_ends": "3 đến 8 nhánh cụt",
+        "path_length_cells": "12 đến 48 ô bước đi",
+        "grid_shapes": [
+          "Hình vuông chuẩn",
+          "Chữ nhật đứng (vertical)",
+          "Chữ nhật ngang (horizontal)",
+          "Khuyết góc chữ L (non-convex)"
+        ]
+      },
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-013",
+          "name": "Tìm đường mê cung (maze-route)",
+          "engine_role": "Engine lõi của Chặng 9: Quản lý lưới mê cung, kiểm tra từng bước chạm liền kề (path_step), chặn va chạm tường (path_blocked), phát hiện ngõ cụt và kích hoạt chiến lược lui lại (retreat), ghi nhận hoàn thành (path_submitted)"
+        },
+        {
+          "template_id": "GT-024",
+          "name": "Vẽ theo nét (trace-path)",
+          "engine_role": "Cơ chế bổ trợ: Cho phép trẻ vẽ nét liên tục tự do trong hành lang mê cung với bán kính dung sai (touch hit band), tự động bám theo trục đường chính"
+        }
+      ],
+      "recommended_skills": [
+        "C2.MAZ.01",
+        "C2.MAZ.02",
+        "C2.DIR.01",
+        "C2.DIR.02",
+        "C2.DIR.03",
+        "C2.DIR.04",
+        "C2.DIR.05",
+        "C2.DIR.06",
+        "C2.DIR.07",
+        "C6.PLN.02",
+        "C6.INH.01"
+      ]
+    },
+    {
+      "group_id": "D2",
+      "name": "Mê cung có điều kiện — Thu thập vật phẩm theo thứ tự (Sequential Checkpoint / Item Collection Maze)",
+      "page_range": "Mở rộng sư phạm số hóa CPA từ các vật thể trong Chặng 9",
+      "mechanic_description": "Trên lưới mê cung, xuất hiện các vật phẩm trung gian rải rác (hoa hướng dương, hũ mật, đèn lồng, chìa khóa, khối pha lê). Trẻ phải lập kế hoạch đường đi để ghé qua các ô bắt buộc (required_cells) theo thứ tự quy định (ví dụ: nhặt chìa khóa trước khi tới cổng lá xanh; nhặt các thẻ số 1 -> 2 -> 3 theo trật tự tăng dần). Nếu trẻ tới đích mà chưa hoàn thành điều kiện, cổng đích sẽ chưa mở.",
+      "sample_prompts": [
+        "Bé hãy đi qua mê cung để nhặt đủ 3 hạt dẻ trước khi về hang sóc nhé!",
+        "Tìm đường lấy Chìa Khóa Vàng rồi mới mở Cánh Cổng Lá Xanh!",
+        "Thu thập các con số theo thứ tự 1 -> 2 -> 3 trên đường tới Tháp Cú!",
+        "Lấy Đèn Đom Đóm thắp sáng trước khi bước vào Cây Cổ Thụ!"
+      ],
+      "visual_objects": [
+        { "name": "Chìa khóa vàng", "emoji": "🗝️" },
+        { "name": "Hạt sồi / Hạt dẻ", "emoji": "🌰" },
+        { "name": "Thẻ số 1, 2, 3", "emoji": "🔢" },
+        { "name": "Đèn soi đường", "emoji": "🏮" },
+        { "name": "Bình pha lê năng lượng", "emoji": "🧪" }
+      ],
+      "quantities_and_ranges": {
+        "required_items_count": "1 đến 3 vật phẩm trung gian",
+        "sequence_order_length": "2 đến 4 bước",
+        "grid_dimensions": "7x7 đến 9x9"
+      },
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-013",
+          "name": "Tìm đường mê cung (maze-route có required_cells)",
+          "engine_role": "Đoạn mã GT-013 đã định sẵn trường required_cells và validation kiểm tra thứ tự vật phẩm nhặt được trên đường"
+        },
+        {
+          "template_id": "GT-006",
+          "name": "Sắp xếp thứ tự (sequence-arrange)",
+          "engine_role": "Hiển thị HUD thanh tiến trình thu thập vật phẩm theo thứ tự tuyến tính"
+        }
+      ],
+      "recommended_skills": [
+        "C2.MAZ.02",
+        "C2.DIR.07",
+        "C1.CNT.01",
+        "C1.ORD.01",
+        "C1.ORD.02",
+        "C6.PLN.01",
+        "C6.INH.01"
+      ]
+    },
+    {
+      "group_id": "D3",
+      "name": "So sánh & Đánh giá tuyến đường tối ưu (Route Comparison & Optimization)",
+      "page_range": "Mở rộng tư duy bậc cao từ các kịch bản ngã rẽ Chặng 9",
+      "mechanic_description": "Màn hình hiển thị 2 hoặc 3 phương án đường đi được tô màu khác biệt (Đường Xanh lục vs Đường Cam vs Đường Lam). Trẻ quan sát tổng thể và suy luận: đường nào là đường thông suốt (không cụt)? Đường nào ngắn nhất (ít số bước nhất)? Đường nào thu thập được nhiều phần thưởng nhất? Trẻ bấm chọn (tap-select) tuyến đường tối ưu.",
+      "sample_prompts": [
+        "Trong 3 con đường A, B, C, đường màu nào dẫn được tới Hũ Mật mà không gặp ngõ cụt?",
+        "Đường màu Xanh hay đường màu Cam ngắn hơn để tới Khối Pha Lê?",
+        "Bé hãy chọn con đường giúp bạn Gấu thu thập được NHIỀU hoa nhất nhé!"
+      ],
+      "visual_objects": [
+        {
+          "name": "Tuyến đường màu Xanh lục",
+          "color": "emerald-500",
+          "emoji": "🟢"
+        },
+        { "name": "Tuyến đường màu Cam", "color": "amber-500", "emoji": "🟠" },
+        { "name": "Tuyến đường màu Tím", "color": "indigo-500", "emoji": "🟣" }
+      ],
+      "quantities_and_ranges": {
+        "routes_to_compare": "2 đến 3 lộ trình",
+        "step_difference": "Chênh lệch 3 đến 6 ô bước đi"
+      },
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-001",
+          "name": "Chọn một đáp án (tap-select)",
+          "engine_role": "Bé chạm vào thẻ nút tương ứng với tuyến đường đúng (Đường Xanh / Đường Cam / Đường Tím)"
+        },
+        {
+          "template_id": "GT-013",
+          "name": "Tìm đường mê cung (maze-route)",
+          "engine_role": "Kích hoạt hiệu ứng hoạt hình chạy thử nhân vật dọc theo tuyến đường được chọn để minh họa kết quả đúng/sai"
+        }
+      ],
+      "recommended_skills": [
+        "C2.MAZ.03",
+        "C1.CMP.01",
+        "C1.CMP.04",
+        "C6.PLN.02",
+        "C3.DED.01"
+      ]
+    }
+  ],
+  "pages_summary": {
+    "total_pages": 19,
+    "breakdown": {
+      "cover": 1,
+      "worksheet_activities": 17,
+      "summary_reward": 1
+    },
+    "progression_arc": "Từ mê cung lưới 5x5 đơn giản (Trang 1) -> Xuất phát đa hướng (Trang 5, 8) -> Lưới khuyết góc chữ L (Trang 15) -> Mê cung cực đại 11x11 đa tầng ngõ cụt (Trang 21) -> Tốt nghiệp Chặng 9 nhận Viên Ngọc Dẫn Lối."
+  },
+  "pages": [
+    {
+      "page_number": 1,
+      "file_path": "pages/page-01.jpg",
+      "workbook_page_label": null,
+      "page_type": "cover_and_hub",
+      "title": "Bìa Chặng 9: Khu Rừng Ngã Rẽ",
+      "dialogue": {
+        "gau_logic": "Chào mừng các bạn nhỏ đến với Khu Rừng Ngã Rẽ! Cùng tớ mở bản đồ thám hiểm nào!",
+        "tho_quan_sat": "Các lối đi ở đây thật kỳ bí. Cùng mình cầm ống nhòm tìm lối ra nhé!"
+      },
+      "instruction": "HÀNH TRÌNH CHUYẾN TÀU TOÁN HỌC - CHẶNG 9: KHU RỪNG NGÃ RẼ",
+      "footer_hint": "CÙNG GẤU LOGIC VÀ THỎ QUAN SÁT TÌM LỐI RA!",
+      "visual_elements": {
+        "environment": "Khu rừng cổ tích huyền ảo ngập tràn cây cối xanh tươi, dây leo hoa nở, cổng chào bằng gỗ khắc chữ nổi 3D",
+        "train": "Đầu tàu hỏa Chuyến Tàu Toán Học số hiệu 9 viền vàng cổ điển, đèn pha tỏa sáng rực rỡ",
+        "centerpiece": "Mê cung hàng rào cây xanh (topiary maze) dẫn tới vòm cổng đá có Viên Ngọc Định Hướng phát sáng",
+        "props": [
+          "Bản đồ kho báu cổ",
+          "Ống nhòm thám hiểm",
+          "Biển chỉ dẫn ngã rẽ gỗ",
+          "Đèn bão"
+        ]
+      },
+      "pedagogical_notes": "Thiết lập bối cảnh chuyến thám hiểm định hướng không gian, kích hoạt trí tò mò và chuẩn bị tâm lý kiên trì vượt ngã rẽ cho bé.",
+      "digital_game_potential": {
+        "template": "GT-000",
+        "mechanic": "Stage Hub & Exploratory Intro",
+        "interactions": [
+          {
+            "target": "Đầu tàu số 9",
+            "action": "Tap",
+            "feedback": "Tiếng còi tàu 'Tu tu!' và làn khói xanh lấp lánh"
+          },
+          {
+            "target": "Viên Ngọc Định Hướng",
+            "action": "Tap",
+            "feedback": "Viên ngọc xoay tròn phát hào quang ngọc lục bảo kèm âm thanh huyền bí"
+          },
+          {
+            "target": "Gấu Logic & Thỏ Quan Sát",
+            "action": "Tap",
+            "feedback": "Phát giọng đọc chào mừng và lời mời bước vào trang 1"
+          }
+        ]
+      }
+    },
+    {
+      "page_number": 2,
+      "file_path": "pages/page-02.jpg",
+      "workbook_page_label": "CHẶNG 9 • TRANG 1",
+      "page_type": "maze_navigation_basic",
+      "title": "Cánh Cổng Lá Xanh",
+      "dialogue": {
+        "gau_logic": "Đường đầu tiên đã bị rối rồi!",
+        "tho_quan_sat": "Bé giúp mình tìm cánh cổng nhé!"
+      },
+      "instruction": "TÌM ĐƯỜNG TỪ ĐIỂM BẮT ĐẦU ĐẾN CÁNH CỔNG",
+      "footer_hint": "GỢI Ý: ĐI CHẬM VÀ QUAN SÁT TRƯỚC MỖI NGÃ RẼ",
+      "start_point": {
+        "position": "Góc dưới bên trái (bottom-left)",
+        "label": "BẮT ĐẦU",
+        "indicator": "Mũi tên đỏ chỉ vào lối vào",
+        "coordinates_grid": [5, 0]
+      },
+      "destination": {
+        "name": "Cánh Cổng Lá Xanh",
+        "label": "CÁNH CỔNG",
+        "position": "Cạnh phải phía trên (top-right)",
+        "emoji": "🚪🌿",
+        "visual": "Khung cổng vòm gỗ cổ tích đính dây hoa leo và viên ngọc xanh phát sáng",
+        "coordinates_grid": [1, 5]
+      },
+      "maze_characteristics": {
+        "dimensions": "6x6",
+        "grid_type": "Vuông chuẩn",
+        "wall_texture": "Hàng rào bụi cây xanh xén tỉa vuông vức (green hedge walls)",
+        "path_texture": "Lối đi đất cát màu kem mịn (cream pathway)",
+        "decision_points": 2,
+        "dead_ends": 3,
+        "optimal_path_steps": 14
+      },
+      "pedagogical_notes": "Level 1: Nhập môn mê cung, nhận biết điểm xuất phát và đích đến, làm quen với khái niệm đường cụt cạn (1 bước).",
+      "digital_game_potential": {
+        "template": "GT-013",
+        "mechanic": "maze-route",
+        "touch_behavior": "Chạm kéo ngón tay hoặc tap từng ô kế cận; hiển thị dấu chân gấu màu vàng sáng",
+        "feedback": {
+          "correct_move": "Âm thanh bước chân lách cách vui tai (footstep_soft.wav)",
+          "dead_end_hit": "Nhịp thở hổ phách (amber pulse) nhẹ nhàng, nhân vật lắc nhẹ và lùi lại một bước",
+          "goal_reached": "Cánh cổng mở ra, phát luồng sáng xanh, chuông 'Ting!' ăn mừng nhỏ"
+        }
+      }
+    },
+    {
+      "page_number": 3,
+      "file_path": "pages/page-03.jpg",
+      "workbook_page_label": "CHẶNG 9 • TRANG 2",
+      "page_type": "maze_navigation_basic",
+      "title": "Lối Mòn Hoa Nắng",
+      "dialogue": {
+        "gau_logic": "Tớ thấy rất nhiều lối rẽ!",
+        "tho_quan_sat": "Bé tìm đường tới bông hoa nhé!"
+      },
+      "instruction": "TÌM ĐƯỜNG TỚI BÔNG HOA MẶT TRỜI",
+      "footer_hint": "GỢI Ý: DÙNG NGÓN TAY THỬ ĐƯỜNG TRƯỚC KHI TÔ BÚT",
+      "start_point": {
+        "position": "Góc dưới bên trái (bottom-left)",
+        "label": "BẮT ĐẦU",
+        "indicator": "Mũi tên đỏ chỉ vào lối vào",
+        "coordinates_grid": [5, 0]
+      },
+      "destination": {
+        "name": "Bông Hoa Mặt Trời",
+        "label": "BÔNG HOA",
+        "position": "Góc trên bên phải (top-right)",
+        "emoji": "🌻",
+        "visual": "Cây hoa hướng dương vàng rực rỡ mọc cạnh cổng vòm đá đón nắng",
+        "coordinates_grid": [0, 5]
+      },
+      "maze_characteristics": {
+        "dimensions": "6x6",
+        "grid_type": "Vuông chuẩn",
+        "decision_points": 3,
+        "dead_ends": 4,
+        "optimal_path_steps": 16
+      },
+      "pedagogical_notes": "Rèn luyện xúc giác và phối hợp mắt - tay: khuyến khích trẻ dùng ngón trỏ dò đường trước khi cầm bút tô màu.",
+      "digital_game_potential": {
+        "template": "GT-013",
+        "mechanic": "maze-route",
+        "touch_behavior": "Ghost Hand gợi ý lướt ngón tay 3 ô đầu tiên nếu trẻ không tương tác trong 10 giây",
+        "feedback": {
+          "goal_reached": "Bông hoa nở xòe cánh, tia nắng vàng lấp lánh tỏa ra"
+        }
+      }
+    },
+    {
+      "page_number": 4,
+      "file_path": "pages/page-04.jpg",
+      "workbook_page_label": "CHẶNG 9 • TRANG 3",
+      "page_type": "maze_navigation_basic",
+      "title": "Cầu Gỗ Bên Suối",
+      "dialogue": {
+        "gau_logic": "Cây cầu ở phía bên kia rồi!",
+        "tho_quan_sat": "Mình đi thật cẩn thận nào!"
+      },
+      "instruction": "GIÚP GẤU VÀ THỎ TÌM ĐẾN CÂY CẦU GỖ",
+      "footer_hint": "GỢI Ý: QUAN SÁT KĨ TRƯỚC MỖI NGÃ RẼ",
+      "start_point": {
+        "position": "Cạnh trái ở giữa phía dưới (middle-left)",
+        "label": "BẮT ĐẦU",
+        "indicator": "Mũi tên đỏ chỉ ngang",
+        "coordinates_grid": [3, 0]
+      },
+      "destination": {
+        "name": "Cây Cầu Gỗ",
+        "label": "CẦU GỖ",
+        "position": "Cạnh phải ở giữa phía dưới (middle-right)",
+        "emoji": "🪵🌉",
+        "visual": "Chiếc cầu gỗ cong cổ điển bắc qua con suối trong vắt có hoa dại hai bên bờ",
+        "coordinates_grid": [3, 5]
+      },
+      "maze_characteristics": {
+        "dimensions": "7x6",
+        "grid_type": "Chữ nhật ngang",
+        "decision_points": 4,
+        "dead_ends": 4,
+        "optimal_path_steps": 18
+      },
+      "pedagogical_notes": "Điểm bắt đầu và kết thúc nằm ngang tầm nhau ở hai bên mép, buộc trẻ phải đi vòng lên trên hoặc xuống dưới qua tường chắn trung tâm.",
+      "digital_game_potential": {
+        "template": "GT-013",
+        "mechanic": "maze-route",
+        "feedback": {
+          "goal_reached": "Tiếng nước suối róc rách và tiếng bước chân gỗ 'cốc cốc'"
+        }
+      }
+    },
+    {
+      "page_number": 5,
+      "file_path": "pages/page-05.jpg",
+      "workbook_page_label": "CHẶNG 9 • TRANG 5",
+      "page_type": "maze_navigation_intermediate",
+      "title": "Hang Đá Tiếng Vang",
+      "dialogue": {
+        "gau_logic": "Trong hang có một chiếc đèn!",
+        "tho_quan_sat": "Bé tìm lối sáng để đi qua nhé!"
+      },
+      "instruction": "TÌM ĐƯỜNG QUA HANG ĐÁ TỚI CHIẾC ĐÈN",
+      "footer_hint": "GỢI Ý: BẮT ĐẦU TỪ DƯỚI VÀ ĐI DẦN LÊN TRÊN",
+      "start_point": {
+        "position": "Cạnh đáy ở giữa (bottom-center)",
+        "label": "BẮT ĐẦU",
+        "indicator": "Mũi tên đỏ chỉ thẳng lên",
+        "coordinates_grid": [6, 3]
+      },
+      "destination": {
+        "name": "Chiếc Đèn Lồng",
+        "label": "ĐÈN LỒNG",
+        "position": "Cạnh trên ở giữa (top-center)",
+        "emoji": "🏮",
+        "visual": "Đèn lồng bão bằng đồng cổ thắp ngọn lửa vàng ấm áp",
+        "coordinates_grid": [0, 3]
+      },
+      "maze_characteristics": {
+        "dimensions": "7x8",
+        "grid_type": "Khổ dọc cao (vertical orientation)",
+        "decision_points": 5,
+        "dead_ends": 5,
+        "optimal_path_steps": 20
+      },
+      "pedagogical_notes": "Lộ trình đi thẳng từ dưới đáy lên đỉnh (Bottom-to-Top flow), kiểm tra khả năng định hướng hướng lên (C2.DIR.01).",
+      "digital_game_potential": {
+        "template": "GT-013",
+        "mechanic": "maze-route",
+        "feedback": {
+          "goal_reached": "Ngọn đèn bừng sáng, tiếng vang vọng 'Coong...' trong hang đá"
+        }
+      }
+    },
+    {
+      "page_number": 6,
+      "file_path": "pages/page-06.jpg",
+      "workbook_page_label": "CHẶNG 9 • TRANG 6",
+      "page_type": "maze_navigation_intermediate",
+      "title": "Khu Vườn Mật Ngọt",
+      "dialogue": {
+        "gau_logic": "Mùi mật ong thơm quá!",
+        "tho_quan_sat": "Nhưng lối vào vườn bị rối rồi!"
+      },
+      "instruction": "TÌM ĐƯỜNG TỚI HŨ MẬT ONG",
+      "footer_hint": "GỢI Ý: CÓ NHỮNG NHÁNH CỤT - BÉ HÃY QUAY LẠI KHI CẦN",
+      "start_point": {
+        "position": "Góc dưới bên trái (bottom-left)",
+        "label": "BẮT ĐẦU",
+        "indicator": "Mũi tên đỏ chỉ ngang",
+        "coordinates_grid": [6, 0]
+      },
+      "destination": {
+        "name": "Hũ Mật Ong",
+        "label": "HŨ MẬT",
+        "position": "Cạnh trên ở giữa (top-center)",
+        "emoji": "🍯",
+        "visual": "Hũ gốm chứa đầy mật ong vàng óng kèm gáo gỗ và những chú ong bay lượn",
+        "coordinates_grid": [0, 3]
+      },
+      "maze_characteristics": {
+        "dimensions": "7x7",
+        "grid_type": "Vuông chuẩn",
+        "decision_points": 5,
+        "dead_ends": 5,
+        "optimal_path_steps": 22
+      },
+      "pedagogical_notes": "Dạy chiến lược quay lui (backtracking): Nhánh cụt hình chữ T sâu, nếu đi sai thì bình tĩnh quay lại ngã rẽ trước đó mà không nản chí.",
+      "digital_game_potential": {
+        "template": "GT-013",
+        "mechanic": "maze-route",
+        "feedback": {
+          "goal_reached": "Gấu Logic nhấp nháy mắt mỉm cười, tiếng 'Slurp!' ngon lành"
+        }
+      }
+    },
+    {
+      "page_number": 7,
+      "file_path": "pages/page-07.jpg",
+      "workbook_page_label": "CHẶNG 9 • TRANG 8",
+      "page_type": "maze_navigation_intermediate",
+      "title": "Ngã Rẽ Gió Xanh",
+      "dialogue": {
+        "gau_logic": "Gió làm những lối đi xoắn lại!",
+        "tho_quan_sat": "Bé đi tới chong chóng màu xanh nhé!"
+      },
+      "instruction": "TÌM ĐƯỜNG QUA CÁC NGÃ RẼ GIÓ",
+      "footer_hint": "GỢI Ý: ĐỪNG VỘI - HÃY NHÌN XA HƠN MỘT ĐOẠN",
+      "start_point": {
+        "position": "Cạnh trái ở giữa (middle-left)",
+        "label": "BẮT ĐẦU",
+        "indicator": "Mũi tên đỏ",
+        "coordinates_grid": [2, 0]
+      },
+      "destination": {
+        "name": "Chong Chóng Màu Xanh",
+        "label": "CHONG CHÓNG",
+        "position": "Góc dưới bên phải (bottom-right)",
+        "emoji": "🎐🌀",
+        "visual": "Chong chóng 4 cánh màu xanh ngọc quay tít trước gió trên bãi cỏ",
+        "coordinates_grid": [6, 6]
+      },
+      "maze_characteristics": {
+        "dimensions": "8x7",
+        "grid_type": "Chữ nhật ngang",
+        "decision_points": 6,
+        "dead_ends": 5,
+        "optimal_path_steps": 24
+      },
+      "pedagogical_notes": "Kích hoạt chiến lược nhìn xa một đoạn (lookahead strategy): Không rẽ ngay vào lối đầu tiên, nhìn lướt đường đi trước khi di chuyển.",
+      "digital_game_potential": {
+        "template": "GT-013",
+        "mechanic": "maze-route",
+        "feedback": {
+          "goal_reached": "Chong chóng quay tít, phát tiếng gió reo 'Vù vù...' mát rượi"
+        }
+      }
+    },
+    {
+      "page_number": 8,
+      "file_path": "pages/page-08.jpg",
+      "workbook_page_label": "CHẶNG 9 • TRANG 9",
+      "page_type": "maze_navigation_intermediate",
+      "title": "Tháp Cú Quan Sát",
+      "dialogue": {
+        "gau_logic": "Cú nhỏ đang đợi trên tháp!",
+        "tho_quan_sat": "Chúng mình tìm đường tới bạn ấy nào!"
+      },
+      "instruction": "TÌM ĐƯỜNG TỚI THÁP CÚ QUAN SÁT",
+      "footer_hint": "GỢI Ý: MỖI LẦN CHỈ CHỌN MỘT LỐI ĐI",
+      "start_point": {
+        "position": "Góc dưới bên trái (bottom-left)",
+        "label": "BẮT ĐẦU",
+        "indicator": "Mũi tên đỏ chỉ ngang",
+        "coordinates_grid": [6, 0]
+      },
+      "destination": {
+        "name": "Tháp Cú Quan Sát",
+        "label": "THÁP CÚ",
+        "position": "Góc trên bên phải (top-right)",
+        "emoji": "🦉🏯",
+        "visual": "Chòi gác tháp gỗ trên cao với chú chim cú lông nâu đeo kính tròn mắt to thông thái",
+        "coordinates_grid": [0, 6]
+      },
+      "maze_characteristics": {
+        "dimensions": "8x8",
+        "grid_type": "Vuông chuẩn",
+        "decision_points": 6,
+        "dead_ends": 6,
+        "optimal_path_steps": 25
+      },
+      "pedagogical_notes": "Rèn luyện tính quyết đoán và kiên định: 'Mỗi lần chỉ chọn một lối đi', không phân vân đổi hướng giữa chừng.",
+      "digital_game_potential": {
+        "template": "GT-013",
+        "mechanic": "maze-route",
+        "feedback": {
+          "goal_reached": "Cú nhỏ vỗ cánh 'Cú cú!', tháp đèn bật sáng ngọn lửa xanh"
+        }
+      }
+    },
+    {
+      "page_number": 9,
+      "file_path": "pages/page-09.jpg",
+      "workbook_page_label": "CHẶNG 9 • TRANG 10",
+      "page_type": "maze_navigation_advanced",
+      "title": "Cửa Rừng Sương Mờ",
+      "dialogue": {
+        "gau_logic": "Đây là mê cung khó hơn rồi!",
+        "tho_quan_sat": "Bé bình tĩnh tìm cửa rừng nhé!"
+      },
+      "instruction": "VƯỢT MÊ CUNG ĐẾN CỬA RỪNG SƯƠNG MỜ",
+      "footer_hint": "GỢI Ý: KIỂM TRA LẠI ĐƯỜNG ĐI TRƯỚC KHI TÔ MÀU",
+      "start_point": {
+        "position": "Góc dưới bên trái (bottom-left)",
+        "label": "BẮT ĐẦU",
+        "indicator": "Mũi tên đỏ",
+        "coordinates_grid": [6, 0]
+      },
+      "destination": {
+        "name": "Cửa Rừng Sương Mờ",
+        "label": "CỬA RỪNG",
+        "position": "Góc trên bên phải (top-right)",
+        "emoji": "⛩️🌲",
+        "visual": "Cổng sắt vòm cuốn mạ vàng tinh xảo giữa rừng thông sương mù bao phủ",
+        "coordinates_grid": [0, 6]
+      },
+      "maze_characteristics": {
+        "dimensions": "8x8",
+        "grid_type": "Vuông phức hợp",
+        "decision_points": 7,
+        "dead_ends": 6,
+        "optimal_path_steps": 28
+      },
+      "pedagogical_notes": "Chuyển giao sang giai đoạn Nâng cao (Level 3): Tường chắn dài ngăn đôi mê cung, bắt buộc phải đi đường vòng xuống đáy trước khi lên đích.",
+      "digital_game_potential": {
+        "template": "GT-013",
+        "mechanic": "maze-route",
+        "feedback": {
+          "goal_reached": "Làn sương mù tan biến hé lộ cánh rừng vàng rực rỡ"
+        }
+      }
+    },
+    {
+      "page_number": 10,
+      "file_path": "pages/page-10.jpg",
+      "workbook_page_label": "CHẶNG 9 • TRANG 11",
+      "page_type": "maze_navigation_advanced",
+      "title": "Khối Pha Lê Bí Ẩn",
+      "dialogue": {
+        "gau_logic": "Ánh sáng đang ở phía bên kia!",
+        "tho_quan_sat": "Mình tìm đúng đường tới đó nhé!"
+      },
+      "instruction": "TÌM ĐƯỜNG TỚI KHỐI PHA LÊ PHÁT SÁNG",
+      "footer_hint": "GỢI Ý: QUAN SÁT CẢ ĐƯỜNG DÀI TRƯỚC KHI CHỌN LỐI",
+      "start_point": {
+        "position": "Cạnh trái ở giữa (middle-left)",
+        "label": "BẮT ĐẦU",
+        "indicator": "Mũi tên đỏ",
+        "coordinates_grid": [3, 0]
+      },
+      "destination": {
+        "name": "Khối Pha Lê Phát Sáng",
+        "label": "KHỐI PHA LÊ",
+        "position": "Cạnh phải ở giữa phía dưới (middle-right)",
+        "emoji": "💎✨",
+        "visual": "Khối lập phương pha lê màu xanh lục bảo phát ra ánh sáng lung linh trên thảm cỏ",
+        "coordinates_grid": [4, 7]
+      },
+      "maze_characteristics": {
+        "dimensions": "9x7",
+        "grid_type": "Chữ nhật ngang phân khoang",
+        "decision_points": 7,
+        "dead_ends": 6,
+        "optimal_path_steps": 30
+      },
+      "pedagogical_notes": "Củng cố năng lực quét toàn cảnh (global scan): Nhìn bao quát toàn bộ 3 khoang mê cung trước khi quyết định rẽ.",
+      "digital_game_potential": {
+        "template": "GT-013",
+        "mechanic": "maze-route",
+        "feedback": {
+          "goal_reached": "Khối pha lê phát ra dải sóng ánh sáng cầu vồng bao quanh mê cung"
+        }
+      }
+    },
+    {
+      "page_number": 11,
+      "file_path": "pages/page-11.jpg",
+      "workbook_page_label": "CHẶNG 9 • TRANG 12",
+      "page_type": "maze_navigation_advanced",
+      "title": "Bờ Suối Ánh Trăng",
+      "dialogue": {
+        "gau_logic": "Con đường lên bờ suối ở đâu nhỉ?",
+        "tho_quan_sat": "Bé bắt đầu từ dưới lên nhé!"
+      },
+      "instruction": "ĐI TỪ CHÂN ĐƯỜNG TỚI BỜ SUỐI ÁNH TRĂNG",
+      "footer_hint": "GỢI Ý: BẮT ĐẦU TỪ DƯỚI VÀ KIÊN TRÌ VƯỢT TỪNG NHÁNH",
+      "start_point": {
+        "position": "Cạnh đáy ở giữa (bottom-center)",
+        "label": "BẮT ĐẦU",
+        "indicator": "Mũi tên đỏ chỉ thẳng lên",
+        "coordinates_grid": [7, 3]
+      },
+      "destination": {
+        "name": "Bờ Suối Ánh Trăng",
+        "label": "ÁNH TRĂNG",
+        "position": "Cạnh trên ở giữa (top-center)",
+        "emoji": "🌙🌊",
+        "visual": "Mặt trăng khuyết vàng lung linh phản chiếu trên làn nước suối biếc",
+        "coordinates_grid": [0, 3]
+      },
+      "maze_characteristics": {
+        "dimensions": "8x9",
+        "grid_type": "Khổ dọc cao đa tầng",
+        "decision_points": 8,
+        "dead_ends": 7,
+        "optimal_path_steps": 32
+      },
+      "pedagogical_notes": "Phân tầng không gian dọc (3 tầng): Tầng hạ lưu -> Tầng ghềnh thác -> Tầng bờ suối ánh trăng. Rèn luyện kiên trì qua từng nhánh.",
+      "digital_game_potential": {
+        "template": "GT-013",
+        "mechanic": "maze-route",
+        "feedback": {
+          "goal_reached": "Ánh trăng tỏa sáng dịu mát, tiếng nước suối hòa cùng tiếng đàn đêm"
+        }
+      }
+    },
+    {
+      "page_number": 12,
+      "file_path": "pages/page-12.jpg",
+      "workbook_page_label": "CHẶNG 9 • TRANG 13",
+      "page_type": "maze_navigation_advanced",
+      "title": "Vườn Hoa Bốn Mùa",
+      "dialogue": {
+        "gau_logic": "Vườn hoa ở sau các lối rẽ!",
+        "tho_quan_sat": "Bé tìm lối không bị chặn nhé!"
+      },
+      "instruction": "TÌM ĐƯỜNG TỚI GÓC HOA BỐN MÙA",
+      "footer_hint": "GỢI Ý: NẾU GẶP ĐƯỜNG CỤT, BÉ HÃY QUAY LẠI",
+      "start_point": {
+        "position": "Góc dưới bên trái (bottom-left)",
+        "label": "BẮT ĐẦU",
+        "indicator": "Mũi tên đỏ chỉ ngang",
+        "coordinates_grid": [7, 0]
+      },
+      "destination": {
+        "name": "Giỏ Hoa Bốn Mùa",
+        "label": "GIỎ HOA",
+        "position": "Góc trên bên phải (top-right)",
+        "emoji": "🧺💐",
+        "visual": "Giỏ mây tròn cắm đầy những đóa hoa cúc vàng, hồng đỏ và dã quỳ thơm ngát",
+        "coordinates_grid": [1, 7]
+      },
+      "maze_characteristics": {
+        "dimensions": "9x9",
+        "grid_type": "Vuông 9x9",
+        "decision_points": 8,
+        "dead_ends": 7,
+        "optimal_path_steps": 34
+      },
+      "pedagogical_notes": "Xuất hiện các ngõ cụt giả dạng như lối đi thông suốt (deceptive dead ends), rèn luyện tư duy phản biện thị giác.",
+      "digital_game_potential": {
+        "template": "GT-013",
+        "mechanic": "maze-route",
+        "feedback": {
+          "goal_reached": "Cánh hoa rơi lả tả, giỏ hoa phát sáng kèm tiếng vỗ tay rộn rã"
+        }
+      }
+    },
+    {
+      "page_number": 13,
+      "file_path": "pages/page-13.jpg",
+      "workbook_page_label": "CHẶNG 9 • TRANG 15",
+      "page_type": "maze_navigation_non_convex",
+      "title": "Hẻm Núi Mây Trắng",
+      "dialogue": {
+        "gau_logic": "Lá cờ đang ở trên đỉnh!",
+        "tho_quan_sat": "Bé tìm đường leo lên nhé!"
+      },
+      "instruction": "TÌM LỐI TỪ CHÂN NÚI LÊN ĐỈNH CÓ LÁ CỜ",
+      "footer_hint": "GỢI Ý: BẮT ĐẦU Ở DƯỚI VÀ TÌM LỐI ĐI LÊN",
+      "start_point": {
+        "position": "Góc dưới bên trái (bottom-left)",
+        "label": "BẮT ĐẦU",
+        "indicator": "Mũi tên đỏ chỉ ngang",
+        "coordinates_grid": [7, 0]
+      },
+      "destination": {
+        "name": "Đỉnh Núi Có Lá Cờ",
+        "label": "ĐỈNH NÚI",
+        "position": "Cạnh trên tại góc lõm chữ L (top-center)",
+        "emoji": "🏔️🚩",
+        "visual": "Ngọn núi đá tuyết phủ bồng bềnh mây trắng cắm lá cờ đỏ thắm tung bay",
+        "coordinates_grid": [0, 4]
+      },
+      "maze_characteristics": {
+        "dimensions": "Lưới hình chữ L không đối xứng (L-shaped non-convex grid, khuyết góc trên bên phải kích thước 4x4)",
+        "grid_type": "Phi đối xứng / Khuyết góc",
+        "decision_points": 7,
+        "dead_ends": 6,
+        "optimal_path_steps": 32
+      },
+      "pedagogical_notes": "Đặc biệt: Phá vỡ định kiến lưới hình chữ nhật thông thường. Trẻ phải thích nghi với không gian địa hình bị biến dạng (non-convex boundary).",
+      "digital_game_potential": {
+        "template": "GT-013",
+        "mechanic": "maze-route",
+        "feedback": {
+          "goal_reached": "Lá cờ đỏ phấp phới reo vui, tiếng gió hú đỉnh núi ngân vang"
+        }
+      }
+    },
+    {
+      "page_number": 14,
+      "file_path": "pages/page-14.jpg",
+      "workbook_page_label": "CHẶNG 9 • TRANG 16",
+      "page_type": "maze_navigation_advanced",
+      "title": "Thung Lũng Đom Đóm",
+      "dialogue": {
+        "gau_logic": "Ánh đèn đang ở cuối thung lũng!",
+        "tho_quan_sat": "Bé giúp chúng mình tìm tới đó nhé!"
+      },
+      "instruction": "TÌM ĐƯỜNG TỚI CHIẾC ĐÈN ĐOM ĐÓM",
+      "footer_hint": "GỢI Ý: NHÌN XA HƠN MỘT NGÃ RẼ TRƯỚC KHI ĐI",
+      "start_point": {
+        "position": "Cạnh trái ở góc dưới (bottom-left)",
+        "label": "BẮT ĐẦU",
+        "indicator": "Mũi tên đỏ",
+        "coordinates_grid": [5, 0]
+      },
+      "destination": {
+        "name": "Chiếc Đèn Đom Đóm",
+        "label": "ĐÈN ĐOM ĐÓM",
+        "position": "Góc trên bên phải (top-right)",
+        "emoji": "🪔✨",
+        "visual": "Chiếc đèn thủy tinh bão chứa đầy đom đóm vàng lấp lánh như ngàn ngôi sao nhỏ",
+        "coordinates_grid": [0, 8]
+      },
+      "maze_characteristics": {
+        "dimensions": "10x7",
+        "grid_type": "Khổ ngang rộng (landscape)",
+        "decision_points": 8,
+        "dead_ends": 7,
+        "optimal_path_steps": 36
+      },
+      "pedagogical_notes": "Lộ trình hành lang dài song song: Bé phải kiên nhẫn lần theo các rãnh hẹp, không nhảy cóc qua bờ tường rào.",
+      "digital_game_potential": {
+        "template": "GT-013",
+        "mechanic": "maze-route",
+        "feedback": {
+          "goal_reached": "Bầy đom đóm bay ra khỏi đèn thắp sáng lung linh màn hình"
+        }
+      }
+    },
+    {
+      "page_number": 15,
+      "file_path": "pages/page-05.jpg",
+      "workbook_page_label": "CHẶNG 9 • TRANG 17",
+      "page_type": "maze_navigation_expert",
+      "title": "Lối Lá Phong Đỏ",
+      "dialogue": {
+        "gau_logic": "Chiếc lá đỏ nằm cuối đường!",
+        "tho_quan_sat": "Mình kiên trì tìm tới đó nhé!"
+      },
+      "instruction": "TÌM ĐƯỜNG TỚI CHIẾC LÁ PHONG ĐỎ",
+      "footer_hint": "GỢI Ý: THỬ ĐƯỜNG BẰNG NGÓN TAY TRƯỚC KHI TÔ BÚT",
+      "start_point": {
+        "position": "Cạnh đáy góc dưới bên trái (bottom-left)",
+        "label": "BẮT ĐẦU",
+        "indicator": "Mũi tên đỏ chỉ thẳng lên",
+        "coordinates_grid": [8, 1]
+      },
+      "destination": {
+        "name": "Chiếc Lá Phong Đỏ",
+        "label": "LÁ PHONG",
+        "position": "Góc trên bên phải (top-right)",
+        "emoji": "🍁",
+        "visual": "Chiếc lá phong mùa thu màu đỏ cam rực rỡ có móc treo chìa khóa vàng",
+        "coordinates_grid": [0, 8]
+      },
+      "maze_characteristics": {
+        "dimensions": "9x9",
+        "grid_type": "Vuông dày đặc",
+        "decision_points": 9,
+        "dead_ends": 8,
+        "optimal_path_steps": 38
+      },
+      "pedagogical_notes": "Bước vào giai đoạn Chuyên Gia (Level 4): Tần suất ngã ba dày đặc, các nhánh rẽ đan xen đối xứng đánh lừa thị giác.",
+      "digital_game_potential": {
+        "template": "GT-013",
+        "mechanic": "maze-route",
+        "feedback": {
+          "goal_reached": "Lá phong đỏ bay lượn tạo thành vòng xoáy thu tuyệt đẹp"
+        }
+      }
+    },
+    {
+      "page_number": 16,
+      "file_path": "pages/page-16.jpg",
+      "workbook_page_label": "CHẶNG 9 • TRANG 18",
+      "page_type": "maze_navigation_expert",
+      "title": "Đường Hầm Rễ Cây",
+      "dialogue": {
+        "gau_logic": "Cây cổ thụ ở cuối đường hầm!",
+        "tho_quan_sat": "Bé tìm lối an toàn nhé!"
+      },
+      "instruction": "ĐI QUA ĐƯỜNG HẦM TỚI CÂY CỔ THỤ",
+      "footer_hint": "GỢI Ý: MỖI LẦN CHỈ CHỌN MỘT LỐI ĐI",
+      "start_point": {
+        "position": "Cạnh đáy ở giữa (bottom-center)",
+        "label": "BẮT ĐẦU",
+        "indicator": "Mũi tên đỏ chỉ thẳng lên",
+        "coordinates_grid": [8, 3]
+      },
+      "destination": {
+        "name": "Cây Cổ Thụ Bí Ẩn",
+        "label": "CÂY CỔ THỤ",
+        "position": "Cạnh trên ở giữa (top-center)",
+        "emoji": "🌳🚪",
+        "visual": "Cây cổ thụ đại ngàn hàng trăm tuổi với cánh cửa gỗ thần kỳ tại gốc cây",
+        "coordinates_grid": [0, 3]
+      },
+      "maze_characteristics": {
+        "dimensions": "7x11",
+        "grid_type": "Khổ dọc hẹp (narrow vertical)",
+        "decision_points": 9,
+        "dead_ends": 8,
+        "optimal_path_steps": 40
+      },
+      "pedagogical_notes": "Mô phỏng đường hầm thẳng đứng dưới lòng đất. Đường đi zigzag qua 4 tầng rễ cây, thử thách khả năng định hướng liên tục đổi chiều trái-phải.",
+      "digital_game_potential": {
+        "template": "GT-013",
+        "mechanic": "maze-route",
+        "feedback": {
+          "goal_reached": "Cánh cửa gỗ mở ra, ánh sáng xanh huyền bí tỏa ngát từ gốc cây"
+        }
+      }
+    },
+    {
+      "page_number": 17,
+      "file_path": "pages/page-17.jpg",
+      "workbook_page_label": "CHẶNG 9 • TRANG 20",
+      "page_type": "maze_navigation_expert",
+      "title": "Cổng Mây Cuối Rừng",
+      "dialogue": {
+        "gau_logic": "Cổng mây đang ở cuối rừng!",
+        "tho_quan_sat": "Bé cùng mình vượt thử thách nhé!"
+      },
+      "instruction": "VƯỢT MÊ CUNG TỚI CỔNG MÂY CUỐI RỪNG",
+      "footer_hint": "GỢI Ý: KIỂM TRA CÁC NHÁNH CỤT TRƯỚC KHI ĐI",
+      "start_point": {
+        "position": "Góc dưới bên trái (bottom-left)",
+        "label": "BẮT ĐẦU",
+        "indicator": "Mũi tên đỏ",
+        "coordinates_grid": [9, 0]
+      },
+      "destination": {
+        "name": "Cổng Mây Cuối Rừng",
+        "label": "CỔNG MÂY",
+        "position": "Góc trên bên phải (top-right)",
+        "emoji": "☁️⛩️",
+        "visual": "Cổng thiên đàng bằng vàng ngọc tọa lạc trên vầng mây trắng tỏa vầng hào quang rực rỡ",
+        "coordinates_grid": [0, 9]
+      },
+      "maze_characteristics": {
+        "dimensions": "10x10",
+        "grid_type": "Vuông lớn 10x10",
+        "decision_points": 10,
+        "dead_ends": 8,
+        "optimal_path_steps": 44
+      },
+      "pedagogical_notes": "Độ khó cận cực đại: Đường đi chính có dạng răng cưa bậc thang, thử thách khả năng lập kế hoạch đường dài và phân biệt nhánh cụt sâu.",
+      "digital_game_potential": {
+        "template": "GT-013",
+        "mechanic": "maze-route",
+        "feedback": {
+          "goal_reached": "Cổng mây bừng sáng, tiếng đàn hạc reo vang báo hiệu sắp chạm tới đích cuối"
+        }
+      }
+    },
+    {
+      "page_number": 18,
+      "file_path": "pages/page-18.jpg",
+      "workbook_page_label": "CHẶNG 9 • TRANG 21",
+      "page_type": "maze_navigation_boss",
+      "title": "Mê Cung Rừng Cỏ",
+      "dialogue": {
+        "gau_logic": "Rừng cỏ thật nhiều lối rẽ!",
+        "tho_quan_sat": "Cố gắng nhé, sắp tới huy hiệu rồi!"
+      },
+      "instruction": "VƯỢT MÊ CUNG CUỐI ĐỂ NHẬN HUY HIỆU",
+      "footer_hint": "GỢI Ý: QUAN SÁT, KIÊN TRÌ VÀ KHÔNG VỘI VÀNG",
+      "start_point": {
+        "position": "Góc dưới bên trái (bottom-left)",
+        "label": "BẮT ĐẦU",
+        "indicator": "Mũi tên đỏ chỉ ngang",
+        "coordinates_grid": [10, 0]
+      },
+      "destination": {
+        "name": "Huy Hiệu Khám Phá Rừng Cỏ",
+        "label": "HUY HIỆU",
+        "position": "Góc trên bên phải (top-right)",
+        "emoji": "🏅🏵️",
+        "visual": "Chiếc huy hiệu thám hiểm bằng đồng viền vàng thắt nơ xanh lá, mặt khắc hình mê cung vòng tròn tinh xảo",
+        "coordinates_grid": [0, 10]
+      },
+      "maze_characteristics": {
+        "dimensions": "11x11",
+        "grid_type": "Lưới cực đại (Master Grid 11x11)",
+        "decision_points": 12,
+        "dead_ends": 9,
+        "optimal_path_steps": 48
+      },
+      "pedagogical_notes": "Boss Level của Chặng 9: Mê cung 11x11 lớn nhất toàn bộ tập tài liệu, kiểm tra tổng lực năng lực điều hành (Executive Function), ức chế phản xạ vội vàng, quét mắt toàn cục và kiên trì không bỏ cuộc.",
+      "digital_game_potential": {
+        "template": "GT-013",
+        "mechanic": "maze-route",
+        "feedback": {
+          "goal_reached": "Pháo hoa giấy (confetti) tung bay rực rỡ, huy hiệu vàng lồng vào ngực áo bạn Gấu và Thỏ"
+        }
+      }
+    },
+    {
+      "page_number": 19,
+      "file_path": "pages/page-19.jpg",
+      "workbook_page_label": null,
+      "page_type": "completion_and_reward",
+      "title": "Hoàn Thành Phần 9: Khu Rừng Ngã Rẽ",
+      "dialogue": {
+        "gau_logic": "Bé đã vượt qua mọi mê cung thật xuất sắc!",
+        "tho_quan_sat": "Viên Ngọc Dẫn Lối đã sáng lên rồi!"
+      },
+      "instruction": "BÉ ĐÃ HOÀN THÀNH CHẶNG SỐ 9! SẴN SÀNG LÊN TÀU ĐẾN CHẶNG 10!",
+      "footer_hint": "BÉ HÃY TÔ MÀU VIÊN NGỌC DẪN LỐI",
+      "visual_elements": {
+        "gem": "Viên Ngọc Dẫn Lối (la bàn ngôi sao 8 cánh phát sáng tỏa ánh ngọc lục bảo lung linh trên đỉnh lâu đài cổ tích)",
+        "railway_map": "Đoạn đường sắt 20 trạm: Các trạm 1 đến 9 đã hoàn thành đánh dấu tick vàng; Trạm 9 có biển 'BÉ ĐANG Ở ĐÂY'; Các trạm 10 đến 20 đang chờ đón",
+        "rating_box": "Khung 3 ngôi sao để ba mẹ và bé cùng đánh giá sự kiên trì và tiến bộ",
+        "coloring_box": "Bản vẽ nét rỗng hình ngôi sao la bàn 8 cánh để bé thỏa sức tô màu sáng tạo"
+      },
+      "pedagogical_notes": "Củng cố cảm giác thành tựu (Sense of Mastery & Accomplishment), khắc sâu bài học về sự kiên trì, định hướng mục tiêu và sẵn sàng bước sang chặng tiếp theo.",
+      "digital_game_potential": {
+        "template": "GT-000",
+        "mechanic": "Reward Celebration & Station Unlock",
+        "interactions": [
+          {
+            "target": "Viên Ngọc Dẫn Lối",
+            "action": "Tap / Drag Color",
+            "feedback": "Ngọc tỏa hào quang xanh ngọc rực rỡ, thêm vào rương báu của bé"
+          },
+          {
+            "target": "3 Ngôi sao",
+            "action": "Tap",
+            "feedback": "Lần lượt thắp sáng 3 ngôi sao vàng kèm âm thanh 'Ting ting ting!'"
+          },
+          {
+            "target": "Đoàn tàu Chặng 10",
+            "action": "Tap",
+            "feedback": "Tiếng còi tàu hú vang, đoàn tàu chuyển động lăn bánh sang ga tiếp theo"
+          }
+        ]
+      }
+    }
+  ]
+}

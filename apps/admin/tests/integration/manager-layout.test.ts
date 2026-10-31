@@ -70,12 +70,10 @@ describe("Task 1 & D-IW — Manager Shell Layout & Page Hosting Invariants", () 
     const reviewerNav = getNavItemsForRole("content_reviewer");
     const reviewerHrefList = reviewerNav.map((item) => item.href);
 
-    // content_reviewer must see: Dashboard, Content Review, Taxonomy, Levels, Lessons, Curriculum
+    // content_reviewer must see: Dashboard, Taxonomy, Levels, Curriculum
     expect(reviewerHrefList).toContain("/");
     expect(reviewerHrefList).toContain("/taxonomy");
-    expect(reviewerHrefList).toContain("/content-review");
     expect(reviewerHrefList).toContain("/levels");
-    expect(reviewerHrefList).toContain("/lessons");
     expect(reviewerHrefList).toContain("/curriculum");
 
     // content_reviewer must NOT see: Users, Payments, Legal Consents, System

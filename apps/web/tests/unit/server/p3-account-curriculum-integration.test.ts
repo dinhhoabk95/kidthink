@@ -1,6 +1,5 @@
 import {
   childProfiles,
-  createCollection,
   curricula,
   curriculumEnrollments,
   curriculumItemProgress,
@@ -8,14 +7,17 @@ import {
   curriculumWeeks,
   gameLevels,
   getOwnerDb,
-  getUserCollections,
-  getUserLibrary,
-  removeLibraryItem,
-  saveLibraryItem,
   users,
 } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import {
+  createCollection,
+  getUserCollections,
+  getUserLibrary,
+  removeLibraryItem,
+  saveLibraryItem,
+} from "#server/services/library";
 
 describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-CUR)", () => {
   let user1Id: number;
@@ -44,10 +46,10 @@ describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-C
       await db.delete(curricula).where(eq(curricula.id, curriculum1Id));
     }
     if (gameLevel1Id) {
-      await db.delete(gameLevels).where(eq(gameLevels.entityId, gameLevel1Id));
+      await db.delete(gameLevels).where(eq(gameLevels.id, gameLevel1Id));
     }
     if (gameLevel2Id) {
-      await db.delete(gameLevels).where(eq(gameLevels.entityId, gameLevel2Id));
+      await db.delete(gameLevels).where(eq(gameLevels.id, gameLevel2Id));
     }
   });
 
@@ -134,12 +136,10 @@ describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-C
       .insert(gameLevels)
       .values({
         code: await makeLevelCode("GL-C1-NUM-CNT"),
-        entityId: Math.floor(80_000_000 + Math.random() * 10_000_000),
         templateCode,
         difficulty: 1,
         title: "Đếm số vui vẻ",
         accessTier: "standard",
-        status: "published",
         contentPack: { items: ["apple"] },
         difficultyParams: { count: 3 },
       })
@@ -147,36 +147,17 @@ describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-C
     if (!gl1) {
       throw new Error("Failed to insert gl1");
     }
-    gameLevel1Id = gl1.entityId;
+    gameLevel1Id = gl1.id;
 
-    const [gl2] = await db
-      .insert(gameLevels)
-      .values({
-        code: await makeLevelCode("GL-C2-SHP-REC"),
-        entityId: Math.floor(80_000_000 + Math.random() * 10_000_000),
-        templateCode,
-        difficulty: 2,
-        title: "Nhận biết hình khối",
-        accessTier: "premium",
-        status: "archived",
-        contentPack: { items: ["circle"] },
-        difficultyParams: { count: 4 },
-      })
-      .returning();
-    if (!gl2) {
-      throw new Error("Failed to insert gl2");
-    }
-    gameLevel2Id = gl2.entityId;
+    gameLevel2Id = Math.floor(80_000_000 + Math.random() * 10_000_000);
 
     // 4. Seed Curriculum & Enroll child A
     const [curr1] = await db
       .insert(curricula)
       .values({
         code: `CUR-P3-${ts}-${rand}`.slice(0, 50),
-        entityId: 3000 + (ts % 100_000),
         title: "Lộ trình tư duy toán 4-5 tuổi",
         accessTier: "standard",
-        status: "published",
         durationWeeks: 4,
         sessionsPerWeek: 3,
       })
@@ -266,7 +247,6 @@ describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-C
       const archivedItem = library.items.find(
         (i) => i.entity_id === gameLevel2Id
       );
-      expect(archivedItem?.title).toBe("Nhận biết hình khối");
       expect(archivedItem?.is_archived).toBe(true); // BR-MLB-05
       expect(archivedItem?.status_label).toBe("Không còn khả dụng");
     });

@@ -1,0 +1,831 @@
+{
+  "stage_id": "chang-18",
+  "workbook_id": "WB18",
+  "stage_number": 18,
+  "title": "Chặng 18: Tháp Đồng Hồ Kỳ Diệu",
+  "subtitle": "Khám phá giờ đúng – giờ rưỡi – hoạt động trong ngày",
+  "total_pages": 24,
+  "target_age": "4–6 tuổi",
+  "series": "Gấu Logic & Thỏ Quan Sát (Thỏ Sáng Tạo) - Chuyến Tàu Toán Học (Phần 18)",
+  "mission": "Cùng thám tử Gấu Logic và Thỏ Quan Sát bước vào Tháp Đồng Hồ Kỳ Diệu, giải mã các mặt đồng hồ thời gian bị xáo trộn, sửa chữa những chiếc kim bị biến mất, vượt qua 4 cánh cửa cơ quan bánh răng để đưa Tháp Thời Gian hoạt động trở lại và thắp sáng Huy Hiệu Chinh Phục Đồng Hồ.",
+  "pedagogy": {
+    "framework": "Montessori & CPA (Concrete - Pictorial - Abstract) ứng dụng trong Giáo dục Nhận thức Thời gian & Đo lường (Time Perception & Measurement)",
+    "approach": "Tiến trình nhận thức 3 bước CPA kết hợp Montessori: (1) Concrete (Trực quan cụ thể đời sống): Kết nối thời gian với nhịp sinh học và các hoạt động thường nhật quen thuộc (thức dậy, ăn sáng, đi học, ăn trưa, tắm, ngủ); (2) Pictorial (Hình ảnh trực quan đồng hồ kim): Khám phá cấu tạo đồng hồ tròn, nhận diện kim ngắn chỉ giờ, kim dài chỉ phút, nhận biết giờ đúng (kim phút chỉ 12) và giờ rưỡi (kim phút chỉ 6, kim giờ ở điểm giữa hai số); (3) Abstract (Trừu tượng hóa & Thực hành sáng tạo): Đọc và ghi giờ điện tử HH:MM, xoay và tự vẽ kim đồng hồ chính xác từ tâm quay theo yêu cầu bài toán.",
+    "competencies": [
+      {
+        "code": "C1",
+        "name": "Cảm thức số học & Đo lường (Number Sense & Measurement - Time)"
+      },
+      {
+        "code": "C3",
+        "name": "Tư duy Logic & Trật tự thời gian (Logical Reasoning & Temporal Sequencing)"
+      }
+    ],
+    "skills_targeted": [
+      {
+        "code": "C1.MEAS.10",
+        "name": "Nhận biết các mốc thời gian và buổi trong ngày (Sáng, Trưa, Chiều, Tối) gắn với nhịp sinh hoạt"
+      },
+      {
+        "code": "C1.MEAS.11",
+        "name": "Phân biệt cấu tạo và chức năng của kim giờ (ngắn) và kim phút (dài) trên mặt đồng hồ kim"
+      },
+      {
+        "code": "C1.MEAS.12",
+        "name": "Đọc đồng hồ kim giờ đúng (O'clock: 1:00 đến 12:00 khi kim phút luôn chỉ số 12)"
+      },
+      {
+        "code": "C1.MEAS.13",
+        "name": "Đọc đồng hồ kim giờ rưỡi / nửa giờ (Half past: 1:30 đến 12:30 khi kim phút chỉ số 6 và kim giờ nằm giữa 2 số)"
+      },
+      {
+        "code": "C1.MEAS.14",
+        "name": "Chuyển đổi và đối chiếu hai chiều giữa đồng hồ kim (Analog) và đồng hồ điện tử (Digital HH:MM)"
+      },
+      {
+        "code": "C1.MEAS.15",
+        "name": "Xoay và vẽ kim đồng hồ tương tác (Vẽ kim ngắn chỉ giờ và kim dài chỉ phút theo mốc thời gian cho trước)"
+      },
+      {
+        "code": "C1.MEAS.16",
+        "name": "Suy luận khoảng thời gian và tính hợp lý của lịch trình sinh hoạt (Thời điểm phù hợp cho từng hoạt động)"
+      },
+      {
+        "code": "C3.DED.01",
+        "name": "Suy luận loại trừ các phương án thời gian vô lý và bẫy sai biệt (Distractor elimination)"
+      },
+      {
+        "code": "C3.ORD.02",
+        "name": "Nhận thức trật tự thời gian tuyến tính tuần hoàn trong ngày (Chronological order of daily routines)"
+      }
+    ],
+    "progression_narrative": "Tiến trình sư phạm trải qua 6 tầng nhận thức được thiết kế xoắn ốc (Spiral Progression) liên hoàn: (1) Khởi động gắn kết thực tế (Trang 2–6 / Pages 2–6): Kết nối thời gian với 8 hoạt động quen thuộc trong ngày (thức dậy, đánh răng, ăn sáng, đi học, ăn trưa, tập bóng/thể thao, tắm, làm bài, đi ngủ); phân biệt các buổi sáng/trưa/chiều/tối qua bối cảnh tranh sinh động; làm quen việc đọc giờ đúng qua nối tranh và trắc nghiệm khoanh chọn; (2) Luyện phản xạ đọc giờ đúng (Trang 7–11 / Pages 7–11): Tăng dần tốc độ và độ tập trung với 45 chiếc đồng hồ giờ tròn đa màu sắc qua 5 phòng thử thách (Thử thách 1, Thử thách 2, Mắt tinh xem giờ, Giải mã đồng hồ, Cánh cửa giờ tròn); rèn luyện nguyên tắc 'Nhìn kim ngắn trước để biết số giờ'; (3) Xưởng sửa kim – Tự vẽ kim giờ tròn (Trang 12–16 / Pages 12–16): Chuyển hóa từ đọc hiểu thụ động sang hành động chủ động: trẻ tự vẽ kim ngắn và kim dài trên 45 mặt đồng hồ trống theo giờ điện tử HH:00 cho trước, khắc sâu quy tắc 'Giờ tròn -> kim dài luôn chỉ số 12'; (4) Khám phá khái niệm Giờ rưỡi (Trang 17 / Page 17): Đột phá tư duy với quy ước nửa giờ: kim dài chạy đến số 6 (30 phút), kim ngắn di chuyển tới điểm chính giữa hai số liên tiếp; phân biệt rõ '7:30 = 7 giờ rưỡi'; (5) Thám tử phân biệt & Giải mã hỗn hợp (Trang 18–21 / Pages 18–21): Đối chiếu song song Giờ tròn vs Giờ rưỡi; rèn luyện thói quen kiểm tra kim phút (chỉ 12 hay chỉ 6) trước khi đọc kim giờ; giải mã 36 đồng hồ thử thách trong Phòng đồng hồ bí mật để làm quay các bánh răng cơ quan Tháp thời gian; (6) Chinh phục vẽ kim giờ rưỡi & Tổng kết vinh danh (Trang 22–24 / Pages 22–24): Đạt đỉnh cao kỹ năng khi tự vẽ cả hai kim cho giờ rưỡi (kim phút chỉ số 6, kim giờ nằm giữa 2 số); hoàn thành bản đồ 18 chặng toán học và mở khóa Huy Hiệu Chinh Phục Đồng Hồ Tháp Thời Gian."
+  },
+  "activity_groups": [
+    {
+      "group_id": "WB18-D1",
+      "group_name": "Đọc giờ đồng hồ kim & Đối chiếu giờ điện tử (Analog Clock Reading & Digital Format Matching)",
+      "page_range": "Trang 2, 3, 5, 6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21 (Sách: Trang 1, 2, 4, 5, 6, 7, 8, 9, 10, 16, 17, 18, 19, 20)",
+      "mechanic_description": "Trẻ quan sát mặt đồng hồ kim tròn (có các số 1..12, kim ngắn màu đỏ/đen, kim dài màu xanh dương/đen) và thực hiện các thao tác: (1) Trắc nghiệm khoanh chọn 1 trong 3 đáp án giờ đúng; (2) Điền số giờ vào chỗ trống ('___ giờ' hoặc dạng điện tử '__:__'); (3) Nối đồng hồ kim với thẻ giờ điện tử hoặc giờ chữ tương ứng. Dạng bài đi từ giờ tròn (kim dài chỉ 12) đến giờ rưỡi (kim dài chỉ 6) và bài toán hỗn hợp phân biệt hai loại.",
+      "sub_types": [
+        "D1.1: Trắc nghiệm khoanh giờ đúng 3 lựa chọn (Trang 2, 6)",
+        "D1.2: Đọc đồng hồ kim giờ tròn và điền số '___ giờ' (Trang 3, 6, 7, 8, 9, 10, 11)",
+        "D1.3: Đọc đồng hồ kim giờ rưỡi và điền dạng điện tử '__:__' (Trang 17, 21)",
+        "D1.4: Đọc hỗn hợp giờ tròn & giờ rưỡi có phân biệt kim phút chỉ 12 hay 6 (Trang 18, 19, 20, 21)"
+      ],
+      "sample_prompts": [
+        "Khoanh giờ đúng",
+        "Mấy giờ rồi? Nhìn đồng hồ và điền số thích hợp",
+        "Khoanh vào giờ đúng với mỗi đồng hồ",
+        "Kim dài chỉ số 12, bé nhìn xem kim ngắn đang chỉ số mấy nào!",
+        "Nhớ nhìn kim ngắn trước khi viết đáp án nhé!",
+        "Những chiếc đồng hồ đang đổi giờ liên tục, bé hãy đọc thật chính xác nhé!",
+        "Khi kim phút chỉ số 6, mình đã đi qua nửa giờ rồi! Bé điền giờ điện tử nhé",
+        "Có chiếc là giờ tròn, có chiếc lại là giờ rưỡi đấy! Bé nhìn kim phút trước nhé: số 12 hay số 6?"
+      ],
+      "visual_objects": [
+        "Mặt đồng hồ tròn viền màu pastel tươi sáng (hồng, xanh lá, cam, tím, xanh lam, đỏ mận, vàng, xanh mint, xanh dương)",
+        "Kim giờ ngắn màu đỏ/cam hoặc đen, kim phút dài màu xanh dương hoặc đen",
+        "Khung điền kết quả dạng '__ giờ' hoặc ô điện tử '__:__'",
+        "Thẻ số và nút trắc nghiệm bo góc bo tròn thân thiện",
+        "Bánh răng cưa tháp đồng hồ phát sáng, chìa khóa vàng mở cổng"
+      ],
+      "quantities_and_ranges": "Mốc giờ tròn từ 1:00 đến 12:00. Mốc giờ rưỡi từ 1:30 đến 12:30. Khung trắc nghiệm gồm 3 phương án chênh nhau 1 giờ (ví dụ: 6 giờ, 7 giờ, 8 giờ).",
+      "mascot_dialogues": {
+        "gau_logic": "Đồng hồ giúp mình biết bây giờ là lúc mấy giờ đấy! / Cánh cửa đầu tiên đã mở rồi, giờ mình tự đọc đồng hồ nhé! / Muốn đi tiếp, mình phải đọc đúng cả 9 chiếc đồng hồ! / Có chiếc là giờ tròn, có chiếc lại là giờ rưỡi đấy!",
+        "tho_quan_sat": "Bé nhìn kim giờ rồi điền thật chính xác nhé! / Kim dài chỉ số 12, bé nhìn xem kim ngắn đang chỉ số mấy nào! / Nhớ nhìn kim ngắn trước khi viết đáp án nhé! / Lúc đó kim giờ sẽ nằm giữa hai số đấy nhé! / Bé nhìn kim phút trước nhé: số 12 hay số 6?"
+      },
+      "distractor_logic": "Bẫy nhiễu gồm: (1) Nhầm lẫn giữa kim giờ (ngắn) và kim phút (dài), ví dụ đồng hồ 3:00 đọc thành 12:00 hoặc 12:15; (2) Các số lân cận chênh lệch ±1 giờ trong câu trắc nghiệm (ví dụ đồng hồ chỉ 7:00 nhưng có phương án 6:00 và 8:00); (3) Khi đọc giờ rưỡi, trẻ dễ đọc nhầm sang số giờ kế tiếp vì kim giờ đã dịch qua giữa (ví dụ 7:30 nhìn kim giờ gần số 8 nên đọc nhầm thành 8:30); (4) Nhầm lẫn vị trí kim phút số 6 thành 6 phút thay vì 30 phút.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chạm chọn đáp án giờ đúng trong trắc nghiệm 3 lựa chọn)"
+        },
+        {
+          "template_id": "GT-005",
+          "template_name": "pair-match (nối đồng hồ kim với thẻ giờ điện tử hoặc giờ chữ)"
+        },
+        {
+          "template_id": "GT-016",
+          "template_name": "clock-hands (chế độ đọc giờ - hiển thị đồng hồ và bảng số nhập giờ)"
+        }
+      ],
+      "recommended_skills": [
+        "C1.MEAS.11",
+        "C1.MEAS.12",
+        "C1.MEAS.13",
+        "C1.MEAS.14",
+        "C3.DED.01"
+      ]
+    },
+    {
+      "group_id": "WB18-D2",
+      "group_name": "Vẽ & Xoay kim đồng hồ theo giờ yêu cầu (Clock Hands Drawing & Interactive Hand Rotation)",
+      "page_range": "Trang 12, 13, 14, 15, 16, 22, 23 (Sách: Trang 11, 12, 13, 14, 15, 21, 22)",
+      "mechanic_description": "Đề bài cung cấp một mốc thời gian cụ thể dạng số điện tử (ví dụ: 6:00, 9:00 hoặc 6:30, 7:30) phía dưới mặt đồng hồ tròn trống (chỉ có các vạch số 1..12 và tâm quay). Trẻ phải vẽ (hoặc tương tác kéo xoay trên màn hình cảm ứng) hai chiếc kim: kim phút dài và kim giờ ngắn xuất phát từ tâm quay đến đúng vị trí tương ứng.",
+      "sub_types": [
+        "D2.1: Vẽ kim giờ tròn Mức 1 & Mức 2 (Trang 12, 13) - Củng cố quy tắc kim dài luôn chỉ số 12, kim ngắn chỉ số giờ yêu cầu",
+        "D2.2: Xưởng sửa kim & Thử tài đặt kim (Trang 14, 15, 16) - Thực hành vẽ kim giờ đúng độc lập, kiểm soát độ dài tương đối của kim giờ (ngắn) và kim phút (dài)",
+        "D2.3: Vẽ kim giờ rưỡi có hướng dẫn quy tắc mẫu (Trang 22) - Kim dài chỉ số 6, kim ngắn chỉ vào điểm chính giữa hai số liên tiếp",
+        "D2.4: Đại thử thách vẽ kim giờ rưỡi độc lập (Trang 23) - Tự vẽ toàn bộ 9 mặt đồng hồ giờ rưỡi không có khung trợ giúp"
+      ],
+      "sample_prompts": [
+        "Bé hãy vẽ kim dài và kim ngắn theo giờ bên dưới nhé!",
+        "Giờ tròn -> kim dài chỉ 12",
+        "Lần này đồng hồ bị mất cả hai chiếc kim rồi! Bé giúp mình sửa lại nhé!",
+        "Kim dài vẫn ở số 12 nhé! Còn kim ngắn sẽ đi đến số giờ mà đề bài yêu cầu!",
+        "Vẽ thật ngay ngắn từ tâm đồng hồ nhé! Kim dài = phút, Kim ngắn = giờ",
+        "Giờ rưỡi thì kim phút luôn chỉ số 6, còn kim giờ phải nằm giữa hai số nhé!",
+        "Bé đã biết quy tắc giờ rưỡi rồi! Giờ mình tự vẽ cả 9 chiếc nhé!"
+      ],
+      "visual_objects": [
+        "Mặt đồng hồ hình tròn với 12 mốc số rõ nét và chấm tròn tâm quay",
+        "Hộp chú giải quy tắc mẫu với hình ảnh minh họa chiếc đồng hồ hoàn chỉnh",
+        "Thẻ giờ điện tử hiển thị dạng số to rõ ràng bên dưới mỗi đồng hồ (ví dụ: '6:00', '7:30')",
+        "Huy hiệu tiến độ dưới chân trang: 'Hoàn thành giờ tròn', 'Bé đã biết giờ rưỡi', 'Bé đang chinh phục giờ rưỡi'",
+        "Biểu tượng kim bút chì chỉ hướng quay của kim giờ và kim phút"
+      ],
+      "quantities_and_ranges": "Mức giờ tròn: 1:00 đến 12:00. Mức giờ rưỡi: 1:30 đến 12:30. Mỗi trang gồm 9 mặt đồng hồ cần hoàn thành.",
+      "mascot_dialogues": {
+        "gau_logic": "Lần này đồng hồ bị mất cả hai chiếc kim rồi! / Kim dài vẫn ở số 12 nhé! / Trong xưởng có 9 chiếc đồng hồ đang thiếu kim! / Giờ rưỡi thì kim phút luôn chỉ số 6!",
+        "tho_quan_sat": "Bé hãy vẽ kim dài và kim ngắn theo giờ bên dưới nhé! / Còn kim ngắn sẽ đi đến số giờ mà đề bài yêu cầu! / Vẽ thật ngay ngắn từ tâm đồng hồ nhé! / Còn kim giờ phải nằm giữa hai số nhé!"
+      },
+      "distractor_logic": "Lỗi phổ biến của trẻ khi vẽ/xoay kim: (1) Vẽ hai kim có chiều dài bằng nhau khiến người xem không phân biệt được kim giờ hay kim phút; (2) Đảo ngược vị trí: vẽ kim ngắn chỉ 12 và kim dài chỉ số giờ; (3) Vẽ kim giờ rưỡi chỉ thẳng vào số giờ (ví dụ 6:30 vẽ kim ngắn thẳng số 6 hoặc thẳng số 7) thay vì nằm ở điểm giữa giữa hai số; (4) Vẽ kim lệch khỏi tâm quay tròn.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-016",
+          "template_name": "clock-hands (chế độ 'set' - trẻ chạm/xoay kim giờ và kim phút trên canvas tương tác tới đúng góc quay yêu cầu)"
+        }
+      ],
+      "recommended_skills": [
+        "C1.MEAS.11",
+        "C1.MEAS.12",
+        "C1.MEAS.13",
+        "C1.MEAS.15"
+      ]
+    },
+    {
+      "group_id": "WB18-D3",
+      "group_name": "Gắn kết thời gian với hoạt động & Suy luận mốc thời gian trong ngày (Daily Routine Association & Time Reasoning)",
+      "page_range": "Trang 2, 3, 4, 5, 6, 24 (Sách: Trang 1, 2, 3, 4, 5, 23)",
+      "mechanic_description": "Trẻ quan sát các bức tranh mô tả sinh hoạt thực tế của trẻ em kết hợp với đồng hồ: (1) Nối hoạt động với đồng hồ kim và nhãn giờ tương ứng; (2) So sánh 2 đồng hồ và khoanh chọn đồng hồ có mốc thời gian hợp lý cho hoạt động (ví dụ: Ăn sáng lúc 7:00 hay 12:00); (3) Quan sát đồng hồ kim và chọn 1 trong 3 bức tranh sinh hoạt phù hợp nhất với thời điểm đó (Sáng, Trưa, Chiều, Tối); (4) Điền số giờ vào câu trần thuật mô tả hoạt động ('Bé thức dậy lúc ___ giờ').",
+      "sub_types": [
+        "D3.1: Nối hoạt động thường nhật với đồng hồ kim & thẻ số giờ (Trang 2, 3, 6)",
+        "D3.2: So sánh chọn đồng hồ hợp lý cho hoạt động (Trang 4 - Sáng, Trưa hay Tối?)",
+        "D3.3: Nhìn đồng hồ kim chọn bức tranh hoạt động phù hợp (Trang 5)",
+        "D3.4: Điền giờ hoàn thành câu diễn đạt sinh hoạt trong ngày (Trang 5, 6)",
+        "D3.5: Tổng kết hành trình và liên kết toàn diện thời gian - đời sống (Trang 24)"
+      ],
+      "sample_prompts": [
+        "Nối đồng hồ với hoạt động đúng",
+        "Bé nhìn kim giờ rồi nối thật chính xác nhé!",
+        "Buổi sáng, buổi trưa và buổi tối có những hoạt động khác nhau! Bé xem đồng hồ rồi tìm hoạt động phù hợp nhé!",
+        "Khoanh đồng hồ đúng: Bé ăn sáng lúc mấy giờ?",
+        "Nối cùng thời điểm: Nối đồng hồ với tranh sinh hoạt ngoài trời hay trong nhà",
+        "Nhìn đồng hồ, chọn tranh đúng",
+        "Bé làm gì lúc mấy giờ? Điền giờ thích hợp vào chỗ trống"
+      ],
+      "visual_objects": [
+        "Tranh minh họa sinh hoạt đáng yêu: Bé vươn vai thức dậy trên giường có đồng hồ báo thức (6:00 sáng)",
+        "Bé đánh răng súc miệng bên bồn rửa mặt và cốc nước (7:00 sáng)",
+        "Bé ngồi ăn sáng với bánh mì ốp la, ly sữa tươi, quả táo đỏ (7:00 - 8:00 sáng)",
+        "Bé đeo balo đến trường học mái ngói đỏ (7:00 sáng)",
+        "Bé ngồi ăn trưa ngon lành với súp và hoa quả (11:00 - 12:00 trưa)",
+        "Bé chạy đá bóng trên sân cỏ cùng bạn bè (15:00 - 17:00 chiều)",
+        "Bé chơi lắp ráp lego đồ chơi trong phòng khách (15:00 chiều)",
+        "Bé tắm mát trong bồn tắm có bọt xà phòng và chú vịt vàng (17:00 chiều)",
+        "Bé ngồi ăn tối ấm cúng cùng gia đình (18:00 tối)",
+        "Bé ngồi bàn học đọc sách làm bài dưới đèn bàn ấm áp (19:00 - 20:00 tối)",
+        "Bé ngủ ngoan trong phòng có vầng trăng khuyết và bầu trời đầy sao (21:00 tối)",
+        "Biểu tượng thiên nhiên: Ông mặt trời cười rạng rỡ (buổi sáng/trưa), Hoàng hôn ửng hồng (buổi chiều), Vầng trăng lưỡi liềm và các vì sao lung linh (buổi tối)"
+      ],
+      "quantities_and_ranges": "Khung thời gian sinh hoạt từ 6:00 sáng đến 21:00 tối. Các hoạt động được phân bổ khoa học theo nhịp sinh học của trẻ mầm non.",
+      "mascot_dialogues": {
+        "gau_logic": "Mỗi hoạt động thường diễn ra vào một thời điểm khác nhau đấy! / Buổi sáng, buổi trưa và buổi tối có những hoạt động khác nhau! / Nhìn đồng hồ thật kỹ để biết đây là lúc mấy giờ nhé! / Giỏi quá! Bé đã giúp Tháp Đồng Hồ hoạt động trở lại rồi!",
+        "tho_quan_sat": "Bé cùng mình nhìn đồng hồ và nối với hoạt động đúng nhé! / Bé hãy chọn hoạt động phù hợp với từng đồng hồ nào! / Chúng mình đã vượt qua thêm một chặng đường nữa!"
+      },
+      "distractor_logic": "Bẫy thời gian phi thực tế so với đời sống: ví dụ ăn sáng lúc 12:00 (trưa), ăn trưa lúc 1:00 đêm, ăn tối lúc 1:00 chiều, đi ngủ ban đêm lúc 12:00 trưa, tắm lúc 8:00 sáng... Trẻ phải dùng hiểu biết xã hội và trải nghiệm bản thân để suy luận loại trừ.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-005",
+          "template_name": "pair-match (nối tranh hoạt động sinh hoạt với mặt đồng hồ kim tương ứng)"
+        },
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chạm chọn tranh sinh hoạt đúng hoặc chạm chọn đồng hồ hợp lý)"
+        },
+        {
+          "template_id": "GT-008",
+          "template_name": "drag-to-slot (kéo nhãn hoạt động thả vào mốc giờ trên dòng thời gian Timeline)"
+        }
+      ],
+      "recommended_skills": [
+        "C1.MEAS.10",
+        "C1.MEAS.12",
+        "C1.MEAS.16",
+        "C3.DED.01",
+        "C3.ORD.02"
+      ]
+    }
+  ],
+  "pages_summary": [
+    {
+      "page_number": 1,
+      "book_page": "Bìa",
+      "title": "Bìa Chặng 18: Tháp Đồng Hồ Kỳ Diệu",
+      "subtitle": "Khám phá giờ đúng – giờ rưỡi – hoạt động trong ngày",
+      "layout_type": "cover",
+      "activity_group_ref": "None",
+      "description": "Trang bìa giới thiệu chủ đề Tháp Đồng Hồ Kỳ Diệu. Hình ảnh tháp đồng hồ cổ tích tráng lệ giữa thiên nhiên tươi đẹp với mặt đồng hồ khổng lồ (8:00), các đồng hồ phụ (9:00, 4:30), biển gỗ chỉ đường 'THÁP THỜI GIAN', các hộp giờ điện tử 3:00, 6:00, 7:30. Thám tử Gấu Logic mặc áo ghi lê thám tử cầm đồng hồ quả quýt và Thỏ Quan Sát mặc váy hồng tươi tắn vẫy tay chào đón bé. Khung 'Bé sẽ khám phá' liệt kê 4 nội dung cốt lõi: Giờ đúng, Kim giờ kim phút, Hoạt động trong ngày, Giờ rưỡi.",
+      "prompts": [],
+      "mascot_dialogues": {
+        "gau_logic": "Chào mừng bé đến với Tháp Đồng Hồ Kỳ Diệu!",
+        "tho_quan_sat": "Chúng mình cùng thám hiểm và giải mã bí mật thời gian nhé!"
+      },
+      "interactive_elements": "Quan sát tổng quan bối cảnh lâu đài đồng hồ và các nhân vật."
+    },
+    {
+      "page_number": 2,
+      "book_page": "Trang 1",
+      "title": "Bé Làm Gì Lúc Mấy Giờ?",
+      "subtitle": "Làm quen đồng hồ và hoạt động thường nhật",
+      "layout_type": "split_2_sections",
+      "activity_group_ref": "WB18-D3 & WB18-D1",
+      "description": "Phần trên (Bài 1): Nối 4 hoạt động với 4 đồng hồ kim và nhãn giờ điện tử tương ứng: (1) Bé thức dậy -> 6:00; (2) Bé đánh răng -> 7:00; (3) Bé ăn sáng -> 8:00; (4) Bé đi ngủ -> 9:00. Phần dưới (Bài 2): Trắc nghiệm khoanh giờ đúng cho 4 đồng hồ kim: (1) Đồng hồ tím 7:00 -> chọn giữa 6 giờ, 7 giờ, 8 giờ; (2) Đồng hồ xanh lá 10:00 -> chọn giữa 9 giờ, 10 giờ, 11 giờ; (3) Đồng hồ cam 3:00 -> chọn giữa 2 giờ, 3 giờ, 4 giờ; (4) Đồng hồ xanh dương 5:00 -> chọn giữa 5 giờ, 6 giờ, 7 giờ.",
+      "prompts": [
+        "Bài 1: Nối đồng hồ với hoạt động đúng",
+        "Bài 2: Khoanh giờ đúng"
+      ],
+      "mascot_dialogues": {
+        "gau_logic": "Đồng hồ giúp mình biết bây giờ là lúc mấy giờ đấy!",
+        "tho_quan_sat": "Bé cùng mình nhìn đồng hồ và nối với hoạt động đúng nhé!"
+      },
+      "interactive_elements": "Nối cặp đường thẳng từ tranh sinh hoạt sang đồng hồ kim; khoanh tròn vào thẻ chữ số giờ đúng.",
+      "correct_answers": {
+        "bai_1": {
+          "be_thuc_day": "6:00",
+          "be_danh_rang": "7:00",
+          "be_an_sang": "8:00",
+          "be_di_ngu": "9:00"
+        },
+        "bai_2": {
+          "dong_ho_1": "7 giờ",
+          "dong_ho_2": "10 giờ",
+          "dong_ho_3": "3 giờ",
+          "dong_ho_4": "5 giờ"
+        }
+      }
+    },
+    {
+      "page_number": 3,
+      "book_page": "Trang 2",
+      "title": "Một Ngày Của Bé",
+      "subtitle": "Chuỗi hoạt động theo dòng thời gian và đọc giờ đúng",
+      "layout_type": "split_2_sections",
+      "activity_group_ref": "WB18-D3 & WB18-D1",
+      "description": "Phần trên (Bài 1): Nối 5 hoạt động sinh hoạt với 5 đồng hồ kim: (1) Bé đánh răng -> Đồng hồ đỏ 7:00; (2) Bé làm bài -> Đồng hồ xanh lá 8:00 / 9:00; (3) Bé chơi thể thao -> Đồng hồ cam 4:00; (4) Bé ăn trưa -> Đồng hồ xanh dương 12:00; (5) Bé tắm -> Đồng hồ tím 5:00. Phần dưới (Bài 2): Nhìn 4 đồng hồ kim và tự điền số vào chỗ trống '__ giờ': (1) Đồng hồ đỏ 3:00 -> 3 giờ; (2) Đồng hồ xanh lá 7:00 -> 7 giờ; (3) Đồng hồ cam 5:00 -> 5 giờ; (4) Đồng hồ xanh dương 4:00 -> 4 giờ.",
+      "prompts": [
+        "Bài 1: Nối hoạt động với đồng hồ đúng",
+        "Bài 2: Mấy giờ rồi?"
+      ],
+      "mascot_dialogues": {
+        "gau_logic": "Mỗi hoạt động thường diễn ra vào một thời điểm khác nhau đấy!",
+        "tho_quan_sat": "Bé nhìn kim giờ rồi nối thật chính xác nhé!"
+      },
+      "interactive_elements": "Nối điểm chấm giữa tranh hoạt động và đồng hồ kim; viết chữ số vào chỗ trống trước chữ 'giờ'.",
+      "correct_answers": {
+        "bai_1": {
+          "danh_rang": "7:00",
+          "lam_bai": "9:00 (hoặc 8:00)",
+          "choi_the_thao": "4:00",
+          "an_trua": "12:00",
+          "tam": "5:00"
+        },
+        "bai_2": [3, 7, 5, 4]
+      }
+    },
+    {
+      "page_number": 4,
+      "book_page": "Trang 3",
+      "title": "Sáng, Trưa Hay Tối?",
+      "subtitle": "Phân biệt các buổi trong ngày và lựa chọn mốc thời gian",
+      "layout_type": "split_2_sections",
+      "activity_group_ref": "WB18-D3",
+      "description": "Phần trên (Bài 1): Khoanh đồng hồ đúng phù hợp với thời điểm của từng hoạt động: (1) Bé ăn sáng -> chọn giữa 7:00 (sáng) và 12:00 (trưa); (2) Bé ăn trưa -> chọn giữa 11:00 (trưa) và 1:00 (đêm); (3) Bé ăn tối -> chọn giữa 6:00 (tối) và 1:00 (trưa); (4) Bé chơi với bạn -> chọn giữa 3:00 (chiều) và 12:00 (đêm); (5) Bé tập bóng -> chọn giữa 4:00 (chiều) và 8:00 (sáng/tối). Phần dưới (Bài 2): Nối cùng thời điểm: Nối 3 đồng hồ kim với 3 bức tranh cảnh vật sinh hoạt: (1) Đồng hồ 5:00 chiều -> tranh Bé đá bóng hoàng hôn; (2) Đồng hồ 7:00 sáng -> tranh Bé ăn sáng đón ngày mới; (3) Đồng hồ 9:00 tối -> tranh Bé ngủ ngon dưới vầng trăng khuyết.",
+      "prompts": ["Bài 1: Khoanh đồng hồ đúng", "Bài 2: Nối cùng thời điểm"],
+      "mascot_dialogues": {
+        "gau_logic": "Buổi sáng, buổi trưa và buổi tối có những hoạt động khác nhau!",
+        "tho_quan_sat": "Bé xem đồng hồ rồi tìm hoạt động phù hợp nhé!"
+      },
+      "interactive_elements": "Khoanh tròn 1 trong 2 đồng hồ đối sánh; nối điểm chấm giữa đồng hồ và tranh sinh hoạt theo buổi.",
+      "correct_answers": {
+        "bai_1": {
+          "an_sang": "7:00",
+          "an_trua": "11:00",
+          "an_toi": "6:00",
+          "choi_voi_ban": "3:00",
+          "tap_bong": "4:00"
+        },
+        "bai_2": {
+          "5_gio": "Bé tập bóng ngoài trời",
+          "7_gio": "Bé ăn sáng",
+          "9_gio": "Bé đi ngủ ban đêm"
+        }
+      }
+    },
+    {
+      "page_number": 5,
+      "book_page": "Trang 4",
+      "title": "Bé Làm Gì Lúc Mấy Giờ?",
+      "subtitle": "Đọc đồng hồ chọn tranh hoạt động và điền câu hoàn chỉnh",
+      "layout_type": "split_2_sections",
+      "activity_group_ref": "WB18-D3 & WB18-D1",
+      "description": "Phần trên (Bài 1): Nhìn đồng hồ kim, chọn tranh đúng trong 3 phương án sinh hoạt: (1) Đồng hồ 5:00 chiều -> chọn Tắm (bẫy: Chơi với bạn, Xem TV); (2) Đồng hồ 8:00 tối -> chọn Làm bài (bẫy: Tắm, Chơi với bạn); (3) Đồng hồ 3:00 chiều -> chọn Chơi/Xem TV; (4) Đồng hồ 6:00 tối -> chọn Ăn tối (bẫy: Tắm, Xem TV); (5) Đồng hồ 4:00 chiều -> chọn Tập bóng (bẫy: Chơi với bạn, Làm bài). Phần dưới (Bài 2): Điền giờ vào câu mô tả: (1) Bé thức dậy lúc 6 giờ; (2) Bé ăn trưa lúc 12 giờ; (3) Bé làm bài lúc 8 giờ; (4) Bé đi ngủ lúc 9 giờ.",
+      "prompts": ["Bài 1: Nhìn đồng hồ, chọn tranh đúng", "Bài 2: Điền giờ"],
+      "mascot_dialogues": {
+        "gau_logic": "Nhìn đồng hồ thật kỹ để biết đây là lúc mấy giờ nhé!",
+        "tho_quan_sat": "Bé hãy chọn hoạt động phù hợp với từng đồng hồ nào!"
+      },
+      "interactive_elements": "Tích/khoanh vào ô tròn dưới tranh hoạt động đúng; điền số giờ vào chỗ trống hoàn thiện câu.",
+      "correct_answers": {
+        "bai_1": {
+          "dong_ho_1_5h": "Tắm",
+          "dong_ho_2_8h": "Làm bài",
+          "dong_ho_3_3h": "Xem TV / Chơi",
+          "dong_ho_4_6h": "Ăn tối",
+          "dong_ho_5_4h": "Tập bóng"
+        },
+        "bai_2": {
+          "cau_1": 6,
+          "cau_2": 12,
+          "cau_3": 8,
+          "cau_4": 9
+        }
+      }
+    },
+    {
+      "page_number": 6,
+      "book_page": "Trang 5",
+      "title": "Trạm Thời Gian Đầu Tiên",
+      "subtitle": "3 thử thách mở cánh cửa thứ nhất của Tháp Đồng Hồ",
+      "layout_type": "three_challenges_stacked",
+      "activity_group_ref": "WB18-D1 & WB18-D3",
+      "description": "Thử thách 1 (Nối đúng): Nối 3 hoạt động sinh hoạt với đồng hồ kim và nhãn giờ: (1) Đi học -> đồng hồ đỏ 7:00 -> thẻ '7 giờ'; (2) Ăn sáng -> đồng hồ xanh 8:00 -> thẻ '8 giờ'; (3) Đi ngủ -> đồng hồ tím 9:00 -> thẻ '9 giờ'. Thử thách 2 (Khoanh giờ đúng): Trắc nghiệm 3 đồng hồ kim: (1) Đồng hồ đỏ 7:00 -> chọn 7 giờ; (2) Đồng hồ xanh lá 9:00 -> chọn 9 giờ; (3) Đồng hồ xanh dương 11:00 -> chọn 11 giờ. Thử thách 3 (Điền giờ): Nhìn 3 đồng hồ kim và điền số vào ô '__ giờ': (1) Đồng hồ đỏ 5:00 -> 5 giờ; (2) Đồng hồ xanh lá 4:00 -> 4 giờ; (3) Đồng hồ xanh dương 12:00 -> 12 giờ.",
+      "prompts": [
+        "Thử thách 1: Nối đúng - Nối hoạt động với đồng hồ chỉ đúng thời gian",
+        "Thử thách 2: Khoanh giờ đúng - Khoanh vào giờ đúng với mỗi đồng hồ",
+        "Thử thách 3: Điền giờ - Nhìn đồng hồ và điền giờ thích hợp vào chỗ trống"
+      ],
+      "mascot_dialogues": {
+        "gau_logic": "Chúng ta sắp đến cánh cửa đầu tiên của Tháp Đồng Hồ rồi!",
+        "tho_quan_sat": "Bé hoàn thành 3 thử thách để mở cửa nhé!"
+      },
+      "interactive_elements": "Nối 3 bên (tranh - đồng hồ - thẻ giờ); khoanh tròn đáp án trắc nghiệm; điền số giờ vào ô trống.",
+      "correct_answers": {
+        "thu_thach_1": {
+          "di_hoc": "7 giờ",
+          "an_sang": "8 giờ",
+          "di_ngu": "9 giờ"
+        },
+        "thu_thach_2": ["7 giờ", "9 giờ", "11 giờ"],
+        "thu_thach_3": [5, 4, 12]
+      }
+    },
+    {
+      "page_number": 7,
+      "book_page": "Trang 6",
+      "title": "Mấy Giờ Rồi? – Thử Thách 1",
+      "subtitle": "Luyện đọc giờ đúng qua 9 đồng hồ kim sắc màu",
+      "layout_type": "grid_3x3",
+      "activity_group_ref": "WB18-D1",
+      "description": "Bé bước qua cánh cửa đầu tiên và luyện đọc 9 mặt đồng hồ tròn với viền màu rực rỡ, kim ngắn màu đỏ chỉ số giờ, kim dài màu xanh chỉ số 12. Trẻ điền số vào dòng '__ giờ': (1) Đồng hồ hồng 3:00 -> 3 giờ; (2) Đồng hồ xanh lá 4:00 -> 4 giờ; (3) Đồng hồ cam 6:00 -> 6 giờ; (4) Đồng hồ tím 9:00 -> 9 giờ; (5) Đồng hồ xanh lam 8:00 -> 8 giờ; (6) Đồng hồ đỏ mận 10:00 -> 10 giờ; (7) Đồng hồ vàng 1:00 -> 1 giờ; (8) Đồng hồ xanh mint 5:00 -> 5 giờ; (9) Đồng hồ xanh dương 8:00 (hoặc 7:00) -> 8 giờ.",
+      "prompts": [
+        "Kim dài chỉ số 12, bé nhìn xem kim ngắn đang chỉ số mấy nào!"
+      ],
+      "mascot_dialogues": {
+        "gau_logic": "Cánh cửa đầu tiên đã mở rồi! Giờ mình thử tự đọc đồng hồ nhé!",
+        "tho_quan_sat": "Kim dài chỉ số 12, bé nhìn xem kim ngắn đang chỉ số mấy nào!"
+      },
+      "interactive_elements": "Ghi số giờ vào chỗ trống bên dưới mỗi đồng hồ trong lưới 3x3.",
+      "correct_answers": [3, 4, 6, 9, 8, 10, 1, 5, 8]
+    },
+    {
+      "page_number": 8,
+      "book_page": "Trang 7",
+      "title": "Mấy Giờ Rồi? – Thử Thách 2",
+      "subtitle": "Nhận diện kim ngắn và các vị trí đối xứng trên mặt số",
+      "layout_type": "grid_3x3",
+      "activity_group_ref": "WB18-D1",
+      "description": "Tiếp tục thử thách với 9 đồng hồ kim giờ đúng, xuất hiện các trường hợp đặc biệt: 12:00 (cả hai kim trùng nhau hướng lên đỉnh), 6:00 (hai kim đối đỉnh tạo thành đường thẳng đứng). Danh sách 9 đồng hồ: (1) 12 giờ; (2) 6 giờ; (3) 1 giờ; (4) 4 giờ; (5) 9 giờ; (6) 11 giờ; (7) 8 giờ; (8) 2 giờ; (9) 7 giờ.",
+      "prompts": ["Nhớ nhìn kim ngắn trước khi viết đáp án nhé!"],
+      "mascot_dialogues": {
+        "gau_logic": "Bé đọc được một bảng rồi đấy!",
+        "tho_quan_sat": "Nhớ nhìn kim ngắn trước khi viết đáp án nhé!"
+      },
+      "interactive_elements": "Viết số giờ vào chỗ trống '__ giờ'.",
+      "correct_answers": [12, 6, 1, 4, 9, 11, 8, 2, 7]
+    },
+    {
+      "page_number": 9,
+      "book_page": "Trang 8",
+      "title": "Mắt Tinh Xem Giờ",
+      "subtitle": "Rèn luyện tốc độ đọc giờ và quan sát nhanh",
+      "layout_type": "grid_3x3",
+      "activity_group_ref": "WB18-D1",
+      "description": "Các đồng hồ đổi giờ liên tục trong tháp. Trẻ quan sát nhanh vị trí kim ngắn để điền kết quả cho 9 đồng hồ: (1) 4 giờ; (2) 2 giờ; (3) 8 giờ; (4) 7 giờ; (5) 10 giờ; (6) 11 giờ; (7) 9 giờ; (8) 6 giờ; (9) 3 giờ. Chân trang có huy hiệu ngôi sao số 8 sáng lấp lánh.",
+      "prompts": [
+        "Những chiếc đồng hồ đang đổi giờ liên tục! Bé hãy đọc thật chính xác để làm chúng sáng lên nhé!"
+      ],
+      "mascot_dialogues": {
+        "gau_logic": "Những chiếc đồng hồ đang đổi giờ liên tục!",
+        "tho_quan_sat": "Bé hãy đọc thật chính xác để làm chúng sáng lên nhé!"
+      },
+      "interactive_elements": "Điền số giờ vào chỗ trống bên dưới 9 đồng hồ.",
+      "correct_answers": [4, 2, 8, 7, 10, 11, 9, 6, 3]
+    },
+    {
+      "page_number": 10,
+      "book_page": "Trang 9",
+      "title": "Giải Mã Những Chiếc Đồng Hồ",
+      "subtitle": "Mỗi đáp án đúng mở một chiếc khóa thời gian",
+      "layout_type": "grid_3x3",
+      "activity_group_ref": "WB18-D1",
+      "description": "Bé giải mã 9 chiếc đồng hồ để thu thập 9 chiếc chìa khóa mở đường đi tiếp lên tầng tháp cao hơn: (1) 11 giờ; (2) 6 giờ; (3) 3 giờ; (4) 1 giờ; (5) 12 giờ; (6) 2 giờ; (7) 10 giờ; (8) 9 giờ; (9) 5 giờ. Các gam màu mặt đồng hồ đa dạng kích thích thị giác.",
+      "prompts": [
+        "Muốn đi tiếp, mình phải đọc đúng cả 9 chiếc đồng hồ! Mỗi đáp án đúng sẽ mở một chiếc khóa nhé!"
+      ],
+      "mascot_dialogues": {
+        "gau_logic": "Muốn đi tiếp, mình phải đọc đúng cả 9 chiếc đồng hồ!",
+        "tho_quan_sat": "Mỗi đáp án đúng sẽ mở một chiếc khóa nhé!"
+      },
+      "interactive_elements": "Ghi số giờ vào chỗ trống bên dưới mỗi đồng hồ.",
+      "correct_answers": [11, 6, 3, 1, 12, 2, 10, 9, 5]
+    },
+    {
+      "page_number": 11,
+      "book_page": "Trang 10",
+      "title": "Cánh Cửa Giờ Tròn",
+      "subtitle": "Thử thách chốt chặn phòng đọc giờ tròn",
+      "layout_type": "grid_3x3",
+      "activity_group_ref": "WB18-D1",
+      "description": "Thử thách cuối cùng của phòng đọc giờ tròn với 9 chiếc đồng hồ xáo trộn: (1) 9 giờ; (2) 11 giờ; (3) 7 giờ; (4) 4 giờ; (5) 2 giờ; (6) 6 giờ; (7) 5 giờ; (8) 1 giờ; (9) 3 giờ. Hoàn thành chính xác 9/9 đồng hồ, thanh cơ quan phát sáng '9/9 đồng hồ -> CỬA MỞ!' để bé tiến vào phòng tự vẽ kim.",
+      "prompts": [
+        "Đây là thử thách cuối của phòng đọc giờ! Bé hoàn thành đủ 9 đồng hồ để mở cánh cửa tiếp theo nhé!"
+      ],
+      "mascot_dialogues": {
+        "gau_logic": "Đây là thử thách cuối của phòng đọc giờ!",
+        "tho_quan_sat": "Bé hoàn thành đủ 9 đồng hồ để mở cánh cửa tiếp theo nhé!"
+      },
+      "interactive_elements": "Điền số giờ vào 9 ô trống; mở khóa biểu tượng cánh cửa cơ quan tháp.",
+      "correct_answers": [9, 11, 7, 4, 2, 6, 5, 1, 3]
+    },
+    {
+      "page_number": 12,
+      "book_page": "Trang 11",
+      "title": "Bé Tự Vẽ Kim – Mức 1",
+      "subtitle": "Chuyển từ giờ điện tử sang tự vẽ kim giờ và kim phút",
+      "layout_type": "grid_3x3",
+      "activity_group_ref": "WB18-D2",
+      "description": "Bước chuyển quan trọng từ thụ động (đọc giờ) sang chủ động (vẽ kim). Mặt đồng hồ chỉ có số 1..12 và chấm tâm. Trên đầu có hộp ghi nhớ quy tắc: 'Giờ tròn -> kim dài chỉ 12' kèm đồng hồ mẫu. Đề bài cho giờ điện tử bên dưới, trẻ vẽ kim ngắn chỉ số giờ và kim dài chỉ số 12: (1) 6:00; (2) 12:00; (3) 10:00; (4) 3:00; (5) 1:00; (6) 9:00; (7) 8:00; (8) 2:00; (9) 5:00.",
+      "prompts": [
+        "Bé hãy vẽ kim dài và kim ngắn theo giờ bên dưới nhé!",
+        "Giờ tròn -> kim dài chỉ 12"
+      ],
+      "mascot_dialogues": {
+        "gau_logic": "Lần này đồng hồ bị mất cả hai chiếc kim rồi!",
+        "tho_quan_sat": "Bé hãy vẽ kim dài và kim ngắn theo giờ bên dưới nhé!"
+      },
+      "interactive_elements": "Vẽ 2 đoạn thẳng xuất phát từ tâm: đoạn ngắn hướng đến số giờ, đoạn dài hướng thẳng lên số 12.",
+      "correct_answers": {
+        "dong_ho_1_6h": "Kim dài chỉ 12, kim ngắn chỉ 6",
+        "dong_ho_2_12h": "Cả kim dài và kim ngắn cùng chỉ 12",
+        "dong_ho_3_10h": "Kim dài chỉ 12, kim ngắn chỉ 10",
+        "dong_ho_4_3h": "Kim dài chỉ 12, kim ngắn chỉ 3",
+        "dong_ho_5_1h": "Kim dài chỉ 12, kim ngắn chỉ 1",
+        "dong_ho_6_9h": "Kim dài chỉ 12, kim ngắn chỉ 9",
+        "dong_ho_7_8h": "Kim dài chỉ 12, kim ngắn chỉ 8",
+        "dong_ho_8_2h": "Kim dài chỉ 12, kim ngắn chỉ 2",
+        "dong_ho_9_5h": "Kim dài chỉ 12, kim ngắn chỉ 5"
+      }
+    },
+    {
+      "page_number": 13,
+      "book_page": "Trang 12",
+      "title": "Bé Tự Vẽ Kim – Mức 2",
+      "subtitle": "Thực hành nâng cao kỹ năng định vị kim giờ trên mặt tròn",
+      "layout_type": "grid_3x3",
+      "activity_group_ref": "WB18-D2",
+      "description": "Luyện tập vẽ kim giờ tròn cấp độ 2 với các mốc giờ phân tán đều các góc mặt đồng hồ: (1) 9:00; (2) 5:00; (3) 10:00; (4) 4:00; (5) 12:00; (6) 3:00; (7) 2:00; (8) 7:00; (9) 8:00. Vẫn có hộp mẫu nhắc nhớ 'Giờ tròn -> kim dài chỉ 12'.",
+      "prompts": [
+        "Kim dài vẫn ở số 12 nhé! Còn kim ngắn sẽ đi đến số giờ mà đề bài yêu cầu!"
+      ],
+      "mascot_dialogues": {
+        "gau_logic": "Kim dài vẫn ở số 12 nhé!",
+        "tho_quan_sat": "Còn kim ngắn sẽ đi đến số giờ mà đề bài yêu cầu!"
+      },
+      "interactive_elements": "Vẽ kim ngắn và kim dài trên 9 mặt đồng hồ trống.",
+      "correct_answers": {
+        "dong_ho_1": "9:00 (kim ngắn 9, dài 12)",
+        "dong_ho_2": "5:00 (kim ngắn 5, dài 12)",
+        "dong_ho_3": "10:00 (kim ngắn 10, dài 12)",
+        "dong_ho_4": "4:00 (kim ngắn 4, dài 12)",
+        "dong_ho_5": "12:00 (cả 2 kim chỉ 12)",
+        "dong_ho_6": "3:00 (kim ngắn 3, dài 12)",
+        "dong_ho_7": "2:00 (kim ngắn 2, dài 12)",
+        "dong_ho_8": "7:00 (kim ngắn 7, dài 12)",
+        "dong_ho_9": "8:00 (kim ngắn 8, dài 12)"
+      }
+    },
+    {
+      "page_number": 14,
+      "book_page": "Trang 13",
+      "title": "Xưởng Sửa Kim Đồng Hồ",
+      "subtitle": "Bé đóng vai thợ sửa đồng hồ tài ba",
+      "layout_type": "grid_3x3",
+      "activity_group_ref": "WB18-D2",
+      "description": "Tại xưởng cơ khí tháp đồng hồ, có 9 chiếc đồng hồ cần được lắp lại kim hoàn chỉnh: (1) 9:00; (2) 6:00; (3) 4:00; (4) 3:00; (5) 10:00; (6) 11:00; (7) 5:00; (8) 8:00; (9) 1:00. Không còn hộp hỗ trợ mẫu, rèn luyện tính độc lập tự chủ.",
+      "prompts": [
+        "Trong xưởng có 9 chiếc đồng hồ đang thiếu kim! Bé giúp mình sửa chúng lại nhé!"
+      ],
+      "mascot_dialogues": {
+        "gau_logic": "Trong xưởng có 9 chiếc đồng hồ đang thiếu kim!",
+        "tho_quan_sat": "Bé giúp mình sửa chúng lại nhé!"
+      },
+      "interactive_elements": "Vẽ kim ngắn và kim dài cho 9 đồng hồ thiếu kim.",
+      "correct_answers": {
+        "dong_ho_1": "9:00",
+        "dong_ho_2": "6:00",
+        "dong_ho_3": "4:00",
+        "dong_ho_4": "3:00",
+        "dong_ho_5": "10:00",
+        "dong_ho_6": "11:00",
+        "dong_ho_7": "5:00",
+        "dong_ho_8": "8:00",
+        "dong_ho_9": "1:00"
+      }
+    },
+    {
+      "page_number": 15,
+      "book_page": "Trang 14",
+      "title": "Thử Tài Đặt Kim",
+      "subtitle": "Kiểm soát độ dài và sự ngay ngắn từ tâm quay",
+      "layout_type": "grid_3x3",
+      "activity_group_ref": "WB18-D2",
+      "description": "Góc phải trên nhấn mạnh nguyên tắc vàng: 'Kim dài = phút, Kim ngắn = giờ'. Lời nhắc Thỏ Quan Sát: 'Vẽ thật ngay ngắn từ tâm đồng hồ nhé!'. 9 đồng hồ thử tài: (1) 5:00; (2) 11:00; (3) 6:00; (4) 2:00; (5) 3:00; (6) 9:00; (7) 7:00; (8) 1:00; (9) 10:00.",
+      "prompts": [
+        "Vẽ thật ngay ngắn từ tâm đồng hồ nhé!",
+        "Kim dài = phút, Kim ngắn = giờ"
+      ],
+      "mascot_dialogues": {
+        "gau_logic": "Bây giờ bé đã biết vị trí của cả hai chiếc kim rồi!",
+        "tho_quan_sat": "Vẽ thật ngay ngắn từ tâm đồng hồ nhé!"
+      },
+      "interactive_elements": "Vẽ chính xác kim ngắn (khoảng 60% bán kính) và kim dài (khoảng 85% bán kính).",
+      "correct_answers": {
+        "dong_ho_1": "5:00",
+        "dong_ho_2": "11:00",
+        "dong_ho_3": "6:00",
+        "dong_ho_4": "2:00",
+        "dong_ho_5": "3:00",
+        "dong_ho_6": "9:00",
+        "dong_ho_7": "7:00",
+        "dong_ho_8": "1:00",
+        "dong_ho_9": "10:00"
+      }
+    },
+    {
+      "page_number": 16,
+      "book_page": "Trang 15",
+      "title": "Đại Thử Thách Vẽ Kim Giờ Tròn",
+      "subtitle": "Chinh phục hoàn toàn kỹ năng vẽ kim giờ đúng và nhận huy hiệu",
+      "layout_type": "grid_3x3",
+      "activity_group_ref": "WB18-D2",
+      "description": "Đại thử thách chốt chặn phòng sửa kim với 9 mốc giờ: (1) 8:00; (2) 3:00; (3) 2:00; (4) 11:00; (5) 10:00; (6) 7:00; (7) 1:00; (8) 9:00; (9) 6:00. Chân trang trao huy hiệu rực rỡ 'HOÀN THÀNH GIỜ TRÒN', chuẩn bị bước lên tầng tháp giờ rưỡi.",
+      "prompts": ["Hoàn thành xong, Tháp Đồng Hồ sẽ chạy thêm một tầng nữa!"],
+      "mascot_dialogues": {
+        "gau_logic": "Đây là 9 chiếc đồng hồ cuối của phòng sửa kim!",
+        "tho_quan_sat": "Hoàn thành xong, Tháp Đồng Hồ sẽ chạy thêm một tầng nữa!"
+      },
+      "interactive_elements": "Vẽ 2 kim cho 9 đồng hồ; mở khóa huy hiệu Hoàn thành giờ tròn.",
+      "correct_answers": {
+        "dong_ho_1": "8:00",
+        "dong_ho_2": "3:00",
+        "dong_ho_3": "2:00",
+        "dong_ho_4": "11:00",
+        "dong_ho_5": "10:00",
+        "dong_ho_6": "7:00",
+        "dong_ho_7": "1:00",
+        "dong_ho_8": "9:00",
+        "dong_ho_9": "6:00"
+      }
+    },
+    {
+      "page_number": 17,
+      "book_page": "Trang 16",
+      "title": "Bước Vào Giờ Rưỡi",
+      "subtitle": "Khám phá quy tắc nửa giờ và điền giờ điện tử",
+      "layout_type": "grid_3x3",
+      "activity_group_ref": "WB18-D1",
+      "description": "Giới thiệu khái niệm mới 'Giờ rưỡi' (Half-past / :30). Hộp quy tắc: '7:30 = 7 giờ rưỡi'. Lời giảng Gấu Logic: 'Khi kim phút chỉ số 6, mình đã đi qua nửa giờ rồi!'. Thỏ Quan Sát: 'Lúc đó kim giờ sẽ nằm giữa hai số đấy nhé!'. Trẻ quan sát 9 đồng hồ và điền vào ô điện tử '__:__': (1) Kim dài 6, kim ngắn giữa 9 và 10 -> 9:30; (2) Kim dài 6, kim ngắn giữa 5 và 6 -> 5:30; (3) Kim dài 6, kim ngắn giữa 11 và 12 -> 11:30; (4) Kim dài 6, kim ngắn giữa 2 và 3 -> 2:30; (5) Bẫy giờ tròn: Kim dài 12, kim ngắn 7 -> 7:00; (6) Kim dài 6, kim ngắn giữa 1 và 2 -> 1:30; (7) Bẫy giờ tròn: Kim dài 12, kim ngắn 8 -> 8:00; (8) Kim dài 6, kim ngắn giữa 12 và 1 -> 12:30; (9) Kim dài 6, kim ngắn giữa 12 và 1 -> 12:30.",
+      "prompts": [
+        "7:30 = 7 giờ rưỡi",
+        "Khi kim phút chỉ số 6, mình đã đi qua nửa giờ rồi! Lúc đó kim giờ sẽ nằm giữa hai số đấy nhé!"
+      ],
+      "mascot_dialogues": {
+        "gau_logic": "Khi kim phút chỉ số 6, mình đã đi qua nửa giờ rồi!",
+        "tho_quan_sat": "Lúc đó kim giờ sẽ nằm giữa hai số đấy nhé!"
+      },
+      "interactive_elements": "Điền cặp số giờ và phút vào ô dạng '__:__'.",
+      "correct_answers": [
+        "9:30",
+        "5:30",
+        "11:30",
+        "2:30",
+        "7:00",
+        "1:30",
+        "8:00",
+        "12:30",
+        "12:30"
+      ]
+    },
+    {
+      "page_number": 18,
+      "book_page": "Trang 17",
+      "title": "Giờ Tròn Hay Giờ Rưỡi?",
+      "subtitle": "So sánh đối chiếu vị trí kim phút số 12 và số 6",
+      "layout_type": "grid_3x3",
+      "activity_group_ref": "WB18-D1",
+      "description": "Chiến lược tư duy phân loại: Nhìn kim phút trước (số 12 hay số 6) để xác định kiểu giờ, sau đó mới quan sát kim giờ để đọc giá trị. Danh sách 9 đồng hồ xen kẽ: (1) Kim phút chỉ 6, kim giờ giữa 1 và 2 -> 1:30; (2) Kim phút chỉ 12, kim giờ 9 -> 9:00; (3) Kim phút chỉ 6, kim giờ giữa 7 và 8 -> 7:30; (4) Kim phút chỉ 6, kim giờ giữa 10 và 11 -> 10:30; (5) Kim phút chỉ 12, kim giờ 11 -> 11:00; (6) Kim phút chỉ 6, kim giờ giữa 5 và 6 -> 5:30; (7) Kim phút chỉ 6, kim giờ giữa 7 và 8 -> 7:30; (8) Kim phút chỉ 6, kim giờ giữa 3 và 4 -> 3:30; (9) Kim phút chỉ 12, kim giờ 4 -> 4:00. Huy hiệu 'BÉ ĐANG GIẢI MÃ THỜI GIAN'.",
+      "prompts": ["Bé nhìn kim phút trước nhé: số 12 hay số 6?"],
+      "mascot_dialogues": {
+        "gau_logic": "Có chiếc là giờ tròn, có chiếc lại là giờ rưỡi đấy!",
+        "tho_quan_sat": "Bé nhìn kim phút trước nhé: số 12 hay số 6?"
+      },
+      "interactive_elements": "Điền kết quả dạng điện tử '__:__' cho 9 đồng hồ phân loại.",
+      "correct_answers": [
+        "1:30",
+        "9:00",
+        "7:30",
+        "10:30",
+        "11:00",
+        "5:30",
+        "7:30",
+        "3:30",
+        "4:00"
+      ]
+    },
+    {
+      "page_number": 19,
+      "book_page": "Trang 18",
+      "title": "Thám Tử Thời Gian",
+      "subtitle": "Giải mã đồng hồ xáo trộn và thắp sáng các bánh răng",
+      "layout_type": "grid_3x3",
+      "activity_group_ref": "WB18-D1",
+      "description": "Các đồng hồ trong tầng tháp bị xáo trộn. Cạnh mỗi ô điền '__:__' có một ngôi sao vàng ⭐ tượng trưng cho nguồn năng lượng kích hoạt bánh răng: (1) 6:00; (2) 12:00; (3) 4:30; (4) 7:30; (5) 4:00; (6) 10:00; (7) 8:00; (8) 2:00; (9) 11:30. Chân trang: 'BÉ LÀM SÁNG NHỮNG BÁNH RĂNG'.",
+      "prompts": ["Bé giải đúng từng chiếc để tìm đường đi tiếp nhé!"],
+      "mascot_dialogues": {
+        "gau_logic": "Những chiếc đồng hồ trong tầng này đang bị xáo trộn!",
+        "tho_quan_sat": "Bé giải đúng từng chiếc để tìm đường đi tiếp nhé!"
+      },
+      "interactive_elements": "Ghi giờ điện tử vào ô '__:__'; nhận sao vàng thưởng.",
+      "correct_answers": [
+        "6:00",
+        "12:00",
+        "4:30",
+        "7:30",
+        "4:00",
+        "10:00",
+        "8:00",
+        "2:00",
+        "11:30"
+      ]
+    },
+    {
+      "page_number": 20,
+      "book_page": "Trang 19",
+      "title": "Phòng Đồng Hồ Bí Mật",
+      "subtitle": "Khởi động hệ thống bánh răng cơ quan tháp đồng hồ",
+      "layout_type": "grid_3x3",
+      "activity_group_ref": "WB18-D1",
+      "description": "Mỗi đáp án đúng sẽ truyền động lực làm bánh răng khổng lồ quay. Lời nhắc Thỏ Quan Sát: 'Bé nhớ: kim dài ở 6 nghĩa là 30 phút nhé!'. Danh sách 9 đồng hồ: (1) 11:00; (2) 4:00; (3) 10:30; (4) 7:30; (5) 12:00; (6) 3:30; (7) 5:00; (8) 7:00; (9) 8:30. Chân trang: 'BÁNH RĂNG ĐANG QUAY!'.",
+      "prompts": ["Bé nhớ: kim dài ở 6 nghĩa là 30 phút nhé!"],
+      "mascot_dialogues": {
+        "gau_logic": "Mỗi đồng hồ đúng sẽ làm một bánh răng quay!",
+        "tho_quan_sat": "Bé nhớ: kim dài ở 6 nghĩa là 30 phút nhé!"
+      },
+      "interactive_elements": "Điền kết quả dạng '__:__' vào 9 ô trống.",
+      "correct_answers": [
+        "11:00",
+        "4:00",
+        "10:30",
+        "7:30",
+        "12:00",
+        "3:30",
+        "5:00",
+        "7:00",
+        "8:30"
+      ]
+    },
+    {
+      "page_number": 21,
+      "book_page": "Trang 20",
+      "title": "Cánh Cửa Giờ Rưỡi",
+      "subtitle": "Chinh phục 9 đồng hồ cuối cùng mở cánh cửa phòng vẽ kim giờ rưỡi",
+      "layout_type": "grid_3x3",
+      "activity_group_ref": "WB18-D1",
+      "description": "Thử thách chốt chặn của toàn bộ chuỗi đọc giờ. Bé hoàn thành đúng cả 9 chiếc đồng hồ: (1) 12:00; (2) 4:30; (3) 3:30; (4) 9:30; (5) 9:00; (6) 5:30; (7) 6:30; (8) 11:30; (9) 7:00. Cánh cửa gỗ viền vàng bật mở kèm biểu ngữ: '9/9 đồng hồ -> CỬA MỞ! BÉ SẮP VÀO PHÒNG VẼ KIM'.",
+      "prompts": [
+        "Đọc đúng hết để mở cánh cửa phòng vẽ kim nhé!",
+        "9/9 đồng hồ -> CỬA MỞ! BÉ SẮP VÀO PHÒNG VẼ KIM"
+      ],
+      "mascot_dialogues": {
+        "gau_logic": "Đây là 9 đồng hồ cuối của phòng đọc giờ!",
+        "tho_quan_sat": "Đọc đúng hết để mở cánh cửa phòng vẽ kim nhé!"
+      },
+      "interactive_elements": "Điền giờ điện tử vào 9 ô trống; mở cánh cửa cơ quan dẫn sang phòng vẽ kim.",
+      "correct_answers": [
+        "12:00",
+        "4:30",
+        "3:30",
+        "9:30",
+        "9:00",
+        "5:30",
+        "6:30",
+        "11:30",
+        "7:00"
+      ]
+    },
+    {
+      "page_number": 22,
+      "book_page": "Trang 21",
+      "title": "Bé Tự Vẽ Kim Giờ Rưỡi",
+      "subtitle": "Học cách vẽ kim phút số 6 và kim giờ ở điểm giữa hai số",
+      "layout_type": "grid_3x3",
+      "activity_group_ref": "WB18-D2",
+      "description": "Thử thách vẽ kim giờ rưỡi có khung hướng dẫn mẫu: '6:30 - Kim phút chỉ số 6, Kim giờ ở giữa 6 và 7'. Lời dặn Gấu Logic: 'Giờ rưỡi thì kim phút luôn chỉ số 6!'. Thỏ Quan Sát: 'Còn kim giờ phải nằm giữa hai số nhé!'. Bé tự vẽ kim cho 9 đồng hồ theo giờ điện tử: (1) 6:30; (2) 7:30; (3) 10:30; (4) 1:30; (5) 2:30; (6) 4:30; (7) 12:30; (8) 9:30; (9) 3:30. Huy hiệu 'BÉ ĐÃ BIẾT GIỜ RƯỠI'.",
+      "prompts": [
+        "6:30 -> Kim phút chỉ số 6, Kim giờ ở giữa 6 và 7",
+        "Giờ rưỡi thì kim phút luôn chỉ số 6! Còn kim giờ phải nằm giữa hai số nhé!"
+      ],
+      "mascot_dialogues": {
+        "gau_logic": "Giờ rưỡi thì kim phút luôn chỉ số 6!",
+        "tho_quan_sat": "Còn kim giờ phải nằm giữa hai số nhé!"
+      },
+      "interactive_elements": "Vẽ kim phút dài hướng xuống số 6; vẽ kim ngắn hướng vào điểm chính giữa khoảng cách giữa hai con số.",
+      "correct_answers": {
+        "dong_ho_1_6h30": "Kim phút chỉ 6, kim giờ giữa 6 và 7",
+        "dong_ho_2_7h30": "Kim phút chỉ 6, kim giờ giữa 7 và 8",
+        "dong_ho_3_10h30": "Kim phút chỉ 6, kim giờ giữa 10 và 11",
+        "dong_ho_4_1h30": "Kim phút chỉ 6, kim giờ giữa 1 và 2",
+        "dong_ho_5_2h30": "Kim phút chỉ 6, kim giờ giữa 2 và 3",
+        "dong_ho_6_4h30": "Kim phút chỉ 6, kim giờ giữa 4 và 5",
+        "dong_ho_7_12h30": "Kim phút chỉ 6, kim giờ giữa 12 và 1",
+        "dong_ho_8_9h30": "Kim phút chỉ 6, kim giờ giữa 9 và 10",
+        "dong_ho_9_3h30": "Kim phút chỉ 6, kim giờ giữa 3 và 4"
+      }
+    },
+    {
+      "page_number": 23,
+      "book_page": "Trang 22",
+      "title": "Thử Thách Vẽ Kim Giờ Rưỡi",
+      "subtitle": "Tự tay vẽ hoàn chỉnh 9 đồng hồ giờ rưỡi không cần khung mẫu",
+      "layout_type": "grid_3x3",
+      "activity_group_ref": "WB18-D2",
+      "description": "Đỉnh cao của chuỗi rèn luyện vận động tinh và hiểu biết không gian mặt đồng hồ: trẻ tự vẽ cả kim giờ và kim phút cho 9 đồng hồ giờ rưỡi mà không còn khung hướng dẫn mẫu. Các mốc giờ: (1) 3:30; (2) 12:30; (3) 8:30; (4) 7:30; (5) 1:30; (6) 9:30; (7) 10:30; (8) 2:30; (9) 6:30. Huy hiệu 'BÉ ĐANG CHINH PHỤC GIỜ RƯỠI'.",
+      "prompts": [
+        "Bé đã biết quy tắc giờ rưỡi rồi! Giờ mình tự vẽ cả 9 chiếc nhé!"
+      ],
+      "mascot_dialogues": {
+        "gau_logic": "Bé đã biết quy tắc giờ rưỡi rồi!",
+        "tho_quan_sat": "Giờ mình tự vẽ cả 9 chiếc nhé!"
+      },
+      "interactive_elements": "Vẽ kim phút dài xuống số 6 và kim ngắn vào vị trí giữa 2 số cho 9 mặt đồng hồ.",
+      "correct_answers": {
+        "dong_ho_1_3h30": "Kim phút chỉ 6, kim giờ giữa 3 và 4",
+        "dong_ho_2_12h30": "Kim phút chỉ 6, kim giờ giữa 12 và 1",
+        "dong_ho_3_8h30": "Kim phút chỉ 6, kim giờ giữa 8 và 9",
+        "dong_ho_4_7h30": "Kim phút chỉ 6, kim giờ giữa 7 và 8",
+        "dong_ho_5_1h30": "Kim phút chỉ 6, kim giờ giữa 1 và 2",
+        "dong_ho_6_9h30": "Kim phút chỉ 6, kim giờ giữa 9 và 10",
+        "dong_ho_7_10h30": "Kim phút chỉ 6, kim giờ giữa 10 và 11",
+        "dong_ho_8_2h30": "Kim phút chỉ 6, kim giờ giữa 2 và 3",
+        "dong_ho_9_6h30": "Kim phút chỉ 6, kim giờ giữa 6 và 7"
+      }
+    },
+    {
+      "page_number": 24,
+      "book_page": "Trang 23",
+      "title": "Tổng Kết Chặng 18: Tháp Đồng Hồ Kỳ Diệu",
+      "subtitle": "Vinh danh thành tích và thắp sáng trạm số 18 trên bản đồ toán học",
+      "layout_type": "summary_and_badge",
+      "activity_group_ref": "None",
+      "description": "Trang tổng kết trang trọng vinh danh nỗ lực của bé. Lời khen Gấu Logic: 'Giỏi quá! Bé đã giúp Tháp Đồng Hồ hoạt động trở lại rồi!'. Thỏ Sáng Tạo: 'Chúng mình đã vượt qua thêm một chặng đường nữa!'. Huy hiệu lớn 'BÉ ĐÃ HOÀN THÀNH CHẶNG 18' với Viên ngọc cầu vồng 7 màu và Ngôi sao vàng rạng rỡ. Khung 'Bé học được' tổng kết 4 kỹ năng chủ đạo: (1) Đọc giờ tròn; (2) Làm quen giờ rưỡi; (3) Vẽ kim giờ và kim phút; (4) Gắn thời gian với hoạt động trong ngày. Bản đồ hành trình 18 trạm xe lửa phát sáng rực rỡ trạm 18 bên cạnh Tháp Đồng Hồ cổ tích. Lời cảm ơn: 'CẢM ƠN BÉ ĐÃ CÙNG GẤU LOGIC VÀ THỎ SÁNG TẠO CHINH PHỤC THÁP ĐỒNG HỒ KỲ DIỆU!'.",
+      "prompts": [],
+      "mascot_dialogues": {
+        "gau_logic": "Giỏi quá! Bé đã giúp Tháp Đồng Hồ hoạt động trở lại rồi!",
+        "tho_quan_sat": "Chúng mình đã vượt qua thêm một chặng đường nữa!"
+      },
+      "interactive_elements": "Quan sát bảng tổng kết thành quả và chiêm ngưỡng Huy Hiệu Chinh Phục Chặng 18."
+    }
+  ]
+}

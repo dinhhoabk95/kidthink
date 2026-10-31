@@ -41,6 +41,7 @@ export async function handleForgotPassword(
     routeClass: "auth:forgot-password",
     remoteIp: getVerifiedRemoteIp(event),
     accountIdentifier: email,
+    skipIpCheck: true,
   });
 
   assertRateLimitAllowed(rateLimitRes.statusCode);

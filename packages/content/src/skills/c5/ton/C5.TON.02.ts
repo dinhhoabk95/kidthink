@@ -45,64 +45,126 @@ export const C5_TON_02_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "tmk_ngang",
-      label: "thanh ngang",
-      glyph: "—",
+      id: "ton_ca",
+      label: "tiếng ca",
+      glyph: "ca",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "☕",
       },
+      category: {
+        type: "tiếng thanh ngang",
+      },
+      value: 1,
       contrast_group: "primary",
     },
     {
-      id: "tmk_huyen",
-      label: "dấu huyền",
-      glyph: "ˋ",
+      id: "ton_hoa",
+      label: "tiếng hoa",
+      glyph: "hoa",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🌸",
       },
-      contrast_group: "contrast",
-    },
-    {
-      id: "tmk_sac",
-      label: "dấu sắc",
-      glyph: "ˊ",
-      image: {
-        kind: "emoji",
-        ref: "📝",
+      category: {
+        type: "tiếng thanh ngang",
       },
+      value: 2,
       contrast_group: "primary",
     },
     {
-      id: "tmk_nang",
-      label: "dấu nặng",
-      glyph: "﹒",
+      id: "ton_ong",
+      label: "tiếng ong",
+      glyph: "ong",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🐝",
       },
-      contrast_group: "contrast",
-    },
-    {
-      id: "tmk_hoi",
-      label: "dấu hỏi",
-      glyph: "̉",
-      image: {
-        kind: "emoji",
-        ref: "📝",
+      category: {
+        type: "tiếng thanh ngang",
       },
+      value: 3,
       contrast_group: "primary",
     },
     {
-      id: "tmk_nga",
-      label: "dấu ngã",
-      glyph: "˜",
+      id: "ton_ga",
+      label: "tiếng gà",
+      glyph: "gà",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🐔",
       },
+      category: {
+        type: "tiếng thanh huyền",
+      },
+      value: 4,
       contrast_group: "contrast",
+    },
+    {
+      id: "ton_nha",
+      label: "tiếng nhà",
+      glyph: "nhà",
+      image: {
+        kind: "emoji",
+        ref: "🏠",
+      },
+      category: {
+        type: "tiếng thanh huyền",
+      },
+      value: 5,
+      contrast_group: "contrast",
+    },
+    {
+      id: "ton_bo",
+      label: "tiếng bò",
+      glyph: "bò",
+      image: {
+        kind: "emoji",
+        ref: "🐄",
+      },
+      category: {
+        type: "tiếng thanh huyền",
+      },
+      value: 6,
+      contrast_group: "contrast",
+    },
+  ],
+  axes: {
+    category: {
+      values: ["tiếng thanh ngang", "tiếng thanh huyền"],
+      ordered: true,
+    },
+  },
+  relations: [
+    {
+      type: "pair",
+      source_id: "ton_ca",
+      target_id: "ton_ga",
+    },
+    {
+      type: "pair",
+      source_id: "ton_hoa",
+      target_id: "ton_nha",
+    },
+    {
+      type: "pair",
+      source_id: "ton_ong",
+      target_id: "ton_bo",
+    },
+    {
+      type: "contrast",
+      source_id: "ton_ca",
+      target_id: "ton_ga",
+    },
+    {
+      type: "contrast",
+      source_id: "ton_hoa",
+      target_id: "ton_nha",
+    },
+    {
+      type: "contrast",
+      source_id: "ton_ong",
+      target_id: "ton_bo",
     },
   ],
   ladder: [
@@ -137,14 +199,7 @@ export const C5_TON_02_DATASET: SkillDataset = {
     narration_template:
       "Chúng mình cùng tìm hiểu về Thanh ngang và thanh huyền nhé",
   },
-  ordering: [
-    "tmk_ngang",
-    "tmk_huyen",
-    "tmk_sac",
-    "tmk_nang",
-    "tmk_hoi",
-    "tmk_nga",
-  ],
+  ordering: ["ton_ca", "ton_hoa", "ton_ong", "ton_ga", "ton_nha", "ton_bo"],
 };
 
 export const C5_TON_02_SEED: SkillSeed = {
@@ -173,62 +228,6 @@ export const C5_TON_02_SEED: SkillSeed = {
       band: "4-5",
       difficulty: 3,
       theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-TON-TCMP-0002",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 4,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-TON-PATT-0003",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 3,
-      theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-TON-PATT-0004",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 4,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-TON-SLOT-0001",
-      template: "GT-008",
-      band: "4-5",
-      difficulty: 3,
-      theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-TON-SLOT-0002",
-      template: "GT-008",
-      band: "4-5",
-      difficulty: 4,
-      theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-TON-PUZZ-0001",
-      template: "GT-010",
-      band: "4-5",
-      difficulty: 3,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-TON-PUZZ-0002",
-      template: "GT-010",
-      band: "4-5",
-      difficulty: 4,
-      theme: "farm",
       rounds: 3,
     },
   ],

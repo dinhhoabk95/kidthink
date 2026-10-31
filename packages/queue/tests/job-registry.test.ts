@@ -14,7 +14,6 @@ const MVP_JOB_NAMES = [
   "order:expire",
   "account:purge",
   "email:send",
-  "image:cleanup-orphan",
   "backup:postgres",
   "backup:verify",
 ];
@@ -24,7 +23,6 @@ const ADDON_JOB_NAMES = [
   "report:manual-grants-monthly",
   "pdf:render",
   "sweep:pdf-cleanup",
-  "embed:content",
   "billing:renewal-reminder",
   "billing:renew",
   "billing:dunning-sweep",

@@ -13,9 +13,7 @@ owns:
   - Luật cấm gán nội dung vào tiết bằng chỉ số vòng
 depends_on:
   - CURRICULUM-MODEL
-  - LESSON-FLOW-MODEL
   - PRESCHOOL-AGE-BANDS
-  - LESSON-MODEL
   - GAME-LEVEL-MODEL
   - TAXONOMY-SERVICE
 ---
@@ -129,17 +127,17 @@ RoadmapSeed
       role          introduce | practice | review | offscreen   (BR-LRM-05)
       skill_code    kỹ năng tiết này dạy             (BR-LRM-02)
       topics[]      mã chủ đề, mỗi chủ đề một strand (BR-CTM-02) — tuỳ chọn tới khi
-                    lesson-topic-composition được cài
+                    chủ đề được cài
 ```
 
 Vai trò quyết định loại nội dung lấp tiết và cờ ngoài màn hình:
 
 | Vai trò | Lấp bằng | `is_offline` | Ghi chú |
 |---|---|---|---|
-| `introduce` | bài học | không | Kỹ năng mới lần đầu có tiết `introduce` |
-| `practice` | game level | không | Theo bậc độ khó của band |
-| `review` | bài học | không | Kỹ năng đã gặp ở tuần trước |
-| `offscreen` | bài học có hoạt động ngoài màn hình | có | Cho phép nêu một kỹ năng chưa `introduce` ở tuần đầu như làm quen thực tế; kỹ năng đó phải `introduce` ngay tuần sau |
+| `introduce` | game level (ưu tiên `GT-000` dạy khái niệm hoặc bậc 1 Concrete) | không | Kỹ năng mới lần đầu có tiết `introduce` |
+| `practice` | 3 game level | không | Theo bậc độ khó của band |
+| `review` | game level | không | Kỹ năng đã gặp ở tuần trước |
+| `offscreen` | game level (củng cố khái niệm ngoài màn hình) | có | Cho phép nêu một kỹ năng chưa `introduce` ở tuần đầu như làm quen thực tế; kỹ năng đó phải `introduce` ngay tuần sau |
 
 Hệ quả suy được: `BR-CRM-05` đo bằng vai trò `offscreen`, không cần cờ riêng. Kỹ năng của tiết
 phải có `age_min`/`age_max` giao band của lộ trình và `difficulty` ≤ trần band
@@ -241,8 +239,7 @@ chưa từng gọi. Luật tồn tại, cổng không chạy.
 ## 8. API contract
 
 Không sở hữu route. Lộ trình publish ra ngoài qua route đã có của
-[`curriculum-player.md`](../04-play/curriculum-player.md) và
-[`lesson-flow-model.md`](lesson-flow-model.md).
+[`curriculum-player.md`](../04-play/curriculum-player.md).
 
 ## 9. Acceptance criteria
 

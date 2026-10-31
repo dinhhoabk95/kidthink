@@ -2,19 +2,51 @@ import { requireUserAuth } from "@mindkid/auth";
 import { requireEnv } from "@mindkid/config";
 import { RestrictedModeError } from "@mindkid/errors/auth";
 import { NoActiveChildError } from "@mindkid/errors/child";
+import {
+  RATE_LIMIT_CONFIGS,
+  type RouteClassName,
+  enforceTwoAxisRateLimit as sharedEnforceTwoAxisRateLimit,
+} from "@mindkid/shared";
 import { getCookie, getHeader, type H3Event, setCookie } from "h3";
 import {
   createAuthRuntime,
+  DEFAULT_MAX_JSON_BODY_BYTES as FACTORY_DEFAULT_MAX_JSON_BODY_BYTES,
+  factoryAssertPayloadSize,
   factoryAssertRateLimitAllowed,
   factoryAssertRequestBodySize,
   factoryAssertSameOriginRequest,
   factoryIsAllowedApiOrigin,
 } from "./auth-runtime-factory.js";
 
+export const DEFAULT_MAX_JSON_BODY_BYTES = FACTORY_DEFAULT_MAX_JSON_BODY_BYTES;
 export const assertRateLimitAllowed = factoryAssertRateLimitAllowed;
 export const assertRequestBodySize = factoryAssertRequestBodySize;
+export const assertPayloadSize = factoryAssertPayloadSize;
 export const assertSameOriginRequest = factoryAssertSameOriginRequest;
 export const isAllowedApiOrigin = factoryIsAllowedApiOrigin;
+
+export async function enforceTwoAxisRateLimit(
+  event: H3Event,
+  routeClass: string,
+  accountIdentifier?: string
+): Promise<void> {
+  const context = event.context as { _rateLimitChecked?: boolean };
+  if (context._rateLimitChecked) {
+    return;
+  }
+  const actualClass =
+    routeClass in RATE_LIMIT_CONFIGS
+      ? (routeClass as RouteClassName)
+      : "auth:login";
+  const remoteIp = getVerifiedRemoteIp(event);
+  const res = await sharedEnforceTwoAxisRateLimit({
+    routeClass: actualClass,
+    remoteIp: remoteIp.trim() ? remoteIp : "127.0.0.1",
+    accountIdentifier,
+  });
+  assertRateLimitAllowed(res.statusCode);
+  context._rateLimitChecked = true;
+}
 
 export const USER_REMEMBER_COOKIE = "tm_u_remember";
 export const MANAGER_REMEMBER_COOKIE = "tm_m_remember";

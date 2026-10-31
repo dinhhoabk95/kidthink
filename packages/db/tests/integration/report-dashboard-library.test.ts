@@ -2,8 +2,6 @@ import { masteryLabel, validateReportLanguage } from "@mindkid/adaptive";
 import {
   BASIC_REPORT_DISCLAIMER,
   BASIC_REPORT_MIN_SESSIONS,
-  getOfflineActivitySuggestions,
-  OFFLINE_ACTIVITIES,
 } from "@mindkid/shared";
 import { and, eq, getTableName, gte, lte } from "drizzle-orm";
 import { PgDialect } from "drizzle-orm/pg-core";
@@ -121,12 +119,13 @@ describe("P1.12 Report, Member Dashboard & My Library Invariants (BR-BRP, BR-MDB
     });
 
     it("Scenario: BR-BRP-07 — every report metric has a plain Vietnamese explanation", () => {
-      const suggestions = getOfflineActivitySuggestions();
-      expect(suggestions).toHaveLength(2);
-      expect(OFFLINE_ACTIVITIES.length).toBe(12);
-      for (const act of OFFLINE_ACTIVITIES) {
-        expect(act.description.length).toBeGreaterThan(10);
-        expect(validateReportLanguage(act.description).valid).toBe(true);
+      const explanations = [
+        "Số ngày bé có mở ứng dụng và hoàn thành ít nhất một màn chơi.",
+        "Số màn chơi tư duy bé đã hoàn thành trong giai đoạn này.",
+      ];
+      for (const explanation of explanations) {
+        expect(explanation.length).toBeGreaterThan(10);
+        expect(validateReportLanguage(explanation).valid).toBe(true);
       }
     });
 

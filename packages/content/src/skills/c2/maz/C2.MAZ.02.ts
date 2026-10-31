@@ -42,61 +42,154 @@ export const C2_MAZ_02_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "bowl",
-      label: "cái bát",
+      id: "path_key",
+      label: "chìa khóa vàng",
       image: {
         kind: "emoji",
-        ref: "🥣",
+        ref: "🔑",
       },
       category: {
-        type: "đồ dùng",
+        type: "lối đi đúng",
       },
+      contrast_group: "correct_path",
+      value: 1,
+      ordering: 1,
     },
     {
-      id: "spoon",
-      label: "cái thìa",
+      id: "path_light",
+      label: "ngọn đèn soi đường",
       image: {
         kind: "emoji",
-        ref: "🥄",
+        ref: "🏮",
       },
       category: {
-        type: "đồ dùng",
+        type: "lối đi đúng",
       },
+      contrast_group: "correct_path",
+      value: 2,
+      ordering: 2,
     },
     {
-      id: "cup",
-      label: "cái cốc",
+      id: "path_bridge",
+      label: "chiếc cầu gỗ nhỏ",
       image: {
         kind: "emoji",
-        ref: "🥤",
+        ref: "🌉",
       },
       category: {
-        type: "đồ dùng",
+        type: "lối đi đúng",
       },
+      contrast_group: "correct_path",
+      value: 3,
+      ordering: 3,
     },
     {
-      id: "bed",
-      label: "cái giường",
+      id: "path_door",
+      label: "cửa thoát hiểm mở",
       image: {
         kind: "emoji",
-        ref: "🛏️",
+        ref: "🚪",
       },
       category: {
-        type: "đồ dùng",
+        type: "lối đi đúng",
       },
+      contrast_group: "correct_path",
+      value: 4,
+      ordering: 4,
     },
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "dead_spider",
+      label: "mạng nhện giăng kín",
       image: {
         kind: "emoji",
-        ref: "🪑",
+        ref: "🕸️",
       },
       category: {
-        type: "đồ dùng",
+        type: "ngõ cụt",
       },
+      contrast_group: "dead_end",
+      value: 5,
+      ordering: 5,
+    },
+    {
+      id: "dead_wall",
+      label: "bức tường gạch cụt",
+      image: {
+        kind: "emoji",
+        ref: "🧱",
+      },
+      category: {
+        type: "ngõ cụt",
+      },
+      contrast_group: "dead_end",
+      value: 6,
+      ordering: 6,
+    },
+    {
+      id: "dead_fog",
+      label: "đám mây mù mịt",
+      image: {
+        kind: "emoji",
+        ref: "🌫️",
+      },
+      category: {
+        type: "ngõ cụt",
+      },
+      contrast_group: "dead_end",
+      value: 7,
+      ordering: 7,
+    },
+    {
+      id: "dead_pit",
+      label: "hố sâu thăm thẳm",
+      image: {
+        kind: "emoji",
+        ref: "🕳️",
+      },
+      category: {
+        type: "ngõ cụt",
+      },
+      contrast_group: "dead_end",
+      value: 8,
+      ordering: 8,
     },
   ],
+  relations: [
+    {
+      type: "pair",
+      source_id: "path_key",
+      target_id: "dead_spider",
+    },
+    {
+      type: "pair",
+      source_id: "path_light",
+      target_id: "dead_wall",
+    },
+    {
+      type: "pair",
+      source_id: "path_bridge",
+      target_id: "dead_fog",
+    },
+    {
+      type: "pair",
+      source_id: "path_door",
+      target_id: "dead_pit",
+    },
+    {
+      type: "contrast",
+      source_id: "path_key",
+      target_id: "dead_spider",
+    },
+  ],
+  axes: {
+    category: {
+      values: ["lối đi đúng", "ngõ cụt"],
+    },
+    order: {
+      values: ["1", "2", "3", "4", "5", "6", "7", "8"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
@@ -128,7 +221,16 @@ export const C2_MAZ_02_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Mê cung nhiều nhánh nhé",
   },
-  ordering: ["bowl", "spoon", "cup", "bed", "chair"],
+  ordering: [
+    "path_key",
+    "path_light",
+    "path_bridge",
+    "path_door",
+    "dead_spider",
+    "dead_wall",
+    "dead_fog",
+    "dead_pit",
+  ],
 };
 
 export const C2_MAZ_02_SEED: SkillSeed = {
@@ -136,67 +238,17 @@ export const C2_MAZ_02_SEED: SkillSeed = {
   dataset: C2_MAZ_02_DATASET,
   levels: [
     {
+      template: "GT-000",
+      band: "5-6",
+      difficulty: 1,
+      theme: "school",
+    },
+    {
       code: "GL-C2-MAZ-SORT-0001",
       template: "GT-006",
       band: "5-6",
       difficulty: 3,
       theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-MAZ-SORT-0002",
-      template: "GT-006",
-      band: "5-6",
-      difficulty: 4,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-MAZ-SHAD-0005",
-      template: "GT-007",
-      band: "4-5",
-      difficulty: 3,
-      theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-MAZ-SHAD-0006",
-      template: "GT-007",
-      band: "4-5",
-      difficulty: 4,
-      theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-MAZ-SIZE-0001",
-      template: "GT-009",
-      band: "4-5",
-      difficulty: 3,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-MAZ-SIZE-0002",
-      template: "GT-009",
-      band: "4-5",
-      difficulty: 4,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-MAZ-MAZE-0001",
-      template: "GT-013",
-      band: "4-5",
-      difficulty: 3,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-MAZ-MAZE-0002",
-      template: "GT-013",
-      band: "4-5",
-      difficulty: 4,
-      theme: "animal",
       rounds: 3,
     },
     {
@@ -208,12 +260,28 @@ export const C2_MAZ_02_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C2-MAZ-HIDE-0002",
-      template: "GT-015",
+      template: "GT-006",
       band: "5-6",
-      difficulty: 4,
-      theme: "ocean",
-      rounds: 3,
+      difficulty: 1,
+      theme: "school",
+    },
+    {
+      template: "GT-007",
+      band: "5-6",
+      difficulty: 1,
+      theme: "home",
+    },
+    {
+      template: "GT-030",
+      band: "5-6",
+      difficulty: 2,
+      theme: "school",
+    },
+    {
+      template: "GT-032",
+      band: "5-6",
+      difficulty: 2,
+      theme: "school",
     },
   ],
 };

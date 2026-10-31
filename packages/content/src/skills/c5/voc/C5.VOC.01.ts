@@ -49,8 +49,10 @@ export const C5_VOC_01_DATASET: SkillDataset = {
         ref: "🐕",
       },
       category: {
-        type: "động vật",
+        type: "thú bốn chân",
       },
+      value: 1,
+      contrast_group: "primary",
     },
     {
       id: "voc_meo",
@@ -60,30 +62,10 @@ export const C5_VOC_01_DATASET: SkillDataset = {
         ref: "🐈",
       },
       category: {
-        type: "động vật",
+        type: "thú bốn chân",
       },
-    },
-    {
-      id: "voc_ga",
-      label: "con gà",
-      image: {
-        kind: "emoji",
-        ref: "🐔",
-      },
-      category: {
-        type: "động vật",
-      },
-    },
-    {
-      id: "voc_vit",
-      label: "con vịt",
-      image: {
-        kind: "emoji",
-        ref: "🦆",
-      },
-      category: {
-        type: "động vật",
-      },
+      value: 2,
+      contrast_group: "primary",
     },
     {
       id: "voc_lon",
@@ -93,9 +75,92 @@ export const C5_VOC_01_DATASET: SkillDataset = {
         ref: "🐷",
       },
       category: {
-        type: "động vật",
+        type: "thú bốn chân",
       },
+      value: 3,
+      contrast_group: "primary",
     },
+    {
+      id: "voc_bo",
+      label: "con bò",
+      image: {
+        kind: "emoji",
+        ref: "🐮",
+      },
+      category: {
+        type: "thú bốn chân",
+      },
+      value: 4,
+      contrast_group: "primary",
+    },
+    {
+      id: "voc_tho",
+      label: "con thỏ",
+      image: {
+        kind: "emoji",
+        ref: "🐰",
+      },
+      category: {
+        type: "thú nhỏ chim",
+      },
+      value: 5,
+      contrast_group: "contrast",
+    },
+    {
+      id: "voc_cuu",
+      label: "con cừu",
+      image: {
+        kind: "emoji",
+        ref: "🐑",
+      },
+      category: {
+        type: "thú nhỏ chim",
+      },
+      value: 6,
+      contrast_group: "contrast",
+    },
+    {
+      id: "voc_ga",
+      label: "con gà",
+      image: {
+        kind: "emoji",
+        ref: "🐔",
+      },
+      category: {
+        type: "thú nhỏ chim",
+      },
+      value: 7,
+      contrast_group: "contrast",
+    },
+    {
+      id: "voc_vit",
+      label: "con vịt",
+      image: {
+        kind: "emoji",
+        ref: "🦆",
+      },
+      category: {
+        type: "thú nhỏ chim",
+      },
+      value: 8,
+      contrast_group: "contrast",
+    },
+  ],
+  axes: {
+    category: {
+      values: ["thú bốn chân", "thú nhỏ chim"],
+      ordered: true,
+    },
+  },
+  relations: [
+    { type: "pair", source_id: "voc_cho", target_id: "voc_meo" },
+    { type: "pair", source_id: "voc_lon", target_id: "voc_bo" },
+    { type: "pair", source_id: "voc_tho", target_id: "voc_cuu" },
+    { type: "pair", source_id: "voc_ga", target_id: "voc_vit" },
+    { type: "contrast", source_id: "voc_cho", target_id: "voc_tho" },
+    { type: "contrast", source_id: "voc_meo", target_id: "voc_cuu" },
+    { type: "contrast", source_id: "voc_lon", target_id: "voc_ga" },
+    { type: "contrast", source_id: "voc_bo", target_id: "voc_vit" },
   ],
   ladder: [
     {
@@ -128,7 +193,16 @@ export const C5_VOC_01_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Từ vựng động vật nhé",
   },
-  ordering: ["voc_cho", "voc_meo", "voc_ga", "voc_vit", "voc_lon"],
+  ordering: [
+    "voc_cho",
+    "voc_meo",
+    "voc_lon",
+    "voc_bo",
+    "voc_tho",
+    "voc_cuu",
+    "voc_ga",
+    "voc_vit",
+  ],
 };
 
 export const C5_VOC_01_SEED: SkillSeed = {
@@ -136,49 +210,10 @@ export const C5_VOC_01_SEED: SkillSeed = {
   dataset: C5_VOC_01_DATASET,
   levels: [
     {
-      code: "GL-C5-WRD-PRB-0006",
-      template: "GT-018",
-      band: "5-6",
-      difficulty: 3,
-      theme: "art",
-      rounds: 3,
-      legacy_v1_ref: "D6-09",
-    },
-    {
-      code: "GL-C5-WRD-PRB-0007",
-      template: "GT-018",
-      band: "5-6",
+      template: "GT-000",
+      band: "3-4",
       difficulty: 1,
-      theme: "home",
-      rounds: 3,
-      legacy_v1_ref: "D6-09",
-    },
-    {
-      code: "GL-C5-WRD-PRB-0008",
-      template: "GT-018",
-      band: "5-6",
-      difficulty: 2,
-      theme: "festival",
-      rounds: 3,
-      legacy_v1_ref: "D6-09",
-    },
-    {
-      code: "GL-C5-WRD-PRB-0009",
-      template: "GT-018",
-      band: "5-6",
-      difficulty: 3,
       theme: "school",
-      rounds: 3,
-      legacy_v1_ref: "D6-09",
-    },
-    {
-      code: "GL-C5-WRD-PRB-0010",
-      template: "GT-018",
-      band: "5-6",
-      difficulty: 1,
-      theme: "farm",
-      rounds: 3,
-      legacy_v1_ref: "D6-09",
     },
     {
       code: "GL-C5-VOC-TAP-0001",
@@ -205,27 +240,11 @@ export const C5_VOC_01_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-VOC-TCMP-0002",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 2,
-      theme: "art",
-      rounds: 3,
-    },
-    {
       code: "GL-C5-VOC-PATT-0001",
       template: "GT-005",
       band: "3-4",
       difficulty: 1,
       theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-PATT-0002",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 2,
-      theme: "body",
       rounds: 3,
     },
     {
@@ -237,27 +256,11 @@ export const C5_VOC_01_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-VOC-SLOT-0002",
-      template: "GT-008",
-      band: "3-4",
-      difficulty: 2,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
       code: "GL-C5-VOC-MEMO-0001",
       template: "GT-012",
       band: "3-4",
       difficulty: 1,
       theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-MEMO-0002",
-      template: "GT-012",
-      band: "3-4",
-      difficulty: 2,
-      theme: "homeland",
       rounds: 3,
     },
   ],

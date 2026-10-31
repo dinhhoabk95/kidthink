@@ -42,61 +42,150 @@ export const C2_ORI_09_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "corn",
-      label: "bắp ngô",
+      id: "flower_middle",
+      label: "bông hoa ở giữa",
+      value: 1,
       image: {
         kind: "emoji",
-        ref: "🌽",
+        ref: "🌸",
       },
       category: {
-        type: "rau củ",
+        type: "ở chính giữa",
+      },
+      contrast_group: "middle",
+    },
+    {
+      id: "star_middle",
+      label: "ngôi sao ở giữa",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "⭐",
+      },
+      category: {
+        type: "ở chính giữa",
+      },
+      contrast_group: "middle",
+    },
+    {
+      id: "ball_middle",
+      label: "quả bóng ở giữa",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "⚽",
+      },
+      category: {
+        type: "ở chính giữa",
+      },
+      contrast_group: "middle",
+    },
+    {
+      id: "target_middle",
+      label: "vạch kẻ ở giữa",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "🎯",
+      },
+      category: {
+        type: "ở chính giữa",
+      },
+      contrast_group: "middle",
+    },
+    {
+      id: "leaf_left",
+      label: "chiếc lá bên trái",
+      value: 5,
+      image: {
+        kind: "emoji",
+        ref: "🍃",
+      },
+      category: {
+        type: "ở hai bên",
+      },
+      contrast_group: "side",
+    },
+    {
+      id: "leaf_right",
+      label: "chiếc lá bên phải",
+      value: 6,
+      image: {
+        kind: "emoji",
+        ref: "🌿",
+      },
+      category: {
+        type: "ở hai bên",
+      },
+      contrast_group: "side",
+    },
+    {
+      id: "flag_side",
+      label: "cột cờ bên cạnh",
+      value: 7,
+      image: {
+        kind: "emoji",
+        ref: "🚩",
+      },
+      category: {
+        type: "ở hai bên",
+      },
+      contrast_group: "side",
+    },
+    {
+      id: "barrier_side",
+      label: "rào chắn hai bên",
+      value: 8,
+      image: {
+        kind: "emoji",
+        ref: "🚧",
+      },
+      category: {
+        type: "ở hai bên",
+      },
+      contrast_group: "side",
+    },
+  ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "flower_middle",
+      target_id: "leaf_left",
+      metadata: {
+        dimension: "betweenness",
       },
     },
     {
-      id: "dog",
-      label: "con chó",
-      image: {
-        kind: "emoji",
-        ref: "🐕",
-      },
-      category: {
-        type: "động vật",
+      type: "contrast",
+      source_id: "star_middle",
+      target_id: "flag_side",
+      metadata: {
+        dimension: "betweenness",
       },
     },
     {
-      id: "cat",
-      label: "con mèo",
-      image: {
-        kind: "emoji",
-        ref: "🐈",
-      },
-      category: {
-        type: "động vật",
+      type: "pair",
+      source_id: "flower_middle",
+      target_id: "star_middle",
+      metadata: {
+        relation: "cùng ở chính giữa",
       },
     },
     {
-      id: "chicken",
-      label: "con gà",
-      image: {
-        kind: "emoji",
-        ref: "🐓",
-      },
-      category: {
-        type: "động vật",
-      },
-    },
-    {
-      id: "duck",
-      label: "con vịt",
-      image: {
-        kind: "emoji",
-        ref: "🦆",
-      },
-      category: {
-        type: "động vật",
+      type: "pair",
+      source_id: "leaf_left",
+      target_id: "leaf_right",
+      metadata: {
+        relation: "cùng ở hai bên",
       },
     },
   ],
+  axes: {
+    betweenness: {
+      values: ["ở chính giữa", "ở hai bên"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
@@ -128,7 +217,16 @@ export const C2_ORI_09_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Giữa nhé",
   },
-  ordering: ["corn", "dog", "cat", "chicken", "duck"],
+  ordering: [
+    "flower_middle",
+    "star_middle",
+    "ball_middle",
+    "target_middle",
+    "leaf_left",
+    "leaf_right",
+    "flag_side",
+    "barrier_side",
+  ],
 };
 
 export const C2_ORI_09_SEED: SkillSeed = {
@@ -148,7 +246,7 @@ export const C2_ORI_09_SEED: SkillSeed = {
       template: "GT-001",
       band: "3-4",
       difficulty: 2,
-      theme: "art",
+      theme: "school",
       rounds: 3,
     },
     {
@@ -157,62 +255,6 @@ export const C2_ORI_09_SEED: SkillSeed = {
       band: "4-5",
       difficulty: 1,
       theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-TCNT-0002",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 2,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-TCMP-0017",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 1,
-      theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-TCMP-0018",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 2,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-PAIR-0001",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 1,
-      theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-PAIR-0002",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 2,
-      theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-PATT-0015",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 1,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-PATT-0016",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 2,
-      theme: "farm",
       rounds: 3,
     },
   ],

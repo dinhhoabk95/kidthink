@@ -1,6 +1,5 @@
 import { requireUserAuth } from "@mindkid/auth";
 import { childProfiles, gameLevels, getOwnerDb } from "@mindkid/db";
-import { ContentArchivedError } from "@mindkid/errors/content";
 import { GameLevelNotFoundError } from "@mindkid/errors/game-level";
 import { getGameTemplate } from "@mindkid/game-engine/registry";
 import {
@@ -14,7 +13,12 @@ import {
   TIER_ENTITLEMENT,
 } from "@mindkid/shared";
 import { and, eq, ne } from "drizzle-orm";
-import { defineEventHandler, getRouterParam, type H3Event } from "h3";
+import {
+  defineEventHandler,
+  getRouterParam,
+  type H3Event,
+  setHeader,
+} from "h3";
 import { getOptionalActiveChildUuid } from "#server/utils/auth-runtime";
 import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
 import {
@@ -106,7 +110,6 @@ export default defineEventHandler(async (event) => {
       code: gameLevels.code,
       title: gameLevels.title,
       description: gameLevels.description,
-      status: gameLevels.status,
       accessTier: gameLevels.accessTier,
       difficulty: gameLevels.difficulty,
       ageMin: gameLevels.ageMin,
@@ -114,7 +117,6 @@ export default defineEventHandler(async (event) => {
       themeId: gameLevels.themeId,
       thumbnailEmoji: gameLevels.thumbnailEmoji,
       templateCode: gameLevels.templateCode,
-      contentVersion: gameLevels.contentVersion,
       // WP167.1: cần cho vòng mặc định khi level chưa có hàng game_level_rounds
       instruction: gameLevels.instruction,
       instructionAudioPath: gameLevels.instructionAudioPath,
@@ -122,40 +124,27 @@ export default defineEventHandler(async (event) => {
       difficultyParams: gameLevels.difficultyParams,
     })
     .from(gameLevels)
-    .where(eq(gameLevels.code, code));
+    .where(eq(gameLevels.code, code))
+    .limit(1);
 
   if (!level) {
     throw new GameLevelNotFoundError(code);
   }
 
-  if (level.status === "archived") {
-    const alternatives = await db
-      .select({
-        code: gameLevels.code,
-        title: gameLevels.title,
-        access_tier: gameLevels.accessTier,
-      })
-      .from(gameLevels)
-      .where(and(eq(gameLevels.status, "published"), ne(gameLevels.code, code)))
-      .limit(3);
-
-    throw new ContentArchivedError("Trò chơi này đã ngừng phát hành", {
-      code: level.code,
-      alternatives,
-    });
-  }
-
-  if (level.status !== "published") {
-    throw new GameLevelNotFoundError(code);
-  }
-
   const { allowed, viewer } = await resolveCallerContext(event);
   const callerKind = viewer.is_authenticated ? "user" : "guest";
+
   const effectiveTier = getEffectiveTier(level.accessTier, null, {
     code: level.code,
     callerKind,
   });
   const isLocked = !allowed.includes(effectiveTier);
+
+  if (level.accessTier === "free" && !isLocked && !viewer.is_authenticated) {
+    setHeader(event, "Cache-Control", "public, max-age=300, s-maxage=300");
+  } else {
+    setHeader(event, "Cache-Control", "private, no-store");
+  }
 
   const taxonomyMeta = resolveLevelTaxonomyMeta(level.code);
 
@@ -170,7 +159,7 @@ export default defineEventHandler(async (event) => {
       thumbnailEmoji: gameLevels.thumbnailEmoji,
     })
     .from(gameLevels)
-    .where(and(eq(gameLevels.status, "published"), ne(gameLevels.code, code)))
+    .where(ne(gameLevels.code, code))
     .limit(4);
 
   const cta = resolveLevelCta(code, effectiveTier, viewer);
@@ -206,10 +195,7 @@ export default defineEventHandler(async (event) => {
       mode: RUNTIME_SCORING_MODE,
     },
     rounds: isLocked
-      ? rounds.map((r) => ({
-          round_index: r.round_index,
-          instruction: r.instruction,
-        }))
+      ? []
       : rounds.map((r) => ({
           round_index: r.round_index,
           instruction: r.instruction,

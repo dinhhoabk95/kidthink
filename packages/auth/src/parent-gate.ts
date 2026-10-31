@@ -22,7 +22,27 @@ export interface ParentGateTokenPayload {
 // A challenge is intentionally one-shot. This process-local replay guard is
 // supplementary to the HMAC; deployments with multiple Nitro instances must
 // back it with the shared cache used by the rest of auth throttling.
+export const MAX_CONSUMED_CHALLENGES = 10_000;
 const consumedChallenges = new Map<string, number>();
+
+function pruneConsumed(now: number): void {
+  for (const [id, expiry] of consumedChallenges) {
+    if (expiry <= now) {
+      consumedChallenges.delete(id);
+    }
+  }
+  if (consumedChallenges.size > MAX_CONSUMED_CHALLENGES) {
+    const excess = consumedChallenges.size - MAX_CONSUMED_CHALLENGES;
+    let removed = 0;
+    for (const id of consumedChallenges.keys()) {
+      consumedChallenges.delete(id);
+      removed++;
+      if (removed >= excess) {
+        break;
+      }
+    }
+  }
+}
 
 /**
  * Creates a single-digit multiplication challenge (e.g. 7 x 8 = 56).
@@ -101,22 +121,19 @@ export function verifyParentGateChallenge(
   try {
     const payload = decodeChallenge(dataB64, hmac, secret);
 
-    if (Date.now() > payload.expiresAt) {
+    const now = Date.now();
+    if (now > payload.expiresAt) {
       throw new ParentGateExpiredError();
     }
 
     const consumedAt = consumedChallenges.get(payload.challengeId);
-    if (consumedAt && consumedAt > Date.now()) {
+    if (consumedAt && consumedAt > now) {
       throw new ParentGateInvalidError();
     }
 
     // Always mark challenge consumed on first verification attempt (single-use)
     consumedChallenges.set(payload.challengeId, payload.expiresAt);
-    for (const [id, expiry] of consumedChallenges) {
-      if (expiry <= Date.now()) {
-        consumedChallenges.delete(id);
-      }
-    }
+    pruneConsumed(now);
 
     if (Number(answer) !== payload.factorA * payload.factorB) {
       throw new ParentGateFailedError();

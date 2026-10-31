@@ -7,6 +7,8 @@ import type {
 } from "@mindkid/shared";
 import { createRng, resolveItemAsset, shuffleDeterministic } from "./utils.js";
 
+const WHITESPACE_RE = /\s+/;
+
 export const projectGT005: Projection<"GT-005"> = {
   template: "GT-005",
   requires: { min_items: 2, max_items: 6 },
@@ -49,12 +51,22 @@ export const projectGT005: Projection<"GT-005"> = {
       };
     });
 
-    const prompt =
+    const promptReplacement = dataset.phrasing.prompt_template.includes(
+      "tương ứng"
+    )
+      ? "các cặp"
+      : "các cặp tương ứng";
+    const candidatePrompt =
       dataset.phrasing.prompt_template.length >= 4
-        ? dataset.phrasing.prompt_template.replace(
-            "{label}",
-            "các cặp tương ứng"
-          )
+        ? dataset.phrasing.prompt_template.replace("{label}", promptReplacement)
+        : "Bé hãy ghép các cặp tương ứng nhé!";
+    const wordCount = candidatePrompt
+      .trim()
+      .split(WHITESPACE_RE)
+      .filter(Boolean).length;
+    const prompt =
+      candidatePrompt.length >= 4 && wordCount <= 12
+        ? candidatePrompt
         : "Bé hãy ghép các cặp tương ứng nhé!";
 
     return {

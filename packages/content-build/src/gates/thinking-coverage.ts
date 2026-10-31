@@ -31,7 +31,6 @@ export interface ThinkingCoverageConfig {
   mechanicPerCellFloor: number;
   thinkingTagFloor: number;
   balanceRatioCeiling: number;
-  lessonPerCellFloor: number;
   activeCompetencies?: string[];
   activeAgeBands?: AgeBand[];
   enforceFloors?: boolean;
@@ -43,7 +42,6 @@ export const DEFAULT_CONFIG: ThinkingCoverageConfig = {
   mechanicPerCellFloor: 2,
   thinkingTagFloor: 5,
   balanceRatioCeiling: 3,
-  lessonPerCellFloor: 1,
   activeCompetencies: ["C1", "C2", "C3", "C4", "C5", "C6"],
   activeAgeBands: [...AGE_BANDS],
   enforceFloors: false,
@@ -165,7 +163,7 @@ export const CLOSED_TAG_VOCABULARY = {
 export interface ContentItem {
   id?: number | string;
   code: string;
-  kind: "game_level" | "lesson" | "activity";
+  kind: "game_level";
   status: "draft" | "in_review" | "approved" | "published" | "archived";
   competencyCode: string;
   ageBand: AgeBand;

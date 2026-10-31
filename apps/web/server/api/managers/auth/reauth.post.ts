@@ -11,6 +11,7 @@ import { and, eq } from "drizzle-orm";
 import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 import {
+  enforceTwoAxisRateLimit,
   getMfaEncryptionKey,
   requireManagerSession,
 } from "#server/utils/admin-auth-runtime";
@@ -73,6 +74,8 @@ async function verifyManagerPasswordReauth(
 export default defineEventHandler(async (event) => {
   const managerSession = requireManagerSession(event);
   const managerId = Number(managerSession.manager_id);
+
+  await enforceTwoAxisRateLimit(event, "auth:reauth", String(managerId));
 
   const eventBody = (event.context as { body?: Record<string, string> })?.body;
   const rawBody =

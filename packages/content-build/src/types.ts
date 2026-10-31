@@ -1,20 +1,11 @@
 export type {
-  ActivitySeed,
-  ActivitySeedHeader,
   AnyContentSeed,
   ContentSeed,
   ContentSeedHeader,
   ContentSeedRound,
-  LessonSeed,
-  LessonSeedHeader,
   SeedAuthoredIn,
   SeedOrigin,
 } from "@mindkid/content";
-export type {
-  ActivityInstruction,
-  ActivityKind,
-  LessonGuide,
-} from "@mindkid/shared";
 
 export interface GateIssue {
   file?: string;

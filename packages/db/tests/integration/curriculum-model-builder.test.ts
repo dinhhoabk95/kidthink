@@ -55,9 +55,7 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
     const [curr] = await db
       .insert(curricula)
       .values({
-        entityId: Math.floor(Math.random() * 800_000) + 100_000,
         code: testCurriculumCode,
-        contentVersion: 1,
         programType: "age_based",
         targetAgeMin: 3,
         targetAgeMax: 4,
@@ -66,7 +64,6 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
         title: "Chương Trình Bé 3 Tuổi",
         description: "Dành cho bé 3-4 tuổi phát triển tư duy toán học",
         accessTier: "standard",
-        status: "draft",
       })
       .returning();
     if (!curr) {
@@ -118,9 +115,7 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
     it("enforces curriculum code format regex check constraint", async () => {
       await expect(
         db.insert(curricula).values({
-          entityId: Date.now() + 1,
           code: "INVALID_CODE_123",
-          contentVersion: 1,
           programType: "journey",
           durationWeeks: 42,
           sessionsPerWeek: 3,
@@ -172,7 +167,7 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
         weekNo: 1,
         sessionNo: 1,
         position: 1,
-        entityType: "lesson",
+        entityType: "game_level",
         entityId: 1001,
         isRequired: true,
       });
@@ -188,7 +183,7 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
       expect(item.weekNo).toBe(1);
       expect(item.sessionNo).toBe(1);
       expect(item.position).toBe(1);
-      expect(item.entityType).toBe("lesson");
+      expect(item.entityType).toBe("game_level");
       expect(item.entityId).toBe(1001);
       expect(item.isRequired).toBe(true);
     });
@@ -199,7 +194,7 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
         weekNo: 1,
         sessionNo: 1,
         position: 1,
-        entityType: "lesson",
+        entityType: "game_level",
         entityId: 1001,
         isRequired: true,
       });
@@ -266,7 +261,7 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
           weekNo: 1,
           sessionNo: 1,
           position: 1,
-          entityType: "lesson",
+          entityType: "game_level",
           entityId: 1001,
           isRequired: true,
         })

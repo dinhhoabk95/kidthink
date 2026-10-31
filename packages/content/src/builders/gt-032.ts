@@ -18,14 +18,15 @@ interface CupItem {
 function buildCups(
   cupCount: number,
   isTrap: boolean,
-  rng: ReturnType<typeof createRng>
+  rng: ReturnType<typeof createRng>,
+  roundIdx: number
 ): {
   cups: CupItem[];
   question_type: "more" | "less" | "same" | "pour_to_mark";
   prompt: string;
 } {
   if (isTrap) {
-    const targetFill = 2 + rng.nextInt(3); // 2..4
+    const targetFill = 2 + ((rng.nextInt(3) + roundIdx) % 3); // 2..4
     const cups: CupItem[] = [
       {
         cup_id: "cup_1",
@@ -67,11 +68,12 @@ function buildCups(
     };
   }
 
+  const baseFill = 1 + (roundIdx % 3);
   const cups: CupItem[] = Array.from({ length: cupCount }, (_, i) => ({
     cup_id: `cup_${i + 1}`,
     shape: "standard",
     capacity_units: 10,
-    fill_units: 2 + i * 2,
+    fill_units: baseFill + i * 2,
     color: "sky",
   }));
 
@@ -86,14 +88,16 @@ export const projectGT032: Projection<"GT-032"> = {
   template: "GT-032",
   requires: { min_items: 0, max_items: 10 },
   project(_dataset: SkillDataset, opts: ProjectOptions): ProjectedPack {
-    const rng = createRng(opts.seed + (opts.round_index ?? 0));
+    const roundIdx = opts.round_index ?? 0;
+    const rng = createRng(opts.seed + roundIdx);
     const params = getEngineDifficultyParams("GT-032", opts.difficulty);
     const trap = params.conservation_trap ?? false;
 
     const { cups, question_type, prompt } = buildCups(
       params.item_count,
       trap,
-      rng
+      rng,
+      roundIdx
     );
 
     return {

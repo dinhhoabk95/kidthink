@@ -1,0 +1,2194 @@
+{
+  "stage_id": "chang-10",
+  "workbook_id": "WB10",
+  "title": "Chặng 10: Thung Lũng Sắc Màu",
+  "subtitle": "Tư duy màu sắc – Giải mã, Quan sát, Tìm quy luật",
+  "series": "Gấu Logic & Thỏ Quan Sát - Chuyến Tàu Toán Học (Phần 10)",
+  "source_pdf": "Chặng 10 - Thung lũng màu sắc.pdf",
+  "target_age": "3–6 tuổi",
+  "total_pages": 22,
+  "mission": "Cùng Gấu Logic và Thỏ Quan Sát vượt qua 21 thử thách sắc màu để khôi phục và thắp sáng Viên Ngọc Sắc Màu",
+  "pedagogy": {
+    "framework": "Montessori & CPA (Concrete - Pictorial - Abstract)",
+    "core_theories": [
+      "Color Sense & Chromatic Discrimination (Cảm thức màu sắc Montessori: phân biệt sắc độ, phân tách tổ hợp đa thuộc tính)",
+      "Color-by-Code / Mathematical Encoding (Mã hóa toán học: liên kết giữa phép tính trừu tượng và màu sắc trực quan)",
+      "Part-to-Whole Spatial Integration (Tích hợp không gian từ bộ phận đến toàn thể: ghép mảnh hình học khuyết dựa trên dải màu nối tiếp)",
+      "Bilateral & Radial Symmetry (Đối xứng trục và đối xứng tâm qua các khối màu đồng tâm)",
+      "Algebraic & Logic Matrix Thinking (Tư duy quy luật chuỗi lặp lại và ma trận Latin Square / Sudoku màu 3x3)"
+    ],
+    "competencies": [
+      "C1 - Cảm thức số & Phép tính (Number Sense & Operations)",
+      "C2 - Hình học & Không gian (Geometry & Spatial Reasoning)",
+      "C4 - Tư duy Logic & Quy luật (Patterns & Logical Thinking)"
+    ],
+    "skills_targeted": [
+      {
+        "code": "C1.OPS.01",
+        "name": "Cộng trong phạm vi 5",
+        "description": "Thực hiện các phép cộng đơn giản với tổng không quá 5"
+      },
+      {
+        "code": "C1.OPS.02",
+        "name": "Cộng trong phạm vi 10",
+        "description": "Thực hiện các phép tính cộng trong phạm vi 10"
+      },
+      {
+        "code": "C1.OPS.04",
+        "name": "Trừ trong phạm vi 5",
+        "description": "Thực hiện phép trừ cơ bản với số bị trừ không quá 5"
+      },
+      {
+        "code": "C1.OPS.05",
+        "name": "Trừ trong phạm vi 10",
+        "description": "Thực hiện phép tính trừ trong phạm vi 10"
+      },
+      {
+        "code": "C1.OPS.08",
+        "name": "Cộng trừ nâng cao trong phạm vi 20",
+        "description": "Tính nhẩm các phép cộng và trừ mở rộng từ 12 đến 20"
+      },
+      {
+        "code": "C2.COL.01",
+        "name": "Nhận biết và gọi tên màu sắc",
+        "description": "Nhận diện chính xác 8–10 màu cơ bản và phái sinh (đỏ, vàng, lam, lục, cam, tím, hồng, xám, nâu, đen, trắng)"
+      },
+      {
+        "code": "C2.COL.02",
+        "name": "Phân loại và trích xuất tổ hợp màu",
+        "description": "Phân tích một vật thể đa sắc để trích xuất bộ ba màu (color triplet palette)"
+      },
+      {
+        "code": "C2.SPA.04",
+        "name": "Ghép mảnh hình học khuyết",
+        "description": "Xác định mảnh ghép hình tam giác, ngôi sao, hình tròn còn thiếu dựa trên đường nối dải màu"
+      },
+      {
+        "code": "C2.SYM.01",
+        "name": "Đối xứng tâm và đối xứng trục",
+        "description": "Ghép nối hai nửa bán nguyệt có các lớp màu đồng tâm để tạo thành hình tròn hoàn chỉnh"
+      },
+      {
+        "code": "C4.PAT.01",
+        "name": "Quy luật chuỗi lặp lại",
+        "description": "Nhận biết và tiếp tục chuỗi màu sắc tuần hoàn theo chu kỳ ABC...ABC"
+      },
+      {
+        "code": "C4.LOG.01",
+        "name": "Ma trận suy luận logic ô khuyết",
+        "description": "Giải ma trận 3x3 kiểu Latin Square / Sudoku màu sắc (mỗi hàng, mỗi cột không trùng màu)"
+      }
+    ],
+    "progression_narrative": "Tiến trình Chặng 10 được xây dựng qua 4 giai đoạn phát triển tư duy chặt chẽ: (1) Giai đoạn 1 (Trang 2–11): Giải mã phép tính & Tô màu (Color by Math Code), tăng dần từ phép trừ phạm vi 10 (Trang 2), phép cộng phạm vi 5 (Trang 3), phạm vi 7 (Trang 4), đảo chiều tư duy (Trang 5: bảng mã phép tính, tranh chứa số), cộng phạm vi 9 (Trang 6), phạm vi 8 (Trang 7), kết hợp cả cộng và trừ (Trang 8–10), và mở rộng lên phép tính 12–15 (Trang 11). (2) Giai đoạn 2 (Trang 12–16): Trích xuất & Đối chiếu tổ hợp ba màu sắc (Multi-Color Triplet Matching), yêu cầu trẻ quan sát các vật thể đa chi tiết (xe hoa, bướm, đèn pha lê, khinh khí cầu, ô tô con) để trích xuất chính xác bộ 3 màu đại diện giữa các lựa chọn gây nhiễu tinh vi. (3) Giai đoạn 3 (Trang 17–20): Tư duy không gian & Mảnh ghép khuyết sắc màu, kết hợp nhận diện màu với hình học và vị trí (mảnh tam giác khuyết dải màu, ngôi sao khuyết 5 tầng màu, ghép đôi huy hiệu đối xứng đồng tâm, mảnh ghép vòng tròn 4 góc phần tư). (4) Giai đoạn 4 (Trang 21): Đại thử thách sắc màu tổng hợp 3 trụ cột kỹ năng (Chuỗi quy luật lặp lại, Trích xuất bộ màu, Ma trận Sudoku màu 3x3)."
+  },
+  "characters": {
+    "gau_logic": {
+      "name": "Gấu Logic",
+      "role": "Người dẫn đường phân tích toán học và thiết lập quy tắc",
+      "appearance": "Gấu nâu đeo kính tròn trí tuệ, áo gile chỉn chu, tay chỉ bảng quy tắc và gợi mở câu đố",
+      "voice_tone": "Trầm ấm, khích lệ tư duy suy luận logic, giải thích rõ ràng từng mã màu"
+    },
+    "tho_quan_sat": {
+      "name": "Thỏ Quan Sát",
+      "role": "Người bạn đồng hành rèn luyện kỹ năng quan sát chi tiết thị giác",
+      "appearance": "Thỏ trắng hoạt bát cầm kính lúp viền vàng, đeo túi chéo xanh, hào hứng khám phá từng dải màu",
+      "voice_tone": "Trong trẻo, tươi vui, nhắc nhở bé quan sát tỉ mỉ từng chi tiết nhỏ và không bỏ sót manh mối"
+    }
+  },
+  "activity_groups": [
+    {
+      "group_id": "WB10-D1",
+      "group_name": "Tô màu giải mã phép tính (Color by Calculation / Math-to-Color Code)",
+      "page_range": "Trang 2 – Trang 11 (Sách: Phần 10 • Trang 1 – 11)",
+      "mechanic_description": "Trẻ quan sát bảng mã bút chì (liên kết giữa số/phép tính và màu sắc). Trẻ tính nhẩm kết quả của từng vùng trên tranh vẽ (hoặc tính phép tính trên bút chì) rồi tô đúng màu tương ứng vào từng phần của bức tranh để làm bức tranh hiện rõ và mở khóa cảnh quan.",
+      "sample_prompts": [
+        "Tính phép trừ – Tô màu theo mã",
+        "Tính phép cộng – Tô màu theo mã",
+        "Tính phép trừ – Tìm màu tương ứng",
+        "Giải phép tính – Tô màu theo kết quả"
+      ],
+      "visual_objects": [
+        "Cánh cổng sắc màu vòm tròn ma thuật (Trang 2)",
+        "Những cánh diều bay lượn, mặt trời, đám mây (Trang 3)",
+        "Lâu đài bảy sắc với các khối tháp cổ tích (Trang 4)",
+        "Ngôi nhà pha lê kim cương (Trang 5)",
+        "Cỗ xe cầu vồng chở các khối pha lê (Trang 6)",
+        "Thuyền buồm lướt sóng qua hồ sắc màu (Trang 7)",
+        "Bức tượng Thỏ Pha Lê đa giác ngồi trên bệ đá giữa vườn hoa (Trang 8)",
+        "Cá heo nhảy múa trên sóng biển và quả cầu ngọc (Trang 9)",
+        "Mèo Nhỏ ôm viên ngọc pha lê đa diện (Trang 10)",
+        "Gấu trúc ngồi bên cây tre và rương kho báu (Trang 11)"
+      ],
+      "quantities_and_ranges": "Phép cộng và trừ từ phạm vi 5, 10, mở rộng đến 15 (các kết quả từ 1 đến 15).",
+      "distractors": "Nhiều vùng có phép tính khác nhau nhưng cho cùng kết quả; các phép tính có chữ số gần giống nhau (ví dụ 6-2 vs 6-3, 7-2 vs 7-3) đòi hỏi trẻ tính cẩn thận không đoán mò.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-002",
+          "template_name": "tap-fill (chạm chọn màu ở bảng palette rồi chạm vào vùng tranh để tô màu theo mã)"
+        },
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chạm chọn đáp án số trước khi chọn màu)"
+        }
+      ],
+      "recommended_skills": [
+        "C1.OPS.01",
+        "C1.OPS.02",
+        "C1.OPS.04",
+        "C1.OPS.05",
+        "C1.OPS.08",
+        "C2.COL.01"
+      ]
+    },
+    {
+      "group_id": "WB10-D2",
+      "group_name": "Trích xuất & Đối chiếu tổ hợp ba màu sắc (Multi-Color Triplet Matching)",
+      "page_range": "Trang 12 – Trang 16 (Sách: Phần 10 • Trang 12 – 16)",
+      "mechanic_description": "Cột trái hiển thị 5 đối tượng đồ họa phức hợp, mỗi đối tượng được cấu thành từ đúng 3 màu sắc đặc trưng ở các vị trí khác nhau. Cột phải hiển thị 5 bộ 3 hình lục giác màu sắc. Trẻ phải phân tích thị giác, trích xuất tổ hợp màu của từng vật thể rồi nối với bộ 3 ô màu khớp hoàn toàn.",
+      "sample_prompts": [
+        "Nối mỗi chiếc xe với bộ ba màu phù hợp",
+        "Nối mỗi chú bướm với bộ ba màu phù hợp",
+        "Nối mỗi chiếc đèn với bộ ba màu phù hợp",
+        "Nối mỗi khinh khí cầu với bộ ba màu phù hợp",
+        "Nối mỗi chiếc xe với bộ ba màu phù hợp"
+      ],
+      "visual_objects": [
+        "5 xe tải chở hoa sắc màu (Trang 12)",
+        "5 chú bướm với các tầng màu cánh đối xứng (Trang 13)",
+        "5 chiếc đèn lồng pha lê cổ tích (Trang 14)",
+        "5 quả khinh khí cầu có 3 múi dải màu (Trang 15)",
+        "5 xe hơi ô tô nhỏ đa sắc mui - thân - bánh (Trang 16)"
+      ],
+      "quantities_and_ranges": "5 cặp đối tượng mỗi trang; mỗi đối tượng gồm tập hợp 3 màu sắc trong hệ 10 màu cơ bản.",
+      "distractors": "Các bộ màu gây nhiễu chứa 2 màu trùng khớp và 1 màu sai lệch, hoặc thứ tự màu bị xáo trộn để kiểm tra khả năng phân biệt tập hợp thuộc tính của trẻ.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-005",
+          "template_name": "pair-match (kéo đường nối hoặc chạm vật thể bên trái rồi chạm bảng màu bên phải)"
+        },
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chạm chọn bảng màu đúng cho vật thể đang được tiêu điểm)"
+        }
+      ],
+      "recommended_skills": ["C2.COL.01", "C2.COL.02"]
+    },
+    {
+      "group_id": "WB10-D3",
+      "group_name": "Mảnh ghép khuyết & Đối xứng không gian màu sắc (Spatial-Color Alignment & Symmetry)",
+      "page_range": "Trang 17 – Trang 20 (Sách: Phần 10 • Trang 17 – 20)",
+      "mechanic_description": "Rèn luyện tư duy không gian và tích hợp thị giác: (1) Nhận diện mảnh ghép hình học (tam giác, ngôi sao) còn thiếu trên bức tường dải màu ngang dựa trên sự liên tục của các sọc màu; (2) Ghép đôi hai nửa bán nguyệt đối xứng có 3 lớp màu đồng tâm; (3) Xác định mảnh tròn khuyết ở tâm hoặc lệch tâm của vòng tròn chia 4 góc phần tư màu.",
+      "sample_prompts": [
+        "Khoanh vào mảnh tam giác còn thiếu",
+        "Khoanh vào ngôi sao ghép khớp hoàn toàn",
+        "Nối mỗi nửa bên trên với nửa phù hợp",
+        "Nối mỗi vòng tròn với mảnh còn thiếu"
+      ],
+      "visual_objects": [
+        "Bức tường 6 hàng gạch màu khuyết mảnh tam giác (Trang 17)",
+        "Bức tường 7 tầng màu pha lê khuyết hình ngôi sao 5 cánh (Trang 18)",
+        "5 cặp nửa huy hiệu bán nguyệt 3 lớp màu đồng tâm (Trang 19)",
+        "3 vòng tròn lớn chia 4 góc phần tư màu khuyết mảnh tròn nhỏ (Trang 20)"
+      ],
+      "quantities_and_ranges": "Bức tường từ 6–7 dải màu; 3–5 lựa chọn trắc nghiệm/ghép nối mỗi bài.",
+      "distractors": "Các mảnh ghép có cùng hình dạng nhưng sai thứ tự màu, thiếu màu ở đỉnh/đáy, hoặc bị đảo màu giữa các tầng.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chạm khoanh chọn mảnh ghép đúng A, B, C...)"
+        },
+        {
+          "template_id": "GT-008",
+          "template_name": "drag-to-slot (kéo mảnh ghép hình học thả khít vào khoảng trống trên bức tường)"
+        },
+        {
+          "template_id": "GT-005",
+          "template_name": "pair-match (nối hai nửa huy hiệu đối xứng)"
+        }
+      ],
+      "recommended_skills": ["C2.SPA.04", "C2.SYM.01", "C2.COL.01"]
+    },
+    {
+      "group_id": "WB10-D4",
+      "group_name": "Đại thử thách sắc màu & Suy luận ma trận (Grand Color Challenge & Matrix Deduction)",
+      "page_range": "Trang 21 (Sách: Phần 10 • Trang 21)",
+      "mechanic_description": "Bài kiểm tra tổng hợp cuối chặng gồm 3 thử thách độc lập: (1) Tiếp tục quy luật chuỗi hạt màu tuần hoàn ABC (Đỏ - Lam - Vàng); (2) Trích xuất bộ 3 màu sắc từ bông hoa/cánh bướm đa chi tiết; (3) Điền ô màu còn thiếu trong ma trận 3x3 kiểu Sudoku màu (mỗi hàng và mỗi cột có đủ 3 màu không lặp).",
+      "sample_prompts": [
+        "Bài 1 • Tiếp tục quy luật",
+        "Bài 2 • Chọn đúng bộ màu",
+        "Bài 3 • Điền ô còn thiếu"
+      ],
+      "visual_objects": [
+        "Chuỗi hạt tròn màu sắc Đỏ - Lam - Vàng",
+        "Hình hoa/bướm 4 cánh gồm 3 màu (Lam, Đỏ, Vàng)",
+        "Ma trận lưới 3x3 màu sắc (Latin Square Sudoku)"
+      ],
+      "quantities_and_ranges": "3 bài tập mini; mỗi bài có 3 lựa chọn A, B, C.",
+      "distractors": "Các màu sai chu kỳ lặp, bộ màu thiếu 1 thành phần, ô ma trận trùng màu trên hàng hoặc cột.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-011",
+          "template_name": "pattern-continue (chạm chọn màu tiếp theo vào dấu ?)"
+        },
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chọn đáp án A, B, C)"
+        },
+        {
+          "template_id": "GT-012",
+          "template_name": "matrix-complete (kéo hoặc chạm ô màu thả vào vị trí khuyết trong ma trận 3x3)"
+        }
+      ],
+      "recommended_skills": ["C4.PAT.01", "C2.COL.02", "C4.LOG.01"]
+    }
+  ],
+  "pages_summary": [
+    {
+      "page_number": 1,
+      "workbook_page_number": null,
+      "file_path": "pages/page-01.jpg",
+      "page_type": "cover_overview",
+      "title": "HÀNH TRÌNH KHÔI PHỤC THUNG LŨNG SẮC MÀU - CHẶNG 10",
+      "subtitle": "TƯ DUY MÀU SẮC: GIẢI MÃ • QUAN SÁT • TÌM QUY LUẬT",
+      "instruction": "CÙNG GẤU LOGIC VÀ THỎ QUAN SÁT KHÔI PHỤC VIÊN NGỌC SẮC MÀU!",
+      "dialogue": {
+        "gau_logic": "Chào mừng các bạn nhỏ đến với Thung Lũng Sắc Màu! Nơi đây chứa đựng những mật mã màu sắc kỳ diệu cần chúng mình giải mã!",
+        "tho_quan_sat": "Viên Ngọc Sắc Màu đã bị mất năng lượng rồi! Hãy cùng vượt qua 21 thử thách sắc màu để thắp sáng viên ngọc rực rỡ nhé!"
+      },
+      "parent_objectives": [
+        "Nhận biết và so sánh màu sắc",
+        "Giải mã màu bằng phép tính",
+        "Tìm mảnh ghép màu còn thiếu"
+      ],
+      "footer_banner": "21 THỬ THÁCH SẮC MÀU - CÙNG GẤU LOGIC VÀ THỎ QUAN SÁT KHÔI PHỤC VIÊN NGỌC SẮC MÀU!",
+      "pedagogical_concept": "Bìa mở đầu chặng thiết lập câu chuyện phiêu lưu thần tiên: cánh cổng vòm pha lê mở ra con đường lát đá 7 sắc cầu vồng dẫn tới tòa lâu đài và Viên ngọc sắc màu đa diện. Khơi gợi sự tò mò và hứng thú học tập qua trò chơi khám phá.",
+      "visual_details": {
+        "scenery": "Bầu trời hoàng hôn tím hồng huyền ảo, lâu đài pha lê tráng lệ, các tinh thể pha lê rực rỡ mọc hai bên đường, con đường cầu vồng dẫn vào cổng vòm thần thoại.",
+        "characters": [
+          "Gấu Logic mặc áo gile xanh, đeo kính trí thức, tươi cười giơ tay chào đón.",
+          "Thỏ Quan Sát đeo túi chéo xanh, cầm kính lúp viền vàng sẵn sàng đồng hành."
+        ],
+        "symbols": "Cánh cổng vòm pha lê tròn khổng lồ và Viên Ngọc Sắc Màu hình khối kim cương đa diện phát sáng lơ lửng ở trung tâm."
+      },
+      "digital_game_mapping": {
+        "suggested_template": "GT-000",
+        "mechanic": "concept-intro / world-hub",
+        "interaction": "Chạm vào Viên Ngọc Sắc Màu để nghe hiệu ứng chuông gió leng keng và giọng lồng tiếng mở màn nhiệm vụ Chặng 10."
+      }
+    },
+    {
+      "page_number": 2,
+      "workbook_page_number": 1,
+      "file_path": "pages/page-02.jpg",
+      "page_type": "color_by_subtraction",
+      "title": "MỞ KHÓA CÁNH CỔNG SẮC MÀU",
+      "instruction": "TÍNH PHÉP TRỪ – TÔ MÀU THEO MÃ",
+      "dialogue": {
+        "gau_logic": "Cánh cổng sắc màu bị khóa rồi!",
+        "tho_quan_sat": "Bé tính đúng rồi tô màu để mở cổng nhé!"
+      },
+      "footer_hint": "Gợi ý: Cho bé đọc phép tính trước khi chọn màu.",
+      "pedagogical_concept": "Mã hóa phép trừ thành màu sắc trong phạm vi kết quả 1–6. Trẻ rèn kỹ năng tính nhẩm trừ trong phạm vi 10 và định vị màu sắc tương ứng để hoàn thiện bức tranh cánh cổng ma thuật.",
+      "color_code_palette": [
+        { "number": 1, "color_name": "Đỏ", "hex": "#E53935" },
+        { "number": 2, "color_name": "Cam", "hex": "#FB8C00" },
+        { "number": 3, "color_name": "Vàng", "hex": "#FDD835" },
+        { "number": 4, "color_name": "Xanh lá", "hex": "#43A047" },
+        { "number": 5, "color_name": "Xanh dương", "hex": "#1E88E5" },
+        { "number": 6, "color_name": "Tím", "hex": "#8E24AA" }
+      ],
+      "calculation_regions": [
+        {
+          "region": "Tâm cổng thoi",
+          "calculation": "3-2",
+          "result": 1,
+          "target_color": "Đỏ"
+        },
+        {
+          "region": "Cánh thoi trên-trái",
+          "calculation": "4-3",
+          "result": 1,
+          "target_color": "Đỏ"
+        },
+        {
+          "region": "Cánh thoi trên-phải",
+          "calculation": "5-4",
+          "result": 1,
+          "target_color": "Đỏ"
+        },
+        {
+          "region": "Vành trong phải",
+          "calculation": "4-2",
+          "result": 2,
+          "target_color": "Cam"
+        },
+        {
+          "region": "Vành trong dưới-trái",
+          "calculation": "6-4",
+          "result": 2,
+          "target_color": "Cam"
+        },
+        {
+          "region": "Vành trong trái",
+          "calculation": "5-3",
+          "result": 2,
+          "target_color": "Cam"
+        },
+        {
+          "region": "Vành trong dưới-phải",
+          "calculation": "5-2",
+          "result": 3,
+          "target_color": "Vàng"
+        },
+        {
+          "region": "Vành ngoài đỉnh trái",
+          "calculation": "6-3",
+          "result": 3,
+          "target_color": "Vàng"
+        },
+        {
+          "region": "Vành ngoài đỉnh phải",
+          "calculation": "7-4",
+          "result": 3,
+          "target_color": "Vàng"
+        },
+        {
+          "region": "Vành ngoài trái",
+          "calculation": "6-2",
+          "result": 4,
+          "target_color": "Xanh lá"
+        },
+        {
+          "region": "Vành ngoài phải",
+          "calculation": "7-3",
+          "result": 4,
+          "target_color": "Xanh lá"
+        },
+        {
+          "region": "Chân vòm trái",
+          "calculation": "8-4",
+          "result": 4,
+          "target_color": "Xanh lá"
+        },
+        {
+          "region": "Chân vòm phải",
+          "calculation": "7-2",
+          "result": 5,
+          "target_color": "Xanh dương"
+        },
+        {
+          "region": "Bậc thang tầng 1",
+          "calculation": "9-4",
+          "result": 5,
+          "target_color": "Xanh dương"
+        },
+        {
+          "region": "Chân cột phải",
+          "calculation": "8-3",
+          "result": 5,
+          "target_color": "Xanh dương"
+        },
+        {
+          "region": "Chân cột trái",
+          "calculation": "8-2",
+          "result": 6,
+          "target_color": "Tím"
+        },
+        {
+          "region": "Bậc thang tầng 2",
+          "calculation": "9-3",
+          "result": 6,
+          "target_color": "Tím"
+        },
+        {
+          "region": "Bậc thềm đáy",
+          "calculation": "10-4",
+          "result": 6,
+          "target_color": "Tím"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-002",
+        "mechanic": "tap-fill",
+        "interaction": "Chạm vào bút chì màu ở khay dưới, rồi chạm vào từng ô phép tính để phủ màu đúng. Khi giải đúng hết, cánh cổng mở bung ánh sáng rực rỡ."
+      }
+    },
+    {
+      "page_number": 3,
+      "workbook_page_number": 2,
+      "file_path": "pages/page-03.jpg",
+      "page_type": "color_by_addition",
+      "title": "ĐÁNH THỨC NHỮNG CÁNH DIỀU",
+      "instruction": "TÍNH PHÉP CỘNG – TÔ MÀU THEO MÃ",
+      "dialogue": {
+        "gau_logic": "Gió đã mang màu sắc của những cánh diều đi mất!",
+        "tho_quan_sat": "Bé cộng thật đúng để gọi màu trở lại nhé!"
+      },
+      "footer_hint": "Gợi ý: Cho bé tính nhẩm rồi tìm màu có cùng số.",
+      "pedagogical_concept": "Phép cộng cơ bản phạm vi 5 (kết quả 1–5), làm quen với phép cộng số 0 (1+0, 0+3, 0+2, 2+0, 0+1) và tính chất giao hoán (1+2 = 2+1 = 3, 2+3 = 3+2 = 5).",
+      "color_code_palette": [
+        { "number": 1, "color_name": "Vàng", "hex": "#FDD835" },
+        { "number": 2, "color_name": "Xanh da trời", "hex": "#4FC3F7" },
+        { "number": 3, "color_name": "Cam", "hex": "#FB8C00" },
+        { "number": 4, "color_name": "Xanh lá", "hex": "#43A047" },
+        { "number": 5, "color_name": "Tím", "hex": "#8E24AA" }
+      ],
+      "calculation_regions": [
+        {
+          "region": "Mặt trời",
+          "calculation": "1+0",
+          "result": 1,
+          "target_color": "Vàng"
+        },
+        {
+          "region": "Đám mây",
+          "calculation": "1+1",
+          "result": 2,
+          "target_color": "Xanh da trời"
+        },
+        {
+          "region": "Diều 1 cánh trên",
+          "calculation": "1+2",
+          "result": 3,
+          "target_color": "Cam"
+        },
+        {
+          "region": "Diều 1 cánh dưới",
+          "calculation": "2+1",
+          "result": 3,
+          "target_color": "Cam"
+        },
+        {
+          "region": "Diều 1 nơ 1",
+          "calculation": "0+3",
+          "result": 3,
+          "target_color": "Cam"
+        },
+        {
+          "region": "Diều 1 nơ 2",
+          "calculation": "1+3",
+          "result": 4,
+          "target_color": "Xanh lá"
+        },
+        {
+          "region": "Diều 2 cánh trên",
+          "calculation": "2+2",
+          "result": 4,
+          "target_color": "Xanh lá"
+        },
+        {
+          "region": "Diều 2 cánh dưới",
+          "calculation": "3+1",
+          "result": 4,
+          "target_color": "Xanh lá"
+        },
+        {
+          "region": "Diều 2 nơ 1",
+          "calculation": "2+3",
+          "result": 5,
+          "target_color": "Tím"
+        },
+        {
+          "region": "Diều 2 nơ 2",
+          "calculation": "3+2",
+          "result": 5,
+          "target_color": "Tím"
+        },
+        {
+          "region": "Diều 3 cánh trên",
+          "calculation": "0+2",
+          "result": 2,
+          "target_color": "Xanh da trời"
+        },
+        {
+          "region": "Diều 3 cánh dưới",
+          "calculation": "2+0",
+          "result": 2,
+          "target_color": "Xanh da trời"
+        },
+        {
+          "region": "Diều 3 nơ 1",
+          "calculation": "4+1",
+          "result": 5,
+          "target_color": "Tím"
+        },
+        {
+          "region": "Diều 3 nơ 2",
+          "calculation": "0+1",
+          "result": 1,
+          "target_color": "Vàng"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-002",
+        "mechanic": "tap-fill",
+        "interaction": "Chạm chọn màu và tô vào các cánh diều, đám mây, mặt trời. Sau khi tô đủ, những cánh diều bay lượn trên nền trời kèm tiếng gió vi vu."
+      }
+    },
+    {
+      "page_number": 4,
+      "workbook_page_number": 3,
+      "file_path": "pages/page-04.jpg",
+      "page_type": "color_by_addition",
+      "title": "THẮP SÁNG LÂU ĐÀI BẢY SẮC",
+      "instruction": "TÍNH PHÉP CỘNG – TÔ MÀU THEO MÃ",
+      "dialogue": {
+        "gau_logic": "Lâu đài phía trước vẫn còn tối quá!",
+        "tho_quan_sat": "Mỗi phép cộng đúng sẽ thắp sáng một ô màu!"
+      },
+      "footer_hint": "Gợi ý: Bé có thể dùng ngón tay để tính.",
+      "pedagogical_concept": "Phép cộng phạm vi 7 (kết quả 1–7). Củng cố đếm ngón tay (Finger Gnosia) và nhận diện 7 sắc màu cơ bản.",
+      "color_code_palette": [
+        { "number": 1, "color_name": "Hồng", "hex": "#EC407A" },
+        { "number": 2, "color_name": "Vàng", "hex": "#FDD835" },
+        { "number": 3, "color_name": "Xanh lơ", "hex": "#4FC3F7" },
+        { "number": 4, "color_name": "Tím", "hex": "#8E24AA" },
+        { "number": 5, "color_name": "Cam", "hex": "#FB8C00" },
+        { "number": 6, "color_name": "Xanh lá", "hex": "#43A047" },
+        { "number": 7, "color_name": "Đỏ", "hex": "#E53935" }
+      ],
+      "calculation_regions": [
+        {
+          "region": "Chóp tháp chính",
+          "calculation": "0+1",
+          "result": 1,
+          "target_color": "Hồng"
+        },
+        {
+          "region": "Thân tháp chính tầng trên",
+          "calculation": "1+0",
+          "result": 1,
+          "target_color": "Hồng"
+        },
+        {
+          "region": "Mái tháp trái",
+          "calculation": "0+2",
+          "result": 2,
+          "target_color": "Vàng"
+        },
+        {
+          "region": "Mái tháp phải",
+          "calculation": "1+2",
+          "result": 3,
+          "target_color": "Xanh lơ"
+        },
+        {
+          "region": "Thân tháp trái",
+          "calculation": "2+0",
+          "result": 2,
+          "target_color": "Vàng"
+        },
+        {
+          "region": "Thân tháp phải",
+          "calculation": "2+1",
+          "result": 3,
+          "target_color": "Xanh lơ"
+        },
+        {
+          "region": "Tường trung tâm trên cổng",
+          "calculation": "1+1",
+          "result": 2,
+          "target_color": "Vàng"
+        },
+        {
+          "region": "Vòm cổng chính",
+          "calculation": "2+2",
+          "result": 4,
+          "target_color": "Tím"
+        },
+        {
+          "region": "Cửa sổ dài tháp trái",
+          "calculation": "0+3",
+          "result": 3,
+          "target_color": "Xanh lơ"
+        },
+        {
+          "region": "Tường cạnh tháp trái",
+          "calculation": "1+3",
+          "result": 4,
+          "target_color": "Tím"
+        },
+        {
+          "region": "Tường cạnh tháp phải",
+          "calculation": "2+3",
+          "result": 5,
+          "target_color": "Cam"
+        },
+        {
+          "region": "Cửa sổ dài tháp phải",
+          "calculation": "3+1",
+          "result": 4,
+          "target_color": "Tím"
+        },
+        {
+          "region": "Móng tường 1",
+          "calculation": "2+4",
+          "result": 6,
+          "target_color": "Xanh lá"
+        },
+        {
+          "region": "Móng tường 2",
+          "calculation": "3+3",
+          "result": 6,
+          "target_color": "Xanh lá"
+        },
+        {
+          "region": "Móng tường 3",
+          "calculation": "4+1",
+          "result": 5,
+          "target_color": "Cam"
+        },
+        {
+          "region": "Móng tường 4",
+          "calculation": "4+2",
+          "result": 6,
+          "target_color": "Xanh lá"
+        },
+        {
+          "region": "Móng tường 5",
+          "calculation": "3+4",
+          "result": 7,
+          "target_color": "Đỏ"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-002",
+        "mechanic": "tap-fill",
+        "interaction": "Chạm chọn bút chì màu rồi chạm vào từng khối lâu đài. Khi thắp sáng đủ, các ô cửa sổ tỏa sáng lung linh."
+      }
+    },
+    {
+      "page_number": 5,
+      "workbook_page_number": 5,
+      "file_path": "pages/page-05.jpg",
+      "page_type": "inverse_color_code",
+      "title": "GIẢI MÃ NGÔI NHÀ PHA LÊ",
+      "instruction": "TÍNH PHÉP TRỪ – TÌM MÀU TƯƠNG ỨNG",
+      "dialogue": {
+        "gau_logic": "Ngôi nhà này chỉ sáng khi ta tìm đúng kết quả!",
+        "tho_quan_sat": "Bé tính ở bảng màu rồi tô những ô có số tương ứng nhé!"
+      },
+      "footer_hint": "Gợi ý: Tính từng phép trừ ở bảng màu trước khi tô.",
+      "pedagogical_concept": "Cơ chế đảo chiều nhận thức (Inverse Decoding): Thay vì tính toán trên hình vẽ, phép tính được đặt ở bảng mã bút chì (3-2, 6-4, 7-4, 8-4, 8-3, 9-3, 8-1), còn tranh vẽ chứa các số kết quả (1–7). Trẻ phải giải mã bút chì trước, sau đó tìm các ô số tương ứng để tô.",
+      "color_code_palette": [
+        {
+          "calculation": "3-2",
+          "result": 1,
+          "color_name": "Hồng đậm",
+          "hex": "#C2185B"
+        },
+        {
+          "calculation": "6-4",
+          "result": 2,
+          "color_name": "Hồng sen",
+          "hex": "#E91E63"
+        },
+        {
+          "calculation": "7-4",
+          "result": 3,
+          "color_name": "Vàng",
+          "hex": "#FDD835"
+        },
+        {
+          "calculation": "8-4",
+          "result": 4,
+          "color_name": "Tím",
+          "hex": "#7E57C2"
+        },
+        {
+          "calculation": "8-3",
+          "result": 5,
+          "color_name": "Xanh lơ",
+          "hex": "#26C6DA"
+        },
+        {
+          "calculation": "9-3",
+          "result": 6,
+          "color_name": "Đỏ",
+          "hex": "#E53935"
+        },
+        {
+          "calculation": "8-1",
+          "result": 7,
+          "color_name": "Xanh lá",
+          "hex": "#43A047"
+        }
+      ],
+      "number_regions": [
+        {
+          "number": 1,
+          "regions": [
+            "Cửa trước (1, 1)",
+            "Chân tháp trái (1)",
+            "Chân tháp phải (1)"
+          ],
+          "target_color": "Hồng đậm"
+        },
+        {
+          "number": 2,
+          "regions": [
+            "Bậc thang đáy (2, 2)",
+            "Cửa sổ tròn tháp trái (2)",
+            "Cửa sổ tròn tháp phải (2)"
+          ],
+          "target_color": "Hồng sen"
+        },
+        {
+          "number": 3,
+          "regions": [
+            "Mép mái ngang giữa (3)",
+            "Tường nhà cạnh cửa (3, 3)",
+            "Tường ngoài hai bên (3, 3)"
+          ],
+          "target_color": "Vàng"
+        },
+        {
+          "number": 4,
+          "regions": [
+            "Mái tháp trái (4)",
+            "Mái tháp phải (4)",
+            "Hai cánh mái đỉnh (4, 4)"
+          ],
+          "target_color": "Tím"
+        },
+        {
+          "number": 5,
+          "regions": ["Chóp nón tháp phải (5)"],
+          "target_color": "Xanh lơ"
+        },
+        {
+          "number": 6,
+          "regions": ["Vòm cửa sổ giữa (6)"],
+          "target_color": "Đỏ"
+        },
+        {
+          "number": 7,
+          "regions": ["Thân tháp phải (7)"],
+          "target_color": "Xanh lá"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-002",
+        "mechanic": "tap-fill",
+        "interaction": "Chạm vào bút chì, hiển thị câu đố tính nhẩm phép trừ; giải đúng thì bút chì được kích hoạt sẵn sàng để tô vào các ô số trên ngôi nhà pha lê."
+      }
+    },
+    {
+      "page_number": 6,
+      "workbook_page_number": 6,
+      "file_path": "pages/page-06.jpg",
+      "page_type": "color_by_addition",
+      "title": "SƠN MÀU CỖ XE CẦU VỒNG",
+      "instruction": "TÍNH PHÉP CỘNG – TÔ MÀU THEO MÃ",
+      "dialogue": {
+        "gau_logic": "Cỗ xe mất màu nên chưa thể chuyển pha lê!",
+        "tho_quan_sat": "Bé cộng đúng rồi tô màu cho cỗ xe nhé!"
+      },
+      "footer_hint": "Gợi ý: Tính phép cộng trước, sau đó tìm số trên bảng màu.",
+      "pedagogical_concept": "Phép cộng phạm vi 9 (kết quả 2–9), với 8 màu sắc phong phú. Trẻ rèn kỹ năng phân biệt các sắc độ màu và kiểm tra kết quả tính toán cẩn thận.",
+      "color_code_palette": [
+        { "number": 2, "color_name": "Nâu", "hex": "#795548" },
+        { "number": 3, "color_name": "Cam", "hex": "#FB8C00" },
+        { "number": 4, "color_name": "Hồng", "hex": "#EC407A" },
+        { "number": 5, "color_name": "Xanh ngọc", "hex": "#00897B" },
+        { "number": 6, "color_name": "Xanh dương nhạt", "hex": "#42A5F5" },
+        { "number": 7, "color_name": "Vàng", "hex": "#FDD835" },
+        { "number": 8, "color_name": "Đỏ", "hex": "#E53935" },
+        { "number": 9, "color_name": "Xanh dương đậm", "hex": "#1565C0" }
+      ],
+      "calculation_regions": [
+        {
+          "region": "Mui buồng lái",
+          "calculation": "1+1",
+          "result": 2,
+          "target_color": "Nâu"
+        },
+        {
+          "region": "Cửa kính buồng lái",
+          "calculation": "0+2",
+          "result": 2,
+          "target_color": "Nâu"
+        },
+        {
+          "region": "Mũi đầu xe",
+          "calculation": "2+1",
+          "result": 3,
+          "target_color": "Cam"
+        },
+        {
+          "region": "Sàn xe phẳng",
+          "calculation": "1+2",
+          "result": 3,
+          "target_color": "Cam"
+        },
+        {
+          "region": "Thùng xe trái",
+          "calculation": "2+2",
+          "result": 4,
+          "target_color": "Hồng"
+        },
+        {
+          "region": "Thùng xe phải",
+          "calculation": "1+3",
+          "result": 4,
+          "target_color": "Hồng"
+        },
+        {
+          "region": "Khối pha lê thấp",
+          "calculation": "4+1",
+          "result": 5,
+          "target_color": "Xanh ngọc"
+        },
+        {
+          "region": "Cản trước đầu xe",
+          "calculation": "2+3",
+          "result": 5,
+          "target_color": "Xanh ngọc"
+        },
+        {
+          "region": "Khối pha lê nghiêng",
+          "calculation": "2+4",
+          "result": 6,
+          "target_color": "Xanh dương nhạt"
+        },
+        {
+          "region": "Khối pha lê mũi xe",
+          "calculation": "3+3",
+          "result": 6,
+          "target_color": "Xanh dương nhạt"
+        },
+        {
+          "region": "Vành bánh xe trước",
+          "calculation": "3+4",
+          "result": 7,
+          "target_color": "Vàng"
+        },
+        {
+          "region": "Vành bánh xe giữa",
+          "calculation": "5+2",
+          "result": 7,
+          "target_color": "Vàng"
+        },
+        {
+          "region": "Khối pha lê đỉnh cao nhất",
+          "calculation": "5+3",
+          "result": 8,
+          "target_color": "Đỏ"
+        },
+        {
+          "region": "Vành bánh xe sau",
+          "calculation": "5+3",
+          "result": 8,
+          "target_color": "Đỏ"
+        },
+        {
+          "region": "Trục bánh xe giữa",
+          "calculation": "4+4",
+          "result": 8,
+          "target_color": "Đỏ"
+        },
+        {
+          "region": "Lốp bánh xe trước",
+          "calculation": "4+5",
+          "result": 9,
+          "target_color": "Xanh dương đậm"
+        },
+        {
+          "region": "Quả tạ móc kéo sau",
+          "calculation": "6+3",
+          "result": 9,
+          "target_color": "Xanh dương đậm"
+        },
+        {
+          "region": "Lốp bánh xe sau",
+          "calculation": "6+3",
+          "result": 9,
+          "target_color": "Xanh dương đậm"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-002",
+        "mechanic": "tap-fill",
+        "interaction": "Tô màu từng bộ phận của cỗ xe. Khi hoàn thành, bánh xe quay tròn và cỗ xe chuyển động chở pha lê về đích."
+      }
+    },
+    {
+      "page_number": 7,
+      "workbook_page_number": 7,
+      "file_path": "pages/page-07.jpg",
+      "page_type": "color_by_addition",
+      "title": "CĂNG BUỒM QUA HỒ SẮC MÀU",
+      "instruction": "TÍNH PHÉP CỘNG – TÔ MÀU THEO MÃ",
+      "dialogue": {
+        "gau_logic": "Con thuyền đang chờ đủ màu để ra khơi!",
+        "tho_quan_sat": "Bé cộng thật đúng để căng những cánh buồm nhé!"
+      },
+      "footer_hint": "Gợi ý: Những phép tính có cùng kết quả sẽ tô cùng một màu.",
+      "pedagogical_concept": "Phép cộng phạm vi 8 (kết quả 1–8). Rèn luyện nhận thức về sự tương đương toán học: các biểu thức khác nhau nhưng có cùng kết quả sẽ chia sẻ cùng thuộc tính màu sắc (Equivalence Class Representation).",
+      "color_code_palette": [
+        { "number": 1, "color_name": "Xanh nhạt", "hex": "#80DEEA" },
+        { "number": 2, "color_name": "Hồng", "hex": "#F06292" },
+        { "number": 3, "color_name": "Xanh lục đậm", "hex": "#00796B" },
+        { "number": 4, "color_name": "Đỏ", "hex": "#E53935" },
+        { "number": 5, "color_name": "Xanh lá mạ", "hex": "#7CB342" },
+        { "number": 6, "color_name": "Xanh tím than", "hex": "#283593" },
+        { "number": 7, "color_name": "Vàng", "hex": "#FDD835" },
+        { "number": 8, "color_name": "Cam", "hex": "#FB8C00" }
+      ],
+      "calculation_regions": [
+        {
+          "region": "Buồm đỉnh giữa",
+          "calculation": "0+1",
+          "result": 1,
+          "target_color": "Xanh nhạt"
+        },
+        {
+          "region": "Buồm trên phải",
+          "calculation": "1+0",
+          "result": 1,
+          "target_color": "Xanh nhạt"
+        },
+        {
+          "region": "Buồm trái",
+          "calculation": "0+2",
+          "result": 2,
+          "target_color": "Hồng"
+        },
+        {
+          "region": "Buồm dưới giữa",
+          "calculation": "1+1",
+          "result": 2,
+          "target_color": "Hồng"
+        },
+        {
+          "region": "Boong tàu trái",
+          "calculation": "1+2",
+          "result": 3,
+          "target_color": "Xanh lục đậm"
+        },
+        {
+          "region": "Boong tàu giữa",
+          "calculation": "2+1",
+          "result": 3,
+          "target_color": "Xanh lục đậm"
+        },
+        {
+          "region": "Boong tàu phải",
+          "calculation": "2+2",
+          "result": 4,
+          "target_color": "Đỏ"
+        },
+        {
+          "region": "Mạn tàu trái",
+          "calculation": "1+3",
+          "result": 4,
+          "target_color": "Đỏ"
+        },
+        {
+          "region": "Mạn tàu giữa",
+          "calculation": "2+3",
+          "result": 5,
+          "target_color": "Xanh lá mạ"
+        },
+        {
+          "region": "Cửa sổ tròn 1",
+          "calculation": "4+1",
+          "result": 5,
+          "target_color": "Xanh lá mạ"
+        },
+        {
+          "region": "Cửa sổ tròn 2",
+          "calculation": "3+3",
+          "result": 6,
+          "target_color": "Xanh tím than"
+        },
+        {
+          "region": "Cửa sổ tròn 3",
+          "calculation": "2+4",
+          "result": 6,
+          "target_color": "Xanh tím than"
+        },
+        {
+          "region": "Mạn tàu phải",
+          "calculation": "3+4",
+          "result": 7,
+          "target_color": "Vàng"
+        },
+        {
+          "region": "Đáy thuyền trái",
+          "calculation": "5+2",
+          "result": 7,
+          "target_color": "Vàng"
+        },
+        {
+          "region": "Đáy thuyền phải",
+          "calculation": "4+4",
+          "result": 8,
+          "target_color": "Cam"
+        },
+        {
+          "region": "Cờ đuôi nheo cột buồm",
+          "calculation": "5+3",
+          "result": 8,
+          "target_color": "Cam"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-002",
+        "mechanic": "tap-fill",
+        "interaction": "Chạm tô từng dải buồm và thân thuyền. Thuyền buồm nhấp nhô lướt sóng nước lung linh sau khi được tô đủ màu."
+      }
+    },
+    {
+      "page_number": 8,
+      "workbook_page_number": 8,
+      "file_path": "pages/page-08.jpg",
+      "page_type": "color_by_mixed_operations",
+      "title": "ĐÁNH THỨC THỎ PHA LÊ",
+      "instruction": "GIẢI PHÉP TÍNH – TÔ MÀU THEO KẾT QUẢ",
+      "dialogue": {
+        "gau_logic": "Bức tượng Thỏ Pha Lê vẫn đang ngủ!",
+        "tho_quan_sat": "Bé giải đúng phép tính để gọi bạn ấy dậy nhé!"
+      },
+      "footer_hint": "Gợi ý: Cộng hoặc trừ rồi đối chiếu kết quả với bảng màu.",
+      "pedagogical_concept": "Tích hợp cả phép cộng và phép trừ trong cùng một hoạt động (Mixed Addition & Subtraction), phạm vi kết quả 3–6. Rèn luyện tư duy linh hoạt chuyển đổi giữa gộp và bớt.",
+      "color_code_palette": [
+        { "number": 3, "color_name": "Xanh lơ nhạt", "hex": "#81D4FA" },
+        { "number": 4, "color_name": "Xám", "hex": "#9E9E9E" },
+        { "number": 5, "color_name": "Hồng", "hex": "#F48FB1" },
+        { "number": 6, "color_name": "Xanh tím than", "hex": "#3949AB" }
+      ],
+      "calculation_regions": [
+        {
+          "region": "Tai trái chóp",
+          "calculation": "1+2",
+          "result": 3,
+          "target_color": "Xanh lơ nhạt"
+        },
+        {
+          "region": "Tai trái gốc",
+          "calculation": "6-3",
+          "result": 3,
+          "target_color": "Xanh lơ nhạt"
+        },
+        {
+          "region": "Tai phải chóp",
+          "calculation": "5-2",
+          "result": 3,
+          "target_color": "Xanh lơ nhạt"
+        },
+        {
+          "region": "Tai phải gốc",
+          "calculation": "4-1",
+          "result": 3,
+          "target_color": "Xanh lơ nhạt"
+        },
+        {
+          "region": "Đỉnh đầu",
+          "calculation": "2+2",
+          "result": 4,
+          "target_color": "Xám"
+        },
+        {
+          "region": "Cổ / Cằm",
+          "calculation": "7-3",
+          "result": 4,
+          "target_color": "Xám"
+        },
+        {
+          "region": "Ngực giữa",
+          "calculation": "5-1",
+          "result": 4,
+          "target_color": "Xám"
+        },
+        {
+          "region": "Mũi thỏ",
+          "calculation": "6-2",
+          "result": 4,
+          "target_color": "Xám"
+        },
+        {
+          "region": "Má trái",
+          "calculation": "2+3",
+          "result": 5,
+          "target_color": "Hồng"
+        },
+        {
+          "region": "Má phải",
+          "calculation": "7-2",
+          "result": 5,
+          "target_color": "Hồng"
+        },
+        {
+          "region": "Đùi trái",
+          "calculation": "8-3",
+          "result": 5,
+          "target_color": "Hồng"
+        },
+        {
+          "region": "Đùi phải",
+          "calculation": "6-1",
+          "result": 5,
+          "target_color": "Hồng"
+        },
+        {
+          "region": "Chân trái",
+          "calculation": "3+3",
+          "result": 6,
+          "target_color": "Xanh tím than"
+        },
+        {
+          "region": "Bụng dưới",
+          "calculation": "9-3",
+          "result": 6,
+          "target_color": "Xanh tím than"
+        },
+        {
+          "region": "Chân phải",
+          "calculation": "8-2",
+          "result": 6,
+          "target_color": "Xanh tím than"
+        },
+        {
+          "region": "Bệ đá đỡ tượng",
+          "calculation": "7-1",
+          "result": 6,
+          "target_color": "Xanh tím than"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-002",
+        "mechanic": "tap-fill",
+        "interaction": "Chạm giải phép tính và tô màu tượng thỏ. Hoàn thành xong, chú thỏ pha lê bừng tỉnh, mở mắt lấp lánh và vẫy tai chào bé."
+      }
+    },
+    {
+      "page_number": 9,
+      "workbook_page_number": 9,
+      "file_path": "pages/page-09.jpg",
+      "page_type": "color_by_mixed_operations",
+      "title": "GIÚP CÁ HEO TÌM LẠI MÀU",
+      "instruction": "GIẢI PHÉP TÍNH – TÔ MÀU THEO KẾT QUẢ",
+      "dialogue": {
+        "gau_logic": "Bạn Cá Heo đã quên mất những màu sắc của mình!",
+        "tho_quan_sat": "Mình cùng giải phép tính để giúp bạn ấy nhé!"
+      },
+      "footer_hint": "Gợi ý: Tô từng vùng sau khi đã kiểm tra kết quả.",
+      "pedagogical_concept": "Phép tính cộng trừ kết hợp với các kết quả 4–8. Rèn luyện sự tỉ mỉ khi phân tách thân cá heo thành các mảng khối và sóng biển.",
+      "color_code_palette": [
+        { "number": 4, "color_name": "Hồng", "hex": "#EC407A" },
+        { "number": 5, "color_name": "Xanh dương", "hex": "#1E88E5" },
+        { "number": 6, "color_name": "Xám", "hex": "#757575" },
+        { "number": 7, "color_name": "Xanh đen", "hex": "#1A237E" },
+        { "number": 8, "color_name": "Xanh lá", "hex": "#43A047" }
+      ],
+      "calculation_regions": [
+        {
+          "region": "Vây lưng cá heo",
+          "calculation": "2+2",
+          "result": 4,
+          "target_color": "Hồng"
+        },
+        {
+          "region": "Lưng cá heo",
+          "calculation": "6-2",
+          "result": 4,
+          "target_color": "Hồng"
+        },
+        {
+          "region": "Mỏ miệng cá heo",
+          "calculation": "7-3",
+          "result": 4,
+          "target_color": "Hồng"
+        },
+        {
+          "region": "Bụng cá heo",
+          "calculation": "7-2",
+          "result": 5,
+          "target_color": "Xanh dương"
+        },
+        {
+          "region": "Ức dưới cá heo",
+          "calculation": "2+3",
+          "result": 5,
+          "target_color": "Xanh dương"
+        },
+        {
+          "region": "Vây đuôi cá heo",
+          "calculation": "8-3",
+          "result": 5,
+          "target_color": "Xanh dương"
+        },
+        {
+          "region": "Chóp vây đuôi",
+          "calculation": "8-2",
+          "result": 6,
+          "target_color": "Xám"
+        },
+        {
+          "region": "Dưới bụng",
+          "calculation": "3+3",
+          "result": 6,
+          "target_color": "Xám"
+        },
+        {
+          "region": "Ngọn sóng giữa",
+          "calculation": "9-3",
+          "result": 6,
+          "target_color": "Xám"
+        },
+        {
+          "region": "Ngọn sóng trái",
+          "calculation": "3+4",
+          "result": 7,
+          "target_color": "Xanh đen"
+        },
+        {
+          "region": "Sóng đáy",
+          "calculation": "9-2",
+          "result": 7,
+          "target_color": "Xanh đen"
+        },
+        {
+          "region": "Đế quả cầu",
+          "calculation": "10-3",
+          "result": 7,
+          "target_color": "Xanh đen"
+        },
+        {
+          "region": "Quả cầu ngọc",
+          "calculation": "9-1",
+          "result": 8,
+          "target_color": "Xanh lá"
+        },
+        {
+          "region": "Vành đỡ quả cầu",
+          "calculation": "10-2",
+          "result": 8,
+          "target_color": "Xanh lá"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-002",
+        "mechanic": "tap-fill",
+        "interaction": "Chạm tô từng mảng thân cá heo và sóng nước. Khi tô xong, cá heo phóng lên không trung tung quả cầu ngọc."
+      }
+    },
+    {
+      "page_number": 10,
+      "workbook_page_number": 10,
+      "file_path": "pages/page-10.jpg",
+      "page_type": "color_by_mixed_operations",
+      "title": "MÈO NHỎ CANH GIỮ VIÊN NGỌC",
+      "instruction": "GIẢI PHÉP TÍNH – TÔ MÀU THEO KẾT QUẢ",
+      "dialogue": {
+        "gau_logic": "Mèo Nhỏ đang giữ một viên ngọc chưa có màu!",
+        "tho_quan_sat": "Bé giải phép tính để làm viên ngọc tỏa sáng nhé!"
+      },
+      "footer_hint": "Gợi ý: Kiểm tra lại kết quả trước khi tô viên ngọc.",
+      "pedagogical_concept": "Phép tính cộng trừ phạm vi 10, mở rộng đến 12-2=10 và 5+5=10. Trẻ làm quen với cấu trúc cơ số 10 (Ten-Base Structure) và sự đối xứng của các bộ phận cơ thể mèo.",
+      "color_code_palette": [
+        { "number": 4, "color_name": "Hồng", "hex": "#EC407A" },
+        { "number": 5, "color_name": "Cam", "hex": "#FB8C00" },
+        { "number": 6, "color_name": "Xám", "hex": "#757575" },
+        { "number": 7, "color_name": "Vàng", "hex": "#FDD835" },
+        { "number": 8, "color_name": "Xanh dương", "hex": "#1E88E5" },
+        { "number": 9, "color_name": "Đỏ", "hex": "#E53935" },
+        { "number": 10, "color_name": "Xanh lá", "hex": "#43A047" }
+      ],
+      "calculation_regions": [
+        {
+          "region": "Tai trái",
+          "calculation": "2+2",
+          "result": 4,
+          "target_color": "Hồng"
+        },
+        {
+          "region": "Trán giữa",
+          "calculation": "6-2",
+          "result": 4,
+          "target_color": "Hồng"
+        },
+        {
+          "region": "Tai phải",
+          "calculation": "2+3",
+          "result": 5,
+          "target_color": "Cam"
+        },
+        {
+          "region": "Má trái",
+          "calculation": "7-2",
+          "result": 5,
+          "target_color": "Cam"
+        },
+        {
+          "region": "Chân phải mèo",
+          "calculation": "7-2",
+          "result": 5,
+          "target_color": "Cam"
+        },
+        {
+          "region": "Má phải",
+          "calculation": "3+3",
+          "result": 6,
+          "target_color": "Xám"
+        },
+        {
+          "region": "Đuôi mèo",
+          "calculation": "8-2",
+          "result": 6,
+          "target_color": "Xám"
+        },
+        {
+          "region": "Tay ôm trái",
+          "calculation": "3+4",
+          "result": 7,
+          "target_color": "Vàng"
+        },
+        {
+          "region": "Tay ôm phải",
+          "calculation": "9-2",
+          "result": 7,
+          "target_color": "Vàng"
+        },
+        {
+          "region": "Chóp viên ngọc",
+          "calculation": "4+4",
+          "result": 8,
+          "target_color": "Xanh dương"
+        },
+        {
+          "region": "Cạnh trái viên ngọc",
+          "calculation": "10-2",
+          "result": 8,
+          "target_color": "Xanh dương"
+        },
+        {
+          "region": "Cạnh phải viên ngọc",
+          "calculation": "4+5",
+          "result": 9,
+          "target_color": "Đỏ"
+        },
+        {
+          "region": "Chân trái mèo",
+          "calculation": "10-1",
+          "result": 9,
+          "target_color": "Đỏ"
+        },
+        {
+          "region": "Tâm viên ngọc",
+          "calculation": "5+5",
+          "result": 10,
+          "target_color": "Xanh lá"
+        },
+        {
+          "region": "Đáy viên ngọc",
+          "calculation": "12-2",
+          "result": 10,
+          "target_color": "Xanh lá"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-002",
+        "mechanic": "tap-fill",
+        "interaction": "Chạm tô từng bộ phận mèo và viên ngọc. Hoàn thành xong, viên ngọc bừng sáng hào quang và chú mèo kêu 'Meo meo' vui sướng."
+      }
+    },
+    {
+      "page_number": 11,
+      "workbook_page_number": 11,
+      "file_path": "pages/page-11.jpg",
+      "page_type": "advanced_calculation_color",
+      "title": "GẤU TRÚC GIỮ KHO BÁU",
+      "instruction": "GIẢI PHÉP TÍNH – TÔ MÀU THEO KẾT QUẢ",
+      "dialogue": {
+        "gau_logic": "Cánh cửa kho báu cần bốn mã màu đặc biệt!",
+        "tho_quan_sat": "Bé tính cẩn thận để tìm các kết quả từ 12 đến 15 nhé!!"
+      },
+      "footer_hint": "Gợi ý: Có thể dùng que tính khi gặp phép tính khó.",
+      "pedagogical_concept": "Cộng trừ nâng cao trong phạm vi 20 (kết quả 12–15). Phát triển năng lực tính nhẩm hai chữ số (18-6=12, 14-2=12, 6+7=13, 7+7=14, 20-6=14, 7+8=15, 20-5=15).",
+      "color_code_palette": [
+        { "number": 12, "color_name": "Xanh lam nhạt", "hex": "#90CAF9" },
+        { "number": 13, "color_name": "Hồng", "hex": "#F48FB1" },
+        { "number": 14, "color_name": "Đen", "hex": "#212121" },
+        { "number": 15, "color_name": "Xanh lá", "hex": "#66BB6A" }
+      ],
+      "calculation_regions": [
+        {
+          "region": "Tai trái gấu",
+          "calculation": "6+6",
+          "result": 12,
+          "target_color": "Xanh lam nhạt"
+        },
+        {
+          "region": "Đầu gấu trúc",
+          "calculation": "14-2",
+          "result": 12,
+          "target_color": "Xanh lam nhạt"
+        },
+        {
+          "region": "Tai phải gấu",
+          "calculation": "15-3",
+          "result": 12,
+          "target_color": "Xanh lam nhạt"
+        },
+        {
+          "region": "Má trái gấu",
+          "calculation": "18-6",
+          "result": 12,
+          "target_color": "Xanh lam nhạt"
+        },
+        {
+          "region": "Má phải gấu",
+          "calculation": "6+7",
+          "result": 13,
+          "target_color": "Hồng"
+        },
+        {
+          "region": "Mũi miệng",
+          "calculation": "15-2",
+          "result": 13,
+          "target_color": "Hồng"
+        },
+        {
+          "region": "Tay trái gấu",
+          "calculation": "18-5",
+          "result": 13,
+          "target_color": "Hồng"
+        },
+        {
+          "region": "Bụng gấu trúc",
+          "calculation": "16-3",
+          "result": 13,
+          "target_color": "Hồng"
+        },
+        {
+          "region": "Chân trái gấu",
+          "calculation": "7+7",
+          "result": 14,
+          "target_color": "Đen"
+        },
+        {
+          "region": "Chân phải gấu",
+          "calculation": "16-2",
+          "result": 14,
+          "target_color": "Đen"
+        },
+        {
+          "region": "Lá tre trên",
+          "calculation": "17-3",
+          "result": 14,
+          "target_color": "Đen"
+        },
+        {
+          "region": "Đốt tre trên",
+          "calculation": "20-6",
+          "result": 14,
+          "target_color": "Đen"
+        },
+        {
+          "region": "Đốt tre giữa",
+          "calculation": "17-2",
+          "result": 15,
+          "target_color": "Xanh lá"
+        },
+        {
+          "region": "Đốt tre dưới",
+          "calculation": "18-3",
+          "result": 15,
+          "target_color": "Xanh lá"
+        },
+        {
+          "region": "Lá tre phải",
+          "calculation": "7+8",
+          "result": 15,
+          "target_color": "Xanh lá"
+        },
+        {
+          "region": "Nắp rương kho báu",
+          "calculation": "20-5",
+          "result": 15,
+          "target_color": "Xanh lá"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-002",
+        "mechanic": "tap-fill",
+        "interaction": "Chạm giải phép tính hai chữ số và tô màu. Sau khi hoàn thành, rương kho báu bật mở nắp tỏa ngọc ngà châu báu."
+      }
+    },
+    {
+      "page_number": 12,
+      "workbook_page_number": 12,
+      "file_path": "pages/page-12.jpg",
+      "page_type": "triplet_palette_matching",
+      "title": "CHỌN MÀU CHO XE CHỞ HOA",
+      "instruction": "NỐI MỖI CHIẾC XE VỚI BỘ BA MÀU PHÙ HỢP",
+      "dialogue": {
+        "gau_logic": "Mỗi chiếc xe được trang trí bằng đúng ba màu!",
+        "tho_quan_sat": "Bé quan sát rồi nối xe với bộ màu giống hệt nhé!"
+      },
+      "footer_hint": "Gợi ý: Gọi tên ba màu trên xe trước khi nối.",
+      "pedagogical_concept": "Trích xuất đặc trưng đa màu sắc (Multi-Attribute Abstraction). Trẻ phân tích một đối tượng có 3 thành phần màu và đối chiếu với tập hợp 3 ô màu lục giác.",
+      "items": [
+        {
+          "index": 1,
+          "object_description": "Xe hoa 1: Thùng xe đỏ, mui/gương vàng, viền xanh lá",
+          "colors": ["Đỏ", "Vàng", "Xanh lá"],
+          "matched_palette_index": 3,
+          "matched_palette": ["Đỏ", "Vàng", "Xanh lá"]
+        },
+        {
+          "index": 2,
+          "object_description": "Xe hoa 2: Thân xe tím lam, viền và hoa hồng, mui xanh lá",
+          "colors": ["Hồng", "Xanh lá", "Tím"],
+          "matched_palette_index": 2,
+          "matched_palette": ["Hồng", "Xanh lá", "Tím"]
+        },
+        {
+          "index": 3,
+          "object_description": "Xe hoa 3: Thân cam, cửa xanh ngọc, bánh xám",
+          "colors": ["Cam", "Xanh ngọc", "Xám"],
+          "matched_palette_index": 1,
+          "matched_palette": ["Cam", "Xanh ngọc", "Xám"]
+        },
+        {
+          "index": 4,
+          "object_description": "Xe hoa 4: Thân xanh dương, viền tím, hoa và tim hồng",
+          "colors": ["Xanh dương", "Tím", "Hồng"],
+          "matched_palette_index": 4,
+          "matched_palette": ["Xanh dương", "Tím", "Hồng"]
+        },
+        {
+          "index": 5,
+          "object_description": "Xe hoa 5: Thân vàng, viền xanh dương, bánh xanh đen",
+          "colors": ["Vàng", "Xanh dương", "Xanh đen"],
+          "matched_palette_index": 5,
+          "matched_palette": ["Vàng", "Xanh dương", "Xanh đen"]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-005",
+        "mechanic": "pair-match",
+        "interaction": "Chạm vào xe hoa bên trái rồi chạm vào bộ 3 lục giác màu tương ứng bên phải (hoặc vuốt kéo dây nối)."
+      }
+    },
+    {
+      "page_number": 13,
+      "workbook_page_number": 13,
+      "file_path": "pages/page-13.jpg",
+      "page_type": "triplet_palette_matching",
+      "title": "GHÉP CÁNH BƯỚM VỚI BẢNG MÀU",
+      "instruction": "NỐI MỖI CHÚ BƯỚM VỚI BỘ BA MÀU PHÙ HỢP",
+      "dialogue": {
+        "gau_logic": "Những cánh bướm đang mang các bộ ba màu khác nhau!",
+        "tho_quan_sat": "Bé nhìn thật kỹ đôi cánh rồi tìm bảng màu đúng nhé!"
+      },
+      "footer_hint": "Gợi ý: Quan sát màu ở cả hai bên cánh bướm.",
+      "pedagogical_concept": "Quan sát thuộc tính màu sắc trên hình thể đối xứng tự nhiên (cánh bướm đối xứng). Trẻ nhận diện 3 tầng màu trên cánh và liên kết với bảng mã màu tương ứng.",
+      "items": [
+        {
+          "index": 1,
+          "object_description": "Bướm 1: Viền xanh dương, lòng cánh vàng, đốm đỏ",
+          "colors": ["Xanh dương", "Vàng", "Đỏ"],
+          "matched_palette_index": 1,
+          "matched_palette": ["Xanh dương", "Vàng", "Đỏ"]
+        },
+        {
+          "index": 2,
+          "object_description": "Bướm 2: Viền đỏ, cánh hồng, đốm xám",
+          "colors": ["Đỏ", "Hồng", "Xám"],
+          "matched_palette_index": 5,
+          "matched_palette": ["Đỏ", "Hồng", "Xám"]
+        },
+        {
+          "index": 3,
+          "object_description": "Bướm 3: Cánh trên xanh ngọc, cánh giữa xanh lá, cánh dưới tím",
+          "colors": ["Xanh ngọc", "Xanh lá", "Tím"],
+          "matched_palette_index": 4,
+          "matched_palette": ["Xanh ngọc", "Xanh lá", "Tím"]
+        },
+        {
+          "index": 4,
+          "object_description": "Bướm 4: Cánh trên cam, cánh giữa vàng, cánh dưới xanh đen",
+          "colors": ["Cam", "Vàng", "Xanh đen"],
+          "matched_palette_index": 2,
+          "matched_palette": ["Cam", "Vàng", "Xanh đen"]
+        },
+        {
+          "index": 5,
+          "object_description": "Bướm 5: Cánh trên tím, cánh giữa cam, cánh dưới xanh lá",
+          "colors": ["Tím", "Cam", "Xanh lá"],
+          "matched_palette_index": 3,
+          "matched_palette": ["Tím", "Cam", "Xanh lá"]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-005",
+        "mechanic": "pair-match",
+        "interaction": "Nối chú bướm với bảng màu. Chú bướm đập cánh bay lượn khi được nối chính xác."
+      }
+    },
+    {
+      "page_number": 14,
+      "workbook_page_number": 14,
+      "file_path": "pages/page-14.jpg",
+      "page_type": "triplet_palette_matching",
+      "title": "THẮP SÁNG NHỮNG CHIẾC ĐÈN",
+      "instruction": "NỐI MỖI CHIẾC ĐÈN VỚI BỘ BA MÀU PHÙ HỢP",
+      "dialogue": {
+        "gau_logic": "Mỗi chiếc đèn pha lê cần đúng ba tia màu!",
+        "tho_quan_sat": "Bé tìm bộ màu giống chiếc đèn để thắp sáng nhé!"
+      },
+      "footer_hint": "Gợi ý: So sánh lần lượt từng màu của chiếc đèn.",
+      "pedagogical_concept": "Phân tích 3 tấm kính màu của đèn lồng cổ kính. Rèn luyện khả năng quét tuần tự (Sequential Scanning) từ trái sang phải hoặc từ trên xuống dưới để trích xuất màu.",
+      "items": [
+        {
+          "index": 1,
+          "object_description": "Đèn 1: Kính đỏ, kính xanh dương, kính vàng",
+          "colors": ["Đỏ", "Xanh dương", "Vàng"],
+          "matched_palette_index": 3,
+          "matched_palette": ["Đỏ", "Xanh dương", "Vàng"]
+        },
+        {
+          "index": 2,
+          "object_description": "Đèn 2: Kính tím, kính hồng, kính xanh lá",
+          "colors": ["Tím", "Hồng", "Xanh lá"],
+          "matched_palette_index": 5,
+          "matched_palette": ["Tím", "Hồng", "Xanh lá"]
+        },
+        {
+          "index": 3,
+          "object_description": "Đèn 3: Kính cam, kính xanh ngọc, kính xanh đen",
+          "colors": ["Cam", "Xanh ngọc", "Xanh đen"],
+          "matched_palette_index": 2,
+          "matched_palette": ["Cam", "Xanh ngọc", "Xanh đen"]
+        },
+        {
+          "index": 4,
+          "object_description": "Đèn 4: Kính vàng, kính xanh lá, kính nâu",
+          "colors": ["Vàng", "Xanh lá", "Nâu"],
+          "matched_palette_index": 4,
+          "matched_palette": ["Vàng", "Xanh lá", "Nâu"]
+        },
+        {
+          "index": 5,
+          "object_description": "Đèn 5: Kính xanh lơ, kính xám, kính đỏ",
+          "colors": ["Xanh lơ", "Xám", "Đỏ"],
+          "matched_palette_index": 1,
+          "matched_palette": ["Xanh lơ", "Xám", "Đỏ"]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-005",
+        "mechanic": "pair-match",
+        "interaction": "Chạm nối đèn với bảng màu. Đèn tỏa sáng ấm áp kèm hiệu ứng tia sáng khi ghép đúng."
+      }
+    },
+    {
+      "page_number": 15,
+      "workbook_page_number": 15,
+      "file_path": "pages/page-15.jpg",
+      "page_type": "triplet_palette_matching",
+      "title": "CHỌN MÀU CHO KHINH KHÍ CẦU",
+      "instruction": "NỐI MỖI KHINH KHÍ CẦU VỚI BỘ BA MÀU PHÙ HỢP",
+      "dialogue": {
+        "gau_logic": "Năm khinh khí cầu sắp bay qua thung lũng!",
+        "tho_quan_sat": "Bé nối đúng bộ màu để các bạn cùng cất cánh nhé!"
+      },
+      "footer_hint": "Gợi ý: Đừng nối theo vị trí; hãy nối theo đúng ba màu.",
+      "pedagogical_concept": "Phân tích 3 múi màu uốn cong trên thân khinh khí cầu. Gợi ý sư phạm quan trọng: Độc lập với trật tự sắp xếp không gian (Order Invariance of Sets) - tập hợp {A, B, C} bằng {C, B, A}.",
+      "items": [
+        {
+          "index": 1,
+          "object_description": "Khinh khí cầu 1: Múi xanh dương, múi cam, múi vàng",
+          "colors": ["Xanh dương", "Cam", "Vàng"],
+          "matched_palette_index": 4,
+          "matched_palette": ["Xanh dương", "Cam", "Vàng"]
+        },
+        {
+          "index": 2,
+          "object_description": "Khinh khí cầu 2: Múi đỏ, múi xanh lá, múi tím",
+          "colors": ["Đỏ", "Xanh lá", "Tím"],
+          "matched_palette_index": 5,
+          "matched_palette": ["Đỏ", "Xanh lá", "Tím"]
+        },
+        {
+          "index": 3,
+          "object_description": "Khinh khí cầu 3: Múi hồng, múi xanh ngọc, múi xám",
+          "colors": ["Hồng", "Xanh ngọc", "Xám"],
+          "matched_palette_index": 1,
+          "matched_palette": ["Hồng", "Xanh ngọc", "Xám"]
+        },
+        {
+          "index": 4,
+          "object_description": "Khinh khí cầu 4: Múi vàng, múi tím, múi xanh đen",
+          "colors": ["Vàng", "Tím", "Xanh đen"],
+          "matched_palette_index": 3,
+          "matched_palette": ["Vàng", "Tím", "Xanh đen"]
+        },
+        {
+          "index": 5,
+          "object_description": "Khinh khí cầu 5: Múi cam, múi xanh lá, múi đỏ",
+          "colors": ["Cam", "Xanh lá", "Đỏ"],
+          "matched_palette_index": 2,
+          "matched_palette": ["Cam", "Xanh lá", "Đỏ"]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-005",
+        "mechanic": "pair-match",
+        "interaction": "Chạm nối khinh khí cầu với bộ màu. Khi nối đúng, ngọn lửa phụt sáng đẩy khinh khí cầu bay lên cao."
+      }
+    },
+    {
+      "page_number": 16,
+      "workbook_page_number": 16,
+      "file_path": "pages/page-16.jpg",
+      "page_type": "triplet_palette_matching",
+      "title": "CHỌN MÃ MÀU CHO XE PHA LÊ",
+      "instruction": "NỐI MỖI CHIẾC XE VỚI BỘ BA MÀU PHÙ HỢP",
+      "dialogue": {
+        "gau_logic": "Năm chiếc xe cần đúng ba màu để mở đường!",
+        "tho_quan_sat": "Bé quan sát rồi nối thật chính xác nhé!"
+      },
+      "footer_hint": "Gợi ý: Gọi tên ba màu trên xe trước khi nối.",
+      "pedagogical_concept": "Phân biệt màu ở các chi tiết chức năng của ô tô (Mui xe, Thân xe, Bánh xe/Gương). Phát triển vốn từ định danh màu sắc và khả năng tập trung chú ý chọn lọc.",
+      "items": [
+        {
+          "index": 1,
+          "object_description": "Xe 1: Thân đỏ, mui vàng, bánh xanh dương",
+          "colors": ["Vàng", "Xanh dương", "Đỏ"],
+          "matched_palette_index": 4,
+          "matched_palette": ["Vàng", "Xanh dương", "Đỏ"]
+        },
+        {
+          "index": 2,
+          "object_description": "Xe 2: Thân cam, mui xanh lá, bánh tím",
+          "colors": ["Cam", "Tím", "Xanh lá"],
+          "matched_palette_index": 1,
+          "matched_palette": ["Cam", "Tím", "Xanh lá"]
+        },
+        {
+          "index": 3,
+          "object_description": "Xe 3: Thân xám đen, mui xanh lơ, bánh xám",
+          "colors": ["Xanh lơ", "Xám", "Xám đen"],
+          "matched_palette_index": 5,
+          "matched_palette": ["Xanh lơ", "Xám", "Xám đen"]
+        },
+        {
+          "index": 4,
+          "object_description": "Xe 4: Thân trắng ngà, mui vàng, bánh xanh đen",
+          "colors": ["Xanh đen", "Trắng ngà", "Vàng"],
+          "matched_palette_index": 2,
+          "matched_palette": ["Xanh đen", "Trắng ngà", "Vàng"]
+        },
+        {
+          "index": 5,
+          "object_description": "Xe 5: Thân xanh lá, mui cam, bánh đỏ",
+          "colors": ["Xanh lá", "Cam", "Đỏ"],
+          "matched_palette_index": 3,
+          "matched_palette": ["Xanh lá", "Cam", "Đỏ"]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-005",
+        "mechanic": "pair-match",
+        "interaction": "Chạm nối xe với bảng mã màu. Xe bấm còi 'Bíp bíp' vui nhộn và lăn bánh mở đường."
+      }
+    },
+    {
+      "page_number": 17,
+      "workbook_page_number": 17,
+      "file_path": "pages/page-17.jpg",
+      "page_type": "spatial_missing_puzzle_piece",
+      "title": "MẢNH GHÉP CẦU VỒNG",
+      "instruction": "KHOANH VÀO MẢNH TAM GIÁC CÒN THIẾU",
+      "dialogue": {
+        "gau_logic": "Một mảnh tam giác đã rơi khỏi bức tường màu!",
+        "tho_quan_sat": "Bé tìm mảnh có các dải màu nối khớp nhé!"
+      },
+      "footer_hint": "Gợi ý: Đáp án đúng phải nối liền màu ở cả hai cạnh tam giác.",
+      "pedagogical_concept": "Tích hợp nhận thức không gian và màu sắc (Spatial-Color Continuity): Bức tường gạch có 6 dải màu ngang liên tục (Tím, Xanh lơ, Xanh lá, Đỏ, Vàng, Xanh dương đậm). Khi một mảnh tam giác bị cắt ra từ tầng 2 đến tầng 6, mảnh ghép đó phải mang các dải màu tương ứng khớp chính xác với hai mép cắt.",
+      "target_structure": {
+        "wall_layers_top_to_bottom": [
+          "Tầng 1: Tím",
+          "Tầng 2: Xanh lơ",
+          "Tầng 3: Xanh lá",
+          "Tầng 4: Đỏ",
+          "Tầng 5: Vàng",
+          "Tầng 6: Xanh dương đậm"
+        ],
+        "missing_cutout_shape": "Hình tam giác cân (đỉnh ở tầng 2 Xanh lơ, đáy ở tầng 6 Xanh dương đậm)",
+        "required_color_sequence": [
+          "Xanh lơ (đỉnh)",
+          "Xanh lá",
+          "Đỏ",
+          "Vàng",
+          "Xanh dương đậm (đáy)"
+        ]
+      },
+      "options": [
+        {
+          "label": "A",
+          "description": "Đỉnh tím, xanh lơ, đỏ, vàng, xanh dương",
+          "is_correct": false,
+          "error_analysis": "Đỉnh bị thừa màu tím và thiếu dải xanh lá."
+        },
+        {
+          "label": "B",
+          "description": "Đỉnh xanh lơ, xanh lá, đỏ, vàng, xanh dương đậm",
+          "is_correct": true,
+          "correct_reason": "Khớp hoàn hảo với 5 tầng màu của bức tường từ tầng 2 đến tầng 6."
+        },
+        {
+          "label": "C",
+          "description": "Đỉnh xanh lơ, xanh lá, vàng, đỏ, xanh dương đậm",
+          "is_correct": false,
+          "error_analysis": "Bị đảo lộn vị trí giữa dải vàng và dải đỏ."
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "drag-to-slot",
+        "interaction": "Kéo mảnh tam giác B thả vào khoảng trống khuyết trên bức tường; mảnh ghép khớp vào khít khao và tường gạch sáng bừng."
+      }
+    },
+    {
+      "page_number": 18,
+      "workbook_page_number": 18,
+      "file_path": "pages/page-18.jpg",
+      "page_type": "spatial_missing_puzzle_piece",
+      "title": "NGÔI SAO BỊ KHUYẾT",
+      "instruction": "KHOANH VÀO NGÔI SAO GHÉP KHỚP HOÀN TOÀN",
+      "dialogue": {
+        "gau_logic": "Bức tường pha lê đang thiếu một ngôi sao!",
+        "tho_quan_sat": "Bé so màu từng dải để tìm đúng mảnh nhé!"
+      },
+      "footer_hint": "Gợi ý: Nhìn thứ tự các dải màu từ trên xuống dưới.",
+      "pedagogical_concept": "Nâng cao độ khó từ tam giác lên hình ngôi sao 5 cánh phức hợp trên bức tường 7 tầng màu. Đòi hỏi trẻ so sánh đối chiếu từng tầng màu theo thứ tự từ đỉnh xuống chân.",
+      "target_structure": {
+        "wall_layers_top_to_bottom": [
+          "Tầng 1: Hồng sen",
+          "Tầng 2: Vàng",
+          "Tầng 3: Xanh lơ",
+          "Tầng 4: Xanh lá",
+          "Tầng 5: Cam",
+          "Tầng 6: Tím",
+          "Tầng 7: Đỏ"
+        ],
+        "missing_cutout_shape": "Ngôi sao 5 cánh (trải dài từ tầng 2 Vàng xuống tầng 6 Tím)",
+        "required_color_sequence": [
+          "Vàng (đỉnh trên)",
+          "Xanh lơ (cánh ngang trên)",
+          "Xanh lá (thân giữa)",
+          "Cam (thân dưới)",
+          "Tím (hai chân)"
+        ]
+      },
+      "options": [
+        {
+          "label": "A",
+          "description": "Đỉnh xanh lá, dải xanh lơ, dải cam, dải tím",
+          "is_correct": false,
+          "error_analysis": "Sai đỉnh màu (xanh lá thay vì vàng)."
+        },
+        {
+          "label": "B",
+          "description": "Đỉnh xanh lơ, dải xanh lá, dải cam, dải tím",
+          "is_correct": false,
+          "error_analysis": "Sai đỉnh màu (xanh lơ thay vì vàng)."
+        },
+        {
+          "label": "C",
+          "description": "Đỉnh xanh lơ, dải cam, dải xanh lá, dải tím",
+          "is_correct": false,
+          "error_analysis": "Sai đỉnh màu và đảo trật tự cam - xanh lá."
+        },
+        {
+          "label": "D",
+          "description": "Đỉnh vàng, dải xanh lơ, dải xanh lá, dải cam, hai chân tím",
+          "is_correct": true,
+          "correct_reason": "Khớp hoàn toàn với cả 5 tầng màu từ tầng 2 đến tầng 6."
+        },
+        {
+          "label": "E",
+          "description": "Đỉnh vàng, dải xanh lơ, dải xanh lá, dải tím, hai chân đỏ",
+          "is_correct": false,
+          "error_analysis": "Thiếu dải màu cam và thừa màu đỏ ở hai chân."
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "drag-to-slot",
+        "interaction": "Kéo ngôi sao D vào vị trí khuyết. Ngôi sao khớp vào bức tường và xoay tròn phát sáng rực rỡ."
+      }
+    },
+    {
+      "page_number": 19,
+      "workbook_page_number": 19,
+      "file_path": "pages/page-19.jpg",
+      "page_type": "concentric_symmetry_matching",
+      "title": "GHÉP ĐÔI HUY HIỆU SẮC MÀU",
+      "instruction": "NỐI MỖI NỬA BÊN TRÊN VỚI NỬA PHÙ HỢP",
+      "dialogue": {
+        "gau_logic": "Năm huy hiệu đã bị tách thành hai nửa!",
+        "tho_quan_sat": "Bé quan sát màu và nối hai nửa giống nhau nhé!"
+      },
+      "footer_hint": "Gợi ý: Mỗi cặp đúng sẽ tạo thành một hình tròn hoàn chỉnh.",
+      "pedagogical_concept": "Tư duy đối xứng trục và cấu trúc đồng tâm (Concentric Radial Symmetry). Mỗi huy hiệu gồm 3 vòng: Vòng ngoài, Vòng giữa, Tâm. Trẻ phải đối chiếu cả 3 lớp màu giữa nửa trái và nửa phải để ghép thành hình tròn hoàn chỉnh.",
+      "items": [
+        {
+          "top_index": 1,
+          "layers": {
+            "outer": "Xanh dương",
+            "middle": "Vàng",
+            "inner": "Xanh lá"
+          },
+          "matched_bottom_label": "C",
+          "matched_layers": {
+            "outer": "Xanh dương",
+            "middle": "Vàng",
+            "inner": "Xanh lá"
+          }
+        },
+        {
+          "top_index": 2,
+          "layers": { "outer": "Xanh lá", "middle": "Hồng/đỏ", "inner": "Tím" },
+          "matched_bottom_label": "E",
+          "matched_layers": {
+            "outer": "Xanh lá",
+            "middle": "Hồng/đỏ",
+            "inner": "Tím"
+          }
+        },
+        {
+          "top_index": 3,
+          "layers": { "outer": "Cam", "middle": "Xanh lơ", "inner": "Hồng" },
+          "matched_bottom_label": "A",
+          "matched_layers": {
+            "outer": "Cam",
+            "middle": "Xanh lơ",
+            "inner": "Hồng"
+          }
+        },
+        {
+          "top_index": 4,
+          "layers": {
+            "outer": "Hồng sen",
+            "middle": "Xanh ngọc",
+            "inner": "Nâu/cam"
+          },
+          "matched_bottom_label": "D",
+          "matched_layers": {
+            "outer": "Hồng sen",
+            "middle": "Xanh ngọc",
+            "inner": "Nâu/cam"
+          }
+        },
+        {
+          "top_index": 5,
+          "layers": { "outer": "Tím", "middle": "Vàng", "inner": "Xanh dương" },
+          "matched_bottom_label": "B",
+          "matched_layers": {
+            "outer": "Tím",
+            "middle": "Vàng",
+            "inner": "Xanh dương"
+          }
+        }
+      ],
+      "correct_pairings": ["1 - C", "2 - E", "3 - A", "4 - D", "5 - B"],
+      "digital_game_mapping": {
+        "suggested_template": "GT-005",
+        "mechanic": "pair-match",
+        "interaction": "Chạm nửa huy hiệu hàng trên rồi chạm nửa tương ứng hàng dưới. Hai nửa snap dính liền vào nhau thành chiếc huy hiệu tròn xoay kim loại lấp lánh."
+      }
+    },
+    {
+      "page_number": 20,
+      "workbook_page_number": 20,
+      "file_path": "pages/page-20.jpg",
+      "page_type": "pie_quadrant_color_matching",
+      "title": "NHỮNG VÒNG TRÒN BÍ MẬT",
+      "instruction": "NỐI MỖI VÒNG TRÒN VỚI MẢNH CÒN THIẾU",
+      "dialogue": {
+        "gau_logic": "Ba vòng tròn đang thiếu những mảnh màu nhỏ!",
+        "tho_quan_sat": "Bé tìm mảnh có màu và đường nét khớp nhé!"
+      },
+      "footer_hint": "Gợi ý: Đường chia màu trên mảnh phải nối liền với vòng tròn.",
+      "pedagogical_concept": "Tư duy góc phần tư và liên tục đường phân ranh (Quadrant Partitioning & Boundary Continuity). Phân biệt giữa mảnh khuyết nằm lệch tâm (giao giữa 2 màu) và mảnh khuyết nằm ngay chính tâm (giao của cả 4 màu).",
+      "target_circles": [
+        {
+          "circle_id": 1,
+          "quadrants": {
+            "top_left": "Xanh lá",
+            "top_right": "Vàng",
+            "bottom_left": "Hồng",
+            "bottom_right": "Xanh dương"
+          },
+          "hole_location": "Lệch tâm ở ranh giới giữa góc trên-trái (Xanh lá) và góc trên-phải (Vàng)",
+          "required_piece": "Hình tròn chia đôi: nửa trái Xanh lá, nửa phải Vàng",
+          "matched_option": "B"
+        },
+        {
+          "circle_id": 2,
+          "quadrants": {
+            "top_left": "Tím",
+            "top_right": "Xanh lơ",
+            "bottom_left": "Vàng",
+            "bottom_right": "Đỏ"
+          },
+          "hole_location": "Lệch tâm ở ranh giới giữa góc trên-trái (Tím) và góc dưới-trái (Vàng)",
+          "required_piece": "Hình tròn chia đôi: nửa trên Tím, nửa dưới Vàng",
+          "matched_option": "D"
+        },
+        {
+          "circle_id": 3,
+          "quadrants": {
+            "top_left": "Xanh dương",
+            "top_right": "Hồng",
+            "bottom_left": "Cam",
+            "bottom_right": "Xanh lá"
+          },
+          "hole_location": "Ngay chính TÂM giao nhau của cả 4 góc phần tư",
+          "required_piece": "Hình tròn chia 4 góc màu: trên-trái Xanh dương, trên-phải Hồng, dưới-trái Cam, dưới-phải Xanh lá",
+          "matched_option": "A"
+        }
+      ],
+      "distractor_options": [
+        {
+          "label": "C",
+          "description": "Hình tròn chia 4 góc với màu sắc và vị trí sai lệch"
+        },
+        {
+          "label": "E",
+          "description": "Hình tròn chia 4 góc với màu sắc đảo lộn"
+        },
+        {
+          "label": "F",
+          "description": "Hình tròn chia đôi nửa hồng, nửa xanh lá"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-005",
+        "mechanic": "pair-match",
+        "interaction": "Nối từng vòng tròn lớn với mảnh tròn nhỏ khớp chính xác. Khi gắn vào, đường viền tan biến biến vòng tròn thành thể thống nhất nguyên vẹn."
+      }
+    },
+    {
+      "page_number": 21,
+      "workbook_page_number": 21,
+      "file_path": "pages/page-21.jpg",
+      "page_type": "grand_challenge_assessment",
+      "title": "ĐẠI THỬ THÁCH SẮC MÀU",
+      "instruction": "HOÀN THÀNH CẢ BA THỬ THÁCH",
+      "dialogue": {
+        "gau_logic": "Viên Ngọc Sắc Màu chỉ còn một bước nữa thôi!",
+        "tho_quan_sat": "Bé dùng tất cả kỹ năng để hoàn thành nhé!"
+      },
+      "footer_hint": "Gợi ý: Đáp án đúng: mỗi bài chỉ có một lựa chọn phù hợp.",
+      "pedagogical_concept": "Đánh giá năng lực tổng hợp (Mastery Assessment) tích hợp 3 trụ cột toán tư duy mầm non: (1) Chuỗi quy luật chu kỳ ABC; (2) Trích xuất thuộc tính tổ hợp màu; (3) Ma trận logic Latin Square Sudoku 3x3.",
+      "challenges": [
+        {
+          "challenge_number": 1,
+          "name": "BÀI 1 • TIẾP TỤC QUY LUẬT",
+          "competency": "C4.PAT.01",
+          "pattern_sequence": [
+            "Đỏ",
+            "Xanh dương",
+            "Vàng",
+            "Đỏ",
+            "Xanh dương",
+            "?"
+          ],
+          "pattern_rule": "Chu kỳ tuần hoàn ABC lặp lại: Đỏ -> Xanh dương -> Vàng",
+          "target_question": "Hạt tiếp theo dấu ? là màu gì?",
+          "options": [
+            { "label": "Xanh lá", "is_correct": false },
+            { "label": "Vàng", "is_correct": true },
+            { "label": "Hồng sen", "is_correct": false }
+          ],
+          "correct_answer": "Vàng",
+          "explanation": "Sau Xanh dương của chu kỳ thứ 2 là màu Vàng để hoàn tất chu kỳ Đỏ - Xanh dương - Vàng."
+        },
+        {
+          "challenge_number": 2,
+          "name": "BÀI 2 • CHỌN ĐÚNG BỘ MÀU",
+          "competency": "C2.COL.02",
+          "object_description": "Hình hoa/bướm có 4 cánh: cánh trên-trái Xanh dương, cánh trên-phải Đỏ, hai cánh dưới Vàng",
+          "target_question": "Bộ ba màu nào cấu tạo nên hình trên?",
+          "options": [
+            {
+              "label": "A",
+              "colors": ["Xanh lá", "Xanh dương", "Đỏ"],
+              "is_correct": false
+            },
+            {
+              "label": "B",
+              "colors": ["Xanh dương", "Vàng", "Đỏ"],
+              "is_correct": true
+            },
+            {
+              "label": "C",
+              "colors": ["Tím", "Vàng", "Hồng"],
+              "is_correct": false
+            }
+          ],
+          "correct_answer": "B (Xanh dương, Vàng, Đỏ)",
+          "explanation": "Hình chứa đúng 3 màu: Xanh dương, Vàng và Đỏ (không có màu xanh lá hay tím)."
+        },
+        {
+          "challenge_number": 3,
+          "name": "BÀI 3 • ĐIỀN Ô CÒN THIẾU",
+          "competency": "C4.LOG.01",
+          "matrix_description": "Lưới 3x3 ma trận Latin Square Sudoku màu sắc:",
+          "matrix_grid": [
+            ["Đỏ", "Xanh dương", "Vàng"],
+            ["Xanh dương", "Vàng", "Đỏ"],
+            ["Vàng", "Đỏ", "?"]
+          ],
+          "logic_rule": "Mỗi hàng ngang và mỗi cột dọc đều phải có đủ 3 màu Đỏ, Xanh dương, Vàng và không được lặp lại màu.",
+          "target_question": "Ô ở góc dưới bên phải mang màu gì?",
+          "options": [
+            { "label": "A", "color": "Xanh lá", "is_correct": false },
+            { "label": "B", "color": "Xanh dương", "is_correct": true },
+            { "label": "C", "color": "Hồng", "is_correct": false }
+          ],
+          "correct_answer": "B (Xanh dương)",
+          "explanation": "Hàng 3 đã có Vàng và Đỏ nên ô thiếu phải là Xanh dương. Cột 3 đã có Vàng và Đỏ nên ô thiếu cũng phải là Xanh dương."
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-001",
+        "mechanic": "tap-select / multi-quiz",
+        "interaction": "Chạm chọn đáp án đúng cho từng bài. Khi hoàn thành cả 3 bài, âm thanh kèn chiến thắng vang lên mở ra trang hoàn thành chặng."
+      }
+    },
+    {
+      "page_number": 22,
+      "workbook_page_number": 22,
+      "file_path": "pages/page-22.jpg",
+      "page_type": "celebration_and_reward",
+      "title": "HOÀN THÀNH PHẦN 10 - THUNG LŨNG SẮC MÀU",
+      "subtitle": "HÀNH TRÌNH CHUYẾN TÀU TOÁN HỌC",
+      "instruction": "BÉ ĐÃ HOÀN THÀNH CHẶNG SỐ 10! BA MẸ CÙNG BÉ TÔ 3 NGÔI SAO NHÉ! BÉ HÃY TÔ MÀU VIÊN NGỌC SẮC MÀU. SẴN SÀNG LÊN TÀU ĐẾN CHẶNG 11!",
+      "dialogue": {
+        "gau_logic": "Bé đã giúp thung lũng tìm lại đủ sắc màu!",
+        "tho_quan_sat": "Viên Ngọc Sắc Màu đã tỏa sáng rồi!"
+      },
+      "footer_banner": "SẴN SÀNG LÊN TÀU ĐẾN CHẶNG 11!",
+      "pedagogical_concept": "Củng cố tâm lý thành tựu (Gamification & Self-efficacy): Trẻ nhìn lại hành trình qua bản đồ đường ray 20 chặng (hoàn thành 10 chặng đầu tiên - cán mốc 50% toàn bộ giáo trình). Khuyến khích ba mẹ tham gia đánh giá 3 ngôi sao và cho trẻ tự do sáng tạo tô màu viên ngọc sắc màu.",
+      "celebration_elements": {
+        "railway_map": "20 ga số trên đường ray. Các ga 1 đến 10 đều đã được tích dấu V vàng hoàn thành. Bảng 'BÉ ĐANG Ở ĐÂY' cắm tại ga số 10.",
+        "star_rating": "3 ngôi sao rỗng cho ba mẹ và bé cùng tô để ghi nhận nỗ lực.",
+        "creative_coloring": "Khung nét vẽ Viên Ngọc Sắc Màu hình kim cương đa diện để bé tự do tô màu sáng tạo theo sở thích.",
+        "characters_mood": "Gấu Logic và Thỏ Quan Sát giơ hai tay reo hò vui mừng bên cạnh đoàn tàu hơi nước chở đầy hoa và pha lê rực rỡ."
+      },
+      "digital_game_mapping": {
+        "suggested_template": "GT-000",
+        "mechanic": "celebration-summary",
+        "interaction": "Hiệu ứng pháo hoa giấy confetti bay ngập màn hình, còi tàu hú vang, trao huy hiệu 'Hiệp Sĩ Sắc Màu' và mở khóa chặng 11."
+      }
+    }
+  ]
+}

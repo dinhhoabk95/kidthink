@@ -24,8 +24,8 @@ describe("PDF Renderer Unit Tests (BR-PDF-04, 05, 06, 07)", () => {
     items: [
       {
         position: 0,
-        item_type: "activity",
-        item_code: "ACT-COUNT-01",
+        item_type: "game_level",
+        item_code: "GL-C1-CNT-0001",
         custom_instruction: "Cho trẻ đếm lần lượt từng quả táo trên bàn.",
         snapshot: {
           title: "Đếm số lượng quả táo",
@@ -116,8 +116,8 @@ describe("PDF Renderer Unit Tests (BR-PDF-04, 05, 06, 07)", () => {
   it("[BR-PDF-05] Từ chối và ném lỗi khi tài liệu vượt quá 20 trang", () => {
     const hugeItems = Array.from({ length: 120 }, (_, i) => ({
       position: i,
-      item_type: "activity" as const,
-      item_code: `ACT-HUGE-${i}`,
+      item_type: "game_level" as const,
+      item_code: `GL-HUGE-${i}`,
       snapshot: {
         title: `Hoạt động mở rộng số ${i + 1} - Luyện tập tư duy chuyên sâu`,
         duration_minutes: 20,
@@ -163,7 +163,7 @@ describe("PDF Renderer Unit Tests (BR-PDF-04, 05, 06, 07)", () => {
       items: [
         {
           position: 0,
-          item_type: "activity" as const,
+          item_type: "game_level" as const,
           snapshot: {
             title: "Hoạt động",
             child_name: "Bé An",

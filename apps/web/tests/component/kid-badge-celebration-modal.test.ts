@@ -57,12 +57,19 @@ describe("KidBadgeCelebrationModal component (Task #287)", () => {
   });
 
   it("bấm nút nghe lời chúc kích hoạt speechSynthesis", async () => {
+    const originalSpeechSynthesis = window.speechSynthesis;
+    const originalUtterance = globalThis.SpeechSynthesisUtterance;
     const speakMock = vi.fn();
     const cancelMock = vi.fn();
-    window.speechSynthesis = {
-      speak: speakMock,
-      cancel: cancelMock,
-    } as unknown as SpeechSynthesis;
+
+    Object.defineProperty(window, "speechSynthesis", {
+      value: {
+        speak: speakMock,
+        cancel: cancelMock,
+      },
+      configurable: true,
+      writable: true,
+    });
 
     class MockSpeechSynthesisUtterance {
       text: string;
@@ -72,28 +79,45 @@ describe("KidBadgeCelebrationModal component (Task #287)", () => {
         this.text = text;
       }
     }
-    // @ts-expect-error Mock for happy-dom
-    globalThis.SpeechSynthesisUtterance = MockSpeechSynthesisUtterance;
 
-    const wrapper = mount(KidBadgeCelebrationModal, {
-      props: {
-        badge: badgeSample,
-      },
-      global: {
-        stubs: {
-          KidMascot: true,
-          UIcon: true,
-        },
-      },
+    Object.defineProperty(globalThis, "SpeechSynthesisUtterance", {
+      value: MockSpeechSynthesisUtterance,
+      configurable: true,
+      writable: true,
     });
 
-    const speakBtn = wrapper.find(
-      'button[aria-label="Nghe lời chúc mừng của Gấu Con"]'
-    );
-    expect(speakBtn.exists()).toBe(true);
+    try {
+      const wrapper = mount(KidBadgeCelebrationModal, {
+        props: {
+          badge: badgeSample,
+        },
+        global: {
+          stubs: {
+            KidMascot: true,
+            UIcon: true,
+          },
+        },
+      });
 
-    await speakBtn.trigger("click");
-    expect(cancelMock).toHaveBeenCalled();
-    expect(speakMock).toHaveBeenCalled();
+      const speakBtn = wrapper.find(
+        'button[aria-label="Nghe lời chúc mừng của Gấu Con"]'
+      );
+      expect(speakBtn.exists()).toBe(true);
+
+      await speakBtn.trigger("click");
+      expect(cancelMock).toHaveBeenCalled();
+      expect(speakMock).toHaveBeenCalled();
+    } finally {
+      Object.defineProperty(window, "speechSynthesis", {
+        value: originalSpeechSynthesis,
+        configurable: true,
+        writable: true,
+      });
+      Object.defineProperty(globalThis, "SpeechSynthesisUtterance", {
+        value: originalUtterance,
+        configurable: true,
+        writable: true,
+      });
+    }
   });
 });

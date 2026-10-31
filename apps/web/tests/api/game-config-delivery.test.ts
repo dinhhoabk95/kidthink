@@ -7,7 +7,7 @@ import {
   playSessions,
 } from "@mindkid/db";
 import { resolveAssets } from "@mindkid/shared";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { describe, expect, it, vi } from "vitest";
 import guestConfigHandler from "#server/api/guest/levels/[code]/config.get";
 import managerConfigHandler from "#server/api/managers/levels/[code]/config.get";
@@ -107,16 +107,10 @@ async function seedTestLevel(options: {
     ],
   };
 
-  const contentVersion = options.contentVersion || 1;
   const existingLevels = await db
     .select({ id: gameLevels.id })
     .from(gameLevels)
-    .where(
-      and(
-        eq(gameLevels.code, options.code),
-        eq(gameLevels.contentVersion, contentVersion)
-      )
-    );
+    .where(eq(gameLevels.code, options.code));
 
   for (const existing of existingLevels) {
     await db
@@ -125,12 +119,14 @@ async function seedTestLevel(options: {
     await db.delete(gameLevels).where(eq(gameLevels.id, existing.id));
   }
 
+  if (options.status === "archived") {
+    return { level: null, templateCode: gtCode };
+  }
+
   const [level] = await db
     .insert(gameLevels)
     .values({
-      entityId: Math.floor(Math.random() * 900_000) + 100_000,
       code: options.code,
-      contentVersion,
       templateCode: gtCode,
       title: "Level Test Config",
       instruction: "Hướng dẫn làm bài",
@@ -142,7 +138,6 @@ async function seedTestLevel(options: {
         shuffle_items: true,
       },
       accessTier: options.accessTier || "free",
-      status: options.status || "published",
     })
     .returning();
 
@@ -203,7 +198,7 @@ async function ensureAllowlistFreeLevel() {
   const [existing] = await db
     .select()
     .from(gameLevels)
-    .where(and(eq(gameLevels.code, code), eq(gameLevels.status, "published")))
+    .where(eq(gameLevels.code, code))
     .limit(1);
   if (existing) {
     return { level: existing, code };
@@ -241,8 +236,8 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
       const res = (await guestConfigHandler(event)) as any;
 
       expect(res.level_code).toBe(code);
-      expect(res.content_version).toBe(level.contentVersion);
-      expect(res.template_code).toBe(level.templateCode);
+      expect(res.content_version).toBe(1);
+      expect(res.template_code).toBe(level?.templateCode);
       expect(res.session).toBeDefined();
       expect(res.session.uuid).toBeDefined();
       expect(res.layout_seed).toBeDefined();
@@ -401,7 +396,7 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
       const res = (await userConfigHandler(event)) as any;
 
       expect(res.session.uuid).toBeDefined();
-      expect(res.content_version).toBe(3);
+      expect(res.content_version).toBe(1);
 
       const db = getOwnerDb();
       const [created] = await db
@@ -410,7 +405,6 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
         .where(eq(playSessions.sessionUuid, res.session.uuid));
 
       expect(created).toBeDefined();
-      expect(created?.contentVersion).toBe(3);
       expect(created?.isPreview).toBe(false);
     });
 

@@ -87,12 +87,12 @@
 
           <div class="flex items-center gap-3 shrink-0">
             <NuxtLink
-              class="min-h-11 px-4 py-2 bg-warning-600 hover:bg-warning-700 text-white text-sm font-semibold rounded-2xl transition-colors inline-flex items-center gap-1.5 shadow-xs"
+              class="min-h-11 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-2xl transition-colors inline-flex items-center gap-1.5 shadow-xs"
               v-if="!skill.identifiers.is_deprecated"
-              :to="skill.actions.author_url"
+              :to="`/levels?skill_code=${skill.identifiers.code}`"
             >
-              <UIcon class="w-4 h-4 shrink-0" name="i-lucide-plus-circle" />
-              <span>Soạn level cho kỹ năng này</span>
+              <UIcon class="w-4 h-4 shrink-0" name="i-lucide-gamepad-2" />
+              <span>Xem danh sách level</span>
             </NuxtLink>
           </div>
         </div>
@@ -383,8 +383,8 @@
           <h2
             class="text-base font-bold font-heading text-surface-900 dark:text-surface-100"
           >
-            Nội dung đang gắn ({{ skill.attached_content.total_published }}
-            xuất bản / {{ skill.attached_content.total_draft }} nháp)
+            Nội dung đang gắn ({{ skill.attached_content.levels.length }} màn
+            chơi)
           </h2>
         </div>
 
@@ -412,16 +412,6 @@
               >
             </div>
             <div class="flex flex-wrap items-center gap-2 shrink-0">
-              <span
-                class="px-2.5 py-0.5 rounded-full font-medium"
-                :class="
-                  level.status === 'published'
-                    ? 'bg-success-100 dark:bg-success-950/60 text-success-800 dark:text-success-300'
-                    : 'bg-warning-100 dark:bg-warning-950/60 text-warning-800 dark:text-warning-300'
-                "
-              >
-                {{ level.status }}
-              </span>
               <span
                 class="px-2.5 py-0.5 bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-300 rounded-xl font-medium"
               >
@@ -521,15 +511,13 @@
         id: number;
         code: string;
         title: string;
-        status: string;
         access_tier: string;
         weight: string;
       }>;
-      total_published: number;
-      total_draft: number;
+      total_published?: number;
+      total_levels?: number;
     };
     actions: {
-      author_url: string;
       pr_notice: string;
     };
   }

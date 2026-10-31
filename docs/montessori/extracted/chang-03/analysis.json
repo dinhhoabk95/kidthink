@@ -1,0 +1,1737 @@
+{
+  "stage_id": "chang-03",
+  "stage_number": 3,
+  "title": "Chặng 3: Thung Lũng Bóng & Hình",
+  "subtitle": "Thử tài tìm chiếc bóng đúng – Đưa những chiếc bóng về đúng chủ nhân",
+  "mission": "Đưa những chiếc bóng về đúng chủ nhân, thắp sáng Viên Ngọc Tinh Mắt",
+  "series": "Gấu Logic & Thỏ Quan Sát - Chuyến Tàu Toán Học (Phần 3)",
+  "target_age": "3–6 tuổi",
+  "reward_badge": {
+    "name": "Viên Ngọc Tinh Mắt",
+    "name_en": "Observer Jewel",
+    "description": "Biểu tượng kim cương tỏa sáng rực rỡ tượng trưng cho khả năng quan sát nhạy bén và phân tích đường nét tinh tế của bé."
+  },
+  "pedagogy": {
+    "framework": "Montessori, CPA (Concrete - Pictorial - Abstract) & Visual Perception Theory",
+    "approach": "Trích xuất đặc trưng đường viền (Silhouette Contour Extraction), Phân biệt hình - nền (Figure-Ground Discrimination), Tư duy định hướng & Bất biến không gian (Spatial Orientation & Rotation Invariance)",
+    "competencies": [
+      {
+        "code": "C2",
+        "name": "Tư duy không gian (Spatial Thinking)",
+        "role": "Mục tiêu trọng tâm: Nhận biết hình thể, hình chiếu cạnh, góc xoay và tính đối xứng"
+      },
+      {
+        "code": "C4",
+        "name": "Quan sát & Khám phá khoa học (Observation Thinking)",
+        "role": "Mục tiêu bổ trợ: Tách chi tiết viền, loại trừ nhiễu tinh vi và liên hệ vật thể thực tế"
+      },
+      {
+        "code": "C1",
+        "name": "Cảm thức số học & Đếm (Number Sense & Counting)",
+        "role": "Nền tảng đối ứng: Đếm số lượng vật thể và số bóng tương ứng (tập hợp 3, 4, 5, 6 phần tử)"
+      }
+    ],
+    "skills_targeted": [
+      {
+        "code": "C2.GEO.01",
+        "name": "Hình tròn (Circle Silhouette)",
+        "description": "Nhận biết bóng có đường bao tròn như quả bóng, khinh khí cầu, bánh xe"
+      },
+      {
+        "code": "C2.GEO.03",
+        "name": "Hình tam giác (Triangle Silhouette)",
+        "description": "Nhận biết bóng chóp nhọn như mũ sinh nhật, mái tháp lâu đài, gai lưng khủng long"
+      },
+      {
+        "code": "C2.GEO.04",
+        "name": "Hình chữ nhật (Rectangle Silhouette)",
+        "description": "Nhận diện khối thân xe cứu hỏa, giỏ khí cầu, thân ghế"
+      },
+      {
+        "code": "C2.ORI.01",
+        "name": "Định hướng bên trái (Leftward Facing)",
+        "description": "Nhận diện hình quay mặt sang trái (cá vàng, chim công, sóc lật hướng)"
+      },
+      {
+        "code": "C2.ORI.02",
+        "name": "Định hướng bên phải (Rightward Facing)",
+        "description": "Nhận diện hình quay mặt sang phải (chú sóc cầm hạt dẻ, xe cứu hỏa, bé trượt xe)"
+      },
+      {
+        "code": "C2.ROT.04",
+        "name": "Bất biến sau khi xoay (Rotational Invariance)",
+        "description": "Nhận biết hình dáng gốc dù bóng bị xoay hướng nghiêng hoặc góc nhìn khác"
+      },
+      {
+        "code": "C2.MIR.01",
+        "name": "Phân biệt đối xứng gương (Mirror Symmetry Discrimination)",
+        "description": "Phát hiện bóng bị lật gương ngược chiều so với mẫu chuẩn"
+      },
+      {
+        "code": "C2.PER.04",
+        "name": "Hình chiếu cạnh / Nhìn từ bên cạnh (Side Profile Silhouette)",
+        "description": "Trích xuất hình bóng từ góc nhìn ngang đặc trưng của động vật và phương tiện"
+      },
+      {
+        "code": "C4.VIS.01",
+        "name": "Phân biệt chi tiết khác biệt (Distractor Discrimination)",
+        "description": "Phát hiện các yếu tố gây nhiễu tinh vi giữa các bóng tương tự nhau (thiếu chi tiết, thay đổi tỷ lệ)"
+      },
+      {
+        "code": "C4.VIS.02",
+        "name": "Ghép cặp tương đồng thị giác (Visual Silhouette Matching)",
+        "description": "Ghép cặp 1-1 giữa tranh minh họa màu và bóng đen đơn sắc"
+      },
+      {
+        "code": "C4.VIS.04",
+        "name": "Hình thể ẩn và bóng chồng lớp (Overlapping Silhouette Layering)",
+        "description": "Tách các mảng bóng lồng nhau hoặc bóng kép của hai cá thể đứng cạnh nhau"
+      },
+      {
+        "code": "C4.DET.02",
+        "name": "Quan sát đặc trưng hình dạng (Shape Feature Extraction)",
+        "description": "So sánh mào chim, sừng nai, râu bướm, đuôi sóc để xác định vật thể"
+      },
+      {
+        "code": "C4.DET.04",
+        "name": "Quan sát tư thế và động tác (Pose Discrimination)",
+        "description": "Phân biệt tư thế tay chân của cùng một nhân vật (gấu con, bé chơi thể thao, vũ công ballet)"
+      },
+      {
+        "code": "C1.CNT.01",
+        "name": "Đếm tương ứng 1-1 (One-to-One Correspondence)",
+        "description": "Ghép đôi chính xác mỗi vật phẩm với đúng một chiếc bóng tương ứng"
+      },
+      {
+        "code": "C1.CMP.01",
+        "name": "So sánh kích thước tỷ lệ (Scale & Size Comparison)",
+        "description": "Nhận biết kích thước bóng mẹ lớn hơn bóng con trong cặp thú mẹ - con"
+      }
+    ],
+    "exercise_groups": [
+      {
+        "group_id": "D1",
+        "name": "Nối cặp vật thể với bóng tương ứng (1-to-1 Silhouette Pair Matching)",
+        "description": "Cho 2 cột (trái: vật thể có màu; phải: bóng đen đã xáo trộn). Trẻ nối đường dây hoặc chọn cặp để kết nối. Tăng dần số lượng từ 3 -> 4 -> 5 -> 6 đối tượng.",
+        "pages": [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 20, 21],
+        "game_engine_mapping": {
+          "primary_template": "GT-005",
+          "template_name": "Ghép cặp (pair-match)",
+          "interaction_domain": "van-chuyen / lan-net"
+        }
+      },
+      {
+        "group_id": "D2",
+        "name": "Trắc nghiệm tìm bóng đúng & Phân tích nhiễu (Multiple Choice Silhouette Discrimination)",
+        "description": "Cho 1 hình mẫu màu sắc ở trên; bên dưới có 4 ô lựa chọn A, B, C, D gồm 1 bóng đúng duy nhất và 3 bóng nhiễu (distractors) được thiết kế có chủ đích sư phạm (lật gương, thiếu chi tiết phụ kiện, sai tư thế, sai hình dáng bộ phận).",
+        "pages": [12, 13, 14, 15, 16, 17, 18, 19],
+        "game_engine_mapping": {
+          "primary_template": "GT-001",
+          "template_name": "Chọn một đáp án (tap-select)",
+          "interaction_domain": "chi-dinh"
+        }
+      },
+      {
+        "group_id": "D3",
+        "name": "Đại thử thách đa hàng & Phân giải bóng phức hợp (Multi-row Compound Challenge & Layering)",
+        "description": "Trang 22 tổng hợp 3 hàng thử thách độc lập với các cấu trúc hình học phức hợp (thỏ cầm cà rốt, khinh khí cầu đa khối, lâu đài nhiều tháp). Mở rộng số hóa sang cơ chế tách bóng chồng lớp (overlapping silhouette deconstruction) và đếm số lượng hình ẩn.",
+        "pages": [22],
+        "game_engine_mapping": {
+          "primary_template": "GT-002",
+          "template_name": "Chọn nhiều đáp án (tap-select-multi) / GT-022 Tìm vật thể ẩn",
+          "interaction_domain": "chi-dinh / sap-dat"
+        }
+      }
+    ]
+  },
+  "characters": {
+    "gau_logic": {
+      "name": "Gấu Logic",
+      "role": "Người dẫn đường phân tích, gợi mở các quy luật hình học, đặc trưng đường viền và tư thế cơ thể",
+      "visual": "Gấu nâu đeo kính gọng tròn xanh dương, áo gile xanh lam, tay cầm đèn bão thắp sáng thung lũng"
+    },
+    "tho_quan_sat": {
+      "name": "Thỏ Quan Sát",
+      "role": "Người trợ lý tinh mắt, nhắc nhở bé quan sát chi tiết nhỏ (râu, tai, sừng, đuôi, hướng xoay)",
+      "visual": "Thỏ trắng đeo túi chéo vàng, tay cầm kính lúp viền đỏ cam rực rỡ"
+    }
+  },
+  "pages": [
+    {
+      "page_number": 1,
+      "file_path": "pages/page-01.jpg",
+      "page_type": "stage_overview_map",
+      "title": "Hành trình Chuyến Tàu Toán Học - Chặng 3: Thung Lũng Bóng Hình",
+      "banner_texts": {
+        "header_title": "HÀNH TRÌNH CHUYẾN TÀU TOÁN HỌC",
+        "stage_badge": "CHẶNG 3",
+        "stage_name": "THUNG LŨNG BÓNG HÌNH",
+        "subtitle": "THỬ TÀI TÌM CHIẾC BÓNG ĐÚNG",
+        "mission_ribbon": "NHIỆM VỤ: ĐƯA NHỮNG CHIẾC BÓNG VỀ ĐÚNG CHỦ NHÂN",
+        "footer_banner": "CÙNG GẤU LOGIC VÀ THỎ QUAN SÁT KHÁM PHÁ NHÉ!"
+      },
+      "parent_objectives_box": {
+        "title": "MỤC TIÊU CHO BA MẸ",
+        "points": [
+          "Nhận biết bóng của đồ vật, con vật",
+          "Rèn quan sát hình dạng, tư thế và hướng",
+          "Tăng tập trung và phối hợp mắt - tay"
+        ]
+      },
+      "visual_elements": {
+        "station": "Ga Toán Học phong cách cổ tích châu Âu, tháp đồng hồ tròn chỉ 12h, vòm đèn vàng ấm áp",
+        "train": "Đầu tàu hỏa hơi nước màu xanh dương cổ điển viền vàng, biểu tượng ngôi sao vàng gắn phía trước",
+        "environment": "Thung lũng đá đêm đầy trăng sao lung linh, đường ray gỗ uốn lượn ven sườn núi dẫn tới Đỉnh Kim Cương",
+        "silhouette_rocks": [
+          {
+            "shape": "Thỏ con",
+            "location": "Khối đá dựng đứng cạnh đường ray"
+          },
+          {
+            "shape": "Voi lớn",
+            "location": "Khối đá phẳng giữa thung lũng"
+          },
+          {
+            "shape": "Cây cổ thụ",
+            "location": "Khối đá ven triền đồi"
+          },
+          {
+            "shape": "Ô tô con",
+            "location": "Khối đá thềm dưới đường ray"
+          },
+          {
+            "shape": "Bông hoa tulip",
+            "location": "Mỏm đá ven sông suối"
+          },
+          {
+            "shape": "Ngôi sao trong khối đá tròn",
+            "location": "Viên đá tròn phát sáng ven bãi cỏ hoa"
+          }
+        ]
+      },
+      "digital_game_potential": {
+        "template": "GT-000",
+        "mechanic": "Stage Hub & Exploratory Intro",
+        "interactions": [
+          {
+            "target": "Đầu tàu hỏa",
+            "action": "Tap",
+            "feedback": "Còi tàu 'Tu tu xình xịch', khói trắng bốc lên, đèn pha quét sáng các khối đá bóng"
+          },
+          {
+            "target": "Các khối đá bóng (Silhouette Rocks)",
+            "action": "Tap",
+            "feedback": "Khối đá sáng lên hé lộ con vật hoặc đồ vật ẩn mình kèm âm thanh vui nhộn"
+          },
+          {
+            "target": "Gấu Logic & Thỏ Quan Sát",
+            "action": "Tap",
+            "feedback": "Phát giọng đọc lồng tiếng giới thiệu chặng 3 và mời bé bước vào bài tập đầu tiên"
+          }
+        ]
+      }
+    },
+    {
+      "page_number": 2,
+      "file_path": "pages/page-02.jpg",
+      "page_type": "pair_matching_basic",
+      "title": "Bóng Của Trái Cây",
+      "instruction": "NỐI MỖI TRÁI CÂY VỚI CHIẾC BÓNG ĐÚNG",
+      "dialogue": {
+        "gau_logic": "Bé nhìn thật kỹ đường viền nhé!",
+        "tho_quan_sat": "Mình bắt đầu với những hình thật dễ nào!"
+      },
+      "footer_guidance": "GỢI Ý: BÓNG CÓ CÙNG HÌNH DÁNG VỚI ĐỒ VẬT",
+      "item_count": 3,
+      "left_items": [
+        {
+          "id": "apple",
+          "name_vi": "Quả táo",
+          "color": "Đỏ tươi",
+          "features": "Thân tròn, có cuống và 1 chiếc lá nhỏ nghiêng"
+        },
+        {
+          "id": "banana_bunch",
+          "name_vi": "Nải chuối",
+          "color": "Vàng tươi",
+          "features": "3 quả chuối xếp cong hình trăng lưỡi liềm"
+        },
+        {
+          "id": "pineapple",
+          "name_vi": "Quả dứa",
+          "color": "Vàng cam",
+          "features": "Thân hình trứng có mắt dứa, chùm lá nhọn xòe trên đỉnh"
+        }
+      ],
+      "right_silhouettes": [
+        {
+          "position": 1,
+          "matches_item_id": "banana_bunch",
+          "description": "Bóng nải chuối cong"
+        },
+        {
+          "position": 2,
+          "matches_item_id": "pineapple",
+          "description": "Bóng quả dứa có chùm lá nhọn"
+        },
+        {
+          "position": 3,
+          "matches_item_id": "apple",
+          "description": "Bóng quả táo có cuống và lá"
+        }
+      ],
+      "pedagogical_notes": "Cấp độ nhập môn 3 tuổi (Level 1): 3 vật thể hình học tự nhiên quen thuộc, đường viền phân biệt rõ ràng (tròn, cong dài, chùm nhọn).",
+      "digital_game_potential": {
+        "template": "GT-005",
+        "mechanic": "pair-match / drag-line",
+        "feedback": {
+          "correct": "Đường dây nối hóa ánh sáng vàng neon, quả trái cây phát âm thanh 'Ting!', giọng đọc: 'Quả táo - Đúng rồi!'",
+          "incorrect": "Nhịp thở hổ phách nhẹ (amber pulse), dây nối tan biến, không trừng phạt"
+        }
+      }
+    },
+    {
+      "page_number": 3,
+      "file_path": "pages/page-03.jpg",
+      "page_type": "pair_matching_basic",
+      "title": "Bóng Của Đồ Chơi",
+      "instruction": "NỐI MỖI ĐỒ CHƠI VỚI CHIẾC BÓNG ĐÚNG",
+      "dialogue": {
+        "gau_logic": "Mỗi món đồ đều có một chiếc bóng!",
+        "tho_quan_sat": "Bé nối thật chính xác nhé!"
+      },
+      "footer_guidance": "GỢI Ý: NHÌN TỪNG GÓC, TỪNG ĐƯỜNG CONG",
+      "item_count": 4,
+      "left_items": [
+        {
+          "id": "toy_car",
+          "name_vi": "Ô tô đồ chơi",
+          "color": "Đỏ",
+          "features": "Mui tròn, 2 bánh xe tròn nhô ra phía dưới"
+        },
+        {
+          "id": "teddy_bear",
+          "name_vi": "Gấu bông",
+          "color": "Vàng nâu",
+          "features": "Đầu tròn 2 tai tròn, thân tròn, nơ cổ đỏ"
+        },
+        {
+          "id": "kite",
+          "name_vi": "Con diều",
+          "color": "Đa sắc (đỏ, vàng, lam, lục)",
+          "features": "Hình thoi/tứ giác nhọn góc, đuôi dây lượn sóng gắn nơ"
+        },
+        {
+          "id": "ball",
+          "name_vi": "Quả bóng",
+          "color": "Đỏ, vàng, xanh",
+          "features": "Hình cầu tròn đều tuyệt đối"
+        }
+      ],
+      "right_silhouettes": [
+        {
+          "position": 1,
+          "matches_item_id": "kite",
+          "description": "Bóng con diều hình thoi có đuôi dây"
+        },
+        {
+          "position": 2,
+          "matches_item_id": "ball",
+          "description": "Bóng quả bóng tròn vo"
+        },
+        {
+          "position": 3,
+          "matches_item_id": "toy_car",
+          "description": "Bóng ô tô có 2 bánh xe"
+        },
+        {
+          "position": 4,
+          "matches_item_id": "teddy_bear",
+          "description": "Bóng chú gấu bông tai tròn"
+        }
+      ],
+      "pedagogical_notes": "Tăng độ khó lên 4 đối tượng. Xuất hiện hình học cơ bản: hình tròn đối xứng hoàn hảo (quả bóng) đối chiếu với hình đa giác góc nhọn (con diều) và hình phức hợp (gấu, ô tô).",
+      "digital_game_potential": {
+        "template": "GT-005",
+        "mechanic": "pair-match / tap-to-select"
+      }
+    },
+    {
+      "page_number": 4,
+      "file_path": "pages/page-04.jpg",
+      "page_type": "pair_matching_basic",
+      "title": "Bóng Của Những Con Vật",
+      "instruction": "NỐI MỖI CON VẬT VỚI CHIẾC BÓNG ĐÚNG",
+      "dialogue": {
+        "gau_logic": "Tai, đuôi và đôi chân là manh mối!",
+        "tho_quan_sat": "Bé quan sát từng bạn nhé!"
+      },
+      "footer_guidance": "GỢI Ý: NHÌN TAI, ĐUÔI, CHÂN VÀ VÂY",
+      "item_count": 4,
+      "left_items": [
+        {
+          "id": "cat",
+          "name_vi": "Mèo con",
+          "color": "Cam sọc trắng",
+          "features": "2 tai nhọn tam giác, đuôi cong vểnh lên"
+        },
+        {
+          "id": "rabbit",
+          "name_vi": "Thỏ trắng",
+          "color": "Trắng hồng",
+          "features": "2 tai dài thẳng đứng, đuôi bông tròn"
+        },
+        {
+          "id": "duckling",
+          "name_vi": "Vịt con",
+          "color": "Vàng ươm",
+          "features": "Mỏ bẹt ngang, đuôi nhọn vểnh, chân màng"
+        },
+        {
+          "id": "goldfish",
+          "name_vi": "Cá vàng",
+          "color": "Cam đỏ",
+          "features": "Thân bầu dục, vây lưng nhọn, đuôi xòe chẻ đôi"
+        }
+      ],
+      "right_silhouettes": [
+        {
+          "position": 1,
+          "matches_item_id": "goldfish",
+          "description": "Bóng cá có vây lưng và đuôi chẻ"
+        },
+        {
+          "position": 2,
+          "matches_item_id": "cat",
+          "description": "Bóng mèo tai nhọn đuôi cong"
+        },
+        {
+          "position": 3,
+          "matches_item_id": "duckling",
+          "description": "Bóng vịt con mỏ bẹt"
+        },
+        {
+          "position": 4,
+          "matches_item_id": "rabbit",
+          "description": "Bóng thỏ tai dài"
+        }
+      ],
+      "pedagogical_notes": "Rèn kỹ năng trích xuất bộ phận giải phẫu động vật (tai nhọn vs tai dài, đuôi cong vs đuôi tròn, vây bơi vs chân màng).",
+      "digital_game_potential": {
+        "template": "GT-005",
+        "mechanic": "pair-match"
+      }
+    },
+    {
+      "page_number": 5,
+      "file_path": "pages/page-05.jpg",
+      "page_type": "pair_matching_basic",
+      "title": "Bóng Của Phương Tiện",
+      "instruction": "NỐI MỖI PHƯƠNG TIỆN VỚI CHIẾC BÓNG ĐÚNG",
+      "dialogue": {
+        "gau_logic": "Bánh xe và đôi cánh rất dễ nhận ra!",
+        "tho_quan_sat": "Bé tìm đúng bóng của từng xe nhé!"
+      },
+      "footer_guidance": "GỢI Ý: NHÌN BÁNH XE, CÁNH VÀ CÁNH BUỒM",
+      "item_count": 4,
+      "left_items": [
+        {
+          "id": "car_blue",
+          "name_vi": "Ô tô con",
+          "color": "Xanh dương",
+          "features": "Thân xe vòm cong, 2 bánh xe lớn"
+        },
+        {
+          "id": "bicycle",
+          "name_vi": "Xe đạp",
+          "color": "Đỏ",
+          "features": "Khung tam giác thanh mảnh, 2 bánh xe nan hoa rỗng"
+        },
+        {
+          "id": "sailboat",
+          "name_vi": "Thuyền buồm",
+          "color": "Vàng cam",
+          "features": "Thân thuyền đáy cong, 2 cánh buồm tam giác lớn vươn cao"
+        },
+        {
+          "id": "airplane",
+          "name_vi": "Máy bay",
+          "color": "Cam",
+          "features": "Thân dài khí động học, cánh ngang phẳng, đuôi đứng"
+        }
+      ],
+      "right_silhouettes": [
+        {
+          "position": 1,
+          "matches_item_id": "airplane",
+          "description": "Bóng máy bay có cánh ngang và đuôi đứng"
+        },
+        {
+          "position": 2,
+          "matches_item_id": "car_blue",
+          "description": "Bóng ô tô vòm cong 2 bánh xe"
+        },
+        {
+          "position": 3,
+          "matches_item_id": "sailboat",
+          "description": "Bóng thuyền buồm 2 cánh buồm tam giác"
+        },
+        {
+          "position": 4,
+          "matches_item_id": "bicycle",
+          "description": "Bóng xe đạp nan hoa thanh mảnh"
+        }
+      ],
+      "pedagogical_notes": "Đối chiếu độ đặc và độ rỗng của hình thể: Xe đạp có nan hoa rỗng thanh mảnh đối lập với bóng đặc khối của ô tô và máy bay.",
+      "digital_game_potential": {
+        "template": "GT-005",
+        "mechanic": "pair-match"
+      }
+    },
+    {
+      "page_number": 6,
+      "file_path": "pages/page-06.jpg",
+      "page_type": "pair_matching_basic",
+      "title": "Bóng Của Đồ Vật Quen Thuộc",
+      "instruction": "NỐI MỖI ĐỒ VẬT VỚI CHIẾC BÓNG ĐÚNG",
+      "dialogue": {
+        "gau_logic": "Nhìn tay cầm và các góc nhỏ nhé!",
+        "tho_quan_sat": "Bé sẽ tìm ra thật nhanh thôi!"
+      },
+      "footer_guidance": "GỢI Ý: CHÚ Ý TAY CẦM, CHÂN VÀ ĐƯỜNG VIỀN",
+      "item_count": 4,
+      "left_items": [
+        {
+          "id": "mug",
+          "name_vi": "Cốc nước",
+          "color": "Xanh dương",
+          "features": "Miệng tròn, thân trụ, quai cầm hình chữ C bên phải"
+        },
+        {
+          "id": "desk_lamp",
+          "name_vi": "Đèn bàn",
+          "color": "Chụp vàng chân cam",
+          "features": "Chụp đèn hình nón cụt, thân thẳng, chân đế bán nguyệt"
+        },
+        {
+          "id": "chair",
+          "name_vi": "Ghế tựa",
+          "color": "Xanh lá",
+          "features": "Lưng tựa có thanh dọc, mặt ghế phẳng, 4 chân ghế"
+        },
+        {
+          "id": "umbrella",
+          "name_vi": "Chiếc ô gấp",
+          "color": "Đỏ",
+          "features": "Dáng thuôn nhọn thu gọn, tay cầm móc câu cong phía dưới"
+        }
+      ],
+      "right_silhouettes": [
+        {
+          "position": 1,
+          "matches_item_id": "chair",
+          "description": "Bóng ghế tựa 4 chân"
+        },
+        {
+          "position": 2,
+          "matches_item_id": "umbrella",
+          "description": "Bóng chiếc ô thuôn dài tay cầm móc câu"
+        },
+        {
+          "position": 3,
+          "matches_item_id": "mug",
+          "description": "Bóng cốc nước có quai cầm chữ C"
+        },
+        {
+          "position": 4,
+          "matches_item_id": "desk_lamp",
+          "description": "Bóng đèn bàn chụp nón cụt"
+        }
+      ],
+      "pedagogical_notes": "Phân biệt các chi tiết tay cầm, chân đế và các phụ kiện gắn ngoài (quai cốc, móc ô, chân ghế).",
+      "digital_game_potential": {
+        "template": "GT-005",
+        "mechanic": "pair-match"
+      }
+    },
+    {
+      "page_number": 7,
+      "file_path": "pages/page-07.jpg",
+      "page_type": "pose_discrimination_matching",
+      "title": "Tư Thế Của Gấu Con",
+      "instruction": "NỐI MỖI GẤU CON VỚI CHIẾC BÓNG ĐÚNG",
+      "dialogue": {
+        "gau_logic": "Cùng một bạn nhưng tư thế đã khác!",
+        "tho_quan_sat": "Bé nhìn tay và chân thật kỹ!"
+      },
+      "footer_guidance": "GỢI Ý: SO SÁNH VỊ TRÍ CỦA TỪNG CÁNH TAY",
+      "item_count": 4,
+      "concept": "Pose Discrimination (Phân biệt biến thể tư thế của cùng một nhân vật)",
+      "left_items": [
+        {
+          "id": "bear_wave_left",
+          "name_vi": "Gấu vẫy tay trái",
+          "color": "Nâu",
+          "pose": "Giơ tay trái lên vẫy chào, tay phải buông xuôi"
+        },
+        {
+          "id": "bear_cheer_both",
+          "name_vi": "Gấu giơ hai tay",
+          "color": "Nâu",
+          "pose": "Cả hai cánh tay giơ cao lên trời hoan hô"
+        },
+        {
+          "id": "bear_arms_down",
+          "name_vi": "Gấu xuôi hai tay",
+          "color": "Nâu",
+          "pose": "Hai cánh tay khép sát thân buông xuôi"
+        },
+        {
+          "id": "bear_point_right",
+          "name_vi": "Gấu chỉ tay phải",
+          "color": "Nâu",
+          "pose": "Cánh tay phải duỗi thẳng chỉ ngang sang phải, tay trái xuôi"
+        }
+      ],
+      "right_silhouettes": [
+        {
+          "position": 1,
+          "matches_item_id": "bear_arms_down",
+          "description": "Bóng gấu hai tay xuôi sát thân"
+        },
+        {
+          "position": 2,
+          "matches_item_id": "bear_point_right",
+          "description": "Bóng gấu tay phải chỉ ngang"
+        },
+        {
+          "position": 3,
+          "matches_item_id": "bear_wave_left",
+          "description": "Bóng gấu giơ 1 tay vẫy chào"
+        },
+        {
+          "position": 4,
+          "matches_item_id": "bear_cheer_both",
+          "description": "Bóng gấu hai tay giơ cao hoan hô"
+        }
+      ],
+      "pedagogical_notes": "BƯỚC NGOẶT TƯ DUY: Không thể dựa vào loài hay hình thể chung (vì đều là gấu nâu). Trẻ BẮT BUỘC phải phân tích quan hệ không gian giữa cánh tay và trục thân người (C4.DET.04 Pose Discrimination & C2.ORI).",
+      "digital_game_potential": {
+        "template": "GT-005",
+        "mechanic": "pose-match"
+      }
+    },
+    {
+      "page_number": 8,
+      "file_path": "pages/page-08.jpg",
+      "page_type": "pair_matching_intermediate",
+      "title": "Những Người Bạn Nông Trại",
+      "instruction": "NỐI MỖI CON VẬT VỚI CHIẾC BÓNG ĐÚNG",
+      "dialogue": {
+        "gau_logic": "Mỗi bạn có một dáng người khác nhau!",
+        "tho_quan_sat": "Bé nhìn sừng, mào và chiếc đuôi nhé!"
+      },
+      "footer_guidance": "GỢI Ý: NHÌN SỪNG, MÀO, LÔNG VÀ ĐUÔI",
+      "item_count": 5,
+      "left_items": [
+        {
+          "id": "cow",
+          "name_vi": "Bò sữa",
+          "color": "Trắng đốm nâu",
+          "features": "Sừng ngắn trên đầu, bầu vú hồng, đuôi có túm lông"
+        },
+        {
+          "id": "rooster",
+          "name_vi": "Gà trống",
+          "color": "Mào đỏ, lông đa sắc",
+          "features": "Mào cờ dựng đứng trên đầu, đuôi xòe cong vút hình lưỡi liềm"
+        },
+        {
+          "id": "pig",
+          "name_vi": "Heo hồng",
+          "color": "Hồng phấn",
+          "features": "Thân tròn mập, mõm hếch, chiếc đuôi xoăn tít nhỏ nhắn"
+        },
+        {
+          "id": "sheep",
+          "name_vi": "Cừu lông xù",
+          "color": "Trắng kem",
+          "features": "Đường viền lông xù lượn sóng tròn như đám mây"
+        },
+        {
+          "id": "horse",
+          "name_vi": "Ngựa nâu",
+          "color": "Nâu đỏ",
+          "features": "Cổ cao, bờm sẫm màu, 4 chân thon dài dũng mãnh, đuôi dài"
+        }
+      ],
+      "right_silhouettes": [
+        {
+          "position": 1,
+          "matches_item_id": "horse",
+          "description": "Bóng ngựa chân dài cổ cao bờm dũng mãnh"
+        },
+        {
+          "position": 2,
+          "matches_item_id": "pig",
+          "description": "Bóng heo tròn béo đuôi xoăn"
+        },
+        {
+          "position": 3,
+          "matches_item_id": "rooster",
+          "description": "Bóng gà trống mào cờ đuôi cong vút"
+        },
+        {
+          "position": 4,
+          "matches_item_id": "cow",
+          "description": "Bóng bò sữa sừng ngắn"
+        },
+        {
+          "position": 5,
+          "matches_item_id": "sheep",
+          "description": "Bóng cừu lông xù dạng đám mây"
+        }
+      ],
+      "pedagogical_notes": "Tăng quy mô đối tượng lên 5 con vật nông trại. Trẻ rèn luyện đối chiếu chi tiết viền đặc trưng (texture viền mây của cừu vs viền trơn của heo).",
+      "digital_game_potential": {
+        "template": "GT-005",
+        "mechanic": "pair-match"
+      }
+    },
+    {
+      "page_number": 9,
+      "file_path": "pages/page-09.jpg",
+      "page_type": "pair_matching_intermediate",
+      "title": "Bóng Của Bé Vui Chơi",
+      "instruction": "NỐI MỖI BẠN NHỎ VỚI CHIẾC BÓNG ĐÚNG",
+      "dialogue": {
+        "gau_logic": "Tư thế của mỗi bạn đều khác nhau!",
+        "tho_quan_sat": "Bé nhìn tay, chân và đồ chơi nhé!"
+      },
+      "footer_guidance": "GỢI Ý: SO SÁNH TƯ THẾ VÀ ĐỒ VẬT ĐI KÈM",
+      "item_count": 5,
+      "left_items": [
+        {
+          "id": "kid_rope_jump",
+          "name_vi": "Bé gái nhảy dây",
+          "features": "2 búi tóc hai bên, sợi dây nhảy uốn cong vòm qua đầu"
+        },
+        {
+          "id": "kid_building_blocks",
+          "name_vi": "Bé trai xếp hình",
+          "features": "Ngồi quỳ gối, xếp chồng các khối vuông thành tháp đồ chơi"
+        },
+        {
+          "id": "kid_swimming",
+          "name_vi": "Bé trai bơi lội",
+          "features": "Tư thế nằm ngang đạp nước, kính bơi, bọt nước tung tóe"
+        },
+        {
+          "id": "kid_reading_book",
+          "name_vi": "Bé gái đọc sách",
+          "features": "Ngồi xếp bằng, cầm cuốn sách mở rộng trước ngực"
+        },
+        {
+          "id": "kid_playing_soccer",
+          "name_vi": "Bé trai đá bóng",
+          "features": "Đứng 1 chân trụ, 1 chân vung ra sau sút quả bóng tròn trước mặt"
+        }
+      ],
+      "right_silhouettes": [
+        {
+          "position": 1,
+          "matches_item_id": "kid_reading_book",
+          "description": "Bóng bé gái ngồi đọc sách"
+        },
+        {
+          "position": 2,
+          "matches_item_id": "kid_playing_soccer",
+          "description": "Bóng bé trai sút quả bóng"
+        },
+        {
+          "position": 3,
+          "matches_item_id": "kid_rope_jump",
+          "description": "Bóng bé gái dây nhảy vòm qua đầu"
+        },
+        {
+          "position": 4,
+          "matches_item_id": "kid_swimming",
+          "description": "Bóng bé trai bơi ngang bọt nước"
+        },
+        {
+          "position": 5,
+          "matches_item_id": "kid_building_blocks",
+          "description": "Bóng bé trai ngồi cạnh tháp hình khối"
+        }
+      ],
+      "pedagogical_notes": "Kết hợp phân tích tư thế cơ thể và nhận diện đồ vật đạo cụ đi kèm (dây nhảy, bóng, khối gỗ, sách).",
+      "digital_game_potential": {
+        "template": "GT-005",
+        "mechanic": "pair-match"
+      }
+    },
+    {
+      "page_number": 10,
+      "file_path": "pages/page-10.jpg",
+      "page_type": "pair_matching_intermediate",
+      "title": "Mẹ Và Bé",
+      "instruction": "NỐI MỖI CẶP MẸ CON VỚI CHIẾC BÓNG ĐÚNG",
+      "dialogue": {
+        "gau_logic": "Hai bạn đứng cạnh nhau sẽ tạo bóng lớn hơn!",
+        "tho_quan_sat": "Bé tìm đúng từng cặp mẹ con nhé!"
+      },
+      "footer_guidance": "GỢI Ý: ĐẾM SỐ BẠN VÀ NHÌN CÁCH HAI BẠN ĐỨNG",
+      "item_count": 5,
+      "concept": "Compound Silhouette (Bóng ghép đôi / Cặp cá thể mẹ - con)",
+      "left_items": [
+        {
+          "id": "kangaroo_pair",
+          "name_vi": "Kangaroo mẹ và con",
+          "features": "Chuột túi con nằm gọn trong túi trước bụng chuột túi mẹ"
+        },
+        {
+          "id": "cat_pair",
+          "name_vi": "Mèo mẹ và mèo con",
+          "features": "Mèo mẹ ngồi thẳng, mèo con ngồi sát bên cạnh phía trước"
+        },
+        {
+          "id": "duck_pair",
+          "name_vi": "Vịt mẹ và vịt con",
+          "features": "Vịt mẹ đi trước, vịt con lũn cũn bước nối đuôi phía sau"
+        },
+        {
+          "id": "elephant_pair",
+          "name_vi": "Voi mẹ và voi con",
+          "features": "Voi mẹ khổng lồ, voi con nép bên chân mẹ"
+        },
+        {
+          "id": "bear_pair",
+          "name_vi": "Gấu mẹ ôm gấu con",
+          "features": "Gấu mẹ ngồi khoanh chân, 2 tay ôm gấu con vào lòng"
+        }
+      ],
+      "right_silhouettes": [
+        {
+          "position": 1,
+          "matches_item_id": "elephant_pair",
+          "description": "Bóng cặp voi mẹ con to lớn"
+        },
+        {
+          "position": 2,
+          "matches_item_id": "kangaroo_pair",
+          "description": "Bóng Kangaroo có con trong túi bụng"
+        },
+        {
+          "position": 3,
+          "matches_item_id": "bear_pair",
+          "description": "Bóng gấu mẹ ôm gấu con trong lòng"
+        },
+        {
+          "position": 4,
+          "matches_item_id": "duck_pair",
+          "description": "Bóng vịt mẹ dẫn vịt con theo sau"
+        },
+        {
+          "position": 5,
+          "matches_item_id": "cat_pair",
+          "description": "Bóng mèo mẹ ngồi cạnh mèo con"
+        }
+      ],
+      "pedagogical_notes": "BƯỚC NGOẶT BÓNG GHÉP: Bóng không còn là một vật đơn lẻ mà là một khối hình phức hợp liên kết từ 2 cá thể (mẹ và con), có quan hệ thứ bậc kích thước (C1.CMP.01) và cấu trúc không gian lồng ghép (C4.VIS.04).",
+      "digital_game_potential": {
+        "template": "GT-005",
+        "mechanic": "pair-match"
+      }
+    },
+    {
+      "page_number": 11,
+      "file_path": "pages/page-11.jpg",
+      "page_type": "pair_matching_intermediate",
+      "title": "Khủng Long Trong Thung Lũng",
+      "instruction": "NỐI MỖI KHỦNG LONG VỚI CHIẾC BÓNG ĐÚNG",
+      "dialogue": {
+        "gau_logic": "Mỗi loài có chiếc đầu và chiếc đuôi khác nhau!",
+        "tho_quan_sat": "Bé tìm đúng bóng của từng bạn nhé!"
+      },
+      "footer_guidance": "GỢI Ý: NHÌN CỔ, SỪNG, GAI LƯNG VÀ ĐÔI CÁNH",
+      "item_count": 5,
+      "left_items": [
+        {
+          "id": "trex",
+          "name_vi": "Khủng long bạo chúa T-Rex",
+          "color": "Xanh lá",
+          "features": "Đầu to, hàm răng nhọn mở rộng, 2 chi trước bé xíu, 2 chân sau to khỏe, đuôi dài"
+        },
+        {
+          "id": "brachiosaurus",
+          "name_vi": "Khủng long cổ dài",
+          "color": "Xanh lam đốm",
+          "features": "Chiếc cổ dài vươn thẳng lên trời, 4 chân như cột đình"
+        },
+        {
+          "id": "triceratops",
+          "name_vi": "Khủng long 3 sừng",
+          "color": "Cam vàng",
+          "features": "Diềm cổ xòe rộng, 3 chiếc sừng nhọn trên mặt"
+        },
+        {
+          "id": "stegosaurus",
+          "name_vi": "Khủng long gai lưng",
+          "color": "Tím",
+          "features": "Các phiến sừng nhọn hình tam giác xếp dọc sống lưng, đuôi có gai"
+        },
+        {
+          "id": "pterodactyl",
+          "name_vi": "Khủng long thằn lằn bay",
+          "color": "Cam đỏ",
+          "features": "Mỏ dài nhọn, đôi cánh màng dang rộng vút trên không"
+        }
+      ],
+      "right_silhouettes": [
+        {
+          "position": 1,
+          "matches_item_id": "triceratops",
+          "description": "Bóng khủng long 3 sừng và diềm cổ"
+        },
+        {
+          "position": 2,
+          "matches_item_id": "pterodactyl",
+          "description": "Bóng thằn lằn bay đôi cánh màng"
+        },
+        {
+          "position": 3,
+          "matches_item_id": "brachiosaurus",
+          "description": "Bóng khủng long cổ cao vút"
+        },
+        {
+          "position": 4,
+          "matches_item_id": "trex",
+          "description": "Bóng khủng long bạo chúa hàm mở"
+        },
+        {
+          "position": 5,
+          "matches_item_id": "stegosaurus",
+          "description": "Bóng khủng long phiến gai lưng"
+        }
+      ],
+      "pedagogical_notes": "Chủ đề khủng long hấp dẫn trẻ mầm non. Khủng long có các đường viền đặc thù cực mạnh (cổ dài, gai lưng tam giác, sừng nhọn, màng cánh) giúp trẻ củng cố kỹ năng trích xuất hình học.",
+      "digital_game_potential": {
+        "template": "GT-005",
+        "mechanic": "pair-match"
+      }
+    },
+    {
+      "page_number": 12,
+      "file_path": "pages/page-12.jpg",
+      "page_type": "multiple_choice_distractor_analysis",
+      "title": "Bóng Nào Của Chú Sóc?",
+      "instruction": "KHOANH VÀO CHIẾC BÓNG ĐÚNG",
+      "dialogue": {
+        "gau_logic": "Các chiếc bóng trông gần giống nhau đấy!",
+        "tho_quan_sat": "Bé nhìn chiếc đuôi và hạt dẻ nhé!"
+      },
+      "footer_guidance": "GỢI Ý: SO SÁNH HƯỚNG QUAY VÀ ĐỒ VẬT TRÊN TAY",
+      "target_object": {
+        "name_vi": "Chú sóc ôm hạt dẻ",
+        "orientation": "Quay mặt sang bên phải",
+        "key_features": [
+          "Quay mặt sang phải (Right-facing)",
+          "Hai tay ôm hạt dẻ nâu trước ngực",
+          "Chiếc đuôi xù uốn cong hình chữ S lớn dựng đứng phía sau"
+        ]
+      },
+      "options": [
+        {
+          "label": "A",
+          "is_correct": false,
+          "distractor_type": "altered_body_feature",
+          "flaw_description": "Chiếc đuôi duỗi thẳng nằm ngang ra sau thay vì uốn cong chữ S"
+        },
+        {
+          "label": "B",
+          "is_correct": true,
+          "distractor_type": "none",
+          "flaw_description": "ĐÚNG: Khớp hoàn hảo cả hướng quay phải, đuôi uốn cong to và hạt dẻ trên tay"
+        },
+        {
+          "label": "C",
+          "is_correct": false,
+          "distractor_type": "mirror_flip",
+          "flaw_description": "Lật gương đối xứng: Chú sóc quay mặt sang trái (sai hướng không gian)"
+        },
+        {
+          "label": "D",
+          "is_correct": false,
+          "distractor_type": "missing_accessory",
+          "flaw_description": "Thiếu chi tiết: Chú sóc không ôm hạt dẻ trên tay"
+        }
+      ],
+      "pedagogical_notes": "MỞ ĐẦU NHÓM D2: Dạng trắc nghiệm 4 lựa chọn (A, B, C, D) với 3 phương án nhiễu được gài bẫy khoa học: (1) biến đổi hình dạng đuôi, (2) lật gương trục dọc (C2.MIR.01), (3) lược bỏ phụ kiện (C4.VIS.01).",
+      "digital_game_potential": {
+        "template": "GT-001",
+        "mechanic": "tap-select-single",
+        "feedback": {
+          "correct": "Khung đáp án B viền xanh lá bừng sáng, chú sóc nhảy vọt vào chiếc bóng phát tiếng 'Chíp chíp!' vui vẻ",
+          "incorrect": "Khung đáp án sai rung nhẹ nhịp hổ phách, Thỏ Quan Sát nhắc nhẹ: 'Bé nhớ nhìn hạt dẻ và chiếc đuôi nhé!'"
+        }
+      }
+    },
+    {
+      "page_number": 13,
+      "file_path": "pages/page-13.jpg",
+      "page_type": "multiple_choice_distractor_analysis",
+      "title": "Bóng Nào Của Bướm Xinh?",
+      "instruction": "KHOANH VÀO CHIẾC BÓNG ĐÚNG",
+      "dialogue": {
+        "gau_logic": "Đôi cánh có nhiều đường cong đặc biệt!",
+        "tho_quan_sat": "Bé nhớ nhìn cả hai chiếc râu nhé!"
+      },
+      "footer_guidance": "GỢI Ý: NHÌN HƯỚNG BAY, ĐÔI CÁNH VÀ CHIẾC RÂU",
+      "target_object": {
+        "name_vi": "Bướm xinh xòe cánh",
+        "orientation": "Bay chéo lên phía trên bên phải",
+        "key_features": [
+          "Hai chiếc râu cong xoắn ốc trên đầu",
+          "Cánh trên viền lượn sóng tròn mềm mại",
+          "Cánh dưới màu cam hình tròn bầu"
+        ]
+      },
+      "options": [
+        {
+          "label": "A",
+          "is_correct": false,
+          "distractor_type": "missing_detail",
+          "flaw_description": "Thiếu chi tiết: Trên đầu chỉ có duy nhất 1 chiếc râu (khuyết 1 râu)"
+        },
+        {
+          "label": "B",
+          "is_correct": true,
+          "distractor_type": "none",
+          "flaw_description": "ĐÚNG: Đủ 2 râu xoắn, đúng hướng bay chếch phải, cánh viền lượn sóng chuẩn xác"
+        },
+        {
+          "label": "C",
+          "is_correct": false,
+          "distractor_type": "mirror_flip",
+          "flaw_description": "Lật gương đối xứng: Bướm bay chếch sang bên trái"
+        },
+        {
+          "label": "D",
+          "is_correct": false,
+          "distractor_type": "altered_contour",
+          "flaw_description": "Sai hình dáng cánh: Đôi cánh thon dài nhọn như lá liễu, mất các gợn sóng tròn"
+        }
+      ],
+      "pedagogical_notes": "Rèn luyện khả năng đếm nhanh chi tiết nhỏ (1 râu vs 2 râu) và nhận biết đường cong viền cánh sinh học.",
+      "digital_game_potential": {
+        "template": "GT-001",
+        "mechanic": "tap-select-single"
+      }
+    },
+    {
+      "page_number": 14,
+      "file_path": "pages/page-14.jpg",
+      "page_type": "multiple_choice_distractor_analysis",
+      "title": "Bóng Nào Của Chú Cá?",
+      "instruction": "KHOANH VÀO CHIẾC BÓNG ĐÚNG",
+      "dialogue": {
+        "gau_logic": "Chiều bơi cũng là một manh mối quan trọng!",
+        "tho_quan_sat": "Bé nhìn chiếc đuôi và chiếc vây nhé!"
+      },
+      "footer_guidance": "GỢI Ý: NHÌN HƯỚNG QUAY, VÂY LƯNG VÀ HÌNH DÁNG ĐUÔI",
+      "target_object": {
+        "name_vi": "Chú cá vàng bơi lội",
+        "orientation": "Bơi sang bên trái (Left-facing)",
+        "key_features": [
+          "Bơi sang trái",
+          "Vây lưng hình tam giác nhọn hướng lên trên",
+          "Vây bụng kép",
+          "Đuôi xòe chẻ đôi 2 thùy nhọn rõ rệt"
+        ]
+      },
+      "options": [
+        {
+          "label": "A",
+          "is_correct": true,
+          "distractor_type": "none",
+          "flaw_description": "ĐÚNG: Bơi sang trái, đủ vây lưng nhọn và đuôi chẻ 2 thùy"
+        },
+        {
+          "label": "B",
+          "is_correct": false,
+          "distractor_type": "mirror_flip",
+          "flaw_description": "Lật gương đối xứng: Cá bơi sang bên phải"
+        },
+        {
+          "label": "C",
+          "is_correct": false,
+          "distractor_type": "missing_detail",
+          "flaw_description": "Thiếu bộ phận: Thiếu chiếc vây lưng nhọn trên sống lưng"
+        },
+        {
+          "label": "D",
+          "is_correct": false,
+          "distractor_type": "altered_body_feature",
+          "flaw_description": "Sai hình dáng đuôi: Đuôi tròn vo dạng quả cầu, không chẻ thùy"
+        }
+      ],
+      "pedagogical_notes": "Rèn luyện cảm quan định hướng không gian trái - phải (C2.ORI.01 Trái) và kiểm tra hình chiếu bộ phận giải phẫu cá.",
+      "digital_game_potential": {
+        "template": "GT-001",
+        "mechanic": "tap-select-single"
+      }
+    },
+    {
+      "page_number": 15,
+      "file_path": "pages/page-15.jpg",
+      "page_type": "multiple_choice_distractor_analysis",
+      "title": "Bóng Nào Của Rô-bốt?",
+      "instruction": "KHOANH VÀO CHIẾC BÓNG ĐÚNG",
+      "dialogue": {
+        "gau_logic": "Một chiếc áng-ten nhỏ cũng tạo nên khác biệt!",
+        "tho_quan_sat": "Bé nhìn kỹ hai cánh tay nhé!"
+      },
+      "footer_guidance": "GỢI Ý: NHÌN ĂNG-TEN, CÁNH TAY VÀ ĐÔI CHÂN",
+      "target_object": {
+        "name_vi": "Rô-bốt thông minh",
+        "orientation": "Nhìn thẳng chính diện (Frontal Perspective)",
+        "key_features": [
+          "Ăng-ten trên đỉnh đầu có gắn ngôi sao 5 cánh",
+          "Tay trái giơ lên cao hình chữ U/càng cua",
+          "Tay phải chỉ ngang sang phải hình càng cua",
+          "Thân khối hộp chữ nhật, 2 chân hình chữ A"
+        ]
+      },
+      "options": [
+        {
+          "label": "A",
+          "is_correct": false,
+          "distractor_type": "missing_detail",
+          "flaw_description": "Thiếu chi tiết: Trên đầu mất chiếc ăng-ten ngôi sao"
+        },
+        {
+          "label": "B",
+          "is_correct": false,
+          "distractor_type": "altered_pose",
+          "flaw_description": "Sai tư thế: Cả 2 cánh tay đều giơ cao lên trời hình chữ U"
+        },
+        {
+          "label": "C",
+          "is_correct": false,
+          "distractor_type": "swapped_limbs",
+          "flaw_description": "Đảo ngược vị trí tay: Tay trái duỗi ngang, tay phải giơ lên cao"
+        },
+        {
+          "label": "D",
+          "is_correct": true,
+          "distractor_type": "none",
+          "flaw_description": "ĐÚNG: Đủ ăng-ten ngôi sao, tay trái giơ cao, tay phải chỉ ngang"
+        }
+      ],
+      "pedagogical_notes": "Rèn luyện khả năng quan sát tính bất đối xứng tư thế (Asymmetric Pose) trên cấu trúc hình học nhân tạo thẳng hàng.",
+      "digital_game_potential": {
+        "template": "GT-001",
+        "mechanic": "tap-select-single"
+      }
+    },
+    {
+      "page_number": 16,
+      "file_path": "pages/page-16.jpg",
+      "page_type": "multiple_choice_distractor_analysis",
+      "title": "Bóng Nào Của Bé Đi Xe Trượt?",
+      "instruction": "KHOANH VÀO CHIẾC BÓNG ĐÚNG",
+      "dialogue": {
+        "gau_logic": "Cả người và chiếc xe tạo thành một chiếc bóng!",
+        "tho_quan_sat": "Bé nhìn mũ, tay và đôi chân nhé!"
+      },
+      "footer_guidance": "GỢI Ý: SO SÁNH CHIẾC MŨ VÀ VỊ TRÍ CỦA ĐÔI CHÂN",
+      "target_object": {
+        "name_vi": "Bé trai đi xe trượt scooter",
+        "orientation": "Di chuyển sang bên phải",
+        "key_features": [
+          "Đội mũ bảo hiểm xanh có lưỡi trai nhô về trước",
+          "Hai tay nắm tay lái xe trượt",
+          "Chân trái đặt trên ván trượt, chân phải co gập ra sau đạp gió",
+          "Xe trượt scooter 2 bánh nhỏ"
+        ]
+      },
+      "options": [
+        {
+          "label": "A",
+          "is_correct": true,
+          "distractor_type": "none",
+          "flaw_description": "ĐÚNG: Khớp lưỡi trai mũ bảo hiểm, chân phải co gập cao ra sau"
+        },
+        {
+          "label": "B",
+          "is_correct": false,
+          "distractor_type": "altered_leg_angle",
+          "flaw_description": "Sai góc chân: Chân sau duỗi chúc xuống đất góc hẹp"
+        },
+        {
+          "label": "C",
+          "is_correct": false,
+          "distractor_type": "missing_helmet_visor",
+          "flaw_description": "Thiếu chi tiết mũ: Đầu tròn trĩnh không có lưỡi trai mũ bảo hiểm"
+        },
+        {
+          "label": "D",
+          "is_correct": false,
+          "distractor_type": "static_standing_pose",
+          "flaw_description": "Sai tư thế vận động: Hai chân đứng thẳng song song trên ván trượt"
+        }
+      ],
+      "pedagogical_notes": "Phân tích bóng chuyển động động học (Kinetic Silhouette): Phối hợp hình người và phương tiện cơ giới trong cùng một bóng.",
+      "digital_game_potential": {
+        "template": "GT-001",
+        "mechanic": "tap-select-single"
+      }
+    },
+    {
+      "page_number": 17,
+      "file_path": "pages/page-17.jpg",
+      "page_type": "multiple_choice_distractor_analysis",
+      "title": "Bóng Nào Của Cô Bé Múa?",
+      "instruction": "KHOANH VÀO CHIẾC BÓNG ĐÚNG",
+      "dialogue": {
+        "gau_logic": "Tư thế càng đặc biệt, chiếc bóng càng thú vị!",
+        "tho_quan_sat": "Bé nhìn hai tay và bàn chân nhé!"
+      },
+      "footer_guidance": "GỢI Ý: SO SÁNH CÁNH TAY GIƠ CAO VÀ CHÂN ĐƯA RA SAU",
+      "target_object": {
+        "name_vi": "Vũ công múa ballet",
+        "orientation": "Mặt và thân hướng sang phải",
+        "key_features": [
+          "Búi tóc củ tỏi có kẹp tóc",
+          "Tay trái uốn cong mềm mại hình vòng cung trên đỉnh đầu",
+          "Tay phải duỗi thẳng ngang ra trước mặt",
+          "Váy xòe tutu ngắn ngang hông",
+          "Chân trái nhón gót làm trụ, chân phải co lùi ra sau"
+        ]
+      },
+      "options": [
+        {
+          "label": "A",
+          "is_correct": false,
+          "distractor_type": "altered_arm_pose",
+          "flaw_description": "Sai cánh tay: Cả hai cánh tay đều uốn cong vòng cung trên đỉnh đầu"
+        },
+        {
+          "label": "B",
+          "is_correct": true,
+          "distractor_type": "none",
+          "flaw_description": "ĐÚNG: Khớp chính xác tay trái cong trên đầu, tay phải duỗi ngang, chân co ra sau"
+        },
+        {
+          "label": "C",
+          "is_correct": false,
+          "distractor_type": "reversed_arm_direction",
+          "flaw_description": "Sai hướng tay: Cánh tay duỗi ngang bị chĩa ngược ra sau lưng"
+        },
+        {
+          "label": "D",
+          "is_correct": false,
+          "distractor_type": "standing_pose",
+          "flaw_description": "Sai tư thế chân: Hai chân đứng thẳng khép vào nhau"
+        }
+      ],
+      "pedagogical_notes": "Đỉnh cao phân tích tư thế nghệ thuật (Aesthetic Pose Analysis): Yêu cầu trẻ chú ý độ cong cánh tay, góc mở của chân và sự cân bằng trọng tâm.",
+      "digital_game_potential": {
+        "template": "GT-001",
+        "mechanic": "tap-select-single"
+      }
+    },
+    {
+      "page_number": 18,
+      "file_path": "pages/page-18.jpg",
+      "page_type": "multiple_choice_distractor_analysis",
+      "title": "Bóng Nào Của Chú Công?",
+      "instruction": "KHOANH VÀO CHIẾC BÓNG ĐÚNG",
+      "dialogue": {
+        "gau_logic": "Chiếc đuôi xòe có rất nhiều đường viền!",
+        "tho_quan_sat": "Bé nhìn cả chiếc mào trên đầu nhé!"
+      },
+      "footer_guidance": "GỢI Ý: NHÌN CHIẾC MÀO, HƯỚNG QUAY VÀ DÁNG ĐUÔI",
+      "target_object": {
+        "name_vi": "Chim công xòe đuôi",
+        "orientation": "Đầu và ức hướng sang trái, đuôi xòe quạt bên phải",
+        "key_features": [
+          "Mào trên đỉnh đầu xòe 3 chùm chấm tròn",
+          "Đầu quay sang trái",
+          "Đuôi xòe quạt tròn lớn với các gợn sóng lượn viền đuôi"
+        ]
+      },
+      "options": [
+        {
+          "label": "A",
+          "is_correct": false,
+          "distractor_type": "missing_crest",
+          "flaw_description": "Thiếu chi tiết mào: Đầu trơn, không có 3 chùm mào vương miện"
+        },
+        {
+          "label": "B",
+          "is_correct": false,
+          "distractor_type": "mirror_flip",
+          "flaw_description": "Lật gương đối xứng: Đầu chim công quay sang phải"
+        },
+        {
+          "label": "C",
+          "is_correct": false,
+          "distractor_type": "closed_tail",
+          "flaw_description": "Sai trạng thái đuôi: Đuôi cụp dài xuôi xuống đất, không xòe cánh quạt"
+        },
+        {
+          "label": "D",
+          "is_correct": true,
+          "distractor_type": "none",
+          "flaw_description": "ĐÚNG: Đầu quay trái có 3 chùm mào, đuôi xòe quạt lượn sóng tròn"
+        }
+      ],
+      "pedagogical_notes": "Phân tích cấu trúc xòe quạt đối xứng và nhận diện chi tiết siêu nhỏ (3 chùm mào vương miện trên đầu).",
+      "digital_game_potential": {
+        "template": "GT-001",
+        "mechanic": "tap-select-single"
+      }
+    },
+    {
+      "page_number": 19,
+      "file_path": "pages/page-19.jpg",
+      "page_type": "multiple_choice_distractor_analysis",
+      "title": "Bóng Nào Của Xe Cứu Hỏa?",
+      "instruction": "KHOANH VÀO CHIẾC BÓNG ĐÚNG",
+      "dialogue": {
+        "gau_logic": "Chiếc thang dài là dấu hiệu rất quan trọng!",
+        "tho_quan_sat": "Bé nhìn cả còi và số bánh xe nhé!"
+      },
+      "footer_guidance": "GỢI Ý: NHÌN HƯỚNG XE, CHIẾC THANG VÀ CÒI TRÊN NÓC",
+      "target_object": {
+        "name_vi": "Xe cứu hỏa chuyên dụng",
+        "orientation": "Đầu xe hướng sang phải",
+        "key_features": [
+          "Đầu xe quay sang phải",
+          "Còi đèn báo động bán cầu nhô trên nóc cabin",
+          "Chiếc thang gấp hoa văn mắt cáo nghiêng góc chếch lên phía trước",
+          "2 bánh xe lớn bên hông"
+        ]
+      },
+      "options": [
+        {
+          "label": "A",
+          "is_correct": false,
+          "distractor_type": "missing_siren",
+          "flaw_description": "Thiếu chi tiết: Trên nóc cabin không có còi đèn báo động"
+        },
+        {
+          "label": "B",
+          "is_correct": true,
+          "distractor_type": "none",
+          "flaw_description": "ĐÚNG: Xe hướng phải, có còi đèn nóc, thang nghiêng góc chếch lên"
+        },
+        {
+          "label": "C",
+          "is_correct": false,
+          "distractor_type": "mirror_flip",
+          "flaw_description": "Lật gương: Đầu xe quay sang bên trái"
+        },
+        {
+          "label": "D",
+          "is_correct": false,
+          "distractor_type": "horizontal_ladder",
+          "flaw_description": "Sai góc thang: Chiếc thang cứu hỏa nằm ngang bằng phẳng song song thân xe"
+        }
+      ],
+      "pedagogical_notes": "Kết thúc nhóm D2 với phương tiện kỹ thuật phức tạp: Kiểm tra góc nghiêng hình học của chiếc thang (C2.DIR/ORI) và các phụ kiện kỹ thuật.",
+      "digital_game_potential": {
+        "template": "GT-001",
+        "mechanic": "tap-select-single"
+      }
+    },
+    {
+      "page_number": 20,
+      "file_path": "pages/page-20.jpg",
+      "page_type": "pair_matching_advanced",
+      "title": "Lễ Hội Bóng Hình",
+      "instruction": "NỐI MỖI ĐỒ VẬT VỚI CHIẾC BÓNG ĐÚNG",
+      "dialogue": {
+        "gau_logic": "Sáu món đồ đang chờ tìm lại chiếc bóng!",
+        "tho_quan_sat": "Bé nối từng cặp thật cẩn thận nhé!"
+      },
+      "footer_guidance": "GỢI Ý: TÌM HÌNH DỄ NHẤT TRƯỚC, RỒI LÀM CÁC HÌNH CÒN LẠI",
+      "item_count": 6,
+      "concept": "Max-Capacity Matching (Thử thách nối 6 cặp cực hạn ở lứa tuổi 3–6)",
+      "left_items": [
+        {
+          "id": "party_hat",
+          "name_vi": "Mũ sinh nhật",
+          "color": "Sọc đa sắc",
+          "features": "Hình chóp nón tam giác nhọn, quả bông đỉnh, viền bèo đáy"
+        },
+        {
+          "id": "drum",
+          "name_vi": "Trống lễ hội",
+          "color": "Đỏ viền vàng lam",
+          "features": "Thân trụ tròn dẹt, 2 chiếc dùi gõ bắt chéo chữ X phía trên"
+        },
+        {
+          "id": "trumpet",
+          "name_vi": "Kèn trumpet",
+          "color": "Vàng kim",
+          "features": "Ống kèn uốn lượn, 3 nút bấm dọc, loa kèn xòe rộng sang trái"
+        },
+        {
+          "id": "balloons",
+          "name_vi": "Chùm bóng bay",
+          "color": "Đỏ, vàng, lam",
+          "features": "3 quả bóng tròn chụm lại, cuống buộc chung nơ ruy băng"
+        },
+        {
+          "id": "guitar",
+          "name_vi": "Đàn guitar",
+          "color": "Vàng nâu",
+          "features": "Thùng đàn hình số 8 uốn lượn, cần đàn dài, đầu cần 6 khóa dây"
+        },
+        {
+          "id": "cake",
+          "name_vi": "Bánh sinh nhật",
+          "color": "Hồng phấn dâu tây",
+          "features": "Khối bánh trụ tròn, kem chảy lượn sóng, 1 cây nến thắp sáng ở tâm"
+        }
+      ],
+      "right_silhouettes": [
+        {
+          "position": 1,
+          "matches_item_id": "guitar",
+          "description": "Bóng đàn guitar thùng số 8 cần dài"
+        },
+        {
+          "position": 2,
+          "matches_item_id": "cake",
+          "description": "Bóng bánh sinh nhật cắm 1 cây nến"
+        },
+        {
+          "position": 3,
+          "matches_item_id": "drum",
+          "description": "Bóng chiếc trống có 2 dùi bắt chéo"
+        },
+        {
+          "position": 4,
+          "matches_item_id": "balloons",
+          "description": "Bóng chùm 3 quả bóng bay nơ ruy băng"
+        },
+        {
+          "position": 5,
+          "matches_item_id": "party_hat",
+          "description": "Bóng mũ sinh nhật chóp nón quả bông"
+        },
+        {
+          "position": 6,
+          "matches_item_id": "trumpet",
+          "description": "Bóng kèn trumpet loa xòe rộng 3 nút bấm"
+        }
+      ],
+      "pedagogical_notes": "Quy mô 6 phần tử chạm trần dung lượng chú ý thị giác của trẻ mẫu giáo. Thỏ Quan Sát gợi ý chiến lược giải quyết bài toán: 'Tìm hình dễ nhất trước (loại trừ) rồi làm các hình còn lại'.",
+      "digital_game_potential": {
+        "template": "GT-005",
+        "mechanic": "pair-match-6"
+      }
+    },
+    {
+      "page_number": 21,
+      "file_path": "pages/page-21.jpg",
+      "page_type": "pair_matching_advanced",
+      "title": "Những Bóng Hình Trong Rừng",
+      "instruction": "NỐI MỖI CON VẬT VỚI CHIẾC BÓNG ĐÚNG",
+      "dialogue": {
+        "gau_logic": "Các bạn trong rừng có nhiều chi tiết đặc biệt!",
+        "tho_quan_sat": "Bé nhìn tai, sừng, gai và chiếc vỏ nhé!"
+      },
+      "footer_guidance": "GỢI Ý: BẮT ĐẦU VỚI BẠN CÓ HÌNH DÁNG DỄ NHẬN NHẤT",
+      "item_count": 6,
+      "left_items": [
+        {
+          "id": "fox",
+          "name_vi": "Cáo cam",
+          "color": "Cam đỏ chỏm trắng",
+          "features": "Đầu tai nhọn vểnh, chiếc đuôi xù to chỏm trắng"
+        },
+        {
+          "id": "owl",
+          "name_vi": "Cú mèo",
+          "color": "Nâu vằn",
+          "features": "Mắt tròn to phía trước, đôi cánh khép, đậu trên cành cây khô"
+        },
+        {
+          "id": "hedgehog",
+          "name_vi": "Nhím gai",
+          "color": "Nâu gai nhọn",
+          "features": "Thân cuộn tròn lởm chởm hàng trăm gai nhọn, mũi nhọn"
+        },
+        {
+          "id": "frog",
+          "name_vi": "Ếch xanh",
+          "color": "Xanh lá",
+          "features": "Ngồi xổm thấp, 2 đùi sau bành gập sang hai bên, mắt lồi"
+        },
+        {
+          "id": "snail",
+          "name_vi": "Ốc sên",
+          "color": "Vàng vỏ tím",
+          "features": "Chiếc vỏ xoắn ốc tròn trên lưng, 2 râu mắt vươn dài"
+        },
+        {
+          "id": "deer",
+          "name_vi": "Nai vàng",
+          "color": "Vàng đốm trắng",
+          "features": "Cặp sừng chia nhiều nhánh nhọn dũng mãnh, 4 chân thon"
+        }
+      ],
+      "right_silhouettes": [
+        {
+          "position": 1,
+          "matches_item_id": "hedgehog",
+          "description": "Bóng nhím gai nhọn lởm chởm"
+        },
+        {
+          "position": 2,
+          "matches_item_id": "deer",
+          "description": "Bóng nai sừng chia nhiều nhánh"
+        },
+        {
+          "position": 3,
+          "matches_item_id": "frog",
+          "description": "Bóng ếch ngồi xổm hai đùi bành"
+        },
+        {
+          "position": 4,
+          "matches_item_id": "fox",
+          "description": "Bóng cáo đuôi xù tai nhọn"
+        },
+        {
+          "position": 5,
+          "matches_item_id": "snail",
+          "description": "Bóng ốc sên vỏ xoắn râu mắt"
+        },
+        {
+          "position": 6,
+          "matches_item_id": "owl",
+          "description": "Bóng cú mèo đậu cành cây khô"
+        }
+      ],
+      "pedagogical_notes": "6 sinh vật rừng rậm với đường viền đa dạng: viền nhọn lởm chởm (nhím), viền nhánh cây (sừng nai), viền xoắn ốc (vỏ ốc sên), viền bành ngang (ếch).",
+      "digital_game_potential": {
+        "template": "GT-005",
+        "mechanic": "pair-match-6"
+      }
+    },
+    {
+      "page_number": 22,
+      "file_path": "pages/page-22.jpg",
+      "page_type": "multi_row_compound_challenge",
+      "title": "Đại Thử Thách Bóng Hình",
+      "instruction": "KHOANH BÓNG ĐÚNG Ở MỖI HÀNG",
+      "dialogue": {
+        "gau_logic": "Ba nhiệm vụ cuối đang chờ bé!",
+        "tho_quan_sat": "Bé quan sát từ hình lớn đến chi tiết nhỏ nhé!"
+      },
+      "footer_guidance": "GỢI Ý: KIỂM TRA HƯỚNG QUAY, SỐ PHẦN VÀ CHI TIẾT NHỎ",
+      "row_count": 3,
+      "concept": "Multi-row Matrix & Compound Silhouette Deconstruction (Đại thử thách ma trận 3 hàng x 3 lựa chọn)",
+      "rows": [
+        {
+          "row_number": 1,
+          "name": "Chú thỏ và củ cà rốt",
+          "category": "Vật thể sinh học & Chi tiết cầm tay",
+          "target_object": {
+            "name_vi": "Thỏ trắng ôm cà rốt",
+            "features": "Quay sang phải, hai tai vểnh, 2 tay ôm củ cà rốt cam có cuống lá xanh"
+          },
+          "options": [
+            {
+              "label": "A",
+              "is_correct": false,
+              "distractor_type": "missing_accessory",
+              "flaw_description": "Thỏ không ôm củ cà rốt (thiếu chi tiết đạo cụ)"
+            },
+            {
+              "label": "B",
+              "is_correct": true,
+              "distractor_type": "none",
+              "flaw_description": "ĐÚNG: Thỏ quay phải ôm cà rốt nguyên vẹn"
+            },
+            {
+              "label": "C",
+              "is_correct": false,
+              "distractor_type": "mirror_flip",
+              "flaw_description": "Lật gương đối xứng: Thỏ quay mặt sang bên trái"
+            }
+          ]
+        },
+        {
+          "row_number": 2,
+          "name": "Khinh khí cầu bay cao",
+          "category": "Cấu trúc hình học đối xứng đa khối",
+          "target_object": {
+            "name_vi": "Khinh khí cầu",
+            "features": "Quả khí cầu hình giọt nước tròn bè, nối 2 dây cáp xuống giỏ mây hình chữ nhật ở dưới"
+          },
+          "options": [
+            {
+              "label": "A",
+              "is_correct": false,
+              "distractor_type": "missing_basket",
+              "flaw_description": "Chỉ có quả khí cầu tròn vo, thiếu hoàn toàn giỏ mây và dây cáp"
+            },
+            {
+              "label": "B",
+              "is_correct": false,
+              "distractor_type": "deformed_ratio",
+              "flaw_description": "Tỷ lệ biến dạng: Quả khí cầu bị bóp thon dài thành hình oval hẹp"
+            },
+            {
+              "label": "C",
+              "is_correct": true,
+              "distractor_type": "none",
+              "flaw_description": "ĐÚNG: Chuẩn dáng quả khí cầu tròn bè, đủ dây nối và giỏ mây chữ nhật"
+            }
+          ]
+        },
+        {
+          "row_number": 3,
+          "name": "Tòa lâu đài cổ tích",
+          "category": "Kiến trúc phức hợp đa hình khối (Composite Architecture)",
+          "target_object": {
+            "name_vi": "Lâu đài 3 ngọn tháp nhọn",
+            "features": "Tòa thành gồm 3 ngọn tháp chóp nón nhọn (tháp giữa cao nhất gắn cờ bay, 2 tháp biên đối xứng), tường thành có rãnh răng cưa"
+          },
+          "options": [
+            {
+              "label": "A",
+              "is_correct": true,
+              "distractor_type": "none",
+              "flaw_description": "ĐÚNG: Đủ 3 ngọn tháp chóp nón, tháp chính giữa cao nhất cắm cờ"
+            },
+            {
+              "label": "B",
+              "is_correct": false,
+              "distractor_type": "missing_center_spire",
+              "flaw_description": "Khuyết ngọn tháp chính giữa: Chỉ có 2 tháp nhọn hai bên, không có tháp giữa gắn cờ"
+            },
+            {
+              "label": "C",
+              "is_correct": false,
+              "distractor_type": "flattened_towers",
+              "flaw_description": "Cắt cụt chóp tháp: Cả 3 ngọn tháp đều bị cắt thành tháp bằng phẳng răng cưa, thiếu mái nón nhọn và cờ"
+            }
+          ]
+        }
+      ],
+      "pedagogical_notes": "TỔNG HỢP TOÀN BỘ KỸ NĂNG: Mỗi hàng kiểm tra một trục tư duy khác nhau: Hàng 1 kiểm tra hướng và chi tiết phụ; Hàng 2 kiểm tra tỷ lệ hình học và cấu trúc ghép nối; Hàng 3 kiểm tra phân tích cấu trúc kiến trúc phức hợp nhiều thành phần (C2.CON & C4.VIS).",
+      "digital_game_potential": {
+        "template": "GT-002",
+        "mechanic": "matrix-row-tap",
+        "extension_d3": {
+          "feature": "Silhouette Layering & Shape De-composition (Tách lớp bóng chồng)",
+          "description": "Trong game số hóa, lâu đài hoặc khinh khí cầu có thể được tách lớp động học để trẻ bóc tách từng bóng đơn lẻ cấu thành."
+        }
+      }
+    },
+    {
+      "page_number": 23,
+      "file_path": "pages/page-23.jpg",
+      "page_type": "stage_completion_reward",
+      "title": "Hoàn Thành Phần 3: Thung Lũng Bóng Hình",
+      "banner_texts": {
+        "header_title": "HOÀN THÀNH PHẦN 3: THUNG LŨNG BÓNG HÌNH",
+        "congratulations": "BÉ ĐÃ HOÀN THÀNH CHẶNG SỐ 3!",
+        "next_stage": "SẴN SÀNG LÊN TÀU ĐẾN CHẶNG 4!"
+      },
+      "dialogue": {
+        "gau_logic": "Bé đã tìm lại những chiếc bóng thật chính xác!",
+        "tho_quan_sat": "Viên Ngọc Tinh Mắt đã sáng lên rồi!"
+      },
+      "railway_track_progress": {
+        "total_stations": 20,
+        "completed_stations": [1, 2, 3],
+        "current_station": {
+          "station_number": 3,
+          "marker_label": "BÉ ĐANG Ở ĐÂY",
+          "status": "active_completed"
+        },
+        "upcoming_stations": [
+          4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
+        ]
+      },
+      "reward_activities": [
+        {
+          "id": "star_coloring",
+          "title": "BA MẸ CÙNG BÉ TÔ 3 NGÔI SAO NHÉ!",
+          "type": "three_stars_rating",
+          "stars_count": 3,
+          "description": "3 ngôi sao viền rỗng để ba mẹ và bé cùng tô màu đánh giá nỗ lực hoàn thành chặng 3"
+        },
+        {
+          "id": "jewel_coloring",
+          "title": "BÉ HÃY TÔ MÀU VIÊN NGỌC TINH MẮT",
+          "type": "stage_badge_reward",
+          "badge_name": "Viên Ngọc Tinh Mắt (Observer Jewel)",
+          "description": "Hình vẽ kim cương tỏa sáng rực rỡ để bé tô màu kỷ niệm chiến thắng tại Thung Lũng Bóng Hình"
+        }
+      ],
+      "visual_elements": {
+        "train": "Đoàn tàu hỏa 4 toa chạy bon bon trên đường ray gỗ thung lũng đá đêm",
+        "celebration": "Gấu Logic vẫy tay tươi cười, Thỏ Quan Sát giơ cao kính lúp, muông thú (sóc, voi, nai, cú mèo) tụ hội bên sườn đồi ngắm đoàn tàu",
+        "sparkles": "Hào quang lấp lánh tỏa ra từ viên kim cương trên bầu trời thung lũng"
+      },
+      "digital_game_potential": {
+        "template": "GT-000",
+        "mechanic": "Stage Outro & Reward Celebration",
+        "interaction": "Chạm vào viên kim cương phát hiệu ứng pháo hoa ánh sáng (360-degree particle burst), phát giấy chứng nhận hoàn thành chặng 3 và còi tàu hụ vang mở khóa chặng 4."
+      }
+    }
+  ],
+  "digital_game_architecture": {
+    "recommended_template": "GT-040",
+    "template_name": "Thung Lũng Bóng & Hình (Silhouette & Shadow Matching)",
+    "supported_modes": [
+      {
+        "mode_id": "pair_connect",
+        "description": "Nối dây hoặc chọn 2 thẻ (vật màu + bóng đen) để ghép đôi chuẩn xác (Trang 2-11, 20-21)",
+        "base_template": "GT-005"
+      },
+      {
+        "mode_id": "mcq_shadow_hunt",
+        "description": "Nhìn vật mẫu, chọn 1 trong 4 bóng với các bẫy nhiễu tinh vi (Trang 12-19)",
+        "base_template": "GT-001"
+      },
+      {
+        "mode_id": "multi_row_matrix",
+        "description": "Giải mã ma trận bóng đa hàng (Trang 22)",
+        "base_template": "GT-002"
+      },
+      {
+        "mode_id": "silhouette_overlap_decomp",
+        "description": "Tách lớp bóng chồng và đếm số lượng hình thể ẩn trong bóng chồng (Mở rộng số hóa)",
+        "base_template": "GT-022"
+      }
+    ],
+    "canvas_specs": {
+      "dimensions": "960x540 logic (scale by DPR)",
+      "fps": 60,
+      "touch_floor": {
+        "min_diameter": "64px (band 5-6 là 72px, band 3-4 là 96px)",
+        "draggable_hit_multiplier": 1.25,
+        "drop_target_hit_multiplier": 1.5
+      },
+      "color_system": "Token only từ designTokens.colors (0 hex literals trong gameplay code)",
+      "scaffolding": {
+        "l1_nudge": "10s hoặc 1 miss: Nhịp thở sáng viền vật phẩm / bóng mục tiêu",
+        "l2_guide": "18s hoặc 2 miss: Bàn tay ma (ghost hand) chỉ từ hình sang bóng đúng",
+        "l3_demo": "25s hoặc 3 miss: Bàn tay ma trình diễn kéo nối với tốc độ 0.5x"
+      },
+      "feedback_audio": {
+        "success": "Âm chime trong trẻo + ramp vào 20ms, ramp ra 40ms, master <= -16 LUFS",
+        "retry": "Nhịp thở hổ phách (amber pulse) nhẹ nhàng, không tiếng buzzer khó chịu, không trừ điểm"
+      }
+    }
+  }
+}

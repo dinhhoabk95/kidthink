@@ -1,5 +1,6 @@
 import type {
   Projection,
+  ProjectOptions,
   SkillDataset,
   SkillIdentity,
   SkillLevelPlan,
@@ -11,7 +12,7 @@ import { buildConceptIntroPrompt } from "./gt-000.js";
 import { ALL_BUILDERS } from "./registry.js";
 import { numberDuplicateTitles, resolveLevelTitle } from "./title-resolver.js";
 
-const REGEX_MONTESSORI_CODE = /-01\d{2}$/;
+const REGEX_MONTESSORI_CODE = /-0[1-9]\d{2}$/;
 
 /**
  * Version của mọi level sinh từ kỹ năng. v2: tên level theo `BR-SDS-16`.
@@ -20,7 +21,7 @@ const REGEX_MONTESSORI_CODE = /-01\d{2}$/;
  * Đổi nội dung level đã gieo (kể cả `title`) thì tăng số này — seeder archive
  * bản cũ và publish bản mới trong một transaction; giữ nguyên số thì seeder bỏ qua.
  */
-export const GENERATED_LEVEL_CONTENT_VERSION = 8;
+export const GENERATED_LEVEL_CONTENT_VERSION = 10;
 
 /**
  * Chỗ trống trong `phrasing.prompt_template` mà bộ dựng level thay được.
@@ -86,6 +87,90 @@ function validateContract(
   }
 }
 
+function packFingerprint(pack: ContentSeed["content_pack"]): string {
+  if (pack === null || pack === undefined) {
+    return "";
+  }
+  if (typeof pack !== "object" || Array.isArray(pack)) {
+    return JSON.stringify(pack);
+  }
+  const normalized: Record<string, ContentSeed["content_pack"]> = {};
+  for (const [k, v] of Object.entries(pack)) {
+    normalized[k] = v as ContentSeed["content_pack"];
+  }
+  if (Array.isArray(normalized.options)) {
+    normalized.options = [...normalized.options].sort((a, b) =>
+      JSON.stringify(a).localeCompare(JSON.stringify(b))
+    );
+  }
+  return JSON.stringify(normalized);
+}
+
+function projectRoundDistinct(
+  builder: Projection,
+  dataset: SkillDataset,
+  levelPlan: SkillLevelPlan,
+  baseSeed: number,
+  roundIndex: number,
+  representation: ProjectOptions["representation"],
+  prevRound: ContentSeedRound | undefined
+) {
+  let projected = builder.project(dataset, {
+    band: levelPlan.band,
+    difficulty: levelPlan.difficulty,
+    theme: levelPlan.theme,
+    seed: baseSeed,
+    round_index: roundIndex,
+    teaches: levelPlan.skill_codes,
+    sequence_no: levelPlan.sequence_no,
+    representation,
+  });
+
+  if (!prevRound) {
+    return projected;
+  }
+
+  const prevFP = packFingerprint(prevRound.content_pack);
+  for (
+    let attempt = 1;
+    attempt <= 12 && packFingerprint(projected.content_pack) === prevFP;
+    attempt++
+  ) {
+    projected = builder.project(dataset, {
+      band: levelPlan.band,
+      difficulty: levelPlan.difficulty,
+      theme: levelPlan.theme,
+      seed: baseSeed + attempt * 13,
+      round_index: roundIndex + attempt,
+      teaches: levelPlan.skill_codes,
+      sequence_no: levelPlan.sequence_no,
+      representation,
+    });
+  }
+  return projected;
+}
+
+function resolveRoundInstruction(
+  dataset: SkillDataset,
+  template: string,
+  packPrompt: string | number | boolean | null | undefined
+): string {
+  let instruction: string;
+  if (typeof packPrompt === "string") {
+    instruction = packPrompt;
+  } else if (template === "GT-000") {
+    instruction = buildConceptIntroPrompt(dataset.concept_label);
+  } else {
+    instruction = dataset.phrasing?.prompt_template || dataset.concept_label;
+  }
+
+  instruction = substitutePromptPlaceholders(instruction, {
+    conceptLabel: dataset.concept_label,
+  });
+
+  return instruction.replace(/\bsố\s+không\b/gi, "số 0");
+}
+
 function buildLevelRounds(
   builder: Projection,
   dataset: SkillDataset,
@@ -95,44 +180,31 @@ function buildLevelRounds(
   const roundCount =
     levelPlan.template === "GT-000" ? 1 : (levelPlan.rounds ?? 3);
   const rounds: ContentSeedRound[] = [];
-  const rung = dataset.ladder.find(
+  const rung = dataset.ladder?.find(
     (item) => item.rung === levelPlan.difficulty
   );
 
   for (let r = 0; r < roundCount; r++) {
-    const projected = builder.project(dataset, {
-      band: levelPlan.band,
-      difficulty: levelPlan.difficulty,
-      theme: levelPlan.theme,
-      seed: baseSeed,
-      round_index: r,
-      teaches: levelPlan.skill_codes,
-      sequence_no: levelPlan.sequence_no,
-      representation: rung?.representation,
-    });
+    const prevRound = r > 0 ? rounds[r - 1] : undefined;
+    const projected = projectRoundDistinct(
+      builder,
+      dataset,
+      levelPlan,
+      baseSeed,
+      r,
+      rung?.representation,
+      prevRound
+    );
 
-    let instruction: string;
     const packWithPrompt = projected.content_pack as {
       prompt?: string | number | boolean | null;
     } | null;
-    if (
-      typeof packWithPrompt === "object" &&
-      packWithPrompt !== null &&
-      typeof packWithPrompt.prompt === "string"
-    ) {
-      instruction = packWithPrompt.prompt;
-    } else if (levelPlan.template === "GT-000") {
-      instruction = buildConceptIntroPrompt(dataset.concept_label);
-    } else {
-      instruction = dataset.phrasing?.prompt_template || dataset.concept_label;
-    }
 
-    instruction = substitutePromptPlaceholders(instruction, {
-      conceptLabel: dataset.concept_label,
-    });
-
-    // Sanitize instruction: replace standalone "không" with "số 0" for child friendliness
-    instruction = instruction.replace(/\bkhông\b/gi, "số 0");
+    const instruction = resolveRoundInstruction(
+      dataset,
+      levelPlan.template,
+      packWithPrompt?.prompt
+    );
 
     if (
       typeof packWithPrompt === "object" &&
@@ -407,6 +479,26 @@ function generateFallbackLevelCode(
   return code;
 }
 
+function resolveLevelLearningObjectives(
+  identity: SkillIdentity,
+  levelPlan: SkillLevelPlan
+): string[] {
+  const los = identity.learning_objectives ?? [];
+  if (los.length === 0) {
+    return [];
+  }
+  if (levelPlan.template === "GT-000" || levelPlan.difficulty <= 1) {
+    const first = los[0];
+    return first ? [first.code] : [];
+  }
+  if (levelPlan.difficulty === 2) {
+    const second = los[Math.min(1, los.length - 1)];
+    return second ? [second.code] : [];
+  }
+  const third = los[Math.min(2, los.length - 1)];
+  return third ? [third.code] : [];
+}
+
 function buildSingleLevel(
   builder: Projection,
   dataset: SkillDataset,
@@ -466,8 +558,9 @@ function buildSingleLevel(
       skill_codes: levelPlan.skill_codes
         ? [...levelPlan.skill_codes]
         : [identity.code],
-      learning_objective_codes: (identity.learning_objectives ?? []).map(
-        (lo) => lo.code
+      learning_objective_codes: resolveLevelLearningObjectives(
+        identity,
+        levelPlan
       ),
       what_tags: [resolveWhatTag(identity.strand_code)],
       thinking_tags: normalizeThinkingTags(identity.thinking_processes),
@@ -475,7 +568,6 @@ function buildSingleLevel(
       origin: "human",
       authored_in: "repo_seed",
       montessori_ref: levelPlan.montessori_ref,
-      legacy_v1_ref: levelPlan.legacy_v1_ref,
     },
     content_pack: firstRound.content_pack,
     difficulty_params: firstRound.difficulty_params,

@@ -49,8 +49,10 @@ export const C5_VOC_02_DATASET: SkillDataset = {
         ref: "🍎",
       },
       category: {
-        type: "trái cây",
+        type: "quả mềm ngọt",
       },
+      value: 1,
+      contrast_group: "primary",
     },
     {
       id: "voc_chuoi",
@@ -60,30 +62,10 @@ export const C5_VOC_02_DATASET: SkillDataset = {
         ref: "🍌",
       },
       category: {
-        type: "trái cây",
+        type: "quả mềm ngọt",
       },
-    },
-    {
-      id: "voc_cam",
-      label: "quả cam",
-      image: {
-        kind: "emoji",
-        ref: "🍊",
-      },
-      category: {
-        type: "trái cây",
-      },
-    },
-    {
-      id: "voc_dua_hau",
-      label: "quả dưa hấu",
-      image: {
-        kind: "emoji",
-        ref: "🍉",
-      },
-      category: {
-        type: "trái cây",
-      },
+      value: 2,
+      contrast_group: "primary",
     },
     {
       id: "voc_nho",
@@ -93,9 +75,92 @@ export const C5_VOC_02_DATASET: SkillDataset = {
         ref: "🍇",
       },
       category: {
-        type: "trái cây",
+        type: "quả mềm ngọt",
       },
+      value: 3,
+      contrast_group: "primary",
     },
+    {
+      id: "voc_dau_tay",
+      label: "quả dâu tây",
+      image: {
+        kind: "emoji",
+        ref: "🍓",
+      },
+      category: {
+        type: "quả mềm ngọt",
+      },
+      value: 4,
+      contrast_group: "primary",
+    },
+    {
+      id: "voc_cam",
+      label: "quả cam",
+      image: {
+        kind: "emoji",
+        ref: "🍊",
+      },
+      category: {
+        type: "quả vỏ dày",
+      },
+      value: 5,
+      contrast_group: "contrast",
+    },
+    {
+      id: "voc_dua_hau",
+      label: "quả dưa hấu",
+      image: {
+        kind: "emoji",
+        ref: "🍉",
+      },
+      category: {
+        type: "quả vỏ dày",
+      },
+      value: 6,
+      contrast_group: "contrast",
+    },
+    {
+      id: "voc_dua",
+      label: "quả dứa",
+      image: {
+        kind: "emoji",
+        ref: "🍍",
+      },
+      category: {
+        type: "quả vỏ dày",
+      },
+      value: 7,
+      contrast_group: "contrast",
+    },
+    {
+      id: "voc_dao",
+      label: "quả đào",
+      image: {
+        kind: "emoji",
+        ref: "🍑",
+      },
+      category: {
+        type: "quả vỏ dày",
+      },
+      value: 8,
+      contrast_group: "contrast",
+    },
+  ],
+  axes: {
+    category: {
+      values: ["quả mềm ngọt", "quả vỏ dày"],
+      ordered: true,
+    },
+  },
+  relations: [
+    { type: "pair", source_id: "voc_tao", target_id: "voc_chuoi" },
+    { type: "pair", source_id: "voc_nho", target_id: "voc_dau_tay" },
+    { type: "pair", source_id: "voc_cam", target_id: "voc_dua_hau" },
+    { type: "pair", source_id: "voc_dua", target_id: "voc_dao" },
+    { type: "contrast", source_id: "voc_tao", target_id: "voc_cam" },
+    { type: "contrast", source_id: "voc_chuoi", target_id: "voc_dua_hau" },
+    { type: "contrast", source_id: "voc_nho", target_id: "voc_dua" },
+    { type: "contrast", source_id: "voc_dau_tay", target_id: "voc_dao" },
   ],
   ladder: [
     {
@@ -128,7 +193,16 @@ export const C5_VOC_02_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Từ vựng trái cây nhé",
   },
-  ordering: ["voc_tao", "voc_chuoi", "voc_cam", "voc_dua_hau", "voc_nho"],
+  ordering: [
+    "voc_tao",
+    "voc_chuoi",
+    "voc_nho",
+    "voc_dau_tay",
+    "voc_cam",
+    "voc_dua_hau",
+    "voc_dua",
+    "voc_dao",
+  ],
 };
 
 export const C5_VOC_02_SEED: SkillSeed = {
@@ -136,19 +210,17 @@ export const C5_VOC_02_SEED: SkillSeed = {
   dataset: C5_VOC_02_DATASET,
   levels: [
     {
+      template: "GT-000",
+      band: "3-4",
+      difficulty: 1,
+      theme: "school",
+    },
+    {
       code: "GL-C5-VOC-TAP-0003",
       template: "GT-001",
       band: "3-4",
       difficulty: 1,
       theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-TAP-0004",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 2,
-      theme: "farm",
       rounds: 3,
     },
     {
@@ -160,27 +232,11 @@ export const C5_VOC_02_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-VOC-TCMP-0004",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 2,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
       code: "GL-C5-VOC-PATT-0003",
       template: "GT-005",
       band: "3-4",
       difficulty: 1,
       theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-PATT-0004",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 2,
-      theme: "ocean",
       rounds: 3,
     },
     {
@@ -192,26 +248,10 @@ export const C5_VOC_02_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-VOC-SLOT-0004",
-      template: "GT-008",
-      band: "3-4",
-      difficulty: 2,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
       code: "GL-C5-VOC-MEMO-0003",
       template: "GT-012",
       band: "3-4",
       difficulty: 1,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-MEMO-0004",
-      template: "GT-012",
-      band: "3-4",
-      difficulty: 2,
       theme: "art",
       rounds: 3,
     },

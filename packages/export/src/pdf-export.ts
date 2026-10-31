@@ -2,10 +2,10 @@ import { writeAudit } from "@mindkid/audit";
 import {
   exportJobs,
   getDb,
-  lessonPlanItems,
-  lessonPlans,
   notificationDeliveries,
   notifications,
+  personalCurricula,
+  personalCurriculumItems,
 } from "@mindkid/db";
 import { ExportNotFoundError } from "@mindkid/errors/account";
 import { TokenExpiredError } from "@mindkid/errors/auth";
@@ -13,13 +13,22 @@ import {
   EntitlementRequiredError,
   QuotaExceededError,
 } from "@mindkid/errors/billing";
-import { LessonPlanNotFoundError } from "@mindkid/errors/content";
+import { PersonalCurriculumNotFoundError } from "@mindkid/errors/curriculum";
 import { enqueue } from "@mindkid/queue";
 import { storage } from "@mindkid/storage";
-import { and, asc, count, eq, gte, isNotNull, lte, ne } from "drizzle-orm";
+import {
+  and,
+  asc,
+  count,
+  eq,
+  gte,
+  inArray,
+  isNotNull,
+  lte,
+  ne,
+} from "drizzle-orm";
 import {
   type LessonPlanExportDTO,
-  type LessonPlanExportItemSnapshot,
   renderLessonPlanPdf,
 } from "./pdf-renderer.js";
 
@@ -30,33 +39,43 @@ export async function loadLessonPlanForExport(
   const db = getDb();
   const [plan] = await db
     .select()
-    .from(lessonPlans)
-    .where(and(eq(lessonPlans.uuid, planUuid), eq(lessonPlans.userId, userId)))
+    .from(personalCurricula)
+    .where(
+      and(
+        eq(personalCurricula.uuid, planUuid),
+        eq(personalCurricula.userId, userId)
+      )
+    )
     .limit(1);
 
   if (!plan) {
-    throw new LessonPlanNotFoundError(planUuid);
+    throw new PersonalCurriculumNotFoundError(planUuid);
   }
 
   const rawItems = await db
     .select()
-    .from(lessonPlanItems)
-    .where(eq(lessonPlanItems.lessonPlanId, plan.id))
-    .orderBy(asc(lessonPlanItems.position));
+    .from(personalCurriculumItems)
+    .where(eq(personalCurriculumItems.personalCurriculumId, plan.id))
+    .orderBy(
+      asc(personalCurriculumItems.weekNo),
+      asc(personalCurriculumItems.sessionNo),
+      asc(personalCurriculumItems.position)
+    );
 
   return {
     uuid: plan.uuid,
     title: plan.title,
-    target_age: plan.targetAge ?? undefined,
-    estimated_minutes: plan.estimatedMinutes ?? undefined,
-    notes: plan.notes ?? undefined,
+    target_age: plan.ageMin ?? undefined,
+    estimated_minutes: plan.durationWeeks * plan.sessionsPerWeek * 10,
     version: plan.version,
-    items: rawItems.map((item) => ({
-      position: item.position,
-      item_type: item.itemType,
-      item_code: item.itemCode ?? undefined,
-      custom_instruction: item.customInstruction ?? undefined,
-      snapshot: (item.snapshot as LessonPlanExportItemSnapshot) ?? undefined,
+    items: rawItems.map((item, idx) => ({
+      position: idx,
+      item_type: "game_level",
+      item_code: `GL-${item.entityId}`,
+      snapshot: {
+        title: `Tuần ${item.weekNo} - Buổi ${item.sessionNo} (#${item.position})`,
+        duration_minutes: 10,
+      },
     })),
   };
 }
@@ -69,7 +88,7 @@ export interface RequestExportJobOptions {
 
 export interface ExportJobResultDTO {
   uuid: string;
-  kind: "lesson_plan" | "worksheet" | "curriculum_plan";
+  kind: "worksheet" | "curriculum_plan";
   ref_id: string;
   status: "queued" | "processing" | "done" | "failed";
   file_path: string | null;
@@ -123,7 +142,7 @@ export async function getUserMonthlyExportCount(
  */
 export async function requestExportJob(
   userId: number,
-  kind: "lesson_plan" | "worksheet" | "curriculum_plan",
+  kind: "worksheet" | "curriculum_plan",
   refId: string,
   options?: RequestExportJobOptions
 ): Promise<{ job_uuid: string; status: "queued" }> {
@@ -147,7 +166,7 @@ export async function requestExportJob(
   }
 
   // 3. Verify refId exists and belongs to user
-  if (kind === "lesson_plan") {
+  if (kind === "curriculum_plan") {
     // Throws NOT_FOUND if not found or belongs to another user
     await loadLessonPlanForExport(userId, refId);
   } else {
@@ -233,7 +252,7 @@ export async function getExportJobByUuid(
 
   return {
     uuid: job.uuid,
-    kind: job.kind as "lesson_plan" | "worksheet" | "curriculum_plan",
+    kind: job.kind as "worksheet" | "curriculum_plan",
     ref_id: job.refId,
     status: job.status as "queued" | "processing" | "done" | "failed",
     file_path: job.filePath,
@@ -285,7 +304,7 @@ export async function processPdfRenderJob(
     let pageCount: number;
     let documentTitle = "Tài liệu";
 
-    if (job.kind === "lesson_plan") {
+    if (job.kind === "curriculum_plan") {
       const planDetail = await loadLessonPlanForExport(job.userId, job.refId);
       documentTitle = planDetail.title;
 
@@ -439,23 +458,27 @@ export async function runPdfCleanupJob(): Promise<{
         isNotNull(exportJobs.filePath),
         ne(exportJobs.filePath, "")
       )
-    );
+    )
+    .limit(500);
 
-  let cleanedCount = 0;
+  const cleanedIds: number[] = [];
 
   for (const job of expiredJobs) {
     if (job.filePath) {
       storage.deletePrivateAsset(job.filePath);
-      await db
-        .update(exportJobs)
-        .set({
-          filePath: null,
-          updatedAt: new Date(),
-        })
-        .where(eq(exportJobs.id, job.id));
-      cleanedCount++;
+      cleanedIds.push(job.id);
     }
   }
 
-  return { cleanedCount };
+  if (cleanedIds.length > 0) {
+    await db
+      .update(exportJobs)
+      .set({
+        filePath: null,
+        updatedAt: new Date(),
+      })
+      .where(inArray(exportJobs.id, cleanedIds));
+  }
+
+  return { cleanedCount: cleanedIds.length };
 }

@@ -38,63 +38,136 @@ export const C6_PER_05_IDENTITY: SkillIdentity = {
 
 export const C6_PER_05_DATASET: SkillDataset = {
   skill_code: "C6.PER.05",
-  concept_label: "Chịu chờ kết quả",
+  concept_label: "Kiên nhẫn chờ kết quả",
   surface: "game",
   items: [
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "notebook",
+      label: "quyển vở",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "📓",
       },
       category: {
-        type: "hoa quả",
+        type: "đồ học tập",
+        color: "blue",
+        shape: "square",
       },
+      value: 1,
+      ordering: 1,
+      contrast_group: "study_tools",
     },
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "pencil",
+      label: "bút chì",
       image: {
         kind: "emoji",
-        ref: "🍉",
+        ref: "✏️",
       },
       category: {
-        type: "hoa quả",
+        type: "đồ học tập",
+        color: "yellow",
+        shape: "triangle",
       },
+      value: 2,
+      ordering: 2,
+      contrast_group: "study_tools",
+    },
+    {
+      id: "backpack",
+      label: "cặp sách",
+      image: {
+        kind: "emoji",
+        ref: "🎒",
+      },
+      category: {
+        type: "đồ học tập",
+        color: "red",
+        shape: "square",
+      },
+      value: 3,
+      ordering: 3,
+      contrast_group: "study_tools",
+    },
+    {
+      id: "ruler",
+      label: "thước kẻ",
+      image: {
+        kind: "emoji",
+        ref: "📏",
+      },
+      category: {
+        type: "đồ học tập",
+        color: "green",
+        shape: "square",
+      },
+      value: 4,
+      ordering: 4,
+      contrast_group: "study_tools",
+    },
+    {
+      id: "onion",
+      label: "hành tây",
+      image: {
+        kind: "emoji",
+        ref: "🧅",
+      },
+      category: {
+        type: "rau củ",
+        color: "yellow",
+        shape: "circle",
+      },
+      value: 5,
+      ordering: 5,
+      contrast_group: "vegetables",
+    },
+    {
+      id: "tomato",
+      label: "cà chua",
+      image: {
+        kind: "emoji",
+        ref: "🍅",
+      },
+      category: {
+        type: "rau củ",
+        color: "red",
+        shape: "circle",
+      },
+      value: 6,
+      ordering: 6,
+      contrast_group: "vegetables",
+    },
+    {
+      id: "broccoli",
+      label: "súp lơ",
+      image: {
+        kind: "emoji",
+        ref: "🥦",
+      },
+      category: {
+        type: "rau củ",
+        color: "green",
+        shape: "triangle",
+      },
+      value: 7,
+      ordering: 7,
+      contrast_group: "vegetables",
     },
     {
       id: "carrot",
-      label: "củ cà rốt",
+      label: "cà rốt",
       image: {
         kind: "emoji",
         ref: "🥕",
       },
       category: {
         type: "rau củ",
+        color: "red",
+        shape: "triangle",
       },
-    },
-    {
-      id: "corn",
-      label: "bắp ngô",
-      image: {
-        kind: "emoji",
-        ref: "🌽",
-      },
-      category: {
-        type: "rau củ",
-      },
-    },
-    {
-      id: "dog",
-      label: "con chó",
-      image: {
-        kind: "emoji",
-        ref: "🐕",
-      },
-      category: {
-        type: "động vật",
-      },
+      value: 8,
+      ordering: 8,
+      contrast_group: "vegetables",
     },
   ],
   ladder: [
@@ -126,9 +199,52 @@ export const C6_PER_05_DATASET: SkillDataset = {
   ],
   phrasing: {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
-    narration_template: "Chúng mình cùng tìm hiểu về Chịu chờ kết quả nhé",
+    narration_template: "Chúng mình cùng kiên nhẫn chờ kết quả nhé",
   },
-  ordering: ["banana", "watermelon", "carrot", "corn", "dog"],
+  axes: {
+    type: ["đồ học tập", "rau củ"],
+    wait_time: {
+      values: [
+        "chờ một chút",
+        "kiên nhẫn",
+        "sắp có kết quả",
+        "nhận phần thưởng",
+      ],
+      ordered: true,
+    },
+  },
+  relations: [
+    {
+      source_id: "notebook",
+      target_id: "pencil",
+      type: "pair",
+    },
+    {
+      source_id: "backpack",
+      target_id: "ruler",
+      type: "pair",
+    },
+    {
+      source_id: "onion",
+      target_id: "tomato",
+      type: "pair",
+    },
+    {
+      source_id: "broccoli",
+      target_id: "carrot",
+      type: "pair",
+    },
+  ],
+  ordering: [
+    "notebook",
+    "pencil",
+    "backpack",
+    "ruler",
+    "onion",
+    "tomato",
+    "broccoli",
+    "carrot",
+  ],
 };
 
 export const C6_PER_05_SEED: SkillSeed = {
@@ -144,30 +260,6 @@ export const C6_PER_05_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C6-PER-DOTS-0002",
-      template: "GT-011",
-      band: "5-6",
-      difficulty: 4,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      code: "GL-C6-PER-MAZE-0005",
-      template: "GT-013",
-      band: "4-5",
-      difficulty: 3,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C6-PER-MAZE-0006",
-      template: "GT-013",
-      band: "4-5",
-      difficulty: 4,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
       code: "GL-C6-PER-DIFF-0001",
       template: "GT-014",
       band: "5-6",
@@ -176,43 +268,11 @@ export const C6_PER_05_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C6-PER-DIFF-0002",
-      template: "GT-014",
-      band: "5-6",
-      difficulty: 4,
-      theme: "ocean",
-      rounds: 3,
-    },
-    {
       code: "GL-C6-PER-ISO-0001",
       template: "GT-017",
       band: "5-6",
       difficulty: 3,
       theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C6-PER-ISO-0002",
-      template: "GT-017",
-      band: "5-6",
-      difficulty: 4,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C6-PER-BOND-0001",
-      template: "GT-018",
-      band: "4-5",
-      difficulty: 3,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C6-PER-BOND-0002",
-      template: "GT-018",
-      band: "4-5",
-      difficulty: 4,
-      theme: "space",
       rounds: 3,
     },
     {

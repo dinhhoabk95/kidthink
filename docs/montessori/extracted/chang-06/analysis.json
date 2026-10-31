@@ -1,0 +1,1623 @@
+{
+  "stage_id": "chang-06",
+  "workbook_id": "WB06",
+  "title": "Chặng 6: Thung Lũng Cân Bằng",
+  "subtitle": "Nhiều hơn – Ít hơn – Bằng nhau",
+  "total_pages": 23,
+  "target_age": "3–6 tuổi",
+  "series": "Gấu Logic & Thỏ Quan Sát - Chuyến Tàu Toán Học (Phần 6)",
+  "mission": "Khôi phục cây cầu thăng bằng và thắp sáng Viên Ngọc Cân Bằng",
+  "pedagogy": {
+    "framework": "Montessori & CPA (Concrete - Pictorial - Abstract)",
+    "approach": "Bàn cân bập bênh trực quan (Balance Pan Beam), Tương ứng 1-1 (One-to-One Correspondence), Tư duy bất đẳng thức & Quan hệ đối xứng nghịch đảo (Relational Thinking & Inversion Property)",
+    "competency": "C1 - Cảm thức số học & So sánh (Number Sense & Comparison)",
+    "skills_targeted": [
+      {
+        "code": "C1.CMP.01",
+        "name": "So sánh lớn hơn (Greater than >)"
+      },
+      {
+        "code": "C1.CMP.02",
+        "name": "So sánh nhỏ hơn (Less than <)"
+      },
+      {
+        "code": "C1.CMP.03",
+        "name": "So sánh bằng nhau (Equal =)"
+      },
+      {
+        "code": "C1.CMP.04",
+        "name": "Nhận biết nhiều hơn (More)"
+      },
+      {
+        "code": "C1.CMP.05",
+        "name": "Nhận biết ít hơn (Fewer / Less)"
+      },
+      {
+        "code": "C1.CNT.01",
+        "name": "Đếm tương ứng 1-1 và xác định số lượng"
+      },
+      {
+        "code": "C1.SYM.01",
+        "name": "Nhận biết và viết ký hiệu số & dấu >, <, ="
+      },
+      {
+        "code": "C1.NREC.09",
+        "name": "Thứ tự số và vị trí trên trục số"
+      },
+      {
+        "code": "C1.ADD.02",
+        "name": "Gộp nhóm / Cộng bằng hình trực quan"
+      },
+      {
+        "code": "C1.SUB.02",
+        "name": "Bớt đi / Trừ bằng hình & tính nhẩm"
+      }
+    ],
+    "progression_narrative": "Tiến trình sư phạm chặt chẽ 5 tầng nhận thức: (1) Trực quan cụ thể (Concrete / Pictorial): Đếm và khoanh nhóm nhiều hơn/ít hơn/bằng nhau (Trang 2–4); (2) Giới thiệu ký hiệu trừu tượng (Semi-concrete): Quy tắc miệng cá sấu há về bên nhiều hơn để làm quen dấu >, <, = (Trang 5–11); (3) Chuyển tiếp biểu diễn: Đếm lượng rồi viết số 2 bên trước khi điền dấu (Trang 12); (4) So sánh số thuần trừu tượng (Abstract): So sánh cặp số 1–10, tính chất hoán vị nghịch đảo a < b <=> b > a, trắc nghiệm 3 lựa chọn, mở rộng phạm vi 20 (Trang 13–18); (5) Tiền đại số & Tổng hợp (Pre-algebra): So sánh nhóm hình vs số, biểu thức gộp (a + b) vs c, biểu thức bớt (a - b) vs c, và cửa ải cân bằng tổng hợp (Trang 19–22)."
+  },
+  "activity_groups": [
+    {
+      "group_id": "WB06-D1",
+      "group_name": "So sánh trực quan 2 nhóm vật thể (Visual Quantity Comparison)",
+      "page_range": "Trang 2 – Trang 4 (Sách: Trang 1 – 3)",
+      "mechanic_description": "Quan sát hai tập hợp vật thể đặt đối xứng ở hai bên (hoặc hai đĩa cân). Trẻ đếm số lượng mỗi bên rồi khoanh tròn nhóm có nhiều hơn, nhóm có ít hơn, hoặc điền dấu = khi hai bên bằng nhau.",
+      "sample_prompts": [
+        "Khoanh vào nhóm có nhiều hơn",
+        "Khoanh vào nhóm có ít hơn",
+        "Đếm và viết dấu = vào ô trống"
+      ],
+      "visual_objects": [
+        "Đàn chim đỏ (2 vs 5), chim xanh dương (4 vs 1), chim vàng (3 vs 6)",
+        "Giỏ quả: Táo đỏ (4 vs 2), dâu tây (1 vs 5), cam tròn (6 vs 3)",
+        "Cà rốt nông trại (3 vs 3), bướm hồng (4 vs 4), bóng bãi biển (5 vs 5)"
+      ],
+      "quantities_and_ranges": "Số lượng từ 1 đến 6 vật thể mỗi bên.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chạm chọn nhóm đúng)"
+        },
+        {
+          "template_id": "GT-009",
+          "template_name": "balance-pan (bàn cân bập bênh so sánh độ nghiêng/thăng bằng)"
+        }
+      ],
+      "recommended_skills": ["C1.CMP.04", "C1.CMP.05", "C1.CMP.03", "C1.CNT.01"]
+    },
+    {
+      "group_id": "WB06-D2",
+      "group_name": "Điền dấu quan hệ >, <, = giữa 2 nhóm hình ảnh (Pictorial Inequality / Equality with Symbols)",
+      "page_range": "Trang 5 – Trang 11 (Sách: Trang 4 – 10)",
+      "mechanic_description": "Đặt hai nhóm hình ảnh đối xứng ở hai bên kèm một ô trống ở giữa. Giới thiệu quy ước ẩn dụ trực quan: 'Miệng cá sấu luôn há về bên nhiều hơn'. Trẻ chọn kéo thả hoặc chạm chọn dấu >, < hoặc = để điền vào ô trống.",
+      "sample_prompts": [
+        "Chọn dấu > hoặc < điền vào ô trống",
+        "Điền dấu >, < hoặc = vào ô trống"
+      ],
+      "visual_objects": [
+        "Động vật nông trại: Vịt con (2 vs 5), bò sữa (4 vs 1), heo con (3 vs 6)",
+        "Vườn hoa: Hoa đỏ (4 vs 4), hoa vàng (2 vs 5), hoa tím (6 vs 3)",
+        "Ao cá bơi tự do: Cá tím (5 vs 4), cá cam (4 vs 4), cá xanh (2 vs 6)",
+        "Bánh tiệc: Cupcake dâu (1 vs 4), donut sô-cô-la (5 vs 2), bánh quy sao (6 vs 6)",
+        "Gara xe: Ô tô đỏ (7 vs 4), xe buýt vàng (3 vs 6), xe tải xanh (5 vs 8)",
+        "Muông thú rừng: Sóc hạt dẻ (9 vs 5), hươu sao (4 vs 8), nhím gai (7 vs 7)",
+        "Kho báu: Tiền vàng ngôi sao (6 vs 10), kim cương xanh (8 vs 5), hồng ngọc đỏ (7 vs 7)"
+      ],
+      "quantities_and_ranges": "Số lượng tăng tiến từ 1–6 lên đến 10 vật thể; cách bố trí từ thẳng hàng đến ma trận 2 hàng và phân tán tự do (scattered array).",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-008",
+          "template_name": "drag-to-slot (kéo dấu >, <, = vào ô giữa 2 nhóm)"
+        },
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chạm chọn 1 trong 3 nút dấu)"
+        },
+        {
+          "template_id": "GT-009",
+          "template_name": "balance-pan (mô phỏng bàn cân hiển thị dấu quan hệ)"
+        }
+      ],
+      "recommended_skills": [
+        "C1.CMP.01",
+        "C1.CMP.02",
+        "C1.CMP.03",
+        "C1.CNT.01",
+        "C1.SYM.01"
+      ]
+    },
+    {
+      "group_id": "WB06-D3",
+      "group_name": "Chuyển hóa CPA: Đếm lượng -> Ghi chữ số -> Điền dấu (Bridge from Pictorial to Abstract)",
+      "page_range": "Trang 12 (Sách: Trang 11)",
+      "mechanic_description": "Trang cầu nối đặc biệt: Mỗi bên gồm nhóm hình và một ô viết số bên dưới, ở giữa là ô điền dấu. Trẻ đếm và điền số lượng của nhóm trái, đếm và điền số lượng nhóm phải, sau đó so sánh 2 số vừa ghi để điền dấu >, <, =.",
+      "sample_prompts": ["Đếm – Viết số – Điền dấu"],
+      "visual_objects": [
+        "Táo đỏ (3 quả vs 6 quả -> ghi số 3 và 6, điền dấu <)",
+        "Bướm hồng (5 con vs 2 con -> ghi số 5 và 2, điền dấu >)",
+        "Bóng bãi biển (4 quả vs 4 quả -> ghi số 4 và 4, điền dấu =)"
+      ],
+      "quantities_and_ranges": "Số lượng trong phạm vi 1 đến 6.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-008",
+          "template_name": "drag-to-slot (kéo số vào ô đếm rồi kéo dấu vào ô so sánh)"
+        },
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chọn số khớp lượng rồi chọn dấu so sánh)"
+        }
+      ],
+      "recommended_skills": [
+        "C1.SYM.01",
+        "C1.CNT.01",
+        "C1.CMP.01",
+        "C1.CMP.02",
+        "C1.CMP.03"
+      ]
+    },
+    {
+      "group_id": "WB06-D4",
+      "group_name": "So sánh số thuần trừu tượng và Tính chất nghịch đảo (Abstract Number Comparison & Inversion Property)",
+      "page_range": "Trang 13 – Trang 18 (Sách: Trang 12 – 17)",
+      "mechanic_description": "So sánh các chữ số trực tiếp không qua hình ảnh đếm: (1) Cặp số 1–10; (2) Số trên đá rêu phong; (3) Tính chất hoán vị nghịch đảo: khi hoán đổi hai số thì chiều của dấu quay ngược lại (a < b <=> b > a); (4) Trắc nghiệm 3 lựa chọn (khoanh vào >, < hoặc =); (5) Cặp toa tàu số; (6) Mở rộng so sánh số phạm vi 20 (phân biệt số 1 chữ số vs 2 chữ số, so sánh hàng chục và hàng đơn vị).",
+      "sample_prompts": [
+        "Điền dấu >, < hoặc = vào ô trống",
+        "Điền dấu đúng vào từng ô trống",
+        "Khoanh vào dấu đúng"
+      ],
+      "visual_objects": [
+        "Thẻ số phẳng màu sắc pastel",
+        "Khối đá tự nhiên rêu phong mang chữ số 1–10",
+        "Cặp thẻ đổi chỗ có trục đối xứng ở giữa",
+        "Nút trắc nghiệm tròn mang dấu >, <, =",
+        "Toa tàu hơi nước chở số 1–10",
+        "Thẻ số lớn phạm vi 20 (7, 9, 11, 12, 14, 15, 17, 18, 20)"
+      ],
+      "quantities_and_ranges": "Số nguyên từ 1 đến 20.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chạm chọn dấu đúng trong 3 lựa chọn)"
+        },
+        {
+          "template_id": "GT-008",
+          "template_name": "drag-to-slot (kéo thả dấu >, <, = vào ô giữa 2 số)"
+        }
+      ],
+      "recommended_skills": [
+        "C1.CMP.01",
+        "C1.CMP.02",
+        "C1.CMP.03",
+        "C1.NREC.09",
+        "C1.SYM.01"
+      ]
+    },
+    {
+      "group_id": "WB06-D5",
+      "group_name": "Đối chiếu đa biểu diễn & Tiền đại số phép tính (Multi-representation & Pre-algebra Operations)",
+      "page_range": "Trang 19 – Trang 22 (Sách: Trang 18 – 21)",
+      "mechanic_description": "Nâng cao tư duy toán học: (1) So sánh nhóm hình cụ thể với chữ số trừu tượng; (2) So sánh phép cộng hai nhóm hình (a + b) với một số; (3) So sánh phép trừ hai số (a - b) với một số; (4) Cửa ải cân bằng thử thách tổng kết tích hợp toàn bộ các dạng biểu diễn.",
+      "sample_prompts": [
+        "Điền dấu >, < hoặc = vào ô trống",
+        "Tính nhẩm rồi điền dấu >, < hoặc =",
+        "Tính rồi điền dấu >, < hoặc =",
+        "Hoàn thành 6 phép so sánh"
+      ],
+      "visual_objects": [
+        "Táo đỏ, cá xanh, ngôi sao vàng đối chiếu với thẻ chữ số",
+        "Hai nhóm hình nối với nhau bởi dấu cộng (+) đối chiếu với thẻ số",
+        "Phép trừ dạng số (7-2, 9-3, 8-1, 10-4, 6-2, 5-3) đối chiếu với thẻ số",
+        "6 ô thử thách vượt ải mở cánh cổng thung lũng cân bằng"
+      ],
+      "quantities_and_ranges": "Số lượng và kết quả phép tính trong phạm vi 20.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-009",
+          "template_name": "balance-pan (thêm/bớt quả cân hoặc vật phẩm để 2 đĩa cân thăng bằng)"
+        },
+        {
+          "template_id": "GT-008",
+          "template_name": "drag-to-slot (kéo dấu vào ô trống giữa phép tính và số)"
+        },
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chạm chọn dấu đúng sau khi tính nhẩm)"
+        }
+      ],
+      "recommended_skills": [
+        "C1.CMP.01",
+        "C1.CMP.02",
+        "C1.CMP.03",
+        "C1.ADD.02",
+        "C1.SUB.02"
+      ]
+    }
+  ],
+  "pages_summary": [
+    {
+      "page_number": 1,
+      "workbook_page_number": null,
+      "file_path": "pages/page-01.jpg",
+      "page_type": "cover_overview",
+      "title": "Hành Trình Chuyến Tàu Toán Học - Chặng 6: Thung Lũng Cân Bằng",
+      "subtitle": "Nhiều hơn – Ít hơn – Bằng nhau",
+      "instruction": "CÙNG GẤU LOGIC VÀ THỎ QUAN SÁT KHÔI PHỤC CÂY CẦU!",
+      "dialogue": {
+        "gau_logic": "Chào mừng các bạn nhỏ đến với Thung Lũng Cân Bằng! Hãy cùng tớ tìm hiểu bí mật của chiếc cân thăng bằng nhé!",
+        "tho_quan_sat": "Cây cầu phép thuật đang bị nghiêng ngả! Bé hãy giúp chúng mình làm cho hai bên cân bằng để thắp sáng Viên Ngọc Cân Bằng nha!"
+      },
+      "parent_objectives": [
+        "Phân biệt nhiều hơn - ít hơn - bằng nhau",
+        "Quan sát và đếm trước khi so sánh",
+        "Làm quen dấu >, <, =",
+        "Rèn tập trung và tư duy logic"
+      ],
+      "footer_banner": "CÙNG GẤU LOGIC VÀ THỎ QUAN SÁT KHÔI PHỤC CÂY CẦU!",
+      "pedagogical_concept": "Bìa mở đầu chặng thiết lập bối cảnh câu chuyện (story-driven learning) và mục tiêu sư phạm. Hình ảnh cây cầu treo với 2 trụ mang biểu tượng dấu so sánh (cổng trái mang dấu '>', cổng phải mang dấu '<', trụ giữa mang dấu '=') giúp trẻ làm quen trực quan với khái niệm cân bằng, thăng bằng khối lượng/số lượng.",
+      "visual_details": {
+        "scenery": "Thung lũng xanh mướt, suối reo, cầu treo cổ kính bắc qua dòng sông dẫn tới bệ đỡ Viên Ngọc Cân Bằng (ngọc lục bảo xanh lá phát sáng).",
+        "characters": [
+          "Gấu Logic mặc áo gile xanh dương, đeo kính gọng tròn, cầm các thẻ số (8, 5, 8) trên toa tàu hỏa.",
+          "Thỏ Quan Sát đeo túi chéo vàng, cầm kính lúp chỉ đường đứng trên thảm cỏ hoa tươi."
+        ],
+        "symbols": "Trụ cầu có khắc các biểu tượng so sánh: cổng trái '>', cổng phải '<', bệ giữa '='.",
+        "quantities": "Bên trái cầu có 3 quả cà chua và 3 chú thỏ con; bên phải có 3 quả cà chua và 3 chú thỏ con (tượng trưng cho sự cân bằng hoàn hảo)."
+      },
+      "digital_game_mapping": {
+        "suggested_template": "GT-000",
+        "mechanic": "intro-tutorial / world-hub",
+        "interaction": "Chạm vào đầu tàu phát tiếng còi hụ 'Tu tu xình xịch', chạm vào Gấu Logic và Thỏ Quan Sát nghe giọng lồng tiếng mở đầu nhiệm vụ chặng 6."
+      }
+    },
+    {
+      "page_number": 2,
+      "workbook_page_number": 1,
+      "file_path": "pages/page-02.jpg",
+      "page_type": "visual_comparison_more",
+      "title": "ĐÀN CHIM BÊN NÀO ĐÔNG HƠN?",
+      "instruction": "KHOANH VÀO NHÓM CÓ NHIỀU HƠN",
+      "dialogue": {
+        "gau_logic": "Hai bên thung lũng có những đàn chim khác nhau!",
+        "tho_quan_sat": "Bé đếm rồi khoanh vào đàn đông hơn nhé!"
+      },
+      "footer_hint": "GỢI Ý: CHẠM TAY VÀO TỪNG HÌNH KHI ĐẾM",
+      "pedagogical_concept": "Cấp độ Concrete/Pictorial sơ đẳng: Trẻ rèn kỹ năng đếm tương ứng 1-1 trên từng đối tượng (one-to-one counting) và so sánh số lượng hai tập hợp để nhận diện tập hợp 'nhiều hơn' (more / greater quantity). Gợi ý xúc giác 'chạm tay vào từng hình' củng cố nguyên lý Montessori tactile counting.",
+      "items": [
+        {
+          "row": 1,
+          "object": "Đàn chim sẻ đỏ 🐦",
+          "left_group": {
+            "count": 2,
+            "description": "2 con chim đỏ"
+          },
+          "right_group": {
+            "count": 5,
+            "description": "5 con chim đỏ (3 trên, 2 dưới)"
+          },
+          "correct_answer": "right",
+          "correct_reason": "Bên phải có 5 con chim đỏ, nhiều hơn bên trái có 2 con chim (5 > 2)",
+          "distractor": "left (2 con chim)"
+        },
+        {
+          "row": 2,
+          "object": "Đàn chim xanh dương 🐦",
+          "left_group": {
+            "count": 4,
+            "description": "4 con chim xanh (2 trên, 2 dưới)"
+          },
+          "right_group": {
+            "count": 1,
+            "description": "1 con chim xanh đơn lẻ"
+          },
+          "correct_answer": "left",
+          "correct_reason": "Bên trái có 4 con chim xanh, nhiều hơn bên phải có 1 con chim (4 > 1)",
+          "distractor": "right (1 con chim)"
+        },
+        {
+          "row": 3,
+          "object": "Đàn chim hoàng yến vàng 🐥",
+          "left_group": {
+            "count": 3,
+            "description": "3 con chim vàng hàng ngang"
+          },
+          "right_group": {
+            "count": 6,
+            "description": "6 con chim vàng (2 hàng 3 con)"
+          },
+          "correct_answer": "right",
+          "correct_reason": "Bên phải có 6 con chim vàng, nhiều hơn bên trái có 3 con chim (6 > 3)",
+          "distractor": "left (3 con chim)"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-001",
+        "mechanic": "tap-select (chạm chọn nhóm có nhiều hơn)",
+        "interaction": "Hai đàn chim đậu trên 2 cành cây (hoặc 2 đĩa cân). Khi chạm vào từng con chim phát tiếng hót lách chách và hiện số đếm 1, 2, 3... Khi chạm vào nhóm nhiều hơn, đàn chim bay lượn reo vui và phát âm thanh khen ngợi."
+      }
+    },
+    {
+      "page_number": 3,
+      "workbook_page_number": 2,
+      "file_path": "pages/page-03.jpg",
+      "page_type": "visual_comparison_less",
+      "title": "GIỎ QUẢ BÊN NÀO ÍT HƠN?",
+      "instruction": "KHOANH VÀO NHÓM CÓ ÍT HƠN",
+      "dialogue": {
+        "gau_logic": "Mỗi bên có một số trái cây khác nhau!",
+        "tho_quan_sat": "Bé đếm rồi khoanh vào nhóm ít hơn nhé!"
+      },
+      "footer_hint": "GỢI Ý: ĐẾM CẢ HAI BÊN RỒI MỚI CHỌN",
+      "pedagogical_concept": "Nhận diện khái niệm 'ít hơn' (fewer / less). Trẻ thường có thiên hướng trực giác chú ý vào nhóm nhiều hơn/lớn hơn, bài học này giúp trẻ chuyển đổi lăng kính tư duy (cognitive flexibility) để tìm nhóm có lượng ít hơn. Gợi ý yêu cầu đếm cả hai bên trước khi đưa ra quyết định.",
+      "items": [
+        {
+          "row": 1,
+          "object": "Quả táo đỏ 🍎",
+          "left_group": {
+            "count": 4,
+            "description": "4 quả táo đỏ xếp hàng ngang"
+          },
+          "right_group": {
+            "count": 2,
+            "description": "2 quả táo đỏ xếp hàng ngang"
+          },
+          "correct_answer": "right",
+          "correct_reason": "Bên phải có 2 quả táo, ít hơn bên trái có 4 quả táo (2 < 4)",
+          "distractor": "left (4 quả táo)"
+        },
+        {
+          "row": 2,
+          "object": "Quả dâu tây 🍓",
+          "left_group": {
+            "count": 1,
+            "description": "1 quả dâu tây đơn lẻ"
+          },
+          "right_group": {
+            "count": 5,
+            "description": "5 quả dâu tây xếp hàng ngang"
+          },
+          "correct_answer": "left",
+          "correct_reason": "Bên trái có 1 quả dâu tây, ít hơn bên phải có 5 quả dâu tây (1 < 5)",
+          "distractor": "right (5 quả dâu)"
+        },
+        {
+          "row": 3,
+          "object": "Quả cam tròn 🍊",
+          "left_group": {
+            "count": 6,
+            "description": "6 quả cam xếp hàng ngang"
+          },
+          "right_group": {
+            "count": 3,
+            "description": "3 quả cam xếp hàng ngang"
+          },
+          "correct_answer": "right",
+          "correct_reason": "Bên phải có 3 quả cam, ít hơn bên trái có 6 quả cam (3 < 6)",
+          "distractor": "left (6 quả cam)"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-001",
+        "mechanic": "tap-select (chọn nhóm ít hơn)",
+        "interaction": "Hai chiếc giỏ mây chứa trái cây. Trẻ đếm và tap vào giỏ có ít trái cây hơn. Giỏ được chọn phát sáng dịu và trái cây nảy nhẹ vui nhộn."
+      }
+    },
+    {
+      "page_number": 4,
+      "workbook_page_number": 3,
+      "file_path": "pages/page-04.jpg",
+      "page_type": "visual_comparison_equal",
+      "title": "HAI BÊN BẰNG NHAU",
+      "instruction": "ĐẾM VÀ VIẾT DẤU = VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Có lúc hai bên có số lượng giống nhau!",
+        "tho_quan_sat": "Bé đếm rồi viết dấu bằng vào ô trống nhé!"
+      },
+      "footer_hint": "GỢI Ý: HAI BÊN BẰNG NHAU KHI CÓ CÙNG SỐ HÌNH",
+      "pedagogical_concept": "Giới thiệu khái niệm 'Bằng nhau' (Equality / Equivalence) và ký hiệu toán học dấu bằng '='. Trẻ nhận ra rằng khi hai nhóm có cùng số lượng phần tử (one-to-one exact match), chúng tương đương nhau về độ lớn.",
+      "items": [
+        {
+          "row": 1,
+          "object": "Củ cà rốt cam 🥕",
+          "left_group": {
+            "count": 3,
+            "description": "3 củ cà rốt thẳng đứng"
+          },
+          "right_group": {
+            "count": 3,
+            "description": "3 củ cà rốt thẳng đứng"
+          },
+          "correct_answer": "=",
+          "correct_reason": "Cả hai bên đều có đúng 3 củ cà rốt (3 = 3)",
+          "distractor": "Dấu >, <"
+        },
+        {
+          "row": 2,
+          "object": "Chú bướm hồng 🦋",
+          "left_group": {
+            "count": 4,
+            "description": "4 chú bướm hồng (2 trên, 2 dưới)"
+          },
+          "right_group": {
+            "count": 4,
+            "description": "4 chú bướm hồng (2 trên, 2 dưới)"
+          },
+          "correct_answer": "=",
+          "correct_reason": "Cả hai bên đều có đúng 4 chú bướm hồng (4 = 4)",
+          "distractor": "Dấu >, <"
+        },
+        {
+          "row": 3,
+          "object": "Quả bóng bãi biển sọc màu ⚽",
+          "left_group": {
+            "count": 5,
+            "description": "5 quả bóng (3 trên, 2 dưới)"
+          },
+          "right_group": {
+            "count": 5,
+            "description": "5 quả bóng (3 trên, 2 dưới)"
+          },
+          "correct_answer": "=",
+          "correct_reason": "Cả hai bên đều có đúng 5 quả bóng (5 = 5)",
+          "distractor": "Dấu >, <"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "drag-to-slot (kéo dấu = vào ô trống) hoặc balance-pan (GT-009)",
+        "interaction": "Hai đĩa cân thăng bằng song song hoàn hảo. Trẻ kéo khối gỗ mang dấu '=' thả vào ô trung tâm nối giữa 2 đĩa cân."
+      }
+    },
+    {
+      "page_number": 5,
+      "workbook_page_number": 4,
+      "file_path": "pages/page-05.jpg",
+      "page_type": "inequality_symbols_intro",
+      "title": "NÔNG TRẠI NHIỀU – ÍT",
+      "instruction": "CHỌN DẤU > HOẶC < ĐIỀN VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Miệng cá sấu luôn há về phía có nhiều hơn!",
+        "tho_quan_sat": "Bé chọn dấu lớn hơn hoặc bé hơn nhé!"
+      },
+      "footer_hint": "GỢI Ý: MIỆNG CÁ SẤU HÁ VỀ BÊN NHIỀU HƠN",
+      "pedagogical_concept": "Giới thiệu ký hiệu bất đẳng thức '>' và '<' qua mô hình ẩn dụ kinh điển (mnemonic): 'Miệng cá sấu tham ăn luôn há to về phía có số lượng nhiều hơn'. Giúp trẻ 3-6 tuổi ghi nhớ trực quan quy tắc định hướng của dấu.",
+      "items": [
+        {
+          "row": 1,
+          "object": "Vịt con lông vàng 🦆",
+          "left_group": {
+            "count": 2,
+            "description": "2 chú vịt vàng"
+          },
+          "right_group": {
+            "count": 5,
+            "description": "5 chú vịt vàng (3 trên, 2 dưới)"
+          },
+          "correct_answer": "<",
+          "correct_reason": "Bên trái có 2 con vịt, bên phải có 5 con vịt. Miệng cá sấu há về bên phải (2 < 5)",
+          "distractor": "Dấu >"
+        },
+        {
+          "row": 2,
+          "object": "Bò sữa nông trại 🐮",
+          "left_group": {
+            "count": 4,
+            "description": "4 chú bò sữa đeo chuông vàng"
+          },
+          "right_group": {
+            "count": 1,
+            "description": "1 chú bò sữa đơn lẻ"
+          },
+          "correct_answer": ">",
+          "correct_reason": "Bên trái có 4 con bò, bên phải có 1 con bò. Miệng cá sấu há về bên trái (4 > 1)",
+          "distractor": "Dấu <"
+        },
+        {
+          "row": 3,
+          "object": "Heo con màu hồng 🐷",
+          "left_group": {
+            "count": 3,
+            "description": "3 chú heo hồng"
+          },
+          "right_group": {
+            "count": 6,
+            "description": "6 chú heo hồng (2 hàng 3)"
+          },
+          "correct_answer": "<",
+          "correct_reason": "Bên trái có 3 con heo, bên phải có 6 con heo. Miệng cá sấu há về bên phải (3 < 6)",
+          "distractor": "Dấu >"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "drag-to-slot / tap-select dấu",
+        "interaction": "Biểu tượng chú cá sấu xanh ngộ nghĩnh có thể xoay đầu há miệng sang trái '>' hoặc sang phải '<'. Khi trẻ đặt đúng, cá sấu chớp mắt kêu 'Chomp chomp' thích thú."
+      }
+    },
+    {
+      "page_number": 6,
+      "workbook_page_number": 5,
+      "file_path": "pages/page-06.jpg",
+      "page_type": "three_symbols_full_choice",
+      "title": "VƯỜN HOA CÂN BẰNG",
+      "instruction": "ĐIỀN DẤU >, < HOẶC = VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Bây giờ có thể nhiều hơn, ít hơn hoặc bằng nhau!",
+        "tho_quan_sat": "Bé chọn đúng một trong ba dấu nhé!"
+      },
+      "footer_hint": "GỢI Ý: ĐẾM TỪNG BÊN TRƯỚC KHI CHỌN DẤU",
+      "pedagogical_concept": "Tổng hợp đầy đủ bộ 3 quan hệ so sánh (Trichotomy Law): lớn hơn (>), bé hơn (<), bằng nhau (=). Trẻ phải tự đưa ra phán đoán giữa cả 3 khả năng thay vì chỉ nhị phân (binary choice).",
+      "items": [
+        {
+          "row": 1,
+          "object": "Bông hoa đỏ nhụy vàng 🌺",
+          "left_group": {
+            "count": 4,
+            "description": "4 bông hoa đỏ thẳng hàng"
+          },
+          "right_group": {
+            "count": 4,
+            "description": "4 bông hoa đỏ thẳng hàng"
+          },
+          "correct_answer": "=",
+          "correct_reason": "Cả hai bên đều có đúng 4 bông hoa đỏ (4 = 4)",
+          "distractor": "Dấu >, <"
+        },
+        {
+          "row": 2,
+          "object": "Bông hoa vàng nhụy cam 🌼",
+          "left_group": {
+            "count": 2,
+            "description": "2 bông hoa vàng"
+          },
+          "right_group": {
+            "count": 5,
+            "description": "5 bông hoa vàng thẳng hàng"
+          },
+          "correct_answer": "<",
+          "correct_reason": "Bên trái có 2 bông hoa, bên phải có 5 bông hoa (2 < 5)",
+          "distractor": "Dấu >, ="
+        },
+        {
+          "row": 3,
+          "object": "Bông hoa tím 6 cánh 🌸",
+          "left_group": {
+            "count": 6,
+            "description": "6 bông hoa tím thẳng hàng"
+          },
+          "right_group": {
+            "count": 3,
+            "description": "3 bông hoa tím thẳng hàng"
+          },
+          "correct_answer": ">",
+          "correct_reason": "Bên trái có 6 bông hoa, bên phải có 3 bông hoa (6 > 3)",
+          "distractor": "Dấu <, ="
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "drag-to-slot (khay 3 thẻ dấu >, <, =)",
+        "interaction": "Dưới chân màn hình có 3 thẻ bài dấu '>', '<', '='. Trẻ kéo thẻ phù hợp vào khung trung tâm."
+      }
+    },
+    {
+      "page_number": 7,
+      "workbook_page_number": 6,
+      "file_path": "pages/page-07.jpg",
+      "page_type": "scattered_array_comparison",
+      "title": "AO CÁ HAI BÊN",
+      "instruction": "ĐIỀN DẤU >, < HOẶC = VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Những đàn cá đang bơi thành nhiều hướng!",
+        "tho_quan_sat": "Dù xếp lộn xộn, bé vẫn đếm thật kỹ nhé!"
+      },
+      "footer_hint": "GỢI Ý: HÌNH XẾP LỘN XỘN VẪN CẦN ĐẾM TỪNG HÌNH",
+      "pedagogical_concept": "Nâng cao độ khó đếm: Bố trí đối tượng ngẫu nhiên phi tuyến tính (Scattered / non-linear array). Trẻ phải áp dụng chiến lược đếm có hệ thống (đánh dấu trong tâm trí hoặc chạm ngón tay lần lượt) để không đếm lặp hoặc bỏ sót đối tượng.",
+      "items": [
+        {
+          "row": 1,
+          "object": "Cá tím bơi lội 🐟",
+          "left_group": {
+            "count": 5,
+            "description": "5 con cá tím bơi lượn nhiều góc nghiêng"
+          },
+          "right_group": {
+            "count": 4,
+            "description": "4 con cá tím bơi các hướng"
+          },
+          "correct_answer": ">",
+          "correct_reason": "Bên trái có 5 con cá, bên phải có 4 con cá (5 > 4)",
+          "distractor": "Dấu <, ="
+        },
+        {
+          "row": 2,
+          "object": "Cá vàng cam 🐠",
+          "left_group": {
+            "count": 4,
+            "description": "4 con cá cam bơi các hướng"
+          },
+          "right_group": {
+            "count": 4,
+            "description": "4 con cá cam bơi các hướng"
+          },
+          "correct_answer": "=",
+          "correct_reason": "Cả hai bên đều có đúng 4 con cá cam (4 = 4)",
+          "distractor": "Dấu >, <"
+        },
+        {
+          "row": 3,
+          "object": "Cá xanh biển 🐟",
+          "left_group": {
+            "count": 2,
+            "description": "2 con cá xanh"
+          },
+          "right_group": {
+            "count": 6,
+            "description": "6 con cá xanh phân tán bơi lội"
+          },
+          "correct_answer": "<",
+          "correct_reason": "Bên trái có 2 con cá, bên phải có 6 con cá (2 < 6)",
+          "distractor": "Dấu >, ="
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "drag-to-slot kết hợp hiệu ứng đếm tap",
+        "interaction": "Mỗi con cá khi được chạm vào sẽ bơi uốn mình tạo bóng nước và phát tiếng bọt nước 'Bloop', kèm vòng tròn sáng highlight đã đếm."
+      }
+    },
+    {
+      "page_number": 8,
+      "workbook_page_number": 7,
+      "file_path": "pages/page-08.jpg",
+      "page_type": "one_to_one_matching_comparison",
+      "title": "BỮA TIỆC BÁNH NGỌT",
+      "instruction": "ĐIỀN DẤU >, < HOẶC = VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Bánh ngọt đã được chia sang hai bàn!",
+        "tho_quan_sat": "Bé có thể nối từng cặp để so sánh nhé!"
+      },
+      "footer_hint": "GỢI Ý: CÓ THỂ NỐI TỪNG CẶP ĐỂ SO SÁNH",
+      "pedagogical_concept": "Phương pháp tương ứng một - một (One-to-one correspondence matching). Thỏ Quan Sát gợi ý chiến lược nối từng cặp vật thể giữa hai bên: bên nào còn thừa vật thể không có cặp thì bên đó nhiều hơn; nếu hai bên ghép vừa khít không thừa thì bằng nhau.",
+      "items": [
+        {
+          "row": 1,
+          "object": "Bánh cupcake kem dâu cherry 🧁",
+          "left_group": {
+            "count": 1,
+            "description": "1 cái bánh cupcake"
+          },
+          "right_group": {
+            "count": 4,
+            "description": "4 cái bánh cupcake thẳng hàng"
+          },
+          "correct_answer": "<",
+          "correct_reason": "Bên trái có 1 cái bánh, bên phải có 4 cái bánh. Nối 1 cặp thì bên phải thừa 3 cái (1 < 4)",
+          "distractor": "Dấu >, ="
+        },
+        {
+          "row": 2,
+          "object": "Bánh donut sô-cô-la rắc cốm 🍩",
+          "left_group": {
+            "count": 5,
+            "description": "5 cái bánh donut (3 trên, 2 dưới)"
+          },
+          "right_group": {
+            "count": 2,
+            "description": "2 cái bánh donut hàng ngang"
+          },
+          "correct_answer": ">",
+          "correct_reason": "Bên trái có 5 cái bánh, bên phải có 2 cái bánh. Bên trái thừa 3 cái (5 > 2)",
+          "distractor": "Dấu <, ="
+        },
+        {
+          "row": 3,
+          "object": "Bánh quy ngôi sao vàng mặt cười ⭐",
+          "left_group": {
+            "count": 6,
+            "description": "6 cái bánh quy (2 hàng 3 cái)"
+          },
+          "right_group": {
+            "count": 6,
+            "description": "6 cái bánh quy (2 hàng 3 cái)"
+          },
+          "correct_answer": "=",
+          "correct_reason": "Cả hai bên đều có đúng 6 cái bánh quy, ghép vừa khít 6 cặp (6 = 6)",
+          "distractor": "Dấu >, <"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-005",
+        "mechanic": "pair-match / drag-to-slot",
+        "interaction": "Trẻ có thể dùng ngón tay vẽ dây ruy băng nối bánh bên trái với bánh bên phải để kiểm tra sự tương ứng 1-1, sau đó chọn dấu điền vào giữa."
+      }
+    },
+    {
+      "page_number": 9,
+      "workbook_page_number": 8,
+      "file_path": "pages/page-09.jpg",
+      "page_type": "linear_array_large_quantity",
+      "title": "GARA XE NHỘN NHỊP",
+      "instruction": "ĐIỀN DẤU >, < HOẶC = VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Các loại xe đang xếp hàng ở hai bên!",
+        "tho_quan_sat": "Bé đếm theo hàng để không bỏ sót nhé!"
+      },
+      "footer_hint": "GỢI Ý: ĐẾM THEO HÀNG ĐỂ KHÔNG BỊ SÓT",
+      "pedagogical_concept": "Mở rộng phạm vi số lượng lên đến 8 vật thể và rèn luyện kỹ năng phân nhóm theo hàng (Row-by-row counting strategy). Giúp trẻ hình thành tư duy đếm có tổ chức trước khi học phép nhân hoặc cấu trúc mảng (array structure).",
+      "items": [
+        {
+          "row": 1,
+          "object": "Ô tô con màu đỏ 🚗",
+          "left_group": {
+            "count": 7,
+            "description": "7 chiếc xe con đỏ (hàng trên 4 chiếc, hàng dưới 3 chiếc)"
+          },
+          "right_group": {
+            "count": 4,
+            "description": "4 chiếc xe con đỏ (2 hàng 2 chiếc)"
+          },
+          "correct_answer": ">",
+          "correct_reason": "Bên trái có 7 chiếc xe, bên phải có 4 chiếc xe (7 > 4)",
+          "distractor": "Dấu <, ="
+        },
+        {
+          "row": 2,
+          "object": "Xe buýt học sinh màu vàng 🚌",
+          "left_group": {
+            "count": 3,
+            "description": "3 chiếc xe buýt hàng ngang"
+          },
+          "right_group": {
+            "count": 6,
+            "description": "6 chiếc xe buýt vàng (2 hàng 3 chiếc)"
+          },
+          "correct_answer": "<",
+          "correct_reason": "Bên trái có 3 chiếc xe buýt, bên phải có 6 chiếc xe buýt (3 < 6)",
+          "distractor": "Dấu >, ="
+        },
+        {
+          "row": 3,
+          "object": "Xe tải chở hàng màu xanh dương 🚚",
+          "left_group": {
+            "count": 5,
+            "description": "5 chiếc xe tải xanh (hàng trên 3, hàng dưới 2)"
+          },
+          "right_group": {
+            "count": 8,
+            "description": "8 chiếc xe tải xanh (2 hàng 4 chiếc)"
+          },
+          "correct_answer": "<",
+          "correct_reason": "Bên trái có 5 chiếc xe tải, bên phải có 8 chiếc xe tải (5 < 8)",
+          "distractor": "Dấu >, ="
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "drag-to-slot",
+        "interaction": "Xe đỗ trong các ô bãi đậu xe. Khi chọn dấu đúng, xe nổ máy 'Brum brum' và bật đèn pha sáng."
+      }
+    },
+    {
+      "page_number": 10,
+      "workbook_page_number": 9,
+      "file_path": "pages/page-10.jpg",
+      "page_type": "forest_animals_comparison",
+      "title": "KHU RỪNG ĐÔNG VUI",
+      "instruction": "ĐIỀN DẤU >, < HOẶC = VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Muông thú xuất hiện ngày càng đông hơn!",
+        "tho_quan_sat": "Bé đánh dấu nhẹ mỗi hình đã đếm nhé!"
+      },
+      "footer_hint": "GỢI Ý: ĐÁNH DẤU NHẸ NHỮNG HÌNH ĐÃ ĐẾM",
+      "pedagogical_concept": "Số lượng tiệm cận mốc 9 và 10. Thỏ Quan Sát hướng dẫn chiến lược 'tích dấu kiểm / đánh dấu nhẹ' (tallying / checkoff strategy) để quản lý bộ nhớ làm việc (working memory) của trẻ mầm non khi đếm tập hợp đông.",
+      "items": [
+        {
+          "row": 1,
+          "object": "Chú sóc nâu cầm hạt dẻ 🐿️",
+          "left_group": {
+            "count": 9,
+            "description": "9 chú sóc (hàng trên 5 chú, hàng dưới 4 chú)"
+          },
+          "right_group": {
+            "count": 5,
+            "description": "5 chú sóc (hàng trên 3 chú, hàng dưới 2 chú)"
+          },
+          "correct_answer": ">",
+          "correct_reason": "Bên trái có 9 chú sóc, bên phải có 5 chú sóc (9 > 5)",
+          "distractor": "Dấu <, ="
+        },
+        {
+          "row": 2,
+          "object": "Chú hươu sao đốm trắng 🦌",
+          "left_group": {
+            "count": 4,
+            "description": "4 chú hươu sao hàng ngang"
+          },
+          "right_group": {
+            "count": 8,
+            "description": "8 chú hươu sao (2 hàng 4 chú)"
+          },
+          "correct_answer": "<",
+          "correct_reason": "Bên trái có 4 chú hươu, bên phải có 8 chú hươu (4 < 8)",
+          "distractor": "Dấu >, ="
+        },
+        {
+          "row": 3,
+          "object": "Chú nhím gai màu nâu 🦔",
+          "left_group": {
+            "count": 7,
+            "description": "7 chú nhím (hàng trên 4 chú, hàng dưới 3 chú)"
+          },
+          "right_group": {
+            "count": 7,
+            "description": "7 chú nhím (hàng trên 4 chú, hàng dưới 3 chú)"
+          },
+          "correct_answer": "=",
+          "correct_reason": "Cả hai bên đều có đúng 7 chú nhím (7 = 7)",
+          "distractor": "Dấu >, <"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "drag-to-slot",
+        "interaction": "Chạm vào thú rừng sẽ có hạt sồi/lá cây rơi xuống đánh dấu con vật đã đếm. Điền dấu đúng khiến muông thú nhảy múa vui nhộn."
+      }
+    },
+    {
+      "page_number": 11,
+      "workbook_page_number": 10,
+      "file_path": "pages/page-11.jpg",
+      "page_type": "treasure_comparison_limit_10",
+      "title": "KHO BÁU HAI BÊN",
+      "instruction": "ĐIỀN DẤU >, < HOẶC = VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Những viên đá quý đã được chia thành hai nhóm!",
+        "tho_quan_sat": "Bé kiểm tra lại trước khi điền dấu nhé!"
+      },
+      "footer_hint": "GỢI Ý: KIỂM TRA LẠI MỖI BÊN TRƯỚC KHI ĐIỀN",
+      "pedagogical_concept": "Đỉnh cao của giai đoạn so sánh lượng trực quan phạm vi 10 (Concrete benchmark 10). Sử dụng hình ảnh tiền vàng và đá quý lấp lánh để thu hút thị giác, đồng thời kiểm tra tính cẩn thận của trẻ trước khi chuyển sang giai đoạn số trừu tượng.",
+      "items": [
+        {
+          "row": 1,
+          "object": "Đồng xu vàng ngôi sao 🪙",
+          "left_group": {
+            "count": 6,
+            "description": "6 đồng xu vàng (2 hàng 3 xu)"
+          },
+          "right_group": {
+            "count": 10,
+            "description": "10 đồng xu vàng (3 hàng 3 xu + 1 xu)"
+          },
+          "correct_answer": "<",
+          "correct_reason": "Bên trái có 6 đồng xu, bên phải có 10 đồng xu (6 < 10)",
+          "distractor": "Dấu >, ="
+        },
+        {
+          "row": 2,
+          "object": "Viên kim cương xanh lam 💎",
+          "left_group": {
+            "count": 8,
+            "description": "8 viên kim cương xanh (2 hàng 4 viên)"
+          },
+          "right_group": {
+            "count": 5,
+            "description": "5 viên kim cương xanh (hàng trên 3, hàng dưới 2)"
+          },
+          "correct_answer": ">",
+          "correct_reason": "Bên trái có 8 viên đá quý, bên phải có 5 viên đá quý (8 > 5)",
+          "distractor": "Dấu <, ="
+        },
+        {
+          "row": 3,
+          "object": "Viên hồng ngọc đỏ lục giác 🔴",
+          "left_group": {
+            "count": 7,
+            "description": "7 viên hồng ngọc (hàng trên 4, hàng dưới 3)"
+          },
+          "right_group": {
+            "count": 7,
+            "description": "7 viên hồng ngọc (hàng trên 4, hàng dưới 3)"
+          },
+          "correct_answer": "=",
+          "correct_reason": "Cả hai bên đều có đúng 7 viên hồng ngọc (7 = 7)",
+          "distractor": "Dấu >, <"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "drag-to-slot",
+        "interaction": "Đá quý phát ra ánh sáng lung linh rực rỡ và âm thanh leng keng thủy tinh 'Tinkle' khi chạm vào."
+      }
+    },
+    {
+      "page_number": 12,
+      "workbook_page_number": 11,
+      "file_path": "pages/page-12.jpg",
+      "page_type": "cpa_bridge_count_write_compare",
+      "title": "ĐẾM RỒI VIẾT SỐ",
+      "instruction": "ĐẾM – VIẾT SỐ – ĐIỀN DẤU",
+      "dialogue": {
+        "gau_logic": "Bé đã đếm rất giỏi rồi!",
+        "tho_quan_sat": "Hãy viết số trước, sau đó chọn dấu nhé!"
+      },
+      "footer_hint": "GỢI Ý: VIẾT SỐ LƯỢNG CỦA HAI BÊN TRƯỚC",
+      "pedagogical_concept": "BƯỚC CẦU NỐI CPA THEN CHỐT: Kết hợp 3 thao tác tư duy liền mạch: (1) Đếm lượng cụ thể (Concrete / Pictorial) -> (2) Mã hóa sang ký hiệu số trừu tượng (Abstract numeral coding) -> (3) Thiết lập quan hệ so sánh giữa hai số (Relational judgment).",
+      "items": [
+        {
+          "row": 1,
+          "object": "Quả táo đỏ 🍎",
+          "left_group": {
+            "count": 3,
+            "description": "3 quả táo đỏ"
+          },
+          "right_group": {
+            "count": 6,
+            "description": "6 quả táo đỏ (2 hàng 3)"
+          },
+          "step_1_write_left": 3,
+          "step_2_write_right": 6,
+          "step_3_compare_symbol": "<",
+          "equation": "3 < 6",
+          "correct_answer": {
+            "left_num": 3,
+            "right_num": 6,
+            "symbol": "<"
+          },
+          "distractor": "Dấu >, ="
+        },
+        {
+          "row": 2,
+          "object": "Chú bướm hồng 🦋",
+          "left_group": {
+            "count": 5,
+            "description": "5 chú bướm hồng (3 trên, 2 dưới)"
+          },
+          "right_group": {
+            "count": 2,
+            "description": "2 chú bướm hồng"
+          },
+          "step_1_write_left": 5,
+          "step_2_write_right": 2,
+          "step_3_compare_symbol": ">",
+          "equation": "5 > 2",
+          "correct_answer": {
+            "left_num": 5,
+            "right_num": 2,
+            "symbol": ">"
+          },
+          "distractor": "Dấu <, ="
+        },
+        {
+          "row": 3,
+          "object": "Quả bóng bãi biển ⚽",
+          "left_group": {
+            "count": 4,
+            "description": "4 quả bóng (2 trên, 2 dưới)"
+          },
+          "right_group": {
+            "count": 4,
+            "description": "4 quả bóng (2 trên, 2 dưới)"
+          },
+          "step_1_write_left": 4,
+          "step_2_write_right": 4,
+          "step_3_compare_symbol": "=",
+          "equation": "4 = 4",
+          "correct_answer": {
+            "left_num": 4,
+            "right_num": 4,
+            "symbol": "="
+          },
+          "distractor": "Dấu >, <"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "multi-slot drag-drop (kéo số vào 2 ô số trước, sau đó ô dấu ở giữa mở khóa để kéo dấu)",
+        "interaction": "Hai bước tương tác: Bước 1 kéo thẻ số 3 và 6 vào hai ô vuông tương ứng. Bước 2 ô tròn ở giữa phát sáng mời bé kéo dấu '<' vào."
+      }
+    },
+    {
+      "page_number": 13,
+      "workbook_page_number": 12,
+      "file_path": "pages/page-13.jpg",
+      "page_type": "abstract_numerals_1_to_10",
+      "title": "BẢNG SỐ TỪ 1 ĐẾN 10",
+      "instruction": "ĐIỀN DẤU >, < HOẶC = VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Bây giờ chúng mình so sánh các con số!",
+        "tho_quan_sat": "Bé điền dấu vào giữa mỗi cặp số nhé!"
+      },
+      "footer_hint": "GỢI Ý: SỐ NÀO ĐỨNG SAU THÌ THƯỜNG LỚN HƠN",
+      "pedagogical_concept": "Bước sang giai đoạn trừu tượng thuần túy (Abstract Symbolic Stage). Trẻ so sánh hai chữ số trực tiếp dựa trên vị trí của chúng trên dãy số tự nhiên / tia số (Mental Number Line): số nào đứng sau thì lớn hơn.",
+      "items": [
+        {
+          "box": 1,
+          "pair": [2, 5],
+          "correct_answer": "<",
+          "explanation": "2 đứng trước 5 trên dãy số nên 2 < 5"
+        },
+        {
+          "box": 2,
+          "pair": [8, 3],
+          "correct_answer": ">",
+          "explanation": "8 đứng sau 3 trên dãy số nên 8 > 3"
+        },
+        {
+          "box": 3,
+          "pair": [4, 4],
+          "correct_answer": "=",
+          "explanation": "Hai số giống hệt nhau nên 4 = 4"
+        },
+        {
+          "box": 4,
+          "pair": [7, 9],
+          "correct_answer": "<",
+          "explanation": "7 đứng trước 9 trên dãy số nên 7 < 9"
+        },
+        {
+          "box": 5,
+          "pair": [10, 6],
+          "correct_answer": ">",
+          "explanation": "10 đứng sau 6 trên dãy số nên 10 > 6"
+        },
+        {
+          "box": 6,
+          "pair": [1, 1],
+          "correct_answer": "=",
+          "explanation": "Hai số giống hệt nhau nên 1 = 1"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-001",
+        "mechanic": "tap-select hoặc drag-to-slot",
+        "interaction": "Hiển thị cặp thẻ số màu sắc pastel. Dưới màn hình có 3 nút dấu >, <, = để trẻ tap chọn nhanh."
+      }
+    },
+    {
+      "page_number": 14,
+      "workbook_page_number": 13,
+      "file_path": "pages/page-14.jpg",
+      "page_type": "rock_numerals_comparison",
+      "title": "DẤU NÀO CÒN THIẾU?",
+      "instruction": "ĐIỀN DẤU >, < HOẶC = VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Những dấu so sánh đã biến mất rồi!",
+        "tho_quan_sat": "Bé giúp đặt lại đúng vị trí nhé!"
+      },
+      "footer_hint": "GỢI Ý: MIỆNG DẤU LUÔN HƯỚNG VỀ SỐ LỚN HƠN",
+      "pedagogical_concept": "Luyện tập củng cố nhận diện số và so sánh trên bối cảnh các tảng đá phong hóa nhiều màu sắc trong Thung Lũng Cân Bằng. Củng cố quy tắc ghi nhớ chiều dấu hướng về số lớn hơn.",
+      "items": [
+        {
+          "box": 1,
+          "pair": [5, 7],
+          "rocks": "Đá xanh lá vs Đá xám",
+          "correct_answer": "<",
+          "explanation": "5 < 7"
+        },
+        {
+          "box": 2,
+          "pair": [9, 2],
+          "rocks": "Đá cam vs Đá xanh dương",
+          "correct_answer": ">",
+          "explanation": "9 > 2"
+        },
+        {
+          "box": 3,
+          "pair": [6, 6],
+          "rocks": "Đá tím vs Đá tím",
+          "correct_answer": "=",
+          "explanation": "6 = 6"
+        },
+        {
+          "box": 4,
+          "pair": [3, 8],
+          "rocks": "Đá ngọc lam vs Đá hồng",
+          "correct_answer": "<",
+          "explanation": "3 < 8"
+        },
+        {
+          "box": 5,
+          "pair": [10, 4],
+          "rocks": "Đá vàng cam vs Đá xanh dương",
+          "correct_answer": ">",
+          "explanation": "10 > 4"
+        },
+        {
+          "box": 6,
+          "pair": [1, 1],
+          "rocks": "Đá đỏ vs Đá đỏ",
+          "correct_answer": "=",
+          "explanation": "1 = 1"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "drag-to-slot",
+        "interaction": "Các tảng đá rêu phong kêu tiếng đá va chạm 'Clack' trầm ấm. Trẻ kéo viên ngọc mang dấu so sánh đặt vào kẽ đá ở giữa."
+      }
+    },
+    {
+      "page_number": 15,
+      "workbook_page_number": 14,
+      "file_path": "pages/page-15.jpg",
+      "page_type": "relational_inversion_property",
+      "title": "ĐỔI CHỖ HAI BÊN",
+      "instruction": "ĐIỀN DẤU ĐÚNG VÀO TỪNG Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Khi hai số đổi chỗ, dấu cũng phải quay lại!",
+        "tho_quan_sat": "Bé quan sát chiều của dấu thật kỹ nhé!"
+      },
+      "footer_hint": "GỢI Ý: ĐỔI CHỖ HAI SỐ THÌ NHỚ QUAY CHIỀU DẤU",
+      "pedagogical_concept": "TƯ DUY QUAN HỆ & TÍNH CHẤT NGHỊCH ĐẢO CỦA BẤT ĐẲNG THỨC (Inversion & Symmetry Properties): a < b <=> b > a và a = b <=> b = a. Đây là nền tảng tư duy toán học cực kỳ quan trọng giúp trẻ hiểu bản chất quan hệ tương hỗ của phép so sánh thay vì học vẹt một chiều.",
+      "items": [
+        {
+          "pair_index": 1,
+          "left_expression": "2 [ < ] 8",
+          "right_expression": "8 [ > ] 2",
+          "concept": "Khi đổi chỗ 2 và 8, dấu bé hơn (<) đổi chiều thành dấu lớn hơn (>)"
+        },
+        {
+          "pair_index": 2,
+          "left_expression": "3 [ < ] 7",
+          "right_expression": "7 [ > ] 3",
+          "concept": "Khi đổi chỗ 3 và 7, dấu bé hơn (<) đổi chiều thành dấu lớn hơn (>)"
+        },
+        {
+          "pair_index": 3,
+          "left_expression": "5 [ = ] 5",
+          "right_expression": "5 [ = ] 5",
+          "concept": "Dấu bằng (=) giữ nguyên không đổi chiều khi hai vế đổi chỗ"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "dual-slot matching / balance-flip",
+        "interaction": "Hiệu ứng hoạt hình chiếc bập bênh xoay ngược 180 độ: khi 2 số đổi vị trí cho nhau, chiếc cân đảo chiều nghiêng và dấu so sánh tự động lật ngược lại minh họa trực quan sinh động."
+      }
+    },
+    {
+      "page_number": 16,
+      "workbook_page_number": 15,
+      "file_path": "pages/page-16.jpg",
+      "page_type": "multiple_choice_symbol_select",
+      "title": "AI CHỌN ĐÚNG?",
+      "instruction": "KHOANH VÀO DẤU ĐÚNG",
+      "dialogue": {
+        "gau_logic": "Mỗi cặp số có ba dấu để lựa chọn!",
+        "tho_quan_sat": "Bé khoanh vào dấu đúng nhé!"
+      },
+      "footer_hint": "GỢI Ý: ĐỌC CẶP SỐ RỒI MỚI NHÌN BA DẤU",
+      "pedagogical_concept": "Cơ chế trắc nghiệm chuẩn mực (Multiple Choice Single Selection): Mỗi bài toán có 1 cặp số kèm 3 phương án lựa chọn dạng nút tròn (>, <, =). Rèn khả năng ra quyết định chính xác và loại trừ phương án nhiễu.",
+      "items": [
+        {
+          "question_number": 1,
+          "expression": "6 [ ? ] 2",
+          "options": [">", "<", "="],
+          "correct_answer": ">",
+          "distractors": ["<", "="],
+          "reason": "6 lớn hơn 2 nên chọn dấu >"
+        },
+        {
+          "question_number": 2,
+          "expression": "4 [ ? ] 9",
+          "options": [">", "<", "="],
+          "correct_answer": "<",
+          "distractors": [">", "="],
+          "reason": "4 bé hơn 9 nên chọn dấu <"
+        },
+        {
+          "question_number": 3,
+          "expression": "7 [ ? ] 7",
+          "options": [">", "<", "="],
+          "correct_answer": "=",
+          "distractors": [">", "<"],
+          "reason": "7 bằng 7 nên chọn dấu ="
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-001",
+        "mechanic": "tap-select (3 nút lựa chọn tròn)",
+        "interaction": "Chạm vào nút dấu đúng, nút nảy pop phóng to nhẹ và phát âm thanh tinh tang kèm dấu tích xanh."
+      }
+    },
+    {
+      "page_number": 17,
+      "workbook_page_number": 16,
+      "file_path": "pages/page-17.jpg",
+      "page_type": "train_carriages_comparison",
+      "title": "NHỮNG TOA TÀU SỐ",
+      "instruction": "ĐIỀN DẤU >, < HOẶC = VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Các toa tàu mang theo những con số!",
+        "tho_quan_sat": "Bé điền dấu để nối đúng từng cặp nhé!"
+      },
+      "footer_hint": "GỢI Ý: SO SÁNH TỪNG CẶP, KHÔNG CẦN ĐẾM HÌNH",
+      "pedagogical_concept": "Gắn liền với chủ đề cốt truyện xuyên suốt 'Chuyến Tàu Toán Học'. Mỗi cặp toa tàu hơi nước (toa xanh và toa vàng) mang theo số hàng hóa cần nối với nhau bằng móc xích ký hiệu so sánh.",
+      "items": [
+        {
+          "box": 1,
+          "pair": [3, 8],
+          "carriages": "Toa 3 vs Toa 8",
+          "correct_answer": "<",
+          "explanation": "3 < 8"
+        },
+        {
+          "box": 2,
+          "pair": [9, 5],
+          "carriages": "Toa 9 vs Toa 5",
+          "correct_answer": ">",
+          "explanation": "9 > 5"
+        },
+        {
+          "box": 3,
+          "pair": [6, 6],
+          "carriages": "Toa 6 vs Toa 6",
+          "correct_answer": "=",
+          "explanation": "6 = 6"
+        },
+        {
+          "box": 4,
+          "pair": [1, 7],
+          "carriages": "Toa 1 vs Toa 7",
+          "correct_answer": "<",
+          "explanation": "1 < 7"
+        },
+        {
+          "box": 5,
+          "pair": [10, 4],
+          "carriages": "Toa 10 vs Toa 4",
+          "correct_answer": ">",
+          "explanation": "10 > 4"
+        },
+        {
+          "box": 6,
+          "pair": [2, 2],
+          "carriages": "Toa 2 vs Toa 2",
+          "correct_answer": "=",
+          "explanation": "2 = 2"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "drag-to-slot",
+        "interaction": "Khi điền đúng dấu móc xích nối hai toa tàu, bánh xe toa tàu quay tít và xịt khói trắng 'Xình xịch'."
+      }
+    },
+    {
+      "page_number": 18,
+      "workbook_page_number": 17,
+      "file_path": "pages/page-18.jpg",
+      "page_type": "numbers_up_to_20_comparison",
+      "title": "CON SỐ NÀO LỚN HƠN?",
+      "instruction": "ĐIỀN DẤU >, < HOẶC = VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Các con số đã lớn hơn một chút rồi!",
+        "tho_quan_sat": "Bé quan sát hàng chục và hàng đơn vị nhé!"
+      },
+      "footer_hint": "GỢI Ý: SỐ CÓ HAI CHỮ SỐ THƯỜNG LỚN HƠN SỐ CÓ MỘT CHỮ SỐ",
+      "pedagogical_concept": "Mở rộng vùng phát triển gần (ZPD) sang phạm vi số 20 (Numbers up to 20): Trẻ học quy tắc so sánh số có hai chữ số với số có một chữ số (số 2 chữ số luôn lớn hơn), và so sánh hai số cùng có hàng chục là 1 bằng cách đối chiếu hàng đơn vị (Place Value Foundation).",
+      "items": [
+        {
+          "box": 1,
+          "pair": [12, 7],
+          "type": "2 chữ số vs 1 chữ số",
+          "correct_answer": ">",
+          "explanation": "12 có 2 chữ số lớn hơn 7 có 1 chữ số (12 > 7)"
+        },
+        {
+          "box": 2,
+          "pair": [9, 15],
+          "type": "1 chữ số vs 2 chữ số",
+          "correct_answer": "<",
+          "explanation": "9 bé hơn 15 (9 < 15)"
+        },
+        {
+          "box": 3,
+          "pair": [14, 14],
+          "type": "Hai số bằng nhau",
+          "correct_answer": "=",
+          "explanation": "14 bằng 14 (14 = 14)"
+        },
+        {
+          "box": 4,
+          "pair": [18, 11],
+          "type": "Cùng hàng chục 1, so hàng đơn vị (8 > 1)",
+          "correct_answer": ">",
+          "explanation": "18 lớn hơn 11 (18 > 11)"
+        },
+        {
+          "box": 5,
+          "pair": [6, 20],
+          "type": "1 chữ số vs 20",
+          "correct_answer": "<",
+          "explanation": "6 bé hơn 20 (6 < 20)"
+        },
+        {
+          "box": 6,
+          "pair": [17, 17],
+          "type": "Hai số bằng nhau",
+          "correct_answer": "=",
+          "explanation": "17 bằng 17 (17 = 17)"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "drag-to-slot",
+        "interaction": "Các thẻ số đá quý đổi màu lung linh. Gợi ý scaffolding nếu trẻ nhầm sẽ highlight hàng chục (màu xanh) và hàng đơn vị (màu cam)."
+      }
+    },
+    {
+      "page_number": 19,
+      "workbook_page_number": 18,
+      "file_path": "pages/page-19.jpg",
+      "page_type": "pictorial_vs_numeral_comparison",
+      "title": "NHÓM HÌNH VÀ CON SỐ",
+      "instruction": "ĐIỀN DẤU >, < HOẶC = VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Một bên là hình, một bên là số!",
+        "tho_quan_sat": "Bé đếm nhóm hình rồi so sánh nhé!"
+      },
+      "footer_hint": "GỢI Ý: ĐẾM NHÓM HÌNH TRƯỚC KHI SO SÁNH",
+      "pedagogical_concept": "So sánh đa biểu diễn liên tầng CPA (Cross-representational comparison): Một bên là lượng cụ thể dạng hình ảnh (Pictorial array), một bên là ký hiệu số trừu tượng (Abstract numeral). Trẻ phải tự chuyển đổi biểu diễn trong đầu (mental conversion) từ hình sang số rồi mới so sánh.",
+      "items": [
+        {
+          "row": 1,
+          "left_side": {
+            "type": "image",
+            "item": "Quả táo đỏ 🍎",
+            "count": 5
+          },
+          "right_side": {
+            "type": "number",
+            "value": 7
+          },
+          "correct_answer": "<",
+          "correct_reason": "Bên trái có 5 quả táo, bên phải là số 7. 5 < 7",
+          "distractor": "Dấu >, ="
+        },
+        {
+          "row": 2,
+          "left_side": {
+            "type": "image",
+            "item": "Con cá xanh 🐟",
+            "count": 8,
+            "layout": "2 hàng 4 con"
+          },
+          "right_side": {
+            "type": "number",
+            "value": 8
+          },
+          "correct_answer": "=",
+          "correct_reason": "Bên trái có 8 con cá, bên phải là số 8. 8 = 8",
+          "distractor": "Dấu >, <"
+        },
+        {
+          "row": 3,
+          "left_side": {
+            "type": "image",
+            "item": "Ngôi sao vàng ⭐",
+            "count": 9,
+            "layout": "5 trên, 4 dưới"
+          },
+          "right_side": {
+            "type": "number",
+            "value": 6
+          },
+          "correct_answer": ">",
+          "correct_reason": "Bên trái có 9 ngôi sao, bên phải là số 6. 9 > 6",
+          "distractor": "Dấu <, ="
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-009",
+        "mechanic": "balance-pan / drag-to-slot",
+        "interaction": "Đặt một bên đĩa cân là đĩa đựng táo/cá/sao, đĩa bên kia là quả cân mang số 7/8/6. Trẻ quan sát đĩa cân nghiêng hoặc thăng bằng rồi điền dấu tương ứng."
+      }
+    },
+    {
+      "page_number": 20,
+      "workbook_page_number": 19,
+      "file_path": "pages/page-20.jpg",
+      "page_type": "addition_groups_vs_numeral",
+      "title": "GỘP NHÓM RỒI SO SÁNH",
+      "instruction": "TÍNH NHẨM RỒI ĐIỀN DẤU >, < HOẶC =",
+      "dialogue": {
+        "gau_logic": "Gộp hai nhóm nhỏ sẽ được một nhóm lớn!",
+        "tho_quan_sat": "Bé tính tổng rồi chọn dấu đúng nhé!"
+      },
+      "footer_hint": "GỢI Ý: GỘP HAI NHÓM RỒI ĐẾM TẤT CẢ",
+      "pedagogical_concept": "TIỀN ĐẠI SỐ - BẤT ĐẲNG THỨC PHÉP CỘNG (Addition inequality: a + b vs c): Trẻ gộp hai nhóm hình ảnh nhỏ bằng phép cộng (+), tính ra tổng số lượng rồi so sánh tổng đó với số ở vế phải.",
+      "items": [
+        {
+          "row": 1,
+          "left_expression": "2 táo + 3 táo 🍎",
+          "sum_left": 5,
+          "right_value": 6,
+          "correct_answer": "<",
+          "correct_reason": "2 táo + 3 táo = 5 quả táo. 5 < 6",
+          "distractor": "Dấu >, ="
+        },
+        {
+          "row": 2,
+          "left_expression": "4 sao + 2 sao ⭐",
+          "sum_left": 6,
+          "right_value": 5,
+          "correct_answer": ">",
+          "correct_reason": "4 sao + 2 sao = 6 ngôi sao. 6 > 5",
+          "distractor": "Dấu <, ="
+        },
+        {
+          "row": 3,
+          "left_expression": "3 cá + 3 cá 🐟",
+          "sum_left": 6,
+          "right_value": 6,
+          "correct_answer": "=",
+          "correct_reason": "3 cá + 3 cá = 6 con cá. 6 = 6",
+          "distractor": "Dấu >, <"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-009",
+        "mechanic": "balance-pan (thả hai nhóm vật vào đĩa cân trái rồi so sánh đĩa phải)",
+        "interaction": "Hai đĩa cân: đĩa trái có 2 quả táo, bé thả thêm 3 quả táo vào khiến đĩa trái nặng thành 5 quả. Đĩa phải có quả cân 6. Bàn cân nghiêng về bên phải, bé kéo dấu '<' vào ô giữa."
+      }
+    },
+    {
+      "page_number": 21,
+      "workbook_page_number": 20,
+      "file_path": "pages/page-21.jpg",
+      "page_type": "subtraction_vs_numeral",
+      "title": "BỚT ĐI RỒI SO SÁNH",
+      "instruction": "TÍNH RỒI ĐIỀN DẤU >, < HOẶC =",
+      "dialogue": {
+        "gau_logic": "Phép trừ giúp một nhóm nhỏ đi!",
+        "tho_quan_sat": "Bé tính kết quả rồi so sánh nhé!"
+      },
+      "footer_hint": "GỢI Ý: TÍNH KẾT QUẢ BÊN TRÁI TRƯỚC",
+      "pedagogical_concept": "TIỀN ĐẠI SỐ - BẤT ĐẲNG THỨC PHÉP TRỪ (Subtraction inequality: a - b vs c): Trẻ thực hiện tính nhẩm phép trừ ở vế trái trước, sau đó so sánh hiệu số thu được với số ở vế phải.",
+      "items": [
+        {
+          "box": 1,
+          "expression": "7 - 2",
+          "left_result": 5,
+          "right_value": 4,
+          "correct_answer": ">",
+          "explanation": "7 - 2 = 5; 5 > 4"
+        },
+        {
+          "box": 2,
+          "expression": "9 - 3",
+          "left_result": 6,
+          "right_value": 6,
+          "correct_answer": "=",
+          "explanation": "9 - 3 = 6; 6 = 6"
+        },
+        {
+          "box": 3,
+          "expression": "8 - 1",
+          "left_result": 7,
+          "right_value": 9,
+          "correct_answer": "<",
+          "explanation": "8 - 1 = 7; 7 < 9"
+        },
+        {
+          "box": 4,
+          "expression": "10 - 4",
+          "left_result": 6,
+          "right_value": 5,
+          "correct_answer": ">",
+          "explanation": "10 - 4 = 6; 6 > 5"
+        },
+        {
+          "box": 5,
+          "expression": "6 - 2",
+          "left_result": 4,
+          "right_value": 4,
+          "correct_answer": "=",
+          "explanation": "6 - 2 = 4; 4 = 4"
+        },
+        {
+          "box": 6,
+          "expression": "5 - 3",
+          "left_result": 2,
+          "right_value": 3,
+          "correct_answer": "<",
+          "explanation": "5 - 3 = 2; 2 < 3"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-009",
+        "mechanic": "balance-pan (bớt vật khỏi đĩa cân) hoặc drag-to-slot (GT-008)",
+        "interaction": "Bớt vật khỏi đĩa cân trái làm đĩa cân nhẹ đi và nâng lên, sau đó so sánh với quả cân ở đĩa phải."
+      }
+    },
+    {
+      "page_number": 22,
+      "workbook_page_number": 21,
+      "file_path": "pages/page-22.jpg",
+      "page_type": "capstone_comprehensive_assessment",
+      "title": "CỬA ẢI CÂN BẰNG",
+      "instruction": "HOÀN THÀNH 6 PHÉP SO SÁNH",
+      "dialogue": {
+        "gau_logic": "Cây cầu chỉ còn một cánh cửa cuối cùng!",
+        "tho_quan_sat": "Bé vận dụng mọi điều đã học để mở cửa nhé!"
+      },
+      "footer_hint": "GỢI Ý: LÀM TỪ DỄ ĐẾN KHÓ VÀ KIỂM TRA LẠI",
+      "pedagogical_concept": "BÀI ĐÁNH GIÁ TỔNG HỢP CUỐI CHẶNG (Capstone Mastery Assessment): Tích hợp toàn bộ 5 kỹ năng so sánh đã học trong suốt chặng 6: (1) Hình vs Số; (2) Số 2 chữ số vs Số 1 chữ số; (3) Hình vs Hình; (4) Phép cộng vs Số; (5) Phép trừ vs Số; (6) Hai số phạm vi 20.",
+      "items": [
+        {
+          "question_number": 1,
+          "category": "Hình ảnh vs Ký hiệu số",
+          "expression": "4 quả táo đỏ vs 7",
+          "correct_answer": "<",
+          "explanation": "4 quả táo < số 7"
+        },
+        {
+          "question_number": 2,
+          "category": "Số 2 chữ số vs Số 1 chữ số",
+          "expression": "12 vs 9",
+          "correct_answer": ">",
+          "explanation": "12 > 9"
+        },
+        {
+          "question_number": 3,
+          "category": "Hình ảnh vs Hình ảnh (Bằng nhau)",
+          "expression": "5 ngôi sao vàng vs 5 ngôi sao vàng",
+          "correct_answer": "=",
+          "explanation": "5 = 5"
+        },
+        {
+          "question_number": 4,
+          "category": "Phép cộng vs Số",
+          "expression": "2 + 4 vs 5",
+          "correct_answer": ">",
+          "explanation": "2 + 4 = 6; 6 > 5"
+        },
+        {
+          "question_number": 5,
+          "category": "Phép trừ vs Số",
+          "expression": "9 - 3 vs 6",
+          "correct_answer": "=",
+          "explanation": "9 - 3 = 6; 6 = 6"
+        },
+        {
+          "question_number": 6,
+          "category": "Hai số có 2 chữ số trong phạm vi 20",
+          "expression": "15 vs 18",
+          "correct_answer": "<",
+          "explanation": "15 < 18"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "boss-level multi-slot drag-to-slot",
+        "interaction": "Mỗi lần điền đúng 1 phép so sánh, một ổ khóa trên cánh cổng thung lũng mở ra cùng hiệu ứng phát sáng. Khi hoàn thành cả 6 phép, cánh cổng mở toang dẫn lối tới đài vinh danh Viên Ngọc Cân Bằng."
+      }
+    },
+    {
+      "page_number": 23,
+      "workbook_page_number": null,
+      "file_path": "pages/page-23.jpg",
+      "page_type": "celebration_and_review",
+      "title": "HOÀN THÀNH PHẦN 6: THUNG LŨNG CÂN BẰNG",
+      "instruction": "BÉ ĐÃ HOÀN THÀNH CHẶNG SỐ 6!",
+      "dialogue": {
+        "gau_logic": "Bé đã giúp cây cầu cân bằng trở lại!",
+        "tho_quan_sat": "Viên Ngọc Cân Bằng đã sáng lên rồi!"
+      },
+      "footer_banner": "SẴN SÀNG LÊN TÀU ĐẾN CHẶNG 7!",
+      "pedagogical_concept": "Trang tổng kết vinh danh (Celebration & Motivation): Củng cố động lực học tập nội tại (intrinsic motivation) qua nghi thức tô màu Viên Ngọc Cân Bằng và tự đánh giá 3 ngôi sao cùng ba mẹ. Hiển thị tiến trình hành trình bản đồ 20 chặng, kích hoạt sự háo hức chuyển tiếp sang Chặng 7: Khu Vườn 2 Nhánh.",
+      "interactive_elements": {
+        "progress_tracker": "Đoàn tàu hỏa hơi nước vượt qua cầu thăng bằng; các trạm 1, 2, 3, 4, 5, 6 đều được tick dấu vàng hoàn thành. Bảng chỉ dẫn ghi 'BÉ ĐANG Ở ĐÂY' tại trạm 6.",
+        "parent_rating": "BA MẸ CÙNG BÉ TÔ 3 NGÔI SAO NHÉ! (3 hình ngôi sao rỗng để bé và phụ huynh cùng tự đánh giá nỗ lực).",
+        "creative_activity": "BÉ HÃY TÔ MÀU VIÊN NGỌC CÂN BẰNG (Hình vẽ nét viên kim cương lục giác để bé thỏa sức sáng tạo màu sắc).",
+        "next_stage_cta": "SẴN SÀNG LÊN TÀU ĐẾN CHẶNG 7! (Khu Vườn 2 Nhánh - Khởi đầu của Number Bonds & Cây Tách Gộp)."
+      },
+      "digital_game_mapping": {
+        "suggested_template": "GT-000",
+        "mechanic": "level-complete-celebration",
+        "interaction": "Pháo hoa giấy confetti bay ngập màn hình, Viên Ngọc Cân Bằng tỏa hào quang lấp lánh, tiếng nhạc vui tươi chúc mừng hoàn thành chặng 6."
+      }
+    }
+  ]
+}

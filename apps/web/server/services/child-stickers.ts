@@ -1,21 +1,16 @@
 /**
  * Album sticker của trẻ — `docs/specs/04-play/sticker-album.md`.
  *
- * Trao sticker khi đóng lượt học (`BR-STK-01`), đọc album của trẻ đang hoạt
+ * Trao sticker khi đóng phiên chơi (`BR-STK-01`), đọc album của trẻ đang hoạt
  * động (`BR-STK-07`). Bảng `child_stickers` chỉ INSERT (`BR-STK-02`).
  */
 
-import {
-  type ChildLessonStepSnapshot,
-  childStickers,
-  gameLevels,
-  type getOwnerDb,
-} from "@mindkid/db";
-import { and, asc, eq, inArray } from "drizzle-orm";
+import { childStickers, gameLevels, type getOwnerDb } from "@mindkid/db";
+import { and, asc, eq } from "drizzle-orm";
 import {
   type AlbumTheme,
   groupStickerAlbum,
-  pickLessonTheme,
+  pickLevelTheme,
   pickSticker,
   type StickerDef,
 } from "./child-sticker-pick.ts";
@@ -23,35 +18,33 @@ import {
 type Db = ReturnType<typeof getOwnerDb>;
 export type DbTx = Parameters<Parameters<Db["transaction"]>[0]>[0];
 
-export interface AwardLessonStickerInput {
+export interface AwardPlayStickerInput {
   readonly childId: number;
-  readonly playId: number;
-  readonly lessonCode: string;
-  readonly steps: readonly ChildLessonStepSnapshot[];
+  readonly playSessionId: number;
+  readonly levelCode: string;
+  readonly themeId?: string | null;
+  readonly levelThemes?: readonly (string | null)[];
 }
 
-/** `theme_id` của các bước `game`, theo thứ tự bước đã chụp (`BR-STK-04`). */
-async function loadStepThemes(
+export type AwardLessonStickerInput = AwardPlayStickerInput;
+
+/** `theme_id` của level đã xuất bản (`BR-STK-04`). */
+async function loadLevelThemes(
   tx: DbTx,
-  steps: readonly ChildLessonStepSnapshot[]
-): Promise<(string | null)[]> {
-  const gameCodes = steps
-    .filter((step) => step.kind === "game")
-    .map((step) => step.level_code);
-  if (gameCodes.length === 0) {
-    return [];
+  input: AwardPlayStickerInput
+): Promise<readonly (string | null)[]> {
+  if (input.levelThemes !== undefined) {
+    return input.levelThemes;
   }
-  const rows = await tx
-    .select({ code: gameLevels.code, themeId: gameLevels.themeId })
+  if (input.themeId !== undefined) {
+    return [input.themeId];
+  }
+  const [row] = await tx
+    .select({ themeId: gameLevels.themeId })
     .from(gameLevels)
-    .where(
-      and(
-        inArray(gameLevels.code, gameCodes),
-        eq(gameLevels.status, "published")
-      )
-    );
-  const themeByCode = new Map(rows.map((row) => [row.code, row.themeId]));
-  return gameCodes.map((code) => themeByCode.get(code) ?? null);
+    .where(eq(gameLevels.code, input.levelCode))
+    .limit(1);
+  return [row?.themeId ?? null];
 }
 
 async function loadOwnedEmojis(
@@ -74,7 +67,7 @@ async function loadOwnedEmojis(
 async function findPlaySticker(
   tx: DbTx,
   childId: number,
-  playId: number
+  playSessionId: number
 ): Promise<StickerDef | null> {
   const [row] = await tx
     .select({
@@ -86,7 +79,7 @@ async function findPlaySticker(
     .where(
       and(
         eq(childStickers.childProfileId, childId),
-        eq(childStickers.childLessonPlayId, playId)
+        eq(childStickers.playSessionId, playSessionId)
       )
     )
     .limit(1);
@@ -94,17 +87,17 @@ async function findPlaySticker(
 }
 
 /**
- * Trao sticker cho một lượt vừa đóng. Gọi **trong** transaction đóng lượt,
- * chỉ khi lượt thật sự vừa chuyển sang `completed` (`BR-STK-01`). Unique
- * `(child, play)` là lớp chặn thứ hai: trùng thì trả sticker đã có.
+ * Trao sticker cho một phiên chơi vừa đóng. Gọi **trong** transaction đóng phiên,
+ * chỉ khi phiên thật sự vừa chuyển sang `completed` (`BR-STK-01`). Unique
+ * `(child, play_session)` là lớp chặn thứ hai: trùng thì trả sticker đã có.
  */
-export async function awardLessonSticker(
+export async function awardPlaySticker(
   tx: DbTx,
-  input: AwardLessonStickerInput
+  input: AwardPlayStickerInput
 ): Promise<StickerDef> {
-  const themeCode = pickLessonTheme(
-    await loadStepThemes(tx, input.steps),
-    input.lessonCode
+  const themeCode = pickLevelTheme(
+    await loadLevelThemes(tx, input),
+    input.levelCode
   );
   const sticker = pickSticker(
     themeCode,
@@ -114,7 +107,7 @@ export async function awardLessonSticker(
     .insert(childStickers)
     .values({
       childProfileId: input.childId,
-      childLessonPlayId: input.playId,
+      playSessionId: input.playSessionId,
       themeCode: sticker.theme_code,
       emoji: sticker.emoji,
       label: sticker.label,
@@ -124,8 +117,12 @@ export async function awardLessonSticker(
   if (created) {
     return sticker;
   }
-  return (await findPlaySticker(tx, input.childId, input.playId)) ?? sticker;
+  return (
+    (await findPlaySticker(tx, input.childId, input.playSessionId)) ?? sticker
+  );
 }
+
+export const awardLessonSticker = awardPlaySticker;
 
 export interface LoadStickerAlbumInput {
   readonly childId: number;

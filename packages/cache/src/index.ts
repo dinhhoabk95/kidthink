@@ -12,7 +12,7 @@ export async function getCached<T>(key: string): Promise<T | null> {
   try {
     return JSON.parse(val) as T;
   } catch {
-    return val as unknown as T;
+    return val as T & string;
   }
 }
 

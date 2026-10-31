@@ -202,14 +202,43 @@
 
 <script lang="ts" setup>
   import { onMounted, ref } from "vue";
-  import type {
-    ChildThemeMapResponse,
-    ThemeMapLesson,
-  } from "#server/services/child-theme-map";
   import KidMascot from "~/components/kid/mascot.vue";
   import KidParentLockButton from "~/components/kid/parent-lock-button.vue";
   import ParentGateModal from "~/components/parent-gate-modal.vue";
   import { useApi } from "~/composables/use-api";
+
+  interface ThemeMapLesson {
+    readonly code: string;
+    readonly title: string;
+    readonly thumbnail_emoji: string;
+    readonly status: "not_started" | "in_progress" | "completed";
+    readonly is_current: boolean;
+  }
+
+  interface ThemeMapWeek {
+    readonly week_no: number;
+    readonly theme_title: string;
+    readonly theme_emoji: string;
+    readonly goal: string;
+    readonly is_current: boolean;
+    readonly is_completed: boolean;
+    readonly lessons: ThemeMapLesson[];
+  }
+
+  interface ChildThemeMapResponse {
+    readonly child: {
+      readonly uuid: string;
+      readonly display_name: string;
+      readonly age_band: string;
+    };
+    readonly roadmap_code: string;
+    readonly roadmap_title: string;
+    readonly current_week_no: number;
+    readonly current_lesson_code: string | null;
+    readonly total_lessons: number;
+    readonly completed_lessons: number;
+    readonly weeks: ThemeMapWeek[];
+  }
 
   /** Bề mặt trẻ: layout kid light-only (`BR-WTM-04`, `BR-PSZ-11`). */
   definePageMeta({ layout: "kid" });
@@ -226,7 +255,7 @@
   }
 
   function openLesson(lessonCode: string): void {
-    router.push(`/play/lesson/${lessonCode}`);
+    router.push(`/play/${lessonCode}`);
   }
 
   function countCompletedInWeek(lessonsList: ThemeMapLesson[]): number {

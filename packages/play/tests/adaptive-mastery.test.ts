@@ -136,14 +136,12 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       [level] = await db
         .insert(gameLevels)
         .values({
-          entityId: Math.floor(Math.random() * 800_000 + 100_000),
           code: levelCode,
           templateCode,
           title: "Level Test 1",
           contentPack: {},
           difficultyParams: {},
           accessTier: "free",
-          status: "published",
         })
         .returning();
     }
@@ -187,7 +185,6 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       sessionUuid,
       childProfileId: child.id,
       gameLevelId: level.id,
-      contentVersion: 1,
       templateCode,
       completionStatus: "in_progress",
     });
@@ -197,56 +194,48 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       {
         sessionUuid,
         seq: 1,
-        contentVersion: 1,
         eventName: "game_started",
         occurredAtMs: 0,
       },
       {
         sessionUuid,
         seq: 2,
-        contentVersion: 1,
         eventName: "round_started",
         occurredAtMs: 100,
       },
       {
         sessionUuid,
         seq: 3,
-        contentVersion: 1,
         eventName: "answer_correct",
         occurredAtMs: 200,
       },
       {
         sessionUuid,
         seq: 4,
-        contentVersion: 1,
         eventName: "round_completed",
         occurredAtMs: 300,
       },
       {
         sessionUuid,
         seq: 5,
-        contentVersion: 1,
         eventName: "round_started",
         occurredAtMs: 400,
       },
       {
         sessionUuid,
         seq: 6,
-        contentVersion: 1,
         eventName: "answer_correct",
         occurredAtMs: 500,
       },
       {
         sessionUuid,
         seq: 7,
-        contentVersion: 1,
         eventName: "round_completed",
         occurredAtMs: 600,
       },
       {
         sessionUuid,
         seq: 8,
-        contentVersion: 1,
         eventName: "game_completed",
         occurredAtMs: 700,
       },
@@ -292,7 +281,6 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       sessionUuid: session1Uuid,
       childProfileId: child.id,
       gameLevelId: level.id,
-      contentVersion: 1,
       templateCode,
       completionStatus: "in_progress",
     });
@@ -301,35 +289,30 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       {
         sessionUuid: session1Uuid,
         seq: 1,
-        contentVersion: 1,
         eventName: "game_started",
         occurredAtMs: 0,
       },
       {
         sessionUuid: session1Uuid,
         seq: 2,
-        contentVersion: 1,
         eventName: "round_started",
         occurredAtMs: 100,
       },
       {
         sessionUuid: session1Uuid,
         seq: 3,
-        contentVersion: 1,
         eventName: "answer_correct",
         occurredAtMs: 200,
       },
       {
         sessionUuid: session1Uuid,
         seq: 4,
-        contentVersion: 1,
         eventName: "round_completed",
         occurredAtMs: 300,
       },
       {
         sessionUuid: session1Uuid,
         seq: 5,
-        contentVersion: 1,
         eventName: "game_completed",
         occurredAtMs: 400,
       },
@@ -363,7 +346,6 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       sessionUuid: session2Uuid,
       childProfileId: child.id,
       gameLevelId: level.id,
-      contentVersion: 1,
       templateCode,
       completionStatus: "in_progress",
     });
@@ -372,35 +354,30 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       {
         sessionUuid: session2Uuid,
         seq: 1,
-        contentVersion: 1,
         eventName: "game_started",
         occurredAtMs: 0,
       },
       {
         sessionUuid: session2Uuid,
         seq: 2,
-        contentVersion: 1,
         eventName: "round_started",
         occurredAtMs: 100,
       },
       {
         sessionUuid: session2Uuid,
         seq: 3,
-        contentVersion: 1,
         eventName: "answer_incorrect",
         occurredAtMs: 200,
       },
       {
         sessionUuid: session2Uuid,
         seq: 4,
-        contentVersion: 1,
         eventName: "round_completed",
         occurredAtMs: 300,
       },
       {
         sessionUuid: session2Uuid,
         seq: 5,
-        contentVersion: 1,
         eventName: "game_completed",
         occurredAtMs: 400,
       },
@@ -440,7 +417,6 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       sessionUuid: guestSessionUuid,
       guestDeviceId: "device-123",
       gameLevelId: level.id,
-      contentVersion: 1,
       templateCode,
       completionStatus: "in_progress",
     });
@@ -449,14 +425,12 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       {
         sessionUuid: guestSessionUuid,
         seq: 1,
-        contentVersion: 1,
         eventName: "game_started",
         occurredAtMs: 0,
       },
       {
         sessionUuid: guestSessionUuid,
         seq: 2,
-        contentVersion: 1,
         eventName: "game_completed",
         occurredAtMs: 100,
       },
@@ -472,7 +446,6 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       sessionUuid: previewSessionUuid,
       guestDeviceId: "device-preview",
       gameLevelId: level.id,
-      contentVersion: 1,
       templateCode,
       completionStatus: "in_progress",
       isPreview: true,
@@ -482,14 +455,12 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       {
         sessionUuid: previewSessionUuid,
         seq: 1,
-        contentVersion: 1,
         eventName: "game_started",
         occurredAtMs: 0,
       },
       {
         sessionUuid: previewSessionUuid,
         seq: 2,
-        contentVersion: 1,
         eventName: "game_completed",
         occurredAtMs: 100,
       },
@@ -516,7 +487,6 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       sessionUuid,
       childProfileId: child.id,
       gameLevelId: level.id,
-      contentVersion: 1,
       templateCode,
       completionStatus: "in_progress",
     });
@@ -525,35 +495,30 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       {
         sessionUuid,
         seq: 1,
-        contentVersion: 1,
         eventName: "game_started",
         occurredAtMs: 0,
       },
       {
         sessionUuid,
         seq: 2,
-        contentVersion: 1,
         eventName: "round_started",
         occurredAtMs: 100,
       },
       {
         sessionUuid,
         seq: 3,
-        contentVersion: 1,
         eventName: "answer_incorrect",
         occurredAtMs: 200,
       },
       {
         sessionUuid,
         seq: 4,
-        contentVersion: 1,
         eventName: "round_completed",
         occurredAtMs: 300,
       },
       {
         sessionUuid,
         seq: 5,
-        contentVersion: 1,
         eventName: "game_completed",
         occurredAtMs: 400,
         payload: { p_learn: 0.99, best_p_learn: 0.99 },
@@ -610,11 +575,9 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
     const [curr] = await db
       .insert(curricula)
       .values({
-        entityId: Math.floor(Math.random() * 800_000 + 100_000),
         code: `CUR-BDG-${Date.now()}`,
         title: "Lộ trình huy hiệu",
         accessTier: "free",
-        status: "published",
         durationWeeks: 1,
         sessionsPerWeek: 1,
       })
@@ -631,7 +594,7 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
         sessionNo: 1,
         position: 1,
         entityType: "game_level",
-        entityId: level.entityId,
+        entityId: level.id,
         isRequired: true,
       })
       .returning();

@@ -1,0 +1,851 @@
+{
+  "stage_id": "chang-21",
+  "workbook_id": "WB21",
+  "stage_number": 21,
+  "title": "Chặng 21: Căn phòng Suy luận Bí mật",
+  "subtitle": "Ma trận Suy luận Tổng hợp & Tư duy Không gian Đa chiều (21 Thử thách Toàn năng)",
+  "total_pages": 24,
+  "target_age": "4–6 tuổi",
+  "series": "Gấu Logic & Thỏ Quan Sát - Hành Trình Toán Tư Duy New 2026",
+  "mission": "Vượt qua cánh cổng bí mật của Căn phòng Suy luận, giải mã 21 thử thách ma trận hình học, hình chiếu không gian 3D và mật mã số học để thắp sáng Viên Ngọc Tư Duy và nhận Huy Hiệu Nhà Thám Hiểm Toàn Năng",
+  "pedagogy": {
+    "framework": "Montessori & CPA (Concrete - Pictorial - Abstract)",
+    "approach": "Tư duy không gian đa chiều (Spatial Reasoning & 3D Projections), Ma trận logic biến đổi thuộc tính (Attribute Transformation Matrices), Ghép mộng phân tích bộ phận - toàn thể (Part-Whole Visual Assembly), Đối xứng trục gương (Mirror Reflection) và Tiền số học đại số (Pre-algebraic Relations & Numerical Patterns)",
+    "competencies": [
+      "C2 - Hình học & Tư duy không gian (Geometry & Spatial Reasoning)",
+      "C3 - Tư duy Logic & Nhận diện quy luật (Logical Reasoning & Pattern Discovery)",
+      "C1 - Cảm thức số học & Tiền đại số (Number Sense & Pre-Algebra)"
+    ],
+    "skills_targeted": [
+      {
+        "code": "C2.SPA.01",
+        "name": "Nhận biết hình chiếu vuông góc từ trên xuống (Top-down view / Plan view)"
+      },
+      {
+        "code": "C2.SPA.02",
+        "name": "Nhận biết hình chiếu bên từ góc nhìn người quan sát (Side elevation view)"
+      },
+      {
+        "code": "C2.SPA.03",
+        "name": "Tư duy không gian 3D và các khối hình xếp chồng tầng (Layered 3D spatial depth)"
+      },
+      {
+        "code": "C2.SYM.01",
+        "name": "Nhận biết đối xứng gương qua trục thẳng đứng (Vertical axis reflection symmetry)"
+      },
+      {
+        "code": "C2.ROT.01",
+        "name": "Biến đổi góc xoay và lộn ngược hình học 180 độ (Spatial rotation & inversion)"
+      },
+      {
+        "code": "C2.CMP.01",
+        "name": "Phân tích và ghép mảnh hình học bù khuyết (Part-whole geometric completion)"
+      },
+      {
+        "code": "C2.TIL.01",
+        "name": "Lắp ghép đa khối hình học polyomino lấp đầy bề mặt (Polyomino tiling)"
+      },
+      {
+        "code": "C3.PAT.01",
+        "name": "Nhận diện quy luật biến đổi chu kỳ và tịnh tiến màu sắc (Pattern translation)"
+      },
+      {
+        "code": "C3.MTX.01",
+        "name": "Ma trận suy luận biến đổi đa thuộc tính: hình dạng, màu sắc, vị trí (Attribute matrix)"
+      },
+      {
+        "code": "C3.ANA.01",
+        "name": "Suy luận tương quan vị trí và chuyển đổi biểu tượng (Analogical mapping)"
+      },
+      {
+        "code": "C3.DED.01",
+        "name": "Suy luận loại trừ đa điều kiện và tìm nghiệm tối ưu (Deductive elimination)"
+      },
+      {
+        "code": "C1.NUM.05",
+        "name": "Nhận biết quy luật số học trong ma trận, tam giác và bánh xe số (Number relations & skip counting)"
+      }
+    ],
+    "progression_narrative": "Tiến trình sư phạm xoắn ốc được cấu trúc thành 4 giai đoạn nhận thức liên hoàn: (1) Khởi động ghép mảnh 2D & khớp mộng màu sắc (Trang 2–6): Rèn luyện khả năng phân tích bộ phận - toàn thể (part-whole), đối chiếu răng cưa tổ ong, ghép mảnh pixel và nhận biết chuỗi hạt đối xứng lộn ngược; (2) Chinh phục tư duy không gian 3D & Hình chiếu đa chiều (Trang 7–12, 14, 16): Bước chuyển mình nhận thức mang tính đột phá từ 2D sang 3D với hình chiếu vuông góc từ trên xuống (top-down view) của tháp lập phương, chóp ngũ giác, khung que diêm, cánh máy bay giấy, khối xếp tầng phối cảnh và hình chiếu cạnh bên (side view); (3) Ma trận biến đổi thuộc tính & Đối xứng trục (Trang 13, 15, 17–20): Khám phá các quy luật tư duy trừu tượng cấp cao: lưới tam giác đẳng diện, đối xứng trục gương ma trận hạt màu, suy luận tương quan vị trí (analogy mapping), chuyển hóa chấm xúc xắc sang ô vuông màu, cộng mảnh ma trận 6x6 và lát gạch đa khối polyomino vào kim tự tháp; (4) Đỉnh cao suy luận số học & Mật mã kho báu (Trang 21–23): Giải mã các hệ thống quan hệ số học phức hợp gồm ma trận 2x2 nhân chia, tam giác số học, bánh xe số bội số tuần hoàn, chu kỳ ma trận 3x3 và bài toán số trung tâm liên hoàn mở khóa căn phòng bí mật."
+  },
+  "activity_groups": [
+    {
+      "group_id": "WB21-D1",
+      "group_name": "Ghép Mảnh Bổ Sung & Khớp Mộng Hình Học 2D (Visual Part-Whole & Complementary Matching)",
+      "page_range": "Trang 2 – Trang 3 (Sách: Trang 1 – 2)",
+      "mechanic_description": "Trẻ quan sát hình mẫu hoàn chỉnh và hai hàng mảnh phân tách (hàng trên và hàng dưới). Trẻ nhận diện đặc điểm phân tách của hình mẫu theo chiều dọc hoặc răng cưa tổ ong, sau đó nối từng mảnh hàng trên với mảnh hàng dưới tương thích để khi ghép lại tạo thành hình giống hệt hình mẫu.",
+      "sample_prompts": [
+        "Các dải hạt đã bị tách ra rồi! Bé nối mỗi mảnh ở hàng trên với mảnh ở hàng dưới để tạo thành hình giống hệt hình mẫu nhé!",
+        "Mỗi mảnh đều có một vị trí riêng! Quan sát màu sắc và nối thật khéo nhé!"
+      ],
+      "visual_objects": [
+        "Dải hạt hình ngũ giác đa màu xếp thành cột 2x7 (Tím, Vàng, Xanh ngọc)",
+        "Khối tổ ong lục giác 4x4 tầng màu (Tím, Vàng, Đỏ hồng, Xanh lá)",
+        "Chấm tròn kết nối hai hàng"
+      ],
+      "quantities_and_ranges": "Mỗi bài gồm 5–6 cặp mảnh cần ghép đôi. Lưới cấu tạo từ 14 đến 16 hạt màu.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-012",
+          "template_name": "drag-drop (kéo nối hai điểm chấm hoặc ghép hai mảnh vào khung mẫu)"
+        },
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chạm chọn cặp mảnh tương thích)"
+        }
+      ],
+      "recommended_skills": ["C2.CMP.01", "C3.PAT.01", "C3.DED.01"],
+      "pedagogical_notes": "Xây dựng nền tảng tư duy 'bộ phận - toàn thể' (part-whole reasoning), giúp trẻ nhận diện hình mẫu không chỉ như một khối nguyên vẹn mà gồm các thành phần cấu tạo theo quy luật màu sắc và cấu trúc không gian."
+    },
+    {
+      "group_id": "WB21-D2",
+      "group_name": "Phép Cộng Mảnh Ô Lưới Pixel & Lát Gạch Đa Khối Polyomino (Pixel Grid Addition & Polyomino Tiling)",
+      "page_range": "Trang 4 – Trang 5, Trang 19 – Trang 20 (Sách: Trang 3 – 4, Trang 18 – 19)",
+      "mechanic_description": "Trẻ thực hiện thao tác cộng mảnh không gian (Spatial Composition / Addition): (1) Ghép mảnh A và mảnh B bù trừ để tạo thành ma trận vuông 4x4, 5x5 hoặc 6x6 màu sắc; (2) Chọn bộ combo các mảnh đa khối polyomino (tetromino, pentomino) để lấp đầy chính xác kim tự tháp bậc thang không chừa khe hở.",
+      "sample_prompts": [
+        "Ghép hai mảnh • Chọn hình hoàn chỉnh: Đối chiếu màu sắc và vị trí của từng ô nhé!",
+        "Mảnh nhỏ sẽ nằm ở đâu trong hình? Bé thử ghép bằng đôi mắt trước nhé!",
+        "Đặt mảnh nhỏ vào đúng khoảng trống! Giữ nguyên màu và vị trí tương đối của từng ô!",
+        "Combo nào sẽ ghép được hình kim tự tháp trên?"
+      ],
+      "visual_objects": [
+        "Khối lưới pixel 4x4 nhiều màu (xanh ngọc, hồng, vàng, xanh dương)",
+        "Khung 5x5 khuyết tâm chữ T kết hợp mảnh chữ T 4 ô",
+        "Ma trận 6x6 khuyết lõi zic-zac kết hợp mảnh bù 7 ô",
+        "Khung tháp bậc thang 20 ô vuông và các khối polyomino (thanh 2 ô cam, chữ L 3 ô xanh lá, thanh dọc 3 ô tím, góc 3 ô vàng, zic-zac 4 ô tím nhạt, thanh 3 ô lam)"
+      ],
+      "quantities_and_ranges": "Kích thước lưới từ 4x4 đến 6x6 ô vuông. Khối tháp gồm 20 ô vuông (2 + 4 + 6 + 8).",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chạm chọn hình kết quả hoặc bộ combo chính xác)"
+        },
+        {
+          "template_id": "GT-012",
+          "template_name": "drag-drop (kéo mảnh bù vào khoảng trống của khung lưới)"
+        }
+      ],
+      "recommended_skills": ["C2.CMP.01", "C2.TIL.01", "C3.MTX.01"],
+      "pedagogical_notes": "Phát triển năng lực xoay chuyển và hợp nhất hình học trong tâm trí (mental rotation & spatial composition), tương tự các bài toán chuẩn Raven Matrices và trò chơi xếp hình thông minh Tetris/Pentomino."
+    },
+    {
+      "group_id": "WB21-D3",
+      "group_name": "Hình Chiếu Vuông Góc Từ Trên Cao (Orthographic Top-Down View Projections)",
+      "page_range": "Trang 7 – Trang 9, Trang 11 – Trang 12 (Sách: Trang 6 – 8, Trang 10 – 11)",
+      "mechanic_description": "Trẻ đóng vai người quan sát đứng trên cao (chim bay, chú hề dù lượn, ông già Noel bay) nhìn thẳng góc 90 độ xuống các mô hình 3D: khối lập phương đa tầng, tháp chữ U, khối chữ thập bậc thang, khung que diêm lập phương, hoặc máy bay giấy gấp 3D. Trẻ chọn hoặc nối với hình chiếu 2D (top-down view) tương ứng.",
+      "sample_prompts": [
+        "Tưởng tượng mình đang đứng ở trên cao! Bé chọn hình chiếu đúng nhất nhé!",
+        "Đừng để các khối cao làm mình nhầm nhé! Quan sát cả phần bị che khuất!",
+        "Màu nào ở trước, màu nào ở sau? Bé xoay hình trong đầu nhé!",
+        "Theo từng cạnh màu sẽ dễ hơn đấy! Bé tìm đúng góc nhìn từ trên nhé!",
+        "Cánh trái và cánh phải có giống nhau không? Bé nối từng máy bay với bóng đúng nhé!"
+      ],
+      "visual_objects": [
+        "Khối lập phương 3D màu vàng, tím, xanh ngọc",
+        "Khối tháp chữ U 3 tầng lập phương",
+        "Khối chữ thập phối cảnh 3D (xanh dương, vàng cam, cánh hồng)",
+        "Khung que lập phương có thanh chéo gia cố ở đáy",
+        "Máy bay giấy gấp 3D với 2 cánh khác màu (vàng-tím, xanh-cam, xanh-tím...)"
+      ],
+      "quantities_and_ranges": "Mô hình chứa từ 6 đến 18 khối lập phương hoặc 6 máy bay giấy nối cặp.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chọn hình chiếu 2D đúng trong 3–6 phương án)"
+        },
+        {
+          "template_id": "GT-012",
+          "template_name": "drag-drop (nối máy bay 3D với hình chiếu tương ứng)"
+        }
+      ],
+      "recommended_skills": ["C2.SPA.01", "C2.SPA.03", "C3.DED.01"],
+      "pedagogical_notes": "Bước phát triển bản lề của tư duy hình học không gian mầm non: chuyển đổi từ hình ảnh phối cảnh 3 chiều (perspective view) sang hình chiếu trực giao 2 chiều (orthogonal top view), khắc phục hiện tượng thị giác bị che khuất."
+    },
+    {
+      "group_id": "WB21-D4",
+      "group_name": "Hình Chiếu Đỉnh Chóp & Hình Khối 3D Đa Tầng (Apex Projection & 3D Layered Geometrics)",
+      "page_range": "Trang 10, Trang 14 (Sách: Trang 9, Trang 13)",
+      "mechanic_description": "(1) Nhìn thẳng từ đỉnh chóp ngũ giác xuống đáy, theo dõi vòng tròn thứ tự màu sắc các cạnh bên theo chiều kim đồng hồ; (2) Đối chiếu giữa hình chiếu 2D nhìn từ trên (gồm các lớp hình học lồng nhau: chữ nhật, tam giác, tròn, vuông) với mô hình phối cảnh 3D các lớp hình khối xếp chồng từ đáy lên đỉnh.",
+      "sample_prompts": [
+        "Nhìn kỹ các đường màu giao nhau! Chỉ có một hình khớp hoàn toàn!",
+        "Hình nào ở trên? Hình nào ở dưới? Bé tìm đúng nhóm hình học xếp chồng nhé!"
+      ],
+      "visual_objects": [
+        "Hình chóp ngũ giác 3D với 5 cạnh sườn màu: xanh lá, đỏ, cam, tím, lam",
+        "Hình chiếu đỉnh chóp dạng nan hoa 5 cánh",
+        "Hình 2D đa tầng: tấm nền tím -> tam giác xanh ngọc -> tròn hồng -> vuông vàng",
+        "Khối phối cảnh 3D: hộp chữ nhật đáy -> lăng trụ tam giác -> khối trụ tròn -> khối lập phương đỉnh"
+      ],
+      "quantities_and_ranges": "5 cạnh chóp ngũ giác; 4 lớp hình học xếp chồng độ cao.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chọn mô hình 3D khớp với hình chiếu 2D)"
+        },
+        {
+          "template_id": "GT-012",
+          "template_name": "drag-drop (nối cặp chóp 3D và hình chiếu đỉnh)"
+        }
+      ],
+      "recommended_skills": ["C2.SPA.01", "C2.SPA.03", "C3.PAT.01"],
+      "pedagogical_notes": "Rèn luyện nhận thức chiều sâu không gian (depth perception) và thứ tự phân tầng trên - dưới, giúp trẻ hiểu bản chất vật ở trên sẽ che khuất một phần vật ở dưới khi nhìn từ trên xuống."
+    },
+    {
+      "group_id": "WB21-D5",
+      "group_name": "Hình Chiếu Bên & Tầm Nhìn Người Quan Sát (Side Elevation View & Observer Perspective)",
+      "page_range": "Trang 16 (Sách: Trang 15)",
+      "mechanic_description": "Trẻ quan sát khối kiến trúc 3D gồm các thanh lập phương dài xếp ngang nhiều tầng (đỏ, vàng, xanh dương). Trẻ đặt mình vào vị trí người đứng bên cạnh trái nhìn ngang tầm mắt (Side elevation view) để xác định chính xác hình chiếu phẳng thu được.",
+      "sample_prompts": [
+        "Hình chiếu của mình là gì? Nhìn khối màu từ bên cạnh • Chọn hình đúng!",
+        "Đếm từng tầng màu thật cẩn thận! So sánh chiều cao và màu của từng khối nhé!"
+      ],
+      "visual_objects": [
+        "Khối thanh ngang 3D nhiều tầng (đỏ, vàng, xanh dương)",
+        "Nhân vật người quan sát đứng bên trái nhìn thẳng",
+        "4 phương án hình chiếu đứng 2D dạng cột màu so le"
+      ],
+      "quantities_and_ranges": "6 tầng thanh ngang; 3 màu sắc phân biệt.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chạm chọn hình chiếu cạnh đúng trong a, b, c, d)"
+        }
+      ],
+      "recommended_skills": ["C2.SPA.02", "C3.DED.01"],
+      "pedagogical_notes": "Mở rộng hệ thống tọa độ hình chiếu: ngoài góc nhìn từ trên xuống (top view), trẻ được làm quen với góc nhìn cạnh bên (side view), hoàn thiện tư duy hình học không gian 3 trục Ox, Oy, Oz."
+    },
+    {
+      "group_id": "WB21-D6",
+      "group_name": "Đối Xứng Trục Gương, Lưới Tam Giác & Nghịch Đảo Chuỗi Hạt (Symmetry, Isometric Grids & Inversion)",
+      "page_range": "Trang 6, Trang 13, Trang 15 (Sách: Trang 5, Trang 12, Trang 14)",
+      "mechanic_description": "(1) So sánh chuỗi hạt treo ngược từ xà vs dựng đứng từ đế để nhận diện phép đảo chiều 180 độ; (2) Trích xuất cụm tam giác trắng trên lưới tam giác đẳng diện 3 màu; (3) Tìm bảng hạt màu đối xứng qua gương trục thẳng đứng (Mirror Reflection).",
+      "sample_prompts": [
+        "Hãy nhìn từ trên xuống dưới nhé! Hai hình đúng phải giống nhau hoàn toàn!",
+        "Tìm quy luật giống nhau giữa ba bảng! Bé kiểm tra đủ cả ba màu nhé!",
+        "Hạt màu đang đổi theo quy luật nào? Bé chọn bảng tiếp theo chính xác nhé!"
+      ],
+      "visual_objects": [
+        "Chuỗi hạt cọc đứng và cọc treo ngược (xanh lá, tím, vàng, xanh ngọc, hồng)",
+        "Lưới tam giác isometric màu xanh ngọc, vàng, đỏ hồng chứa cụm tam giác trắng",
+        "Bảng hạt màu 5x6 có trục đối xứng thẳng đứng nét đứt"
+      ],
+      "quantities_and_ranges": "4 đến 5 chuỗi hạt mỗi bảng; ma trận hạt 5x6 ô.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chọn bảng đối xứng hoặc cụm hình đúng)"
+        },
+        {
+          "template_id": "GT-011",
+          "template_name": "matrix-pick (chọn mảnh ghép hoàn thành quy luật đối xứng)"
+        }
+      ],
+      "recommended_skills": ["C2.SYM.01", "C2.ROT.01", "C3.PAT.01"],
+      "pedagogical_notes": "Phát triển tư duy biến hình đối xứng (Transformational Geometry) – trục đối xứng gương là khái niệm nền tảng trong toán học hình học và nghệ thuật hoa văn tự nhiên."
+    },
+    {
+      "group_id": "WB21-D7",
+      "group_name": "Quy Luật Tương Quan Vị Trí & Biến Đổi Hình Thái (Analogy Transformation & Spatial Position Mapping)",
+      "page_range": "Trang 17 – Trang 18 (Sách: Trang 16 – Trang 17)",
+      "mechanic_description": "Trẻ giải bài toán suy luận tương quan (A : B :: C : D): (1) Theo dõi cách 4 vị trí trên đĩa tròn (trên, dưới, trái, phải) chuyển đổi hình dạng và màu sắc từ hình A sang hình B, rồi áp dụng chính xác quy luật đó để tìm hình D từ hình C; (2) Ánh xạ vị trí 5 chấm tròn xúc xắc sang 5 ô vuông màu tương ứng.",
+      "sample_prompts": [
+        "Nhìn vị trí trước và sau mũi tên! Bé chọn hình đã đổi đúng vị trí nhé!",
+        "Màu nào đã đổi sang vị trí mới? Bé áp dụng cùng một quy luật nhé!"
+      ],
+      "visual_objects": [
+        "Đĩa tròn xanh lá có 4 vị trí hình học (vuông trắng, tròn trắng) biến đổi sang màu (tím, cam, lam)",
+        "Mặt xúc xắc 5 chấm vàng chuyển đổi sang 5 ô vuông màu trên nền xanh lá",
+        "Các bảng phương án trắc nghiệm a, b, c, d, e, f"
+      ],
+      "quantities_and_ranges": "4 đến 5 điểm nút vị trí trên mỗi hình.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-011",
+          "template_name": "matrix-pick (suy luận tương quan A sang B => C sang D)"
+        },
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chọn đáp án tương quan đúng trong 6 lựa chọn)"
+        }
+      ],
+      "recommended_skills": ["C3.ANA.01", "C3.MTX.01", "C3.DED.01"],
+      "pedagogical_notes": "Dạng bài suy luận tương quan (analogical reasoning) là thước đo tinh hoa của tư duy logic trừu tượng, giúp trẻ thiết lập quy tắc chuyển đổi hàm số trực quan f(x)."
+    },
+    {
+      "group_id": "WB21-D8",
+      "group_name": "Mật Mã Số Học, Ma Trận Quy Luật & Chu Kỳ Ký Hiệu (Numerical Matrices, Number Puzzles & Cyclic Symbol Shifts)",
+      "page_range": "Trang 21 – Trang 23 (Sách: Trang 20 – Trang 22)",
+      "mechanic_description": "Trẻ giải mã các thử thách tư duy số học và ma trận ký hiệu: (1) Bảng số 2x2 quy luật tích số hoặc thương số; (2) Bánh xe số với quy luật dãy số bội số tuần hoàn (+2, +3, +4); (3) Tam giác số nhân chia; (4) Ma trận 3x3 dịch chuyển chu kỳ ký hiệu; (5) Vòng tròn số trung bình cộng và hình vuông số liên tiếp tìm số trung tâm mở khóa.",
+      "sample_prompts": [
+        "Tìm mối liên hệ giữa các con số! Bé thử từng quy luật một nhé!",
+        "Nhìn cả hàng và cột trước khi tính! Bé tìm ra quy luật ẩn bên trong nhé!",
+        "Chặng cuối cần quan sát thật kỹ! Bé sắp mở khóa Căn phòng Suy Luận rồi!"
+      ],
+      "visual_objects": [
+        "Bảng số ma trận 2x2: [3, 4 / 1, 12], [18, 3 / 2, 3], [5, 2 / 2, ?], [2, 3 / 4, 24]",
+        "Bánh xe số nan quạt bội số của 2, 3, 4",
+        "Tam giác số học liên kết 3 đỉnh và trung tâm",
+        "Ma trận lưới 3x3 dịch chuyển ký hiệu: dấu chấm, dấu cộng (+), dấu hỏi (?)",
+        "Vòng tròn số 3 cánh có tâm trung bình cộng; hình vuông 4 góc số liên tiếp tìm tâm"
+      ],
+      "quantities_and_ranges": "Các số tự nhiên trong phạm vi từ 1 đến 34. Phép nhân chia trong bảng cửu chương 2, 3, 4, 5 và tính nhẩm trung bình.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-011",
+          "template_name": "matrix-pick (ma trận điền số / ký hiệu còn thiếu)"
+        },
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chọn số mở khóa hoặc chọn phương án ký hiệu đúng)"
+        }
+      ],
+      "recommended_skills": ["C1.NUM.05", "C3.MTX.01", "C3.DED.01"],
+      "pedagogical_notes": "Đỉnh cao của tư duy định lượng và suy luận logic tiền tiểu học: trẻ không chỉ làm toán số học cơ học mà khám phá quy luật hàm số ẩn giữa các con số trong các cấu trúc hình học trực quan."
+    }
+  ],
+  "pages_summary": [
+    {
+      "page_number": 1,
+      "book_page_label": "Trang bìa",
+      "title": "Căn phòng Suy luận Bí mật - 21 Thử thách Toàn năng",
+      "subtitle_or_instruction": "Phía sau cánh cổng cuối cùng, một căn phòng chưa từng xuất hiện trên bản đồ đang chờ bé khám phá...",
+      "characters_dialogue": {
+        "bear_logic": "Một căn phòng bí mật vừa xuất hiện!",
+        "rabbit_observation": "Bé cùng chúng mình vượt qua 21 thử thách nhé!"
+      },
+      "content_description": "Trang bìa chặng đặc biệt 21. Cánh cổng gỗ vòm mạ vàng cổ kính gắn 21 viên ngọc số tròn biểu tượng cho 21 thử thách. Ở giữa là ổ khóa hình huy hiệu vàng 'Huy hiệu Trí tuệ Toàn năng'. Gấu Logic cầm chìa khóa cổ, Thỏ Quan Sát cầm kính lúp chỉ dẫn bạn nhỏ chuẩn bị mở cửa. Hộp mục tiêu ba mẹ tóm tắt 5 trụ cột: Quan sát & so sánh, Nhận biết hình chiếu, Tư duy không gian, Tìm quy luật, Suy luận số.",
+      "visual_items": [
+        "Cánh cổng gỗ vòm mạ vàng cổ kính với 21 viên đá tròn",
+        "Huy hiệu vàng tỏa sáng ở tâm cánh cổng",
+        "Gấu Logic mặc vest nơ cầm chìa khóa",
+        "Thỏ Quan Sát đeo kính lúp thám hiểm",
+        "Em bé vươn tay cầm mảnh ghép vàng",
+        "Biểu tượng khối rubik, mảnh ghép jigsaw, xúc xắc, máy bay giấy, tháp số"
+      ],
+      "answer_key": "Không có (Trang bìa giới thiệu chặng)",
+      "distractors": "Không có",
+      "cognition_level": "Khởi động & Tạo động lực",
+      "difficulty_rating": 1,
+      "recommended_game_type": "GT-000 (Cover / Mission Brief)",
+      "ui_digitalization_notes": "Màn hình bắt đầu chặng với nhạc nền thám hiểm huyền bí. Chạm vào cánh cổng phát hiệu ứng âm thanh mở khóa vang dội và ánh sáng vàng bung tỏa chào đón người chơi."
+    },
+    {
+      "page_number": 2,
+      "book_page_label": "Chặng 21 • Trang 1 (Mảnh Suy luận 01 - Khởi động)",
+      "title": "Nối Để Được Hình Mẫu - Dải Hạt Đa Màu",
+      "subtitle_or_instruction": "NỐI MỖI MẢNH Ở HÀNG TRÊN VỚI MẢNH Ở HÀNG DƯỚI ĐỂ TẠO THÀNH HÌNH GIỐNG HỆT HÌNH MẪU. Bé dùng bút chì nối hai chấm tròn tương ứng. Không cần xoay các mảnh.",
+      "characters_dialogue": {
+        "bear_logic": "Các dải hạt đã bị tách ra rồi!",
+        "rabbit_observation": "Bé nối các mảnh thật chính xác nhé!"
+      },
+      "content_description": "Bài 1 • Nối hình: Hình mẫu chuẩn là cột kép 2x7 gồm các hạt ngũ giác xếp khít theo quy luật màu từ trên xuống: 2 tím - 2 vàng - 2 xanh ngọc - 2 tím - 2 xanh ngọc - 2 vàng - 2 tím. Dưới có 6 mảnh hàng trên và 6 mảnh hàng dưới đã bị tách rời. Trẻ đếm số lượng hạt và phân tích màu sắc của từng cột để nối đúng 6 cặp mảnh trên - dưới tạo thành 6 cột chuẩn.",
+      "visual_items": [
+        "Hình mẫu cột hạt ngũ giác 2x7 màu sắc rõ nét",
+        "6 mảnh hàng trên với số lượng hạt mỗi cột chênh lệch",
+        "6 mảnh hàng dưới bổ khuyết tương ứng",
+        "Các chấm tròn xanh định vị nối dây"
+      ],
+      "answer_key": "Ghép cặp từng mảnh hàng trên với mảnh hàng dưới sao cho tổng số hạt mỗi cột bằng đúng 7 và thứ tự màu khớp hoàn toàn hình mẫu.",
+      "distractors": "Các mảnh có cùng màu tím ở đầu nhưng số lượng hạt vàng/xanh ngọc bị thiếu 1 hạt hoặc sai độ cao.",
+      "cognition_level": "Thông hiểu & Đối chiếu trực quan",
+      "difficulty_rating": 2,
+      "recommended_game_type": "GT-012 (drag-drop line nối điểm)",
+      "ui_digitalization_notes": "Trẻ chạm vào chấm tròn mảnh trên rồi kéo dây nối tới chấm tròn mảnh dưới. Khi ghép đúng hai mảnh tự động trượt lại gần nhau và khớp thành cột hạt lấp lánh kèm SFX 'ding'."
+    },
+    {
+      "page_number": 3,
+      "book_page_label": "Chặng 21 • Trang 2 (Mảnh Suy luận 02 - Khởi động)",
+      "title": "Nối Để Được Hình Mẫu - Khối Tổ Ong Lục Giác",
+      "subtitle_or_instruction": "NỐI MỖI MẢNH Ở HÀNG TRÊN VỚI MẢNH Ở HÀNG DƯỚI ĐỂ TẠO THÀNH HÌNH GIỐNG HỆT HÌNH MẪU. Bé dùng bút chì nối hai chấm tròn tương ứng. Không cần xoay các mảnh.",
+      "characters_dialogue": {
+        "bear_logic": "Mỗi mảnh đều có một vị trí riêng!",
+        "rabbit_observation": "Quan sát màu sắc và nối thật khéo nhé!"
+      },
+      "content_description": "Bài 2 • Nối hình: Hình mẫu là khối tổ ong lục giác 4x4 gồm 4 tầng màu: tầng 1 tím (4 hạt), tầng 2 vàng (4 hạt), tầng 3 đỏ hồng (4 hạt), tầng 4 xanh lá (4 hạt). Có 5 mảnh hàng trên và 5 mảnh hàng dưới với khớp răng cưa so le. Trẻ đối chiếu đường biên zic-zac và màu sắc để nối đúng 5 cặp mảnh trên - dưới.",
+      "visual_items": [
+        "Hình mẫu khối tổ ong lục giác 4x4 gồm 16 hạt đa màu",
+        "5 mảnh trên cắt zic-zac so le",
+        "5 mảnh dưới bổ khuyết lồi lõm tương ứng",
+        "Hạt lục giác viền đậm, màu sắc rực rỡ"
+      ],
+      "answer_key": "Nối 5 cặp mảnh có biên răng cưa khớp khít hoàn toàn và tái lập đủ 4 tầng màu của khối tổ ong.",
+      "distractors": "Mảnh có đường viền khớp nhưng màu tầng 2 và tầng 3 bị tráo đổi (đỏ hồng lên trước vàng).",
+      "cognition_level": "Thông hiểu & Khớp mộng hình học",
+      "difficulty_rating": 2,
+      "recommended_game_type": "GT-012 (drag-drop line)",
+      "ui_digitalization_notes": "Cho phép trẻ chạm chọn mảnh trên, sau đó chạm mảnh dưới để dây nối phát sáng liên kết hai mảnh. Có thể tháo dây nối dễ dàng nếu muốn chọn lại."
+    },
+    {
+      "page_number": 4,
+      "book_page_label": "Chặng 21 • Trang 3 (Mảnh Suy luận 03 - Khởi động)",
+      "title": "Ghép Mảnh Đúng Hình - Phép Cộng Lưới Pixel 4x4",
+      "subtitle_or_instruction": "GHÉP HAI MẢNH • CHỌN HÌNH HOÀN CHỈNH. Đối chiếu màu sắc và vị trí của từng ô. Bé khoanh, nối hoặc điền đáp án theo yêu cầu của bài.",
+      "characters_dialogue": {
+        "bear_logic": "Xem từng hàng màu trước khi ghép nhé!",
+        "rabbit_observation": "Các cạnh phải khớp thật chính xác!"
+      },
+      "content_description": "Bài 3 • Thử thách Suy luận: Gồm 3 bài toán cộng mảnh hình học độc lập. Dòng 1: Mảnh A (hình chữ L xanh lam/hồng/vàng) + Mảnh B (hình zic-zac xanh lam/hồng/vàng) = [ ? ]; Dòng 2: Mảnh A + Mảnh B = [ ? ]; Dòng 3: Mảnh A + Mảnh B = [ ? ]. Cột bên phải là 3 hình vuông lưới 4x4 hoàn chỉnh tương ứng. Trẻ nối mỗi phép cộng với hình kết quả đúng.",
+      "visual_items": [
+        "3 biểu thức cộng mảnh pixel: [Mảnh A] + [Mảnh B] = [ ? ]",
+        "Các ô màu pixel: xanh ngọc, hồng cánh sen, vàng tươi, xanh da trời",
+        "Cột 'Answers' chứa 3 khối vuông 4x4 hoàn chỉnh để nối"
+      ],
+      "answer_key": "Dòng 1 nối với hình kết quả 1; Dòng 2 nối với hình kết quả 2; Dòng 3 nối với hình kết quả 3 trong cột Answers dựa trên phép gộp màu từng ô tọa độ (x, y).",
+      "distractors": "Các hình kết quả có góc trên-phải bị đổi thành màu xanh ngọc thay vì vàng tươi.",
+      "cognition_level": "Vận dụng & Ghép tọa độ pixel 2D",
+      "difficulty_rating": 2,
+      "recommended_game_type": "GT-012 / GT-001",
+      "ui_digitalization_notes": "Hiệu ứng khi chạm: mảnh A và mảnh B bay lại gần nhau, lồng vào nhau tạo thành khối vuông hoàn chỉnh rồi khớp vào cột đáp án tương ứng."
+    },
+    {
+      "page_number": 5,
+      "book_page_label": "Chặng 21 • Trang 4 (Mảnh Suy luận 04 - Khởi động)",
+      "title": "Ghép Hình Hoàn Chỉnh - Khung 5x5 & Mảnh Chữ T",
+      "subtitle_or_instruction": "QUAN SÁT HAI MẢNH • TÌM ĐÁP ÁN ĐÚNG. Mỗi ô màu phải nằm đúng vị trí trong hình.",
+      "characters_dialogue": {
+        "bear_logic": "Mảnh nhỏ sẽ nằm ở đâu trong hình?",
+        "rabbit_observation": "Bé thử ghép bằng đôi mắt trước nhé!"
+      },
+      "content_description": "Bài 4 • Thử thách Suy luận: Cho Mảnh A là khung vuông 5x5 có khuyết 4 ô tạo thành hình chữ T ở lõi giữa (các ô viền ngoài màu hồng, xanh lá, vàng). Mảnh B là khối chữ T rời gồm 4 ô màu (3 ô vàng ngang ở trên, 2 ô xanh lá dọc ở dưới, giao nhau 1 ô). Trẻ thực hiện phép cộng Mảnh A + Mảnh B trong tâm trí và chọn đáp án chính xác trong 4 phương án trắc nghiệm a, b, c, d.",
+      "visual_items": [
+        "Mảnh A: Khung vuông 5x5 khuyết lõi chữ T",
+        "Mảnh B: Khối chữ T 4 ô màu (vàng và xanh lá)",
+        "Dấu cộng (+) và dấu bằng (=) kèm dấu hỏi (?)",
+        "4 phương án lựa chọn a, b, c, d với các biến thể màu ô tâm"
+      ],
+      "answer_key": "Đáp án a (hoặc hình vuông 5x5 giữ nguyên vẹn toàn bộ màu viền của Mảnh A và điền chính xác màu chữ T của Mảnh B vào lõi giữa).",
+      "distractors": "Phương án b: lõi chữ T bị đổi thành màu hồng; Phương án c: ô tâm chữ T bị đổi thành màu vàng thay vì xanh lá; Phương án d: viền góc dưới bị lệch màu xanh lá.",
+      "cognition_level": "Vận dụng & Ghép mộng không gian",
+      "difficulty_rating": 3,
+      "recommended_game_type": "GT-001 (tap-select)",
+      "ui_digitalization_notes": "Chế độ tương tác: trẻ có thể kéo mảnh chữ T thử ướm vào khung khuyết 5x5 trước khi chọn đáp án, hỗ trợ giàn giáo (scaffolding) trực quan sinh động."
+    },
+    {
+      "page_number": 6,
+      "book_page_label": "Chặng 21 • Trang 5 (Mảnh Suy luận 05 - Khởi động)",
+      "title": "Tìm Hai Hình Khớp Nhau - Chuỗi Hạt Treo & Dựng Đứng",
+      "subtitle_or_instruction": "SO SÁNH CÁC CHUỖI HẠT • TÌM HAI HÌNH GIỐNG NHAU. Nhìn thứ tự màu và độ dài của từng chuỗi hạt.",
+      "characters_dialogue": {
+        "bear_logic": "Hãy nhìn từ trên xuống dưới nhé!",
+        "rabbit_observation": "Hai hình đúng phải giống nhau hoàn toàn!"
+      },
+      "content_description": "Bài 5 • Thử thách Suy luận: Hàng trên gồm 4 bảng chuỗi hạt gắn trên thanh xà ngang chúc đầu xuống (độ dài các cột hạt: xanh lá, tím, vàng, xanh ngọc, hồng). Hàng dưới gồm 4 bảng chuỗi hạt dựng đứng từ đế xà. Trẻ so sánh độ dài và thứ tự màu của từng chuỗi hạt để tìm ra cặp hình có cấu trúc giống nhau hoàn toàn (hoặc quan hệ lộn ngược 180 độ đối xứng).",
+      "visual_items": [
+        "Hàng trên: 4 bảng chuỗi hạt treo ngược từ xà ngang",
+        "Hàng dưới: 4 bảng chuỗi hạt dựng đứng từ thanh đế",
+        "Các cột hạt màu: xanh lá, tím, vàng tươi, xanh ngọc, hồng cánh sen"
+      ],
+      "answer_key": "Cặp bảng chuỗi hạt khớp nhau hoàn toàn về chiều dài từng cột và màu sắc tương ứng từ trái sang phải.",
+      "distractors": "Bảng có cùng độ dài các cột hạt nhưng bị tráo màu giữa cột vàng và cột tím.",
+      "cognition_level": "Phân tích & Xoay hình 180 độ",
+      "difficulty_rating": 3,
+      "recommended_game_type": "GT-001 / GT-012",
+      "ui_digitalization_notes": "Trẻ chạm vào một hình ở hàng trên và một hình ở hàng dưới để tạo liên kết so khớp. Nếu đúng, hai hình xoay nhẹ và sáng viền xanh lá."
+    },
+    {
+      "page_number": 7,
+      "book_page_label": "Chặng 21 • Trang 6 (Mảnh Suy luận 06 - Khởi động)",
+      "title": "Nhìn Từ Trên Xuống - Khối Lập Phương 3D Đa Màu",
+      "subtitle_or_instruction": "QUAN SÁT KHỐI HÌNH • CHỌN HÌNH NHÌN TỪ TRÊN. Chú ý vị trí và màu của từng khối vuông.",
+      "characters_dialogue": {
+        "bear_logic": "Tưởng tượng mình đang đứng ở trên cao!",
+        "rabbit_observation": "Bé chọn hình chiếu đúng nhất nhé!"
+      },
+      "content_description": "Bài 6 • Thử thách Suy luận: Mô hình 3D phối cảnh gồm các khối lập phương màu vàng, tím và xanh ngọc xếp bậc thang và rãnh lõm. Trẻ tưởng tượng mình đứng ở vị trí trên đỉnh nhìn thẳng góc xuống và chọn hình chiếu bằng 2D (top-down view) chính xác trong 6 phương án lưới màu phẳng phía dưới.",
+      "visual_items": [
+        "Mô hình 3D khối lập phương đa màu xếp bậc thang (vàng ở đỉnh, tím ở tầng trung, xanh ngọc ở chân)",
+        "6 phương án hình chiếu phẳng 2D với các bố cục ô màu khác nhau",
+        "Chấm tròn chọn đáp án"
+      ],
+      "answer_key": "Phương án biểu diễn đúng mặt trên của các khối lập phương: 2 ô vàng ở 2 cánh nhô cao, 2 ô tím ở rãnh giữa, và dải xanh ngọc ở bậc thềm trước.",
+      "distractors": "Các phương án bị tráo màu tím và xanh ngọc, hoặc thiếu 1 ô vàng góc ngoài.",
+      "cognition_level": "Tư duy không gian 3D -> 2D (Hình chiếu bằng)",
+      "difficulty_rating": 3,
+      "recommended_game_type": "GT-001 (tap-select)",
+      "ui_digitalization_notes": "Tính năng 3D tương tác: trẻ có thể chạm nhẹ vào nút 'Xoay camera' để mô hình 3D xoay từ từ từ góc nhìn nghiêng sang góc nhìn đỉnh đầu rồi quay lại, giúp hình thành trực giác không gian."
+    },
+    {
+      "page_number": 8,
+      "book_page_label": "Chặng 21 • Trang 7 (Mảnh Suy luận 07 - Khởi động)",
+      "title": "Góc Nhìn Từ Trên Cao - Khối Tháp Chữ U",
+      "subtitle_or_instruction": "NHÌN KHỐI HÌNH TỪ TRÊN XUỐNG • CHỌN ĐÁP ÁN. Đếm số ô và so sánh vị trí các màu.",
+      "characters_dialogue": {
+        "bear_logic": "Đừng để các khối cao làm mình nhầm nhé!",
+        "rabbit_observation": "Quan sát cả phần bị che khuất!"
+      },
+      "content_description": "Bài 7 • Thử thách Suy luận: Ông già Noel bay trên cao nhìn xuống khối kiến trúc hình chữ U được xây bằng các khối lập phương màu tím (thân chính), vàng (bậc thềm) và xanh lá (đỉnh cột). Trẻ phân tích các mặt nhìn thấy từ trên cao và chọn hình chiếu 2D đúng trong 3 phương án a, b, c.",
+      "visual_items": [
+        "Hình ông già Noel bay trên cao với ống dòm",
+        "Khối kiến trúc tháp chữ U 3D lập phương đa màu (tím, xanh lá, vàng)",
+        "3 phương án 2D hình chữ U viền màu: a, b, c"
+      ],
+      "answer_key": "Đáp án c (hoặc hình chiếu thể hiện đúng 2 đỉnh cột xanh lá ở 2 đầu chữ U, các mặt thềm vàng ở trong rãnh và dải tím viền ngoài).",
+      "distractors": "Phương án a: cột xanh lá bị dịch chuyển vào giữa; Phương án b: thiếu các ô thềm vàng ở đáy chữ U.",
+      "cognition_level": "Tư duy không gian & Loại trừ vật che khuất",
+      "difficulty_rating": 3,
+      "recommended_game_type": "GT-001 (tap-select)",
+      "ui_digitalization_notes": "Hiệu ứng ống kính máy ảnh từ góc nhìn ông già Noel phóng to hình chiếu 2D khi trẻ đưa ra quyết định chọn đáp án."
+    },
+    {
+      "page_number": 9,
+      "book_page_label": "Chặng 21 • Trang 8 (Mảnh Suy luận 08 - Khởi động)",
+      "title": "Chọn Hình Nhìn Từ Trên - Khối Chữ Thập 3D",
+      "subtitle_or_instruction": "TÌM HÌNH CHIẾU TỪ TRÊN CỦA KHỐI LẬP PHƯƠNG. Màu nào ở trước, màu nào ở sau? 'Which top view is correct?'",
+      "characters_dialogue": {
+        "bear_logic": "Mỗi màu là một vị trí quan trọng!",
+        "rabbit_observation": "Bé xoay hình trong đầu nhé!"
+      },
+      "content_description": "Bài 8 • Thử thách Suy luận: Chú hề nhảy dù ở trên không nhìn xuống khối lập phương 3D phối cảnh chữ thập gồm 3 màu: xanh dương ở mặt sân trước, vàng cam ở cột tháp nhô cao, và hồng cánh sen ở 2 cánh nhô ngang. Trẻ chọn hình chiếu từ trên xuống (top view) chính xác trong 6 lựa chọn a, b, c, d, e, f.",
+      "visual_items": [
+        "Chú hề nhảy dù lơ lửng trên không trung",
+        "Mô hình 3D phối cảnh khối chữ thập màu xanh dương, vàng cam, hồng",
+        "Dòng chữ 'Which top view is correct?'",
+        "6 phương án hình chiếu chữ thập 2D từ a đến f"
+      ],
+      "answer_key": "Phương án có cột tâm vàng cam, 2 cánh hồng đối xứng hai bên, và dải xanh dương kéo dài ở phía trước với đúng số ô vuông.",
+      "distractors": "Phương án có cánh hồng bị đặt lệch một bước lên phía trên hoặc cột vàng cam kéo dài sai số lượng ô.",
+      "cognition_level": "Tư duy không gian 3D & Chiếu trực giao",
+      "difficulty_rating": 3,
+      "recommended_game_type": "GT-001 (tap-select)",
+      "ui_digitalization_notes": "Khi trẻ chạm vào chú hề, một luồng sáng chiếu thẳng từ đỉnh đầu chú hề xuống mô hình tạo thành bóng hình chiếu 2D gợi ý."
+    },
+    {
+      "page_number": 10,
+      "book_page_label": "Chặng 21 • Trang 9 (Mảnh Suy luận 09 - Khởi động)",
+      "title": "Hình Chiếu Bí Mật - Đỉnh Chóp Ngũ Giác",
+      "subtitle_or_instruction": "QUAN SÁT KHỐI HÌNH • TÌM HÌNH NHÌN TỪ TRÊN. Theo dõi các đường màu nối giữa các đỉnh.",
+      "characters_dialogue": {
+        "bear_logic": "Nhìn kỹ các đường màu giao nhau!",
+        "rabbit_observation": "Chỉ có một hình khớp hoàn toàn!"
+      },
+      "content_description": "Bài 9 • Thử thách Suy luận: Hàng trên là 5 hình chóp ngũ giác 3D nhìn nghiêng, mỗi cạnh sườn nối từ đỉnh chóp xuống các đỉnh đáy được tô một màu riêng biệt (xanh lá, đỏ, cam, tím, xanh dương). Hàng dưới là 5 hình chiếu nhìn thẳng từ đỉnh chóp xuống (dạng nan hoa ngũ giác). Trẻ theo dõi thứ tự vòng tròn màu sắc theo chiều kim đồng hồ để nối từng hình chóp với hình chiếu đỉnh đúng.",
+      "visual_items": [
+        "5 hình chóp ngũ giác phối cảnh 3D với 5 cạnh sườn màu",
+        "5 hình chiếu 2D ngũ giác dạng nan hoa nối từ tâm",
+        "Các chấm tròn kết nối"
+      ],
+      "answer_key": "Nối từng cặp hình chóp và hình chiếu có cùng chuỗi xoay màu sắc theo chiều kim đồng hồ (ví dụ: đỏ -> cam -> tím -> lam -> lục).",
+      "distractors": "Các hình chiếu có cùng các màu nhưng bị đảo ngược chiều kim đồng hồ (nghịch đảo gương).",
+      "cognition_level": "Tư duy không gian & Thứ tự vòng tròn xoay",
+      "difficulty_rating": 4,
+      "recommended_game_type": "GT-012 / GT-001",
+      "ui_digitalization_notes": "Khi trẻ rê ngón tay quanh các đỉnh của hình chóp, một vệt sáng quét theo chiều kim đồng hồ đọc to tên màu sắc giúp trẻ dễ dàng đối chiếu với hình chiếu dưới."
+    },
+    {
+      "page_number": 11,
+      "book_page_label": "Chặng 21 • Trang 10 (Mảnh Suy luận 10 - Khởi động)",
+      "title": "Xếp Que Nhìn Từ Trên - Khung Lập Phương Đa Cạnh",
+      "subtitle_or_instruction": "SO SÁNH CÁC KHỐI QUE • CHỌN HÌNH CHIẾU ĐÚNG. Chú ý màu của cạnh và vị trí từng đỉnh.",
+      "characters_dialogue": {
+        "bear_logic": "Theo từng cạnh màu sẽ dễ hơn đấy!",
+        "rabbit_observation": "Bé tìm đúng góc nhìn từ trên nhé!"
+      },
+      "content_description": "Bài 10 • Thử thách Suy luận: Gồm 3 bài toán nhỏ. Mỗi bài đưa ra một mô hình khung lập phương que diêm 3D với các cạnh màu sắc (đỏ, vàng, xanh dương, tím, xanh lá) và các hạt khớp nối ở đỉnh, có thêm thanh que chéo gia cố ở mặt đáy hoặc mặt bên. Bên cạnh là 3 hình vuông 2D biểu diễn các cạnh nhìn từ trên xuống. Trẻ chọn hình chiếu vuông góc 2D chính xác.",
+      "visual_items": [
+        "3 mô hình khung que lập phương 3D với que chéo gia cố",
+        "Mỗi bài có 3 hình vuông 2D biểu diễn cạnh và đường chéo",
+        "Khớp nối hạt tròn màu ở các đỉnh"
+      ],
+      "answer_key": "Bài 1 chọn hình chiếu 2; Bài 2 chọn hình chiếu 1; Bài 3 chọn hình chiếu 3 (dựa trên màu sắc 4 cạnh viền ngoài và hướng nghiêng/màu sắc của đường que chéo).",
+      "distractors": "Hình vuông có 4 cạnh màu đúng nhưng đường chéo bị ngược hướng (chéo từ góc trái thay vì góc phải) hoặc que chéo bị sai màu.",
+      "cognition_level": "Tư duy không gian khung dây (Wireframe 3D)",
+      "difficulty_rating": 3,
+      "recommended_game_type": "GT-001 (tap-select)",
+      "ui_digitalization_notes": "Hình ảnh khung que lập phương được hiển thị dưới dạng 3D render đổ bóng trong suốt, cho phép nhìn thấu các cạnh phía sau một cách trực quan."
+    },
+    {
+      "page_number": 12,
+      "book_page_label": "Chặng 21 • Trang 11 (Mảnh Suy luận 11 - Khởi động)",
+      "title": "Máy Bay Nhìn Từ Trên - Cánh Giấy Đa Màu",
+      "subtitle_or_instruction": "GHÉP MÁY BAY VỚI HÌNH NHÌN TỪ TRÊN TƯƠNG ỨNG. So sánh màu sắc và hướng của từng cánh.",
+      "characters_dialogue": {
+        "bear_logic": "Cánh trái và cánh phải có giống nhau không?",
+        "rabbit_observation": "Bé nối từng máy bay với bóng đúng nhé!"
+      },
+      "content_description": "Bài 11 • Thử thách Suy luận: Hàng trên gồm 6 chiếc máy bay giấy gấp 3D nhìn nghiêng ở các tư thế lượn khác nhau. Mỗi máy bay có cánh trái và cánh phải sơn 2 màu phân biệt (vàng-tím, xanh ngọc-cam, xanh lá-tím, xanh lam-hồng, tím-lục, cam-lam). Hàng dưới là 6 hình chiếu tam giác cân đối xứng nhìn từ trên đỉnh (cánh trái | cánh phải). Trẻ nối từng máy bay với hình chiếu tương ứng.",
+      "visual_items": [
+        "6 máy bay giấy 3D bay nghiêng với cặp màu cánh tương phản",
+        "6 hình tam giác chiếu phẳng 2D chia đôi cánh trái - cánh phải",
+        "Các chấm tròn kết nối"
+      ],
+      "answer_key": "Nối từng máy bay với hình tam giác có đúng màu cánh trái và cánh phải theo hướng bay về phía trước.",
+      "distractors": "Các hình chiếu bị đảo nghịch vị trí màu cánh trái sang cánh phải (nhầm lẫn giữa hướng bay tiến và hướng bay lùi).",
+      "cognition_level": "Định hướng không gian Trái - Phải & Chiếu phẳng",
+      "difficulty_rating": 3,
+      "recommended_game_type": "GT-012 (nối cặp)",
+      "ui_digitalization_notes": "Khi nối đúng, máy bay giấy bay lượn một vòng trên màn hình rồi đáp khít lên hình chiếu tam giác kèm âm thanh gió vút vui nhộn."
+    },
+    {
+      "page_number": 13,
+      "book_page_label": "Chặng 21 • Trang 12 (Mảnh Suy luận 12 - Khởi động)",
+      "title": "Mảnh Tam Giác Bí Ẩn - Lưới Đẳng Diện Tam Giác",
+      "subtitle_or_instruction": "QUAN SÁT BA BẢNG TAM GIÁC • CHỌN NHÓM ĐÚNG. So sánh vị trí các mảnh trắng trong từng bảng.",
+      "characters_dialogue": {
+        "bear_logic": "Tìm quy luật giống nhau giữa ba bảng!",
+        "rabbit_observation": "Bé kiểm tra đủ cả ba màu nhé!"
+      },
+      "content_description": "Bài 12 • Thử thách Suy luận: 3 bảng lưới tam giác isometric lớn trên 3 nền màu: xanh ngọc, vàng, đỏ hồng. Trong mỗi bảng có một cụm các mảnh tam giác trắng được xếp ở các tọa độ cố định tạo thành hoa văn đồng dạng. Phía dưới là 4 nhóm đáp án a, b, c, d (mỗi nhóm gồm 3 cụm tam giác trắng rời rạc). Trẻ quan sát và tìm nhóm đáp án bóc tách chính xác vị trí và cấu trúc của cụm tam giác trắng trên cả 3 bảng.",
+      "visual_items": [
+        "3 bảng lưới tam giác đẳng diện màu xanh ngọc, vàng, đỏ hồng",
+        "Các cụm hoa văn tam giác màu trắng nổi bật",
+        "4 nhóm phương án a, b, c, d gồm các cụm mảnh tam giác trắng tách rời"
+      ],
+      "answer_key": "Nhóm đáp án có cả 3 cụm tam giác trắng khớp hoàn toàn về số lượng, hướng xoay và vị trí tương đối với 3 bảng mẫu ở trên.",
+      "distractors": "Nhóm phương án có 2 bảng đúng nhưng 1 bảng bị xoay góc 60 độ hoặc thiếu 1 mảnh tam giác nhỏ.",
+      "cognition_level": "Phân tích mẫu hình & Khớp lưới tam giác",
+      "difficulty_rating": 4,
+      "recommended_game_type": "GT-001 (tap-select)",
+      "ui_digitalization_notes": "Cho phép trẻ chạm vào cụm tam giác trắng ở đáp án để cụm này tự động phóng lên đè khớp thử vào bảng lớn phía trên kiểm tra độ trùng khít."
+    },
+    {
+      "page_number": 14,
+      "book_page_label": "Chặng 21 • Trang 13 (Mảnh Suy luận 13 - Khởi động)",
+      "title": "Khối Hình Kỳ Diệu - Xếp Chồng Tầng Hình Học 3D",
+      "subtitle_or_instruction": "SO SÁNH CÁC KHỐI HÌNH • TÌM NHÓM CHÍNH XÁC. Chú ý hình nằm trên, nằm dưới và phần nhô ra. 'Find the correct group of geometric shapes'",
+      "characters_dialogue": {
+        "bear_logic": "Hình nào ở trên? Hình nào ở dưới?",
+        "rabbit_observation": "Bé tìm đúng nhóm hình học nhé!"
+      },
+      "content_description": "Bài 13 • Thử thách Suy luận: Hình mẫu 2D nhìn từ trên gồm các lớp hình học lồng nhau: Nền chữ nhật tím -> đặt lên trên là tam giác xanh ngọc -> đặt lên trên là hình tròn hồng -> đặt lên trên cùng là hình vuông vàng nhỏ. Phía dưới là 6 mô hình khối 3D xếp chồng tầng dạng phối cảnh. Trẻ đối chiếu thứ tự phân lớp từ đáy lên đỉnh và góc nhô ra để chọn mô hình 3D chính xác.",
+      "visual_items": [
+        "Hình mẫu 2D gồm 4 lớp hình học lồng nhau (tím, xanh ngọc, hồng, vàng)",
+        "Dòng chữ 'Find the correct group of geometric shapes'",
+        "6 mô hình phối cảnh 3D các khối hình học xếp chồng tầng"
+      ],
+      "answer_key": "Mô hình 3D có đáy là khối hộp chữ nhật tím, tầng 2 là lăng trụ tam giác xanh ngọc nhô sang trái, tầng 3 là hình trụ tròn hồng, đỉnh là khối vuông vàng.",
+      "distractors": "Các mô hình bị đảo lộn tầng: khối vuông vàng bị xếp dưới hình tròn hồng, hoặc lăng trụ tam giác bị quay ngược đỉnh sang phải.",
+      "cognition_level": "Tư duy không gian 3D nhiều lớp (Layered Depth Perception)",
+      "difficulty_rating": 3,
+      "recommended_game_type": "GT-001 (tap-select)",
+      "ui_digitalization_notes": "Mô hình 3D có thể tương tác tách rời từng tầng dạng nổ tung (explode view) khi giải thích kết quả, giúp trẻ nhìn rõ từng khối cấu thành."
+    },
+    {
+      "page_number": 15,
+      "book_page_label": "Chặng 21 • Trang 14 (Mảnh Suy luận 14 - Khởi động)",
+      "title": "Quy Luật Hạt Màu - Đối Xứng Gương Trục Dọc",
+      "subtitle_or_instruction": "QUAN SÁT BẢNG HẠT MÀU • CHỌN HÌNH TIẾP THEO. Theo dõi sự thay đổi của từng hàng và cột.",
+      "characters_dialogue": {
+        "bear_logic": "Hạt màu đang đổi theo quy luật nào?",
+        "rabbit_observation": "Bé chọn bảng tiếp theo chính xác nhé!"
+      },
+      "content_description": "Bài 14 • Thử thách Suy luận: Một bảng hạt màu 5x6 ô gồm các hạt đa màu (đỏ, vàng, lam, tím, lục) có trục thẳng đứng nét đứt ở bên phải kèm dấu hỏi '?'. Bác thợ xây và chú kỹ sư chỉ dẫn tìm bảng kế tiếp. Trẻ phân tích quy luật đối xứng gương qua trục thẳng đứng để chọn bảng phản chiếu chính xác trong 3 phương án a, b, c.",
+      "visual_items": [
+        "Bảng hạt màu 5x6 ô với hoa văn hạt lượn sóng zic-zac",
+        "Trục đối xứng nét đứt thẳng đứng và dấu hỏi (?) lớn",
+        "Hình ảnh bác thợ xây và chú kỹ sư cầm bản vẽ công trình",
+        "3 phương án bảng hạt màu a, b, c"
+      ],
+      "answer_key": "Đáp án c (hoặc bảng hạt màu là ảnh phản chiếu gương qua trục đứng, hạt đỏ ở cột 1 bên trái trở thành hạt đỏ ở cột cuối bên phải).",
+      "distractors": "Phương án a: bảng tịnh tiến nguyên xi không lật; Phương án b: bảng bị lật ngược theo trục ngang từ trên xuống dưới.",
+      "cognition_level": "Tư duy đối xứng trục gương (Mirror Symmetry)",
+      "difficulty_rating": 3,
+      "recommended_game_type": "GT-001 / GT-011",
+      "ui_digitalization_notes": "Khi chọn đúng, một tấm gương thần ảo xuất hiện tại trục nét đứt, phản chiếu bảng bên trái sang bên phải tạo thành bức tranh hoa văn đối xứng hoàn mỹ."
+    },
+    {
+      "page_number": 16,
+      "book_page_label": "Chặng 21 • Trang 15 (Mảnh Suy luận 15 - Khởi động)",
+      "title": "Hình Chiếu Khối Màu - Góc Nhìn Bên Cạnh (Side View)",
+      "subtitle_or_instruction": "NHÌN KHỐI MÀU TỪ BÊN CẠNH • CHỌN HÌNH ĐÚNG. So sánh chiều cao và màu của từng khối. 'HÌNH CHIẾU CỦA MÌNH LÀ GÌ?'",
+      "characters_dialogue": {
+        "bear_logic": "Đếm từng tầng màu thật cẩn thận!",
+        "rabbit_observation": "Hình chiếu nào khớp với mẫu nhỉ?"
+      },
+      "content_description": "Bài 15 • Thử thách Suy luận: Khối kiến trúc 3D gồm các thanh lập phương dài xếp ngang 6 tầng với các màu đỏ, vàng, xanh dương. Người quan sát đứng ở bên trái nhìn thẳng ngang tầm mắt (Side view / Elevation view). Trẻ xác định xem từ góc nhìn bên cạnh, các mặt khối màu nhìn thấy sẽ tạo thành hình chiếu đứng nào trong 4 lựa chọn a, b, c, d.",
+      "visual_items": [
+        "Khối kiến trúc thanh ngang 3D nhiều tầng (đỏ, vàng, xanh dương)",
+        "Nhân vật người quan sát đứng bên trái nhìn thẳng",
+        "Dòng chữ 'HÌNH CHIẾU CỦA MÌNH LÀ GÌ?'",
+        "4 phương án hình chiếu 2D dạng cột thanh so le a, b, c, d"
+      ],
+      "answer_key": "Phương án biểu diễn đúng thứ tự màu và độ nhô dài ngắn của các thanh từ tầng 1 đến tầng 6 khi nhìn từ mạn sườn bên trái.",
+      "distractors": "Các phương án bị đảo lộn tầng trên xuống tầng dưới hoặc sai màu ở tầng 3 và tầng 5.",
+      "cognition_level": "Tư duy hình chiếu cạnh bên (Side Elevation View)",
+      "difficulty_rating": 4,
+      "recommended_game_type": "GT-001 (tap-select)",
+      "ui_digitalization_notes": "Cho phép trẻ chạm vào nhân vật để chuyển đổi camera sang góc nhìn góc nhìn thứ nhất (First-person perspective) của người quan sát bên cạnh."
+    },
+    {
+      "page_number": 17,
+      "book_page_label": "Chặng 21 • Trang 16 (Mảnh Suy luận 16 - Khởi động)",
+      "title": "Đổi Chỗ Hình Màu - Quy Luật Tương Quan Vị Trí",
+      "subtitle_or_instruction": "THEO DÕI SỰ BIẾN ĐỔI • CHỌN ĐÁP ÁN ĐÚNG. Các ô vuông đổi vị trí nhưng vẫn giữ màu. 'Which answer is correct?'",
+      "characters_dialogue": {
+        "bear_logic": "Nhìn vị trí trước và sau mũi tên!",
+        "rabbit_observation": "Bé chọn hình đã đổi đúng vị trí!"
+      },
+      "content_description": "Bài 16 • Thử thách Suy luận: Quy luật suy luận tương quan (Analogy / Geometric Mapping). Hình mẫu 1: Đĩa tròn xanh lá có 4 vị trí (trên: vuông trắng, dưới: vuông trắng, trái: tròn trắng, phải: vuông trắng) biến đổi theo mũi tên thành Đĩa tròn xám (trên: vuông tím, dưới: vuông tím, trái: tròn cam, phải: vuông lam). Áp dụng quy tắc chuyển đổi màu sắc và thuộc tính vị trí này để chọn hình kết quả đúng trong 6 phương án a..f.",
+      "visual_items": [
+        "Quy luật mẫu: Đĩa tròn xanh lá -> Mũi tên đỏ -> Đĩa tròn xám biến đổi",
+        "Dòng chữ 'Which answer is correct?'",
+        "6 phương án lựa chọn a, b, c, d, e, f với các cách bố trí màu"
+      ],
+      "answer_key": "Phương án giữ nguyên bản chất vị trí hình tròn cam ở bên trái, hai ô vuông tím ở trục dọc trên-dưới và ô vuông lam ở bên phải.",
+      "distractors": "Các phương án bị xoay 90 độ khiến hình tròn cam nhảy lên đỉnh trên hoặc hai ô tím bị tách rời.",
+      "cognition_level": "Suy luận tương quan vị trí (Analogical Mapping)",
+      "difficulty_rating": 4,
+      "recommended_game_type": "GT-011 / GT-001",
+      "ui_digitalization_notes": "Hiệu ứng biến đổi chuyển động: khi trẻ chọn đúng, mũi tên phát sáng và các hình khối tự động đổi màu biến hình theo hoạt họa mượt mà."
+    },
+    {
+      "page_number": 18,
+      "book_page_label": "Chặng 21 • Trang 17 (Mảnh Suy luận 17 - Khởi động)",
+      "title": "Biến Đổi Hình Dạng - Ánh Xạ Chấm Tròn Sang Ô Vuông",
+      "subtitle_or_instruction": "QUAN SÁT HÌNH TRƯỚC VÀ SAU • TÌM QUY LUẬT. Theo dõi cách các chấm tròn chuyển sang ô vuông. 'Which answer is correct?'",
+      "characters_dialogue": {
+        "bear_logic": "Màu nào đã đổi sang vị trí mới?",
+        "rabbit_observation": "Bé áp dụng cùng một quy luật nhé!"
+      },
+      "content_description": "Bài 17 • Thử thách Suy luận: Mẫu biến đổi: Hình vuông vàng chứa 5 chấm tròn trắng xếp như mặt xúc xắc 5 chấm biến đổi theo mũi tên thành Hình vuông xanh lá chứa 5 ô vuông màu: góc trên-trái (xanh lam), góc trên-phải (trắng), tâm (tím), góc dưới-trái (hồng), góc dưới-phải (xanh dương). Trẻ áp dụng quy tắc gán màu vị trí tương ứng này để chọn hình vuông vàng chứa các chấm tròn màu đúng trong 6 phương án a..f.",
+      "visual_items": [
+        "Mẫu quy luật: [Vuông vàng 5 chấm trắng] -> [Vuông xanh lá 5 ô vuông màu]",
+        "Dòng chữ 'Which answer is correct?'",
+        "6 phương án hình vuông vàng 5 chấm màu a, b, c, d, e, f"
+      ],
+      "answer_key": "Phương án a (hoặc hình vuông vàng có các chấm tròn mang màu sắc khớp 1-1 với tọa độ của các ô vuông màu ở hình mẫu).",
+      "distractors": "Các phương án bị tráo màu giữa chấm tròn góc trên-trái và góc dưới-phải, hoặc tâm đổi thành màu hồng thay vì tím.",
+      "cognition_level": "Ánh xạ thuộc tính vị trí (Attribute & Coordinate Mapping)",
+      "difficulty_rating": 4,
+      "recommended_game_type": "GT-011 / GT-001",
+      "ui_digitalization_notes": "Trẻ có thể chạm vào từng chấm tròn để nghe âm thanh nốt nhạc tương ứng với màu sắc (sound-color mapping), hỗ trợ đa giác quan."
+    },
+    {
+      "page_number": 19,
+      "book_page_label": "Chặng 21 • Trang 18 (Mảnh Suy luận 18 - Khởi động)",
+      "title": "Cộng Mảnh Tìm Hình - Hợp Nhất Ma Trận Màu 6x6",
+      "subtitle_or_instruction": "GHÉP HAI MẢNH MÀU • CHỌN HÌNH HOÀN CHỈNH. Giữ nguyên màu và vị trí tương đối của từng ô. 'Which answer is correct?'",
+      "characters_dialogue": {
+        "bear_logic": "Đặt mảnh nhỏ vào đúng khoảng trống!",
+        "rabbit_observation": "Bé kiểm tra từng hàng màu nhé!"
+      },
+      "content_description": "Bài 18 • Thử thách Suy luận: Biểu thức cộng mảnh: [Mảnh lớn 6x6 khuyết vùng giữa và góc] + [Mảnh nhỏ 7 ô màu cam, tím, vàng] = [ ? ]. Trẻ tính toán phép bù không gian (Spatial Complement) và đối chiếu màu sắc từng ô để chọn ma trận vuông 6x6 hoàn chỉnh đúng trong 6 phương án a, b, c, d, e, f.",
+      "visual_items": [
+        "Mảnh ma trận lớn 6x6 khuyết lõi với các ô màu pixel",
+        "Mảnh ghép bù nhỏ 7 ô màu (vàng, tím, cam)",
+        "Dấu cộng (+) và dấu bằng (=) kèm dấu hỏi (?)",
+        "6 ma trận vuông 6x6 hoàn chỉnh a, b, c, d, e, f"
+      ],
+      "answer_key": "Phương án giữ nguyên toàn bộ các ô màu của mảnh lớn và lấp đầy chính xác các ô màu của mảnh nhỏ vào đúng vị trí khuyết.",
+      "distractors": "Các phương án có 1 ô màu vàng bị thay bằng ô tím hoặc hàng thứ 4 bị dịch chuyển sai 1 ô.",
+      "cognition_level": "Vận dụng cao & Hợp nhất ma trận pixel 2D",
+      "difficulty_rating": 4,
+      "recommended_game_type": "GT-001 (tap-select)",
+      "ui_digitalization_notes": "Cho phép trẻ kéo mảnh nhỏ thả vào vùng khuyết của mảnh lớn, khi vừa khít hệ thống tự động đối chiếu và highlight phương án tương ứng."
+    },
+    {
+      "page_number": 20,
+      "book_page_label": "Chặng 21 • Trang 19 (Mảnh Suy luận 19 - Khởi động)",
+      "title": "Ghép Khối Tạo Tháp - Kim Tự Tháp Bậc Thang & Polyomino",
+      "subtitle_or_instruction": "GHÉP CÁC MẢNH MÀU • TẠO THÀNH KHỐI HOÀN CHỈNH. So sánh hình dạng và hướng của từng mảnh. 'COMBO NÀO SẼ GHÉP ĐƯỢC HÌNH TRÊN'",
+      "characters_dialogue": {
+        "bear_logic": "Mỗi mảnh có một vị trí riêng!",
+        "rabbit_observation": "Bé chọn khối ghép đúng nhất nhé!"
+      },
+      "content_description": "Bài 19 • Thử thách Suy luận: Khung kim tự tháp bậc thang rỗng gồm 20 ô vuông (tầng 1: 2 ô, tầng 2: 4 ô, tầng 3: 6 ô, tầng 4: 8 ô). Phía dưới là 4 combo mảnh đa khối polyomino (a, b, c, d), mỗi combo gồm 6 mảnh hình học màu sắc: thanh 2 ô cam, chữ L 3 ô xanh lá, thanh dọc 3 ô tím, góc 3 ô vàng, zic-zac 4 ô tím nhạt, thanh 3 ô xanh lam. Trẻ kiểm tra hình dạng và khớp ghép để tìm combo duy nhất lấp đầy hoàn hảo kim tự tháp.",
+      "visual_items": [
+        "Khung kim tự tháp bậc thang 20 ô vuông màu trắng viền đen",
+        "Dòng chữ 'COMBO NÀO SẼ GHÉP ĐƯỢC HÌNH TRÊN'",
+        "4 khung hộp combo mảnh a, b, c, d với các mảnh polyomino màu sắc"
+      ],
+      "answer_key": "Combo c (hoặc bộ combo có đúng các mảnh khi xếp khít vào nhau vừa vặn với kích thước từng bậc của kim tự tháp: 2 - 4 - 6 - 8 ô).",
+      "distractors": "Combo a có mảnh chữ L bị ngược chiều không vừa bậc 2; Combo b có thanh dài 4 ô vượt quá độ rộng bậc; Combo d có tổng số ô là 19 thiếu 1 ô.",
+      "cognition_level": "Tư duy lát gạch đa khối (Polyomino Tiling)",
+      "difficulty_rating": 4,
+      "recommended_game_type": "GT-001 (tap-select)",
+      "ui_digitalization_notes": "Khi chọn combo đúng, các mảnh polyomino tự động bay lên lần lượt xếp khít vào kim tự tháp từ đáy lên đỉnh tạo thành tòa tháp cầu vồng rực rỡ."
+    },
+    {
+      "page_number": 21,
+      "book_page_label": "Chặng 21 • Trang 20 (Mảnh Suy luận 20 - Khởi động)",
+      "title": "Mật Mã Số Và Xúc Xắc - Bảng Số 2x2 & Dãy Chấm Xúc Xắc",
+      "subtitle_or_instruction": "QUAN SÁT QUY LUẬT • ĐIỀN SỐ HOẶC HÌNH CÒN THIẾU. Giải lần lượt từng bài từ trên xuống dưới.",
+      "characters_dialogue": {
+        "bear_logic": "Tìm mối liên hệ giữa các con số!",
+        "rabbit_observation": "Bé thử từng quy luật một nhé!"
+      },
+      "content_description": "Bài 20 • Thử thách Suy luận: Gồm 3 phần thử thách độc lập: (1) Bảng ma trận 2x2: Bảng 1: [3, 4 / 1, 12] (3x4x1=12); Bảng 2: [18, 3 / 2, 3] (18/(3x2)=3); Bảng 3: [5, 2 / 2, ?]; Bảng 4: [2, 3 / 4, 24] (2x3x4=24) => ? = 20 (5x2x2=20); (2) Tam giác số liên kết đỉnh và cạnh; (3) Dãy chấm xúc xắc: Hàng 1 (5 -> 4 -> 2 -> 1), Hàng 2 (2 -> 3 -> 5 -> ?). Chọn phương án A (6 chấm), B (4 chấm), C (5 chấm).",
+      "visual_items": [
+        "4 bảng ma trận số 2x2",
+        "Tam giác số học với các số ở đỉnh và cạnh",
+        "Dãy quân xúc xắc với các chấm tròn đen",
+        "3 phương án xúc xắc A, B, C"
+      ],
+      "answer_key": "Phần 1: Điền số 20; Phần 2: Điền số còn thiếu vào tam giác; Phần 3: Chọn đáp án A (xúc xắc 6 chấm theo quy luật dãy tăng).",
+      "distractors": "Phần 1 điền nhầm 9 (do làm phép cộng 5+2+2); Phần 3 chọn B (4 chấm) do đếm lùi.",
+      "cognition_level": "Suy luận quy luật số học & Chuỗi logic",
+      "difficulty_rating": 5,
+      "recommended_game_type": "GT-011 / GT-001",
+      "ui_digitalization_notes": "Bàn phím số cảm ứng nổi lên khi chạm vào ô dấu hỏi '?'. Khi điền đúng, các số phát sáng và phát âm thanh mở ổ khóa 'clack'."
+    },
+    {
+      "page_number": 22,
+      "book_page_label": "Chặng 21 • Trang 21 (Mảnh Suy luận 21 - Khởi động)",
+      "title": "Quy Luật Số Bí Ẩn - Bánh Xe Bội Số & Chu Kỳ Ký Hiệu 3x3",
+      "subtitle_or_instruction": "SO SÁNH CÁC HÌNH • TÌM SỐ CÒN THIẾU. Quan sát theo hàng, cột và vòng tròn.",
+      "characters_dialogue": {
+        "bear_logic": "Nhìn cả hàng và cột trước khi tính!",
+        "rabbit_observation": "Bé tìm ra quy luật ẩn bên trong nhé!"
+      },
+      "content_description": "Bài 21 • Thử thách Suy luận: 3 bài toán logic đỉnh cao: (1) Bánh xe 6 nan: Bánh xe 1 là bội số của 2 (2, 4, 6, 8, 10, 12); Bánh xe 2 là bội số của 3 (3, 6, 9, 12, 15, 18); Bánh xe 3 là bội số của 4 (4, ?, 12, 16, 20, 24) => ? = 8; (2) Tam giác số nhân chia: Tam giác 1 (3x3=9); Tam giác 2 đảo (8/2=4); Tam giác 3 (5x5=25); Tam giác 4 đảo (?/4=5 => ? = 20); (3) Ma trận lưới 3x3 dịch chuyển ký hiệu (chấm đen, dấu +, dấu ? theo chu kỳ xoay vòng).",
+      "visual_items": [
+        "3 bánh xe số hình tròn chia 6 nan quạt",
+        "4 hình tam giác số xuôi và ngược xen kẽ",
+        "Ma trận lưới 3x3 với các ký hiệu chấm đen và dấu cộng",
+        "3 phương án ma trận ký hiệu A, B, C"
+      ],
+      "answer_key": "Phần 1: ? = 8; Phần 2: ? = 20; Phần 3: Chọn phương án A (ma trận có ký hiệu dấu chấm và dấu + di chuyển đúng 1 bước theo chiều kim đồng hồ).",
+      "distractors": "Phần 1 điền nhầm 6 (do cộng 2); Phần 2 điền nhầm 9 (do cộng 4+5); Phần 3 chọn B (dịch chuyển sai hướng).",
+      "cognition_level": "Suy luận đại số & Chu kỳ ma trận trừu tượng",
+      "difficulty_rating": 5,
+      "recommended_game_type": "GT-011 (matrix-pick)",
+      "ui_digitalization_notes": "Bánh xe số có thể quay nhẹ khi bé chạm vào, các nan quạt phát sáng theo nhịp đếm nhảy 2-4-6-8, 3-6-9-12, 4-8-12-16."
+    },
+    {
+      "page_number": 23,
+      "book_page_label": "Chặng 21 • Trang 22 (Mảnh Suy luận 22 - Khởi động)",
+      "title": "Căn Phòng Mật Mã Cuối - Ba Khóa Số Mở Cửa Kho Báu",
+      "subtitle_or_instruction": "GIẢI BA MẬT MÃ CUỐI • ĐIỀN SỐ CHÍNH XÁC. Kiểm tra quy luật ở từng vòng tròn và ô số.",
+      "characters_dialogue": {
+        "bear_logic": "Chặng cuối cần quan sát thật kỹ!",
+        "rabbit_observation": "Bé sắp mở khóa Căn phòng Suy Luận rồi!"
+      },
+      "content_description": "Bài 22 • Thử thách Suy luận: 3 mật mã mở cánh cổng kho báu tối thượng: (1) Vòng tròn số chia 3 cánh và tâm: Vòng 1 (4 + 16 + 10 = 30; 30/2 = 15 ở tâm); Vòng 2 (8 + 12 + 12 = 32; 32/2 = 16 ở tâm); Vòng 3 (4 + ? + 10 = 34 để tâm là 17 -> ? = 20); (2) Mạng lưới bát giác 9 số liên kết các đường chéo và cạnh đối xứng; (3) Khối vuông 4 góc số liên tiếp tìm số trung tâm: Hình 1 (11, 12, 13, 14 -> tâm 15); Hình 2 (15, 16, 17, 18 -> tâm 19); Hình 3 (18, 19, 20, 21 -> tâm 22).",
+      "visual_items": [
+        "3 vòng tròn số 3 cánh có tâm trung bình cộng",
+        "Mạng lưới hình vuông 9 số liên kết đường chéo",
+        "3 hình vuông chia 4 tam giác góc có số liên tiếp và số tâm",
+        "Ô điền dấu hỏi (?) cho từng mật mã"
+      ],
+      "answer_key": "Mật mã 1: ? = 20; Mật mã 2: ? = 6; Mật mã 3: ? = 22.",
+      "distractors": "Mật mã 1 điền nhầm 18; Mật mã 3 điền nhầm 21 (do lấy số góc lớn nhất thay vì số tiếp theo của chuỗi).",
+      "cognition_level": "Tổng hợp suy luận toán học đỉnh cao (Capstone Reasoning)",
+      "difficulty_rating": 5,
+      "recommended_game_type": "GT-011 / GT-001",
+      "ui_digitalization_notes": "Mỗi khi điền đúng một mật mã, một bánh răng khổng lồ trên cánh cổng quay và phát sáng. Khi điền đủ cả 3 mật mã, cánh cổng bung mở hé lộ Viên Ngọc Tư Duy."
+    },
+    {
+      "page_number": 24,
+      "book_page_label": "Chặng 21 • Trang 23 (Chiến Thắng - Hoàn Thành Chặng Đặc Biệt)",
+      "title": "Chiến Thắng Căn Phòng Suy Luận - Viên Ngọc Tư Duy Tỏa Sáng",
+      "subtitle_or_instruction": "BÉ ĐÃ THU THẬP ĐỦ 21 MẢNH SUY LUẬN! Cánh cửa bí mật đã mở - chúc mừng nhà thám hiểm nhí!",
+      "characters_dialogue": {
+        "bear_logic": "21 thử thách đã hoàn thành!",
+        "rabbit_observation": "Viên ngọc Trí tuệ đã tỏa sáng!"
+      },
+      "content_description": "Trang tổng kết chiến thắng chặng 21. Bản đồ hành trình 21 mảnh tư duy được đánh dấu hoàn thành 21/21 mốc. Huy hiệu Nhà Thám Hiểm Suy Luận với viên ngọc vàng đa giác 3D phát sáng rực rỡ. Ba trụ cột năng lực được vinh danh: Quan sát tinh mắt (Nhìn kỹ từng chi tiết), Ghép hình chính xác (So sánh đúng vị trí), Giải mật mã tư duy (Tìm ra quy luật ẩn). Khu vực chấm điểm 5 ngôi sao dành cho ba mẹ kèm ngày hoàn thành và chữ ký kỷ niệm.",
+      "visual_items": [
+        "Bản đồ hành trình 21 nút tròn hoàn thành 21/21",
+        "Huy hiệu vàng Nhà thám hiểm với viên ngọc hổ phách đa giác 3D tỏa sáng",
+        "3 nhãn kỹ năng: Quan sát tinh mắt, Ghép hình chính xác, Giải mật mã tư duy",
+        "5 ngôi sao viền vàng dành cho ba mẹ tô màu",
+        "Khung ngày hoàn thành và ba mẹ ký tên"
+      ],
+      "answer_key": "Không có (Trang chứng nhận chiến thắng)",
+      "distractors": "Không có",
+      "cognition_level": "Đánh giá, Ghi nhận thành tích & Tự hào học tập",
+      "difficulty_rating": 1,
+      "recommended_game_type": "GT-000 (Victory / Certificate)",
+      "ui_digitalization_notes": "Màn hình Victory ăn mừng hoành tráng: pháo hoa giấy bay rợp trời, huy hiệu vàng 3D xoay vòng và rơi vào kho báu cá nhân của bé, cho phép phụ huynh in chứng chỉ PDF hoặc chia sẻ."
+    }
+  ]
+}

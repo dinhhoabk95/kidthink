@@ -77,7 +77,12 @@ export const projectGT003: Projection<"GT-003"> = {
     };
 
     let picked = assemble(
-      safeGetItem(targetPool, rng.nextInt(targetPool.length))
+      safeGetItem(
+        targetPool,
+        (createRng(opts.seed).nextInt(targetPool.length) +
+          (opts.round_index ?? 0)) %
+          targetPool.length
+      )
     );
 
     // Dataset có ký hiệu (chữ số) thì bàn chơi phải cho trẻ thấy ký hiệu đó
@@ -89,7 +94,14 @@ export const projectGT003: Projection<"GT-003"> = {
       (i) => i.glyph
     );
     if (glyphPool.length > 0 && !showsGlyph) {
-      picked = assemble(safeGetItem(glyphPool, rng.nextInt(glyphPool.length)));
+      picked = assemble(
+        safeGetItem(
+          glyphPool,
+          (createRng(opts.seed).nextInt(glyphPool.length) +
+            (opts.round_index ?? 0)) %
+            glyphPool.length
+        )
+      );
     }
 
     const { targetItem, targetAttr, chosenDistractors } = picked;
@@ -97,9 +109,19 @@ export const projectGT003: Projection<"GT-003"> = {
     // Thuộc tính là khoá nội bộ, còn danh từ hiển thị đi vào câu đề và nhãn
     // rổ — nó phải đọc được. Nhãn dài kiểu "xếp sách lên kệ gọn gàng" đẩy câu
     // đề vượt trần 12 từ của `BR-GLM-04`, nên lúc đó lấy tên loại thay thế.
-    const displayNoun = isShortNoun(targetAttr)
-      ? targetAttr
-      : byCategory(targetItem);
+    let displayNoun = "vật cùng nhóm";
+    if (isShortNoun(targetAttr)) {
+      displayNoun = targetAttr;
+    } else if (
+      targetItem.category?.label &&
+      isShortNoun(targetItem.category.label)
+    ) {
+      displayNoun = targetItem.category.label;
+    } else if (isShortNoun(byCategory(targetItem))) {
+      displayNoun = byCategory(targetItem);
+    } else if (isShortNoun(targetItem.label)) {
+      displayNoun = targetItem.label;
+    }
 
     const items = [
       ...Array.from({ length: targetCount }, (_, i) => ({

@@ -6,9 +6,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./skills/*": "./src/skills/*.js",
-    "./builders/*": "./src/builders/*.js",
-    "./activities/*": "./src/activities/*.js",
-    "./lessons/*": "./src/lessons/*.js"
+    "./builders/*": "./src/builders/*.js"
   },
   "dependencies": {
     "@mindkid/game-engine": "workspace:*",

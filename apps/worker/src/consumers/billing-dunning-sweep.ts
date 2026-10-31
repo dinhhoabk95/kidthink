@@ -6,7 +6,7 @@ export const billingDunningSweep: Consumer<"billing:dunning-sweep"> = async (
   _payload,
   ctx
 ) => {
-  const result = await runRecurringDunningSweep();
+  const result = await runRecurringDunningSweep(new Date(), ctx.signal);
   logJobDone("billing:dunning-sweep", ctx, {
     processed: result.totalProcessed,
     retried: result.retriedCount,

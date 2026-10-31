@@ -46,7 +46,6 @@ Không có.
 | `BR-SPT-03` | `telemetry_events` PK `(session_uuid, seq)` — idempotent ở tầng DB | `BR-EVT-03` |
 | `BR-SPT-04` | `telemetry_events.child_uuid` **nullable** — guest là NULL, và xoá tài khoản đặt về NULL | Ẩn danh hoá thay vì xoá cứng |
 | `BR-SPT-05` | `mastery_state` khoá theo `skill_id` **FK** (`skills.id`), không chuỗi tự do, không `skill_code` (D-AE) | `BR-TAX-07` |
-| `BR-SPT-06` | `play_sessions.content_version` NOT NULL | `BR-VER-03` |
 | `BR-SPT-07` | `telemetry_events` · `play_sessions` INSERT-only sau khi `completed` | `BR-DM-05`. Đây là dữ liệu **đã xảy ra** — sửa được nghĩa là báo cáo tiến bộ của một đứa trẻ không còn giải thích được bằng thứ nó thật sự đã chơi (D5). `play_sessions` mở cho UPDATE tới lúc `completed` vì phiên đang chạy còn ghi tiếp; sau đó đóng lại |
 | `BR-SPT-08` | `p_learn` CHECK 0–1 ở tầng DB | Bất biến quan trọng nhất của adaptive |
 
@@ -63,7 +62,7 @@ Không có.
 | `birth_year` | smallint | NOT NULL, CHECK trong khoảng cho tuổi 3–6. Index đơn cho lookup theo tuổi |
 | `avatar_id` | varchar(24) | NOT NULL — FK logic tới preset |
 | `relationship` | enum | `child`\|`student`\|`other`, nullable |
-| `current_curriculum_id` | bigint | nullable — FK `curricula.entity_id` (neo dòng dõi, D-AE), luôn theo bản `published` mới nhất |
+| `current_curriculum_id` | bigint | nullable — FK `curricula.id` |
 | `daily_play_cap_minutes` | smallint | NOT NULL default theo gói |
 | `status` | enum | `active`\|`archived`\|`pending_deletion` |
 | `created_at` `updated_at` | timestamptz | |
@@ -79,9 +78,9 @@ Không có.
 | `user_id` | nullable — NULL cho guest |
 | `child_profile_id` | nullable — NULL cho guest |
 | `guest_device_id` | nullable — cookie `tm_did` |
-| `game_level_id` `content_version` | NOT NULL — FK hàng version cụ thể lúc chơi (D-AE) |
+| `game_level_id` | NOT NULL — FK `game_levels(id)` (đã bỏ `content_version`) |
 | `template_code` | varchar(20) NOT NULL — mã template từ registry `ALL_TEMPLATES` |
-| `curriculum_id` `curriculum_item_id` `lesson_id` | nullable — FK hàng version cụ thể lúc chơi (D-AE) |
+| `curriculum_id` `curriculum_item_id` | nullable — FK `curricula(id)` / `curriculum_items(id)` |
 | `access_tier_at_start` | Bậc lúc mở phiên |
 | `started_at` `completed_at` `duration_ms` | |
 | `rounds_total` `rounds_correct` `attempt_count` `correct_count` `incorrect_count` `hint_count` `retry_count` | int |
@@ -99,7 +98,7 @@ CHECK: `(child_profile_id IS NOT NULL) OR (guest_device_id IS NOT NULL)`.
 |---|---|
 | `session_uuid` `seq` | PK ghép |
 | `child_uuid` | nullable |
-| `game_level_id` `content_version` `template_id` | FK hàng version cụ thể lúc chơi (D-AE); `content_version` giữ tường minh cho báo cáo dù đã ngầm định trong `game_level_id` |
+| `game_level_id` `template_id` | FK `game_levels(id)` lúc chơi (đã bỏ `content_version`) |
 | `event_name` | varchar — từ catalog |
 | `payload` | JSONB — schema theo event |
 | `occurred_at_ms` | int — tương đối so với `started_at` |
@@ -116,12 +115,12 @@ Hai điều kiện giữ đường mở: (a) không FK nào trỏ **vào** `tele
 ### 7.4 `child_session_summaries`
 
 `(child_profile_id, session_uuid)` PK · `date_ict` date · `skill_ids` bigint[] ·
-`score` · `duration_ms` · `hint_count` · `retry_count` · `completed` bool.
+`score` · `duration_ms` · `hint_count` · `retry_count` · `completed` bool (không có `content_version`).
 
 ### 7.5 Bảng rollup — `child_daily_stats` · `level_daily_stats` · `skill_daily_stats`
 
 `child_daily_stats` `(child_profile_id, date_ict)` · `level_daily_stats`
-`(game_level_id, date_ict)` · `skill_daily_stats` `(skill_id, date_ict)`.
+`(game_level_id, date_ict)` · `skill_daily_stats` `(skill_id, date_ict)` (không có `content_version`).
 
 Chi tiết cột: [`telemetry-pipeline.md`](telemetry-pipeline.md) §7.1.
 
@@ -138,10 +137,7 @@ Chi tiết cột: [`telemetry-pipeline.md`](telemetry-pipeline.md) §7.1.
 | `params_version` | varchar |
 | `assessed_by_user_id` | nullable — skill ngôn ngữ mở do người lớn chấm |
 
-### 7.7 `level_params`
-
-`(child_profile_id, game_level_id)` · `params` JSONB · `updated_at` — tham số độ khó đã
-điều chỉnh cho từng trẻ.
+Đã xóa bảng `level_params` (tham số độ khó điều chỉnh động được tính thuần tại runtime từ `mastery_state` qua `@mindkid/adaptive`).
 
 ## 8. API contract
 
@@ -166,10 +162,6 @@ Scenario: BR-SPT-08 — p_learn bị ràng buộc ở DB
 Scenario: BR-SPT-05 — skill_id là FK thật
   When chèn mastery_state với skill_id không tồn tại
   Then vi phạm khoá ngoại
-
-Scenario: BR-SPT-06 — phiên chơi bắt buộc có content_version
-  When chèn play_sessions không có content_version
-  Then NOT NULL từ chối
 
 Scenario: BR-SPT-04 — ẩn danh hoá khi xoá tài khoản
   Given một user bị purge
@@ -201,7 +193,7 @@ Scenario: D-Z — không FK trỏ vào telemetry_events
 **Never**
 - Cột PII trên bất kỳ bảng nào ở module này.
 - `skill` dạng chuỗi tự do.
-- `content_version` nullable trên `play_sessions`.
+- Thêm lại cột `content_version` trên `play_sessions`, `telemetry_events`, `child_session_summaries`, `level_daily_stats`.
 
 ## 11. Open questions
 
@@ -214,7 +206,7 @@ Scenario: D-Z — không FK trỏ vào telemetry_events
 
 | Bảng | Lệch | Bước sở hữu |
 |---|---|---|
-| `play_sessions` | Thiếu `user_id` `curriculum_id` `curriculum_item_id` `lesson_id` `access_tier_at_start` `duration_ms` `rounds_*` `attempt_count` `correct_count` `incorrect_count` `hint_count` `retry_count` `raw_score` `normalized_score` `difficulty` `device` `is_preview`; thừa `stars_earned` `score` `duration_seconds` | P1.6 · P1.7 |
+| `play_sessions` | Thiếu `user_id` `curriculum_id` `curriculum_item_id` `access_tier_at_start` `duration_ms` `rounds_*` `attempt_count` `correct_count` `incorrect_count` `hint_count` `retry_count` `raw_score` `normalized_score` `difficulty` `device` `is_preview`; thừa `stars_earned` `score` `duration_seconds` | P1.6 · P1.7 |
 | `child_session_summaries` | Hợp đồng §7.4 đòi PK `(child_profile_id, session_uuid)` · `date_ict` · `skill_ids` bigint[]; schema dùng `id` + `date` varchar(10) + `total_play_time_seconds` | P1.6 |
 | `child_daily_stats` `level_daily_stats` `skill_daily_stats` | Cột không khớp [`telemetry-pipeline.md`](telemetry-pipeline.md) §7.1 | P1.5 |
 

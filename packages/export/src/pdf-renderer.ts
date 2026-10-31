@@ -43,7 +43,7 @@ export interface LessonPlanExportItemSnapshot {
 
 export interface LessonPlanExportItemDTO {
   position: number;
-  item_type: "activity" | "game_level" | "custom_note";
+  item_type: "game_level" | "custom_note";
   item_code?: string;
   custom_instruction?: string;
   snapshot?: LessonPlanExportItemSnapshot;
@@ -211,12 +211,7 @@ function buildHeaderLines(dto: LessonPlanExportDTO): RenderLine[] {
   return lines;
 }
 
-function getItemTypeLabel(
-  itemType: "activity" | "game_level" | "custom_note"
-): string {
-  if (itemType === "activity") {
-    return "Hoạt động thực hành";
-  }
+function getItemTypeLabel(itemType: "game_level" | "custom_note"): string {
   if (itemType === "game_level") {
     return "Trò chơi tư duy";
   }
@@ -445,7 +440,7 @@ export function renderLessonPlanPdf(
   return {
     pdfBuffer,
     pageCount,
-    kind: "lesson_plan",
+    kind: "curriculum_plan",
     title: dto.title,
   };
 }

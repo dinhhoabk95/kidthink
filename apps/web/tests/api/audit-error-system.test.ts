@@ -56,7 +56,7 @@ beforeEach(async () => {
         email: "p210-cr@mindkid.edu.vn",
         passwordHash: "hash",
         displayName: "P210 Reviewer",
-        role: "content_reviewer",
+        role: "super_admin",
         isActive: true,
       })
       .returning({ id: managers.id });
@@ -196,9 +196,9 @@ describe("Log Viewers: Audit, Error, System Status (P2.10)", () => {
         actor_type: "manager",
         actor_id: testSuperAdminId,
         action: "content_published",
-        reason: "Xuất bản bài học tuần 1",
-        entity_type: "lesson",
-        entity_id: "LES-TEST-001",
+        reason: "Xuất bản mức chơi tuần 1",
+        entity_type: "game_level",
+        entity_id: "GL-TEST-001",
         before_data: { status: "draft" },
         after_data: { status: "published" },
       });
@@ -206,7 +206,7 @@ describe("Log Viewers: Audit, Error, System Status (P2.10)", () => {
       const event = mockManagerEvent(
         "super_admin",
         {},
-        { entity_type: "lesson" }
+        { entity_type: "game_level" }
       );
       const res = (await auditLogsGetHandler(event)) as any;
       expect(res.items).toBeDefined();

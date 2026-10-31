@@ -44,10 +44,10 @@ export function readQuotaConfig(): QuotaConfig {
     return JSON.parse(fs.readFileSync(filePath, "utf8")) as QuotaConfig;
   }
   return {
-    c1: { requiredLevels: 20, requiredTemplates: 4 },
-    default: { requiredLevels: 10, requiredTemplates: 2 },
+    c1: { requiredLevels: 3, requiredTemplates: 2 },
+    default: { requiredLevels: 3, requiredTemplates: 2 },
     maxLevelsPerPair: 5,
-    minDistinctPairsCatalog: 658,
+    minDistinctPairsCatalog: 886,
   };
 }
 

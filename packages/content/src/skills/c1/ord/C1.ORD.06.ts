@@ -1,13 +1,12 @@
 import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
-import { ordinalItem } from "#src/inventories/index";
 
 export const C1_ORD_06_IDENTITY: SkillIdentity = {
   code: "C1.ORD.06",
   strand_code: "C1.ORD",
   competency_code: "C1",
   name: "Thứ tự ngược từ cuối lên",
-  age_min: 6,
-  age_max: 7,
+  age_min: 5,
+  age_max: 6,
   difficulty: 4,
   thinking_processes: ["sequence", "shift"],
   tier: "advanced",
@@ -43,142 +42,122 @@ export const C1_ORD_06_DATASET: SkillDataset = {
   concept_label: "Thứ tự ngược từ cuối lên",
   surface: "game",
   items: [
-    ordinalItem("ord_1", {
+    {
+      id: "ord_6",
+      label: "vị trí cuối hàng (thứ sáu)",
+      value: 6,
       image: {
         kind: "emoji",
-        ref: "🥇",
+        ref: "🐘",
       },
       category: {
-        ordinal: "thứ nhất",
-        parity: "lẻ",
-      },
-    }),
-    ordinalItem("ord_2", {
-      image: {
-        kind: "emoji",
-        ref: "🥈",
-      },
-      category: {
-        ordinal: "thứ hai",
-        parity: "chẵn",
-      },
-    }),
-    ordinalItem("ord_3", {
-      image: {
-        kind: "emoji",
-        ref: "🥉",
-      },
-      category: {
-        ordinal: "thứ ba",
-        parity: "lẻ",
-      },
-    }),
-    ordinalItem("ord_4", {
-      image: {
-        kind: "emoji",
-        ref: "4️⃣",
-      },
-      category: {
-        ordinal: "thứ tư",
-        parity: "chẵn",
-      },
-    }),
-    ordinalItem("ord_5", {
-      image: {
-        kind: "emoji",
-        ref: "5️⃣",
-      },
-      category: {
-        ordinal: "thứ năm",
-        parity: "lẻ",
-      },
-    }),
-    ordinalItem("ord_6", {
-      image: {
-        kind: "emoji",
-        ref: "6️⃣",
-      },
-      category: {
+        type: "cuối hàng",
         ordinal: "thứ sáu",
-        parity: "chẵn",
       },
-    }),
-    ordinalItem("ord_7", {
+      contrast_group: "reverse_ord",
+    },
+    {
+      id: "ord_5",
+      label: "vị trí áp chót (thứ năm)",
+      value: 5,
       image: {
         kind: "emoji",
-        ref: "7️⃣",
+        ref: "🐄",
       },
       category: {
-        ordinal: "thứ bảy",
-        parity: "lẻ",
+        type: "cuối hàng",
+        ordinal: "thứ năm",
       },
-    }),
-    ordinalItem("ord_8", {
+      contrast_group: "reverse_ord",
+    },
+    {
+      id: "ord_4",
+      label: "vị trí thứ tư từ dưới lên",
+      value: 4,
       image: {
         kind: "emoji",
-        ref: "8️⃣",
+        ref: "🐎",
       },
       category: {
-        ordinal: "thứ tám",
-        parity: "chẵn",
+        type: "giữa hàng",
+        ordinal: "thứ tư",
       },
-    }),
-    ordinalItem("ord_9", {
+      contrast_group: "reverse_ord",
+    },
+    {
+      id: "ord_3",
+      label: "vị trí thứ ba từ dưới lên",
+      value: 3,
       image: {
         kind: "emoji",
-        ref: "9️⃣",
+        ref: "🐑",
       },
       category: {
-        ordinal: "thứ chín",
-        parity: "lẻ",
+        type: "giữa hàng",
+        ordinal: "thứ ba",
       },
-    }),
-    ordinalItem("ord_10", {
+      contrast_group: "reverse_ord",
+    },
+    {
+      id: "ord_2",
+      label: "vị trí thứ hai từ đầu hàng",
+      value: 2,
       image: {
         kind: "emoji",
-        ref: "🔟",
+        ref: "🐕",
       },
       category: {
-        ordinal: "thứ mười",
-        parity: "chẵn",
+        type: "đầu hàng",
+        ordinal: "thứ hai",
       },
-    }),
+      contrast_group: "reverse_ord",
+    },
+    {
+      id: "ord_1",
+      label: "vị trí đầu hàng (thứ nhất)",
+      value: 1,
+      image: {
+        kind: "emoji",
+        ref: "🐇",
+      },
+      category: {
+        type: "đầu hàng",
+        ordinal: "thứ nhất",
+      },
+      contrast_group: "reverse_ord",
+    },
   ],
   relations: [
     {
       type: "sequence",
-      source_id: "ord_10",
-      target_id: "ord_9",
+      source_id: "ord_6",
+      target_id: "ord_5",
     },
     {
       type: "sequence",
-      source_id: "ord_9",
-      target_id: "ord_8",
+      source_id: "ord_5",
+      target_id: "ord_4",
     },
     {
       type: "sequence",
-      source_id: "ord_8",
-      target_id: "ord_7",
+      source_id: "ord_4",
+      target_id: "ord_3",
+    },
+    {
+      type: "sequence",
+      source_id: "ord_3",
+      target_id: "ord_2",
+    },
+    {
+      type: "sequence",
+      source_id: "ord_2",
+      target_id: "ord_1",
     },
   ],
   axes: {
     ordinal: {
-      values: [
-        "thứ nhất",
-        "thứ hai",
-        "thứ ba",
-        "thứ tư",
-        "thứ năm",
-        "thứ sáu",
-        "thứ bảy",
-        "thứ tám",
-        "thứ chín",
-        "thứ mười",
-      ],
+      values: ["thứ sáu", "thứ năm", "thứ tư", "thứ ba", "thứ hai", "thứ nhất"],
       ordered: true,
-    },
-    parity: {
-      values: ["chẵn", "lẻ"],
     },
   },
   ladder: [
@@ -209,22 +188,11 @@ export const C1_ORD_06_DATASET: SkillDataset = {
     },
   ],
   phrasing: {
-    prompt_template: "Bé đếm ngược từ cuối hàng lên nhé!",
+    prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template:
-      "Chúng mình cùng tìm hiểu về Thứ tự ngược từ cuối lên nhé",
+      "Chúng mình cùng tìm hiểu về thứ tự ngược từ cuối lên nhé",
   },
-  ordering: [
-    "ord_10",
-    "ord_9",
-    "ord_8",
-    "ord_7",
-    "ord_6",
-    "ord_5",
-    "ord_4",
-    "ord_3",
-    "ord_2",
-    "ord_1",
-  ],
+  ordering: ["ord_6", "ord_5", "ord_4", "ord_3", "ord_2", "ord_1"],
 };
 
 export const C1_ORD_06_SEED: SkillSeed = {
@@ -248,147 +216,11 @@ export const C1_ORD_06_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C1-ORD-SORT-0011",
-      template: "GT-006",
-      band: "5-6",
-      difficulty: 5,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-ORD-SORT-0012",
-      template: "GT-006",
-      band: "5-6",
-      difficulty: 3,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-ORD-SLOT-0019",
-      template: "GT-008",
-      band: "5-6",
-      difficulty: 3,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-ORD-SLOT-0020",
-      template: "GT-008",
-      band: "5-6",
-      difficulty: 4,
-      theme: "ocean",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-ORD-SLOT-0021",
-      template: "GT-008",
-      band: "5-6",
-      difficulty: 5,
-      theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-ORD-SLOT-0022",
-      template: "GT-008",
-      band: "5-6",
-      difficulty: 3,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-ORD-PUZZ-0001",
-      template: "GT-010",
-      band: "5-6",
-      difficulty: 3,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-ORD-PUZZ-0002",
-      template: "GT-010",
-      band: "5-6",
-      difficulty: 4,
-      theme: "space",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-ORD-PUZZ-0003",
-      template: "GT-010",
-      band: "5-6",
-      difficulty: 5,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-ORD-PUZZ-0004",
-      template: "GT-010",
-      band: "5-6",
-      difficulty: 3,
-      theme: "body",
-      rounds: 3,
-    },
-    {
       code: "GL-C1-ORD-MAZE-0001",
       template: "GT-013",
       band: "5-6",
       difficulty: 3,
       theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-ORD-MAZE-0002",
-      template: "GT-013",
-      band: "5-6",
-      difficulty: 4,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-ORD-MAZE-0003",
-      template: "GT-013",
-      band: "5-6",
-      difficulty: 5,
-      theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-ORD-MAZE-0004",
-      template: "GT-013",
-      band: "5-6",
-      difficulty: 3,
-      theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-ORD-BAL-0001",
-      template: "GT-014",
-      band: "5-6",
-      difficulty: 3,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-ORD-BAL-0002",
-      template: "GT-014",
-      band: "5-6",
-      difficulty: 4,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-ORD-BAL-0003",
-      template: "GT-014",
-      band: "5-6",
-      difficulty: 5,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-ORD-BAL-0004",
-      template: "GT-014",
-      band: "5-6",
-      difficulty: 3,
-      theme: "animal",
       rounds: 3,
     },
   ],

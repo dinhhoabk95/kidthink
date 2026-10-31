@@ -15,8 +15,8 @@ describe("P3.4 Curriculum Player Invariants (BR-CUR)", () => {
 
     it("Scenario: BR-CUR-03 — optional items do not block week completion or progression to next week", () => {
       const items = [
-        { code: "LES-001", is_required: true, status: "completed" },
-        { code: "LES-002", is_required: false, status: "pending" },
+        { code: "GL-C1-001", is_required: true, status: "completed" },
+        { code: "GL-C1-002", is_required: false, status: "pending" },
       ];
       const isWeekComplete = items
         .filter((i) => i.is_required)

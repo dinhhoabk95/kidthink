@@ -41,7 +41,7 @@ describe("Identity Schema Integration Tests", () => {
         email: `sib04-m-${suffix}@example.com`,
         passwordHash: await hashPassword("xK9#mQ2$vL8!wP5@"),
         displayName: "SIB04 Manager",
-        role: "content_reviewer",
+        role: "super_admin",
       })
       .returning();
     if (!(u && m)) {

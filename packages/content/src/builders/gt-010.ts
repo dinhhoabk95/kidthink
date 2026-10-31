@@ -12,6 +12,8 @@ import {
   shuffleDeterministic,
 } from "./utils.js";
 
+const NUMERIC_GLYPH_RE = /^\d+$/;
+
 export const projectGT010: Projection<"GT-010"> = {
   template: "GT-010",
   requires: { min_items: 2, max_items: 3 },
@@ -27,20 +29,31 @@ export const projectGT010: Projection<"GT-010"> = {
     const requiredDistractors = targetItemCount - 1;
 
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
-    const items = shuffleDeterministic(dataset.items, rng);
+    const nonNumericItems = dataset.items.filter(
+      (it) => !(it.glyph && NUMERIC_GLYPH_RE.test(it.glyph))
+    );
+    const pool = nonNumericItems.length >= 2 ? nonNumericItems : dataset.items;
+    const items = shuffleDeterministic(pool, rng);
     const itemA = safeGetItem(items, 0);
     const itemB = safeGetItem(items, 1);
 
     const valA = 2 + rng.nextInt(4); // 2..5
     const valB = 1 + rng.nextInt(4); // 1..4
 
+    const preferGlyphA = Boolean(
+      itemA.glyph && !NUMERIC_GLYPH_RE.test(itemA.glyph)
+    );
+    const preferGlyphB = Boolean(
+      itemB.glyph && !NUMERIC_GLYPH_RE.test(itemB.glyph)
+    );
+
     const symA = {
       symbol_id: itemA.id,
-      asset: resolveItemAsset(itemA, true),
+      asset: resolveItemAsset(itemA, preferGlyphA),
     };
     const symB = {
       symbol_id: itemB.id,
-      asset: resolveItemAsset(itemB, true),
+      asset: resolveItemAsset(itemB, preferGlyphB),
     };
 
     const equations = [

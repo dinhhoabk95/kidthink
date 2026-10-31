@@ -48,7 +48,6 @@ export default defineEventHandler(async (event) => {
   const extraById = new Map<
     number,
     {
-      contentVersion: number;
       templateCode: string;
       createdAt: Date;
       updatedAt: Date;
@@ -59,7 +58,6 @@ export default defineEventHandler(async (event) => {
     const extraRows = await db
       .select({
         id: gameLevels.id,
-        contentVersion: gameLevels.contentVersion,
         templateCode: gameLevels.templateCode,
         createdAt: gameLevels.createdAt,
         updatedAt: gameLevels.updatedAt,
@@ -69,7 +67,6 @@ export default defineEventHandler(async (event) => {
 
     for (const row of extraRows) {
       extraById.set(row.id, {
-        contentVersion: row.contentVersion,
         templateCode: row.templateCode,
         createdAt: row.createdAt,
         updatedAt: row.updatedAt,
@@ -79,7 +76,7 @@ export default defineEventHandler(async (event) => {
 
   const enrichedItems = result.items.map((item) => {
     const extra = extraById.get(item.id);
-    const contentVersion = extra?.contentVersion ?? 1;
+    const contentVersion = 1;
     const templateCode = extra?.templateCode ?? "GT-001";
     const createdAtIso = extra?.createdAt ? extra.createdAt.toISOString() : "";
     const updatedAtIso = extra?.updatedAt

@@ -8,6 +8,7 @@ import {
   masteryState,
   skills,
 } from "@mindkid/db";
+import { getDateIct } from "@mindkid/shared";
 import { and, eq, inArray } from "drizzle-orm";
 import type { DbOrTx } from "#src/types";
 
@@ -233,32 +234,33 @@ export async function hasCompletedAnyCurriculumWeek(
     ...new Set(enrollments.map((e) => Number(e.curriculumId))),
   ];
 
-  const items = await db
-    .select({
-      id: curriculumItems.id,
-      curriculumId: curriculumItems.curriculumId,
-      weekNo: curriculumItems.weekNo,
-      isRequired: curriculumItems.isRequired,
-    })
-    .from(curriculumItems)
-    .where(inArray(curriculumItems.curriculumId, curriculumIds));
+  const [items, completedProgress] = await Promise.all([
+    db
+      .select({
+        id: curriculumItems.id,
+        curriculumId: curriculumItems.curriculumId,
+        weekNo: curriculumItems.weekNo,
+        isRequired: curriculumItems.isRequired,
+      })
+      .from(curriculumItems)
+      .where(inArray(curriculumItems.curriculumId, curriculumIds)),
+    db
+      .select({
+        enrollmentId: curriculumItemProgress.enrollmentId,
+        curriculumItemId: curriculumItemProgress.curriculumItemId,
+      })
+      .from(curriculumItemProgress)
+      .where(
+        and(
+          inArray(curriculumItemProgress.enrollmentId, enrollmentIds),
+          eq(curriculumItemProgress.status, "completed")
+        )
+      ),
+  ]);
 
   if (items.length === 0) {
     return false;
   }
-
-  const completedProgress = await db
-    .select({
-      enrollmentId: curriculumItemProgress.enrollmentId,
-      curriculumItemId: curriculumItemProgress.curriculumItemId,
-    })
-    .from(curriculumItemProgress)
-    .where(
-      and(
-        inArray(curriculumItemProgress.enrollmentId, enrollmentIds),
-        eq(curriculumItemProgress.status, "completed")
-      )
-    );
 
   return evaluateWeekCurriculumCompletion({
     enrollments: enrollments.map((e) => ({
@@ -293,19 +295,36 @@ export async function awardChildBadges(params: {
     existingBadgesRows.map((b: { badgeCode: string }) => b.badgeCode)
   );
 
-  const dailyStatsRows = await db
-    .select({ dateIct: childDailyStats.dateIct })
-    .from(childDailyStats)
-    .where(eq(childDailyStats.childProfileId, childId));
-  const distinctDays = new Set(
-    dailyStatsRows.map((d: { dateIct: string }) => d.dateIct)
-  ).size;
+  if (
+    existingBadgeCodes.has("PLAY_DAYS_5") &&
+    existingBadgeCodes.has("STRAND_FIRST_COMPLETE") &&
+    existingBadgeCodes.has("WEEK_CURRICULUM_COMPLETE")
+  ) {
+    return;
+  }
 
-  const isFirstStrandComplete = await hasCompletedAnyStrand(db, childId);
-  const isWeekCurriculumComplete = await hasCompletedAnyCurriculumWeek(
-    db,
-    childId
-  );
+  const [distinctDays, isFirstStrandComplete, isWeekCurriculumComplete] =
+    await Promise.all([
+      existingBadgeCodes.has("PLAY_DAYS_5")
+        ? Promise.resolve(0)
+        : db
+            .selectDistinct({ dateIct: childDailyStats.dateIct })
+            .from(childDailyStats)
+            .where(eq(childDailyStats.childProfileId, childId))
+            .then((rows: Array<{ dateIct: string }>) => {
+              const dateSet = new Set(
+                rows.map((d: { dateIct: string }) => d.dateIct)
+              );
+              dateSet.add(getDateIct(now));
+              return dateSet.size;
+            }),
+      existingBadgeCodes.has("STRAND_FIRST_COMPLETE")
+        ? Promise.resolve(false)
+        : hasCompletedAnyStrand(db, childId),
+      existingBadgeCodes.has("WEEK_CURRICULUM_COMPLETE")
+        ? Promise.resolve(false)
+        : hasCompletedAnyCurriculumWeek(db, childId),
+    ]);
 
   const newBadges = evaluateBadges({
     distinctPlayDays: distinctDays,
@@ -314,15 +333,17 @@ export async function awardChildBadges(params: {
     existingBadgeCodes,
   });
 
-  for (const badgeCode of newBadges) {
+  if (newBadges.length > 0) {
     await db
       .insert(childBadges)
-      .values({
-        childProfileId: childId,
-        badgeCode,
-        awardedAt: now,
-        sourceRef: sessionUuid,
-      })
+      .values(
+        newBadges.map((badgeCode) => ({
+          childProfileId: childId,
+          badgeCode,
+          awardedAt: now,
+          sourceRef: sessionUuid,
+        }))
+      )
       .onConflictDoNothing();
   }
 }

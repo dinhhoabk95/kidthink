@@ -18,7 +18,7 @@
       </h2>
 
       <button
-        class="min-h-11 px-4 py-2 rounded-2xl border-2 border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800 hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200 text-xs font-bold transition-colors inline-flex items-center justify-center self-start sm:self-auto"
+        class="min-h-11 px-4 py-2 rounded-2xl border-2 border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800 hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200 text-sm font-bold transition-colors inline-flex items-center justify-center self-start sm:self-auto"
         type="button"
         :disabled="loading"
         @click="loadSubscriptions"
@@ -28,14 +28,14 @@
     </div>
 
     <div
-      class="p-3 rounded-2xl bg-danger-50 dark:bg-danger-950/40 border border-danger-200 dark:border-danger-800 text-xs text-danger-800 dark:text-danger-200 font-medium"
+      class="p-3 rounded-2xl bg-danger-50 dark:bg-danger-950/40 border border-danger-200 dark:border-danger-800 text-sm text-danger-800 dark:text-danger-200 font-medium"
       v-if="loadError"
     >
       {{ loadError }}
     </div>
 
     <div
-      class="text-xs text-surface-500 dark:text-surface-400 italic p-4 bg-surface-50 dark:bg-surface-800/50 rounded-2xl border border-dashed border-surface-200 dark:border-surface-700 text-center"
+      class="text-sm text-surface-500 dark:text-surface-400 italic p-4 bg-surface-50 dark:bg-surface-800/50 rounded-2xl border border-dashed border-surface-200 dark:border-surface-700 text-center"
       v-if="loading"
     >
       Đang tải danh sách gói đăng ký định kỳ...
@@ -45,7 +45,7 @@
       class="overflow-x-auto border-2 border-surface-200 dark:border-surface-700 rounded-2xl"
       v-else-if="subscriptions.length > 0"
     >
-      <table class="w-full text-left text-xs">
+      <table class="w-full text-left text-sm">
         <thead
           class="bg-surface-50 dark:bg-surface-800 border-b-2 border-surface-200 dark:border-surface-700 text-surface-600 dark:text-surface-300 font-bold font-heading"
         >
@@ -71,14 +71,14 @@
               >
                 {{ sub.package_code }}
               </div>
-              <div class="text-[10px] text-surface-500 dark:text-surface-400">
+              <div class="text-sm text-surface-500 dark:text-surface-400">
                 ID: #{{ sub.id }}
                 • {{ sub.offer_code }}
               </div>
             </td>
             <td class="p-3 text-surface-700 dark:text-surface-300">
               <div class="font-bold">{{ formatVnd(sub.price_vnd) }}</div>
-              <div class="text-[10px] text-surface-500 dark:text-surface-400">
+              <div class="text-sm text-surface-500 dark:text-surface-400">
                 {{
                   sub.billing_period === "annual" ? "Hàng năm" : "Hàng tháng"
                 }}
@@ -86,7 +86,7 @@
             </td>
             <td class="p-3">
               <span
-                class="px-2 py-0.5 rounded-full text-[11px] font-bold"
+                class="px-2 py-0.5 rounded-full text-sm font-bold"
                 :class="getStatusBadgeClass(sub.status)"
               >
                 {{ getStatusLabel(sub.status) }}
@@ -107,7 +107,7 @@
             <td class="p-3 text-surface-700 dark:text-surface-300">
               <div>{{ formatDate(sub.current_period_end) }}</div>
               <div
-                class="text-[10px] text-surface-400 dark:text-surface-500"
+                class="text-sm text-surface-400 dark:text-surface-500"
                 v-if="sub.next_billing_at && sub.auto_renew"
               >
                 Thu kỳ tới: {{ formatDate(sub.next_billing_at) }}
@@ -125,7 +125,7 @@
             </td>
             <td class="p-3 text-right">
               <button
-                class="min-h-11 px-3 py-1.5 rounded-xl border border-danger-300 dark:border-danger-700 bg-danger-50 dark:bg-danger-950/50 hover:bg-danger-100 dark:hover:bg-danger-900/60 text-danger-800 dark:text-danger-200 text-[11px] font-bold transition-colors disabled:opacity-50 inline-flex items-center justify-center"
+                class="min-h-11 px-3 py-1.5 rounded-xl border border-danger-300 dark:border-danger-700 bg-danger-50 dark:bg-danger-950/50 hover:bg-danger-100 dark:hover:bg-danger-900/60 text-danger-800 dark:text-danger-200 text-sm font-bold transition-colors disabled:opacity-50 inline-flex items-center justify-center"
                 type="button"
                 v-if="canCancel(sub.status)"
                 :disabled="isUserDeleted"
@@ -134,7 +134,7 @@
                 Huỷ gói
               </button>
               <span
-                class="text-[11px] text-surface-400 dark:text-surface-500"
+                class="text-sm text-surface-400 dark:text-surface-500"
                 v-else
               >
                 Đã đóng
@@ -146,7 +146,7 @@
     </div>
 
     <div
-      class="text-xs text-surface-500 dark:text-surface-400 italic p-4 bg-surface-50 dark:bg-surface-800/50 rounded-2xl border border-dashed border-surface-200 dark:border-surface-700 text-center"
+      class="text-sm text-surface-500 dark:text-surface-400 italic p-4 bg-surface-50 dark:bg-surface-800/50 rounded-2xl border border-dashed border-surface-200 dark:border-surface-700 text-center"
       v-else
     >
       Người dùng chưa có gói đăng ký định kỳ nào.
@@ -179,20 +179,20 @@
         </div>
 
         <div
-          class="p-3 rounded-2xl bg-danger-50 dark:bg-danger-950/40 border border-danger-200 dark:border-danger-800 text-xs text-danger-800 dark:text-danger-200 font-medium"
+          class="p-3 rounded-2xl bg-danger-50 dark:bg-danger-950/40 border border-danger-200 dark:border-danger-800 text-sm text-danger-800 dark:text-danger-200 font-medium"
           v-if="cancelError"
         >
           {{ cancelError }}
         </div>
 
         <p
-          class="text-xs text-surface-600 dark:text-surface-300 leading-relaxed"
+          class="text-sm text-surface-600 dark:text-surface-300 leading-relaxed"
         >
           Thao tác này dừng tự động gia hạn (<code>auto_renew = false</code>) và
           giữ nguyên trạng thái đơn hàng gốc (BR-ASC-01, BR-ASC-02).
         </p>
 
-        <form class="space-y-4 text-xs" @submit.prevent="submitCancel">
+        <form class="space-y-4 text-sm" @submit.prevent="submitCancel">
           <!-- Reason Select (BR-ASC-03: closed list) -->
           <div class="space-y-1.5">
             <label
@@ -202,7 +202,7 @@
               Kênh / Lý do yêu cầu huỷ <span class="text-danger-500">*</span>
             </label>
             <select
-              class="w-full p-2.5 border-2 border-surface-200 dark:border-surface-700 rounded-2xl bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-100 text-xs font-medium focus:border-brand-500 focus:outline-none"
+              class="w-full p-2.5 border-2 border-surface-200 dark:border-surface-700 rounded-2xl bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-100 text-base font-medium focus:border-brand-500 focus:outline-none"
               id="cancel_reason_select"
               required
               v-model="cancelForm.reason"
@@ -229,7 +229,7 @@
               </label>
               <span
                 :class="[
-                  'text-[10px] font-bold',
+                  'text-sm font-bold',
                   cancelForm.admin_note.trim().length >= 20
                     ? 'text-success-600 dark:text-success-400'
                     : 'text-danger-600 dark:text-danger-400',
@@ -239,7 +239,7 @@
               </span>
             </div>
             <textarea
-              class="w-full p-2.5 border-2 border-surface-200 dark:border-surface-700 rounded-2xl bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-100 text-xs font-medium focus:border-danger-500 focus:outline-none"
+              class="w-full p-2.5 border-2 border-surface-200 dark:border-surface-700 rounded-2xl bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-100 text-base font-medium focus:border-danger-500 focus:outline-none"
               id="cancel_admin_note_input"
               minlength="20"
               placeholder="Ghi rõ mã hội thoại Zalo OA / Messenger / Email hoặc nội dung trao đổi với khách hàng..."
@@ -277,7 +277,7 @@
             </label>
             <input
               autocomplete="current-password"
-              class="w-full p-2.5 border-2 border-surface-200 dark:border-surface-700 rounded-2xl bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-100 text-xs font-medium focus:border-brand-500 focus:outline-none"
+              class="w-full p-2.5 border-2 border-surface-200 dark:border-surface-700 rounded-2xl bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-100 text-base font-medium focus:border-brand-500 focus:outline-none"
               id="cancel_reauth_password"
               placeholder="Nhập mật khẩu quản trị viên nếu phiên yêu cầu xác thực lại..."
               type="password"
@@ -556,3 +556,5 @@
     loadSubscriptions();
   });
 </script>
+
+<style scoped></style>

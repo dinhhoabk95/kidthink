@@ -10,9 +10,11 @@ import {
   ReconciliationMismatchError,
   WebhookReplayDetectedError,
 } from "@mindkid/errors/billing";
+import { ValidationError } from "@mindkid/errors/common";
 import {
   type AutomatedPaymentProvider,
   type AutomatedPaymentWebhookPayload,
+  assertPaymentOrderTransition,
   isWebhookWithinReplayWindow,
   PACKAGE_CATALOG,
 } from "@mindkid/shared";
@@ -37,31 +39,56 @@ async function grantOrStackEntitlements(
   now: Date
 ) {
   const pkgDef = PACKAGE_CATALOG[packageCode];
-  const offerDef = pkgDef?.offers.find((o) => o.offer_code === offerCode);
+  if (!pkgDef) {
+    throw new ValidationError(`Gói cước không hợp lệ: ${packageCode}`);
+  }
+  const offerDef = pkgDef.offers.find((o) => o.offer_code === offerCode);
   const durationDays = offerDef?.duration_days ?? 365;
   const newExpiry = new Date(
     now.getTime() + durationDays * 24 * 60 * 60 * 1000
   );
-  const entitlementKeysToGrant = pkgDef?.entitlements ?? [
-    "play_standard_games",
-  ];
+  const entitlementKeysToGrant = pkgDef.entitlements;
+
+  const existingRows = await tx
+    .select()
+    .from(entitlements)
+    .where(
+      and(
+        eq(entitlements.userId, userId),
+        inArray(entitlements.entitlementKey, entitlementKeysToGrant),
+        inArray(entitlements.status, ["active", "soft_unlock", "grace_period"])
+      )
+    )
+    .catch(() => [] as (typeof entitlements.$inferSelect)[]);
+
+  const existingMap = new Map<string, typeof entitlements.$inferSelect>();
+  for (const row of existingRows) {
+    if (!existingMap.has(row.entitlementKey)) {
+      existingMap.set(row.entitlementKey, row);
+    }
+  }
 
   for (const key of entitlementKeysToGrant) {
-    const [existingEntitlement] = await tx
-      .select()
-      .from(entitlements)
-      .where(
-        and(
-          eq(entitlements.userId, userId),
-          eq(entitlements.entitlementKey, key),
-          inArray(entitlements.status, [
-            "active",
-            "soft_unlock",
-            "grace_period",
-          ])
+    let existingEntitlement = existingMap.get(key);
+    if (!existingEntitlement && existingRows.length === 0) {
+      const [singleRow] = await tx
+        .select()
+        .from(entitlements)
+        .where(
+          and(
+            eq(entitlements.userId, userId),
+            eq(entitlements.entitlementKey, key),
+            inArray(entitlements.status, [
+              "active",
+              "soft_unlock",
+              "grace_period",
+            ])
+          )
         )
-      )
-      .limit(1);
+        .limit(1)
+        .catch(() => [] as (typeof entitlements.$inferSelect)[]);
+      existingEntitlement = singleRow;
+    }
 
     if (
       existingEntitlement?.expiresAt &&
@@ -115,11 +142,18 @@ async function handleNonSuccessWebhook(
     createdAt: now,
   });
 
+  const isPendingOrDraft =
+    order.status === "pending" || order.status === "draft";
+  let finalOrderStatus = order.status;
+  if (isPendingOrDraft) {
+    finalOrderStatus = payload.status === "cancelled" ? "cancelled" : "expired";
+  }
+
   if (order.status === "pending" || order.status === "draft") {
     await tx
       .update(paymentOrders)
       .set({
-        status: payload.status === "cancelled" ? "cancelled" : "expired",
+        status: finalOrderStatus,
         updatedAt: now,
       })
       .where(eq(paymentOrders.id, order.id));
@@ -128,7 +162,7 @@ async function handleNonSuccessWebhook(
   return {
     success: true,
     orderUuid: order.uuid,
-    orderStatus: order.status,
+    orderStatus: finalOrderStatus,
     isDuplicate: false,
   };
 }
@@ -207,6 +241,8 @@ export async function processAutomatedPaymentWebhook(
 
     // 6. Webhook status is success -> Atomic state transition + Entitlements + Audit
     if (order.status !== "approved") {
+      assertPaymentOrderTransition(order.status, "approved");
+
       // Transition order to approved
       await tx
         .update(paymentOrders)
@@ -271,6 +307,22 @@ export async function processAutomatedPaymentWebhook(
  * Reconcile internal ledger against external provider transactions.
  * BR-APM-06: Flag mismatches, do not auto-modify amounts or blindly grant entitlements.
  */
+function normalizeTxStatus(
+  status: string
+): "success" | "cancelled" | "failed" | "other" {
+  const s = status.toLowerCase();
+  if (["success", "paid", "approved", "completed"].includes(s)) {
+    return "success";
+  }
+  if (["cancelled", "canceled"].includes(s)) {
+    return "cancelled";
+  }
+  if (["failed", "expired"].includes(s)) {
+    return "failed";
+  }
+  return "other";
+}
+
 export async function reconcileAutomatedPayments(params: {
   provider: AutomatedPaymentProvider;
   records: Array<{
@@ -299,17 +351,24 @@ export async function reconcileAutomatedPayments(params: {
 
   let matchedCount = 0;
 
+  const eventIds = params.records.map((r) => r.providerEventId).filter(Boolean);
+  const existingTxs =
+    eventIds.length > 0
+      ? await db
+          .select()
+          .from(paymentTransactions)
+          .where(
+            and(
+              eq(paymentTransactions.provider, params.provider),
+              inArray(paymentTransactions.providerEventId, eventIds)
+            )
+          )
+      : [];
+
+  const txMap = new Map(existingTxs.map((tx) => [tx.providerEventId, tx]));
+
   for (const record of params.records) {
-    const [txRecord] = await db
-      .select()
-      .from(paymentTransactions)
-      .where(
-        and(
-          eq(paymentTransactions.provider, params.provider),
-          eq(paymentTransactions.providerEventId, record.providerEventId)
-        )
-      )
-      .limit(1);
+    const txRecord = txMap.get(record.providerEventId);
 
     if (!txRecord) {
       mismatches.push({
@@ -325,6 +384,18 @@ export async function reconcileAutomatedPayments(params: {
         providerEventId: record.providerEventId,
         orderUuid: record.orderUuid,
         reason: `AMOUNT_MISMATCH: expected ${txRecord.amountVnd}, provider reported ${record.amountVnd}`,
+      });
+      continue;
+    }
+
+    if (
+      normalizeTxStatus(record.status) !== normalizeTxStatus(txRecord.status)
+    ) {
+      mismatches.push({
+        providerEventId: record.providerEventId,
+        orderUuid: record.orderUuid,
+        reason:
+          "Trạng thái giao dịch lệch giữa cổng thanh toán và sổ cái nội bộ",
       });
       continue;
     }

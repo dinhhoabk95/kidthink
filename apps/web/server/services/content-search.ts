@@ -1,17 +1,20 @@
 import {
-  activities,
   contentSkillMap,
   gameLevels,
-  lessons,
   type OwnerDb,
   skills,
   strands,
 } from "@mindkid/db";
 import type { AccessTier } from "@mindkid/shared";
 import { AGE_BANDS, allowedTiers, getEffectiveTier } from "@mindkid/shared";
-import { and, eq, gt, gte, lte, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gte, lte, sql } from "drizzle-orm";
 import type { getQuery } from "h3";
 import { z } from "zod";
+import {
+  ageBandLabel,
+  buildGameLevelFacets,
+  competencyFromCode,
+} from "#server/services/content-search-facets";
 
 export type SearchViewerRole = "guest" | "user" | "manager";
 export type RawSearchParamsInput =
@@ -26,7 +29,7 @@ const VIETNAMESE_UNACCENTED =
   "aaaaaaaaaaaaaaaaaeeeeeeeeeeeiiiiiooooooooooooooooouuuuuuuuuuuyyyyydAAAAAAAAAAAAAAAAAEEEEEEEEEEEIIIIIOOOOOOOOOOOOOOOOOUUUUUUUUUUUYYYYYD";
 
 export const SearchParamsSchema = z.object({
-  q: z.string().optional(),
+  q: z.string().trim().max(100).optional(),
   age_min: z.coerce.number().min(3).max(6).optional(),
   age_max: z.coerce.number().min(3).max(6).optional(),
   /**
@@ -47,9 +50,9 @@ export const SearchParamsSchema = z.object({
    */
   age_band: z.enum(AGE_BANDS).optional(),
   competency: z.enum(["C1", "C2", "C3", "C4", "C5", "C6"]).optional(),
-  strand: z.string().optional(),
-  skill: z.string().optional(),
-  skill_code: z.string().optional(),
+  strand: z.string().trim().max(100).optional(),
+  skill: z.string().trim().max(100).optional(),
+  skill_code: z.string().trim().max(100).optional(),
   learning_objective: z.string().optional(),
   difficulty: z.coerce.number().min(1).max(5).optional(),
   duration_max: z.coerce.number().optional(),
@@ -75,7 +78,6 @@ export const SearchParamsSchema = z.object({
     .default("relevance"),
   limit: z.coerce.number().min(1).optional(),
   cursor: z.string().optional(),
-  is_exemplar: z.coerce.boolean().optional(),
 });
 
 export type SearchParams = z.infer<typeof SearchParamsSchema>;
@@ -88,16 +90,18 @@ function removeVietnameseTones(str: string): string {
     .replace(/Đ/g, "D");
 }
 
+function escapeLikeWildcards(text: string): string {
+  return text.replace(/([%_\\])/g, "\\$1");
+}
+
 function buildBasicConditions(
   params: SearchParams,
-  viewerRole: SearchViewerRole
+  _viewerRole: SearchViewerRole
 ): ReturnType<typeof sql>[] {
   const conditions: ReturnType<typeof sql>[] = [];
 
-  if (viewerRole === "guest" || viewerRole === "user") {
-    conditions.push(eq(gameLevels.status, "published"));
-  } else if (params.status) {
-    conditions.push(eq(gameLevels.status, params.status));
+  if (params.status && params.status !== "published") {
+    conditions.push(sql`1 = 0`);
   }
 
   if (params.access_tier) {
@@ -144,7 +148,8 @@ function buildSearchWhereConditions(
 
   if (params.strand) {
     const rawStrand = params.strand.trim();
-    const suffixPattern = `%.${rawStrand}`;
+    const escapedStrand = escapeLikeWildcards(rawStrand);
+    const suffixPattern = `%.${escapedStrand}`;
     conditions.push(
       sql`EXISTS (
         SELECT 1 FROM ${contentSkillMap}
@@ -155,7 +160,7 @@ function buildSearchWhereConditions(
           AND (
             ${strands.code} = ${rawStrand} OR 
             ${strands.code} ILIKE ${suffixPattern} OR
-            ${strands.name} ILIKE ${rawStrand}
+            ${strands.name} ILIKE ${escapedStrand}
           )
       )`
     );
@@ -177,8 +182,8 @@ function buildSearchWhereConditions(
   if (params.q && params.q.trim().length > 0) {
     const rawQuery = params.q.trim();
     const normalizedQuery = removeVietnameseTones(rawQuery);
-    const patternRaw = `%${rawQuery}%`;
-    const patternNorm = `%${normalizedQuery}%`;
+    const patternRaw = `%${escapeLikeWildcards(rawQuery)}%`;
+    const patternNorm = `%${escapeLikeWildcards(normalizedQuery)}%`;
     conditions.push(
       sql`(
         ${gameLevels.title} ILIKE ${patternRaw} OR
@@ -213,9 +218,15 @@ async function getViewerAllowedTiers(viewer: {
       | "play_standard_games"
       | "play_login_games"
     )[] = ["play_login_games"];
-    if (viewer.userPackage === "PKG-premium") {
+    if (
+      viewer.userPackage === "PKG-premium" ||
+      viewer.userPackage === "premium"
+    ) {
       keys = ["play_premium_games", "play_standard_games", "play_login_games"];
-    } else if (viewer.userPackage === "PKG-standard") {
+    } else if (
+      viewer.userPackage === "PKG-standard" ||
+      viewer.userPackage === "standard"
+    ) {
       keys = ["play_standard_games", "play_login_games"];
     }
     return await allowedTiers({ kind: "user", user_id: "user" }, keys);
@@ -236,35 +247,10 @@ interface RawRow {
   ageMax?: number | null;
   difficulty?: number | null;
   accessTier: string;
-  status: string;
+  status?: string;
   contentPack: (typeof gameLevels.$inferSelect)["contentPack"];
   difficultyParams: (typeof gameLevels.$inferSelect)["difficultyParams"];
   createdAt: Date;
-}
-
-/**
- * Năng lực đọc từ mã level — `GL-C3-...` thuộc C3.
- *
- * Không có cột `competency` trên `game_levels`; bộ lọc của
- * `buildSearchWhereConditions` cũng khớp bằng `code LIKE 'GL-C3-%'`, nên đây là
- * cùng một nguồn sự thật chứ không phải một cách suy diễn thứ hai.
- */
-const LEVEL_COMPETENCY_REGEX = /^GL-(C[1-6])-/;
-
-export function competencyFromCode(code: string): string | null {
-  const match = LEVEL_COMPETENCY_REGEX.exec(code);
-  return match?.[1] ?? null;
-}
-
-/** "3-4" — thẻ trò chơi hiện band, không hiện hai số rời (`BR-GCP` §7.2). */
-export function ageBandLabel(
-  ageMin: number | null | undefined,
-  ageMax: number | null | undefined
-): string | null {
-  if (ageMin == null || ageMax == null) {
-    return null;
-  }
-  return `${ageMin}-${ageMax}`;
 }
 
 function formatSearchItem(
@@ -289,12 +275,12 @@ function formatSearchItem(
     thumbnail_emoji: row.thumbnailEmoji,
     theme_id: row.themeId,
     competency: competencyFromCode(row.code),
-    age_band: ageBandLabel(row.ageMin, row.ageMax),
+    age_band: ageBandLabel(row.ageMin ?? null, row.ageMax ?? null),
     age_min: row.ageMin,
     age_max: row.ageMax,
     difficulty: row.difficulty,
     access_tier: row.accessTier,
-    status: row.status,
+    status: row.status ?? "published",
   };
 
   if (isLocked) {
@@ -307,6 +293,16 @@ function formatSearchItem(
     content_pack: row.contentPack,
     difficulty_params: row.difficultyParams,
   };
+}
+
+function resolveGameLevelOrder(params: SearchParams) {
+  if (!params.cursor && params.sort === "newest") {
+    return [desc(gameLevels.createdAt), asc(gameLevels.id)];
+  }
+  if (!params.cursor && params.sort === "difficulty") {
+    return [asc(gameLevels.difficulty), asc(gameLevels.id)];
+  }
+  return [asc(gameLevels.id)];
 }
 
 export async function searchGameLevels(
@@ -322,10 +318,11 @@ export async function searchGameLevels(
   const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
   const userAllowedTiers = await getViewerAllowedTiers(viewer);
 
+  const orderClauses = resolveGameLevelOrder(params);
+
   const rawRows = await db
     .select({
       id: gameLevels.id,
-      entityId: gameLevels.entityId,
       code: gameLevels.code,
       title: gameLevels.title,
       description: gameLevels.description,
@@ -336,13 +333,13 @@ export async function searchGameLevels(
       ageMax: gameLevels.ageMax,
       difficulty: gameLevels.difficulty,
       accessTier: gameLevels.accessTier,
-      status: gameLevels.status,
       contentPack: gameLevels.contentPack,
       difficultyParams: gameLevels.difficultyParams,
       createdAt: gameLevels.createdAt,
     })
     .from(gameLevels)
     .where(whereClause)
+    .orderBy(...orderClauses)
     .limit(limit + 1);
 
   const hasMore = rawRows.length > limit;
@@ -365,423 +362,25 @@ export async function searchGameLevels(
 
   const isPaidViewer =
     viewer.userPackage === "PKG-premium" ||
-    viewer.userPackage === "PKG-standard";
+    viewer.userPackage === "premium" ||
+    viewer.userPackage === "PKG-standard" ||
+    viewer.userPackage === "standard";
   const hasPaidOrLockedContent =
     isPaidViewer ||
     items.some((item) => item.locked || item.access_tier !== "free");
 
-  const facets = await buildGameLevelFacets(db, params, viewer.role);
+  const facets = await buildGameLevelFacets(
+    db,
+    params,
+    viewer.role,
+    buildSearchWhereConditions
+  );
 
   return {
     items,
     next_cursor: nextCursor,
     total: facets.total,
     facets,
-    no_store: hasPaidOrLockedContent,
-  };
-}
-
-export interface GameLevelFacets {
-  total: number;
-  competency: Record<string, number>;
-  age: Record<string, number>;
-  age_band: Record<string, number>;
-  access_tier: Record<string, number>;
-  strand?: Record<string, number>;
-}
-
-interface FacetCountRow {
-  code: string;
-  ageMin: number | null;
-  ageMax: number | null;
-  accessTier: AccessTier;
-}
-
-/**
- * Số lượng cho từng giá trị bộ lọc — `GAME-CATALOG-PUBLIC` §8.
- *
- * Mỗi trục được đếm với **mọi bộ lọc khác trừ chính nó**. Đếm với cả bộ lọc
- * hiện tại thì mọi lựa chọn chưa chọn đều ra 0 và giao diện sẽ vô hiệu hết —
- * đúng ngược với lý do facet tồn tại.
- */
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: aggregate facets branching
-async function buildGameLevelFacets(
-  db: OwnerDb,
-  params: SearchParams,
-  viewerRole: SearchViewerRole
-): Promise<GameLevelFacets> {
-  const countWith = async (
-    overrides: Partial<SearchParams>
-  ): Promise<FacetCountRow[]> => {
-    const scoped = { ...params, ...overrides };
-    const conditions = buildSearchWhereConditions(scoped, viewerRole);
-    return await db
-      .select({
-        code: gameLevels.code,
-        ageMin: gameLevels.ageMin,
-        ageMax: gameLevels.ageMax,
-        accessTier: gameLevels.accessTier,
-      })
-      .from(gameLevels)
-      .where(conditions.length > 0 ? and(...conditions) : undefined);
-  };
-
-  const clearCursor = { cursor: undefined };
-  const strandConditions = buildSearchWhereConditions(
-    { ...params, strand: undefined, cursor: undefined },
-    viewerRole
-  );
-
-  const [competencyRows, ageRows, tierRows, totalRows, strandRows] =
-    await Promise.all([
-      countWith({
-        ...clearCursor,
-        competency: undefined,
-      }),
-      countWith({
-        ...clearCursor,
-        age: undefined,
-        age_min: undefined,
-        age_max: undefined,
-        age_band: undefined,
-      }),
-      countWith({
-        ...clearCursor,
-        access_tier: undefined,
-      }),
-      countWith(clearCursor),
-      db
-        .select({
-          code: strands.code,
-          count: sql<number>`count(distinct ${gameLevels.id})`.mapWith(Number),
-        })
-        .from(gameLevels)
-        .innerJoin(
-          contentSkillMap,
-          and(
-            eq(contentSkillMap.entityId, gameLevels.id),
-            eq(contentSkillMap.entityType, "game_level")
-          )
-        )
-        .innerJoin(skills, eq(contentSkillMap.skillId, skills.id))
-        .innerJoin(strands, eq(skills.strandId, strands.id))
-        .where(
-          strandConditions.length > 0 ? and(...strandConditions) : undefined
-        )
-        .groupBy(strands.code),
-    ]);
-
-  const competency: Record<string, number> = {};
-  for (const row of competencyRows) {
-    const code = competencyFromCode(row.code);
-    if (code) {
-      competency[code] = (competency[code] ?? 0) + 1;
-    }
-  }
-
-  const age: Record<string, number> = {};
-  const age_band: Record<string, number> = {};
-  for (const row of ageRows) {
-    if (row.ageMin == null || row.ageMax == null) {
-      continue;
-    }
-    for (let year = row.ageMin; year <= row.ageMax; year++) {
-      age[String(year)] = (age[String(year)] ?? 0) + 1;
-    }
-    const band = ageBandLabel(row.ageMin, row.ageMax);
-    if (band) {
-      age_band[band] = (age_band[band] ?? 0) + 1;
-    }
-  }
-
-  const access_tier: Record<string, number> = {};
-  for (const row of tierRows) {
-    access_tier[row.accessTier] = (access_tier[row.accessTier] ?? 0) + 1;
-  }
-
-  const strand: Record<string, number> = {};
-  for (const row of strandRows) {
-    strand[row.code] = row.count;
-  }
-
-  return {
-    total: totalRows.length,
-    competency,
-    age,
-    age_band,
-    access_tier,
-    strand,
-  };
-}
-
-function buildActivityConditions(
-  params: z.infer<typeof SearchParamsSchema>,
-  viewer: { role: SearchViewerRole; userPackage?: string }
-) {
-  const conditions: ReturnType<typeof sql>[] = [];
-
-  if (viewer.role === "guest" || viewer.role === "user") {
-    conditions.push(eq(activities.status, "published"));
-  } else if (params.status) {
-    conditions.push(eq(activities.status, params.status));
-  }
-
-  if (params.access_tier) {
-    conditions.push(eq(activities.accessTier, params.access_tier));
-  }
-  if (params.what) {
-    conditions.push(
-      eq(activities.kind, params.what as typeof activities.$inferSelect.kind)
-    );
-  }
-  if (params.duration_max !== undefined) {
-    conditions.push(lte(activities.estimatedMinutes, params.duration_max));
-  }
-  if (params.cursor) {
-    const cursorId = Number(params.cursor);
-    if (!Number.isNaN(cursorId)) {
-      conditions.push(gt(activities.id, cursorId));
-    }
-  }
-
-  if (params.q && params.q.trim().length > 0) {
-    const rawQuery = params.q.trim();
-    const normalizedQuery = removeVietnameseTones(rawQuery);
-    const patternRaw = `%${rawQuery}%`;
-    const patternNorm = `%${normalizedQuery}%`;
-    conditions.push(
-      sql`(
-        ${activities.code} ILIKE ${patternRaw} OR
-        ${activities.title} ILIKE ${patternRaw} OR
-        ${activities.instruction} ILIKE ${patternRaw} OR
-        ${activities.materials} ILIKE ${patternRaw} OR
-        translate(${activities.title}, ${VIETNAMESE_ACCENTED}, ${VIETNAMESE_UNACCENTED}) ILIKE ${patternNorm}
-      )`
-    );
-  }
-  return conditions;
-}
-
-export async function searchActivities(
-  db: OwnerDb,
-  rawParams: RawSearchParamsInput,
-  viewer: { role: SearchViewerRole; userPackage?: string }
-) {
-  const params = SearchParamsSchema.parse(rawParams ?? {});
-  const maxLimit = viewer.role === "manager" ? 100 : 60;
-  const limit = Math.min(params.limit ?? 20, maxLimit);
-
-  const conditions = buildActivityConditions(params, viewer);
-  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
-  const userAllowedTiers = await getViewerAllowedTiers(viewer);
-
-  const rawRows = await db
-    .select({
-      id: activities.id,
-      entityId: activities.entityId,
-      code: activities.code,
-      contentVersion: activities.contentVersion,
-      kind: activities.kind,
-      title: activities.title,
-      instruction: activities.instruction,
-      materials: activities.materials,
-      estimatedMinutes: activities.estimatedMinutes,
-      refType: activities.refType,
-      refId: activities.refId,
-      accessTier: activities.accessTier,
-      status: activities.status,
-      origin: activities.origin,
-      authoredIn: activities.authoredIn,
-      createdAt: activities.createdAt,
-    })
-    .from(activities)
-    .where(whereClause)
-    .limit(limit + 1);
-
-  const hasMore = rawRows.length > limit;
-  const pageRows = hasMore ? rawRows.slice(0, limit) : rawRows;
-  const lastRow = pageRows.at(-1);
-  const nextCursor = hasMore && lastRow ? String(lastRow.id) : null;
-
-  const items = pageRows.map((row) => {
-    const isLocked =
-      viewer.role !== "manager" && !userAllowedTiers.includes(row.accessTier);
-    return {
-      id: row.id,
-      entity_id: row.entityId,
-      code: row.code,
-      content_version: row.contentVersion,
-      kind: row.kind,
-      title: row.title,
-      instruction: isLocked ? "" : row.instruction,
-      materials: row.materials,
-      estimated_minutes: row.estimatedMinutes,
-      ref_type: row.refType,
-      ref_id: row.refId,
-      access_tier: row.accessTier,
-      status: row.status,
-      origin: row.origin,
-      authored_in: row.authoredIn,
-      created_at: row.createdAt,
-      locked: isLocked,
-    };
-  });
-
-  const isPaidViewer =
-    viewer.userPackage === "PKG-premium" ||
-    viewer.userPackage === "PKG-standard";
-  const hasPaidOrLockedContent =
-    isPaidViewer ||
-    items.some((item) => item.locked || item.access_tier !== "free");
-
-  return {
-    items,
-    next_cursor: nextCursor,
-    no_store: hasPaidOrLockedContent,
-  };
-}
-
-function buildLessonConditions(
-  params: z.infer<typeof SearchParamsSchema>,
-  viewer: { role: SearchViewerRole; userPackage?: string }
-) {
-  const conditions: ReturnType<typeof sql>[] = [];
-
-  if (viewer.role === "guest" || viewer.role === "user") {
-    conditions.push(eq(lessons.status, "published"));
-  } else if (params.status) {
-    conditions.push(eq(lessons.status, params.status));
-  }
-
-  if (params.access_tier) {
-    conditions.push(eq(lessons.accessTier, params.access_tier));
-  }
-  if (params.age_min !== undefined) {
-    conditions.push(gte(lessons.targetAgeMin, params.age_min));
-  }
-  if (params.age_max !== undefined) {
-    conditions.push(lte(lessons.targetAgeMax, params.age_max));
-  }
-  if (params.duration_max !== undefined) {
-    conditions.push(lte(lessons.estimatedMinutes, params.duration_max));
-  }
-  if (params.cursor) {
-    const cursorId = Number(params.cursor);
-    if (!Number.isNaN(cursorId)) {
-      conditions.push(gt(lessons.id, cursorId));
-    }
-  }
-
-  if (params.is_exemplar !== undefined) {
-    conditions.push(eq(lessons.isExemplar, params.is_exemplar));
-  }
-
-  if (params.q && params.q.trim().length > 0) {
-    const rawQuery = params.q.trim();
-    const normalizedQuery = removeVietnameseTones(rawQuery);
-    const patternRaw = `%${rawQuery}%`;
-    const patternNorm = `%${normalizedQuery}%`;
-    conditions.push(
-      sql`(
-        ${lessons.code} ILIKE ${patternRaw} OR
-        ${lessons.title} ILIKE ${patternRaw} OR
-        ${lessons.guide} ILIKE ${patternRaw} OR
-        ${lessons.materials} ILIKE ${patternRaw} OR
-        translate(${lessons.title}, ${VIETNAMESE_ACCENTED}, ${VIETNAMESE_UNACCENTED}) ILIKE ${patternNorm}
-      )`
-    );
-  }
-
-  return conditions;
-}
-
-export async function searchLessons(
-  db: OwnerDb,
-  rawParams: RawSearchParamsInput,
-  viewer: { role: SearchViewerRole; userPackage?: string }
-) {
-  const params = SearchParamsSchema.parse(rawParams ?? {});
-  const maxLimit = viewer.role === "manager" ? 100 : 40;
-  const limit = Math.min(params.limit ?? 20, maxLimit);
-
-  const conditions = buildLessonConditions(params, viewer);
-  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
-  const userAllowedTiers = await getViewerAllowedTiers(viewer);
-
-  const rawRows = await db
-    .select({
-      id: lessons.id,
-      entityId: lessons.entityId,
-      code: lessons.code,
-      contentVersion: lessons.contentVersion,
-      title: lessons.title,
-      guide: lessons.guide,
-      targetAgeMin: lessons.targetAgeMin,
-      targetAgeMax: lessons.targetAgeMax,
-      estimatedMinutes: lessons.estimatedMinutes,
-      materials: lessons.materials,
-      warmUp: lessons.warmUp,
-      reflection: lessons.reflection,
-      assessment: lessons.assessment,
-      extension: lessons.extension,
-      accessTier: lessons.accessTier,
-      status: lessons.status,
-      origin: lessons.origin,
-      authoredIn: lessons.authoredIn,
-      isExemplar: lessons.isExemplar,
-      exemplarCompetency: lessons.exemplarCompetency,
-      exemplarAgeBand: lessons.exemplarAgeBand,
-      createdAt: lessons.createdAt,
-    })
-    .from(lessons)
-    .where(whereClause)
-    .limit(limit + 1);
-
-  const hasMore = rawRows.length > limit;
-  const pageRows = hasMore ? rawRows.slice(0, limit) : rawRows;
-  const lastRow = pageRows.at(-1);
-  const nextCursor = hasMore && lastRow ? String(lastRow.id) : null;
-
-  const items = pageRows.map((row) => {
-    const isLocked =
-      viewer.role !== "manager" && !userAllowedTiers.includes(row.accessTier);
-    return {
-      id: row.id,
-      entity_id: row.entityId,
-      code: row.code,
-      content_version: row.contentVersion,
-      title: row.title,
-      guide: isLocked ? "" : row.guide,
-      target_age_min: row.targetAgeMin,
-      target_age_max: row.targetAgeMax,
-      estimated_minutes: row.estimatedMinutes,
-      materials: row.materials,
-      warm_up: row.warmUp,
-      reflection: row.reflection,
-      assessment: row.assessment,
-      extension: row.extension,
-      access_tier: row.accessTier,
-      status: row.status,
-      origin: row.origin,
-      authored_in: row.authoredIn,
-      is_exemplar: row.isExemplar,
-      exemplar_competency: row.exemplarCompetency,
-      exemplar_age_band: row.exemplarAgeBand,
-      created_at: row.createdAt,
-      locked: isLocked,
-    };
-  });
-
-  const isPaidViewer =
-    viewer.userPackage === "PKG-premium" ||
-    viewer.userPackage === "PKG-standard";
-  const hasPaidOrLockedContent =
-    isPaidViewer ||
-    items.some((item) => item.locked || item.access_tier !== "free");
-
-  return {
-    items,
-    next_cursor: nextCursor,
     no_store: hasPaidOrLockedContent,
   };
 }

@@ -1,0 +1,1491 @@
+{
+  "stage_id": "chang-11",
+  "workbook_id": "WB11",
+  "title": "Chặng 11: Lâu Đài Ô Số - Giải Mã Những Ô Trống",
+  "subtitle": "Phối Hợp Hàng Ngang - Hàng Dọc & Phép Tính Cộng Trừ Trong Phạm Vi 20",
+  "total_pages": 22,
+  "target_age": "3–6 tuổi",
+  "series": "Gấu Logic & Thỏ Quan Sát - Chuyến Tàu Toán Học (Phần 11)",
+  "mission": "Khám phá Lâu Đài Ô Số, điền đúng các số còn thiếu vào hệ thống ma trận phép tính liên hoàn theo cả hàng ngang và hàng dọc để mở khóa từng cánh cổng, tháp số, pháo đài và giải mã Đại Mật Mã Viên Ngọc Lâu Đài.",
+  "pedagogy": {
+    "framework": "Montessori & CPA (Concrete - Pictorial - Abstract) kết hợp Tư duy Tiền Đại Số & Ma Trận Số Học (Cross-number Math Grids / Early Algebraic Thinking)",
+    "approach": "Hệ thống ràng buộc hai chiều (2D Constraint Satisfaction): Mỗi ô số tại giao điểm phải thỏa mãn đồng thời phép tính hàng ngang (từ trái sang phải) và hàng dọc (từ trên xuống dưới). Khắc sâu mối quan hệ nghịch đảo giữa phép cộng và phép trừ (Inverse Relationship: a + b = c <=> c - a = b). Rèn luyện tư duy suy luận diễn dịch nhiều bước (Cascading Deductive Reasoning): xác định hàng/cột có nhiều dữ kiện nhất để giải trước, tạo tiền đề mở khóa các ô số tiếp theo.",
+    "competencies": [
+      "C1 - Cảm thức số học & Phép tính (Number Sense & Operations)",
+      "C3 - Tư duy logic, Quy luật & Ma trận (Logical Reasoning, Patterns & Matrix Logic)"
+    ],
+    "skills_targeted": [
+      {
+        "code": "C1.ADD.01",
+        "name": "Phép cộng trong phạm vi 10 (Addition within 10)"
+      },
+      {
+        "code": "C1.ADD.02",
+        "name": "Phép cộng trong phạm vi 20 có nhớ và không nhớ (Addition within 20)"
+      },
+      {
+        "code": "C1.SUB.01",
+        "name": "Phép trừ trong phạm vi 10 (Subtraction within 10)"
+      },
+      {
+        "code": "C1.SUB.02",
+        "name": "Phép trừ trong phạm vi 20 (Subtraction within 20)"
+      },
+      {
+        "code": "C1.ALG.01",
+        "name": "Phương trình số khuyết & Số hạng chưa biết (Missing Addend & Subtrahend Equations: a + [ ] = c, [ ] - b = c)"
+      },
+      {
+        "code": "C1.SYM.01",
+        "name": "Nhận biết và vận dụng ký hiệu phép tính (+, -, =)"
+      },
+      {
+        "code": "C3.RULE.01",
+        "name": "Nhận diện và suy luận quy luật hàng và cột (Row-Column Constraint Logic)"
+      },
+      {
+        "code": "C3.MAT.01",
+        "name": "Tư duy ma trận số học hai chiều (2D Cross-Math Matrix Reasoning)"
+      },
+      {
+        "code": "C3.DED.01",
+        "name": "Suy luận diễn dịch dây chuyền (Cascading Deduction & Strategic Entry Point)"
+      }
+    ],
+    "progression_narrative": "Tiến trình sư phạm gồm 5 giai đoạn tiến triển rõ rệt từ trực quan cơ bản đến cấu trúc không gian phức hợp: (1) Nền tảng ma trận lưới 2 chiều (Trang 1–5): Làm quen với cơ chế kiểm tra chéo hàng ngang - hàng dọc, giải quyết các ô trống từ 13 đến 17 ô trong lưới hình chữ nhật chuẩn; (2) Cấu trúc hình học - kiến trúc biểu tượng (Trang 6–9): Chuyển hóa lưới chữ nhật sang các dạng hình học phi đối xứng như bậc thang ziggurat, ngôi nhà mái tam giác, đoàn tàu hỏa và vương miện 3 đỉnh (17–20 ô trống), kích thích định hướng không gian; (3) Công trình pháo đài & chìa khóa liên hợp (Trang 10–14): Ma trận hình chìa khóa cổ, tường thành zíc zắc, tháp bậc thang 3 tầng và pháo đài chữ T đối xứng (18–21 ô trống) yêu cầu giải các nhánh phụ trước khi hội tụ về trục chính; (4) Mạng lưới liên kết đa cụm (Trang 15–18): Bản đồ thành trì zíc zắc, huy hiệu khiên nhọn, cầu thành song song và tháp đôi ô số nối cầu treo (20–21 ô trống) đòi hỏi tư duy hệ thống và đối chiếu song song; (5) Mạch vòng khép kín & Đại thử thách đỉnh cao (Trang 19–21): Cửa sổ chữ thập 4 hướng, vòng thành khép kín (closed-loop constraint) và đại mật mã viên ngọc 7 khối (22 ô trống) tích hợp toàn diện năng lực tiền đại số và tư duy logic phản biện."
+  },
+  "activity_groups": [
+    {
+      "group_id": "WB11-D1",
+      "group_name": "Ma trận lưới số học 2 chiều cơ bản (Fundamental 2D Cross-Math Grids)",
+      "page_range": "Trang 2 – Trang 6 (Sách: Trang 1 – Trang 5)",
+      "mechanic_description": "Trẻ quan sát lưới ô chữ số học dạng chữ nhật hoặc chữ thập cơ bản gồm các biểu thức cộng và trừ đan xen. Trẻ tính toán giá trị theo hàng ngang (từ trái sang phải) và kiểm tra lại bằng hàng dọc (từ trên xuống dưới). Tìm ra số còn thiếu (ẩn số) trong các ô khuyết để mọi phương trình đều đúng.",
+      "sample_prompts": [
+        "Tính theo hàng ngang và hàng dọc, rồi điền số còn thiếu",
+        "Tính từ trái sang phải, sau đó kiểm tra theo hàng dọc",
+        "Tính từ trên xuống dưới, rồi dùng hàng ngang để kiểm tra",
+        "Mỗi ô trống phải làm đúng cả hàng ngang và hàng dọc",
+        "Điền đủ các ô trống và kiểm tra lại theo chiều còn lại"
+      ],
+      "visual_objects": [
+        "Khối gạch số học màu pastel (xanh dương, vàng, xanh lá, hồng, cam)",
+        "Các ô vuông viền nét đứt màu vàng viền cam biểu thị ô cần điền số",
+        "Ký hiệu phép toán (+, -, =) in nổi trên nền khối gạch vuông 3D",
+        "Cổng vòm đá lâu đài và đường ray xe lửa Chuyến Tàu Toán Học"
+      ],
+      "quantities_and_ranges": "Các số tự nhiên trong phạm vi từ 1 đến 20. Phép cộng và trừ không vượt quá 20. Số lượng ô trống cần giải: 13 đến 17 ô mỗi trang.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chạm chọn ô trống rồi gõ số từ bàn phím số/khay số)"
+        },
+        {
+          "template_id": "GT-008",
+          "template_name": "drag-to-slot (kéo thả thẻ số vào các ô trống phù hợp)"
+        },
+        {
+          "template_id": "GT-048",
+          "template_name": "cross-math-grid (engine ma trận số học 2D chuyên biệt)"
+        }
+      ],
+      "recommended_skills": [
+        "C1.ADD.01",
+        "C1.ADD.02",
+        "C1.SUB.01",
+        "C1.SUB.02",
+        "C1.ALG.01",
+        "C3.RULE.01",
+        "C3.MAT.01"
+      ]
+    },
+    {
+      "group_id": "WB11-D2",
+      "group_name": "Cấu trúc hình học & Kiến trúc biểu tượng (Architectural & Figurative Grids)",
+      "page_range": "Trang 7 – Trang 10 (Sách: Trang 6 – Trang 9)",
+      "mechanic_description": "Các phương trình số học được sắp xếp theo các hình dạng hình học và đồ vật thân quen (cầu thang bậc ziggurat, ngôi nhà mái tam giác, đoàn tàu hỏa có ống khói, vương miện hoàng gia 3 đỉnh nhô cao). Trẻ phải nhận diện điểm bắt đầu chiến lược: giải từ mái nhà xuống, giải từ đầu tàu đến toa cuối, giải hàng nền vương miện trước khi thắp sáng các đỉnh.",
+      "sample_prompts": [
+        "Giải lần lượt từ bậc thấp lên bậc cao",
+        "Hoàn thành mái nhà trước, sau đó giải các tầng bên dưới",
+        "Điền số theo chiều đoàn tàu chạy, rồi kiểm tra từ trên xuống",
+        "Giải hàng nền trước, sau đó mở lần lượt các đỉnh vương miện"
+      ],
+      "visual_objects": [
+        "Bậc thang giật cấp 3 tầng",
+        "Ngôi nhà gạch với mái chóp nhọn tam giác",
+        "Đoàn tàu hỏa hơi nước chở các toa số và bánh xe tròn",
+        "Vương miện hoàng gia với 3 đỉnh nhô cao gắn ngọc"
+      ],
+      "quantities_and_ranges": "Phép cộng và trừ phạm vi 20. Số lượng ô trống: 17 đến 20 ô mỗi trang.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-048",
+          "template_name": "cross-math-grid (ma trận ô số đa hình dạng)"
+        },
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chạm chọn số thích hợp)"
+        },
+        {
+          "template_id": "GT-008",
+          "template_name": "drag-to-slot (kéo thả số vào hình dạng kiến trúc)"
+        }
+      ],
+      "recommended_skills": [
+        "C1.ADD.02",
+        "C1.SUB.02",
+        "C1.ALG.01",
+        "C3.DED.01",
+        "C3.MAT.01"
+      ]
+    },
+    {
+      "group_id": "WB11-D3",
+      "group_name": "Cấu trúc công trình pháo đài & Chìa khóa liên hợp (Keys & Compound Fortress Structures)",
+      "page_range": "Trang 11 – Trang 15 (Sách: Trang 10 – Trang 14)",
+      "mechanic_description": "Ma trận số mở rộng sang các cấu trúc công trình phức tạp: chìa khóa cổ (đầu tròn, thân ngang, răng khóa), tường thành zíc zắc chữ L, bậc thang 3 tầng đỉnh tháp, pháo đài chữ T đối xứng, và cổng vòm đôi liên kết. Đòi hỏi giải theo từng cụm hoặc phân đoạn, sau đó tổng hợp tại giao điểm then chốt.",
+      "sample_prompts": [
+        "Giải phần đầu chìa khóa, rồi lần theo thân khóa sang bên phải",
+        "Giải từ góc trên trái, lần theo các ô liên kết xuống dưới",
+        "Giải từ hàng dưới, lần lượt kiểm tra lên trên",
+        "Giải hàng trên trước, sau đó đi xuống trụ giữa",
+        "Giải từ hai bên, sau đó khép lại ở giữa"
+      ],
+      "visual_objects": [
+        "Chìa khóa cổ điển đầu tròn viền đỏ",
+        "Tường thành kiên cố viền gạch đôi",
+        "Pháo đài chữ T với cánh ngang rộng và trụ cột dọc trung tâm",
+        "Cổng vòm đôi đối xứng hai cánh mở"
+      ],
+      "quantities_and_ranges": "Phép cộng trừ phạm vi 20, các phép tính có nhớ như 8+12=20, 18-9=9, 7+9=16. Số lượng ô trống: 17 đến 21 ô.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-048",
+          "template_name": "cross-math-grid"
+        },
+        {
+          "template_id": "GT-008",
+          "template_name": "drag-to-slot"
+        }
+      ],
+      "recommended_skills": [
+        "C1.ADD.02",
+        "C1.SUB.02",
+        "C1.ALG.01",
+        "C3.RULE.01",
+        "C3.DED.01"
+      ]
+    },
+    {
+      "group_id": "WB11-D4",
+      "group_name": "Mạng lưới liên kết đa cụm & Cầu nối song song (Network Graphs & Multi-Cluster Bridges)",
+      "page_range": "Trang 16 – Trang 19 (Sách: Trang 15 – Trang 18)",
+      "mechanic_description": "Không gian bài toán được chia thành nhiều cụm khối ô độc lập (clusters) được kết nối với nhau bằng các cầu nối dữ liệu (data bridges / connecting links). Trẻ giải từng cụm cục bộ, truyền kết quả qua cầu nối sang cụm tiếp theo, và kiểm tra tính nhất quán logic toàn cục.",
+      "sample_prompts": [
+        "Đi theo đường zíc zắc từ trên xuống dưới",
+        "Giải vành trên trước, rồi khép dần xuống mũi nhọn",
+        "Giải hai hàng song song và kiểm tra các cột nối",
+        "Giải từ trên xuống ở từng tháp, rồi kiểm tra ngang"
+      ],
+      "visual_objects": [
+        "Đường cầu nối zíc zắc màu xanh ngọc",
+        "Huy hiệu khiên danh dự hình chóp nhọn",
+        "Cầu thành đôi song song hai nhịp cầu đối xứng",
+        "Tháp đôi lâu đài nối với nhau bằng cầu treo tím bắc ngang"
+      ],
+      "quantities_and_ranges": "Phép cộng trừ phạm vi 20. Số ô trống: 20 đến 21 ô mỗi bài.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-048",
+          "template_name": "cross-math-grid"
+        },
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select"
+        }
+      ],
+      "recommended_skills": [
+        "C1.ADD.02",
+        "C1.SUB.02",
+        "C1.ALG.01",
+        "C3.RULE.01",
+        "C3.MAT.01",
+        "C3.DED.01"
+      ]
+    },
+    {
+      "group_id": "WB11-D5",
+      "group_name": "Mạch khép kín & Đại thử thách cuối chặng (Closed Loops & Grand Master Finale)",
+      "page_range": "Trang 20 – Trang 22 (Sách: Trang 19 – Trang 21)",
+      "mechanic_description": "Cấp độ tư duy cao nhất: (1) Cửa sổ chữ thập 4 hướng với ô trung tâm chi phối toàn bộ 4 cánh; (2) Vòng thành khép kín (closed-loop constraint) đòi hỏi chuỗi suy luận vòng tròn phải quay về khớp chính xác với điểm xuất phát ban đầu; (3) Đại mật mã viên ngọc 7 khối ô liên hoàn - bài kiểm tra tổng hợp toàn diện mở khóa Viên Ngọc Trí Tuệ tối thượng.",
+      "sample_prompts": [
+        "Bắt đầu ở ô giữa, sau đó giải lên - xuống - trái - phải",
+        "Chọn một ô bắt đầu, giải liên tục cho đến khi khép vòng",
+        "Giải từ viền ngoài và tiến dần vào ô trung tâm"
+      ],
+      "visual_objects": [
+        "Cửa sổ chữ thập 4 hướng cân xứng",
+        "Vòng thành khép kín hình chữ nhật rỗng tâm",
+        "Bảng đại mật mã 7 khối ô bao bọc Viên Ngọc Tối Thượng rực rỡ",
+        "Rương kho báu và cổng hào quang lâu đài bừng sáng"
+      ],
+      "quantities_and_ranges": "Toàn dải số 1 đến 20, các phép toán biến thiên linh hoạt. Số ô trống tối đa: 22 ô mỗi trang.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-048",
+          "template_name": "cross-math-grid (đại thử thách cuối chặng)"
+        },
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select"
+        },
+        {
+          "template_id": "GT-008",
+          "template_name": "drag-to-slot"
+        }
+      ],
+      "recommended_skills": [
+        "C1.ADD.02",
+        "C1.SUB.02",
+        "C1.ALG.01",
+        "C3.RULE.01",
+        "C3.MAT.01",
+        "C3.DED.01"
+      ]
+    }
+  ],
+  "pages_summary": [
+    {
+      "page_number": 1,
+      "workbook_page_number": null,
+      "file_path": "pages/page-01.jpg",
+      "page_type": "cover_overview",
+      "title": "Hành Trình Chuyến Tàu Toán Học - Chặng 11: Lâu Đài Ô Số",
+      "subtitle": "Giải Mã Những Ô Trống",
+      "character_quotes": {
+        "gau_logic": "Cùng Gấu Logic và Thỏ Quan Sát giải mã lâu đài nhé!",
+        "tho_quan_sat": "Điền đúng số để mở cửa lâu đài!"
+      },
+      "layout_structure": "Trang bìa rực rỡ với hình ảnh Lâu đài ô số cổ kính nguy nga, cổng vòm tỏa hào quang vàng rực bảo vệ Viên Ngọc Lâu Đài lấp lánh; đường ray xe lửa dẫn Chuyến Tàu Toán Học do Gấu Logic điều khiển tiến vào; Thỏ Quan Sát đứng bên cạnh cầm kính lúp chỉ dẫn; khung trên góc phải nêu Mục tiêu cho ba mẹ.",
+      "mechanics": "Giới thiệu cốt truyện chủ đề Chặng 11: Khám phá Lâu Đài Ô Số bí ẩn bằng việc giải mã các ô số bị khuyết theo hàng ngang và hàng dọc.",
+      "prompt": "Điền đúng số để mở cửa lâu đài",
+      "instruction": "Mục tiêu cho ba mẹ: • Cộng - trừ trong phạm vi 20 • Suy luận số còn thiếu • Phối hợp hàng ngang - hàng dọc",
+      "hint": "Cùng Gấu Logic và Thỏ Quan Sát giải mã lâu đài nhé!",
+      "empty_slots_count": 0,
+      "sample_equations_and_answers": [],
+      "distractors_or_palette": [],
+      "pedagogy_notes": "Tạo động lực nội tại và bối cảnh hóa việc giải toán ma trận thành một cuộc phiêu lưu mở khóa lâu đài thần tiên.",
+      "recommended_gt_templates": ["GT-048"],
+      "recommended_skills": ["C1.SYM.01"]
+    },
+    {
+      "page_number": 2,
+      "workbook_page_number": 1,
+      "file_path": "pages/page-02.jpg",
+      "page_type": "activity",
+      "title": "Cánh Cửa Đầu Tiên",
+      "subtitle": "Giải Ô Chữ Toán Học - Mật Mã Cổng Số",
+      "character_quotes": {
+        "gau_logic": "Cánh cửa có rất nhiều ô trống!",
+        "tho_quan_sat": "Bé tính theo cả hai hướng nhé!"
+      },
+      "layout_structure": "Ma trận chữ nhật 3x3 chuỗi liên hoàn gồm 3 hàng ngang và 4 cột dọc giao nhau, tạo thành 13 ô trống cần điền.",
+      "mechanics": "Tính giá trị theo hàng ngang từ trái sang phải, kiểm tra lại theo cột dọc từ trên xuống dưới.",
+      "prompt": "Tính theo hàng ngang và hàng dọc, rồi điền số còn thiếu",
+      "instruction": "HOÀN THÀNH 13 Ô TRỐNG ĐỂ MỞ CỬA",
+      "hint": "Gợi ý: Làm những hàng có nhiều số trước",
+      "empty_slots_count": 13,
+      "sample_equations_and_answers": [
+        {
+          "equation": "5 + [7] = 12",
+          "answer": 7,
+          "type": "horizontal"
+        },
+        {
+          "equation": "12 - 4 = [8]",
+          "answer": 8,
+          "type": "horizontal"
+        },
+        {
+          "equation": "[8] + [7] = 15",
+          "answer": [8, 7],
+          "type": "horizontal"
+        },
+        {
+          "equation": "5 + 4 = [9]",
+          "answer": 9,
+          "type": "vertical"
+        },
+        {
+          "equation": "[9] - [5] = 4",
+          "answer": [9, 5],
+          "type": "vertical"
+        },
+        {
+          "equation": "4 + 6 = [10]",
+          "answer": 10,
+          "type": "horizontal"
+        },
+        {
+          "equation": "[10] - [3] = 7",
+          "answer": [10, 3],
+          "type": "horizontal"
+        },
+        {
+          "equation": "7 + 6 = 13",
+          "answer": 13,
+          "type": "horizontal"
+        }
+      ],
+      "distractors_or_palette": [3, 5, 7, 8, 9, 10],
+      "pedagogy_notes": "Làm quen với luật chơi ràng buộc 2 chiều: mỗi ô tại giao điểm thuộc về cả phép tính ngang lẫn phép tính dọc.",
+      "recommended_gt_templates": ["GT-048", "GT-001", "GT-008"],
+      "recommended_skills": [
+        "C1.ADD.01",
+        "C1.SUB.01",
+        "C1.ALG.01",
+        "C3.RULE.01"
+      ]
+    },
+    {
+      "page_number": 3,
+      "workbook_page_number": 2,
+      "file_path": "pages/page-03.jpg",
+      "page_type": "activity",
+      "title": "Hành Lang Hàng Ngang",
+      "subtitle": "Khôi Phục Hàng Ngang - Hành Lang Ô Số",
+      "character_quotes": {
+        "gau_logic": "Những hàng số đang bị khuyết rồi!",
+        "tho_quan_sat": "Bé lần theo từng hàng giúp mình nhé!"
+      },
+      "layout_structure": "Lưới chữ nhật trải rộng gồm 3 hàng ngang dài và 4 cột dọc liên kết, có 14 ô trống nét đứt.",
+      "mechanics": "Tính chuỗi phép tính liên hoàn từ trái qua phải, sau đó đối chiếu kết quả theo cột dọc.",
+      "prompt": "Tính từ trái sang phải, sau đó kiểm tra theo hàng dọc",
+      "instruction": "HOÀN THÀNH 14 Ô TRỐNG ĐỂ MỞ KHÓA",
+      "hint": "Gợi ý: Bắt đầu từ hàng có đủ số ở hai đầu",
+      "empty_slots_count": 14,
+      "sample_equations_and_answers": [
+        {
+          "equation": "2 + [3] = 5",
+          "answer": 3,
+          "type": "horizontal"
+        },
+        {
+          "equation": "5 + [4] = [9]",
+          "answer": [4, 9],
+          "type": "horizontal"
+        },
+        {
+          "equation": "[9] - 5 = 4",
+          "answer": 9,
+          "type": "horizontal"
+        },
+        {
+          "equation": "2 + [4] = [6]",
+          "answer": [4, 6],
+          "type": "vertical"
+        },
+        {
+          "equation": "[6] - 3 = 3",
+          "answer": 6,
+          "type": "vertical"
+        },
+        {
+          "equation": "4 + [5] = 9",
+          "answer": 5,
+          "type": "horizontal"
+        }
+      ],
+      "distractors_or_palette": [2, 3, 4, 5, 6, 7, 8, 9],
+      "pedagogy_notes": "Dạy trẻ chiến thuật quan sát tổng thể: tìm hàng có sẵn 2 đầu mút để suy luận số ở giữa.",
+      "recommended_gt_templates": ["GT-048", "GT-001"],
+      "recommended_skills": ["C1.ADD.01", "C1.SUB.01", "C1.ALG.01", "C3.DED.01"]
+    },
+    {
+      "page_number": 4,
+      "workbook_page_number": 3,
+      "file_path": "pages/page-04.jpg",
+      "page_type": "activity",
+      "title": "Tháp Số Hàng Dọc",
+      "subtitle": "Đánh Thức Tháp Số - Tháp Ô Số",
+      "character_quotes": {
+        "gau_logic": "Các con số đang chạy lên tòa tháp!",
+        "tho_quan_sat": "Bé tính từ trên xuống dưới nhé!"
+      },
+      "layout_structure": "Bố cục tháp số dạng lưới dọc 4 hàng ngang × 3 cột dọc lớn, tổng cộng 15 ô trống.",
+      "mechanics": "Định hướng tư duy theo chiều dọc: ưu tiên tính các cột dọc từ trên xuống dưới rồi dùng hàng ngang kiểm tra lại.",
+      "prompt": "Tính từ trên xuống dưới, rồi dùng hàng ngang để kiểm tra",
+      "instruction": "HOÀN THÀNH 15 Ô TRỐNG ĐỂ MỞ KHÓA",
+      "hint": "Gợi ý: Làm lần lượt từ đỉnh tháp xuống dưới",
+      "empty_slots_count": 15,
+      "sample_equations_and_answers": [
+        {
+          "equation": "4 + [5] = [9]",
+          "answer": [5, 9],
+          "type": "horizontal"
+        },
+        {
+          "equation": "[9] - 3 = 6",
+          "answer": 9,
+          "type": "horizontal"
+        },
+        {
+          "equation": "7 + 5 = 12",
+          "answer": 12,
+          "type": "horizontal"
+        },
+        {
+          "equation": "[5] - 2 = [3]",
+          "answer": [5, 3],
+          "type": "horizontal"
+        }
+      ],
+      "distractors_or_palette": [2, 3, 5, 8, 9, 12],
+      "pedagogy_notes": "Đảo chiều tư duy: chuyển từ ưu tiên quét ngang sang ưu tiên quét dọc, phát triển tính linh hoạt nhận thức.",
+      "recommended_gt_templates": ["GT-048", "GT-001"],
+      "recommended_skills": [
+        "C1.ADD.01",
+        "C1.SUB.01",
+        "C1.ALG.01",
+        "C3.RULE.01"
+      ]
+    },
+    {
+      "page_number": 5,
+      "workbook_page_number": 4,
+      "file_path": "pages/page-05.jpg",
+      "page_type": "activity",
+      "title": "Ngã Tư Phép Tính",
+      "subtitle": "Một Ô - Hai Hướng | Ngã Tư Liên Kết",
+      "character_quotes": {
+        "gau_logic": "Mỗi ngã tư nối với hai phép tính!",
+        "tho_quan_sat": "Bé làm đúng cả hai hướng nhé!"
+      },
+      "layout_structure": "Lưới ngã tư giao thoa đa điểm: 3 hàng ngang × 4 cột dọc với các nút giao then chốt, 15 ô trống.",
+      "mechanics": "Mỗi ô trống tại ngã tư phải đồng thời thỏa mãn phép tính ngang và phép tính dọc. Rèn luyện tư duy kiểm chứng hai chiều.",
+      "prompt": "Mỗi ô trống phải làm đúng cả hàng ngang và hàng dọc",
+      "instruction": "HOÀN THÀNH 15 Ô TRỐNG ĐỂ MỞ KHÓA",
+      "hint": "Gợi ý: Một ô có thể thuộc cả hai phép tính",
+      "empty_slots_count": 15,
+      "sample_equations_and_answers": [
+        {
+          "equation": "5 + [6] = [11]",
+          "answer": [6, 11],
+          "type": "horizontal"
+        },
+        {
+          "equation": "[11] - 4 = 7",
+          "answer": 11,
+          "type": "horizontal"
+        },
+        {
+          "equation": "7 + [4] = [11]",
+          "answer": [4, 11],
+          "type": "horizontal"
+        },
+        {
+          "equation": "9 + [6] = 15",
+          "answer": 6,
+          "type": "horizontal"
+        },
+        {
+          "equation": "15 - [4] = [11]",
+          "answer": [4, 11],
+          "type": "horizontal"
+        },
+        {
+          "equation": "[11] + 3 = 13",
+          "answer": 11,
+          "type": "horizontal"
+        }
+      ],
+      "distractors_or_palette": [4, 6, 8, 10, 11, 12],
+      "pedagogy_notes": "Khắc sâu khái niệm nút giao (intersection node): nghiệm số của 1 ô là giao của 2 ràng buộc toán học độc lập.",
+      "recommended_gt_templates": ["GT-048", "GT-008"],
+      "recommended_skills": [
+        "C1.ADD.02",
+        "C1.SUB.02",
+        "C1.ALG.01",
+        "C3.RULE.01"
+      ]
+    },
+    {
+      "page_number": 6,
+      "workbook_page_number": 5,
+      "file_path": "pages/page-06.jpg",
+      "page_type": "activity",
+      "title": "Bậc Thềm Bị Khuyết",
+      "subtitle": "Mở Khóa Tầng Thứ Nhất - Bậc Thềm Liên Kết",
+      "character_quotes": {
+        "gau_logic": "Tám ô cửa đang chờ được thắp sáng!",
+        "tho_quan_sat": "Bé tìm đủ số để mở tầng đầu nhé!"
+      },
+      "layout_structure": "Lưới mở rộng quy mô lớn: 3 hàng ngang dài đan xen 5 cột dọc, tạo thành 17 ô trống cần giải.",
+      "mechanics": "Quy mô phương trình mở rộng tới phạm vi 20 (như 6 + [7] = [13] - 4 = 9, 8 + 9 = [17], 20 - [ ] = [ ]).",
+      "prompt": "Điền đủ các ô trống và kiểm tra lại theo chiều còn lại",
+      "instruction": "HOÀN THÀNH 17 Ô TRỐNG ĐỂ MỞ KHÓA",
+      "hint": "Gợi ý: Kiểm tra lại đáp án theo chiều còn lại",
+      "empty_slots_count": 17,
+      "sample_equations_and_answers": [
+        {
+          "equation": "6 + [7] = [13]",
+          "answer": [7, 13],
+          "type": "horizontal"
+        },
+        {
+          "equation": "[13] - 4 = 9",
+          "answer": 13,
+          "type": "horizontal"
+        },
+        {
+          "equation": "9 + [7] = [16]",
+          "answer": [7, 16],
+          "type": "horizontal"
+        },
+        {
+          "equation": "[16] - 5 = 11",
+          "answer": 16,
+          "type": "horizontal"
+        },
+        {
+          "equation": "[4] + [14] = 18",
+          "answer": [4, 14],
+          "type": "horizontal"
+        },
+        {
+          "equation": "18 - 6 = [12]",
+          "answer": 12,
+          "type": "horizontal"
+        },
+        {
+          "equation": "8 + 9 = [17]",
+          "answer": 17,
+          "type": "horizontal"
+        }
+      ],
+      "distractors_or_palette": [4, 7, 8, 12, 13, 14, 16, 17],
+      "pedagogy_notes": "Chuyển tiếp phạm vi tính toán từ 10 lên 20 có nhớ, củng cố khả năng tính nhẩm kết hợp tư duy logic phân tích.",
+      "recommended_gt_templates": ["GT-048", "GT-001"],
+      "recommended_skills": ["C1.ADD.02", "C1.SUB.02", "C1.ALG.01", "C3.DED.01"]
+    },
+    {
+      "page_number": 7,
+      "workbook_page_number": 6,
+      "file_path": "pages/page-07.jpg",
+      "page_type": "activity",
+      "title": "Cầu Thang Ô Số",
+      "subtitle": "Bước Lên Từng Bậc - Bảng Cầu Thang 6 Ô",
+      "character_quotes": {
+        "gau_logic": "Những bậc thang đang thiếu số rồi!",
+        "tho_quan_sat": "Bé mở từng bậc giúp mình nhé!"
+      },
+      "layout_structure": "Bố cục bậc thang giật cấp (ziggurat staircase grid): Tầng dưới cùng rộng nhất (4 cột), tầng giữa (3 cột), tầng trên cùng thu hẹp (2 cột), gồm 17 ô trống.",
+      "mechanics": "Giải lần lượt từ bậc thang thấp nhất lên bậc thang cao nhất, mở khóa từng nấc thang leo lên tháp.",
+      "prompt": "Giải lần lượt từ bậc thấp lên bậc cao",
+      "instruction": "HOÀN THÀNH 17 Ô TRỐNG ĐỂ MỞ KHÓA",
+      "hint": "Gợi ý: Mỗi đáp án đúng sẽ mở thêm một bậc",
+      "empty_slots_count": 17,
+      "sample_equations_and_answers": [
+        {
+          "equation": "3 + 8 = [11]",
+          "answer": 11,
+          "type": "horizontal"
+        },
+        {
+          "equation": "[11] - [6] = [5]",
+          "answer": [11, 6, 5],
+          "type": "horizontal"
+        },
+        {
+          "equation": "[5] + [10] = 15",
+          "answer": [5, 10],
+          "type": "horizontal"
+        },
+        {
+          "equation": "[6] + 8 = 14",
+          "answer": 6,
+          "type": "horizontal"
+        },
+        {
+          "equation": "6 + 6 = [12]",
+          "answer": 12,
+          "type": "horizontal"
+        }
+      ],
+      "distractors_or_palette": [5, 6, 8, 10, 11, 12, 14],
+      "pedagogy_notes": "Phá vỡ tính đối xứng chữ nhật: trẻ học cách thích ứng với lưới hình học bậc thang không đồng đều.",
+      "recommended_gt_templates": ["GT-048", "GT-008"],
+      "recommended_skills": [
+        "C1.ADD.02",
+        "C1.SUB.02",
+        "C3.RULE.01",
+        "C3.DED.01"
+      ]
+    },
+    {
+      "page_number": 8,
+      "workbook_page_number": 7,
+      "file_path": "pages/page-08.jpg",
+      "page_type": "activity",
+      "title": "Ngôi Nhà Phép Tính",
+      "subtitle": "Thắp Sáng Từng Ô Cửa - Bảng Ngôi Nhà 7 Ô",
+      "character_quotes": {
+        "gau_logic": "Ngôi nhà có nhiều ô cửa đang tắt!",
+        "tho_quan_sat": "Bé điền số để thắp sáng nhé!"
+      },
+      "layout_structure": "Cấu trúc ngôi nhà: Chóp mái nhà tam giác ở trên đỉnh (1 phép tính ngang 12 - [ ] = 8 và 2 cột dọc nối xuống), thân nhà gồm 3 tầng x 4 cột bên dưới, 18 ô trống.",
+      "mechanics": "Bắt đầu giải từ mái nhà trước (điểm nút đơn giản nhất), sau đó phân nhánh xuống thắp sáng các tầng bên dưới.",
+      "prompt": "Hoàn thành mái nhà trước, sau đó giải các tầng bên dưới",
+      "instruction": "HOÀN THÀNH 18 Ô TRỐNG ĐỂ MỞ KHÓA",
+      "hint": "Gợi ý: Bắt đầu từ ô trên mái nhà",
+      "empty_slots_count": 18,
+      "sample_equations_and_answers": [
+        {
+          "equation": "12 - [4] = 8",
+          "answer": 4,
+          "type": "roof_top"
+        },
+        {
+          "equation": "12 + [ ] = [ ]",
+          "answer": 16,
+          "type": "vertical"
+        },
+        {
+          "equation": "8 + [ ] = [ ]",
+          "answer": 15,
+          "type": "vertical"
+        },
+        {
+          "equation": "[6] + 7 = 13",
+          "answer": 6,
+          "type": "horizontal"
+        },
+        {
+          "equation": "15 - 5 = [10]",
+          "answer": 10,
+          "type": "horizontal"
+        },
+        {
+          "equation": "[10] + 9 = 19",
+          "answer": 10,
+          "type": "horizontal"
+        }
+      ],
+      "distractors_or_palette": [4, 6, 7, 8, 10, 12, 15],
+      "pedagogy_notes": "Dạy trẻ nguyên lý phân rã hình ảnh: nhận biết cấu trúc 'mái' và 'thân', chọn bài toán con có nghiệm duy nhất để khởi đầu.",
+      "recommended_gt_templates": ["GT-048", "GT-001"],
+      "recommended_skills": ["C1.ADD.02", "C1.SUB.02", "C1.ALG.01", "C3.DED.01"]
+    },
+    {
+      "page_number": 9,
+      "workbook_page_number": 8,
+      "file_path": "pages/page-09.jpg",
+      "page_type": "activity",
+      "title": "Đoàn Tàu Ô Số",
+      "subtitle": "Nối Lại Những Toa Tàu - Bảng Đoàn Tàu 7 Toa",
+      "character_quotes": {
+        "gau_logic": "Các toa tàu bị đứt mất ô số!",
+        "tho_quan_sat": "Bé nối lại đoàn tàu giúp mình nhé!"
+      },
+      "layout_structure": "Hình dáng đoàn tàu hỏa hoàn chỉnh: Ống khói phía trên bên trái, thân tàu gồm 3 hàng toa nối tiếp, phía dưới có 4 bánh xe tròn, 19 ô trống.",
+      "mechanics": "Điền số theo chiều chuyển động của đoàn tàu từ đầu tàu sang các toa sau, đồng thời kiểm tra lại tính đúng đắn từ trên xuống bánh xe.",
+      "prompt": "Điền số theo chiều đoàn tàu chạy, rồi kiểm tra từ trên xuống",
+      "instruction": "HOÀN THÀNH 19 Ô TRỐNG ĐỂ MỞ KHÓA",
+      "hint": "Gợi ý: Giải từ đầu tàu đến toa cuối",
+      "empty_slots_count": 19,
+      "sample_equations_and_answers": [
+        {
+          "equation": "4 + [5] = [9]",
+          "answer": [5, 9],
+          "type": "horizontal"
+        },
+        {
+          "equation": "[9] - 3 = [6]",
+          "answer": [9, 6],
+          "type": "horizontal"
+        },
+        {
+          "equation": "[6] + 7 = [13]",
+          "answer": [6, 13],
+          "type": "horizontal"
+        },
+        {
+          "equation": "4 + 4 = [8]",
+          "answer": 8,
+          "type": "vertical"
+        },
+        {
+          "equation": "16 - [6] = 10",
+          "answer": 6,
+          "type": "horizontal"
+        }
+      ],
+      "distractors_or_palette": [4, 5, 6, 7, 8, 9, 13, 16],
+      "pedagogy_notes": "Gắn liền toán học với phương tiện giao thông yêu thích của trẻ; rèn luyện tư duy luồng dữ liệu (data flow) tuyến tính kết hợp kiểm định ma trận.",
+      "recommended_gt_templates": ["GT-048", "GT-008"],
+      "recommended_skills": [
+        "C1.ADD.02",
+        "C1.SUB.02",
+        "C3.RULE.01",
+        "C3.DED.01"
+      ]
+    },
+    {
+      "page_number": 10,
+      "workbook_page_number": 9,
+      "file_path": "pages/page-09.jpg",
+      "page_type": "activity",
+      "title": "Vương Miện Số Học",
+      "subtitle": "Đánh Thức Ba Đỉnh Sáng - Bảng Vương Miện 8 Ô",
+      "character_quotes": {
+        "gau_logic": "Ba đỉnh vương miện đang mất ánh sáng!",
+        "tho_quan_sat": "Bé tìm các số viên ngọc nhé!"
+      },
+      "layout_structure": "Hình dạng vương miện 3 đỉnh nhô cao: Đỉnh trái (5+6), Đỉnh giữa (7+[ ]=14), Đỉnh phải (9+7); đế vương miện rộng gồm 2 hàng ngang dài liên hoàn, 20 ô trống.",
+      "mechanics": "Giải các phương trình ở hàng nền vương miện trước làm điểm tựa vững chắc, sau đó mở dần 3 đỉnh vương miện lên phía trên.",
+      "prompt": "Giải hàng nền trước, sau đó mở lần lượt các đỉnh vương miện",
+      "instruction": "HOÀN THÀNH 20 Ô TRỐNG ĐỂ MỞ KHÓA",
+      "hint": "Gợi ý: Hàng dưới là chìa khóa của các đỉnh",
+      "empty_slots_count": 20,
+      "sample_equations_and_answers": [
+        {
+          "equation": "5 + 6 = [11]",
+          "answer": 11,
+          "type": "crown_peak_left"
+        },
+        {
+          "equation": "7 + [7] = 14",
+          "answer": 7,
+          "type": "crown_peak_mid"
+        },
+        {
+          "equation": "9 + 7 = [16]",
+          "answer": 16,
+          "type": "crown_peak_right"
+        },
+        {
+          "equation": "8 + 7 = 15",
+          "answer": 15,
+          "type": "horizontal"
+        },
+        {
+          "equation": "15 - 5 = [10]",
+          "answer": 10,
+          "type": "horizontal"
+        },
+        {
+          "equation": "[10] + 8 = [18]",
+          "answer": [10, 18],
+          "type": "horizontal"
+        }
+      ],
+      "distractors_or_palette": [4, 7, 10, 11, 14, 15, 16, 18, 19],
+      "pedagogy_notes": "Tư duy cây phân nhánh (tree structure): hàng đáy là gốc rễ cấp dữ liệu cho 3 nhánh đỉnh độc lập phía trên.",
+      "recommended_gt_templates": ["GT-048", "GT-001"],
+      "recommended_skills": ["C1.ADD.02", "C1.SUB.02", "C1.ALG.01", "C3.DED.01"]
+    },
+    {
+      "page_number": 11,
+      "workbook_page_number": 10,
+      "file_path": "pages/page-11.jpg",
+      "page_type": "activity",
+      "title": "Chìa Khóa Liên Kết",
+      "subtitle": "Tìm Mật Mã Mở Khóa - Bảng Chìa Khóa 7 Ô",
+      "character_quotes": {
+        "gau_logic": "Chiếc chìa khóa đang thiếu nhiều mảnh số!",
+        "tho_quan_sat": "Bé giải đúng để mở cổng lâu đài nhé!"
+      },
+      "layout_structure": "Hình chiếc chìa khóa cổ: Vòng tròn đầu khóa bên trái (viền tròn đỏ), thân khóa dài chạy ngang sang phải, và các răng khóa ở góc dưới bên phải (19 - [ ] = 14), 21 ô trống.",
+      "mechanics": "Giải phần đầu chìa khóa tròn, lần theo thân khóa sang phải và hoàn thành các răng khóa.",
+      "prompt": "Giải phần đầu chìa khóa, rồi lần theo thân khóa sang bên phải",
+      "instruction": "HOÀN THÀNH 21 Ô TRỐNG ĐỂ MỞ KHÓA",
+      "hint": "Gợi ý: Những ô ở giữa nối cả đầu và thân khóa",
+      "empty_slots_count": 21,
+      "sample_equations_and_answers": [
+        {
+          "equation": "6 + [4] = [10]",
+          "answer": [4, 10],
+          "type": "key_head"
+        },
+        {
+          "equation": "[10] - 4 = [6]",
+          "answer": [10, 6],
+          "type": "key_head"
+        },
+        {
+          "equation": "[6] + 8 = 14",
+          "answer": 6,
+          "type": "key_body"
+        },
+        {
+          "equation": "14 - [6] = 8",
+          "answer": 6,
+          "type": "key_body"
+        },
+        {
+          "equation": "8 + 9 = [17]",
+          "answer": 17,
+          "type": "key_body"
+        },
+        {
+          "equation": "19 - [5] = 14",
+          "answer": 5,
+          "type": "key_teeth"
+        }
+      ],
+      "distractors_or_palette": [4, 5, 6, 8, 9, 10, 14, 17, 19],
+      "pedagogy_notes": "Tư duy định hướng hình thể phức hợp: nhận diện các ô giao điểm nằm giữa phần 'đầu' và 'thân' chìa khóa mang vai trò quyết định chuyển tiếp dữ liệu.",
+      "recommended_gt_templates": ["GT-048", "GT-008"],
+      "recommended_skills": ["C1.ADD.02", "C1.SUB.02", "C1.ALG.01", "C3.DED.01"]
+    },
+    {
+      "page_number": 12,
+      "workbook_page_number": 11,
+      "file_path": "pages/page-12.jpg",
+      "page_type": "activity",
+      "title": "Tường Thành Ô Số",
+      "subtitle": "Xây Lại Tường Thành - Bảng Tường Thành 7 Ô",
+      "character_quotes": {
+        "gau_logic": "Bức tường đang khuyết nhiều ô số!",
+        "tho_quan_sat": "Bé nối các phép tính thật chính xác nhé!"
+      },
+      "layout_structure": "Bố cục thành lũy giật cấp: Hàng trên cùng rộng nhô ra, tường rủ xuống và gấp khúc sang chân thành chữ L, 17 ô trống.",
+      "mechanics": "Bắt đầu giải từ góc trên cùng bên trái (8 + 12 = 20), lần theo dòng chảy dữ liệu xuống dưới chân thành.",
+      "prompt": "Giải từ góc trên trái, lần theo các ô liên kết xuống dưới",
+      "instruction": "HOÀN THÀNH 17 Ô TRỐNG ĐỂ MỞ KHÓA",
+      "hint": "Gợi ý: Giải từ hàng trên, sau đó kiểm tra theo cột",
+      "empty_slots_count": 17,
+      "sample_equations_and_answers": [
+        {
+          "equation": "8 + 12 = [20]",
+          "answer": 20,
+          "type": "wall_top"
+        },
+        {
+          "equation": "[20] - 19 = 1",
+          "answer": 20,
+          "type": "wall_top"
+        },
+        {
+          "equation": "8 - 4 = [4]",
+          "answer": 4,
+          "type": "vertical"
+        },
+        {
+          "equation": "15 - [10] = 5",
+          "answer": 10,
+          "type": "horizontal"
+        },
+        {
+          "equation": "5 + [11] = 16",
+          "answer": 11,
+          "type": "horizontal"
+        },
+        {
+          "equation": "13 + 2 = [15]",
+          "answer": 15,
+          "type": "horizontal"
+        },
+        {
+          "equation": "16 - [1] = 15",
+          "answer": 1,
+          "type": "bottom"
+        }
+      ],
+      "distractors_or_palette": [1, 2, 4, 7, 9, 10, 11, 14, 15, 18, 20],
+      "pedagogy_notes": "Xuất hiện các số lớn tiệm cận trần 20 (8+12=20, 20-19=1) kích hoạt tư duy làm tròn chục và trừ lùi.",
+      "recommended_gt_templates": ["GT-048", "GT-001"],
+      "recommended_skills": [
+        "C1.ADD.02",
+        "C1.SUB.02",
+        "C1.ALG.01",
+        "C3.RULE.01"
+      ]
+    },
+    {
+      "page_number": 13,
+      "workbook_page_number": 12,
+      "file_path": "pages/page-13.jpg",
+      "page_type": "activity",
+      "title": "Bậc Thang Đỉnh Tháp",
+      "subtitle": "Chinh Phục Từng Bậc - Bảng Bậc Thang 6 Ô",
+      "character_quotes": {
+        "gau_logic": "Các bậc thang đang thiếu số rồi!",
+        "tho_quan_sat": "Bé giải từ chân tháp đi lên nhé!"
+      },
+      "layout_structure": "Cấu trúc tháp bậc 3 tầng xếp chồng đối xứng: Tầng đáy (3 ma trận ô), Tầng trung (2 ma trận ô), Đỉnh tháp (1 ma trận ô), 18 ô trống.",
+      "mechanics": "Mỗi tầng là các ma trận con 2x2 liên hoàn. Giải chắc chắn tầng dưới trước khi leo lên tầng trên.",
+      "prompt": "Giải từ hàng dưới, lần lượt kiểm tra lên trên",
+      "instruction": "HOÀN THÀNH 18 Ô TRỐNG ĐỂ MỞ KHÓA",
+      "hint": "Gợi ý: Mỗi đáp án đúng sẽ mở một bậc",
+      "empty_slots_count": 18,
+      "sample_equations_and_answers": [
+        {
+          "equation": "5 + [8] = 13",
+          "answer": 8,
+          "type": "step_base"
+        },
+        {
+          "equation": "15 - [6] = 9",
+          "answer": 6,
+          "type": "step_base"
+        },
+        {
+          "equation": "7 + [9] = 16",
+          "answer": 9,
+          "type": "step_base"
+        },
+        {
+          "equation": "6 + [8] = 14",
+          "answer": 8,
+          "type": "step_mid"
+        },
+        {
+          "equation": "12 - [4] = 8",
+          "answer": 4,
+          "type": "step_mid"
+        },
+        {
+          "equation": "4 + [5] = 9",
+          "answer": 5,
+          "type": "step_top"
+        }
+      ],
+      "distractors_or_palette": [3, 4, 5, 6, 7, 8, 9, 10, 11, 14],
+      "pedagogy_notes": "Tập trung giải quyết các ma trận con 2x2 lặp lại, xây dựng phản xạ giải nhanh các cụm ô chuẩn hóa.",
+      "recommended_gt_templates": ["GT-048", "GT-008"],
+      "recommended_skills": ["C1.ADD.02", "C1.SUB.02", "C1.ALG.01", "C3.MAT.01"]
+    },
+    {
+      "page_number": 14,
+      "workbook_page_number": 13,
+      "file_path": "pages/page-14.jpg",
+      "page_type": "activity",
+      "title": "Pháo Đài Chữ T",
+      "subtitle": "Nối Liền Pháo Đài - Bảng Pháo Đài 6 Ô",
+      "character_quotes": {
+        "gau_logic": "Pháo đài đang mất các mảnh số!",
+        "tho_quan_sat": "Bé giải từ cánh ngang xuống trụ giữa nhé!"
+      },
+      "layout_structure": "Bố cục pháo đài hình chữ T vững chãi: Thanh ngang trên đỉnh gồm 3 khối ô ma trận, trụ dọc bên dưới gồm 2 khối ô nối tiếp, 18 ô trống.",
+      "mechanics": "Giải thanh ngang trên pháo đài trước, xác định giao điểm trung tâm rồi lần lượt giải xuống trụ giữa.",
+      "prompt": "Giải hàng trên trước, sau đó đi xuống trụ giữa",
+      "instruction": "HOÀN THÀNH 18 Ô TRỐNG ĐỂ MỞ KHÓA",
+      "hint": "Gợi ý: Giao điểm ở giữa nối cả hàng và cột",
+      "empty_slots_count": 18,
+      "sample_equations_and_answers": [
+        {
+          "equation": "12 - [4] = 8",
+          "answer": 4,
+          "type": "t_bar_left"
+        },
+        {
+          "equation": "5 + [8] = 13",
+          "answer": 8,
+          "type": "t_bar_mid"
+        },
+        {
+          "equation": "15 - [6] = 9",
+          "answer": 6,
+          "type": "t_bar_right"
+        },
+        {
+          "equation": "7 + [9] = 16",
+          "answer": 9,
+          "type": "t_stem_mid"
+        },
+        {
+          "equation": "18 - [8] = 10",
+          "answer": 8,
+          "type": "t_stem_bottom"
+        },
+        {
+          "equation": "9 + [8] = 17",
+          "answer": 8,
+          "type": "t_stem_bottom"
+        }
+      ],
+      "distractors_or_palette": [4, 5, 6, 7, 8, 9, 10, 12, 16],
+      "pedagogy_notes": "Nhận thức cấu trúc chữ T đối xứng: điểm giao nhau giữa thanh ngang và cột đứng là chốt chặn then chốt.",
+      "recommended_gt_templates": ["GT-048", "GT-001"],
+      "recommended_skills": ["C1.ADD.02", "C1.SUB.02", "C1.ALG.01", "C3.DED.01"]
+    },
+    {
+      "page_number": 15,
+      "workbook_page_number": 14,
+      "file_path": "pages/page-15.jpg",
+      "page_type": "activity",
+      "title": "Cổng Vòm Liên Kết",
+      "subtitle": "Thắp Sáng Ba Cổng - Bảng Cổng Vòm 6 Ô",
+      "character_quotes": {
+        "gau_logic": "Ba cổng vòm đang chờ số bí mật!",
+        "tho_quan_sat": "Bé kiểm tra cả hàng và cột nhé!"
+      },
+      "layout_structure": "Cấu trúc cổng vòm đôi 2 tầng: Tầng trên gồm 3 khối cổng vòm, tầng dưới gồm 3 khối cổng vòm đối xứng, 19 ô trống.",
+      "mechanics": "Giải từ hai bên cánh cổng tiến dần vào cổng trung tâm, kiểm tra chéo hai chiều trên từng khối.",
+      "prompt": "Giải từ hai bên, sau đó khép lại ở giữa",
+      "instruction": "HOÀN THÀNH 19 Ô TRỐNG ĐỂ MỞ KHÓA",
+      "hint": "Gợi ý: Hai phía cùng dẫn về cổng trung tâm",
+      "empty_slots_count": 19,
+      "sample_equations_and_answers": [
+        {
+          "equation": "15 - [6] = 9",
+          "answer": 6,
+          "type": "arch_top_left"
+        },
+        {
+          "equation": "7 + [9] = 16",
+          "answer": 9,
+          "type": "arch_top_mid"
+        },
+        {
+          "equation": "18 - [8] = 10",
+          "answer": 8,
+          "type": "arch_top_right"
+        },
+        {
+          "equation": "9 + [8] = 17",
+          "answer": 8,
+          "type": "arch_bottom_left"
+        },
+        {
+          "equation": "3 + [8] = 11",
+          "answer": 8,
+          "type": "arch_bottom_mid"
+        },
+        {
+          "equation": "16 - [9] = 7",
+          "answer": 9,
+          "type": "arch_bottom_right"
+        }
+      ],
+      "distractors_or_palette": [4, 6, 7, 8, 9, 11, 13, 14, 19, 20],
+      "pedagogy_notes": "Chiến lược gọng kìm (convergent deduction): giải từ 2 phía biên để ép dữ liệu về ô trung tâm.",
+      "recommended_gt_templates": ["GT-048", "GT-008"],
+      "recommended_skills": ["C1.ADD.02", "C1.SUB.02", "C1.ALG.01", "C3.DED.01"]
+    },
+    {
+      "page_number": 16,
+      "workbook_page_number": 15,
+      "file_path": "pages/page-16.jpg",
+      "page_type": "activity",
+      "title": "Bản Đồ Thành Trì",
+      "subtitle": "Khôi Phục Bản Đồ - Bảng Thành Trì 6 Ô",
+      "character_quotes": {
+        "gau_logic": "Bản đồ đang bị đứt mất các ô số!",
+        "tho_quan_sat": "Bé nối lại từng khu thật chính xác nhé!"
+      },
+      "layout_structure": "Bản đồ zíc zắc 3 chặng nối nhau: Cụm 1 (trên cùng 2 ô), đường nối xanh ngọc sang Cụm 2 (ở giữa 2 ô), đường nối sang Cụm 3 (dưới cùng 2 ô), 20 ô trống.",
+      "mechanics": "Đi theo lộ trình zíc zắc: kết quả của cụm trước là chìa khóa mở đường sang cụm tiếp theo.",
+      "prompt": "Đi theo đường zíc zắc từ trên xuống dưới",
+      "instruction": "HOÀN THÀNH 20 Ô TRỐNG ĐỂ MỞ KHÓA",
+      "hint": "Gợi ý: Dùng kết quả ở ô trước để kiểm tra ô sau",
+      "empty_slots_count": 20,
+      "sample_equations_and_answers": [
+        {
+          "equation": "18 - [8] = 10",
+          "answer": 8,
+          "type": "cluster_1"
+        },
+        {
+          "equation": "9 + [8] = 17",
+          "answer": 8,
+          "type": "cluster_1"
+        },
+        {
+          "equation": "3 + [8] = 11",
+          "answer": 8,
+          "type": "cluster_2"
+        },
+        {
+          "equation": "16 - [9] = 7",
+          "answer": 9,
+          "type": "cluster_2"
+        },
+        {
+          "equation": "11 + [7] = 18",
+          "answer": 7,
+          "type": "cluster_3"
+        },
+        {
+          "equation": "8 + [7] = 15",
+          "answer": 7,
+          "type": "cluster_3"
+        }
+      ],
+      "distractors_or_palette": [4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 20],
+      "pedagogy_notes": "Mô hình mạng lưới có hướng (directed graph network): rèn luyện tính kiên nhẫn và khả năng truyền thông tin qua cầu nối.",
+      "recommended_gt_templates": ["GT-048", "GT-001"],
+      "recommended_skills": ["C1.ADD.02", "C1.SUB.02", "C1.ALG.01", "C3.DED.01"]
+    },
+    {
+      "page_number": 17,
+      "workbook_page_number": 16,
+      "file_path": "pages/page-17.jpg",
+      "page_type": "activity",
+      "title": "Huy Hiệu Ô Số",
+      "subtitle": "Ghép Đủ Bốn Cạnh - Bảng Huy Hiệu 6 Ô",
+      "character_quotes": {
+        "gau_logic": "Huy hiệu đang thiếu những viên số quý!",
+        "tho_quan_sat": "Bé hoàn thành từng cạnh của huy hiệu nhé!"
+      },
+      "layout_structure": "Hình chiếc khiên huy hiệu hoàng gia nhọn đáy: Vành trên ngang rộng (3 ô), phần thân thu dần (2 ô), mũi nhọn đáy (1 ô đơn 18 - [ ] = 10, 13 - [ ] = 6), 20 ô trống.",
+      "mechanics": "Mỗi ô vuông được bao quanh bởi 4 phép tính. Giải vành trên trước rồi khép dần xuống mũi nhọn huy hiệu.",
+      "prompt": "Giải vành trên trước, rồi khép dần xuống mũi nhọn",
+      "instruction": "HOÀN THÀNH 20 Ô TRỐNG ĐỂ MỞ KHÓA",
+      "hint": "Gợi ý: Mỗi ô vuông có bốn phép tính bao quanh",
+      "empty_slots_count": 20,
+      "sample_equations_and_answers": [
+        {
+          "equation": "6 + [8] = 14",
+          "answer": 8,
+          "type": "badge_top"
+        },
+        {
+          "equation": "12 - [4] = 8",
+          "answer": 4,
+          "type": "badge_top"
+        },
+        {
+          "equation": "5 + [8] = 13",
+          "answer": 8,
+          "type": "badge_top"
+        },
+        {
+          "equation": "15 - [6] = 9",
+          "answer": 6,
+          "type": "badge_mid"
+        },
+        {
+          "equation": "7 + [9] = 16",
+          "answer": 9,
+          "type": "badge_mid"
+        },
+        {
+          "equation": "18 - [8] = 10",
+          "answer": 8,
+          "type": "badge_tip"
+        },
+        {
+          "equation": "13 - [7] = 6",
+          "answer": 7,
+          "type": "badge_tip"
+        }
+      ],
+      "distractors_or_palette": [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16],
+      "pedagogy_notes": "Tư duy hình học hình khiên: hội tụ từ diện rộng xuống điểm mút đáy, kiểm tra 4 cạnh khép góc của từng ô.",
+      "recommended_gt_templates": ["GT-048", "GT-008"],
+      "recommended_skills": [
+        "C1.ADD.02",
+        "C1.SUB.02",
+        "C1.ALG.01",
+        "C3.RULE.01"
+      ]
+    },
+    {
+      "page_number": 18,
+      "workbook_page_number": 17,
+      "file_path": "pages/page-18.jpg",
+      "page_type": "activity",
+      "title": "Cầu Thành Song Song",
+      "subtitle": "Nối Hai Nhịp Cầu - Bảng Cầu Thành 6 Ô",
+      "character_quotes": {
+        "gau_logic": "Hai nhịp cầu chưa nối đúng các con số!",
+        "tho_quan_sat": "Bé giải từng nhịp rồi so sánh ở giữa nhé!"
+      },
+      "layout_structure": "Hai nhịp cầu song song trên và dưới: Nhịp trên gồm 3 khối ô, nhịp dưới gồm 3 khối ô đối xứng qua khoảng trống trung tâm, 21 ô trống.",
+      "mechanics": "Giải hai hàng song song độc lập, sau đó so sánh và khớp nối giá trị tại các cột dọc liên kết.",
+      "prompt": "Giải hai hàng song song và kiểm tra các cột nối",
+      "instruction": "HOÀN THÀNH 21 Ô TRỐNG ĐỂ MỞ KHÓA",
+      "hint": "Gợi ý: Đáp án ở hai nhịp phải khớp tại giao điểm",
+      "empty_slots_count": 21,
+      "sample_equations_and_answers": [
+        {
+          "equation": "5 + [8] = 13",
+          "answer": 8,
+          "type": "bridge_top"
+        },
+        {
+          "equation": "15 - [6] = 9",
+          "answer": 6,
+          "type": "bridge_top"
+        },
+        {
+          "equation": "7 + [9] = 16",
+          "answer": 9,
+          "type": "bridge_top"
+        },
+        {
+          "equation": "18 - [8] = 10",
+          "answer": 8,
+          "type": "bridge_bottom"
+        },
+        {
+          "equation": "9 + [8] = 17",
+          "answer": 8,
+          "type": "bridge_bottom"
+        },
+        {
+          "equation": "3 + [8] = 11",
+          "answer": 8,
+          "type": "bridge_bottom"
+        }
+      ],
+      "distractors_or_palette": [4, 5, 6, 8, 9, 10, 11, 12, 13, 14, 16, 17, 19],
+      "pedagogy_notes": "Tư duy đối xứng song song (parallel logic processing): so sánh 2 tiến trình độc lập và hợp nhất tại các điểm giao cắt.",
+      "recommended_gt_templates": ["GT-048", "GT-001"],
+      "recommended_skills": ["C1.ADD.02", "C1.SUB.02", "C1.ALG.01", "C3.MAT.01"]
+    },
+    {
+      "page_number": 19,
+      "workbook_page_number": 18,
+      "file_path": "pages/page-19.jpg",
+      "page_type": "activity",
+      "title": "Tháp Đôi Ô Số",
+      "subtitle": "Đánh Thức Tháp Đôi - Bảng Tháp Đôi 6 Ô",
+      "character_quotes": {
+        "gau_logic": "Hai tòa tháp đang tắt ánh sáng rồi!",
+        "tho_quan_sat": "Bé giải từ đỉnh tháp xuống chân tháp nhé!"
+      },
+      "layout_structure": "Hai tòa tháp đứng song song hai bên: Tháp trái 3 tầng ô, Tháp phải 3 tầng ô, nối với nhau bằng 2 cầu treo màu tím bắc ngang giữa các tầng, 21 ô trống.",
+      "mechanics": "Giải từng tháp theo chiều từ trên xuống dưới, sau đó kiểm tra tương thích ngang qua cầu treo nối 2 tháp.",
+      "prompt": "Giải từ trên xuống ở từng tháp, rồi kiểm tra ngang",
+      "instruction": "HOÀN THÀNH 21 Ô TRỐNG ĐỂ MỞ KHÓA",
+      "hint": "Gợi ý: Làm xong một tầng hãy so sánh với tháp bên",
+      "empty_slots_count": 21,
+      "sample_equations_and_answers": [
+        {
+          "equation": "7 + [9] = 16",
+          "answer": 9,
+          "type": "tower_left_top"
+        },
+        {
+          "equation": "18 - [8] = 10",
+          "answer": 8,
+          "type": "tower_right_top"
+        },
+        {
+          "equation": "9 + [8] = 17",
+          "answer": 8,
+          "type": "tower_left_mid"
+        },
+        {
+          "equation": "3 + [8] = 11",
+          "answer": 8,
+          "type": "tower_right_mid"
+        },
+        {
+          "equation": "16 - [9] = 7",
+          "answer": 9,
+          "type": "tower_left_bottom"
+        },
+        {
+          "equation": "11 + [7] = 18",
+          "answer": 7,
+          "type": "tower_right_bottom"
+        }
+      ],
+      "distractors_or_palette": [4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 18, 20],
+      "pedagogy_notes": "Mô hình tháp đôi liên kết: rèn luyện kỹ năng phân chia nhiệm vụ thành 2 bán phần độc lập rồi đối chiếu giao tiếp ngang.",
+      "recommended_gt_templates": ["GT-048", "GT-008"],
+      "recommended_skills": ["C1.ADD.02", "C1.SUB.02", "C1.ALG.01", "C3.DED.01"]
+    },
+    {
+      "page_number": 20,
+      "workbook_page_number": 19,
+      "file_path": "pages/page-20.jpg",
+      "page_type": "activity",
+      "title": "Cửa Sổ Bốn Hướng",
+      "subtitle": "Mở Khóa Bốn Hướng - Bảng Cửa Sổ 6 Ô",
+      "character_quotes": {
+        "gau_logic": "Bốn hướng cửa sổ đang thiếu mã số!",
+        "tho_quan_sat": "Bé giải từ trung tâm tỏa ra bốn phía nhé!"
+      },
+      "layout_structure": "Bố cục hình chữ thập / la bàn 4 hướng đối xứng: Ô trung tâm kết nối 4 nhánh (nhánh Trên, nhánh Dưới, nhánh Trái, nhánh Phải), 22 ô trống.",
+      "mechanics": "Tìm ra giá trị chìa khóa của ô trung tâm trước, sau đó phát triển giải tỏa đều ra cả 4 hướng Đông - Tây - Nam - Bắc.",
+      "prompt": "Bắt đầu ở ô giữa, sau đó giải lên - xuống - trái - phải",
+      "instruction": "HOÀN THÀNH 22 Ô TRỐNG ĐỂ MỞ KHÓA",
+      "hint": "Gợi ý: Ô trung tâm là chìa khóa của cả bảng",
+      "empty_slots_count": 22,
+      "sample_equations_and_answers": [
+        {
+          "equation": "9 + [8] = 17",
+          "answer": 8,
+          "type": "compass_north"
+        },
+        {
+          "equation": "3 + [8] = 11",
+          "answer": 8,
+          "type": "compass_west"
+        },
+        {
+          "equation": "16 - [9] = 7",
+          "answer": 9,
+          "type": "compass_center"
+        },
+        {
+          "equation": "11 + [7] = 18",
+          "answer": 7,
+          "type": "compass_east"
+        },
+        {
+          "equation": "8 + [7] = 15",
+          "answer": 7,
+          "type": "compass_south"
+        },
+        {
+          "equation": "4 + [5] = 9",
+          "answer": 5,
+          "type": "compass_south"
+        }
+      ],
+      "distractors_or_palette": [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 19, 20],
+      "pedagogy_notes": "Cấu trúc hình sao / chữ thập (hub-and-spoke): ô trung tâm là hạt nhân mang tính sống còn quyết định lời giải của toàn bộ hệ thống.",
+      "recommended_gt_templates": ["GT-048", "GT-001"],
+      "recommended_skills": [
+        "C1.ADD.02",
+        "C1.SUB.02",
+        "C1.ALG.01",
+        "C3.DED.01",
+        "C3.MAT.01"
+      ]
+    },
+    {
+      "page_number": 21,
+      "workbook_page_number": 20,
+      "file_path": "pages/page-21.jpg",
+      "page_type": "activity",
+      "title": "Vòng Thành Ô Số",
+      "subtitle": "Khép Kín Vòng Thành - Bảng Vòng Thành 6 Ô",
+      "character_quotes": {
+        "gau_logic": "Vòng thành còn nhiều ô số chưa sáng!",
+        "tho_quan_sat": "Bé giải một vòng khép kín thật cẩn thận nhé!"
+      },
+      "layout_structure": "Bố cục vành khăn chữ nhật rỗng tâm (closed-loop ring): 6 khối ô tạo thành một vòng chu trình tuần hoàn khép kín, 22 ô trống.",
+      "mechanics": "Chọn 1 ô có đủ điều kiện để bắt đầu, giải lần lượt theo chiều kim đồng hồ cho đến khi vòng lặp quay về khớp chính xác với điểm xuất phát.",
+      "prompt": "Chọn một ô bắt đầu, giải liên tục cho đến khi khép vòng",
+      "instruction": "HOÀN THÀNH 22 Ô TRỐNG ĐỂ MỞ KHÓA",
+      "hint": "Gợi ý: Kết quả cuối phải khớp lại ô bắt đầu",
+      "empty_slots_count": 22,
+      "sample_equations_and_answers": [
+        {
+          "equation": "3 + [8] = 11",
+          "answer": 8,
+          "type": "loop_top"
+        },
+        {
+          "equation": "14 + [5] = 19",
+          "answer": 5,
+          "type": "loop_top"
+        },
+        {
+          "equation": "11 + [7] = 18",
+          "answer": 7,
+          "type": "loop_right"
+        },
+        {
+          "equation": "4 + [5] = 9",
+          "answer": 5,
+          "type": "loop_bottom_right"
+        },
+        {
+          "equation": "6 + [8] = 14",
+          "answer": 8,
+          "type": "loop_bottom"
+        },
+        {
+          "equation": "8 + [7] = 15",
+          "answer": 7,
+          "type": "loop_bottom_left"
+        },
+        {
+          "equation": "16 - [9] = 7",
+          "answer": 9,
+          "type": "loop_left"
+        }
+      ],
+      "distractors_or_palette": [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 20],
+      "pedagogy_notes": "Đỉnh cao của tư duy nhất quán logic (consistency check): một sai lầm nhỏ ở bất kỳ bước nào sẽ dẫn đến mâu thuẫn khi khép vòng tròn.",
+      "recommended_gt_templates": ["GT-048", "GT-008"],
+      "recommended_skills": [
+        "C1.ADD.02",
+        "C1.SUB.02",
+        "C1.ALG.01",
+        "C3.RULE.01",
+        "C3.DED.01"
+      ]
+    },
+    {
+      "page_number": 22,
+      "workbook_page_number": 21,
+      "file_path": "pages/page-22.jpg",
+      "page_type": "boss_challenge",
+      "title": "Đại Mật Mã Viên Ngọc",
+      "subtitle": "Thử Thách Cuối Chặng - Bảng Đại Mật Mã 7 Ô",
+      "character_quotes": {
+        "gau_logic": "Viên ngọc cuối đang ẩn sau bảng số lớn!",
+        "tho_quan_sat": "Bé dùng tất cả kỹ năng để mở khóa nhé!"
+      },
+      "layout_structure": "Ma trận đại thử thách quy mô cực đại 7 khối ô liên hợp: 3 khối hàng trên, 3 khối hàng giữa, và khối chân đế phong ấn cuối cùng ở dưới, 22 ô trống.",
+      "mechanics": "Giải từ viền ngoài tiến dần vào ô trung tâm, kiểm tra kỹ lưỡng cả 4 cạnh để tháo dỡ toàn bộ phong ấn giải cứu Viên Ngọc Lâu Đài tối thượng.",
+      "prompt": "Giải từ viền ngoài và tiến dần vào ô trung tâm",
+      "instruction": "HOÀN THÀNH 22 Ô TRỐNG ĐỂ MỞ KHÓA",
+      "hint": "Gợi ý: Kiểm tra lại cả bốn cạnh trước khi mở khóa",
+      "empty_slots_count": 22,
+      "sample_equations_and_answers": [
+        {
+          "equation": "16 - [9] = 7",
+          "answer": 9,
+          "type": "boss_top_left"
+        },
+        {
+          "equation": "11 + [7] = 18",
+          "answer": 7,
+          "type": "boss_top_mid"
+        },
+        {
+          "equation": "8 + [7] = 15",
+          "answer": 7,
+          "type": "boss_top_right"
+        },
+        {
+          "equation": "4 + [5] = 9",
+          "answer": 5,
+          "type": "boss_mid_left"
+        },
+        {
+          "equation": "6 + [8] = 14",
+          "answer": 8,
+          "type": "boss_mid_center"
+        },
+        {
+          "equation": "12 - [4] = 8",
+          "answer": 4,
+          "type": "boss_mid_right"
+        },
+        {
+          "equation": "5 + [8] = 13",
+          "answer": 8,
+          "type": "boss_bottom_pedestal"
+        },
+        {
+          "equation": "8 + [2] = 10",
+          "answer": 2,
+          "type": "boss_bottom_pedestal"
+        }
+      ],
+      "distractors_or_palette": [
+        2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 20
+      ],
+      "pedagogy_notes": "Trận đấu trùm (Boss Challenge) tích hợp toàn bộ kỹ năng của Chặng 11: tính toán phạm vi 20, phương trình số khuyết, suy luận 2 chiều, kiểm tra chéo 4 cạnh. Hoàn thành xuất sắc chặng đường giải mã ô số.",
+      "recommended_gt_templates": ["GT-048", "GT-001", "GT-008"],
+      "recommended_skills": [
+        "C1.ADD.02",
+        "C1.SUB.02",
+        "C1.ALG.01",
+        "C3.RULE.01",
+        "C3.MAT.01",
+        "C3.DED.01"
+      ]
+    }
+  ]
+}

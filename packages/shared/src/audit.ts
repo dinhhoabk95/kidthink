@@ -22,6 +22,8 @@ export const AUDIT_ACTIONS = {
   ORDER_APPROVED: "order_approved",
   ORDER_REJECTED: "order_rejected",
   BONUS_DAYS_GRANTED: "bonus_days_granted",
+  SUBSCRIPTION_CANCELLED_BY_USER: "subscription.cancelled_by_user",
+  SUBSCRIPTION_CANCELLED_BY_ADMIN: "subscription.cancelled_by_admin",
 
   // Content
   CONTENT_CREATED: "content_created",

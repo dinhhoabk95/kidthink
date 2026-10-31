@@ -6,7 +6,6 @@ export const AI_FEATURE_COSTS = {
   content_recommendation: 1,
   semantic_search: 1,
   instruction_rewrite: 2,
-  lesson_plan_generation: 2,
 } as const;
 
 export type AiFeatureKey = keyof typeof AI_FEATURE_COSTS;

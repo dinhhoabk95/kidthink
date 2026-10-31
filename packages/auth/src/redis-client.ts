@@ -20,13 +20,15 @@ export function getAuthRedisClient(): MinimalRedisClient {
     client.on("error", () => {
       /* fail-closed handled per operation */
     });
+    const created: MinimalRedisClient = client;
     client.on("end", () => {
-      if (authRedisClient === client) {
+      if (authRedisClient === created) {
         authRedisClient = undefined;
         browserSessionService = undefined;
       }
     });
-    authRedisClient = client;
+    authRedisClient = created;
+    return created;
   }
   return authRedisClient;
 }

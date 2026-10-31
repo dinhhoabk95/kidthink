@@ -4,9 +4,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ref } from "vue";
 
 /**
- * Sảnh chơi của trẻ (`play-stage-zones.md`, `child-lesson-flow.md` §3, Task #280, Task #285):
+ * Sảnh chơi của trẻ (`play-stage-zones.md`):
  * dùng layout kid (không navbar/footer phụ huynh), thoát chỉ qua khoá phụ huynh,
- * chứa hàng bài học, danh mục 6 năng lực, và huy hiệu hồ sơ bé.
+ * chứa danh mục 6 năng lực, lộ trình và huy hiệu hồ sơ bé.
  */
 
 const pushMock = vi.fn();
@@ -49,9 +49,6 @@ const ParentGateStub = {
 const stubs = {
   UIcon: { template: "<i />" },
   KidMascot: { template: "<canvas />" },
-  KidLessonRow: {
-    template: '<div data-testid="kid-lesson-row-stub">LessonRow</div>',
-  },
   KidRecommendationsRow: {
     props: ["recommendations"],
     template:
@@ -149,13 +146,6 @@ describe("Sảnh chơi của trẻ /play (BR-PSZ-11, BR-CLF-05, BR-PEN-07)", () 
     expect(mapLink.attributes("href")).toBe("/play/map");
   });
 
-  it("hiển thị hàng bài học KidLessonRow", async () => {
-    const page = await mountLobbyPage();
-    expect(page.find('[data-testid="kid-lesson-row-stub"]').exists()).toBe(
-      true
-    );
-  });
-
   it("hiển thị đủ 6 nhóm năng lực C1–C6 dẫn vào trang khám phá trẻ (BR-CCE-06)", async () => {
     const page = await mountLobbyPage();
     const competencyLinks = page
@@ -174,7 +164,7 @@ describe("Sảnh chơi của trẻ /play (BR-PSZ-11, BR-CLF-05, BR-PEN-07)", () 
   it("hiển thị modal chúc mừng huy hiệu KidBadgeCelebrationModal khi có huy hiệu mới (BR-PRG-04, §7.2)", async () => {
     localStorage.clear();
     const fetchMock = vi.fn().mockImplementation((url: string) => {
-      if (url === "/api/users/play/map") {
+      if (url === "/api/users/play/stickers" || url === "/api/users/play/map") {
         return Promise.resolve({
           badges: [{ badge_code: "STRAND_FIRST_COMPLETE" }],
         });

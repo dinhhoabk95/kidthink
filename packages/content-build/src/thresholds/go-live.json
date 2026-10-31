@@ -44,7 +44,6 @@
   "thresholds": {
     "engine_render_coverage_percent": 100,
     "longest_flow_code": "CUR-RM-3-4-mam-01",
-    "lesson_supply_target": 126,
     "min_levels_per_skill": 2,
     "content_depth_step": 0
   }

@@ -71,7 +71,7 @@ export const suggestContentInputSchema = z.object({
     .uuid("child_uuid phải là định dạng UUID hợp lệ.")
     .optional(),
   target_skill_code: z.string().optional(),
-  content_type: z.enum(["game", "lesson"]).optional().default("game"),
+  content_type: z.enum(["game"]).optional().default("game"),
   limit: z.coerce.number().int().min(1).max(10).optional().default(5),
 });
 

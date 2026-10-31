@@ -13,6 +13,28 @@ import {
   shuffleDeterministic,
 } from "./utils.js";
 
+const WHITESPACE_RE = /\s+/;
+
+function countWords(text: string): number {
+  return text.trim().split(WHITESPACE_RE).filter(Boolean).length;
+}
+
+function buildGT026Prompt(goLabel: string, nogoLabel: string): string {
+  const full = `Bé hãy chạm vào ${goLabel}, bỏ qua ${nogoLabel} nhé!`;
+  if (countWords(full) <= 12) {
+    return full;
+  }
+  const compact = `Chạm vào ${goLabel}, bỏ qua ${nogoLabel} nhé!`;
+  if (countWords(compact) <= 12) {
+    return compact;
+  }
+  const goOnly = `Bé hãy chạm vào ${goLabel} nhé!`;
+  if (countWords(goOnly) <= 12) {
+    return goOnly;
+  }
+  return "Bé hãy chạm đúng hình mục tiêu nhé!";
+}
+
 function buildTrials(count: number, rng: ReturnType<typeof createRng>) {
   const nogoCount = Math.max(1, Math.round(count * 0.3));
   const rawTrials: Array<{ id: string; kind: "go" | "nogo" }> = [];
@@ -46,7 +68,10 @@ export const projectGT026: Projection<"GT-026"> = {
 
     return {
       content_pack: {
-        prompt: `Bé hãy chạm vào ${formatPromptLabel(goItem.label)}, bỏ qua ${formatPromptLabel(nogoItem.label)} nhé!`,
+        prompt: buildGT026Prompt(
+          formatPromptLabel(goItem.label),
+          formatPromptLabel(nogoItem.label)
+        ),
         go_stimulus: {
           label: goItem.label,
           asset: resolveItemAsset(goItem, true),

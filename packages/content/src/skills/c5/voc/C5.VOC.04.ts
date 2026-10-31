@@ -49,8 +49,10 @@ export const C5_VOC_04_DATASET: SkillDataset = {
         ref: "👴",
       },
       category: {
-        type: "gia đình",
+        type: "người lớn nhà",
       },
+      value: 1,
+      contrast_group: "primary",
     },
     {
       id: "voc_ba",
@@ -60,8 +62,10 @@ export const C5_VOC_04_DATASET: SkillDataset = {
         ref: "👵",
       },
       category: {
-        type: "gia đình",
+        type: "người lớn nhà",
       },
+      value: 2,
+      contrast_group: "primary",
     },
     {
       id: "voc_bo",
@@ -71,8 +75,10 @@ export const C5_VOC_04_DATASET: SkillDataset = {
         ref: "👨",
       },
       category: {
-        type: "gia đình",
+        type: "người lớn nhà",
       },
+      value: 3,
+      contrast_group: "primary",
     },
     {
       id: "voc_me",
@@ -82,8 +88,49 @@ export const C5_VOC_04_DATASET: SkillDataset = {
         ref: "👩",
       },
       category: {
-        type: "gia đình",
+        type: "người lớn nhà",
       },
+      value: 4,
+      contrast_group: "primary",
+    },
+    {
+      id: "voc_anh",
+      label: "anh trai",
+      image: {
+        kind: "emoji",
+        ref: "👦",
+      },
+      category: {
+        type: "anh chị em",
+      },
+      value: 5,
+      contrast_group: "contrast",
+    },
+    {
+      id: "voc_chi",
+      label: "chị gái",
+      image: {
+        kind: "emoji",
+        ref: "👧",
+      },
+      category: {
+        type: "anh chị em",
+      },
+      value: 6,
+      contrast_group: "contrast",
+    },
+    {
+      id: "voc_em",
+      label: "em trai",
+      image: {
+        kind: "emoji",
+        ref: "🧒",
+      },
+      category: {
+        type: "anh chị em",
+      },
+      value: 7,
+      contrast_group: "contrast",
     },
     {
       id: "voc_be",
@@ -93,9 +140,27 @@ export const C5_VOC_04_DATASET: SkillDataset = {
         ref: "👶",
       },
       category: {
-        type: "gia đình",
+        type: "anh chị em",
       },
+      value: 8,
+      contrast_group: "contrast",
     },
+  ],
+  axes: {
+    category: {
+      values: ["người lớn nhà", "anh chị em"],
+      ordered: true,
+    },
+  },
+  relations: [
+    { type: "pair", source_id: "voc_ong", target_id: "voc_ba" },
+    { type: "pair", source_id: "voc_bo", target_id: "voc_me" },
+    { type: "pair", source_id: "voc_anh", target_id: "voc_chi" },
+    { type: "pair", source_id: "voc_em", target_id: "voc_be" },
+    { type: "contrast", source_id: "voc_ong", target_id: "voc_anh" },
+    { type: "contrast", source_id: "voc_ba", target_id: "voc_chi" },
+    { type: "contrast", source_id: "voc_bo", target_id: "voc_em" },
+    { type: "contrast", source_id: "voc_me", target_id: "voc_be" },
   ],
   ladder: [
     {
@@ -128,7 +193,16 @@ export const C5_VOC_04_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Từ vựng gia đình nhé",
   },
-  ordering: ["voc_ong", "voc_ba", "voc_bo", "voc_me", "voc_be"],
+  ordering: [
+    "voc_ong",
+    "voc_ba",
+    "voc_bo",
+    "voc_me",
+    "voc_anh",
+    "voc_chi",
+    "voc_em",
+    "voc_be",
+  ],
 };
 
 export const C5_VOC_04_SEED: SkillSeed = {
@@ -157,62 +231,6 @@ export const C5_VOC_04_SEED: SkillSeed = {
       band: "3-4",
       difficulty: 1,
       theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-TCMP-0008",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 2,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-PATT-0007",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 1,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-PATT-0008",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 2,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-SLOT-0005",
-      template: "GT-008",
-      band: "3-4",
-      difficulty: 1,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-SLOT-0006",
-      template: "GT-008",
-      band: "3-4",
-      difficulty: 2,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-MEMO-0005",
-      template: "GT-012",
-      band: "3-4",
-      difficulty: 1,
-      theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-MEMO-0006",
-      template: "GT-012",
-      band: "3-4",
-      difficulty: 2,
-      theme: "festival",
       rounds: 3,
     },
   ],

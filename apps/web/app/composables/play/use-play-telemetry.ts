@@ -258,11 +258,12 @@ export function usePlayTelemetry(options?: UsePlayTelemetryOptions) {
     sessionUuid: string,
     roundRunner: RoundRunner,
     loggedIn: boolean,
-    sessionStartedAt?: string | null
+    sessionStartedAt?: string | null,
+    precollectedEvents?: readonly TelemetryEvent[]
   ): Promise<void> {
     ensureSessionInitialized(sessionUuid, loggedIn, sessionStartedAt);
 
-    const rawEvents = roundRunner.getAllTelemetry();
+    const rawEvents = precollectedEvents ?? roundRunner.getAllTelemetry();
     const events = formatTelemetryPayload(rawEvents, sessionStartedAt);
 
     buffer.ingestEvents(events);
@@ -312,6 +313,7 @@ export function usePlayTelemetry(options?: UsePlayTelemetryOptions) {
       activeTelemetryBuffer = null;
       activeRoundRunner = null;
     }
+    parentGateTelemetryRecords.length = 0;
     buffer.destroy();
   }
 

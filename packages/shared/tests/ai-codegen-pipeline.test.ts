@@ -20,50 +20,44 @@ const HEX_8_REGEX = /^[a-f0-9]{8}$/;
 
 describe("AI Codegen Pipeline (docs/specs/01-platform/ai-codegen-pipeline.md, #307)", () => {
   it("S1 (BR-AIG-04, BR-AIG-10): parses real spec markdown into deterministic SpecIndex with 8-char SHA-256 hash", () => {
-    const audioSpecPath = "docs/specs/01-platform/audio-storage.md";
-    const audioMarkdown = fs.readFileSync(
-      path.join(ROOT_DIR, audioSpecPath),
+    const flagSpecPath = "docs/specs/01-platform/feature-flag-service.md";
+    const flagMarkdown = fs.readFileSync(
+      path.join(ROOT_DIR, flagSpecPath),
       "utf8"
     );
 
-    const parsed1 = parseSpecMarkdown(audioSpecPath, audioMarkdown);
-    const parsed2 = parseSpecMarkdown(audioSpecPath, audioMarkdown);
+    const parsed1 = parseSpecMarkdown(flagSpecPath, flagMarkdown);
+    const parsed2 = parseSpecMarkdown(flagSpecPath, flagMarkdown);
 
-    expect(parsed1.specId).toBe("AUDIO-STORAGE");
-    expect(parsed1.specSlug).toBe("audio-storage");
+    expect(parsed1.specId).toBe("FEATURE-FLAG-SERVICE");
+    expect(parsed1.specSlug).toBe("feature-flag-service");
     expect(parsed1.specHash).toMatch(HEX_8_REGEX);
     expect(parsed1.specHash).toBe(parsed2.specHash);
     expect(parsed1.isSensitiveDomain).toBe(false);
 
     const ruleIds = parsed1.businessRules.map((r) => r.id);
-    expect(ruleIds).toContain("BR-AST-01");
-    expect(ruleIds).toContain("BR-AST-05");
-    expect(ruleIds).toContain("BR-AST-08");
+    expect(ruleIds).toContain("BR-FLG-01");
+    expect(ruleIds).toContain("BR-FLG-02");
+    expect(ruleIds).toContain("BR-FLG-04");
 
-    expect(parsed1.drizzleTables.map((t) => t.tableName)).toContain(
-      "content_audio"
-    );
     expect(parsed1.endpoints.map((e) => `${e.method} ${e.path}`)).toEqual(
-      expect.arrayContaining([
-        "POST /api/managers/audio",
-        "DELETE /api/managers/audio/{id}",
-      ])
+      expect.arrayContaining(["GET /api/managers/feature-flags"])
     );
 
     const index = buildSpecIndex([
-      { specPath: audioSpecPath, markdown: audioMarkdown },
+      { specPath: flagSpecPath, markdown: flagMarkdown },
     ]);
     expect(index.version).toBe(1);
     expect(index.specs).toHaveLength(1);
   });
 
   it("S2 (BR-AIG-02, BR-AIG-04, BR-AIG-06, BR-AIG-10): generates deterministic tests, zod, routes, schema, and session with @generated header", () => {
-    const audioSpecPath = "docs/specs/01-platform/audio-storage.md";
-    const audioMarkdown = fs.readFileSync(
-      path.join(ROOT_DIR, audioSpecPath),
+    const flagSpecPath = "docs/specs/01-platform/feature-flag-service.md";
+    const flagMarkdown = fs.readFileSync(
+      path.join(ROOT_DIR, flagSpecPath),
       "utf8"
     );
-    const spec = parseSpecMarkdown(audioSpecPath, audioMarkdown);
+    const spec = parseSpecMarkdown(flagSpecPath, flagMarkdown);
     const expectedHeader = formatGeneratedHeader(spec.specId, spec.specHash);
 
     const testCodeA = generateTestsFromSpec(spec);
@@ -82,7 +76,7 @@ describe("AI Codegen Pipeline (docs/specs/01-platform/ai-codegen-pipeline.md, #3
 
     const schemaCode = generateSchemaFromSpec(spec);
     expect(schemaCode.startsWith(expectedHeader)).toBe(true);
-    expect(schemaCode).toContain("content_audio");
+    expect(schemaCode).toContain("feature-flag-service.md");
 
     const sessionCode = generateGameSessionFromSpec(spec, {
       className: "CountTapSession",

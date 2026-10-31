@@ -101,6 +101,84 @@ export const C1_PROB_02_DATASET: SkillDataset = {
         type: "con vật",
       },
     },
+    {
+      id: "cp20_apple",
+      label: "quả táo đỏ",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "🍎",
+      },
+      contrast_group: "cp20_orchard",
+      category: {
+        type: "trái cây",
+      },
+    },
+    {
+      id: "cp20_pear",
+      label: "quả lê xanh",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "🍐",
+      },
+      contrast_group: "cp20_orchard",
+      category: {
+        type: "trái cây",
+      },
+    },
+    {
+      id: "cp20_strawberry",
+      label: "quả dâu tây",
+      value: 1,
+      image: {
+        kind: "emoji",
+        ref: "🍓",
+      },
+      contrast_group: "cp20_orchard",
+      category: {
+        type: "trái cây",
+      },
+    },
+    {
+      id: "cp20_carrot",
+      label: "củ cà rốt",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "🥕",
+      },
+      contrast_group: "cp20_veggie",
+      category: {
+        type: "nông sản",
+      },
+    },
+    {
+      id: "cp20_corn",
+      label: "bắp ngô vàng",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "🌽",
+      },
+      contrast_group: "cp20_veggie",
+      category: {
+        type: "nông sản",
+      },
+    },
+    {
+      id: "cp20_pea",
+      label: "đậu Hà Lan",
+      value: 1,
+      image: {
+        kind: "emoji",
+        ref: "🫛",
+      },
+      contrast_group: "cp20_veggie",
+      category: {
+        type: "nông sản",
+      },
+    },
   ],
   relations: [
     {
@@ -329,6 +407,26 @@ export const C1_PROB_02_SEED: SkillSeed = {
       difficulty: 3,
       theme: "body",
       rounds: 3,
+    },
+    {
+      code: "GL-C1-PROB-SUB-0310",
+      template: "GT-010",
+      band: "5-6",
+      difficulty: 1,
+      access_tier: "free",
+      theme: "farm",
+      rounds: 3,
+      montessori_ref: "WB20-D1",
+    },
+    {
+      code: "GL-C1-PROB-SLOT-0311",
+      template: "GT-008",
+      band: "5-6",
+      difficulty: 2,
+      access_tier: "login",
+      theme: "nature",
+      rounds: 3,
+      montessori_ref: "WB20-D1",
     },
   ],
 };

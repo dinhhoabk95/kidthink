@@ -5,8 +5,8 @@ export const C4_EXP_06_IDENTITY: SkillIdentity = {
   strand_code: "C4.EXP",
   competency_code: "C4",
   name: "Đổi một điều kiện rồi thử lại",
-  age_min: 6,
-  age_max: 7,
+  age_min: 5,
+  age_max: 6,
   difficulty: 5,
   thinking_processes: ["verify", "shift"],
   tier: "advanced",
@@ -45,61 +45,153 @@ export const C4_EXP_06_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "bowl",
-      label: "cái bát",
+      id: "cond_cold",
+      label: "cốc nước đá",
       image: {
         kind: "emoji",
-        ref: "🥣",
+        ref: "🧊",
       },
       category: {
-        type: "đồ dùng",
+        type: "điều kiện đầu",
       },
+      contrast_group: "initial",
+      value: 1,
+      ordering: 1,
+      audio_path: "/audio/vi/c4/cond_cold.mp3",
     },
     {
-      id: "spoon",
-      label: "cái thìa",
+      id: "cond_ramp_low",
+      label: "xe dốc thấp",
       image: {
         kind: "emoji",
-        ref: "🥄",
+        ref: "🚗",
       },
       category: {
-        type: "đồ dùng",
+        type: "điều kiện đầu",
       },
+      contrast_group: "initial",
+      value: 2,
+      ordering: 2,
+      audio_path: "/audio/vi/c4/cond_ramp_low.mp3",
     },
     {
-      id: "cup",
-      label: "cái cốc",
+      id: "cond_wind_light",
+      label: "diều gió nhẹ",
       image: {
         kind: "emoji",
-        ref: "🥤",
+        ref: "🪁",
       },
       category: {
-        type: "đồ dùng",
+        type: "điều kiện đầu",
       },
+      contrast_group: "initial",
+      value: 3,
+      ordering: 3,
+      audio_path: "/audio/vi/c4/cond_wind_light.mp3",
     },
     {
-      id: "bed",
-      label: "cái giường",
+      id: "cond_shade",
+      label: "cây trong bóng",
       image: {
         kind: "emoji",
-        ref: "🛏️",
+        ref: "🌱",
       },
       category: {
-        type: "đồ dùng",
+        type: "điều kiện đầu",
       },
+      contrast_group: "initial",
+      value: 4,
+      ordering: 4,
+      audio_path: "/audio/vi/c4/cond_shade.mp3",
     },
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "cond_warm",
+      label: "cốc nước ấm",
       image: {
         kind: "emoji",
-        ref: "🪑",
+        ref: "♨️",
       },
       category: {
-        type: "đồ dùng",
+        type: "điều kiện đổi",
       },
+      contrast_group: "changed",
+      value: 1,
+      ordering: 5,
+      audio_path: "/audio/vi/c4/cond_warm.mp3",
+    },
+    {
+      id: "cond_ramp_high",
+      label: "xe dốc cao",
+      image: {
+        kind: "emoji",
+        ref: "🏎️",
+      },
+      category: {
+        type: "điều kiện đổi",
+      },
+      contrast_group: "changed",
+      value: 2,
+      ordering: 6,
+      audio_path: "/audio/vi/c4/cond_ramp_high.mp3",
+    },
+    {
+      id: "cond_wind_strong",
+      label: "diều gió to",
+      image: {
+        kind: "emoji",
+        ref: "💨",
+      },
+      category: {
+        type: "điều kiện đổi",
+      },
+      contrast_group: "changed",
+      value: 3,
+      ordering: 7,
+      audio_path: "/audio/vi/c4/cond_wind_strong.mp3",
+    },
+    {
+      id: "cond_sun",
+      label: "cây ngoài nắng",
+      image: {
+        kind: "emoji",
+        ref: "☀️",
+      },
+      category: {
+        type: "điều kiện đổi",
+      },
+      contrast_group: "changed",
+      value: 4,
+      ordering: 8,
+      audio_path: "/audio/vi/c4/cond_sun.mp3",
     },
   ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "cond_cold",
+      target_id: "cond_warm",
+    },
+    {
+      type: "contrast",
+      source_id: "cond_ramp_low",
+      target_id: "cond_ramp_high",
+    },
+    {
+      type: "contrast",
+      source_id: "cond_wind_light",
+      target_id: "cond_wind_strong",
+    },
+    {
+      type: "contrast",
+      source_id: "cond_shade",
+      target_id: "cond_sun",
+    },
+  ],
+  axes: {
+    condition_type: {
+      values: ["điều kiện đầu", "điều kiện đổi"],
+    },
+  },
   ladder: [
     {
       rung: 1,
@@ -132,7 +224,16 @@ export const C4_EXP_06_DATASET: SkillDataset = {
     narration_template:
       "Chúng mình cùng tìm hiểu về Đổi một điều kiện rồi thử lại nhé",
   },
-  ordering: ["bowl", "spoon", "cup", "bed", "chair"],
+  ordering: [
+    "cond_cold",
+    "cond_ramp_low",
+    "cond_wind_light",
+    "cond_shade",
+    "cond_warm",
+    "cond_ramp_high",
+    "cond_wind_strong",
+    "cond_sun",
+  ],
 };
 
 export const C4_EXP_06_SEED: SkillSeed = {
@@ -148,27 +249,11 @@ export const C4_EXP_06_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C4-EXP-PUZZ-0002",
-      template: "GT-010",
-      band: "5-6",
-      difficulty: 5,
-      theme: "homeland",
-      rounds: 3,
-    },
-    {
       code: "GL-C4-EXP-ADD-0001",
       template: "GT-026",
       band: "5-6",
       difficulty: 4,
       theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-EXP-ADD-0002",
-      template: "GT-026",
-      band: "5-6",
-      difficulty: 5,
-      theme: "farm",
       rounds: 3,
     },
     {
@@ -180,14 +265,6 @@ export const C4_EXP_06_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C4-EXP-SUB-0002",
-      template: "GT-027",
-      band: "5-6",
-      difficulty: 5,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
       code: "GL-C4-EXP-MEAS-0003",
       template: "GT-028",
       band: "5-6",
@@ -196,27 +273,11 @@ export const C4_EXP_06_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C4-EXP-MEAS-0004",
-      template: "GT-028",
-      band: "5-6",
-      difficulty: 5,
-      theme: "ocean",
-      rounds: 3,
-    },
-    {
       code: "GL-C4-EXP-TIME-0001",
       template: "GT-029",
       band: "5-6",
       difficulty: 4,
       theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-EXP-TIME-0002",
-      template: "GT-029",
-      band: "5-6",
-      difficulty: 5,
-      theme: "vehicle",
       rounds: 3,
     },
   ],

@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import { flushPromises, mount } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { ref } from "vue";
+import { defineComponent, h, ref, Suspense } from "vue";
 
 const pushMock = vi.fn();
 const fetchSessionMock = vi.fn();
@@ -91,6 +91,8 @@ vi.mock("~/composables/use-api", () => ({
 vi.mock("#imports", () => ({
   definePageMeta: vi.fn(),
   useSeoMeta: vi.fn(),
+  useRoute: () => ({ query: mockRouteQuery.value }),
+  useRouter: () => ({ push: pushMock }),
   useUserSession: () => ({ fetch: fetchSessionMock }),
   useFetch: () => ({
     data: mockSubscriptionData,
@@ -99,6 +101,9 @@ vi.mock("#imports", () => ({
     refresh: refreshMock,
   }),
 }));
+
+vi.stubGlobal("useRoute", () => ({ query: mockRouteQuery.value }));
+vi.stubGlobal("useRouter", () => ({ push: pushMock }));
 
 const globalStubs = {
   UIcon: { template: "<i />" },
@@ -221,7 +226,14 @@ describe("Register Page & Subscription View Page (#290 S8, #291 S5, #292 S5)", (
 
       const SubscriptionPage = (await import("~/pages/me/subscription.vue"))
         .default;
-      const wrapper = mount(SubscriptionPage, {
+      const SuspendedSubscription = defineComponent({
+        render() {
+          return h(Suspense, null, {
+            default: () => h(SubscriptionPage),
+          });
+        },
+      });
+      const wrapper = mount(SuspendedSubscription, {
         global: { stubs: globalStubs },
       });
       await flushPromises();
@@ -286,7 +298,14 @@ describe("Register Page & Subscription View Page (#290 S8, #291 S5, #292 S5)", (
 
       const SubscriptionPage = (await import("~/pages/me/subscription.vue"))
         .default;
-      const wrapper = mount(SubscriptionPage, {
+      const SuspendedSubscription = defineComponent({
+        render() {
+          return h(Suspense, null, {
+            default: () => h(SubscriptionPage),
+          });
+        },
+      });
+      const wrapper = mount(SuspendedSubscription, {
         global: { stubs: globalStubs },
       });
       await flushPromises();

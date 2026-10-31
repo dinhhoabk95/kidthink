@@ -42,59 +42,151 @@ export const C4_SOC_03_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "bowl",
-      label: "cái bát",
+      id: "sweep",
+      label: "chổi quét nhà",
+      image: {
+        kind: "emoji",
+        ref: "🧹",
+      },
+      category: {
+        type: "dụng cụ dọn",
+      },
+      value: 1,
+      ordering: 1,
+      contrast_group: "clean",
+      audio_path: "/audio/vi/c4/sweep.mp3",
+    },
+    {
+      id: "wipe_table",
+      label: "miếng bọt biển",
+      image: {
+        kind: "emoji",
+        ref: "🧽",
+      },
+      category: {
+        type: "dụng cụ dọn",
+      },
+      value: 2,
+      ordering: 2,
+      contrast_group: "clean",
+      audio_path: "/audio/vi/c4/wipe_table.mp3",
+    },
+    {
+      id: "laundry",
+      label: "giỏ đựng đồ",
+      image: {
+        kind: "emoji",
+        ref: "🧺",
+      },
+      category: {
+        type: "dụng cụ dọn",
+      },
+      value: 3,
+      ordering: 3,
+      contrast_group: "clean",
+      audio_path: "/audio/vi/c4/laundry.mp3",
+    },
+    {
+      id: "trash_sort",
+      label: "thùng đựng rác",
+      image: {
+        kind: "emoji",
+        ref: "🗑️",
+      },
+      category: {
+        type: "dụng cụ dọn",
+      },
+      value: 4,
+      ordering: 4,
+      contrast_group: "clean",
+      audio_path: "/audio/vi/c4/trash_sort.mp3",
+    },
+    {
+      id: "cook",
+      label: "chảo nấu ăn",
+      image: {
+        kind: "emoji",
+        ref: "🍳",
+      },
+      category: {
+        type: "đồ dùng bếp",
+      },
+      value: 1,
+      ordering: 5,
+      contrast_group: "kitchen",
+      audio_path: "/audio/vi/c4/cook.mp3",
+    },
+    {
+      id: "wash_dishes",
+      label: "bát ăn cơm",
       image: {
         kind: "emoji",
         ref: "🥣",
       },
       category: {
-        type: "đồ dùng",
+        type: "đồ dùng bếp",
       },
+      value: 2,
+      ordering: 6,
+      contrast_group: "kitchen",
+      audio_path: "/audio/vi/c4/wash_dishes.mp3",
+    },
+    {
+      id: "cooking_pot",
+      label: "nồi nấu canh",
+      image: {
+        kind: "emoji",
+        ref: "🍲",
+      },
+      category: {
+        type: "đồ dùng bếp",
+      },
+      value: 3,
+      ordering: 7,
+      contrast_group: "kitchen",
+      audio_path: "/audio/vi/c4/cooking_pot.mp3",
     },
     {
       id: "spoon",
-      label: "cái thìa",
+      label: "chiếc thìa nhỏ",
       image: {
         kind: "emoji",
         ref: "🥄",
       },
       category: {
-        type: "đồ dùng",
+        type: "đồ dùng bếp",
       },
+      value: 4,
+      ordering: 8,
+      contrast_group: "kitchen",
+      audio_path: "/audio/vi/c4/spoon.mp3",
+    },
+  ],
+  axes: {
+    category: {
+      values: ["dụng cụ dọn", "đồ dùng bếp"],
+    },
+  },
+  relations: [
+    {
+      type: "contrast",
+      source_id: "sweep",
+      target_id: "cook",
     },
     {
-      id: "cup",
-      label: "cái cốc",
-      image: {
-        kind: "emoji",
-        ref: "🥤",
-      },
-      category: {
-        type: "đồ dùng",
-      },
+      type: "contrast",
+      source_id: "wipe_table",
+      target_id: "wash_dishes",
     },
     {
-      id: "bed",
-      label: "cái giường",
-      image: {
-        kind: "emoji",
-        ref: "🛏️",
-      },
-      category: {
-        type: "đồ dùng",
-      },
+      type: "contrast",
+      source_id: "laundry",
+      target_id: "cooking_pot",
     },
     {
-      id: "chair",
-      label: "cái ghế",
-      image: {
-        kind: "emoji",
-        ref: "🪑",
-      },
-      category: {
-        type: "đồ dùng",
-      },
+      type: "contrast",
+      source_id: "trash_sort",
+      target_id: "spoon",
     },
   ],
   ladder: [
@@ -128,7 +220,16 @@ export const C4_SOC_03_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Công việc trong nhà nhé",
   },
-  ordering: ["bowl", "spoon", "cup", "bed", "chair"],
+  ordering: [
+    "sweep",
+    "wipe_table",
+    "laundry",
+    "trash_sort",
+    "cook",
+    "wash_dishes",
+    "cooking_pot",
+    "spoon",
+  ],
 };
 
 export const C4_SOC_03_SEED: SkillSeed = {
@@ -157,62 +258,6 @@ export const C4_SOC_03_SEED: SkillSeed = {
       band: "4-5",
       difficulty: 1,
       theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-SOC-TCNT-0002",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 2,
-      theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-SOC-TCMP-0003",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 1,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-SOC-TCMP-0004",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 2,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-SOC-PAIR-0001",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 1,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-SOC-PAIR-0002",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 2,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-SOC-PATT-0007",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 1,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-SOC-PATT-0008",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 2,
-      theme: "ocean",
       rounds: 3,
     },
   ],

@@ -5,9 +5,8 @@ import {
   curriculumItems,
   curriculumWeeks,
   gameLevels,
-  lessons,
 } from "@mindkid/db";
-import { and, eq, inArray } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import type { ContentDemandLedger } from "#src/gates/content-demand";
 import {
   type CurriculumItemPlan,
@@ -23,29 +22,22 @@ type OwnerDb = ReturnType<typeof getOwnerDb>;
 
 async function findCurriculumId(
   db: OwnerDb,
-  code: string,
-  contentVersion: number
+  code: string
 ): Promise<number | undefined> {
   const [row] = await db
     .select({ id: curricula.id })
     .from(curricula)
-    .where(
-      and(
-        eq(curricula.code, code),
-        eq(curricula.contentVersion, contentVersion)
-      )
-    )
+    .where(eq(curricula.code, code))
     .limit(1);
   return row?.id;
 }
 
 async function upsertCurriculumRecord(
   db: OwnerDb,
-  roadmap: RoadmapSeed,
-  idx: number
+  roadmap: RoadmapSeed
 ): Promise<{ curriculumId: number; isNew: boolean }> {
   const cfg = roadmapToCurriculumConfig(roadmap);
-  const existing = await findCurriculumId(db, cfg.code, cfg.contentVersion);
+  const existing = await findCurriculumId(db, cfg.code);
   if (existing !== undefined) {
     return { curriculumId: existing, isNew: false };
   }
@@ -53,9 +45,7 @@ async function upsertCurriculumRecord(
   const [inserted] = await db
     .insert(curricula)
     .values({
-      entityId: idx + 1,
       code: cfg.code,
-      contentVersion: cfg.contentVersion,
       programType: cfg.programType,
       targetAgeMin: cfg.targetAgeMin,
       targetAgeMax: cfg.targetAgeMax,
@@ -64,9 +54,6 @@ async function upsertCurriculumRecord(
       title: cfg.title,
       description: cfg.description,
       accessTier: cfg.accessTier,
-      status: cfg.status,
-      authoredIn: "repo_seed",
-      publishedAt: cfg.status === "published" ? new Date() : null,
     })
     .onConflictDoNothing()
     .returning({ id: curricula.id });
@@ -74,7 +61,7 @@ async function upsertCurriculumRecord(
   if (inserted?.id) {
     return { curriculumId: inserted.id, isNew: true };
   }
-  const found = await findCurriculumId(db, cfg.code, cfg.contentVersion);
+  const found = await findCurriculumId(db, cfg.code);
   if (found === undefined) {
     throw new Error(`Không tạo được chương trình ${cfg.code}`);
   }
@@ -100,7 +87,7 @@ async function seedCurriculumWeeksData(
 
 /**
  * Gieo bản ghi chương trình và các tuần từ lộ trình. Chạy trước bước gieo
- * nội dung: bước này không đọc `lessons` hay `game_levels`.
+ * nội dung: bước này không đọc `game_levels`.
  */
 export async function seedRoadmapCurricula(
   db: OwnerDb,
@@ -108,12 +95,8 @@ export async function seedRoadmapCurricula(
 ): Promise<{ curriculaCount: number; weeksCount: number }> {
   let curriculaCount = 0;
   let weeksCount = 0;
-  for (const [idx, roadmap] of roadmaps.entries()) {
-    const { curriculumId, isNew } = await upsertCurriculumRecord(
-      db,
-      roadmap,
-      idx
-    );
+  for (const roadmap of roadmaps) {
+    const { curriculumId, isNew } = await upsertCurriculumRecord(db, roadmap);
     if (isNew) {
       curriculaCount++;
     }
@@ -126,34 +109,17 @@ async function loadIdsByCode(
   db: OwnerDb,
   plan: readonly CurriculumItemPlan[]
 ): Promise<{
-  lesson: Map<string, number>;
   game_level: Map<string, number>;
 }> {
-  const wanted = (type: CurriculumItemPlan["entityType"]) => [
-    ...new Set(
-      plan
-        .filter((item) => item.entityType === type)
-        .map((item) => item.contentCode)
-    ),
-  ];
-  const lessonCodes = wanted("lesson");
-  const levelCodes = wanted("game_level");
-  const [lessonRows, levelRows] = await Promise.all([
-    lessonCodes.length === 0
-      ? []
-      : db
-          .select({ id: lessons.id, code: lessons.code })
-          .from(lessons)
-          .where(inArray(lessons.code, lessonCodes)),
+  const levelCodes = [...new Set(plan.map((item) => item.contentCode))];
+  const levelRows =
     levelCodes.length === 0
       ? []
-      : db
+      : await db
           .select({ id: gameLevels.id, code: gameLevels.code })
           .from(gameLevels)
-          .where(inArray(gameLevels.code, levelCodes)),
-  ]);
+          .where(inArray(gameLevels.code, levelCodes));
   return {
-    lesson: new Map(lessonRows.map((row) => [row.code, row.id])),
     game_level: new Map(levelRows.map((row) => [row.code, row.id])),
   };
 }
@@ -219,7 +185,7 @@ export async function seedCurriculumItems(
   let itemsCount = 0;
   for (const roadmap of roadmaps) {
     const code = curriculumCodeForRoadmap(roadmap.code);
-    const curriculumId = await findCurriculumId(db, code, roadmap.version);
+    const curriculumId = await findCurriculumId(db, code);
     if (curriculumId === undefined) {
       throw new Error(
         `Chương trình ${code} chưa được gieo; chạy bước lộ trình trước bước item`

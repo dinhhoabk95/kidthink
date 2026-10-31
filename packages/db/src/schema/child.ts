@@ -53,5 +53,7 @@ export const childProfiles = pgTable(
       sql`${table.birthYear} >= 2010 AND ${table.birthYear} <= 2035`
     ),
     index("child_profiles_birth_year_idx").on(table.birthYear),
+    index("idx_child_profiles_user_id").on(table.userId),
+    index("idx_child_profiles_status_purge_at").on(table.status, table.purgeAt),
   ]
 );

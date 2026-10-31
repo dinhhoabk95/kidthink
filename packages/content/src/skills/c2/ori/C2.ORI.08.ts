@@ -42,61 +42,150 @@ export const C2_ORI_08_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "carrot",
-      label: "củ cà rốt",
+      id: "bird_outside",
+      label: "chú chim bay ngoài trời",
+      value: 1,
       image: {
         kind: "emoji",
-        ref: "🥕",
+        ref: "🕊️",
       },
       category: {
-        type: "rau củ",
+        type: "ở bên ngoài",
+      },
+      contrast_group: "outside",
+    },
+    {
+      id: "dolphin_outside",
+      label: "cá heo ngoài biển rộng",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "🐬",
+      },
+      category: {
+        type: "ở bên ngoài",
+      },
+      contrast_group: "outside",
+    },
+    {
+      id: "box_outside",
+      label: "chiếc hộp rỗng mở nắp",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "📦",
+      },
+      category: {
+        type: "ở bên ngoài",
+      },
+      contrast_group: "outside",
+    },
+    {
+      id: "book_outside",
+      label: "sách đặt ngoài bàn",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "📖",
+      },
+      category: {
+        type: "ở bên ngoài",
+      },
+      contrast_group: "outside",
+    },
+    {
+      id: "bird_inside",
+      label: "chú chim trong lồng",
+      value: 5,
+      image: {
+        kind: "emoji",
+        ref: "🦜",
+      },
+      category: {
+        type: "ở bên trong",
+      },
+      contrast_group: "inside",
+    },
+    {
+      id: "fish_inside",
+      label: "cá bơi trong bể",
+      value: 6,
+      image: {
+        kind: "emoji",
+        ref: "🐠",
+      },
+      category: {
+        type: "ở bên trong",
+      },
+      contrast_group: "inside",
+    },
+    {
+      id: "gift_inside",
+      label: "quà trong hộp",
+      value: 7,
+      image: {
+        kind: "emoji",
+        ref: "🎁",
+      },
+      category: {
+        type: "ở bên trong",
+      },
+      contrast_group: "inside",
+    },
+    {
+      id: "pencil_inside",
+      label: "bút trong hộp bút",
+      value: 8,
+      image: {
+        kind: "emoji",
+        ref: "✏️",
+      },
+      category: {
+        type: "ở bên trong",
+      },
+      contrast_group: "inside",
+    },
+  ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "bird_outside",
+      target_id: "bird_inside",
+      metadata: {
+        dimension: "containment",
       },
     },
     {
-      id: "corn",
-      label: "bắp ngô",
-      image: {
-        kind: "emoji",
-        ref: "🌽",
-      },
-      category: {
-        type: "rau củ",
+      type: "contrast",
+      source_id: "dolphin_outside",
+      target_id: "fish_inside",
+      metadata: {
+        dimension: "containment",
       },
     },
     {
-      id: "dog",
-      label: "con chó",
-      image: {
-        kind: "emoji",
-        ref: "🐕",
-      },
-      category: {
-        type: "động vật",
+      type: "pair",
+      source_id: "bird_outside",
+      target_id: "box_outside",
+      metadata: {
+        relation: "cùng ở bên ngoài",
       },
     },
     {
-      id: "cat",
-      label: "con mèo",
-      image: {
-        kind: "emoji",
-        ref: "🐈",
-      },
-      category: {
-        type: "động vật",
-      },
-    },
-    {
-      id: "chicken",
-      label: "con gà",
-      image: {
-        kind: "emoji",
-        ref: "🐓",
-      },
-      category: {
-        type: "động vật",
+      type: "pair",
+      source_id: "bird_inside",
+      target_id: "gift_inside",
+      metadata: {
+        relation: "cùng ở bên trong",
       },
     },
   ],
+  axes: {
+    containment: {
+      values: ["ở bên ngoài", "ở bên trong"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
@@ -128,7 +217,16 @@ export const C2_ORI_08_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Ngoài nhé",
   },
-  ordering: ["carrot", "corn", "dog", "cat", "chicken"],
+  ordering: [
+    "bird_outside",
+    "dolphin_outside",
+    "box_outside",
+    "book_outside",
+    "bird_inside",
+    "fish_inside",
+    "gift_inside",
+    "pencil_inside",
+  ],
 };
 
 export const C2_ORI_08_SEED: SkillSeed = {
@@ -157,62 +255,6 @@ export const C2_ORI_08_SEED: SkillSeed = {
       band: "3-4",
       difficulty: 1,
       theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-TCMP-0016",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 2,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-PATT-0013",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 1,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-PATT-0014",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 2,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-SLOT-0015",
-      template: "GT-008",
-      band: "3-4",
-      difficulty: 1,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-SLOT-0016",
-      template: "GT-008",
-      band: "3-4",
-      difficulty: 2,
-      theme: "ocean",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-MEMO-0014",
-      template: "GT-012",
-      band: "3-4",
-      difficulty: 1,
-      theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-MEMO-0015",
-      template: "GT-012",
-      band: "3-4",
-      difficulty: 2,
-      theme: "vehicle",
       rounds: 3,
     },
   ],

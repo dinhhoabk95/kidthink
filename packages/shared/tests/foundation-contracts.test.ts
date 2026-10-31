@@ -61,12 +61,13 @@ describe("P0 foundation contracts", () => {
       resolve(ROOT, "pnpm-workspace.yaml"),
       "utf8"
     );
-    expect(workspace).toContain("nodemailer: ^6.10.0");
-    expect(workspace).toContain("mjml: ^5.4.0");
-    expect(workspace).toContain("rate-limiter-flexible: ^11.2.0");
-    expect(workspace).toContain("nuxt-security: ^2.6.0");
-    expect(workspace).toContain("otpauth: ^9.5.0");
-    expect(workspace).toContain("openid-client: ^6.8.0");
+    expect(workspace).toContain("nodemailer: ^10.2.1");
+    expect(workspace).toContain("mjml: ^5.4.1");
+    expect(workspace).toContain("rate-limiter-flexible: ^11.2.3");
+    expect(workspace).toContain("nuxt-security: ^2.7.0");
+    expect(workspace).toContain('"@t3-oss/env-nuxt": ^0.13.11');
+    expect(workspace).toContain("otpauth: ^9.5.2");
+    expect(workspace).toContain("openid-client: ^6.8.8");
   });
 
   it("BR-GLOS-03 & BR-GLOS-04: the tooling glossary exposes every banned foundation term and replacement", () => {
@@ -114,14 +115,14 @@ describe("P0 foundation contracts", () => {
     expect(workspace).toContain("packages/*");
     expect(workspace).toContain("catalog:");
     expect(workspace).toContain("lefthook: false");
-    expect(workspace).toContain("unhead: 3.4.0");
-    expect(workspace).toContain('"@unhead/vue": 3.4.0');
+    expect(workspace).toContain("unhead: 3.4.3");
+    expect(workspace).toContain('"@unhead/vue": 3.4.3');
 
-    expect(rootPkg.engines?.node).toBe(">=24");
+    expect(rootPkg.engines?.node).toBe(">=24.22.1");
     expect(rootPkg.engines?.pnpm).toBe(">=11");
   });
 
-  it("BR-RBS-03 & BR-RBS-03a: lefthook.yml configures pre-commit (format, lint-and-deps, engine-gates) and pre-push (check:fast)", () => {
+  it("BR-RBS-03: lefthook.yml configures pre-commit (format, lint-and-deps) and pre-push (typecheck)", () => {
     const rootPkg = JSON.parse(
       readFileSync(resolve(ROOT, "package.json"), "utf8")
     ) as { scripts?: Record<string, string> };
@@ -131,23 +132,8 @@ describe("P0 foundation contracts", () => {
     expect(lefthook).toContain("pre-commit:");
     expect(lefthook).toContain("- name: format");
     expect(lefthook).toContain("- name: lint-and-deps");
-    expect(lefthook).toContain("- name: engine-gates");
     expect(lefthook).toContain("pre-push:");
-    expect(lefthook).toContain("pnpm check:fast");
-
-    const requiredEngineGates = [
-      "check:engine-specs",
-      "check:render",
-      "check:engine-depth",
-      "check:engine-turn",
-      "check:engine-behavior",
-      "check:difficulty-ladder",
-      "check:hardcoded-params",
-      "check:engine-seed-matrix",
-    ];
-    for (const gateName of requiredEngineGates) {
-      expect(lefthook).toContain(gateName);
-    }
+    expect(lefthook).toContain("pnpm typecheck");
   });
 
   it("BR-RBS-07: docker-compose.yml uses pgvector/pgvector:pg17 and valkey/valkey:9-alpine", () => {

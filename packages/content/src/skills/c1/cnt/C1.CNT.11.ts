@@ -1,11 +1,10 @@
 import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
-import { numeralItem } from "#src/inventories/index";
 
 export const C1_CNT_11_IDENTITY: SkillIdentity = {
   code: "C1.CNT.11",
   strand_code: "C1.CNT",
   competency_code: "C1",
-  name: "Subitizing — nhận lượng tức thì (1–5)",
+  name: "Nhận biết nhanh số lượng (1–5)",
   age_min: 4,
   age_max: 4,
   difficulty: 3,
@@ -42,87 +41,129 @@ export const C1_CNT_11_IDENTITY: SkillIdentity = {
 
 export const C1_CNT_11_DATASET: SkillDataset = {
   skill_code: "C1.CNT.11",
-  concept_label: "Subitizing — nhận lượng tức thì (1–5)",
+  concept_label: "Nhận biết nhanh số lượng",
   surface: "game",
   items: [
-    numeralItem("n0", {
+    {
+      id: "dot_1",
+      label: "nhóm một chấm",
+      glyph: "⚫",
+      value: 1,
+      contrast_group: "quantity",
+      ordering: 1,
+      category: {
+        type: "chấm tròn nhỏ",
+      },
       image: {
         kind: "emoji",
-        ref: "0️⃣",
+        ref: "⚫",
       },
-    }),
-    numeralItem("n1", {
+    },
+    {
+      id: "dot_2",
+      label: "nhóm hai chấm",
+      glyph: "⚫⚫",
+      value: 2,
+      contrast_group: "quantity",
+      ordering: 2,
+      category: {
+        type: "chấm tròn nhỏ",
+      },
       image: {
         kind: "emoji",
-        ref: "1️⃣",
+        ref: "⚫",
       },
-    }),
-    numeralItem("n2", {
+    },
+    {
+      id: "dot_3",
+      label: "nhóm ba chấm",
+      glyph: "⚫⚫⚫",
+      value: 3,
+      contrast_group: "quantity",
+      ordering: 3,
+      category: {
+        type: "chấm tròn nhỏ",
+      },
       image: {
         kind: "emoji",
-        ref: "2️⃣",
+        ref: "⚫",
       },
-    }),
-    numeralItem("n3", {
+    },
+    {
+      id: "dot_4",
+      label: "nhóm bốn chấm",
+      glyph: "⚫⚫⚫⚫",
+      value: 4,
+      contrast_group: "quantity",
+      ordering: 4,
+      category: {
+        type: "chấm tròn nhỏ",
+      },
       image: {
         kind: "emoji",
-        ref: "3️⃣",
+        ref: "⚫",
       },
-    }),
-    numeralItem("n4", {
+    },
+    {
+      id: "dot_5",
+      label: "nhóm năm chấm",
+      glyph: "⚫⚫⚫⚫⚫",
+      value: 5,
+      contrast_group: "quantity",
+      ordering: 5,
+      category: {
+        type: "chấm tròn nhỏ",
+      },
       image: {
         kind: "emoji",
-        ref: "4️⃣",
+        ref: "⚫",
       },
-    }),
-    numeralItem("n5", {
-      image: {
-        kind: "emoji",
-        ref: "5️⃣",
-      },
-    }),
+    },
+  ],
+  relations: [
+    {
+      type: "subset",
+      source_id: "dot_1",
+      target_id: "dot_5",
+    },
   ],
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với subitizing — nhận lượng tức thì (1–5)",
+      description: "Làm quen cơ bản với nhận biết nhanh số lượng",
       representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description:
-        "Nhận biết và chọn đúng subitizing — nhận lượng tức thì (1–5)",
+      description: "Nhìn nhanh và chọn đúng số lượng chấm",
       representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description:
-        "Phân biệt subitizing — nhận lượng tức thì (1–5) với phương án nhiễu",
-      representation: "dot-pattern",
+      description: "Phân biệt nhóm chấm với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi subitizing — nhận lượng tức thì (1–5)",
-      representation: "dot-pattern",
+      description: "Mở rộng phạm vi nhận biết nhanh số lượng",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description:
-        "Thuần thục subitizing — nhận lượng tức thì (1–5) và tự làm một mình",
-      representation: "dot-pattern",
+      description: "Thuần thục nhận biết nhanh số lượng và tự làm một mình",
+      representation: "ten-frame",
     },
   ],
   phrasing: {
-    prompt_template: "Bé nhìn một cái là biết ngay có mấy vật nhé!",
-    narration_template:
-      "Chúng mình cùng tìm hiểu về Subitizing — nhận lượng tức thì (1–5) nhé",
+    prompt_template: "Bé hãy chọn {label} nhé!",
+    narration_template: "Chúng mình cùng nhận biết nhanh số lượng nhé",
   },
-  ordering: ["n0", "n1", "n2", "n3", "n4", "n5"],
+  ordering: ["dot_1", "dot_2", "dot_3", "dot_4", "dot_5"],
 };
 
 export const C1_CNT_11_SEED: SkillSeed = {
@@ -142,7 +183,7 @@ export const C1_CNT_11_SEED: SkillSeed = {
       template: "GT-012",
       band: "5-6",
       difficulty: 4,
-      theme: "school",
+      theme: "home",
       rounds: 3,
     },
     {
@@ -151,158 +192,6 @@ export const C1_CNT_11_SEED: SkillSeed = {
       band: "3-4",
       difficulty: 2,
       theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-TAP-0038",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 3,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-TAP-0039",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 4,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-TAP-0040",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 2,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-TCNT-0024",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 2,
-      theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-TCNT-0025",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 3,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-TCNT-0026",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 4,
-      theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-TCNT-0027",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 2,
-      theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-TCMP-0026",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 2,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-TCMP-0027",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 3,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-TCMP-0028",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 4,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-TCMP-0029",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 2,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-PAIR-0013",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 2,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-PAIR-0014",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 3,
-      theme: "ocean",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-PAIR-0015",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 4,
-      theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-PAIR-0016",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 2,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-PATT-0005",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 2,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-PATT-0006",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 3,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-PATT-0007",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 4,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-PATT-0008",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 2,
-      theme: "body",
       rounds: 3,
     },
   ],

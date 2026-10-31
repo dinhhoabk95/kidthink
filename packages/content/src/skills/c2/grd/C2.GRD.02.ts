@@ -42,61 +42,154 @@ export const C2_GRD_02_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "bowl",
-      label: "cái bát",
-      image: {
-        kind: "emoji",
-        ref: "🥣",
-      },
-      category: {
-        type: "đồ dùng",
-      },
-    },
-    {
-      id: "spoon",
-      label: "cái thìa",
-      image: {
-        kind: "emoji",
-        ref: "🥄",
-      },
-      category: {
-        type: "đồ dùng",
-      },
-    },
-    {
-      id: "cup",
-      label: "cái cốc",
-      image: {
-        kind: "emoji",
-        ref: "🥤",
-      },
-      category: {
-        type: "đồ dùng",
-      },
-    },
-    {
-      id: "bed",
-      label: "cái giường",
-      image: {
-        kind: "emoji",
-        ref: "🛏️",
-      },
-      category: {
-        type: "đồ dùng",
-      },
-    },
-    {
-      id: "chair",
-      label: "cái ghế",
+      id: "station_bench",
+      label: "ghế nghỉ công viên",
       image: {
         kind: "emoji",
         ref: "🪑",
       },
       category: {
-        type: "đồ dùng",
+        type: "trạm dừng",
       },
+      contrast_group: "station",
+      value: 1,
+      ordering: 1,
+    },
+    {
+      id: "station_fountain",
+      label: "đài phun nước",
+      image: {
+        kind: "emoji",
+        ref: "⛲",
+      },
+      category: {
+        type: "trạm dừng",
+      },
+      contrast_group: "station",
+      value: 2,
+      ordering: 2,
+    },
+    {
+      id: "station_flower",
+      label: "bồn hoa rực rỡ",
+      image: {
+        kind: "emoji",
+        ref: "🌷",
+      },
+      category: {
+        type: "trạm dừng",
+      },
+      contrast_group: "station",
+      value: 3,
+      ordering: 3,
+    },
+    {
+      id: "station_gate",
+      label: "cổng vòm hoa",
+      image: {
+        kind: "emoji",
+        ref: "⛩️",
+      },
+      category: {
+        type: "trạm dừng",
+      },
+      contrast_group: "station",
+      value: 4,
+      ordering: 4,
+    },
+    {
+      id: "guide_arrow_up",
+      label: "mũi tên tiến thẳng",
+      image: {
+        kind: "emoji",
+        ref: "⬆️",
+      },
+      category: {
+        type: "chỉ dẫn ô",
+      },
+      contrast_group: "guide",
+      value: 5,
+      ordering: 5,
+    },
+    {
+      id: "guide_arrow_right",
+      label: "mũi tên rẽ phải",
+      image: {
+        kind: "emoji",
+        ref: "➡️",
+      },
+      category: {
+        type: "chỉ dẫn ô",
+      },
+      contrast_group: "guide",
+      value: 6,
+      ordering: 6,
+    },
+    {
+      id: "guide_footprint",
+      label: "dấu chân bước đi",
+      image: {
+        kind: "emoji",
+        ref: "👣",
+      },
+      category: {
+        type: "chỉ dẫn ô",
+      },
+      contrast_group: "guide",
+      value: 7,
+      ordering: 7,
+    },
+    {
+      id: "guide_compass",
+      label: "la bàn dẫn hướng",
+      image: {
+        kind: "emoji",
+        ref: "🧭",
+      },
+      category: {
+        type: "chỉ dẫn ô",
+      },
+      contrast_group: "guide",
+      value: 8,
+      ordering: 8,
     },
   ],
+  relations: [
+    {
+      type: "pair",
+      source_id: "station_bench",
+      target_id: "guide_arrow_up",
+    },
+    {
+      type: "pair",
+      source_id: "station_fountain",
+      target_id: "guide_arrow_right",
+    },
+    {
+      type: "pair",
+      source_id: "station_flower",
+      target_id: "guide_footprint",
+    },
+    {
+      type: "pair",
+      source_id: "station_gate",
+      target_id: "guide_compass",
+    },
+    {
+      type: "contrast",
+      source_id: "station_bench",
+      target_id: "guide_arrow_up",
+    },
+  ],
+  axes: {
+    category: {
+      values: ["trạm dừng", "chỉ dẫn ô"],
+    },
+    order: {
+      values: ["1", "2", "3", "4", "5", "6", "7", "8"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
@@ -128,7 +221,16 @@ export const C2_GRD_02_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Đi theo ô nhé",
   },
-  ordering: ["bowl", "spoon", "cup", "bed", "chair"],
+  ordering: [
+    "station_bench",
+    "station_fountain",
+    "station_flower",
+    "station_gate",
+    "guide_arrow_up",
+    "guide_arrow_right",
+    "guide_footprint",
+    "guide_compass",
+  ],
 };
 
 export const C2_GRD_02_SEED: SkillSeed = {
@@ -157,62 +259,6 @@ export const C2_GRD_02_SEED: SkillSeed = {
       band: "4-5",
       difficulty: 2,
       theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GRD-SHAD-0002",
-      template: "GT-007",
-      band: "4-5",
-      difficulty: 3,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GRD-SLOT-0001",
-      template: "GT-008",
-      band: "4-5",
-      difficulty: 2,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GRD-SLOT-0002",
-      template: "GT-008",
-      band: "4-5",
-      difficulty: 3,
-      theme: "ocean",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GRD-SIZE-0001",
-      template: "GT-009",
-      band: "4-5",
-      difficulty: 2,
-      theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GRD-SIZE-0002",
-      template: "GT-009",
-      band: "4-5",
-      difficulty: 3,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GRD-MAZE-0001",
-      template: "GT-013",
-      band: "4-5",
-      difficulty: 2,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GRD-MAZE-0002",
-      template: "GT-013",
-      band: "4-5",
-      difficulty: 3,
-      theme: "space",
       rounds: 3,
     },
   ],

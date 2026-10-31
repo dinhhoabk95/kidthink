@@ -114,7 +114,7 @@ function releaseArgv(argv: string[]): string[] {
   if (!isCommitPushed(commit)) {
     throw new InvalidArgumentError(
       [
-        `Ref '${ref}' (${commit.slice(0, 7)}) is not on any remote.`,
+        `Ref '${ref}' (${commit.slice(0, 7)}) was not found on remote.`,
         "The server can only fetch pushed commits, so this release would fail there.",
         `Push it first:  git push origin ${ref}`,
       ].join("\n")

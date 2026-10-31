@@ -44,58 +44,81 @@ export const C5_STO_03_DATASET: SkillDataset = {
   items: [
     {
       id: "sto_ket_vui_ve",
-      label: "cả nhà sum vầy ăn cơm",
+      label: "gia đình sum vầy",
       image: {
         kind: "emoji",
         ref: "🍲",
       },
       category: {
-        type: "kết thúc truyện",
+        type: "kết yêu thương",
       },
+      value: 1,
+      contrast_group: "primary",
     },
     {
       id: "sto_ket_giup_do",
-      label: "bạn bè giúp đỡ nhau",
+      label: "bạn bè giúp nhau",
       image: {
         kind: "emoji",
         ref: "🤝",
       },
       category: {
-        type: "kết thúc truyện",
+        type: "kết yêu thương",
       },
+      value: 2,
+      contrast_group: "primary",
     },
     {
       id: "sto_ket_hoa_thuan",
-      label: "hai bạn bắt tay làm hòa",
+      label: "hai bạn làm hòa",
       image: {
         kind: "emoji",
         ref: "🕊️",
       },
       category: {
-        type: "kết thúc truyện",
+        type: "kết yêu thương",
       },
+      value: 3,
+      contrast_group: "primary",
     },
     {
       id: "sto_ket_khen_thuong",
-      label: "bé ngoan được cô khen",
+      label: "bé được khen thưởng",
       image: {
         kind: "emoji",
         ref: "⭐",
       },
       category: {
-        type: "kết thúc truyện",
+        type: "kết chăm ngoan",
       },
+      value: 4,
+      contrast_group: "contrast",
     },
     {
       id: "sto_ket_chia_se",
-      label: "chia sẻ đồ chơi cùng bạn",
+      label: "chia sẻ đồ chơi",
       image: {
         kind: "emoji",
         ref: "🧸",
       },
       category: {
-        type: "kết thúc truyện",
+        type: "kết chăm ngoan",
       },
+      value: 5,
+      contrast_group: "contrast",
+    },
+    {
+      id: "sto_ket_vuon_hoa",
+      label: "vườn hoa tươi tốt",
+      image: {
+        kind: "emoji",
+        ref: "🌻",
+      },
+      category: {
+        type: "kết chăm ngoan",
+      },
+      value: 6,
+      contrast_group: "contrast",
     },
   ],
   ladder: [
@@ -135,6 +158,30 @@ export const C5_STO_03_DATASET: SkillDataset = {
     "sto_ket_hoa_thuan",
     "sto_ket_khen_thuong",
     "sto_ket_chia_se",
+    "sto_ket_vuon_hoa",
+  ],
+  axes: {
+    category: {
+      values: ["kết yêu thương", "kết chăm ngoan"],
+      ordered: true,
+    },
+  },
+  relations: [
+    {
+      type: "pair",
+      source_id: "sto_ket_vui_ve",
+      target_id: "sto_ket_giup_do",
+    },
+    {
+      type: "pair",
+      source_id: "sto_ket_khen_thuong",
+      target_id: "sto_ket_chia_se",
+    },
+    {
+      type: "contrast",
+      source_id: "sto_ket_vui_ve",
+      target_id: "sto_ket_khen_thuong",
+    },
   ],
 };
 
@@ -164,62 +211,6 @@ export const C5_STO_03_SEED: SkillSeed = {
       band: "5-6",
       difficulty: 3,
       theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-STO-SORT-0004",
-      template: "GT-006",
-      band: "5-6",
-      difficulty: 4,
-      theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-STO-SHAD-0003",
-      template: "GT-007",
-      band: "4-5",
-      difficulty: 3,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-STO-SHAD-0004",
-      template: "GT-007",
-      band: "4-5",
-      difficulty: 4,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-STO-SIZE-0005",
-      template: "GT-009",
-      band: "4-5",
-      difficulty: 3,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-STO-SIZE-0006",
-      template: "GT-009",
-      band: "4-5",
-      difficulty: 4,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-STO-PUZZ-0003",
-      template: "GT-010",
-      band: "4-5",
-      difficulty: 3,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-STO-PUZZ-0004",
-      template: "GT-010",
-      band: "4-5",
-      difficulty: 4,
-      theme: "ocean",
       rounds: 3,
     },
   ],

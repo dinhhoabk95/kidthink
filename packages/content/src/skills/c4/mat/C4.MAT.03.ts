@@ -42,61 +42,153 @@ export const C4_MAT_03_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "carrot",
-      label: "củ cà rốt",
+      id: "tod_sun",
+      label: "mặt trời tỏa sáng",
       image: {
         kind: "emoji",
-        ref: "🥕",
+        ref: "☀️",
       },
       category: {
-        type: "rau củ",
+        type: "cảnh ban ngày",
       },
+      contrast_group: "day",
+      value: 1,
+      ordering: 1,
+      audio_path: "/audio/vi/c4/tod_sun.mp3",
     },
     {
-      id: "corn",
-      label: "bắp ngô",
-      image: {
-        kind: "emoji",
-        ref: "🌽",
-      },
-      category: {
-        type: "rau củ",
-      },
-    },
-    {
-      id: "dog",
-      label: "con chó",
-      image: {
-        kind: "emoji",
-        ref: "🐕",
-      },
-      category: {
-        type: "động vật",
-      },
-    },
-    {
-      id: "cat",
-      label: "con mèo",
-      image: {
-        kind: "emoji",
-        ref: "🐈",
-      },
-      category: {
-        type: "động vật",
-      },
-    },
-    {
-      id: "chicken",
-      label: "con gà",
+      id: "tod_rooster",
+      label: "gà gáy báo thức",
       image: {
         kind: "emoji",
         ref: "🐓",
       },
       category: {
-        type: "động vật",
+        type: "cảnh ban ngày",
       },
+      contrast_group: "day",
+      value: 2,
+      ordering: 2,
+      audio_path: "/audio/vi/c4/tod_rooster.mp3",
+    },
+    {
+      id: "tod_school",
+      label: "cặp sách học",
+      image: {
+        kind: "emoji",
+        ref: "🏫",
+      },
+      category: {
+        type: "cảnh ban ngày",
+      },
+      contrast_group: "day",
+      value: 3,
+      ordering: 3,
+      audio_path: "/audio/vi/c4/tod_school.mp3",
+    },
+    {
+      id: "tod_rainbow",
+      label: "cầu vồng rực rỡ",
+      image: {
+        kind: "emoji",
+        ref: "🌈",
+      },
+      category: {
+        type: "cảnh ban ngày",
+      },
+      contrast_group: "day",
+      value: 4,
+      ordering: 4,
+      audio_path: "/audio/vi/c4/tod_rainbow.mp3",
+    },
+    {
+      id: "tod_moon",
+      label: "mặt trăng soi sáng",
+      image: {
+        kind: "emoji",
+        ref: "🌙",
+      },
+      category: {
+        type: "cảnh ban đêm",
+      },
+      contrast_group: "night",
+      value: 1,
+      ordering: 5,
+      audio_path: "/audio/vi/c4/tod_moon.mp3",
+    },
+    {
+      id: "tod_stars",
+      label: "ngôi sao lấp lánh",
+      image: {
+        kind: "emoji",
+        ref: "⭐",
+      },
+      category: {
+        type: "cảnh ban đêm",
+      },
+      contrast_group: "night",
+      value: 2,
+      ordering: 6,
+      audio_path: "/audio/vi/c4/tod_stars.mp3",
+    },
+    {
+      id: "tod_owl",
+      label: "chú cú mèo",
+      image: {
+        kind: "emoji",
+        ref: "🦉",
+      },
+      category: {
+        type: "cảnh ban đêm",
+      },
+      contrast_group: "night",
+      value: 3,
+      ordering: 7,
+      audio_path: "/audio/vi/c4/tod_owl.mp3",
+    },
+    {
+      id: "tod_sleep",
+      label: "giường ngủ êm",
+      image: {
+        kind: "emoji",
+        ref: "🛌",
+      },
+      category: {
+        type: "cảnh ban đêm",
+      },
+      contrast_group: "night",
+      value: 4,
+      ordering: 8,
+      audio_path: "/audio/vi/c4/tod_sleep.mp3",
     },
   ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "tod_sun",
+      target_id: "tod_moon",
+    },
+    {
+      type: "contrast",
+      source_id: "tod_rooster",
+      target_id: "tod_owl",
+    },
+    {
+      type: "contrast",
+      source_id: "tod_school",
+      target_id: "tod_sleep",
+    },
+    {
+      type: "contrast",
+      source_id: "tod_rainbow",
+      target_id: "tod_stars",
+    },
+  ],
+  axes: {
+    time_of_day: {
+      values: ["cảnh ban ngày", "cảnh ban đêm"],
+    },
+  },
   ladder: [
     {
       rung: 1,
@@ -128,7 +220,16 @@ export const C4_MAT_03_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Ngày và đêm nhé",
   },
-  ordering: ["carrot", "corn", "dog", "cat", "chicken"],
+  ordering: [
+    "tod_sun",
+    "tod_rooster",
+    "tod_school",
+    "tod_rainbow",
+    "tod_moon",
+    "tod_stars",
+    "tod_owl",
+    "tod_sleep",
+  ],
 };
 
 export const C4_MAT_03_SEED: SkillSeed = {
@@ -157,62 +258,6 @@ export const C4_MAT_03_SEED: SkillSeed = {
       band: "4-5",
       difficulty: 1,
       theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-MAT-TCNT-0004",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 2,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-MAT-TCMP-0005",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 1,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-MAT-TCMP-0006",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 2,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-MAT-PAIR-0003",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 1,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-MAT-PAIR-0004",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 2,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-MAT-PATT-0005",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 1,
-      theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-MAT-PATT-0006",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 2,
-      theme: "festival",
       rounds: 3,
     },
   ],

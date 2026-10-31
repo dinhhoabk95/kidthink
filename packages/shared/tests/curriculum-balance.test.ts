@@ -16,15 +16,14 @@ describe("P3.3 Curriculum Balance Engine & Rules (BR-CRM-01..11, BR-CBD-01..08, 
         week_no: weekNo,
         session_no: 1,
         position: 1,
-        entity_type: "lesson",
+        entity_type: "game_level",
         entity_id: weekNo * 10 + 1,
-        code: `LES-${competencies[0]}-00${weekNo}`,
+        code: `GL-${competencies[0]}-00${weekNo}`,
         competency_code: competencies[0],
         skill_codes: [`${competencies[0]}.SKL.01`],
         difficulty: 1,
         estimated_minutes: 20,
         status: "published",
-        is_offline: false,
       },
       {
         week_no: weekNo,
@@ -38,21 +37,19 @@ describe("P3.3 Curriculum Balance Engine & Rules (BR-CRM-01..11, BR-CBD-01..08, 
         difficulty: 2,
         estimated_minutes: 10,
         status: "published",
-        is_offline: false,
       },
       {
         week_no: weekNo,
         session_no: 3,
         position: 1,
-        entity_type: "lesson",
+        entity_type: "game_level",
         entity_id: weekNo * 10 + 3,
-        code: `LES-${competencies[2]}-00${weekNo}`,
+        code: `GL-${competencies[2]}-00${weekNo}`,
         competency_code: competencies[2],
         skill_codes: [`${competencies[2]}.SKL.01`],
         difficulty: 2,
         estimated_minutes: 15,
         status: "published",
-        is_offline: true, // Offline activity for BR-CRM-05
       },
     ];
   }
@@ -181,9 +178,9 @@ describe("P3.3 Curriculum Balance Engine & Rules (BR-CRM-01..11, BR-CBD-01..08, 
       week_no: 3,
       session_no: 1,
       position: 2,
-      entity_type: "lesson",
+      entity_type: "game_level",
       entity_id: 11, // Same entity_id as week 1 session 1
-      code: "LES-C1-001",
+      code: "GL-C1-001",
       competency_code: "C1",
       status: "published",
     });
@@ -239,9 +236,9 @@ describe("P3.3 Curriculum Balance Engine & Rules (BR-CRM-01..11, BR-CBD-01..08, 
       week_no: 7,
       session_no: 2,
       position: 2,
-      entity_type: "lesson",
+      entity_type: "game_level",
       entity_id: 999,
-      code: "LES-NEW-SKL",
+      code: "GL-NEW-SKL",
       competency_code: "C2",
       skill_codes: ["C2.BRAND_NEW.01"],
       status: "published",
@@ -270,23 +267,6 @@ describe("P3.3 Curriculum Balance Engine & Rules (BR-CRM-01..11, BR-CBD-01..08, 
     const result = validateCurriculumModel(input);
     expect(result.ok).toBe(false);
     expect(result.errors.some((e) => e.includes("BR-CRM-06"))).toBe(true);
-  });
-
-  it("BR-CRM-05: warns when a week has no off-screen activity", () => {
-    const input = createValidCurriculum(8);
-    // Set all items in week 3 to online/digital
-    for (const item of input.items) {
-      if (item.week_no === 3) {
-        item.is_offline = false;
-      }
-    }
-
-    const result = validateCurriculumModel(input);
-    expect(
-      result.warnings.some(
-        (w) => w.includes("BR-CRM-05") && w.includes("Tuần 3")
-      )
-    ).toBe(true);
   });
 
   it("BR-CBD-03: detects unpublished items when validating published curriculum", () => {

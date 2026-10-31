@@ -58,22 +58,22 @@ function stableHash(text: string): number {
   return hash;
 }
 
-function fallbackTheme(lessonCode: string): string {
+function fallbackTheme(levelCode: string): string {
   const candidates = CONTENT_THEMES.filter(
     (theme) => theme.age_floor === FALLBACK_THEME_AGE_FLOOR
   );
   const pool = candidates.length > 0 ? candidates : CONTENT_THEMES;
-  const picked = pool[stableHash(lessonCode) % pool.length];
+  const picked = pool[stableHash(levelCode) % pool.length];
   return picked?.code ?? "";
 }
 
 /**
  * Chủ đề của sticker (`BR-STK-04`): chủ đề hợp lệ gặp nhiều nhất trong các
- * level của bài; hoà thì chủ đề gặp trước; không có thì chọn tất định.
+ * level; hoà thì chủ đề gặp trước; không có thì chọn tất định.
  */
-export function pickLessonTheme(
+export function pickLevelTheme(
   levelThemes: readonly (string | null)[],
-  lessonCode: string
+  levelCode: string
 ): string {
   const counts = new Map<string, number>();
   for (const theme of levelThemes) {
@@ -90,8 +90,10 @@ export function pickLessonTheme(
       bestCount = count;
     }
   }
-  return best ?? fallbackTheme(lessonCode);
+  return best ?? fallbackTheme(levelCode);
 }
+
+export const pickLessonTheme = pickLevelTheme;
 
 /**
  * Sticker trao trong một chủ đề (`BR-STK-05`): cái đầu tiên trẻ chưa có; có

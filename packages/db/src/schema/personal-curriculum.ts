@@ -48,7 +48,6 @@ export const personalCurricula = pgTable(
   },
   (table) => [
     index("idx_personal_curricula_user_id").on(table.userId),
-    uniqueIndex("idx_personal_curricula_uuid").on(table.uuid),
     check(
       "check_personal_curricula_age_range",
       sql`${table.ageMin} IS NULL OR ${table.ageMax} IS NULL OR ${table.ageMin} <= ${table.ageMax}`
@@ -95,7 +94,6 @@ export const personalCurriculumItems = pgTable(
       table.personalCurriculumId,
       table.weekNo
     ),
-    index("idx_personal_curriculum_items_entity_id").on(table.entityId),
   ]
 );
 
@@ -121,7 +119,10 @@ export const personalCurriculumEnrollments = pgTable(
     uniqueIndex("idx_personal_curriculum_enrollments_child_active_unique")
       .on(table.childId)
       .where(sql`${table.status} = 'active'`),
-    index("idx_personal_curriculum_enrollments_child_id").on(table.childId),
+    index("idx_personal_curriculum_enrollments_child_status").on(
+      table.childId,
+      table.status
+    ),
     index("idx_personal_curriculum_enrollments_curriculum_id").on(
       table.personalCurriculumId
     ),

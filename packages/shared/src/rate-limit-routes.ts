@@ -52,6 +52,19 @@ const IN_ROUTE_CLASSES: Readonly<Record<string, RouteClassName>> = {
 const OAUTH_START_PATH = /^\/api\/guest\/auth\/oauth\/[^/]+\/start$/;
 const OAUTH_CALLBACK_PATH = /^\/api\/guest\/auth\/oauth\/[^/]+\/callback$/;
 
+export const GUEST_POST_ROUTE_MAP: Readonly<Record<string, string>> = {
+  "/api/guest/auth/users/login": "auth_login",
+  "/api/guest/auth/managers/login": "auth_login",
+  "/api/guest/auth/users/register": "auth_register",
+  "/api/guest/auth/users/forgot-password": "auth_forgot_password",
+  "/api/guest/auth/users/social-login": "auth_social_login",
+  "/api/guest/auth/users/reset-password": "auth_reset_password",
+  "/api/guest/auth/users/verify-email": "auth_verify_email",
+  "/api/guest/auth/users/mfa": "auth_mfa",
+  "/api/guest/auth/managers/mfa": "auth_mfa",
+  "/api/guest/auth/managers/mfa-setup": "auth_mfa",
+};
+
 function resolveInRoute(path: string): RateLimitRouteResolution | null {
   const className = IN_ROUTE_CLASSES[path];
   if (className) {
@@ -117,7 +130,11 @@ function resolveManagerRoute(
   if (!(path === "/api/managers" || path.startsWith("/api/managers/"))) {
     return null;
   }
-  if (path === "/api/managers/images" && method === "POST") {
+  if (
+    (path === "/api/managers/images" ||
+      (path === "/api/managers/audio" && method === "POST")) &&
+    method === "POST"
+  ) {
     return { mode: "middleware", className: "upload:image" };
   }
   return { mode: "middleware", className: "managers:*" };
@@ -162,7 +179,11 @@ function resolveUserRoute(
   if (isUserMfaOrParentGateRoute(path)) {
     return { mode: "middleware", className: "auth:mfa" };
   }
-  if (path === "/api/users/ai/search") {
+  if (
+    path === "/api/users/ai/search" ||
+    path.startsWith("/api/users/ai/") ||
+    path === "/api/users/custom-games/ai-draft"
+  ) {
     return { mode: "middleware", className: "search" };
   }
   if (

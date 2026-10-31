@@ -1,5 +1,4 @@
 import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
-import { numeralItem } from "#src/inventories/index";
 
 export const C1_SUB_03_IDENTITY: SkillIdentity = {
   code: "C1.SUB.03",
@@ -42,42 +41,132 @@ export const C1_SUB_03_DATASET: SkillDataset = {
   concept_label: "Trừ trong phạm vi 5",
   surface: "game",
   items: [
-    numeralItem("n0", {
+    {
+      id: "n0",
+      label: "số 0",
+      glyph: "0",
+      value: 0,
+      audio_path: "/audio/voice/common/numbers/0.mp3",
       image: {
         kind: "emoji",
-        ref: "0️⃣",
+        ref: "🧺",
       },
-    }),
-    numeralItem("n1", {
+      contrast_group: "sub_5",
+      category: {
+        type: "kết quả nhỏ",
+      },
+    },
+    {
+      id: "n1",
+      label: "số một",
+      glyph: "1",
+      value: 1,
+      audio_path: "/audio/voice/common/numbers/1.mp3",
       image: {
         kind: "emoji",
-        ref: "1️⃣",
+        ref: "🍭",
       },
-    }),
-    numeralItem("n2", {
+      contrast_group: "sub_5",
+      category: {
+        type: "kết quả nhỏ",
+      },
+    },
+    {
+      id: "n2",
+      label: "số hai",
+      glyph: "2",
+      value: 2,
+      audio_path: "/audio/voice/common/numbers/2.mp3",
       image: {
         kind: "emoji",
-        ref: "2️⃣",
+        ref: "🍬",
       },
-    }),
-    numeralItem("n3", {
+      contrast_group: "sub_5",
+      category: {
+        type: "kết quả nhỏ",
+      },
+    },
+    {
+      id: "n3",
+      label: "số ba",
+      glyph: "3",
+      value: 3,
+      audio_path: "/audio/voice/common/numbers/3.mp3",
       image: {
         kind: "emoji",
-        ref: "3️⃣",
+        ref: "🍪",
       },
-    }),
-    numeralItem("n4", {
+      contrast_group: "sub_5",
+      category: {
+        type: "kết quả lớn",
+      },
+    },
+    {
+      id: "n4",
+      label: "số bốn",
+      glyph: "4",
+      value: 4,
+      audio_path: "/audio/voice/common/numbers/4.mp3",
       image: {
         kind: "emoji",
-        ref: "4️⃣",
+        ref: "🧁",
       },
-    }),
-    numeralItem("n5", {
+      contrast_group: "sub_5",
+      category: {
+        type: "kết quả lớn",
+      },
+    },
+    {
+      id: "n5",
+      label: "số năm",
+      glyph: "5",
+      value: 5,
+      audio_path: "/audio/voice/common/numbers/5.mp3",
       image: {
         kind: "emoji",
-        ref: "5️⃣",
+        ref: "🍩",
       },
-    }),
+      contrast_group: "sub_5",
+      category: {
+        type: "kết quả lớn",
+      },
+    },
+    {
+      id: "mag_glass",
+      label: "kính lúp thám tử",
+      value: 1,
+      image: {
+        kind: "emoji",
+        ref: "🔍",
+      },
+    },
+    {
+      id: "gold_key",
+      label: "chìa khóa vàng",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "🗝️",
+      },
+    },
+    {
+      id: "pin_note",
+      label: "thẻ giấy ghim gỗ",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "📌",
+      },
+    },
+    {
+      id: "treasure_chest",
+      label: "rương kho báu",
+      value: 5,
+      image: {
+        kind: "emoji",
+        ref: "📦",
+      },
+    },
   ],
   relations: [
     {
@@ -136,6 +225,11 @@ export const C1_SUB_03_DATASET: SkillDataset = {
       },
     },
   ],
+  axes: {
+    type: {
+      values: ["kết quả nhỏ", "kết quả lớn"],
+    },
+  },
   ladder: [
     {
       rung: 1,
@@ -164,10 +258,21 @@ export const C1_SUB_03_DATASET: SkillDataset = {
     },
   ],
   phrasing: {
-    prompt_template: "Bớt đi thì còn lại bao nhiêu {label}?",
-    narration_template: "Chúng mình cùng tìm hiểu về Trừ trong phạm vi 5 nhé",
+    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    narration_template: "Chúng mình cùng tìm hiểu về Trừ trong phạm vi 5 nhé!",
   },
-  ordering: ["n0", "n1", "n2", "n3", "n4", "n5"],
+  ordering: [
+    "n0",
+    "n1",
+    "n2",
+    "n3",
+    "n4",
+    "n5",
+    "mag_glass",
+    "gold_key",
+    "pin_note",
+    "treasure_chest",
+  ],
 };
 
 export const C1_SUB_03_SEED: SkillSeed = {
@@ -191,30 +296,6 @@ export const C1_SUB_03_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C1-SUB-PICT-0008",
-      template: "GT-031",
-      band: "5-6",
-      difficulty: 4,
-      theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-SUB-PICT-0009",
-      template: "GT-031",
-      band: "5-6",
-      difficulty: 2,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-SUB-PICT-0010",
-      template: "GT-031",
-      band: "5-6",
-      difficulty: 3,
-      theme: "art",
-      rounds: 3,
-    },
-    {
       code: "GL-C1-SUB-TAP-0010",
       template: "GT-001",
       band: "4-5",
@@ -223,116 +304,34 @@ export const C1_SUB_03_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C1-SUB-TAP-0011",
-      template: "GT-001",
+      code: "GL-C1-SUB-SLOT-0201",
+      template: "GT-008",
       band: "4-5",
-      difficulty: 3,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-SUB-TAP-0012",
-      template: "GT-001",
-      band: "4-5",
-      difficulty: 4,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-SUB-TAP-0013",
-      template: "GT-001",
-      band: "4-5",
-      difficulty: 2,
-      theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-SUB-TAP-0014",
-      template: "GT-001",
-      band: "4-5",
-      difficulty: 3,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-SUB-TCMP-0010",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 2,
+      difficulty: 1,
+      access_tier: "free",
       theme: "job",
       rounds: 3,
+      montessori_ref: "WB14-D1",
     },
     {
-      code: "GL-C1-SUB-TCMP-0011",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 3,
-      theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-SUB-TCMP-0012",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 4,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-SUB-TCMP-0013",
-      template: "GT-003",
+      code: "GL-C1-SUB-TAP-0202",
+      template: "GT-001",
       band: "4-5",
       difficulty: 2,
-      theme: "farm",
+      access_tier: "login",
+      theme: "job",
       rounds: 3,
+      montessori_ref: "WB14-D2",
     },
     {
-      code: "GL-C1-SUB-TCMP-0014",
-      template: "GT-003",
-      band: "4-5",
+      code: "GL-C1-SUB-SLOT-0203",
+      template: "GT-008",
+      band: "5-6",
       difficulty: 3,
-      theme: "home",
+      access_tier: "standard",
+      theme: "job",
       rounds: 3,
-    },
-    {
-      code: "GL-C1-SUB-PATT-0006",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 2,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-SUB-PATT-0007",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 3,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-SUB-PATT-0008",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 4,
-      theme: "ocean",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-SUB-PATT-0009",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 2,
-      theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-SUB-PATT-0010",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 3,
-      theme: "vehicle",
-      rounds: 3,
+      montessori_ref: "WB14-D3",
     },
   ],
 };

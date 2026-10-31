@@ -127,6 +127,14 @@ function toActivePackageItem(
   };
 }
 
+const PACKAGE_SIGNATURE_KEY: Record<string, string> = {
+  "PKG-standard": "play_standard_games",
+  "PKG-premium": "play_premium_games",
+  "PKG-addon_curriculum": "create_custom_curriculum",
+  "PKG-addon_custom_game": "create_custom_game",
+  "PKG-addon_ai": "use_ai_analysis",
+};
+
 function resolvePackages(
   activeOrSoftRows: EntitlementDbRow[],
   now: Date
@@ -137,14 +145,21 @@ function resolvePackages(
     if (!pkg.entitlements || pkg.entitlements.length === 0) {
       continue;
     }
+    const signatureKey = PACKAGE_SIGNATURE_KEY[pkg.code];
     const requiredKeys = pkg.entitlements as readonly string[];
+    const hasSignature =
+      signatureKey !== undefined &&
+      activeOrSoftRows.some((e) => e.key === signatureKey);
     const hasAllEntitlements = requiredKeys.every((reqKey) =>
       activeOrSoftRows.some((e) => e.key === reqKey)
     );
-    if (!hasAllEntitlements) {
+
+    if (!(hasSignature || hasAllEntitlements)) {
       continue;
     }
-    const primary = activeOrSoftRows.find((e) => requiredKeys.includes(e.key));
+    const primary =
+      activeOrSoftRows.find((e) => e.key === signatureKey) ||
+      activeOrSoftRows.find((e) => requiredKeys.includes(e.key));
     if (primary) {
       activePackages.push(toActivePackageItem(pkg, primary, now));
     }
@@ -242,85 +257,86 @@ export default defineEventHandler(async (event) => {
     throw new UnauthenticatedError();
   }
 
-  const userEntitlementRows = await db
-    .select({
-      id: entitlements.id,
-      key: entitlements.entitlementKey,
-      source: entitlements.source,
-      status: entitlements.status,
-      grantedAt: entitlements.grantedAt,
-      expiresAt: entitlements.expiresAt,
-      label: entitlementKeys.label,
-      description: entitlementKeys.description,
-      group: entitlementKeys.group,
-    })
-    .from(entitlements)
-    .leftJoin(
-      entitlementKeys,
-      eq(entitlements.entitlementKey, entitlementKeys.key)
-    )
-    .where(
-      and(
-        eq(entitlements.userId, session.user_id),
-        inArray(entitlements.status, [
-          "active",
-          "soft_unlock",
-          "grace_period",
-          "expired",
-          "cancelled",
-        ])
-      )
-    )
-    .orderBy(desc(entitlements.id));
+  const [userEntitlementRows, [childrenCountResult], orderRows, [activeSub]] =
+    await Promise.all([
+      db
+        .select({
+          id: entitlements.id,
+          key: entitlements.entitlementKey,
+          source: entitlements.source,
+          status: entitlements.status,
+          grantedAt: entitlements.grantedAt,
+          expiresAt: entitlements.expiresAt,
+          label: entitlementKeys.label,
+          description: entitlementKeys.description,
+          group: entitlementKeys.group,
+        })
+        .from(entitlements)
+        .leftJoin(
+          entitlementKeys,
+          eq(entitlements.entitlementKey, entitlementKeys.key)
+        )
+        .where(
+          and(
+            eq(entitlements.userId, session.user_id),
+            inArray(entitlements.status, [
+              "active",
+              "soft_unlock",
+              "grace_period",
+              "expired",
+              "cancelled",
+            ])
+          )
+        )
+        .orderBy(desc(entitlements.id)),
+      db
+        .select({ val: count(childProfiles.id) })
+        .from(childProfiles)
+        .where(
+          and(
+            eq(childProfiles.userId, session.user_id),
+            eq(childProfiles.status, "active")
+          )
+        ),
+      db
+        .select({
+          id: paymentOrders.id,
+          uuid: paymentOrders.uuid,
+          packageCode: paymentOrders.packageCode,
+          offerCode: paymentOrders.offerCode,
+          amountVnd: paymentOrders.amountVnd,
+          currency: paymentOrders.currency,
+          status: paymentOrders.status,
+          createdAt: paymentOrders.createdAt,
+          submittedAt: paymentOrders.submittedAt,
+          reviewedAt: paymentOrders.reviewedAt,
+        })
+        .from(paymentOrders)
+        .where(eq(paymentOrders.userId, session.user_id))
+        .orderBy(desc(paymentOrders.id))
+        .limit(100),
+      db
+        .select()
+        .from(recurringSubscriptions)
+        .where(
+          and(
+            eq(recurringSubscriptions.userId, session.user_id),
+            inArray(recurringSubscriptions.status, ["active", "past_due"])
+          )
+        )
+        .orderBy(desc(recurringSubscriptions.id))
+        .limit(1),
+    ]);
 
   const { activeOrSoftRows, resolved: resolvedEntitlements } =
     resolveEntitlements(userEntitlementRows, now);
 
   const activePackages = resolvePackages(activeOrSoftRows, now);
 
-  const [childrenCountResult] = await db
-    .select({ val: count(childProfiles.id) })
-    .from(childProfiles)
-    .where(
-      and(
-        eq(childProfiles.userId, session.user_id),
-        eq(childProfiles.status, "active")
-      )
-    );
-
   const quotas = calculateQuotas(
     activePackages,
     Number(childrenCountResult?.val ?? 0)
   );
-
-  const orderRows = await db
-    .select({
-      id: paymentOrders.id,
-      uuid: paymentOrders.uuid,
-      packageCode: paymentOrders.packageCode,
-      offerCode: paymentOrders.offerCode,
-      amountVnd: paymentOrders.amountVnd,
-      currency: paymentOrders.currency,
-      status: paymentOrders.status,
-      createdAt: paymentOrders.createdAt,
-      submittedAt: paymentOrders.submittedAt,
-      reviewedAt: paymentOrders.reviewedAt,
-    })
-    .from(paymentOrders)
-    .where(eq(paymentOrders.userId, session.user_id))
-    .orderBy(desc(paymentOrders.id));
-
-  const [activeSub] = await db
-    .select()
-    .from(recurringSubscriptions)
-    .where(
-      and(
-        eq(recurringSubscriptions.userId, session.user_id),
-        inArray(recurringSubscriptions.status, ["active", "past_due"])
-      )
-    )
-    .orderBy(desc(recurringSubscriptions.id))
-    .limit(1);
 
   const recurringInfo = activeSub
     ? {

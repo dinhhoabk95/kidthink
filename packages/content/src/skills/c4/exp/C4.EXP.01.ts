@@ -42,61 +42,153 @@ export const C4_EXP_01_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "exp_ice",
+      label: "viên đá lạnh",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "🧊",
       },
       category: {
-        type: "hoa quả",
+        type: "vật thử nghiệm",
       },
+      contrast_group: "setup",
+      value: 1,
+      ordering: 1,
+      audio_path: "/audio/vi/c4/exp_ice.mp3",
     },
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "exp_seed",
+      label: "hạt mầm nhỏ",
       image: {
         kind: "emoji",
-        ref: "🍉",
+        ref: "🌱",
       },
       category: {
-        type: "hoa quả",
+        type: "vật thử nghiệm",
       },
+      contrast_group: "setup",
+      value: 2,
+      ordering: 2,
+      audio_path: "/audio/vi/c4/exp_seed.mp3",
     },
     {
-      id: "carrot",
-      label: "củ cà rốt",
+      id: "exp_paper",
+      label: "tờ giấy khô",
       image: {
         kind: "emoji",
-        ref: "🥕",
+        ref: "📄",
       },
       category: {
-        type: "rau củ",
+        type: "vật thử nghiệm",
       },
+      contrast_group: "setup",
+      value: 3,
+      ordering: 3,
+      audio_path: "/audio/vi/c4/exp_paper.mp3",
     },
     {
-      id: "corn",
-      label: "bắp ngô",
+      id: "exp_soap",
+      label: "bánh xà phòng",
       image: {
         kind: "emoji",
-        ref: "🌽",
+        ref: "🧼",
       },
       category: {
-        type: "rau củ",
+        type: "vật thử nghiệm",
       },
+      contrast_group: "setup",
+      value: 4,
+      ordering: 4,
+      audio_path: "/audio/vi/c4/exp_soap.mp3",
     },
     {
-      id: "dog",
-      label: "con chó",
+      id: "exp_water",
+      label: "giọt nước tan",
       image: {
         kind: "emoji",
-        ref: "🐕",
+        ref: "💧",
       },
       category: {
-        type: "động vật",
+        type: "kết quả đoán",
       },
+      contrast_group: "predict",
+      value: 1,
+      ordering: 5,
+      audio_path: "/audio/vi/c4/exp_water.mp3",
+    },
+    {
+      id: "exp_sprout",
+      label: "chồi non xanh",
+      image: {
+        kind: "emoji",
+        ref: "🌿",
+      },
+      category: {
+        type: "kết quả đoán",
+      },
+      contrast_group: "predict",
+      value: 2,
+      ordering: 6,
+      audio_path: "/audio/vi/c4/exp_sprout.mp3",
+    },
+    {
+      id: "exp_wet",
+      label: "vết nước thấm",
+      image: {
+        kind: "emoji",
+        ref: "💦",
+      },
+      category: {
+        type: "kết quả đoán",
+      },
+      contrast_group: "predict",
+      value: 3,
+      ordering: 7,
+      audio_path: "/audio/vi/c4/exp_wet.mp3",
+    },
+    {
+      id: "exp_bubble",
+      label: "bong bóng bay",
+      image: {
+        kind: "emoji",
+        ref: "🫧",
+      },
+      category: {
+        type: "kết quả đoán",
+      },
+      contrast_group: "predict",
+      value: 4,
+      ordering: 8,
+      audio_path: "/audio/vi/c4/exp_bubble.mp3",
     },
   ],
+  relations: [
+    {
+      type: "pair",
+      source_id: "exp_ice",
+      target_id: "exp_water",
+    },
+    {
+      type: "pair",
+      source_id: "exp_seed",
+      target_id: "exp_sprout",
+    },
+    {
+      type: "pair",
+      source_id: "exp_paper",
+      target_id: "exp_wet",
+    },
+    {
+      type: "pair",
+      source_id: "exp_soap",
+      target_id: "exp_bubble",
+    },
+  ],
+  axes: {
+    experiment_pair: {
+      values: ["vật thử nghiệm", "kết quả đoán"],
+    },
+  },
   ladder: [
     {
       rung: 1,
@@ -128,7 +220,16 @@ export const C4_EXP_01_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Đoán trước khi làm nhé",
   },
-  ordering: ["banana", "watermelon", "carrot", "corn", "dog"],
+  ordering: [
+    "exp_ice",
+    "exp_seed",
+    "exp_paper",
+    "exp_soap",
+    "exp_water",
+    "exp_sprout",
+    "exp_wet",
+    "exp_bubble",
+  ],
 };
 
 export const C4_EXP_01_SEED: SkillSeed = {
@@ -136,28 +237,10 @@ export const C4_EXP_01_SEED: SkillSeed = {
   dataset: C4_EXP_01_DATASET,
   levels: [
     {
-      code: "GL-C4-EXP-MAZE-0001",
-      template: "GT-013",
+      template: "GT-000",
       band: "4-5",
       difficulty: 1,
-      theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-EXP-MAZE-0002",
-      template: "GT-013",
-      band: "4-5",
-      difficulty: 2,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-EXP-MAZE-0003",
-      template: "GT-013",
-      band: "4-5",
-      difficulty: 3,
-      theme: "job",
-      rounds: 3,
+      theme: "school",
     },
     {
       code: "GL-C4-EXP-TFRA-0001",
@@ -173,14 +256,6 @@ export const C4_EXP_01_SEED: SkillSeed = {
       band: "4-5",
       difficulty: 2,
       theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-EXP-TFRA-0003",
-      template: "GT-019",
-      band: "4-5",
-      difficulty: 3,
-      theme: "farm",
       rounds: 3,
     },
     {

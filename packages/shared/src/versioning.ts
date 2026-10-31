@@ -3,7 +3,7 @@
  * Rule sở hữu: BR-VER-07, BR-VER-08
  */
 
-export type VersionableEntityType = "game_level" | "lesson" | "curriculum";
+export type VersionableEntityType = "game_level" | "curriculum";
 
 export const BUMP_FIELDS: Record<VersionableEntityType, readonly string[]> = {
   game_level: [
@@ -22,20 +22,6 @@ export const BUMP_FIELDS: Record<VersionableEntityType, readonly string[]> = {
     "ageMax",
     "age_max",
     "difficulty",
-    "accessTier",
-    "access_tier",
-  ],
-  lesson: [
-    "activities",
-    "activityIds",
-    "learningObjectiveIds",
-    "learning_objective_ids",
-    "targetAge",
-    "target_age",
-    "targetAgeMin",
-    "target_age_min",
-    "targetAgeMax",
-    "target_age_max",
     "accessTier",
     "access_tier",
   ],
@@ -64,23 +50,6 @@ export const NO_BUMP_FIELDS: Record<VersionableEntityType, readonly string[]> =
       "thumbnail_emoji",
       "isFeatured",
       "is_featured",
-      "origin",
-      "authoredIn",
-      "seedBatchId",
-    ],
-    lesson: [
-      "title",
-      "description",
-      "guide",
-      "materials",
-      "warmUp",
-      "warm_up",
-      "reflection",
-      "assessment",
-      "extension",
-      "tags",
-      "thumbnailEmoji",
-      "thumbnail_emoji",
       "origin",
       "authoredIn",
       "seedBatchId",

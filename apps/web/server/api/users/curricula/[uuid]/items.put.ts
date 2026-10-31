@@ -2,13 +2,15 @@ import { replacePersonalCurriculumItemsSchema } from "@mindkid/shared";
 import {
   defineEventHandler,
   getRequestHeader,
-  getRequestIP,
   getRouterParam,
   readBody,
 } from "h3";
 import { replacePersonalCurriculumItems } from "#server/services/index.js";
 import { throwValidationError } from "#server/utils/api-error";
-import { requireWebUserSession } from "#server/utils/auth-runtime";
+import {
+  getVerifiedRemoteIp,
+  requireWebUserSession,
+} from "#server/utils/auth-runtime";
 import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
 
 export default defineEventHandler(async (event) => {
@@ -30,7 +32,7 @@ export default defineEventHandler(async (event) => {
     {
       userId,
       entitlements,
-      ip: getRequestIP(event),
+      ip: getVerifiedRemoteIp(event),
       userAgent: getRequestHeader(event, "user-agent"),
     },
     uuid,

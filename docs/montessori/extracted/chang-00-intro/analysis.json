@@ -1,0 +1,315 @@
+{
+  "stage_id": "chang-00-intro",
+  "stage_number": 0,
+  "title": "Chặng 0: Khởi Hành - Đường Ray Sau Cầu Vồng & Vương Quốc Số",
+  "series": "Gấu Logic & Thỏ Quan Sát - Chuyến Tàu Toán Học",
+  "source_document": {
+    "filename": "A - Giới thiệu.pdf",
+    "total_pages": 4,
+    "publisher": "Montessori VN",
+    "contact": "0567977111"
+  },
+  "target_age": "3–6 tuổi (Mầm 3–4, Chồi 4–5, Lá 5–6)",
+  "narrative_universe": {
+    "theme": "Chuyến Tàu Toán Học & Cuộc Giải Cứu Vương Quốc Số",
+    "setting": "Cây Cầu Vồng, Cánh Cổng Ánh Sáng và Vương Quốc Số kỳ diệu",
+    "premise": "Cơn Bão Lộn Xộn bất ngờ quét qua làm vỡ nát Đường Ray Ánh Sáng thành 20 mảnh và xáo trộn toàn bộ số lượng, hình khối, trật tự tại Vương quốc Số. Bé cùng hai người bạn Gấu Logic và Thỏ Quan Sát bước lên Chuyến Tàu Toán Học, vượt qua các thử thách tư duy để tìm lại 20 mảnh đường ray ánh sáng, khôi phục lại trật tự cho vương quốc.",
+    "core_mechanic_gamification": "Mỗi thử thách hoàn thành = Nhận 1 Mảnh Đường Ray Ánh Sáng. Đủ 20 mảnh sẽ nối liền đường ray đưa Chuyến Tàu Toán Học về đích an toàn."
+  },
+  "characters": [
+    {
+      "id": "gau_logic",
+      "name": "Gấu Logic",
+      "persona": "Nhà tư duy phân tích, điềm tĩnh, yêu thích trật tự, lý thuyết số và tính quy luật",
+      "visual_design": {
+        "species": "Gấu nâu tròn trĩnh",
+        "accessories": "Kính cận gọng tròn màu xanh dương trí tuệ",
+        "costume": "Áo gile xanh dương có cúc vàng, quần ngắn màu nâu cam",
+        "props": "Bảng tính hạt tư duy, thước đo, sổ ghi chép"
+      },
+      "voice_and_dialogue": "Điềm tĩnh, chu đáo, thường đặt câu hỏi khơi gợi suy luận logic ('Đường ray này dẫn đến đâu nhỉ?', 'Các con số và đồ vật đều bị xáo trộn!', 'Mỗi vùng đất đang giữ một mảnh đường ray.')",
+      "pedagogical_role": "Đại diện cho tư duy bán cầu não trái: Phân loại, so sánh, đối chiếu, suy luận nhân quả và giải quyết vấn đề."
+    },
+    {
+      "id": "tho_quan_sat",
+      "name": "Thỏ Quan Sát",
+      "persona": "Nhà thám hiểm tinh mắt, nhanh nhẹn, tò mò, hào hứng và giàu năng lượng",
+      "visual_design": {
+        "species": "Thỏ trắng hoạt bát, đôi tai dài viền hồng",
+        "accessories": "Kính lúp thám tử viền vàng cam cán đỏ, túi da đeo chéo màu vàng đựng dụng cụ",
+        "costume": "Bộ lông trắng muốt sạch sẽ, chân tay linh hoạt",
+        "props": "Kính lúp ma thuật phóng đại manh mối"
+      },
+      "voice_and_dialogue": "Tươi vui, nhiệt huyết, thúc giục hành động và cổ vũ bé ('Nhìn kìa! Một cánh cổng đang mở ra!', 'Chúng ta lên đường thôi!', 'Bé hãy nhìn thật kỹ và giúp chúng mình nhé!', 'Chúng ta phải tìm đủ 20 mảnh!')",
+      "pedagogical_role": "Đại diện cho tư duy bán cầu não phải & thị giác không gian: Quan sát chi tiết, phân biệt màu sắc, phát hiện hình dạng, định hướng không gian và kích hoạt sự tò mò."
+    }
+  ],
+  "journey_map": {
+    "total_stages": 21,
+    "goal": "Thu thập 20 mảnh Đường Ray Ánh Sáng qua 20 chặng thử thách và mở khóa Căn phòng IQ bí mật",
+    "stages": [
+      {
+        "stage": 0,
+        "slug": "chang-00-intro",
+        "name": "Giới thiệu & Khởi hành",
+        "region": "Cây Cầu Vồng & Cánh Cổng Ánh Sáng"
+      },
+      {
+        "stage": 1,
+        "slug": "chang-01",
+        "name": "Những con Số - Nhận biết số",
+        "region": "Ga Những Con Số Thức Giấc (Số 1–10)"
+      },
+      {
+        "stage": 2,
+        "slug": "chang-02",
+        "name": "Đường ray số thứ tự",
+        "region": "Tuyến Đường Ray Thứ Tự Tuyến Tính"
+      },
+      {
+        "stage": 3,
+        "slug": "chang-03",
+        "name": "Thung lũng bóng & hình",
+        "region": "Thung Lũng Bóng & Hình Học Không Gian"
+      },
+      {
+        "stage": 4,
+        "slug": "chang-04",
+        "name": "Quảng trường số lượng",
+        "region": "Quảng Trường Đếm & Ghép Cặp Tương Ứng"
+      },
+      {
+        "stage": 5,
+        "slug": "chang-05",
+        "name": "Thành phố săn số",
+        "region": "Thành Phố Săn Tìm Số Ẩn"
+      },
+      {
+        "stage": 6,
+        "slug": "chang-06",
+        "name": "Thung lũng cân bằng",
+        "region": "Thung Lũng Cân Bằng Trọng Lượng & So Sánh"
+      },
+      {
+        "stage": 7,
+        "slug": "chang-07",
+        "name": "Khu vườn 2 nhánh",
+        "region": "Khu Vườn Phân Loại & Phân Nhánh Logic"
+      },
+      {
+        "stage": 8,
+        "slug": "chang-08",
+        "name": "Thành phố mật mã",
+        "region": "Mê Cung Mã Hóa & Ký Hiệu"
+      },
+      {
+        "stage": 9,
+        "slug": "chang-09",
+        "name": "Khu rừng ngã rẽ",
+        "region": "Khu Rừng Quyết Định & Định Hướng Không Gian"
+      },
+      {
+        "stage": 10,
+        "slug": "chang-10",
+        "name": "Thung lũng màu sắc",
+        "region": "Thung Lũng Sắc Màu & Phối Hợp Mẫu"
+      },
+      {
+        "stage": 11,
+        "slug": "chang-11",
+        "name": "Giải mã những ô số",
+        "region": "Ma Trận Ô Số & Liên Tưởng Toán Học"
+      },
+      {
+        "stage": 12,
+        "slug": "chang-12",
+        "name": "Xưởng máy biến hình",
+        "region": "Xưởng Biến Hình & Lắp Ghép Hình Phức Hợp"
+      },
+      {
+        "stage": 13,
+        "slug": "chang-13",
+        "name": "Học viện thám tử số học",
+        "region": "Học Viện Thám Tử Suy Luận Suy Lý"
+      },
+      {
+        "stage": 14,
+        "slug": "chang-14",
+        "name": "Bé tìm số bí ẩn",
+        "region": "Vùng Đất Ẩn Số & Điền Khuyết"
+      },
+      {
+        "stage": 15,
+        "slug": "chang-15",
+        "name": "Thung lũng quy luật",
+        "region": "Thung Lũng Chuỗi Tuần Hoàn & Mẫu Hình (Patterns)"
+      },
+      {
+        "stage": 16,
+        "slug": "chang-16",
+        "name": "Xưởng cân bằng kỳ diệu",
+        "region": "Xưởng Bảo Toàn Số Lượng & Đẳng Thức"
+      },
+      {
+        "stage": 17,
+        "slug": "chang-17",
+        "name": "Lâu đài sudoku bí ẩn",
+        "region": "Lâu Đài Sudoku Hình Ảnh & Tư Duy Ma Trận"
+      },
+      {
+        "stage": 18,
+        "slug": "chang-18",
+        "name": "Tháp đồng hồ kỳ diệu",
+        "region": "Tháp Thời Gian, Giờ Giấc & Trình Tự Sự Kiện"
+      },
+      {
+        "stage": 19,
+        "slug": "chang-19",
+        "name": "Thành phố hình khối",
+        "region": "Đô Thị Khối 3D (Lập phương, Cầu, Trụ, Nón)"
+      },
+      {
+        "stage": 20,
+        "slug": "chang-20",
+        "name": "Trạm mật mã cuối cùng",
+        "region": "Trạm Mật Mã Tổng Hợp Về Đích"
+      },
+      {
+        "stage": 21,
+        "slug": "chang-21",
+        "name": "Căn phòng IQ bí mật",
+        "region": "Căn Phòng Thử Thách IQ Đỉnh Cao & Vinh Danh"
+      }
+    ]
+  },
+  "pedagogy": {
+    "framework": "Montessori & CPA (Concrete - Pictorial - Abstract)",
+    "montessori_core_principles": [
+      {
+        "principle": "Cụ thể hóa khái niệm trừu tượng (Concrete to Abstract)",
+        "explanation": "Toán học không bắt đầu từ con số khô khan trên giấy mà từ đồ vật có hình dáng, màu sắc, vị trí cụ thể (đoạn ray, quả táo, khối gỗ, toa xe)."
+      },
+      {
+        "principle": "Kiểm soát lỗi tự thân (Control of Error)",
+        "explanation": "Hình ảnh trực quan cho phép trẻ tự phát hiện lỗi sai mà không cần phán xét tiêu cực (ví dụ: số 1 đứng cạnh số 3, bục đá thiếu số 2, 3 quả táo đi với số 2)."
+      },
+      {
+        "principle": "Học qua khám phá và nhập vai (Story-based Learning)",
+        "explanation": "Cốt truyện phiêu lưu giải cứu vương quốc biến bài tập toán thành nhiệm vụ người hùng, tạo động lực nội tại (intrinsic motivation) mạnh mẽ."
+      },
+      {
+        "principle": "Sự đồng hành scaffolding hai vai",
+        "explanation": "Gấu Logic đóng vai trò phân tích định hướng (Logical guide), Thỏ Quan Sát đóng vai trò gợi mở giác quan (Visual observer), hỗ trợ trẻ từng nấc thang nhận thức."
+      }
+    ],
+    "parent_guide": {
+      "attitude": "Đồng hành tích cực, kiên nhẫn, không hối thúc, không làm thay bài tập của trẻ.",
+      "four_step_interaction": [
+        "Bước 1 - Khơi gợi: Đọc to lời thoại của Gấu Logic và Thỏ Quan Sát với ngữ điệu sinh động.",
+        "Bước 2 - Khám phá: Đặt câu hỏi mở để trẻ tự quan sát tranh ('Con nhìn thấy gì?', 'Cái gì đang đứng sai chỗ?').",
+        "Bước 3 - Giải quyết: Hướng dẫn trẻ dùng ngón tay chỉ, đếm to hoặc nối đồ vật tương ứng.",
+        "Bước 4 - Khen ngợi nỗ lực: Ghi nhận sự tập trung và trao huy hiệu/sticker Mảnh Đường Ray Ánh Sáng."
+      ],
+      "recommended_duration": "10–15 phút mỗi ngày, tập trung vào niềm vui trải nghiệm hơn là tốc độ."
+    }
+  },
+  "pages": [
+    {
+      "page_number": 1,
+      "file_path": "pages/page-1.jpg",
+      "page_type": "story_prologue",
+      "title": "ĐƯỜNG RAY SAU CẦU VỒNG",
+      "visual_scene": {
+        "center": "Cây Cầu Vồng (Rainbow Tree) đại thụ khổng lồ rực rỡ sắc màu, ở thân cây có biểu tượng trái tim phát sáng kim quang.",
+        "foreground": "Đường ray xe lửa bằng vàng lấp lánh xuất phát từ gốc cây, chạy uốn lượn qua bãi cỏ hoa rực rỡ sắc đỏ, vàng, tím. Gấu Logic và Thỏ Quan Sát đứng bên đường ray.",
+        "background": "Lâu đài cổ tích với mái chóp sắc màu, dải cầu vồng bắc ngang bầu trời xanh mây trắng, dẫn tới cánh cổng vòm cầu vồng mở ra chân trời ánh sáng chói lọi."
+      },
+      "dialogue": {
+        "gau_logic": "Đường ray này dẫn đến đâu nhỉ?",
+        "tho_quan_sat": "Nhìn kìa! Một cánh cổng đang mở ra!"
+      },
+      "narration_text": "Một tia sáng từ Cây Cầu Vồng biến thành đường ray vàng lấp lánh.",
+      "pedagogical_purpose": "Khởi động trí tưởng tượng và tạo động lực khám phá. Giới thiệu hai nhân vật biểu tượng và con đường dẫn tới thế giới toán học.",
+      "digital_game_potential": {
+        "mechanic": "Intro Animated Cutscene & Touch-to-Interact",
+        "interaction": "Chạm vào Cây Cầu Vồng phát hiệu ứng ánh sáng lấp lánh và âm thanh chuông gió ma thuật; chạm vào Gấu/Thỏ phát giọng lồng tiếng; chạm vào cánh cổng cầu vồng để kích hoạt hoạt cảnh mở cổng tiến vào Vương quốc Số."
+      }
+    },
+    {
+      "page_number": 2,
+      "file_path": "pages/page-2.jpg",
+      "page_type": "inciting_incident",
+      "title": "LÁ THƯ TỪ VƯƠNG QUỐC SỐ",
+      "visual_scene": {
+        "center": "Gấu Logic mở phong thư màu vàng kim ma thuật (mang biểu tượng con dấu hoàng gia), từ trong thư phát ra luồng bụi phép màu vàng với các con số (1, 3, 5, 9, dấu '?'), lâu đài tí hon và các đoạn đường ray thu nhỏ.",
+        "foreground": "Thỏ Quan Sát giật mình ngạc nhiên, mắt to tròn, tay cầm kính lúp và túi chéo hướng về phía trước sẵn sàng hành động.",
+        "background": "Cây Cầu Vồng trái tim, đường ray vàng uốn lượn dẫn tới cổng vòm cầu vồng phát sáng rực rỡ."
+      },
+      "dialogue": {
+        "gau_logic": null,
+        "tho_quan_sat": "Chúng ta lên đường thôi!"
+      },
+      "letter_content": "Vương quốc Số đang gặp nguy hiểm! Cơn Bão Lộn Xộn đã cuốn mất 20 mảnh Đường Ray Ánh Sáng. Xin hãy giúp chúng tôi!",
+      "pedagogical_purpose": "Thiết lập nhiệm vụ học tập (Learning Quest) rõ ràng: Cần thu thập đủ 20 mảnh đường ray ánh sáng để cứu vương quốc. Chuyển hóa việc học thành hành động nghĩa hiệp đầy hứng khởi.",
+      "digital_game_potential": {
+        "mechanic": "Interactive Letter Opening & Quest Briefing HUD",
+        "interaction": "Trẻ chạm vào phong thư để xé tem niêm phong; các con số 1, 3, 5, 9 bay ra với âm thanh sparkle vui nhộn; giọng đọc truyền cảm đọc nội dung bức thư kêu cứu."
+      }
+    },
+    {
+      "page_number": 3,
+      "file_path": "pages/page-3.jpg",
+      "page_type": "problem_demonstration",
+      "title": "VƯƠNG QUỐC BỊ ĐẢO LỘN",
+      "visual_scene": {
+        "center": "Năm bục đá tròn đặt các con số khổng lồ 1, 2, 3, 4, 5 bị đảo lộn vị trí hỗn loạn: Số 1 (vàng cam), Số 3 (xanh lam) ở trên cao, Số 5 (đỏ hồng) ở giữa, Số 4 (tím) ở dưới, Số 2 (xanh lá) đứng cạnh 3 quả táo đỏ mọng.",
+        "foreground": "Mặt đất đất đá ngổn ngang ba khối hình học không gian 3D: Khối lập phương màu xanh lam (cube), Khối cầu màu tím (sphere), Khối hình trụ màu vàng (cylinder).",
+        "characters_action": "Gấu Logic chỉ tay vào các con số phân tích; Thỏ Quan Sát cầm kính lúp cúi xuống soi kiểm tra từng chi tiết.",
+        "background": "Cổng vòm cầu vồng tỏa sáng, tháp đồng hồ cổ tích với ngôi sao vàng chỉ sai giờ/bị kẹt kim (kim dài 12, kim ngắn 6)."
+      },
+      "dialogue": {
+        "gau_logic": "Các con số và đồ vật đều bị xáo trộn!",
+        "tho_quan_sat": "Bé hãy nhìn thật kỹ và giúp chúng mình nhé!"
+      },
+      "narration_text": "Mọi thứ trong Vương quốc Số đang đứng sai vị trí.",
+      "pedagogical_purpose": "Thị giác hóa khái niệm 'Đảo lộn' (Disorder) vs 'Trật tự' (Order): Rèn luyện khả năng quan sát chi tiết, phân biệt sự sai lệch về thứ tự dãy số (1-2-3-4-5), sự bất tương thích giữa ký hiệu số và số lượng (số 2 vs 3 quả táo), và phân loại các hình khối không gian (khối lập phương, cầu, trụ).",
+      "digital_game_potential": {
+        "mechanic": "Spot-the-Error / Interactive Scavenger Hunt Mini-game",
+        "interaction": "Chạm vào số 2 và chùm 3 quả táo để nghe Thỏ Quan Sát thốt lên: 'Ủa, số 2 mà lại có 3 quả táo kìa!'; chạm vào khối lập phương/khối cầu để nghe Gấu Logic gọi tên hình khối; sắp xếp kéo thả số về đúng bục thứ tự 1-2-3-4-5."
+      }
+    },
+    {
+      "page_number": 4,
+      "file_path": "pages/page-4.jpg",
+      "page_type": "world_map_rules",
+      "title": "20 MẢNH ĐƯỜNG RAY ÁNH SÁNG",
+      "visual_scene": {
+        "left": "Đầu tàu hỏa hơi nước Chuyến Tàu Toán Học bằng kim loại bóng bẩy, phối màu tím - đỏ - xanh - vàng kim với ngôi sao vàng 5 cánh ở mũi tàu, khói trắng bốc lên; tháp đồng hồ nhà ga đồ sộ.",
+        "center": "Tấm bản đồ da cuộn khổng lồ vẽ toàn bộ lãnh thổ Vương quốc Số với con đường mòn uốn lượn nối qua các địa danh đặc trưng: Lâu đài số 1-2-3, Vườn cây hoa ngũ sắc, Hang đá mắt đen bí ẩn, Mê cung hàng rào xanh, Ngôi nhà hình học cơ bản (vuông, tam giác, tròn), Tháp đồng hồ, Lâu đài cổ tích. Ở chính giữa tỏa sáng con số 20 khổng lồ phát sáng rực rỡ cùng các mảnh đường ray ánh sáng rải rác.",
+        "foreground": "Đoạn đường ray vàng thật đang dở dang dưới chân ga; Gấu Logic chỉ tay hướng dẫn bản đồ; Thỏ Quan Sát hào hứng giơ kính lúp.",
+        "text_banner": "Hoàn thành một thử thách, bé sẽ nhận được một mảnh Đường Ray Ánh Sáng."
+      },
+      "dialogue": {
+        "gau_logic": "Mỗi vùng đất đang giữ một mảnh đường ray.",
+        "tho_quan_sat": "Chúng ta phải tìm đủ 20 mảnh!"
+      },
+      "pedagogical_purpose": "Thiết lập bản đồ tiến trình (Progress Tracker / Gamification). Trẻ nhìn thấy mục tiêu toàn diện, hiểu rõ mối quan hệ giữa nỗ lực học tập và phần thưởng tích lũy (thu thập đủ 20 mảnh đường ray để tàu khởi hành).",
+      "digital_game_potential": {
+        "mechanic": "Level Selection World Map & Achievement Tracker",
+        "interaction": "Màn hình Bản đồ tổng của toàn bộ trò chơi: Mỗi vùng đất tương ứng 1 Chặng (Chặng 1 đến 20). Vùng đã chơi xong sẽ sáng lên và hiện đoạn đường ray ánh sáng lắp vào tuyến đường; chạm vào đầu tàu để nghe còi hụ 'Tu tu xình xịch!'."
+      }
+    }
+  ],
+  "digital_game_potential": {
+    "suggested_template_id": "GT-000",
+    "template_name": "Narrative Prologue & Interactive World Map Hub",
+    "mechanic": "storyboard_and_map_hub",
+    "description": "Chuyển hóa 4 trang Giới thiệu thành màn mở đầu điện ảnh tương tác (Interactive Prologue Cutscene) kết hợp Giao diện Bản đồ Hành trình (World Map Hub) chuẩn Montessori.",
+    "features": [
+      "Lồng tiếng song ngữ/tiếng Việt chất lượng cao cho lời dẫn, Gấu Logic và Thỏ Quan Sát",
+      "Tương tác chạm phát sáng vào Cây Cầu Vồng, phong thư phát tán con số, các khối hình học",
+      "Bản đồ 20 chặng hành trình tương tác, mở khóa dần theo cơ chế Scaffolding ZPD",
+      "Thanh tiến độ 20 Mảnh Đường Ray Ánh Sáng gắn kết xuyên suốt toàn bộ ứng dụng TiniMath"
+    ]
+  }
+}

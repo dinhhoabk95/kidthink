@@ -25,15 +25,10 @@ depends_on:
 
 ## 1. Objective
 
-Hôm nay có **hai đường** dẫn trẻ tới một màn chơi, và chỉ một đường có dạy:
-
-| Đường | Có dạy trước không |
-|---|---|
-| Giáo án — [`curriculum-player.md`](curriculum-player.md) → [`lesson-session-runner.md`](../03-account/lesson-session-runner.md) → bước `digital_game` | **Có**, ba pha, có người lớn |
-| Danh mục — `/games` → `/play/{code}` | **Không**. Bảy bước của [`access-gating.md`](access-gating.md) hỏi về tiền, hạn mức và tuổi — không bước nào hỏi trẻ đã biết khái niệm chưa |
-
-Đường thứ hai là đường phụ huynh dùng khi để trẻ chơi một mình. File này đóng nó lại: thêm
-**bước 8** — điều kiện sư phạm — vào cuối thứ tự kiểm quyền.
+Khi phụ huynh để trẻ chơi một mình từ danh mục `/games` → `/play/{code}` hoặc lộ trình
+[`curriculum-player.md`](curriculum-player.md), bảy bước của [`access-gating.md`](access-gating.md)
+hỏi về tiền, hạn mức và tuổi — không bước nào hỏi trẻ đã biết khái niệm chưa. File này đóng khoảng
+trống đó: thêm **bước 8** — điều kiện sư phạm — vào cuối thứ tự kiểm quyền.
 
 **Một trò chơi có thể cần nhiều bài làm quen trước đó.** Một màn chơi ghép vần cần cả bài về
 ký tự lẫn bài về từ; một màn chơi khối 3D cần bài về hình phẳng trước. Nên bước 8 không trả
@@ -56,7 +51,6 @@ thành hình phạt.
 |---|---|---|
 | Khách chưa đăng nhập | `guest_device_id` | Áp cổng; trạng thái làm quen theo thiết bị |
 | Trẻ qua hồ sơ đã chọn | `child_profile_id` | Áp cổng; trạng thái làm quen theo hồ sơ, bền |
-| Trẻ trong một tiết giáo án | có `lesson_run_id` | **Miễn** — người lớn đang dạy |
 | Manager preview | `is_preview = true` | **Miễn**, và không ghi gì |
 
 ## 3. Entry points
@@ -94,7 +88,6 @@ thành hình phạt.
 | Nhánh | Điều kiện | Hành vi |
 |---|---|---|
 | Level là bài làm quen | `kind = 'teach'` | Mở. Nếu không, không trò chơi nào vào được |
-| Level chạy trong tiết giáo án | Request mang `lesson_run_id` hợp lệ đang mở | **Miễn.** Ghi hoàn thành cho mọi level trong hàng đợi với `source = 'lesson_run'` — người lớn vừa dạy đúng thứ cổng này đi tìm |
 | Manager preview | `is_preview = true` | Miễn, và Cấm — **NEVER** ghi hoàn thành — `BR-GAT-08` |
 | Không kỹ năng nào trong tập có bài làm quen | Thư viện thiếu | Mở. Đếm vào sổ nợ của cổng bậc thang mục 7.4 |
 | Level không gắn kỹ năng nào | Lỗi dữ liệu | Mở, và **log cảnh báo**. Cổng publish lẽ ra đã chặn — cùng lập trường `progress-and-mastery.md` mục 5 |
@@ -115,7 +108,6 @@ thành hình phạt.
 | `BR-CIG-04` (thiếu bài thì mở) | Kỹ năng chưa có bài làm quen `published` → **bỏ khỏi hàng đợi**, không chặn | Cổng tồn tại để thêm bài dạy, không phải để gỡ trò chơi. Nợ độ phủ đo ở mục 7.4, không đo bằng cách chặn trẻ |
 | `BR-CIG-05` (cổng chạy ở server) | Bước 8 chạy trong `assertContentAccess`, Cấm — **NEVER** chỉ ở client | `BR-GAT-01`. Ẩn nút chơi bằng CSS không phải là cổng |
 | `BR-CIG-06` (bài làm quen không tự chắn) | Level `kind = 'teach'` **luôn** qua bước 8 | Nếu không thì không có đường nào vào bài làm quen, và toàn bộ thư viện đóng |
-| `BR-CIG-07` (giáo án miễn cổng) | Level mở từ trong một `lesson_run` đang chạy được **miễn**, và ghi hoàn thành cho cả hàng đợi với `source = 'lesson_run'` | Tiết giáo án có đủ ba pha và có người lớn (`BR-LSM-01`). Bắt trẻ xem thêm hai bài làm quen ngay sau khi người lớn vừa dạy đúng khái niệm đó là lặp vô nghĩa |
 | `BR-CIG-08` (trạng thái theo từng hồ sơ) | Trạng thái làm quen gắn `child_profile_id`, hoặc `guest_device_id` với khách. Bài đã hoàn thành tính theo **mã level**, ở mọi phiên bản content — level lên bản mới (`BR-CSA-17`) không bắt trẻ làm quen lại | Hai đứa trẻ trong một nhà học khác nhau. Trạng thái theo tài khoản sẽ mở khoá cho đứa chưa học |
 | `BR-CIG-09` (preview không ghi) | Manager preview miễn cổng và Cấm — **NEVER** ghi hoàn thành | `BR-GAT-08`. Manager chạy thử một bài chục lần khi soạn nó |
 | `BR-CIG-10` (nguồn sự thật là `play_sessions`) | Trạng thái làm quen suy ra từ `play_sessions` (`completion_status = 'completed'`, `is_preview = false`) của level `kind = 'teach'`. Cấm — **NEVER** dựng bảng đếm song song đồng bộ tay | `play_sessions` đã có đủ ba thứ cần: chủ thể, trạng thái, và cờ preview. Bảng thứ hai là hai nguồn sự thật, và nó sẽ lệch |
@@ -123,7 +115,7 @@ thành hình phạt.
 | `BR-CIG-12` (bốn ô mới phải có test) | Ma trận mục 7.3 phải có test, cộng **ca âm** cho từng nhánh miễn | `BR-GAT-05` đã đóng lập trường: gating là ma trận, test vài ô sẽ để lọt ô còn lại |
 | `BR-CIG-13` (bậc thang chỉ đi xuống) | Số **kỹ năng** có level chấm nhưng thiếu bài làm quen chỉ được **giảm**. Level chấm mới cho kỹ năng chưa có bài làm quen làm cổng **đỏ** | Không có bậc thang thì `BR-CIG-04` biến thành cửa thoát vĩnh viễn: mọi kỹ năng cứ thiếu bài là cổng cứ mở |
 | `BR-CIG-14` (Cấm nới để qua cổng) | Cấm — **NEVER** thêm kỹ năng vào danh sách miễn trừ chỉ để một đợt nội dung kịp phát hành | `AGENTS.md`: không nới rule chỉ để code hiện tại qua được cổng |
-| `BR-CIG-15` (thứ tự nền trước) | Hàng đợi sắp theo **thứ tự topo trên kỹ năng**, cạnh lấy thẳng từ `skill_prerequisites`. Hai tiết cùng một chủ đề — không có cạnh nào giữa chúng — sắp theo `concept.sequence_no` | Dạy từ trước khi dạy ký tự là dạy ngược. `BR-LFM-06` đã đóng lập trường prerequisite là ràng buộc sư phạm không được nới. Topo không phân biệt được hai tiết cùng chủ đề, nên phải có số thứ tự tường minh — `BR-CIM-20` |
+| `BR-CIG-15` (thứ tự nền trước) | Hàng đợi sắp theo **thứ tự topo trên kỹ năng**, cạnh lấy thẳng từ `skill_prerequisites`. Hai tiết cùng một chủ đề — không có cạnh nào giữa chúng — sắp theo `concept.sequence_no` | Dạy từ trước khi dạy ký tự là dạy ngược. Prerequisite là ràng buộc sư phạm không được nới. Topo không phân biệt được hai tiết cùng chủ đề, nên phải có số thứ tự tường minh — `BR-CIM-20` |
 | `BR-CIG-16` (tối đa 2 bài mỗi lần vào) | Một lần vào trả tối đa **2** bài trong `intro_queue`; phần còn lại đòi ở lần vào sau, kèm `intro_remaining` | Bao đóng prerequisite có thể dài. Chắn một đứa trẻ sau sáu phút bài dạy để tới màn chơi 90 giây là cách chắc chắn nhất làm nó bỏ. Trẻ đi dần vẫn phải qua hết, chỉ là không qua hết trong một hơi |
 | `BR-CIG-18` (cổng phải có người gọi) | Cổng bậc thang mục 7.4 BẮT BUỘC được gọi bởi một script có tên trong `package.json` và chạy trong `scripts/check.sh`. Ca âm mục 7.4 BẮT BUỘC tồn tại | Đo 2026-09-06: `scripts/check-intro-coverage.ts` cài đặt đúng `BR-CIG-13` nhưng **không script nào gọi nó** — không `package.json`, không `lefthook.yml`, không `check.sh`. Nợ 392 tăng tự do suốt thời gian đó. Một cổng không ai gọi là tài liệu, không phải cổng |
 | `BR-CIG-17` (bao đóng, không phải một tầng) | Tập kỹ năng gồm cả prerequisite **bắc cầu**, không chỉ tầng liền kề. Cấm — **NEVER** gom về strand ở bất cứ bước nào | Chặn ở một tầng thì trẻ vào được màn chơi mà vẫn thiếu nền hai tầng dưới — đúng lỗ hổng file này đang vá. Gom về strand thì mất cạnh giữa hai kỹ năng cùng strand, và một bài dạy của strand mở khoá cho cả 11 kỹ năng khác chưa được dạy |
@@ -131,7 +123,7 @@ thành hình phạt.
 ## 7. Data
 
 **Đọc:** `game_levels` · registry `ALL_TEMPLATES` (`kind`) · `content_skill_map` · `skills` · `skill_prerequisites` ·
-`play_sessions` · `lesson_runs`.
+`play_sessions`.
 **Ghi:** không ghi gì ở đường đọc config. Hàng hoàn thành do
 [`concept-intro-runner.md`](concept-intro-runner.md) ghi qua `play_sessions`.
 
@@ -169,10 +161,10 @@ trình thì bỏ cạnh gây chu trình, log cảnh báo, và chạy tiếp — 
 
 ### 7.3 Ô phải có test
 
-| Trạng thái trẻ \ Hàng đợi | Rỗng vì không kỹ năng nào có bài | Rỗng vì đã đi hết | 1 bài | 3 bài (cắt còn 2) | Trong `lesson_run` |
-|---|:--:|:--:|:--:|:--:|:--:|
-| Khách (`guest_device_id`) | 200 | 200 | **428** | **428** + `intro_remaining = 1` | 200 |
-| Trẻ đã chọn hồ sơ | 200 | 200 | **428** | **428** + `intro_remaining = 1` | 200 |
+| Trạng thái trẻ \ Hàng đợi | Rỗng vì không kỹ năng nào có bài | Rỗng vì đã đi hết | 1 bài | 3 bài (cắt còn 2) |
+|---|:--:|:--:|:--:|:--:|
+| Khách (`guest_device_id`) | 200 | 200 | **428** | **428** + `intro_remaining = 1` |
+| Trẻ đã chọn hồ sơ | 200 | 200 | **428** | **428** + `intro_remaining = 1` |
 
 Cộng bốn ca âm bắt buộc: preview **không** bị chặn và **không** ghi hoàn thành · level
 `kind = 'teach'` **không** bị chính nó chặn · phiên `abandoned` **không** mở cổng ·
@@ -338,13 +330,6 @@ Scenario: BR-CIG-06 — bài làm quen không tự chặn chính nó
   Given trẻ chưa làm quen kỹ năng nào
   When client xin config của một level kind = teach
   Then trả 200
-
-Scenario: BR-CIG-07 — trong tiết giáo án thì miễn cổng
-  Given một lesson_run đang mở chứa bước game level
-  And trẻ chưa đi bài làm quen nào của level đó
-  When client xin config kèm lesson_run_id
-  Then trả 200
-  And ghi hoàn thành cho cả hàng đợi với source = lesson_run
 
 Scenario: BR-CIG-08 — hồ sơ em không dùng được trạng thái của anh
   Given hồ sơ A đã làm quen kỹ năng C1.NREC.01, hồ sơ B thì chưa

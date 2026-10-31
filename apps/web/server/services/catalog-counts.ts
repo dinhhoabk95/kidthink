@@ -1,5 +1,5 @@
 import { gameLevels } from "@mindkid/db";
-import { eq, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 /**
@@ -32,7 +32,6 @@ export async function countPublishedLevels(
       count: sql<number>`count(*)::int`,
     })
     .from(gameLevels)
-    .where(eq(gameLevels.status, "published"))
     .groupBy(gameLevels.ageMin, gameLevels.ageMax, gameLevels.accessTier);
 
   const byAgeBand: Record<string, number> = {};

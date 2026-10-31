@@ -26,7 +26,7 @@
             :class="{ 'star-pill--dim': (stars ?? 0) < 1 }"
           >
             <UIcon
-              class="w-12 h-12 text-amber-400 fill-current"
+              class="star-icon w-12 h-12 text-amber-400 fill-current"
               name="i-lucide-star"
               v-if="(stars ?? 0) >= 1"
             />
@@ -36,7 +36,7 @@
             :class="{ 'star-pill--dim': (stars ?? 0) < 2 }"
           >
             <UIcon
-              class="w-12 h-12 text-amber-400 fill-current"
+              class="star-icon star-icon--big w-12 h-12 text-amber-400 fill-current"
               name="i-lucide-star"
               v-if="(stars ?? 0) >= 2"
             />
@@ -46,7 +46,7 @@
             :class="{ 'star-pill--dim': (stars ?? 0) < 3 }"
           >
             <UIcon
-              class="w-12 h-12 text-amber-400 fill-current"
+              class="star-icon w-12 h-12 text-amber-400 fill-current"
               name="i-lucide-star"
               v-if="(stars ?? 0) >= 3"
             />

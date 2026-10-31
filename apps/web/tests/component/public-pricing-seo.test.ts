@@ -7,7 +7,7 @@ import {
 } from "@mindkid/shared/client";
 import { flushPromises, mount } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { ref } from "vue";
+import { defineComponent, h, ref, Suspense } from "vue";
 
 interface HeadInput {
   title?: string;
@@ -41,14 +41,55 @@ vi.mock("#imports", () => ({
       return mockRouteParams.value;
     },
   }),
+  useFetch: () =>
+    Promise.resolve({
+      data: ref(null),
+      pending: ref(false),
+      error: ref(null),
+      refresh: vi.fn(),
+    }),
   useRuntimeConfig: () => ({
     public: {
       apiBaseUrl: "",
       siteUrl: "https://mindkid.vn",
     },
   }),
+  useUserSession: () => ({
+    loggedIn: ref(false),
+  }),
+  useApi: () => vi.fn(),
   definePageMeta: vi.fn(),
 }));
+
+vi.stubGlobal(
+  "useSeoMeta",
+  (meta: Record<string, string | (() => string | undefined) | undefined>) => {
+    useSeoMetaCalls.push(meta);
+  }
+);
+vi.stubGlobal("useHead", (head: HeadInput | (() => HeadInput)) => {
+  useHeadCalls.push(head);
+});
+vi.stubGlobal("useRoute", () => ({
+  get path() {
+    return mockRoutePath.value;
+  },
+  get params() {
+    return mockRouteParams.value;
+  },
+}));
+vi.stubGlobal("useApi", () => vi.fn());
+vi.stubGlobal("useUserSession", () => ({
+  loggedIn: ref(false),
+}));
+vi.stubGlobal("useFetch", () =>
+  Promise.resolve({
+    data: ref(null),
+    pending: ref(false),
+    error: ref(null),
+    refresh: vi.fn(),
+  })
+);
 
 const stubs = {
   UIcon: { template: "<i />" },
@@ -71,7 +112,14 @@ describe("G19 — Pricing Page, Program Showcase & SEO Invariants (BR-PRC, BR-RB
   describe("Pricing Page (BR-PRC-01..08, BR-RBL-01, BR-RBL-03, Task #292 S5)", () => {
     it("BR-RBL-01 & BR-RBL-03: renders explicit opt-in auto-renewal notice and removes deprecated BR-PRC-07 non-renewal text", async () => {
       const PricingPage = (await import("~/pages/pricing.vue")).default;
-      const wrapper = mount(PricingPage, { global: { stubs } });
+      const SuspendedPricing = defineComponent({
+        render() {
+          return h(Suspense, null, {
+            default: () => h(PricingPage),
+          });
+        },
+      });
+      const wrapper = mount(SuspendedPricing, { global: { stubs } });
       await flushPromises();
 
       const text = wrapper.text();
@@ -113,7 +161,11 @@ describe("G19 — Pricing Page, Program Showcase & SEO Invariants (BR-PRC, BR-RB
           },
         ])
       );
-      const jsonLdRaw = resolvedHead?.script?.[0]?.innerHTML ?? "{}";
+      const rawScript = resolvedHead?.script?.[0]?.innerHTML;
+      const jsonLdRaw =
+        typeof rawScript === "function"
+          ? (rawScript as () => string)()
+          : (rawScript ?? "{}");
       const parsedJsonLd = JSON.parse(jsonLdRaw) as {
         "@type": string;
         offers: { "@type": string }[];

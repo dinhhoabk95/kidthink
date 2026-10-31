@@ -9,7 +9,6 @@ import {
   pgTable,
   smallint,
   text,
-  uniqueIndex,
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
@@ -47,7 +46,6 @@ export const customGames = pgTable(
   (table) => [
     index("idx_custom_games_user_status").on(table.userId, table.status),
     index("idx_custom_games_user_template").on(table.userId, table.templateId),
-    uniqueIndex("idx_custom_games_uuid").on(table.uuid),
     check(
       "check_custom_games_age_range",
       sql`${table.ageMin} <= ${table.ageMax} AND ${table.ageMin} >= 3 AND ${table.ageMax} <= 6`

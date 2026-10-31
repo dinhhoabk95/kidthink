@@ -33,7 +33,7 @@ export interface CurriculumItemPlan {
   readonly weekNo: number;
   readonly sessionNo: number;
   readonly position: number;
-  readonly entityType: "lesson" | "game_level";
+  readonly entityType: "game_level";
   readonly contentCode: string;
   readonly isRequired: boolean;
 }
@@ -78,7 +78,7 @@ export function planCurriculumItems(
       weekNo: cell.week_no,
       sessionNo: cell.session_no,
       position: index + 1,
-      entityType: cell.role === "practice" ? "game_level" : "lesson",
+      entityType: "game_level",
       contentCode,
       isRequired: true,
     }))
@@ -92,7 +92,6 @@ export interface ResolvedCurriculumItem extends CurriculumItemPlan {
 export function resolveCurriculumItems(
   plan: readonly CurriculumItemPlan[],
   idByCode: {
-    readonly lesson: ReadonlyMap<string, number>;
     readonly game_level: ReadonlyMap<string, number>;
   }
 ): ResolvedCurriculumItem[] {

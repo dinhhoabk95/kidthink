@@ -45,58 +45,139 @@ export const C5_WRT_02_DATASET: SkillDataset = {
     {
       id: "wrt_net_so",
       label: "nét sổ thẳng",
+      value: 1,
       image: {
         kind: "emoji",
         ref: "📏",
       },
       category: {
-        type: "nét cơ bản",
+        type: "nét thẳng",
       },
+      contrast_group: "primary",
     },
     {
       id: "wrt_net_ngang",
       label: "nét ngang",
+      value: 2,
       image: {
         kind: "emoji",
         ref: "➖",
       },
       category: {
-        type: "nét cơ bản",
+        type: "nét thẳng",
       },
+      contrast_group: "primary",
+    },
+    {
+      id: "wrt_duong_thang",
+      label: "đường kẻ thẳng",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "✏️",
+      },
+      category: {
+        type: "nét thẳng",
+      },
+      contrast_group: "primary",
+    },
+    {
+      id: "wrt_cot_thang",
+      label: "cây cột thẳng",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "💈",
+      },
+      category: {
+        type: "nét thẳng",
+      },
+      contrast_group: "primary",
     },
     {
       id: "wrt_net_xien_phai",
       label: "nét xiên phải",
+      value: 5,
       image: {
         kind: "emoji",
         ref: "📐",
       },
       category: {
-        type: "nét cơ bản",
+        type: "nét xiên gấp",
       },
+      contrast_group: "contrast",
     },
     {
       id: "wrt_net_xien_trai",
       label: "nét xiên trái",
+      value: 6,
       image: {
         kind: "emoji",
-        ref: "📐",
+        ref: "📉",
       },
       category: {
-        type: "nét cơ bản",
+        type: "nét xiên gấp",
       },
+      contrast_group: "contrast",
     },
     {
       id: "wrt_net_gay",
       label: "nét gấp khúc",
+      value: 7,
       image: {
         kind: "emoji",
         ref: "⚡",
       },
       category: {
-        type: "nét cơ bản",
+        type: "nét xiên gấp",
       },
+      contrast_group: "contrast",
     },
+    {
+      id: "wrt_mai_nha",
+      label: "nét chéo mái nhà",
+      value: 8,
+      image: {
+        kind: "emoji",
+        ref: "🏠",
+      },
+      category: {
+        type: "nét xiên gấp",
+      },
+      contrast_group: "contrast",
+    },
+  ],
+  axes: {
+    category: {
+      values: ["nét thẳng", "nét xiên gấp"],
+      ordered: true,
+    },
+  },
+  relations: [
+    { type: "pair", source_id: "wrt_net_so", target_id: "wrt_net_ngang" },
+    { type: "pair", source_id: "wrt_duong_thang", target_id: "wrt_cot_thang" },
+    {
+      type: "pair",
+      source_id: "wrt_net_xien_phai",
+      target_id: "wrt_net_xien_trai",
+    },
+    { type: "pair", source_id: "wrt_net_gay", target_id: "wrt_mai_nha" },
+    {
+      type: "contrast",
+      source_id: "wrt_net_so",
+      target_id: "wrt_net_xien_phai",
+    },
+    {
+      type: "contrast",
+      source_id: "wrt_net_ngang",
+      target_id: "wrt_net_xien_trai",
+    },
+    {
+      type: "contrast",
+      source_id: "wrt_duong_thang",
+      target_id: "wrt_net_gay",
+    },
+    { type: "contrast", source_id: "wrt_cot_thang", target_id: "wrt_mai_nha" },
   ],
   ladder: [
     {
@@ -132,9 +213,12 @@ export const C5_WRT_02_DATASET: SkillDataset = {
   ordering: [
     "wrt_net_so",
     "wrt_net_ngang",
+    "wrt_duong_thang",
+    "wrt_cot_thang",
     "wrt_net_xien_phai",
     "wrt_net_xien_trai",
     "wrt_net_gay",
+    "wrt_mai_nha",
   ],
 };
 
@@ -155,7 +239,7 @@ export const C5_WRT_02_SEED: SkillSeed = {
       template: "GT-001",
       band: "3-4",
       difficulty: 2,
-      theme: "art",
+      theme: "school",
       rounds: 3,
     },
     {
@@ -164,62 +248,6 @@ export const C5_WRT_02_SEED: SkillSeed = {
       band: "4-5",
       difficulty: 1,
       theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-TCNT-0004",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 2,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-TCMP-0003",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 1,
-      theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-TCMP-0004",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 2,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-PAIR-0003",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 1,
-      theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-PAIR-0004",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 2,
-      theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-PATT-0003",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 1,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-PATT-0004",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 2,
-      theme: "farm",
       rounds: 3,
     },
   ],

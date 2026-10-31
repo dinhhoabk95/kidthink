@@ -26,17 +26,20 @@ export default defineEventHandler(async (event) => {
   const userId = Number(user.user_id);
   const db = getOwnerDb();
 
-  // 1. Verify child profile ownership and active status (BR-PEN-02)
-  const [activeChild] = await db
-    .select()
-    .from(childProfiles)
-    .where(
-      and(
-        eq(childProfiles.uuid, candidateUuid),
-        eq(childProfiles.userId, userId),
-        eq(childProfiles.status, "active")
-      )
-    );
+  // 1. Verify child profile ownership and active status (BR-PEN-02) & resolve entitlements in parallel
+  const [[activeChild], activeKeys] = await Promise.all([
+    db
+      .select()
+      .from(childProfiles)
+      .where(
+        and(
+          eq(childProfiles.uuid, candidateUuid),
+          eq(childProfiles.userId, userId),
+          eq(childProfiles.status, "active")
+        )
+      ),
+    resolveUserActiveEntitlements(userId),
+  ]);
 
   if (!activeChild) {
     deleteCookie(event, "active_child_id", { path: "/" });
@@ -54,8 +57,7 @@ export default defineEventHandler(async (event) => {
     ? Math.max(1, Math.min(rawLimit, 5))
     : 5;
 
-  // 3. Resolve user entitlements & allowed tiers in batch
-  const activeKeys = await resolveUserActiveEntitlements(userId);
+  // 3. Resolve allowed tiers
   const userAllowedTiers = await allowedTiers(
     {
       kind: "user",

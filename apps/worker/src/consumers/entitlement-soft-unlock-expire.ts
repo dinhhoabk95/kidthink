@@ -5,7 +5,7 @@ import type { Consumer } from "./types.js";
 export const entitlementSoftUnlockExpire: Consumer<
   "entitlement:soft-unlock-expire"
 > = async (_payload, ctx) => {
-  const result = await runExpireSoftUnlockEntitlements();
+  const result = await runExpireSoftUnlockEntitlements(new Date(), ctx.signal);
   logJobDone("entitlement:soft-unlock-expire", ctx, {
     expired: result.expiredCount,
   });

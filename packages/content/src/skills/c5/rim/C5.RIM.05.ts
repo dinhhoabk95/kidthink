@@ -5,8 +5,8 @@ export const C5_RIM_05_IDENTITY: SkillIdentity = {
   strand_code: "C5.RIM",
   competency_code: "C5",
   name: "Vần có âm đệm: oa oe uy uê uơ",
-  age_min: 6,
-  age_max: 7,
+  age_min: 5,
+  age_max: 6,
   difficulty: 4,
   thinking_processes: ["observe", "compare"],
   tier: "advanced",
@@ -45,48 +45,87 @@ export const C5_RIM_05_DATASET: SkillDataset = {
   items: [
     {
       id: "rim_oa",
-      label: "vần oa",
+      label: "vần oa (bông hoa)",
       glyph: "oa",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🌸",
       },
+      value: 1,
+      category: {
+        type: "vần đệm một",
+      },
+      contrast_group: "primary",
     },
     {
       id: "rim_oe",
-      label: "vần oe",
+      label: "vần oe (chích chòe)",
       glyph: "oe",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🐦",
       },
+      value: 2,
+      category: {
+        type: "vần đệm một",
+      },
+      contrast_group: "primary",
     },
     {
       id: "rim_uy",
-      label: "vần uy",
+      label: "vần uy (tàu thủy)",
       glyph: "uy",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🚢",
       },
+      value: 3,
+      category: {
+        type: "vần đệm một",
+      },
+      contrast_group: "primary",
     },
     {
       id: "rim_uê",
-      label: "vần uê",
+      label: "vần uê (hoa huệ)",
       glyph: "uê",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "💮",
       },
+      value: 4,
+      category: {
+        type: "vần đệm hai",
+      },
+      contrast_group: "contrast",
     },
     {
       id: "rim_uơ",
-      label: "vần uơ",
+      label: "vần uơ (quơ tay)",
       glyph: "uơ",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🐘",
       },
+      value: 5,
+      category: {
+        type: "vần đệm hai",
+      },
+      contrast_group: "contrast",
+    },
+    {
+      id: "rim_uya",
+      label: "vần uya (đêm khuya)",
+      glyph: "uya",
+      image: {
+        kind: "emoji",
+        ref: "🌌",
+      },
+      value: 6,
+      category: {
+        type: "vần đệm hai",
+      },
+      contrast_group: "contrast",
     },
   ],
   ladder: [
@@ -121,7 +160,30 @@ export const C5_RIM_05_DATASET: SkillDataset = {
     narration_template:
       "Chúng mình cùng tìm hiểu về Vần có âm đệm: oa oe uy uê uơ nhé",
   },
-  ordering: ["rim_oa", "rim_oe", "rim_uy", "rim_uê", "rim_uơ"],
+  ordering: ["rim_oa", "rim_oe", "rim_uy", "rim_uê", "rim_uơ", "rim_uya"],
+  axes: {
+    category: {
+      values: ["vần đệm một", "vần đệm hai"],
+      ordered: true,
+    },
+  },
+  relations: [
+    {
+      type: "pair",
+      source_id: "rim_oa",
+      target_id: "rim_oe",
+    },
+    {
+      type: "pair",
+      source_id: "rim_uê",
+      target_id: "rim_uơ",
+    },
+    {
+      type: "contrast",
+      source_id: "rim_oa",
+      target_id: "rim_uê",
+    },
+  ],
 };
 
 export const C5_RIM_05_SEED: SkillSeed = {
@@ -147,14 +209,6 @@ export const C5_RIM_05_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-RIM-TAP-0022",
-      template: "GT-001",
-      band: "5-6",
-      difficulty: 3,
-      theme: "family",
-      rounds: 3,
-    },
-    {
       code: "GL-C5-RIM-TAP-0023",
       template: "GT-001",
       band: "5-6",
@@ -163,59 +217,11 @@ export const C5_RIM_05_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-RIM-TAP-0024",
-      template: "GT-001",
-      band: "5-6",
-      difficulty: 4,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RIM-TAP-0025",
-      template: "GT-001",
-      band: "5-6",
-      difficulty: 5,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
       code: "GL-C5-RIM-MULTI-0021",
       template: "GT-002",
       band: "5-6",
       difficulty: 3,
       theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RIM-MULTI-0022",
-      template: "GT-002",
-      band: "5-6",
-      difficulty: 3,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RIM-MULTI-0023",
-      template: "GT-002",
-      band: "5-6",
-      difficulty: 4,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RIM-MULTI-0024",
-      template: "GT-002",
-      band: "5-6",
-      difficulty: 4,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RIM-MULTI-0025",
-      template: "GT-002",
-      band: "5-6",
-      difficulty: 5,
-      theme: "weather",
       rounds: 3,
     },
   ],

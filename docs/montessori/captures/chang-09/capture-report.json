@@ -1,0 +1,58 @@
+[
+  {
+    "changSlug": "chang-09",
+    "wbCode": "WB09",
+    "montessoriRef": "WB09-D1",
+    "levelCode": "GL-C2-DIR-MAZE-0181",
+    "templateCode": "GT-013",
+    "skillCode": "C2.DIR.01",
+    "title": "Đi lên — Thiên nhiên",
+    "instruction": "Bé hãy tìm đường đi qua mê cung đến đích nhé!",
+    "ageBand": "4-5",
+    "difficulty": 1,
+    "accessTier": "free",
+    "themeId": "nature",
+    "screenshotPath": "docs/montessori/captures/chang-09/WB09-D1_GT-013_GL-C2-DIR-MAZE-0181.jpg",
+    "verdict": "ĐẠT (100%x100%)",
+    "canvas": {
+      "backingWidth": 1920,
+      "backingHeight": 1080,
+      "cssWidth": 960,
+      "cssHeight": 540,
+      "devicePixelRatio": 2,
+      "transform": [2, 0, 0, 2, 0, 0]
+    },
+    "engineError": null,
+    "visibleErrorText": null,
+    "consoleErrors": [],
+    "pageErrors": []
+  },
+  {
+    "changSlug": "chang-09",
+    "wbCode": "WB09",
+    "montessoriRef": "WB09-D1",
+    "levelCode": "GL-C2-DIR-MAZE-0182",
+    "templateCode": "GT-013",
+    "skillCode": "C2.DIR.02",
+    "title": "Đi xuống — Thiên nhiên",
+    "instruction": "Bé hãy tìm đường đi qua mê cung đến đích nhé!",
+    "ageBand": "4-5",
+    "difficulty": 1,
+    "accessTier": "free",
+    "themeId": "nature",
+    "screenshotPath": "docs/montessori/captures/chang-09/WB09-D1_GT-013_GL-C2-DIR-MAZE-0182.jpg",
+    "verdict": "ĐẠT (100%x100%)",
+    "canvas": {
+      "backingWidth": 1920,
+      "backingHeight": 1080,
+      "cssWidth": 960,
+      "cssHeight": 540,
+      "devicePixelRatio": 2,
+      "transform": [2, 0, 0, 2, 0, 0]
+    },
+    "engineError": null,
+    "visibleErrorText": null,
+    "consoleErrors": [],
+    "pageErrors": []
+  }
+]

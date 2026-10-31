@@ -42,50 +42,154 @@ export const C2_GEO_07_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "square",
-      label: "hình vuông",
+      id: "honey_hex",
+      label: "tổ ong sáu cạnh",
       image: {
         kind: "emoji",
-        ref: "🟦",
+        ref: "🐝",
       },
       category: {
-        type: "shape",
+        type: "hình sáu cạnh",
       },
+      contrast_group: "six_sided",
+      value: 1,
+      ordering: 1,
     },
     {
-      id: "triangle",
-      label: "hình tam giác",
+      id: "snow_hex",
+      label: "bông tuyết sáu cánh",
+      image: {
+        kind: "emoji",
+        ref: "❄️",
+      },
+      category: {
+        type: "hình sáu cạnh",
+      },
+      contrast_group: "six_sided",
+      value: 2,
+      ordering: 2,
+    },
+    {
+      id: "turtle_hex",
+      label: "mai rùa sáu cạnh",
+      image: {
+        kind: "emoji",
+        ref: "🐢",
+      },
+      category: {
+        type: "hình sáu cạnh",
+      },
+      contrast_group: "six_sided",
+      value: 3,
+      ordering: 3,
+    },
+    {
+      id: "nut_hex",
+      label: "đai ốc sáu cạnh",
+      image: {
+        kind: "emoji",
+        ref: "🔩",
+      },
+      category: {
+        type: "hình sáu cạnh",
+      },
+      contrast_group: "six_sided",
+      value: 4,
+      ordering: 4,
+    },
+    {
+      id: "circle_red",
+      label: "hình tròn đỏ",
+      image: {
+        kind: "emoji",
+        ref: "🔴",
+      },
+      category: {
+        type: "hình khác",
+      },
+      contrast_group: "other_shape",
+      value: 5,
+      ordering: 5,
+    },
+    {
+      id: "triangle_red",
+      label: "tam giác ba cạnh",
       image: {
         kind: "emoji",
         ref: "🔺",
       },
       category: {
-        type: "shape",
+        type: "hình khác",
       },
+      contrast_group: "other_shape",
+      value: 6,
+      ordering: 6,
     },
     {
-      id: "rectangle",
-      label: "hình chữ nhật",
+      id: "square_blue",
+      label: "hình vuông bốn cạnh",
       image: {
         kind: "emoji",
-        ref: "🟧",
+        ref: "🟦",
       },
       category: {
-        type: "shape",
+        type: "hình khác",
       },
+      contrast_group: "other_shape",
+      value: 7,
+      ordering: 7,
     },
     {
-      id: "star",
-      label: "hình ngôi sao",
+      id: "star_yellow",
+      label: "ngôi sao năm cánh",
       image: {
         kind: "emoji",
         ref: "⭐",
       },
       category: {
-        type: "shape",
+        type: "hình khác",
       },
+      contrast_group: "other_shape",
+      value: 8,
+      ordering: 8,
     },
   ],
+  relations: [
+    {
+      type: "pair",
+      source_id: "honey_hex",
+      target_id: "circle_red",
+    },
+    {
+      type: "pair",
+      source_id: "snow_hex",
+      target_id: "triangle_red",
+    },
+    {
+      type: "pair",
+      source_id: "turtle_hex",
+      target_id: "square_blue",
+    },
+    {
+      type: "pair",
+      source_id: "nut_hex",
+      target_id: "star_yellow",
+    },
+    {
+      type: "contrast",
+      source_id: "honey_hex",
+      target_id: "circle_red",
+    },
+  ],
+  axes: {
+    category: {
+      values: ["hình sáu cạnh", "hình khác"],
+    },
+    order: {
+      values: ["1", "2", "3", "4", "5", "6", "7", "8"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
@@ -117,7 +221,16 @@ export const C2_GEO_07_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Hình lục giác nhé",
   },
-  ordering: ["square", "triangle", "rectangle", "star"],
+  ordering: [
+    "honey_hex",
+    "snow_hex",
+    "turtle_hex",
+    "nut_hex",
+    "circle_red",
+    "triangle_red",
+    "square_blue",
+    "star_yellow",
+  ],
 };
 
 export const C2_GEO_07_SEED: SkillSeed = {
@@ -138,70 +251,6 @@ export const C2_GEO_07_SEED: SkillSeed = {
       band: "4-5",
       difficulty: 3,
       theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GEO-TCNT-0007",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 2,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GEO-TCNT-0008",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 3,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GEO-TCMP-0007",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 2,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GEO-TCMP-0008",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 3,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GEO-PAIR-0007",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 2,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GEO-PAIR-0008",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 3,
-      theme: "ocean",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GEO-PATT-0010",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 2,
-      theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GEO-PATT-0011",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 3,
-      theme: "vehicle",
       rounds: 3,
     },
     {

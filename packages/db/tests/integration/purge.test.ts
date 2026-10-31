@@ -83,7 +83,6 @@ describe("Purge and Anonymization Integration Tests — Task 10", () => {
     await db.insert(telemetryEvents).values({
       sessionUuid,
       seq: 1,
-      contentVersion: 1,
       childUuid: child.uuid,
       eventName: "game_start",
     });

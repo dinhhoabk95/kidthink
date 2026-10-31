@@ -43,10 +43,7 @@ export const projectGT008: Projection<"GT-008"> = {
       asset: resolveItemAsset(item, true),
     }));
 
-    const prompt =
-      dataset.phrasing.prompt_template.length >= 4
-        ? dataset.phrasing.prompt_template.replace("{label}", "vào ô tương ứng")
-        : "Bé hãy kéo các hình vào ô tương ứng nhé!";
+    const prompt = "Bé hãy kéo các hình vào đúng ô tương ứng nhé!";
 
     return {
       content_pack: {

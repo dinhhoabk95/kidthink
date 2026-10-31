@@ -109,16 +109,13 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
       const [lvl] = await db
         .insert(gameLevels)
         .values({
-          entityId: uid + 100 + i,
           code: glCode,
-          contentVersion: 1,
           templateCode: "GT-001",
           title: `Trò chơi ${i}`,
           instruction: "Hướng dẫn",
           contentPack: { level: i },
           difficultyParams: { difficulty: 1 },
           accessTier: i === 4 ? "premium" : "free", // Level 4 is premium
-          status: "published",
         })
         .returning();
       createdLevels.push(lvl);
@@ -129,9 +126,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
     const [cur] = await db
       .insert(curricula)
       .values({
-        entityId: uid + 10,
         code: curCode,
-        contentVersion: 1,
         programType: "age_based",
         targetAgeMin: 4,
         targetAgeMax: 6,
@@ -139,7 +134,6 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
         sessionsPerWeek: 3,
         title: "Chương trình Toán 5 tuổi",
         accessTier: "free",
-        status: "published",
       })
       .returning();
 
@@ -161,7 +155,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
         sessionNo: 1,
         position: 1,
         entityType: "game_level",
-        entityId: createdLevels[0].entityId,
+        entityId: createdLevels[0].id,
         isRequired: true,
       })
       .returning();
@@ -174,7 +168,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
         sessionNo: 2,
         position: 1,
         entityType: "game_level",
-        entityId: createdLevels[1].entityId,
+        entityId: createdLevels[1].id,
         isRequired: true,
       })
       .returning();
@@ -187,7 +181,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
         sessionNo: 3,
         position: 1,
         entityType: "game_level",
-        entityId: createdLevels[2].entityId,
+        entityId: createdLevels[2].id,
         isRequired: false, // Optional item
       })
       .returning();
@@ -201,7 +195,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
         sessionNo: 1,
         position: 1,
         entityType: "game_level",
-        entityId: createdLevels[3].entityId, // Premium
+        entityId: createdLevels[3].id, // Premium
         isRequired: true,
       })
       .returning();
@@ -214,7 +208,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
         sessionNo: 2,
         position: 1,
         entityType: "game_level",
-        entityId: createdLevels[4].entityId, // Free
+        entityId: createdLevels[4].id, // Free
         isRequired: true,
       })
       .returning();
@@ -228,7 +222,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
         sessionNo: 1,
         position: 1,
         entityType: "game_level",
-        entityId: createdLevels[5].entityId, // Free
+        entityId: createdLevels[5].id, // Free
         isRequired: true,
       })
       .returning();
@@ -317,10 +311,9 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
     expect(next.week_no).toBe(2);
   });
 
-  it("BR-CUR-04 & D-MA: child keeps pinned curriculum version when version 2 is published", async () => {
-    const { db, user, child, curriculum } = await createTestFixtures();
+  it("BR-CUR-04 & D-MA: child keeps pinned curriculum enrollment", async () => {
+    const { user, child, curriculum } = await createTestFixtures();
 
-    // Enroll at version 1
     const enrollEvent = makeUserEvent(
       user.id,
       { uuid: child.uuid },
@@ -328,25 +321,6 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
     );
     await enrollHandler(enrollEvent);
 
-    // Publish Version 2 of same curriculum code
-    await db
-      .update(curricula)
-      .set({ status: "archived" })
-      .where(eq(curricula.id, curriculum.id));
-
-    const [_curV2] = await db
-      .insert(curricula)
-      .values({
-        entityId: curriculum.entityId,
-        code: curriculum.code,
-        contentVersion: 2,
-        title: "Chương trình V2 mới",
-        accessTier: "free",
-        status: "published",
-      })
-      .returning();
-
-    // Query progress for enrolled child -> pinned to version 1
     const progEvent = makeUserEvent(user.id, { uuid: child.uuid });
     const prog = await progressHandler(progEvent);
     expect(prog.curriculum_version).toBe(1);
@@ -727,9 +701,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
     const [premCur] = await db
       .insert(curricula)
       .values({
-        entityId: uid + 20,
         code: `CUR-PREM-${uid}`,
-        contentVersion: 1,
         programType: "age_based",
         targetAgeMin: 4,
         targetAgeMax: 6,
@@ -737,7 +709,6 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
         sessionsPerWeek: 2,
         title: "Chương trình VIP",
         accessTier: "premium",
-        status: "published",
       })
       .returning();
 
@@ -748,7 +719,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
       sessionNo: 1,
       position: 1,
       entityType: "game_level",
-      entityId: createdLevels[3].entityId, // Premium
+      entityId: createdLevels[3].id, // Premium
       isRequired: true,
     });
 

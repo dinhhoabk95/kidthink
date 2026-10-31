@@ -84,7 +84,7 @@ job `account:purge`.
 ### 7.2 Job `account:purge`
 
 ```
-DELETE child_profiles, mastery_state, level_params, play_sessions,
+DELETE child_profiles, mastery_state, play_sessions,
        child_session_summaries, child_daily_stats, curriculum_enrollments,
        curriculum_item_progress, quota_usage, active_sessions,
        verification_tokens, mfa_settings, mfa_recovery_codes,

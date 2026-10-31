@@ -14,7 +14,7 @@ export interface SeedManagerAccount {
   email: string;
   passwordRaw: string;
   displayName: string;
-  role: "super_admin" | "content_reviewer";
+  role: "super_admin";
   mfaEnabled: boolean;
   isActive: boolean;
 }
@@ -41,14 +41,6 @@ export const SEED_MANAGERS: readonly SeedManagerAccount[] = [
     passwordRaw: "xK9#mQ2$vL8!wP5@",
     displayName: "Super Admin",
     role: "super_admin",
-    mfaEnabled: false,
-    isActive: true,
-  },
-  {
-    email: "reviewer@mindkid.test",
-    passwordRaw: "jR4$yT7#nE2!zM9&",
-    displayName: "Content Reviewer",
-    role: "content_reviewer",
     mfaEnabled: false,
     isActive: true,
   },

@@ -45,54 +45,88 @@ export const C5_PRN_02_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "let_s",
-      label: "chữ s",
-      glyph: "s",
+      id: "prn_hieu_sach",
+      label: "tiệm sách",
+      value: 1,
       image: {
         kind: "emoji",
-        ref: "🆂",
+        ref: "📚",
+      },
+      audio_path: "/audio/vi/c5/prn/bien_tiem_sach.mp3",
+      category: {
+        type: "biển cửa hàng",
       },
       contrast_group: "primary",
     },
     {
-      id: "let_t",
-      label: "chữ t",
-      glyph: "t",
+      id: "prn_tiem_banh",
+      label: "tiệm bánh",
+      value: 2,
       image: {
         kind: "emoji",
-        ref: "🆃",
+        ref: "🥖",
+      },
+      audio_path: "/audio/vi/c5/prn/bien_tiem_banh.mp3",
+      category: {
+        type: "biển cửa hàng",
+      },
+      contrast_group: "primary",
+    },
+    {
+      id: "prn_tiem_thuoc",
+      label: "quầy thuốc",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "💊",
+      },
+      audio_path: "/audio/vi/c5/prn/bien_quay_thuoc.mp3",
+      category: {
+        type: "biển cửa hàng",
+      },
+      contrast_group: "primary",
+    },
+    {
+      id: "prn_nhan_vo",
+      label: "nhãn vở",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "📒",
+      },
+      audio_path: "/audio/vi/c5/prn/nhan_dan_vo.mp3",
+      category: {
+        type: "nhãn đồ dùng",
       },
       contrast_group: "contrast",
     },
     {
-      id: "let_u",
-      label: "chữ u",
-      glyph: "u",
+      id: "prn_nhan_hop_but",
+      label: "nhãn hộp bút",
+      value: 5,
       image: {
         kind: "emoji",
-        ref: "🆄",
+        ref: "✏️",
       },
-      contrast_group: "primary",
-    },
-    {
-      id: "let_ư",
-      label: "chữ ư",
-      glyph: "ư",
-      image: {
-        kind: "emoji",
-        ref: "🆄",
+      audio_path: "/audio/vi/c5/prn/nhan_hop_but.mp3",
+      category: {
+        type: "nhãn đồ dùng",
       },
       contrast_group: "contrast",
     },
     {
-      id: "let_v",
-      label: "chữ v",
-      glyph: "v",
+      id: "prn_nhan_ba_lo",
+      label: "nhãn ba lô",
+      value: 6,
       image: {
         kind: "emoji",
-        ref: "🆅",
+        ref: "🎒",
       },
-      contrast_group: "primary",
+      audio_path: "/audio/vi/c5/prn/nhan_ba_lo.mp3",
+      category: {
+        type: "nhãn đồ dùng",
+      },
+      contrast_group: "contrast",
     },
   ],
   ladder: [
@@ -127,7 +161,47 @@ export const C5_PRN_02_DATASET: SkillDataset = {
     narration_template:
       "Chúng mình cùng tìm hiểu về Chữ ở quanh ta: biển hiệu · nhãn nhé",
   },
-  ordering: ["let_s", "let_t", "let_u", "let_ư", "let_v"],
+  ordering: [
+    "prn_hieu_sach",
+    "prn_tiem_banh",
+    "prn_tiem_thuoc",
+    "prn_nhan_vo",
+    "prn_nhan_hop_but",
+    "prn_nhan_ba_lo",
+  ],
+  axes: {
+    category: {
+      values: ["biển cửa hàng", "nhãn đồ dùng"],
+      ordered: true,
+    },
+  },
+  relations: [
+    {
+      type: "pair",
+      source_id: "prn_hieu_sach",
+      target_id: "prn_tiem_banh",
+    },
+    {
+      type: "pair",
+      source_id: "prn_nhan_vo",
+      target_id: "prn_nhan_hop_but",
+    },
+    {
+      type: "contrast",
+      source_id: "prn_hieu_sach",
+      target_id: "prn_nhan_vo",
+    },
+    {
+      type: "contrast",
+      source_id: "prn_tiem_banh",
+      target_id: "prn_nhan_hop_but",
+    },
+    {
+      type: "contrast",
+      source_id: "prn_tiem_thuoc",
+      target_id: "prn_nhan_ba_lo",
+    },
+  ],
 };
 
 export const C5_PRN_02_SEED: SkillSeed = {
@@ -156,62 +230,6 @@ export const C5_PRN_02_SEED: SkillSeed = {
       band: "4-5",
       difficulty: 1,
       theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-PRN-TCNT-0004",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 2,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-PRN-TCMP-0003",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 1,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-PRN-TCMP-0004",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 2,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-PRN-PAIR-0003",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 1,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-PRN-PAIR-0004",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 2,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-PRN-PATT-0003",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 1,
-      theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-PRN-PATT-0004",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 2,
-      theme: "festival",
       rounds: 3,
     },
   ],

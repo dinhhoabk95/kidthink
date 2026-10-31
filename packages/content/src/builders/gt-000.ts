@@ -1,23 +1,14 @@
 import type {
-  DatasetItem,
   ProjectedPack,
   Projection,
   ProjectOptions,
   SkillDataset,
 } from "@mindkid/shared";
-import {
-  formatDisplayLabel,
-  formatPromptLabel,
-  formatSpokenLabel,
-} from "@mindkid/shared";
-import { resolveItemAsset } from "./utils.js";
+import { formatDisplayLabel, formatPromptLabel } from "@mindkid/shared";
+import { createRng, resolveItemAsset, shuffleDeterministic } from "./utils.js";
 
 /**
- * Cắt dãy giá trị của chủ đề thành phân đoạn.
- *
- * Trần 3 vật một phân đoạn, không phải 4: từ khi có bước `echo` (BR-CIM-19)
- * mỗi vật tốn bốn hành động — `present` · `echo` · `recognise` · `recall` —
- * nên 4 vật là 16 hành động, vượt trần 12 của `BR-CIM-03`. 3 vật là đúng 12.
+ * Cắt dãy giá trị của chủ đề thành phân đoạn dạy 2–3 chất liệu (`BR-CIM-03`).
  *
  * Phân đoạn cuối Cấm — NEVER còn lại một vật: một vật thì không có gì để phân
  * biệt (`BR-CIM-03` đòi tối thiểu 2 chất liệu mỗi phân đoạn).
@@ -51,23 +42,43 @@ export function buildConceptIntroPrompt(label: string): string {
   const wordCount = candidate
     .split(WHITESPACE_SPLIT_REGEX)
     .filter(Boolean).length;
-  if (wordCount <= 12) {
+  if (wordCount <= 12 && !lower.includes("không") && !lower.includes("đừng")) {
     return candidate;
   }
   return "Bé cùng làm quen bài học mới nhé!";
 }
 
 const MAX_RECALL_OPTIONS = 4;
+const MAX_REVIEW_POOL = 6;
+const MAX_REVIEW_QUESTIONS = 3;
+
+const RECOGNISE_PROMPTS: readonly ((label: string) => string)[] = [
+  (label) => `Bé hãy chạm vào ${label} nhé!`,
+  (label) => `Bé chỉ giúp cô ${label} nào!`,
+  (label) => `Đâu là ${label} nhỉ?`,
+];
+
+const RECALL_PROMPTS: readonly ((label: string) => string)[] = [
+  (label) => `Đâu là ${label}?`,
+  (label) => `Bé hãy tìm ${label} nhé!`,
+  (label) => `Bé chọn đúng ${label} giúp cô nhé!`,
+];
 
 /**
- * Lựa chọn của bước recall: tối đa bốn vật, BẮT BUỘC có đáp án. Cắt bốn vật đầu
- * làm vật thứ năm trở đi (phân đoạn ôn 5–6 vật) không bao giờ có đáp án để chạm.
+ * Lựa chọn của bước recall: tối đa bốn vật, BẮT BUỘC có đáp án (`BR-E000-13`),
+ * xoay vần ngẫu nhiên các phương án nhiễu theo RNG.
  */
-function recallOptions(pool: readonly string[], targetId: string): string[] {
-  const others = pool.filter((id) => id !== targetId);
-  return [targetId, ...others.slice(0, MAX_RECALL_OPTIONS - 1)].sort(
-    (a, b) => pool.indexOf(a) - pool.indexOf(b)
+function recallOptions(
+  pool: readonly string[],
+  targetId: string,
+  rng: ReturnType<typeof createRng>
+): string[] {
+  const others = shuffleDeterministic(
+    pool.filter((id) => id !== targetId),
+    rng
   );
+  const picked = [targetId, ...others.slice(0, MAX_RECALL_OPTIONS - 1)];
+  return shuffleDeterministic(picked, rng);
 }
 
 export const projectGT000: Projection<"GT-000"> = {
@@ -80,6 +91,8 @@ export const projectGT000: Projection<"GT-000"> = {
       );
     }
 
+    const rng = createRng(opts.seed + (opts.round_index ?? 0) * 1009);
+
     const assets = dataset.items.map((item) => ({
       asset_id: `asset_${item.id}`,
       kind: (item.glyph ? "glyph" : "image") as "glyph" | "image",
@@ -89,7 +102,7 @@ export const projectGT000: Projection<"GT-000"> = {
       }),
       glyph: item.glyph,
       contrast_group: item.contrast_group ?? "primary",
-      image_ref: resolveItemAsset(item, true),
+      image_ref: resolveItemAsset(item, false),
       audio_path: item.audio_path,
       value: item.value,
     }));
@@ -98,121 +111,101 @@ export const projectGT000: Projection<"GT-000"> = {
     const segments = itemChunks.map((chunk, segIdx) => {
       const segAssetIds = chunk.map((item) => `asset_${item.id}`);
 
-      // Giới thiệu và tập nói liền mạch theo từng chất liệu
-      const teachSteps = chunk.flatMap((item) => {
+      // Giai đoạn 1: Giới thiệu từng chất liệu (bỏ echo trùng lặp khi speak_along = 'off')
+      const presentSteps = chunk.map((item) => {
         const pLabel = formatPromptLabel(item.label, {
           value: item.value,
           glyph: item.glyph,
         });
-        const sLabel = formatSpokenLabel(item.label, {
-          value: item.value,
-          glyph: item.glyph,
-        });
-        return [
-          {
-            action: "present" as const,
-            target_asset_id: `asset_${item.id}`,
-            narration_line: `Đây là ${pLabel}`,
-          },
-          {
-            action: "echo" as const,
-            target_asset_id: `asset_${item.id}`,
-            repeat_count: 1,
-            prompt_line: `Bé nói theo cô nhé: ${sLabel}`,
-          },
-        ];
+        return {
+          action: "present" as const,
+          target_asset_id: `asset_${item.id}`,
+          narration_line: `Đây là ${pLabel}`,
+        };
       });
 
-      const recogniseSteps = chunk.map((item) => {
-        const distractors = chunk
-          .filter((other) => other.id !== item.id)
-          .map((other) => `asset_${other.id}`);
+      // Giai đoạn 2 & 3 tinh gọn: mỗi vật trong phân đoạn chỉ hỏi 1 lượt nhận diện xoay vần,
+      // kết thúc phân đoạn bằng recall (BR-E000-04).
+      const rotatedChunk = shuffleDeterministic(chunk, rng);
+      const checkSteps = rotatedChunk.map((item, qIdx) => {
         const pLabel = formatPromptLabel(item.label, {
           value: item.value,
           glyph: item.glyph,
         });
+        const isLastInSegment = qIdx === rotatedChunk.length - 1;
+        if (isLastInSegment) {
+          const promptFn =
+            RECALL_PROMPTS[(segIdx + qIdx) % RECALL_PROMPTS.length] ??
+            RECALL_PROMPTS[0];
+          return {
+            action: "recall" as const,
+            target_asset_id: `asset_${item.id}`,
+            option_asset_ids: recallOptions(
+              segAssetIds,
+              `asset_${item.id}`,
+              rng
+            ),
+            prompt_line: promptFn ? promptFn(pLabel) : `Đâu là ${pLabel}?`,
+          };
+        }
+
+        const distractors = shuffleDeterministic(
+          chunk
+            .filter((other) => other.id !== item.id)
+            .map((other) => `asset_${other.id}`),
+          rng
+        );
+        const promptFn =
+          RECOGNISE_PROMPTS[(segIdx + qIdx) % RECOGNISE_PROMPTS.length] ??
+          RECOGNISE_PROMPTS[0];
         return {
           action: "recognise" as const,
           target_asset_id: `asset_${item.id}`,
           distractor_asset_ids: distractors.slice(0, 3),
-          prompt_line: `Bé hãy chạm vào ${pLabel} nhé!`,
-        };
-      });
-
-      const recallSteps = chunk.map((item) => {
-        const pLabel = formatPromptLabel(item.label, {
-          value: item.value,
-          glyph: item.glyph,
-        });
-        return {
-          action: "recall" as const,
-          target_asset_id: `asset_${item.id}`,
-          option_asset_ids: recallOptions(segAssetIds, `asset_${item.id}`),
-          prompt_line: `Đâu là ${pLabel}?`,
+          prompt_line: promptFn
+            ? promptFn(pLabel)
+            : `Bé hãy chạm vào ${pLabel} nhé!`,
         };
       });
 
       return {
         segment_id: `seg_${segIdx + 1}`,
         asset_ids: segAssetIds,
-        steps: [...teachSteps, ...recogniseSteps, ...recallSteps],
+        steps: [...presentSteps, ...checkSteps],
         is_review: false,
       };
     });
 
-    // Phân đoạn ôn cuối (review segment): gộp tối đa 4-6 giá trị tiêu biểu đã dạy
-    const reviewItems: DatasetItem[] = [];
-    if (dataset.items.length <= 6) {
-      reviewItems.push(...dataset.items);
-    } else {
-      const first = dataset.items[0];
-      const mid1 = dataset.items[Math.floor(dataset.items.length / 3)];
-      const mid2 = dataset.items[Math.floor((dataset.items.length * 2) / 3)];
-      const last = dataset.items.at(-1);
-      if (first) {
-        reviewItems.push(first);
-      }
-      if (mid1) {
-        reviewItems.push(mid1);
-      }
-      if (mid2) {
-        reviewItems.push(mid2);
-      }
-      if (last) {
-        reviewItems.push(last);
-      }
-    }
-
+    // Phân đoạn ôn cuối (review segment): xoay vần ngẫu nhiên tập đã học và chỉ hỏi 2–3 câu recall đại diện
+    const rotatedAll = shuffleDeterministic(dataset.items, rng);
+    const reviewItems = rotatedAll.slice(
+      0,
+      Math.min(MAX_REVIEW_POOL, rotatedAll.length)
+    );
     const reviewAssetIds = reviewItems.map((item) => `asset_${item.id}`);
-    const reviewSteps = [
-      ...reviewItems.map((item) => {
-        const distractors = reviewItems
-          .filter((other) => other.id !== item.id)
-          .map((other) => `asset_${other.id}`);
-        const pLabel = formatPromptLabel(item.label, {
-          value: item.value,
-          glyph: item.glyph,
-        });
-        return {
-          action: "recognise" as const,
-          target_asset_id: `asset_${item.id}`,
-          distractor_asset_ids: distractors.slice(0, 3),
-          prompt_line: `Bé hãy tìm ${pLabel} nhé!`,
-        };
-      }),
-      ...reviewItems.map((item) => {
-        const pLabel = formatPromptLabel(item.label, {
-          value: item.value,
-          glyph: item.glyph,
-        });
-        return {
-          action: "recall" as const,
-          target_asset_id: `asset_${item.id}`,
-          option_asset_ids: recallOptions(reviewAssetIds, `asset_${item.id}`),
-          prompt_line: `Đâu là ${pLabel}?`,
-        };
-      }),
-    ];
+    const reviewQuizItems = reviewItems.slice(
+      0,
+      Math.min(MAX_REVIEW_QUESTIONS, reviewItems.length)
+    );
+
+    const reviewSteps = reviewQuizItems.map((item, idx) => {
+      const pLabel = formatPromptLabel(item.label, {
+        value: item.value,
+        glyph: item.glyph,
+      });
+      const promptFn =
+        RECALL_PROMPTS[idx % RECALL_PROMPTS.length] ?? RECALL_PROMPTS[0];
+      return {
+        action: "recall" as const,
+        target_asset_id: `asset_${item.id}`,
+        option_asset_ids: recallOptions(
+          reviewAssetIds,
+          `asset_${item.id}`,
+          rng
+        ),
+        prompt_line: promptFn ? promptFn(pLabel) : `Đâu là ${pLabel}?`,
+      };
+    });
 
     segments.push({
       segment_id: "seg_review",

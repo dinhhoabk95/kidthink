@@ -2,70 +2,14 @@ import { relations } from "drizzle-orm";
 import {
   bigint,
   boolean,
-  customType,
   index,
   integer,
   pgTable,
-  text,
-  uniqueIndex,
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
 import { timestamps } from "./columns.ts";
 import { users } from "./identity.ts";
-
-const LEADING_BRACKET = /^\[/;
-const TRAILING_BRACKET = /\]$/;
-
-export const vector = customType<{
-  data: number[];
-  driverData: string;
-  config: { dimensions: number };
-}>({
-  dataType(config) {
-    return `vector(${config?.dimensions ?? 1536})`;
-  },
-  toDriver(value: number[]): string {
-    return `[${value.join(",")}]`;
-  },
-  fromDriver(value: string): number[] {
-    if (typeof value !== "string") {
-      return value as unknown as number[];
-    }
-    return value
-      .replace(LEADING_BRACKET, "")
-      .replace(TRAILING_BRACKET, "")
-      .split(",")
-      .map(Number);
-  },
-});
-
-export const contentEmbeddings = pgTable(
-  "content_embeddings",
-  {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
-    contentType: varchar("content_type", { length: 30 }).notNull(),
-    contentId: bigint("content_id", { mode: "number" }).notNull(),
-    contentVersion: integer("content_version").notNull(),
-    model: varchar("model", { length: 60 }).notNull(),
-    embedding: vector("embedding", { dimensions: 1536 }).notNull(),
-    chunkIndex: integer("chunk_index").notNull().default(0),
-    chunkText: text("chunk_text").notNull(),
-    ...timestamps(),
-  },
-  (table) => [
-    uniqueIndex("idx_content_embeddings_unique").on(
-      table.contentType,
-      table.contentId,
-      table.contentVersion,
-      table.model,
-      table.chunkIndex
-    ),
-    index("idx_content_embeddings_model").on(table.model),
-  ]
-);
 
 export const aiUsageLog = pgTable(
   "ai_usage_log",
@@ -103,7 +47,5 @@ export const aiUsageLogRelations = relations(aiUsageLog, ({ one }) => ({
   }),
 }));
 
-export type ContentEmbedding = typeof contentEmbeddings.$inferSelect;
-export type NewContentEmbedding = typeof contentEmbeddings.$inferInsert;
 export type AiUsageLogEntry = typeof aiUsageLog.$inferSelect;
 export type NewAiUsageLogEntry = typeof aiUsageLog.$inferInsert;

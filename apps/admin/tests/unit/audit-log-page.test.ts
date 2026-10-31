@@ -7,8 +7,8 @@ describe("Audit Log Viewer Page (/audit) — BR-ALV-01..07", () => {
     join(import.meta.dirname, "../../app/pages/audit/index.vue"),
     "utf-8"
   );
-  const reviewDetailContent = readFileSync(
-    join(import.meta.dirname, "../../app/pages/studio/review/[id].vue"),
+  const levelsPageContent = readFileSync(
+    join(import.meta.dirname, "../../app/pages/levels/index.vue"),
     "utf-8"
   );
 
@@ -31,8 +31,7 @@ describe("Audit Log Viewer Page (/audit) — BR-ALV-01..07", () => {
     expect(auditPageContent).toContain("Field-by-Field Diff");
   });
 
-  it("Scenario: BR-ALV-05 — review detail page provides 'Xem lịch sử' link to /audit with entity_type and entity_id", () => {
-    expect(reviewDetailContent).toContain("/audit?entity_type=");
-    expect(reviewDetailContent).toContain("Xem lịch sử");
+  it("Scenario: BR-ALV-05 — levels page provides link to /audit with entity_type and entity_id", () => {
+    expect(levelsPageContent).toContain("/audit?entity_type=");
   });
 });

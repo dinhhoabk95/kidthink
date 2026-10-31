@@ -13,7 +13,7 @@ import { CANONICAL_THEME_CODES } from "@mindkid/shared";
 import { z } from "zod";
 import { isLevelOutOfBand, toAgeBand } from "#src/gates/engine-content-depth";
 import type { MvpCurriculumConfig } from "#src/seed-master/roadmap-curricula";
-import type { ContentSeed, LessonSeed } from "#src/types";
+import type { ContentSeed } from "#src/types";
 
 export interface GoLiveConfig {
   version: number;
@@ -22,7 +22,6 @@ export interface GoLiveConfig {
   thresholds: {
     engine_render_coverage_percent: number;
     longest_flow_code: string;
-    lesson_supply_target: number;
     min_levels_per_skill: number;
     content_depth_step: number;
   };
@@ -34,14 +33,13 @@ export interface GoLiveInput {
   implementedRenderEngineIds: string[];
   depthPassingEngineIds: string[];
   curriculaConfigs: MvpCurriculumConfig[];
-  lessons: LessonSeed[];
   gameLevels: ContentSeed[];
   enforceContractParse?: boolean;
 }
 
 export interface GoLiveCheckItem {
   name: string;
-  axis: "game_template" | "lesson_corpus";
+  axis: "game_template" | "curriculum";
   isHardBlock: boolean;
   expected: string;
   actual: string;
@@ -52,7 +50,7 @@ export interface GoLiveCheckItem {
 export interface GoLiveEvaluation {
   items: GoLiveCheckItem[];
   isGameAxisPassed: boolean;
-  isLessonAxisPassed: boolean;
+  isCurriculumAxisPassed: boolean;
   isPassed: boolean;
   violations: string[];
 }
@@ -373,38 +371,18 @@ function evaluateGameAxis(
   };
 }
 
-function checkLessonSupplyAndFlow(
-  publishedLessons: LessonSeed[],
-  targetSupply: number,
+function checkCurriculumFlow(
   longestFlowCode: string,
   curriculaConfigs: MvpCurriculumConfig[]
 ): { items: GoLiveCheckItem[]; violations: string[]; passed: boolean } {
   const items: GoLiveCheckItem[] = [];
   const violations: string[] = [];
 
-  const supplyPassed = publishedLessons.length >= targetSupply;
-  items.push({
-    name: `Cung giáo án đạt sàn ${targetSupply} tiết (BR-LCD-01)`,
-    axis: "lesson_corpus",
-    isHardBlock: true,
-    expected: `>= ${targetSupply} tiết`,
-    actual: `${publishedLessons.length} tiết`,
-    passed: supplyPassed,
-    message: supplyPassed
-      ? undefined
-      : `Thư viện thiếu ${targetSupply - publishedLessons.length} tiết`,
-  });
-  if (!supplyPassed) {
-    violations.push(
-      `BR-LCD-01: Thư viện giáo án chỉ có ${publishedLessons.length}/${targetSupply} tiết.`
-    );
-  }
-
   const curJ42 = curriculaConfigs.find((c) => c.code === longestFlowCode);
   const j42Published = curJ42?.status === "published";
   items.push({
     name: `Chương trình dài nhất (${longestFlowCode}) ở trạng thái published (BR-LCD-01)`,
-    axis: "lesson_corpus",
+    axis: "curriculum",
     isHardBlock: true,
     expected: "published",
     actual: curJ42 ? curJ42.status : "missing",
@@ -416,33 +394,20 @@ function checkLessonSupplyAndFlow(
     );
   }
 
-  return { items, violations, passed: supplyPassed && j42Published };
+  return { items, violations, passed: j42Published };
 }
 
 function checkSkillLevelCoverage(
-  publishedLessons: LessonSeed[],
   gameLevels: ContentSeed[],
   minLevelReq: number
 ): { items: GoLiveCheckItem[]; violations: string[]; passed: boolean } {
   const items: GoLiveCheckItem[] = [];
   const violations: string[] = [];
 
-  const skillSet = new Set<string>();
-  for (const les of publishedLessons) {
-    for (const sk of les.header.skill_codes) {
-      skillSet.add(sk);
-    }
-  }
-
   const skillLevelCounts = new Map<string, number>();
-  for (const sk of skillSet) {
-    skillLevelCounts.set(sk, 0);
-  }
   for (const gl of gameLevels) {
     for (const glSkill of gl.header.skill_codes) {
-      if (skillLevelCounts.has(glSkill)) {
-        skillLevelCounts.set(glSkill, (skillLevelCounts.get(glSkill) ?? 0) + 1);
-      }
+      skillLevelCounts.set(glSkill, (skillLevelCounts.get(glSkill) ?? 0) + 1);
     }
   }
 
@@ -452,7 +417,7 @@ function checkSkillLevelCoverage(
   const skillLevelPassed = deficientSkills.length === 0;
   items.push({
     name: `Mỗi kỹ năng thư viện có >=${minLevelReq} game level published (BR-LCD-10)`,
-    axis: "lesson_corpus",
+    axis: "curriculum",
     isHardBlock: true,
     expected: "0 kỹ năng thiếu level",
     actual: `${deficientSkills.length} kỹ năng thiếu level`,
@@ -470,21 +435,16 @@ function checkSkillLevelCoverage(
   return { items, violations, passed: skillLevelPassed };
 }
 
-function evaluateLessonAxis(
+function evaluateCurriculumAxis(
   config: GoLiveConfig,
   curriculaConfigs: MvpCurriculumConfig[],
-  lessons: LessonSeed[],
   gameLevels: ContentSeed[]
 ): { items: GoLiveCheckItem[]; isPassed: boolean; violations: string[] } {
-  const publishedLessons = lessons;
-  const res1 = checkLessonSupplyAndFlow(
-    publishedLessons,
-    config.thresholds.lesson_supply_target,
+  const res1 = checkCurriculumFlow(
     config.thresholds.longest_flow_code,
     curriculaConfigs
   );
   const res2 = checkSkillLevelCoverage(
-    publishedLessons,
     gameLevels,
     config.thresholds.min_levels_per_skill
   );
@@ -506,7 +466,6 @@ export function evaluateGoLiveReadiness(input: GoLiveInput): GoLiveEvaluation {
     implementedRenderEngineIds,
     depthPassingEngineIds,
     curriculaConfigs,
-    lessons,
     gameLevels,
     enforceContractParse = false,
   } = input;
@@ -520,7 +479,7 @@ export function evaluateGoLiveReadiness(input: GoLiveInput): GoLiveEvaluation {
     return {
       items: [],
       isGameAxisPassed: false,
-      isLessonAxisPassed: false,
+      isCurriculumAxisPassed: false,
       isPassed: false,
       violations: [
         "BR-GLR-06: Nguồn cấu hình hoặc dữ liệu chương trình không đọc được / rỗng.",
@@ -537,25 +496,24 @@ export function evaluateGoLiveReadiness(input: GoLiveInput): GoLiveEvaluation {
     enforceContractParse
   );
 
-  const lessonEval = evaluateLessonAxis(
+  const curriculumEval = evaluateCurriculumAxis(
     config,
     curriculaConfigs,
-    lessons,
     gameLevels
   );
 
   return {
-    items: [...gameEval.items, ...lessonEval.items],
+    items: [...gameEval.items, ...curriculumEval.items],
     isGameAxisPassed: gameEval.isPassed,
-    isLessonAxisPassed: lessonEval.isPassed,
-    isPassed: gameEval.isPassed && lessonEval.isPassed,
-    violations: [...gameEval.violations, ...lessonEval.violations],
+    isCurriculumAxisPassed: curriculumEval.isPassed,
+    isPassed: gameEval.isPassed && curriculumEval.isPassed,
+    violations: [...gameEval.violations, ...curriculumEval.violations],
   };
 }
 
 function formatItemsSection(
   items: GoLiveCheckItem[],
-  axis: "game_template" | "lesson_corpus"
+  axis: "game_template" | "curriculum"
 ): string[] {
   const lines: string[] = [];
   for (const it of items.filter((i) => i.axis === axis)) {
@@ -574,8 +532,13 @@ function formatItemsSection(
  * Format báo cáo Go-Live Readiness
  */
 export function formatGoLiveReport(evaluation: GoLiveEvaluation): string {
-  const { items, isGameAxisPassed, isLessonAxisPassed, isPassed, violations } =
-    evaluation;
+  const {
+    items,
+    isGameAxisPassed,
+    isCurriculumAxisPassed,
+    isPassed,
+    violations,
+  } = evaluation;
   const lines: string[] = [];
 
   lines.push("===============================================================");
@@ -590,10 +553,10 @@ export function formatGoLiveReport(evaluation: GoLiveEvaluation): string {
     `-> Trục Game Template: ${isGameAxisPassed ? "ĐẠT (PASS)" : "CHƯA ĐẠT (BLOCKED)"}`
   );
 
-  lines.push("\n--- TRỤC 2: GIÁO ÁN BÀI GIẢNG & FLOW GHI DANH ---");
-  lines.push(...formatItemsSection(items, "lesson_corpus"));
+  lines.push("\n--- TRỤC 2: CHƯƠNG TRÌNH HỌC & FLOW GHI DANH ---");
+  lines.push(...formatItemsSection(items, "curriculum"));
   lines.push(
-    `-> Trục Giáo Án: ${isLessonAxisPassed ? "ĐẠT (PASS)" : "CHƯA ĐẠT (BLOCKED)"}`
+    `-> Trục Chương Trình: ${isCurriculumAxisPassed ? "ĐẠT (PASS)" : "CHƯA ĐẠT (BLOCKED)"}`
   );
 
   if (violations.length > 0) {
@@ -624,7 +587,6 @@ export const goLiveConfigSchema = z.object({
   thresholds: z.object({
     engine_render_coverage_percent: z.number(),
     longest_flow_code: z.string().min(1),
-    lesson_supply_target: z.number().int().positive(),
     min_levels_per_skill: z.number().int().positive(),
     content_depth_step: z.number().int().nonnegative(),
   }),

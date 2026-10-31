@@ -81,22 +81,6 @@
           <span>Trò chơi</span>
         </button>
         <button
-          data-testid="library-tab-lesson"
-          role="tab"
-          type="button"
-          :aria-selected="selectedType === 'lesson'"
-          :class="[
-            'min-h-11 px-4 py-2 rounded-2xl font-bold text-sm transition-colors flex items-center gap-1.5',
-            selectedType === 'lesson'
-              ? 'bg-brand-600 text-white shadow'
-              : 'bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200'
-          ]"
-          @click="setType('lesson')"
-        >
-          <UIcon class="w-4 h-4 shrink-0" name="i-lucide-book-open" />
-          <span>Bài học</span>
-        </button>
-        <button
           data-testid="library-tab-curriculum"
           role="tab"
           type="button"
@@ -111,22 +95,6 @@
         >
           <UIcon class="w-4 h-4 shrink-0" name="i-lucide-milestone" />
           <span>Lộ trình</span>
-        </button>
-        <button
-          data-testid="library-tab-activity"
-          role="tab"
-          type="button"
-          :aria-selected="selectedType === 'activity'"
-          :class="[
-            'min-h-11 px-4 py-2 rounded-2xl font-bold text-sm transition-colors flex items-center gap-1.5',
-            selectedType === 'activity'
-              ? 'bg-brand-600 text-white shadow'
-              : 'bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200'
-          ]"
-          @click="setType('activity')"
-        >
-          <UIcon class="w-4 h-4 shrink-0" name="i-lucide-sparkles" />
-          <span>Hoạt động</span>
         </button>
       </div>
 
@@ -543,7 +511,7 @@
   }
 
   interface LibraryItem {
-    entity_type: "game_level" | "lesson" | "curriculum" | "activity";
+    entity_type: "game_level" | "curriculum";
     entity_id: number;
     code: string;
     title: string;
@@ -577,9 +545,7 @@
   const api = useApi();
   const router = useRouter();
 
-  const selectedType = ref<
-    "game_level" | "lesson" | "curriculum" | "activity" | null
-  >(null);
+  const selectedType = ref<"game_level" | "curriculum" | null>(null);
   const selectedCollectionId = ref<number | null>(null);
   const searchQuery = ref("");
   const debouncedQuery = ref("");
@@ -616,9 +582,7 @@
     })),
   });
 
-  function setType(
-    type: "game_level" | "lesson" | "curriculum" | "activity" | null
-  ) {
+  function setType(type: "game_level" | "curriculum" | null) {
     selectedType.value = type;
   }
 
@@ -639,9 +603,7 @@
   function resolveTypeLabel(type: string): string {
     const map: Record<string, string> = {
       game_level: "Trò chơi",
-      lesson: "Bài học",
       curriculum: "Lộ trình",
-      activity: "Hoạt động",
     };
     return map[type] || type;
   }
@@ -649,9 +611,7 @@
   function resolveTypeIcon(type: string): string {
     const map: Record<string, string> = {
       game_level: "i-lucide-gamepad-2",
-      lesson: "i-lucide-book-open",
       curriculum: "i-lucide-milestone",
-      activity: "i-lucide-sparkles",
     };
     return map[type] || "i-lucide-bookmark";
   }

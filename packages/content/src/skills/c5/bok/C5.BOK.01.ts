@@ -50,19 +50,12 @@ export const C5_BOK_01_DATASET: SkillDataset = {
         ref: "📕",
       },
       category: {
-        type: "cấu tạo sách",
+        type: "phần của sách",
+        label: "Phần của sách",
       },
-    },
-    {
-      id: "bok_gay_sach",
-      label: "gáy sách",
-      image: {
-        kind: "emoji",
-        ref: "📙",
-      },
-      category: {
-        type: "cấu tạo sách",
-      },
+      contrast_group: "primary",
+      value: 1,
+      ordering: 1,
     },
     {
       id: "bok_trang_sach",
@@ -72,30 +65,92 @@ export const C5_BOK_01_DATASET: SkillDataset = {
         ref: "📄",
       },
       category: {
-        type: "cấu tạo sách",
+        type: "phần của sách",
+        label: "Phần của sách",
       },
+      contrast_group: "primary",
+      value: 2,
+      ordering: 2,
+    },
+    {
+      id: "bok_gay_sach",
+      label: "gáy sách",
+      image: {
+        kind: "emoji",
+        ref: "📙",
+      },
+      category: {
+        type: "phần của sách",
+        label: "Phần của sách",
+      },
+      contrast_group: "primary",
+      value: 3,
+      ordering: 3,
     },
     {
       id: "bok_ten_sach",
-      label: "tên cuốn sách",
+      label: "tên truyện",
       image: {
         kind: "emoji",
         ref: "🏷️",
       },
       category: {
-        type: "cấu tạo sách",
+        type: "thông tin sách",
+        label: "Thông tin sách",
       },
+      contrast_group: "contrast",
+      value: 4,
+      ordering: 4,
     },
     {
       id: "bok_tac_gia",
-      label: "tác giả viết sách",
+      label: "tác giả",
       image: {
         kind: "emoji",
         ref: "✍️",
       },
       category: {
-        type: "cấu tạo sách",
+        type: "thông tin sách",
+        label: "Thông tin sách",
       },
+      contrast_group: "contrast",
+      value: 5,
+      ordering: 5,
+    },
+    {
+      id: "bok_tranh_ve",
+      label: "tranh minh họa",
+      image: {
+        kind: "emoji",
+        ref: "🎨",
+      },
+      category: {
+        type: "thông tin sách",
+        label: "Thông tin sách",
+      },
+      contrast_group: "contrast",
+      value: 6,
+      ordering: 6,
+    },
+  ],
+  relations: [
+    {
+      type: "pair",
+      source_id: "bok_bia_sach",
+      target_id: "bok_trang_sach",
+      explanation: "cùng là phần của cuốn sách",
+    },
+    {
+      type: "pair",
+      source_id: "bok_ten_sach",
+      target_id: "bok_tac_gia",
+      explanation: "cùng là thông tin trên sách",
+    },
+    {
+      type: "contrast",
+      source_id: "bok_bia_sach",
+      target_id: "bok_ten_sach",
+      explanation: "phần của sách đối lập với thông tin sách",
     },
   ],
   ladder: [
@@ -132,10 +187,11 @@ export const C5_BOK_01_DATASET: SkillDataset = {
   },
   ordering: [
     "bok_bia_sach",
-    "bok_gay_sach",
     "bok_trang_sach",
+    "bok_gay_sach",
     "bok_ten_sach",
     "bok_tac_gia",
+    "bok_tranh_ve",
   ],
 };
 
@@ -143,6 +199,12 @@ export const C5_BOK_01_SEED: SkillSeed = {
   identity: C5_BOK_01_IDENTITY,
   dataset: C5_BOK_01_DATASET,
   levels: [
+    {
+      template: "GT-000",
+      band: "3-4",
+      difficulty: 1,
+      theme: "school",
+    },
     {
       code: "GL-C5-BOK-TAP-0001",
       template: "GT-001",
@@ -168,27 +230,11 @@ export const C5_BOK_01_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-BOK-TCMP-0002",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 2,
-      theme: "homeland",
-      rounds: 3,
-    },
-    {
       code: "GL-C5-BOK-PATT-0001",
       template: "GT-005",
       band: "3-4",
       difficulty: 1,
       theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-BOK-PATT-0002",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 2,
-      theme: "farm",
       rounds: 3,
     },
     {
@@ -200,27 +246,11 @@ export const C5_BOK_01_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-BOK-SLOT-0002",
-      template: "GT-008",
-      band: "3-4",
-      difficulty: 2,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
       code: "GL-C5-BOK-MEMO-0001",
       template: "GT-012",
       band: "3-4",
       difficulty: 1,
       theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-BOK-MEMO-0002",
-      template: "GT-012",
-      band: "3-4",
-      difficulty: 2,
-      theme: "ocean",
       rounds: 3,
     },
   ],

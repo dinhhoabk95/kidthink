@@ -4,7 +4,7 @@ export const C2_GEO_05_IDENTITY: SkillIdentity = {
   code: "C2.GEO.05",
   strand_code: "C2.GEO",
   competency_code: "C2",
-  name: "Hình oval",
+  name: "Hình bầu dục",
   age_min: 4,
   age_max: 4,
   difficulty: 2,
@@ -38,64 +38,168 @@ export const C2_GEO_05_IDENTITY: SkillIdentity = {
 
 export const C2_GEO_05_DATASET: SkillDataset = {
   skill_code: "C2.GEO.05",
-  concept_label: "Hình oval",
+  concept_label: "Hình bầu dục",
   surface: "game",
   items: [
     {
-      id: "star",
-      label: "hình ngôi sao",
+      id: "egg_oval",
+      label: "quả trứng bầu dục",
+      image: {
+        kind: "emoji",
+        ref: "🥚",
+      },
+      category: {
+        type: "hình bầu dục",
+      },
+      contrast_group: "oval",
+      value: 1,
+      ordering: 1,
+    },
+    {
+      id: "potato_oval",
+      label: "củ khoai bầu dục",
+      image: {
+        kind: "emoji",
+        ref: "🥔",
+      },
+      category: {
+        type: "hình bầu dục",
+      },
+      contrast_group: "oval",
+      value: 2,
+      ordering: 2,
+    },
+    {
+      id: "melon_oval",
+      label: "quả dưa bầu dục",
+      image: {
+        kind: "emoji",
+        ref: "🍉",
+      },
+      category: {
+        type: "hình bầu dục",
+      },
+      contrast_group: "oval",
+      value: 3,
+      ordering: 3,
+    },
+    {
+      id: "rugby_oval",
+      label: "bóng bầu dục nâu",
+      image: {
+        kind: "emoji",
+        ref: "🏈",
+      },
+      category: {
+        type: "hình bầu dục",
+      },
+      contrast_group: "oval",
+      value: 4,
+      ordering: 4,
+    },
+    {
+      id: "square_blue",
+      label: "hình vuông xanh",
+      image: {
+        kind: "emoji",
+        ref: "🟦",
+      },
+      category: {
+        type: "hình khác",
+      },
+      contrast_group: "other_shape",
+      value: 5,
+      ordering: 5,
+    },
+    {
+      id: "triangle_red",
+      label: "hình tam giác đỏ",
+      image: {
+        kind: "emoji",
+        ref: "🔺",
+      },
+      category: {
+        type: "hình khác",
+      },
+      contrast_group: "other_shape",
+      value: 6,
+      ordering: 6,
+    },
+    {
+      id: "star_yellow",
+      label: "ngôi sao vàng",
       image: {
         kind: "emoji",
         ref: "⭐",
       },
       category: {
-        type: "shape",
+        type: "hình khác",
       },
+      contrast_group: "other_shape",
+      value: 7,
+      ordering: 7,
     },
     {
-      id: "heart",
-      label: "hình trái tim",
+      id: "diamond_orange",
+      label: "hình thoi cam",
       image: {
         kind: "emoji",
-        ref: "❤️",
+        ref: "🔶",
       },
       category: {
-        type: "shape",
+        type: "hình khác",
       },
-    },
-    {
-      id: "diamond",
-      label: "hình thoi",
-      image: {
-        kind: "emoji",
-        ref: "🔷",
-      },
-      category: {
-        type: "shape",
-      },
-    },
-    {
-      id: "oval",
-      label: "hình bầu dục",
-      image: {
-        kind: "emoji",
-        ref: "🟢",
-      },
-      category: {
-        type: "shape",
-      },
+      contrast_group: "other_shape",
+      value: 8,
+      ordering: 8,
     },
   ],
+  relations: [
+    {
+      type: "pair",
+      source_id: "egg_oval",
+      target_id: "square_blue",
+    },
+    {
+      type: "pair",
+      source_id: "potato_oval",
+      target_id: "triangle_red",
+    },
+    {
+      type: "pair",
+      source_id: "melon_oval",
+      target_id: "star_yellow",
+    },
+    {
+      type: "pair",
+      source_id: "rugby_oval",
+      target_id: "diamond_orange",
+    },
+    {
+      type: "contrast",
+      source_id: "egg_oval",
+      target_id: "square_blue",
+    },
+  ],
+  axes: {
+    category: {
+      values: ["hình bầu dục", "hình khác"],
+    },
+    order: {
+      values: ["1", "2", "3", "4", "5", "6", "7", "8"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Hình oval",
+      description: "Làm quen cơ bản với Hình bầu dục",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Hình oval",
+      description: "Nhận biết và chọn đúng Hình bầu dục",
     },
     {
       rung: 3,
@@ -115,9 +219,18 @@ export const C2_GEO_05_DATASET: SkillDataset = {
   ],
   phrasing: {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
-    narration_template: "Chúng mình cùng tìm hiểu về Hình oval nhé",
+    narration_template: "Chúng mình cùng tìm hiểu về hình bầu dục nhé",
   },
-  ordering: ["star", "heart", "diamond", "oval"],
+  ordering: [
+    "egg_oval",
+    "potato_oval",
+    "melon_oval",
+    "rugby_oval",
+    "square_blue",
+    "triangle_red",
+    "star_yellow",
+    "diamond_orange",
+  ],
 };
 
 export const C2_GEO_05_SEED: SkillSeed = {
@@ -131,94 +244,12 @@ export const C2_GEO_05_SEED: SkillSeed = {
       difficulty: 3,
       theme: "food",
       rounds: 3,
-      legacy_v1_ref: "D2-01",
     },
     {
       code: "GL-C2-HOL-SLOT-0004",
       template: "GT-008",
       band: "4-5",
       difficulty: 1,
-      theme: "animal",
-      rounds: 3,
-      legacy_v1_ref: "D2-01",
-    },
-    {
-      code: "GL-C2-GEO-TAP-0007",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 1,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GEO-TAP-0008",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 2,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GEO-TCNT-0003",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 1,
-      theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GEO-TCNT-0004",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 2,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GEO-TCMP-0003",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 1,
-      theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GEO-TCMP-0004",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 2,
-      theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GEO-PAIR-0003",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 1,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GEO-PAIR-0004",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 2,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GEO-PATT-0006",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 1,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GEO-PATT-0007",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 2,
       theme: "animal",
       rounds: 3,
     },

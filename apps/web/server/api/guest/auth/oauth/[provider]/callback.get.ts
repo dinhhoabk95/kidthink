@@ -117,7 +117,10 @@ async function handleOAuthLinkFlow(
   profile: NormalizedProfile,
   returnTo: string
 ) {
-  if (!currentUserId) {
+  if (
+    !currentUserId ||
+    (event.context.user && Number(event.context.user.user_id) !== currentUserId)
+  ) {
     throw new UnauthenticatedError();
   }
 
@@ -195,7 +198,12 @@ async function handleOAuthLinkFlow(
     });
   }
 
-  return sendRedirect(event, `${returnTo}?linked=${rawProvider}`, 302);
+  const separator = returnTo.includes("?") ? "&" : "?";
+  return sendRedirect(
+    event,
+    `${returnTo}${separator}linked=${rawProvider}`,
+    302
+  );
 }
 
 async function establishUserSession(

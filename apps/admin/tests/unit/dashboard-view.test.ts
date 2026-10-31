@@ -25,14 +25,12 @@ describe("Task 5 — Dashboard View & Mutation Scan (BR-DSH-01, D-JA, D-IX)", ()
   });
 
   it("Scenario: D-IX — pending_source references exist in dashboard and never hardcode 0", () => {
-    expect(dashboardSource).toContain("P2.3");
-    expect(dashboardSource).toContain("P2.8");
-    expect(dashboardSource).toContain("P3.1");
     expect(dashboardSource).toContain("P3.3");
     expect(dashboardSource).toContain("P4");
 
     // Must display "Chưa có nguồn"
-    expect(dashboardSource).toContain("Chưa có nguồn — bước P2.3");
+    expect(dashboardSource).toContain("Chưa có nguồn — bước P3.3");
+    expect(dashboardSource).toContain("Chưa có nguồn — bước P4");
   });
 
   it("Scenario: BR-DSH-04 — displays as_of timestamp at the top of the dashboard", () => {

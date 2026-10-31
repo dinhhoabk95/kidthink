@@ -9,7 +9,7 @@ export interface CurriculumItemMetadata {
   week_no: number;
   session_no: number;
   position: number;
-  entity_type: "lesson" | "game_level";
+  entity_type: "game_level";
   entity_id: number;
   code?: string;
   title?: string;
@@ -20,7 +20,6 @@ export interface CurriculumItemMetadata {
   skill_codes?: string[];
   difficulty?: number;
   estimated_minutes?: number;
-  is_offline?: boolean;
 }
 
 export interface CurriculumWeekMetadata {
@@ -96,7 +95,7 @@ export interface CurriculumValidationResult {
 const ALL_COMPETENCIES = ["C1", "C2", "C3", "C4", "C5", "C6"];
 const STRAND_COMPETENCY_REGEX = /^(C[1-6])/i;
 const SKILL_COMPETENCY_REGEX = /^(C[1-6])/i;
-const CODE_COMPETENCY_REGEX = /^(?:GL-|LES-)?(C[1-6])/i;
+const CODE_COMPETENCY_REGEX = /^(?:GL-)?(C[1-6])/i;
 
 function extractCompetency(item: CurriculumItemMetadata): string | null {
   if (item.competency_code?.trim()) {
@@ -206,27 +205,17 @@ function validateSingleWeekDiversity(
   warnings: string[]
 ): void {
   const weekComps = new Set<string>();
-  let hasOffline = false;
 
   for (const item of weekItems) {
     const comp = extractCompetency(item);
     if (comp) {
       weekComps.add(comp);
     }
-    if (item.is_offline === true) {
-      hasOffline = true;
-    }
   }
 
   if (weekComps.size < 2 || weekComps.size > 4) {
     warnings.push(
       `BR-CRM-02: Tuần ${weekNo} chạm ${weekComps.size} năng lực (khuyến nghị 2-4 năng lực mỗi tuần)`
-    );
-  }
-
-  if (!hasOffline) {
-    warnings.push(
-      `BR-CRM-05: Tuần ${weekNo} chưa có hoạt động ngoài màn hình nào`
     );
   }
 }
@@ -307,8 +296,7 @@ function checkSessionDurations(
   const sessionMinutesMap = new Map<string, number>();
   for (const item of items) {
     const key = `${item.week_no}_${item.session_no}`;
-    const mins =
-      item.estimated_minutes || (item.entity_type === "lesson" ? 20 : 10);
+    const mins = item.estimated_minutes || 10;
     sessionMinutesMap.set(key, (sessionMinutesMap.get(key) || 0) + mins);
   }
 

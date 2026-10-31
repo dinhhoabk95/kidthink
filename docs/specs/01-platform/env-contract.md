@@ -46,6 +46,7 @@ nó thành một cổng chặn phát hành.
 | Nơi                                                     | Actor            | Ghi chú                                    |
 | ------------------------------------------------------- | ---------------- | ------------------------------------------ |
 | `packages/config/src/env-contract.ts`                   | Người phát triển | Registry — nguồn sự thật duy nhất          |
+| `apps/web/env.ts` · `apps/admin/env.ts`                 | Tiến trình Nuxt  | Schema `@t3-oss/env-nuxt` + Zod khớp `ENV_REGISTRY` cho Nuxt build/runtime |
 | `/etc/mindkid/env/web.env` · `worker.env`              | Người vận hành   | Chỉ trên máy chủ, quyền `0600`, chủ `root` |
 | `.env` ở gốc repo                                       | Người phát triển | Chỉ máy trạm, đã bị `.gitignore` chặn      |
 | `apps/<app>/.env`                                       | Người phát triển | Chỉ máy trạm, **tuỳ chọn** — lớp đè lên `.env` gốc |

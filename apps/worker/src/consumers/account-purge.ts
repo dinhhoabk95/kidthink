@@ -17,25 +17,56 @@ export async function recordPurgeAudit(
   entry:
     | { kind: "child_data_purged"; childUuid: string }
     | { kind: "user_deleted"; userId: number; purgedAt: Date }
+    | { entityType: "user"; entityId: number | string; purgedAt: Date }
+    | { entityType: "child_profile"; entityId: number | string; purgedAt: Date }
 ) {
-  if (entry.kind === "child_data_purged") {
+  if ("kind" in entry) {
+    if (entry.kind === "child_data_purged") {
+      return await writeAudit(tx, {
+        actor_type: "system",
+        action: "child_data_purged",
+        entity_type: "child_profile",
+        entity_id: entry.childUuid,
+        after_data: {
+          child_uuid: entry.childUuid,
+          purged: true,
+          telemetry_anonymized: true,
+        },
+      });
+    }
     return await writeAudit(tx, {
       actor_type: "system",
-      action: "child_data_purged",
-      entity_type: "child_profile",
-      entity_id: entry.childUuid,
+      action: "user_deleted",
+      entity_type: "user",
+      entity_id: String(entry.userId),
+      reason: "account_deletion_grace_expired",
       after_data: {
-        child_uuid: entry.childUuid,
-        purged: true,
+        purged_at: entry.purgedAt.toISOString(),
         telemetry_anonymized: true,
       },
     });
   }
+
+  if (entry.entityType === "child_profile") {
+    return await writeAudit(tx, {
+      actor_type: "system",
+      action: "child_data_purged",
+      entity_type: "child_profile",
+      entity_id: String(entry.entityId),
+      after_data: {
+        child_id: entry.entityId,
+        purged: true,
+        purged_at: entry.purgedAt.toISOString(),
+        telemetry_anonymized: true,
+      },
+    });
+  }
+
   return await writeAudit(tx, {
     actor_type: "system",
     action: "user_deleted",
     entity_type: "user",
-    entity_id: String(entry.userId),
+    entity_id: String(entry.entityId),
     reason: "account_deletion_grace_expired",
     after_data: {
       purged_at: entry.purgedAt.toISOString(),
@@ -84,8 +115,13 @@ async function purgeDueChildProfiles(
     }
     try {
       await hardPurgeChildProfile(db, child.id, child.uuid);
+      await recordPurgeAudit(db, {
+        entityType: "child_profile",
+        entityId: child.id,
+        purgedAt: now,
+      });
       purged++;
-    } catch (error: unknown) {
+    } catch (error) {
       await alert("error", "Child profile purge job failed", {
         jobId: ctx.jobId,
         childId: child.id,
@@ -128,9 +164,14 @@ export const accountPurge: Consumer<"account:purge"> = async (payload, ctx) => {
     try {
       const result = await hardPurgeUser(db, user.id, now, user.purgeAt ?? now);
       if (result.purged) {
+        await recordPurgeAudit(db, {
+          entityType: "user",
+          entityId: user.id,
+          purgedAt: now,
+        });
         purgedCount++;
       }
-    } catch (error: unknown) {
+    } catch (error) {
       // Thông điệp phải là HẰNG: `DeduplicatingAlertAdapter` gộp theo
       // `severity:message` và Cấm — NEVER dọn cache. Nhét `user.id` vào thông
       // điệp làm cửa sổ gộp 15 phút vô tác dụng (200 user hỏng = 200 alert) và

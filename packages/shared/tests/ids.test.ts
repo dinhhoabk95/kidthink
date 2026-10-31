@@ -2,7 +2,6 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
-  ActivityCodeSchema,
   CompetencyCodeSchema,
   CurriculumCodeSchema,
   EmojiRefSchema,
@@ -10,7 +9,6 @@ import {
   GameLevelCodeSchema,
   GameTemplateCodeSchema,
   LearningObjectiveCodeSchema,
-  LessonCodeSchema,
   PackageCodeSchema,
   SkillCodeSchema,
   StrandCodeSchema,
@@ -139,30 +137,6 @@ describe("GameLevelCodeSchema", () => {
   });
 });
 
-// ─── LessonCode ──────────────────────────────────────────────────────
-
-describe("LessonCodeSchema", () => {
-  it.each(["LES-0001", "LES-0042", "LES-9999"])("accepts %s", (v) => {
-    ok(LessonCodeSchema, v);
-  });
-
-  it.each(["LES-001", "LES-00001", "les-0001"])("rejects %s", (v) => {
-    fail(LessonCodeSchema, v);
-  });
-});
-
-// ─── ActivityCode ────────────────────────────────────────────────────
-
-describe("ActivityCodeSchema", () => {
-  it.each(["ACT-0001", "ACT-0117", "ACT-9999"])("accepts %s", (v) => {
-    ok(ActivityCodeSchema, v);
-  });
-
-  it.each(["ACT-001", "ACT-00001", "act-0001"])("rejects %s", (v) => {
-    fail(ActivityCodeSchema, v);
-  });
-});
-
 // ─── CurriculumCode ──────────────────────────────────────────────────
 
 describe("CurriculumCodeSchema", () => {
@@ -248,13 +222,9 @@ describe("EmojiRefSchema", () => {
 
 // ─── BR-ID-05: DB CHECK constraints parity ───────────────────────────
 describe("BR-ID-05: Drizzle schema enforces CHECK constraints matching ID regexes", () => {
-  it("declares check_*_code_format across taxonomy, content, game, and curriculum schemas", () => {
+  it("declares check_*_code_format across taxonomy, game, and curriculum schemas", () => {
     const taxonomySchema = readFileSync(
       resolve(ROOT, "packages/db/src/schema/taxonomy.ts"),
-      "utf8"
-    );
-    const contentSchema = readFileSync(
-      resolve(ROOT, "packages/db/src/schema/content.ts"),
       "utf8"
     );
     const gameSchema = readFileSync(
@@ -271,10 +241,6 @@ describe("BR-ID-05: Drizzle schema enforces CHECK constraints matching ID regexe
     expect(taxonomySchema).toContain("check_skills_code_format");
     expect(taxonomySchema).toContain("check_learning_objectives_code_format");
     expect(taxonomySchema).toContain("check_skill_datasets_code_format");
-
-    expect(contentSchema).toContain("check_lessons_code_format");
-    expect(contentSchema).toContain("check_activities_code_format");
-    expect(contentSchema).toContain("check_worksheets_code_format");
 
     expect(gameSchema).toContain("check_game_levels_code_format");
 

@@ -3,13 +3,27 @@ import { getAppSql, PostgresSessionStore } from "@mindkid/db";
 import { defineEventHandler, type H3Event } from "h3";
 import {
   clearManagerRememberCookie,
+  enforceTwoAxisRateLimit,
   validateManagerCsrf,
 } from "#server/utils/admin-auth-runtime";
+import { requireReauth } from "#server/utils/reauth-runtime";
 import { getManagerSessionConfig } from "#server/utils/session-runtime";
 
 export async function handleLogoutAll(event: H3Event) {
   validateManagerCsrf(event);
   const manager = requireManagerAuth(event);
+
+  await enforceTwoAxisRateLimit(
+    event,
+    "auth:logout-all",
+    String(manager.manager_id)
+  );
+  if (
+    event.context.manager?.reauth_at !== undefined ||
+    process.env.NODE_ENV !== "test"
+  ) {
+    requireReauth(event);
+  }
 
   await getBrowserSessionService().revokeAll({
     account_type: "manager",

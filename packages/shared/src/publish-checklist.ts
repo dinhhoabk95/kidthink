@@ -4,29 +4,19 @@
  */
 
 import {
-  ACTIVITY_REF_TYPE_BY_KIND,
-  validateActivityModel,
-} from "./activity-model.js";
-import {
   type CurriculumItemMetadata,
   type CurriculumValidationInput,
   type CurriculumWeekMetadata,
   type ProgramType,
   validateCurriculumModel,
 } from "./curriculum-model.js";
-import { validateLessonModel } from "./lesson-model.js";
 import { type RoundInput, validateRoundSet } from "./round-set-validation.js";
 import {
   validateWorksheetContent,
   WORKSHEET_LAYOUT_TEMPLATES,
 } from "./worksheet-model.js";
 
-export type EntityType =
-  | "game_level"
-  | "lesson"
-  | "activity"
-  | "curriculum"
-  | "worksheet";
+export type EntityType = "game_level" | "curriculum" | "worksheet";
 
 export interface PublishChecklistResult {
   ok: boolean;
@@ -84,23 +74,11 @@ function checkAgeRange(
   entity: GenericEntityPayload,
   missing: string[]
 ): void {
-  const ageMin =
-    entityType === "activity"
-      ? (entity.effectiveAgeMin ??
-        entity.effective_age_min ??
-        entity.ageMin ??
-        entity.age_min)
-      : (entity.ageMin ?? entity.age_min);
-  const ageMax =
-    entityType === "activity"
-      ? (entity.effectiveAgeMax ??
-        entity.effective_age_max ??
-        entity.ageMax ??
-        entity.age_max)
-      : (entity.ageMax ?? entity.age_max);
+  const ageMin = entity.ageMin ?? entity.age_min;
+  const ageMax = entity.ageMax ?? entity.age_max;
 
   if (
-    (entityType === "activity" || entityType === "worksheet") &&
+    entityType === "worksheet" &&
     ageMin === undefined &&
     ageMax === undefined
   ) {
@@ -201,140 +179,6 @@ function checkGameLevelRules(
   const difficulty = entity.difficulty;
   if (typeof difficulty !== "number" || difficulty < 1 || difficulty > 5) {
     missing.push("invalid_difficulty");
-  }
-}
-
-function checkDigitalGameRef(
-  entity: GenericEntityPayload,
-  missing: string[]
-): void {
-  const refType = entity.refType ?? entity.ref_type;
-  const refId = entity.refId ?? entity.ref_id;
-  const refStatus = entity.refStatus ?? entity.ref_status;
-  if (refType !== ACTIVITY_REF_TYPE_BY_KIND.digital_game || !refId) {
-    missing.push("digital_game_missing_level_ref");
-  } else if (refStatus && refStatus !== "published") {
-    missing.push("referenced_game_level_not_published");
-  }
-}
-
-function validateActivityAgainstModel(
-  entity: GenericEntityPayload,
-  kind: string,
-  instruction: string,
-  est: number,
-  missing: string[]
-): void {
-  const res = validateActivityModel({
-    kind,
-    title: (entity.title ?? "") as string,
-    instruction,
-    materials: (entity.materials ?? null) as string | null,
-    estimated_minutes: est ?? 10,
-    skill_codes: (entity.skillCodes ?? entity.skill_codes ?? []) as string[],
-    skills: entity.skills as
-      | { code: string; age_min: number; age_max: number }[]
-      | undefined,
-    ref_type: (entity.refType ?? entity.ref_type) as string | null,
-    ref_id: (entity.refId ?? entity.ref_id) as number | null,
-  });
-
-  if (!res.ok) {
-    for (const err of res.errors) {
-      missing.push(
-        `activity_validation_failed_${err.slice(0, 10).replace(/[^a-z0-9]/gi, "_")}`
-      );
-    }
-  }
-}
-
-function checkActivityRules(
-  entity: GenericEntityPayload,
-  missing: string[]
-): void {
-  const kind = (entity.kind as string) || "";
-  const est = (entity.estimatedMinutes ?? entity.estimated_minutes) as number;
-  if (typeof est !== "number" || est < 2 || est > 20) {
-    missing.push("invalid_estimated_minutes");
-  }
-
-  const instruction = entity.instruction;
-  if (
-    !instruction ||
-    (typeof instruction === "string" && instruction.trim() === "")
-  ) {
-    missing.push("instruction_missing");
-  }
-
-  if (kind === "digital_game") {
-    checkDigitalGameRef(entity, missing);
-  }
-
-  validateActivityAgainstModel(
-    entity,
-    kind,
-    typeof instruction === "string" ? instruction : "",
-    est,
-    missing
-  );
-}
-
-function extractLessonValidationPayload(entity: GenericEntityPayload) {
-  const activities = (entity.activities ?? entity.activityIds) as
-    | unknown[]
-    | undefined;
-  const est = entity.estimatedMinutes ?? entity.estimated_minutes;
-  const guide = entity.guide;
-
-  return {
-    title: (entity.title ?? "") as string,
-    guide: guide as string,
-    estimated_minutes: typeof est === "number" ? est : 15,
-    activities: Array.isArray(activities)
-      ? (activities as Record<string, unknown>[])
-      : [],
-    materials: (entity.materials ?? null) as string | null,
-    warm_up: (entity.warmUp ?? entity.warm_up ?? null) as string | null,
-    reflection: (entity.reflection ?? null) as string | null,
-    assessment: (entity.assessment ?? null) as string | null,
-  };
-}
-
-function checkLessonBasicFields(
-  entity: GenericEntityPayload,
-  missing: string[]
-): void {
-  const activities = entity.activities ?? entity.activityIds;
-  if (!Array.isArray(activities) || activities.length < 1) {
-    missing.push("activities_missing");
-  }
-
-  const est = entity.estimatedMinutes ?? entity.estimated_minutes;
-  if (typeof est !== "number" || est < 5 || est > 45) {
-    missing.push("invalid_estimated_minutes");
-  }
-
-  const guide = entity.guide;
-  if (!guide || (typeof guide === "string" && guide.trim() === "")) {
-    missing.push("guide_vi_missing");
-  }
-}
-
-function checkLessonRules(
-  entity: GenericEntityPayload,
-  missing: string[]
-): void {
-  checkLessonBasicFields(entity, missing);
-
-  const payload = extractLessonValidationPayload(entity);
-  const res = validateLessonModel(payload);
-
-  if (!res.ok) {
-    for (const err of res.errors) {
-      missing.push(
-        `lesson_validation_failed_${err.slice(0, 10).replace(/[^a-z0-9]/gi, "_")}`
-      );
-    }
   }
 }
 
@@ -669,10 +513,6 @@ export function validatePublishChecklist(
   if (entityType === "game_level") {
     checkGameLevelRules(entity, missing);
     checkRoundSetRules(entity, missing);
-  } else if (entityType === "activity") {
-    checkActivityRules(entity, missing);
-  } else if (entityType === "lesson") {
-    checkLessonRules(entity, missing);
   } else if (entityType === "curriculum") {
     checkCurriculumRules(entity, missing);
   } else if (entityType === "worksheet") {

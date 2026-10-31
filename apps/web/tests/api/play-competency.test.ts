@@ -1,10 +1,12 @@
 import crypto from "node:crypto";
 import {
   childProfiles,
+  entitlementKeys,
   entitlements,
   gameLevels,
   getOwnerDb,
   playSessions,
+  SEED_ENTITLEMENT_KEYS,
   users,
 } from "@mindkid/db";
 import { eq, inArray } from "drizzle-orm";
@@ -98,17 +100,20 @@ describe("Child Competency Explorer API (child-competency-explorer.md, BR-CCE-02
   let levelAge45Code = "";
 
   beforeAll(async () => {
-    const suffix = crypto.randomBytes(3).toString("hex").toUpperCase();
+    for (const k of SEED_ENTITLEMENT_KEYS) {
+      await db.insert(entitlementKeys).values(k).onConflictDoNothing();
+    }
+
+    const suffix = String(crypto.randomInt(1000, 9999));
     // Đặt mã level 5-6 tuổi đứng trước theo thứ tự từ điển ("AA") để chứng minh
     // BR-CCE-02 xếp theo độ tuổi hợp band trước rồi mới theo code.
-    levelAge56Code = `GL-C1-CCE-AA56-${suffix}`;
-    levelAge45Code = `GL-C1-CCE-ZZ45-${suffix}`;
+    levelAge56Code = `GL-C1-CCE-AA-${suffix}`;
+    levelAge45Code = `GL-C1-CCE-ZZ-${suffix}`;
 
     const rows = await db
       .insert(gameLevels)
       .values([
         {
-          entityId: crypto.randomInt(100_000_000, 2_000_000_000),
           code: levelAge56Code,
           templateCode: "GT-001",
           title: "Trò chơi C1 cho 5-6 tuổi",
@@ -118,10 +123,8 @@ describe("Child Competency Explorer API (child-competency-explorer.md, BR-CCE-02
           ageMin: 5,
           ageMax: 6,
           accessTier: "premium",
-          status: "published",
         },
         {
-          entityId: crypto.randomInt(100_000_000, 2_000_000_000),
           code: levelAge45Code,
           templateCode: "GT-001",
           title: "Trò chơi C1 cho 4-5 tuổi",
@@ -131,7 +134,6 @@ describe("Child Competency Explorer API (child-competency-explorer.md, BR-CCE-02
           ageMin: 4,
           ageMax: 5,
           accessTier: "free",
-          status: "published",
         },
       ])
       .returning({ id: gameLevels.id });

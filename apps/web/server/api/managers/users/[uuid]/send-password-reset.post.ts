@@ -70,9 +70,9 @@ export default defineEventHandler(async (event) => {
       recipientId: targetUser.id,
       templateCode: "password_reset",
       payload: {
-        token: rawToken,
         email: targetUser.email,
         displayName: targetUser.displayName,
+        tokenRedacted: true,
       },
     })
     .returning();

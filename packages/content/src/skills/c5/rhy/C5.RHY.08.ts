@@ -5,8 +5,8 @@ export const C5_RHY_08_IDENTITY: SkillIdentity = {
   strand_code: "C5.RHY",
   competency_code: "C5",
   name: "Tự nghĩ tiếng cùng vần",
-  age_min: 6,
-  age_max: 7,
+  age_min: 5,
+  age_max: 6,
   difficulty: 5,
   thinking_processes: ["create", "listen"],
   tier: "advanced",
@@ -43,54 +43,82 @@ export const C5_RHY_08_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "let_e",
-      label: "chữ e",
-      glyph: "e",
+      id: "rhy_hoa",
+      label: "tiếng hoa (bông hoa)",
       image: {
         kind: "emoji",
-        ref: "🅴",
+        ref: "🌸",
       },
+      category: {
+        type: "tiếng vần oa",
+      },
+      value: 1,
       contrast_group: "primary",
     },
     {
-      id: "let_ê",
-      label: "chữ ê",
-      glyph: "ê",
+      id: "rhy_loa",
+      label: "tiếng loa (cái loa)",
       image: {
         kind: "emoji",
-        ref: "🅴",
+        ref: "📢",
       },
+      category: {
+        type: "tiếng vần oa",
+      },
+      value: 2,
+      contrast_group: "primary",
+    },
+    {
+      id: "rhy_khoa",
+      label: "tiếng khóa (ổ khóa)",
+      image: {
+        kind: "emoji",
+        ref: "🔒",
+      },
+      category: {
+        type: "tiếng vần oa",
+      },
+      value: 3,
+      contrast_group: "primary",
+    },
+    {
+      id: "rhy_meo",
+      label: "tiếng mèo (con mèo)",
+      image: {
+        kind: "emoji",
+        ref: "🐱",
+      },
+      category: {
+        type: "tiếng vần eo",
+      },
+      value: 4,
       contrast_group: "contrast",
     },
     {
-      id: "let_g",
-      label: "chữ g",
-      glyph: "g",
+      id: "rhy_keo",
+      label: "tiếng kẹo (viên kẹo)",
       image: {
         kind: "emoji",
-        ref: "🅶",
+        ref: "🍬",
       },
-      contrast_group: "primary",
-    },
-    {
-      id: "let_h",
-      label: "chữ h",
-      glyph: "h",
-      image: {
-        kind: "emoji",
-        ref: "🅷",
+      category: {
+        type: "tiếng vần eo",
       },
+      value: 5,
       contrast_group: "contrast",
     },
     {
-      id: "let_i",
-      label: "chữ i",
-      glyph: "i",
+      id: "rhy_keo_cat",
+      label: "tiếng kéo (cái kéo)",
       image: {
         kind: "emoji",
-        ref: "🅸",
+        ref: "✂️",
       },
-      contrast_group: "primary",
+      category: {
+        type: "tiếng vần eo",
+      },
+      value: 6,
+      contrast_group: "contrast",
     },
   ],
   ladder: [
@@ -125,7 +153,37 @@ export const C5_RHY_08_DATASET: SkillDataset = {
     narration_template:
       "Chúng mình cùng tìm hiểu về Tự nghĩ tiếng cùng vần nhé",
   },
-  ordering: ["let_e", "let_ê", "let_g", "let_h", "let_i"],
+  ordering: [
+    "rhy_hoa",
+    "rhy_loa",
+    "rhy_khoa",
+    "rhy_meo",
+    "rhy_keo",
+    "rhy_keo_cat",
+  ],
+  axes: {
+    category: {
+      values: ["tiếng vần oa", "tiếng vần eo"],
+      ordered: true,
+    },
+  },
+  relations: [
+    {
+      type: "pair",
+      source_id: "rhy_hoa",
+      target_id: "rhy_loa",
+    },
+    {
+      type: "pair",
+      source_id: "rhy_meo",
+      target_id: "rhy_keo",
+    },
+    {
+      type: "contrast",
+      source_id: "rhy_hoa",
+      target_id: "rhy_meo",
+    },
+  ],
 };
 
 export const C5_RHY_08_SEED: SkillSeed = {
@@ -138,38 +196,6 @@ export const C5_RHY_08_SEED: SkillSeed = {
       band: "5-6",
       difficulty: 4,
       theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RHY-FRAC-0002",
-      template: "GT-034",
-      band: "5-6",
-      difficulty: 5,
-      theme: "ocean",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RHY-FRAC-0003",
-      template: "GT-034",
-      band: "5-6",
-      difficulty: 4,
-      theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RHY-FRAC-0004",
-      template: "GT-034",
-      band: "5-6",
-      difficulty: 5,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RHY-FRAC-0005",
-      template: "GT-034",
-      band: "5-6",
-      difficulty: 4,
-      theme: "art",
       rounds: 3,
     },
     {

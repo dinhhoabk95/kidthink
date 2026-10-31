@@ -1,6 +1,6 @@
 import { gameLevels, getOwnerDb } from "@mindkid/db";
 import { NotFoundError } from "@mindkid/errors/common";
-import { and, desc, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { defineEventHandler, getRouterParam } from "h3";
 import {
   getOptionalActiveChildUuid,
@@ -21,8 +21,7 @@ export default defineEventHandler(async (event) => {
   const [level] = await db
     .select()
     .from(gameLevels)
-    .where(and(eq(gameLevels.code, code), eq(gameLevels.status, "published")))
-    .orderBy(desc(gameLevels.contentVersion))
+    .where(eq(gameLevels.code, code))
     .limit(1);
 
   if (!level) {

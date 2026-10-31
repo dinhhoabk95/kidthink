@@ -1,10 +1,10 @@
-import { seoPageTypeEnum } from "@mindkid/db";
 import { FAQ_ITEMS } from "@mindkid/shared";
 import { describe, expect, it } from "vitest";
 import {
   type FaqRowStore,
   listPublishedFaqItems,
   normalizeFaqItems,
+  STATIC_FAQ_ITEMS,
   toFaqAnchor,
 } from "#server/services/faq-service";
 
@@ -19,11 +19,11 @@ function createFakeDb(
 }
 
 describe("FAQ Service & Schema Invariants (BR-FAQ-01..06)", () => {
-  it("BR-FAQ-04: seo_page_type enum trong schema chứa giá trị 'faq'", () => {
-    expect(seoPageTypeEnum.enumValues).toContain("faq");
+  it("BR-FAQ-04: STATIC_FAQ_ITEMS matches shared FAQ_ITEMS", () => {
+    expect(STATIC_FAQ_ITEMS).toEqual(FAQ_ITEMS);
   });
 
-  it("BR-FAQ-04: listPublishedFaqItems trả về nội dung từ seo_pages khi có hàng faq published", async () => {
+  it("BR-FAQ-04: listPublishedFaqItems trả về nội dung từ store khi có hàng faq", async () => {
     const fakeDb = createFakeDb([
       {
         faqItems: [
@@ -57,7 +57,7 @@ describe("FAQ Service & Schema Invariants (BR-FAQ-01..06)", () => {
     );
   });
 
-  it("BR-FAQ-04: listPublishedFaqItems fallback an toàn về FAQ_ITEMS khi DB chưa có hàng faq hoặc rỗng", async () => {
+  it("BR-FAQ-04: listPublishedFaqItems fallback an toàn về FAQ_ITEMS khi store rỗng", async () => {
     const emptyDb = createFakeDb([]);
     const fallbackFromEmpty = await listPublishedFaqItems(emptyDb);
     expect(fallbackFromEmpty).toEqual([...FAQ_ITEMS]);

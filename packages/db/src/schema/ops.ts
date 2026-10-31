@@ -15,21 +15,12 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { timestamps } from "./columns.ts";
-import { contentLifecycleStatusEnum } from "./game.ts";
-import { managerRoleEnum, managers, users } from "./identity.ts";
+import { managers, users } from "./identity.ts";
 
 export const actorTypeEnum = pgEnum("actor_type", [
   "user",
   "manager",
   "system",
-]);
-
-export const reviewEntityTypeEnum = pgEnum("review_entity_type", [
-  "game_level",
-  "lesson",
-  "activity",
-  "curriculum",
-  "worksheet",
 ]);
 
 export const backupTypeEnum = pgEnum("backup_type", [
@@ -100,6 +91,7 @@ export const auditLogs = pgTable(
       table.createdAt
     ),
     index("idx_audit_logs_action_created").on(table.action, table.createdAt),
+    index("idx_audit_logs_created_at").on(table.createdAt),
     // actor_id chỉ NULL đúng khi actor là hệ thống. Không có CHECK thì một hàng
     // `actor_type='user', actor_id=NULL` lọt vào và vết điều tra mất chủ thể.
     check(
@@ -109,48 +101,6 @@ export const auditLogs = pgTable(
     ),
   ]
 );
-
-export const contentReviewLog = pgTable(
-  "content_review_log",
-  {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
-    entityType: reviewEntityTypeEnum("entity_type").notNull(),
-    entityId: bigint("entity_id", { mode: "number" }).notNull(),
-    contentVersion: integer("content_version").notNull(),
-    fromStatus: contentLifecycleStatusEnum("from_status").notNull(),
-    toStatus: contentLifecycleStatusEnum("to_status").notNull(),
-    actorManagerId: bigint("actor_manager_id", {
-      mode: "number",
-    }).references(() => managers.id),
-    actorRole: managerRoleEnum("actor_role"),
-    reason: text("reason"),
-    checklistSnapshot: jsonb("checklist_snapshot"),
-    ...timestamps(),
-  },
-  (table) => [
-    // Cặp đa hình: index, không khoá ngoại (BR-DM-04).
-    index("idx_content_review_log_entity").on(table.entityType, table.entityId),
-  ]
-);
-
-export const contentSeedBatches = pgTable("content_seed_batches", {
-  id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
-  batchCode: varchar("batch_code", { length: 60 }).notNull().unique(),
-  kind: varchar("kind", { length: 40 }).notNull(),
-  gitSha: varchar("git_sha", { length: 40 }),
-  prUrl: varchar("pr_url", { length: 255 }),
-  approvedByManagerId: bigint("approved_by_manager_id", {
-    mode: "number",
-  }).references(() => managers.id),
-  rowsInserted: integer("rows_inserted").notNull().default(0),
-  gateResults: jsonb("gate_results"),
-  seededAt: timestamp("seeded_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  ...timestamps(),
-});
 
 export const backupLog = pgTable("backup_log", {
   id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
@@ -215,10 +165,8 @@ export const notificationDeliveries = pgTable(
 );
 
 export const notificationReads = pgTable("notification_reads", {
-  id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
   notificationId: bigint("notification_id", { mode: "number" })
-    .notNull()
-    .unique()
+    .primaryKey()
     .references(() => notifications.id, { onDelete: "cascade" }),
   readAt: timestamp("read_at", { withTimezone: true }).notNull(),
   ...timestamps(),

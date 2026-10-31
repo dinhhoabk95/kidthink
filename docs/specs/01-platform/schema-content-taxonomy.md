@@ -7,11 +7,10 @@ mvp: true
 phase: P0
 reviewed: 2026-10-18
 owns:
-  - Định nghĩa cột module taxonomy, tagging, game, content, curriculum
+  - Định nghĩa cột module taxonomy, tagging, game, curriculum
 depends_on:
   - DATA-MODEL-OVERVIEW
   - TAXONOMY-SERVICE
-  - CONTENT-VERSIONING
   - GAME-TEMPLATE-CONTRACT
 ---
 
@@ -19,8 +18,7 @@ depends_on:
 
 ## 1. Objective
 
-Định nghĩa cột cho năm module nội dung. Đây là nơi ranh giới **Lớp 1 / Lớp 2** hiện ra
-trong schema.
+Định nghĩa cột cho bốn module nội dung (`taxonomy`, `tagging`, `game`, `curriculum`). Toàn bộ nội dung (`game_levels`, `curricula`, `skill_datasets`) được gán cứng qua seeder dữ liệu, mỗi `code` là `UNIQUE` (1 dòng duy nhất) và dùng `id` trực tiếp. Đã xóa hoàn toàn `content.ts`, `assets.ts`, `versioning.ts` và `content_objective_map`.
 
 ## 2. Actors
 
@@ -28,8 +26,7 @@ Dev.
 
 ## 3. Entry points
 
-`packages/db/src/schema/taxonomy.ts` · `tagging.ts` · `game.ts` · `content.ts` ·
-`curriculum.ts`.
+`packages/db/src/schema/taxonomy.ts` · `tagging.ts` · `game.ts` · `curriculum.ts`.
 
 ## 4. Main flow
 
@@ -43,32 +40,22 @@ Không có.
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-SCT-01` (Lớp 1 không có status vòng đời) | Bảng Lớp 1 **không có** cột `status` vòng đời nội dung — chúng chỉ `active`/`deprecated` | Lớp 1 không đi qua cổng duyệt |
-| `BR-SCT-02` (Lớp 2 có 6 status) | Bảng Lớp 2 **bắt buộc** có `content_version` + `status` 6 giá trị | 6 giá trị định nghĩa ở [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) §7.1 — cấm tự thêm giá trị thứ 7 ở đây |
-| `BR-SCT-03` (một published mỗi code) | Partial unique index ép **đúng một** hàng `published` mỗi `code` | [`content-versioning.md`](../00-foundation/content-versioning.md) `BR-VER-02` (đúng một bản published) |
+| `BR-SCT-01` (Không dùng cơ chế đa version hay cổng duyệt Studio) | Toàn bộ bảng nội dung (`game_levels`, `curricula`, `skill_datasets`) không có các cột `entity_id`, `content_version`, `status` vòng đời Studio, `origin`, `authored_in`, `seed_batch_id`, `created_by_manager_id`, `reviewed_by_manager_id`, `published_at`, `archived_at` | Nội dung được quản lý phiên bản trong Git và nạp cứng qua seeder |
+| `BR-SCT-03` (Mỗi `code` là UNIQUE) | Mỗi `code` trong `game_levels`, `curricula`, `skill_datasets` có ràng buộc `UNIQUE` trực tiếp (1 dòng duy nhất mỗi mã) | Đảm bảo mỗi mã nội dung tương ứng đúng 1 bản ghi duy nhất trong DB |
 | `BR-SCT-04` | `content_pack` và `difficulty_params` là **hai cột JSONB riêng** | `BR-DM-02` |
-| `BR-SCT-05` (trigger chặn UPDATE) | Trigger chặn `UPDATE` hàng `published` | [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) `BR-CLC-01` (bản published bất biến) |
-| `BR-SCT-06` (neo dòng dõi) | `curriculum_items` trỏ tới nội dung bằng `(entity_type, entity_id)` — `entity_id` là **neo dòng dõi** (`entity_id` lineage anchor), bất biến qua mọi version, không phải `id` của một hàng version cụ thể | Ghim đúng hàng version thì content update xong curriculum vẫn thấy bản cũ. Neo dòng dõi + `WHERE status='published'` giải quyết mà **vẫn là `id`**, không cần `code` (D-AE, sửa lại 2026-08-07) |
+| `BR-SCT-06` (Tham chiếu trực tiếp bằng `id`) | `curriculum_items` trỏ tới nội dung bằng `(entity_type, entity_id)` trong đó `entity_id` là `id` (bigint) trực tiếp của `game_levels` | Không còn đa version nên không cần cột neo dòng dõi riêng; tham chiếu thẳng vào `id` của bản ghi |
 | `BR-SCT-07` (weight CHECK) | `content_skill_map.weight` có `CHECK (weight > 0 AND weight <= 1)` | [`data-model-overview.md`](../00-foundation/data-model-overview.md) `BR-DM-03` định nghĩa miền `[0,1]`; `CHECK` là chỗ **duy nhất** ép được — miền ghi trong prose không chặn một seeder ghi `weight = 5`. Cận dưới **loại trừ 0**: một hàng `weight = 0` nghĩa là "có ánh xạ nhưng không đóng góp gì", mâu thuẫn với chính việc hàng đó tồn tại, và nó làm mọi phép chuẩn hoá mastery chia cho tổng bằng 0 |
-| `BR-SCT-08` (từ vựng `entity_type` đóng) | `entity_type` của `content_skill_map`, `content_tag_map`, `content_objective_map` nhận đúng bộ giá trị `game_level` · `lesson` · `activity` · `curriculum` · `worksheet`, ép bằng enum ở tầng database | Seeder ghi `'game_level'` trong khi bốn nơi đọc `'level'` — [`dashboard.get.ts:123`](../../../apps/web/server/api/managers/dashboard.get.ts), [`skills/[code].get.ts:101`](../../../apps/web/server/api/managers/taxonomy/skills/%5Bcode%5D.get.ts), [`rollup.ts:155`](../../../apps/worker/src/services/rollup.ts), [`advanced-report.ts:809`](../../../apps/web/server/services/advanced-report.ts). Bốn truy vấn đó trả 0 hàng và **không** báo lỗi, vì cột `text` nhận mọi chuỗi |
+| `BR-SCT-08` (từ vựng `entity_type` đóng) | `entity_type` (`content_entity_type`) của `content_skill_map`, `content_tag_map` nhận đúng bộ giá trị `game_level` · `curriculum`, ép bằng enum ở tầng database | Đã xóa `content.ts` (`worksheets`, `lessons`, `activities`) và `content_objective_map`; enum ở tầng DB chặn mọi chuỗi sai chính tả |
 
 ## 7. Data
 
-> **Quy tắc FK/quan hệ đa hình — không ngoại lệ (D-AE, sửa lại 2026-08-07):** mọi FK dùng
+> **Quy tắc FK/quan hệ đa hình — không ngoại lệ (`BR-DM-13`):** mọi FK dùng
 > `id` (bigint). Cấm — **không** bảng nào — kể cả `competencies`/`strands`/`skills`/
-> `learning_objectives`/`content_tags`/`game_templates` — được tham chiếu bằng `code` từ bảng
-> khác. Các bảng đó **vẫn giữ** cột `code` (định danh hiển thị/URL, [`id-conventions.md`](../00-foundation/id-conventions.md) §7) —
-> `code` không biến mất, chỉ không dùng làm FK nữa.
->
-> Bảng Lớp 2 có version (`game_levels`·`lessons`·`activities`·`curricula`·`worksheets`) thêm
-> cột **`entity_id`** (bigint NOT NULL) — **neo dòng dõi**: version đầu tiên `entity_id = id`
-> (tự trỏ), mọi version sau copy nguyên `entity_id` của version trước (cùng lúc copy nội dung
-> theo [`content-versioning.md`](../00-foundation/content-versioning.md) §4). `entity_id` bất biến suốt vòng đời một `code`, dùng cho
-> tham chiếu cần **luôn theo bản `published` mới nhất** (join kèm `WHERE status='published'`).
-> Tham chiếu cần **ghim đúng một version** (dữ liệu lịch sử chơi) dùng `id` của đúng hàng đó.
-> Cả hai đều là `id` — khác nhau ở **cột nào**, không khác ở **kiểu dữ liệu**.
+> `learning_objectives`/`content_tags`/`game_levels`/`curricula` — được tham chiếu bằng `code` từ bảng
+> khác. Các bảng đó **vẫn giữ** cột `code` UNIQUE (định danh hiển thị/URL, [`id-conventions.md`](../00-foundation/id-conventions.md) §7) —
+> `code` không biến mất, chỉ không dùng làm FK. Mỗi `code` trong `game_levels`, `curricula`, `skill_datasets` là 1 dòng duy nhất và được trỏ trực tiếp qua `id` (đã xóa cột `entity_id` và `content_version`).
 
-### 7.1 Taxonomy — Lớp 1
+### 7.1 Taxonomy
 
 | Bảng | Cột |
 |---|---|
@@ -77,34 +64,30 @@ Không có.
 | `skills` | `id` bigserial PK · `code` UNIQUE (hiển thị) · `strand_id` FK · `name` · `description` · `age_min` `age_max` smallint CHECK 3–6 · `difficulty` smallint CHECK 1–5 · `thinking_processes` text[] · `what_axis` text[] · `status` enum (`seeded`\|`deprecated`) · `position` |
 | `skill_prerequisites` | `(skill_id, prerequisite_id)` PK · `strength` numeric CHECK 0–1 |
 | `learning_objectives` | `id` bigserial PK · `code` UNIQUE (hiển thị) · `skill_id` FK · `behaviour` · `observable_criteria` · `position` |
-| `skill_datasets` | `id` bigserial PK · `code` UNIQUE (= `skill_code`, hiển thị) · `skill_id` FK · `content_version` int · `concept_label` · `surface` enum (`game`\|`worksheet`) · `items` jsonb · `axes` jsonb · `ladder` jsonb · `phrasing` jsonb · `status` · `seed_batch_id` FK nullable · `origin` · `authored_in` · audit cột — hình dạng ở mục 7.1 của [`skill-dataset-model.md`](../05-content/skill-dataset-model.md) |
+| `skill_datasets` | `id` bigserial PK · `code` UNIQUE (= `skill_code`, hiển thị) · `skill_id` FK · `concept_label` · `surface` enum (`game`\|`worksheet`) · `items` jsonb · `axes` jsonb · `ladder` jsonb · `phrasing` jsonb · `created_at` `updated_at` — hình dạng ở mục 7.1 của [`skill-dataset-model.md`](../05-content/skill-dataset-model.md) |
 
-### 7.2 Tagging
+### 7.2 Tagging (`packages/db/src/schema/tagging.ts`)
 
 | Bảng | Cột |
 |---|---|
-| `content_tags` | `id` bigserial PK · `code` UNIQUE (hiển thị) · `axis` enum (`what`\|`thinking`\|`mechanic`\|`theme`) · `label` · `status` — Lớp 1 |
-| `content_tag_map` | `(entity_type, entity_id, tag_id)` PK ghép |
-| `content_skill_map` | `(entity_type, entity_id, skill_id)` PK ghép · `weight` numeric CHECK |
-| `content_objective_map` | `(entity_type, entity_id, learning_objective_id)` PK ghép — đóng `BR-SDS-15` (mục tiêu học tập phải ghi được): trước đó `learning_objective_codes` chỉ được cổng seed kiểm rồi vứt, không bảng nào giữ |
-| `user_tags` | `id` · `user_id` FK · `label` · UNIQUE `(user_id, label)` |
+| `content_tags` | `id` bigserial PK · `code` UNIQUE (hiển thị) · `axis` enum (`what`\|`thinking`\|`mechanic`\|`theme`) · `label` · `status` |
+| `content_tag_map` | `(entity_type, entity_id, tag_id)` PK ghép — `entity_type` thuộc `content_entity_type` (`game_level`\|`curriculum`) |
+| `content_skill_map` | `(entity_type, entity_id, skill_id)` PK ghép · `weight` numeric CHECK — `entity_type` thuộc `content_entity_type` (`game_level`\|`curriculum`) |
 
-### 7.3 Templates — Lớp 1 (Code Registry)
+Đã xóa `content_objective_map`, `user_tags`, `user_tag_map`.
+
+### 7.3 Templates (Code Registry)
 
 Templates được quản lý thuần trong mã nguồn qua registry `ALL_TEMPLATES` của `@mindkid/game-engine` (không lưu bảng DB `game_templates`).
 Mỗi template định nghĩa `code`, `name`, `mechanic`, `layouts`, `content_contract`, `difficulty_contract`, `limits`, `age_min`/`age_max`,
 `requires_tap_fallback`, `asset_kinds`, `kind`, `scoring`, `engine_session`, `status`, `version`.
 
-### 7.4 `game_levels` — Lớp 2, có version
+### 7.4 `game_levels` — Nạp cứng từ seeder, 1 dòng mỗi `code`
 
 | Cột | Ghi chú |
 |---|---|
-| `id` | bigserial PK — của **hàng version này** |
-| `entity_id` | bigserial — **neo dòng dõi**: version đầu `entity_id = id`; version sau copy nguyên. Tham chiếu "luôn theo published mới nhất" trỏ vào đây |
-| `code` | `GL-*` — format theo [`id-conventions`](../00-foundation/id-conventions.md) §7. **Không** UNIQUE một mình |
-| `content_version` | int NOT NULL |
-| — | UNIQUE `(code, content_version)` |
-| — | UNIQUE `(code) WHERE status = 'published'` — partial |
+| `id` | bigserial PK — dùng trực tiếp cho mọi FK và tham chiếu |
+| `code` | `GL-*` UNIQUE NOT NULL — format theo [`id-conventions`](../00-foundation/id-conventions.md) §7 |
 | `template_code` | varchar(20) NOT NULL — mã template trong registry `ALL_TEMPLATES` (không FK) |
 | `title` `description` `instruction` | |
 | `instruction_audio_path` | |
@@ -114,72 +97,29 @@ Mỗi template định nghĩa `code`, `name`, `mechanic`, `layouts`, `content_co
 | `age_min` `age_max` `difficulty` | CHECK như `skills` |
 | `access_tier` | enum NOT NULL — cấm default `free` |
 | `thumbnail_emoji` | ký tự UTF-8 |
-| `status` | enum 6 giá trị |
-| `origin` | enum (`human`\|`ai_assisted`) — soạn thảo có AI agent IDE hỗ trợ không |
-| `authored_in` | enum (`repo_seed`\|`studio`) — hàng này vào DB bằng đường nào |
-| `seed_batch_id` | FK `content_seed_batches` nullable |
 | `skill_dataset_id` | FK `skill_datasets(id)` nullable — level chiếu từ dataset nào |
 | `projection_ref` | varchar nullable — bộ chiếu nào dựng `content_pack`; `NULL` nghĩa là soạn tay (nhóm G, mục 7.5 của [`skill-dataset-model.md`](../05-content/skill-dataset-model.md)) |
-| `created_by_manager_id` `reviewed_by_manager_id` `published_at` `archived_at` | |
+| `created_at` `updated_at` | timestamptz NOT NULL |
 
+Đã xóa các cột `entity_id`, `content_version`, `status`, `origin`, `authored_in`, `seed_batch_id`, `created_by_manager_id`, `reviewed_by_manager_id`, `published_at`, `archived_at`.
 `access_tier` NOT NULL **không có default** — ép người soạn quyết định, thay vì im lặng cho
-không nội dung ([`access-ladder.md`](../00-foundation/access-ladder.md) `BR-LAD-02` — access tier do người quyết định).
+không nội dung ([`access-ladder.md`](../00-foundation/access-ladder.md) `BR-LAD-02`).
 
-### 7.5 `lessons` · `activities` · `lesson_activities` — Lớp 2, có version
+### 7.5 `curricula` · `curriculum_items` · `curriculum_enrollments` · `curriculum_item_progress`
 
-`lessons`: `id` bigserial PK · `entity_id` bigserial (neo dòng dõi, xem đầu §7) · `code` ·
-`content_version` · `title` · `guide` · `target_age_min/max` ·
-`estimated_minutes` CHECK 5–45 · `materials` · `warm_up` · `reflection` ·
-`assessment` · `extension` · `access_tier` · `status` · `origin` · `authored_in` ·
-`seed_batch_id` · audit cột.
-
-`activities`: `id` bigserial PK · `entity_id` bigserial (neo dòng dõi — activity tái sử dụng
-qua nhiều lesson, [`activity-authoring.md`](../06-admin/activity-authoring.md) "sửa một lần, mọi lesson dùng nó đều cập nhật") ·
-`code` · `content_version` · `kind` enum (10 loại) · `title` · `instruction` ·
-`estimated_minutes` · `ref_type` `ref_id` (FK `entity_id` của `game_levels`/`worksheets` tuỳ
-`ref_type`, nếu `kind = digital_game`/`worksheet` — luôn bản `published` mới nhất) ·
-`access_tier` · `status`.
-
-`lesson_activities`: `(lesson_id, position)` PK ghép · `activity_id` FK `activities(entity_id)`
-· `is_required` bool. `lesson_id` là FK `lessons(id)` — hàng này thuộc đúng **một version cụ
-thể** của lesson (quan hệ cha-con nội bộ, ghim). `activity_id` trỏ `entity_id` (neo dòng dõi)
-của activity — luôn bản `published` mới nhất, khớp mô tả tái sử dụng ở [`activity-authoring.md`](../06-admin/activity-authoring.md).
-
-### 7.6 `curricula` · `curriculum_items` · `curriculum_enrollments` · `curriculum_item_progress`
-
-> **Hai loại quan hệ, đừng trộn (D-AE) — cả hai đều dùng `id`, khác nhau ở CỘT NÀO:**
-> (a) quan hệ **cha-con** — một hàng thuộc đúng một version cụ thể của bảng cha, tạo mới mỗi
-> lần copy-on-write — dùng `id` của **đúng hàng version đó** (`lesson_activities.lesson_id`,
-> `curriculum_items.curriculum_id`, `curriculum_enrollments.curriculum_id`). (b) tham chiếu
-> **tới nội dung khác**, cố ý luôn theo bản `published` mới nhất — dùng **`entity_id`** (neo
-> dòng dõi, xem đầu §7), không phải `id` của một hàng version cụ thể và không phải `code`
-> (`curriculum_items.entity_id`, `activities.ref_id`, `lesson_activities.activity_id`) theo
-> `BR-SCT-06` + [`content-versioning.md`](../00-foundation/content-versioning.md) §11 Q2, sửa lại 2026-08-07 theo D-AE.
-
-`curricula`: `id` bigserial PK · `entity_id` bigserial (neo dòng dõi, cho
-`current_curriculum_id` ở `child_profiles`) · `code` · `content_version` · `title` ·
+`curricula`: `id` bigserial PK · `code` UNIQUE NOT NULL · `title` ·
 `description` · `program_type` enum · `age_min` `age_max` · `duration_weeks` ·
-`sessions_per_week` · `access_tier` · `status`.
+`sessions_per_week` · `access_tier` · `created_at` `updated_at` (đã xóa `entity_id`, `content_version`, `status`, và các cột duyệt Studio).
 
-`curriculum_items`: `id` · `curriculum_id` FK `curricula(id)` (cha-con, ghim) ·
+`curriculum_items`: `id` · `curriculum_id` FK `curricula(id)` ·
 `level_no` `module_no` `week_no` `session_no` `position` ·
-`entity_type` enum (`lesson`\|`game_level`) ·
-`entity_id` FK `entity_id` của bảng tương ứng theo `entity_type` (luôn bản `published` mới
-nhất) · `is_required` bool · `estimated_minutes`.
+`entity_type` enum (`game_level`) ·
+`entity_id` bigint NOT NULL (trỏ `game_levels.id`) · `is_required` bool · `estimated_minutes`.
 
-`curriculum_enrollments`: `(child_id, curriculum_id)` FK `curricula(id)` (cha-con, ghim đúng
-version lúc enroll) · `started_at` · `current_week` · `status`.
+`curriculum_enrollments`: `(child_id, curriculum_id)` FK `curricula(id)` · `started_at` · `current_week` · `status`.
 
 `curriculum_item_progress`: `(child_id, curriculum_item_id)` · `completed_at` ·
 `play_session_uuid`.
-
-### 7.7 `worksheets` · `content_images`
-
-`worksheets`: `id` bigserial PK · `entity_id` bigserial (neo dòng dõi — target được của
-`activities.ref_id` khi `ref_type = worksheet`) · `code` · `content_version` · `title` ·
-`learning_objective_ids` bigint[] · `pdf_path` · `access_tier` · `status`.
-
-`content_images`: [`image-storage.md`](image-storage.md) §7.1.
 
 ## 8. API contract
 
@@ -188,40 +128,28 @@ Không có.
 ## 9. Acceptance criteria
 
 ```gherkin
-Scenario: BR-SCT-03 — đúng một bản published
-  Given game level GL-C1-CNT-MATCH-0007 version 1 published
-  When chèn version 2 với status published mà không archive version 1
-  Then partial unique index từ chối
-
-Scenario: BR-SCT-05 — trigger chặn sửa bản published
-  Given một hàng game_levels status published
-  When chạy UPDATE đổi content_pack
-  Then trigger từ chối
+Scenario: BR-SCT-03 — mỗi code là duy nhất
+  Given một hàng game_levels với code GL-C1-CNT-MATCH-0007 đã tồn tại
+  When chèn thêm một hàng game_levels khác có cùng code GL-C1-CNT-MATCH-0007
+  Then ràng buộc UNIQUE từ chối
 
 Scenario: access_tier không có default
   When chèn game_levels không nêu access_tier
   Then DB từ chối vì NOT NULL không default
 
 Scenario: BR-SCT-08 — entity_type ngoài từ vựng bị chặn
-  Given một hàng content_skill_map với entity_type là 'level'
+  Given một hàng content_skill_map với entity_type là 'level' hoặc 'worksheet'
   When ghi vào database
-  Then database từ chối vì giá trị không thuộc enum
-  And thông báo nêu bộ giá trị hợp lệ
+  Then database từ chối vì giá trị không thuộc enum content_entity_type (game_level, curriculum)
 
 Scenario: BR-SCT-07 — weight bị ràng buộc
   When chèn content_skill_map với weight = 1.5
   Then CHECK constraint từ chối
 
-Scenario: BR-SCT-06 — curriculum trỏ bằng entity_id (neo dòng dõi), không ghim version
-  When đọc định nghĩa curriculum_items
-  Then cột tham chiếu là entity_id bigint, khoá ngoại tới cột entity_id của bảng đích
-  And không phải id của một hàng version cụ thể
-
-Scenario: BR-SCT-06 — entity_id neo dòng dõi bất biến qua các version
-  Given một game level code GL-C1-CNT-MATCH-0007 version 1, entity_id = 500
-  When manager tạo version 2 (copy-on-write) rồi publish
-  Then hàng version 2 mới có entity_id = 500 (giống version 1)
-  And curriculum_items trỏ entity_id 500 tự động thấy version 2 sau khi publish
+Scenario: BR-SCT-06 — curriculum_items trỏ trực tiếp vào id của game_levels
+  When đọc định nghĩa curriculum_items và game_levels
+  Then game_levels không có cột entity_id hay content_version
+  And curriculum_items.entity_id lưu id (bigint) của game_levels
 
 Scenario: skill code đúng định dạng
   When chèn skills với code "c1.cnt.3"
@@ -237,24 +165,19 @@ Scenario: strand lồng tối đa một tầng
 
 **Always**
 - `access_tier` NOT NULL không default.
-- Partial unique index cho `published`.
-- Trigger chặn sửa hàng `published`.
+- `code` UNIQUE trên `game_levels`, `curricula`, `skill_datasets`.
 - CHECK cho mọi enum số (`age`, `difficulty`, `weight`).
 
 **Ask first**
-- Thêm cột vào bảng Lớp 2.
-- Đổi enum `program_type` hoặc `activity.kind`.
+- Thêm cột vào `game_levels`, `curricula`, `skill_datasets`.
+- Đổi enum `program_type` hoặc `content_entity_type`.
 
 **Never**
 - Default `free` cho `access_tier`.
 - Trộn nội dung và độ khó vào một cột.
-- Tham chiếu curriculum/nội dung khác bằng `id` của **một hàng version cụ thể** khi cần luôn
-  theo bản published mới nhất — phải dùng `entity_id` (neo dòng dõi). Cấm dùng `code`.
+- Thêm lại cơ chế đa version (`entity_id`, `content_version`) hoặc bảng `content.ts`, `assets.ts`, `content_objective_map`.
 - Lồng strand quá một tầng.
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
-|---|---|---|---|---|
-| ~~1~~ | ~~`curriculum_items` ghim `entity_version` hay luôn lấy bản published mới nhất?~~ **Đóng 2026-08-07 (T7)**: theo [`content-versioning.md`](../00-foundation/content-versioning.md) §11 Q2 — `curriculum_items` **luôn lấy bản `published` mới nhất**, không ghim `entity_version`. Hệ quả: đổi nội dung `published` thì mọi curriculum thấy bản mới ngay lập tức, **không có** đường ghim version. **Sửa cơ chế 2026-08-07 (D-AE lần 2)**: hành vi trên **không đổi**, nhưng cột lưu **không** phải `entity_code` — là `curriculum_items.entity_id` bigint, trỏ cột **`entity_id`** (neo dòng dõi, bất biến qua mọi version) của bảng đích. Join `WHERE entity_id = ? AND status = 'published'`. Theo `BR-DM-13`: FK luôn là `id`, không có ngoại lệ `code` | — | Đã đóng | D-AE |
-| 2 | `lesson_activities` khoá theo `lesson_version` làm mọi version copy lại toàn bộ item — chấp nhận được không? | P3 | chờ P3 | hoãn — copy-on-write đắt về dung lượng nhưng không sai; đo lại khi có số hàng thật, cùng lúc [`content-versioning.md`](../00-foundation/content-versioning.md) Q1 (archive S3) |
+Không còn câu hỏi mở.

@@ -51,15 +51,12 @@ describe("Task 5 — Daily Rollup & Entitlement Expire (BR-TLM-02, BR-TLM-05, BR
     const [gl] = await db
       .insert(gameLevels)
       .values({
-        entityId: Math.floor(Math.random() * 900_000) + 100_000,
         code: glCode,
-        contentVersion: 1,
         templateCode: gtCode,
         title: "Level Rollup Test",
         contentPack: { test: true },
         difficultyParams: { speed: 1 },
         accessTier: "free",
-        status: "published",
       })
       .returning();
     if (!gl) {
@@ -83,7 +80,6 @@ describe("Task 5 — Daily Rollup & Entitlement Expire (BR-TLM-02, BR-TLM-05, BR
     await db.insert(playSessions).values({
       childProfileId: child.id,
       gameLevelId: gl.id,
-      contentVersion: 1,
       templateCode: gtCode,
       completionStatus: "completed",
       durationSeconds: 120,
@@ -97,7 +93,6 @@ describe("Task 5 — Daily Rollup & Entitlement Expire (BR-TLM-02, BR-TLM-05, BR
       childProfileId: null,
       guestDeviceId: `guest-dev-${Date.now()}`,
       gameLevelId: gl.id,
-      contentVersion: 1,
       templateCode: gtCode,
       completionStatus: "completed",
       durationSeconds: 90,

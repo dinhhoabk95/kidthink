@@ -1,11 +1,10 @@
 import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
-import { numeralItem } from "#src/inventories/index";
 
 export const C1_CNT_02_IDENTITY: SkillIdentity = {
   code: "C1.CNT.02",
   strand_code: "C1.CNT",
   competency_code: "C1",
-  name: "Đếm khi di chuyển",
+  name: "Đếm một-một",
   age_min: 4,
   age_max: 4,
   difficulty: 3,
@@ -39,101 +38,129 @@ export const C1_CNT_02_IDENTITY: SkillIdentity = {
 
 export const C1_CNT_02_DATASET: SkillDataset = {
   skill_code: "C1.CNT.02",
-  concept_label: "Đếm khi di chuyển",
+  concept_label: "Đếm một-một",
   surface: "game",
   items: [
-    numeralItem("n0", {
+    {
+      id: "cnt02_1",
+      label: "một chú gấu bông",
+      glyph: "🧸",
+      value: 1,
+      contrast_group: "quantity",
+      ordering: 1,
+      category: {
+        type: "đồ chơi nhỏ",
+      },
       image: {
         kind: "emoji",
-        ref: "0️⃣",
+        ref: "🧸",
       },
-      category: {
-        parity: "chẵn",
-      },
-    }),
-    numeralItem("n1", {
-      image: {
-        kind: "emoji",
-        ref: "1️⃣",
-      },
-      category: {
-        parity: "lẻ",
-      },
-    }),
-    numeralItem("n2", {
-      image: {
-        kind: "emoji",
-        ref: "2️⃣",
-      },
-      category: {
-        parity: "chẵn",
-      },
-    }),
-    numeralItem("n3", {
-      image: {
-        kind: "emoji",
-        ref: "3️⃣",
-      },
-      category: {
-        parity: "lẻ",
-      },
-    }),
-    numeralItem("n4", {
-      image: {
-        kind: "emoji",
-        ref: "4️⃣",
-      },
-      category: {
-        parity: "chẵn",
-      },
-    }),
-    numeralItem("n5", {
-      image: {
-        kind: "emoji",
-        ref: "5️⃣",
-      },
-      category: {
-        parity: "lẻ",
-      },
-    }),
-  ],
-  axes: {
-    parity: {
-      values: ["chẵn", "lẻ"],
     },
-  },
+    {
+      id: "cnt02_2",
+      label: "hai chiếc ô tô",
+      glyph: "🚗🚗",
+      value: 2,
+      contrast_group: "quantity",
+      ordering: 2,
+      category: {
+        type: "đồ chơi nhỏ",
+      },
+      image: {
+        kind: "emoji",
+        ref: "🚗",
+      },
+    },
+    {
+      id: "cnt02_3",
+      label: "ba chiếc máy bay",
+      glyph: "✈️✈️✈️",
+      value: 3,
+      contrast_group: "quantity",
+      ordering: 3,
+      category: {
+        type: "đồ chơi nhỏ",
+      },
+      image: {
+        kind: "emoji",
+        ref: "✈️",
+      },
+    },
+    {
+      id: "cnt02_4",
+      label: "bốn quả bóng bay",
+      glyph: "🎈🎈🎈🎈",
+      value: 4,
+      contrast_group: "quantity",
+      ordering: 4,
+      category: {
+        type: "đồ chơi nhỏ",
+      },
+      image: {
+        kind: "emoji",
+        ref: "🎈",
+      },
+    },
+    {
+      id: "cnt02_5",
+      label: "năm quả bóng tròn",
+      glyph: "⚽⚽⚽⚽⚽",
+      value: 5,
+      contrast_group: "quantity",
+      ordering: 5,
+      category: {
+        type: "đồ chơi nhỏ",
+      },
+      image: {
+        kind: "emoji",
+        ref: "⚽",
+      },
+    },
+  ],
+  relations: [
+    {
+      type: "subset",
+      source_id: "cnt02_1",
+      target_id: "cnt02_5",
+    },
+  ],
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với đếm khi di chuyển",
+      description: "Làm quen cơ bản với đếm một-một",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng đếm khi di chuyển",
+      description: "Nhận biết và chọn đúng đếm một-một",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt đếm khi di chuyển với phương án nhiễu",
+      description: "Phân biệt đếm một-một với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi đếm khi di chuyển",
+      description: "Mở rộng phạm vi đếm một-một",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục đếm khi di chuyển và tự làm một mình",
+      description: "Thuần thục đếm một-một và tự làm một mình",
+      representation: "ten-frame",
     },
   ],
   phrasing: {
-    prompt_template: "Bé đếm xem có mấy {label}?",
-    narration_template: "Chúng mình cùng tìm hiểu về Đếm khi di chuyển nhé",
+    prompt_template: "Bé hãy chọn {label} nhé!",
+    narration_template: "Chúng mình cùng học đếm từng vật một nhé",
   },
-  ordering: ["n0", "n1", "n2", "n3", "n4", "n5"],
+  ordering: ["cnt02_1", "cnt02_2", "cnt02_3", "cnt02_4", "cnt02_5"],
 };
 
 export const C1_CNT_02_SEED: SkillSeed = {
@@ -143,7 +170,7 @@ export const C1_CNT_02_SEED: SkillSeed = {
     {
       code: "GL-C1-CNT-INTRO-0002",
       template: "GT-000",
-      band: "3-5",
+      band: "4-5",
       difficulty: 1,
       theme: "school",
       rounds: 1,
@@ -187,23 +214,6 @@ export const C1_CNT_02_SEED: SkillSeed = {
       difficulty: 1,
       theme: "school",
       rounds: 3,
-      legacy_v1_ref: "D1-01",
-    },
-    {
-      code: "GL-C1-CNT-TAP-0015",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 2,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-TAP-0016",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 3,
-      theme: "ocean",
-      rounds: 3,
     },
     {
       code: "GL-C1-CNT-TCNT-0001",
@@ -214,107 +224,11 @@ export const C1_CNT_02_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C1-CNT-TCNT-0002",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 3,
-      theme: "space",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-TCNT-0003",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 4,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-TCMP-0002",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 2,
-      theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-TCMP-0003",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 3,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-TCMP-0004",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 4,
-      theme: "job",
-      rounds: 3,
-    },
-    {
       code: "GL-C1-CNT-PAIR-0001",
       template: "GT-004",
       band: "4-5",
       difficulty: 2,
       theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-PAIR-0002",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 3,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-PAIR-0003",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 4,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-PAIR-0004",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 2,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-PATT-0001",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 2,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-PATT-0002",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 3,
-      theme: "ocean",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-PATT-0003",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 4,
-      theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-PATT-0004",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 2,
-      theme: "vehicle",
       rounds: 3,
     },
   ],

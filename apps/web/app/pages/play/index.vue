@@ -81,8 +81,6 @@
         <KidRecommendationsRow :recommendations="recommendations" />
       </div>
 
-      <KidLessonRow v-if="activeChildUuid" :key="activeChildUuid" />
-
       <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6">
         <NuxtLink
           v-for="c in competencies"
@@ -104,6 +102,9 @@
           >
             <img
               class="w-full h-full object-contain"
+              decoding="async"
+              height="80"
+              width="80"
               :alt="c.title"
               :src="c.icon"
             >
@@ -174,7 +175,6 @@
   import { onMounted, ref, watch } from "vue";
   import CurriculumProgressCard from "~/components/curriculum-progress-card.vue";
   import KidBadgeCelebrationModal from "~/components/kid/badge-celebration-modal.vue";
-  import KidLessonRow from "~/components/kid/lesson-row.vue";
   import KidMascot from "~/components/kid/mascot.vue";
   import KidParentLockButton from "~/components/kid/parent-lock-button.vue";
   import KidProfileBadge from "~/components/kid/profile-badge.vue";
@@ -282,8 +282,13 @@
 
   // Gợi ý bài chơi kế tiếp cho bé hoặc guest (`next-game-recommendation.md`, S5b)
   const recommendations = ref<RecommendationsPayload | null>(null);
+  let isLoadingRecommendations = false;
 
   async function loadRecommendations(): Promise<void> {
+    if (isLoadingRecommendations) {
+      return;
+    }
+    isLoadingRecommendations = true;
     const endpoint = activeChildUuid.value
       ? "/api/users/play/recommendations"
       : "/api/guest/play/recommendations";
@@ -292,6 +297,8 @@
       recommendations.value = res ?? null;
     } catch {
       recommendations.value = null;
+    } finally {
+      isLoadingRecommendations = false;
     }
   }
 
@@ -302,21 +309,25 @@
   const childBadgesList = ref<
     Array<{ badge_code: string; awarded_at?: string }>
   >([]);
+  let isCheckingBadges = false;
 
   async function checkBadgesForActiveChild(): Promise<void> {
-    if (!activeChildUuid.value) {
+    if (!activeChildUuid.value || isCheckingBadges) {
       return;
     }
+    isCheckingBadges = true;
     try {
-      const mapRes = await apiFetch<{
+      const stickersRes = await apiFetch<{
         badges?: Array<{ badge_code: string; awarded_at?: string }>;
-      }>("/api/users/play/map");
-      childBadgesList.value = mapRes?.badges ?? [];
+      }>("/api/users/play/stickers");
+      childBadgesList.value = stickersRes?.badges ?? [];
       if (childBadgesList.value.length > 0 && activeChildUuid.value) {
         checkAndCelebrate(activeChildUuid.value, childBadgesList.value);
       }
     } catch {
       // Bỏ qua lỗi kết nối để sảnh chơi vẫn tiếp tục hoạt động mượt mà
+    } finally {
+      isCheckingBadges = false;
     }
   }
 
@@ -326,9 +337,11 @@
     loadRecommendations();
   });
 
-  watch(activeChildUuid, () => {
-    checkBadgesForActiveChild();
-    loadRecommendations();
+  watch(activeChildUuid, (newUuid, oldUuid) => {
+    if (newUuid !== oldUuid) {
+      checkBadgesForActiveChild();
+      loadRecommendations();
+    }
   });
 
   function handleConfirmBadge(): void {
@@ -384,3 +397,5 @@
     ...(COMPETENCY_STYLES[entry.code] ?? FALLBACK_STYLE),
   }));
 </script>
+
+<style scoped></style>

@@ -242,7 +242,7 @@ describe("P2.4 Entitlement Grant, Package Catalog Admin & Subscription View Inva
       const allPkgs = Object.values(PACKAGE_CATALOG) as PackageDefinition[];
       const unreleased = allPkgs.filter((p) => !p.is_public);
 
-      expect(unreleased.length).toBe(4);
+      expect(unreleased.length).toBe(3);
       for (const addon of unreleased) {
         expect(addon.is_public).toBe(false);
         expect(addon.requires_spec).toBeDefined();
@@ -302,7 +302,7 @@ describe("P2.4 Entitlement Grant, Package Catalog Admin & Subscription View Inva
   });
 
   describe("Subscription View Invariants (BR-SBV-01..07)", () => {
-    it("Scenario: BR-SBV-01 — user subscription view resolves effective entitlements dynamically from package_entitlements", () => {
+    it("Scenario: BR-SBV-01 — user subscription view resolves effective entitlements dynamically from PACKAGE_CATALOG", () => {
       const pkgStandard = PACKAGE_CATALOG["PKG-standard"];
       if (!pkgStandard) {
         throw new Error("PKG-standard not found");
@@ -385,11 +385,11 @@ describe("P2.4 Entitlement Grant, Package Catalog Admin & Subscription View Inva
     it("Scenario: BR-SBV-05 — multiple active package grants combine entitlement keys seamlessly", () => {
       const standardKeys = PACKAGE_CATALOG["PKG-standard"]?.entitlements ?? [];
       const addonKeys =
-        PACKAGE_CATALOG["PKG-addon_lesson_plan"]?.entitlements ?? [];
+        PACKAGE_CATALOG["PKG-addon_curriculum"]?.entitlements ?? [];
 
       const combined = Array.from(new Set([...standardKeys, ...addonKeys]));
       expect(combined).toContain("play_standard_games");
-      expect(combined).toContain("create_lesson_plan");
+      expect(combined).toContain("create_custom_curriculum");
       expect(combined).toContain("export_pdf");
     });
 

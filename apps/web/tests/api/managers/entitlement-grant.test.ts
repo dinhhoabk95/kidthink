@@ -193,7 +193,7 @@ describe("Task 2 — Manual Entitlement Grant & Revoke Suite (BR-EGR-01..08, D-J
     }
   });
 
-  it("Scenario: grants unreleased add-on (PKG-addon_lesson_plan), stacks expiry, records audit and NO payment order (BR-EGR-01..08, D-JO)", async () => {
+  it("Scenario: grants unreleased add-on (PKG-addon_curriculum), stacks expiry, records audit and NO payment order (BR-EGR-01..08, D-JO)", async () => {
     const db = getOwnerDb();
 
     // Ensure manager exists in managers table for FK
@@ -216,13 +216,13 @@ describe("Task 2 — Manual Entitlement Grant & Revoke Suite (BR-EGR-01..08, D-J
       })
       .returning();
 
-    // Initial grant: PKG-addon_lesson_plan for 50 days
+    // Initial grant: PKG-addon_curriculum for 50 days
     const event1 = mockManagerEvent(
       "super_admin",
       {
-        package_code: "PKG-addon_lesson_plan",
+        package_code: "PKG-addon_curriculum",
         duration_days: 50,
-        grant_reason: "Cấp add-on giáo án 50 ngày cho đối tác sư phạm.",
+        grant_reason: "Cấp add-on lộ trình 50 ngày cho đối tác sư phạm.",
         notify_user: true,
       },
       { uuid: user.uuid }
@@ -240,7 +240,7 @@ describe("Task 2 — Manual Entitlement Grant & Revoke Suite (BR-EGR-01..08, D-J
       .where(
         and(
           eq(entitlements.userId, user.id),
-          eq(entitlements.entitlementKey, "create_lesson_plan")
+          eq(entitlements.entitlementKey, "create_custom_curriculum")
         )
       );
 
@@ -267,7 +267,7 @@ describe("Task 2 — Manual Entitlement Grant & Revoke Suite (BR-EGR-01..08, D-J
     const event2 = mockManagerEvent(
       "super_admin",
       {
-        package_code: "PKG-addon_lesson_plan",
+        package_code: "PKG-addon_curriculum",
         duration_days: 100,
         grant_reason: "Gia hạn thêm 100 ngày cho đối tác vì sự cố hệ thống.",
         notify_user: false,
@@ -284,7 +284,7 @@ describe("Task 2 — Manual Entitlement Grant & Revoke Suite (BR-EGR-01..08, D-J
       .where(
         and(
           eq(entitlements.userId, user.id),
-          eq(entitlements.entitlementKey, "create_lesson_plan")
+          eq(entitlements.entitlementKey, "create_custom_curriculum")
         )
       );
 
@@ -306,7 +306,7 @@ describe("Task 2 — Manual Entitlement Grant & Revoke Suite (BR-EGR-01..08, D-J
       );
     expect(auditEntries.length).toBeGreaterThanOrEqual(2);
     expect(
-      auditEntries.some((e) => e.reason?.includes("Cấp add-on giáo án"))
+      auditEntries.some((e) => e.reason?.includes("Cấp add-on lộ trình"))
     ).toBe(true);
 
     // Test Revocation: DELETE /api/managers/entitlements/[id]

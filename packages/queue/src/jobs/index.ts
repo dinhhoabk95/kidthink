@@ -6,10 +6,8 @@ import { billingDunningSweep } from "./billing-dunning-sweep.js";
 import { billingRenew } from "./billing-renew.js";
 import { billingRenewalReminder } from "./billing-renewal-reminder.js";
 import { emailSend } from "./email-send.js";
-import { embedContent } from "./embed-content.js";
 import { entitlementExpire } from "./entitlement-expire.js";
 import { entitlementSoftUnlockExpire } from "./entitlement-soft-unlock-expire.js";
-import { imageCleanupOrphan } from "./image-cleanup-orphan.js";
 import { orderExpire } from "./order-expire.js";
 import { pdfRender } from "./pdf-render.js";
 import { reportManualGrantsMonthly } from "./report-manual-grants-monthly.js";
@@ -24,7 +22,7 @@ import { sweepPdfCleanup } from "./sweep-pdf-cleanup.js";
  * bảng consumer trong worker đều suy ra từ mảng này, nên không danh sách nào
  * còn trôi lệch được nữa.
  *
- * Thứ tự theo `job-queue.md` §7.1: 10 job MVP trước, job add-on sau.
+ * Thứ tự theo `job-queue.md` §7.1: các job MVP trước, job add-on sau.
  */
 export const JOB_DEFINITIONS = [
   rollupSession,
@@ -34,14 +32,12 @@ export const JOB_DEFINITIONS = [
   orderExpire,
   accountPurge,
   emailSend,
-  imageCleanupOrphan,
   backupPostgres,
   backupVerify,
   entitlementSoftUnlockExpire,
   reportManualGrantsMonthly,
   pdfRender,
   sweepPdfCleanup,
-  embedContent,
   billingRenewalReminder,
   billingRenew,
   billingDunningSweep,

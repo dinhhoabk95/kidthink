@@ -36,6 +36,13 @@ export default defineEventHandler(async (event) => {
   }
   const { challenge } = parsed.data;
 
+  // Enforce IP rate limit before consuming one-time challenge token (BR-MME-07)
+  const ipRateLimit = await enforceTwoAxisRateLimit({
+    routeClass: "auth:mfa",
+    remoteIp: getVerifiedRemoteIp(event),
+  });
+  assertManagerRateLimitAllowed(ipRateLimit.statusCode);
+
   // Consume opaque Redis MFA challenge atomically (BR-AUT-35, BR-MME-03)
   const mfaChallengeService = new MfaChallengeService(getAuthRedisClient());
   const challengePayload = await mfaChallengeService
@@ -58,13 +65,13 @@ export default defineEventHandler(async (event) => {
     throw new InsufficientRoleError();
   }
 
-  // Check rate limit (BR-MME-07)
-  const rateLimit = await enforceTwoAxisRateLimit({
+  // Check account axis rate limit (BR-MME-07)
+  const accountRateLimit = await enforceTwoAxisRateLimit({
     routeClass: "auth:mfa",
     remoteIp: getVerifiedRemoteIp(event),
     accountIdentifier: String(manager.id),
   });
-  assertManagerRateLimitAllowed(rateLimit.statusCode);
+  assertManagerRateLimitAllowed(accountRateLimit.statusCode);
 
   // BR-MME-01: Disallow enrollment if already confirmed or mfaEnabled
   const [existingSetting] = await db

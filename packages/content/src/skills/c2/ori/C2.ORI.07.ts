@@ -42,61 +42,150 @@ export const C2_ORI_07_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "bird_inside",
+      label: "chú chim trong lồng",
+      value: 1,
       image: {
         kind: "emoji",
-        ref: "🍉",
+        ref: "🦜",
       },
       category: {
-        type: "hoa quả",
+        type: "ở bên trong",
+      },
+      contrast_group: "inside",
+    },
+    {
+      id: "fish_inside",
+      label: "cá bơi trong bể",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "🐠",
+      },
+      category: {
+        type: "ở bên trong",
+      },
+      contrast_group: "inside",
+    },
+    {
+      id: "gift_inside",
+      label: "quà trong hộp",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "🎁",
+      },
+      category: {
+        type: "ở bên trong",
+      },
+      contrast_group: "inside",
+    },
+    {
+      id: "pencil_inside",
+      label: "bút trong hộp bút",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "✏️",
+      },
+      category: {
+        type: "ở bên trong",
+      },
+      contrast_group: "inside",
+    },
+    {
+      id: "bird_outside",
+      label: "chú chim bay ngoài trời",
+      value: 5,
+      image: {
+        kind: "emoji",
+        ref: "🕊️",
+      },
+      category: {
+        type: "ở bên ngoài",
+      },
+      contrast_group: "outside",
+    },
+    {
+      id: "dolphin_outside",
+      label: "cá heo ngoài biển rộng",
+      value: 6,
+      image: {
+        kind: "emoji",
+        ref: "🐬",
+      },
+      category: {
+        type: "ở bên ngoài",
+      },
+      contrast_group: "outside",
+    },
+    {
+      id: "box_outside",
+      label: "chiếc hộp rỗng mở nắp",
+      value: 7,
+      image: {
+        kind: "emoji",
+        ref: "📦",
+      },
+      category: {
+        type: "ở bên ngoài",
+      },
+      contrast_group: "outside",
+    },
+    {
+      id: "book_outside",
+      label: "sách đặt ngoài bàn",
+      value: 8,
+      image: {
+        kind: "emoji",
+        ref: "📖",
+      },
+      category: {
+        type: "ở bên ngoài",
+      },
+      contrast_group: "outside",
+    },
+  ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "bird_inside",
+      target_id: "bird_outside",
+      metadata: {
+        dimension: "containment",
       },
     },
     {
-      id: "carrot",
-      label: "củ cà rốt",
-      image: {
-        kind: "emoji",
-        ref: "🥕",
-      },
-      category: {
-        type: "rau củ",
+      type: "contrast",
+      source_id: "fish_inside",
+      target_id: "dolphin_outside",
+      metadata: {
+        dimension: "containment",
       },
     },
     {
-      id: "corn",
-      label: "bắp ngô",
-      image: {
-        kind: "emoji",
-        ref: "🌽",
-      },
-      category: {
-        type: "rau củ",
+      type: "pair",
+      source_id: "bird_inside",
+      target_id: "gift_inside",
+      metadata: {
+        relation: "cùng ở bên trong",
       },
     },
     {
-      id: "dog",
-      label: "con chó",
-      image: {
-        kind: "emoji",
-        ref: "🐕",
-      },
-      category: {
-        type: "động vật",
-      },
-    },
-    {
-      id: "cat",
-      label: "con mèo",
-      image: {
-        kind: "emoji",
-        ref: "🐈",
-      },
-      category: {
-        type: "động vật",
+      type: "pair",
+      source_id: "bird_outside",
+      target_id: "box_outside",
+      metadata: {
+        relation: "cùng ở bên ngoài",
       },
     },
   ],
+  axes: {
+    containment: {
+      values: ["ở bên trong", "ở bên ngoài"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
@@ -128,7 +217,16 @@ export const C2_ORI_07_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Trong nhé",
   },
-  ordering: ["watermelon", "carrot", "corn", "dog", "cat"],
+  ordering: [
+    "bird_inside",
+    "fish_inside",
+    "gift_inside",
+    "pencil_inside",
+    "bird_outside",
+    "dolphin_outside",
+    "box_outside",
+    "book_outside",
+  ],
 };
 
 export const C2_ORI_07_SEED: SkillSeed = {
@@ -144,30 +242,6 @@ export const C2_ORI_07_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C2-POS-LOC-0005",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 2,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-CMP-SIZ-0009",
-      template: "GT-001",
-      band: "4-5",
-      difficulty: 2,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-POS-LOC-0014",
-      template: "GT-022",
-      band: "4-5",
-      difficulty: 3,
-      theme: "school",
-      rounds: 3,
-    },
-    {
       code: "GL-C2-SUB-FAST-0019",
       template: "GT-012",
       band: "5-6",
@@ -176,39 +250,12 @@ export const C2_ORI_07_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C2-POS-LOC-0020",
-      template: "GT-022",
-      band: "5-6",
-      difficulty: 4,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ROT-TRANS-0021",
-      template: "GT-019",
-      band: "4-5",
-      difficulty: 2,
-      theme: "school",
-      rounds: 3,
-      legacy_v1_ref: "D2-04",
-    },
-    {
-      code: "GL-C2-ROT-TRANS-0022",
-      template: "GT-019",
-      band: "4-5",
-      difficulty: 3,
-      theme: "school",
-      rounds: 3,
-      legacy_v1_ref: "D2-04",
-    },
-    {
       code: "GL-C2-ROT-TRANS-0023",
       template: "GT-019",
       band: "5-6",
       difficulty: 4,
       theme: "ocean",
       rounds: 3,
-      legacy_v1_ref: "D2-04",
     },
     {
       code: "GL-C2-BLK-STK-0033",
@@ -217,89 +264,29 @@ export const C2_ORI_07_SEED: SkillSeed = {
       difficulty: 2,
       theme: "school",
       rounds: 3,
-      legacy_v1_ref: "D6-10",
     },
     {
       code: "GL-C2-BLK-STK-0034",
       template: "GT-017",
       band: "5-6",
       difficulty: 3,
-      theme: "school",
+      theme: "home",
       rounds: 3,
-      legacy_v1_ref: "D6-10",
     },
     {
       code: "GL-C2-BLK-STK-0035",
       template: "GT-017",
       band: "5-6",
       difficulty: 4,
-      theme: "school",
+      theme: "farm",
       rounds: 3,
-      legacy_v1_ref: "D6-10",
     },
     {
       code: "GL-C2-BLK-STK-0036",
       template: "GT-017",
       band: "5-6",
       difficulty: 3,
-      theme: "home",
-      rounds: 3,
-      legacy_v1_ref: "D6-10",
-    },
-    {
-      code: "GL-C2-ORI-TCMP-0013",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 1,
-      theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-TCMP-0014",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 2,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-PATT-0011",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 1,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-PATT-0012",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 2,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-SLOT-0013",
-      template: "GT-008",
-      band: "3-4",
-      difficulty: 1,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-SLOT-0014",
-      template: "GT-008",
-      band: "3-4",
-      difficulty: 2,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-MEMO-0013",
-      template: "GT-012",
-      band: "3-4",
-      difficulty: 1,
-      theme: "weather",
+      theme: "nature",
       rounds: 3,
     },
   ],

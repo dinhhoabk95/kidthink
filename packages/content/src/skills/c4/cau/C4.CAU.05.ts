@@ -5,8 +5,8 @@ export const C4_CAU_05_IDENTITY: SkillIdentity = {
   strand_code: "C4.CAU",
   competency_code: "C4",
   name: "Chuỗi nhân quả hai bước",
-  age_min: 6,
-  age_max: 7,
+  age_min: 5,
+  age_max: 6,
   difficulty: 5,
   thinking_processes: ["infer", "sequence"],
   tier: "advanced",
@@ -43,61 +43,164 @@ export const C4_CAU_05_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "spoon",
-      label: "cái thìa",
+      id: "seq_seed",
+      label: "hạt giống nhỏ",
       image: {
         kind: "emoji",
-        ref: "🥄",
+        ref: "🌰",
       },
       category: {
-        type: "đồ dùng",
+        type: "bước đầu tiên",
       },
+      contrast_group: "plant",
+      value: 1,
+      ordering: 1,
+      audio_path: "/audio/vi/c4/seq_seed.mp3",
     },
     {
-      id: "cup",
-      label: "cái cốc",
+      id: "seq_sprout",
+      label: "mầm non nhú",
       image: {
         kind: "emoji",
-        ref: "🥤",
+        ref: "🌱",
       },
       category: {
-        type: "đồ dùng",
+        type: "bước phát triển",
       },
+      contrast_group: "plant",
+      value: 2,
+      ordering: 2,
+      audio_path: "/audio/vi/c4/seq_sprout.mp3",
     },
     {
-      id: "bed",
-      label: "cái giường",
+      id: "seq_flower",
+      label: "bông hoa nở",
       image: {
         kind: "emoji",
-        ref: "🛏️",
+        ref: "🌸",
       },
       category: {
-        type: "đồ dùng",
+        type: "bước phát triển",
       },
+      contrast_group: "plant",
+      value: 3,
+      ordering: 3,
+      audio_path: "/audio/vi/c4/seq_flower.mp3",
     },
     {
-      id: "chair",
-      label: "cái ghế",
-      image: {
-        kind: "emoji",
-        ref: "🪑",
-      },
-      category: {
-        type: "đồ dùng",
-      },
-    },
-    {
-      id: "apple",
-      label: "quả táo",
+      id: "seq_fruit",
+      label: "quả táo chín",
       image: {
         kind: "emoji",
         ref: "🍎",
       },
       category: {
-        type: "hoa quả",
+        type: "kết quả cuối",
       },
+      contrast_group: "plant",
+      value: 4,
+      ordering: 4,
+      audio_path: "/audio/vi/c4/seq_fruit.mp3",
+    },
+    {
+      id: "seq_egg",
+      label: "quả trứng tròn",
+      image: {
+        kind: "emoji",
+        ref: "🥚",
+      },
+      category: {
+        type: "bước đầu tiên",
+      },
+      contrast_group: "animal",
+      value: 1,
+      ordering: 5,
+      audio_path: "/audio/vi/c4/seq_egg.mp3",
+    },
+    {
+      id: "seq_hatch",
+      label: "trứng nứt vỏ",
+      image: {
+        kind: "emoji",
+        ref: "🐣",
+      },
+      category: {
+        type: "bước phát triển",
+      },
+      contrast_group: "animal",
+      value: 2,
+      ordering: 6,
+      audio_path: "/audio/vi/c4/seq_hatch.mp3",
+    },
+    {
+      id: "seq_chick",
+      label: "gà con xinh",
+      image: {
+        kind: "emoji",
+        ref: "🐥",
+      },
+      category: {
+        type: "bước phát triển",
+      },
+      contrast_group: "animal",
+      value: 3,
+      ordering: 7,
+      audio_path: "/audio/vi/c4/seq_chick.mp3",
+    },
+    {
+      id: "seq_hen",
+      label: "gà mẹ lớn",
+      image: {
+        kind: "emoji",
+        ref: "🐔",
+      },
+      category: {
+        type: "kết quả cuối",
+      },
+      contrast_group: "animal",
+      value: 4,
+      ordering: 8,
+      audio_path: "/audio/vi/c4/seq_hen.mp3",
     },
   ],
+  relations: [
+    {
+      type: "sequence",
+      source_id: "seq_seed",
+      target_id: "seq_sprout",
+    },
+    {
+      type: "sequence",
+      source_id: "seq_sprout",
+      target_id: "seq_flower",
+    },
+    {
+      type: "sequence",
+      source_id: "seq_flower",
+      target_id: "seq_fruit",
+    },
+    {
+      type: "sequence",
+      source_id: "seq_egg",
+      target_id: "seq_hatch",
+    },
+    {
+      type: "sequence",
+      source_id: "seq_hatch",
+      target_id: "seq_chick",
+    },
+    {
+      type: "sequence",
+      source_id: "seq_chick",
+      target_id: "seq_hen",
+    },
+  ],
+  axes: {
+    step_seq: {
+      values: ["bước đầu tiên", "bước phát triển", "kết quả cuối"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
@@ -130,7 +233,16 @@ export const C4_CAU_05_DATASET: SkillDataset = {
     narration_template:
       "Chúng mình cùng tìm hiểu về Chuỗi nhân quả hai bước nhé",
   },
-  ordering: ["spoon", "cup", "bed", "chair", "apple"],
+  ordering: [
+    "seq_seed",
+    "seq_sprout",
+    "seq_flower",
+    "seq_fruit",
+    "seq_egg",
+    "seq_hatch",
+    "seq_chick",
+    "seq_hen",
+  ],
 };
 
 export const C4_CAU_05_SEED: SkillSeed = {
@@ -138,51 +250,11 @@ export const C4_CAU_05_SEED: SkillSeed = {
   dataset: C4_CAU_05_DATASET,
   levels: [
     {
-      code: "GL-C4-CAU-PAIR-0009",
-      template: "GT-004",
-      band: "5-6",
-      difficulty: 4,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-CAU-PAIR-0010",
-      template: "GT-004",
-      band: "5-6",
-      difficulty: 5,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-CAU-SORT-0005",
-      template: "GT-006",
-      band: "5-6",
-      difficulty: 4,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-CAU-SORT-0006",
-      template: "GT-006",
-      band: "5-6",
-      difficulty: 5,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
       code: "GL-C4-CAU-SHAD-0009",
       template: "GT-007",
       band: "5-6",
       difficulty: 4,
       theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-CAU-SHAD-0010",
-      template: "GT-007",
-      band: "5-6",
-      difficulty: 5,
-      theme: "ocean",
       rounds: 3,
     },
     {
@@ -194,27 +266,11 @@ export const C4_CAU_05_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C4-CAU-SLOT-0002",
-      template: "GT-008",
-      band: "5-6",
-      difficulty: 5,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
       code: "GL-C4-CAU-SIZE-0009",
       template: "GT-009",
       band: "5-6",
       difficulty: 4,
       theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-CAU-SIZE-0010",
-      template: "GT-009",
-      band: "5-6",
-      difficulty: 5,
-      theme: "space",
       rounds: 3,
     },
   ],

@@ -61,7 +61,7 @@ export const C1_PROB_05_DATASET: SkillDataset = {
       value: 2,
       image: {
         kind: "emoji",
-        ref: "🐱",
+        ref: "😸",
       },
       contrast_group: "yellow",
       category: {
@@ -75,7 +75,7 @@ export const C1_PROB_05_DATASET: SkillDataset = {
       value: 1,
       image: {
         kind: "emoji",
-        ref: "🐕",
+        ref: "🐶",
       },
       contrast_group: "black",
       category: {
@@ -95,6 +95,110 @@ export const C1_PROB_05_DATASET: SkillDataset = {
       category: {
         species: "dog",
         color: "black",
+      },
+    },
+    {
+      id: "cp20_comet_blue",
+      label: "sao chổi xanh lam",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "🔷",
+      },
+      contrast_group: "cp20_space",
+      category: {
+        type: "vũ trụ",
+      },
+    },
+    {
+      id: "cp20_comet_red",
+      label: "sao chổi đỏ rực",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "☄️",
+      },
+      contrast_group: "cp20_space",
+      category: {
+        type: "vũ trụ",
+      },
+    },
+    {
+      id: "cp20_comet_gold",
+      label: "sao chổi vàng sáng",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "⭐",
+      },
+      contrast_group: "cp20_space",
+      category: {
+        type: "vũ trụ",
+      },
+    },
+    {
+      id: "cp20_crystal_blue",
+      label: "pha lê lam",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "💎",
+      },
+      contrast_group: "cp20_treasure",
+      category: {
+        type: "kho báu",
+      },
+    },
+    {
+      id: "cp20_comet_zero",
+      label: "sao băng biến mất",
+      value: 0,
+      image: {
+        kind: "emoji",
+        ref: "🌠",
+      },
+      contrast_group: "cp20_space",
+      category: {
+        type: "vũ trụ",
+      },
+    },
+    {
+      id: "cp20_diamond_gold",
+      label: "kim cương vàng",
+      value: 5,
+      image: {
+        kind: "emoji",
+        ref: "🪙",
+      },
+      contrast_group: "cp20_gate",
+      category: {
+        type: "mật mã",
+      },
+    },
+    {
+      id: "cp20_gear_gold",
+      label: "bánh răng vàng",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "⚙️",
+      },
+      contrast_group: "cp20_gate",
+      category: {
+        type: "mật mã",
+      },
+    },
+    {
+      id: "cp20_key_gold",
+      label: "chìa khóa cổ",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "🗝️",
+      },
+      contrast_group: "cp20_gate",
+      category: {
+        type: "mật mã",
       },
     },
   ],
@@ -167,7 +271,6 @@ export const C1_PROB_05_SEED: SkillSeed = {
       difficulty: 3,
       theme: "home",
       rounds: 3,
-      legacy_v1_ref: "D1-03",
     },
     {
       code: "GL-C1-QNT-TAP-0010",
@@ -176,7 +279,6 @@ export const C1_PROB_05_SEED: SkillSeed = {
       difficulty: 1,
       theme: "festival",
       rounds: 3,
-      legacy_v1_ref: "D1-03",
     },
     {
       code: "GL-C1-PROB-TCNT-0005",
@@ -337,6 +439,36 @@ export const C1_PROB_05_SEED: SkillSeed = {
       difficulty: 3,
       theme: "home",
       rounds: 3,
+    },
+    {
+      code: "GL-C1-PROB-SUB-0314",
+      template: "GT-010",
+      band: "5-6",
+      difficulty: 3,
+      access_tier: "standard",
+      theme: "space",
+      rounds: 3,
+      montessori_ref: "WB20-D3",
+    },
+    {
+      code: "GL-C1-PROB-SUB-0315",
+      template: "GT-010",
+      band: "5-6",
+      difficulty: 4,
+      access_tier: "premium",
+      theme: "art",
+      rounds: 3,
+      montessori_ref: "WB20-D4",
+    },
+    {
+      code: "GL-C1-PROB-SLOT-0316",
+      template: "GT-008",
+      band: "5-6",
+      difficulty: 5,
+      access_tier: "premium",
+      theme: "festival",
+      rounds: 3,
+      montessori_ref: "WB20-D4",
     },
   ],
 };

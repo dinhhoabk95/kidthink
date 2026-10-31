@@ -16,15 +16,19 @@ export const projectGT028: Projection<"GT-028"> = {
       );
     }
 
-    const rng = createRng(opts.seed + (opts.round_index ?? 0));
+    const roundIdx = opts.round_index ?? 0;
     const step = 2; // đếm bước 2
-    const totalSteps = Math.min(Math.max(2, opts.difficulty + 1), 5);
+    const totalSteps = Math.min(
+      Math.max(2, opts.difficulty + 1 + (roundIdx % 2)),
+      5
+    );
     const target_total = totalSteps * step;
     const itemCount = Math.max(4, totalSteps + 1);
 
+    const baseIdx = createRng(opts.seed).nextInt(dataset.items.length);
     const baseItem = safeGetItem(
       dataset.items,
-      rng.nextInt(dataset.items.length)
+      (baseIdx + roundIdx) % dataset.items.length
     );
     const items = Array.from({ length: itemCount }, (_, i) => ({
       item_id: `${baseItem.id}_${i + 1}`,

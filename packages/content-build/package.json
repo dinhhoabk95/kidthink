@@ -29,35 +29,10 @@
   },
   "scripts": {
     "test": "vitest run",
-    "check:skill-quota": "tsx scripts/check-skill-quota.ts",
-    "check:engine-allocation": "tsx scripts/check-engine-allocation.ts",
-    "check:engine-depth": "tsx src/cli/check-engine-depth.ts",
-    "check:engine-seed-matrix": "tsx src/cli/check-engine-seed-matrix.ts",
-    "check:lesson-supply": "tsx src/cli/check-lesson-supply.ts",
-    "check:go-live": "tsx src/cli/check-go-live.ts",
-    "check:legacy-v1": "tsx src/gates/legacy-v1-coverage.ts",
-    "check:skill-progression": "tsx src/gates/skill-progression.ts",
-    "check:seed-gates": "tsx src/cli/check-seed-gates.ts",
-    "check:roadmap-balance": "tsx src/cli/check-roadmap-balance.ts",
-    "derive:demand": "tsx src/cli/derive-demand.ts",
-    "check:content-demand": "tsx src/cli/derive-demand.ts --check",
-    "check:seed-master": "tsx src/cli/check-seed-master.ts",
-    "check:lesson-topics": "tsx src/cli/check-lesson-topics.ts",
-    "report:level-demand": "tsx src/cli/report-level-demand.ts",
-    "seed:all": "tsx src/cli/seed-all.ts",
-    "seed:check": "tsx src/cli/seed-check.ts",
-    "seed:content": "tsx src/cli/seed-content.ts",
-    "seed:report": "tsx src/cli/seed-report.ts",
-    "gen:levels": "tsx src/cli/gen-levels.ts",
-    "reset-content": "tsx scripts/reset-content.ts",
-    "report:tags": "tsx scripts/report-tag-vocabulary.ts",
-    "gen-level-allocation": "tsx scripts/gen-level-allocation.ts",
-    "gen-skill-affinity": "tsx scripts/gen-skill-affinity.ts",
-    "check:engine-behavior-corpus": "tsx src/gates/engine-behavior-corpus.ts"
+    "seed:all": "tsx src/cli/seed-all.ts"
   },
   "imports": {
     "#src/*": "./src/*.ts",
-    "#tests/*": "./tests/*.ts",
-    "#scripts/*": "./scripts/*.ts"
+    "#tests/*": "./tests/*.ts"
   }
 }

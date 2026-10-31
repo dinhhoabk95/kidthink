@@ -78,7 +78,16 @@ describe("dispatchTransactionalEmail — hàng đợi chết (BR-JOB-01)", () =>
     expect(delivery?.error).toContain(OFFLINE);
   });
 
-  it("thất bại phải tới được người trực, không chỉ nằm trong DB", () => {
+  it("thất bại phải tới được người trực, không chỉ nằm trong DB", async () => {
+    await expect(
+      dispatchTransactionalEmail({
+        recipientType: "user",
+        recipientId: userId,
+        code: CODE,
+        to: "offline@example.com",
+        payload: {},
+      })
+    ).rejects.toThrow(OFFLINE);
     expect(alert).toHaveBeenCalledTimes(1);
     expect(vi.mocked(alert).mock.calls[0]?.[0]).toBe("error");
     expect(vi.mocked(alert).mock.calls[0]?.[1]).toContain("Không đẩy được");

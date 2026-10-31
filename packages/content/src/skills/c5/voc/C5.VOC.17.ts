@@ -47,7 +47,7 @@ export const C5_VOC_17_DATASET: SkillDataset = {
       label: "màu hồng",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🩷",
       },
     },
     {
@@ -55,7 +55,7 @@ export const C5_VOC_17_DATASET: SkillDataset = {
       label: "màu cam",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🟧",
       },
     },
     {
@@ -63,7 +63,7 @@ export const C5_VOC_17_DATASET: SkillDataset = {
       label: "màu tím",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🟪",
       },
     },
     {
@@ -71,15 +71,15 @@ export const C5_VOC_17_DATASET: SkillDataset = {
       label: "màu nâu",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🟫",
       },
     },
     {
-      id: "voc_mau_xam",
-      label: "màu xám",
+      id: "voc_mau_vang",
+      label: "màu vàng",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🟨",
       },
     },
     {
@@ -87,7 +87,7 @@ export const C5_VOC_17_DATASET: SkillDataset = {
       label: "màu đen",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "⬛",
       },
     },
     {
@@ -95,7 +95,7 @@ export const C5_VOC_17_DATASET: SkillDataset = {
       label: "màu trắng",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "⬜",
       },
     },
     {
@@ -103,7 +103,7 @@ export const C5_VOC_17_DATASET: SkillDataset = {
       label: "màu xanh lá",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🟩",
       },
     },
     {
@@ -111,7 +111,7 @@ export const C5_VOC_17_DATASET: SkillDataset = {
       label: "màu xanh dương",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🟦",
       },
     },
   ],
@@ -152,7 +152,7 @@ export const C5_VOC_17_DATASET: SkillDataset = {
     "voc_mau_cam",
     "voc_mau_tim",
     "voc_mau_nau",
-    "voc_mau_xam",
+    "voc_mau_vang",
     "voc_mau_den",
     "voc_mau_trang",
     "voc_xanh_la",
@@ -183,14 +183,6 @@ export const C5_VOC_17_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-VOC-TAP-0067",
-      template: "GT-001",
-      band: "4-5",
-      difficulty: 2,
-      theme: "family",
-      rounds: 3,
-    },
-    {
       code: "GL-C5-VOC-TAP-0068",
       template: "GT-001",
       band: "4-5",
@@ -199,59 +191,11 @@ export const C5_VOC_17_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-VOC-TAP-0069",
-      template: "GT-001",
-      band: "4-5",
-      difficulty: 3,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-TAP-0070",
-      template: "GT-001",
-      band: "4-5",
-      difficulty: 4,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
       code: "GL-C5-VOC-MULTI-0056",
       template: "GT-002",
       band: "4-5",
       difficulty: 2,
       theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-MULTI-0057",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 2,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-MULTI-0058",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 3,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-MULTI-0059",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 3,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-MULTI-0060",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 4,
-      theme: "weather",
       rounds: 3,
     },
   ],

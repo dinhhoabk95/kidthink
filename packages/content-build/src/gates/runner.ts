@@ -4,18 +4,11 @@
  */
 
 import type { AgeBand, SkillDataset } from "@mindkid/shared";
-import {
-  isValidLegacyV1Ref,
-  validateActivityModel,
-  validateLessonModel,
-} from "@mindkid/shared";
 import type {
-  ActivitySeed,
   AnyContentSeed,
   ContentSeed,
   GateIssue,
   GateResult,
-  LessonSeed,
 } from "#src/types";
 import {
   isValidTagForAxis,
@@ -30,8 +23,6 @@ import { checkGateMontessori } from "./montessori-gate.js";
 
 const CODE_REGEX =
   /^(?:GL-(?:\d{4}|C[1-6]-[A-Z]{2,5}-[A-Z]{2,5}-\d{4})|C[1-6]\.[A-Z]{2,5}\.\d{2}-GT-\d{3}-\d)$/;
-const ACTIVITY_CODE_REGEX = /^ACT-(?:\d{4}|C[1-6]-[A-Z]{2,5}-\d{4})$/;
-const LESSON_CODE_REGEX = /^LES-(?:\d{4}|C[1-6]-[A-Z]{2,5}-\d{4})$/;
 
 function checkGate0(
   seed: AnyContentSeed,
@@ -40,14 +31,7 @@ function checkGate0(
   const issues: GateIssue[] = [];
   const { header } = seed;
 
-  let pattern = CODE_REGEX;
-  if (seed.kind === "activity") {
-    pattern = ACTIVITY_CODE_REGEX;
-  } else if (seed.kind === "lesson") {
-    pattern = LESSON_CODE_REGEX;
-  }
-
-  if (!pattern.test(header.code)) {
+  if (!CODE_REGEX.test(header.code)) {
     issues.push({
       code: "CODE_FORMAT_INVALID",
       message: `Mã định danh ${header.code} không đúng định dạng.`,
@@ -77,63 +61,6 @@ function checkGate0(
     passed: issues.length === 0,
     issues,
   };
-}
-
-function checkActivityGate1(act: ActivitySeed, issues: GateIssue[]): void {
-  const validation = validateActivityModel({
-    code: act.header.code,
-    kind: act.header.activity_kind,
-    title: act.header.title,
-    instruction: act.header.instruction,
-    materials: act.header.materials,
-    estimated_minutes: act.header.estimated_minutes,
-    skill_codes: act.header.skill_codes,
-    learning_objective_codes: act.header.learning_objective_codes,
-    ref_type: act.header.ref_type,
-    ref_id: act.header.ref_id,
-    ref_code: act.header.ref_code,
-  });
-  if (!validation.ok) {
-    for (const err of validation.errors) {
-      issues.push({
-        code: "ACTIVITY_SCHEMA_ERROR",
-        message: err,
-      });
-    }
-  }
-}
-
-function checkLessonGate1(les: LessonSeed, issues: GateIssue[]): void {
-  const validation = validateLessonModel(
-    {
-      code: les.header.code,
-      title: les.header.title,
-      guide: les.header.guide,
-      target_age_min: les.header.target_age_min,
-      target_age_max: les.header.target_age_max,
-      estimated_minutes: les.header.estimated_minutes,
-      materials: les.header.materials,
-      warm_up: les.header.warm_up,
-      reflection: les.header.reflection,
-      assessment: les.header.assessment,
-      extension: les.header.extension,
-      skill_codes: les.header.skill_codes,
-      learning_objective_codes: les.header.learning_objective_codes,
-      activities: (les.header.activity_codes || []).map((c) => ({
-        activity_code: c,
-        kind: "discussion",
-      })),
-    },
-    { isSeed: true }
-  );
-  if (!validation.ok) {
-    for (const err of validation.errors) {
-      issues.push({
-        code: "LESSON_SCHEMA_ERROR",
-        message: err,
-      });
-    }
-  }
 }
 
 import {
@@ -221,13 +148,7 @@ function checkGate1(
 ): GateResult {
   const issues: GateIssue[] = [];
 
-  if (seed.kind === "activity") {
-    checkActivityGate1(seed as ActivitySeed, issues);
-  } else if (seed.kind === "lesson") {
-    checkLessonGate1(seed as LessonSeed, issues);
-  } else {
-    checkGameLevelGate1(seed as ContentSeed, issues, registry);
-  }
+  checkGameLevelGate1(seed, issues, registry);
 
   return {
     gate: 1,
@@ -253,17 +174,6 @@ function checkGate2(seed: AnyContentSeed): GateResult {
     issues.push({
       code: "TITLE_EMPTY",
       message: "Tiêu đề không được rỗng.",
-    });
-  }
-
-  if (
-    "legacy_v1_ref" in header &&
-    header.legacy_v1_ref &&
-    !isValidLegacyV1Ref(header.legacy_v1_ref)
-  ) {
-    issues.push({
-      code: "LEGACY_V1_REF_INVALID",
-      message: `Mã legacy_v1_ref '${header.legacy_v1_ref}' không thuộc 60 mã game type v1 hợp lệ.`,
     });
   }
 
@@ -361,26 +271,20 @@ const WHITESPACE_REGEX = /\s+/;
 function checkGate4(seed: AnyContentSeed): GateResult {
   const issues: GateIssue[] = [];
 
-  if (seed.kind !== "activity" && seed.kind !== "lesson") {
-    const gl = seed as ContentSeed;
-    const instruction = gl.header.instruction || "";
-    const words = instruction.split(WHITESPACE_REGEX).filter(Boolean);
-    if (gl.header.age_min <= 4 && words.length > 12) {
-      issues.push({
-        code: "INSTRUCTION_TOO_LONG",
-        message: `Chỉ dẫn quá dài (${words.length} từ). Tối đa 12 từ.`,
-      });
-    }
-    const lowerInstruction = instruction.toLowerCase();
-    if (
-      lowerInstruction.includes("không") ||
-      lowerInstruction.includes("đừng")
-    ) {
-      issues.push({
-        code: "NEGATIVE_INSTRUCTION_FORBIDDEN",
-        message: "Chỉ dẫn không được chứa từ phủ định (không, đừng).",
-      });
-    }
+  const instruction = seed.header.instruction || "";
+  const words = instruction.split(WHITESPACE_REGEX).filter(Boolean);
+  if (seed.header.age_min <= 4 && words.length > 12) {
+    issues.push({
+      code: "INSTRUCTION_TOO_LONG",
+      message: `Chỉ dẫn quá dài (${words.length} từ). Tối đa 12 từ.`,
+    });
+  }
+  const lowerInstruction = instruction.toLowerCase();
+  if (lowerInstruction.includes("không") || lowerInstruction.includes("đừng")) {
+    issues.push({
+      code: "NEGATIVE_INSTRUCTION_FORBIDDEN",
+      message: "Chỉ dẫn không được chứa từ phủ định (không, đừng).",
+    });
   }
 
   return {
@@ -534,9 +438,7 @@ function checkGate5(
     );
   }
 
-  if (seed.kind !== "activity" && seed.kind !== "lesson") {
-    checkBannedAgeBand(seed as ContentSeed, registry, issues);
-  }
+  checkBannedAgeBand(seed, registry, issues);
 
   return {
     gate: 5,
@@ -564,15 +466,8 @@ function checkGate6(
     });
   }
 
-  if (
-    seed.kind !== "activity" &&
-    seed.kind !== "lesson" &&
-    existingLevels.length > 0
-  ) {
-    const duplicate = findDuplicateLevelInSameSkill(
-      seed as ContentSeed,
-      existingLevels
-    );
+  if (existingLevels.length > 0) {
+    const duplicate = findDuplicateLevelInSameSkill(seed, existingLevels);
     if (duplicate) {
       issues.push({
         code: "DUPLICATE_CONTENT_IN_SKILL",
@@ -602,17 +497,7 @@ function checkGate7(seed: AnyContentSeed): GateResult {
     });
   }
 
-  let textToScan = `${header.title || ""}`;
-  if (seed.kind === "activity") {
-    const act = seed as ActivitySeed;
-    textToScan += ` ${JSON.stringify(act.header?.instruction || "")} ${act.header?.materials || ""}`;
-  } else if (seed.kind === "lesson") {
-    const les = seed as LessonSeed;
-    textToScan += ` ${JSON.stringify(les.header?.guide || "")} ${les.header?.materials || ""} ${les.header?.assessment || ""}`;
-  } else {
-    const gl = seed as ContentSeed;
-    textToScan += ` ${gl.header?.instruction || ""} ${JSON.stringify(gl.content_pack || {})} ${JSON.stringify(gl.difficulty_params || {})}`;
-  }
+  const textToScan = `${header.title || ""} ${seed.header?.instruction || ""} ${JSON.stringify(seed.content_pack || {})} ${JSON.stringify(seed.difficulty_params || {})}`;
 
   const safetyViolations = scanChildContentSafety(textToScan);
   if (safetyViolations.length > 0) {
@@ -661,10 +546,10 @@ export function runEightGates(
     gates.push(montessoriGate);
   }
 
-  // Chạy Gate 8 và 9 nếu là game_level và có dataset truyền vào
-  if (seed.kind !== "activity" && seed.kind !== "lesson" && dataset) {
-    gates.push(checkGateItemOrigin(seed as ContentSeed, dataset));
-    gates.push(checkGateConceptPresent(seed as ContentSeed, dataset));
+  // Chạy Gate 8 và 9 nếu có dataset truyền vào
+  if (dataset) {
+    gates.push(checkGateItemOrigin(seed, dataset));
+    gates.push(checkGateConceptPresent(seed, dataset));
   }
 
   return gates;

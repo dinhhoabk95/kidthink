@@ -34,6 +34,7 @@ import {
   readMultipartFormData,
 } from "h3";
 import {
+  enforceTwoAxisRateLimit,
   getVerifiedRemoteIp,
   requireWebUserSession,
 } from "#server/utils/auth-runtime";
@@ -229,6 +230,11 @@ function assertOrderAcceptsProof(
 
 export default defineEventHandler(async (event) => {
   const session = requireWebUserSession(event);
+  await enforceTwoAxisRateLimit(
+    event,
+    "payment:proof",
+    String(session.user_id)
+  );
   const orderUuid = getRouterParam(event, "uuid");
   if (!orderUuid) {
     throw new ValidationError("Order UUID is required");

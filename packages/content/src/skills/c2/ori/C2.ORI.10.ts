@@ -42,61 +42,150 @@ export const C2_ORI_10_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "spoon",
-      label: "cái thìa",
+      id: "brick_corner",
+      label: "viên gạch ở góc",
+      value: 1,
       image: {
         kind: "emoji",
-        ref: "🥄",
+        ref: "🧱",
       },
       category: {
-        type: "đồ dùng",
+        type: "ở trong góc",
+      },
+      contrast_group: "corner",
+    },
+    {
+      id: "flag_corner",
+      label: "chiếc cờ cắm ở góc",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "🚩",
+      },
+      category: {
+        type: "ở trong góc",
+      },
+      contrast_group: "corner",
+    },
+    {
+      id: "plant_corner",
+      label: "chậu cây đặt trong góc",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "🪴",
+      },
+      category: {
+        type: "ở trong góc",
+      },
+      contrast_group: "corner",
+    },
+    {
+      id: "web_corner",
+      label: "mạng nhện giăng góc nhà",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "🕸️",
+      },
+      category: {
+        type: "ở trong góc",
+      },
+      contrast_group: "corner",
+    },
+    {
+      id: "table_center",
+      label: "bàn tròn ở trung tâm",
+      value: 5,
+      image: {
+        kind: "emoji",
+        ref: "🛋️",
+      },
+      category: {
+        type: "ở trung tâm",
+      },
+      contrast_group: "center",
+    },
+    {
+      id: "rug_center",
+      label: "tấm thảm giữa phòng",
+      value: 6,
+      image: {
+        kind: "emoji",
+        ref: "🧶",
+      },
+      category: {
+        type: "ở trung tâm",
+      },
+      contrast_group: "center",
+    },
+    {
+      id: "lamp_center",
+      label: "ngọn đèn giữa trần",
+      value: 7,
+      image: {
+        kind: "emoji",
+        ref: "💡",
+      },
+      category: {
+        type: "ở trung tâm",
+      },
+      contrast_group: "center",
+    },
+    {
+      id: "tulip_center",
+      label: "hoa tu-líp tươi",
+      value: 8,
+      image: {
+        kind: "emoji",
+        ref: "🌷",
+      },
+      category: {
+        type: "ở trung tâm",
+      },
+      contrast_group: "center",
+    },
+  ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "brick_corner",
+      target_id: "table_center",
+      metadata: {
+        dimension: "corner_position",
       },
     },
     {
-      id: "cup",
-      label: "cái cốc",
-      image: {
-        kind: "emoji",
-        ref: "🥤",
-      },
-      category: {
-        type: "đồ dùng",
+      type: "contrast",
+      source_id: "flag_corner",
+      target_id: "lamp_center",
+      metadata: {
+        dimension: "corner_position",
       },
     },
     {
-      id: "bed",
-      label: "cái giường",
-      image: {
-        kind: "emoji",
-        ref: "🛏️",
-      },
-      category: {
-        type: "đồ dùng",
+      type: "pair",
+      source_id: "brick_corner",
+      target_id: "plant_corner",
+      metadata: {
+        relation: "cùng ở trong góc",
       },
     },
     {
-      id: "chair",
-      label: "cái ghế",
-      image: {
-        kind: "emoji",
-        ref: "🪑",
-      },
-      category: {
-        type: "đồ dùng",
-      },
-    },
-    {
-      id: "apple",
-      label: "quả táo",
-      image: {
-        kind: "emoji",
-        ref: "🍎",
-      },
-      category: {
-        type: "hoa quả",
+      type: "pair",
+      source_id: "table_center",
+      target_id: "rug_center",
+      metadata: {
+        relation: "cùng ở trung tâm",
       },
     },
   ],
+  axes: {
+    corner_position: {
+      values: ["ở trong góc", "ở trung tâm"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
@@ -128,7 +217,16 @@ export const C2_ORI_10_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Góc nhé",
   },
-  ordering: ["spoon", "cup", "bed", "chair", "apple"],
+  ordering: [
+    "brick_corner",
+    "flag_corner",
+    "plant_corner",
+    "web_corner",
+    "table_center",
+    "rug_center",
+    "lamp_center",
+    "tulip_center",
+  ],
 };
 
 export const C2_ORI_10_SEED: SkillSeed = {
@@ -157,62 +255,6 @@ export const C2_ORI_10_SEED: SkillSeed = {
       band: "4-5",
       difficulty: 2,
       theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-TCNT-0004",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 3,
-      theme: "ocean",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-TCMP-0019",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 2,
-      theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-TCMP-0020",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 3,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-PAIR-0003",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 2,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-PAIR-0004",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 3,
-      theme: "space",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-PATT-0017",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 2,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-PATT-0018",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 3,
-      theme: "body",
       rounds: 3,
     },
   ],

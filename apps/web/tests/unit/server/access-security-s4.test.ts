@@ -14,7 +14,6 @@ type MockRow = Record<string, MockScalar>;
 
 const hoisted = vi.hoisted(() => ({
   curriculumStatus: "in_review" as string,
-  lessonRows: [] as { id: number; code: string; status: string }[],
   activeEntitlements: [] as string[],
   updateCustomGameMock: vi.fn(async () => ({ uuid: "cg-1" })),
   resetSelectIndex: () => undefined,
@@ -35,18 +34,11 @@ vi.mock("@mindkid/db", () => {
     accessTier: "access_tier",
     status: "status",
   };
-  const lessonsTable = {
-    __table: "lessons",
-    id: "id",
-    code: "code",
-    title: "title",
-    status: "status",
-    accessTier: "access_tier",
-  };
   const gameLevelsTable = {
     __table: "gameLevels",
     id: "id",
     code: "code",
+    title: "title",
     contentVersion: "content_version",
     status: "status",
     accessTier: "access_tier",
@@ -68,6 +60,9 @@ vi.mock("@mindkid/db", () => {
       let currentTable = "";
       const resolveRows = (): MockRow[] => {
         if (currentTable === "curricula") {
+          if (hoisted.curriculumStatus !== "published") {
+            return [];
+          }
           return [
             {
               id: 1,
@@ -80,23 +75,19 @@ vi.mock("@mindkid/db", () => {
               durationWeeks: 4,
               sessionsPerWeek: 3,
               accessTier: "free",
-              status: hoisted.curriculumStatus,
             },
           ];
         }
-        if (currentTable === "lessons") {
+        if (currentTable === "gameLevels") {
           if (fields && "accessTier" in fields) {
             return [
               {
-                code: "LS-C1-STD-01",
-                title: "Bài học Standard",
+                code: "GL-C1-CNT-OBJ-0001",
+                title: "Đếm vật Standard",
                 accessTier: "standard",
               },
             ];
           }
-          return hoisted.lessonRows;
-        }
-        if (currentTable === "gameLevels") {
           return [
             {
               id: 100,
@@ -176,7 +167,6 @@ vi.mock("@mindkid/db", () => {
       entityId: "entity_id",
     },
     curriculumRedirects: {},
-    lessons: lessonsTable,
     gameLevels: gameLevelsTable,
     skills: {},
     childProfiles: childProfilesTable,
@@ -255,7 +245,6 @@ describe("Slice S4 Security Fixes ([H-10], [M-11], [L-01])", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     hoisted.curriculumStatus = "in_review";
-    hoisted.lessonRows = [];
     hoisted.activeEntitlements = [];
     hoisted.resetSelectIndex();
   });
@@ -282,14 +271,13 @@ describe("Slice S4 Security Fixes ([H-10], [M-11], [L-01])", () => {
     }
   });
 
-  it("[H-10] deliverGameConfig does NOT exempt fake ?lesson= param from DailyPlayCapReachedError, but exempts published lesson", async () => {
+  it("[H-10] deliverGameConfig enforces DailyPlayCapReachedError when daily play cap is reached", async () => {
     const { deliverGameConfig } = await import(
       "#server/utils/game-config-runtime"
     );
-    hoisted.lessonRows = [];
 
     const fakeEvent = makeEvent({
-      url: "/api/users/games/GL-C1-CNT-OBJ-0001/config?lesson=FAKE-LESSON-999",
+      url: "/api/users/games/GL-C1-CNT-OBJ-0001/config",
     });
 
     await expect(
@@ -303,24 +291,6 @@ describe("Slice S4 Security Fixes ([H-10], [M-11], [L-01])", () => {
       })
     ).rejects.toMatchObject({
       code: "DAILY_PLAY_CAP_REACHED",
-    });
-
-    hoisted.lessonRows = [{ id: 1, code: "LS-C1-PUB-01", status: "published" }];
-    const validLessonEvent = makeEvent({
-      url: "/api/users/games/GL-C1-CNT-OBJ-0001/config?lesson=LS-C1-PUB-01",
-    });
-
-    await expect(
-      deliverGameConfig(validLessonEvent, "GL-C1-CNT-OBJ-0001", {
-        caller: {
-          kind: "user",
-          user_id: "42",
-          active_child_id: "00000000-0000-4000-8000-000000000010",
-        },
-        activeKeys: ["play_login_games"],
-      })
-    ).resolves.toMatchObject({
-      level_code: "GL-C1-CNT-OBJ-0001",
     });
   });
 
@@ -351,13 +321,13 @@ describe("Slice S4 Security Fixes ([H-10], [M-11], [L-01])", () => {
     hoisted.activeEntitlements = [];
 
     const result = await aiAssistantService.suggestContent(42, {
-      contentType: "lesson",
+      contentType: "game",
       limit: 5,
     });
 
     expect(result.suggestions).toHaveLength(1);
     expect(result.suggestions[0]).toMatchObject({
-      code: "LS-C1-STD-01",
+      code: "GL-C1-CNT-OBJ-0001",
       access_tier: "standard",
       locked: true,
     });

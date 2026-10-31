@@ -1,17 +1,12 @@
-import { getOwnerDb, managers } from "@mindkid/db";
+import { gameLevels, getOwnerDb, managers } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
-import duplicateLevelHandler from "#server/api/managers/levels/[code]/[version]/duplicate.post";
-import submitLevelHandler from "#server/api/managers/levels/[code]/[version]/submit.post";
-import getLevelVersionHandler from "#server/api/managers/levels/[code]/[version].get";
-import patchLevelHandler from "#server/api/managers/levels/[code]/[version].patch";
 import getLevelConfigHandler from "#server/api/managers/levels/[code]/config.get";
-import createLevelHandler from "#server/api/managers/levels/index.post";
+import getLevelsHandler from "#server/api/managers/levels/index.get";
 
 const CSRF_TOKEN =
   "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 
-const LEVEL_CODE_REGEX = /^GL-C1-[A-Z]{2,5}-[A-Z]{2,5}-\d{4}$/;
 let testManagerId = 1;
 
 beforeEach(async () => {
@@ -45,7 +40,7 @@ function mockEvent(
   method: string,
   managerRole?: "super_admin" | "content_reviewer",
   params: Record<string, string> = {},
-  body?: unknown,
+  body?: Record<string, string>,
   query: Record<string, string> = {}
 ) {
   const headersMap: Record<string, string> = {};
@@ -85,259 +80,32 @@ function mockEvent(
     query,
     _requestBody: body,
     _body: body,
-  } as any;
+  };
 }
 
-describe("Game Level Studio & Management API (BR-STU-01 - BR-STU-10, Spec §7.2)", () => {
+describe("Game Level Read-Only Management API", () => {
   it("rejects unauthenticated requests", async () => {
-    const event = mockEvent("POST", undefined, {}, { template_code: "GT-001" });
-    await expect(createLevelHandler(event)).rejects.toThrow();
-  });
-
-  it("POST /api/managers/levels creates draft level with valid code format (BR-STU-04)", async () => {
-    const event = mockEvent(
-      "POST",
-      "content_reviewer",
-      {},
-      {
-        template_code: "GT-001",
-        title: "Đếm số bông hoa",
-        instruction: "Hãy đếm số bông hoa xuất hiện",
-        access_tier: "free",
-        content_pack: {
-          prompt: "Tìm quả táo màu đỏ",
-          target_item: {
-            item_id: "apple_target",
-            asset: { kind: "emoji", ref: "🍎" },
-          },
-          options: [
-            {
-              item_id: "apple_opt",
-              asset: { kind: "emoji", ref: "🍎" },
-              is_correct: true,
-            },
-            {
-              item_id: "banana_opt",
-              asset: { kind: "emoji", ref: "🍌" },
-              is_correct: false,
-            },
-          ],
-        },
-      }
-    );
-
-    const res = (await createLevelHandler(event)) as any;
-    expect(res).toBeDefined();
-    expect(res.id).toBeDefined();
-    expect(res.code).toMatch(LEVEL_CODE_REGEX);
-    expect(res.contentVersion).toBe(1);
-    expect(res.status).toBe("draft");
-    expect(res.title).toBe("Đếm số bông hoa");
-  });
-
-  it("Task #300 S2 — POST /api/managers/levels rejects missing access_tier with 422 VALIDATION_FAILED (BR-STU-06)", async () => {
-    const missingTierEvt = mockEvent(
-      "POST",
-      "content_reviewer",
-      {},
-      {
-        template_code: "GT-001",
-        title: "Màn chơi thiếu access_tier",
-      }
-    );
-
-    await expect(createLevelHandler(missingTierEvt)).rejects.toMatchObject({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-    });
-
-    const validTierEvt = mockEvent(
-      "POST",
-      "content_reviewer",
-      {},
-      {
-        template_code: "GT-001",
-        title: "Màn chơi có access_tier tường minh",
-        access_tier: "standard",
-      }
-    );
-    const created = await createLevelHandler(validTierEvt);
-    expect(created.accessTier).toBe("standard");
-  });
-
-  it("GET /api/managers/levels/[code]/[version] retrieves level details", async () => {
-    // 1. Create a level first
-    const createEvt = mockEvent(
-      "POST",
-      "content_reviewer",
-      {},
-      {
-        template_code: "GT-002",
-        title: "Tìm số còn thiếu",
-        access_tier: "free",
-      }
-    );
-    const created = (await createLevelHandler(createEvt)) as any;
-
-    // 2. Fetch by code and version
-    const getEvt = mockEvent("GET", "content_reviewer", {
-      code: created.code,
-      version: "1",
-    });
-    const fetched = (await getLevelVersionHandler(getEvt)) as any;
-
-    expect(fetched.code).toBe(created.code);
-    expect(fetched.contentVersion).toBe(1);
-    expect(fetched.title).toBe("Tìm số còn thiếu");
-  });
-
-  it("PATCH /api/managers/levels/[code]/[version] updates draft and enforces optimistic concurrency (BR-STU-03)", async () => {
-    // 1. Create level
-    const createEvt = mockEvent(
-      "POST",
-      "content_reviewer",
-      {},
-      {
-        template_code: "GT-001",
-        title: "Tiêu đề cũ",
-        access_tier: "free",
-      }
-    );
-    const created = (await createLevelHandler(createEvt)) as any;
-
-    // 2. Update with matching expected_version
-    const patchEvt = mockEvent(
-      "PATCH",
-      "content_reviewer",
-      { code: created.code, version: "1" },
-      {
-        title: "Tiêu đề mới",
-        expected_version: 1,
-      }
-    );
-    const updated = (await patchLevelHandler(patchEvt)) as any;
-    expect(updated.title).toBe("Tiêu đề mới");
-
-    // 3. Update with mismatched expected_version -> 409 VERSION_CONFLICT
-    const conflictEvt = mockEvent(
-      "PATCH",
-      "content_reviewer",
-      { code: created.code, version: "1" },
-      {
-        title: "Sẽ bị xung đột",
-        expected_version: 99,
-      }
-    );
-
-    try {
-      await patchLevelHandler(conflictEvt);
-      expect.fail("Should have thrown 409 VERSION_CONFLICT");
-    } catch (err: any) {
-      expect(err.statusCode || err.status).toBe(409);
-    }
-  });
-
-  it("PATCH /api/managers/levels/[code]/[version] rejects invalid content_pack with 422 (BR-STU-02)", async () => {
-    const createEvt = mockEvent(
-      "POST",
-      "content_reviewer",
-      {},
-      {
-        template_code: "GT-001",
-        title: "Level test validation",
-        access_tier: "free",
-      }
-    );
-    const created = (await createLevelHandler(createEvt)) as any;
-
-    const invalidPatchEvt = mockEvent(
-      "PATCH",
-      "content_reviewer",
-      { code: created.code, version: "1" },
-      {
-        content_pack: {
-          prompt: "", // invalid empty prompt
-          target_number: -999,
-          options: "not-an-array",
-        },
-      }
-    );
-
-    try {
-      await patchLevelHandler(invalidPatchEvt);
-      expect.fail("Should have thrown 422 CONTENT_PACK_INVALID");
-    } catch (err: any) {
-      expect(err.statusCode || err.status).toBe(422);
-    }
-  });
-
-  it("POST /api/managers/levels/[code]/[version]/duplicate creates cloned draft level (D-KA)", async () => {
-    // 1. Create level
-    const createEvt = mockEvent(
-      "POST",
-      "content_reviewer",
-      {},
-      {
-        template_code: "GT-001",
-        title: "Bản gốc",
-        access_tier: "free",
-      }
-    );
-    const created = (await createLevelHandler(createEvt)) as any;
-
-    // 2. Duplicate
-    const dupEvt = mockEvent("POST", "content_reviewer", {
-      code: created.code,
-      version: "1",
-    });
-    const cloned = (await duplicateLevelHandler(dupEvt)) as any;
-
-    expect(cloned.code).not.toBe(created.code);
-    expect(cloned.contentVersion).toBe(1);
-    expect(cloned.status).toBe("draft");
-    expect(cloned.title).toContain("Bản gốc");
-  });
-
-  it("POST /api/managers/levels/[code]/[version]/submit transitions draft to in_review (BR-STU-07)", async () => {
-    // 1. Create level with valid content pack & access tier
-    const createEvt = mockEvent(
-      "POST",
-      "content_reviewer",
-      {},
-      {
-        template_code: "GT-001",
-        title: "Bài học hoàn chỉnh",
-        instruction: "Đếm số bông hoa",
-        access_tier: "standard",
-        content_pack: {
-          prompt: "Đếm hoa",
-          hasCorrectAnswer: true,
-          correctAnswers: ["3"],
-          items: [{ isCorrect: true, emoji: "🌸" }],
-        },
-      }
-    );
-    const created = (await createLevelHandler(createEvt)) as any;
-
-    // 2. Submit for review
-    const submitEvt = mockEvent("POST", "content_reviewer", {
-      code: created.code,
-      version: "1",
-    });
-    const result = (await submitLevelHandler(submitEvt)) as any;
-    expect(result.status).toBe("in_review");
+    const event = mockEvent("GET", undefined);
+    await expect(
+      getLevelsHandler(event as Parameters<typeof getLevelsHandler>[0])
+    ).rejects.toThrow();
   });
 
   it("GET /api/managers/levels/[code]/config delivers preview config without gating (D-JW, D-JX, BR-LPV-05)", async () => {
-    const createEvt = mockEvent(
-      "POST",
-      "content_reviewer",
-      {},
-      {
-        template_code: "GT-001",
+    const db = getOwnerDb();
+    const code = `GL-C1-TST-CFG-${String(Date.now()).slice(-4)}`;
+    await db
+      .insert(gameLevels)
+      .values({
+        code,
+        templateCode: "GT-001",
         title: "Level Preview Config",
-        access_tier: "premium",
-        content_pack: {
+        instruction: "Tìm quả táo màu đỏ",
+        ageMin: 3,
+        ageMax: 4,
+        difficulty: 1,
+        accessTier: "premium",
+        contentPack: {
           prompt: "Tìm quả táo màu đỏ",
           target_item: {
             item_id: "apple_target",
@@ -356,107 +124,22 @@ describe("Game Level Studio & Management API (BR-STU-01 - BR-STU-10, Spec §7.2)
             },
           ],
         },
-      }
-    );
-    const created = (await createLevelHandler(createEvt)) as any;
+        difficultyParams: {},
+      })
+      .onConflictDoNothing();
 
     const configEvt = mockEvent(
       "GET",
       "content_reviewer",
-      { code: created.code },
+      { code },
       undefined,
       { version: "1" }
     );
-    const config = (await getLevelConfigHandler(configEvt)) as any;
+    const config = await getLevelConfigHandler(
+      configEvt as Parameters<typeof getLevelConfigHandler>[0]
+    );
     expect(config).toBeDefined();
-    expect(config.level_code).toBe(created.code);
+    expect(config.level_code).toBe(code);
     expect(config.content_version).toBe(1);
-  });
-
-  it("Task #92 — POST /api/managers/levels rejects invalid layout_id with 422 LAYOUT_NOT_SUPPORTED (BR-LAY-02, BR-LAY-10)", async () => {
-    const createEvt = mockEvent(
-      "POST",
-      "content_reviewer",
-      {},
-      {
-        template_code: "GT-001",
-        title: "Level with Invalid Layout",
-        access_tier: "free",
-        difficulty_params: {
-          layout_id: "step-ladder", // GT-001 does not support step-ladder
-        },
-        content_pack: {
-          prompt: "Tìm quả táo",
-          target_item: {
-            item_id: "t1",
-            asset: { kind: "emoji", ref: "🍎" },
-          },
-          options: [
-            {
-              item_id: "o1",
-              asset: { kind: "emoji", ref: "🍎" },
-              is_correct: true,
-            },
-            {
-              item_id: "o2",
-              asset: { kind: "emoji", ref: "🍌" },
-              is_correct: false,
-            },
-          ],
-        },
-      }
-    );
-
-    await expect(createLevelHandler(createEvt)).rejects.toMatchObject({
-      statusCode: 422,
-      statusMessage: "LAYOUT_NOT_SUPPORTED",
-    });
-  });
-
-  it("Task #305 — PATCH /api/managers/levels/[code]/[version] rejects invalid layout_id with 422 LAYOUT_NOT_SUPPORTED (BR-LAY-02)", async () => {
-    const createEvt = mockEvent(
-      "POST",
-      "content_reviewer",
-      {},
-      {
-        template_code: "GT-001",
-        title: "Level for PATCH Layout Test",
-        access_tier: "free",
-      }
-    );
-    const created = await createLevelHandler(createEvt);
-
-    const invalidLayoutPatchEvt = mockEvent(
-      "PATCH",
-      "content_reviewer",
-      { code: created.code, version: "1" },
-      {
-        difficulty_params: {
-          layout_id: "card-flip-grid",
-        },
-      }
-    );
-
-    await expect(
-      patchLevelHandler(invalidLayoutPatchEvt)
-    ).rejects.toMatchObject({
-      statusCode: 422,
-      statusMessage: "LAYOUT_NOT_SUPPORTED",
-    });
-
-    const validLayoutPatchEvt = mockEvent(
-      "PATCH",
-      "content_reviewer",
-      { code: created.code, version: "1" },
-      {
-        difficulty_params: {
-          layout_id: "grid",
-        },
-      }
-    );
-    const updated = await patchLevelHandler(validLayoutPatchEvt);
-    expect(updated.difficultyParams).toMatchObject({
-      layout_id: "grid",
-    });
   });
 });

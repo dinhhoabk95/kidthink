@@ -15,11 +15,7 @@ import {
 import { timestamps } from "./columns.ts";
 import { users } from "./identity.ts";
 
-export const exportJobKindEnum = pgEnum("export_job_kind", [
-  "lesson_plan",
-  "worksheet",
-  "curriculum_plan",
-]);
+export const exportJobKindEnum = pgEnum("export_job_kind", ["curriculum_plan"]);
 
 export const exportJobStatusEnum = pgEnum("export_job_status", [
   "queued",

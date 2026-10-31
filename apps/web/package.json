@@ -6,6 +6,7 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev --port 3000",
+    "typecheck": "vue-tsc --noEmit -p .nuxt/tsconfig.app.json && vue-tsc --noEmit -p .nuxt/tsconfig.server.json && vue-tsc --noEmit -p .nuxt/tsconfig.shared.json && vue-tsc --noEmit -p .nuxt/tsconfig.node.json",
     "test": "vitest run"
   },
   "dependencies": {
@@ -34,6 +35,7 @@
   "devDependencies": {
     "@nuxt/fonts": "catalog:",
     "@nuxt/ui": "catalog:",
+    "@t3-oss/env-nuxt": "catalog:",
     "nuxt": "catalog:",
     "nuxt-auth-utils": "catalog:",
     "nuxt-security": "catalog:",

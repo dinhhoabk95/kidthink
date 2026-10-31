@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import { writeAudit } from "@mindkid/audit";
 import { checkRateLimit } from "@mindkid/cache";
 import {
@@ -19,7 +20,7 @@ import {
   ValidationError,
 } from "@mindkid/errors/common";
 import { getPrivateSignedUrl, uploadPrivateAsset } from "@mindkid/storage";
-import { and, desc, eq, gte, lte, type SQL, sql } from "drizzle-orm";
+import { and, desc, eq, gte, inArray, lte, type SQL, sql } from "drizzle-orm";
 import { defineEventHandler, getQuery, getRouterParam } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
@@ -54,9 +55,10 @@ type TimestampColumn =
 
 export async function checkExportRateLimit(managerId: number): Promise<void> {
   const result = await checkRateLimit(
-    `rl:acc:data-export:manager:${managerId}`,
+    `acc:data-export:manager:${managerId}`,
     EXPORT_RATE_LIMIT,
-    EXPORT_RATE_WINDOW_SECONDS
+    EXPORT_RATE_WINDOW_SECONDS,
+    false
   );
   if (!result.allowed) {
     throw new RateLimitedError(
@@ -195,10 +197,8 @@ async function exportRevenueCsv(
     .select({ count: sql<number>`count(*)::int` })
     .from(paymentOrders)
     .where(whereCondition);
-  assertRowCountWithinLimit(
-    countRow?.count ?? 0,
-    options.maxRows ?? MAX_EXPORT_ROWS
-  );
+  const maxRows = options.maxRows ?? MAX_EXPORT_ROWS;
+  assertRowCountWithinLimit(countRow?.count ?? 0, maxRows);
 
   const rows = await db
     .select({
@@ -213,12 +213,14 @@ async function exportRevenueCsv(
     .from(paymentOrders)
     .leftJoin(users, eq(paymentOrders.userId, users.id))
     .where(whereCondition)
-    .orderBy(desc(paymentOrders.createdAt));
+    .orderBy(desc(paymentOrders.createdAt))
+    .limit(maxRows + 1);
 
   let csvContent =
     "\uFEFFMã đơn,Gói,Số tiền (VNĐ),Trạng thái,Email Người dùng,Thời gian tạo\n";
   for (const r of rows) {
-    csvContent += `"${sanitizeCsvCell(r.orderCode)}","${sanitizeCsvCell(r.packageCode)}",${r.amountVnd},"${sanitizeCsvCell(r.status)}","${sanitizeCsvCell(r.userEmail)}","${r.createdAt.toISOString()}"\n`;
+    const redactedEmail = r.userEmail ? redactEmail(r.userEmail) : "";
+    csvContent += `"${sanitizeCsvCell(r.orderCode)}","${sanitizeCsvCell(r.packageCode)}",${r.amountVnd},"${sanitizeCsvCell(r.status)}","${sanitizeCsvCell(redactedEmail)}","${r.createdAt.toISOString()}"\n`;
   }
   return { csvContent, rowCount: rows.length };
 }
@@ -232,10 +234,8 @@ async function exportSubscriptionsCsv(
     .select({ count: sql<number>`count(*)::int` })
     .from(users)
     .where(whereCondition);
-  assertRowCountWithinLimit(
-    countRow?.count ?? 0,
-    options.maxRows ?? MAX_EXPORT_ROWS
-  );
+  const maxRows = options.maxRows ?? MAX_EXPORT_ROWS;
+  assertRowCountWithinLimit(countRow?.count ?? 0, maxRows);
 
   const rows = await db
     .select({
@@ -245,7 +245,8 @@ async function exportSubscriptionsCsv(
     })
     .from(users)
     .where(whereCondition)
-    .orderBy(desc(users.createdAt));
+    .orderBy(desc(users.createdAt))
+    .limit(maxRows + 1);
 
   let csvContent = "\uFEFFUser ID,Email (Rút gọn),Ngày đăng ký\n";
   for (const r of rows) {
@@ -264,27 +265,24 @@ async function exportContentKpiCsv(
     .select({ count: sql<number>`count(*)::int` })
     .from(gameLevels)
     .where(whereCondition);
-  assertRowCountWithinLimit(
-    countRow?.count ?? 0,
-    options.maxRows ?? MAX_EXPORT_ROWS
-  );
+  const maxRows = options.maxRows ?? MAX_EXPORT_ROWS;
+  assertRowCountWithinLimit(countRow?.count ?? 0, maxRows);
 
   const rows = await db
     .select({
       code: gameLevels.code,
-      version: gameLevels.contentVersion,
       title: gameLevels.title,
       accessTier: gameLevels.accessTier,
-      status: gameLevels.status,
     })
     .from(gameLevels)
     .where(whereCondition)
-    .orderBy(desc(gameLevels.updatedAt));
+    .orderBy(desc(gameLevels.updatedAt))
+    .limit(maxRows + 1);
 
   let csvContent =
     "\uFEFFMã màn chơi,Phiên bản,Tiêu đề,Gói truy cập,Trạng thái\n";
   for (const r of rows) {
-    csvContent += `"${sanitizeCsvCell(r.code)}",${r.version},"${sanitizeCsvCell(r.title)}","${sanitizeCsvCell(r.accessTier)}","${sanitizeCsvCell(r.status)}"\n`;
+    csvContent += `"${sanitizeCsvCell(r.code)}",1,"${sanitizeCsvCell(r.title)}","${sanitizeCsvCell(r.accessTier)}","published"\n`;
   }
   return { csvContent, rowCount: rows.length };
 }
@@ -298,10 +296,8 @@ async function exportSkillCoverageCsv(
     .select({ count: sql<number>`count(*)::int` })
     .from(skills)
     .where(whereCondition);
-  assertRowCountWithinLimit(
-    countRow?.count ?? 0,
-    options.maxRows ?? MAX_EXPORT_ROWS
-  );
+  const maxRows = options.maxRows ?? MAX_EXPORT_ROWS;
+  assertRowCountWithinLimit(countRow?.count ?? 0, maxRows);
 
   const rows = await db
     .select({
@@ -312,7 +308,8 @@ async function exportSkillCoverageCsv(
     })
     .from(skills)
     .where(whereCondition)
-    .orderBy(skills.code);
+    .orderBy(skills.code)
+    .limit(maxRows + 1);
 
   let csvContent = "\uFEFFMã kỹ năng,Tên kỹ năng,Độ khó,Bậc\n";
   for (const r of rows) {
@@ -330,16 +327,24 @@ async function exportAuditCsv(
     .select({ count: sql<number>`count(*)::int` })
     .from(auditLogs)
     .where(whereCondition);
-  assertRowCountWithinLimit(
-    countRow?.count ?? 0,
-    options.maxRows ?? MAX_EXPORT_ROWS
-  );
+  const maxRows = options.maxRows ?? MAX_EXPORT_ROWS;
+  assertRowCountWithinLimit(countRow?.count ?? 0, maxRows);
 
   const rows = await db
-    .select()
+    .select({
+      uuid: auditLogs.uuid,
+      actorType: auditLogs.actorType,
+      actorId: auditLogs.actorId,
+      action: auditLogs.action,
+      entityType: auditLogs.entityType,
+      entityId: auditLogs.entityId,
+      reason: auditLogs.reason,
+      createdAt: auditLogs.createdAt,
+    })
     .from(auditLogs)
     .where(whereCondition)
-    .orderBy(desc(auditLogs.createdAt));
+    .orderBy(desc(auditLogs.createdAt))
+    .limit(maxRows + 1);
 
   let csvContent =
     "\uFEFFUUID,Actor Type,Actor ID,Action,Entity Type,Entity ID,Reason,Created At\n";
@@ -358,26 +363,23 @@ async function exportCurriculumHealthCsv(
     .select({ count: sql<number>`count(*)::int` })
     .from(curricula)
     .where(whereCondition);
-  assertRowCountWithinLimit(
-    countRow?.count ?? 0,
-    options.maxRows ?? MAX_EXPORT_ROWS
-  );
+  const maxRows = options.maxRows ?? MAX_EXPORT_ROWS;
+  assertRowCountWithinLimit(countRow?.count ?? 0, maxRows);
 
   const rows = await db
     .select({
       id: curricula.id,
       code: curricula.code,
-      version: curricula.contentVersion,
       title: curricula.title,
       programType: curricula.programType,
-      status: curricula.status,
       durationWeeks: curricula.durationWeeks,
       sessionsPerWeek: curricula.sessionsPerWeek,
       createdAt: curricula.createdAt,
     })
     .from(curricula)
     .where(whereCondition)
-    .orderBy(desc(curricula.createdAt));
+    .orderBy(desc(curricula.createdAt))
+    .limit(maxRows + 1);
 
   let csvContent =
     "\uFEFFMã chương trình,Phiên bản,Tiêu đề,Loại hình,Trạng thái,Số tuần,Số buổi/tuần,Số hoạt động,Số học sinh đang học,Thời gian tạo\n";
@@ -386,26 +388,35 @@ async function exportCurriculumHealthCsv(
     return { csvContent, rowCount: 0 };
   }
 
-  const itemCounts = await db
-    .select({
-      curriculumId: curriculumItems.curriculumId,
-      count: sql<number>`count(*)::int`,
-    })
-    .from(curriculumItems)
-    .groupBy(curriculumItems.curriculumId);
+  const curriculumIds = rows.map((r) => r.id);
+
+  const [itemCounts, enrollmentCounts] = await Promise.all([
+    db
+      .select({
+        curriculumId: curriculumItems.curriculumId,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(curriculumItems)
+      .where(inArray(curriculumItems.curriculumId, curriculumIds))
+      .groupBy(curriculumItems.curriculumId),
+    db
+      .select({
+        curriculumId: curriculumEnrollments.curriculumId,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(curriculumEnrollments)
+      .where(
+        and(
+          eq(curriculumEnrollments.status, "active"),
+          inArray(curriculumEnrollments.curriculumId, curriculumIds)
+        )
+      )
+      .groupBy(curriculumEnrollments.curriculumId),
+  ]);
 
   const itemCountMap = new Map<number, number>(
     itemCounts.map((ic) => [ic.curriculumId, ic.count])
   );
-
-  const enrollmentCounts = await db
-    .select({
-      curriculumId: curriculumEnrollments.curriculumId,
-      count: sql<number>`count(*)::int`,
-    })
-    .from(curriculumEnrollments)
-    .where(eq(curriculumEnrollments.status, "active"))
-    .groupBy(curriculumEnrollments.curriculumId);
 
   const enrollmentCountMap = new Map<number, number>(
     enrollmentCounts.map((ec) => [ec.curriculumId, ec.count])
@@ -415,7 +426,7 @@ async function exportCurriculumHealthCsv(
     const itemsCount = itemCountMap.get(r.id) ?? 0;
     const activeEnrollments = enrollmentCountMap.get(r.id) ?? 0;
 
-    csvContent += `"${sanitizeCsvCell(r.code)}",${r.version},"${sanitizeCsvCell(r.title)}","${sanitizeCsvCell(r.programType)}","${sanitizeCsvCell(r.status)}",${r.durationWeeks},${r.sessionsPerWeek},${itemsCount},${activeEnrollments},"${r.createdAt.toISOString()}"\n`;
+    csvContent += `"${sanitizeCsvCell(r.code)}",1,"${sanitizeCsvCell(r.title)}","${sanitizeCsvCell(r.programType)}","published",${r.durationWeeks},${r.sessionsPerWeek},${itemsCount},${activeEnrollments},"${r.createdAt.toISOString()}"\n`;
   }
 
   return { csvContent, rowCount: rows.length };
@@ -448,7 +459,7 @@ export async function generateCsvData(
 }
 
 export default defineEventHandler(async (event) => {
-  const manager = await requireManagerSession(event);
+  const manager = requireManagerSession(event);
 
   // BR-EXP-06: super_admin only
   if (manager.role !== "super_admin") {
@@ -503,7 +514,7 @@ export default defineEventHandler(async (event) => {
   });
 
   // Save CSV to private storage and create 15-min signed URL (BR-EXP-04)
-  const exportKey = `exports/${kind}_${Date.now()}.csv`;
+  const exportKey = `exports/${kind}_${Date.now()}_${crypto.randomUUID().slice(0, 8)}.csv`;
   await uploadPrivateAsset({
     key: exportKey,
     body: Buffer.from(csvContent, "utf-8"),

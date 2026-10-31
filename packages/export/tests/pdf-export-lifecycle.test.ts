@@ -1,8 +1,8 @@
 import {
   exportJobs,
   getOwnerDb,
-  lessonPlanItems,
-  lessonPlans,
+  personalCurricula,
+  personalCurriculumItems,
   users,
 } from "@mindkid/db";
 import { eq } from "drizzle-orm";
@@ -36,13 +36,14 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
     testUserId = user.id;
 
     const [plan] = await db
-      .insert(lessonPlans)
+      .insert(personalCurricula)
       .values({
         userId: testUserId,
         title: "Bài học đếm quả táo và phân loại hình",
-        targetAge: 4,
-        estimatedMinutes: 30,
-        notes: "Ghi chú chuẩn bị đồ dùng",
+        ageMin: 4,
+        ageMax: 5,
+        durationWeeks: 4,
+        sessionsPerWeek: 3,
         version: 1,
       })
       .returning();
@@ -51,29 +52,22 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
     }
     testPlanUuid = plan.uuid;
 
-    await db.insert(lessonPlanItems).values([
+    await db.insert(personalCurriculumItems).values([
       {
-        lessonPlanId: plan.id,
-        position: 0,
-        itemType: "activity",
-        itemCode: "ACT-COUNT",
-        snapshot: {
-          title: "Hoạt động khởi động",
-          duration_minutes: 15,
-          description: "Người dạy hướng dẫn trẻ đếm 1-5",
-          child_prompts: ["Có mấy quả táo?"],
-        },
+        personalCurriculumId: plan.id,
+        weekNo: 1,
+        sessionNo: 1,
+        position: 1,
+        entityType: "game_level",
+        entityId: 101,
       },
       {
-        lessonPlanId: plan.id,
+        personalCurriculumId: plan.id,
+        weekNo: 1,
+        sessionNo: 2,
         position: 1,
-        itemType: "game_level",
-        itemCode: "GL-01",
-        snapshot: {
-          title: "Trò chơi tư duy",
-          duration_minutes: 15,
-          description: "Ghép hình tương ứng",
-        },
+        entityType: "game_level",
+        entityId: 102,
       },
     ]);
   });
@@ -81,10 +75,10 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
   it("[BR-PDF-01] Khởi tạo yêu cầu xuất PDF trả về 202 queued và ghi nhận job", async () => {
     const res = await requestExportJob(
       testUserId,
-      "lesson_plan",
+      "curriculum_plan",
       testPlanUuid,
       {
-        userEntitlements: ["export_pdf", "create_lesson_plan"],
+        userEntitlements: ["export_pdf", "create_custom_curriculum"],
       }
     );
 
@@ -105,8 +99,8 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
   it("[BR-PDF-02] Từ chối khi thiếu entitlement export_pdf", async () => {
     let error: unknown;
     try {
-      await requestExportJob(testUserId, "lesson_plan", testPlanUuid, {
-        userEntitlements: ["create_lesson_plan"], // missing export_pdf
+      await requestExportJob(testUserId, "curriculum_plan", testPlanUuid, {
+        userEntitlements: ["create_custom_curriculum"], // missing export_pdf
       });
     } catch (e) {
       error = e;
@@ -120,7 +114,7 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
     for (let i = 0; i < MONTHLY_PDF_EXPORT_QUOTA; i++) {
       await db.insert(exportJobs).values({
         userId: testUserId,
-        kind: "lesson_plan",
+        kind: "curriculum_plan",
         refId: testPlanUuid,
         status: "done",
         pageCount: 2,
@@ -134,7 +128,7 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
     // 21st attempt must throw QUOTA_EXCEEDED
     let error: unknown;
     try {
-      await requestExportJob(testUserId, "lesson_plan", testPlanUuid, {
+      await requestExportJob(testUserId, "curriculum_plan", testPlanUuid, {
         userEntitlements: ["export_pdf"],
       });
     } catch (e) {
@@ -147,7 +141,7 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
   it("[BR-PDF-01, 03, 08] Worker render hoàn tất cập nhật status done, số trang, signed URL và hạn 7 ngày", async () => {
     const initRes = await requestExportJob(
       testUserId,
-      "lesson_plan",
+      "curriculum_plan",
       testPlanUuid,
       {
         userEntitlements: ["export_pdf"],
@@ -183,7 +177,7 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
       .insert(exportJobs)
       .values({
         userId: testUserId,
-        kind: "lesson_plan",
+        kind: "curriculum_plan",
         refId: "99999999-9999-9999-9999-999999999999",
         status: "queued",
       })
@@ -218,7 +212,7 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
       .insert(exportJobs)
       .values({
         userId: testUserId,
-        kind: "lesson_plan",
+        kind: "curriculum_plan",
         refId: testPlanUuid,
         status: "done",
         filePath: `exports/${testUserId}/expired-job.pdf`,

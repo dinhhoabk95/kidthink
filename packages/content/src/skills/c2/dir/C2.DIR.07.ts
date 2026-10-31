@@ -43,61 +43,154 @@ export const C2_DIR_07_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "step_start",
+      label: "bước 1 xuất phát",
       image: {
         kind: "emoji",
-        ref: "🍉",
+        ref: "🏁",
       },
       category: {
-        type: "hoa quả",
+        type: "chặng đầu",
       },
+      contrast_group: "step_early",
+      value: 1,
+      ordering: 1,
     },
     {
-      id: "carrot",
-      label: "củ cà rốt",
+      id: "step_bridge",
+      label: "bước 2 qua cầu",
       image: {
         kind: "emoji",
-        ref: "🥕",
+        ref: "🌉",
       },
       category: {
-        type: "rau củ",
+        type: "chặng đầu",
       },
+      contrast_group: "step_early",
+      value: 2,
+      ordering: 2,
     },
     {
-      id: "corn",
-      label: "bắp ngô",
+      id: "step_park",
+      label: "bước 3 qua công viên",
       image: {
         kind: "emoji",
-        ref: "🌽",
+        ref: "🌳",
       },
       category: {
-        type: "rau củ",
+        type: "chặng đầu",
       },
+      contrast_group: "step_early",
+      value: 3,
+      ordering: 3,
     },
     {
-      id: "dog",
-      label: "con chó",
+      id: "step_pond",
+      label: "bước 4 qua đài phun",
       image: {
         kind: "emoji",
-        ref: "🐕",
+        ref: "⛲",
       },
       category: {
-        type: "động vật",
+        type: "chặng đầu",
       },
+      contrast_group: "step_early",
+      value: 4,
+      ordering: 4,
     },
     {
-      id: "cat",
-      label: "con mèo",
+      id: "step_school",
+      label: "bước 5 qua trường học",
       image: {
         kind: "emoji",
-        ref: "🐈",
+        ref: "🏫",
       },
       category: {
-        type: "động vật",
+        type: "chặng cuối",
       },
+      contrast_group: "step_late",
+      value: 5,
+      ordering: 5,
+    },
+    {
+      id: "step_shop",
+      label: "bước 6 qua cửa hàng",
+      image: {
+        kind: "emoji",
+        ref: "🏪",
+      },
+      category: {
+        type: "chặng cuối",
+      },
+      contrast_group: "step_late",
+      value: 6,
+      ordering: 6,
+    },
+    {
+      id: "step_house",
+      label: "bước 7 về đến nhà",
+      image: {
+        kind: "emoji",
+        ref: "🏠",
+      },
+      category: {
+        type: "chặng cuối",
+      },
+      contrast_group: "step_late",
+      value: 7,
+      ordering: 7,
+    },
+    {
+      id: "step_goal",
+      label: "bước 8 chạm ngôi sao",
+      image: {
+        kind: "emoji",
+        ref: "⭐",
+      },
+      category: {
+        type: "chặng cuối",
+      },
+      contrast_group: "step_late",
+      value: 8,
+      ordering: 8,
     },
   ],
+  relations: [
+    {
+      type: "pair",
+      source_id: "step_start",
+      target_id: "step_school",
+    },
+    {
+      type: "pair",
+      source_id: "step_bridge",
+      target_id: "step_shop",
+    },
+    {
+      type: "pair",
+      source_id: "step_park",
+      target_id: "step_house",
+    },
+    {
+      type: "pair",
+      source_id: "step_pond",
+      target_id: "step_goal",
+    },
+    {
+      type: "contrast",
+      source_id: "step_start",
+      target_id: "step_school",
+    },
+  ],
+  axes: {
+    category: {
+      values: ["chặng đầu", "chặng cuối"],
+    },
+    order: {
+      values: ["1", "2", "3", "4", "5", "6", "7", "8"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
@@ -130,7 +223,16 @@ export const C2_DIR_07_DATASET: SkillDataset = {
     narration_template:
       "Chúng mình cùng tìm hiểu về Theo lộ trình nhiều bước nhé",
   },
-  ordering: ["watermelon", "carrot", "corn", "dog", "cat"],
+  ordering: [
+    "step_start",
+    "step_bridge",
+    "step_park",
+    "step_pond",
+    "step_school",
+    "step_shop",
+    "step_house",
+    "step_goal",
+  ],
 };
 
 export const C2_DIR_07_SEED: SkillSeed = {
@@ -143,79 +245,6 @@ export const C2_DIR_07_SEED: SkillSeed = {
       band: "5-6",
       difficulty: 1,
       theme: "festival",
-      rounds: 3,
-      legacy_v1_ref: "D4-06",
-    },
-    {
-      code: "GL-C2-DIR-SORT-0001",
-      template: "GT-006",
-      band: "5-6",
-      difficulty: 3,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-DIR-SHAD-0017",
-      template: "GT-007",
-      band: "4-5",
-      difficulty: 3,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-DIR-SHAD-0018",
-      template: "GT-007",
-      band: "4-5",
-      difficulty: 4,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-DIR-SLOT-0001",
-      template: "GT-008",
-      band: "4-5",
-      difficulty: 3,
-      theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-DIR-SLOT-0002",
-      template: "GT-008",
-      band: "4-5",
-      difficulty: 4,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-DIR-SIZE-0007",
-      template: "GT-009",
-      band: "4-5",
-      difficulty: 3,
-      theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-DIR-SIZE-0008",
-      template: "GT-009",
-      band: "4-5",
-      difficulty: 4,
-      theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-DIR-MAZE-0005",
-      template: "GT-013",
-      band: "4-5",
-      difficulty: 3,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-DIR-MAZE-0006",
-      template: "GT-013",
-      band: "4-5",
-      difficulty: 4,
-      theme: "farm",
       rounds: 3,
     },
     {
@@ -233,7 +262,6 @@ export const C2_DIR_07_SEED: SkillSeed = {
       difficulty: 3,
       theme: "vehicle",
       rounds: 3,
-      legacy_v1_ref: "D2-07",
     },
     {
       code: "GL-C2-DIR-CMD-0003",
@@ -242,7 +270,6 @@ export const C2_DIR_07_SEED: SkillSeed = {
       difficulty: 4,
       theme: "school",
       rounds: 3,
-      legacy_v1_ref: "D2-07",
     },
     {
       code: "GL-C2-DIR-CMD-0004",
@@ -251,7 +278,6 @@ export const C2_DIR_07_SEED: SkillSeed = {
       difficulty: 5,
       theme: "nature",
       rounds: 3,
-      legacy_v1_ref: "D2-07",
     },
   ],
 };

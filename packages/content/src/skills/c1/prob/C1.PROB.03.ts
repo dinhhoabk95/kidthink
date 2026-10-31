@@ -71,6 +71,84 @@ export const C1_PROB_03_DATASET: SkillDataset = {
       },
       contrast_group: "share",
     },
+    {
+      id: "cp20_lotus",
+      label: "bông hoa sen hồng",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "🪷",
+      },
+      contrast_group: "cp20_pond",
+      category: {
+        type: "thực vật",
+      },
+    },
+    {
+      id: "cp20_frog",
+      label: "chú ếch xanh",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "🐸",
+      },
+      contrast_group: "cp20_pond",
+      category: {
+        type: "sinh vật",
+      },
+    },
+    {
+      id: "cp20_dragonfly",
+      label: "con chuồn chuồn",
+      value: 1,
+      image: {
+        kind: "emoji",
+        ref: "🦗",
+      },
+      contrast_group: "cp20_pond",
+      category: {
+        type: "sinh vật",
+      },
+    },
+    {
+      id: "cp20_robot",
+      label: "người máy robot",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "🤖",
+      },
+      contrast_group: "cp20_workshop",
+      category: {
+        type: "đồ chơi",
+      },
+    },
+    {
+      id: "cp20_ball",
+      label: "quả bóng tròn",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "⚽",
+      },
+      contrast_group: "cp20_workshop",
+      category: {
+        type: "đồ chơi",
+      },
+    },
+    {
+      id: "cp20_wood",
+      label: "khối gỗ vuông",
+      value: 1,
+      image: {
+        kind: "emoji",
+        ref: "🪵",
+      },
+      contrast_group: "cp20_workshop",
+      category: {
+        type: "đồ chơi",
+      },
+    },
   ],
   relations: [
     {
@@ -296,6 +374,26 @@ export const C1_PROB_03_SEED: SkillSeed = {
       difficulty: 4,
       theme: "homeland",
       rounds: 3,
+    },
+    {
+      code: "GL-C1-PROB-SUB-0312",
+      template: "GT-010",
+      band: "5-6",
+      difficulty: 3,
+      access_tier: "standard",
+      theme: "food",
+      rounds: 3,
+      montessori_ref: "WB20-D2",
+    },
+    {
+      code: "GL-C1-PROB-TAP-0313",
+      template: "GT-001",
+      band: "5-6",
+      difficulty: 4,
+      access_tier: "premium",
+      theme: "school",
+      rounds: 3,
+      montessori_ref: "WB20-D2",
     },
   ],
 };

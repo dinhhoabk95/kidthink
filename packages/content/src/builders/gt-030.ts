@@ -72,8 +72,12 @@ export const projectGT030: Projection<"GT-030"> = {
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
     const params = getEngineDifficultyParams("GT-030", opts.difficulty);
     const shuffled = shuffleDeterministic(dataset.items, rng);
-    const objectItem = safeGetItem(shuffled, 0);
-    const unitItem = safeGetItem(shuffled, 1);
+    const firstItem = safeGetItem(shuffled, 0);
+    const secondItem = safeGetItem(shuffled, 1);
+    const firstMetric = firstItem.value ?? firstItem.ordering ?? 1;
+    const secondMetric = secondItem.value ?? secondItem.ordering ?? 0;
+    const objectItem = firstMetric >= secondMetric ? firstItem : secondItem;
+    const unitItem = firstMetric >= secondMetric ? secondItem : firstItem;
 
     const lengthInUnits = params.length_in_units ?? 4;
     const answer_options = buildAnswerOptions(

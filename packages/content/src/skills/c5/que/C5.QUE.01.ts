@@ -43,58 +43,87 @@ export const C5_QUE_01_DATASET: SkillDataset = {
   items: [
     {
       id: "que_ai_day_hoc",
-      label: "cô giáo đang dạy học",
+      label: "cô giáo dạy học",
+      value: 1,
       image: {
         kind: "emoji",
         ref: "👩‍🏫",
       },
+      audio_path: "/audio/vi/c5/que/co_giao_day_hoc.mp3",
       category: {
-        type: "câu hỏi ai",
+        type: "người ở trường",
       },
+      contrast_group: "primary",
     },
     {
       id: "que_ai_kham_benh",
-      label: "bác sĩ đang khám bệnh",
+      label: "bác sĩ khám bệnh",
+      value: 2,
       image: {
         kind: "emoji",
         ref: "👨‍⚕️",
       },
+      audio_path: "/audio/vi/c5/que/bac_si_kham_benh.mp3",
       category: {
-        type: "câu hỏi ai",
+        type: "người ở trường",
       },
+      contrast_group: "primary",
+    },
+    {
+      id: "que_ai_bao_ve",
+      label: "bác bảo vệ",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "👮",
+      },
+      audio_path: "/audio/vi/c5/que/bac_bao_ve.mp3",
+      category: {
+        type: "người ở trường",
+      },
+      contrast_group: "primary",
     },
     {
       id: "que_ai_lai_xe",
-      label: "chú tài xế lái xe",
+      label: "chú tài xế",
+      value: 4,
       image: {
         kind: "emoji",
-        ref: "🚌",
+        ref: "🧑‍✈️",
       },
+      audio_path: "/audio/vi/c5/que/chu_tai_xe.mp3",
       category: {
-        type: "câu hỏi ai",
+        type: "người quanh bé",
       },
+      contrast_group: "contrast",
     },
     {
       id: "que_ai_nau_an",
-      label: "đầu bếp nấu món ngon",
+      label: "chú đầu bếp",
+      value: 5,
       image: {
         kind: "emoji",
         ref: "👨‍🍳",
       },
+      audio_path: "/audio/vi/c5/que/dau_bep_nau_an.mp3",
       category: {
-        type: "câu hỏi ai",
+        type: "người quanh bé",
       },
+      contrast_group: "contrast",
     },
     {
       id: "que_ai_tuoi_cay",
-      label: "bác làm vườn tưới cây",
+      label: "bác làm vườn",
+      value: 6,
       image: {
         kind: "emoji",
         ref: "🧑‍🌾",
       },
+      audio_path: "/audio/vi/c5/que/bac_lam_vuon.mp3",
       category: {
-        type: "câu hỏi ai",
+        type: "người quanh bé",
       },
+      contrast_group: "contrast",
     },
   ],
   ladder: [
@@ -131,9 +160,43 @@ export const C5_QUE_01_DATASET: SkillDataset = {
   ordering: [
     "que_ai_day_hoc",
     "que_ai_kham_benh",
+    "que_ai_bao_ve",
     "que_ai_lai_xe",
     "que_ai_nau_an",
     "que_ai_tuoi_cay",
+  ],
+  axes: {
+    category: {
+      values: ["người ở trường", "người quanh bé"],
+      ordered: true,
+    },
+  },
+  relations: [
+    {
+      type: "pair",
+      source_id: "que_ai_day_hoc",
+      target_id: "que_ai_kham_benh",
+    },
+    {
+      type: "pair",
+      source_id: "que_ai_lai_xe",
+      target_id: "que_ai_nau_an",
+    },
+    {
+      type: "contrast",
+      source_id: "que_ai_day_hoc",
+      target_id: "que_ai_lai_xe",
+    },
+    {
+      type: "contrast",
+      source_id: "que_ai_kham_benh",
+      target_id: "que_ai_nau_an",
+    },
+    {
+      type: "contrast",
+      source_id: "que_ai_bao_ve",
+      target_id: "que_ai_tuoi_cay",
+    },
   ],
 };
 
@@ -154,31 +217,7 @@ export const C5_QUE_01_SEED: SkillSeed = {
       template: "GT-007",
       band: "3-4",
       difficulty: 2,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-QUE-SHAD-0003",
-      template: "GT-007",
-      band: "3-4",
-      difficulty: 3,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-QUE-SHAD-0004",
-      template: "GT-007",
-      band: "3-4",
-      difficulty: 1,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-QUE-SHAD-0005",
-      template: "GT-007",
-      band: "3-4",
-      difficulty: 2,
-      theme: "weather",
+      theme: "school",
       rounds: 3,
     },
     {
@@ -187,38 +226,6 @@ export const C5_QUE_01_SEED: SkillSeed = {
       band: "3-4",
       difficulty: 1,
       theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-QUE-TAP-0002",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 2,
-      theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-QUE-TAP-0003",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 3,
-      theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-QUE-TAP-0004",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 1,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-QUE-TAP-0005",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 2,
-      theme: "farm",
       rounds: 3,
     },
   ],

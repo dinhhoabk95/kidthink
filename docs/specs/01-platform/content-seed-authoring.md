@@ -12,11 +12,8 @@ owns:
     theo trục kỹ năng, thuộc [`skill-dataset-model.md`](../05-content/skill-dataset-model.md)
   - Mười cổng kiểm chạy trong cổng tự động trước khi merge
   - Yêu cầu ca âm cho từng cổng
-  - Đường ghi thẳng `published` từ seed và ràng buộc idempotency
-  - `content_seed_batches` và cột provenance của nội dung nền
+  - Đường ghi cứng và idempotent từ seeder vào DB
 depends_on:
-  - CONTENT-LIFECYCLE
-  - CONTENT-VERSIONING
   - GAME-TEMPLATE-CONTRACT
   - TAXONOMY-SERVICE
   - EMOJI-REGISTRY
@@ -28,14 +25,13 @@ depends_on:
 
 ## 1. Objective
 
-MVP cần **≥690 learning objective, ≥120 game level, ≥60 lesson**. ≥690 LO là dữ liệu taxonomy
-Lớp 1 do [`taxonomy-service.md`](taxonomy-service.md) sở hữu và phải hoàn tất ở P0. Spec này
-sở hữu đường ống biên soạn Lớp 2 từ P1: game level trước, lesson/curriculum ở P3.
+MVP cần **≥690 learning objective, ≥120 game level, 5 curriculum**. ≥690 LO là dữ liệu taxonomy
+do [`taxonomy-service.md`](taxonomy-service.md) sở hữu và phải hoàn tất ở P0. Spec này
+sở hữu đường ống biên soạn nội dung từ P1: `skill_datasets`, `game_levels` trước, `curricula` ở P3.
 
-Cách giải: nội dung nền được viết thành **seeder file trong repo**, người biên soạn dùng
+Cách giải: toàn bộ nội dung (`game_levels`, `curricula`, `skill_datasets`) được viết thành **seeder file trong repo**, người biên soạn dùng
 **AI agent IDE** (Claude Code / Cursor) làm trợ lý soạn thảo, và **PR review là cổng người**.
-Seed ghi thẳng `published`. Từ đó trở đi admin quản lý nội dung trong studio bằng version
-mới.
+Mỗi `code` là `UNIQUE` (1 dòng duy nhất) và dùng `id` trực tiếp — đã xóa cơ chế đa version (`content_version`, `entity_id`), xóa cổng duyệt Studio (`draft/in_review/approved/published/archived/rejected`), xóa bảng `content_review_log`, `content_seed_batches` và toàn bộ bảng `content.ts` (`lessons`, `activities`, `worksheets`, `seo_pages`).
 
 Cấm: **không có LLM nào chạy trong hệ thống.** Không có hàng đợi duyệt nội dung do máy sinh,
 không có trần chi phí token trong production, không có provenance theo model.
@@ -51,9 +47,7 @@ người + AI agent IDE ──viết──► seeder file trong repo (TS có ki�
                                         │
                               pnpm --filter @mindkid/content-build seed:content
                                         ▼
-                     hàng published, content_version = 1
-                                        │
-                     admin quản lý tiếp trong studio (version mới)
+                     nạp cứng idempotent vào DB (1 dòng duy nhất mỗi code)
 ```
 
 Rule đúng:
@@ -61,15 +55,15 @@ Rule đúng:
 > Cấm — **NEVER để AI phát hành nội dung cốt lõi.**
 > Được phép: AI **soạn thảo file** trong repo. Chỉ **người** merge, và merge chính là phát hành.
 
-### 1.2 Vì sao là seeder chứ không phải pipeline sinh tự động
+### 1.2 Vì sao là seeder chứ không phải pipeline sinh tự động hay Studio CRUD
 
-| | Seeder trong repo | Pipeline LLM sinh `draft` |
+| | Seeder trong repo | Pipeline LLM / Studio runtime |
 |---|---|---|
 | Cổng người | PR review — đọc diff, `git blame`, revert một lệnh | Hàng đợi admin — không có ba thứ đó |
-| Tái lập môi trường | Dựng từ số 0 ra **đúng** thư viện nội dung đó | Không bảo đảm — đầu ra LLM không xác định |
-| Sai schema bắt ở đâu | Lúc `tsc`, trước khi chạy | Lúc runtime, sau khi tốn tiền gọi model |
-| Chi phí vận hành | 0 — không gọi model trong production | Trần chi phí, ngân sách tháng, degrade model |
-| Nội dung là gì | **Tài sản của repo**, version cùng code | Dữ liệu vận hành, không tái tạo được |
+| Tái lập môi trường | Dựng từ số 0 ra **đúng** thư viện nội dung đó | Không bảo đảm |
+| Sai schema bắt ở đâu | Lúc `tsc`, trước khi chạy | Lúc runtime |
+| Chi phí vận hành | 0 — không gọi model trong production, không cần duy trì đa version DB | Phức tạp hoá schema và UI quản trị |
+| Nội dung là gì | **Tài sản của repo**, version cùng code | Dữ liệu vận hành rời rạc |
 
 Nội dung nền là tài sản, không phải dữ liệu vận hành. Nó phải nằm cùng chỗ với thứ khác
 cũng là tài sản và cũng cần review: code.
@@ -81,22 +75,19 @@ cũng là tài sản và cũng cần review: code.
 | **Người biên soạn** | Viết seeder, chạy cổng local, mở PR | Merge PR của chính mình khi có ≥2 manager |
 | **AI agent IDE** | Soạn thảo file seeder theo `content_contract`, tra taxonomy · emoji registry · spec | Chạy `seed:content` lên môi trường ≠ local · merge PR · chạm `skills`/`strands` |
 | **Người review PR** | Đọc **từng bản** trong diff, approve = phát hành | Approve theo lô mà không mở nội dung |
-| **cổng tự động** | Chạy 10 cổng §7.3 + `seed:content --dry-run` trên DB tạm | Merge tự động |
-| **`pnpm --filter @mindkid/content-build seed:content`** | INSERT hàng `published` + `content_review_log` + batch | `UPDATE` hàng đã có |
-| **Manager trong studio** | Từ đây quản lý nội dung: tạo version mới, archive, rollback | Sửa tại chỗ hàng đã `published` |
+| **Cổng tự động** | Chạy 10 cổng §7.3 + `seed:content --dry-run` trên DB tạm | Merge tự động |
+| **`pnpm --filter @mindkid/content-build seed:content`** | Nạp cứng idempotent nội dung (`skill_datasets`, `game_levels`, `curricula`) vào DB | Chạy khi chưa qua đủ 10 cổng |
 
 ## 3. Entry points
 
 | Nơi | Ghi chú |
 |---|---|
-| `packages/content/src/skills/c1..c6/<strand>/<SKILL>.ts` | Game level theo từng kỹ năng, gom theo cây năng lực C1–C6 |
-| `packages/content-build/src/seed-master/taxonomy/index.ts` (khối `learning_objectives`) | LO Lớp 1 do [`taxonomy-service.md`](taxonomy-service.md) sở hữu; P0 dùng cùng quy tắc PR review, không tính là lô Lớp 2 của spec này |
-| `packages/content/src/lessons/c1..c6.ts` · `activities/c1..c6.ts` | Giáo án và hoạt động theo năng lực |
+| `packages/content/src/skills/c1..c6/<strand>/<SKILL>.ts` | Dataset kỹ năng và game level theo từng kỹ năng, gom theo cây năng lực C1–C6 |
+| `packages/content-build/src/seed-master/taxonomy/index.ts` (khối `learning_objectives`) | LO do [`taxonomy-service.md`](taxonomy-service.md) sở hữu; P0 dùng cùng quy tắc PR review |
 | `pnpm --filter @mindkid/content-build seed:check` | Chạy các cổng kiểm tra, không chạm DB |
-| `pnpm --filter @mindkid/content-build seed:content --dry-run` | DB tạm → seed → checklist publish → rollback |
-| `pnpm --filter @mindkid/content-build seed:content --batch=SEED-*` | Ghi thật |
+| `pnpm --filter @mindkid/content-build seed:content --dry-run` | DB tạm → seed → kiểm tra cổng → rollback |
+| `pnpm --filter @mindkid/content-build seed:content` | Ghi thật vào DB |
 | `pnpm --filter @mindkid/content-build seed:report` | Phủ theo competency · skill · template; chỉ ra khoảng trống |
-| [`game-level-studio.md`](../06-admin/game-level-studio.md) | Nơi admin quản lý **sau khi** seed |
 
 Cấm — **NEVER trong đường request.** Seed là lệnh vận hành, chạy lúc dựng môi trường hoặc lúc
 deploy một lô nội dung đã merge.
@@ -104,7 +95,7 @@ deploy một lô nội dung đã merge.
 ## 4. Main flow
 
 ```
-1. Chọn khoảng trống cần lấp:  pnpm --filter @mindkid/content-build seed:report  → skill nào chưa có level published
+1. Chọn khoảng trống cần lấp:  pnpm --filter @mindkid/content-build seed:report  → skill nào chưa có level
 2. Người biên soạn + AI agent IDE soạn seeder file
        ├── kiểu content_pack suy ra từ content_contract của template (§7.2)
        ├── emoji: ký tự UTF-8; @mindkid/emoji là vốn từ gợi ý
@@ -114,43 +105,36 @@ deploy một lô nội dung đã merge.
 5. Cổng tự động chạy 10 cổng + seed:content --dry-run trên DB tạm
 6. ► NGƯỜI REVIEW ĐỌC TỪNG BẢN  ← cổng người
 7. Merge  = quyết định phát hành
-8. pnpm --filter @mindkid/content-build seed:content --batch=…     → INSERT published + content_review_log + batch row
-9. Từ đây: admin quản lý trong studio; sửa = version mới, cấm UPDATE tại chỗ
+8. pnpm --filter @mindkid/content-build seed:content               → nạp cứng idempotent vào DB
 ```
 
 ## 5. Alternative flows
 
 | Nhánh | Hành vi |
 |---|---|
-| Seeder đổi một `code` đã seed và đang `published` | Seed **từ chối**. Hai đường hợp lệ: khai `content_version` mới trong seeder → INSERT bản mới + archive bản cũ trong một transaction; hoặc sửa trong studio |
-| Chạy lại `seed:content` không đổi gì | **No-op.** Idempotent theo `(code, content_version)` |
+| Chạy lại `seed:content` không đổi gì | **Idempotent** theo `code` UNIQUE (1 dòng duy nhất mỗi mã) |
 | Một cổng tự động đỏ | PR không merge được qua review. Cờ bỏ qua **ở máy cá nhân** (`git commit --no-verify`) tồn tại — xem [`repo-bootstrap.md`](../00-foundation/repo-bootstrap.md) §11 Q12; PR vẫn cần review người, không tự merge được |
 | `code` trùng giữa hai seeder file | Cổng 0 bắt lúc build, fail **trước khi** chạm DB |
-| Nội dung seeded phát hiện sai sau khi publish | Studio archive/rollback theo [`publish-and-version.md`](../06-admin/publish-and-version.md); **và** sửa seeder trong cùng PR để môi trường dựng mới không tái tạo lỗi |
-| Môi trường đã có bản studio cùng `code` | Seed từ chối, báo xung đột. **Studio thắng** — seed không đè nội dung người soạn |
 | Seed chạy giữa chừng thì lỗi | Rollback cả batch. Cấm seed một phần |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-CSA-01` (chỉ INSERT) | Seed **chỉ INSERT**. Cấm — **NEVER UPDATE** hàng đã có. Sửa = version mới | [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) `BR-CLC-01` (bản published bất biến) — bản đã published bất biến, kể cả với seeder |
-| `BR-CSA-02` (cổng người là PR) | Seed ghi thẳng `published`. Cổng người là **PR review**, không phải hàng đợi duyệt | Cổng người ở đâu cũng được miễn có thật và ghi lại được. PR ghi lại tốt hơn: diff, blame, revert |
-| `BR-CSA-03` (bằng chứng phát hành) | Mỗi hàng seed ghi `content_review_log`: `from_status = null` → `published`, `actor_manager_id` = người approve PR, `checklist_snapshot` = kết quả 10 cổng | [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) `BR-CLC-06`/`BR-CLC-10` — vẫn phải trả lời được ai phát hành cái gì, lúc nào |
-| `BR-CSA-04` (checklist publish) | Seed chạy **đủ checklist publish** ([`content-lifecycle.md`](../00-foundation/content-lifecycle.md) §7.3) ở tầng service trước khi INSERT. Trượt một mục → rollback cả batch | Seeder đi vòng qua route studio. Checklist chỉ nằm ở route thì seed là lỗ hổng |
-| `BR-CSA-05` (một transaction) | Một batch = **một transaction**. Cấm seed một phần | Nửa lô nội dung published là một thư viện không giải thích được |
-| `BR-CSA-06` (idempotent) | Seed **idempotent**: chạy lại không đổi số hàng, không đổi nội dung | Seed chạy mỗi lần dựng môi trường. Không idempotent thì nó là migration giả |
+| `BR-CSA-01` (nạp cứng từ seeder, 1 dòng mỗi `code`) | Toàn bộ `game_levels`, `curricula`, `skill_datasets` có `code UNIQUE` (1 dòng duy nhất mỗi mã), dùng `id` trực tiếp, không có `content_version` hay `entity_id` | Quản lý phiên bản trong Git, giữ DB gọn nhẹ và nhất quán |
+| `BR-CSA-02` (cổng người là PR) | Cổng người là **PR review**, không còn hàng đợi duyệt Studio hay trạng thái vòng đời nội dung trong DB | Cổng người ở PR có diff, `git blame`, và revert bằng một lệnh |
+| `BR-CSA-04` (qua đủ 10 cổng trước khi ghi) | Seed chạy **đủ 10 cổng kiểm tra** trước khi ghi vào DB. Trượt một mục → rollback cả batch | Đảm bảo không có nội dung sai schema hay sai sư phạm lọt vào DB |
+| `BR-CSA-05` (một transaction) | Một lần seed = **một transaction**. Cấm seed một phần | Nửa lô nội dung là một thư viện không giải thích được |
+| `BR-CSA-06` (idempotent) | Seed **idempotent**: chạy lại không tạo bản trùng, giữ nguyên `id` của `code` đã có | Seed chạy mỗi lần dựng hoặc cập nhật môi trường |
 | `BR-CSA-07` (AI không phát hành) | AI agent IDE cấm — **NEVER chạy `seed:content`** lên môi trường khác local, cấm — **NEVER merge PR** | Ranh giới cứng: AI soạn file, người phát hành |
-| `BR-CSA-08` (AI không sinh taxonomy) | AI cấm — **NEVER sinh `skills` hay `strands`** | Taxonomy là Lớp 1, do người thiết kế. Sai một skill là sai mọi thứ treo lên nó |
+| `BR-CSA-08` (AI không sinh taxonomy) | AI cấm — **NEVER sinh `skills` hay `strands`** | Taxonomy do người thiết kế. Sai một skill là sai mọi thứ treo lên nó |
 | `BR-CSA-09` (LO soạn bằng seeder) | `learning_objectives` soạn bằng seeder như game level, chịu đúng bộ cổng ở §7.3 và đúng PR review | LO là Tầng 4 taxonomy nhưng là **mô tả hành vi** — soạn được, miễn có người đọc |
-| `BR-CSA-10` (code bất biến) | `code` trong seeder **bất biến** sau khi merge | [`id-conventions.md`](../00-foundation/id-conventions.md) — mã published là neo của mọi telemetry và báo cáo |
-| `BR-CSA-11` (nguồn sự thật) | Seeder file là **nguồn sự thật** của lô nền. `pnpm --filter @mindkid/content-build seed:check --against-db` báo lệch giữa repo và DB | Sửa DB tay rồi quên seeder = môi trường tiếp theo mất bản sửa |
+| `BR-CSA-10` (code bất biến) | `code` trong seeder **bất biến** sau khi merge | [`id-conventions.md`](../00-foundation/id-conventions.md) — mã là neo của mọi telemetry và báo cáo |
+| `BR-CSA-11` (nguồn sự thật) | Seeder file là **nguồn sự thật duy nhất** của toàn bộ nội dung. `pnpm --filter @mindkid/content-build seed:check --against-db` báo lệch giữa repo và DB | Sửa DB tay rồi quên seeder = môi trường tiếp theo mất bản sửa |
 | `BR-CSA-12` (TS có kiểu) | `content_pack` viết bằng **TS có kiểu**, kiểu lấy từ `content_contract` của template. Cấm JSON trần | Sai schema bắt lúc `tsc` rẻ hơn bắt lúc cổng tự động, rẻ hơn nhiều bắt lúc trẻ đang chơi |
-| `BR-CSA-13` (emoji là ký tự) | Emoji tham chiếu bằng **ký tự UTF-8**. Cấm — NEVER mã `EMJ-<slug>`. `@mindkid/emoji` là **vốn từ khuyến nghị**, không phải ràng buộc | [`emoji-registry.md`](emoji-registry.md) `BR-EMJ-01`/`BR-EMJ-02` — ref *là* glyph nên không còn phép tra để hỏng; đổi lại cổng 3 không kiểm emoji nữa |
-| `BR-CSA-14` (provenance) | Mọi hàng seed mang `seed_batch_id` + `origin` + `authored_in = 'repo_seed'` | Khi phát hiện một lô sai, phải truy được lô nào cùng PR |
-| `BR-CSA-15` (mỗi cổng có ca âm) | Mỗi cổng ở §7.3 phải có **ít nhất một** test dựng nội dung vi phạm đúng cổng đó và khẳng định cổng đỏ | Không có ca âm thì một cổng chỉ kiểm `typeof` vẫn in "đạt" mãi mãi. Đo 2026-08-29: cổng 1 báo 552 đạt trong khi phép kiểm thật cho 162 trượt — xem §7.3a |
-| `BR-CSA-16` (cổng 1 nạp contract thật) | Cổng 1 **phải** nạp `content_contract` và `difficulty_contract` từ registry engine và gọi `parse`, kể cả `refine`. Cấm — NEVER thay bằng kiểm kiểu nông | `BR-GTC-02` parse lại ở server; nếu cổng seed không parse thì lỗi chỉ lộ ra lúc trẻ mở màn chơi, là chỗ đắt nhất để phát hiện |
-| `BR-CSA-17` (khoá phiên bản level sinh) | Level sinh từ kỹ năng mang một `GENERATED_LEVEL_CONTENT_VERSION` chung. Băm nội dung mọi level dựng ra (bỏ `content_version`) nằm trong `packages/content/content-version.lock.json` cùng số phiên bản. Băm đổi mà phiên bản không tăng → test **đỏ**; chỉ cập nhật khoá khi phiên bản đã tăng | `BR-CSA-01` cấm UPDATE nên đổi tham số, builder hay dataset mà quên tăng phiên bản thì seeder bỏ qua lặng lẽ và môi trường đã gieo giữ level cũ (#283: GT-035 độ khó 5 vẫn tràn ở DB dev) |
+| `BR-CSA-13` (emoji là ký tự) | Emoji tham chiếu bằng **ký tự UTF-8**. Cấm — NEVER mã `EMJ-<slug>`. `@mindkid/emoji` là **vốn từ khuyến nghị**, không phải ràng buộc | [`emoji-registry.md`](emoji-registry.md) `BR-EMJ-01`/`BR-EMJ-02` |
+| `BR-CSA-15` (mỗi cổng có ca âm) | Mỗi cổng ở §7.3 phải có **ít nhất một** test dựng nội dung vi phạm đúng cổng đó và khẳng định cổng đỏ | Không có ca âm thì một cổng chỉ kiểm `typeof` vẫn in "đạt" mãi mãi |
+| `BR-CSA-16` (cổng 1 nạp contract thật) | Cổng 1 **phải** nạp `content_contract` và `difficulty_contract` từ registry engine và gọi `parse`, kể cả `refine`. Cấm — NEVER thay bằng kiểm kiểu nông | `BR-GTC-02` parse lại ở server; nếu cổng seed không parse thì lỗi chỉ lộ ra lúc trẻ mở màn chơi |
 
 ## 7. Data
 
@@ -160,13 +144,11 @@ deploy một lô nội dung đã merge.
 packages/content/src/
 ├── skills/c1..c6/<strand>/<SKILL>.ts    408 file: danh tính + vốn liệu + ma trận màn chơi
 ├── builders/<GT>.ts                     34 bộ dựng màn chơi
-├── manual/c1..c6/<strand>/              Màn chơi soạn tay
-├── activities/c1..c6.ts                 Hoạt động theo năng lực
-└── lessons/c1..c6.ts                    Giáo án theo năng lực
+└── manual/c1..c6/<strand>/              Màn chơi soạn tay
 ```
 
 Chia theo **competency → strand → skill** (Task #208): mỗi kỹ năng có đúng một file
-chứa trọn vẹn danh tính, vốn liệu và ma trận màn chơi. Danh sách competency:
+chứa trọn vẹn danh tính, vốn liệu và ma trận màn chơi. Đã xoá `activities` và `lessons`. Danh sách competency:
 [`taxonomy-service.md`](taxonomy-service.md) §7.
 
 ### 7.2 Hình dạng một seeder
@@ -176,8 +158,7 @@ export const seed: ContentSeed<"GT-004"> = {
   batch: "SEED-C4-GT004-01",
   competency: "C4",
   items: [{
-    code: "GL-C4-CLS-SORT-0021",                 // bất biến sau merge
-    content_version: 1,
+    code: "GL-C4-CLS-SORT-0021",                 // UNIQUE, bất biến sau merge
     title: "Xếp quả vào rổ đúng màu",
     instruction: "Bé xếp mỗi quả vào rổ cùng màu nhé!",
     skill_codes: ["C3.CLS.02"],
@@ -202,16 +183,16 @@ Chạy tuần tự. Trượt cổng nào thì dừng ở đó, in `file:line` v�
 
 | # | Cổng | Kiểm gì | Thi công |
 |---|---|---|---|
-| 0 | **Định danh** | `code` duy nhất toàn corpus seeder · đúng format [`id-conventions.md`](../00-foundation/id-conventions.md) · cấm đụng `code` đã seed ở batch trước với `content_version` khác | Đủ |
+| 0 | **Định danh** | `code` duy nhất toàn corpus seeder · đúng format [`id-conventions.md`](../00-foundation/id-conventions.md) | Đủ |
 | 1 | **Schema** | `content_pack` parse được bằng `content_contract` thật (Zod, còn đủ `refine`) · `difficulty_params` parse được bằng `difficulty_contract` | **Báo cáo + bậc thang nợ (Task #117)** — xem mục 7.3a |
 | 2 | **Cấu trúc** | ≥1 đáp án đúng · cấm prompt rỗng · số item trong `limits` của template · số distractor hợp lệ · cấm đáp án trùng nhau | Một phần |
 | 3 | **Asset** | Emoji không kiểm (là text thường, `BR-EMJ-01`) · mọi `image_path` resolve được | Đủ |
-| 4 | **Ngôn ngữ** | Câu ≤ 12 từ · từ vựng trong tầm 3–6 tuổi · cấm từ cấm §7.5 · cấm lỗi dấu | Một phần |
+| 4 | **Ngôn ngữ** | Câu ≤ 12 từ · từ vựng trong tầm 3–6 tuổi · cấm từ cấm §7.4 · cấm lỗi dấu | Một phần |
 | 5 | **Sư phạm** | `skill_codes` · `learning_objective_codes` là FK có thật · `age_min ≤ age_max ∈ [3,6]` · `difficulty ∈ [1,5]` · khớp band tuổi · mechanic hợp band (`BR-GTC-05`) | **Đủ (Task #117)** — xem mục 7.3a |
-| 6 | **Trùng lặp** | Cấm gần trùng bản đã `published` — chuẩn hoá `content_pack` rồi so | Một phần |
+| 6 | **Trùng lặp** | Cấm gần trùng bản khác trong corpus — chuẩn hoá `content_pack` rồi so | Một phần |
 | 7 | **An toàn** | Cấm bạo lực, đáng sợ, phân biệt, không hợp tuổi · cấm thương hiệu, cấm nhân vật có bản quyền. Cổng này **không** thay thế mắt người ở bước 6 §4 | Một phần |
-| 8 | **Nguồn vật** | Mọi `item_id` và asset trong `content_pack` truy được về `dataset.items[].id` của kỹ năng level đó (`BR-SDS-02` — vật phải là vật của kỹ năng) | Chưa dựng — mục 7.6 của [`skill-dataset-model.md`](../05-content/skill-dataset-model.md) |
-| 9 | **Khái niệm hiện ra** | Dataset có `glyph` thì mọi level của kỹ năng hiển thị ≥1 vật mang `glyph` (`BR-SDS-03` — khái niệm phải hiện ra) | Chưa dựng — idem |
+| 8 | **Nguồn vật** | Mọi `item_id` và asset trong `content_pack` truy được về `dataset.items[].id` của kỹ năng level đó (`BR-SDS-02` — vật phải là vật của kỹ năng) | Mục 7.6 của [`skill-dataset-model.md`](../05-content/skill-dataset-model.md) |
+| 9 | **Khái niệm hiện ra** | Dataset có `glyph` thì mọi level của kỹ năng hiển thị ≥1 vật mang `glyph` (`BR-SDS-03` — khái niệm phải hiện ra) | Idem |
 
 Cổng 0–3, 5, 8 và 9 là **xác định**. Cổng 4, 6, 7 là **heuristic** — chúng lọc bớt, không
 kết luận. Đó là lý do bước review của người vẫn bắt buộc.
@@ -222,7 +203,7 @@ kỹ năng nó gắn không. Cả 10 cổng phải chạy trong `db:seed` (`BR-S
 
 ### 7.3a Đóng xanh giả Cổng 1 và Cổng 5 — thi công 2026-08-29 (Task #117)
 
-Đo và khắc phục trên corpus 552 hàng seed (gồm 228 game level):
+Đo và khắc phục trên corpus hàng seed:
 
 | Phép kiểm | Cổng cũ | Cổng thật (Task #117) | Trạng thái xử lý |
 |---|---|---|---|
@@ -233,41 +214,13 @@ kỹ năng nó gắn không. Cả 10 cổng phải chạy trong `db:seed` (`BR-S
 | Cổng 5 — FK taxonomy (`skill_codes`, `learning_objective_codes`) | không kiểm | **Kiểm tra định dạng & FK taxonomy** | Đóng |
 | Cổng 5 — `difficulty ∈ [1, 5]` & band engine | không kiểm | **Kiểm tra difficulty + cảnh báo band engine** | Đóng |
 
-Task #117 đã triển khai:
-- Tám cổng đều có test ca âm độc lập trong `packages/db/tests/gates/eight-gates.test.ts`.
-- Cổng 1 nạp `content_contract` và `difficulty_contract` thật từ `game-engine/templates`, gom lỗi chi tiết theo path trường Zod, và chạy cơ chế bậc thang không thoái lui (`packages/db/tests/gates/gate-ladder.test.ts`).
-- Cổng 5 đổi tên `"Sư phạm"`, xoá `SLUG_REGEX`, khoá bộ từ vựng đóng 4 trục (`what`, `thinking`, `mechanic`, `theme`), kiểm tra taxonomy FK codes và range difficulty.
-
-### 7.4 `content_seed_batches` và cột provenance
-
-| Field | Ghi chú |
-|---|---|
-| `batch_code` | `SEED-*`, bất biến |
-| `kind` | `game_level` \| `learning_objective` \| `lesson` \| `curriculum` |
-| `git_sha` | Commit chứa seeder file |
-| `pr_url` | |
-| `approved_by_manager_id` | Người approve PR — **người phát hành** |
-| `rows_inserted` | |
-| `gate_results` | JSONB — kết quả 10 cổng lúc cổng tự động |
-| `seeded_at` `seeded_by` | |
-
-Trên hàng content: `origin ∈ {human, ai_assisted}` · `authored_in ∈ {repo_seed, studio}` ·
-`seed_batch_id` nullable.
-
-Hai trục tách bạch vì chúng trả lời hai câu khác nhau: `origin` = *soạn thảo có AI hỗ trợ
-không*; `authored_in` = *hàng này vào DB bằng đường nào*. `origin` **không đổi** sau khi
-người sửa.
-
-Không còn `ai_generated`, không còn `content_generation_runs` — không còn thứ nào sinh
-nội dung tự chủ để mà đặt tên.
-
-### 7.5 Từ cấm trong nội dung cho trẻ
+### 7.4 Từ cấm trong nội dung cho trẻ
 
 Bạo lực · sợ hãi (ma, quái vật đáng sợ) · chết chóc · bệnh tật · phân biệt giới/vùng miền ·
 thương hiệu thương mại · nhân vật có bản quyền · nội dung tôn giáo · chính trị ·
 so sánh hơn kém giữa trẻ · từ mang nghĩa trừng phạt ("sai rồi", "dốt", "thua").
 
-Danh sách đầy đủ: `packages/moderation/src/child-content-blocklist.ts`, seed Lớp 1. Cổng 7
+Danh sách đầy đủ: `packages/moderation/src/child-content-blocklist.ts`. Cổng 7
 dùng đúng danh sách này.
 
 ## 8. API contract
@@ -276,8 +229,8 @@ Không có route. Giao diện là CLI + cổng tự động. Không mã lỗi HT
 
 ```ts
 interface SeedOptions {
-  batch?: string;           // mặc định: mọi batch chưa seed
-  dry_run?: boolean;        // DB tạm, seed, checklist, rollback
+  batch?: string;           // mặc định: mọi batch
+  dry_run?: boolean;        // DB tạm, seed, kiểm cổng, rollback
   against_db?: boolean;     // so repo ↔ DB, chỉ báo lệch
 }
 
@@ -295,55 +248,24 @@ Cổng tự động fail khi `gate_failures.length > 0` hoặc `drift.length > 0
 ## 9. Acceptance criteria
 
 ```gherkin
-Scenario: BR-CSA-01 — seed không UPDATE bản đã published
-  Given một game level code GL-C4-CLS-SORT-0021 version 1 đang published
-  And seeder sửa content_pack của GL-C4-CLS-SORT-0021 mà giữ nguyên content_version
-  When chạy pnpm --filter @mindkid/content-build seed:content
-  Then lệnh thoát khác 0
-  And nội dung trong DB không đổi
-  And thông báo chỉ ra phải khai content_version mới
-
-Scenario: BR-CSA-01 — version mới thì INSERT và archive bản cũ
-  Given GL-C4-CLS-SORT-0021 version 1 đang published
-  And seeder khai GL-C4-CLS-SORT-0021 content_version 2
-  When chạy pnpm --filter @mindkid/content-build seed:content
-  Then version 2 có status published
-  And version 1 có status archived
-  And cả hai đổi trong một transaction
-
-Scenario: BR-CSA-17 — đổi nội dung level sinh bắt buộc tăng phiên bản
-  Given khoá content-version.lock.json ghi băm H và phiên bản N
-  When một tham số độ khó hoặc builder đổi nên băm nội dung level ra H' khác H
-  And GENERATED_LEVEL_CONTENT_VERSION vẫn là N
-  Then test khoá phiên bản đỏ
-  And chỉ khi tăng lên N+1 thì cập nhật khoá mới được ghi
-
-Scenario: BR-CSA-02 — seed ghi thẳng published
+Scenario: BR-CSA-01 — mỗi code trong game_levels là duy nhất
   Given một batch 30 game level qua đủ 10 cổng và đã merge
   When chạy pnpm --filter @mindkid/content-build seed:content
-  Then cả 30 hàng có status = published
-  And không hàng nào đi qua trạng thái draft hay in_review
+  Then cả 30 hàng được ghi vào game_levels với mỗi code là UNIQUE
+  And không có cột content_version hay entity_id
 
-Scenario: BR-CSA-03 — mỗi hàng seed có bằng chứng phát hành
-  Given một batch vừa seed xong
-  When đọc content_review_log của một hàng bất kỳ trong batch
-  Then có đúng một hàng from_status null to_status published
-  And actor_manager_id trỏ tới người approve PR
-  And checklist_snapshot chứa kết quả đủ 10 cổng
-
-Scenario: BR-CSA-04 — trượt checklist publish thì rollback cả batch
-  Given một batch 30 bản, trong đó một bản thiếu learning objective
+Scenario: BR-CSA-04 — trượt cổng kiểm tra thì rollback cả batch
+  Given một batch 30 bản, trong đó một bản thiếu skill hợp lệ
   When chạy pnpm --filter @mindkid/content-build seed:content
   Then transaction bị rollback
   And số hàng trong bảng game_levels không đổi
-  And thông báo nêu code của bản thiếu
+  And thông báo nêu code của bản lỗi
 
-Scenario: BR-CSA-06 — chạy lại là no-op
+Scenario: BR-CSA-06 — chạy lại là idempotent
   Given một batch đã seed xong
   When chạy lại pnpm --filter @mindkid/content-build seed:content với cùng batch
-  Then rows_inserted bằng 0
-  And rows_skipped_idempotent bằng số bản trong batch
-  And không hàng nào bị UPDATE
+  Then không sinh bản ghi trùng lặp
+  And id của các bản ghi đã có được giữ nguyên
 
 Scenario: cổng 0 — code trùng giữa hai seeder file
   Given hai file seeder cùng khai code GL-C4-CLS-SORT-0021
@@ -384,7 +306,7 @@ Scenario: BR-CSA-07 — AI agent không phát hành được
 Scenario: BR-CSA-08 — seeder không tạo được skill
   Given một seeder cố khai một skill mới
   When chạy pnpm --filter @mindkid/content-build seed:check
-  Then cổng 5 fail với thông báo taxonomy là Lớp 1
+  Then cổng 5 fail với thông báo taxonomy do người thiết kế
 
 Scenario: BR-CSA-16 — cổng 1 bắt content_pack sai hình dạng
   Given một seeder có content_pack thiếu trường prompt
@@ -413,13 +335,6 @@ Scenario: BR-CSA-11 — lệch giữa repo và DB bị bắt
   Then drift liệt kê code và field lệch
   And cổng tự động fail
 
-Scenario: studio thắng seed khi trùng code
-  Given một game level cùng code do manager tạo trong studio
-  When chạy pnpm --filter @mindkid/content-build seed:content
-  Then seed từ chối bản đó
-  And nội dung do manager tạo không đổi
-  And batch báo xung đột kèm code
-
 Scenario: dry-run không chạm DB thật
   Given chạy pnpm --filter @mindkid/content-build seed:content --dry-run
   When lệnh kết thúc
@@ -432,8 +347,6 @@ Scenario: dry-run không chạm DB thật
 **Always**
 - Chạy đủ 10 cổng trước khi merge; cổng tự động là cổng chặn.
 - Đọc **từng bản** trong PR trước khi approve.
-- Ghi `content_review_log` + `content_seed_batches` cho mọi hàng seed.
-- Chạy đủ checklist publish [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) §7.3 ở tầng service.
 - Một batch một transaction.
 - Giữ seeder file đồng bộ với DB (`--against-db` trong cổng tự động).
 - Lấy kiểu `content_pack` từ `content_contract`, cấm viết lại tay.
@@ -445,14 +358,13 @@ Scenario: dry-run không chạm DB thật
 - Cho AI agent IDE quyền chạm môi trường ngoài local.
 
 **Never**
-- `UPDATE` hàng đã `published` từ seeder.
 - Bỏ qua một cổng.
 - Approve PR nội dung theo lô mà không mở từng bản.
 - Cho AI sinh `skills` hoặc `strands`.
 - Mã `EMJ-<slug>` — tham chiếu là ký tự UTF-8 (`BR-EMJ-02`).
 - Chạy seed trong đường request.
 - Sửa DB tay mà không sửa seeder.
-- Để seed đè nội dung do manager tạo trong studio.
+- Thêm lại `content_review_log`, `content_seed_batches`, hoặc cơ chế đa version (`content_version`, `entity_id`).
 
 ## 11. Open questions
 

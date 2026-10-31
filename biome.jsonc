@@ -7,6 +7,9 @@
     "clientKind": "git",
     "useIgnoreFile": true
   },
+  "files": {
+    "includes": ["apps/**", "packages/**", "scripts/**", "!**/*.md", "!.agents"]
+  },
   "javascript": {
     "globals": [
       "$fetch",

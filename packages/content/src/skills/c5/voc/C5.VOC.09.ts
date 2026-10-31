@@ -47,65 +47,121 @@ export const C5_VOC_09_DATASET: SkillDataset = {
       label: "đôi mắt",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "👀",
       },
+      category: {
+        type: "bộ phận đầu",
+      },
+      value: 1,
+      contrast_group: "primary",
     },
     {
       id: "voc_mui",
       label: "cái mũi",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "👃",
       },
+      category: {
+        type: "bộ phận đầu",
+      },
+      value: 2,
+      contrast_group: "primary",
     },
     {
       id: "voc_mieng",
       label: "cái miệng",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "👄",
       },
+      category: {
+        type: "bộ phận đầu",
+      },
+      value: 3,
+      contrast_group: "primary",
     },
     {
       id: "voc_tai",
       label: "cái tai",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "👂",
       },
+      category: {
+        type: "bộ phận đầu",
+      },
+      value: 4,
+      contrast_group: "primary",
     },
     {
       id: "voc_tay",
       label: "bàn tay",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "✋",
       },
+      category: {
+        type: "tay và chân",
+      },
+      value: 5,
+      contrast_group: "contrast",
     },
     {
       id: "voc_chan",
       label: "bàn chân",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🦶",
       },
+      category: {
+        type: "tay và chân",
+      },
+      value: 6,
+      contrast_group: "contrast",
+    },
+    {
+      id: "voc_bung",
+      label: "cánh tay",
+      image: {
+        kind: "emoji",
+        ref: "💪",
+      },
+      category: {
+        type: "tay và chân",
+      },
+      value: 7,
+      contrast_group: "contrast",
     },
     {
       id: "voc_dau",
       label: "cái đầu",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🧒",
       },
-    },
-    {
-      id: "voc_bung",
-      label: "cái bụng",
-      image: {
-        kind: "emoji",
-        ref: "📝",
+      category: {
+        type: "tay và chân",
       },
+      value: 8,
+      contrast_group: "contrast",
     },
+  ],
+  axes: {
+    category: {
+      values: ["bộ phận đầu", "tay và chân"],
+      ordered: true,
+    },
+  },
+  relations: [
+    { type: "pair", source_id: "voc_mat", target_id: "voc_mui" },
+    { type: "pair", source_id: "voc_mieng", target_id: "voc_tai" },
+    { type: "pair", source_id: "voc_tay", target_id: "voc_chan" },
+    { type: "pair", source_id: "voc_bung", target_id: "voc_dau" },
+    { type: "contrast", source_id: "voc_mat", target_id: "voc_tay" },
+    { type: "contrast", source_id: "voc_mui", target_id: "voc_chan" },
+    { type: "contrast", source_id: "voc_mieng", target_id: "voc_bung" },
+    { type: "contrast", source_id: "voc_tai", target_id: "voc_dau" },
   ],
   ladder: [
     {
@@ -146,8 +202,8 @@ export const C5_VOC_09_DATASET: SkillDataset = {
     "voc_tai",
     "voc_tay",
     "voc_chan",
-    "voc_dau",
     "voc_bung",
+    "voc_dau",
   ],
 };
 
@@ -174,14 +230,6 @@ export const C5_VOC_09_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-VOC-TAP-0027",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 2,
-      theme: "family",
-      rounds: 3,
-    },
-    {
       code: "GL-C5-VOC-TAP-0028",
       template: "GT-001",
       band: "3-4",
@@ -190,59 +238,11 @@ export const C5_VOC_09_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-VOC-TAP-0029",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 3,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-TAP-0030",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 4,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
       code: "GL-C5-VOC-MULTI-0016",
       template: "GT-003",
       band: "3-4",
       difficulty: 2,
       theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-MULTI-0017",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 2,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-MULTI-0018",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 3,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-MULTI-0019",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 3,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-MULTI-0020",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 4,
-      theme: "weather",
       rounds: 3,
     },
   ],

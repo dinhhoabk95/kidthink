@@ -29,7 +29,7 @@ describe("Seed Initial Accounts Integration Tests", () => {
     // 1. Run seeder
     const stats = await seedInitialAccounts(db);
 
-    expect(stats.managerCount).toBe(2);
+    expect(stats.managerCount).toBe(1);
     expect(stats.userCount).toBe(3);
     expect(stats.childProfileCount).toBeGreaterThanOrEqual(5);
 

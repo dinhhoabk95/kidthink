@@ -44,58 +44,126 @@ export const C5_LET_02_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "let_ă",
-      label: "chữ ă",
-      glyph: "ă",
-      image: {
-        kind: "emoji",
-        ref: "📝",
-      },
-    },
-    {
       id: "let_â",
-      label: "chữ â",
+      label: "chữ â (đám mây)",
       glyph: "â",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "☁️",
       },
+      category: {
+        type: "chữ có dấu mũ",
+        label: "Chữ có dấu mũ",
+      },
+      contrast_group: "primary",
+      value: 1,
+      ordering: 1,
     },
     {
       id: "let_ê",
-      label: "chữ ê",
+      label: "chữ ê (chú ếch)",
       glyph: "ê",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🐸",
       },
+      category: {
+        type: "chữ có dấu mũ",
+        label: "Chữ có dấu mũ",
+      },
+      contrast_group: "primary",
+      value: 2,
+      ordering: 2,
     },
     {
       id: "let_ô",
-      label: "chữ ô",
+      label: "chữ ô (cái ô)",
       glyph: "ô",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "☂️",
       },
+      category: {
+        type: "chữ có dấu mũ",
+        label: "Chữ có dấu mũ",
+      },
+      contrast_group: "primary",
+      value: 3,
+      ordering: 3,
+    },
+    {
+      id: "let_ă",
+      label: "chữ ă (cái khăn)",
+      glyph: "ă",
+      image: {
+        kind: "emoji",
+        ref: "🧣",
+      },
+      category: {
+        type: "chữ có dấu móc",
+        label: "Chữ có dấu móc",
+      },
+      contrast_group: "contrast",
+      value: 4,
+      ordering: 4,
     },
     {
       id: "let_ơ",
-      label: "chữ ơ",
+      label: "chữ ơ (lá cờ)",
       glyph: "ơ",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🚩",
       },
+      category: {
+        type: "chữ có dấu móc",
+        label: "Chữ có dấu móc",
+      },
+      contrast_group: "contrast",
+      value: 5,
+      ordering: 5,
     },
     {
       id: "let_ư",
-      label: "chữ ư",
+      label: "chữ ư (sư tử)",
       glyph: "ư",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🦁",
       },
+      category: {
+        type: "chữ có dấu móc",
+        label: "Chữ có dấu móc",
+      },
+      contrast_group: "contrast",
+      value: 6,
+      ordering: 6,
+    },
+  ],
+  axes: {
+    category: {
+      values: ["chữ có dấu mũ", "chữ có dấu móc"],
+      ordered: true,
+    },
+  },
+  relations: [
+    {
+      type: "pair",
+      source_id: "let_â",
+      target_id: "let_ê",
+      explanation: "cùng là chữ có dấu mũ",
+    },
+    {
+      type: "pair",
+      source_id: "let_ă",
+      target_id: "let_ơ",
+      explanation: "cùng là chữ có dấu móc",
+    },
+    {
+      type: "contrast",
+      source_id: "let_â",
+      target_id: "let_ă",
+      explanation: "chữ có dấu mũ đối lập với chữ có dấu móc",
     },
   ],
   ladder: [
@@ -130,7 +198,7 @@ export const C5_LET_02_DATASET: SkillDataset = {
     narration_template:
       "Chúng mình cùng tìm hiểu về Nhận biết ă · â · ê · ô · ơ · ư nhé",
   },
-  ordering: ["let_ă", "let_â", "let_ê", "let_ô", "let_ơ", "let_ư"],
+  ordering: ["let_â", "let_ê", "let_ô", "let_ă", "let_ơ", "let_ư"],
 };
 
 export const C5_LET_02_SEED: SkillSeed = {
@@ -172,22 +240,6 @@ export const C5_LET_02_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-LET-TAP-0009",
-      template: "GT-001",
-      band: "4-5",
-      difficulty: 2,
-      theme: "ocean",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-LET-TAP-0010",
-      template: "GT-001",
-      band: "4-5",
-      difficulty: 3,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
       code: "GL-C5-LET-MULTI-0006",
       template: "GT-002",
       band: "4-5",
@@ -209,22 +261,6 @@ export const C5_LET_02_SEED: SkillSeed = {
       band: "4-5",
       difficulty: 2,
       theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-LET-MULTI-0009",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 2,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-LET-MULTI-0010",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 3,
-      theme: "animal",
       rounds: 3,
     },
   ],

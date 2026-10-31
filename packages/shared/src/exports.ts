@@ -1,10 +1,6 @@
 import { z } from "zod";
 
-export const ExportJobKindSchema = z.enum([
-  "lesson_plan",
-  "worksheet",
-  "curriculum_plan",
-]);
+export const ExportJobKindSchema = z.enum(["worksheet", "curriculum_plan"]);
 
 export type ExportJobKind = z.infer<typeof ExportJobKindSchema>;
 

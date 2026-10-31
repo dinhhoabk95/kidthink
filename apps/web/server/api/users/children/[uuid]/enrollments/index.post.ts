@@ -6,7 +6,6 @@ import {
   curriculumItems,
   gameLevels,
   getOwnerDb,
-  lessons,
 } from "@mindkid/db";
 import {
   InternalError,
@@ -14,12 +13,7 @@ import {
   ValidationError,
 } from "@mindkid/errors/common";
 import { AlreadyEnrolledError } from "@mindkid/errors/curriculum";
-import {
-  type AccessTier,
-  allowedTiers,
-  buildAgeRecommendationWarning,
-  computeAgeGap,
-} from "@mindkid/shared";
+import { type AccessTier, allowedTiers } from "@mindkid/shared";
 import { and, eq, inArray } from "drizzle-orm";
 import {
   defineEventHandler,
@@ -85,11 +79,33 @@ async function assertNoActiveEnrollment(
   }
 }
 
-/**
- * `BR-LFM-04`. Luật sống ở `@mindkid/shared`, không nằm trong route: bản cũ
- * viết chuỗi cảnh báo ngay tại đây, rồi file test chép lại nguyên văn — nên
- * phép thử vẫn xanh kể cả khi route bị xoá.
- */
+function computeAgeGap(input: {
+  childAge: number;
+  targetAgeMin?: number | null;
+  targetAgeMax?: number | null;
+}): number {
+  const { childAge, targetAgeMin, targetAgeMax } = input;
+  if (targetAgeMin != null && childAge < targetAgeMin) {
+    return targetAgeMin - childAge;
+  }
+  if (targetAgeMax != null && childAge > targetAgeMax) {
+    return childAge - targetAgeMax;
+  }
+  return 0;
+}
+
+function buildAgeRecommendationWarning(input: {
+  childAge: number;
+  targetAgeMin?: number | null;
+  targetAgeMax?: number | null;
+}): string | undefined {
+  if (computeAgeGap(input) === 0) {
+    return;
+  }
+  const { childAge, targetAgeMin, targetAgeMax } = input;
+  return `Chương trình này gợi ý cho trẻ ${targetAgeMin ?? 3}–${targetAgeMax ?? 6} tuổi, bé nhà bạn ${childAge} tuổi`;
+}
+
 export function computeAgeRecommendationWarning(
   child: typeof childProfiles.$inferSelect,
   curriculum: typeof curricula.$inferSelect
@@ -144,53 +160,23 @@ async function assertGatingAllowance(
   const glEntityIds = mandatoryItems
     .filter((i) => i.entityType === "game_level")
     .map((i) => i.entityId);
-  const lesEntityIds = mandatoryItems
-    .filter((i) => i.entityType === "lesson")
-    .map((i) => i.entityId);
 
   const glTiers = new Map<number, AccessTier>();
   if (glEntityIds.length > 0) {
     const glRows = await db
       .select({
-        entityId: gameLevels.entityId,
+        id: gameLevels.id,
         accessTier: gameLevels.accessTier,
       })
       .from(gameLevels)
-      .where(
-        and(
-          inArray(gameLevels.entityId, glEntityIds),
-          eq(gameLevels.status, "published")
-        )
-      );
+      .where(inArray(gameLevels.id, glEntityIds));
     for (const r of glRows) {
-      glTiers.set(r.entityId, r.accessTier as AccessTier);
-    }
-  }
-
-  const lesTiers = new Map<number, AccessTier>();
-  if (lesEntityIds.length > 0) {
-    const lesRows = await db
-      .select({
-        entityId: lessons.entityId,
-        accessTier: lessons.accessTier,
-      })
-      .from(lessons)
-      .where(
-        and(
-          inArray(lessons.entityId, lesEntityIds),
-          eq(lessons.status, "published")
-        )
-      );
-    for (const r of lesRows) {
-      lesTiers.set(r.entityId, r.accessTier as AccessTier);
+      glTiers.set(r.id, r.accessTier as AccessTier);
     }
   }
 
   const hasAccessibleMandatoryItem = mandatoryItems.some((item) => {
-    const tier =
-      item.entityType === "game_level"
-        ? glTiers.get(item.entityId) || "premium"
-        : lesTiers.get(item.entityId) || "premium";
+    const tier = glTiers.get(item.entityId) || "premium";
     return userAllowedTiers.includes(tier);
   });
 
@@ -233,13 +219,11 @@ export default defineEventHandler(async (event) => {
   // 2. Check if child already has an active enrollment (D-MB -> 409 ALREADY_ENROLLED)
   await assertNoActiveEnrollment(db, child.id, event);
 
-  // 3. Resolve published curriculum by code (D-MA)
+  // 3. Resolve curriculum by code (D-MA)
   const [curriculum] = await db
     .select()
     .from(curricula)
-    .where(
-      and(eq(curricula.code, curriculumCode), eq(curricula.status, "published"))
-    );
+    .where(eq(curricula.code, curriculumCode));
 
   if (!curriculum) {
     throw new NotFoundError("Không tìm thấy chương trình học.");
@@ -279,7 +263,7 @@ export default defineEventHandler(async (event) => {
       child_id: child.id,
       child_uuid: child.uuid,
       curriculum_code: curriculum.code,
-      curriculum_version: curriculum.contentVersion,
+      curriculum_version: 1,
       age_gap: ageGap,
       age_warning: ageWarning,
     },
@@ -289,7 +273,7 @@ export default defineEventHandler(async (event) => {
   return {
     enrollment_id: enrollment.id,
     curriculum_code: curriculum.code,
-    curriculum_version: curriculum.contentVersion,
+    curriculum_version: 1,
     status: enrollment.status,
     enrolled_at: enrollment.enrolledAt,
     age_gap: ageGap,

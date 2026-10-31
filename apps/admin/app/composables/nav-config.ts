@@ -42,17 +42,6 @@ export const MANAGER_NAV_ITEMS: readonly ManagerNavItem[] = [
     shortcut: "G D",
     description: "Tổng quan vận hành, KPI và cảnh báo",
   },
-  {
-    id: "content-review",
-    label: "Phê duyệt nội dung",
-    href: "/content-review",
-    icon: "i-lucide-clipboard-check",
-    category: "operations",
-    roles: ["super_admin", "content_reviewer"],
-    badge: "P2.8",
-    shortcut: "G R",
-    description: "Hàng đợi kiểm duyệt màn chơi & bài học",
-  },
 
   // 2. Pedagogy & Content
   {
@@ -74,27 +63,7 @@ export const MANAGER_NAV_ITEMS: readonly ManagerNavItem[] = [
     roles: ["super_admin", "content_reviewer"],
     badge: "P2.6",
     shortcut: "G L",
-    description: "Xưởng soạn thảo và cấu hình màn chơi",
-  },
-  {
-    id: "lessons",
-    label: "Bài học (Lessons)",
-    href: "/lessons",
-    icon: "i-lucide-book-open",
-    category: "content",
-    roles: ["super_admin", "content_reviewer"],
-    badge: "P3.1",
-    description: "Biên soạn bài học và giáo án tương tác",
-  },
-  {
-    id: "activities",
-    label: "Hoạt động (Activities)",
-    href: "/activities",
-    icon: "i-lucide-puzzle",
-    category: "content",
-    roles: ["super_admin", "content_reviewer"],
-    badge: "P3.2",
-    description: "Hoạt động thực hành và phiếu bài tập",
+    description: "Danh mục và cấu hình màn chơi",
   },
   {
     id: "curriculum",

@@ -1,10 +1,13 @@
 import { ValidationError } from "@mindkid/errors/common";
 import { SessionNotFoundError } from "@mindkid/errors/play";
 import { EventPayloadSchema, ingestPlayEvents } from "@mindkid/play";
-import { defineEventHandler, getRouterParam, readBody } from "h3";
+import { defineEventHandler, getRouterParam } from "h3";
 import { z } from "zod";
-
-import { getOrSetGuestDeviceId } from "#server/utils/auth-runtime";
+import {
+  enforceTwoAxisRateLimit,
+  getOrSetGuestDeviceId,
+} from "#server/utils/auth-runtime";
+import { readJsonBodyWithLimit } from "#server/utils/request-body";
 
 const EventsSchema = z
   .object({
@@ -31,8 +34,11 @@ export default defineEventHandler(async (event) => {
     throw new SessionNotFoundError();
   }
 
+  await enforceTwoAxisRateLimit(event, "play:events", uuid);
+
   const guestDeviceId = getOrSetGuestDeviceId(event);
-  const parsed = EventsSchema.safeParse((await readBody(event)) || {});
+  const rawBody = await readJsonBodyWithLimit(event);
+  const parsed = EventsSchema.safeParse(rawBody);
   if (!parsed.success) {
     throw new ValidationError();
   }

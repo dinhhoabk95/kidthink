@@ -4,8 +4,8 @@ export const C2_GEO_08_IDENTITY: SkillIdentity = {
   code: "C2.GEO.08",
   strand_code: "C2.GEO",
   competency_code: "C2",
-  name: "Đa giác — đếm cạnh",
-  age_min: 6,
+  name: "Đếm cạnh của hình",
+  age_min: 5,
   age_max: 6,
   difficulty: 4,
   thinking_processes: ["count", "infer"],
@@ -38,64 +38,168 @@ export const C2_GEO_08_IDENTITY: SkillIdentity = {
 
 export const C2_GEO_08_DATASET: SkillDataset = {
   skill_code: "C2.GEO.08",
-  concept_label: "Đa giác — đếm cạnh",
+  concept_label: "Đếm cạnh của hình",
   surface: "game",
   items: [
     {
-      id: "triangle",
-      label: "hình tam giác",
+      id: "triangle_3",
+      label: "tam giác ba cạnh",
       image: {
         kind: "emoji",
         ref: "🔺",
       },
       category: {
-        type: "shape",
+        type: "hình ít cạnh",
       },
+      contrast_group: "few_edges",
+      value: 1,
+      ordering: 1,
     },
     {
-      id: "rectangle",
-      label: "hình chữ nhật",
+      id: "ruler_3",
+      label: "thước ê-ke ba cạnh",
       image: {
         kind: "emoji",
-        ref: "🟧",
+        ref: "📐",
       },
       category: {
-        type: "shape",
+        type: "hình ít cạnh",
       },
+      contrast_group: "few_edges",
+      value: 2,
+      ordering: 2,
     },
     {
-      id: "star",
-      label: "hình ngôi sao",
+      id: "square_4",
+      label: "hình vuông bốn cạnh",
+      image: {
+        kind: "emoji",
+        ref: "🟦",
+      },
+      category: {
+        type: "hình ít cạnh",
+      },
+      contrast_group: "few_edges",
+      value: 3,
+      ordering: 3,
+    },
+    {
+      id: "diamond_4",
+      label: "hình thoi bốn cạnh",
+      image: {
+        kind: "emoji",
+        ref: "🔶",
+      },
+      category: {
+        type: "hình ít cạnh",
+      },
+      contrast_group: "few_edges",
+      value: 4,
+      ordering: 4,
+    },
+    {
+      id: "house_5",
+      label: "mái nhà năm cạnh",
+      image: {
+        kind: "emoji",
+        ref: "🏠",
+      },
+      category: {
+        type: "hình nhiều cạnh",
+      },
+      contrast_group: "many_edges",
+      value: 5,
+      ordering: 5,
+    },
+    {
+      id: "star_5",
+      label: "ngôi sao năm cánh",
       image: {
         kind: "emoji",
         ref: "⭐",
       },
       category: {
-        type: "shape",
+        type: "hình nhiều cạnh",
       },
+      contrast_group: "many_edges",
+      value: 6,
+      ordering: 6,
     },
     {
-      id: "heart",
-      label: "hình trái tim",
+      id: "honey_6",
+      label: "tổ ong sáu cạnh",
       image: {
         kind: "emoji",
-        ref: "❤️",
+        ref: "🐝",
       },
       category: {
-        type: "shape",
+        type: "hình nhiều cạnh",
       },
+      contrast_group: "many_edges",
+      value: 7,
+      ordering: 7,
+    },
+    {
+      id: "stop_8",
+      label: "biển báo tám cạnh",
+      image: {
+        kind: "emoji",
+        ref: "🛑",
+      },
+      category: {
+        type: "hình nhiều cạnh",
+      },
+      contrast_group: "many_edges",
+      value: 8,
+      ordering: 8,
     },
   ],
+  relations: [
+    {
+      type: "pair",
+      source_id: "triangle_3",
+      target_id: "house_5",
+    },
+    {
+      type: "pair",
+      source_id: "ruler_3",
+      target_id: "star_5",
+    },
+    {
+      type: "pair",
+      source_id: "square_4",
+      target_id: "honey_6",
+    },
+    {
+      type: "pair",
+      source_id: "diamond_4",
+      target_id: "stop_8",
+    },
+    {
+      type: "contrast",
+      source_id: "triangle_3",
+      target_id: "house_5",
+    },
+  ],
+  axes: {
+    category: {
+      values: ["hình ít cạnh", "hình nhiều cạnh"],
+    },
+    order: {
+      values: ["1", "2", "3", "4", "5", "6", "7", "8"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Đa giác — đếm cạnh",
+      description: "Làm quen cơ bản với Đếm cạnh của hình",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Đa giác — đếm cạnh",
+      description: "Nhận biết và chọn đúng Đếm cạnh của hình",
     },
     {
       rung: 3,
@@ -115,23 +219,24 @@ export const C2_GEO_08_DATASET: SkillDataset = {
   ],
   phrasing: {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
-    narration_template: "Chúng mình cùng tìm hiểu về Đa giác — đếm cạnh nhé",
+    narration_template: "Chúng mình cùng đếm cạnh của hình thật vui nhé",
   },
-  ordering: ["triangle", "rectangle", "star", "heart"],
+  ordering: [
+    "triangle_3",
+    "ruler_3",
+    "square_4",
+    "diamond_4",
+    "house_5",
+    "star_5",
+    "honey_6",
+    "stop_8",
+  ],
 };
 
 export const C2_GEO_08_SEED: SkillSeed = {
   identity: C2_GEO_08_IDENTITY,
   dataset: C2_GEO_08_DATASET,
   levels: [
-    {
-      code: "GL-C2-GEO-TAP-0013",
-      template: "GT-001",
-      band: "5-6",
-      difficulty: 3,
-      theme: "art",
-      rounds: 3,
-    },
     {
       code: "GL-C2-GEO-TAP-0014",
       template: "GT-001",
@@ -146,62 +251,6 @@ export const C2_GEO_08_SEED: SkillSeed = {
       band: "5-6",
       difficulty: 3,
       theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GEO-TCNT-0010",
-      template: "GT-002",
-      band: "5-6",
-      difficulty: 4,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GEO-TCMP-0009",
-      template: "GT-003",
-      band: "5-6",
-      difficulty: 3,
-      theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GEO-TCMP-0010",
-      template: "GT-003",
-      band: "5-6",
-      difficulty: 4,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GEO-PAIR-0009",
-      template: "GT-004",
-      band: "5-6",
-      difficulty: 3,
-      theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GEO-PAIR-0010",
-      template: "GT-004",
-      band: "5-6",
-      difficulty: 4,
-      theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GEO-SORT-0001",
-      template: "GT-006",
-      band: "5-6",
-      difficulty: 3,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GEO-SORT-0002",
-      template: "GT-006",
-      band: "5-6",
-      difficulty: 4,
-      theme: "farm",
       rounds: 3,
     },
     {

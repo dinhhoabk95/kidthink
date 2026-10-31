@@ -1,5 +1,18 @@
 import { getQuery, type H3Event, readBody } from "h3";
-import { assertRequestBodySize } from "./auth-runtime.js";
+import {
+  assertPayloadSize,
+  assertRequestBodySize,
+  DEFAULT_MAX_JSON_BODY_BYTES as RUNTIME_DEFAULT_MAX_JSON_BODY_BYTES,
+} from "./auth-runtime.js";
+
+export const DEFAULT_MAX_JSON_BODY_BYTES = RUNTIME_DEFAULT_MAX_JSON_BODY_BYTES;
+
+export type JsonPrimitive = string | number | boolean | null;
+export type JsonValue = JsonPrimitive | JsonRecord | JsonArray;
+export interface JsonRecord {
+  [key: string]: JsonValue | undefined;
+}
+export type JsonArray = JsonValue[];
 
 /**
  * Đọc body request có kiểm tra trần kích thước tối đa.
@@ -7,12 +20,11 @@ import { assertRequestBodySize } from "./auth-runtime.js";
  */
 export async function readBodyWithLimit(
   event: H3Event,
-  maxBytes?: number
+  maxBytes = DEFAULT_MAX_JSON_BODY_BYTES
 ): Promise<Record<string, string | number | boolean | null | object>> {
-  if (maxBytes !== undefined) {
-    assertRequestBodySize(event, maxBytes);
-  }
+  assertRequestBodySize(event, maxBytes);
   const body = await readRequestBody(event);
+  assertPayloadSize(body, maxBytes);
   if (typeof body === "object" && body !== null) {
     return body as Record<string, string | number | boolean | null | object>;
   }
@@ -20,27 +32,44 @@ export async function readBodyWithLimit(
 }
 
 /**
+ * Đọc JSON body với kiểm tra kích thước nghiêm ngặt hai tầng (header + actual buffer size)
+ * chống chunked-encoding payload bypass (SEC-REQ-6).
+ */
+export async function readJsonBodyWithLimit<T = JsonRecord>(
+  event: H3Event,
+  maxBytes = DEFAULT_MAX_JSON_BODY_BYTES
+): Promise<T> {
+  assertRequestBodySize(event, maxBytes);
+  const parsed =
+    (await readBody<JsonRecord>(event).catch(() => undefined)) ??
+    (Reflect.get(event, "_body") as JsonRecord | undefined) ??
+    (Reflect.get(event.context, "body") as JsonRecord | undefined);
+
+  assertPayloadSize(parsed, maxBytes);
+  return (parsed ?? {}) as T;
+}
+
+/**
  * Đọc body request rồi trả về dữ liệu thô — **chưa tin được**, người gọi BẮT BUỘC
  * đưa qua Zod (`BR-SEC-04`).
  * Khuyến nghị: dùng `defineApiRoute` cho route mới.
- *
- * Thứ tự nguồn:
- * 1. `readBody(event)` — request thật.
- * 2. `event._body` — nơi Nitro và test đơn vị gắn body dựng sẵn.
- * 3. `event.context.body` — nơi một số middleware nội bộ gắn body đã đọc.
  */
-export async function readRequestBody(event: H3Event): Promise<unknown> {
-  const parsed = await readBody(event).catch(() => undefined);
+export async function readRequestBody(event: H3Event): Promise<JsonRecord> {
+  const parsed = (await readBody<JsonRecord>(event).catch(() => undefined)) as
+    | JsonRecord
+    | undefined;
   if (isNonEmptyRecord(parsed)) {
     return parsed;
   }
 
-  const injected = Reflect.get(event, "_body");
+  const injected = Reflect.get(event, "_body") as JsonRecord | undefined;
   if (isNonEmptyRecord(injected)) {
     return injected;
   }
 
-  const contextBody = Reflect.get(event.context, "body");
+  const contextBody = Reflect.get(event.context, "body") as
+    | JsonRecord
+    | undefined;
   if (isNonEmptyRecord(contextBody)) {
     return contextBody;
   }
@@ -48,23 +77,22 @@ export async function readRequestBody(event: H3Event): Promise<unknown> {
   return parsed ?? {};
 }
 
-function isNonEmptyRecord(value: unknown): boolean {
+function isNonEmptyRecord(value: JsonValue | undefined): value is JsonRecord {
   return (
-    typeof value === "object" && value !== null && Object.keys(value).length > 0
+    typeof value === "object" &&
+    value !== null &&
+    !Array.isArray(value) &&
+    Object.keys(value).length > 0
   );
 }
 
 /**
  * Đọc query string, ưu tiên `event._query` mà test đơn vị gắn sẵn.
- *
- * `Reflect.get` thay cho `event as Record<string, unknown>`: ép H3Event sang
- * record là một `as` mà `tsc` từ chối (TS2352 — hai kiểu không đủ chồng lấn),
- * và nợ ép kiểu của repo chỉ được giảm (TYPE-SAFETY `BR-TYP-02`).
  */
-export function readRequestQuery(event: H3Event): Record<string, unknown> {
-  const injected = Reflect.get(event, "_query");
+export function readRequestQuery(event: H3Event): JsonRecord {
+  const injected = Reflect.get(event, "_query") as JsonRecord | undefined;
   if (typeof injected === "object" && injected !== null) {
-    return injected as Record<string, unknown>;
+    return injected;
   }
-  return getQuery(event);
+  return getQuery(event) as JsonRecord;
 }

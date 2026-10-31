@@ -43,11 +43,11 @@ export const C5_VOC_16_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "voc_tet_nguyen_dan",
-      label: "tết nguyên đán",
+      id: "voc_qua_tet",
+      label: "quà tết",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🎁",
       },
     },
     {
@@ -55,7 +55,7 @@ export const C5_VOC_16_DATASET: SkillDataset = {
       label: "tết trung thu",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🥮",
       },
     },
     {
@@ -63,31 +63,31 @@ export const C5_VOC_16_DATASET: SkillDataset = {
       label: "đèn lồng",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🏮",
       },
     },
     {
       id: "voc_banh_chung",
-      label: "bánh chưng",
+      label: "mâm quả ngày tết",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🍉",
       },
     },
     {
       id: "voc_mua_lan",
-      label: "múa lân",
+      label: "múa sư tử lân",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🦁",
       },
     },
     {
       id: "voc_li_xi",
-      label: "lì xì",
+      label: "bao lì xì",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🧧",
       },
     },
     {
@@ -95,7 +95,7 @@ export const C5_VOC_16_DATASET: SkillDataset = {
       label: "hoa đào tết",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🌸",
       },
     },
     {
@@ -103,7 +103,7 @@ export const C5_VOC_16_DATASET: SkillDataset = {
       label: "pháo hoa",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🎆",
       },
     },
   ],
@@ -140,7 +140,7 @@ export const C5_VOC_16_DATASET: SkillDataset = {
       "Chúng mình cùng tìm hiểu về Từ vựng lễ hội Việt Nam nhé",
   },
   ordering: [
-    "voc_tet_nguyen_dan",
+    "voc_qua_tet",
     "voc_tet_trung_thu",
     "voc_den_long",
     "voc_banh_chung",
@@ -174,14 +174,6 @@ export const C5_VOC_16_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-VOC-TAP-0062",
-      template: "GT-001",
-      band: "5-6",
-      difficulty: 2,
-      theme: "family",
-      rounds: 3,
-    },
-    {
       code: "GL-C5-VOC-TAP-0063",
       template: "GT-001",
       band: "5-6",
@@ -190,59 +182,11 @@ export const C5_VOC_16_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-VOC-TAP-0064",
-      template: "GT-001",
-      band: "5-6",
-      difficulty: 3,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-TAP-0065",
-      template: "GT-001",
-      band: "5-6",
-      difficulty: 4,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
       code: "GL-C5-VOC-MULTI-0051",
       template: "GT-002",
       band: "5-6",
       difficulty: 2,
       theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-MULTI-0052",
-      template: "GT-002",
-      band: "5-6",
-      difficulty: 2,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-MULTI-0053",
-      template: "GT-002",
-      band: "5-6",
-      difficulty: 3,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-MULTI-0054",
-      template: "GT-002",
-      band: "5-6",
-      difficulty: 3,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-MULTI-0055",
-      template: "GT-002",
-      band: "5-6",
-      difficulty: 4,
-      theme: "weather",
       rounds: 3,
     },
   ],

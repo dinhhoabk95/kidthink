@@ -49,30 +49,10 @@ export const C5_VOC_03_DATASET: SkillDataset = {
         ref: "👨‍⚕️",
       },
       category: {
-        type: "nghề nghiệp",
+        type: "nghề bảo vệ",
       },
-    },
-    {
-      id: "voc_co_giao",
-      label: "cô giáo",
-      image: {
-        kind: "emoji",
-        ref: "👩‍🏫",
-      },
-      category: {
-        type: "nghề nghiệp",
-      },
-    },
-    {
-      id: "voc_dau_bep",
-      label: "đầu bếp",
-      image: {
-        kind: "emoji",
-        ref: "👨‍🍳",
-      },
-      category: {
-        type: "nghề nghiệp",
-      },
+      value: 1,
+      contrast_group: "primary",
     },
     {
       id: "voc_chu_bo_doi",
@@ -82,8 +62,62 @@ export const C5_VOC_03_DATASET: SkillDataset = {
         ref: "💂‍♂️",
       },
       category: {
-        type: "nghề nghiệp",
+        type: "nghề bảo vệ",
       },
+      value: 2,
+      contrast_group: "primary",
+    },
+    {
+      id: "voc_cuu_hoa",
+      label: "lính cứu hỏa",
+      image: {
+        kind: "emoji",
+        ref: "👨‍🚒",
+      },
+      category: {
+        type: "nghề bảo vệ",
+      },
+      value: 3,
+      contrast_group: "primary",
+    },
+    {
+      id: "voc_canh_sat",
+      label: "cảnh sát",
+      image: {
+        kind: "emoji",
+        ref: "👮",
+      },
+      category: {
+        type: "nghề bảo vệ",
+      },
+      value: 4,
+      contrast_group: "primary",
+    },
+    {
+      id: "voc_co_giao",
+      label: "cô giáo",
+      image: {
+        kind: "emoji",
+        ref: "👩‍🏫",
+      },
+      category: {
+        type: "nghề đời sống",
+      },
+      value: 5,
+      contrast_group: "contrast",
+    },
+    {
+      id: "voc_dau_bep",
+      label: "đầu bếp",
+      image: {
+        kind: "emoji",
+        ref: "👨‍🍳",
+      },
+      category: {
+        type: "nghề đời sống",
+      },
+      value: 6,
+      contrast_group: "contrast",
     },
     {
       id: "voc_bac_nong_dan",
@@ -93,9 +127,44 @@ export const C5_VOC_03_DATASET: SkillDataset = {
         ref: "🧑‍🌾",
       },
       category: {
-        type: "nghề nghiệp",
+        type: "nghề đời sống",
       },
+      value: 7,
+      contrast_group: "contrast",
     },
+    {
+      id: "voc_hoa_si",
+      label: "họa sĩ",
+      image: {
+        kind: "emoji",
+        ref: "👨‍🎨",
+      },
+      category: {
+        type: "nghề đời sống",
+      },
+      value: 8,
+      contrast_group: "contrast",
+    },
+  ],
+  axes: {
+    category: {
+      values: ["nghề bảo vệ", "nghề đời sống"],
+      ordered: true,
+    },
+  },
+  relations: [
+    { type: "pair", source_id: "voc_bac_si", target_id: "voc_cuu_hoa" },
+    { type: "pair", source_id: "voc_chu_bo_doi", target_id: "voc_canh_sat" },
+    { type: "pair", source_id: "voc_co_giao", target_id: "voc_dau_bep" },
+    { type: "pair", source_id: "voc_bac_nong_dan", target_id: "voc_hoa_si" },
+    { type: "contrast", source_id: "voc_bac_si", target_id: "voc_co_giao" },
+    { type: "contrast", source_id: "voc_chu_bo_doi", target_id: "voc_dau_bep" },
+    {
+      type: "contrast",
+      source_id: "voc_cuu_hoa",
+      target_id: "voc_bac_nong_dan",
+    },
+    { type: "contrast", source_id: "voc_canh_sat", target_id: "voc_hoa_si" },
   ],
   ladder: [
     {
@@ -130,10 +199,13 @@ export const C5_VOC_03_DATASET: SkillDataset = {
   },
   ordering: [
     "voc_bac_si",
+    "voc_chu_bo_doi",
+    "voc_cuu_hoa",
+    "voc_canh_sat",
     "voc_co_giao",
     "voc_dau_bep",
-    "voc_chu_bo_doi",
     "voc_bac_nong_dan",
+    "voc_hoa_si",
   ],
 };
 
@@ -163,62 +235,6 @@ export const C5_VOC_03_SEED: SkillSeed = {
       band: "3-4",
       difficulty: 2,
       theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-TCMP-0006",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 3,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-PAIR-0001",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 2,
-      theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-PAIR-0002",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 3,
-      theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-PATT-0005",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 2,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-PATT-0006",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 3,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-SHAD-0001",
-      template: "GT-007",
-      band: "3-4",
-      difficulty: 2,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-SHAD-0002",
-      template: "GT-007",
-      band: "3-4",
-      difficulty: 3,
-      theme: "animal",
       rounds: 3,
     },
   ],

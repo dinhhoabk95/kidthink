@@ -1,7 +1,12 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { requireEnv } from "@mindkid/config";
 
-const PREVIEW_SECRET = requireEnv("NUXT_SESSION_PASSWORD");
+function getPreviewKey(): string {
+  const secret = requireEnv("NUXT_SESSION_PASSWORD");
+  return createHmac("sha256", `mindkid:studio-preview:v1:${secret}`)
+    .update("mindkid:studio-preview:v1")
+    .digest("hex");
+}
 
 const PREVIEW_TOKEN_TTL_MS = 30 * 60 * 1000; // 30 minutes
 
@@ -31,7 +36,7 @@ export function issuePreviewToken(payload: {
   };
 
   const json = Buffer.from(JSON.stringify(data)).toString("base64url");
-  const signature = createHmac("sha256", PREVIEW_SECRET)
+  const signature = createHmac("sha256", getPreviewKey())
     .update(json)
     .digest("base64url");
 
@@ -64,7 +69,7 @@ export function verifyPreviewToken(
     return false;
   }
 
-  const expectedSig = createHmac("sha256", PREVIEW_SECRET)
+  const expectedSig = createHmac("sha256", getPreviewKey())
     .update(json)
     .digest("base64url");
 

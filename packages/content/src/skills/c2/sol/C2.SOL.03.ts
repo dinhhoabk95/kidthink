@@ -42,50 +42,150 @@ export const C2_SOL_03_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "square",
-      label: "hình vuông",
+      id: "can_cylinder",
+      label: "lon nước khối trụ",
+      value: 1,
       image: {
         kind: "emoji",
-        ref: "🟦",
+        ref: "🥫",
       },
       category: {
-        type: "shape",
+        type: "khối trụ",
+      },
+      contrast_group: "cylinder",
+    },
+    {
+      id: "drum_cylinder",
+      label: "cái trống khối trụ",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "🥁",
+      },
+      category: {
+        type: "khối trụ",
+      },
+      contrast_group: "cylinder",
+    },
+    {
+      id: "candle_cylinder",
+      label: "ngọn nến khối trụ",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "🕯️",
+      },
+      category: {
+        type: "khối trụ",
+      },
+      contrast_group: "cylinder",
+    },
+    {
+      id: "log_cylinder",
+      label: "khúc gỗ khối trụ",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "🪵",
+      },
+      category: {
+        type: "khối trụ",
+      },
+      contrast_group: "cylinder",
+    },
+    {
+      id: "ball_other",
+      label: "quả bóng khối cầu",
+      value: 5,
+      image: {
+        kind: "emoji",
+        ref: "⚽",
+      },
+      category: {
+        type: "khối khác",
+      },
+      contrast_group: "other_solid",
+    },
+    {
+      id: "dice_other",
+      label: "xúc xắc lập phương",
+      value: 6,
+      image: {
+        kind: "emoji",
+        ref: "🎲",
+      },
+      category: {
+        type: "khối khác",
+      },
+      contrast_group: "other_solid",
+    },
+    {
+      id: "gift_other",
+      label: "hộp quà vuông",
+      value: 7,
+      image: {
+        kind: "emoji",
+        ref: "🎁",
+      },
+      category: {
+        type: "khối khác",
+      },
+      contrast_group: "other_solid",
+    },
+    {
+      id: "cone_other",
+      label: "kem ốc quế",
+      value: 8,
+      image: {
+        kind: "emoji",
+        ref: "🍦",
+      },
+      category: {
+        type: "khối khác",
+      },
+      contrast_group: "other_solid",
+    },
+  ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "can_cylinder",
+      target_id: "ball_other",
+      metadata: {
+        dimension: "solid_type",
       },
     },
     {
-      id: "triangle",
-      label: "hình tam giác",
-      image: {
-        kind: "emoji",
-        ref: "🔺",
-      },
-      category: {
-        type: "shape",
+      type: "contrast",
+      source_id: "drum_cylinder",
+      target_id: "dice_other",
+      metadata: {
+        dimension: "solid_type",
       },
     },
     {
-      id: "rectangle",
-      label: "hình chữ nhật",
-      image: {
-        kind: "emoji",
-        ref: "🟧",
-      },
-      category: {
-        type: "shape",
+      type: "pair",
+      source_id: "can_cylinder",
+      target_id: "drum_cylinder",
+      metadata: {
+        relation: "cùng khối trụ",
       },
     },
     {
-      id: "star",
-      label: "hình ngôi sao",
-      image: {
-        kind: "emoji",
-        ref: "⭐",
-      },
-      category: {
-        type: "shape",
+      type: "pair",
+      source_id: "ball_other",
+      target_id: "dice_other",
+      metadata: {
+        relation: "cùng khối khác",
       },
     },
   ],
+  axes: {
+    solid_type: {
+      values: ["khối trụ", "khối khác"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
@@ -117,7 +217,16 @@ export const C2_SOL_03_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Khối trụ nhé",
   },
-  ordering: ["square", "triangle", "rectangle", "star"],
+  ordering: [
+    "can_cylinder",
+    "drum_cylinder",
+    "candle_cylinder",
+    "log_cylinder",
+    "ball_other",
+    "dice_other",
+    "gift_other",
+    "cone_other",
+  ],
 };
 
 export const C2_SOL_03_SEED: SkillSeed = {
@@ -146,62 +255,6 @@ export const C2_SOL_03_SEED: SkillSeed = {
       band: "4-5",
       difficulty: 2,
       theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-TCNT-0006",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 3,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-TCMP-0005",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 2,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-TCMP-0006",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 3,
-      theme: "space",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-PAIR-0005",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 2,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-PAIR-0006",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 3,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-PATT-0005",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 2,
-      theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-PATT-0006",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 3,
-      theme: "festival",
       rounds: 3,
     },
   ],

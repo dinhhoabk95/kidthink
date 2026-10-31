@@ -37,6 +37,7 @@ export interface RememberData {
   readonly role?: ManagerRole;
   readonly displayName: string;
   readonly gen?: number;
+  readonly activeChildId?: number | null;
 }
 
 export interface CreateSessionOptions {
@@ -92,12 +93,19 @@ export function buildAuthSentinelKey(
 
 export interface MinimalRedisClient {
   get(key: string): Promise<string | null>;
-  set(key: string, value: string, ...args: unknown[]): Promise<unknown>;
+  set(
+    key: string,
+    value: string,
+    expiryMode: "EX",
+    time: number
+  ): Promise<string | number | null>;
+  set(key: string, value: string): Promise<string | number | null>;
   del(...keys: string[]): Promise<number>;
   sadd(key: string, ...members: string[]): Promise<number>;
   srem(key: string, ...members: string[]): Promise<number>;
   smembers(key: string): Promise<string[]>;
   incr(key: string): Promise<number>;
+  expire?(key: string, seconds: number): Promise<number | undefined>;
 }
 
 export class InMemoryRedisClient implements MinimalRedisClient {
@@ -126,14 +134,15 @@ export class InMemoryRedisClient implements MinimalRedisClient {
     return Promise.resolve(this.kv.get(key)?.value ?? null);
   }
 
-  set(key: string, value: string, ...args: unknown[]): Promise<unknown> {
+  set(
+    key: string,
+    value: string,
+    expiryMode?: "EX",
+    time?: number
+  ): Promise<string | number | null> {
     let ttlMs: number | undefined;
-    for (let i = 0; i < args.length; i++) {
-      if (args[i] === "EX" && typeof args[i + 1] === "number") {
-        ttlMs = (args[i + 1] as number) * 1000;
-      } else if (args[i] === "PX" && typeof args[i + 1] === "number") {
-        ttlMs = args[i + 1] as number;
-      }
+    if (expiryMode === "EX" && typeof time === "number") {
+      ttlMs = time * 1000;
     }
     this.kv.set(key, {
       value,
@@ -190,6 +199,15 @@ export class InMemoryRedisClient implements MinimalRedisClient {
     return Promise.resolve(set ? Array.from(set) : []);
   }
 
+  expire(key: string, seconds: number): Promise<number> {
+    const item = this.kv.get(key);
+    if (!item) {
+      return Promise.resolve(0);
+    }
+    item.expiresAt = Date.now() + seconds * 1000;
+    return Promise.resolve(1);
+  }
+
   async incr(key: string): Promise<number> {
     const val = await this.get(key);
     const num = val ? Number.parseInt(val, 10) + 1 : 1;
@@ -242,6 +260,64 @@ export class RedisSessionStore implements SessionStorePort {
     return Number.isNaN(parsed) ? 0 : parsed;
   }
 
+  private async createRememberToken(
+    options: CreateSessionOptions,
+    deviceId: string,
+    gen: number,
+    now: number
+  ): Promise<{ rememberToken: string; selectorDigest: string }> {
+    const selector = generateTokenHex(32);
+    const verifier = generateTokenHex(32);
+    const selectorDigest = sha256(selector);
+    const verifierHash = sha256(verifier);
+
+    const absoluteExpiresAt = now + REMEMBER_MAX_TTL_SECONDS * 1000;
+    const rememberData: RememberData = {
+      accountId: options.accountId,
+      verifierHash,
+      deviceId,
+      createdAt: now,
+      absoluteExpiresAt,
+      role: options.role,
+      displayName: options.displayName,
+      gen,
+      activeChildId: options.activeChildId ?? null,
+    };
+
+    await this.redis.set(
+      this.rememberKey(options.namespace, selectorDigest),
+      JSON.stringify(rememberData),
+      "EX",
+      REMEMBER_MAX_TTL_SECONDS
+    );
+
+    return { rememberToken: `${selector}:${verifier}`, selectorDigest };
+  }
+
+  private async cleanupExistingDeviceSession(
+    namespace: AuthNamespace,
+    devKey: string,
+    currentSessionDigest: string,
+    currentSelectorDigest?: string
+  ): Promise<string | undefined> {
+    const existingPtr = await this.redis.get(devKey);
+    if (!existingPtr) {
+      return currentSelectorDigest;
+    }
+    try {
+      const parsed = JSON.parse(existingPtr);
+      if (
+        parsed.sessionDigest &&
+        parsed.sessionDigest !== currentSessionDigest
+      ) {
+        await this.redis.del(this.sessionKey(namespace, parsed.sessionDigest));
+      }
+      return currentSelectorDigest ?? parsed.selectorDigest;
+    } catch {
+      return currentSelectorDigest;
+    }
+  }
+
   async createSession(
     options: CreateSessionOptions
   ): Promise<CreatedSessionOutput> {
@@ -276,44 +352,18 @@ export class RedisSessionStore implements SessionStorePort {
       let selectorDigest: string | undefined;
 
       if (options.rememberMe) {
-        const selector = generateTokenHex(32);
-        const verifier = generateTokenHex(32);
-        selectorDigest = sha256(selector);
-        const verifierHash = sha256(verifier);
-
-        const absoluteExpiresAt = now + REMEMBER_MAX_TTL_SECONDS * 1000;
-        const rememberData: RememberData = {
-          accountId: options.accountId,
-          verifierHash,
-          deviceId,
-          createdAt: now,
-          absoluteExpiresAt,
-          role: options.role,
-          displayName: options.displayName,
-          gen,
-        };
-
-        await this.redis.set(
-          this.rememberKey(options.namespace, selectorDigest),
-          JSON.stringify(rememberData),
-          "EX",
-          REMEMBER_MAX_TTL_SECONDS
-        );
-
-        rememberToken = `${selector}:${verifier}`;
-      } else {
-        const existingPtr = await this.redis.get(
-          this.devicePointerKey(options.namespace, deviceId)
-        );
-        if (existingPtr) {
-          try {
-            const parsed = JSON.parse(existingPtr);
-            selectorDigest = parsed.selectorDigest;
-          } catch {
-            // ignore
-          }
-        }
+        const res = await this.createRememberToken(options, deviceId, gen, now);
+        rememberToken = res.rememberToken;
+        selectorDigest = res.selectorDigest;
       }
+
+      const devKey = this.devicePointerKey(options.namespace, deviceId);
+      selectorDigest = await this.cleanupExistingDeviceSession(
+        options.namespace,
+        devKey,
+        sessionDigest,
+        selectorDigest
+      );
 
       await this.redis.sadd(
         this.accountDevicesKey(options.namespace, options.accountId),
@@ -321,7 +371,7 @@ export class RedisSessionStore implements SessionStorePort {
       );
 
       await this.redis.set(
-        this.devicePointerKey(options.namespace, deviceId),
+        devKey,
         JSON.stringify({ sessionDigest, selectorDigest }),
         "EX",
         REMEMBER_MAX_TTL_SECONDS
@@ -509,6 +559,7 @@ export class RedisSessionStore implements SessionStorePort {
         displayName: rememberData.displayName,
         role: rememberData.role,
         deviceId: rememberData.deviceId,
+        activeChildId: rememberData.activeChildId ?? undefined,
         now: options.now,
       });
 
@@ -521,6 +572,7 @@ export class RedisSessionStore implements SessionStorePort {
             user_id: rememberData.accountId,
             display_name: rememberData.displayName,
             session_id: created.sessionId,
+            active_child_db_id: rememberData.activeChildId ?? undefined,
           },
         };
       }
@@ -592,7 +644,7 @@ export class RedisSessionStore implements SessionStorePort {
     sessionId: string,
     account: AccountReference,
     at: Date,
-    now: Date = new Date()
+    now: Date = at
   ): Promise<void> {
     try {
       const data = await this.readSession(account.account_type, sessionId);
@@ -624,7 +676,11 @@ export class RedisSessionStore implements SessionStorePort {
     sessionId: string,
     account: AccountReference
   ): Promise<void> {
-    const deviceId = await this.getDeviceId(account.account_type, sessionId);
+    const data = await this.readSession(account.account_type, sessionId);
+    if (!data || data.accountId !== account.account_id) {
+      return;
+    }
+    const deviceId = data.deviceId;
     if (deviceId) {
       await this.revokeDevice(
         account.account_type,
@@ -665,15 +721,23 @@ export class RedisSessionStore implements SessionStorePort {
     try {
       const devPtrKey = this.devicePointerKey(namespace, deviceId);
       const rawPtr = await this.redis.get(devPtrKey);
+      const keysToDelete: string[] = [];
       if (rawPtr) {
-        const { sessionDigest, selectorDigest } = JSON.parse(rawPtr);
-        if (sessionDigest) {
-          await this.redis.del(this.sessionKey(namespace, sessionDigest));
+        try {
+          const { sessionDigest, selectorDigest } = JSON.parse(rawPtr);
+          if (sessionDigest) {
+            keysToDelete.push(this.sessionKey(namespace, sessionDigest));
+          }
+          if (selectorDigest) {
+            keysToDelete.push(this.rememberKey(namespace, selectorDigest));
+          }
+        } catch {
+          // ignore
         }
-        if (selectorDigest) {
-          await this.redis.del(this.rememberKey(namespace, selectorDigest));
-        }
-        await this.redis.del(devPtrKey);
+        keysToDelete.push(devPtrKey);
+      }
+      if (keysToDelete.length > 0) {
+        await this.redis.del(...keysToDelete);
       }
       await this.redis.srem(
         this.accountDevicesKey(namespace, accountId),

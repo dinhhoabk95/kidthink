@@ -5,8 +5,8 @@ export const C5_RHY_07_IDENTITY: SkillIdentity = {
   strand_code: "C5.RHY",
   competency_code: "C5",
   name: "Vần có nguyên âm đôi: ia · ua · ưa",
-  age_min: 6,
-  age_max: 7,
+  age_min: 5,
+  age_max: 6,
   difficulty: 5,
   thinking_processes: ["solve", "compare"],
   tier: "advanced",
@@ -45,54 +45,82 @@ export const C5_RHY_07_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "let_đ",
-      label: "chữ đ",
-      glyph: "đ",
+      id: "rhy_ia",
+      label: "vần ia (cái thìa)",
       image: {
         kind: "emoji",
-        ref: "🅳",
+        ref: "🥄",
       },
+      category: {
+        type: "vần ia ua",
+      },
+      value: 1,
       contrast_group: "primary",
     },
     {
-      id: "let_e",
-      label: "chữ e",
-      glyph: "e",
+      id: "rhy_ua",
+      label: "vần ua (con cua)",
       image: {
         kind: "emoji",
-        ref: "🅴",
+        ref: "🦀",
       },
+      category: {
+        type: "vần ia ua",
+      },
+      value: 2,
+      contrast_group: "primary",
+    },
+    {
+      id: "rhy_ua_moc",
+      label: "vần ưa (dưa hấu)",
+      image: {
+        kind: "emoji",
+        ref: "🍉",
+      },
+      category: {
+        type: "vần ia ua",
+      },
+      value: 3,
+      contrast_group: "primary",
+    },
+    {
+      id: "rhy_ie",
+      label: "vần iê (con kiến)",
+      image: {
+        kind: "emoji",
+        ref: "🐜",
+      },
+      category: {
+        type: "vần iê uô",
+      },
+      value: 4,
       contrast_group: "contrast",
     },
     {
-      id: "let_ê",
-      label: "chữ ê",
-      glyph: "ê",
+      id: "rhy_uo_moc",
+      label: "vần uô (quả chuối)",
       image: {
         kind: "emoji",
-        ref: "🅴",
+        ref: "🍌",
       },
-      contrast_group: "primary",
-    },
-    {
-      id: "let_g",
-      label: "chữ g",
-      glyph: "g",
-      image: {
-        kind: "emoji",
-        ref: "🅶",
+      category: {
+        type: "vần iê uô",
       },
+      value: 5,
       contrast_group: "contrast",
     },
     {
-      id: "let_h",
-      label: "chữ h",
-      glyph: "h",
+      id: "rhy_uo_doi",
+      label: "vần ươ (con bướm)",
       image: {
         kind: "emoji",
-        ref: "🅷",
+        ref: "🦋",
       },
-      contrast_group: "primary",
+      category: {
+        type: "vần iê uô",
+      },
+      value: 6,
+      contrast_group: "contrast",
     },
   ],
   ladder: [
@@ -127,7 +155,37 @@ export const C5_RHY_07_DATASET: SkillDataset = {
     narration_template:
       "Chúng mình cùng tìm hiểu về Vần có nguyên âm đôi: ia · ua · ưa nhé",
   },
-  ordering: ["let_đ", "let_e", "let_ê", "let_g", "let_h"],
+  ordering: [
+    "rhy_ia",
+    "rhy_ua",
+    "rhy_ua_moc",
+    "rhy_ie",
+    "rhy_uo_moc",
+    "rhy_uo_doi",
+  ],
+  axes: {
+    category: {
+      values: ["vần ia ua", "vần iê uô"],
+      ordered: true,
+    },
+  },
+  relations: [
+    {
+      type: "pair",
+      source_id: "rhy_ia",
+      target_id: "rhy_ua",
+    },
+    {
+      type: "pair",
+      source_id: "rhy_ie",
+      target_id: "rhy_uo_moc",
+    },
+    {
+      type: "contrast",
+      source_id: "rhy_ia",
+      target_id: "rhy_ie",
+    },
+  ],
 };
 
 export const C5_RHY_07_SEED: SkillSeed = {
@@ -156,62 +214,6 @@ export const C5_RHY_07_SEED: SkillSeed = {
       band: "5-6",
       difficulty: 4,
       theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RHY-TCNT-0008",
-      template: "GT-002",
-      band: "5-6",
-      difficulty: 5,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RHY-PAIR-0007",
-      template: "GT-004",
-      band: "5-6",
-      difficulty: 4,
-      theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RHY-PAIR-0008",
-      template: "GT-004",
-      band: "5-6",
-      difficulty: 5,
-      theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RHY-PATT-0013",
-      template: "GT-005",
-      band: "5-6",
-      difficulty: 4,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RHY-PATT-0014",
-      template: "GT-005",
-      band: "5-6",
-      difficulty: 5,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RHY-SORT-0001",
-      template: "GT-006",
-      band: "5-6",
-      difficulty: 4,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RHY-SORT-0002",
-      template: "GT-006",
-      band: "5-6",
-      difficulty: 5,
-      theme: "animal",
       rounds: 3,
     },
   ],

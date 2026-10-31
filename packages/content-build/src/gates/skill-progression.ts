@@ -7,7 +7,7 @@ import {
 } from "@mindkid/content";
 import type { SkillIdentity } from "@mindkid/shared";
 import { z } from "zod";
-import { ALL_SEED_LESSONS, ALL_SEED_LEVELS } from "#src/catalog";
+import { ALL_SEED_LEVELS } from "#src/catalog";
 
 export const SkillProgressionRowSchema = z.object({
   skill_code: z.string().min(1),
@@ -61,12 +61,6 @@ function collectActiveSkills(): Set<string> {
 
   for (const level of ALL_SEED_LEVELS) {
     for (const s of level.header.skill_codes ?? []) {
-      active.add(s);
-    }
-  }
-
-  for (const lesson of ALL_SEED_LESSONS) {
-    for (const s of lesson.header.skill_codes ?? []) {
       active.add(s);
     }
   }

@@ -14,12 +14,20 @@ import {
   getOwnerDb,
   masteryState,
   playSessions,
-  skillActionSuggestions,
   skillPrerequisites,
   skills,
   strands,
 } from "@mindkid/db";
 import { and, asc, eq, gte } from "drizzle-orm";
+
+export interface SkillActionSuggestionRecord {
+  id?: number;
+  skillId: number;
+  kind: "in_app" | "home_activity";
+  text: string;
+  refEntityId?: number | null;
+  orderNo?: number;
+}
 
 export interface CompetencyReportItem {
   code: string;
@@ -476,7 +484,7 @@ function buildIndependenceSection(
 
 function buildReinforcementSection(
   data: AggregatedTaxonomyData,
-  actionsBySkillId: Map<number, (typeof skillActionSuggestions.$inferSelect)[]>
+  actionsBySkillId: Map<number, SkillActionSuggestionRecord[]>
 ): ReinforcementSkillItem[] {
   const { allSkills, sessionIdsBySkillId, masteryMap } = data;
   const items: ReinforcementSkillItem[] = [];
@@ -583,10 +591,10 @@ function buildReadyForNextSection(
  * dòng cũ và tạo dòng mới (id khác), nên gộp theo id làm mất dấu đổi phiên bản.
  */
 export function buildVersionMarkers(
-  recentSessions: Pick<
-    typeof playSessions.$inferSelect,
-    "gameLevelId" | "contentVersion"
-  >[],
+  recentSessions: Array<{
+    gameLevelId: number | null;
+    contentVersion?: number | null;
+  }>,
   levelById: Map<number, Pick<typeof gameLevels.$inferSelect, "code">>
 ): VersionChangeMarker[] {
   const versionsByCode = new Map<string, Set<number>>();
@@ -705,7 +713,7 @@ function buildReportLookupMaps(params: {
   allLevels: AdvancedReportLevelRow[];
   allMappings: (typeof contentSkillMap.$inferSelect)[];
   childMasteryList: (typeof masteryState.$inferSelect)[];
-  actionSuggestionsList: (typeof skillActionSuggestions.$inferSelect)[];
+  actionSuggestionsList: SkillActionSuggestionRecord[];
   allPrereqs: (typeof skillPrerequisites.$inferSelect)[];
   skillById: Map<number, typeof skills.$inferSelect>;
 }) {
@@ -738,10 +746,7 @@ function buildReportLookupMaps(params: {
     masteryMap.set(Number(ms.skillId), ms);
   }
 
-  const actionsBySkillId = new Map<
-    number,
-    (typeof skillActionSuggestions.$inferSelect)[]
-  >();
+  const actionsBySkillId = new Map<number, SkillActionSuggestionRecord[]>();
   for (const act of params.actionSuggestionsList) {
     const skId = Number(act.skillId);
     const list = actionsBySkillId.get(skId) ?? [];
@@ -802,7 +807,6 @@ export async function buildAdvancedReport(params: {
     allLevels,
     recentSessions,
     childMasteryList,
-    actionSuggestionsList,
     allPrereqs,
   ] = await Promise.all([
     db.select().from(competencies).orderBy(asc(competencies.position)),
@@ -832,10 +836,6 @@ export async function buildAdvancedReport(params: {
       .select()
       .from(masteryState)
       .where(eq(masteryState.childProfileId, childId)),
-    db
-      .select()
-      .from(skillActionSuggestions)
-      .orderBy(asc(skillActionSuggestions.orderNo)),
     db.select().from(skillPrerequisites),
   ]);
 
@@ -861,7 +861,7 @@ export async function buildAdvancedReport(params: {
     allLevels,
     allMappings,
     childMasteryList,
-    actionSuggestionsList,
+    actionSuggestionsList: [],
     allPrereqs,
     skillById,
   });

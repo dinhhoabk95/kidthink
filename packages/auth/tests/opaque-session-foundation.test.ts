@@ -212,4 +212,61 @@ describe("T1 Opaque Redis Session Foundation (BR-AUT-25 .. BR-AUT-38)", () => {
       expect.objectContaining({ code: "TOKEN_EXPIRED", status: 410 })
     );
   });
+
+  it("preserves activeChildId in remember token and cleans up orphaned session on re-login", async () => {
+    const redis = new InMemoryRedisClient();
+    const store = new RedisSessionStore(redis);
+
+    const now = new Date("2026-08-13T12:00:00Z");
+    const deviceId = "test_dev_1";
+
+    const s1 = await store.createSession({
+      namespace: "user",
+      accountId: 101,
+      displayName: "User A",
+      rememberMe: true,
+      deviceId,
+      activeChildId: 77,
+      now,
+    });
+
+    expect(s1.rememberToken).toBeDefined();
+
+    // Resolving s1 has active_child_db_id = 77
+    const r1 = await store.resolveSession("user", s1.sessionToken, now);
+    expect(r1?.user?.active_child_db_id).toBe(77);
+
+    // Restoring remember token also retains active_child_db_id = 77
+    const restored = await store.restoreRemember({
+      namespace: "user",
+      rememberToken: s1.rememberToken ?? "",
+      now: new Date("2026-08-13T12:30:00Z"),
+    });
+    expect(restored.user?.active_child_db_id).toBe(77);
+
+    // Creating s2 on same device cleans up old session
+    const s2 = await store.createSession({
+      namespace: "user",
+      accountId: 101,
+      displayName: "User A",
+      deviceId,
+      now: new Date("2026-08-13T13:00:00Z"),
+    });
+
+    // Old s1 session should be gone
+    const oldSession = await store.resolveSession("user", s1.sessionToken, now);
+    expect(oldSession).toBeNull();
+
+    // Trying to revoke session using wrong accountId should do nothing
+    await store.revokeSession(s2.sessionId, {
+      account_type: "user",
+      account_id: 999, // wrong account
+    });
+    const stillActive = await store.resolveSession(
+      "user",
+      s2.sessionToken,
+      new Date("2026-08-13T13:05:00Z")
+    );
+    expect(stillActive).not.toBeNull();
+  });
 });

@@ -13,9 +13,6 @@ owns:
   - Cách báo cáo trạng thái sẵn sàng
 depends_on:
   - MVP-SCOPE
-  - LESSON-FLOW-MODEL
-  - LESSON-CORPUS-DEPTH
-  - LESSON-TEMPLATE-VARIETY
   - ENGINE-RENDER-CONTRACT
   - ENGINE-CONTENT-DEPTH
   - CONTENT-SEED-AUTHORING
@@ -59,10 +56,9 @@ Phạm vi go-live vì vậy là **cả hai trục, đầy đủ**:
 | Giáo án | **126 / 126** tiết của flow dài nhất, lắp từ thư viện master | 81 lesson |
 | Level phục vụ giáo án | mỗi kỹ năng của thư viện có **≥2** level | 23 / 40 kỹ năng có 0 level |
 
-Con số trục giáo án đổi từ 222 xuống 126 ngày 2026-08-29 theo quyết định `D-SI`: giáo án là
+Con số trục lộ trình đổi từ 222 xuống 126 ngày 2026-08-29 theo quyết định `D-SI`: nội dung là
 thư viện master dùng chung, tuổi là đề xuất, nên cầu là flow **dài nhất** chứ không phải tổng
-mọi flow phân vùng theo band. Đó không phải nới ngưỡng — xem mục 1.1 của
-[`lesson-corpus-depth.md`](../05-content/lesson-corpus-depth.md).
+mọi flow phân vùng theo band. Đó không phải nới ngưỡng.
 
 Bản trước của file này có một quy tắc cho phép **bớt engine khỏi phạm vi** khi chưa đạt. Quy
 tắc đó đã bị bãi bỏ — xem `BR-GLR-04` ở mục 6. Đường duy nhất còn lại khi chưa đạt là **lùi

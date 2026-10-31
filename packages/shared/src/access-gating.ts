@@ -195,7 +195,6 @@ export interface ContentAccessContext {
   managerAudience?: boolean;
   requiresChild?: boolean;
   callerChildAge?: number | null;
-  lessonRunId?: string | null;
   verifyChildOwnership?: (
     userId: string,
     childId: string
@@ -311,7 +310,7 @@ async function checkConceptIntroGate(
   isPreview: boolean
 ): Promise<void> {
   const isTeach = content.kind === "teach" || content.template_kind === "teach";
-  if (isPreview || isTeach || ctx.lessonRunId || !ctx.checkIntroRequired) {
+  if (isPreview || isTeach || !ctx.checkIntroRequired) {
     return;
   }
 

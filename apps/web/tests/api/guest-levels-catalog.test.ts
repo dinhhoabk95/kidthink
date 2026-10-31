@@ -1,4 +1,4 @@
-import { gameLevels, gameTemplates, getOwnerDb } from "@mindkid/db";
+import { gameLevels, getOwnerDb } from "@mindkid/db";
 import type { AccessTier, LevelCta } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import type { H3Event } from "h3";
@@ -72,79 +72,52 @@ describe("GET /api/guest/levels — Catalog CTA & Session Independence (BR-GCP-0
   ];
 
   beforeAll(async () => {
-    const [template] = await db
-      .insert(gameTemplates)
-      .values({
-        code: "GT-001",
-        name: "Test Template",
-        mechanic: "tap_target",
-      })
-      .onConflictDoNothing()
-      .returning();
-
-    const templateId = template
-      ? template.id
-      : (
-          await db
-            .select({ id: gameTemplates.id })
-            .from(gameTemplates)
-            .where(eq(gameTemplates.code, "GT-001"))
-        )[0]?.id || 1;
-
     await db.insert(gameLevels).values([
       {
-        entityId: baseNum + 1000,
         code: testCodes[0],
         title: "Catalog Free Level",
-        status: "published",
         accessTier: "free",
         difficulty: 1,
         ageMin: 3,
         ageMax: 4,
         themeId: "farm",
-        templateId,
+        templateCode: "GT-001",
         contentPack: { items: [] },
         difficultyParams: { count: 3 },
       },
       {
-        entityId: baseNum + 1001,
         code: testCodes[1],
         title: "Catalog Login Level",
-        status: "published",
         accessTier: "login",
         difficulty: 1,
         ageMin: 3,
         ageMax: 4,
         themeId: "farm",
-        templateId,
+        templateCode: "GT-001",
         contentPack: { items: [] },
         difficultyParams: { count: 3 },
       },
       {
-        entityId: baseNum + 1002,
         code: testCodes[2],
         title: "Catalog Standard Level",
-        status: "published",
         accessTier: "standard",
         difficulty: 2,
         ageMin: 4,
         ageMax: 5,
         themeId: "farm",
-        templateId,
+        templateCode: "GT-001",
         contentPack: { items: [] },
         difficultyParams: { count: 3 },
       },
       {
-        entityId: baseNum + 1003,
         code: testCodes[3],
         title: "Catalog Premium Level",
-        status: "published",
         accessTier: "premium",
         difficulty: 3,
         ageMin: 5,
         ageMax: 6,
         themeId: "farm",
-        templateId,
+        templateCode: "GT-001",
         contentPack: { items: [] },
         difficultyParams: { count: 3 },
       },

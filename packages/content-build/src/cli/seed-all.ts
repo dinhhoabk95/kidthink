@@ -1,6 +1,5 @@
 import { getOwnerDb } from "@mindkid/db";
 import { loadContentDemandLedger } from "../gates/content-demand-file.js";
-import { seedSkillActionSuggestions } from "../seed-master/action-suggestions.js";
 import { seedContentTags } from "../seed-master/content-tags.js";
 import {
   seedCurriculumItems,
@@ -38,19 +37,13 @@ export async function seedAllContent(options?: { masterOnly?: boolean }) {
   await seedContentTags(db);
   console.log("[content-build:seed] Content Tags vocabulary seeded.");
 
-  // 3. Seed Skill Action Suggestions library
-  const actionStats = await seedSkillActionSuggestions(db);
-  console.log(
-    `[content-build:seed] Skill action suggestions seeded: ${actionStats.seededCount} items.`
-  );
-
-  // 4. Seed roadmap curricula and weeks — BEFORE any level is seeded
+  // 3. Seed roadmap curricula and weeks — BEFORE any level is seeded
   const roadmapStats = await seedRoadmapCurricula(db);
   console.log(
     `[content-build:seed] Roadmaps seeded: ${roadmapStats.curriculaCount} new curricula, ${roadmapStats.weeksCount} weeks.`
   );
 
-  // 5. Seed content batch (levels, activities, lessons)
+  // 5. Seed content batch (levels)
   const masterOnly =
     options?.masterOnly ?? process.env.MINDKID_SEED_MASTER_ONLY === "1";
   if (masterOnly) {

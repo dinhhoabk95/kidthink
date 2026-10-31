@@ -4,40 +4,38 @@ import { ALL_SEED_LEVELS } from "#src/catalog";
 import type { ContentSeed } from "#src/types";
 
 describe("Backfill Content Quality & Contract Verification (Tasks #179 & #180)", () => {
-  const TASK_179_TYPES = [
-    "D1-06",
-    "D1-07",
-    "D1-13",
-    "D3-04",
-    "D3-08",
-    "D6-09",
-    "D2-02",
-    "D2-07",
-    "D6-10",
-    "D2-04",
-    "D2-10",
-    "D2-08",
-    "D6-06",
+  const TASK_179_TEMPLATES = [
+    "GT-004",
+    "GT-005",
+    "GT-011",
+    "GT-012",
+    "GT-013",
+    "GT-014",
+    "GT-016",
+    "GT-017",
+    "GT-024",
+    "GT-031",
+    "GT-035",
   ];
 
-  const TASK_180_TYPES = [
-    "D5-03",
-    "D6-08",
-    "D6-01",
-    "D5-08",
-    "D2-03",
-    "D2-09",
-    "D6-02",
-    "D6-07",
-    "D6-11",
+  const TASK_180_TEMPLATES = [
+    "GT-015",
+    "GT-025",
+    "GT-026",
+    "GT-030",
+    "GT-032",
+    "GT-033",
+    "GT-034",
+    "GT-036",
+    "GT-037",
   ];
 
   const MID_LOAD_BACKFILL_LEVELS = ALL_SEED_LEVELS.filter((l) =>
-    TASK_179_TYPES.includes(l.header.legacy_v1_ref ?? "")
+    TASK_179_TEMPLATES.includes(l.header.template_code)
   );
 
   const SINGLE_TYPE_BACKFILL_LEVELS = ALL_SEED_LEVELS.filter((l) =>
-    TASK_180_TYPES.includes(l.header.legacy_v1_ref ?? "")
+    TASK_180_TEMPLATES.includes(l.header.template_code)
   );
 
   function validateLevelContracts(levels: ContentSeed<unknown, unknown>[]) {
@@ -53,7 +51,7 @@ describe("Backfill Content Quality & Contract Verification (Tasks #179 & #180)",
       );
       if (!contentRes.success) {
         throw new Error(
-          `Level ${level.header.code} (${level.header.legacy_v1_ref}) hỏng content_contract: ${JSON.stringify(contentRes.error.issues)}`
+          `Level ${level.header.code} (${level.header.template_code}) hỏng content_contract: ${JSON.stringify(contentRes.error.issues)}`
         );
       }
 
@@ -62,23 +60,23 @@ describe("Backfill Content Quality & Contract Verification (Tasks #179 & #180)",
       );
       if (!diffRes.success) {
         throw new Error(
-          `Level ${level.header.code} (${level.header.legacy_v1_ref}) hỏng difficulty_contract: ${JSON.stringify(diffRes.error.issues)}`
+          `Level ${level.header.code} (${level.header.template_code}) hỏng difficulty_contract: ${JSON.stringify(diffRes.error.issues)}`
         );
       }
     }
   }
 
-  it("Task #179: Chứa đủ 130 levels cho 13 game types (mỗi type 10 levels)", () => {
-    expect(MID_LOAD_BACKFILL_LEVELS.length).toBeGreaterThanOrEqual(130);
+  it("Task #179: Chứa đủ ≥39 levels cho các template nhóm 1 (mỗi template ≥3 levels theo BR-SKQ-02)", () => {
+    expect(MID_LOAD_BACKFILL_LEVELS.length).toBeGreaterThanOrEqual(39);
 
-    const countsByType = new Map<string, number>();
+    const countsByTemplate = new Map<string, number>();
     for (const level of MID_LOAD_BACKFILL_LEVELS) {
-      const ref = level.header.legacy_v1_ref ?? "";
-      countsByType.set(ref, (countsByType.get(ref) ?? 0) + 1);
+      const tCode = level.header.template_code;
+      countsByTemplate.set(tCode, (countsByTemplate.get(tCode) ?? 0) + 1);
     }
 
-    for (const type of TASK_179_TYPES) {
-      expect(countsByType.get(type)).toBeGreaterThanOrEqual(10);
+    for (const tCode of TASK_179_TEMPLATES) {
+      expect(countsByTemplate.get(tCode)).toBeGreaterThanOrEqual(3);
     }
   });
 
@@ -86,40 +84,37 @@ describe("Backfill Content Quality & Contract Verification (Tasks #179 & #180)",
     validateLevelContracts(MID_LOAD_BACKFILL_LEVELS);
   });
 
-  it("Task #179: Các game types chỉ hỗ trợ độ tuổi 4-6 không gán độ tuổi 3", () => {
-    const age4to6Types = [
-      "D3-04",
-      "D3-08",
-      "D6-09",
-      "D2-02",
-      "D2-07",
-      "D6-10",
-      "D2-04",
-      "D2-10",
-      "D2-08",
-      "D6-06",
+  it("Task #179: Các template chỉ hỗ trợ độ tuổi 4-6 không gán độ tuổi 3", () => {
+    const age4to6Templates = [
+      "GT-011",
+      "GT-013",
+      "GT-014",
+      "GT-016",
+      "GT-017",
+      "GT-024",
+      "GT-031",
+      "GT-035",
     ];
 
     for (const level of MID_LOAD_BACKFILL_LEVELS) {
-      const ref = level.header.legacy_v1_ref ?? "";
-      if (age4to6Types.includes(ref)) {
+      const tCode = level.header.template_code;
+      if (age4to6Templates.includes(tCode)) {
         expect(level.header.age_min).toBeGreaterThanOrEqual(4);
       }
     }
   });
 
-  it("Task #180: Chứa đủ 85 levels cho 9 game types (D5-08 đạt trần 5 level theo BR-SKQ-04)", () => {
-    expect(SINGLE_TYPE_BACKFILL_LEVELS.length).toBeGreaterThanOrEqual(85);
+  it("Task #180: Chứa đủ ≥27 levels cho các template nhóm 2 (mỗi template ≥3 levels theo BR-SKQ-02/04)", () => {
+    expect(SINGLE_TYPE_BACKFILL_LEVELS.length).toBeGreaterThanOrEqual(27);
 
-    const countsByType = new Map<string, number>();
+    const countsByTemplate = new Map<string, number>();
     for (const level of SINGLE_TYPE_BACKFILL_LEVELS) {
-      const ref = level.header.legacy_v1_ref ?? "";
-      countsByType.set(ref, (countsByType.get(ref) ?? 0) + 1);
+      const tCode = level.header.template_code;
+      countsByTemplate.set(tCode, (countsByTemplate.get(tCode) ?? 0) + 1);
     }
 
-    for (const type of TASK_180_TYPES) {
-      const minCount = type === "D5-08" ? 5 : 10;
-      expect(countsByType.get(type)).toBeGreaterThanOrEqual(minCount);
+    for (const tCode of TASK_180_TEMPLATES) {
+      expect(countsByTemplate.get(tCode)).toBeGreaterThanOrEqual(3);
     }
   });
 
@@ -128,15 +123,15 @@ describe("Backfill Content Quality & Contract Verification (Tasks #179 & #180)",
   });
 
   it("Task #180: Tuân thủ nghiêm ngặt giới hạn độ tuổi của từng template", () => {
-    const age5to6Types = ["D5-03", "D6-08", "D5-08", "D2-09", "D6-02"];
-    const age4to6Types = ["D6-01", "D2-03", "D6-07"];
+    const age5to6Templates = ["GT-015", "GT-032", "GT-033", "GT-036"];
+    const age4to6Templates = ["GT-025", "GT-026", "GT-030", "GT-034"];
 
     for (const level of SINGLE_TYPE_BACKFILL_LEVELS) {
-      const ref = level.header.legacy_v1_ref ?? "";
-      if (age5to6Types.includes(ref)) {
+      const tCode = level.header.template_code;
+      if (age5to6Templates.includes(tCode)) {
         expect(level.header.age_min).toBe(5);
         expect(level.header.age_max).toBe(6);
-      } else if (age4to6Types.includes(ref)) {
+      } else if (age4to6Templates.includes(tCode)) {
         expect(level.header.age_min).toBeGreaterThanOrEqual(4);
       }
     }

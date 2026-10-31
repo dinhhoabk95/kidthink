@@ -40,11 +40,9 @@ async function createTestLevel(db: ReturnType<typeof getOwnerDb>) {
     }
   }
 
-  const uid = Math.floor(Math.random() * 89_999) + 10_000;
   const [gl] = await db
     .insert(gameLevels)
     .values({
-      entityId: uid,
       code,
       templateCode,
       title: "Level Test",
@@ -52,8 +50,6 @@ async function createTestLevel(db: ReturnType<typeof getOwnerDb>) {
       contentPack: {},
       difficultyParams: {},
       accessTier: "free",
-      status: "published",
-      contentVersion: 1,
     })
     .returning();
 
@@ -70,7 +66,6 @@ describe("Task P1.6 / #250 — Event Ingestion Gates (BR-ING, BR-EVT, BR-TRX)", 
       .insert(playSessions)
       .values({
         gameLevelId: glId,
-        contentVersion: 1,
         templateCode,
         guestDeviceId: "device-batch-3",
         completionStatus: "in_progress",
@@ -109,7 +104,6 @@ describe("Task P1.6 / #250 — Event Ingestion Gates (BR-ING, BR-EVT, BR-TRX)", 
       .insert(playSessions)
       .values({
         gameLevelId: glId,
-        contentVersion: 1,
         templateCode,
         guestDeviceId: "device-idempotent",
         completionStatus: "in_progress",
@@ -148,7 +142,6 @@ describe("Task P1.6 / #250 — Event Ingestion Gates (BR-ING, BR-EVT, BR-TRX)", 
       .insert(playSessions)
       .values({
         gameLevelId: glId,
-        contentVersion: 1,
         templateCode,
         guestDeviceId: "device-dup-seq",
         completionStatus: "in_progress",
@@ -181,7 +174,6 @@ describe("Task P1.6 / #250 — Event Ingestion Gates (BR-ING, BR-EVT, BR-TRX)", 
       .insert(playSessions)
       .values({
         gameLevelId: glId,
-        contentVersion: 1,
         templateCode,
         guestDeviceId: "device-seq-order",
         completionStatus: "in_progress",
@@ -226,7 +218,6 @@ describe("Task P1.6 / #250 — Event Ingestion Gates (BR-ING, BR-EVT, BR-TRX)", 
       .insert(playSessions)
       .values({
         gameLevelId: glId,
-        contentVersion: 1,
         templateCode,
         guestDeviceId: "device-intro-payload",
         completionStatus: "in_progress",
@@ -271,7 +262,6 @@ describe("Task P1.6 / #250 — Event Ingestion Gates (BR-ING, BR-EVT, BR-TRX)", 
       .insert(playSessions)
       .values({
         gameLevelId: glId,
-        contentVersion: 1,
         templateCode,
         guestDeviceId: "device-terminal",
         completionStatus: "completed",
@@ -405,7 +395,6 @@ describe("Task P1.6 / #250 — Event Ingestion Gates (BR-ING, BR-EVT, BR-TRX)", 
       .insert(playSessions)
       .values({
         gameLevelId: glId,
-        contentVersion: 1,
         templateCode,
         childProfileId: child.id,
         completionStatus: "in_progress",
@@ -422,7 +411,6 @@ describe("Task P1.6 / #250 — Event Ingestion Gates (BR-ING, BR-EVT, BR-TRX)", 
         eventName: "game_started",
         childUuid: child.uuid,
         gameLevelId: glId,
-        contentVersion: 1,
       },
       {
         sessionUuid: uuid,
@@ -430,7 +418,6 @@ describe("Task P1.6 / #250 — Event Ingestion Gates (BR-ING, BR-EVT, BR-TRX)", 
         eventName: "game_completed",
         childUuid: child.uuid,
         gameLevelId: glId,
-        contentVersion: 1,
         payload: { duration_ms: 10_000, rounds_total: 1, rounds_correct: 1 },
       },
     ]);
@@ -473,7 +460,6 @@ describe("Task P1.6 / #250 — Event Ingestion Gates (BR-ING, BR-EVT, BR-TRX)", 
         guestDeviceId: "device-test-occurred-at",
         gameLevelId: glId,
         templateCode,
-        contentVersion: 1,
         startedAt: new Date(Date.now() - 5000),
       })
       .returning();

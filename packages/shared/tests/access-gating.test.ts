@@ -510,7 +510,6 @@ describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08, BR-LAD-07)", () => {
     interface IntroMatrixRow {
       readonly label: string;
       readonly caller: CallerIdentity;
-      readonly lessonRunId?: string | null;
       readonly introCheckResult: {
         readonly intro_required: boolean;
         readonly intro_queue?: readonly (typeof queueItem1)[];
@@ -524,7 +523,7 @@ describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08, BR-LAD-07)", () => {
       readonly expectedRemaining?: number;
     }
 
-    // §7.3 Matrix: 2 caller types (guest, child profile) x 5 columns = 10 cells (BR-CIG-12)
+    // §7.3 Matrix: 2 caller types (guest, child profile) x 4 columns = 8 cells (BR-CIG-12)
     const introMatrixRows: readonly IntroMatrixRow[] = [
       // Guest rows (BR-CIG-07)
       {
@@ -569,17 +568,6 @@ describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08, BR-LAD-07)", () => {
         expectedQueueLength: 2,
         expectedRemaining: 1,
       },
-      {
-        label: "guest | Đang trong lesson_run",
-        caller: { kind: "guest" },
-        lessonRunId: "lr-guest-001",
-        introCheckResult: {
-          intro_required: true,
-          intro_queue: [queueItem1],
-          intro_remaining: 0,
-        },
-        expectedStatus: 200,
-      },
       // Child profile rows (BR-CIG-06)
       {
         label: "child | intro_queue rỗng (skill không có bài làm quen)",
@@ -623,17 +611,6 @@ describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08, BR-LAD-07)", () => {
         expectedQueueLength: 2,
         expectedRemaining: 1,
       },
-      {
-        label: "child | Đang trong lesson_run",
-        caller: { kind: "user", user_id: "u1", active_child_id: "c1" },
-        lessonRunId: "lr-child-001",
-        introCheckResult: {
-          intro_required: true,
-          intro_queue: [queueItem1],
-          intro_remaining: 0,
-        },
-        expectedStatus: 200,
-      },
     ];
 
     interface IntroErrorDetails {
@@ -644,14 +621,13 @@ describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08, BR-LAD-07)", () => {
       readonly intro_level_code?: string;
     }
 
-    it("BR-CIG-12, BR-CIG-01, BR-CIG-06, BR-CIG-07, BR-CIG-09, BR-CIG-10: Data-driven test cho đủ 10 ô ma trận §7.3", async () => {
-      expect(introMatrixRows).toHaveLength(10);
+    it("BR-CIG-12, BR-CIG-01, BR-CIG-06, BR-CIG-07, BR-CIG-09, BR-CIG-10: Data-driven test cho đủ 8 ô ma trận §7.3", async () => {
+      expect(introMatrixRows).toHaveLength(8);
 
       for (const row of introMatrixRows) {
         if (row.expectedStatus === 200) {
           const res = await assertContentAccess(publishedFree, {
             caller: row.caller,
-            lessonRunId: row.lessonRunId ?? null,
             checkIntroRequired: () => row.introCheckResult,
           });
           expect(res.is_preview, row.label).toBe(false);
@@ -659,7 +635,6 @@ describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08, BR-LAD-07)", () => {
           try {
             await assertContentAccess(publishedFree, {
               caller: row.caller,
-              lessonRunId: row.lessonRunId ?? null,
               checkIntroRequired: () => row.introCheckResult,
             });
             expect.unreachable(
@@ -690,7 +665,7 @@ describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08, BR-LAD-07)", () => {
       }
     });
 
-    it("BR-CIG-02, BR-CIG-03, BR-CIG-04, BR-CIG-05: các trường hợp miễn cổng làm quen (teach, lesson_run, preview, không có bài intro)", async () => {
+    it("BR-CIG-02, BR-CIG-04, BR-CIG-05: các trường hợp miễn cổng làm quen (teach, preview, không có bài intro)", async () => {
       let hookCalled = false;
       const throwingHook = () => {
         hookCalled = true;
@@ -710,14 +685,6 @@ describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08, BR-LAD-07)", () => {
       };
       await assertContentAccess(teachLevel, {
         caller: { kind: "user", user_id: "u1", active_child_id: "c1" },
-        checkIntroRequired: throwingHook,
-      });
-      expect(hookCalled).toBe(false);
-
-      // BR-CIG-03: đang trong lesson_run miễn bước 8
-      await assertContentAccess(publishedFree, {
-        caller: { kind: "user", user_id: "u1", active_child_id: "c1" },
-        lessonRunId: "lesson-run-123",
         checkIntroRequired: throwingHook,
       });
       expect(hookCalled).toBe(false);

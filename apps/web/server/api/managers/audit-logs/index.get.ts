@@ -3,8 +3,20 @@ import { InsufficientRoleError } from "@mindkid/errors/auth";
 import { ValidationError } from "@mindkid/errors/common";
 import { and, desc, eq, gte, ilike, inArray, lte, type SQL } from "drizzle-orm";
 import { defineEventHandler } from "h3";
+import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 import { readRequestQuery } from "#server/utils/request-body";
+
+const AuditQuerySchema = z.object({
+  q: z.string().max(100).optional(),
+  entity_type: z.string().max(100).optional(),
+  entityType: z.string().max(100).optional(),
+  entity_id: z.string().max(100).optional(),
+  entityId: z.string().max(100).optional(),
+  action: z
+    .union([z.string().max(500), z.array(z.string().max(64)).max(20)])
+    .optional(),
+});
 
 export type AuditPayloadValue =
   | string
@@ -176,6 +188,10 @@ export default defineEventHandler(async (event) => {
   }
 
   const query = readRequestQuery(event);
+  const validatedQuery = AuditQuerySchema.safeParse(query);
+  if (!validatedQuery.success) {
+    throw new ValidationError("Tham số tra cứu không hợp lệ");
+  }
 
   const rawLimit = Number(readQueryString(query, "limit"));
   const limit = Math.min(Math.max(rawLimit || 50, 1), 200);

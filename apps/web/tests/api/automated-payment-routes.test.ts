@@ -2,13 +2,15 @@ import crypto from "node:crypto";
 import {
   auditLogs,
   getOwnerDb,
+  packages,
   paymentOrders,
   paymentTransactions,
+  SEED_PACKAGES,
   users,
 } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { createEvent, type H3Event } from "h3";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import getReconciliationHandler from "#server/api/managers/payments/reconciliation/index.get";
 import runReconciliationHandler from "#server/api/managers/payments/reconciliation/run.post";
 import createCheckoutSessionHandler from "#server/api/users/orders/[uuid]/checkout-session.post";
@@ -86,6 +88,13 @@ function buildManagerEvent(options: {
 }
 
 describe("Automated Payment Routes (Task #305 S4 — BR-APM-03, BR-APM-06)", () => {
+  beforeEach(async () => {
+    const db = getOwnerDb();
+    for (const pkg of SEED_PACKAGES) {
+      await db.insert(packages).values(pkg).onConflictDoNothing();
+    }
+  });
+
   it("POST /api/users/orders/[uuid]/checkout-session enforces server catalog price (BR-APM-03) and blocks cross-user or processed orders", async () => {
     const db = getOwnerDb();
 

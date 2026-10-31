@@ -132,12 +132,10 @@ describe("Task #82 — GET /api/users/dashboard (BR-MDB-01..07, BR-CUR-01..10)",
       .insert(gameLevels)
       .values({
         code: glCode,
-        entityId: Math.floor(100_000 + Math.random() * 800_000),
         templateCode,
         difficulty: 1,
         title: "Đếm số vui vẻ",
         accessTier: "standard",
-        status: "published",
         contentPack: { items: ["apple"] },
         difficultyParams: { count: 3 },
       })
@@ -148,10 +146,8 @@ describe("Task #82 — GET /api/users/dashboard (BR-MDB-01..07, BR-CUR-01..10)",
       .insert(curricula)
       .values({
         code: `CUR-P3-DASH-${ts}-${rand}`.slice(0, 50),
-        entityId: 3000 + (ts % 100_000),
         title: "Lộ trình tư duy toán mầm non",
         accessTier: "standard",
-        status: "published",
         durationWeeks: 4,
         sessionsPerWeek: 3,
       })

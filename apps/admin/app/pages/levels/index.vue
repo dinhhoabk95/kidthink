@@ -8,38 +8,15 @@
         <h1
           class="text-2xl font-bold font-heading text-surface-900 dark:text-white break-words"
         >
-          Xưởng Soạn Màn Chơi (Game Levels)
+          Danh Mục Màn Chơi (Game Levels)
         </h1>
         <p
           class="text-sm text-surface-500 dark:text-surface-400 mt-1 break-words"
         >
-          Tạo, chỉnh sửa và quản lý các màn chơi giáo dục tương tác cho trẻ 3–6
-          tuổi theo 6 miền năng lực tư duy.
+          Tra cứu danh mục và cấu hình các màn chơi giáo dục tương tác cho trẻ
+          3–6 tuổi theo 6 miền năng lực tư duy (dữ liệu nạp từ seeder).
         </p>
       </div>
-
-      <button
-        class="min-h-11 px-5 py-2.5 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm shadow-xs transition-colors inline-flex items-center justify-center gap-2 shrink-0"
-        type="button"
-        @click="openCreateModal"
-      >
-        <span>+ Tạo màn chơi mới</span>
-      </button>
-    </div>
-
-    <!-- Notification Banner -->
-    <div
-      class="p-4 rounded-2xl bg-brand-50 dark:bg-brand-900/40 border border-brand-200 dark:border-brand-700 text-brand-900 dark:text-brand-200 text-sm flex items-center justify-between gap-3"
-      v-if="actionNotification"
-    >
-      <span class="break-words">{{ actionNotification }}</span>
-      <button
-        class="min-h-11 px-3 rounded-xl text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline shrink-0 inline-flex items-center justify-center"
-        type="button"
-        @click="dismissNotification"
-      >
-        Đóng
-      </button>
     </div>
 
     <!-- Competency Quick Filter Pills (C1 - C6) -->
@@ -88,7 +65,7 @@
       class="p-4 sm:p-5 rounded-3xl bg-white dark:bg-surface-800 border-2 border-surface-200 dark:border-surface-700 shadow-xs space-y-4 min-w-0"
     >
       <div
-        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 min-w-0"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 min-w-0"
       >
         <div class="min-w-0">
           <label
@@ -128,29 +105,6 @@
             >
               {{ comp.code }}: {{ comp.label }}
             </option>
-          </select>
-        </div>
-
-        <div class="min-w-0">
-          <label
-            class="block text-xs font-bold font-heading text-surface-700 dark:text-surface-300 mb-1"
-            for="filter-level-status"
-          >
-            Trạng thái phát hành
-          </label>
-          <select
-            class="w-full min-h-11 px-3 py-2 text-sm rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:outline-none focus:border-brand-500"
-            id="filter-level-status"
-            v-model="filters.status"
-            @change="fetchLevels"
-          >
-            <option value="">Tất cả trạng thái</option>
-            <option value="draft">Bản nháp (Draft)</option>
-            <option value="in_review">Đang duyệt (In Review)</option>
-            <option value="approved">Đã duyệt (Approved)</option>
-            <option value="published">Đã phát hành (Published)</option>
-            <option value="archived">Lưu trữ (Archived)</option>
-            <option value="rejected">Từ chối (Rejected)</option>
           </select>
         </div>
 
@@ -255,17 +209,16 @@
             class="bg-surface-50 dark:bg-surface-900/60 text-xs font-bold text-surface-500 border-b border-surface-200 dark:border-surface-700"
           >
             <tr>
-              <th class="px-5 py-3.5">Mã &amp; Phiên bản</th>
+              <th class="px-5 py-3.5">Mã màn chơi</th>
               <th class="px-5 py-3.5">Tiêu đề &amp; Mẫu</th>
               <th class="px-5 py-3.5">Độ tuổi &amp; Bậc</th>
-              <th class="px-5 py-3.5">Trạng thái</th>
               <th class="px-5 py-3.5">Cập nhật</th>
-              <th class="px-5 py-3.5 text-right">Thao tác</th>
+              <th class="px-5 py-3.5 text-right">Tra cứu</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-surface-100 dark:divide-surface-700/50">
             <tr v-if="isLoading">
-              <td class="px-5 py-10 text-center text-surface-400" colspan="6">
+              <td class="px-5 py-10 text-center text-surface-400" colspan="5">
                 <div class="inline-flex items-center gap-2.5">
                   <span
                     aria-hidden="true"
@@ -276,7 +229,7 @@
               </td>
             </tr>
             <tr v-else-if="levels.length === 0">
-              <td class="px-5 py-10 text-center text-surface-400" colspan="6">
+              <td class="px-5 py-10 text-center text-surface-400" colspan="5">
                 Chưa có màn chơi nào phù hợp với bộ lọc.
               </td>
             </tr>
@@ -288,17 +241,7 @@
               <td
                 class="px-5 py-4 font-mono font-bold text-brand-600 dark:text-brand-400 whitespace-nowrap"
               >
-                <NuxtLink
-                  class="hover:underline"
-                  :to="`/studio/levels/${lvl.code}`"
-                >
-                  {{ lvl.code }}
-                </NuxtLink>
-                <span
-                  class="ml-1.5 text-xs px-2 py-0.5 rounded-full bg-surface-100 dark:bg-surface-700 text-surface-600 dark:text-surface-300 font-sans"
-                >
-                  v{{ getLevelVersion(lvl) }}
-                </span>
+                {{ lvl.code }}
               </td>
               <td class="px-5 py-4">
                 <div class="font-semibold text-surface-900 dark:text-white">
@@ -321,142 +264,28 @@
                   {{ getAccessTier(lvl) }}
                 </span>
               </td>
-              <td class="px-5 py-4 whitespace-nowrap">
-                <span
-                  :class="[
-                    'text-xs px-2.5 py-1 rounded-full font-semibold',
-                    getStatusBadgeClass(lvl.status),
-                  ]"
-                >
-                  {{ formatStatus(lvl.status) }}
-                </span>
-              </td>
               <td class="px-5 py-4 text-xs text-surface-500 whitespace-nowrap">
                 {{ formatDate(getUpdatedAt(lvl)) }}
               </td>
               <td class="px-5 py-4 text-right whitespace-nowrap">
-                <div class="inline-flex items-center justify-end gap-2">
-                  <NuxtLink
-                    class="min-h-11 px-3 py-1.5 text-xs font-semibold rounded-xl bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-300 hover:bg-brand-100 transition-colors inline-flex items-center justify-center"
-                    :to="`/studio/levels/${lvl.code}`"
-                  >
-                    Chỉnh sửa
-                  </NuxtLink>
-                  <button
-                    class="min-h-11 px-3 py-1.5 text-xs font-semibold rounded-xl bg-surface-100 dark:bg-surface-700 text-surface-600 dark:text-surface-300 hover:bg-surface-200 transition-colors inline-flex items-center justify-center"
-                    type="button"
-                    @click="onDuplicateLevel(lvl.code, getLevelVersion(lvl))"
-                  >
-                    Nhân bản
-                  </button>
-                  <NuxtLink
-                    class="min-h-11 px-3 py-1.5 text-xs font-semibold rounded-xl border border-surface-200 dark:border-surface-700 text-surface-600 dark:text-surface-300 hover:bg-surface-100 transition-colors inline-flex items-center justify-center"
-                    :to="`/audit?entity_type=game_level&entity_id=${lvl.id}`"
-                  >
-                    Lịch sử
-                  </NuxtLink>
-                </div>
+                <NuxtLink
+                  class="min-h-11 px-3 py-1.5 text-xs font-semibold rounded-xl border border-surface-200 dark:border-surface-700 text-surface-600 dark:text-surface-300 hover:bg-surface-100 transition-colors inline-flex items-center justify-center"
+                  :to="`/audit?entity_type=game_level&entity_id=${lvl.code}`"
+                >
+                  Nhật ký
+                </NuxtLink>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
-
-    <!-- Create Modal -->
-    <div
-      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-900/60 backdrop-blur-sm"
-      v-if="isCreateModalOpen"
-    >
-      <div
-        class="w-full max-w-md bg-white dark:bg-surface-800 rounded-3xl border-4 border-surface-200 dark:border-surface-700 p-6 shadow-2xl space-y-4"
-      >
-        <h2 class="text-lg font-bold text-surface-900 dark:text-white">
-          Tạo màn chơi mới
-        </h2>
-        <div class="space-y-3">
-          <div>
-            <label
-              class="block text-xs font-bold text-surface-500 mb-1"
-              for="create-template-select"
-            >
-              Chọn Mẫu Gameplay (Template) *
-            </label>
-            <select
-              class="w-full min-h-11 px-3 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
-              id="create-template-select"
-              v-model="newLevelForm.template_code"
-            >
-              <option value="GT-001">GT-001: Đếm &amp; Chọn số</option>
-              <option value="GT-002">GT-002: Điền dãy số quy luật</option>
-              <option value="GT-003">GT-003: Phân loại nhóm</option>
-              <option value="GT-004">GT-004: So sánh số lượng</option>
-              <option value="GT-005">GT-005: Nối cặp logic</option>
-              <option value="GT-006">GT-006: Ghép hình không gian</option>
-            </select>
-          </div>
-
-          <div>
-            <label
-              class="block text-xs font-bold text-surface-500 mb-1"
-              for="create-access-tier-select"
-            >
-              Bậc quyền truy cập (Access Tier) *
-            </label>
-            <select
-              class="w-full min-h-11 px-3 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
-              id="create-access-tier-select"
-              v-model="newLevelForm.access_tier"
-            >
-              <option value="free">Free (Chơi thử công khai)</option>
-              <option value="login">Login (Đã đăng nhập)</option>
-              <option value="standard">Standard (Gói Tiêu chuẩn)</option>
-              <option value="premium">Premium (Gói Cao cấp)</option>
-            </select>
-          </div>
-
-          <div>
-            <label
-              class="block text-xs font-bold text-surface-500 mb-1"
-              for="create-title-input"
-            >
-              Tiêu đề màn chơi *
-            </label>
-            <input
-              class="w-full min-h-11 px-3 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
-              id="create-title-input"
-              placeholder="Ví dụ: Đếm quả táo trong vườn"
-              type="text"
-              v-model="newLevelForm.title"
-            >
-          </div>
-        </div>
-
-        <div class="flex justify-end gap-3 pt-3">
-          <button
-            class="min-h-11 px-4 py-2 rounded-xl text-surface-600 dark:text-surface-300 hover:bg-surface-100 font-semibold text-sm inline-flex items-center justify-center"
-            type="button"
-            @click="closeCreateModal"
-          >
-            Huỷ
-          </button>
-          <button
-            class="min-h-11 px-5 py-2 rounded-xl bg-brand-600 text-white font-semibold text-sm hover:bg-brand-700 transition-colors inline-flex items-center justify-center"
-            type="button"
-            @click="submitCreateLevel"
-          >
-            Tạo và mở xưởng
-          </button>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-  import { normalizeApiError } from "@mindkid/errors/client";
   import { computed, onMounted, ref } from "vue";
-  import { useRoute, useRouter } from "vue-router";
+  import { useRoute } from "vue-router";
   import { definePageMeta, useHead } from "#imports";
   import { apiFetch } from "~/composables/use-api-client";
 
@@ -510,8 +339,6 @@
   export interface GameLevelListItem {
     id: number;
     code: string;
-    content_version?: number;
-    contentVersion?: number;
     title: string;
     template_code?: string;
     templateCode?: string;
@@ -523,7 +350,6 @@
     ageMax?: number;
     access_tier?: string;
     accessTier?: string;
-    status: string;
     created_at?: string;
     updated_at?: string;
     createdAt?: string;
@@ -541,14 +367,11 @@
   }
 
   const route = useRoute();
-  const router = useRouter();
 
   const levels = ref<GameLevelListItem[]>([]);
   const totalCount = ref<number | null>(null);
   const competencyCounts = ref<Record<string, number>>({});
   const isLoading = ref(true);
-  const isCreateModalOpen = ref(false);
-  const actionNotification = ref("");
 
   const initialSkillCode =
     typeof route.query.skill_code === "string"
@@ -563,15 +386,8 @@
     q: "",
     competency: initialCompetency,
     template_code: "",
-    status: "",
     access_tier: "",
     skill_code: initialSkillCode,
-  });
-
-  const newLevelForm = ref({
-    template_code: "GT-001",
-    access_tier: "standard",
-    title: "",
   });
 
   const totalLevels = computed(() => {
@@ -588,18 +404,6 @@
     fetchLevels();
   });
 
-  function openCreateModal(): void {
-    isCreateModalOpen.value = true;
-  }
-
-  function closeCreateModal(): void {
-    isCreateModalOpen.value = false;
-  }
-
-  function dismissNotification(): void {
-    actionNotification.value = "";
-  }
-
   function selectCompetency(code: string): void {
     filters.value.competency = code;
     fetchLevels();
@@ -610,7 +414,6 @@
       q: "",
       competency: "",
       template_code: "",
-      status: "",
       access_tier: "",
       skill_code: "",
     };
@@ -619,10 +422,6 @@
 
   function getCompetencyCount(code: string): number {
     return competencyCounts.value[code] ?? 0;
-  }
-
-  function getLevelVersion(lvl: GameLevelListItem): number {
-    return lvl.content_version ?? lvl.contentVersion ?? 1;
   }
 
   function getLevelTemplate(lvl: GameLevelListItem): string {
@@ -663,9 +462,6 @@
       if (filters.value.template_code) {
         query.template_code = filters.value.template_code;
       }
-      if (filters.value.status) {
-        query.status = filters.value.status;
-      }
       if (filters.value.access_tier) {
         query.access_tier = filters.value.access_tier;
       }
@@ -687,73 +483,6 @@
     } finally {
       isLoading.value = false;
     }
-  }
-
-  async function submitCreateLevel(): Promise<void> {
-    if (!newLevelForm.value.title.trim()) {
-      return;
-    }
-    try {
-      const created = await apiFetch<{ code: string }>("/api/managers/levels", {
-        method: "POST",
-        body: {
-          template_code: newLevelForm.value.template_code,
-          access_tier: newLevelForm.value.access_tier,
-          title: newLevelForm.value.title.trim(),
-        },
-      });
-      isCreateModalOpen.value = false;
-      router.push(`/studio/levels/${created.code}`);
-    } catch (err) {
-      const parsed = normalizeApiError(err);
-      actionNotification.value = parsed.message || "Lỗi tạo màn chơi";
-    }
-  }
-
-  function onDuplicateLevel(code: string, version: number): void {
-    duplicateLevel(code, version);
-  }
-
-  async function duplicateLevel(code: string, version: number): Promise<void> {
-    try {
-      const cloned = await apiFetch<{ code: string }>(
-        `/api/managers/levels/${code}/${version}/duplicate`,
-        { method: "POST" }
-      );
-      router.push(`/studio/levels/${cloned.code}`);
-    } catch (err) {
-      const parsed = normalizeApiError(err);
-      actionNotification.value = parsed.message || "Lỗi nhân bản";
-    }
-  }
-
-  function getStatusBadgeClass(status: string): string {
-    switch (status) {
-      case "draft":
-        return "bg-surface-100 text-surface-700 dark:bg-surface-700 dark:text-surface-300";
-      case "in_review":
-        return "bg-warning-100 text-warning-800 dark:bg-warning-900/40 dark:text-warning-300";
-      case "approved":
-        return "bg-success-100 text-success-800 dark:bg-success-900/40 dark:text-success-300";
-      case "published":
-        return "bg-brand-100 text-brand-800 dark:bg-brand-900/40 dark:text-brand-300";
-      case "archived":
-        return "bg-danger-100 text-danger-800 dark:bg-danger-900/40 dark:text-danger-300";
-      default:
-        return "bg-surface-100 text-surface-600";
-    }
-  }
-
-  function formatStatus(status: string): string {
-    const map: Record<string, string> = {
-      draft: "Bản nháp",
-      in_review: "Chờ duyệt",
-      approved: "Đã duyệt",
-      published: "Đã phát hành",
-      archived: "Lưu trữ",
-      rejected: "Từ chối",
-    };
-    return map[status] || status;
   }
 
   function formatDate(d: string): string {

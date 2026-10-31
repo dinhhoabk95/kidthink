@@ -109,7 +109,7 @@ export function runEngineBehaviorCorpusGate(
     BehaviorConfigSchema
   );
   const baseline = readJson(
-    repoPath("scripts/engine-behavior-baseline.json"),
+    repoPath("packages/game-engine/config/engine-behavior-baseline.json"),
     BaselineSchema
   );
 

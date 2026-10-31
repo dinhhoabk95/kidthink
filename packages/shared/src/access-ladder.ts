@@ -161,10 +161,9 @@ export function buildTierLockedResponse(
  *
  * Hàm này lệch spec ở nhánh `login`: nó trả `true` chỉ vì người gọi đã đăng
  * nhập, trong khi bậc `login` đòi **đã đăng nhập VÀ có `active_child_id` hợp
- * lệ**. Chín call site còn lại nằm ở giáo án và worksheet
- * (`packages/db/src/services/lesson-plan.ts`,
- * `apps/web/server/api/users/worksheets/[code]/pdf.get.ts`); sửa nhánh này là
- * đổi phân quyền của hai bề mặt đó nên phải đi bằng task riêng có review.
+ * lệ**. Các call site còn lại nằm ở worksheet
+ * (`apps/web/server/api/users/worksheets/[code]/pdf.get.ts`); sửa nhánh này là
+ * đổi phân quyền của bề mặt đó nên phải đi bằng task riêng có review.
  */
 export function canAccessTier(
   tier: string,

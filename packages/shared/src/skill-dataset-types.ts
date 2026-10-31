@@ -67,6 +67,7 @@ export interface DatasetItem {
   readonly glyph?: string;
   readonly image?: DatasetAsset;
   readonly value?: number;
+  readonly ordering?: number;
   readonly category?: Readonly<Record<string, string>>;
   readonly audio_path?: string;
   readonly contrast_group?: string;
@@ -79,6 +80,7 @@ export interface DatasetRelation {
   readonly type: DatasetRelationType;
   readonly source_id: string;
   readonly target_id: string;
+  readonly explanation?: string;
   readonly metadata?: Readonly<Record<string, string | number | boolean>>;
 }
 
@@ -186,7 +188,6 @@ export interface SkillLevelPlan {
   readonly theme: string;
   readonly rounds?: number;
   readonly montessori_ref?: string;
-  readonly legacy_v1_ref?: string;
   readonly skill_codes?: readonly string[];
   /**
    * Giữ nguyên nấc truy cập khi `difficulty` bị hạ vì canvas thấp không chứa nổi

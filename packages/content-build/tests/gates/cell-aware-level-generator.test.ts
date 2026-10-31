@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { generateMatrixReport } from "#scripts/check-matrix-budget";
-import { validateCellSpec } from "#src/cli/cell-generator";
+import {
+  generateMatrixReport,
+  validateCellSpec,
+} from "#src/cli/cell-generator";
 import { generateLevelsCore } from "#src/cli/gen-levels";
 
 describe("Cell-aware Level Generator (Task #161 / BR-LGK-12)", () => {

@@ -88,6 +88,14 @@ export const THEME_SUBJECT_NOUNS: Readonly<Record<string, ThemeSubjectNoun>> = {
     pluralNoun: "nhạc cụ và âm thanh",
     contextLabel: "Âm nhạc",
   },
+  railway: {
+    pluralNoun: "toa tàu và đường ray",
+    contextLabel: "Đường ray",
+  },
+  town: {
+    pluralNoun: "công trình phố xá",
+    contextLabel: "Phố xá",
+  },
 };
 
 const SIMPLE_COMPARISON_SKILLS = new Set<string>([

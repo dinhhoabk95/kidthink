@@ -33,8 +33,7 @@ một hành động nhỏ; năm hành động (`present` · `echo` · `recognise
 một khuôn** trên cả ba loại chất liệu — ký tự, từ khoá học, hình minh hoạ. Người soạn đổi
 dãy thì trẻ thấy bài khác; runner không đổi.
 
-Khác [`lesson-session-runner.md`](../03-account/lesson-session-runner.md) ở chỗ quyết định tất cả: ở đó
-**người lớn giữ nhịp**, ở đây **không có người lớn nào cả**. Nên bài làm quen không được có
+Điểm quyết định tất cả: ở đây **không có người lớn nào cả** giữ nhịp. Nên bài làm quen không được có
 bước nào cần diễn giải, không được có chữ nào phải đọc, và không được có ngã cụt nào mà trẻ
 tự thoát không nổi.
 
@@ -100,7 +99,7 @@ tự thoát không nổi.
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-CIR-01` (không cần người lớn) | Mọi step phải chạy được với **chỉ trẻ và máy** | Đây là điểm khác `lesson-session-runner.md`. Step nào cần người lớn diễn giải thì step đó không tồn tại trên đường danh mục |
+| `BR-CIR-01` (không cần người lớn) | Mọi step phải chạy được với **chỉ trẻ và máy** | Step nào cần người lớn diễn giải thì step đó không tồn tại trên đường danh mục |
 | `BR-CIR-02` (trẻ giữ nhịp) | Cấm — **NEVER** tự chuyển step theo đồng hồ | `BR-LSR-02` cùng lý do: nhịp của trẻ ba tuổi không đoán trước được |
 | `BR-CIR-03` (một step một màn) | Runner hiện **đúng một** step tại một thời điểm, và `present` hiện **đúng một** chất liệu | `BR-ENG-09` — một phần tử động thu hút chú ý tại một thời điểm. Giới thiệu ba thứ cùng lúc là không giới thiệu thứ nào |
 | `BR-CIR-17` (phân đoạn chạy nối tiếp) | Runner chạy hết `steps` của một phân đoạn rồi mới mở phân đoạn kế. Cuối mỗi phân đoạn là một **mốc**: ăn mừng nhẹ, ghi `segment_id` đã xong | Chủ đề dài hơn một lần ngồi của trẻ ba tuổi. Không có mốc thì trẻ rời giữa chừng và lần sau phải học lại từ giá trị đầu tiên |

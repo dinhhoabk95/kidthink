@@ -42,61 +42,150 @@ export const C2_ORI_02_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "cup",
-      label: "cái cốc",
+      id: "glove_right",
+      label: "găng tay bên phải",
+      value: 1,
       image: {
         kind: "emoji",
-        ref: "🥤",
+        ref: "🧤",
       },
       category: {
-        type: "đồ dùng",
+        type: "ở bên phải",
+      },
+      contrast_group: "right",
+    },
+    {
+      id: "shoe_right",
+      label: "chiếc giày bên phải",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "👟",
+      },
+      category: {
+        type: "ở bên phải",
+      },
+      contrast_group: "right",
+    },
+    {
+      id: "bus_right",
+      label: "xe buýt bên phải",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "🚌",
+      },
+      category: {
+        type: "ở bên phải",
+      },
+      contrast_group: "right",
+    },
+    {
+      id: "arrow_right",
+      label: "mũi tên bên phải",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "➡️",
+      },
+      category: {
+        type: "ở bên phải",
+      },
+      contrast_group: "right",
+    },
+    {
+      id: "sock_left",
+      label: "chiếc tất bên trái",
+      value: 5,
+      image: {
+        kind: "emoji",
+        ref: "🧦",
+      },
+      category: {
+        type: "ở bên trái",
+      },
+      contrast_group: "left",
+    },
+    {
+      id: "boot_left",
+      label: "đôi ủng bên trái",
+      value: 6,
+      image: {
+        kind: "emoji",
+        ref: "🥾",
+      },
+      category: {
+        type: "ở bên trái",
+      },
+      contrast_group: "left",
+    },
+    {
+      id: "bike_left",
+      label: "xe đạp bên trái",
+      value: 7,
+      image: {
+        kind: "emoji",
+        ref: "🚲",
+      },
+      category: {
+        type: "ở bên trái",
+      },
+      contrast_group: "left",
+    },
+    {
+      id: "arrow_left",
+      label: "mũi tên bên trái",
+      value: 8,
+      image: {
+        kind: "emoji",
+        ref: "⬅️",
+      },
+      category: {
+        type: "ở bên trái",
+      },
+      contrast_group: "left",
+    },
+  ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "arrow_right",
+      target_id: "arrow_left",
+      metadata: {
+        dimension: "direction",
       },
     },
     {
-      id: "bed",
-      label: "cái giường",
-      image: {
-        kind: "emoji",
-        ref: "🛏️",
-      },
-      category: {
-        type: "đồ dùng",
+      type: "contrast",
+      source_id: "bus_right",
+      target_id: "bike_left",
+      metadata: {
+        dimension: "direction",
       },
     },
     {
-      id: "chair",
-      label: "cái ghế",
-      image: {
-        kind: "emoji",
-        ref: "🪑",
-      },
-      category: {
-        type: "đồ dùng",
+      type: "pair",
+      source_id: "glove_right",
+      target_id: "shoe_right",
+      metadata: {
+        relation: "cùng bên phải",
       },
     },
     {
-      id: "apple",
-      label: "quả táo",
-      image: {
-        kind: "emoji",
-        ref: "🍎",
-      },
-      category: {
-        type: "hoa quả",
-      },
-    },
-    {
-      id: "banana",
-      label: "quả chuối",
-      image: {
-        kind: "emoji",
-        ref: "🍌",
-      },
-      category: {
-        type: "hoa quả",
+      type: "pair",
+      source_id: "sock_left",
+      target_id: "boot_left",
+      metadata: {
+        relation: "cùng bên trái",
       },
     },
   ],
+  axes: {
+    direction: {
+      values: ["ở bên phải", "ở bên trái"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
@@ -128,7 +217,16 @@ export const C2_ORI_02_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Phải nhé",
   },
-  ordering: ["cup", "bed", "chair", "apple", "banana"],
+  ordering: [
+    "glove_right",
+    "shoe_right",
+    "bus_right",
+    "arrow_right",
+    "sock_left",
+    "boot_left",
+    "bike_left",
+    "arrow_left",
+  ],
 };
 
 export const C2_ORI_02_SEED: SkillSeed = {
@@ -157,62 +255,6 @@ export const C2_ORI_02_SEED: SkillSeed = {
       band: "3-4",
       difficulty: 1,
       theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-TCMP-0004",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 2,
-      theme: "ocean",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-PATT-0003",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 1,
-      theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-PATT-0004",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 2,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-SLOT-0003",
-      template: "GT-008",
-      band: "3-4",
-      difficulty: 1,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-SLOT-0004",
-      template: "GT-008",
-      band: "3-4",
-      difficulty: 2,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-MEMO-0003",
-      template: "GT-012",
-      band: "3-4",
-      difficulty: 1,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-MEMO-0004",
-      template: "GT-012",
-      band: "3-4",
-      difficulty: 2,
-      theme: "body",
       rounds: 3,
     },
   ],

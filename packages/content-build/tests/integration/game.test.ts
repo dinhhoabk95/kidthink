@@ -30,72 +30,60 @@ describe("Game Schema Integration Tests", () => {
     await expect(
       // @ts-expect-error testing missing access_tier
       db.insert(gameLevels).values({
-        entityId: 1,
         code,
-        contentVersion: 1,
         templateCode: "GT-001",
         title: "Level Test",
         contentPack: { test: true },
         difficultyParams: { speed: 1 },
-        status: "draft",
       })
     ).rejects.toThrow();
   });
 
-  it("BR-SCT-03: partial unique index enforces only one published version per code", async () => {
+  it("BR-SCT-03: unique constraint enforces only one row per code", async () => {
     const db = getOwnerDb();
     const code = await getUniqueGameLevelCode();
 
-    // 1. Insert version 1 published
+    // 1. Insert first row
     const [gl1] = await db
       .insert(gameLevels)
       .values({
-        entityId: 100,
         code,
-        contentVersion: 1,
         templateCode: "GT-001",
         title: "Level V1",
         contentPack: { test: true },
         difficultyParams: { speed: 1 },
         accessTier: "free",
-        status: "published",
       })
       .returning();
 
     expect(gl1).toBeDefined();
 
-    // 2. Insert version 2 published with SAME code -> must fail partial unique index
+    // 2. Insert second row with SAME code -> must fail unique constraint
     await expect(
       db.insert(gameLevels).values({
-        entityId: 100,
         code,
-        contentVersion: 2,
         templateCode: "GT-001",
         title: "Level V2",
         contentPack: { test: true },
         difficultyParams: { speed: 2 },
         accessTier: "free",
-        status: "published",
       })
     ).rejects.toThrow();
   });
 
-  it("BR-SCT-05: trigger prevents UPDATE on published game_levels row", async () => {
+  it("allows UPDATE on game_levels row directly", async () => {
     const db = getOwnerDb();
     const code = await getUniqueGameLevelCode();
 
     const [gl] = await db
       .insert(gameLevels)
       .values({
-        entityId: Math.floor(Math.random() * 800_000) + 100_000,
         code,
-        contentVersion: 1,
         templateCode: "GT-001",
-        title: "Original Published Title",
+        title: "Original Title",
         contentPack: { test: true },
         difficultyParams: { speed: 1 },
         accessTier: "free",
-        status: "published",
       })
       .returning();
     if (!gl) {
@@ -104,17 +92,12 @@ describe("Game Schema Integration Tests", () => {
 
     expect(gl).toBeDefined();
 
-    // Attempting UPDATE on published row must fail due to trigger BR-SCT-05
-    await expect(
-      db
-        .update(gameLevels)
-        .set({ title: "Modified Title" })
-        .where(eq(gameLevels.id, gl.id))
-    ).rejects.toSatisfy((err: unknown) => {
-      const e = err as { message?: string; cause?: { message?: string } };
-      const fullText = (e.message ?? "") + (e.cause?.message ?? "");
-      return fullText.includes("BR-SCT-05");
-    });
+    const [updated] = await db
+      .update(gameLevels)
+      .set({ title: "Modified Title" })
+      .where(eq(gameLevels.id, gl.id))
+      .returning();
+    expect(updated?.title).toBe("Modified Title");
   });
 
   it("WP167.6: ContentSeed with rounds creates rows in game_level_rounds", async () => {

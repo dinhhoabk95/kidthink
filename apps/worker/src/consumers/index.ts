@@ -6,10 +6,8 @@ import { billingDunningSweep } from "./billing-dunning-sweep.js";
 import { billingRenew } from "./billing-renew.js";
 import { billingRenewalReminder } from "./billing-renewal-reminder.js";
 import { emailSend } from "./email-send.js";
-import { embedContent } from "./embed-content.js";
 import { entitlementExpire } from "./entitlement-expire.js";
 import { entitlementSoftUnlockExpire } from "./entitlement-soft-unlock-expire.js";
-import { imageCleanupOrphan } from "./image-cleanup-orphan.js";
 import { orderExpire } from "./order-expire.js";
 import { pdfRender } from "./pdf-render.js";
 import { reportManualGrantsMonthly } from "./report-manual-grants-monthly.js";
@@ -64,13 +62,11 @@ export const CONSUMERS: Record<JobName, ErasedConsumer> = {
     billingRenewalReminder
   ),
   "email:send": bind("email:send", emailSend),
-  "embed:content": bind("embed:content", embedContent),
   "entitlement:expire": bind("entitlement:expire", entitlementExpire),
   "entitlement:soft-unlock-expire": bind(
     "entitlement:soft-unlock-expire",
     entitlementSoftUnlockExpire
   ),
-  "image:cleanup-orphan": bind("image:cleanup-orphan", imageCleanupOrphan),
   "order:expire": bind("order:expire", orderExpire),
   "pdf:render": bind("pdf:render", pdfRender),
   "report:manual-grants-monthly": bind(

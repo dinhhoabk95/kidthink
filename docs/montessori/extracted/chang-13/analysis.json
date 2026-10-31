@@ -1,0 +1,1875 @@
+{
+  "stage_id": "chang-13",
+  "workbook_id": "WB13",
+  "title": "Chặng 13: Học Viện Thám Tử Số Học",
+  "subtitle": "Tách gộp • Đưa về 10 • Tính nhanh",
+  "total_pages": 23,
+  "target_age": "4–6 tuổi",
+  "series": "Gấu Logic & Thỏ Quan Sát - Chuyến Tàu Toán Học (Phần 13)",
+  "mission": "Khám phá các manh mối số học, vận dụng chiến lược tách số đưa về 10 để tính nhẩm phép trừ trong phạm vi 20 và giải mã mật mã 6 số mở tủ chứng cứ lấy Viên Ngọc Số Học",
+  "pedagogy": {
+    "framework": "Montessori & CPA (Concrete - Pictorial - Abstract)",
+    "approach": "Chiến lược làm tròn 10 / Trừ qua 10 (Make-a-10 / Bridging through 10 Subtraction Strategy), Sơ đồ tách gộp Number Bond, Tiền đại số & Phát hiện quy luật bảo toàn hiệu số (Relational Thinking & Subtraction Invariance Property), Tư duy phản biện & Sửa lỗi sai trong lập luận (Error Analysis & Metacognition)",
+    "competency": "C1 - Tư duy toán học (Mathematical Thinking) & Tách gộp phép tính trong phạm vi 20",
+    "skills_targeted": [
+      {
+        "code": "C1.SUB.04",
+        "name": "Trừ qua 10 trong phạm vi 20 bằng chiến lược đưa về 10 (Make-10 subtraction)"
+      },
+      {
+        "code": "C1.NCOMP.01",
+        "name": "Tách gộp số linh hoạt để tạo số tròn 10"
+      },
+      {
+        "code": "C1.NCOMP.02",
+        "name": "Tìm thành phần còn thiếu trong sơ đồ phân tách số (Missing part in number bond)"
+      },
+      {
+        "code": "C1.SUB.02",
+        "name": "Tính nhẩm trừ không cần đếm ngón tay (Mental subtraction fluency)"
+      },
+      {
+        "code": "C1.SUB.03",
+        "name": "So sánh và ghép nối giá trị phép tính tương đương"
+      },
+      {
+        "code": "C1.LOG.01",
+        "name": "Kiểm chứng tính đúng đắn của chuỗi suy luận 4 bước (Mathematical verification)"
+      },
+      {
+        "code": "C1.LOG.02",
+        "name": "Phân tích và lựa chọn chiến lược phân tách tối ưu nhất"
+      },
+      {
+        "code": "C1.REL.01",
+        "name": "Nhận biết quy luật bảo toàn hiệu số: a - b = (a + k) - (b + k)"
+      }
+    ],
+    "progression_narrative": "Tiến trình sư phạm chặt chẽ qua 6 tầng phát triển nhận thức: (1) Mô hình hóa 4 bước tường minh (Full 4-Step Structural Decomposition - Trang 2–4, 7): Đặt nền tảng cho chiến lược trừ qua 10 (a - b -> tách b thành (a-10) + c -> a - (a-10) = 10 -> 10 - c = kết quả); (2) Giàn giáo mờ dần (Faded Scaffolding & Number Bond Schema - Trang 5, 8, 9, 17): Giảm dần trợ giúp, trẻ tự điền phần khuyết trong sơ đồ mũi tên và cấu trúc phân rã; (3) Tự kiểm chứng và phân tích lỗi sai (Self-Verification & Error Correction - Trang 6, 10, 11, 19): Rèn siêu nhận thức (metacognition) khi tự đối chiếu kết quả 2 dòng, phân định hồ sơ Đúng / Chưa đúng và phát hiện vị trí bị sai để sửa lại; (4) Tối ưu hóa chiến lược & Trắc nghiệm phản xạ (Strategy Selection & Multiple Choice - Trang 13, 18): So sánh 2 cách tách để nhận biết cách nào đưa về 10 nhanh nhất, củng cố tính nhẩm phản xạ 3 lựa chọn; (5) Khái quát hóa tiền đại số (Relational Thinking & Equivalence - Trang 14, 15): Khám phá tính chất bảo toàn hiệu số qua các cặp hồ sơ có cùng kết quả; (6) Thành thạo tính nhẩm & Vận dụng game hóa (Mental Fluency & Detective Quest Mastery - Trang 12, 16, 20, 21, 22, 23): Tính nhẩm tốc độ không ghi nháp, vượt qua kỳ kiểm tra giữa chặng, giải mã mật mã 6 số mở tủ chứng cứ và đoạt Viên Ngọc Số Học."
+  },
+  "activity_groups": [
+    {
+      "group_id": "WB13-D1",
+      "group_name": "Phân rã 4 bước đưa về 10 tường minh (Full 4-Step Decomposition Strategy 'Make-10')",
+      "page_range": "Trang 2 – Trang 4, Trang 7 (Sách: Trang 1 – 3, Trang 6)",
+      "mechanic_description": "Trẻ quan sát hồ sơ phép trừ qua 10 (ví dụ 15 - 6). Trẻ thực hiện 4 bước suy luận logic: Dòng 1 ghi phép tính gốc; Dòng 2 tách số trừ thành 2 phần (sao cho phần đầu bằng chữ số hàng đơn vị của số bị trừ); Dòng 3 lấy số bị trừ bớt phần đầu để chạm mốc tròn 10; Dòng 4 lấy 10 trừ tiếp phần còn lại để ra kết quả cuối cùng.",
+      "sample_prompts": [
+        "Tách số trừ • Đưa về 10 • Tính kết quả",
+        "Tìm dấu vết • Tách đúng • Tính nhanh",
+        "Tách số trừ • Đưa về 10 • Tìm kết quả"
+      ],
+      "visual_objects": [
+        "Hồ sơ thám tử cổ điển (File case cards)",
+        "Kính lúp điều tra của Thỏ Quan Sát",
+        "Kẹp tài liệu phá án của Gấu Logic",
+        "Bảng manh mối gắn ghim vàng"
+      ],
+      "quantities_and_ranges": "Số bị trừ từ 11 đến 18, số trừ từ 3 đến 9 (phép trừ có nhớ qua 10 trong phạm vi 20, kết quả từ 3 đến 9).",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-007",
+          "template_name": "number-bond (cây sơ đồ phân rã số trừ thành 2 nhánh)"
+        },
+        {
+          "template_id": "GT-008",
+          "template_name": "drag-to-slot (kéo các thẻ số vào 4 dòng phân rã)"
+        },
+        {
+          "template_id": "GT-003",
+          "template_name": "drag-to-container (phân loại phần tách về rổ mốc 10 và rổ trừ tiếp)"
+        }
+      ],
+      "recommended_skills": ["C1.SUB.04", "C1.NCOMP.01", "C1.SUB.02"]
+    },
+    {
+      "group_id": "WB13-D2",
+      "group_name": "Điền khuyết dấu vết & Sơ đồ phân nhánh (Faded Scaffolding & Number Bond Schema)",
+      "page_range": "Trang 5, Trang 8, Trang 9, Trang 17 (Sách: Trang 4, Trang 7, Trang 8, Trang 16)",
+      "mechanic_description": "Áp dụng kỹ thuật giàn giáo mờ dần (fading scaffolding). Các bước phân rã đã được điền sẵn một phần (ví dụ đã có số tách đầu tiên hoặc đã có dòng 3), trẻ quan sát mối quan hệ giữa các dòng hoặc sơ đồ mũi tên 'TÁCH: b -> b1 + [ ]' để điền các số còn thiếu vào ô trống và suy ra kết quả.",
+      "sample_prompts": [
+        "Đọc dấu vết • Điền số thiếu • Kiểm tra",
+        "Đọc gợi ý • Điền số • Hoàn thành hồ sơ",
+        "Nhìn sơ đồ • Điền phần thiếu • Tính kết quả",
+        "Đọc dấu vết • Điền đúng ô trống"
+      ],
+      "visual_objects": [
+        "Bảng chứng cứ bị khuyết với ghim đính",
+        "Sơ đồ mũi tên phân rã số (Arrow decomposition tree)",
+        "Hồ sơ thám tử mật mã ô trống có viền chỉ thị"
+      ],
+      "quantities_and_ranges": "Số bị trừ 11–18, số trừ 5–9, các thành phần tách b1 ∈ [1, 8], b2 ∈ [1, 7].",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-007",
+          "template_name": "number-bond (điền số vào nhánh khuyết của cây bond)"
+        },
+        {
+          "template_id": "GT-008",
+          "template_name": "drag-to-slot (kéo thẻ số vào vị trí bị khuyết)"
+        }
+      ],
+      "recommended_skills": ["C1.NCOMP.02", "C1.SUB.04", "C1.LOG.01"]
+    },
+    {
+      "group_id": "WB13-D3",
+      "group_name": "Đối chiếu, Kiểm chứng đúng/sai & Phân tích sửa sai (Self-Verification & Error Analysis)",
+      "page_range": "Trang 6, Trang 10, Trang 11, Trang 19 (Sách: Trang 5, Trang 9, Trang 10, Trang 18)",
+      "mechanic_description": "Rèn luyện tư duy phản biện và tự kiểm tra (Self-monitoring): (1) Tính kết quả dòng 1 và dòng 4 để đối chiếu xem có khớp nhau không; (2) Đọc 4 dòng trong hồ sơ và đánh giá tính đúng đắn (Đúng hay Chưa đúng); (3) Phát hiện con số bị ghi sai duy nhất trong 4 dòng của hồ sơ thám tử và viết lại con số đúng.",
+      "sample_prompts": [
+        "Dùng gợi ý • Tính nhanh • Đối chiếu",
+        "Theo dấu vết • Tính nhanh • Đối chiếu",
+        "Kiểm tra phép tính • Đánh dấu lựa chọn (Đúng / Chưa đúng)",
+        "Kiểm tra từng dòng • Sửa một con số"
+      ],
+      "visual_objects": [
+        "Huy hiệu kiểm chứng Đúng / Chưa đúng",
+        "Bút đánh dấu khoanh tròn điểm sai sót",
+        "Bảng đối chiếu đường dây phép tính nối kết quả"
+      ],
+      "quantities_and_ranges": "Phép tính phạm vi 20, các trường hợp sai gồm: sai kết quả dòng 1, sai phép tách dòng 2, sai mốc 10 dòng 3, hoặc sai phép trừ dòng 4.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chạm chọn Đúng / Chưa đúng; chạm số sai để sửa)"
+        },
+        {
+          "template_id": "GT-011",
+          "template_name": "error-spotting (soi kính lúp tìm con số sai trong chuỗi logic)"
+        }
+      ],
+      "recommended_skills": ["C1.LOG.01", "C1.SUB.04", "C1.NCOMP.01"]
+    },
+    {
+      "group_id": "WB13-D4",
+      "group_name": "Lựa chọn chiến lược tách tối ưu & Trắc nghiệm phản xạ (Strategy Selection & Multiple Choice)",
+      "page_range": "Trang 13, Trang 18 (Sách: Trang 12, Trang 17)",
+      "mechanic_description": "Phát triển tư duy siêu nhận thức về chiến lược (Strategic Metacognition): Cùng một số trừ có thể tách theo nhiều cách (ví dụ 8 = 4 + 4 hoặc 8 = 3 + 5), trẻ phải chọn đúng cách tách có thành phần đầu khớp với hàng đơn vị của số bị trừ để đưa về 10 nhanh nhất; kết hợp trắc nghiệm phản xạ tính nhẩm chọn 1 trong 3 đáp án.",
+      "sample_prompts": [
+        "Tính nhẩm • Khoanh đáp án đúng",
+        "Chọn cách tách đưa số bị trừ về 10"
+      ],
+      "visual_objects": [
+        "Thẻ phương án lựa chọn A và B",
+        "3 vòng tròn đáp án trắc nghiệm với số nổi bật"
+      ],
+      "quantities_and_ranges": "Số bị trừ 12–17, số trừ 7–9, các phương án tách đối chiếu hợp lệ về mặt toán học nhưng chỉ 1 phương án tối ưu để đưa về 10.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-002",
+          "template_name": "multiple-choice (chọn phương án tách tối ưu A hoặc B)"
+        },
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chạm chọn kết quả đúng trong 3 bong bóng số)"
+        }
+      ],
+      "recommended_skills": ["C1.LOG.02", "C1.SUB.04"]
+    },
+    {
+      "group_id": "WB13-D5",
+      "group_name": "Ghép nối hồ sơ & Quy luật cặp hiệu số bất biến (Matching & Invariant Equivalence Pairs)",
+      "page_range": "Trang 14, Trang 15 (Sách: Trang 13, Trang 14)",
+      "mechanic_description": "Khái quát hóa tư duy đại số sơ đẳng: (1) Nối các thẻ hồ sơ phép trừ bên trái với các thẻ kết quả bên phải; (2) Quan sát và phát hiện tính chất bất biến của phép trừ: khi số bị trừ và số trừ cùng tăng thêm một lượng bằng nhau k (ví dụ: 11-7 và 13-9, cùng tăng 2), thì hiệu số không thay đổi. Trẻ tính và điền kết quả chung vào huy hiệu thám tử.",
+      "sample_prompts": [
+        "Tính nhẩm • Nối phép tính với kết quả",
+        "Tính hai phép trừ • Điền kết quả chung"
+      ],
+      "visual_objects": [
+        "Thẻ hồ sơ màu pastel có tai folder thám tử",
+        "Huy hiệu thám tử vàng (Detective golden shield badge)",
+        "Đường nối dây dẫn chứng cứ manh mối"
+      ],
+      "quantities_and_ranges": "Số bị trừ 11–18, số trừ 7–9, các cặp phép trừ lệch nhau k = 2 đơn vị có cùng hiệu từ 4 đến 9.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-006",
+          "template_name": "match-pairs (kéo dây nối hồ sơ phép tính sang kết quả)"
+        },
+        {
+          "template_id": "GT-008",
+          "template_name": "drag-to-slot (đóng dấu huy hiệu kết quả chung)"
+        }
+      ],
+      "recommended_skills": ["C1.REL.01", "C1.SUB.03", "C1.SUB.04"]
+    },
+    {
+      "group_id": "WB13-D6",
+      "group_name": "Tính nhẩm tốc độ & Phá án mở khóa mật mã (Mental Math Fluency & Mystery Code Decryption)",
+      "page_range": "Trang 12, Trang 16, Trang 20, Trang 21, Trang 22 (Sách: Trang 11, Trang 15, Trang 19, Trang 20, Trang 21)",
+      "mechanic_description": "Đạt tới độ thuần thục trừu tượng (Abstract Fluency) và ứng dụng game hóa: (1) Tính nhẩm trực tiếp 10–12 hồ sơ không cần ghi trung gian; (2) Kỳ kiểm tra giữa chặng và đại thử thách cuối tổng hợp 6 dạng bài; (3) Nhiệm vụ cao trào: Tính 6 phép trừ để thu thập 6 chữ số mật mã theo thứ tự (5-4-7-3-8-6), nhập mã mở khóa tủ kính lấy Viên Ngọc Số Học.",
+      "sample_prompts": [
+        "Tính nhẩm • Điền kết quả",
+        "Tách số • Tính nhẩm • Kiểm tra",
+        "Hoàn thành 12 hồ sơ",
+        "Tính kết quả • Ghi theo đúng thứ tự để mở tủ chứng cứ",
+        "Vận dụng tất cả kỹ năng"
+      ],
+      "visual_objects": [
+        "Tủ kính chứng cứ mạ vàng cổ kính chứa Viên Ngọc Số Học màu tím",
+        "Dây xích vàng và ổ khóa đồng cổ",
+        "Băng nhập mật mã 6 ô số",
+        "Viên đá quý đa diện lấp lánh (Purple Arithmetic Gem)"
+      ],
+      "quantities_and_ranges": "Toàn bộ 36 phép trừ qua 10 trong phạm vi 20.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-008",
+          "template_name": "drag-to-slot (kéo phím số nhập mật mã 6 chữ số)"
+        },
+        {
+          "template_id": "GT-018",
+          "template_name": "cipher-lock (máy xoay ổ khóa mật mã thám tử)"
+        },
+        {
+          "template_id": "GT-012",
+          "template_name": "checkpoint-test (bài kiểm tra tổng hợp vượt ải)"
+        }
+      ],
+      "recommended_skills": ["C1.SUB.04", "C1.SUB.02", "C1.PROB.01"]
+    }
+  ],
+  "pages_summary": [
+    {
+      "page_number": 1,
+      "workbook_page_number": null,
+      "file_path": "pages/page-01.jpg",
+      "page_type": "cover_overview",
+      "title": "Hành Trình Chuyến Tàu Toán Học - Chặng 13: Học Viện Thám Tử Số Học",
+      "subtitle": "Tách gộp • Đưa về 10 • Tính nhanh",
+      "instruction": "CÙNG GẤU LOGIC VÀ THỎ QUAN SÁT PHÁ ÁN!",
+      "dialogue": {
+        "gau_logic": "Chào mừng các bạn nhỏ đến với Học Viện Thám Tử Số Học! Hôm nay chúng ta sẽ dùng bí quyết đưa về 10 để giải các vụ án phép trừ hóc búa nhé!",
+        "tho_quan_sat": "Viên Ngọc Số Học đang bị khóa trong tủ chứng cứ kìa! Hãy cùng tớ tìm các manh mối, giải mã các hồ sơ để mở khóa chiếc tủ bí mật nha!"
+      },
+      "parent_objectives": [
+        "Biết tách số hợp lý",
+        "Trừ trong phạm vi 20",
+        "Rèn tư duy và tính nhẩm"
+      ],
+      "footer_banner": "CÙNG GẤU LOGIC VÀ THỎ QUAN SÁT PHÁ ÁN!",
+      "pedagogical_concept": "Bìa mở đầu chặng thiết lập bối cảnh câu chuyện học viện thám tử Victorian (story-driven learning) và giới thiệu chiến lược trọng tâm: 'Trừ qua 10 bằng cách đưa về 10' qua bảng manh mối trung tâm: 13 - 7 -> tách 7 thành 3 và 4 -> 13 - 3 = 10 -> 10 - 4 = 6. Trẻ được kích thích trí tò mò và định hình cấu trúc tư duy trước khi bước vào các bài tập cụ thể.",
+      "visual_details": {
+        "scenery": "Học viện thám tử ấm cúng phong cách cổ điển ban đêm, cửa kính nhìn ra sân ga tàu hỏa với đoàn tàu số học đang đỗ, kệ sách, tủ hồ sơ đánh số từ 1 đến 20.",
+        "characters": [
+          "Gấu Logic mặc vest kẻ ca-rô xanh, đeo kính gọng tròn, tay cầm kẹp hồ sơ mật và bút chì ghi chép.",
+          "Thỏ Quan Sát mặc áo choàng thám tử màu kem, đeo túi da chéo, tay cầm kính lúp vàng soi chiếu bảng manh mối."
+        ],
+        "key_props": [
+          "Bảng gỗ đính ghim manh mối trung tâm mô tả phép tính 13 - 7 phân rã thành 3 và 4.",
+          "Tủ chứng cứ bằng gỗ mạ đồng, bên trong chứa Viên Ngọc Số Học tím phát sáng lấp lánh, bên ngoài có dây xích và ổ khóa mật mã.",
+          "Cuốn sổ 'HỒ SƠ SỐ HỌC', kính lúp, dấu chân thám tử, bánh răng thời gian."
+        ]
+      },
+      "digital_game_mapping": {
+        "suggested_template": "GT-000",
+        "mechanic": "intro-tutorial / world-hub",
+        "interaction": "Chạm vào kính lúp nghe âm thanh 'Ting!' thám tử, chạm vào bảng manh mối xem animation mô phỏng số 7 tách thành 3 và 4 bay vào vị trí phép tính, nghe Gấu Logic thuyết minh luật chơi."
+      }
+    },
+    {
+      "page_number": 2,
+      "workbook_page_number": 1,
+      "file_path": "pages/page-02.jpg",
+      "page_type": "step_by_step_decomposition",
+      "title": "HỒ SƠ PHÉP TRỪ ĐẦU TIÊN",
+      "instruction": "NHIỆM VỤ: TÁCH SỐ TRỪ • ĐƯA VỀ 10 • TÍNH KẾT QUẢ",
+      "dialogue": {
+        "gau_logic": "Muốn trừ nhanh, hãy đưa số bị trừ về 10 trước!",
+        "tho_quan_sat": "Ta tách số trừ thành hai phần nhé!"
+      },
+      "pedagogical_concept": "Khởi đầu lộ trình CPA cấp độ Semi-Concrete / Pictorial Structural: Hướng dẫn trẻ từng bước phân rã 4 dòng chuẩn mực. Giúp hình thành mô hình tâm trí (mental model) vững chắc về việc làm tròn 10.",
+      "items": [
+        {
+          "record_id": 1,
+          "problem": "15 - 6",
+          "steps": {
+            "step_1_split": "6 = 5 + 1",
+            "step_2_to_ten": "15 - 5 = 10",
+            "step_3_from_ten": "10 - 1 = 9"
+          },
+          "final_answer": 9,
+          "target_inputs": [
+            "15 - 6 = [9]",
+            "6 = [5] + [1]",
+            "15 - [5] = 10",
+            "10 - [1] = [9]"
+          ]
+        },
+        {
+          "record_id": 2,
+          "problem": "11 - 3",
+          "steps": {
+            "step_1_split": "3 = 1 + 2",
+            "step_2_to_ten": "11 - 1 = 10",
+            "step_3_from_ten": "10 - 2 = 8"
+          },
+          "final_answer": 8,
+          "target_inputs": [
+            "11 - 3 = [8]",
+            "3 = [1] + [2]",
+            "11 - [1] = 10",
+            "10 - [2] = [8]"
+          ]
+        },
+        {
+          "record_id": 3,
+          "problem": "16 - 8",
+          "steps": {
+            "step_1_split": "8 = 6 + 2",
+            "step_2_to_ten": "16 - 6 = 10",
+            "step_3_from_ten": "10 - 2 = 8"
+          },
+          "final_answer": 8,
+          "target_inputs": [
+            "16 - 8 = [8]",
+            "8 = [6] + [2]",
+            "16 - [6] = 10",
+            "10 - [2] = [8]"
+          ]
+        },
+        {
+          "record_id": 4,
+          "problem": "15 - 7",
+          "steps": {
+            "step_1_split": "7 = 5 + 2",
+            "step_2_to_ten": "15 - 5 = 10",
+            "step_3_from_ten": "10 - 2 = 8"
+          },
+          "final_answer": 8,
+          "target_inputs": [
+            "15 - 7 = [8]",
+            "7 = [5] + [2]",
+            "15 - [5] = 10",
+            "10 - [2] = [8]"
+          ]
+        },
+        {
+          "record_id": 5,
+          "problem": "14 - 6",
+          "steps": {
+            "step_1_split": "6 = 4 + 2",
+            "step_2_to_ten": "14 - 4 = 10",
+            "step_3_from_ten": "10 - 2 = 8"
+          },
+          "final_answer": 8,
+          "target_inputs": [
+            "14 - 6 = [8]",
+            "6 = [4] + [2]",
+            "14 - [4] = 10",
+            "10 - [2] = [8]"
+          ]
+        },
+        {
+          "record_id": 6,
+          "problem": "13 - 5",
+          "steps": {
+            "step_1_split": "5 = 3 + 2",
+            "step_2_to_ten": "13 - 3 = 10",
+            "step_3_from_ten": "10 - 2 = 8"
+          },
+          "final_answer": 8,
+          "target_inputs": [
+            "13 - 5 = [8]",
+            "5 = [3] + [2]",
+            "13 - [3] = 10",
+            "10 - [2] = [8]"
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-007",
+        "mechanic": "number-bond / step-by-step fill",
+        "interaction": "Chạm vào ô trống trên từng dòng để bàn phím số hiện lên hoặc kéo thẻ số từ khay vào đúng ô."
+      }
+    },
+    {
+      "page_number": 3,
+      "workbook_page_number": 2,
+      "file_path": "pages/page-03.jpg",
+      "page_type": "step_by_step_decomposition",
+      "title": "HỒ SƠ TÁCH SỐ KHÉO LÉO",
+      "instruction": "NHIỆM VỤ: TÁCH SỐ TRỪ • ĐƯA VỀ 10 • TÍNH KẾT QUẢ",
+      "dialogue": {
+        "gau_logic": "Tách vừa đủ để đưa số bị trừ về 10 nhé!",
+        "tho_quan_sat": "Phần còn lại sẽ trừ tiếp từ 10!"
+      },
+      "pedagogical_concept": "Mở rộng bài toán phân rã số trừ lớn hơn (trừ 8, trừ 9), củng cố kỹ năng nhận diện phần bù và phần tách để chạm mốc 10 nhanh nhất.",
+      "items": [
+        {
+          "record_id": 1,
+          "problem": "12 - 5",
+          "steps": {
+            "step_1_split": "5 = 2 + 3",
+            "step_2_to_ten": "12 - 2 = 10",
+            "step_3_from_ten": "10 - 3 = 7"
+          },
+          "final_answer": 7,
+          "target_inputs": [
+            "12 - 5 = [7]",
+            "5 = [2] + [3]",
+            "12 - [2] = 10",
+            "10 - [3] = [7]"
+          ]
+        },
+        {
+          "record_id": 2,
+          "problem": "17 - 9",
+          "steps": {
+            "step_1_split": "9 = 7 + 2",
+            "step_2_to_ten": "17 - 7 = 10",
+            "step_3_from_ten": "10 - 2 = 8"
+          },
+          "final_answer": 8,
+          "target_inputs": [
+            "17 - 9 = [8]",
+            "9 = [7] + [2]",
+            "17 - [7] = 10",
+            "10 - [2] = [8]"
+          ]
+        },
+        {
+          "record_id": 3,
+          "problem": "13 - 6",
+          "steps": {
+            "step_1_split": "6 = 3 + 3",
+            "step_2_to_ten": "13 - 3 = 10",
+            "step_3_from_ten": "10 - 3 = 7"
+          },
+          "final_answer": 7,
+          "target_inputs": [
+            "13 - 6 = [7]",
+            "6 = [3] + [3]",
+            "13 - [3] = 10",
+            "10 - [3] = [7]"
+          ]
+        },
+        {
+          "record_id": 4,
+          "problem": "18 - 9",
+          "steps": {
+            "step_1_split": "9 = 8 + 1",
+            "step_2_to_ten": "18 - 8 = 10",
+            "step_3_from_ten": "10 - 1 = 9"
+          },
+          "final_answer": 9,
+          "target_inputs": [
+            "18 - 9 = [9]",
+            "9 = [8] + [1]",
+            "18 - [8] = 10",
+            "10 - [1] = [9]"
+          ]
+        },
+        {
+          "record_id": 5,
+          "problem": "16 - 7",
+          "steps": {
+            "step_1_split": "7 = 6 + 1",
+            "step_2_to_ten": "16 - 6 = 10",
+            "step_3_from_ten": "10 - 1 = 9"
+          },
+          "final_answer": 9,
+          "target_inputs": [
+            "16 - 7 = [9]",
+            "7 = [6] + [1]",
+            "16 - [6] = 10",
+            "10 - [1] = [9]"
+          ]
+        },
+        {
+          "record_id": 6,
+          "problem": "14 - 8",
+          "steps": {
+            "step_1_split": "8 = 4 + 4",
+            "step_2_to_ten": "14 - 4 = 10",
+            "step_3_from_ten": "10 - 4 = 6"
+          },
+          "final_answer": 6,
+          "target_inputs": [
+            "14 - 8 = [6]",
+            "8 = [4] + [4]",
+            "14 - [4] = 10",
+            "10 - [4] = [6]"
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-007",
+        "mechanic": "number-bond / drag-to-slot",
+        "interaction": "Kéo thẻ số tương ứng vào các ô khuyết của quy trình 4 dòng."
+      }
+    },
+    {
+      "page_number": 4,
+      "workbook_page_number": 3,
+      "file_path": "pages/page-04.jpg",
+      "page_type": "step_by_step_decomposition",
+      "title": "DẤU VẾT ĐƯA VỀ 10",
+      "instruction": "NHIỆM VỤ: TÌM DẤU VẾT • TÁCH ĐÚNG • TÍNH NHANH",
+      "dialogue": {
+        "gau_logic": "Tìm phần cần tách để chạm mốc 10!",
+        "tho_quan_sat": "Đừng quên trừ tiếp phần còn lại nhé!"
+      },
+      "pedagogical_concept": "Luyện tập thuần thục việc tách số trừ có chứa chữ số lớn (7, 8, 9), hình thành phản xạ tự động nhận diện chữ số hàng đơn vị của số bị trừ để tách số trừ tương ứng.",
+      "items": [
+        {
+          "record_id": 1,
+          "problem": "11 - 7",
+          "steps": {
+            "step_1_split": "7 = 1 + 6",
+            "step_2_to_ten": "11 - 1 = 10",
+            "step_3_from_ten": "10 - 6 = 4"
+          },
+          "final_answer": 4,
+          "target_inputs": [
+            "11 - 7 = [4]",
+            "7 = [1] + [6]",
+            "11 - [1] = 10",
+            "10 - [6] = [4]"
+          ]
+        },
+        {
+          "record_id": 2,
+          "problem": "12 - 8",
+          "steps": {
+            "step_1_split": "8 = 2 + 6",
+            "step_2_to_ten": "12 - 2 = 10",
+            "step_3_from_ten": "10 - 6 = 4"
+          },
+          "final_answer": 4,
+          "target_inputs": [
+            "12 - 8 = [4]",
+            "8 = [2] + [6]",
+            "12 - [2] = 10",
+            "10 - [6] = [4]"
+          ]
+        },
+        {
+          "record_id": 3,
+          "problem": "13 - 9",
+          "steps": {
+            "step_1_split": "9 = 3 + 6",
+            "step_2_to_ten": "13 - 3 = 10",
+            "step_3_from_ten": "10 - 6 = 4"
+          },
+          "final_answer": 4,
+          "target_inputs": [
+            "13 - 9 = [4]",
+            "9 = [3] + [6]",
+            "13 - [3] = 10",
+            "10 - [6] = [4]"
+          ]
+        },
+        {
+          "record_id": 4,
+          "problem": "14 - 9",
+          "steps": {
+            "step_1_split": "9 = 4 + 5",
+            "step_2_to_ten": "14 - 4 = 10",
+            "step_3_from_ten": "10 - 5 = 5"
+          },
+          "final_answer": 5,
+          "target_inputs": [
+            "14 - 9 = [5]",
+            "9 = [4] + [5]",
+            "14 - [4] = 10",
+            "10 - [5] = [5]"
+          ]
+        },
+        {
+          "record_id": 5,
+          "problem": "15 - 8",
+          "steps": {
+            "step_1_split": "8 = 5 + 3",
+            "step_2_to_ten": "15 - 5 = 10",
+            "step_3_from_ten": "10 - 3 = 7"
+          },
+          "final_answer": 7,
+          "target_inputs": [
+            "15 - 8 = [7]",
+            "8 = [5] + [3]",
+            "15 - [5] = 10",
+            "10 - [3] = [7]"
+          ]
+        },
+        {
+          "record_id": 6,
+          "problem": "16 - 9",
+          "steps": {
+            "step_1_split": "9 = 6 + 3",
+            "step_2_to_ten": "16 - 6 = 10",
+            "step_3_from_ten": "10 - 3 = 7"
+          },
+          "final_answer": 7,
+          "target_inputs": [
+            "16 - 9 = [7]",
+            "9 = [6] + [3]",
+            "16 - [6] = 10",
+            "10 - [3] = [7]"
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-007",
+        "mechanic": "number-bond / fill-blank",
+        "interaction": "Điền các giá trị vào 4 dòng của hồ sơ để giải mã."
+      }
+    },
+    {
+      "page_number": 5,
+      "workbook_page_number": 4,
+      "file_path": "pages/page-05.jpg",
+      "page_type": "scaffolded_fill_blanks",
+      "title": "BẢNG CHỨNG CỨ BỊ KHUYẾT",
+      "instruction": "NHIỆM VỤ: ĐỌC DẤU VẾT • ĐIỀN SỐ THIẾU • KIỂM TRA",
+      "dialogue": {
+        "gau_logic": "Mỗi hồ sơ đã có sẵn vài dấu vết!",
+        "tho_quan_sat": "Điền phần còn thiếu để phá án nhé!"
+      },
+      "pedagogical_concept": "Bước chuyển tiếp Fading Scaffolding: Sách đã in sẵn số tách đầu tiên và phép trừ đưa về 10 (ví dụ: 7 = 4 + [ ], 14 - 4 = 10). Trẻ chỉ cần suy luận phần còn lại của số trừ và thực hiện phép trừ 10 - [ ] = [ ].",
+      "items": [
+        {
+          "record_id": 1,
+          "problem": "14 - 7",
+          "given": "7 = 4 + [ ]; 14 - 4 = 10; 10 - [ ] = [ ]",
+          "missing_inputs": {
+            "split_part_2": 3,
+            "from_ten_subtrahend": 3,
+            "step_3_result": 7,
+            "final_result": 7
+          }
+        },
+        {
+          "record_id": 2,
+          "problem": "12 - 8",
+          "given": "8 = 2 + [ ]; 12 - 2 = 10; 10 - [ ] = [ ]",
+          "missing_inputs": {
+            "split_part_2": 6,
+            "from_ten_subtrahend": 6,
+            "step_3_result": 4,
+            "final_result": 4
+          }
+        },
+        {
+          "record_id": 3,
+          "problem": "17 - 9",
+          "given": "9 = 7 + [ ]; 17 - 7 = 10; 10 - [ ] = [ ]",
+          "missing_inputs": {
+            "split_part_2": 2,
+            "from_ten_subtrahend": 2,
+            "step_3_result": 8,
+            "final_result": 8
+          }
+        },
+        {
+          "record_id": 4,
+          "problem": "15 - 6",
+          "given": "6 = 5 + [ ]; 15 - 5 = 10; 10 - [ ] = [ ]",
+          "missing_inputs": {
+            "split_part_2": 1,
+            "from_ten_subtrahend": 1,
+            "step_3_result": 9,
+            "final_result": 9
+          }
+        },
+        {
+          "record_id": 5,
+          "problem": "13 - 8",
+          "given": "8 = 3 + [ ]; 13 - 3 = 10; 10 - [ ] = [ ]",
+          "missing_inputs": {
+            "split_part_2": 5,
+            "from_ten_subtrahend": 5,
+            "step_3_result": 5,
+            "final_result": 5
+          }
+        },
+        {
+          "record_id": 6,
+          "problem": "16 - 9",
+          "given": "9 = 6 + [ ]; 16 - 6 = 10; 10 - [ ] = [ ]",
+          "missing_inputs": {
+            "split_part_2": 3,
+            "from_ten_subtrahend": 3,
+            "step_3_result": 7,
+            "final_result": 7
+          }
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "drag-to-slot",
+        "interaction": "Kéo các khối số từ thanh trượt vào các ô còn khuyết trên hồ sơ."
+      }
+    },
+    {
+      "page_number": 6,
+      "workbook_page_number": 5,
+      "file_path": "pages/page-06.jpg",
+      "page_type": "step_check_verification",
+      "title": "THỬ THÁCH TÍNH NHANH",
+      "instruction": "NHIỆM VỤ: DÙNG GỢI Ý • TÍNH NHANH • ĐỐI CHIẾU",
+      "dialogue": {
+        "gau_logic": "Dùng các dấu vết để tính thật nhanh!",
+        "tho_quan_sat": "Hai ô kết quả phải giống nhau nhé!"
+      },
+      "pedagogical_concept": "Cơ chế tự kiểm chứng (Self-verification): Hai dòng giữa đã được giải quyết sẵn, trẻ tính phép tính ban đầu (dòng 1) và phép tính trừ từ 10 (dòng 4) rồi đối chiếu sự trùng khớp, củng cố niềm tin vào tính đúng đắn của phương pháp.",
+      "items": [
+        {
+          "record_id": 1,
+          "problem": "11 - 4",
+          "given_steps": "4 = 1 + 3; 11 - 1 = 10",
+          "check_pair": {
+            "line_1": "11 - 4 = [7]",
+            "line_4": "10 - 3 = [7]"
+          },
+          "verified_answer": 7
+        },
+        {
+          "record_id": 2,
+          "problem": "12 - 5",
+          "given_steps": "5 = 2 + 3; 12 - 2 = 10",
+          "check_pair": {
+            "line_1": "12 - 5 = [7]",
+            "line_4": "10 - 3 = [7]"
+          },
+          "verified_answer": 7
+        },
+        {
+          "record_id": 3,
+          "problem": "13 - 7",
+          "given_steps": "7 = 3 + 4; 13 - 3 = 10",
+          "check_pair": {
+            "line_1": "13 - 7 = [6]",
+            "line_4": "10 - 4 = [6]"
+          },
+          "verified_answer": 6
+        },
+        {
+          "record_id": 4,
+          "problem": "14 - 6",
+          "given_steps": "6 = 4 + 2; 14 - 4 = 10",
+          "check_pair": {
+            "line_1": "14 - 6 = [8]",
+            "line_4": "10 - 2 = [8]"
+          },
+          "verified_answer": 8
+        },
+        {
+          "record_id": 5,
+          "problem": "15 - 9",
+          "given_steps": "9 = 5 + 4; 15 - 5 = 10",
+          "check_pair": {
+            "line_1": "15 - 9 = [6]",
+            "line_4": "10 - 4 = [6]"
+          },
+          "verified_answer": 6
+        },
+        {
+          "record_id": 6,
+          "problem": "18 - 9",
+          "given_steps": "9 = 8 + 1; 18 - 8 = 10",
+          "check_pair": {
+            "line_1": "18 - 9 = [9]",
+            "line_4": "10 - 1 = [9]"
+          },
+          "verified_answer": 9
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-001",
+        "mechanic": "tap-select / dual-input match",
+        "interaction": "Nhập kết quả cho 2 ô; nếu 2 số giống nhau, hiệu ứng tia sáng kết nối phát ra báo hiệu trùng khớp dấu vết."
+      }
+    },
+    {
+      "page_number": 7,
+      "workbook_page_number": 6,
+      "file_path": "pages/page-07.jpg",
+      "page_type": "step_by_step_decomposition",
+      "title": "KHO DẤU VẾT MỚI",
+      "instruction": "NHIỆM VỤ: TÁCH SỐ TRỪ • ĐƯA VỀ 10 • TÌM KẾT QUẢ",
+      "dialogue": {
+        "gau_logic": "Mỗi phép trừ đều có một cách tách thật khéo!",
+        "tho_quan_sat": "Hãy đưa số bị trừ về 10 trước nhé!"
+      },
+      "pedagogical_concept": "Củng cố chu kỳ lặp lại với bộ dữ liệu số mới, thử thách trẻ tự hoàn thành toàn bộ 4 bước phân rã không có giàn giáo hỗ trợ.",
+      "items": [
+        {
+          "record_id": 1,
+          "problem": "11 - 5",
+          "steps": {
+            "step_1_split": "5 = 1 + 4",
+            "step_2_to_ten": "11 - 1 = 10",
+            "step_3_from_ten": "10 - 4 = 6"
+          },
+          "final_answer": 6
+        },
+        {
+          "record_id": 2,
+          "problem": "12 - 7",
+          "steps": {
+            "step_1_split": "7 = 2 + 5",
+            "step_2_to_ten": "12 - 2 = 10",
+            "step_3_from_ten": "10 - 5 = 5"
+          },
+          "final_answer": 5
+        },
+        {
+          "record_id": 3,
+          "problem": "13 - 8",
+          "steps": {
+            "step_1_split": "8 = 3 + 5",
+            "step_2_to_ten": "13 - 3 = 10",
+            "step_3_from_ten": "10 - 5 = 5"
+          },
+          "final_answer": 5
+        },
+        {
+          "record_id": 4,
+          "problem": "14 - 7",
+          "steps": {
+            "step_1_split": "7 = 4 + 3",
+            "step_2_to_ten": "14 - 4 = 10",
+            "step_3_from_ten": "10 - 3 = 7"
+          },
+          "final_answer": 7
+        },
+        {
+          "record_id": 5,
+          "problem": "15 - 8",
+          "steps": {
+            "step_1_split": "8 = 5 + 3",
+            "step_2_to_ten": "15 - 5 = 10",
+            "step_3_from_ten": "10 - 3 = 7"
+          },
+          "final_answer": 7
+        },
+        {
+          "record_id": 6,
+          "problem": "16 - 9",
+          "steps": {
+            "step_1_split": "9 = 6 + 3",
+            "step_2_to_ten": "16 - 6 = 10",
+            "step_3_from_ten": "10 - 3 = 7"
+          },
+          "final_answer": 7
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-007",
+        "mechanic": "number-bond",
+        "interaction": "Hoàn thành 4 ô trống liên hoàn trong hồ sơ."
+      }
+    },
+    {
+      "page_number": 8,
+      "workbook_page_number": 7,
+      "file_path": "pages/page-08.jpg",
+      "page_type": "scaffolded_fill_blanks",
+      "title": "MỞ KHÓA SỐ BÍ MẬT",
+      "instruction": "NHIỆM VỤ: ĐỌC GỢI Ý • ĐIỀN SỐ • HOÀN THÀNH HỒ SƠ",
+      "dialogue": {
+        "gau_logic": "Dấu vết đầu tiên đã có sẵn rồi!",
+        "tho_quan_sat": "Bé tìm phần còn lại để mở khóa nhé!"
+      },
+      "pedagogical_concept": "Giàn giáo phân mảnh: Trẻ hoàn thiện các mảnh ghép số học còn thiếu, tập trung vào phép tách số trừ và phép trừ từ 10.",
+      "items": [
+        {
+          "record_id": 1,
+          "problem": "17 - 8",
+          "given": "8 = 7 + [ ]; 17 - 7 = 10; 10 - [ ] = [ ]",
+          "missing_inputs": {
+            "part_2": 1,
+            "sub_from_10": 1,
+            "result": 9,
+            "final": 9
+          }
+        },
+        {
+          "record_id": 2,
+          "problem": "18 - 9",
+          "given": "9 = 8 + [ ]; 18 - 8 = 10; 10 - [ ] = [ ]",
+          "missing_inputs": {
+            "part_2": 1,
+            "sub_from_10": 1,
+            "result": 9,
+            "final": 9
+          }
+        },
+        {
+          "record_id": 3,
+          "problem": "16 - 8",
+          "given": "8 = 6 + [ ]; 16 - 6 = 10; 10 - [ ] = [ ]",
+          "missing_inputs": {
+            "part_2": 2,
+            "sub_from_10": 2,
+            "result": 8,
+            "final": 8
+          }
+        },
+        {
+          "record_id": 4,
+          "problem": "15 - 7",
+          "given": "7 = 5 + [ ]; 15 - 5 = 10; 10 - [ ] = [ ]",
+          "missing_inputs": {
+            "part_2": 2,
+            "sub_from_10": 2,
+            "result": 8,
+            "final": 8
+          }
+        },
+        {
+          "record_id": 5,
+          "problem": "14 - 9",
+          "given": "9 = 4 + [ ]; 14 - 4 = 10; 10 - [ ] = [ ]",
+          "missing_inputs": {
+            "part_2": 5,
+            "sub_from_10": 5,
+            "result": 5,
+            "final": 5
+          }
+        },
+        {
+          "record_id": 6,
+          "problem": "13 - 7",
+          "given": "7 = 3 + [ ]; 13 - 3 = 10; 10 - [ ] = [ ]",
+          "missing_inputs": {
+            "part_2": 4,
+            "sub_from_10": 4,
+            "result": 6,
+            "final": 6
+          }
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "drag-to-slot",
+        "interaction": "Kéo số thích hợp vào ô trống để mở khóa hồ sơ."
+      }
+    },
+    {
+      "page_number": 9,
+      "workbook_page_number": 8,
+      "file_path": "pages/page-09.jpg",
+      "page_type": "arrow_schema_decomposition",
+      "title": "SƠ ĐỒ TÁCH SỐ",
+      "instruction": "NHIỆM VỤ: NHÌN SƠ ĐỒ • ĐIỀN PHẦN THIẾU • TÍNH KẾT QUẢ",
+      "dialogue": {
+        "gau_logic": "Mũi tên chỉ cách tách số trừ thành hai phần!",
+        "tho_quan_sat": "Phần đầu giúp số bị trừ chạm mốc 10!"
+      },
+      "pedagogical_concept": "Giới thiệu biểu diễn sơ đồ mũi tên chuyển dịch trạng thái (State-transition arrow schema): 'TÁCH: b -> b1 + [ ]'. Trực quan hóa hành động tách số trừ.",
+      "items": [
+        {
+          "record_id": 1,
+          "problem": "11 - 8",
+          "schema": "TÁCH: 8 -> 1 + [7]",
+          "steps": "11 - 1 = 10; 10 - [7] = [3]",
+          "final_answer": 3
+        },
+        {
+          "record_id": 2,
+          "problem": "12 - 9",
+          "schema": "TÁCH: 9 -> 2 + [7]",
+          "steps": "12 - 2 = 10; 10 - [7] = [3]",
+          "final_answer": 3
+        },
+        {
+          "record_id": 3,
+          "problem": "13 - 8",
+          "schema": "TÁCH: 8 -> 3 + [5]",
+          "steps": "13 - 3 = 10; 10 - [5] = [5]",
+          "final_answer": 5
+        },
+        {
+          "record_id": 4,
+          "problem": "14 - 9",
+          "schema": "TÁCH: 9 -> 4 + [5]",
+          "steps": "14 - 4 = 10; 10 - [5] = [5]",
+          "final_answer": 5
+        },
+        {
+          "record_id": 5,
+          "problem": "15 - 9",
+          "schema": "TÁCH: 9 -> 5 + [4]",
+          "steps": "15 - 5 = 10; 10 - [4] = [6]",
+          "final_answer": 6
+        },
+        {
+          "record_id": 6,
+          "problem": "17 - 9",
+          "schema": "TÁCH: 9 -> 7 + [2]",
+          "steps": "17 - 7 = 10; 10 - [2] = [8]",
+          "final_answer": 8
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-007",
+        "mechanic": "arrow-number-bond",
+        "interaction": "Chạm vào mũi tên để kích hoạt phân rã số trừ thành 2 bong bóng số."
+      }
+    },
+    {
+      "page_number": 10,
+      "workbook_page_number": 9,
+      "file_path": "pages/page-10.jpg",
+      "page_type": "step_check_verification",
+      "title": "ĐƯỜNG DÂY PHÉP TÍNH",
+      "instruction": "NHIỆM VỤ: THEO DẤU VẾT • TÍNH NHANH • ĐỐI CHIẾU",
+      "dialogue": {
+        "gau_logic": "Theo từng dòng, bé sẽ tìm được kết quả!",
+        "tho_quan_sat": "Hai ô cuối phải cho cùng một số nhé!"
+      },
+      "pedagogical_concept": "Tự đối chiếu kết quả để xây dựng độ tự tin toán học và khả năng kiểm tra lại bài làm (self-checking).",
+      "items": [
+        {
+          "record_id": 1,
+          "problem": "11 - 6",
+          "given_steps": "6 = 1 + 5; 11 - 1 = 10",
+          "check_pair": {
+            "line_1": "11 - 6 = [5]",
+            "line_4": "10 - 5 = [5]"
+          },
+          "final_answer": 5
+        },
+        {
+          "record_id": 2,
+          "problem": "12 - 8",
+          "given_steps": "8 = 2 + 6; 12 - 2 = 10",
+          "check_pair": {
+            "line_1": "12 - 8 = [4]",
+            "line_4": "10 - 6 = [4]"
+          },
+          "final_answer": 4
+        },
+        {
+          "record_id": 3,
+          "problem": "13 - 6",
+          "given_steps": "6 = 3 + 3; 13 - 3 = 10",
+          "check_pair": {
+            "line_1": "13 - 6 = [7]",
+            "line_4": "10 - 3 = [7]"
+          },
+          "final_answer": 7
+        },
+        {
+          "record_id": 4,
+          "problem": "14 - 8",
+          "given_steps": "8 = 4 + 4; 14 - 4 = 10",
+          "check_pair": {
+            "line_1": "14 - 8 = [6]",
+            "line_4": "10 - 4 = [6]"
+          },
+          "final_answer": 6
+        },
+        {
+          "record_id": 5,
+          "problem": "15 - 7",
+          "given_steps": "7 = 5 + 2; 15 - 5 = 10",
+          "check_pair": {
+            "line_1": "15 - 7 = [8]",
+            "line_4": "10 - 2 = [8]"
+          },
+          "final_answer": 8
+        },
+        {
+          "record_id": 6,
+          "problem": "17 - 8",
+          "given_steps": "8 = 7 + 1; 17 - 7 = 10",
+          "check_pair": {
+            "line_1": "17 - 8 = [9]",
+            "line_4": "10 - 1 = [9]"
+          },
+          "final_answer": 9
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-001",
+        "mechanic": "dual-slot-match",
+        "interaction": "Nhập số vào 2 ô đối chiếu, màn hình chớp sáng xanh khi 2 số khớp nhau."
+      }
+    },
+    {
+      "page_number": 11,
+      "workbook_page_number": 10,
+      "file_path": "pages/page-11.jpg",
+      "page_type": "truth_verification",
+      "title": "PHÒNG KIỂM CHỨNG",
+      "instruction": "NHIỆM VỤ: KIỂM TRA PHÉP TÍNH • ĐÁNH DẤU LỰA CHỌN",
+      "dialogue": {
+        "gau_logic": "Có hồ sơ đúng, cũng có hồ sơ bị ghi sai!",
+        "tho_quan_sat": "Bé hãy kiểm tra từng bước thật kỹ nhé!"
+      },
+      "pedagogical_concept": "Phát triển năng lực tư duy phê phán và kiểm định tính hợp lý (Mathematical Proofing & Verification). Trẻ đóng vai thám tử kiểm tra xem hồ sơ đã phá án chuẩn xác hay có sơ hở logic.",
+      "items": [
+        {
+          "record_id": 1,
+          "content": "13 - 7 = 6; 7 = 3 + 4; 13 - 3 = 10; 10 - 4 = 6",
+          "evaluation": "ĐÚNG",
+          "reason": "Mọi bước đều chuẩn xác, kết quả 6 đúng."
+        },
+        {
+          "record_id": 2,
+          "content": "12 - 8 = 5; 8 = 2 + 6; 12 - 2 = 10; 10 - 6 = 4",
+          "evaluation": "CHƯA ĐÚNG",
+          "reason": "Dòng 1 ghi kết quả bằng 5, nhưng dòng 4 tính ra 10 - 6 = 4 (12 - 8 phải bằng 4)."
+        },
+        {
+          "record_id": 3,
+          "content": "15 - 9 = 6; 9 = 5 + 4; 15 - 5 = 10; 10 - 4 = 6",
+          "evaluation": "ĐÚNG",
+          "reason": "Mọi bước đều chuẩn xác, kết quả 6 đúng."
+        },
+        {
+          "record_id": 4,
+          "content": "14 - 6 = 7; 6 = 4 + 2; 14 - 4 = 10; 10 - 2 = 8",
+          "evaluation": "CHƯA ĐÚNG",
+          "reason": "Dòng 1 ghi kết quả bằng 7, trong khi 10 - 2 = 8 (14 - 6 phải bằng 8)."
+        },
+        {
+          "record_id": 5,
+          "content": "17 - 9 = 8; 9 = 7 + 2; 17 - 7 = 10; 10 - 2 = 8",
+          "evaluation": "ĐÚNG",
+          "reason": "Mọi bước đều chuẩn xác, kết quả 8 đúng."
+        },
+        {
+          "record_id": 6,
+          "content": "11 - 6 = 4; 6 = 1 + 5; 11 - 1 = 10; 10 - 5 = 5",
+          "evaluation": "CHƯA ĐÚNG",
+          "reason": "Dòng 1 ghi kết quả bằng 4, trong khi 10 - 5 = 5 (11 - 6 phải bằng 5)."
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-001",
+        "mechanic": "tap-select / true-false toggle",
+        "interaction": "Chạm chọn nút 'ĐÚNG' màu xanh hoặc 'CHƯA ĐÚNG' màu cam cho từng hồ sơ."
+      }
+    },
+    {
+      "page_number": 12,
+      "workbook_page_number": 11,
+      "file_path": "pages/page-12.jpg",
+      "page_type": "mental_calculation",
+      "title": "HỒ SƠ TÍNH NHẨM",
+      "instruction": "NHIỆM VỤ: TÍNH NHẨM • ĐIỀN KẾT QUẢ",
+      "dialogue": {
+        "gau_logic": "Bây giờ bé thử tách số trong đầu nhé!",
+        "tho_quan_sat": "Đưa về 10 rồi ghi kết quả thật nhanh!"
+      },
+      "pedagogical_concept": "Chuyển tiếp từ Pictorial sang Pure Abstract (Tư duy trừu tượng thuần túy): Trẻ nội hóa (internalize) 4 bước phân rã vào trong đầu và chỉ ghi kết quả cuối cùng.",
+      "items": [
+        {
+          "id": 1,
+          "problem": "11 - 4",
+          "mental_path": "(11 - 1) - 3 = 10 - 3 = 7",
+          "answer": 7
+        },
+        {
+          "id": 2,
+          "problem": "12 - 6",
+          "mental_path": "(12 - 2) - 4 = 10 - 4 = 6",
+          "answer": 6
+        },
+        {
+          "id": 3,
+          "problem": "13 - 5",
+          "mental_path": "(13 - 3) - 2 = 10 - 2 = 8",
+          "answer": 8
+        },
+        {
+          "id": 4,
+          "problem": "14 - 7",
+          "mental_path": "(14 - 4) - 3 = 10 - 3 = 7",
+          "answer": 7
+        },
+        {
+          "id": 5,
+          "problem": "15 - 8",
+          "mental_path": "(15 - 5) - 3 = 10 - 3 = 7",
+          "answer": 7
+        },
+        {
+          "id": 6,
+          "problem": "16 - 7",
+          "mental_path": "(16 - 6) - 1 = 10 - 1 = 9",
+          "answer": 9
+        },
+        {
+          "id": 7,
+          "problem": "17 - 9",
+          "mental_path": "(17 - 7) - 2 = 10 - 2 = 8",
+          "answer": 8
+        },
+        {
+          "id": 8,
+          "problem": "18 - 9",
+          "mental_path": "(18 - 8) - 1 = 10 - 1 = 9",
+          "answer": 9
+        },
+        {
+          "id": 9,
+          "problem": "12 - 9",
+          "mental_path": "(12 - 2) - 7 = 10 - 7 = 3",
+          "answer": 3
+        },
+        {
+          "id": 10,
+          "problem": "14 - 9",
+          "mental_path": "(14 - 4) - 5 = 10 - 5 = 5",
+          "answer": 5
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "rapid-fire keypad entry",
+        "interaction": "Nhập nhanh đáp án cho 10 hồ sơ liên tiếp."
+      }
+    },
+    {
+      "page_number": 13,
+      "workbook_page_number": 12,
+      "file_path": "pages/page-013.jpg",
+      "file_path_actual": "pages/page-13.jpg",
+      "page_type": "multiple_choice",
+      "title": "CHỌN KẾT QUẢ ĐÚNG",
+      "instruction": "NHIỆM VỤ: TÍNH NHẨM • KHOANH ĐÁP ÁN",
+      "dialogue": {
+        "gau_logic": "Tính nhẩm trước rồi mới nhìn đáp án!",
+        "tho_quan_sat": "Khoanh vào một kết quả đúng nhé!"
+      },
+      "pedagogical_concept": "Rèn luyện tính nhẩm với các phương án gây nhiễu (distractors) lệch 1 đơn vị. Trẻ phải tính toán chính xác thay vì ước lượng phỏng đoán.",
+      "items": [
+        {
+          "record_id": 1,
+          "problem": "13 - 9 = ?",
+          "options": [4, 5, 3],
+          "correct_answer": 4,
+          "distractors": [5, 3]
+        },
+        {
+          "record_id": 2,
+          "problem": "15 - 8 = ?",
+          "options": [6, 8, 7],
+          "correct_answer": 7,
+          "distractors": [6, 8]
+        },
+        {
+          "record_id": 3,
+          "problem": "12 - 7 = ?",
+          "options": [6, 5, 4],
+          "correct_answer": 5,
+          "distractors": [6, 4]
+        },
+        {
+          "record_id": 4,
+          "problem": "16 - 9 = ?",
+          "options": [8, 6, 7],
+          "correct_answer": 7,
+          "distractors": [8, 6]
+        },
+        {
+          "record_id": 5,
+          "problem": "14 - 6 = ?",
+          "options": [7, 8, 9],
+          "correct_answer": 8,
+          "distractors": [7, 9]
+        },
+        {
+          "record_id": 6,
+          "problem": "17 - 8 = ?",
+          "options": [9, 10, 8],
+          "correct_answer": 9,
+          "distractors": [10, 8]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-001",
+        "mechanic": "tap-select / 3-option bubble",
+        "interaction": "Chạm vào bong bóng mang chữ số đúng để khoanh tròn."
+      }
+    },
+    {
+      "page_number": 14,
+      "workbook_page_number": 13,
+      "file_path": "pages/page-14.jpg",
+      "page_type": "matching_pairs",
+      "title": "GHÉP ĐÚNG HỒ SƠ",
+      "instruction": "NHIỆM VỤ: TÍNH NHẨM • NỐI PHÉP TÍNH VỚI KẾT QUẢ",
+      "dialogue": {
+        "gau_logic": "Tính từng phép trừ ở bảng bên trái!",
+        "tho_quan_sat": "Nối với kết quả đúng ở bảng bên phải nhé!"
+      },
+      "pedagogical_concept": "Kỹ năng ghép nối tương ứng 1-1 giữa biểu thức toán học và giá trị số. Trẻ nhận diện dãy kết quả liên tiếp từ 3 đến 8.",
+      "items": [
+        {
+          "left_problem": "12 - 9",
+          "right_result": 3
+        },
+        {
+          "left_problem": "11 - 7",
+          "right_result": 4
+        },
+        {
+          "left_problem": "13 - 8",
+          "right_result": 5
+        },
+        {
+          "left_problem": "14 - 8",
+          "right_result": 6
+        },
+        {
+          "left_problem": "15 - 8",
+          "right_result": 7
+        },
+        {
+          "left_problem": "16 - 8",
+          "right_result": 8
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-006",
+        "mechanic": "match-pairs / draw line",
+        "interaction": "Kéo dây từ chốt folder bên trái sang chốt vòng tròn bên phải."
+      }
+    },
+    {
+      "page_number": 15,
+      "workbook_page_number": 14,
+      "file_path": "pages/page-15.jpg",
+      "page_type": "common_result_pairs",
+      "title": "CẶP HỒ SƠ CÙNG KẾT QUẢ",
+      "instruction": "NHIỆM VỤ: TÍNH HAI PHÉP TRỪ • ĐIỀN KẾT QUẢ CHUNG",
+      "dialogue": {
+        "gau_logic": "Hai phép trừ trong mỗi hồ sơ có cùng kết quả!",
+        "tho_quan_sat": "Tính rồi điền số chung vào huy hiệu nhé!"
+      },
+      "pedagogical_concept": "Tư duy tiền đại số sâu sắc: Nhận biết quy luật bảo toàn hiệu số (Subtraction Invariance). Khi số bị trừ và số trừ cùng tăng thêm 2 đơn vị: (a+2) - (b+2) = a - b. Trẻ khám phá ra rằng nhiều phép tính khác nhau có thể mang lại cùng một kết quả.",
+      "items": [
+        {
+          "record_id": 1,
+          "pair": ["11 - 7", "13 - 9"],
+          "common_result": 4,
+          "invariance_note": "11 + 2 = 13, 7 + 2 = 9 -> hiệu đều bằng 4"
+        },
+        {
+          "record_id": 2,
+          "pair": ["12 - 7", "14 - 9"],
+          "common_result": 5,
+          "invariance_note": "12 + 2 = 14, 7 + 2 = 9 -> hiệu đều bằng 5"
+        },
+        {
+          "record_id": 3,
+          "pair": ["13 - 7", "15 - 9"],
+          "common_result": 6,
+          "invariance_note": "13 + 2 = 15, 7 + 2 = 9 -> hiệu đều bằng 6"
+        },
+        {
+          "record_id": 4,
+          "pair": ["14 - 7", "16 - 9"],
+          "common_result": 7,
+          "invariance_note": "14 + 2 = 16, 7 + 2 = 9 -> hiệu đều bằng 7"
+        },
+        {
+          "record_id": 5,
+          "pair": ["15 - 7", "17 - 9"],
+          "common_result": 8,
+          "invariance_note": "15 + 2 = 17, 7 + 2 = 9 -> hiệu đều bằng 8"
+        },
+        {
+          "record_id": 6,
+          "pair": ["16 - 7", "18 - 9"],
+          "common_result": 9,
+          "invariance_note": "16 + 2 = 18, 7 + 2 = 9 -> hiệu đều bằng 9"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "badge-stamp",
+        "interaction": "Tính 2 phép trừ rồi kéo con dấu số vào huy hiệu thám tử."
+      }
+    },
+    {
+      "page_number": 16,
+      "workbook_page_number": 15,
+      "file_path": "pages/page-16.jpg",
+      "page_type": "midterm_review",
+      "title": "KỲ KIỂM TRA GIỮA CHẶNG",
+      "instruction": "NHIỆM VỤ: TÁCH SỐ • TÍNH NHẨM • KIỂM TRA",
+      "dialogue": {
+        "gau_logic": "Bé đã sẵn sàng thử sức với nhiều dạng bài!",
+        "tho_quan_sat": "Bình tĩnh đọc kỹ từng hồ sơ nhé!"
+      },
+      "pedagogical_concept": "Đánh giá định kỳ giữa chặng (Midterm Checkpoint): Tích hợp đồng thời 6 cơ chế bài tập khác nhau trong 1 trang thử thách để đánh giá sự linh hoạt chuyển đổi nhận thức.",
+      "items": [
+        {
+          "task_id": 1,
+          "type": "TÁCH SỐ",
+          "content": "16 - 8 = [8]",
+          "solution": "8 = 6 + 2; 16 - 6 = 10; 10 - 2 = 8"
+        },
+        {
+          "task_id": 2,
+          "type": "ĐIỀN DẤU VẾT",
+          "content": "13 - 7 = [6]",
+          "solution": "7 = 3 + 4; 13 - 3 = 10; 10 - 4 = 6"
+        },
+        {
+          "task_id": 3,
+          "type": "KIỂM CHỨNG",
+          "content": "14 - 9 = 5; 9 = 4 + 5; 14 - 4 = 10; 10 - 5 = 5",
+          "solution": "ĐÚNG"
+        },
+        {
+          "task_id": 4,
+          "type": "CHỌN ĐÁP ÁN",
+          "content": "12 - 8 = ?",
+          "options": [3, 4, 5],
+          "solution": 4
+        },
+        {
+          "task_id": 5,
+          "type": "TÍNH NHẨM",
+          "content": "17 - 9 = [8]",
+          "solution": 8
+        },
+        {
+          "task_id": 6,
+          "type": "KẾT QUẢ CHUNG",
+          "content": "15 - 8 và 16 - 9",
+          "solution": 7
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-012",
+        "mechanic": "checkpoint-test / multi-mechanic gauntlet",
+        "interaction": "Vượt qua 6 trạm thử thách liên hoàn để tích lũy sao kiểm tra."
+      }
+    },
+    {
+      "page_number": 17,
+      "workbook_page_number": 16,
+      "file_path": "pages/page-17.jpg",
+      "page_type": "missing_number_cipher",
+      "title": "MẬT MÃ Ô TRỐNG",
+      "instruction": "NHIỆM VỤ: ĐỌC DẤU VẾT • ĐIỀN ĐÚNG Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Mỗi ô trống che giấu một con số quan trọng!",
+        "tho_quan_sat": "Dựa vào các dòng còn lại để tìm số nhé!"
+      },
+      "pedagogical_concept": "Tư duy tìm ẩn số linh hoạt (Variable Slot Flexibility): Ô trống không chỉ nằm ở kết quả cuối cùng mà thay đổi vị trí (nằm ở số tách đầu, số tách sau, hoặc số bị trừ), đòi hỏi trẻ phải hiểu bản chất mối quan hệ cấu trúc.",
+      "items": [
+        {
+          "record_id": 1,
+          "problem": "14 - 8",
+          "template_layout": "14 - 8 = [6]; 8 = 4 + 4; 14 - 4 = 10; 10 - 4 = [6]",
+          "missing_slot": "Kết quả dòng 1 và dòng 4",
+          "answer": 6
+        },
+        {
+          "record_id": 2,
+          "problem": "15 - 7 = 8",
+          "template_layout": "7 = [5] + 2; 15 - [5] = 10; 10 - 2 = 8",
+          "missing_slot": "Số tách đầu tiên",
+          "answer": 5
+        },
+        {
+          "record_id": 3,
+          "problem": "13 - 9 = 4",
+          "template_layout": "9 = 3 + [6]; 13 - 3 = 10; 10 - [6] = 4",
+          "missing_slot": "Số tách thứ hai",
+          "answer": 6
+        },
+        {
+          "record_id": 4,
+          "problem": "17 - 8 = 9",
+          "template_layout": "8 = 7 + [1]; 17 - 7 = 10; 10 - [1] = 9",
+          "missing_slot": "Số tách thứ hai",
+          "answer": 1
+        },
+        {
+          "record_id": 5,
+          "problem": "12 - 6 = 6",
+          "template_layout": "6 = 2 + [4]; 12 - 2 = 10; 10 - [4] = 6",
+          "missing_slot": "Số tách thứ hai",
+          "answer": 4
+        },
+        {
+          "record_id": 6,
+          "problem": "16 - 9 = 7",
+          "template_layout": "9 = 6 + [3]; 16 - 6 = 10; 10 - [3] = 7",
+          "missing_slot": "Số tách thứ hai",
+          "answer": 3
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "drag-to-slot",
+        "interaction": "Điền số đúng vào vị trí ô trống bất kỳ trong chuỗi 4 dòng."
+      }
+    },
+    {
+      "page_number": 18,
+      "workbook_page_number": 17,
+      "file_path": "pages/page-18.jpg",
+      "page_type": "strategy_choice",
+      "title": "CHỌN CÁCH TÁCH ĐÚNG",
+      "instruction": "NHIỆM VỤ: CHỌN CÁCH TÁCH ĐƯA SỐ BỊ TRỪ VỀ 10",
+      "dialogue": {
+        "gau_logic": "Cả hai cách đều tách đủ số!",
+        "tho_quan_sat": "Nhưng chỉ một cách giúp đưa về 10 nhanh nhất!"
+      },
+      "pedagogical_concept": "So sánh và tối ưu hóa chiến lược (Strategic Optimization): Trẻ phân biệt giữa 'tách đúng về mặt số học' và 'tách thông minh để phục vụ chiến lược làm tròn 10'.",
+      "items": [
+        {
+          "record_id": 1,
+          "problem": "12 - 8",
+          "option_A": "8 = 2 + 6",
+          "option_B": "8 = 3 + 5",
+          "correct_option": "A",
+          "reason": "12 có tận cùng là 2 nên cần tách 8 thành 2 + 6 để 12 - 2 = 10.",
+          "final_result": 4
+        },
+        {
+          "record_id": 2,
+          "problem": "15 - 9",
+          "option_A": "9 = 4 + 5",
+          "option_B": "9 = 5 + 4",
+          "correct_option": "B",
+          "reason": "15 có tận cùng là 5 nên cần tách 9 thành 5 + 4 để 15 - 5 = 10.",
+          "final_result": 6
+        },
+        {
+          "record_id": 3,
+          "problem": "13 - 7",
+          "option_A": "7 = 3 + 4",
+          "option_B": "7 = 2 + 5",
+          "correct_option": "A",
+          "reason": "13 có tận cùng là 3 nên cần tách 7 thành 3 + 4 để 13 - 3 = 10.",
+          "final_result": 6
+        },
+        {
+          "record_id": 4,
+          "problem": "16 - 8",
+          "option_A": "8 = 5 + 3",
+          "option_B": "8 = 6 + 2",
+          "correct_option": "B",
+          "reason": "16 có tận cùng là 6 nên cần tách 8 thành 6 + 2 để 16 - 6 = 10.",
+          "final_result": 8
+        },
+        {
+          "record_id": 5,
+          "problem": "14 - 9",
+          "option_A": "9 = 4 + 5",
+          "option_B": "9 = 6 + 3",
+          "correct_option": "A",
+          "reason": "14 có tận cùng là 4 nên cần tách 9 thành 4 + 5 để 14 - 4 = 10.",
+          "final_result": 5
+        },
+        {
+          "record_id": 6,
+          "problem": "17 - 9",
+          "option_A": "9 = 2 + 7",
+          "option_B": "9 = 7 + 2",
+          "correct_option": "B",
+          "reason": "17 có tận cùng là 7 nên cần tách 9 thành 7 + 2 để 17 - 7 = 10.",
+          "final_result": 8
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-002",
+        "mechanic": "multiple-choice",
+        "interaction": "Chạm chọn nút A hoặc B rồi điền kết quả vào ô trống."
+      }
+    },
+    {
+      "page_number": 19,
+      "workbook_page_number": 18,
+      "file_path": "pages/page-19.jpg",
+      "page_type": "error_correction",
+      "title": "SỬA HỒ SƠ BỊ SAI",
+      "instruction": "NHIỆM VỤ: KIỂM TRA TỪNG DÒNG • SỬA MỘT CON SỐ",
+      "dialogue": {
+        "gau_logic": "Mỗi hồ sơ có đúng một con số bị ghi sai!",
+        "tho_quan_sat": "Khoanh số sai rồi viết lại số đúng nhé!"
+      },
+      "pedagogical_concept": "Cấp độ cao nhất của Bloom's Taxonomy: Đánh giá và Chỉnh sửa (Evaluating & Correcting). Rèn luyện sự tỉ mỉ, phát hiện bẫy sai sót ở các bước khác nhau.",
+      "items": [
+        {
+          "record_id": 1,
+          "content": "13 - 8 = 6; 8 = 3 + 5; 13 - 3 = 10; 10 - 5 = 5",
+          "error_location": "Dòng 1: số 6",
+          "corrected_value": 5,
+          "explanation": "10 - 5 = 5 nên kết quả phép trừ 13 - 8 phải bằng 5 chứ không phải 6."
+        },
+        {
+          "record_id": 2,
+          "content": "15 - 7 = 8; 7 = 4 + 2; 15 - 5 = 10; 10 - 2 = 8",
+          "error_location": "Dòng 2: số 4",
+          "corrected_value": 5,
+          "explanation": "7 phải tách thành 5 + 2 (để 15 - 5 = 10), ghi 4 + 2 là sai phép cộng và sai số trừ."
+        },
+        {
+          "record_id": 3,
+          "content": "12 - 9 = 3; 9 = 2 + 7; 12 - 3 = 10; 10 - 7 = 3",
+          "error_location": "Dòng 3: số 3",
+          "corrected_value": 2,
+          "explanation": "Để đưa về 10 thì phải lấy 12 - 2 = 10, ghi 12 - 3 là sai."
+        },
+        {
+          "record_id": 4,
+          "content": "16 - 8 = 8; 8 = 6 + 2; 16 - 6 = 10; 10 - 3 = 8",
+          "error_location": "Dòng 4: số 3",
+          "corrected_value": 2,
+          "explanation": "8 tách thành 6 và 2, nên dòng 4 phải là 10 - 2 = 8, ghi 10 - 3 là sai."
+        },
+        {
+          "record_id": 5,
+          "content": "14 - 9 = 4; 9 = 4 + 5; 14 - 4 = 10; 10 - 5 = 5",
+          "error_location": "Dòng 1: số 4",
+          "corrected_value": 5,
+          "explanation": "10 - 5 = 5 nên 14 - 9 phải bằng 5, ghi 4 là sai."
+        },
+        {
+          "record_id": 6,
+          "content": "17 - 9 = 8; 9 = 7 + 2; 17 - 7 = 11; 10 - 2 = 8",
+          "error_location": "Dòng 3: số 11",
+          "corrected_value": 10,
+          "explanation": "17 - 7 phải bằng 10 để chạm mốc tròn chục, ghi 11 là sai mốc 10."
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-011",
+        "mechanic": "error-spotting / tap-to-fix",
+        "interaction": "Chạm vào số bị sai để khoanh đỏ, sau đó kéo số đúng từ khay vào ô 'SỐ ĐÚNG'."
+      }
+    },
+    {
+      "page_number": 20,
+      "workbook_page_number": 19,
+      "file_path": "pages/page-20.jpg",
+      "page_type": "mental_math_drill",
+      "title": "THỬ THÁCH TÍNH NHANH",
+      "instruction": "NHIỆM VỤ: HOÀN THÀNH 12 HỒ SƠ",
+      "dialogue": {
+        "gau_logic": "Tách số trong đầu rồi ghi kết quả!",
+        "tho_quan_sat": "Làm lần lượt, không cần vội nhé!"
+      },
+      "pedagogical_concept": "Cường độ luyện tập nhẩm tốc độ cao (High-volume mental math drill): 12 hồ sơ liên tiếp bao phủ toàn bộ các dạng bài trừ có nhớ phạm vi 20.",
+      "items": [
+        {
+          "id": 1,
+          "problem": "11 - 3",
+          "answer": 8
+        },
+        {
+          "id": 2,
+          "problem": "11 - 8",
+          "answer": 3
+        },
+        {
+          "id": 3,
+          "problem": "12 - 4",
+          "answer": 8
+        },
+        {
+          "id": 4,
+          "problem": "12 - 9",
+          "answer": 3
+        },
+        {
+          "id": 5,
+          "problem": "13 - 5",
+          "answer": 8
+        },
+        {
+          "id": 6,
+          "problem": "13 - 9",
+          "answer": 4
+        },
+        {
+          "id": 7,
+          "problem": "14 - 6",
+          "answer": 8
+        },
+        {
+          "id": 8,
+          "problem": "14 - 9",
+          "answer": 5
+        },
+        {
+          "id": 9,
+          "problem": "15 - 7",
+          "answer": 8
+        },
+        {
+          "id": 10,
+          "problem": "16 - 8",
+          "answer": 8
+        },
+        {
+          "id": 11,
+          "problem": "17 - 9",
+          "answer": 8
+        },
+        {
+          "id": 12,
+          "problem": "18 - 9",
+          "answer": 9
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "speed-run drill",
+        "interaction": "Giải liên tiếp 12 bài để nạp năng lượng cho đoàn tàu thám tử."
+      }
+    },
+    {
+      "page_number": 21,
+      "workbook_page_number": 20,
+      "file_path": "pages/page-21.jpg",
+      "page_type": "cipher_safe_unlock",
+      "title": "MẬT MÃ TỦ CHỨNG CỨ",
+      "instruction": "NHIỆM VỤ: TÍNH KẾT QUẢ • GHI THEO ĐÚNG THỨ TỰ",
+      "dialogue": {
+        "gau_logic": "Mỗi phép trừ cho một chữ số của mật mã!",
+        "tho_quan_sat": "Điền đủ sáu số để mở tủ chứng cứ nhé!"
+      },
+      "pedagogical_concept": "Đỉnh cao ứng dụng Gamification: Tích hợp bài toán số học vào câu chuyện giải mã mật mã (Cipher Decryption). Mỗi hồ sơ là 1 chữ số trong mã số bí mật 6 ký tự để mở tủ kho báu.",
+      "cipher_code": "5 - 4 - 7 - 3 - 8 - 6",
+      "items": [
+        {
+          "slot_order": 1,
+          "record_name": "HỒ SƠ 1",
+          "problem": "13 - 8",
+          "digit": 5
+        },
+        {
+          "slot_order": 2,
+          "record_name": "HỒ SƠ 2",
+          "problem": "11 - 7",
+          "digit": 4
+        },
+        {
+          "slot_order": 3,
+          "record_name": "HỒ SƠ 3",
+          "problem": "16 - 9",
+          "digit": 7
+        },
+        {
+          "slot_order": 4,
+          "record_name": "HỒ SƠ 4",
+          "problem": "12 - 9",
+          "digit": 3
+        },
+        {
+          "slot_order": 5,
+          "record_name": "HỒ SƠ 5",
+          "problem": "17 - 9",
+          "digit": 8
+        },
+        {
+          "slot_order": 6,
+          "record_name": "HỒ SƠ 6",
+          "problem": "15 - 9",
+          "digit": 6
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-018",
+        "mechanic": "cipher-lock / safe-dial",
+        "interaction": "Tính từng hồ sơ, mỗi số tính đúng tự động bay lên quay trục số của ổ khóa tủ chứng cứ. Đủ 6 số tủ bật mở phát sáng hoành tráng."
+      }
+    },
+    {
+      "page_number": 22,
+      "workbook_page_number": 21,
+      "file_path": "pages/page-22.jpg",
+      "page_type": "final_grand_challenge",
+      "title": "ĐẠI THỬ THÁCH CUỐI",
+      "instruction": "NHIỆM VỤ: VẬN DỤNG TẤT CẢ KỸ NĂNG",
+      "dialogue": {
+        "gau_logic": "Chỉ còn sáu hồ sơ cuối cùng!",
+        "tho_quan_sat": "Hoàn thành để nhận viên ngọc số học nhé!"
+      },
+      "pedagogical_concept": "Thử thách chung cuộc (Final Boss Challenge): Đánh giá tổng hợp toàn diện cả 6 năng lực đã học trong chặng 13 trước khi nhận phần thưởng.",
+      "items": [
+        {
+          "challenge_id": 1,
+          "name": "TÁCH SỐ",
+          "problem": "18 - 9 = [9]",
+          "solution": "9 = 8 + 1; 18 - 8 = 10; 10 - 1 = 9"
+        },
+        {
+          "challenge_id": 2,
+          "name": "CHỌN CÁCH TÁCH",
+          "problem": "16 - 9",
+          "options": ["A. 9 = 6 + 3", "B. 9 = 5 + 4"],
+          "solution_choice": "A",
+          "final_answer": 7
+        },
+        {
+          "challenge_id": 3,
+          "name": "TÌM VÀ SỬA",
+          "content": "13 - 8 = 6; 8 = 3 + 5; 13 - 3 = 10; 10 - 5 = 5",
+          "solution": "Số đúng: 5 (sửa 6 thành 5)"
+        },
+        {
+          "challenge_id": 4,
+          "name": "CHỌN ĐÁP ÁN",
+          "problem": "15 - 7 = ?",
+          "options": [7, 8, 9],
+          "solution": 8
+        },
+        {
+          "challenge_id": 5,
+          "name": "KẾT QUẢ CHUNG",
+          "problems": ["14 - 8", "15 - 9"],
+          "solution": 6
+        },
+        {
+          "challenge_id": 6,
+          "name": "TÍNH NHẨM",
+          "problem": "17 - 8 = [9]",
+          "solution": 9
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-012",
+        "mechanic": "final-boss-gauntlet",
+        "interaction": "Hoàn thành lần lượt 6 cửa ải, mỗi cửa giải đúng làm đứt 1 đoạn dây xích khóa tủ chứng cứ."
+      }
+    },
+    {
+      "page_number": 23,
+      "workbook_page_number": 22,
+      "file_path": "pages/page-23.jpg",
+      "page_type": "completion_reward",
+      "title": "HOÀN THÀNH CHẶNG 13!",
+      "subtitle": "BÉ ĐÃ MỞ KHÓA VIÊN NGỌC SỐ HỌC",
+      "instruction": "BÉ HÃY TÔ MÀU VIÊN NGỌC SỐ HỌC VÀ ĐÁNH DẤU HÀNH TRÌNH!",
+      "dialogue": {
+        "gau_logic": "Chúc mừng bé thám tử tài ba! Bé đã nắm vững bí quyết đưa về 10 để tính nhẩm siêu tốc!",
+        "tho_quan_sat": "Viên Ngọc Số Học đã thuộc về bé rồi! Cùng tô màu thật đẹp cho viên ngọc và chuẩn bị lên tàu tới chặng tiếp theo nhé!"
+      },
+      "achievements": [
+        "Biết tách số trừ hợp lý",
+        "Biết đưa số bị trừ về 10",
+        "Tính nhẩm phép trừ trong phạm vi 20"
+      ],
+      "interactive_activity": {
+        "type": "coloring_and_milestone",
+        "prompt": "BÉ HÃY TÔ MÀU VIÊN NGỌC",
+        "canvas": "Hình vẽ nét kim cương / ngọc đa diện số học",
+        "train_milestone": "Đoàn tàu cập bến Ga số 13 trên lộ trình 13 ga. Nhãn 'Bé đang ở đây' gắn trên toa 13 rực rỡ ánh tím."
+      },
+      "certification": {
+        "date_field": "Ngày hoàn thành: ....................",
+        "parent_signature": "Ba mẹ ký tên: ...................."
+      },
+      "digital_game_mapping": {
+        "suggested_template": "GT-000",
+        "mechanic": "celebration-trophy / badge-unlocked",
+        "interaction": "Hiệu ứng pháo hoa chúc mừng, trao cúp 'Thám Tử Số Học Xuất Sắc', cho trẻ tương tác tô màu viên ngọc số học 3D bằng bảng màu lấp lánh."
+      }
+    }
+  ]
+}

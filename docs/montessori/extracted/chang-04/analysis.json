@@ -1,0 +1,1565 @@
+{
+  "stage_id": "chang-04",
+  "stage_number": 4,
+  "workbook_code": "WB04",
+  "title": "Chặng 4: Quảng Trường Số Lượng",
+  "subtitle": "Đếm thật nhanh – Chọn thật đúng",
+  "mission": "Khôi phục những tấm biển số lượng bị thất lạc",
+  "series": "Gấu Logic & Thỏ Quan Sát - Chuyến Tàu Toán Học (Phần 4)",
+  "target_age": "3–6 tuổi",
+  "total_pages": 23,
+  "pedagogy": {
+    "framework": "Montessori & CPA (Concrete - Pictorial - Abstract) & Cardinality Principle",
+    "approach": "Tư duy đếm tương ứng 1-1, Nguyên lý bản số (Số đếm cuối là tổng số lượng - Cardinality Principle), Ghép số lượng với ký hiệu chữ số, Chiến lược đếm có hệ thống (từ trái sang phải, hàng trên trước hàng dưới sau) nhằm kiểm soát lỗi đếm sót hoặc đếm lặp.",
+    "competency": "C1 - Cảm thức số học & Đếm (Number Sense & Counting)",
+    "skills_targeted": [
+      {
+        "code": "C1.CNT.01",
+        "name": "Đếm đồ vật (Counting objects)",
+        "description": "Đếm số lượng vật thể cụ thể/trực quan từ 1 đến 12"
+      },
+      {
+        "code": "C1.CNT.02",
+        "name": "Đếm một-một (One-to-one correspondence)",
+        "description": "Mỗi lần chỉ tay/chạm vào một vật tương ứng với đúng một từ số"
+      },
+      {
+        "code": "C1.CNT.03",
+        "name": "Đếm đủ từng vật không bỏ sót (Counting without skipping)",
+        "description": "Đếm tuần tự theo hàng, không bỏ sót vật thể và không đếm lặp lại"
+      },
+      {
+        "code": "C1.CNT.05",
+        "name": "Số cuối là tổng (Cardinality principle)",
+        "description": "Hiểu số đếm sau cùng biểu thị tổng số lượng của cả tập hợp"
+      },
+      {
+        "code": "C1.CNT.06",
+        "name": "Đếm theo nhóm / Đếm đến 5 (Counting up to 5)",
+        "description": "Nhận biết và đếm các nhóm đối tượng trong phạm vi 5"
+      },
+      {
+        "code": "C1.CNT.07",
+        "name": "Đếm đến 10 & 12 (Counting up to 10 and 12)",
+        "description": "Mở rộng năng lực đếm và cấu trúc nhóm 2 hàng lên đến 12 vật"
+      },
+      {
+        "code": "C1.NREC.01",
+        "name": "Nhận biết số 0–3 (Number recognition 0–3)",
+        "description": "Nhận diện mặt chữ số 1, 2, 3"
+      },
+      {
+        "code": "C1.NREC.02",
+        "name": "Nhận biết số 0–5 (Number recognition 0–5)",
+        "description": "Nhận diện mặt chữ số 4, 5"
+      },
+      {
+        "code": "C1.NREC.03",
+        "name": "Nhận biết số 0–10 & đến 12 (Number recognition up to 12)",
+        "description": "Nhận diện mặt chữ số từ 6 đến 12"
+      },
+      {
+        "code": "C1.OTO.01",
+        "name": "Ghép 1-1 giữa số lượng và chữ số (Quantity-Numeral Matching)",
+        "description": "Ghép nối chính xác nhóm đồ vật với thẻ số tương ứng"
+      },
+      {
+        "code": "C1.CMP.04",
+        "name": "Đối chiếu và so sánh số lượng (Comparing quantities)",
+        "description": "Phân biệt nhóm có số lượng đúng với số chỉ định và nhóm gây nhiễu"
+      }
+    ],
+    "learning_progression": "Tăng tiến độ khó rõ rệt theo 4 giai đoạn chuẩn Montessori: (1) Mức cơ bản 1–5 (Trang 1–5) với các vật quen thuộc, xếp 1 hàng hoặc nhóm thưa; (2) Mức mở rộng 1–8 (Trang 6–10) với bố cục 2 hàng ngang song song; (3) Mức phát triển 5–10 (Trang 11–15) với mật độ dày, đòi hỏi đếm từ trái sang phải; (4) Thử thách đối chiếu ngược D2 (Trang 16–18) nhìn số ở giữa chọn 1 trong 2 nhóm; (5) Đỉnh cao thử thách 8–12 (Trang 19–21) với cấu trúc ma trận 2 hàng (5+4, 5+5, 6+5, 6+6); kết thúc bằng bức tranh tổng kết khôi phục toàn bộ biển số của Quảng trường (Trang 22)."
+  },
+  "exercise_groups": [
+    {
+      "id": "D1",
+      "name": "Đếm vật thể và khoanh số đúng trong 3 lựa chọn",
+      "instruction": "ĐẾM ĐỒ VẬT VÀ KHOANH VÀO SỐ ĐÚNG",
+      "page_count": 17,
+      "page_numbers": [
+        2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 20, 21, 22
+      ],
+      "mechanic_description": "Mỗi trang gồm 3 hàng độc lập. Mỗi hàng hiển thị một nhóm vật thể trực quan cùng 3 thẻ số đóng khung chữ nhật nét đứt. Trẻ đếm số lượng vật thể rồi chọn/khoanh đúng 1 trong 3 số.",
+      "distractor_rule": "2 số gây nhiễu luôn là số liền kề trước (N - 1) hoặc liền kề sau (N + 1), hoặc trong khoảng cách ±1/±2 (ví dụ đúng 4 thì lựa chọn [5, 3, 4] hoặc [4, 5, 3]). Điều này ngăn chặn việc đoán mò và rèn luyện tính chính xác tuyệt đối, tránh lỗi đếm thiếu/đếm thừa 1 đơn vị.",
+      "mapped_templates": ["GT-001", "GT-028"],
+      "mapped_skills": [
+        "C1.CNT.01",
+        "C1.CNT.02",
+        "C1.CNT.03",
+        "C1.CNT.05",
+        "C1.NREC.01",
+        "C1.NREC.02",
+        "C1.NREC.03",
+        "C1.OTO.01"
+      ]
+    },
+    {
+      "id": "D2",
+      "name": "Nhìn số ở giữa và khoanh nhóm có số lượng đúng",
+      "instruction": "NHÌN SỐ Ở GIỮA VÀ KHOANH NHÓM CÓ SỐ LƯỢNG ĐÚNG",
+      "page_count": 3,
+      "page_numbers": [17, 18, 19],
+      "mechanic_description": "Mỗi trang gồm 3 hàng. Ở giữa mỗi hàng là một vòng tròn màu vàng chứa chữ số mục tiêu (Target Number). Hai bên trái và phải là hai nhóm đồ vật khác nhau (về chủng loại và số lượng). Trẻ phải đếm cả hai nhóm, đối chiếu với số ở giữa và khoanh nhóm có số lượng khớp hoàn toàn.",
+      "distractor_rule": "Nhóm sai thường có số lượng chênh lệch 1–2 vật so với số mục tiêu (ví dụ số 3: bên trái 2 chanh, bên phải 3 đào; số 5: bên trái 5 dâu, bên phải 3 chuối; số 4: bên trái 2 dưa hấu, bên phải 4 cam).",
+      "mapped_templates": ["GT-001", "GT-002", "GT-026"],
+      "mapped_skills": [
+        "C1.CMP.04",
+        "C1.CNT.01",
+        "C1.CNT.02",
+        "C1.OTO.01",
+        "C1.NREC.02",
+        "C1.NREC.03"
+      ]
+    },
+    {
+      "id": "D3",
+      "name": "Bức tranh Quảng trường số lượng: Đếm phân loại và khôi phục biển số",
+      "instruction": "KHÔI PHỤC NHỮNG TẤM BIỂN SỐ LƯỢNG BỊ THẤT LẠC",
+      "page_count": 2,
+      "page_numbers": [1, 23],
+      "mechanic_description": "Bức tranh toàn cảnh Quảng trường số lượng. Ở trang mở đầu (Page 1), các gian hàng/vật phẩm có các biển cắm cờ dấu hỏi '?'. Trẻ quan sát bối cảnh tổng thể, nhận diện các danh mục (táo, bóng bay, hoa, bánh kem, gấu bông), đếm số lượng từng loại trong bức tranh và gắn/điền số tương ứng. Trang kết thúc (Page 23) hiển thị bức tranh sau khi đã hoàn thành với đầy đủ các biển số được khôi phục, kèm phần thưởng Viên Ngọc Số Lượng và 3 ngôi sao.",
+      "distractor_rule": "Các đối tượng nằm đan xen trong bối cảnh phức tạp của sân ga, quảng trường, tháp đồng hồ, tàu hỏa. Đòi hỏi kỹ năng tách lọc hình - nền (Figure-Ground Perception) và phân loại đối tượng trước khi đếm.",
+      "mapped_templates": ["GT-000", "GT-022", "GT-008", "GT-004"],
+      "mapped_skills": ["C1.CNT.01", "C1.CNT.03", "C1.CNT.05", "C1.OTO.01"]
+    }
+  ],
+  "characters": {
+    "gau_logic": {
+      "name": "Gấu Logic",
+      "role": "Người dẫn đường phân tích, giải thích quy tắc đếm logic",
+      "visual": "Gấu nâu đeo kính gọng tròn xanh, mặc áo gile xanh dương có cúc vàng, cầm sổ kẹp checklist hoặc vẫy tay chỉ dẫn",
+      "catchphrases": [
+        "Các tấm biển số đã biến mất rồi!",
+        "Mỗi loại rau củ cần một tấm biển số!",
+        "Những người bạn nhỏ đang bay khắp nơi!",
+        "Mùi bánh thơm quá, nhưng biển số đâu rồi?",
+        "Đồ chơi đang chờ được gắn đúng số!",
+        "Quảng trường đã đông vui hơn rồi!",
+        "Các bạn thú cưng đang xếp thành từng nhóm!",
+        "Những bông hoa cần biển số mới!",
+        "Các phương tiện đang chờ gắn biển số!",
+        "Chúng mình sắp tìm đủ các tấm biển rồi!",
+        "Những món đồ gốm đang chờ biển số!",
+        "Các bạn khủng long đang xếp thành đội!",
+        "Mỗi luống hoa cần một tấm biển số!",
+        "Các món đồ đang bị mất nhãn số rồi!",
+        "Đồ dùng sạch sẽ cũng cần biển số!",
+        "Mỗi con số chỉ mở được một nhóm đúng!",
+        "Các bạn nhỏ đang đứng thành hai đội!",
+        "Những ngôi nhà đang chờ kiểm tra số!",
+        "Các dụng cụ thể thao đã sẵn sàng!",
+        "Những quả trứng đang xếp thành hàng!",
+        "Ba tấm biển cuối cùng đang ở phía trước!",
+        "Bé đã khôi phục đủ những tấm biển số lượng!"
+      ]
+    },
+    "tho_quan_sat": {
+      "name": "Thỏ Quan Sát",
+      "role": "Trợ lý tinh mắt hướng dẫn chiến thuật quan sát và tránh bỏ sót",
+      "visual": "Thỏ trắng đeo túi da chéo vàng cam, tay cầm kính lúp viền đỏ cam, vui tươi chỉ điểm",
+      "catchphrases": [
+        "Bé đếm từng nhóm và tìm số đúng nhé!",
+        "Bé đếm thật chậm để không bỏ sót nhé!",
+        "Bé quan sát rồi chọn số thật chính xác!",
+        "Bé giúp bác chủ tiệm đếm bánh nhé!",
+        "Bé đếm nhanh rồi khoanh vào đáp án nhé!",
+        "Bé đếm theo từng hàng để không bị rối nhé!",
+        "Bé đếm từng bạn rồi chọn số đúng nhé!",
+        "Bé chia thành hàng nhỏ rồi đếm nhé!",
+        "Bé nhìn từng hàng và đếm thật chính xác!",
+        "Bé hoàn thành ba thử thách cuối nhé!",
+        "Bé đếm theo từng hàng thật đều nhé!",
+        "Bé đếm từng màu rồi chọn số đúng nhé!",
+        "Bé nhìn từ trái sang phải rồi đếm nhé!",
+        "Bé giúp bác chủ quầy đếm lại nhé!",
+        "Bé chia thành hàng nhỏ rồi đếm nhé!",
+        "Bé đếm cả hai bên rồi khoanh nhé!",
+        "Bé tìm đội có số lượng đúng nhé!",
+        "Bé chọn đúng nhóm để mở đường nhé!",
+        "Bé đếm hai hàng rồi chọn số đúng nhé!",
+        "Bé đếm thật kỹ để không bỏ sót nhé!",
+        "Bé dùng tất cả kỹ năng đếm để hoàn thành nhé!",
+        "Viên Ngọc Số Lượng đã sáng lên rồi!"
+      ]
+    }
+  },
+  "pages": [
+    {
+      "page_number": 1,
+      "file_path": "pages/page-01.jpg",
+      "page_type": "stage_overview_map",
+      "title": "Hành trình Chuyến Tàu Toán Học - Chặng 4: Quảng Trường Số Lượng",
+      "subtitle": "ĐẾM THẬT NHANH – CHỌN THẬT ĐÚNG",
+      "mission": "NHIỆM VỤ: KHÔI PHỤC NHỮNG TẤM BIỂN SỐ LƯỢNG BỊ THẤT LẠC",
+      "exercise_type": "D3",
+      "parent_objectives": [
+        "Đếm chính xác trong phạm vi 12",
+        "Ghép chữ số với số lượng tương ứng",
+        "Rèn quan sát và tránh đếm sót"
+      ],
+      "footer_banner": "CÙNG GẤU LOGIC VÀ THỎ QUAN SÁT KHÔI PHỤC QUẢNG TRƯỜNG NHÉ!",
+      "visual_elements": {
+        "scene": "Quảng trường trung tâm thị trấn cổ tích với nhà mái ngói đỏ, cờ tam giác ngũ sắc giăng trên cao, đường ray xe lửa uốn lượn",
+        "train": "Đầu tàu hơi nước màu xanh dương cổ điển viền vàng, Gấu Logic đứng trong buồng lái cầm bảng kẹp tài liệu checklist",
+        "character_tho": "Thỏ Quan Sát đứng trước đoàn tàu cầm kính lúp và các thẻ số 3, 4, 5",
+        "demo_card": "Thẻ mẫu minh họa phương pháp: 4 quả táo đỏ -> ba thẻ số [3, 4, 5], ô số 4 được tô xanh lá khoanh chọn chính xác",
+        "interactive_stands_with_question_marks": [
+          {
+            "target": "Giỏ táo đỏ",
+            "item_name": "Táo",
+            "count": 4,
+            "sign_status": "?"
+          },
+          {
+            "target": "Chùm bóng bay",
+            "item_name": "Bóng bay",
+            "count": 3,
+            "sign_status": "?"
+          },
+          {
+            "target": "Bánh kem sinh nhật",
+            "item_name": "Bánh kem",
+            "count": 1,
+            "sign_status": "?"
+          },
+          {
+            "target": "Giỏ gấu bông",
+            "item_name": "Gấu bông",
+            "count": 2,
+            "sign_status": "?"
+          }
+        ]
+      },
+      "digital_game_potential": {
+        "engine_template": "GT-000",
+        "mechanic": "Scene Overview / Onboarding Hub",
+        "interactions": [
+          {
+            "target": "Đầu tàu hơi nước",
+            "action": "tap",
+            "feedback": "Còi tàu kêu 'Tu tu xình xịch', khói trắng bay lên từ ống khói"
+          },
+          {
+            "target": "Gấu Logic",
+            "action": "tap",
+            "feedback": "Phát audio giọng đọc giới thiệu nhiệm vụ Quảng Trường Số Lượng"
+          },
+          {
+            "target": "Thỏ Quan Sát & Kính lúp",
+            "action": "tap",
+            "feedback": "Phóng to kính lúp vào thẻ táo mẫu 4 quả, đọc 'Bốn quả táo, chọn số bốn!'"
+          },
+          {
+            "target": "Các biển '?'",
+            "action": "tap",
+            "feedback": "Nhấp nháy vàng mời gọi bước vào các bài tập chi tiết"
+          }
+        ]
+      }
+    },
+    {
+      "page_number": 2,
+      "page_label": "Chặng 4 • Trang 1",
+      "file_path": "pages/page-02.jpg",
+      "page_type": "exercise_d1",
+      "exercise_type": "D1",
+      "title": "Gian hàng trái cây",
+      "theme": "Quầy hoa quả tươi ngon tại quảng trường",
+      "dialogue": {
+        "gau_logic": "Các tấm biển số đã biến mất rồi!",
+        "tho_quan_sat": "Bé đếm từng nhóm và tìm số đúng nhé!"
+      },
+      "instruction": "ĐẾM ĐỒ VẬT VÀ KHOANH VÀO SỐ ĐÚNG",
+      "footer_hint": "GỢI Ý: CHẠM TAY VÀO TỪNG HÌNH KHI ĐẾM",
+      "rows": [
+        {
+          "row_index": 1,
+          "item_name": "Táo đỏ",
+          "item_type": "fruit_apple",
+          "actual_count": 2,
+          "layout": "1 hàng ngang, 2 quả tách biệt rõ ràng",
+          "options": [1, 2, 3],
+          "correct_answer": 2,
+          "distractors": [1, 3],
+          "distractor_analysis": "Số liền trước 1 và số liền sau 3; kiểm tra đếm sót hoặc đếm lặp"
+        },
+        {
+          "row_index": 2,
+          "item_name": "Chuối vàng",
+          "item_type": "fruit_banana",
+          "actual_count": 3,
+          "layout": "1 hàng ngang, 3 quả chuối cong vàng",
+          "options": [3, 4, 2],
+          "correct_answer": 3,
+          "distractors": [4, 2],
+          "distractor_analysis": "Số liền trước 2 và liền sau 4, xáo trộn thứ tự lựa chọn"
+        },
+        {
+          "row_index": 3,
+          "item_name": "Lê xanh",
+          "item_type": "fruit_pear",
+          "actual_count": 4,
+          "layout": "1 hàng ngang, 4 quả lê xanh mướt",
+          "options": [5, 3, 4],
+          "correct_answer": 4,
+          "distractors": [5, 3],
+          "distractor_analysis": "Số liền trước 3 và liền sau 5; đáp án nằm ở vị trí thứ 3"
+        }
+      ],
+      "digital_game_potential": {
+        "engine_template": "GT-001",
+        "sub_mechanic": "GT-028 (Tap-count hỗ trợ đếm)",
+        "interaction": "Chạm vào từng quả phát âm 'Một', 'Hai'...; sau đó tap vào thẻ số đúng để chốt đáp án; thẻ số đúng phát sáng xanh và âm keng nhẹ"
+      }
+    },
+    {
+      "page_number": 3,
+      "page_label": "Chặng 4 • Trang 2",
+      "file_path": "pages/page-03.jpg",
+      "page_type": "exercise_d1",
+      "exercise_type": "D1",
+      "title": "Sạp rau củ rực rỡ",
+      "theme": "Nông sản mùa thu tươi ngon",
+      "dialogue": {
+        "gau_logic": "Mỗi loại rau củ cần một tấm biển số!",
+        "tho_quan_sat": "Bé đếm thật chậm để không bỏ sót nhé!"
+      },
+      "instruction": "ĐẾM ĐỒ VẬT VÀ KHOANH VÀO SỐ ĐÚNG",
+      "footer_hint": "GỢI Ý: CHẠM TAY VÀO TỪNG HÌNH KHI ĐẾM",
+      "rows": [
+        {
+          "row_index": 1,
+          "item_name": "Bí ngô khổng lồ",
+          "item_type": "veg_pumpkin",
+          "actual_count": 1,
+          "layout": "1 quả bí ngô lớn giữa khung",
+          "options": [2, 1, 3],
+          "correct_answer": 1,
+          "distractors": [2, 3],
+          "distractor_analysis": "Nhận biết số lượng 1 đơn lẻ"
+        },
+        {
+          "row_index": 2,
+          "item_name": "Cà rốt cam",
+          "item_type": "veg_carrot",
+          "actual_count": 3,
+          "layout": "3 củ cà rốt thẳng đứng",
+          "options": [4, 2, 3],
+          "correct_answer": 3,
+          "distractors": [4, 2],
+          "distractor_analysis": "Nhiễu 2 và 4"
+        },
+        {
+          "row_index": 3,
+          "item_name": "Cà chua đỏ",
+          "item_type": "veg_tomato",
+          "actual_count": 5,
+          "layout": "Xếp 2 hàng: hàng trên 3 quả, hàng dưới 2 quả",
+          "options": [5, 4, 6],
+          "correct_answer": 5,
+          "distractors": [4, 6],
+          "distractor_analysis": "Bước đầu chuyển sang bố cục 2 hàng phân tán (Subitizing 3+2 = 5)"
+        }
+      ],
+      "digital_game_potential": {
+        "engine_template": "GT-001",
+        "sub_mechanic": "GT-028"
+      }
+    },
+    {
+      "page_number": 4,
+      "page_label": "Chặng 4 • Trang 3",
+      "file_path": "pages/page-04.jpg",
+      "page_type": "exercise_d1",
+      "exercise_type": "D1",
+      "title": "Khu vườn côn trùng",
+      "theme": "Sinh vật nhỏ bé đáng yêu trong vườn hoa",
+      "dialogue": {
+        "gau_logic": "Những người bạn nhỏ đang bay khắp nơi!",
+        "tho_quan_sat": "Bé quan sát rồi chọn số thật chính xác!"
+      },
+      "instruction": "ĐẾM ĐỒ VẬT VÀ KHOANH VÀO SỐ ĐÚNG",
+      "footer_hint": "GỢI Ý: CHẠM TAY VÀO TỪNG HÌNH KHI ĐẾM",
+      "rows": [
+        {
+          "row_index": 1,
+          "item_name": "Bướm sắc màu",
+          "item_type": "insect_butterfly",
+          "actual_count": 2,
+          "layout": "2 con bướm đối xứng",
+          "options": [3, 1, 2],
+          "correct_answer": 2,
+          "distractors": [3, 1],
+          "distractor_analysis": "Nhiễu 1 và 3"
+        },
+        {
+          "row_index": 2,
+          "item_name": "Bọ rùa chấm bi",
+          "item_type": "insect_ladybug",
+          "actual_count": 4,
+          "layout": "Bố cục lưới vuông 2x2",
+          "options": [4, 5, 3],
+          "correct_answer": 4,
+          "distractors": [5, 3],
+          "distractor_analysis": "Đếm cấu trúc khối 2x2"
+        },
+        {
+          "row_index": 3,
+          "item_name": "Chú ong chăm chỉ",
+          "item_type": "insect_bee",
+          "actual_count": 3,
+          "layout": "1 hàng ngang 3 chú ong bay",
+          "options": [2, 3, 4],
+          "correct_answer": 3,
+          "distractors": [2, 4],
+          "distractor_analysis": "Nhiễu 2 và 4 kẹp hai bên số 3"
+        }
+      ],
+      "digital_game_potential": {
+        "engine_template": "GT-001",
+        "sub_mechanic": "GT-028"
+      }
+    },
+    {
+      "page_number": 5,
+      "page_label": "Chặng 4 • Trang 4",
+      "file_path": "pages/page-05.jpg",
+      "page_type": "exercise_d1",
+      "exercise_type": "D1",
+      "title": "Tiệm bánh thơm lừng",
+      "theme": "Bánh ngọt thơm phức trong quầy bánh thị trấn",
+      "dialogue": {
+        "gau_logic": "Mùi bánh thơm quá, nhưng biển số đâu rồi?",
+        "tho_quan_sat": "Bé giúp bác chủ tiệm đếm bánh nhé!"
+      },
+      "instruction": "ĐẾM ĐỒ VẬT VÀ KHOANH VÀO SỐ ĐÚNG",
+      "footer_hint": "GỢI Ý: CHẠM TAY VÀO TỪNG HÌNH KHI ĐẾM",
+      "rows": [
+        {
+          "row_index": 1,
+          "item_name": "Bánh sừng bò (Croissant)",
+          "item_type": "bakery_croissant",
+          "actual_count": 3,
+          "layout": "Xếp tam giác: 1 trên, 2 dưới",
+          "options": [2, 4, 3],
+          "correct_answer": 3,
+          "distractors": [2, 4],
+          "distractor_analysis": "Nhiễu 2 và 4"
+        },
+        {
+          "row_index": 2,
+          "item_name": "Bánh mì vàng",
+          "item_type": "bakery_bread",
+          "actual_count": 5,
+          "layout": "Xếp 2 hàng so le: 3 trên, 2 dưới",
+          "options": [5, 4, 6],
+          "correct_answer": 5,
+          "distractors": [4, 6],
+          "distractor_analysis": "Nhiễu 4 và 6"
+        },
+        {
+          "row_index": 3,
+          "item_name": "Bánh cupcake kem dâu",
+          "item_type": "bakery_cupcake",
+          "actual_count": 4,
+          "layout": "Xếp zíc zắc: 2 trên, 2 dưới",
+          "options": [3, 4, 5],
+          "correct_answer": 4,
+          "distractors": [3, 5],
+          "distractor_analysis": "Dãy số tự nhiên [3, 4, 5]"
+        }
+      ],
+      "digital_game_potential": {
+        "engine_template": "GT-001",
+        "sub_mechanic": "GT-028"
+      }
+    },
+    {
+      "page_number": 6,
+      "page_label": "Chặng 4 • Trang 5",
+      "file_path": "pages/page-06.jpg",
+      "page_type": "exercise_d1",
+      "exercise_type": "D1",
+      "title": "Cửa hàng đồ chơi",
+      "theme": "Thế giới đồ chơi trẻ em yêu thích",
+      "dialogue": {
+        "gau_logic": "Đồ chơi đang chờ được gắn đúng số!",
+        "tho_quan_sat": "Bé đếm nhanh rồi khoanh vào đáp án nhé!"
+      },
+      "instruction": "ĐẾM ĐỒ VẬT VÀ KHOANH VÀO SỐ ĐÚNG",
+      "footer_hint": "GỢI Ý: CHẠM TAY VÀO TỪNG HÌNH KHI ĐẾM",
+      "rows": [
+        {
+          "row_index": 1,
+          "item_name": "Gấu bông nơ xanh",
+          "item_type": "toy_teddy",
+          "actual_count": 1,
+          "layout": "1 gấu bông ngồi",
+          "options": [1, 2, 3],
+          "correct_answer": 1,
+          "distractors": [2, 3],
+          "distractor_analysis": "Nhận biết lượng 1"
+        },
+        {
+          "row_index": 2,
+          "item_name": "Quả bóng đồ chơi",
+          "item_type": "toy_ball",
+          "actual_count": 4,
+          "layout": "Lưới 2x2",
+          "options": [5, 3, 4],
+          "correct_answer": 4,
+          "distractors": [5, 3],
+          "distractor_analysis": "Nhiễu 5 và 3"
+        },
+        {
+          "row_index": 3,
+          "item_name": "Ô tô đồ chơi",
+          "item_type": "toy_car",
+          "actual_count": 5,
+          "layout": "2 hàng so le: 2 trên, 3 dưới",
+          "options": [4, 5, 6],
+          "correct_answer": 5,
+          "distractors": [4, 6],
+          "distractor_analysis": "Nhiễu 4 và 6"
+        }
+      ],
+      "digital_game_potential": {
+        "engine_template": "GT-001",
+        "sub_mechanic": "GT-028"
+      }
+    },
+    {
+      "page_number": 7,
+      "page_label": "Chặng 4 • Trang 6",
+      "file_path": "pages/page-07.jpg",
+      "page_type": "exercise_d1",
+      "exercise_type": "D1",
+      "title": "Lễ hội bóng bay",
+      "theme": "Bầu trời lễ hội rực rỡ bóng bay, chong chóng, cánh diều",
+      "dialogue": {
+        "gau_logic": "Quảng trường đã đông vui hơn rồi!",
+        "tho_quan_sat": "Bé đếm theo từng hàng để không bị rối nhé!"
+      },
+      "instruction": "ĐẾM ĐỒ VẬT VÀ KHOANH VÀO SỐ ĐÚNG",
+      "footer_hint": "GỢI Ý: XẾP THÀNH HÀNG NHỎ RỒI ĐẾM",
+      "rows": [
+        {
+          "row_index": 1,
+          "item_name": "Bóng bay sắc màu",
+          "item_type": "festive_balloon",
+          "actual_count": 6,
+          "layout": "1 hàng ngang 6 quả (đỏ, cam, vàng, xanh lá, xanh dương, tím)",
+          "options": [5, 6, 7],
+          "correct_answer": 6,
+          "distractors": [5, 7],
+          "distractor_analysis": "Đếm hàng ngang dài đến 6, nhiễu 5 và 7"
+        },
+        {
+          "row_index": 2,
+          "item_name": "Chong chóng quay",
+          "item_type": "festive_pinwheel",
+          "actual_count": 3,
+          "layout": "1 hàng ngang 3 chiếc",
+          "options": [3, 4, 2],
+          "correct_answer": 3,
+          "distractors": [4, 2],
+          "distractor_analysis": "Nhiễu 4 và 2"
+        },
+        {
+          "row_index": 3,
+          "item_name": "Diều ngũ sắc",
+          "item_type": "festive_kite",
+          "actual_count": 5,
+          "layout": "1 hàng ngang 5 con diều",
+          "options": [6, 4, 5],
+          "correct_answer": 5,
+          "distractors": [6, 4],
+          "distractor_analysis": "Nhiễu 6 và 4"
+        }
+      ],
+      "digital_game_potential": {
+        "engine_template": "GT-001",
+        "sub_mechanic": "GT-028"
+      }
+    },
+    {
+      "page_number": 8,
+      "page_label": "Chặng 4 • Trang 7",
+      "file_path": "pages/page-08.jpg",
+      "page_type": "exercise_d1",
+      "exercise_type": "D1",
+      "title": "Đoàn diễu hành thú cưng",
+      "theme": "Các con vật nuôi đáng yêu diễu hành trên quảng trường",
+      "dialogue": {
+        "gau_logic": "Các bạn thú cưng đang xếp thành từng nhóm!",
+        "tho_quan_sat": "Bé đếm từng bạn rồi chọn số đúng nhé!"
+      },
+      "instruction": "ĐẾM ĐỒ VẬT VÀ KHOANH VÀO SỐ ĐÚNG",
+      "footer_hint": "GỢI Ý: XẾP THÀNH HÀNG NHỎ RỒI ĐẾM",
+      "rows": [
+        {
+          "row_index": 1,
+          "item_name": "Mèo con",
+          "item_type": "pet_cat",
+          "actual_count": 2,
+          "layout": "2 bạn mèo cạnh nhau",
+          "options": [3, 2, 1],
+          "correct_answer": 2,
+          "distractors": [3, 1],
+          "distractor_analysis": "Nhiễu 3 và 1"
+        },
+        {
+          "row_index": 2,
+          "item_name": "Cún con đeo nơ",
+          "item_type": "pet_dog",
+          "actual_count": 5,
+          "layout": "2 hàng: 3 trên, 2 dưới",
+          "options": [4, 6, 5],
+          "correct_answer": 5,
+          "distractors": [4, 6],
+          "distractor_analysis": "Nhiễu 4 và 6"
+        },
+        {
+          "row_index": 3,
+          "item_name": "Vịt con lông vàng",
+          "item_type": "pet_duck",
+          "actual_count": 6,
+          "layout": "2 hàng cân đối: 3 trên, 3 dưới",
+          "options": [6, 5, 7],
+          "correct_answer": 6,
+          "distractors": [5, 7],
+          "distractor_analysis": "Cấu trúc nhóm 3+3 = 6, nhiễu 5 và 7"
+        }
+      ],
+      "digital_game_potential": {
+        "engine_template": "GT-001",
+        "sub_mechanic": "GT-028"
+      }
+    },
+    {
+      "page_number": 9,
+      "page_label": "Chặng 4 • Trang 8",
+      "file_path": "pages/page-09.jpg",
+      "page_type": "exercise_d1",
+      "exercise_type": "D1",
+      "title": "Con đường hoa rực rỡ",
+      "theme": "Vườn hoa ven quảng trường khoe sắc",
+      "dialogue": {
+        "gau_logic": "Những bông hoa cần biển số mới!",
+        "tho_quan_sat": "Bé chia thành hàng nhỏ rồi đếm nhé!"
+      },
+      "instruction": "ĐẾM ĐỒ VẬT VÀ KHOANH VÀO SỐ ĐÚNG",
+      "footer_hint": "GỢI Ý: XẾP THÀNH HÀNG NHỎ RỒI ĐẾM",
+      "rows": [
+        {
+          "row_index": 1,
+          "item_name": "Hoa hướng dương",
+          "item_type": "flower_sunflower",
+          "actual_count": 4,
+          "layout": "1 hàng ngang 4 bông",
+          "options": [4, 3, 5],
+          "correct_answer": 4,
+          "distractors": [3, 5],
+          "distractor_analysis": "Nhiễu 3 và 5"
+        },
+        {
+          "row_index": 2,
+          "item_name": "Hoa tulip đỏ",
+          "item_type": "flower_tulip",
+          "actual_count": 7,
+          "layout": "2 hàng so le: 4 trên, 3 dưới",
+          "options": [6, 7, 8],
+          "correct_answer": 7,
+          "distractors": [6, 8],
+          "distractor_analysis": "Mở rộng đếm đến 7 (4+3), nhiễu 6 và 8"
+        },
+        {
+          "row_index": 3,
+          "item_name": "Hoa cúc trắng",
+          "item_type": "flower_daisy",
+          "actual_count": 5,
+          "layout": "2 hàng so le: 3 trên, 2 dưới",
+          "options": [6, 4, 5],
+          "correct_answer": 5,
+          "distractors": [6, 4],
+          "distractor_analysis": "Nhiễu 6 và 4"
+        }
+      ],
+      "digital_game_potential": {
+        "engine_template": "GT-001",
+        "sub_mechanic": "GT-028"
+      }
+    },
+    {
+      "page_number": 10,
+      "page_label": "Chặng 4 • Trang 9",
+      "file_path": "pages/page-10.jpg",
+      "page_type": "exercise_d1",
+      "exercise_type": "D1",
+      "title": "Bến xe nhộn nhịp",
+      "theme": "Các phương tiện giao thông tại bến xe quảng trường",
+      "dialogue": {
+        "gau_logic": "Các phương tiện đang chờ gắn biển số!",
+        "tho_quan_sat": "Bé nhìn từng hàng và đếm thật chính xác!"
+      },
+      "instruction": "ĐẾM ĐỒ VẬT VÀ KHOANH VÀO SỐ ĐÚNG",
+      "footer_hint": "GỢI Ý: XẾP THÀNH HÀNG NHỎ RỒI ĐẾM",
+      "rows": [
+        {
+          "row_index": 1,
+          "item_name": "Xe đạp thể thao",
+          "item_type": "vehicle_bicycle",
+          "actual_count": 3,
+          "layout": "1 hàng ngang 3 chiếc",
+          "options": [2, 4, 3],
+          "correct_answer": 3,
+          "distractors": [2, 4],
+          "distractor_analysis": "Nhiễu 2 và 4"
+        },
+        {
+          "row_index": 2,
+          "item_name": "Xe buýt đỏ",
+          "item_type": "vehicle_bus",
+          "actual_count": 6,
+          "layout": "2 hàng đều: 3 trên, 3 dưới",
+          "options": [6, 7, 5],
+          "correct_answer": 6,
+          "distractors": [7, 5],
+          "distractor_analysis": "Cấu trúc 3+3 = 6, nhiễu 7 và 5"
+        },
+        {
+          "row_index": 3,
+          "item_name": "Xe máy vàng",
+          "item_type": "vehicle_scooter",
+          "actual_count": 8,
+          "layout": "2 hàng đều: 4 trên, 4 dưới",
+          "options": [7, 8, 6],
+          "correct_answer": 8,
+          "distractors": [7, 6],
+          "distractor_analysis": "Mở rộng đếm đến 8 (4+4), nhiễu 7 và 6"
+        }
+      ],
+      "digital_game_potential": {
+        "engine_template": "GT-001",
+        "sub_mechanic": "GT-028"
+      }
+    },
+    {
+      "page_number": 11,
+      "page_label": "Chặng 4 • Trang 10",
+      "file_path": "pages/page-11.jpg",
+      "page_type": "exercise_d1",
+      "exercise_type": "D1",
+      "title": "Lễ hội trên quảng trường",
+      "theme": "Không khí lễ hội truyền thống náo nhiệt",
+      "dialogue": {
+        "gau_logic": "Chúng mình sắp tìm đủ các tấm biển rồi!",
+        "tho_quan_sat": "Bé hoàn thành ba thử thách cuối nhé!"
+      },
+      "instruction": "ĐẾM ĐỒ VẬT VÀ KHOANH VÀO SỐ ĐÚNG",
+      "footer_hint": "GỢI Ý: XẾP THÀNH HÀNG NHỎ RỒI ĐẾM",
+      "rows": [
+        {
+          "row_index": 1,
+          "item_name": "Trống hội",
+          "item_type": "event_drum",
+          "actual_count": 5,
+          "layout": "2 hàng: 3 trên, 2 dưới",
+          "options": [4, 5, 6],
+          "correct_answer": 5,
+          "distractors": [4, 6],
+          "distractor_analysis": "Nhiễu 4 và 6"
+        },
+        {
+          "row_index": 2,
+          "item_name": "Cờ đuôi nheo ngũ sắc",
+          "item_type": "event_flag",
+          "actual_count": 7,
+          "layout": "2 hàng so le: 4 trên, 3 dưới",
+          "options": [7, 6, 8],
+          "correct_answer": 7,
+          "distractors": [6, 8],
+          "distractor_analysis": "Nhiễu 6 và 8"
+        },
+        {
+          "row_index": 3,
+          "item_name": "Đèn lồng tròn nhiều màu",
+          "item_type": "event_lantern",
+          "actual_count": 8,
+          "layout": "2 hàng đều: 4 trên, 4 dưới",
+          "options": [9, 7, 8],
+          "correct_answer": 8,
+          "distractors": [9, 7],
+          "distractor_analysis": "Cấu trúc 4+4 = 8, nhiễu 9 và 7"
+        }
+      ],
+      "digital_game_potential": {
+        "engine_template": "GT-001",
+        "sub_mechanic": "GT-028"
+      }
+    },
+    {
+      "page_number": 12,
+      "page_label": "Chặng 4 • Trang 11",
+      "file_path": "pages/page-12.jpg",
+      "page_type": "exercise_d1",
+      "exercise_type": "D1",
+      "title": "Gian hàng gốm xinh",
+      "theme": "Đồ gốm mỹ nghệ tinh xảo vẽ hoa lam",
+      "dialogue": {
+        "gau_logic": "Những món đồ gốm đang chờ biển số!",
+        "tho_quan_sat": "Bé đếm theo từng hàng thật đều nhé!"
+      },
+      "instruction": "ĐẾM ĐỒ VẬT VÀ KHOANH VÀO SỐ ĐÚNG",
+      "footer_hint": "GỢI Ý: ĐẾM THEO TỪNG HÀNG TỪ TRÁI SANG PHẢI",
+      "rows": [
+        {
+          "row_index": 1,
+          "item_name": "Tách trà gốm hoa lam",
+          "item_type": "craft_teacup",
+          "actual_count": 6,
+          "layout": "2 hàng đều: 3 trên, 3 dưới",
+          "options": [5, 6, 7],
+          "correct_answer": 6,
+          "distractors": [5, 7],
+          "distractor_analysis": "Nhiễu 5 và 7"
+        },
+        {
+          "row_index": 2,
+          "item_name": "Đĩa gốm hoa văn tròn",
+          "item_type": "craft_plate",
+          "actual_count": 8,
+          "layout": "2 hàng đều: 4 trên, 4 dưới",
+          "options": [8, 7, 9],
+          "correct_answer": 8,
+          "distractors": [7, 9],
+          "distractor_analysis": "Nhiễu 7 và 9"
+        },
+        {
+          "row_index": 3,
+          "item_name": "Bình hoa gốm",
+          "item_type": "craft_vase",
+          "actual_count": 7,
+          "layout": "2 hàng so le: 4 trên, 3 dưới",
+          "options": [6, 8, 7],
+          "correct_answer": 7,
+          "distractors": [6, 8],
+          "distractor_analysis": "Nhiễu 6 và 8"
+        }
+      ],
+      "digital_game_potential": {
+        "engine_template": "GT-001",
+        "sub_mechanic": "GT-028"
+      }
+    },
+    {
+      "page_number": 13,
+      "page_label": "Chặng 4 • Trang 12",
+      "file_path": "pages/page-13.jpg",
+      "page_type": "exercise_d1",
+      "exercise_type": "D1",
+      "title": "Vườn khủng long tí hon",
+      "theme": "Công viên mô hình khủng long dễ thương",
+      "dialogue": {
+        "gau_logic": "Các bạn khủng long đang xếp thành đội!",
+        "tho_quan_sat": "Bé đếm từng màu rồi chọn số đúng nhé!"
+      },
+      "instruction": "ĐẾM ĐỒ VẬT VÀ KHOANH VÀO SỐ ĐÚNG",
+      "footer_hint": "GỢI Ý: ĐẾM THEO TỪNG HÀNG TỪ TRÁI SANG PHẢI",
+      "rows": [
+        {
+          "row_index": 1,
+          "item_name": "Khủng long xanh lá",
+          "item_type": "dino_green",
+          "actual_count": 8,
+          "layout": "2 hàng đều: 4 trên, 4 dưới",
+          "options": [7, 8, 9],
+          "correct_answer": 8,
+          "distractors": [7, 9],
+          "distractor_analysis": "Nhiễu 7 và 9"
+        },
+        {
+          "row_index": 2,
+          "item_name": "Khủng long đỏ",
+          "item_type": "dino_red",
+          "actual_count": 5,
+          "layout": "2 hàng: 3 trên, 2 dưới",
+          "options": [5, 6, 4],
+          "correct_answer": 5,
+          "distractors": [6, 4],
+          "distractor_analysis": "Nhiễu 6 và 4"
+        },
+        {
+          "row_index": 3,
+          "item_name": "Khủng long xanh lam",
+          "item_type": "dino_blue",
+          "actual_count": 10,
+          "layout": "2 hàng đều: 5 trên, 5 dưới (khung mười - Ten Frame)",
+          "options": [9, 11, 10],
+          "correct_answer": 10,
+          "distractors": [9, 11],
+          "distractor_analysis": "Mốc số tròn chục 10 (5+5), kiểm tra đếm sót trong ma trận 10 vật"
+        }
+      ],
+      "digital_game_potential": {
+        "engine_template": "GT-001",
+        "sub_mechanic": "GT-028"
+      }
+    },
+    {
+      "page_number": 14,
+      "page_label": "Chặng 4 • Trang 13",
+      "file_path": "pages/page-14.jpg",
+      "page_type": "exercise_d1",
+      "exercise_type": "D1",
+      "title": "Vườn hoa khoe sắc",
+      "theme": "Thảm hoa tươi thắm rực rỡ sắc màu",
+      "dialogue": {
+        "gau_logic": "Mỗi luống hoa cần một tấm biển số!",
+        "tho_quan_sat": "Bé nhìn từ trái sang phải rồi đếm nhé!"
+      },
+      "instruction": "ĐẾM ĐỒ VẬT VÀ KHOANH VÀO SỐ ĐÚNG",
+      "footer_hint": "GỢI Ý: ĐẾM THEO TỪNG HÀNG TỪ TRÁI SANG PHẢI",
+      "rows": [
+        {
+          "row_index": 1,
+          "item_name": "Hoa cúc trắng",
+          "item_type": "flower_white_daisy",
+          "actual_count": 6,
+          "layout": "2 hàng đều: 3 trên, 3 dưới",
+          "options": [7, 5, 6],
+          "correct_answer": 6,
+          "distractors": [7, 5],
+          "distractor_analysis": "Nhiễu 7 và 5"
+        },
+        {
+          "row_index": 2,
+          "item_name": "Hoa hồng phấn 5 cánh",
+          "item_type": "flower_pink_rose",
+          "actual_count": 9,
+          "layout": "2 hàng: 5 trên, 4 dưới",
+          "options": [9, 8, 10],
+          "correct_answer": 9,
+          "distractors": [8, 10],
+          "distractor_analysis": "Số lượng 9 (5+4), tiệm cận 10, nhiễu 8 và 10"
+        },
+        {
+          "row_index": 3,
+          "item_name": "Hoa chuông tím",
+          "item_type": "flower_purple_bell",
+          "actual_count": 7,
+          "layout": "2 hàng so le: 4 trên, 3 dưới",
+          "options": [6, 7, 8],
+          "correct_answer": 7,
+          "distractors": [6, 8],
+          "distractor_analysis": "Nhiễu 6 và 8"
+        }
+      ],
+      "digital_game_potential": {
+        "engine_template": "GT-001",
+        "sub_mechanic": "GT-028"
+      }
+    },
+    {
+      "page_number": 15,
+      "page_label": "Chặng 4 • Trang 14",
+      "file_path": "pages/page-15.jpg",
+      "page_type": "exercise_d1",
+      "exercise_type": "D1",
+      "title": "Quầy đồ dùng thông minh",
+      "theme": "Các thiết bị đồ dùng công nghệ và giải trí",
+      "dialogue": {
+        "gau_logic": "Các món đồ đang bị mất nhãn số rồi!",
+        "tho_quan_sat": "Bé giúp bác chủ quầy đếm lại nhé!"
+      },
+      "instruction": "ĐẾM ĐỒ VẬT VÀ KHOANH VÀO SỐ ĐÚNG",
+      "footer_hint": "GỢI Ý: ĐẾM THEO TỪNG HÀNG TỪ TRÁI SANG PHẢI",
+      "rows": [
+        {
+          "row_index": 1,
+          "item_name": "Radio cổ điển đỏ",
+          "item_type": "device_radio",
+          "actual_count": 9,
+          "layout": "2 hàng: 5 trên, 4 dưới",
+          "options": [8, 9, 10],
+          "correct_answer": 9,
+          "distractors": [8, 10],
+          "distractor_analysis": "Nhiễu 8 và 10"
+        },
+        {
+          "row_index": 2,
+          "item_name": "Máy ảnh đồ chơi",
+          "item_type": "device_camera",
+          "actual_count": 7,
+          "layout": "2 hàng so le: 4 trên, 3 dưới",
+          "options": [7, 6, 8],
+          "correct_answer": 7,
+          "distractors": [6, 8],
+          "distractor_analysis": "Nhiễu 6 và 8"
+        },
+        {
+          "row_index": 3,
+          "item_name": "Robot thông minh",
+          "item_type": "toy_robot",
+          "actual_count": 10,
+          "layout": "2 hàng đều: 5 trên, 5 dưới",
+          "options": [11, 9, 10],
+          "correct_answer": 10,
+          "distractors": [11, 9],
+          "distractor_analysis": "Ma trận Ten-frame 5+5 = 10, nhiễu 11 và 9"
+        }
+      ],
+      "digital_game_potential": {
+        "engine_template": "GT-001",
+        "sub_mechanic": "GT-028"
+      }
+    },
+    {
+      "page_number": 16,
+      "page_label": "Chặng 4 • Trang 15",
+      "file_path": "pages/page-16.jpg",
+      "page_type": "exercise_d1",
+      "exercise_type": "D1",
+      "title": "Góc chăm sóc sạch sẽ",
+      "theme": "Đồ dùng vệ sinh cá nhân hàng ngày",
+      "dialogue": {
+        "gau_logic": "Đồ dùng sạch sẽ cũng cần biển số!",
+        "tho_quan_sat": "Bé chia thành hàng nhỏ rồi đếm nhé!"
+      },
+      "instruction": "ĐẾM ĐỒ VẬT VÀ KHOANH VÀO SỐ ĐÚNG",
+      "footer_hint": "GỢI Ý: ĐẾM THEO TỪNG HÀNG TỪ TRÁI SANG PHẢI",
+      "rows": [
+        {
+          "row_index": 1,
+          "item_name": "Bàn chải đánh răng",
+          "item_type": "hygiene_toothbrush",
+          "actual_count": 6,
+          "layout": "2 hàng xiên đều: 3 trên, 3 dưới",
+          "options": [5, 7, 6],
+          "correct_answer": 6,
+          "distractors": [5, 7],
+          "distractor_analysis": "Nhiễu 5 và 7"
+        },
+        {
+          "row_index": 2,
+          "item_name": "Bánh xà phòng vàng",
+          "item_type": "hygiene_soap",
+          "actual_count": 8,
+          "layout": "2 hàng đều: 4 trên, 4 dưới",
+          "options": [8, 9, 7],
+          "correct_answer": 8,
+          "distractors": [9, 7],
+          "distractor_analysis": "Nhiễu 9 và 7"
+        },
+        {
+          "row_index": 3,
+          "item_name": "Chai sữa tắm hoa vàng",
+          "item_type": "hygiene_shampoo",
+          "actual_count": 9,
+          "layout": "2 hàng: 5 trên, 4 dưới",
+          "options": [10, 9, 8],
+          "correct_answer": 9,
+          "distractors": [10, 8],
+          "distractor_analysis": "Nhiễu 10 và 8"
+        }
+      ],
+      "digital_game_potential": {
+        "engine_template": "GT-001",
+        "sub_mechanic": "GT-028"
+      }
+    },
+    {
+      "page_number": 17,
+      "page_label": "Chặng 4 • Trang 16",
+      "file_path": "pages/page-17.jpg",
+      "page_type": "exercise_d2",
+      "exercise_type": "D2",
+      "title": "Cổng kiểm tra trái cây",
+      "theme": "Trạm gác kiểm định số lượng trái cây",
+      "dialogue": {
+        "gau_logic": "Mỗi con số chỉ mở được một nhóm đúng!",
+        "tho_quan_sat": "Bé đếm cả hai bên rồi khoanh nhé!"
+      },
+      "instruction": "NHÌN SỐ Ở GIỮA VÀ KHOANH NHÓM CÓ SỐ LƯỢNG ĐÚNG",
+      "footer_hint": "GỢI Ý: ĐẾM CẢ HAI NHÓM TRƯỚC KHI CHỌN",
+      "rows": [
+        {
+          "row_index": 1,
+          "target_number": 3,
+          "left_group": {
+            "item_name": "Quả chanh vàng",
+            "item_type": "fruit_lemon",
+            "count": 2,
+            "is_correct": false
+          },
+          "right_group": {
+            "item_name": "Quả đào hồng",
+            "item_type": "fruit_peach",
+            "count": 3,
+            "is_correct": true
+          },
+          "correct_side": "right",
+          "distractor_analysis": "Nhóm bên trái có 2 quả (thiếu 1 đơn vị so với số 3)"
+        },
+        {
+          "row_index": 2,
+          "target_number": 5,
+          "left_group": {
+            "item_name": "Quả dâu tây đỏ",
+            "item_type": "fruit_strawberry",
+            "count": 5,
+            "is_correct": true
+          },
+          "right_group": {
+            "item_name": "Quả chuối vàng",
+            "item_type": "fruit_banana",
+            "count": 3,
+            "is_correct": false
+          },
+          "correct_side": "left",
+          "distractor_analysis": "Nhóm bên phải có 3 quả (thiếu 2 đơn vị so với số 5)"
+        },
+        {
+          "row_index": 3,
+          "target_number": 4,
+          "left_group": {
+            "item_name": "Quả dưa hấu tròn",
+            "item_type": "fruit_watermelon",
+            "count": 2,
+            "is_correct": false
+          },
+          "right_group": {
+            "item_name": "Quả cam tròn",
+            "item_type": "fruit_orange",
+            "count": 4,
+            "is_correct": true
+          },
+          "correct_side": "right",
+          "distractor_analysis": "Nhóm bên trái có 2 quả (thiếu 2 đơn vị so với số 4)"
+        }
+      ],
+      "digital_game_potential": {
+        "engine_template": "GT-001",
+        "alternative_template": "GT-002",
+        "mechanic": "Target-Matching Tap Select",
+        "interaction": "Số mục tiêu hiển thị ở huy hiệu vàng trung tâm; trẻ tap chọn khung bên trái hoặc khung bên phải; khung đúng viền sáng bừng và nở hoa ăn mừng"
+      }
+    },
+    {
+      "page_number": 18,
+      "page_label": "Chặng 4 • Trang 17",
+      "file_path": "pages/page-18.jpg",
+      "page_type": "exercise_d2",
+      "exercise_type": "D2",
+      "title": "Sân chơi các con vật",
+      "theme": "Sân thi đấu của các bạn côn trùng và muông thú",
+      "dialogue": {
+        "gau_logic": "Các bạn nhỏ đang đứng thành hai đội!",
+        "tho_quan_sat": "Bé tìm đội có số lượng đúng nhé!"
+      },
+      "instruction": "NHÌN SỐ Ở GIỮA VÀ KHOANH NHÓM CÓ SỐ LƯỢNG ĐÚNG",
+      "footer_hint": "GỢI Ý: ĐẾM CẢ HAI NHÓM TRƯỚC KHI CHỌN",
+      "rows": [
+        {
+          "row_index": 1,
+          "target_number": 4,
+          "left_group": {
+            "item_name": "Sâu xanh lá",
+            "item_type": "animal_caterpillar",
+            "count": 1,
+            "is_correct": false
+          },
+          "right_group": {
+            "item_name": "Cào cào xanh",
+            "item_type": "animal_grasshopper",
+            "count": 4,
+            "is_correct": true
+          },
+          "correct_side": "right",
+          "distractor_analysis": "Nhóm bên trái chỉ có 1 con đơn lẻ"
+        },
+        {
+          "row_index": 2,
+          "target_number": 3,
+          "left_group": {
+            "item_name": "Kiến đỏ",
+            "item_type": "animal_ant",
+            "count": 3,
+            "is_correct": true
+          },
+          "right_group": {
+            "item_name": "Cá vàng",
+            "item_type": "animal_fish",
+            "count": 2,
+            "is_correct": false
+          },
+          "correct_side": "left",
+          "distractor_analysis": "Nhóm bên phải có 2 con cá (thiếu 1 đơn vị)"
+        },
+        {
+          "row_index": 3,
+          "target_number": 5,
+          "left_group": {
+            "item_name": "Ong vàng",
+            "item_type": "animal_bee",
+            "count": 2,
+            "is_correct": false
+          },
+          "right_group": {
+            "item_name": "Chim xanh líu lo",
+            "item_type": "animal_bird",
+            "count": 5,
+            "is_correct": true
+          },
+          "correct_side": "right",
+          "distractor_analysis": "Nhóm bên trái có 2 con ong (thiếu 3 đơn vị so với số 5)"
+        }
+      ],
+      "digital_game_potential": {
+        "engine_template": "GT-001",
+        "alternative_template": "GT-002"
+      }
+    },
+    {
+      "page_number": 19,
+      "page_label": "Chặng 4 • Trang 18",
+      "file_path": "pages/page-19.jpg",
+      "page_type": "exercise_d2",
+      "exercise_type": "D2",
+      "title": "Phố nhà sắc màu",
+      "theme": "Khu phố kiến trúc tí hon rực rỡ",
+      "dialogue": {
+        "gau_logic": "Những ngôi nhà đang chờ kiểm tra số!",
+        "tho_quan_sat": "Bé chọn đúng nhóm để mở đường nhé!"
+      },
+      "instruction": "NHÌN SỐ Ở GIỮA VÀ KHOANH NHÓM CÓ SỐ LƯỢNG ĐÚNG",
+      "footer_hint": "GỢI Ý: ĐẾM CẢ HAI NHÓM TRƯỚC KHI CHỌN",
+      "rows": [
+        {
+          "row_index": 1,
+          "target_number": 5,
+          "left_group": {
+            "item_name": "Nhà mái ngói đỏ",
+            "item_type": "building_house",
+            "count": 2,
+            "is_correct": false
+          },
+          "right_group": {
+            "item_name": "Nhà tí hon đa sắc",
+            "item_type": "building_cottage",
+            "count": 5,
+            "is_correct": true
+          },
+          "correct_side": "right",
+          "distractor_analysis": "Nhóm bên trái chỉ có 2 căn nhà to"
+        },
+        {
+          "row_index": 2,
+          "target_number": 6,
+          "left_group": {
+            "item_name": "Chòi gỗ bãi biển sắc màu",
+            "item_type": "building_hut",
+            "count": 6,
+            "is_correct": true
+          },
+          "right_group": {
+            "item_name": "Lâu đài cổ tích",
+            "item_type": "building_castle",
+            "count": 3,
+            "is_correct": false
+          },
+          "correct_side": "left",
+          "distractor_analysis": "Nhóm bên phải có 3 lâu đài (bằng 1/2 số mục tiêu 6)"
+        },
+        {
+          "row_index": 3,
+          "target_number": 4,
+          "left_group": {
+            "item_name": "Tòa nhà chung cư 3 tầng",
+            "item_type": "building_apartment",
+            "count": 1,
+            "is_correct": false
+          },
+          "right_group": {
+            "item_name": "Nhà nấm đốm đỏ",
+            "item_type": "building_mushroom",
+            "count": 4,
+            "is_correct": true
+          },
+          "correct_side": "right",
+          "distractor_analysis": "Nhóm bên trái có 1 toà nhà cao tầng (bẫy thị giác đếm số tầng thay vì số toà nhà)"
+        }
+      ],
+      "digital_game_potential": {
+        "engine_template": "GT-001",
+        "alternative_template": "GT-002"
+      }
+    },
+    {
+      "page_number": 20,
+      "page_label": "Chặng 4 • Trang 19",
+      "file_path": "pages/page-20.jpg",
+      "page_type": "exercise_d1",
+      "exercise_type": "D1",
+      "title": "Sân vận động mini",
+      "theme": "Khu luyện tập thể thao vui nhộn",
+      "dialogue": {
+        "gau_logic": "Các dụng cụ thể thao đã sẵn sàng!",
+        "tho_quan_sat": "Bé đếm hai hàng rồi chọn số đúng nhé!"
+      },
+      "instruction": "ĐẾM ĐỒ VẬT VÀ KHOANH VÀO SỐ ĐÚNG",
+      "footer_hint": "GỢI Ý: ĐẾM HÀNG TRÊN TRƯỚC, HÀNG DƯỚI SAU",
+      "rows": [
+        {
+          "row_index": 1,
+          "item_name": "Quả bóng đá",
+          "item_type": "sport_soccer",
+          "actual_count": 9,
+          "layout": "2 hàng: 5 trên, 4 dưới",
+          "options": [8, 9, 10],
+          "correct_answer": 9,
+          "distractors": [8, 10],
+          "distractor_analysis": "Mở rộng vùng đếm lớn 9, nhiễu 8 và 10"
+        },
+        {
+          "row_index": 2,
+          "item_name": "Quả bóng rổ",
+          "item_type": "sport_basketball",
+          "actual_count": 10,
+          "layout": "2 hàng đều: 5 trên, 5 dưới (Ten-frame hoàn chỉnh)",
+          "options": [10, 9, 11],
+          "correct_answer": 10,
+          "distractors": [9, 11],
+          "distractor_analysis": "Mốc số 10 tròn trịa, nhiễu 9 và 11"
+        },
+        {
+          "row_index": 3,
+          "item_name": "Quả cầu lông",
+          "item_type": "sport_shuttlecock",
+          "actual_count": 11,
+          "layout": "2 hàng: 6 trên, 5 dưới",
+          "options": [12, 10, 11],
+          "correct_answer": 11,
+          "distractors": [12, 10],
+          "distractor_analysis": "Vượt ngưỡng chục lên 11 (10+1), nhiễu 10 và 12"
+        }
+      ],
+      "digital_game_potential": {
+        "engine_template": "GT-001",
+        "sub_mechanic": "GT-028"
+      }
+    },
+    {
+      "page_number": 21,
+      "page_label": "Chặng 4 • Trang 20",
+      "file_path": "pages/page-21.jpg",
+      "page_type": "exercise_d1",
+      "exercise_type": "D1",
+      "title": "Lễ hội trứng sắc màu",
+      "theme": "Bộ sưu tập trứng phục sinh rực rỡ hoa văn",
+      "dialogue": {
+        "gau_logic": "Những quả trứng đang xếp thành hàng!",
+        "tho_quan_sat": "Bé đếm thật kỹ để không bỏ sót nhé!"
+      },
+      "instruction": "ĐẾM ĐỒ VẬT VÀ KHOANH VÀO SỐ ĐÚNG",
+      "footer_hint": "GỢI Ý: ĐẾM HÀNG TRÊN TRƯỚC, HÀNG DƯỚI SAU",
+      "rows": [
+        {
+          "row_index": 1,
+          "item_name": "Trứng xanh đốm vàng",
+          "item_type": "easter_egg_green",
+          "actual_count": 10,
+          "layout": "2 hàng đều: 5 trên, 5 dưới",
+          "options": [9, 10, 11],
+          "correct_answer": 10,
+          "distractors": [9, 11],
+          "distractor_analysis": "Nhiễu 9 và 11"
+        },
+        {
+          "row_index": 2,
+          "item_name": "Trứng vàng hoa văn zigzag",
+          "item_type": "easter_egg_yellow",
+          "actual_count": 11,
+          "layout": "2 hàng: 6 trên, 5 dưới",
+          "options": [11, 12, 10],
+          "correct_answer": 11,
+          "distractors": [12, 10],
+          "distractor_analysis": "Số lượng 11, nhiễu 12 và 10"
+        },
+        {
+          "row_index": 3,
+          "item_name": "Trứng xanh dương chấm hồng",
+          "item_type": "easter_egg_blue",
+          "actual_count": 12,
+          "layout": "2 hàng đều: 6 trên, 6 dưới",
+          "options": [11, 13, 12],
+          "correct_answer": 12,
+          "distractors": [11, 13],
+          "distractor_analysis": "Số lượng tối đa của chặng: 12 (6+6), nhiễu 11 và 13"
+        }
+      ],
+      "digital_game_potential": {
+        "engine_template": "GT-001",
+        "sub_mechanic": "GT-028"
+      }
+    },
+    {
+      "page_number": 22,
+      "page_label": "Chặng 4 • Trang 21",
+      "file_path": "pages/page-22.jpg",
+      "page_type": "exercise_d1",
+      "exercise_type": "D1",
+      "title": "Đại thử thách số lượng",
+      "theme": "Thử thách tổng kết cấp độ cao nhất của chặng",
+      "dialogue": {
+        "gau_logic": "Ba tấm biển cuối cùng đang ở phía trước!",
+        "tho_quan_sat": "Bé dùng tất cả kỹ năng đếm để hoàn thành nhé!"
+      },
+      "instruction": "ĐẾM THẬT KỸ VÀ KHOANH VÀO SỐ ĐÚNG",
+      "footer_hint": "GỢI Ý: ĐẾM CHẬM, KIỂM TRA LẠI MỘT LẦN NỮA",
+      "rows": [
+        {
+          "row_index": 1,
+          "item_name": "Hộp quà đỏ nơ vàng",
+          "item_type": "reward_gift",
+          "actual_count": 10,
+          "layout": "2 hàng đều: 5 trên, 5 dưới",
+          "options": [9, 10, 11],
+          "correct_answer": 10,
+          "distractors": [9, 11],
+          "distractor_analysis": "Nhiễu 9 và 11"
+        },
+        {
+          "row_index": 2,
+          "item_name": "Khối lập phương màu sắc",
+          "item_type": "math_cube",
+          "actual_count": 11,
+          "layout": "2 hàng: 6 trên, 5 dưới",
+          "options": [10, 12, 11],
+          "correct_answer": 11,
+          "distractors": [10, 12],
+          "distractor_analysis": "Nhiễu 10 và 12"
+        },
+        {
+          "row_index": 3,
+          "item_name": "Chuông vàng lễ hội",
+          "item_type": "festive_bell",
+          "actual_count": 12,
+          "layout": "2 hàng đều: 6 trên, 6 dưới",
+          "options": [12, 11, 10],
+          "correct_answer": 12,
+          "distractors": [11, 10],
+          "distractor_analysis": "Số lượng 12, cả ba phương án là [12, 11, 10]"
+        }
+      ],
+      "digital_game_potential": {
+        "engine_template": "GT-001",
+        "sub_mechanic": "GT-028"
+      }
+    },
+    {
+      "page_number": 23,
+      "page_label": "Chặng 4 • Trang 22",
+      "file_path": "pages/page-23.jpg",
+      "page_type": "completion_reward",
+      "exercise_type": "D3",
+      "title": "Hoàn thành Phần 4: Quảng Trường Số Lượng",
+      "mission_result": "BÉ ĐÃ HOÀN THÀNH CHẶNG SỐ 4!",
+      "dialogue": {
+        "gau_logic": "Bé đã khôi phục đủ những tấm biển số lượng!",
+        "tho_quan_sat": "Viên Ngọc Số Lượng đã sáng lên rồi!"
+      },
+      "restored_signs": [
+        {
+          "stand": "Quầy táo đỏ",
+          "item": "Táo đỏ",
+          "count": 4,
+          "restored_sign_number": 4
+        },
+        {
+          "stand": "Cụm bóng bay",
+          "item": "Bóng bay",
+          "count": 3,
+          "restored_sign_number": 3
+        },
+        {
+          "stand": "Luống hoa cúc",
+          "item": "Hoa ngũ sắc",
+          "count": 5,
+          "restored_sign_number": 5
+        },
+        {
+          "stand": "Quầy thú nhồi bông",
+          "item": "Gấu bông",
+          "count": 2,
+          "restored_sign_number": 2
+        },
+        {
+          "stand": "Khay bánh cupcake",
+          "item": "Bánh cupcake",
+          "count": 4,
+          "restored_sign_number": 4
+        }
+      ],
+      "route_map": {
+        "total_stations": 20,
+        "completed_stations": [1, 2, 3, 4],
+        "current_marker": 4,
+        "current_station_label": "BÉ ĐANG Ở ĐÂY (Ga số 4)",
+        "next_station": 5
+      },
+      "rewards": {
+        "stars_section": {
+          "title": "BA MẸ CÙNG BÉ TÔ 3 NGÔI SAO NHÉ!",
+          "count": 3,
+          "purpose": "Đánh giá mức độ độc lập, quan sát chính xác và kiên trì"
+        },
+        "gem_section": {
+          "title": "BÉ HÃY TÔ MÀU VIÊN NGỌC SỐ LƯỢNG",
+          "gem_name": "Viên Ngọc Số Lượng (Quantity Gemstone)",
+          "visual": "Viên kim cương tỏa sáng lấp lánh"
+        }
+      },
+      "next_journey_banner": "SẴN SÀNG LÊN TÀU ĐẾN CHẶNG 5!",
+      "digital_game_potential": {
+        "engine_template": "GT-000",
+        "mechanic": "Stage Completion Celebration & Reward Ceremony",
+        "interaction": "Hiệu ứng pháo hoa giấy, đoàn tàu hỏa hơi nước lăn bánh, huy hiệu Viên Ngọc Số Lượng nảy bung lên thu vào ba lô phần thưởng của bé."
+      }
+    }
+  ],
+  "digital_conversion_summary": {
+    "total_interactive_rounds": 60,
+    "breakdown": {
+      "type_d1_rounds": 51,
+      "type_d2_rounds": 9,
+      "type_d3_scenes": 2
+    },
+    "template_allocation": {
+      "GT-001": {
+        "name": "Chọn một đáp án (Tap-Select)",
+        "usage": "Phục vụ toàn bộ các câu hỏi D1 (chọn 1 trong 3 thẻ số) và D2 (chọn 1 trong 2 nhóm trái/phải theo số mục tiêu)",
+        "features": "Bố cục chia 3 hàng (3 sub-rounds per screen) hoặc chạy từng câu đơn lẻ theo round-runner 60fps"
+      },
+      "GT-028": {
+        "name": "Chạm đếm tích luỹ (Tap-Count)",
+        "usage": "Cơ chế bổ trợ cực kỳ quan trọng cho trẻ mầm non 3-4 tuổi (phản hồi âm thanh '1, 2, 3...' và đánh dấu hạt sáng khi chạm từng vật trước khi chốt số đáp án)"
+      },
+      "GT-022": {
+        "name": "Tìm vật thể ẩn (Hidden-Object / I-Spy)",
+        "usage": "Phục vụ bài tập mở rộng D3 đếm phân loại trực tiếp trên bức tranh Quảng trường trung tâm"
+      },
+      "GT-000": {
+        "name": "Làm quen khái niệm (Concept-Intro)",
+        "usage": "Phục vụ trang bìa Page 1 và trang tổng kết mừng công Page 23"
+      }
+    },
+    "audio_voice_requirements": {
+      "language": "vi-VN",
+      "gau_logic_voice": "Trầm ấm, khích lệ, nhịp điệu từ tốn chuẩn mẫu giáo",
+      "tho_quan_sat_voice": "Trong trẻo, lanh lợi, nhấn mạnh các mẹo quan sát",
+      "number_pronunciation": "Phát âm chuẩn tiếng Việt từ 'Một' đến 'Mười hai', có ngữ điệu reo vui khi hoàn thành"
+    }
+  }
+}

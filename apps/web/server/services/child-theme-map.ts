@@ -1,27 +1,25 @@
 /**
  * Bản đồ chủ đề tuần cho trẻ tự học — `child-theme-map.md`, `BR-WTM-01..08`.
  *
- * Tổng hợp lộ trình 36 tuần theo 10 chủ đề GDMN, gắn trạng thái bài học
- * từ `child_lesson_plays` của trẻ và xác định vị trí Gấu Con định vị.
+ * Tổng hợp lộ trình 36 tuần theo 10 chủ đề GDMN, gắn trạng thái màn chơi
+ * từ `play_sessions` của trẻ và xác định vị trí Gấu Con định vị.
  */
 
 import {
-  childLessonPlays,
   curricula,
   curriculumEnrollments,
   curriculumItems,
   curriculumWeeks,
+  gameLevels,
   type getOwnerDb,
-  lessons,
+  playSessions,
 } from "@mindkid/db";
 import { deriveAgeBand } from "@mindkid/shared";
 import { and, asc, eq } from "drizzle-orm";
-import {
-  FALLBACK_LESSON_EMOJI,
-  findFirstLevelEmojis,
-} from "./child-lesson-flow.ts";
 
 type Db = ReturnType<typeof getOwnerDb>;
+
+const FALLBACK_LEVEL_EMOJI = "🎯";
 
 export interface ThemeMapLesson {
   code: string;
@@ -64,11 +62,12 @@ export interface GetChildThemeMapInput {
   now?: Date;
 }
 
-interface RawLessonItem {
+interface RawLevelItem {
   weekNo: number;
-  lessonId: number;
+  levelId: number;
   code: string;
   title: string;
+  thumbnailEmoji: string | null;
 }
 
 const THEME_EMOJI_MAP: Record<string, string> = {
@@ -125,111 +124,112 @@ export function resolveTargetCurriculumCode(
   return "CUR-RM-3-4-mam-year-01";
 }
 
-async function fetchChildLessonStatuses(
+async function fetchChildLevelStatuses(
   db: Db,
   childId: number
 ): Promise<Map<string, "not_started" | "in_progress" | "completed">> {
   const playRows = await db
     .select({
-      lessonCode: lessons.code,
-      status: childLessonPlays.status,
+      levelCode: gameLevels.code,
+      status: playSessions.completionStatus,
     })
-    .from(childLessonPlays)
-    .innerJoin(lessons, eq(lessons.id, childLessonPlays.lessonId))
-    .where(eq(childLessonPlays.childProfileId, childId));
+    .from(playSessions)
+    .innerJoin(gameLevels, eq(gameLevels.id, playSessions.gameLevelId))
+    .where(
+      and(
+        eq(playSessions.childProfileId, childId),
+        eq(playSessions.isPreview, false)
+      )
+    );
 
-  const statusByLessonCode = new Map<
+  const statusByLevelCode = new Map<
     string,
     "not_started" | "in_progress" | "completed"
   >();
   for (const row of playRows) {
-    const current = statusByLessonCode.get(row.lessonCode);
+    const current = statusByLevelCode.get(row.levelCode);
     if (row.status === "completed") {
-      statusByLessonCode.set(row.lessonCode, "completed");
+      statusByLevelCode.set(row.levelCode, "completed");
     } else if (row.status === "in_progress" && current !== "completed") {
-      statusByLessonCode.set(row.lessonCode, "in_progress");
+      statusByLevelCode.set(row.levelCode, "in_progress");
     }
   }
-  return statusByLessonCode;
+  return statusByLevelCode;
 }
 
 async function fetchCurriculumWeeksAndItems(
   db: Db,
   currId: number | null
-): Promise<{ weekGoalsMap: Map<number, string>; itemsList: RawLessonItem[] }> {
+): Promise<{ weekGoalsMap: Map<number, string>; itemsList: RawLevelItem[] }> {
   const weekGoalsMap = new Map<number, string>();
   if (!currId) {
     return { weekGoalsMap, itemsList: [] };
   }
 
-  const rawWeeks = await db
-    .select({
-      weekNo: curriculumWeeks.weekNo,
-      goal: curriculumWeeks.goal,
-    })
-    .from(curriculumWeeks)
-    .where(eq(curriculumWeeks.curriculumId, currId))
-    .orderBy(asc(curriculumWeeks.weekNo));
+  const [rawWeeks, rawItems] = await Promise.all([
+    db
+      .select({
+        weekNo: curriculumWeeks.weekNo,
+        goal: curriculumWeeks.goal,
+      })
+      .from(curriculumWeeks)
+      .where(eq(curriculumWeeks.curriculumId, currId))
+      .orderBy(asc(curriculumWeeks.weekNo)),
+    db
+      .select({
+        weekNo: curriculumItems.weekNo,
+        levelId: gameLevels.id,
+        code: gameLevels.code,
+        title: gameLevels.title,
+        thumbnailEmoji: gameLevels.thumbnailEmoji,
+      })
+      .from(curriculumItems)
+      .innerJoin(gameLevels, eq(curriculumItems.entityId, gameLevels.id))
+      .where(
+        and(
+          eq(curriculumItems.curriculumId, currId),
+          eq(curriculumItems.entityType, "game_level")
+        )
+      )
+      .orderBy(
+        asc(curriculumItems.weekNo),
+        asc(curriculumItems.sessionNo),
+        asc(curriculumItems.position)
+      ),
+  ]);
 
   for (const w of rawWeeks) {
     weekGoalsMap.set(w.weekNo, w.goal);
   }
 
-  const rawItems = await db
-    .select({
-      weekNo: curriculumItems.weekNo,
-      lessonId: lessons.id,
-      code: lessons.code,
-      title: lessons.title,
-    })
-    .from(curriculumItems)
-    .innerJoin(
-      lessons,
-      and(
-        eq(curriculumItems.entityId, lessons.entityId),
-        eq(lessons.status, "published")
-      )
-    )
-    .where(
-      and(
-        eq(curriculumItems.curriculumId, currId),
-        eq(curriculumItems.entityType, "lesson")
-      )
-    )
-    .orderBy(
-      asc(curriculumItems.weekNo),
-      asc(curriculumItems.sessionNo),
-      asc(curriculumItems.position)
-    );
-
   return { weekGoalsMap, itemsList: rawItems };
 }
 
-async function fetchFallbackLessonItems(db: Db): Promise<RawLessonItem[]> {
+async function fetchFallbackLevelItems(db: Db): Promise<RawLevelItem[]> {
   const published = await db
     .select({
-      id: lessons.id,
-      code: lessons.code,
-      title: lessons.title,
+      id: gameLevels.id,
+      code: gameLevels.code,
+      title: gameLevels.title,
+      thumbnailEmoji: gameLevels.thumbnailEmoji,
     })
-    .from(lessons)
-    .where(eq(lessons.status, "published"))
-    .orderBy(asc(lessons.code))
+    .from(gameLevels)
+    .orderBy(asc(gameLevels.code))
     .limit(36);
 
-  return published.map((les, index) => ({
+  return published.map((lvl, index) => ({
     weekNo: Math.floor(index / 2) + 1,
-    lessonId: les.id,
-    code: les.code,
-    title: les.title,
+    levelId: lvl.id,
+    code: lvl.code,
+    title: lvl.title,
+    thumbnailEmoji: lvl.thumbnailEmoji,
   }));
 }
 
 function buildSingleWeekLessons(params: {
   weekNo: number;
-  weekRawItems: RawLessonItem[];
+  weekRawItems: RawLevelItem[];
   statusByLessonCode: Map<string, "not_started" | "in_progress" | "completed">;
-  emojis: Map<number, string>;
   foundCurrent: boolean;
 }): {
   lessonsInWeek: ThemeMapLesson[];
@@ -239,7 +239,7 @@ function buildSingleWeekLessons(params: {
   totalLessonsDelta: number;
   completedLessonsDelta: number;
 } {
-  const { weekRawItems, statusByLessonCode, emojis } = params;
+  const { weekRawItems, statusByLessonCode } = params;
   let newFoundCurrent = params.foundCurrent;
   let nextLessonCode: string | null = null;
   let totalLessonsDelta = 0;
@@ -266,7 +266,7 @@ function buildSingleWeekLessons(params: {
     lessonsInWeek.push({
       code: item.code,
       title: item.title,
-      thumbnail_emoji: emojis.get(item.lessonId) || FALLBACK_LESSON_EMOJI,
+      thumbnail_emoji: item.thumbnailEmoji || FALLBACK_LEVEL_EMOJI,
       status,
       is_current: isCurrentLesson,
     });
@@ -285,9 +285,8 @@ function buildSingleWeekLessons(params: {
 function buildWeeksStructure(params: {
   allWeekNumbers: number[];
   weekGoalsMap: Map<number, string>;
-  itemsByWeek: Map<number, RawLessonItem[]>;
+  itemsByWeek: Map<number, RawLevelItem[]>;
   statusByLessonCode: Map<string, "not_started" | "in_progress" | "completed">;
-  emojis: Map<number, string>;
 }): {
   weeks: ThemeMapWeek[];
   currentWeekNo: number;
@@ -295,13 +294,8 @@ function buildWeeksStructure(params: {
   totalLessons: number;
   completedLessons: number;
 } {
-  const {
-    allWeekNumbers,
-    weekGoalsMap,
-    itemsByWeek,
-    statusByLessonCode,
-    emojis,
-  } = params;
+  const { allWeekNumbers, weekGoalsMap, itemsByWeek, statusByLessonCode } =
+    params;
 
   let foundCurrent = false;
   let currentWeekNo = allWeekNumbers[0] ?? 1;
@@ -321,7 +315,6 @@ function buildWeeksStructure(params: {
       weekNo,
       weekRawItems,
       statusByLessonCode,
-      emojis,
       foundCurrent,
     });
 
@@ -410,23 +403,19 @@ export async function getChildThemeMap(
     activeEnrollment?.curriculumTitle ??
     `Chương trình phát triển tư duy ${ageBand} tuổi`;
 
-  // 3. Lấy toàn bộ lượt học của trẻ để suy trạng thái trạm (BR-WTM-02)
-  const statusByLessonCode = await fetchChildLessonStatuses(db, input.childId);
+  // 3. Lấy toàn bộ phiên chơi của trẻ để suy trạng thái trạm (BR-WTM-02)
+  const statusByLessonCode = await fetchChildLevelStatuses(db, input.childId);
 
-  // 4. Lấy các tuần và bài học từ DB nếu có curriculum
+  // 4. Lấy các tuần và màn chơi từ DB nếu có curriculum
   const { weekGoalsMap, itemsList: rawItemsList } =
     await fetchCurriculumWeeksAndItems(db, currId);
 
   // 5. Dự phòng nếu DB chưa liên kết curriculumItems
   const itemsList =
-    rawItemsList.length > 0 ? rawItemsList : await fetchFallbackLessonItems(db);
-
-  // Lấy thumbnail emoji
-  const lessonIds = [...new Set(itemsList.map((i) => i.lessonId))];
-  const emojis = await findFirstLevelEmojis(db, lessonIds);
+    rawItemsList.length > 0 ? rawItemsList : await fetchFallbackLevelItems(db);
 
   // Gom theo tuần
-  const itemsByWeek = new Map<number, RawLessonItem[]>();
+  const itemsByWeek = new Map<number, RawLevelItem[]>();
   for (const item of itemsList) {
     const existing = itemsByWeek.get(item.weekNo) ?? [];
     existing.push(item);
@@ -446,7 +435,6 @@ export async function getChildThemeMap(
     weekGoalsMap,
     itemsByWeek,
     statusByLessonCode,
-    emojis,
   });
 
   return {

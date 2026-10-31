@@ -11,6 +11,16 @@ const routeState = {
   query: {} as Record<string, string>,
 };
 
+vi.mock("#imports", () => ({
+  definePageMeta: (meta: Record<string, string | string[]>) =>
+    pageMetaMock(meta),
+  useRoute: () => routeState,
+  useRouter: () => ({
+    push: routerPushMock,
+  }),
+  useSeoMeta: vi.fn(),
+}));
+
 vi.stubGlobal("definePageMeta", pageMetaMock);
 vi.stubGlobal("$fetch", fetchMock);
 vi.stubGlobal("useRoute", () => routeState);

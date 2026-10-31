@@ -4,7 +4,7 @@ export const C2_ROT_02_IDENTITY: SkillIdentity = {
   code: "C2.ROT.02",
   strand_code: "C2.ROT",
   competency_code: "C2",
-  name: "Xoay 180°",
+  name: "Xoay ngược hình lại",
   age_min: 5,
   age_max: 5,
   difficulty: 4,
@@ -38,75 +38,198 @@ export const C2_ROT_02_IDENTITY: SkillIdentity = {
 
 export const C2_ROT_02_DATASET: SkillDataset = {
   skill_code: "C2.ROT.02",
-  concept_label: "Xoay 180°",
+  concept_label: "Xoay ngược hình lại",
   surface: "game",
   items: [
     {
-      id: "cup",
-      label: "cái cốc",
+      id: "tree_up",
+      label: "cây thông đứng thẳng",
+      value: 1,
       image: {
         kind: "emoji",
-        ref: "🥤",
+        ref: "🌲",
       },
       category: {
-        type: "đồ dùng",
+        type: "hình đứng thẳng",
+      },
+      contrast_group: "upright",
+    },
+    {
+      id: "bottle_up",
+      label: "chai nước đứng thẳng",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "🍾",
+      },
+      category: {
+        type: "hình đứng thẳng",
+      },
+      contrast_group: "upright",
+    },
+    {
+      id: "glass_up",
+      label: "cốc sữa đứng thẳng",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "🥛",
+      },
+      category: {
+        type: "hình đứng thẳng",
+      },
+      contrast_group: "upright",
+    },
+    {
+      id: "candle_up",
+      label: "ngọn nến đứng thẳng",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "🕯️",
+      },
+      category: {
+        type: "hình đứng thẳng",
+      },
+      contrast_group: "upright",
+    },
+    {
+      id: "umbrella_down",
+      label: "cây dù chúc xuống",
+      value: 5,
+      image: {
+        kind: "emoji",
+        ref: "🌂",
+      },
+      category: {
+        type: "hình xoay ngược",
+      },
+      contrast_group: "inverted",
+    },
+    {
+      id: "mushroom_down",
+      label: "nấm nghiêng đầu",
+      value: 6,
+      image: {
+        kind: "emoji",
+        ref: "🍄",
+      },
+      category: {
+        type: "hình xoay ngược",
+      },
+      contrast_group: "inverted",
+    },
+    {
+      id: "bell_tilt",
+      label: "chuông lắc nghiêng",
+      value: 7,
+      image: {
+        kind: "emoji",
+        ref: "🔔",
+      },
+      category: {
+        type: "hình xoay ngược",
+      },
+      contrast_group: "inverted",
+    },
+    {
+      id: "trophy_tilt",
+      label: "chiếc cúp lật úp",
+      value: 8,
+      image: {
+        kind: "emoji",
+        ref: "🏆",
+      },
+      category: {
+        type: "hình xoay ngược",
+      },
+      contrast_group: "inverted",
+    },
+    {
+      id: "mirror_axis_vertical",
+      label: "trục gương nét đứt",
+      value: 9,
+      image: {
+        kind: "emoji",
+        ref: "🪞",
+      },
+      category: {
+        type: "đối xứng gương",
+      },
+      contrast_group: "mirror",
+    },
+    {
+      id: "color_bead_table_5x6",
+      label: "bảng hạt đối xứng",
+      value: 10,
+      image: {
+        kind: "emoji",
+        ref: "🎨",
+      },
+      category: {
+        type: "đối xứng gương",
+      },
+      contrast_group: "mirror",
+    },
+  ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "tree_up",
+      target_id: "umbrella_down",
+      metadata: {
+        dimension: "orientation",
       },
     },
     {
-      id: "bed",
-      label: "cái giường",
-      image: {
-        kind: "emoji",
-        ref: "🛏️",
-      },
-      category: {
-        type: "đồ dùng",
+      type: "contrast",
+      source_id: "bottle_up",
+      target_id: "mushroom_down",
+      metadata: {
+        dimension: "orientation",
       },
     },
     {
-      id: "chair",
-      label: "cái ghế",
-      image: {
-        kind: "emoji",
-        ref: "🪑",
-      },
-      category: {
-        type: "đồ dùng",
+      type: "pair",
+      source_id: "tree_up",
+      target_id: "candle_up",
+      metadata: {
+        relation: "cùng đứng thẳng",
       },
     },
     {
-      id: "apple",
-      label: "quả táo",
-      image: {
-        kind: "emoji",
-        ref: "🍎",
-      },
-      category: {
-        type: "hoa quả",
+      type: "pair",
+      source_id: "umbrella_down",
+      target_id: "trophy_tilt",
+      metadata: {
+        relation: "cùng xoay ngược",
       },
     },
     {
-      id: "banana",
-      label: "quả chuối",
-      image: {
-        kind: "emoji",
-        ref: "🍌",
-      },
-      category: {
-        type: "hoa quả",
+      type: "pair",
+      source_id: "mirror_axis_vertical",
+      target_id: "color_bead_table_5x6",
+      metadata: {
+        relation: "cùng phản chiếu qua gương",
       },
     },
   ],
+  axes: {
+    rotation_type: {
+      values: ["hình đứng thẳng", "hình xoay ngược"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Xoay 180°",
+      description: "Làm quen cơ bản với Xoay ngược hình lại",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Xoay 180°",
+      description: "Nhận biết và chọn đúng Xoay ngược hình lại",
     },
     {
       rung: 3,
@@ -128,7 +251,18 @@ export const C2_ROT_02_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Xoay 180° nhé",
   },
-  ordering: ["cup", "bed", "chair", "apple", "banana"],
+  ordering: [
+    "tree_up",
+    "bottle_up",
+    "glass_up",
+    "candle_up",
+    "umbrella_down",
+    "mushroom_down",
+    "bell_tilt",
+    "trophy_tilt",
+    "mirror_axis_vertical",
+    "color_bead_table_5x6",
+  ],
 };
 
 export const C2_ROT_02_SEED: SkillSeed = {
@@ -142,7 +276,6 @@ export const C2_ROT_02_SEED: SkillSeed = {
       difficulty: 3,
       theme: "home",
       rounds: 3,
-      legacy_v1_ref: "D2-06",
     },
     {
       code: "GL-C2-PRJ-TAP-0010",
@@ -150,55 +283,6 @@ export const C2_ROT_02_SEED: SkillSeed = {
       band: "5-6",
       difficulty: 1,
       theme: "festival",
-      rounds: 3,
-      legacy_v1_ref: "D2-06",
-    },
-    {
-      code: "GL-C2-ROT-DOTS-0003",
-      template: "GT-011",
-      band: "5-6",
-      difficulty: 3,
-      theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ROT-DOTS-0004",
-      template: "GT-011",
-      band: "5-6",
-      difficulty: 4,
-      theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ROT-MAZE-0003",
-      template: "GT-013",
-      band: "4-5",
-      difficulty: 3,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ROT-MAZE-0004",
-      template: "GT-013",
-      band: "4-5",
-      difficulty: 4,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ROT-DIFF-0003",
-      template: "GT-014",
-      band: "5-6",
-      difficulty: 3,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ROT-DIFF-0004",
-      template: "GT-014",
-      band: "5-6",
-      difficulty: 4,
-      theme: "animal",
       rounds: 3,
     },
     {
@@ -210,28 +294,24 @@ export const C2_ROT_02_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C2-ROT-ISO-0004",
-      template: "GT-017",
+      code: "GL-C2-ROT-MATRX-0285",
+      template: "GT-011",
+      band: "5-6",
+      difficulty: 3,
+      access_tier: "standard",
+      theme: "home",
+      rounds: 3,
+      montessori_ref: "WB21-D3",
+    },
+    {
+      code: "GL-C2-ROT-TAP-0286",
+      template: "GT-001",
       band: "5-6",
       difficulty: 4,
-      theme: "ocean",
+      access_tier: "premium",
+      theme: "festival",
       rounds: 3,
-    },
-    {
-      code: "GL-C2-ROT-TFRA-0003",
-      template: "GT-019",
-      band: "4-5",
-      difficulty: 3,
-      theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ROT-TFRA-0004",
-      template: "GT-019",
-      band: "4-5",
-      difficulty: 4,
-      theme: "vehicle",
-      rounds: 3,
+      montessori_ref: "WB21-D2",
     },
   ],
 };

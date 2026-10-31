@@ -4,7 +4,6 @@ import {
   curricula,
   curriculumItems,
   gameLevels,
-  gameTemplates,
   getOwnerDb,
   playSessions,
   telemetryEvents,
@@ -34,7 +33,7 @@ describe("Web Scale Gate Drills & Failure Matrix — Task #78 / P5.3", () => {
   let testUserId = 0;
   let testChildProfileId = 0;
   let gameLevelId = 0;
-  let templateId = 0;
+  let templateCode = "GT-001";
 
   beforeEach(async () => {
     // 1. Seed base user
@@ -62,26 +61,8 @@ describe("Web Scale Gate Drills & Failure Matrix — Task #78 / P5.3", () => {
       .returning({ id: childProfiles.id });
     testChildProfileId = child?.id ?? 0;
 
-    // 3. Seed template & game level
-    const templateCode = `GT-${String(Math.floor(Math.random() * 899) + 100).padStart(3, "0")}`;
-    const [tmpl] = await db
-      .insert(gameTemplates)
-      .values({
-        code: templateCode,
-        name: "Template Scale",
-        mechanic: "tap_select",
-        contentContract: { schema: "v1" },
-        status: "active",
-      })
-      .onConflictDoNothing()
-      .returning({ id: gameTemplates.id });
-
-    if (tmpl) {
-      templateId = tmpl.id;
-    } else {
-      const [existing] = await db.select().from(gameTemplates).limit(1);
-      templateId = existing?.id ?? 0;
-    }
+    // 3. Seed game level
+    templateCode = "GT-001";
 
     let glCode = `GL-C1-SCL-DRL-${String(Math.floor(Math.random() * 8999) + 1000).padStart(4, "0")}`;
     for (let i = 0; i < 20; i++) {
@@ -100,15 +81,12 @@ describe("Web Scale Gate Drills & Failure Matrix — Task #78 / P5.3", () => {
       .insert(gameLevels)
       .values({
         code: glCode,
-        entityId: Math.floor(Math.random() * 800_000) + 100_000,
-        name: "Game Level Scale",
         title: "Game Level Scale",
         difficulty: 1,
         accessTier: "standard",
-        status: "published",
         contentPack: { items: [{ id: 1, name: "Apple" }] },
         difficultyParams: { count: 3 },
-        templateId,
+        templateCode,
       })
       .returning({ id: gameLevels.id });
     gameLevelId = gl?.id ?? 0;
@@ -220,12 +198,9 @@ describe("Web Scale Gate Drills & Failure Matrix — Task #78 / P5.3", () => {
         .insert(curricula)
         .values({
           code: curriculumCode,
-          entityId: Math.floor(100_000 + Math.random() * 800_000),
           title: "Chương trình Web Scale",
           accessTier: "standard",
-          totalWeeks: 1,
-          status: "published",
-          contentVersion: 1,
+          durationWeeks: 1,
         })
         .returning({ id: curricula.id });
 
@@ -265,8 +240,7 @@ describe("Web Scale Gate Drills & Failure Matrix — Task #78 / P5.3", () => {
         sessionUuid,
         childProfileId: testChildProfileId,
         gameLevelId,
-        contentVersion: 1,
-        templateId,
+        templateCode,
         startedAt: new Date(),
         completionStatus: "in_progress",
       });
@@ -312,8 +286,7 @@ describe("Web Scale Gate Drills & Failure Matrix — Task #78 / P5.3", () => {
         sessionUuid,
         childProfileId: testChildProfileId,
         gameLevelId,
-        contentVersion: 1,
-        templateId,
+        templateCode,
         startedAt: new Date(),
         completionStatus: "in_progress",
       });

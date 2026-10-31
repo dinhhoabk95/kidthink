@@ -5,7 +5,7 @@ import {
   buildWebhookPayload,
   mockRawWebhookEvent,
   signRawBody,
-} from "../../mock-payment-webhook.js";
+} from "~~/tests/mock-payment-webhook.js";
 
 const processMock = vi.hoisted(() => vi.fn());
 

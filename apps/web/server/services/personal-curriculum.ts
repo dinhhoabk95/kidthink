@@ -10,7 +10,6 @@ import {
   curriculumItems,
   gameLevels,
   getDb,
-  lessons,
   personalCurricula,
   personalCurriculumEnrollments,
   personalCurriculumItemProgress,
@@ -46,7 +45,6 @@ import {
 import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 
 const DEFAULT_MAX_PERSONAL_CURRICULA = 5;
-const COMPETENCY_LESSON_REGEX = /^(?:LES-)?(C[1-6])/i;
 const COMPETENCY_GAME_REGEX = /^(?:GL-)?(C[1-6])/i;
 
 interface UserCallerContext {
@@ -112,32 +110,6 @@ interface RawItemInput {
   isRequired?: boolean;
 }
 
-function buildLessonDetail(
-  item: RawItemInput,
-  lesson?: typeof lessons.$inferSelect
-): PersonalCurriculumItemDetail {
-  return {
-    id: item.id ?? 0,
-    personal_curriculum_id: item.personalCurriculumId ?? 0,
-    week_no: item.weekNo,
-    session_no: item.sessionNo,
-    position: item.position,
-    entity_type: "lesson",
-    entity_id: item.entityId,
-    code: lesson?.code,
-    title: lesson?.title ?? `Bài học #${item.entityId}`,
-    is_required: item.isRequired !== false,
-    access_tier: lesson?.accessTier as AccessTier | undefined,
-    status: lesson?.status,
-    competency_code: lesson?.code
-      ?.match(COMPETENCY_LESSON_REGEX)?.[1]
-      ?.toUpperCase(),
-    difficulty: 1,
-    estimated_minutes: 20,
-    is_offline: false,
-  };
-}
-
 function buildGameLevelDetail(
   item: RawItemInput,
   gl?: typeof gameLevels.$inferSelect
@@ -154,11 +126,10 @@ function buildGameLevelDetail(
     title: gl?.title ?? `Trò chơi #${item.entityId}`,
     is_required: item.isRequired !== false,
     access_tier: gl?.accessTier as AccessTier | undefined,
-    status: gl?.status,
+    status: gl ? "published" : undefined,
     competency_code: gl?.code?.match(COMPETENCY_GAME_REGEX)?.[1]?.toUpperCase(),
     difficulty: gl?.difficulty ?? 1,
     estimated_minutes: 10,
-    is_offline: false,
   };
 }
 
@@ -170,42 +141,27 @@ async function fetchAndEnrichItemMetadata(
     return [];
   }
 
-  const lessonIds = items
-    .filter((i) => i.entityType === "lesson")
-    .map((i) => i.entityId);
   const gameLevelIds = items
     .filter((i) => i.entityType === "game_level")
     .map((i) => i.entityId);
 
-  const lessonMap = new Map<number, typeof lessons.$inferSelect>();
-  if (lessonIds.length > 0) {
-    const fetchedLessons = await db
-      .select()
-      .from(lessons)
-      .where(inArray(lessons.id, lessonIds));
-    for (const l of fetchedLessons) {
-      lessonMap.set(l.id, l);
-    }
-  }
-
   const gameLevelMap = new Map<number, typeof gameLevels.$inferSelect>();
-  if (gameLevelIds.length > 0) {
-    const fetchedGameLevels = await db
-      .select()
-      .from(gameLevels)
-      .where(inArray(gameLevels.id, gameLevelIds));
-    for (const g of fetchedGameLevels) {
-      gameLevelMap.set(g.id, g);
-    }
+
+  const fetchedGameLevels =
+    gameLevelIds.length > 0
+      ? await db
+          .select()
+          .from(gameLevels)
+          .where(inArray(gameLevels.id, gameLevelIds))
+      : [];
+
+  for (const g of fetchedGameLevels) {
+    gameLevelMap.set(g.id, g);
   }
 
   const result: PersonalCurriculumItemDetail[] = [];
   for (const item of items) {
-    if (item.entityType === "lesson") {
-      result.push(buildLessonDetail(item, lessonMap.get(item.entityId)));
-    } else {
-      result.push(buildGameLevelDetail(item, gameLevelMap.get(item.entityId)));
-    }
+    result.push(buildGameLevelDetail(item, gameLevelMap.get(item.entityId)));
   }
 
   return result.sort((a, b) => {
@@ -219,37 +175,6 @@ async function fetchAndEnrichItemMetadata(
   });
 }
 
-async function validateLessons(
-  db: ReturnType<typeof getDb>,
-  lessonIds: number[],
-  allowedTiers: AccessTier[]
-): Promise<void> {
-  if (lessonIds.length === 0) {
-    return;
-  }
-  const fetchedLessons = await db
-    .select()
-    .from(lessons)
-    .where(inArray(lessons.id, lessonIds));
-  for (const l of fetchedLessons) {
-    if (l.status !== "published") {
-      throw new ValidationError(
-        `BR-PCU-01: Bài học '${l.title}' (${l.code}) chưa được xuất bản (status: ${l.status}).`
-      );
-    }
-    if (!allowedTiers.includes(l.accessTier as AccessTier)) {
-      throw new TierLockedError(
-        `BR-PCU-01: Bài học '${l.title}' yêu cầu gói ${l.accessTier}, vượt quyền tài khoản của bạn.`,
-        {
-          cause: {
-            access_tier: l.accessTier,
-          },
-        }
-      );
-    }
-  }
-}
-
 async function validateGameLevels(
   db: ReturnType<typeof getDb>,
   gameLevelIds: number[],
@@ -258,16 +183,15 @@ async function validateGameLevels(
   if (gameLevelIds.length === 0) {
     return;
   }
+  const uniqueGameLevelIds = [...new Set(gameLevelIds)];
   const fetchedGameLevels = await db
     .select()
     .from(gameLevels)
-    .where(inArray(gameLevels.id, gameLevelIds));
+    .where(inArray(gameLevels.id, uniqueGameLevelIds));
+  if (fetchedGameLevels.length !== uniqueGameLevelIds.length) {
+    throw new ValidationError("Một hoặc nhiều màn chơi không tồn tại");
+  }
   for (const g of fetchedGameLevels) {
-    if (g.status !== "published") {
-      throw new ValidationError(
-        `BR-PCU-01: Trò chơi '${g.title}' (${g.code}) chưa được xuất bản (status: ${g.status}).`
-      );
-    }
     if (!allowedTiers.includes(g.accessTier as AccessTier)) {
       throw new TierLockedError(
         `BR-PCU-01: Trò chơi '${g.title}' yêu cầu gói ${g.accessTier}, vượt quyền tài khoản của bạn.`,
@@ -287,14 +211,10 @@ async function validateItemsForUser(
   userTier: AccessTier
 ): Promise<void> {
   const allowedTiers = getAllowedTiers(userTier);
-  const lessonIds = items
-    .filter((i) => i.entity_type === "lesson")
-    .map((i) => i.entity_id);
   const gameLevelIds = items
     .filter((i) => i.entity_type === "game_level")
     .map((i) => i.entity_id);
 
-  await validateLessons(db, lessonIds, allowedTiers);
   await validateGameLevels(db, gameLevelIds, allowedTiers);
 }
 
@@ -652,12 +572,7 @@ export async function copySystemCurriculum(
   const [systemCurriculum] = await db
     .select()
     .from(curricula)
-    .where(
-      and(
-        eq(curricula.code, input.system_curriculum_code),
-        eq(curricula.status, "published")
-      )
-    );
+    .where(eq(curricula.code, input.system_curriculum_code));
 
   if (!systemCurriculum) {
     throw new CurriculumNotFoundError(input.system_curriculum_code);
@@ -678,11 +593,14 @@ export async function copySystemCurriculum(
   // Validate items
   const itemsToCopy: PersonalCurriculumItemInput[] = [];
   for (const it of sysItems) {
+    if (it.entityType !== "game_level") {
+      continue;
+    }
     itemsToCopy.push({
       week_no: it.weekNo,
       session_no: it.sessionNo,
       position: it.position,
-      entity_type: it.entityType as "lesson" | "game_level",
+      entity_type: "game_level",
       entity_id: it.entityId,
       is_required: it.isRequired,
     });
@@ -790,31 +708,31 @@ export async function enrollChildInPersonalCurriculum(
 ): Promise<{ enrollment_id: number; status: string; enrolled_at: string }> {
   const db = getDb();
 
-  // 1. Verify child ownership (BR-PCU-02)
-  const [child] = await db
-    .select()
-    .from(childProfiles)
-    .where(
-      and(
-        eq(childProfiles.uuid, childUuid),
-        eq(childProfiles.userId, context.userId)
-      )
-    );
+  // 1 & 2. Verify child & curriculum ownership in parallel (BR-PCU-02)
+  const [[child], [curriculum]] = await Promise.all([
+    db
+      .select()
+      .from(childProfiles)
+      .where(
+        and(
+          eq(childProfiles.uuid, childUuid),
+          eq(childProfiles.userId, context.userId)
+        )
+      ),
+    db
+      .select()
+      .from(personalCurricula)
+      .where(
+        and(
+          eq(personalCurricula.uuid, personalCurriculumUuid),
+          eq(personalCurricula.userId, context.userId)
+        )
+      ),
+  ]);
 
   if (!child) {
     throw new ChildNotFoundError(childUuid);
   }
-
-  // 2. Verify curriculum ownership (BR-PCU-02)
-  const [curriculum] = await db
-    .select()
-    .from(personalCurricula)
-    .where(
-      and(
-        eq(personalCurricula.uuid, personalCurriculumUuid),
-        eq(personalCurricula.userId, context.userId)
-      )
-    );
 
   if (!curriculum) {
     throw new PersonalCurriculumNotFoundError(personalCurriculumUuid);
@@ -931,27 +849,31 @@ export async function resolveChildPersonalCurriculumNextStep(
     return { active_enrollment: null, next_step: null };
   }
 
-  const rawItems = await db
-    .select()
-    .from(personalCurriculumItems)
-    .where(
-      eq(personalCurriculumItems.personalCurriculumId, enrollment.curriculumId)
-    );
+  const [rawItems, progressRows] = await Promise.all([
+    db
+      .select()
+      .from(personalCurriculumItems)
+      .where(
+        eq(
+          personalCurriculumItems.personalCurriculumId,
+          enrollment.curriculumId
+        )
+      ),
+    db
+      .select({
+        itemId: personalCurriculumItemProgress.personalCurriculumItemId,
+        status: personalCurriculumItemProgress.status,
+      })
+      .from(personalCurriculumItemProgress)
+      .where(
+        and(
+          eq(personalCurriculumItemProgress.enrollmentId, enrollment.id),
+          eq(personalCurriculumItemProgress.status, "completed")
+        )
+      ),
+  ]);
 
   const enrichedItems = await fetchAndEnrichItemMetadata(db, rawItems);
-
-  const progressRows = await db
-    .select({
-      itemId: personalCurriculumItemProgress.personalCurriculumItemId,
-      status: personalCurriculumItemProgress.status,
-    })
-    .from(personalCurriculumItemProgress)
-    .where(
-      and(
-        eq(personalCurriculumItemProgress.enrollmentId, enrollment.id),
-        eq(personalCurriculumItemProgress.status, "completed")
-      )
-    );
 
   const completedItemIds = new Set(progressRows.map((p) => p.itemId));
   const userTier = context.currentTier || resolveUserTier(context.entitlements);

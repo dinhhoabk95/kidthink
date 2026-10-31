@@ -1,17 +1,9 @@
 import { hashPassword } from "@mindkid/auth";
 import { getOwnerDb } from "./client.ts";
-import {
-  entitlementKeys,
-  packageEntitlements,
-  packages,
-} from "./schema/billing.ts";
+import { entitlementKeys, packages } from "./schema/billing.ts";
 import { consentRequirements, managers } from "./schema/identity.ts";
 import { seedInitialAccounts } from "./seed-accounts.ts";
-import {
-  SEED_ENTITLEMENT_KEYS,
-  SEED_PACKAGE_ENTITLEMENTS,
-  SEED_PACKAGES,
-} from "./seed-catalog.ts";
+import { SEED_ENTITLEMENT_KEYS, SEED_PACKAGES } from "./seed-catalog.ts";
 
 export async function seed() {
   const db = getOwnerDb();
@@ -48,12 +40,7 @@ export async function seed() {
       });
   }
 
-  // 3. Seed package_entitlements
-  for (const item of SEED_PACKAGE_ENTITLEMENTS) {
-    await db.insert(packageEntitlements).values(item).onConflictDoNothing();
-  }
-
-  // 4. Seed initial test accounts (Managers and Users)
+  // 3. Seed initial test accounts (Managers and Users)
   const accountStats = await seedInitialAccounts(db);
   console.log(
     `[db:seed] Initial accounts seeded: ${accountStats.managerCount} managers, ${accountStats.userCount} users, ${accountStats.childProfileCount} children, ${accountStats.entitlementCount} entitlements.`

@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { validateLessonModel } from "#src/lesson-model";
 import { validatePublishChecklist } from "#src/publish-checklist";
 import {
   validateWorksheetContent,
@@ -348,62 +347,5 @@ describe("Publish Checklist cho Worksheet (BR-WSM-03, BR-WSM-06, D-P4J)", () => 
     const result = validatePublishChecklist("worksheet", payload);
     expect(result.ok).toBe(false);
     expect(result.missing).toContain("worksheet_render_hash_mismatch");
-  });
-});
-
-describe("Lesson Alternative Requirement for Worksheet (BR-WSM-07)", () => {
-  const guideText =
-    "Mục tiêu: Đếm đến 5. Chuẩn bị: Thẻ số. Mở đầu: Hát bài tập đếm. Làm được: Đếm trôi chảy. Cần giúp: Dùng ngón tay đếm cùng trẻ.";
-
-  it("từ chối lesson có activity worksheet nhưng KHÔNG có hoạt động thay thế không cần in", () => {
-    const lessonWithOnlyWorksheet = {
-      code: "LES-0001",
-      title: "Bài học luyện tập quy luật",
-      guide: guideText,
-      estimated_minutes: 20,
-      assessment: "Trẻ chỉ ra được hình tiếp theo trong chuỗi.",
-      warm_up: "Khởi động cùng cô",
-      reflection: "Đúc kết bài học",
-      activities: [
-        {
-          activity_code: "ACT-0001",
-          kind: "worksheet",
-          title: "Phiếu tô màu quy luật",
-        },
-      ],
-    };
-
-    const res = validateLessonModel(lessonWithOnlyWorksheet);
-    expect(res.ok).toBe(false);
-    expect(res.errors.some((e) => e.includes("BR-WSM-07"))).toBe(true);
-  });
-
-  it("chấp nhận lesson có activity worksheet KÈM hoạt động thay thế không cần in (discussion/manipulative)", () => {
-    const lessonWithAlternative = {
-      code: "LES-0002",
-      title: "Bài học luyện tập quy luật có phương án thay thế",
-      guide: guideText,
-      estimated_minutes: 25,
-      assessment: "Trẻ xếp được các khối gỗ hoặc tô được phiếu quy luật.",
-      warm_up: "Khởi động cùng cô",
-      reflection: "Đúc kết bài học",
-      activities: [
-        {
-          activity_code: "ACT-0001",
-          kind: "worksheet",
-          title: "Phiếu tô màu quy luật",
-        },
-        {
-          activity_code: "ACT-0002",
-          kind: "manipulative",
-          title:
-            "Xếp khối gỗ màu theo quy luật tương ứng (phương án không cần in)",
-        },
-      ],
-    };
-
-    const res = validateLessonModel(lessonWithAlternative);
-    expect(res.ok).toBe(true);
-    expect(res.errors).toEqual([]);
   });
 });

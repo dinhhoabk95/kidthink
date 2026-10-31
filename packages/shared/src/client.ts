@@ -14,8 +14,6 @@
 // Module bị loại: access-gating, alerts-config, custom-game, email-job, logger, payment-state-machine, publish-checklist, rate-limit-middleware, round-set-validation, vietqr, web-scale-contract.
 export * from "./access-cta.js";
 export * from "./access-ladder.js";
-export * from "./activity-model.js";
-export * from "./activity-schemas.js";
 export * from "./admin-child-projection.js";
 export * from "./advanced-report.js";
 export * from "./age-bands.js";
@@ -39,11 +37,8 @@ export * from "./glossary.js";
 export * from "./healthy-play-limits.js";
 export * from "./ids.js";
 export * from "./legal-summary.js";
-export * from "./lesson-model.js";
-export * from "./lesson-plan.js";
 export * from "./lifecycle.js";
 export * from "./notifications.js";
-export * from "./offline-activities.js";
 export * from "./pedagogical-evidence.js";
 export * from "./personal-curriculum.js";
 export * from "./program-showcase.js";

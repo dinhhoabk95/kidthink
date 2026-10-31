@@ -194,12 +194,12 @@ export async function findCompletedLevelCodes(
   }
 
   const rows = await db
-    .select({ code: gameLevels.code })
+    .selectDistinct({ code: gameLevels.code })
     .from(playSessions)
     .innerJoin(gameLevels, eq(gameLevels.id, playSessions.gameLevelId))
     .where(and(...conditions));
 
-  return Array.from(new Set(rows.map((r) => r.code)));
+  return rows.map((r) => r.code);
 }
 
 async function sortIntroLevelsTopologically(
@@ -262,13 +262,27 @@ async function sortIntroLevelsTopologically(
 export async function checkLevelIntroRequired(
   level: typeof gameLevels.$inferSelect,
   caller: CallerIdentity,
-  options: {
-    guestDeviceId?: string;
-    lessonRunId?: string | null;
-    isManagerPreview?: boolean;
-  } = {}
+  optionsOrResolvedChildId:
+    | {
+        guestDeviceId?: string;
+        isManagerPreview?: boolean;
+        resolvedChildId?: number | null;
+      }
+    | number
+    | null = {},
+  resolvedChildIdArg?: number | null
 ): Promise<IntroCheckResult> {
-  if (options.isManagerPreview || options.lessonRunId) {
+  const options =
+    typeof optionsOrResolvedChildId === "object" &&
+    optionsOrResolvedChildId !== null
+      ? optionsOrResolvedChildId
+      : {};
+  const explicitChildId =
+    typeof optionsOrResolvedChildId === "number"
+      ? optionsOrResolvedChildId
+      : (options.resolvedChildId ?? resolvedChildIdArg);
+
+  if (options.isManagerPreview) {
     return { intro_required: false };
   }
 
@@ -335,7 +349,6 @@ export async function checkLevelIntroRequired(
     .where(
       and(
         inArray(gameLevels.templateCode, teachTemplateCodes),
-        eq(gameLevels.status, "published"),
         inArray(contentSkillMap.skillId, transitiveSkillIds)
       )
     );
@@ -344,7 +357,10 @@ export async function checkLevelIntroRequired(
     return { intro_required: false };
   }
 
-  const childProfileId = await resolveCallerChildId(db, caller);
+  const childProfileId =
+    explicitChildId !== undefined && explicitChildId !== null
+      ? explicitChildId
+      : await resolveCallerChildId(db, caller);
   const completedLevelIds = await findCompletedIntroLevelIds(
     db,
     introLevels,

@@ -2,6 +2,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
+import { createAdminEnv } from "~/utils/env";
 import {
   checkGlobalAuthGuard,
   scanRuntimeBoundary,
@@ -136,5 +137,21 @@ window.open("/api/three");
     const violations = scanRuntimeBoundary(tempDir);
     expect(violations.length).toBe(3);
     fs.rmSync(tempDir, { recursive: true, force: true });
+  });
+
+  it("BR-ENV-01 & BR-ENV-13: createAdminEnv validates NUXT_PUBLIC_API_BASE_URL protocol via @t3-oss/env-nuxt", () => {
+    const prev = process.env.NUXT_PUBLIC_API_BASE_URL;
+    try {
+      process.env.NUXT_PUBLIC_API_BASE_URL = "https://api.mindkid.vn";
+      const parsed = createAdminEnv({ isServer: true });
+      expect(parsed.NUXT_PUBLIC_API_BASE_URL).toBe("https://api.mindkid.vn");
+
+      process.env.NUXT_PUBLIC_API_BASE_URL = "ftp://api.mindkid.vn";
+      expect(() => createAdminEnv({ isServer: true })).toThrow(
+        "NUXT_PUBLIC_API_BASE_URL"
+      );
+    } finally {
+      process.env.NUXT_PUBLIC_API_BASE_URL = prev;
+    }
   });
 });

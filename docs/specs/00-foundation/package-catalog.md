@@ -112,8 +112,7 @@ một điều.
 
 | `code` | Mở entitlement | Lên catalog khi |
 |---|---|---|
-| `PKG-addon_lesson_plan` | `create_lesson_plan` `duplicate_lesson` `customize_lesson` `export_pdf` | `07-addon/lesson-plan-creator.md` đạt `implemented` |
-| `PKG-addon_curriculum` | `create_custom_curriculum` | `07-addon/personal-curriculum.md` đạt `implemented` |
+| `PKG-addon_curriculum` | `create_custom_curriculum` `export_pdf` | `07-addon/personal-curriculum.md` đạt `implemented` |
 | `PKG-addon_custom_game` | `create_custom_game` | `07-addon/custom-game-builder.md` đạt `implemented` |
 | `PKG-addon_ai` | `use_ai_analysis` `use_ai_search` | `07-addon/ai-credit-ledger.md` đạt `implemented` |
 

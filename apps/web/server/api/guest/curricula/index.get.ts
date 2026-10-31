@@ -6,7 +6,7 @@ import {
   type ShowcaseGroup,
   toProgramCardPublic,
 } from "@mindkid/shared";
-import { asc, eq } from "drizzle-orm";
+import { asc } from "drizzle-orm";
 import { defineEventHandler, setHeader } from "h3";
 
 const SHOWCASE_GROUP_ORDER: ShowcaseGroup[] = [
@@ -34,10 +34,8 @@ export default defineEventHandler(async (event) => {
       durationWeeks: curricula.durationWeeks,
       sessionsPerWeek: curricula.sessionsPerWeek,
       accessTier: curricula.accessTier,
-      status: curricula.status,
     })
     .from(curricula)
-    .where(eq(curricula.status, "published"))
     .orderBy(asc(curricula.targetAgeMin), asc(curricula.code));
 
   if (publishedCurricula.length === 0) {

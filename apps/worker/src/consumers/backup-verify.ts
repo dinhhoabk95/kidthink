@@ -21,6 +21,106 @@ export interface VerifyOptions {
   directory?: string;
 }
 
+async function openEncryptedBackupStream(
+  backupFile: string,
+  encryptionKey: string
+): Promise<{ fileStream: fs.ReadStream; decipher: crypto.DecipherGCM }> {
+  const fileHandle = await fs.promises.open(backupFile, "r");
+  const iv = Buffer.alloc(16);
+  await fileHandle.read(iv, 0, 16, 0);
+
+  const stats = await fileHandle.stat();
+  const authTag = Buffer.alloc(16);
+  await fileHandle.read(authTag, 0, 16, stats.size - 16);
+  await fileHandle.close();
+
+  const decipher = crypto.createDecipheriv(
+    "aes-256-gcm",
+    Buffer.from(encryptionKey, "utf8"),
+    iv
+  );
+  decipher.setAuthTag(authTag);
+
+  const fileStream = fs.createReadStream(backupFile, {
+    start: 16,
+    end: stats.size - 17,
+  });
+
+  return { fileStream, decipher };
+}
+
+async function createTempDatabase(
+  dbUrl: string,
+  tempDbName: string
+): Promise<void> {
+  const sqlAdmin = postgres(dbUrl);
+  try {
+    await sqlAdmin.unsafe(`CREATE DATABASE ${tempDbName}`);
+  } finally {
+    await sqlAdmin.end();
+  }
+}
+
+async function dropTempDatabase(
+  dbUrl: string,
+  tempDbName: string
+): Promise<void> {
+  const sqlAdminCleanup = postgres(dbUrl);
+  try {
+    await sqlAdminCleanup.unsafe(`DROP DATABASE IF EXISTS ${tempDbName}`);
+  } finally {
+    await sqlAdminCleanup.end();
+  }
+}
+
+async function restorePsqlDump(
+  tempDbUrl: string,
+  fileStream: fs.ReadStream,
+  decipher: crypto.DecipherGCM
+): Promise<void> {
+  const gunzip = createGunzip();
+  const psqlProcess = spawn("psql", [tempDbUrl], {
+    stdio: ["pipe", "ignore", "pipe"],
+  });
+
+  let psqlStderr = "";
+  psqlProcess.stderr.on("data", (data) => {
+    psqlStderr += data.toString();
+  });
+
+  const psqlPromise = new Promise<void>((resolve, reject) => {
+    psqlProcess.on("close", (code) => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject(new Error(`psql restore failed: ${psqlStderr}`));
+      }
+    });
+    psqlProcess.on("error", reject);
+  });
+
+  await Promise.all([
+    pipeline(fileStream, decipher, gunzip, psqlProcess.stdin),
+    psqlPromise,
+  ]);
+}
+
+async function verifyTableCount(tempDbUrl: string): Promise<number> {
+  const sqlVerify = postgres(tempDbUrl);
+  try {
+    const result = await sqlVerify.unsafe<{ count: string }[]>(`
+      SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public'
+    `);
+    const count = Number.parseInt(result[0]?.count ?? "0", 10);
+    if (count === 0) {
+      throw new Error("Verify failed: restored 0 rows");
+    }
+    return count;
+  } finally {
+    await sqlVerify.end();
+  }
+}
+
 export async function runVerifyBackup(
   jobId: string,
   options: VerifyOptions = {}
@@ -62,9 +162,6 @@ export async function runVerifyBackup(
       throw new Error("No successful backup found to verify");
     }
 
-    // backup_log.storagePath holds the OBJECT KEY in the bucket
-    // (prefix/YYYY/MM/DD/name). The copy still on this host is the bare
-    // filename inside BACKUP_DIR, so take the last segment.
     const backupFile = path.join(
       directory,
       path.basename(latestBackup.storagePath)
@@ -75,91 +172,31 @@ export async function runVerifyBackup(
     }
 
     // 2. Read IV and create decipher
-    const fileHandle = await fs.promises.open(backupFile, "r");
-    const iv = Buffer.alloc(16);
-    await fileHandle.read(iv, 0, 16, 0);
-
-    const stats = await fileHandle.stat();
-    const authTag = Buffer.alloc(16);
-    await fileHandle.read(authTag, 0, 16, stats.size - 16);
-
-    await fileHandle.close();
-
-    const decipher = crypto.createDecipheriv(
-      "aes-256-gcm",
-      Buffer.from(encryptionKey, "utf8"),
-      iv
+    const { fileStream, decipher } = await openEncryptedBackupStream(
+      backupFile,
+      encryptionKey
     );
-    decipher.setAuthTag(authTag);
-
-    const fileStream = fs.createReadStream(backupFile, {
-      start: 16,
-      end: stats.size - 17, // don't include auth tag
-    });
-
-    const gunzip = createGunzip();
 
     // 3. Create temp database
     const dbUrl = requireEnv("DATABASE_URL");
     tempDbName = `verify_${crypto.randomBytes(4).toString("hex")}`;
-
-    // Connect to default DB to create temp DB
-    const sqlAdmin = postgres(dbUrl);
-    await sqlAdmin.unsafe(`CREATE DATABASE ${tempDbName}`);
-    await sqlAdmin.end();
+    await createTempDatabase(dbUrl, tempDbName);
 
     // 4. Restore via psql
     const tempDbUrl = dbUrl.replace(dbNameRegex, `/${tempDbName}$1`);
-
-    // Safety check: ensure we are not restoring into the main DB
     if (!tempDbName.startsWith("verify_")) {
       throw new Error(
         "Safety check failed: target DB must be a verify temp DB"
       );
     }
 
-    const psqlProcess = spawn("psql", [tempDbUrl], {
-      stdio: ["pipe", "ignore", "pipe"],
-    });
-
-    let psqlStderr = "";
-    psqlProcess.stderr.on("data", (data) => {
-      psqlStderr += data.toString();
-    });
-
-    const psqlPromise = new Promise<void>((resolve, reject) => {
-      psqlProcess.on("close", (code) => {
-        if (code === 0) {
-          resolve();
-        } else {
-          reject(new Error(`psql restore failed: ${psqlStderr}`));
-        }
-      });
-      psqlProcess.on("error", reject);
-    });
-
-    await Promise.all([
-      pipeline(fileStream, decipher, gunzip, psqlProcess.stdin),
-      psqlPromise,
-    ]);
+    await restorePsqlDump(tempDbUrl, fileStream, decipher);
 
     // 5. Verify schema / rows
-    const sqlVerify = postgres(tempDbUrl);
-    const result = await sqlVerify.unsafe<{ count: string }[]>(`
-      SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public'
-    `);
-
-    const restoredRows = Number.parseInt(result[0]?.count ?? "0", 10);
-    if (restoredRows === 0) {
-      throw new Error("Verify failed: restored 0 rows");
-    }
-
-    await sqlVerify.end();
+    const restoredRows = await verifyTableCount(tempDbUrl);
 
     // 6. Cleanup temp DB
-    const sqlAdminCleanup = postgres(dbUrl);
-    await sqlAdminCleanup.unsafe(`DROP DATABASE ${tempDbName}`);
-    await sqlAdminCleanup.end();
+    await dropTempDatabase(dbUrl, tempDbName);
 
     // 7. Update log
     await getOwnerDb()
@@ -170,14 +207,12 @@ export async function runVerifyBackup(
         finishedAt: new Date(),
       })
       .where(eq(backupLog.id, log.id));
-  } catch (error: unknown) {
+  } catch (error) {
     if (tempDbName) {
       try {
         const dbUrl = requireEnv("DATABASE_URL");
-        const sqlAdminCleanup = postgres(dbUrl);
-        await sqlAdminCleanup.unsafe(`DROP DATABASE IF EXISTS ${tempDbName}`);
-        await sqlAdminCleanup.end();
-      } catch (_e) {
+        await dropTempDatabase(dbUrl, tempDbName);
+      } catch {
         // Ignore cleanup errors
       }
     }

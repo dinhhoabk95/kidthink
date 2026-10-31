@@ -1,0 +1,1331 @@
+{
+  "stage_id": "chang-17",
+  "workbook_id": "WB17",
+  "title": "Chặng 17: Lâu Đài Sudoku Bí Ẩn",
+  "subtitle": "Thử thách tư duy với số, chữ và hình",
+  "total_pages": 24,
+  "target_age": "3–6 tuổi",
+  "series": "Gấu Logic & Thỏ Quan Sát - Chuyến Tàu Toán Học (Phần 17)",
+  "mission": "Giải mã các cánh cửa ma trận Sudoku Số - Chữ - Hình trong Lâu Đài Bí Ẩn để thắp sáng Viên Ngọc Trí Tuệ",
+  "pedagogy": {
+    "framework": "Montessori & CPA (Concrete - Pictorial - Abstract)",
+    "approach": "Tư duy ma trận không gian lưới (Matrix Grid Reasoning), Ràng buộc không trùng lặp đa chiều (Row - Column - 2x2 Subgrid Non-repetition Constraint), Suy luận loại trừ logic (Elimination Logic), Tiến trình đa biểu diễn: Số trừu tượng (1–4) -> Ký tự ngôn ngữ (Chữ cái 4 ký tự) -> Biểu tượng hình học trực quan (◯, □, △, ✕)",
+    "competency": "C3 - Tư duy logic, Ma trận & Phân tích giải quyết vấn đề (Logic, Matrix & Problem Solving)",
+    "skills_targeted": [
+      {
+        "code": "C3.MTX.01",
+        "name": "Sudoku biểu tượng hình học 4x4 (không lặp theo hàng, cột và vùng 2x2)"
+      },
+      {
+        "code": "C3.MTX.02",
+        "name": "Sudoku chữ số 1–4 trong lưới 4x4 (quy tắc hàng, cột và vùng con 2x2)"
+      },
+      {
+        "code": "C3.MTX.03",
+        "name": "Sudoku ký tự chữ cái 4x4 (liên môn toán & ngôn ngữ từ vựng tiếng Anh)"
+      },
+      {
+        "code": "C3.LOG.01",
+        "name": "Suy luận loại trừ (Elimination Reasoning) xác định phần tử còn thiếu duy nhất"
+      },
+      {
+        "code": "C3.SPA.02",
+        "name": "Định vị không gian lưới ma trận (Grid spatial orientation & row-column coordinates)"
+      },
+      {
+        "code": "C1.NREC.01",
+        "name": "Nhận diện và phân biệt chính xác chữ số 1, 2, 3, 4"
+      }
+    ],
+    "progression_narrative": "Tiến trình sư phạm chặt chẽ 4 giai đoạn tăng tiến: (1) Khởi động Sudoku số cơ bản 1–4 (Trang 2–4): Làm quen quy tắc Sudoku 4x4 với mật độ ô cho sẵn dày đặc (6–8 gợi ý/bảng), trẻ dễ dàng tìm ô duy nhất còn trống trong hàng hoặc cột; (2) Chuyển dịch biểu diễn sang Sudoku chữ cái từ vựng tiếng Anh (Trang 5–8): Thay số bằng các từ 4 ký tự gần gũi (LION, BEAR, FISH, BOAT) giúp rèn sự linh hoạt nhận thức (cognitive flexibility) và gắn kết ngôn ngữ với tư duy toán học; (3) Thử thách Sudoku số tăng độ khó 1–30 (Trang 9–13): 30 bảng số được đánh số thứ tự liên tục, giảm dần số lượng gợi ý (chỉ còn 4–5 gợi ý), đòi hỏi trẻ kết hợp suy luận chéo giữa hàng, cột và khối con 2x2; (4) Thử thách Sudoku biểu tượng hình học 1–60 (Trang 14–23): 60 bảng ma trận sử dụng 4 hình học cơ bản (Tròn, Vuông, Tam giác, Dấu X), giải phóng trẻ khỏi gánh nặng xử lý số học để tập trung tối đa vào tư duy không gian và suy luận hình học trừu tượng; (5) Tổng kết & Thắp sáng Viên Ngọc Trí Tuệ (Trang 24): Hệ thống hóa toàn bộ 3 trụ cột kỹ năng (Số - Chữ - Hình), vinh danh 4 năng lực tư duy cốt lõi (Quan sát, Tập trung, Suy luận, Kiên nhẫn) cùng hoạt động tô màu ngọc thưởng."
+  },
+  "activity_groups": [
+    {
+      "group_id": "WB17-D1",
+      "group_name": "Sudoku số 1–4 khởi động cơ bản (Introductory Number Sudoku 4x4)",
+      "page_range": "Trang 2 – Trang 4 (Sách: Trang 1 – 3)",
+      "total_boards": 18,
+      "mechanic_description": "Ma trận 4x4 phân thành 4 vùng con 2x2. Trẻ điền các chữ số 1, 2, 3, 4 vào các ô trống sao cho mỗi hàng ngang, mỗi cột dọc và mỗi vùng con 2x2 đều chứa đủ cả 4 chữ số mà không lặp lại. Mật độ gợi ý cao (6–8 ô cho trước/bảng) giúp trẻ nhận diện ô khuyết duy nhất trên từng hàng hoặc từng cột.",
+      "sample_prompts": [
+        "Điền các chữ số 1, 2, 3, 4 sao cho mỗi hàng, mỗi cột, mỗi vùng đều có đủ các số 1, 2, 3, 4.",
+        "Mỗi hàng, mỗi cột và mỗi vùng đều phải có đủ 1, 2, 3, 4 nhé!",
+        "Bé quan sát thật kỹ rồi điền vào các ô trống nhé!"
+      ],
+      "visual_objects": [
+        "Lưới ma trận 4x4 nét kẻ đậm phân chia 4 khối 2x2 rõ ràng",
+        "Chữ số in to, rõ ràng: 1, 2, 3, 4",
+        "Khung bìa pastel tông tím - vàng lâu đài cổ tích"
+      ],
+      "quantities_and_ranges": "Chữ số 1 đến 4; kích thước lưới 4x4; 6 bảng mỗi trang.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-015",
+          "template_name": "sudoku-grid (lưới sudoku 4x4 tương tác chạm chọn hoặc kéo thả số vào ô trống)"
+        },
+        {
+          "template_id": "GT-008",
+          "template_name": "drag-to-slot (kéo thả thẻ số 1-4 từ thanh công cụ vào ô ma trận)"
+        },
+        {
+          "template_id": "GT-011",
+          "template_name": "matrix-pick (chạm vào ô trống để mở popover chọn 1 trong 4 số)"
+        }
+      ],
+      "recommended_skills": ["C3.MTX.02", "C3.LOG.01", "C1.NREC.01"]
+    },
+    {
+      "group_id": "WB17-D2",
+      "group_name": "Sudoku chữ cái từ vựng tiếng Anh (Letter & Word Sudoku 4x4)",
+      "page_range": "Trang 5 – Trang 8 (Sách: Trang 4 – 7)",
+      "total_boards": 16,
+      "mechanic_description": "Thay thế các con số bằng 4 chữ cái tiếng Anh tạo thành một từ vựng chủ đề quen thuộc (LION, BEAR, FISH, BOAT). Trẻ điền 4 chữ cái vào lưới 4x4 tuân thủ quy tắc không lặp theo hàng, cột và vùng 2x2. Rèn luyện khả năng trừu tượng hóa ký hiệu và tích hợp liên môn Toán - Tiếng Anh.",
+      "sample_prompts": [
+        "Điền các chữ cái L, I, O, N vào ô trống sao cho mỗi hàng, mỗi cột và mỗi vùng đều có đủ các chữ L, I, O, N.",
+        "Điền các chữ cái B, E, A, R vào ô trống sao cho mỗi hàng, mỗi cột và mỗi vùng đều có đủ các chữ B, E, A, R.",
+        "Điền các chữ cái F, I, S, H vào ô trống sao cho mỗi hàng, mỗi cột và mỗi vùng đều có đủ các chữ F, I, S, H.",
+        "Điền các chữ cái B, O, A, T vào ô trống sao cho mỗi hàng, mỗi cột và mỗi vùng đều có đủ các chữ B, O, A, T."
+      ],
+      "visual_objects": [
+        "Chú sư tử con đáng yêu (chủ đề từ LION) 🦁",
+        "Gấu Logic đại diện cho từ BEAR 🐻",
+        "Chú cá vàng cam bơi thổi bọt nước (chủ đề từ FISH) 🐟",
+        "Chiếc thuyền buồm căng gió lướt sóng (chủ đề từ BOAT) ⛵",
+        "Khối chữ cái in hoa: L, I, O, N, B, E, A, R, F, S, H, T"
+      ],
+      "quantities_and_ranges": "4 ký tự chữ cái mỗi bộ từ; kích thước ma trận 4x4; 4 bảng mỗi trang.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-015",
+          "template_name": "sudoku-grid (biến thể chữ cái letter-mode kèm phát âm ngữ âm phonics của từng chữ)"
+        },
+        {
+          "template_id": "GT-008",
+          "template_name": "drag-to-slot (kéo thả khối chữ cái vào ô trống)"
+        }
+      ],
+      "recommended_skills": ["C3.MTX.03", "C3.LOG.01"]
+    },
+    {
+      "group_id": "WB17-D3",
+      "group_name": "Thử thách Sudoku số 1–4 tăng tiến độ khó (Progressive Number Sudoku 4x4)",
+      "page_range": "Trang 9 – Trang 13 (Sách: Trang 8 – 12)",
+      "total_boards": 30,
+      "mechanic_description": "Chuỗi thử thách gồm 30 bảng Sudoku số 4x4 được đánh số thứ tự liên tục từ 1 đến 30. Số lượng gợi ý giảm dần từ 6 gợi ý xuống 4–5 gợi ý cho trước. Trẻ buộc phải sử dụng chiến thuật suy luận loại trừ đa bước: kiểm tra giao điểm giữa hàng và cột, loại trừ số đã có trong vùng 2x2 để tìm vị trí duy nhất còn lại.",
+      "sample_prompts": [
+        "Điền các chữ số 1, 2, 3, 4 vào ô trống sao cho mỗi hàng, mỗi cột, mỗi vùng đều có đủ 1, 2, 3, 4.",
+        "Bé nhớ kiểm tra cả hàng, cột và vùng nhé!",
+        "Những bảng này ít gợi ý hơn đấy, bé cứ điền từng ô thật cẩn thận nhé!"
+      ],
+      "visual_objects": [
+        "Lưới 4x4 đánh số định danh bảng (Bảng 1 đến Bảng 30)",
+        "Các chữ số 1, 2, 3, 4 bố trí thưa dần tạo khoảng trống tư duy",
+        "Biểu tượng gợi ý nhỏ trên tay Gấu Logic và kính lúp Thỏ Quan Sát"
+      ],
+      "quantities_and_ranges": "Chữ số 1 đến 4; 6 bảng mỗi trang x 5 trang = 30 thử thách tăng tiến.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-015",
+          "template_name": "sudoku-grid (hỗ trợ tính năng highlight hàng/cột/vùng khi trẻ chạm vào ô để hỗ trợ quan sát scaffolding)"
+        },
+        {
+          "template_id": "GT-011",
+          "template_name": "matrix-pick (chọn nhanh số điền vào lưới)"
+        }
+      ],
+      "recommended_skills": ["C3.MTX.02", "C3.LOG.01", "C3.SPA.02"]
+    },
+    {
+      "group_id": "WB17-D4",
+      "group_name": "Thử thách Sudoku biểu tượng hình học trừu tượng (Geometric Symbol Sudoku 4x4)",
+      "page_range": "Trang 14 – Trang 23 (Sách: Trang 13 – 22)",
+      "total_boards": 60,
+      "mechanic_description": "Quy mô thử thách lớn nhất gồm 60 bảng ma trận 4x4 đánh số từ 1 đến 60. Sử dụng 4 biểu tượng hình học chuẩn: Hình tròn (◯), Hình vuông (□), Hình tam giác (△) và Dấu chéo (✕). Không dùng số giúp loại bỏ áp lực đếm/tính, giải phóng hoàn toàn năng lực tư duy thị giác (visual spatial reasoning). Độ khó leo thang: từ bảng có 6 gợi ý giảm dần chỉ còn 3–4 gợi ý ở các bảng 55–60.",
+      "sample_prompts": [
+        "Điền các hình tròn, hình vuông, hình tam giác và dấu X vào ô trống sao cho mỗi hàng, mỗi cột, mỗi vùng đều có đủ 4 hình.",
+        "Mỗi hàng, mỗi cột, mỗi vùng phải đủ 4 hình khác nhau!",
+        "Bé nhìn xem trong mỗi ô 2x2 còn thiếu hình nào nhé!",
+        "Đây là những thử thách cuối cùng của Lâu đài Sudoku!"
+      ],
+      "visual_objects": [
+        "Biểu tượng ◯: Hình tròn màu xanh lam/đen nét chuẩn",
+        "Biểu tượng □: Hình vuông cân đối",
+        "Biểu tượng △: Hình tam giác đều đỉnh hướng lên",
+        "Biểu tượng ✕: Dấu nhân/chéo đối xứng",
+        "Bảng quy ước ký hiệu ở đầu trang: [◯ Hình tròn] [□ Hình vuông] [△ Hình tam giác] [✕ Dấu X]"
+      ],
+      "quantities_and_ranges": "4 biểu tượng hình học; 6 bảng mỗi trang x 10 trang = 60 thử thách hình học.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-015",
+          "template_name": "sudoku-grid (chế độ symbol-mode với 4 nút hình dạng xúc giác ở palette dưới cùng)"
+        },
+        {
+          "template_id": "GT-008",
+          "template_name": "drag-to-slot (kéo thả các khối hình ◯, □, △, ✕ vào ô lưới)"
+        },
+        {
+          "template_id": "GT-011",
+          "template_name": "matrix-pick (chạm chọn hình dạng tương ứng)"
+        }
+      ],
+      "recommended_skills": ["C3.MTX.01", "C3.LOG.01", "C3.SPA.02"]
+    },
+    {
+      "group_id": "WB17-D5",
+      "group_name": "Tổng kết chặng, Vinh danh năng lực & Thưởng ngọc trí tuệ (Mastery Synthesis & Award)",
+      "page_range": "Trang 24 (Sách: Trang 23)",
+      "total_boards": 0,
+      "mechanic_description": "Trang tổng kết toàn diện hành trình: Vinh danh chiến thắng mở khóa Lâu Đài Sudoku Bí Ẩn; ôn tập tổng hợp 3 phương thức Sudoku đã thành thạo (Số, Chữ, Hình); đánh giá 4 năng lực tư duy cốt lõi (Quan sát, Tập trung, Suy luận, Kiên nhẫn); trao Huy hiệu Hoàn Thành Chặng 17 và hoạt động xúc giác tô màu Viên Ngọc Trí Tuệ.",
+      "sample_prompts": [
+        "BÉ ĐÃ CHINH PHỤC LÂU ĐÀI SUDOKU BÍ ẨN!",
+        "Bé đã hoàn thành thật xuất sắc các thử thách Sudoku rồi!",
+        "Mình cùng nhận viên ngọc trí tuệ và bước sang chặng mới nhé!"
+      ],
+      "visual_objects": [
+        "Cánh cổng Lâu Đài Sudoku rộng mở",
+        "Viên Ngọc Trí Tuệ cầu vồng phát sáng rực rỡ trên bệ đá hoàng gia",
+        "3 ô tổng kết kỹ năng: [1. Sudoku số] [2. Sudoku chữ] [3. Sudoku hình]",
+        "4 biểu tượng huy hiệu năng lực: Quan sát 👁️, Tập trung 🎯, Suy luận 💡, Kiên nhẫn ❤️",
+        "Huy hiệu vàng kim: 'HOÀN THÀNH CHẶNG 17'",
+        "Viên kim cương nét vẽ đen trắng cho bé tô màu sáng tạo"
+      ],
+      "quantities_and_ranges": "1 trang tổng kết danh dự.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-000",
+          "template_name": "intro-tutorial (màn hình Celebration / Award ceremony với pháo hoa, hiệu ứng ánh sáng ngọc bích và nhạc chiến thắng)"
+        }
+      ],
+      "recommended_skills": ["C3.LOG.01", "C3.MTX.01", "C3.MTX.02"]
+    }
+  ],
+  "pages_summary": [
+    {
+      "page_number": 1,
+      "workbook_page_number": null,
+      "file_path": "pages/page-01.jpg",
+      "page_type": "cover_overview",
+      "title": "Hành Trình 20 Chặng Toán Học - Chặng 17: Lâu Đài Sudoku Bí Ẩn",
+      "subtitle": "Thử thách tư duy với số, chữ và hình",
+      "instruction": "HỌC VUI MỖI NGÀY - TOÁN THẬT DỄ!",
+      "dialogue": {
+        "gau_logic": "Chào mừng các bạn nhỏ đến với Lâu Đài Sudoku Bí Ẩn! Hãy cùng tớ khám phá những câu đố ma trận kỳ thú nhé!",
+        "tho_quan_sat": "Những cánh cổng ma trận đang chờ bé giải mã để thắp sáng Viên Ngọc Trí Tuệ đấy!"
+      },
+      "footer_banner": "CHẶNG 17 - LÂU ĐÀI SUDOKU BÍ ẨN",
+      "pedagogical_concept": "Bìa mở đầu chặng thiết lập bối cảnh cốt truyện (story-driven learning). Hình ảnh cánh cổng Lâu Đài Sudoku chính là một lưới ma trận 4x4, kết hợp các khối lập phương chứa số (1, 2, 3), chữ cái (B, D) và hình học (tam giác, vuông, tròn) trôi bồng bềnh, báo hiệu 3 hình thái Sudoku mà trẻ sẽ được chinh phục.",
+      "visual_details": {
+        "scenery": "Lâu đài cổ tích tím mộng mơ với các tháp nhọn, cổng vòm bằng đá ma trận Sudoku 4x4 có ổ khóa hình dấu hỏi vàng, khinh khí cầu mang chú gấu nhỏ trên nền cầu vồng rực rỡ.",
+        "characters": [
+          "Gấu Logic mặc áo thám tử nâu, đeo kính tròn thông thái, tay cầm bút chì và kẹp 'SỔ TAY QUY LUẬT'.",
+          "Thỏ Sáng Tạo (Thỏ Quan Sát) đeo túi chéo 'THỎ SÁNG TẠO', cầm kính lúp chỉ tay hào hứng vào cổng lâu đài."
+        ],
+        "symbols": "Các khối hộp 3D mang số 1, 2, 3; chữ B, D; hình tròn, vuông, tam giác nổi trên mây.",
+        "quantities": "Bảng Sudoku 4x4 tại cổng chính hiển thị sẵn các số 1, 2, 3, 4 chuẩn luật chơi."
+      },
+      "digital_game_mapping": {
+        "suggested_template": "GT-000",
+        "mechanic": "intro-tutorial / world-hub",
+        "interaction": "Chạm vào cánh cổng lâu đài để nghe âm thanh mở khóa ma thuật; chạm vào Gấu Logic và Thỏ Quan Sát để nghe giọng đọc lồng tiếng nhiệm vụ chặng."
+      }
+    },
+    {
+      "page_number": 2,
+      "workbook_page_number": 1,
+      "file_path": "pages/page-02.jpg",
+      "page_type": "number_sudoku_intro",
+      "title": "TRANG 1 - SUDOKU SỐ 1-4",
+      "instruction": "Điền các chữ số 1, 2, 3, 4 sao cho mỗi hàng, mỗi cột, mỗi vùng đều có đủ các số 1, 2, 3, 4.",
+      "dialogue": {
+        "gau_logic": "Mỗi hàng, mỗi cột và mỗi vùng đều phải có đủ 1, 2, 3, 4 nhé!",
+        "tho_quan_sat": "Bé quan sát thật kỹ rồi điền vào các ô trống nhé!"
+      },
+      "footer_hint": "Quan sát hàng hoặc cột đã có 3 số trước để tìm số còn thiếu duy nhất.",
+      "pedagogical_concept": "Cấp độ khởi động Sudoku số 4x4: Trẻ tiếp nhận 3 quy tắc bất biến đồng thời: Không lặp số trên hàng ngang (Row constraint), Không lặp số trên cột dọc (Column constraint), và Không lặp số trong vùng con 2x2 (Box constraint). Nhiều hàng/cột có sẵn 3 số (ví dụ bảng 1 có 2 hàng đã điền đủ 4 số), trẻ chỉ cần tìm số thứ tư khuyết thiếu (Single Candidate).",
+      "items": [
+        {
+          "board_index": 1,
+          "position": "Trên - Trái",
+          "given_cells_count": 8,
+          "empty_cells_count": 8,
+          "description": "Lưới 4x4 cho sẵn 8 số; 2 hàng dưới [4,2,3,1] và [1,3,4,2] đã hoàn chỉnh giúp bé chỉ cần tập trung suy luận 2 hàng trên."
+        },
+        {
+          "board_index": 2,
+          "position": "Trên - Phải",
+          "given_cells_count": 7,
+          "empty_cells_count": 9,
+          "description": "Lưới 4x4 cho sẵn 7 số: Hàng 1 có [4,3], Hàng 2 có [1,2,3], Hàng 4 có [2,1]."
+        },
+        {
+          "board_index": 3,
+          "position": "Giữa - Trái",
+          "given_cells_count": 6,
+          "empty_cells_count": 10,
+          "description": "Lưới 4x4 cho sẵn 6 số ở các cột 1 và 3, phân bố đều ở 4 khối 2x2."
+        },
+        {
+          "board_index": 4,
+          "position": "Giữa - Phải",
+          "given_cells_count": 6,
+          "empty_cells_count": 10,
+          "description": "Lưới 4x4 cho sẵn 6 số: Hàng 4 có [1,3,4] chỉ thiếu số 2."
+        },
+        {
+          "board_index": 5,
+          "position": "Dưới - Trái",
+          "given_cells_count": 7,
+          "empty_cells_count": 9,
+          "description": "Lưới 4x4 cho sẵn 7 số với các khối 2x2 có sẵn 2–3 số."
+        },
+        {
+          "board_index": 6,
+          "position": "Dưới - Phải",
+          "given_cells_count": 8,
+          "empty_cells_count": 8,
+          "description": "Lưới 4x4 cho sẵn 8 số phân bổ đều cả 4 hàng và 4 cột."
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-015",
+        "mechanic": "sudoku-grid-tap",
+        "interaction": "Chạm vào ô trống trên lưới để phóng to ô đó, chọn 1 trong 4 số ở thanh bàn phím tròn dưới màn hình để điền. Nếu đúng phát tiếng chuông leng keng 'Ting!'."
+      }
+    },
+    {
+      "page_number": 3,
+      "workbook_page_number": 2,
+      "file_path": "pages/page-03.jpg",
+      "page_type": "number_sudoku_intro",
+      "title": "TRANG 2 - SUDOKU SỐ 1-4",
+      "instruction": "Điền các chữ số 1, 2, 3, 4 sao cho mỗi hàng, mỗi cột, mỗi vùng đều có đủ các số 1, 2, 3, 4.",
+      "dialogue": {
+        "gau_logic": "Mỗi hàng, mỗi cột và mỗi vùng đều cần đủ 1, 2, 3, 4 đấy!",
+        "tho_quan_sat": "Bé nhìn thật kỹ rồi điền vào các ô trống nhé!"
+      },
+      "footer_hint": "Bé nhớ kiểm tra lại từng ô 2x2 sau khi điền nhé!",
+      "pedagogical_concept": "Củng cố tư duy loại trừ trực tiếp trên lưới 4x4. Trẻ luyện tập quét mắt theo hàng ngang trước, cột dọc sau, sau đó đối chiếu lại vùng 2x2 để kiểm tra tính duy nhất của nghiệm.",
+      "items": [
+        {
+          "board_index": 1,
+          "description": "Lưới 4x4 cho sẵn 6 số, bố trí đối xứng chéo."
+        },
+        {
+          "board_index": 2,
+          "description": "Lưới 4x4 cho sẵn 6 số, cột 2 có [1,2, ,1]."
+        },
+        {
+          "board_index": 3,
+          "description": "Lưới 4x4 cho sẵn 7 số, hàng 2 có [4,2,3], hàng 3 có [1,3,4]."
+        },
+        {
+          "board_index": 4,
+          "description": "Lưới 4x4 cho sẵn 7 số, hàng 3 có [4,1,2,3] đã đủ 4 số làm mốc suy luận."
+        },
+        {
+          "board_index": 5,
+          "description": "Lưới 4x4 cho sẵn 6 số, các số 4 và 1 chiếm các góc lưới."
+        },
+        {
+          "board_index": 6,
+          "description": "Lưới 4x4 cho sẵn 7 số, hàng 4 có [ ,3,4,2] chỉ thiếu số 1."
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-015",
+        "mechanic": "sudoku-grid-tap",
+        "interaction": "Chế độ hỗ trợ trực quan: Khi chọn một ô trống, hàng và cột tương ứng sẽ sáng nhẹ màu vàng nhạt giúp trẻ dễ dàng nhìn ra số còn thiếu."
+      }
+    },
+    {
+      "page_number": 4,
+      "workbook_page_number": 3,
+      "file_path": "pages/page-04.jpg",
+      "page_type": "number_sudoku_intro",
+      "title": "TRANG 3 - SUDOKU SỐ 1-4",
+      "instruction": "Điền các chữ số 1, 2, 3, 4 sao cho mỗi hàng, mỗi cột, mỗi vùng đều có đủ các số 1, 2, 3, 4.",
+      "dialogue": {
+        "gau_logic": "Bé đã quen luật chơi rồi, mình làm tiếp nhé!",
+        "tho_quan_sat": "Hãy quan sát từng hàng, từng cột trước khi điền nhé!"
+      },
+      "footer_hint": "Hãy tìm những hàng hoặc cột chỉ thiếu 1 số duy nhất để điền trước.",
+      "pedagogical_concept": "Tự động hóa kỹ năng quét lưới (visual scanning automation). Trẻ hình thành phản xạ tìm hàng/cột/vùng có ít ô trống nhất (least empty cells heuristic) để điền trước thay vì điền ngẫu nhiên.",
+      "items": [
+        {
+          "board_index": 1,
+          "description": "Lưới 4x4 cho sẵn 7 số: Hàng 2 có [4,2,3], Hàng 3 có [1,3,4]."
+        },
+        {
+          "board_index": 2,
+          "description": "Lưới 4x4 cho sẵn 7 số: Hàng 3 có [4,1,2,3] đã hoàn chỉnh."
+        },
+        {
+          "board_index": 3,
+          "description": "Lưới 4x4 cho sẵn 6 số: Hàng 2 có [3, ,4, ], Cột 2 có [4, , ,2]."
+        },
+        {
+          "board_index": 4,
+          "description": "Lưới 4x4 cho sẵn 7 số: Hàng 4 có [ ,3,4,2] giúp trẻ tìm số 1 tức thì."
+        },
+        {
+          "board_index": 5,
+          "description": "Lưới 4x4 cho sẵn 7 số: Hàng 2 có [ ,4,2,1] chỉ thiếu số 3."
+        },
+        {
+          "board_index": 6,
+          "description": "Lưới 4x4 cho sẵn 7 số: Hàng 4 có [4,2,3, ] chỉ thiếu số 1."
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-015",
+        "mechanic": "sudoku-grid-drag",
+        "interaction": "Trẻ có thể kéo thả thẻ số từ khay phía dưới vào ô trống. Khi thả trúng ô đúng, thẻ số snap vào vị trí với hiệu ứng nảy nhẹ."
+      }
+    },
+    {
+      "page_number": 5,
+      "workbook_page_number": 4,
+      "file_path": "pages/page-05.jpg",
+      "page_type": "letter_sudoku_lion",
+      "title": "TRANG 4 - SUDOKU CHỮ LION",
+      "instruction": "Điền các chữ cái L, I, O, N vào ô trống sao cho mỗi hàng, mỗi cột và mỗi vùng đều có đủ các chữ L, I, O, N.",
+      "dialogue": {
+        "gau_logic": "Lần này mình dùng chữ cái thay cho số nhé!",
+        "tho_quan_sat": "Bé hãy điền đủ L - I - O - N vào mỗi bảng nhé!"
+      },
+      "footer_hint": "4 chữ cái ghép lại thành chữ LION - chú sư tử dũng mãnh!",
+      "pedagogical_concept": "Chuyển dịch nhận thức linh hoạt (Cognitive Flexibility): Thay thế các ký tự số bằng chữ cái tiếng Anh (L, I, O, N). Trẻ nhận ra bản chất của Sudoku là quan hệ loại trừ logic giữa các phần tử trong tập hợp hữu hạn (4 phần tử), không phụ thuộc vào giá trị độ lớn số học. Tích hợp học từ vựng tiếng Anh (CLIL).",
+      "items": [
+        {
+          "board_index": 1,
+          "position": "Trên - Trái",
+          "given_cells_count": 7,
+          "description": "Lưới 4x4 cho sẵn 7 chữ cái: Hàng 2 có [N, I, O], Hàng 3 có [L, O, N] chỉ thiếu chữ I."
+        },
+        {
+          "board_index": 2,
+          "position": "Trên - Phải",
+          "given_cells_count": 8,
+          "description": "Lưới 4x4 cho sẵn 8 chữ cái: Hàng 2 có đủ [N, L, I, O], Hàng 3 có [I, O, N] chỉ thiếu L."
+        },
+        {
+          "board_index": 3,
+          "position": "Dưới - Trái",
+          "given_cells_count": 6,
+          "description": "Lưới 4x4 cho sẵn 6 chữ cái: Cột 2 có [N, , , I], Hàng 4 có [ , I, L, ]."
+        },
+        {
+          "board_index": 4,
+          "position": "Dưới - Phải",
+          "given_cells_count": 7,
+          "description": "Lưới 4x4 cho sẵn 7 chữ cái: Hàng 4 có [ , O, N, I] chỉ thiếu chữ L."
+        }
+      ],
+      "visual_details": {
+        "illustration": "Chú sư tử con màu vàng cam đáng yêu với bờm xù ngồi mỉm cười ở chân trang 🦁.",
+        "letters": ["L", "I", "O", "N"]
+      },
+      "digital_game_mapping": {
+        "suggested_template": "GT-015",
+        "mechanic": "sudoku-letter-mode",
+        "interaction": "Mỗi lần điền đúng một chữ cái, âm thanh phát âm phonics của chữ cái đó vang lên (/l/, /aɪ/, /oʊ/, /n/), khi hoàn thành cả bảng sẽ phát âm cả từ 'LION!' kèm tiếng sư tử gầm vui nhộn."
+      }
+    },
+    {
+      "page_number": 6,
+      "workbook_page_number": 5,
+      "file_path": "pages/page-06.jpg",
+      "page_type": "letter_sudoku_bear",
+      "title": "TRANG 5 - SUDOKU CHỮ BEAR",
+      "instruction": "Điền các chữ cái B, E, A, R vào ô trống sao cho mỗi hàng, mỗi cột và mỗi vùng đều có đủ các chữ B, E, A, R.",
+      "dialogue": {
+        "gau_logic": "Tên BEAR nghe giống bạn gấu nhỉ!",
+        "tho_quan_sat": "Bé cùng điền đủ B - E - A - R nhé!"
+      },
+      "footer_hint": "B, E, A, R ghép lại thành chữ BEAR - nghĩa là bạn Gấu đấy!",
+      "pedagogical_concept": "Củng cố Sudoku chữ cái với từ vựng BEAR. Rèn luyện khả năng ghi nhớ thị giác các ký tự chữ cái B, E, A, R và áp dụng quy tắc loại trừ trong từng ô 2x2.",
+      "items": [
+        {
+          "board_index": 1,
+          "position": "Trên - Trái",
+          "given_cells_count": 6,
+          "description": "Lưới 4x4 cho sẵn 6 chữ: Hàng 2 có [ , R, E, B] chỉ thiếu chữ A."
+        },
+        {
+          "board_index": 2,
+          "position": "Trên - Phải",
+          "given_cells_count": 6,
+          "description": "Lưới 4x4 cho sẵn 6 chữ: Hàng 4 có [R, E, A, ] chỉ thiếu chữ B."
+        },
+        {
+          "board_index": 3,
+          "position": "Dưới - Trái",
+          "given_cells_count": 6,
+          "description": "Lưới 4x4 cho sẵn 6 chữ: Cột 1 có [B, A, E, ] chỉ thiếu chữ R."
+        },
+        {
+          "board_index": 4,
+          "position": "Dưới - Phải",
+          "given_cells_count": 8,
+          "description": "Lưới 4x4 cho sẵn 8 chữ: Hàng 1 có [B, A, E, ], Hàng 4 có [ , R, B, A]."
+        }
+      ],
+      "visual_details": {
+        "illustration": "Gấu Logic vẫy tay tươi cười cầm bảng chữ cái B-E-A-R 🐻.",
+        "letters": ["B", "E", "A", "R"]
+      },
+      "digital_game_mapping": {
+        "suggested_template": "GT-015",
+        "mechanic": "sudoku-letter-mode",
+        "interaction": "Hoàn thành bảng, Gấu Logic nhảy múa ăn mừng và phát âm thanh từ 'BEAR!' kèm tiếng vỗ tay khích lệ."
+      }
+    },
+    {
+      "page_number": 7,
+      "workbook_page_number": 6,
+      "file_path": "pages/page-07.jpg",
+      "page_type": "letter_sudoku_fish",
+      "title": "TRANG 6 - SUDOKU CHỮ FISH",
+      "instruction": "Điền các chữ cái F, I, S, H vào ô trống sao cho mỗi hàng, mỗi cột và mỗi vùng đều có đủ các chữ F, I, S, H.",
+      "dialogue": {
+        "gau_logic": "Mỗi bảng là một câu đố chữ cái thú vị!",
+        "tho_quan_sat": "Bé hãy điền đủ F - I - S - H nhé!"
+      },
+      "footer_hint": "F, I, S, H là chú cá nhỏ đang bơi dưới nước!",
+      "pedagogical_concept": "Bộ chữ cái F, I, S, H có các nét đặc trưng (nét thẳng, nét cong của S) giúp trẻ tăng cường độ nhạy bén nhận diện mặt chữ và thực hiện phép đối chiếu ma trận nhanh chóng.",
+      "items": [
+        {
+          "board_index": 1,
+          "position": "Trên - Trái",
+          "given_cells_count": 6,
+          "description": "Lưới 4x4 cho sẵn 6 chữ cái F, I, S, H."
+        },
+        {
+          "board_index": 2,
+          "position": "Trên - Phải",
+          "given_cells_count": 8,
+          "description": "Lưới 4x4 cho sẵn 8 chữ cái: Hàng 2 có [I, F, , S], Hàng 3 có [F, H, , I]."
+        },
+        {
+          "board_index": 3,
+          "position": "Dưới - Trái",
+          "given_cells_count": 6,
+          "description": "Lưới 4x4 cho sẵn 6 chữ cái: Cột 1 có [S, , H, I] chỉ thiếu chữ F."
+        },
+        {
+          "board_index": 4,
+          "position": "Dưới - Phải",
+          "given_cells_count": 7,
+          "description": "Lưới 4x4 cho sẵn 7 chữ cái: Hàng 4 có [H, F, , ] phân bổ ở các vùng 2x2."
+        }
+      ],
+      "visual_details": {
+        "illustration": "Chú cá vàng cam mắt to tròn 🐟 bơi tung tăng thổi 4 bong bóng nước ở đáy trang.",
+        "letters": ["F", "I", "S", "H"]
+      },
+      "digital_game_mapping": {
+        "suggested_template": "GT-015",
+        "mechanic": "sudoku-letter-mode",
+        "interaction": "Mỗi bong bóng nước vỡ phát tiếng 'Bốp!' khi trẻ điền đúng 1 chữ cái, chú cá bơi nhanh qua màn hình."
+      }
+    },
+    {
+      "page_number": 8,
+      "workbook_page_number": 7,
+      "file_path": "pages/page-08.jpg",
+      "page_type": "letter_sudoku_boat",
+      "title": "TRANG 7 - SUDOKU CHỮ BOAT",
+      "instruction": "Điền các chữ cái B, O, A, T vào ô trống sao cho mỗi hàng, mỗi cột và mỗi vùng đều có đủ các chữ B, O, A, T.",
+      "dialogue": {
+        "gau_logic": "Bé đã quen Sudoku chữ rồi đấy!",
+        "tho_quan_sat": "Cùng hoàn thành các bảng B - O - A - T nhé!"
+      },
+      "footer_hint": "B, O, A, T là con thuyền buồm đang rẽ sóng ra khơi!",
+      "pedagogical_concept": "Hoàn tất giai đoạn Sudoku chữ cái với từ BOAT. Kiểm tra độ thành thạo của trẻ khi chuyển đổi linh hoạt giữa các bộ ký tự khác nhau trước khi bước vào các thử thách số và hình học nâng cao.",
+      "items": [
+        {
+          "board_index": 1,
+          "position": "Trên - Trái",
+          "given_cells_count": 8,
+          "description": "Lưới 4x4 cho sẵn 8 chữ cái: 2 hàng dưới [T, O, A, B] và [B, A, T, O] đã điền kín."
+        },
+        {
+          "board_index": 2,
+          "position": "Trên - Phải",
+          "given_cells_count": 7,
+          "description": "Lưới 4x4 cho sẵn 7 chữ: Hàng 2 có [B, O, A, ] chỉ thiếu chữ T."
+        },
+        {
+          "board_index": 3,
+          "position": "Dưới - Trái",
+          "given_cells_count": 5,
+          "description": "Lưới 4x4 cho sẵn 5 chữ cái: Đòi hỏi trẻ đối chiếu giao điểm giữa hàng và cột."
+        },
+        {
+          "board_index": 4,
+          "position": "Dưới - Phải",
+          "given_cells_count": 7,
+          "description": "Lưới 4x4 cho sẵn 7 chữ: Hàng 4 có [ , B, A, T] chỉ thiếu chữ O."
+        }
+      ],
+      "visual_details": {
+        "illustration": "Chiếc thuyền buồm gỗ trắng ⛵ cánh buồm nâu lướt sóng tại trung tâm trang.",
+        "letters": ["B", "O", "A", "T"]
+      },
+      "digital_game_mapping": {
+        "suggested_template": "GT-015",
+        "mechanic": "sudoku-letter-mode",
+        "interaction": "Hoàn thành 4 bảng chữ cái BOAT, chiếc thuyền buồm căng gió di chuyển kèm tiếng sóng biển rì rào."
+      }
+    },
+    {
+      "page_number": 9,
+      "workbook_page_number": 8,
+      "file_path": "pages/page-09.jpg",
+      "page_type": "number_sudoku_challenge",
+      "title": "TRANG 8 - THỬ THÁCH SUDOKU 1-6",
+      "instruction": "Điền các chữ số 1, 2, 3, 4 vào ô trống sao cho mỗi hàng, mỗi cột, mỗi vùng đều có đủ 1, 2, 3, 4.",
+      "dialogue": {
+        "gau_logic": "Giờ mình bước vào những thử thách Sudoku được đánh số nhé!",
+        "tho_quan_sat": "Bé cứ làm từng bảng một thật cẩn thận nhé!"
+      },
+      "footer_hint": "Bé giải từng bảng theo thứ tự từ 1 đến 6 nhé!",
+      "pedagogical_concept": "Bắt đầu chuỗi thử thách số được chuẩn hóa với 30 câu đố đánh số liên tục. Khung thử thách tạo động lực chinh phục liên tục (streak challenge) cho trẻ.",
+      "items": [
+        {
+          "board_index": 1,
+          "description": "Thử thách 1: Cho sẵn 6 số, các hàng có 1–2 số."
+        },
+        {
+          "board_index": 2,
+          "description": "Thử thách 2: Cho sẵn 6 số, hàng 1 có [1, , 3, 4] chỉ thiếu số 2."
+        },
+        {
+          "board_index": 3,
+          "description": "Thử thách 3: Cho sẵn 6 số, cột 1 có [4, 1, , ]."
+        },
+        {
+          "board_index": 4,
+          "description": "Thử thách 4: Cho sẵn 6 số, hàng 4 có [3, , 2, ]."
+        },
+        {
+          "board_index": 5,
+          "description": "Thử thách 5: Cho sẵn 5 số, số lượng gợi ý bắt đầu giảm dần."
+        },
+        {
+          "board_index": 6,
+          "description": "Thử thách 6: Cho sẵn 6 số, hàng 4 có [ , , 2, 3] chỉ thiếu 1 và 4."
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-015",
+        "mechanic": "sudoku-challenge-ladder",
+        "interaction": "Mỗi bảng hoàn thành sẽ thắp sáng một ngôi sao vàng nhỏ trên thang điểm cấp độ (Level 1/30)."
+      }
+    },
+    {
+      "page_number": 10,
+      "workbook_page_number": 9,
+      "file_path": "pages/page-10.jpg",
+      "page_type": "number_sudoku_challenge",
+      "title": "TRANG 9 - THỬ THÁCH SUDOKU 7-12",
+      "instruction": "Điền các chữ số 1, 2, 3, 4 vào ô trống sao cho mỗi hàng, mỗi cột, mỗi vùng đều có đủ 1, 2, 3, 4.",
+      "dialogue": {
+        "gau_logic": "Các bảng này sẽ khó hơn một chút đấy!",
+        "tho_quan_sat": "Bé nhớ kiểm tra cả hàng, cột và vùng nhé!"
+      },
+      "footer_hint": "Kiểm tra kỹ cả 3 quy tắc trước khi điền một số nhé!",
+      "pedagogical_concept": "Nâng cao độ khó: Các gợi ý bố trí phân tán, không tập trung vào cùng một hàng/cột. Trẻ phải đối chiếu chéo (Cross-referencing) giữa hàng và cột để loại trừ khả năng.",
+      "items": [
+        {
+          "board_index": 7,
+          "description": "Thử thách 7: Cho sẵn 5 số, hàng 1 có [ , , 1, 2]."
+        },
+        {
+          "board_index": 8,
+          "description": "Thử thách 8: Cho sẵn 6 số, khối trên-trái có [2,3 / 3, ]."
+        },
+        {
+          "board_index": 9,
+          "description": "Thử thách 9: Cho sẵn 5 số, hàng 1 có [ , 3, 2, ]."
+        },
+        {
+          "board_index": 10,
+          "description": "Thử thách 10: Cho sẵn 6 số, khối dưới-phải có [2,4 / 2,1]."
+        },
+        {
+          "board_index": 11,
+          "description": "Thử thách 11: Cho sẵn 6 số, hàng 3 có [2, 1, 4, ] chỉ thiếu số 3."
+        },
+        {
+          "board_index": 12,
+          "description": "Thử thách 12: Cho sẵn 6 số, các số 2 và 1 rải rác ở các góc."
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-015",
+        "mechanic": "sudoku-challenge-ladder",
+        "interaction": "Trẻ chạm vào ô để xem các số khả dĩ (candidate hints) nếu gặp khó khăn sau 15 giây không tương tác."
+      }
+    },
+    {
+      "page_number": 11,
+      "workbook_page_number": 10,
+      "file_path": "pages/page-11.jpg",
+      "page_type": "number_sudoku_challenge",
+      "title": "TRANG 10 - THỬ THÁCH SUDOKU 13-18",
+      "instruction": "Điền các chữ số 1, 2, 3, 4 vào ô trống sao cho mỗi hàng, mỗi cột, mỗi vùng đều có đủ 1, 2, 3, 4.",
+      "dialogue": {
+        "gau_logic": "Bé đã đi được một quãng khá xa trong lâu đài Sudoku rồi!",
+        "tho_quan_sat": "Cùng hoàn thành tiếp các thử thách số nhé!"
+      },
+      "footer_hint": "Giữ bình tĩnh và kiên trì rà soát từng ô trống.",
+      "pedagogical_concept": "Đạt ngưỡng trung cấp của Sudoku 4x4. Trẻ rèn tính kiên nhẫn và khả năng tập trung chú ý kéo dài (sustained attention), tránh điền mò theo cảm tính.",
+      "items": [
+        {
+          "board_index": 13,
+          "description": "Thử thách 13: Cho sẵn 6 số: Hàng 1 có [4, , 2, 1] chỉ thiếu số 3."
+        },
+        {
+          "board_index": 14,
+          "description": "Thử thách 14: Cho sẵn 6 số: Hàng 1 có [2, 4, , 3] chỉ thiếu số 1."
+        },
+        {
+          "board_index": 15,
+          "description": "Thử thách 15: Cho sẵn 6 số: Cột 1 có [4, , , 2]."
+        },
+        {
+          "board_index": 16,
+          "description": "Thử thách 16: Cho sẵn 6 số: Hàng 4 có [ , , 2, 1]."
+        },
+        {
+          "board_index": 17,
+          "description": "Thử thách 17: Cho sẵn 6 số: Cột 1 có [ , 2, 1, 3] chỉ thiếu số 4."
+        },
+        {
+          "board_index": 18,
+          "description": "Thử thách 18: Cho sẵn 6 số: Cột 1 có [ , 1, , 4]."
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-015",
+        "mechanic": "sudoku-challenge-ladder",
+        "interaction": "Mỗi khi điền đúng cả 1 hàng hoặc 1 cột, hàng/cột đó sẽ lóe sáng hiệu ứng cầu vồng nhỏ khích lệ."
+      }
+    },
+    {
+      "page_number": 12,
+      "workbook_page_number": 11,
+      "file_path": "pages/page-12.jpg",
+      "page_type": "number_sudoku_challenge",
+      "title": "TRANG 11 - THỬ THÁCH SUDOKU 19-24",
+      "instruction": "Điền các chữ số 1, 2, 3, 4 vào ô trống sao cho mỗi hàng, mỗi cột, mỗi vùng đều có đủ 1, 2, 3, 4.",
+      "dialogue": {
+        "gau_logic": "Bé sắp hoàn thành phần Sudoku số rồi đấy!",
+        "tho_quan_sat": "Cố lên, còn vài bảng nữa thôi!"
+      },
+      "footer_hint": "Quan sát vùng 2x2 trước để thu hẹp phạm vi tìm kiếm.",
+      "pedagogical_concept": "Chiến thuật ưu tiên vùng con 2x2 (Subgrid-first Strategy): Khuyến khích trẻ kiểm tra các khối 2x2 đã có sẵn 2 hoặc 3 số trước khi nhìn toàn bảng.",
+      "items": [
+        {
+          "board_index": 19,
+          "description": "Thử thách 19: Cho sẵn 6 số: Cột 2 có [ , 3, 3, ] - phân bố đòi hỏi phân tích kĩ."
+        },
+        {
+          "board_index": 20,
+          "description": "Thử thách 20: Cho sẵn 6 số: Hàng 1 có [ , , 1, 2], Hàng 4 có [4, 3, , ]."
+        },
+        {
+          "board_index": 21,
+          "description": "Thử thách 21: Cho sẵn 5 số: Bố trí thưa thớt, cần suy luận 2 bước."
+        },
+        {
+          "board_index": 22,
+          "description": "Thử thách 22: Cho sẵn 6 số: Hàng 3 có [ , 1, 2, 3] chỉ thiếu số 4."
+        },
+        {
+          "board_index": 23,
+          "description": "Thử thách 23: Cho sẵn 6 số: Khối dưới-trái có [4, / 1, 3] chỉ thiếu số 2."
+        },
+        {
+          "board_index": 24,
+          "description": "Thử thách 24: Cho sẵn 6 số: Cột 4 có [ , 4, 3, ] chỉ thiếu 1 và 2."
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-015",
+        "mechanic": "sudoku-challenge-ladder",
+        "interaction": "Âm thanh click gỗ giòn tan mỗi lần đặt số vào ô, tạo phản hồi xúc giác thỏa mãn."
+      }
+    },
+    {
+      "page_number": 13,
+      "workbook_page_number": 12,
+      "file_path": "pages/page-13.jpg",
+      "page_type": "number_sudoku_challenge",
+      "title": "TRANG 12 - THỬ THÁCH SUDOKU 25-30",
+      "instruction": "Điền các chữ số 1, 2, 3, 4 vào ô trống sao cho mỗi hàng, mỗi cột, mỗi vùng đều có đủ 1, 2, 3, 4.",
+      "dialogue": {
+        "gau_logic": "Những bảng này ít gợi ý hơn đấy!",
+        "tho_quan_sat": "Bé cứ điền từng ô thật cẩn thận nhé!"
+      },
+      "footer_hint": "Bé đã chinh phục trọn vẹn 30 thử thách Sudoku số!",
+      "pedagogical_concept": "Cấp độ tinh hoa của Sudoku số: Chỉ có 4–5 gợi ý cho trước. Trẻ đạt đến năng lực suy luận loại trừ logic hoàn chỉnh, sẵn sàng chuyển giao năng lực sang biểu tượng hình học.",
+      "items": [
+        {
+          "board_index": 25,
+          "description": "Thử thách 25: Cho sẵn 5 số: Cột 4 có [3, 2, , ]."
+        },
+        {
+          "board_index": 26,
+          "description": "Thử thách 26: Cho sẵn 5 số: Cột 1 có [ , 2, , 4]."
+        },
+        {
+          "board_index": 27,
+          "description": "Thử thách 27: Cho sẵn 5 số: Cột 1 có [ , , 4, 2], Hàng 4 có [2, , , 4]."
+        },
+        {
+          "board_index": 28,
+          "description": "Thử thách 28: Cho sẵn 6 số: Hàng 3 có [1, 2, 3, ] chỉ thiếu số 4."
+        },
+        {
+          "board_index": 29,
+          "description": "Thử thách 29: Cho sẵn 5 số: Hàng 3 có đủ [4, 3, 1, 2] làm mốc giải quyết các hàng còn lại."
+        },
+        {
+          "board_index": 30,
+          "description": "Thử thách 30: Cho sẵn 5 số: Bảng tổng kết số cuối cùng đầy thử thách."
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-015",
+        "mechanic": "sudoku-challenge-ladder",
+        "interaction": "Hoàn thành bảng 30, mở khóa Huy hiệu Thám Tử Số Học 4x4 kèm hiệu ứng pháo hoa chúc mừng."
+      }
+    },
+    {
+      "page_number": 14,
+      "workbook_page_number": 13,
+      "file_path": "pages/page-14.jpg",
+      "page_type": "symbol_sudoku_challenge",
+      "title": "TRANG 13 - THỬ THÁCH SUDOKU HÌNH 1-6",
+      "instruction": "Điền các hình tròn, hình vuông, hình tam giác và dấu X vào ô trống sao cho mỗi hàng, mỗi cột, mỗi vùng đều có đủ 4 hình.",
+      "dialogue": {
+        "gau_logic": "Giờ mình đổi sang Sudoku hình nhé!",
+        "tho_quan_sat": "Mỗi hàng, mỗi cột, mỗi vùng phải đủ 4 hình khác nhau!"
+      },
+      "legend": "◯ = Hình tròn | □ = Hình vuông | △ = Hình tam giác | ✕ = Dấu X",
+      "footer_hint": "Bé nhớ 4 hình: Hình tròn, hình vuông, hình tam giác và dấu X nhé!",
+      "pedagogical_concept": "Khởi đầu pha Sudoku biểu tượng hình học (Symbolic Sudoku 4x4). Trẻ không còn thao tác với chữ số mà chuyển sang nhận diện các thuộc tính hình học cơ bản (đường cong tròn, cạnh vuông góc, góc nhọn tam giác, nét chéo dấu X). Kích thích tối đa bán cầu não phải và năng lực xử lý hình ảnh trực quan.",
+      "items": [
+        {
+          "board_index": 1,
+          "description": "Lưới hình 1: Cho sẵn 4 hình (◯, □, △)."
+        },
+        {
+          "board_index": 2,
+          "description": "Lưới hình 2: Cho sẵn 4 hình (◯, ◯, △, ✕)."
+        },
+        {
+          "board_index": 3,
+          "description": "Lưới hình 3: Cho sẵn 4 hình (✕, △, △, ◯)."
+        },
+        {
+          "board_index": 4,
+          "description": "Lưới hình 4: Cho sẵn 5 hình: Cột 4 có [△, ✕], Khối dưới-trái có [✕, □ / ◯, ]."
+        },
+        {
+          "board_index": 5,
+          "description": "Lưới hình 5: Cho sẵn 4 hình (◯, ✕, □, □)."
+        },
+        {
+          "board_index": 6,
+          "description": "Lưới hình 6: Cho sẵn 4 hình (✕, ◯, △, △)."
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-015",
+        "mechanic": "sudoku-symbol-mode",
+        "interaction": "Khay công cụ dưới màn hình hiển thị 4 nút hình khối nổi claymorphism nhiều màu sắc: ◯ đỏ, □ xanh lá, △ vàng, ✕ tím. Trẻ chạm hoặc kéo thả vào ô lưới."
+      }
+    },
+    {
+      "page_number": 15,
+      "workbook_page_number": 14,
+      "file_path": "pages/page-15.jpg",
+      "page_type": "symbol_sudoku_challenge",
+      "title": "TRANG 14 - THỬ THÁCH SUDOKU HÌNH 7-12",
+      "instruction": "Điền các hình tròn, hình vuông, hình tam giác và dấu X vào ô trống sao cho mỗi hàng, mỗi cột, mỗi vùng đều có đủ 4 hình.",
+      "dialogue": {
+        "gau_logic": "Sudoku hình nhìn vui mắt nhưng cũng cần suy luận kỹ!",
+        "tho_quan_sat": "Bé nhớ không được lặp hình trong cùng một hàng nhé!"
+      },
+      "footer_hint": "Mỗi hàng ngang chỉ được có 1 hình tròn, 1 hình vuông, 1 hình tam giác và 1 dấu X.",
+      "pedagogical_concept": "Củng cố quy tắc không lặp hình trên hàng ngang và cột dọc. Trẻ học cách đối chiếu nhanh các hình đã xuất hiện trong hàng để gọi tên hình còn thiếu.",
+      "items": [
+        {
+          "board_index": 7,
+          "description": "Lưới hình 7: Cho sẵn 6 hình: Hàng 4 có [✕, , △, □] chỉ thiếu ◯."
+        },
+        {
+          "board_index": 8,
+          "description": "Lưới hình 8: Cho sẵn 6 hình: Khối trên-trái có [□, / , ◯]."
+        },
+        {
+          "board_index": 9,
+          "description": "Lưới hình 9: Cho sẵn 6 hình: Cột 2 có [✕, □, ◯, ✕]."
+        },
+        {
+          "board_index": 10,
+          "description": "Lưới hình 10: Cho sẵn 6 hình: Cột 4 có [△, ◯, , □] chỉ thiếu ✕."
+        },
+        {
+          "board_index": 11,
+          "description": "Lưới hình 11: Cho sẵn 6 hình: Hàng 4 có [✕, , ◯, ]."
+        },
+        {
+          "board_index": 12,
+          "description": "Lưới hình 12: Cho sẵn 6 hình: Hàng 1 có [ , △, , ✕]."
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-015",
+        "mechanic": "sudoku-symbol-mode",
+        "interaction": "Chạm vào hình đã điền để đổi hình khác nếu phát hiện bị trùng lặp, ô bị trùng sẽ rung nhẹ màu hổ phách cảnh báo nhẹ nhàng."
+      }
+    },
+    {
+      "page_number": 16,
+      "workbook_page_number": 15,
+      "file_path": "pages/page-16.jpg",
+      "page_type": "symbol_sudoku_challenge",
+      "title": "TRANG 15 - THỬ THÁCH SUDOKU HÌNH 13-18",
+      "instruction": "Điền các hình tròn, hình vuông, hình tam giác và dấu X vào ô trống sao cho mỗi hàng, mỗi cột, mỗi vùng đều có đủ 4 hình.",
+      "dialogue": {
+        "gau_logic": "Bắt đầu khó hơn rồi đấy!",
+        "tho_quan_sat": "Bé nhìn xem trong mỗi ô 2x2 còn thiếu hình nào nhé!"
+      },
+      "footer_hint": "Tập trung quan sát từng khối 2x2 để tìm hình còn thiếu trước.",
+      "pedagogical_concept": "Luyện tập kỹ năng cô lập vùng con (Subgrid isolation). Nhận biết rằng một khối 2x2 chứa chính xác 4 ô tương ứng 4 hình khác nhau.",
+      "items": [
+        {
+          "board_index": 13,
+          "description": "Lưới hình 13: Cho sẵn 4 hình bố trí ở các cột giữa."
+        },
+        {
+          "board_index": 14,
+          "description": "Lưới hình 14: Cho sẵn 4 hình: Cột 2 có [✕, , , ] và Khối dưới-trái có [ , / □, ]."
+        },
+        {
+          "board_index": 15,
+          "description": "Lưới hình 15: Cho sẵn 4 hình: Cột 1 có [ , ◯, , ]."
+        },
+        {
+          "board_index": 16,
+          "description": "Lưới hình 16: Cho sẵn 4 hình: Cột 1 có [✕, , , ]."
+        },
+        {
+          "board_index": 17,
+          "description": "Lưới hình 17: Cho sẵn 4 hình: Cột 1 có [ , ◯, , ]."
+        },
+        {
+          "board_index": 18,
+          "description": "Lưới hình 18: Cho sẵn 4 hình: Cột 2 có [ , ✕, △, ]."
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-015",
+        "mechanic": "sudoku-symbol-mode",
+        "interaction": "Hiệu ứng viền phát sáng nhẹ quanh khối 2x2 khi trẻ chạm vào 1 ô trong khối đó."
+      }
+    },
+    {
+      "page_number": 17,
+      "workbook_page_number": 16,
+      "file_path": "pages/page-17.jpg",
+      "page_type": "symbol_sudoku_challenge",
+      "title": "TRANG 16 - THỬ THÁCH SUDOKU HÌNH 19-24",
+      "instruction": "Điền các hình tròn, hình vuông, hình tam giác và dấu X vào ô trống sao cho mỗi hàng, mỗi cột, mỗi vùng đều có đủ 4 hình.",
+      "dialogue": {
+        "gau_logic": "Chặng Sudoku hình đang dần thử thách hơn rồi!",
+        "tho_quan_sat": "Mình cứ giải từng bảng thật bình tĩnh nhé!"
+      },
+      "footer_hint": "Bé kiểm tra cẩn thận từng hàng ngang và cột dọc.",
+      "pedagogical_concept": "Xây dựng tính tự chủ và khả năng tự sửa lỗi (Self-correction / Error control) theo triết lý Montessori: nếu điền sai một hình, trẻ sẽ gặp ngõ cụt ở các ô sau và tự động lùi lại kiểm tra.",
+      "items": [
+        {
+          "board_index": 19,
+          "description": "Lưới hình 19: Cho sẵn 4 hình: Cột 1 có [ , , , □]."
+        },
+        {
+          "board_index": 20,
+          "description": "Lưới hình 20: Cho sẵn 4 hình: Cột 1 có [△, , , ]."
+        },
+        {
+          "board_index": 21,
+          "description": "Lưới hình 21: Cho sẵn 4 hình: Hàng 1 có [ , △, □, ]."
+        },
+        {
+          "board_index": 22,
+          "description": "Lưới hình 22: Cho sẵn 4 hình: Cột 1 có [△, ◯, , ]."
+        },
+        {
+          "board_index": 23,
+          "description": "Lưới hình 23: Cho sẵn 4 hình: Cột 1 có [◯, , , ]."
+        },
+        {
+          "board_index": 24,
+          "description": "Lưới hình 24: Cho sẵn 4 hình: Cột 1 có [ , , ◯, □]."
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-015",
+        "mechanic": "sudoku-symbol-mode",
+        "interaction": "Nút 'Làm lại' (Undo) thân thiện giúp trẻ rút lại bước điền mà không bị trừ sao hay điểm phạt."
+      }
+    },
+    {
+      "page_number": 18,
+      "workbook_page_number": 17,
+      "file_path": "pages/page-18.jpg",
+      "page_type": "symbol_sudoku_challenge",
+      "title": "TRANG 17 - THỬ THÁCH SUDOKU HÌNH 25-30",
+      "instruction": "Điền các hình tròn, hình vuông, hình tam giác và dấu X vào ô trống sao cho mỗi hàng, mỗi cột, mỗi vùng đều có đủ 4 hình.",
+      "dialogue": {
+        "gau_logic": "Bé đã rất giỏi rồi!",
+        "tho_quan_sat": "Mình tiếp tục chinh phục các bảng tiếp theo nào!"
+      },
+      "legend": "◯ Hình tròn | □ Hình vuông | △ Hình tam giác | ✕ Dấu X",
+      "footer_hint": "Bé đã vượt qua nửa chặng đường Sudoku hình rồi đấy!",
+      "pedagogical_concept": "Trang nhắc lại quy ước ký hiệu rõ ràng kèm chú thích chữ. Củng cố khả năng liên kết giữa biểu tượng trực quan và tên gọi ngôn ngữ học.",
+      "items": [
+        {
+          "board_index": 25,
+          "description": "Lưới hình 25: Cho sẵn 4 hình: Hàng 1 có [ , ✕, , ], Cột 1 có [ , , , □]."
+        },
+        {
+          "board_index": 26,
+          "description": "Lưới hình 26: Cho sẵn 4 hình: Cột 2 có [△, △, , ]."
+        },
+        {
+          "board_index": 27,
+          "description": "Lưới hình 27: Cho sẵn 4 hình: Cột 1 có [✕, , , ]."
+        },
+        {
+          "board_index": 28,
+          "description": "Lưới hình 28: Cho sẵn 5 hình: Hàng 3 có [ , ✕, , □]."
+        },
+        {
+          "board_index": 29,
+          "description": "Lưới hình 29: Cho sẵn 4 hình: Hàng 1 có [✕, , , △], Hàng 4 có [□, ◯, , ]."
+        },
+        {
+          "board_index": 30,
+          "description": "Lưới hình 30: Cho sẵn 5 hình: Cột 3 có [✕, □, , ]."
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-015",
+        "mechanic": "sudoku-symbol-mode",
+        "interaction": "Chạm vào ô legend để nghe phát âm tên gọi từng hình khối ('Hình tròn màu đỏ', 'Hình vuông màu xanh')."
+      }
+    },
+    {
+      "page_number": 19,
+      "workbook_page_number": 18,
+      "file_path": "pages/page-19.jpg",
+      "page_type": "symbol_sudoku_challenge",
+      "title": "TRANG 18 - THỬ THÁCH SUDOKU HÌNH 31-36",
+      "instruction": "Điền các hình tròn, hình vuông, hình tam giác và dấu X vào ô trống sao cho mỗi hàng, mỗi cột, mỗi vùng đều có đủ 4 hình.",
+      "dialogue": {
+        "gau_logic": "Các ô gợi ý ngày càng ít hơn!",
+        "tho_quan_sat": "Nhưng bé đã quen luật chơi rồi, chắc chắn làm được!"
+      },
+      "legend": "◯ = hình tròn | □ = hình vuông | △ = hình tam giác | ✕ = dấu X",
+      "footer_hint": "Bé tìm ô nào giao nhau giữa hàng và cột có nhiều hình nhất để điền trước.",
+      "pedagogical_concept": "Nâng cao tư duy không gian: Số ô gợi ý rút xuống mức tối thiểu (3–4 hình/bảng). Trẻ phải áp dụng chiến lược giao thoa (Intersection strategy) để xác định vị trí của hình.",
+      "items": [
+        {
+          "board_index": 31,
+          "description": "Lưới hình 31: Cho sẵn 5 hình: Hàng 4 có [ , ◯, ✕, ]."
+        },
+        {
+          "board_index": 32,
+          "description": "Lưới hình 32: Cho sẵn 4 hình: Cột 1 có [ , , △, ], Cột 4 có [ , , , ✕]."
+        },
+        {
+          "board_index": 33,
+          "description": "Lưới hình 33: Cho sẵn 4 hình: Khối dưới-trái có [ , / ✕, ]."
+        },
+        {
+          "board_index": 34,
+          "description": "Lưới hình 34: Cho sẵn 4 hình: Cột 3 có [ , , ◯, ]."
+        },
+        {
+          "board_index": 35,
+          "description": "Lưới hình 35: Cho sẵn 5 hình: Hàng 1 có [ , □, ◯, ]."
+        },
+        {
+          "board_index": 36,
+          "description": "Lưới hình 36: Cho sẵn 4 hình: Cột 1 có [ , , △, ]."
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-015",
+        "mechanic": "sudoku-symbol-mode",
+        "interaction": "Chế độ Ghost Hand trợ giúp cấp 1: Nhấp nháy nhẹ ô có khả năng giải duy nhất khi trẻ chưa tương tác sau 20 giây."
+      }
+    },
+    {
+      "page_number": 20,
+      "workbook_page_number": 19,
+      "file_path": "pages/page-20.jpg",
+      "page_type": "symbol_sudoku_challenge",
+      "title": "TRANG 19 - THỬ THÁCH SUDOKU HÌNH 37-42",
+      "instruction": "Điền các hình tròn, hình vuông, hình tam giác và dấu X vào ô trống sao cho mỗi hàng, mỗi cột, mỗi vùng đều có đủ 4 hình.",
+      "dialogue": {
+        "gau_logic": "Chúng ta đã đi rất xa trong Lâu đài Sudoku rồi!",
+        "tho_quan_sat": "Cùng giải tiếp để mở thêm cánh cửa nhé!"
+      },
+      "legend": "◯ = hình tròn | □ = hình vuông | △ = hình tam giác | ✕ = dấu X",
+      "footer_hint": "Mỗi bảng giải xong sẽ mở ra một căn phòng bí mật trong lâu đài!",
+      "pedagogical_concept": "Kích thích trí tưởng tượng và động lực phiêu lưu (Gamification narrative): Mỗi bảng ma trận là một ổ khóa mật mã của căn phòng bí mật. Rèn luyện tư duy bền bỉ trước các cấu trúc lưới phức tạp.",
+      "items": [
+        {
+          "board_index": 37,
+          "description": "Lưới hình 37: Cho sẵn 4 hình: Cột 1 có [ , , ✕, ], Cột 4 có [ , , , △]."
+        },
+        {
+          "board_index": 38,
+          "description": "Lưới hình 38: Cho sẵn 4 hình: Cột 1 có [✕, , , ], Cột 4 có [ , ✕, , ]."
+        },
+        {
+          "board_index": 39,
+          "description": "Lưới hình 39: Cho sẵn 4 hình: Cột 1 có [□, , , ], Cột 4 có [ , □, , ]."
+        },
+        {
+          "board_index": 40,
+          "description": "Lưới hình 40: Cho sẵn 4 hình: Cột 1 có [ , □, , ], Cột 4 có [◯, , , ]."
+        },
+        {
+          "board_index": 41,
+          "description": "Lưới hình 41: Cho sẵn 4 hình: Hàng 1 có [ , , , ✕], Cột 1 có [ , △, , ]."
+        },
+        {
+          "board_index": 42,
+          "description": "Lưới hình 42: Cho sẵn 5 hình: Hàng 4 có [✕, □, , ]."
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-015",
+        "mechanic": "sudoku-symbol-mode",
+        "interaction": "Hình ảnh cánh cửa phòng mở hé với ánh sáng vàng phát ra khi hoàn thành thử thách 42."
+      }
+    },
+    {
+      "page_number": 21,
+      "workbook_page_number": 20,
+      "file_path": "pages/page-21.jpg",
+      "page_type": "symbol_sudoku_challenge",
+      "title": "TRANG 20 - THỬ THÁCH SUDOKU HÌNH 43-48",
+      "instruction": "Điền các hình tròn, hình vuông, hình tam giác và dấu X vào ô trống sao cho mỗi hàng, mỗi cột, mỗi vùng đều có đủ 4 hình.",
+      "dialogue": {
+        "gau_logic": "Bây giờ là những thử thách gần cuối!",
+        "tho_quan_sat": "Bé hãy thật tập trung nhé!"
+      },
+      "legend": "◯ | □ | △ | ✕",
+      "footer_hint": "Hãy hít thở sâu và quan sát thật kỹ từng ô 2x2.",
+      "pedagogical_concept": "Huấn luyện kiểm soát ức chế và điều hành hành vi (Executive Function & Inhibitory Control): Trẻ học cách kìm hãm thôi thúc đoán mò, duy trì quy trình kiểm tra logic 3 bước (Hàng -> Cột -> Khối).",
+      "items": [
+        {
+          "board_index": 43,
+          "description": "Lưới hình 43: Cho sẵn 4 hình: Cột 1 có [ , , ✕, ], Cột 4 có [ , , , ◯]."
+        },
+        {
+          "board_index": 44,
+          "description": "Lưới hình 44: Cho sẵn 4 hình: Cột 1 có [ , , □, △]."
+        },
+        {
+          "board_index": 45,
+          "description": "Lưới hình 45: Cho sẵn 4 hình: Cột 1 có [ , , , □], Cột 4 có [◯, , , ]."
+        },
+        {
+          "board_index": 46,
+          "description": "Lưới hình 46: Cho sẵn 4 hình: Cột 2 có [△, , ✕, ], Cột 4 có [ , □, , ]."
+        },
+        {
+          "board_index": 47,
+          "description": "Lưới hình 47: Cho sẵn 4 hình: Hàng 1 có [ , ✕, , ], Cột 1 có [ , , ✕, ]."
+        },
+        {
+          "board_index": 48,
+          "description": "Lưới hình 48: Cho sẵn 4 hình: Hàng 1 có [ , ✕, , □], Cột 1 có [ , , □, ]."
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-015",
+        "mechanic": "sudoku-symbol-mode",
+        "interaction": "Thanh đo tiến độ 'Focus Meter' tăng dần theo chuỗi điền chính xác liên tiếp."
+      }
+    },
+    {
+      "page_number": 22,
+      "workbook_page_number": 21,
+      "file_path": "pages/page-22.jpg",
+      "page_type": "symbol_sudoku_challenge",
+      "title": "TRANG 21 - THỬ THÁCH SUDOKU HÌNH 49-54",
+      "instruction": "Điền các hình tròn, hình vuông, hình tam giác và dấu X vào ô trống sao cho mỗi hàng, mỗi cột, mỗi vùng đều có đủ 4 hình.",
+      "dialogue": {
+        "gau_logic": "Chỉ còn vài bảng nữa là chinh phục xong lâu đài rồi!",
+        "tho_quan_sat": "Bé cứ bình tĩnh, nhìn từng hàng và từng vùng nhé!"
+      },
+      "legend": "◯ | □ | △ | ✕",
+      "footer_hint": "Sắp chạm tay vào Viên Ngọc Trí Tuệ rồi, cố lên bé ơi!",
+      "pedagogical_concept": "Giai đoạn chuẩn bị cán đích: Các bảng đòi hỏi kết hợp linh hoạt suy luận loại trừ (Naked Single và Hidden Single ở quy mô 4x4). Trẻ khẳng định sự tự tin và làm chủ hoàn toàn kỹ năng.",
+      "items": [
+        {
+          "board_index": 49,
+          "description": "Lưới hình 49: Cho sẵn 4 hình: Hàng 1 có [◯, , , □]."
+        },
+        {
+          "board_index": 50,
+          "description": "Lưới hình 50: Cho sẵn 4 hình: Hàng 1 có [ , , , □], Cột 4 có [□, , , ◯]."
+        },
+        {
+          "board_index": 51,
+          "description": "Lưới hình 51: Cho sẵn 4 hình: Cột 1 có [✕, , □, ], Cột 4 có [ , , , ◯]."
+        },
+        {
+          "board_index": 52,
+          "description": "Lưới hình 52: Cho sẵn 5 hình: Hàng 4 có [✕, ◯, , □]."
+        },
+        {
+          "board_index": 53,
+          "description": "Lưới hình 53: Cho sẵn 4 hình: Hàng 1 có [□, , , ✕]."
+        },
+        {
+          "board_index": 54,
+          "description": "Lưới hình 54: Cho sẵn 4 hình: Cột 4 có [△, , , ✕]."
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-015",
+        "mechanic": "sudoku-symbol-mode",
+        "interaction": "Âm nhạc nền tăng dần nhịp điệu rộn ràng, tạo cảm giác hồi hộp hào hứng trước cửa ải cuối."
+      }
+    },
+    {
+      "page_number": 23,
+      "workbook_page_number": 22,
+      "file_path": "pages/page-23.jpg",
+      "page_type": "symbol_sudoku_challenge",
+      "title": "TRANG 22 - THỬ THÁCH SUDOKU HÌNH 55-60",
+      "instruction": "Điền các hình tròn, hình vuông, hình tam giác và dấu X vào ô trống sao cho mỗi hàng, mỗi cột, mỗi vùng đều có đủ 4 hình.",
+      "dialogue": {
+        "gau_logic": "Đây là những thử thách cuối cùng của Lâu đài Sudoku!",
+        "tho_quan_sat": "Bé hoàn thành xong là nhận được viên ngọc trí tuệ đấy!"
+      },
+      "legend": "◯ | □ | △ | ✕",
+      "footer_hint": "Chúc mừng bé đã xuất sắc hoàn thành trọn vẹn 60 thử thách hình!",
+      "pedagogical_concept": "Cực đỉnh thử thách hình học (Ultimate Geometric Matrix): Bảng 55 đến 60 kiểm tra toàn diện năng lực tổng hợp và tư duy cấu trúc ma trận. Trẻ làm chủ hoàn toàn kỹ năng giải Sudoku 4x4 ở lứa tuổi mầm non.",
+      "items": [
+        {
+          "board_index": 55,
+          "description": "Thử thách 55: Cho sẵn 4 hình: Hàng 4 có [ , ✕, , ], Cột 4 có [ , ◯, □, ]."
+        },
+        {
+          "board_index": 56,
+          "description": "Thử thách 56: Cho sẵn 5 hình: Cột 1 có [ , ◯, △, ], Cột 4 có [ , □, , ◯]."
+        },
+        {
+          "board_index": 57,
+          "description": "Thử thách 57: Cho sẵn 4 hình: Cột 1 có [ , □, ◯, ], Hàng 1 có [ , , △, ]."
+        },
+        {
+          "board_index": 58,
+          "description": "Thử thách 58: Cho sẵn 5 hình: Hàng 1 có [ , ◯, □, ], Hàng 3 có [ , △, , ✕]."
+        },
+        {
+          "board_index": 59,
+          "description": "Thử thách 59: Cho sẵn 4 hình: Cột 4 có [ , , ◯, ✕]."
+        },
+        {
+          "board_index": 60,
+          "description": "Thử thách 60: Cho sẵn 4 hình: Bảng thử thách chốt hạ mở cánh cửa phòng kho báu."
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-015",
+        "mechanic": "sudoku-symbol-mode",
+        "interaction": "Hoàn thành thử thách 60, toàn bộ màn hình chuyển cảnh sang nghi thức mở cánh cửa kho báu Lâu Đài Sudoku."
+      }
+    },
+    {
+      "page_number": 24,
+      "workbook_page_number": 23,
+      "file_path": "pages/page-24.jpg",
+      "page_type": "summary_celebration",
+      "title": "TRANG 23 - TỔNG KẾT CHẶNG 17",
+      "instruction": "BÉ ĐÃ CHINH PHỤC LÂU ĐÀI SUDOKU BÍ ẨN!",
+      "dialogue": {
+        "gau_logic": "Bé đã hoàn thành thật xuất sắc các thử thách Sudoku rồi!",
+        "tho_quan_sat": "Mình cùng nhận viên ngọc trí tuệ và bước sang chặng mới nhé!"
+      },
+      "footer_banner": "HOÀN THÀNH CHẶNG 17 - LÂU ĐÀI SUDOKU BÍ ẨN",
+      "pedagogical_concept": "Tổng kết sư phạm & Củng cố lòng tự tin (Mastery Reflection & Metacognition): Hệ thống hóa 3 phương thức biểu diễn mà trẻ đã làm chủ (Số - Chữ - Hình). Đánh giá sự trưởng thành về 4 năng lực tư duy cốt lõi (Quan sát, Tập trung, Suy luận, Kiên nhẫn) theo chuẩn giáo dục sớm Montessori. Hoạt động tô màu kết thúc mang tính xúc giác cá nhân hóa phần thưởng.",
+      "summary_pillars": [
+        {
+          "pillar_number": 1,
+          "name": "Sudoku số",
+          "description": "Bé đã luyện điền số 1, 2, 3, 4 vào ma trận 4x4 chuẩn xác.",
+          "symbol_demo": "Lưới 2x2 mang các số 1, 2, 3, 4"
+        },
+        {
+          "pillar_number": 2,
+          "name": "Sudoku chữ",
+          "description": "Bé đã làm quen với các ô chữ thú vị (LION, BEAR, FISH, BOAT).",
+          "symbol_demo": "4 ô chữ cái A, B, C, D nhiều màu"
+        },
+        {
+          "pillar_number": 3,
+          "name": "Sudoku hình",
+          "description": "Bé đã suy luận bằng các hình tròn, vuông, tam giác và dấu X.",
+          "symbol_demo": "4 ô ký hiệu [◯] [□] [△] [✕]"
+        }
+      ],
+      "character_qualities": [
+        {
+          "name": "Quan sát",
+          "icon": "👁️",
+          "description": "Nhìn nhận bao quát hàng, cột và vùng"
+        },
+        {
+          "name": "Tập trung",
+          "icon": "🎯",
+          "description": "Duy trì chú ý liên tục không phân tâm"
+        },
+        {
+          "name": "Suy luận",
+          "icon": "💡",
+          "description": "Dùng logic loại trừ để tìm nghiệm duy nhất"
+        },
+        {
+          "name": "Kiên nhẫn",
+          "icon": "❤️",
+          "description": "Không bỏ cuộc trước các bảng câu đố khó"
+        }
+      ],
+      "award_details": {
+        "gem_name": "Viên Ngọc Trí Tuệ",
+        "gem_appearance": "Viên ngọc bát giác phát sáng hào quang 7 sắc cầu vồng rực rỡ trên bệ đá hoàng gia",
+        "badge_text": "HOÀN THÀNH CHẶNG 17",
+        "coloring_section": "TÔ MÀU VIÊN NGỌC CỦA CON: Bản vẽ nét viền viên kim cương đa giác cho bé thỏa sức sáng tạo màu sắc riêng."
+      },
+      "digital_game_mapping": {
+        "suggested_template": "GT-000",
+        "mechanic": "stage-celebration-award",
+        "interaction": "Màn hình ăn mừng lớn (Grand Celebration): Trẻ chạm vào Viên Ngọc Trí Tuệ để thắp sáng viên ngọc trên bản đồ 20 chặng, mở khóa tính năng tô màu ngọc kỹ thuật số bằng bảng màu ma thuật."
+      }
+    }
+  ]
+}

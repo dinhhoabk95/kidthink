@@ -14,7 +14,6 @@ export const CONTENT_KPI_THRESHOLDS = {
   HIGH_ABANDONMENT_RATE: 0.4, // > 40%
   LOW_ACCURACY_RATE: 0.3, // < 30%
   LOW_PLAY_COUNT: 5, // < 5 plays/week
-  LOW_ACTIVITY_COUNT: 3, // < 3 activities
 } as const;
 
 export default defineEventHandler(async (event) => {
@@ -56,7 +55,7 @@ export default defineEventHandler(async (event) => {
 
     return {
       level_code: row.levelCode,
-      content_version: row.contentVersion,
+      content_version: 1,
       date_ict: row.dateIct,
       plays_count: row.playsCount,
       completions_count: row.completionsCount,

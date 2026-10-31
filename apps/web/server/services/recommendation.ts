@@ -47,7 +47,6 @@ export interface GetGuestRecommendationsOptions {
 type PublishedGameLevel = Pick<
   typeof gameLevels.$inferSelect,
   | "id"
-  | "entityId"
   | "code"
   | "title"
   | "thumbnailEmoji"
@@ -58,7 +57,6 @@ type PublishedGameLevel = Pick<
 
 const publishedGameLevelColumns = {
   id: gameLevels.id,
-  entityId: gameLevels.entityId,
   code: gameLevels.code,
   title: gameLevels.title,
   thumbnailEmoji: gameLevels.thumbnailEmoji,
@@ -158,10 +156,10 @@ async function resolveTier1CurriculumCandidate(
       week_no: item.weekNo,
       session_no: item.sessionNo,
       position: item.position,
-      entity_type: item.entityType as "lesson" | "game_level",
+      entity_type: "game_level" as const,
       entity_id: item.entityId,
       code: gl?.code ?? `${item.entityType}_${item.entityId}`,
-      title: gl?.title ?? "Hoạt động",
+      title: gl?.title ?? "Trò chơi",
       is_required: item.isRequired,
       access_tier: (gl?.accessTier as AccessTier) ?? "free",
     };
@@ -201,7 +199,7 @@ async function resolveTier1CurriculumCandidate(
     access_tier: matchedLevel.accessTier as AccessTier,
     age_min: matchedLevel.ageMin,
     age_max: matchedLevel.ageMax,
-    entity_id: matchedLevel.entityId,
+    entity_id: matchedLevel.id,
   };
 }
 
@@ -237,7 +235,7 @@ async function resolveReinforceCandidates(
         access_tier: gl.accessTier as AccessTier,
         age_min: gl.ageMin,
         age_max: gl.ageMax,
-        entity_id: gl.entityId,
+        entity_id: gl.id,
       });
     }
   }
@@ -287,7 +285,7 @@ async function resolveProgressionCandidates(
         access_tier: gl.accessTier as AccessTier,
         age_min: gl.ageMin,
         age_max: gl.ageMax,
-        entity_id: gl.entityId,
+        entity_id: gl.id,
       });
     }
   }
@@ -326,7 +324,7 @@ async function resolveRevisionCandidates(
         access_tier: gl.accessTier as AccessTier,
         age_min: gl.ageMin,
         age_max: gl.ageMax,
-        entity_id: gl.entityId,
+        entity_id: gl.id,
       });
     }
   }
@@ -430,7 +428,7 @@ async function resolvePopularCandidates(
     age_min: gl.ageMin,
     age_max: gl.ageMax,
     plays_count: popularMap.get(gl.code) ?? 0,
-    entity_id: gl.entityId,
+    entity_id: gl.id,
   }));
 }
 
@@ -495,14 +493,13 @@ export async function getRecommendationsForChild(
     db
       .select(publishedGameLevelColumns)
       .from(gameLevels)
-      .where(eq(gameLevels.status, "published"))
       .orderBy(asc(gameLevels.code)),
   ]);
 
   const publishedByEntityId = new Map<number, PublishedGameLevel>();
   const publishedByCode = new Map<string, PublishedGameLevel>();
   for (const lvl of allPublishedLevels) {
-    publishedByEntityId.set(lvl.entityId, lvl);
+    publishedByEntityId.set(lvl.id, lvl);
     publishedByCode.set(lvl.code, lvl);
   }
 
@@ -550,7 +547,7 @@ export async function getRecommendationsForChild(
       access_tier: gl.accessTier as AccessTier,
       age_min: gl.ageMin,
       age_max: gl.ageMax,
-      entity_id: gl.entityId,
+      entity_id: gl.id,
     });
   }
 
@@ -578,7 +575,7 @@ export async function getRecommendationsForChild(
       access_tier: gl.accessTier as AccessTier,
       age_min: gl.ageMin,
       age_max: gl.ageMax,
-      entity_id: gl.entityId,
+      entity_id: gl.id,
     });
   }
 
@@ -593,7 +590,7 @@ export async function getRecommendationsForChild(
         access_tier: gl.accessTier as AccessTier,
         age_min: gl.ageMin,
         age_max: gl.ageMax,
-        entity_id: gl.entityId,
+        entity_id: gl.id,
       });
     }
   }
@@ -643,12 +640,7 @@ export async function getGuestRecommendations(
     db
       .select(publishedGameLevelColumns)
       .from(gameLevels)
-      .where(
-        and(
-          eq(gameLevels.status, "published"),
-          eq(gameLevels.accessTier, "free")
-        )
-      )
+      .where(eq(gameLevels.accessTier, "free"))
       .orderBy(asc(gameLevels.code)),
     db
       .select({

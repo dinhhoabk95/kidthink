@@ -1,9 +1,5 @@
-import {
-  auditLogs,
-  entitlements,
-  getOwnerDb,
-  recurringSubscriptions,
-} from "@mindkid/db";
+import { writeAudit } from "@mindkid/audit";
+import { entitlements, getOwnerDb, recurringSubscriptions } from "@mindkid/db";
 import {
   InvalidCancelReasonError,
   SubscriptionAlreadyCancelledError,
@@ -15,6 +11,7 @@ import {
   canCancelRecurringSubscription,
   DUNNING_GRACE_PERIOD_DAYS,
   DUNNING_MAX_ATTEMPTS,
+  PACKAGE_CATALOG,
 } from "@mindkid/shared";
 import { and, eq, inArray, isNotNull, lt } from "drizzle-orm";
 
@@ -130,19 +127,18 @@ export async function userCancelRecurringSubscription(
     }
 
     // Audit log
-    await tx.insert(auditLogs).values({
-      actorType: "user",
-      actorId: userId,
+    await writeAudit(tx, {
+      actor_type: "user",
+      actor_id: userId,
       action: "subscription.cancelled_by_user",
-      entityType: "recurring_subscription",
-      entityId: String(sub.id),
-      afterData: {
+      entity_type: "recurring_subscription",
+      entity_id: String(sub.id),
+      after_data: {
         subscription_id: sub.id,
         auto_renew: false,
         status: "cancelled",
         effective_until: sub.currentPeriodEnd,
       },
-      createdAt: now,
     });
 
     return {
@@ -152,6 +148,35 @@ export async function userCancelRecurringSubscription(
       effective_until: updatedSub.currentPeriodEnd.toISOString(),
     };
   });
+}
+
+type Tx = Parameters<
+  Parameters<ReturnType<typeof getOwnerDb>["transaction"]>[0]
+>[0];
+
+async function revokeSubEntitlements(
+  tx: Tx,
+  userId: number,
+  packageCode: string,
+  now: Date
+): Promise<void> {
+  const pkg = PACKAGE_CATALOG[packageCode as keyof typeof PACKAGE_CATALOG];
+  const pkgKeys = pkg ? [...pkg.entitlements] : [];
+  const entitlementConditions = [
+    eq(entitlements.userId, userId),
+    eq(entitlements.source, "package_order"),
+    inArray(entitlements.status, ["active", "soft_unlock", "grace_period"]),
+  ];
+  if (pkgKeys.length > 0) {
+    entitlementConditions.push(inArray(entitlements.entitlementKey, pkgKeys));
+  }
+  await tx
+    .update(entitlements)
+    .set({
+      status: "cancelled",
+      updatedAt: now,
+    })
+    .where(and(...entitlementConditions));
 }
 
 /**
@@ -216,33 +241,18 @@ export async function adminCancelSubscription(
 
     // 2. Handle entitlements according to revoke_immediate
     if (revokeImmediate) {
-      await tx
-        .update(entitlements)
-        .set({
-          status: "cancelled",
-          updatedAt: now,
-        })
-        .where(
-          and(
-            eq(entitlements.userId, sub.userId),
-            inArray(entitlements.status, [
-              "active",
-              "soft_unlock",
-              "grace_period",
-            ])
-          )
-        );
+      await revokeSubEntitlements(tx, sub.userId, sub.packageCode, now);
     }
 
     // 3. Write Audit Log
-    await tx.insert(auditLogs).values({
-      actorType: "manager",
-      actorId: params.managerId,
+    await writeAudit(tx, {
+      actor_type: "manager",
+      actor_id: params.managerId,
       action: "subscription.cancelled_by_admin",
-      entityType: "recurring_subscription",
-      entityId: String(sub.id),
+      entity_type: "recurring_subscription",
+      entity_id: String(sub.id),
       reason: params.adminNote,
-      afterData: {
+      after_data: {
         subscription_id: sub.id,
         user_id: sub.userId,
         reason: params.reason,
@@ -253,7 +263,6 @@ export async function adminCancelSubscription(
           ? now.toISOString()
           : sub.currentPeriodEnd.toISOString(),
       },
-      createdAt: now,
     });
 
     return {
@@ -324,18 +333,24 @@ export async function runDunningSweep(now = new Date()) {
           .where(eq(recurringSubscriptions.id, sub.id));
 
         // Revoke entitlements
+        const pkg =
+          PACKAGE_CATALOG[sub.packageCode as keyof typeof PACKAGE_CATALOG];
+        const pkgKeys = pkg ? [...pkg.entitlements] : [];
+        const dunningConditions = [
+          eq(entitlements.userId, sub.userId),
+          eq(entitlements.source, "package_order"),
+          eq(entitlements.status, "grace_period"),
+        ];
+        if (pkgKeys.length > 0) {
+          dunningConditions.push(inArray(entitlements.entitlementKey, pkgKeys));
+        }
         await tx
           .update(entitlements)
           .set({
             status: "cancelled",
             updatedAt: now,
           })
-          .where(
-            and(
-              eq(entitlements.userId, sub.userId),
-              eq(entitlements.status, "grace_period")
-            )
-          );
+          .where(and(...dunningConditions));
 
         expiredCount++;
       }

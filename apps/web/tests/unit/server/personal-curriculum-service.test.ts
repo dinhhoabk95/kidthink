@@ -4,7 +4,6 @@ import {
   curriculumItems,
   gameLevels,
   getOwnerDb,
-  lessons,
   users,
 } from "@mindkid/db";
 import { eq, inArray } from "drizzle-orm";
@@ -28,17 +27,17 @@ const ERR_QUOTA_EXCEEDED = /hạn mức/;
 const ERR_VERSION_CONFLICT = /Xung đột phiên bản/;
 const ERR_NOT_FOUND = /Không tìm thấy/;
 const ERR_READY_STATUS = /ready/;
-const ERR_UNPUBLISHED = /chưa được xuất bản/;
+const ERR_UNPUBLISHED = /không tồn tại/;
 
 describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / P4.4)", () => {
   let userAId: number;
   let userBId: number;
   let childAUuid: string;
   let childBUuid: string;
-  let publishedLessonId: number;
+  let secondGameLevelId: number;
   let premiumGameLevelId: number;
   let standardGameLevelId: number;
-  let archivedLessonId: number;
+  let archivedGameLevelId: number;
   let systemCurriculumCode: string;
   let systemCurriculumId: number;
 
@@ -108,7 +107,6 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
 
     // 4. Create standard & premium game levels
     async function insertUniqueGameLevel(
-      entityId: number,
       difficulty: number,
       title: string,
       accessTier: "standard" | "premium"
@@ -125,12 +123,10 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
             .insert(gameLevels)
             .values({
               code,
-              entityId,
               templateCode: safeTemplateCode,
               difficulty,
               title,
               accessTier,
-              status: "published",
               contentPack: {},
               difficultyParams: {},
             })
@@ -145,74 +141,30 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
     }
 
     standardGameLevelId = await insertUniqueGameLevel(
-      101,
       1,
       "Đếm số tiêu chuẩn",
       "standard"
     );
     premiumGameLevelId = await insertUniqueGameLevel(
-      102,
       2,
       "Đếm số cao cấp",
       "premium"
     );
-
-    // 5. Create lessons (published & archived)
-    async function insertUniqueLesson(
-      entityId: number,
-      title: string,
-      status: "published" | "archived"
-    ): Promise<number> {
-      for (let i = 0; i < 20; i++) {
-        const code = `LES-${Math.floor(Math.random() * 8000) + 1000}`;
-        const [existing] = await db
-          .select({ id: lessons.id })
-          .from(lessons)
-          .where(eq(lessons.code, code))
-          .limit(1);
-        if (!existing) {
-          const [res] = await db
-            .insert(lessons)
-            .values({
-              code,
-              entityId,
-              title,
-              accessTier: "standard",
-              status,
-              estimatedMinutes: 20,
-              contentVersion: 1,
-            })
-            .returning();
-          if (!res) {
-            throw new Error("Failed to insert lesson");
-          }
-          return res.id;
-        }
-      }
-      throw new Error("Failed to insert unique lesson");
-    }
-
-    publishedLessonId = await insertUniqueLesson(
-      201,
-      "Bài học hình khối cơ bản",
-      "published"
+    secondGameLevelId = await insertUniqueGameLevel(
+      1,
+      "Hình khối cơ bản",
+      "standard"
     );
-    archivedLessonId = await insertUniqueLesson(
-      202,
-      "Bài học cũ đã lưu trữ",
-      "archived"
-    );
+    archivedGameLevelId = 999_999_999;
 
-    // 6. Create system published curriculum
+    // 5. Create system published curriculum
     systemCurriculumCode = `CUR-SYS-${ts}-${rand}`;
     const [sysCurr] = await db
       .insert(curricula)
       .values({
         code: systemCurriculumCode,
-        entityId: 301,
         title: "Chương trình mẫu hệ thống",
         accessTier: "standard",
-        status: "published",
         durationWeeks: 4,
         sessionsPerWeek: 3,
       })
@@ -237,8 +189,8 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
         weekNo: 1,
         sessionNo: 2,
         position: 1,
-        entityType: "lesson",
-        entityId: publishedLessonId,
+        entityType: "game_level",
+        entityId: secondGameLevelId,
         isRequired: true,
       },
     ]);
@@ -252,23 +204,23 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
         .where(eq(curriculumItems.curriculumId, systemCurriculumId));
       await db.delete(curricula).where(eq(curricula.id, systemCurriculumId));
     }
-    if (standardGameLevelId || premiumGameLevelId) {
+    if (
+      standardGameLevelId ||
+      premiumGameLevelId ||
+      secondGameLevelId ||
+      archivedGameLevelId
+    ) {
       await db
         .delete(gameLevels)
         .where(
           inArray(
             gameLevels.id,
-            [standardGameLevelId, premiumGameLevelId].filter(Boolean)
-          )
-        );
-    }
-    if (publishedLessonId || archivedLessonId) {
-      await db
-        .delete(lessons)
-        .where(
-          inArray(
-            lessons.id,
-            [publishedLessonId, archivedLessonId].filter(Boolean)
+            [
+              standardGameLevelId,
+              premiumGameLevelId,
+              secondGameLevelId,
+              archivedGameLevelId,
+            ].filter(Boolean)
           )
         );
     }
@@ -318,7 +270,7 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
       ).rejects.toThrow(ERR_TIER_FORBIDDEN);
     });
 
-    it("từ chối thêm bài học có status archived khi tạo mới (BR-PCU-01)", async () => {
+    it("từ chối thêm mức chơi có status archived khi tạo mới (BR-PCU-01)", async () => {
       await expect(
         createPersonalCurriculum(
           {
@@ -327,14 +279,14 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
             currentTier: "standard",
           },
           {
-            title: "Lộ trình chứa bài học archived",
+            title: "Lộ trình chứa mức chơi archived",
             items: [
               {
                 week_no: 1,
                 session_no: 1,
                 position: 1,
-                entity_type: "lesson",
-                entity_id: archivedLessonId,
+                entity_type: "game_level",
+                entity_id: archivedGameLevelId,
               },
             ],
           }
@@ -437,8 +389,8 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
               week_no: 1,
               session_no: 2,
               position: 1,
-              entity_type: "lesson",
-              entity_id: publishedLessonId,
+              entity_type: "game_level",
+              entity_id: secondGameLevelId,
               is_required: true,
             },
           ],
@@ -583,8 +535,8 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
             week_no: 3,
             session_no: 1,
             position: 1,
-            entity_type: "lesson",
-            entity_id: publishedLessonId,
+            entity_type: "game_level",
+            entity_id: secondGameLevelId,
           },
         ],
       });

@@ -9,14 +9,14 @@ reviewed: 2026-10-18
 owns:
   - Cơ chế render PDF và giới hạn
 depends_on:
-  - LESSON-PLAN-CREATOR
+  - PERSONAL-CURRICULUM
   - JOB-QUEUE
   - ENTITLEMENT-MODEL
 ---
 
 # Xuất PDF
 
-> **Add-on — không bán ở MVP.** Đi kèm `addon_lesson_plan`.
+> **Add-on — không bán ở MVP.** Đi kèm `addon_curriculum`.
 
 ## 1. Objective
 

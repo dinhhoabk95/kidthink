@@ -36,7 +36,7 @@ export const emailSend: Consumer<"email:send"> = async (payload, ctx) => {
     });
 
     return result;
-  } catch (error: unknown) {
+  } catch (error) {
     await recordEmailDeliveryOutcome(payload.notificationId, {
       status: "failed",
       error: readErrorMessage(error),

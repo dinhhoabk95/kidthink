@@ -7,9 +7,8 @@
     "dev": "tsx watch src/index.ts",
     "build": "node scripts/build.mjs",
     "start": "node dist/index.js",
-    "restore": "tsx src/backup/restore.ts",
-    "test": "vitest run",
-    "backup:manual": "tsx src/scripts/backup-manual.ts"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
     "@mindkid/audit": "workspace:*",

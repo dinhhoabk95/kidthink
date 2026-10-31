@@ -48,7 +48,7 @@ export const C5_VOC_20_DATASET: SkillDataset = {
       label: "ở trên",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "⬆️",
       },
     },
     {
@@ -56,7 +56,7 @@ export const C5_VOC_20_DATASET: SkillDataset = {
       label: "ở dưới",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "⬇️",
       },
     },
     {
@@ -64,7 +64,7 @@ export const C5_VOC_20_DATASET: SkillDataset = {
       label: "bên trong",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "📦",
       },
     },
     {
@@ -72,23 +72,23 @@ export const C5_VOC_20_DATASET: SkillDataset = {
       label: "bên ngoài",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🏠",
       },
     },
     {
-      id: "voc_phia_truoc",
-      label: "phía trước",
+      id: "voc_ben_phai",
+      label: "bên phải",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "➡️",
       },
     },
     {
-      id: "voc_phia_sau",
-      label: "phía sau",
+      id: "voc_ben_trai",
+      label: "bên trái",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "⬅️",
       },
     },
     {
@@ -96,7 +96,7 @@ export const C5_VOC_20_DATASET: SkillDataset = {
       label: "bên cạnh",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "↔️",
       },
     },
     {
@@ -104,7 +104,7 @@ export const C5_VOC_20_DATASET: SkillDataset = {
       label: "ở giữa",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🎯",
       },
     },
   ],
@@ -145,8 +145,8 @@ export const C5_VOC_20_DATASET: SkillDataset = {
     "voc_o_duoi",
     "voc_ben_trong",
     "voc_ben_ngoai",
-    "voc_phia_truoc",
-    "voc_phia_sau",
+    "voc_ben_phai",
+    "voc_ben_trai",
     "voc_ben_canh",
     "voc_o_giua",
   ],
@@ -175,14 +175,6 @@ export const C5_VOC_20_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-VOC-TAP-0082",
-      template: "GT-001",
-      band: "5-6",
-      difficulty: 2,
-      theme: "family",
-      rounds: 3,
-    },
-    {
       code: "GL-C5-VOC-TAP-0083",
       template: "GT-001",
       band: "5-6",
@@ -191,59 +183,11 @@ export const C5_VOC_20_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-VOC-TAP-0084",
-      template: "GT-001",
-      band: "5-6",
-      difficulty: 3,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-TAP-0085",
-      template: "GT-001",
-      band: "5-6",
-      difficulty: 4,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
       code: "GL-C5-VOC-MULTI-0071",
       template: "GT-002",
       band: "5-6",
       difficulty: 2,
       theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-MULTI-0072",
-      template: "GT-002",
-      band: "5-6",
-      difficulty: 2,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-MULTI-0073",
-      template: "GT-002",
-      band: "5-6",
-      difficulty: 3,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-MULTI-0074",
-      template: "GT-002",
-      band: "5-6",
-      difficulty: 3,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-MULTI-0075",
-      template: "GT-002",
-      band: "5-6",
-      difficulty: 4,
-      theme: "weather",
       rounds: 3,
     },
   ],

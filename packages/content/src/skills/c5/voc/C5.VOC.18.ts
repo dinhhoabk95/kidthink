@@ -48,7 +48,7 @@ export const C5_VOC_18_DATASET: SkillDataset = {
       label: "hình tròn",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🔴",
       },
     },
     {
@@ -56,7 +56,7 @@ export const C5_VOC_18_DATASET: SkillDataset = {
       label: "hình vuông",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🟦",
       },
     },
     {
@@ -64,7 +64,7 @@ export const C5_VOC_18_DATASET: SkillDataset = {
       label: "hình tam giác",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🔺",
       },
     },
     {
@@ -72,7 +72,7 @@ export const C5_VOC_18_DATASET: SkillDataset = {
       label: "hình chữ nhật",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "📗",
       },
     },
     {
@@ -80,7 +80,7 @@ export const C5_VOC_18_DATASET: SkillDataset = {
       label: "hình bầu dục",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🥚",
       },
     },
     {
@@ -88,7 +88,7 @@ export const C5_VOC_18_DATASET: SkillDataset = {
       label: "hình thoi",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🔷",
       },
     },
     {
@@ -96,7 +96,7 @@ export const C5_VOC_18_DATASET: SkillDataset = {
       label: "ngôi sao",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "⭐",
       },
     },
     {
@@ -104,7 +104,7 @@ export const C5_VOC_18_DATASET: SkillDataset = {
       label: "trái tim",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "❤️",
       },
     },
   ],
@@ -175,14 +175,6 @@ export const C5_VOC_18_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-VOC-TAP-0072",
-      template: "GT-001",
-      band: "4-5",
-      difficulty: 2,
-      theme: "family",
-      rounds: 3,
-    },
-    {
       code: "GL-C5-VOC-TAP-0073",
       template: "GT-001",
       band: "4-5",
@@ -191,59 +183,11 @@ export const C5_VOC_18_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-VOC-TAP-0074",
-      template: "GT-001",
-      band: "4-5",
-      difficulty: 3,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-TAP-0075",
-      template: "GT-001",
-      band: "4-5",
-      difficulty: 4,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
       code: "GL-C5-VOC-MULTI-0061",
       template: "GT-002",
       band: "4-5",
       difficulty: 2,
       theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-MULTI-0062",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 2,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-MULTI-0063",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 3,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-MULTI-0064",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 3,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-VOC-MULTI-0065",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 4,
-      theme: "weather",
       rounds: 3,
     },
   ],

@@ -724,4 +724,51 @@ describe("usePlayGesture — nhấn chậm vẫn là chạm (BR-FBK-02)", () => 
     } as PointerEvent);
     expect(session.dispatched.map((a) => a.type)).toEqual(["tap_item"]);
   });
+
+  it("trả lời đúng sau khi gợi ý đã bật gọi resetScaffolding để xoá gợi ý ngay cho các câu tiếp theo", () => {
+    const session = new FakeTapSelectSession({}, {});
+    const resetScaffolding = vi.fn();
+    const onMiss = vi.fn();
+    const onSuccess = vi.fn();
+    const engine = {
+      activeSession: session,
+      acceptingInput: true,
+      focusIndex: 1 as number | null,
+      actionHinted: true,
+      hintRegionIds: ["opt-1"],
+      resetScaffolding: () => {
+        resetScaffolding();
+        onSuccess();
+        engine.focusIndex = null;
+        engine.actionHinted = false;
+        engine.hintRegionIds = [];
+      },
+      audio: {
+        playSnapSound: vi.fn(),
+        playPopCelebrateSound: vi.fn(),
+        playSoftFeedbackSound: vi.fn(),
+        speakPrompt: vi.fn(),
+      },
+      scaffolding: { onMiss, onSuccess },
+      renderSystem: { LOGIC_WIDTH: 960, LOGIC_HEIGHT: 540 },
+    };
+
+    const gesture = usePlayGesture({
+      getEngine: () => engine as never,
+      canvasRef: ref(null),
+      onRoundWon: vi.fn(),
+    });
+
+    // Chạm sai ở (300, 100)
+    gesture.dispatchGesture({ type: "tap", x: 300, y: 100, timeMs: 0 });
+    expect(onMiss).toHaveBeenCalledTimes(1);
+
+    // Chạm đúng ở (100, 100) -> xoá sạch trạng thái gợi ý trên engine
+    gesture.dispatchGesture({ type: "tap", x: 100, y: 100, timeMs: 100 });
+    expect(resetScaffolding).toHaveBeenCalledTimes(1);
+    expect(onSuccess).toHaveBeenCalledTimes(1);
+    expect(engine.focusIndex).toBeNull();
+    expect(engine.actionHinted).toBe(false);
+    expect(engine.hintRegionIds).toEqual([]);
+  });
 });

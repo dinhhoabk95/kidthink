@@ -260,13 +260,7 @@
                     >
                       <div>
                         <span
-                          class="text-sm font-bold px-2.5 py-1 rounded-xl bg-surface-100 text-brand-700 inline-block"
-                          v-if="item.entity_type === 'lesson'"
-                          >Bài học</span
-                        >
-                        <span
                           class="text-sm font-bold px-2.5 py-1 rounded-xl bg-surface-100 text-surface-800 inline-block"
-                          v-else
                           >Trò chơi</span
                         >
                       </div>
@@ -435,9 +429,6 @@
   }
 
   function getItemHref(item: ProgramWeekItemPublic): string {
-    if (item.entity_type === "lesson") {
-      return item.code ? `/play/lesson/${item.code}` : "/play";
-    }
     return item.code ? `/games/${item.code}` : "/games";
   }
 

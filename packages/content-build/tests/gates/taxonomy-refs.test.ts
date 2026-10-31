@@ -14,10 +14,10 @@ describe("Cổng check:taxonomy-refs — không mã kỹ năng chết", () => {
     expect(knownSkillCodes().size).toBeGreaterThan(300);
   });
 
-  it("Ca âm 1: mã chết trong tài liệu bản đồ giáo án làm cổng đỏ", () => {
+  it("Ca âm 1: mã chết trong tài liệu ánh xạ làm cổng đỏ", () => {
     const found = scanTaxonomyRefs(
-      "docs/taxonomy/lesson-map.md",
-      "| W22 | Tiết 64 | `LES-0104` | Tháp hồng | `C5.LEN.01` |",
+      "docs/taxonomy/moet-alignment.md",
+      "| W22 | Tiết 64 | `GL-0104` | Tháp hồng | `C5.LEN.01` |",
       knownSkillCodes()
     );
 

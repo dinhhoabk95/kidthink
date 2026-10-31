@@ -45,61 +45,150 @@ export const C2_MIR_03_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "spoon",
-      label: "cái thìa",
+      id: "sym_butterfly",
+      label: "nửa bướm đối xứng",
+      value: 1,
       image: {
         kind: "emoji",
-        ref: "🥄",
+        ref: "🦋",
       },
       category: {
-        type: "đồ dùng",
+        type: "nửa hình ghép",
+      },
+      contrast_group: "half_match",
+    },
+    {
+      id: "sym_snowflake",
+      label: "nửa bông tuyết",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "❄️",
+      },
+      category: {
+        type: "nửa hình ghép",
+      },
+      contrast_group: "half_match",
+    },
+    {
+      id: "sym_heart",
+      label: "nửa trái tim",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "❤️",
+      },
+      category: {
+        type: "nửa hình ghép",
+      },
+      contrast_group: "half_match",
+    },
+    {
+      id: "sym_star",
+      label: "nửa ngôi sao",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "⭐",
+      },
+      category: {
+        type: "nửa hình ghép",
+      },
+      contrast_group: "half_match",
+    },
+    {
+      id: "asym_shoe",
+      label: "chiếc giày lệch bên",
+      value: 5,
+      image: {
+        kind: "emoji",
+        ref: "👟",
+      },
+      category: {
+        type: "hình lệch bên",
+      },
+      contrast_group: "asymmetric",
+    },
+    {
+      id: "asym_scissors",
+      label: "cây kéo lệch bên",
+      value: 6,
+      image: {
+        kind: "emoji",
+        ref: "✂️",
+      },
+      category: {
+        type: "hình lệch bên",
+      },
+      contrast_group: "asymmetric",
+    },
+    {
+      id: "asym_cup",
+      label: "chiếc cốc lệch bên",
+      value: 7,
+      image: {
+        kind: "emoji",
+        ref: "☕",
+      },
+      category: {
+        type: "hình lệch bên",
+      },
+      contrast_group: "asymmetric",
+    },
+    {
+      id: "asym_snail",
+      label: "chú ốc sên lệch bên",
+      value: 8,
+      image: {
+        kind: "emoji",
+        ref: "🐌",
+      },
+      category: {
+        type: "hình lệch bên",
+      },
+      contrast_group: "asymmetric",
+    },
+  ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "sym_butterfly",
+      target_id: "asym_shoe",
+      metadata: {
+        dimension: "symmetry",
       },
     },
     {
-      id: "cup",
-      label: "cái cốc",
-      image: {
-        kind: "emoji",
-        ref: "🥤",
-      },
-      category: {
-        type: "đồ dùng",
+      type: "contrast",
+      source_id: "sym_snowflake",
+      target_id: "asym_scissors",
+      metadata: {
+        dimension: "symmetry",
       },
     },
     {
-      id: "bed",
-      label: "cái giường",
-      image: {
-        kind: "emoji",
-        ref: "🛏️",
-      },
-      category: {
-        type: "đồ dùng",
+      type: "pair",
+      source_id: "sym_butterfly",
+      target_id: "sym_heart",
+      metadata: {
+        relation: "cùng nửa hình",
       },
     },
     {
-      id: "chair",
-      label: "cái ghế",
-      image: {
-        kind: "emoji",
-        ref: "🪑",
-      },
-      category: {
-        type: "đồ dùng",
-      },
-    },
-    {
-      id: "apple",
-      label: "quả táo",
-      image: {
-        kind: "emoji",
-        ref: "🍎",
-      },
-      category: {
-        type: "hoa quả",
+      type: "pair",
+      source_id: "asym_shoe",
+      target_id: "asym_cup",
+      metadata: {
+        relation: "cùng lệch bên",
       },
     },
   ],
+  axes: {
+    symmetry: {
+      values: ["nửa hình ghép", "hình lệch bên"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
@@ -132,7 +221,16 @@ export const C2_MIR_03_DATASET: SkillDataset = {
     narration_template:
       "Chúng mình cùng tìm hiểu về Hoàn thành nửa hình còn lại nhé",
   },
-  ordering: ["spoon", "cup", "bed", "chair", "apple"],
+  ordering: [
+    "sym_butterfly",
+    "sym_snowflake",
+    "sym_heart",
+    "sym_star",
+    "asym_shoe",
+    "asym_scissors",
+    "asym_cup",
+    "asym_snail",
+  ],
 };
 
 export const C2_MIR_03_SEED: SkillSeed = {
@@ -156,67 +254,11 @@ export const C2_MIR_03_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C2-MIR-MAZE-0001",
-      template: "GT-013",
-      band: "4-5",
-      difficulty: 3,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-MIR-MAZE-0002",
-      template: "GT-013",
-      band: "4-5",
-      difficulty: 4,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-MIR-DIFF-0001",
-      template: "GT-014",
-      band: "5-6",
-      difficulty: 3,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-MIR-DIFF-0002",
-      template: "GT-014",
-      band: "5-6",
-      difficulty: 4,
-      theme: "ocean",
-      rounds: 3,
-    },
-    {
       code: "GL-C2-MIR-ISO-0001",
       template: "GT-017",
       band: "5-6",
       difficulty: 3,
       theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-MIR-ISO-0002",
-      template: "GT-017",
-      band: "5-6",
-      difficulty: 4,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-MIR-TFRA-0001",
-      template: "GT-019",
-      band: "4-5",
-      difficulty: 3,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-MIR-TFRA-0002",
-      template: "GT-019",
-      band: "4-5",
-      difficulty: 4,
-      theme: "space",
       rounds: 3,
     },
   ],

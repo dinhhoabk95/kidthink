@@ -1,26 +1,23 @@
 import type { RecommendationItem } from "@mindkid/adaptive";
 import {
-  activities,
   collections,
   curricula,
   gameLevels,
   type getOwnerDb,
-  lessons,
   libraryItems,
-  userTagMap,
 } from "@mindkid/db";
 import { QuotaExceededError } from "@mindkid/errors/billing";
 import { NotFoundError } from "@mindkid/errors/common";
 import { CodeAlreadyExistsError } from "@mindkid/errors/content";
 import { type AccessTier, TIER_ORDER, TIER_RANK } from "@mindkid/shared";
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { getGuestRecommendations } from "./recommendation.ts";
 
 type LibraryDatabase = ReturnType<typeof getOwnerDb>;
 
 export interface GetLibraryOptions {
   userId: number;
-  entityType?: "game_level" | "lesson" | "curriculum" | "activity";
+  entityType?: "game_level" | "curriculum";
   collectionId?: number;
   tag?: string;
   q?: string;
@@ -45,25 +42,26 @@ export interface LibraryItemPayload {
 }
 
 export async function getUserCollections(db: LibraryDatabase, userId: number) {
-  const userCols = await db
-    .select({
-      id: collections.id,
-      name: collections.name,
-      position: collections.position,
-      createdAt: collections.createdAt,
-    })
-    .from(collections)
-    .where(eq(collections.userId, userId))
-    .orderBy(collections.position, collections.createdAt);
-
-  const counts = await db
-    .select({
-      collectionId: libraryItems.collectionId,
-      count: sql<number>`count(*)::int`,
-    })
-    .from(libraryItems)
-    .where(eq(libraryItems.userId, userId))
-    .groupBy(libraryItems.collectionId);
+  const [userCols, counts] = await Promise.all([
+    db
+      .select({
+        id: collections.id,
+        name: collections.name,
+        position: collections.position,
+        createdAt: collections.createdAt,
+      })
+      .from(collections)
+      .where(eq(collections.userId, userId))
+      .orderBy(collections.position, collections.createdAt),
+    db
+      .select({
+        collectionId: libraryItems.collectionId,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(libraryItems)
+      .where(eq(libraryItems.userId, userId))
+      .groupBy(libraryItems.collectionId),
+  ]);
 
   const countMap = new Map<number, number>();
   for (const c of counts) {
@@ -194,7 +192,7 @@ export async function deleteCollection(
 
 async function resolveEntityIdByCode(
   db: LibraryDatabase,
-  entityType: "game_level" | "lesson" | "curriculum" | "activity",
+  entityType: "game_level" | "curriculum",
   code: string
 ): Promise<number | null> {
   const normalizedCode = code.trim();
@@ -203,45 +201,25 @@ async function resolveEntityIdByCode(
   }
   if (entityType === "game_level") {
     const [row] = await db
-      .select({ entityId: gameLevels.entityId })
+      .select({ id: gameLevels.id })
       .from(gameLevels)
       .where(eq(gameLevels.code, normalizedCode))
-      .orderBy(desc(gameLevels.contentVersion))
       .limit(1);
-    return row?.entityId ?? null;
-  }
-  if (entityType === "lesson") {
-    const [row] = await db
-      .select({ entityId: lessons.entityId })
-      .from(lessons)
-      .where(eq(lessons.code, normalizedCode))
-      .orderBy(desc(lessons.contentVersion))
-      .limit(1);
-    return row?.entityId ?? null;
-  }
-  if (entityType === "curriculum") {
-    const [row] = await db
-      .select({ entityId: curricula.entityId })
-      .from(curricula)
-      .where(eq(curricula.code, normalizedCode))
-      .orderBy(desc(curricula.contentVersion))
-      .limit(1);
-    return row?.entityId ?? null;
+    return row?.id ?? null;
   }
   const [row] = await db
-    .select({ entityId: activities.entityId })
-    .from(activities)
-    .where(eq(activities.code, normalizedCode))
-    .orderBy(desc(activities.contentVersion))
+    .select({ id: curricula.id })
+    .from(curricula)
+    .where(eq(curricula.code, normalizedCode))
     .limit(1);
-  return row?.entityId ?? null;
+  return row?.id ?? null;
 }
 
 export async function addLibraryItem(
   db: LibraryDatabase,
   params: {
     userId: number;
-    entityType: "game_level" | "lesson" | "curriculum" | "activity";
+    entityType: "game_level" | "curriculum";
     entityId?: number;
     code?: string;
     collectionId?: number | null;
@@ -300,7 +278,7 @@ export async function removeLibraryItem(
   db: LibraryDatabase,
   params: {
     userId: number;
-    entityType: "game_level" | "lesson" | "curriculum" | "activity";
+    entityType: "game_level" | "curriculum";
     entityId: number;
   }
 ) {
@@ -311,16 +289,6 @@ export async function removeLibraryItem(
         eq(libraryItems.userId, params.userId),
         eq(libraryItems.entityType, params.entityType),
         eq(libraryItems.entityId, params.entityId)
-      )
-    );
-
-  await db
-    .delete(userTagMap)
-    .where(
-      and(
-        eq(userTagMap.userId, params.userId),
-        eq(userTagMap.entityType, params.entityType),
-        eq(userTagMap.entityId, params.entityId)
       )
     );
 }
@@ -337,51 +305,22 @@ async function resolveGameLevelMeta(
   db: LibraryDatabase,
   entityId: number
 ): Promise<ResolvedEntityMeta> {
-  const levels = await db
+  const [active] = await db
     .select({
       code: gameLevels.code,
       title: gameLevels.title,
       thumbnailEmoji: gameLevels.thumbnailEmoji,
       accessTier: gameLevels.accessTier,
-      status: gameLevels.status,
     })
     .from(gameLevels)
-    .where(eq(gameLevels.entityId, entityId))
-    .orderBy(desc(gameLevels.contentVersion));
+    .where(eq(gameLevels.id, entityId));
 
-  const published = levels.find((l) => l.status === "published");
-  const active = published ?? levels[0];
   return {
     code: active?.code ?? `game_level-${entityId}`,
     title: active?.title ?? `Trò chơi #${entityId}`,
     thumbnailEmoji: active?.thumbnailEmoji ?? undefined,
     accessTier: active?.accessTier ?? "free",
-    isArchived: !published && levels.some((l) => l.status === "archived"),
-  };
-}
-
-async function resolveLessonMeta(
-  db: LibraryDatabase,
-  entityId: number
-): Promise<ResolvedEntityMeta> {
-  const les = await db
-    .select({
-      code: lessons.code,
-      title: lessons.title,
-      accessTier: lessons.accessTier,
-      status: lessons.status,
-    })
-    .from(lessons)
-    .where(eq(lessons.entityId, entityId))
-    .orderBy(desc(lessons.contentVersion));
-
-  const published = les.find((l) => l.status === "published");
-  const active = published ?? les[0];
-  return {
-    code: active?.code ?? `lesson-${entityId}`,
-    title: active?.title ?? `Bài học #${entityId}`,
-    accessTier: active?.accessTier ?? "free",
-    isArchived: !published && les.some((l) => l.status === "archived"),
+    isArchived: !active,
   };
 }
 
@@ -389,49 +328,20 @@ async function resolveCurriculumMeta(
   db: LibraryDatabase,
   entityId: number
 ): Promise<ResolvedEntityMeta> {
-  const currs = await db
+  const [active] = await db
     .select({
       code: curricula.code,
       title: curricula.title,
       accessTier: curricula.accessTier,
-      status: curricula.status,
     })
     .from(curricula)
-    .where(eq(curricula.entityId, entityId))
-    .orderBy(desc(curricula.contentVersion));
+    .where(eq(curricula.id, entityId));
 
-  const published = currs.find((c) => c.status === "published");
-  const active = published ?? currs[0];
   return {
     code: active?.code ?? `curriculum-${entityId}`,
     title: active?.title ?? `Chương trình #${entityId}`,
     accessTier: active?.accessTier ?? "free",
-    isArchived: !published && currs.some((c) => c.status === "archived"),
-  };
-}
-
-async function resolveActivityMeta(
-  db: LibraryDatabase,
-  entityId: number
-): Promise<ResolvedEntityMeta> {
-  const acts = await db
-    .select({
-      code: activities.code,
-      title: activities.title,
-      accessTier: activities.accessTier,
-      status: activities.status,
-    })
-    .from(activities)
-    .where(eq(activities.entityId, entityId))
-    .orderBy(desc(activities.contentVersion));
-
-  const published = acts.find((a) => a.status === "published");
-  const active = published ?? acts[0];
-  return {
-    code: active?.code ?? `activity-${entityId}`,
-    title: active?.title ?? `Hoạt động #${entityId}`,
-    accessTier: active?.accessTier ?? "free",
-    isArchived: !published && acts.some((a) => a.status === "archived"),
+    isArchived: !active,
   };
 }
 
@@ -443,20 +353,92 @@ function resolveEntityMeta(
   switch (entityType) {
     case "game_level":
       return resolveGameLevelMeta(db, entityId);
-    case "lesson":
-      return resolveLessonMeta(db, entityId);
     case "curriculum":
       return resolveCurriculumMeta(db, entityId);
-    case "activity":
-      return resolveActivityMeta(db, entityId);
     default:
       return Promise.resolve({
         code: `${entityType}-${entityId}`,
         title: `Nội dung #${entityId}`,
         accessTier: "free",
-        isArchived: false,
+        isArchived: true,
       });
   }
+}
+
+function populateMetaGroup<
+  T extends {
+    id: number;
+    code: string;
+    title: string;
+    accessTier: string;
+    thumbnailEmoji?: string | null;
+  },
+>(metaMap: Map<string, ResolvedEntityMeta>, rows: T[], type: string): void {
+  for (const r of rows) {
+    metaMap.set(`${type}_${r.id}`, {
+      code: r.code,
+      title: r.title,
+      thumbnailEmoji: r.thumbnailEmoji ?? undefined,
+      accessTier: r.accessTier,
+      isArchived: false,
+    });
+  }
+}
+
+async function buildBulkMetaMap(
+  db: LibraryDatabase,
+  items: Array<{ entityType: string; entityId: number }>
+): Promise<Map<string, ResolvedEntityMeta>> {
+  const gameLevelIds = items
+    .filter((i) => i.entityType === "game_level")
+    .map((i) => i.entityId);
+  const currIds = items
+    .filter((i) => i.entityType === "curriculum")
+    .map((i) => i.entityId);
+
+  const [rawGameLevels, rawCurricula] = await Promise.all([
+    gameLevelIds.length > 0
+      ? db
+          .select({
+            id: gameLevels.id,
+            code: gameLevels.code,
+            title: gameLevels.title,
+            thumbnailEmoji: gameLevels.thumbnailEmoji,
+            accessTier: gameLevels.accessTier,
+          })
+          .from(gameLevels)
+          .where(inArray(gameLevels.id, gameLevelIds))
+      : Promise.resolve([]),
+    currIds.length > 0
+      ? db
+          .select({
+            id: curricula.id,
+            code: curricula.code,
+            title: curricula.title,
+            accessTier: curricula.accessTier,
+          })
+          .from(curricula)
+          .where(inArray(curricula.id, currIds))
+      : Promise.resolve([]),
+  ]);
+
+  const metaMap = new Map<string, ResolvedEntityMeta>();
+  populateMetaGroup(metaMap, rawGameLevels, "game_level");
+  populateMetaGroup(metaMap, rawCurricula, "curriculum");
+  return metaMap;
+}
+
+function matchesLibraryQuery(
+  meta: ResolvedEntityMeta,
+  qLower: string | undefined
+): boolean {
+  if (!qLower) {
+    return true;
+  }
+  return (
+    meta.title.toLowerCase().includes(qLower) ||
+    meta.code.toLowerCase().includes(qLower)
+  );
 }
 
 export async function getUserLibrary(
@@ -491,17 +473,14 @@ export async function getUserLibrary(
   );
   const result: LibraryItemPayload[] = [];
   const qLower = options.q?.toLowerCase().trim();
+  const metaMap = await buildBulkMetaMap(db, items);
 
   for (const item of items) {
-    const meta = await resolveEntityMeta(db, item.entityType, item.entityId);
+    const meta =
+      metaMap.get(`${item.entityType}_${item.entityId}`) ??
+      (await resolveEntityMeta(db, item.entityType, item.entityId));
 
-    if (
-      qLower &&
-      !(
-        meta.title.toLowerCase().includes(qLower) ||
-        meta.code.toLowerCase().includes(qLower)
-      )
-    ) {
+    if (!matchesLibraryQuery(meta, qLower)) {
       continue;
     }
 

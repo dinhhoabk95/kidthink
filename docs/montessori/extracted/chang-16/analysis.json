@@ -1,0 +1,2520 @@
+{
+  "stage_id": "chang-16",
+  "workbook_id": "WB16",
+  "stage_number": 16,
+  "title": "Chặng 16: Xưởng Cân Bằng Kỳ Diệu",
+  "subtitle": "Quan sát – So sánh – Suy luận (Cân nặng, Thăng bằng & Tiền đại số)",
+  "total_pages": 24,
+  "target_age": "3–6 tuổi",
+  "series": "Gấu Logic & Thỏ Sáng Tạo - Hành Trình 20 Chặng Toán Học",
+  "mission": "Khám phá Xưởng Cân Bằng Kỳ Diệu, giải mã các chiếc cân bí mật, tìm mật mã mở cửa kho báu và thắp sáng Huy Hiệu Cân Bằng",
+  "pedagogy": {
+    "framework": "Montessori & CPA (Concrete - Pictorial - Abstract)",
+    "approach": "Mô hình bàn cân hai đĩa (Two-pan Balance Scale), Trực quan xúc giác (Tactile & Visual), Tiền đại số (Pre-algebra Equivalence & Substitution), Suy luận bắc cầu (Transitive Deduction) & Triệt tiêu đại số (Algebraic Elimination)",
+    "competencies": [
+      "C1 - Cảm thức số học & Đo lường (Number Sense & Measurement)",
+      "C3 - Tư duy Logic & Suy luận đại số (Logical Reasoning & Pre-Algebra)"
+    ],
+    "skills_targeted": [
+      {
+        "code": "C1.MEAS.01",
+        "name": "Nhận biết nặng hơn - nhẹ hơn trực quan qua độ nghiêng bàn cân"
+      },
+      {
+        "code": "C1.MEAS.02",
+        "name": "So sánh thứ tự cân nặng đa vật thể (Nặng nhất - Nhẹ nhất qua nhiều bàn cân)"
+      },
+      {
+        "code": "C1.CMP.03",
+        "name": "So sánh bằng nhau (Thăng bằng khối lượng / số lượng hai bên đĩa cân)"
+      },
+      {
+        "code": "C1.CMP.04",
+        "name": "Nhận biết bên nhiều hơn (More / Heavier group)"
+      },
+      {
+        "code": "C1.CMP.05",
+        "name": "Nhận biết bên ít hơn (Fewer / Lighter group)"
+      },
+      {
+        "code": "C1.CNT.01",
+        "name": "Đếm tương ứng 1-1 và xác định số lượng vật phẩm trên đĩa cân"
+      },
+      {
+        "code": "C1.ADD.02",
+        "name": "Thêm vào để cân bằng (Phép cộng & tìm số hạng còn thiếu)"
+      },
+      {
+        "code": "C1.SUB.02",
+        "name": "Bớt đi để cân bằng (Phép trừ & tìm số trừ / hiệu số chênh lệch)"
+      },
+      {
+        "code": "C1.MUL.01",
+        "name": "Gấp nhiều lần / Nhân tỉ lệ vật thể tương đương (Scaling factor)"
+      },
+      {
+        "code": "C3.EQV.01",
+        "name": "Khái niệm đẳng thức và thăng bằng hai vế (Equivalence Principle: Trái = Phải)"
+      },
+      {
+        "code": "C3.EQV.02",
+        "name": "Quy đổi thế đại số 1 bậc & 2 bậc (Substitution Principle: 1 A = n B)"
+      },
+      {
+        "code": "C3.EQV.03",
+        "name": "Khử biến và tính giá trị biểu thức đại số (Elimination & System of Equations)"
+      },
+      {
+        "code": "C3.DED.01",
+        "name": "Suy luận cơ học từ trạng thái bàn cân (Cao = nhẹ hơn, Thấp = nặng hơn, Ngang = bằng nhau)"
+      },
+      {
+        "code": "C3.DED.02",
+        "name": "Suy luận tìm số lượng vật phẩm còn thiếu để lập lại cân bằng"
+      },
+      {
+        "code": "C3.DED.03",
+        "name": "Suy luận bắc cầu (Transitive Reasoning: A > B, B > C => A > C; A = nB, B = mC => A = n*m C)"
+      }
+    ],
+    "progression_narrative": "Tiến trình sư phạm chặt chẽ 6 tầng nhận thức (CPA & Montessori Spiral Progression): (1) Trực quan cụ thể (Concrete): Làm quen với cơ chế bàn cân đĩa, thăng bằng nghĩa là hai bên bằng nhau, đĩa nhiều hơn hạ thấp (Trang 2); (2) Bán cụ thể chuyển tiếp số học (Pictorial to Abstract Bridge): Cân số và tiền đại số khuyết số – tìm số còn thiếu để tổng hai bên bằng nhau trong phạm vi 10 (Trang 3–9); (3) Định tính khối lượng cơ học (Mechanical Weight Comparison): Phân biệt nặng hơn (hạ thấp) vs nhẹ hơn (nâng cao), đọc góc nghiêng bàn cân (Trang 10–11); (4) Thao tác bù trừ cơ học & đại số (Balancing Operations: Add vs Subtract): Phân tích đĩa cao cần THÊM (+) và đĩa thấp cần BỚT (−) vật phẩm để đạt thăng bằng (Trang 12–15); (5) Tiền đại số tương đương & Thế bắc cầu (Pre-algebra Equivalence & Transitive Substitution): Quy đổi tỉ lệ 1 bậc (1 A = n B), quy đổi bắc cầu 2 bậc (A qua B ra C), khử biến đại số và tổ hợp đại số tuyến tính (Trang 16–20); (6) Đỉnh cao tư duy hệ thống & Tổng hợp (Pre-algebra System Solving & Capstone Master Challenge): Giải hệ phương trình mở mã khóa 6 chữ số (Trang 21), cân bằng biểu thức quả cân sắt (Trang 22), và vượt qua 4 đại thử thách cực trị nặng/nhẹ nhất, bắc cầu và tìm giá trị cuối cùng (Trang 23–24)."
+  },
+  "activity_groups": [
+    {
+      "group_id": "WB16-D1",
+      "group_name": "Làm quen với bàn cân & So sánh thăng bằng trực quan (Visual Balance & Tray Comparison)",
+      "page_range": "Trang 2 (Sách: Trang 1)",
+      "mechanic_description": "Trẻ quan sát đĩa cân thăng bằng và đĩa khay hai bên: (1) Nhận biết cân nằm ngang nghĩa là hai bên bằng nhau, vẽ/thêm hình còn thiếu để 2 bên bằng nhau; (2) So sánh 2 khay đồ vật, chọn nhãn 'Bên trái', 'Bằng nhau', hoặc 'Bên phải' nhiều hơn.",
+      "sample_prompts": [
+        "Bé xem bên nào cần thêm đồ vật để hai bên bằng nhau nhé!",
+        "Bên nào nhiều hơn? Chọn Bên trái, Bằng nhau, hay Bên phải"
+      ],
+      "visual_objects": [
+        "Táo đỏ tươi 🍎 (2 vs 1+?, 3 vs 6)",
+        "Ngôi sao vàng ⭐ (3 vs 2+?, 2 vs 2)",
+        "Quả lê xanh 🍐 (2 vs 1+?, 4 vs 1)",
+        "Dâu tây đỏ 🍓 (3 vs 2+?, 5 vs 3)",
+        "Cam tròn mọng 🍊 (2 vs 1+?, 2 vs 5)",
+        "Chuối vàng 🍌 (3 vs 2+?, 3 vs 7)"
+      ],
+      "quantities_and_ranges": "Số lượng từ 1 đến 7 vật thể mỗi bên.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-014",
+          "template_name": "balance-scale (bàn cân đĩa bập bênh trực quan)"
+        },
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chạm chọn 1 trong 3 nhãn kết quả)"
+        }
+      ],
+      "recommended_skills": [
+        "C1.CMP.03",
+        "C1.CMP.04",
+        "C1.CMP.05",
+        "C1.CNT.01",
+        "C3.DED.01"
+      ]
+    },
+    {
+      "group_id": "WB16-D2",
+      "group_name": "Cân số & Tiền đại số tìm số hạng còn thiếu (Number Scale & Missing Addend Pre-Algebra)",
+      "page_range": "Trang 3 – Trang 9 (Sách: Trang 2 – 8), Trang 22 (Sách: Trang 21)",
+      "mechanic_description": "Mỗi đĩa cân chứa các quả số, khối số hoặc quả cân sắt biểu thị giá trị. Bàn cân thăng bằng thể hiện đẳng thức toán học. Trẻ tính tổng/hiệu của vế đã biết, suy luận số còn thiếu ở vế khuyết để hai bên có giá trị bằng nhau. Đa dạng hóa qua các hình thức: điền số vào ô trống, chọn quả số trắc nghiệm, nối đáp án, kiểm tra đúng/sai.",
+      "sample_prompts": [
+        "Mỗi bên phải có tổng bằng nhau nhé! Bé điền số còn thiếu để chiếc cân cân bằng nào!",
+        "Ôi, có vài con số bị mất rồi! Bé tìm số còn thiếu để cân bằng nhé!",
+        "Cân hai phép tính: Bé tính rồi điền số để hai bên bằng nhau nhé!",
+        "Chọn quả số đúng để cân thăng bằng nhé!",
+        "Đúng hay sai? Chọn Đúng hoặc Sai cho mỗi đẳng thức"
+      ],
+      "visual_objects": [
+        "Quả số tròn mang chữ số 1–10 (Táo số đỏ, Lê số xanh, Cam số cam)",
+        "Khối vuông số màu sắc rực rỡ (xanh lá, xanh dương, tím, hồng, vàng, cam)",
+        "Quả cân sắt đen truyền thống mang số 1, 2, 3, 4, 5, 6, 8, 10 kg",
+        "Thẻ số treo quả chuông vàng kim"
+      ],
+      "quantities_and_ranges": "Số nguyên phạm vi 1 đến 10. Biểu thức dạng: A = B + ?, A + B = C + ?, A + B + ? = C, A - ? = B + C.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-014",
+          "template_name": "balance-scale (bàn cân hiển thị đẳng thức số học)"
+        },
+        {
+          "template_id": "GT-008",
+          "template_name": "drag-to-slot (kéo quả số / thẻ số vào ô khuyết trên đĩa cân)"
+        },
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chọn quả số đúng trong 3 lựa chọn)"
+        }
+      ],
+      "recommended_skills": ["C1.ADD.02", "C1.SUB.02", "C3.EQV.01", "C3.DED.02"]
+    },
+    {
+      "group_id": "WB16-D3",
+      "group_name": "So sánh nặng – nhẹ định tính qua góc nghiêng bàn cân (Qualitative Weight Comparison via Balance Tilt)",
+      "page_range": "Trang 10 – Trang 11 (Sách: Trang 9 – 10)",
+      "mechanic_description": "Trẻ quan sát chiếc cân 2 đĩa đang bị nghiêng: (1) Đĩa ở trên cao hơn là vật nhẹ hơn; (2) Đĩa hạ thấp xuống là vật nặng hơn. Đọc mô tả góc nghiêng ('nghiêng nhiều về trái', 'nghiêng nhẹ về phải') và khoanh chọn đúng vật nhẹ hơn / nặng hơn.",
+      "sample_prompts": [
+        "Bên nào ở cao hơn thường là nhẹ hơn đấy! Bé hãy nhìn chiếc cân rồi tìm vật nhẹ hơn nhé!",
+        "Bên nào hạ thấp xuống thường là nặng hơn! Bé hãy nhìn chiếc cân rồi tìm vật nặng hơn nhé!"
+      ],
+      "visual_objects": [
+        "Cặp trái cây đối sánh kích thước và khối lượng:",
+        "Dưa hấu 🍉 vs Quả lê 🍐",
+        "Quả dứa 🍍 vs Quả táo 🍎",
+        "Quả cam 🍊 vs Dâu tây 🍓",
+        "Quả lê 🍐 vs Nải chuối 🍌",
+        "Chùm nho 🍇 vs Quả chanh 🍋",
+        "Quả dừa 🥥 vs Quả cam 🍊"
+      ],
+      "quantities_and_ranges": "Mỗi đĩa đặt 1 loại quả đại diện (tỉ lệ 1 vs 1).",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-014",
+          "template_name": "balance-scale (mô phỏng nghiêng vật lý khi đặt 2 vật có khối lượng khác nhau)"
+        },
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chạm chọn vật nhẹ hơn hoặc nặng hơn trực tiếp trên đĩa cân)"
+        }
+      ],
+      "recommended_skills": ["C1.MEAS.01", "C3.DED.01"]
+    },
+    {
+      "group_id": "WB16-D4",
+      "group_name": "Thao tác bù trừ cơ học: Thêm vào (+) hay Bớt đi (−) để cân bằng (Balancing by Adding or Subtracting)",
+      "page_range": "Trang 12 – Trang 15 (Sách: Trang 11 – 14)",
+      "mechanic_description": "Bàn cân bị lệch do chênh lệch số lượng các vật đồng nhất (bánh răng, đinh ốc, khối vuông, cúc áo, ngôi sao, quả cầu): (1) Đĩa cao (ít vật): muốn thăng bằng phải THÊM VÀO (+); (2) Đĩa thấp (nhiều vật): muốn thăng bằng phải BỚT ĐI (−). Trẻ quan sát mũi tên chỉ định đĩa cần sửa, xác định dấu thao tác (+ hay −) và số lượng chính xác cần thêm hoặc bớt.",
+      "sample_prompts": [
+        "Bé hãy thêm phần còn thiếu để cân nằm ngang nhé!",
+        "Đĩa có nhiều vật hơn sẽ hạ thấp xuống! Bé hãy bớt vật ở đĩa thấp để cân nằm ngang nhé!",
+        "Mũi tên chỉ vào đĩa bé cần sửa! Đĩa cao chọn + để thêm, đĩa thấp chọn − để bớt nhé!",
+        "Thử tài sửa cân: Chọn đúng dấu, rồi tìm đúng số vật nhé!"
+      ],
+      "visual_objects": [
+        "Bánh răng cơ khí vàng kim ⚙️",
+        "Đinh ốc / bu-lông màu xanh kim loại 🔩",
+        "Khối lập phương đồ chơi màu đỏ 🟥 / xanh dương 🟦",
+        "Cúc áo thời trang tròn tím 🟣",
+        "Ngôi sao may mắn vàng ⭐ / tím",
+        "Quả cầu ngọc xanh lá 🟢"
+      ],
+      "quantities_and_ranges": "Số lượng mỗi đĩa từ 1 đến 6 vật phẩm. Độ chênh lệch bù trừ từ 1 đến 4 vật phẩm.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-014",
+          "template_name": "balance-scale (bàn cân động có hoạt họa thêm vào / nhấc bớt ra để đạt thăng bằng)"
+        },
+        {
+          "template_id": "GT-008",
+          "template_name": "drag-to-slot (kéo thả thẻ thao tác [+2], [−3] vào đĩa cân)"
+        },
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chọn dấu +/− và chọn số lượng vật)"
+        }
+      ],
+      "recommended_skills": [
+        "C1.ADD.02",
+        "C1.SUB.02",
+        "C1.MEAS.01",
+        "C3.DED.02"
+      ]
+    },
+    {
+      "group_id": "WB16-D5",
+      "group_name": "Quy đổi tương đương trực quan 1 bậc & Nhân tỉ lệ (1-Step Equivalence & Proportional Scaling)",
+      "page_range": "Trang 16 (Sách: Trang 15)",
+      "mechanic_description": "Trẻ quan sát 'Cân mẫu' thiết lập quy đổi chuẩn giữa 2 loại quả (ví dụ: 1 Dứa = 2 Táo, 1 Lê = 3 Dâu, 2 Cam = 1 Dừa, 3 Chanh = 1 Xoài). Sau đó suy luận trên 'Cân thử' để: (1) Tìm số lượng tương đương khi nhân đôi số vật mẫu (2 Dứa = ? Táo); (2) Tìm số lượng quả còn thiếu trên đĩa bên phải để giữ cân bằng.",
+      "sample_prompts": [
+        "Cân nằm ngang nghĩa là hai bên nặng bằng nhau! Hãy nhìn cân mẫu rồi tìm đúng nhóm trái cây nhé!",
+        "Nhìn cân mẫu, khoanh nhóm trái cây thay thế đúng",
+        "Tìm nhóm trái cây còn thiếu để cân bằng"
+      ],
+      "visual_objects": [
+        "1 Dứa 🍍 = 2 Táo đỏ 🍎",
+        "1 Lê xanh 🍐 = 3 Dâu tây 🍓",
+        "2 Cam mọng 🍊 = 1 Quả dừa 🥥",
+        "3 Chanh vàng 🍋 = 1 Quả xoài 🥭"
+      ],
+      "quantities_and_ranges": "Hệ số quy đổi 1:2, 1:3; nhân tỉ lệ lên 4, 6 quả.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-014",
+          "template_name": "balance-scale (hiển thị cân mẫu và cân thử song song)"
+        },
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chạm chọn đĩa quả thay thế tương đương)"
+        },
+        {
+          "template_id": "GT-008",
+          "template_name": "drag-to-slot (kéo nhóm quả vào đĩa cân thử)"
+        }
+      ],
+      "recommended_skills": ["C3.EQV.01", "C3.EQV.02", "C1.MUL.01", "C3.DED.02"]
+    },
+    {
+      "group_id": "WB16-D6",
+      "group_name": "Quy đổi tương đương bắc cầu 2 bậc & Chuỗi cân liên hoàn (2-Step Transitive Equivalence & 3-Scale Chain)",
+      "page_range": "Trang 17 – Trang 18 (Sách: Trang 16 – 17)",
+      "mechanic_description": "Dạng bài suy luận bắc cầu tiền đại số kinh điển: Cho 2 cân gợi ý (Cân 1: A = n B; Cân 2: k B = m C). Trẻ tìm giá trị đơn vị của vật thể trung gian B, sau đó thế vào Cân 3 để suy ra mối quan hệ trực tiếp giữa A và C (A = ? C). Trang 18 nâng cao hệ số nhân liên hoàn tạo ra kết quả lớn (lên tới 12 vật phẩm).",
+      "sample_prompts": [
+        "Quan sát 2 cân gợi ý • Điền số vào chiếc cân thứ ba! Gợi ý: Đổi qua đồ vật ở giữa, rồi tìm đồ vật cuối cùng",
+        "Ba cân liên hoàn: Quan sát Cân A và Cân B • Hoàn thành Cân C! Gợi ý: Tìm một đồ vật ở cân B trước, rồi suy ra cân C"
+      ],
+      "visual_objects": [
+        "Chuỗi 1: 1 Dưa hấu 🍉 = 3 Táo 🍎; 2 Táo = 4 Dâu 🍓 => 1 Dưa = 6 Dâu",
+        "Chuỗi 2: 1 Bí đỏ 🎃 = 2 Bắp ngô 🌽; 1 Bắp ngô = 3 Cà rốt 🥕 => 1 Bí đỏ = 6 Cà rốt",
+        "Chuỗi 3: 1 Bánh mì 🍞 = 3 Hộp sữa 🥛; 2 Hộp sữa = 4 Bánh quy 🍪 => 1 Bánh mì = 6 Bánh quy",
+        "Chuỗi 4: 1 Robot đồ chơi 🤖 = 2 Quả bóng ⚽; 3 Quả bóng = 6 Khối hộp 📦 => 1 Robot = 4 Khối hộp",
+        "Chuỗi nâng cao (Trang 18): 1 Dưa = 4 Táo, 1 Táo = 3 Dâu => 1 Dưa = 12 Dâu; 2 Bí = 4 Ngô, 1 Ngô = 4 Cà rốt => 1 Bí = 8 Cà rốt; 1 Bánh mì = 5 Sữa, 2 Sữa = 4 Bánh quy => 1 Bánh mì = 10 Bánh quy; 1 Robot = 3 Bóng, 2 Bóng = 8 Khối => 1 Robot = 12 Khối"
+      ],
+      "quantities_and_ranges": "Số lượng quy đổi bắc cầu từ 4 đến 12 vật thể đơn vị.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-014",
+          "template_name": "balance-scale (bộ 3 bàn cân xếp dọc có mũi tên suy luận bắc cầu)"
+        },
+        {
+          "template_id": "GT-008",
+          "template_name": "drag-to-slot (điền số lượng hoặc kéo đúng số vật thể vào cân thứ 3)"
+        }
+      ],
+      "recommended_skills": ["C3.DED.03", "C3.EQV.02", "C1.MUL.01"]
+    },
+    {
+      "group_id": "WB16-D7",
+      "group_name": "Triệt tiêu đại số & Tổ hợp tuyến tính hai vật thể (Algebraic Elimination & Linear Combination)",
+      "page_range": "Trang 19 – Trang 20 (Sách: Trang 18 – 19)",
+      "mechanic_description": "(1) Khử đại số: Cho quan hệ mẫu A = n B. Ở cân tìm quả, vế trái có [ ? ] + 1 B, vế phải có (n + 1) B. Trẻ nhận ra có thể triệt tiêu 1 B ở cả 2 vế để tìm ra [ ? ] chính là vật A; (2) Tổ hợp tuyến tính: Cho 1 A = n B. Ở cân chọn đĩa, vế trái chứa tổ hợp '1 A + k B'. Trẻ thế A thành n B để gộp thành (n + k) B, rồi chọn đúng đĩa cân chứa toàn vật nhỏ.",
+      "sample_prompts": [
+        "Giải cứu quả bị mất: Xem cân gợi ý • Khoanh quả còn thiếu! Gợi ý: Đổi quả thành nhóm quả có giá trị bằng nhau",
+        "Chọn đĩa cân đúng: Xem cân gợi ý • Khoanh nhóm đồ vật đúng! Gợi ý: Đổi vật lớn thành các vật nhỏ trước"
+      ],
+      "visual_objects": [
+        "Triệt tiêu: [Nho] + 1 Táo = 3 Táo (1 Nho = 2 Táo); 1 Cam + [Dứa] = 3 Cam (1 Dứa = 2 Cam); [Dưa hấu] + 1 Lê = 4 Lê (1 Dưa = 3 Lê); 2 Dâu + [Chuối] = 4 Dâu (1 Chuối = 2 Dâu); 1 Xoài + [Dừa] = 3 Xoài (1 Dừa = 2 Xoài)",
+        "Tổ hợp tuyến tính: 1 Dứa + 1 Cam = 3 Cam (1 Dứa = 2 Cam); 1 Dưa + 2 Táo = 5 Táo (1 Dưa = 3 Táo); 1 Bánh mì + 1 Sữa = 3 Sữa (1 Bánh mì = 2 Sữa); 2 Robot = 4 Bóng (1 Robot = 2 Bóng)"
+      ],
+      "quantities_and_ranges": "Số lượng quả từ 1 đến 5 vật thể mỗi đĩa.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-014",
+          "template_name": "balance-scale (bàn cân tương tác cho phép nhấc bỏ quả giống nhau ở 2 đĩa để triệt tiêu)"
+        },
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chạm chọn vật phẩm / đĩa cân tương đương)"
+        }
+      ],
+      "recommended_skills": ["C3.EQV.03", "C3.DED.02", "C3.EQV.02"]
+    },
+    {
+      "group_id": "WB16-D8",
+      "group_name": "Hệ phương trình đại số biểu tượng & Giải mật mã mở khóa (Pre-Algebra System of Equations & Code Breaking)",
+      "page_range": "Trang 21 (Sách: Trang 20)",
+      "mechanic_description": "Trẻ đóng vai nhà thám hiểm giải mã cánh cửa xưởng cân bằng bị khóa bằng mật mã 6 chữ số. Mỗi mã (Mã 1 đến Mã 6) là một mini-hệ phương trình kết hợp giữa quả cân sắt có ghi khối lượng (4, 5, 8, 10, 11, 12, 13) và các biểu tượng hình học/kho báu (sao, khối vuông, trăng khuyết, tam giác, vương miện, kim cương, dưa, lê, tinh thể). Trẻ giải từng phương trình để tìm ra chuỗi mật mã: 5 - 6 - 3 - 2 - 4 - 8.",
+      "sample_prompts": [
+        "Mật mã cân bằng: Giải từ Mã 1 đến Mã 6 • Điền dãy số mở khóa!",
+        "Cánh cửa chỉ mở khi tìm đủ 6 chữ số! Mỗi chiếc cân sẽ cho bé một số bí mật!"
+      ],
+      "visual_objects": [
+        "Cánh cửa vòm gỗ sắt cổ kính với ổ khóa 6 ô số bí mật",
+        "Mã 1: 2 Ngôi sao vàng ⭐⭐ = Quả cân 10 kg => 1 Sao = 5",
+        "Mã 2: 1 Khối xanh 🟩 = 4 kg; 1 Mặt trăng tím 🌙 + Khối = 10 kg => Trăng = 6",
+        "Mã 3: 1 Sao ⭐ = 5 kg; 2 Tam giác đỏ 🔺🔺 + Sao = 11 kg => Tam giác = 3",
+        "Mã 4: 1 Vương miện 👑 = 8 kg; 2 Kim cương xanh 💎💎 + Vương miện = 12 kg => Kim cương = 2",
+        "Mã 5: 1 Dưa 🍉 = 2 Táo 🍎; 1 Táo = 2 Lê 🍐 => 1 Dưa = 4 Quả lê",
+        "Mã 6: 2 Sao ⭐⭐ = 10 kg (Sao = 5); 1 Sao + 1 Tinh thể 💠 = 13 kg => Tinh thể = 8",
+        "Dãy số mở cửa: [ 5 ] - [ 6 ] - [ 3 ] - [ 2 ] - [ 4 ] - [ 8 ]"
+      ],
+      "quantities_and_ranges": "Khối lượng từ 2 đến 13 kg. Các phép tính nhẩm chia đôi, trừ và nhân bắc cầu.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-014",
+          "template_name": "balance-scale (bàn cân quả cân đại số)"
+        },
+        {
+          "template_id": "GT-008",
+          "template_name": "drag-to-slot (kéo số vào từng ô mã số mở cửa)"
+        },
+        {
+          "template_id": "GT-025",
+          "template_name": "code-breaker (cơ chế bàn phím giải mã cửa thần bí)"
+        }
+      ],
+      "recommended_skills": ["C3.EQV.03", "C3.DED.03", "C1.ADD.02", "C1.SUB.02"]
+    },
+    {
+      "group_id": "WB16-D9",
+      "group_name": "Đại thử thách tổng hợp & So sánh chuỗi bắc cầu cực trị (Capstone Multi-Scale Extrema & Master Challenges)",
+      "page_range": "Trang 23 (Sách: Trang 22)",
+      "mechanic_description": "Trang thử thách tổng kết kiểm tra toàn diện năng lực tư duy thăng bằng: (1) So sánh bắc cầu qua 2 cân nghiêng để tìm vật NẶNG NHẤT (Ô tô > Xe máy > Ván trượt); (2) So sánh bắc cầu qua 2 cân nghiêng để tìm vật NHẸ NHẤT (Xe đạp nhẹ hơn cả Tàu hỏa và Giày patin); (3) Bắc cầu thế đơn vị 2 bậc: 1 Robot = 2 Pin, 1 Pin = 3 Bu-lông => 1 Robot = ? Bu-lông; (4) Tìm ẩn số và tính giá trị biểu thức: Bánh răng + 3 = 8 => Bánh răng = 5, Bánh răng + 2 = [ 7 ].",
+      "sample_prompts": [
+        "Đại thử thách cân bằng: Quan sát • Suy luận • Hoàn thành 4 thử thách!",
+        "Chỉ còn 4 thử thách cuối cùng thôi! Bé hãy dùng tất cả bí quyết cân bằng nhé!"
+      ],
+      "visual_objects": [
+        "Thử thách 1: Ô tô đỏ 🚗, Xe máy scooter xanh 🛵, Ván trượt ván gỗ 🛹",
+        "Thử thách 2: Đầu tàu hỏa hơi nước tím 🚂, Xe đạp địa hình xanh 🚲, Giày patin cam 🛼",
+        "Thử thách 3: Robot đồ chơi 🤖, 2 Thỏi pin tiểu 🔋, Ốc bu-lông kim loại 🔩",
+        "Thử thách 4: Bánh răng vàng ⚙️, Quả cân sắt 3, 2, 8 kg"
+      ],
+      "quantities_and_ranges": "Số lượng và giá trị cân nặng từ 1 đến 8.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-014",
+          "template_name": "balance-scale (tổng hợp 2 đĩa cân nghiêng và đĩa cân thăng bằng)"
+        },
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chọn vật nặng nhất / nhẹ nhất)"
+        },
+        {
+          "template_id": "GT-008",
+          "template_name": "drag-to-slot (điền số bu-lông và số kết quả biểu thức)"
+        }
+      ],
+      "recommended_skills": [
+        "C1.MEAS.02",
+        "C3.DED.03",
+        "C3.EQV.03",
+        "C3.EQV.02"
+      ]
+    }
+  ],
+  "pages_summary": [
+    {
+      "page_number": 1,
+      "workbook_page_number": null,
+      "file_path": "pages/page-01.jpg",
+      "page_type": "cover_overview",
+      "title": "Hành Trình 20 Chặng Toán Học - Chặng 16: Xưởng Cân Bằng Kỳ Diệu",
+      "subtitle": "Quan sát – So sánh – Suy luận",
+      "dialogue": {
+        "gau_logic": "Chào mừng các bạn nhỏ đến với Xưởng Cân Bằng Kỳ Diệu! Hãy mang theo Sổ tay quy luật và cùng tớ khám phá bí mật thăng bằng nhé!",
+        "tho_sang_tao": "Ở đây có những chiếc cân ma thuật thật kỳ diệu! Bé hãy giúp chúng mình giải mã các chiếc cân để thắp sáng Huy Hiệu Cân Bằng nha!"
+      },
+      "pedagogical_concept": "Bìa mở đầu chặng thiết lập bối cảnh cốt truyện (story-driven context). Hình ảnh chiếc cân lớn 2 tầng bằng vàng cơ khí với các bánh răng steampunk: tầng trên cân trái cây (3 Táo = 3 Lê), tầng dưới cân hình khối (Hình tròn hồng + Vuông xanh = Tam giác xanh + Vuông tím), cùng biển phương trình 'TÁO = LÊ' và 'Khối vuông + Khối tròn = Khối tam giác'. Giúp trẻ kích hoạt trực giác về thăng bằng, đẳng thức và quy đổi trước khi vào bài học.",
+      "visual_details": {
+        "scenery": "Thành phố đồ chơi kỳ ảo với các lâu đài bánh răng steampunk, khinh khí cầu bay lơ lửng trên bầu trời mây hồng và cầu vồng rực rỡ.",
+        "characters": [
+          "Gấu Logic mặc áo gile nâu, đeo kính tròn tri thức, cầm kính lúp soi xét và cuốn 'SỔ TAY QUY LUẬT'.",
+          "Thỏ Sáng Tạo đeo nơ hồng, mang túi chéo da 'THỎ SÁNG TẠO', tay chỉ lên bàn cân kỳ diệu."
+        ],
+        "scale_elements": "Bàn cân 2 tầng bằng đồng vàng chạm khắc tinh xảo; các quả cầu số 1, 2, 3 và 4, 5, 6; giỏ dưa hấu, nho, dứa, dâu tây và các khối hình 3D rải rác."
+      },
+      "digital_game_mapping": {
+        "suggested_template": "GT-000",
+        "mechanic": "intro-tutorial / world-hub",
+        "interaction": "Chạm vào bàn cân phát âm thanh bánh răng quay lách cách và tiếng chuông thăng bằng 'Keng!'. Chạm vào Gấu Logic và Thỏ Sáng Tạo để nghe lời dẫn cốt truyện."
+      }
+    },
+    {
+      "page_number": 2,
+      "workbook_page_number": 1,
+      "file_path": "pages/page-02.jpg",
+      "page_type": "concrete_visual_balance",
+      "title": "Trang 1 – Làm quen với chiếc cân",
+      "instruction": "Bài 1: Cân bằng bằng hình • Bài 2: Bên nào nhiều hơn?",
+      "dialogue": {
+        "gau_logic": "Hai bên bằng nhau thì chiếc cân sẽ nằm ngang!",
+        "tho_sang_tao": "Bé xem bên nào cần thêm đồ vật nhé!"
+      },
+      "pedagogical_concept": "Tầng Concrete của phương pháp CPA: Trẻ làm quen với nguyên lý vật lý trực quan của bàn cân đĩa – khi số lượng hoặc khối lượng hai bên bằng nhau, thanh cân sẽ ở trạng thái nằm ngang thăng bằng (Equivalence). Rèn kỹ năng đếm tương ứng 1-1 và so sánh lượng nhiều hơn - ít hơn - bằng nhau trên 2 khay đĩa.",
+      "sections": [
+        {
+          "section_id": "P02-S1",
+          "section_title": "Bài 1: Cân bằng bằng hình",
+          "description": "Nhìn hai vế của dấu bằng, tìm hình trái cây/ngôi sao còn thiếu ở ô trống nét đứt để hai bên có số lượng bằng nhau.",
+          "items": [
+            {
+              "id": 1,
+              "equation": "2 quả táo đỏ = 1 quả táo đỏ + [ ? ]",
+              "correct_missing": "1 quả táo đỏ 🍎",
+              "reasoning": "2 = 1 + 1"
+            },
+            {
+              "id": 2,
+              "equation": "3 ngôi sao vàng = 2 ngôi sao vàng + [ ? ]",
+              "correct_missing": "1 ngôi sao vàng ⭐",
+              "reasoning": "3 = 2 + 1"
+            },
+            {
+              "id": 3,
+              "equation": "2 quả lê xanh = 1 quả lê xanh + [ ? ]",
+              "correct_missing": "1 quả lê xanh 🍐",
+              "reasoning": "2 = 1 + 1"
+            },
+            {
+              "id": 4,
+              "equation": "3 quả dâu đỏ = 2 quả dâu đỏ + [ ? ]",
+              "correct_missing": "1 quả dâu đỏ 🍓",
+              "reasoning": "3 = 2 + 1"
+            },
+            {
+              "id": 5,
+              "equation": "2 quả cam tròn = 1 quả cam tròn + [ ? ]",
+              "correct_missing": "1 quả cam tròn 🍊",
+              "reasoning": "2 = 1 + 1"
+            },
+            {
+              "id": 6,
+              "equation": "3 quả chuối vàng = 2 quả chuối vàng + [ ? ]",
+              "correct_missing": "1 quả chuối vàng 🍌",
+              "reasoning": "3 = 2 + 1"
+            }
+          ]
+        },
+        {
+          "section_id": "P02-S2",
+          "section_title": "Bài 2: Bên nào nhiều hơn?",
+          "description": "Quan sát hai khay gỗ đặt hai bên, đếm số lượng và chọn 1 trong 3 nút: [⬅ Bên trái], [= Bằng nhau], [➡ Bên phải].",
+          "items": [
+            {
+              "id": 1,
+              "left": "3 quả táo",
+              "right": "6 quả táo (2 hàng 3)",
+              "correct": "Bên phải ➡",
+              "reasoning": "3 < 6 nên bên phải nhiều hơn"
+            },
+            {
+              "id": 2,
+              "left": "2 ngôi sao",
+              "right": "2 ngôi sao",
+              "correct": "Bằng nhau =",
+              "reasoning": "2 = 2 nên hai bên bằng nhau"
+            },
+            {
+              "id": 3,
+              "left": "4 quả lê",
+              "right": "1 quả lê",
+              "correct": "Bên trái ⬅",
+              "reasoning": "4 > 1 nên bên trái nhiều hơn"
+            },
+            {
+              "id": 4,
+              "left": "5 quả dâu",
+              "right": "3 quả dâu",
+              "correct": "Bên trái ⬅",
+              "reasoning": "5 > 3 nên bên trái nhiều hơn"
+            },
+            {
+              "id": 5,
+              "left": "2 quả cam",
+              "right": "5 quả cam",
+              "correct": "Bên phải ➡",
+              "reasoning": "2 < 5 nên bên phải nhiều hơn"
+            },
+            {
+              "id": 6,
+              "left": "3 quả chuối",
+              "right": "7 quả chuối",
+              "correct": "Bên phải ➡",
+              "reasoning": "3 < 7 nên bên phải nhiều hơn"
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-014",
+        "mechanic": "balance-pan-tap",
+        "interaction": "Chạm vào vật phẩm để kéo thả vào đĩa còn thiếu (Bài 1); Chạm vào 1 trong 3 nút điều hướng [Bên trái / Bằng nhau / Bên phải] (Bài 2)."
+      }
+    },
+    {
+      "page_number": 3,
+      "workbook_page_number": 2,
+      "file_path": "pages/page-03.jpg",
+      "page_type": "number_balance_missing_addend",
+      "title": "Trang 2 – Điền số để cân bằng",
+      "instruction": "Bài 1: Điền số để cân bằng • Bài 2: Khoanh phép cân bằng đúng",
+      "dialogue": {
+        "gau_logic": "Mỗi bên phải có tổng bằng nhau nhé!",
+        "tho_sang_tao": "Bé điền số còn thiếu để chiếc cân cân bằng nào!"
+      },
+      "pedagogical_concept": "Bước chuyển tiếp Pictorial sang Abstract: Các đĩa cân chứa quả số mang giá trị đại số, bên dưới là phương trình khuyết số hạng. Trẻ rèn tư duy đại số sơ đẳng: hai vế của dấu '=' có giá trị tương đương nhau, muốn cân bằng phải tìm số hạng còn thiếu trong tổng.",
+      "sections": [
+        {
+          "section_id": "P03-S1",
+          "section_title": "Bài 1: Điền số để cân bằng",
+          "items": [
+            {
+              "id": 1,
+              "scale": "Trái: Táo 8 | Phải: Táo 5 + [ ? ]",
+              "equation": "8 = 5 + [ ? ]",
+              "correct_number": 3
+            },
+            {
+              "id": 2,
+              "scale": "Trái: Táo 7 + Lê 3 | Phải: Táo 5 + [ ? ]",
+              "equation": "7 + 3 = 5 + [ ? ]",
+              "correct_number": 5
+            },
+            {
+              "id": 3,
+              "scale": "Trái: Lê 6 | Phải: Lê 2 + Lê 2 + [ ? ]",
+              "equation": "6 = 2 + 2 + [ ? ]",
+              "correct_number": 2
+            },
+            {
+              "id": 4,
+              "scale": "Trái: Cam 9 | Phải: Cam 4 + [ ? ]",
+              "equation": "9 = 4 + [ ? ]",
+              "correct_number": 5
+            },
+            {
+              "id": 5,
+              "scale": "Trái: Cam 3 + [ ? ] | Phải: Cam 8",
+              "equation": "3 + [ ? ] = 8",
+              "correct_number": 5
+            },
+            {
+              "id": 6,
+              "scale": "Trái: Lê 6 + [ ? ] | Phải: Lê 10",
+              "equation": "6 + [ ? ] = 10",
+              "correct_number": 4
+            },
+            {
+              "id": 7,
+              "scale": "Trái: Cam 2 + Cam 3 + [ ? ] | Phải: Cam 9",
+              "equation": "2 + 3 + [ ? ] = 9",
+              "correct_number": 4
+            },
+            {
+              "id": 8,
+              "scale": "Trái: Dâu 4 + [ ? ] | Phải: Dâu 2 + Dâu 7",
+              "equation": "4 + [ ? ] = 2 + 7",
+              "correct_number": 5
+            }
+          ]
+        },
+        {
+          "section_id": "P03-S2",
+          "section_title": "Bài 2: Khoanh phép cân bằng đúng",
+          "description": "Khoanh tròn vào phương án A hoặc B có biểu thức đẳng thức chính xác.",
+          "items": [
+            {
+              "id": 1,
+              "fruit": "Táo đỏ 🍎",
+              "options": ["A. 4 + 3 = 6", "B. 4 + 3 = 7"],
+              "correct": "B",
+              "reasoning": "4 + 3 = 7 đúng"
+            },
+            {
+              "id": 2,
+              "fruit": "Lê xanh 🍐",
+              "options": ["A. 5 + 2 = 7", "B. 5 + 2 = 8"],
+              "correct": "A",
+              "reasoning": "5 + 2 = 7 đúng"
+            },
+            {
+              "id": 3,
+              "fruit": "Cam tròn 🍊",
+              "options": ["A. 3 + 4 = 7", "B. 2 + 4 = 7"],
+              "correct": "A",
+              "reasoning": "3 + 4 = 7 đúng"
+            },
+            {
+              "id": 4,
+              "fruit": "Dâu tây 🍓",
+              "options": ["A. 6 + 1 = 7", "B. 6 + 1 = 6"],
+              "correct": "A",
+              "reasoning": "6 + 1 = 7 đúng"
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-014",
+        "mechanic": "balance-number-slot",
+        "interaction": "Bàn cân nghiêng cho đến khi trẻ kéo đúng quả số vào ô khuyết thì bàn cân phát sáng thăng bằng nằm ngang."
+      }
+    },
+    {
+      "page_number": 4,
+      "workbook_page_number": 3,
+      "file_path": "pages/page-04.jpg",
+      "page_type": "number_balance_truth_value",
+      "title": "Trang 3 – Một số đã biến mất",
+      "instruction": "Bài 1: Điền số còn thiếu • Bài 2: Đúng hay sai?",
+      "dialogue": {
+        "gau_logic": "Ôi, có vài con số bị mất rồi!",
+        "tho_sang_tao": "Bé tìm số còn thiếu để cân bằng nhé!"
+      },
+      "pedagogical_concept": "Củng cố tư duy tìm ẩn số khuyết ở nhiều vị trí khác nhau (vị trí đầu, vị trí giữa, phương trình 3 số hạng). Bài 2 phát triển năng lực đánh giá chân trị logic (Truth Value Evaluation: Đúng / Sai) đối với các đẳng thức hai vế.",
+      "sections": [
+        {
+          "section_id": "P04-S1",
+          "section_title": "Bài 1: Điền số còn thiếu",
+          "items": [
+            {
+              "id": 1,
+              "equation": "[ ? ] + 5 = 9",
+              "correct_number": 4,
+              "plate_visual": "Khối tím 9 bên phải, đĩa trái có [?] và khối xanh 5"
+            },
+            {
+              "id": 2,
+              "equation": "2 + [ ? ] + 1 = 6",
+              "correct_number": 3,
+              "plate_visual": "Khối cam 6 bên phải, đĩa trái có 2, [?], 1"
+            },
+            {
+              "id": 3,
+              "equation": "7 + [ ? ] = 10",
+              "correct_number": 3,
+              "plate_visual": "Đĩa trái 7 + [?], đĩa phải 10"
+            },
+            {
+              "id": 4,
+              "equation": "[ ? ] + 3 = 8",
+              "correct_number": 5,
+              "plate_visual": "Đĩa trái [?] + 3, đĩa phải 8"
+            },
+            {
+              "id": 5,
+              "equation": "1 + [ ? ] + 4 = 8",
+              "correct_number": 3,
+              "plate_visual": "Đĩa trái 1 + [?] + 4, đĩa phải 8"
+            },
+            {
+              "id": 6,
+              "equation": "[ ? ] + 2 = 7",
+              "correct_number": 5,
+              "plate_visual": "Đĩa trái [?] + 2, đĩa phải 7"
+            },
+            {
+              "id": 7,
+              "equation": "3 + [ ? ] = 3 + 4",
+              "correct_number": 4,
+              "plate_visual": "Đĩa trái 3 + [?], đĩa phải 3 + 4 (triệt tiêu 3)"
+            },
+            {
+              "id": 8,
+              "equation": "[ ? ] + 1 + 2 = 9",
+              "correct_number": 6,
+              "plate_visual": "Đĩa trái [?] + 1 + 2, đĩa phải 9"
+            }
+          ]
+        },
+        {
+          "section_id": "P04-S2",
+          "section_title": "Bài 2: Đúng hay sai?",
+          "description": "Kiểm tra tính cân bằng của hai vế và chọn nút [Đúng] hoặc [Sai].",
+          "items": [
+            {
+              "id": "a",
+              "equation": "4 + 2 = 3 + 3",
+              "left_sum": 6,
+              "right_sum": 6,
+              "correct": "Đúng",
+              "reasoning": "6 = 6 đẳng thức đúng"
+            },
+            {
+              "id": "b",
+              "equation": "5 + 1 = 2 + 2",
+              "left_sum": 6,
+              "right_sum": 4,
+              "correct": "Sai",
+              "reasoning": "6 khác 4 đẳng thức sai"
+            },
+            {
+              "id": "c",
+              "equation": "3 + 4 = 6 + 1",
+              "left_sum": 7,
+              "right_sum": 7,
+              "correct": "Đúng",
+              "reasoning": "7 = 7 đẳng thức đúng"
+            },
+            {
+              "id": "d",
+              "equation": "2 + 3 + 1 = 7",
+              "left_sum": 6,
+              "right_sum": 7,
+              "correct": "Sai",
+              "reasoning": "6 khác 7 đẳng thức sai"
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-014",
+        "mechanic": "balance-eval-drag",
+        "interaction": "Kéo thẻ số điền vào ô trống. Bài 2: Chạm nút xanh [Đúng] hoặc nút đỏ cam [Sai] với âm thanh phản hồi nhẹ nhàng."
+      }
+    },
+    {
+      "page_number": 5,
+      "workbook_page_number": 4,
+      "file_path": "pages/page-05.jpg",
+      "page_type": "two_operation_balance_matching",
+      "title": "Trang 4 – Cân hai phép tính",
+      "instruction": "Bài 1: Điền số để hai bên bằng nhau • Bài 2: Nối với đáp án đúng",
+      "dialogue": {
+        "gau_logic": "Mỗi bên đều là một phép tính đấy!",
+        "tho_sang_tao": "Bé tính rồi điền số để hai bên bằng nhau nhé!"
+      },
+      "pedagogical_concept": "Cân bằng hai biểu thức số học (Equating two expressions: a + b = c + ?). Trẻ học chiến lược 2 bước: Bước 1 tính giá trị của vế đầy đủ; Bước 2 tìm số hạng còn thiếu ở vế khuyết. Bài 2 rèn kỹ năng nối dây logic giữa bài toán và đáp số.",
+      "sections": [
+        {
+          "section_id": "P05-S1",
+          "section_title": "Bài 1: Điền số để hai bên bằng nhau",
+          "items": [
+            {
+              "id": 1,
+              "equation": "4 + 3 = 5 + [ ? ]",
+              "target_sum": 7,
+              "correct_number": 2
+            },
+            {
+              "id": 2,
+              "equation": "6 + 2 = [ ? ] + 3",
+              "target_sum": 8,
+              "correct_number": 5
+            },
+            {
+              "id": 3,
+              "equation": "2 + 3 + 4 = 5 + [ ? ]",
+              "target_sum": 9,
+              "correct_number": 4
+            },
+            {
+              "id": 4,
+              "equation": "1 + 5 = 2 + [ ? ]",
+              "target_sum": 6,
+              "correct_number": 4
+            },
+            {
+              "id": 5,
+              "equation": "3 + 2 = [ ? ] + 1",
+              "target_sum": 5,
+              "correct_number": 4
+            },
+            {
+              "id": 6,
+              "equation": "7 + 1 = 4 + [ ? ]",
+              "target_sum": 8,
+              "correct_number": 4
+            },
+            {
+              "id": 7,
+              "equation": "2 + 2 + [ ? ] = 9",
+              "target_sum": 9,
+              "correct_number": 5
+            },
+            {
+              "id": 8,
+              "equation": "5 + [ ? ] = 3 + 6",
+              "target_sum": 9,
+              "correct_number": 4
+            }
+          ]
+        },
+        {
+          "section_id": "P05-S2",
+          "section_title": "Bài 2: Nối với đáp án đúng",
+          "description": "Nối từng biểu thức bên trái với quả bóng số màu hồng/xanh bên phải qua hình chiếc cân đồng.",
+          "items": [
+            {
+              "id": "a",
+              "equation": "3 + 2 = 1 + [ ? ]",
+              "correct_number": 4,
+              "connect_to": "Quả bóng số 4 (trên cùng)"
+            },
+            {
+              "id": "b",
+              "equation": "4 + 4 = 3 + [ ? ]",
+              "correct_number": 5,
+              "connect_to": "Quả bóng số 5 (thứ hai)"
+            },
+            {
+              "id": "c",
+              "equation": "2 + [ ? ] = 7",
+              "correct_number": 5,
+              "connect_to": "Quả bóng số 5 (thứ ba)"
+            },
+            {
+              "id": "d",
+              "equation": "6 = 2 + 1 + [ ? ]",
+              "correct_number": 3,
+              "connect_to": "Quả bóng số 3 (dưới cùng)"
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-014",
+        "mechanic": "match-line-drag",
+        "interaction": "Kéo dây thừng ma thuật từ chốt biểu thức bên trái sang nút số tương ứng bên phải."
+      }
+    },
+    {
+      "page_number": 6,
+      "workbook_page_number": 5,
+      "file_path": "pages/page-06.jpg",
+      "page_type": "fruit_multiple_choice_balance",
+      "title": "Trang 5 – Chọn quả số đúng",
+      "instruction": "Bài 1: Chọn quả số đúng • Bài 2: Tô màu đáp án đúng",
+      "dialogue": {
+        "gau_logic": "Có nhiều quả số đấy!",
+        "tho_sang_tao": "Bé hãy chọn quả số đúng để cân thăng bằng nhé!"
+      },
+      "pedagogical_concept": "Đa dạng hóa hình thức phản hồi bằng trắc nghiệm 3 lựa chọn trực quan (Quả dâu 🍓, Cam 🍊, Lê 🍐). Giúp trẻ rèn kỹ năng loại trừ nhiễu (distractor filtering). Bài 2 liên kết đĩa cân hình vẽ trực quan với biểu thức số học.",
+      "sections": [
+        {
+          "section_id": "P06-S1",
+          "section_title": "Bài 1: Chọn quả số đúng",
+          "items": [
+            {
+              "id": 1,
+              "scale": "4 + [ ? ] = 9",
+              "options": [
+                {
+                  "fruit": "Dâu",
+                  "val": 3
+                },
+                {
+                  "fruit": "Cam",
+                  "val": 5
+                },
+                {
+                  "fruit": "Lê",
+                  "val": 6
+                }
+              ],
+              "correct": "Cam 5"
+            },
+            {
+              "id": 2,
+              "scale": "8 = 2 + [ ? ]",
+              "options": [
+                {
+                  "fruit": "Dâu",
+                  "val": 5
+                },
+                {
+                  "fruit": "Cam",
+                  "val": 6
+                },
+                {
+                  "fruit": "Lê",
+                  "val": 7
+                }
+              ],
+              "correct": "Cam 6"
+            },
+            {
+              "id": 3,
+              "scale": "3 + [ ? ] = 7",
+              "options": [
+                {
+                  "fruit": "Dâu",
+                  "val": 2
+                },
+                {
+                  "fruit": "Cam",
+                  "val": 4
+                },
+                {
+                  "fruit": "Lê",
+                  "val": 5
+                }
+              ],
+              "correct": "Cam 4"
+            },
+            {
+              "id": 4,
+              "scale": "6 + [ ? ] = 10",
+              "options": [
+                {
+                  "fruit": "Dâu",
+                  "val": 2
+                },
+                {
+                  "fruit": "Cam",
+                  "val": 3
+                },
+                {
+                  "fruit": "Lê",
+                  "val": 4
+                }
+              ],
+              "correct": "Lê 4"
+            },
+            {
+              "id": 5,
+              "scale": "2 + 2 + [ ? ] = 7",
+              "options": [
+                {
+                  "fruit": "Dâu",
+                  "val": 2
+                },
+                {
+                  "fruit": "Cam",
+                  "val": 3
+                },
+                {
+                  "fruit": "Lê",
+                  "val": 4
+                }
+              ],
+              "correct": "Cam 3"
+            },
+            {
+              "id": 6,
+              "scale": "[ ? ] + 1 = 6",
+              "options": [
+                {
+                  "fruit": "Dâu",
+                  "val": 4
+                },
+                {
+                  "fruit": "Cam",
+                  "val": 5
+                },
+                {
+                  "fruit": "Lê",
+                  "val": 6
+                }
+              ],
+              "correct": "Cam 5"
+            },
+            {
+              "id": 7,
+              "scale": "5 + [ ? ] = 8",
+              "options": [
+                {
+                  "fruit": "Dâu",
+                  "val": 1
+                },
+                {
+                  "fruit": "Cam",
+                  "val": 2
+                },
+                {
+                  "fruit": "Lê",
+                  "val": 3
+                }
+              ],
+              "correct": "Lê 3"
+            },
+            {
+              "id": 8,
+              "scale": "7 = 4 + [ ? ]",
+              "options": [
+                {
+                  "fruit": "Dâu",
+                  "val": 2
+                },
+                {
+                  "fruit": "Cam",
+                  "val": 3
+                },
+                {
+                  "fruit": "Lê",
+                  "val": 5
+                }
+              ],
+              "correct": "Cam 3"
+            }
+          ]
+        },
+        {
+          "section_id": "P06-S2",
+          "section_title": "Bài 2: Tô màu đáp án đúng",
+          "items": [
+            {
+              "id": 1,
+              "scale": "3 Dâu = [ ? ] + 2 Lê",
+              "equation": "3 = [ ? ] + 2",
+              "options": [1, 2, 3],
+              "correct": 1
+            },
+            {
+              "id": 2,
+              "scale": "2 Cam + 1 Cam = 3 Dâu",
+              "equation": "2 + 1 = [ ? ]",
+              "options": [2, 3, 4],
+              "correct": 3
+            },
+            {
+              "id": 3,
+              "scale": "[ ? ] Lê + 3 Cam = 7",
+              "equation": "[ ? ] + 3 = 7",
+              "options": [3, 4, 5],
+              "correct": 4
+            },
+            {
+              "id": 4,
+              "scale": "9 = 4 + [ ? ]",
+              "equation": "9 = 4 + [ ? ]",
+              "options": [4, 5, 6],
+              "correct": 5
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-001",
+        "mechanic": "tap-select-fruit",
+        "interaction": "Chạm vào quả trái cây đúng dưới mỗi bàn cân. Quả được chọn sẽ bay lên nằm vào ô khuyết và cân thăng bằng."
+      }
+    },
+    {
+      "page_number": 7,
+      "workbook_page_number": 6,
+      "file_path": "pages/page-07.jpg",
+      "page_type": "multi_number_balance",
+      "title": "Trang 6 – Cân nhiều quả số",
+      "instruction": "Bài 1: Điền số còn thiếu • Bài 2: Khoanh chiếc cân đúng",
+      "dialogue": {
+        "gau_logic": "Mỗi bên có nhiều quả số hơn rồi đấy!",
+        "tho_sang_tao": "Bé cộng từng bên rồi điền số còn thiếu nhé!"
+      },
+      "pedagogical_concept": "Nâng độ khó: Cân bằng biểu thức gồm 3 số hạng ở một vế và 2 số hạng ở vế kia. Trẻ phải cộng gộp nhiều số liên tiếp (Chain Addition: a + b + c = d + ?), rèn luyện trí nhớ làm việc (working memory) và tính toán nhẩm linh hoạt.",
+      "sections": [
+        {
+          "section_id": "P07-S1",
+          "section_title": "Bài 1: Điền số còn thiếu",
+          "items": [
+            {
+              "id": 1,
+              "scale": "2 + 1 + 3 = 4 + [ ? ]",
+              "left_sum": 6,
+              "correct_number": 2
+            },
+            {
+              "id": 2,
+              "scale": "5 + 2 = 1 + 3 + [ ? ]",
+              "left_sum": 7,
+              "correct_number": 3
+            },
+            {
+              "id": 3,
+              "scale": "4 + 2 + [ ? ] = 9",
+              "target_sum": 9,
+              "correct_number": 3
+            },
+            {
+              "id": 4,
+              "scale": "6 + [ ? ] = 2 + 3 + 4",
+              "target_sum": 9,
+              "correct_number": 3
+            },
+            {
+              "id": 5,
+              "scale": "1 + 5 + [ ? ] = 10",
+              "target_sum": 10,
+              "correct_number": 4
+            },
+            {
+              "id": 6,
+              "scale": "3 + 2 + 2 = [ ? ] + 4",
+              "target_sum": 7,
+              "correct_number": 3
+            },
+            {
+              "id": 7,
+              "scale": "7 = 2 + 2 + [ ? ]",
+              "target_sum": 7,
+              "correct_number": 3
+            },
+            {
+              "id": 8,
+              "scale": "8 + 1 = 4 + [ ? ] + 2",
+              "target_sum": 9,
+              "correct_number": 3
+            }
+          ]
+        },
+        {
+          "section_id": "P07-S2",
+          "section_title": "Bài 2: Khoanh chiếc cân đúng",
+          "items": [
+            {
+              "id": 1,
+              "options": ["A. 2 + 3 + 1 = 6", "B. 2 + 3 + 1 = 7"],
+              "correct": "A"
+            },
+            {
+              "id": 2,
+              "options": ["A. 4 + 1 + 1 = 5 + 1", "B. 4 + 1 + 1 = 5 + 2"],
+              "correct": "A"
+            },
+            {
+              "id": 3,
+              "options": ["A. 3 + 3 + 2 = 4 + 4", "B. 3 + 3 + 2 = 5 + 4"],
+              "correct": "A"
+            },
+            {
+              "id": 4,
+              "options": [
+                "A. 5 + 2 + 1 = 3 + 3 + 2",
+                "B. 5 + 2 + 1 = 3 + 3 + 3"
+              ],
+              "correct": "A"
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-014",
+        "mechanic": "balance-scale-multi",
+        "interaction": "Nhập số vào ô khuyết bằng bàn phím số Montessori hoặc kéo thả quả số tương ứng."
+      }
+    },
+    {
+      "page_number": 8,
+      "workbook_page_number": 7,
+      "file_path": "pages/page-08.jpg",
+      "page_type": "fruit_and_bell_card_balance",
+      "title": "Trang 7 – Ai làm cân thăng bằng?",
+      "instruction": "Bài 1: Chọn quả số đúng • Bài 2: Gắn thẻ số đúng",
+      "dialogue": {
+        "gau_logic": "Mỗi chiếc cân đang chờ một quả số đúng đấy!",
+        "tho_sang_tao": "Bé hãy chọn đáp án đúng để cân thăng bằng nhé!"
+      },
+      "pedagogical_concept": "Rèn luyện khả năng lựa chọn phương án tối ưu trong các tình huống cân bằng tổng hợp. Bài 2 giới thiệu thẻ số chuông vàng treo (bell-shaped number cards), mô phỏng thao tác treo tải trọng vào đòn cân trong xưởng cơ khí.",
+      "sections": [
+        {
+          "section_id": "P08-S1",
+          "section_title": "Bài 1: Chọn quả số đúng",
+          "items": [
+            {
+              "id": 1,
+              "equation": "8 = 3 + [ ? ]",
+              "options": [3, 5, 7],
+              "correct": 5
+            },
+            {
+              "id": 2,
+              "equation": "9 = 4 + [ ? ]",
+              "options": [3, 5, 6],
+              "correct": 5
+            },
+            {
+              "id": 3,
+              "equation": "6 + [ ? ] = 10",
+              "options": [2, 4, 5],
+              "correct": 4
+            },
+            {
+              "id": 4,
+              "equation": "2 + 3 + [ ? ] = 9",
+              "options": [3, 4, 5],
+              "correct": 4
+            },
+            {
+              "id": 5,
+              "equation": "7 = [ ? ] + 2",
+              "options": [4, 5, 6],
+              "correct": 5
+            },
+            {
+              "id": 6,
+              "equation": "5 + [ ? ] = 2 + 6",
+              "options": [2, 3, 4],
+              "correct": 3
+            }
+          ]
+        },
+        {
+          "section_id": "P08-S2",
+          "section_title": "Bài 2: Gắn thẻ số đúng",
+          "items": [
+            {
+              "id": "a",
+              "equation": "4 + 2 = 1 + [ ? ]",
+              "options": [4, 5, 6],
+              "correct": 5
+            },
+            {
+              "id": "b",
+              "equation": "3 + 3 = [ ? ] + 2",
+              "options": [3, 4, 5],
+              "correct": 4
+            },
+            {
+              "id": "c",
+              "equation": "8 = 5 + [ ? ]",
+              "options": [2, 3, 4],
+              "correct": 3
+            },
+            {
+              "id": "d",
+              "equation": "2 + 4 + [ ? ] = 9",
+              "options": [2, 3, 4],
+              "correct": 3
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "hang-card-to-hook",
+        "interaction": "Kéo thẻ chuông số móc vào móc treo dưới đĩa cân để kéo đĩa cân về vị trí thăng bằng."
+      }
+    },
+    {
+      "page_number": 9,
+      "workbook_page_number": 8,
+      "file_path": "pages/page-09.jpg",
+      "page_type": "checkpoint_number_balance",
+      "title": "Trang 8 – Trạm kiểm tra cân số",
+      "instruction": "Bài 1: Điền số còn thiếu • Bài 2: Khoanh số đúng • Bài 3: Nối với đáp án đúng",
+      "dialogue": {
+        "gau_logic": "Mình cùng ôn lại những chiếc cân số nhé!",
+        "tho_sang_tao": "Bé đọc kỹ từng bài rồi làm từng phần nào!"
+      },
+      "pedagogical_concept": "Trạm kiểm tra định kỳ (Formative Assessment Checkpoint): Tổng ôn toàn bộ kỹ năng tiền đại số khuyết số phạm vi 10 qua 3 bài tập với 3 cơ chế tương tác: Điền số tự do -> Khoanh trắc nghiệm -> Nối dây kết nối. Đánh giá mức độ thành thục trước khi chuyển sang giai đoạn cân nặng cơ học.",
+      "sections": [
+        {
+          "section_id": "P09-S1",
+          "section_title": "Bài 1: Điền số còn thiếu",
+          "items": [
+            {
+              "id": 1,
+              "equation": "6 = 4 + [ ? ]",
+              "correct": 2
+            },
+            {
+              "id": 2,
+              "equation": "3 + [ ? ] = 8",
+              "correct": 5
+            },
+            {
+              "id": 3,
+              "equation": "2 + 1 + [ ? ] = 7",
+              "correct": 4
+            },
+            {
+              "id": 4,
+              "equation": "9 = 3 + 2 + [ ? ]",
+              "correct": 4
+            }
+          ]
+        },
+        {
+          "section_id": "P09-S2",
+          "section_title": "Bài 2: Khoanh số đúng",
+          "items": [
+            {
+              "id": 1,
+              "equation": "5 + [ ? ] = 9",
+              "options": [3, 4, 5],
+              "correct": 4
+            },
+            {
+              "id": 2,
+              "equation": "7 = 2 + [ ? ]",
+              "options": [4, 5, 6],
+              "correct": 5
+            },
+            {
+              "id": 3,
+              "equation": "4 + 3 = [ ? ] + 5",
+              "options": [1, 2, 3],
+              "correct": 2
+            },
+            {
+              "id": 4,
+              "equation": "8 = 1 + 2 + [ ? ]",
+              "options": [4, 5, 6],
+              "correct": 5
+            }
+          ]
+        },
+        {
+          "section_id": "P09-S3",
+          "section_title": "Bài 3: Nối với đáp án đúng",
+          "items": [
+            {
+              "id": "a",
+              "equation": "3 + 2 = [ ? ] + 1",
+              "correct": 4,
+              "connect_to": 4
+            },
+            {
+              "id": "b",
+              "equation": "5 + [ ? ] = 7",
+              "correct": 2,
+              "connect_to": 2
+            },
+            {
+              "id": "c",
+              "equation": "2 + 2 + [ ? ] = 7",
+              "correct": 3,
+              "connect_to": 3
+            },
+            {
+              "id": "d",
+              "equation": "9 = 4 + [ ? ]",
+              "correct": 5,
+              "connect_to": 5
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-014",
+        "mechanic": "quiz-checkpoint",
+        "interaction": "Hoàn thành 3 vòng thử thách nhận huy hiệu sao nhỏ của Trạm kiểm tra."
+      }
+    },
+    {
+      "page_number": 10,
+      "workbook_page_number": 9,
+      "file_path": "pages/page-10.jpg",
+      "page_type": "lighter_object_comparison",
+      "title": "Trang 9 – Vật nào nhẹ hơn?",
+      "instruction": "Bài 1: Khoanh vật nhẹ hơn • Bài 2: Nhẹ hơn hay nặng hơn?",
+      "dialogue": {
+        "gau_logic": "Bên nào ở cao hơn thường là nhẹ hơn đấy!",
+        "tho_sang_tao": "Bé hãy nhìn chiếc cân rồi tìm vật nhẹ hơn nhé!"
+      },
+      "pedagogical_concept": "Khái niệm đo lường khối lượng định tính (Qualitative Mass Comparison): Trẻ học quy luật cơ học trực quan 'Vật nhẹ hơn thì đĩa cân bị đẩy lên cao hơn'. Phân biệt rõ sự đối lập giữa độ cao hình học (cao) và khối lượng (nhẹ).",
+      "sections": [
+        {
+          "section_id": "P10-S1",
+          "section_title": "Bài 1: Khoanh vật nhẹ hơn",
+          "items": [
+            {
+              "id": 1,
+              "scale": "Dưa hấu (chìm thấp) vs Quả lê (ở cao)",
+              "correct": "Quả lê 🍐",
+              "reasoning": "Đĩa lê ở trên cao nên quả lê nhẹ hơn"
+            },
+            {
+              "id": 2,
+              "scale": "Dứa (chìm thấp) vs Táo (ở cao)",
+              "correct": "Táo 🍎",
+              "reasoning": "Đĩa táo ở trên cao nên táo nhẹ hơn"
+            },
+            {
+              "id": 3,
+              "scale": "Cam (chìm thấp) vs Dâu tây (ở cao)",
+              "correct": "Dâu tây 🍓",
+              "reasoning": "Đĩa dâu ở trên cao nên dâu tây nhẹ hơn"
+            },
+            {
+              "id": 4,
+              "scale": "Quả lê (chìm thấp) vs Chuối (ở cao)",
+              "correct": "Chuối 🍌",
+              "reasoning": "Đĩa chuối ở trên cao nên chuối nhẹ hơn"
+            },
+            {
+              "id": 5,
+              "scale": "Chùm nho (chìm thấp) vs Chanh (ở cao)",
+              "correct": "Chanh 🍋",
+              "reasoning": "Đĩa chanh ở trên cao nên chanh nhẹ hơn"
+            },
+            {
+              "id": 6,
+              "scale": "Quả dừa (chìm thấp) vs Cam (ở cao)",
+              "correct": "Cam 🍊",
+              "reasoning": "Đĩa cam ở trên cao nên cam nhẹ hơn"
+            }
+          ]
+        },
+        {
+          "section_id": "P10-S2",
+          "section_title": "Bài 2: Nhẹ hơn hay nặng hơn?",
+          "description": "Nhìn vật bên trái đĩa cân và tích chọn ô [Nhẹ hơn] hoặc [Nặng hơn].",
+          "items": [
+            {
+              "id": 1,
+              "target": "Táo đỏ (hạ thấp so với Lê)",
+              "correct": "Nặng hơn",
+              "reasoning": "Táo hạ thấp nên nặng hơn"
+            },
+            {
+              "id": 2,
+              "target": "Chuối (hạ thấp so với Cam)",
+              "correct": "Nặng hơn",
+              "reasoning": "Chuối hạ thấp nên nặng hơn"
+            },
+            {
+              "id": 3,
+              "target": "Chùm nho (hạ thấp so với Chanh)",
+              "correct": "Nặng hơn",
+              "reasoning": "Nho hạ thấp nên nặng hơn"
+            },
+            {
+              "id": 4,
+              "target": "Quả dừa (hạ thấp so với Táo)",
+              "correct": "Nặng hơn",
+              "reasoning": "Dừa hạ thấp nên nặng hơn"
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-001",
+        "mechanic": "tap-lighter-object",
+        "interaction": "Chạm trực tiếp vào vật trên đĩa nâng cao. Hiệu ứng bọt khí nâng vật bay nhẹ lên phát âm thanh vui tai."
+      }
+    },
+    {
+      "page_number": 11,
+      "workbook_page_number": 10,
+      "file_path": "pages/page-11.jpg",
+      "page_type": "heavier_object_tilt_angle",
+      "title": "Trang 10 – Vật nào nặng hơn?",
+      "instruction": "Bài 1: Khoanh vật nặng hơn • Bài 2: Tìm vật nặng hơn",
+      "dialogue": {
+        "gau_logic": "Bên nào hạ thấp xuống thường là nặng hơn!",
+        "tho_sang_tao": "Bé hãy nhìn chiếc cân rồi tìm vật nặng hơn nhé!"
+      },
+      "pedagogical_concept": "Tính đối ngẫu của quan hệ khối lượng: 'Hạ thấp xuống = Nặng hơn'. Bài 2 nâng cao khả năng đọc hiểu ngôn ngữ khoa học mô tả góc nghiêng: 'Chiếc cân nghiêng nhiều về phía bên trái' / 'Chiếc cân nghiêng nhẹ về phía bên phải'.",
+      "sections": [
+        {
+          "section_id": "P11-S1",
+          "section_title": "Bài 1: Khoanh vật nặng hơn",
+          "items": [
+            {
+              "id": 1,
+              "scale": "Dưa hấu (hạ thấp) vs Lê (cao)",
+              "correct": "Dưa hấu 🍉",
+              "reasoning": "Dưa hấu hạ thấp nên nặng hơn"
+            },
+            {
+              "id": 2,
+              "scale": "Dứa (hạ thấp) vs Táo (cao)",
+              "correct": "Dứa 🍍",
+              "reasoning": "Dứa hạ thấp nên nặng hơn"
+            },
+            {
+              "id": 3,
+              "scale": "Dâu tây (hạ thấp) vs Cam (cao)",
+              "correct": "Dâu tây 🍓 (trên hình vẽ đĩa dâu hạ thấp)",
+              "reasoning": "Bên hạ thấp nặng hơn"
+            },
+            {
+              "id": 4,
+              "scale": "Lê (hạ thấp) vs Chuối (cao)",
+              "correct": "Quả lê 🍐",
+              "reasoning": "Lê hạ thấp nên nặng hơn"
+            },
+            {
+              "id": 5,
+              "scale": "Nho (hạ thấp) vs Chanh (cao)",
+              "correct": "Chùm nho 🍇",
+              "reasoning": "Nho hạ thấp nên nặng hơn"
+            },
+            {
+              "id": 6,
+              "scale": "Dừa (hạ thấp) vs Cam (cao)",
+              "correct": "Quả dừa 🥥",
+              "reasoning": "Dừa hạ thấp nên nặng hơn"
+            }
+          ]
+        },
+        {
+          "section_id": "P11-S2",
+          "section_title": "Bài 2: Tìm vật nặng hơn",
+          "items": [
+            {
+              "id": 1,
+              "prompt": "Chiếc cân nghiêng nhiều về phía bên trái!",
+              "objects": "Táo đỏ (trái, hạ thấp) vs Cam (phải, cao)",
+              "correct": "Táo đỏ 🍎"
+            },
+            {
+              "id": 2,
+              "prompt": "Chiếc cân nghiêng nhẹ về phía bên phải!",
+              "objects": "Dâu tây (trái, cao) vs Lê (phải, hạ thấp)",
+              "correct": "Quả lê 🍐"
+            },
+            {
+              "id": 3,
+              "prompt": "Chiếc cân nghiêng nhiều về phía bên trái!",
+              "objects": "Nho (trái, hạ thấp) vs Chuối (phải, cao)",
+              "correct": "Chùm nho 🍇"
+            },
+            {
+              "id": 4,
+              "prompt": "Chiếc cân nghiêng nhẹ về phía bên phải!",
+              "objects": "Dứa (trái, cao) vs Dừa (phải, hạ thấp)",
+              "correct": "Quả dừa 🥥"
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-001",
+        "mechanic": "tap-heavier-object",
+        "interaction": "Chạm vào vật ở đĩa hạ thấp. Hiệu ứng đĩa cân nhún xuống tạo cảm giác trọng lượng nặng 'Bịch!'."
+      }
+    },
+    {
+      "page_number": 12,
+      "workbook_page_number": 11,
+      "file_path": "pages/page-12.jpg",
+      "page_type": "add_to_balance",
+      "title": "Trang 11 – Thêm vào cho cân bằng",
+      "instruction": "Bài 1: Khoanh nhóm vật cần thêm vào đĩa cân • Bài 2: Viết số vật cần thêm vào ô trống",
+      "dialogue": {
+        "gau_logic": "Hai bên đều là những vật giống nhau!",
+        "tho_sang_tao": "Bé hãy thêm phần còn thiếu để cân nằm ngang nhé!"
+      },
+      "pedagogical_concept": "Thao tác bù trừ cơ học dạng Thêm vào (Additive Balancing): Khi các vật trên 2 đĩa là cùng loại (đồng nhất), trẻ đếm số lượng mỗi bên, so sánh hiệu số chênh lệch và xác định cần thêm bao nhiêu vật vào đĩa cao (đĩa nhẹ) để đạt trạng thái thăng bằng.",
+      "sections": [
+        {
+          "section_id": "P12-S1",
+          "section_title": "Bài 1: Khoanh nhóm vật cần thêm vào đĩa cân",
+          "items": [
+            {
+              "id": 1,
+              "scale": "Trái 2 bánh răng vs Phải 1 bánh răng + [ ? ]",
+              "options": ["A. 1 bánh răng", "B. 2 bánh răng"],
+              "correct": "A (1 bánh răng)",
+              "reasoning": "2 - 1 = 1"
+            },
+            {
+              "id": 2,
+              "scale": "Trái 1 đinh ốc + [ ? ] vs Phải 3 đinh ốc",
+              "options": ["A. 1 đinh ốc", "B. 2 đinh ốc"],
+              "correct": "B (2 đinh ốc)",
+              "reasoning": "3 - 1 = 2"
+            },
+            {
+              "id": 3,
+              "scale": "Trái 4 khối vuông vs Phải 2 khối + [ ? ]",
+              "options": ["A. 2 khối đỏ", "B. 3 khối đỏ"],
+              "correct": "A (2 khối đỏ)",
+              "reasoning": "4 - 2 = 2"
+            },
+            {
+              "id": 4,
+              "scale": "Trái 2 cúc tím + [ ? ] vs Phải 3 cúc tím",
+              "options": ["A. 2 cúc tím", "B. 1 cúc tím"],
+              "correct": "B (1 cúc tím)",
+              "reasoning": "3 - 2 = 1"
+            },
+            {
+              "id": 5,
+              "scale": "Trái 5 ngôi sao vs Phải 3 sao + [ ? ]",
+              "options": ["A. 2 ngôi sao", "B. 3 ngôi sao"],
+              "correct": "A (2 ngôi sao)",
+              "reasoning": "5 - 3 = 2"
+            },
+            {
+              "id": 6,
+              "scale": "Trái 2 quả cầu + [ ? ] vs Phải 4 quả cầu",
+              "options": ["A. 2 quả cầu", "B. 3 quả cầu"],
+              "correct": "A (2 quả cầu)",
+              "reasoning": "4 - 2 = 2"
+            }
+          ]
+        },
+        {
+          "section_id": "P12-S2",
+          "section_title": "Bài 2: Viết số vật cần thêm vào ô trống",
+          "items": [
+            {
+              "id": 1,
+              "scale": "Trái 3 đinh ốc vs Phải 1 đinh ốc + [ ? ]",
+              "correct_number": 2,
+              "reasoning": "3 = 1 + 2"
+            },
+            {
+              "id": 2,
+              "scale": "Trái 2 khối xanh + [ ? ] vs Phải 5 khối xanh",
+              "correct_number": 3,
+              "reasoning": "2 + 3 = 5"
+            },
+            {
+              "id": 3,
+              "scale": "Trái 4 bánh răng vs Phải 1 bánh răng + [ ? ]",
+              "correct_number": 3,
+              "reasoning": "4 = 1 + 3"
+            },
+            {
+              "id": 4,
+              "scale": "Trái 1 sao tím + [ ? ] vs Phải 4 sao tím",
+              "correct_number": 3,
+              "reasoning": "1 + 3 = 4"
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-014",
+        "mechanic": "drag-add-to-pan",
+        "interaction": "Kéo vật phẩm từ khay nguyên liệu thả vào đĩa cao; mỗi vật thả vào làm đĩa hạ xuống từ từ đến khi cân thăng bằng nằm ngang."
+      }
+    },
+    {
+      "page_number": 13,
+      "workbook_page_number": 12,
+      "file_path": "pages/page-13.jpg",
+      "page_type": "subtract_to_balance",
+      "title": "Trang 12 – Bớt đi cho cân bằng",
+      "instruction": "Bài 1: Khoanh nhóm vật cần bớt ở đĩa thấp • Bài 2: Viết số vật cần bớt vào ô trống",
+      "dialogue": {
+        "gau_logic": "Đĩa có nhiều vật hơn sẽ hạ thấp xuống!",
+        "tho_sang_tao": "Bé hãy bớt vật ở đĩa thấp để cân nằm ngang nhé!"
+      },
+      "pedagogical_concept": "Thao tác bù trừ cơ học dạng Bớt đi (Subtractive Balancing): Khái niệm phép trừ trực quan trên bàn cân. Để làm đĩa thấp nhẹ bớt và nâng lên thăng bằng với đĩa cao, ta phải nhấc bớt một lượng vật phẩm tương ứng với phần chênh lệch.",
+      "sections": [
+        {
+          "section_id": "P13-S1",
+          "section_title": "Bài 1: Khoanh nhóm vật cần bớt ở đĩa thấp",
+          "items": [
+            {
+              "id": 1,
+              "scale": "Trái 3 bánh răng (thấp) vs Phải 2 bánh răng (cao)",
+              "options": ["A. 2 bánh răng", "B. 1 bánh răng"],
+              "correct": "B (1 bánh răng)",
+              "reasoning": "3 - 1 = 2"
+            },
+            {
+              "id": 2,
+              "scale": "Trái 2 đinh ốc (cao) vs Phải 4 đinh ốc (thấp)",
+              "options": ["A. 2 đinh ốc", "B. 1 đinh ốc"],
+              "correct": "A (2 đinh ốc)",
+              "reasoning": "4 - 2 = 2"
+            },
+            {
+              "id": 3,
+              "scale": "Trái 5 khối đỏ (thấp) vs Phải 2 khối đỏ (cao)",
+              "options": ["A. 2 khối đỏ", "B. 3 khối đỏ"],
+              "correct": "B (3 khối đỏ)",
+              "reasoning": "5 - 3 = 2"
+            },
+            {
+              "id": 4,
+              "scale": "Trái 1 cúc tím (cao) vs Phải 4 cúc tím (thấp)",
+              "options": ["A. 3 cúc tím", "B. 2 cúc tím"],
+              "correct": "A (3 cúc tím)",
+              "reasoning": "4 - 3 = 1"
+            },
+            {
+              "id": 5,
+              "scale": "Trái 6 sao vàng (thấp) vs Phải 4 sao vàng (cao)",
+              "options": ["A. 3 sao vàng", "B. 2 sao vàng"],
+              "correct": "B (2 sao vàng)",
+              "reasoning": "6 - 2 = 4"
+            },
+            {
+              "id": 6,
+              "scale": "Trái 2 cầu xanh (cao) vs Phải 5 cầu xanh (thấp)",
+              "options": ["A. 4 cầu xanh", "B. 3 cầu xanh"],
+              "correct": "B (3 cầu xanh)",
+              "reasoning": "5 - 3 = 2"
+            }
+          ]
+        },
+        {
+          "section_id": "P13-S2",
+          "section_title": "Bài 2: Viết số vật cần bớt vào ô trống",
+          "items": [
+            {
+              "id": 1,
+              "scale": "Trái 4 đinh ốc vs Phải 2 đinh ốc",
+              "operator": "- [ ? ]",
+              "correct_number": 2,
+              "reasoning": "4 - 2 = 2"
+            },
+            {
+              "id": 2,
+              "scale": "Trái 2 khối vs Phải 5 khối",
+              "operator": "- [ ? ]",
+              "correct_number": 3,
+              "reasoning": "5 - 3 = 2"
+            },
+            {
+              "id": 3,
+              "scale": "Trái 5 bánh răng vs Phải 4 bánh răng",
+              "operator": "- [ ? ]",
+              "correct_number": 1,
+              "reasoning": "5 - 1 = 4"
+            },
+            {
+              "id": 4,
+              "scale": "Trái 1 sao vs Phải 5 sao",
+              "operator": "- [ ? ]",
+              "correct_number": 4,
+              "reasoning": "5 - 4 = 1"
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-014",
+        "mechanic": "tap-remove-from-pan",
+        "interaction": "Chạm vào vật trên đĩa thấp để nhặt bỏ ra ngoài; đĩa nhấc lên từ từ đạt thăng bằng."
+      }
+    },
+    {
+      "page_number": 14,
+      "workbook_page_number": 13,
+      "file_path": "pages/page-14.jpg",
+      "page_type": "add_or_subtract_decision",
+      "title": "Trang 13 – Thêm hay bớt?",
+      "instruction": "Bài 1: Mũi tên chỉ đĩa cần sửa. Khoanh + hoặc − • Bài 2: Điền số vật cần thêm hoặc bớt",
+      "dialogue": {
+        "gau_logic": "Mũi tên chỉ vào đĩa bé cần sửa!",
+        "tho_sang_tao": "Đĩa cao chọn + để thêm, đĩa thấp chọn − để bớt nhé!"
+      },
+      "pedagogical_concept": "Tư duy phân nhánh logic (Conditional Decision Logic): Quy tắc kép: (1) Nếu mũi tên chỉ đĩa cao (thiếu lượng) -> chọn THÊM (+); (2) Nếu mũi tên chỉ đĩa thấp (thừa lượng) -> chọn BỚT (−). Kết hợp nhận diện phép toán và tính nhẩm số lượng.",
+      "sections": [
+        {
+          "section_id": "P14-S1",
+          "section_title": "Bài 1: Mũi tên chỉ đĩa cần sửa. Khoanh + hoặc −",
+          "items": [
+            {
+              "id": 1,
+              "target": "Mũi tên chỉ đĩa trái (ở cao: 1 bánh răng vs 3 bánh răng)",
+              "options": ["A. +", "B. −"],
+              "correct": "A (+)",
+              "reasoning": "Đĩa cao thiếu vật nên cần thêm +"
+            },
+            {
+              "id": 2,
+              "target": "Mũi tên chỉ đĩa trái (ở thấp: 4 đinh ốc vs 2 đinh ốc)",
+              "options": ["A. +", "B. −"],
+              "correct": "B (−)",
+              "reasoning": "Đĩa thấp thừa vật nên cần bớt −"
+            },
+            {
+              "id": 3,
+              "target": "Mũi tên chỉ đĩa phải (ở cao: 2 khối vs 5 khối)",
+              "options": ["A. +", "B. −"],
+              "correct": "A (+)",
+              "reasoning": "Đĩa cao thiếu vật nên cần thêm +"
+            },
+            {
+              "id": 4,
+              "target": "Mũi tên chỉ đĩa phải (ở thấp: 5 cúc vs 2 cúc)",
+              "options": ["A. +", "B. −"],
+              "correct": "B (−)",
+              "reasoning": "Đĩa thấp thừa vật nên cần bớt −"
+            },
+            {
+              "id": 5,
+              "target": "Mũi tên chỉ đĩa phải (ở cao: 3 sao vs 5 sao)",
+              "options": ["A. −", "B. +"],
+              "correct": "B (+)",
+              "reasoning": "Đĩa cao thiếu vật nên cần thêm +"
+            },
+            {
+              "id": 6,
+              "target": "Mũi tên chỉ đĩa phải (ở thấp: 6 cầu vs 2 cầu)",
+              "options": ["A. −", "B. +"],
+              "correct": "A (−)",
+              "reasoning": "Đĩa thấp thừa vật nên cần bớt −"
+            }
+          ]
+        },
+        {
+          "section_id": "P14-S2",
+          "section_title": "Bài 2: Điền số vật cần thêm hoặc bớt",
+          "items": [
+            {
+              "id": 1,
+              "target": "Đĩa trái ở cao (2 đinh ốc vs 4 đinh ốc)",
+              "display": "+ [ ? ]",
+              "correct_number": 2,
+              "reasoning": "Thêm 2 đinh ốc: 2 + 2 = 4"
+            },
+            {
+              "id": 2,
+              "target": "Đĩa trái ở thấp (5 khối vs 2 khối)",
+              "display": "− [ ? ]",
+              "correct_number": 3,
+              "reasoning": "Bớt 3 khối: 5 - 3 = 2"
+            },
+            {
+              "id": 3,
+              "target": "Đĩa phải ở cao (3 bánh răng vs 4 bánh răng)",
+              "display": "+ [ ? ]",
+              "correct_number": 1,
+              "reasoning": "Thêm 1 bánh răng: 3 + 1 = 4"
+            },
+            {
+              "id": 4,
+              "target": "Đĩa phải ở thấp (5 sao vs 1 sao)",
+              "display": "− [ ? ]",
+              "correct_number": 4,
+              "reasoning": "Bớt 4 sao: 5 - 4 = 1"
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-001",
+        "mechanic": "sign-and-number-select",
+        "interaction": "Chạm vào nút dấu [+] hoặc [−], sau đó chọn số lượng vật phẩm trên bàn phím ảo."
+      }
+    },
+    {
+      "page_number": 15,
+      "workbook_page_number": 14,
+      "file_path": "pages/page-15.jpg",
+      "page_type": "composite_repair_balance",
+      "title": "Trang 14 – Thử tài sửa cân",
+      "instruction": "Bài 1: Khoanh thẻ giúp cân nằm ngang • Bài 2: Điền dấu vào ô tròn, điền số vào ô vuông",
+      "dialogue": {
+        "gau_logic": "Mũi tên vẫn chỉ vào đĩa bé cần sửa!",
+        "tho_sang_tao": "Chọn đúng dấu, rồi tìm đúng số vật nhé!"
+      },
+      "pedagogical_concept": "Tích hợp biểu diễn đại số kép: Kết hợp đồng thời dấu điều chỉnh (+ hoặc −) và số lượng cụ thể thành một thẻ lệnh duy nhất (ví dụ: `+ 2 bánh răng`, `− 3 đinh ốc`). Chuẩn bị tư duy cho các phép biến đổi đại số tương đương (Equivalence Transformations).",
+      "sections": [
+        {
+          "section_id": "P15-S1",
+          "section_title": "Bài 1: Khoanh thẻ giúp cân nằm ngang",
+          "items": [
+            {
+              "id": 1,
+              "scale": "Đĩa trái cao 1 bánh răng vs Đĩa phải 3 bánh răng. Mũi tên chỉ đĩa trái.",
+              "options": ["A. + 2 bánh răng", "B. + 1 bánh răng"],
+              "correct": "A (+ 2 bánh răng)"
+            },
+            {
+              "id": 2,
+              "scale": "Đĩa trái thấp 5 đinh ốc vs Đĩa phải 2 đinh ốc. Mũi tên chỉ đĩa trái.",
+              "options": ["A. − 2 đinh ốc", "B. − 3 đinh ốc"],
+              "correct": "B (− 3 đinh ốc)"
+            },
+            {
+              "id": 3,
+              "scale": "Đĩa trái 4 khối đỏ vs Đĩa phải cao 2 khối. Mũi tên chỉ đĩa phải.",
+              "options": ["A. + 1 khối", "B. + 2 khối"],
+              "correct": "B (+ 2 khối)"
+            },
+            {
+              "id": 4,
+              "scale": "Đĩa trái 2 cúc tím vs Đĩa phải thấp 5 cúc. Mũi tên chỉ đĩa phải.",
+              "options": ["A. − 3 cúc tím", "B. − 2 cúc tím"],
+              "correct": "A (− 3 cúc tím)"
+            },
+            {
+              "id": 5,
+              "scale": "Đĩa trái 5 sao vs Đĩa phải cao 4 sao. Mũi tên chỉ đĩa phải.",
+              "options": ["A. + 1 sao", "B. + 2 sao"],
+              "correct": "A (+ 1 sao)"
+            },
+            {
+              "id": 6,
+              "scale": "Đĩa trái 2 cầu xanh vs Đĩa phải thấp 6 cầu. Mũi tên chỉ đĩa phải.",
+              "options": ["A. − 3 quả cầu", "B. − 4 quả cầu"],
+              "correct": "B (− 4 quả cầu)"
+            }
+          ]
+        },
+        {
+          "section_id": "P15-S2",
+          "section_title": "Bài 2: Điền dấu vào ô tròn, điền số vào ô vuông",
+          "items": [
+            {
+              "id": 1,
+              "scale": "Đĩa trái cao 1 đinh ốc vs Đĩa phải 3 đinh ốc. Mũi tên đĩa trái.",
+              "correct_sign": "+",
+              "correct_number": 2,
+              "result": "(+) [ 2 ]"
+            },
+            {
+              "id": 2,
+              "scale": "Đĩa trái thấp 5 khối vs Đĩa phải 2 khối. Mũi tên đĩa trái.",
+              "correct_sign": "−",
+              "correct_number": 3,
+              "result": "(−) [ 3 ]"
+            },
+            {
+              "id": 3,
+              "scale": "Đĩa trái 4 bánh răng vs Đĩa phải cao 3 bánh răng. Mũi tên đĩa phải.",
+              "correct_sign": "+",
+              "correct_number": 1,
+              "result": "(+) [ 1 ]"
+            },
+            {
+              "id": 4,
+              "scale": "Đĩa trái 2 sao vs Đĩa phải thấp 6 sao. Mũi tên đĩa phải.",
+              "correct_sign": "−",
+              "correct_number": 4,
+              "result": "(−) [ 4 ]"
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "composite-command-drag",
+        "interaction": "Kéo thẻ lệnh chứa cả dấu và hình ảnh vào đĩa cân chỉ định để tự động sửa cân thăng bằng."
+      }
+    },
+    {
+      "page_number": 16,
+      "workbook_page_number": 15,
+      "file_path": "pages/page-16.jpg",
+      "page_type": "fruit_equivalence_scaling",
+      "title": "Trang 15 – Quầy trái cây cân bằng",
+      "instruction": "Bài 1: Nhìn cân mẫu, khoanh nhóm trái cây thay thế đúng • Bài 2: Tìm nhóm trái cây còn thiếu để cân bằng",
+      "dialogue": {
+        "gau_logic": "Cân nằm ngang nghĩa là hai bên nặng bằng nhau!",
+        "tho_sang_tao": "Hãy nhìn cân mẫu rồi tìm đúng nhóm trái cây nhé!"
+      },
+      "pedagogical_concept": "Chuyển tiếp sang Tiền đại số: Khái niệm tương đương và quy đổi giá trị (Equivalence & Substitution). Từ 'Cân mẫu' 1 vật lớn = n vật nhỏ, trẻ nhân đôi số lượng để tìm nhóm thay thế, hoặc tìm phần còn thiếu khi đã có sẵn một phần vật nhỏ.",
+      "sections": [
+        {
+          "section_id": "P16-S1",
+          "section_title": "Bài 1: Nhìn cân mẫu, khoanh nhóm trái cây thay thế đúng",
+          "items": [
+            {
+              "id": 1,
+              "sample": "1 Quả dứa 🍍 = 2 Quả táo đỏ 🍎",
+              "target": "2 Quả dứa = [ ? ] Quả táo đỏ",
+              "options": ["A. 3 quả táo", "B. 4 quả táo"],
+              "correct": "B (4 quả táo)",
+              "reasoning": "2 x 2 = 4 táo"
+            },
+            {
+              "id": 2,
+              "sample": "1 Quả lê xanh 🍐 = 3 Dâu tây 🍓",
+              "target": "2 Quả lê = [ ? ] Dâu tây",
+              "options": ["A. 6 quả dâu tây", "B. 5 quả dâu tây"],
+              "correct": "A (6 quả dâu tây)",
+              "reasoning": "2 x 3 = 6 dâu"
+            },
+            {
+              "id": 3,
+              "sample": "2 Quả cam 🍊 = 1 Quả dừa 🥥",
+              "target": "4 Quả cam = [ ? ] Quả dừa",
+              "options": ["A. 2 quả dừa", "B. 3 quả dừa"],
+              "correct": "A (2 quả dừa)",
+              "reasoning": "4 cam = 2 x 2 cam = 2 dừa"
+            },
+            {
+              "id": 4,
+              "sample": "3 Quả chanh 🍋 = 1 Quả xoài 🥭",
+              "target": "6 Quả chanh = [ ? ] Quả xoài",
+              "options": ["A. 1 quả xoài", "B. 2 quả xoài"],
+              "correct": "B (2 quả xoài)",
+              "reasoning": "6 chanh = 2 x 3 chanh = 2 xoài"
+            }
+          ]
+        },
+        {
+          "section_id": "P16-S2",
+          "section_title": "Bài 2: Tìm nhóm trái cây còn thiếu để cân bằng",
+          "items": [
+            {
+              "id": 1,
+              "sample": "1 Dứa = 2 Táo",
+              "scale": "Trái: 2 Dứa | Phải: 2 Táo + [ ? ]",
+              "options": ["A. 1 quả táo", "B. 2 quả táo"],
+              "correct": "B (2 quả táo)",
+              "reasoning": "2 Dứa = 4 Táo, đã có 2 Táo nên cần thêm 2 Táo"
+            },
+            {
+              "id": 2,
+              "sample": "1 Lê = 3 Dâu",
+              "scale": "Trái: 2 Lê | Phải: 4 Dâu + [ ? ]",
+              "options": ["A. 1 quả dâu", "B. 2 quả dâu"],
+              "correct": "B (2 quả dâu)",
+              "reasoning": "2 Lê = 6 Dâu, đã có 4 Dâu nên cần thêm 2 Dâu"
+            },
+            {
+              "id": 3,
+              "sample": "2 Cam = 1 Dừa",
+              "scale": "Trái: 4 Cam | Phải: 1 Dừa + [ ? ]",
+              "options": ["A. 1 quả dừa", "B. 2 quả dừa"],
+              "correct": "A (1 quả dừa)",
+              "reasoning": "4 Cam = 2 Dừa, đã có 1 Dừa nên cần thêm 1 Dừa"
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-014",
+        "mechanic": "balance-substitution",
+        "interaction": "Chạm vào quả dứa ở cân thử, hiệu ứng tách dứa thành 2 quả táo để trẻ trực quan hóa phép thế."
+      }
+    },
+    {
+      "page_number": 17,
+      "workbook_page_number": 16,
+      "file_path": "pages/page-17.jpg",
+      "page_type": "transitive_third_scale",
+      "title": "Trang 16 – Chiếc cân thứ ba",
+      "instruction": "QUAN SÁT 2 CÂN GỢI Ý • ĐIỀN SỐ VÀO CÂN THỨ BA",
+      "dialogue": {
+        "gau_logic": "Hai chiếc cân đầu đang cất giấu manh mối!",
+        "tho_sang_tao": "Bé dùng hai manh mối để hoàn thành chiếc cân thứ ba nhé!"
+      },
+      "footer_hint": "GỢI Ý: ĐỔI QUA ĐỒ VẬT Ở GIỮA, RỒI TÌM ĐỒ VẬT CUỐI CÙNG",
+      "pedagogical_concept": "Suy luận bắc cầu tiền đại số 2 bước (Transitive Deduction / 2-Step Equivalence): Nếu A = n B và B = m C thì A = (n x m) C. Trẻ học cách xác định 'đồ vật trung gian' (vật ở giữa), rút về đơn vị 1 vật trung gian rồi quy đổi sang vật đích.",
+      "items": [
+        {
+          "id": 1,
+          "name": "Bài 1: Dưa hấu qua Táo ra Dâu tây",
+          "scale_1": "1 Quả dưa hấu 🍉 = 3 Quả táo đỏ 🍎",
+          "scale_2": "2 Quả táo đỏ = 4 Quả dâu tây 🍓 (suy ra 1 Táo = 2 Dâu)",
+          "scale_3": "1 Quả dưa hấu = [ ? ] Quả dâu tây 🍓",
+          "intermediate_object": "Táo đỏ: 1 Táo = 2 Dâu tây",
+          "correct_number": 6,
+          "reasoning": "1 Dưa = 3 Táo = 3 x 2 Dâu = 6 Dâu tây"
+        },
+        {
+          "id": 2,
+          "name": "Bài 2: Bí đỏ qua Bắp ngô ra Cà rốt",
+          "scale_1": "1 Quả bí đỏ 🎃 = 2 Bắp ngô 🌽",
+          "scale_2": "1 Bắp ngô = 3 Củ cà rốt 🥕",
+          "scale_3": "1 Quả bí đỏ = [ ? ] Củ cà rốt 🥕",
+          "intermediate_object": "Bắp ngô: 1 Ngô = 3 Cà rốt",
+          "correct_number": 6,
+          "reasoning": "1 Bí đỏ = 2 Ngô = 2 x 3 Cà rốt = 6 Củ cà rốt"
+        },
+        {
+          "id": 3,
+          "name": "Bài 3: Bánh mì qua Sữa ra Bánh quy",
+          "scale_1": "1 Ổ bánh mì 🍞 = 3 Hộp sữa 🥛",
+          "scale_2": "2 Hộp sữa = 4 Bánh quy 🍪 (suy ra 1 Sữa = 2 Bánh quy)",
+          "scale_3": "1 Ổ bánh mì = [ ? ] Bánh quy 🍪",
+          "intermediate_object": "Hộp sữa: 1 Sữa = 2 Bánh quy",
+          "correct_number": 6,
+          "reasoning": "1 Bánh mì = 3 Sữa = 3 x 2 Bánh quy = 6 Bánh quy"
+        },
+        {
+          "id": 4,
+          "name": "Bài 4: Robot qua Bóng ra Khối lập phương",
+          "scale_1": "1 Robot đồ chơi 🤖 = 2 Quả bóng ⚽",
+          "scale_2": "3 Quả bóng = 6 Khối lập phương 📦 (suy ra 1 Bóng = 2 Khối)",
+          "scale_3": "1 Robot đồ chơi = [ ? ] Khối lập phương 📦",
+          "intermediate_object": "Quả bóng: 1 Bóng = 2 Khối",
+          "correct_number": 4,
+          "reasoning": "1 Robot = 2 Bóng = 2 x 2 Khối = 4 Khối lập phương"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-014",
+        "mechanic": "transitive-scale-flow",
+        "interaction": "Chạm vào đồ vật ở Cân 1 làm sáng đồ vật tương ứng ở Cân 2; animation biến hình đồ vật trung gian thành đồ vật cuối cùng trên Cân 3."
+      }
+    },
+    {
+      "page_number": 18,
+      "workbook_page_number": 17,
+      "file_path": "pages/page-18.jpg",
+      "page_type": "three_scale_chain",
+      "title": "Trang 17 – Ba cân liên hoàn",
+      "instruction": "QUAN SÁT CÂN A VÀ CÂN B • HOÀN THÀNH CÂN C",
+      "dialogue": {
+        "gau_logic": "Mỗi chiếc cân đang nối tiếp một manh mối!",
+        "tho_sang_tao": "Bé suy luận từ cân A đến cân C nhé!"
+      },
+      "footer_hint": "GỢI Ý: TÌM MỘT ĐỒ VẬT Ở CÂN B TRƯỚC, RỒI SUY RA CÂN C",
+      "pedagogical_concept": "Nâng cao suy luận chuỗi liên hoàn (Multi-step Sequential Reasoning): Các hệ số quy đổi lớn hơn (kết quả lên đến 8, 10, 12). Đòi hỏi trẻ làm chủ khả năng chia nhẩm để tìm đơn vị (Unitary Method) và nhân gấp bội để tìm tổng thể.",
+      "items": [
+        {
+          "id": 1,
+          "name": "Bài 1: Dưa hấu qua Táo ra Dâu tây",
+          "scale_a": "1 Quả dưa hấu 🍉 = 4 Quả táo đỏ 🍎",
+          "scale_b": "1 Quả táo đỏ = 3 Quả dâu tây 🍓",
+          "scale_c": "1 Quả dưa hấu = [ ? ] Quả dâu tây 🍓",
+          "correct_number": 12,
+          "reasoning": "1 Dưa = 4 Táo = 4 x 3 = 12 Dâu tây"
+        },
+        {
+          "id": 2,
+          "name": "Bài 2: Bí ngô qua Bắp ngô ra Cà rốt",
+          "scale_a": "2 Quả bí ngô 🎃 = 4 Bắp ngô 🌽 (suy ra 1 Bí = 2 Ngô)",
+          "scale_b": "1 Bắp ngô = 4 Củ cà rốt 🥕",
+          "scale_c": "1 Quả bí ngô = [ ? ] Củ cà rốt 🥕",
+          "correct_number": 8,
+          "reasoning": "1 Bí = 2 Ngô = 2 x 4 = 8 Củ cà rốt"
+        },
+        {
+          "id": 3,
+          "name": "Bài 3: Bánh mì qua Sữa ra Bánh quy",
+          "scale_a": "1 Ổ bánh mì 🍞 = 5 Hộp sữa 🥛",
+          "scale_b": "2 Hộp sữa = 4 Bánh quy 🍪 (suy ra 1 Sữa = 2 Bánh quy)",
+          "scale_c": "1 Ổ bánh mì = [ ? ] Bánh quy 🍪",
+          "correct_number": 10,
+          "reasoning": "1 Bánh mì = 5 Sữa = 5 x 2 = 10 Bánh quy"
+        },
+        {
+          "id": 4,
+          "name": "Bài 4: Robot qua Bóng ra Khối lập phương",
+          "scale_a": "1 Robot đồ chơi 🤖 = 3 Quả bóng ⚽",
+          "scale_b": "2 Quả bóng = 8 Khối lập phương 📦 (suy ra 1 Bóng = 4 Khối)",
+          "scale_c": "1 Robot đồ chơi = [ ? ] Khối lập phương 📦",
+          "correct_number": 12,
+          "reasoning": "1 Robot = 3 Bóng = 3 x 4 = 12 Khối lập phương"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-014",
+        "mechanic": "chain-scale-link",
+        "interaction": "Mỗi chiếc cân được kích hoạt tuần tự A -> B -> C với hiệu ứng dây chuyền bánh răng xưởng kỳ diệu."
+      }
+    },
+    {
+      "page_number": 19,
+      "workbook_page_number": 18,
+      "file_path": "pages/page-19.jpg",
+      "page_type": "algebraic_elimination",
+      "title": "Trang 18 – Giải cứu quả bị mất",
+      "instruction": "XEM CÂN GỢI Ý • KHOANH QUẢ CÒN THIẾU",
+      "dialogue": {
+        "gau_logic": "Một loại quả đã bị che mất rồi!",
+        "tho_sang_tao": "Bé xem cân gợi ý và tìm lại nhé!"
+      },
+      "footer_hint": "GỢI Ý: ĐỔI QUẢ THÀNH NHÓM QUẢ CÓ GIÁ TRỊ BẰNG NHAU",
+      "pedagogical_concept": "Phương pháp Khử đại số trực quan (Visual Algebraic Elimination): Ở cân tìm quả, trên đĩa xuất hiện ô ẩn số [ ? ] kèm thêm một vài quả đã biết. Trẻ triệt tiêu các quả giống nhau ở hai đĩa cân (tương đương trừ cùng một lượng ở 2 vế của đẳng thức) để cô lập ẩn số [ ? ], sau đó đối chiếu với Cân gợi ý để tìm ra đúng loại quả bị mất.",
+      "items": [
+        {
+          "id": 1,
+          "hint_scale": "1 Chùm nho 🍇 = 2 Quả táo đỏ 🍎",
+          "test_scale": "Đĩa trái: [ ? ] + 1 Táo 🍎 | Đĩa phải: 3 Táo 🍎",
+          "elimination": "Bớt 1 Táo ở cả 2 đĩa => [ ? ] = 2 Táo",
+          "options": ["A. Cam 🍊", "B. Nho 🍇", "C. Lê 🍐"],
+          "correct": "B. Nho 🍇",
+          "reasoning": "[ ? ] = 2 Táo = 1 Chùm nho"
+        },
+        {
+          "id": 2,
+          "hint_scale": "1 Quả dứa 🍍 = 2 Quả cam 🍊",
+          "test_scale": "Đĩa trái: 1 Cam 🍊 + [ ? ] | Đĩa phải: 3 Cam 🍊",
+          "elimination": "Bớt 1 Cam ở cả 2 đĩa => [ ? ] = 2 Cam",
+          "options": ["A. Dứa 🍍", "B. Dâu tây 🍓", "C. Táo 🍎"],
+          "correct": "A. Dứa 🍍",
+          "reasoning": "[ ? ] = 2 Cam = 1 Quả dứa"
+        },
+        {
+          "id": 3,
+          "hint_scale": "1 Quả dưa hấu 🍉 = 3 Quả lê 🍐",
+          "test_scale": "Đĩa trái: [ ? ] + 1 Lê 🍐 | Đĩa phải: 4 Lê 🍐",
+          "elimination": "Bớt 1 Lê ở cả 2 đĩa => [ ? ] = 3 Lê",
+          "options": ["A. Táo 🍎", "B. Chuối 🍌", "C. Dưa hấu 🍉"],
+          "correct": "C. Dưa hấu 🍉",
+          "reasoning": "[ ? ] = 3 Lê = 1 Quả dưa hấu"
+        },
+        {
+          "id": 4,
+          "hint_scale": "1 Nải chuối 🍌 = 2 Quả dâu 🍓",
+          "test_scale": "Đĩa trái: 2 Dâu 🍓 + [ ? ] | Đĩa phải: 4 Dâu 🍓",
+          "elimination": "Bớt 2 Dâu ở cả 2 đĩa => [ ? ] = 2 Dâu",
+          "options": ["A. Lê 🍐", "B. Chuối 🍌", "C. Cam 🍊"],
+          "correct": "B. Chuối 🍌",
+          "reasoning": "[ ? ] = 2 Dâu = 1 Nải chuối"
+        },
+        {
+          "id": 5,
+          "hint_scale": "1 Quả dừa 🥥 = 2 Quả xoài 🥭",
+          "test_scale": "Đĩa trái: 1 Xoài 🥭 + [ ? ] | Đĩa phải: 3 Xoài 🥭",
+          "elimination": "Bớt 1 Xoài ở cả 2 đĩa => [ ? ] = 2 Xoài",
+          "options": ["A. Dừa 🥥", "B. Nho 🍇", "C. Dứa 🍍"],
+          "correct": "A. Dừa 🥥",
+          "reasoning": "[ ? ] = 2 Xoài = 1 Quả dừa"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-014",
+        "mechanic": "drag-elimination-solve",
+        "interaction": "Bé dùng ngón tay gạt bỏ các quả giống nhau ở 2 đĩa để làm lộ ra giá trị thực sự của ô [ ? ], sau đó chạm chọn đúng loại quả ở bảng trắc nghiệm."
+      }
+    },
+    {
+      "page_number": 20,
+      "workbook_page_number": 19,
+      "file_path": "pages/page-20.jpg",
+      "page_type": "linear_combination_plate",
+      "title": "Trang 19 – Chọn đĩa cân đúng",
+      "instruction": "XEM CÂN GỢI Ý • KHOANH NHÓM ĐỒ VẬT ĐÚNG",
+      "dialogue": {
+        "gau_logic": "Một số đĩa cân vẫn còn thiếu đồ vật!",
+        "tho_sang_tao": "Bé chọn đúng nhóm để cân thăng bằng nhé!"
+      },
+      "footer_hint": "GỢI Ý: ĐỔI VẬT LỚN THÀNH CÁC VẬT NHỎ TRƯỚC",
+      "pedagogical_concept": "Tổ hợp tuyến tính đại số (Linear Combination & Substitution: a X + b Y = ? Y). Trẻ học chiến lược đồng nhất đơn vị: đổi vật lớn thành các vật nhỏ trước, sau đó cộng gộp với số vật nhỏ đã có sẵn để tìm tổng số lượng ở đĩa đối diện.",
+      "items": [
+        {
+          "id": 1,
+          "hint": "1 Quả dứa 🍍 = 2 Quả cam 🍊",
+          "plate_left": "1 Quả dứa 🍍 + 1 Quả cam 🍊",
+          "substitution": "Đổi 1 Dứa = 2 Cam. Tổng bên trái = 2 Cam + 1 Cam = 3 Cam",
+          "options": ["A. 2 quả cam", "B. 3 quả cam", "C. 4 quả cam"],
+          "correct": "B (3 quả cam)"
+        },
+        {
+          "id": 2,
+          "hint": "1 Quả dưa hấu 🍉 = 3 Quả táo đỏ 🍎",
+          "plate_left": "1 Quả dưa hấu 🍉 + 2 Quả táo 🍎",
+          "substitution": "Đổi 1 Dưa = 3 Táo. Tổng bên trái = 3 Táo + 2 Táo = 5 Táo",
+          "options": ["A. 4 quả táo", "B. 6 quả táo", "C. 5 quả táo"],
+          "correct": "C (5 quả táo)"
+        },
+        {
+          "id": 3,
+          "hint": "1 Ổ bánh mì 🍞 = 2 Hộp sữa 🥛",
+          "plate_left": "1 Ổ bánh mì 🍞 + 1 Hộp sữa 🥛",
+          "substitution": "Đổi 1 Bánh mì = 2 Sữa. Tổng bên trái = 2 Sữa + 1 Sữa = 3 Sữa",
+          "options": ["A. 3 hộp sữa", "B. 2 hộp sữa", "C. 4 hộp sữa"],
+          "correct": "A (3 hộp sữa)"
+        },
+        {
+          "id": 4,
+          "hint": "1 Robot đồ chơi 🤖 = 2 Quả bóng ⚽",
+          "plate_left": "2 Robot đồ chơi 🤖",
+          "substitution": "Đổi 2 Robot = 2 x 2 Bóng = 4 Quả bóng",
+          "options": ["A. 2 quả bóng", "B. 3 quả bóng", "C. 4 quả bóng"],
+          "correct": "C (4 quả bóng)"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-001",
+        "mechanic": "tap-matching-plate",
+        "interaction": "Chạm vào đĩa đáp án chứa đúng số lượng vật nhỏ để đĩa bay lên đặt vào bên phải cân."
+      }
+    },
+    {
+      "page_number": 21,
+      "workbook_page_number": 20,
+      "file_path": "pages/page-21.jpg",
+      "page_type": "pre_algebra_code_breaker",
+      "title": "Trang 20 – Mật mã cân bằng",
+      "instruction": "GIẢI TỪ MÃ 1 ĐẾN MÃ 6 • ĐIỀN DÃY SỐ MỞ KHÓA",
+      "dialogue": {
+        "gau_logic": "Cánh cửa chỉ mở khi tìm đủ 6 chữ số!",
+        "tho_sang_tao": "Mỗi chiếc cân sẽ cho bé một số bí mật!"
+      },
+      "pedagogical_concept": "Hệ phương trình đại số biểu tượng kết hợp quả cân số học (Pre-Algebra System of Equations): Mỗi mã là một bài toán suy luận độc lập giải tìm giá trị ẩn số của một biểu tượng. Rèn luyện tư duy chia đôi, trừ bù và nhân bắc cầu, cuối cùng tổng hợp thành dãy mật mã 6 chữ số để mở cánh cửa kho báu xưởng cân bằng.",
+      "items": [
+        {
+          "code_id": 1,
+          "title": "Mã 1: Ngôi sao vàng",
+          "scale": "2 Ngôi sao vàng ⭐⭐ = Quả cân 10 kg",
+          "solution": "10 : 2 = 5",
+          "secret_digit": 5,
+          "result": "⭐ = 5"
+        },
+        {
+          "code_id": 2,
+          "title": "Mã 2: Mặt trăng tím",
+          "scale_1": "1 Khối vuông xanh 🟩 = Quả cân 4 kg",
+          "scale_2": "1 Mặt trăng tím 🌙 + 1 Khối vuông xanh 🟩 = Quả cân 10 kg",
+          "solution": "10 - 4 = 6",
+          "secret_digit": 6,
+          "result": "🌙 = 6"
+        },
+        {
+          "code_id": 3,
+          "title": "Mã 3: Tam giác kim cương đỏ",
+          "scale_1": "1 Ngôi sao vàng ⭐ = Quả cân 5 kg",
+          "scale_2": "2 Tam giác đỏ 🔺🔺 + 1 Ngôi sao ⭐ = Quả cân 11 kg",
+          "solution": "2 Tam giác = 11 - 5 = 6 => 1 Tam giác = 6 : 2 = 3",
+          "secret_digit": 3,
+          "result": "🔺 = 3"
+        },
+        {
+          "code_id": 4,
+          "title": "Mã 4: Kim cương xanh",
+          "scale_1": "1 Vương miện vàng 👑 = Quả cân 8 kg",
+          "scale_2": "2 Kim cương xanh 💎💎 + 1 Vương miện 👑 = Quả cân 12 kg",
+          "solution": "2 Kim cương = 12 - 8 = 4 => 1 Kim cương = 4 : 2 = 2",
+          "secret_digit": 2,
+          "result": "💎 = 2"
+        },
+        {
+          "code_id": 5,
+          "title": "Mã 5: Dưa hấu đổi ra Quả lê",
+          "scale_1": "1 Quả dưa hấu 🍉 = 2 Quả táo đỏ 🍎",
+          "scale_2": "1 Quả táo đỏ 🍎 = 2 Quả lê xanh 🍐",
+          "solution": "1 Dưa hấu = 2 x 2 = 4 Quả lê",
+          "secret_digit": 4,
+          "result": "1 Dưa hấu = 4 Quả lê"
+        },
+        {
+          "code_id": 6,
+          "title": "Mã 6: Tinh thể pha lê xanh",
+          "scale_1": "2 Ngôi sao vàng ⭐⭐ = Quả cân 10 kg (Sao = 5)",
+          "scale_2": "1 Ngôi sao ⭐ + 1 Tinh thể xanh 💠 = Quả cân 13 kg",
+          "solution": "Tinh thể = 13 - 5 = 8",
+          "secret_digit": 8,
+          "result": "💠 = 8"
+        }
+      ],
+      "door_code": {
+        "slots_count": 6,
+        "full_code": "5 - 6 - 3 - 2 - 4 - 8",
+        "digits": [5, 6, 3, 2, 4, 8]
+      },
+      "digital_game_mapping": {
+        "suggested_template": "GT-025",
+        "mechanic": "secret-door-code-breaker",
+        "interaction": "Nhập lần lượt 6 số vừa giải được vào bàn phím cơ khí trên cánh cửa gỗ. Cửa mở ra ánh sáng vàng rực rỡ và pháo hoa ăn mừng."
+      }
+    },
+    {
+      "page_number": 22,
+      "workbook_page_number": 21,
+      "file_path": "pages/page-22.jpg",
+      "page_type": "weight_equation_balance",
+      "title": "Trang 21 – Cân bằng phép tính",
+      "instruction": "ĐIỀN SỐ CÒN THIẾU ĐỂ HAI BÊN CÂN BẰNG",
+      "dialogue": {
+        "gau_logic": "Cánh cửa đã mở, nhưng những chiếc cân số đang bị thiếu!",
+        "tho_sang_tao": "Bé hãy điền số để hai bên cân bằng nhé!"
+      },
+      "footer_hint": "GỢI Ý: TÍNH GIÁ TRỊ CỦA BÊN ĐÃ BIẾT TRƯỚC",
+      "pedagogical_concept": "Tầng Abstract hoàn chỉnh: Bàn cân với quả cân sắt truyền thống (Cast Iron Weight Blocks) kết hợp các khối thẻ phép tính cộng và trừ (+/−). Củng cố định lý tương đương đại số hai vế: tính giá trị bên đã biết trước rồi giải tìm ẩn số bên khuyết.",
+      "items": [
+        {
+          "id": 1,
+          "name": "Bài 1",
+          "scale": "Đĩa trái: Quả cân 2 + [ ? ] | Đĩa phải: Quả cân 5",
+          "equation": "2 + [ ? ] = 5",
+          "target_value": 5,
+          "correct_number": 3,
+          "reasoning": "5 - 2 = 3"
+        },
+        {
+          "id": 2,
+          "name": "Bài 2",
+          "scale": "Đĩa trái: [ ? ] + Quả cân 4 | Đĩa phải: Quả cân 6",
+          "equation": "[ ? ] + 4 = 6",
+          "target_value": 6,
+          "correct_number": 2,
+          "reasoning": "6 - 4 = 2"
+        },
+        {
+          "id": 3,
+          "name": "Bài 3",
+          "scale": "Đĩa trái: Quả cân 8 | Đĩa phải: [ ? ] + Quả cân 3",
+          "equation": "8 = [ ? ] + 3",
+          "target_value": 8,
+          "correct_number": 5,
+          "reasoning": "8 - 3 = 5"
+        },
+        {
+          "id": 4,
+          "name": "Bài 4",
+          "scale": "Đĩa trái: Quả cân 5 + Quả cân 1 | Đĩa phải: [ ? ] + Quả cân 2",
+          "equation": "5 + 1 = [ ? ] + 2",
+          "target_value": 6,
+          "correct_number": 4,
+          "reasoning": "5 + 1 = 6; 6 - 2 = 4"
+        },
+        {
+          "id": 5,
+          "name": "Bài 5 (Bóng đèn thông thái phát sáng)",
+          "scale": "Đĩa trái: Quả cân 10 − [ ? ] | Đĩa phải: Quả cân 3 + Quả cân 2",
+          "equation": "10 − [ ? ] = 3 + 2",
+          "target_value": 5,
+          "correct_number": 5,
+          "reasoning": "3 + 2 = 5; 10 - 5 = 5"
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-014",
+        "mechanic": "iron-weight-balance",
+        "interaction": "Kéo quả cân sắt có số vào vị trí còn thiếu trên đĩa cân."
+      }
+    },
+    {
+      "page_number": 23,
+      "workbook_page_number": 22,
+      "file_path": "pages/page-23.jpg",
+      "page_type": "capstone_master_challenge",
+      "title": "Trang 22 – Đại thử thách cân bằng",
+      "instruction": "QUAN SÁT • SUY LUẬN • HOÀN THÀNH 4 THỬ THÁCH",
+      "dialogue": {
+        "gau_logic": "Chỉ còn 4 thử thách cuối cùng thôi!",
+        "tho_sang_tao": "Bé hãy dùng tất cả bí quyết cân bằng nhé!"
+      },
+      "pedagogical_concept": "Bài thi tổng hợp năng lực tư duy thăng bằng & suy luận logic cao cấp (Capstone Challenge): (1) Cực trị nặng nhất qua chuỗi bất đẳng thức bắc cầu; (2) Cực trị nhẹ nhất qua chuỗi bất đẳng thức bắc cầu; (3) Bắc cầu thế đại số 2 bước tìm số lượng vật phẩm; (4) Giải phương trình tìm ẩn số và tính giá trị biểu thức đích.",
+      "items": [
+        {
+          "challenge_id": 1,
+          "title": "THỬ THÁCH 1: VẬT NÀO NẶNG NHẤT?",
+          "type": "transitive_maximum",
+          "scales": [
+            "Cân A: Ô tô đỏ 🚗 (hạ thấp) > Xe máy xanh 🛵 (cao) => Ô tô > Xe máy",
+            "Cân B: Xe máy xanh 🛵 (hạ thấp) > Ván trượt 🛹 (cao) => Xe máy > Ván trượt"
+          ],
+          "deduction": "Ô tô đỏ > Xe máy > Ván trượt",
+          "question": "Vật nào nặng nhất?",
+          "options": ["A. Xe máy 🛵", "B. Ván trượt 🛹", "C. Ô tô đỏ 🚗"],
+          "correct": "C (Ô tô đỏ 🚗)",
+          "reasoning": "Ô tô nặng hơn xe máy, mà xe máy lại nặng hơn ván trượt nên ô tô nặng nhất."
+        },
+        {
+          "challenge_id": 2,
+          "title": "THỬ THÁCH 2: VẬT NÀO NHẸ NHẤT?",
+          "type": "transitive_minimum",
+          "scales": [
+            "Cân A: Tàu hỏa tím 🚂 (hạ thấp) > Xe đạp xanh 🚲 (cao) => Xe đạp nhẹ hơn Tàu hỏa",
+            "Cân B: Giày patin cam 🛼 (hạ thấp) > Xe đạp xanh 🚲 (cao) => Xe đạp nhẹ hơn Giày patin"
+          ],
+          "deduction": "Xe đạp xanh ở trên cao ở cả 2 chiếc cân => Xe đạp nhẹ hơn cả Tàu hỏa và Giày patin",
+          "question": "Vật nào nhẹ nhất?",
+          "options": ["A. Xe đạp 🚲", "B. Giày patin 🛼", "C. Tàu hỏa 🚂"],
+          "correct": "A (Xe đạp 🚲)",
+          "reasoning": "Xe đạp nhẹ hơn cả tàu hỏa và giày patin nên xe đạp là vật nhẹ nhất."
+        },
+        {
+          "challenge_id": 3,
+          "title": "THỬ THÁCH 3: TÌM SỐ BU-LÔNG CÒN THIẾU",
+          "type": "transitive_substitution",
+          "scales": [
+            "Cân A: 1 Robot 🤖 = 2 Thỏi pin 🔋",
+            "Cân B: 1 Thỏi pin 🔋 = 3 Ốc bu-lông 🔩"
+          ],
+          "deduction": "1 Robot = 2 Pin = 2 x 3 = 6 Bu-lông",
+          "question": "1 Robot 🤖 = [ ? ] Bu-lông 🔩",
+          "correct_number": 6,
+          "reasoning": "1 Robot bằng 2 thỏi pin, mỗi thỏi pin bằng 3 bu-lông nên 1 Robot bằng 6 bu-lông."
+        },
+        {
+          "challenge_id": 4,
+          "title": "THỬ THÁCH 4: TÌM GIÁ TRỊ CUỐI CÙNG",
+          "type": "solve_and_evaluate",
+          "scales": [
+            "Cân A: 1 Bánh răng ⚙️ + Quả cân 3 = Quả cân 8 => Bánh răng = 8 - 3 = 5",
+            "Cân B: 1 Bánh răng ⚙️ + Quả cân 2 = [ ? ]"
+          ],
+          "deduction": "Thay Bánh răng = 5 vào Cân B: 5 + 2 = 7",
+          "question": "BÁNH RĂNG + 2 = [ ? ]",
+          "correct_number": 7,
+          "reasoning": "Bánh răng có giá trị là 5, vậy Bánh răng + 2 = 5 + 2 = 7."
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-014",
+        "mechanic": "master-boss-challenge",
+        "interaction": "Hoàn thành 4 thử thách làm cỗ máy cơ khí trung tâm phát sáng, 4 đèn báo hiệu xanh lá bật sáng mở ra rương kho báu."
+      }
+    },
+    {
+      "page_number": 24,
+      "workbook_page_number": 23,
+      "file_path": "pages/page-24.jpg",
+      "page_type": "completion_certificate_map",
+      "title": "Trang 23 – Hoàn thành Chặng 16: Xưởng Cân Bằng Kỳ Diệu",
+      "subtitle": "Hành Trình Chuyến Tàu Toán Học - Huy Hiệu Cân Bằng",
+      "dialogue": {
+        "gau_logic": "Bé đã giữ cho mọi chiếc cân thăng bằng rồi!",
+        "tho_sang_tao": "Huy hiệu Cân Bằng đã sáng lên!"
+      },
+      "pedagogical_concept": "Tổng kết và củng cố thành tựu học tập (Positive Reinforcement & Mastery Closure): Trẻ nhìn lại bản đồ 20 chặng đường, đánh dấu hoàn thành chặng 16, tự đánh giá 3 ngôi sao nỗ lực cùng phụ huynh, tô màu Huy hiệu Cân Bằng và sẵn sàng tâm thế đón nhận thử thách tiếp theo ở Chặng 17.",
+      "journey_map": {
+        "completed_stages": "1 đến 16",
+        "current_stage": 16,
+        "upcoming_stages": "17 đến 20",
+        "badge_earned": "Huy Hiệu Cân Bằng (Biểu tượng bàn cân công lý bằng vàng phát sáng rực rỡ)",
+        "stars_evaluation": "Ba mẹ cùng bé tô 3 ngôi sao nỗ lực ⭐⭐⭐",
+        "next_stop": "SẴN SÀNG ĐẾN CHẶNG 17!"
+      },
+      "digital_game_mapping": {
+        "suggested_template": "GT-000",
+        "mechanic": "victory-screen / celebration-badge",
+        "interaction": "Hiệu ứng pháo hoa giấy, huy hiệu Cân Bằng 3D xoay tròn và âm thanh chúc mừng chiến thắng vang dội."
+      }
+    }
+  ]
+}

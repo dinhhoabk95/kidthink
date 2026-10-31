@@ -5,8 +5,8 @@ export const C5_WRD_04_IDENTITY: SkillIdentity = {
   strand_code: "C5.WRD",
   competency_code: "C5",
   name: "Đọc tiếng có dấu thanh",
-  age_min: 6,
-  age_max: 7,
+  age_min: 5,
+  age_max: 6,
   difficulty: 5,
   thinking_processes: ["solve", "verify"],
   tier: "advanced",
@@ -43,60 +43,133 @@ export const C5_WRD_04_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "dog",
-      label: "con chó",
-      image: {
-        kind: "emoji",
-        ref: "🐕",
-      },
-      category: {
-        type: "động vật",
-      },
-    },
-    {
-      id: "cat",
-      label: "con mèo",
-      image: {
-        kind: "emoji",
-        ref: "🐈",
-      },
-      category: {
-        type: "động vật",
-      },
-    },
-    {
-      id: "chicken",
-      label: "con gà",
-      image: {
-        kind: "emoji",
-        ref: "🐓",
-      },
-      category: {
-        type: "động vật",
-      },
-    },
-    {
-      id: "duck",
-      label: "con vịt",
-      image: {
-        kind: "emoji",
-        ref: "🦆",
-      },
-      category: {
-        type: "động vật",
-      },
-    },
-    {
-      id: "fish",
-      label: "con cá",
+      id: "wrd_ca_sac",
+      label: "tiếng cá",
+      glyph: "cá",
+      value: 1,
       image: {
         kind: "emoji",
         ref: "🐟",
       },
       category: {
-        type: "động vật",
+        type: "tiếng thanh sắc",
       },
+      contrast_group: "primary",
     },
+    {
+      id: "wrd_la_sac",
+      label: "tiếng lá",
+      glyph: "lá",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "🍃",
+      },
+      category: {
+        type: "tiếng thanh sắc",
+      },
+      contrast_group: "primary",
+    },
+    {
+      id: "wrd_be_sac",
+      label: "tiếng bé",
+      glyph: "bé",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "👶",
+      },
+      category: {
+        type: "tiếng thanh sắc",
+      },
+      contrast_group: "primary",
+    },
+    {
+      id: "wrd_nho_sac",
+      label: "tiếng chó",
+      glyph: "chó",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "🐕",
+      },
+      category: {
+        type: "tiếng thanh sắc",
+      },
+      contrast_group: "primary",
+    },
+    {
+      id: "wrd_ga_huyen",
+      label: "tiếng gà",
+      glyph: "gà",
+      value: 5,
+      image: {
+        kind: "emoji",
+        ref: "🐔",
+      },
+      category: {
+        type: "tiếng thanh huyền",
+      },
+      contrast_group: "contrast",
+    },
+    {
+      id: "wrd_bo_huyen",
+      label: "tiếng bò",
+      glyph: "bò",
+      value: 6,
+      image: {
+        kind: "emoji",
+        ref: "🐮",
+      },
+      category: {
+        type: "tiếng thanh huyền",
+      },
+      contrast_group: "contrast",
+    },
+    {
+      id: "wrd_meo_huyen",
+      label: "tiếng mèo",
+      glyph: "mèo",
+      value: 7,
+      image: {
+        kind: "emoji",
+        ref: "🐈",
+      },
+      category: {
+        type: "tiếng thanh huyền",
+      },
+      contrast_group: "contrast",
+    },
+    {
+      id: "wrd_co_huyen",
+      label: "tiếng cò",
+      glyph: "cò",
+      value: 8,
+      image: {
+        kind: "emoji",
+        ref: "🦢",
+      },
+      category: {
+        type: "tiếng thanh huyền",
+      },
+      contrast_group: "contrast",
+    },
+  ],
+  axes: {
+    category: {
+      values: ["tiếng thanh sắc", "tiếng thanh huyền"],
+      ordered: true,
+    },
+  },
+  relations: [
+    { type: "pair", source_id: "wrd_ca_sac", target_id: "wrd_la_sac" },
+    { type: "pair", source_id: "wrd_be_sac", target_id: "wrd_nho_sac" },
+    { type: "pair", source_id: "wrd_ga_huyen", target_id: "wrd_bo_huyen" },
+    { type: "pair", source_id: "wrd_meo_huyen", target_id: "wrd_co_huyen" },
+    { type: "contrast", source_id: "wrd_ca_sac", target_id: "wrd_ga_huyen" },
+    { type: "contrast", source_id: "wrd_la_sac", target_id: "wrd_bo_huyen" },
+    { type: "contrast", source_id: "wrd_be_sac", target_id: "wrd_meo_huyen" },
+    { type: "contrast", source_id: "wrd_nho_sac", target_id: "wrd_co_huyen" },
   ],
   ladder: [
     {
@@ -130,7 +203,16 @@ export const C5_WRD_04_DATASET: SkillDataset = {
     narration_template:
       "Chúng mình cùng tìm hiểu về Đọc tiếng có dấu thanh nhé",
   },
-  ordering: ["dog", "cat", "chicken", "duck", "fish"],
+  ordering: [
+    "wrd_ca_sac",
+    "wrd_la_sac",
+    "wrd_be_sac",
+    "wrd_nho_sac",
+    "wrd_ga_huyen",
+    "wrd_bo_huyen",
+    "wrd_meo_huyen",
+    "wrd_co_huyen",
+  ],
 };
 
 export const C5_WRD_04_SEED: SkillSeed = {
@@ -159,62 +241,6 @@ export const C5_WRD_04_SEED: SkillSeed = {
       band: "5-6",
       difficulty: 4,
       theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRD-TIME-0002",
-      template: "GT-029",
-      band: "5-6",
-      difficulty: 5,
-      theme: "ocean",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRD-COIN-0001",
-      template: "GT-030",
-      band: "5-6",
-      difficulty: 4,
-      theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRD-COIN-0002",
-      template: "GT-030",
-      band: "5-6",
-      difficulty: 5,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRD-PICT-0001",
-      template: "GT-031",
-      band: "5-6",
-      difficulty: 4,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRD-PICT-0002",
-      template: "GT-031",
-      band: "5-6",
-      difficulty: 5,
-      theme: "space",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRD-VENN-0001",
-      template: "GT-032",
-      band: "5-6",
-      difficulty: 4,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRD-VENN-0002",
-      template: "GT-032",
-      band: "5-6",
-      difficulty: 5,
-      theme: "body",
       rounds: 3,
     },
   ],

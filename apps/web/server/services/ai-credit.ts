@@ -23,7 +23,10 @@ import {
   MIN_MANUAL_GRANT_REASON_LENGTH,
 } from "@mindkid/shared";
 import { desc, eq, sql } from "drizzle-orm";
-import type { PgTransaction } from "drizzle-orm/pg-core";
+
+type DbTx = Parameters<
+  Parameters<ReturnType<typeof getDb>["transaction"]>[0]
+>[0];
 
 export interface GrantCreditsParams {
   userId: number;
@@ -36,8 +39,7 @@ export interface GrantCreditsParams {
   grantReason?: string;
   idempotencyKey?: string;
   notifyUser?: boolean;
-  // biome-ignore lint/suspicious/noExplicitAny: generic drizzle transaction
-  tx?: PgTransaction<any, any, any>;
+  tx?: DbTx;
 }
 
 export interface DebitCreditsParams {
@@ -47,8 +49,7 @@ export interface DebitCreditsParams {
   refType?: string;
   refId?: string;
   idempotencyKey?: string;
-  // biome-ignore lint/suspicious/noExplicitAny: generic drizzle transaction
-  tx?: PgTransaction<any, any, any>;
+  tx?: DbTx;
 }
 
 export interface RefundCreditsParams {
@@ -57,8 +58,7 @@ export interface RefundCreditsParams {
   debitRefId?: string;
   reason?: string;
   idempotencyKey?: string;
-  // biome-ignore lint/suspicious/noExplicitAny: generic drizzle transaction
-  tx?: PgTransaction<any, any, any>;
+  tx?: DbTx;
 }
 
 export interface ManualGrantParams {
@@ -74,8 +74,7 @@ export interface ManualGrantParams {
  */
 export async function getCreditBalance(
   userId: number,
-  // biome-ignore lint/suspicious/noExplicitAny: generic drizzle transaction
-  tx?: PgTransaction<any, any, any>
+  tx?: DbTx
 ): Promise<AiCreditBalance> {
   const runner = tx ?? getDb();
   const [row] = await runner
@@ -103,8 +102,7 @@ export async function getCreditBalance(
 }
 
 async function findExistingByIdempotency(
-  // biome-ignore lint/suspicious/noExplicitAny: generic transaction
-  activeTx: PgTransaction<any, any, any>,
+  activeTx: DbTx,
   idempotencyKey?: string
 ): Promise<AiCreditLedgerEntry | null> {
   if (!idempotencyKey) {
@@ -119,8 +117,7 @@ async function findExistingByIdempotency(
 }
 
 async function checkAndSendLowBalanceWarning(
-  // biome-ignore lint/suspicious/noExplicitAny: generic transaction
-  activeTx: PgTransaction<any, any, any>,
+  activeTx: DbTx,
   userId: number,
   prevBalance: number,
   newBalance: number,
@@ -148,8 +145,7 @@ async function checkAndSendLowBalanceWarning(
  * Grants AI credits to a user (append-only ledger + cache projection) (BR-ACL-01, BR-ACL-07).
  */
 async function applyCreditGrantBalance(
-  // biome-ignore lint/suspicious/noExplicitAny: generic transaction
-  activeTx: PgTransaction<any, any, any>,
+  activeTx: DbTx,
   userId: number,
   delta: number,
   reason: string,
@@ -193,10 +189,7 @@ export async function grantCredits(
   const db = getDb();
   const now = new Date();
 
-  const executeInTransaction = async (
-    // biome-ignore lint/suspicious/noExplicitAny: generic transaction
-    activeTx: PgTransaction<any, any, any>
-  ) => {
+  const executeInTransaction = async (activeTx: DbTx) => {
     const existing = await findExistingByIdempotency(
       activeTx,
       params.idempotencyKey
@@ -205,6 +198,14 @@ export async function grantCredits(
       const bal = await getCreditBalance(params.userId, activeTx);
       return { ledgerEntry: existing, balance: bal.balance };
     }
+
+    const updatedBalance = await applyCreditGrantBalance(
+      activeTx,
+      params.userId,
+      params.delta,
+      params.reason,
+      now
+    );
 
     const [ledgerEntry] = await activeTx
       .insert(aiCreditLedger)
@@ -224,14 +225,6 @@ export async function grantCredits(
     if (!ledgerEntry) {
       throw new Error("Failed to create ledger entry");
     }
-
-    const updatedBalance = await applyCreditGrantBalance(
-      activeTx,
-      params.userId,
-      params.delta,
-      params.reason,
-      now
-    );
 
     if (params.notifyUser) {
       await activeTx.insert(notifications).values({
@@ -265,10 +258,7 @@ export async function debitCredits(params: DebitCreditsParams): Promise<{
   const db = getDb();
   const now = new Date();
 
-  const executeInTransaction = async (
-    // biome-ignore lint/suspicious/noExplicitAny: generic transaction
-    activeTx: PgTransaction<any, any, any>
-  ) => {
+  const executeInTransaction = async (activeTx: DbTx) => {
     const existing = await findExistingByIdempotency(
       activeTx,
       params.idempotencyKey
@@ -363,10 +353,7 @@ export async function refundCredits(params: RefundCreditsParams): Promise<{
   const db = getDb();
   const now = new Date();
 
-  const executeInTransaction = async (
-    // biome-ignore lint/suspicious/noExplicitAny: generic transaction
-    activeTx: PgTransaction<any, any, any>
-  ) => {
+  const executeInTransaction = async (activeTx: DbTx) => {
     const existing = await findExistingByIdempotency(
       activeTx,
       params.idempotencyKey
@@ -378,23 +365,6 @@ export async function refundCredits(params: RefundCreditsParams): Promise<{
         newBalance: bal.balance,
         ledgerEntry: existing,
       };
-    }
-
-    const [ledgerEntry] = await activeTx
-      .insert(aiCreditLedger)
-      .values({
-        userId: params.userId,
-        delta: params.cost,
-        reason: "refund",
-        refType: "refund",
-        refId: params.debitRefId ?? null,
-        grantReason: params.reason ?? "Hoàn trả do lỗi hệ thống AI",
-        idempotencyKey: params.idempotencyKey ?? null,
-      })
-      .returning();
-
-    if (!ledgerEntry) {
-      throw new Error("Failed to create ledger entry");
     }
 
     const [existingBal] = await activeTx
@@ -416,6 +386,23 @@ export async function refundCredits(params: RefundCreditsParams): Promise<{
         updatedAt: now,
       })
       .where(eq(aiCreditBalance.userId, params.userId));
+
+    const [ledgerEntry] = await activeTx
+      .insert(aiCreditLedger)
+      .values({
+        userId: params.userId,
+        delta: params.cost,
+        reason: "refund",
+        refType: "refund",
+        refId: params.debitRefId ?? null,
+        grantReason: params.reason ?? "Hoàn trả do lỗi hệ thống AI",
+        idempotencyKey: params.idempotencyKey ?? null,
+      })
+      .returning();
+
+    if (!ledgerEntry) {
+      throw new Error("Failed to create ledger entry");
+    }
 
     return {
       success: true,
@@ -550,21 +537,22 @@ export async function listCreditTransactions(
   options?: { limit?: number; offset?: number }
 ): Promise<{ items: AiCreditLedgerEntry[]; total: number }> {
   const db = getDb();
-  const limit = options?.limit ?? 20;
-  const offset = options?.offset ?? 0;
+  const limit = Math.min(Math.max(1, options?.limit ?? 20), 100);
+  const offset = Math.max(0, options?.offset ?? 0);
 
-  const items = await db
-    .select()
-    .from(aiCreditLedger)
-    .where(eq(aiCreditLedger.userId, userId))
-    .orderBy(desc(aiCreditLedger.createdAt))
-    .limit(limit)
-    .offset(offset);
-
-  const [countRow] = await db
-    .select({ count: sql<number>`count(*)::int` })
-    .from(aiCreditLedger)
-    .where(eq(aiCreditLedger.userId, userId));
+  const [items, [countRow]] = await Promise.all([
+    db
+      .select()
+      .from(aiCreditLedger)
+      .where(eq(aiCreditLedger.userId, userId))
+      .orderBy(desc(aiCreditLedger.createdAt))
+      .limit(limit)
+      .offset(offset),
+    db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(aiCreditLedger)
+      .where(eq(aiCreditLedger.userId, userId)),
+  ]);
 
   return {
     items,

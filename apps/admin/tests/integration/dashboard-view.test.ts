@@ -43,7 +43,7 @@ describe("Task 5 — Dashboard View Invariants (BR-DSH-01, BR-DSH-02, D-JA)", ()
     expect(dashboardSource).toContain('to="/system"');
     expect(dashboardSource).toContain("open_alerts");
     expect(dashboardSource).toContain("pending_payments");
-    expect(dashboardSource).toContain("pending_content");
+    expect(dashboardSource).not.toContain("/content-review");
   });
 
   it("Scenario: D-IX — pending sources display explicit pending step badges, never false zeros", () => {
@@ -52,9 +52,6 @@ describe("Task 5 — Dashboard View Invariants (BR-DSH-01, BR-DSH-02, D-JA)", ()
       "utf8"
     );
 
-    expect(dashboardSource).toContain("Bước P2.3");
-    expect(dashboardSource).toContain("Bước P2.8");
-    expect(dashboardSource).toContain("Bước P3.1");
     expect(dashboardSource).toContain("Bước P3.3");
     expect(dashboardSource).toContain("Bước P4");
     expect(dashboardSource).toContain("Chưa có nguồn");

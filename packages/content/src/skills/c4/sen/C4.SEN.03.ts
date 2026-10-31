@@ -42,59 +42,151 @@ export const C4_SEN_03_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "spoon",
-      label: "cái thìa",
+      id: "mirror",
+      label: "mặt gương nhẵn",
       image: {
         kind: "emoji",
-        ref: "🥄",
+        ref: "🪞",
       },
       category: {
-        type: "đồ dùng",
+        type: "vật nhẵn mịn",
       },
+      value: 1,
+      ordering: 1,
+      contrast_group: "smooth",
+      audio_path: "/audio/vi/c4/mirror.mp3",
     },
     {
-      id: "cup",
-      label: "cái cốc",
+      id: "ceramic_cup",
+      label: "cốc sứ láng",
       image: {
         kind: "emoji",
-        ref: "🥤",
+        ref: "🍵",
       },
       category: {
-        type: "đồ dùng",
+        type: "vật nhẵn mịn",
       },
+      value: 2,
+      ordering: 2,
+      contrast_group: "smooth",
+      audio_path: "/audio/vi/c4/ceramic_cup.mp3",
     },
     {
-      id: "bed",
-      label: "cái giường",
+      id: "bowl",
+      label: "bát sứ nhẵn",
       image: {
         kind: "emoji",
-        ref: "🛏️",
+        ref: "🥣",
       },
       category: {
-        type: "đồ dùng",
+        type: "vật nhẵn mịn",
       },
-    },
-    {
-      id: "chair",
-      label: "cái ghế",
-      image: {
-        kind: "emoji",
-        ref: "🪑",
-      },
-      category: {
-        type: "đồ dùng",
-      },
+      value: 3,
+      ordering: 3,
+      contrast_group: "smooth",
+      audio_path: "/audio/vi/c4/bowl.mp3",
     },
     {
       id: "apple",
-      label: "quả táo",
+      label: "quả táo bóng",
       image: {
         kind: "emoji",
         ref: "🍎",
       },
       category: {
-        type: "hoa quả",
+        type: "vật nhẵn mịn",
       },
+      value: 4,
+      ordering: 4,
+      contrast_group: "smooth",
+      audio_path: "/audio/vi/c4/apple.mp3",
+    },
+    {
+      id: "pineapple",
+      label: "vỏ dứa gai",
+      image: {
+        kind: "emoji",
+        ref: "🍍",
+      },
+      category: {
+        type: "vật sần sùi",
+      },
+      value: 1,
+      ordering: 5,
+      contrast_group: "rough",
+      audio_path: "/audio/vi/c4/pineapple.mp3",
+    },
+    {
+      id: "potato",
+      label: "củ khoai sần",
+      image: {
+        kind: "emoji",
+        ref: "🥔",
+      },
+      category: {
+        type: "vật sần sùi",
+      },
+      value: 2,
+      ordering: 6,
+      contrast_group: "rough",
+      audio_path: "/audio/vi/c4/potato.mp3",
+    },
+    {
+      id: "shell",
+      label: "vỏ sò khía",
+      image: {
+        kind: "emoji",
+        ref: "🐚",
+      },
+      category: {
+        type: "vật sần sùi",
+      },
+      value: 3,
+      ordering: 7,
+      contrast_group: "rough",
+      audio_path: "/audio/vi/c4/shell.mp3",
+    },
+    {
+      id: "cactus",
+      label: "xương rồng gai",
+      image: {
+        kind: "emoji",
+        ref: "🌵",
+      },
+      category: {
+        type: "vật sần sùi",
+      },
+      value: 4,
+      ordering: 8,
+      contrast_group: "rough",
+      audio_path: "/audio/vi/c4/cactus.mp3",
+    },
+  ],
+  axes: {
+    category: {
+      values: ["vật nhẵn mịn", "vật sần sùi"],
+    },
+  },
+  relations: [
+    {
+      type: "contrast",
+      source_id: "mirror",
+      target_id: "pineapple",
+    },
+    {
+      type: "contrast",
+      source_id: "ceramic_cup",
+      target_id: "potato",
+    },
+    {
+      type: "contrast",
+      source_id: "bowl",
+      target_id: "shell",
+    },
+    {
+      type: "contrast",
+      source_id: "apple",
+      target_id: "cactus",
     },
   ],
   ladder: [
@@ -128,13 +220,28 @@ export const C4_SEN_03_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Phân biệt kết cấu nhé",
   },
-  ordering: ["spoon", "cup", "bed", "chair", "apple"],
+  ordering: [
+    "mirror",
+    "ceramic_cup",
+    "bowl",
+    "apple",
+    "pineapple",
+    "potato",
+    "shell",
+    "cactus",
+  ],
 };
 
 export const C4_SEN_03_SEED: SkillSeed = {
   identity: C4_SEN_03_IDENTITY,
   dataset: C4_SEN_03_DATASET,
   levels: [
+    {
+      template: "GT-000",
+      band: "4-5",
+      difficulty: 1,
+      theme: "school",
+    },
     {
       code: "GL-C4-SEN-SND-0001",
       template: "GT-018",
@@ -152,43 +259,11 @@ export const C4_SEN_03_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C4-SEN-TAP-0005",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 2,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-SEN-TAP-0006",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 3,
-      theme: "art",
-      rounds: 3,
-    },
-    {
       code: "GL-C4-SEN-TCNT-0005",
       template: "GT-002",
       band: "4-5",
       difficulty: 2,
       theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-SEN-TCMP-0005",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 2,
-      theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-SEN-TCMP-0006",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 3,
-      theme: "festival",
       rounds: 3,
     },
     {
@@ -208,20 +283,10 @@ export const C4_SEN_03_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C4-SEN-PATT-0005",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 2,
+      template: "GT-018",
+      band: "4-5",
+      difficulty: 1,
       theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-SEN-PATT-0006",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 3,
-      theme: "farm",
-      rounds: 3,
     },
   ],
 };

@@ -4,7 +4,6 @@ import {
   boolean,
   check,
   index,
-  integer,
   pgEnum,
   pgTable,
   smallint,
@@ -16,14 +15,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { childProfiles } from "./child.ts";
 import { timestamps } from "./columns.ts";
-import {
-  accessTierEnum,
-  authoredInEnum,
-  contentLifecycleStatusEnum,
-  contentOriginEnum,
-} from "./game.ts";
-import { managers } from "./identity.ts";
-import { versioningConstraints } from "./versioning.ts";
+import { accessTierEnum } from "./game.ts";
 
 export const programTypeEnum = pgEnum("program_type", ["age_based", "journey"]);
 
@@ -46,9 +38,7 @@ export const curricula = pgTable(
     id: bigint("id", { mode: "number" })
       .primaryKey()
       .generatedAlwaysAsIdentity(),
-    entityId: bigint("entity_id", { mode: "number" }).notNull(),
-    code: varchar("code", { length: 50 }).notNull(),
-    contentVersion: integer("content_version").notNull().default(1),
+    code: varchar("code", { length: 50 }).notNull().unique(),
     programType: programTypeEnum("program_type").notNull().default("age_based"),
     targetAgeMin: smallint("target_age_min"),
     targetAgeMax: smallint("target_age_max"),
@@ -57,28 +47,9 @@ export const curricula = pgTable(
     title: varchar("title", { length: 200 }).notNull(),
     description: text("description"),
     accessTier: accessTierEnum("access_tier").notNull(),
-    status: contentLifecycleStatusEnum("status").notNull().default("draft"),
-    origin: contentOriginEnum("origin").notNull().default("human"),
-    authoredIn: authoredInEnum("authored_in").notNull().default("studio"),
-    seedBatchId: bigint("seed_batch_id", { mode: "number" }),
-    createdByManagerId: bigint("created_by_manager_id", {
-      mode: "number",
-    }).references(() => managers.id),
-    reviewedByManagerId: bigint("reviewed_by_manager_id", {
-      mode: "number",
-    }).references(() => managers.id),
-    publishedAt: timestamp("published_at", { withTimezone: true }),
-    archivedAt: timestamp("archived_at", { withTimezone: true }),
     ...timestamps(),
   },
   (table) => [
-    ...versioningConstraints({
-      uniqueName: "curricula_code_version_unique",
-      publishedIndexName: "idx_curricula_published_code",
-      keyColumn: table.code,
-      versionColumn: table.contentVersion,
-      statusColumn: table.status,
-    }),
     check(
       "check_curricula_code_format",
       sql`${table.code} ~ '^CUR-[A-Za-z0-9_-]+$'`
@@ -134,7 +105,6 @@ export const curriculumItems = pgTable(
       table.sessionNo,
       table.position
     ),
-    index("idx_curriculum_items_entity_id").on(table.entityId),
   ]
 );
 
@@ -160,7 +130,11 @@ export const curriculumEnrollments = pgTable(
     uniqueIndex("idx_curriculum_enrollments_child_active_unique")
       .on(table.childId)
       .where(sql`${table.status} = 'active'`),
-    index("idx_curriculum_enrollments_child_id").on(table.childId),
+    index("idx_curriculum_enrollments_child_status").on(
+      table.childId,
+      table.status
+    ),
+    index("idx_curriculum_enrollments_curriculum_id").on(table.curriculumId),
   ]
 );
 

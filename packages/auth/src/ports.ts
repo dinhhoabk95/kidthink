@@ -40,7 +40,8 @@ export interface SessionStorePort {
   markReauthenticated(
     sessionId: string,
     account: AccountReference,
-    at: Date
+    at: Date,
+    now?: Date
   ): Promise<void>;
 }
 

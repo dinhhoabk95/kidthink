@@ -7,7 +7,7 @@ const CMP_04 = "C1.CMP.04";
 const GEO_02 = "C2.GEO.02";
 const SRT_01 = "C3.SRT.01";
 const VIS_02 = "C4.VIS.02";
-const DET_03 = "C4.DET.03";
+const VOC_01 = "C5.VOC.01";
 const LIS_01 = "C5.LIS.01";
 const ATT_01 = "C6.ATT.01";
 
@@ -62,24 +62,24 @@ export const RM_3_4_MAM_01: RoadmapSeed = {
       session(2, "practice", CMP_04),
       session(3, "offscreen", ATT_01),
     ]),
-    week(9, "Bé tìm vật giống nhau theo màu và hình.", [
-      session(1, "introduce", DET_03),
-      session(2, "practice", DET_03),
+    week(9, "Bé làm quen và gọi tên các con vật quen thuộc.", [
+      session(1, "introduce", VOC_01),
+      session(2, "practice", VOC_01),
       session(3, "offscreen", CMP_04),
     ]),
     week(10, "Bé ôn lại hình, xếp thứ tự và giữ chú ý.", [
       session(1, "review", GEO_02),
-      session(2, "practice", SRT_01),
+      session(2, "review", SRT_01),
       session(3, "offscreen", ATT_01),
     ]),
-    week(11, "Bé ôn lại lắng nghe, tìm điểm giống và so sánh nhiều ít.", [
+    week(11, "Bé ôn lại lắng nghe, từ vựng con vật và so sánh nhiều ít.", [
       session(1, "review", LIS_01),
-      session(2, "practice", DET_03),
+      session(2, "review", VOC_01),
       session(3, "offscreen", CMP_04),
     ]),
     week(12, "Bé ôn lại đếm, quan sát và sắp xếp để khép lại hành trình.", [
       session(1, "review", CNT_01),
-      session(2, "practice", VIS_02),
+      session(2, "review", VIS_02),
       session(3, "offscreen", SRT_01),
     ]),
   ],

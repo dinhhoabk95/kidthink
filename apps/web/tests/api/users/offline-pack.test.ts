@@ -6,9 +6,7 @@ import {
   entitlementKeys,
   entitlements,
   gameLevels,
-  gameTemplates,
   getOwnerDb,
-  lessons,
   playSessions,
   telemetryEvents,
   users,
@@ -82,7 +80,7 @@ describe("Offline Curriculum Pack & Sync APIs (BR-PWA, BR-OCP, BR-OFF)", () => {
   let childProfileId: number;
   let curriculumCode: string;
   let gameLevelCode: string;
-  let templateId: number;
+  let templateCode: string;
   let gameLevelId: number;
 
   beforeEach(async () => {
@@ -146,22 +144,8 @@ describe("Offline Curriculum Pack & Sync APIs (BR-PWA, BR-OCP, BR-OFF)", () => {
       .returning();
     childProfileId = cp.id;
 
-    // 3. Seed template & game level
-    const templateCode = "GT-001";
-    await db
-      .insert(gameTemplates)
-      .values({
-        code: templateCode,
-        name: "Game template test offline",
-        mechanic: "drag_drop",
-        contentContract: {},
-      })
-      .onConflictDoNothing();
-    const [foundGt] = await db
-      .select({ id: gameTemplates.id })
-      .from(gameTemplates)
-      .where(eq(gameTemplates.code, templateCode));
-    templateId = foundGt?.id ?? 1;
+    // 3. Seed game level
+    templateCode = "GT-001";
 
     while (true) {
       const candidate = `GL-C1-OFF-PCK-${String(Math.floor(1000 + Math.random() * 8999))}`;
@@ -175,47 +159,44 @@ describe("Offline Curriculum Pack & Sync APIs (BR-PWA, BR-OCP, BR-OFF)", () => {
         break;
       }
     }
-    const randEntityId = Math.floor(Math.random() * 100_000) + 1000;
     const [gl] = await db
       .insert(gameLevels)
       .values({
         code: gameLevelCode,
-        entityId: randEntityId,
-        templateId,
+        templateCode,
         difficulty: 1,
         title: "Trò chơi học đếm ngoại tuyến",
         accessTier: "standard",
-        status: "published",
         contentPack: { items: ["apple", "banana"] },
         difficultyParams: { count: 3 },
       })
       .returning();
     gameLevelId = gl.id;
 
-    // 4. Seed lesson
-    let lesCode = "";
+    // 4. Seed second game level
+    let gl2Code = "";
     while (true) {
-      const candidate = `LES-${String(Math.floor(1000 + Math.random() * 8999))}`;
+      const candidate = `GL-C1-OFF-PCK-${String(Math.floor(1000 + Math.random() * 8999))}`;
       const [existing] = await db
-        .select({ id: lessons.id })
-        .from(lessons)
-        .where(eq(lessons.code, candidate))
+        .select({ id: gameLevels.id })
+        .from(gameLevels)
+        .where(eq(gameLevels.code, candidate))
         .limit(1);
-      if (!existing) {
-        lesCode = candidate;
+      if (!existing && candidate !== gameLevelCode) {
+        gl2Code = candidate;
         break;
       }
     }
-    const [les] = await db
-      .insert(lessons)
+    const [gl2] = await db
+      .insert(gameLevels)
       .values({
-        code: lesCode,
-        entityId: randEntityId + 1,
-        title: "Bài học toán tuần 1",
+        code: gl2Code,
+        templateCode,
+        difficulty: 1,
+        title: "Trò chơi hình khối tuần 1",
         accessTier: "standard",
-        status: "published",
-        estimatedMinutes: 15,
-        version: 1,
+        contentPack: { items: ["circle", "square"] },
+        difficultyParams: { count: 2 },
       })
       .returning();
 
@@ -226,10 +207,8 @@ describe("Offline Curriculum Pack & Sync APIs (BR-PWA, BR-OCP, BR-OFF)", () => {
       .insert(curricula)
       .values({
         code: curriculumCode,
-        entityId: randEntityId + 2,
         title: "Chương trình mẫu Offline Tuần 1-4",
         accessTier: "standard",
-        status: "published",
         durationWeeks: 4,
         sessionsPerWeek: 3,
       })
@@ -250,8 +229,8 @@ describe("Offline Curriculum Pack & Sync APIs (BR-PWA, BR-OCP, BR-OFF)", () => {
         weekNo: 1,
         sessionNo: 2,
         position: 1,
-        entityType: "lesson",
-        entityId: les.id,
+        entityType: "game_level",
+        entityId: gl2.id,
         isRequired: true,
       },
     ]);
@@ -379,8 +358,7 @@ describe("Offline Curriculum Pack & Sync APIs (BR-PWA, BR-OCP, BR-OFF)", () => {
           sessionUuid,
           childProfileId,
           gameLevelId,
-          contentVersion: 1,
-          templateId,
+          templateCode,
           startedAt: new Date(),
           completionStatus: "in_progress",
         })

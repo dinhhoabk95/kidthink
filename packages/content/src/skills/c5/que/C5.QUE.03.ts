@@ -43,58 +43,87 @@ export const C5_QUE_03_DATASET: SkillDataset = {
   items: [
     {
       id: "que_chim_tren_cay",
-      label: "chú chim trên cành cây",
+      label: "chú chim trên cây",
+      value: 1,
       image: {
         kind: "emoji",
         ref: "🌳",
       },
+      audio_path: "/audio/vi/c5/que/chim_tren_cay.mp3",
       category: {
-        type: "câu hỏi ở đâu",
+        type: "ngoài thiên nhiên",
       },
+      contrast_group: "primary",
     },
     {
       id: "que_ca_duoi_nuoc",
-      label: "đàn cá bơi dưới nước",
+      label: "con cá dưới nước",
+      value: 2,
       image: {
         kind: "emoji",
         ref: "🌊",
       },
+      audio_path: "/audio/vi/c5/que/ca_duoi_nuoc.mp3",
       category: {
-        type: "câu hỏi ở đâu",
+        type: "ngoài thiên nhiên",
       },
+      contrast_group: "primary",
+    },
+    {
+      id: "que_may_tren_troi",
+      label: "đám mây trên trời",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "☁️",
+      },
+      audio_path: "/audio/vi/c5/que/may_tren_troi.mp3",
+      category: {
+        type: "ngoài thiên nhiên",
+      },
+      contrast_group: "primary",
     },
     {
       id: "que_sach_tren_gia",
-      label: "sách truyện trên giá",
+      label: "sách trên giá",
+      value: 4,
       image: {
         kind: "emoji",
         ref: "📚",
       },
+      audio_path: "/audio/vi/c5/que/sach_tren_gia.mp3",
       category: {
-        type: "câu hỏi ở đâu",
+        type: "ở trong nhà",
       },
+      contrast_group: "contrast",
     },
     {
       id: "que_be_ngu_tren_giuong",
       label: "bé ngủ trên giường",
+      value: 5,
       image: {
         kind: "emoji",
         ref: "🛏️",
       },
+      audio_path: "/audio/vi/c5/que/be_tren_giuong.mp3",
       category: {
-        type: "câu hỏi ở đâu",
+        type: "ở trong nhà",
       },
+      contrast_group: "contrast",
     },
     {
       id: "que_xe_o_gara",
-      label: "xe ô tô đỗ trong nhà xe",
+      label: "xe trong nhà xe",
+      value: 6,
       image: {
         kind: "emoji",
         ref: "🏠",
       },
+      audio_path: "/audio/vi/c5/que/xe_trong_nha.mp3",
       category: {
-        type: "câu hỏi ở đâu",
+        type: "ở trong nhà",
       },
+      contrast_group: "contrast",
     },
   ],
   ladder: [
@@ -131,9 +160,43 @@ export const C5_QUE_03_DATASET: SkillDataset = {
   ordering: [
     "que_chim_tren_cay",
     "que_ca_duoi_nuoc",
+    "que_may_tren_troi",
     "que_sach_tren_gia",
     "que_be_ngu_tren_giuong",
     "que_xe_o_gara",
+  ],
+  axes: {
+    category: {
+      values: ["ngoài thiên nhiên", "ở trong nhà"],
+      ordered: true,
+    },
+  },
+  relations: [
+    {
+      type: "pair",
+      source_id: "que_chim_tren_cay",
+      target_id: "que_ca_duoi_nuoc",
+    },
+    {
+      type: "pair",
+      source_id: "que_sach_tren_gia",
+      target_id: "que_be_ngu_tren_giuong",
+    },
+    {
+      type: "contrast",
+      source_id: "que_chim_tren_cay",
+      target_id: "que_sach_tren_gia",
+    },
+    {
+      type: "contrast",
+      source_id: "que_ca_duoi_nuoc",
+      target_id: "que_be_ngu_tren_giuong",
+    },
+    {
+      type: "contrast",
+      source_id: "que_may_tren_troi",
+      target_id: "que_xe_o_gara",
+    },
   ],
 };
 
@@ -163,62 +226,6 @@ export const C5_QUE_03_SEED: SkillSeed = {
       band: "3-4",
       difficulty: 2,
       theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-QUE-SHAD-0012",
-      template: "GT-007",
-      band: "3-4",
-      difficulty: 3,
-      theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-QUE-SIZE-0001",
-      template: "GT-009",
-      band: "4-5",
-      difficulty: 2,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-QUE-SIZE-0002",
-      template: "GT-009",
-      band: "4-5",
-      difficulty: 3,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-QUE-PUZZ-0001",
-      template: "GT-010",
-      band: "4-5",
-      difficulty: 2,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-QUE-PUZZ-0002",
-      template: "GT-010",
-      band: "4-5",
-      difficulty: 3,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-QUE-TIME-0001",
-      template: "GT-029",
-      band: "4-5",
-      difficulty: 2,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-QUE-TIME-0002",
-      template: "GT-029",
-      band: "4-5",
-      difficulty: 3,
-      theme: "ocean",
       rounds: 3,
     },
   ],

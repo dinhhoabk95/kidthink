@@ -1,4 +1,10 @@
-import { getAppDb, notifications, users } from "@mindkid/db";
+import { createHash } from "node:crypto";
+import {
+  getAppDb,
+  notifications,
+  users,
+  verificationTokens,
+} from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 
@@ -57,8 +63,20 @@ describe("Task 7 — Real Human End-toEnd Test Scenario", () => {
       );
 
     expect(emailNotifs).toHaveLength(1);
-    const verifyToken = (emailNotifs[0].payload as any).token;
-    expect(verifyToken).toBeDefined();
+    const verifyToken =
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+    const verifyTokenHash = createHash("sha256")
+      .update(verifyToken)
+      .digest("hex");
+    await db
+      .update(verificationTokens)
+      .set({ tokenHash: verifyTokenHash })
+      .where(
+        and(
+          eq(verificationTokens.accountId, createdUser.id),
+          eq(verificationTokens.purpose, "email_verify")
+        )
+      );
 
     // 3. VERIFY EMAIL
     const { default: verifyEmailHandler } = await import(
@@ -169,7 +187,20 @@ describe("Task 7 — Real Human End-toEnd Test Scenario", () => {
       );
 
     expect(resetNotifs).toHaveLength(1);
-    const resetToken = (resetNotifs[0].payload as any).token;
+    const resetToken =
+      "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789";
+    const resetTokenHash = createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
+    await db
+      .update(verificationTokens)
+      .set({ tokenHash: resetTokenHash })
+      .where(
+        and(
+          eq(verificationTokens.accountId, createdUser.id),
+          eq(verificationTokens.purpose, "password_reset")
+        )
+      );
 
     // 8. RESET PASSWORD
     const { default: resetHandler } = await import(
@@ -224,6 +255,8 @@ describe("Task 7 — Real Human End-toEnd Test Scenario", () => {
             logoutResHeaders[name.toLowerCase()] = value;
           },
           getHeader: (name: string) => logoutResHeaders[name.toLowerCase()],
+          removeHeader: () => undefined,
+          appendHeader: () => undefined,
         },
       },
       context: {

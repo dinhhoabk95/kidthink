@@ -118,6 +118,7 @@ export function usePlayGesture(options: GestureOptions) {
   const stagedEntityId = computed(() => stagedSourceEntity.value?.id ?? null);
 
   let activePointerId: number | null = null;
+  let cachedCanvasRect: DOMRect | null = null;
   let startClientX = 0;
   let startClientY = 0;
   let startLogicX = 0;
@@ -156,7 +157,7 @@ export function usePlayGesture(options: GestureOptions) {
   }
 
   function getCanvasRect(): DOMRect | null {
-    return canvasRef.value?.getBoundingClientRect() ?? null;
+    return cachedCanvasRect ?? canvasRef.value?.getBoundingClientRect() ?? null;
   }
 
   function getLogicPoint(e: PointerEvent): { x: number; y: number } {
@@ -235,13 +236,13 @@ export function usePlayGesture(options: GestureOptions) {
     gesture: Gesture
   ): void {
     speakKeyword(engine, tapped);
-    syncView();
 
     if (verdict.feedback === "none") {
       // Cử chỉ bị nuốt: ngoài mọi slot, trước khi cảnh dựng xong, hoặc vòng
       // đã thắng (`BR-ETS-02`). Cấm — NEVER tính là lần sai — không phát âm
       // mềm, không leo bậc trợ giúp. Tên vừa đọc ở trên (nếu có) là đường
       // "chạm lại minh hoạ để nghe lại từ khoá", không phải một lượt trả lời.
+      syncView();
       return;
     }
 
@@ -251,7 +252,11 @@ export function usePlayGesture(options: GestureOptions) {
       engine.audio.playSnapSound();
       engine.audio.playPopCelebrateSound();
       emitFeedback("success", gesture);
-      engine.scaffolding?.onSuccess();
+      if (typeof engine.resetScaffolding === "function") {
+        engine.resetScaffolding();
+      } else {
+        engine.scaffolding?.onSuccess();
+      }
       syncView();
 
       if (session.checkWinCondition()) {
@@ -353,6 +358,7 @@ export function usePlayGesture(options: GestureOptions) {
       return;
     }
     activePointerId = e.pointerId;
+    cachedCanvasRect = canvasRef.value?.getBoundingClientRect() ?? null;
     startClientX = e.clientX;
     startClientY = e.clientY;
     isDragging = false;
@@ -418,12 +424,14 @@ export function usePlayGesture(options: GestureOptions) {
     }
 
     activePointerId = null;
+    cachedCanvasRect = null;
     isDragging = false;
   }
 
   function handlePointerCancel(e: PointerEvent): void {
     if (activePointerId === e.pointerId) {
       activePointerId = null;
+      cachedCanvasRect = null;
       isDragging = false;
     }
   }
@@ -501,6 +509,12 @@ export function usePlayGesture(options: GestureOptions) {
     dispatchGesture({ type: "commit", timeMs });
   }
 
+  function destroy(): void {
+    cachedCanvasRect = null;
+    activePointerId = null;
+    isDragging = false;
+  }
+
   return {
     viewEntities,
     actionButton,
@@ -513,5 +527,6 @@ export function usePlayGesture(options: GestureOptions) {
     handlePointerUp,
     handlePointerCancel,
     handleAccessibleEntityTap,
+    destroy,
   };
 }

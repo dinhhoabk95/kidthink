@@ -5,8 +5,8 @@ export const C2_GRD_04_IDENTITY: SkillIdentity = {
   strand_code: "C2.GRD",
   competency_code: "C2",
   name: "Sơ đồ lưới của lớp học",
-  age_min: 6,
-  age_max: 7,
+  age_min: 5,
+  age_max: 6,
   difficulty: 4,
   thinking_processes: ["infer", "plan"],
   tier: "advanced",
@@ -43,61 +43,154 @@ export const C2_GRD_04_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "cup",
-      label: "cái cốc",
+      id: "blackboard_board",
+      label: "bảng phấn lớp học",
       image: {
         kind: "emoji",
-        ref: "🥤",
+        ref: "🖼️",
       },
       category: {
-        type: "đồ dùng",
+        type: "khu vực lớp",
       },
+      contrast_group: "zone",
+      value: 1,
+      ordering: 1,
     },
     {
-      id: "bed",
-      label: "cái giường",
+      id: "bookshelf_zone",
+      label: "góc giá sách",
       image: {
         kind: "emoji",
-        ref: "🛏️",
+        ref: "📚",
       },
       category: {
-        type: "đồ dùng",
+        type: "khu vực lớp",
       },
+      contrast_group: "zone",
+      value: 2,
+      ordering: 2,
     },
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "door_zone",
+      label: "cửa ra vào",
+      image: {
+        kind: "emoji",
+        ref: "🚪",
+      },
+      category: {
+        type: "khu vực lớp",
+      },
+      contrast_group: "zone",
+      value: 3,
+      ordering: 3,
+    },
+    {
+      id: "window_zone",
+      label: "cửa sổ đón nắng",
+      image: {
+        kind: "emoji",
+        ref: "🪟",
+      },
+      category: {
+        type: "khu vực lớp",
+      },
+      contrast_group: "zone",
+      value: 4,
+      ordering: 4,
+    },
+    {
+      id: "desk_student",
+      label: "bàn học sinh",
       image: {
         kind: "emoji",
         ref: "🪑",
       },
       category: {
-        type: "đồ dùng",
+        type: "đồ vật lớp",
       },
+      contrast_group: "item",
+      value: 5,
+      ordering: 5,
     },
     {
-      id: "apple",
-      label: "quả táo",
+      id: "clock_wall",
+      label: "đồng hồ treo tường",
       image: {
         kind: "emoji",
-        ref: "🍎",
+        ref: "⏰",
       },
       category: {
-        type: "hoa quả",
+        type: "đồ vật lớp",
       },
+      contrast_group: "item",
+      value: 6,
+      ordering: 6,
     },
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "globe_table",
+      label: "quả địa cầu",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "🌍",
       },
       category: {
-        type: "hoa quả",
+        type: "đồ vật lớp",
       },
+      contrast_group: "item",
+      value: 7,
+      ordering: 7,
+    },
+    {
+      id: "bin_corner",
+      label: "thùng rác góc phòng",
+      image: {
+        kind: "emoji",
+        ref: "🗑️",
+      },
+      category: {
+        type: "đồ vật lớp",
+      },
+      contrast_group: "item",
+      value: 8,
+      ordering: 8,
     },
   ],
+  relations: [
+    {
+      type: "pair",
+      source_id: "blackboard_board",
+      target_id: "desk_student",
+    },
+    {
+      type: "pair",
+      source_id: "bookshelf_zone",
+      target_id: "clock_wall",
+    },
+    {
+      type: "pair",
+      source_id: "door_zone",
+      target_id: "globe_table",
+    },
+    {
+      type: "pair",
+      source_id: "window_zone",
+      target_id: "bin_corner",
+    },
+    {
+      type: "contrast",
+      source_id: "blackboard_board",
+      target_id: "desk_student",
+    },
+  ],
+  axes: {
+    category: {
+      values: ["khu vực lớp", "đồ vật lớp"],
+    },
+    order: {
+      values: ["1", "2", "3", "4", "5", "6", "7", "8"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
@@ -130,7 +223,16 @@ export const C2_GRD_04_DATASET: SkillDataset = {
     narration_template:
       "Chúng mình cùng tìm hiểu về Sơ đồ lưới của lớp học nhé",
   },
-  ordering: ["cup", "bed", "chair", "apple", "banana"],
+  ordering: [
+    "blackboard_board",
+    "bookshelf_zone",
+    "door_zone",
+    "window_zone",
+    "desk_student",
+    "clock_wall",
+    "globe_table",
+    "bin_corner",
+  ],
 };
 
 export const C2_GRD_04_SEED: SkillSeed = {
@@ -138,51 +240,11 @@ export const C2_GRD_04_SEED: SkillSeed = {
   dataset: C2_GRD_04_DATASET,
   levels: [
     {
-      code: "GL-C2-GRD-PAIR-0005",
-      template: "GT-004",
-      band: "5-6",
-      difficulty: 3,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
       code: "GL-C2-GRD-PAIR-0006",
       template: "GT-004",
       band: "5-6",
       difficulty: 4,
       theme: "ocean",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GRD-SORT-0005",
-      template: "GT-006",
-      band: "5-6",
-      difficulty: 3,
-      theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GRD-SORT-0006",
-      template: "GT-006",
-      band: "5-6",
-      difficulty: 4,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GRD-SHAD-0003",
-      template: "GT-007",
-      band: "5-6",
-      difficulty: 3,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GRD-SHAD-0004",
-      template: "GT-007",
-      band: "5-6",
-      difficulty: 4,
-      theme: "space",
       rounds: 3,
     },
     {
@@ -194,27 +256,11 @@ export const C2_GRD_04_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C2-GRD-SIZE-0004",
-      template: "GT-009",
-      band: "5-6",
-      difficulty: 4,
-      theme: "body",
-      rounds: 3,
-    },
-    {
       code: "GL-C2-GRD-PUZZ-0001",
       template: "GT-010",
       band: "5-6",
       difficulty: 3,
       theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GRD-PUZZ-0002",
-      template: "GT-010",
-      band: "5-6",
-      difficulty: 4,
-      theme: "festival",
       rounds: 3,
     },
   ],

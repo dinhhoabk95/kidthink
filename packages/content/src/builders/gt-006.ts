@@ -20,20 +20,38 @@ export const projectGT006: Projection<"GT-006"> = {
     const params = getEngineDifficultyParams("GT-006", opts.difficulty);
     const expectedItemCount = params.item_count;
 
-    // If ordering specified, use it
-    let orderedIds = dataset.ordering ?? dataset.items.map((i) => i.id);
+    // If ordering specified, use it; otherwise sort by item.ordering / item.value if present
+    const sortedByItemOrder = dataset.items.some(
+      (i) => typeof i.ordering === "number" || typeof i.value === "number"
+    )
+      ? dataset.items
+          .slice()
+          .sort(
+            (a, b) =>
+              (a.ordering ?? a.value ?? 0) - (b.ordering ?? b.value ?? 0)
+          )
+          .map((i) => i.id)
+      : dataset.items.map((i) => i.id);
+    let orderedIds = dataset.ordering ?? sortedByItemOrder;
     if (orderedIds.length < expectedItemCount) {
-      orderedIds = dataset.items.map((i) => i.id);
+      orderedIds = sortedByItemOrder;
     }
 
+    const roundIndex = opts.round_index ?? 0;
     const itemMap = new Map(dataset.items.map((i) => [i.id, i]));
     const pickIds = (source: readonly string[]): string[] => {
+      const maxOffset = Math.max(0, source.length - expectedItemCount);
+      const startOffset = maxOffset > 0 ? roundIndex % (maxOffset + 1) : 0;
       const ids: string[] = [];
       for (let i = 0; i < expectedItemCount; i++) {
-        if (i < source.length) {
-          ids.push(safeGetItem(source, i));
+        const idx = startOffset + i;
+        if (idx < source.length) {
+          ids.push(safeGetItem(source, idx));
         } else {
-          const fallback = safeGetItem(dataset.items, i % dataset.items.length);
+          const fallback = safeGetItem(
+            dataset.items,
+            (startOffset + i) % dataset.items.length
+          );
           ids.push(fallback.id);
         }
       }
@@ -57,7 +75,7 @@ export const projectGT006: Projection<"GT-006"> = {
         );
       }
       return {
-        step_id: `step-${item.id}-${index + 1}`,
+        step_id: `step-${item.id}-${roundIndex * 10 + index + 1}`,
         order_index: index,
         asset: resolveItemAsset(item, true),
         label: item.label,

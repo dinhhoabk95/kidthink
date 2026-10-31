@@ -15,11 +15,9 @@ import { describe, expect, it } from "vitest";
 
 async function createTestLevel(db: ReturnType<typeof getOwnerDb>) {
   const num4 = Math.floor(Math.random() * 8999) + 1000;
-  const uid = Math.floor(Math.random() * 89_999) + 10_000;
   const [gl] = await db
     .insert(gameLevels)
     .values({
-      entityId: uid,
       code: `GL-C1-CNT-SWP-${num4}`,
       templateCode: "GT-001",
       title: "Level Test",
@@ -27,8 +25,6 @@ async function createTestLevel(db: ReturnType<typeof getOwnerDb>) {
       contentPack: {},
       difficultyParams: {},
       accessTier: "free",
-      status: "published",
-      contentVersion: 1,
     })
     .returning();
 
@@ -46,7 +42,6 @@ describe("Task P1.6 & #293 S3 — Job sweep:abandoned (BR-PSL-07, BR-HPL-02)", (
       .values({
         sessionUuid: randomUUID(),
         gameLevelId: glId,
-        contentVersion: 1,
         templateCode,
         guestDeviceId: "device-sweep-1",
         completionStatus: "in_progress",
@@ -108,7 +103,6 @@ describe("Task P1.6 & #293 S3 — Job sweep:abandoned (BR-PSL-07, BR-HPL-02)", (
         sessionUuid: sessionZeroUuid,
         childProfileId: childZero.id,
         gameLevelId: glId,
-        contentVersion: 1,
         templateCode,
         completionStatus: "in_progress",
         startedAt: fortyMinsAgo,
@@ -123,7 +117,6 @@ describe("Task P1.6 & #293 S3 — Job sweep:abandoned (BR-PSL-07, BR-HPL-02)", (
         sessionUuid: sessionEventsUuid,
         childProfileId: childWithEvents.id,
         gameLevelId: glId,
-        contentVersion: 1,
         templateCode,
         completionStatus: "in_progress",
         startedAt: fortyMinsAgo,
@@ -134,14 +127,12 @@ describe("Task P1.6 & #293 S3 — Job sweep:abandoned (BR-PSL-07, BR-HPL-02)", (
       {
         sessionUuid: sessionEventsUuid,
         seq: 1,
-        contentVersion: 1,
         eventName: "game_started",
         occurredAtMs: 0,
       },
       {
         sessionUuid: sessionEventsUuid,
         seq: 2,
-        contentVersion: 1,
         eventName: "round_started",
         occurredAtMs: 45_000,
       },

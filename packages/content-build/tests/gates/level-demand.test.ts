@@ -146,11 +146,11 @@ describe("cổng sinh level theo sổ cầu", () => {
     expect(verdict.ok === false && verdict.reason).toBe("engine_not_valid");
   });
 
-  it("ô lesson không được tính là chỗ sinh level", () => {
-    const lessonOnly = ledger([
+  it("ô introduce không được tính là chỗ sinh level thực hành", () => {
+    const introduceOnly = ledger([
       cell({ role: "introduce", level_quota: 1, filled_by: [] }),
     ]);
-    const verdict = checkGenerationTarget(lessonOnly, {
+    const verdict = checkGenerationTarget(introduceOnly, {
       skill_code: "C1.CNT.01",
       band: "3-4",
       engine: "GT-001",

@@ -1,11 +1,4 @@
-import {
-  activities,
-  competencies,
-  gameLevels,
-  getOwnerDb,
-  lessons,
-  skills,
-} from "@mindkid/db";
+import { competencies, gameLevels, getOwnerDb, skills } from "@mindkid/db";
 import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 import type { AgeBand } from "@mindkid/shared";
 import { count } from "drizzle-orm";
@@ -52,10 +45,6 @@ export async function runSeedReport() {
   const db = getOwnerDb();
 
   const [totalLevels] = await db.select({ value: count() }).from(gameLevels);
-  const [totalActivities] = await db
-    .select({ value: count() })
-    .from(activities);
-  const [totalLessons] = await db.select({ value: count() }).from(lessons);
   const totalTemplates = Object.keys(ALL_TEMPLATES).length;
   const [totalSkills] = await db.select({ value: count() }).from(skills);
   const [totalCompetencies] = await db
@@ -64,8 +53,6 @@ export async function runSeedReport() {
 
   console.log("Summary metrics:");
   console.log(`- Published Game Levels: ${totalLevels?.value ?? 0}`);
-  console.log(`- Published Activities: ${totalActivities?.value ?? 0}`);
-  console.log(`- Published Lessons: ${totalLessons?.value ?? 0}`);
   console.log(`- Total Templates: ${totalTemplates}`);
   console.log(`- Total Skills: ${totalSkills?.value ?? 0}`);
   console.log(`- Total Competencies: ${totalCompetencies?.value ?? 0}`);

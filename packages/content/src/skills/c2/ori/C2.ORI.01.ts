@@ -42,61 +42,150 @@ export const C2_ORI_01_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "spoon",
-      label: "cái thìa",
+      id: "arrow_left",
+      label: "mũi tên bên trái",
+      value: 1,
       image: {
         kind: "emoji",
-        ref: "🥄",
+        ref: "⬅️",
       },
       category: {
-        type: "đồ dùng",
+        type: "ở bên trái",
+      },
+      contrast_group: "left",
+    },
+    {
+      id: "hand_left",
+      label: "bàn tay bên trái",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "🤚",
+      },
+      category: {
+        type: "ở bên trái",
+      },
+      contrast_group: "left",
+    },
+    {
+      id: "car_left",
+      label: "ô tô bên trái",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "🚗",
+      },
+      category: {
+        type: "ở bên trái",
+      },
+      contrast_group: "left",
+    },
+    {
+      id: "dolphin_left",
+      label: "cá heo bên trái",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "🐬",
+      },
+      category: {
+        type: "ở bên trái",
+      },
+      contrast_group: "left",
+    },
+    {
+      id: "arrow_right",
+      label: "mũi tên bên phải",
+      value: 5,
+      image: {
+        kind: "emoji",
+        ref: "➡️",
+      },
+      category: {
+        type: "ở bên phải",
+      },
+      contrast_group: "right",
+    },
+    {
+      id: "hand_right",
+      label: "bàn tay bên phải",
+      value: 6,
+      image: {
+        kind: "emoji",
+        ref: "✋",
+      },
+      category: {
+        type: "ở bên phải",
+      },
+      contrast_group: "right",
+    },
+    {
+      id: "train_right",
+      label: "tàu hỏa bên phải",
+      value: 7,
+      image: {
+        kind: "emoji",
+        ref: "🚄",
+      },
+      category: {
+        type: "ở bên phải",
+      },
+      contrast_group: "right",
+    },
+    {
+      id: "runner_right",
+      label: "người chạy bên phải",
+      value: 8,
+      image: {
+        kind: "emoji",
+        ref: "🏃",
+      },
+      category: {
+        type: "ở bên phải",
+      },
+      contrast_group: "right",
+    },
+  ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "arrow_left",
+      target_id: "arrow_right",
+      metadata: {
+        dimension: "direction",
       },
     },
     {
-      id: "cup",
-      label: "cái cốc",
-      image: {
-        kind: "emoji",
-        ref: "🥤",
-      },
-      category: {
-        type: "đồ dùng",
+      type: "contrast",
+      source_id: "hand_left",
+      target_id: "hand_right",
+      metadata: {
+        dimension: "direction",
       },
     },
     {
-      id: "bed",
-      label: "cái giường",
-      image: {
-        kind: "emoji",
-        ref: "🛏️",
-      },
-      category: {
-        type: "đồ dùng",
+      type: "pair",
+      source_id: "arrow_left",
+      target_id: "car_left",
+      metadata: {
+        relation: "cùng bên trái",
       },
     },
     {
-      id: "chair",
-      label: "cái ghế",
-      image: {
-        kind: "emoji",
-        ref: "🪑",
-      },
-      category: {
-        type: "đồ dùng",
-      },
-    },
-    {
-      id: "apple",
-      label: "quả táo",
-      image: {
-        kind: "emoji",
-        ref: "🍎",
-      },
-      category: {
-        type: "hoa quả",
+      type: "pair",
+      source_id: "arrow_right",
+      target_id: "train_right",
+      metadata: {
+        relation: "cùng bên phải",
       },
     },
   ],
+  axes: {
+    orientation: {
+      values: ["ở bên trái", "ở bên phải"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
@@ -128,7 +217,16 @@ export const C2_ORI_01_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Trái nhé",
   },
-  ordering: ["spoon", "cup", "bed", "chair", "apple"],
+  ordering: [
+    "arrow_left",
+    "hand_left",
+    "car_left",
+    "dolphin_left",
+    "arrow_right",
+    "hand_right",
+    "train_right",
+    "runner_right",
+  ],
 };
 
 export const C2_ORI_01_SEED: SkillSeed = {
@@ -142,7 +240,6 @@ export const C2_ORI_01_SEED: SkillSeed = {
       difficulty: 1,
       theme: "school",
       rounds: 3,
-      legacy_v1_ref: "D2-04",
     },
     {
       code: "GL-C2-ROT-SHP-0002",
@@ -151,7 +248,6 @@ export const C2_ORI_01_SEED: SkillSeed = {
       difficulty: 2,
       theme: "farm",
       rounds: 3,
-      legacy_v1_ref: "D2-04",
     },
     {
       code: "GL-C2-ROT-SHP-0003",
@@ -160,25 +256,6 @@ export const C2_ORI_01_SEED: SkillSeed = {
       difficulty: 3,
       theme: "food",
       rounds: 3,
-      legacy_v1_ref: "D2-04",
-    },
-    {
-      code: "GL-C2-ROT-SHP-0004",
-      template: "GT-019",
-      band: "4-5",
-      difficulty: 1,
-      theme: "animal",
-      rounds: 3,
-      legacy_v1_ref: "D2-04",
-    },
-    {
-      code: "GL-C2-ROT-SHP-0005",
-      template: "GT-019",
-      band: "4-5",
-      difficulty: 2,
-      theme: "nature",
-      rounds: 3,
-      legacy_v1_ref: "D2-04",
     },
     {
       code: "GL-C2-ORI-TAP-0001",
@@ -186,78 +263,6 @@ export const C2_ORI_01_SEED: SkillSeed = {
       band: "3-4",
       difficulty: 1,
       theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-TAP-0002",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 2,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-TCMP-0001",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 1,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-TCMP-0002",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 2,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-PATT-0001",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 1,
-      theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-PATT-0002",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 2,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-SLOT-0001",
-      template: "GT-008",
-      band: "3-4",
-      difficulty: 1,
-      theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-SLOT-0002",
-      template: "GT-008",
-      band: "3-4",
-      difficulty: 2,
-      theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-MEMO-0001",
-      template: "GT-012",
-      band: "3-4",
-      difficulty: 1,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-MEMO-0002",
-      template: "GT-012",
-      band: "3-4",
-      difficulty: 2,
-      theme: "farm",
       rounds: 3,
     },
   ],

@@ -67,7 +67,10 @@ vi.mock("@mindkid/db", () => ({
 }));
 
 /** What the code last wrote into backup_log. */
-function lastBackupLogUpdate(): Record<string, unknown> {
+function lastBackupLogUpdate(): Record<
+  string,
+  string | number | boolean | null | undefined | Date
+> {
   return dbSpies.set.mock.calls.at(-1)?.[0] ?? {};
 }
 

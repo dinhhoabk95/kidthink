@@ -1,6 +1,5 @@
 import { requireEnv } from "@mindkid/config";
 import { curricula, getOwnerDb } from "@mindkid/db";
-import { eq } from "drizzle-orm";
 import { defineEventHandler, setHeader } from "h3";
 
 export default defineEventHandler(async (event) => {
@@ -18,8 +17,7 @@ export default defineEventHandler(async (event) => {
         code: curricula.code,
         updatedAt: curricula.updatedAt,
       })
-      .from(curricula)
-      .where(eq(curricula.status, "published"));
+      .from(curricula);
   } catch (_err) {
     programs = [];
   }

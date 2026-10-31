@@ -30,47 +30,45 @@ lọc theo một cây.
 
 | Actor | Làm gì |
 |---|---|
-| Dev | Định nghĩa từ vựng ba trục (Lớp 1) |
-| Manager | Gắn tag khi soạn nội dung |
-| AI agent IDE (lúc soạn seeder) | Đề xuất tag trong file; **người xác nhận lúc review PR** |
-| User | Tag tự do **chỉ** trong My Library cá nhân |
+| Dev | Định nghĩa từ vựng ba trục (`content_tags`) |
+| Người biên soạn & AI agent IDE (lúc soạn seeder) | Gắn tag trong seeder nội dung; **người xác nhận lúc review PR** |
+| User | Tag tự do **chỉ** trong My Library cá nhân (`user_tags`) |
 
 ## 3. Entry points
 
 | Nơi | |
 |---|---|
-| `packages/content-build/src/seed-master/content-tags.ts` | Từ vựng Lớp 1 |
-| `06-admin/game-level-studio.md` | Gắn tag |
+| `packages/content-build/src/seed-master/content-tags.ts` | Từ vựng `content_tags` |
+| `packages/db/src/schema/tagging.ts` | Schema bảng `content_tags`, `content_tag_map`, `content_skill_map`, `user_tags` |
 | `01-platform/content-search.md` | Tiêu thụ tag |
 
 ## 4. Main flow
 
-1. Manager soạn nội dung, chọn skill mục tiêu.
-2. Hệ thống **gợi ý** tag ba trục từ skill đã chọn.
-3. Manager xác nhận hoặc sửa.
-4. Gắn `content_skill_map` với `weight` cho từng skill.
-5. Cổng publish kiểm: ≥1 skill, ≥1 LO, ≥1 tag mỗi trục.
+1. Người biên soạn khai báo nội dung (`game_level` hoặc `curriculum`) trong seeder và chọn skill mục tiêu.
+2. Khai báo tag ba trục (`what`, `thinking`, `mechanic`) và `theme` từ bộ từ vựng đóng.
+3. Gắn `content_skill_map` với `weight` cho từng skill.
+4. Cổng tự động (`seed:check`) kiểm tra: ≥1 skill, ≥1 tag mỗi trục, từ vựng hợp lệ.
+5. Seeder nạp cứng vào `content_tag_map` và `content_skill_map` theo `(entity_type, entity_id)` trong đó `entity_type ∈ {game_level, curriculum}` và `entity_id` là `id` của bảng đích.
 
 ## 5. Alternative flows
 
 | Nhánh | Hành vi |
 |---|---|
-| Tag không có trong từ vựng | **422** — từ vựng là danh sách đóng |
+| Tag không có trong từ vựng | Cổng seed (`seed:check`) báo lỗi — từ vựng là danh sách đóng |
 | Tag do User tạo | Sống trong `user_tags`, không vào `content_tags` |
 | Skill phụ | `weight` thấp (0.2–0.5), ảnh hưởng mastery ít hơn |
-| Đổi skill của nội dung `published` | Bump version — [`content-versioning.md`](../00-foundation/content-versioning.md) §7.2 |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-TAG-01` | Từ vựng ba trục là **Lớp 1**, danh sách đóng | Tag tự do biến tìm kiếm thành đoán |
-| `BR-TAG-02` | Mọi nội dung `published` có ≥1 tag **mỗi trục** | Thiếu một trục là mất một chiều lọc |
-| `BR-TAG-03` | `content_skill_map.weight ∈ [0,1]` — 1.0 mục tiêu chính, 0.3 có chạm tới | Không có nó, một game đếm "dạy" mọi skill nó chạm tới |
+| `BR-TAG-01` | Từ vựng ba trục là danh sách đóng (`content_tags`) | Tag tự do biến tìm kiếm thành đoán |
+| `BR-TAG-02` | Mọi nội dung (`game_level`) có ≥1 tag **mỗi trục** | Thiếu một trục là mất một chiều lọc |
+| `BR-TAG-03` | `content_skill_map.weight ∈ (0,1]` — 1.0 mục tiêu chính, 0.3 có chạm tới | Không có nó, một game đếm "dạy" mọi skill nó chạm tới |
 | `BR-TAG-04` | Mỗi nội dung có **đúng một** skill `weight = 1.0` | Hai mục tiêu chính là không có mục tiêu chính |
 | `BR-TAG-05` | Tag do User tạo Cấm — **NEVER** vào catalog công khai | Tag tự do không qua kiểm duyệt từ vựng — một User đặt tên xúc phạm hay sai chính tả mà lọt vào tìm kiếm công khai thì cả hệ thống thừa hưởng lỗi cá nhân đó |
-| `BR-TAG-06` | AI **đề xuất** tag, người **xác nhận**. Cấm tự gắn | Tag sai làm nội dung không tìm thấy hoặc tìm nhầm |
-| `BR-TAG-07` | `content_tag_map` là FK polymorphic → **bắt buộc** test bắt orphan | [`data-model-overview.md`](../00-foundation/data-model-overview.md) `BR-DM-04` — FK đa hình không ép được ở Postgres, nên đây là 1 trong 9 chỗ đóng phải có integration test, không phải khuyến nghị |
+| `BR-TAG-06` | AI **đề xuất** tag trong seeder, người **xác nhận** qua PR review | Tag sai làm nội dung không tìm thấy hoặc tìm nhầm |
+| `BR-TAG-07` | `content_tag_map` và `content_skill_map` là FK polymorphic với `entity_type ∈ {game_level, curriculum}` → **bắt buộc** test bắt orphan | [`data-model-overview.md`](../00-foundation/data-model-overview.md) `BR-DM-04` |
 
 ## 7. Data
 
@@ -82,32 +80,8 @@ lọc theo một cây.
 | **thinking** | `observe` `compare` `sort` `match` `sequence` `infer` `predict` `plan` `recall` `inhibit` `shift` `count` |
 | **mechanic** | `tap-select` `tap-select-multi` `drag-to-container` `sort-groups` `pair-match` `sequence-order` `number-bond` `drag-to-slot` `clue-deduction` `substitution` `matrix-choice` `flash-recall` `maze-route` `balance-scale` `sudoku-mini` `clock-hands` `block-stack` `listen-respond` `rotate-transform` `memory-flip` `mirror-complete` `hidden-object` `construct` `trace-path` `spot-difference` `go-nogo` `rule-switch` `tap-count` `remove-from-set` `measure-with-unit` `coin-compose` `pour-quantity` `weave-grid` `beat-sequence` `command-sequence` `free-create` |
 
-Trục `mechanic` suy ra từ `game_templates.mechanic` — không nhập tay. Ba mươi sáu giá trị
+Trục `mechanic` suy ra từ `mechanic` của template — không nhập tay. Ba mươi sáu giá trị
 khớp một–một với 36 engine ở [`engines/index.md`](../01-platform/engines/index.md).
-
-**Độ trôi đo ngày 2026-08-29 trên 228 game level:**
-
-| Trục | Lượt gắn trong từ vựng | Lượt gắn ngoài | Giá trị ngoài | Giá trị trong từ vựng chưa dùng |
-|---|---:|---:|---|---|
-| `thinking` | 284 | **0** | không có | không có |
-| `what` | 79 | **160** | `mem` `cnt` `shp` `voc` `spt` `pat` `cmp` `cls` `fnc` `log` `msr` | `quantity` `pattern` `size` `money` `letter` |
-
-Trục `thinking` đã được đóng thật kèm ca âm bởi `BR-TCM-01` (từ vựng đóng thật) và số đo
-chứng minh điều đó. Mười một giá trị ngoài của trục `what` là chữ viết tắt của
-`seed-master/content-tags.ts` (`mem` cho trí nhớ, `cnt` cho đếm, `shp` cho hình), không phải
-khái niệm mới.
-
-**Trục `what` có cổng, nhưng cổng đó ép trên một bộ khác.** `CANONICAL_WHAT_TAGS` ở
-`packages/content-build/tests/gates/thinking-coverage.ts` chứa **28** giá trị: 14 của mục 7.1 này cộng
-14 chữ viết tắt của Lớp 1, kèm chú thích `// DB seed-master abbreviations`. Vì vậy cổng xanh
-trong khi corpus dùng lẫn hai bộ.
-
-Cùng file đó **đã từ chối** làm đúng như vậy cho trục `thinking`: 12 giá trị viết tắt của Lớp
-1 từng được thêm vào rồi bị gỡ, với lý do ghi ngay trong mã nguồn — *"đúng thứ AGENTS.md cấm:
-không nới rule chỉ để code hiện tại qua được cổng"*. Trục `thinking` do đó đóng thật và corpus
-sạch. Trục `what` giữ nguyên phần nới. Đó là toàn bộ chênh lệch giữa 0 và 160 ở bảng trên.
-
-Xem câu hỏi 3 ở mục 11.
 
 ### 7.2 Tag chủ đề (trục thứ tư) — chủ đã chuyển
 
@@ -120,17 +94,18 @@ Nguồn sự thật duy nhất cho từ vựng chủ đề định nghĩa tại
 
 Lưu trong `content_tags` với `axis = 'theme'` — cột `axis` của
 [`schema-content-taxonomy.md`](../01-platform/schema-content-taxonomy.md) §7.2 khai đúng 4 giá trị
-(`what`\|`thinking`\|`mechanic`\|`theme`); đây vẫn là chỗ giá trị thứ tư đó được dùng, và ràng
-buộc trên nó nay đọc ở spec mới.
+(`what`\|`thinking`\|`mechanic`\|`theme`).
 
-### 7.3 Bảng
+### 7.3 Bảng (`packages/db/src/schema/tagging.ts`)
 
 | Bảng | Nội dung |
 |---|---|
-| `content_tags` | `code` `axis` `label` `status` — Lớp 1 |
-| `content_tag_map` | `(entity_type, entity_id, tag_id)` |
-| `content_skill_map` | `(entity_type, entity_id, skill_id, weight)` |
+| `content_tags` | `id` `code` `axis` `label` `status` |
+| `content_tag_map` | `(entity_type, entity_id, tag_id)` — `entity_type` thuộc enum `content_entity_type` (`game_level`\|`curriculum`), `entity_id` trỏ trực tiếp tới `id` của bảng đích |
+| `content_skill_map` | `(entity_type, entity_id, skill_id, weight)` — `entity_type` thuộc enum `content_entity_type` (`game_level`\|`curriculum`), `entity_id` trỏ trực tiếp tới `id` của bảng đích |
 | `user_tags` | `(user_id, label)` — tách hoàn toàn, chỉ My Library |
+
+Đã xóa `content_objective_map`.
 
 ## 8. API contract
 
@@ -138,32 +113,23 @@ buộc trên nó nay đọc ở spec mới.
 
 200 → từ vựng ba trục + tag chủ đề. Cache `public, max-age=3600`.
 
-### `PUT /api/managers/content/{type}/{id}/tags`
-
-| | |
-|---|---|
-| Auth | `requireManagerAuth()` |
-| Body | `{ tags: string[], skills: [{skill_code, weight}] }` |
-| 200 | |
-| 422 | `VALIDATION_FAILED` — tag ngoài từ vựng, hoặc không có skill `weight = 1.0` |
-| 409 | `CONTENT_IMMUTABLE` — nội dung đã published |
+Đã xóa route authoring `PUT /api/managers/content/{type}/{id}/tags` (mọi tag nội dung được nạp cứng qua seeder).
 
 ## 9. Acceptance criteria
 
 ```gherkin
-Scenario: BR-TAG-01 — tag ngoài từ vựng bị từ chối
-  When gắn tag "fun_stuff" cho một game level
-  Then trả 422
+Scenario: BR-TAG-01 — tag ngoài từ vựng bị từ chối ở cổng seed
+  When một game level trong seeder gắn tag "fun_stuff"
+  Then cổng seed:check fail
 
-Scenario: BR-TAG-02 — publish yêu cầu đủ ba trục
-  Given một game level thiếu tag trục thinking
-  When manager publish
-  Then trả 422 PUBLISH_CHECKLIST_FAILED
-  And missing chứa "tag_axis_thinking"
+Scenario: BR-TAG-02 — yêu cầu đủ ba trục
+  Given một game level trong seeder thiếu tag trục thinking
+  When chạy cổng seed:check
+  Then cổng fail và chỉ ra thiếu trục thinking
 
 Scenario: BR-TAG-04 — đúng một skill chính
-  When gắn hai skill cùng weight 1.0
-  Then trả 422
+  When một game level gắn hai skill cùng weight 1.0
+  Then cổng seed:check fail
 
 Scenario: BR-TAG-03 — weight điều tiết mastery
   Given một level gắn skill A weight 1.0 và skill B weight 0.3
@@ -176,7 +142,7 @@ Scenario: BR-TAG-05 — tag của user không ra công khai
   Then tag đó không xuất hiện
 
 Scenario: BR-TAG-07 — orphan tag map bị bắt
-  Given một hàng content_tag_map trỏ tới entity không tồn tại
+  Given một hàng content_tag_map trỏ tới entity_id không tồn tại
   When chạy integration test toàn vẹn
   Then test fail
 ```
@@ -184,19 +150,20 @@ Scenario: BR-TAG-07 — orphan tag map bị bắt
 ## 10. Boundaries
 
 **Always**
-- Kiểm tag thuộc từ vựng đóng ở server.
+- Kiểm tag thuộc từ vựng đóng qua cổng tự động trước khi seed.
 - Đúng một skill `weight = 1.0`.
 - Suy `mechanic` từ template.
+- `content_entity_type` chỉ gồm `game_level` và `curriculum`.
 
 **Ask first**
 - Thêm giá trị vào một trục.
 - Thêm trục thứ năm.
-- Đổi `weight` của nội dung đã published.
 
 **Never**
 - Tag tự do trong catalog công khai.
-- AI tự gắn tag không qua người.
+- AI tự phát hành tag không qua PR review.
 - Tag của User trộn vào `content_tags`.
+- Thêm lại `content_objective_map` hoặc API sửa tag từ Studio.
 
 ## 11. Open questions
 
@@ -204,4 +171,4 @@ Scenario: BR-TAG-07 — orphan tag map bị bắt
 |---|---|---|---|---|
 | 1 | Từ vựng `what` và `thinking` đã đủ phủ 230 skill chưa? Cần đối chiếu. **Không chặn approve spec này** — từ vựng là Lớp 1, mở rộng qua PR như mọi hằng số Lớp 1 khác, không phải quyết định kiến trúc | [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) — lộ ra khi seeder thật cố gắn tag cho 230 skill | P1 | hoãn — đo được khi seed |
 | 2 | `weight` do người đặt hay suy từ mức độ khớp LO? | [`adaptive-engine.md`](../01-platform/adaptive-engine.md) | P3 | hoãn — P3, engine chưa tồn tại |
-| 3 | Trục `what` có 160 trên 239 lượt gắn nằm ngoài từ vựng, toàn chữ viết tắt tự phát. Gắn lại tag cho corpus theo 14 giá trị đang có, hay nâng danh sách viết tắt lên thành từ vựng? Bản published bất biến nên mọi cách đều là INSERT version mới | `BR-ECD-04` (đa dạng trục nội dung) của [`engine-content-depth.md`](engine-content-depth.md) không đo được | P4 | người quyết |
+| 3 | Trục `what` có 160 trên 239 lượt gắn nằm ngoài từ vựng, toàn chữ viết tắt tự phát. Gắn lại tag cho corpus theo 14 giá trị đang có, hay nâng danh sách viết tắt lên thành từ vựng? | `BR-ECD-04` (đa dạng trục nội dung) của [`engine-content-depth.md`](engine-content-depth.md) không đo được | P4 | người quyết |

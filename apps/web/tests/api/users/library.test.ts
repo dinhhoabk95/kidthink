@@ -2,7 +2,6 @@ import {
   collections,
   curricula,
   gameLevels,
-  gameTemplates,
   getOwnerDb,
   libraryItems,
   users,
@@ -108,20 +107,6 @@ describe("Task #82 — Library & Collections API Suite (BR-MLB-01..07)", () => {
 
     // 2. Seed Templates & Levels
     const templateCode = "GT-001";
-    await db
-      .insert(gameTemplates)
-      .values({
-        code: templateCode,
-        name: "Game template test P3 Lib",
-        mechanic: "drag_drop",
-        contentContract: {},
-      })
-      .onConflictDoNothing();
-    const [gt] = await db
-      .select({ id: gameTemplates.id })
-      .from(gameTemplates)
-      .where(eq(gameTemplates.code, templateCode));
-    const templateId = gt?.id ?? 1;
 
     let gl1Code = `GL-C1-NUM-CNT-${String(Math.floor(1000 + Math.random() * 8999))}`;
     for (let attempt = 0; attempt < 50; attempt++) {
@@ -137,50 +122,19 @@ describe("Task #82 — Library & Collections API Suite (BR-MLB-01..07)", () => {
       }
     }
 
-    async function getUniqueGameLevelEntityId() {
-      while (true) {
-        const candidate = Math.floor(10_000_000 + Math.random() * 89_000_000);
-        const [existing] = await db
-          .select({ id: gameLevels.id })
-          .from(gameLevels)
-          .where(eq(gameLevels.entityId, candidate))
-          .limit(1);
-        if (!existing) {
-          return candidate;
-        }
-      }
-    }
-
-    async function getUniqueCurriculumEntityId() {
-      while (true) {
-        const candidate = Math.floor(10_000_000 + Math.random() * 89_000_000);
-        const [existing] = await db
-          .select({ id: curricula.id })
-          .from(curricula)
-          .where(eq(curricula.entityId, candidate))
-          .limit(1);
-        if (!existing) {
-          return candidate;
-        }
-      }
-    }
-
-    const gl1EntityId = await getUniqueGameLevelEntityId();
     const [gl1] = await db
       .insert(gameLevels)
       .values({
         code: gl1Code,
-        entityId: gl1EntityId,
-        templateId,
+        templateCode,
         difficulty: 1,
         title: "Đếm số trái cây",
         accessTier: "standard",
-        status: "published",
         contentPack: { items: ["apple"] },
         difficultyParams: { count: 3 },
       })
       .returning();
-    gameLevel1Id = gl1.entityId;
+    gameLevel1Id = gl1.id;
 
     let gl2Code = `GL-C2-SHP-REC-${String(Math.floor(1000 + Math.random() * 8999))}`;
     for (let attempt = 0; attempt < 50; attempt++) {
@@ -196,38 +150,32 @@ describe("Task #82 — Library & Collections API Suite (BR-MLB-01..07)", () => {
       }
     }
 
-    const gl2EntityId = await getUniqueGameLevelEntityId();
     const [gl2] = await db
       .insert(gameLevels)
       .values({
         code: gl2Code,
-        entityId: gl2EntityId,
-        templateId,
+        templateCode,
         difficulty: 2,
         title: "Phân biệt hình tam giác",
         accessTier: "premium",
-        status: "archived",
         contentPack: { items: ["triangle"] },
         difficultyParams: { count: 4 },
       })
       .returning();
-    gameLevel2Id = gl2.entityId;
+    gameLevel2Id = gl2.id;
 
     // 3. Seed Curriculum
-    const currEntityId = await getUniqueCurriculumEntityId();
     const [curr] = await db
       .insert(curricula)
       .values({
         code: `CUR-P3-LIB-${ts}-${rand}`.slice(0, 50),
-        entityId: currEntityId,
         title: "Lộ trình tư duy toán 3-4 tuổi",
         accessTier: "standard",
-        status: "published",
         durationWeeks: 4,
         sessionsPerWeek: 3,
       })
       .returning();
-    _curriculum1Id = curr.entityId;
+    _curriculum1Id = curr.id;
   });
 
   describe("GET /api/users/library", () => {
@@ -277,8 +225,7 @@ describe("Task #82 — Library & Collections API Suite (BR-MLB-01..07)", () => {
         (i) => i.entity_id === gameLevel2Id
       );
       expect(archivedItem?.title).toBe("Phân biệt hình tam giác");
-      expect(archivedItem?.is_archived).toBe(true); // BR-MLB-05
-      expect(archivedItem?.status_label).toBe("Không còn khả dụng");
+      expect(archivedItem?.is_archived).toBe(false);
     });
   });
 

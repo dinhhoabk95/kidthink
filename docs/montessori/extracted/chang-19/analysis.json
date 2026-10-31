@@ -1,0 +1,2175 @@
+{
+  "stage_id": "chang-19",
+  "workbook_id": "WB19",
+  "stage_number": 19,
+  "title": "Chặng 19: Thành Phố Hình Khối",
+  "subtitle": "Quan sát – nhận biết – đếm hình – giải mã hình ghép",
+  "total_pages": 25,
+  "target_age": "3–5 tuổi",
+  "series": "Gấu Logic & Thỏ Sáng Tạo - Hành Trình 20 Chặng Toán Học",
+  "mission": "Khám phá Thành Phố Hình Khối Kỳ Diệu, giải mã cánh cổng lâu đài hình học, làm quen 4 hình cơ bản (Tam giác, Chữ nhật, Vuông, Tròn), khám phá thuộc tính cạnh/đỉnh/góc, nhận diện bất biến qua phép quay, liên hệ đồ vật thực tế đời sống, phân loại gom nhóm, đếm số lượng và vượt qua Thử Thách Cuối Cùng để thắp sáng Huy Hiệu Thành Phố Hình Khối.",
+  "pedagogy": {
+    "framework": "Montessori & CPA (Concrete - Pictorial - Abstract) kết hợp Lý thuyết Phát triển Tư duy Hình học Van Hiele (Cấp độ 0: Trực quan hóa & Cấp độ 1: Phân tích thuộc tính)",
+    "approach": "Nhận thức hình học trực quan nhân hoá (Anthropomorphic Shapes), Bất biến hình học qua phép quay không gian (Rotation Invariance), Trích xuất đặc trưng thuộc tính cấu tạo (Cạnh - Đỉnh - Góc), Ánh xạ hai chiều giữa vật thể thực tế đời sống và hình học phẳng trừu tượng (Real-World to Abstract Bidirectional Mapping), Phân loại gom nhóm đa tiêu chí & Đếm bổ sung (Classification & Complementary Counting), và Tư duy quy luật chuỗi hình lặp (Pattern Sequence Completion).",
+    "clarification_note": "Lưu ý quan trọng: Tiêu đề sách là 'Thành phố hình khối' (tên hình tượng hoá thu hút trẻ mầm non), tuy nhiên nội dung học liệu thực tế trong PDF tập trung trọn vẹn vào 4 Hình Học Phẳng 2D cơ bản (Tam giác, Chữ nhật, Vuông, Tròn) và sự chuyển tiếp sang các đồ vật 3D quen thuộc trong đời sống (cánh cửa, hộp quà, bánh xe, quả bóng, lát pizza, con diều, mặt trời, v.v.). Sách không chứa bài tập đếm khối lập phương 3D bị khuất hay hình chiếu kỹ thuật (vốn thuộc lứa tuổi tiền tiểu học 5-6 tuổi ở các chặng nâng cao).",
+    "competencies": [
+      {
+        "code": "C2",
+        "name": "Tư duy Không gian & Hình học (Spatial Thinking & Geometry)",
+        "role": "Trọng tâm cốt lõi: Nhận diện, phân tích đặc tính cấu tạo hình học 2D, nhận biết bất biến hướng quay và liên hệ đồ vật thực tế."
+      },
+      {
+        "code": "C1",
+        "name": "Cảm thức Số học & Quy luật (Number Sense & Pattern)",
+        "role": "Nền tảng bổ trợ: Đếm số lượng hình trong tập hợp hỗn hợp, đối ứng 1-1, trắc nghiệm số lượng, và giải mã quy luật chuỗi lặp AB/AAB."
+      },
+      {
+        "code": "C3",
+        "name": "Tư duy Logic & Phân loại (Logical Reasoning & Classification)",
+        "role": "Phát triển tư duy: Phân loại hình vào nhóm/giỏ, phân biệt đối lập (Vuông vs Chữ nhật), tư duy phủ định/bổ sung (Hình tròn vs Không phải hình tròn)."
+      },
+      {
+        "code": "C4",
+        "name": "Quan sát & Tách lọc chi tiết (Visual Observation & Detail Extraction)",
+        "role": "Kỹ năng thị giác: Phân biệt hình - nền, lọc hình mục tiêu trong ma trận dày đặc, loại trừ phương án nhiễu."
+      }
+    ],
+    "skills_targeted": [
+      {
+        "code": "C2.GEO.01",
+        "name": "Hình tròn (Circle Recognition & Attributes)",
+        "description": "Nhận biết hình tròn qua đặc điểm đường cong khép kín, không có cạnh, không có góc, có khả năng lăn tròn."
+      },
+      {
+        "code": "C2.GEO.02",
+        "name": "Hình vuông (Square Recognition & Attributes)",
+        "description": "Nhận biết hình vuông với 4 cạnh bằng nhau và 4 góc vuông."
+      },
+      {
+        "code": "C2.GEO.03",
+        "name": "Hình tam giác (Triangle Recognition & Attributes)",
+        "description": "Nhận biết hình tam giác có 3 cạnh và 3 đỉnh (góc)."
+      },
+      {
+        "code": "C2.GEO.04",
+        "name": "Hình chữ nhật (Rectangle Recognition & Attributes)",
+        "description": "Nhận biết hình chữ nhật có 4 cạnh (2 cạnh dài đối diện bằng nhau, 2 cạnh ngắn đối diện bằng nhau) và 4 góc."
+      },
+      {
+        "code": "C2.ROT.01",
+        "name": "Tính bất biến qua phép quay (Rotation Invariance)",
+        "description": "Nhận thức rằng hình tam giác quay sang trái/phải, hay hình vuông xoay 45 độ (dạng hình thoi) vẫn giữ nguyên bản chất hình học ban đầu."
+      },
+      {
+        "code": "C2.SOL.01",
+        "name": "Ánh xạ đồ vật thực tế sang hình học (Real-world Object to Geometry Mapping)",
+        "description": "Nhận biết dạng hình học của các vật thể xung quanh: cửa ra vào/quyển sách/bảng lớp là hình chữ nhật, bánh xe/mặt trời/quả bóng là hình tròn, cửa sổ/hộp quà là hình vuông, miếng pizza/con diều là hình tam giác."
+      },
+      {
+        "code": "C3.CLS.01",
+        "name": "Phân loại đơn tiêu chí (Single-attribute Classification)",
+        "description": "Phân loại các hình vào các nhóm tương ứng (Hộp Tam giác, Hộp Chữ nhật, Hộp Vuông, Hộp Tròn)."
+      },
+      {
+        "code": "C3.CLS.02",
+        "name": "Phân biệt đối lập & Phân loại bù (Contrast Discrimination & Complementary Counting)",
+        "description": "So sánh phân biệt cặp hình dễ nhầm lẫn (Hình vuông vs Hình chữ nhật); đếm tập hợp bù: 'Có X hình tròn' và 'Có Y hình KHÔNG PHẢI hình tròn'."
+      },
+      {
+        "code": "C1.CNT.01",
+        "name": "Đếm số lượng phần tử trong tập hợp hỗn hợp (Mixed Set Counting)",
+        "description": "Đếm chính xác số lượng từng loại hình trong một ma trận hỗn hợp gồm 12–18 hình với nhiều kích thước và màu sắc khác nhau."
+      },
+      {
+        "code": "C1.PAT.01",
+        "name": "Quy luật chuỗi hình lặp (Pattern Sequence Completion)",
+        "description": "Nhận diện đơn vị chu kỳ lặp (ABAB, AABAAB) của các hình học và suy luận hình tiếp theo còn thiếu."
+      }
+    ],
+    "progression_narrative": "Tiến trình sư phạm xoắn ốc (Montessori Spiral Progression) gồm 6 chặng nhỏ tinh tế: (1) Khám phá từng hình đơn lẻ vòng 1 (Trang 2–10): Làm quen lần lượt Tam giác (3 cạnh, 3 đỉnh) -> Chữ nhật (4 cạnh, 2 dài 2 ngắn) -> Vuông (4 cạnh bằng nhau) -> Tròn (không cạnh, không góc, lăn được), kèm bài tập xoay góc và liên hệ đồ vật thực tế đầu tiên; (2) Trạm dừng ôn tập tổng hợp vòng 1 (Trang 11): Nối tên, đối ứng thuộc tính định nghĩa và tô màu 4 hình theo mã; (3) Đi sâu phân tích thuộc tính & phân biệt nâng cao vòng 2 (Trang 12–20): Khảo sát sâu hơn về góc và cạnh, đặt Hình vuông và Hình chữ nhật cạnh nhau để so sánh điểm giống (4 cạnh, 4 góc) và khác (4 cạnh bằng nhau vs 2 dài 2 ngắn), bài tập phân loại bù (hình tròn vs không phải tròn); (4) Trạm tổng hợp đa chiều & phân loại 4 giỏ (Trang 21): Nối tên, đếm từng loại và phân loại kéo-thả vào 4 giỏ hình học; (5) Luyện tập chuyên sâu & đếm ma trận mật độ cao (Trang 22–23): Nối hình mẫu vào ma trận 4x4 (nối 1-nhiều), khoanh theo hạn ngạch số lượng, đếm ma trận dày đặc 18 hình; (6) Thử thách đỉnh cao & Lễ tốt nghiệp (Trang 24–25): Điền hình vào chuỗi quy luật lặp tuần hoàn AB/AAB, nối đối ứng 2 chiều đồ vật thực tế vào cột hình chuẩn ở giữa, nhận huy hiệu vinh danh và khắc sâu 4 định lý cốt lõi của Thành Phố Hình Khối."
+  },
+  "activity_groups": [
+    {
+      "group_id": "WB19-D1",
+      "group_name": "Làm quen & Khám phá thuộc tính hình học phẳng 2D (Concept Introduction & Attribute Exploration)",
+      "page_range": "Trang 2, 5, 7, 9, 12, 15, 18 (Sách: Trang 1, 4, 6, 8, 11, 14, 17)",
+      "mechanic_description": "Trẻ quan sát hình nhân hoá vui nhộn, nghe Gấu Logic & Thỏ Sáng Tạo giới thiệu tên gọi và các thuộc tính giải phẫu hình học (số cạnh, số đỉnh, số góc, tính chất cạnh bằng nhau hay dài/ngắn, khả năng lăn cơ học). Trẻ chỉ tay vào từng cạnh, góc trên sơ đồ để hình thành biểu tượng trực quan xúc giác.",
+      "sample_prompts": [
+        "Hình tam giác là hình có 3 cạnh, 3 đỉnh đấy!",
+        "Hình chữ nhật có 4 cạnh, gồm 2 cạnh dài và 2 cạnh ngắn!",
+        "Hình vuông có 4 cạnh bằng nhau nhé!",
+        "Hình tròn lăn được đấy, vì bạn ấy không có cạnh, không có góc nào cả!"
+      ],
+      "visual_objects": [
+        "Hình tam giác hồng mặt cười 3 cạnh 3 đỉnh",
+        "Hình chữ nhật hồng nằm ngang 2 cạnh dài 2 cạnh ngắn 4 góc",
+        "Hình vuông vàng mặt cười 4 cạnh bằng nhau 4 góc",
+        "Hình tròn lam mặt cười tròn xoe lăn tròn"
+      ],
+      "quantities_and_ranges": "Số cạnh từ 0, 3, 4; số đỉnh/góc từ 0, 3, 4.",
+      "recommended_existing_gt_templates": ["GT-000", "GT-001"],
+      "recommended_skills": ["C2.GEO.01", "C2.GEO.02", "C2.GEO.03", "C2.GEO.04"]
+    },
+    {
+      "group_id": "WB19-D2",
+      "group_name": "Tìm & Khoanh chọn hình đúng – Nhận diện bất biến qua phép quay (Shape Recognition & Rotation Invariance)",
+      "page_range": "Trang 2, 3, 4, 5, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22",
+      "mechanic_description": "Trẻ tìm và khoanh tròn/chạm vào tất cả các hình mục tiêu trong một hàng hoặc lưới gồm nhiều hình khác nhau làm nhiễu. Điểm then chốt sư phạm là trẻ nhận diện hình tam giác khi quay sang trái, sang phải hoặc quay ngược; nhận diện hình vuông khi xoay nghiêng 45 độ (dễ bị nhầm thành hình thoi); khoanh đúng số lượng theo yêu cầu (ví dụ: khoanh 3 tam giác, 2 chữ nhật).",
+      "sample_prompts": [
+        "Khoanh vào hình tam giác.",
+        "Tam giác quay hướng nào vẫn là tam giác!",
+        "Hình vuông quay đi vẫn là hình vuông!",
+        "Chọn hình tròn trong mỗi nhóm.",
+        "Khoanh 3 hình tam giác, khoanh 2 hình chữ nhật, khoanh 4 hình vuông, khoanh 3 hình tròn."
+      ],
+      "visual_objects": [
+        "Hình tam giác xoay hướng lên, hướng trái, hướng phải",
+        "Hình vuông đứng chuẩn và hình vuông xoay 45 độ",
+        "Hình chữ nhật nằm ngang và hình chữ nhật dựng đứng",
+        "Hình tròn các kích thước khác nhau",
+        "Màu sắc sinh động: Đỏ, Hồng, Vàng, Cam, Xanh lá, Xanh dương, Tím"
+      ],
+      "quantities_and_ranges": "Mỗi bài gồm 5 đến 8 hình, trong đó có 2 đến 4 hình đúng và 3 đến 5 hình nhiễu.",
+      "recommended_existing_gt_templates": ["GT-001", "GT-005"],
+      "recommended_skills": [
+        "C2.GEO.01",
+        "C2.GEO.02",
+        "C2.GEO.03",
+        "C2.GEO.04",
+        "C2.ROT.01",
+        "C4.DET.01"
+      ]
+    },
+    {
+      "group_id": "WB19-D3",
+      "group_name": "Nối hình với tên gọi & Thuộc tính định nghĩa (Semantic Label & Definition Matching)",
+      "page_range": "Trang 3, 4, 10, 11, 13, 14, 21 (Sách: Trang 2, 3, 9, 10, 12, 13, 20)",
+      "mechanic_description": "Trẻ dùng tay kéo đường nối từ hình học sang nhãn tên tiếng Việt tương ứng ('Hình tam giác', 'Hình chữ nhật', 'Hình vuông', 'Hình tròn') hoặc nối nhãn đặc tính định nghĩa ('Có 3 cạnh' -> Tam giác, 'Có 4 cạnh bằng nhau' -> Vuông, 'Không có cạnh' -> Tròn).",
+      "sample_prompts": [
+        "Nối hình với tên đúng.",
+        "Nối đặc điểm với hình đúng.",
+        "Khoanh vào câu đúng: Hình vuông có 4 cạnh bằng nhau."
+      ],
+      "visual_objects": [
+        "Thẻ hình tam giác hồng, chữ nhật cam, vuông vàng, tròn lam",
+        "Nhãn tên có khung viền màu sắc rõ ràng",
+        "Nhãn đặc điểm thuộc tính hình học"
+      ],
+      "quantities_and_ranges": "Ghép nối 3 hoặc 4 cặp tương ứng 1-1.",
+      "recommended_existing_gt_templates": ["GT-005"],
+      "recommended_skills": [
+        "C2.GEO.01",
+        "C2.GEO.02",
+        "C2.GEO.03",
+        "C2.GEO.04",
+        "C3.CLS.01"
+      ]
+    },
+    {
+      "group_id": "WB19-D4",
+      "group_name": "Ánh xạ đồ vật thực tế đời sống sang hình học phẳng 2D (Real-World Concrete to Abstract Geometry Matching)",
+      "page_range": "Trang 6, 10, 16, 19, 24 (Sách: Trang 5, 9, 15, 18, 23)",
+      "mechanic_description": "Trẻ quan sát các đồ vật quen thuộc trong đời sống hàng ngày, nhận diện hình dạng hình học trừu tượng tương ứng và thực hiện thao tác khoanh tròn đồ vật đúng hoặc kéo dây nối từ đồ vật sang hình học phẳng 2D. Bài tập đỉnh cao ở Trang 24 yêu cầu nối hai cột đồ vật bên trái và bên phải cùng trỏ về 4 hình chuẩn ở giữa.",
+      "sample_prompts": [
+        "Đồ vật nào giống hình chữ nhật? Khoanh vào các đồ vật có dạng hình chữ nhật.",
+        "Đồ vật nào giống hình tròn?",
+        "Nối hình vuông với đồ vật có dạng vuông.",
+        "Nối đồ vật với hình phù hợp."
+      ],
+      "visual_objects": [
+        "Cánh cửa gỗ đứng 🚪 (Hình chữ nhật)",
+        "Quyển sách bìa đỏ / bìa xanh 📕📗 (Hình chữ nhật)",
+        "Bảng đen lớp học 🪧 (Hình chữ nhật)",
+        "Quả bóng bãi biển sọc màu ⚽ (Hình tròn)",
+        "Mặt trời toả nắng vàng tươi ☀️ (Hình tròn)",
+        "Bánh xe ô tô vành đúc 🛞 (Hình tròn)",
+        "Khung cửa sổ 4 ô vuông 🪟 (Hình vuông)",
+        "Hộp quà thắt nơ đỏ 🎁 (Hình vuông)",
+        "Đồng hồ treo tường tròn ⏰ (Hình tròn - nhiễu)",
+        "Miếng pizza xúc xích 🍕 (Hình tam giác)",
+        "Con diều no gió 🪁 (Hình tam giác / thoi)"
+      ],
+      "quantities_and_ranges": "Từ 3 đến 8 đồ vật thực tế mỗi trang.",
+      "recommended_existing_gt_templates": ["GT-005", "GT-001"],
+      "recommended_skills": ["C2.SOL.01", "C4.OBS.01"]
+    },
+    {
+      "group_id": "WB19-D5",
+      "group_name": "Đếm số lượng hình trong tập hợp hỗn hợp & Đếm bổ sung (Mixed Shape Counting & Complementary Logic)",
+      "page_range": "Trang 3, 6, 8, 10, 13, 16, 19, 20, 21, 23 (Sách: Trang 2, 5, 7, 9, 12, 15, 18, 19, 20, 22)",
+      "mechanic_description": "Trẻ quét mắt quan sát tập hợp gồm nhiều hình học hỗn hợp, đếm số lượng của một loại hình chỉ định và chọn đáp án trắc nghiệm A/B/C hoặc điền số vào ô. Ở trang 20, bài toán nâng lên tư duy phần bù: đếm số hình tròn và đếm số hình 'không phải hình tròn'. Ở trang 23, ma trận dày đặc 18 hình đòi hỏi trẻ đếm đồng thời cả 4 loại hình.",
+      "sample_prompts": [
+        "Có tất cả bao nhiêu hình tam giác? Chọn A. 3, B. 4, C. 5",
+        "Có tất cả bao nhiêu hình chữ nhật?",
+        "Có tất cả bao nhiêu hình vuông?",
+        "Điền số lượng: Có [?] hình tròn. Có [?] hình không phải hình tròn.",
+        "Đếm và viết số vào ô: Hình tam giác, hình chữ nhật, hình vuông, hình tròn."
+      ],
+      "visual_objects": [
+        "Tập hợp hỗn hợp các hình màu phẳng",
+        "Ma trận hình 12 hình và 18 hình dày đặc",
+        "Các nút bấm trắc nghiệm A, B, C lớn dễ chạm",
+        "Ô trống điền số bên cạnh nhãn hình"
+      ],
+      "quantities_and_ranges": "Số lượng đếm từ 2 đến 7 hình mỗi loại; tổng số hình trong ma trận lên tới 18.",
+      "recommended_existing_gt_templates": ["GT-002", "GT-001", "GT-024"],
+      "recommended_skills": ["C1.CNT.01", "C1.CNT.02", "C3.CLS.02"]
+    },
+    {
+      "group_id": "WB19-D6",
+      "group_name": "Phân loại & Gom nhóm hình học (Geometric Basket Sorting & Classification)",
+      "page_range": "Trang 14, 17, 21 (Sách: Trang 13, 16, 20)",
+      "mechanic_description": "Trẻ thực hiện thao tác kéo-thả các thẻ hình vào các hộp/giỏ tương ứng: phân biệt nhị phân giữa Hình Vuông vs Hình Chữ Nhật (Trang 17), hoặc phân loại đồng thời vào 4 giỏ: Tam giác, Chữ nhật, Vuông, Tròn (Trang 21).",
+      "sample_prompts": [
+        "Nối các hình vào đúng nhóm: Hộp Hình vuông vs Hộp Hình chữ nhật.",
+        "Phân loại các hình vào nhóm phù hợp: Giỏ Tam giác, Chữ nhật, Vuông, Tròn."
+      ],
+      "visual_objects": [
+        "Hộp dán nhãn 'Hình vuông' và 'Hình chữ nhật'",
+        "4 giỏ màu sắc tươi sáng mang nhãn 4 hình học",
+        "Dải thẻ hình cắt dán gồm 6 đến 8 hình học đa dạng màu sắc"
+      ],
+      "quantities_and_ranges": "Phân loại 6 đến 8 thẻ hình vào 2 hoặc 4 giỏ.",
+      "recommended_existing_gt_templates": ["GT-008"],
+      "recommended_skills": ["C3.CLS.01", "C3.CLS.02"]
+    },
+    {
+      "group_id": "WB19-D7",
+      "group_name": "Tô màu theo mã quy ước & Giải mã chuỗi quy luật hình ghép (Color by Code & Pattern Sequence Completion)",
+      "page_range": "Trang 2, 5, 7, 9, 11, 14, 17, 20, 24 (Sách: Trang 1, 4, 6, 8, 10, 13, 16, 19, 23)",
+      "mechanic_description": "Gồm 2 nhánh rèn luyện: (1) Nhánh Tô màu: Trẻ nhận diện hình và tô màu theo quy tắc (ví dụ: tam giác xanh, chữ nhật đỏ, vuông vàng, tròn xanh dương); (2) Nhánh Giải mã quy luật (Trang 24): Trẻ phân tích chuỗi hình tuần hoàn (ABAB, AABAAB), tìm ra đơn vị lặp và chọn hình còn thiếu đặt vào ô dấu hỏi chấm [?].",
+      "sample_prompts": [
+        "Tô màu các hình tam giác.",
+        "Tô màu theo yêu cầu: Tam giác màu xanh lá, hình chữ nhật màu đỏ, hình vuông màu vàng, hình tròn màu xanh dương.",
+        "Tô màu xanh hình chữ nhật, tô màu đỏ hình vuông.",
+        "Bài 1: Điền hình còn thiếu theo quy luật chuỗi."
+      ],
+      "visual_objects": [
+        "Dãy hình nét rỗng trắng đen để tô màu",
+        "Chuỗi hình học màu sắc: Tam giác hồng, Chữ nhật xanh lá, Vuông vàng, Tròn lam, Vuông tím",
+        "Ô dấu hỏi chấm [?] và 3 thẻ lựa chọn bên cạnh"
+      ],
+      "quantities_and_ranges": "Chuỗi gồm 4 đến 6 phần tử; mẫu lặp AB hoặc AAB.",
+      "recommended_existing_gt_templates": ["GT-003", "GT-020", "GT-028"],
+      "recommended_skills": ["C1.PAT.01", "C1.PAT.02", "C3.PAT.01"]
+    }
+  ],
+  "pages_summary": [
+    {
+      "page_index": 1,
+      "page_file": "page-01.jpg",
+      "book_page_number": null,
+      "type": "cover",
+      "title": "Bìa Sách: Thành Phố Hình Khối",
+      "description": "Bìa tập sách mở ra cánh cổng Thành Phố Hình Khối rực rỡ với lâu đài được ghép từ các khối hình 2D/3D đầy màu sắc. Gấu Logic đeo túi thám tử cầm kính lúp và hình tam giác, Thỏ Sáng Tạo cầm hình tròn tím chào đón bé.",
+      "dialogues": {
+        "bear": "Chào mừng bé đến với Thành Phố Hình Khối!",
+        "rabbit": "Hãy cùng khám phá các hình học kỳ diệu để mở cánh cổng kho báu nhé!"
+      },
+      "pillars": [
+        "Quan sát hình",
+        "Đếm hình thật vui",
+        "Giải mã hình ghép",
+        "Nhận biết hình khối"
+      ],
+      "recommended_gt_template": "GT-000",
+      "recommended_skills": ["C2.GEO.01", "C2.GEO.02", "C2.GEO.03", "C2.GEO.04"]
+    },
+    {
+      "page_index": 2,
+      "page_file": "page-02.jpg",
+      "book_page_number": 1,
+      "type": "concept_intro_and_practice",
+      "title": "Làm Quen Với Hình Tam Giác",
+      "section_badge": "Chặng 19 - Thành Phố Hình Khối",
+      "dialogues": {
+        "bear": "Hình tam giác là hình có 3 cạnh, 3 đỉnh đấy!",
+        "rabbit": "Cùng nhau học thật tốt để mở cánh cổng nhé!"
+      },
+      "exercises": [
+        {
+          "exercise_id": "P02-EX1",
+          "exercise_number": 1,
+          "instruction": "LÀM QUEN VỚI HÌNH TAM GIÁC",
+          "mechanic": "Flashcard / Concept Exploration",
+          "content": "Giới thiệu hình tam giác hồng nhân hoá có mắt mũi miệng xinh xắn. Sơ đồ giải phẫu chỉ rõ 1 đỉnh trên, 2 đỉnh dưới, 3 cạnh nối với nhau.",
+          "rules": [
+            "Đây là hình tam giác.",
+            "Hình tam giác có 3 cạnh.",
+            "Hình tam giác có 3 đỉnh."
+          ]
+        },
+        {
+          "exercise_id": "P02-EX2",
+          "exercise_number": 2,
+          "instruction": "KHOANH VÀO HÌNH TAM GIÁC.",
+          "mechanic": "Tap Select / Circle items",
+          "items": [
+            { "shape": "rectangle", "color": "green", "is_correct": false },
+            { "shape": "triangle", "color": "pink", "is_correct": true },
+            { "shape": "square", "color": "yellow", "is_correct": false },
+            { "shape": "circle", "color": "blue", "is_correct": false },
+            { "shape": "triangle", "color": "purple", "is_correct": true }
+          ],
+          "correct_count": 2
+        },
+        {
+          "exercise_id": "P02-EX3",
+          "exercise_number": 3,
+          "instruction": "TÔ MÀU CÁC HÌNH TAM GIÁC.",
+          "mechanic": "Coloring / Outline Identification",
+          "items": [
+            { "shape": "triangle", "is_target": true },
+            { "shape": "circle", "is_target": false },
+            { "shape": "triangle", "is_target": true },
+            { "shape": "rectangle_vertical", "is_target": false },
+            { "shape": "triangle", "is_target": true },
+            { "shape": "square", "is_target": false }
+          ],
+          "target_count": 3
+        }
+      ],
+      "parent_tips": [
+        "Hình tam giác có mấy cạnh?",
+        "Hình tam giác có mấy đỉnh?",
+        "Con hãy chỉ ra hình tam giác."
+      ],
+      "recommended_gt_template": "GT-001",
+      "recommended_skills": ["C2.GEO.03"]
+    },
+    {
+      "page_index": 3,
+      "page_file": "page-03.jpg",
+      "book_page_number": 2,
+      "type": "rotation_and_counting",
+      "title": "Tìm Hình Tam Giác & Đếm Hình",
+      "section_badge": "Chặng 19 - Thành Phố Hình Khối",
+      "dialogues": {
+        "bear": "Cùng tìm hình tam giác nhé!",
+        "rabbit": "Tam giác quay hướng nào vẫn là tam giác!"
+      },
+      "exercises": [
+        {
+          "exercise_id": "P03-EX1",
+          "exercise_number": 1,
+          "instruction": "TÌM HÌNH TAM GIÁC: Khoanh vào các hình tam giác.",
+          "mechanic": "Rotation Invariance Detection",
+          "items": [
+            { "shape": "rectangle", "color": "green", "is_correct": false },
+            {
+              "shape": "triangle",
+              "color": "pink",
+              "orientation": "up",
+              "is_correct": true
+            },
+            { "shape": "circle", "color": "blue", "is_correct": false },
+            { "shape": "square", "color": "yellow", "is_correct": false },
+            {
+              "shape": "triangle",
+              "color": "purple",
+              "orientation": "left",
+              "is_correct": true
+            },
+            { "shape": "rectangle", "color": "orange", "is_correct": false },
+            {
+              "shape": "triangle",
+              "color": "blue",
+              "orientation": "right",
+              "is_correct": true
+            },
+            { "shape": "circle", "color": "red", "is_correct": false }
+          ],
+          "correct_count": 3
+        },
+        {
+          "exercise_id": "P03-EX2",
+          "exercise_number": 2,
+          "instruction": "ĐẾM SỐ HÌNH TAM GIÁC: Có tất cả bao nhiêu hình tam giác?",
+          "mechanic": "Counting in Mixed Set & Multiple Choice",
+          "items": [
+            { "shape": "triangle", "color": "pink", "is_target": true },
+            { "shape": "circle", "color": "green", "is_target": false },
+            { "shape": "triangle", "color": "blue", "is_target": true },
+            { "shape": "rectangle", "color": "orange", "is_target": false },
+            { "shape": "triangle", "color": "yellow", "is_target": true },
+            { "shape": "square", "color": "purple", "is_target": false },
+            { "shape": "triangle", "color": "red", "is_target": true }
+          ],
+          "options": ["A. 3", "B. 4", "C. 5"],
+          "correct_answer": "B. 4"
+        },
+        {
+          "exercise_id": "P03-EX3",
+          "exercise_number": 3,
+          "instruction": "NỐI HÌNH VỚI TÊN ĐÚNG",
+          "mechanic": "Pair Match",
+          "pairs": [
+            { "source": "Tam giác hồng", "target": "Hình tam giác" },
+            { "source": "Hình tròn xanh dương", "target": "Hình tròn" },
+            { "source": "Hình vuông vàng", "target": "Hình vuông" }
+          ]
+        }
+      ],
+      "parent_tips": [
+        "Hình tam giác có mấy cạnh?",
+        "Con tìm được mấy hình tam giác?",
+        "Tam giác quay ngang có còn là tam giác không?"
+      ],
+      "recommended_gt_template": "GT-001",
+      "recommended_skills": [
+        "C2.GEO.03",
+        "C2.ROT.01",
+        "C1.CNT.01",
+        "C2.GEO.01",
+        "C2.GEO.02"
+      ]
+    },
+    {
+      "page_index": 4,
+      "page_file": "page-04.jpg",
+      "book_page_number": 3,
+      "type": "attributes_cloze_and_matching",
+      "title": "Thuộc Tính Hình Tam Giác & Điền Số",
+      "section_badge": "Chặng 19 - Thành Phố Hình Khối",
+      "dialogues": {
+        "bear": "Tam giác quay hướng nào vẫn là tam giác!",
+        "rabbit": "Chỉ cần có 3 cạnh thôi nhé!"
+      },
+      "exercises": [
+        {
+          "exercise_id": "P04-EX1",
+          "exercise_number": 1,
+          "instruction": "TÌM HÌNH TAM GIÁC: Khoanh vào các hình tam giác.",
+          "mechanic": "Rotation Invariance Detection",
+          "items": [
+            { "shape": "rectangle", "color": "green", "is_correct": false },
+            {
+              "shape": "triangle",
+              "color": "pink",
+              "orientation": "up",
+              "is_correct": true
+            },
+            { "shape": "circle", "color": "blue", "is_correct": false },
+            { "shape": "square", "color": "yellow", "is_correct": false },
+            {
+              "shape": "triangle",
+              "color": "purple",
+              "orientation": "left",
+              "is_correct": true
+            },
+            { "shape": "rectangle", "color": "orange", "is_correct": false },
+            {
+              "shape": "triangle",
+              "color": "blue",
+              "orientation": "right",
+              "is_correct": true
+            },
+            { "shape": "circle", "color": "red", "is_correct": false }
+          ],
+          "correct_count": 3
+        },
+        {
+          "exercise_id": "P04-EX2",
+          "exercise_number": 2,
+          "instruction": "ĐIỀN SỐ ĐÚNG",
+          "mechanic": "Attribute Cloze / Number Input",
+          "content": "Hình tam giác hồng mẫu lớn.",
+          "prompts": [
+            "Hình tam giác có [ 3 ] cạnh.",
+            "Hình tam giác có [ 3 ] đỉnh."
+          ]
+        },
+        {
+          "exercise_id": "P04-EX3",
+          "exercise_number": 3,
+          "instruction": "NỐI HÌNH VỚI TÊN ĐÚNG",
+          "mechanic": "Pair Match",
+          "pairs": [
+            { "source": "Tam giác hồng", "target": "Hình tam giác" },
+            { "source": "Hình vuông vàng", "target": "Hình vuông" },
+            { "source": "Hình tròn xanh dương", "target": "Hình tròn" }
+          ]
+        }
+      ],
+      "parent_tips": [
+        "Hình tam giác có mấy cạnh?",
+        "Tam giác quay ngang có còn là tam giác không?",
+        "Con tìm được mấy hình tam giác?"
+      ],
+      "recommended_gt_template": "GT-005",
+      "recommended_skills": ["C2.GEO.03", "C2.ROT.01"]
+    },
+    {
+      "page_index": 5,
+      "page_file": "page-05.jpg",
+      "book_page_number": 4,
+      "type": "concept_intro_and_practice",
+      "title": "Làm Quen Với Hình Chữ Nhật",
+      "section_badge": "Chặng 19 - Thành Phố Hình Khối",
+      "dialogues": {
+        "bear": "Đây là hình chữ nhật!",
+        "rabbit": "Hình chữ nhật có 4 cạnh nhé!"
+      },
+      "exercises": [
+        {
+          "exercise_id": "P05-EX1",
+          "exercise_number": 1,
+          "instruction": "LÀM QUEN VỚI HÌNH CHỮ NHẬT",
+          "mechanic": "Flashcard / Concept Exploration",
+          "content": "Hình chữ nhật hồng nằm ngang má hồng cười tươi. Sơ đồ chỉ rõ cạnh dài trên-dưới và cạnh ngắn trái-phải.",
+          "rules": [
+            "Đây là hình chữ nhật.",
+            "Hình chữ nhật có 4 cạnh.",
+            "Hình chữ nhật có 2 cạnh dài và 2 cạnh ngắn."
+          ]
+        },
+        {
+          "exercise_id": "P05-EX2",
+          "exercise_number": 2,
+          "instruction": "KHOANH VÀO HÌNH CHỮ NHẬT.",
+          "mechanic": "Orientation Invariance (Horizontal & Vertical)",
+          "items": [
+            {
+              "shape": "rectangle",
+              "color": "green",
+              "orientation": "horizontal",
+              "is_correct": true
+            },
+            { "shape": "triangle", "color": "pink", "is_correct": false },
+            { "shape": "square", "color": "yellow", "is_correct": false },
+            { "shape": "circle", "color": "blue", "is_correct": false },
+            {
+              "shape": "rectangle",
+              "color": "orange",
+              "orientation": "vertical",
+              "is_correct": true
+            },
+            {
+              "shape": "rectangle",
+              "color": "purple",
+              "orientation": "horizontal",
+              "is_correct": true
+            }
+          ],
+          "correct_count": 3
+        },
+        {
+          "exercise_id": "P05-EX3",
+          "exercise_number": 3,
+          "instruction": "TÔ MÀU CÁC HÌNH CHỮ NHẬT.",
+          "mechanic": "Coloring / Outline Identification",
+          "items": [
+            { "shape": "rectangle_horizontal", "is_target": true },
+            { "shape": "circle", "is_target": false },
+            { "shape": "rectangle_horizontal", "is_target": true },
+            { "shape": "triangle", "is_target": false },
+            { "shape": "square", "is_target": false },
+            { "shape": "rectangle_horizontal", "is_target": true }
+          ],
+          "target_count": 3
+        }
+      ],
+      "parent_tips": [
+        "Hình chữ nhật có mấy cạnh?",
+        "Cạnh dài và cạnh ngắn có giống nhau không?",
+        "Con tìm được mấy hình chữ nhật?"
+      ],
+      "recommended_gt_template": "GT-001",
+      "recommended_skills": ["C2.GEO.04"]
+    },
+    {
+      "page_index": 6,
+      "page_file": "page-06.jpg",
+      "book_page_number": 5,
+      "type": "real_world_mapping_and_counting",
+      "title": "Hình Chữ Nhật Trong Đời Sống & Đếm Hình",
+      "section_badge": "Chặng 19 - Thành Phố Hình Khối",
+      "dialogues": {
+        "bear": "Bé tìm hình chữ nhật trong đồ vật nhé!",
+        "rabbit": "Cửa và quyển sách rất giống hình chữ nhật đấy!"
+      },
+      "exercises": [
+        {
+          "exercise_id": "P06-EX1",
+          "exercise_number": 1,
+          "instruction": "ĐỒ VẬT NÀO GIỐNG HÌNH CHỮ NHẬT? Khoanh vào các đồ vật có dạng hình chữ nhật.",
+          "mechanic": "Real-world Object Recognition",
+          "items": [
+            {
+              "object": "Cánh cửa gỗ đứng 🚪",
+              "shape": "rectangle",
+              "is_correct": true
+            },
+            {
+              "object": "Quyển sách bìa đỏ 📕",
+              "shape": "rectangle",
+              "is_correct": true
+            },
+            {
+              "object": "Quả bóng bãi biển ⚽",
+              "shape": "circle",
+              "is_correct": false
+            },
+            {
+              "object": "Hộp quà vuông thắt nơ 🎁",
+              "shape": "square",
+              "is_correct": false
+            },
+            {
+              "object": "Bảng đen lớp học 🪧",
+              "shape": "rectangle",
+              "is_correct": true
+            }
+          ],
+          "correct_count": 3
+        },
+        {
+          "exercise_id": "P06-EX2",
+          "exercise_number": 2,
+          "instruction": "ĐẾM SỐ HÌNH CHỮ NHẬT: Có tất cả bao nhiêu hình chữ nhật?",
+          "mechanic": "Counting in Mixed Set & Multiple Choice",
+          "items": [
+            {
+              "shape": "rectangle",
+              "color": "green",
+              "orientation": "horizontal",
+              "is_target": true
+            },
+            { "shape": "square", "color": "yellow", "is_target": false },
+            {
+              "shape": "rectangle",
+              "color": "orange",
+              "orientation": "vertical",
+              "is_target": true
+            },
+            { "shape": "triangle", "color": "pink", "is_target": false },
+            { "shape": "circle", "color": "blue", "is_target": false },
+            {
+              "shape": "rectangle",
+              "color": "purple",
+              "orientation": "horizontal",
+              "is_target": true
+            },
+            {
+              "shape": "rectangle",
+              "color": "red",
+              "orientation": "horizontal",
+              "is_target": true
+            },
+            {
+              "shape": "rectangle",
+              "color": "blue",
+              "orientation": "vertical",
+              "is_target": true
+            }
+          ],
+          "options": ["A. 3", "B. 4", "C. 5"],
+          "correct_answer": "C. 5"
+        },
+        {
+          "exercise_id": "P06-EX3",
+          "exercise_number": 3,
+          "instruction": "NỐI ĐỒ VẬT VỚI HÌNH ĐÚNG",
+          "mechanic": "Pair Match",
+          "pairs": [
+            { "source": "Cánh cửa gỗ", "target": "Hình chữ nhật xanh lá" },
+            { "source": "Quả bóng bãi biển", "target": "Hình tròn xanh dương" },
+            {
+              "source": "Quyển sách đỏ",
+              "target": "Hình vuông vàng / chữ nhật"
+            }
+          ]
+        }
+      ],
+      "parent_tips": [
+        "Đồ vật nào giống hình chữ nhật?",
+        "Con đếm được mấy hình chữ nhật?",
+        "Hình vuông có giống hình chữ nhật không?"
+      ],
+      "recommended_gt_template": "GT-005",
+      "recommended_skills": ["C2.GEO.04", "C2.SOL.01", "C1.CNT.01"]
+    },
+    {
+      "page_index": 7,
+      "page_file": "page-07.jpg",
+      "book_page_number": 6,
+      "type": "concept_intro_and_practice",
+      "title": "Làm Quen Với Hình Vuông",
+      "section_badge": "Chặng 19 - Thành Phố Hình Khối",
+      "dialogues": {
+        "bear": "Đây là hình vuông!",
+        "rabbit": "Hình vuông có 4 cạnh bằng nhau nhé!"
+      },
+      "exercises": [
+        {
+          "exercise_id": "P07-EX1",
+          "exercise_number": 1,
+          "instruction": "LÀM QUEN VỚI HÌNH VUÔNG",
+          "mechanic": "Flashcard / Concept Exploration",
+          "content": "Hình vuông vàng ngộ nghĩnh cười tươi. Sơ đồ minh họa 4 cạnh bằng nhau bao quanh.",
+          "rules": [
+            "Đây là hình vuông.",
+            "Hình vuông có 4 cạnh.",
+            "4 cạnh của hình vuông bằng nhau."
+          ]
+        },
+        {
+          "exercise_id": "P07-EX2",
+          "exercise_number": 2,
+          "instruction": "KHOANH VÀO HÌNH VUÔNG.",
+          "mechanic": "Shape Discrimination",
+          "items": [
+            { "shape": "rectangle", "color": "green", "is_correct": false },
+            { "shape": "square", "color": "pink", "is_correct": true },
+            { "shape": "circle", "color": "blue", "is_correct": false },
+            { "shape": "square", "color": "yellow", "is_correct": true },
+            { "shape": "triangle", "color": "purple", "is_correct": false },
+            { "shape": "square", "color": "orange", "is_correct": true }
+          ],
+          "correct_count": 3
+        },
+        {
+          "exercise_id": "P07-EX3",
+          "exercise_number": 3,
+          "instruction": "TÔ MÀU CÁC HÌNH VUÔNG.",
+          "mechanic": "Coloring / Outline Identification",
+          "items": [
+            { "shape": "square", "is_target": true },
+            { "shape": "rectangle_horizontal", "is_target": false },
+            { "shape": "square", "is_target": true },
+            { "shape": "circle", "is_target": false },
+            { "shape": "triangle", "is_target": false },
+            { "shape": "square", "is_target": true }
+          ],
+          "target_count": 3
+        }
+      ],
+      "parent_tips": [
+        "Hình vuông có mấy cạnh?",
+        "Các cạnh của hình vuông có bằng nhau không?",
+        "Con tìm được mấy hình vuông?"
+      ],
+      "recommended_gt_template": "GT-001",
+      "recommended_skills": ["C2.GEO.02"]
+    },
+    {
+      "page_index": 8,
+      "page_file": "page-08.jpg",
+      "book_page_number": 7,
+      "type": "rotation_and_counting",
+      "title": "Tìm Hình Vuông Xoay & Khẳng Định Thuộc Tính",
+      "section_badge": "Chặng 19 - Thành Phố Hình Khối",
+      "dialogues": {
+        "bear": "Hình vuông quay đi vẫn là hình vuông!",
+        "rabbit": "Bé nhìn xem các cạnh có bằng nhau không nhé!"
+      },
+      "exercises": [
+        {
+          "exercise_id": "P08-EX1",
+          "exercise_number": 1,
+          "instruction": "TÌM HÌNH VUÔNG: Khoanh vào các hình vuông.",
+          "mechanic": "Rotation Invariance (Square rotated 45 degrees)",
+          "items": [
+            {
+              "shape": "square",
+              "color": "pink",
+              "orientation": "standard",
+              "is_correct": true
+            },
+            { "shape": "rectangle", "color": "green", "is_correct": false },
+            {
+              "shape": "square",
+              "color": "blue",
+              "orientation": "rotated_45",
+              "is_correct": true
+            },
+            { "shape": "circle", "color": "yellow", "is_correct": false },
+            { "shape": "triangle", "color": "purple", "is_correct": false },
+            {
+              "shape": "square",
+              "color": "orange",
+              "orientation": "standard",
+              "is_correct": true
+            },
+            {
+              "shape": "rectangle",
+              "color": "red",
+              "orientation": "vertical",
+              "is_correct": false
+            },
+            {
+              "shape": "square",
+              "color": "green",
+              "orientation": "standard",
+              "is_correct": true
+            }
+          ],
+          "correct_count": 4
+        },
+        {
+          "exercise_id": "P08-EX2",
+          "exercise_number": 2,
+          "instruction": "ĐẾM SỐ HÌNH VUÔNG: Có tất cả bao nhiêu hình vuông?",
+          "mechanic": "Counting with Rotation & Multiple Choice",
+          "items": [
+            { "shape": "square", "color": "pink", "is_target": true },
+            { "shape": "circle", "color": "blue", "is_target": false },
+            { "shape": "square", "color": "green", "is_target": true },
+            { "shape": "triangle", "color": "purple", "is_target": false },
+            { "shape": "rectangle", "color": "orange", "is_target": false },
+            {
+              "shape": "square",
+              "color": "blue",
+              "orientation": "rotated_45",
+              "is_target": true
+            },
+            { "shape": "square", "color": "yellow", "is_target": true }
+          ],
+          "options": ["A. 3", "B. 4", "C. 5"],
+          "correct_answer": "B. 4"
+        },
+        {
+          "exercise_id": "P08-EX3",
+          "exercise_number": 3,
+          "instruction": "KHOANH VÀO CÂU ĐÚNG",
+          "mechanic": "Multiple Choice / Statement Verification",
+          "options": [
+            { "text": "Hình vuông có 3 cạnh.", "is_correct": false },
+            { "text": "Hình vuông có 4 cạnh bằng nhau.", "is_correct": true },
+            { "text": "Hình vuông không có cạnh.", "is_correct": false }
+          ],
+          "correct_answer": "Hình vuông có 4 cạnh bằng nhau."
+        }
+      ],
+      "parent_tips": [
+        "Hình vuông có đặc điểm gì?",
+        "Hình vuông quay nghiêng có còn là hình vuông không?",
+        "Con đếm được mấy hình vuông?"
+      ],
+      "recommended_gt_template": "GT-001",
+      "recommended_skills": ["C2.GEO.02", "C2.ROT.01", "C1.CNT.01"]
+    },
+    {
+      "page_index": 9,
+      "page_file": "page-09.jpg",
+      "book_page_number": 8,
+      "type": "concept_intro_and_practice",
+      "title": "Làm Quen Với Hình Tròn",
+      "section_badge": "Chặng 19 - Thành Phố Hình Khối",
+      "dialogues": {
+        "bear": "Đây là hình tròn!",
+        "rabbit": "Hình tròn không có cạnh nào cả!"
+      },
+      "exercises": [
+        {
+          "exercise_id": "P09-EX1",
+          "exercise_number": 1,
+          "instruction": "LÀM QUEN VỚI HÌNH TRÒN",
+          "mechanic": "Flashcard / Concept Exploration",
+          "content": "Hình tròn xanh dương mặt cười tươi tắn. Vòng tròn rỗng bên cạnh thể hiện đường cong khép kín mượt mà.",
+          "rules": [
+            "Đây là hình tròn.",
+            "Hình tròn không có cạnh.",
+            "Hình tròn không có góc."
+          ]
+        },
+        {
+          "exercise_id": "P09-EX2",
+          "exercise_number": 2,
+          "instruction": "KHOANH VÀO HÌNH TRÒN.",
+          "mechanic": "Shape Discrimination",
+          "items": [
+            { "shape": "triangle", "color": "pink", "is_correct": false },
+            { "shape": "circle", "color": "blue", "is_correct": true },
+            { "shape": "square", "color": "yellow", "is_correct": false },
+            { "shape": "circle", "color": "green", "is_correct": true },
+            {
+              "shape": "rectangle",
+              "color": "orange",
+              "orientation": "vertical",
+              "is_correct": false
+            },
+            { "shape": "circle", "color": "red", "is_correct": true }
+          ],
+          "correct_count": 3
+        },
+        {
+          "exercise_id": "P09-EX3",
+          "exercise_number": 3,
+          "instruction": "TÔ MÀU CÁC HÌNH TRÒN.",
+          "mechanic": "Coloring / Outline Identification",
+          "items": [
+            { "shape": "circle", "is_target": true },
+            { "shape": "square", "is_target": false },
+            { "shape": "circle", "is_target": true },
+            { "shape": "triangle", "is_target": false },
+            { "shape": "rectangle_vertical", "is_target": false },
+            { "shape": "circle", "is_target": true }
+          ],
+          "target_count": 3
+        }
+      ],
+      "parent_tips": [
+        "Hình tròn có mấy cạnh?",
+        "Hình tròn có góc không?",
+        "Con tìm được mấy hình tròn?"
+      ],
+      "recommended_gt_template": "GT-001",
+      "recommended_skills": ["C2.GEO.01"]
+    },
+    {
+      "page_index": 10,
+      "page_file": "page-10.jpg",
+      "book_page_number": 9,
+      "type": "real_world_mapping_and_counting",
+      "title": "Hình Tròn Trong Đời Sống & Đếm Hình",
+      "section_badge": "Chặng 19 - Thành Phố Hình Khối",
+      "dialogues": {
+        "bear": "Nhiều đồ vật có dạng hình tròn lắm!",
+        "rabbit": "Bé cùng tìm các đồ vật hình tròn nhé!"
+      },
+      "exercises": [
+        {
+          "exercise_id": "P10-EX1",
+          "exercise_number": 1,
+          "instruction": "ĐỒ VẬT NÀO GIỐNG HÌNH TRÒN? Khoanh vào các đồ vật có dạng hình tròn.",
+          "mechanic": "Real-world Object Recognition",
+          "items": [
+            {
+              "object": "Quả bóng bãi biển ⚽",
+              "shape": "circle",
+              "is_correct": true
+            },
+            {
+              "object": "Mặt trời toả nắng ☀️",
+              "shape": "circle",
+              "is_correct": true
+            },
+            {
+              "object": "Bánh xe ô tô 🛞",
+              "shape": "circle",
+              "is_correct": true
+            },
+            {
+              "object": "Quyển sách xanh 📗",
+              "shape": "rectangle",
+              "is_correct": false
+            },
+            {
+              "object": "Cánh cửa gỗ 🚪",
+              "shape": "rectangle",
+              "is_correct": false
+            }
+          ],
+          "correct_count": 3
+        },
+        {
+          "exercise_id": "P10-EX2",
+          "exercise_number": 2,
+          "instruction": "ĐẾM SỐ HÌNH TRÒN: Có tất cả bao nhiêu hình tròn?",
+          "mechanic": "Counting in Mixed Set & Multiple Choice",
+          "items": [
+            { "shape": "circle", "color": "blue", "is_target": true },
+            { "shape": "triangle", "color": "pink", "is_target": false },
+            { "shape": "circle", "color": "green", "is_target": true },
+            { "shape": "square", "color": "yellow", "is_target": false },
+            { "shape": "square", "color": "orange", "is_target": false },
+            { "shape": "circle", "color": "red", "is_target": true },
+            { "shape": "triangle", "color": "purple", "is_target": false },
+            { "shape": "circle", "color": "blue", "is_target": true }
+          ],
+          "options": ["A. 3", "B. 4", "C. 5"],
+          "correct_answer": "B. 4"
+        },
+        {
+          "exercise_id": "P10-EX3",
+          "exercise_number": 3,
+          "instruction": "NỐI HÌNH VỚI TÊN ĐÚNG",
+          "mechanic": "Pair Match",
+          "pairs": [
+            { "source": "Hình tròn lam", "target": "Hình tròn" },
+            { "source": "Hình vuông vàng", "target": "Hình vuông" },
+            { "source": "Tam giác hồng", "target": "Hình tam giác" }
+          ]
+        }
+      ],
+      "parent_tips": [
+        "Đồ vật nào giống hình tròn?",
+        "Hình tròn có mấy cạnh?",
+        "Con đếm được mấy hình tròn?"
+      ],
+      "recommended_gt_template": "GT-005",
+      "recommended_skills": ["C2.GEO.01", "C2.SOL.01", "C1.CNT.01"]
+    },
+    {
+      "page_index": 11,
+      "page_file": "page-11.jpg",
+      "book_page_number": 10,
+      "type": "comprehensive_review_stage1",
+      "title": "Ôn Tập Tổng Hợp 4 Hình Cơ Bản (Vòng 1)",
+      "section_badge": "Chặng 19 - Thành Phố Hình Khối",
+      "dialogues": {
+        "bear": "Bé đã học được 4 hình cơ bản rồi!",
+        "rabbit": "Mình cùng ôn lại thật vui nhé!"
+      },
+      "exercises": [
+        {
+          "exercise_id": "P11-EX1",
+          "exercise_number": 1,
+          "instruction": "NỐI HÌNH VỚI TÊN ĐÚNG",
+          "mechanic": "4-Item Pair Match",
+          "pairs": [
+            { "source": "Tam giác hồng", "target": "Hình tam giác" },
+            { "source": "Chữ nhật cam", "target": "Hình chữ nhật" },
+            { "source": "Hình vuông vàng", "target": "Hình vuông" },
+            { "source": "Hình tròn lam", "target": "Hình tròn" }
+          ]
+        },
+        {
+          "exercise_id": "P11-EX2",
+          "exercise_number": 2,
+          "instruction": "NỐI ĐẶC ĐIỂM VỚI HÌNH ĐÚNG",
+          "mechanic": "Attribute-to-Shape Match",
+          "pairs": [
+            { "source": "Có 3 cạnh", "target": "Hình tam giác" },
+            { "source": "Có 4 cạnh", "target": "Hình chữ nhật" },
+            { "source": "Có 4 cạnh bằng nhau", "target": "Hình vuông" },
+            { "source": "Không có cạnh", "target": "Hình tròn" }
+          ]
+        },
+        {
+          "exercise_id": "P11-EX3",
+          "exercise_number": 3,
+          "instruction": "TÔ MÀU THEO YÊU CẦU: Tam giác màu xanh lá, hình chữ nhật màu đỏ, hình vuông màu vàng, hình tròn màu xanh dương.",
+          "mechanic": "Multi-rule Color Coding",
+          "color_mapping": {
+            "triangle": "green",
+            "rectangle": "red",
+            "square": "yellow",
+            "circle": "blue"
+          },
+          "items": [
+            { "shape": "triangle", "expected_color": "green" },
+            { "shape": "rectangle_horizontal", "expected_color": "red" },
+            { "shape": "square", "expected_color": "yellow" },
+            { "shape": "circle", "expected_color": "blue" },
+            { "shape": "square", "expected_color": "yellow" },
+            { "shape": "circle", "expected_color": "blue" },
+            { "shape": "triangle", "expected_color": "green" },
+            { "shape": "rectangle_horizontal", "expected_color": "red" }
+          ]
+        }
+      ],
+      "parent_tips": [
+        "Tam giác có mấy cạnh?",
+        "Hình vuông khác hình chữ nhật ở điểm nào?",
+        "Con nhớ tên 4 hình cơ bản không?"
+      ],
+      "recommended_gt_template": "GT-005",
+      "recommended_skills": ["C2.GEO.01", "C2.GEO.02", "C2.GEO.03", "C2.GEO.04"]
+    },
+    {
+      "page_index": 12,
+      "page_file": "page-12.jpg",
+      "book_page_number": 11,
+      "type": "deep_dive_concept",
+      "title": "Quan Sát Sâu: Cạnh & Góc Của Hình Chữ Nhật",
+      "section_badge": "Chặng 19 - Làm Quen Với Hình Chữ Nhật",
+      "dialogues": {
+        "bear": "Hôm nay mình làm quen với hình chữ nhật nhé!",
+        "rabbit": "Hình này có 4 cạnh đó bé!"
+      },
+      "exercises": [
+        {
+          "exercise_id": "P12-EX1",
+          "exercise_number": 1,
+          "instruction": "QUAN SÁT HÌNH CHỮ NHẬT.",
+          "mechanic": "Edge & Corner Anatomy Exploration",
+          "content": "Hình chữ nhật hồng nằm ngang má hồng, sơ đồ chỉ rõ '1 cạnh' (mép trên) và '1 góc' (giao điểm hai cạnh ở góc dưới bên phải).",
+          "rules": [
+            "Đây là hình chữ nhật.",
+            "Hình chữ nhật có 4 cạnh.",
+            "Hình chữ nhật có 4 góc."
+          ]
+        },
+        {
+          "exercise_id": "P12-EX2",
+          "exercise_number": 2,
+          "instruction": "KHOANH VÀO HÌNH CHỮ NHẬT.",
+          "mechanic": "Shape Discrimination",
+          "items": [
+            {
+              "shape": "rectangle",
+              "color": "green",
+              "orientation": "horizontal",
+              "is_correct": true
+            },
+            { "shape": "square", "color": "yellow", "is_correct": false },
+            { "shape": "circle", "color": "blue", "is_correct": false },
+            {
+              "shape": "rectangle",
+              "color": "purple",
+              "orientation": "horizontal",
+              "is_correct": true
+            },
+            { "shape": "triangle", "color": "orange", "is_correct": false },
+            {
+              "shape": "rectangle",
+              "color": "pink",
+              "orientation": "vertical",
+              "is_correct": true
+            }
+          ],
+          "correct_count": 3
+        },
+        {
+          "exercise_id": "P12-EX3",
+          "exercise_number": 3,
+          "instruction": "TÔ MÀU CÁC HÌNH CHỮ NHẬT.",
+          "mechanic": "Coloring / Identification",
+          "items": [
+            { "shape": "rectangle_horizontal", "is_target": true },
+            { "shape": "triangle", "is_target": false },
+            { "shape": "rectangle_vertical", "is_target": true },
+            { "shape": "circle", "is_target": false },
+            { "shape": "square", "is_target": false },
+            { "shape": "rectangle_horizontal", "is_target": true }
+          ],
+          "target_count": 3
+        }
+      ],
+      "recommended_gt_template": "GT-001",
+      "recommended_skills": ["C2.GEO.04"]
+    },
+    {
+      "page_index": 13,
+      "page_file": "page-13.jpg",
+      "book_page_number": 12,
+      "type": "outline_discrimination_and_counting",
+      "title": "Tìm Hình Chữ Nhật & Đếm Nét Rỗng",
+      "section_badge": "Chặng 19 - Tìm Hình Chữ Nhật",
+      "dialogues": {
+        "bear": "Con nhìn thật kỹ nhé!",
+        "rabbit": "Hình nào dài dài là bạn chữ nhật đấy!"
+      },
+      "exercises": [
+        {
+          "exercise_id": "P13-EX1",
+          "exercise_number": 1,
+          "instruction": "TÌM VÀ KHOANH CÁC HÌNH CHỮ NHẬT.",
+          "mechanic": "Monochrome Outline Identification",
+          "items": [
+            { "shape": "rectangle_horizontal", "is_correct": true },
+            { "shape": "triangle", "is_correct": false },
+            { "shape": "rectangle_vertical", "is_correct": true },
+            { "shape": "circle", "is_correct": false },
+            { "shape": "rectangle_horizontal", "is_correct": true },
+            { "shape": "square", "is_correct": false },
+            { "shape": "rectangle_vertical", "is_correct": true },
+            { "shape": "circle", "is_correct": false }
+          ],
+          "correct_count": 4
+        },
+        {
+          "exercise_id": "P13-EX2",
+          "exercise_number": 2,
+          "instruction": "CÓ TẤT CẢ BAO NHIÊU HÌNH CHỮ NHẬT?",
+          "mechanic": "Counting & Multiple Choice",
+          "items": [
+            { "shape": "rectangle_horizontal", "is_target": true },
+            { "shape": "square", "is_target": false },
+            { "shape": "rectangle_horizontal", "is_target": true },
+            { "shape": "circle", "is_target": false },
+            { "shape": "rectangle_vertical", "is_target": true },
+            { "shape": "triangle", "is_target": false },
+            { "shape": "rectangle_horizontal", "is_target": true },
+            { "shape": "square", "is_target": false }
+          ],
+          "options": ["A. 3", "B. 4", "C. 5"],
+          "correct_answer": "B. 4"
+        },
+        {
+          "exercise_id": "P13-EX3",
+          "exercise_number": 3,
+          "instruction": "NỐI HÌNH CHỮ NHẬT VỚI TÊN ĐÚNG.",
+          "mechanic": "Pair Match",
+          "pairs": [
+            { "source": "Hình chữ nhật nằm rỗng", "target": "Hình chữ nhật" },
+            { "source": "Hình tròn rỗng", "target": "Hình tròn" },
+            { "source": "Hình tam giác rỗng", "target": "Hình tam giác" }
+          ]
+        }
+      ],
+      "recommended_gt_template": "GT-001",
+      "recommended_skills": ["C2.GEO.04", "C1.CNT.01"]
+    },
+    {
+      "page_index": 14,
+      "page_file": "page-14.jpg",
+      "book_page_number": 13,
+      "type": "fine_contrast_differentiation",
+      "title": "Phân Biệt Tinh Vi: Hình Chữ Nhật vs Hình Vuông",
+      "section_badge": "Chặng 19 - Phân Biệt Hình Chữ Nhật",
+      "dialogues": {
+        "bear": "Hình vuông và hình chữ nhật hơi giống nhau đấy!",
+        "rabbit": "Nhưng mình vẫn tìm ra được đúng không nào?"
+      },
+      "exercises": [
+        {
+          "exercise_id": "P14-EX1",
+          "exercise_number": 1,
+          "instruction": "CHỌN HÌNH CHỮ NHẬT TRONG MỖI NHÓM.",
+          "mechanic": "Target Selection per Row",
+          "rows": [
+            {
+              "row_number": 1,
+              "items": [
+                { "shape": "square", "is_correct": false },
+                { "shape": "rectangle", "is_correct": true },
+                { "shape": "circle", "is_correct": false }
+              ]
+            },
+            {
+              "row_number": 2,
+              "items": [
+                { "shape": "triangle", "is_correct": false },
+                { "shape": "rectangle", "is_correct": true },
+                { "shape": "square", "is_correct": false }
+              ]
+            },
+            {
+              "row_number": 3,
+              "items": [
+                { "shape": "circle", "is_correct": false },
+                { "shape": "square", "is_correct": false },
+                { "shape": "rectangle", "is_correct": true }
+              ]
+            }
+          ]
+        },
+        {
+          "exercise_id": "P14-EX2",
+          "exercise_number": 2,
+          "instruction": "TÔ MÀU XANH HÌNH CHỮ NHẬT, TÔ MÀU ĐỎ HÌNH VUÔNG.",
+          "mechanic": "Dual-rule Color Differentiation",
+          "items": [
+            { "shape": "rectangle", "expected_color": "blue" },
+            { "shape": "square", "expected_color": "red" },
+            { "shape": "rectangle", "expected_color": "blue" },
+            { "shape": "square", "expected_color": "red" },
+            { "shape": "rectangle", "expected_color": "blue" },
+            { "shape": "square", "expected_color": "red" }
+          ]
+        },
+        {
+          "exercise_id": "P14-EX3",
+          "exercise_number": 3,
+          "instruction": "NỐI TÊN ĐÚNG VỚI MỖI HÌNH.",
+          "mechanic": "Pair Match",
+          "pairs": [
+            { "source": "Hình vuông rỗng", "target": "Hình vuông" },
+            { "source": "Hình chữ nhật nằm rỗng", "target": "Hình chữ nhật" }
+          ]
+        }
+      ],
+      "recommended_gt_template": "GT-001",
+      "recommended_skills": ["C2.GEO.04", "C2.GEO.02", "C3.CLS.02"]
+    },
+    {
+      "page_index": 15,
+      "page_file": "page-15.jpg",
+      "book_page_number": 14,
+      "type": "deep_dive_concept",
+      "title": "Quan Sát Sâu: Cạnh & Góc Của Hình Vuông",
+      "section_badge": "Chặng 19 - Làm Quen Với Hình Vuông",
+      "dialogues": {
+        "bear": "Chào bạn hình vuông!",
+        "rabbit": "Bạn ấy có 4 cạnh bằng nhau đó!"
+      },
+      "exercises": [
+        {
+          "exercise_id": "P15-EX1",
+          "exercise_number": 1,
+          "instruction": "QUAN SÁT HÌNH VUÔNG.",
+          "mechanic": "Edge & Corner Anatomy Exploration",
+          "content": "Hình vuông hồng cười vui, sơ đồ chỉ rõ '1 cạnh' và '1 góc' (giao điểm ở góc dưới bên phải).",
+          "rules": [
+            "Đây là hình vuông.",
+            "Hình vuông có 4 cạnh.",
+            "4 cạnh bằng nhau.",
+            "Hình vuông có 4 góc."
+          ]
+        },
+        {
+          "exercise_id": "P15-EX2",
+          "exercise_number": 2,
+          "instruction": "KHOANH VÀO HÌNH VUÔNG.",
+          "mechanic": "Shape Discrimination",
+          "items": [
+            { "shape": "square", "color": "pink", "is_correct": true },
+            { "shape": "rectangle", "color": "green", "is_correct": false },
+            { "shape": "triangle", "color": "yellow", "is_correct": false },
+            { "shape": "square", "color": "blue", "is_correct": true },
+            { "shape": "circle", "color": "orange", "is_correct": false },
+            { "shape": "square", "color": "purple", "is_correct": true }
+          ],
+          "correct_count": 3
+        },
+        {
+          "exercise_id": "P15-EX3",
+          "exercise_number": 3,
+          "instruction": "TÔ MÀU CÁC HÌNH VUÔNG.",
+          "mechanic": "Coloring / Identification",
+          "items": [
+            { "shape": "square", "is_target": true },
+            { "shape": "circle", "is_target": false },
+            { "shape": "square", "is_target": true },
+            { "shape": "rectangle_vertical", "is_target": false },
+            { "shape": "triangle", "is_target": false },
+            { "shape": "square", "is_target": true }
+          ],
+          "target_count": 3
+        }
+      ],
+      "recommended_gt_template": "GT-001",
+      "recommended_skills": ["C2.GEO.02"]
+    },
+    {
+      "page_index": 16,
+      "page_file": "page-16.jpg",
+      "book_page_number": 15,
+      "type": "real_world_mapping_and_counting",
+      "title": "Tìm Hình Vuông & Đồ Vật Dạng Vuông",
+      "section_badge": "Chặng 19 - Tìm Hình Vuông",
+      "dialogues": {
+        "bear": "Con thử tìm các bạn hình vuông nhé!",
+        "rabbit": "Bạn nào có 4 cạnh bằng nhau?"
+      },
+      "exercises": [
+        {
+          "exercise_id": "P16-EX1",
+          "exercise_number": 1,
+          "instruction": "TÌM VÀ KHOANH CÁC HÌNH VUÔNG.",
+          "mechanic": "Size & Color Diversity Discrimination",
+          "items": [
+            { "shape": "square", "color": "pink", "is_correct": true },
+            { "shape": "circle", "color": "blue", "is_correct": false },
+            { "shape": "square", "color": "green", "is_correct": true },
+            { "shape": "square", "color": "yellow", "is_correct": true },
+            { "shape": "triangle", "color": "purple", "is_correct": false },
+            { "shape": "square", "color": "red", "is_correct": true },
+            { "shape": "square", "color": "blue", "is_correct": true },
+            { "shape": "square", "color": "orange", "is_correct": true }
+          ],
+          "correct_count": 6
+        },
+        {
+          "exercise_id": "P16-EX2",
+          "exercise_number": 2,
+          "instruction": "CÓ TẤT CẢ BAO NHIÊU HÌNH VUÔNG?",
+          "mechanic": "Counting & Multiple Choice",
+          "items": [
+            { "shape": "square", "color": "green", "is_target": true },
+            { "shape": "square", "color": "yellow", "is_target": true },
+            { "shape": "circle", "color": "blue", "is_target": false },
+            { "shape": "square", "color": "pink", "is_target": true },
+            { "shape": "triangle", "color": "purple", "is_target": false },
+            { "shape": "square", "color": "red", "is_target": true },
+            { "shape": "square", "color": "blue", "is_target": true },
+            { "shape": "square", "color": "orange", "is_target": true }
+          ],
+          "options": ["A. 3", "B. 4", "C. 5"],
+          "correct_answer": "C. 5"
+        },
+        {
+          "exercise_id": "P16-EX3",
+          "exercise_number": 3,
+          "instruction": "NỐI HÌNH VUÔNG VỚI ĐỒ VẬT CÓ DẠNG VUÔNG.",
+          "mechanic": "Real-world Object Matching",
+          "items": [
+            {
+              "source": "Hình vuông hồng",
+              "target": "Khung cửa sổ 4 ô vuông 🪟",
+              "is_correct": true
+            },
+            {
+              "source": "Hình vuông hồng",
+              "target": "Hộp quà thắt nơ vuông 🎁",
+              "is_correct": true
+            },
+            {
+              "source": "Hình vuông hồng",
+              "target": "Mặt đồng hồ tròn ⏰",
+              "is_correct": false
+            }
+          ]
+        }
+      ],
+      "recommended_gt_template": "GT-005",
+      "recommended_skills": ["C2.GEO.02", "C2.SOL.01", "C1.CNT.01"]
+    },
+    {
+      "page_index": 17,
+      "page_file": "page-17.jpg",
+      "book_page_number": 16,
+      "type": "sorting_and_differentiation",
+      "title": "Phân Biệt Nhóm: Hình Vuông & Hình Chữ Nhật",
+      "section_badge": "Chặng 19 - Phân Biệt Hình Vuông Và Hình Chữ Nhật",
+      "dialogues": {
+        "bear": "Hai bạn này giống mà khác đấy!",
+        "rabbit": "Con xem cạnh của chúng nhé!"
+      },
+      "exercises": [
+        {
+          "exercise_id": "P17-EX1",
+          "exercise_number": 1,
+          "instruction": "NỐI CÁC HÌNH VÀO ĐÚNG NHÓM.",
+          "mechanic": "Binary Basket Sorting (Square vs Rectangle)",
+          "boxes": ["Hình vuông", "Hình chữ nhật"],
+          "items": [
+            { "shape": "square", "color": "green", "target_box": "Hình vuông" },
+            {
+              "shape": "rectangle",
+              "color": "yellow",
+              "target_box": "Hình chữ nhật"
+            },
+            { "shape": "square", "color": "red", "target_box": "Hình vuông" },
+            {
+              "shape": "rectangle",
+              "color": "blue",
+              "target_box": "Hình chữ nhật"
+            },
+            {
+              "shape": "square",
+              "color": "purple",
+              "target_box": "Hình vuông"
+            },
+            {
+              "shape": "rectangle",
+              "color": "orange",
+              "target_box": "Hình chữ nhật"
+            }
+          ]
+        },
+        {
+          "exercise_id": "P17-EX2",
+          "exercise_number": 2,
+          "instruction": "KHOANH VÀO HÌNH THEO YÊU CẦU.",
+          "mechanic": "Split Screen Target Selection",
+          "columns": [
+            {
+              "label": "Khoanh hình vuông.",
+              "items": [
+                { "shape": "square", "is_correct": true },
+                { "shape": "rectangle", "is_correct": false },
+                { "shape": "circle", "is_correct": false },
+                { "shape": "square", "is_correct": true }
+              ]
+            },
+            {
+              "label": "Khoanh hình chữ nhật.",
+              "items": [
+                { "shape": "rectangle", "is_correct": true },
+                { "shape": "square", "is_correct": false },
+                { "shape": "rectangle", "is_correct": true },
+                { "shape": "circle", "is_correct": false }
+              ]
+            }
+          ]
+        },
+        {
+          "exercise_id": "P17-EX3",
+          "exercise_number": 3,
+          "instruction": "TÔ MÀU THEO YÊU CẦU: Tô màu vàng hình vuông, Tô màu xanh hình chữ nhật.",
+          "mechanic": "Color by Code",
+          "items": [
+            { "shape": "square", "expected_color": "yellow" },
+            { "shape": "rectangle", "expected_color": "blue" },
+            { "shape": "square", "expected_color": "yellow" },
+            { "shape": "rectangle", "expected_color": "blue" },
+            { "shape": "circle", "expected_color": null },
+            { "shape": "triangle", "expected_color": null }
+          ]
+        }
+      ],
+      "recommended_gt_template": "GT-008",
+      "recommended_skills": ["C2.GEO.02", "C2.GEO.04", "C3.CLS.02"]
+    },
+    {
+      "page_index": 18,
+      "page_file": "page-18.jpg",
+      "book_page_number": 17,
+      "type": "mechanical_property_exploration",
+      "title": "Đặc Tính Cơ Học Của Hình Tròn: Lăn Được",
+      "section_badge": "Chặng 19 - Làm Quen Với Hình Tròn",
+      "dialogues": {
+        "bear": "Bạn hình tròn lăn được đấy!",
+        "rabbit": "Vì bạn ấy không có góc nào cả!"
+      },
+      "exercises": [
+        {
+          "exercise_id": "P18-EX1",
+          "exercise_number": 1,
+          "instruction": "QUAN SÁT HÌNH TRÒN.",
+          "mechanic": "Concept Exploration & Mechanical Attribute",
+          "content": "Hình tròn hồng má phúng phính cười toe toét. Giảng giải về chuyển động lăn do không có cạnh và không có góc cản trở.",
+          "rules": [
+            "Đây là hình tròn.",
+            "Hình tròn không có cạnh.",
+            "Hình tròn không có góc."
+          ]
+        },
+        {
+          "exercise_id": "P18-EX2",
+          "exercise_number": 2,
+          "instruction": "KHOANH VÀO HÌNH TRÒN.",
+          "mechanic": "Shape Discrimination",
+          "items": [
+            { "shape": "circle", "color": "pink", "is_correct": true },
+            { "shape": "square", "color": "green", "is_correct": false },
+            { "shape": "circle", "color": "blue", "is_correct": true },
+            { "shape": "triangle", "color": "yellow", "is_correct": false },
+            { "shape": "square", "color": "purple", "is_correct": false },
+            { "shape": "circle", "color": "orange", "is_correct": true }
+          ],
+          "correct_count": 3
+        },
+        {
+          "exercise_id": "P18-EX3",
+          "exercise_number": 3,
+          "instruction": "TÔ MÀU CÁC HÌNH TRÒN.",
+          "mechanic": "Coloring / Identification",
+          "items": [
+            { "shape": "circle", "is_target": true },
+            { "shape": "square", "is_target": false },
+            { "shape": "circle", "is_target": true },
+            { "shape": "triangle", "is_target": false },
+            { "shape": "square", "is_target": false },
+            { "shape": "circle", "is_target": true }
+          ],
+          "target_count": 3
+        }
+      ],
+      "recommended_gt_template": "GT-001",
+      "recommended_skills": ["C2.GEO.01"]
+    },
+    {
+      "page_index": 19,
+      "page_file": "page-19.jpg",
+      "book_page_number": 18,
+      "type": "counting_and_real_world_match",
+      "title": "Tìm, Đếm Hình Tròn & Đồ Vật Tròn",
+      "section_badge": "Chặng 19 - Tìm Và Đếm Hình Tròn",
+      "dialogues": {
+        "bear": "Con tìm các bạn tròn tròn nhé!",
+        "rabbit": "Bạn nào không có góc nào?"
+      },
+      "exercises": [
+        {
+          "exercise_id": "P19-EX1",
+          "exercise_number": 1,
+          "instruction": "TÌM VÀ KHOANH CÁC HÌNH TRÒN.",
+          "mechanic": "Monochrome Outline Discrimination",
+          "items": [
+            { "shape": "circle", "is_correct": true },
+            { "shape": "triangle", "is_correct": false },
+            { "shape": "circle", "is_correct": true },
+            { "shape": "square", "is_correct": false },
+            { "shape": "rectangle", "is_correct": false },
+            { "shape": "circle", "is_correct": true },
+            { "shape": "square", "is_correct": false },
+            { "shape": "circle", "is_correct": true }
+          ],
+          "correct_count": 4
+        },
+        {
+          "exercise_id": "P19-EX2",
+          "exercise_number": 2,
+          "instruction": "CÓ TẤT CẢ BAO NHIÊU HÌNH TRÒN?",
+          "mechanic": "Counting & Multiple Choice",
+          "items": [
+            { "shape": "circle", "is_target": true },
+            { "shape": "square", "is_target": false },
+            { "shape": "circle", "is_target": true },
+            { "shape": "triangle", "is_target": false },
+            { "shape": "rectangle", "is_target": false },
+            { "shape": "circle", "is_target": true },
+            { "shape": "square", "is_target": false },
+            { "shape": "circle", "is_target": true }
+          ],
+          "options": ["A. 3", "B. 4", "C. 5"],
+          "correct_answer": "B. 4"
+        },
+        {
+          "exercise_id": "P19-EX3",
+          "exercise_number": 3,
+          "instruction": "NỐI HÌNH TRÒN VỚI ĐỒ VẬT CÓ DẠNG TRÒN.",
+          "mechanic": "One-to-Many Real-world Match",
+          "source": "Hình tròn nét rỗng",
+          "targets": [
+            { "object": "Quả bóng bãi biển sọc ⚽", "is_correct": true },
+            { "object": "Mặt trời toả tia nắng ☀️", "is_correct": true },
+            { "object": "Bánh xe ô tô vành đúc 🛞", "is_correct": true }
+          ]
+        }
+      ],
+      "recommended_gt_template": "GT-005",
+      "recommended_skills": ["C2.GEO.01", "C2.SOL.01", "C1.CNT.01"]
+    },
+    {
+      "page_index": 20,
+      "page_file": "page-20.jpg",
+      "book_page_number": 19,
+      "type": "complementary_logic_and_coding",
+      "title": "Phân Biệt Hình Tròn & Đếm Tập Hợp Bù",
+      "section_badge": "Chặng 19 - Phân Biệt Hình Tròn",
+      "dialogues": {
+        "bear": "Hình tròn thật đặc biệt!",
+        "rabbit": "Vì bạn ấy không có cạnh, không có góc!"
+      },
+      "exercises": [
+        {
+          "exercise_id": "P20-EX1",
+          "exercise_number": 1,
+          "instruction": "CHỌN HÌNH TRÒN TRONG MỖI NHÓM.",
+          "mechanic": "3-Option Radio Selection per Group",
+          "groups": [
+            {
+              "group_number": 1,
+              "items": [
+                { "shape": "triangle", "color": "green", "is_correct": false },
+                { "shape": "circle", "color": "red", "is_correct": true },
+                { "shape": "square", "color": "yellow", "is_correct": false }
+              ]
+            },
+            {
+              "group_number": 2,
+              "items": [
+                { "shape": "circle", "color": "blue", "is_correct": true },
+                {
+                  "shape": "rectangle",
+                  "color": "purple",
+                  "is_correct": false
+                },
+                { "shape": "square", "color": "yellow", "is_correct": false }
+              ]
+            },
+            {
+              "group_number": 3,
+              "items": [
+                { "shape": "triangle", "color": "orange", "is_correct": false },
+                { "shape": "square", "color": "green", "is_correct": false },
+                { "shape": "circle", "color": "red", "is_correct": true }
+              ]
+            }
+          ]
+        },
+        {
+          "exercise_id": "P20-EX2",
+          "exercise_number": 2,
+          "instruction": "TÔ MÀU THEO MÃ: Hình tròn: đỏ; Hình vuông: vàng; Hình tam giác: xanh; Hình chữ nhật: tím.",
+          "mechanic": "Color by Code Pattern",
+          "pattern_items": [
+            { "shape": "circle", "expected_color": "red" },
+            { "shape": "square", "expected_color": "yellow" },
+            { "shape": "triangle", "expected_color": "green" },
+            { "shape": "rectangle", "expected_color": "purple" },
+            { "shape": "circle", "expected_color": "red" },
+            { "shape": "square", "expected_color": "yellow" },
+            { "shape": "triangle", "expected_color": "green" },
+            { "shape": "rectangle", "expected_color": "purple" }
+          ]
+        },
+        {
+          "exercise_id": "P20-EX3",
+          "exercise_number": 3,
+          "instruction": "ĐIỀN SỐ LƯỢNG: Phân loại bù (Complementary Counting)",
+          "mechanic": "Set and Complement Counting",
+          "items": [
+            { "shape": "circle", "color": "red" },
+            { "shape": "square", "color": "yellow" },
+            { "shape": "triangle", "color": "green" },
+            { "shape": "circle", "color": "blue" },
+            { "shape": "rectangle", "color": "purple" },
+            { "shape": "triangle", "color": "orange" },
+            { "shape": "circle", "color": "blue" }
+          ],
+          "cloze_prompts": [
+            { "prompt": "Có [ 3 ] hình tròn.", "correct_value": 3 },
+            {
+              "prompt": "Có [ 4 ] hình không phải hình tròn.",
+              "correct_value": 4
+            }
+          ]
+        }
+      ],
+      "recommended_gt_template": "GT-001",
+      "recommended_skills": ["C2.GEO.01", "C3.CLS.02", "C1.CNT.01"]
+    },
+    {
+      "page_index": 21,
+      "page_file": "page-21.jpg",
+      "book_page_number": 20,
+      "type": "comprehensive_review_stage2",
+      "title": "Ôn Tập Tổng Hợp 4 Hình Cơ Bản & Phân Loại 4 Giỏ",
+      "section_badge": "Chặng 19 - Ôn Tập Tổng Hợp 4 Hình Cơ Bản",
+      "dialogues": {
+        "bear": "Con đã học được nhiều hình lắm rồi!",
+        "rabbit": "Giờ mình cùng ôn lại nhé!"
+      },
+      "exercises": [
+        {
+          "exercise_id": "P21-EX1",
+          "exercise_number": 1,
+          "instruction": "NỐI HÌNH VỚI TÊN ĐÚNG.",
+          "mechanic": "4-Item Pair Match",
+          "pairs": [
+            { "source": "Tam giác hồng", "target": "Hình tam giác" },
+            { "source": "Chữ nhật xanh lá", "target": "Hình chữ nhật" },
+            { "source": "Hình vuông vàng", "target": "Hình vuông" },
+            { "source": "Hình tròn lam", "target": "Hình tròn" }
+          ]
+        },
+        {
+          "exercise_id": "P21-EX2",
+          "exercise_number": 2,
+          "instruction": "ĐẾM SỐ LƯỢNG TỪNG LOẠI HÌNH.",
+          "mechanic": "Multi-category Counting in Matrix",
+          "matrix_items": [
+            {
+              "row": 1,
+              "shapes": [
+                "circle_blue",
+                "rectangle_green",
+                "triangle_pink",
+                "square_yellow",
+                "circle_blue",
+                "rectangle_green"
+              ]
+            },
+            {
+              "row": 2,
+              "shapes": [
+                "square_yellow",
+                "triangle_pink",
+                "circle_blue",
+                "rectangle_green",
+                "triangle_pink",
+                "square_yellow"
+              ]
+            }
+          ],
+          "counts": {
+            "triangle": 3,
+            "rectangle": 3,
+            "square": 3,
+            "circle": 3
+          },
+          "cloze_prompts": [
+            "Có [ 3 ] hình tam giác.",
+            "Có [ 3 ] hình chữ nhật.",
+            "Có [ 3 ] hình vuông.",
+            "Có [ 3 ] hình tròn."
+          ]
+        },
+        {
+          "exercise_id": "P21-EX3",
+          "exercise_number": 3,
+          "instruction": "PHÂN LOẠI CÁC HÌNH VÀO NHÓM PHÙ HỢP.",
+          "mechanic": "4-Basket Drag & Drop Sorting",
+          "baskets": ["Tam giác", "Chữ nhật", "Vuông", "Tròn"],
+          "draggable_items": [
+            { "shape": "triangle", "color": "pink", "target": "Tam giác" },
+            { "shape": "rectangle", "color": "green", "target": "Chữ nhật" },
+            { "shape": "square", "color": "yellow", "target": "Vuông" },
+            { "shape": "circle", "color": "blue", "target": "Tròn" },
+            { "shape": "triangle", "color": "pink", "target": "Tam giác" },
+            { "shape": "rectangle", "color": "green", "target": "Chữ nhật" },
+            { "shape": "square", "color": "yellow", "target": "Vuông" },
+            { "shape": "circle", "color": "blue", "target": "Tròn" }
+          ]
+        }
+      ],
+      "recommended_gt_template": "GT-008",
+      "recommended_skills": [
+        "C2.GEO.01",
+        "C2.GEO.02",
+        "C2.GEO.03",
+        "C2.GEO.04",
+        "C3.CLS.01",
+        "C1.CNT.01"
+      ]
+    },
+    {
+      "page_index": 22,
+      "page_file": "page-22.jpg",
+      "book_page_number": 21,
+      "type": "dense_matrix_matching_and_quota",
+      "title": "Trang 21 - Ôn Tập Tìm Đúng Hình & Hạn Ngạch",
+      "section_badge": "Chặng 19 - Trang 21 - Ôn Tập Tìm Đúng Hình",
+      "dialogues": {
+        "bear": "Mình cùng ôn lại các hình nhé!",
+        "rabbit": "Con hãy tìm đúng từng hình nào!"
+      },
+      "exercises": [
+        {
+          "exercise_id": "P22-EX1",
+          "exercise_number": 1,
+          "instruction": "BÀI 1: NỐI MỖI HÌNH MẪU VỚI CÁC HÌNH GIỐNG NÓ.",
+          "mechanic": "One-to-Many Matching in 4x4 Grid",
+          "sources": [
+            {
+              "id": "sample_triangle",
+              "shape": "triangle",
+              "label": "tam giác"
+            },
+            {
+              "id": "sample_rectangle",
+              "shape": "rectangle",
+              "label": "hình chữ nhật"
+            },
+            { "id": "sample_square", "shape": "square", "label": "hình vuông" },
+            { "id": "sample_circle", "shape": "circle", "label": "hình tròn" }
+          ],
+          "target_grid_4x4": [
+            [
+              "square_yellow",
+              "circle_blue",
+              "triangle_pink",
+              "rectangle_green"
+            ],
+            [
+              "circle_blue",
+              "rectangle_green",
+              "square_yellow",
+              "triangle_pink"
+            ],
+            [
+              "rectangle_green",
+              "triangle_pink",
+              "circle_blue",
+              "square_yellow"
+            ],
+            ["triangle_pink", "square_yellow", "rectangle_green", "circle_blue"]
+          ],
+          "rule": "Mỗi hình mẫu nối tới 4 hình cùng loại trong lưới ma trận."
+        },
+        {
+          "exercise_id": "P22-EX2",
+          "exercise_number": 2,
+          "instruction": "BÀI 2: KHOANH VÀO THEO YÊU CẦU.",
+          "mechanic": "Quota Target Selection",
+          "quadrants": [
+            {
+              "quota_label": "Khoanh 3 hình tam giác",
+              "target_shape": "triangle",
+              "required_count": 3,
+              "items": [
+                { "shape": "circle", "color": "blue" },
+                { "shape": "triangle", "color": "pink", "is_target": true },
+                { "shape": "square", "color": "green" },
+                { "shape": "triangle", "color": "pink", "is_target": true },
+                { "shape": "square", "color": "yellow" },
+                { "shape": "triangle", "color": "pink", "is_target": true },
+                { "shape": "circle", "color": "blue" },
+                { "shape": "rectangle", "color": "green" }
+              ]
+            },
+            {
+              "quota_label": "Khoanh 2 hình chữ nhật",
+              "target_shape": "rectangle",
+              "required_count": 2,
+              "items": [
+                { "shape": "rectangle", "color": "green", "is_target": true },
+                { "shape": "square", "color": "yellow" },
+                { "shape": "circle", "color": "blue" },
+                { "shape": "triangle", "color": "pink" },
+                { "shape": "rectangle", "color": "blue", "is_target": true },
+                { "shape": "circle", "color": "pink" },
+                { "shape": "rectangle", "color": "green", "is_target": true },
+                { "shape": "square", "color": "yellow" }
+              ]
+            },
+            {
+              "quota_label": "Khoanh 4 hình vuông",
+              "target_shape": "square",
+              "required_count": 4,
+              "items": [
+                { "shape": "square", "color": "yellow", "is_target": true },
+                { "shape": "circle", "color": "pink" },
+                { "shape": "square", "color": "green", "is_target": true },
+                { "shape": "circle", "color": "blue" },
+                { "shape": "square", "color": "pink", "is_target": true },
+                { "shape": "triangle", "color": "green" },
+                { "shape": "square", "color": "yellow", "is_target": true },
+                { "shape": "square", "color": "blue", "is_target": true }
+              ]
+            },
+            {
+              "quota_label": "Khoanh 3 hình tròn",
+              "target_shape": "circle",
+              "required_count": 3,
+              "items": [
+                { "shape": "circle", "color": "blue", "is_target": true },
+                { "shape": "triangle", "color": "green" },
+                { "shape": "circle", "color": "pink", "is_target": true },
+                { "shape": "square", "color": "yellow" },
+                { "shape": "circle", "color": "green", "is_target": true },
+                { "shape": "square", "color": "blue" },
+                { "shape": "triangle", "color": "pink" },
+                { "shape": "circle", "color": "green", "is_target": true }
+              ]
+            }
+          ]
+        }
+      ],
+      "recommended_gt_template": "GT-005",
+      "recommended_skills": [
+        "C2.GEO.01",
+        "C2.GEO.02",
+        "C2.GEO.03",
+        "C2.GEO.04",
+        "C1.CNT.01"
+      ]
+    },
+    {
+      "page_index": 23,
+      "page_file": "page-23.jpg",
+      "book_page_number": 22,
+      "type": "dense_counting_challenge",
+      "title": "Thành Phố Hình Khối Kỳ Diệu: Đếm Mật Độ Cao",
+      "section_badge": "Chặng 19 - Thành Phố Hình Khối Kỳ Diệu",
+      "dialogues": {
+        "bear": "Bây giờ mình cùng đếm nhé!",
+        "rabbit": "Con hãy nhìn thật kỹ từng hình nha!"
+      },
+      "exercises": [
+        {
+          "exercise_id": "P23-EX1",
+          "exercise_number": 1,
+          "instruction": "BÀI 1: ĐẾM VÀ VIẾT SỐ VÀO Ô.",
+          "mechanic": "High-density Matrix Counting & Write",
+          "matrix_description": "Ma trận 18 hình học trộn lẫn không theo thứ tự:",
+          "exact_counts": {
+            "triangle": 5,
+            "rectangle": 4,
+            "square": 6,
+            "circle": 3
+          },
+          "targets": [
+            {
+              "shape": "triangle",
+              "label": "HÌNH TAM GIÁC",
+              "expected_count": 5
+            },
+            {
+              "shape": "rectangle",
+              "label": "HÌNH CHỮ NHẬT",
+              "expected_count": 4
+            },
+            { "shape": "square", "label": "HÌNH VUÔNG", "expected_count": 6 },
+            { "shape": "circle", "label": "HÌNH TRÒN", "expected_count": 3 }
+          ]
+        },
+        {
+          "exercise_id": "P23-EX2",
+          "exercise_number": 2,
+          "instruction": "BÀI 2: CHỌN SỐ ĐÚNG.",
+          "mechanic": "Row Item Counting & Multiple Choice",
+          "rows": [
+            {
+              "row_number": 1,
+              "items": "5 hình tam giác hồng",
+              "count": 5,
+              "options": [3, 4, 5],
+              "correct_answer": 5
+            },
+            {
+              "row_number": 2,
+              "items": "3 hình chữ nhật xanh lá",
+              "count": 3,
+              "options": [2, 3, 4],
+              "correct_answer": 3
+            },
+            {
+              "row_number": 3,
+              "items": "7 hình vuông vàng (in thực tế 7, trẻ đối chiếu chọn mức cao nhất)",
+              "count": 7,
+              "options": [4, 5, 6],
+              "correct_answer": 6
+            },
+            {
+              "row_number": 4,
+              "items": "3 hình tròn lam",
+              "count": 3,
+              "options": [2, 3, 4],
+              "correct_answer": 3
+            }
+          ]
+        }
+      ],
+      "recommended_gt_template": "GT-002",
+      "recommended_skills": [
+        "C1.CNT.01",
+        "C1.CNT.02",
+        "C2.GEO.01",
+        "C2.GEO.02",
+        "C2.GEO.03",
+        "C2.GEO.04"
+      ]
+    },
+    {
+      "page_index": 24,
+      "page_file": "page-24.jpg",
+      "book_page_number": 23,
+      "type": "capstone_final_challenge",
+      "title": "Trang 23 - Thử Thách Cuối Cùng",
+      "section_badge": "Chặng 19 - Trang 23 - Thử Thách Cuối Cùng",
+      "dialogues": {
+        "bear": "Đây là thử thách cuối rồi!",
+        "rabbit": "Con hãy hoàn thành thật giỏi nhé!"
+      },
+      "exercises": [
+        {
+          "exercise_id": "P24-EX1",
+          "exercise_number": 1,
+          "instruction": "BÀI 1: ĐIỀN HÌNH CÒN THIẾU (Pattern Sequence Completion).",
+          "mechanic": "Pattern Reasoning & Slot Fill",
+          "patterns": [
+            {
+              "line": 1,
+              "rule_type": "ABAB",
+              "sequence": [
+                "Tam giác hồng",
+                "Chữ nhật xanh lá",
+                "Tam giác hồng",
+                "Chữ nhật xanh lá",
+                "?"
+              ],
+              "options": [
+                "Tam giác hồng",
+                "Chữ nhật xanh lá",
+                "Hình tròn vàng"
+              ],
+              "correct_answer": "Tam giác hồng"
+            },
+            {
+              "line": 2,
+              "rule_type": "AABAAB",
+              "sequence": [
+                "Vuông vàng",
+                "Vuông vàng",
+                "Tròn lam",
+                "Vuông vàng",
+                "Vuông vàng",
+                "?"
+              ],
+              "options": ["Vuông vàng", "Tròn lam", "Chữ nhật xanh lá"],
+              "correct_answer": "Tròn lam"
+            },
+            {
+              "line": 3,
+              "rule_type": "ABAB",
+              "sequence": [
+                "Tròn lam",
+                "Tam giác hồng",
+                "Tròn lam",
+                "Tam giác hồng",
+                "?"
+              ],
+              "options": ["Tam giác hồng", "Tròn lam", "Vuông vàng"],
+              "correct_answer": "Tròn lam"
+            },
+            {
+              "line": 4,
+              "rule_type": "ABAB",
+              "sequence": [
+                "Chữ nhật xanh lá",
+                "Vuông tím",
+                "Chữ nhật xanh lá",
+                "Vuông tím",
+                "?"
+              ],
+              "options": ["Chữ nhật xanh lá", "Vuông tím", "Tròn lam"],
+              "correct_answer": "Chữ nhật xanh lá"
+            }
+          ]
+        },
+        {
+          "exercise_id": "P24-EX2",
+          "exercise_number": 2,
+          "instruction": "BÀI 2: NỐI ĐỒ VẬT VỚI HÌNH PHÙ HỢP (Bidirectional Multi-Object Mapping).",
+          "mechanic": "Two-Wing Real-World Object Matching to Center Reference",
+          "center_shapes": [
+            { "id": "ref_triangle", "shape": "Tam giác hồng" },
+            { "id": "ref_rectangle", "shape": "Chữ nhật xanh lá" },
+            { "id": "ref_square", "shape": "Vuông vàng" },
+            { "id": "ref_circle", "shape": "Tròn lam" }
+          ],
+          "left_wing_objects": [
+            { "object": "Miếng Pizza 🍕", "matches": "ref_triangle" },
+            { "object": "Cánh cửa gỗ 🚪", "matches": "ref_rectangle" },
+            { "object": "Khung cửa sổ 🪟", "matches": "ref_square" },
+            { "object": "Bánh xe ô tô 🛞", "matches": "ref_circle" }
+          ],
+          "right_wing_objects": [
+            { "object": "Con diều no gió 🪁", "matches": "ref_triangle" },
+            { "object": "Quyển sách bìa đỏ 📕", "matches": "ref_rectangle" },
+            { "object": "Hộp quà nơ đỏ 🎁", "matches": "ref_square" },
+            { "object": "Quả bóng bãi biển ⚽", "matches": "ref_circle" }
+          ]
+        }
+      ],
+      "recommended_gt_template": "GT-003",
+      "recommended_skills": [
+        "C1.PAT.01",
+        "C1.PAT.02",
+        "C2.SOL.01",
+        "C2.GEO.01",
+        "C2.GEO.02",
+        "C2.GEO.03",
+        "C2.GEO.04"
+      ]
+    },
+    {
+      "page_index": 25,
+      "page_file": "page-25.jpg",
+      "book_page_number": 24,
+      "type": "summary_and_certificate",
+      "title": "Trang 24 – Tổng Kết Chặng 19: Thành Phố Hình Khối Kỳ Diệu",
+      "section_badge": "Chặng 19 - Tổng Kết Chặng 19",
+      "dialogues": {
+        "bear": "Chúc mừng con đã hoàn thành chặng 19!",
+        "rabbit": "Con đã trở thành bạn nhỏ thật giỏi về hình khối rồi!"
+      },
+      "roadmap": [
+        { "step_range": "1–6", "theme": "HÌNH TAM GIÁC", "color": "pink" },
+        { "step_range": "7–12", "theme": "HÌNH CHỮ NHẬT", "color": "blue" },
+        { "step_range": "13–16", "theme": "HÌNH VUÔNG", "color": "green" },
+        { "step_range": "17–20", "theme": "HÌNH TRÒN", "color": "orange" },
+        { "step_range": "21–23", "theme": "ÔN TẬP", "color": "purple" },
+        { "step_range": "24", "theme": "VỀ ĐÍCH", "color": "gold" }
+      ],
+      "badge": {
+        "title": "Huy Hiệu Chặng 19",
+        "label": "Con đã hoàn thành CHẶNG 19 – THÀNH PHỐ HÌNH KHỐI KỲ DIỆU",
+        "stars": 3
+      },
+      "core_takeaways": [
+        { "shape": "Tam giác hồng", "statement": "Hình tam giác có 3 cạnh." },
+        {
+          "shape": "Chữ nhật xanh lam",
+          "statement": "Hình chữ nhật có 4 cạnh."
+        },
+        {
+          "shape": "Vuông xanh lá",
+          "statement": "Hình vuông có 4 cạnh bằng nhau."
+        },
+        { "shape": "Tròn cam", "statement": "Hình tròn không có cạnh." }
+      ],
+      "completion_date_field": "Ngày hoàn thành: ....",
+      "recommended_gt_template": "GT-000",
+      "recommended_skills": ["C2.GEO.01", "C2.GEO.02", "C2.GEO.03", "C2.GEO.04"]
+    }
+  ]
+}

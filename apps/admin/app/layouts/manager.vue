@@ -335,7 +335,7 @@
 
   const managerRole = computed<ManagerRole>(() => {
     const r = user.value?.role;
-    return r === "content_reviewer" ? "content_reviewer" : "super_admin";
+    return r === "super_admin" ? "super_admin" : "content_reviewer";
   });
 
   const managerDisplayName = computed(() => {

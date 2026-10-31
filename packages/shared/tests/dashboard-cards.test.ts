@@ -7,8 +7,8 @@ import {
 } from "#src/dashboard-cards";
 
 describe("Task 3 — Dashboard Cards Registry & Invariants (D-IX, BR-DSH-02, BR-DSH-06)", () => {
-  it("Scenario: D-IX — declares exactly 16 KPI cards matching Spec §7", () => {
-    expect(DASHBOARD_CARDS.length).toBe(16);
+  it("Scenario: D-IX — declares exactly 15 KPI cards matching Spec §7", () => {
+    expect(DASHBOARD_CARDS.length).toBe(15);
 
     const groupCounts = DASHBOARD_CARDS.reduce(
       (acc, card) => {
@@ -20,7 +20,7 @@ describe("Task 3 — Dashboard Cards Registry & Invariants (D-IX, BR-DSH-02, BR-
 
     expect(groupCounts.todo).toBe(3);
     expect(groupCounts.growth).toBe(5);
-    expect(groupCounts.content).toBe(6);
+    expect(groupCounts.content).toBe(5);
     expect(groupCounts.system).toBe(2);
   });
 
@@ -70,7 +70,7 @@ describe("Task 3 — Dashboard Cards Registry & Invariants (D-IX, BR-DSH-02, BR-
 
   it("Scenario: §7.3 feedback cards are placed before count cards in content group", () => {
     const contentCards = DASHBOARD_CARDS.filter((c) => c.group === "content");
-    expect(contentCards.length).toBe(6);
+    expect(contentCards.length).toBe(5);
 
     const feedbackCards = contentCards.slice(0, 3);
     const countCards = contentCards.slice(3);
@@ -86,7 +86,6 @@ describe("Task 3 — Dashboard Cards Registry & Invariants (D-IX, BR-DSH-02, BR-
     expect(countCards.map((c) => c.id)).toEqual([
       "published_levels",
       "draft_levels",
-      "published_lessons",
     ]);
   });
 
@@ -104,7 +103,7 @@ describe("Task 3 — Dashboard Cards Registry & Invariants (D-IX, BR-DSH-02, BR-
     }
 
     const adminCards = getDashboardCardsForRole("super_admin");
-    expect(adminCards.length).toBe(16);
+    expect(adminCards.length).toBe(15);
   });
 
   it("Scenario: D-IX negative test — pending_source card must be marked as pending, never treated as ready", () => {

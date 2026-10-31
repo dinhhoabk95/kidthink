@@ -1,7 +1,0 @@
-{
-  "create_error_api": {},
-  "create_error_server_non_api": {},
-  "app_error_not_found_string": {},
-  "bare_extends_error": {},
-  "auth_shim_imports": {}
-}

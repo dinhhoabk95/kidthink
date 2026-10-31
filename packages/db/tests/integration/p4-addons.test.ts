@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-describe("Phase P4 Add-on Invariants (BR-ACL, BR-AAS, BR-WSM, BR-LPC, BR-PDF, BR-CGB, BR-PCR, BR-SMS)", () => {
+describe("Phase P4 Add-on Invariants (BR-ACL, BR-AAS, BR-PDF, BR-CGB, BR-PCR)", () => {
   describe("AI Credit Ledger Invariants (BR-ACL)", () => {
     it("Scenario: BR-ACL-01 — Sổ là append-only — mọi giao dịch là một hàng, số dư là tổng", () => {
       const balance = 100;
@@ -79,7 +79,7 @@ describe("Phase P4 Add-on Invariants (BR-ACL, BR-AAS, BR-WSM, BR-LPC, BR-PDF, BR
       expect(passesModeration).toBe(true);
     });
 
-    it("Scenario: BR-AAS-06 — AI assistant supports lesson plan drafting suggestions for parent and teacher users", () => {
+    it("Scenario: BR-AAS-06 — AI assistant supports game content drafting suggestions for parent and teacher users", () => {
       const supportsDrafting = true;
       expect(supportsDrafting).toBe(true);
     });
@@ -94,91 +94,6 @@ describe("Phase P4 Add-on Invariants (BR-ACL, BR-AAS, BR-WSM, BR-LPC, BR-PDF, BR
     it("Scenario: BR-AAS-08 — AI assistant displays clear disclosure that content is AI-generated", () => {
       const hasAiDisclosure = true;
       expect(hasAiDisclosure).toBe(true);
-    });
-  });
-
-  describe("Worksheet Model Invariants (BR-WSM)", () => {
-    it("Scenario: BR-WSM-01 — worksheet model specifies printable A4 page dimensions and margin constraints", () => {
-      const format = "A4";
-      expect(format).toBe("A4");
-    });
-
-    it("Scenario: BR-WSM-02 — worksheet items map directly to target learning objectives and skill codes", () => {
-      const targetSkillCode = "C1.CNT.01";
-      expect(targetSkillCode).toBe("C1.CNT.01");
-    });
-
-    it("Scenario: BR-WSM-03 — worksheet layout engine formats high-contrast printable elements for home printing", () => {
-      const isHighContrast = true;
-      expect(isHighContrast).toBe(true);
-    });
-
-    it("Scenario: BR-WSM-04 — worksheet model enforces max page count limit of 2 pages per worksheet", () => {
-      const maxPages = 2;
-      expect(maxPages).toBe(2);
-    });
-
-    it("Scenario: BR-WSM-05 — worksheet model requires answer key page generation for parent reference", () => {
-      const includesAnswerKey = true;
-      expect(includesAnswerKey).toBe(true);
-    });
-
-    it("Scenario: BR-WSM-06 — worksheet versioning maintains immutable published PDF assets", () => {
-      const isImmutable = true;
-      expect(isImmutable).toBe(true);
-    });
-
-    it("Scenario: BR-WSM-07 — worksheet access is gated by entitlement package level", () => {
-      const requiredTier = "standard";
-      expect(requiredTier).toBe("standard");
-    });
-
-    it("Scenario: BR-WSM-08 — worksheet metadata includes estimated completion time in minutes", () => {
-      const estimatedMinutes = 15;
-      expect(estimatedMinutes).toBe(15);
-    });
-  });
-
-  describe("Lesson Plan Creator Invariants (BR-LPC)", () => {
-    it("Scenario: BR-LPC-01 — lesson plan creator generates structured multi-activity lesson plans", () => {
-      const isStructured = true;
-      expect(isStructured).toBe(true);
-    });
-
-    it("Scenario: BR-LPC-02 — lesson plan creator validates pedagogical balance across competencies", () => {
-      const isBalanced = true;
-      expect(isBalanced).toBe(true);
-    });
-
-    it("Scenario: BR-LPC-03 — lesson plan creator supports custom duration selection between 15 and 45 minutes", () => {
-      const duration = 30;
-      const isValid = duration >= 15 && duration <= 45;
-      expect(isValid).toBe(true);
-    });
-
-    it("Scenario: BR-LPC-04 — lesson plan creator consumes AI credits for AI-assisted plan generation", () => {
-      const consumesCredits = true;
-      expect(consumesCredits).toBe(true);
-    });
-
-    it("Scenario: BR-LPC-05 — custom created lesson plans are saved to user account personal library", () => {
-      const savesToLibrary = true;
-      expect(savesToLibrary).toBe(true);
-    });
-
-    it("Scenario: BR-LPC-06 — lesson plan creator enforces max limit on custom saved plans per account quota", () => {
-      const quotaLimit = 20;
-      expect(quotaLimit).toBe(20);
-    });
-
-    it("Scenario: BR-LPC-07 — custom lesson plans can be exported as printable PDF documents", () => {
-      const supportsPdfExport = true;
-      expect(supportsPdfExport).toBe(true);
-    });
-
-    it("Scenario: BR-LPC-08 — custom lesson plans undergo client-side and server-side Zod validation", () => {
-      const isValidated = true;
-      expect(isValidated).toBe(true);
     });
   });
 
@@ -307,48 +222,6 @@ describe("Phase P4 Add-on Invariants (BR-ACL, BR-AAS, BR-WSM, BR-LPC, BR-PDF, BR
     it("Scenario: BR-PCR-08 — personal curriculum operations write audit_logs entries", () => {
       const auditAction = "user.personal_curriculum.updated";
       expect(auditAction).toBe("user.personal_curriculum.updated");
-    });
-  });
-
-  describe("Semantic Search Invariants (BR-SMS)", () => {
-    it("Scenario: BR-SMS-01 — semantic search queries vector embeddings for similarity search across learning content", () => {
-      const usesVectorSearch = true;
-      expect(usesVectorSearch).toBe(true);
-    });
-
-    it("Scenario: BR-SMS-02 — vector embedding dimension size N is fixed in database migration schema", () => {
-      const vectorDimension = 1536;
-      expect(vectorDimension).toBe(1536);
-    });
-
-    it("Scenario: BR-SMS-03 — semantic search results are filtered by user entitlement tier and content visibility", () => {
-      const filtersByEntitlement = true;
-      expect(filtersByEntitlement).toBe(true);
-    });
-
-    it("Scenario: BR-SMS-04 — semantic search falls back to keyword trigram search if vector service is unavailable", () => {
-      const hasFallback = true;
-      expect(hasFallback).toBe(true);
-    });
-
-    it("Scenario: BR-SMS-05 — semantic search API enforces query rate limits per account to prevent abuse", () => {
-      const rateLimitRpm = 30;
-      expect(rateLimitRpm).toBe(30);
-    });
-
-    it("Scenario: BR-SMS-06 — semantic search results return high-confidence match scores above threshold 0.7", () => {
-      const matchScoreThreshold = 0.7;
-      expect(matchScoreThreshold).toBe(0.7);
-    });
-
-    it("Scenario: BR-SMS-07 — semantic search indexing runs asynchronously on published content updates", () => {
-      const isAsyncIndexing = true;
-      expect(isAsyncIndexing).toBe(true);
-    });
-
-    it("Scenario: BR-SMS-08 — semantic search logs search terms and match metrics without storing PII", () => {
-      const storesPii = false;
-      expect(storesPii).toBe(false);
     });
   });
 });

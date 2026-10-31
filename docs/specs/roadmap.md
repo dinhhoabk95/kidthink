@@ -175,26 +175,20 @@ image-upload · emoji-picker ──→ game-level-studio
 
 | # | Việc | Spec sở hữu |
 |---|---|---|
-| 1 | Mô hình lesson + activity | [`lesson-model.md`](05-content/lesson-model.md) · [`activity-model.md`](05-content/activity-model.md) |
-| 2 | Soạn lesson và activity | [`lesson-authoring.md`](06-admin/lesson-authoring.md) · [`activity-authoring.md`](06-admin/activity-authoring.md) |
-| 3 | Mô hình + builder curriculum | [`curriculum-model.md`](05-content/curriculum-model.md) · [`curriculum-builder.md`](06-admin/curriculum-builder.md) |
-| 4 | Player curriculum | [`curriculum-player.md`](04-play/curriculum-player.md) |
-| 5 | Mastery + adaptive | [`adaptive-engine.md`](01-platform/adaptive-engine.md) · [`progress-and-mastery.md`](04-play/progress-and-mastery.md) |
-| 6 | Gợi ý game kế tiếp | [`next-game-recommendation.md`](04-play/next-game-recommendation.md) |
-| 7 | Báo cáo nâng cao | [`advanced-report.md`](03-account/advanced-report.md) |
-| 8 | Trưng bày chương trình ra public | [`program-showcase.md`](02-public/program-showcase.md) |
-| 9 | Tích hợp curriculum vào account: bật khối chương trình đang học, chốt bố cục nhiều trẻ và phạm vi thư viện theo trẻ | [`member-dashboard.md`](03-account/member-dashboard.md) · [`my-library.md`](03-account/my-library.md) · [`curriculum-player.md`](04-play/curriculum-player.md) — [`Task #82`](../tasks/82-p3-account-curriculum-integration-plan.md) |
-| 10 | Ma trận phủ tư duy và cổng phủ nội dung | [`thinking-coverage-matrix.md`](08-quality/thinking-coverage-matrix.md) |
-| 11 | Nạp corpus Montessori **lô A** — phần chạy được trên sáu khuôn hiện có, không dòng code engine nào | [`montessori-corpus-mapping.md`](05-content/montessori-corpus-mapping.md) (mục 7.7 tới 7.13) |
+| 1 | Mô hình + builder curriculum | [`curriculum-model.md`](05-content/curriculum-model.md) · [`curriculum-builder.md`](06-admin/curriculum-builder.md) |
+| 2 | Player curriculum | [`curriculum-player.md`](04-play/curriculum-player.md) |
+| 3 | Mastery + adaptive | [`adaptive-engine.md`](01-platform/adaptive-engine.md) · [`progress-and-mastery.md`](04-play/progress-and-mastery.md) |
+| 4 | Gợi ý game kế tiếp | [`next-game-recommendation.md`](04-play/next-game-recommendation.md) |
+| 5 | Báo cáo nâng cao | [`advanced-report.md`](03-account/advanced-report.md) |
+| 6 | Trưng bày chương trình ra public | [`program-showcase.md`](02-public/program-showcase.md) |
+| 7 | Tích hợp curriculum vào account: bật khối chương trình đang học, chốt bố cục nhiều trẻ và phạm vi thư viện theo trẻ | [`member-dashboard.md`](03-account/member-dashboard.md) · [`my-library.md`](03-account/my-library.md) · [`curriculum-player.md`](04-play/curriculum-player.md) — [`Task #82`](../tasks/82-p3-account-curriculum-integration-plan.md) |
+| 8 | Ma trận phủ tư duy và cổng phủ nội dung | [`thinking-coverage-matrix.md`](08-quality/thinking-coverage-matrix.md) |
+| 9 | Nạp corpus Montessori **lô A** — phần chạy được trên sáu khuôn hiện có, không dòng code engine nào | [`montessori-corpus-mapping.md`](05-content/montessori-corpus-mapping.md) (mục 7.7 tới 7.13) |
 
 ## P4 — Add-on (ngoài MVP)
 
 Chỉ bắt đầu khi P0–P3 đã `implemented`. Mỗi add-on **lên catalog cùng lúc với tính năng của nó**, không trước.
 
-Ba spec add-on nữa nằm ngoài dòng catalog và có thứ tự riêng:
-[`lesson-session-runner.md`](03-account/lesson-session-runner.md) →
-[`lesson-exemplar-set.md`](05-content/lesson-exemplar-set.md) (spec sau khai
-`depends_on: LESSON-SESSION-RUNNER`; điều kiện mẫu được kiểm dựa trên bản ghi phiên chạy), còn
 [`template-authoring-kit.md`](01-platform/template-authoring-kit.md) chờ cả hai spec P1
 ở bước 2c vì nó khai `depends_on` cả hai.
 
@@ -224,19 +218,7 @@ hẳn câu "cái gì thuộc MVP" mà [`mvp-scope.md`](00-foundation/mvp-scope.m
 ≥120 game level đang đạt ở 228 trong khi không màn nào chơi được; đó là chỗ trống hai spec này
 lấp.
 
-**Trục giáo án.** Hai spec, và thứ tự bắt buộc:
-[`lesson-flow-model.md`](05-content/lesson-flow-model.md) trước — nó chốt mô hình (thư viện
-giáo án master, flow ghi danh, **tuổi là đề xuất chứ không phải khoá**, quyết định `D-SI`) —
-rồi [`lesson-corpus-depth.md`](05-content/lesson-corpus-depth.md) mới tính được cầu.
-
-Đổi mô hình làm cầu giảm từ 222 buổi phân vùng theo band xuống **126 tiết dùng chung**, tức
-flow dài nhất `CUR-J42`. Cung là **81 lesson**, thiếu **45**. Cộng thêm **48 game level** phải
-soạn để mỗi kỹ năng của thư viện có ≥2 level (`D-SJ` — soạn thêm level, cấm nối bừa).
-
-Phạm vi go-live chốt ngày 2026-08-29 là **27 engine và 126 tiết, không rút** — quyết định
-`D-SH`, ghi ở mục 1.1 của [`go-live-readiness.md`](08-quality/go-live-readiness.md).
-
-[`worksheet-model.md`](05-content/worksheet-model.md) · [`lesson-plan-creator.md`](07-addon/lesson-plan-creator.md) → [`pdf-export.md`](07-addon/pdf-export.md) · [`personal-curriculum.md`](07-addon/personal-curriculum.md) · [`custom-game-builder.md`](07-addon/custom-game-builder.md) · [`ai-credit-ledger.md`](07-addon/ai-credit-ledger.md) → [`ai-assistant.md`](07-addon/ai-assistant.md) · [`semantic-search.md`](07-addon/semantic-search.md)
+[`worksheet-model.md`](05-content/worksheet-model.md) · [`pdf-export.md`](07-addon/pdf-export.md) · [`personal-curriculum.md`](07-addon/personal-curriculum.md) · [`custom-game-builder.md`](07-addon/custom-game-builder.md) · [`ai-credit-ledger.md`](07-addon/ai-credit-ledger.md) → [`ai-assistant.md`](07-addon/ai-assistant.md) · [`semantic-search.md`](07-addon/semantic-search.md)
 
 ## P5 — Web scale (ngoài MVP)
 
@@ -266,8 +248,8 @@ package đã được tách xuống cỡ S/M. Audit ngày 2026-08-12 cho kết q
 | P0 | Task #1, #2, #3, #7, #14, các increment #16–#25, hardening Task #83, auth adapter Task #85, phát hành [`Task #90`](../tasks/90-vps-deploy-plan.md) và bằng chứng test P0 Task #91 | Contract package core và auth adapter đã đổi; P0 chỉ trở lại xanh sau evidence Task #83, Task #85 và gate Task #14 |
 | P1 | Task #26–#42; contract closure ở [`Task #80`](../tasks/80-audio-contract-closure-plan.md) (implementation [`Task #87`](../tasks/87-p1-audio-runtime-delivery-plan.md)) và [`Task #81`](../tasks/81-pedagogical-evidence-contract-plan.md) | Contract audio và evidence sư phạm đã đóng; implementation audio runtime được giao tại Task #87 |
 | P2 | Task #43–#53 | Đủ cho 11 bước; audio storage P2 đã có spec [`audio-storage.md`](01-platform/audio-storage.md) tách biệt khỏi pipeline ảnh của Task #49 |
-| P3 | Task #54–#61 và lát account bổ sung [`Task #82`](../tasks/82-p3-account-curriculum-integration-plan.md) | Coverage cũ thiếu ba debt account từ P1.12; còn chặn người ở quyết định ≥60 hay ≥126 lesson và bố cục nhiều trẻ |
-| P4 | Task #62–#69, chiều sâu engine [`Task #113`](../tasks/113-game-engine-depth-and-seed-diversity-plan.md), 11 task ngang [#115](../tasks/115-render-contract-core-plan.md)–[#125](../tasks/125-go-live-readiness-plan.md), và **27 lát dọc engine** [#130](../tasks/130-engine-gt-001-plan.md)–[#156](../tasks/156-engine-gt-027-plan.md) tách ra ở [`Task #114`](../tasks/114-next-roadmap-plan.md) | Đủ 8 outcome add-on hiện hành; giá, quota, provider và schema vector vẫn là contract gate, không được thay bằng số placeholder. Phạm vi mở của Task #113 đã chuyển chủ sang #115–#125 ngày 2026-08-29; chặn người còn lại là `Q114-1` (162 level không parse) và `Q114-2` (sàn bậc 2) |
+| P3 | Task #56–#61 và lát account bổ sung [`Task #82`](../tasks/82-p3-account-curriculum-integration-plan.md) | Coverage cũ thiếu ba debt account từ P1.12; còn chặn người ở bố cục nhiều trẻ |
+| P4 | Task #62–#69, chiều sâu engine [`Task #113`](../tasks/113-game-engine-depth-and-seed-diversity-plan.md), 9 task ngang [#115](../tasks/115-render-contract-core-plan.md)–[#125](../tasks/125-go-live-readiness-plan.md), và **27 lát dọc engine** [#130](../tasks/130-engine-gt-001-plan.md)–[#156](../tasks/156-engine-gt-027-plan.md) tách ra ở [`Task #114`](../tasks/114-next-roadmap-plan.md) | Đủ các outcome add-on hiện hành; giá, quota, provider và schema vector vẫn là contract gate, không được thay bằng số placeholder. Phạm vi mở của Task #113 đã chuyển chủ sang #115–#125 ngày 2026-08-29; chặn người còn lại là `Q114-1` (162 level không parse) và `Q114-2` (sàn bậc 2) |
 | P5 | Task #70–#72, #78 và #84 | Đủ ở mức contract-first cho Web scale; FCM/inbox đứng sau package core Task #83 và không chặn email |
 
 Task #14 là master dependency graph và phase gate; các task increment là lát dọc có acceptance
@@ -298,8 +280,6 @@ task riêng. Khoản nợ đó nằm ở [`08-quality/runtime-gates.md`](08-qual
 | #92 | [`game-layout-engine.md`](01-platform/game-layout-engine.md) | câu hỏi §11 Q2: 12 giá trị layout có gộp được không |
 | #93 | [`deterministic-randomness.md`](01-platform/deterministic-randomness.md) | Task #92, và migration thêm cột seed vào bảng phiên chơi |
 | #94 | [`thinking-coverage-matrix.md`](08-quality/thinking-coverage-matrix.md) | chưa nội dung nào gắn tag trục tư duy — cổng sẽ đo ma trận rỗng |
-| #95 | [`lesson-session-runner.md`](03-account/lesson-session-runner.md) | ba bảng mới, và câu hỏi §11 Q3 định hình lược đồ |
-| #96 | [`lesson-exemplar-set.md`](05-content/lesson-exemplar-set.md) | Task #95, và chưa spec nào sở hữu nơi lưu bản ghi chơi thử |
 | #97 | [`template-authoring-kit.md`](01-platform/template-authoring-kit.md) | Task #92 và #93 |
 | [#98](../tasks/98-montessori-corpus-intake-plan.md) | [`montessori-corpus-mapping.md`](05-content/montessori-corpus-mapping.md) · [`engine-spec-sheet.md`](01-platform/engine-spec-sheet.md) (lô `montessori`) | không còn bị chặn — 16 câu hỏi đóng bằng `D-RG` tới `D-RV` ngày 2026-08-20; lô A chạy được ngay, lô B chờ khuôn theo bốn nhóm |
 | [#99](../tasks/99-montessori-template-designs-plan.md) | chín khuôn còn lại của lô `montessori` ([`engine-spec-sheet.md`](01-platform/engine-spec-sheet.md) mục 7.5) | trần C1 đã dùng hết — bốn khuôn chỉ phục vụ C1 không có nội dung nào seed được; chờ quyết định nới trần |
@@ -314,8 +294,8 @@ Hồ sơ: [`Task #114`](../tasks/114-next-roadmap-plan.md).
 Cả 49 file đều có plan sở hữu — không file nào mồ côi. Chỗ tắc là ba plan quá tải, nặng nhất
 là [`Task #113`](../tasks/113-game-engine-depth-and-seed-diversity-plan.md) (45/109), một plan
 gánh cùng lúc bốn loại việc có nhịp khác hẳn nhau: phê duyệt spec, thi công cổng, sửa nợ dữ
-liệu, và soạn nội dung. Task #114 tách phạm vi mở của nó thành 11 task ngang, xếp cùng 4 task
-đóng đuôi, rồi tách tiếp phần engine thành **27 lát dọc** — tổng **42 task**.
+liệu, và soạn nội dung. Task #114 tách phạm vi mở của nó thành các task ngang, xếp cùng 4 task
+đóng đuôi, rồi tách tiếp phần engine thành **27 lát dọc**.
 
 | Task | Spec đóng | Loại | Chặn bởi |
 |---|---|---|---|
@@ -327,11 +307,9 @@ liệu, và soạn nội dung. Task #114 tách phạm vi mở của nó thành 1
 | [#120](../tasks/120-engine-spec-contract-plan.md) | [`engine-spec-sheet`](01-platform/engine-spec-sheet.md) — khuôn spec engine theo SDD | contract + cổng | — |
 | [#121](../tasks/121-level-generator-kit-plan.md) | [`level-generator-kit`](01-platform/level-generator-kit.md) | mã | #119, cách sinh |
 | [#122](../tasks/122-engine-content-depth-plan.md) | [`engine-content-depth`](05-content/engine-content-depth.md) | cổng + ngân sách | #117 #119 #120 #121 |
-| [#123](../tasks/123-lesson-flow-model-plan.md) | [`lesson-flow-model`](05-content/lesson-flow-model.md) | mã + UI | — |
-| [#124](../tasks/124-lesson-corpus-depth-plan.md) | [`lesson-corpus-depth`](05-content/lesson-corpus-depth.md) | nội dung + cổng | #123 |
-| [#125](../tasks/125-go-live-readiness-plan.md) | [`go-live-readiness`](08-quality/go-live-readiness.md) | cổng | #156 #122 #124 |
+| [#125](../tasks/125-go-live-readiness-plan.md) | [`go-live-readiness`](08-quality/go-live-readiness.md) | cổng | #156 #122 |
 | [#126](../tasks/126-montessori-closure-plan.md) | bốn spec Montessori | đóng đuôi | trần C1 |
-| [#127](../tasks/127-template-diversity-ratification-plan.md) | [`engine-spec-sheet`](01-platform/engine-spec-sheet.md) (lô `taxonomy-gap`) · [`lesson-template-variety`](05-content/lesson-template-variety.md) · [`thinking-coverage-matrix`](08-quality/thinking-coverage-matrix.md) (`BR-TCL-04`) | đo + phê chuẩn | #117 #122 #124 |
+| [#127](../tasks/127-template-diversity-ratification-plan.md) | [`engine-spec-sheet`](01-platform/engine-spec-sheet.md) (lô `taxonomy-gap`) · [`thinking-coverage-matrix`](08-quality/thinking-coverage-matrix.md) (`BR-TCL-04`) | đo + phê chuẩn | #117 #122 |
 | [#128](../tasks/128-infra-go-live-plan.md) | năm spec phát hành P0 | hạ tầng | ba quyết định người |
 | [#129](../tasks/129-mfa-and-runtime-boundary-closure-plan.md) | [`manager-mfa-enrollment`](06-admin/manager-mfa-enrollment.md) · [`app-runtime-boundary`](00-foundation/app-runtime-boundary.md) | đóng đuôi | một số đo DB |
 | [#130](../tasks/130-engine-gt-001-plan.md) … [#156](../tasks/156-engine-gt-027-plan.md) | **27 spec engine** `GT-001`…`GT-027` — một task một spec | lát dọc | #115 #120; #130 là pilot |

@@ -20,7 +20,7 @@ interface WeekItemSummary {
   week_no: number;
   session_no: number;
   position: number;
-  entity_type: "lesson" | "game_level";
+  entity_type: "game_level";
   entity_id: number;
   code: string;
   title: string;

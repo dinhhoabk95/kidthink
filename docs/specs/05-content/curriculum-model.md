@@ -9,7 +9,7 @@ reviewed: 2026-10-18
 owns:
   - Ràng buộc sư phạm khi dựng chương trình
 depends_on:
-  - LESSON-MODEL
+  - GAME-LEVEL-MODEL
   - TAXONOMY-SERVICE
 ---
 
@@ -17,24 +17,23 @@ depends_on:
 
 ## 1. Objective
 
-> **Đổi 2026-08-29 (`D-SI`).** Curriculum nay là **flow** lắp từ thư viện giáo án master, và
-> tuổi là tín hiệu đề xuất chứ không phải điều kiện ghi danh. Mô hình đầy đủ ở
-> [`lesson-flow-model.md`](lesson-flow-model.md). Ràng buộc sư phạm của file này không đổi —
+> **Đổi 2026-08-29 (`D-SI`).** Curriculum là **flow** lắp từ thư viện `game_levels`, và
+> tuổi là tín hiệu đề xuất chứ không phải điều kiện ghi danh. Ràng buộc sư phạm của file này không đổi —
 > và vì bỏ khoá tuổi, thứ tự prerequisite ở `BR-CRM-01` trở thành ràng buộc sư phạm **duy
 > nhất** còn lại, nên nó càng không được nới.
 
 Curriculum là **thứ tự có chủ đích**. Thứ tự sai làm trẻ gặp nội dung chưa đủ nền, thất bại
 liên tục, rồi bỏ.
 
-[`curriculum-builder.md`](../06-admin/curriculum-builder.md) nói **công cụ**; file này nói **luật sư phạm** mà công cụ phải ép.
+Toàn bộ chương trình (`curricula` và `curriculum_items`) được định nghĩa qua data seeders (`code` UNIQUE); file này nói **luật sư phạm** mà hàm kiểm tra seeder phải ép.
 
 ## 2. Actors
 
-Người soạn chương trình · người duyệt.
+Người soạn chương trình · người review PR.
 
 ## 3. Entry points
 
-`06-admin/curriculum-builder.md` · chỉ báo cân bằng §7.2 ở đó · `packages/shared/src/curriculum-model.ts` (`validateCurriculumModel`) · `packages/shared/tests/curriculum-balance.test.ts`.
+`packages/shared/src/curriculum-model.ts` (`validateCurriculumModel`) · `packages/shared/tests/curriculum-balance.test.ts` · seeder chương trình.
 
 ## 4. Main flow
 
@@ -55,7 +54,7 @@ Không có.
 | `BR-CRM-05` | Mỗi tuần có **≥1 hoạt động ngoài màn hình** | Cân bằng giữa tương tác màn hình và vận động thực tế theo định hướng giáo dục toàn diện |
 | `BR-CRM-06` | Tuần đầu **dễ có chủ ý** | Tuần đầu quyết định trẻ có quay lại không |
 | `BR-CRM-07` | Cấm — **NEVER quá 40%** item thuộc một competency trên toàn chương trình | Chương trình lệch là lỗi sư phạm khó thấy bằng mắt |
-| `BR-CRM-08` | Chương trình theo tuổi (`program_type = 'age_based'`) phải phủ **cả 6 competency** | Phát triển đồng đều toàn bộ 6 năng lực tư duy toán học cốt lõi cho trẻ. **Từ 2026-08-29 (`D-SI`)**, `age_based` là **nhãn đề xuất** chứ không phải khoá ghi danh — luật phủ 6 competency vẫn giữ nguyên, xem [`lesson-flow-model.md`](lesson-flow-model.md) `BR-LFM-03` |
+| `BR-CRM-08` | Chương trình theo tuổi (`program_type = 'age_based'`) phải phủ **cả 6 competency** | Phát triển đồng đều toàn bộ 6 năng lực tư duy toán học cốt lõi cho trẻ. **Từ 2026-08-29 (`D-SI`)**, `age_based` là **nhãn đề xuất** chứ không phải khoá ghi danh — luật phủ 6 competency vẫn giữ nguyên |
 | `BR-CRM-09` | Cấm — **NEVER lặp cùng một item trong 4 tuần liên tiếp** (đo trên **item**) | Duy trì sự mới mẻ và hứng thú học tập cho trẻ mầm non |
 | `BR-CRM-10` | Nêu rõ **mục tiêu của mỗi tuần** bằng một câu cho người lớn | Người lớn cần biết tuần này học gì |
 | `BR-CRM-11` | Cấm — **NEVER giới thiệu skill mới trong 3 tuần cuối** của một chương trình | 3 tuần cuối dành cho ôn tập và củng cố toàn diện, đảm bảo `BR-CRM-03` không vi phạm vì thiếu tuần phía sau (`D-LY`) |
@@ -66,15 +65,15 @@ Không có.
 
 | Buổi | Nội dung |
 |---|---|
-| 1 | Giới thiệu skill mới — lesson đầy đủ |
+| 1 | Giới thiệu skill mới — màn làm quen (`kind = 'teach'`) + màn thực hành |
 | 2 | Luyện tập — 2–3 game level |
-| 3 | Ôn skill tuần trước + hoạt động ngoài màn hình |
+| 3 | Ôn skill tuần trước |
 
 Ba buổi mỗi tuần là mặc định; chương trình khác đặt được `sessions_per_week` khác.
 
 ### 7.2 Sáu chỉ báo cân bằng
 
-Xem `06-admin/curriculum-builder.md` §7.2. Chúng là biểu hiện công cụ của các rule ở §6.
+Hàm `validateCurriculumModel` (`packages/shared/src/curriculum-model.ts`) kiểm tra trực tiếp các chỉ báo cân bằng tương ứng với các rule ở §6 trên dữ liệu seeder.
 
 ### 7.3 Chương trình MVP
 
@@ -97,11 +96,11 @@ Không sở hữu route.
 
 ```gherkin
 Scenario: BR-CRM-01 — thứ tự prerequisite đúng
-  When kiểm mọi chương trình published
+  When kiểm mọi chương trình trong seeder
   Then không skill nào xuất hiện trước prerequisite của nó
 
 Scenario: BR-CRM-02 — mỗi tuần 2-4 competency
-  When kiểm mọi tuần của mọi chương trình published
+  When kiểm mọi tuần của mọi chương trình trong seeder
   Then mỗi tuần chạm từ 2 tới 4 competency
 
 Scenario: BR-CRM-03 — có ôn lại
@@ -138,7 +137,6 @@ Scenario: BR-CRM-11 — không giới thiệu skill mới trong 3 tuần cuối
 **Always**
 - Kiểm thứ tự prerequisite.
 - Ôn lại skill mới trong 2–3 tuần.
-- ≥1 hoạt động ngoài màn hình mỗi tuần.
 
 **Ask first**
 - Đổi cấu trúc tuần chuẩn.
@@ -155,5 +153,4 @@ Scenario: BR-CRM-11 — không giới thiệu skill mới trong 3 tuần cuối
 
 | # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
 |---|---|---|---|---|
-| 1 | 42 tuần cần ~126 buổi. Với ≥60 lesson thì mỗi lesson dùng lại 2 lần — có chấp nhận được không? | P3 | Đóng theo `D-LA` & `D-LU`: Thư viện lesson thiết kế đủ số lượng theo nhu cầu curriculum thực tế | người quyết |
-| 2 | Chu kỳ ôn lại 2–3 tuần dựa trên nguồn nào? Đường cong quên có tài liệu nhưng chưa đối chiếu cho tuổi 3–6 | P3 | Đóng: Giữ quy tắc ôn lại 2-3 tuần cho MVP; đo lường tỉ lệ hoàn thành thực tế để tinh chỉnh ở P4 | Nội dung |
+| 1 | Chu kỳ ôn lại 2–3 tuần dựa trên nguồn nào? Đường cong quên có tài liệu nhưng chưa đối chiếu cho tuổi 3–6 | P3 | Đóng: Giữ quy tắc ôn lại 2-3 tuần cho MVP; đo lường tỉ lệ hoàn thành thực tế để tinh chỉnh ở P4 | Nội dung |

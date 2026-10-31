@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { createHash, createHmac } from "node:crypto";
 import { writeAudit } from "@mindkid/audit";
 import {
   childProfiles,
@@ -7,7 +7,6 @@ import {
   gameLevels,
   getDb,
   getOwnerDb,
-  lessons,
   personalCurricula,
   personalCurriculumItems,
   playSessions,
@@ -20,6 +19,7 @@ import {
   type OfflineCurriculumPackManifest,
   type OfflineSyncEventItem,
   type OfflineSyncResponse,
+  redactPii,
 } from "@mindkid/shared";
 import { and, eq, inArray } from "drizzle-orm";
 
@@ -42,10 +42,16 @@ function generateDeterministicLeaseToken(
   weekNo: number,
   expiresAtIso: string
 ): string {
-  const secret = "mindkid_offline_lease_secret_v1";
-  return calculateSha256(
-    `${userId}:${curriculumCode}:${weekNo}:${expiresAtIso}:${secret}`
-  );
+  const secret =
+    process.env.NUXT_SESSION_PASSWORD ||
+    (process.env.NODE_ENV === "test" ? "mindkid_offline_lease_secret_v1" : "");
+  if (!secret) {
+    throw new Error(
+      "NUXT_SESSION_PASSWORD is not configured for offline lease token"
+    );
+  }
+  const payload = `${userId}:${curriculumCode}:${weekNo}:${expiresAtIso}`;
+  return createHmac("sha256", secret).update(payload).digest("hex");
 }
 
 interface ResolvedCurriculumData {
@@ -62,7 +68,7 @@ async function resolveSystemCurriculum(
   const [systemCurriculum] = await db
     .select()
     .from(curricula)
-    .where(and(eq(curricula.code, code), eq(curricula.status, "published")));
+    .where(eq(curricula.code, code));
 
   if (!systemCurriculum) {
     return null;
@@ -83,7 +89,7 @@ async function resolveSystemCurriculum(
 
   return {
     curriculumCode: systemCurriculum.code,
-    contentVersion: systemCurriculum.contentVersion,
+    contentVersion: 1,
     rawItems: sysItems,
   };
 }
@@ -139,9 +145,6 @@ async function buildOfflineAssets(
   weekNo: number
 ): Promise<OfflineAssetItem[]> {
   const assets: OfflineAssetItem[] = [];
-  const lessonIds = rawItems
-    .filter((i) => i.entityType === "lesson")
-    .map((i) => i.entityId);
   const gameLevelIds = rawItems
     .filter((i) => i.entityType === "game_level")
     .map((i) => i.entityId);
@@ -163,26 +166,6 @@ async function buildOfflineAssets(
         path: `/assets/games/${gl.code.toLowerCase()}.webp`,
         size_bytes: 18_000,
         sha256: calculateSha256(`asset:${gl.code}`),
-      });
-    }
-  }
-
-  if (lessonIds.length > 0) {
-    const lessonRows = await db
-      .select()
-      .from(lessons)
-      .where(inArray(lessons.id, lessonIds));
-
-    for (const les of lessonRows) {
-      const lessonContent = JSON.stringify({
-        code: les.code,
-        title: les.title,
-        guide: les.guide,
-      });
-      assets.push({
-        path: `/api/guest/lessons/${les.code}`,
-        size_bytes: Buffer.byteLength(lessonContent, "utf-8") || 2048,
-        sha256: calculateSha256(lessonContent),
       });
     }
   }
@@ -273,27 +256,6 @@ export async function generateOfflineCurriculumPackManifest(
   return manifest;
 }
 
-async function isSessionAuthorized(
-  db: ReturnType<typeof getOwnerDb>,
-  session: typeof playSessions.$inferSelect,
-  userId: number
-): Promise<boolean> {
-  if (!session.childProfileId) {
-    return true;
-  }
-  const [child] = await db
-    .select()
-    .from(childProfiles)
-    .where(
-      and(
-        eq(childProfiles.id, Number(session.childProfileId)),
-        eq(childProfiles.userId, userId)
-      )
-    )
-    .limit(1);
-  return Boolean(child);
-}
-
 function normalizeSyncOccurredAtMs(
   rawMs: number | undefined,
   startedAt: Date | null | undefined
@@ -316,46 +278,67 @@ async function syncSingleSessionEvents(
   session: typeof playSessions.$inferSelect,
   events: OfflineSyncEventItem[]
 ): Promise<{ synced: number; skipped: number }> {
-  let synced = 0;
-  let skipped = 0;
-
-  for (const ev of events) {
-    try {
-      const occurredAtMs = normalizeSyncOccurredAtMs(
-        ev.occurred_at_ms,
-        session.startedAt
-      );
-
-      const [inserted] = await db
-        .insert(telemetryEvents)
-        .values({
-          sessionUuid: session.sessionUuid,
-          seq: ev.seq,
-          childUuid: null,
-          gameLevelId: session.gameLevelId,
-          contentVersion: session.contentVersion,
-          templateCode: session.templateCode,
-          eventName: ev.event_name,
-          occurredAtMs,
-          payload: ev.payload || {},
-          clientTimestamp: ev.client_timestamp
-            ? new Date(ev.client_timestamp)
-            : new Date(),
-        })
-        .onConflictDoNothing()
-        .returning({ seq: telemetryEvents.seq });
-
-      if (inserted) {
-        synced++;
-      } else {
-        skipped++;
-      }
-    } catch {
-      skipped++;
-    }
+  if (events.length === 0) {
+    return { synced: 0, skipped: 0 };
   }
 
-  return { synced, skipped };
+  const rows = events.map((ev) => {
+    const occurredAtMs = normalizeSyncOccurredAtMs(
+      ev.occurred_at_ms,
+      session.startedAt
+    );
+    return {
+      sessionUuid: session.sessionUuid,
+      seq: ev.seq,
+      childUuid: null,
+      gameLevelId: session.gameLevelId,
+      templateCode: session.templateCode,
+      eventName: ev.event_name,
+      occurredAtMs,
+      payload: redactPii(ev.payload || {}),
+      clientTimestamp: ev.client_timestamp
+        ? new Date(ev.client_timestamp)
+        : new Date(),
+    };
+  });
+
+  try {
+    const inserted = await db
+      .insert(telemetryEvents)
+      .values(rows)
+      .onConflictDoNothing()
+      .returning({ seq: telemetryEvents.seq });
+
+    const synced = inserted.length;
+    const skipped = events.length - synced;
+    return { synced, skipped };
+  } catch {
+    return { synced: 0, skipped: events.length };
+  }
+}
+
+async function loadAuthorizedChildIds(
+  db: ReturnType<typeof getOwnerDb>,
+  childProfileIds: number[],
+  userId: number
+): Promise<Set<number>> {
+  const authorized = new Set<number>();
+  if (childProfileIds.length === 0) {
+    return authorized;
+  }
+  const userChildren = await db
+    .select({ id: childProfiles.id })
+    .from(childProfiles)
+    .where(
+      and(
+        inArray(childProfiles.id, childProfileIds),
+        eq(childProfiles.userId, userId)
+      )
+    );
+  for (const c of userChildren) {
+    authorized.add(c.id);
+  }
+  return authorized;
 }
 
 export async function syncOfflinePlayEvents(
@@ -373,20 +356,42 @@ export async function syncOfflinePlayEvents(
     eventsBySession.set(ev.session_uuid, list);
   }
 
-  for (const [sessionUuid, sessionEvents] of eventsBySession.entries()) {
-    const [session] = await db
-      .select()
-      .from(playSessions)
-      .where(eq(playSessions.sessionUuid, sessionUuid))
-      .limit(1);
+  const sessionUuids = Array.from(eventsBySession.keys());
+  if (sessionUuids.length === 0) {
+    return { synced_count: 0, duplicates_skipped: 0 };
+  }
 
+  const sessionList = await db
+    .select()
+    .from(playSessions)
+    .where(inArray(playSessions.sessionUuid, sessionUuids));
+
+  const sessionMap = new Map<string, typeof playSessions.$inferSelect>();
+  const childProfileIds: number[] = [];
+  for (const s of sessionList) {
+    sessionMap.set(s.sessionUuid, s);
+    if (s.childProfileId) {
+      childProfileIds.push(Number(s.childProfileId));
+    }
+  }
+
+  const authorizedChildIds = await loadAuthorizedChildIds(
+    db,
+    childProfileIds,
+    context.userId
+  );
+
+  for (const [sessionUuid, sessionEvents] of eventsBySession.entries()) {
+    const session = sessionMap.get(sessionUuid);
     if (!session) {
       duplicatesSkipped += sessionEvents.length;
       continue;
     }
 
-    const authorized = await isSessionAuthorized(db, session, context.userId);
-    if (!authorized) {
+    const isAuthorized = session.childProfileId
+      ? authorizedChildIds.has(Number(session.childProfileId))
+      : false;
+    if (!isAuthorized) {
       duplicatesSkipped += sessionEvents.length;
       continue;
     }

@@ -121,12 +121,10 @@ async function createTestUserWithChildren() {
 
 async function seedPublishedFreeLevel(): Promise<string> {
   const db = getOwnerDb();
-  const suffix = Math.floor(Math.random() * 89_999 + 10_000);
-  const code = `GL-C1-HPL-${suffix}`;
+  const suffix = Math.floor(Math.random() * 8999 + 1000);
+  const code = `GL-C1-HPL-TEST-${suffix}`;
   await db.insert(gameLevels).values({
-    entityId: suffix,
     code,
-    contentVersion: 1,
     templateCode: "GT-001",
     title: "Level HPL Test",
     instruction: "Chọn quả táo đỏ",
@@ -151,7 +149,6 @@ async function seedPublishedFreeLevel(): Promise<string> {
     },
     difficultyParams: {},
     accessTier: "free",
-    status: "published",
     ageMin: 3,
     ageMax: 6,
   });

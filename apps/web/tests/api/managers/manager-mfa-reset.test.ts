@@ -31,11 +31,7 @@ let reviewer: Actor = { id: 0, uuid: "" };
 let target: Actor = { id: 0, uuid: "" };
 let plain: Actor = { id: 0, uuid: "" };
 
-async function createManager(
-  tag: string,
-  role: "super_admin" | "content_reviewer",
-  mfaEnabled: boolean
-): Promise<Actor> {
+async function createManager(tag: string, mfaEnabled: boolean): Promise<Actor> {
   const db = getOwnerDb();
   const [row] = await db
     .insert(managers)
@@ -43,7 +39,7 @@ async function createManager(
       email: `mfa-reset-${tag}-${Date.now()}-${Math.floor(Math.random() * 1_000_000)}@mindkid.vn`,
       passwordHash: await hashPassword("AdminPassword123!"),
       displayName: tag,
-      role,
+      role: "super_admin",
       isActive: true,
       mfaEnabled,
     })
@@ -52,10 +48,10 @@ async function createManager(
 }
 
 beforeAll(async () => {
-  admin = await createManager("admin", "super_admin", true);
-  reviewer = await createManager("reviewer", "content_reviewer", true);
-  target = await createManager("target", "content_reviewer", true);
-  plain = await createManager("plain", "content_reviewer", false);
+  admin = await createManager("admin", true);
+  reviewer = await createManager("reviewer", true);
+  target = await createManager("target", true);
+  plain = await createManager("plain", false);
 
   const db = getOwnerDb();
   await db.insert(mfaSettings).values({

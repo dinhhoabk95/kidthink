@@ -12,7 +12,6 @@ import {
 } from "drizzle-orm/pg-core";
 import { timestamps } from "./columns.ts";
 import { users } from "./identity.ts";
-import { contentTags } from "./tagging.ts";
 
 export const collections = pgTable(
   "collections",
@@ -56,32 +55,7 @@ export const libraryItems = pgTable(
     index("idx_library_items_entity").on(table.entityType, table.entityId),
     check(
       "check_library_items_entity_type",
-      sql`${table.entityType} IN ('game_level', 'lesson', 'curriculum', 'activity')`
-    ),
-  ]
-);
-
-export const userTagMap = pgTable(
-  "user_tag_map",
-  {
-    userId: bigint("user_id", { mode: "number" })
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    tagId: bigint("tag_id", { mode: "number" })
-      .notNull()
-      .references(() => contentTags.id, { onDelete: "cascade" }),
-    entityType: varchar("entity_type", { length: 50 }).notNull(),
-    entityId: bigint("entity_id", { mode: "number" }).notNull(),
-    ...timestamps(),
-  },
-  (table) => [
-    primaryKey({
-      columns: [table.userId, table.tagId, table.entityType, table.entityId],
-    }),
-    index("idx_user_tag_map_entity").on(table.entityType, table.entityId),
-    check(
-      "check_user_tag_entity_type",
-      sql`${table.entityType} IN ('game_level', 'lesson', 'curriculum', 'activity')`
+      sql`${table.entityType} IN ('game_level', 'curriculum')`
     ),
   ]
 );
@@ -90,5 +64,3 @@ export type Collection = typeof collections.$inferSelect;
 export type NewCollection = typeof collections.$inferInsert;
 export type LibraryItem = typeof libraryItems.$inferSelect;
 export type NewLibraryItem = typeof libraryItems.$inferInsert;
-export type UserTagMap = typeof userTagMap.$inferSelect;
-export type NewUserTagMap = typeof userTagMap.$inferInsert;

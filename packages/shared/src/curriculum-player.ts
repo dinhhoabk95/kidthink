@@ -8,7 +8,7 @@ export interface CurriculumPlayerItemRef {
   week_no: number;
   session_no: number;
   position: number;
-  entity_type: "lesson" | "game_level";
+  entity_type: "game_level";
   entity_id: number;
   code?: string;
   title?: string;
@@ -22,7 +22,7 @@ export interface CurriculumPlayerWeekGoal {
 }
 
 export interface NextStepItemPayload {
-  entity_type: "lesson" | "game_level";
+  entity_type: "game_level";
   entity_code: string;
   title?: string;
   locked: boolean;

@@ -37,11 +37,11 @@ về mặt sư phạm dù đúng schema.
 
 ## 2. Actors
 
-Người soạn nội dung · người review · AI agent IDE lúc soạn seeder (dùng làm ràng buộc).
+Người soạn nội dung · người review PR · AI agent IDE lúc soạn seeder (dùng làm ràng buộc).
 
 ## 3. Entry points
 
-`06-admin/game-level-studio.md` · checklist duyệt [`content-review-queue.md`](../06-admin/content-review-queue.md) §7.2.
+`packages/content/src/skills/**` · cổng kiểm tra tự động [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) §7.3.
 
 ## 4. Main flow
 
@@ -76,7 +76,7 @@ Không có.
 | 4–5 | 3 | 6 | 2 |
 | 5–6 | 3 | 8 | 3 |
 
-Vượt trần là lý do **từ chối duyệt**, không phải cảnh báo.
+Vượt trần làm cổng kiểm tra seeder (`seed:check`) **đỏ**, không phải cảnh báo.
 
 ### 7.2 Thang độ khó 1–5
 
@@ -98,7 +98,7 @@ Một level chỉ tăng **một chiều** so với level trước cùng skill.
 | "Hãy phân loại các đối tượng theo kích thước" | "Vật to bỏ bên trái, vật nhỏ bên phải" | Từ vựng trong tầm tuổi |
 | "Chọn đáp án đúng" | "Có mấy quả táo?" | Nói rõ phải làm gì |
 
-### 7.4 Kiểm tra trước khi gửi duyệt
+### 7.4 Kiểm tra trước khi mở PR seeder
 
 - [ ] Đúng một skill `weight = 1.0`
 - [ ] Vật trong `content_pack` truy được về dataset của kỹ năng đó (`BR-SDS-02`)
@@ -112,31 +112,31 @@ Một level chỉ tăng **một chiều** so với level trước cùng skill.
 
 ## 8. API contract
 
-Không sở hữu route. Ràng buộc §7.1 ép ở cổng publish [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) §7.3.
+Không sở hữu route. Ràng buộc §7.1 ép ở cổng kiểm tra seeder [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) §7.3.
 
 ## 9. Acceptance criteria
 
 ```gherkin
 Scenario: BR-GLM-02 — vượt trần item bị chặn
   Given một level band 3-4 có 6 item
-  When gửi duyệt
-  Then trả 422
-  And missing nêu vượt trần item của band
+  When chạy seed:check
+  Then cổng đỏ
+  And thông báo nêu vượt trần item của band
 
 Scenario: BR-GLM-04 — chỉ dẫn quá dài bị chặn
   Given instruction có 20 từ
-  When gửi duyệt
-  Then trả 422
+  When chạy seed:check
+  Then cổng đỏ
 
 Scenario: BR-GLM-05 — phủ định bị bắt
   Given instruction chứa "đừng" hoặc "không"
-  When gửi duyệt
-  Then hiện cảnh báo yêu cầu viết lại dạng khẳng định
+  When chạy seed:check
+  Then cổng đỏ yêu cầu viết lại dạng khẳng định
 
 Scenario: BR-GLM-01 — một mục tiêu chính
   Given hai skill cùng weight 1.0
-  When gửi duyệt
-  Then trả 422
+  When chạy seed:check
+  Then cổng đỏ
 
 Scenario: BR-GLM-07 — level trùng lặp bị phát hiện
   Given một level mới giống level đã có, chỉ khác số lượng
@@ -146,7 +146,7 @@ Scenario: BR-GLM-07 — level trùng lặp bị phát hiện
 Scenario: BR-GLM-08 — tăng một chiều
   Given level trước cùng skill có 3 item và 1 nhiễu
   When level mới có 5 item và 3 nhiễu
-  Then người duyệt được cảnh báo tăng nhiều chiều
+  Then cổng kiểm tra hoặc PR review cảnh báo tăng nhiều chiều
 ```
 
 ## 10. Boundaries

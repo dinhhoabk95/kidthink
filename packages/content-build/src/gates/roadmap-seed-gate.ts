@@ -291,7 +291,7 @@ function buildItems(
       week_no: week.week_no,
       session_no: session.session_no,
       position: 1,
-      entity_type: session.role === "practice" ? "game_level" : "lesson",
+      entity_type: "game_level",
       entity_id: index + 1,
       code: `${roadmap.code}:W${week.week_no}S${session.session_no}`,
       is_required: true,

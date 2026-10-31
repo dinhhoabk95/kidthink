@@ -4,7 +4,7 @@ export const C4_EXP_03_IDENTITY: SkillIdentity = {
   code: "C4.EXP.03",
   strand_code: "C4.EXP",
   competency_code: "C4",
-  name: "Tan – không tan",
+  name: "Chất tan và chất giữ nguyên",
   age_min: 5,
   age_max: 5,
   difficulty: 3,
@@ -38,75 +38,167 @@ export const C4_EXP_03_IDENTITY: SkillIdentity = {
 
 export const C4_EXP_03_DATASET: SkillDataset = {
   skill_code: "C4.EXP.03",
-  concept_label: "Tan – không tan",
+  concept_label: "Chất tan và chất giữ nguyên",
   surface: "game",
   items: [
     {
-      id: "carrot",
-      label: "củ cà rốt",
+      id: "sol_salt",
+      label: "hạt muối trắng",
       image: {
         kind: "emoji",
-        ref: "🥕",
+        ref: "🧂",
       },
       category: {
-        type: "rau củ",
+        type: "chất hòa tan",
       },
+      contrast_group: "dissolve",
+      value: 1,
+      ordering: 1,
+      audio_path: "/audio/vi/c4/sol_salt.mp3",
     },
     {
-      id: "corn",
-      label: "bắp ngô",
+      id: "sol_sugar",
+      label: "viên đường ngọt",
       image: {
         kind: "emoji",
-        ref: "🌽",
+        ref: "🍬",
       },
       category: {
-        type: "rau củ",
+        type: "chất hòa tan",
       },
+      contrast_group: "dissolve",
+      value: 2,
+      ordering: 2,
+      audio_path: "/audio/vi/c4/sol_sugar.mp3",
     },
     {
-      id: "dog",
-      label: "con chó",
+      id: "sol_honey",
+      label: "mật ong thơm",
       image: {
         kind: "emoji",
-        ref: "🐕",
+        ref: "🍯",
       },
       category: {
-        type: "động vật",
+        type: "chất hòa tan",
       },
+      contrast_group: "dissolve",
+      value: 3,
+      ordering: 3,
+      audio_path: "/audio/vi/c4/sol_honey.mp3",
     },
     {
-      id: "cat",
-      label: "con mèo",
+      id: "sol_milk",
+      label: "bột sữa trắng",
       image: {
         kind: "emoji",
-        ref: "🐈",
+        ref: "🥛",
       },
       category: {
-        type: "động vật",
+        type: "chất hòa tan",
       },
+      contrast_group: "dissolve",
+      value: 4,
+      ordering: 4,
+      audio_path: "/audio/vi/c4/sol_milk.mp3",
     },
     {
-      id: "chicken",
-      label: "con gà",
+      id: "insol_pebble",
+      label: "viên sỏi đá",
       image: {
         kind: "emoji",
-        ref: "🐓",
+        ref: "🪨",
       },
       category: {
-        type: "động vật",
+        type: "chất giữ nguyên",
       },
+      contrast_group: "remain",
+      value: 1,
+      ordering: 5,
+      audio_path: "/audio/vi/c4/insol_pebble.mp3",
+    },
+    {
+      id: "insol_bean",
+      label: "hạt đậu khô",
+      image: {
+        kind: "emoji",
+        ref: "🫘",
+      },
+      category: {
+        type: "chất giữ nguyên",
+      },
+      contrast_group: "remain",
+      value: 2,
+      ordering: 6,
+      audio_path: "/audio/vi/c4/insol_bean.mp3",
+    },
+    {
+      id: "insol_spoon",
+      label: "chiếc thìa inox",
+      image: {
+        kind: "emoji",
+        ref: "🥄",
+      },
+      category: {
+        type: "chất giữ nguyên",
+      },
+      contrast_group: "remain",
+      value: 3,
+      ordering: 7,
+      audio_path: "/audio/vi/c4/insol_spoon.mp3",
+    },
+    {
+      id: "insol_wood",
+      label: "khối gỗ nhỏ",
+      image: {
+        kind: "emoji",
+        ref: "🪵",
+      },
+      category: {
+        type: "chất giữ nguyên",
+      },
+      contrast_group: "remain",
+      value: 4,
+      ordering: 8,
+      audio_path: "/audio/vi/c4/insol_wood.mp3",
     },
   ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "sol_salt",
+      target_id: "insol_pebble",
+    },
+    {
+      type: "contrast",
+      source_id: "sol_sugar",
+      target_id: "insol_bean",
+    },
+    {
+      type: "contrast",
+      source_id: "sol_honey",
+      target_id: "insol_spoon",
+    },
+    {
+      type: "contrast",
+      source_id: "sol_milk",
+      target_id: "insol_wood",
+    },
+  ],
+  axes: {
+    solubility: {
+      values: ["chất hòa tan", "chất giữ nguyên"],
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Tan – không tan",
+      description: "Làm quen cơ bản với Chất tan và chất giữ nguyên",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Tan – không tan",
+      description: "Nhận biết và chọn đúng Chất tan và chất giữ nguyên",
     },
     {
       rung: 3,
@@ -126,9 +218,19 @@ export const C4_EXP_03_DATASET: SkillDataset = {
   ],
   phrasing: {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
-    narration_template: "Chúng mình cùng tìm hiểu về Tan – không tan nhé",
+    narration_template:
+      "Chúng mình cùng tìm hiểu về Chất tan và chất giữ nguyên nhé",
   },
-  ordering: ["carrot", "corn", "dog", "cat", "chicken"],
+  ordering: [
+    "sol_salt",
+    "sol_sugar",
+    "sol_honey",
+    "sol_milk",
+    "insol_pebble",
+    "insol_bean",
+    "insol_spoon",
+    "insol_wood",
+  ],
 };
 
 export const C4_EXP_03_SEED: SkillSeed = {
@@ -152,22 +254,6 @@ export const C4_EXP_03_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C4-EXP-MAZE-0006",
-      template: "GT-013",
-      band: "4-5",
-      difficulty: 2,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-EXP-MAZE-0007",
-      template: "GT-013",
-      band: "4-5",
-      difficulty: 3,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
       code: "GL-C4-EXP-DIFF-0001",
       template: "GT-014",
       band: "5-6",
@@ -176,43 +262,11 @@ export const C4_EXP_03_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C4-EXP-DIFF-0002",
-      template: "GT-014",
-      band: "5-6",
-      difficulty: 3,
-      theme: "ocean",
-      rounds: 3,
-    },
-    {
       code: "GL-C4-EXP-ISO-0001",
       template: "GT-017",
       band: "5-6",
       difficulty: 2,
       theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-EXP-ISO-0002",
-      template: "GT-017",
-      band: "5-6",
-      difficulty: 3,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-EXP-TFRA-0006",
-      template: "GT-019",
-      band: "4-5",
-      difficulty: 2,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-EXP-TFRA-0007",
-      template: "GT-019",
-      band: "4-5",
-      difficulty: 3,
-      theme: "space",
       rounds: 3,
     },
   ],

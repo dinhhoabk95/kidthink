@@ -3,7 +3,7 @@ import { repoPath } from "@mindkid/config/paths";
 import type { AgeBand } from "@mindkid/game-engine/contracts";
 import { AGE_BANDS } from "@mindkid/shared";
 import { z } from "zod";
-import { ALL_SEED_LESSONS, ALL_SEED_LEVELS } from "#src/catalog";
+import { ALL_SEED_LEVELS } from "#src/catalog";
 
 export const SEED_LEVELS_CORPUS = ALL_SEED_LEVELS;
 
@@ -28,7 +28,7 @@ export type PreschoolAgeBandsConfig = z.infer<
 
 export interface ViolationRecord {
   readonly code: string;
-  readonly type: "level" | "lesson";
+  readonly type: "level";
   readonly band: AgeBand;
   readonly metric: string;
   readonly limit: number;
@@ -38,7 +38,6 @@ export interface ViolationRecord {
 export interface AgeBandFitResult {
   readonly valid: boolean;
   readonly totalLevels: number;
-  readonly totalLessons: number;
   readonly violations: readonly ViolationRecord[];
 }
 
@@ -81,35 +80,6 @@ function checkLevelsFit(config: PreschoolAgeBandsConfig): ViolationRecord[] {
   return violations;
 }
 
-function checkLessonsFit(config: PreschoolAgeBandsConfig): ViolationRecord[] {
-  const violations: ViolationRecord[] = [];
-
-  for (const lesson of ALL_SEED_LESSONS) {
-    const min = lesson.header.target_age_min ?? 3;
-    const max = lesson.header.target_age_max ?? 6;
-    const band = resolveBand(min, max);
-    const limits = config.bands[band];
-
-    if (!limits) {
-      continue;
-    }
-
-    const estMinutes = lesson.header.estimated_minutes ?? 10;
-    if (estMinutes > limits.estimated_minutes_max) {
-      violations.push({
-        code: lesson.header.code,
-        type: "lesson",
-        band,
-        metric: "estimated_minutes",
-        limit: limits.estimated_minutes_max,
-        actual: estMinutes,
-      });
-    }
-  }
-
-  return violations;
-}
-
 export function runAgeBandFitGate(configPath?: string): AgeBandFitResult {
   const filePath =
     configPath ??
@@ -123,14 +93,11 @@ export function runAgeBandFitGate(configPath?: string): AgeBandFitResult {
   const config = PreschoolAgeBandsConfigSchema.parse(rawJson);
 
   const levelViolations = checkLevelsFit(config);
-  const lessonViolations = checkLessonsFit(config);
-  const allViolations = [...levelViolations, ...lessonViolations];
 
   return {
-    valid: allViolations.length === 0,
+    valid: levelViolations.length === 0,
     totalLevels: ALL_SEED_LEVELS.length,
-    totalLessons: ALL_SEED_LESSONS.length,
-    violations: allViolations,
+    violations: levelViolations,
   };
 }
 
@@ -138,9 +105,7 @@ export function reportAgeBandFit(): boolean {
   try {
     const result = runAgeBandFitGate();
     console.log("=== BÁO CÁO AGE-BAND-FIT (TASK #159 / BR-PAR-01..07) ===");
-    console.log(
-      `Tổng số level: ${result.totalLevels} | Tổng số lesson: ${result.totalLessons}`
-    );
+    console.log(`Tổng số level: ${result.totalLevels}`);
     console.log(`Số vi phạm: ${result.violations.length}`);
 
     if (result.violations.length > 0) {

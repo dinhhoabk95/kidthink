@@ -1,6 +1,7 @@
 import { createHmac } from "node:crypto";
+import { requireEnv } from "@mindkid/config";
 import { RateLimiterMemory, RateLimiterRedis } from "rate-limiter-flexible";
-import { getClient } from "./client.js";
+import { getClient, onClientDisconnect } from "./client.js";
 
 export interface RateLimitCheckResult {
   allowed: boolean;
@@ -21,6 +22,10 @@ export const RATE_LIMIT_KEY_PREFIX = "rl";
 const memoryLimiters = new Map<string, RateLimiterMemory>();
 const redisLimiters = new Map<string, RateLimiterRedis>();
 
+onClientDisconnect(() => {
+  redisLimiters.clear();
+});
+
 export function clearInMemoryBuckets(): void {
   memoryLimiters.clear();
   redisLimiters.clear();
@@ -39,10 +44,20 @@ export async function clearRateLimitBuckets(): Promise<void> {
   clearInMemoryBuckets();
 
   const client = getClient();
-  const keys = await client.keys(`${RATE_LIMIT_KEY_PREFIX}:*`);
-  if (keys.length > 0) {
-    await client.del(...keys);
-  }
+  let cursor = "0";
+  do {
+    const [nextCursor, keys] = await client.scan(
+      cursor,
+      "MATCH",
+      `${RATE_LIMIT_KEY_PREFIX}:*`,
+      "COUNT",
+      100
+    );
+    cursor = nextCursor;
+    if (keys.length > 0) {
+      await client.del(...keys);
+    }
+  } while (cursor !== "0");
 }
 
 /**
@@ -57,7 +72,9 @@ export function hashRateLimitIdentifier(
     secret ||
     process.env.RATE_LIMIT_HMAC_SECRET ||
     process.env.NUXT_SESSION_PASSWORD ||
-    "tinimath_ratelimit_salt";
+    (process.env.NODE_ENV === "test"
+      ? "test_ratelimit_hmac_secret_32bytes!!"
+      : requireEnv("NUXT_SESSION_PASSWORD"));
   const normalized = identifier.trim().toLowerCase();
   return createHmac("sha256", effectiveSecret)
     .update(normalized)
@@ -107,7 +124,7 @@ async function consumeMemoryRateLimit(
       remaining: res.remainingPoints,
       resetSeconds: Math.ceil(res.msBeforeNext / 1000),
     };
-  } catch (rej: unknown) {
+  } catch (rej) {
     if (rej && typeof rej === "object" && "remainingPoints" in rej) {
       const msBeforeNext = (rej as { msBeforeNext?: number }).msBeforeNext;
       return {
@@ -141,7 +158,7 @@ export async function checkRateLimit(
       remaining: res.remainingPoints,
       resetSeconds: Math.ceil(res.msBeforeNext / 1000),
     };
-  } catch (err: unknown) {
+  } catch (err) {
     if (err && typeof err === "object" && "remainingPoints" in err) {
       const msBeforeNext = (err as { msBeforeNext?: number }).msBeforeNext;
       return {

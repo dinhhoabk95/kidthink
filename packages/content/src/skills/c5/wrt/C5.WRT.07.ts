@@ -5,8 +5,8 @@ export const C5_WRT_07_IDENTITY: SkillIdentity = {
   strand_code: "C5.WRT",
   competency_code: "C5",
   name: "Viết chữ cái trong ô li",
-  age_min: 6,
-  age_max: 7,
+  age_min: 5,
+  age_max: 6,
   difficulty: 5,
   thinking_processes: ["create", "verify"],
   tier: "advanced",
@@ -44,58 +44,155 @@ export const C5_WRT_07_DATASET: SkillDataset = {
   items: [
     {
       id: "wrt_o_li_vuong",
-      label: "ô li vuông vắn",
+      label: "ô li vuông",
       image: {
         kind: "emoji",
         ref: "🔲",
       },
       category: {
-        type: "ô li",
+        type: "dòng ô li",
       },
+      value: 1,
+      contrast_group: "primary",
     },
     {
       id: "wrt_duong_ke_ngang",
-      label: "đường kẻ ngang đậm",
+      label: "đường kẻ ngang",
       image: {
         kind: "emoji",
         ref: "➖",
       },
       category: {
-        type: "ô li",
+        type: "dòng ô li",
       },
+      value: 2,
+      contrast_group: "primary",
     },
     {
       id: "wrt_duong_ke_doc",
-      label: "đường kẻ dọc ô li",
+      label: "đường kẻ dọc",
       image: {
         kind: "emoji",
         ref: "📏",
       },
       category: {
-        type: "ô li",
+        type: "dòng ô li",
       },
+      value: 3,
+      contrast_group: "primary",
+    },
+    {
+      id: "wrt_diem_dat_but",
+      label: "điểm đặt bút",
+      image: {
+        kind: "emoji",
+        ref: "📍",
+      },
+      category: {
+        type: "dòng ô li",
+      },
+      value: 4,
+      contrast_group: "primary",
     },
     {
       id: "wrt_do_cao_chu",
-      label: "chiều cao chữ cái 2 ô li",
+      label: "chiều cao chữ",
       image: {
         kind: "emoji",
         ref: "📊",
       },
       category: {
-        type: "ô li",
+        type: "viết chữ đẹp",
       },
+      value: 5,
+      contrast_group: "contrast",
     },
     {
       id: "wrt_khoang_cach_chu",
-      label: "khoảng cách giữa các chữ",
+      label: "khoảng cách chữ",
       image: {
         kind: "emoji",
         ref: "↔️",
       },
       category: {
-        type: "ô li",
+        type: "viết chữ đẹp",
       },
+      value: 6,
+      contrast_group: "contrast",
+    },
+    {
+      id: "wrt_dung_but",
+      label: "điểm dừng bút",
+      image: {
+        kind: "emoji",
+        ref: "🛑",
+      },
+      category: {
+        type: "viết chữ đẹp",
+      },
+      value: 7,
+      contrast_group: "contrast",
+    },
+    {
+      id: "wrt_chu_dep",
+      label: "dòng chữ ngay ngắn",
+      image: {
+        kind: "emoji",
+        ref: "📝",
+      },
+      category: {
+        type: "viết chữ đẹp",
+      },
+      value: 8,
+      contrast_group: "contrast",
+    },
+  ],
+  axes: {
+    category: {
+      values: ["dòng ô li", "viết chữ đẹp"],
+      ordered: true,
+    },
+  },
+  relations: [
+    {
+      type: "pair",
+      source_id: "wrt_o_li_vuong",
+      target_id: "wrt_duong_ke_ngang",
+    },
+    {
+      type: "pair",
+      source_id: "wrt_duong_ke_doc",
+      target_id: "wrt_diem_dat_but",
+    },
+    {
+      type: "pair",
+      source_id: "wrt_do_cao_chu",
+      target_id: "wrt_khoang_cach_chu",
+    },
+    {
+      type: "pair",
+      source_id: "wrt_dung_but",
+      target_id: "wrt_chu_dep",
+    },
+    {
+      type: "contrast",
+      source_id: "wrt_o_li_vuong",
+      target_id: "wrt_do_cao_chu",
+    },
+    {
+      type: "contrast",
+      source_id: "wrt_duong_ke_ngang",
+      target_id: "wrt_khoang_cach_chu",
+    },
+    {
+      type: "contrast",
+      source_id: "wrt_duong_ke_doc",
+      target_id: "wrt_dung_but",
+    },
+    {
+      type: "contrast",
+      source_id: "wrt_diem_dat_but",
+      target_id: "wrt_chu_dep",
     },
   ],
   ladder: [
@@ -134,8 +231,11 @@ export const C5_WRT_07_DATASET: SkillDataset = {
     "wrt_o_li_vuong",
     "wrt_duong_ke_ngang",
     "wrt_duong_ke_doc",
+    "wrt_diem_dat_but",
     "wrt_do_cao_chu",
     "wrt_khoang_cach_chu",
+    "wrt_dung_but",
+    "wrt_chu_dep",
   ],
 };
 
@@ -165,62 +265,6 @@ export const C5_WRT_07_SEED: SkillSeed = {
       band: "5-6",
       difficulty: 4,
       theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-TIME-0002",
-      template: "GT-029",
-      band: "5-6",
-      difficulty: 5,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-COIN-0001",
-      template: "GT-030",
-      band: "5-6",
-      difficulty: 4,
-      theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-COIN-0002",
-      template: "GT-030",
-      band: "5-6",
-      difficulty: 5,
-      theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-PICT-0001",
-      template: "GT-031",
-      band: "5-6",
-      difficulty: 4,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-PICT-0002",
-      template: "GT-031",
-      band: "5-6",
-      difficulty: 5,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-VENN-0001",
-      template: "GT-032",
-      band: "5-6",
-      difficulty: 4,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-VENN-0002",
-      template: "GT-032",
-      band: "5-6",
-      difficulty: 5,
-      theme: "animal",
       rounds: 3,
     },
   ],

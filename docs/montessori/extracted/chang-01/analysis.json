@@ -1,0 +1,1450 @@
+{
+  "stage_id": "chang-01",
+  "stage_number": 1,
+  "workbook_code": "WB01",
+  "title": "Chặng 1: Ga Những Con Số Thức Giấc",
+  "subtitle": "Những con Số - Nhận biết số",
+  "series": "Gấu Logic & Thỏ Quan Sát - Chuyến Tàu Toán Học (Phần 1)",
+  "source_pdf": "Chặng 1 - Những con Số - Nhận biết số.pdf",
+  "target_age": "3–6 tuổi",
+  "total_pages": 31,
+  "pedagogy": {
+    "framework": "Montessori & CPA (Concrete - Pictorial - Abstract)",
+    "core_theories": [
+      "Three-Period Lesson (Bài học 3 bước Montessori: Bước 1 Gọi tên/Nhận diện mặt số; Bước 2 Đối chiếu/Gắn lượng; Bước 3 Khắc sâu/Ứng dụng)",
+      "Finger Gnosia (Số học ngón tay: Cử chỉ ngón tay làm cầu nối bán cụ thể giữa vật thể và ký hiệu số)",
+      "Subitizing (Nhận biết lượng tức thì trong phạm vi 1–5)",
+      "Ten-Frame & Linear Unit Blocks (Mô hình thanh 10 ô vuông trực quan hóa số lượng và cấu trúc cơ số 10)",
+      "Multi-sensory Sandpaper Letters (Tập đồ nét số theo hướng mũi tên kết hợp phân biệt thị giác)"
+    ],
+    "competency": "C1 - Mathematical Thinking (Tư duy toán học & Cảm thức số)",
+    "skills_targeted": [
+      {
+        "code": "C1.NREC.01",
+        "name": "Nhận biết số 0–3",
+        "description": "Nhận diện mặt chữ số và gắn với số lượng trong phạm vi 3"
+      },
+      {
+        "code": "C1.NREC.02",
+        "name": "Nhận biết số 0–5",
+        "description": "Nhận diện mặt chữ số và gắn với số lượng trong phạm vi 5"
+      },
+      {
+        "code": "C1.NREC.03",
+        "name": "Nhận biết số 0–10",
+        "description": "Nhận diện đầy đủ các chữ số từ 0 đến 10"
+      },
+      {
+        "code": "C1.NREC.05",
+        "name": "Ghép số với lượng",
+        "description": "Đối chiếu ký hiệu số trừu tượng với tập hợp số lượng vật thể tương ứng"
+      },
+      {
+        "code": "C1.NREC.06",
+        "name": "Chọn đúng ký hiệu số",
+        "description": "Phân biệt thị giác và chọn đúng chữ số mục tiêu giữa các chữ số gây nhiễu"
+      },
+      {
+        "code": "C1.NREC.07",
+        "name": "Đọc số",
+        "description": "Phát âm chuẩn xác tên gọi các số từ 1 đến 10"
+      },
+      {
+        "code": "C1.NREC.08",
+        "name": "Viết số theo nét",
+        "description": "Đồ theo nét chấm có định hướng mũi tên viết số chuẩn"
+      },
+      {
+        "code": "C1.NREC.09",
+        "name": "Thứ tự số",
+        "description": "Nắm vững trật tự tự nhiên của các số từ 1 đến 10 trên đường số"
+      },
+      {
+        "code": "C1.CNT.01",
+        "name": "Đếm đồ vật",
+        "description": "Đếm tương ứng 1-1 các vật thể rời rạc không bỏ sót, không đếm trùng"
+      },
+      {
+        "code": "C1.CNT.03",
+        "name": "Đếm không bỏ sót",
+        "description": "Kỹ năng đếm cẩn thận, quét tuần tự các đối tượng trong nhóm lớn (6–10)"
+      },
+      {
+        "code": "C1.CNT.08",
+        "name": "Đếm trên đường số",
+        "description": "Xác định vị trí số khuyết trên chuỗi số liên tục (chú sâu 10 đốt, đoàn tàu 10 toa)"
+      },
+      {
+        "code": "C1.CNT.11",
+        "name": "Subitizing (1–5)",
+        "description": "Nhận diện nhanh số lượng nhóm chấm tròn hoặc ngón tay không cần đếm từng hạt"
+      },
+      {
+        "code": "C1.OTO.01",
+        "name": "Ghép 1-1",
+        "description": "Thiết lập quan hệ tương ứng 1-1 giữa vật thể và đơn vị đo / khối vuông"
+      },
+      {
+        "code": "C1.OTO.04",
+        "name": "Ghép đồ vật với số",
+        "description": "Ghép nối các đại diện khác nhau của cùng một số lượng (hình ảnh, bàn tay, chữ số)"
+      }
+    ]
+  },
+  "characters": {
+    "gau_logic": {
+      "name": "Gấu Logic",
+      "role": "Người dẫn đường lý thuyết & giải thích bản chất toán học",
+      "appearance": "Gấu nâu thông thái, đeo kính tròn xanh dương, áo gile xanh lam, phong thái ấm áp, cầm bảng hạt tư duy",
+      "voice_tone": "Trầm ấm, điềm tĩnh, hướng dẫn rõ ràng từng bước"
+    },
+    "tho_quan_sat": {
+      "name": "Thỏ Quan Sát",
+      "role": "Bạn đồng hành khích lệ hành động & rèn luyện kỹ năng quan sát",
+      "appearance": "Thỏ trắng hoạt bát, đeo túi chéo vàng, cầm kính lúp viền đỏ/cam, chỉ tay khám phá",
+      "voice_tone": "Trong trẻo, hào hứng, cổ vũ tích cực, nhắc nhở chi tiết"
+    }
+  },
+  "activity_groups": [
+    {
+      "id": "D1",
+      "code": "D1_WAKE_CPA",
+      "name": "Đánh thức số & Bảng CPA 1–10",
+      "pages": [2, 3],
+      "pedagogical_purpose": "Khởi động và làm quen: Nhân cách hóa các chữ số đang ngủ (Step 1 Presentation) và đối chiếu hệ thống 3 tầng biểu diễn CPA (Concrete chấm tròn - Pictorial bàn tay - Abstract chữ số).",
+      "game_templates": [
+        {
+          "template_id": "GT-000",
+          "name": "Làm quen khái niệm",
+          "mechanic": "concept-intro",
+          "role": "Trình diễn và gọi tên từng số 1–10"
+        },
+        {
+          "template_id": "GT-001",
+          "name": "Chọn một đáp án",
+          "mechanic": "tap-select",
+          "role": "Chạm vào ô số để đánh thức chữ số"
+        },
+        {
+          "template_id": "GT-028",
+          "name": "Chạm đếm tích luỹ",
+          "mechanic": "tap-count",
+          "role": "Chạm từng chấm tròn trên bảng CPA để phát âm nhịp đếm"
+        }
+      ],
+      "skills": [
+        "C1.NREC.01",
+        "C1.NREC.02",
+        "C1.NREC.03",
+        "C1.NREC.07",
+        "C1.CNT.11",
+        "C1.OTO.01"
+      ],
+      "dialogue_patterns": {
+        "gau_logic": "Mười con số vẫn đang ngủ! / Mỗi con số có một số lượng riêng.",
+        "tho_quan_sat": "Bé hãy gọi tên để đánh thức các bạn nhé! / Bé hãy đếm ngón tay và chấm tròn nhé!"
+      },
+      "objects_and_quantities": "10 chữ số nhân cách hóa có mắt ngủ, 10 bàn tay ngón cử chỉ chuẩn, 10 nhóm chấm tròn từ 1 đến 10",
+      "distractors": "Không có nhiễu ở bước này — tập trung 100% vào nhận thức cốt lõi (Scaffolding mức cao nhất)",
+      "digital_mechanic": {
+        "visual_state": "Số ban đầu nhắm mắt, scale thở nhẹ (idle breathing). Khi tap: mắt mở to, nảy pop, phát hào quang, ngôi sao đế chân sáng vàng.",
+        "audio_feedback": "Giọng đọc truyền cảm chuẩn Tiếng Việt 'Số một!', 'Số hai!'... kèm SFX leng keng ngôi sao ấm áp.",
+        "win_state": "Đánh thức đủ 10 số: tiếng còi tàu hụ vang, 10 số cùng mỉm cười vẫy tay, pháo hoa bong bóng nhẹ nhàng."
+      }
+    },
+    {
+      "id": "D2",
+      "code": "D2_COUNT_MATCH_HANDS",
+      "name": "Đếm nối nhóm hình – bàn tay – chữ số",
+      "pages": [4, 5, 6, 7],
+      "pedagogical_purpose": "Rèn luyện tương ứng 1-1 và chuyển dịch biểu diễn đa phương thức (Multi-representational fluency): Đếm vật thể -> Gắn với bàn tay -> Gắn với chữ số biểu tượng.",
+      "sub_stages": [
+        {
+          "pages": [4, 5],
+          "type": "Vật thể thực tế ↔ Bàn tay ngón (Concrete ↔ Semi-concrete)",
+          "range_p4": "1–5 (3 mèo, 1 voi, 5 vịt, 2 táo, 4 cá)",
+          "range_p5": "6–10 (8 sao, 6 bóng bay, 10 dâu, 7 lá, 9 cá; neo cơ số 5 với 2 bàn tay)"
+        },
+        {
+          "pages": [6, 7],
+          "type": "Bàn tay ngón ↔ Chữ số (Semi-concrete ↔ Abstract)",
+          "range_p6": "1–5 (ngón tay 4, 5, 1, 3, 2 ↔ chữ số 2, 4, 5, 1, 3)",
+          "range_p7": "6–10 (cặp bàn tay 5+3, 5+1, 5+5, 5+2, 5+4 ↔ chữ số 7, 9, 6, 10, 8)"
+        }
+      ],
+      "game_templates": [
+        {
+          "template_id": "GT-005",
+          "name": "Ghép cặp",
+          "mechanic": "pair-match",
+          "role": "Nối dây giữa 2 cột (hoặc tap nguồn - tap đích)"
+        },
+        {
+          "template_id": "GT-001",
+          "name": "Chọn một đáp án",
+          "mechanic": "tap-select",
+          "role": "Tap-tap matching fallback cho trẻ 3–4 tuổi"
+        }
+      ],
+      "skills": [
+        "C1.CNT.01",
+        "C1.CNT.03",
+        "C1.OTO.04",
+        "C1.NREC.02",
+        "C1.NREC.03",
+        "C1.CNT.11"
+      ],
+      "dialogue_patterns": {
+        "gau_logic": "Hãy đếm từng nhóm hình. / Một bàn tay có 5 ngón. / Quan sát số ngón tay. / Đếm đủ cả hai bàn tay.",
+        "tho_quan_sat": "Nối với bàn tay phù hợp nhé! / Hãy đếm thêm ở bàn tay thứ hai nhé! / Tìm chữ số tương ứng nhé!"
+      },
+      "objects_and_quantities": "Mèo, voi, vịt con, táo, cá sắc màu, sao vàng, bóng bay đỏ, dâu tây, lá xanh; bàn tay 1-5 ngón và 2 bàn tay 6-10 ngón; chữ số màu sắc",
+      "distractors": "Các nhóm lượng khác nhau xếp xáo trộn thứ tự ở 2 cột, đòi hỏi trẻ phải đếm chính xác và đối chiếu",
+      "digital_mechanic": {
+        "interaction": "Kéo dây nối mượt mà hoặc chạm thẻ bên trái rồi chạm thẻ tương ứng bên phải. Hitbox rộng bán kính >=64px.",
+        "feedback": "Dây nối đổi màu sáng rực khi đúng, phát âm khen ngợi 'Chính xác! Ba chú mèo nối với ba ngón tay!'. Sai: dây tan biến dạng bong bóng nhẹ, item trôi về chỗ cũ không phạt điểm."
+      }
+    },
+    {
+      "id": "D3",
+      "code": "D3_CUT_PASTE_SLOTS",
+      "name": "Đếm, cắt và dán nhóm hình vào ô số",
+      "pages": [8, 9],
+      "pedagogical_purpose": "Mô phỏng thao tác vận động tinh (cắt dán) bằng tương tác kéo thả định vị (Drag-to-slot), gắn kết lượng của nhóm vật thể vào khung ô số tương ứng.",
+      "sub_stages": [
+        {
+          "page": 8,
+          "range": "1–5 (Ô đích: 1, 2, 3, 4, 5. Thẻ nguồn: 4 tên lửa, 1 mặt trời, 3 hành tinh, 5 ngôi sao, 2 đám mây)"
+        },
+        {
+          "page": 9,
+          "range": "6–10 (Ô đích: 6, 7, 8, 9, 10. Thẻ nguồn: 8 cá, 6 bóng bay, 10 cam, 7 lá, 9 hoa)"
+        }
+      ],
+      "game_templates": [
+        {
+          "template_id": "GT-008",
+          "name": "Kéo vào ô chứa",
+          "mechanic": "drag-to-slot",
+          "role": "Kéo thẻ lượng từ khay dưới thả khớp vào ô chữ số phía trên"
+        },
+        {
+          "template_id": "GT-003",
+          "name": "Kéo vào đích",
+          "mechanic": "drag-to-container",
+          "role": "Hộp thả thẻ số lượng tương thích"
+        }
+      ],
+      "skills": ["C1.CNT.01", "C1.CNT.03", "C1.NREC.05", "C1.OTO.04"],
+      "dialogue_patterns": {
+        "gau_logic": "Đếm từng nhóm hình. / Đếm chậm để không bỏ sót.",
+        "tho_quan_sat": "Cắt rồi dán vào ô số đúng nhé!"
+      },
+      "objects_and_quantities": "Chủ đề vũ trụ (tên lửa, mặt trời, hành tinh, sao, mây) và thiên nhiên (cá, bóng bay, cam, lá, hoa); 5 ô số mục tiêu mỗi trang",
+      "distractors": "5 thẻ hình ở khay cắt bị đảo lộn thứ tự hoàn toàn so với thứ tự 1-5 và 6-10",
+      "digital_mechanic": {
+        "interaction": "Chạm giữ thẻ hình ở khay dưới, kéo lên vùng ô chữ nhật cạnh số tương ứng, nam châm snap tự hút khi thả gần đích (hit band multiplier 1.5x). Fallback tap thẻ nguồn -> tap ô đích cho bé nhỏ.",
+        "feedback": "Thẻ dán chặt vào ô kèm hiệu ứng đính ghim vàng lấp lánh và âm 'tách' giòn giã."
+      }
+    },
+    {
+      "id": "D4",
+      "code": "D4_TRACE_AND_HUNT",
+      "name": "Tô số theo nét chấm & Săn tìm số trong lưới",
+      "pages": [10, 11, 12, 14, 15, 16, 17, 18, 19, 25],
+      "pedagogical_purpose": "Khắc sâu hình thái chữ số (Orthographic representation): Tích hợp xúc giác vận động (Trace-path đồ nét theo hướng chuẩn mũi tên) và phân biệt thị giác ma trận (Visual discrimination / Symbol hunt giữa các số gây nhiễu).",
+      "structure_per_page": {
+        "part_1_concept": "Chữ số lớn có nét hướng dẫn + Nhóm vật thể đếm được mang tính đại diện (1 Mặt Trời, 2 Mây, 3 Vịt, 4 Bóng bay, 5 Táo, 6 Cá, 7 Hoa, 8 Sao, 9 Cam, 10 Ngọc)",
+        "part_2_tracing": "2 hàng x 5 chữ số nét chấm = 10 lần luyện viết chữ số",
+        "part_3_grid_hunt": "Lưới 3 hàng x 5 cột = 15 ô, chứa đúng 5 chữ số mục tiêu và 10 chữ số gây nhiễu"
+      },
+      "game_templates": [
+        {
+          "template_id": "GT-024",
+          "name": "Vẽ theo nét",
+          "mechanic": "trace-path",
+          "role": "Đồ nét chữ số theo điểm neo và hướng mũi tên"
+        },
+        {
+          "template_id": "GT-037",
+          "name": "Tìm hết ký hiệu",
+          "mechanic": "symbol-hunt",
+          "role": "Tìm và tap đủ 5 số mục tiêu trong ma trận 15 ô"
+        },
+        {
+          "template_id": "GT-002",
+          "name": "Chọn nhiều đáp án",
+          "mechanic": "tap-select-multi",
+          "role": "Chế độ khoanh tròn đa chọn cho lưới săn số"
+        }
+      ],
+      "skills": [
+        "C1.NREC.01",
+        "C1.NREC.02",
+        "C1.NREC.03",
+        "C1.NREC.06",
+        "C1.NREC.08",
+        "C1.CNT.01"
+      ],
+      "dialogue_patterns": {
+        "gau_logic": "Số [N] chỉ [N] đồ vật.",
+        "tho_quan_sat": "Bé hãy tô và tìm số [N] nhé!"
+      },
+      "objects_and_quantities": "Số 1: 1 mặt trời; Số 2: 2 đám mây; Số 3: 3 chú vịt; Số 4: 4 quả bóng bay; Số 5: 5 quả táo; Số 6: 6 chú cá; Số 7: 7 bông hoa; Số 8: 8 ngôi sao; Số 9: 9 quả cam; Số 10: 10 viên ngọc",
+      "distractors": "Các chữ số lân cận trong phạm vi 1-5 (với bài số 1-5) hoặc 5-10 (với bài số 6-10) xuất hiện ngẫu nhiên trong lưới 3x5",
+      "digital_mechanic": {
+        "tracing": "Bút chì ngôi sao dẫn đường, đường vẽ phát sáng neon rực rỡ, tự động snap theo đường đứt đoạn. Hoàn thành 1 chữ số phát âm đếm 1, 2... đến 10.",
+        "hunting": "Chạm vào số đúng trong lưới -> số bừng sáng, vòng tròn bút màu vẽ bao quanh, âm chuông vang. Chạm số sai: số rung rinh nhẹ không trừ điểm."
+      }
+    },
+    {
+      "id": "D5",
+      "code": "D5_THREE_TASK_CHALLENGE",
+      "name": "Thử thách số 1–10: Ba nhiệm vụ tích hợp",
+      "pages": [13, 20, 21, 22, 23, 24, 26, 27, 28, 29, 30],
+      "pedagogical_purpose": "Đánh giá tổng hợp và củng cố vững chắc (Mastery Assessment): Mỗi số từ 1 đến 10 đều trải qua 3 thử thách độc lập: (1) Ten-frame cấu trúc lượng, (2) Đếm hình thực tế / điền số khuyết sâu & tàu / tô ngón tay, (3) Săn tìm số trong ma trận mở rộng 3x7 (21 ô).",
+      "three_tasks_breakdown": {
+        "task_1_ten_frame": "Tô màu N khối vuông trên dải thanh 10 ô vuông chuẩn (Linear Ten-Frame / Unit bar)",
+        "task_2_varied_representation": "Bài toán ngữ cảnh: Điền số sâu số (Số 1), Tô cánh bướm (Số 2), Điền số toa tàu (Số 3, Số 7), Tô cánh chuồn chuồn (Số 4), Tô chú sâu (Số 5), Khoanh ô cánh diều (Số 6), Tô chân & mắt nhện (Số 8), Khoanh ô châu chấu (Số 9), Khoanh ô viên ngọc (Số 10) kết hợp tô N ngón tay",
+        "task_3_matrix_hunt": "Ma trận 3 hàng x 7 cột (21 ô) mật độ nhiễu cao, tìm và tô tất cả chữ số N mục tiêu"
+      },
+      "game_templates": [
+        {
+          "template_id": "GT-028",
+          "name": "Chạm đếm tích luỹ",
+          "mechanic": "tap-count",
+          "role": "Chạm tô từng ô khối vuông và ngón tay trên thanh 10 ô"
+        },
+        {
+          "template_id": "GT-001",
+          "name": "Chọn một đáp án",
+          "mechanic": "tap-select",
+          "role": "Khoanh ô đáp án đúng trong các bài chọn nhóm hình (Số 6 diều, Số 9 châu chấu, Số 10 ngọc)"
+        },
+        {
+          "template_id": "GT-006",
+          "name": "Sắp xếp thứ tự",
+          "mechanic": "sequence-order",
+          "role": "Điền số khuyết trên đoàn tàu và chú sâu (Số 1, 3, 7)"
+        },
+        {
+          "template_id": "GT-037",
+          "name": "Tìm hết ký hiệu",
+          "mechanic": "symbol-hunt",
+          "role": "Săn tìm toàn bộ chữ số mục tiêu trong ma trận 21 ô"
+        }
+      ],
+      "skills": [
+        "C1.NREC.01",
+        "C1.NREC.02",
+        "C1.NREC.03",
+        "C1.NREC.09",
+        "C1.CNT.01",
+        "C1.CNT.03",
+        "C1.CNT.08",
+        "C1.OTO.01"
+      ],
+      "dialogue_patterns": {
+        "gau_logic": "Mình cùng ôn số 1 nhé! / Số 2 đang chờ chúng mình! / Số 3 có ba nhiệm vụ. / Số 4 cần đôi mắt tinh! / Năm nhiệm vụ nhỏ đang đợi! / Số 6 cần đếm thật kỹ! / Số 7 trốn ở đâu nhỉ? / Tám chân của ai đây? / Số 9 gần đến đích rồi! / Thử thách cuối cùng đây!",
+        "tho_quan_sat": "Hoàn thành cả ba nhiệm vụ nào! / Quan sát kỹ rồi làm nhé! / Bé làm lần lượt nhé! / Đếm chậm và thật chính xác! / Bé đếm từng hình nhé! / Chọn đúng ô có sáu hình nhé! / Tìm ra rồi tô thật đẹp! / Đếm chân và mắt thật kỹ! / Khoanh đúng nhóm chín hình! / Hoàn thành để mở cổng nhà ga!"
+      },
+      "objects_and_quantities": "Khối vuông (1-10 ô), bàn tay (1-10 ngón), chú sâu 10 đốt, bướm 4 cánh, đoàn tàu 10 toa, chuồn chuồn 4 cánh, đàn sâu 6 con, 4 ô diều, nhện 8 chân 8 mắt, 4 ô châu chấu, 4 ô kim cương; ma trận 21 chữ số",
+      "distractors": "Các số nhiễu lân cận trong ma trận 3x7 (13-14 số nhiễu, 7-8 số đúng); các ô lựa chọn có số lượng bẫy (ví dụ ô 5 con, 7 con khi tìm 6 con diều)",
+      "digital_mechanic": {
+        "task_1": "Chạm tuần tự từng khối vuông, khối vuông bật màu sinh động và đọc số đếm tăng dần.",
+        "task_2": "Điền số vào ô khuyết bằng bàn phím số bong bóng hoặc chọn ô hình đúng; tô ngón tay đổi màu.",
+        "task_3": "Chạm quét ma trận 21 ô, thanh tiến độ hiển thị số lượng đã tìm được (ví dụ: Đã tìm 6/8 số). Khi tìm hết, hiệu ứng chúc mừng 'Tuyệt vời!' bừng sáng."
+      }
+    }
+  ],
+  "pages": [
+    {
+      "page_number": 1,
+      "file_path": "pages/page-01.jpg",
+      "page_type": "cover_overview",
+      "activity_group": null,
+      "title": "Chuyến Tàu Toán Học - Phần 1: Ga Những Con Số Thức Giấc",
+      "instruction": null,
+      "dialogue": {
+        "gau_logic": "Chào mừng bé đến với Chuyến Tàu Toán Học! Hãy cùng Gấu Logic khám phá ga đầu tiên nhé!",
+        "tho_quan_sat": "Thỏ Quan Sát đã chuẩn bị kính lúp rồi. Chúng mình cùng lên tàu nào!"
+      },
+      "target_number": null,
+      "number_range": [1, 10],
+      "objects": [
+        "Đầu tàu hỏa hơi nước màu tím thẫm viền vàng kim, có gắn huy hiệu ngôi sao",
+        "10 toa tàu rực rỡ màu cầu vồng đánh số thứ tự 1 đến 10",
+        "Gấu Logic mặc gile xanh cầm bảng chấm tư duy",
+        "Thỏ Quan Sát đeo túi chéo vàng cầm kính lúp chỉ tay",
+        "Nhà ga cổ tích, tháp đồng hồ tròn chỉ 12 giờ, lâu đài 3 cổng vòm số 1, 2, 3 trên đồi hoa"
+      ],
+      "layout": "Toàn cảnh sân ga bình minh, bố cục phong cảnh hoạt hình rực rỡ ấm áp",
+      "quantities": {
+        "carriage_count": 10,
+        "range": [1, 10]
+      },
+      "distractors": null,
+      "game_template": "GT-000",
+      "skills_targeted": ["C1.NREC.03", "C1.NREC.09"],
+      "digital_interaction": {
+        "mechanic": "Scene Overview / World Map Entry",
+        "description": "Chạm vào đầu tàu phát tiếng còi hụ 'Tu tu xình xịch', chạm vào từng toa tàu đọc tên số tương ứng, chạm Gấu và Thỏ phát lời chào mở đầu chặng."
+      }
+    },
+    {
+      "page_number": 2,
+      "file_path": "pages/page-02.jpg",
+      "page_type": "d1_wake_numbers",
+      "activity_group": "D1",
+      "title": "Nhiệm vụ đầu tiên",
+      "instruction": "CHỈ TAY VÀ ĐỌC TO CÁC SỐ TỪ 1 ĐẾN 10.",
+      "dialogue": {
+        "gau_logic": "Mười con số vẫn đang ngủ!",
+        "tho_quan_sat": "Bé hãy gọi tên để đánh thức các bạn nhé!"
+      },
+      "target_number": null,
+      "number_range": [1, 10],
+      "objects": [
+        "10 thẻ số vòm xe lửa viền vàng có chân đế sao: Số 1 (đỏ cam), 2 (cam vàng), 3 (vàng tươi), 4 (xanh lá), 5 (xanh ngọc), 6 (xanh dương), 7 (tím hoa cà), 8 (hồng phấn), 9 (nâu nhạt), 10 (xanh navy)",
+        "Trên đầu mỗi chữ số có cặp mắt hàng mi cong nhắm nghiền biểu thị đang ngủ",
+        "Đoàn tàu hỏa hơi nước đỗ bên sân ga có 10 toa số tối màu đang say ngủ"
+      ],
+      "layout": "2 hàng x 5 cột (Hàng trên: 1–5; Hàng dưới: 6–10)",
+      "quantities": {
+        "total_cards": 10,
+        "range": [1, 10]
+      },
+      "distractors": "Không có nhiễu — bài tập giới thiệu nhận diện trực quan ban đầu",
+      "game_template": "GT-001",
+      "skills_targeted": [
+        "C1.NREC.01",
+        "C1.NREC.02",
+        "C1.NREC.03",
+        "C1.NREC.07"
+      ],
+      "digital_interaction": {
+        "mechanic": "Tap-to-Wake (TapSelectSession)",
+        "description": "Bé chạm vào từng thẻ số để đánh thức. Chữ số mở mắt to tròn, chớp mắt mỉm cười, ngôi sao chân đế sáng bừng, giọng đọc phát âm chuẩn tiếng Việt kèm âm leng keng ngân vang."
+      }
+    },
+    {
+      "page_number": 3,
+      "file_path": "pages/page-03.jpg",
+      "page_type": "d1_cpa_table",
+      "activity_group": "D1",
+      "title": "Bảng số thức giấc",
+      "instruction": "QUAN SÁT VÀ ĐỌC CÁC SỐ TỪ 1 ĐẾN 10.",
+      "dialogue": {
+        "gau_logic": "Mỗi con số có một số lượng riêng.",
+        "tho_quan_sat": "Bé hãy đếm ngón tay và chấm tròn nhé!"
+      },
+      "target_number": null,
+      "number_range": [1, 10],
+      "objects": [
+        "10 cột biểu diễn 3 tầng Montessori/CPA:",
+        "Tầng 1 (Abstract): Chữ số 1 đến 10 in màu nổi bật",
+        "Tầng 2 (Semi-concrete): Bàn tay ngón (1: ngón trỏ; 2: trỏ+giữa; 3: 3 ngón; 4: 4 ngón; 5: xòe 5 ngón; 6: 5+1; 7: 5+2; 8: 5+3; 9: 5+4; 10: 5+5)",
+        "Tầng 3 (Concrete): Chấm tròn màu (1 chấm đỏ; 2 chấm cam; 3 chấm vàng; 4 chấm xanh lá; 5 chấm xanh ngọc; 6 chấm xanh dương 3x2; 7 chấm tím 4+3; 8 chấm hồng 4x2; 9 chấm nâu 3x3; 10 chấm xanh navy Ten-Frame 5x2)"
+      ],
+      "layout": "2 hàng x 5 cột (Hàng trên: 1–5; Hàng dưới: 6–10)",
+      "quantities": {
+        "total_columns": 10,
+        "range": [1, 10]
+      },
+      "distractors": "Không có nhiễu — bảng hệ thống chuẩn hóa",
+      "game_template": "GT-028",
+      "skills_targeted": ["C1.NREC.03", "C1.NREC.05", "C1.CNT.11", "C1.OTO.01"],
+      "digital_interaction": {
+        "mechanic": "Multi-sensory Explore & Tap Count",
+        "description": "Chạm vào chữ số để nghe đọc tên số; chạm vào bàn tay để cử chỉ ngón tay động đậy; chạm vào từng chấm tròn để nghe giọng đếm 1, 2, 3... tương ứng với nốt nhạc thăng hoa."
+      }
+    },
+    {
+      "page_number": 4,
+      "file_path": "pages/page-04.jpg",
+      "page_type": "d2_count_match_hands",
+      "activity_group": "D2",
+      "title": "Đếm và nối đúng",
+      "instruction": "ĐẾM VÀ NỐI MỖI NHÓM HÌNH VỚI BÀN TAY ĐÚNG.",
+      "dialogue": {
+        "gau_logic": "Hãy đếm từng nhóm hình.",
+        "tho_quan_sat": "Nối với bàn tay phù hợp nhé!"
+      },
+      "target_number": null,
+      "number_range": [1, 5],
+      "objects": [
+        "Cột trái (Nhóm hình): 3 chú mèo vàng cam, 1 chú voi xanh, 5 chú vịt con vàng, 2 quả táo đỏ, 4 chú cá sắc màu",
+        "Cột phải (Bàn tay): 5 ngón, 2 ngón, 4 ngón, 1 ngón, 3 ngón"
+      ],
+      "layout": "2 cột đối xứng x 5 hàng (Trái: Hình ảnh; Phải: Bàn tay)",
+      "quantities": {
+        "pairs_count": 5,
+        "left_items": [3, 1, 5, 2, 4],
+        "right_items": [5, 2, 4, 1, 3]
+      },
+      "distractors": "Các bàn tay ngón được xếp xáo trộn ngẫu nhiên so với thứ tự các nhóm hình bên trái",
+      "game_template": "GT-005",
+      "skills_targeted": ["C1.CNT.01", "C1.OTO.04", "C1.CNT.11", "C1.NREC.02"],
+      "digital_interaction": {
+        "mechanic": "Pair Match / Line Draw",
+        "description": "Bé kéo ngón tay từ khung hình sang khung bàn tay tương ứng (hoặc tap hình rồi tap bàn tay). Nối đúng: dây nối phát sáng xanh, phát âm 'Đúng rồi! Ba chú mèo nối với ba ngón tay!'."
+      }
+    },
+    {
+      "page_number": 5,
+      "file_path": "pages/page-05.jpg",
+      "page_type": "d2_count_match_hands",
+      "activity_group": "D2",
+      "title": "Đếm và nối 6–10",
+      "instruction": "ĐẾM VÀ NỐI MỖI NHÓM HÌNH VỚI HAI BÀN TAY ĐÚNG.",
+      "dialogue": {
+        "gau_logic": "Một bàn tay có 5 ngón.",
+        "tho_quan_sat": "Hãy đếm thêm ở bàn tay thứ hai nhé!"
+      },
+      "target_number": null,
+      "number_range": [6, 10],
+      "objects": [
+        "Cột trái (Nhóm hình 6-10): 8 ngôi sao vàng (2 hàng 4), 6 quả bóng bay đỏ (2 hàng 3), 10 quả dâu tây đỏ (2 hàng 5), 7 chiếc lá xanh (hàng 4 + hàng 3), 9 chú cá xanh dương (hàng 5 + hàng 4)",
+        "Cột phải (Hai bàn tay): 10 ngón (5+5), 7 ngón (5+2), 9 ngón (5+4), 6 ngón (5+1), 8 ngón (5+3)"
+      ],
+      "layout": "2 cột đối xứng x 5 hàng (Trái: Hình ảnh; Phải: Cặp bàn tay)",
+      "quantities": {
+        "pairs_count": 5,
+        "left_items": [8, 6, 10, 7, 9],
+        "right_items": [10, 7, 9, 6, 8]
+      },
+      "distractors": "Cặp bàn tay xáo trộn thứ tự, đòi hỏi trẻ nhận biết cấu trúc 5 + N ngón",
+      "game_template": "GT-005",
+      "skills_targeted": ["C1.CNT.01", "C1.CNT.03", "C1.OTO.04", "C1.NREC.03"],
+      "digital_interaction": {
+        "mechanic": "Pair Match (Base-5 Finger Decomposition)",
+        "description": "Kéo nối nhóm vật thể với cặp bàn tay. Engine làm nổi bật bàn tay trái 5 ngón cố định để trẻ rèn thói quen đếm tiếp từ 5."
+      }
+    },
+    {
+      "page_number": 6,
+      "file_path": "pages/page-06.jpg",
+      "page_type": "d2_hands_to_digits",
+      "activity_group": "D2",
+      "title": "Nối bàn tay với chữ số",
+      "instruction": "NỐI MỖI BÀN TAY VỚI CHỮ SỐ ĐÚNG.",
+      "dialogue": {
+        "gau_logic": "Quan sát số ngón tay.",
+        "tho_quan_sat": "Tìm chữ số tương ứng nhé!"
+      },
+      "target_number": null,
+      "number_range": [1, 5],
+      "objects": [
+        "Cột trái (Bàn tay 1-5 ngón): 4 ngón, 5 ngón, 1 ngón, 3 ngón, 2 ngón",
+        "Cột phải (Chữ số 1-5): 2 (xanh lá), 4 (xanh dương), 5 (đỏ), 1 (cam), 3 (tím)"
+      ],
+      "layout": "2 cột đối xứng x 5 hàng (Trái: Bàn tay; Phải: Chữ số)",
+      "quantities": {
+        "pairs_count": 5,
+        "left_items": [4, 5, 1, 3, 2],
+        "right_items": [2, 4, 5, 1, 3]
+      },
+      "distractors": "Các chữ số bên phải đảo trật tự hoàn toàn so với cột bàn tay bên trái",
+      "game_template": "GT-005",
+      "skills_targeted": ["C1.NREC.02", "C1.OTO.04", "C1.CNT.11"],
+      "digital_interaction": {
+        "mechanic": "Pair Match (Finger-to-Numeral)",
+        "description": "Nối bàn tay giơ ngón với chữ số trừu tượng. Giúp trẻ củng cố kỹ năng ánh xạ cử chỉ cơ thể sang ký hiệu số."
+      }
+    },
+    {
+      "page_number": 7,
+      "file_path": "pages/page-07.jpg",
+      "page_type": "d2_hands_to_digits",
+      "activity_group": "D2",
+      "title": "Nối hai bàn tay với chữ số",
+      "instruction": "NỐI MỖI CẶP BÀN TAY VỚI CHỮ SỐ ĐÚNG.",
+      "dialogue": {
+        "gau_logic": "Đếm đủ cả hai bàn tay.",
+        "tho_quan_sat": "Tìm chữ số tương ứng nhé!"
+      },
+      "target_number": null,
+      "number_range": [6, 10],
+      "objects": [
+        "Cột trái (Cặp bàn tay 6-10 ngón): 5+3 (8 ngón), 5+1 (6 ngón), 5+5 (10 ngón), 5+2 (7 ngón), 5+4 (9 ngón)",
+        "Cột phải (Chữ số 6-10): 7 (tím), 9 (cam), 6 (xanh lá), 10 (xanh dương), 8 (đỏ)"
+      ],
+      "layout": "2 cột đối xứng x 5 hàng (Trái: Cặp bàn tay; Phải: Chữ số)",
+      "quantities": {
+        "pairs_count": 5,
+        "left_items": [8, 6, 10, 7, 9],
+        "right_items": [7, 9, 6, 10, 8]
+      },
+      "distractors": "Các chữ số 6, 7, 8, 9, 10 đảo lộn thứ tự",
+      "game_template": "GT-005",
+      "skills_targeted": ["C1.NREC.03", "C1.OTO.04"],
+      "digital_interaction": {
+        "mechanic": "Pair Match (Two Hands to Numeral)",
+        "description": "Nối cặp 2 bàn tay với chữ số 6–10. Phản hồi âm thanh đọc tên số và phân tích '5 ngón thêm 3 ngón là 8!'."
+      }
+    },
+    {
+      "page_number": 8,
+      "file_path": "pages/page-08.jpg",
+      "page_type": "d3_cut_paste_slots",
+      "activity_group": "D3",
+      "title": "Đếm, cắt và dán 1–5",
+      "instruction": "CẮT CÁC NHÓM HÌNH Ở DƯỚI VÀ DÁN VÀO Ô PHÙ HỢP.",
+      "dialogue": {
+        "gau_logic": "Đếm từng nhóm hình.",
+        "tho_quan_sat": "Cắt rồi dán vào ô số đúng nhé!"
+      },
+      "target_number": null,
+      "number_range": [1, 5],
+      "objects": [
+        "Vùng đích ở trên: 5 ô số có khung chữ nhật chờ dán: Ô 1 (xanh dương), Ô 2 (cam), Ô 3 (xanh lá), Ô 4 (tím), Ô 5 (đỏ)",
+        "Khay cắt ở dưới: 5 thẻ hình chủ đề vũ trụ gồm 4 tên lửa đỏ, 1 mặt trời vàng cười, 3 hành tinh có vành đai, 5 ngôi sao vàng, 2 đám mây trắng cười"
+      ],
+      "layout": "Phần trên: Lưới ô đích (Hàng 1: 1, 2; Hàng 2: 3, 4; Hàng 3: 5 ở giữa). Phần dưới: Khay cắt 5 thẻ hàng ngang phân cách bởi đường kéo đứt",
+      "quantities": {
+        "slots_count": 5,
+        "cards_quantities": [4, 1, 3, 5, 2]
+      },
+      "distractors": "5 thẻ hình ở khay dưới có thứ tự số lượng xáo trộn (4, 1, 3, 5, 2)",
+      "game_template": "GT-008",
+      "skills_targeted": ["C1.CNT.01", "C1.NREC.05", "C1.OTO.04"],
+      "digital_interaction": {
+        "mechanic": "Drag-to-Slot",
+        "description": "Trẻ chạm giữ thẻ hình từ khay dưới, kéo và thả vào ô chữ nhật cạnh số tương ứng. Thẻ tự động snap khóa vào vị trí khi đúng kèm hiệu ứng ghim vàng lấp lánh."
+      }
+    },
+    {
+      "page_number": 9,
+      "file_path": "pages/page-09.jpg",
+      "page_type": "d3_cut_paste_slots",
+      "activity_group": "D3",
+      "title": "Đếm, cắt và dán 6–10",
+      "instruction": "CẮT CÁC NHÓM HÌNH Ở DƯỚI VÀ DÁN VÀO Ô PHÙ HỢP.",
+      "dialogue": {
+        "gau_logic": "Đếm chậm để không bỏ sót.",
+        "tho_quan_sat": "Cắt rồi dán vào ô số đúng nhé!"
+      },
+      "target_number": null,
+      "number_range": [6, 10],
+      "objects": [
+        "Vùng đích ở trên: 5 ô số có khung chữ nhật chờ dán: Ô 6 (xanh dương), Ô 7 (cam), Ô 8 (xanh lá), Ô 9 (tím), Ô 10 (đỏ)",
+        "Khay cắt ở dưới: 5 thẻ hình chủ đề thiên nhiên gồm 8 chú cá xanh (2 hàng 4), 6 quả bóng bay đỏ (2 hàng 3), 10 quả cam vàng (2 hàng 5), 7 chiếc lá xanh (4+3), 9 bông hoa tím (5+4)"
+      ],
+      "layout": "Phần trên: Lưới ô đích (Hàng 1: 6, 7; Hàng 2: 8, 9; Hàng 3: 10 ở giữa). Phần dưới: Khay cắt 5 thẻ hàng ngang phân cách bởi đường kéo đứt",
+      "quantities": {
+        "slots_count": 5,
+        "cards_quantities": [8, 6, 10, 7, 9]
+      },
+      "distractors": "5 thẻ hình ở khay dưới có thứ tự xáo trộn (8, 6, 10, 7, 9)",
+      "game_template": "GT-008",
+      "skills_targeted": ["C1.CNT.01", "C1.CNT.03", "C1.NREC.05", "C1.OTO.04"],
+      "digital_interaction": {
+        "mechanic": "Drag-to-Slot",
+        "description": "Kéo thẻ lượng 6–10 thả vào ô số tương ứng. Khi trẻ kéo rê thẻ trên các ô, ô phát sáng viền đón nhận. Thả đúng snap khóa chặt."
+      }
+    },
+    {
+      "page_number": 10,
+      "file_path": "pages/page-10.jpg",
+      "page_type": "d4_trace_and_hunt",
+      "activity_group": "D4",
+      "title": "Số 1 – Một Mặt Trời",
+      "instruction": "TÔ THEO NÉT CHẤM & KHOANH TẤT CẢ SỐ 1.",
+      "dialogue": {
+        "gau_logic": "Số 1 chỉ một đồ vật.",
+        "tho_quan_sat": "Bé hãy tô và tìm số 1 nhé!"
+      },
+      "target_number": 1,
+      "number_range": [1, 5],
+      "objects": [
+        "Số 1 lớn màu đỏ cam có mũi tên trắng hướng dẫn 2 nét (nét xiên lên và nét thẳng đứng xuống)",
+        "1 ông Mặt Trời vàng tỏa ánh nắng rạng rỡ mỉm cười",
+        "10 số 1 nét chấm đứt chia 2 hàng x 5 số",
+        "Lưới 3 hàng x 5 cột gồm 15 ô số"
+      ],
+      "layout": "3 phần dọc: Phần 1 (Khái niệm & hình ảnh); Phần 2 (Tô theo nét chấm); Phần 3 (Khoanh tất cả số 1)",
+      "quantities": {
+        "target_count_in_grid": 5,
+        "grid_size": [3, 5],
+        "tracing_count": 10
+      },
+      "distractors": "Các số 2, 3, 4, 5 xuất hiện xen kẽ 10 lần trong lưới 15 ô",
+      "game_template": "GT-024",
+      "skills_targeted": [
+        "C1.NREC.01",
+        "C1.NREC.06",
+        "C1.NREC.08",
+        "C1.CNT.01"
+      ],
+      "digital_interaction": {
+        "mechanic": "Trace-path & Symbol Hunt",
+        "description": "Phần 1: Ngón tay kéo theo nét chấm tạo vệt sáng neon hoàn thành chữ số 1. Phần 2: Chạm vào tất cả ô có số 1 trong lưới, mỗi lần chạm đúng số 1 phát sáng và đổi màu vàng."
+      }
+    },
+    {
+      "page_number": 11,
+      "file_path": "pages/page-11.jpg",
+      "page_type": "d4_trace_and_hunt",
+      "activity_group": "D4",
+      "title": "Số 2 – Hai Đám Mây",
+      "instruction": "TÔ THEO NÉT CHẤM & KHOANH TẤT CẢ SỐ 2.",
+      "dialogue": {
+        "gau_logic": "Số 2 chỉ hai đồ vật.",
+        "tho_quan_sat": "Bé hãy tô và tìm số 2 nhé!"
+      },
+      "target_number": 2,
+      "number_range": [1, 5],
+      "objects": [
+        "Số 2 lớn màu cam có mũi tên hướng dẫn (nét cong tròn trên, nét xiên xuống, nét ngang đáy)",
+        "2 đám mây trắng bồng bềnh mỉm cười mắt chớp",
+        "10 số 2 nét chấm đứt (2 hàng x 5)",
+        "Lưới 3 hàng x 5 cột gồm 15 ô số"
+      ],
+      "layout": "3 phần dọc: Khái niệm & hình ảnh -> Tô nét chấm -> Lưới tìm số 2",
+      "quantities": {
+        "target_count_in_grid": 5,
+        "grid_size": [3, 5],
+        "tracing_count": 10
+      },
+      "distractors": "Các số 1, 3, 4, 5 (10 ô nhiễu)",
+      "game_template": "GT-024",
+      "skills_targeted": [
+        "C1.NREC.01",
+        "C1.NREC.06",
+        "C1.NREC.08",
+        "C1.CNT.01"
+      ],
+      "digital_interaction": {
+        "mechanic": "Trace-path & Symbol Hunt",
+        "description": "Đồ nét chữ số 2 theo đường cong mượt mà. Trong lưới, chạm đủ 5 số 2 để hoàn thành."
+      }
+    },
+    {
+      "page_number": 12,
+      "file_path": "pages/page-12.jpg",
+      "page_type": "d4_trace_and_hunt",
+      "activity_group": "D4",
+      "title": "Số 3 – Ba Chú Vịt",
+      "instruction": "TÔ THEO NÉT CHẤM & KHOANH TẤT CẢ SỐ 3.",
+      "dialogue": {
+        "gau_logic": "Số 3 chỉ ba đồ vật.",
+        "tho_quan_sat": "Bé hãy tô và tìm số 3 nhé!"
+      },
+      "target_number": 3,
+      "number_range": [1, 5],
+      "objects": [
+        "Số 3 lớn màu vàng có mũi tên hướng dẫn 2 nét cong",
+        "3 chú vịt con màu vàng lông mịn đáng yêu",
+        "10 số 3 nét chấm đứt (2 hàng x 5)",
+        "Lưới 3 hàng x 5 cột gồm 15 ô số"
+      ],
+      "layout": "3 phần dọc: Khái niệm & hình ảnh -> Tô nét chấm -> Lưới tìm số 3",
+      "quantities": {
+        "target_count_in_grid": 5,
+        "grid_size": [3, 5],
+        "tracing_count": 10
+      },
+      "distractors": "Các số 1, 2, 4, 5 (10 ô nhiễu)",
+      "game_template": "GT-024",
+      "skills_targeted": [
+        "C1.NREC.01",
+        "C1.NREC.06",
+        "C1.NREC.08",
+        "C1.CNT.01"
+      ],
+      "digital_interaction": {
+        "mechanic": "Trace-path & Symbol Hunt",
+        "description": "Đồ nét 2 cung tròn của số 3. Tìm 5 số 3 trong lưới chữ số."
+      }
+    },
+    {
+      "page_number": 13,
+      "file_path": "pages/page-13.jpg",
+      "page_type": "d5_three_task_challenge",
+      "activity_group": "D5",
+      "title": "Thử thách số 5",
+      "instruction": "1. TÔ MÀU 5 KHỐI VUÔNG - 2. TÔ MÀU 5 CHÚ SÂU & 5 NGÓN TAY - 3. TÌM VÀ TÔ TẤT CẢ SỐ 5.",
+      "dialogue": {
+        "gau_logic": "Năm nhiệm vụ nhỏ đang đợi!",
+        "tho_quan_sat": "Bé đếm từng hình nhé!"
+      },
+      "target_number": 5,
+      "number_range": [1, 5],
+      "objects": [
+        "Thanh 10 khối vuông nằm ngang (Ten-Frame bar)",
+        "6 chú sâu nhỏ bò ngang (yêu cầu tô đúng 5 chú sâu)",
+        "1 bàn tay xòe 5 ngón viền nét chờ tô",
+        "Ma trận chữ số 3 hàng x 7 cột = 21 ô"
+      ],
+      "layout": "3 khung nhiệm vụ dọc: Khung 1 (Tô 5 khối vuông); Khung 2 (Chia đôi: Trái tô 5 chú sâu, Phải tô 5 ngón tay); Khung 3 (Ma trận 3x7 tìm số 5)",
+      "quantities": {
+        "blocks_to_color": 5,
+        "total_blocks": 10,
+        "caterpillars_to_color": 5,
+        "total_caterpillars": 6,
+        "fingers_to_color": 5,
+        "target_count_in_grid": 8,
+        "grid_size": [3, 7]
+      },
+      "distractors": "Có 6 chú sâu (dư 1 chú sâu để thử thách bé đếm dừng đúng 5); Ma trận có 13 số nhiễu gồm 1, 2, 3, 4",
+      "game_template": "GT-028",
+      "skills_targeted": ["C1.NREC.02", "C1.CNT.01", "C1.CNT.11", "C1.OTO.01"],
+      "digital_interaction": {
+        "mechanic": "Tap-to-Color & Matrix Hunt",
+        "description": "Chạm từng khối vuông đến khi đủ 5 khối thì khóa; chạm tô đúng 5/6 chú sâu; chạm đủ 8 số 5 trong lưới 21 ô."
+      }
+    },
+    {
+      "page_number": 14,
+      "file_path": "pages/page-14.jpg",
+      "page_type": "d4_trace_and_hunt",
+      "activity_group": "D4",
+      "title": "Số 5 – Năm Quả Táo",
+      "instruction": "TÔ THEO NÉT CHẤM & KHOANH TẤT CẢ SỐ 5.",
+      "dialogue": {
+        "gau_logic": "Số 5 chỉ năm đồ vật.",
+        "tho_quan_sat": "Bé hãy tô và tìm số 5 nhé!"
+      },
+      "target_number": 5,
+      "number_range": [1, 5],
+      "objects": [
+        "Số 5 lớn màu đỏ có mũi tên hướng dẫn (nét ngang, nét đứng ngắn, nét cong tròn)",
+        "5 quả táo đỏ tươi có cuống và lá xanh (hàng trên 3 quả, hàng dưới 2 quả)",
+        "10 số 5 nét chấm đứt (2 hàng x 5)",
+        "Lưới 3 hàng x 5 cột gồm 15 ô số"
+      ],
+      "layout": "3 phần dọc: Khái niệm & hình ảnh -> Tô nét chấm -> Lưới tìm số 5",
+      "quantities": {
+        "target_count_in_grid": 5,
+        "grid_size": [3, 5],
+        "tracing_count": 10
+      },
+      "distractors": "Các số 1, 2, 3, 4 (10 ô nhiễu)",
+      "game_template": "GT-024",
+      "skills_targeted": [
+        "C1.NREC.02",
+        "C1.NREC.06",
+        "C1.NREC.08",
+        "C1.CNT.01"
+      ],
+      "digital_interaction": {
+        "mechanic": "Trace-path & Symbol Hunt",
+        "description": "Đồ nét số 5 theo 3 phân đoạn nét chuẩn. Tìm 5 số 5 trong ma trận 15 ô."
+      }
+    },
+    {
+      "page_number": 15,
+      "file_path": "pages/page-15.jpg",
+      "page_type": "d4_trace_and_hunt",
+      "activity_group": "D4",
+      "title": "Số 6 – Sáu Chú Cá",
+      "instruction": "TÔ THEO NÉT CHẤM & KHOANH TẤT CẢ SỐ 6.",
+      "dialogue": {
+        "gau_logic": "Số 6 chỉ sáu đồ vật.",
+        "tho_quan_sat": "Bé hãy tô và tìm số 6 nhé!"
+      },
+      "target_number": 6,
+      "number_range": [1, 6],
+      "objects": [
+        "Số 6 lớn màu xanh dương có mũi tên uốn lượn hướng dẫn nét cong và vòng khép kín",
+        "6 chú cá bơi lội gồm 3 chú màu xanh dương và 3 chú màu cam (chia 2 hàng 3)",
+        "10 số 6 nét chấm đứt (2 hàng x 5)",
+        "Lưới 3 hàng x 5 cột gồm 15 ô số"
+      ],
+      "layout": "3 phần dọc: Khái niệm & hình ảnh -> Tô nét chấm -> Lưới tìm số 6",
+      "quantities": {
+        "target_count_in_grid": 5,
+        "grid_size": [3, 5],
+        "tracing_count": 10
+      },
+      "distractors": "Các số 1, 2, 3, 4, 5 (10 ô nhiễu)",
+      "game_template": "GT-024",
+      "skills_targeted": [
+        "C1.NREC.03",
+        "C1.NREC.06",
+        "C1.NREC.08",
+        "C1.CNT.01"
+      ],
+      "digital_interaction": {
+        "mechanic": "Trace-path & Symbol Hunt",
+        "description": "Luyện đồ số 6 bắt đầu từ đỉnh lượn xuống tạo bụng tròn. Khoanh tìm đủ 5 số 6 trong lưới."
+      }
+    },
+    {
+      "page_number": 16,
+      "file_path": "pages/page-16.jpg",
+      "page_type": "d4_trace_and_hunt",
+      "activity_group": "D4",
+      "title": "Số 7 – Bảy Bông Hoa",
+      "instruction": "TÔ THEO NÉT CHẤM & KHOANH TẤT CẢ SỐ 7.",
+      "dialogue": {
+        "gau_logic": "Số 7 chỉ bảy đồ vật.",
+        "tho_quan_sat": "Bé hãy tô và tìm số 7 nhé!"
+      },
+      "target_number": 7,
+      "number_range": [1, 9],
+      "objects": [
+        "Số 7 lớn màu xanh tím có mũi tên hướng dẫn (nét ngang, nét xiên dài xuống)",
+        "7 bông hoa rực rỡ có lá xanh (hàng trên 4 bông: hồng, vàng, cam, xanh dương; hàng dưới 3 bông: tím, hồng, xanh dương)",
+        "10 số 7 nét chấm đứt (2 hàng x 5)",
+        "Lưới 3 hàng x 5 cột gồm 15 ô số"
+      ],
+      "layout": "3 phần dọc: Khái niệm & hình ảnh -> Tô nét chấm -> Lưới tìm số 7",
+      "quantities": {
+        "target_count_in_grid": 5,
+        "grid_size": [3, 5],
+        "tracing_count": 10
+      },
+      "distractors": "Các số 5, 6, 8, 9 (10 ô nhiễu)",
+      "game_template": "GT-024",
+      "skills_targeted": [
+        "C1.NREC.03",
+        "C1.NREC.06",
+        "C1.NREC.08",
+        "C1.CNT.01"
+      ],
+      "digital_interaction": {
+        "mechanic": "Trace-path & Symbol Hunt",
+        "description": "Vẽ nét ngang sang phải rồi kéo dốc xuống cho số 7. Săn tìm 5 số 7 giữa các số bẫy 5, 6, 8, 9."
+      }
+    },
+    {
+      "page_number": 17,
+      "file_path": "pages/page-17.jpg",
+      "page_type": "d4_trace_and_hunt",
+      "activity_group": "D4",
+      "title": "Số 8 – Tám Ngôi Sao",
+      "instruction": "TÔ THEO NÉT CHẤM & KHOANH TẤT CẢ SỐ 8.",
+      "dialogue": {
+        "gau_logic": "Số 8 chỉ tám đồ vật.",
+        "tho_quan_sat": "Bé hãy tô và tìm số 8 nhé!"
+      },
+      "target_number": 8,
+      "number_range": [5, 9],
+      "objects": [
+        "Số 8 lớn màu cam vàng có mũi tên uốn lượn hình chữ S rồi khép vòng tròn kép",
+        "8 ngôi sao lấp lánh xếp xen kẽ màu vàng và xanh dương (2 hàng 4)",
+        "10 số 8 nét chấm đứt (2 hàng x 5)",
+        "Lưới 3 hàng x 5 cột gồm 15 ô số"
+      ],
+      "layout": "3 phần dọc: Khái niệm & hình ảnh -> Tô nét chấm -> Lưới tìm số 8",
+      "quantities": {
+        "target_count_in_grid": 5,
+        "grid_size": [3, 5],
+        "tracing_count": 10
+      },
+      "distractors": "Các số 5, 6, 7, 9 (10 ô nhiễu)",
+      "game_template": "GT-024",
+      "skills_targeted": [
+        "C1.NREC.03",
+        "C1.NREC.06",
+        "C1.NREC.08",
+        "C1.CNT.01"
+      ],
+      "digital_interaction": {
+        "mechanic": "Trace-path & Symbol Hunt",
+        "description": "Luyện viết nét số 8 liên tục không nhấc bút. Khoanh tìm đủ 5 số 8 trong lưới."
+      }
+    },
+    {
+      "page_number": 18,
+      "file_path": "pages/page-18.jpg",
+      "page_type": "d4_trace_and_hunt",
+      "activity_group": "D4",
+      "title": "Số 9 – Chín Quả Cam",
+      "instruction": "TÔ THEO NÉT CHẤM & KHOANH TẤT CẢ SỐ 9.",
+      "dialogue": {
+        "gau_logic": "Số 9 chỉ chín đồ vật.",
+        "tho_quan_sat": "Bé hãy tô và tìm số 9 nhé!"
+      },
+      "target_number": 9,
+      "number_range": [5, 9],
+      "objects": [
+        "Số 9 lớn màu cam đỏ có mũi tên hướng dẫn vòng tròn trên và nét cong móc xuống dưới",
+        "9 quả cam chín mọng có cuống lá (hàng trên 5 quả, hàng dưới 4 quả)",
+        "10 số 9 nét chấm đứt (2 hàng x 5)",
+        "Lưới 3 hàng x 5 cột gồm 15 ô số"
+      ],
+      "layout": "3 phần dọc: Khái niệm & hình ảnh -> Tô nét chấm -> Lưới tìm số 9",
+      "quantities": {
+        "target_count_in_grid": 5,
+        "grid_size": [3, 5],
+        "tracing_count": 10
+      },
+      "distractors": "Các số 5, 6, 7, 8 (10 ô nhiễu)",
+      "game_template": "GT-024",
+      "skills_targeted": [
+        "C1.NREC.03",
+        "C1.NREC.06",
+        "C1.NREC.08",
+        "C1.CNT.01"
+      ],
+      "digital_interaction": {
+        "mechanic": "Trace-path & Symbol Hunt",
+        "description": "Vẽ vòng khép kín ở trên rồi lượn cong xuống cho số 9. Chạm đúng 5 ô số 9 trong lưới."
+      }
+    },
+    {
+      "page_number": 19,
+      "file_path": "pages/page-19.jpg",
+      "page_type": "d4_trace_and_hunt",
+      "activity_group": "D4",
+      "title": "Số 10 – Mười Viên Ngọc",
+      "instruction": "TÔ THEO NÉT CHẤM & KHOANH TẤT CẢ SỐ 10.",
+      "dialogue": {
+        "gau_logic": "Số 10 chỉ mười đồ vật.",
+        "tho_quan_sat": "Bé hãy tô và tìm số 10 nhé!"
+      },
+      "target_number": 10,
+      "number_range": [6, 10],
+      "objects": [
+        "Số 10 lớn màu xanh ngọc gồm chữ số 1 và chữ số 0 có mũi tên hướng dẫn",
+        "10 viên kim cương tỏa sắc cầu vồng rực rỡ (2 hàng x 5 viên)",
+        "10 số 10 nét chấm đứt (2 hàng x 5)",
+        "Lưới 3 hàng x 5 cột gồm 15 ô số"
+      ],
+      "layout": "3 phần dọc: Khái niệm & hình ảnh -> Tô nét chấm -> Lưới tìm số 10",
+      "quantities": {
+        "target_count_in_grid": 5,
+        "grid_size": [3, 5],
+        "tracing_count": 10
+      },
+      "distractors": "Các số 6, 7, 8, 9 (10 ô nhiễu)",
+      "game_template": "GT-024",
+      "skills_targeted": [
+        "C1.NREC.03",
+        "C1.NREC.06",
+        "C1.NREC.08",
+        "C1.CNT.01"
+      ],
+      "digital_interaction": {
+        "mechanic": "Trace-path & Symbol Hunt",
+        "description": "Đồ nét số có hai chữ số đầu tiên (1 và 0). Săn tìm 5 số 10 trong ma trận 15 ô."
+      }
+    },
+    {
+      "page_number": 20,
+      "file_path": "pages/page-20.jpg",
+      "page_type": "d5_three_task_challenge",
+      "activity_group": "D5",
+      "title": "Thử thách số 1",
+      "instruction": "1. TÔ MÀU 1 KHỐI VUÔNG - 2. ĐIỀN SỐ CÒN THIẾU & TÔ MÀU 1 NGÓN TAY - 3. TÌM VÀ TÔ TẤT CẢ SỐ 1.",
+      "dialogue": {
+        "gau_logic": "Mình cùng ôn số 1 nhé!",
+        "tho_quan_sat": "Hoàn thành cả ba nhiệm vụ nào!"
+      },
+      "target_number": 1,
+      "number_range": [1, 10],
+      "objects": [
+        "Thanh 10 khối vuông nằm ngang",
+        "Chú sâu 10 đốt: đốt đầu tiên trống để điền số, các đốt sau ghi 2, 3, 4, 5, 6, 7, 8, 9, 10",
+        "Bàn tay 5 ngón viền nét",
+        "Ma trận chữ số 3 hàng x 7 cột = 21 ô"
+      ],
+      "layout": "3 khung nhiệm vụ dọc",
+      "quantities": {
+        "blocks_to_color": 1,
+        "missing_number": 1,
+        "fingers_to_color": 1,
+        "target_count_in_grid": 9,
+        "grid_size": [3, 7]
+      },
+      "distractors": "Ma trận có 12 ô nhiễu gồm số 2 và số 3",
+      "game_template": "GT-028",
+      "skills_targeted": ["C1.NREC.01", "C1.NREC.09", "C1.CNT.08", "C1.OTO.01"],
+      "digital_interaction": {
+        "mechanic": "Counting-On & Symbol Hunt",
+        "description": "Tô 1 khối vuông đầu tiên; điền số 1 vào đốt sâu đầu tiên; tô 1 ngón tay; tìm đủ 9 số 1 trong lưới 21 ô."
+      }
+    },
+    {
+      "page_number": 21,
+      "file_path": "pages/page-21.jpg",
+      "page_type": "d5_three_task_challenge",
+      "activity_group": "D5",
+      "title": "Thử thách số 2",
+      "instruction": "1. TÔ MÀU 2 KHỐI VUÔNG - 2. TÔ MÀU 2 CÁNH BƯỚM & 2 NGÓN TAY - 3. TÌM VÀ TÔ TẤT CẢ SỐ 2.",
+      "dialogue": {
+        "gau_logic": "Số 2 đang chờ chúng mình!",
+        "tho_quan_sat": "Quan sát kỹ rồi làm nhé!"
+      },
+      "target_number": 2,
+      "number_range": [1, 3],
+      "objects": [
+        "Thanh 10 khối vuông",
+        "Chú bướm xinh có 4 cánh (2 cánh trên to, 2 cánh dưới nhỏ)",
+        "Bàn tay 5 ngón viền nét",
+        "Ma trận chữ số 3x7 = 21 ô"
+      ],
+      "layout": "3 khung nhiệm vụ dọc",
+      "quantities": {
+        "blocks_to_color": 2,
+        "butterfly_wings_to_color": 2,
+        "total_wings": 4,
+        "fingers_to_color": 2,
+        "target_count_in_grid": 8,
+        "grid_size": [3, 7]
+      },
+      "distractors": "Chú bướm có 4 cánh (trẻ chỉ được tô đúng 2 cánh); Ma trận có 13 số nhiễu gồm 1 và 3",
+      "game_template": "GT-028",
+      "skills_targeted": ["C1.NREC.01", "C1.CNT.01", "C1.OTO.01"],
+      "digital_interaction": {
+        "mechanic": "Part-Whole Coloring & Symbol Hunt",
+        "description": "Tô 2 khối vuông; chọn tô đúng 2 cánh bướm; tô 2 ngón tay; chạm tìm đủ 8 số 2 trong lưới."
+      }
+    },
+    {
+      "page_number": 22,
+      "file_path": "pages/page-22.jpg",
+      "page_type": "d5_three_task_challenge",
+      "activity_group": "D5",
+      "title": "Thử thách số 3",
+      "instruction": "1. TÔ MÀU 3 KHỐI VUÔNG - 2. ĐIỀN SỐ CÒN THIẾU & TÔ MÀU 3 NGÓN TAY - 3. TÌM VÀ TÔ TẤT CẢ SỐ 3.",
+      "dialogue": {
+        "gau_logic": "Số 3 có ba nhiệm vụ.",
+        "tho_quan_sat": "Bé làm lần lượt nhé!"
+      },
+      "target_number": 3,
+      "number_range": [1, 10],
+      "objects": [
+        "Thanh 10 khối vuông",
+        "Đoàn tàu hỏa có đầu tàu và 10 toa: toa 1, 2, [trống], 4, 5, 6, 7, 8, 9, 10",
+        "Bàn tay 5 ngón viền nét",
+        "Ma trận chữ số 3x7 = 21 ô"
+      ],
+      "layout": "3 khung nhiệm vụ dọc",
+      "quantities": {
+        "blocks_to_color": 3,
+        "missing_train_carriage": 3,
+        "fingers_to_color": 3,
+        "target_count_in_grid": 8,
+        "grid_size": [3, 7]
+      },
+      "distractors": "Ma trận có 13 số nhiễu gồm 1 và 2",
+      "game_template": "GT-028",
+      "skills_targeted": ["C1.NREC.01", "C1.NREC.09", "C1.CNT.08", "C1.OTO.01"],
+      "digital_interaction": {
+        "mechanic": "Train Sequence & Matrix Hunt",
+        "description": "Tô 3 khối vuông; kéo số 3 thả vào toa tàu số 3 còn thiếu; tô 3 ngón tay; tìm đủ 8 số 3 trong lưới 21 ô."
+      }
+    },
+    {
+      "page_number": 23,
+      "file_path": "pages/page-23.jpg",
+      "page_type": "d5_three_task_challenge",
+      "activity_group": "D5",
+      "title": "Thử thách số 4",
+      "instruction": "1. TÔ MÀU 4 KHỐI VUÔNG - 2. TÔ MÀU 4 CÁNH CHUỒN CHUỒN & 4 NGÓN TAY - 3. TÌM VÀ TÔ TẤT CẢ SỐ 4.",
+      "dialogue": {
+        "gau_logic": "Số 4 cần đôi mắt tinh!",
+        "tho_quan_sat": "Đếm chậm và thật chính xác!"
+      },
+      "target_number": 4,
+      "number_range": [1, 4],
+      "objects": [
+        "Thanh 10 khối vuông",
+        "Chú chuồn chuồn có 4 cánh dang rộng",
+        "Bàn tay 5 ngón viền nét",
+        "Ma trận chữ số 3x7 = 21 ô"
+      ],
+      "layout": "3 khung nhiệm vụ dọc",
+      "quantities": {
+        "blocks_to_color": 4,
+        "dragonfly_wings_to_color": 4,
+        "fingers_to_color": 4,
+        "target_count_in_grid": 8,
+        "grid_size": [3, 7]
+      },
+      "distractors": "Ma trận có 13 số nhiễu gồm 1, 2, 3",
+      "game_template": "GT-028",
+      "skills_targeted": ["C1.NREC.02", "C1.CNT.01", "C1.OTO.01"],
+      "digital_interaction": {
+        "mechanic": "Tap-to-Color & Matrix Hunt",
+        "description": "Tô 4 khối vuông; tô đủ 4 cánh chuồn chuồn; tô 4 ngón tay; tìm 8 số 4 trong lưới."
+      }
+    },
+    {
+      "page_number": 24,
+      "file_path": "pages/page-24.jpg",
+      "page_type": "d5_three_task_challenge",
+      "activity_group": "D5",
+      "title": "Thử thách số 4 (Trang trùng lặp)",
+      "instruction": "1. TÔ MÀU 4 KHỐI VUÔNG - 2. TÔ MÀU 4 CÁNH CHUỒN CHUỒN & 4 NGÓN TAY - 3. TÌM VÀ TÔ TẤT CẢ SỐ 4.",
+      "dialogue": {
+        "gau_logic": "Số 4 cần đôi mắt tinh!",
+        "tho_quan_sat": "Đếm chậm và thật chính xác!"
+      },
+      "target_number": 4,
+      "number_range": [1, 4],
+      "objects": [
+        "Trang in trùng lặp trong tệp PDF gốc (nội dung giống hệt trang 23)"
+      ],
+      "layout": "3 khung nhiệm vụ dọc",
+      "quantities": {
+        "blocks_to_color": 4,
+        "dragonfly_wings_to_color": 4,
+        "fingers_to_color": 4,
+        "target_count_in_grid": 8,
+        "grid_size": [3, 7]
+      },
+      "distractors": "Giống trang 23",
+      "game_template": "GT-028",
+      "skills_targeted": ["C1.NREC.02", "C1.CNT.01"],
+      "digital_interaction": {
+        "mechanic": "Tap-to-Color & Matrix Hunt",
+        "description": "Trang dự phòng/trùng lặp bản in. Trong hệ thống số, trang này được gộp làm một bài kiểm tra tăng cường với biến thể hình ảnh khác."
+      }
+    },
+    {
+      "page_number": 25,
+      "file_path": "pages/page-25.jpg",
+      "page_type": "d4_trace_and_hunt",
+      "activity_group": "D4",
+      "title": "Số 4 – Bốn Quả Bóng Bay",
+      "instruction": "TÔ THEO NÉT CHẤM & KHOANH TẤT CẢ SỐ 4.",
+      "dialogue": {
+        "gau_logic": "Số 4 chỉ bốn đồ vật.",
+        "tho_quan_sat": "Bé hãy tô và tìm số 4 nhé!"
+      },
+      "target_number": 4,
+      "number_range": [1, 5],
+      "objects": [
+        "Số 4 lớn màu xanh lá có mũi tên hướng dẫn 3 nét",
+        "4 quả bóng bay rực rỡ có dây buộc (đỏ, xanh dương, vàng, xanh lá)",
+        "10 số 4 nét chấm đứt (2 hàng x 5)",
+        "Lưới 3 hàng x 5 cột gồm 15 ô số"
+      ],
+      "layout": "3 phần dọc: Khái niệm & hình ảnh -> Tô nét chấm -> Lưới tìm số 4",
+      "quantities": {
+        "target_count_in_grid": 5,
+        "grid_size": [3, 5],
+        "tracing_count": 10
+      },
+      "distractors": "Các số 1, 2, 3, 5 (10 ô nhiễu)",
+      "game_template": "GT-024",
+      "skills_targeted": [
+        "C1.NREC.02",
+        "C1.NREC.06",
+        "C1.NREC.08",
+        "C1.CNT.01"
+      ],
+      "digital_interaction": {
+        "mechanic": "Trace-path & Symbol Hunt",
+        "description": "Vẽ nét xiên, nét ngang và nét đứng hoàn thành số 4. Tìm 5 số 4 trong lưới 15 ô."
+      }
+    },
+    {
+      "page_number": 26,
+      "file_path": "pages/page-26.jpg",
+      "page_type": "d5_three_task_challenge",
+      "activity_group": "D5",
+      "title": "Thử thách số 6",
+      "instruction": "1. TÔ MÀU 6 KHỐI VUÔNG - 2. KHOANH Ô CÓ 6 CÁNH DIỀU & TÔ MÀU 6 NGÓN TAY - 3. TÌM VÀ TÔ TẤT CẢ SỐ 6.",
+      "dialogue": {
+        "gau_logic": "Số 6 cần đếm thật kỹ!",
+        "tho_quan_sat": "Chọn đúng ô có sáu hình nhé!"
+      },
+      "target_number": 6,
+      "number_range": [2, 6],
+      "objects": [
+        "Thanh 10 khối vuông",
+        "4 ô lựa chọn cánh diều: Ô trên trái (3 diều), Ô trên phải (5 diều), Ô dưới trái (6 diều), Ô dưới phải (7 diều)",
+        "Hai bàn tay (5 ngón + 1 ngón viền nét)",
+        "Ma trận chữ số 3x7 = 21 ô"
+      ],
+      "layout": "3 khung nhiệm vụ dọc",
+      "quantities": {
+        "blocks_to_color": 6,
+        "correct_kite_box_count": 6,
+        "fingers_to_color": 6,
+        "target_count_in_grid": 7,
+        "grid_size": [3, 7]
+      },
+      "distractors": "3 ô diều gây nhiễu có 3, 5, 7 cánh diều (bẫy lân cận số 6); Ma trận có 14 số nhiễu gồm 2, 3, 4, 5",
+      "game_template": "GT-028",
+      "skills_targeted": ["C1.NREC.03", "C1.CNT.01", "C1.CNT.03", "C1.OTO.04"],
+      "digital_interaction": {
+        "mechanic": "Tap Count, Choice Select & Matrix Hunt",
+        "description": "Tô 6 khối vuông; chạm chọn ô có đúng 6 cánh diều; tô 6 ngón tay (bàn tay 5 ngón + 1 ngón); tìm đủ 7 số 6 trong ma trận."
+      }
+    },
+    {
+      "page_number": 27,
+      "file_path": "pages/page-27.jpg",
+      "page_type": "d5_three_task_challenge",
+      "activity_group": "D5",
+      "title": "Thử thách số 7",
+      "instruction": "1. TÔ MÀU 7 KHỐI VUÔNG - 2. ĐIỀN SỐ CÒN THIẾU & TÔ MÀU 7 NGÓN TAY - 3. TÌM VÀ TÔ TẤT CẢ SỐ 7.",
+      "dialogue": {
+        "gau_logic": "Số 7 trốn ở đâu nhỉ?",
+        "tho_quan_sat": "Tìm ra rồi tô thật đẹp!"
+      },
+      "target_number": 7,
+      "number_range": [1, 10],
+      "objects": [
+        "Thanh 10 khối vuông",
+        "Đoàn tàu chở hàng 10 toa: các toa 1, 2, 3, 4, 5, 6, [toa 7 trống], 8, 9, 10",
+        "Hai bàn tay (5 ngón + 2 ngón)",
+        "Ma trận chữ số 3x7 = 21 ô"
+      ],
+      "layout": "3 khung nhiệm vụ dọc",
+      "quantities": {
+        "blocks_to_color": 7,
+        "missing_train_carriage": 7,
+        "fingers_to_color": 7,
+        "target_count_in_grid": 8,
+        "grid_size": [3, 7]
+      },
+      "distractors": "Ma trận có 13 số nhiễu gồm 5, 6, 8, 9",
+      "game_template": "GT-028",
+      "skills_targeted": ["C1.NREC.03", "C1.NREC.09", "C1.CNT.08", "C1.OTO.01"],
+      "digital_interaction": {
+        "mechanic": "Sequence Missing Number & Matrix Hunt",
+        "description": "Tô 7 khối vuông; điền số 7 vào toa tàu khuyết; tô 7 ngón tay; tìm đủ 8 số 7 trong ma trận 21 ô."
+      }
+    },
+    {
+      "page_number": 28,
+      "file_path": "pages/page-28.jpg",
+      "page_type": "d5_three_task_challenge",
+      "activity_group": "D5",
+      "title": "Thử thách số 8",
+      "instruction": "1. TÔ MÀU 8 KHỐI VUÔNG - 2. TÔ 8 CHÂN VÀ 8 MẮT & TÔ MÀU 8 NGÓN TAY - 3. TÌM VÀ TÔ TẤT CẢ SỐ 8.",
+      "dialogue": {
+        "gau_logic": "Tám chân của ai đây?",
+        "tho_quan_sat": "Đếm chân và mắt thật kỹ!"
+      },
+      "target_number": 8,
+      "number_range": [5, 9],
+      "objects": [
+        "Thanh 10 khối vuông",
+        "Chú nhện có 8 chân chìa sang 2 bên và trên mặt có 8 chấm tròn mắt (chia 2 hàng 4)",
+        "Hai bàn tay (5 ngón + 3 ngón)",
+        "Ma trận chữ số 3x7 = 21 ô"
+      ],
+      "layout": "3 khung nhiệm vụ dọc",
+      "quantities": {
+        "blocks_to_color": 8,
+        "spider_legs": 8,
+        "spider_eyes": 8,
+        "fingers_to_color": 8,
+        "target_count_in_grid": 8,
+        "grid_size": [3, 7]
+      },
+      "distractors": "Ma trận có 13 số nhiễu gồm 5, 6, 7, 9",
+      "game_template": "GT-028",
+      "skills_targeted": ["C1.NREC.03", "C1.CNT.01", "C1.OTO.01"],
+      "digital_interaction": {
+        "mechanic": "Biological Counting & Matrix Hunt",
+        "description": "Tô 8 khối vuông; chạm tô lần lượt 8 chân nhện và 8 mắt nhện (mỗi lần chạm đếm to 1, 2..8); tô 8 ngón tay; tìm 8 số 8 trong lưới."
+      }
+    },
+    {
+      "page_number": 29,
+      "file_path": "pages/page-29.jpg",
+      "page_type": "d5_three_task_challenge",
+      "activity_group": "D5",
+      "title": "Thử thách số 9",
+      "instruction": "1. TÔ MÀU 9 KHỐI VUÔNG - 2. KHOANH Ô CÓ 9 CHÚ CHÂU CHẤU & TÔ MÀU 9 NGÓN TAY - 3. TÌM VÀ TÔ TẤT CẢ SỐ 9.",
+      "dialogue": {
+        "gau_logic": "Số 9 gần đến đích rồi!",
+        "tho_quan_sat": "Khoanh đúng nhóm chín hình!"
+      },
+      "target_number": 9,
+      "number_range": [5, 9],
+      "objects": [
+        "Thanh 10 khối vuông",
+        "4 ô lựa chọn châu chấu: Ô trên trái (4 con), Ô trên phải (6 con), Ô dưới trái (9 con chia 3x3), Ô dưới phải (6 con)",
+        "Hai bàn tay (5 ngón + 4 ngón)",
+        "Ma trận chữ số 3x7 = 21 ô"
+      ],
+      "layout": "3 khung nhiệm vụ dọc",
+      "quantities": {
+        "blocks_to_color": 9,
+        "correct_grasshopper_count": 9,
+        "fingers_to_color": 9,
+        "target_count_in_grid": 8,
+        "grid_size": [3, 7]
+      },
+      "distractors": "3 ô châu chấu gây nhiễu (4 con, 6 con, 6 con); Ma trận có 13 số nhiễu gồm 5, 6, 7, 8",
+      "game_template": "GT-028",
+      "skills_targeted": ["C1.NREC.03", "C1.CNT.01", "C1.CNT.03", "C1.OTO.04"],
+      "digital_interaction": {
+        "mechanic": "Subitizing Grid & Matrix Hunt",
+        "description": "Tô 9 khối vuông; quan sát cấu trúc ma trận 3x3 để nhận diện tức thì ô 9 chú châu chấu; tô 9 ngón tay; săn 8 số 9 trong lưới."
+      }
+    },
+    {
+      "page_number": 30,
+      "file_path": "pages/page-30.jpg",
+      "page_type": "d5_three_task_challenge",
+      "activity_group": "D5",
+      "title": "Thử thách số 10",
+      "instruction": "1. TÔ MÀU 10 KHỐI VUÔNG - 2. KHOANH Ô CÓ 10 VIÊN NGỌC & TÔ MÀU 10 NGÓN TAY - 3. TÌM VÀ TÔ TẤT CẢ SỐ 10.",
+      "dialogue": {
+        "gau_logic": "Thử thách cuối cùng đây!",
+        "tho_quan_sat": "Hoàn thành để mở cổng nhà ga!"
+      },
+      "target_number": 10,
+      "number_range": [6, 10],
+      "objects": [
+        "Thanh 10 khối vuông (tô trọn vẹn cả thanh)",
+        "4 ô lựa chọn viên ngọc: Ô trên trái (6 viên), Ô trên phải (8 viên), Ô dưới trái (10 viên chia 2 hàng 5 chuẩn Ten-Frame), Ô dưới phải (9 viên)",
+        "Hai bàn tay xòe đủ 10 ngón",
+        "Ma trận chữ số 3x7 = 21 ô",
+        "Băng rôn vinh danh dưới đáy: HOÀN THÀNH GA NHỮNG CON SỐ THỨC GIẤC!"
+      ],
+      "layout": "3 khung nhiệm vụ dọc + Băng rôn hoàn thành",
+      "quantities": {
+        "blocks_to_color": 10,
+        "correct_diamond_count": 10,
+        "fingers_to_color": 10,
+        "target_count_in_grid": 8,
+        "grid_size": [3, 7]
+      },
+      "distractors": "Các ô ngọc bẫy có 6, 8, 9 viên; Ma trận có 13 số nhiễu gồm 6, 7, 8, 9",
+      "game_template": "GT-028",
+      "skills_targeted": ["C1.NREC.03", "C1.CNT.01", "C1.CNT.03", "C1.OTO.04"],
+      "digital_interaction": {
+        "mechanic": "Full Ten-Frame Mastery",
+        "description": "Tô trọn vẹn 10 khối vuông; chọn ô 10 viên ngọc (nhận biết khuôn mẫu 2 hàng 5); tô đủ 10 ngón tay; săn tìm 8 số 10 trong ma trận. Còi tàu hú vang, mở khóa cổng ga số 1."
+      }
+    },
+    {
+      "page_number": 31,
+      "file_path": "pages/page-31.jpg",
+      "page_type": "stage_summary_reward",
+      "activity_group": null,
+      "title": "Hoàn thành Phần 1: Ga Những Con Số Thức Giấc",
+      "instruction": "BÉ HÃY TÔ MÀU VIÊN NGỌC CON SỐ & ĐÁNH GIÁ 3 NGÔI SAO.",
+      "dialogue": {
+        "gau_logic": "Bé nhận biết số từ 1 đến 10 thật giỏi!",
+        "tho_quan_sat": "Nhà ga đã sáng lên rồi!"
+      },
+      "target_number": null,
+      "number_range": [1, 20],
+      "objects": [
+        "Sân ga 'GA TOÁN HỌC' rực sáng đèn và cờ hoa",
+        "Đoàn tàu hỏa với 10 toa sáng rực các chữ số 1 đến 10 màu vàng",
+        "Gấu Logic và Thỏ Quan Sát tươi cười vẫy tay chúc mừng",
+        "Bản đồ 'HÀNH TRÌNH CHUYẾN TÀU TOÁN HỌC' gồm 20 ga đường sắt uốn lượn: Ga số 1 có dấu tick chữ V xanh hoàn thành, ga 2 đến 20 mang dấu hỏi '?' đón chờ",
+        "Khung đánh giá: 3 ngôi sao lớn 'HOÀN THÀNH'",
+        "Viên ngọc kim cương hình học cỡ lớn để bé tô màu kỷ niệm",
+        "Băng rôn chân trang: SẴN SÀNG LÊN TÀU ĐẾN CHẶNG 2!"
+      ],
+      "layout": "Bố cục vinh danh lễ hội: Phần trên là Ga Toán Học rực rỡ; Phần giữa là bản đồ hành trình 20 ga; Phần dưới là khu vực phần thưởng sao & kim cương",
+      "quantities": {
+        "completed_stations": 1,
+        "total_stations_on_map": 20,
+        "reward_stars": 3
+      },
+      "distractors": null,
+      "game_template": "GT-000",
+      "skills_targeted": ["C1.NREC.09", "C1.ORD.01"],
+      "digital_interaction": {
+        "mechanic": "Progression & Celebration Hub",
+        "description": "Màn hình vinh danh hoàn thành Chặng 1: Nổ pháo hoa hạt sao, tặng huy hiệu 'Bậc Thầy Nhận Biết Số 1-10', mở khóa ga số 2 trên bản đồ thế giới."
+      }
+    }
+  ]
+}

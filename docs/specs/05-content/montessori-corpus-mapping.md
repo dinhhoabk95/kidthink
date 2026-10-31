@@ -21,8 +21,6 @@ depends_on:
   - CONTENT-SEED-AUTHORING
   - ENGINE-SPEC-SHEET
   - THINKING-COVERAGE-MATRIX
-  - LESSON-MODEL
-  - ACTIVITY-MODEL
   - CURRICULUM-MODEL
 ---
 
@@ -144,7 +142,7 @@ không từ độ dày của nguồn.
 | `BR-MGL-12` (tier gán lúc soạn) | Mọi game level Montessori khai `access_tier` tường minh trong seeder, theo bảng ở mục 7.10 | `access_tier` là `NOT NULL` không default; nguồn không mang trường này (mục 7.5) nên nó luôn là quyết định của người soạn |
 | `BR-MLS-01` (một workbook một lesson) | Mỗi workbook sinh **đúng một** lesson | `BR-LSM-08` (một cụm learning objective) — một workbook đã là một cụm learning objective liên quan; tách nhỏ hơn làm mất cung bậc, gộp lớn hơn làm vượt trần thời lượng |
 | `BR-MLS-02` (thay giáo cụ bắt buộc) | Mọi giáo cụ Montessori gốc phải thay bằng vật liệu ở mục 7.12; cấm — **NEVER để tên giáo cụ thương mại** trong danh sách vật liệu | `BR-LSM-04` (vật liệu có sẵn trong nhà) — lesson yêu cầu mua bộ giáo cụ là lesson không ai dùng, và là quảng cáo cho bên thứ ba |
-| `BR-MLS-03` (an toàn thắng độ trung thực) | Khi vật liệu trung thực với giáo cụ gốc vi phạm danh sách an toàn, **an toàn thắng** | Mục 7.3 của [`activity-model.md`](activity-model.md) cấm vật đường kính dưới 3cm với band 3-4. Hạt đếm Montessori nằm đúng trong nhóm đó |
+| `BR-MLS-03` (an toàn thắng độ trung thực) | Khi vật liệu trung thực với giáo cụ gốc vi phạm danh sách an toàn, **an toàn thắng** | Cấm vật đường kính dưới 3cm với band 3-4. Hạt đếm Montessori nằm đúng trong nhóm đó |
 | `BR-MLS-04` (hoạt động ngoài màn hình là hoạt động chính) | Trong lesson Montessori, hoạt động ngoài màn hình là **hoạt động chính**, không phải phần thêm cuối buổi | Nguồn mạnh nhất ở đúng chỗ game level yếu nhất. Đặt nó ở cuối biến lesson thành một game level có lời dẫn dài |
 | `BR-MLS-05` (activity đứng độc lập) | Activity Montessori cấm tham chiếu workbook nguồn hay lesson chứa nó | `BR-ACM-01` (activity đứng độc lập) — tái dùng ở lesson khác thì ngữ cảnh đó sai |
 | `BR-MLS-06` (đánh giá bằng hành vi) | Phần đánh giá mô tả hành vi quan sát được, kèm số lần thử | `BR-LSM-06` — "bé hiểu khái niệm số lượng" không đo được, "bé chỉ đúng nhóm nhiều hơn trong 3 lần thử" thì đo được |
@@ -152,8 +150,8 @@ không từ độ dày của nguồn.
 | `BR-MLS-08` (khối mã lesson) | Lesson Montessori dùng mã từ `LES-0101`, activity từ `ACT-0101` | 60 lesson và 60 activity đã seed chiếm khối `0001` tới `0060`. Khối liền kề làm không thu hồi được nguyên lô khi cần |
 | `BR-MLS-09` (một batch một workbook) | Một batch chứa lesson và activity của **đúng một** workbook | Cùng lý do `BR-MGL-07` — thu hồi theo workbook là đơn vị thu hồi tự nhiên khi một nguồn hoá ra sai |
 | `BR-MLS-10` (không dựng chương trình theo tuổi) | Lesson Montessori cấm — **NEVER dùng một mình để dựng một chương trình `age_based`** | `BR-CRM-08` (phủ đủ sáu competency) và `BR-CRM-07` (không competency nào quá 40%). Nguồn phủ bốn competency và lệch 14 trên 21 về C1 — xem mục 7.13 |
-| `BR-MLS-11` (chuyên gia đọc bản thô) | Mỗi lesson được một người có nền sư phạm mầm non đọc trước khi mở PR; chưa có người thì lesson dừng ở `draft` (mục 7.11) | Đóng cùng nợ mà câu hỏi mở số 1 của [`lesson-model.md`](lesson-model.md) nêu. Bộ cổng seed không kiểm được cung bậc sư phạm của một buổi học |
-| `BR-MLS-12` (gắn game level đã published) | Activity kiểu `digital_game` chỉ trỏ game level Montessori đã `published` | Mục 7.2 của [`activity-model.md`](activity-model.md) — trỏ một level chưa publish là một buổi học có một bước không mở được |
+| `BR-MLS-11` (chuyên gia đọc bản thô) | Mỗi lesson được một người có nền sư phạm mầm non đọc trước khi mở PR; chưa có người thì lesson dừng ở `draft` (mục 7.11) | Bộ cổng seed không kiểm được cung bậc sư phạm của một buổi học |
+| `BR-MLS-12` (gắn game level đã published) | Activity kiểu `digital_game` chỉ trỏ game level Montessori đã `published` | Trỏ một level chưa publish là một buổi học có một bước không mở được |
 | `BR-MLS-13` (cung bậc theo CPA) | Hoạt động chính đi theo thứ tự **vật thật, rồi hình ảnh, rồi ký hiệu số**; khởi động luôn ở mức vật thật | Nguyên lý CPA ở mục 7.0. Lesson mở bằng ký hiệu số là đưa trẻ vào phần trừu tượng trước khi có nghĩa để gắn vào — cũng là lý do `BR-LSM-01` đòi có khởi động |
 | `BR-MTB-11` (lô B mở khoá theo khuôn) | Một dạng bài lô B chỉ được soạn khi khuôn tương ứng đã `active` trong registry | Soạn nội dung cho khuôn chưa có nghĩa là nội dung không kiểm được bằng `content_contract` — đúng thứ `BR-GTC-02` (parse ở server) tồn tại để chặn |
 
@@ -406,7 +404,7 @@ không được nới ở đây. Dạng bài gốc vượt trần thì chia nh�
 | **Tổng lesson** | **21** | **21** | **21** |
 
 Ba band chia đều bảy workbook mỗi band là hình dạng sẵn có của nguồn. Mỗi lesson theo cấu trúc
-chuẩn ở mục 7.1 của [`lesson-model.md`](lesson-model.md) — khởi động, hoạt động chính, đúc kết,
+chuẩn — khởi động, hoạt động chính, đúc kết,
 đánh giá — và có ít nhất một activity ngoài màn hình cộng một activity gắn game level Montessori
 đã `published`. Workbook có dạng bài thuộc khuôn chưa `active` vẫn viết được lesson với activity
 ngoài màn hình; phần gắn game level bổ sung bằng version sau.
@@ -471,9 +469,7 @@ mang tên Montessori là một quyết định sản phẩm riêng, cần thêm 
 ## 8. API contract
 
 Không sở hữu route. Bảng ánh xạ là tài liệu, đọc bằng mắt lúc soạn và lúc review PR. Game
-level đi qua CLI seeder và bộ cổng seed (thoát khác 0 khi hỏng); lesson và activity đi qua route
-mà [`lesson-authoring.md`](../06-admin/lesson-authoring.md) và
-[`activity-authoring.md`](../06-admin/activity-authoring.md) sở hữu.
+level đi qua CLI seeder và bộ cổng seed (thoát khác 0 khi hỏng).
 
 ## 9. Acceptance criteria
 

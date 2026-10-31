@@ -1,6 +1,6 @@
 import { fileURLToPath } from "node:url";
-import { requireEnv } from "@mindkid/config";
 import { defineNuxtConfig } from "nuxt/config";
+import { env } from "./env";
 
 export default defineNuxtConfig({
   // Trỏ thẳng vào thư mục layer. Cấm — NEVER dùng tên package "@mindkid/ui":
@@ -17,7 +17,7 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      apiBaseUrl: requireEnv("NUXT_PUBLIC_API_BASE_URL"),
+      apiBaseUrl: env.NUXT_PUBLIC_API_BASE_URL,
     },
   },
 });

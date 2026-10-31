@@ -9,7 +9,6 @@ describe("Gate: Preschool Age Bands (Task #159 / BR-PAR-01..07)", () => {
   it("chạy trên cấu hình hợp lệ và trả về báo cáo đo lường chi tiết", () => {
     const result = runAgeBandFitGate();
     expect(result.totalLevels).toBeGreaterThan(0);
-    expect(result.totalLessons).toBeGreaterThan(0);
     expect(Array.isArray(result.violations)).toBe(true);
   });
 

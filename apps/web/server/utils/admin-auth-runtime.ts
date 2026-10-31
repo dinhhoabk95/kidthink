@@ -1,6 +1,7 @@
 import { requireManagerAuth, requireRole } from "@mindkid/auth";
 import { requireEnv } from "@mindkid/config";
 import type { H3Event } from "h3";
+import { enforceTwoAxisRateLimit as runtimeEnforceTwoAxisRateLimit } from "./auth-runtime.js";
 import {
   createAuthRuntime,
   factoryAssertRateLimitAllowed,
@@ -11,6 +12,7 @@ import {
 export const assertManagerRateLimitAllowed = factoryAssertRateLimitAllowed;
 export const assertManagerRequestBodySize = factoryAssertRequestBodySize;
 export const assertManagerSameOriginRequest = factoryAssertSameOriginRequest;
+export const enforceTwoAxisRateLimit = runtimeEnforceTwoAxisRateLimit;
 
 const managerRuntime = createAuthRuntime("manager");
 

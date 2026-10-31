@@ -13,7 +13,7 @@ function registerShutdownHandlers(): void {
     process.once(signal, () => {
       shutdown(signal)
         .then(() => process.exit(0))
-        .catch((error: unknown) => {
+        .catch((error) => {
           console.error(`[worker] Tắt không sạch: ${readErrorMessage(error)}`);
           process.exit(1);
         });
@@ -47,17 +47,17 @@ async function main(): Promise<void> {
   console.info("[worker] Đã khởi động.");
 }
 
-process.on("unhandledRejection", (reason: unknown) => {
+process.on("unhandledRejection", (reason) => {
   console.error(`[worker] Unhandled rejection: ${readErrorMessage(reason)}`);
   process.exit(1);
 });
 
-process.on("uncaughtException", (error: unknown) => {
+process.on("uncaughtException", (error) => {
   console.error(`[worker] Uncaught exception: ${readErrorMessage(error)}`);
   process.exit(1);
 });
 
-main().catch((error: unknown) => {
+main().catch((error) => {
   console.error(`[worker] Khởi động thất bại: ${readErrorMessage(error)}`);
   process.exit(1);
 });

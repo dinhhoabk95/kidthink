@@ -44,6 +44,7 @@ export const C5_WRT_04_DATASET: SkillDataset = {
     {
       id: "wrt_moc_xuoi",
       label: "nét móc xuôi",
+      value: 1,
       image: {
         kind: "emoji",
         ref: "🪝",
@@ -51,21 +52,12 @@ export const C5_WRT_04_DATASET: SkillDataset = {
       category: {
         type: "nét móc",
       },
+      contrast_group: "primary",
     },
     {
       id: "wrt_moc_nguoc",
       label: "nét móc ngược",
-      image: {
-        kind: "emoji",
-        ref: "🪝",
-      },
-      category: {
-        type: "nét móc",
-      },
-    },
-    {
-      id: "wrt_moc_hai_dau",
-      label: "nét móc hai đầu",
+      value: 2,
       image: {
         kind: "emoji",
         ref: "🦯",
@@ -73,10 +65,38 @@ export const C5_WRT_04_DATASET: SkillDataset = {
       category: {
         type: "nét móc",
       },
+      contrast_group: "primary",
+    },
+    {
+      id: "wrt_moc_hai_dau",
+      label: "nét móc hai đầu",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "🌂",
+      },
+      category: {
+        type: "nét móc",
+      },
+      contrast_group: "primary",
+    },
+    {
+      id: "wrt_chiec_o",
+      label: "cán ô uốn móc",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "☂️",
+      },
+      category: {
+        type: "nét móc",
+      },
+      contrast_group: "primary",
     },
     {
       id: "wrt_khuyet_tren",
       label: "nét khuyết trên",
+      value: 5,
       image: {
         kind: "emoji",
         ref: "🎗️",
@@ -84,18 +104,79 @@ export const C5_WRT_04_DATASET: SkillDataset = {
       category: {
         type: "nét khuyết",
       },
+      contrast_group: "contrast",
     },
     {
       id: "wrt_khuyet_duoi",
       label: "nét khuyết dưới",
+      value: 6,
       image: {
         kind: "emoji",
-        ref: "🎀",
+        ref: "🧶",
       },
       category: {
         type: "nét khuyết",
       },
+      contrast_group: "contrast",
     },
+    {
+      id: "wrt_vong_khuyet",
+      label: "vòng khuyết cong",
+      value: 7,
+      image: {
+        kind: "emoji",
+        ref: "➰",
+      },
+      category: {
+        type: "nét khuyết",
+      },
+      contrast_group: "contrast",
+    },
+    {
+      id: "wrt_hai_vong",
+      label: "hai vòng uốn lượn",
+      value: 8,
+      image: {
+        kind: "emoji",
+        ref: "➿",
+      },
+      category: {
+        type: "nét khuyết",
+      },
+      contrast_group: "contrast",
+    },
+  ],
+  axes: {
+    category: {
+      values: ["nét móc", "nét khuyết"],
+      ordered: true,
+    },
+  },
+  relations: [
+    { type: "pair", source_id: "wrt_moc_xuoi", target_id: "wrt_moc_nguoc" },
+    { type: "pair", source_id: "wrt_moc_hai_dau", target_id: "wrt_chiec_o" },
+    {
+      type: "pair",
+      source_id: "wrt_khuyet_tren",
+      target_id: "wrt_khuyet_duoi",
+    },
+    { type: "pair", source_id: "wrt_vong_khuyet", target_id: "wrt_hai_vong" },
+    {
+      type: "contrast",
+      source_id: "wrt_moc_xuoi",
+      target_id: "wrt_khuyet_tren",
+    },
+    {
+      type: "contrast",
+      source_id: "wrt_moc_nguoc",
+      target_id: "wrt_khuyet_duoi",
+    },
+    {
+      type: "contrast",
+      source_id: "wrt_moc_hai_dau",
+      target_id: "wrt_vong_khuyet",
+    },
+    { type: "contrast", source_id: "wrt_chiec_o", target_id: "wrt_hai_vong" },
   ],
   ladder: [
     {
@@ -132,8 +213,11 @@ export const C5_WRT_04_DATASET: SkillDataset = {
     "wrt_moc_xuoi",
     "wrt_moc_nguoc",
     "wrt_moc_hai_dau",
+    "wrt_chiec_o",
     "wrt_khuyet_tren",
     "wrt_khuyet_duoi",
+    "wrt_vong_khuyet",
+    "wrt_hai_vong",
   ],
 };
 
@@ -163,62 +247,6 @@ export const C5_WRT_04_SEED: SkillSeed = {
       band: "4-5",
       difficulty: 2,
       theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-TCNT-0008",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 3,
-      theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-TCMP-0007",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 2,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-TCMP-0008",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 3,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-PAIR-0007",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 2,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-PAIR-0008",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 3,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-PATT-0007",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 2,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-PATT-0008",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 3,
-      theme: "ocean",
       rounds: 3,
     },
   ],

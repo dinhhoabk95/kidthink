@@ -30,6 +30,7 @@ const CONSENT_NAMES: Record<ConsentType, string> = {
 export interface CachedConsentRecord {
   terms: boolean;
   privacy: boolean;
+  child_data?: boolean;
   epoch: number;
 }
 
@@ -134,6 +135,33 @@ export async function requireCurrentConsent(
   userId: number,
   type: ConsentType = "child_data"
 ): Promise<void> {
+  if (type === "child_data") {
+    const cacheKey = getConsentCacheKey(userId);
+    const [currentEpoch, cached] = await Promise.all([
+      getGlobalConsentEpoch(),
+      getCached<CachedConsentRecord>(cacheKey).catch(() => null),
+    ]);
+    if (cached?.child_data && cached.epoch === currentEpoch) {
+      return;
+    }
+    await requireConsentActive(userId, type);
+    const sameEpochCache = cached?.epoch === currentEpoch ? cached : null;
+    try {
+      await setCached<CachedConsentRecord>(
+        cacheKey,
+        {
+          terms: sameEpochCache?.terms ?? false,
+          privacy: sameEpochCache?.privacy ?? false,
+          child_data: true,
+          epoch: currentEpoch,
+        },
+        CONSENT_CACHE_TTL_SECONDS
+      );
+    } catch {
+      // Non-blocking cache write failure
+    }
+    return;
+  }
   await requireConsentActive(userId, type);
 }
 
@@ -145,14 +173,12 @@ export async function assertUserTermsAndPrivacyConsent(
   userId: number
 ): Promise<void> {
   const cacheKey = getConsentCacheKey(userId);
-  const currentEpoch = await getGlobalConsentEpoch();
-  try {
-    const cached = await getCached<CachedConsentRecord>(cacheKey);
-    if (cached?.terms && cached.privacy && cached.epoch === currentEpoch) {
-      return;
-    }
-  } catch {
-    // Non-blocking cache read failure
+  const [currentEpoch, cached] = await Promise.all([
+    getGlobalConsentEpoch(),
+    getCached<CachedConsentRecord>(cacheKey).catch(() => null),
+  ]);
+  if (cached?.terms && cached.privacy && cached.epoch === currentEpoch) {
+    return;
   }
 
   await Promise.all([
@@ -160,10 +186,17 @@ export async function assertUserTermsAndPrivacyConsent(
     requireConsentActive(userId, "privacy"),
   ]);
 
+  const sameEpochCache = cached?.epoch === currentEpoch ? cached : null;
+
   try {
     await setCached<CachedConsentRecord>(
       cacheKey,
-      { terms: true, privacy: true, epoch: currentEpoch },
+      {
+        terms: true,
+        privacy: true,
+        ...(sameEpochCache?.child_data ? { child_data: true } : {}),
+        epoch: currentEpoch,
+      },
       CONSENT_CACHE_TTL_SECONDS
     );
   } catch {

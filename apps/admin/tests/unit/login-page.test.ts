@@ -13,24 +13,22 @@ describe("Task #105 — Admin Login Page (BR-ADA-01..03, BR-MME-01..07)", () => 
     expect(loginSource).not.toContain('layout: "manager"');
   });
 
-  it("Scenario: contains all 3 states (password, enroll/recovery, mfa)", () => {
+  it("Scenario: contains password and mfa states without forced otpauth enrollment on login", () => {
     expect(loginSource).toContain("authState === 'password'");
-    expect(loginSource).toContain("authState === 'enroll'");
-    expect(loginSource).toContain("authState === 'recovery'");
     expect(loginSource).toContain("authState === 'mfa'");
+    expect(loginSource).not.toContain("otpauthUri");
+    expect(loginSource).not.toContain('"/api/guest/auth/managers/mfa-setup"');
   });
 
   it("Scenario: calls guest auth endpoints via useApiClient", () => {
     expect(loginSource).toContain('"/api/guest/auth/managers/login"');
-    expect(loginSource).toContain('"/api/guest/auth/managers/mfa-setup"');
     expect(loginSource).toContain('"/api/guest/auth/managers/mfa"');
     expect(loginSource).toContain("useApiClient()");
   });
 
-  it("Scenario: displays 10 recovery codes with confirmation before proceeding", () => {
-    expect(loginSource).toContain("hasSavedRecoveryCodes");
-    expect(loginSource).toContain("recoveryCodes");
-    expect(loginSource).toContain(':disabled="!hasSavedRecoveryCodes"');
+  it("Scenario: redirects directly to dashboard when login returns status ok", () => {
+    expect(loginSource).toContain('res.status === "ok"');
+    expect(loginSource).toContain("finishLoginAndRedirect");
   });
 
   it("Scenario: strictly uses token colors without hex literals", () => {

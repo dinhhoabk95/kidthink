@@ -8,7 +8,7 @@ import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 const SaveLibraryItemSchema = z
   .object({
-    entity_type: z.enum(["game_level", "lesson", "curriculum", "activity"]),
+    entity_type: z.enum(["game_level", "curriculum"]),
     entity_id: z.coerce.number().positive().optional(),
     code: z.string().trim().min(1).max(100).optional(),
     collection_id: z.coerce.number().positive().optional().nullable(),

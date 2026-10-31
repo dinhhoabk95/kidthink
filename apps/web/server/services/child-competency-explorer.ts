@@ -227,12 +227,7 @@ export async function getChildCompetencyGames(
       ageMax: gameLevels.ageMax,
     })
     .from(gameLevels)
-    .where(
-      and(
-        like(gameLevels.code, `GL-${competency.code}-%`),
-        eq(gameLevels.status, "published")
-      )
-    )
+    .where(like(gameLevels.code, `GL-${competency.code}-%`))
     .orderBy(asc(gameLevels.code));
 
   const orderedLevels = sortCompetencyLevels(rawLevels, bounds);

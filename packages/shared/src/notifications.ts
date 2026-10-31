@@ -74,12 +74,6 @@ export const NOTIFICATION_TYPES = {
     optOutAllowed: false,
     recipientType: "manager",
   },
-  lesson_plan_source_updated: {
-    code: "lesson_plan_source_updated",
-    kind: "transactional",
-    optOutAllowed: false,
-    recipientType: "user",
-  },
   pdf_export_ready: {
     code: "pdf_export_ready",
     kind: "transactional",

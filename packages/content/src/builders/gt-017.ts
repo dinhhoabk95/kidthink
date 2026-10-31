@@ -18,8 +18,13 @@ export const projectGT017: Projection<"GT-017"> = {
     const distractorCount =
       params.distractor_count ?? Math.max(1, expectedItemCount - 1);
 
-    const rng = createRng(opts.seed + (opts.round_index ?? 0));
-    const cubeCount = 2 + Math.min(opts.difficulty, 3) + hiddenCubeCount;
+    const roundIdx = opts.round_index ?? 0;
+    const rng = createRng(opts.seed + roundIdx);
+    const roundOffset = roundIdx % 3;
+    const cubeCount = Math.min(
+      9,
+      2 + Math.min(opts.difficulty, 3) + hiddenCubeCount + roundOffset
+    );
 
     const model: Array<{
       x: number;

@@ -19,7 +19,7 @@ export const personalCurriculumItemInputSchema = z.object({
   week_no: z.number().int().min(1).max(52),
   session_no: z.number().int().min(1).max(7),
   position: z.number().int().min(1).max(20),
-  entity_type: z.enum(["lesson", "game_level"]),
+  entity_type: z.enum(["game_level"]),
   entity_id: z.number().int().positive(),
   is_required: z.boolean().optional().default(true),
 });
@@ -105,7 +105,7 @@ export interface PersonalCurriculumItemMetadata {
   week_no: number;
   session_no: number;
   position: number;
-  entity_type: "lesson" | "game_level";
+  entity_type: "game_level";
   entity_id: number;
   code?: string;
   title?: string;
@@ -117,7 +117,6 @@ export interface PersonalCurriculumItemMetadata {
   is_required?: boolean;
   difficulty?: number;
   estimated_minutes?: number;
-  is_offline?: boolean;
 }
 
 export type PersonalCurriculumItemDetail = PersonalCurriculumItemMetadata;

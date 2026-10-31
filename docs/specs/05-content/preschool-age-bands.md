@@ -9,8 +9,6 @@ reviewed: 2026-10-18
 owns:
   - Ràng buộc biên soạn của nội dung theo band tuổi mầm non
 depends_on:
-  - LESSON-MODEL
-  - LESSON-FLOW-MODEL
   - CURRICULUM-MODEL
   - GAME-LEVEL-MODEL
   - TAXONOMY-SERVICE

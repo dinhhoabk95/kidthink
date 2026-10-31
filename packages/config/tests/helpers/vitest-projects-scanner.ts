@@ -38,7 +38,6 @@ export const PROJECT_ROOTS: readonly ProjectRoot[] = [
   { name: "@mindkid/storage", prefix: "packages/storage" },
   { name: "@mindkid/taxonomy", prefix: "packages/taxonomy" },
   { name: "@mindkid/ui", prefix: "packages/ui" },
-  { name: "scripts", prefix: "scripts" },
 ];
 
 const EXCLUDED_DIRS = new Set([
@@ -69,8 +68,7 @@ export function scanTestFiles(dir: string): string[] {
     }
   }
 
-  // Quét apps, packages, scripts
-  for (const sub of ["apps", "packages", "scripts"]) {
+  for (const sub of ["apps", "packages"]) {
     const full = path.join(dir, sub);
     if (fs.existsSync(full)) {
       walk(full);

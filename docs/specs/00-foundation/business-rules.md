@@ -146,7 +146,7 @@ tham chiếu — cấm — NEVER còn lệnh nào đo tự động; reviewer tra
 | `BR-PPU` | [`payment-proof-upload.md`](../03-account/payment-proof-upload.md) | | `BR-SBV` | [`subscription-view.md`](../03-account/subscription-view.md) |
 | `BR-SCL` | [`social-login.md`](../03-account/social-login.md) | | `BR-SLK` | [`social-account-linking.md`](../03-account/social-account-linking.md) |
 | `BR-NIB` | [`notification-inbox.md`](../03-account/notification-inbox.md) | | `BR-RBL` | [`recurring-billing.md`](../03-account/recurring-billing.md) |
-| `BR-OCP` | [`offline-curriculum-pack.md`](../03-account/offline-curriculum-pack.md) | | `BR-LSR` | [`lesson-session-runner.md`](../03-account/lesson-session-runner.md) |
+| `BR-OCP` | [`offline-curriculum-pack.md`](../03-account/offline-curriculum-pack.md) | | | |
 
 **Play**
 
@@ -161,29 +161,25 @@ tham chiếu — cấm — NEVER còn lệnh nào đo tự động; reviewer tra
 | `BR-REC` | [`next-game-recommendation.md`](../04-play/next-game-recommendation.md) | | | |
 | `BR-RSP` | [`round-sequence-play.md`](../04-play/round-sequence-play.md) | | `BR-CIR` | [`concept-intro-runner.md`](../04-play/concept-intro-runner.md) |
 | `BR-CIG` | [`concept-intro-gate.md`](../04-play/concept-intro-gate.md) | | `BR-PNR` | [`play-narration.md`](../04-play/play-narration.md) |
-| `BR-CLF` | [`child-lesson-flow.md`](../04-play/child-lesson-flow.md) | | `BR-STK` | [`sticker-album.md`](../04-play/sticker-album.md) |
-| `BR-WTM` | [`child-theme-map.md`](../04-play/child-theme-map.md) | | `BR-CCE` | [`child-competency-explorer.md`](../04-play/child-competency-explorer.md) |
+| `BR-STK` | [`sticker-album.md`](../04-play/sticker-album.md) | | `BR-WTM` | [`child-theme-map.md`](../04-play/child-theme-map.md) |
+| `BR-CCE` | [`child-competency-explorer.md`](../04-play/child-competency-explorer.md) | | | |
 
 **Content**
 
 | Prefix | Spec | | Prefix | Spec |
 |---|---|---|---|---|
-| `BR-GLM` | [`game-level-model.md`](../05-content/game-level-model.md) | | `BR-LSM` | [`lesson-model.md`](../05-content/lesson-model.md) |
-| `BR-ACM` | [`activity-model.md`](../05-content/activity-model.md) | | `BR-CRM` | [`curriculum-model.md`](../05-content/curriculum-model.md) |
-| `BR-WSM` | [`worksheet-model.md`](../05-content/worksheet-model.md) | | `BR-LEX` | [`lesson-exemplar-set.md`](../05-content/lesson-exemplar-set.md) |
-| `BR-MCM` | [`montessori-corpus-mapping.md`](../05-content/montessori-corpus-mapping.md) | | `BR-RSM` | [`round-set-model.md`](../05-content/round-set-model.md) |
-| `BR-MGL` | [`montessori-corpus-mapping.md`](../05-content/montessori-corpus-mapping.md) mục 6 + 7.7–7.10 | | `BR-MLS` | [`montessori-corpus-mapping.md`](../05-content/montessori-corpus-mapping.md) mục 6 + 7.11–7.13 |
-| `BR-TAG` | [`content-tagging.md`](../05-content/content-tagging.md) | | `BR-LTV` | [`lesson-template-variety.md`](../05-content/lesson-template-variety.md) |
-| `BR-ECD` | [`engine-content-depth.md`](../05-content/engine-content-depth.md) | | `BR-CTR` | [`content-theme-registry.md`](../05-content/content-theme-registry.md) |
-| `BR-LCD` | [`lesson-corpus-depth.md`](../05-content/lesson-corpus-depth.md) | | `BR-LFM` | [`lesson-flow-model.md`](../05-content/lesson-flow-model.md) |
+| `BR-GLM` | [`game-level-model.md`](../05-content/game-level-model.md) | | `BR-CRM` | [`curriculum-model.md`](../05-content/curriculum-model.md) |
+| `BR-WSM` | [`worksheet-model.md`](../05-content/worksheet-model.md) | | `BR-RSM` | [`round-set-model.md`](../05-content/round-set-model.md) |
+| `BR-MCM` | [`montessori-corpus-mapping.md`](../05-content/montessori-corpus-mapping.md) | | `BR-MGL` | [`montessori-corpus-mapping.md`](../05-content/montessori-corpus-mapping.md) mục 6 + 7.7–7.10 |
+| `BR-TAG` | [`content-tagging.md`](../05-content/content-tagging.md) | | `BR-CTR` | [`content-theme-registry.md`](../05-content/content-theme-registry.md) |
+| `BR-ECD` | [`engine-content-depth.md`](../05-content/engine-content-depth.md) | | `BR-SKQ` | [`engine-content-depth.md`](../05-content/engine-content-depth.md) mục 6.1 |
 | `BR-RSD` | [`round-set-corpus-depth.md`](../05-content/round-set-corpus-depth.md) | | `BR-CIM` | [`concept-intro-model.md`](../05-content/concept-intro-model.md) |
-| `BR-SDS` | [`skill-dataset-model.md`](../05-content/skill-dataset-model.md) | | `BR-SKQ` | [`engine-content-depth.md`](../05-content/engine-content-depth.md) mục 6.1 |
-| `BR-STA` | [`skill-dataset-model.md`](../05-content/skill-dataset-model.md) §7.5 | | `BR-ALC` | [`skill-dataset-model.md`](../05-content/skill-dataset-model.md) §7.4 |
-| `BR-ECA` | [`engine-competency-allocation.md`](../05-content/engine-competency-allocation.md) | | `BR-PAR` | [`preschool-age-bands.md`](../05-content/preschool-age-bands.md) |
-| `BR-SAP` | [`skill-age-progression.md`](../05-content/skill-age-progression.md) | | `BR-CTM` | [`concept-topic-model.md`](../05-content/concept-topic-model.md) |
-| `BR-SVI` | [`skill-value-inventory.md`](../05-content/skill-value-inventory.md) | | `BR-LDC` | [`level-difficulty-contract.md`](../05-content/level-difficulty-contract.md) |
-| `BR-STS` | [`skill-thinking-structure.md`](../05-content/skill-thinking-structure.md) | | `BR-NRL` | [`numeracy-representation-ladder.md`](../05-content/numeracy-representation-ladder.md) |
-| `BR-LRM` | [`learning-roadmap-model.md`](../05-content/learning-roadmap-model.md) | | `BR-LTC` | [`lesson-topic-composition.md`](../05-content/lesson-topic-composition.md) |
+| `BR-SDS` | [`skill-dataset-model.md`](../05-content/skill-dataset-model.md) | | `BR-STA` | [`skill-dataset-model.md`](../05-content/skill-dataset-model.md) §7.5 |
+| `BR-ALC` | [`skill-dataset-model.md`](../05-content/skill-dataset-model.md) §7.4 | | `BR-PAR` | [`preschool-age-bands.md`](../05-content/preschool-age-bands.md) |
+| `BR-ECA` | [`engine-competency-allocation.md`](../05-content/engine-competency-allocation.md) | | `BR-CTM` | [`concept-topic-model.md`](../05-content/concept-topic-model.md) |
+| `BR-SAP` | [`skill-age-progression.md`](../05-content/skill-age-progression.md) | | `BR-LDC` | [`level-difficulty-contract.md`](../05-content/level-difficulty-contract.md) |
+| `BR-SVI` | [`skill-value-inventory.md`](../05-content/skill-value-inventory.md) | | `BR-NRL` | [`numeracy-representation-ladder.md`](../05-content/numeracy-representation-ladder.md) |
+| `BR-STS` | [`skill-thinking-structure.md`](../05-content/skill-thinking-structure.md) | | `BR-LRM` | [`learning-roadmap-model.md`](../05-content/learning-roadmap-model.md) |
 
 **Prefix chia nhiều spec** — luật bền của các đợt dựng khuôn và nạp nội dung (kế hoạch đợt nằm
 ở `docs/tasks/`, không là spec — mục 2 của [`CONVENTIONS.md`](../CONVENTIONS.md)). Mỗi mã giữ
@@ -209,8 +205,7 @@ prefix vẫn duy nhất (không hai **nhóm luật** dùng chung), chỉ có ch�
 | `BR-PCA` | [`package-catalog-admin.md`](../06-admin/package-catalog-admin.md) | | `BR-TXB` | [`taxonomy-browser.md`](../06-admin/taxonomy-browser.md) |
 | `BR-STU` | [`game-level-studio.md`](../06-admin/game-level-studio.md) | | `BR-SDF` | [`schema-driven-form.md`](../06-admin/schema-driven-form.md) |
 | `BR-LPV` | [`live-preview.md`](../06-admin/live-preview.md) | | `BR-CRQ` | [`content-review-queue.md`](../06-admin/content-review-queue.md) |
-| `BR-PUB` | [`publish-and-version.md`](../06-admin/publish-and-version.md) | | `BR-LSA` | [`lesson-authoring.md`](../06-admin/lesson-authoring.md) |
-| `BR-ACA` | [`activity-authoring.md`](../06-admin/activity-authoring.md) | | `BR-CBD` | [`curriculum-builder.md`](../06-admin/curriculum-builder.md) |
+| `BR-PUB` | [`publish-and-version.md`](../06-admin/publish-and-version.md) | | `BR-CBD` | [`curriculum-builder.md`](../06-admin/curriculum-builder.md) |
 | `BR-IUP` | [`image-upload.md`](../06-admin/image-upload.md) | | `BR-EPK` | [`emoji-picker.md`](../06-admin/emoji-picker.md) |
 | `BR-AUT2` | [`asset-usage-tracking.md`](../06-admin/asset-usage-tracking.md) | | `BR-SEO` | [`seo-content-admin.md`](../06-admin/seo-content-admin.md) |
 | `BR-NTA` | [`notification-admin.md`](../06-admin/notification-admin.md) | | `BR-ALV` | [`audit-log-viewer.md`](../06-admin/audit-log-viewer.md) |
@@ -222,10 +217,9 @@ prefix vẫn duy nhất (không hai **nhóm luật** dùng chung), chỉ có ch�
 
 | Prefix | Spec | | Prefix | Spec |
 |---|---|---|---|---|
-| `BR-LPC` | [`lesson-plan-creator.md`](../07-addon/lesson-plan-creator.md) | | `BR-CGB` | [`custom-game-builder.md`](../07-addon/custom-game-builder.md) |
-| `BR-PCU` | [`personal-curriculum.md`](../07-addon/personal-curriculum.md) | | `BR-AIA` | [`ai-assistant.md`](../07-addon/ai-assistant.md) |
-| `BR-ACL` | [`ai-credit-ledger.md`](../07-addon/ai-credit-ledger.md) | | `BR-PDF` | [`pdf-export.md`](../07-addon/pdf-export.md) |
-| `BR-SEM` | [`semantic-search.md`](../07-addon/semantic-search.md) | | | |
+| `BR-CGB` | [`custom-game-builder.md`](../07-addon/custom-game-builder.md) | | `BR-PCU` | [`personal-curriculum.md`](../07-addon/personal-curriculum.md) |
+| `BR-AIA` | [`ai-assistant.md`](../07-addon/ai-assistant.md) | | `BR-ACL` | [`ai-credit-ledger.md`](../07-addon/ai-credit-ledger.md) |
+| `BR-PDF` | [`pdf-export.md`](../07-addon/pdf-export.md) | | `BR-SEM` | [`semantic-search.md`](../07-addon/semantic-search.md) |
 
 **Quality**
 

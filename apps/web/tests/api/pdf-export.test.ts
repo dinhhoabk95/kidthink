@@ -3,8 +3,8 @@ import {
   entitlements,
   exportJobs,
   getOwnerDb,
-  lessonPlanItems,
-  lessonPlans,
+  personalCurricula,
+  personalCurriculumItems,
   users,
 } from "@mindkid/db";
 import { MONTHLY_PDF_EXPORT_QUOTA, processPdfRenderJob } from "@mindkid/export";
@@ -12,7 +12,6 @@ import { ENTITLEMENT_KEYS } from "@mindkid/shared";
 import { beforeEach, describe, expect, it } from "vitest";
 import getExportStatusHandler from "#server/api/users/exports/[uuid].get";
 import postExportHandler from "#server/api/users/exports/index.post";
-import exportPlanHandler from "#server/api/users/lesson-plans/[uuid]/export.post";
 import { invalidateUserEntitlementsCache } from "#server/utils/entitlements-runtime";
 
 function makeUserEvent(
@@ -98,11 +97,11 @@ describe("Task P4.2 — PDF Export API (BR-PDF-01..09)", () => {
         .onConflictDoNothing();
     }
 
-    // Grant u1 entitlements (create_lesson_plan, export_pdf)
+    // Grant u1 entitlements (create_custom_curriculum, export_pdf)
     await db.insert(entitlements).values([
       {
         userId: user1Id,
-        entitlementKey: "create_lesson_plan",
+        entitlementKey: "create_custom_curriculum",
         source: "manual_grant",
         status: "active",
       },
@@ -114,28 +113,29 @@ describe("Task P4.2 — PDF Export API (BR-PDF-01..09)", () => {
       },
     ]);
 
-    // Create a lesson plan for u1
+    // Create a personal curriculum for u1
     const [plan] = await db
-      .insert(lessonPlans)
+      .insert(personalCurricula)
       .values({
         userId: user1Id,
-        title: "Giáo án xuất PDF kiểm thử",
-        targetAge: 4,
-        estimatedMinutes: 30,
+        title: "Lộ trình xuất PDF kiểm thử",
+        ageMin: 4,
+        ageMax: 5,
+        durationWeeks: 4,
+        sessionsPerWeek: 3,
         version: 1,
       })
       .returning();
     plan1Uuid = plan.uuid;
 
-    await db.insert(lessonPlanItems).values({
-      lessonPlanId: plan.id,
-      position: 0,
-      itemType: "activity",
-      snapshot: {
-        title: "Hoạt động nhận biết",
-        duration_minutes: 15,
-        description: "Mô tả chi tiết",
-      },
+    await db.insert(personalCurriculumItems).values({
+      personalCurriculumId: plan.id,
+      weekNo: 1,
+      sessionNo: 1,
+      position: 1,
+      entityType: "game_level",
+      entityId: 1,
+      isRequired: true,
     });
   });
 
@@ -144,7 +144,7 @@ describe("Task P4.2 — PDF Export API (BR-PDF-01..09)", () => {
       user1Id,
       {},
       {
-        kind: "lesson_plan",
+        kind: "curriculum_plan",
         ref_id: plan1Uuid,
       }
     );
@@ -161,7 +161,7 @@ describe("Task P4.2 — PDF Export API (BR-PDF-01..09)", () => {
       user2Id,
       {},
       {
-        kind: "lesson_plan",
+        kind: "curriculum_plan",
         ref_id: plan1Uuid,
       }
     );
@@ -181,7 +181,7 @@ describe("Task P4.2 — PDF Export API (BR-PDF-01..09)", () => {
     for (let i = 0; i < MONTHLY_PDF_EXPORT_QUOTA; i++) {
       await db.insert(exportJobs).values({
         userId: user1Id,
-        kind: "lesson_plan",
+        kind: "curriculum_plan",
         refId: plan1Uuid,
         status: "done",
         pageCount: 1,
@@ -193,7 +193,7 @@ describe("Task P4.2 — PDF Export API (BR-PDF-01..09)", () => {
       user1Id,
       {},
       {
-        kind: "lesson_plan",
+        kind: "curriculum_plan",
         ref_id: plan1Uuid,
       }
     );
@@ -213,7 +213,7 @@ describe("Task P4.2 — PDF Export API (BR-PDF-01..09)", () => {
       user1Id,
       {},
       {
-        kind: "lesson_plan",
+        kind: "curriculum_plan",
         ref_id: plan1Uuid,
       }
     );
@@ -239,7 +239,7 @@ describe("Task P4.2 — PDF Export API (BR-PDF-01..09)", () => {
       user1Id,
       {},
       {
-        kind: "lesson_plan",
+        kind: "curriculum_plan",
         ref_id: plan1Uuid,
       }
     );
@@ -256,14 +256,5 @@ describe("Task P4.2 — PDF Export API (BR-PDF-01..09)", () => {
     }
     expect(error).toBeDefined();
     expect(error.statusCode).toBe(404);
-  });
-
-  it("POST /api/users/lesson-plans/:uuid/export liên kết chuẩn hóa sang pipeline xuất PDF", async () => {
-    const event = makeUserEvent(user1Id, { uuid: plan1Uuid });
-    const res = await exportPlanHandler(event);
-
-    expect(event.node.res.statusCode).toBe(202);
-    expect(res.job_uuid).toBeDefined();
-    expect(res.status).toBe("queued");
   });
 });

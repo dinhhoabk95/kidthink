@@ -15,14 +15,6 @@ import type {
 } from "@mindkid/content";
 import { BAND_AGES } from "./roadmap-seed-gate.js";
 
-export interface DemandLesson {
-  readonly code: string;
-  readonly skill_codes: readonly string[];
-  readonly age_min: number;
-  readonly age_max: number;
-  readonly has_offline_activity: boolean;
-}
-
 export interface DemandLevel {
   readonly code: string;
   readonly skill_codes: readonly string[];
@@ -62,18 +54,17 @@ export interface ContentDemandLedger {
 export interface DemandInput {
   readonly roadmaps: readonly RoadmapSeed[];
   readonly affinities: Readonly<Record<string, readonly string[]>>;
-  readonly lessons: readonly DemandLesson[];
   readonly levels: readonly DemandLevel[];
   readonly difficultyMaxByBand: Readonly<Record<RoadmapBand, number>>;
 }
 
 // Một tiết thực hành chơi ba level liên tiếp trong khung 10 phút của vai trò
-// practice; tiết còn lại dùng đúng một bài học.
+// practice; các tiết còn lại dùng đúng một level.
 export const PRACTICE_LEVEL_QUOTA = 3;
-export const LESSON_QUOTA = 1;
+export const SINGLE_LEVEL_QUOTA = 1;
 
-// Thứ tự cấp nội dung: tiết giới thiệu được chọn trước vì nó cần bài dạy
-// nhất; ngoài màn hình chọn cuối vì nó hẹp nhất (cần hoạt động không màn hình).
+// Thứ tự cấp nội dung: tiết giới thiệu được chọn trước; thực hành, ôn tập,
+// ngoài màn hình chọn theo thứ tự ưu tiên.
 const ROLE_PRIORITY: Readonly<Record<RoadmapSession["role"], number>> = {
   introduce: 0,
   practice: 1,
@@ -109,26 +100,7 @@ function byDifficultyThenCode(a: DemandLevel, b: DemandLevel): number {
 }
 
 function quotaFor(role: RoadmapSession["role"]): number {
-  return role === "practice" ? PRACTICE_LEVEL_QUOTA : LESSON_QUOTA;
-}
-
-function pickLessons(
-  draft: CellDraft,
-  band: RoadmapBand,
-  lessons: readonly DemandLesson[],
-  used: ReadonlySet<string>
-): string[] {
-  return lessons
-    .filter(
-      (lesson) =>
-        !used.has(lesson.code) &&
-        lesson.skill_codes.includes(draft.skill_code) &&
-        coversBand(band, lesson.age_min, lesson.age_max) &&
-        (draft.role !== "offscreen" || lesson.has_offline_activity)
-    )
-    .sort(byCode)
-    .slice(0, quotaFor(draft.role))
-    .map((lesson) => lesson.code);
+  return role === "practice" ? PRACTICE_LEVEL_QUOTA : SINGLE_LEVEL_QUOTA;
 }
 
 function pickLevels(
@@ -147,7 +119,7 @@ function pickLevels(
         coversBand(band, level.age_min, level.age_max)
     )
     .sort(byDifficultyThenCode)
-    .slice(0, PRACTICE_LEVEL_QUOTA)
+    .slice(0, quotaFor(draft.role))
     .map((level) => level.code);
 }
 
@@ -187,16 +159,13 @@ function fillRoadmap(
       a.session_no - b.session_no
   );
   for (const draft of order) {
-    const picked =
-      draft.role === "practice"
-        ? pickLevels(
-            draft,
-            roadmap.band,
-            input.levels,
-            input.difficultyMaxByBand[roadmap.band],
-            used
-          )
-        : pickLessons(draft, roadmap.band, input.lessons, used);
+    const picked = pickLevels(
+      draft,
+      roadmap.band,
+      input.levels,
+      input.difficultyMaxByBand[roadmap.band],
+      used
+    );
     for (const code of picked) {
       used.add(code);
     }
@@ -273,11 +242,10 @@ export interface BandMismatch {
 
 export function findBandMismatches(
   ledger: ContentDemandLedger,
-  lessons: readonly DemandLesson[],
   levels: readonly DemandLevel[]
 ): BandMismatch[] {
   const ages = new Map<string, { min: number; max: number }>();
-  for (const entry of [...lessons, ...levels]) {
+  for (const entry of levels) {
     ages.set(entry.code, { min: entry.age_min, max: entry.age_max });
   }
   const mismatches: BandMismatch[] = [];

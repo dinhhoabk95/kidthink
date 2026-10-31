@@ -42,50 +42,150 @@ export const C2_SOL_05_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "rectangle",
-      label: "hình chữ nhật",
+      id: "brick_solid",
+      label: "viên gạch chữ nhật",
+      value: 1,
       image: {
         kind: "emoji",
-        ref: "🟧",
+        ref: "🧱",
       },
       category: {
-        type: "shape",
+        type: "khối chữ nhật",
+      },
+      contrast_group: "rect_prism",
+    },
+    {
+      id: "book_solid",
+      label: "quyển sách chữ nhật",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "📗",
+      },
+      category: {
+        type: "khối chữ nhật",
+      },
+      contrast_group: "rect_prism",
+    },
+    {
+      id: "juice_box",
+      label: "hộp sữa chữ nhật",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "🧃",
+      },
+      category: {
+        type: "khối chữ nhật",
+      },
+      contrast_group: "rect_prism",
+    },
+    {
+      id: "suitcase_solid",
+      label: "chiếc va-li chữ nhật",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "🧳",
+      },
+      category: {
+        type: "khối chữ nhật",
+      },
+      contrast_group: "rect_prism",
+    },
+    {
+      id: "ball_round",
+      label: "quả bóng tròn lăn",
+      value: 5,
+      image: {
+        kind: "emoji",
+        ref: "⚽",
+      },
+      category: {
+        type: "khối tròn lăn",
+      },
+      contrast_group: "round_solid",
+    },
+    {
+      id: "orange_round",
+      label: "trái cam tròn lăn",
+      value: 6,
+      image: {
+        kind: "emoji",
+        ref: "🍊",
+      },
+      category: {
+        type: "khối tròn lăn",
+      },
+      contrast_group: "round_solid",
+    },
+    {
+      id: "can_round",
+      label: "lon nước tròn lăn",
+      value: 7,
+      image: {
+        kind: "emoji",
+        ref: "🥫",
+      },
+      category: {
+        type: "khối tròn lăn",
+      },
+      contrast_group: "round_solid",
+    },
+    {
+      id: "drum_round",
+      label: "chiếc trống tròn",
+      value: 8,
+      image: {
+        kind: "emoji",
+        ref: "🥁",
+      },
+      category: {
+        type: "khối tròn lăn",
+      },
+      contrast_group: "round_solid",
+    },
+  ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "brick_solid",
+      target_id: "ball_round",
+      metadata: {
+        dimension: "solid_type",
       },
     },
     {
-      id: "star",
-      label: "hình ngôi sao",
-      image: {
-        kind: "emoji",
-        ref: "⭐",
-      },
-      category: {
-        type: "shape",
+      type: "contrast",
+      source_id: "book_solid",
+      target_id: "orange_round",
+      metadata: {
+        dimension: "solid_type",
       },
     },
     {
-      id: "heart",
-      label: "hình trái tim",
-      image: {
-        kind: "emoji",
-        ref: "❤️",
-      },
-      category: {
-        type: "shape",
+      type: "pair",
+      source_id: "brick_solid",
+      target_id: "book_solid",
+      metadata: {
+        relation: "cùng khối chữ nhật",
       },
     },
     {
-      id: "diamond",
-      label: "hình thoi",
-      image: {
-        kind: "emoji",
-        ref: "🔷",
-      },
-      category: {
-        type: "shape",
+      type: "pair",
+      source_id: "ball_round",
+      target_id: "orange_round",
+      metadata: {
+        relation: "cùng khối tròn lăn",
       },
     },
   ],
+  axes: {
+    solid_type: {
+      values: ["khối chữ nhật", "khối tròn lăn"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
@@ -117,7 +217,16 @@ export const C2_SOL_05_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Khối chữ nhật nhé",
   },
-  ordering: ["rectangle", "star", "heart", "diamond"],
+  ordering: [
+    "brick_solid",
+    "book_solid",
+    "juice_box",
+    "suitcase_solid",
+    "ball_round",
+    "orange_round",
+    "can_round",
+    "drum_round",
+  ],
 };
 
 export const C2_SOL_05_SEED: SkillSeed = {
@@ -146,62 +255,6 @@ export const C2_SOL_05_SEED: SkillSeed = {
       band: "4-5",
       difficulty: 2,
       theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-TCNT-0010",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 3,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-TCMP-0009",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 2,
-      theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-TCMP-0010",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 3,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-PAIR-0009",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 2,
-      theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-PAIR-0010",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 3,
-      theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-PATT-0009",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 2,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-PATT-0010",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 3,
-      theme: "farm",
       rounds: 3,
     },
   ],

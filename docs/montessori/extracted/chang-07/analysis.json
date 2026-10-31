@@ -1,0 +1,2977 @@
+{
+  "stage_id": "chang-07",
+  "stage_number": 7,
+  "workbook_code": "WB07",
+  "title": "Chặng 7: Khu Vườn Hai Nhánh",
+  "subtitle": "Tách một nhóm • Gộp hai nhóm",
+  "mission": "Cùng Gấu Logic và Thỏ Quan Sát khôi phục Cây Đại Đoàn Kết, kết nối các cành quả trĩu ngọt và thắp sáng Viên Ngọc Kết Nối rực rỡ.",
+  "series": "Gấu Logic & Thỏ Quan Sát - Chuyến Tàu Toán Học (Phần 7)",
+  "target_age": "3–6 tuổi",
+  "total_pages": 23,
+  "reward_badge": {
+    "name": "Viên Ngọc Kết Nối",
+    "name_en": "Connection Gem / Unity Gem",
+    "symbol": "emerald_gem",
+    "pedagogical_meaning": "Tượng trưng cho sự gắn kết, thấu hiểu mối liên hệ hai chiều giữa Toàn thể (Whole) và Các bộ phận (Parts). Đây là nền tảng tư duy vững chắc cho phép cộng và phép trừ trong toán học."
+  },
+  "pedagogy": {
+    "framework": "Montessori Math & CPA (Concrete - Pictorial - Abstract) Approach",
+    "approach": "Chuyển hóa từ Thao tác vật thể cụ thể (hoa quả, xe cộ, hình khối) sang Sơ đồ liên kết số hai nhánh (Number Bond Tree) và tiến tới Ký hiệu trừu tượng (Toa tàu số học, biểu thức cộng khuyết).",
+    "core_concepts": [
+      "Khái niệm Tách - Gộp (Composing & Decomposing numbers): Một nhóm có thể tách thành hai nhóm nhỏ hơn, và hai nhóm nhỏ có thể gộp lại thành nhóm ban đầu.",
+      "Mô hình Số liên kết (Number Bond): Mối quan hệ Part-Part-Whole (Hai phần tạo nên toàn thể).",
+      "Tính giao hoán của phép gộp (Commutative Property of Addition): a + b = b + a (ví dụ 1 + 5 = 5 + 1 = 6).",
+      "Bảo toàn số lượng (Conservation of Number): Số lượng tổng không đổi dù được phân chia theo nhiều cách khác nhau.",
+      "Tìm thành phần còn thiếu (Missing Addend): Nền tảng tư duy phép trừ trực quan (Whole - Part = Missing Part)."
+    ],
+    "competencies": [
+      {
+        "code": "C1",
+        "name": "Cảm thức số học & Đếm (Number Sense & Counting)",
+        "role": "Trọng tâm cốt lõi: Nhận biết cấu trúc số, tách gộp số lượng trong phạm vi 10, liên kết số lượng và chữ số."
+      },
+      {
+        "code": "C3",
+        "name": "Tư duy logic & Giải quyết vấn đề (Logical Thinking & Problem Solving)",
+        "role": "Bổ trợ phương pháp: Nhận diện quy luật tách gộp, suy luận thành phần ẩn, phân tích tổng hợp đa chiều."
+      },
+      {
+        "code": "C4",
+        "name": "Quan sát & Phân biệt thị giác (Observation & Visual Discrimination)",
+        "role": "Hỗ trợ quan sát: Đếm chính xác theo hàng/nhóm, so sánh đối chiếu số lượng hình giữa các nhánh và phương án A/B."
+      }
+    ],
+    "skills_targeted": [
+      {
+        "code": "C1.NCOMP.01",
+        "name": "Tách số 2",
+        "description": "Tách nhóm 2 thành 1 và 1; gộp 1 và 1 thành 2 (Trang 1)."
+      },
+      {
+        "code": "C1.NCOMP.02",
+        "name": "Tách số 3",
+        "description": "Tách nhóm 3 thành 1 và 2, hoặc 2 và 1; gộp tạo 3 (Trang 1, 2, 4, 6)."
+      },
+      {
+        "code": "C1.NCOMP.03",
+        "name": "Tách số 4",
+        "description": "Tách nhóm 4 thành 2 và 2, hoặc 1 và 3; gộp tạo 4 (Trang 1, 2, 4, 6, 16)."
+      },
+      {
+        "code": "C1.NCOMP.04",
+        "name": "Tách số 5",
+        "description": "Khám phá toàn bộ các cặp tách gộp của 5: 1+4, 2+3, 3+2, 4+1 (Trang 2, 3, 4, 5, 11, 12, 14, 17, 18)."
+      },
+      {
+        "code": "C1.NCOMP.05",
+        "name": "Tách số 6",
+        "description": "Khám phá các cặp tách gộp của 6: 1+5, 2+4, 3+3, 4+2 (Trang 5, 6, 11, 12, 13, 14, 16, 17, 18)."
+      },
+      {
+        "code": "C1.NCOMP.06",
+        "name": "Tách số 7",
+        "description": "Tách gộp số lượng 7: 3+4, 2+5, 4+3, 1+6 (Trang 7, 11, 12, 14, 15, 16, 17, 21)."
+      },
+      {
+        "code": "C1.NCOMP.07",
+        "name": "Tách số 8",
+        "description": "Tách gộp số lượng 8: 1+7, 2+6, 3+5, 4+4, 5+3 (Trang 8, 11, 12, 14, 15, 17, 18, 19, 21)."
+      },
+      {
+        "code": "C1.NCOMP.08",
+        "name": "Tách số 9",
+        "description": "Tách gộp số lượng 9: 4+5, 3+6, 2+7, 5+4, 6+3 (Trang 9, 15, 18, 21)."
+      },
+      {
+        "code": "C1.NCOMP.09",
+        "name": "Tách số 10",
+        "description": "Khám phá các cặp bạn thân tạo 10: 1+9, 2+8, 3+7, 4+6, 5+5 (Trang 10, 15, 20, 21)."
+      },
+      {
+        "code": "C1.NCOMP.10",
+        "name": "Gộp số",
+        "description": "Hành động hợp nhất hai tập hợp rời rạc thành một tập hợp tổng quát."
+      },
+      {
+        "code": "C1.NCOMP.11",
+        "name": "Thành phần số (Part-Whole Relationship)",
+        "description": "Hiểu bản chất số nguyên tố cấu tạo từ các phần con cấu thành."
+      },
+      {
+        "code": "C1.NCOMP.12",
+        "name": "Sơ đồ Number Bond",
+        "description": "Sử dụng sơ đồ cây phân nhánh biểu diễn mối quan hệ tách gộp hai chiều."
+      },
+      {
+        "code": "C1.ADD.01",
+        "name": "Cộng bằng đồ vật",
+        "description": "Đếm dồn hoặc gộp hai nhóm vật phẩm trực quan để tìm kết quả phép cộng."
+      },
+      {
+        "code": "C1.SUB.05",
+        "name": "Tìm số còn lại (Missing Addend)",
+        "description": "Biết số tổng và một nhánh, tìm số lượng nhánh còn lại (khởi đầu phép trừ)."
+      },
+      {
+        "code": "C1.CNT.01",
+        "name": "Đếm đồ vật",
+        "description": "Đếm chính xác từng nhóm đối tượng trên mỗi nhánh cây hoặc toa tàu."
+      },
+      {
+        "code": "C1.CNT.03",
+        "name": "Đếm không bỏ sót",
+        "description": "Quét mắt theo hàng từ trái sang phải, không đếm trùng, không đếm sót."
+      },
+      {
+        "code": "C1.NREC.02",
+        "name": "Nhận biết số 0–5",
+        "description": "Gắn thẻ số và viết số tương ứng với các nhóm lượng từ 1 đến 5."
+      },
+      {
+        "code": "C1.NREC.03",
+        "name": "Nhận biết số 0–10",
+        "description": "Gắn thẻ số và viết số tương ứng với các nhóm lượng từ 6 đến 10."
+      }
+    ],
+    "strategy_ladder": [
+      {
+        "level": 1,
+        "name": "Gộp trực quan cơ sở phạm vi 2–5 (Concrete Combining 2-5)",
+        "pages": [1, 2, 3, 4],
+        "focus": "Đếm từng giỏ nhỏ rồi đếm giỏ tổng, làm quen cấu trúc sơ đồ hai nhánh chụm về một."
+      },
+      {
+        "level": 2,
+        "name": "Mở rộng gộp phạm vi 6–10 (Visual Combining 6-10)",
+        "pages": [5, 6, 7, 8, 9, 10],
+        "focus": "Luyện kỹ năng quét mắt theo hàng (grid scan), đếm không bỏ sót khi số lượng tăng lên 7, 8, 9, 10."
+      },
+      {
+        "level": 3,
+        "name": "Tìm phần còn thiếu & Trắc nghiệm đối sánh (Missing Part & Comparison)",
+        "pages": [11, 12, 14],
+        "focus": "Chuyển dịch tư duy: từ phép gộp xuôi sang tư duy tìm phần khuyết (Missing Addend) và đối chiếu trắc nghiệm."
+      },
+      {
+        "level": 4,
+        "name": "Đa dạng hóa phân rã & Tư duy trừu tượng (Partitions & Symbolic Train)",
+        "pages": [13, 15, 16, 17, 18, 19, 20],
+        "focus": "Nhận biết một số có nhiều cách tách; chuyển sang biểu diễn ký hiệu số thuần túy trên toa tàu và tự vẽ hình còn thiếu."
+      },
+      {
+        "level": 5,
+        "name": "Thử thách tổng hợp Cây Đại Đoàn Kết (Comprehensive Boss Challenge)",
+        "pages": [21],
+        "focus": "Tích hợp cả 4 cơ chế: Gộp, Tìm phần thiếu, Tách, Chọn đúng trên phạm vi 10."
+      }
+    ]
+  },
+  "activity_groups": [
+    {
+      "group_id": "WB07-D1",
+      "name": "Đếm vật ở hai nhánh rồi gộp về giỏ tổng (Part-Part -> Whole)",
+      "description": "Cho hai nhóm vật thể riêng biệt ở hai nhánh trên. Trẻ đếm từng nhánh, viết số lượng vào ô vuông của nhánh đó, sau đó đếm nhóm tổng ở khung dưới và điền số tổng vào ô kết quả.",
+      "page_range": "Trang 1 – 10 (File page-02 đến page-11)",
+      "primary_skills": [
+        "C1.NCOMP.10",
+        "C1.NCOMP.12",
+        "C1.CNT.01",
+        "C1.ADD.01",
+        "C1.NREC.02",
+        "C1.NREC.03"
+      ],
+      "recommended_existing_gt_templates": ["GT-007", "GT-003"],
+      "mechanic_description": "Drag-to-container hoặc Tap-select-number: Kéo các quả/vật từ 2 cành nhỏ rơi vào giỏ lớn dưới gốc cây, hoặc đếm rồi chạm chọn số điền vào 3 ô tương ứng (Nhánh A + Nhánh B = Tổng).",
+      "sample_prompts": [
+        "Hai nhóm nhỏ có thể gộp thành một nhóm! Bé đếm rồi viết số nhé!",
+        "Mỗi cành cây có một nhóm quả! Bé gộp hai cành lại nhé!",
+        "Mỗi đường ray có một nhóm xe! Gộp lại xem nhà ga có bao nhiêu nhé!",
+        "Mười hình có rất nhiều cách gộp! Bé hoàn thành thử thách nhé!"
+      ],
+      "visual_objects": [
+        {
+          "type": "fruit",
+          "items": [
+            "Táo đỏ",
+            "Dâu tây",
+            "Cam vàng",
+            "Lê xanh",
+            "Dưa hấu",
+            "Nho tím",
+            "Đào vàng"
+          ]
+        },
+        {
+          "type": "geometric_shapes",
+          "items": [
+            "Tam giác tím",
+            "Hình vuông xanh lá",
+            "Chấm tròn đỏ",
+            "Ngũ giác hồng"
+          ]
+        },
+        {
+          "type": "nature",
+          "items": [
+            "Hoa đỏ",
+            "Hoa vàng",
+            "Hoa hồng",
+            "Hoa tím",
+            "Ngôi sao vàng",
+            "Bướm sắc màu",
+            "Chiếc lá xanh"
+          ]
+        },
+        {
+          "type": "vehicles",
+          "items": [
+            "Xe ô tô con vàng",
+            "Xe buýt xanh dương",
+            "Máy bay trực thăng xanh",
+            "Đầu tàu hỏa đỏ"
+          ]
+        },
+        {
+          "type": "treasure",
+          "items": ["Kim cương xanh", "Đồng xu sao vàng", "Đá quý hồng ruby"]
+        },
+        {
+          "type": "animals",
+          "items": ["Con cá xanh"]
+        }
+      ],
+      "quantities_and_ranges": "Phạm vi số lượng từ 2 đến 10. Tiến trình tăng dần: 2, 3, 4 (Trang 1-2) -> 5 (Trang 3-5) -> 6 (Trang 5-6) -> 7 (Trang 7) -> 8 (Trang 8) -> 9 (Trang 9) -> 10 (Trang 10).",
+      "distractors": "Tránh đếm nhầm đối tượng giữa 2 nhánh; các hình sắp xếp phân tán hoặc so le để trẻ phải rèn luyện đếm có trật tự."
+    },
+    {
+      "group_id": "WB07-D2",
+      "name": "Cho tổng và một nhánh, tìm số lượng nhánh còn lại (Missing Part Deduction)",
+      "description": "Sơ đồ tách gộp có sẵn số tổng và một nhánh con, nhánh con còn lại bị khuyết ô số. Trẻ quan sát hình ảnh trực quan ở nhánh khuyết để đếm hoặc dùng tư duy trừu tượng tính toán số còn thiếu.",
+      "page_range": "Trang 11 – 12 (File page-12 đến page-13)",
+      "primary_skills": [
+        "C1.SUB.05",
+        "C1.NCOMP.11",
+        "C1.NCOMP.12",
+        "C1.CNT.01"
+      ],
+      "recommended_existing_gt_templates": ["GT-007"],
+      "mechanic_description": "Number Bond khuyết nhánh: Hiển thị quả cầu tổng và 1 nhánh có quả. Nhánh còn lại có dấu hỏi chấm hoặc hộp bí mật. Trẻ chạm chọn thẻ số đúng kéo vào ô trống để cân bằng cây.",
+      "sample_prompts": [
+        "Một ô số đang trốn rồi! Bé đếm hình để tìm nhé!",
+        "Tổng nằm ở chiếc hộp lớn! Bé tìm phần còn lại nhé!"
+      ],
+      "visual_objects": [
+        {
+          "items": ["Táo đỏ", "Ngôi sao vàng", "Cá xanh", "Hoa hồng"]
+        }
+      ],
+      "quantities_and_ranges": "Phạm vi tổng từ 5 đến 8. Trang 11 có hình vẽ ở cả 2 nhánh và tổng; Trang 12 ô tổng chuyển sang dạng hình tròn số trừu tượng (vòng tròn màu 5, 6, 7, 8).",
+      "distractors": "Số gây nhiễu là số lớn hơn tổng, hoặc số chênh lệch +-1 so với đáp án đúng."
+    },
+    {
+      "group_id": "WB07-D3",
+      "name": "Khám phá nhiều cách tách/gộp của cùng một số (Number Partitions & Combinations)",
+      "description": "Cùng một số lượng tổng (như 6, 8, 10), trẻ được quan sát và thực hành nhiều cách phân chia khác nhau thành hai nhánh, chứng minh tính đa dạng và bảo toàn số lượng.",
+      "page_range": "Trang 13, 19, 20 (File page-14, page-20, page-21)",
+      "primary_skills": [
+        "C1.NCOMP.05",
+        "C1.NCOMP.07",
+        "C1.NCOMP.09",
+        "C1.NCOMP.11"
+      ],
+      "recommended_existing_gt_templates": ["GT-007"],
+      "mechanic_description": "Multi-branch Bond Split: Cho một số tổng cố định (ví dụ 8). Người chơi thực hiện 4 lượt gộp/tách khác nhau: (1 và 7), (2 và 6), (3 và 5), (4 và 4).",
+      "sample_prompts": [
+        "Số 6 có nhiều cách gộp! Bé khám phá cả bốn cách nhé!",
+        "Số 8 có thể chia theo nhiều cách! Bé đếm từng cặp nhánh nhé!",
+        "Cây Đại Đoàn Kết sắp hồi phục rồi! Bé hoàn thành bốn cách tách nhé!"
+      ],
+      "visual_objects": [
+        {
+          "page": 13,
+          "target_number": 6,
+          "items": ["Táo (1+5)", "Sao (2+4)", "Cá (3+3)", "Hoa tím (4+2)"]
+        },
+        {
+          "page": 19,
+          "target_number": 8,
+          "items": ["Táo (1+7)", "Sao (2+6)", "Cá (3+5)", "Hoa tím (4+4)"]
+        },
+        {
+          "page": 20,
+          "target_number": 10,
+          "items": [
+            "Chấm tròn đỏ (1+9)",
+            "Sao vàng (2+8)",
+            "Vuông xanh (3+7)",
+            "Trái tim tím (5+5)"
+          ]
+        }
+      ],
+      "quantities_and_ranges": "Khảo sát chuyên sâu 3 mốc số trọng điểm: 6, 8, 10.",
+      "distractors": "Các cặp số cộng lại không bằng số mục tiêu (ví dụ 3+4=7 khi mục tiêu là 8)."
+    },
+    {
+      "group_id": "WB07-D4",
+      "name": "Chọn nhánh còn thiếu bằng trắc nghiệm thị giác A/B (Multiple Choice Missing Branch)",
+      "description": "Cho một nhóm tổng và một nhánh con đã biết. Nhánh con thứ hai đưa ra 2 phương án A và B (mỗi phương án là một chùm hình ảnh). Trẻ phải đối chiếu và khoanh tròn phương án chính xác.",
+      "page_range": "Trang 14 (File page-15)",
+      "primary_skills": ["C1.SUB.05", "C1.NCOMP.11", "C4.VIS.01"],
+      "recommended_existing_gt_templates": ["GT-001", "GT-007"],
+      "mechanic_description": "Tap-select: Hai đám mây hoặc hai giỏ A và B bay tới. Trẻ chạm vào giỏ có số lượng chính xác để ghép vào nhánh còn thiếu.",
+      "sample_prompts": [
+        "Một nhánh đang chờ được bổ sung! Bé khoanh vào nhóm đúng nhé!",
+        "Gợi ý: Nhóm đã có và nhóm chọn phải tạo đủ tổng."
+      ],
+      "visual_objects": [
+        {
+          "exercise": 1,
+          "total": 5,
+          "branch1": 2,
+          "optionA": 3,
+          "optionB": 2,
+          "correct": "A",
+          "item": "Táo đỏ"
+        },
+        {
+          "exercise": 2,
+          "total": 6,
+          "branch1": 1,
+          "optionA": 4,
+          "optionB": 5,
+          "correct": "B",
+          "item": "Ngôi sao vàng"
+        },
+        {
+          "exercise": 3,
+          "total": 7,
+          "branch1": 4,
+          "optionA": 3,
+          "optionB": 2,
+          "correct": "A",
+          "item": "Cá xanh"
+        },
+        {
+          "exercise": 4,
+          "total": 8,
+          "branch1": 5,
+          "optionA": 2,
+          "optionB": 3,
+          "correct": "B",
+          "item": "Hoa hồng"
+        }
+      ],
+      "quantities_and_ranges": "Tổng 5, 6, 7, 8.",
+      "distractors": "Phương án sai lệch đúng 1 đơn vị (như 2 thay vì 3, hoặc 4 thay vì 5) tạo thử thách phân biệt thị giác tinh tế."
+    },
+    {
+      "group_id": "WB07-D5",
+      "name": "Tàu số kết nối - Number Bond trừu tượng bằng chữ số (Symbolic Train Bond)",
+      "description": "Đầu tàu kéo theo hai toa hàng. Số trên đầu tàu là tổng, số trên hai toa là các phần. Bài tập lược bỏ hoàn toàn hình vẽ cụ thể, chỉ còn các ô chữ số, đánh dấu bước chuyển sang giai đoạn Trừu tượng (Abstract).",
+      "page_range": "Trang 15 (File page-16)",
+      "primary_skills": ["C1.NCOMP.12", "C1.SUB.05", "C1.NREC.03"],
+      "recommended_existing_gt_templates": ["GT-007", "GT-008"],
+      "mechanic_description": "Drag digit to wagon slot: Trẻ kéo khối số từ bảng số dưới đáy màn hình vào ô toa tàu còn khuyết để đoàn tàu khởi hành.",
+      "sample_prompts": [
+        "Các toa số đang tìm phần còn lại! Bé điền số để nối đúng nhé!",
+        "Gợi ý: Hai toa nhỏ gộp lại bằng toa tổng."
+      ],
+      "visual_objects": [
+        {
+          "train": 1,
+          "locomotive": 7,
+          "wagonA": 3,
+          "wagonB_blank": true,
+          "answer": 4
+        },
+        {
+          "train": 2,
+          "locomotive": 8,
+          "wagonA_blank": true,
+          "wagonB": 5,
+          "answer": 3
+        },
+        {
+          "train": 3,
+          "locomotive": 9,
+          "wagonA": 4,
+          "wagonB_blank": true,
+          "answer": 5
+        },
+        {
+          "train": 4,
+          "locomotive": 10,
+          "wagonA_blank": true,
+          "wagonB": 6,
+          "answer": 4
+        }
+      ],
+      "quantities_and_ranges": "Các số tổng: 7, 8, 9, 10.",
+      "distractors": "Các chữ số lân cận (nhiễu +-1 hoặc +-2)."
+    },
+    {
+      "group_id": "WB07-D6",
+      "name": "Tách một nhóm lớn thành hai nhóm nhỏ (Whole -> Part-Part Decomposition)",
+      "description": "Ngược lại với thao tác gộp, bài tập bắt đầu từ một nhóm tổng ở trên, sau đó phân rã thành hai nhánh nhỏ ở dưới. Trẻ đếm số lượng tổng và số lượng từng nhánh để ghi nhận mối quan hệ phân rã.",
+      "page_range": "Trang 16, 18 (File page-17, page-19)",
+      "primary_skills": [
+        "C1.NCOMP.10",
+        "C1.NCOMP.11",
+        "C1.NCOMP.12",
+        "C1.CNT.01"
+      ],
+      "recommended_existing_gt_templates": ["GT-007", "GT-003"],
+      "mechanic_description": "Tách nhóm: Dùng ngón tay vạch đường phân chia nhóm lớn thành 2 phần, hoặc chạm vào các nhánh để phân phối vật thể từ đỉnh cây xuống 2 cành con.",
+      "sample_prompts": [
+        "Bây giờ mình tách một nhóm lớn! Bé đếm từng nhánh sau khi chia nhé!",
+        "Tổng đã có sẵn ở trên! Bé đếm rồi viết số vào hai nhánh nhé!"
+      ],
+      "visual_objects": [
+        {
+          "page": 16,
+          "items": [
+            "Táo (4 -> 1 và 3)",
+            "Cam (5 -> 2 và 3)",
+            "Dâu (6 -> 3 và 3)",
+            "Nho (7 -> 2 và 5)"
+          ]
+        },
+        {
+          "page": 18,
+          "items": [
+            "Táo (tổng 5 -> 2 và 3)",
+            "Sao (tổng 6 -> 1 và 5)",
+            "Cá (tổng 8 -> 4 và 4)",
+            "Hoa tím (tổng 9 -> 6 và 3)"
+          ]
+        }
+      ],
+      "quantities_and_ranges": "Tổng từ 4 đến 9.",
+      "distractors": "Đếm nhầm lẫn giữa tổng ban đầu và số lượng các nhánh sau khi tách."
+    },
+    {
+      "group_id": "WB07-D7",
+      "name": "Hoàn thành nhánh trống - Tự vẽ/bổ sung vật thể cho đủ tổng (Item Completion)",
+      "description": "Cho một nhóm tổng ở trên và một nhánh đã có hình vẽ. Nhánh thứ hai để trống kèm yêu cầu 'BÉ VẼ VÀO ĐÂY'. Trẻ phải tính toán số lượng còn thiếu và tự vẽ thêm số hình tương ứng.",
+      "page_range": "Trang 17 (File page-18)",
+      "primary_skills": ["C1.SUB.05", "C1.NCOMP.11", "C1.CNT.01"],
+      "recommended_existing_gt_templates": ["GT-003", "GT-007"],
+      "mechanic_description": "Interactive Stamp / Spawn items: Trẻ chạm vào hộp công cụ để đóng dấu (stamp) hoặc lôi đúng số lượng đồ vật còn thiếu đặt vào ô trống.",
+      "sample_prompts": [
+        "Một nhánh vẫn chưa có hình! Bé vẽ thêm số hình còn thiếu nhé!",
+        "Gợi ý: Đếm xem còn thiếu bao nhiêu hình."
+      ],
+      "visual_objects": [
+        {
+          "exercise": 1,
+          "total": 5,
+          "branch1": 2,
+          "missing": 3,
+          "item": "Táo đỏ"
+        },
+        {
+          "exercise": 2,
+          "total": 6,
+          "branch1": 1,
+          "missing": 5,
+          "item": "Ngôi sao vàng"
+        },
+        {
+          "exercise": 3,
+          "total": 7,
+          "branch1": 4,
+          "missing": 3,
+          "item": "Con cá xanh"
+        },
+        {
+          "exercise": 4,
+          "total": 8,
+          "branch1": 5,
+          "missing": 3,
+          "item": "Bông hoa tím"
+        }
+      ],
+      "quantities_and_ranges": "Tổng từ 5 đến 8; số lượng cần bổ sung từ 3 đến 5.",
+      "distractors": "Vẽ thiếu 1 hình hoặc vẽ thừa 1 hình."
+    },
+    {
+      "group_id": "WB07-D8",
+      "name": "Cửa ải Cây Đại Đoàn Kết - Thử thách tổng hợp 4 cơ chế (Boss Challenge)",
+      "description": "Trang kết khóa hội tụ 4 dạng bài tập tiêu biểu trên một màn hình duy nhất: (1) Gộp hai nhóm; (2) Tìm phần còn thiếu (vẽ & điền số); (3) Tách số thành hai phần; (4) Chọn đáp án đúng A/B.",
+      "page_range": "Trang 21 (File page-22)",
+      "primary_skills": [
+        "C1.NCOMP.10",
+        "C1.NCOMP.11",
+        "C1.NCOMP.12",
+        "C1.SUB.05",
+        "C4.VIS.01"
+      ],
+      "recommended_existing_gt_templates": ["GT-007", "GT-001", "GT-003"],
+      "mechanic_description": "Multi-stage Boss Trial: Trẻ vượt qua lần lượt 4 cửa ải nhỏ trên Cây Đại Đoàn Kết để thắp sáng Viên Ngọc Kết Nối.",
+      "sample_prompts": [
+        "Chỉ còn bốn thử thách cuối! Bé vận dụng cả tách và gộp nhé!",
+        "Gợi ý: Làm từ dễ đến khó và kiểm tra lại."
+      ],
+      "visual_objects": [
+        {
+          "challenge": 1,
+          "mode": "GỘP",
+          "branch1": 3,
+          "branch2": 4,
+          "total": 7,
+          "item": "Táo đỏ"
+        },
+        {
+          "challenge": 2,
+          "mode": "TÌM PHẦN THIẾU",
+          "total": 9,
+          "branch1": 4,
+          "branch2_missing": 5,
+          "item": "Táo đỏ"
+        },
+        {
+          "challenge": 3,
+          "mode": "TÁCH",
+          "total": 8,
+          "branch1": 3,
+          "branch2": 5,
+          "item": "Ngôi sao vàng"
+        },
+        {
+          "challenge": 4,
+          "mode": "CHỌN ĐÚNG",
+          "total": 10,
+          "branch1": 6,
+          "optionA": 4,
+          "optionB": 5,
+          "correct": "A",
+          "item": "Chiếc lá xanh"
+        }
+      ],
+      "quantities_and_ranges": "Phạm vi số từ 7 đến 10.",
+      "distractors": "Nhiễu phương án B (5 lá thay vì 4 lá) ở thử thách 4; nhầm lẫn giữa tách và gộp ở thử thách 1 và 3."
+    }
+  ],
+  "characters": {
+    "gau_logic": {
+      "name": "Gấu Logic",
+      "role": "Người thầy dẫn dắt, giải thích cấu trúc sơ đồ hai nhánh, khái niệm tổng thể và phương pháp tính toán",
+      "visual": "Gấu nâu thông thái mặc vest xanh lam, áo sơ mi trắng, đeo kính tròn trí tuệ, tay cầm bảng kẹp bài giảng và bút chì màu đỏ."
+    },
+    "tho_quan_sat": {
+      "name": "Thỏ Quan Sát",
+      "role": "Người bạn đồng hành nhanh nhẹn, đưa ra lời khuyên thực hành, gợi ý quan sát chi tiết và động viên bé",
+      "visual": "Chú thỏ trắng tinh nghịch đeo túi da chéo màu vàng, tay cầm kính lúp viền đỏ phát sáng, tai vểnh cao lắng nghe."
+    }
+  },
+  "pages": [
+    {
+      "page_number": 1,
+      "printed_page_number": null,
+      "file_path": "pages/page-01.jpg",
+      "page_type": "cover",
+      "title": "Khu Vườn Hai Nhánh - Bìa Tập",
+      "banner_texts": {
+        "journey_title": "HÀNH TRÌNH CHUYẾN TÀU TOÁN HỌC",
+        "stage_badge": "CHẶNG 7",
+        "main_title": "KHU VƯỜN HAI NHÁNH",
+        "subtitle": "TÁCH MỘT NHÓM • GỘP HAI NHÓM",
+        "gem_name": "VIÊN NGỌC KẾT NỐI",
+        "footer_callout": "CÙNG GẤU LOGIC VÀ THỎ QUAN SÁT KHÔI PHỤC CÂY ĐẠI ĐOÀN KẾT!"
+      },
+      "objectives_box": {
+        "title": "MỤC TIÊU CHO BÉ",
+        "items": [
+          "Tách – gộp trong phạm vi 10",
+          "Hiểu tổng và các phần",
+          "Làm quen nền tảng cộng – trừ"
+        ]
+      },
+      "cover_illustrations": {
+        "sacred_tree": "Cây Đại Đoàn Kết cổ thụ với hai nhánh vươn cao tỏa bóng mát, trên ngọn tỏa sáng Viên Ngọc Kết Nối màu xanh ngọc bích.",
+        "railway_fork": "Đường ray xe lửa tách nhánh dẫn đầu tàu màu xanh qua thung lũng hoa lá mùa xuân.",
+        "introductory_formulas": [
+          {
+            "branch1": "3 táo",
+            "branch2": "2 táo",
+            "result": "5 táo",
+            "formula": "3 + 2 = 5"
+          },
+          {
+            "branch1": "4 cam",
+            "branch2": "3 cam",
+            "result": "7 cam",
+            "formula": "4 + 3 = 7"
+          },
+          {
+            "branch1": "5 quả",
+            "branch2": "4 quả",
+            "result": "9 quả hỗn hợp",
+            "formula": "5 + 4 = 9"
+          }
+        ]
+      },
+      "digital_game_potential": {
+        "template": "GT-000",
+        "mechanic": "Stage Overview & Hub",
+        "interactive_points": [
+          "Chạm vào Cây Đại Đoàn Kết để nghe tiếng gió rì rào và lời chào mở đầu của Gấu Logic.",
+          "Chạm vào đầu tàu hỏa để kéo còi và chạy thử trên nhánh ray phân tách."
+        ]
+      }
+    },
+    {
+      "page_number": 2,
+      "printed_page_number": 1,
+      "file_path": "pages/page-02.jpg",
+      "page_type": "exercise",
+      "title": "Hai giỏ nhập lại - Đếm, viết số, gộp hai nhóm",
+      "activity_group_id": "WB07-D1",
+      "banners": {
+        "main_banner": "HAI GIỎ NHẬP LẠI",
+        "sub_banner": "ĐẾM – VIẾT SỐ – GỘP HAI NHÓM"
+      },
+      "dialogues": {
+        "gau_logic": "Hai nhóm nhỏ có thể gộp thành một nhóm!",
+        "tho_quan_sat": "Bé đếm rồi viết số nhé!"
+      },
+      "hint": "GỢI Ý: ĐẾM TỪNG GIỎ RỒI ĐẾM TẤT CẢ",
+      "exercises": [
+        {
+          "index": 1,
+          "position": "top_left",
+          "item_name": "Táo đỏ",
+          "emoji": "🍎",
+          "branch_1": {
+            "count": 1,
+            "input_required": true,
+            "answer": 1
+          },
+          "branch_2": {
+            "count": 1,
+            "input_required": true,
+            "answer": 1
+          },
+          "total": {
+            "count": 2,
+            "input_required": true,
+            "answer": 2
+          },
+          "formula": "1 + 1 = 2"
+        },
+        {
+          "index": 2,
+          "position": "top_right",
+          "item_name": "Dâu tây đỏ",
+          "emoji": "🍓",
+          "branch_1": {
+            "count": 1,
+            "input_required": true,
+            "answer": 1
+          },
+          "branch_2": {
+            "count": 2,
+            "input_required": true,
+            "answer": 2
+          },
+          "total": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "formula": "1 + 2 = 3"
+        },
+        {
+          "index": 3,
+          "position": "bottom_left",
+          "item_name": "Quả cam",
+          "emoji": "🍊",
+          "branch_1": {
+            "count": 2,
+            "input_required": true,
+            "answer": 2
+          },
+          "branch_2": {
+            "count": 2,
+            "input_required": true,
+            "answer": 2
+          },
+          "total": {
+            "count": 4,
+            "input_required": true,
+            "answer": 4
+          },
+          "formula": "2 + 2 = 4"
+        },
+        {
+          "index": 4,
+          "position": "bottom_right",
+          "item_name": "Quả lê xanh",
+          "emoji": "🍐",
+          "branch_1": {
+            "count": 1,
+            "input_required": true,
+            "answer": 1
+          },
+          "branch_2": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "total": {
+            "count": 4,
+            "input_required": true,
+            "answer": 4
+          },
+          "formula": "1 + 3 = 4"
+        }
+      ],
+      "digital_game_mapping": {
+        "template": "GT-007",
+        "interaction": "Kéo thả quả vào giỏ hoặc chạm chọn số cho 3 ô.",
+        "scaffolding": "Nudge sau 10s: Nhấp nháy nhánh 1 để trẻ đếm trước."
+      }
+    },
+    {
+      "page_number": 3,
+      "printed_page_number": 2,
+      "file_path": "pages/page-03.jpg",
+      "page_type": "exercise",
+      "title": "Vườn quả đầu mùa - Đếm, viết số, gộp hai nhóm",
+      "activity_group_id": "WB07-D1",
+      "banners": {
+        "main_banner": "VƯỜN QUẢ ĐẦU MÙA",
+        "sub_banner": "ĐẾM – VIẾT SỐ – GỘP HAI NHÓM"
+      },
+      "dialogues": {
+        "gau_logic": "Mỗi cành cây có một nhóm quả!",
+        "tho_quan_sat": "Bé gộp hai cành lại nhé!"
+      },
+      "hint": "GỢI Ý: HAI NHÓM GỘP LẠI TẠO THÀNH MỘT NHÓM LỚN",
+      "exercises": [
+        {
+          "index": 1,
+          "position": "top_left",
+          "item_name": "Táo đỏ",
+          "emoji": "🍎",
+          "branch_1": {
+            "count": 2,
+            "input_required": true,
+            "answer": 2
+          },
+          "branch_2": {
+            "count": 1,
+            "input_required": true,
+            "answer": 1
+          },
+          "total": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "formula": "2 + 1 = 3"
+        },
+        {
+          "index": 2,
+          "position": "top_right",
+          "item_name": "Dưa hấu tròn",
+          "emoji": "🍉",
+          "branch_1": {
+            "count": 1,
+            "input_required": true,
+            "answer": 1
+          },
+          "branch_2": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "total": {
+            "count": 4,
+            "input_required": true,
+            "answer": 4
+          },
+          "formula": "1 + 3 = 4"
+        },
+        {
+          "index": 3,
+          "position": "bottom_left",
+          "item_name": "Chùm nho tím",
+          "emoji": "🍇",
+          "branch_1": {
+            "count": 2,
+            "input_required": true,
+            "answer": 2
+          },
+          "branch_2": {
+            "count": 2,
+            "input_required": true,
+            "answer": 2
+          },
+          "total": {
+            "count": 4,
+            "input_required": true,
+            "answer": 4
+          },
+          "formula": "2 + 2 = 4"
+        },
+        {
+          "index": 4,
+          "position": "bottom_right",
+          "item_name": "Quả đào vàng",
+          "emoji": "🍑",
+          "branch_1": {
+            "count": 2,
+            "input_required": true,
+            "answer": 2
+          },
+          "branch_2": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "total": {
+            "count": 5,
+            "input_required": true,
+            "answer": 5
+          },
+          "formula": "2 + 3 = 5"
+        }
+      ],
+      "digital_game_mapping": {
+        "template": "GT-007",
+        "interaction": "Number bond tree animation khi gộp thành công."
+      }
+    },
+    {
+      "page_number": 4,
+      "printed_page_number": 3,
+      "file_path": "pages/page-04.jpg",
+      "page_type": "exercise",
+      "title": "Gộp thành nhóm 5 - Đếm hai phần rồi viết số",
+      "activity_group_id": "WB07-D1",
+      "banners": {
+        "main_banner": "GỘP THÀNH NHÓM 5",
+        "sub_banner": "ĐẾM HAI PHẦN RỒI VIẾT SỐ"
+      },
+      "dialogues": {
+        "gau_logic": "Các nhóm hôm nay đều có tổng là 5!",
+        "tho_quan_sat": "Bé tìm xem hai phần có bao nhiêu nhé!"
+      },
+      "hint": "GỢI Ý: CÁC NHÓM LỚN ĐỀU CÓ 5 HÌNH",
+      "exercises": [
+        {
+          "index": 1,
+          "position": "top_left",
+          "item_name": "Táo đỏ",
+          "emoji": "🍎",
+          "branch_1": {
+            "count": 1,
+            "input_required": true,
+            "answer": 1
+          },
+          "branch_2": {
+            "count": 4,
+            "input_required": true,
+            "answer": 4
+          },
+          "total": {
+            "count": 5,
+            "input_required": true,
+            "answer": 5
+          },
+          "formula": "1 + 4 = 5"
+        },
+        {
+          "index": 2,
+          "position": "top_right",
+          "item_name": "Ngôi sao vàng",
+          "emoji": "⭐",
+          "branch_1": {
+            "count": 2,
+            "input_required": true,
+            "answer": 2
+          },
+          "branch_2": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "total": {
+            "count": 5,
+            "input_required": true,
+            "answer": 5
+          },
+          "formula": "2 + 3 = 5"
+        },
+        {
+          "index": 3,
+          "position": "bottom_left",
+          "item_name": "Bươm bướm sắc màu",
+          "emoji": "🦋",
+          "branch_1": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "branch_2": {
+            "count": 2,
+            "input_required": true,
+            "answer": 2
+          },
+          "total": {
+            "count": 5,
+            "input_required": true,
+            "answer": 5
+          },
+          "formula": "3 + 2 = 5"
+        },
+        {
+          "index": 4,
+          "position": "bottom_right",
+          "item_name": "Bông hoa hồng",
+          "emoji": "🌸",
+          "branch_1": {
+            "count": 4,
+            "input_required": true,
+            "answer": 4
+          },
+          "branch_2": {
+            "count": 1,
+            "input_required": true,
+            "answer": 1
+          },
+          "total": {
+            "count": 5,
+            "input_required": true,
+            "answer": 5
+          },
+          "formula": "4 + 1 = 5"
+        }
+      ],
+      "digital_game_mapping": {
+        "template": "GT-007",
+        "pedagogical_note": "Trang này bao quát đủ 4 cách gộp tạo số 5: (1+4), (2+3), (3+2), (4+1), minh họa tính chất giao hoán rõ ràng."
+      }
+    },
+    {
+      "page_number": 5,
+      "printed_page_number": 4,
+      "file_path": "pages/page-05.jpg",
+      "page_type": "exercise",
+      "title": "Hình khối hội tụ - Đếm, viết số, gộp hai nhóm",
+      "activity_group_id": "WB07-D1",
+      "banners": {
+        "main_banner": "HÌNH KHỐI HỘI TỤ",
+        "sub_banner": "ĐẾM – VIẾT SỐ – GỘP HAI NHÓM"
+      },
+      "dialogues": {
+        "gau_logic": "Hình khác nhau cũng có thể gộp số lượng!",
+        "tho_quan_sat": "Bé đếm thật chậm và chính xác nhé!"
+      },
+      "hint": "GỢI Ý: HÌNH DẠNG KHÁC NHAU NHƯNG CÁCH GỘP GIỐNG NHAU",
+      "exercises": [
+        {
+          "index": 1,
+          "position": "top_left",
+          "item_name": "Tam giác tím",
+          "emoji": "🔺",
+          "branch_1": {
+            "count": 1,
+            "input_required": true,
+            "answer": 1
+          },
+          "branch_2": {
+            "count": 2,
+            "input_required": true,
+            "answer": 2
+          },
+          "total": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "formula": "1 + 2 = 3"
+        },
+        {
+          "index": 2,
+          "position": "top_right",
+          "item_name": "Hình vuông xanh lá",
+          "emoji": "🟩",
+          "branch_1": {
+            "count": 2,
+            "input_required": true,
+            "answer": 2
+          },
+          "branch_2": {
+            "count": 2,
+            "input_required": true,
+            "answer": 2
+          },
+          "total": {
+            "count": 4,
+            "input_required": true,
+            "answer": 4
+          },
+          "formula": "2 + 2 = 4"
+        },
+        {
+          "index": 3,
+          "position": "bottom_left",
+          "item_name": "Chấm tròn đỏ cam",
+          "emoji": "🔴",
+          "branch_1": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "branch_2": {
+            "count": 2,
+            "input_required": true,
+            "answer": 2
+          },
+          "total": {
+            "count": 5,
+            "input_required": true,
+            "answer": 5
+          },
+          "formula": "3 + 2 = 5"
+        },
+        {
+          "index": 4,
+          "position": "bottom_right",
+          "item_name": "Ngũ giác hồng",
+          "emoji": "⬟",
+          "branch_1": {
+            "count": 1,
+            "input_required": true,
+            "answer": 1
+          },
+          "branch_2": {
+            "count": 4,
+            "input_required": true,
+            "answer": 4
+          },
+          "total": {
+            "count": 5,
+            "input_required": true,
+            "answer": 5
+          },
+          "formula": "1 + 4 = 5"
+        }
+      ],
+      "digital_game_mapping": {
+        "template": "GT-007",
+        "pedagogical_note": "Trừu tượng hóa từ vật thể sinh động sang hình học phẳng chuẩn Montessori Sensory."
+      }
+    },
+    {
+      "page_number": 6,
+      "printed_page_number": 5,
+      "file_path": "pages/page-06.jpg",
+      "page_type": "exercise",
+      "title": "Bông hoa chung một luống - Đếm, viết số, gộp hai nhóm",
+      "activity_group_id": "WB07-D1",
+      "banners": {
+        "main_banner": "BÔNG HOA CHUNG MỘT LUỐNG",
+        "sub_banner": "ĐẾM – VIẾT SỐ – GỘP HAI NHÓM"
+      },
+      "dialogues": {
+        "gau_logic": "Hoa từ hai nhánh đang về chung một luống!",
+        "tho_quan_sat": "Bé đếm từng nhóm nhé!"
+      },
+      "hint": "GỢI Ý: ĐẾM TỪNG NHÁNH RỒI ĐẾM CẢ LUỐNG",
+      "exercises": [
+        {
+          "index": 1,
+          "position": "top_left",
+          "item_name": "Bông hoa đỏ",
+          "emoji": "🌺",
+          "branch_1": {
+            "count": 2,
+            "input_required": true,
+            "answer": 2
+          },
+          "branch_2": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "total": {
+            "count": 5,
+            "input_required": true,
+            "answer": 5
+          },
+          "formula": "2 + 3 = 5"
+        },
+        {
+          "index": 2,
+          "position": "top_right",
+          "item_name": "Bông hoa vàng",
+          "emoji": "🌼",
+          "branch_1": {
+            "count": 1,
+            "input_required": true,
+            "answer": 1
+          },
+          "branch_2": {
+            "count": 4,
+            "input_required": true,
+            "answer": 4
+          },
+          "total": {
+            "count": 5,
+            "input_required": true,
+            "answer": 5
+          },
+          "formula": "1 + 4 = 5"
+        },
+        {
+          "index": 3,
+          "position": "bottom_left",
+          "item_name": "Bông hoa hồng sen",
+          "emoji": "🌸",
+          "branch_1": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "branch_2": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "total": {
+            "count": 6,
+            "input_required": true,
+            "answer": 6
+          },
+          "formula": "3 + 3 = 6"
+        },
+        {
+          "index": 4,
+          "position": "bottom_right",
+          "item_name": "Bông hoa tím",
+          "emoji": "🪻",
+          "branch_1": {
+            "count": 4,
+            "input_required": true,
+            "answer": 4
+          },
+          "branch_2": {
+            "count": 2,
+            "input_required": true,
+            "answer": 2
+          },
+          "total": {
+            "count": 6,
+            "input_required": true,
+            "answer": 6
+          },
+          "formula": "4 + 2 = 6"
+        }
+      ],
+      "digital_game_mapping": {
+        "template": "GT-007",
+        "pedagogical_note": "Mở rộng phạm vi gộp lên 6 (cặp 3+3 và 4+2)."
+      }
+    },
+    {
+      "page_number": 7,
+      "printed_page_number": 6,
+      "file_path": "pages/page-07.jpg",
+      "page_type": "exercise",
+      "title": "Đoàn xe về ga - Đếm, viết số, gộp hai nhóm",
+      "activity_group_id": "WB07-D1",
+      "banners": {
+        "main_banner": "ĐOÀN XE VỀ GA",
+        "sub_banner": "ĐẾM – VIẾT SỐ – GỘP HAI NHÓM"
+      },
+      "dialogues": {
+        "gau_logic": "Mỗi đường ray có một nhóm xe!",
+        "tho_quan_sat": "Gộp lại xem nhà ga có bao nhiêu nhé!"
+      },
+      "hint": "GỢI Ý: HAI ĐƯỜNG NHẬP LẠI THÀNH MỘT ĐƯỜNG",
+      "exercises": [
+        {
+          "index": 1,
+          "position": "top_left",
+          "item_name": "Xe ô tô con màu vàng",
+          "emoji": "🚗",
+          "branch_1": {
+            "count": 1,
+            "input_required": true,
+            "answer": 1
+          },
+          "branch_2": {
+            "count": 2,
+            "input_required": true,
+            "answer": 2
+          },
+          "total": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "formula": "1 + 2 = 3"
+        },
+        {
+          "index": 2,
+          "position": "top_right",
+          "item_name": "Xe buýt xanh dương",
+          "emoji": "🚌",
+          "branch_1": {
+            "count": 2,
+            "input_required": true,
+            "answer": 2
+          },
+          "branch_2": {
+            "count": 2,
+            "input_required": true,
+            "answer": 2
+          },
+          "total": {
+            "count": 4,
+            "input_required": true,
+            "answer": 4
+          },
+          "formula": "2 + 2 = 4"
+        },
+        {
+          "index": 3,
+          "position": "bottom_left",
+          "item_name": "Máy bay trực thăng xanh",
+          "emoji": "🚁",
+          "branch_1": {
+            "count": 2,
+            "input_required": true,
+            "answer": 2
+          },
+          "branch_2": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "total": {
+            "count": 5,
+            "input_required": true,
+            "answer": 5
+          },
+          "formula": "2 + 3 = 5"
+        },
+        {
+          "index": 4,
+          "position": "bottom_right",
+          "item_name": "Đầu tàu hỏa đỏ",
+          "emoji": "🚂",
+          "branch_1": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "branch_2": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "total": {
+            "count": 6,
+            "input_required": true,
+            "answer": 6
+          },
+          "formula": "3 + 3 = 6"
+        }
+      ],
+      "digital_game_mapping": {
+        "template": "GT-007",
+        "pedagogical_note": "Chủ đề phương tiện giao thông lôi cuốn bé trai và bé gái."
+      }
+    },
+    {
+      "page_number": 8,
+      "printed_page_number": 7,
+      "file_path": "pages/page-08.jpg",
+      "page_type": "exercise",
+      "title": "Hai nhánh kết trái - Đếm hai phần rồi viết số gộp 7",
+      "activity_group_id": "WB07-D1",
+      "banners": {
+        "main_banner": "HAI NHÁNH KẾT TRÁI",
+        "sub_banner": "ĐẾM HAI PHẦN RỒI VIẾT SỐ"
+      },
+      "dialogues": {
+        "gau_logic": "Mỗi cây có hai nhánh đầy quả!",
+        "tho_quan_sat": "Bé gộp lại để được nhóm 7 nhé!"
+      },
+      "hint": "GỢI Ý: CÁC NHÓM LỚN ĐỀU CÓ 7 HÌNH",
+      "exercises": [
+        {
+          "index": 1,
+          "position": "top_left",
+          "item_name": "Táo đỏ",
+          "emoji": "🍎",
+          "branch_1": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "branch_2": {
+            "count": 4,
+            "input_required": true,
+            "answer": 4
+          },
+          "total": {
+            "count": 7,
+            "input_required": true,
+            "answer": 7
+          },
+          "formula": "3 + 4 = 7"
+        },
+        {
+          "index": 2,
+          "position": "top_right",
+          "item_name": "Quả cam",
+          "emoji": "🍊",
+          "branch_1": {
+            "count": 2,
+            "input_required": true,
+            "answer": 2
+          },
+          "branch_2": {
+            "count": 5,
+            "input_required": true,
+            "answer": 5
+          },
+          "total": {
+            "count": 7,
+            "input_required": true,
+            "answer": 7
+          },
+          "formula": "2 + 5 = 7"
+        },
+        {
+          "index": 3,
+          "position": "bottom_left",
+          "item_name": "Dâu tây",
+          "emoji": "🍓",
+          "branch_1": {
+            "count": 4,
+            "input_required": true,
+            "answer": 4
+          },
+          "branch_2": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "total": {
+            "count": 7,
+            "input_required": true,
+            "answer": 7
+          },
+          "formula": "4 + 3 = 7"
+        },
+        {
+          "index": 4,
+          "position": "bottom_right",
+          "item_name": "Chùm nho",
+          "emoji": "🍇",
+          "branch_1": {
+            "count": 1,
+            "input_required": true,
+            "answer": 1
+          },
+          "branch_2": {
+            "count": 6,
+            "input_required": true,
+            "answer": 6
+          },
+          "total": {
+            "count": 7,
+            "input_required": true,
+            "answer": 7
+          },
+          "formula": "1 + 6 = 7"
+        }
+      ],
+      "digital_game_mapping": {
+        "template": "GT-007",
+        "pedagogical_note": "Chuyên sâu gộp phạm vi 7: (3+4), (2+5), (4+3), (1+6)."
+      }
+    },
+    {
+      "page_number": 9,
+      "printed_page_number": 8,
+      "file_path": "pages/page-09.jpg",
+      "page_type": "exercise",
+      "title": "Kho báu kết nối - Đếm, viết số, gộp hai nhóm tạo 8",
+      "activity_group_id": "WB07-D1",
+      "banners": {
+        "main_banner": "KHO BÁU KẾT NỐI",
+        "sub_banner": "ĐẾM – VIẾT SỐ – GỘP HAI NHÓM"
+      },
+      "dialogues": {
+        "gau_logic": "Hai rương nhỏ sẽ gộp thành một kho báu!",
+        "tho_quan_sat": "Bé hoàn thành các nhóm 8 nhé!"
+      },
+      "hint": "GỢI Ý: ĐẾM CHẬM ĐỂ KHÔNG BỎ SÓT VIÊN NÀO",
+      "exercises": [
+        {
+          "index": 1,
+          "position": "top_left",
+          "item_name": "Kim cương xanh",
+          "emoji": "💎",
+          "branch_1": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "branch_2": {
+            "count": 5,
+            "input_required": true,
+            "answer": 5
+          },
+          "total": {
+            "count": 8,
+            "input_required": true,
+            "answer": 8
+          },
+          "formula": "3 + 5 = 8"
+        },
+        {
+          "index": 2,
+          "position": "top_right",
+          "item_name": "Đồng tiền vàng ngôi sao",
+          "emoji": "🪙",
+          "branch_1": {
+            "count": 4,
+            "input_required": true,
+            "answer": 4
+          },
+          "branch_2": {
+            "count": 4,
+            "input_required": true,
+            "answer": 4
+          },
+          "total": {
+            "count": 8,
+            "input_required": true,
+            "answer": 8
+          },
+          "formula": "4 + 4 = 8"
+        },
+        {
+          "index": 3,
+          "position": "bottom_left",
+          "item_name": "Ngôi sao vàng",
+          "emoji": "⭐",
+          "branch_1": {
+            "count": 2,
+            "input_required": true,
+            "answer": 2
+          },
+          "branch_2": {
+            "count": 6,
+            "input_required": true,
+            "answer": 6
+          },
+          "total": {
+            "count": 8,
+            "input_required": true,
+            "answer": 8
+          },
+          "formula": "2 + 6 = 8"
+        },
+        {
+          "index": 4,
+          "position": "bottom_right",
+          "item_name": "Đá quý hồng ruby",
+          "emoji": "♦️",
+          "branch_1": {
+            "count": 5,
+            "input_required": true,
+            "answer": 5
+          },
+          "branch_2": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "total": {
+            "count": 8,
+            "input_required": true,
+            "answer": 8
+          },
+          "formula": "5 + 3 = 8"
+        }
+      ],
+      "digital_game_mapping": {
+        "template": "GT-007",
+        "pedagogical_note": "Gộp tạo 8: (3+5), (4+4), (2+6), (5+3)."
+      }
+    },
+    {
+      "page_number": 10,
+      "printed_page_number": 9,
+      "file_path": "pages/page-10.jpg",
+      "page_type": "exercise",
+      "title": "Gộp nhanh thành 9 - Đếm theo hàng, gộp thành 9",
+      "activity_group_id": "WB07-D1",
+      "banners": {
+        "main_banner": "GỘP NHANH THÀNH 9",
+        "sub_banner": "ĐẾM THEO HÀNG – GỘP THÀNH 9"
+      },
+      "dialogues": {
+        "gau_logic": "Số lượng lớn hơn rồi!",
+        "tho_quan_sat": "Bé quan sát theo hàng nhé!"
+      },
+      "hint": "GỢI Ý: ĐẾM TỪ TRÁI SANG PHẢI ĐỂ KHÔNG BỎ SÓT",
+      "exercises": [
+        {
+          "index": 1,
+          "position": "top_left",
+          "item_name": "Chấm tròn xanh dương",
+          "emoji": "🔵",
+          "branch_1": {
+            "count": 4,
+            "input_required": true,
+            "answer": 4
+          },
+          "branch_2": {
+            "count": 5,
+            "input_required": true,
+            "answer": 5
+          },
+          "total": {
+            "count": 9,
+            "input_required": true,
+            "answer": 9
+          },
+          "formula": "4 + 5 = 9"
+        },
+        {
+          "index": 2,
+          "position": "top_right",
+          "item_name": "Tam giác đỏ",
+          "emoji": "🔺",
+          "branch_1": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "branch_2": {
+            "count": 6,
+            "input_required": true,
+            "answer": 6
+          },
+          "total": {
+            "count": 9,
+            "input_required": true,
+            "answer": 9
+          },
+          "formula": "3 + 6 = 9"
+        },
+        {
+          "index": 3,
+          "position": "bottom_left",
+          "item_name": "Hình vuông xanh lá",
+          "emoji": "🟩",
+          "branch_1": {
+            "count": 2,
+            "input_required": true,
+            "answer": 2
+          },
+          "branch_2": {
+            "count": 7,
+            "input_required": true,
+            "answer": 7
+          },
+          "total": {
+            "count": 9,
+            "input_required": true,
+            "answer": 9
+          },
+          "formula": "2 + 7 = 9"
+        },
+        {
+          "index": 4,
+          "position": "bottom_right",
+          "item_name": "Trái tim tím",
+          "emoji": "💜",
+          "branch_1": {
+            "count": 5,
+            "input_required": true,
+            "answer": 5
+          },
+          "branch_2": {
+            "count": 4,
+            "input_required": true,
+            "answer": 4
+          },
+          "total": {
+            "count": 9,
+            "input_required": true,
+            "answer": 9
+          },
+          "formula": "5 + 4 = 9"
+        }
+      ],
+      "digital_game_mapping": {
+        "template": "GT-007",
+        "pedagogical_note": "Rèn luyện kỹ năng quét mắt theo hàng (grid scanning) với ma trận 2 hàng khi đếm 7, 8, 9 đối tượng."
+      }
+    },
+    {
+      "page_number": 11,
+      "printed_page_number": 10,
+      "file_path": "pages/page-11.jpg",
+      "page_type": "exercise",
+      "title": "Chinh phục nhóm 10 - Đếm, viết số, gộp thành 10",
+      "activity_group_id": "WB07-D1",
+      "banners": {
+        "main_banner": "CHINH PHỤC NHÓM 10",
+        "sub_banner": "ĐẾM – VIẾT SỐ – GỘP THÀNH 10"
+      },
+      "dialogues": {
+        "gau_logic": "Mười hình có rất nhiều cách gộp!",
+        "tho_quan_sat": "Bé hoàn thành thử thách nhé!"
+      },
+      "hint": "GỢI Ý: CÁC NHÓM LỚN ĐỀU CÓ 10 HÌNH",
+      "exercises": [
+        {
+          "index": 1,
+          "position": "top_left",
+          "item_name": "Táo đỏ",
+          "emoji": "🍎",
+          "branch_1": {
+            "count": 4,
+            "input_required": true,
+            "answer": 4
+          },
+          "branch_2": {
+            "count": 6,
+            "input_required": true,
+            "answer": 6
+          },
+          "total": {
+            "count": 10,
+            "input_required": true,
+            "answer": 10
+          },
+          "formula": "4 + 6 = 10"
+        },
+        {
+          "index": 2,
+          "position": "top_right",
+          "item_name": "Ngôi sao vàng",
+          "emoji": "⭐",
+          "branch_1": {
+            "count": 5,
+            "input_required": true,
+            "answer": 5
+          },
+          "branch_2": {
+            "count": 5,
+            "input_required": true,
+            "answer": 5
+          },
+          "total": {
+            "count": 10,
+            "input_required": true,
+            "answer": 10
+          },
+          "formula": "5 + 5 = 10"
+        },
+        {
+          "index": 3,
+          "position": "bottom_left",
+          "item_name": "Con cá xanh dương",
+          "emoji": "🐟",
+          "branch_1": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "branch_2": {
+            "count": 7,
+            "input_required": true,
+            "answer": 7
+          },
+          "total": {
+            "count": 10,
+            "input_required": true,
+            "answer": 10
+          },
+          "formula": "3 + 7 = 10"
+        },
+        {
+          "index": 4,
+          "position": "bottom_right",
+          "item_name": "Chiếc lá xanh",
+          "emoji": "🍃",
+          "branch_1": {
+            "count": 2,
+            "input_required": true,
+            "answer": 2
+          },
+          "branch_2": {
+            "count": 8,
+            "input_required": true,
+            "answer": 8
+          },
+          "total": {
+            "count": 10,
+            "input_required": true,
+            "answer": 10
+          },
+          "formula": "2 + 8 = 10"
+        }
+      ],
+      "digital_game_mapping": {
+        "template": "GT-007",
+        "pedagogical_note": "Cặp số bạn thân tạo 10 (Friends of 10): 4+6, 5+5, 3+7, 2+8. Đây là kỹ năng nền tảng số 1 trong toán tiền tiểu học."
+      }
+    },
+    {
+      "page_number": 12,
+      "printed_page_number": 11,
+      "file_path": "pages/page-12.jpg",
+      "page_type": "exercise",
+      "title": "Ô số nào còn thiếu? - Đếm hình, điền ô còn thiếu",
+      "activity_group_id": "WB07-D2",
+      "banners": {
+        "main_banner": "Ô SỐ NÀO CÒN THIẾU?",
+        "sub_banner": "ĐẾM HÌNH – ĐIỀN Ô CÒN THIẾU"
+      },
+      "dialogues": {
+        "gau_logic": "Một ô số đang trốn rồi!",
+        "tho_quan_sat": "Bé đếm hình để tìm nhé!"
+      },
+      "hint": "GỢI Ý: ĐẾM NHÓM NẰM TRÊN Ô TRỐNG",
+      "exercises": [
+        {
+          "index": 1,
+          "position": "top_left",
+          "item_name": "Táo đỏ",
+          "emoji": "🍎",
+          "branch_1": {
+            "count": 2,
+            "given_number": 2,
+            "input_required": false
+          },
+          "branch_2": {
+            "count": 3,
+            "given_number": null,
+            "input_required": true,
+            "answer": 3
+          },
+          "total": {
+            "count": 5,
+            "given_number": 5,
+            "input_required": false
+          },
+          "equation": "2 + [?] = 5 -> answer: 3"
+        },
+        {
+          "index": 2,
+          "position": "top_right",
+          "item_name": "Ngôi sao vàng",
+          "emoji": "⭐",
+          "branch_1": {
+            "count": 1,
+            "given_number": null,
+            "input_required": true,
+            "answer": 1
+          },
+          "branch_2": {
+            "count": 5,
+            "given_number": 5,
+            "input_required": false
+          },
+          "total": {
+            "count": 6,
+            "given_number": 6,
+            "input_required": false
+          },
+          "equation": "[?] + 5 = 6 -> answer: 1"
+        },
+        {
+          "index": 3,
+          "position": "bottom_left",
+          "item_name": "Con cá xanh",
+          "emoji": "🐟",
+          "branch_1": {
+            "count": 4,
+            "given_number": 4,
+            "input_required": false
+          },
+          "branch_2": {
+            "count": 3,
+            "given_number": null,
+            "input_required": true,
+            "answer": 3
+          },
+          "total": {
+            "count": 7,
+            "given_number": 7,
+            "input_required": false
+          },
+          "equation": "4 + [?] = 7 -> answer: 3"
+        },
+        {
+          "index": 4,
+          "position": "bottom_right",
+          "item_name": "Bông hoa hồng",
+          "emoji": "🌸",
+          "branch_1": {
+            "count": 3,
+            "given_number": null,
+            "input_required": true,
+            "answer": 3
+          },
+          "branch_2": {
+            "count": 5,
+            "given_number": 5,
+            "input_required": false
+          },
+          "total": {
+            "count": 8,
+            "given_number": 8,
+            "input_required": false
+          },
+          "equation": "[?] + 5 = 8 -> answer: 3"
+        }
+      ],
+      "digital_game_mapping": {
+        "template": "GT-007",
+        "pedagogical_note": "Trẻ quan sát nhóm hình nằm ngay phía trên ô trống để đếm và điền số, rèn liên kết 1-1 giữa lượng và số."
+      }
+    },
+    {
+      "page_number": 13,
+      "printed_page_number": 12,
+      "file_path": "pages/page-13.jpg",
+      "page_type": "exercise",
+      "title": "Tổng đã biết - Nhìn tổng, tìm phần còn thiếu",
+      "activity_group_id": "WB07-D2",
+      "banners": {
+        "main_banner": "TỔNG ĐÃ BIẾT",
+        "sub_banner": "NHÌN TỔNG – TÌM PHẦN CÒN THIẾU"
+      },
+      "dialogues": {
+        "gau_logic": "Tổng nằm ở chiếc hộp lớn!",
+        "tho_quan_sat": "Bé tìm phần còn lại nhé!"
+      },
+      "hint": "GỢI Ý: HAI PHẦN GỘP LẠI PHẢI BẰNG TỔNG",
+      "exercises": [
+        {
+          "index": 1,
+          "position": "top_left",
+          "item_name": "Táo đỏ",
+          "emoji": "🍎",
+          "total_badge": {
+            "number": 5,
+            "color": "red_circle",
+            "visual_items_shown": false
+          },
+          "branch_1": {
+            "count": 2,
+            "given_number": 2,
+            "input_required": false
+          },
+          "branch_2": {
+            "count": 3,
+            "given_number": null,
+            "input_required": true,
+            "answer": 3
+          },
+          "equation": "5 = 2 + [?] -> answer: 3"
+        },
+        {
+          "index": 2,
+          "position": "top_right",
+          "item_name": "Ngôi sao vàng",
+          "emoji": "⭐",
+          "total_badge": {
+            "number": 6,
+            "color": "blue_circle",
+            "visual_items_shown": false
+          },
+          "branch_1": {
+            "count": 1,
+            "given_number": null,
+            "input_required": true,
+            "answer": 1
+          },
+          "branch_2": {
+            "count": 5,
+            "given_number": 5,
+            "input_required": false
+          },
+          "equation": "6 = [?] + 5 -> answer: 1"
+        },
+        {
+          "index": 3,
+          "position": "bottom_left",
+          "item_name": "Con cá xanh",
+          "emoji": "🐟",
+          "total_badge": {
+            "number": 7,
+            "color": "green_circle",
+            "visual_items_shown": false
+          },
+          "branch_1": {
+            "count": 4,
+            "given_number": 4,
+            "input_required": false
+          },
+          "branch_2": {
+            "count": 3,
+            "given_number": null,
+            "input_required": true,
+            "answer": 3
+          },
+          "equation": "7 = 4 + [?] -> answer: 3"
+        },
+        {
+          "index": 4,
+          "position": "bottom_right",
+          "item_name": "Bông hoa hồng",
+          "emoji": "🌸",
+          "total_badge": {
+            "number": 8,
+            "color": "orange_circle",
+            "visual_items_shown": false
+          },
+          "branch_1": {
+            "count": 6,
+            "given_number": null,
+            "input_required": true,
+            "answer": 6
+          },
+          "branch_2": {
+            "count": 2,
+            "given_number": 2,
+            "input_required": false
+          },
+          "equation": "8 = [?] + 2 -> answer: 6"
+        }
+      ],
+      "digital_game_mapping": {
+        "template": "GT-007",
+        "pedagogical_note": "Bước chuyển quan trọng: Ô tổng chỉ còn ký hiệu số trong vòng tròn màu, không còn hình ảnh tổng, đòi hỏi trẻ nhận thức số trừu tượng."
+      }
+    },
+    {
+      "page_number": 14,
+      "printed_page_number": 13,
+      "file_path": "pages/page-14.jpg",
+      "page_type": "exercise",
+      "title": "Một tổng – Nhiều cách - Đếm hai phần, gộp thành 6",
+      "activity_group_id": "WB07-D3",
+      "banners": {
+        "main_banner": "MỘT TỔNG – NHIỀU CÁCH",
+        "sub_banner": "ĐẾM HAI PHẦN – GỘP THÀNH 6"
+      },
+      "dialogues": {
+        "gau_logic": "Số 6 có nhiều cách gộp!",
+        "tho_quan_sat": "Bé khám phá cả bốn cách nhé!"
+      },
+      "hint": "GỢI Ý: CÁC CÁCH KHÁC NHAU NHƯNG TỔNG VẪN LÀ 6",
+      "exercises": [
+        {
+          "index": 1,
+          "position": "top_left",
+          "item_name": "Táo đỏ",
+          "emoji": "🍎",
+          "branch_1": {
+            "count": 1,
+            "input_required": true,
+            "answer": 1
+          },
+          "branch_2": {
+            "count": 5,
+            "input_required": true,
+            "answer": 5
+          },
+          "total": {
+            "count": 6,
+            "input_required": true,
+            "answer": 6
+          },
+          "formula": "1 + 5 = 6"
+        },
+        {
+          "index": 2,
+          "position": "top_right",
+          "item_name": "Ngôi sao vàng",
+          "emoji": "⭐",
+          "branch_1": {
+            "count": 2,
+            "input_required": true,
+            "answer": 2
+          },
+          "branch_2": {
+            "count": 4,
+            "input_required": true,
+            "answer": 4
+          },
+          "total": {
+            "count": 6,
+            "input_required": true,
+            "answer": 6
+          },
+          "formula": "2 + 4 = 6"
+        },
+        {
+          "index": 3,
+          "position": "bottom_left",
+          "item_name": "Con cá xanh",
+          "emoji": "🐟",
+          "branch_1": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "branch_2": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "total": {
+            "count": 6,
+            "input_required": true,
+            "answer": 6
+          },
+          "formula": "3 + 3 = 6"
+        },
+        {
+          "index": 4,
+          "position": "bottom_right",
+          "item_name": "Bông hoa tím",
+          "emoji": "🪻",
+          "branch_1": {
+            "count": 4,
+            "input_required": true,
+            "answer": 4
+          },
+          "branch_2": {
+            "count": 2,
+            "input_required": true,
+            "answer": 2
+          },
+          "total": {
+            "count": 6,
+            "input_required": true,
+            "answer": 6
+          },
+          "formula": "4 + 2 = 6"
+        }
+      ],
+      "digital_game_mapping": {
+        "template": "GT-007",
+        "pedagogical_note": "Trực quan hóa sự đa dạng của cấu trúc phân rã số 6: (1+5), (2+4), (3+3), (4+2)."
+      }
+    },
+    {
+      "page_number": 15,
+      "printed_page_number": 14,
+      "file_path": "pages/page-15.jpg",
+      "page_type": "exercise",
+      "title": "Chọn nhánh còn thiếu - Khoanh vào nhóm hình còn thiếu",
+      "activity_group_id": "WB07-D4",
+      "banners": {
+        "main_banner": "CHỌN NHÁNH CÒN THIẾU",
+        "sub_banner": "KHOANH VÀO NHÓM HÌNH CÒN THIẾU"
+      },
+      "dialogues": {
+        "gau_logic": "Một nhánh đang chờ được bổ sung!",
+        "tho_quan_sat": "Bé khoanh vào nhóm đúng nhé!"
+      },
+      "hint": "GỢI Ý: NHÓM ĐÃ CÓ VÀ NHÓM CHỌN PHẢI TẠO ĐỦ TỔNG",
+      "exercises": [
+        {
+          "index": 1,
+          "position": "top_left",
+          "item_name": "Táo đỏ",
+          "emoji": "🍎",
+          "total": 5,
+          "branch_1_given": 2,
+          "options": [
+            {
+              "label": "A",
+              "count": 3,
+              "is_correct": true
+            },
+            {
+              "label": "B",
+              "count": 2,
+              "is_correct": false
+            }
+          ],
+          "correct_answer": "A",
+          "explanation": "Tổng 5, nhánh 1 có 2 quả, cần thêm 3 quả (nhóm A) để đủ 5."
+        },
+        {
+          "index": 2,
+          "position": "top_right",
+          "item_name": "Ngôi sao vàng",
+          "emoji": "⭐",
+          "total": 6,
+          "branch_1_given": 1,
+          "options": [
+            {
+              "label": "A",
+              "count": 4,
+              "is_correct": false
+            },
+            {
+              "label": "B",
+              "count": 5,
+              "is_correct": true
+            }
+          ],
+          "correct_answer": "B",
+          "explanation": "Tổng 6, nhánh 1 có 1 ngôi sao, cần thêm 5 ngôi sao (nhóm B) để đủ 6."
+        },
+        {
+          "index": 3,
+          "position": "bottom_left",
+          "item_name": "Con cá xanh",
+          "emoji": "🐟",
+          "total": 7,
+          "branch_1_given": 4,
+          "options": [
+            {
+              "label": "A",
+              "count": 3,
+              "is_correct": true
+            },
+            {
+              "label": "B",
+              "count": 2,
+              "is_correct": false
+            }
+          ],
+          "correct_answer": "A",
+          "explanation": "Tổng 7, nhánh 1 có 4 con cá, cần thêm 3 con cá (nhóm A) để đủ 7."
+        },
+        {
+          "index": 4,
+          "position": "bottom_right",
+          "item_name": "Bông hoa hồng",
+          "emoji": "🌸",
+          "total": 8,
+          "branch_1_given": 5,
+          "options": [
+            {
+              "label": "A",
+              "count": 2,
+              "is_correct": false
+            },
+            {
+              "label": "B",
+              "count": 3,
+              "is_correct": true
+            }
+          ],
+          "correct_answer": "B",
+          "explanation": "Tổng 8, nhánh 1 có 5 bông hoa, cần thêm 3 bông hoa (nhóm B) để đủ 8."
+        }
+      ],
+      "digital_game_mapping": {
+        "template": "GT-001",
+        "interaction": "Chạm vào ô A hoặc B. Phản hồi nhịp hổ phách nhẹ khi chọn sai, âm thanh ramp nhẹ và viền sáng khi chọn đúng."
+      }
+    },
+    {
+      "page_number": 16,
+      "printed_page_number": 15,
+      "file_path": "pages/page-16.jpg",
+      "page_type": "exercise",
+      "title": "Tàu số kết nối - Điền số còn thiếu vào toa tàu",
+      "activity_group_id": "WB07-D5",
+      "banners": {
+        "main_banner": "TÀU SỐ KẾT NỐI",
+        "sub_banner": "ĐIỀN SỐ CÒN THIẾU VÀO TOA TÀU"
+      },
+      "dialogues": {
+        "gau_logic": "Các toa số đang tìm phần còn lại!",
+        "tho_quan_sat": "Bé điền số để nối đúng nhé!"
+      },
+      "hint": "GỢI Ý: HAI TOA NHỎ GỘP LẠI BẰNG TOA TỔNG",
+      "exercises": [
+        {
+          "index": 1,
+          "position": "top_left",
+          "theme": "Đoàn tàu hỏa hơi nước màu xanh viền vàng",
+          "locomotive_total": 7,
+          "wagon_1": {
+            "number": 3,
+            "input_required": false
+          },
+          "wagon_2": {
+            "number": null,
+            "input_required": true,
+            "answer": 4
+          },
+          "equation": "7 = 3 + [4]"
+        },
+        {
+          "index": 2,
+          "position": "top_right",
+          "theme": "Đoàn tàu hỏa hơi nước màu xanh viền vàng",
+          "locomotive_total": 8,
+          "wagon_1": {
+            "number": null,
+            "input_required": true,
+            "answer": 3
+          },
+          "wagon_2": {
+            "number": 5,
+            "input_required": false
+          },
+          "equation": "8 = [3] + 5"
+        },
+        {
+          "index": 3,
+          "position": "bottom_left",
+          "theme": "Đoàn tàu hỏa hơi nước màu xanh viền vàng",
+          "locomotive_total": 9,
+          "wagon_1": {
+            "number": 4,
+            "input_required": false
+          },
+          "wagon_2": {
+            "number": null,
+            "input_required": true,
+            "answer": 5
+          },
+          "equation": "9 = 4 + [5]"
+        },
+        {
+          "index": 4,
+          "position": "bottom_right",
+          "theme": "Đoàn tàu hỏa hơi nước màu xanh viền vàng",
+          "locomotive_total": 10,
+          "wagon_1": {
+            "number": null,
+            "input_required": true,
+            "answer": 4
+          },
+          "wagon_2": {
+            "number": 6,
+            "input_required": false
+          },
+          "equation": "10 = [4] + 6"
+        }
+      ],
+      "digital_game_mapping": {
+        "template": "GT-007",
+        "fallback_template": "GT-008",
+        "interaction": "Kéo thả khối số gỗ vào ô toa tàu trống. Khi khớp đúng, toa tàu nhấp nháy phát sáng và phát tiếng còi xe lửa 'Tu tu'."
+      }
+    },
+    {
+      "page_number": 17,
+      "printed_page_number": 16,
+      "file_path": "pages/page-17.jpg",
+      "page_type": "exercise",
+      "title": "Chia quả về hai nhánh - Đếm, viết số, tách thành hai nhóm",
+      "activity_group_id": "WB07-D6",
+      "banners": {
+        "main_banner": "CHIA QUẢ VỀ HAI NHÁNH",
+        "sub_banner": "ĐẾM – VIẾT SỐ – TÁCH THÀNH HAI NHÓM"
+      },
+      "dialogues": {
+        "gau_logic": "Bây giờ mình tách một nhóm lớn!",
+        "tho_quan_sat": "Bé đếm từng nhánh sau khi chia nhé!"
+      },
+      "hint": "GỢI Ý: HAI NHÁNH NHỎ PHẢI CÓ ĐỦ SỐ QUẢ CỦA NHÓM LỚN",
+      "exercises": [
+        {
+          "index": 1,
+          "position": "top_left",
+          "item_name": "Táo đỏ",
+          "emoji": "🍎",
+          "top_whole": {
+            "count": 4,
+            "input_required": true,
+            "answer": 4
+          },
+          "branch_1": {
+            "count": 1,
+            "input_required": true,
+            "answer": 1
+          },
+          "branch_2": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "decomposition": "4 -> 1 và 3"
+        },
+        {
+          "index": 2,
+          "position": "top_right",
+          "item_name": "Quả cam",
+          "emoji": "🍊",
+          "top_whole": {
+            "count": 5,
+            "input_required": true,
+            "answer": 5
+          },
+          "branch_1": {
+            "count": 2,
+            "input_required": true,
+            "answer": 2
+          },
+          "branch_2": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "decomposition": "5 -> 2 và 3"
+        },
+        {
+          "index": 3,
+          "position": "bottom_left",
+          "item_name": "Dâu tây",
+          "emoji": "🍓",
+          "top_whole": {
+            "count": 6,
+            "input_required": true,
+            "answer": 6
+          },
+          "branch_1": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "branch_2": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "decomposition": "6 -> 3 và 3"
+        },
+        {
+          "index": 4,
+          "position": "bottom_right",
+          "item_name": "Chùm nho tím",
+          "emoji": "🍇",
+          "top_whole": {
+            "count": 7,
+            "input_required": true,
+            "answer": 7
+          },
+          "branch_1": {
+            "count": 2,
+            "input_required": true,
+            "answer": 2
+          },
+          "branch_2": {
+            "count": 5,
+            "input_required": true,
+            "answer": 5
+          },
+          "decomposition": "7 -> 2 và 5"
+        }
+      ],
+      "digital_game_mapping": {
+        "template": "GT-007",
+        "pedagogical_note": "Đảo ngược chiều mũi tên từ Whole -> Part-Part. Trẻ làm quen với thao tác phân tách số lượng chuẩn bị cho phép trừ."
+      }
+    },
+    {
+      "page_number": 18,
+      "printed_page_number": 17,
+      "file_path": "pages/page-18.jpg",
+      "page_type": "exercise",
+      "title": "Hoàn thành nhánh trống - Vẽ hình vào nhánh trống",
+      "activity_group_id": "WB07-D7",
+      "banners": {
+        "main_banner": "HOÀN THÀNH NHÁNH TRỐNG",
+        "sub_banner": "VẼ HÌNH VÀO NHÁNH TRỐNG"
+      },
+      "dialogues": {
+        "gau_logic": "Một nhánh vẫn chưa có hình!",
+        "tho_quan_sat": "Bé vẽ thêm số hình còn thiếu nhé!"
+      },
+      "hint": "GỢI Ý: ĐẾM XEM CÒN THIẾU BAO NHIÊU HÌNH",
+      "exercises": [
+        {
+          "index": 1,
+          "position": "top_left",
+          "item_name": "Táo đỏ",
+          "emoji": "🍎",
+          "top_whole": {
+            "count": 5,
+            "input_required": true,
+            "answer": 5
+          },
+          "branch_1": {
+            "count": 2,
+            "visual_drawn": true
+          },
+          "branch_2_drawing_target": {
+            "prompt": "BÉ VẼ VÀO ĐÂY",
+            "missing_count": 3,
+            "expected_items": "3 quả táo đỏ"
+          }
+        },
+        {
+          "index": 2,
+          "position": "top_right",
+          "item_name": "Ngôi sao vàng",
+          "emoji": "⭐",
+          "top_whole": {
+            "count": 6,
+            "input_required": true,
+            "answer": 6
+          },
+          "branch_1": {
+            "count": 1,
+            "visual_drawn": true
+          },
+          "branch_2_drawing_target": {
+            "prompt": "BÉ VẼ VÀO ĐÂY",
+            "missing_count": 5,
+            "expected_items": "5 ngôi sao vàng"
+          }
+        },
+        {
+          "index": 3,
+          "position": "bottom_left",
+          "item_name": "Con cá xanh",
+          "emoji": "🐟",
+          "top_whole": {
+            "count": 7,
+            "input_required": true,
+            "answer": 7
+          },
+          "branch_1": {
+            "count": 4,
+            "visual_drawn": true
+          },
+          "branch_2_drawing_target": {
+            "prompt": "BÉ VẼ VÀO ĐÂY",
+            "missing_count": 3,
+            "expected_items": "3 con cá xanh"
+          }
+        },
+        {
+          "index": 4,
+          "position": "bottom_right",
+          "item_name": "Bông hoa tím",
+          "emoji": "🪻",
+          "top_whole": {
+            "count": 8,
+            "input_required": true,
+            "answer": 8
+          },
+          "branch_1": {
+            "count": 5,
+            "visual_drawn": true
+          },
+          "branch_2_drawing_target": {
+            "prompt": "BÉ VẼ VÀO ĐÂY",
+            "missing_count": 3,
+            "expected_items": "3 bông hoa tím"
+          }
+        }
+      ],
+      "digital_game_mapping": {
+        "template": "GT-003",
+        "adaptation": "Trên digital, thay vì vẽ tự do bằng bút chì, bé kéo thả đúng số lượng sticker từ khay đồ dùng vào ô trống."
+      }
+    },
+    {
+      "page_number": 19,
+      "printed_page_number": 18,
+      "file_path": "pages/page-19.jpg",
+      "page_type": "exercise",
+      "title": "Điền số vào hai nhánh - Đếm hình, viết số vào ô trống",
+      "activity_group_id": "WB07-D6",
+      "banners": {
+        "main_banner": "ĐIỀN SỐ VÀO HAI NHÁNH",
+        "sub_banner": "ĐẾM HÌNH – VIẾT SỐ VÀO Ô TRỐNG"
+      },
+      "dialogues": {
+        "gau_logic": "Tổng đã có sẵn ở trên!",
+        "tho_quan_sat": "Bé đếm rồi viết số vào hai nhánh nhé!"
+      },
+      "hint": "GỢI Ý: ĐẾM RIÊNG TỪNG NHÁNH",
+      "exercises": [
+        {
+          "index": 1,
+          "position": "top_left",
+          "item_name": "Táo đỏ",
+          "emoji": "🍎",
+          "top_total_circle": 5,
+          "branch_1": {
+            "count": 2,
+            "input_required": true,
+            "answer": 2
+          },
+          "branch_2": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "verification": "5 = 2 + 3"
+        },
+        {
+          "index": 2,
+          "position": "top_right",
+          "item_name": "Ngôi sao vàng",
+          "emoji": "⭐",
+          "top_total_circle": 6,
+          "branch_1": {
+            "count": 1,
+            "input_required": true,
+            "answer": 1
+          },
+          "branch_2": {
+            "count": 5,
+            "input_required": true,
+            "answer": 5
+          },
+          "verification": "6 = 1 + 5"
+        },
+        {
+          "index": 3,
+          "position": "bottom_left",
+          "item_name": "Con cá xanh",
+          "emoji": "🐟",
+          "top_total_circle": 8,
+          "branch_1": {
+            "count": 4,
+            "input_required": true,
+            "answer": 4
+          },
+          "branch_2": {
+            "count": 4,
+            "input_required": true,
+            "answer": 4
+          },
+          "verification": "8 = 4 + 4"
+        },
+        {
+          "index": 4,
+          "position": "bottom_right",
+          "item_name": "Bông hoa tím",
+          "emoji": "🪻",
+          "top_total_circle": 9,
+          "branch_1": {
+            "count": 6,
+            "input_required": true,
+            "answer": 6
+          },
+          "branch_2": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "verification": "9 = 6 + 3"
+        }
+      ],
+      "digital_game_mapping": {
+        "template": "GT-007",
+        "pedagogical_note": "Trẻ đối chiếu kết quả đếm của 2 nhánh với số tổng có sẵn ở đỉnh để tự kiểm tra tính hợp lý."
+      }
+    },
+    {
+      "page_number": 20,
+      "printed_page_number": 19,
+      "file_path": "pages/page-20.jpg",
+      "page_type": "exercise",
+      "title": "Một số – Nhiều cách tách - Tách nhóm 8 thành hai phần",
+      "activity_group_id": "WB07-D3",
+      "banners": {
+        "main_banner": "MỘT SỐ – NHIỀU CÁCH TÁCH",
+        "sub_banner": "TÁCH NHÓM 8 THÀNH HAI PHẦN"
+      },
+      "dialogues": {
+        "gau_logic": "Số 8 có thể chia theo nhiều cách!",
+        "tho_quan_sat": "Bé đếm từng cặp nhánh nhé!"
+      },
+      "hint": "GỢI Ý: CÁC CẶP KHÁC NHAU NHƯNG ĐỀU TẠO THÀNH 8",
+      "exercises": [
+        {
+          "index": 1,
+          "position": "top_left",
+          "item_name": "Táo đỏ",
+          "emoji": "🍎",
+          "top_total_circle": 8,
+          "branch_1": {
+            "count": 1,
+            "input_required": true,
+            "answer": 1
+          },
+          "branch_2": {
+            "count": 7,
+            "input_required": true,
+            "answer": 7
+          },
+          "pair": "(1, 7)"
+        },
+        {
+          "index": 2,
+          "position": "top_right",
+          "item_name": "Ngôi sao vàng",
+          "emoji": "⭐",
+          "top_total_circle": 8,
+          "branch_1": {
+            "count": 2,
+            "input_required": true,
+            "answer": 2
+          },
+          "branch_2": {
+            "count": 6,
+            "input_required": true,
+            "answer": 6
+          },
+          "pair": "(2, 6)"
+        },
+        {
+          "index": 3,
+          "position": "bottom_left",
+          "item_name": "Con cá xanh",
+          "emoji": "🐟",
+          "top_total_circle": 8,
+          "branch_1": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "branch_2": {
+            "count": 5,
+            "input_required": true,
+            "answer": 5
+          },
+          "pair": "(3, 5)"
+        },
+        {
+          "index": 4,
+          "position": "bottom_right",
+          "item_name": "Bông hoa tím",
+          "emoji": "🪻",
+          "top_total_circle": 8,
+          "branch_1": {
+            "count": 4,
+            "input_required": true,
+            "answer": 4
+          },
+          "branch_2": {
+            "count": 4,
+            "input_required": true,
+            "answer": 4
+          },
+          "pair": "(4, 4)"
+        }
+      ],
+      "digital_game_mapping": {
+        "template": "GT-007",
+        "pedagogical_note": "Trực quan hóa hệ thống phân rã số 8: 1+7, 2+6, 3+5, 4+4. Giúp trẻ nhận ra quy luật: nhánh này tăng 1 thì nhánh kia giảm 1."
+      }
+    },
+    {
+      "page_number": 21,
+      "printed_page_number": 20,
+      "file_path": "pages/page-21.jpg",
+      "page_type": "exercise",
+      "title": "Thử tài tách số 10 - Đếm, viết số, tách nhóm 10",
+      "activity_group_id": "WB07-D3",
+      "banners": {
+        "main_banner": "THỬ TÀI TÁCH SỐ 10",
+        "sub_banner": "ĐẾM – VIẾT SỐ – TÁCH NHÓM 10"
+      },
+      "dialogues": {
+        "gau_logic": "Cây Đại Đoàn Kết sắp hồi phục rồi!",
+        "tho_quan_sat": "Bé hoàn thành bốn cách tách nhé!"
+      },
+      "hint": "GỢI Ý: HAI NHÁNH NHỎ LUÔN CÓ TẤT CẢ 10 HÌNH",
+      "exercises": [
+        {
+          "index": 1,
+          "position": "top_left",
+          "item_name": "Chấm tròn đỏ",
+          "emoji": "🔴",
+          "top_whole": {
+            "count": 10,
+            "input_required": true,
+            "answer": 10
+          },
+          "branch_1": {
+            "count": 1,
+            "input_required": true,
+            "answer": 1
+          },
+          "branch_2": {
+            "count": 9,
+            "input_required": true,
+            "answer": 9
+          },
+          "decomposition": "10 -> 1 và 9"
+        },
+        {
+          "index": 2,
+          "position": "top_right",
+          "item_name": "Ngôi sao vàng",
+          "emoji": "⭐",
+          "top_whole": {
+            "count": 10,
+            "input_required": true,
+            "answer": 10
+          },
+          "branch_1": {
+            "count": 2,
+            "input_required": true,
+            "answer": 2
+          },
+          "branch_2": {
+            "count": 8,
+            "input_required": true,
+            "answer": 8
+          },
+          "decomposition": "10 -> 2 và 8"
+        },
+        {
+          "index": 3,
+          "position": "bottom_left",
+          "item_name": "Hình vuông xanh lá",
+          "emoji": "🟩",
+          "top_whole": {
+            "count": 10,
+            "input_required": true,
+            "answer": 10
+          },
+          "branch_1": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "branch_2": {
+            "count": 7,
+            "input_required": true,
+            "answer": 7
+          },
+          "decomposition": "10 -> 3 và 7"
+        },
+        {
+          "index": 4,
+          "position": "bottom_right",
+          "item_name": "Trái tim tím",
+          "emoji": "💜",
+          "top_whole": {
+            "count": 10,
+            "input_required": true,
+            "answer": 10
+          },
+          "branch_1": {
+            "count": 5,
+            "input_required": true,
+            "answer": 5
+          },
+          "branch_2": {
+            "count": 5,
+            "input_required": true,
+            "answer": 5
+          },
+          "decomposition": "10 -> 5 và 5"
+        }
+      ],
+      "digital_game_mapping": {
+        "template": "GT-007",
+        "pedagogical_note": "Phân tách số 10 thành các cặp cơ sở (1,9), (2,8), (3,7), (5,5) chuẩn bị cho phép cộng có nhớ trong phạm vi 20."
+      }
+    },
+    {
+      "page_number": 22,
+      "printed_page_number": 21,
+      "file_path": "pages/page-22.jpg",
+      "page_type": "assessment",
+      "title": "Cửa ải Cây Đại Đoàn Kết - Hoàn thành 4 thử thách",
+      "activity_group_id": "WB07-D8",
+      "banners": {
+        "main_banner": "CỬA ẢI CÂY ĐẠI ĐOÀN KẾT",
+        "sub_banner": "HOÀN THÀNH 4 THỬ THÁCH"
+      },
+      "dialogues": {
+        "gau_logic": "Chỉ còn bốn thử thách cuối!",
+        "tho_quan_sat": "Bé vận dụng cả tách và gộp nhé!"
+      },
+      "hint": "GỢI Ý: LÀM TỪ DỄ ĐẾN KHÓ VÀ KIỂM TRA LẠI",
+      "challenges": [
+        {
+          "number": 1,
+          "mode": "GỘP",
+          "mode_vn": "Gộp hai nhóm",
+          "item_name": "Táo đỏ",
+          "emoji": "🍎",
+          "branch_1": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "branch_2": {
+            "count": 4,
+            "input_required": true,
+            "answer": 4
+          },
+          "total": {
+            "count": 7,
+            "input_required": true,
+            "answer": 7
+          },
+          "formula": "3 + 4 = 7"
+        },
+        {
+          "number": 2,
+          "mode": "TÌM PHẦN THIẾU",
+          "mode_vn": "Tìm phần còn thiếu",
+          "item_name": "Táo đỏ",
+          "emoji": "🍎",
+          "total_badge": 9,
+          "branch_1": {
+            "count": 4,
+            "given_number": 4
+          },
+          "branch_2_target": {
+            "missing_count": 5,
+            "drawing_required": true,
+            "input_number_required": true,
+            "answer": 5
+          },
+          "equation": "9 = 4 + [5]"
+        },
+        {
+          "number": 3,
+          "mode": "TÁCH",
+          "mode_vn": "Tách một nhóm",
+          "item_name": "Ngôi sao vàng",
+          "emoji": "⭐",
+          "total_badge": 8,
+          "branch_1": {
+            "count": 3,
+            "input_required": true,
+            "answer": 3
+          },
+          "branch_2": {
+            "count": 5,
+            "input_required": true,
+            "answer": 5
+          },
+          "equation": "8 = [3] + [5]"
+        },
+        {
+          "number": 4,
+          "mode": "CHỌN ĐÚNG",
+          "mode_vn": "Khoanh chọn nhánh đúng",
+          "item_name": "Chiếc lá xanh",
+          "emoji": "🍃",
+          "total_badge": 10,
+          "branch_1": {
+            "count": 6,
+            "input_required": true,
+            "answer": 6
+          },
+          "options": [
+            {
+              "label": "A",
+              "count": 4,
+              "is_correct": true
+            },
+            {
+              "label": "B",
+              "count": 5,
+              "is_correct": false
+            }
+          ],
+          "correct_option": "A",
+          "selected_input_answer": 4,
+          "equation": "10 = 6 + [4 (A)]"
+        }
+      ],
+      "digital_game_mapping": {
+        "template": "GT-007",
+        "pedagogical_note": "Trang kiểm tra tổng hợp 4 kỹ năng trọng điểm của toàn chặng."
+      }
+    },
+    {
+      "page_number": 23,
+      "printed_page_number": null,
+      "file_path": "pages/page-23.jpg",
+      "page_type": "congratulation_reward",
+      "title": "Hoàn thành phần 7: Khu Vườn Hai Nhánh",
+      "banners": {
+        "main_title": "HOÀN THÀNH PHẦN 7: KHU VƯỜN HAI NHÁNH",
+        "reward_notification": "BÉ ĐÃ HOÀN THÀNH CHẶNG SỐ 7! SẴN SÀNG LÊN TÀU ĐẾN CHẶNG 8!"
+      },
+      "dialogues": {
+        "gau_logic": "Bé đã giúp hai nhánh kết nối rồi!",
+        "tho_quan_sat": "Viên Ngọc Kết Nối đã sáng lên!"
+      },
+      "reward_details": {
+        "gem_name": "Viên Ngọc Kết Nối",
+        "gem_color": "Xanh ngọc lục bảo (Emerald Green)",
+        "gem_status": "Đã hồi sinh và tỏa sáng lấp lánh trên đỉnh Cây Đại Đoàn Kết"
+      },
+      "journey_map": {
+        "total_stations": 20,
+        "completed_stations": [1, 2, 3, 4, 5, 6, 7],
+        "current_station": 7,
+        "current_flag": "BÉ ĐANG Ở ĐÂY",
+        "next_station": 8,
+        "next_station_title": "Chặng 8: Thành phố mật mã (Tách gộp phạm vi 10 nâng cao & Dải hạt màu)"
+      },
+      "parent_child_interaction": [
+        {
+          "activity": "Tô màu 3 ngôi sao đánh giá",
+          "instruction": "Ba mẹ cùng bé tô 3 ngôi sao nhé!",
+          "criteria": "Đánh giá mức độ tự tin, kiên trì và độ chính xác của bé khi hoàn thành tập sách."
+        },
+        {
+          "activity": "Tô màu Viên Ngọc Kết Nối",
+          "instruction": "Bé hãy tô màu Viên Ngọc Kết Nối",
+          "purpose": "Ghi nhận chiến công, tạo cảm xúc tự hào và kích hoạt động lực nội tại bước vào chặng tiếp theo."
+        }
+      ],
+      "digital_game_potential": {
+        "template": "GT-000",
+        "mechanic": "Victory Celebration & Trophy Showcase",
+        "animation": "Pháo hoa giấy sắc màu bung nở, âm thanh chuông ngân vang (Celebration fanfare Ramp >= 20ms), Viên Ngọc Kết Nối bay vào Bộ sưu tập Huy hiệu cá nhân."
+      }
+    }
+  ],
+  "digital_game_potential": {
+    "suggested_template_id": "GT-007",
+    "suggested_template_name": "Number Bond Tree (Cây Tách Gộp)",
+    "secondary_template_id": "GT-003",
+    "secondary_template_name": "Drag to Container (Kéo Thả Vào Giỏ Phân Loại)",
+    "tertiary_template_id": "GT-001",
+    "tertiary_template_name": "Tap Select (Chạm Chọn Đáp Án)",
+    "canvas_architecture": {
+      "screen_resolution": "960x540 logic fixed canvas (contain scaling, touch-first)",
+      "layout_zones": {
+        "top_bar": "HUD hiển thị tiến trình, nút trợ giúp âm thanh lời dẫn Gấu Logic & Thỏ Quan Sát",
+        "central_tree": "Cây Đại Đoàn Kết với thân cây và hai nhánh lớn uốn cong tự nhiên, có điểm neo (snap zones) cho quả và số",
+        "bottom_rack": "Khay số tròn hoặc giỏ chứa vật phẩm có thể kéo thả với đường kính hit band >= 64px (band 3-4 tuổi 96px, band 5-6 tuổi 72px)"
+      },
+      "touch_interactions": [
+        "Drag & Drop: Kéo quả từ rương hoặc cành này sang cành kia, quả tự động hít vào nhánh có hiệu ứng nhịp thở (breathing pulse).",
+        "Tap-to-type / Number Pad: Chạm vào ô vuông trống trên cành cây hoặc toa tàu, mở khay chọn số lớn 1-10 để điền số.",
+        "Tap-to-Select: Đối với dạng trắc nghiệm A/B, chạm trực tiếp vào giỏ phương án A hoặc B."
+      ],
+      "scaffolding_system": {
+        "level_1_nudge": "Sau 10s hoặc 1 lần chọn sai: Nhấp nháy viền sáng hổ phách ở cành quả cần đếm.",
+        "level_2_guide": "Sau 18s hoặc 2 lần chọn sai: Giọng Thỏ Quan Sát phát âm đếm chậm từng quả kèm bàn tay ảo (ghost hand) chỉ điểm.",
+        "level_3_demo": "Sau 25s hoặc 3 lần sai: Bàn tay ảo demo di chuyển 1 quả vào giỏ để bé hình dung thao tác gộp."
+      },
+      "audio_feedback": {
+        "correct_action": "Âm thanh chimes ngân trong trẻo, cành cây bung nở hoa lá rực rỡ.",
+        "retry_action": "Âm mộc êm dịu (ramp >= 20ms), vật thể trôi nhẹ nhàng về vị trí cũ không phát tiếng buzzer trừng phạt."
+      }
+    }
+  }
+}

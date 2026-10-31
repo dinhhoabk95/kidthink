@@ -11,9 +11,16 @@ import postgres from "postgres";
  * chạy mọi thứ bằng owner làm cho ràng buộc đó thành trang trí.
  */
 
-/** `max: 1` — mỗi tiến trình Node giữ đúng một connection, khớp t3.small. */
+const DEFAULT_POOL_MAX = 5;
+const resolvedPoolMax = Number(process.env.DB_POOL_MAX ?? DEFAULT_POOL_MAX);
+
 const POOL_OPTIONS = {
-  max: 1,
+  max:
+    Number.isFinite(resolvedPoolMax) && resolvedPoolMax > 0
+      ? resolvedPoolMax
+      : DEFAULT_POOL_MAX,
+  idle_timeout: 30,
+  connect_timeout: 5,
   // Notice của postgres không được nuốt: `DO $$ ... EXCEPTION` trong migration
   // báo lỗi qua đúng đường này. Hạ mức ồn, không bịt miệng.
   onnotice: (notice: { severity?: string; message?: string }) => {

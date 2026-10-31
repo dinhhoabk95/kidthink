@@ -5,7 +5,7 @@ export const C6_PLN_03_IDENTITY: SkillIdentity = {
   strand_code: "C6.PLN",
   competency_code: "C6",
   name: "Thử trong đầu trước khi thao tác",
-  age_min: 6,
+  age_min: 5,
   age_max: 6,
   difficulty: 5,
   thinking_processes: ["plan", "predict"],
@@ -41,19 +41,88 @@ export const C6_PLN_03_IDENTITY: SkillIdentity = {
 
 export const C6_PLN_03_DATASET: SkillDataset = {
   skill_code: "C6.PLN.03",
-  concept_label: "Thử trong đầu trước khi thao tác",
+  concept_label: "Suy nghĩ trước khi làm",
   surface: "game",
   items: [
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "seed",
+      label: "gieo hạt mầm",
       image: {
         kind: "emoji",
-        ref: "🍉",
+        ref: "🌱",
       },
       category: {
-        type: "hoa quả",
+        type: "chăm sóc cây",
+        color: "green",
+        shape: "triangle",
       },
+      value: 1,
+      ordering: 1,
+      contrast_group: "grow_step",
+    },
+    {
+      id: "herb",
+      label: "cây mọc lá",
+      image: {
+        kind: "emoji",
+        ref: "🌿",
+      },
+      category: {
+        type: "chăm sóc cây",
+        color: "green",
+        shape: "triangle",
+      },
+      value: 2,
+      ordering: 2,
+      contrast_group: "grow_step",
+    },
+    {
+      id: "tree",
+      label: "cây vươn cao",
+      image: {
+        kind: "emoji",
+        ref: "🌳",
+      },
+      category: {
+        type: "chăm sóc cây",
+        color: "green",
+        shape: "circle",
+      },
+      value: 3,
+      ordering: 3,
+      contrast_group: "grow_step",
+    },
+    {
+      id: "cherry_blossom",
+      label: "cây trổ hoa",
+      image: {
+        kind: "emoji",
+        ref: "🌸",
+      },
+      category: {
+        type: "chăm sóc cây",
+        color: "red",
+        shape: "circle",
+      },
+      value: 4,
+      ordering: 4,
+      contrast_group: "grow_step",
+    },
+    {
+      id: "cucumber",
+      label: "quả dưa chuột",
+      image: {
+        kind: "emoji",
+        ref: "🥒",
+      },
+      category: {
+        type: "thu hoạch quả",
+        color: "green",
+        shape: "square",
+      },
+      value: 5,
+      ordering: 5,
+      contrast_group: "harvest_step",
     },
     {
       id: "carrot",
@@ -63,41 +132,45 @@ export const C6_PLN_03_DATASET: SkillDataset = {
         ref: "🥕",
       },
       category: {
-        type: "rau củ",
+        type: "thu hoạch quả",
+        color: "red",
+        shape: "triangle",
       },
+      value: 6,
+      ordering: 6,
+      contrast_group: "harvest_step",
     },
     {
       id: "corn",
-      label: "bắp ngô",
+      label: "bắp ngô vàng",
       image: {
         kind: "emoji",
         ref: "🌽",
       },
       category: {
-        type: "rau củ",
+        type: "thu hoạch quả",
+        color: "yellow",
+        shape: "triangle",
       },
+      value: 7,
+      ordering: 7,
+      contrast_group: "harvest_step",
     },
     {
-      id: "dog",
-      label: "con chó",
+      id: "basket",
+      label: "giỏ thu hoạch",
       image: {
         kind: "emoji",
-        ref: "🐕",
+        ref: "🧺",
       },
       category: {
-        type: "động vật",
+        type: "thu hoạch quả",
+        color: "yellow",
+        shape: "square",
       },
-    },
-    {
-      id: "cat",
-      label: "con mèo",
-      image: {
-        kind: "emoji",
-        ref: "🐈",
-      },
-      category: {
-        type: "động vật",
-      },
+      value: 8,
+      ordering: 8,
+      contrast_group: "harvest_step",
     },
   ],
   ladder: [
@@ -129,16 +202,59 @@ export const C6_PLN_03_DATASET: SkillDataset = {
   ],
   phrasing: {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
-    narration_template:
-      "Chúng mình cùng tìm hiểu về Thử trong đầu trước khi thao tác nhé",
+    narration_template: "Chúng mình cùng ngắm kỹ và nghĩ cách làm trước nhé",
   },
-  ordering: ["watermelon", "carrot", "corn", "dog", "cat"],
+  axes: {
+    type: ["chăm sóc cây", "thu hoạch quả"],
+    step: {
+      values: ["nghĩ trước", "thử nghiệm", "chọn lọc", "thực hiện"],
+      ordered: true,
+    },
+  },
+  relations: [
+    {
+      source_id: "seed",
+      target_id: "herb",
+      type: "sequence",
+    },
+    {
+      source_id: "herb",
+      target_id: "tree",
+      type: "sequence",
+    },
+    {
+      source_id: "tree",
+      target_id: "cherry_blossom",
+      type: "sequence",
+    },
+    {
+      source_id: "cherry_blossom",
+      target_id: "cucumber",
+      type: "sequence",
+    },
+  ],
+  ordering: [
+    "seed",
+    "herb",
+    "tree",
+    "cherry_blossom",
+    "cucumber",
+    "carrot",
+    "corn",
+    "basket",
+  ],
 };
 
 export const C6_PLN_03_SEED: SkillSeed = {
   identity: C6_PLN_03_IDENTITY,
   dataset: C6_PLN_03_DATASET,
   levels: [
+    {
+      template: "GT-000",
+      band: "5-6",
+      difficulty: 1,
+      theme: "school",
+    },
     {
       code: "GL-C6-PLN-FIN-0001",
       template: "GT-024",
@@ -164,14 +280,6 @@ export const C6_PLN_03_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C6-PLN-SORT-0006",
-      template: "GT-006",
-      band: "5-6",
-      difficulty: 5,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
       code: "GL-C6-PLN-SHAD-0003",
       template: "GT-007",
       band: "5-6",
@@ -180,59 +288,11 @@ export const C6_PLN_03_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C6-PLN-SHAD-0004",
-      template: "GT-007",
-      band: "5-6",
-      difficulty: 5,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
       code: "GL-C6-PLN-SIZE-0003",
       template: "GT-009",
       band: "5-6",
       difficulty: 4,
       theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C6-PLN-SIZE-0004",
-      template: "GT-009",
-      band: "5-6",
-      difficulty: 5,
-      theme: "ocean",
-      rounds: 3,
-    },
-    {
-      code: "GL-C6-PLN-DOTS-0001",
-      template: "GT-011",
-      band: "5-6",
-      difficulty: 4,
-      theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C6-PLN-DOTS-0002",
-      template: "GT-011",
-      band: "5-6",
-      difficulty: 5,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C6-PLN-MAZE-0001",
-      template: "GT-013",
-      band: "5-6",
-      difficulty: 4,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C6-PLN-MAZE-0002",
-      template: "GT-013",
-      band: "5-6",
-      difficulty: 5,
-      theme: "space",
       rounds: 3,
     },
   ],

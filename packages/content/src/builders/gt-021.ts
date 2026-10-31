@@ -7,8 +7,8 @@ import type {
 } from "@mindkid/shared";
 import { createRng, resolveItemAsset, shuffleDeterministic } from "./utils.js";
 
-/** Số mảnh tối đa của band: sàn chạm làm band 4-5 không chứa quá 3 mảnh (BR-PSZ-13). */
-const MAX_PIECES_BY_BAND: Record<string, number> = { "4-5": 3 };
+/** Số mảnh tối đa của band: sàn chạm làm band 4-5 không chứa quá 3 mảnh, band 5-6 tối đa 4 mảnh trên màn dọc (BR-PSZ-13). */
+const MAX_PIECES_BY_BAND: Record<string, number> = { "4-5": 3, "5-6": 4 };
 
 export const projectGT021: Projection<"GT-021"> = {
   template: "GT-021",

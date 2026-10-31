@@ -5,7 +5,7 @@ export const C6_MON_03_IDENTITY: SkillIdentity = {
   strand_code: "C6.MON",
   competency_code: "C6",
   name: "Tự đánh giá kết quả",
-  age_min: 6,
+  age_min: 5,
   age_max: 6,
   difficulty: 5,
   thinking_processes: ["verify", "describe"],
@@ -42,28 +42,6 @@ export const C6_MON_03_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "watermelon",
-      label: "dưa hấu",
-      image: {
-        kind: "emoji",
-        ref: "🍉",
-      },
-      category: {
-        type: "hoa quả",
-      },
-    },
-    {
-      id: "carrot",
-      label: "củ cà rốt",
-      image: {
-        kind: "emoji",
-        ref: "🥕",
-      },
-      category: {
-        type: "rau củ",
-      },
-    },
-    {
       id: "corn",
       label: "bắp ngô",
       image: {
@@ -72,29 +50,124 @@ export const C6_MON_03_DATASET: SkillDataset = {
       },
       category: {
         type: "rau củ",
+        color: "yellow",
+        shape: "triangle",
       },
+      value: 1,
+      ordering: 1,
+      contrast_group: "vegetables",
     },
     {
-      id: "dog",
-      label: "con chó",
+      id: "cucumber",
+      label: "dưa chuột",
       image: {
         kind: "emoji",
-        ref: "🐕",
+        ref: "🥒",
       },
       category: {
-        type: "động vật",
+        type: "rau củ",
+        color: "green",
+        shape: "square",
       },
+      value: 2,
+      ordering: 2,
+      contrast_group: "vegetables",
     },
     {
-      id: "cat",
-      label: "con mèo",
+      id: "mushroom",
+      label: "cây nấm",
       image: {
         kind: "emoji",
-        ref: "🐈",
+        ref: "🍄",
       },
       category: {
-        type: "động vật",
+        type: "rau củ",
+        color: "red",
+        shape: "triangle",
       },
+      value: 3,
+      ordering: 3,
+      contrast_group: "vegetables",
+    },
+    {
+      id: "carrot",
+      label: "cà rốt",
+      image: {
+        kind: "emoji",
+        ref: "🥕",
+      },
+      category: {
+        type: "rau củ",
+        color: "red",
+        shape: "triangle",
+      },
+      value: 4,
+      ordering: 4,
+      contrast_group: "vegetables",
+    },
+    {
+      id: "watermelon",
+      label: "dưa hấu",
+      image: {
+        kind: "emoji",
+        ref: "🍉",
+      },
+      category: {
+        type: "hoa quả",
+        color: "red",
+        shape: "triangle",
+      },
+      value: 5,
+      ordering: 5,
+      contrast_group: "fruits",
+    },
+    {
+      id: "grapes",
+      label: "chùm nho",
+      image: {
+        kind: "emoji",
+        ref: "🍇",
+      },
+      category: {
+        type: "hoa quả",
+        color: "blue",
+        shape: "circle",
+      },
+      value: 6,
+      ordering: 6,
+      contrast_group: "fruits",
+    },
+    {
+      id: "cherry",
+      label: "anh đào",
+      image: {
+        kind: "emoji",
+        ref: "🍒",
+      },
+      category: {
+        type: "hoa quả",
+        color: "red",
+        shape: "circle",
+      },
+      value: 7,
+      ordering: 7,
+      contrast_group: "fruits",
+    },
+    {
+      id: "apple",
+      label: "quả táo",
+      image: {
+        kind: "emoji",
+        ref: "🍎",
+      },
+      category: {
+        type: "hoa quả",
+        color: "red",
+        shape: "circle",
+      },
+      value: 8,
+      ordering: 8,
+      contrast_group: "fruits",
     },
   ],
   ladder: [
@@ -126,9 +199,47 @@ export const C6_MON_03_DATASET: SkillDataset = {
   ],
   phrasing: {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
-    narration_template: "Chúng mình cùng tìm hiểu về Tự đánh giá kết quả nhé",
+    narration_template: "Chúng mình cùng ngắm lại và đánh giá kết quả nhé",
   },
-  ordering: ["watermelon", "carrot", "corn", "dog", "cat"],
+  axes: {
+    type: ["rau củ", "hoa quả"],
+    rating: {
+      values: ["đạt", "khá", "tốt", "xuất sắc"],
+      ordered: true,
+    },
+  },
+  relations: [
+    {
+      source_id: "corn",
+      target_id: "cucumber",
+      type: "pair",
+    },
+    {
+      source_id: "mushroom",
+      target_id: "carrot",
+      type: "pair",
+    },
+    {
+      source_id: "watermelon",
+      target_id: "grapes",
+      type: "pair",
+    },
+    {
+      source_id: "cherry",
+      target_id: "apple",
+      type: "pair",
+    },
+  ],
+  ordering: [
+    "corn",
+    "cucumber",
+    "mushroom",
+    "carrot",
+    "watermelon",
+    "grapes",
+    "cherry",
+    "apple",
+  ],
 };
 
 export const C6_MON_03_SEED: SkillSeed = {
@@ -157,62 +268,6 @@ export const C6_MON_03_SEED: SkillSeed = {
       band: "5-6",
       difficulty: 4,
       theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C6-MON-TIME-0006",
-      template: "GT-029",
-      band: "5-6",
-      difficulty: 5,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      code: "GL-C6-MON-COIN-0003",
-      template: "GT-030",
-      band: "5-6",
-      difficulty: 4,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C6-MON-COIN-0004",
-      template: "GT-030",
-      band: "5-6",
-      difficulty: 5,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C6-MON-PICT-0003",
-      template: "GT-031",
-      band: "5-6",
-      difficulty: 4,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C6-MON-PICT-0004",
-      template: "GT-031",
-      band: "5-6",
-      difficulty: 5,
-      theme: "ocean",
-      rounds: 3,
-    },
-    {
-      code: "GL-C6-MON-VENN-0003",
-      template: "GT-032",
-      band: "5-6",
-      difficulty: 4,
-      theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C6-MON-VENN-0004",
-      template: "GT-032",
-      band: "5-6",
-      difficulty: 5,
-      theme: "vehicle",
       rounds: 3,
     },
   ],

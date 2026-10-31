@@ -45,54 +45,82 @@ export const C5_RHY_02_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "let_ă",
-      label: "chữ ă",
-      glyph: "ă",
+      id: "rhy_meo",
+      label: "con mèo",
       image: {
         kind: "emoji",
-        ref: "🅰️",
+        ref: "🐱",
       },
+      category: {
+        type: "tiếng vần eo",
+      },
+      value: 1,
       contrast_group: "primary",
     },
     {
-      id: "let_â",
-      label: "chữ â",
-      glyph: "â",
+      id: "rhy_keo",
+      label: "viên kẹo",
       image: {
         kind: "emoji",
-        ref: "🅰️",
+        ref: "🍬",
       },
+      category: {
+        type: "tiếng vần eo",
+      },
+      value: 2,
+      contrast_group: "primary",
+    },
+    {
+      id: "rhy_keo_cat",
+      label: "cái kéo",
+      image: {
+        kind: "emoji",
+        ref: "✂️",
+      },
+      category: {
+        type: "tiếng vần eo",
+      },
+      value: 3,
+      contrast_group: "primary",
+    },
+    {
+      id: "rhy_sao",
+      label: "ngôi sao",
+      image: {
+        kind: "emoji",
+        ref: "⭐",
+      },
+      category: {
+        type: "tiếng vần ao",
+      },
+      value: 4,
       contrast_group: "contrast",
     },
     {
-      id: "let_b",
-      label: "chữ b",
-      glyph: "b",
+      id: "rhy_cao",
+      label: "con cáo",
       image: {
         kind: "emoji",
-        ref: "🅱️",
+        ref: "🦊",
       },
-      contrast_group: "primary",
-    },
-    {
-      id: "let_c",
-      label: "chữ c",
-      glyph: "c",
-      image: {
-        kind: "emoji",
-        ref: "🅲",
+      category: {
+        type: "tiếng vần ao",
       },
+      value: 5,
       contrast_group: "contrast",
     },
     {
-      id: "let_d",
-      label: "chữ d",
-      glyph: "d",
+      id: "rhy_dao",
+      label: "quả đào",
       image: {
         kind: "emoji",
-        ref: "🅳",
+        ref: "🍑",
       },
-      contrast_group: "primary",
+      category: {
+        type: "tiếng vần ao",
+      },
+      value: 6,
+      contrast_group: "contrast",
     },
   ],
   ladder: [
@@ -127,7 +155,37 @@ export const C5_RHY_02_DATASET: SkillDataset = {
     narration_template:
       "Chúng mình cùng tìm hiểu về Tìm tiếng cùng vần trong nhóm nhé",
   },
-  ordering: ["let_ă", "let_â", "let_b", "let_c", "let_d"],
+  ordering: [
+    "rhy_meo",
+    "rhy_keo",
+    "rhy_keo_cat",
+    "rhy_sao",
+    "rhy_cao",
+    "rhy_dao",
+  ],
+  axes: {
+    category: {
+      values: ["tiếng vần eo", "tiếng vần ao"],
+      ordered: true,
+    },
+  },
+  relations: [
+    {
+      type: "pair",
+      source_id: "rhy_meo",
+      target_id: "rhy_keo",
+    },
+    {
+      type: "pair",
+      source_id: "rhy_sao",
+      target_id: "rhy_cao",
+    },
+    {
+      type: "contrast",
+      source_id: "rhy_meo",
+      target_id: "rhy_sao",
+    },
+  ],
 };
 
 export const C5_RHY_02_SEED: SkillSeed = {
@@ -135,84 +193,34 @@ export const C5_RHY_02_SEED: SkillSeed = {
   dataset: C5_RHY_02_DATASET,
   levels: [
     {
-      code: "GL-C5-RHY-TAP-0003",
-      template: "GT-001",
-      band: "4-5",
-      difficulty: 3,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RHY-TAP-0004",
-      template: "GT-001",
-      band: "4-5",
-      difficulty: 4,
-      theme: "space",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RHY-TCMP-0003",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 3,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RHY-TCMP-0004",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 4,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RHY-PATT-0003",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 3,
-      theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RHY-PATT-0004",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 4,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RHY-SLOT-0003",
-      template: "GT-008",
-      band: "4-5",
-      difficulty: 3,
-      theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RHY-SLOT-0004",
-      template: "GT-008",
-      band: "4-5",
-      difficulty: 4,
-      theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RHY-PUZZ-0003",
-      template: "GT-010",
-      band: "4-5",
-      difficulty: 3,
+      template: "GT-000",
+      band: "5-6",
+      difficulty: 1,
       theme: "school",
-      rounds: 3,
     },
     {
-      code: "GL-C5-RHY-PUZZ-0004",
-      template: "GT-010",
-      band: "4-5",
-      difficulty: 4,
+      template: "GT-001",
+      band: "5-6",
+      difficulty: 1,
+      theme: "school",
+    },
+    {
+      template: "GT-001",
+      band: "5-6",
+      difficulty: 2,
+      theme: "home",
+    },
+    {
+      template: "GT-001",
+      band: "5-6",
+      difficulty: 3,
       theme: "farm",
-      rounds: 3,
+    },
+    {
+      template: "GT-003",
+      band: "5-6",
+      difficulty: 1,
+      theme: "nature",
     },
   ],
 };

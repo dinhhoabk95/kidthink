@@ -195,5 +195,5 @@ Scenario: mã năng lực không hợp lệ
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | ~~`BR-CCE-02` lọc hay xếp hạng theo tuổi?~~ Đã chốt 2026-10-18: xếp hạng, không lọc — thống nhất với [`child-lesson-flow.md`](child-lesson-flow.md) `BR-CLF-07`, [`access-gating.md`](access-gating.md) và `D-SI`. | — | — | đã đóng |
+| 1 | ~~`BR-CCE-02` lọc hay xếp hạng theo tuổi?~~ Đã chốt 2026-10-18: xếp hạng, không lọc — thống nhất với [`access-gating.md`](access-gating.md) và `D-SI`. | — | — | đã đóng |
 

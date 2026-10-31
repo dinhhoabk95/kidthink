@@ -1,12 +1,8 @@
 import { SKILL_DATASETS } from "@mindkid/content";
-import { activities, gameLevels, getOwnerDb, lessons } from "@mindkid/db";
+import { gameLevels, getOwnerDb } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { checkSkillRegistry } from "#src/gates/check-skill-registry";
 import { GATE_1_LADDER_BASELINES } from "#src/gates/ladder";
-import {
-  checkLegacyV1Coverage,
-  printLegacyV1CoverageReport,
-} from "#src/gates/legacy-v1-coverage";
 import { checkGateMontessoriCorpus } from "#src/gates/montessori-gate";
 import { runEightGates } from "#src/gates/runner";
 import { ALL_SEED_CONTENT, ALL_SEED_LEVELS } from "#src/index";
@@ -26,40 +22,16 @@ async function checkSeedDrift(
   seed: AnyContentSeed
 ): Promise<{ code: string; reason: string } | null> {
   const db = getOwnerDb();
-  if (seed.kind === "activity") {
-    const [dbAct] = await db
-      .select()
-      .from(activities)
-      .where(eq(activities.code, seed.header.code));
-    if (dbAct && dbAct.contentVersion !== seed.header.content_version) {
-      return {
-        code: seed.header.code,
-        reason: `Version mismatch: repo has v${seed.header.content_version}, DB has v${dbAct.contentVersion}`,
-      };
-    }
-  } else if (seed.kind === "lesson") {
-    const [dbLes] = await db
-      .select()
-      .from(lessons)
-      .where(eq(lessons.code, seed.header.code));
-    if (dbLes && dbLes.contentVersion !== seed.header.content_version) {
-      return {
-        code: seed.header.code,
-        reason: `Version mismatch: repo has v${seed.header.content_version}, DB has v${dbLes.contentVersion}`,
-      };
-    }
-  } else {
-    const [dbLevel] = await db
-      .select()
-      .from(gameLevels)
-      .where(eq(gameLevels.code, seed.header.code));
+  const [dbLevel] = await db
+    .select()
+    .from(gameLevels)
+    .where(eq(gameLevels.code, seed.header.code));
 
-    if (dbLevel && dbLevel.contentVersion !== seed.header.content_version) {
-      return {
-        code: seed.header.code,
-        reason: `Version mismatch: repo has v${seed.header.content_version}, DB has v${dbLevel.contentVersion}`,
-      };
-    }
+  if (!dbLevel) {
+    return {
+      code: seed.header.code,
+      reason: "Missing in DB",
+    };
   }
   return null;
 }
@@ -234,9 +206,7 @@ export async function runSeedCheck(againstDb = false) {
     );
     existingCodes.add(seed.header.code);
 
-    if (seed.kind !== "activity" && seed.kind !== "lesson") {
-      recordGate1Stats(seed as ContentSeed, gates, tracker);
-    }
+    recordGate1Stats(seed, gates, tracker);
 
     blockingIssues += checkBlockingGates(seed, gates);
   }
@@ -245,12 +215,6 @@ export async function runSeedCheck(againstDb = false) {
 
   printGate1Report(tracker);
   blockingIssues += validateLadderBaselines(tracker);
-
-  const legacyV1Report = checkLegacyV1Coverage(ALL_SEED_LEVELS);
-  printLegacyV1CoverageReport(legacyV1Report);
-  if (!legacyV1Report.passed) {
-    blockingIssues++;
-  }
 
   const skillRegistryGate = checkSkillRegistry(SKILL_DATASETS);
   if (!skillRegistryGate.passed) {

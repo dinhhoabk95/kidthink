@@ -19,6 +19,6 @@ export const C5_TONE_MARK_INVENTORY: readonly ToneMarkInventoryItem[] = [
   { id: "tmk_nang", glyph: "﹒", label: "dấu nặng", group: "C5.TMK.02" },
 
   // C5.TMK.03: Dấu hỏi và dấu ngã
-  { id: "tmk_hoi", glyph: "̉", label: "dấu hỏi", group: "C5.TMK.03" },
+  { id: "tmk_hoi", glyph: "ʾ", label: "dấu hỏi", group: "C5.TMK.03" },
   { id: "tmk_nga", glyph: "˜", label: "dấu ngã", group: "C5.TMK.03" },
 ] as const;

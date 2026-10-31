@@ -1,4 +1,8 @@
-import { requireManagerAuth } from "@mindkid/auth";
+import {
+  getAuthRedisClient,
+  RedisSessionStore,
+  requireManagerAuth,
+} from "@mindkid/auth";
 import { activeSessions, getAppDb } from "@mindkid/db";
 import { and, eq, gte, isNull } from "drizzle-orm";
 import type { H3Event } from "h3";
@@ -18,6 +22,9 @@ function redactIpAddress(ipAddress: string | null): string | null {
 export async function handleGetManagerSessions(event: H3Event) {
   const managerSession = requireManagerAuth(event);
   const db = getAppDb();
+  const currentDeviceId = await new RedisSessionStore(getAuthRedisClient())
+    .getDeviceId("manager", managerSession.session_id)
+    .catch(() => null);
 
   const rows = await db
     .select()
@@ -39,7 +46,9 @@ export async function handleGetManagerSessions(event: H3Event) {
       authMethod: r.authMethod,
       lastUsedAt: r.lastUsedAt,
       createdAt: r.createdAt,
-      isCurrent: String(r.id) === managerSession.session_id,
+      isCurrent:
+        String(r.id) === managerSession.session_id ||
+        Boolean(currentDeviceId && r.deviceId === currentDeviceId),
     })),
   };
 }

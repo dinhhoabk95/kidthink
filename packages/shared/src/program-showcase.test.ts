@@ -75,11 +75,11 @@ describe("program-showcase projections (Task #61 / P3.8)", () => {
         weekNo: 1,
         sessionNo: 1,
         position: 1,
-        entityType: "lesson",
+        entityType: "game_level",
         entityId: 1001, // should not leak
-        code: "LES-C1-001",
+        code: "GL-C1-001",
         title: "Đếm hạt dẻ",
-        estimatedMinutes: 20,
+        estimatedMinutes: 10,
         accessTier: "free",
         content_pack: { answer: 3 }, // forbidden field in raw input
       },
@@ -109,22 +109,22 @@ describe("program-showcase projections (Task #61 / P3.8)", () => {
         weekNo: 3,
         sessionNo: 1,
         position: 1,
-        entityType: "lesson",
+        entityType: "game_level",
         entityId: 1003,
-        code: "LES-C3-001",
+        code: "GL-C3-001",
         title: "Chuỗi màu sắc",
-        estimatedMinutes: 20,
+        estimatedMinutes: 10,
         accessTier: "standard",
       },
       {
         weekNo: 4,
         sessionNo: 1,
         position: 1,
-        entityType: "lesson",
+        entityType: "game_level",
         entityId: 1004,
-        code: "LES-C6-001",
+        code: "GL-C6-001",
         title: "Thử thách chặng 1",
-        estimatedMinutes: 20,
+        estimatedMinutes: 10,
         accessTier: "premium",
       },
     ];
@@ -153,10 +153,10 @@ describe("program-showcase projections (Task #61 / P3.8)", () => {
     expect(detail.weeks[0]?.items).toBeDefined();
     expect(detail.weeks[0]?.items).toHaveLength(2);
     expect(detail.weeks[0]?.items?.[0]).toEqual({
-      entity_type: "lesson",
-      code: "LES-C1-001",
+      entity_type: "game_level",
+      code: "GL-C1-001",
       title: "Đếm hạt dẻ",
-      estimated_minutes: 20,
+      estimated_minutes: 10,
       access_tier: "free",
     });
 

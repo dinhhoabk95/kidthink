@@ -49,6 +49,43 @@ export function computeNetSessionDurationSeconds(
   return Math.max(0, baseSec - pausedSec);
 }
 
+async function fetchSessionEventsByUuid(
+  db: ReturnType<typeof getOwnerDb>,
+  sessionUuids: string[]
+): Promise<Map<string, TelemetryEventInput[]>> {
+  const EVENT_CHUNK_SIZE = 200;
+  const eventsBySession = new Map<string, TelemetryEventInput[]>();
+
+  for (let i = 0; i < sessionUuids.length; i += EVENT_CHUNK_SIZE) {
+    const chunkUuids = sessionUuids.slice(i, i + EVENT_CHUNK_SIZE);
+    const chunkEvents = await db
+      .select({
+        sessionUuid: telemetryEvents.sessionUuid,
+        seq: telemetryEvents.seq,
+        eventName: telemetryEvents.eventName,
+        occurredAtMs: telemetryEvents.occurredAtMs,
+        payload: telemetryEvents.payload,
+      })
+      .from(telemetryEvents)
+      .where(inArray(telemetryEvents.sessionUuid, chunkUuids))
+      .orderBy(telemetryEvents.seq);
+
+    for (const e of chunkEvents) {
+      const list = eventsBySession.get(e.sessionUuid) ?? [];
+      list.push({
+        sessionUuid: e.sessionUuid,
+        seq: e.seq,
+        eventName: e.eventName,
+        occurredAtMs: e.occurredAtMs,
+        payload: isPayloadRecord(e.payload) ? e.payload : null,
+      });
+      eventsBySession.set(e.sessionUuid, list);
+    }
+  }
+
+  return eventsBySession;
+}
+
 export async function rollupChildDailyStatsForWindow(
   db: ReturnType<typeof getOwnerDb>,
   dateIct: string,
@@ -69,7 +106,18 @@ export async function rollupChildDailyStatsForWindow(
   }
 
   const sessions = await db
-    .select()
+    .select({
+      sessionUuid: playSessions.sessionUuid,
+      childProfileId: playSessions.childProfileId,
+      gameLevelId: playSessions.gameLevelId,
+      isPreview: playSessions.isPreview,
+      completionStatus: playSessions.completionStatus,
+      durationSeconds: playSessions.durationSeconds,
+      starsEarned: playSessions.starsEarned,
+      startedAt: playSessions.startedAt,
+      completedAt: playSessions.completedAt,
+      score: playSessions.score,
+    })
     .from(playSessions)
     .where(and(...conditions));
 
@@ -78,25 +126,7 @@ export async function rollupChildDailyStatsForWindow(
   }
 
   const sessionUuids = sessions.map((s) => s.sessionUuid);
-  const allEvents = await db
-    .select()
-    .from(telemetryEvents)
-    .where(inArray(telemetryEvents.sessionUuid, sessionUuids))
-    .orderBy(telemetryEvents.seq);
-
-  const eventsBySession = new Map<string, TelemetryEventInput[]>();
-  for (const e of allEvents) {
-    const list = eventsBySession.get(e.sessionUuid) ?? [];
-    list.push({
-      sessionUuid: e.sessionUuid,
-      seq: e.seq,
-      eventName: e.eventName,
-      occurredAtMs: e.occurredAtMs,
-      payload: isPayloadRecord(e.payload) ? e.payload : null,
-      clientTimestamp: e.clientTimestamp,
-    });
-    eventsBySession.set(e.sessionUuid, list);
-  }
+  const eventsBySession = await fetchSessionEventsByUuid(db, sessionUuids);
 
   const grouped = new Map<
     number,
@@ -135,36 +165,41 @@ export async function rollupChildDailyStatsForWindow(
     grouped.set(childId, current);
   }
 
-  let childStatsCount = 0;
-  for (const [childProfileId, agg] of grouped.entries()) {
+  const now = new Date();
+  const childRows = Array.from(grouped.entries()).map(
+    ([childProfileId, agg]) => ({
+      childProfileId,
+      dateIct,
+      sessionsCount: agg.sessionsCount,
+      totalPlayTimeSeconds: agg.totalPlayTimeSeconds,
+      levelsAttempted: agg.levelIds.size,
+      levelsCompleted: agg.levelsCompleted,
+      skillsTouched: 0,
+      starsEarned: agg.starsEarned,
+      updatedAt: now,
+    })
+  );
+
+  const UPSERT_BATCH_SIZE = 500;
+  for (let i = 0; i < childRows.length; i += UPSERT_BATCH_SIZE) {
+    const batch = childRows.slice(i, i + UPSERT_BATCH_SIZE);
     await db
       .insert(childDailyStats)
-      .values({
-        childProfileId,
-        dateIct,
-        sessionsCount: agg.sessionsCount,
-        totalPlayTimeSeconds: agg.totalPlayTimeSeconds,
-        levelsAttempted: agg.levelIds.size,
-        levelsCompleted: agg.levelsCompleted,
-        skillsTouched: 0,
-        starsEarned: agg.starsEarned,
-        updatedAt: new Date(),
-      })
+      .values(batch)
       .onConflictDoUpdate({
         target: [childDailyStats.childProfileId, childDailyStats.dateIct],
         set: {
-          sessionsCount: agg.sessionsCount,
-          totalPlayTimeSeconds: agg.totalPlayTimeSeconds,
-          levelsAttempted: agg.levelIds.size,
-          levelsCompleted: agg.levelsCompleted,
-          starsEarned: agg.starsEarned,
-          updatedAt: new Date(),
+          sessionsCount: sql`excluded.sessions_count`,
+          totalPlayTimeSeconds: sql`excluded.total_play_time_seconds`,
+          levelsAttempted: sql`excluded.levels_attempted`,
+          levelsCompleted: sql`excluded.levels_completed`,
+          starsEarned: sql`excluded.stars_earned`,
+          updatedAt: now,
         },
       });
-    childStatsCount++;
   }
 
-  return childStatsCount;
+  return childRows.length;
 }
 
 /**
@@ -189,11 +224,10 @@ export async function runDailyRollup(
   // 1. Rollup child_daily_stats (ignoring NULL child_profile_id per BR-TLM-05)
   const childStatsCount = await rollupChildDailyStatsForWindow(db, dateIct);
 
-  // 2. Rollup level_daily_stats (by level_code, content_version, date_ict)
+  // 2. Rollup level_daily_stats (by level_code, date_ict)
   const levelAggregates = await db
     .select({
       levelCode: gameLevels.code,
-      contentVersion: playSessions.contentVersion,
       playsCount: count(playSessions.id),
       completionsCount: sql<number>`COUNT(CASE WHEN ${playSessions.completionStatus} = 'completed' THEN 1 END)::int`,
       abandonedCount: sql<number>`COUNT(CASE WHEN ${playSessions.completionStatus} = 'abandoned' THEN 1 END)::int`,
@@ -207,39 +241,38 @@ export async function runDailyRollup(
         lt(playSessions.startedAt, endDate)
       )
     )
-    .groupBy(gameLevels.code, playSessions.contentVersion);
+    .groupBy(gameLevels.code);
 
-  let levelStatsCount = 0;
-  for (const agg of levelAggregates) {
+  const now = new Date();
+  const UPSERT_BATCH_SIZE = 500;
+  const levelRows = levelAggregates.map((agg) => ({
+    levelCode: agg.levelCode,
+    dateIct,
+    playsCount: agg.playsCount,
+    completionsCount: agg.completionsCount,
+    abandonedCount: agg.abandonedCount,
+    avgDurationSeconds: agg.avgDurationSeconds,
+    avgHintsUsed: 0,
+    updatedAt: now,
+  }));
+
+  for (let i = 0; i < levelRows.length; i += UPSERT_BATCH_SIZE) {
+    const batch = levelRows.slice(i, i + UPSERT_BATCH_SIZE);
     await db
       .insert(levelDailyStats)
-      .values({
-        levelCode: agg.levelCode,
-        contentVersion: agg.contentVersion,
-        dateIct,
-        playsCount: agg.playsCount,
-        completionsCount: agg.completionsCount,
-        abandonedCount: agg.abandonedCount,
-        avgDurationSeconds: agg.avgDurationSeconds,
-        avgHintsUsed: 0,
-        updatedAt: new Date(),
-      })
+      .values(batch)
       .onConflictDoUpdate({
-        target: [
-          levelDailyStats.levelCode,
-          levelDailyStats.contentVersion,
-          levelDailyStats.dateIct,
-        ],
+        target: [levelDailyStats.levelCode, levelDailyStats.dateIct],
         set: {
-          playsCount: agg.playsCount,
-          completionsCount: agg.completionsCount,
-          abandonedCount: agg.abandonedCount,
-          avgDurationSeconds: agg.avgDurationSeconds,
-          updatedAt: new Date(),
+          playsCount: sql`excluded.plays_count`,
+          completionsCount: sql`excluded.completions_count`,
+          abandonedCount: sql`excluded.abandoned_count`,
+          avgDurationSeconds: sql`excluded.avg_duration_seconds`,
+          updatedAt: now,
         },
       });
-    levelStatsCount++;
   }
+  const levelStatsCount = levelRows.length;
 
   // 3. Rollup skill_daily_stats (by skill_id, date_ict; ignoring NULL child_profile_id per BR-TLM-05)
   const skillAggregates = await db
@@ -265,32 +298,32 @@ export async function runDailyRollup(
     )
     .groupBy(contentSkillMap.skillId);
 
-  let skillStatsCount = 0;
-  for (const agg of skillAggregates) {
-    const accuracy =
+  const skillRows = skillAggregates.map((agg) => ({
+    skillId: agg.skillId,
+    dateIct,
+    exposureCount: agg.exposureCount,
+    avgAccuracyPercent:
       agg.exposureCount > 0
         ? Math.round((agg.completions / agg.exposureCount) * 100)
-        : 0;
+        : 0,
+    updatedAt: now,
+  }));
 
+  for (let i = 0; i < skillRows.length; i += UPSERT_BATCH_SIZE) {
+    const batch = skillRows.slice(i, i + UPSERT_BATCH_SIZE);
     await db
       .insert(skillDailyStats)
-      .values({
-        skillId: agg.skillId,
-        dateIct,
-        exposureCount: agg.exposureCount,
-        avgAccuracyPercent: accuracy,
-        updatedAt: new Date(),
-      })
+      .values(batch)
       .onConflictDoUpdate({
         target: [skillDailyStats.skillId, skillDailyStats.dateIct],
         set: {
-          exposureCount: agg.exposureCount,
-          avgAccuracyPercent: accuracy,
-          updatedAt: new Date(),
+          exposureCount: sql`excluded.exposure_count`,
+          avgAccuracyPercent: sql`excluded.avg_accuracy_percent`,
+          updatedAt: now,
         },
       });
-    skillStatsCount++;
   }
+  const skillStatsCount = skillRows.length;
 
   return {
     dateIct,
@@ -323,7 +356,7 @@ export async function runExpireEntitlements(
         lt(entitlements.expiresAt, now)
       )
     )
-    .returning();
+    .returning({ id: entitlements.id });
 
   return { expiredCount: updated.length };
 }

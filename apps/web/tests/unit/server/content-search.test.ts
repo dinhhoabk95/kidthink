@@ -1,10 +1,7 @@
 import { gameLevels, getOwnerDb } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import {
-  searchGameLevels,
-  searchLessons,
-} from "#server/services/content-search.js";
+import { searchGameLevels } from "#server/services/content-search.js";
 
 describe("Content Search Service & Invariants (BR-SRC-01..07)", () => {
   it("Scenario: BR-SRC-01 — locked items omit content_pack and difficulty_params", async () => {
@@ -28,7 +25,7 @@ describe("Content Search Service & Invariants (BR-SRC-01..07)", () => {
     }
   });
 
-  it("Scenario: BR-SRC-02 — caps limit parameter at 60 for levels, 40 for lessons, and 100 for managers", async () => {
+  it("Scenario: BR-SRC-02 — caps limit parameter at 60 for levels and 100 for managers", async () => {
     const db = getOwnerDb();
     const levelResult = await searchGameLevels(
       db,
@@ -36,13 +33,6 @@ describe("Content Search Service & Invariants (BR-SRC-01..07)", () => {
       { role: "user", userPackage: "free" }
     );
     expect(levelResult.items.length).toBeLessThanOrEqual(60);
-
-    const lessonResult = await searchLessons(
-      db,
-      { limit: 5000 },
-      { role: "user", userPackage: "free" }
-    );
-    expect(lessonResult.items.length).toBeLessThanOrEqual(40);
 
     const managerResult = await searchGameLevels(
       db,
@@ -119,20 +109,18 @@ describe("Content Search Service & Invariants (BR-SRC-01..07)", () => {
 
   it("Scenario: BR-SRC-07 — supports accent-insensitive Vietnamese search", async () => {
     const db = getOwnerDb();
-    const uniqueCode = `GL-C1-SRC-${Date.now()}`;
+    const randNum = String(Math.floor(Math.random() * 8999 + 1000));
+    const uniqueCode = `GL-C1-NUM-SRCH-${randNum}`;
     const [inserted] = await db
       .insert(gameLevels)
       .values({
-        entityId: Math.floor(Date.now() / 1000),
         code: uniqueCode,
-        contentVersion: 1,
         templateCode: "GT-001",
         title: "Đếm quả táo đỏ trên cây",
         description: "Trò chơi đếm quả táo",
         contentPack: { prompt: "Đếm táo" },
         difficultyParams: { distractor_count: 1 },
         accessTier: "free",
-        status: "published",
       })
       .returning({ id: gameLevels.id });
 
@@ -146,10 +134,7 @@ describe("Content Search Service & Invariants (BR-SRC-01..07)", () => {
       expect(result.items.some((it) => it.code === uniqueCode)).toBe(true);
     } finally {
       if (inserted) {
-        await db
-          .update(gameLevels)
-          .set({ status: "archived" })
-          .where(eq(gameLevels.id, inserted.id));
+        await db.delete(gameLevels).where(eq(gameLevels.id, inserted.id));
       }
     }
   });

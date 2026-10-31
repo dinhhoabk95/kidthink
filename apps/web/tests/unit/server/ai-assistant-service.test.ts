@@ -185,7 +185,7 @@ describe("AI Assistant Service Integration Tests (BR-AIA-01..11)", () => {
     );
   });
 
-  it("BR-AIA-05 & BR-AIA-06 & BR-AIA-10: suggestContent queries published games/lessons without altering curriculum", async () => {
+  it("BR-AIA-05 & BR-AIA-06 & BR-AIA-10: suggestContent queries published games without altering curriculum", async () => {
     const { user } = await createTestParent(5);
     const db = getOwnerDb();
     const uid = Math.floor(Math.random() * 800_000) + 100_000;
@@ -193,14 +193,11 @@ describe("AI Assistant Service Integration Tests (BR-AIA-01..11)", () => {
     // Seed dummy game level
     const templateCode = "GT-001";
     await db.insert(gameLevels).values({
-      entityId: uid,
       code: `GL-C1-CNT-NUM-${String(uid).slice(0, 4)}`,
       templateCode,
-      contentVersion: 1,
       title: "Mức chơi AI Test",
       contentPack: {},
       difficultyParams: {},
-      status: "published",
       accessTier: "free",
     });
 

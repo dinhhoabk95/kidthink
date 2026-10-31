@@ -300,6 +300,7 @@ describe("User MFA Flow (P2.11, BR-MFA-01 - BR-MFA-12)", () => {
           setHeader: () => {
             /* mock */
           },
+          getHeader: () => undefined,
         },
       },
       context: {
@@ -344,6 +345,7 @@ describe("User MFA Flow (P2.11, BR-MFA-01 - BR-MFA-12)", () => {
           setHeader: () => {
             /* mock */
           },
+          getHeader: () => undefined,
         },
       },
       context: {
@@ -382,6 +384,7 @@ describe("User MFA Flow (P2.11, BR-MFA-01 - BR-MFA-12)", () => {
           setHeader: () => {
             /* mock */
           },
+          getHeader: () => undefined,
         },
       },
       context: {
@@ -447,7 +450,11 @@ describe("User MFA Flow (P2.11, BR-MFA-01 - BR-MFA-12)", () => {
         method: "POST",
         node: {
           req: { method: "POST", headers: {}, body },
-          res: { statusCode: 200, setHeader: () => undefined },
+          res: {
+            statusCode: 200,
+            setHeader: () => undefined,
+            getHeader: () => undefined,
+          },
         },
         context: { body },
         _requestBody: body,

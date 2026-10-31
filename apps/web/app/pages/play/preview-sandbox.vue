@@ -65,6 +65,7 @@
   let currentConfig: EngineConfig | null = null;
   let stageZones: StageZones | null = null;
   let trustedParentOrigin = "";
+  let startSeq = 0;
   let currentTemplateCode =
     typeof route.query.template === "string" && route.query.template.length > 0
       ? route.query.template
@@ -81,15 +82,19 @@
     if (!canvasRef.value) {
       return;
     }
+    const seq = ++startSeq;
 
     try {
       errorMessage.value = null;
+
+      await preloadGameSession(templateCode);
+      if (seq !== startSeq || !canvasRef.value) {
+        return;
+      }
       if (engine) {
         engine.destroy();
         engine = null;
       }
-
-      await preloadGameSession(templateCode);
 
       engine = new GameEngine();
       engine.load(config, createSessionFactory(templateCode));
@@ -108,6 +113,9 @@
         );
       }
     } catch (err) {
+      if (seq !== startSeq) {
+        return;
+      }
       errorMessage.value =
         err instanceof Error ? err.message : "Lỗi khởi chạy engine";
       if (window.parent) {
@@ -622,6 +630,7 @@
   });
 
   onUnmounted(() => {
+    ++startSeq;
     clearTimeout(autoInitTimer);
     window.removeEventListener("message", handleMessage);
     window.removeEventListener("resize", handleResize);

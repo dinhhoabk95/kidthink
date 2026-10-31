@@ -27,10 +27,7 @@ export const userStatusEnum = pgEnum("user_status", [
   "deleted",
 ]);
 
-export const managerRoleEnum = pgEnum("manager_role", [
-  "super_admin",
-  "content_reviewer",
-]);
+export const managerRoleEnum = pgEnum("manager_role", ["super_admin"]);
 
 export const accountTypeEnum = pgEnum("account_type", ["user", "manager"]);
 
@@ -57,19 +54,27 @@ export const consentActionEnum = pgEnum("consent_action", [
   "withdrawn",
 ]);
 
-export const users = pgTable("users", {
-  id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
-  uuid: uuid("uuid").defaultRandom().notNull().unique(),
-  email: citext("email").notNull().unique(),
-  passwordHash: text("password_hash"),
-  displayName: varchar("display_name", { length: 60 }).notNull(),
-  status: userStatusEnum("status").notNull().default("pending_verification"),
-  emailVerifiedAt: timestamp("email_verified_at", { withTimezone: true }),
-  sessionVersion: integer("session_version").notNull().default(0),
-  suspendedReason: text("suspended_reason"),
-  purgeAt: timestamp("purge_at", { withTimezone: true }),
-  ...timestamps(),
-});
+export const users = pgTable(
+  "users",
+  {
+    id: bigint("id", { mode: "number" })
+      .primaryKey()
+      .generatedAlwaysAsIdentity(),
+    uuid: uuid("uuid").defaultRandom().notNull().unique(),
+    email: citext("email").notNull().unique(),
+    passwordHash: text("password_hash"),
+    displayName: varchar("display_name", { length: 60 }).notNull(),
+    status: userStatusEnum("status").notNull().default("pending_verification"),
+    emailVerifiedAt: timestamp("email_verified_at", { withTimezone: true }),
+    sessionVersion: integer("session_version").notNull().default(0),
+    suspendedReason: text("suspended_reason"),
+    purgeAt: timestamp("purge_at", { withTimezone: true }),
+    ...timestamps(),
+  },
+  (table) => [
+    index("idx_users_status_purge_at").on(table.status, table.purgeAt),
+  ]
+);
 
 export const managers = pgTable("managers", {
   id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
@@ -209,17 +214,30 @@ export const socialIdentities = pgTable(
   ]
 );
 
-export const consentLogs = pgTable("consent_logs", {
-  id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
-  userId: bigint("user_id", { mode: "number" })
-    .notNull()
-    .references(() => users.id, { onDelete: "restrict" }),
-  consentType: consentTypeEnum("consent_type").notNull(),
-  action: consentActionEnum("action").notNull().default("accepted"),
-  ipAddress: text("ip_address").notNull(),
-  userAgent: text("user_agent").notNull(),
-  ...timestamps(),
-});
+export const consentLogs = pgTable(
+  "consent_logs",
+  {
+    id: bigint("id", { mode: "number" })
+      .primaryKey()
+      .generatedAlwaysAsIdentity(),
+    userId: bigint("user_id", { mode: "number" })
+      .notNull()
+      .references(() => users.id, { onDelete: "restrict" }),
+    consentType: consentTypeEnum("consent_type").notNull(),
+    action: consentActionEnum("action").notNull().default("accepted"),
+    ipAddress: text("ip_address").notNull(),
+    userAgent: text("user_agent").notNull(),
+    ...timestamps(),
+  },
+  (table) => [
+    index("idx_consent_logs_user_type_created").on(
+      table.userId,
+      table.consentType,
+      table.createdAt,
+      table.id
+    ),
+  ]
+);
 
 export const consentRequirements = pgTable("consent_requirements", {
   consentType: consentTypeEnum("consent_type").primaryKey(),

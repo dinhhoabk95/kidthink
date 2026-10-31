@@ -189,9 +189,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
     const [levelFree1] = await db
       .insert(gameLevels)
       .values({
-        entityId: Math.floor(100_000 + Math.random() * 800_000),
         code: await makeLevelCode("FREA"),
-        contentVersion: 1,
         templateCode,
         title: "Đếm táo miễn phí",
         contentPack: {},
@@ -200,7 +198,6 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         ageMin: 3,
         ageMax: 5,
         difficulty: 1,
-        status: "published",
         thumbnailEmoji: "🍎",
       })
       .returning();
@@ -211,9 +208,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
     const [levelFree2] = await db
       .insert(gameLevels)
       .values({
-        entityId: Math.floor(100_000 + Math.random() * 800_000),
         code: await makeLevelCode("FREB"),
-        contentVersion: 1,
         templateCode,
         title: "Đếm chuối miễn phí",
         contentPack: {},
@@ -222,7 +217,6 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         ageMin: 3,
         ageMax: 5,
         difficulty: 1,
-        status: "published",
         thumbnailEmoji: "🍌",
       })
       .returning();
@@ -233,9 +227,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
     const [levelStandard] = await db
       .insert(gameLevels)
       .values({
-        entityId: Math.floor(100_000 + Math.random() * 800_000),
         code: await makeLevelCode("STDA"),
-        contentVersion: 1,
         templateCode,
         title: "Đếm cam tiêu chuẩn",
         contentPack: {},
@@ -244,7 +236,6 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         ageMin: 4,
         ageMax: 6,
         difficulty: 2,
-        status: "published",
         thumbnailEmoji: "🍊",
       })
       .returning();
@@ -255,9 +246,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
     const [levelPremium] = await db
       .insert(gameLevels)
       .values({
-        entityId: Math.floor(100_000 + Math.random() * 800_000),
         code: await makeLevelCode("PRMA"),
-        contentVersion: 1,
         templateCode,
         title: "Đếm dâu cao cấp",
         contentPack: {},
@@ -266,7 +255,6 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         ageMin: 4,
         ageMax: 6,
         difficulty: 3,
-        status: "published",
         thumbnailEmoji: "🍓",
       })
       .returning();
@@ -278,13 +266,13 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
     await db.insert(contentSkillMap).values([
       {
         entityType: "game_level",
-        entityId: levelFree1.entityId,
+        entityId: levelFree1.id,
         skillId: skill1.id,
         weight: "1.00",
       },
       {
         entityType: "game_level",
-        entityId: levelStandard.entityId,
+        entityId: levelStandard.id,
         skillId: skill2.id,
         weight: "1.00",
       },
@@ -330,13 +318,11 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
     const [curr] = await db
       .insert(curricula)
       .values({
-        entityId: ts + 100,
         code: `CUR-REC-${ts}`,
         title: "Chương trình Mầm non 1",
         accessTier: "free",
         durationWeeks: 4,
         sessionsPerWeek: 2,
-        status: "published",
       })
       .returning();
     if (!curr) {
@@ -357,7 +343,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         sessionNo: 1,
         position: 1,
         entityType: "game_level",
-        entityId: levelFree2.entityId,
+        entityId: levelFree2.id,
         isRequired: true,
       })
       .returning();
@@ -404,7 +390,6 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
       {
         childProfileId: child.id,
         gameLevelId: levelFree1.id,
-        contentVersion: 1,
         templateCode: levelFree1.templateCode,
         startedAt: new Date(Date.now() - 3000),
         completionStatus: "completed",
@@ -412,7 +397,6 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
       {
         childProfileId: child.id,
         gameLevelId: levelFree2.id,
-        contentVersion: 1,
         templateCode: levelFree2.templateCode,
         startedAt: new Date(Date.now() - 2000),
         completionStatus: "completed",
@@ -420,7 +404,6 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
       {
         childProfileId: child.id,
         gameLevelId: levelStandard.id,
-        contentVersion: 1,
         templateCode: levelStandard.templateCode,
         startedAt: new Date(Date.now() - 1000),
         completionStatus: "completed",
@@ -481,7 +464,6 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
       .insert(levelDailyStats)
       .values({
         levelCode: levelFree1.code,
-        contentVersion: 1,
         dateIct: "2026-08-15",
         playsCount: 150,
       })
@@ -524,7 +506,6 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
     await db.insert(playSessions).values({
       childProfileId: child.id,
       gameLevelId: levelFree1.id,
-      contentVersion: 1,
       templateCode: levelFree1.templateCode,
       startedAt: new Date(),
       completionStatus: "completed",
@@ -539,40 +520,15 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
     expect(recs.primary.level_code).toBeTruthy();
   });
 
-  it("Scenario: level đã chơi ở bản cũ (đã archive) vẫn tính là đã chơi — khớp theo mã, không theo id", async () => {
+  it("Scenario: level đã chơi được ghi nhận đầy đủ theo mã level", async () => {
     const db = getOwnerDb();
     const { child, levelFree1, levelFree2 } = await createTestFixtures();
-
-    await db
-      .update(gameLevels)
-      .set({ status: "archived" })
-      .where(eq(gameLevels.id, levelFree1.id));
-    const [v2] = await db
-      .insert(gameLevels)
-      .values({
-        entityId: levelFree1.entityId,
-        code: levelFree1.code,
-        contentVersion: 2,
-        templateCode: levelFree1.templateCode,
-        title: levelFree1.title,
-        contentPack: {},
-        difficultyParams: {},
-        accessTier: "free",
-        ageMin: 3,
-        ageMax: 5,
-        difficulty: 1,
-        status: "published",
-        thumbnailEmoji: "🍎",
-      })
-      .returning();
-    expect(v2?.id).not.toBe(levelFree1.id);
 
     const base = Date.now();
     await db.insert(playSessions).values([
       {
         childProfileId: child.id,
         gameLevelId: levelFree1.id,
-        contentVersion: 1,
         templateCode: levelFree1.templateCode,
         startedAt: new Date(base - 10_000),
         completionStatus: "completed",
@@ -580,7 +536,6 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
       ...[3000, 2000, 1000].map((ago) => ({
         childProfileId: child.id,
         gameLevelId: levelFree2.id,
-        contentVersion: 1,
         templateCode: levelFree2.templateCode,
         startedAt: new Date(base - ago),
         completionStatus: "completed" as const,

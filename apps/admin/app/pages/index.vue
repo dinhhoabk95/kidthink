@@ -109,7 +109,7 @@
           </span>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <!-- Pending Payments Card -->
           <div
             class="p-4 rounded-3xl border flex flex-col justify-between space-y-3 shadow-xs transition-colors"
@@ -176,76 +176,6 @@
                 to="/payments"
               >
                 Vào hàng đợi &rsaquo;
-              </NuxtLink>
-            </div>
-          </div>
-
-          <!-- Pending Content Card -->
-          <div
-            class="p-4 rounded-3xl border flex flex-col justify-between space-y-3 shadow-xs transition-colors"
-            :class="[
-              data.todo.pending_content.count > 50
-                ? 'border-warning-300 dark:border-warning-800 bg-warning-50/30 dark:bg-warning-950/20'
-                : 'border-surface-200 dark:border-surface-800 bg-white dark:bg-surface-900',
-            ]"
-          >
-            <div class="space-y-1.5">
-              <div class="flex items-center justify-between gap-2">
-                <span
-                  class="text-xs font-semibold text-surface-600 dark:text-surface-300"
-                >
-                  Nội dung
-                </span>
-                <span
-                  class="px-2 py-0.5 rounded-xl text-xs font-mono font-bold"
-                  :class="
-                    data.todo.pending_content.count > 50
-                      ? 'bg-warning-100 dark:bg-warning-900/60 text-warning-800 dark:text-warning-300'
-                      : 'bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-300'
-                  "
-                >
-                  {{
-                    data.todo.pending_content.count > 50
-                      ? "Tồn đọng cao"
-                      : "Bước P2.8"
-                  }}
-                </span>
-              </div>
-              <h3
-                class="text-sm font-bold text-surface-900 dark:text-surface-100"
-              >
-                Nội dung chờ duyệt
-              </h3>
-              <div
-                class="text-3xl font-bold font-mono tabular-nums"
-                :class="
-                  data.todo.pending_content.count > 50
-                    ? 'text-warning-700 dark:text-warning-400'
-                    : 'text-surface-900 dark:text-surface-100'
-                "
-              >
-                {{ data.todo.pending_content.count }}
-              </div>
-              <p class="text-xs text-surface-500 dark:text-surface-400">
-                Ngưỡng cảnh báo: &gt; 50 nội dung tồn
-              </p>
-            </div>
-
-            <div
-              class="pt-2 border-t border-surface-100 dark:border-surface-800/80 flex items-center justify-between gap-2"
-            >
-              <span class="text-xs text-surface-500 dark:text-surface-400">
-                {{
-                  data.todo.pending_content.count > 0
-                    ? `${data.todo.pending_content.count} mục chờ duyệt`
-                    : "Không có mục tồn"
-                }}
-              </span>
-              <NuxtLink
-                class="min-h-11 inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-semibold bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-brand-300 hover:bg-brand-100 dark:hover:bg-brand-900/60 transition-colors"
-                to="/content-review"
-              >
-                Duyệt nội dung &rsaquo;
               </NuxtLink>
             </div>
           </div>
@@ -664,9 +594,9 @@
           </div>
         </div>
 
-        <!-- 3 Catalog Counts Mini-Strip -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
-          <!-- Published Levels -->
+        <!-- Catalog Counts Mini-Strip -->
+        <div class="grid grid-cols-1 gap-3 pt-1">
+          <!-- Total Levels -->
           <NuxtLink
             class="min-h-11 p-3.5 rounded-2xl border border-surface-200 dark:border-surface-800 bg-surface-50/70 dark:bg-surface-900/60 hover:border-brand-300 dark:hover:border-brand-700 flex items-center justify-between gap-3 transition-colors"
             to="/levels"
@@ -675,7 +605,7 @@
               <div
                 class="text-xs text-surface-700 dark:text-surface-200 font-semibold"
               >
-                Levels đã xuất bản
+                Tổng màn chơi (Game Levels)
               </div>
               <div class="text-xs text-surface-500 dark:text-surface-400">
                 Sẵn sàng cho trẻ chơi
@@ -684,51 +614,11 @@
             <div
               class="text-2xl font-bold font-mono tabular-nums text-success-600 dark:text-success-400"
             >
-              {{ data.content.published_levels.count }}
-            </div>
-          </NuxtLink>
-
-          <!-- Draft Levels -->
-          <NuxtLink
-            class="min-h-11 p-3.5 rounded-2xl border border-surface-200 dark:border-surface-800 bg-surface-50/70 dark:bg-surface-900/60 hover:border-brand-300 dark:hover:border-brand-700 flex items-center justify-between gap-3 transition-colors"
-            to="/levels"
-          >
-            <div class="min-w-0">
-              <div
-                class="text-xs text-surface-700 dark:text-surface-200 font-semibold"
-              >
-                Levels bản nháp
-              </div>
-              <div class="text-xs text-surface-500 dark:text-surface-400">
-                Đang biên soạn / kiểm thử
-              </div>
-            </div>
-            <div
-              class="text-2xl font-bold font-mono tabular-nums text-warning-600 dark:text-warning-400"
-            >
-              {{ data.content.draft_levels.count }}
-            </div>
-          </NuxtLink>
-
-          <!-- Published Lessons -->
-          <NuxtLink
-            class="min-h-11 p-3.5 rounded-2xl border border-surface-200 dark:border-surface-800 bg-surface-50/70 dark:bg-surface-900/60 hover:border-brand-300 dark:hover:border-brand-700 flex items-center justify-between gap-3 transition-colors"
-            to="/lessons"
-          >
-            <div class="min-w-0">
-              <div
-                class="text-xs text-surface-700 dark:text-surface-200 font-semibold"
-              >
-                Lessons đã xuất bản
-              </div>
-              <div class="text-xs text-surface-500 dark:text-surface-400">
-                Giáo án tương tác
-              </div>
-            </div>
-            <div
-              class="text-2xl font-bold font-mono tabular-nums text-brand-600 dark:text-brand-400"
-            >
-              {{ data.content.published_lessons.count }}
+              {{
+                data.content.total_levels?.count ??
+                  data.content.published_levels?.count ??
+                  0
+              }}
             </div>
           </NuxtLink>
         </div>
@@ -843,8 +733,7 @@
               Chưa có nguồn — bước P4
             </div>
             <p class="text-xs text-surface-500 dark:text-surface-400">
-              Theo dõi hạn mức tiêu thụ token API của người dùng và xưởng sáng
-              tác.
+              Theo dõi hạn mức tiêu thụ token API của người dùng.
             </p>
           </div>
         </div>
@@ -880,7 +769,6 @@
     as_of: string;
     todo?: {
       pending_payments: { count: number };
-      pending_content: { count: number };
       open_alerts?: {
         count: number;
         items: Array<{
@@ -902,9 +790,8 @@
       skills_without_levels: { count: number; is_feedback: true };
       levels_high_drop_rate: { count: number; is_feedback: true };
       curriculum_weeks_incomplete: PendingSourceMetric & { is_feedback: true };
-      published_levels: { count: number };
-      draft_levels: { count: number };
-      published_lessons: { count: number };
+      total_levels?: { count: number };
+      published_levels?: { count: number };
     };
     system?: {
       last_backup: {

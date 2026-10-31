@@ -35,8 +35,8 @@ export const RM_5_6_LA_YEAR_01: RoadmapSeed = {
       "Ôn tập chủ đề «Trường mầm non»: bé ôn lại «Đếm từ điểm bất kỳ», «Nhận biết b · c · d · đ · g · h».",
       [
         session(1, "review", "C1.CNT.07"),
-        session(2, "practice", "C5.LET.03"),
-        session(3, "offscreen", "C1.CNT.07"),
+        session(2, "review", "C5.LET.03"),
+        session(3, "offscreen", "C5.LET.04"),
       ]
     ),
     week(
@@ -45,7 +45,7 @@ export const RM_5_6_LA_YEAR_01: RoadmapSeed = {
       [
         session(1, "introduce", "C5.LET.04"),
         session(2, "practice", "C5.LET.04"),
-        session(3, "offscreen", "C1.CNT.07"),
+        session(3, "offscreen", "C1.MEAS.05"),
       ]
     ),
     week(
@@ -71,16 +71,16 @@ export const RM_5_6_LA_YEAR_01: RoadmapSeed = {
       "Ôn tập chủ đề «Bản thân»: bé ôn lại «Vần một âm: 12 nguyên âm», «Dung tích», «Nhận biết k · l · m · n · p · q».",
       [
         session(1, "review", "C5.RIM.01"),
-        session(2, "practice", "C1.MEAS.05"),
+        session(2, "review", "C1.MEAS.05"),
         session(3, "offscreen", "C5.LET.04"),
       ]
     ),
     week(
       8,
-      "Chủ đề «Gia đình»: bé làm quen với «Hình ngũ giác» qua trò chơi và hoạt động thật.",
+      "Chủ đề «Gia đình»: bé làm quen với «Hình xoay một góc vuông» qua trò chơi và hoạt động thật.",
       [
-        session(1, "introduce", "C2.GEO.06"),
-        session(2, "practice", "C2.GEO.06"),
+        session(1, "introduce", "C2.ROT.01"),
+        session(2, "practice", "C2.ROT.01"),
         session(3, "offscreen", "C5.RIM.01"),
       ]
     ),
@@ -90,24 +90,24 @@ export const RM_5_6_LA_YEAR_01: RoadmapSeed = {
       [
         session(1, "introduce", "C1.CNT.10"),
         session(2, "practice", "C1.CNT.10"),
-        session(3, "offscreen", "C2.GEO.06"),
+        session(3, "offscreen", "C2.ROT.01"),
       ]
     ),
     week(
       10,
-      "Ôn tập chủ đề «Gia đình»: bé ôn lại «Kiểm tra kết quả đếm», «Hình ngũ giác», «Vần một âm: 12 nguyên âm».",
+      "Ôn tập chủ đề «Gia đình»: bé ôn lại «Kiểm tra kết quả đếm», «Hình xoay một góc vuông», «Vần một âm: 12 nguyên âm».",
       [
         session(1, "review", "C1.CNT.10"),
-        session(2, "practice", "C2.GEO.06"),
+        session(2, "review", "C2.ROT.01"),
         session(3, "offscreen", "C5.RIM.01"),
       ]
     ),
     week(
       11,
-      "Chủ đề «Nghề nghiệp»: bé làm quen với «Hình lục giác» qua trò chơi và hoạt động thật.",
+      "Chủ đề «Nghề nghiệp»: bé làm quen với «Ghép khối 3D» qua trò chơi và hoạt động thật.",
       [
-        session(1, "introduce", "C2.GEO.07"),
-        session(2, "practice", "C2.GEO.07"),
+        session(1, "introduce", "C2.CON.04"),
+        session(2, "practice", "C2.CON.04"),
         session(3, "offscreen", "C1.CNT.10"),
       ]
     ),
@@ -117,25 +117,25 @@ export const RM_5_6_LA_YEAR_01: RoadmapSeed = {
       [
         session(1, "introduce", "C1.MEAS.13"),
         session(2, "practice", "C1.MEAS.13"),
-        session(3, "offscreen", "C2.GEO.07"),
+        session(3, "offscreen", "C2.CON.04"),
       ]
     ),
     week(
       13,
-      "Chủ đề «Nghề nghiệp»: bé làm quen với «Ghép khối 3D» qua trò chơi và hoạt động thật.",
+      "Chủ đề «Nghề nghiệp»: bé làm quen với «Tách tiếng thành âm đầu và vần» qua trò chơi và hoạt động thật.",
       [
-        session(1, "introduce", "C2.CON.04"),
-        session(2, "practice", "C2.CON.04"),
+        session(1, "introduce", "C5.ONS.01"),
+        session(2, "practice", "C5.ONS.01"),
         session(3, "offscreen", "C1.MEAS.13"),
       ]
     ),
     week(
       14,
-      "Ôn tập chủ đề «Nghề nghiệp»: bé ôn lại «Ghép khối 3D», «Đồng hồ: giờ đúng», «Vần một âm: 12 nguyên âm».",
+      "Ôn tập chủ đề «Nghề nghiệp»: bé ôn lại «Tách tiếng thành âm đầu và vần», «Đồng hồ: giờ đúng», «Ghép khối 3D».",
       [
-        session(1, "review", "C2.CON.04"),
-        session(2, "practice", "C1.MEAS.13"),
-        session(3, "offscreen", "C5.RIM.01"),
+        session(1, "review", "C5.ONS.01"),
+        session(2, "review", "C1.MEAS.13"),
+        session(3, "offscreen", "C2.CON.04"),
       ]
     ),
     week(
@@ -144,15 +144,15 @@ export const RM_5_6_LA_YEAR_01: RoadmapSeed = {
       [
         session(1, "introduce", "C3.DED.02"),
         session(2, "practice", "C3.DED.02"),
-        session(3, "offscreen", "C2.CON.04"),
+        session(3, "offscreen", "C5.ONS.01"),
       ]
     ),
     week(
       16,
-      "Chủ đề «Thực vật»: bé làm quen với «Đa giác — đếm cạnh» qua trò chơi và hoạt động thật.",
+      "Chủ đề «Thực vật»: bé làm quen với «Cộng trong phạm vi 5» qua trò chơi và hoạt động thật.",
       [
-        session(1, "introduce", "C2.GEO.08"),
-        session(2, "practice", "C2.GEO.08"),
+        session(1, "introduce", "C1.ADD.02"),
+        session(2, "practice", "C1.ADD.02"),
         session(3, "offscreen", "C3.DED.02"),
       ]
     ),
@@ -162,15 +162,15 @@ export const RM_5_6_LA_YEAR_01: RoadmapSeed = {
       [
         session(1, "introduce", "C3.INF.02"),
         session(2, "practice", "C3.INF.02"),
-        session(3, "offscreen", "C2.GEO.08"),
+        session(3, "offscreen", "C1.ADD.02"),
       ]
     ),
     week(
       18,
-      "Ôn tập chủ đề «Thực vật»: bé ôn lại «Đoán kết quả», «Đa giác — đếm cạnh», «Đồng hồ: giờ đúng».",
+      "Ôn tập chủ đề «Thực vật»: bé ôn lại «Đoán kết quả», «Cộng trong phạm vi 5», «Đồng hồ: giờ đúng».",
       [
         session(1, "review", "C3.INF.02"),
-        session(2, "practice", "C2.GEO.08"),
+        session(2, "review", "C1.ADD.02"),
         session(3, "offscreen", "C1.MEAS.13"),
       ]
     ),
@@ -206,7 +206,7 @@ export const RM_5_6_LA_YEAR_01: RoadmapSeed = {
       "Ôn tập chủ đề «Động vật»: bé ôn lại «Chọn nguyên nhân đúng», «Đoán nguyên nhân», «Mê cung nhiều nhánh».",
       [
         session(1, "review", "C4.CAU.03"),
-        session(2, "practice", "C3.INF.03"),
+        session(2, "review", "C3.INF.03"),
         session(3, "offscreen", "C2.MAZ.02"),
       ]
     ),
@@ -233,7 +233,7 @@ export const RM_5_6_LA_YEAR_01: RoadmapSeed = {
       "Ôn tập chủ đề «Phương tiện giao thông»: bé ôn lại «Suy nguyên nhân bị che», «Ma trận 2×2», «Mê cung nhiều nhánh».",
       [
         session(1, "review", "C4.CAU.04"),
-        session(2, "practice", "C3.MTX.01"),
+        session(2, "review", "C3.MTX.01"),
         session(3, "offscreen", "C2.MAZ.02"),
       ]
     ),
@@ -269,16 +269,16 @@ export const RM_5_6_LA_YEAR_01: RoadmapSeed = {
       "Ôn tập chủ đề «Hiện tượng tự nhiên»: bé ôn lại «Chọn đường đi tối ưu», «So kết quả với dự đoán», «Ma trận 2×2».",
       [
         session(1, "review", "C6.PLN.02"),
-        session(2, "practice", "C4.EXP.05"),
+        session(2, "review", "C4.EXP.05"),
         session(3, "offscreen", "C3.MTX.01"),
       ]
     ),
     week(
       30,
-      "Chủ đề «Quê hương – Đất nước – Bác Hồ»: bé làm quen với «Chuỗi nhân quả hai bước» qua trò chơi và hoạt động thật.",
+      "Chủ đề «Quê hương – Đất nước – Bác Hồ»: bé làm quen với «Trừ trong phạm vi 5» qua trò chơi và hoạt động thật.",
       [
-        session(1, "introduce", "C4.CAU.05"),
-        session(2, "practice", "C4.CAU.05"),
+        session(1, "introduce", "C1.SUB.02"),
+        session(2, "practice", "C1.SUB.02"),
         session(3, "offscreen", "C6.PLN.02"),
       ]
     ),
@@ -288,52 +288,52 @@ export const RM_5_6_LA_YEAR_01: RoadmapSeed = {
       [
         session(1, "introduce", "C6.PLN.03"),
         session(2, "practice", "C6.PLN.03"),
-        session(3, "offscreen", "C4.CAU.05"),
+        session(3, "offscreen", "C1.SUB.02"),
       ]
     ),
     week(
       32,
-      "Chủ đề «Quê hương – Đất nước – Bác Hồ»: bé làm quen với «Đổi một điều kiện rồi thử lại» qua trò chơi và hoạt động thật.",
+      "Chủ đề «Quê hương – Đất nước – Bác Hồ»: bé làm quen với «Tìm tiếng hiệp vần» qua trò chơi và hoạt động thật.",
       [
-        session(1, "introduce", "C4.EXP.06"),
-        session(2, "practice", "C4.EXP.06"),
+        session(1, "introduce", "C5.RHY.02"),
+        session(2, "practice", "C5.RHY.02"),
         session(3, "offscreen", "C6.PLN.03"),
       ]
     ),
     week(
       33,
-      "Ôn tập chủ đề «Quê hương – Đất nước – Bác Hồ»: bé ôn lại «Đổi một điều kiện rồi thử lại», «Thử trong đầu trước khi thao tác», «Ma trận 2×2».",
+      "Ôn tập chủ đề «Quê hương – Đất nước – Bác Hồ»: bé ôn lại «Tìm tiếng hiệp vần», «Thử trong đầu trước khi thao tác», «Nếu… thì…».",
       [
-        session(1, "review", "C4.EXP.06"),
-        session(2, "practice", "C6.PLN.03"),
-        session(3, "offscreen", "C3.MTX.01"),
+        session(1, "review", "C5.RHY.02"),
+        session(2, "review", "C6.PLN.03"),
+        session(3, "offscreen", "C3.DED.02"),
       ]
     ),
     week(
       34,
-      "Chủ đề «Bé sắp vào lớp Một»: bé ôn lại «Đếm từ điểm bất kỳ», «Đoán kết quả», «Vần một âm: 12 nguyên âm» để khép lại năm học.",
+      "Chủ đề «Bé sắp vào lớp Một»: bé ôn lại «Đếm từ điểm bất kỳ», «Đoán kết quả», «Trừ trong phạm vi 5» để khép lại năm học.",
       [
         session(1, "review", "C1.CNT.07"),
-        session(2, "practice", "C3.INF.02"),
-        session(3, "offscreen", "C5.RIM.01"),
+        session(2, "review", "C3.INF.02"),
+        session(3, "offscreen", "C1.SUB.02"),
       ]
     ),
     week(
       35,
-      "Chủ đề «Bé sắp vào lớp Một»: bé ôn lại «Hình lục giác», «So kết quả với dự đoán», «Lập kế hoạch trước khi làm» để khép lại năm học.",
+      "Chủ đề «Bé sắp vào lớp Một»: bé ôn lại «Ghép khối 3D», «So kết quả với dự đoán», «Lập kế hoạch trước khi làm» để khép lại năm học.",
       [
-        session(1, "review", "C2.GEO.07"),
-        session(2, "practice", "C4.EXP.05"),
+        session(1, "review", "C2.CON.04"),
+        session(2, "review", "C4.EXP.05"),
         session(3, "offscreen", "C6.PLN.01"),
       ]
     ),
     week(
       36,
-      "Chủ đề «Bé sắp vào lớp Một»: bé ôn lại «Đoán nguyên nhân», «Nhận biết b · c · d · đ · g · h», «Đếm từ điểm bất kỳ» để khép lại năm học.",
+      "Chủ đề «Bé sắp vào lớp Một»: bé ôn lại «Đoán nguyên nhân», «Nhận biết b · c · d · đ · g · h», «Kiểm tra kết quả đếm» để khép lại năm học.",
       [
         session(1, "review", "C3.INF.03"),
-        session(2, "practice", "C5.LET.03"),
-        session(3, "offscreen", "C1.CNT.07"),
+        session(2, "review", "C5.LET.03"),
+        session(3, "offscreen", "C1.CNT.10"),
       ]
     ),
   ],

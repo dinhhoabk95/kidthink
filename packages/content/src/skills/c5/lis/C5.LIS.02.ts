@@ -43,58 +43,131 @@ export const C5_LIS_02_DATASET: SkillDataset = {
   items: [
     {
       id: "lis_vo_tay",
-      label: "nghe hiệu lệnh vỗ tay",
+      label: "bé vỗ tay",
       image: {
         kind: "emoji",
         ref: "👏",
       },
       category: {
-        type: "làm theo hiệu lệnh",
+        type: "động tác tay",
+        label: "Động tác tay",
       },
-    },
-    {
-      id: "lis_dam_chan",
-      label: "nghe hiệu lệnh dậm chân",
-      image: {
-        kind: "emoji",
-        ref: "🦶",
-      },
-      category: {
-        type: "làm theo hiệu lệnh",
-      },
-    },
-    {
-      id: "lis_ngoi_xuong",
-      label: "nghe hiệu lệnh ngồi xuống",
-      image: {
-        kind: "emoji",
-        ref: "🪑",
-      },
-      category: {
-        type: "làm theo hiệu lệnh",
-      },
-    },
-    {
-      id: "lis_dung_len",
-      label: "nghe hiệu lệnh đứng lên",
-      image: {
-        kind: "emoji",
-        ref: "🧍",
-      },
-      category: {
-        type: "làm theo hiệu lệnh",
-      },
+      contrast_group: "primary",
+      value: 1,
+      ordering: 1,
+      audio_path: "/audio/vi/c5/lis/be_vo_tay.mp3",
     },
     {
       id: "lis_gio_tay",
-      label: "nghe hiệu lệnh giơ tay",
+      label: "bé giơ tay",
       image: {
         kind: "emoji",
         ref: "🙋",
       },
       category: {
-        type: "làm theo hiệu lệnh",
+        type: "động tác tay",
+        label: "Động tác tay",
       },
+      contrast_group: "primary",
+      value: 2,
+      ordering: 2,
+      audio_path: "/audio/vi/c5/lis/be_gio_tay.mp3",
+    },
+    {
+      id: "lis_khoanh_tay",
+      label: "bé khoanh tay",
+      image: {
+        kind: "emoji",
+        ref: "🙇",
+      },
+      category: {
+        type: "động tác tay",
+        label: "Động tác tay",
+      },
+      contrast_group: "primary",
+      value: 3,
+      ordering: 3,
+      audio_path: "/audio/vi/c5/lis/be_khoanh_tay.mp3",
+    },
+    {
+      id: "lis_dam_chan",
+      label: "bé dậm chân",
+      image: {
+        kind: "emoji",
+        ref: "🦶",
+      },
+      category: {
+        type: "động tác thân",
+        label: "Động tác toàn thân",
+      },
+      contrast_group: "contrast",
+      value: 4,
+      ordering: 4,
+      audio_path: "/audio/vi/c5/lis/be_dam_chan.mp3",
+    },
+    {
+      id: "lis_dung_len",
+      label: "bé đứng lên",
+      image: {
+        kind: "emoji",
+        ref: "🧍",
+      },
+      category: {
+        type: "động tác thân",
+        label: "Động tác toàn thân",
+      },
+      contrast_group: "contrast",
+      value: 5,
+      ordering: 5,
+      audio_path: "/audio/vi/c5/lis/be_dung_len.mp3",
+    },
+    {
+      id: "lis_ngoi_xuong",
+      label: "bé ngồi xuống",
+      image: {
+        kind: "emoji",
+        ref: "🪑",
+      },
+      category: {
+        type: "động tác thân",
+        label: "Động tác toàn thân",
+      },
+      contrast_group: "contrast",
+      value: 6,
+      ordering: 6,
+      audio_path: "/audio/vi/c5/lis/be_ngoi_xuong.mp3",
+    },
+  ],
+  relations: [
+    {
+      type: "pair",
+      source_id: "lis_vo_tay",
+      target_id: "lis_gio_tay",
+      explanation: "cùng là động tác tay",
+    },
+    {
+      type: "pair",
+      source_id: "lis_dam_chan",
+      target_id: "lis_dung_len",
+      explanation: "cùng là động tác thân",
+    },
+    {
+      type: "contrast",
+      source_id: "lis_vo_tay",
+      target_id: "lis_dam_chan",
+      explanation: "động tác tay đối lập với động tác thân",
+    },
+    {
+      type: "contrast",
+      source_id: "lis_gio_tay",
+      target_id: "lis_dung_len",
+      explanation: "động tác tay đối lập với động tác thân",
+    },
+    {
+      type: "contrast",
+      source_id: "lis_khoanh_tay",
+      target_id: "lis_ngoi_xuong",
+      explanation: "động tác tay đối lập với động tác thân",
     },
   ],
   ladder: [
@@ -130,10 +203,11 @@ export const C5_LIS_02_DATASET: SkillDataset = {
   },
   ordering: [
     "lis_vo_tay",
-    "lis_dam_chan",
-    "lis_ngoi_xuong",
-    "lis_dung_len",
     "lis_gio_tay",
+    "lis_khoanh_tay",
+    "lis_dam_chan",
+    "lis_dung_len",
+    "lis_ngoi_xuong",
   ],
 };
 
@@ -142,13 +216,18 @@ export const C5_LIS_02_SEED: SkillSeed = {
   dataset: C5_LIS_02_DATASET,
   levels: [
     {
+      template: "GT-000",
+      band: "3-4",
+      difficulty: 1,
+      theme: "school",
+    },
+    {
       code: "GL-C5-WRD-PRB-0001",
       template: "GT-018",
       band: "4-5",
       difficulty: 1,
       theme: "food",
       rounds: 3,
-      legacy_v1_ref: "D6-09",
     },
     {
       code: "GL-C5-WRD-PRB-0002",
@@ -157,34 +236,6 @@ export const C5_LIS_02_SEED: SkillSeed = {
       difficulty: 2,
       theme: "animal",
       rounds: 3,
-      legacy_v1_ref: "D6-09",
-    },
-    {
-      code: "GL-C5-WRD-PRB-0003",
-      template: "GT-018",
-      band: "4-5",
-      difficulty: 3,
-      theme: "nature",
-      rounds: 3,
-      legacy_v1_ref: "D6-09",
-    },
-    {
-      code: "GL-C5-WRD-PRB-0004",
-      template: "GT-018",
-      band: "4-5",
-      difficulty: 1,
-      theme: "ocean",
-      rounds: 3,
-      legacy_v1_ref: "D6-09",
-    },
-    {
-      code: "GL-C5-WRD-PRB-0005",
-      template: "GT-018",
-      band: "4-5",
-      difficulty: 2,
-      theme: "vehicle",
-      rounds: 3,
-      legacy_v1_ref: "D6-09",
     },
     {
       code: "GL-C5-LIS-SHAD-0001",
@@ -203,27 +254,11 @@ export const C5_LIS_02_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-LIS-SHAD-0003",
-      template: "GT-007",
-      band: "3-4",
-      difficulty: 3,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
       code: "GL-C5-LIS-SHAD-0004",
       template: "GT-007",
       band: "3-4",
       difficulty: 1,
       theme: "ocean",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-LIS-SHAD-0005",
-      template: "GT-007",
-      band: "3-4",
-      difficulty: 2,
-      theme: "food",
       rounds: 3,
     },
     {
@@ -243,27 +278,11 @@ export const C5_LIS_02_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-LIS-GRID-0005",
-      template: "GT-020",
-      band: "3-4",
-      difficulty: 3,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
       code: "GL-C5-LIS-GRID-0006",
       template: "GT-020",
       band: "3-4",
       difficulty: 1,
       theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-LIS-GRID-0007",
-      template: "GT-020",
-      band: "3-4",
-      difficulty: 2,
-      theme: "body",
       rounds: 3,
     },
   ],

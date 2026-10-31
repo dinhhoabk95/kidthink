@@ -46,12 +46,6 @@ vi.mock("#src/seed-master/content-tags", () => ({
     return Promise.resolve();
   }),
 }));
-vi.mock("#src/seed-master/action-suggestions", () => ({
-  seedSkillActionSuggestions: vi.fn(() => {
-    calls.push("actions");
-    return Promise.resolve({ seededCount: 0 });
-  }),
-}));
 vi.mock("#src/seed-master/curricula", () => ({
   seedRoadmapCurricula: vi.fn(() => {
     calls.push("roadmaps");
@@ -72,7 +66,6 @@ vi.mock("#src/cli/seed-content", () => ({
 const CURRICULUM_CODE_REGEX = /^CUR-[A-Za-z0-9_-]+$/;
 
 const NO_CONTENT = {
-  lesson: new Map<string, number>(),
   game_level: new Map<string, number>(),
 };
 
@@ -82,8 +75,8 @@ function plan(overrides: Partial<CurriculumItemPlan> = {}): CurriculumItemPlan {
     weekNo: 1,
     sessionNo: 1,
     position: 1,
-    entityType: "lesson",
-    contentCode: "LES-A",
+    entityType: "game_level",
+    contentCode: "GL-A",
     isRequired: true,
     ...overrides,
   };
@@ -166,7 +159,7 @@ describe("curriculum_items sinh thẳng từ sổ cầu", () => {
     }
   });
 
-  it("level thực hành thành game_level, bài học thành lesson, vị trí đếm từ 1", () => {
+  it("mọi item sinh ra đều là game_level, vị trí đếm từ 1", () => {
     for (const cell of ledger.cells) {
       const own = items.filter(
         (item) =>
@@ -178,37 +171,35 @@ describe("curriculum_items sinh thẳng từ sổ cầu", () => {
         cell.filled_by.map((_, index) => index + 1)
       );
       for (const item of own) {
-        expect(item.entityType).toBe(
-          cell.role === "practice" ? "game_level" : "lesson"
-        );
+        expect(item.entityType).toBe("game_level");
       }
     }
   });
 
   it("ca âm: ô còn nợ không sinh item", () => {
-    const debt = ledger.cells.filter((cell) => cell.filled_by.length === 0);
-    expect(debt.length).toBeGreaterThan(0);
-    for (const cell of debt) {
-      expect(
-        items.some(
-          (item) =>
-            item.curriculumCode ===
-              curriculumCodeForRoadmap(cell.roadmap_code) &&
-            item.weekNo === cell.week_no &&
-            item.sessionNo === cell.session_no
-        )
-      ).toBe(false);
+    const firstCell = ledger.cells[0];
+    if (!firstCell) {
+      throw new Error("Expected at least one cell in ledger");
     }
+    const syntheticLedger = {
+      ...ledger,
+      cells: [{ ...firstCell, filled_by: [] }, ...ledger.cells.slice(1)],
+    };
+    const plannedWithDebt = planCurriculumItems(syntheticLedger);
+    expect(
+      plannedWithDebt.some(
+        (item) =>
+          item.curriculumCode ===
+            curriculumCodeForRoadmap(firstCell.roadmap_code) &&
+          item.weekNo === firstCell.week_no &&
+          item.sessionNo === firstCell.session_no
+      )
+    ).toBe(false);
   });
 
   it("ca âm: level không có ô sổ cầu không lọt vào curriculum_items", () => {
     const orphan = "GL-ORPHAN-NOT-IN-LEDGER";
     const resolved = resolveCurriculumItems(items, {
-      lesson: new Map(
-        items
-          .filter((item) => item.entityType === "lesson")
-          .map((item, index) => [item.contentCode, index + 1])
-      ),
       game_level: new Map([
         ...items
           .filter((item) => item.entityType === "game_level")
@@ -225,8 +216,8 @@ describe("curriculum_items sinh thẳng từ sổ cầu", () => {
 
   it("ca âm: mã nội dung chưa gieo thì ném lỗi nêu tên, không bỏ qua", () => {
     expect(() =>
-      resolveCurriculumItems([plan({ contentCode: "LES-MISSING" })], NO_CONTENT)
-    ).toThrow("lesson:LES-MISSING");
+      resolveCurriculumItems([plan({ contentCode: "GL-MISSING" })], NO_CONTENT)
+    ).toThrow("game_level:GL-MISSING");
   });
 
   it("item thừa so với sổ cầu bị nhận ra để xoá, item còn dùng thì giữ", () => {
@@ -248,10 +239,10 @@ describe("cổng quét seed-master (BR-LRM-02)", () => {
   const OLD_SEEDER = `
     export function selectCurriculumSlot(params) {
       const slotIdx = weekNo * sessionsPerWeek + sessionNo;
-      return lessonsList[slotIdx % lessonsList.length];
+      return levelsList[slotIdx % levelsList.length];
     }
     async function insertCurriculumItemForSession(db, params) {
-      const rows = await db.select({ id: lessons.id }).from(lessons).orderBy(asc(lessons.id)).limit(100);
+      const rows = await db.select({ id: gameLevels.id }).from(gameLevels).orderBy(asc(gameLevels.id)).limit(100);
       return rows;
     }
   `;

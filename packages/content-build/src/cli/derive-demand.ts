@@ -4,14 +4,9 @@ import { pathToFileURL } from "node:url";
 import { repoPath } from "@mindkid/config/paths";
 import { ALL_ROADMAPS } from "@mindkid/content";
 import { findDebtIncreases } from "#src/gates/level-demand";
-import {
-  ALL_SEED_ACTIVITIES,
-  ALL_SEED_LESSONS,
-  SHIPPABLE_SEED_LEVELS,
-} from "../catalog.js";
+import { SHIPPABLE_SEED_LEVELS } from "../catalog.js";
 import {
   type ContentDemandLedger,
-  type DemandLesson,
   type DemandLevel,
   deriveContentDemand,
   findBandMismatches,
@@ -29,23 +24,6 @@ import {
 } from "../gates/roadmap-seed-runner.js";
 import { buildSkillTemplateAffinityMatrix } from "../gates/skill-template-affinity.js";
 
-function collectLessons(): DemandLesson[] {
-  const offlineActivities = new Set(
-    ALL_SEED_ACTIVITIES.filter(
-      (activity) => activity.header.activity_kind !== "digital_game"
-    ).map((activity) => activity.header.code)
-  );
-  return ALL_SEED_LESSONS.map((lesson) => ({
-    code: lesson.header.code,
-    skill_codes: lesson.header.skill_codes,
-    age_min: lesson.header.target_age_min,
-    age_max: lesson.header.target_age_max,
-    has_offline_activity: lesson.header.activity_codes.some((code) =>
-      offlineActivities.has(code)
-    ),
-  }));
-}
-
 function collectLevels(): DemandLevel[] {
   return SHIPPABLE_SEED_LEVELS.map((level) => ({
     code: level.header.code,
@@ -60,7 +38,6 @@ export function computeContentDemand(): ContentDemandLedger {
   return deriveContentDemand({
     roadmaps: ALL_ROADMAPS,
     affinities: buildSkillTemplateAffinityMatrix().affinities,
-    lessons: collectLessons(),
     levels: collectLevels(),
     difficultyMaxByBand: loadDifficultyMaxByBand(),
   });
@@ -82,11 +59,7 @@ function reportBandMismatches(
   ledger: ContentDemandLedger,
   label: string
 ): number {
-  const mismatches = findBandMismatches(
-    ledger,
-    collectLessons(),
-    collectLevels()
-  );
+  const mismatches = findBandMismatches(ledger, collectLevels());
   for (const m of mismatches) {
     console.error(
       `❌ ${label}: ${m.content_code} đứng ở ${m.roadmap_code} tuần ${m.week_no} tiết ${m.session_no} nhưng ${m.reason === "unknown_content" ? "không có trong kho" : `không phủ band ${m.band}`} (BR-LRM-04)`

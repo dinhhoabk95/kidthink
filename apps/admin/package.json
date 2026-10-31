@@ -6,6 +6,7 @@
   "scripts": {
     "build": "nuxt generate",
     "dev": "nuxt dev --port 3001",
+    "typecheck": "vue-tsc --noEmit -p .nuxt/tsconfig.app.json && vue-tsc --noEmit -p .nuxt/tsconfig.server.json && vue-tsc --noEmit -p .nuxt/tsconfig.shared.json && vue-tsc --noEmit -p .nuxt/tsconfig.node.json",
     "test": "vitest run"
   },
   "dependencies": {
@@ -17,11 +18,13 @@
     "@mindkid/config": "workspace:*",
     "@nuxt/fonts": "catalog:",
     "@nuxt/ui": "catalog:",
+    "@t3-oss/env-nuxt": "catalog:",
     "nuxt": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:",
     "vue-tsc": "catalog:",
-    "vue": "catalog:"
+    "vue": "catalog:",
+    "zod": "catalog:"
   }
 }

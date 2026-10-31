@@ -5,7 +5,7 @@ import {
 } from "@mindkid/adaptive";
 import { contentSkillMap, masteryState } from "@mindkid/db";
 import type { computeSessionResult } from "@mindkid/shared";
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { awardChildBadges } from "#src/badges";
 import type { DbOrTx } from "#src/types";
 
@@ -17,18 +17,23 @@ export async function recordSkillMasteryUpdate(params: {
   readonly correctRatio: number;
   readonly hintRate: number;
   readonly now: Date;
+  readonly existingRow?: typeof masteryState.$inferSelect | null;
 }): Promise<MasteryState> {
   const { db, childId, skillId, weight, correctRatio, hintRate, now } = params;
-  const [existing] = await db
-    .select()
-    .from(masteryState)
-    .where(
-      and(
-        eq(masteryState.childProfileId, childId),
-        eq(masteryState.skillId, skillId)
+  let existing = params.existingRow;
+  if (existing === undefined) {
+    const [queried] = await db
+      .select()
+      .from(masteryState)
+      .where(
+        and(
+          eq(masteryState.childProfileId, childId),
+          eq(masteryState.skillId, skillId)
+        )
       )
-    )
-    .limit(1);
+      .limit(1);
+    existing = queried ?? null;
+  }
 
   const prevState: MasteryState | null = existing
     ? {
@@ -122,6 +127,19 @@ export async function applySessionMasteryAndBadges(params: {
     roundsTotal > 0 ? (scoringResult.metrics.hint_count ?? 0) / roundsTotal : 0;
 
   const masteryMap = new Map<number, MasteryState>();
+  const skillIds = mappedSkills.map((ms) => Number(ms.skillId));
+  const existingRows = await db
+    .select()
+    .from(masteryState)
+    .where(
+      and(
+        eq(masteryState.childProfileId, childId),
+        inArray(masteryState.skillId, skillIds)
+      )
+    );
+  const existingBySkillId = new Map<number, typeof masteryState.$inferSelect>(
+    existingRows.map((row) => [Number(row.skillId), row])
+  );
 
   for (const ms of mappedSkills) {
     const skillId = Number(ms.skillId);
@@ -133,6 +151,7 @@ export async function applySessionMasteryAndBadges(params: {
       correctRatio,
       hintRate,
       now,
+      existingRow: existingBySkillId.get(skillId) ?? null,
     });
     masteryMap.set(skillId, updatedState);
   }
@@ -145,9 +164,7 @@ export async function applySessionMasteryAndBadges(params: {
       week_no: 1,
       session_no: 1,
       position: 1,
-      skill_ids: mappedSkills.map((ms: { skillId: number }) =>
-        Number(ms.skillId)
-      ),
+      skill_ids: skillIds,
     },
     now,
   });
@@ -170,6 +187,24 @@ export async function applyAbandonedSessionMastery(params: {
       )
     );
 
+  if (mappedSkills.length === 0) {
+    return;
+  }
+
+  const skillIds = mappedSkills.map((ms) => Number(ms.skillId));
+  const existingRows = await db
+    .select()
+    .from(masteryState)
+    .where(
+      and(
+        eq(masteryState.childProfileId, childId),
+        inArray(masteryState.skillId, skillIds)
+      )
+    );
+  const existingBySkillId = new Map<number, typeof masteryState.$inferSelect>(
+    existingRows.map((row) => [Number(row.skillId), row])
+  );
+
   for (const ms of mappedSkills) {
     const skillId = Number(ms.skillId);
     await recordSkillMasteryUpdate({
@@ -180,6 +215,7 @@ export async function applyAbandonedSessionMastery(params: {
       correctRatio: 0,
       hintRate: 1,
       now,
+      existingRow: existingBySkillId.get(skillId) ?? null,
     });
   }
 }

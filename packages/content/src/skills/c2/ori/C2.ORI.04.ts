@@ -42,61 +42,150 @@ export const C2_ORI_04_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "arrow_below",
+      label: "mũi tên ở dưới",
+      value: 1,
       image: {
         kind: "emoji",
-        ref: "🪑",
+        ref: "⬇️",
       },
       category: {
-        type: "đồ dùng",
+        type: "ở phía dưới",
+      },
+      contrast_group: "below",
+    },
+    {
+      id: "drawer_below",
+      label: "ngăn tủ ở dưới",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "🗄️",
+      },
+      category: {
+        type: "ở phía dưới",
+      },
+      contrast_group: "below",
+    },
+    {
+      id: "leg_below",
+      label: "chân bàn ở dưới",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "🪵",
+      },
+      category: {
+        type: "ở phía dưới",
+      },
+      contrast_group: "below",
+    },
+    {
+      id: "mat_below",
+      label: "thảm trải ở dưới",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "🧶",
+      },
+      category: {
+        type: "ở phía dưới",
+      },
+      contrast_group: "below",
+    },
+    {
+      id: "arrow_above",
+      label: "mũi tên ở trên",
+      value: 5,
+      image: {
+        kind: "emoji",
+        ref: "⬆️",
+      },
+      category: {
+        type: "ở phía trên",
+      },
+      contrast_group: "above",
+    },
+    {
+      id: "tabletop_above",
+      label: "mặt bàn ở trên",
+      value: 6,
+      image: {
+        kind: "emoji",
+        ref: "🛋️",
+      },
+      category: {
+        type: "ở phía trên",
+      },
+      contrast_group: "above",
+    },
+    {
+      id: "lamp_above",
+      label: "đèn treo ở trên",
+      value: 7,
+      image: {
+        kind: "emoji",
+        ref: "💡",
+      },
+      category: {
+        type: "ở phía trên",
+      },
+      contrast_group: "above",
+    },
+    {
+      id: "cloud_above",
+      label: "đám mây ở trên",
+      value: 8,
+      image: {
+        kind: "emoji",
+        ref: "☁️",
+      },
+      category: {
+        type: "ở phía trên",
+      },
+      contrast_group: "above",
+    },
+  ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "arrow_below",
+      target_id: "arrow_above",
+      metadata: {
+        dimension: "position",
       },
     },
     {
-      id: "apple",
-      label: "quả táo",
-      image: {
-        kind: "emoji",
-        ref: "🍎",
-      },
-      category: {
-        type: "hoa quả",
+      type: "contrast",
+      source_id: "drawer_below",
+      target_id: "lamp_above",
+      metadata: {
+        dimension: "position",
       },
     },
     {
-      id: "banana",
-      label: "quả chuối",
-      image: {
-        kind: "emoji",
-        ref: "🍌",
-      },
-      category: {
-        type: "hoa quả",
+      type: "pair",
+      source_id: "arrow_below",
+      target_id: "drawer_below",
+      metadata: {
+        relation: "cùng ở dưới",
       },
     },
     {
-      id: "watermelon",
-      label: "dưa hấu",
-      image: {
-        kind: "emoji",
-        ref: "🍉",
-      },
-      category: {
-        type: "hoa quả",
-      },
-    },
-    {
-      id: "carrot",
-      label: "củ cà rốt",
-      image: {
-        kind: "emoji",
-        ref: "🥕",
-      },
-      category: {
-        type: "rau củ",
+      type: "pair",
+      source_id: "arrow_above",
+      target_id: "lamp_above",
+      metadata: {
+        relation: "cùng ở trên",
       },
     },
   ],
+  axes: {
+    position: {
+      values: ["ở phía dưới", "ở phía trên"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
@@ -128,7 +217,16 @@ export const C2_ORI_04_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Dưới nhé",
   },
-  ordering: ["chair", "apple", "banana", "watermelon", "carrot"],
+  ordering: [
+    "arrow_below",
+    "drawer_below",
+    "leg_below",
+    "mat_below",
+    "arrow_above",
+    "tabletop_above",
+    "lamp_above",
+    "cloud_above",
+  ],
 };
 
 export const C2_ORI_04_SEED: SkillSeed = {
@@ -157,70 +255,6 @@ export const C2_ORI_04_SEED: SkillSeed = {
       band: "3-4",
       difficulty: 1,
       theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-TAP-0008",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 2,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-TCMP-0007",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 1,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-TCMP-0008",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 2,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-PATT-0006",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 1,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-SLOT-0007",
-      template: "GT-008",
-      band: "3-4",
-      difficulty: 1,
-      theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-SLOT-0008",
-      template: "GT-008",
-      band: "3-4",
-      difficulty: 2,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-MEMO-0007",
-      template: "GT-012",
-      band: "3-4",
-      difficulty: 1,
-      theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-ORI-MEMO-0008",
-      template: "GT-012",
-      band: "3-4",
-      difficulty: 2,
-      theme: "homeland",
       rounds: 3,
     },
   ],

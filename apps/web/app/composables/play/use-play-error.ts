@@ -19,15 +19,7 @@ export interface ApiErrorDetails {
   readonly primary_skill_code?: string;
 }
 
-export interface PlayErrorOptions {
-  /** Đang học trong một bài (`child-lesson-flow.md`): giữ `lesson` qua đường làm quen. */
-  readonly lessonCode?: string | null;
-}
-
-export function usePlayError(options: PlayErrorOptions = {}) {
-  const lessonQuery = options.lessonCode
-    ? `&lesson=${encodeURIComponent(options.lessonCode)}`
-    : "";
+export function usePlayError() {
   const errorMessage = ref<string | null>(null);
   const errorTitle = ref<string>("Đã có lỗi xảy ra");
   const errorEmoji = ref<string>("😿");
@@ -53,7 +45,7 @@ export function usePlayError(options: PlayErrorOptions = {}) {
       errorTitle.value = "Làm quen khái niệm trước";
       errorEmoji.value = "📖";
       errorActionLink.value = introCode
-        ? `/play/${introCode}?return_to=${levelCode}${lessonQuery}`
+        ? `/play/${introCode}?return_to=${levelCode}`
         : "/games";
       errorActionText.value = introCode
         ? "Bắt đầu bài làm quen"

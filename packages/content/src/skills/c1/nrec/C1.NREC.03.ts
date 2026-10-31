@@ -44,17 +44,19 @@ export const C1_NREC_03_DATASET: SkillDataset = {
   items: [
     {
       id: "n0",
-      label: "số không",
+      label: "số 0",
       glyph: "0",
       value: 0,
       audio_path: "/audio/voice/common/numbers/0.mp3",
       image: {
         kind: "emoji",
-        ref: "0️⃣",
+        ref: "🪹",
       },
       category: {
+        type: "số một chữ số",
         parity: "chẵn",
       },
+      contrast_group: "numeral_0_10",
     },
     {
       id: "n1",
@@ -64,11 +66,13 @@ export const C1_NREC_03_DATASET: SkillDataset = {
       audio_path: "/audio/voice/common/numbers/1.mp3",
       image: {
         kind: "emoji",
-        ref: "1️⃣",
+        ref: "🐣",
       },
       category: {
+        type: "số một chữ số",
         parity: "lẻ",
       },
+      contrast_group: "numeral_0_10",
     },
     {
       id: "n2",
@@ -78,11 +82,13 @@ export const C1_NREC_03_DATASET: SkillDataset = {
       audio_path: "/audio/voice/common/numbers/2.mp3",
       image: {
         kind: "emoji",
-        ref: "2️⃣",
+        ref: "🐰",
       },
       category: {
+        type: "số một chữ số",
         parity: "chẵn",
       },
+      contrast_group: "numeral_0_10",
     },
     {
       id: "n3",
@@ -92,11 +98,13 @@ export const C1_NREC_03_DATASET: SkillDataset = {
       audio_path: "/audio/voice/common/numbers/3.mp3",
       image: {
         kind: "emoji",
-        ref: "3️⃣",
+        ref: "🐶",
       },
       category: {
+        type: "số một chữ số",
         parity: "lẻ",
       },
+      contrast_group: "numeral_0_10",
     },
     {
       id: "n4",
@@ -106,11 +114,13 @@ export const C1_NREC_03_DATASET: SkillDataset = {
       audio_path: "/audio/voice/common/numbers/4.mp3",
       image: {
         kind: "emoji",
-        ref: "4️⃣",
+        ref: "🐱",
       },
       category: {
+        type: "số một chữ số",
         parity: "chẵn",
       },
+      contrast_group: "numeral_0_10",
     },
     {
       id: "n5",
@@ -120,11 +130,13 @@ export const C1_NREC_03_DATASET: SkillDataset = {
       audio_path: "/audio/voice/common/numbers/5.mp3",
       image: {
         kind: "emoji",
-        ref: "5️⃣",
+        ref: "🐷",
       },
       category: {
+        type: "số một chữ số",
         parity: "lẻ",
       },
+      contrast_group: "numeral_0_10",
     },
     {
       id: "n6",
@@ -134,11 +146,13 @@ export const C1_NREC_03_DATASET: SkillDataset = {
       audio_path: "/audio/voice/common/numbers/6.mp3",
       image: {
         kind: "emoji",
-        ref: "6️⃣",
+        ref: "🐑",
       },
       category: {
+        type: "số một chữ số",
         parity: "chẵn",
       },
+      contrast_group: "numeral_0_10",
     },
     {
       id: "n7",
@@ -148,11 +162,13 @@ export const C1_NREC_03_DATASET: SkillDataset = {
       audio_path: "/audio/voice/common/numbers/7.mp3",
       image: {
         kind: "emoji",
-        ref: "7️⃣",
+        ref: "🐐",
       },
       category: {
+        type: "số một chữ số",
         parity: "lẻ",
       },
+      contrast_group: "numeral_0_10",
     },
     {
       id: "n8",
@@ -162,11 +178,13 @@ export const C1_NREC_03_DATASET: SkillDataset = {
       audio_path: "/audio/voice/common/numbers/8.mp3",
       image: {
         kind: "emoji",
-        ref: "8️⃣",
+        ref: "🐄",
       },
       category: {
+        type: "số một chữ số",
         parity: "chẵn",
       },
+      contrast_group: "numeral_0_10",
     },
     {
       id: "n9",
@@ -176,11 +194,13 @@ export const C1_NREC_03_DATASET: SkillDataset = {
       audio_path: "/audio/voice/common/numbers/9.mp3",
       image: {
         kind: "emoji",
-        ref: "9️⃣",
+        ref: "🐴",
       },
       category: {
+        type: "số một chữ số",
         parity: "lẻ",
       },
+      contrast_group: "numeral_0_10",
     },
     {
       id: "n10",
@@ -190,11 +210,13 @@ export const C1_NREC_03_DATASET: SkillDataset = {
       audio_path: "/audio/voice/common/numbers/10.mp3",
       image: {
         kind: "emoji",
-        ref: "🔟",
+        ref: "🐘",
       },
       category: {
+        type: "số hai chữ số",
         parity: "chẵn",
       },
+      contrast_group: "numeral_0_10",
     },
   ],
   axes: {
@@ -206,32 +228,34 @@ export const C1_NREC_03_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với nhận biết số 0–10",
+      description: "Làm quen cơ bản với số 0–10",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng nhận biết số 0–10",
+      description: "Nhận biết và chọn đúng số 0–10",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt nhận biết số 0–10 với phương án nhiễu",
+      description: "Phân biệt số 0–10 với phương án nhiễu",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi nhận biết số 0–10",
+      description: "Mở rộng phạm vi số 0–10",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục nhận biết số 0–10 và tự làm một mình",
+      description: "Thuần thục số 0–10 và tự làm một mình",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng chữ số {label} nhé!",
-    narration_template: "Chúng mình cùng tìm hiểu về Nhận biết số 0–10 nhé",
+    prompt_template:
+      "Bé hãy cùng Thỏ Quan Sát săn tìm đúng {label} trong lưới nhé!",
+    narration_template:
+      "Gấu Logic nhắc: Quan sát từng hàng và từng cột để không bỏ sót bạn số nào!",
   },
   ordering: ["n0", "n1", "n2", "n3", "n4", "n5", "n6", "n7", "n8", "n9", "n10"],
 };
@@ -239,7 +263,7 @@ export const C1_NREC_03_DATASET: SkillDataset = {
 /**
  * Chủ đề làm quen — dataset của bài học mở đầu GL-C1-NREC-INTRO-0002.
  *
- * Chủ đề không có hàng `skills` riêng (`BR-CTM-01`): nó sống trên chính level dạy
+ * Chủ đề chưa có hàng `skills` riêng (`BR-CTM-01`): nó sống trên chính level dạy
  * qua `SkillLevelPlan.dataset`. Trước 2026-09-06 dataset này treo ở kỹ năng bậc
  * `pre` C1_NREC_14, kỹ năng đó đã bị gỡ.
  */
@@ -249,81 +273,125 @@ const TOPIC_NUMBER_0_10_DATASET: SkillDataset = {
   surface: "game",
   items: [
     numeralItem("n0", {
-      label: "Số không",
+      label: "Số 0",
       image: {
         kind: "emoji",
-        ref: "0️⃣",
+        ref: "🧺",
       },
+      category: {
+        type: "số một chữ số",
+      },
+      contrast_group: "numeral_0_10",
     }),
     numeralItem("n1", {
       label: "Số một",
       image: {
         kind: "emoji",
-        ref: "1️⃣",
+        ref: "🍎",
       },
+      category: {
+        type: "số một chữ số",
+      },
+      contrast_group: "numeral_0_10",
     }),
     numeralItem("n2", {
       label: "Số hai",
       image: {
         kind: "emoji",
-        ref: "2️⃣",
+        ref: "🍊",
       },
+      category: {
+        type: "số một chữ số",
+      },
+      contrast_group: "numeral_0_10",
     }),
     numeralItem("n3", {
       label: "Số ba",
       image: {
         kind: "emoji",
-        ref: "3️⃣",
+        ref: "🍋",
       },
+      category: {
+        type: "số một chữ số",
+      },
+      contrast_group: "numeral_0_10",
     }),
     numeralItem("n4", {
       label: "Số bốn",
       image: {
         kind: "emoji",
-        ref: "4️⃣",
+        ref: "🍌",
       },
+      category: {
+        type: "số một chữ số",
+      },
+      contrast_group: "numeral_0_10",
     }),
     numeralItem("n5", {
       label: "Số năm",
       image: {
         kind: "emoji",
-        ref: "5️⃣",
+        ref: "🍉",
       },
+      category: {
+        type: "số một chữ số",
+      },
+      contrast_group: "numeral_0_10",
     }),
     numeralItem("n6", {
       label: "Số sáu",
       image: {
         kind: "emoji",
-        ref: "6️⃣",
+        ref: "🍇",
       },
+      category: {
+        type: "số một chữ số",
+      },
+      contrast_group: "numeral_0_10",
     }),
     numeralItem("n7", {
       label: "Số bảy",
       image: {
         kind: "emoji",
-        ref: "7️⃣",
+        ref: "🍓",
       },
+      category: {
+        type: "số một chữ số",
+      },
+      contrast_group: "numeral_0_10",
     }),
     numeralItem("n8", {
       label: "Số tám",
       image: {
         kind: "emoji",
-        ref: "8️⃣",
+        ref: "🍑",
       },
+      category: {
+        type: "số một chữ số",
+      },
+      contrast_group: "numeral_0_10",
     }),
     numeralItem("n9", {
       label: "Số chín",
       image: {
         kind: "emoji",
-        ref: "9️⃣",
+        ref: "🍍",
       },
+      category: {
+        type: "số một chữ số",
+      },
+      contrast_group: "numeral_0_10",
     }),
     numeralItem("n10", {
       label: "Số mười",
       image: {
         kind: "emoji",
-        ref: "🔟",
+        ref: "🥭",
       },
+      category: {
+        type: "số hai chữ số",
+      },
+      contrast_group: "numeral_0_10",
     }),
   ],
   ladder: [
@@ -344,7 +412,7 @@ const TOPIC_NUMBER_0_10_DATASET: SkillDataset = {
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy làm quen với chữ số nhé!",
+    prompt_template: "Bé hãy làm quen với {label} nhé!",
     narration_template: "Chúng mình cùng làm quen với các số từ 0 đến 10 nhé",
   },
   ordering: ["n0", "n1", "n2", "n3", "n4", "n5", "n6", "n7", "n8", "n9", "n10"],
@@ -355,6 +423,36 @@ export const C1_NREC_03_SEED: SkillSeed = {
   dataset: C1_NREC_03_DATASET,
   levels: [
     {
+      code: "GL-C1-NREC-HUNT-0103",
+      template: "GT-037",
+      band: "4-5",
+      difficulty: 2,
+      access_tier: "login",
+      theme: "school",
+      rounds: 3,
+      montessori_ref: "WB01-D4",
+    },
+    {
+      code: "GL-C1-NREC-HUNT-0104",
+      template: "GT-037",
+      band: "5-6",
+      difficulty: 3,
+      access_tier: "standard",
+      theme: "school",
+      rounds: 3,
+      montessori_ref: "WB01-D4",
+    },
+    {
+      code: "GL-C1-NREC-HUNT-0105",
+      template: "GT-037",
+      band: "5-6",
+      difficulty: 4,
+      access_tier: "premium",
+      theme: "railway",
+      rounds: 3,
+      montessori_ref: "WB01-D5",
+    },
+    {
       code: "GL-C1-NREC-INTRO-0002",
       template: "GT-000",
       band: "4-5",
@@ -364,38 +462,6 @@ export const C1_NREC_03_SEED: SkillSeed = {
       dataset: TOPIC_NUMBER_0_10_DATASET,
       sequence_no: 1,
       skill_codes: ["C1.NREC.03"],
-    },
-    {
-      code: "GL-C1-NREC-TAP-0004",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 1,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-NREC-TAP-0005",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 2,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-NREC-TAP-0006",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 3,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-NREC-TAP-0007",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 1,
-      theme: "body",
-      rounds: 3,
     },
     {
       code: "GL-C1-NREC-TCNT-0001",
@@ -414,51 +480,11 @@ export const C1_NREC_03_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C1-NREC-TCNT-0003",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 3,
-      theme: "job",
-      rounds: 3,
-    },
-    {
       code: "GL-C1-NREC-TCNT-0004",
       template: "GT-002",
       band: "4-5",
       difficulty: 1,
       theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-NREC-TCMP-0007",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 1,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-NREC-TCMP-0008",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 2,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-NREC-TCMP-0009",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 3,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-NREC-TCMP-0010",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 1,
-      theme: "animal",
       rounds: 3,
     },
     {
@@ -470,59 +496,11 @@ export const C1_NREC_03_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C1-NREC-PAIR-0002",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 2,
-      theme: "ocean",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-NREC-PAIR-0003",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 3,
-      theme: "food",
-      rounds: 3,
-    },
-    {
       code: "GL-C1-NREC-PAIR-0004",
       template: "GT-004",
       band: "4-5",
       difficulty: 1,
       theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-NREC-PATT-0007",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 1,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-NREC-PATT-0008",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 2,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-NREC-PATT-0009",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 3,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-NREC-PATT-0010",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 1,
-      theme: "body",
       rounds: 3,
     },
   ],

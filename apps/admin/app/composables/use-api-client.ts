@@ -7,16 +7,41 @@ import {
   useState,
 } from "#imports";
 
+type ApiRequestBody =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | FormData
+  | URLSearchParams
+  | Blob
+  | ArrayBuffer
+  | Record<string, string | number | boolean | null | undefined | object>
+  | (string | number | boolean | null | undefined | object)[];
+
+type ApiOptionValue =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | object
+  | ApiRequestBody;
+
 interface ApiRequestOptions {
   method?: string;
   headers?: HeadersInit;
-  body?: unknown;
-  query?: Record<string, unknown>;
-  [key: string]: unknown;
+  body?: ApiRequestBody;
+  query?: Record<string, string | number | boolean | null | undefined>;
+  [key: string]: ApiOptionValue;
 }
 
 interface ManagerSessionResponse {
-  manager: Record<string, unknown>;
+  manager: Record<
+    string,
+    string | number | boolean | null | undefined | object
+  >;
   csrf_token: string;
 }
 

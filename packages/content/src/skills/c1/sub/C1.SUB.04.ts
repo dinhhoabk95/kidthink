@@ -109,6 +109,84 @@ export const C1_SUB_04_DATASET: SkillDataset = {
         ref: "🔟",
       },
     }),
+    {
+      id: "cp20_lotus",
+      label: "bông hoa sen hồng",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "🪷",
+      },
+      contrast_group: "cp20_sub_cipher",
+      category: {
+        type: "biểu tượng trừ",
+      },
+    },
+    {
+      id: "cp20_frog",
+      label: "chú ếch xanh",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "🐸",
+      },
+      contrast_group: "cp20_sub_cipher",
+      category: {
+        type: "biểu tượng trừ",
+      },
+    },
+    {
+      id: "cp20_dragonfly",
+      label: "con chuồn chuồn",
+      value: 1,
+      image: {
+        kind: "emoji",
+        ref: "🦗",
+      },
+      contrast_group: "cp20_sub_cipher",
+      category: {
+        type: "biểu tượng trừ",
+      },
+    },
+    {
+      id: "cp20_robot",
+      label: "người máy robot",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "🤖",
+      },
+      contrast_group: "cp20_sub_cipher",
+      category: {
+        type: "biểu tượng trừ",
+      },
+    },
+    {
+      id: "cp20_ball",
+      label: "quả bóng tròn",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "⚽",
+      },
+      contrast_group: "cp20_sub_cipher",
+      category: {
+        type: "biểu tượng trừ",
+      },
+    },
+    {
+      id: "cp20_wood",
+      label: "khối gỗ vuông",
+      value: 1,
+      image: {
+        kind: "emoji",
+        ref: "🪵",
+      },
+      contrast_group: "cp20_sub_cipher",
+      category: {
+        type: "biểu tượng trừ",
+      },
+    },
   ],
   relations: [
     {
@@ -253,7 +331,25 @@ export const C1_SUB_04_DATASET: SkillDataset = {
     prompt_template: "Bớt đi thì còn lại bao nhiêu {label}?",
     narration_template: "Chúng mình cùng tìm hiểu về Trừ trong phạm vi 10 nhé",
   },
-  ordering: ["n0", "n1", "n2", "n3", "n4", "n5", "n6", "n7", "n8", "n9", "n10"],
+  ordering: [
+    "n0",
+    "n1",
+    "n2",
+    "n3",
+    "n4",
+    "n5",
+    "n6",
+    "n7",
+    "n8",
+    "n9",
+    "n10",
+    "cp20_lotus",
+    "cp20_frog",
+    "cp20_dragonfly",
+    "cp20_robot",
+    "cp20_ball",
+    "cp20_wood",
+  ],
 };
 
 export const C1_SUB_04_SEED: SkillSeed = {
@@ -419,6 +515,26 @@ export const C1_SUB_04_SEED: SkillSeed = {
       difficulty: 4,
       theme: "body",
       rounds: 3,
+    },
+    {
+      code: "GL-C1-SUB-SUB-0325",
+      template: "GT-010",
+      band: "5-6",
+      difficulty: 3,
+      access_tier: "standard",
+      theme: "food",
+      rounds: 3,
+      montessori_ref: "WB20-D2",
+    },
+    {
+      code: "GL-C1-SUB-TAP-0326",
+      template: "GT-001",
+      band: "5-6",
+      difficulty: 4,
+      access_tier: "premium",
+      theme: "school",
+      rounds: 3,
+      montessori_ref: "WB20-D2",
     },
   ],
 };

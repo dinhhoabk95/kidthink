@@ -28,15 +28,8 @@ describe("Task 1 & Task 2 — Admin Shell Layout & Invariants (D-IW, D-IY)", () 
       expect(forbiddenReviewerHrefs).not.toContain(item.href);
     }
 
-    // content_reviewer CAN see dashboard, taxonomy, levels, lessons, curriculum, review
-    const allowedReviewerHrefs = [
-      "/",
-      "/taxonomy",
-      "/levels",
-      "/lessons",
-      "/curriculum",
-      "/content-review",
-    ];
+    // content_reviewer CAN see dashboard, taxonomy, levels, curriculum
+    const allowedReviewerHrefs = ["/", "/taxonomy", "/levels", "/curriculum"];
     for (const href of allowedReviewerHrefs) {
       expect(reviewerNav.some((i) => i.href === href)).toBe(true);
     }

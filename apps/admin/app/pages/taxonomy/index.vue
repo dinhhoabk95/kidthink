@@ -29,7 +29,7 @@
     <div
       class="bg-white dark:bg-surface-900 rounded-3xl border-2 border-surface-200 dark:border-surface-800 p-5 space-y-4 shadow-xs"
     >
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
         <div
           class="p-3 bg-surface-50 dark:bg-surface-800/60 rounded-2xl border border-surface-200 dark:border-surface-700"
         >
@@ -48,22 +48,10 @@
           <div
             class="text-2xl font-bold font-heading text-success-700 dark:text-success-300"
           >
-            {{ summary.total_published_levels }}
+            {{ summary.total_levels ?? summary.total_published_levels ?? 0 }}
           </div>
           <div class="text-sm text-success-800 dark:text-success-200">
-            Levels đã xuất bản
-          </div>
-        </div>
-        <div
-          class="p-3 bg-warning-50 dark:bg-warning-950/40 rounded-2xl border border-warning-200 dark:border-warning-800"
-        >
-          <div
-            class="text-2xl font-bold font-heading text-warning-700 dark:text-warning-300"
-          >
-            {{ summary.total_draft_levels }}
-          </div>
-          <div class="text-sm text-warning-800 dark:text-warning-200">
-            Levels bản nháp
+            Tổng màn chơi (Levels)
           </div>
         </div>
         <div
@@ -208,8 +196,8 @@
             <span>{{ comp.total_skills }} kỹ năng</span>
             <span>&bull;</span>
             <span class="text-success-700 dark:text-success-300 font-medium">
-              {{ comp.published_count }}
-              đã xuất bản
+              {{ comp.total_levels ?? comp.published_count ?? 0 }}
+              màn chơi
             </span>
           </div>
         </div>
@@ -287,17 +275,15 @@
                   class="pt-2.5 border-t border-surface-200 dark:border-surface-700 flex flex-wrap items-center justify-between gap-2 text-sm"
                 >
                   <span class="text-surface-600 dark:text-surface-300">
-                    {{ skill.published_count }}
-                    pub /
-                    {{ skill.draft_count }}
-                    nháp
+                    {{ skill.total_count ?? skill.published_count ?? 0 }}
+                    màn chơi
                   </span>
                   <div class="flex flex-wrap items-center gap-2">
                     <NuxtLink
-                      class="min-h-11 inline-flex items-center px-3 py-1.5 rounded-xl bg-warning-50 dark:bg-warning-950/50 text-warning-800 dark:text-warning-300 hover:bg-warning-100 dark:hover:bg-warning-900/60 font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
-                      :to="`/studio/levels?skill_code=${skill.code}`"
+                      class="min-h-11 inline-flex items-center px-3 py-1.5 rounded-xl bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-200 hover:bg-surface-200 dark:hover:bg-surface-700 font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
+                      :to="`/levels?skill_code=${skill.code}`"
                     >
-                      Soạn level
+                      Xem levels
                     </NuxtLink>
                     <NuxtLink
                       class="min-h-11 inline-flex items-center px-3 py-1.5 rounded-xl bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300 hover:bg-brand-100 dark:hover:bg-brand-900/60 font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
@@ -358,10 +344,8 @@
     thinking_processes: string[];
     what_axis: string[];
     tier?: string;
-    status?: string;
     is_deprecated: boolean;
-    published_count: number;
-    draft_count: number;
+    published_count?: number;
     total_count: number;
     lo_count: number;
     gap_status: "empty" | "thin" | "sufficient";
@@ -376,8 +360,8 @@
     competency_id: number;
     parent_strand_id: number | null;
     total_skills: number;
-    published_count: number;
-    draft_count: number;
+    published_count?: number;
+    total_levels?: number;
     gap_skills_count: number;
   }
 
@@ -390,9 +374,16 @@
     icon: string;
     total_strands: number;
     total_skills: number;
-    published_count: number;
-    draft_count: number;
+    published_count?: number;
+    total_levels?: number;
     gap_skills_count: number;
+  }
+
+  interface TaxonomySummary {
+    total_skills: number;
+    total_levels?: number;
+    total_published_levels?: number;
+    total_gaps: number;
   }
 
   interface TaxonomyResponse {
@@ -401,12 +392,7 @@
     competencies: CompetencyItem[];
     strands: StrandItem[];
     skills: SkillItem[];
-    summary: {
-      total_skills: number;
-      total_published_levels: number;
-      total_draft_levels: number;
-      total_gaps: number;
-    };
+    summary: TaxonomySummary;
   }
 
   const searchQuery = ref("");
@@ -415,10 +401,10 @@
   const isLoading = ref(true);
   const errorMessage = ref<string | null>(null);
 
-  const summary = ref({
+  const summary = ref<TaxonomySummary>({
     total_skills: 0,
+    total_levels: 0,
     total_published_levels: 0,
-    total_draft_levels: 0,
     total_gaps: 0,
   });
 

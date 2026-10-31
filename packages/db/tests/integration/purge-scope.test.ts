@@ -4,6 +4,7 @@ import {
   PURGE_TABLE_MAP,
   validateSchemaTablesClassified,
 } from "#src/index";
+import { TABLES } from "#tests/global-setup";
 
 const DIF_GATE_VIOLATION_REGEX = /D-IF GATE VIOLATION/;
 
@@ -41,11 +42,11 @@ describe("Task 5 — Purge Scope 3-Group Classification Gate (BR-ADL-01..10, D-I
     expect(paymentEntry?.classification).toBe("retain");
   });
 
-  it("D-IF Gate: passes cleanly when all discovered table names are in the registry", () => {
-    const tableNames = Array.from(PURGE_TABLE_MAP.keys());
-    const result = validateSchemaTablesClassified(tableNames);
+  it("D-IF Gate: passes cleanly when all discovered schema table names are in the registry (100% 1-to-1 match)", () => {
+    const result = validateSchemaTablesClassified(TABLES);
     expect(result.unclassified).toHaveLength(0);
-    expect(result.totalClassified).toBe(PURGE_TABLE_CLASSIFICATIONS.length);
+    expect(result.totalClassified).toBe(TABLES.length);
+    expect([...PURGE_TABLE_MAP.keys()].sort()).toEqual([...TABLES].sort());
   });
 
   it("D-IF Gate negative: throws when a new table is added without classification", () => {

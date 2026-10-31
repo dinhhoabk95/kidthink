@@ -43,65 +43,134 @@ export const C1_NCOMP_08_DATASET: SkillDataset = {
   surface: "game",
   items: [
     numeralItem("n0", {
+      label: "số 0",
       image: {
         kind: "emoji",
-        ref: "0️⃣",
+        ref: "⚪",
+      },
+      contrast_group: "quantity",
+      category: {
+        type: "tách số chín",
+        role: "phần",
       },
     }),
     numeralItem("n1", {
       image: {
         kind: "emoji",
-        ref: "1️⃣",
+        ref: "🍎",
+      },
+      contrast_group: "quantity",
+      category: {
+        type: "tách số chín",
+        role: "phần",
       },
     }),
     numeralItem("n2", {
       image: {
         kind: "emoji",
-        ref: "2️⃣",
+        ref: "🍐",
+      },
+      contrast_group: "quantity",
+      category: {
+        type: "tách số chín",
+        role: "phần",
       },
     }),
     numeralItem("n3", {
       image: {
         kind: "emoji",
-        ref: "3️⃣",
+        ref: "🍊",
+      },
+      contrast_group: "quantity",
+      category: {
+        type: "tách số chín",
+        role: "phần",
       },
     }),
     numeralItem("n4", {
       image: {
         kind: "emoji",
-        ref: "4️⃣",
+        ref: "🍋",
+      },
+      contrast_group: "quantity",
+      category: {
+        type: "tách số chín",
+        role: "phần",
       },
     }),
     numeralItem("n5", {
       image: {
         kind: "emoji",
-        ref: "5️⃣",
+        ref: "🍓",
+      },
+      contrast_group: "quantity",
+      category: {
+        type: "tách số chín",
+        role: "phần",
       },
     }),
     numeralItem("n6", {
       image: {
         kind: "emoji",
-        ref: "6️⃣",
+        ref: "🍇",
+      },
+      contrast_group: "quantity",
+      category: {
+        type: "tách số chín",
+        role: "phần",
       },
     }),
     numeralItem("n7", {
       image: {
         kind: "emoji",
-        ref: "7️⃣",
+        ref: "🍉",
+      },
+      contrast_group: "quantity",
+      category: {
+        type: "tách số chín",
+        role: "phần",
       },
     }),
     numeralItem("n8", {
       image: {
         kind: "emoji",
-        ref: "8️⃣",
+        ref: "🍒",
+      },
+      contrast_group: "quantity",
+      category: {
+        type: "tách số chín",
+        role: "phần",
       },
     }),
     numeralItem("n9", {
       image: {
         kind: "emoji",
-        ref: "9️⃣",
+        ref: "🍑",
+      },
+      contrast_group: "quantity",
+      category: {
+        type: "tách số chín",
+        role: "tổng",
       },
     }),
+    {
+      id: "wb13_case_folder",
+      label: "kẹp hồ sơ phá án",
+      value: 9,
+      image: {
+        kind: "emoji",
+        ref: "📋",
+      },
+    },
+    {
+      id: "wb13_number_stamp",
+      label: "con dấu số học",
+      value: 9,
+      image: {
+        kind: "emoji",
+        ref: "🔢",
+      },
+    },
   ],
   relations: [
     {
@@ -204,38 +273,61 @@ export const C1_NCOMP_08_DATASET: SkillDataset = {
       },
     },
   ],
+  axes: {
+    role: {
+      values: ["phần", "tổng"],
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
       description: "Làm quen cơ bản với tách số 9",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
       description: "Nhận biết và chọn đúng tách số 9",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt tách số 9 với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi tách số 9",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục tách số 9 và tự làm một mình",
+      representation: "ten-frame",
     },
   ],
   phrasing: {
-    prompt_template: "Thêm mấy nữa thì đủ 9 hả bé?",
+    prompt_template: "Bé hãy chọn {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Tách số 9 nhé",
   },
-  ordering: ["n0", "n1", "n2", "n3", "n4", "n5", "n6", "n7", "n8", "n9"],
+  ordering: [
+    "n0",
+    "n1",
+    "n2",
+    "n3",
+    "n4",
+    "n5",
+    "n6",
+    "n7",
+    "n8",
+    "n9",
+    "wb13_case_folder",
+    "wb13_number_stamp",
+  ],
 };
 
 export const C1_NCOMP_08_SEED: SkillSeed = {
@@ -259,30 +351,6 @@ export const C1_NCOMP_08_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C1-NCOMP-PICT-0018",
-      template: "GT-031",
-      band: "5-6",
-      difficulty: 5,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-NCOMP-PICT-0019",
-      template: "GT-031",
-      band: "5-6",
-      difficulty: 3,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-NCOMP-PICT-0020",
-      template: "GT-031",
-      band: "5-6",
-      difficulty: 4,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
       code: "GL-C1-NCOMP-TAP-0036",
       template: "GT-001",
       band: "4-5",
@@ -291,116 +359,24 @@ export const C1_NCOMP_08_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C1-NCOMP-TAP-0037",
-      template: "GT-001",
-      band: "4-5",
-      difficulty: 4,
-      theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-NCOMP-TAP-0038",
-      template: "GT-001",
-      band: "4-5",
-      difficulty: 5,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-NCOMP-TAP-0039",
-      template: "GT-001",
-      band: "4-5",
+      code: "GL-C1-NCOMP-BOND-0231",
+      template: "GT-007",
+      band: "5-6",
       difficulty: 3,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-NCOMP-TAP-0040",
-      template: "GT-001",
-      band: "4-5",
-      difficulty: 4,
-      theme: "space",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-NCOMP-TCMP-0036",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 3,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-NCOMP-TCMP-0037",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 4,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-NCOMP-TCMP-0038",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 5,
-      theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-NCOMP-TCMP-0039",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 3,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-NCOMP-TCMP-0040",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 4,
+      access_tier: "standard",
       theme: "job",
       rounds: 3,
+      montessori_ref: "WB13-D1",
     },
     {
-      code: "GL-C1-NCOMP-PATT-0016",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 3,
-      theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-NCOMP-PATT-0017",
-      template: "GT-005",
-      band: "4-5",
+      code: "GL-C1-NCOMP-SLOT-0205",
+      template: "GT-008",
+      band: "5-6",
       difficulty: 4,
-      theme: "school",
+      access_tier: "premium",
+      theme: "job",
       rounds: 3,
-    },
-    {
-      code: "GL-C1-NCOMP-PATT-0018",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 5,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-NCOMP-PATT-0019",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 3,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-NCOMP-PATT-0020",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 4,
-      theme: "animal",
-      rounds: 3,
+      montessori_ref: "WB13-D2",
     },
   ],
 };

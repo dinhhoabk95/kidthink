@@ -71,15 +71,16 @@ describe("Task #253 M3: projectGT000 Builder Tests", () => {
     for (const seg of parsedContent.segments ?? []) {
       expect(seg.asset_ids.length).toBeGreaterThanOrEqual(2);
       expect(seg.asset_ids.length).toBeLessThanOrEqual(6);
-      expect(seg.steps.length).toBeGreaterThanOrEqual(3);
-      expect(seg.steps.length).toBeLessThanOrEqual(12);
+      expect(seg.steps.length).toBeGreaterThanOrEqual(2);
+      expect(seg.steps.length).toBeLessThanOrEqual(6);
       const lastStep = seg.steps.at(-1);
       expect(lastStep?.action).toBe("recall");
     }
 
-    // Phân đoạn cuối cùng là phân đoạn ôn (is_review = true)
+    // Phân đoạn cuối cùng là phân đoạn ôn (is_review = true) với tối đa 3 câu recall đại diện
     const lastSeg = parsedContent.segments?.at(-1);
     expect(lastSeg?.is_review).toBe(true);
+    expect(lastSeg?.steps.length).toBeLessThanOrEqual(3);
 
     // Difficulty params đúng chuẩn contract mới
     expect(parsedDiff.hint_after_ms).toBe(12_000);

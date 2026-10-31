@@ -14,45 +14,28 @@ import {
   resolveIntroResumeSegmentIndex,
 } from "#server/utils/concept-intro-runtime";
 
-/**
- * Bài làm quen đã hoàn thành ở bản cũ của level vẫn tính là đã làm khi level
- * được publish bản mới (`BR-CSA-17`: cả danh mục lên bản mới cùng lúc). Cổng
- * làm quen đối chiếu theo mã level, không theo `game_levels.id` của bản đang
- * published.
- */
-
 const suffix = crypto.randomInt(1000, 9999);
 const CODE = `GL-C1-CIV-TSTA-${suffix}`;
 const OTHER_CODE = `GL-C1-CIV-TSTB-${suffix}`;
 const RESUME_CODE = `GL-C1-CIV-TSTC-${suffix}`;
-const ENTITY_ID = crypto.randomInt(100_000_000, 2_000_000_000);
 
 let userId = 0;
 let childId = 0;
-let archivedId = 0;
 let publishedId = 0;
 let otherPublishedId = 0;
 let resumeLevelId = 0;
 const createdSessionUuids: string[] = [];
 
-async function insertLevel(
-  code: string,
-  entityId: number,
-  contentVersion: number,
-  status: "archived" | "published"
-): Promise<number> {
+async function insertLevel(code: string): Promise<number> {
   const [level] = await getOwnerDb()
     .insert(gameLevels)
     .values({
-      entityId,
       code,
-      contentVersion,
       templateCode: "GT-000",
       title: `Level ${code}`,
       contentPack: {},
       difficultyParams: {},
       accessTier: "free",
-      status,
     })
     .returning();
   if (!level) {
@@ -61,7 +44,7 @@ async function insertLevel(
   return level.id;
 }
 
-describe("cổng làm quen qua bản content mới & tiếp tục phân đoạn dở (BR-CIR-18)", () => {
+describe("cổng làm quen & tiếp tục phân đoạn dở (BR-CIR-18)", () => {
   beforeAll(async () => {
     const db = getOwnerDb();
     const [user] = await db
@@ -85,24 +68,12 @@ describe("cổng làm quen qua bản content mới & tiếp tục phân đoạn 
       throw new Error("Không tạo được hồ sơ trẻ");
     }
     childId = child.id;
-    archivedId = await insertLevel(CODE, ENTITY_ID, 1, "archived");
-    publishedId = await insertLevel(CODE, ENTITY_ID, 3, "published");
-    otherPublishedId = await insertLevel(
-      OTHER_CODE,
-      ENTITY_ID + 1,
-      3,
-      "published"
-    );
-    resumeLevelId = await insertLevel(
-      RESUME_CODE,
-      ENTITY_ID + 2,
-      1,
-      "published"
-    );
+    publishedId = await insertLevel(CODE);
+    otherPublishedId = await insertLevel(OTHER_CODE);
+    resumeLevelId = await insertLevel(RESUME_CODE);
     await db.insert(playSessions).values({
       childProfileId: childId,
-      gameLevelId: archivedId,
-      contentVersion: 1,
+      gameLevelId: publishedId,
       templateCode: "GT-000",
       completionStatus: "completed",
     });
@@ -119,16 +90,11 @@ describe("cổng làm quen qua bản content mới & tiếp tục phân đoạn 
     await db
       .delete(gameLevels)
       .where(
-        inArray(gameLevels.id, [
-          archivedId,
-          publishedId,
-          otherPublishedId,
-          resumeLevelId,
-        ])
+        inArray(gameLevels.id, [publishedId, otherPublishedId, resumeLevelId])
       );
   });
 
-  it("level làm quen hoàn thành ở bản v1 vẫn tính là đã làm ở bản v3", async () => {
+  it("level làm quen hoàn thành được nhận diện đúng theo mã level", async () => {
     const done = await findCompletedIntroLevelIds(
       getOwnerDb(),
       [
@@ -160,7 +126,6 @@ describe("cổng làm quen qua bản content mới & tiếp tục phân đoạn 
       sessionUuid,
       childProfileId: childId,
       gameLevelId: resumeLevelId,
-      contentVersion: 1,
       templateCode: "GT-000",
       completionStatus: "abandoned",
       isPreview: false,
@@ -170,7 +135,6 @@ describe("cổng làm quen qua bản content mới & tiếp tục phân đoạn 
       sessionUuid,
       seq: 1,
       gameLevelId: resumeLevelId,
-      contentVersion: 1,
       templateCode: "GT-000",
       eventName: "intro_segment_completed",
       payload: {
@@ -194,7 +158,6 @@ describe("cổng làm quen qua bản content mới & tiếp tục phân đoạn 
     await db.insert(playSessions).values({
       childProfileId: childId,
       gameLevelId: resumeLevelId,
-      contentVersion: 1,
       templateCode: "GT-000",
       completionStatus: "completed",
       isPreview: false,

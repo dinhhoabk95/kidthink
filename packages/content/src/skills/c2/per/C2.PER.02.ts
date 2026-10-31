@@ -42,61 +42,150 @@ export const C2_PER_02_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "dog",
-      label: "con chó",
+      id: "backpack_back",
+      label: "chiếc ba lô phía sau",
+      value: 1,
       image: {
         kind: "emoji",
-        ref: "🐕",
+        ref: "🎒",
       },
       category: {
-        type: "động vật",
+        type: "nhìn phía sau",
+      },
+      contrast_group: "back_view",
+    },
+    {
+      id: "turtle_back",
+      label: "mai rùa nhìn từ sau",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "🐢",
+      },
+      category: {
+        type: "nhìn phía sau",
+      },
+      contrast_group: "back_view",
+    },
+    {
+      id: "ladybug_back",
+      label: "bọ rùa nhìn từ sau",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "🐞",
+      },
+      category: {
+        type: "nhìn phía sau",
+      },
+      contrast_group: "back_view",
+    },
+    {
+      id: "chair_back",
+      label: "lưng ghế phía sau",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "🪑",
+      },
+      category: {
+        type: "nhìn phía sau",
+      },
+      contrast_group: "back_view",
+    },
+    {
+      id: "lion_front",
+      label: "chú sư tử nhìn thẳng",
+      value: 5,
+      image: {
+        kind: "emoji",
+        ref: "🦁",
+      },
+      category: {
+        type: "góc nhìn khác",
+      },
+      contrast_group: "other_view",
+    },
+    {
+      id: "owl_front",
+      label: "chú cú nhìn thẳng",
+      value: 6,
+      image: {
+        kind: "emoji",
+        ref: "🦉",
+      },
+      category: {
+        type: "góc nhìn khác",
+      },
+      contrast_group: "other_view",
+    },
+    {
+      id: "clock_front",
+      label: "đồng hồ nhìn thẳng",
+      value: 7,
+      image: {
+        kind: "emoji",
+        ref: "⏰",
+      },
+      category: {
+        type: "góc nhìn khác",
+      },
+      contrast_group: "other_view",
+    },
+    {
+      id: "tv_front",
+      label: "ti vi nhìn thẳng",
+      value: 8,
+      image: {
+        kind: "emoji",
+        ref: "📺",
+      },
+      category: {
+        type: "góc nhìn khác",
+      },
+      contrast_group: "other_view",
+    },
+  ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "backpack_back",
+      target_id: "lion_front",
+      metadata: {
+        dimension: "perspective",
       },
     },
     {
-      id: "cat",
-      label: "con mèo",
-      image: {
-        kind: "emoji",
-        ref: "🐈",
-      },
-      category: {
-        type: "động vật",
+      type: "contrast",
+      source_id: "turtle_back",
+      target_id: "owl_front",
+      metadata: {
+        dimension: "perspective",
       },
     },
     {
-      id: "chicken",
-      label: "con gà",
-      image: {
-        kind: "emoji",
-        ref: "🐓",
-      },
-      category: {
-        type: "động vật",
+      type: "pair",
+      source_id: "backpack_back",
+      target_id: "turtle_back",
+      metadata: {
+        relation: "cùng nhìn sau",
       },
     },
     {
-      id: "duck",
-      label: "con vịt",
-      image: {
-        kind: "emoji",
-        ref: "🦆",
-      },
-      category: {
-        type: "động vật",
-      },
-    },
-    {
-      id: "fish",
-      label: "con cá",
-      image: {
-        kind: "emoji",
-        ref: "🐟",
-      },
-      category: {
-        type: "động vật",
+      type: "pair",
+      source_id: "lion_front",
+      target_id: "owl_front",
+      metadata: {
+        relation: "cùng nhìn khác",
       },
     },
   ],
+  axes: {
+    perspective: {
+      values: ["nhìn phía sau", "góc nhìn khác"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
@@ -128,7 +217,16 @@ export const C2_PER_02_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Nhìn từ phía sau nhé",
   },
-  ordering: ["dog", "cat", "chicken", "duck", "fish"],
+  ordering: [
+    "backpack_back",
+    "turtle_back",
+    "ladybug_back",
+    "chair_back",
+    "lion_front",
+    "owl_front",
+    "clock_front",
+    "tv_front",
+  ],
 };
 
 export const C2_PER_02_SEED: SkillSeed = {
@@ -157,62 +255,6 @@ export const C2_PER_02_SEED: SkillSeed = {
       band: "5-6",
       difficulty: 3,
       theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-PER-SORT-0002",
-      template: "GT-006",
-      band: "5-6",
-      difficulty: 4,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-PER-SHAD-0001",
-      template: "GT-007",
-      band: "4-5",
-      difficulty: 3,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-PER-SHAD-0002",
-      template: "GT-007",
-      band: "4-5",
-      difficulty: 4,
-      theme: "space",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-PER-SIZE-0001",
-      template: "GT-009",
-      band: "4-5",
-      difficulty: 3,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-PER-SIZE-0002",
-      template: "GT-009",
-      band: "4-5",
-      difficulty: 4,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-PER-PUZZ-0001",
-      template: "GT-010",
-      band: "4-5",
-      difficulty: 3,
-      theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-PER-PUZZ-0002",
-      template: "GT-010",
-      band: "4-5",
-      difficulty: 4,
-      theme: "festival",
       rounds: 3,
     },
   ],

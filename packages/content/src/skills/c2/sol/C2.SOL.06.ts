@@ -42,50 +42,150 @@ export const C2_SOL_06_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "star",
-      label: "hình ngôi sao",
+      id: "icecream_cone",
+      label: "kem ốc quế",
+      value: 1,
       image: {
         kind: "emoji",
-        ref: "⭐",
+        ref: "🍦",
       },
       category: {
-        type: "shape",
+        type: "khối nón",
+      },
+      contrast_group: "cone",
+    },
+    {
+      id: "party_hat",
+      label: "mũ sinh nhật",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "🎉",
+      },
+      category: {
+        type: "khối nón",
+      },
+      contrast_group: "cone",
+    },
+    {
+      id: "tent_cone",
+      label: "lều chóp nón",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "⛺",
+      },
+      category: {
+        type: "khối nón",
+      },
+      contrast_group: "cone",
+    },
+    {
+      id: "carrot_cone",
+      label: "củ cà rốt chóp nhọn",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "🥕",
+      },
+      category: {
+        type: "khối nón",
+      },
+      contrast_group: "cone",
+    },
+    {
+      id: "ball_other",
+      label: "quả bóng tròn",
+      value: 5,
+      image: {
+        kind: "emoji",
+        ref: "⚽",
+      },
+      category: {
+        type: "khối khác",
+      },
+      contrast_group: "other_solid",
+    },
+    {
+      id: "dice_other",
+      label: "xúc xắc vuông",
+      value: 6,
+      image: {
+        kind: "emoji",
+        ref: "🎲",
+      },
+      category: {
+        type: "khối khác",
+      },
+      contrast_group: "other_solid",
+    },
+    {
+      id: "can_other",
+      label: "lon nước trụ",
+      value: 7,
+      image: {
+        kind: "emoji",
+        ref: "🥫",
+      },
+      category: {
+        type: "khối khác",
+      },
+      contrast_group: "other_solid",
+    },
+    {
+      id: "box_other",
+      label: "hộp các-tông",
+      value: 8,
+      image: {
+        kind: "emoji",
+        ref: "📦",
+      },
+      category: {
+        type: "khối khác",
+      },
+      contrast_group: "other_solid",
+    },
+  ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "icecream_cone",
+      target_id: "ball_other",
+      metadata: {
+        dimension: "solid_type",
       },
     },
     {
-      id: "heart",
-      label: "hình trái tim",
-      image: {
-        kind: "emoji",
-        ref: "❤️",
-      },
-      category: {
-        type: "shape",
+      type: "contrast",
+      source_id: "party_hat",
+      target_id: "dice_other",
+      metadata: {
+        dimension: "solid_type",
       },
     },
     {
-      id: "diamond",
-      label: "hình thoi",
-      image: {
-        kind: "emoji",
-        ref: "🔷",
-      },
-      category: {
-        type: "shape",
+      type: "pair",
+      source_id: "icecream_cone",
+      target_id: "party_hat",
+      metadata: {
+        relation: "cùng khối nón",
       },
     },
     {
-      id: "oval",
-      label: "hình bầu dục",
-      image: {
-        kind: "emoji",
-        ref: "🟢",
-      },
-      category: {
-        type: "shape",
+      type: "pair",
+      source_id: "ball_other",
+      target_id: "dice_other",
+      metadata: {
+        relation: "cùng khối khác",
       },
     },
   ],
+  axes: {
+    solid_type: {
+      values: ["khối nón", "khối khác"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
@@ -117,7 +217,16 @@ export const C2_SOL_06_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Khối nón nhé",
   },
-  ordering: ["star", "heart", "diamond", "oval"],
+  ordering: [
+    "icecream_cone",
+    "party_hat",
+    "tent_cone",
+    "carrot_cone",
+    "ball_other",
+    "dice_other",
+    "can_other",
+    "box_other",
+  ],
 };
 
 export const C2_SOL_06_SEED: SkillSeed = {
@@ -146,62 +255,6 @@ export const C2_SOL_06_SEED: SkillSeed = {
       band: "4-5",
       difficulty: 3,
       theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-TCNT-0012",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 4,
-      theme: "ocean",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-TCMP-0011",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 3,
-      theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-TCMP-0012",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 4,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-PAIR-0011",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 3,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-PAIR-0012",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 4,
-      theme: "space",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-PATT-0011",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 3,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-PATT-0012",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 4,
-      theme: "body",
       rounds: 3,
     },
   ],

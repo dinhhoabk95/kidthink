@@ -60,7 +60,11 @@ export class MfaAttemptGuard {
       const key = this.failKey(namespace, accountId);
       const count = await this.redis.incr(key);
       if (count === 1) {
-        await this.redis.set(key, "1", "EX", MFA_LOCK_SECONDS);
+        if (typeof this.redis.expire === "function") {
+          await this.redis.expire(key, MFA_LOCK_SECONDS);
+        } else {
+          await this.redis.set(key, String(count), "EX", MFA_LOCK_SECONDS);
+        }
       }
       if (count < MFA_MAX_FAILURES) {
         return { locked: false };

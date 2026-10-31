@@ -49,12 +49,9 @@ describe("Curriculum Schema Integration Tests", () => {
     const [cur] = await db
       .insert(curricula)
       .values({
-        entityId: Math.floor(10_000_000 + Math.random() * 89_000_000),
         code: curCode,
-        contentVersion: 1,
         title: "Lộ trình Test",
         accessTier: "free",
-        status: "draft",
       })
       .returning();
     if (!cur) {
@@ -80,44 +77,34 @@ describe("Curriculum Schema Integration Tests", () => {
     expect(item.entityId).toBe(999_111_222);
   });
 
-  it("BR-SCT-06: curriculum_items references entity_id (lineage anchor) so it sees new published versions automatically", async () => {
+  it("BR-SCT-06: curriculum_items references game_levels.id directly via entity_id", async () => {
     const db = getOwnerDb();
 
-    // 1. Template Code
     const gtCode = "GT-001";
-
     const glCode = await getUniqueGameLevelCode();
-    const lineageAnchorEntityId = Math.floor(Math.random() * 900_000) + 100_000;
 
-    const [glV1] = await db
+    const [gl] = await db
       .insert(gameLevels)
       .values({
-        entityId: lineageAnchorEntityId,
         code: glCode,
-        contentVersion: 1,
         templateCode: gtCode,
         title: "Version 1",
         contentPack: { v: 1 },
         difficultyParams: { speed: 1 },
         accessTier: "free",
-        status: "published",
       })
       .returning();
-    if (!glV1) {
-      throw new Error("Failed to insert glV1");
+    if (!gl) {
+      throw new Error("Failed to insert gl");
     }
 
-    // 2. Create Curriculum and Curriculum Item pointing to lineage anchor
     const curCode = await getUniqueCurriculumCode();
     const [cur] = await db
       .insert(curricula)
       .values({
-        entityId: Math.floor(10_000_000 + Math.random() * 89_000_000),
         code: curCode,
-        contentVersion: 1,
-        title: "Curriculum Lineage Test",
+        title: "Curriculum Direct Entity Test",
         accessTier: "free",
-        status: "published",
       })
       .returning();
     if (!cur) {
@@ -132,48 +119,35 @@ describe("Curriculum Schema Integration Tests", () => {
         sessionNo: 1,
         position: 1,
         entityType: "game_level",
-        entityId: lineageAnchorEntityId,
+        entityId: gl.id,
       })
       .returning();
     if (!item) {
       throw new Error("Failed to insert item");
     }
 
-    // Query published game level version for curriculum item before update -> returns V1
-    const [publishedBefore] = await db
+    const [levelBefore] = await db
       .select()
       .from(gameLevels)
-      .where(eq(gameLevels.entityId, item.entityId));
+      .where(eq(gameLevels.id, item.entityId));
 
-    expect(publishedBefore?.title).toBe("Version 1");
+    expect(levelBefore?.title).toBe("Version 1");
 
-    // 3. Archive V1 and create Published Game Level Version 2 with same lineageAnchorEntityId
     await db
       .update(gameLevels)
-      .set({ status: "archived" })
-      .where(eq(gameLevels.id, glV1.id));
+      .set({
+        title: "Version 2 (Updated)",
+        contentPack: { v: 2 },
+        difficultyParams: { speed: 2 },
+      })
+      .where(eq(gameLevels.id, gl.id));
 
-    await db.insert(gameLevels).values({
-      entityId: lineageAnchorEntityId,
-      code: glCode,
-      contentVersion: 2,
-      templateCode: gtCode,
-      title: "Version 2 (New Published)",
-      contentPack: { v: 2 },
-      difficultyParams: { speed: 2 },
-      accessTier: "free",
-      status: "published",
-    });
+    const [levelAfter] = await db
+      .select()
+      .from(gameLevels)
+      .where(eq(gameLevels.id, item.entityId));
 
-    // Query published game level for curriculum item -> automatically sees Version 2 without changing curriculum_items.entity_id!
-    const latestPublished = (
-      await db
-        .select()
-        .from(gameLevels)
-        .where(eq(gameLevels.entityId, item.entityId))
-    ).find((g) => g.status === "published");
-
-    expect(latestPublished?.title).toBe("Version 2 (New Published)");
+    expect(levelAfter?.title).toBe("Version 2 (Updated)");
   });
 
   it("D-MB: rejects two active enrollments for the same child profile via unique partial index", async () => {
@@ -211,12 +185,9 @@ describe("Curriculum Schema Integration Tests", () => {
     const [cur1] = await db
       .insert(curricula)
       .values({
-        entityId: uid,
         code: curCode1,
-        contentVersion: 1,
         title: "Lộ trình 1",
         accessTier: "free",
-        status: "published",
       })
       .returning();
     if (!cur1) {
@@ -226,12 +197,9 @@ describe("Curriculum Schema Integration Tests", () => {
     const [cur2] = await db
       .insert(curricula)
       .values({
-        entityId: uid + 1,
         code: curCode2,
-        contentVersion: 1,
         title: "Lộ trình 2",
         accessTier: "free",
-        status: "published",
       })
       .returning();
     if (!cur2) {
@@ -288,12 +256,9 @@ describe("Curriculum Schema Integration Tests", () => {
     const [cur] = await db
       .insert(curricula)
       .values({
-        entityId: uid,
         code: curCode,
-        contentVersion: 1,
         title: "Lộ trình Tiến độ",
         accessTier: "free",
-        status: "published",
       })
       .returning();
     if (!cur) {

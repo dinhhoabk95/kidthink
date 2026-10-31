@@ -117,7 +117,7 @@ export function startWorker(): Worker {
   });
 
   worker.on("failed", (job, error) => {
-    onJobFailed(job, error).catch((alertError: unknown) => {
+    onJobFailed(job, error).catch((alertError) => {
       // Nuốt lỗi ở đây là quay lại đúng chế độ hỏng mà BR-JOB-05 cấm.
       console.error(
         `[worker] Không phát được alert cho job thất bại: ${readErrorMessage(alertError)}`

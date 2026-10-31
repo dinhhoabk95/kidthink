@@ -87,10 +87,21 @@ const SPATIAL_MAP: Readonly<Record<string, string>> = {
   góc: "trong góc",
 };
 
+const TONE_MARK_GLYPH_MAP: Readonly<Record<string, string>> = {
+  "—": "Thanh ngang",
+  ˋ: "Dấu huyền",
+  ˊ: "Dấu sắc",
+  "﹒": "Dấu nặng",
+  "\u0309": "Dấu hỏi",
+  ʾ: "Dấu hỏi",
+  "˜": "Dấu ngã",
+};
+
 const DIGITS_ONLY_RE = /^\d+$/;
 const SO_NUMBER_RE = /^số\s+\d+$/i;
 const SO_WORD_RE = /^số\s+[a-zà-ỹ\s]+$/i;
 const SINGLE_LETTER_RE = /^[a-zA-Zà-ỹÀ-Ỹ]$/;
+const NUMBER_PREFIX_RE = /^(một|hai|ba|bốn|năm|sáu|bảy|tám|chín|mười|\d+)\s+/i;
 
 export interface TerminologyOptions {
   readonly value?: number;
@@ -113,13 +124,16 @@ export function isNumberEntity(
   label: string,
   opts?: TerminologyOptions
 ): boolean {
-  if (opts?.value !== undefined) {
-    return true;
-  }
-  if (opts?.glyph && DIGITS_ONLY_RE.test(opts.glyph.trim())) {
-    return true;
-  }
   const clean = label.trim().toLowerCase();
+  if (clean.length === 0) {
+    if (opts?.value !== undefined) {
+      return true;
+    }
+    if (opts?.glyph && DIGITS_ONLY_RE.test(opts.glyph.trim())) {
+      return true;
+    }
+    return false;
+  }
   if (SO_NUMBER_RE.test(clean) || SO_WORD_RE.test(clean)) {
     return true;
   }
@@ -210,6 +224,9 @@ export function formatDisplayLabel(
   opts?: TerminologyOptions
 ): string {
   const raw = label.trim();
+  if (TONE_MARK_GLYPH_MAP[raw]) {
+    return TONE_MARK_GLYPH_MAP[raw];
+  }
   const lower = raw.toLowerCase();
 
   // 1. Số học
@@ -271,6 +288,11 @@ export function formatPluralNoun(
   opts?: TerminologyOptions
 ): string {
   const promptLabel = formatPromptLabel(label, opts);
+
+  // Nếu nhãn đã chứa số lượng ở đầu (ví dụ: "hai bông hoa", "3 quả táo"), không thêm "các"
+  if (NUMBER_PREFIX_RE.test(promptLabel)) {
+    return promptLabel;
+  }
 
   if (promptLabel.startsWith("hình ")) {
     return `các ${promptLabel}`;

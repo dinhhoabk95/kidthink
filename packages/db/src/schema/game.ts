@@ -9,23 +9,11 @@ import {
   pgTable,
   smallint,
   text,
-  timestamp,
   unique,
   varchar,
 } from "drizzle-orm/pg-core";
 import { timestamps } from "./columns.ts";
-import { managers } from "./identity.ts";
 import { skillDatasets } from "./taxonomy.ts";
-import { versioningConstraints } from "./versioning.ts";
-
-export const contentLifecycleStatusEnum = pgEnum("content_lifecycle_status", [
-  "draft",
-  "in_review",
-  "approved",
-  "published",
-  "archived",
-  "rejected",
-]);
 
 export const accessTierEnum = pgEnum("access_tier", [
   "free",
@@ -34,22 +22,13 @@ export const accessTierEnum = pgEnum("access_tier", [
   "premium",
 ]);
 
-export const contentOriginEnum = pgEnum("content_origin", [
-  "human",
-  "ai_assisted",
-]);
-
-export const authoredInEnum = pgEnum("authored_in", ["repo_seed", "studio"]);
-
 export const gameLevels = pgTable(
   "game_levels",
   {
     id: bigint("id", { mode: "number" })
       .primaryKey()
       .generatedAlwaysAsIdentity(),
-    entityId: bigint("entity_id", { mode: "number" }).notNull(),
-    code: varchar("code", { length: 50 }).notNull(),
-    contentVersion: integer("content_version").notNull().default(1),
+    code: varchar("code", { length: 50 }).notNull().unique(),
     templateCode: varchar("template_code", { length: 20 }).notNull(),
     title: varchar("title", { length: 200 }).notNull(),
     description: text("description"),
@@ -63,36 +42,17 @@ export const gameLevels = pgTable(
     difficulty: smallint("difficulty"),
     accessTier: accessTierEnum("access_tier").notNull(),
     thumbnailEmoji: varchar("thumbnail_emoji", { length: 50 }),
-    legacyV1Ref: text("legacy_v1_ref"),
-    status: contentLifecycleStatusEnum("status").notNull().default("draft"),
-    origin: contentOriginEnum("origin").notNull().default("human"),
-    authoredIn: authoredInEnum("authored_in").notNull().default("studio"),
-    seedBatchId: bigint("seed_batch_id", { mode: "number" }),
     skillDatasetId: bigint("skill_dataset_id", { mode: "number" }).references(
       () => skillDatasets.id
     ),
     projectionRef: varchar("projection_ref", { length: 100 }),
-    createdByManagerId: bigint("created_by_manager_id", {
-      mode: "number",
-    }).references(() => managers.id),
-    reviewedByManagerId: bigint("reviewed_by_manager_id", {
-      mode: "number",
-    }).references(() => managers.id),
-    publishedAt: timestamp("published_at", { withTimezone: true }),
-    archivedAt: timestamp("archived_at", { withTimezone: true }),
     ...timestamps(),
   },
   (table) => [
-    ...versioningConstraints({
-      uniqueName: "game_levels_code_version_unique",
-      publishedIndexName: "idx_game_levels_published_code",
-      keyColumn: table.code,
-      versionColumn: table.contentVersion,
-      statusColumn: table.status,
-    }),
     // Tra cứu nội dung theo khoá JSONB (content-search) — không có GIN thì mỗi
     // truy vấn quét toàn bảng game_levels.
     index("idx_game_levels_content_pack_gin").using("gin", table.contentPack),
+    index("idx_game_levels_skill_dataset_id").on(table.skillDatasetId),
     check(
       "check_game_levels_code_format",
       sql`${table.code} ~ '^GL-C[1-6]-[A-Z]{2,5}-[A-Z]{2,5}-\\d{4}$'`

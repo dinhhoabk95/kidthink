@@ -4,7 +4,6 @@ import {
   childProfiles,
   gameLevels,
   getOwnerDb,
-  lessons,
   playSessions,
 } from "@mindkid/db";
 import { isAppError, type JsonValue } from "@mindkid/errors/base";
@@ -32,8 +31,8 @@ import {
   measureRoundSetPayloadBytes,
   resolveAssets,
 } from "@mindkid/shared";
-import { and, desc, eq } from "drizzle-orm";
-import { getQuery, type H3Event, setHeader } from "h3";
+import { and, eq } from "drizzle-orm";
+import { type H3Event, setHeader } from "h3";
 import { checkLevelIntroRequired } from "#server/utils/concept-intro-runtime";
 import {
   loadRoundSet,
@@ -48,7 +47,6 @@ export interface GameConfigDeliveryOptions {
   guestDeviceId?: string;
   callerChildAge?: number;
   activeKeys?: EntitlementKey[];
-  lessonRunId?: string | number | null;
 }
 
 interface LevelTemplateRow {
@@ -73,7 +71,8 @@ async function resolveOwnedChild(
     .where(
       and(
         eq(childProfiles.uuid, caller.active_child_id),
-        eq(childProfiles.userId, userId)
+        eq(childProfiles.userId, userId),
+        eq(childProfiles.status, "active")
       )
     )
     .limit(1);
@@ -85,30 +84,14 @@ async function resolveOwnedChild(
 
 async function fetchLevelAndTemplate(
   code: string,
-  options: GameConfigDeliveryOptions
+  _options: GameConfigDeliveryOptions
 ): Promise<LevelTemplateRow> {
   const db = getOwnerDb();
-  const baseQuery = db.select().from(gameLevels);
-
-  let rows: (typeof gameLevels.$inferSelect)[] = [];
-  if (options.isManagerPreview && options.version !== undefined) {
-    rows = await baseQuery.where(
-      and(
-        eq(gameLevels.code, code),
-        eq(gameLevels.contentVersion, options.version)
-      )
-    );
-  } else if (options.isManagerPreview) {
-    rows = await baseQuery
-      .where(eq(gameLevels.code, code))
-      .orderBy(desc(gameLevels.contentVersion))
-      .limit(1);
-  } else {
-    rows = await baseQuery
-      .where(and(eq(gameLevels.code, code), eq(gameLevels.status, "published")))
-      .orderBy(desc(gameLevels.contentVersion))
-      .limit(1);
-  }
+  const rows = await db
+    .select()
+    .from(gameLevels)
+    .where(eq(gameLevels.code, code))
+    .limit(1);
 
   const levelRow = rows[0];
   if (!levelRow) {
@@ -125,12 +108,11 @@ async function fetchLevelAndTemplate(
   return { level: levelRow, template };
 }
 
-async function isExemptFromDailyPlayCap(
+function isExemptFromDailyPlayCap(
   options: GameConfigDeliveryOptions,
-  event: H3Event,
   template: GameTemplate,
   ownedChild: typeof childProfiles.$inferSelect | null
-): Promise<boolean> {
+): boolean {
   if (
     options.isManagerPreview ||
     options.caller.kind !== "user" ||
@@ -141,22 +123,7 @@ async function isExemptFromDailyPlayCap(
   if (template.kind === "teach") {
     return true;
   }
-  if (options.lessonRunId !== undefined && options.lessonRunId !== null) {
-    return true;
-  }
-  const query = getQuery(event);
-  const lessonCode =
-    typeof query.lesson === "string" ? query.lesson.trim() : "";
-  if (lessonCode.length === 0) {
-    return false;
-  }
-  const db = getOwnerDb();
-  const [publishedLesson] = await db
-    .select({ id: lessons.id })
-    .from(lessons)
-    .where(and(eq(lessons.code, lessonCode), eq(lessons.status, "published")))
-    .limit(1);
-  return Boolean(publishedLesson);
+  return false;
 }
 
 async function assertChildDailyPlayQuota(
@@ -189,15 +156,24 @@ async function runContentAccessGuard(
   level: typeof gameLevels.$inferSelect,
   template: GameTemplate,
   options: GameConfigDeliveryOptions,
-  event: H3Event,
+  _event: H3Event,
   ownedChild: typeof childProfiles.$inferSelect | null
 ): Promise<ContentAccessResult> {
+  const effectiveChildAge =
+    options.callerChildAge ??
+    (ownedChild
+      ? Math.max(
+          3,
+          Math.min(6, new Date().getFullYear() - ownedChild.birthYear)
+        )
+      : undefined);
+
   try {
     return await assertContentAccess(
       {
         code: level.code,
         access_tier: level.accessTier,
-        status: level.status,
+        status: "published",
         age_min: level.ageMin ?? 3,
         age_max: level.ageMax ?? 6,
         title: level.title,
@@ -209,21 +185,24 @@ async function runContentAccessGuard(
         isManagerPreview: options.isManagerPreview,
         managerAudience: options.isManagerPreview,
         requiresChild: options.requiresChild,
-        callerChildAge: options.callerChildAge,
+        callerChildAge: effectiveChildAge,
         verifyChildOwnership: async (userId, childUuid) =>
           ownedChild !== null &&
           String(ownedChild.uuid) === childUuid &&
           String(ownedChild.userId) === userId,
         checkIntroRequired: async () =>
-          await checkLevelIntroRequired(level, options.caller, {
-            guestDeviceId: options.guestDeviceId,
-            lessonRunId: null,
-            isManagerPreview: options.isManagerPreview,
-          }),
+          await checkLevelIntroRequired(
+            level,
+            options.caller,
+            {
+              guestDeviceId: options.guestDeviceId,
+              isManagerPreview: options.isManagerPreview,
+              resolvedChildId: ownedChild?.id ?? null,
+            },
+            ownedChild?.id ?? null
+          ),
         checkQuotaRemaining: async () => {
-          if (
-            await isExemptFromDailyPlayCap(options, event, template, ownedChild)
-          ) {
+          if (isExemptFromDailyPlayCap(options, template, ownedChild)) {
             return true;
           }
           if (!ownedChild) {
@@ -259,10 +238,26 @@ export function createLayoutSeed(isManagerPreview: boolean): number {
     : Math.floor(Math.random() * LAYOUT_SEED_MAX);
 }
 
+function resolveSessionGuestDeviceId(
+  childProfileId: number | null,
+  options: GameConfigDeliveryOptions
+): string | null {
+  if (childProfileId !== null) {
+    return null;
+  }
+  if (options.guestDeviceId) {
+    return options.guestDeviceId;
+  }
+  if (options.caller.kind === "user" && options.caller.user_id) {
+    return `user:${options.caller.user_id}`;
+  }
+  return options.isManagerPreview ? "preview-manager" : "guest-device";
+}
+
 async function createPlaySessionRecord(
   db: ReturnType<typeof getOwnerDb>,
   params: {
-    level: { id: number; contentVersion: number; accessTier: string };
+    level: { id: number; accessTier: string };
     templateCode: string;
     ownedChild: { id: number } | null;
     options: GameConfigDeliveryOptions;
@@ -272,10 +267,10 @@ async function createPlaySessionRecord(
   const sessionUuid = randomUUID();
   const startedAt = new Date();
   const childProfileId = params.ownedChild?.id ?? null;
-  const guestDeviceId = childProfileId
-    ? null
-    : params.options.guestDeviceId ||
-      (params.options.isManagerPreview ? "preview-manager" : "guest-device");
+  const guestDeviceId = resolveSessionGuestDeviceId(
+    childProfileId,
+    params.options
+  );
   const layoutSeed = createLayoutSeed(params.options.isManagerPreview === true);
 
   await db.insert(playSessions).values({
@@ -283,7 +278,6 @@ async function createPlaySessionRecord(
     childProfileId,
     guestDeviceId,
     gameLevelId: params.level.id,
-    contentVersion: params.level.contentVersion,
     templateCode: params.templateCode,
     layoutSeed,
     isPreview: params.isPreview,
@@ -300,7 +294,6 @@ function validateLevelAndRounds(
   templateCode: string,
   level: {
     code: string;
-    contentVersion: number;
     contentPack: typeof gameLevels.$inferSelect.contentPack;
   },
   rounds: Array<{
@@ -311,7 +304,7 @@ function validateLevelAndRounds(
   const validation = validateContentPack(templateCode, level.contentPack);
   if (!validation.success) {
     console.error(
-      `[ALERT] CONTENT_PACK_INVALID for level ${level.code} v${level.contentVersion}:`,
+      `[ALERT] CONTENT_PACK_INVALID for level ${level.code} v1:`,
       validation.error
     );
     throw new ContentPackInvalidError(
@@ -323,6 +316,9 @@ function validateLevelAndRounds(
   }
 
   for (const round of rounds) {
+    if (round.content_pack === level.contentPack) {
+      continue;
+    }
     const roundValidation = validateContentPack(
       templateCode,
       round.content_pack
@@ -387,8 +383,10 @@ export async function deliverGameConfig(
   options: GameConfigDeliveryOptions
 ) {
   const db = getOwnerDb();
-  const { level, template } = await fetchLevelAndTemplate(code, options);
-  const ownedChild = await resolveOwnedChild(db, options.caller);
+  const [{ level, template }, ownedChild] = await Promise.all([
+    fetchLevelAndTemplate(code, options),
+    resolveOwnedChild(db, options.caller),
+  ]);
 
   const accessResult = await runContentAccessGuard(
     level,
@@ -429,7 +427,9 @@ export async function deliverGameConfig(
   // 5. Resolve assets (BR-CFG-07)
   const allContentPacks = [
     level.contentPack,
-    ...rounds.map((r) => r.content_pack),
+    ...rounds
+      .map((r) => r.content_pack)
+      .filter((pack) => pack !== level.contentPack),
   ];
   const assets = allContentPacks.flatMap((pack) => resolveAssets(pack));
 
@@ -439,7 +439,7 @@ export async function deliverGameConfig(
   // 7. Construct payload §7.1
   return {
     level_code: level.code,
-    content_version: level.contentVersion,
+    content_version: 1,
     template_code: template.code,
     title: level.title,
     instruction: level.instruction || "",

@@ -70,7 +70,7 @@ describe("Manager Auth Sessions Routes (Task #305 S1 — BR-AUT-01..10)", () => 
         email: `mgr-sess-b-${suffix}@mindkid.vn`,
         passwordHash: passHash,
         displayName: "Manager B",
-        role: "content_reviewer",
+        role: "super_admin",
         isActive: true,
         mfaEnabled: true,
       })
@@ -169,7 +169,7 @@ describe("Manager Auth Sessions Routes (Task #305 S1 — BR-AUT-01..10)", () => 
         email: `mgr-del-b-${suffix}@mindkid.vn`,
         passwordHash: passHash,
         displayName: "Manager Del B",
-        role: "content_reviewer",
+        role: "super_admin",
         isActive: true,
         mfaEnabled: true,
       })

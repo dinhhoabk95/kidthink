@@ -32,13 +32,9 @@ describe("Guest Play Recommendations API (BR-REC-04, BR-REC-06, D-MW)", () => {
   it("GET /api/guest/play/recommendations returns 200 with allow-list free content only", async () => {
     const db = getOwnerDb();
 
-    const randNum = crypto.randomInt(100_000, 999_999);
-
     // Insert free level
     await db.insert(gameLevels).values({
-      entityId: randNum,
       code: `GL-C1-GUEST-FREE-${String(crypto.randomInt(1000, 9999))}`,
-      contentVersion: 1,
       templateCode: "GT-001",
       title: "Trò chơi khách",
       contentPack: {},
@@ -47,15 +43,12 @@ describe("Guest Play Recommendations API (BR-REC-04, BR-REC-06, D-MW)", () => {
       ageMin: 3,
       ageMax: 5,
       difficulty: 1,
-      status: "published",
       thumbnailEmoji: "⭐",
     });
 
     // Insert standard level (negative test: must never be returned to guest)
     await db.insert(gameLevels).values({
-      entityId: randNum + 1,
       code: `GL-C1-GUEST-STD-${String(crypto.randomInt(1000, 9999))}`,
-      contentVersion: 1,
       templateCode: "GT-001",
       title: "Trò chơi khoá",
       contentPack: {},
@@ -64,7 +57,6 @@ describe("Guest Play Recommendations API (BR-REC-04, BR-REC-06, D-MW)", () => {
       ageMin: 3,
       ageMax: 5,
       difficulty: 2,
-      status: "published",
       thumbnailEmoji: "🔒",
     });
 

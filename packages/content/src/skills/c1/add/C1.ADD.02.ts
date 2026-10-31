@@ -1,5 +1,4 @@
 import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
-import { numeralItem } from "#src/inventories/index";
 
 export const C1_ADD_02_IDENTITY: SkillIdentity = {
   code: "C1.ADD.02",
@@ -42,85 +41,184 @@ export const C1_ADD_02_DATASET: SkillDataset = {
   concept_label: "Cộng bằng hình",
   surface: "game",
   items: [
-    numeralItem("n0", {
-      image: {
-        kind: "emoji",
-        ref: "0️⃣",
-      },
-    }),
-    numeralItem("n1", {
-      image: {
-        kind: "emoji",
-        ref: "1️⃣",
-      },
-    }),
-    numeralItem("n2", {
-      image: {
-        kind: "emoji",
-        ref: "2️⃣",
-      },
-    }),
-    numeralItem("n3", {
-      image: {
-        kind: "emoji",
-        ref: "3️⃣",
-      },
-    }),
-    numeralItem("n4", {
-      image: {
-        kind: "emoji",
-        ref: "4️⃣",
-      },
-    }),
-    numeralItem("n5", {
-      image: {
-        kind: "emoji",
-        ref: "5️⃣",
-      },
-    }),
-    numeralItem("n6", {
-      image: {
-        kind: "emoji",
-        ref: "6️⃣",
-      },
-    }),
-    numeralItem("n7", {
-      image: {
-        kind: "emoji",
-        ref: "7️⃣",
-      },
-    }),
-    numeralItem("n8", {
-      image: {
-        kind: "emoji",
-        ref: "8️⃣",
-      },
-    }),
-    numeralItem("n9", {
-      image: {
-        kind: "emoji",
-        ref: "9️⃣",
-      },
-    }),
-    numeralItem("n10", {
-      image: {
-        kind: "emoji",
-        ref: "🔟",
-      },
-    }),
-  ],
-  relations: [
     {
-      type: "subset",
-      source_id: "n0",
-      target_id: "n7",
-      metadata: {
-        bond_id: "bond_7_0_7",
-        part_a: 0,
-        part_b: 7,
-        whole: 7,
+      id: "n0",
+      label: "số 0",
+      glyph: "0",
+      value: 0,
+      contrast_group: "quantity",
+      ordering: 0,
+      audio_path: "/audio/voice/common/numbers/0.mp3",
+      category: {
+        type: "phép cộng hình",
+      },
+      image: {
+        kind: "emoji",
+        ref: "🧺",
       },
     },
+    {
+      id: "n1",
+      label: "số một",
+      glyph: "1",
+      value: 1,
+      contrast_group: "quantity",
+      ordering: 1,
+      audio_path: "/audio/voice/common/numbers/1.mp3",
+      category: {
+        type: "phép cộng hình",
+      },
+      image: {
+        kind: "emoji",
+        ref: "🍎",
+      },
+    },
+    {
+      id: "n2",
+      label: "số hai",
+      glyph: "2",
+      value: 2,
+      contrast_group: "quantity",
+      ordering: 2,
+      audio_path: "/audio/voice/common/numbers/2.mp3",
+      category: {
+        type: "phép cộng hình",
+      },
+      image: {
+        kind: "emoji",
+        ref: "🍊",
+      },
+    },
+    {
+      id: "n3",
+      label: "số ba",
+      glyph: "3",
+      value: 3,
+      contrast_group: "quantity",
+      ordering: 3,
+      audio_path: "/audio/voice/common/numbers/3.mp3",
+      category: {
+        type: "phép cộng hình",
+      },
+      image: {
+        kind: "emoji",
+        ref: "🍌",
+      },
+    },
+    {
+      id: "n4",
+      label: "số bốn",
+      glyph: "4",
+      value: 4,
+      contrast_group: "quantity",
+      ordering: 4,
+      audio_path: "/audio/voice/common/numbers/4.mp3",
+      category: {
+        type: "phép cộng hình",
+      },
+      image: {
+        kind: "emoji",
+        ref: "🍓",
+      },
+    },
+    {
+      id: "n5",
+      label: "số năm",
+      glyph: "5",
+      value: 5,
+      contrast_group: "quantity",
+      ordering: 5,
+      audio_path: "/audio/voice/common/numbers/5.mp3",
+      category: {
+        type: "phép cộng hình",
+      },
+      image: {
+        kind: "emoji",
+        ref: "🍉",
+      },
+    },
+    {
+      id: "n6",
+      label: "số sáu",
+      glyph: "6",
+      value: 6,
+      contrast_group: "quantity",
+      ordering: 6,
+      audio_path: "/audio/voice/common/numbers/6.mp3",
+      category: {
+        type: "phép cộng hình",
+      },
+      image: {
+        kind: "emoji",
+        ref: "🍑",
+      },
+    },
+    {
+      id: "n7",
+      label: "số bảy",
+      glyph: "7",
+      value: 7,
+      contrast_group: "quantity",
+      ordering: 7,
+      audio_path: "/audio/voice/common/numbers/7.mp3",
+      category: {
+        type: "phép cộng hình",
+      },
+      image: {
+        kind: "emoji",
+        ref: "🍐",
+      },
+    },
+    {
+      id: "n8",
+      label: "số tám",
+      glyph: "8",
+      value: 8,
+      contrast_group: "quantity",
+      ordering: 8,
+      audio_path: "/audio/voice/common/numbers/8.mp3",
+      category: {
+        type: "phép cộng hình",
+      },
+      image: {
+        kind: "emoji",
+        ref: "🍇",
+      },
+    },
+    {
+      id: "n9",
+      label: "số chín",
+      glyph: "9",
+      value: 9,
+      contrast_group: "quantity",
+      ordering: 9,
+      audio_path: "/audio/voice/common/numbers/9.mp3",
+      category: {
+        type: "phép cộng hình",
+      },
+      image: {
+        kind: "emoji",
+        ref: "🍒",
+      },
+    },
+    {
+      id: "n10",
+      label: "số mười",
+      glyph: "10",
+      value: 10,
+      contrast_group: "quantity",
+      ordering: 10,
+      audio_path: "/audio/voice/common/numbers/10.mp3",
+      category: {
+        type: "phép cộng hình",
+      },
+      image: {
+        kind: "emoji",
+        ref: "🍍",
+      },
+    },
+  ],
+  relations: [
     {
       type: "subset",
       source_id: "n1",
@@ -165,28 +263,6 @@ export const C1_ADD_02_DATASET: SkillDataset = {
         whole: 7,
       },
     },
-    {
-      type: "subset",
-      source_id: "n5",
-      target_id: "n7",
-      metadata: {
-        bond_id: "bond_7_5_2",
-        part_a: 5,
-        part_b: 2,
-        whole: 7,
-      },
-    },
-    {
-      type: "subset",
-      source_id: "n6",
-      target_id: "n7",
-      metadata: {
-        bond_id: "bond_7_6_1",
-        part_a: 6,
-        part_b: 1,
-        whole: 7,
-      },
-    },
   ],
   ladder: [
     {
@@ -221,8 +297,8 @@ export const C1_ADD_02_DATASET: SkillDataset = {
     },
   ],
   phrasing: {
-    prompt_template: "Gộp lại có tất cả bao nhiêu {label}?",
-    narration_template: "Chúng mình cùng tìm hiểu về Cộng bằng hình nhé",
+    prompt_template: "Bé hãy chọn {label} nhé!",
+    narration_template: "Chúng mình cùng làm quen với phép cộng bằng hình nhé",
   },
   ordering: ["n0", "n1", "n2", "n3", "n4", "n5", "n6", "n7", "n8", "n9", "n10"],
 };
@@ -231,6 +307,12 @@ export const C1_ADD_02_SEED: SkillSeed = {
   identity: C1_ADD_02_IDENTITY,
   dataset: C1_ADD_02_DATASET,
   levels: [
+    {
+      template: "GT-000",
+      band: "5-6",
+      difficulty: 1,
+      theme: "school",
+    },
     {
       code: "GL-C1-ADD-PICT-0001",
       template: "GT-031",
@@ -248,14 +330,6 @@ export const C1_ADD_02_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C1-ADD-PICT-0003",
-      template: "GT-031",
-      band: "5-6",
-      difficulty: 4,
-      theme: "family",
-      rounds: 3,
-    },
-    {
       code: "GL-C1-ADD-PICT-0004",
       template: "GT-031",
       band: "5-6",
@@ -264,132 +338,16 @@ export const C1_ADD_02_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C1-ADD-PICT-0005",
-      template: "GT-031",
+      template: "GT-001",
       band: "5-6",
-      difficulty: 3,
-      theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-ADD-TAP-0005",
-      template: "GT-001",
-      band: "4-5",
-      difficulty: 2,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-ADD-TAP-0006",
-      template: "GT-001",
-      band: "4-5",
-      difficulty: 3,
-      theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-ADD-TAP-0007",
-      template: "GT-001",
-      band: "4-5",
-      difficulty: 4,
-      theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-ADD-TAP-0008",
-      template: "GT-001",
-      band: "4-5",
-      difficulty: 2,
+      difficulty: 1,
       theme: "school",
-      rounds: 3,
     },
     {
-      code: "GL-C1-ADD-TAP-0009",
       template: "GT-001",
-      band: "4-5",
-      difficulty: 3,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-ADD-TCMP-0005",
-      template: "GT-003",
-      band: "4-5",
+      band: "5-6",
       difficulty: 2,
       theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-ADD-TCMP-0006",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 3,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-ADD-TCMP-0007",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 4,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-ADD-TCMP-0008",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 2,
-      theme: "ocean",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-ADD-TCMP-0009",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 3,
-      theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-ADD-PATT-0001",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 2,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-ADD-PATT-0002",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 3,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-ADD-PATT-0003",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 4,
-      theme: "space",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-ADD-PATT-0004",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 2,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-ADD-PATT-0005",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 3,
-      theme: "body",
-      rounds: 3,
     },
   ],
 };

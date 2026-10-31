@@ -4,7 +4,7 @@ export const C2_MIR_01_IDENTITY: SkillIdentity = {
   code: "C2.MIR.01",
   strand_code: "C2.MIR",
   competency_code: "C2",
-  name: "Đối xứng trục dọc",
+  name: "Hình hai bên cân đối",
   age_min: 4,
   age_max: 4,
   difficulty: 3,
@@ -38,75 +38,172 @@ export const C2_MIR_01_IDENTITY: SkillIdentity = {
 
 export const C2_MIR_01_DATASET: SkillDataset = {
   skill_code: "C2.MIR.01",
-  concept_label: "Đối xứng trục dọc",
+  concept_label: "Hình hai bên cân đối",
   surface: "game",
   items: [
     {
-      id: "dog",
-      label: "con chó",
+      id: "sym_butterfly",
+      label: "con bướm hai cánh đều",
+      value: 1,
+      ordering: 1,
       image: {
         kind: "emoji",
-        ref: "🐕",
+        ref: "🦋",
       },
       category: {
-        type: "động vật",
+        type: "hình cân đối",
+      },
+      contrast_group: "symmetric",
+    },
+    {
+      id: "sym_snowflake",
+      label: "bông tuyết đối xứng",
+      value: 2,
+      ordering: 2,
+      image: {
+        kind: "emoji",
+        ref: "❄️",
+      },
+      category: {
+        type: "hình cân đối",
+      },
+      contrast_group: "symmetric",
+    },
+    {
+      id: "sym_heart",
+      label: "trái tim cân đối",
+      value: 3,
+      ordering: 3,
+      image: {
+        kind: "emoji",
+        ref: "❤️",
+      },
+      category: {
+        type: "hình cân đối",
+      },
+      contrast_group: "symmetric",
+    },
+    {
+      id: "sym_star",
+      label: "ngôi sao năm cánh",
+      value: 4,
+      ordering: 4,
+      image: {
+        kind: "emoji",
+        ref: "⭐",
+      },
+      category: {
+        type: "hình cân đối",
+      },
+      contrast_group: "symmetric",
+    },
+    {
+      id: "asym_shoe",
+      label: "chiếc giày lệch bên",
+      value: 5,
+      ordering: 5,
+      image: {
+        kind: "emoji",
+        ref: "👟",
+      },
+      category: {
+        type: "hình lệch bên",
+      },
+      contrast_group: "asymmetric",
+    },
+    {
+      id: "asym_scissors",
+      label: "cây kéo nghiêng",
+      value: 6,
+      ordering: 6,
+      image: {
+        kind: "emoji",
+        ref: "✂️",
+      },
+      category: {
+        type: "hình lệch bên",
+      },
+      contrast_group: "asymmetric",
+    },
+    {
+      id: "asym_cup",
+      label: "chiếc cốc có quai",
+      value: 7,
+      ordering: 7,
+      image: {
+        kind: "emoji",
+        ref: "☕",
+      },
+      category: {
+        type: "hình lệch bên",
+      },
+      contrast_group: "asymmetric",
+    },
+    {
+      id: "asym_snail",
+      label: "chú ốc sên xoắn",
+      value: 8,
+      ordering: 8,
+      image: {
+        kind: "emoji",
+        ref: "🐌",
+      },
+      category: {
+        type: "hình lệch bên",
+      },
+      contrast_group: "asymmetric",
+    },
+  ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "sym_butterfly",
+      target_id: "asym_shoe",
+      metadata: {
+        dimension: "symmetry",
       },
     },
     {
-      id: "cat",
-      label: "con mèo",
-      image: {
-        kind: "emoji",
-        ref: "🐈",
-      },
-      category: {
-        type: "động vật",
+      type: "contrast",
+      source_id: "sym_snowflake",
+      target_id: "asym_scissors",
+      metadata: {
+        dimension: "symmetry",
       },
     },
     {
-      id: "chicken",
-      label: "con gà",
-      image: {
-        kind: "emoji",
-        ref: "🐓",
-      },
-      category: {
-        type: "động vật",
+      type: "pair",
+      source_id: "sym_butterfly",
+      target_id: "sym_heart",
+      metadata: {
+        relation: "cùng cân đối",
       },
     },
     {
-      id: "duck",
-      label: "con vịt",
-      image: {
-        kind: "emoji",
-        ref: "🦆",
-      },
-      category: {
-        type: "động vật",
-      },
-    },
-    {
-      id: "fish",
-      label: "con cá",
-      image: {
-        kind: "emoji",
-        ref: "🐟",
-      },
-      category: {
-        type: "động vật",
+      type: "pair",
+      source_id: "asym_shoe",
+      target_id: "asym_cup",
+      metadata: {
+        relation: "cùng lệch bên",
       },
     },
   ],
+  axes: {
+    symmetry: {
+      values: ["hình cân đối", "hình lệch bên"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Đối xứng trục dọc",
+      description: "Làm quen cơ bản với hình hai bên cân đối",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Đối xứng trục dọc",
+      description: "Nhận biết và chọn đúng hình hai bên cân đối",
     },
     {
       rung: 3,
@@ -126,9 +223,19 @@ export const C2_MIR_01_DATASET: SkillDataset = {
   ],
   phrasing: {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
-    narration_template: "Chúng mình cùng tìm hiểu về Đối xứng trục dọc nhé",
+    narration_template:
+      "Chúng mình cùng tìm hình hai bên cân đối giống nhau nhé",
   },
-  ordering: ["dog", "cat", "chicken", "duck", "fish"],
+  ordering: [
+    "sym_butterfly",
+    "sym_snowflake",
+    "sym_heart",
+    "sym_star",
+    "asym_shoe",
+    "asym_scissors",
+    "asym_cup",
+    "asym_snail",
+  ],
 };
 
 export const C2_MIR_01_SEED: SkillSeed = {
@@ -142,7 +249,6 @@ export const C2_MIR_01_SEED: SkillSeed = {
       difficulty: 1,
       theme: "farm",
       rounds: 3,
-      legacy_v1_ref: "D2-10",
     },
     {
       code: "GL-C2-FLI-SHP-0002",
@@ -151,7 +257,6 @@ export const C2_MIR_01_SEED: SkillSeed = {
       difficulty: 2,
       theme: "food",
       rounds: 3,
-      legacy_v1_ref: "D2-10",
     },
     {
       code: "GL-C2-FLI-SHP-0003",
@@ -160,25 +265,6 @@ export const C2_MIR_01_SEED: SkillSeed = {
       difficulty: 3,
       theme: "animal",
       rounds: 3,
-      legacy_v1_ref: "D2-10",
-    },
-    {
-      code: "GL-C2-FLI-SHP-0004",
-      template: "GT-019",
-      band: "4-5",
-      difficulty: 1,
-      theme: "nature",
-      rounds: 3,
-      legacy_v1_ref: "D2-10",
-    },
-    {
-      code: "GL-C2-FLI-SHP-0005",
-      template: "GT-019",
-      band: "4-5",
-      difficulty: 2,
-      theme: "ocean",
-      rounds: 3,
-      legacy_v1_ref: "D2-10",
     },
     {
       code: "GL-C2-SYM-MIR-0001",
@@ -186,124 +272,6 @@ export const C2_MIR_01_SEED: SkillSeed = {
       band: "4-5",
       difficulty: 1,
       theme: "farm",
-      rounds: 3,
-      legacy_v1_ref: "D2-03",
-    },
-    {
-      code: "GL-C2-SYM-MIR-0002",
-      template: "GT-021",
-      band: "4-5",
-      difficulty: 2,
-      theme: "food",
-      rounds: 3,
-      legacy_v1_ref: "D2-03",
-    },
-    {
-      code: "GL-C2-SYM-MIR-0003",
-      template: "GT-021",
-      band: "4-5",
-      difficulty: 3,
-      access_tier: "standard",
-      theme: "animal",
-      rounds: 3,
-      legacy_v1_ref: "D2-03",
-    },
-    {
-      code: "GL-C2-SYM-MIR-0004",
-      template: "GT-021",
-      band: "4-5",
-      difficulty: 1,
-      theme: "nature",
-      rounds: 3,
-      legacy_v1_ref: "D2-03",
-    },
-    {
-      code: "GL-C2-SYM-MIR-0005",
-      template: "GT-021",
-      band: "4-5",
-      difficulty: 2,
-      theme: "ocean",
-      rounds: 3,
-      legacy_v1_ref: "D2-03",
-    },
-    {
-      code: "GL-C2-MIR-TAP-0001",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 2,
-      theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-MIR-TAP-0002",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 3,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-MIR-TCNT-0001",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 2,
-      theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-MIR-TCNT-0002",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 3,
-      theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-MIR-TCMP-0001",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 2,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-MIR-TCMP-0002",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 3,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-MIR-PAIR-0001",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 2,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-MIR-PAIR-0002",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 3,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-MIR-PATT-0001",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 2,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-MIR-PATT-0002",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 3,
-      theme: "ocean",
       rounds: 3,
     },
   ],

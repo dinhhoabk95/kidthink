@@ -69,9 +69,9 @@ describe("Task 2 & 3 — Manager Login & MFA Handler (BR-ADA-01..08)", () => {
     expect(sessions).toHaveLength(0);
   });
 
-  it("UC-009 BR-001/BR-002 + A3: manager chưa bật MFA chỉ nhận yêu cầu thiết lập, không phiên", async () => {
+  it("BR-ADA-01: manager chưa bật MFA đăng nhập thẳng bằng mật khẩu, tạo phiên và ghi audit manager_login", async () => {
     const db = getOwnerDb();
-    const testEmail = `admin_setup_required_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@tinimath.test`;
+    const testEmail = `admin_direct_login_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@tinimath.test`;
     const passwordHash = await hashPassword("AdminSecret123!");
 
     const [manager] = await db
@@ -79,7 +79,7 @@ describe("Task 2 & 3 — Manager Login & MFA Handler (BR-ADA-01..08)", () => {
       .values({
         email: testEmail,
         passwordHash,
-        displayName: "Setup Admin",
+        displayName: "Direct Login Admin",
         role: "super_admin",
         mfaEnabled: false,
       })
@@ -92,10 +92,13 @@ describe("Task 2 & 3 — Manager Login & MFA Handler (BR-ADA-01..08)", () => {
     });
 
     const res = await loginHandler(event);
-    expect(res.status).toBe("MFA_REQUIRED");
-    expect(res.mfa_enabled).toBe(false);
-    expect(res.challenge).toBeDefined();
-    expect(res.manager).toBeUndefined();
+    expect(res.status).toBe("ok");
+    expect(res.manager).toEqual({
+      id: manager.id,
+      email: testEmail,
+      display_name: "Direct Login Admin",
+      role: "super_admin",
+    });
 
     const sessions = await db
       .select()
@@ -106,7 +109,13 @@ describe("Task 2 & 3 — Manager Login & MFA Handler (BR-ADA-01..08)", () => {
           eq(activeSessions.accountId, manager.id)
         )
       );
-    expect(sessions).toHaveLength(0);
+    expect(sessions.length).toBeGreaterThan(0);
+
+    const logs = await db
+      .select()
+      .from(auditLogs)
+      .where(eq(auditLogs.action, "manager_login"));
+    expect(logs.some((l) => l.entityId === manager.id.toString())).toBe(true);
   });
 
   it("Task 2: wrong password returns 401 INVALID_CREDENTIALS + audits manager_login_failed", async () => {

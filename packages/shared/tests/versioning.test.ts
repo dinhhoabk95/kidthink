@@ -28,10 +28,7 @@ describe("P0.6 Task 4 — Phân loại field bump version §7.2 & §7.3", () => 
     ).toThrow(UNKNOWN_FIELD_REGEX);
   });
 
-  it("Lesson & Curriculum: bump vs no-bump phân loại đúng", () => {
-    expect(requiresVersionBump("lesson", ["title"])).toBe(false);
-    expect(requiresVersionBump("lesson", ["activities"])).toBe(true);
-
+  it("Curriculum: bump vs no-bump phân loại đúng", () => {
     expect(requiresVersionBump("curriculum", ["description"])).toBe(false);
     expect(requiresVersionBump("curriculum", ["curriculum_items"])).toBe(true);
   });

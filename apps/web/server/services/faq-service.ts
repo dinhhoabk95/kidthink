@@ -1,6 +1,6 @@
-import { getOwnerDb, seoPages } from "@mindkid/db";
 import { FAQ_ITEMS, type FaqItem } from "@mindkid/shared";
-import { and, desc, eq } from "drizzle-orm";
+
+export const STATIC_FAQ_ITEMS: readonly FaqItem[] = FAQ_ITEMS;
 
 export interface StoredFaqItemCandidate {
   readonly id?: string;
@@ -14,7 +14,7 @@ export interface StoredFaqItemCandidate {
   readonly legal_link?: string;
 }
 
-type RawFaqItemsColumn = (typeof seoPages.$inferSelect)["faqItems"];
+type RawFaqItemsColumn = readonly StoredFaqItemCandidate[] | null | undefined;
 
 const VALID_CATEGORIES: readonly FaqItem["category"][] = [
   "product",
@@ -133,38 +133,23 @@ export interface FaqRowStore {
 }
 
 /**
- * Đọc danh sách FAQ đang published từ `seo_pages` (`page_type = 'faq'`, `status = 'published'`).
- * Khi DB chưa seed hàng `faq` hoặc `faq_items` rỗng, fallback an toàn về `FAQ_ITEMS` (`BR-FAQ-04`).
+ * Trả danh sách FAQ tĩnh (`STATIC_FAQ_ITEMS`).
  */
 export async function listPublishedFaqItems(
-  db: ReturnType<typeof getOwnerDb> | FaqRowStore = getOwnerDb()
+  store?: FaqRowStore | object
 ): Promise<FaqItem[]> {
-  try {
-    const rows =
-      "fetchFaqRows" in db
-        ? await db.fetchFaqRows()
-        : await db
-            .select({
-              faqItems: seoPages.faqItems,
-            })
-            .from(seoPages)
-            .where(
-              and(
-                eq(seoPages.pageType, "faq"),
-                eq(seoPages.status, "published")
-              )
-            )
-            .orderBy(desc(seoPages.contentVersion), desc(seoPages.id))
-            .limit(1);
-
-    const [row] = rows;
-    if (!row) {
-      return [...FAQ_ITEMS];
+  if (store && "fetchFaqRows" in store) {
+    try {
+      const rows = await store.fetchFaqRows();
+      const [row] = rows;
+      if (!row) {
+        return [...STATIC_FAQ_ITEMS];
+      }
+      const normalized = normalizeFaqItems(row.faqItems);
+      return normalized.length > 0 ? normalized : [...STATIC_FAQ_ITEMS];
+    } catch {
+      return [...STATIC_FAQ_ITEMS];
     }
-
-    const normalized = normalizeFaqItems(row.faqItems);
-    return normalized.length > 0 ? normalized : [...FAQ_ITEMS];
-  } catch {
-    return [...FAQ_ITEMS];
   }
+  return [...STATIC_FAQ_ITEMS];
 }

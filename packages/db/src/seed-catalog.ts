@@ -38,11 +38,3 @@ export const SEED_PACKAGES = Object.values(PACKAGE_CATALOG).map((pkg) => ({
   isPublic: pkg.is_public,
   isFeatured: pkg.is_featured,
 }));
-
-export const SEED_PACKAGE_ENTITLEMENTS = Object.values(PACKAGE_CATALOG).flatMap(
-  (pkg) =>
-    pkg.entitlements.map((key) => ({
-      packageCode: pkg.code,
-      entitlementKey: key,
-    }))
-);

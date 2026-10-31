@@ -7,12 +7,10 @@ import {
   pgEnum,
   pgTable,
   primaryKey,
-  unique,
   varchar,
 } from "drizzle-orm/pg-core";
 import { timestamps } from "./columns.ts";
-import { users } from "./identity.ts";
-import { learningObjectives, skills } from "./taxonomy.ts";
+import { skills } from "./taxonomy.ts";
 
 export const tagAxisEnum = pgEnum("tag_axis", [
   "what",
@@ -25,10 +23,7 @@ export const tagStatusEnum = pgEnum("tag_status", ["active", "deprecated"]);
 
 export const contentEntityTypeEnum = pgEnum("content_entity_type", [
   "game_level",
-  "lesson",
-  "activity",
   "curriculum",
-  "worksheet",
 ]);
 
 export const contentTags = pgTable("content_tags", {
@@ -77,40 +72,5 @@ export const contentSkillMap = pgTable(
       "check_content_skill_map_weight",
       sql`${table.weight} > 0 AND ${table.weight} <= 1`
     ),
-  ]
-);
-
-export const contentObjectiveMap = pgTable(
-  "content_objective_map",
-  {
-    entityType: contentEntityTypeEnum("entity_type").notNull(),
-    entityId: bigint("entity_id", { mode: "number" }).notNull(),
-    learningObjectiveId: bigint("learning_objective_id", { mode: "number" })
-      .notNull()
-      .references(() => learningObjectives.id, { onDelete: "cascade" }),
-    ...timestamps(),
-  },
-  (table) => [
-    primaryKey({
-      name: "content_objective_map_entity_type_entity_id_learning_objective_",
-      columns: [table.entityType, table.entityId, table.learningObjectiveId],
-    }),
-  ]
-);
-
-export const userTags = pgTable(
-  "user_tags",
-  {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
-    userId: bigint("user_id", { mode: "number" })
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    label: varchar("label", { length: 100 }).notNull(),
-    ...timestamps(),
-  },
-  (table) => [
-    unique("user_tags_user_id_label_unique").on(table.userId, table.label),
   ]
 );

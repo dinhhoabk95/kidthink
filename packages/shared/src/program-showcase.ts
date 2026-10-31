@@ -23,7 +23,7 @@ export interface ProgramCardPublic {
 }
 
 export interface ProgramWeekItemPublic {
-  entity_type: "lesson" | "game_level";
+  entity_type: "game_level";
   code: string;
   title: string;
   estimated_minutes: number;
@@ -133,7 +133,7 @@ export interface RawCurriculumItemRecord {
   weekNo: number;
   sessionNo: number;
   position?: number | null;
-  entityType: "lesson" | "game_level" | string;
+  entityType: "game_level" | string;
   code?: string | null;
   title?: string | null;
   estimatedMinutes?: number | null;
@@ -300,19 +300,14 @@ export function toProgramDetailPublic(params: {
 
     // BR-PSH-02 & D-NH: Only weeks 1-2 include item details
     if (w <= 2) {
-      weekPublic.items = weekItems.map((item) => {
-        const entityType =
-          item.entityType === "lesson" ? "lesson" : "game_level";
-        const defaultMinutes = entityType === "lesson" ? 20 : 10;
-        return {
-          entity_type: entityType,
-          code: String(item.code || ""),
-          title: String(item.title || "Hoạt động học"),
-          estimated_minutes: Number(item.estimatedMinutes || defaultMinutes),
-          access_tier:
-            (item.accessTier as AccessTier) || card.access_tier || "free",
-        };
-      });
+      weekPublic.items = weekItems.map((item) => ({
+        entity_type: "game_level",
+        code: String(item.code || ""),
+        title: String(item.title || "Hoạt động học"),
+        estimated_minutes: Number(item.estimatedMinutes || 10),
+        access_tier:
+          (item.accessTier as AccessTier) || card.access_tier || "free",
+      }));
     }
 
     publicWeeks.push(weekPublic);

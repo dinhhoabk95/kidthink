@@ -5,8 +5,8 @@ export const C5_WRD_02_IDENTITY: SkillIdentity = {
   strand_code: "C5.WRD",
   competency_code: "C5",
   name: "Đọc tiếng quen thuộc",
-  age_min: 6,
-  age_max: 7,
+  age_min: 5,
+  age_max: 6,
   difficulty: 4,
   thinking_processes: ["recall", "match"],
   tier: "advanced",
@@ -44,59 +44,132 @@ export const C5_WRD_02_DATASET: SkillDataset = {
   items: [
     {
       id: "wrd_hoa",
-      label: "từ hoa",
+      label: "tiếng hoa",
+      glyph: "hoa",
+      value: 1,
       image: {
         kind: "emoji",
         ref: "🌸",
       },
       category: {
-        type: "tiếng viết",
+        type: "cây hoa lá",
       },
+      contrast_group: "primary",
     },
     {
       id: "wrd_la",
-      label: "từ lá",
+      label: "tiếng lá",
+      glyph: "lá",
+      value: 2,
       image: {
         kind: "emoji",
         ref: "🍃",
       },
       category: {
-        type: "tiếng viết",
+        type: "cây hoa lá",
       },
+      contrast_group: "primary",
     },
     {
       id: "wrd_qua",
-      label: "từ quả",
+      label: "tiếng quả",
+      glyph: "quả",
+      value: 3,
       image: {
         kind: "emoji",
         ref: "🍎",
       },
       category: {
-        type: "tiếng viết",
+        type: "cây hoa lá",
       },
-    },
-    {
-      id: "wrd_chim",
-      label: "từ chim",
-      image: {
-        kind: "emoji",
-        ref: "🐦",
-      },
-      category: {
-        type: "tiếng viết",
-      },
+      contrast_group: "primary",
     },
     {
       id: "wrd_cay",
-      label: "từ cây",
+      label: "tiếng cây",
+      glyph: "cây",
+      value: 4,
       image: {
         kind: "emoji",
         ref: "🌳",
       },
       category: {
-        type: "tiếng viết",
+        type: "cây hoa lá",
       },
+      contrast_group: "primary",
     },
+    {
+      id: "wrd_chim",
+      label: "tiếng chim",
+      glyph: "chim",
+      value: 5,
+      image: {
+        kind: "emoji",
+        ref: "🐦",
+      },
+      category: {
+        type: "loài vật quen",
+      },
+      contrast_group: "contrast",
+    },
+    {
+      id: "wrd_ca",
+      label: "tiếng cá",
+      glyph: "cá",
+      value: 6,
+      image: {
+        kind: "emoji",
+        ref: "🐟",
+      },
+      category: {
+        type: "loài vật quen",
+      },
+      contrast_group: "contrast",
+    },
+    {
+      id: "wrd_cho",
+      label: "tiếng chó",
+      glyph: "chó",
+      value: 7,
+      image: {
+        kind: "emoji",
+        ref: "🐕",
+      },
+      category: {
+        type: "loài vật quen",
+      },
+      contrast_group: "contrast",
+    },
+    {
+      id: "wrd_meo",
+      label: "tiếng mèo",
+      glyph: "mèo",
+      value: 8,
+      image: {
+        kind: "emoji",
+        ref: "🐈",
+      },
+      category: {
+        type: "loài vật quen",
+      },
+      contrast_group: "contrast",
+    },
+  ],
+  axes: {
+    category: {
+      values: ["cây hoa lá", "loài vật quen"],
+      ordered: true,
+    },
+  },
+  relations: [
+    { type: "pair", source_id: "wrd_hoa", target_id: "wrd_la" },
+    { type: "pair", source_id: "wrd_qua", target_id: "wrd_cay" },
+    { type: "pair", source_id: "wrd_chim", target_id: "wrd_ca" },
+    { type: "pair", source_id: "wrd_cho", target_id: "wrd_meo" },
+    { type: "contrast", source_id: "wrd_hoa", target_id: "wrd_chim" },
+    { type: "contrast", source_id: "wrd_la", target_id: "wrd_ca" },
+    { type: "contrast", source_id: "wrd_qua", target_id: "wrd_cho" },
+    { type: "contrast", source_id: "wrd_cay", target_id: "wrd_meo" },
   ],
   ladder: [
     {
@@ -129,7 +202,16 @@ export const C5_WRD_02_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Đọc tiếng quen thuộc nhé",
   },
-  ordering: ["wrd_hoa", "wrd_la", "wrd_qua", "wrd_chim", "wrd_cay"],
+  ordering: [
+    "wrd_hoa",
+    "wrd_la",
+    "wrd_qua",
+    "wrd_cay",
+    "wrd_chim",
+    "wrd_ca",
+    "wrd_cho",
+    "wrd_meo",
+  ],
 };
 
 export const C5_WRD_02_SEED: SkillSeed = {
@@ -137,51 +219,11 @@ export const C5_WRD_02_SEED: SkillSeed = {
   dataset: C5_WRD_02_DATASET,
   levels: [
     {
-      code: "GL-C5-WRD-TAP-0003",
-      template: "GT-001",
-      band: "5-6",
-      difficulty: 3,
-      theme: "job",
-      rounds: 3,
-    },
-    {
       code: "GL-C5-WRD-TAP-0004",
       template: "GT-001",
       band: "5-6",
       difficulty: 4,
       theme: "homeland",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRD-TCMP-0003",
-      template: "GT-003",
-      band: "5-6",
-      difficulty: 3,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRD-TCMP-0004",
-      template: "GT-003",
-      band: "5-6",
-      difficulty: 4,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRD-PATT-0003",
-      template: "GT-005",
-      band: "5-6",
-      difficulty: 3,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRD-PATT-0004",
-      template: "GT-005",
-      band: "5-6",
-      difficulty: 4,
-      theme: "animal",
       rounds: 3,
     },
     {
@@ -193,27 +235,11 @@ export const C5_WRD_02_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-WRD-SLOT-0002",
-      template: "GT-008",
-      band: "5-6",
-      difficulty: 4,
-      theme: "ocean",
-      rounds: 3,
-    },
-    {
       code: "GL-C5-WRD-SIZE-0001",
       template: "GT-009",
       band: "5-6",
       difficulty: 3,
       theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRD-SIZE-0002",
-      template: "GT-009",
-      band: "5-6",
-      difficulty: 4,
-      theme: "vehicle",
       rounds: 3,
     },
   ],

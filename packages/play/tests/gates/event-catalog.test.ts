@@ -189,37 +189,29 @@ describe("Event Catalog Invariants Gates (Task #209 / #251)", () => {
     ).toThrow(EventOutOfOrderError);
   });
 
-  it("BR-EVT-06: TelemetryEventSchema requires positive integer content_version", () => {
+  it("BR-EVT-06: TelemetryEventSchema validates session_uuid, seq, and event_name", () => {
     const valid = TelemetryEventSchema.safeParse({
       session_uuid: "e0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
       seq: 1,
       event_name: "game_started",
-      content_version: 1,
       occurred_at_ms: 0,
       payload: { device: "tablet" },
     });
     expect(valid.success).toBe(true);
 
-    const missingContentVersion = TelemetryEventSchema.safeParse({
+    const invalidSeq = TelemetryEventSchema.safeParse({
       session_uuid: "e0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
-      seq: 1,
+      seq: 0,
       event_name: "game_started",
     });
-    expect(missingContentVersion.success).toBe(false);
+    expect(invalidSeq.success).toBe(false);
 
     expect(() =>
       validateTelemetryEvent({
         session_uuid: "e0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
-        seq: 1,
+        seq: 0,
         event_name: "game_started",
-        content_version: 0,
       })
-    ).toThrow(ValidationError);
-
-    expect(() =>
-      validateBatchPayload([
-        { seq: 1, event_name: "game_started", content_version: 0 },
-      ])
     ).toThrow(ValidationError);
   });
 

@@ -6,7 +6,6 @@ import {
   jsonb,
   pgEnum,
   pgTable,
-  primaryKey,
   text,
   timestamp,
   unique,
@@ -80,22 +79,6 @@ export const packages = pgTable("packages", {
   ...timestamps(),
 });
 
-export const packageEntitlements = pgTable(
-  "package_entitlements",
-  {
-    packageCode: varchar("package_code", { length: 40 })
-      .notNull()
-      .references(() => packages.code, { onDelete: "cascade" }),
-    entitlementKey: varchar("entitlement_key", { length: 60 })
-      .notNull()
-      .references(() => entitlementKeys.key, { onDelete: "cascade" }),
-    ...timestamps(),
-  },
-  (table) => [
-    primaryKey({ columns: [table.packageCode, table.entitlementKey] }),
-  ]
-);
-
 export const entitlements = pgTable(
   "entitlements",
   {
@@ -124,6 +107,10 @@ export const entitlements = pgTable(
   (table) => [
     index("idx_entitlements_user_status_expires").on(
       table.userId,
+      table.status,
+      table.expiresAt
+    ),
+    index("idx_entitlements_status_expires_at").on(
       table.status,
       table.expiresAt
     ),
@@ -160,13 +147,16 @@ export const paymentOrders = pgTable(
     ...timestamps(),
   },
   (table) => [
-    uniqueIndex("idx_payment_orders_transfer_note").on(table.transferNote),
     index("idx_payment_orders_bank_txn_ref").on(table.bankTxnRef),
     index("idx_payment_orders_status_submitted_at").on(
       table.status,
       table.submittedAt
     ),
     index("idx_payment_orders_user_id_status").on(table.userId, table.status),
+    index("idx_payment_orders_status_expires_at").on(
+      table.status,
+      table.expiresAt
+    ),
   ]
 );
 
@@ -207,9 +197,7 @@ export const paymentTransactions = pgTable(
       .primaryKey()
       .generatedAlwaysAsIdentity(),
     provider: varchar("provider", { length: 30 }).notNull(),
-    providerEventId: varchar("provider_event_id", { length: 120 })
-      .notNull()
-      .unique(),
+    providerEventId: varchar("provider_event_id", { length: 120 }).notNull(),
     orderId: bigint("order_id", { mode: "number" }).references(
       () => paymentOrders.id,
       { onDelete: "set null" }
@@ -274,6 +262,9 @@ export const recurringSubscriptions = pgTable(
       table.userId,
       table.status
     ),
-    index("idx_recurring_subscriptions_next_billing").on(table.nextBillingAt),
+    index("idx_recurring_subscriptions_status_next_billing_at").on(
+      table.status,
+      table.nextBillingAt
+    ),
   ]
 );

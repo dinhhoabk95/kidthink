@@ -42,61 +42,153 @@ export const C4_AUD_02_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "dog",
-      label: "con chó",
+      id: "aud_dog",
+      label: "tiếng chó sủa",
       image: {
         kind: "emoji",
-        ref: "🐕",
+        ref: "🐶",
       },
       category: {
-        type: "động vật",
+        type: "tiếng con vật",
       },
+      contrast_group: "animal",
+      value: 1,
+      ordering: 1,
+      audio_path: "/audio/vi/c4/aud_dog.mp3",
     },
     {
-      id: "cat",
-      label: "con mèo",
+      id: "aud_cat",
+      label: "tiếng mèo kêu",
       image: {
         kind: "emoji",
-        ref: "🐈",
+        ref: "🐱",
       },
       category: {
-        type: "động vật",
+        type: "tiếng con vật",
       },
+      contrast_group: "animal",
+      value: 2,
+      ordering: 2,
+      audio_path: "/audio/vi/c4/aud_cat.mp3",
     },
     {
-      id: "chicken",
-      label: "con gà",
+      id: "aud_rooster",
+      label: "tiếng gà gáy",
       image: {
         kind: "emoji",
-        ref: "🐓",
+        ref: "🐔",
       },
       category: {
-        type: "động vật",
+        type: "tiếng con vật",
       },
+      contrast_group: "animal",
+      value: 3,
+      ordering: 3,
+      audio_path: "/audio/vi/c4/aud_rooster.mp3",
     },
     {
-      id: "duck",
-      label: "con vịt",
+      id: "aud_duck",
+      label: "tiếng vịt kêu",
       image: {
         kind: "emoji",
         ref: "🦆",
       },
       category: {
-        type: "động vật",
+        type: "tiếng con vật",
       },
+      contrast_group: "animal",
+      value: 4,
+      ordering: 4,
+      audio_path: "/audio/vi/c4/aud_duck.mp3",
     },
     {
-      id: "fish",
-      label: "con cá",
+      id: "aud_car",
+      label: "tiếng còi ô tô",
       image: {
         kind: "emoji",
-        ref: "🐟",
+        ref: "🚗",
       },
       category: {
-        type: "động vật",
+        type: "tiếng phương tiện",
       },
+      contrast_group: "vehicle",
+      value: 1,
+      ordering: 5,
+      audio_path: "/audio/vi/c4/aud_car.mp3",
+    },
+    {
+      id: "aud_train",
+      label: "tiếng tàu hỏa",
+      image: {
+        kind: "emoji",
+        ref: "🚂",
+      },
+      category: {
+        type: "tiếng phương tiện",
+      },
+      contrast_group: "vehicle",
+      value: 2,
+      ordering: 6,
+      audio_path: "/audio/vi/c4/aud_train.mp3",
+    },
+    {
+      id: "aud_ambulance",
+      label: "tiếng xe cứu thương",
+      image: {
+        kind: "emoji",
+        ref: "🚑",
+      },
+      category: {
+        type: "tiếng phương tiện",
+      },
+      contrast_group: "vehicle",
+      value: 3,
+      ordering: 7,
+      audio_path: "/audio/vi/c4/aud_ambulance.mp3",
+    },
+    {
+      id: "aud_airplane",
+      label: "tiếng máy bay",
+      image: {
+        kind: "emoji",
+        ref: "✈️",
+      },
+      category: {
+        type: "tiếng phương tiện",
+      },
+      contrast_group: "vehicle",
+      value: 4,
+      ordering: 8,
+      audio_path: "/audio/vi/c4/aud_airplane.mp3",
     },
   ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "aud_dog",
+      target_id: "aud_car",
+    },
+    {
+      type: "contrast",
+      source_id: "aud_cat",
+      target_id: "aud_train",
+    },
+    {
+      type: "contrast",
+      source_id: "aud_rooster",
+      target_id: "aud_ambulance",
+    },
+    {
+      type: "contrast",
+      source_id: "aud_duck",
+      target_id: "aud_airplane",
+    },
+  ],
+  axes: {
+    sound_type: {
+      values: ["tiếng con vật", "tiếng phương tiện"],
+    },
+  },
   ladder: [
     {
       rung: 1,
@@ -128,13 +220,28 @@ export const C4_AUD_02_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Tiếng con vật nhé",
   },
-  ordering: ["dog", "cat", "chicken", "duck", "fish"],
+  ordering: [
+    "aud_dog",
+    "aud_cat",
+    "aud_rooster",
+    "aud_duck",
+    "aud_car",
+    "aud_train",
+    "aud_ambulance",
+    "aud_airplane",
+  ],
 };
 
 export const C4_AUD_02_SEED: SkillSeed = {
   identity: C4_AUD_02_IDENTITY,
   dataset: C4_AUD_02_DATASET,
   levels: [
+    {
+      template: "GT-000",
+      band: "3-4",
+      difficulty: 1,
+      theme: "school",
+    },
     {
       code: "GL-C4-AUD-TAP-0004",
       template: "GT-001",
@@ -160,27 +267,11 @@ export const C4_AUD_02_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C4-AUD-TCMP-0002",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 2,
-      theme: "art",
-      rounds: 3,
-    },
-    {
       code: "GL-C4-AUD-PATT-0004",
       template: "GT-005",
       band: "3-4",
       difficulty: 1,
       theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-AUD-PATT-0005",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 2,
-      theme: "body",
       rounds: 3,
     },
     {
@@ -192,27 +283,11 @@ export const C4_AUD_02_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C4-AUD-SLOT-0002",
-      template: "GT-008",
-      band: "3-4",
-      difficulty: 2,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
       code: "GL-C4-AUD-GRID-0001",
       template: "GT-020",
       band: "3-4",
       difficulty: 1,
       theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C4-AUD-GRID-0002",
-      template: "GT-020",
-      band: "3-4",
-      difficulty: 2,
-      theme: "homeland",
       rounds: 3,
     },
   ],

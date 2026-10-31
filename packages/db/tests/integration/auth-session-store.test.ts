@@ -163,7 +163,7 @@ describe("PostgresSessionStore (Metadata Only under Task #85)", () => {
             email,
             displayName: "Manager MFA",
             passwordHash: "local-test-argon-placeholder",
-            role: "content_reviewer",
+            role: "super_admin",
             mfaEnabled: true,
           })
           .returning();

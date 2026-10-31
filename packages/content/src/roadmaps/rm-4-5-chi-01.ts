@@ -5,11 +5,11 @@ const SRT_02 = "C3.SRT.02";
 const CNT_02 = "C1.CNT.02";
 const GEO_04 = "C2.GEO.04";
 const SEN_03 = "C4.SEN.03";
-const SOL_01 = "C2.SOL.01";
+const CMP_10 = "C1.CMP.10";
 const STO_01 = "C5.STO.01";
 const INH_01 = "C6.INH.01";
 const MEM_02 = "C4.MEM.02";
-const PER_02 = "C6.PER.02";
+const LET_01 = "C5.LET.01";
 
 export const RM_4_5_CHI_01: RoadmapSeed = {
   code: "RM-4-5-chi-01",
@@ -46,15 +46,15 @@ export const RM_4_5_CHI_01: RoadmapSeed = {
       session(2, "practice", SEN_03),
       session(3, "offscreen", GEO_04),
     ]),
-    week(5, "Bé nhận ra khối cầu và phân biệt với hình tròn phẳng.", [
-      session(1, "introduce", SOL_01),
-      session(2, "practice", SOL_01),
+    week(5, "Bé so sánh hai đồ vật để nhận ra vật nào nặng hơn.", [
+      session(1, "introduce", CMP_10),
+      session(2, "practice", CMP_10),
       session(3, "offscreen", SEN_03),
     ]),
     week(6, "Bé nghe một câu chuyện ngắn và kể lại theo thứ tự.", [
       session(1, "introduce", STO_01),
       session(2, "practice", STO_01),
-      session(3, "offscreen", SOL_01),
+      session(3, "offscreen", CMP_10),
     ]),
     week(7, "Bé tập kiềm chế, không chọn màu bị cấm.", [
       session(1, "introduce", INH_01),
@@ -66,25 +66,25 @@ export const RM_4_5_CHI_01: RoadmapSeed = {
       session(2, "practice", MEM_02),
       session(3, "offscreen", INH_01),
     ]),
-    week(9, "Bé bình tĩnh thử lại sau khi làm sai.", [
-      session(1, "introduce", PER_02),
-      session(2, "practice", PER_02),
+    week(9, "Bé làm quen các nguyên âm a, e, i, o, u, y.", [
+      session(1, "introduce", LET_01),
+      session(2, "practice", LET_01),
       session(3, "offscreen", MEM_02),
     ]),
     week(10, "Bé ôn lại sắp xếp, kể chuyện và kiềm chế.", [
       session(1, "review", SRT_02),
-      session(2, "practice", STO_01),
+      session(2, "review", STO_01),
       session(3, "offscreen", INH_01),
     ]),
     week(11, "Bé ôn lại xúc giác, hình chữ nhật và nhớ chuỗi hình.", [
       session(1, "review", SEN_03),
-      session(2, "practice", GEO_04),
+      session(2, "review", GEO_04),
       session(3, "offscreen", MEM_02),
     ]),
-    week(12, "Bé ôn lại đếm, khối cầu và kiên trì để khép lại hành trình.", [
+    week(12, "Bé ôn lại đếm, so sánh nặng nhẹ và nhận biết chữ cái.", [
       session(1, "review", CNT_02),
-      session(2, "practice", SOL_01),
-      session(3, "offscreen", PER_02),
+      session(2, "review", CMP_10),
+      session(3, "offscreen", LET_01),
     ]),
   ],
 };

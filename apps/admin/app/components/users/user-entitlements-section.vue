@@ -16,7 +16,7 @@
 
       <!-- Enabled Action: Cấp quyền thủ công (Task 3 & BR-EGR-01..05) -->
       <button
-        class="min-h-11 px-4 py-2 rounded-2xl border-2 border-brand-300 bg-brand-50 hover:bg-brand-100 text-brand-900 text-xs font-bold font-heading transition-colors flex items-center gap-1.5 shadow-sm self-start sm:self-auto"
+        class="min-h-11 px-4 py-2 rounded-2xl border-2 border-brand-300 bg-brand-50 hover:bg-brand-100 text-brand-900 text-sm font-bold font-heading transition-colors flex items-center gap-1.5 shadow-sm self-start sm:self-auto"
         type="button"
         v-if="userUuid"
         @click="openGrantModal"
@@ -28,7 +28,7 @@
     <!-- Active Entitlements Table / Cards -->
     <div class="space-y-3">
       <h3
-        class="text-xs font-bold font-heading text-surface-700 tracking-wider"
+        class="text-sm font-bold font-heading text-surface-700 tracking-wider"
       >
         Quyền đang hiệu lực ({{ entitlements.active.length }})
       </h3>
@@ -37,7 +37,7 @@
         class="overflow-x-auto border-2 border-surface-200 rounded-2xl"
         v-if="entitlements.active.length > 0"
       >
-        <table class="w-full text-left text-xs">
+        <table class="w-full text-left text-sm">
           <thead
             class="bg-surface-50 border-b-2 border-surface-200 text-surface-600 font-bold font-heading"
           >
@@ -63,7 +63,7 @@
               <td class="p-3">
                 <span
                   :class="[
-                    'px-2 py-0.5 rounded-full text-[11px] font-bold',
+                    'px-2 py-0.5 rounded-full text-sm font-bold',
                     e.source === 'manual_grant'
                       ? 'bg-brand-100 text-brand-800 border border-brand-300'
                       : 'bg-brand-100 text-brand-800 border border-brand-300'
@@ -74,13 +74,13 @@
               </td>
               <td class="p-3">
                 <span
-                  class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-warning-100 text-warning-800 border border-warning-300"
+                  class="px-2 py-0.5 rounded-full text-sm font-bold bg-warning-100 text-warning-800 border border-warning-300"
                   v-if="e.status === 'soft_unlock'"
                 >
                   Tạm mở (soft_unlock)
                 </span>
                 <span
-                  class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-success-100 text-success-800 border border-success-300"
+                  class="px-2 py-0.5 rounded-full text-sm font-bold bg-success-100 text-success-800 border border-success-300"
                   v-else
                 >
                   Hoạt động
@@ -90,7 +90,7 @@
                 <div>
                   {{ e.expires_at ? formatDate(e.expires_at) : "Vĩnh viễn" }}
                 </div>
-                <div class="text-[10px] text-surface-400">
+                <div class="text-sm text-surface-400">
                   Cấp: {{ formatDate(e.granted_at) }}
                 </div>
               </td>
@@ -105,7 +105,7 @@
               </td>
               <td class="p-3 text-right">
                 <button
-                  class="min-h-11 px-3 py-1.5 rounded-xl border border-danger-300 bg-danger-50 hover:bg-danger-100 text-danger-800 text-[11px] font-bold transition-colors inline-flex items-center justify-center"
+                  class="min-h-11 px-3 py-1.5 rounded-xl border border-danger-300 bg-danger-50 hover:bg-danger-100 text-danger-800 text-sm font-bold transition-colors inline-flex items-center justify-center"
                   type="button"
                   @click="() => openRevokeModal(e)"
                 >
@@ -118,7 +118,7 @@
       </div>
 
       <div
-        class="text-xs text-surface-500 italic p-4 bg-surface-50 rounded-2xl border border-dashed border-surface-200 text-center"
+        class="text-sm text-surface-500 italic p-4 bg-surface-50 rounded-2xl border border-dashed border-surface-200 text-center"
         v-else
       >
         Không có quyền nào đang kích hoạt.
@@ -131,13 +131,13 @@
       v-if="entitlements.history.length > 0"
     >
       <h3
-        class="text-xs font-bold font-heading text-surface-600 tracking-wider"
+        class="text-sm font-bold font-heading text-surface-600 tracking-wider"
       >
         Lịch sử quyền hết hạn / đã thu hồi ({{ entitlements.history.length }})
       </h3>
 
       <div class="overflow-x-auto border border-surface-200 rounded-2xl">
-        <table class="w-full text-left text-xs">
+        <table class="w-full text-left text-sm">
           <thead class="bg-surface-50 text-surface-500 font-medium">
             <tr>
               <th class="p-2.5">Quyền (Key)</th>
@@ -157,7 +157,7 @@
               <td class="p-2.5">
                 <span
                   :class="[
-                    'px-2 py-0.5 rounded text-[10px] font-medium',
+                    'px-2 py-0.5 rounded text-sm font-medium',
                     e.status === 'cancelled' ? 'bg-danger-100 text-danger-800' : 'bg-surface-100 text-surface-600'
                   ]"
                 >
@@ -201,13 +201,13 @@
         </div>
 
         <div
-          class="p-3 rounded-2xl bg-danger-50 border border-danger-200 text-xs text-danger-800 font-medium"
+          class="p-3 rounded-2xl bg-danger-50 border border-danger-200 text-sm text-danger-800 font-medium"
           v-if="grantError"
         >
           {{ grantError }}
         </div>
 
-        <form class="space-y-4 text-xs" @submit.prevent="submitGrant">
+        <form class="space-y-4 text-sm" @submit.prevent="submitGrant">
           <!-- Package Select (BR-EGR-01: by package only) -->
           <div class="space-y-1.5">
             <label
@@ -217,7 +217,7 @@
               Gói áp dụng (Package) <span class="text-danger-500">*</span>
             </label>
             <select
-              class="w-full p-2.5 border-2 border-surface-200 rounded-2xl bg-white text-surface-800 text-xs font-medium focus:border-brand-500 focus:outline-none"
+              class="w-full p-2.5 border-2 border-surface-200 rounded-2xl bg-white text-surface-800 text-base font-medium focus:border-brand-500 focus:outline-none"
               id="grant_package_code"
               required
               v-model="grantForm.package_code"
@@ -225,9 +225,6 @@
               <option disabled value="">-- Chọn gói sản phẩm --</option>
               <option value="PKG-standard">PKG-standard (Gói Standard)</option>
               <option value="PKG-premium">PKG-premium (Gói Premium)</option>
-              <option value="PKG-addon_lesson_plan">
-                PKG-addon_lesson_plan (Add-on Tạo giáo án)
-              </option>
               <option value="PKG-addon_curriculum">
                 PKG-addon_curriculum (Add-on Lộ trình)
               </option>
@@ -238,7 +235,7 @@
                 PKG-addon_ai (Add-on AI Assistant)
               </option>
             </select>
-            <p class="text-[11px] text-surface-500">
+            <p class="text-sm text-surface-500">
               * Quyền lợi được cấp theo gói đầy đủ, không cấp key riêng lẻ
               (BR-EGR-01).
             </p>
@@ -253,7 +250,7 @@
               Thời hạn cấp (1 – 365 ngày) <span class="text-danger-500">*</span>
             </label>
             <input
-              class="w-full p-2.5 border-2 border-surface-200 rounded-2xl text-surface-800 text-xs font-medium focus:border-brand-500 focus:outline-none"
+              class="w-full p-2.5 border-2 border-surface-200 rounded-2xl text-surface-800 text-base font-medium focus:border-brand-500 focus:outline-none"
               id="grant_duration_days"
               max="365"
               min="1"
@@ -262,7 +259,7 @@
               v-model.number="grantForm.duration_days"
             >
             <span
-              class="text-[11px] text-warning-600 font-medium flex items-center gap-1"
+              class="text-sm text-warning-600 font-medium flex items-center gap-1"
               v-if="grantForm.duration_days > 300"
             >
               <UIcon
@@ -288,7 +285,7 @@
               </label>
               <span
                 :class="[
-                  'text-[10px] font-bold',
+                  'text-sm font-bold',
                   grantForm.grant_reason.trim().length >= 20 ? 'text-success-600' : 'text-danger-600'
                 ]"
               >
@@ -296,7 +293,7 @@
               </span>
             </div>
             <textarea
-              class="w-full p-2.5 border-2 border-surface-200 rounded-2xl text-surface-800 text-xs font-medium focus:border-brand-500 focus:outline-none"
+              class="w-full p-2.5 border-2 border-surface-200 rounded-2xl text-surface-800 text-base font-medium focus:border-brand-500 focus:outline-none"
               id="grant_reason_input"
               placeholder="Nhập chi tiết lý do cấp quyền (ví dụ: bồi thường sự cố chuyển khoản, tài khoản dùng thử đối tác)..."
               required
@@ -369,13 +366,13 @@
         </div>
 
         <div
-          class="p-3 rounded-2xl bg-danger-50 border border-danger-200 text-xs text-danger-800 font-medium"
+          class="p-3 rounded-2xl bg-danger-50 border border-danger-200 text-sm text-danger-800 font-medium"
           v-if="revokeError"
         >
           {{ revokeError }}
         </div>
 
-        <p class="text-xs text-surface-600 leading-relaxed">
+        <p class="text-sm text-surface-600 leading-relaxed">
           Bạn đang thu hồi quyền
           <code class="font-mono font-bold text-surface-900">{{
             selectedEntitlement.key
@@ -384,7 +381,7 @@
           cập của người dùng.
         </p>
 
-        <form class="space-y-4 text-xs" @submit.prevent="submitRevoke">
+        <form class="space-y-4 text-sm" @submit.prevent="submitRevoke">
           <div class="space-y-1.5">
             <div class="flex items-center justify-between">
               <label
@@ -396,7 +393,7 @@
               </label>
               <span
                 :class="[
-                  'text-[10px] font-bold',
+                  'text-sm font-bold',
                   revokeReason.trim().length >= 10 ? 'text-success-600' : 'text-danger-600'
                 ]"
               >
@@ -404,7 +401,7 @@
               </span>
             </div>
             <textarea
-              class="w-full p-2.5 border-2 border-surface-200 rounded-2xl text-surface-800 text-xs font-medium focus:border-danger-500 focus:outline-none"
+              class="w-full p-2.5 border-2 border-surface-200 rounded-2xl text-surface-800 text-base font-medium focus:border-danger-500 focus:outline-none"
               id="revoke_reason_input"
               placeholder="Nhập lý do thu hồi quyền sử dụng..."
               required
@@ -585,3 +582,5 @@
     }
   }
 </script>
+
+<style scoped></style>

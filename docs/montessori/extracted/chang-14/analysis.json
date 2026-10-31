@@ -1,0 +1,2925 @@
+{
+  "stage_id": "chang-14",
+  "workbook_id": "WB14",
+  "title": "Chặng 14: Bé Tìm Số Bí Ẩn",
+  "subtitle": "Bí ẩn những con số biến mất – Thung lũng số bí ẩn",
+  "total_pages": 24,
+  "target_age": "3–6 tuổi",
+  "series": "Gấu Logic & Thỏ Quan Sát (Thỏ Sáng Tạo) - Chuyến Tàu Toán Học (Phần 14)",
+  "mission": "Cùng Gấu Logic và Thỏ Sáng Tạo truy tìm những con số bị biến mất, thu thập manh mối toán học trong Thung lũng số bí ẩn, giải mật mã 6 chữ số để mở rương báu và nhận danh hiệu Thám Tử Số Học Xuất Sắc.",
+  "pedagogy": {
+    "framework": "Montessori & CPA (Concrete - Pictorial - Abstract)",
+    "approach": "Tiền đại số hình ảnh (Pre-algebra visual equations), Tìm thành phần chưa biết (Missing addend / subtrahend / minuend), Tính chất đối xứng của đẳng thức (Symmetry of equality: c = a + b), Suy luận loại trừ theo manh mối (Deductive elimination) và Ghi nhớ làm việc chuỗi mật mã (Working memory code quest).",
+    "competencies": [
+      {
+        "code": "C1",
+        "name": "Cảm thức số học & Phép tính (Number Sense & Operations)"
+      },
+      {
+        "code": "C3",
+        "name": "Tư duy logic & Suy luận loại trừ (Logic & Deductive Reasoning)"
+      },
+      {
+        "code": "C6",
+        "name": "Trí nhớ làm việc & Điều hành nhận thức (Working Memory & Executive Function)"
+      }
+    ],
+    "skills_targeted": [
+      {
+        "code": "C1.ADD.03",
+        "name": "Tìm số hạng còn thiếu trong phép cộng (Missing addend: a + ? = c, ? + b = c)"
+      },
+      {
+        "code": "C1.SUB.03",
+        "name": "Tìm số trừ / số bị trừ còn thiếu trong phép trừ (Missing subtrahend/minuend: a - ? = c, ? - b = c)"
+      },
+      {
+        "code": "C1.EQU.01",
+        "name": "Hiểu bản chất dấu bằng và tính chất đối xứng của đẳng thức (c = a + ?, c = ? + b)"
+      },
+      {
+        "code": "C1.NCOMP.02",
+        "name": "Phân tích và tách gộp cấu tạo số trong phạm vi 10, 20 và 40 (Number decomposition)"
+      },
+      {
+        "code": "C3.DED.01",
+        "name": "Suy luận loại trừ theo 2 manh mối (Deductive elimination via dual clues)"
+      },
+      {
+        "code": "C3.DED.02",
+        "name": "Suy luận loại trừ đa điều kiện có chứa phủ định 'không phải...' (Negation clues)"
+      },
+      {
+        "code": "C3.PROB.01",
+        "name": "Giải quyết bài toán phương trình hình ảnh cơ bản (Visual equation solving)"
+      },
+      {
+        "code": "C6.WM.01",
+        "name": "Ghi nhớ và kết nối chuỗi kết quả đa bước để tạo mật mã mở rương (Multi-step working memory code sequence)"
+      }
+    ],
+    "progression_narrative": "Tiến trình sư phạm trải qua 6 tầng nhận thức liên hoàn: (1) Khởi đầu trực quan CPA (Trang 1 / Page 2): Dùng hình vẽ cụ thể (táo, sao, bóng bay, cá) chia nhóm để trẻ thấy rõ phần bù còn thiếu trước khi chuyển sang phương trình số; (2) Làm quen vị trí số khuyết trong phạm vi 10 (Trang 2–6 / Page 3–7): Số bí ẩn đứng sau dấu cộng/trừ, đứng ở đầu ([ ] + a = c), đứng ở kết quả hoặc vị trí bất kỳ; chuyển từ trắc nghiệm khoanh 3 số sang tự điền số và nối cặp phép tính - kết quả; (3) Vượt ngưỡng số 10 mở rộng phạm vi 20 (Trang 7–12 / Page 8–13): Giới thiệu ẩn dụ 'Chiếc chìa khóa bị thiếu' và 'Hộp khóa số', số lớn hơn đòi hỏi kỹ năng tách gộp số tuổi teen (10 + n); (4) Tính chất đối xứng của đẳng thức - Số bí ẩn đổi chỗ (Trang 13–15 / Page 14–16): Đổi vị trí kết quả lên trước (c = [ ] + a), phá vỡ tư duy máy móc 'phép tính bên trái, kết quả bên phải'; (5) Tiến vào vùng số 40 & Thử thách hỗn hợp (Trang 16–19 / Page 17–20): Mở rộng phạm vi phép tính đến 30–40, trộn lẫn mọi vị trí ô trống để tôi luyện phản xạ đại số; (6) Mật mã mở rương & Tổng kết vinh danh (Trang 20–23 / Page 21–24): Giải hệ 6 phép tính để ghép thành chuỗi mã số 6 chữ số mở rương báu Thung lũng số bí ẩn và nhận huy hiệu Thám tử số học xuất sắc."
+  },
+  "activity_groups": [
+    {
+      "group_id": "WB14-D1",
+      "group_name": "Phương trình hình ảnh CPA sơ đẳng (Visual Equation & Missing Addend with Pictures)",
+      "page_range": "Trang 2 (Sách: Trang 1)",
+      "mechanic_description": "Trẻ quan sát nhóm vật thể trực quan được chia thành 2 phần (bên trái và bên phải vạch ngăn) kèm tổng số lượng. Trẻ đếm số lượng vật thể ở nhóm đã biết, đối chiếu với tổng số để xác định số lượng vật thể còn thiếu và điền số vào ô vuông [ ? ].",
+      "sample_prompts": [
+        "Nhìn hình rồi điền số còn thiếu",
+        "Tìm số bí ẩn trong phép tính"
+      ],
+      "visual_objects": [
+        "Táo đỏ 🍎: 4 quả bên trái + [ 2 ] = 6 quả táo",
+        "Ngôi sao vàng ⭐: [ 2 ] quả bên trái + 3 quả bên phải = 5 ngôi sao",
+        "Bóng bay sắc màu 🎈: 7 quả bóng - [ 3 ] = 4 quả còn lại",
+        "Đàn cá xanh 🐟: [ 5 ] con bên trái + 2 con bên phải = 7 con cá"
+      ],
+      "quantities_and_ranges": "Số lượng và kết quả trong phạm vi 1 đến 7.",
+      "mascot_dialogues": {
+        "gau_logic": "Một con số đã biến mất khỏi phép tính rồi!",
+        "tho_sang_tao": "Bé hãy tìm số còn thiếu nhé!"
+      },
+      "distractor_logic": "Trẻ có thể đếm toàn bộ tổng số (ví dụ điền 6 thay vì 2) hoặc chỉ đếm nhóm bên trái (điền 4 thay vì 2).",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-008",
+          "template_name": "drag-to-slot (kéo thẻ số vào ô trống khuyết trong phương trình hình ảnh)"
+        },
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chạm chọn thẻ số đúng từ khay lựa chọn)"
+        }
+      ],
+      "recommended_skills": [
+        "C1.ADD.03",
+        "C1.SUB.03",
+        "C3.PROB.01",
+        "C1.NCOMP.02"
+      ]
+    },
+    {
+      "group_id": "WB14-D2",
+      "group_name": "Trắc nghiệm chọn số bí ẩn 3 phương án (3-Choice Multiple Choice for Missing Values)",
+      "page_range": "Trang 3, 4, 5, 8, 9, 10, 12, 13, 14, 15, 17, 18, 19 (Sách: Trang 2, 3, 4, 7, 8, 9, 11, 12, 13, 14, 16, 17, 18)",
+      "mechanic_description": "Mỗi bài toán đưa ra một phương trình khuyết (dạng a + [ ] = c, [ ] + b = c, a - [ ] = c, hoặc c = [ ] + a) kèm theo 3 số lựa chọn đặt trong vòng tròn, thẻ giấy ghim, hoặc chiếc chìa khóa vàng. Trẻ tính nhẩm phép bù/hiệu và chạm/khoanh vào phương án chính xác.",
+      "sample_prompts": [
+        "Khoanh vào số thích hợp để phép tính đúng",
+        "Khoanh đáp án đúng",
+        "Chọn chiếc chìa khóa đúng",
+        "Chọn đáp án đúng"
+      ],
+      "visual_objects": [
+        "Thẻ ghi chú màu nâu nhạt ghim bằng đinh ghim màu xanh/đỏ trên bảng gỗ",
+        "Những chiếc chìa khóa vàng cổ điển mang chữ số (4, 5, 6; 6, 7, 8; 7, 8, 9)",
+        "Các ngôi sao mang số thứ tự bài (ngôi sao tím, xanh, cam, hồng)",
+        "Cánh cửa vòm đá Thung lũng số bí ẩn"
+      ],
+      "quantities_and_ranges": "Mở rộng từng nấc: Phạm vi 10 (Trang 2-4) -> Phạm vi 20 (Trang 7-12) -> Phạm vi 30-40 (Trang 16-18).",
+      "mascot_dialogues": {
+        "gau_logic": "Có những phép tính, số bí ẩn đứng ở đầu này! / Mỗi chìa khóa mở một phép tính!",
+        "tho_sang_tao": "Bé tìm xem số nào là số bí ẩn nhé! / Bé chọn chìa khóa đúng nhé!"
+      },
+      "distractor_logic": "Nhiễu gồm các số lân cận chênh lệch ±1 hoặc ±2 so với đáp án đúng (ví dụ: đáp án 6 thì phương án nhiễu là 4, 5 hoặc 7, 8); hoặc nhiễu do nhầm lẫn phép cộng thành phép trừ.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chạm chọn 1 trong 3 chìa khóa / thẻ số)"
+        },
+        {
+          "template_id": "GT-009",
+          "template_name": "clue-elimination (loại trừ các chìa khóa không khớp với phương trình)"
+        }
+      ],
+      "recommended_skills": ["C1.ADD.03", "C1.SUB.03", "C3.DED.01"]
+    },
+    {
+      "group_id": "WB14-D3",
+      "group_name": "Tự điền số bí ẩn theo biến thiên vị trí (Free-Form Missing Value by Position)",
+      "page_range": "Trang 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22 (Sách: Trang 1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21)",
+      "mechanic_description": "Dạng bài tự luận cốt lõi: Không có hình minh họa, không có phương án gợi ý. Trẻ phải phân tích vai trò của ô trống trong phép tính (số hạng thứ nhất, số hạng thứ hai, số trừ, số bị trừ, hoặc kết quả đứng trước/sau dấu bằng) và điền số chính xác vào ô vuông.",
+      "sample_prompts": [
+        "Tìm số bí ẩn",
+        "Điền số thích hợp vào ô trống",
+        "Viết số bí ẩn vào ô trống để phép tính đúng",
+        "Điền số bí ẩn"
+      ],
+      "visual_objects": [
+        "Khung phép tính viền bo tròn màu nâu vàng",
+        "Ô vuông điền số màu trắng viền xanh dương/tím nhạt",
+        "Kính lúp thám tử của Gấu Logic soi vào từng bài toán"
+      ],
+      "quantities_and_ranges": "Phạm vi 10 (cộng trừ cơ bản) -> Phạm vi 20 (cộng qua 10, trừ có nhớ cơ bản) -> Phạm vi 40 (số tròn chục và số có hai chữ số).",
+      "mascot_dialogues": {
+        "gau_logic": "Không có hình minh họa nữa, chỉ có phép tính thôi! / Mình giải mật mã theo hai cột nhé!",
+        "tho_sang_tao": "Con số đúng đang ẩn trong ô vuông đó! / Bé điền số thật cẩn thận nha!"
+      },
+      "distractor_logic": "Trẻ dễ nhầm lẫn quy tắc nghịch đảo (Inversion): ví dụ [ ] + 3 = 7 trẻ lấy 7 + 3 = 10 thay vì 7 - 3 = 4; hoặc 10 - [ ] = 6 trẻ lấy 10 + 6 = 16.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-008",
+          "template_name": "drag-to-slot (kéo số từ bàn phím số Montessori vào ô trống)"
+        },
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chọn số từ bảng số tương tác)"
+        }
+      ],
+      "recommended_skills": [
+        "C1.ADD.03",
+        "C1.SUB.03",
+        "C1.EQU.01",
+        "C1.NCOMP.02"
+      ]
+    },
+    {
+      "group_id": "WB14-D4",
+      "group_name": "Nối phép tính với đáp án đúng (Matching Equation to Target Clue Value)",
+      "page_range": "Trang 7, 11, 16, 20, 22 (Sách: Trang 6, 10, 15, 19, 21)",
+      "mechanic_description": "Trình bày dưới dạng hai cột đối xứng: Cột trái gồm các thẻ phép tính chứa ô trống số bí ẩn; Cột phải gồm các số tròn mang giá trị đáp án xếp xáo trộn. Trẻ giải từng phương trình rồi vẽ đường nối (hoặc chạm cặp tương ứng) từ điểm chốt của phép tính sang điểm chốt của số đúng.",
+      "sample_prompts": [
+        "Nối phép tính với đáp án đúng",
+        "Nối và điền số bí ẩn trong phạm vi 10"
+      ],
+      "visual_objects": [
+        "Cột phép tính bên trái có chấm cam tròn dẫn hướng",
+        "Cột số kết quả bên phải đặt trong các vòng tròn viền kép màu xám/vàng",
+        "Cuộn bản đồ thám tử cổ của Thỏ Sáng Tạo"
+      ],
+      "quantities_and_ranges": "5 đến 8 cặp nối mỗi trang; phạm vi số kết quả từ 1 đến 16.",
+      "mascot_dialogues": {
+        "gau_logic": "Mình tìm số bí ẩn trên bản đồ nhé! / Bé thử sức với bài tổng hợp nhé!",
+        "tho_sang_tao": "Bé nhìn thật kỹ rồi nối đúng nha! / Mình làm lần lượt từng câu thôi!"
+      },
+      "distractor_logic": "Các số đích ở cột phải có giá trị sát nhau (ví dụ: 6, 7, 8, 9, 10 hoặc 9, 11, 13, 14, 16). Trẻ nối sai nếu tính nhầm một phép tính dẫn đến việc trùng lặp điểm nối.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-005",
+          "template_name": "match-pairs (chạm phép tính rồi chạm số đích để tạo đường nối mềm mại kèm âm thanh harp)"
+        }
+      ],
+      "recommended_skills": ["C1.ADD.03", "C1.SUB.03", "C3.DED.01"]
+    },
+    {
+      "group_id": "WB14-D5",
+      "group_name": "Mật mã mở rương kho báu liên hoàn (Chest Code Breaker & Working Memory Sequence)",
+      "page_range": "Trang 21, 23 (Sách: Trang 20, 22)",
+      "mechanic_description": "Thử thách đỉnh cao kết thúc chặng: Trẻ lần lượt giải 6 phép tính tìm số bí ẩn độc lập (được đánh số ngôi sao từ 1 đến 6). Giá trị tìm được của mỗi câu tương ứng với một chữ số trong chuỗi mật mã 6 chữ số của rương báu. Trẻ ghi nhớ và điền dãy mã số [5, 7, 8, 9, 6, 15] vào 6 ô khóa để nắp rương kho báu bật mở tỏa sáng ngọc ngà vàng bạc.",
+      "sample_prompts": [
+        "Tìm số bí ẩn để lấy mật mã",
+        "Viết mật mã: Mật mã của rương là: [1] [2] [3] [4] [5] [6]",
+        "Tìm đáp án để hoàn thành mật mã"
+      ],
+      "visual_objects": [
+        "Rương kho báu bằng gỗ nẹp đồng cổ, ổ khóa số hình lỗ khóa phát sáng",
+        "Đá quý nhiều màu lấp lánh (kim cương xanh, hồng ngọc đỏ, thạch anh tím, đồng tiền vàng)",
+        "Băng dải 6 ô vuông mật mã mang nhãn ngôi sao số [1], [2], [3], [4], [5], [6]"
+      ],
+      "quantities_and_ranges": "6 phương trình độc lập với số bí ẩn thuộc phạm vi 1 đến 15; chuỗi mật mã gồm 6 phần tử.",
+      "mascot_dialogues": {
+        "gau_logic": "Chúng mình sắp mở được rương báu rồi!",
+        "tho_sang_tao": "Bé giải đúng để lấy mật mã nhé!"
+      },
+      "distractor_logic": "Trẻ điền sai thứ tự vị trí các chữ số trong chuỗi mật mã (lẫn lộn kết quả câu 1 vào ô 2, câu 5 vào ô 6), đòi hỏi trí nhớ làm việc (Working Memory) và sự kiểm soát trình tự nhận thức.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-008",
+          "template_name": "drag-to-slot (kéo các số mật mã đã giải vào hàng ổ khóa của rương)"
+        },
+        {
+          "template_id": "GT-009",
+          "template_name": "clue-elimination (mở từng lẫy khóa khi giải đúng từng manh mối)"
+        }
+      ],
+      "recommended_skills": [
+        "C6.WM.01",
+        "C1.ADD.03",
+        "C1.SUB.03",
+        "C1.EQU.01",
+        "C3.DED.01"
+      ]
+    },
+    {
+      "group_id": "WB14-DED-1",
+      "group_name": "Suy luận loại trừ số qua 2 manh mối thuộc tính/số (Deductive Elimination via 2 Clues)",
+      "page_range": "Định hướng tích hợp chương trình Chặng 14 (Curriculum Extension)",
+      "mechanic_description": "Trẻ được cung cấp một lưới số (ví dụ 1–10) và 2 manh mối thám tử từ Gấu Logic và Thỏ Sáng Tạo: Manh mối 1 thu hẹp khoảng giá trị (ví dụ: 'Tôi lớn hơn 4'), Manh mối 2 xác định đặc tính số học (ví dụ: 'Tôi là số chẵn' hoặc 'Tôi nhỏ hơn 7'). Trẻ dùng kính lúp loại bỏ các số sai để tìm ra con số bí ẩn duy nhất.",
+      "sample_prompts": [
+        "Manh mối 1: Tôi lớn hơn 4",
+        "Manh mối 2: Tôi nhỏ hơn 8 và là số chẵn",
+        "Tìm con số bí ẩn!"
+      ],
+      "visual_objects": [
+        "Lưới 10 ô số bằng gỗ cổ kính",
+        "Kính lúp thám tử có hiệu ứng quét sáng",
+        "Dấu gạch chéo đỏ nhẹ loại trừ các số không thỏa mãn"
+      ],
+      "quantities_and_ranges": "Phạm vi số 1 đến 10 hoặc 1 đến 20.",
+      "mascot_dialogues": {
+        "gau_logic": "Manh mối đầu tiên: Tôi là số lớn hơn 5!",
+        "tho_sang_tao": "Manh mối thứ hai: Tôi có bạn cặp (số chẵn) và nhỏ hơn 8!"
+      },
+      "distractor_logic": "Các số chỉ thỏa mãn 1 trong 2 manh mối (thỏa mãn lớn hơn 4 nhưng là số lẻ, hoặc là số chẵn nhưng nhỏ hơn 4).",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-009",
+          "template_name": "clue-elimination (chạm để gạch bỏ các số vi phạm manh mối)"
+        },
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chạm chọn số cuối cùng còn lại)"
+        }
+      ],
+      "recommended_skills": ["C3.DED.01", "C1.CMP.01", "C1.CMP.02"]
+    },
+    {
+      "group_id": "WB14-DED-2",
+      "group_name": "Suy luận loại trừ qua 3 manh mối có điều kiện phủ định 'Không phải...' (Negation Clue Elimination)",
+      "page_range": "Định hướng tích hợp nâng cao Chặng 14 (Curriculum Extension)",
+      "mechanic_description": "Trẻ nhận 3 manh mối liên tiếp, trong đó có ít nhất một manh mối phủ định dạng 'Tôi KHÔNG PHẢI là...': Manh mối 1 ('Tôi lớn hơn 3'), Manh mối 2 ('Tôi không phải số 6 và không phải số 8'), Manh mối 3 ('Tôi đứng liền sau số 4'). Trẻ kích hoạt tư duy ức chế hành vi và loại trừ chính xác.",
+      "sample_prompts": [
+        "Tôi lớn hơn 3",
+        "Tôi KHÔNG PHẢI là số chẵn",
+        "Tôi đứng liền trước số 6",
+        "Số bí ẩn là số nào?"
+      ],
+      "visual_objects": [
+        "Biểu tượng biển cấm gạch chéo 🚫 màu đỏ nhạt Montessori",
+        "Thẻ bài manh mối thám tử có dấu hỏi bí ẩn",
+        "Bảng số phát sáng hiệu ứng radar"
+      ],
+      "quantities_and_ranges": "Phạm vi số 1 đến 10.",
+      "mascot_dialogues": {
+        "gau_logic": "Hãy chú ý kỹ: Số này KHÔNG PHẢI là số đứng cạnh số 5 đâu nhé!",
+        "tho_sang_tao": "Bé gạch bỏ những số bị cấm trước rồi tìm tiếp nha!"
+      },
+      "distractor_logic": "Số bị cấm trong điều kiện phủ định thường là cái bẫy trực giác của trẻ (trẻ nghe nhắc đến số 5 thì bấm ngay số 5).",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-009",
+          "template_name": "clue-elimination (loại trừ theo điều kiện phủ định NOT)"
+        }
+      ],
+      "recommended_skills": ["C3.DED.02", "C6.WM.01"]
+    },
+    {
+      "group_id": "WB14-DED-3",
+      "group_name": "Giải mã mật mã 2-3 chữ số từ gợi ý vị trí / đúng số sai vị trí (Mastermind Position Clues)",
+      "page_range": "Định hướng tích hợp Mastermind Chặng 14 (Curriculum Extension)",
+      "mechanic_description": "Trò chơi tư duy Mastermind cho trẻ mầm non: Để mở két sắt bí mật, trẻ nhận các gợi ý vị trí về mã số 2 chữ số (ví dụ: 'Số 4 7 có một số đúng nhưng sai vị trí', 'Số 2 4 có một số đúng và đúng vị trí'). Trẻ kết hợp các manh mối để xác định chính xác chữ số hàng chục và hàng đơn vị.",
+      "sample_prompts": [
+        "Gợi ý 1: [3, 8] có 1 số đúng nhưng sai chỗ",
+        "Gợi ý 2: [8, 5] có 1 số đúng và đúng chỗ",
+        "Tìm mã số 2 chữ số mở két!"
+      ],
+      "visual_objects": [
+        "Két sắt bí mật hình trụ bằng đồng có 2 bánh xoay số",
+        "Đèn tín hiệu xanh lá (đúng số đúng vị trí) và đèn vàng (đúng số sai vị trí)",
+        "Thẻ ghi chép thám tử của Gấu Logic"
+      ],
+      "quantities_and_ranges": "Mã số 2 chữ số (hoặc 3 chữ số cấp nâng cao) trong phạm vi chữ số 0–9.",
+      "mascot_dialogues": {
+        "gau_logic": "Mã số két sắt có 2 chữ số. Hãy xem đèn tín hiệu báo gì nào!",
+        "tho_sang_tao": "Đèn xanh là đúng chỗ rồi, đèn vàng là số đó phải đổi sang vị trí kia đấy!"
+      },
+      "distractor_logic": "Trẻ dễ nhầm giữa 'đúng số nhưng sai vị trí' với 'đúng số đúng vị trí', đòi hỏi khả năng tư duy đảo vị trí (spatial permutation).",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-009",
+          "template_name": "clue-elimination (bảng manh mối Mastermind lọc số khả dĩ)"
+        },
+        {
+          "template_id": "GT-008",
+          "template_name": "drag-to-slot (kéo các chữ số vào bánh xoay mã số két sắt)"
+        }
+      ],
+      "recommended_skills": ["C3.DED.02", "C6.WM.01"]
+    }
+  ],
+  "pages_summary": [
+    {
+      "page_number": 1,
+      "workbook_page_number": null,
+      "file_path": "pages/page-01.jpg",
+      "page_type": "cover_overview",
+      "title": "Chặng 14: Bé Tìm Số Bí Ẩn",
+      "subtitle": "Bí ẩn những con số biến mất! – Thung lũng số bí ẩn",
+      "instruction": "CÙNG GẤU VÀ THỎ PHÁ ÁN SỐ HỌC!",
+      "dialogue": {
+        "gau_logic": "Chào mừng các bạn nhỏ đến với Thung Lũng Số Bí Ẩn! Những con số tinh nghịch đã biến mất khỏi các phép tính rồi!",
+        "tho_sang_tao": "Manh mối ở khắp mọi nơi! Bé hãy cùng chúng mình giải mã từng câu đố để mở khóa rương kho báu nhé!"
+      },
+      "parent_objectives": [
+        "Rèn luyện kỹ năng tìm số hạng và số trừ chưa biết (Missing values)",
+        "Nắm vững tính chất đối xứng của dấu bằng trong phương trình",
+        "Phát triển tư duy logic loại trừ và ghi nhớ làm việc đa bước",
+        "Tạo hứng thú khám phá toán học qua cốt truyện thám tử phá án"
+      ],
+      "footer_banner": "CÙNG GẤU VÀ THỎ PHÁ ÁN SỐ HỌC! – DÀNH CHO BÉ 3-6 TUỔI",
+      "pedagogical_concept": "Trang bìa mở đầu thiết lập bối cảnh câu chuyện thám tử phiêu lưu kỳ thú tại Thung lũng số bí ẩn. Hình ảnh Gấu Logic đeo kính cầm kính lúp và Thỏ Sáng Tạo cầm bản đồ kho báu bên cạnh rương vàng đầy ắp đá quý tạo động lực nội tại mạnh mẽ cho trẻ nhỏ. Các tảng đá khắc phép tính khuyết (4 + ? = 7, ? + 3 = 8, 10 - ? = 6, 18 = ? + 8) báo hiệu trước các thử thách toán học xuyên suốt cuốn sách.",
+      "visual_details": {
+        "scenery": "Thung lũng ngập tràn hoa cỏ dại rực rỡ, cánh cổng vòm đá rêu phong mở ra con đường ánh sáng vàng huyền ảo dẫn vào rừng sâu. Phía trên có khinh khí cầu Gấu thám tử bay lượn dưới vầng mặt trời tươi cười rạng rỡ.",
+        "characters": [
+          "Gấu Logic mặc áo măng tô thám tử màu nâu bò, đeo nơ đỏ, đeo kính gọng tròn đen, tay cầm kính lúp chỉ về phía cổng bí mật.",
+          "Thỏ Sáng Tạo mặc áo thám tử màu be nhạt, nơ đỏ, đội mũ thám tử có hai tai thỏ thò lên xinh xắn, tay cầm cuộn bản đồ kho báu có dấu ? và dấu X đỏ."
+        ],
+        "symbols": "Rương kho báu mở hé nắp vàng lấp lánh; dải số manh mối [2, 7, ?, 5, 9] trên đá; các phương trình khắc trên bia đá cổ.",
+        "quantities": "Dải tuổi 3–6 tuổi; 4 trụ cột kỹ năng: Đếm số 1-20, Cộng - Trừ phạm vi 20, So sánh & Sắp xếp, Trò chơi IQ toán học."
+      },
+      "digital_game_mapping": {
+        "suggested_template": "GT-000",
+        "mechanic": "world-hub / story-intro",
+        "interaction": "Chạm vào kính lúp của Gấu Logic để phát ra âm thanh 'ting' soi sáng dấu vết; chạm vào rương báu để phát ra âm thanh leng keng của tiền vàng; chạm vào cổng đá để mở ra bản đồ 22 thử thách."
+      }
+    },
+    {
+      "page_number": 2,
+      "workbook_page_number": 1,
+      "file_path": "pages/page-02.jpg",
+      "page_type": "pictorial_and_abstract_missing_values",
+      "title": "TRANG 1 – SỐ NÀO ĐÃ BIẾN MẤT?",
+      "instruction": "Bé hãy tìm số còn thiếu nhé!",
+      "dialogue": {
+        "gau_logic": "Một con số đã biến mất khỏi phép tính rồi!",
+        "tho_sang_tao": "Bé hãy tìm số còn thiếu nhé!"
+      },
+      "footer_hint": "BỘ TOÁN IQ – CHẶNG 14",
+      "pedagogical_concept": "Khởi đầu theo phương pháp CPA (Concrete - Pictorial - Abstract): Bài 1 cung cấp điểm tựa trực quan sinh động với các nhóm trái cây, động vật, ngôi sao để trẻ đếm và cảm nhận số lượng còn thiếu một cách tự nhiên. Bài 2 chuyển hóa ngay sang dạng biểu diễn trừu tượng thuần chữ số trong phạm vi 10.",
+      "sections": [
+        {
+          "section_id": "bai-1",
+          "title": "Bài 1. Nhìn hình rồi điền số còn thiếu.",
+          "type": "pictorial_equation",
+          "problems": [
+            {
+              "id": 1,
+              "visual": "4 quả táo đỏ bên trái + [ 2 ] quả táo bên phải = 6 quả táo",
+              "equation": "4 + [ ] = 6",
+              "correct_answer": 2,
+              "hint": "Có 4 quả táo, thêm mấy quả để được 6 quả?"
+            },
+            {
+              "id": 2,
+              "visual": "[ 2 ] ngôi sao vàng bên trái + 3 ngôi sao bên phải = 5 ngôi sao",
+              "equation": "[ ] + 3 = 5",
+              "correct_answer": 2,
+              "hint": "Mấy ngôi sao gộp với 3 ngôi sao bằng 5 ngôi sao?"
+            },
+            {
+              "id": 3,
+              "visual": "7 quả bóng bay sắc màu - [ 3 ] quả = 4 quả bóng bay còn lại",
+              "equation": "7 - [ ] = 4",
+              "correct_answer": 3,
+              "hint": "Có 7 quả bóng bay, bớt đi mấy quả để còn 4 quả?"
+            },
+            {
+              "id": 4,
+              "visual": "[ 5 ] con cá xanh bên trái + 2 con cá bên phải = 7 con cá",
+              "equation": "[ ] + 2 = 7",
+              "correct_answer": 5,
+              "hint": "Đếm đàn cá bên trái xem có bao nhiêu con cá đang bơi?"
+            }
+          ]
+        },
+        {
+          "section_id": "bai-2",
+          "title": "Bài 2. Tìm số bí ẩn.",
+          "type": "abstract_equation",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "4 + [ ] = 7",
+              "correct_answer": 3
+            },
+            {
+              "id": 2,
+              "equation": "[ ] + 2 = 6",
+              "correct_answer": 4
+            },
+            {
+              "id": 3,
+              "equation": "8 - [ ] = 5",
+              "correct_answer": 3
+            },
+            {
+              "id": 4,
+              "equation": "[ ] + 1 = 9",
+              "correct_answer": 8
+            },
+            {
+              "id": 5,
+              "equation": "10 - [ ] = 6",
+              "correct_answer": 4
+            },
+            {
+              "id": 6,
+              "equation": "3 + [ ] = 8",
+              "correct_answer": 5
+            },
+            {
+              "id": 7,
+              "equation": "[ ] + 4 = 7",
+              "correct_answer": 3
+            },
+            {
+              "id": 8,
+              "equation": "9 - [ ] = 7",
+              "correct_answer": 2
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "drag-to-slot",
+        "interaction": "Bé chạm đếm từng quả táo, ngôi sao, kéo thẻ số vào ô vuông khuyết."
+      }
+    },
+    {
+      "page_number": 3,
+      "workbook_page_number": 2,
+      "file_path": "pages/page-03.jpg",
+      "page_type": "multiple_choice_and_fill",
+      "title": "TRANG 2 – ĐI TÌM PHẦN CÒN THIẾU",
+      "instruction": "Khoanh vào số thích hợp để phép tính đúng.",
+      "dialogue": {
+        "gau_logic": "Những phép tính này bị mất một số rồi!",
+        "tho_sang_tao": "Bé hãy khoanh vào số đúng nhé!"
+      },
+      "footer_hint": "BỘ TOÁN IQ – CHẶNG 14",
+      "pedagogical_concept": "Rèn luyện khả năng lựa chọn có định hướng thông qua trắc nghiệm 3 phương án (scaffolding nhận biết phương án đúng giữa 2 phương án gây nhiễu). Phần 2 yêu cầu tự viết số để củng cố khả năng tự truy xuất đáp án từ trí nhớ.",
+      "sections": [
+        {
+          "section_id": "bai-1",
+          "title": "Bài 1. Khoanh vào số thích hợp.",
+          "type": "multiple_choice_3",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "4 + [ ] = 7",
+              "choices": [2, 3, 5],
+              "correct_answer": 3,
+              "distractors": [2, 5]
+            },
+            {
+              "id": 2,
+              "equation": "10 - [ ] = 5",
+              "choices": [3, 5, 6],
+              "correct_answer": 5,
+              "distractors": [3, 6]
+            },
+            {
+              "id": 3,
+              "equation": "3 + [ ] = 8",
+              "choices": [4, 5, 6],
+              "correct_answer": 5,
+              "distractors": [4, 6]
+            },
+            {
+              "id": 4,
+              "equation": "8 - [ ] = 6",
+              "choices": [1, 2, 3],
+              "correct_answer": 2,
+              "distractors": [1, 3]
+            },
+            {
+              "id": 5,
+              "equation": "2 + [ ] = 10",
+              "choices": [7, 8, 9],
+              "correct_answer": 8,
+              "distractors": [7, 9]
+            },
+            {
+              "id": 6,
+              "equation": "6 + [ ] = 9",
+              "choices": [2, 3, 4],
+              "correct_answer": 3,
+              "distractors": [2, 4]
+            },
+            {
+              "id": 7,
+              "equation": "9 - [ ] = 4",
+              "choices": [4, 5, 6],
+              "correct_answer": 5,
+              "distractors": [4, 6]
+            },
+            {
+              "id": 8,
+              "equation": "5 + [ ] = 9",
+              "choices": [2, 3, 4],
+              "correct_answer": 4,
+              "distractors": [2, 3]
+            }
+          ]
+        },
+        {
+          "section_id": "bai-2",
+          "title": "Bài 2. Điền số thích hợp vào ô trống.",
+          "type": "fill_in_the_blank",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "4 + [ ] = 6",
+              "correct_answer": 2
+            },
+            {
+              "id": 2,
+              "equation": "7 - [ ] = 5",
+              "correct_answer": 2
+            },
+            {
+              "id": 3,
+              "equation": "3 + [ ] = 9",
+              "correct_answer": 6
+            },
+            {
+              "id": 4,
+              "equation": "[ ] + 2 = 8",
+              "correct_answer": 6
+            },
+            {
+              "id": 5,
+              "equation": "10 - [ ] = 7",
+              "correct_answer": 3
+            },
+            {
+              "id": 6,
+              "equation": "[ ] + 4 = 9",
+              "correct_answer": 5
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-001",
+        "mechanic": "tap-select",
+        "interaction": "Chạm vào 1 trong 3 nút tròn chứa số đáp án."
+      }
+    },
+    {
+      "page_number": 4,
+      "workbook_page_number": 3,
+      "file_path": "pages/page-04.jpg",
+      "page_type": "initial_missing_value",
+      "title": "TRANG 3 – SỐ BÍ ẨN ĐỨNG Ở ĐẦU",
+      "instruction": "Khoanh vào số thích hợp để phép tính đúng.",
+      "dialogue": {
+        "gau_logic": "Có những phép tính, số bí ẩn đứng ở đầu này!",
+        "tho_sang_tao": "Bé tìm xem số nào là số bí ẩn nhé!"
+      },
+      "footer_hint": "BỘ TOÁN IQ – CHẶNG 14",
+      "pedagogical_concept": "Tập trung giải quyết rào cản nhận thức: Số bí ẩn đứng ở vị trí đầu tiên ([ ] + a = c hoặc [ ] - b = c). Với phép trừ, trẻ cần hiểu [ ] là số bị trừ (tổng gộp của hiệu và số trừ), giúp chuẩn bị tư duy đại số sơ đẳng.",
+      "sections": [
+        {
+          "section_id": "bai-1",
+          "title": "Bài 1. Khoanh vào số thích hợp để phép tính đúng.",
+          "type": "multiple_choice_3",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "[ ] + 3 = 7",
+              "choices": [2, 3, 4],
+              "correct_answer": 4,
+              "distractors": [2, 3]
+            },
+            {
+              "id": 2,
+              "equation": "[ ] - 5 = 5",
+              "choices": [8, 9, 10],
+              "correct_answer": 10,
+              "distractors": [8, 9]
+            },
+            {
+              "id": 3,
+              "equation": "[ ] + 5 = 8",
+              "choices": [2, 3, 4],
+              "correct_answer": 3,
+              "distractors": [2, 4]
+            },
+            {
+              "id": 4,
+              "equation": "[ ] - 2 = 6",
+              "choices": [6, 7, 8],
+              "correct_answer": 8,
+              "distractors": [6, 7]
+            },
+            {
+              "id": 5,
+              "equation": "[ ] + 4 = 9",
+              "choices": [4, 5, 6],
+              "correct_answer": 5,
+              "distractors": [4, 6]
+            },
+            {
+              "id": 6,
+              "equation": "[ ] - 3 = 4",
+              "choices": [5, 6, 7],
+              "correct_answer": 7,
+              "distractors": [5, 6]
+            },
+            {
+              "id": 7,
+              "equation": "[ ] + 2 = 10",
+              "choices": [6, 7, 8],
+              "correct_answer": 8,
+              "distractors": [6, 7]
+            },
+            {
+              "id": 8,
+              "equation": "[ ] - 1 = 8",
+              "choices": [7, 8, 9],
+              "correct_answer": 9,
+              "distractors": [7, 8]
+            }
+          ]
+        },
+        {
+          "section_id": "bai-2",
+          "title": "Bài 2. Viết số bí ẩn vào ô trống để phép tính đúng.",
+          "type": "fill_in_the_blank",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "[ ] + 1 = 5",
+              "correct_answer": 4
+            },
+            {
+              "id": 2,
+              "equation": "[ ] + 2 = 7",
+              "correct_answer": 5
+            },
+            {
+              "id": 3,
+              "equation": "[ ] - 4 = 5",
+              "correct_answer": 9
+            },
+            {
+              "id": 4,
+              "equation": "[ ] + 3 = 10",
+              "correct_answer": 7
+            },
+            {
+              "id": 5,
+              "equation": "[ ] - 5 = 4",
+              "correct_answer": 9
+            },
+            {
+              "id": 6,
+              "equation": "[ ] + 6 = 9",
+              "correct_answer": 3
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-001",
+        "mechanic": "tap-select",
+        "interaction": "Chạm chọn số đúng để điền vào đầu phương trình."
+      }
+    },
+    {
+      "page_number": 5,
+      "workbook_page_number": 4,
+      "file_path": "pages/page-05.jpg",
+      "page_type": "arbitrary_position_missing_value",
+      "title": "TRANG 4 – SỐ BÍ ẨN CÓ THỂ Ở BẤT CỨ ĐÂU",
+      "instruction": "Khoanh vào số thích hợp để phép tính đúng.",
+      "dialogue": {
+        "gau_logic": "Số bí ẩn có thể ở giữa, ở đầu hoặc ở cuối!",
+        "tho_sang_tao": "Bé hãy tìm số thích hợp để phép tính đúng nhé!"
+      },
+      "footer_hint": "BỘ TOÁN IQ – CHẶNG 14",
+      "pedagogical_concept": "Luyện tính linh hoạt nhận thức (Cognitive Flexibility): Ô trống không cố định mà có thể nằm ở số hạng đầu, số hạng giữa, kết quả, hoặc đảo vế (9 = [ ] + 4). Thiết kế 10 thẻ ghi chú ghim trên bảng gỗ tạo cảm giác khám phá tài liệu mật của thám tử.",
+      "sections": [
+        {
+          "section_id": "bai-1",
+          "title": "Bài 1. Khoanh vào số thích hợp (10 thẻ ghi chú ghim gỗ).",
+          "type": "pinned_notes_selection",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "[ ] + 3 = 7",
+              "choices": [2, 3, 4],
+              "correct_answer": 4,
+              "position": "start"
+            },
+            {
+              "id": 2,
+              "equation": "10 - [ ] = 5",
+              "choices": [4, 5, 6],
+              "correct_answer": 5,
+              "position": "middle"
+            },
+            {
+              "id": 3,
+              "equation": "3 + 5 = [ ]",
+              "choices": [6, 7, 8],
+              "correct_answer": 8,
+              "position": "end"
+            },
+            {
+              "id": 4,
+              "equation": "8 - [ ] = 6",
+              "choices": [1, 2, 3],
+              "correct_answer": 2,
+              "position": "middle"
+            },
+            {
+              "id": 5,
+              "equation": "[ ] + 8 = 10",
+              "choices": [1, 2, 3],
+              "correct_answer": 2,
+              "position": "start"
+            },
+            {
+              "id": 6,
+              "equation": "9 = [ ] + 4",
+              "choices": [4, 5, 6],
+              "correct_answer": 5,
+              "position": "inverted_equation"
+            },
+            {
+              "id": 7,
+              "equation": "15 - [ ] = 7",
+              "choices": [6, 7, 8],
+              "correct_answer": 8,
+              "position": "middle_teen"
+            },
+            {
+              "id": 8,
+              "equation": "2 + [ ] = 6",
+              "choices": [3, 4, 5],
+              "correct_answer": 4,
+              "position": "middle"
+            },
+            {
+              "id": 9,
+              "equation": "[ ] - 3 = 5",
+              "choices": [6, 7, 8],
+              "correct_answer": 8,
+              "position": "start"
+            },
+            {
+              "id": 10,
+              "equation": "7 + 6 = [ ]",
+              "choices": [12, 13, 14],
+              "correct_answer": 13,
+              "position": "end_sum_over_10"
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-001",
+        "mechanic": "tap-select",
+        "interaction": "Chạm vào số trên từng mẩu giấy ghim trên bảng gỗ."
+      }
+    },
+    {
+      "page_number": 6,
+      "workbook_page_number": 5,
+      "file_path": "pages/page-06.jpg",
+      "page_type": "abstract_magnifier_drill",
+      "title": "TRANG 5 – CHIẾC KÍNH LÚP SỐ HỌC",
+      "instruction": "Điền số thích hợp vào ô trống.",
+      "dialogue": {
+        "gau_logic": "Không có hình minh họa nữa, chỉ có phép tính thôi!",
+        "tho_sang_tao": "Con số đúng đang ẩn trong ô vuông đó!"
+      },
+      "footer_hint": "BỘ TOÁN IQ – CHẶNG 14",
+      "pedagogical_concept": "Chuyển hóa hoàn toàn sang tầng trừu tượng (Abstract level): Trẻ tự nhẩm tính và điền số cho 12 phương trình độc lập trong phạm vi 10 mà không còn hỗ trợ của hình ảnh hay phương án gợi ý. Đây là bài kiểm tra tính thuần thục số học.",
+      "sections": [
+        {
+          "section_id": "bai-1",
+          "title": "Bài 1. Điền số thích hợp vào ô trống.",
+          "type": "fill_in_the_blank_12",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "3 + [ ] = 5",
+              "correct_answer": 2
+            },
+            {
+              "id": 2,
+              "equation": "6 + [ ] = 9",
+              "correct_answer": 3
+            },
+            {
+              "id": 3,
+              "equation": "1 + [ ] = 2",
+              "correct_answer": 1
+            },
+            {
+              "id": 4,
+              "equation": "5 + [ ] = 9",
+              "correct_answer": 4
+            },
+            {
+              "id": 5,
+              "equation": "2 + [ ] = 7",
+              "correct_answer": 5
+            },
+            {
+              "id": 6,
+              "equation": "4 + [ ] = 8",
+              "correct_answer": 4
+            },
+            {
+              "id": 7,
+              "equation": "7 + [ ] = 10",
+              "correct_answer": 3
+            },
+            {
+              "id": 8,
+              "equation": "3 + [ ] = 6",
+              "correct_answer": 3
+            },
+            {
+              "id": 9,
+              "equation": "9 - [ ] = 4",
+              "correct_answer": 5
+            },
+            {
+              "id": 10,
+              "equation": "10 - [ ] = 6",
+              "correct_answer": 4
+            },
+            {
+              "id": 11,
+              "equation": "8 - [ ] = 5",
+              "correct_answer": 3
+            },
+            {
+              "id": 12,
+              "equation": "7 - [ ] = 2",
+              "correct_answer": 5
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "drag-to-slot",
+        "interaction": "Kính lúp soi sáng ô trống, bé kéo thẻ số thả vào vị trí kính lúp đang soi."
+      }
+    },
+    {
+      "page_number": 7,
+      "workbook_page_number": 6,
+      "file_path": "pages/page-07.jpg",
+      "page_type": "matching_and_filling_map",
+      "title": "TRANG 6 – BẢN ĐỒ SỐ TRONG PHẠM VI 10",
+      "instruction": "Nối và điền số bí ẩn trong phạm vi 10",
+      "dialogue": {
+        "gau_logic": "Mình tìm số bí ẩn trên bản đồ nhé!",
+        "tho_sang_tao": "Bé nhìn thật kỹ rồi nối đúng nha!"
+      },
+      "footer_hint": "BỘ TOÁN IQ – CHẶNG 14",
+      "pedagogical_concept": "Kết hợp hai cơ chế tương tác: Nối đường (Matching lines) ở Bài 1 và Tự điền số (Fill-in) ở Bài 2. Cơ chế nối giúp trẻ đối chiếu trực quan kết quả nhẩm với một tập hợp đích gồm các số rời rạc từ 1 đến 8.",
+      "sections": [
+        {
+          "section_id": "bai-1",
+          "title": "Bài 1. Nối phép tính với đáp án đúng.",
+          "type": "matching_pairs",
+          "pairs": [
+            {
+              "id": 1,
+              "equation": "4 + [ ] = 5",
+              "target_number": 1
+            },
+            {
+              "id": 2,
+              "equation": "7 - [ ] = 5",
+              "target_number": 2
+            },
+            {
+              "id": 3,
+              "equation": "5 + [ ] = 8",
+              "target_number": 3
+            },
+            {
+              "id": 4,
+              "equation": "9 - [ ] = 5",
+              "target_number": 4
+            },
+            {
+              "id": 5,
+              "equation": "2 + [ ] = 7",
+              "target_number": 5
+            },
+            {
+              "id": 6,
+              "equation": "[ ] + 4 = 10",
+              "target_number": 6
+            },
+            {
+              "id": 7,
+              "equation": "10 - [ ] = 3",
+              "target_number": 7
+            },
+            {
+              "id": 8,
+              "equation": "1 + [ ] = 9",
+              "target_number": 8
+            }
+          ]
+        },
+        {
+          "section_id": "bai-2",
+          "title": "Bài 2. Điền số bí ẩn.",
+          "type": "fill_in_the_blank",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "3 + [ ] = 7",
+              "correct_answer": 4
+            },
+            {
+              "id": 2,
+              "equation": "[ ] + 2 = 9",
+              "correct_answer": 7
+            },
+            {
+              "id": 3,
+              "equation": "8 - [ ] = 2",
+              "correct_answer": 6
+            },
+            {
+              "id": 4,
+              "equation": "10 - [ ] = 1",
+              "correct_answer": 9
+            },
+            {
+              "id": 5,
+              "equation": "[ ] + 5 = 10",
+              "correct_answer": 5
+            },
+            {
+              "id": 6,
+              "equation": "9 - [ ] = 6",
+              "correct_answer": 3
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-005",
+        "mechanic": "match-pairs",
+        "interaction": "Kéo dây thừng thám tử từ điểm chốt phép tính sang điểm chốt số kết quả."
+      }
+    },
+    {
+      "page_number": 8,
+      "workbook_page_number": 7,
+      "file_path": "pages/page-08.jpg",
+      "page_type": "boundary_expansion_20",
+      "title": "TRANG 7 – BƯỚC QUA CÁNH CỔNG SỐ 10",
+      "instruction": "Tìm số bí ẩn với các phép tính đến 20",
+      "dialogue": {
+        "gau_logic": "Số bí ẩn giờ lớn hơn rồi!",
+        "tho_sang_tao": "Nhưng bé vẫn tìm được đúng thôi!"
+      },
+      "footer_hint": "BỘ TOÁN IQ – CHẶNG 14",
+      "pedagogical_concept": "Bước nhảy sư phạm quan trọng: Chuyển từ phạm vi 10 sang phạm vi 20. Trẻ bắt đầu tiếp cận các phép cộng trừ qua 10 (ví dụ 9 + [ ] = 15, 12 - [ ] = 7), ứng dụng chiến lược tách số 10 làm mốc (Ten-frame bridging strategy).",
+      "sections": [
+        {
+          "section_id": "bai-1",
+          "title": "Bài 1. Khoanh đáp án đúng.",
+          "type": "multiple_choice_3",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "9 + [ ] = 15",
+              "choices": [4, 5, 6],
+              "correct_answer": 6,
+              "distractors": [4, 5]
+            },
+            {
+              "id": 2,
+              "equation": "12 - [ ] = 7",
+              "choices": [4, 5, 6],
+              "correct_answer": 5,
+              "distractors": [4, 6]
+            },
+            {
+              "id": 3,
+              "equation": "[ ] + 8 = 14",
+              "choices": [4, 5, 6],
+              "correct_answer": 6,
+              "distractors": [4, 5]
+            },
+            {
+              "id": 4,
+              "equation": "15 - [ ] = 9",
+              "choices": [5, 6, 7],
+              "correct_answer": 6,
+              "distractors": [5, 7]
+            },
+            {
+              "id": 5,
+              "equation": "7 + [ ] = 13",
+              "choices": [4, 5, 6],
+              "correct_answer": 6,
+              "distractors": [4, 5]
+            },
+            {
+              "id": 6,
+              "equation": "[ ] + 5 = 11",
+              "choices": [4, 5, 6],
+              "correct_answer": 6,
+              "distractors": [4, 5]
+            },
+            {
+              "id": 7,
+              "equation": "18 - [ ] = 10",
+              "choices": [6, 7, 8],
+              "correct_answer": 8,
+              "distractors": [6, 7]
+            },
+            {
+              "id": 8,
+              "equation": "10 + [ ] = 16",
+              "choices": [4, 5, 6],
+              "correct_answer": 6,
+              "distractors": [4, 5]
+            }
+          ]
+        },
+        {
+          "section_id": "bai-2",
+          "title": "Bài 2. Điền số thích hợp.",
+          "type": "fill_in_the_blank",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "11 + [ ] = 17",
+              "correct_answer": 6
+            },
+            {
+              "id": 2,
+              "equation": "[ ] + 9 = 14",
+              "correct_answer": 5
+            },
+            {
+              "id": 3,
+              "equation": "16 - [ ] = 8",
+              "correct_answer": 8
+            },
+            {
+              "id": 4,
+              "equation": "13 - [ ] = 6",
+              "correct_answer": 7
+            },
+            {
+              "id": 5,
+              "equation": "[ ] + 7 = 15",
+              "correct_answer": 8
+            },
+            {
+              "id": 6,
+              "equation": "14 + [ ] = 19",
+              "correct_answer": 5
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-001",
+        "mechanic": "tap-select",
+        "interaction": "Chạm vào số đúng để cánh cổng số 10 từ từ mở ra ánh sáng xanh lục."
+      }
+    },
+    {
+      "page_number": 9,
+      "workbook_page_number": 8,
+      "file_path": "pages/page-09.jpg",
+      "page_type": "key_lock_selection",
+      "title": "TRANG 8 – CHIẾC CHÌA KHÓA BỊ THIẾU",
+      "instruction": "Chọn và điền số bí ẩn đến 20",
+      "dialogue": {
+        "gau_logic": "Mỗi chìa khóa mở một phép tính!",
+        "tho_sang_tao": "Bé chọn chìa khóa đúng nhé!"
+      },
+      "footer_hint": "BỘ TOÁN IQ – CHẶNG 14",
+      "pedagogical_concept": "Ẩn dụ hình tượng 'Chìa khóa mở ổ khóa phép tính': 3 chiếc chìa khóa vàng mang số giúp biến phép toán trừu tượng thành trò chơi tương tác hành động thực tế. Rèn tư duy phân tích và thử sai có kiểm soát (Trial-and-error with verification).",
+      "sections": [
+        {
+          "section_id": "bai-1",
+          "title": "Bài 1. Chọn chiếc chìa khóa đúng.",
+          "type": "key_choice",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "8 + [ ] = 14",
+              "key_choices": [4, 5, 6],
+              "correct_answer": 6,
+              "distractors": [4, 5]
+            },
+            {
+              "id": 2,
+              "equation": "[ ] + 6 = 13",
+              "key_choices": [6, 7, 8],
+              "correct_answer": 7,
+              "distractors": [6, 8]
+            },
+            {
+              "id": 3,
+              "equation": "17 - [ ] = 9",
+              "key_choices": [7, 8, 9],
+              "correct_answer": 8,
+              "distractors": [7, 9]
+            },
+            {
+              "id": 4,
+              "equation": "10 + [ ] = 18",
+              "key_choices": [6, 7, 8],
+              "correct_answer": 8,
+              "distractors": [6, 7]
+            },
+            {
+              "id": 5,
+              "equation": "15 - [ ] = 10",
+              "key_choices": [4, 5, 6],
+              "correct_answer": 5,
+              "distractors": [4, 6]
+            },
+            {
+              "id": 6,
+              "equation": "[ ] + 8 = 16",
+              "key_choices": [6, 7, 8],
+              "correct_answer": 8,
+              "distractors": [6, 7]
+            },
+            {
+              "id": 7,
+              "equation": "19 - [ ] = 12",
+              "key_choices": [5, 6, 7],
+              "correct_answer": 7,
+              "distractors": [5, 6]
+            },
+            {
+              "id": 8,
+              "equation": "9 + [ ] = 17",
+              "key_choices": [7, 8, 9],
+              "correct_answer": 8,
+              "distractors": [7, 9]
+            }
+          ]
+        },
+        {
+          "section_id": "bai-2",
+          "title": "Bài 2. Điền số bí ẩn.",
+          "type": "fill_in_the_blank",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "12 + [ ] = 18",
+              "correct_answer": 6
+            },
+            {
+              "id": 2,
+              "equation": "[ ] + 4 = 15",
+              "correct_answer": 11
+            },
+            {
+              "id": 3,
+              "equation": "20 - [ ] = 11",
+              "correct_answer": 9
+            },
+            {
+              "id": 4,
+              "equation": "17 - [ ] = 10",
+              "correct_answer": 7
+            },
+            {
+              "id": 5,
+              "equation": "[ ] + 9 = 19",
+              "correct_answer": 10
+            },
+            {
+              "id": 6,
+              "equation": "14 + [ ] = 20",
+              "correct_answer": 6
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-001",
+        "mechanic": "tap-select",
+        "interaction": "Chạm vào chiếc chìa khóa vàng, chìa khóa bay vào ổ khóa và xoay kêu 'tách'."
+      }
+    },
+    {
+      "page_number": 10,
+      "workbook_page_number": 9,
+      "file_path": "pages/page-10.jpg",
+      "page_type": "two_column_cipher",
+      "title": "TRANG 9 – MẬT MÃ HAI CỘT",
+      "instruction": "Điền và khoanh số bí ẩn đến 20",
+      "dialogue": {
+        "gau_logic": "Mình giải mật mã theo hai cột nhé!",
+        "tho_sang_tao": "Bé điền số thật cẩn thận nha!"
+      },
+      "footer_hint": "BỘ TOÁN IQ – CHẶNG 14",
+      "pedagogical_concept": "Tổ chức dữ liệu theo ma trận hai cột song song: Rèn luyện khả năng quét thị giác có trật tự (Visual tracking: từ trên xuống dưới, từ trái sang phải), duy trì sự tập trung chú ý liên tục trong suốt 16 bài toán phạm vi 20.",
+      "sections": [
+        {
+          "section_id": "bai-1",
+          "title": "Bài 1. Điền số bí ẩn (10 câu xếp thành 2 cột).",
+          "type": "two_column_fill",
+          "problems": [
+            {
+              "col": "left",
+              "id": 1,
+              "equation": "[ ] + 8 = 18",
+              "correct_answer": 10
+            },
+            {
+              "col": "left",
+              "id": 2,
+              "equation": "14 - [ ] = 9",
+              "correct_answer": 5
+            },
+            {
+              "col": "left",
+              "id": 3,
+              "equation": "7 + [ ] = 16",
+              "correct_answer": 9
+            },
+            {
+              "col": "left",
+              "id": 4,
+              "equation": "[ ] + 6 = 15",
+              "correct_answer": 9
+            },
+            {
+              "col": "left",
+              "id": 5,
+              "equation": "19 - [ ] = 12",
+              "correct_answer": 7
+            },
+            {
+              "col": "right",
+              "id": 6,
+              "equation": "12 + [ ] = 20",
+              "correct_answer": 8
+            },
+            {
+              "col": "right",
+              "id": 7,
+              "equation": "[ ] + 7 = 17",
+              "correct_answer": 10
+            },
+            {
+              "col": "right",
+              "id": 8,
+              "equation": "18 - [ ] = 11",
+              "correct_answer": 7
+            },
+            {
+              "col": "right",
+              "id": 9,
+              "equation": "9 + [ ] = 19",
+              "correct_answer": 10
+            },
+            {
+              "col": "right",
+              "id": 10,
+              "equation": "[ ] + 5 = 14",
+              "correct_answer": 9
+            }
+          ]
+        },
+        {
+          "section_id": "bai-2",
+          "title": "Bài 2. Khoanh đáp án đúng.",
+          "type": "multiple_choice_3",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "13 + [ ] = 18",
+              "choices": [4, 5, 6],
+              "correct_answer": 5,
+              "distractors": [4, 6]
+            },
+            {
+              "id": 2,
+              "equation": "[ ] + 9 = 16",
+              "choices": [6, 7, 8],
+              "correct_answer": 7,
+              "distractors": [6, 8]
+            },
+            {
+              "id": 3,
+              "equation": "20 - [ ] = 12",
+              "choices": [7, 8, 9],
+              "correct_answer": 8,
+              "distractors": [7, 9]
+            },
+            {
+              "id": 4,
+              "equation": "15 - [ ] = 8",
+              "choices": [6, 7, 8],
+              "correct_answer": 7,
+              "distractors": [6, 8]
+            },
+            {
+              "id": 5,
+              "equation": "[ ] + 4 = 14",
+              "choices": [8, 9, 10],
+              "correct_answer": 10,
+              "distractors": [8, 9]
+            },
+            {
+              "id": 6,
+              "equation": "17 - [ ] = 11",
+              "choices": [5, 6, 7],
+              "correct_answer": 6,
+              "distractors": [5, 7]
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "drag-to-slot",
+        "interaction": "Hoàn thành lần lượt từng cột mật mã để mở khóa lẫy bảo vệ."
+      }
+    },
+    {
+      "page_number": 11,
+      "workbook_page_number": 10,
+      "file_path": "pages/page-11.jpg",
+      "page_type": "checkpoint_review",
+      "title": "TRANG 10 – TRẠM KIỂM TRA SỐ BÍ ẨN",
+      "instruction": "Ôn tập các dạng số bí ẩn đã học",
+      "dialogue": {
+        "gau_logic": "Bé thử sức với bài ôn tập nhé!",
+        "tho_sang_tao": "Mình làm từ dễ đến khó thôi!"
+      },
+      "footer_hint": "BỘ TOÁN IQ – CHẶNG 14",
+      "pedagogical_concept": "Cột mốc kiểm tra định kỳ (Checkpoint Review 1): Đánh giá độ thông thạo của trẻ trên toàn bộ các kỹ năng đã học từ Trang 1 đến Trang 9 trước khi chuyển sang giai đoạn nâng cao hơn của chặng.",
+      "sections": [
+        {
+          "section_id": "bai-1",
+          "title": "Bài 1. Điền số thích hợp.",
+          "type": "fill_in_the_blank_8",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "5 + [ ] = 9",
+              "correct_answer": 4
+            },
+            {
+              "id": 2,
+              "equation": "[ ] + 3 = 10",
+              "correct_answer": 7
+            },
+            {
+              "id": 3,
+              "equation": "12 - [ ] = 7",
+              "correct_answer": 5
+            },
+            {
+              "id": 4,
+              "equation": "8 + [ ] = 14",
+              "correct_answer": 6
+            },
+            {
+              "id": 5,
+              "equation": "[ ] + 6 = 15",
+              "correct_answer": 9
+            },
+            {
+              "id": 6,
+              "equation": "18 - [ ] = 10",
+              "correct_answer": 8
+            },
+            {
+              "id": 7,
+              "equation": "9 + [ ] = 19",
+              "correct_answer": 10
+            },
+            {
+              "id": 8,
+              "equation": "20 - [ ] = 11",
+              "correct_answer": 9
+            }
+          ]
+        },
+        {
+          "section_id": "bai-2",
+          "title": "Bài 2. Nối phép tính với đáp án đúng.",
+          "type": "matching_pairs",
+          "pairs": [
+            {
+              "id": 1,
+              "equation": "10 - [ ] = 6",
+              "target_number": 4
+            },
+            {
+              "id": 2,
+              "equation": "[ ] + 4 = 9",
+              "target_number": 5
+            },
+            {
+              "id": 3,
+              "equation": "15 - [ ] = 9",
+              "target_number": 6
+            },
+            {
+              "id": 4,
+              "equation": "9 + [ ] = 16",
+              "target_number": 7
+            },
+            {
+              "id": 5,
+              "equation": "[ ] + 8 = 16",
+              "target_number": 8
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-005",
+        "mechanic": "match-pairs",
+        "interaction": "Chạm nối đường sáng huỳnh quang giữa phép tính và trạm số."
+      }
+    },
+    {
+      "page_number": 12,
+      "workbook_page_number": 11,
+      "file_path": "pages/page-12.jpg",
+      "page_type": "right_side_missing_value",
+      "title": "TRANG 11 – SỐ MẤT TÍCH BÊN PHẢI",
+      "instruction": "Tìm số bí ẩn ở bên phải dấu cộng",
+      "dialogue": {
+        "gau_logic": "Số bí ẩn đang ở bên phải đó!",
+        "tho_sang_tao": "Bé điền số thật cẩn thận nhé!"
+      },
+      "footer_hint": "BỘ TOÁN IQ – CHẶNG 14",
+      "pedagogical_concept": "Chuyên đề sâu về dạng a + [ ] = c: Giúp trẻ củng cố kỹ năng tìm số hạng thứ hai khi biết tổng và số hạng thứ nhất. Khắc sâu nguyên lý phép trừ là phép tính ngược của phép cộng (c - a = [ ]).",
+      "sections": [
+        {
+          "section_id": "bai-1",
+          "title": "Bài 1. Điền số bí ẩn.",
+          "type": "fill_in_the_blank",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "12 + [ ] = 17",
+              "correct_answer": 5
+            },
+            {
+              "id": 2,
+              "equation": "7 + [ ] = 15",
+              "correct_answer": 8
+            },
+            {
+              "id": 3,
+              "equation": "9 + [ ] = 17",
+              "correct_answer": 8
+            },
+            {
+              "id": 4,
+              "equation": "8 + [ ] = 18",
+              "correct_answer": 10
+            },
+            {
+              "id": 5,
+              "equation": "14 + [ ] = 20",
+              "correct_answer": 6
+            },
+            {
+              "id": 6,
+              "equation": "6 + [ ] = 13",
+              "correct_answer": 7
+            },
+            {
+              "id": 7,
+              "equation": "10 + [ ] = 19",
+              "correct_answer": 9
+            },
+            {
+              "id": 8,
+              "equation": "5 + [ ] = 14",
+              "correct_answer": 9
+            }
+          ]
+        },
+        {
+          "section_id": "bai-2",
+          "title": "Bài 2. Khoanh đáp án đúng.",
+          "type": "multiple_choice_3",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "13 + [ ] = 19",
+              "choices": [5, 6, 7],
+              "correct_answer": 6,
+              "distractors": [5, 7]
+            },
+            {
+              "id": 2,
+              "equation": "8 + [ ] = 15",
+              "choices": [6, 7, 8],
+              "correct_answer": 7,
+              "distractors": [6, 8]
+            },
+            {
+              "id": 3,
+              "equation": "11 + [ ] = 20",
+              "choices": [8, 9, 10],
+              "correct_answer": 9,
+              "distractors": [8, 10]
+            },
+            {
+              "id": 4,
+              "equation": "9 + [ ] = 13",
+              "choices": [3, 4, 5],
+              "correct_answer": 4,
+              "distractors": [3, 5]
+            },
+            {
+              "id": 5,
+              "equation": "7 + [ ] = 17",
+              "choices": [8, 9, 10],
+              "correct_answer": 10,
+              "distractors": [8, 9]
+            },
+            {
+              "id": 6,
+              "equation": "15 + [ ] = 19",
+              "choices": [3, 4, 5],
+              "correct_answer": 4,
+              "distractors": [3, 5]
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-001",
+        "mechanic": "tap-select",
+        "interaction": "Chạm chọn số đúng để lắp vào vị trí bên phải dấu cộng."
+      }
+    },
+    {
+      "page_number": 13,
+      "workbook_page_number": 12,
+      "file_path": "pages/page-13.jpg",
+      "page_type": "key_lock_box",
+      "title": "TRANG 12 – HỘP KHÓA SỐ",
+      "instruction": "Mở ổ khóa bằng số bí ẩn",
+      "dialogue": {
+        "gau_logic": "Mỗi ổ khóa cần một số đúng!",
+        "tho_sang_tao": "Bé chọn chìa khóa thật khéo nhé!"
+      },
+      "footer_hint": "BỘ TOÁN IQ – CHẶNG 14",
+      "pedagogical_concept": "Nâng cấp cơ chế chìa khóa: Các chìa khóa mang 3 màu sắc khác nhau (vàng, xanh lá, xanh dương) kết hợp với các bài toán có phạm vi kết quả vượt qua 20 (ví dụ 14 + [ ] = 23). Trẻ kết hợp giải mã số học với phân biệt trực quan.",
+      "sections": [
+        {
+          "section_id": "bai-1",
+          "title": "Bài 1. Chọn chìa khóa đúng.",
+          "type": "color_coded_keys",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "13 + [ ] = 18",
+              "key_choices": [4, 5, 6],
+              "correct_answer": 5,
+              "distractors": [4, 6]
+            },
+            {
+              "id": 2,
+              "equation": "9 + [ ] = 17",
+              "key_choices": [7, 8, 9],
+              "correct_answer": 8,
+              "distractors": [7, 9]
+            },
+            {
+              "id": 3,
+              "equation": "6 + [ ] = 15",
+              "key_choices": [8, 9, 10],
+              "correct_answer": 9,
+              "distractors": [8, 10]
+            },
+            {
+              "id": 4,
+              "equation": "14 + [ ] = 20",
+              "key_choices": [5, 6, 7],
+              "correct_answer": 6,
+              "distractors": [5, 7]
+            },
+            {
+              "id": 5,
+              "equation": "15 - [ ] = 8",
+              "key_choices": [6, 7, 8],
+              "correct_answer": 7,
+              "distractors": [6, 8]
+            },
+            {
+              "id": 6,
+              "equation": "18 - [ ] = 9",
+              "key_choices": [8, 9, 10],
+              "correct_answer": 9,
+              "distractors": [8, 10]
+            },
+            {
+              "id": 7,
+              "equation": "[ ] + 7 = 15",
+              "key_choices": [7, 8, 9],
+              "correct_answer": 8,
+              "distractors": [7, 9]
+            },
+            {
+              "id": 8,
+              "equation": "[ ] + 9 = 19",
+              "key_choices": [8, 9, 10],
+              "correct_answer": 10,
+              "distractors": [8, 9]
+            }
+          ]
+        },
+        {
+          "section_id": "bai-2",
+          "title": "Bài 2. Điền số bí ẩn.",
+          "type": "fill_in_the_blank",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "12 + [ ] = 20",
+              "correct_answer": 8
+            },
+            {
+              "id": 2,
+              "equation": "17 - [ ] = 10",
+              "correct_answer": 7
+            },
+            {
+              "id": 3,
+              "equation": "[ ] + 6 = 16",
+              "correct_answer": 10
+            },
+            {
+              "id": 4,
+              "equation": "19 - [ ] = 11",
+              "correct_answer": 8
+            },
+            {
+              "id": 5,
+              "equation": "14 + [ ] = 23",
+              "correct_answer": 9
+            },
+            {
+              "id": 6,
+              "equation": "[ ] + 8 = 18",
+              "correct_answer": 10
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-001",
+        "mechanic": "tap-select",
+        "interaction": "Chạm vào chìa khóa màu đúng để mở ổ khóa tương ứng."
+      }
+    },
+    {
+      "page_number": 14,
+      "workbook_page_number": 13,
+      "file_path": "pages/page-14.jpg",
+      "page_type": "swapped_equation_symmetry",
+      "title": "TRANG 13 – SỐ BÍ ẨN ĐỔI CHỖ",
+      "instruction": "Khi kết quả đứng ở phía trước",
+      "dialogue": {
+        "gau_logic": "Ô! Kết quả chạy lên trước rồi!",
+        "tho_sang_tao": "Mình vẫn tìm được số bí ẩn thôi!"
+      },
+      "footer_hint": "BỘ TOÁN IQ – CHẶNG 14",
+      "pedagogical_concept": "Bước ngoặt tư duy đại số (Pre-algebra milestone): Dạng c = [ ] + a. Trẻ thường quen với việc kết quả luôn nằm ở bên phải dấu bằng. Việc đảo kết quả lên trước giúp trẻ hiểu bản chất dấu bằng là một quan hệ cân bằng hai vế (Equivalence relation), không phải là lệnh hành động 'hãy tính ra kết quả'.",
+      "sections": [
+        {
+          "section_id": "bai-1",
+          "title": "Bài 1. Điền số bí ẩn.",
+          "type": "swapped_fill",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "21 = [ ] + 10",
+              "correct_answer": 11
+            },
+            {
+              "id": 2,
+              "equation": "24 = [ ] + 12",
+              "correct_answer": 12
+            },
+            {
+              "id": 3,
+              "equation": "14 = [ ] + 5",
+              "correct_answer": 9
+            },
+            {
+              "id": 4,
+              "equation": "19 = [ ] + 10",
+              "correct_answer": 9
+            },
+            {
+              "id": 5,
+              "equation": "18 = [ ] + 6",
+              "correct_answer": 12
+            },
+            {
+              "id": 6,
+              "equation": "20 = [ ] + 11",
+              "correct_answer": 9
+            },
+            {
+              "id": 7,
+              "equation": "17 = [ ] + 8",
+              "correct_answer": 9
+            },
+            {
+              "id": 8,
+              "equation": "13 = [ ] + 7",
+              "correct_answer": 6
+            }
+          ]
+        },
+        {
+          "section_id": "bai-2",
+          "title": "Bài 2. Khoanh đáp án đúng.",
+          "type": "swapped_multiple_choice",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "16 = [ ] + 9",
+              "choices": [6, 7, 8],
+              "correct_answer": 7,
+              "distractors": [6, 8]
+            },
+            {
+              "id": 2,
+              "equation": "22 = [ ] + 15",
+              "choices": [6, 7, 8],
+              "correct_answer": 7,
+              "distractors": [6, 8]
+            },
+            {
+              "id": 3,
+              "equation": "25 = [ ] + 13",
+              "choices": [11, 12, 13],
+              "correct_answer": 12,
+              "distractors": [11, 13]
+            },
+            {
+              "id": 4,
+              "equation": "20 = [ ] + 12",
+              "choices": [6, 7, 8],
+              "correct_answer": 8,
+              "distractors": [6, 7]
+            },
+            {
+              "id": 5,
+              "equation": "27 = [ ] + 14",
+              "choices": [12, 13, 14],
+              "correct_answer": 13,
+              "distractors": [12, 14]
+            },
+            {
+              "id": 6,
+              "equation": "15 = [ ] + 10",
+              "choices": [4, 5, 6],
+              "correct_answer": 5,
+              "distractors": [4, 6]
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "drag-to-slot",
+        "interaction": "Bập bênh cân bằng: Bé đặt quả cân số vào vế phải để cân bằng với số ở vế trái."
+      }
+    },
+    {
+      "page_number": 15,
+      "workbook_page_number": 14,
+      "file_path": "pages/page-15.jpg",
+      "page_type": "secret_doors_symmetry",
+      "title": "TRANG 14 – NHỮNG CÁNH CỬA BÍ MẬT",
+      "instruction": "Tìm số để mở từng cánh cửa",
+      "dialogue": {
+        "gau_logic": "Mỗi cánh cửa có một bí mật!",
+        "tho_sang_tao": "Bé thử mở từng cánh cửa nhé!"
+      },
+      "footer_hint": "BỘ TOÁN IQ – CHẶNG 14",
+      "pedagogical_concept": "Củng cố dạng đẳng thức đảo vế c = [ ] + a với số liệu lớn dần lên tới 30. Trẻ thuần thục việc thực hiện phép trừ nhẩm c - a để tìm số bí ẩn đứng sau dấu bằng.",
+      "sections": [
+        {
+          "section_id": "bai-1",
+          "title": "Bài 1. Chọn đáp án đúng.",
+          "type": "swapped_multiple_choice",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "18 = [ ] + 8",
+              "choices": [8, 9, 10],
+              "correct_answer": 10,
+              "distractors": [8, 9]
+            },
+            {
+              "id": 2,
+              "equation": "17 = [ ] + 5",
+              "choices": [11, 12, 13],
+              "correct_answer": 12,
+              "distractors": [11, 13]
+            },
+            {
+              "id": 3,
+              "equation": "23 = [ ] + 14",
+              "choices": [8, 9, 10],
+              "correct_answer": 9,
+              "distractors": [8, 10]
+            },
+            {
+              "id": 4,
+              "equation": "16 = [ ] + 7",
+              "choices": [8, 9, 10],
+              "correct_answer": 9,
+              "distractors": [8, 10]
+            },
+            {
+              "id": 5,
+              "equation": "24 = [ ] + 11",
+              "choices": [12, 13, 14],
+              "correct_answer": 13,
+              "distractors": [12, 14]
+            },
+            {
+              "id": 6,
+              "equation": "20 = [ ] + 9",
+              "choices": [10, 11, 12],
+              "correct_answer": 11,
+              "distractors": [10, 12]
+            },
+            {
+              "id": 7,
+              "equation": "29 = [ ] + 14",
+              "choices": [14, 15, 16],
+              "correct_answer": 15,
+              "distractors": [14, 16]
+            },
+            {
+              "id": 8,
+              "equation": "14 = [ ] + 9",
+              "choices": [4, 5, 6],
+              "correct_answer": 5,
+              "distractors": [4, 6]
+            }
+          ]
+        },
+        {
+          "section_id": "bai-2",
+          "title": "Bài 2. Điền số bí ẩn.",
+          "type": "swapped_fill",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "22 = [ ] + 10",
+              "correct_answer": 12
+            },
+            {
+              "id": 2,
+              "equation": "19 = [ ] + 14",
+              "correct_answer": 5
+            },
+            {
+              "id": 3,
+              "equation": "21 = [ ] + 12",
+              "correct_answer": 9
+            },
+            {
+              "id": 4,
+              "equation": "18 = [ ] + 8",
+              "correct_answer": 10
+            },
+            {
+              "id": 5,
+              "equation": "27 = [ ] + 13",
+              "correct_answer": 14
+            },
+            {
+              "id": 6,
+              "equation": "30 = [ ] + 15",
+              "correct_answer": 15
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-001",
+        "mechanic": "tap-select",
+        "interaction": "Chạm chọn số đúng, cánh cửa gỗ bí mật mở ra hé lộ kho báu tiếp theo."
+      }
+    },
+    {
+      "page_number": 16,
+      "workbook_page_number": 15,
+      "file_path": "pages/page-16.jpg",
+      "page_type": "mixed_challenge",
+      "title": "TRANG 15 – THỬ THÁCH HỖN HỢP",
+      "instruction": "Nhiều dạng số bí ẩn trong một trang",
+      "dialogue": {
+        "gau_logic": "Có nhiều kiểu số bí ẩn lắm!",
+        "tho_sang_tao": "Bé bình tĩnh làm từng câu nhé!"
+      },
+      "footer_hint": "BỘ TOÁN IQ – CHẶNG 14",
+      "pedagogical_concept": "Thử thách xáo trộn dạng toán (Interleaving practice): Các bài toán liên tục đổi vị trí ô trống (đầu, giữa, đảo vế, phép cộng, phép trừ). Yêu cầu trẻ phải đọc kỹ cấu trúc của từng phương trình trước khi quyết định chiến lược tính nhẩm.",
+      "sections": [
+        {
+          "section_id": "bai-1",
+          "title": "Bài 1. Điền số bí ẩn.",
+          "type": "mixed_fill",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "[ ] + 7 = 19",
+              "correct_answer": 12,
+              "form": "start_add"
+            },
+            {
+              "id": 2,
+              "equation": "13 + [ ] = 25",
+              "correct_answer": 12,
+              "form": "middle_add"
+            },
+            {
+              "id": 3,
+              "equation": "24 = [ ] + 11",
+              "correct_answer": 13,
+              "form": "swapped_add"
+            },
+            {
+              "id": 4,
+              "equation": "15 - [ ] = 8",
+              "correct_answer": 7,
+              "form": "subtrahend"
+            },
+            {
+              "id": 5,
+              "equation": "[ ] + 9 = 16",
+              "correct_answer": 7,
+              "form": "start_add"
+            },
+            {
+              "id": 6,
+              "equation": "11 + [ ] = 18",
+              "correct_answer": 7,
+              "form": "middle_add"
+            },
+            {
+              "id": 7,
+              "equation": "20 = [ ] + 8",
+              "correct_answer": 12,
+              "form": "swapped_add"
+            },
+            {
+              "id": 8,
+              "equation": "18 - [ ] = 10",
+              "correct_answer": 8,
+              "form": "subtrahend"
+            },
+            {
+              "id": 9,
+              "equation": "14 + [ ] = 20",
+              "correct_answer": 6,
+              "form": "middle_add"
+            },
+            {
+              "id": 10,
+              "equation": "17 = [ ] + 9",
+              "correct_answer": 8,
+              "form": "swapped_add"
+            }
+          ]
+        },
+        {
+          "section_id": "bai-2",
+          "title": "Bài 2. Nối phép tính với đáp án đúng.",
+          "type": "matching_pairs",
+          "pairs": [
+            {
+              "id": 1,
+              "equation": "16 = [ ] + 6",
+              "target_number": 10
+            },
+            {
+              "id": 2,
+              "equation": "9 + [ ] = 17",
+              "target_number": 8
+            },
+            {
+              "id": 3,
+              "equation": "20 - [ ] = 11",
+              "target_number": 9
+            },
+            {
+              "id": 4,
+              "equation": "12 + [ ] = 19",
+              "target_number": 7
+            },
+            {
+              "id": 5,
+              "equation": "[ ] + 8 = 14",
+              "target_number": 6
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-005",
+        "mechanic": "match-pairs",
+        "interaction": "Chạm nối phép tính với thẻ số tương ứng từ 6 đến 10."
+      }
+    },
+    {
+      "page_number": 17,
+      "workbook_page_number": 16,
+      "file_path": "pages/page-17.jpg",
+      "page_type": "range_40_start_value",
+      "title": "TRANG 16 – TIẾN VÀO VÙNG SỐ 40",
+      "instruction": "Số lớn hơn nhưng cách tìm vẫn vậy",
+      "dialogue": {
+        "gau_logic": "Bây giờ mình gặp các số lớn hơn!",
+        "tho_sang_tao": "Bé cứ tìm số còn thiếu như cũ nhé!"
+      },
+      "footer_hint": "BỘ TOÁN IQ – CHẶNG 14",
+      "pedagogical_concept": "Mở rộng giới hạn tính toán lên phạm vi 40: Dạng [ ] + a = c với các số hai chữ số (18, 25, 34, 38). Lời dẫn sư phạm trấn an tâm lý trẻ: 'Số lớn hơn nhưng cách tìm vẫn vậy' giúp trẻ chuyển giao nguyên lý (Transfer of principle) từ số nhỏ sang số lớn.",
+      "sections": [
+        {
+          "section_id": "bai-1",
+          "title": "Bài 1. Điền số bí ẩn.",
+          "type": "range_40_fill",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "[ ] + 18 = 34",
+              "correct_answer": 16
+            },
+            {
+              "id": 2,
+              "equation": "[ ] + 15 = 25",
+              "correct_answer": 10
+            },
+            {
+              "id": 3,
+              "equation": "[ ] + 19 = 36",
+              "correct_answer": 17
+            },
+            {
+              "id": 4,
+              "equation": "[ ] + 13 = 23",
+              "correct_answer": 10
+            },
+            {
+              "id": 5,
+              "equation": "[ ] + 14 = 32",
+              "correct_answer": 18
+            },
+            {
+              "id": 6,
+              "equation": "[ ] + 16 = 33",
+              "correct_answer": 17
+            },
+            {
+              "id": 7,
+              "equation": "[ ] + 20 = 38",
+              "correct_answer": 18
+            },
+            {
+              "id": 8,
+              "equation": "[ ] + 12 = 31",
+              "correct_answer": 19
+            }
+          ]
+        },
+        {
+          "section_id": "bai-2",
+          "title": "Bài 2. Khoanh đáp án đúng.",
+          "type": "range_40_multiple_choice",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "[ ] + 17 = 30",
+              "choices": [12, 13, 14],
+              "correct_answer": 13,
+              "distractors": [12, 14]
+            },
+            {
+              "id": 2,
+              "equation": "[ ] + 11 = 24",
+              "choices": [12, 13, 14],
+              "correct_answer": 13,
+              "distractors": [12, 14]
+            },
+            {
+              "id": 3,
+              "equation": "[ ] + 16 = 31",
+              "choices": [14, 15, 16],
+              "correct_answer": 15,
+              "distractors": [14, 16]
+            },
+            {
+              "id": 4,
+              "equation": "[ ] + 10 = 23",
+              "choices": [12, 13, 14],
+              "correct_answer": 13,
+              "distractors": [12, 14]
+            },
+            {
+              "id": 5,
+              "equation": "[ ] + 18 = 29",
+              "choices": [10, 11, 12],
+              "correct_answer": 11,
+              "distractors": [10, 12]
+            },
+            {
+              "id": 6,
+              "equation": "[ ] + 15 = 34",
+              "choices": [18, 19, 20],
+              "correct_answer": 19,
+              "distractors": [18, 20]
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-001",
+        "mechanic": "tap-select",
+        "interaction": "Chạm chọn số đúng trong phạm vi lớn, tiến sâu vào thung lũng số 40."
+      }
+    },
+    {
+      "page_number": 18,
+      "workbook_page_number": 17,
+      "file_path": "pages/page-18.jpg",
+      "page_type": "range_40_middle_value",
+      "title": "TRANG 17 – GIẢI CỨU NHỮNG CON SỐ LỚN",
+      "instruction": "Tìm số bí ẩn với các phép tính lớn",
+      "dialogue": {
+        "gau_logic": "Mình sắp cứu được các con số rồi!",
+        "tho_sang_tao": "Bé cố gắng thêm chút nữa nhé!"
+      },
+      "footer_hint": "BỘ TOÁN IQ – CHẶNG 14",
+      "pedagogical_concept": "Luyện tập dạng a + [ ] = c trong phạm vi 40: Trẻ thực hành tách gộp chục và đơn vị để tìm số hạng còn thiếu của các tổng từ 21 đến 37.",
+      "sections": [
+        {
+          "section_id": "bai-1",
+          "title": "Bài 1. Điền số bí ẩn.",
+          "type": "range_40_fill",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "20 + [ ] = 36",
+              "correct_answer": 16
+            },
+            {
+              "id": 2,
+              "equation": "11 + [ ] = 27",
+              "correct_answer": 16
+            },
+            {
+              "id": 3,
+              "equation": "13 + [ ] = 25",
+              "correct_answer": 12
+            },
+            {
+              "id": 4,
+              "equation": "18 + [ ] = 37",
+              "correct_answer": 19
+            },
+            {
+              "id": 5,
+              "equation": "14 + [ ] = 25",
+              "correct_answer": 11
+            },
+            {
+              "id": 6,
+              "equation": "17 + [ ] = 30",
+              "correct_answer": 13
+            },
+            {
+              "id": 7,
+              "equation": "10 + [ ] = 21",
+              "correct_answer": 11
+            },
+            {
+              "id": 8,
+              "equation": "19 + [ ] = 30",
+              "correct_answer": 11
+            }
+          ]
+        },
+        {
+          "section_id": "bai-2",
+          "title": "Bài 2. Khoanh đáp án đúng.",
+          "type": "range_40_multiple_choice",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "15 + [ ] = 27",
+              "choices": [10, 11, 12],
+              "correct_answer": 12,
+              "distractors": [10, 11]
+            },
+            {
+              "id": 2,
+              "equation": "13 + [ ] = 29",
+              "choices": [15, 16, 17],
+              "correct_answer": 16,
+              "distractors": [15, 17]
+            },
+            {
+              "id": 3,
+              "equation": "20 + [ ] = 35",
+              "choices": [14, 15, 16],
+              "correct_answer": 15,
+              "distractors": [14, 16]
+            },
+            {
+              "id": 4,
+              "equation": "17 + [ ] = 35",
+              "choices": [17, 18, 19],
+              "correct_answer": 18,
+              "distractors": [17, 19]
+            },
+            {
+              "id": 5,
+              "equation": "14 + [ ] = 28",
+              "choices": [12, 13, 14],
+              "correct_answer": 14,
+              "distractors": [12, 13]
+            },
+            {
+              "id": 6,
+              "equation": "11 + [ ] = 25",
+              "choices": [12, 13, 14],
+              "correct_answer": 14,
+              "distractors": [12, 13]
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-001",
+        "mechanic": "tap-select",
+        "interaction": "Chạm chọn số đúng để giải cứu con số lớn đang bị nhốt trong lồng gỗ."
+      }
+    },
+    {
+      "page_number": 19,
+      "workbook_page_number": 18,
+      "file_path": "pages/page-19.jpg",
+      "page_type": "swapped_range_40",
+      "title": "TRANG 18 – CÁNH CỬA CUỐI CÙNG",
+      "instruction": "Tìm số còn thiếu để mở cửa cuối",
+      "dialogue": {
+        "gau_logic": "Đây là cánh cửa cuối cùng rồi!",
+        "tho_sang_tao": "Bé tìm số thật chính xác nhé!"
+      },
+      "footer_hint": "BỘ TOÁN IQ – CHẶNG 14",
+      "pedagogical_concept": "Kết hợp đẳng thức đảo vế c = a + [ ] với phạm vi số lớn đến 40 (ví dụ 40 = 20 + [ 20 ]). Chuẩn bị bước vào các bài Đại thử thách và Mở rương kho báu.",
+      "sections": [
+        {
+          "section_id": "bai-1",
+          "title": "Bài 1. Điền số bí ẩn.",
+          "type": "swapped_range_40_fill",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "22 = 10 + [ ]",
+              "correct_answer": 12
+            },
+            {
+              "id": 2,
+              "equation": "28 = 10 + [ ]",
+              "correct_answer": 18
+            },
+            {
+              "id": 3,
+              "equation": "26 = 14 + [ ]",
+              "correct_answer": 12
+            },
+            {
+              "id": 4,
+              "equation": "29 = 19 + [ ]",
+              "correct_answer": 10
+            },
+            {
+              "id": 5,
+              "equation": "27 = 16 + [ ]",
+              "correct_answer": 11
+            },
+            {
+              "id": 6,
+              "equation": "28 = 15 + [ ]",
+              "correct_answer": 13
+            },
+            {
+              "id": 7,
+              "equation": "40 = 20 + [ ]",
+              "correct_answer": 20
+            },
+            {
+              "id": 8,
+              "equation": "33 = 18 + [ ]",
+              "correct_answer": 15
+            }
+          ]
+        },
+        {
+          "section_id": "bai-2",
+          "title": "Bài 2. Khoanh đáp án đúng.",
+          "type": "swapped_range_40_choice",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "31 = 12 + [ ]",
+              "choices": [18, 19, 20],
+              "correct_answer": 19,
+              "distractors": [18, 20]
+            },
+            {
+              "id": 2,
+              "equation": "30 = 19 + [ ]",
+              "choices": [10, 11, 12],
+              "correct_answer": 11,
+              "distractors": [10, 12]
+            },
+            {
+              "id": 3,
+              "equation": "25 = 15 + [ ]",
+              "choices": [8, 9, 10],
+              "correct_answer": 10,
+              "distractors": [8, 9]
+            },
+            {
+              "id": 4,
+              "equation": "24 = 10 + [ ]",
+              "choices": [12, 13, 14],
+              "correct_answer": 14,
+              "distractors": [12, 13]
+            },
+            {
+              "id": 5,
+              "equation": "35 = 19 + [ ]",
+              "choices": [14, 15, 16],
+              "correct_answer": 16,
+              "distractors": [14, 15]
+            },
+            {
+              "id": 6,
+              "equation": "26 = 11 + [ ]",
+              "choices": [14, 15, 16],
+              "correct_answer": 15,
+              "distractors": [14, 16]
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-001",
+        "mechanic": "tap-select",
+        "interaction": "Chạm chọn số mở cánh cửa cuối cùng dẫn vào mật thất rương báu."
+      }
+    },
+    {
+      "page_number": 20,
+      "workbook_page_number": 19,
+      "file_path": "pages/page-20.jpg",
+      "page_type": "grand_challenge_1",
+      "title": "TRANG 19 – ĐẠI THỬ THÁCH 1",
+      "instruction": "Tổng hợp các dạng số bí ẩn",
+      "dialogue": {
+        "gau_logic": "Bé thử sức với bài tổng hợp nhé!",
+        "tho_sang_tao": "Mình làm lần lượt từng câu thôi!"
+      },
+      "footer_hint": "BỘ TOÁN IQ – CHẶNG 14",
+      "pedagogical_concept": "Bài thi tổng hợp toàn diện (Grand Comprehensive Challenge 1): Tổng cộng 17 bài toán (12 bài điền số, 5 bài nối cặp) bao phủ mọi cấu trúc toán học từ đầu đến cuối chặng.",
+      "sections": [
+        {
+          "section_id": "bai-1",
+          "title": "Bài 1. Điền số bí ẩn (12 câu đa dạng).",
+          "type": "comprehensive_fill_12",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "[ ] + 5 = 12",
+              "correct_answer": 7
+            },
+            {
+              "id": 2,
+              "equation": "8 + [ ] = 17",
+              "correct_answer": 9
+            },
+            {
+              "id": 3,
+              "equation": "20 = [ ] + 9",
+              "correct_answer": 11
+            },
+            {
+              "id": 4,
+              "equation": "14 - [ ] = 8",
+              "correct_answer": 6
+            },
+            {
+              "id": 5,
+              "equation": "11 + [ ] = 20",
+              "correct_answer": 9
+            },
+            {
+              "id": 6,
+              "equation": "27 = 12 + [ ]",
+              "correct_answer": 15
+            },
+            {
+              "id": 7,
+              "equation": "[ ] + 7 = 18",
+              "correct_answer": 11
+            },
+            {
+              "id": 8,
+              "equation": "19 - [ ] = 10",
+              "correct_answer": 9
+            },
+            {
+              "id": 9,
+              "equation": "13 + [ ] = 21",
+              "correct_answer": 8
+            },
+            {
+              "id": 10,
+              "equation": "24 = [ ] + 10",
+              "correct_answer": 14
+            },
+            {
+              "id": 11,
+              "equation": "[ ] + 15 = 30",
+              "correct_answer": 15
+            },
+            {
+              "id": 12,
+              "equation": "32 = 18 + [ ]",
+              "correct_answer": 14
+            }
+          ]
+        },
+        {
+          "section_id": "bai-2",
+          "title": "Bài 2. Nối phép tính với đáp án đúng.",
+          "type": "matching_pairs",
+          "pairs": [
+            {
+              "id": 1,
+              "equation": "16 - [ ] = 7",
+              "target_number": 9
+            },
+            {
+              "id": 2,
+              "equation": "[ ] + 8 = 19",
+              "target_number": 11
+            },
+            {
+              "id": 3,
+              "equation": "28 = 14 + [ ]",
+              "target_number": 14
+            },
+            {
+              "id": 4,
+              "equation": "17 + [ ] = 30",
+              "target_number": 13
+            },
+            {
+              "id": 5,
+              "equation": "35 = [ ] + 19",
+              "target_number": 16
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-005",
+        "mechanic": "match-pairs",
+        "interaction": "Chạm nối phép tính với cột số kết quả có hiệu ứng tia sáng xanh."
+      }
+    },
+    {
+      "page_number": 21,
+      "workbook_page_number": 20,
+      "file_path": "pages/page-21.jpg",
+      "page_type": "chest_code_breaker",
+      "title": "TRANG 20 – NHIỆM VỤ CUỐI: MẬT MÃ MỞ RƯƠNG",
+      "instruction": "Tìm đáp án để hoàn thành mật mã",
+      "dialogue": {
+        "gau_logic": "Chúng mình sắp mở được rương báu rồi!",
+        "tho_sang_tao": "Bé giải đúng để lấy mật mã nhé!"
+      },
+      "footer_hint": "BỘ TOÁN IQ – CHẶNG 14",
+      "pedagogical_concept": "Đỉnh cao ứng dụng trí nhớ làm việc (Working Memory & Multi-step Logic): Bài 1 gồm 6 bài toán tìm số bí ẩn, mỗi đáp án chính là một chữ số của mã khóa rương báu. Trẻ phải chuyển giao kết quả bài 1 sang bài 2 để ghép thành chuỗi mã số [5, 7, 8, 9, 6, 15]. Bài 3 bổ sung 4 phép tính củng cố.",
+      "sections": [
+        {
+          "section_id": "bai-1",
+          "title": "Bài 1. Tìm số bí ẩn.",
+          "type": "code_clue_equations",
+          "problems": [
+            {
+              "clue_index": 1,
+              "equation": "4 + [ ] = 9",
+              "correct_answer": 5
+            },
+            {
+              "clue_index": 2,
+              "equation": "[ ] + 3 = 10",
+              "correct_answer": 7
+            },
+            {
+              "clue_index": 3,
+              "equation": "12 = [ ] + 4",
+              "correct_answer": 8
+            },
+            {
+              "clue_index": 4,
+              "equation": "19 - [ ] = 10",
+              "correct_answer": 9
+            },
+            {
+              "clue_index": 5,
+              "equation": "13 + [ ] = 19",
+              "correct_answer": 6
+            },
+            {
+              "clue_index": 6,
+              "equation": "30 = 15 + [ ]",
+              "correct_answer": 15
+            }
+          ]
+        },
+        {
+          "section_id": "bai-2",
+          "title": "Bài 2. Viết mật mã.",
+          "type": "passcode_assembly",
+          "instruction": "Mật mã của rương là: [1] [2] [3] [4] [5] [6]",
+          "assembled_code": [5, 7, 8, 9, 6, 15],
+          "visual": "Rương kho báu mở hé nắp tràn ngập châu báu vàng ngọc lấp lánh."
+        },
+        {
+          "section_id": "bai-3",
+          "title": "Bài 3. Điền số bí ẩn.",
+          "type": "bonus_fill",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "[ ] + 8 = 16",
+              "correct_answer": 8
+            },
+            {
+              "id": 2,
+              "equation": "17 - [ ] = 9",
+              "correct_answer": 8
+            },
+            {
+              "id": 3,
+              "equation": "20 - [ ] = 12",
+              "correct_answer": 8
+            },
+            {
+              "id": 4,
+              "equation": "11 + [ ] = 20",
+              "correct_answer": 9
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "drag-to-slot",
+        "interaction": "Kéo các chữ số mật mã đã giải vào các ô khóa trên thân rương kho báu; khi đủ 6 số, nắp rương bật mở bắn pháo hoa ăn mừng."
+      }
+    },
+    {
+      "page_number": 22,
+      "workbook_page_number": 21,
+      "file_path": "pages/page-02.jpg",
+      "page_type": "final_mastery_quest",
+      "title": "TRANG 21 – NHIỆM VỤ CUỐI CÙNG",
+      "instruction": "Tổng hợp các dạng số bí ẩn",
+      "dialogue": {
+        "gau_logic": "Bé thử sức với bài tổng hợp nhé!",
+        "tho_sang_tao": "Mình làm lần lượt từng câu thôi!"
+      },
+      "footer_hint": "BỘ TOÁN IQ – CHẶNG 14",
+      "pedagogical_concept": "Củng cố tổng thể lần hai (Mastery Re-affirmation): Cung cấp biến thể bài tập tương tự Trang 19 với cùng độ khó cao, giúp củng cố độ bền của năng lực toán học trước khi kết thúc tập sách.",
+      "sections": [
+        {
+          "section_id": "bai-1",
+          "title": "Bài 1. Điền số bí ẩn.",
+          "type": "comprehensive_fill_12",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "[ ] + 5 = 12",
+              "correct_answer": 7
+            },
+            {
+              "id": 2,
+              "equation": "8 + [ ] = 17",
+              "correct_answer": 9
+            },
+            {
+              "id": 3,
+              "equation": "20 = [ ] + 9",
+              "correct_answer": 11
+            },
+            {
+              "id": 4,
+              "equation": "14 - [ ] = 8",
+              "correct_answer": 6
+            },
+            {
+              "id": 5,
+              "equation": "11 + [ ] = 20",
+              "correct_answer": 9
+            },
+            {
+              "id": 6,
+              "equation": "27 = 12 + [ ]",
+              "correct_answer": 15
+            },
+            {
+              "id": 7,
+              "equation": "[ ] + 7 = 18",
+              "correct_answer": 11
+            },
+            {
+              "id": 8,
+              "equation": "19 - [ ] = 10",
+              "correct_answer": 9
+            },
+            {
+              "id": 9,
+              "equation": "13 + [ ] = 21",
+              "correct_answer": 8
+            },
+            {
+              "id": 10,
+              "equation": "24 = [ ] + 10",
+              "correct_answer": 14
+            },
+            {
+              "id": 11,
+              "equation": "[ ] + 15 = 30",
+              "correct_answer": 15
+            },
+            {
+              "id": 12,
+              "equation": "32 = 18 + [ ]",
+              "correct_answer": 14
+            }
+          ]
+        },
+        {
+          "section_id": "bai-2",
+          "title": "Bài 2. Nối phép tính với đáp án đúng.",
+          "type": "matching_pairs",
+          "pairs": [
+            {
+              "id": 1,
+              "equation": "16 - [ ] = 7",
+              "target_number": 9
+            },
+            {
+              "id": 2,
+              "equation": "[ ] + 8 = 19",
+              "target_number": 11
+            },
+            {
+              "id": 3,
+              "equation": "28 = 14 + [ ]",
+              "target_number": 14
+            },
+            {
+              "id": 4,
+              "equation": "17 + [ ] = 30",
+              "target_number": 13
+            },
+            {
+              "id": 5,
+              "equation": "35 = [ ] + 19",
+              "target_number": 16
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-005",
+        "mechanic": "match-pairs",
+        "interaction": "Chạm nối phép tính với cột số kết quả có hiệu ứng tia sáng vàng."
+      }
+    },
+    {
+      "page_number": 23,
+      "workbook_page_number": 22,
+      "file_path": "pages/page-23.jpg",
+      "page_type": "chest_code_breaker_part2",
+      "title": "TRANG 22 – MẬT MÃ MỞ RƯƠNG (PHẦN 2)",
+      "instruction": "Tìm đáp án để hoàn thành mật mã",
+      "dialogue": {
+        "gau_logic": "Chúng mình sắp mở được rương báu rồi!",
+        "tho_sang_tao": "Bé giải đúng để lấy mật mã nhé!"
+      },
+      "footer_hint": "BỘ TOÁN IQ – CHẶNG 14",
+      "pedagogical_concept": "Hoàn tất nghi thức mở khóa rương kho báu: Xác nhận chuỗi mật mã [5, 7, 8, 9, 6, 15] và hoàn thành các bài toán chốt hạ cuối cùng của hành trình thám tử.",
+      "sections": [
+        {
+          "section_id": "bai-1",
+          "title": "Bài 1. Tìm số bí ẩn.",
+          "type": "code_clue_equations",
+          "problems": [
+            {
+              "clue_index": 1,
+              "equation": "4 + [ ] = 9",
+              "correct_answer": 5
+            },
+            {
+              "clue_index": 2,
+              "equation": "[ ] + 3 = 10",
+              "correct_answer": 7
+            },
+            {
+              "clue_index": 3,
+              "equation": "12 = [ ] + 4",
+              "correct_answer": 8
+            },
+            {
+              "clue_index": 4,
+              "equation": "19 - [ ] = 10",
+              "correct_answer": 9
+            },
+            {
+              "clue_index": 5,
+              "equation": "13 + [ ] = 19",
+              "correct_answer": 6
+            },
+            {
+              "clue_index": 6,
+              "equation": "30 = 15 + [ ]",
+              "correct_answer": 15
+            }
+          ]
+        },
+        {
+          "section_id": "bai-2",
+          "title": "Bài 2. Viết mật mã.",
+          "type": "passcode_assembly",
+          "instruction": "Mật mã của rương là: [1] [2] [3] [4] [5] [6]",
+          "assembled_code": [5, 7, 8, 9, 6, 15]
+        },
+        {
+          "section_id": "bai-3",
+          "title": "Bài 3. Điền số bí ẩn.",
+          "type": "bonus_fill",
+          "problems": [
+            {
+              "id": 1,
+              "equation": "[ ] + 8 = 16",
+              "correct_answer": 8
+            },
+            {
+              "id": 2,
+              "equation": "17 - [ ] = 9",
+              "correct_answer": 8
+            },
+            {
+              "id": 3,
+              "equation": "20 - [ ] = 12",
+              "correct_answer": 8
+            },
+            {
+              "id": 4,
+              "equation": "11 + [ ] = 20",
+              "correct_answer": 9
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "drag-to-slot",
+        "interaction": "Bé chạm mở rương kho báu, nhận phần thưởng đá quý và huy hiệu."
+      }
+    },
+    {
+      "page_number": 24,
+      "workbook_page_number": 23,
+      "file_path": "pages/page-24.jpg",
+      "page_type": "reward_certificate",
+      "title": "TRANG 23 – THÁM TỬ SỐ HỌC XUẤT SẮC!",
+      "instruction": "Bé hãy tô màu viên ngọc của Chặng 14 nhé!",
+      "dialogue": {
+        "gau_logic": "Tuyệt quá! Bé đã tìm được tất cả số bí ẩn rồi!",
+        "tho_sang_tao": "Bé thật là siêu thám tử!"
+      },
+      "footer_hint": "BỘ TOÁN IQ – CHẶNG 14",
+      "pedagogical_concept": "Phiếu khen thưởng & Vinh danh thành tựu (Gamification & Intrinsic Reward): Trao huy hiệu 'Thám tử số bí ẩn', phần thưởng tương tác tô màu viên ngọc Chặng 14 giúp giải tỏa căng thẳng nhận thức, củng cố cảm giác tự hào và khơi gợi niềm háo hức tiến vào Chặng 15.",
+      "visual_details": {
+        "certificate_banner": "PHIẾU KHEN THƯỞNG – Chúc mừng bé đã hoàn thành Chặng 14: Bí ẩn những con số biến mất!",
+        "badge": "Huy hiệu tròn viền răng cưa vàng 'THÁM TỬ SỐ BÍ ẨN' đính ngôi sao vàng 5 cánh và kính lúp",
+        "coloring_reward": "Viên kim cương đa diện lớn với các mặt cắt sắc nét để bé tự do tô màu sắc yêu thích",
+        "next_stop_sign": "Biển gỗ mũi tên chỉ hướng: Chặng 15 – Hẹn gặp lại bé ở Chặng 15 để khám phá bí mật tiếp theo! ❤️",
+        "name_field": "Dòng kẻ ghi danh 'Tên bé: ____________________'"
+      },
+      "digital_game_mapping": {
+        "suggested_template": "GT-000",
+        "mechanic": "reward-celebration",
+        "interaction": "Hiệu ứng pháo hoa giấy tung bay (confetti), chạm vào viên ngọc để chọn màu tô phát sáng lấp lánh và nhận huy hiệu vào bộ sưu tập cá nhân."
+      }
+    }
+  ],
+  "digital_game_potential": {
+    "suggested_primary_template": "GT-008",
+    "suggested_secondary_templates": ["GT-001", "GT-005", "GT-009", "GT-051"],
+    "architecture_alignment": {
+      "framework": "packages/game-engine (TypeScript thuần, Canvas 2D 960x540)",
+      "target_fps": 60,
+      "touch_floor": "96px cho lứa tuổi 3–4, 72px cho lứa tuổi 5–6 (tối thiểu 64px)",
+      "feedback_rules": {
+        "correct": "Pop hạt ánh kim tại điểm chạm, âm thanh ramp nhẹ nhàng êm ái",
+        "retry": "Nhịp hổ phách (amber pulse) nhẹ trên ô đích, âm thanh êm, không buzzer, không trừ điểm, vật phẩm trôi về vị trí ban đầu"
+      }
+    },
+    "key_mechanic_recommendations": [
+      {
+        "module": "ClueEliminationSession (GT-009)",
+        "role": "Mô phỏng cơ chế loại trừ theo 2-3 manh mối thám tử của Gấu Logic & Thỏ Sáng Tạo"
+      },
+      {
+        "module": "DragDropSession (GT-008)",
+        "role": "Kéo thả thẻ số hoặc chìa khóa vào ô vuông số bí ẩn trong phương trình"
+      },
+      {
+        "module": "TapSelectSession (GT-001)",
+        "role": "Chạm chọn chìa khóa vàng hoặc thẻ số đáp án đúng từ 3 lựa chọn"
+      },
+      {
+        "module": "MatchPairsSession (GT-005)",
+        "role": "Nối dây từ phương trình số sang thẻ đáp án đúng trên bản đồ số"
+      },
+      {
+        "module": "ChestUnlockSession (GT-051 / CodeBreaker)",
+        "role": "Mở khóa rương kho báu bằng chuỗi 6 mã số đã giải mã"
+      }
+    ]
+  }
+}

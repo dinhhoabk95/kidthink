@@ -44,7 +44,7 @@ const LoginSchema = z
   })
   .strict();
 
-function parseLoginCredentials(rawBody: unknown): {
+function parseLoginCredentials(rawBody: object | null | undefined): {
   email: string;
   password: string;
   rememberMe: boolean;
@@ -60,7 +60,7 @@ function parseLoginCredentials(rawBody: unknown): {
   };
 }
 
-export async function handleLogin(event: H3Event, testBody?: unknown) {
+export async function handleLogin(event: H3Event, testBody?: object | null) {
   const ipRateLimit = await enforceTwoAxisRateLimit({
     routeClass: "auth:login",
     remoteIp: getVerifiedRemoteIp(event),
@@ -77,6 +77,7 @@ export async function handleLogin(event: H3Event, testBody?: unknown) {
     routeClass: "auth:login",
     remoteIp: getVerifiedRemoteIp(event),
     accountIdentifier: email,
+    skipIpCheck: true,
   });
   assertRateLimitAllowed(rateLimitRes.statusCode);
 

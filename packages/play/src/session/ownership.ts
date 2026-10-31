@@ -34,7 +34,7 @@ export async function checkUserSessionOwnership(
     ) {
       return;
     }
-    if (session.guestDeviceId === "guest-device") {
+    if (session.guestDeviceId === `user:${callerAccountId}`) {
       return;
     }
     throw new NotFoundError();

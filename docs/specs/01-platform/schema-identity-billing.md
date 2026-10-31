@@ -55,7 +55,7 @@ Không có.
 | `BR-SIB-10` (cấm cột token provider) | `social_identities` cấm — **NEVER có cột token** của nhà cung cấp | [`oauth-provider-registry.md`](oauth-provider-registry.md) `BR-OAP-07` (không lưu token provider). Cột không tồn tại thì không rò được |
 | `BR-SIB-11` | Xoá `users` **cascade** xoá `social_identities` | Danh tính mồ côi làm `UNIQUE (provider, provider_user_id)` chặn người dùng đăng ký lại sau khi đã xoá tài khoản |
 | `BR-SIB-12` (singleton force marker) | `consent_requirements` có đúng ba khoá `terms` · `privacy` · `child_data`; marker chỉ UPDATE tiến tới, không có policy version | Một hàng cho mỗi loại cho phép kiểm consent bằng một so sánh thời gian, không fan-out theo User và không dựng kho version trá hình |
-| `BR-SIB-13` (seed test accounts) | Seeder cung cấp sẵn bộ tài khoản kiểm thử mặc định (2 Manager, 3 User, 5 Child, Package Entitlements) với mật khẩu ngẫu nhiên băm argon2id, không bắt buộc biến `.env` | Cho phép kiểm thử cục bộ và chạy dev trơn tru ngay từ lần seed đầu tiên |
+| `BR-SIB-13` (seed test accounts) | Seeder cung cấp sẵn bộ tài khoản kiểm thử mặc định (1 Manager `super_admin`, 3 User, 5 Child) với mật khẩu ngẫu nhiên băm argon2id, không bắt buộc biến `.env` | Cho phép kiểm thử cục bộ và chạy dev trơn tru ngay từ lần seed đầu tiên |
 
 ## 7. Data
 
@@ -80,7 +80,7 @@ Cấm: không `role`, không `package`, không `tier`.
 ### 7.2 `managers`
 
 `id` · `uuid` · `email` citext UNIQUE · `password_hash` · `display_name` ·
-`role` enum (`super_admin`\|`content_reviewer`) NOT NULL · `mfa_enabled` bool ·
+`role` enum (`super_admin`) NOT NULL · `mfa_enabled` bool ·
 `session_version` · `is_active` · `created_at` `updated_at`.
 
 ### 7.3 Bảng auth phụ — polymorphic
@@ -162,7 +162,7 @@ manager id hay reason nội bộ; manager và reason nằm ở `audit_logs`.
 `key` PK varchar · `group` enum (`content`\|`account`\|`report`\|`creator`\|`ai`) ·
 `label` · `description` · `is_mvp` bool.
 
-### 7.6 `packages` · `package_entitlements` — Lớp 1, bảng chiếu
+### 7.6 `packages` — Lớp 1, bảng chiếu
 
 | `packages` | |
 |---|---|
@@ -173,7 +173,7 @@ manager id hay reason nội bộ; manager và reason nằm ở `audit_logs`.
 | `offers` | JSONB — `[{offer_code, billing_period, price_vnd, duration_days}]` — `billing_period` ∈ `{yearly, monthly}` (miền đóng, D-AB); MVP chỉ dùng `yearly` ([`package-catalog.md`](../00-foundation/package-catalog.md) §11 Q2) |
 | `quotas` | JSONB |
 
-`package_entitlements`: `(package_code, entitlement_key)` PK ghép, cả hai FK.
+Danh sách quyền lợi mỗi gói đọc trực tiếp từ `PACKAGE_CATALOG` trong `@mindkid/shared` (đã xóa bảng nối `package_entitlements`).
 
 ### 7.7 `entitlements`
 
@@ -214,7 +214,6 @@ spec đó sở hữu.
 | Bảng | Cột | Sở hữu |
 |---|---|---|
 | `audit_logs` | [`audit-log.md`](audit-log.md) §7.1 — INSERT-only | [`audit-log.md`](audit-log.md) `approved` 2026-08-07 |
-| `content_review_log` | xem §7.10a dưới | [`schema-identity-billing.md`](schema-identity-billing.md) (file này, D-AC) |
 | `backup_log` | [`backup-and-restore.md`](backup-and-restore.md) §7.2 | [`backup-and-restore.md`](backup-and-restore.md) `approved` 2026-08-07 |
 | `notifications` | [`notification-service.md`](notification-service.md) §7.2 — logical event | [`notification-service.md`](notification-service.md) (`D-AF`, P2→P0) |
 | `notification_deliveries` | [`notification-service.md`](notification-service.md) §7.3 — một hàng mỗi channel | [`notification-service.md`](notification-service.md), Task #83 |
@@ -233,36 +232,14 @@ transaction. Migration Task #83 phải backfill theo `channel/status` cũ, có t
 không được xoá dữ liệu delivery trước khi đối chiếu count. `notification_reads` và
 `notification_endpoints` là P5, tạo cùng Task #84 theo hai spec sở hữu.
 
-### 7.10a `content_review_log` — polymorphic, INSERT-only
-
-Cột chuyển từ [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) §7.2 sang đây theo **D-AC** (2026-08-07) — [`data-model-overview.md`](../00-foundation/data-model-overview.md) §7 xếp
-bảng này vào module `ops`, sở hữu cột chuyển sang schema-*; [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) giữ quyền
-định nghĩa **ngữ nghĩa** state machine, không định nghĩa cột.
-
-| Cột | Kiểu | Ràng buộc |
-|---|---|---|
-| `id` | bigserial | PK |
-| `entity_type` | enum | Loại nội dung Lớp 2 được review (`game_level`\|`lesson`\|`activity`\|`worksheet`\|`curriculum`) |
-| `entity_id` | bigint | FK hàng version cụ thể của nội dung đó — polymorphic, `(entity_type, entity_id)` là 1 trong 9 FK polymorphic đóng ở [`data-model-overview.md`](../00-foundation/data-model-overview.md) §7.2 (`BR-DM-13` — danh sách polymorphic đóng, D-AE; số chỗ 7→9 ở `D-AQ`) |
-| `content_version` | int | Snapshot version tại thời điểm review — cột thông tin, không phải FK riêng (đã ngầm định trong `entity_id`) |
-| `from_status` `to_status` | enum | Theo [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) §7.1 — 6 giá trị |
-| `actor_manager_id` | bigint | FK `managers(id)` |
-| `actor_role` | enum | Vai trò của actor lúc thực hiện — snapshot, không đổi theo role hiện tại |
-| `reason` | text | Bắt buộc ≥10 ký tự khi `to_status = 'rejected'` ([`content-lifecycle.md`](../00-foundation/content-lifecycle.md) `BR-CLC-05` — từ chối phải ghi lý do) |
-| `checklist_snapshot` | JSONB | Kết quả checklist publish ([`content-lifecycle.md`](../00-foundation/content-lifecycle.md) §7.3) tại thời điểm chuyển |
-| `created_at` | timestamptz | NOT NULL |
-
-INSERT-only ([`data-model-overview.md`](../00-foundation/data-model-overview.md) `BR-DM-05` — bảng INSERT-only, [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) `BR-CLC-06`) — cấm `UPDATE`/`DELETE`.
-
 ### 7.10b Module `ops` — tạo cùng tính năng sở hữu (P1+)
 
-Bảng **không** tạo ở P0 mà tạo cùng lúc với tính năng sở hữu; tới 2026-10-18 cả năm bảng đã có trong
-`packages/db/src/schema/ops.ts`:
+Các bảng tạo cùng tính năng sở hữu trong `packages/db/src/schema/ops.ts`:
 `error_logs` (Observability), `feature_flags` (feature-flag-service),
-`content_seed_batches` (content-seed-authoring), `notification_reads`
-([`../03-account/notification-inbox.md`](../03-account/notification-inbox.md)) và
+`notification_reads` ([`../03-account/notification-inbox.md`](../03-account/notification-inbox.md)) và
 `notification_endpoints` ([`browser-push.md`](browser-push.md)). `notifications` và
 `notification_deliveries` ở §7.10; xem `D-AP` và `D-ND`.
+Đã xóa hoàn toàn `content_review_log`, `content_seed_batches`, `review_entity_type` khỏi `ops.ts`.
 
 ### 7.10c `notification_reads` — P5, tạo cùng Task #84
 

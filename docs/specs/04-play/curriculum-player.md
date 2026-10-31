@@ -60,7 +60,7 @@ Player trả lời một câu hỏi mỗi lần mở: **hôm nay học gì tiế
 | Item tuỳ chọn chưa xong | Cấm chặn mở tuần mới (`BR-CUR-03`) |
 | Item bị khoá bậc | Bỏ qua trong tính "hoàn thành tuần", nhưng hiện trong danh sách kèm khoá (`BR-CUR-05`) |
 | Curriculum publish version mới | Trẻ đang học **giữ version đã ghi danh** — `BR-CUR-04` (`D-MA`) |
-| Lesson publish version mới | Trẻ thấy nội dung bản `published` mới nhất qua `entity_id` (`D-MA`, `D-AE`) |
+| Game level publish version mới | Trẻ thấy nội dung bản `published` mới nhất qua `entity_id` (`D-MA`, `D-AE`) |
 | Trẻ đã có enrollment `active` | Từ chối ghi danh thứ hai với **409** `ALREADY_ENROLLED` (`D-MB`) |
 | Rút khỏi curriculum | `enrollment.status = 'withdrawn'`, giữ tiến độ cũ; ghi danh lại tạo enrollment mới |
 | Tuần toàn item khoá bậc | Không tự hoàn thành; trả `week_blocked_by_tier: true` (`BR-CUR-10`, `D-ME`) |
@@ -139,8 +139,7 @@ Body `{ curriculum_code }`. 201 → ghim `curriculum_version` hiện tại.
 **409** `ALREADY_ENROLLED` (nếu đã có enrollment `active`) · **422** nếu không mở được item bắt buộc nào.
 
 **Đổi 2026-08-29 (`D-SI`):** điều kiện **422 khi tuổi trẻ ngoài khoảng curriculum** đã bỏ. Ghi
-danh thành công bất kể tuổi, response mang `age_gap` để giao diện dựng cảnh báo. Lý do và luật
-đầy đủ ở [`lesson-flow-model.md`](../05-content/lesson-flow-model.md) `BR-LFM-02`. Quyết định
+danh thành công bất kể tuổi, response mang `age_gap` để giao diện dựng cảnh báo. Quyết định
 `D-ME` bị thay thế.
 
 ### `POST /api/users/children/{uuid}/enrollments/withdraw`

@@ -5,8 +5,8 @@ export const C2_SOL_07_IDENTITY: SkillIdentity = {
   strand_code: "C2.SOL",
   competency_code: "C2",
   name: "Mặt · cạnh · đỉnh của khối",
-  age_min: 6,
-  age_max: 7,
+  age_min: 5,
+  age_max: 6,
   difficulty: 4,
   thinking_processes: ["count", "observe"],
   tier: "advanced",
@@ -45,50 +45,150 @@ export const C2_SOL_07_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "circle",
-      label: "hình tròn",
+      id: "dice_flat",
+      label: "xúc xắc mặt phẳng",
+      value: 1,
       image: {
         kind: "emoji",
-        ref: "🔴",
+        ref: "🎲",
       },
       category: {
-        type: "shape",
+        type: "khối mặt phẳng",
+      },
+      contrast_group: "flat_face",
+    },
+    {
+      id: "ice_flat",
+      label: "khối đá mặt phẳng",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "🧊",
+      },
+      category: {
+        type: "khối mặt phẳng",
+      },
+      contrast_group: "flat_face",
+    },
+    {
+      id: "gift_flat",
+      label: "hộp quà mặt phẳng",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "🎁",
+      },
+      category: {
+        type: "khối mặt phẳng",
+      },
+      contrast_group: "flat_face",
+    },
+    {
+      id: "brick_flat",
+      label: "viên gạch mặt phẳng",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "🧱",
+      },
+      category: {
+        type: "khối mặt phẳng",
+      },
+      contrast_group: "flat_face",
+    },
+    {
+      id: "ball_curved",
+      label: "quả bóng mặt cong",
+      value: 5,
+      image: {
+        kind: "emoji",
+        ref: "⚽",
+      },
+      category: {
+        type: "khối mặt cong",
+      },
+      contrast_group: "curved_face",
+    },
+    {
+      id: "basket_curved",
+      label: "bóng rổ mặt cong",
+      value: 6,
+      image: {
+        kind: "emoji",
+        ref: "🏀",
+      },
+      category: {
+        type: "khối mặt cong",
+      },
+      contrast_group: "curved_face",
+    },
+    {
+      id: "globe_curved",
+      label: "quả địa cầu mặt cong",
+      value: 7,
+      image: {
+        kind: "emoji",
+        ref: "🌍",
+      },
+      category: {
+        type: "khối mặt cong",
+      },
+      contrast_group: "curved_face",
+    },
+    {
+      id: "marble_curved",
+      label: "viên bi mặt cong",
+      value: 8,
+      image: {
+        kind: "emoji",
+        ref: "🔮",
+      },
+      category: {
+        type: "khối mặt cong",
+      },
+      contrast_group: "curved_face",
+    },
+  ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "dice_flat",
+      target_id: "ball_curved",
+      metadata: {
+        dimension: "face_type",
       },
     },
     {
-      id: "square",
-      label: "hình vuông",
-      image: {
-        kind: "emoji",
-        ref: "🟦",
-      },
-      category: {
-        type: "shape",
+      type: "contrast",
+      source_id: "ice_flat",
+      target_id: "basket_curved",
+      metadata: {
+        dimension: "face_type",
       },
     },
     {
-      id: "triangle",
-      label: "hình tam giác",
-      image: {
-        kind: "emoji",
-        ref: "🔺",
-      },
-      category: {
-        type: "shape",
+      type: "pair",
+      source_id: "dice_flat",
+      target_id: "ice_flat",
+      metadata: {
+        relation: "cùng mặt phẳng",
       },
     },
     {
-      id: "rectangle",
-      label: "hình chữ nhật",
-      image: {
-        kind: "emoji",
-        ref: "🟧",
-      },
-      category: {
-        type: "shape",
+      type: "pair",
+      source_id: "ball_curved",
+      target_id: "basket_curved",
+      metadata: {
+        relation: "cùng mặt cong",
       },
     },
   ],
+  axes: {
+    face_type: {
+      values: ["khối mặt phẳng", "khối mặt cong"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
@@ -121,7 +221,16 @@ export const C2_SOL_07_DATASET: SkillDataset = {
     narration_template:
       "Chúng mình cùng tìm hiểu về Mặt · cạnh · đỉnh của khối nhé",
   },
-  ordering: ["circle", "square", "triangle", "rectangle"],
+  ordering: [
+    "dice_flat",
+    "ice_flat",
+    "gift_flat",
+    "brick_flat",
+    "ball_curved",
+    "basket_curved",
+    "globe_curved",
+    "marble_curved",
+  ],
 };
 
 export const C2_SOL_07_SEED: SkillSeed = {
@@ -134,30 +243,6 @@ export const C2_SOL_07_SEED: SkillSeed = {
       band: "5-6",
       difficulty: 3,
       theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-TAP-0014",
-      template: "GT-001",
-      band: "5-6",
-      difficulty: 4,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-TCNT-0013",
-      template: "GT-002",
-      band: "5-6",
-      difficulty: 3,
-      theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-TCNT-0014",
-      template: "GT-002",
-      band: "5-6",
-      difficulty: 4,
-      theme: "homeland",
       rounds: 3,
     },
     {
@@ -174,38 +259,6 @@ export const C2_SOL_07_SEED: SkillSeed = {
       band: "5-6",
       difficulty: 4,
       theme: "farm",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-PAIR-0013",
-      template: "GT-004",
-      band: "5-6",
-      difficulty: 3,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-PAIR-0014",
-      template: "GT-004",
-      band: "5-6",
-      difficulty: 4,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-PATT-0013",
-      template: "GT-005",
-      band: "5-6",
-      difficulty: 3,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-PATT-0014",
-      template: "GT-005",
-      band: "5-6",
-      difficulty: 4,
-      theme: "ocean",
       rounds: 3,
     },
   ],

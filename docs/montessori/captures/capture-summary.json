@@ -1,0 +1,118 @@
+{
+  "totalCaptured": 262,
+  "passedCount": 262,
+  "failedCount": 0,
+  "failedLevels": [],
+  "byWorkbook": {
+    "chang-00-intro": {
+      "total": 4,
+      "passed": 4,
+      "failed": 0
+    },
+    "chang-01": {
+      "total": 17,
+      "passed": 17,
+      "failed": 0
+    },
+    "chang-02": {
+      "total": 26,
+      "passed": 26,
+      "failed": 0
+    },
+    "chang-03": {
+      "total": 13,
+      "passed": 13,
+      "failed": 0
+    },
+    "chang-04": {
+      "total": 9,
+      "passed": 9,
+      "failed": 0
+    },
+    "chang-05": {
+      "total": 9,
+      "passed": 9,
+      "failed": 0
+    },
+    "chang-06": {
+      "total": 15,
+      "passed": 15,
+      "failed": 0
+    },
+    "chang-07": {
+      "total": 13,
+      "passed": 13,
+      "failed": 0
+    },
+    "chang-08": {
+      "total": 9,
+      "passed": 9,
+      "failed": 0
+    },
+    "chang-09": {
+      "total": 2,
+      "passed": 2,
+      "failed": 0
+    },
+    "chang-10": {
+      "total": 7,
+      "passed": 7,
+      "failed": 0
+    },
+    "chang-11": {
+      "total": 14,
+      "passed": 14,
+      "failed": 0
+    },
+    "chang-12": {
+      "total": 12,
+      "passed": 12,
+      "failed": 0
+    },
+    "chang-13": {
+      "total": 9,
+      "passed": 9,
+      "failed": 0
+    },
+    "chang-14": {
+      "total": 13,
+      "passed": 13,
+      "failed": 0
+    },
+    "chang-15": {
+      "total": 18,
+      "passed": 18,
+      "failed": 0
+    },
+    "chang-16": {
+      "total": 6,
+      "passed": 6,
+      "failed": 0
+    },
+    "chang-17": {
+      "total": 14,
+      "passed": 14,
+      "failed": 0
+    },
+    "chang-18": {
+      "total": 14,
+      "passed": 14,
+      "failed": 0
+    },
+    "chang-19": {
+      "total": 19,
+      "passed": 19,
+      "failed": 0
+    },
+    "chang-20": {
+      "total": 11,
+      "passed": 11,
+      "failed": 0
+    },
+    "chang-21": {
+      "total": 8,
+      "passed": 8,
+      "failed": 0
+    }
+  }
+}

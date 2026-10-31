@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 import { flushPromises, mount, type VueWrapper } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { ref } from "vue";
 
 const pushMock = vi.fn();
 const replaceMock = vi.fn();
@@ -10,6 +11,8 @@ const speakMock = vi.fn(() => true);
 const cancelSpeechMock = vi.fn();
 
 let mockRouteCode = "C1";
+const mockLoggedIn = ref(true);
+const mockActiveChildCookie = ref<string | null>("child-uuid-1");
 
 vi.mock("~/composables/play/use-speech", () => ({
   useSpeech: () => ({
@@ -18,10 +21,31 @@ vi.mock("~/composables/play/use-speech", () => ({
   }),
 }));
 
+vi.mock("#imports", () => ({
+  definePageMeta: (meta: Record<string, string | string[]>) =>
+    pageMetaMock(meta),
+  useRoute: () => ({ params: { code: mockRouteCode } }),
+  useRouter: () => ({ push: pushMock, replace: replaceMock }),
+  useCookie: () => mockActiveChildCookie,
+  useUserSession: () => ({
+    loggedIn: mockLoggedIn,
+    fetch: vi.fn().mockResolvedValue(undefined),
+  }),
+  useApi: () => fetchMock,
+  useSeoMeta: vi.fn(),
+  useHead: vi.fn(),
+}));
+
 vi.stubGlobal("definePageMeta", pageMetaMock);
 vi.stubGlobal("useRouter", () => ({ push: pushMock, replace: replaceMock }));
 vi.stubGlobal("useRoute", () => ({ params: { code: mockRouteCode } }));
 vi.stubGlobal("$fetch", fetchMock);
+vi.stubGlobal("useCookie", () => mockActiveChildCookie);
+vi.stubGlobal("useUserSession", () => ({
+  loggedIn: mockLoggedIn,
+  fetch: vi.fn(() => Promise.resolve()),
+}));
+vi.stubGlobal("useApi", () => fetchMock);
 
 const ParentGateStub = {
   emits: ["verified", "cancel"],

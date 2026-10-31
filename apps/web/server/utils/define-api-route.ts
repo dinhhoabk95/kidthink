@@ -14,7 +14,9 @@ import {
 } from "./admin-auth-runtime.js";
 import { throwValidationError } from "./api-error.js";
 import {
+  assertPayloadSize,
   assertRequestBodySize,
+  DEFAULT_MAX_JSON_BODY_BYTES,
   requireWebUserSession,
 } from "./auth-runtime.js";
 import { readRequestBody, readRequestQuery } from "./request-body.js";
@@ -89,10 +91,10 @@ async function parseRouteBody<TBody>(
   if (!schema) {
     return undefined as never;
   }
-  if (maxBodyBytes !== undefined) {
-    assertRequestBodySize(event, maxBodyBytes);
-  }
+  const maxBytes = maxBodyBytes ?? DEFAULT_MAX_JSON_BODY_BYTES;
+  assertRequestBodySize(event, maxBytes);
   const rawBody = await readRequestBody(event);
+  assertPayloadSize(rawBody as object, maxBytes);
   const result = schema.safeParse(rawBody);
   if (!result.success) {
     throwValidationError(result.error);

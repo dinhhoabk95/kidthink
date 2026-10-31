@@ -50,24 +50,6 @@ export const ENTITLEMENT_KEYS = [
     is_mvp: true,
   },
   {
-    key: "create_lesson_plan",
-    group: "creator",
-    label: "Tạo giáo án học tập",
-    is_mvp: false,
-  },
-  {
-    key: "duplicate_lesson",
-    group: "creator",
-    label: "Sao chép bài học",
-    is_mvp: false,
-  },
-  {
-    key: "customize_lesson",
-    group: "creator",
-    label: "Tùy chỉnh bài học",
-    is_mvp: false,
-  },
-  {
     key: "export_pdf",
     group: "creator",
     label: "Xuất PDF bài tập",
@@ -119,12 +101,6 @@ export const QUOTA_KEYS = [
     label: "Lượt xuất dữ liệu",
     unit: "count",
     cycle: "hours_24",
-  },
-  {
-    key: "lesson_plans_per_month",
-    label: "Giáo án mỗi tháng",
-    unit: "plans",
-    cycle: "monthly",
   },
   {
     key: "custom_games_saved",
@@ -246,39 +222,12 @@ export const PACKAGE_CATALOG: Record<string, PackageDefinition> = {
     is_featured: true,
     status: "active",
   },
-  "PKG-addon_lesson_plan": {
-    code: "PKG-addon_lesson_plan",
-    name: "Add-on Giáo án",
-    audience: "Người dùng tự soạn giáo án",
-    description: "Tạo, tuỳ chỉnh và xuất PDF giáo án",
-    entitlements: [
-      "create_lesson_plan",
-      "duplicate_lesson",
-      "customize_lesson",
-      "export_pdf",
-    ],
-    quotas: {
-      lesson_plans_per_month: 20,
-    },
-    offers: [
-      {
-        offer_code: "annual",
-        billing_period: "1 năm",
-        price_vnd: PENDING_PRICE_VND,
-        duration_days: 365,
-      },
-    ],
-    is_public: false,
-    is_featured: false,
-    status: "active",
-    requires_spec: "07-addon/lesson-plan-creator.md",
-  },
   "PKG-addon_curriculum": {
     code: "PKG-addon_curriculum",
     name: "Add-on Lộ trình tùy chỉnh",
     audience: "Người dùng tự dựng lộ trình",
     description: "Tạo lộ trình học cá nhân hoá",
-    entitlements: ["create_custom_curriculum"],
+    entitlements: ["create_custom_curriculum", "export_pdf"],
     quotas: {
       custom_curricula_saved: 5,
     },

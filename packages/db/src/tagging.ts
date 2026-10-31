@@ -10,7 +10,7 @@ export interface SkillMapInput {
 }
 
 export interface TagAssignmentInput {
-  entityType: "game_level" | "lesson" | "worksheet" | "activity";
+  entityType: "game_level" | "curriculum";
   entityId: number;
   tagCodes: string[];
   mechanicTagCode?: string;
@@ -30,11 +30,7 @@ export const MECHANIC_TAG_MAP: Record<string, string> =
 export const normalizeMechanicTagCode: (code?: string) => string | undefined =
   taxonomyNormalizeMechanicTagCode;
 
-async function resolveAndEnsureTags(
-  db: NodePgDatabase<Record<string, unknown>>,
-  tagList: string[],
-  entityType: string
-) {
+async function resolveAndEnsureTags(db: NodePgDatabase, tagList: string[]) {
   const matchedTags = await db
     .select()
     .from(contentTags)
@@ -48,25 +44,6 @@ async function resolveAndEnsureTags(
 
   const matchedSet = new Set(matchedTags.map((t) => t.code));
   const missing = tagList.filter((c) => !matchedSet.has(c));
-
-  if (entityType === "activity" || entityType === "lesson") {
-    for (const code of missing) {
-      const [inserted] = await db
-        .insert(contentTags)
-        .values({
-          code,
-          axis: "what",
-          label: code,
-          status: "active",
-        })
-        .onConflictDoNothing()
-        .returning();
-      if (inserted) {
-        matchedTags.push(inserted);
-      }
-    }
-    return matchedTags;
-  }
 
   throw new ValidationError(
     `Tag không hợp lệ hoặc chưa được duyệt trong từ vựng Lớp 1: ${missing.join(", ")}`
@@ -88,8 +65,44 @@ function validatePublishAxes(matchedTags: Array<{ axis: string }>) {
   }
 }
 
+export async function assignTagsToEntity(
+  db: NodePgDatabase,
+  entityType: TagAssignmentInput["entityType"],
+  entityId: number,
+  tagIds: number[]
+) {
+  const runAssign = async (tx: NodePgDatabase) => {
+    await tx
+      .delete(contentTagMap)
+      .where(
+        and(
+          eq(contentTagMap.entityType, entityType),
+          eq(contentTagMap.entityId, entityId)
+        )
+      );
+
+    const newEntries = tagIds.map((tagId) => ({
+      entityType,
+      entityId,
+      tagId,
+    }));
+
+    if (newEntries.length > 0) {
+      await tx.insert(contentTagMap).values(newEntries);
+    }
+  };
+
+  if (typeof db.transaction === "function") {
+    await db.transaction(async (tx) => {
+      await runAssign(tx as NodePgDatabase);
+    });
+  } else {
+    await runAssign(db);
+  }
+}
+
 export async function validateAndAssignTags(
-  db: NodePgDatabase<Record<string, unknown>>,
+  db: NodePgDatabase,
   input: TagAssignmentInput,
   isPublishing = false
 ) {
@@ -111,30 +124,18 @@ export async function validateAndAssignTags(
     return;
   }
 
-  const matchedTags = await resolveAndEnsureTags(db, tagList, entityType);
+  const matchedTags = await resolveAndEnsureTags(db, tagList);
 
   if (isPublishing && entityType === "game_level") {
     validatePublishAxes(matchedTags);
   }
 
-  await db
-    .delete(contentTagMap)
-    .where(
-      and(
-        eq(contentTagMap.entityType, entityType),
-        eq(contentTagMap.entityId, entityId)
-      )
-    );
-
-  const newEntries = matchedTags.map((tag) => ({
+  await assignTagsToEntity(
+    db,
     entityType,
     entityId,
-    tagId: tag.id,
-  }));
-
-  if (newEntries.length > 0) {
-    await db.insert(contentTagMap).values(newEntries);
-  }
+    matchedTags.map((tag) => tag.id)
+  );
 }
 
 /**
@@ -168,9 +169,7 @@ export function validateContentSkillMap(entries: SkillMapInput[]) {
 /**
  * BR-TAG-07: Detect orphaned content_tag_map entries where referenced entity does not exist.
  */
-export async function detectOrphanedContentTags(
-  db: NodePgDatabase<Record<string, unknown>>
-) {
+export async function detectOrphanedContentTags(db: NodePgDatabase) {
   const result = await db.execute<{ count: number }>(sql`
     SELECT COUNT(*)::int AS count
     FROM content_tag_map ctm

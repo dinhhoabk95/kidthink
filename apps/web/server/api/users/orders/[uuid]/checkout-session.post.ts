@@ -80,7 +80,8 @@ export default defineApiRoute({
     }
 
     // BR-APM-03: Price is strictly determined by server-side PACKAGE_CATALOG
-    const catalogAmountVnd = offer.price_vnd;
+    const catalogAmountVnd =
+      offer.price_vnd > 0 ? offer.price_vnd : order.amountVnd;
     const transferNote = order.transferNote || formatTransferNote(order.uuid);
     const vietQr = generateVietQrPayload({
       amountVnd: catalogAmountVnd,

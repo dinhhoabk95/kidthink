@@ -1,0 +1,1561 @@
+{
+  "stage_id": "chang-12",
+  "workbook_id": "WB12",
+  "title": "Chặng 12: Xưởng Máy Biến Hình",
+  "subtitle": "Giải mã • Thay thế • Suy luận",
+  "total_pages": 23,
+  "target_age": "4–6 tuổi",
+  "series": "Gấu Logic & Thỏ Quan Sát - Chuyến Tàu Toán Học (Phần 12)",
+  "mission": "Cùng Gấu Logic và Thỏ Quan Sát khởi động lại Cỗ Máy Biến Hình bị kẹt bằng cách giải mã bảng mã số, thay thế linh kiện bằng giá trị số học, vượt qua trạm kiểm tra và mở khóa Viên Ngọc Biến Hình.",
+  "pedagogy": {
+    "framework": "Montessori & CPA (Concrete - Pictorial - Abstract) kết hợp Tiền Đại Số (Early Algebraic Thinking)",
+    "approach": "Biểu tượng hóa (Symbolic Representation), Tư duy hàm cỗ máy (Function Machine / Transformation), Quy tắc thay thế 1-1 (One-to-One Substitution), Tư duy hệ thống & Siêu nhận thức kiểm chứng (Equation Verification & Metacognition)",
+    "competency": "C1 - Cảm thức số học & Giải quyết vấn đề (Number Sense & Problem Solving) và C3 - Tư duy Logic & Suy luận (Logical Thinking & Deduction)",
+    "skills_targeted": [
+      {
+        "code": "C1.PROB.06",
+        "name": "Suy luận số & Quy tắc thay thế biểu tượng sơ đẳng (Symbol Substitution)"
+      },
+      {
+        "code": "C1.PROB.01",
+        "name": "Chọn cách giải & Lập kế hoạch tính toán nhiều bước"
+      },
+      {
+        "code": "C1.ADD.04",
+        "name": "Cộng nhẩm biểu thức 2–4 số hạng trong phạm vi 20"
+      },
+      {
+        "code": "C1.SUB.03",
+        "name": "Trừ nhẩm biểu thức và thực hiện liên hoàn phép tính từ trái sang phải"
+      },
+      {
+        "code": "C3.INF.01",
+        "name": "Suy luận giá trị còn thiếu dựa trên dữ kiện quy ước (Bảng mã)"
+      },
+      {
+        "code": "C3.INF.02",
+        "name": "Dự đoán kết quả từ chuỗi biến đổi ký hiệu sang số học"
+      },
+      {
+        "code": "C3.DED.01",
+        "name": "Loại trừ phương án sai có chủ đích (Distractor Elimination) trong bài trắc nghiệm"
+      },
+      {
+        "code": "C3.DED.02",
+        "name": "Suy luận logic điều kiện 'Nếu... Thì...' (Nếu Hình A mang giá trị X, thì Hình A + Hình B = X + Y)"
+      }
+    ],
+    "progression_narrative": "Tiến trình nhận thức sư phạm được thiết kế tinh tế qua 8 nấc thang tăng tiến độ khó: (1) Thay thế 1-1 phép cộng cơ bản (Trang 2–4): Bảng mã 3 vật thể trực quan với giá trị 1..4, trẻ thực hiện phép cộng 2–3 hình; (2) Thay thế 1-1 phép trừ (Trang 5–6): Giới thiệu thao tác nghịch đảo (phép trừ) bắt đầu từ số bị trừ lớn hơn, giá trị bảng mã tăng lên 6 và 8; (3) Phép tính hỗn hợp cộng trừ liên hoàn (Trang 7–9): Rèn luyện quy tắc tính toán tuần tự từ trái sang phải với 3 toán hạng (+ và - đan xen); (4) Biểu tượng lặp lại (Trang 10–12): Một hình xuất hiện 2 lần trong cùng một biểu thức (A + A, A + B + A), gieo mầm tư duy nhân sơ đẳng (Repeated Addition) và đặt nền móng giải hệ phương trình 'n hình = Tổng'; (5) Dải giá trị số mở rộng (Trang 13–15): Giá trị bảng mã nâng cao tới 7, 8, 9 và kết quả vươn tới phạm vi 15, kích thích tính toán bền bỉ; (6) Trắc nghiệm chọn nút đúng có bẫy nhiễu (Trang 16–18): Chuyển từ điền số sang trắc nghiệm 3 nút chọn, với các phương án nhiễu tinh vi (±1, nhầm dấu) và vị trí xáo trộn ngẫu nhiên để chống đoán mò; (7) Kiểm chứng Đúng/Sai (Trang 19): Nâng lên tầng tư duy siêu nhận thức (Metacognition) khi trẻ đóng vai kiểm định viên, phát hiện lỗi sai trong phép tính của cỗ máy; (8) Thử thách tổng hợp tối cao (Trang 20–22): Đạt đỉnh cao nhận thức với biểu thức lên tới 4 toán hạng, giá trị bảng mã tới 9, tổng lên tới 19 để mở khóa Viên Ngọc Biến Hình."
+  },
+  "activity_groups": [
+    {
+      "group_id": "WB12-D1",
+      "group_name": "Thay thế biểu tượng 1-1 & Phép tính cơ bản (Direct 1-to-1 Symbol Substitution)",
+      "page_range": "Trang 2 – Trang 9 (Sách: Trang 1 – Trang 8)",
+      "mechanic_description": "Trẻ quan sát 'Bảng mã' gồm 3 biểu tượng trực quan, mỗi biểu tượng được gán cố định một giá trị số nguyên. Sau đó, trẻ tra cứu từng hình ảnh trong biểu thức, thay thế bằng con số tương ứng và thực hiện phép tính (+, -, hoặc hỗn hợp + / -) từ trái sang phải để điền kết quả vào ô bánh răng.",
+      "sub_types": [
+        "D1.1: Phép cộng cơ bản 2 và 3 toán hạng (Trang 2–4)",
+        "D1.2: Phép trừ cơ bản bắt đầu từ số lớn (Trang 5–6)",
+        "D1.3: Phép tính hỗn hợp đan xen cộng và trừ 3 toán hạng (Trang 7–9)"
+      ],
+      "sample_prompts": [
+        "Nhìn bảng mã • Thay hình bằng số • Tính kết quả",
+        "Dựa vào bảng mã • Tính kết quả",
+        "Thay hình bằng số • Thực hiện phép trừ",
+        "Dựa vào bảng mã • Tìm phần còn lại",
+        "Thay hình bằng số • Tính từ trái sang phải"
+      ],
+      "visual_objects": [
+        "Thực phẩm & Đồ ngọt: Dâu tây 🍓 (=2), Bánh cupcake 🧁 (=3), Cam 🍊 (=4), Lê 🍐 (=2), Cherry 🍒 (=1), Donut hồng 🍩 (=5), Kẹo mút 🍭 (=3), Kẹo bọc 🍬 (=2)",
+        "Đồ chơi & Cơ khí: Bánh răng ⚙️ (=1), Táo đỏ 🍎 (=1), Ngôi sao ⭐️ (=2), Robot mini 🤖 (=3), Bóng bay 🎈 (=2), Tàu hoả 🚂 (=4), Gấu bông 🧸 (=1), Hộp đồ nghề 🧰 (=6), Cờ lê 🔧 (=2), Đai ốc 🔩 (=1), Ngọc xanh 💎 (=8), Pin sạc 🔋 (=3), Tia sét ⚡️ (=2), Bảng màu 🎨 (=4), Tuýp sơn 🧴 (=3), Cọ vẽ 🖌️ (=1)"
+      ],
+      "quantities_and_ranges": "Giá trị trong bảng mã từ 1 đến 8; kết quả phép tính từ 1 đến 8.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-010",
+          "template_name": "symbol-substitution (bảng luật cố định + thay thế ký hiệu + tính giá trị)"
+        },
+        {
+          "template_id": "GT-008",
+          "template_name": "drag-to-slot (kéo thẻ số đặt vào ô bánh răng kết quả)"
+        }
+      ],
+      "recommended_skills": [
+        "C1.PROB.06",
+        "C1.ADD.04",
+        "C1.SUB.03",
+        "C3.INF.01"
+      ]
+    },
+    {
+      "group_id": "WB12-D2",
+      "group_name": "Thay thế biểu tượng lặp lại (Repeated Symbol Substitution / Pre-multiplication)",
+      "page_range": "Trang 10 – Trang 12 (Sách: Trang 9 – Trang 11)",
+      "mechanic_description": "Cùng một biểu tượng xuất hiện từ 2 lần trở lên trong một phép tính (A + A, A + B + A, A + A - B). Trẻ phải nhận thức nguyên lý bất biến: giá trị của một biểu tượng không đổi dù xuất hiện nhiều lần. Đây là nền tảng tư duy phép cộng lặp (tiền thân của phép nhân 2A) và tiền đề giải hệ phương trình.",
+      "sample_prompts": [
+        "Mỗi lần xuất hiện • Tính thêm một lần",
+        "Mỗi hình xuất hiện • Tính một lần",
+        "Hình lặp lại • Giá trị không thay đổi"
+      ],
+      "visual_objects": [
+        "Cơ khí & Kỹ thuật: Bánh răng xanh ⚙️ (=2), Lò xo xoắn vàng 🌀 (=3), Nút bấm đỏ 🔘 (=1)",
+        "Bánh kẹo: Bánh cookie sô-cô-la 🍪 (=2), Bánh xoắn Pretzel 🥨 (=4), Bánh macaron hồng 🥯 (=1)",
+        "Đồ chơi: Tên lửa vũ trụ 🚀 (=3), Khối gạch lego xanh 🧱 (=2), Quả bóng vàng sọc đỏ ⚽️ (=1)"
+      ],
+      "quantities_and_ranges": "Giá trị bảng mã từ 1 đến 4; kết quả phép tính từ 3 đến 9.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-010",
+          "template_name": "symbol-substitution (hỗ trợ biểu thức có ký hiệu lặp)"
+        },
+        {
+          "template_id": "GT-008",
+          "template_name": "drag-to-slot (kéo kết quả vào ô bánh răng)"
+        }
+      ],
+      "recommended_skills": ["C1.PROB.06", "C1.ADD.04", "C3.DED.02"]
+    },
+    {
+      "group_id": "WB12-D3",
+      "group_name": "Thay thế biểu tượng dải giá trị lớn (Extended Value Range Symbol Substitution - Sums up to 15)",
+      "page_range": "Trang 13 – Trang 15 (Sách: Trang 12 – Trang 14)",
+      "mechanic_description": "Bảng mã đưa vào các giá trị số lớn hơn (5, 6, 7, 8). Phép tính kết hợp cả cộng và trừ với kết quả vượt qua 10 (lên đến 13, 14), thử thách độ bền tập trung và năng lực tính nhẩm mở rộng của trẻ.",
+      "sample_prompts": [
+        "Giá trị lớn hơn • Tính thật cẩn thận",
+        "Nhìn bảng mã • Tính kết quả",
+        "Giá trị lớn hơn • Tính thật cẩn thận"
+      ],
+      "visual_objects": [
+        "Phòng thí nghiệm: Bình cầu màu tím 🧪 (=7), Bình tam giác màu vàng ⚗️ (=4), Cụm pha lê xanh 🔮 (=2)",
+        "Thú cưng cơ khí: Mèo máy xanh ngọc 🐱 (=6), Chó máy bánh răng 🐶 (=5), Chim máy vàng 🐤 (=2)",
+        "Bầu trời đêm: Trăng lưỡi liềm 🌙 (=8), Sao băng rực lửa ☄️ (=5), Đám mây trắng ☁️ (=2)"
+      ],
+      "quantities_and_ranges": "Giá trị bảng mã từ 2 đến 8; kết quả phép tính từ 5 đến 13 (vượt ngưỡng 10).",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-010",
+          "template_name": "symbol-substitution (cấu hình difficulty_params mở rộng max_value = 15)"
+        }
+      ],
+      "recommended_skills": ["C1.PROB.06", "C1.ADD.04", "C1.SUB.03"]
+    },
+    {
+      "group_id": "WB12-D4",
+      "group_name": "Trắc nghiệm 3 nút chọn kết quả có phương án nhiễu (Multiple-Choice Symbol Substitution with Distractors)",
+      "page_range": "Trang 16 – Trang 18 (Sách: Trang 15 – Trang 17)",
+      "mechanic_description": "Sau khi tính toán biểu thức thay thế, trẻ không cần tự viết số mà phải nhận diện và khoanh chọn 1 trong 3 nút số tròn. Hệ thống cung cấp các phương án nhiễu (distractors) kề cận (±1, ±2) hoặc do sai lầm thứ tự thực hiện phép tính. Các trang sau tăng độ khó bằng cách đảo ngẫu nhiên vị trí nút đúng (Trái, Giữa, Phải).",
+      "sample_prompts": [
+        "Tính kết quả • Khoanh vào nút đúng",
+        "Tính kết quả • Khoanh vào nút đúng",
+        "Tính kết quả • Khoanh vào nút đúng"
+      ],
+      "visual_objects": [
+        "Cần gạt điều khiển đỏ 🕹️ (=4), Nút ấn tròn xanh dương 🔘 (=3), Nút ấn tròn xanh lá 🟢 (=2)",
+        "Bóng đèn sáng 💡 (=5), Chìa khóa cơ khí 🗝️ (=4), Nút bấm chuông đỏ 🔴 (=1)",
+        "Kim cương xanh ngọc 💎 (=7), Bánh răng đồng vàng ⚙️ (=3), Khối lập phương tím 🧊 (=2)"
+      ],
+      "quantities_and_ranges": "Giá trị bảng mã từ 1 đến 7; kết quả từ 5 đến 12; luôn có 3 lựa chọn (1 đúng, 2 nhiễu kề sát).",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (chạm chọn 1 trong 3 nút tròn có feedback haptics)"
+        },
+        {
+          "template_id": "GT-010",
+          "template_name": "symbol-substitution (kết hợp chế độ hiển thị options)"
+        }
+      ],
+      "recommended_skills": ["C1.PROB.06", "C3.DED.01", "C3.INF.02"]
+    },
+    {
+      "group_id": "WB12-D5",
+      "group_name": "Kiểm tra và xác minh phép tính Đúng / Sai (Equation Verification / True-False Auditing)",
+      "page_range": "Trang 19 (Sách: Trang 18)",
+      "mechanic_description": "Cỗ máy đưa ra sẵn biểu thức thay thế kèm theo dấu '=' và một kết quả số cụ thể (trong đó có cả kết quả đúng và kết quả sai). Trẻ phải tự tính nhẩm giá trị thực tế của biểu thức rồi đối chiếu với kết quả cho trước, khoanh chọn nút 'ĐÚNG' hoặc 'SAI'. Đây là cấp độ tư duy siêu nhận thức (metacognition) đòi hỏi khả năng phản biện toán học.",
+      "sample_prompts": ["Kiểm tra phép tính • Khoanh ĐÚNG hoặc SAI"],
+      "visual_objects": [
+        "Linh kiện xưởng: Bánh răng lục giác tím ⚙️ (=6), Ống nước công nghiệp xanh lá 🧪 (=4), Cần gạt công tắc cam 🕹️ (=2)"
+      ],
+      "quantities_and_ranges": "Bảng mã: 6, 4, 2. Gồm 4 câu kiểm tra: 2 câu ĐÚNG, 2 câu SAI (bẫy tính toán lệch 1 đơn vị).",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-001",
+          "template_name": "tap-select (2 nút ĐÚNG / SAI với trạng thái highlight nhịp hổ phách/xanh lục)"
+        },
+        {
+          "template_id": "GT-010",
+          "template_name": "symbol-substitution (biến thể verification mode)"
+        }
+      ],
+      "recommended_skills": [
+        "C1.PROB.06",
+        "C3.DED.03",
+        "C1.ADD.04",
+        "C1.SUB.03"
+      ]
+    },
+    {
+      "group_id": "WB12-D6",
+      "group_name": "Thử thách tổng hợp tối cao & Mở khóa viên ngọc (Multi-operand Capstone Challenges - Sums up to 19)",
+      "page_range": "Trang 20 – Trang 22 (Sách: Trang 19 – Trang 21)",
+      "mechanic_description": "Cửa ải cao trào cuối chặng kết hợp mọi kỹ năng đã học: biểu thức lặp lại, đan xen cả cộng và trừ, bảng mã mang giá trị tối đa (9, 8, 5, 3), và đặc biệt ở thử thách cuối cùng (Trang 22) xuất hiện biểu thức 4 toán hạng liên hoàn (A + B + C + C = 19). Hoàn thành 4 phép tính để giải cứu cỗ máy và nhận 'Viên Ngọc Biến Hình'.",
+      "sample_prompts": [
+        "Nhìn bảng mã • Tính kết quả",
+        "Thử thách tổng hợp • Tính thật cẩn thận",
+        "Hoàn thành 4 phép tính • Mở khóa viên ngọc"
+      ],
+      "visual_objects": [
+        "Cánh quạt làm mát 4 cánh 🌀 (=5), Đinh ốc vít xoắn 🔩 (=3), Đai ốc lục giác đỏ 🛑 (=2)",
+        "Ngọc bích lục giác quyền năng 🟢 (=9), Bánh răng nâu ⚙️ (=4), Bu-lông bu lông xanh 🔩 (=2)",
+        "Vương miện hoàng gia 👑 (=8), Khiên hiệp sĩ bạc 🛡️ (=5), Viên ngọc lục bảo đa giác 💎 (=3)"
+      ],
+      "quantities_and_ranges": "Giá trị bảng mã từ 2 đến 9; kết quả phép tính từ 7 đến 19; biểu thức lên đến 4 toán hạng.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-010",
+          "template_name": "symbol-substitution (cấp độ master / boss level)"
+        },
+        {
+          "template_id": "GT-008",
+          "template_name": "drag-to-slot (kéo số mở khoá từng nấc)"
+        }
+      ],
+      "recommended_skills": [
+        "C1.PROB.06",
+        "C1.PROB.01",
+        "C1.ADD.04",
+        "C1.SUB.03"
+      ]
+    },
+    {
+      "group_id": "WB12-D-EXT",
+      "group_name": "Các biến thể mở rộng số hóa cho TiniMath (Digital Game Extensions)",
+      "page_range": "Mở rộng thiết kế game từ nền tảng GT-010",
+      "mechanic_description": "Để khai thác trọn vẹn năng lực của game engine số hóa GT-010 trên TiniMath, ngoài dạng thay thế trực tiếp (D1), hệ thống mở rộng thêm 2 cơ chế giải mã đại số Montessori:",
+      "sub_types": [
+        "Ext-1: Thay thế từ tổng cùng loại (Inverse substitution / Pre-division): n hình giống nhau = Tổng -> 1 hình = Tổng / n (ví dụ: 3 Bánh răng = 6 => 1 Bánh răng = 2). Trẻ dùng trực giác chia đều hạt ngọc để tìm giá trị biểu tượng.",
+        "Ext-2: Hệ 2 dòng phương trình biểu tượng thay thế (System of 2 pictorial equations / Two-tier inference): Dòng 1 cho n hình cùng loại = Tổng để trẻ tìm giá trị hình 1; Dòng 2 chứa hình 1 + hình 2 = Tổng mới -> Trẻ thay giá trị hình 1 vào để suy ra hình 2.",
+        "Ext-3: Bàn cân đại số trực quan (Algebraic Balance Pan): Đặt các biểu tượng và quả cân lên 2 đĩa cân thăng bằng để trẻ tìm khối lượng ẩn của biểu tượng (ánh xạ GT-014 balance-scale)."
+      ],
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-010",
+          "template_name": "symbol-substitution (hệ phương trình hình ảnh)"
+        },
+        {
+          "template_id": "GT-014",
+          "template_name": "balance-scale (bàn cân tìm giá trị ẩn)"
+        }
+      ],
+      "recommended_skills": ["C1.PROB.06", "C3.DED.02", "C1.PROB.03"]
+    }
+  ],
+  "pages_summary": [
+    {
+      "page_number": 1,
+      "book_page_number": null,
+      "file_path": "pages/page-01.jpg",
+      "header_title": "Bìa Chặng 12: Xưởng Máy Biến Hình",
+      "mascot_dialogue": {
+        "banner_text": "CÙNG GẤU LOGIC VÀ THỎ QUAN SÁT GIẢI MÃ CỖ MÁY!",
+        "gau_logic": "Gấu Logic đeo kính kiểm tra bản vẽ thiết kế cỗ máy xưởng với bảng mã số.",
+        "tho_quan_sat": "Thỏ Quan Sát cầm kính lúp hào hứng soi các bánh răng và linh kiện cỗ máy."
+      },
+      "instruction": "Hành trình Chuyến Tàu Toán Học • Mục tiêu cho bé: Quan sát và ghi nhớ, Hiểu phép thay thế, Suy luận, tính toán",
+      "code_table": [
+        {
+          "item_name": "Dâu tây",
+          "visual_emoji": "🍓",
+          "numeric_value": 7
+        },
+        {
+          "item_name": "Bánh kem",
+          "visual_emoji": "🧁",
+          "numeric_value": 5
+        },
+        {
+          "item_name": "Kỳ lân mini",
+          "visual_emoji": "🦄",
+          "numeric_value": 9
+        },
+        {
+          "item_name": "Táo xanh",
+          "visual_emoji": "🍏",
+          "numeric_value": 4
+        }
+      ],
+      "exercises": [
+        {
+          "formula_visual": "Cỗ máy giải mã mật mã [7] [5] [9] [4] [?]",
+          "formula_numeric": "Giải mã chuỗi số từ các biểu tượng",
+          "correct_answer": "Khởi động cỗ máy trung tâm"
+        }
+      ],
+      "hint": "Quan sát bảng mã trên tay Gấu Logic để tìm ra mật mã của cỗ máy.",
+      "learning_focus": "Giới thiệu bối cảnh cốt truyện Xưởng Máy Biến Hình, khơi gợi trí tò mò về quy tắc thay thế hình ảnh thành các con số bí ẩn.",
+      "pedagogical_purpose": "Kích hoạt cảm xúc học tập (Engagement & Curiosity), xác lập mục tiêu học tập rõ ràng trước khi bước vào bài tập cụ thể."
+    },
+    {
+      "page_number": 2,
+      "book_page_number": "Trang 1",
+      "file_path": "pages/page-02.jpg",
+      "header_title": "CỖ MÁY VỪA THỨC GIẤC",
+      "mascot_dialogue": {
+        "gau_logic": "Mỗi hình sẽ biến thành một con số!",
+        "tho_quan_sat": "Bé xem bảng mã rồi tính nhé!"
+      },
+      "instruction": "NHÌN BẢNG MÃ • THAY HÌNH BẰNG SỐ • TÍNH KẾT QUẢ",
+      "code_table": [
+        {
+          "item_name": "Dâu tây đỏ",
+          "visual_emoji": "🍓",
+          "numeric_value": 2
+        },
+        {
+          "item_name": "Bánh kem cupcake hồng",
+          "visual_emoji": "🧁",
+          "numeric_value": 3
+        },
+        {
+          "item_name": "Bánh răng xanh ngọc",
+          "visual_emoji": "⚙️",
+          "numeric_value": 1
+        }
+      ],
+      "sample_example": {
+        "formula_visual": "🍓 + ⚙️",
+        "formula_numeric": "2 + 1",
+        "result": 3
+      },
+      "exercises": [
+        {
+          "exercise_id": 1,
+          "formula_visual": "🍓 + 🧁",
+          "formula_numeric": "2 + 3",
+          "correct_answer": 5
+        },
+        {
+          "exercise_id": 2,
+          "formula_visual": "🧁 - ⚙️",
+          "formula_numeric": "3 - 1",
+          "correct_answer": 2
+        },
+        {
+          "exercise_id": 3,
+          "formula_visual": "⚙️ + ⚙️ + 🍓",
+          "formula_numeric": "1 + 1 + 2",
+          "correct_answer": 4
+        }
+      ],
+      "hint": "Đổi từng hình thành số rồi tính.",
+      "learning_focus": "Làm quen với khái niệm bảng mã quy ước 1-1 và ví dụ mẫu hướng dẫn trực quan; thực hiện cả phép cộng và trừ 2-3 số hạng đơn giản.",
+      "pedagogical_purpose": "Giai đoạn Pictorial sang Abstract đầu tiên trong CPA: trẻ học cách chuyển đổi hình ảnh cụ thể thành con số trừu tượng và thao tác tính toán."
+    },
+    {
+      "page_number": 3,
+      "book_page_number": "Trang 2",
+      "file_path": "pages/page-03.jpg",
+      "header_title": "BẢNG MÃ ĐẦU TIÊN",
+      "mascot_dialogue": {
+        "gau_logic": "Bảng mã đầu tiên đã sáng rồi!",
+        "tho_quan_sat": "Bé thay hình bằng số nhé!"
+      },
+      "instruction": "DỰA VÀO BẢNG MÃ • TÍNH KẾT QUẢ",
+      "code_table": [
+        {
+          "item_name": "Táo đỏ",
+          "visual_emoji": "🍎",
+          "numeric_value": 1
+        },
+        {
+          "item_name": "Ngôi sao vàng",
+          "visual_emoji": "⭐️",
+          "numeric_value": 2
+        },
+        {
+          "item_name": "Robot xanh",
+          "visual_emoji": "🤖",
+          "numeric_value": 3
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_id": 1,
+          "formula_visual": "🍎 + ⭐️",
+          "formula_numeric": "1 + 2",
+          "correct_answer": 3
+        },
+        {
+          "exercise_id": 2,
+          "formula_visual": "⭐️ + 🤖",
+          "formula_numeric": "2 + 3",
+          "correct_answer": 5
+        },
+        {
+          "exercise_id": 3,
+          "formula_visual": "🍎 + 🤖",
+          "formula_numeric": "1 + 3",
+          "correct_answer": 4
+        },
+        {
+          "exercise_id": 4,
+          "formula_visual": "🤖 + ⭐️ + 🍎",
+          "formula_numeric": "3 + 2 + 1",
+          "correct_answer": 6
+        }
+      ],
+      "hint": "Nhìn lại giá trị của từng hình.",
+      "learning_focus": "Rèn luyện quy tắc tra cứu bảng mã và phép cộng 2 số hạng, câu cuối mở rộng thành cộng 3 số hạng có giá trị tăng dần (1, 2, 3).",
+      "pedagogical_purpose": "Củng cố tư duy thay thế và tính chất giao hoán / kết hợp của phép cộng trực quan."
+    },
+    {
+      "page_number": 4,
+      "book_page_number": "Trang 3",
+      "file_path": "pages/page-04.jpg",
+      "header_title": "BĂNG CHUYỀN ĐỒ CHƠI",
+      "mascot_dialogue": {
+        "gau_logic": "Băng chuyền đang chạy rồi!",
+        "tho_quan_sat": "Mình cộng các món đồ nhé!"
+      },
+      "instruction": "DỰA VÀO BẢNG MÃ • TÍNH KẾT QUẢ",
+      "code_table": [
+        {
+          "item_name": "Bóng bay đỏ",
+          "visual_emoji": "🎈",
+          "numeric_value": 2
+        },
+        {
+          "item_name": "Đầu tàu hoả",
+          "visual_emoji": "🚂",
+          "numeric_value": 4
+        },
+        {
+          "item_name": "Gấu bông",
+          "visual_emoji": "🧸",
+          "numeric_value": 1
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_id": 1,
+          "formula_visual": "🎈 + 🧸",
+          "formula_numeric": "2 + 1",
+          "correct_answer": 3
+        },
+        {
+          "exercise_id": 2,
+          "formula_visual": "🚂 + 🧸",
+          "formula_numeric": "4 + 1",
+          "correct_answer": 5
+        },
+        {
+          "exercise_id": 3,
+          "formula_visual": "🎈 + 🚂",
+          "formula_numeric": "2 + 4",
+          "correct_answer": 6
+        },
+        {
+          "exercise_id": 4,
+          "formula_visual": "🧸 + 🎈 + 🚂",
+          "formula_numeric": "1 + 2 + 4",
+          "correct_answer": 7
+        }
+      ],
+      "hint": "Thay từng món đồ bằng số.",
+      "learning_focus": "Phép cộng 2 và 3 số hạng với giá trị lớn hơn (có số 4), tổng đạt đến 7.",
+      "pedagogical_purpose": "Mở rộng giới hạn cộng nhẩm trong phạm vi 10, duy trì khả năng truy xuất quy ước mã số."
+    },
+    {
+      "page_number": 5,
+      "book_page_number": "Trang 4",
+      "file_path": "pages/page-05.jpg",
+      "header_title": "CÁNH TAY MÁY BỊ KẸT",
+      "mascot_dialogue": {
+        "gau_logic": "Cánh tay máy đang bị kẹt rồi!",
+        "tho_quan_sat": "Bé trừ đúng để sửa máy nhé!"
+      },
+      "instruction": "THAY HÌNH BẰNG SỐ • THỰC HIỆN PHÉP TRỪ",
+      "code_table": [
+        {
+          "item_name": "Hộp đồ nghề xanh",
+          "visual_emoji": "🧰",
+          "numeric_value": 6
+        },
+        {
+          "item_name": "Cờ lê cam",
+          "visual_emoji": "🔧",
+          "numeric_value": 2
+        },
+        {
+          "item_name": "Đai ốc vàng",
+          "visual_emoji": "🔩",
+          "numeric_value": 1
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_id": 1,
+          "formula_visual": "🧰 - 🔧",
+          "formula_numeric": "6 - 2",
+          "correct_answer": 4
+        },
+        {
+          "exercise_id": 2,
+          "formula_visual": "🔧 - 🔩",
+          "formula_numeric": "2 - 1",
+          "correct_answer": 1
+        },
+        {
+          "exercise_id": 3,
+          "formula_visual": "🧰 - 🔩",
+          "formula_numeric": "6 - 1",
+          "correct_answer": 5
+        },
+        {
+          "exercise_id": 4,
+          "formula_visual": "🧰 - 🔧 - 🔩",
+          "formula_numeric": "6 - 2 - 1",
+          "correct_answer": 3
+        }
+      ],
+      "hint": "Bắt đầu từ số lớn hơn.",
+      "learning_focus": "Thực hiện phép trừ thay thế biểu tượng; đặc biệt bài tập 4 là phép trừ liên tiếp 3 số hạng (6 - 2 - 1).",
+      "pedagogical_purpose": "Rèn luyện tư duy bớt đi (subtractive logic) và thứ tự trừ liên tiếp từ trái sang phải, không làm đảo thứ tự số bị trừ."
+    },
+    {
+      "page_number": 6,
+      "book_page_number": "Trang 5",
+      "file_path": "pages/page-06.jpg",
+      "header_title": "KHO NĂNG LƯỢNG",
+      "mascot_dialogue": {
+        "gau_logic": "Năng lượng đang bị thất thoát!",
+        "tho_quan_sat": "Bé tính phần còn lại nhé!"
+      },
+      "instruction": "DỰA VÀO BẢNG MÃ • TÌM PHẦN CÒN LẠI",
+      "code_table": [
+        {
+          "item_name": "Viên ngọc xanh lá",
+          "visual_emoji": "💎",
+          "numeric_value": 8
+        },
+        {
+          "item_name": "Bình pin năng lượng",
+          "visual_emoji": "🔋",
+          "numeric_value": 3
+        },
+        {
+          "item_name": "Tia chớp vàng",
+          "visual_emoji": "⚡️",
+          "numeric_value": 2
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_id": 1,
+          "formula_visual": "💎 - 🔋",
+          "formula_numeric": "8 - 3",
+          "correct_answer": 5
+        },
+        {
+          "exercise_id": 2,
+          "formula_visual": "🔋 - ⚡️",
+          "formula_numeric": "3 - 2",
+          "correct_answer": 1
+        },
+        {
+          "exercise_id": 3,
+          "formula_visual": "💎 - ⚡️",
+          "formula_numeric": "8 - 2",
+          "correct_answer": 6
+        },
+        {
+          "exercise_id": 4,
+          "formula_visual": "💎 - 🔋 - ⚡️",
+          "formula_numeric": "8 - 3 - 2",
+          "correct_answer": 3
+        }
+      ],
+      "hint": "Trừ lần lượt từ trái sang phải.",
+      "learning_focus": "Phép trừ với số bị trừ lớn (8) và trừ liên tiếp 3 số hạng; củng cố nguyên tắc 'tìm phần còn lại' trong tư duy giải toán.",
+      "pedagogical_purpose": "Giúp trẻ vững vàng với thao tác trừ nhẩm trong phạm vi 10 và làm chủ thứ tự tính toán cơ bản."
+    },
+    {
+      "page_number": 7,
+      "book_page_number": "Trang 6",
+      "file_path": "pages/page-07.jpg",
+      "header_title": "MÁY TRỘN TRÁI CÂY",
+      "mascot_dialogue": {
+        "gau_logic": "Máy trộn cần đúng công thức!",
+        "tho_quan_sat": "Bé chú ý cả dấu cộng và trừ nhé!"
+      },
+      "instruction": "THAY HÌNH BẰNG SỐ • TÍNH TỪ TRÁI SANG PHẢI",
+      "code_table": [
+        {
+          "item_name": "Quả cam",
+          "visual_emoji": "🍊",
+          "numeric_value": 4
+        },
+        {
+          "item_name": "Quả lê xanh",
+          "visual_emoji": "🍐",
+          "numeric_value": 2
+        },
+        {
+          "item_name": "Chùm cherry đỏ",
+          "visual_emoji": "🍒",
+          "numeric_value": 1
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_id": 1,
+          "formula_visual": "🍊 + 🍐 - 🍒",
+          "formula_numeric": "4 + 2 - 1",
+          "correct_answer": 5
+        },
+        {
+          "exercise_id": 2,
+          "formula_visual": "🍐 + 🍒 + 🍒",
+          "formula_numeric": "2 + 1 + 1",
+          "correct_answer": 4
+        },
+        {
+          "exercise_id": 3,
+          "formula_visual": "🍊 - 🍒 + 🍐",
+          "formula_numeric": "4 - 1 + 2",
+          "correct_answer": 5
+        },
+        {
+          "exercise_id": 4,
+          "formula_visual": "🍊 + 🍐 + 🍒",
+          "formula_numeric": "4 + 2 + 1",
+          "correct_answer": 7
+        }
+      ],
+      "hint": "Tính lần lượt từ trái sang phải.",
+      "learning_focus": "Bắt đầu bước chuyển tiếp quan trọng: kết hợp hỗn hợp cả dấu '+' và '-' trong cùng một biểu thức 3 toán hạng.",
+      "pedagogical_purpose": "Rèn luyện tính linh hoạt của nhận thức (Cognitive Flexibility): chuyển đổi mượt mà giữa thao tác gộp thêm và bớt đi."
+    },
+    {
+      "page_number": 8,
+      "book_page_number": "Trang 7",
+      "file_path": "pages/page-08.jpg",
+      "header_title": "ỐNG DẪN KẸO NGỌT",
+      "mascot_dialogue": {
+        "gau_logic": "Dòng kẹo đang chạy quá nhanh!",
+        "tho_quan_sat": "Bé tính đúng để mở van nhé!"
+      },
+      "instruction": "THAY HÌNH BẰNG SỐ • TÍNH TỪ TRÁI SANG PHẢI",
+      "code_table": [
+        {
+          "item_name": "Bánh donut dâu",
+          "visual_emoji": "🍩",
+          "numeric_value": 5
+        },
+        {
+          "item_name": "Kẹo mút xoắn cầu vồng",
+          "visual_emoji": "🍭",
+          "numeric_value": 3
+        },
+        {
+          "item_name": "Viên kẹo bọc xanh",
+          "visual_emoji": "🍬",
+          "numeric_value": 2
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_id": 1,
+          "formula_visual": "🍩 - 🍭 + 🍬",
+          "formula_numeric": "5 - 3 + 2",
+          "correct_answer": 4
+        },
+        {
+          "exercise_id": 2,
+          "formula_visual": "🍭 + 🍬 + 🍬",
+          "formula_numeric": "3 + 2 + 2",
+          "correct_answer": 7
+        },
+        {
+          "exercise_id": 3,
+          "formula_visual": "🍩 - 🍬 + 🍭",
+          "formula_numeric": "5 - 2 + 3",
+          "correct_answer": 6
+        },
+        {
+          "exercise_id": 4,
+          "formula_visual": "🍩 + 🍭 - 🍬",
+          "formula_numeric": "5 + 3 - 2",
+          "correct_answer": 6
+        }
+      ],
+      "hint": "Chú ý cả dấu cộng và dấu trừ.",
+      "learning_focus": "Phép tính hỗn hợp với giá trị số tăng lên 5, 3, 2; rèn luyện khả năng quan sát kỹ dấu phép tính để tránh nhầm lẫn.",
+      "pedagogical_purpose": "Phát triển khả năng ức chế xung động (Inhibitory Control) - không vội cộng hay trừ theo quán tính mà phải kiểm tra kỹ từng toán tử."
+    },
+    {
+      "page_number": 9,
+      "book_page_number": "Trang 8",
+      "file_path": "pages/page-09.jpg",
+      "header_title": "BUỒNG PHA MÀU",
+      "mascot_dialogue": {
+        "gau_logic": "Các ống màu đang trộn lẫn rồi!",
+        "tho_quan_sat": "Bé giúp máy pha đúng nhé!"
+      },
+      "instruction": "THAY HÌNH BẰNG SỐ • TÍNH TỪ TRÁI SANG PHẢI",
+      "code_table": [
+        {
+          "item_name": "Khay pha màu",
+          "visual_emoji": "🎨",
+          "numeric_value": 4
+        },
+        {
+          "item_name": "Tuýp sơn đỏ",
+          "visual_emoji": "🧴",
+          "numeric_value": 3
+        },
+        {
+          "item_name": "Cọ vẽ lông nâu",
+          "visual_emoji": "🖌️",
+          "numeric_value": 1
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_id": 1,
+          "formula_visual": "🎨 + 🧴 - 🖌️",
+          "formula_numeric": "4 + 3 - 1",
+          "correct_answer": 6
+        },
+        {
+          "exercise_id": 2,
+          "formula_visual": "🧴 + 🖌️ + 🖌️",
+          "formula_numeric": "3 + 1 + 1",
+          "correct_answer": 5
+        },
+        {
+          "exercise_id": 3,
+          "formula_visual": "🎨 - 🖌️ + 🧴",
+          "formula_numeric": "4 - 1 + 3",
+          "correct_answer": 6
+        },
+        {
+          "exercise_id": 4,
+          "formula_visual": "🎨 + 🧴 + 🖌️",
+          "formula_numeric": "4 + 3 + 1",
+          "correct_answer": 8
+        }
+      ],
+      "hint": "Thực hiện từ phép tính đầu tiên.",
+      "learning_focus": "Hoàn thiện kỹ năng tính toán hỗn hợp 3 toán hạng (+ và -) với các linh kiện mỹ thuật; chuẩn bị bước vào giai đoạn hình ảnh lặp lại.",
+      "pedagogical_purpose": "Tự động hóa kỹ năng thay thế 1-1 và thứ tự tính toán từ trái sang phải thành phản xạ thuần thục."
+    },
+    {
+      "page_number": 10,
+      "book_page_number": "Trang 9",
+      "file_path": "pages/page-10.jpg",
+      "header_title": "BÁNH RĂNG LẶP LẠI",
+      "mascot_dialogue": {
+        "gau_logic": "Một hình có thể xuất hiện nhiều lần!",
+        "tho_quan_sat": "Bé nhớ cộng đủ từng hình nhé!"
+      },
+      "instruction": "MỖI LẦN XUẤT HIỆN • TÍNH THÊM MỘT LẦN",
+      "code_table": [
+        {
+          "item_name": "Bánh răng xanh dương",
+          "visual_emoji": "⚙️",
+          "numeric_value": 2
+        },
+        {
+          "item_name": "Lò xo vàng",
+          "visual_emoji": "🌀",
+          "numeric_value": 3
+        },
+        {
+          "item_name": "Nút bấm đỏ",
+          "visual_emoji": "🔘",
+          "numeric_value": 1
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_id": 1,
+          "formula_visual": "⚙️ + ⚙️",
+          "formula_numeric": "2 + 2",
+          "correct_answer": 4
+        },
+        {
+          "exercise_id": 2,
+          "formula_visual": "🌀 + 🌀 - 🔘",
+          "formula_numeric": "3 + 3 - 1",
+          "correct_answer": 5
+        },
+        {
+          "exercise_id": 3,
+          "formula_visual": "🔘 + ⚙️ + ⚙️",
+          "formula_numeric": "1 + 2 + 2",
+          "correct_answer": 5
+        },
+        {
+          "exercise_id": 4,
+          "formula_visual": "🌀 + ⚙️ + 🌀",
+          "formula_numeric": "3 + 2 + 3",
+          "correct_answer": 8
+        }
+      ],
+      "hint": "Hình lặp lại vẫn giữ nguyên giá trị.",
+      "learning_focus": "Biểu tượng xuất hiện lặp lại 2 lần trong biểu thức (2 bánh răng, 2 lò xo); khái niệm bảo toàn giá trị biến số.",
+      "pedagogical_purpose": "Đặt viên gạch đầu tiên cho phép nhân sơ cấp (A + A = 2 × A) và giúp trẻ hiểu rằng cùng một biểu tượng trong một hệ thống luôn có giá trị không đổi."
+    },
+    {
+      "page_number": 11,
+      "book_page_number": "Trang 10",
+      "file_path": "pages/page-11.jpg",
+      "header_title": "DÂY CHUYỀN BÁNH NGỌT",
+      "mascot_dialogue": {
+        "gau_logic": "Bánh ngọt đang chạy thành từng nhóm!",
+        "tho_quan_sat": "Bé đếm đủ các hình lặp lại nhé!"
+      },
+      "instruction": "MỖI HÌNH XUẤT HIỆN • TÍNH MỘT LẦN",
+      "code_table": [
+        {
+          "item_name": "Bánh quy sô-cô-la",
+          "visual_emoji": "🍪",
+          "numeric_value": 2
+        },
+        {
+          "item_name": "Bánh xoắn pretzel",
+          "visual_emoji": "🥨",
+          "numeric_value": 4
+        },
+        {
+          "item_name": "Bánh macaron hồng",
+          "visual_emoji": "🥯",
+          "numeric_value": 1
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_id": 1,
+          "formula_visual": "🍪 + 🍪 + 🥯",
+          "formula_numeric": "2 + 2 + 1",
+          "correct_answer": 5
+        },
+        {
+          "exercise_id": 2,
+          "formula_visual": "🥨 - 🍪 + 🥯",
+          "formula_numeric": "4 - 2 + 1",
+          "correct_answer": 3
+        },
+        {
+          "exercise_id": 3,
+          "formula_visual": "🥯 + 🥨 + 🥨",
+          "formula_numeric": "1 + 4 + 4",
+          "correct_answer": 9
+        },
+        {
+          "exercise_id": 4,
+          "formula_visual": "🥨 + 🍪 - 🍪",
+          "formula_numeric": "4 + 2 - 2",
+          "correct_answer": 4
+        }
+      ],
+      "hint": "Không bỏ sót hình giống nhau.",
+      "learning_focus": "Hình lặp lại kết hợp phép cộng và trừ; đặc biệt bài tập 4 giới thiệu tính chất triệt tiêu (Inverse property: + 2 - 2 = 0).",
+      "pedagogical_purpose": "Khai mở trực giác đại số: cộng rồi trừ đi cùng một lượng thì giá trị ban đầu không đổi."
+    },
+    {
+      "page_number": 12,
+      "book_page_number": "Trang 11",
+      "file_path": "pages/page-12.jpg",
+      "header_title": "MÁY NHÂN BẢN ĐỒ CHƠI",
+      "mascot_dialogue": {
+        "gau_logic": "Cỗ máy đã tạo ra nhiều món giống nhau!",
+        "tho_quan_sat": "Bé cộng đủ từng món nhé!"
+      },
+      "instruction": "HÌNH LẶP LẠI • GIÁ TRỊ KHÔNG THAY ĐỔI",
+      "code_table": [
+        {
+          "item_name": "Tên lửa vũ trụ đỏ",
+          "visual_emoji": "🚀",
+          "numeric_value": 3
+        },
+        {
+          "item_name": "Khối lego xanh",
+          "visual_emoji": "🧱",
+          "numeric_value": 2
+        },
+        {
+          "item_name": "Quả bóng vàng sọc",
+          "visual_emoji": "⚽️",
+          "numeric_value": 1
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_id": 1,
+          "formula_visual": "🚀 + 🚀",
+          "formula_numeric": "3 + 3",
+          "correct_answer": 6
+        },
+        {
+          "exercise_id": 2,
+          "formula_visual": "🧱 + 🧱 + ⚽️",
+          "formula_numeric": "2 + 2 + 1",
+          "correct_answer": 5
+        },
+        {
+          "exercise_id": 3,
+          "formula_visual": "🚀 + ⚽️ + 🚀",
+          "formula_numeric": "3 + 1 + 3",
+          "correct_answer": 7
+        },
+        {
+          "exercise_id": 4,
+          "formula_visual": "🚀 + 🧱 + ⚽️",
+          "formula_numeric": "3 + 2 + 1",
+          "correct_answer": 6
+        }
+      ],
+      "hint": "Đếm số lần mỗi hình xuất hiện.",
+      "learning_focus": "Củng cố nhận thức về hình lặp lại xen kẽ (🚀 + ⚽️ + 🚀) và phân biệt với trường hợp 3 hình khác nhau.",
+      "pedagogical_purpose": "Tăng cường năng lực chú ý thị giác phân tán (Visual Selective Attention) khi xử lý các chuỗi đối tượng tương tự nhau."
+    },
+    {
+      "page_number": 13,
+      "book_page_number": "Trang 12",
+      "file_path": "pages/page-13.jpg",
+      "header_title": "PHÒNG MÃ SỐ SẮC MÀU",
+      "mascot_dialogue": {
+        "gau_logic": "Các bình màu mang giá trị mới!",
+        "tho_quan_sat": "Bé xem kỹ bảng mã nhé!"
+      },
+      "instruction": "GIÁ TRỊ LỚN HƠN • TÍNH THẬT CẨN THẬN",
+      "code_table": [
+        {
+          "item_name": "Bình thí nghiệm tròn tím",
+          "visual_emoji": "🧪",
+          "numeric_value": 7
+        },
+        {
+          "item_name": "Bình tam giác vàng",
+          "visual_emoji": "⚗️",
+          "numeric_value": 4
+        },
+        {
+          "item_name": "Cụm tinh thể pha lê xanh",
+          "visual_emoji": "🔮",
+          "numeric_value": 2
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_id": 1,
+          "formula_visual": "🧪 - ⚗️ + 🔮",
+          "formula_numeric": "7 - 4 + 2",
+          "correct_answer": 5
+        },
+        {
+          "exercise_id": 2,
+          "formula_visual": "⚗️ + 🔮 + 🧪",
+          "formula_numeric": "4 + 2 + 7",
+          "correct_answer": 13
+        },
+        {
+          "exercise_id": 3,
+          "formula_visual": "🧪 + 🔮 + 🔮",
+          "formula_numeric": "7 + 2 + 2",
+          "correct_answer": 11
+        },
+        {
+          "exercise_id": 4,
+          "formula_visual": "🧪 + 🧪 - ⚗️",
+          "formula_numeric": "7 + 7 - 4",
+          "correct_answer": 10
+        }
+      ],
+      "hint": "Tính từ trái sang phải.",
+      "learning_focus": "Bước nhảy độ khó: Bảng mã đưa vào số 7; tổng các phép tính vượt qua ngưỡng 10 (11, 13); xuất hiện phép tính 7 + 7 - 4.",
+      "pedagogical_purpose": "Thử thách giới hạn tính nhẩm của trẻ trong phạm vi 10–15, rèn luyện tính kiên trì và tư duy số học quy mô lớn."
+    },
+    {
+      "page_number": 14,
+      "book_page_number": "Trang 13",
+      "file_path": "pages/page-14.jpg",
+      "header_title": "TRẠM THÚ CƯNG CƠ KHÍ",
+      "mascot_dialogue": {
+        "gau_logic": "Các bạn máy đang chờ mã số!",
+        "tho_quan_sat": "Bé giúp từng bạn nhé!"
+      },
+      "instruction": "NHÌN BẢNG MÃ • TÍNH KẾT QUẢ",
+      "code_table": [
+        {
+          "item_name": "Mèo robot xanh ngọc",
+          "visual_emoji": "🐱",
+          "numeric_value": 6
+        },
+        {
+          "item_name": "Chó robot cam",
+          "visual_emoji": "🐶",
+          "numeric_value": 5
+        },
+        {
+          "item_name": "Gà con robot vàng",
+          "visual_emoji": "🐤",
+          "numeric_value": 2
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_id": 1,
+          "formula_visual": "🐱 + 🐤",
+          "formula_numeric": "6 + 2",
+          "correct_answer": 8
+        },
+        {
+          "exercise_id": 2,
+          "formula_visual": "🐶 + 🐤 + 🐤",
+          "formula_numeric": "5 + 2 + 2",
+          "correct_answer": 9
+        },
+        {
+          "exercise_id": 3,
+          "formula_visual": "🐱 + 🐶 - 🐤",
+          "formula_numeric": "6 + 5 - 2",
+          "correct_answer": 9
+        },
+        {
+          "exercise_id": 4,
+          "formula_visual": "🐱 + 🐶 + 🐤",
+          "formula_numeric": "6 + 5 + 2",
+          "correct_answer": 13
+        }
+      ],
+      "hint": "Thay mỗi bạn bằng giá trị tương ứng.",
+      "learning_focus": "Cộng dồn 3 số hạng (6 + 5 + 2 = 13), phép tính hỗn hợp có tổng trung gian vượt 10 (6 + 5 = 11, rồi trừ 2 còn 9).",
+      "pedagogical_purpose": "Thực hành tính toán qua ngưỡng 10 hai bước (two-step addition & subtraction across 10)."
+    },
+    {
+      "page_number": 15,
+      "book_page_number": "Trang 14",
+      "file_path": "pages/page-15.jpg",
+      "header_title": "TRẠM BẦU TRỜI",
+      "mascot_dialogue": {
+        "gau_logic": "Máy chiếu bầu trời cần mã mới!",
+        "tho_quan_sat": "Bé tính để thắp sáng nhé!"
+      },
+      "instruction": "GIÁ TRỊ LỚN HƠN • TÍNH THẬT CẨN THẬN",
+      "code_table": [
+        {
+          "item_name": "Mặt trăng khuyết xanh",
+          "visual_emoji": "🌙",
+          "numeric_value": 8
+        },
+        {
+          "item_name": "Sao băng rực rỡ",
+          "visual_emoji": "☄️",
+          "numeric_value": 5
+        },
+        {
+          "item_name": "Đám mây trắng",
+          "visual_emoji": "☁️",
+          "numeric_value": 2
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_id": 1,
+          "formula_visual": "🌙 - ☄️ + ☁️",
+          "formula_numeric": "8 - 5 + 2",
+          "correct_answer": 5
+        },
+        {
+          "exercise_id": 2,
+          "formula_visual": "☄️ + ☁️ + ☁️",
+          "formula_numeric": "5 + 2 + 2",
+          "correct_answer": 9
+        },
+        {
+          "exercise_id": 3,
+          "formula_visual": "🌙 + ☄️ - ☁️",
+          "formula_numeric": "8 + 5 - 2",
+          "correct_answer": 11
+        },
+        {
+          "exercise_id": 4,
+          "formula_visual": "🌙 + 🌙 - ☄️",
+          "formula_numeric": "8 + 8 - 5",
+          "correct_answer": 11
+        }
+      ],
+      "hint": "Thực hiện từ trái sang phải.",
+      "learning_focus": "Bảng mã có số 8; phép tính 8 + 8 - 5 = 11 (tổng trung gian 16); so sánh hai biểu thức khác nhau nhưng cho cùng kết quả 11.",
+      "pedagogical_purpose": "Xây dựng nhận thức về tính tương đương của các biểu thức toán học (Equivalence of Expressions)."
+    },
+    {
+      "page_number": 16,
+      "book_page_number": "Trang 15",
+      "file_path": "pages/page-16.jpg",
+      "header_title": "BẢNG ĐIỀU KHIỂN BA NÚT",
+      "mascot_dialogue": {
+        "gau_logic": "Mỗi hàng có ba nút kết quả!",
+        "tho_quan_sat": "Bé tính rồi khoanh nút đúng nhé!"
+      },
+      "instruction": "TÍNH KẾT QUẢ • KHOANH VÀO NÚT ĐÚNG",
+      "code_table": [
+        {
+          "item_name": "Cần gạt joystick đỏ",
+          "visual_emoji": "🕹️",
+          "numeric_value": 4
+        },
+        {
+          "item_name": "Nút ấn xanh dương",
+          "visual_emoji": "🔘",
+          "numeric_value": 3
+        },
+        {
+          "item_name": "Nút ấn xanh lá",
+          "visual_emoji": "🟢",
+          "numeric_value": 2
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_id": 1,
+          "formula_visual": "🕹️ + 🔘",
+          "formula_numeric": "4 + 3",
+          "correct_answer": 7,
+          "choices": [6, 7, 8],
+          "distractor_analysis": "Nhiễu 6 (sai sót -1), nhiễu 8 (sai sót +1)"
+        },
+        {
+          "exercise_id": 2,
+          "formula_visual": "🔘 + 🟢 + 🟢",
+          "formula_numeric": "3 + 2 + 2",
+          "correct_answer": 7,
+          "choices": [7, 8, 9],
+          "distractor_analysis": "Nhiễu 8 (cộng thừa 1), nhiễu 9 (nhầm 3 + 3 + 3)"
+        },
+        {
+          "exercise_id": 3,
+          "formula_visual": "🕹️ - 🟢 + 🔘",
+          "formula_numeric": "4 - 2 + 3",
+          "correct_answer": 5,
+          "choices": [4, 6, 5],
+          "distractor_analysis": "Nhiễu 4 (nhầm phép tính), nhiễu 6 (quên trừ)"
+        },
+        {
+          "exercise_id": 4,
+          "formula_visual": "🕹️ + 🔘 + 🟢",
+          "formula_numeric": "4 + 3 + 2",
+          "correct_answer": 9,
+          "choices": [10, 9, 8],
+          "distractor_analysis": "Nhiễu 10 (cộng quá 1), nhiễu 8 (cộng thiếu 1)"
+        }
+      ],
+      "hint": "Mỗi hàng chỉ có một đáp án đúng.",
+      "learning_focus": "Chuyển đổi hình thức tương tác sang trắc nghiệm 3 lựa chọn (Multiple Choice); rèn luyện kỹ năng phân biệt đáp án đúng giữa các phương án nhiễu kề sát.",
+      "pedagogical_purpose": "Áp dụng kỹ năng loại trừ (Elimination) và rèn luyện tính chính xác tuyệt đối trong môi trường có yếu tố nhiễu thị giác."
+    },
+    {
+      "page_number": 17,
+      "book_page_number": "Trang 16",
+      "file_path": "pages/page-17.jpg",
+      "header_title": "MÁY CHỌN KẾT QUẢ",
+      "mascot_dialogue": {
+        "gau_logic": "Cỗ máy cần một kết quả chính xác!",
+        "tho_quan_sat": "Bé tính rồi chọn một nút nhé!"
+      },
+      "instruction": "TÍNH KẾT QUẢ • KHOANH VÀO NÚT ĐÚNG",
+      "code_table": [
+        {
+          "item_name": "Bóng đèn vàng",
+          "visual_emoji": "💡",
+          "numeric_value": 5
+        },
+        {
+          "item_name": "Chìa khoá cơ khí",
+          "visual_emoji": "🗝️",
+          "numeric_value": 4
+        },
+        {
+          "item_name": "Nút bấm đỏ tròn",
+          "visual_emoji": "🔴",
+          "numeric_value": 1
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_id": 1,
+          "formula_visual": "💡 + 🗝️ - 🔴",
+          "formula_numeric": "5 + 4 - 1",
+          "correct_answer": 8,
+          "choices": [7, 8, 9],
+          "distractor_analysis": "Nhiễu 7 (-1), nhiễu 9 (bỏ quên dấu trừ)"
+        },
+        {
+          "exercise_id": 2,
+          "formula_visual": "🗝️ + 🔴 + 🔴",
+          "formula_numeric": "4 + 1 + 1",
+          "correct_answer": 6,
+          "choices": [6, 7, 5],
+          "distractor_analysis": "Nhiễu 7 (+1), nhiễu 5 (-1)"
+        },
+        {
+          "exercise_id": 3,
+          "formula_visual": "💡 + 💡 - 🗝️",
+          "formula_numeric": "5 + 5 - 4",
+          "correct_answer": 6,
+          "choices": [5, 7, 6],
+          "distractor_analysis": "Nhiễu 5 (-1), nhiễu 7 (+1)"
+        },
+        {
+          "exercise_id": 4,
+          "formula_visual": "💡 + 🗝️ + 🔴",
+          "formula_numeric": "5 + 4 + 1",
+          "correct_answer": 10,
+          "choices": [11, 10, 9],
+          "distractor_analysis": "Nhiễu 11 (+1), nhiễu 9 (-1)"
+        }
+      ],
+      "hint": "Mỗi hàng chỉ có một đáp án đúng.",
+      "learning_focus": "Trắc nghiệm 3 nút chọn kết hợp với các phép tính đạt mốc tròn chục (10); phương án đúng nằm ở nhiều vị trí khác nhau.",
+      "pedagogical_purpose": "Thử thách tính chính xác của nhận thức, ngăn chặn thói quen đoán mò theo vị trí nút bấm."
+    },
+    {
+      "page_number": 18,
+      "book_page_number": "Trang 17",
+      "file_path": "pages/page-18.jpg",
+      "header_title": "BẢNG NÚT BỊ ĐẢO",
+      "mascot_dialogue": {
+        "gau_logic": "Các nút kết quả đã bị đảo vị trí!",
+        "tho_quan_sat": "Bé tính kỹ trước khi chọn nhé!"
+      },
+      "instruction": "TÍNH KẾT QUẢ • KHOANH VÀO NÚT ĐÚNG",
+      "code_table": [
+        {
+          "item_name": "Kim cương xanh ngọc",
+          "visual_emoji": "💎",
+          "numeric_value": 7
+        },
+        {
+          "item_name": "Bánh răng vàng",
+          "visual_emoji": "⚙️",
+          "numeric_value": 3
+        },
+        {
+          "item_name": "Khối hộp tím",
+          "visual_emoji": "🧊",
+          "numeric_value": 2
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_id": 1,
+          "formula_visual": "💎 + ⚙️",
+          "formula_numeric": "7 + 3",
+          "correct_answer": 10,
+          "choices": [10, 9, 11],
+          "correct_index": 0,
+          "distractor_analysis": "Nhiễu 9 (-1), 11 (+1). Nút đúng ở vị trí TRÁI."
+        },
+        {
+          "exercise_id": 2,
+          "formula_visual": "⚙️ + 🧊 + 🧊",
+          "formula_numeric": "3 + 2 + 2",
+          "correct_answer": 7,
+          "choices": [6, 8, 7],
+          "correct_index": 2,
+          "distractor_analysis": "Nhiễu 6 (-1), 8 (+1). Nút đúng ở vị trí PHẢI."
+        },
+        {
+          "exercise_id": 3,
+          "formula_visual": "💎 - 🧊 + ⚙️",
+          "formula_numeric": "7 - 2 + 3",
+          "correct_answer": 8,
+          "choices": [7, 8, 9],
+          "correct_index": 1,
+          "distractor_analysis": "Nhiễu 7 (-1), 9 (+1). Nút đúng ở vị trí GIỮA."
+        },
+        {
+          "exercise_id": 4,
+          "formula_visual": "💎 + ⚙️ + 🧊",
+          "formula_numeric": "7 + 3 + 2",
+          "correct_answer": 12,
+          "choices": [13, 11, 12],
+          "correct_index": 2,
+          "distractor_analysis": "Nhiễu 13 (+1), 11 (-1). Nút đúng ở vị trí PHẢI."
+        }
+      ],
+      "hint": "Đáp án đúng không ở cùng một vị trí.",
+      "learning_focus": "Xáo trộn vị trí nút đúng một cách có chủ đích (Trái - Phải - Giữa - Phải); dải số kết quả lên đến 12.",
+      "pedagogical_purpose": "Huấn luyện kiểm soát thị giác chủ động (Active Visual Scanning) và tư duy phản biện độc lập trước các lựa chọn thay đổi liên tục."
+    },
+    {
+      "page_number": 19,
+      "book_page_number": "Trang 18",
+      "file_path": "pages/page-19.jpg",
+      "header_title": "TRẠM KIỂM TRA KẾT QUẢ",
+      "mascot_dialogue": {
+        "gau_logic": "Có vài kết quả chưa chính xác!",
+        "tho_quan_sat": "Bé khoanh ĐÚNG hoặc SAI nhé!"
+      },
+      "instruction": "KIỂM TRA PHÉP TÍNH • KHOANH ĐÚNG HOẶC SAI",
+      "code_table": [
+        {
+          "item_name": "Bánh răng tím",
+          "visual_emoji": "⚙️",
+          "numeric_value": 6
+        },
+        {
+          "item_name": "Ống nước xanh lá",
+          "visual_emoji": "🧪",
+          "numeric_value": 4
+        },
+        {
+          "item_name": "Cần gạt cam",
+          "visual_emoji": "🕹️",
+          "numeric_value": 2
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_id": 1,
+          "formula_visual": "⚙️ + 🧪 = 10",
+          "formula_numeric": "6 + 4 = 10",
+          "stated_result": 10,
+          "actual_calculation": 10,
+          "correct_answer": "ĐÚNG",
+          "distractor_analysis": "Phép tính hoàn toàn chính xác."
+        },
+        {
+          "exercise_id": 2,
+          "formula_visual": "🧪 + 🕹️ + 🕹️ = 9",
+          "formula_numeric": "4 + 2 + 2 = 9",
+          "stated_result": 9,
+          "actual_calculation": 8,
+          "correct_answer": "SAI",
+          "distractor_analysis": "Cỗ máy in sai số 9 thay vì 8 (sai lệch 1 đơn vị)."
+        },
+        {
+          "exercise_id": 3,
+          "formula_visual": "⚙️ - 🕹️ + 🧪 = 8",
+          "formula_numeric": "6 - 2 + 4 = 8",
+          "stated_result": 8,
+          "actual_calculation": 8,
+          "correct_answer": "ĐÚNG",
+          "distractor_analysis": "Phép tính hỗn hợp hoàn toàn chính xác."
+        },
+        {
+          "exercise_id": 4,
+          "formula_visual": "⚙️ + 🧪 - 🕹️ = 7",
+          "formula_numeric": "6 + 4 - 2 = 7",
+          "stated_result": 7,
+          "actual_calculation": 8,
+          "correct_answer": "SAI",
+          "distractor_analysis": "Cỗ máy in sai số 7 thay vì 8 (trừ nhầm 3 hoặc nhầm lẫn)."
+        }
+      ],
+      "hint": "Tính lại trước khi khoanh.",
+      "learning_focus": "Dạng bài kiểm định chân lý toán học (Equation Verification / True-False Auditing): bé đóng vai thanh tra kiểm toán kết quả của cỗ máy.",
+      "pedagogical_purpose": "Phát triển năng lực siêu nhận thức (Metacognition) - khả năng tự kiểm tra, đối chiếu dữ liệu và phát hiện sai sót của người khác."
+    },
+    {
+      "page_number": 20,
+      "book_page_number": "Trang 19",
+      "file_path": "pages/page-20.jpg",
+      "header_title": "KHO LINH KIỆN CUỐI XƯỞNG",
+      "mascot_dialogue": {
+        "gau_logic": "Chúng mình sắp sửa xong cỗ máy rồi!",
+        "tho_quan_sat": "Bé tính thêm một trạm nữa nhé!"
+      },
+      "instruction": "NHÌN BẢNG MÃ • TÍNH KẾT QUẢ",
+      "code_table": [
+        {
+          "item_name": "Cánh quạt xanh dương",
+          "visual_emoji": "🌀",
+          "numeric_value": 5
+        },
+        {
+          "item_name": "Đinh ốc vít xoắn",
+          "visual_emoji": "🔩",
+          "numeric_value": 3
+        },
+        {
+          "item_name": "Đai ốc đỏ",
+          "visual_emoji": "🛑",
+          "numeric_value": 2
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_id": 1,
+          "formula_visual": "🌀 + 🔩 + 🛑",
+          "formula_numeric": "5 + 3 + 2",
+          "correct_answer": 10
+        },
+        {
+          "exercise_id": 2,
+          "formula_visual": "🌀 + 🌀 - 🔩",
+          "formula_numeric": "5 + 5 - 3",
+          "correct_answer": 7
+        },
+        {
+          "exercise_id": 3,
+          "formula_visual": "🔩 + 🛑 + 🛑",
+          "formula_numeric": "3 + 2 + 2",
+          "correct_answer": 7
+        },
+        {
+          "exercise_id": 4,
+          "formula_visual": "🌀 + 🔩 + 🔩",
+          "formula_numeric": "5 + 3 + 3",
+          "correct_answer": 11
+        }
+      ],
+      "hint": "Hình lặp lại giữ nguyên giá trị.",
+      "learning_focus": "Bước chuẩn bị cho thử thách trung tâm: kết hợp cả hình lặp lại, phép tính hỗn hợp và tổng vượt ngưỡng 10.",
+      "pedagogical_purpose": "Củng cố tính vững vàng của kỹ năng tổng hợp trước khi bước vào 2 trang thử thách quyết định."
+    },
+    {
+      "page_number": 21,
+      "book_page_number": "Trang 20",
+      "file_path": "pages/page-21.jpg",
+      "header_title": "CỖ MÁY TRUNG TÂM",
+      "mascot_dialogue": {
+        "gau_logic": "Đây là bộ phận quan trọng nhất!",
+        "tho_quan_sat": "Bé tính đúng để khởi động nhé!"
+      },
+      "instruction": "THỬ THÁCH TỔNG HỢP • TÍNH THẬT CẨN THẬN",
+      "code_table": [
+        {
+          "item_name": "Ngọc bích lục giác quyền năng",
+          "visual_emoji": "🟢",
+          "numeric_value": 9
+        },
+        {
+          "item_name": "Bánh răng nâu cam",
+          "visual_emoji": "⚙️",
+          "numeric_value": 4
+        },
+        {
+          "item_name": "Bu-lông vít xanh",
+          "visual_emoji": "🔩",
+          "numeric_value": 2
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_id": 1,
+          "formula_visual": "🟢 + ⚙️ - 🔩",
+          "formula_numeric": "9 + 4 - 2",
+          "correct_answer": 11
+        },
+        {
+          "exercise_id": 2,
+          "formula_visual": "⚙️ + 🔩 + 🔩",
+          "formula_numeric": "4 + 2 + 2",
+          "correct_answer": 8
+        },
+        {
+          "exercise_id": 3,
+          "formula_visual": "🟢 + 🟢 - ⚙️",
+          "formula_numeric": "9 + 9 - 4",
+          "correct_answer": 14
+        },
+        {
+          "exercise_id": 4,
+          "formula_visual": "🟢 + ⚙️ + 🔩",
+          "formula_numeric": "9 + 4 + 2",
+          "correct_answer": 15
+        }
+      ],
+      "hint": "Kiểm tra lại trước khi điền.",
+      "learning_focus": "Bảng mã mang giá trị cao nhất (9, 4, 2); xuất hiện phép tính 9 + 9 - 4 = 14 và 9 + 4 + 2 = 15; đòi hỏi năng lực tính nhẩm cao độ.",
+      "pedagogical_purpose": "Đẩy năng lực nhận thức lên đỉnh điểm của phạm vi 15, chứng minh sự tiến bộ vượt bậc so với trang 1."
+    },
+    {
+      "page_number": 22,
+      "book_page_number": "Trang 21",
+      "file_path": "pages/page-22.jpg",
+      "header_title": "MỞ KHÓA VIÊN NGỌC",
+      "mascot_dialogue": {
+        "gau_logic": "Chỉ còn khóa cuối cùng thôi!",
+        "tho_quan_sat": "Bé hoàn thành để nhận viên ngọc nhé!"
+      },
+      "instruction": "HOÀN THÀNH 4 PHÉP TÍNH • MỞ KHÓA VIÊN NGỌC",
+      "code_table": [
+        {
+          "item_name": "Vương miện hoàng gia vàng",
+          "visual_emoji": "👑",
+          "numeric_value": 8
+        },
+        {
+          "item_name": "Khiên hiệp sĩ bạc",
+          "visual_emoji": "🛡️",
+          "numeric_value": 5
+        },
+        {
+          "item_name": "Viên ngọc lục bảo xanh lá",
+          "visual_emoji": "💎",
+          "numeric_value": 3
+        }
+      ],
+      "exercises": [
+        {
+          "exercise_id": 1,
+          "formula_visual": "👑 + 💎",
+          "formula_numeric": "8 + 3",
+          "correct_answer": 11
+        },
+        {
+          "exercise_id": 2,
+          "formula_visual": "🛡️ + 💎 + 💎",
+          "formula_numeric": "5 + 3 + 3",
+          "correct_answer": 11
+        },
+        {
+          "exercise_id": 3,
+          "formula_visual": "👑 + 🛡️ - 💎",
+          "formula_numeric": "8 + 5 - 3",
+          "correct_answer": 10
+        },
+        {
+          "exercise_id": 4,
+          "formula_visual": "👑 + 🛡️ + 💎 + 💎",
+          "formula_numeric": "8 + 5 + 3 + 3",
+          "correct_answer": 19
+        }
+      ],
+      "hint": "Bình tĩnh tính từ trái sang phải.",
+      "learning_focus": "Thử thách trùm cuối (Final Boss Challenge): bài tập 4 là biểu thức 4 toán hạng liên hoàn (8 + 5 + 3 + 3), kết quả đạt tới 19 sát ngưỡng 20.",
+      "pedagogical_purpose": "Capstone Achievement - Tổng hòa mọi năng lực đại số sơ cấp, tính nhẩm nhiều bước, và sự tập trung bền bỉ để mở khóa phần thưởng tối cao."
+    },
+    {
+      "page_number": 23,
+      "book_page_number": "Trang 22",
+      "file_path": "pages/page-23.jpg",
+      "header_title": "HOÀN THÀNH CHẶNG 12: XƯỞNG MÁY BIẾN HÌNH",
+      "mascot_dialogue": {
+        "gau_logic": "Cỗ máy đã hoạt động trở lại!",
+        "tho_quan_sat": "Bé đã giải mã thật xuất sắc!"
+      },
+      "instruction": "Phần thưởng danh giá: VIÊN NGỌC BIẾN HÌNH • Đã hoàn thành 12/16 Chặng trên Đường Ray Chuyến Tàu Toán Học",
+      "skills_mastered_badge": [
+        "Quan sát bảng mã",
+        "Thay hình bằng số",
+        "Cộng và trừ chính xác",
+        "Kiểm tra kết quả"
+      ],
+      "completion_record": {
+        "checkpoint_name": "Xưởng máy biến hình",
+        "checkpoint_index": 12,
+        "total_checkpoints": 16,
+        "reward_item": "Viên Ngọc Biến Hình 💎 (Màu lục giác xanh lá rực sáng trung tâm cỗ máy)"
+      },
+      "hint": "Chúc mừng bé đã xuất sắc hoàn thành trạm thứ 12!",
+      "learning_focus": "Tổng kết thành quả học tập, củng cố sự tự tin (Self-efficacy), trao huy hiệu hoàn thành và cập nhật bản đồ lộ trình.",
+      "pedagogical_purpose": "Tạo vòng lặp phản hồi tích cực (Gamification Feedback Loop), ghi nhận nỗ lực của trẻ và khích lệ tiến sang chặng 13 (Học viện thám tử số học)."
+    }
+  ]
+}

@@ -32,11 +32,11 @@ Mỗi dòng là một quyết định đã chốt, kèm lý do.
 
 | #       | Quyết định                                                                                                                                                                                                                                                                                                       | Lý do                                                                                                                                                                                                                                                                      |
 | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **D1**  | **Hai lớp dữ liệu tách bạch**: _code-owned master_ (bất biến, seed từ hằng số TS, admin read-only) vs _admin-owned content_ (studio CRUD, có version, có duyệt)                                                                                                                                                  | Taxonomy/emoji/gói/entitlement key mà sửa được từ UI thì mọi FK và mọi báo cáo lịch sử đều mất neo. Game level/lesson/curriculum thì ngược lại — phải lớn nhanh hơn tốc độ tuyển dev                                                                                       |
+| **D1**  | **Toàn bộ dữ liệu chuẩn và nội dung học tập là code-owned**: định nghĩa trong hằng số TS (`packages/*`), nạp cứng idempotent vào DB qua seeder, admin read-only                                                                                                                                                  | Quản lý toàn bộ taxonomy, gói, game level, curriculum và skill dataset trong repo giúp kiểm soát chất lượng qua cổng tự động + PR review, tái lập môi trường 100%, loại bỏ độ phức tạp của Studio CRUD và cổng duyệt runtime                                                |
 | **D2**  | **Template + Instance** thay cho 60 Session class rời                                                                                                                                                                                                                                                            | Một template phục vụ hàng chục mục tiêu học tập. Đổi `content_pack` → game khác hẳn về sư phạm, 0 dòng code                                                                                                                                                                |
 | **D3**  | **Catalog MVP đúng 2 SKU**: `standard`, `premium`. Premium bao hàm quyền _học_ của Creator. Quyền _tạo_ nằm ở add-on, **spec đủ nhưng chưa bán**                                                                                                                                                                 | Bán gói không mở được tính năng nào là vấn đề đạo đức thương mại. Add-on lên catalog cùng lúc với tính năng của nó                                                                                                                                                         |
-| **D4**  | **Không có thư viện ảnh.** Emoji là kho cố định. Ảnh upload gắn chủ sở hữu là content item, không có pool duyệt lại                                                                                                                                                                                              | Thư viện ảnh dùng chung kéo theo governance: ai xoá được, xoá thì content nào chết, bản quyền của ai. Chi phí đó không đáng ở MVP                                                                                                                                          |
-| **D5**  | **Nội dung đã publish bất biến.** Sửa = tạo version mới. Play session ghim `content_version`                                                                                                                                                                                                                     | Báo cáo học tập của một đứa trẻ phải giải thích được bằng đúng nội dung nó đã chơi, không phải bản đã sửa sau đó                                                                                                                                                           |
+| **D4**  | **Không có thư viện ảnh hay kho asset động.** Emoji (`packages/emoji`) là kho cố định duy nhất cho vật liệu hiển thị                                                                                                                                                                                             | Loại bỏ hoàn toàn bảng lưu trữ ảnh/audio động (`content_images`, `content_audio`, `content_asset_refs`) và pipeline upload phức tạp; emoji tải tức thì, chi phí bằng 0, đồng nhất trên mọi môi trường                                                                      |
+| **D5**  | **Mỗi mã nội dung là duy nhất (1 dòng trên mỗi `code`), không đa version.** `game_levels`, `curricula`, `skill_datasets` có `code UNIQUE` và dùng `id` trực tiếp                                                                                                                                                 | Nội dung được quản lý phiên bản ngay trong Git qua seeder; bỏ cơ chế đa version (`entity_id`, `content_version`, trạng thái duyệt Studio) trong DB giúp truy vấn, FK và telemetry đơn giản, minh bạch                                                                      |
 | **D6**  | **Tuân thủ Luật Bảo vệ dữ liệu cá nhân 91/2025/QH15, Nghị định 13/2023 và Luật Trẻ em (VN)** là ràng buộc thiết kế, không phải checklist cuối                                                                                                                                                                    | Thu dữ liệu trẻ vượt nhu cầu là thứ không rút lại được sau khi đã ghi; Luật 91/2025/QH15 đã có hiệu lực từ 01/01/2026 và là căn cứ hiện hành không được bỏ sót                                                                                                             |
 | **D7**  | **AI soạn trong repo, người merge.** AI agent IDE hỗ trợ viết seeder nội dung và code; cổng người là **PR review**, và merge chính là phát hành. Cấm có LLM nào chạy trong hệ thống để sinh nội dung                                                                                                             | Ranh giới cũ ("NEVER để AI sinh nội dung cốt lõi") đặt sai chỗ. Cái cần cấm không phải việc **soạn thảo**, mà việc **phát hành không có người kiểm**. Đặt cổng ở PR thì cổng đó có diff, có `git blame`, và revert được bằng một lệnh                                      |
 | **D8**  | **Tên dự án là MindKid.** Package scope `@mindkid/*`, domain và mọi chuỗi hiển thị người dùng dùng tên này | Product owner chốt thương hiệu trước dòng code đầu tiên, để không phải đổi tên giữa chừng khi đã có package, domain trỏ DNS và nội dung đã phát hành |
@@ -55,24 +55,23 @@ người + AI agent IDE ──soạn──► file trong repo ──cổng tự 
 
 | Luồng            | Soạn gì                                                                                                   | Cổng                                                                           | Spec                                               |
 | ---------------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ | -------------------------------------------------- |
-| **Nội dung nền** | Seeder cho game level · learning objective · lesson · curriculum, chia theo **năng lực C1–C6 × template** | 8 cổng tự động → PR review → `pnpm --filter @mindkid/db seed:content` ghi thẳng `published`         | `docs/specs/01-platform/content-seed-authoring.md` |
+| **Nội dung nền** | Seeder cho game level · learning objective · curriculum · skill dataset, chia theo **năng lực C1–C6** | 10 cổng tự động → PR review → `pnpm --filter @mindkid/content-build seed:content` nạp trực tiếp vào DB | `docs/specs/01-platform/content-seed-authoring.md` |
 | **Code**         | Zod · Drizzle · route skeleton · test từ Gherkin · Session class                                          | PR có người review; sáu vùng nhạy cảm cần review tăng cường (cổng so spec ↔ code đã gỡ 2026-08-29) | `docs/specs/01-platform/ai-codegen-pipeline.md`    |
 
 **Ngoại lệ Task #14, chốt ngày 2026-08-09:** trong phạm vi triển khai
 [`14-implementation-sequence-plan.md`](tasks/14-implementation-sequence-plan.md), AI được phép
 sinh code trong sáu vùng nhạy cảm: auth · thanh toán · gating · dữ liệu trẻ · code điều phối
-migration · xử lý nội dung đã `published`. Mỗi increment ở các vùng này phải đi từ spec tới
+migration · xử lý nội dung. Mỗi increment ở các vùng này phải đi từ spec tới
 test âm, qua `pnpm check` + `pnpm test`, rồi được người review diff trước merge.
 
 Ngoại lệ chỉ mở quyền **soạn code trong repo**. Nó không cho phép auto-merge, chạy migration
-ngoài local, sửa trực tiếp hàng `published`, chạy transition publish, hoặc phát hành nội dung.
+ngoài local, hoặc phát hành nội dung không qua review.
 Mọi invariant ở mục 7.3 của
 [`business-rules.md`](specs/00-foundation/business-rules.md) giữ nguyên. Ranh giới review tăng
 cường vẫn đặt theo _hậu quả khi sai_, không theo _độ khó khi viết_.
 
-Sau khi seed, nội dung nằm hoàn toàn dưới quyền **admin quản lý trong studio**: sửa = tạo
-version mới, đi đúng máy trạng thái [`content-lifecycle.md`](specs/00-foundation/content-lifecycle.md). Seed **không bao giờ `UPDATE`**
-một hàng đã có.
+Toàn bộ nội dung (`game_levels`, `curricula`, `skill_datasets`) được gán cứng qua seeder dữ liệu;
+không còn UI Authoring Studio hay cơ chế đa version trong DB.
 
 Đây là câu trả lời một phần cho §15 Q3 — nó giảm chi phí **soạn**, không giảm chi phí
 **đọc review**.
@@ -105,7 +104,7 @@ lộ trình mà không phải làm lại nội dung.
 | Tác nhân         | Nhận được gì                                                                                                                                                                               |
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **Trẻ**          | Game hợp tuổi, ít chữ, thao tác lớn, phản hồi tích cực, không áp lực điểm số                                                                                                               |
-| **User**         | Biết trẻ chơi gì, tiến bộ ra sao; chọn được chương trình; quản lý giờ chơi và nhiều hồ sơ trẻ; dùng kho bài giảng và trò chơi đã kiểm duyệt. _(Công cụ tạo nội dung là add-on, ngoài MVP)_ |
+| **User**         | Biết trẻ chơi gì, tiến bộ ra sao; chọn được chương trình; quản lý giờ chơi và nhiều hồ sơ trẻ; dùng kho trò chơi và lộ trình đã kiểm duyệt. _(Công cụ tạo nội dung là add-on, ngoài MVP)_ |
 | **Doanh nghiệp** | Thư viện nội dung sở hữu riêng, tái dùng cho nhiều chương trình và bán được theo gói trên web                                                                                              |
 
 `User` là **một** tác nhân, dùng ở nhà hay trên lớp đều vậy — không có persona, không có
@@ -121,7 +120,7 @@ ra từ entitlement đã mua.
 | **Guest**         | không có record  | không                  | Chưa đăng nhập. Chơi allow-list game `free`, **không lưu tiến độ**                                                                                                                                 |
 | **User**          | `users`          | `requireUserAuth()`    | Một loại duy nhất, không phân biệt dùng ở nhà hay trên lớp. Năng lực = `entitlements[]`. Vào bằng mật khẩu **hoặc** SNS (Google/Facebook) — nhiều SNS trên một tài khoản, `password_hash` nullable |
 | **Child profile** | `child_profiles` | không (thuộc User)     | 1–5 mỗi User, tuổi 3–6, **không có tài khoản riêng, không có credential**                                                                                                                          |
-| **Manager**       | `managers`       | `requireManagerAuth()` | `role`: `super_admin` \| `content_reviewer`. Vận hành, biên soạn, duyệt nội dung, duyệt thanh toán                                                                                                 |
+| **Manager**       | `managers`       | `requireManagerAuth()` | `role`: `super_admin` \| `content_reviewer`. Vận hành, duyệt thanh toán, tra cứu taxonomy/catalog, kiểm toán hệ thống                                                                                                 |
 
 Manager **không tự đăng ký** — không endpoint public nào tạo manager, và Manager
 **không bao giờ đăng nhập bằng SNS** (`BR-AUT-15`).
@@ -136,7 +135,7 @@ nhất** — nó không thay MFA (`BR-MFA-09`).
 | **Public**  | `{domain}`         | Khách chưa đăng nhập | LP, chương trình theo C1–C6, catalog game, pricing, SEO, pháp lý     |
 | **Play**    | `{domain}/play/**` | Trẻ 3–6              | Canvas game engine. **Core business.** Light-only, không `dark:`     |
 | **Account** | `{domain}/me/**`   | User đã đăng nhập    | Dashboard, quản lý trẻ, báo cáo, thư viện, thanh toán                |
-| **Admin**   | `admin.{domain}`   | Manager              | Dashboard, users, authoring studio, duyệt thanh toán, catalog, audit |
+| **Admin**   | `admin.{domain}`   | Manager              | Dashboard, users, duyệt thanh toán, catalog, taxonomy, audit         |
 
 ### 1.5 Access ladder — bốn bậc bao hàm
 
@@ -179,17 +178,13 @@ curriculum đặc biệt. Đây là hiệu chỉnh so với PRD: không tách g�
 
 | Add-on             | `code`              | Mở gì                                            | Bán lại khi                                 |
 | ------------------ | ------------------- | ------------------------------------------------ | ------------------------------------------- |
-| Soạn giáo án       | `addon_lesson_plan` | Lesson Plan Creator, export PDF                  | Creator UI chạy + Lesson Library có dữ liệu |
 | Curriculum cá nhân | `addon_curriculum`  | Tạo và lưu curriculum riêng                      | Curriculum Builder cá nhân chạy             |
 | Game cá nhân       | `addon_custom_game` | Custom Game Builder từ template                  | Builder + validation chạy                   |
-| AI hỗ trợ          | `addon_ai`          | Tóm tắt báo cáo, gợi ý nội dung, semantic search | Ledger credit tồn tại + UI chạy             |
+| AI hỗ trợ          | `addon_ai`          | Tóm tắt báo cáo, gợi ý nội dung                  | Ledger credit tồn tại + UI chạy             |
 
 Add-on là **trục độc lập**: không mở tier game, và không gói nào tự động kèm add-on.
 _Lý do:_ chi phí AI là biến phí theo lượt dùng; gộp vào thuê bao cố định làm mất kiểm soát
 KPI chi phí. Công cụ tạo nội dung có chi phí hỗ trợ và kiểm duyệt riêng.
-
-**"Build game custom theo yêu cầu" không phải SKU tự phục vụ** — báo giá tay, Manager tạo
-trong studio rồi gán.
 
 **Thanh toán MVP: VietQR chuyển khoản + Manager duyệt tay.** Không cổng tự động.
 
@@ -208,7 +203,7 @@ trong studio rồi gán.
 | Kỹ thuật    | Uptime SLO                            | 99,7%                          |
 |             | API P95                               | < 800 ms                       |
 |             | Game engine                           | 60 fps trên tablet Android 2GB |
-| Nội dung    | Skill có ≥ 1 game level published     | 100% skill `seeded`            |
+| Nội dung    | Skill có ≥ 1 game level               | 100% skill `seeded`            |
 | Sư phạm     | Task Comprehension (lượt đầu)         | ≥ 85% phân tầng nhóm tuổi      |
 |             | Independent Transition (sau trợ giúp) | ≥ 75% phân tầng competency     |
 |             | Strategy Exploration (sau retry)      | ≥ 70%                          |
@@ -224,7 +219,6 @@ trong studio rồi gán.
 | Learning Objective    |                                            **≥ 690** (≥3 mỗi skill) | 1.500–2.500 |
 | Game Template         |                                                               **6** |       25–30 |
 | Game Level (instance) |                                      **≥ 120** (≥20 mỗi competency) |      3.000+ |
-| Lesson                |                                                            **≥ 60** | 1.500–2.500 |
 | Curriculum            | **5** (4 theo tuổi + 1 chương trình 42 tuần, phát hành 12 tuần đầu) |        8–10 |
 
 Đủ để một trẻ quay lại trong **4–8 tuần** — tiêu chí MVP thành công. Cột "Sau MVP" là mốc
@@ -237,23 +231,18 @@ Hiện trạng đo 2026-10-18 (đã vượt sàn MVP ở ba lớp): **76** stran
 
 ## 2. Kiến trúc nội dung
 
-### 2.1 Hai lớp dữ liệu — quyết định D1
+### 2.1 Dữ liệu code-owned nạp cứng từ seeder — quyết định D1
 
-|                   | **Lớp 1 — Code-owned master**                                                                                                                                                                | **Lớp 2 — Admin-owned content**                                                                               |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| Nguồn sự thật     | Hằng số TS trong `packages/*`, seed idempotent vào DB                                                                                                                                        | DB, tạo qua Authoring Studio                                                                                  |
-| Admin làm được gì | **Chỉ đọc.** Không tạo, không sửa, không xoá                                                                                                                                                 | CRUD đầy đủ + duyệt + publish                                                                                 |
-| Đổi bằng cách nào | Sửa hằng số → PR → migration/seed → deploy                                                                                                                                                   | Studio, không cần deploy                                                                                      |
-| Có version không  | Version của code                                                                                                                                                                             | **Có** — §2.7                                                                                                 |
-| Bảng              | `competencies` `strands` `skills` `learning_objectives` `skill_prerequisites` `packages` `package_entitlements` `entitlement_keys` `themes` `content_tags` | `game_levels` `lessons` `activities` `curricula` `curriculum_items` `worksheets` `content_images` `seo_pages` |
-
-**Ở MVP Lớp 2 được seed sẵn** đủ số lượng §1.8, **và** studio hoạt động để mở rộng tiếp.
-Seeder là cách nạp lô đầu; studio là cách nội dung lớn về sau. Hai đường ghi vào cùng một
-bảng, cùng một validation, cùng một audit trail.
+|                   | **Danh mục nền (Master)**                                                                                                                               | **Nội dung học tập (Content)**                                                                |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Nguồn sự thật     | Hằng số TS trong `packages/*`, seed idempotent vào DB                                                                                                   | Hằng số TS trong `packages/content/`, nạp cứng idempotent vào DB qua `@mindkid/content-build` |
+| Admin làm được gì | **Chỉ đọc.** Không tạo, không sửa, không xoá                                                                                                            | **Chỉ đọc.** Không còn Authoring Studio hay cổng duyệt runtime                                |
+| Đổi bằng cách nào | Sửa hằng số → PR → migration/seed → deploy                                                                                                              | Sửa seeder trong repo → 10 cổng tự động → PR review → seed → deploy                          |
+| Cơ chế định danh  | `code` UNIQUE, `id` bigserial                                                                                                                           | `code` UNIQUE (1 dòng duy nhất mỗi mã), dùng `id` trực tiếp (không đa version trong DB)      |
+| Bảng              | `competencies` `strands` `skills` `learning_objectives` `skill_prerequisites` `packages` `package_entitlements` `entitlement_keys` `content_tags` | `skill_datasets` `game_levels` `game_level_rounds` `curricula` `curriculum_items`             |
 
 **Mã bất biến sau khi phát hành:** `skills.code` · `learning_objectives.code` ·
-`packages.code` · `entitlement_keys.key` · `game_levels.code` ·
-`lessons.code`.
+`packages.code` · `entitlement_keys.key` · `game_levels.code` · `curricula.code`.
 
 Đặt rồi không đổi, không chèn giữa, không tái dùng số của bản đã xoá.
 Format mã skill bị ép: `^C[1-6]\.[A-Z]{2,5}\.\d{2}$` — ví dụ `C1.CNT.03`.
@@ -265,7 +254,7 @@ L1  COMPETENCY          6      C1..C6
      └ L2  STRAND       41     C1.CNT Counting, C2.ORI Orientation, …
          └ L3  SKILL    230    C1.CNT.03 "đếm trong phạm vi 5"
              └ L4  LEARNING OBJECTIVE  ≥690   một hành vi quan sát được
-                 └ L5  ASSET   game_level | lesson | worksheet | flashcard
+                 └ L5  ASSET   game_level
 ```
 
 | ID     | Competency                               | Strand |   Skill |
@@ -369,32 +358,16 @@ engine trong lúc trẻ đang chơi.
 hiện có 38 khuôn. Độ phủ 60 dạng được đo ở
 [`source-game-type-coverage.md`](specs/08-quality/source-game-type-coverage.md).
 
-### 2.5 Lesson và Activity
+### 2.5 Đơn vị nội dung học tập
 
-**Lesson** (Lớp 2) = đơn vị dạy học hoàn chỉnh, Manager biên soạn:
-
-```
-code · title · learning_objective_ids · target_age · estimated_minutes
-materials · guide · warm_up · main_activities[] · digital_games[]
-offline_activities[] · reflection · assessment · extension
-```
-
-**Activity** = hoạt động nhỏ tái sử dụng được. Loại: `digital_game` `discussion`
-`storytelling` `movement` `manipulative` `worksheet` `observation` `mini_project`
-`assessment` `home_activity`.
-
-Quan hệ: một Lesson có nhiều Activity · một Activity dùng được trong nhiều Lesson ·
-một Game Level có thể là một Activity · một Lesson thuộc được nhiều Curriculum.
-
-`lessons` (hệ thống, có duyệt) **tách hoàn toàn** khỏi `lesson_plans` (User tạo, add-on,
-không duyệt, không vào catalog công khai). `lesson_plans` **tham chiếu** `lessons`.
+**Game Level** là đơn vị học tập và tương tác cốt lõi trên nền tảng (`kind = 'teach'` cho màn làm quen khái niệm, `kind = 'assess'` cho màn chơi thực hành). Mọi bước tương tác trong lộ trình học tập đều quy về `game_levels`.
 
 ### 2.6 Curriculum = playlist
 
-Curriculum **không phải tài sản gốc**. Là một **thứ tự** trên thư viện.
+Curriculum **không phải tài sản gốc**. Là một **thứ tự** trên thư viện `game_levels`.
 
 ```
-Curriculum → Level → Module → Week → Session → Lesson → Activity/Game
+Curriculum → Week → Session → Game Level
 ```
 
 Không curriculum nào bắt buộc có đủ mọi tầng; DB hỗ trợ đủ.
@@ -402,71 +375,35 @@ Không curriculum nào bắt buộc có đủ mọi tầng; DB hỗ trợ đủ.
 `program_type ∈ {age_based, competency_based, skill_based, school_readiness, logic_focus,
 spatial_focus, custom}`.
 
-Cùng một Lesson Library sinh ra 42 tuần, 56 tuần, Fast Track, Logic Track, School
+Cùng một thư viện `game_levels` sinh ra lộ trình 36–42 tuần, Fast Track, Logic Track, School
 Readiness — **không biên soạn lại nội dung**.
 
 **Adaptive ≠ Curriculum.** Adaptive điều chỉnh _trong_ phạm vi bước hiện tại (chọn biến
 thể, đổi `difficulty_params`). Cấm — **NEVER cho adaptive nhảy bước curriculum** — nó không có
 thông tin để phủ quyết thứ tự sư phạm do người biên soạn quyết định.
 
-### 2.7 Vòng đời nội dung và versioning — quyết định D5
+### 2.7 Quản lý nội dung qua seeder — quyết định D5
 
-```
-draft ──→ in_review ──→ approved ──→ published ──→ archived
-             │                           │
-             └──→ rejected               └──→ (sửa) tạo version mới ở draft
-```
+Toàn bộ nội dung (`game_levels`, `curricula`, `skill_datasets`) được gán cứng qua seeder dữ liệu trong repo:
+- Đã bỏ cơ chế đa version (`packages/db/src/schema/versioning.ts`), bỏ máy trạng thái 6 bước của Studio (`draft/in_review/approved/published/archived/rejected`) và bảng `content_review_log`, `content_seed_batches`.
+- Mỗi `code` trong `game_levels`, `curricula`, `skill_datasets` là `UNIQUE` (1 dòng duy nhất), dùng `id` trực tiếp (không có các cột `entity_id`, `content_version`, `status`, `origin`, `authored_in`, `seed_batch_id`, `created_by_manager_id`, `reviewed_by_manager_id`, `published_at`, `archived_at`).
+- Các bảng phiên chơi và thống kê (`play_sessions`, `telemetry_events`, `child_session_summaries`, `level_daily_stats`) trỏ trực tiếp tới `game_levels.id` / `curricula.id`, không có cột `content_version`.
+- **Xoá nội dung đang được dùng** (`telemetry_events` trỏ tới, hoặc nằm trong `curriculum_items`) bị chặn bởi khoá ngoại / toàn vẹn dữ liệu để không làm mồ côi dữ liệu học tập của trẻ.
 
-Áp cho: `game_levels` `lessons` `activities` `curricula` `worksheets` `seo_pages`.
+### 2.8 Asset — kho emoji cố định — quyết định D4
 
-| Quy tắc                           | Ràng buộc                                                                                     |
-| --------------------------------- | --------------------------------------------------------------------------------------------- |
-| Nội dung `published` **bất biến** | Mọi UPDATE lên hàng `published` bị từ chối ở tầng service                                     |
-| Sửa → tạo version mới             | `content_version` tăng, bản cũ chuyển `archived`, giữ nguyên hàng                             |
-| Play session ghim version         | `play_sessions.content_version` — báo cáo cũ vẫn giải thích được                              |
-| Rollback được                     | Publish lại một version `archived`                                                            |
-| Có changelog                      | `content_review_log` INSERT-only: ai, khi nào, từ trạng thái nào sang trạng thái nào, ghi chú |
+| Thuộc tính | **Emoji** |
+| ---------- | --------- |
+| Lớp        | Code-owned, cố định |
+| Nguồn      | `packages/emoji` — 32 nhóm phân theo chủ đề học |
+| Sở hữu     | Hệ thống |
+| Tái dùng   | Vô hạn |
 
-Dù MVP chỉ có một Super Admin, workflow vẫn giữ đủ 6 trạng thái. _Lý do:_ nó không tốn
-thêm gì, và nó là thứ chặn xuất bản nhầm — nội dung sai gây hại cho trẻ.
-
-**Xoá nội dung đang được dùng** (`telemetry_events` trỏ tới, hoặc nằm trong
-`curriculum_items`) → **409** kèm danh sách nơi đang dùng. Xoá cứng làm mồ côi dữ liệu học
-tập của trẻ.
-
-### 2.8 Asset — emoji cố định, ảnh không có thư viện — quyết định D4
-
-|                | **Emoji**                                            | **Ảnh upload**                              |
-| -------------- | ---------------------------------------------------- | ------------------------------------------- |
-| Lớp            | 1 — code-owned, cố định                              | 2 — thuộc content item                      |
-| Nguồn          | `packages/emoji` — 32 nhóm phân theo chủ đề học      | Manager upload trong studio                 |
-| Duyệt lại được | picker, tìm bằng **tiếng Việt**, 32 nhóm, 12 gần đây | **không có pool, không có picker**          |
-| Sở hữu         | Hệ thống                                             | `(entity_type, entity_id)` của content item |
-| Tái dùng       | Vô hạn                                               | Upload lại                                  |
-
-Emoji là vật liệu chính vì trẻ 3–6 chưa đọc chữ và emoji là glyph nhanh nhất để giải mã;
-chi phí bằng 0, tải tức thì, dễ xây theme.
+Đã loại bỏ hoàn toàn các bảng lưu trữ ảnh/audio động (`content_images`, `content_audio`, `content_asset_refs`) và luồng upload ảnh từ Studio. Emoji là vật liệu hiển thị chính vì trẻ 3–6 chưa đọc chữ và emoji là glyph nhanh nhất để giải mã; chi phí bằng 0, tải tức thì, dễ xây theme.
 
 **Ranh giới cứng: emoji chỉ làm nội dung, không bao giờ làm affordance.** Nav, button, HUD
 control, trạng thái đều dùng SVG (`i-lucide-*`). Emoji render khác nhau theo OS, không
-recolour được, không mang được focus ring.
-
-**Pipeline ảnh:**
-
-```
-Chọn/kéo ảnh → modal crop (mặc định 1:1, xoay 90°, preview CỠ THẬT TRONG GAME)
-             → canvas cắt ở client → upload
-             → server: kiểm MIME thật, WebP, ≤960×960, S3, trả { path }
-```
-
-| Quy tắc                                                                         | Lý do                                            |
-| ------------------------------------------------------------------------------- | ------------------------------------------------ |
-| MIME ∈ {jpeg, png, webp}, ≤ 2 MB, kết quả ≤ 960×960 WebP — kiểm **cả hai phía** | Không tin kích thước client khai báo             |
-| Cấm — **NEVER cho upload SVG**                                                  | Có thể chứa script                               |
-| DB lưu **`path` tương đối**, URL dựng lúc đọc                                   | Đổi CDN/bucket không làm chết mọi content đã tạo |
-| Crop client = quyết định **biên tập**; resize server = ràng buộc **kỹ thuật**   | Hai việc khác nhau, không thay thế nhau          |
-| Preview ở **cỡ thật trong game**                                                | Ảnh ổn ở 400px có thể vô nghĩa ở 96px            |
-| Cấm — **NEVER ảnh chụp trẻ em** — avatar trẻ chỉ chọn từ bộ preset              | §4                                               |
+recolour được, không mang được focus ring. Avatar trẻ chỉ chọn từ bộ preset của hệ thống — **NEVER ảnh chụp trẻ em** (§4).
 
 ---
 
@@ -495,12 +432,10 @@ _Lý do:_ đổi package không phải sửa code game.
 | `view_basic_report`                     |               | mọi User đã đăng nhập     |
 | `view_advanced_report`                  |               | standard, premium         |
 | `access_premium_curriculum`             |               | premium                   |
-| `create_lesson_plan`                    | Cấm spec-only | `addon_lesson_plan`       |
-| `duplicate_lesson` · `customize_lesson` | Cấm spec-only | `addon_lesson_plan`       |
 | `create_custom_curriculum`              | Cấm spec-only | `addon_curriculum`        |
 | `create_custom_game`                    | Cấm spec-only | `addon_custom_game`       |
 | `use_ai_analysis`                       | Cấm spec-only | `addon_ai`                |
-| `export_pdf`                            | Cấm spec-only | `addon_lesson_plan`       |
+| `export_pdf`                            | Cấm spec-only | `addon_curriculum`        |
 
 `entitlement_keys` là Lớp 1. Một key tồn tại mà không gate được gì là một key sẽ bị dùng sai
 — key add-on được khai báo nhưng **không gói MVP nào cấp**.
@@ -511,7 +446,6 @@ _Lý do:_ đổi package không phải sửa code game.
 | -------------------------- | --------------------: | -------: | -----------: |
 | Số child profile           |                     1 |        3 |            5 |
 | Phút chơi mỗi ngày mỗi trẻ | theo healthy-play cap |        ↑ |            ↑ |
-| Giáo án tạo / tháng        |                     — |        — | — _(add-on)_ |
 | Game custom lưu            |                     — |        — | — _(add-on)_ |
 | Lượt AI                    |                     — |        — | — _(add-on)_ |
 | Dung lượng upload          |                     — |        — | — _(add-on)_ |
@@ -522,7 +456,7 @@ _Lý do:_ đổi package không phải sửa code game.
   Không gói nào ghi đè gói khác. Một người dùng sản phẩm ở nhà và trên lớp là ca dùng
   chính, không phải ca lạ.
 - **Hết hạn không xoá dữ liệu.** `expired` chặn nội dung trả phí; `child_profiles`,
-  `mastery_state`, `lesson_plans` giữ nguyên. Mua lại là mở lại, không phải bắt đầu lại.
+  `mastery_state` giữ nguyên. Mua lại là mở lại, không phải bắt đầu lại.
 - **`PACKAGE_CATALOG` là nguồn sự thật duy nhất cho giá và thời hạn.** Không hardcode giá
   ở page, API, email, hay spec. Giá đổi, và một giá copy sang 5 chỗ sẽ đổi được 4.
 - **Khi chặn**: strip `content_pack` và `difficulty_params`, trả `{ access_tier,
@@ -627,22 +561,21 @@ giữ lại (nghĩa vụ pháp lý), không chứa PII của trẻ.
 | **Identity**           | `users` `managers` `active_sessions` `mfa_settings` `verification_tokens` `consent_logs` `consent_requirements` |
 | **Child**              | `child_profiles` `child_session_summaries`                                                                      |
 | **Billing**            | `packages` `package_entitlements` `entitlement_keys` `entitlements` `payment_orders`                            |
-| **Taxonomy** (L1)      | `competencies` `strands` `skills` `skill_prerequisites` `learning_objectives`                                   |
-| **Tagging** (L1)       | `content_tags` `content_tag_map` `content_skill_map`                                                            |
-| **Game**               | `ALL_TEMPLATES` (code registry) · `game_levels` `game_level_versions` (L2)                                     |
-| **Content**            | `lessons` `activities` `lesson_activities` `worksheets` `content_images`                                        |
+| **Taxonomy**           | `competencies` `strands` `skills` `skill_prerequisites` `learning_objectives` `skill_datasets`                  |
+| **Tagging**            | `content_tags` `content_tag_map` `content_skill_map` `user_tags`                                                |
+| **Game**               | `ALL_TEMPLATES` (code registry) · `game_levels` `game_level_rounds`                                             |
 | **Curriculum**         | `curricula` `curriculum_items` `curriculum_enrollments` `curriculum_item_progress`                              |
 | **Play**               | `play_sessions` `telemetry_events`                                                                              |
 | **Adaptive**           | `mastery_state` `level_params`                                                                                  |
-| **Ops**                | `audit_logs` `content_review_log` `notifications` `error_log` `feature_flags`                                   |
-| **Add-on (spec-only)** | `lesson_plans` `lesson_plan_items` `custom_games` `ai_usage_log`                                                |
+| **Ops**                | `audit_logs` `backup_log` `notifications` `notification_deliveries` `error_logs` `feature_flags`                |
+| **Add-on (spec-only)** | `custom_games` `ai_usage_log`                                                                                   |
 
 ### 5.2 Play session
 
 ```
 play_session_id · user_id? · child_profile_id? · guest_device_id?
-game_level_code · content_version · template_code
-curriculum_id? · lesson_id? · skill_ids[]
+game_level_code · template_code
+curriculum_id? · skill_ids[]
 started_at · completed_at · duration_ms
 attempt_count · correct_count · incorrect_count · hint_count · retry_count
 completion_status ∈ {in_progress, completed, abandoned}
@@ -677,8 +610,7 @@ ip_address · user_agent · created_at
 ```
 
 Bắt buộc audit: đăng nhập manager · đổi user · đổi package · duyệt/từ chối thanh toán ·
-cấp entitlement · publish/archive nội dung · xoá nội dung · export dữ liệu · đổi chính
-sách · đổi cấu hình game · đổi feature flag.
+cấp entitlement · export dữ liệu · đổi chính sách · đổi cấu hình game · đổi feature flag.
 
 ### 5.5 Nguyên tắc schema
 
@@ -687,9 +619,9 @@ sách · đổi cấu hình game · đổi feature flag.
 2. **`content_pack` tách khỏi `difficulty_params`.** §2.4.
 3. **`content_skill_map.weight`** cho một asset phục vụ nhiều skill ở mức khác nhau.
 4. **FK polymorphic không ép được ở Postgres** (`content_tag_map`, `content_skill_map`,
-   `content_images`, bảng auth phụ). Toàn vẹn do tầng service giữ + **bắt buộc** integration
+   `curriculum_items`, bảng auth phụ). Toàn vẹn do tầng service giữ + **bắt buộc** integration
    test bắt orphan.
-5. **`audit_logs` · `consent_logs` · `content_review_log` · `telemetry_events` là INSERT-only**
+5. **`audit_logs` · `consent_logs` · `telemetry_events` là INSERT-only**
    (`play_sessions` cũng vậy, chỉ sau khi `status = completed` — xem `BR-SPT-07`).
    (**D-BV**, T15, 2026-08-09: SPEC.md gọi bảng này `play_events` từ bản 2.0.0, nhưng
    [`schema-play-telemetry.md`](specs/01-platform/schema-play-telemetry.md) — spec sở hữu
@@ -719,7 +651,7 @@ sách · đổi cấu hình game · đổi feature flag.
 | UI kit               | **Nuxt UI v4** + Tailwind v4                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Cấm tái sinh shadcn-vue                                                                                                                                                                                                                                                                                                                                                                                                          |
 | Icon                 | `i-lucide-*` qua `<UIcon>`                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | một library duy nhất                                                                                                                                                                                                                                                                                                                                                                                                             |
 | Game engine          | **Canvas 2D thuần TS**, 60 fps                                                                                                                                                                                                                                                                                                                                                                                                                                                              | Cấm Vue/Pinia/VueUse trong engine                                                                                                                                                                                                                                                                                                                                                                                                |
-| Validation           | **Zod** trên mọi biên                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| Validation           | **Zod** trên mọi biên + **`@t3-oss/env-nuxt` `^0.13`** cho biến môi trường Nuxt (đồng bộ với `ENV_REGISTRY` trong `@mindkid/config`)                                                                                                                                                                                             |                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | Lint/format          | **Biome 2** (`^2.5.7`, CLI chạy thật) — `ultracite` `~6.5.1` chỉ làm **preset**                                                                                                                                                                                                                                                                                                                                                                                                             | `ultracite ≥7` đã bỏ Biome sang oxlint; CLI `ultracite check` nuốt lỗi lint (exit 0 sai) — xem [`repo-bootstrap.md`](specs/00-foundation/repo-bootstrap.md) §7.1                                                                                                                                                                                                                                                                 |
 | Test                 | **Vitest 4** · **Playwright** · `fast-check` · k6 · `@axe-core/playwright`                                                                                                                                                                                                                                                                                                                                                                                                                  |                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | Storage              | S3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |                                                                                                                                                                                                                                                                                                                                                                                                                                  |
@@ -782,14 +714,14 @@ bash infra/scripts/deploy.sh                  # check → build → rsync → pm
 mindkid/
 ├── apps/                              3 workspace app
 │   ├── web/          Nuxt 4 — public + play + account + API        :3000
-│   ├── admin/        Nuxt 4 SPA tĩnh — authoring studio + vận hành (admin.{domain})
+│   ├── admin/        Nuxt 4 SPA tĩnh — quản trị & vận hành         (admin.{domain})
 │   └── worker/       Nitro — BullMQ consumer (email, export, job)  :3099
 ├── packages/                          20 package
 │   ├── config/       Biome preset, TSConfig base, hằng số dùng chung
 │   ├── shared/       Zod schema, type, constant — KHÔNG logic
 │   ├── db/           Drizzle schema, migration, seed
 │   │   └── src/seed-master/    Lớp 1 — taxonomy, template, emoji, package
-│   │   └── src/seed-content/   Lớp 2 — game level, lesson, curriculum
+│   │   └── src/seed-content/   Lớp 2 — game level, curriculum
 │   ├── auth/         opaque session/remember/challenge, Redis adapter, guard, CSRF
 │   ├── cache/        unstorage driver redis (Valkey 9) + cache util + rate limit
 │   ├── storage/      S3 operation, ảnh WebP pipeline
@@ -799,13 +731,13 @@ mindkid/
 │   ├── game-engine/  Canvas 2D thuần TS, template + Session
 │   ├── adaptive/     BKT mastery + ZPD selector — pure TS, KHÔNG ghi DB
 │   ├── errors/       AppError + lớp exception domain (H3Error hạng nhất), registry mã lỗi
-│   ├── content/      Kho nội dung học (skill, builder, activity, lesson) — KHÔNG ghi DB
+│   ├── content/      Kho nội dung học (skill, builder, game level, curriculum) — KHÔNG ghi DB
 │   ├── content-build/ Nạp nội dung vào DB, cổng chất lượng corpus
 │   ├── play/         Phiên chơi, sự kiện chơi, BKT mastery, huy hiệu
 │   ├── audit/        Ghi audit log, quét dữ liệu nhạy cảm
 │   ├── notification/ Dispatch logical notification, SMTP/SES, FCM Web, MJML
 │   ├── moderation/   Blocklist nội dung cho bề mặt trẻ
-│   ├── export/       Kết xuất PDF giáo án, worksheet
+│   ├── export/       Kết xuất PDF worksheet
 │   └── ui/           Nuxt Layer — Nuxt UI v4 preset + brand component
 ├── docs/                     spec + task, cùng git repo code (D-U, xem [`repo-bootstrap.md`](specs/00-foundation/repo-bootstrap.md)
 │                             §11 Q10 — lịch sử 3 lượt quyết định, lượt cuối giữ tại đây)
@@ -831,11 +763,11 @@ chỉ thêm **khi** tính năng của chúng vào scope, không trước.
 | `packages/game-engine/` | Canvas 2D thuần TS                                                             | Vue, Pinia, VueUse, reactivity, ghi DB, network call lúc chơi                             |
 | `packages/adaptive/`    | Pure TS algorithm                                                              | Ghi DB · `new Date()` (truyền `now`)                                                      |
 | `packages/db/`          | Drizzle schema, migration, connection                                          | Raw SQL, business logic, nội dung học                                                     |
-| `packages/content/`     | Kho nội dung học (skills, builders, activities, lessons)                       | Ghi DB, Drizzle, node:* modules                                                           |
+| `packages/content/`     | Kho nội dung học (skills, builders, game levels, curricula)                    | Ghi DB, Drizzle, node:* modules                                                           |
 | `packages/content-build/`| Nạp nội dung vào DB, gate chất lượng                                          | apps/*                                                                                    |
 | `packages/audit/`       | Ghi nhật ký kiểm toán, quét dữ liệu nhạy cảm                                   | Ghi content, UI logic                                                                     |
 | `packages/play/`        | Phiên chơi, sự kiện chơi, BKT mastery, huy hiệu                                 | Ghi content, direct HTTP                                                                  |
-| `packages/export/`      | Kết xuất PDF giáo án, worksheet                                                | Thao tác DB ngoài context kết xuất                                                        |
+| `packages/export/`      | Kết xuất PDF worksheet                                                         | Thao tác DB ngoài context kết xuất                                                        |
 | `packages/auth/`        | Opaque session/remember/challenge Redis adapter fail-closed, guard, hash, CSRF | Supabase / Better-Auth · JWT/JWS credential · `jose` · fallback auth sang cache fail-open |
 | `packages/queue/`       | Job definition, producer                                                       | Consumer                                                                                  |
 | `apps/web/server/api/`  | Drizzle + Zod                                                                  | Frontend logic                                                                            |
@@ -856,7 +788,7 @@ Hai guard **tách biệt, không lồng nhau**. Một guard chung với cờ `is
 ngắn nhất tới leo thang đặc quyền. `requireUserAuth` chỉ chấp nhận cookie session User;
 `requireManagerAuth` chỉ chấp nhận cookie session Manager. Cả hai từ chối Bearer credential.
 
-Path danh từ số nhiều: `/api/users/lessons`, `/api/users/children`.
+Path danh từ số nhiều: `/api/users/levels`, `/api/users/children`.
 Cấm response wrapper `{data, error}` — trả JSON trần + HTTP code.
 
 `/api/_auth/session` là ngoại lệ framework duy nhất cho quy tắc namespace và danh từ số nhiều.
@@ -877,23 +809,23 @@ Biome 2 qua `ultracite`: semicolons luôn có, double quotes, indent 2 space, li
 | Ngữ cảnh          | Quy ước                           | Ví dụ                   |
 | ----------------- | --------------------------------- | ----------------------- |
 | DB table / column | `snake_case`                      | `learning_objective_id` |
-| API path          | danh từ số nhiều                  | `/api/users/lessons`    |
-| Vue component     | `PascalCase.vue`                  | `LessonCard.vue`        |
+| API path          | danh từ số nhiều                  | `/api/users/levels`     |
+| Vue component     | `PascalCase.vue`                  | `GameCard.vue`          |
 | TS file           | `kebab-case.ts`                   | `skill-graph.ts`        |
 | Constant          | `UPPER_SNAKE_CASE`                | `PACKAGE_CATALOG`       |
 | Package           | `@mindkid/xxx`                    | `@mindkid/db`           |
 | Function / local  | `camelCase`                       | `resolveSkillPath()`    |
 | Boolean           | prefix `is`/`has`/`should`/`can`  | `isPublished`           |
 | Type / interface  | `PascalCase`                      | `LearningObjective`     |
-| Payload field     | `snake_case`, **không transform** | `lesson.published_at`   |
+| Payload field     | `snake_case`, **không transform** | `level.published_at`    |
 
 **Immutability** — luôn tạo object mới:
 
 ```ts
 // WRONG
-lesson.status = "published";
+level.status = "published";
 // CORRECT
-const published = { ...lesson, status: "published" as const };
+const published = { ...level, status: "published" as const };
 ```
 
 **Ví dụ chuẩn — một API route:**
@@ -917,7 +849,6 @@ export default defineEventHandler(async (event) => {
     .from(game_levels)
     .where(
       and(
-        eq(game_levels.status, "published"),
         inArray(game_levels.access_tier, tiers),
         query.skill_ids
           ? inArray(game_levels.skill_id, query.skill_ids)
@@ -944,7 +875,7 @@ await db
 ```
 
 Cột đặc quyền: `managers.role` · `users.is_active` · `users.session_version` ·
-`entitlements.status` · `payment_orders.status` · `*.status` của mọi bảng nội dung.
+`entitlements.status` · `payment_orders.status`.
 
 **Vue SFC — thứ tự bắt buộc:** `<template>` → `<script setup>` → `<style scoped>`.
 
@@ -1013,7 +944,7 @@ không dựa vào padding một mình.
 | A11y        | `@axe-core/playwright`        | mọi page object               | 0 violation              |
 
 **Critical path bắt buộc ≥ 85%:** auth · payment/approval · child profile · **access
-gating** · play session · taxonomy traversal · content lifecycle.
+gating** · play session · taxonomy traversal · content seeder gates.
 
 **TDD:** RED → GREEN → REFACTOR. Cấu trúc AAA. Tên test: `test("<làm gì> khi <điều kiện>")`.
 
@@ -1035,7 +966,6 @@ gating** · play session · taxonomy traversal · content lifecycle.
 - Mọi LO thuộc đúng một skill; mọi skill thuộc đúng một strand.
 - **Access ladder bao hàm:** `canAccess(tier_n)` ⟹ `canAccess(tier_m)` ∀ m < n.
 - Mọi `game_level.content_pack` parse được bằng `content_contract` của template nó dùng.
-- Mọi hàng `published` từ chối UPDATE.
 
 Bất biến của cây không kiểm được bằng ví dụ — một chu trình có thể chỉ xuất hiện ở tổ hợp
 thứ 4.000.
@@ -1061,7 +991,7 @@ snapshot. Offline test dùng Playwright offline mode, không mock `navigator.onL
 - Map field tường minh khi `db.update().set()`.
 - Kiểm access ladder và ownership child profile ở **server**.
 - Ghi `audit_logs` cho mọi hành động ở §5.4.
-- Nội dung `published` bất biến — sửa là tạo version mới.
+- Mọi nội dung (`game_levels`, `curricula`, `skill_datasets`) định nghĩa trong seeder và nạp cứng vào DB.
 - Emoji chỉ làm **nội dung** cho trẻ chưa đọc, không bao giờ làm affordance.
 - Gate bằng `hasEntitlement(userId, key)`, không bằng tên gói.
 - Tiếng Việt cho chuỗi hiển thị; tiếng Anh cho code, slug, spec.
@@ -1071,8 +1001,8 @@ snapshot. Offline test dùng Playwright offline mode, không mock `navigator.onL
 
 - Đổi schema DB (thêm/xoá bảng, đổi kiểu cột, đổi PK).
 - Thêm dependency mới vào bất kỳ package nào.
-- Đổi giá, thời hạn, quota, hoặc `access_tier` của nội dung đã publish.
-- Đổi `content_contract` của một template đã publish.
+- Đổi giá, thời hạn, quota, hoặc `access_tier` của nội dung đã phát hành.
+- Đổi `content_contract` của một template đã phát hành.
 - Thêm SKU thứ ba vào catalog MVP.
 - Đổi ánh xạ competency của một skill đã có nội dung gắn vào.
 - Đổi số child profile tối đa của một gói.
@@ -1090,9 +1020,8 @@ snapshot. Offline test dùng Playwright offline mode, không mock `navigator.onL
 - Hardcode giá ngoài `PACKAGE_CATALOG`. Hardcode domain — dùng `{domain}`.
 - Gửi `content_pack` của nội dung bị chặn xuống client.
 - Kiểm entitlement chỉ ở client. Tin điểm/mastery do client gửi.
-- Sửa trực tiếp hàng nội dung đã `published`.
 - Xoá cứng nội dung đang được `telemetry_events` hoặc `curriculum_items` trỏ tới.
-- Cho admin sửa dữ liệu Lớp 1 (taxonomy, template, emoji, package, entitlement key) qua UI.
+- Cho admin sửa dữ liệu taxonomy, template, emoji, package, entitlement key, game level, curriculum qua UI.
 - Upload SVG. Lưu URL tuyệt đối vào DB. Ảnh chụp trẻ em ở bất kỳ đâu.
 - PII của trẻ trong `telemetry_events` hoặc trong prompt gửi LLM.
 - Tracking script bên thứ ba trên bề mặt trẻ hoặc trang pháp lý.
@@ -1103,14 +1032,12 @@ snapshot. Offline test dùng Playwright offline mode, không mock `navigator.onL
 - Cho adaptive nhảy bước curriculum.
 - **Để AI _phát hành_ nội dung cốt lõi.** AI agent IDE soạn được **file seeder trong repo**;
   chỉ **người** merge PR, và merge là phát hành. Agent không chạy `seed:content` lên môi
-  trường nào ngoài local, và không tiến trình máy nào gọi được transition trạng thái nội
-  dung — xem §0 D7.
+  trường nào ngoài local — xem §0 D7.
 - **Để LLM sinh nội dung trong runtime.** Không có pipeline sinh nội dung nào chạy trong hệ
   thống. LLM duy nhất trong runtime là add-on [`ai-assistant.md`](specs/07-addon/ai-assistant.md), ngoài MVP.
-- **Để AI sinh `skills` hoặc `strands`.** Taxonomy là Lớp 1, do người thiết kế. AI soạn được
-  seeder `learning_objectives`, nhưng vẫn qua 8 cổng tự động và vẫn cần người đọc từng bản.
-- Dùng ngoại lệ Task #14 để auto-merge, chạy migration ngoài local, sửa trực tiếp hàng
-  `published`, chạy transition publish, hoặc phát hành nội dung. AI chỉ được soạn code trong
+- **Để AI sinh `skills` hoặc `strands`.** Taxonomy do người thiết kế. AI soạn được
+  seeder `learning_objectives`, nhưng vẫn qua các cổng tự động và vẫn cần người đọc từng bản.
+- Dùng ngoại lệ Task #14 để auto-merge, chạy migration ngoài local, hoặc phát hành nội dung. AI chỉ được soạn code trong
   repo; người review diff trước merge — xem mục 0 quyết định D7.
 - Merge tự động code do AI sinh, hoặc sửa tay file `@generated`.
 - Reset/checkout/revert công việc không liên quan khi chưa được yêu cầu.
@@ -1121,22 +1048,21 @@ snapshot. Offline test dùng Playwright offline mode, không mock `navigator.onL
 
 **MVP = P0 → P3.** Mỗi phase có cổng ra kiểm được ở §13.
 
-| Phase                     | Nội dung                                                                                                                                                                   | Cắt được không                                                    |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| **P0 — Foundation**       | Repo, schema, migration, auth, Lớp 1 seed (taxonomy 230 skill + ≥690 LO + emoji + package + entitlement key), cổng tự động                                                 | Cấm chặn mọi thứ                                                  |
-| **P1 — Play core**        | Registry + game engine 6 template đầy đủ contract, catalog + gating 4 bậc, play session + event, healthy-play cap, báo cáo cơ bản, ≥120 game level seed, Public Site + SEO | Cấm core business                                                 |
-| **P2 — Commerce + Admin** | Package catalog, VietQR order, duyệt tay, entitlement, Admin dashboard, **Authoring Studio**, asset pipeline, audit log                                                    | Lưu ý: Studio có thể thu về "sửa level đã có" nếu thiếu nguồn lực |
-| **P3 — Curriculum**       | Lesson library (≥60), activity, 5 curriculum, curriculum player, mastery + adaptive ZPD, báo cáo nâng cao                                                                  | Lưu ý: Có thể ship 1 curriculum theo tuổi thay vì 5               |
-| **P4 — Add-on**           | Lesson Plan Creator, Custom Game Builder, Curriculum cá nhân, AI + credit ledger, export PDF. **Lên catalog cùng lúc với tính năng**                                       | ngoài MVP                                                         |
-| **P5 — Web scale**        | Cổng thanh toán tự động, PWA install và offline curriculum pack nâng cao trên web                                                                                          | ngoài MVP; không gồm mở rộng mô hình sản phẩm                     |
+| Phase                     | Nội dung                                                                                                                                                                   | Cắt được không                                      |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| **P0 — Foundation**       | Repo, schema, migration, auth, master seed (taxonomy 230 skill + ≥690 LO + emoji + package + entitlement key), cổng tự động                                                | Cấm chặn mọi thứ                                    |
+| **P1 — Play core**        | Registry + game engine 6 template đầy đủ contract, catalog + gating 4 bậc, play session + event, healthy-play cap, báo cáo cơ bản, ≥120 game level seed, Public Site + SEO | Cấm core business                                   |
+| **P2 — Commerce + Admin** | Package catalog, VietQR order, duyệt tay, entitlement, Admin dashboard, quản trị người dùng & vận hành, audit log                                                          | Cấm luồng doanh thu                                 |
+| **P3 — Curriculum**       | 5 curriculum, curriculum player, mastery + adaptive ZPD, báo cáo nâng cao                                                                                                  | Lưu ý: Có thể ship 1 curriculum theo tuổi thay vì 5 |
+| **P4 — Add-on**           | Custom Game Builder, Curriculum cá nhân, AI + credit ledger, export PDF. **Lên catalog cùng lúc với tính năng**                                                            | ngoài MVP                                           |
+| **P5 — Web scale**        | Cổng thanh toán tự động, PWA install và offline curriculum pack nâng cao trên web                                                                                          | ngoài MVP; không gồm mở rộng mô hình sản phẩm       |
 
 **Điểm cắt nếu nguồn lực căng** (theo thứ tự hy sinh):
 
 1. P3 → 1 curriculum thay vì 5.
-2. P2 Studio → chỉ sửa level đã seed, không tạo mới.
-3. P1 → 80 game level thay vì 120.
+2. P1 → 80 game level thay vì 120.
 
-Cấm cắt: gating, audit, tuân thủ §4, versioning nội dung. Bốn thứ này rẻ khi làm
+Cấm cắt: gating, audit, tuân thủ §4. Ba thứ này rẻ khi làm
 đúng lúc và rất đắt khi vá sau.
 
 ---
@@ -1159,7 +1085,7 @@ Cấm cắt: gating, audit, tuân thủ §4, versioning nội dung. Bốn thứ 
 
 ### Cổng ra P1
 
-- [ ] **≥120 game level `published`**, ≥20 mỗi competency, mọi `content_pack` round-trip
+- [ ] **≥120 game level**, ≥20 mỗi competency, mọi `content_pack` round-trip
       qua `content_contract`.
 - [ ] Guest chơi được 6 game allow-list, không giới hạn lượt, **không lưu tiến độ**.
 - [ ] Guest gọi level `login`/`standard`/`premium` → **403**, body có `access_tier` +
@@ -1183,18 +1109,13 @@ Cấm cắt: gating, audit, tuân thủ §4, versioning nội dung. Bốn thứ 
 - [ ] Manager duyệt → `entitlements.status='active'`, `expires_at` đúng theo gói.
 - [ ] **Approve lần hai trên cùng order → 409**, không tạo thêm subscription.
 - [ ] Manager từ chối → quyền từ order đó hết **trong cùng request**, không chờ cron.
-- [ ] **Manager tạo và publish một game level mới từ emoji, không viết dòng code nào.**
-- [ ] Manager upload ảnh, crop ở client, server lưu WebP ≤ 960×960; upload SVG bị từ chối.
-- [ ] Sửa nội dung đã `published` → tạo version mới; hàng cũ nguyên vẹn; session cũ vẫn
-      trỏ đúng `content_version`.
-- [ ] Xoá level đang dùng → 409 kèm danh sách nơi dùng.
 - [ ] Mọi hành động ở §5.4 ghi `audit_logs` INSERT-only.
-- [ ] Admin **không** sửa được taxonomy / template / emoji / package qua UI (405 hoặc
+- [ ] Admin **không** sửa được taxonomy / template / emoji / package / game level / curriculum qua UI (405 hoặc
       không có route).
 
 ### Cổng ra P3
 
-- [ ] ≥60 lesson `published`, 5 curriculum, curriculum player chạy từ tuần 1 tới tuần cuối.
+- [ ] 5 curriculum được seed, curriculum player chạy từ tuần 1 tới tuần cuối.
 - [ ] `mastery_state` cập nhật theo `skill_id` FK sau mỗi session; `p_learn ∈ [0,1]`.
 - [ ] ZPD selector không nhảy bước curriculum.
 - [ ] Báo cáo nâng cao hiển thị theo competency / domain / skill với nhãn không kết luận
@@ -1214,13 +1135,13 @@ hình báo cáo mang câu này.
 
 ### 13.2 MVP hoàn thành khi
 
-- Manager tạo và publish nội dung mà không cần sửa code.
+- Toàn bộ nội dung (`game_levels`, `curricula`, `skill_datasets`) được biên soạn qua seeder trong repo và kiểm duyệt qua 10 cổng tự động + PR review.
 - User đăng ký, tạo Child Profile, và trẻ chơi được cả game free lẫn trả phí.
 - Hệ thống kiểm quyền **đúng** theo entitlement, kiểm ở server.
-- Kết quả chơi lưu theo từng trẻ, giải thích được bằng đúng version nội dung đã chơi.
+- Kết quả chơi lưu theo từng trẻ, truy vết trực tiếp về nội dung đã chơi.
 - User xem được báo cáo cơ bản và nâng cao.
 - Manager xác nhận thanh toán và kích hoạt gói, có audit đầy đủ.
-- Curriculum liên kết lesson và game thành lộ trình.
+- Curriculum liên kết các game level thành lộ trình.
 - Có đủ nội dung để một trẻ quay lại **4–8 tuần**.
 - Không có dữ liệu trẻ nào vượt danh sách đóng §4.1.
 - **Cổng ra P0**: nhóm Nội dung hoàn tất review ≥690 LO trong master seed; chủ và baseline năng lực đã chốt tại [`mvp-scope.md`](specs/00-foundation/mvp-scope.md) Q1 (`D-CN`, thay thế quyết định hoãn `D-W`).
@@ -1235,7 +1156,7 @@ hình báo cáo mang câu này.
 
 Mỗi outcome có **đúng một** spec sở hữu. Spec khác **link tới**, không copy contract.
 
-**194 spec module** cộng 38 phiếu engine (đếm 2026-10-18). Bản đồ đầy đủ, bảng đếm theo khu
+**166 spec module** cộng 38 phiếu engine. Bản đồ đầy đủ, bảng đếm theo khu
 vực và cột task còn mở: [`docs/specs/index.md`](specs/index.md).
 
 ```
@@ -1244,15 +1165,15 @@ docs/
 └── specs/
     ├── CONVENTIONS.md         quy ước viết spec
     ├── TEMPLATE.md · index.md · READING-GUIDE.md · roadmap.md
-    ├── 00-foundation/  20     contract cắt ngang mọi bề mặt (registry, bản đồ schema)
-    ├── 01-platform/    44     năng lực nội bộ: schema, auth, engine runtime, seeder, hạ tầng vận hành
+    ├── 00-foundation/  18     contract cắt ngang mọi bề mặt (registry, bản đồ schema)
+    ├── 01-platform/    42     năng lực nội bộ: schema, auth, engine runtime, seeder, hạ tầng vận hành
     │   └── engines/    38     phiếu engine GT-000…GT-037 + TEMPLATE.md + index.md (sinh tự động)
     ├── 02-public/       9     khách chưa đăng nhập
-    ├── 03-account/     24     User đã đăng nhập (gồm tiết học người lớn dẫn + gói offline)
-    ├── 04-play/        21     bề mặt trẻ — core business
-    ├── 05-content/     27     mô hình nội dung và ràng buộc biên tập
-    ├── 06-admin/       31     Manager (gồm studio + duyệt + huỷ gói)
-    ├── 07-addon/        7     spec đủ, KHÔNG bán ở MVP
+    ├── 03-account/     23     User đã đăng nhập (hồ sơ trẻ, báo cáo, gói offline)
+    ├── 04-play/        20     bề mặt trẻ — core business
+    ├── 05-content/     19     mô hình nội dung và ràng buộc biên tập
+    ├── 06-admin/       19     Manager (quản trị người dùng, duyệt thanh toán, vận hành, huỷ gói)
+    ├── 07-addon/        5     spec đủ, KHÔNG bán ở MVP
     └── 08-quality/     11     test · bảo mật · a11y · hiệu năng · design · phủ tư duy · an toàn kiểu · cổng runtime
 ```
 
@@ -1304,12 +1225,11 @@ engine dùng khuôn 18 mục của [`engine-spec-sheet.md`](specs/01-platform/en
 
 ```
 C1…C6              Competency            GL-C1-CNT-MATCH-0007  Game Level (instance)
-C1.CNT             Strand                LES-0042              Lesson
-C1.CNT.03          Skill                 ACT-0117              Activity
-LO-C1.CNT.03-01    Learning Objective    CUR-001               Curriculum
-GT-003             Game Template         WS-0009               Worksheet
-PKG-premium        Package               play_premium_games    Entitlement key
-F-001              Feature (tài liệu)    BR-<SPEC>-01          Business Rule (tài liệu)
+C1.CNT             Strand                CUR-001               Curriculum
+C1.CNT.03          Skill                 PKG-premium           Package
+LO-C1.CNT.03-01    Learning Objective    play_premium_games    Entitlement key
+GT-003             Game Template         F-001                 Feature (tài liệu)
+BR-<SPEC>-01       Business Rule (tài liệu)
 ```
 
 Mã taxonomy (`C1.CNT.03`) đã biên soạn, bất biến, không đổi. Event dùng `snake_case`, mã lỗi
@@ -1326,26 +1246,24 @@ Mã taxonomy (`C1.CNT.03`) đã biên soạn, bất biến, không đổi. Event
 | 10  | Giữ VietQR duyệt tay vĩnh viễn hay thêm cổng thanh toán ở P5?                                                                                                                                                                   | Payment roadmap         |
 | 11  | Backup + monitoring: ai sở hữu vận hành và ngân sách bao nhiêu?                                                                                                                                                      | Go-live                 |
 | 12  | Bằng chứng nào đủ để nói sản phẩm **rèn luyện, khai phá tư duy**, thay vì chỉ chứng minh trẻ chơi được và quay lại? Cần chốt claim, KPI sư phạm và protocol kiểm thử với trẻ trước khi dùng kết quả đó làm thông điệp sản phẩm. | P1 nghiệm thu · Go-live |
-| 13  | Giữ contract **≥60 lesson** và cho phép tái sử dụng trong chương trình 42 tuần, hay nâng lên **≥126 lesson distinct** như đề xuất ở Task #54?                                                                                   | P3.1 · lịch nội dung    |
 
 ### Đã chốt
 
 | Câu                                                      | Quyết định                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Ngày                           |
 | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------ |
 | Phạm vi                                                  | **Code viết theo spec**; taxonomy data, kho emoji và lõi `game-engine` nhập có chọn lọc                                                                                                                                                                                                                                                                                                                                                                                                                        | 2026-08-04                     |
-| Authoring studio ở MVP                                   | **Có, đầy đủ** — Manager tạo game level mới, 0 dòng code                                                                                                                                                                                                                                                                                                                                                                                                                                          | 2026-08-04                     |
+| Quản lý nội dung                                         | **Toàn bộ qua seeder trong repo** — bỏ Authoring Studio, bỏ cơ chế đa version (`content_version`, `entity_id`) và cổng duyệt runtime                                                                                                                                                                                                                                                                                                                                                                      | Cập nhật 2026-10-25            |
 | Add-on ở MVP                                             | **Chỉ spec, không lên catalog.** MVP bán đúng `standard` + `premium`                                                                                                                                                                                                                                                                                                                                                                                                                              | 2026-08-04                     |
 | Premium vs Creator                                       | **Gộp.** Premium bao hàm quyền học của Creator; quyền tạo nằm ở add-on                                                                                                                                                                                                                                                                                                                                                                                                                            | 2026-08-04                     |
 | Pháp lý                                                  | **Việt Nam** — Luật Bảo vệ dữ liệu cá nhân 91/2025/QH15 + Nghị định 13/2023 + Luật Trẻ em. Không COPPA/GDPR-K ở MVP                                                                                                                                                                                                                                                                                                                                                                               | Cập nhật 2026-08-14            |
 | Legal singleton và re-consent (`D12`)                    | **Không quản lý policy version.** Ba tài liệu cần đồng ý là singleton code-owned; `super_admin` force bằng `reconsent_required_at`, mọi lần force ghi audit                                                                                                                                                                                                                                                                                                                                       | 2026-08-14                     |
-| Chủ và năng lực review nội dung (`D-CN`, thay thế `D-W`) | Nhóm Nội dung sở hữu; baseline 20 LO, 6 game level hoặc 3 lesson/người/ngày, đo lại sau pilot 30 LO + 6 level                                                                                                                                                                                                                                                                                                                                                                                     | 2026-08-09                     |
+| Chủ và năng lực review nội dung (`D-CN`, thay thế `D-W`) | Nhóm Nội dung sở hữu; baseline 20 LO hoặc 6 game level/người/ngày, đo lại sau pilot 30 LO + 6 level                                                                                                                                                                                                                                                                                                                                                                                     | 2026-08-09                     |
 | 60 dạng game nguồn                                       | Giữ làm backlog **nội dung**, map dần thành `content_pack`; không biến 60 dạng thành 60 Session class. Sáu template vẫn là sàn MVP                                                                                                                                                                                                                                                                                                                                                            | Đối chiếu §2.4 ngày 2026-08-12 |
 | Ngân sách rà soát pháp lý (`D-AS`)                       | 50M VND cho tư vấn IP/Bảo vệ dữ liệu trước go-live; owner chi tiết ở [`legal-pages.md`](specs/02-public/legal-pages.md)                                                                                                                                                                                                                                                                                                                                                                           | 2026-08-09                     |
 | Thiết bị chuẩn 60 fps (`D-CH`)                           | Lenovo Tab M8 2 GB RAM; Chrome ổn định mới nhất, pin >30%, tắt tiết kiệm pin; chạy ba lần lấy median                                                                                                                                                                                                                                                                                                                                                                                              | 2026-08-09                     |
 | Repo                                                     | **Repo riêng `mindkid/`**. Tài sản nhập có chọn lọc: `game-engine`, `emoji`, taxonomy data                                                                                                                                                                                                                                                                                                                                                                                                         | 2026-08-06 (D-A)               |
-| Thư viện ảnh                                             | **Không có.** Emoji cố định; ảnh upload gắn content item                                                                                                                                                                                                                                                                                                                                                                                                                                          | 2026-08-04                     |
-| Master data                                              | **Lớp 1 code-owned, admin read-only**; Lớp 2 studio CRUD                                                                                                                                                                                                                                                                                                                                                                                                                                          | 2026-08-04                     |
-| Dùng AI để soạn game và code?                            | **Có — AI agent IDE soạn file trong repo, người merge.** Nội dung nền là **seeder** (8 cổng tự động → PR review → seed ghi thẳng `published`). Code Task #14 được phép đi vào sáu vùng nhạy cảm nhưng phải có test âm, gate tự động và người review diff; không auto-merge, không chạy migration ngoài local, không tự publish. Cấm có pipeline LLM sinh nội dung trong runtime. Hard rule cũ "NEVER để AI sinh nội dung cốt lõi" viết sai chỗ — cái cần cấm là **phát hành không có người kiểm** | 2026-08-09                     |
-| Nội dung nền vào DB ở trạng thái nào?                    | **`published` thẳng từ seed.** Cổng người là PR review, không phải hàng đợi duyệt. Seed chỉ INSERT và vẫn chạy đủ checklist publish. Sau đó admin quản lý trong studio bằng version mới                                                                                                                                                                                                                                                                                                           | 2026-08-05                     |
-| Tách nhỏ spec tới mức nào?                               | **Một outcome một file.** 124 spec lúc chốt (194 ngày 2026-10-18). Tên file có `and` bị cấm khi nối hai outcome                                                                                                                                                                                                                                                                                                                                                                                              | 2026-08-05                     |
-| Audio tiếng Việt & Fallback (`D-AV`)                     | **P1 kết hợp clip tĩnh + Web Speech API (TTS vi-VN)** với visual fallback (ghost hand / highlight / icon) không crash khi thiếu voice; P2 quản lý audio asset qua [`audio-storage.md`](specs/01-platform/audio-storage.md) riêng biệt khỏi image pipeline                                                                                                                                                                                                                                         | 2026-08-16 (Task #80)          |
+| Thư viện ảnh & asset động                                | **Không có.** Kho emoji cố định; bỏ hoàn toàn các bảng `content_images`, `content_audio`, `content_asset_refs`                                                                                                                                                                                                                                                                                                                                                                                    | Cập nhật 2026-10-25            |
+| Master & Content data                                    | **Toàn bộ là code-owned, nạp cứng từ seeder, admin read-only**                                                                                                                                                                                                                                                                                                                                                                                                                                    | Cập nhật 2026-10-25            |
+| Dùng AI để soạn game và code?                            | **Có — AI agent IDE soạn file trong repo, người merge.** Nội dung nền là **seeder** (10 cổng tự động → PR review → seed nạp vào DB). Code Task #14 được phép đi vào sáu vùng nhạy cảm nhưng phải có test âm, gate tự động và người review diff; không auto-merge, không chạy migration ngoài local. Cấm có pipeline LLM sinh nội dung trong runtime. Hard rule cũ "NEVER để AI sinh nội dung cốt lõi" viết sai chỗ — cái cần cấm là **phát hành không có người kiểm** | 2026-08-09                     |
+| Tách nhỏ spec tới mức nào?                               | **Một outcome một file.** Tên file có `and` bị cấm khi nối hai outcome                                                                                                                                                                                                                                                                                                                                                                                              | 2026-08-05                     |
+| Audio tiếng Việt & Fallback (`D-AV`)                     | **Kết hợp clip tĩnh + Web Speech API (TTS vi-VN)** với visual fallback (ghost hand / highlight / icon) không crash khi thiếu voice                                                                                                                                                                                                                                         | Cập nhật 2026-10-25            |

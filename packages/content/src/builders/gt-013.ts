@@ -7,38 +7,81 @@ import type {
 } from "@mindkid/shared";
 import { createRng } from "./utils.js";
 
+interface MazeWall {
+  row: number;
+  col: number;
+  side: "n" | "e" | "s" | "w";
+}
+
+function buildMazeWalls(size: number, variant: number): MazeWall[] {
+  if (size === 4) {
+    if (variant === 0) {
+      return [
+        { row: 0, col: 1, side: "s" },
+        { row: 1, col: 1, side: "e" },
+        { row: 2, col: 2, side: "s" },
+        { row: 1, col: 3, side: "s" },
+      ];
+    }
+    if (variant === 1) {
+      return [
+        { row: 0, col: 2, side: "s" },
+        { row: 1, col: 1, side: "s" },
+        { row: 2, col: 1, side: "e" },
+        { row: 2, col: 3, side: "s" },
+      ];
+    }
+    return [
+      { row: 0, col: 1, side: "e" },
+      { row: 1, col: 2, side: "s" },
+      { row: 2, col: 0, side: "s" },
+      { row: 1, col: 3, side: "s" },
+    ];
+  }
+  if (variant === 0) {
+    return [
+      { row: 0, col: 1, side: "s" },
+      { row: 1, col: 2, side: "e" },
+      { row: 2, col: 2, side: "s" },
+      { row: 3, col: 3, side: "s" },
+      { row: 2, col: 4, side: "s" },
+    ];
+  }
+  if (variant === 1) {
+    return [
+      { row: 0, col: 2, side: "s" },
+      { row: 1, col: 1, side: "e" },
+      { row: 2, col: 3, side: "s" },
+      { row: 3, col: 2, side: "s" },
+      { row: 1, col: 4, side: "s" },
+    ];
+  }
+  return [
+    { row: 0, col: 1, side: "e" },
+    { row: 1, col: 3, side: "s" },
+    { row: 2, col: 1, side: "s" },
+    { row: 3, col: 3, side: "s" },
+    { row: 2, col: 4, side: "s" },
+  ];
+}
+
 export const projectGT013: Projection<"GT-013"> = {
   template: "GT-013",
   requires: { min_items: 0, max_items: 10 },
   project(dataset: SkillDataset, opts: ProjectOptions): ProjectedPack {
     const params = getEngineDifficultyParams("GT-013", opts.difficulty);
-    const _rng = createRng(opts.seed + (opts.round_index ?? 0));
+    const roundIdx = opts.round_index ?? 0;
+    const _rng = createRng(opts.seed + roundIdx);
     const size = opts.band === "5-6" ? 5 : 4;
 
-    const walls: Array<{
-      row: number;
-      col: number;
-      side: "n" | "e" | "s" | "w";
-    }> = [];
-    // Deterministic simple internal walls
-    if (size === 4) {
-      walls.push(
-        { row: 0, col: 1, side: "s" },
-        { row: 1, col: 1, side: "e" },
-        { row: 2, col: 2, side: "s" },
-        { row: 1, col: 3, side: "s" }
-      );
-    } else {
-      walls.push(
-        { row: 0, col: 1, side: "s" },
-        { row: 1, col: 2, side: "e" },
-        { row: 2, col: 2, side: "s" },
-        { row: 3, col: 3, side: "s" },
-        { row: 2, col: 4, side: "s" }
-      );
-    }
+    const variant = (opts.seed + roundIdx) % 3;
+    const walls = buildMazeWalls(size, variant);
 
-    const item = dataset.items.find((i) => i.glyph) ?? dataset.items[0];
+    const glyphItems = dataset.items.filter((i) => i.glyph);
+    const item =
+      glyphItems.length > 0
+        ? glyphItems[roundIdx % glyphItems.length]
+        : dataset.items[roundIdx % Math.max(1, dataset.items.length)];
     const prompt = item?.glyph
       ? `Bé hãy tìm đường qua mê cung đến ô ${item.glyph} nhé!`
       : "Bé hãy tìm đường đi qua mê cung đến đích nhé!";

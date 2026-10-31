@@ -42,50 +42,176 @@ export const C2_SOL_01_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "star",
-      label: "hình ngôi sao",
+      id: "ball_sphere",
+      label: "quả bóng tròn",
+      value: 1,
       image: {
         kind: "emoji",
-        ref: "⭐",
+        ref: "⚽",
       },
       category: {
-        type: "shape",
+        type: "khối cầu",
+      },
+      contrast_group: "sphere",
+    },
+    {
+      id: "basket_sphere",
+      label: "bóng rổ tròn",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "🏀",
+      },
+      category: {
+        type: "khối cầu",
+      },
+      contrast_group: "sphere",
+    },
+    {
+      id: "globe_sphere",
+      label: "quả địa cầu",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "🌍",
+      },
+      category: {
+        type: "khối cầu",
+      },
+      contrast_group: "sphere",
+    },
+    {
+      id: "orange_sphere",
+      label: "trái cam tròn",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "🍊",
+      },
+      category: {
+        type: "khối cầu",
+      },
+      contrast_group: "sphere",
+    },
+    {
+      id: "dice_cube",
+      label: "khối xúc xắc",
+      value: 5,
+      image: {
+        kind: "emoji",
+        ref: "🎲",
+      },
+      category: {
+        type: "khối có góc",
+      },
+      contrast_group: "angular_solid",
+    },
+    {
+      id: "ice_cube",
+      label: "khối đá lạnh",
+      value: 6,
+      image: {
+        kind: "emoji",
+        ref: "🧊",
+      },
+      category: {
+        type: "khối có góc",
+      },
+      contrast_group: "angular_solid",
+    },
+    {
+      id: "gift_box",
+      label: "hộp quà vuông",
+      value: 7,
+      image: {
+        kind: "emoji",
+        ref: "🎁",
+      },
+      category: {
+        type: "khối có góc",
+      },
+      contrast_group: "angular_solid",
+    },
+    {
+      id: "wooden_box",
+      label: "thùng các-tông",
+      value: 8,
+      image: {
+        kind: "emoji",
+        ref: "📦",
+      },
+      category: {
+        type: "khối có góc",
+      },
+      contrast_group: "angular_solid",
+    },
+    {
+      id: "sphere_crystal",
+      label: "quả cầu pha lê",
+      value: 9,
+      image: {
+        kind: "emoji",
+        ref: "🔮",
+      },
+      category: {
+        type: "khối cầu",
+      },
+      contrast_group: "sphere",
+    },
+    {
+      id: "cylinder_wood",
+      label: "khối gỗ hình trụ",
+      value: 10,
+      image: {
+        kind: "emoji",
+        ref: "🪵",
+      },
+      category: {
+        type: "khối trụ",
+      },
+      contrast_group: "other_solid",
+    },
+  ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "ball_sphere",
+      target_id: "dice_cube",
+      metadata: {
+        dimension: "solid_type",
       },
     },
     {
-      id: "heart",
-      label: "hình trái tim",
-      image: {
-        kind: "emoji",
-        ref: "❤️",
-      },
-      category: {
-        type: "shape",
+      type: "contrast",
+      source_id: "orange_sphere",
+      target_id: "wooden_box",
+      metadata: {
+        dimension: "solid_type",
       },
     },
     {
-      id: "diamond",
-      label: "hình thoi",
-      image: {
-        kind: "emoji",
-        ref: "🔷",
-      },
-      category: {
-        type: "shape",
+      type: "pair",
+      source_id: "ball_sphere",
+      target_id: "basket_sphere",
+      metadata: {
+        relation: "cùng khối cầu",
       },
     },
     {
-      id: "oval",
-      label: "hình bầu dục",
-      image: {
-        kind: "emoji",
-        ref: "🟢",
-      },
-      category: {
-        type: "shape",
+      type: "pair",
+      source_id: "dice_cube",
+      target_id: "ice_cube",
+      metadata: {
+        relation: "cùng khối có góc",
       },
     },
   ],
+  axes: {
+    solid_type: {
+      values: ["khối cầu", "khối có góc"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
@@ -114,10 +240,22 @@ export const C2_SOL_01_DATASET: SkillDataset = {
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
-    narration_template: "Chúng mình cùng tìm hiểu về Khối cầu nhé",
+    prompt_template: "Bé hãy chọn khối cầu {label} nhé!",
+    narration_template:
+      "Khối cầu tròn xoe, có thể lăn về mọi phía! Chúng mình cùng tìm khối cầu nhé",
   },
-  ordering: ["star", "heart", "diamond", "oval"],
+  ordering: [
+    "ball_sphere",
+    "basket_sphere",
+    "globe_sphere",
+    "orange_sphere",
+    "sphere_crystal",
+    "dice_cube",
+    "ice_cube",
+    "gift_box",
+    "wooden_box",
+    "cylinder_wood",
+  ],
 };
 
 export const C2_SOL_01_SEED: SkillSeed = {
@@ -129,6 +267,7 @@ export const C2_SOL_01_SEED: SkillSeed = {
       template: "GT-001",
       band: "3-4",
       difficulty: 1,
+      access_tier: "free",
       theme: "school",
       rounds: 3,
     },
@@ -137,6 +276,7 @@ export const C2_SOL_01_SEED: SkillSeed = {
       template: "GT-001",
       band: "3-4",
       difficulty: 2,
+      access_tier: "login",
       theme: "farm",
       rounds: 3,
     },
@@ -145,64 +285,19 @@ export const C2_SOL_01_SEED: SkillSeed = {
       template: "GT-002",
       band: "4-5",
       difficulty: 1,
+      access_tier: "free",
       theme: "home",
       rounds: 3,
     },
     {
-      code: "GL-C2-SOL-TCNT-0002",
-      template: "GT-002",
+      code: "GL-C2-SOL-TAP-0101",
+      template: "GT-001",
       band: "4-5",
       difficulty: 2,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-TCMP-0001",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 1,
+      access_tier: "login",
       theme: "nature",
       rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-TCMP-0002",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 2,
-      theme: "ocean",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-PAIR-0001",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 1,
-      theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-PAIR-0002",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 2,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-PATT-0001",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 1,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-SOL-PATT-0002",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 2,
-      theme: "art",
-      rounds: 3,
+      montessori_ref: "WB00-D4",
     },
   ],
 };

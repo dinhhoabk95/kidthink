@@ -2,18 +2,18 @@ import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 import { describe, expect, it } from "vitest";
 import {
   ALL_SEED_LEVELS,
+  type ContentSeed,
   QUARANTINED_LEVEL_CODES,
   SHIPPABLE_SEED_LEVELS,
 } from "#src/index";
 import { INVALID_CONTRACT_FIXTURE } from "./fixtures/quarantine-negative.ts";
 
 /**
- * Bậc thang cách ly nội dung — `docs/tasks/162-...-plan.md`.
+ * Bậc thang cách ly nội dung.
  *
  * Một level không parse được `content_contract` là một trò chơi không dựng
- * được. Trước task 162, 175 hạt như vậy nằm im trong lô seed và làm cả lô
- * rollback; codemod chuyển 102, và 73 hạt còn lại đã được soạn lại nên trần
- * giờ là **0**. Phép đo này giữ hai bất biến:
+ * được. Toàn bộ hạt seed phải parse được schema nên trần cách ly là **0**.
+ * Phép đo này giữ hai bất biến:
  *
  * 1. Danh sách chỉ ngắn đi — không ai được thêm nội dung hỏng rồi cách ly nó.
  * 2. Mọi mã trong danh sách vẫn **thật sự** hỏng — mã đã sửa xong mà còn nằm
@@ -23,11 +23,17 @@ const MAX_QUARANTINED = 0;
 
 interface LevelLike {
   header: { code: string; template_code: string };
-  content_pack: unknown;
-  difficulty_params: unknown;
+  content_pack:
+    | Record<string, string | number | boolean | null | undefined | object>
+    | null
+    | undefined;
+  difficulty_params:
+    | Record<string, string | number | boolean | null | undefined | object>
+    | null
+    | undefined;
 }
 
-function isContractValid(level: LevelLike): boolean {
+function isContractValid(level: ContentSeed | LevelLike): boolean {
   const template = ALL_TEMPLATES[level.header.template_code];
   if (!template) {
     return false;

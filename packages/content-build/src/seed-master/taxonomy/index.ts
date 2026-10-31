@@ -677,7 +677,6 @@ export async function seedSkillDatasetsStep(
       skillId,
       code: dataset.skill_code,
       conceptLabel: dataset.concept_label,
-      surface: dataset.surface,
       items: dataset.items,
       ladder: dataset.ladder,
       phrasing: dataset.phrasing,
@@ -685,9 +684,6 @@ export async function seedSkillDatasetsStep(
       ordering: dataset.ordering ?? null,
       axes: dataset.axes ?? null,
       extendsSkillCode: dataset.extends ?? null,
-      status: "active",
-      origin: "human",
-      authoredIn: "repo_seed",
     });
   }
 
@@ -702,7 +698,6 @@ export async function seedSkillDatasetsStep(
           set: {
             skillId: sql`excluded.skill_id`,
             conceptLabel: sql`excluded.concept_label`,
-            surface: sql`excluded.surface`,
             items: sql`excluded.items`,
             ladder: sql`excluded.ladder`,
             phrasing: sql`excluded.phrasing`,
@@ -710,7 +705,6 @@ export async function seedSkillDatasetsStep(
             ordering: sql`excluded.ordering`,
             axes: sql`excluded.axes`,
             extendsSkillCode: sql`excluded.extends_skill_code`,
-            status: sql`excluded.status`,
             updatedAt: sql`now()`,
           },
         });

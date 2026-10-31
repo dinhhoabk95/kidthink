@@ -1,11 +1,10 @@
 import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
-import { numeralItem } from "#src/inventories/index";
 
 export const C1_CNT_03_IDENTITY: SkillIdentity = {
   code: "C1.CNT.03",
   strand_code: "C1.CNT",
   competency_code: "C1",
-  name: "Đếm không bỏ sót",
+  name: "Đếm đủ từng vật",
   age_min: 3,
   age_max: 3,
   difficulty: 2,
@@ -39,194 +38,135 @@ export const C1_CNT_03_IDENTITY: SkillIdentity = {
 
 export const C1_CNT_03_DATASET: SkillDataset = {
   skill_code: "C1.CNT.03",
-  concept_label: "Đếm không bỏ sót",
+  concept_label: "Đếm đủ từng vật",
   surface: "game",
   items: [
-    numeralItem("n0", {
+    {
+      id: "cnt03_1",
+      label: "một bông hoa",
+      glyph: "🌸",
+      value: 1,
+      contrast_group: "quantity",
+      ordering: 1,
+      category: {
+        type: "đồ vật nhỏ",
+      },
       image: {
         kind: "emoji",
-        ref: "0️⃣",
+        ref: "🌸",
       },
+    },
+    {
+      id: "cnt03_2",
+      label: "hai bông hoa",
+      glyph: "🌸🌸",
+      value: 2,
+      contrast_group: "quantity",
+      ordering: 2,
       category: {
-        parity: "chẵn",
+        type: "đồ vật nhỏ",
       },
-    }),
-    numeralItem("n1", {
       image: {
         kind: "emoji",
-        ref: "1️⃣",
+        ref: "🌸",
       },
+    },
+    {
+      id: "cnt03_3",
+      label: "ba bông hoa",
+      glyph: "🌸🌸🌸",
+      value: 3,
+      contrast_group: "quantity",
+      ordering: 3,
       category: {
-        parity: "lẻ",
+        type: "đồ vật nhỏ",
       },
-    }),
-    numeralItem("n2", {
       image: {
         kind: "emoji",
-        ref: "2️⃣",
+        ref: "🌸",
       },
+    },
+    {
+      id: "cnt03_4",
+      label: "bốn bông hoa",
+      glyph: "🌸🌸🌸🌸",
+      value: 4,
+      contrast_group: "quantity",
+      ordering: 4,
       category: {
-        parity: "chẵn",
+        type: "đồ vật nhỏ",
       },
-    }),
-    numeralItem("n3", {
       image: {
         kind: "emoji",
-        ref: "3️⃣",
+        ref: "🌸",
       },
+    },
+    {
+      id: "cnt03_5",
+      label: "năm bông hoa",
+      glyph: "🌸🌸🌸🌸🌸",
+      value: 5,
+      contrast_group: "quantity",
+      ordering: 5,
       category: {
-        parity: "lẻ",
+        type: "đồ vật nhỏ",
       },
-    }),
-    numeralItem("n4", {
       image: {
         kind: "emoji",
-        ref: "4️⃣",
+        ref: "🌸",
       },
-      category: {
-        parity: "chẵn",
-      },
-    }),
-    numeralItem("n5", {
-      image: {
-        kind: "emoji",
-        ref: "5️⃣",
-      },
-      category: {
-        parity: "lẻ",
-      },
-    }),
-    numeralItem("n6", {
-      image: {
-        kind: "emoji",
-        ref: "6️⃣",
-      },
-      category: {
-        parity: "chẵn",
-      },
-    }),
-    numeralItem("n7", {
-      image: {
-        kind: "emoji",
-        ref: "7️⃣",
-      },
-      category: {
-        parity: "lẻ",
-      },
-    }),
-    numeralItem("n8", {
-      image: {
-        kind: "emoji",
-        ref: "8️⃣",
-      },
-      category: {
-        parity: "chẵn",
-      },
-    }),
-    numeralItem("n9", {
-      image: {
-        kind: "emoji",
-        ref: "9️⃣",
-      },
-      category: {
-        parity: "lẻ",
-      },
-    }),
-    numeralItem("n10", {
-      image: {
-        kind: "emoji",
-        ref: "🔟",
-      },
-      category: {
-        parity: "chẵn",
-      },
-    }),
+    },
   ],
   relations: [
     {
-      type: "contrast",
-      source_id: "n2",
-      target_id: "n3",
-      metadata: {
-        near_miss: true,
-      },
-    },
-    {
-      type: "contrast",
-      source_id: "n4",
-      target_id: "n5",
-      metadata: {
-        near_miss: true,
-      },
+      type: "subset",
+      source_id: "cnt03_1",
+      target_id: "cnt03_5",
     },
   ],
-  axes: {
-    parity: {
-      values: ["chẵn", "lẻ"],
-    },
-  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với đếm không bỏ sót",
+      description: "Làm quen cơ bản với đếm đủ từng vật",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng đếm không bỏ sót",
+      description: "Nhận biết và đếm đủ từng vật",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt đếm không bỏ sót với phương án nhiễu",
+      description: "Phân biệt đếm đủ từng vật với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi đếm không bỏ sót",
+      description: "Mở rộng phạm vi đếm đủ từng vật",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục đếm không bỏ sót và tự làm một mình",
+      description: "Thuần thục đếm đủ từng vật và tự làm một mình",
+      representation: "ten-frame",
     },
   ],
   phrasing: {
-    prompt_template: "Bé đếm xem có mấy {label}?",
-    narration_template: "Chúng mình cùng tìm hiểu về Đếm không bỏ sót nhé",
+    prompt_template: "Bé hãy chọn {label} nhé!",
+    narration_template: "Chúng mình cùng học cách đếm đủ từng vật nhé",
   },
-  ordering: ["n0", "n1", "n2", "n3", "n4", "n5", "n6", "n7", "n8", "n9", "n10"],
+  ordering: ["cnt03_1", "cnt03_2", "cnt03_3", "cnt03_4", "cnt03_5"],
 };
 
 export const C1_CNT_03_SEED: SkillSeed = {
   identity: C1_CNT_03_IDENTITY,
   dataset: C1_CNT_03_DATASET,
   levels: [
-    {
-      code: "GL-C1-CNT-CARD-0005",
-      template: "GT-012",
-      band: "4-5",
-      difficulty: 2,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-SORT-BOX-0008",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 2,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-SORT-BOX-0009",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 2,
-      theme: "farm",
-      rounds: 3,
-    },
     {
       code: "GL-C1-POS-LOC-0018",
       template: "GT-022",
@@ -269,7 +209,6 @@ export const C1_CNT_03_SEED: SkillSeed = {
       difficulty: 1,
       theme: "school",
       rounds: 3,
-      legacy_v1_ref: "D1-10",
     },
     {
       code: "GL-C1-CNT-TAP-0002",
@@ -278,7 +217,6 @@ export const C1_CNT_03_SEED: SkillSeed = {
       difficulty: 1,
       theme: "farm",
       rounds: 3,
-      legacy_v1_ref: "D1-10",
     },
     {
       code: "GL-C1-CNT-TAP-0003",
@@ -287,43 +225,6 @@ export const C1_CNT_03_SEED: SkillSeed = {
       difficulty: 2,
       theme: "nature",
       rounds: 3,
-      legacy_v1_ref: "D1-10",
-    },
-    {
-      code: "GL-C1-CNT-TAP-0004",
-      template: "GT-028",
-      band: "4-5",
-      difficulty: 2,
-      theme: "food",
-      rounds: 3,
-      legacy_v1_ref: "D1-10",
-    },
-    {
-      code: "GL-C1-CNT-TAP-0005",
-      template: "GT-028",
-      band: "4-5",
-      difficulty: 2,
-      theme: "school",
-      rounds: 3,
-      legacy_v1_ref: "D1-10",
-    },
-    {
-      code: "GL-C1-REM-SET-0003",
-      template: "GT-029",
-      band: "4-5",
-      difficulty: 2,
-      theme: "ocean",
-      rounds: 3,
-      legacy_v1_ref: "D1-12",
-    },
-    {
-      code: "GL-C1-REM-SET-0005",
-      template: "GT-029",
-      band: "4-5",
-      difficulty: 2,
-      theme: "nature",
-      rounds: 3,
-      legacy_v1_ref: "D1-12",
     },
     {
       code: "GL-C1-REM-SET-0006",
@@ -332,162 +233,13 @@ export const C1_CNT_03_SEED: SkillSeed = {
       difficulty: 2,
       theme: "food",
       rounds: 3,
-      legacy_v1_ref: "D1-12",
     },
     {
       code: "GL-C1-OTO-MATCH-0005",
       template: "GT-005",
       band: "4-5",
       difficulty: 2,
-      theme: "nature",
-      rounds: 3,
-      legacy_v1_ref: "D1-02",
-    },
-    {
-      code: "GL-C1-OTO-MATCH-0006",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 3,
-      theme: "ocean",
-      rounds: 3,
-      legacy_v1_ref: "D1-02",
-    },
-    {
-      code: "GL-C1-OTO-MATCH-0007",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 1,
-      theme: "vehicle",
-      rounds: 3,
-      legacy_v1_ref: "D1-02",
-    },
-    {
-      code: "GL-C1-OTO-MATCH-0008",
-      template: "GT-005",
-      band: "5-6",
-      difficulty: 2,
-      theme: "art",
-      rounds: 3,
-      legacy_v1_ref: "D1-02",
-    },
-    {
-      code: "GL-C1-CNT-TAP-0017",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 1,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-TAP-0018",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 2,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-TAP-0019",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 3,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-TAP-0020",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 1,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-TAP-0021",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 2,
-      theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-TCMP-0005",
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 1,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-SHAD-0006",
-      template: "GT-007",
-      band: "3-4",
-      difficulty: 1,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-SHAD-0007",
-      template: "GT-007",
-      band: "3-4",
-      difficulty: 2,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-SHAD-0008",
-      template: "GT-007",
-      band: "3-4",
-      difficulty: 3,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-SHAD-0009",
-      template: "GT-007",
-      band: "3-4",
-      difficulty: 1,
-      theme: "ocean",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-SHAD-0010",
-      template: "GT-007",
-      band: "3-4",
-      difficulty: 2,
-      theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-MEMO-0002",
-      template: "GT-012",
-      band: "3-4",
-      difficulty: 1,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-MEMO-0003",
-      template: "GT-012",
-      band: "3-4",
-      difficulty: 2,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-MEMO-0004",
-      template: "GT-012",
-      band: "3-4",
-      difficulty: 3,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CNT-MEMO-0005",
-      template: "GT-012",
-      band: "3-4",
-      difficulty: 1,
-      theme: "family",
+      theme: "school",
       rounds: 3,
     },
   ],

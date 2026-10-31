@@ -6,8 +6,7 @@
  *
  * Vì sao cần: không cổng nào đối chiếu mã kỹ năng với taxonomy thật. Trước cổng
  * này `moet-alignment.md` trỏ vào `C3.PAT.01` (không tồn tại — strand quy luật
- * là `C1.PAT`), `lesson-map.md` mang 9 mã chết trong 45, và corpus từng có 20
- * "mã ma" mà tác giả tự đặt. Không cổng nào bắt được cả ba.
+ * là `C1.PAT`), và corpus từng có 20 "mã ma" mà tác giả tự đặt.
  */
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { extname, join, relative } from "node:path";

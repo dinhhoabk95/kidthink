@@ -7,7 +7,6 @@ import {
   curriculumWeeks,
   gameLevels,
   getOwnerDb,
-  lessons,
 } from "@mindkid/db";
 import { ChildNotFoundError } from "@mindkid/errors/child";
 import { CurriculumNotFoundError } from "@mindkid/errors/curriculum";
@@ -100,7 +99,6 @@ export async function resolveEnrolledChildCurriculum(
       enrolledAt: curriculumEnrollments.enrolledAt,
       status: curriculumEnrollments.status,
       curriculum_code: curricula.code,
-      curriculum_version: curricula.contentVersion,
       curriculum_title: curricula.title,
       duration_weeks: curricula.durationWeeks,
       sessions_per_week: curricula.sessionsPerWeek,
@@ -120,9 +118,9 @@ export async function resolveEnrolledChildCurriculum(
       desc(curriculumEnrollments.id)
     );
 
-  const [enrollment] = await enrollmentQuery;
+  const [rawEnrollment] = await enrollmentQuery;
 
-  if (!enrollment) {
+  if (!rawEnrollment) {
     if (options.requireEnrollment === false) {
       const allowed = await resolveUserActiveEntitlements(userId);
       const userAllowedTiers = await allowedTiers(
@@ -145,6 +143,11 @@ export async function resolveEnrolledChildCurriculum(
     throw new CurriculumNotFoundError();
   }
 
+  const enrollment: EnrolledChildCurriculumDetails = {
+    ...rawEnrollment,
+    curriculum_version: 1,
+  };
+
   // 3. Batch load curriculum items & weeks (D-MA: pinned curriculum_id)
   const rawItems = await db
     .select()
@@ -156,13 +159,9 @@ export async function resolveEnrolledChildCurriculum(
     .from(curriculumWeeks)
     .where(eq(curriculumWeeks.curriculumId, enrollment.curriculumId));
 
-  // 4. Batch resolve latest published entities for items (D-MA & D-AE)
+  // 4. Batch resolve entities for items (D-MA & D-AE)
   const gameLevelEntityIds = rawItems
     .filter((i) => i.entityType === "game_level")
-    .map((i) => i.entityId);
-
-  const lessonEntityIds = rawItems
-    .filter((i) => i.entityType === "lesson")
     .map((i) => i.entityId);
 
   const gameLevelsMap = new Map<
@@ -172,21 +171,16 @@ export async function resolveEnrolledChildCurriculum(
   if (gameLevelEntityIds.length > 0) {
     const glRows = await db
       .select({
-        entityId: gameLevels.entityId,
+        id: gameLevels.id,
         code: gameLevels.code,
         title: gameLevels.title,
         accessTier: gameLevels.accessTier,
       })
       .from(gameLevels)
-      .where(
-        and(
-          inArray(gameLevels.entityId, gameLevelEntityIds),
-          eq(gameLevels.status, "published")
-        )
-      );
+      .where(inArray(gameLevels.id, gameLevelEntityIds));
 
     for (const gl of glRows) {
-      gameLevelsMap.set(gl.entityId, {
+      gameLevelsMap.set(gl.id, {
         code: gl.code,
         title: gl.title,
         access_tier: gl.accessTier as AccessTier,
@@ -194,54 +188,16 @@ export async function resolveEnrolledChildCurriculum(
     }
   }
 
-  const lessonsMap = new Map<
-    number,
-    { code: string; title: string; access_tier: AccessTier }
-  >();
-  if (lessonEntityIds.length > 0) {
-    const lesRows = await db
-      .select({
-        entityId: lessons.entityId,
-        code: lessons.code,
-        title: lessons.title,
-        accessTier: lessons.accessTier,
-      })
-      .from(lessons)
-      .where(
-        and(
-          inArray(lessons.entityId, lessonEntityIds),
-          eq(lessons.status, "published")
-        )
-      );
-
-    for (const les of lesRows) {
-      lessonsMap.set(les.entityId, {
-        code: les.code,
-        title: les.title,
-        access_tier: les.accessTier as AccessTier,
-      });
-    }
-  }
-
   const items: CurriculumPlayerItemRef[] = rawItems.map((item) => {
     let resolvedCode = `${item.entityType}_${item.entityId}`;
-    let resolvedTitle = item.entityType === "lesson" ? "Bài học" : "Trò chơi";
+    let resolvedTitle = "Trò chơi";
     let resolvedTier: AccessTier = "free";
 
-    if (item.entityType === "game_level") {
-      const gl = gameLevelsMap.get(item.entityId);
-      if (gl) {
-        resolvedCode = gl.code;
-        resolvedTitle = gl.title;
-        resolvedTier = gl.access_tier;
-      }
-    } else if (item.entityType === "lesson") {
-      const les = lessonsMap.get(item.entityId);
-      if (les) {
-        resolvedCode = les.code;
-        resolvedTitle = les.title;
-        resolvedTier = les.access_tier;
-      }
+    const gl = gameLevelsMap.get(item.entityId);
+    if (gl) {
+      resolvedCode = gl.code;
+      resolvedTitle = gl.title;
+      resolvedTier = gl.access_tier;
     }
 
     return {
@@ -250,7 +206,7 @@ export async function resolveEnrolledChildCurriculum(
       week_no: item.weekNo,
       session_no: item.sessionNo,
       position: item.position,
-      entity_type: item.entityType as "lesson" | "game_level",
+      entity_type: "game_level",
       entity_id: item.entityId,
       code: resolvedCode,
       title: resolvedTitle,

@@ -42,61 +42,154 @@ export const C2_GRD_01_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "dog",
-      label: "con chó",
+      id: "treasure_chest",
+      label: "rương kho báu",
       image: {
         kind: "emoji",
-        ref: "🐕",
+        ref: "🪙",
       },
       category: {
-        type: "động vật",
+        type: "điểm đích",
       },
+      contrast_group: "grid_target",
+      value: 1,
+      ordering: 1,
     },
     {
-      id: "cat",
-      label: "con mèo",
+      id: "target_flag",
+      label: "lá cờ chiến thắng",
       image: {
         kind: "emoji",
-        ref: "🐈",
+        ref: "🚩",
       },
       category: {
-        type: "động vật",
+        type: "điểm đích",
       },
+      contrast_group: "grid_target",
+      value: 2,
+      ordering: 2,
     },
     {
-      id: "chicken",
-      label: "con gà",
+      id: "target_house",
+      label: "ngôi nhà ấm áp",
       image: {
         kind: "emoji",
-        ref: "🐓",
+        ref: "🏡",
       },
       category: {
-        type: "động vật",
+        type: "điểm đích",
       },
+      contrast_group: "grid_target",
+      value: 3,
+      ordering: 3,
     },
     {
-      id: "duck",
-      label: "con vịt",
+      id: "target_star",
+      label: "ngôi sao vàng",
       image: {
         kind: "emoji",
-        ref: "🦆",
+        ref: "⭐",
       },
       category: {
-        type: "động vật",
+        type: "điểm đích",
       },
+      contrast_group: "grid_target",
+      value: 4,
+      ordering: 4,
     },
     {
-      id: "fish",
-      label: "con cá",
+      id: "obstacle_rock",
+      label: "tảng đá lớn",
       image: {
         kind: "emoji",
-        ref: "🐟",
+        ref: "🪨",
       },
       category: {
-        type: "động vật",
+        type: "vật cản",
       },
+      contrast_group: "grid_obstacle",
+      value: 5,
+      ordering: 5,
+    },
+    {
+      id: "obstacle_tree",
+      label: "hàng cây rậm rạp",
+      image: {
+        kind: "emoji",
+        ref: "🌳",
+      },
+      category: {
+        type: "vật cản",
+      },
+      contrast_group: "grid_obstacle",
+      value: 6,
+      ordering: 6,
+    },
+    {
+      id: "obstacle_water",
+      label: "vũng nước sâu",
+      image: {
+        kind: "emoji",
+        ref: "💧",
+      },
+      category: {
+        type: "vật cản",
+      },
+      contrast_group: "grid_obstacle",
+      value: 7,
+      ordering: 7,
+    },
+    {
+      id: "obstacle_fence",
+      label: "hàng rào gỗ",
+      image: {
+        kind: "emoji",
+        ref: "🪵",
+      },
+      category: {
+        type: "vật cản",
+      },
+      contrast_group: "grid_obstacle",
+      value: 8,
+      ordering: 8,
     },
   ],
+  relations: [
+    {
+      type: "pair",
+      source_id: "treasure_chest",
+      target_id: "obstacle_rock",
+    },
+    {
+      type: "pair",
+      source_id: "target_flag",
+      target_id: "obstacle_tree",
+    },
+    {
+      type: "pair",
+      source_id: "target_house",
+      target_id: "obstacle_water",
+    },
+    {
+      type: "pair",
+      source_id: "target_star",
+      target_id: "obstacle_fence",
+    },
+    {
+      type: "contrast",
+      source_id: "treasure_chest",
+      target_id: "obstacle_rock",
+    },
+  ],
+  axes: {
+    category: {
+      values: ["điểm đích", "vật cản"],
+    },
+    order: {
+      values: ["1", "2", "3", "4", "5", "6", "7", "8"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
@@ -128,13 +221,28 @@ export const C2_GRD_01_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Hàng và cột nhé",
   },
-  ordering: ["dog", "cat", "chicken", "duck", "fish"],
+  ordering: [
+    "treasure_chest",
+    "target_flag",
+    "target_house",
+    "target_star",
+    "obstacle_rock",
+    "obstacle_tree",
+    "obstacle_water",
+    "obstacle_fence",
+  ],
 };
 
 export const C2_GRD_01_SEED: SkillSeed = {
   identity: C2_GRD_01_IDENTITY,
   dataset: C2_GRD_01_DATASET,
   levels: [
+    {
+      template: "GT-000",
+      band: "4-5",
+      difficulty: 1,
+      theme: "school",
+    },
     {
       code: "GL-C2-GRD-TAP-0001",
       template: "GT-001",
@@ -160,27 +268,11 @@ export const C2_GRD_01_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C2-GRD-TCNT-0002",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 3,
-      theme: "space",
-      rounds: 3,
-    },
-    {
       code: "GL-C2-GRD-TCMP-0001",
       template: "GT-003",
       band: "4-5",
       difficulty: 2,
       theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GRD-TCMP-0002",
-      template: "GT-003",
-      band: "4-5",
-      difficulty: 3,
-      theme: "body",
       rounds: 3,
     },
     {
@@ -192,27 +284,11 @@ export const C2_GRD_01_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C2-GRD-PAIR-0002",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 3,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
       code: "GL-C2-GRD-PATT-0001",
       template: "GT-005",
       band: "4-5",
       difficulty: 2,
       theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C2-GRD-PATT-0002",
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 3,
-      theme: "homeland",
       rounds: 3,
     },
     {
@@ -222,7 +298,6 @@ export const C2_GRD_01_SEED: SkillSeed = {
       difficulty: 1,
       theme: "school",
       rounds: 3,
-      legacy_v1_ref: "D2-05",
     },
     {
       code: "GL-C2-GRD-SLOT-0003",

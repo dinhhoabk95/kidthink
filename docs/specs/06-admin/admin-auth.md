@@ -41,13 +41,17 @@ Manager có quyền chạm tiền và nội dung mà trẻ sẽ chơi. Đó là 
 ## 4. Main flow
 
 1. Nhập email + mật khẩu → xác thực.
-2. Đúng → cấp opaque Redis challenge 256-bit một mục đích, TTL tối đa 5 phút, trả **428**
-   `MFA_REQUIRED`; server chỉ lưu digest và challenge chỉ consume được một lần.
-   Credential này không phải session, không qua guard và không tạo `active_sessions`.
-   Preference `rememberMe` được bind vào challenge.
-3. Nhập mã TOTP kèm challenge credential → xác thực → cấp opaque session một giờ; chỉ cấp
-   remember credential tối đa 365 ngày nếu preference đã bind là true.
-4. Ghi Redis session authority + metadata `active_sessions` + audit `manager_login`.
+2. Nếu Manager **chưa bật MFA** (`mfa_enabled = false`): cấp ngay opaque session một giờ
+   (`200 OK` `{ status: "ok", manager }`); chỉ cấp remember credential tối đa 365 ngày nếu
+   `rememberMe = true`; ghi Redis session authority + metadata `active_sessions` + audit
+   `manager_login`. Không chặn hoặc ép thiết lập `otpauth://` tại màn hình `/login`.
+3. Nếu Manager **đã bật MFA** (`mfa_enabled = true`): cấp opaque Redis challenge 256-bit một
+   mục đích, TTL tối đa 5 phút, trả **428** `MFA_REQUIRED`; server chỉ lưu digest và challenge
+   chỉ consume được một lần. Credential này không phải session, không qua guard và không tạo
+   `active_sessions`. Preference `rememberMe` được bind vào challenge.
+4. Nhập mã TOTP/khôi phục kèm challenge credential → xác thực → cấp opaque session một giờ;
+   chỉ cấp remember credential tối đa 365 ngày nếu preference đã bind là true; ghi
+   `active_sessions` + audit `manager_login`.
 5. Mỗi API route manager trên `{domain}` kiểm `requireManagerAuth()` và `requireRole()` khi cần;
    admin SPA không có route handler hoặc DB access.
 
@@ -56,8 +60,8 @@ Manager có quyền chạm tiền và nội dung mà trẻ sẽ chơi. Đó là 
 | Nhánh | Hành vi |
 |---|---|
 | Sai mật khẩu | 401 `INVALID_CREDENTIALS`, audit `manager_login_failed` |
-| Sai MFA | 401, audit `manager_mfa_failed`; 5 lần → khoá 15 phút |
-| Chưa bật MFA | Bắt buộc thiết lập **trước khi** vào bất kỳ trang nào |
+| Sai MFA (khi `mfa_enabled = true`) | 401, audit `manager_mfa_failed`; 5 lần → khoá 15 phút |
+| Chưa bật MFA (`mfa_enabled = false`) | Đăng nhập thẳng bằng mật khẩu; thiết lập **TOTP** và **Passkey (WebAuthn)** thực hiện tại màn hình Cài đặt bảo mật (Settings) riêng |
 | Mất thiết bị MFA | Mã khôi phục dùng một lần; hết mã → `super_admin` khác reset |
 | `is_active = false` | 403, không nói lý do chi tiết |
 | Thao tác toàn hệ thống, reauth cũ hơn 5 phút | 428 `REAUTH_REQUIRED`; nhập lại mật khẩu hoặc TOTP/mã khôi phục hợp lệ trên chính session hiện tại |
@@ -66,7 +70,7 @@ Manager có quyền chạm tiền và nội dung mà trẻ sẽ chơi. Đó là 
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-ADA-01` | MFA **bắt buộc** cho mọi Manager | Tài khoản chạm tiền và nội dung cho trẻ |
+| `BR-ADA-01` | Mọi trang Admin ngoài `/login` bắt buộc có phiên Manager hợp lệ; MFA (TOTP / Passkey) chỉ thử thách khi tài khoản đã bật (`mfa_enabled = true`), thiết lập tại màn hình Settings riêng | Cho phép đăng nhập quản trị mượt mà ban đầu, tách luồng cấu hình TOTP + Passkey sang trang Cài đặt bảo mật riêng thay vì chặn ở `/login` |
 | `BR-ADA-02` | Cookie Manager là host-only trên `{domain}`; admin gọi API tuyệt đối với credentials và CSRF header | Admin static không được đọc hoặc phát hành cookie, còn API vẫn nhận đúng namespace |
 | `BR-ADA-03` | Cấm — **NEVER endpoint public tạo Manager** | Ngăn ngừa rò rỉ tài khoản quản trị và tự nâng cấp quyền |
 | `BR-ADA-04` | `requireRole()` kiểm ở **server route**, không chỉ ẩn menu | Ẩn menu không phải phân quyền |
@@ -111,8 +115,10 @@ interface AuthenticatedManager {
 
 ### `POST /api/guest/auth/managers/login`
 
-Body `{ email, password, rememberMe?: boolean }`. **428** `MFA_REQUIRED` + challenge credential một mục đích.
-401 `INVALID_CREDENTIALS`.
+Body `{ email, password, rememberMe?: boolean }`.
+- Khi `mfa_enabled = false`: trả **200** `{ status: "ok", manager }`, cấp opaque session một giờ và remember credential (nếu `rememberMe = true`), ghi `active_sessions` và `audit_logs` `manager_login`.
+- Khi `mfa_enabled = true`: trả **428** `MFA_REQUIRED` + challenge credential một mục đích.
+- Sai thông tin xác thực: **401** `INVALID_CREDENTIALS`.
 
 ### `POST /api/guest/auth/managers/mfa`
 
@@ -203,3 +209,4 @@ Scenario: BR-ADA-09 — force cần reauth gần nhất trên đúng session
 |---|---|---|---|---|
 | 1 | Có giới hạn IP cho bề mặt admin không? An toàn hơn nhưng cản vận hành di động | Cấu hình Admin P2 | P2 | Infra |
 | 2 | Manager đầu tiên tạo bằng seed — quy trình xoay mật khẩu ban đầu thế nào? | Quy trình Go-live | P1 | người quyết |
+| 3 | Màn hình Cài đặt bảo mật (Settings) riêng cho Manager: thiết kế luồng cấu hình cả **TOTP** (QR Code + Base32 Secret Key) và **Passkey (WebAuthn)** | Mở rộng xác thực đa yếu tố cho Admin | P2 | Product / Auth |

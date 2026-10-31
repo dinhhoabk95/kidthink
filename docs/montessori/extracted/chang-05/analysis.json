@@ -1,0 +1,1381 @@
+{
+  "stage_id": "chang-05",
+  "stage_number": 5,
+  "workbook_code": "WB05",
+  "title": "Chặng 5: Thành phố săn số",
+  "subtitle": "Tìm thật nhanh – Điền thật đúng",
+  "mission": "Tìm lại những con số bị gió xáo trộn cuốn mất",
+  "gem_reward": {
+    "name": "Viên Ngọc Chính Xác",
+    "english_name": "Accuracy Gem",
+    "symbol": "diamond_sparkle",
+    "pedagogical_meaning": "Tượng trưng cho sự kiên trì, quan sát tỉ mỉ, đếm chính xác không bỏ sót và không đếm lặp"
+  },
+  "series": "Gấu Logic & Thỏ Quan Sát - Chuyến Tàu Toán Học (Phần 5)",
+  "target_age": "3–6 tuổi",
+  "pedagogy": {
+    "framework": "Montessori Sensory & CPA (Concrete - Pictorial - Abstract)",
+    "approach": "Visual Discrimination (Phân biệt thị giác) -> One-to-One Counting (Đếm tương ứng 1-1) -> Symbolic Recording (Ghi nhận số lượng vào ký hiệu số)",
+    "competencies": [
+      {
+        "id": "C1",
+        "name": "Cảm thức số học & Đếm (Number Sense & Counting)",
+        "strands": ["C1.CNT", "C1.NREC", "C1.OTO"]
+      },
+      {
+        "id": "C4",
+        "name": "Cảm quan & Phân biệt thị giác (Sensory & Visual Discrimination)",
+        "strands": ["C4.VIS", "C4.SEN"]
+      }
+    ],
+    "skills_targeted": [
+      {
+        "code": "C1.CNT.01",
+        "name": "Đếm đồ vật",
+        "description": "Đếm chính xác từng đối tượng mục tiêu trong bức tranh hỗn hợp"
+      },
+      {
+        "code": "C1.CNT.03",
+        "name": "Đếm không bỏ sót",
+        "description": "Duy trì kiểm soát thị giác, không bỏ sót đối tượng và không đếm lặp"
+      },
+      {
+        "code": "C1.CNT.06",
+        "name": "Đếm theo nhóm",
+        "description": "Cô lập một nhóm thuộc tính (loại rau, con vật, màu sắc) giữa đám đông hỗn loạn để đếm"
+      },
+      {
+        "code": "C1.CNT.10",
+        "name": "Kiểm tra kết quả đếm",
+        "description": "Rà soát lại số lượng trước khi điền số vào ô"
+      },
+      {
+        "code": "C1.NREC.01",
+        "name": "Nhận biết số 0–3",
+        "description": "Gắn lượng đếm được từ 1 đến 3 với chữ số tương ứng"
+      },
+      {
+        "code": "C1.NREC.02",
+        "name": "Nhận biết số 0–5",
+        "description": "Gắn lượng đếm được từ 1 đến 5 với chữ số tương ứng"
+      },
+      {
+        "code": "C1.NREC.03",
+        "name": "Nhận biết số 0–10",
+        "description": "Gắn lượng đếm được từ 1 đến 10 với chữ số tương ứng"
+      },
+      {
+        "code": "C1.NREC.05",
+        "name": "Ghép số với lượng",
+        "description": "Chọn hoặc kéo số đúng vào ô đáp án tương ứng với tập hợp con vừa đếm"
+      },
+      {
+        "code": "C1.NREC.06",
+        "name": "Chọn đúng ký hiệu số",
+        "description": "Nhận biết ký hiệu số chính xác trong bảng chọn, phân biệt với số đảo/gần giống"
+      },
+      {
+        "code": "C1.OTO.04",
+        "name": "Ghép đồ vật với số",
+        "description": "Thiết lập tương ứng giữa tập hợp đối tượng và thẻ số đại diện"
+      },
+      {
+        "code": "C4.VIS.01",
+        "name": "Phân biệt thị giác chi tiết",
+        "description": "Phát hiện khác biệt nhỏ về màu sắc, hướng quay đầu, đạo cụ và sắc thái biểu cảm"
+      }
+    ],
+    "strategy_ladder": [
+      {
+        "level": 1,
+        "name": "Chạm tay đếm trực tiếp (Point & Count)",
+        "guide_quote": "Chạm tay vào từng hình khi đếm",
+        "pages": [2, 3, 4],
+        "focus": "Liên kết xúc giác - thị giác - âm thanh, củng cố đếm 1-1"
+      },
+      {
+        "level": 2,
+        "name": "Phân đoạn chú ý có chọn lọc (Selective Attention)",
+        "guide_quote": "Tìm xong một loại rồi mới đếm loại khác",
+        "pages": [5, 6, 7, 8, 9, 10, 11],
+        "focus": "Ức chế chú ý ngoại cảnh (Inhibitory Control), cô lập 1 mục tiêu duy nhất"
+      },
+      {
+        "level": 3,
+        "name": "Quét thị giác có hệ thống (Systematic Visual Scanning)",
+        "guide_quote": "Quét mắt từ trái sang phải, từ trên xuống dưới",
+        "pages": [12, 13, 14, 15, 16],
+        "focus": "Hình thành thói quen quét hình chữ Z chuẩn bị cho kỹ năng đọc viết và quan sát khoa học"
+      },
+      {
+        "level": 4,
+        "name": "Đánh dấu kiểm soát chống lặp/sót (Tally & Marking)",
+        "guide_quote": "Đánh dấu nhẹ những hình bé đã đếm",
+        "pages": [17, 18, 19, 20, 21],
+        "focus": "Quản lý bộ nhớ làm việc (Working Memory), đánh dấu trực quan để không đếm hai lần"
+      },
+      {
+        "level": 5,
+        "name": "Chia vùng không gian (Spatial Chunking / Quadrant Partitioning)",
+        "guide_quote": "Chia khu vực nhỏ để đếm không bị sót",
+        "pages": [22],
+        "focus": "Chiến lược tư duy cấp cao chia để trị khi mật độ đối tượng dày đặc và ngụy trang"
+      }
+    ]
+  },
+  "activity_groups": [
+    {
+      "group_id": "WB05-D1",
+      "name": "Săn tìm & Khoanh đối tượng / Số mục tiêu trong lưới ký hiệu",
+      "game_engine_code": "GT-037",
+      "game_engine_name": "symbol-hunt (Scatter Board / Matrix Symbol Hunt)",
+      "fallback_engine_code": "GT-002",
+      "fallback_engine_name": "tap-select-multi",
+      "primary_skills": ["C1.NREC.03", "C1.NREC.06", "C1.CNT.03", "C4.VIS.01"],
+      "age_band": "3–4, 4–5, 5–6 tuổi",
+      "pedagogical_concept": "Rèn luyện khả năng lọc thị giác (Figure-Ground Perception) và ức chế phân tán. Trẻ đối chiếu mẫu mục tiêu với các phần tử phân tán trên bảng.",
+      "dialogue": {
+        "gau_logic": "Thợ săn nhí ơi! Hãy tìm và khoanh tất cả số mục tiêu đang ẩn nấp nhé!",
+        "tho_quan_sat": "Coi chừng những con số nghịch ngợm quay ngược đầu làm bé nhầm lẫn đấy!"
+      },
+      "mechanics": {
+        "input": "Tap-to-select (Chạm để khoanh / đóng khung sáng mục tiêu)",
+        "hit_floor": "Bán kính chạm >= 64px (band 3-4 là 96px, band 5-6 là 72px)",
+        "target_display": "Hộp mẫu 'MỤC TIÊU CẦN TÌM' nổi bật ở cạnh trên với viền breathing pulse",
+        "matrix_layout": "Bảng phân tán cố định 960x540 (Scatter board) hoặc lưới ma trận 4x4, 5x5, 6x6",
+        "distractor_types": [
+          {
+            "category": "Số đảo ngược / Gần giống (Mirror / Inverted numbers)",
+            "examples": [
+              {
+                "target": 6,
+                "distractors": [9, "dấu lộn ngược của 6", 5, 8]
+              },
+              {
+                "target": 2,
+                "distractors": [5, "số 2 lật gương", 3, 7]
+              },
+              {
+                "target": 1,
+                "distractors": [7, "chữ l hoa", "gạch đứng |"]
+              },
+              {
+                "target": 3,
+                "distractors": [8, "chữ E ngược", 2]
+              },
+              {
+                "target": 4,
+                "distractors": ["số 4 mở đầu", "chữ A không gạch"]
+              }
+            ]
+          },
+          {
+            "category": "Đối tượng cùng loại khác thuộc tính (Isomorphic variations)",
+            "examples": [
+              {
+                "target": "Ong vàng",
+                "distractors": ["Ong xanh dương", "Ong cam", "Ong tím"]
+              },
+              {
+                "target": "Bọ rùa đỏ",
+                "distractors": ["Bọ rùa vàng", "Bọ rùa xanh", "Bọ rùa hồng"]
+              },
+              {
+                "target": "Cún tai vểnh",
+                "distractors": ["Cún tai cụp", "Cún nơ hồng", "Cún tai xoăn"]
+              }
+            ]
+          },
+          {
+            "category": "Đối tượng ngụy trang hướng quay (Spatial orientation distractors)",
+            "examples": [
+              {
+                "target": "Tắc kè sọc vàng quay trái",
+                "distractors": [
+                  "Tắc kè sọc vàng quay phải",
+                  "Tắc kè sọc đỏ quay phải",
+                  "Tắc kè sọc lam quay trái"
+                ]
+              }
+            ]
+          }
+        ],
+        "feedback": {
+          "correct_tap": {
+            "behavior": "Khuyên tròn ánh sáng vàng nhạt khóa quanh mục tiêu, nảy nhẹ scale 1.1x -> 1.0x",
+            "audio": "Tiếng tinh tinh trong trẻo + giọng đọc tên số/vật, tăng cao độ theo chuỗi liên tiếp",
+            "particles": "3 hạt sao nhỏ bung tại điểm chạm (không hardcode tọa độ)"
+          },
+          "incorrect_tap": {
+            "behavior": "Nhịp thở hổ phách (amber_soft pulse 300ms) trên vật chạm sai, không dấu X đỏ, không tiếng buzzer",
+            "audio": "Âm mộc gõ nhẹ dịu dàng (ramp-in 20ms, ramp-out 40ms) gợi ý bé nhìn kỹ lại mẫu",
+            "scaffolding": "Sau 2 miss: Hộp mục tiêu trên đỉnh nhấp nháy nhắc nhở"
+          },
+          "level_completion": {
+            "trigger": "Khoanh đủ tất cả các mục tiêu trên bảng",
+            "animation": "Các mục tiêu đã khoanh đồng loạt phát sáng lấp lánh, Gấu Logic gật đầu khen ngợi",
+            "celebration": "Âm hợp âm hoàn thành (Do-Mi-Sol-Do), Thỏ tung hoa, chuyển level mượt mà"
+          }
+        }
+      }
+    },
+    {
+      "group_id": "WB05-D2",
+      "name": "Tìm đối tượng mục tiêu rồi đếm tổng số lần xuất hiện & Điền số",
+      "game_engine_code": "GT-028",
+      "game_engine_name": "tap-count (Tally Counter / Count & Number Input)",
+      "fallback_engine_code": "GT-002",
+      "fallback_engine_name": "tap-select-multi",
+      "primary_skills": [
+        "C1.CNT.01",
+        "C1.CNT.03",
+        "C1.CNT.06",
+        "C1.NREC.05",
+        "C1.OTO.04"
+      ],
+      "age_band": "3–4, 4–5, 5–6 tuổi",
+      "pedagogical_concept": "Cơ chế xương sống của cả 21 trang bài tập Chặng 5: Đứa trẻ phải thực hiện quy trình 3 giai đoạn: (1) Nhận dạng mẫu ở thanh trên; (2) Quét và chạm đếm từng cá thể trên bảng (chấm sáng đánh dấu chống đếm lặp); (3) Chọn hoặc kéo chữ số tương ứng vào ô trống bên cạnh mẫu.",
+      "dialogue": {
+        "gau_logic": "Gió đã xáo trộn cả khu vườn rồi! Bé hãy tìm từng loại, đếm xem có bao nhiêu bạn nhé!",
+        "tho_quan_sat": "Nhớ quét mắt từ trái sang phải, đếm bạn nào thì chạm tay đánh dấu bạn đó nha!"
+      },
+      "mechanics": {
+        "input": "Two-phase interaction: Phase 1: Tap to count target on field; Phase 2: Select/drag number to slot",
+        "target_shelf": "Thanh chứa 3–4 ô mẫu mục tiêu kèm ô trống hình chữ nhật bo tròn viền nét đứt",
+        "counting_mode": {
+          "active_target_selection": "Bé chạm vào 1 thẻ mẫu trên khay để kích hoạt chế độ săn cho loại đó",
+          "field_interaction": "Khi chạm vào cá thể đúng trên bảng: Cá thể sáng lên, hiện số thứ tự đếm (1, 2, 3...) nổi lên nhịp nhàng",
+          "counter_link": "Bộ đếm trong ô trống tự động nhảy số hoặc hiển thị ngân hàng số [1..10] để bé chọn xác nhận",
+          "marking_badge": "Mỗi cá thể đã đếm được ghim một chấm sáng hoặc tick hoa nhỏ để bé biết không đếm lại"
+        },
+        "quantities_matrix": {
+          "level_1_pages_1_to_3": {
+            "categories": 3,
+            "total_items": [9, 10, 11],
+            "per_target_range": [2, 4]
+          },
+          "level_2_pages_4_to_7": {
+            "categories": 4,
+            "total_items": [16, 16, 20, 23],
+            "per_target_range": [3, 6]
+          },
+          "level_3_pages_8_to_15": {
+            "categories": 4,
+            "total_items": [20, 20, 20, 24],
+            "per_target_range": [4, 6]
+          },
+          "level_4_pages_16_to_20": {
+            "categories": 4,
+            "total_items": [20, 20, 20, 24],
+            "per_target_range": [4, 6]
+          },
+          "level_5_page_21": {
+            "categories": 4,
+            "total_items": [24],
+            "per_target_range": [6, 6]
+          }
+        },
+        "feedback": {
+          "on_count_step": "Âm marimba nốt tăng dần (1 -> 2 -> 3 -> 4...), số thứ tự bay lên",
+          "on_slot_complete": "Khi đếm đủ và xác nhận đúng số lượng: Thẻ mục tiêu đổi sang viền xanh ngọc, phát tiếng ting thành công",
+          "on_under_count": "Nhịp hổ phách nhẹ nhắc bé: 'Vẫn còn bạn đang trốn đấy, bé tìm kỹ thêm nhé!'",
+          "on_over_count": "Âm thanh nhẹ nhắc bé đếm lại, bỏ đánh dấu trùng",
+          "scaffolding": {
+            "l1_nudge": "Sau 10s: Nhấp nháy nhẹ 1 cá thể mục tiêu chưa đếm",
+            "l2_guide": "Sau 18s: Ghost hand chỉ đường quét từ góc trên trái sang phải",
+            "l3_demo": "Sau 25s: Ghost hand chạm đếm mẫu 2 đối tượng tiếp theo"
+          }
+        }
+      }
+    },
+    {
+      "group_id": "WB05-D3",
+      "name": "Tô màu theo mã số trên lưới / Tranh ẩn (Color by Number / Code Reveal)",
+      "game_engine_code": "GT-037",
+      "game_engine_name": "symbol-hunt (Pixel Matrix / Color Code Variant)",
+      "fallback_engine_code": "GT-012",
+      "fallback_engine_name": "matrix-choice",
+      "primary_skills": ["C1.NREC.01", "C1.NREC.02", "C1.NREC.03", "C4.SEN.01"],
+      "age_band": "4–5, 5–6 tuổi",
+      "pedagogical_concept": "Chuyển hóa biểu tượng 'Viên Ngọc Chính Xác' (Trang 23) và cơ chế tìm số ẩn thành hoạt động giải mã màu theo số. Trẻ nhận biết ký hiệu số trong từng ô lưới và dùng bút màu số tương ứng để tô, làm lộ bức tranh bí mật.",
+      "dialogue": {
+        "gau_logic": "Bức tranh bí mật bị che mờ bởi những ô số!",
+        "tho_quan_sat": "Bé hãy chọn đúng màu cho từng con số để làm viên ngọc tỏa sáng nhé!"
+      },
+      "mechanics": {
+        "palette": "Khay màu ở cạnh màn hình, mỗi màu gắn một số (Ví dụ: 1 = Xanh dương, 2 = Vàng, 3 = Cam, 4 = Đỏ, 5 = Tím)",
+        "board": "Lưới pixel hình viên ngọc kim cương hoặc đầu tàu hơi nước Chặng 5 (9x9 hoặc 12x12)",
+        "action": "Chọn bút màu ở khay rồi chạm vào ô số tương ứng trên tranh",
+        "feedback": {
+          "correct_color": {
+            "behavior": "Ô số biến thành màu đúng với hiệu ứng loang màu mịn màng (gradient fill)",
+            "audio": "Tiếng cọ vẽ xào xạc vui tai kèm nốt nhạc nhẹ"
+          },
+          "incorrect_color": {
+            "behavior": "Màu không ăn vào ô, ô số rung nhẹ với nhịp hổ phách, bút màu trôi về bảng màu",
+            "audio": "Âm mộc 'cốc' nhẹ nhàng, giọng thỏ: 'Số này cần màu khác cơ!'"
+          },
+          "revelation": "Khi tô đủ 100% các ô: Đường viền biến mất, toàn bộ bức tranh bừng sáng lấp lánh (Viên Ngọc Chính Xác tỏa hào quang kim cương)"
+        }
+      }
+    }
+  ],
+  "difficulty_progression": [
+    {
+      "level": 1,
+      "name": "Khởi động trực quan (Visual Starter)",
+      "pages_range": "Trang 1 – 3 (Pages 2–4)",
+      "category_count": 3,
+      "items_total_range": "9 – 11",
+      "visual_complexity": "Độ tương phản hình thái và màu sắc tối đa (Cà chua đỏ, Cà rốt cam, Cà tím tím; Bọ rùa đỏ, Bướm hồng, Ong vàng)",
+      "distractor_profile": "Không có bẫy cùng loài, kích thước to, khoảng cách thưa",
+      "target_skill": "Làm quen với quy trình Săn tìm -> Đếm 1-1 -> Ghi số"
+    },
+    {
+      "level": 2,
+      "name": "Mở rộng danh mục & Mật độ (Category Expansion)",
+      "pages_range": "Trang 4 – 7 (Pages 5–8)",
+      "category_count": 4,
+      "items_total_range": "16 – 23",
+      "visual_complexity": "Mở rộng 4 loại đối tượng, mật độ dày đặc hơn, khoảng cách co hẹp",
+      "distractor_profile": "Bắt đầu xuất hiện các đối tượng cùng nhóm sinh vật (Ong + Bọ rùa + Nhện + Bướm)",
+      "target_skill": "Rèn luyện khả năng duy trì tập trung và chiến lược đếm tuần tự từng loại"
+    },
+    {
+      "level": 3,
+      "name": "Đồng nhất hình thái - Phân biệt màu sắc & Chi tiết (Isomorphic & Attribute Discrimination)",
+      "pages_range": "Trang 8 – 15 (Pages 9–16)",
+      "category_count": 4,
+      "items_total_range": "20 – 24",
+      "visual_complexity": "Cực kỳ thách thức: Các cá thể trong cùng một bài có hình dáng giống hệt nhau, CHỈ KHÁC màu sắc hoặc chi tiết nhỏ",
+      "distractor_profile": "4 đàn bướm khác màu, 4 đội ong khác màu sọc, 4 đội bọ rùa khác màu chấm bi, 4 giống cún khác tai/nơ",
+      "target_skill": "Phát triển năng lực phân tích vi chi tiết (Fine-grained Visual Feature Extraction)"
+    },
+    {
+      "level": 4,
+      "name": "Phân biệt hành động & Đạo cụ (Action & Context Discrimination)",
+      "pages_range": "Trang 16 – 20 (Pages 17–21)",
+      "category_count": 4,
+      "items_total_range": "20 – 24",
+      "visual_complexity": "Nhân vật giống nhau nhưng đang thực hiện các hành động khác nhau với đạo cụ riêng biệt",
+      "distractor_profile": "Cún vẽ tranh vs Cún ăn vs Cún đánh đàn vs Cún gặm xương; Cún đeo ba lô vs Cún đọc báo",
+      "target_skill": "Nhận diện ngữ cảnh và hành động, kết hợp chiến lược đánh dấu chống đếm lặp"
+    },
+    {
+      "level": 5,
+      "name": "Ngụy trang & Hướng không gian (Camouflage & Spatial Orientation Mastery)",
+      "pages_range": "Trang 21 (Page 22)",
+      "category_count": 4,
+      "items_total_range": "24",
+      "visual_complexity": "Thử thách đỉnh cao: 24 chú tắc kè xanh ngụy trang, khác biệt cực kỳ tinh vi về màu sọc lưng và hướng quay đầu (Trái vs Phải)",
+      "distractor_profile": "Bẫy lật gương trái/phải kết hợp sọc vàng/đỏ/lam/xanh",
+      "target_skill": "Thao tác không gian tinh tế và chiến lược chia nhỏ khu vực (Spatial Chunking)"
+    }
+  ],
+  "pages_inventory": [
+    {
+      "page_number": 1,
+      "file_path": "pages/page-01.jpg",
+      "page_type": "cover_overview",
+      "title": "HÀNH TRÌNH CHUYẾN TÀU TOÁN HỌC - CHẶNG 5: THÀNH PHỐ SĂN SỐ",
+      "subtitle": "TÌM THẬT NHANH – ĐIỀN THẬT ĐÚNG",
+      "mission": "TÌM LẠI NHỮNG CON SỐ BỊ GIÓ XÁO TRỘN CUỐN MẤT",
+      "theme": "Quảng trường cổ tích rực rỡ nắng vàng của Thành Phố Săn Số, đài phun nước trung tâm có Viên Ngọc Chính Xác",
+      "characters": [
+        {
+          "name": "Gấu Logic",
+          "appearance": "Đeo kính xanh tròn, áo gile xanh tím than, cầm clipboard gắn danh mục kiểm đếm có 4 ô số trống"
+        },
+        {
+          "name": "Thỏ Quan Sát",
+          "appearance": "Đeo túi chéo vàng, cầm kính lúp viền đỏ cam háo hức chỉ dẫn thám tử nhí"
+        }
+      ],
+      "parent_objectives": [
+        "Tìm đúng từng loại hình trong tranh hỗn hợp",
+        "Đếm và tự viết số vào ô trống",
+        "Rèn tập trung và tránh đếm lặp"
+      ],
+      "visual_elements": {
+        "train": "Đầu tàu hỏa số 5 màu xanh dương cổ điển, ống khói phun hơi nước, toa chở đầy hoa quả",
+        "gem": "Viên Ngọc Chính Xác hình kim cương màu xanh lam khổng lồ tỏa hào quang trên đỉnh đài phun nước",
+        "signs": "Biển gỗ cắm câu hỏi: Ong=? Cà rốt=? Cà chua=? Bướm=?",
+        "environment": "Chợ nông sản đầy bắp cải, cà chua, cà rốt, bí ngô, hoa cỏ, bướm bay rộn ràng"
+      },
+      "digital_game_potential": {
+        "mechanic": "Hub / Map Overview / Story Introduction",
+        "interaction": "Chạm vào Gấu & Thỏ phát lời chào mở đầu; chạm vào các biển '?' phát hiệu ứng tò mò; chạm vào đầu tàu hụ còi xình xịch."
+      }
+    },
+    {
+      "page_number": 2,
+      "page_index_in_workbook": 1,
+      "file_path": "pages/page-02.jpg",
+      "page_type": "hunt_and_count_activity",
+      "title": "VƯỜN RAU BỊ XÁO TRỘN",
+      "instruction": "TÌM TỪNG LOẠI, ĐẾM VÀ VIẾT SỐ VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Gió đã trộn các loại rau củ vào nhau!",
+        "tho_quan_sat": "Bé tìm từng loại, đếm rồi viết số nhé!"
+      },
+      "strategy_tip": "GỢI Ý: CHẠM TAY VÀO TỪNG HÌNH KHI ĐẾM",
+      "targets": [
+        {
+          "name": "Cà chua",
+          "color": "Đỏ tươi",
+          "expected_count": 3
+        },
+        {
+          "name": "Cà rốt",
+          "color": "Cam cuống xanh",
+          "expected_count": 4
+        },
+        {
+          "name": "Cà tím",
+          "color": "Tím thẫm",
+          "expected_count": 2
+        }
+      ],
+      "total_items": 9,
+      "category_count": 3,
+      "difficulty_level": 1,
+      "engine_mapping": {
+        "primary": "GT-028",
+        "secondary": "GT-037",
+        "fallback": "GT-002"
+      }
+    },
+    {
+      "page_number": 3,
+      "page_index_in_workbook": 2,
+      "file_path": "pages/page-03.jpg",
+      "page_type": "hunt_and_count_activity",
+      "title": "KHU VƯỜN CÔN TRÙNG NHỎ",
+      "instruction": "TÌM TỪNG LOẠI, ĐẾM VÀ VIẾT SỐ VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Các bạn côn trùng đang ẩn khắp nơi!",
+        "tho_quan_sat": "Bé dùng kính lúp tìm từng loại nhé!"
+      },
+      "strategy_tip": "GỢI Ý: CHẠM TAY VÀO TỪNG HÌNH KHI ĐẾM",
+      "targets": [
+        {
+          "name": "Bọ rùa",
+          "color": "Đỏ chấm bi đen",
+          "expected_count": 3
+        },
+        {
+          "name": "Bướm",
+          "color": "Hồng phấn cánh hoa",
+          "expected_count": 3
+        },
+        {
+          "name": "Ong",
+          "color": "Vàng sọc đen cánh xanh",
+          "expected_count": 4
+        }
+      ],
+      "total_items": 10,
+      "category_count": 3,
+      "difficulty_level": 1,
+      "engine_mapping": {
+        "primary": "GT-028",
+        "secondary": "GT-037",
+        "fallback": "GT-002"
+      }
+    },
+    {
+      "page_number": 4,
+      "page_index_in_workbook": 3,
+      "file_path": "pages/page-04.jpg",
+      "page_type": "hunt_and_count_activity",
+      "title": "NHỮNG NGƯỜI BẠN BÒ TÍ HON",
+      "instruction": "TÌM TỪNG LOẠI, ĐẾM VÀ VIẾT SỐ VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Các bạn nhỏ đang bò lẫn vào nhau!",
+        "tho_quan_sat": "Bé tìm xong một loại rồi mới đếm nhé!"
+      },
+      "strategy_tip": "GỢI Ý: CHẠM TAY VÀO TỪNG HÌNH KHI ĐẾM",
+      "targets": [
+        {
+          "name": "Sâu xanh",
+          "color": "Xanh lá chuối uốn lượn",
+          "expected_count": 4
+        },
+        {
+          "name": "Ong mật",
+          "color": "Vàng sọc đen",
+          "expected_count": 4
+        },
+        {
+          "name": "Nhện tím",
+          "color": "Tím tròn nhiều chân mắt to",
+          "expected_count": 3
+        }
+      ],
+      "total_items": 11,
+      "category_count": 3,
+      "difficulty_level": 1,
+      "engine_mapping": {
+        "primary": "GT-028",
+        "secondary": "GT-037",
+        "fallback": "GT-002"
+      }
+    },
+    {
+      "page_number": 5,
+      "page_index_in_workbook": 4,
+      "file_path": "pages/page-05.jpg",
+      "page_type": "hunt_and_count_activity",
+      "title": "VŨ ĐIỆU CÁNH NHỎ",
+      "instruction": "TÌM TỪNG LOẠI, ĐẾM VÀ VIẾT SỐ VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Có bốn nhóm bạn đang bay quanh vườn!",
+        "tho_quan_sat": "Bé nhìn thật kỹ đôi cánh của từng bạn!"
+      },
+      "strategy_tip": "GỢI Ý: CHẠM TAY VÀO TỪNG HÌNH KHI ĐẾM",
+      "targets": [
+        {
+          "name": "Bướm hồng",
+          "color": "Hồng phấn viền vàng",
+          "expected_count": 4
+        },
+        {
+          "name": "Chuồn chuồn",
+          "color": "Xanh dương cánh mỏng",
+          "expected_count": 4
+        },
+        {
+          "name": "Bọ rùa",
+          "color": "Đỏ chấm bi đen",
+          "expected_count": 4
+        },
+        {
+          "name": "Ong vàng",
+          "color": "Vàng sọc đen",
+          "expected_count": 4
+        }
+      ],
+      "total_items": 16,
+      "category_count": 4,
+      "difficulty_level": 2,
+      "engine_mapping": {
+        "primary": "GT-028",
+        "secondary": "GT-037",
+        "fallback": "GT-002"
+      }
+    },
+    {
+      "page_number": 6,
+      "page_index_in_workbook": 5,
+      "file_path": "pages/page-06.jpg",
+      "page_type": "hunt_and_count_activity",
+      "title": "BỮA SÁNG TRONG THÀNH PHỐ",
+      "instruction": "TÌM TỪNG LOẠI, ĐẾM VÀ VIẾT SỐ VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Bàn ăn sáng đang bị xáo trộn rồi!",
+        "tho_quan_sat": "Bé tìm từng món và điền số còn thiếu nhé!"
+      },
+      "strategy_tip": "GỢI Ý: CHẠM TAY VÀO TỪNG HÌNH KHI ĐẾM",
+      "targets": [
+        {
+          "name": "Bánh mì nướng",
+          "color": "Vàng nâu lát vuông",
+          "expected_count": 4
+        },
+        {
+          "name": "Hộp sữa",
+          "color": "Trắng xanh hộp giấy",
+          "expected_count": 3
+        },
+        {
+          "name": "Trứng ốp la",
+          "color": "Lòng đỏ cam lòng trắng tròn",
+          "expected_count": 5
+        },
+        {
+          "name": "Xúc xích",
+          "color": "Đỏ nâu nướng thơm",
+          "expected_count": 4
+        }
+      ],
+      "total_items": 16,
+      "category_count": 4,
+      "difficulty_level": 2,
+      "engine_mapping": {
+        "primary": "GT-028",
+        "secondary": "GT-037",
+        "fallback": "GT-002"
+      }
+    },
+    {
+      "page_number": 7,
+      "page_index_in_workbook": 6,
+      "file_path": "pages/page-07.jpg",
+      "page_type": "hunt_and_count_activity",
+      "title": "KHU CHỢ RAU ĐÔNG VUI",
+      "instruction": "TÌM TỪNG LOẠI, ĐẾM VÀ VIẾT SỐ VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Khu chợ có nhiều rau củ hơn rồi!",
+        "tho_quan_sat": "Bé tìm xong một loại rồi mới đếm nhé!"
+      },
+      "strategy_tip": "GỢI Ý: TÌM XONG MỘT LOẠI RỒI MỚI ĐẾM LOẠI KHÁC",
+      "targets": [
+        {
+          "name": "Cà chua",
+          "color": "Đỏ mọng",
+          "expected_count": 6
+        },
+        {
+          "name": "Cà rốt",
+          "color": "Cam tươi",
+          "expected_count": 5
+        },
+        {
+          "name": "Cà tím",
+          "color": "Tím thẫm",
+          "expected_count": 4
+        },
+        {
+          "name": "Đậu Hà Lan",
+          "color": "Xanh lá vỏ dài hạt tròn",
+          "expected_count": 5
+        }
+      ],
+      "total_items": 20,
+      "category_count": 4,
+      "difficulty_level": 2,
+      "engine_mapping": {
+        "primary": "GT-028",
+        "secondary": "GT-037",
+        "fallback": "GT-002"
+      }
+    },
+    {
+      "page_number": 8,
+      "page_index_in_workbook": 7,
+      "file_path": "pages/page-08.jpg",
+      "page_type": "hunt_and_count_activity",
+      "title": "VŨ HỘI CÔN TRÙNG",
+      "instruction": "TÌM TỪNG LOẠI, ĐẾM VÀ VIẾT SỐ VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Các bạn côn trùng đang vui hội khắp nơi!",
+        "tho_quan_sat": "Bé quan sát màu sắc để tìm đúng từng loại!"
+      },
+      "strategy_tip": "GỢI Ý: TÌM XONG MỘT LOẠI RỒI MỚI ĐẾM LOẠI KHÁC",
+      "targets": [
+        {
+          "name": "Ong",
+          "color": "Vàng sọc đen",
+          "expected_count": 6
+        },
+        {
+          "name": "Bọ rùa",
+          "color": "Đỏ chấm bi đen",
+          "expected_count": 6
+        },
+        {
+          "name": "Nhện tím",
+          "color": "Tím sẫm nhiều chân",
+          "expected_count": 5
+        },
+        {
+          "name": "Bướm hồng",
+          "color": "Hồng cánh sen",
+          "expected_count": 6
+        }
+      ],
+      "total_items": 23,
+      "category_count": 4,
+      "difficulty_level": 2,
+      "engine_mapping": {
+        "primary": "GT-028",
+        "secondary": "GT-037",
+        "fallback": "GT-002"
+      }
+    },
+    {
+      "page_number": 9,
+      "page_index_in_workbook": 8,
+      "file_path": "pages/page-09.jpg",
+      "page_type": "hunt_and_count_activity",
+      "title": "ĐÀN BƯỚM RỰC RỠ",
+      "instruction": "TÌM TỪNG LOẠI, ĐẾM VÀ VIẾT SỐ VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Những cánh bướm nhiều màu đang bay lẫn nhau!",
+        "tho_quan_sat": "Bé tìm bướm theo từng màu rồi điền số nhé!"
+      },
+      "strategy_tip": "GỢI Ý: TÌM XONG MỘT LOẠI RỒI MỚI ĐẾM LOẠI KHÁC",
+      "targets": [
+        {
+          "name": "Bướm hồng",
+          "color": "Hồng phấn",
+          "expected_count": 5
+        },
+        {
+          "name": "Bướm xanh",
+          "color": "Xanh da trời",
+          "expected_count": 5
+        },
+        {
+          "name": "Bướm tím",
+          "color": "Tím hoa cà",
+          "expected_count": 5
+        },
+        {
+          "name": "Bướm vàng",
+          "color": "Vàng tươi",
+          "expected_count": 5
+        }
+      ],
+      "total_items": 20,
+      "category_count": 4,
+      "difficulty_level": 3,
+      "engine_mapping": {
+        "primary": "GT-028",
+        "secondary": "GT-037",
+        "fallback": "GT-002"
+      }
+    },
+    {
+      "page_number": 10,
+      "page_index_in_workbook": 9,
+      "file_path": "pages/page-10.jpg",
+      "page_type": "hunt_and_count_activity",
+      "title": "BIỆT ĐỘI ONG CHĂM CHỈ",
+      "instruction": "TÌM TỪNG LOẠI, ĐẾM VÀ VIẾT SỐ VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Bốn đội ong đang cùng nhau làm việc!",
+        "tho_quan_sat": "Bé phân biệt từng màu và đếm thật kỹ nhé!"
+      },
+      "strategy_tip": "GỢI Ý: TÌM XONG MỘT LOẠI RỒI MỚI ĐẾM LOẠI KHÁC",
+      "targets": [
+        {
+          "name": "Ong vàng",
+          "color": "Vàng sọc đen",
+          "expected_count": 5
+        },
+        {
+          "name": "Ong xanh",
+          "color": "Xanh dương sọc đen",
+          "expected_count": 5
+        },
+        {
+          "name": "Ong cam",
+          "color": "Cam sọc đen",
+          "expected_count": 5
+        },
+        {
+          "name": "Ong tím",
+          "color": "Tím sọc đen",
+          "expected_count": 5
+        }
+      ],
+      "total_items": 20,
+      "category_count": 4,
+      "difficulty_level": 3,
+      "engine_mapping": {
+        "primary": "GT-028",
+        "secondary": "GT-037",
+        "fallback": "GT-002"
+      }
+    },
+    {
+      "page_number": 11,
+      "page_index_in_workbook": 10,
+      "file_path": "pages/page-11.jpg",
+      "page_type": "hunt_and_count_activity",
+      "title": "HỘI BỌ RÙA CHẤM BI",
+      "instruction": "TÌM TỪNG LOẠI, ĐẾM VÀ VIẾT SỐ VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Những chú bọ rùa đủ màu đang tụ họp!",
+        "tho_quan_sat": "Bé tìm từng màu rồi viết số chính xác nhé!"
+      },
+      "strategy_tip": "GỢI Ý: TÌM XONG MỘT LOẠI RỒI MỚI ĐẾM LOẠI KHÁC",
+      "targets": [
+        {
+          "name": "Bọ rùa đỏ",
+          "color": "Đỏ chấm bi đen",
+          "expected_count": 5
+        },
+        {
+          "name": "Bọ rùa vàng",
+          "color": "Vàng chấm bi đen",
+          "expected_count": 5
+        },
+        {
+          "name": "Bọ rùa xanh",
+          "color": "Xanh dương chấm bi đen",
+          "expected_count": 5
+        },
+        {
+          "name": "Bọ rùa hồng",
+          "color": "Hồng phấn chấm bi đen",
+          "expected_count": 5
+        }
+      ],
+      "total_items": 20,
+      "category_count": 4,
+      "difficulty_level": 3,
+      "engine_mapping": {
+        "primary": "GT-028",
+        "secondary": "GT-037",
+        "fallback": "GT-002"
+      }
+    },
+    {
+      "page_number": 12,
+      "page_index_in_workbook": 11,
+      "file_path": "pages/page-12.jpg",
+      "page_type": "hunt_and_count_activity",
+      "title": "BIỆT ĐỘI CÚN CON",
+      "instruction": "TÌM TỪNG LOẠI, ĐẾM VÀ VIẾT SỐ VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Các chú cún trông gần giống nhau đấy!",
+        "tho_quan_sat": "Bé nhìn màu lông và đôi tai thật kỹ nhé!"
+      },
+      "strategy_tip": "GỢI Ý: QUÉT MẮT TỪ TRÁI SANG PHẢI, TỪ TRÊN XUỐNG DƯỚI",
+      "targets": [
+        {
+          "name": "Cún cam tai vểnh",
+          "color": "Cam tai nhọn đứng",
+          "expected_count": 6
+        },
+        {
+          "name": "Cún trắng tai xoăn",
+          "color": "Trắng kem lông xù tai tròn",
+          "expected_count": 6
+        },
+        {
+          "name": "Cún nâu tai cụp",
+          "color": "Nâu socola tai dài rủ",
+          "expected_count": 6
+        },
+        {
+          "name": "Cún vàng nơ hồng",
+          "color": "Vàng tai cụp gắn nơ hồng",
+          "expected_count": 6
+        }
+      ],
+      "total_items": 24,
+      "category_count": 4,
+      "difficulty_level": 3,
+      "engine_mapping": {
+        "primary": "GT-028",
+        "secondary": "GT-037",
+        "fallback": "GT-002"
+      }
+    },
+    {
+      "page_number": 13,
+      "page_index_in_workbook": 12,
+      "file_path": "pages/page-13.jpg",
+      "page_type": "hunt_and_count_activity",
+      "title": "SÂN CHƠI ĐỘNG TÁC",
+      "instruction": "TÌM TỪNG LOẠI, ĐẾM VÀ VIẾT SỐ VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Mỗi bạn đang vận động theo một cách!",
+        "tho_quan_sat": "Bé tìm đúng tư thế rồi đếm nhé!"
+      },
+      "strategy_tip": "GỢI Ý: QUÉT MẮT TỪ TRÁI SANG PHẢI, TỪ TRÊN XUỐNG DƯỚI",
+      "targets": [
+        {
+          "name": "Chó con cúi người",
+          "color": "Vàng nhạt mông chổng",
+          "expected_count": 6
+        },
+        {
+          "name": "Kangaroo nhảy",
+          "color": "Nâu đỏ nhảy vọt",
+          "expected_count": 6
+        },
+        {
+          "name": "Dê nâu bước đi",
+          "color": "Nâu sừng cong 4 chân",
+          "expected_count": 6
+        },
+        {
+          "name": "Mèo vàng lăn ngửa",
+          "color": "Vàng giơ 4 chân lên trời",
+          "expected_count": 6
+        }
+      ],
+      "total_items": 24,
+      "category_count": 4,
+      "difficulty_level": 3,
+      "engine_mapping": {
+        "primary": "GT-028",
+        "secondary": "GT-037",
+        "fallback": "GT-002"
+      }
+    },
+    {
+      "page_number": 14,
+      "page_index_in_workbook": 13,
+      "file_path": "pages/page-14.jpg",
+      "page_type": "hunt_and_count_activity",
+      "title": "CÚN CON ĐANG LÀM GÌ?",
+      "instruction": "TÌM TỪNG LOẠI, ĐẾM VÀ VIẾT SỐ VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Một chú cún có thể làm nhiều việc khác nhau!",
+        "tho_quan_sat": "Bé nhìn đồ vật đi cùng từng chú cún nhé!"
+      },
+      "strategy_tip": "GỢI Ý: QUÉT MẮT TỪ TRÁI SANG PHẢI, TỪ TRÊN XUỐNG DƯỚI",
+      "targets": [
+        {
+          "name": "Cún vẽ tranh",
+          "color": "Cún nâu bên giá vẽ & bảng màu",
+          "expected_count": 5
+        },
+        {
+          "name": "Cún ăn thức ăn",
+          "color": "Cún nâu bên bát ăn xanh",
+          "expected_count": 5
+        },
+        {
+          "name": "Cún đánh đàn",
+          "color": "Cún nâu gảy đàn guitar & nốt nhạc",
+          "expected_count": 5
+        },
+        {
+          "name": "Cún gặm xương",
+          "color": "Cún nâu ngậm khúc xương trắng",
+          "expected_count": 5
+        }
+      ],
+      "total_items": 20,
+      "category_count": 4,
+      "difficulty_level": 3,
+      "engine_mapping": {
+        "primary": "GT-028",
+        "secondary": "GT-037",
+        "fallback": "GT-002"
+      }
+    },
+    {
+      "page_number": 15,
+      "page_index_in_workbook": 14,
+      "file_path": "pages/page-15.jpg",
+      "page_type": "hunt_and_count_activity",
+      "title": "KHU RỪNG ĐÁNG YÊU",
+      "instruction": "TÌM TỪNG LOẠI, ĐẾM VÀ VIẾT SỐ VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Các bạn thú rừng đang chơi trốn tìm!",
+        "tho_quan_sat": "Bé nhận ra từng loài rồi đếm thật chuẩn nhé!"
+      },
+      "strategy_tip": "GỢI Ý: QUÉT MẮT TỪ TRÁI SANG PHẢI, TỪ TRÊN XUỐNG DƯỚI",
+      "targets": [
+        {
+          "name": "Cáo cam",
+          "color": "Cam đuôi xù chóp trắng",
+          "expected_count": 5
+        },
+        {
+          "name": "Hà mã xám",
+          "color": "Xám mập há miệng to",
+          "expected_count": 5
+        },
+        {
+          "name": "Hải ly nâu",
+          "color": "Nâu răng thỏ đuôi dẹt",
+          "expected_count": 5
+        },
+        {
+          "name": "Sói con",
+          "color": "Xám lông mượt tai vểnh",
+          "expected_count": 5
+        }
+      ],
+      "total_items": 20,
+      "category_count": 4,
+      "difficulty_level": 3,
+      "engine_mapping": {
+        "primary": "GT-028",
+        "secondary": "GT-037",
+        "fallback": "GT-002"
+      }
+    },
+    {
+      "page_number": 16,
+      "page_index_in_workbook": 15,
+      "file_path": "pages/page-16.jpg",
+      "page_type": "hunt_and_count_activity",
+      "title": "BỐN SẮC THÁI CÚN CON",
+      "instruction": "TÌM TỪNG LOẠI, ĐẾM VÀ VIẾT SỐ VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Các chú cún đang biểu cảm thật vui!",
+        "tho_quan_sat": "Bé nhìn khuôn mặt và màu lông để tìm nhé!"
+      },
+      "strategy_tip": "GỢI Ý: QUÉT MẮT TỪ TRÁI SANG PHẢI, TỪ TRÊN XUỐNG DƯỚI",
+      "targets": [
+        {
+          "name": "Cún vàng xù cười",
+          "color": "Vàng đậm lông xù miệng cười tươi",
+          "expected_count": 5
+        },
+        {
+          "name": "Cún trắng kem mỉm cười",
+          "color": "Trắng kem tai nhọn mắt to",
+          "expected_count": 5
+        },
+        {
+          "name": "Cún nâu lè lưỡi",
+          "color": "Nâu sẫm há to miệng lè lưỡi",
+          "expected_count": 5
+        },
+        {
+          "name": "Cún đốm tai nâu",
+          "color": "Trắng đốm tai nâu mắt lấp lánh",
+          "expected_count": 5
+        }
+      ],
+      "total_items": 20,
+      "category_count": 4,
+      "difficulty_level": 3,
+      "engine_mapping": {
+        "primary": "GT-028",
+        "secondary": "GT-037",
+        "fallback": "GT-002"
+      }
+    },
+    {
+      "page_number": 17,
+      "page_index_in_workbook": 16,
+      "file_path": "pages/page-17.jpg",
+      "page_type": "hunt_and_count_activity",
+      "title": "RỪNG XANH THỨC GIẤC",
+      "instruction": "TÌM TỪNG LOẠI, ĐẾM VÀ VIẾT SỐ VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Muông thú đã thức dậy khắp khu rừng!",
+        "tho_quan_sat": "Bé đánh dấu nhẹ mỗi hình đã đếm nhé!"
+      },
+      "strategy_tip": "GỢI Ý: ĐÁNH DẤU NHẸ NHỮNG HÌNH BÉ ĐÃ ĐẾM",
+      "targets": [
+        {
+          "name": "Sói xám",
+          "color": "Xám tro đuôi ngoe nguẩy",
+          "expected_count": 6
+        },
+        {
+          "name": "Hươu sừng tấm",
+          "color": "Nâu sừng xòe rộng",
+          "expected_count": 6
+        },
+        {
+          "name": "Cáo đỏ",
+          "color": "Đỏ cam ngồi ngoan",
+          "expected_count": 6
+        },
+        {
+          "name": "Hải ly",
+          "color": "Nâu socola gặm gỗ",
+          "expected_count": 6
+        }
+      ],
+      "total_items": 24,
+      "category_count": 4,
+      "difficulty_level": 4,
+      "engine_mapping": {
+        "primary": "GT-028",
+        "secondary": "GT-037",
+        "fallback": "GT-002"
+      }
+    },
+    {
+      "page_number": 18,
+      "page_index_in_workbook": 17,
+      "file_path": "pages/page-18.jpg",
+      "page_type": "hunt_and_count_activity",
+      "title": "VŨ HỘI THÚ RỪNG",
+      "instruction": "TÌM TỪNG LOẠI, ĐẾM VÀ VIẾT SỐ VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Bốn nhóm bạn đang hòa vào vũ hội!",
+        "tho_quan_sat": "Bé nhận đúng từng bạn rồi đếm nhé!"
+      },
+      "strategy_tip": "GỢI Ý: ĐÁNH DẤU NHẸ NHỮNG HÌNH BÉ ĐÃ ĐẾM",
+      "targets": [
+        {
+          "name": "Hà mã",
+          "color": "Xám mập mạp",
+          "expected_count": 5
+        },
+        {
+          "name": "Sư tử",
+          "color": "Vàng bờm nâu tròn",
+          "expected_count": 5
+        },
+        {
+          "name": "Gấu nâu",
+          "color": "Nâu đậm khoanh tay",
+          "expected_count": 5
+        },
+        {
+          "name": "Mèo rừng",
+          "color": "Cam tai nhọn chỏm lông đen",
+          "expected_count": 5
+        }
+      ],
+      "total_items": 20,
+      "category_count": 4,
+      "difficulty_level": 4,
+      "engine_mapping": {
+        "primary": "GT-028",
+        "secondary": "GT-037",
+        "fallback": "GT-002"
+      }
+    },
+    {
+      "page_number": 19,
+      "page_index_in_workbook": 18,
+      "file_path": "pages/page-19.jpg",
+      "page_type": "hunt_and_count_activity",
+      "title": "ĐỘI CÚN KHÁC BIỆT",
+      "instruction": "TÌM TỪNG LOẠI, ĐẾM VÀ VIẾT SỐ VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Những chú cún này có vài nét rất giống nhau!",
+        "tho_quan_sat": "Bé nhìn tai, mõm và vòng cổ thật kỹ nhé!"
+      },
+      "strategy_tip": "GỢI Ý: ĐÁNH DẤU NHẸ NHỮNG HÌNH BÉ ĐÃ ĐẾM",
+      "targets": [
+        {
+          "name": "Corgi đỏ cam",
+          "color": "Cam đuôi xù tai to",
+          "expected_count": 5
+        },
+        {
+          "name": "Chó đốm đứng",
+          "color": "Trắng đốm nâu tai dài",
+          "expected_count": 5
+        },
+        {
+          "name": "Bulldog nơ đỏ",
+          "color": "Nâu béo vòng cổ đỏ",
+          "expected_count": 5
+        },
+        {
+          "name": "Chó vàng vươn cổ",
+          "color": "Vàng vểnh tai đuôi cong",
+          "expected_count": 5
+        }
+      ],
+      "total_items": 20,
+      "category_count": 4,
+      "difficulty_level": 4,
+      "engine_mapping": {
+        "primary": "GT-028",
+        "secondary": "GT-037",
+        "fallback": "GT-002"
+      }
+    },
+    {
+      "page_number": 20,
+      "page_index_in_workbook": 19,
+      "file_path": "pages/page-20.jpg",
+      "page_type": "hunt_and_count_activity",
+      "title": "NHỮNG CÚN CON BẬN RỘN",
+      "instruction": "TÌM TỪNG LOẠI, ĐẾM VÀ VIẾT SỐ VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Mỗi chú cún đang bận một công việc!",
+        "tho_quan_sat": "Bé nhìn đồ dùng để phân biệt từng bạn nhé!"
+      },
+      "strategy_tip": "GỢI Ý: ĐÁNH DẤU NHẸ NHỮNG HÌNH BÉ ĐÃ ĐẾM",
+      "targets": [
+        {
+          "name": "Cún đeo ba lô xanh",
+          "color": "Nâu nằm cuộn cạnh ba lô",
+          "expected_count": 5
+        },
+        {
+          "name": "Cún đọc báo",
+          "color": "Nâu ngồi đọc tờ báo mở rộng",
+          "expected_count": 5
+        },
+        {
+          "name": "Cún quàng khăn xanh",
+          "color": "Nâu ngồi ngoan thắt khăn",
+          "expected_count": 5
+        },
+        {
+          "name": "Cún vẽ tranh",
+          "color": "Nâu đứng cầm cọ bên giá vẽ",
+          "expected_count": 5
+        }
+      ],
+      "total_items": 20,
+      "category_count": 4,
+      "difficulty_level": 4,
+      "engine_mapping": {
+        "primary": "GT-028",
+        "secondary": "GT-037",
+        "fallback": "GT-002"
+      }
+    },
+    {
+      "page_number": 21,
+      "page_index_in_workbook": 20,
+      "file_path": "pages/page-21.jpg",
+      "page_type": "hunt_and_count_activity",
+      "title": "NGÔI NHÀ MÈO TINH NGHỊCH",
+      "instruction": "TÌM TỪNG LOẠI, ĐẾM VÀ VIẾT SỐ VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Các bạn mèo đang ngồi, đứng và cuộn tròn!",
+        "tho_quan_sat": "Bé quan sát cả màu lông lẫn tư thế nhé!"
+      },
+      "strategy_tip": "GỢI Ý: ĐÁNH DẤU NHẸ NHỮNG HÌNH BÉ ĐÃ ĐẾM",
+      "targets": [
+        {
+          "name": "Mèo xanh cuộn ngủ",
+          "color": "Xanh xám cuộn tròn nhắm mắt",
+          "expected_count": 6
+        },
+        {
+          "name": "Mèo mướp cam ngồi",
+          "color": "Cam sọc ngồi nhìn thẳng",
+          "expected_count": 6
+        },
+        {
+          "name": "Mèo xanh quàng khăn đỏ",
+          "color": "Xanh xám ngồi quàng khăn len đỏ",
+          "expected_count": 6
+        },
+        {
+          "name": "Mèo mướp cam đứng",
+          "color": "Cam sọc đứng 4 chân đuôi cong",
+          "expected_count": 6
+        }
+      ],
+      "total_items": 24,
+      "category_count": 4,
+      "difficulty_level": 4,
+      "engine_mapping": {
+        "primary": "GT-028",
+        "secondary": "GT-037",
+        "fallback": "GT-002"
+      }
+    },
+    {
+      "page_number": 22,
+      "page_index_in_workbook": 21,
+      "file_path": "pages/page-22.jpg",
+      "page_type": "hunt_and_count_activity",
+      "title": "THỬ THÁCH TẮC KÈ",
+      "instruction": "TÌM TỪNG LOẠI, ĐẾM VÀ VIẾT SỐ VÀO Ô TRỐNG",
+      "dialogue": {
+        "gau_logic": "Các chú tắc kè đang đổi màu và ẩn vào nhau!",
+        "tho_quan_sat": "Bé chia khu vực nhỏ để đếm không bị sót nhé!"
+      },
+      "strategy_tip": "GỢI Ý: CHIA KHU VỰC NHỎ ĐỂ ĐẾM KHÔNG BỊ SÓT",
+      "targets": [
+        {
+          "name": "Tắc kè sọc vàng quay trái",
+          "color": "Xanh lá sọc vàng hướng trái",
+          "expected_count": 6
+        },
+        {
+          "name": "Tắc kè sọc đỏ quay phải",
+          "color": "Xanh lá sọc đỏ cam hướng phải",
+          "expected_count": 6
+        },
+        {
+          "name": "Tắc kè xanh ngọc quay phải",
+          "color": "Xanh ngọc lưng vàng hướng phải",
+          "expected_count": 6
+        },
+        {
+          "name": "Tắc kè sọc lam quay trái",
+          "color": "Xanh lá sọc lam đậm hướng trái",
+          "expected_count": 6
+        }
+      ],
+      "total_items": 24,
+      "category_count": 4,
+      "difficulty_level": 5,
+      "engine_mapping": {
+        "primary": "GT-028",
+        "secondary": "GT-037",
+        "fallback": "GT-002"
+      }
+    },
+    {
+      "page_number": 23,
+      "page_index_in_workbook": 22,
+      "file_path": "pages/page-23.jpg",
+      "page_type": "stage_completion",
+      "title": "HOÀN THÀNH PHẦN 5: THÀNH PHỐ SĂN SỐ",
+      "subtitle": "BÉ ĐÃ HOÀN THÀNH CHẶNG SỐ 5!",
+      "dialogue": {
+        "gau_logic": "Bé đã tìm và đếm đúng mọi nhóm hình!",
+        "tho_quan_sat": "Viên Ngọc Chính Xác đã sáng lên rồi!"
+      },
+      "activities": [
+        {
+          "type": "parent_coaching",
+          "instruction": "Ba mẹ cùng bé tô 3 ngôi sao nhé!",
+          "visual": "3 ngôi sao viền rỗng chờ tô màu đánh giá mức độ xuất sắc"
+        },
+        {
+          "type": "gem_coloring",
+          "instruction": "Bé hãy tô màu viên ngọc chính xác",
+          "visual": "Viên kim cương hình học tỏa hào quang lấp lánh"
+        },
+        {
+          "type": "track_progress",
+          "track_state": "Các mốc 1, 2, 3, 4, 5 đã tick xanh hoàn thành; Mốc 5 có biển 'BÉ ĐANG Ở ĐÂY'; Mốc 6 đến 20 mang dấu hỏi '?'",
+          "next_destination": "SẴN SÀNG LÊN TÀU ĐẾN CHẶNG 6! (Thung lũng cân bằng)"
+        }
+      ],
+      "digital_game_potential": {
+        "mechanic": "Stage Summary & Reward Showcase",
+        "celebration": "Viên ngọc xoay 3D hào quang tỏa sáng rực rỡ, phát huy hiệu 'Thám Tử Săn Số Đại Tài', mở khóa chặng 6."
+      }
+    }
+  ],
+  "digital_implementation": {
+    "screen_resolution": "960x540 logic (scale by device DPR)",
+    "target_fps": 60,
+    "tech_stack": "Pure TypeScript Canvas 2D engine (0 Vue/Pinia inside game loop)",
+    "design_tokens": {
+      "colors": "Zero hex literals in sessions. All colors resolved via designTokens.colors (berry, amber, sky, slate...)",
+      "touch_floor": {
+        "band_3_4": "96px diameter",
+        "band_4_5": "80px diameter",
+        "band_5_6": "72px diameter",
+        "absolute_min": "64px"
+      }
+    },
+    "telemetry_events": [
+      {
+        "event_name": "target_item_tapped",
+        "payload": [
+          "stage_id",
+          "level_id",
+          "category_id",
+          "count_index",
+          "is_correct",
+          "elapsed_ms"
+        ]
+      },
+      {
+        "event_name": "slot_number_filled",
+        "payload": [
+          "stage_id",
+          "level_id",
+          "category_id",
+          "expected_count",
+          "input_count",
+          "is_correct",
+          "attempts"
+        ]
+      },
+      {
+        "event_name": "stage_completed",
+        "payload": [
+          "stage_id",
+          "total_time_ms",
+          "accuracy_rate",
+          "stars_awarded",
+          "gem_unlocked"
+        ]
+      }
+    ]
+  }
+}

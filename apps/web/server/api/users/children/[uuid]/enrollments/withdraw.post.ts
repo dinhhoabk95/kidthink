@@ -46,7 +46,6 @@ export default defineEventHandler(async (event) => {
       id: curriculumEnrollments.id,
       curriculumId: curriculumEnrollments.curriculumId,
       code: curricula.code,
-      contentVersion: curricula.contentVersion,
     })
     .from(curriculumEnrollments)
     .innerJoin(curricula, eq(curricula.id, curriculumEnrollments.curriculumId))
@@ -84,7 +83,7 @@ export default defineEventHandler(async (event) => {
       child_id: child.id,
       child_uuid: child.uuid,
       curriculum_code: activeEnrollment.code,
-      curriculum_version: activeEnrollment.contentVersion,
+      curriculum_version: 1,
     },
   });
 

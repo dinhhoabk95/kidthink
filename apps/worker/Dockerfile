@@ -1,4 +1,4 @@
-FROM node:24.15.0-alpine AS builder
+FROM node:24.22.1-alpine AS builder
 
 RUN corepack enable
 WORKDIR /app
@@ -16,7 +16,7 @@ RUN pnpm install --frozen-lockfile --ignore-scripts
 # được — CMD bên dưới trỏ vào một file không có.
 RUN pnpm --filter @mindkid/worker build
 
-FROM node:24.15.0-alpine AS runner
+FROM node:24.22.1-alpine AS runner
 RUN corepack enable
 # pg_dump / psql cho backup:postgres và backup:verify.
 RUN apk add --no-cache postgresql-client

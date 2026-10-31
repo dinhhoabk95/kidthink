@@ -4,6 +4,7 @@ import {
   getClientErrorSamplingRate,
   getSentryDsn,
   isSentryConfigured,
+  type RedactableValue,
   redactPii,
   shouldSampleClientError,
 } from "#src/index";
@@ -127,5 +128,44 @@ describe("Task 3 — Structured Logging & PII Redactor (BR-MON-05, BR-MON-06, D-
     if (!dsn) {
       expect(isSentryConfigured()).toBe(false);
     }
+  });
+
+  it("redacts camelCase PII keys", () => {
+    const raw = {
+      displayName: "Child Name",
+      birthYear: 2020,
+      childUuid: "abc-123",
+      passwordHash: "hash123",
+      mfaSecret: "secret456",
+      recoveryCode: "rec789",
+      rawToken: "tok123",
+      sessionToken: "sess_xyz",
+      rememberToken: "rem_xyz",
+      safeProperty: "safe_value",
+    };
+    const redacted = redactPii(raw);
+    expect(redacted).not.toHaveProperty("displayName");
+    expect(redacted).not.toHaveProperty("birthYear");
+    expect(redacted).not.toHaveProperty("childUuid");
+    expect(redacted).not.toHaveProperty("passwordHash");
+    expect(redacted).not.toHaveProperty("mfaSecret");
+    expect(redacted).not.toHaveProperty("recoveryCode");
+    expect(redacted).not.toHaveProperty("rawToken");
+    expect(redacted).not.toHaveProperty("sessionToken");
+    expect(redacted).not.toHaveProperty("rememberToken");
+    expect(redacted.safeProperty).toBe("safe_value");
+  });
+
+  it("handles circular references and Error instances safely", () => {
+    const circularObj: Record<string, RedactableValue> = { name: "test" };
+    circularObj.self = circularObj;
+    const res = redactPii(circularObj);
+    expect(res.name).toBe("test");
+    expect(res.self).toBe("[CIRCULAR]");
+
+    const err = new Error("Bearer secret-error-token");
+    const errRedacted = redactPii(err) as { name: string; message: string };
+    expect(errRedacted.name).toBe("Error");
+    expect(errRedacted.message).toBe("[REDACTED_BEARER_TOKEN]");
   });
 });

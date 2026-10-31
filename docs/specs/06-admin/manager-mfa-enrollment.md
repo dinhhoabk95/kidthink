@@ -189,3 +189,4 @@ Scenario: BR-MME-07 — bước mới không đi vòng qua rate limit
 |---|---|---|---|---|
 | 1 | Manager đầu tiên có cần bắt buộc đổi mật khẩu seed ngay trong lần enrollment không? | Chặn quy trình go-live, không chặn luồng enrollment | P1 | người quyết |
 | 2 | Có giới hạn số lần enrollment lại trên cùng tài khoản trong 24 giờ không? | Chặn cấu hình chống lạm dụng P2 | P2 | Infra |
+| 3 | Chuyển luồng thiết lập bảo mật sang màn hình **Settings riêng** trong Admin, hỗ trợ đồng thời **TOTP** (QR Code + Secret Key) và **Passkey (WebAuthn)** thay vì ép enroll ngay tại `/login` | Trải nghiệm bảo mật Admin P2 | P2 | Product / Auth |

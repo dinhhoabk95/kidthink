@@ -1,6 +1,6 @@
 import { gameLevels, getOwnerDb } from "@mindkid/db";
 import { NotFoundError } from "@mindkid/errors/common";
-import { and, desc, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { defineEventHandler, getQuery, getRouterParam } from "h3";
 import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
@@ -44,21 +44,16 @@ export default defineEventHandler(async (event) => {
   const managerId = manager.manager_id;
 
   const [level] = await db
-    .select({ id: gameLevels.id, contentVersion: gameLevels.contentVersion })
+    .select({ id: gameLevels.id })
     .from(gameLevels)
-    .where(
-      version === undefined
-        ? eq(gameLevels.code, code)
-        : and(eq(gameLevels.code, code), eq(gameLevels.contentVersion, version))
-    )
-    .orderBy(desc(gameLevels.contentVersion))
+    .where(eq(gameLevels.code, code))
     .limit(1);
 
   const previewToken = level
     ? issuePreviewToken({
         entityType: "game_level",
         id: level.id,
-        version: level.contentVersion,
+        version: 1,
         managerId,
       })
     : undefined;

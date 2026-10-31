@@ -1,0 +1,2304 @@
+{
+  "stage_id": "chang-15",
+  "workbook_id": "WB15",
+  "stage_number": 15,
+  "title": "Chặng 15: Thung Lũng Quy Luật",
+  "subtitle": "Quy luật lặp lại chu kỳ, dãy số biến đổi, ma trận 2x2 và hình học phát triển",
+  "total_pages": 22,
+  "target_age": "3–6 tuổi (Mầm non lớn 5–6 tuổi & Tiền tiểu học)",
+  "series": "Gấu Logic & Thỏ Quan Sát - Chuyến Tàu Toán Học (Phần 15)",
+  "mission": "Giải mã các quy luật lặp hoa quả, con đường số nhảy đều, bông hoa số bí mật, ma trận ô vuông và mô hình điểm chấm để mở Cánh Cổng Thung Lũng bước tiếp sang Chặng 16",
+  "pedagogy": {
+    "framework": "Montessori & CPA (Concrete - Pictorial - Abstract)",
+    "approach": "Tiến trình từ trực quan hình tượng cụ thể (Concrete: hoa cỏ, trái cây, con vật) sang bán trừu tượng (Pictorial: hình học 2 thuộc tính shape/color, điểm chấm dot patterns) đến trừu tượng cao cấp (Abstract: dãy số bước nhảy đều, gia số biến đổi, Fibonacci, ma trận 2x2, hệ phương trình ẩn số A/B).",
+    "competencies": [
+      {
+        "code": "C1",
+        "name": "Cảm thức số học & Đếm (Number Sense & Counting)"
+      },
+      {
+        "code": "C3",
+        "name": "Tư duy quy luật, Đại số sớm & Logic quan hệ (Patterns, Early Algebra & Relational Thinking)"
+      }
+    ],
+    "skills_targeted": [
+      {
+        "code": "C1.PAT.01",
+        "name": "Nhận biết và tiếp nối quy luật lặp 2 phần tử luân phiên AB"
+      },
+      {
+        "code": "C1.PAT.02",
+        "name": "Nhận biết và tiếp nối quy luật lặp AAB và ABB"
+      },
+      {
+        "code": "C1.PAT.03",
+        "name": "Nhận biết và mở rộng quy luật lặp 3 phần tử luân phiên ABC"
+      },
+      {
+        "code": "C1.NREC.09",
+        "name": "Thứ tự số, quan hệ liền trước - liền sau trên trục số"
+      },
+      {
+        "code": "C3.RULE.01",
+        "name": "Dãy số tăng/giảm đều theo bước nhảy cố định (Skip counting / Arithmetic sequence: +2, -2, +3, +5, -5)"
+      },
+      {
+        "code": "C3.RULE.02",
+        "name": "Dãy số có gia số tăng dần (Growing step sequence: +1, +2, +3... số chẵn, số lẻ, bội số)"
+      },
+      {
+        "code": "C3.RULE.03",
+        "name": "Quy luật dãy số đôi xen kẽ (Interleaved / Alternating dual sequence)"
+      },
+      {
+        "code": "C3.RULE.04",
+        "name": "Quan hệ đối xứng và bảo toàn tổng trong mô hình không gian bông hoa số (Center-petal relational pattern)"
+      },
+      {
+        "code": "C3.RULE.05",
+        "name": "Quy luật ma trận 2x2 hai chiều (2x2 Matrix horizontal & vertical constant difference transformation)"
+      },
+      {
+        "code": "C3.RULE.06",
+        "name": "Quy luật hình học điểm chấm phát triển (Growing geometric dot patterns: đường thẳng, góc L, chữ U, dấu cộng, khung vuông, tam giác)"
+      },
+      {
+        "code": "C3.ALG.01",
+        "name": "Tìm ẩn số vị trí khuyết trong mô hình logic ma trận (Missing variables A and B)"
+      }
+    ],
+    "learning_objectives": [
+      "LO-01: Nhận diện cấu trúc lõi (unit of repeat) của chuỗi lặp AB, AAB, ABB, ABC và dự đoán chính xác vật phẩm ở đuôi dãy.",
+      "LO-02: Phân tích quy luật lặp trên các chiều thuộc tính độc lập hoặc phối hợp (loại vật thể, màu sắc, hình học).",
+      "LO-03: Nhận biết quy luật biến thiên dãy số: đếm cách đều (+2, +3, +5, +10), đếm lùi (-2, -5), và gia số tăng dần (+1, +2, +3...).",
+      "LO-04: Phân tách một dãy số phức tạp thành hai dãy số đơn xen kẽ độc lập (dãy vị trí lẻ và dãy vị trí chẵn).",
+      "LO-05: Suy luận quan hệ cân bằng số học trong mô hình bông hoa 4 cánh (Số ở nhụy = Tổng hai cánh đối diện).",
+      "LO-06: Xác định quy luật tịnh tiến trong ma trận 2x2 theo chiều ngang, chiều dọc và giữa các ô ma trận.",
+      "LO-07: Giải hệ ẩn số đại số sớm A và B dựa trên các ràng buộc hàng/cột trong lưới số 2x2.",
+      "LO-08: Kết nối hình học không gian và số học thông qua đếm số điểm chấm phát triển có quy luật (growing patterns)."
+    ]
+  },
+  "activity_groups": [
+    {
+      "group_id": "AG-01",
+      "name": "Quy luật lặp chu kỳ một chiều (Repeating Patterns 1D: AB, AAB, ABB, ABC)",
+      "page_range": "Trang 2 đến 11, Trang 21, 22 (Workbook trang 1 đến 10, 21, 22)",
+      "mechanic_description": "Trẻ quan sát chuỗi các đối tượng (trái cây, hoa, con vật, hình học 2D) lặp lại theo chu kỳ cố định, nhận diện đơn vị lặp cơ sở (core unit), từ đó khoanh tròn hoặc kéo thả hình tiếp theo vào ô hỏi chấm/ô trống.",
+      "sample_prompts": [
+        "Các hình đang lặp lại theo thứ tự đấy! Bé hãy tìm hình xuất hiện tiếp theo nhé!",
+        "Hai hình đang thay phiên nhau đấy!",
+        "Hai hình giống nhau rồi đến một hình khác đấy!",
+        "Một hình đi trước, rồi hai hình giống nhau theo sau!",
+        "Ba hình sẽ lặp lại theo thứ tự A - B - C! Bé nhớ đủ ba bạn rồi chọn hình tiếp theo nhé!"
+      ],
+      "visual_objects": [
+        "Trái cây: Táo đỏ 🍎, Lê xanh 🍐, Cam tròn 🍊, Dâu tây 🍓, Chuối vàng 🍌, Dứa vàng 🍍, Nho tím 🍇, Táo xanh 🍏, Đào hồng 🍑, Chanh vàng 🍋, Dưa hấu 🍉",
+        "Hoa cỏ: Hoa hồng 5 cánh 🌸, Hoa cúc trắng 🌼, Hoa hướng dương 🌻, Hoa tulip hồng/đỏ 🌷, Hoa râm bụt đỏ 🌺, Hoa hồng nhung đỏ 🌹",
+        "Động vật: Gấu nâu 🐻, Thỏ trắng 🐰, Cáo cam 🦊, Chó con 🐶, Mèo vàng/xám 🐱, Sư tử 🦁, Voi xám 🐘, Bò sữa 🐮, Heo hồng 🐷, Ếch xanh 🐸, Gà con 🐥, Khỉ nâu 🐵, Gấu trúc 🐼",
+        "Hình học & Màu sắc: Tròn xanh dương 🔵, Vuông hồng/đỏ 🟥, Tam giác vàng 🔺, Ngôi sao vàng ⭐, Hình thoi cam/xanh 🔶, Trái tim hồng/đỏ ❤️",
+        "Phương tiện & Đồ vật: Xe ô tô con 🚗, Xe buýt vàng 🚌, Xe đạp 🚲, Tàu hỏa 🚂, Thuyền buồm ⛵, Máy bay ✈️, Bóng bãi biển 🏐, Bút chì ✏️, Quyển sách 📘, Mặt cười 😊"
+      ],
+      "quantities_and_ranges": "Độ dài chuỗi từ 5 đến 7 phần tử; số lượng lựa chọn 2–3 phương án (1 đúng, 1–2 nhiễu).",
+      "distractor_design": "Nhiễu bao gồm chính phần tử trước đó trong chuỗi, phần tử không liên quan cùng danh mục (như xe đạp, cáo, chuối), hoặc cùng hình dạng nhưng sai màu sắc.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-006",
+          "name": "sequence-order / pattern-complete",
+          "rationale": "Cung cấp ray trượt hiển thị chuỗi và slot trống cuối dãy kèm danh sách quân cờ để trẻ kéo thả vào vị trí khuyết."
+        },
+        {
+          "template_id": "GT-001",
+          "name": "tap-select",
+          "rationale": "Cho trẻ chạm chọn nhanh 1 trong 3 đáp án hiển thị bên cạnh dấu hỏi chấm."
+        }
+      ],
+      "recommended_skills": ["C1.PAT.01", "C1.PAT.02", "C1.PAT.03"]
+    },
+    {
+      "group_id": "AG-02",
+      "name": "Dãy số tăng/giảm đều & Dãy số gia số biến đổi (Arithmetic & Growing Number Sequences)",
+      "page_range": "Trang 12 đến 14, Trang 21, 22 (Workbook trang 11 đến 13, 21, 22)",
+      "mechanic_description": "Trẻ phân tích khoảng cách số học giữa các số liên tiếp: bước nhảy đều (+2, -2, +3, +5, -5, +10), bước nhảy tăng dần (+1, +2, +3, +4...), dãy số chẵn/lẻ, dãy Fibonacci, hoặc dãy số chính phương (1, 4, 9, 16, 25...), sau đó điền hoặc chọn số còn thiếu.",
+      "sample_prompts": [
+        "Các số đang tăng hoặc giảm đều đấy! Bé hãy tìm số tiếp theo nhé!",
+        "Mỗi lần dãy số tăng nhiều hơn một chút! Bé xem quy luật tăng dần rồi điền số nhé!",
+        "Ồ, dãy số này khó hơn một chút rồi! Bé hãy quan sát kỹ cách tăng của các số nhé!"
+      ],
+      "visual_objects": [
+        "Thẻ số gắn trên đường ray đá sỏi 🛤️",
+        "Mũi tên cong kèm nhãn bước nhảy (+1, +2, +3, +4, +5...)",
+        "Biển gỗ trắc nghiệm A, B, C",
+        "Kính lúp của Gấu Logic 🔍"
+      ],
+      "quantities_and_ranges": "Phạm vi số từ 1 đến 50. Bước nhảy: +1, +2, +3, +4, +5, +10, -2, -3, -5.",
+      "distractor_design": "Các số sai lệch ±1 hoặc ±2 so với kết quả đúng, hoặc nhầm giữa tăng và giảm, hoặc dùng nhầm bước nhảy trước đó.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-006",
+          "name": "sequence-order",
+          "rationale": "Phù hợp để hiển thị trục số hoặc dãy thẻ số với slot trống ở cuối dãy."
+        },
+        {
+          "template_id": "GT-001",
+          "name": "tap-select",
+          "rationale": "Trắc nghiệm 3 đáp án A, B, C chọn số chuẩn xác."
+        }
+      ],
+      "recommended_skills": ["C3.RULE.01", "C3.RULE.02", "C1.NREC.09"]
+    },
+    {
+      "group_id": "AG-03",
+      "name": "Dãy số xen kẽ / Dãy số đôi (Interleaved / Alternating Sequences)",
+      "page_range": "Trang 15 đến 16, Trang 21, 22 (Workbook trang 14, 15, 21, 22)",
+      "mechanic_description": "Trẻ nhận diện hai chuỗi số độc lập đan xen ở các vị trí chẵn và lẻ (ví dụ: vị trí lẻ tăng 2, vị trí chẵn giảm 2; hoặc các toa xe lửa màu vàng và màu xanh xen kẽ). Trẻ phải tìm 2 số hoặc 2 toa xe lửa tiếp theo.",
+      "sample_prompts": [
+        "Có hai dãy số đang chạy xen kẽ nhau đấy! Bé tìm hai số tiếp theo cho mỗi dãy nhé!",
+        "Mỗi đoàn tàu có quy luật riêng! Bé ghép các toa số thật chính xác nhé!"
+      ],
+      "visual_objects": [
+        "Đoàn tàu hỏa hơi nước chở toa hàng nhiều màu sắc (vàng, xanh lá, hồng, xanh dương) 🚂🚃🚃",
+        "Hai chiếc xe ô tô mini chạy song song trên đường đua 🏎️🚙",
+        "Ô trống cặp số đôi [  ] [  ]"
+      ],
+      "quantities_and_ranges": "Chuỗi gồm 6–8 số trong phạm vi 1 đến 30. Trẻ cần tìm cặp 2 số tiếp theo (vị trí n+1 và n+2).",
+      "distractor_design": "Đảo ngược vị trí của 2 số (ví dụ: '8 và 16' đảo thành '16 và 8'), tính sai 1 trong 2 dãy, hoặc nhầm lẫn giữa quy luật vị trí chẵn và lẻ.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-006",
+          "name": "sequence-order",
+          "rationale": "Kéo thả 2 toa tàu vào vị trí đuôi đoàn tàu hỏa."
+        },
+        {
+          "template_id": "GT-008",
+          "name": "multi-slot",
+          "rationale": "Hai slot chờ nhận 2 giá trị số tương ứng."
+        }
+      ],
+      "recommended_skills": ["C3.RULE.03", "C1.NREC.09"]
+    },
+    {
+      "group_id": "AG-04",
+      "name": "Quy luật không gian đối xứng / Bông hoa số (Spatial Relational Number Flower)",
+      "page_range": "Trang 17, Trang 21, 22 (Workbook trang 16, 21, 22)",
+      "mechanic_description": "Bông hoa gồm 1 nhụy tròn ở trung tâm và 4 cánh hoa đối xứng (Trên, Dưới, Trái, Phải). Quy tắc: 'Số ở nhụy giữa = Tổng hai cánh đối diện' (Trên + Dưới = Giữa, và Trái + Phải = Giữa). Trẻ suy luận tìm số còn thiếu ở một cánh hoa hoặc ở nhụy.",
+      "sample_prompts": [
+        "Mỗi bông hoa ẩn chứa quy luật kỳ diệu! Hãy tìm số còn thiếu bằng cách thật thông minh nhé!",
+        "Gợi ý: Số ở giữa = tổng hai cánh đối diện."
+      ],
+      "visual_objects": [
+        "Bông hoa 4 cánh lớn: Nhụy vàng tròn ở tâm, cánh trên màu hồng tím, cánh dưới màu vàng cam, cánh trái màu xanh dương, cánh phải màu xanh lá 🌸🌼"
+      ],
+      "quantities_and_ranges": "Các số nguyên từ 1 đến 15. Phép cộng và trừ trong phạm vi 15.",
+      "distractor_design": "Lấy tổng trừ sai (ví dụ 10 - 3 = 6 thay vì 7), hoặc lấy cánh trên cộng cánh trái (nhầm cánh kề nhau thay vì cánh đối diện).",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-008",
+          "name": "number-bond / balance-pan",
+          "rationale": "Mô hình quan hệ cân bằng tổng giữa các nhánh đối diện kết nối về tâm."
+        },
+        {
+          "template_id": "GT-001",
+          "name": "tap-select",
+          "rationale": "Chạm chọn số đúng điền vào cánh hoa khuyết."
+        }
+      ],
+      "recommended_skills": ["C3.RULE.04", "C1.ADD.02", "C3.ALG.01"]
+    },
+    {
+      "group_id": "AG-05",
+      "name": "Ma trận 2x2 & Tìm ẩn số A, B (2x2 Matrix Logic & Missing Variables)",
+      "page_range": "Trang 18 đến 19, Trang 21, 22 (Workbook trang 17, 18, 21, 22)",
+      "mechanic_description": "Lưới ma trận 2x2 chứa 4 số. Quan hệ số học nhất quán theo hàng ngang (chênh lệch Δx), cột dọc (chênh lệch Δy), và tịnh tiến giữa các ô ma trận (+k). Trẻ tìm số còn thiếu ở ô góc hoặc giải tìm cặp ẩn số A và B.",
+      "sample_prompts": [
+        "Mỗi ô vuông có quy luật riêng! Bé quan sát thật kỹ rồi tìm số còn thiếu nhé!",
+        "Gợi ý: Sang phải và đi xuống luôn theo cùng một mức thay đổi.",
+        "Mỗi quy luật đều có dấu vết! Quan sát thật kỹ, tìm ra A và B nhé!"
+      ],
+      "visual_objects": [
+        "Lưới ô vuông 2x2 viền màu cam, hồng, xanh lá 🔲",
+        "Mũi tên chỉ sự biến đổi tịnh tiến giữa 2 hoặc 3 ma trận liên tiếp ➡️",
+        "Các chữ cái ẩn số A và B màu đỏ nổi bật"
+      ],
+      "quantities_and_ranges": "Các số nguyên từ 1 đến 20. Độ chênh lệch hàng/cột: 1 đến 5 đơn vị.",
+      "distractor_design": "Tính đúng ẩn A nhưng sai ẩn B; đảo ngược giá trị giữa A và B; áp dụng nhầm mức chênh lệch hàng ngang cho cột dọc.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-011",
+          "name": "matrix-pick / 2d-pattern",
+          "rationale": "Lưới 2 chiều với slot trống cần xác định giá trị thỏa mãn cả 2 trục ngang và dọc."
+        },
+        {
+          "template_id": "GT-001",
+          "name": "tap-select",
+          "rationale": "Lựa chọn cặp nghiệm (A, B) trong 3 phương án gợi ý."
+        }
+      ],
+      "recommended_skills": ["C3.RULE.05", "C3.ALG.01"]
+    },
+    {
+      "group_id": "AG-06",
+      "name": "Quy luật hình học điểm chấm phát triển (Growing Geometric Dot Patterns)",
+      "page_range": "Trang 20, Trang 22 (Workbook trang 20, 22)",
+      "mechanic_description": "Trẻ quan sát các hình vẽ cấu tạo từ điểm chấm tròn (dots) lớn dần qua từng bước: đoạn thẳng (+2), góc L (+2), hình chữ U (+4), hình dấu cộng (+4), viền hình vuông (+4), viền hình tam giác (+3) và quan hệ nhân n x n. Trẻ đếm số chấm và tính số lượng của hình tiếp theo.",
+      "sample_prompts": [
+        "Mỗi hàng rào đều lớn dần lên! Quan sát thật kỹ để tìm quy luật nhé!",
+        "Quan sát hình chấm và điền số lượng tiếp theo ⭐"
+      ],
+      "visual_objects": [
+        "Điểm chấm tròn màu tím/xanh 🟣 tạo thành các hình học trực quan",
+        "Đoạn thẳng ngang (2 -> 4 -> 6)",
+        "Góc vuông chữ L (3 -> 5 -> 7)",
+        "Cốc / rãnh chữ U (5 -> 9 -> 13)",
+        "Dấu thập / dấu cộng + (5 -> 9 -> 13)",
+        "Khung viền hình vuông (4 -> 8 -> 12)",
+        "Khung viền tam giác (3 -> 6 -> 9)"
+      ],
+      "quantities_and_ranges": "Số lượng chấm từ 2 đến 20; bước tăng đều +2, +3, +4; bảng nhân 1x1, 2x2, 3x3, 4x4.",
+      "distractor_design": "Số chấm của hình hiện tại (chưa cộng bước tăng), sai lệch ±1 hoặc ±2 so với kết quả.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-022",
+          "name": "growing-pattern / dot-array",
+          "rationale": "Hiển thị mô hình hạt phát triển động trên canvas 2D."
+        },
+        {
+          "template_id": "GT-001",
+          "name": "tap-select",
+          "rationale": "Trắc nghiệm chọn số lượng hạt tiếp theo."
+        }
+      ],
+      "recommended_skills": ["C3.RULE.06", "C1.CNT.01", "C3.RULE.01"]
+    },
+    {
+      "group_id": "AG-07",
+      "name": "Đại thử thách tổng hợp & Mật mã mở cánh cổng (Grand Boss Door Challenge)",
+      "page_range": "Trang 21 đến 22 (Workbook trang 21 đến 22)",
+      "mechanic_description": "Tổng kết chặng bằng bài thi tích hợp toàn bộ các kỹ năng đã học (chuỗi hình, chuỗi số, dãy xen kẽ, ô logic, bông hoa số, hình học lớn dần). Trẻ giải từng câu để thu thập các ký tự mật mã điền vào bảng mở khóa cánh cổng Thung Lũng Quy Luật.",
+      "sample_prompts": [
+        "Mỗi manh mối dẫn ta đến bí mật của Quy luật! Hãy quan sát thật kỹ và chọn đáp án đúng nhé!",
+        "Chỉ còn một bước nữa thôi! Bé hãy giải 6 mật mã để mở cánh cổng nhé!",
+        "Mở cánh cổng để bước sang chặng tiếp theo!"
+      ],
+      "visual_objects": [
+        "Cánh cổng đá cổ thụ phủ dây leo hoa rực rỡ với ổ khóa 6 ký tự ⛩️🔐",
+        "Bảng điều khiển 6 ô mật mã [ 1 ] [ 2 ] [ 3 ] [ 4 ] [ 5 ] [ 6 ]",
+        "Gấu Logic cầm kính lúp và Thỏ Quan Sát giơ tay cổ vũ 🐻🐰"
+      ],
+      "quantities_and_ranges": "6 câu hỏi đại diện cho 6 năng lực cốt lõi của toàn bộ chặng.",
+      "distractor_design": "Nhiễu được tinh chỉnh từ các bẫy tư duy thường gặp ở các trang trước.",
+      "recommended_existing_gt_templates": [
+        {
+          "template_id": "GT-000",
+          "name": "boss-gate / celebration",
+          "rationale": "Màn chơi kết thúc chặng với cơ chế giải mật mã 6 bước và hiệu ứng mở cổng phát sáng, pháo hoa ăn mừng."
+        }
+      ],
+      "recommended_skills": [
+        "C1.PAT.01",
+        "C3.RULE.01",
+        "C3.RULE.03",
+        "C3.RULE.04",
+        "C3.RULE.05",
+        "C3.RULE.06"
+      ]
+    }
+  ],
+  "pages_summary": [
+    {
+      "page_number": 1,
+      "workbook_page_number": null,
+      "file_path": "pages/page-01.jpg",
+      "page_type": "cover",
+      "title": "CHẶNG 15: THUNG LŨNG QUY LUẬT",
+      "instruction": "HÀNH TRÌNH 20 CHẶNG TOÁN HỌC - CÙNG BÉ TÌM QUY LUẬT",
+      "dialogue": {
+        "welcome_sign": "CHÀO MỪNG ĐẾN THUNG LŨNG QUY LUẬT!",
+        "gau_logic": "Gấu Logic cầm kính lúp và Sổ tay quy luật sẵn sàng khám phá",
+        "tho_quan_sat": "Thỏ Quan Sát hào hứng chỉ dẫn lối vào thung lũng"
+      },
+      "pedagogical_concept": "Trang bìa giới thiệu 4 trụ cột quy luật chính của chặng thông qua các biển chỉ dẫn bằng gỗ: HOA (quy luật lặp tự nhiên), TRÁI CÂY (quy luật lặp đối tượng quen thuộc), HÌNH DẠNG (quy luật hình học & màu sắc) và SỐ (dãy số nhảy đều 2-4-6-8...).",
+      "digital_game_mapping": {
+        "suggested_template": "GT-000",
+        "mechanic": "hub-world-intro",
+        "interaction": "Chạm vào cánh cổng thung lũng để bắt đầu hành trình; các biển gỗ phát âm thanh giới thiệu chủ đề tương ứng."
+      }
+    },
+    {
+      "page_number": 2,
+      "workbook_page_number": 1,
+      "file_path": "pages/page-02.jpg",
+      "page_type": "practice_ab",
+      "title": "Trang 1 – Cánh cổng AB",
+      "instruction": "Bài 1: Khoanh vào hình tiếp theo ⭐ | Bài 2: Nối quy luật với đáp án đúng ⭐",
+      "dialogue": {
+        "gau_logic": "Các hình đang lặp lại theo thứ tự đấy!",
+        "tho_quan_sat": "Bé hãy tìm hình xuất hiện tiếp theo nhé!"
+      },
+      "pedagogical_concept": "Giới thiệu quy luật lặp luân phiên 2 phần tử cơ bản AB (ABAB A -> B). Trẻ phân tích chu kỳ lặp và xác định hình tiếp theo.",
+      "exercises": [
+        {
+          "part": "Bài 1",
+          "type": "pick_next_ab",
+          "items": [
+            {
+              "question": 1,
+              "sequence": [
+                "Táo đỏ",
+                "Lê xanh",
+                "Táo đỏ",
+                "Lê xanh",
+                "Táo đỏ",
+                "?"
+              ],
+              "correct_answer": "Lê xanh",
+              "distractors": ["Táo đỏ", "Cam tròn"]
+            },
+            {
+              "question": 2,
+              "sequence": [
+                "Dâu tây",
+                "Cam tròn",
+                "Dâu tây",
+                "Cam tròn",
+                "Dâu tây",
+                "?"
+              ],
+              "correct_answer": "Cam tròn",
+              "distractors": ["Chuối vàng", "Dâu tây"]
+            },
+            {
+              "question": 3,
+              "sequence": [
+                "Gấu nâu",
+                "Thỏ trắng",
+                "Gấu nâu",
+                "Thỏ trắng",
+                "Gấu nâu",
+                "?"
+              ],
+              "correct_answer": "Thỏ trắng",
+              "distractors": ["Gấu nâu", "Cáo cam"]
+            },
+            {
+              "question": 4,
+              "sequence": [
+                "Tròn xanh dương",
+                "Vuông hồng",
+                "Tròn xanh dương",
+                "Vuông hồng",
+                "Tròn xanh dương",
+                "?"
+              ],
+              "correct_answer": "Vuông hồng",
+              "distractors": ["Tròn xanh dương", "Tam giác vàng"]
+            }
+          ]
+        },
+        {
+          "part": "Bài 2",
+          "type": "match_next_ab",
+          "items": [
+            {
+              "question": "A",
+              "sequence": [
+                "Hoa hồng",
+                "Bướm tím",
+                "Hoa hồng",
+                "Bướm tím",
+                "Hoa hồng",
+                "?"
+              ],
+              "correct_answer": "Bướm tím"
+            },
+            {
+              "question": "B",
+              "sequence": [
+                "Xe ô tô xanh",
+                "Bóng bãi biển",
+                "Xe ô tô xanh",
+                "Bóng bãi biển",
+                "Xe ô tô xanh",
+                "?"
+              ],
+              "correct_answer": "Bóng bãi biển"
+            },
+            {
+              "question": "C",
+              "sequence": [
+                "Ngôi sao vàng",
+                "Trăng khuyết",
+                "Ngôi sao vàng",
+                "Trăng khuyết",
+                "Ngôi sao vàng",
+                "?"
+              ],
+              "correct_answer": "Trăng khuyết"
+            },
+            {
+              "question": "D",
+              "sequence": [
+                "Cá vàng",
+                "Vỏ sò hồng",
+                "Cá vàng",
+                "Vỏ sò hồng",
+                "Cá vàng",
+                "?"
+              ],
+              "correct_answer": "Vỏ sò hồng"
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-006",
+        "mechanic": "drag-drop-pattern-slot",
+        "interaction": "Kéo vật phẩm vào slot trống ở đuôi chuỗi hoặc nối điểm chạm tới đáp án đúng."
+      }
+    },
+    {
+      "page_number": 3,
+      "workbook_page_number": 2,
+      "file_path": "pages/page-03.jpg",
+      "page_type": "practice_ab_extension",
+      "title": "Trang 2 – Hai hình thay phiên",
+      "instruction": "Bài 1: Khoanh vào hình tiếp theo ⭐ | Bài 2: Nối quy luật với đáp án đúng ⭐ | Bé giỏi quan sát ⭐",
+      "dialogue": {
+        "gau_logic": "Hai hình đang thay phiên nhau đấy!",
+        "tho_quan_sat": "Bé tìm hình xuất hiện tiếp theo nhé!"
+      },
+      "pedagogical_concept": "Luyện tập mở rộng quy luật AB với 5 câu chọn và phần thử thách 'Bé giỏi quan sát' vẽ/điền hình tiếp theo vào ô trống.",
+      "exercises": [
+        {
+          "part": "Bài 1",
+          "type": "pick_next_ab",
+          "items": [
+            {
+              "question": 1,
+              "sequence": "Táo - Lê - Táo - Lê - Táo - ?",
+              "correct_answer": "Lê",
+              "distractors": ["Táo", "Cam"]
+            },
+            {
+              "question": 2,
+              "sequence": "Dâu tây - Cam - Dâu tây - Cam - Dâu tây - ?",
+              "correct_answer": "Cam",
+              "distractors": ["Chuối", "Dâu tây"]
+            },
+            {
+              "question": 3,
+              "sequence": "Gấu - Thỏ - Gấu - Thỏ - Gấu - ?",
+              "correct_answer": "Thỏ",
+              "distractors": ["Gấu", "Cáo"]
+            },
+            {
+              "question": 4,
+              "sequence": "Tròn xanh - Vuông hồng - Tròn xanh - Vuông hồng - Tròn xanh - ?",
+              "correct_answer": "Vuông hồng",
+              "distractors": ["Tròn xanh", "Tam giác vàng"]
+            },
+            {
+              "question": 5,
+              "sequence": "Ô tô xanh - Bóng - Ô tô xanh - Bóng - Ô tô xanh - ?",
+              "correct_answer": "Bóng",
+              "distractors": ["Ô tô xanh", "Tàu hỏa"]
+            }
+          ]
+        },
+        {
+          "part": "Bài 2",
+          "type": "match_next_ab",
+          "items": [
+            {
+              "question": "A",
+              "sequence": "Hoa - Bướm - Hoa - Bướm - Hoa - ?",
+              "correct_answer": "Bướm tím"
+            },
+            {
+              "question": "B",
+              "sequence": "Ô tô - Bóng - Ô tô - Bóng - Ô tô - ?",
+              "correct_answer": "Bóng bãi biển"
+            },
+            {
+              "question": "C",
+              "sequence": "Ngôi sao - Trăng khuyết - Sao - Trăng - Sao - ?",
+              "correct_answer": "Trăng khuyết"
+            },
+            {
+              "question": "D",
+              "sequence": "Cá vàng - Vỏ sò - Cá vàng - Vỏ sò - Cá vàng - ?",
+              "correct_answer": "Vỏ sò hồng"
+            }
+          ]
+        },
+        {
+          "part": "Bé giỏi quan sát",
+          "type": "fill_in_blank_ab",
+          "items": [
+            {
+              "question": 1,
+              "sequence": "Mặt cười - Tim hồng - Mặt cười - Tim hồng - [ ]",
+              "correct_answer": "Mặt cười vàng"
+            },
+            {
+              "question": 2,
+              "sequence": "Bút chì vàng - Sách xanh - Bút chì vàng - Sách xanh - [ ]",
+              "correct_answer": "Bút chì vàng"
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-006",
+        "mechanic": "tap-to-place-slot",
+        "interaction": "Chạm vào khay đồ vật bên dưới để lấp đầy ô trống."
+      }
+    },
+    {
+      "page_number": 4,
+      "workbook_page_number": 3,
+      "file_path": "pages/page-04.jpg",
+      "page_type": "practice_aab",
+      "title": "Trang 3 – QUY LUẬT AAB",
+      "instruction": "Bài 1: Chọn hình còn thiếu ⭐ | Bài 2: Khoanh đáp án đúng ⭐",
+      "dialogue": {
+        "gau_logic": "Hai hình giống nhau rồi đến một hình khác đấy!",
+        "tho_quan_sat": "Bé tìm hình tiếp theo theo quy luật nhé!"
+      },
+      "pedagogical_concept": "Giới thiệu cấu trúc lặp AAB (AABAAB AAB -> B). Rèn luyện nhận thức cấu trúc nhóm: phần tử A xuất hiện 2 lần liên tiếp trước khi đến B.",
+      "exercises": [
+        {
+          "part": "Bài 1",
+          "type": "pick_next_aab",
+          "items": [
+            {
+              "question": 1,
+              "sequence": "Táo - Táo - Lê - Táo - Táo - ?",
+              "correct_answer": "Lê",
+              "distractors": ["Táo", "Cam"]
+            },
+            {
+              "question": 2,
+              "sequence": "Sao vàng - Sao vàng - Tim hồng - Sao vàng - Sao vàng - ?",
+              "correct_answer": "Tim hồng",
+              "distractors": ["Sao vàng", "Tròn xanh"]
+            },
+            {
+              "question": 3,
+              "sequence": "Thỏ - Thỏ - Gấu - Thỏ - Thỏ - ?",
+              "correct_answer": "Gấu",
+              "distractors": ["Thỏ", "Cáo"]
+            },
+            {
+              "question": 4,
+              "sequence": "Tròn xanh - Tròn xanh - Tam giác vàng - Tròn xanh - Tròn xanh - ?",
+              "correct_answer": "Tam giác vàng",
+              "distractors": ["Tròn xanh", "Vuông vàng"]
+            },
+            {
+              "question": 5,
+              "sequence": "Ô tô xanh - Ô tô xanh - Xe buýt vàng - Ô tô xanh - Ô tô xanh - ?",
+              "correct_answer": "Xe buýt vàng",
+              "distractors": ["Ô tô xanh", "Xe đạp"]
+            },
+            {
+              "question": 6,
+              "sequence": "Hoa hồng phấn - Hoa hồng phấn - Hoa vàng - Hoa hồng phấn - Hoa hồng phấn - ?",
+              "correct_answer": "Hoa vàng",
+              "distractors": ["Hoa hồng phấn", "Tulip đỏ"]
+            }
+          ]
+        },
+        {
+          "part": "Bài 2",
+          "type": "multiple_choice_aab",
+          "items": [
+            {
+              "question": "a",
+              "sequence": "Dâu tây - Dâu tây - Cam - Dâu tây - Dâu tây - ?",
+              "correct_answer": "Cam",
+              "distractors": ["Dâu tây", "Chuối"]
+            },
+            {
+              "question": "b",
+              "sequence": "Cún vàng - Cún vàng - Mèo cam - Cún vàng - Cún vàng - ?",
+              "correct_answer": "Mèo cam",
+              "distractors": ["Cún vàng", "Thỏ trắng"]
+            },
+            {
+              "question": "c",
+              "sequence": "Hình thoi cam - Hình thoi cam - Sao vàng - Hình thoi cam - Hình thoi cam - ?",
+              "correct_answer": "Sao vàng",
+              "distractors": ["Hình thoi cam", "Hình thoi xanh"]
+            },
+            {
+              "question": "d",
+              "sequence": "Tulip hồng - Tulip hồng - Hướng dương - Tulip hồng - Tulip hồng - ?",
+              "correct_answer": "Hướng dương",
+              "distractors": ["Tulip hồng", "Hoa hồng 5 cánh"]
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-001",
+        "mechanic": "three-option-tap-select",
+        "interaction": "Chạm vào 1 trong 3 đáp án chia bởi dấu gạch chéo (/)."
+      }
+    },
+    {
+      "page_number": 5,
+      "workbook_page_number": 4,
+      "file_path": "pages/page-05.jpg",
+      "page_type": "practice_abb",
+      "title": "Trang 4 – QUY LUẬT ABB",
+      "instruction": "Bài 1: Chọn hình còn thiếu ⭐ | Bài 2: Khoanh đáp án đúng ⭐",
+      "dialogue": {
+        "gau_logic": "Một hình đi trước, rồi hai hình giống nhau theo sau!",
+        "tho_quan_sat": "Bé nhìn kỹ để chọn hình tiếp theo nhé!"
+      },
+      "pedagogical_concept": "Giới thiệu cấu trúc lặp ABB (ABB ABB -> B). Trẻ phân biệt được sự khác biệt giữa cấu trúc AAB và ABB khi phần tử lặp đôi nằm ở cuối đơn vị lặp.",
+      "exercises": [
+        {
+          "part": "Bài 1",
+          "type": "pick_next_abb",
+          "items": [
+            {
+              "question": 1,
+              "sequence": "Táo - Lê - Lê - Táo - Lê - ?",
+              "correct_answer": "Lê",
+              "distractors": ["Táo", "Chuối"]
+            },
+            {
+              "question": 2,
+              "sequence": "Sao vàng - Tim hồng - Tim hồng - Sao vàng - Tim hồng - ?",
+              "correct_answer": "Tim hồng",
+              "distractors": ["Sao vàng", "Tròn xanh"]
+            },
+            {
+              "question": 3,
+              "sequence": "Gấu - Thỏ - Thỏ - Gấu - Thỏ - ?",
+              "correct_answer": "Thỏ",
+              "distractors": ["Gấu", "Cáo"]
+            },
+            {
+              "question": 4,
+              "sequence": "Tròn xanh - Vuông vàng - Vuông vàng - Tròn xanh - Vuông vàng - ?",
+              "correct_answer": "Vuông vàng",
+              "distractors": ["Tròn xanh", "Tam giác đỏ"]
+            },
+            {
+              "question": 5,
+              "sequence": "Ô tô xanh - Xe buýt vàng - Xe buýt vàng - Ô tô xanh - Xe buýt vàng - ?",
+              "correct_answer": "Xe buýt vàng",
+              "distractors": ["Ô tô xanh", "Xe đạp"]
+            },
+            {
+              "question": 6,
+              "sequence": "Hướng dương - Tulip hồng - Tulip hồng - Hướng dương - Tulip hồng - ?",
+              "correct_answer": "Tulip hồng",
+              "distractors": ["Hướng dương", "Hoa cúc"]
+            }
+          ]
+        },
+        {
+          "part": "Bài 2",
+          "type": "multiple_choice_abb",
+          "items": [
+            {
+              "question": "a",
+              "sequence": "Nho tím - Cam tròn - Cam tròn - Nho tím - Cam tròn - ?",
+              "correct_answer": "Cam tròn",
+              "distractors": ["Nho tím", "Táo đỏ"]
+            },
+            {
+              "question": "b",
+              "sequence": "Gấu trúc - Cáo cam - Cáo cam - Gấu trúc - Cáo cam - ?",
+              "correct_answer": "Cáo cam",
+              "distractors": ["Gấu trúc", "Thỏ trắng"]
+            },
+            {
+              "question": "c",
+              "sequence": "Hình thoi cam - Sao vàng - Sao vàng - Hình thoi cam - Sao vàng - ?",
+              "correct_answer": "Sao vàng",
+              "distractors": ["Hình thoi cam", "Hình thoi xanh"]
+            },
+            {
+              "question": "d",
+              "sequence": "Hoa hồng đỏ - Cúc vàng - Cúc vàng - Hoa hồng đỏ - Cúc vàng - ?",
+              "correct_answer": "Cúc vàng",
+              "distractors": ["Hoa hồng đỏ", "Hoa hồng phấn"]
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-001",
+        "mechanic": "tap-select",
+        "interaction": "Chạm trực tiếp vào đáp án đúng."
+      }
+    },
+    {
+      "page_number": 6,
+      "workbook_page_number": 5,
+      "file_path": "pages/page-06.jpg",
+      "page_type": "practice_mixed_flowers",
+      "title": "Trang 5 – KHU VƯỜN HOA BÍ MẬT",
+      "instruction": "Bài 1: Chọn bông hoa tiếp theo ⭐ | Bài 2: Nối với bông hoa đúng ⭐",
+      "dialogue": {
+        "gau_logic": "Những bông hoa ở đây nở theo một quy luật đấy!",
+        "tho_quan_sat": "Bé tìm bông hoa tiếp theo nhé!"
+      },
+      "pedagogical_concept": "Tích hợp đồng thời các quy luật AB, AAB, ABB và bắt đầu giới thiệu quy luật 3 phần tử luân phiên ABC trong bối cảnh các loài hoa.",
+      "exercises": [
+        {
+          "part": "Bài 1",
+          "type": "mixed_patterns",
+          "items": [
+            {
+              "question": 1,
+              "pattern_type": "AB",
+              "sequence": "Tulip hồng - Hướng dương - Tulip - Hướng dương - Tulip - ?",
+              "correct_answer": "Hướng dương"
+            },
+            {
+              "question": 2,
+              "pattern_type": "AAB",
+              "sequence": "Hoa hồng phấn - Hoa hồng phấn - Cúc trắng - Hoa hồng phấn - Hoa hồng phấn - ?",
+              "correct_answer": "Cúc trắng"
+            },
+            {
+              "question": 3,
+              "pattern_type": "ABB",
+              "sequence": "Hoa hồng đỏ - Cúc trắng - Cúc trắng - Hoa hồng đỏ - Cúc trắng - ?",
+              "correct_answer": "Cúc trắng"
+            },
+            {
+              "question": 4,
+              "pattern_type": "ABC",
+              "sequence": "Hướng dương - Tulip hồng - Hoa hồng đỏ - Hướng dương - Tulip hồng - ?",
+              "correct_answer": "Hoa hồng đỏ"
+            },
+            {
+              "question": 5,
+              "pattern_type": "AAB",
+              "sequence": "Râm bụt đỏ - Râm bụt đỏ - Hoa hồng phấn - Râm bụt - Râm bụt - ?",
+              "correct_answer": "Hoa hồng phấn"
+            },
+            {
+              "question": 6,
+              "pattern_type": "AB",
+              "sequence": "Cúc trắng - Tulip hồng - Cúc trắng - Tulip hồng - Cúc trắng - ?",
+              "correct_answer": "Tulip hồng"
+            }
+          ]
+        },
+        {
+          "part": "Bài 2",
+          "type": "match_pattern",
+          "items": [
+            {
+              "question": "a",
+              "pattern_type": "AAB",
+              "sequence": "Hồng đỏ - Hồng đỏ - Hướng dương - Hồng đỏ - Hồng đỏ - ?",
+              "correct_answer": "Hướng dương"
+            },
+            {
+              "question": "b",
+              "pattern_type": "ABC",
+              "sequence": "Hồng phấn - Hướng dương - Tulip hồng - Hồng phấn - Hướng dương - ?",
+              "correct_answer": "Tulip hồng"
+            },
+            {
+              "question": "c",
+              "pattern_type": "AAB",
+              "sequence": "Tulip hồng - Tulip hồng - Cúc trắng - Tulip hồng - Tulip hồng - ?",
+              "correct_answer": "Cúc trắng"
+            },
+            {
+              "question": "d",
+              "pattern_type": "ABB",
+              "sequence": "Hướng dương - Hồng đỏ - Hồng đỏ - Hướng dương - Hồng đỏ - ?",
+              "correct_answer": "Hồng đỏ"
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-006",
+        "mechanic": "flower-garden-sequence",
+        "interaction": "Bông hoa nở xòe bung cánh khi đặt đúng vị trí khuyết."
+      }
+    },
+    {
+      "page_number": 7,
+      "workbook_page_number": 6,
+      "file_path": "pages/page-07.jpg",
+      "page_type": "practice_mixed_fruits",
+      "title": "Trang 6 – QUẦY TRÁI CÂY KỲ LẠ",
+      "instruction": "Bài 1: Chọn trái cây tiếp theo ⭐ | Bài 2: Khoanh đáp án đúng ⭐",
+      "dialogue": {
+        "gau_logic": "Những loại trái cây được xếp theo thứ tự lặp lại!",
+        "tho_quan_sat": "Bé quan sát rồi chọn quả tiếp theo nhé!"
+      },
+      "pedagogical_concept": "Củng cố quy luật AB, AAB và ABC trên các loại quả phong phú (dứa, lê, táo, cam, chuối, nho, đào, dưa hấu, chanh).",
+      "exercises": [
+        {
+          "part": "Bài 1",
+          "items": [
+            {
+              "question": 1,
+              "pattern_type": "AB",
+              "sequence": "Dứa - Lê - Dứa - Lê - Dứa - ?",
+              "correct_answer": "Lê"
+            },
+            {
+              "question": 2,
+              "pattern_type": "AAB",
+              "sequence": "Chuối - Chuối - Táo - Chuối - Chuối - ?",
+              "correct_answer": "Táo"
+            },
+            {
+              "question": 3,
+              "pattern_type": "AB",
+              "sequence": "Cam - Chanh - Cam - Chanh - Cam - ?",
+              "correct_answer": "Chanh"
+            },
+            {
+              "question": 4,
+              "pattern_type": "AB",
+              "sequence": "Nho - Táo xanh - Nho - Táo xanh - Nho - ?",
+              "correct_answer": "Táo xanh"
+            },
+            {
+              "question": 5,
+              "pattern_type": "AB",
+              "sequence": "Lê - Táo đỏ - Lê - Táo đỏ - Lê - ?",
+              "correct_answer": "Táo đỏ"
+            },
+            {
+              "question": 6,
+              "pattern_type": "AAB",
+              "sequence": "Đào - Đào - Dứa - Đào - Đào - ?",
+              "correct_answer": "Dứa"
+            }
+          ]
+        },
+        {
+          "part": "Bài 2",
+          "items": [
+            {
+              "question": "a",
+              "pattern_type": "AB",
+              "sequence": "Dâu tây - Cam - Dâu tây - Cam - Dâu tây - ?",
+              "correct_answer": "Cam"
+            },
+            {
+              "question": "b",
+              "pattern_type": "ABC",
+              "sequence": "Dưa hấu - Nho - Chuối - Dưa hấu - Nho - ?",
+              "correct_answer": "Chuối"
+            },
+            {
+              "question": "c",
+              "pattern_type": "AAB",
+              "sequence": "Táo - Táo - Lê - Táo - Táo - ?",
+              "correct_answer": "Lê"
+            },
+            {
+              "question": "d",
+              "pattern_type": "AB",
+              "sequence": "Dứa - Cam - Dứa - Cam - Dứa - ?",
+              "correct_answer": "Cam"
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-001",
+        "mechanic": "fruit-stand-pattern",
+        "interaction": "Chạm quả trên kệ bày hàng để lấp đầy ô trống."
+      }
+    },
+    {
+      "page_number": 8,
+      "workbook_page_number": 7,
+      "file_path": "pages/page-08.jpg",
+      "page_type": "practice_mixed_animals",
+      "title": "Trang 7 – ĐOÀN THÚ NỐI ĐUÔI NHAU",
+      "instruction": "Bài 1: Chọn con vật tiếp theo ⭐ | Bài 2: Khoanh đáp án đúng ⭐",
+      "dialogue": {
+        "gau_logic": "Các bạn thú đang đi theo một thứ tự đấy!",
+        "tho_quan_sat": "Bé hãy tìm con vật tiếp theo nhé!"
+      },
+      "pedagogical_concept": "Ứng dụng quy luật AB, AAB, ABC trên đối tượng các con vật dễ thương (chó, mèo, thỏ, gấu, cáo, sư tử, voi, bò, heo, ếch, gà).",
+      "exercises": [
+        {
+          "part": "Bài 1",
+          "items": [
+            {
+              "question": 1,
+              "pattern_type": "AB",
+              "sequence": "Chó - Mèo - Chó - Mèo - Chó - ?",
+              "correct_answer": "Mèo"
+            },
+            {
+              "question": 2,
+              "pattern_type": "AAB",
+              "sequence": "Gấu - Gấu - Cáo - Gấu - Gấu - ?",
+              "correct_answer": "Cáo"
+            },
+            {
+              "question": 3,
+              "pattern_type": "ABC",
+              "sequence": "Thỏ - Chó - Mèo - Thỏ - Chó - ?",
+              "correct_answer": "Mèo"
+            },
+            {
+              "question": 4,
+              "pattern_type": "AB",
+              "sequence": "Sư tử - Voi - Sư tử - Voi - Sư tử - ?",
+              "correct_answer": "Voi"
+            },
+            {
+              "question": 5,
+              "pattern_type": "AB",
+              "sequence": "Bò sữa - Heo hồng - Bò sữa - Heo hồng - Bò sữa - ?",
+              "correct_answer": "Heo hồng"
+            },
+            {
+              "question": 6,
+              "pattern_type": "AB",
+              "sequence": "Ếch - Gà con - Ếch - Gà con - Ếch - ?",
+              "correct_answer": "Gà con"
+            }
+          ]
+        },
+        {
+          "part": "Bài 2",
+          "items": [
+            {
+              "question": "a",
+              "pattern_type": "AAB",
+              "sequence": "Khỉ - Khỉ - Sư tử - Khỉ - Khỉ - ?",
+              "correct_answer": "Sư tử"
+            },
+            {
+              "question": "b",
+              "pattern_type": "ABC",
+              "sequence": "Gấu trúc - Thỏ - Cáo - Gấu trúc - Thỏ - ?",
+              "correct_answer": "Cáo"
+            },
+            {
+              "question": "c",
+              "pattern_type": "AAB",
+              "sequence": "Thỏ - Thỏ - Gấu - Thỏ - Thỏ - ?",
+              "correct_answer": "Gấu"
+            },
+            {
+              "question": "d",
+              "pattern_type": "ABC",
+              "sequence": "Chó - Mèo - Thỏ - Chó - Mèo - ?",
+              "correct_answer": "Thỏ"
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-006",
+        "mechanic": "animal-train-parade",
+        "interaction": "Các bạn thú cử động lắc lư bước đi khi được ghép đúng đoàn diễu hành."
+      }
+    },
+    {
+      "page_number": 9,
+      "workbook_page_number": 8,
+      "file_path": "pages/page-09.jpg",
+      "page_type": "practice_abc",
+      "title": "Trang 8 – BA NGƯỜI BẠN LUÂN PHIÊN",
+      "instruction": "Bài 1: Chọn hình còn thiếu ⭐ | Bài 2: Khoanh đáp án đúng ⭐",
+      "dialogue": {
+        "gau_logic": "Ba hình sẽ lặp lại theo thứ tự A – B – C!",
+        "tho_quan_sat": "Bé nhớ đủ ba bạn rồi chọn hình tiếp theo nhé!"
+      },
+      "pedagogical_concept": "Chuyên đề sâu về quy luật lặp 3 phần tử luân phiên ABC (ABC ABC -> C). Mở rộng trí nhớ làm việc (working memory) của trẻ lên dung lượng 3 phần tử.",
+      "exercises": [
+        {
+          "part": "Bài 1",
+          "items": [
+            {
+              "question": 1,
+              "sequence": "Thỏ - Gấu - Cáo - Thỏ - Gấu - ?",
+              "correct_answer": "Cáo"
+            },
+            {
+              "question": 2,
+              "sequence": "Chấm tròn đỏ - Xanh dương - Vàng - Đỏ - Xanh dương - ?",
+              "correct_answer": "Vàng"
+            },
+            {
+              "question": 3,
+              "sequence": "Cây xanh - Ngôi nhà - Mặt trời - Cây - Ngôi nhà - ?",
+              "correct_answer": "Mặt trời"
+            },
+            {
+              "question": 4,
+              "sequence": "Tròn xanh lá - Tròn tím - Sao vàng - Tròn xanh lá - Tròn tím - ?",
+              "correct_answer": "Sao vàng"
+            },
+            {
+              "question": 5,
+              "sequence": "Ô tô xanh - Thuyền buồm - Máy bay - Ô tô - Thuyền - ?",
+              "correct_answer": "Máy bay"
+            },
+            {
+              "question": 6,
+              "sequence": "Táo đỏ - Nho tím - Chuối vàng - Táo - Nho - ?",
+              "correct_answer": "Chuối vàng"
+            }
+          ]
+        },
+        {
+          "part": "Bài 2",
+          "items": [
+            {
+              "question": "a",
+              "sequence": "Tulip - Hướng dương - Hồng đỏ - Tulip - Hướng dương - ?",
+              "correct_answer": "Hồng đỏ"
+            },
+            {
+              "question": "b",
+              "sequence": "Chó - Mèo - Thỏ - Chó - Mèo - ?",
+              "correct_answer": "Thỏ"
+            },
+            {
+              "question": "c",
+              "sequence": "Tam giác đỏ - Vuông xanh lá - Tròn xanh dương - Tam giác đỏ - Vuông xanh lá - ?",
+              "correct_answer": "Tròn xanh dương"
+            },
+            {
+              "question": "d",
+              "sequence": "Sao vàng - Tim đỏ - Hình thoi xanh - Sao vàng - Tim đỏ - ?",
+              "correct_answer": "Hình thoi xanh"
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-001",
+        "mechanic": "abc-rhythm-tapper",
+        "interaction": "Chạm theo nhịp điệu âm thanh 3 nốt nhạc tương ứng với 3 biểu tượng ABC."
+      }
+    },
+    {
+      "page_number": 10,
+      "workbook_page_number": 9,
+      "file_path": "pages/page-10.jpg",
+      "page_type": "practice_geometry_color",
+      "title": "Trang 9 – MẬT MÃ HÌNH HỌC",
+      "instruction": "Bài 1: Chọn hình còn thiếu ⭐ | Bài 2: Khoanh đáp án đúng ⭐",
+      "dialogue": {
+        "gau_logic": "Hình dạng và màu sắc cũng tạo thành quy luật đấy!",
+        "tho_quan_sat": "Bé tìm hình tiếp theo để giải mật mã nhé!"
+      },
+      "pedagogical_concept": "Quy luật lặp trên 2 thuộc tính: Hình dạng (Shape) và Màu sắc (Color). Trẻ học cách phân tách thuộc tính (cùng hình khác màu, khác hình cùng màu, hoặc khác cả hình lẫn màu).",
+      "exercises": [
+        {
+          "part": "Bài 1",
+          "items": [
+            {
+              "question": 1,
+              "rule": "AB khác hình khác màu",
+              "sequence": "Tròn xanh - Vuông đỏ - Tròn xanh - Vuông đỏ - Tròn xanh - ?",
+              "correct_answer": "Vuông đỏ"
+            },
+            {
+              "question": 2,
+              "rule": "AB khác hình cùng màu vàng",
+              "sequence": "Tam giác vàng - Tròn vàng - Tam giác vàng - Tròn vàng - Tam giác vàng - ?",
+              "correct_answer": "Tròn vàng"
+            },
+            {
+              "question": 3,
+              "rule": "AB khác hình khác màu",
+              "sequence": "Vuông tím - Sao vàng - Vuông tím - Sao vàng - Vuông tím - ?",
+              "correct_answer": "Sao vàng"
+            },
+            {
+              "question": 4,
+              "rule": "ABC cùng hình tròn khác màu",
+              "sequence": "Tròn xanh dương - Tròn xanh lá - Tròn đỏ - Tròn xanh dương - Tròn xanh lá - ?",
+              "correct_answer": "Tròn đỏ"
+            },
+            {
+              "question": 5,
+              "rule": "ABC khác hình khác màu",
+              "sequence": "Sao vàng - Vuông vàng - Tròn xanh - Sao vàng - Vuông vàng - ?",
+              "correct_answer": "Tròn xanh"
+            },
+            {
+              "question": 6,
+              "rule": "ABC 3 hình 3 màu",
+              "sequence": "Tròn xanh lá - Vuông xanh dương - Tam giác vàng - Tròn xanh lá - Vuông xanh dương - ?",
+              "correct_answer": "Tam giác vàng"
+            }
+          ]
+        },
+        {
+          "part": "Bài 2",
+          "items": [
+            {
+              "question": "a",
+              "sequence": "Tròn đỏ - Thoi xanh - Tròn đỏ - Thoi xanh - Tròn đỏ - ?",
+              "correct_answer": "Thoi xanh"
+            },
+            {
+              "question": "b",
+              "sequence": "Tim hồng - Thoi xanh - Tim hồng - Thoi xanh - Tim hồng - ?",
+              "correct_answer": "Thoi xanh"
+            },
+            {
+              "question": "c",
+              "sequence": "Vuông vàng - Vuông vàng - Tròn xanh - Vuông vàng - Vuông vàng - ?",
+              "correct_answer": "Tròn xanh"
+            },
+            {
+              "question": "d",
+              "sequence": "Tam giác vàng - Sao vàng - Tam giác vàng - Sao vàng - Tam giác vàng - ?",
+              "correct_answer": "Sao vàng"
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-006",
+        "mechanic": "geometric-shape-lock",
+        "interaction": "Đặt đúng khối hình học 2D vào khe ổ khóa mật mã."
+      }
+    },
+    {
+      "page_number": 11,
+      "workbook_page_number": 10,
+      "file_path": "pages/page-11.jpg",
+      "page_type": "checkpoint_patterns",
+      "title": "Trang 10 – TRẠM KIỂM TRA QUY LUẬT HÌNH",
+      "instruction": "Bài 1: Điền hình còn thiếu ⭐ | Bài 2: Khoanh đáp án đúng ⭐ | Bài 3: Nối với đáp án đúng ⭐",
+      "dialogue": {
+        "gau_logic": "Mình cùng ôn lại các quy luật nhé!",
+        "tho_quan_sat": "Bé đọc kỹ từng bài rồi làm từng phần nào!"
+      },
+      "pedagogical_concept": "Trạm kiểm tra giữa chặng (Checkpoint 1) đánh giá năng lực nhận diện toàn bộ các dạng quy luật lặp hình tượng (AB, AAB, ABC) qua 3 phương thức tương tác: điền khuyết, trắc nghiệm và nối.",
+      "exercises": [
+        {
+          "part": "Bài 1: Điền hình còn thiếu",
+          "items": [
+            {
+              "question": 1,
+              "sequence": "Táo - Lê - Táo - Lê - Táo - [ ]",
+              "correct_answer": "Lê"
+            },
+            {
+              "question": 2,
+              "sequence": "Thỏ - Gấu - Cáo - Thỏ - Gấu - [ ]",
+              "correct_answer": "Cáo"
+            },
+            {
+              "question": 3,
+              "sequence": "Tròn xanh - Vuông hồng - Tròn xanh - Vuông hồng - Tròn xanh - [ ]",
+              "correct_answer": "Vuông hồng"
+            },
+            {
+              "question": 4,
+              "sequence": "Tulip - Tulip - Hoa vàng - Tulip - Tulip - [ ]",
+              "correct_answer": "Hoa vàng"
+            }
+          ]
+        },
+        {
+          "part": "Bài 2: Khoanh đáp án đúng",
+          "items": [
+            {
+              "question": 1,
+              "sequence": "Dâu tây - Dâu tây - Cam - Dâu tây - Dâu tây - [ ]",
+              "correct_answer": "Cam"
+            },
+            {
+              "question": 2,
+              "sequence": "Chó - Mèo - Chó - Mèo - Chó - [ ]",
+              "correct_answer": "Mèo"
+            },
+            {
+              "question": 3,
+              "sequence": "Hình thoi - Hình thoi - Sao - Hình thoi - Hình thoi - [ ]",
+              "correct_answer": "Sao"
+            },
+            {
+              "question": 4,
+              "sequence": "Dứa - Lê - Dứa - Lê - Dứa - [ ]",
+              "correct_answer": "Lê"
+            }
+          ]
+        },
+        {
+          "part": "Bài 3: Nối với đáp án đúng",
+          "items": [
+            {
+              "question": "a",
+              "sequence": "Hồng phấn - Hồng phấn - Hoa vàng - Hồng phấn - Hồng phấn - [ ]",
+              "correct_answer": "Hoa vàng"
+            },
+            {
+              "question": "b",
+              "sequence": "Gấu trúc - Thỏ - Cáo - Gấu trúc - Thỏ - [ ]",
+              "correct_answer": "Cáo"
+            },
+            {
+              "question": "c",
+              "sequence": "Tròn đỏ - Tròn xanh - Tròn vàng - Tròn đỏ - Tròn xanh - [ ]",
+              "correct_answer": "Tròn vàng"
+            },
+            {
+              "question": "d",
+              "sequence": "Táo - Táo - Lê - Táo - Táo - [ ]",
+              "correct_answer": "Lê"
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "checkpoint-trio-challenge",
+        "interaction": "Vượt qua trạm kiểm tra mở rào chắn để đoàn tàu tiến vào Khu Vực Quy Luật Số Học."
+      }
+    },
+    {
+      "page_number": 12,
+      "workbook_page_number": 11,
+      "file_path": "pages/page-12.jpg",
+      "page_type": "arithmetic_sequence",
+      "title": "Trang 11 – Con đường số nhảy đều",
+      "instruction": "Bài 1: Điền số còn thiếu ⭐ | Bài 2: Khoanh đáp án đúng ⭐",
+      "dialogue": {
+        "gau_logic": "Các số đang tăng hoặc giảm đều đấy!",
+        "tho_quan_sat": "Bé hãy tìm số tiếp theo nhé!"
+      },
+      "pedagogical_concept": "Chuyển giao từ quy luật hình ảnh sang trừu tượng số học: Dãy số tăng đều và giảm đều (Arithmetic Sequences / Skip Counting). Khởi đầu của tư duy nhân chia và trục số.",
+      "exercises": [
+        {
+          "part": "Bài 1: Điền số còn thiếu",
+          "items": [
+            {
+              "question": 1,
+              "sequence": "2, 4, 6, 8, [ ]",
+              "rule": "Cộng 2 đều",
+              "correct_answer": 10
+            },
+            {
+              "question": 2,
+              "sequence": "5, 10, 15, 20, [ ]",
+              "rule": "Cộng 5 đều",
+              "correct_answer": 25
+            },
+            {
+              "question": 3,
+              "sequence": "12, 15, 18, 21, [ ]",
+              "rule": "Cộng 3 đều",
+              "correct_answer": 24
+            },
+            {
+              "question": 4,
+              "sequence": "20, 18, 16, 14, [ ]",
+              "rule": "Trừ 2 đều",
+              "correct_answer": 12
+            },
+            {
+              "question": 5,
+              "sequence": "30, 25, 20, 15, [ ]",
+              "rule": "Trừ 5 đều",
+              "correct_answer": 10
+            },
+            {
+              "question": 6,
+              "sequence": "7, 9, 11, 13, [ ]",
+              "rule": "Cộng 2 đều (dãy số lẻ)",
+              "correct_answer": 15
+            },
+            {
+              "question": 7,
+              "sequence": "40, 35, 30, 25, [ ]",
+              "rule": "Trừ 5 đều",
+              "correct_answer": 20
+            },
+            {
+              "question": 8,
+              "sequence": "3, 6, 9, 12, [ ]",
+              "rule": "Cộng 3 đều",
+              "correct_answer": 15
+            }
+          ]
+        },
+        {
+          "part": "Bài 2: Khoanh đáp án đúng",
+          "items": [
+            {
+              "question": 1,
+              "sequence": "1, 3, 5, 7, [ ]",
+              "correct_answer": 9,
+              "options": { "A": 8, "B": 9, "C": 10 }
+            },
+            {
+              "question": 2,
+              "sequence": "10, 20, 30, 40, [ ]",
+              "correct_answer": 50,
+              "options": { "A": 45, "B": 50, "C": 60 }
+            },
+            {
+              "question": 3,
+              "sequence": "15, 12, 9, 6, [ ]",
+              "correct_answer": 3,
+              "options": { "A": 3, "B": 2, "C": 5 }
+            },
+            {
+              "question": 4,
+              "sequence": "6, 8, 10, 12, [ ]",
+              "correct_answer": 14,
+              "options": { "A": 14, "B": 15, "C": 16 }
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-006",
+        "mechanic": "stepping-stones-skip-counting",
+        "interaction": "Chú ếch nhảy trên các phiến đá lá sen theo bước nhảy đều; chọn phiến đá mang số đúng."
+      }
+    },
+    {
+      "page_number": 13,
+      "workbook_page_number": 12,
+      "file_path": "pages/page-13.jpg",
+      "page_type": "growing_step_sequence",
+      "title": "Trang 12 – Bậc thang tăng dần",
+      "instruction": "Bài 1: Điền số còn thiếu ⭐ | Bài 2: Chọn đáp án đúng ⭐",
+      "dialogue": {
+        "gau_logic": "Mỗi lần dãy số tăng nhiều hơn một chút!",
+        "tho_quan_sat": "Bé xem quy luật tăng dần rồi điền số nhé!"
+      },
+      "pedagogical_concept": "Quy luật cấp hai (Second-order sequence): Khoảng cách giữa các số không cố định mà tăng dần đều (+1, +2, +3, +4, +5...). Khởi đầu tư duy đạo hàm rời rạc và dãy số tam giác.",
+      "exercises": [
+        {
+          "part": "Bài 1: Điền số còn thiếu (kèm mũi tên chỉ gia số)",
+          "items": [
+            {
+              "question": 1,
+              "sequence": "2 (+1)-> 3 (+2)-> 5 (+3)-> 8 (+4)-> 12 (+5)-> [ ]",
+              "correct_answer": 17
+            },
+            {
+              "question": 2,
+              "sequence": "5 (+2)-> 7 (+3)-> 10 (+4)-> 14 (+5)-> 19 (+6)-> [ ]",
+              "correct_answer": 25
+            },
+            {
+              "question": 3,
+              "sequence": "1 (+1)-> 2 (+2)-> 4 (+3)-> 7 (+4)-> 11 (+5)-> [ ]",
+              "correct_answer": 16
+            },
+            {
+              "question": 4,
+              "sequence": "3 (+2)-> 5 (+3)-> 8 (+4)-> 12 (+5)-> 17 (+6)-> [ ]",
+              "correct_answer": 23
+            },
+            {
+              "question": 5,
+              "sequence": "10 (+1)-> 11 (+2)-> 13 (+3)-> 16 (+4)-> 20 (+5)-> [ ]",
+              "correct_answer": 25
+            },
+            {
+              "question": 6,
+              "sequence": "4 (+2)-> 6 (+3)-> 9 (+4)-> 13 (+5)-> 18 (+6)-> [ ]",
+              "correct_answer": 24
+            },
+            {
+              "question": 7,
+              "sequence": "6 (+1)-> 7 (+2)-> 9 (+3)-> 12 (+4)-> 16 (+5)-> [ ]",
+              "correct_answer": 21
+            },
+            {
+              "question": 8,
+              "sequence": "8 (+2)-> 10 (+3)-> 13 (+4)-> 17 (+5)-> 22 (+6)-> [ ]",
+              "correct_answer": 28
+            }
+          ]
+        },
+        {
+          "part": "Bài 2: Chọn đáp án đúng",
+          "items": [
+            {
+              "question": 1,
+              "sequence": "2, 4, 7, 11, 16, ___",
+              "correct_answer": 22,
+              "options": { "A": 21, "B": 22, "C": 23 }
+            },
+            {
+              "question": 2,
+              "sequence": "1, 3, 6, 10, 15, ___",
+              "correct_answer": 21,
+              "options": { "A": 20, "B": 21, "C": 22 }
+            },
+            {
+              "question": 3,
+              "sequence": "7, 8, 10, 13, 17, ___",
+              "correct_answer": 22,
+              "options": { "A": 21, "B": 22, "C": 23 }
+            },
+            {
+              "question": 4,
+              "sequence": "9, 11, 14, 18, 23, ___",
+              "correct_answer": 29,
+              "options": { "A": 28, "B": 29, "C": 30 }
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-006",
+        "mechanic": "growing-steps-climbing",
+        "interaction": "Bậc thang cao dần theo cấp số; trẻ điền số để gấu leo lên đỉnh núi."
+      }
+    },
+    {
+      "page_number": 14,
+      "workbook_page_number": 13,
+      "file_path": "pages/page-14.jpg",
+      "page_type": "advanced_number_patterns",
+      "title": "Trang 13 – Bậc thang khó hơn",
+      "instruction": "Bài 1: Điền số còn thiếu ⭐ | Bài 2: Khoanh đáp án đúng ⭐ (Thử thách ⭐)",
+      "dialogue": {
+        "gau_logic": "Ồ, dãy số này khó hơn một chút rồi!",
+        "tho_quan_sat": "Bé hãy quan sát kỹ cách tăng của các số nhé!"
+      },
+      "pedagogical_concept": "Nâng cao tư duy toán học với các quy luật kinh điển: gia số là dãy số chẵn (+2, +4, +6...), gia số lẻ (+3, +5, +7...), bội số của 3 (+3, +6, +9...), DÃY SỐ FIBONACCI (tổng 2 số trước) và DÃY SỐ CHÍNH PHƯƠNG (n^2).",
+      "exercises": [
+        {
+          "part": "Bài 1: Điền số còn thiếu",
+          "items": [
+            {
+              "question": 1,
+              "sequence": "3, 5, 9, 15, 23, [ ]",
+              "rule": "Gia số chẵn (+2, +4, +6, +8, +10)",
+              "correct_answer": 33
+            },
+            {
+              "question": 2,
+              "sequence": "4, 7, 13, 22, 34, [ ]",
+              "rule": "Gia số bội 3 (+3, +6, +9, +12, +15)",
+              "correct_answer": 49
+            },
+            {
+              "question": 3,
+              "sequence": "11, 13, 17, 23, 31, [ ]",
+              "rule": "Gia số chẵn (+2, +4, +6, +8, +10)",
+              "correct_answer": 41
+            },
+            {
+              "question": 4,
+              "sequence": "13, 14, 16, 19, 23, [ ]",
+              "rule": "Gia số tự nhiên (+1, +2, +3, +4, +5)",
+              "correct_answer": 28
+            },
+            {
+              "question": 5,
+              "sequence": "1, 2, 3, 5, 8, 13, [ ]",
+              "rule": "Dãy Fibonacci (a_n = a_{n-1} + a_{n-2})",
+              "correct_answer": 21
+            },
+            {
+              "question": 6,
+              "sequence": "3, 4, 7, 12, 19, 28, [ ]",
+              "rule": "Gia số lẻ (+1, +3, +5, +7, +9, +11)",
+              "correct_answer": 39
+            }
+          ]
+        },
+        {
+          "part": "Bài 2: Khoanh đáp án đúng",
+          "items": [
+            {
+              "question": 1,
+              "sequence": "2, 5, 10, 17, 26, ___",
+              "rule": "Gia số lẻ (+3, +5, +7, +9, +11)",
+              "correct_answer": 37,
+              "options": { "A": 35, "B": 37, "C": 39 }
+            },
+            {
+              "question": 2,
+              "sequence": "6, 8, 12, 18, 26, ___",
+              "rule": "Gia số chẵn (+2, +4, +6, +8, +10)",
+              "correct_answer": 36,
+              "options": { "A": 34, "B": 36, "C": 38 }
+            },
+            {
+              "question": 3,
+              "sequence": "5, 6, 8, 11, 15, ___",
+              "rule": "Gia số tự nhiên (+1, +2, +3, +4, +5)",
+              "correct_answer": 20,
+              "options": { "A": 19, "B": 20, "C": 21 }
+            },
+            {
+              "question": 4,
+              "sequence": "1, 4, 9, 16, 25, ___",
+              "rule": "Dãy số chính phương (1^2, 2^2, 3^2, 4^2, 5^2, 6^2)",
+              "correct_answer": 36,
+              "options": { "A": 30, "B": 36, "C": 49 }
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-001",
+        "mechanic": "advanced-number-stairs",
+        "interaction": "Mỗi lần tìm đúng số, một bậc thang pha lê phát sáng xuất hiện."
+      }
+    },
+    {
+      "page_number": 15,
+      "workbook_page_number": 14,
+      "file_path": "pages/page-15.jpg",
+      "page_type": "interleaved_sequences",
+      "title": "Trang 14 – Dãy số đôi",
+      "instruction": "Bài 1: Điền 2 số còn thiếu ⭐ | Bài 2: Khoanh đáp án đúng ⭐",
+      "dialogue": {
+        "gau_logic": "Có hai dãy số đang chạy xen kẽ nhau đấy!",
+        "tho_quan_sat": "Bé tìm hai số tiếp theo cho mỗi dãy nhé!"
+      },
+      "pedagogical_concept": "Tư duy đa luồng (Multi-stream thinking): Tách một chuỗi số thành 2 dãy số đan xen ở vị trí lẻ và vị trí chẵn. Rèn luyện khả năng ức chế chú ý (inhibitory control) để bỏ qua số xen giữa.",
+      "exercises": [
+        {
+          "part": "Bài 1: Điền 2 số còn thiếu",
+          "items": [
+            {
+              "question": 1,
+              "sequence": "2, 10, 4, 12, 6, 14, [ ], [ ]",
+              "rule": "Lẻ +2 (2, 4, 6 -> 8), Chẵn +2 (10, 12, 14 -> 16)",
+              "correct_answers": [8, 16]
+            },
+            {
+              "question": 2,
+              "sequence": "5, 20, 7, 18, 9, 16, [ ], [ ]",
+              "rule": "Lẻ +2 (5, 7, 9 -> 11), Chẵn -2 (20, 18, 16 -> 14)",
+              "correct_answers": [11, 14]
+            },
+            {
+              "question": 3,
+              "sequence": "2, 5, 4, 7, 6, 9, [ ], [ ]",
+              "rule": "Lẻ +2 (2, 4, 6 -> 8), Chẵn +2 (5, 7, 9 -> 11)",
+              "correct_answers": [8, 11]
+            },
+            {
+              "question": 4,
+              "sequence": "1, 8, 3, 10, 5, 12, [ ], [ ]",
+              "rule": "Lẻ +2 (1, 3, 5 -> 7), Chẵn +2 (8, 10, 12 -> 14)",
+              "correct_answers": [7, 14]
+            },
+            {
+              "question": 5,
+              "sequence": "10, 3, 12, 5, 14, 7, [ ], [ ]",
+              "rule": "Lẻ +2 (10, 12, 14 -> 16), Chẵn +2 (3, 5, 7 -> 9)",
+              "correct_answers": [16, 9]
+            },
+            {
+              "question": 6,
+              "sequence": "3, 30, 6, 27, 9, 24, [ ], [ ]",
+              "rule": "Lẻ +3 (3, 6, 9 -> 12), Chẵn -3 (30, 27, 24 -> 21)",
+              "correct_answers": [12, 21]
+            }
+          ]
+        },
+        {
+          "part": "Bài 2: Khoanh đáp án đúng",
+          "items": [
+            {
+              "question": 1,
+              "sequence": "4, 14, 6, 12, 8, 10, [ ], [ ]",
+              "correct_answer": "10 và 8",
+              "options": { "A": "10 và 8", "B": "8 và 8", "C": "6 và 8" }
+            },
+            {
+              "question": 2,
+              "sequence": "1, 9, 3, 11, 5, 13, [ ], [ ]",
+              "correct_answer": "7 và 15",
+              "options": { "A": "7 và 15", "B": "7 và 14", "C": "6 và 15" }
+            },
+            {
+              "question": 3,
+              "sequence": "20, 2, 18, 4, 16, 6, [ ], [ ]",
+              "correct_answer": "14 và 8",
+              "options": { "A": "14 và 8", "B": "15 và 8", "C": "14 và 7" }
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "dual-track-car-racing",
+        "interaction": "Hai xe đua chạy trên 2 làn đường; điền số cho cả 2 xe cùng về đích."
+      }
+    },
+    {
+      "page_number": 16,
+      "workbook_page_number": 15,
+      "file_path": "pages/page-16.jpg",
+      "page_type": "train_interleaved_sequence",
+      "title": "Trang 15 – Hai đoàn tàu số",
+      "instruction": "Bài 1: Điền 2 toa còn thiếu ⭐ | Bài 2: Chọn đoàn tàu đúng ⭐",
+      "dialogue": {
+        "gau_logic": "Mỗi đoàn tàu có quy luật riêng!",
+        "tho_quan_sat": "Bé ghép các toa số thật chính xác nhé!"
+      },
+      "pedagogical_concept": "Mô hình hóa dãy số đôi thông qua đoàn tàu hỏa gồm các toa số màu vàng và màu xanh xen kẽ.",
+      "exercises": [
+        {
+          "part": "Bài 1: Điền 2 toa còn thiếu",
+          "items": [
+            {
+              "question": 1,
+              "train_cars": "2 (vàng), 1 (xanh), 4, 3, 6, 5, 8, 7, [ ], [ ]",
+              "correct_answers": [10, 9]
+            },
+            {
+              "question": 2,
+              "train_cars": "3, 10, 5, 12, 7, 14, 9, 16, [ ], [ ]",
+              "correct_answers": [11, 18]
+            },
+            {
+              "question": 3,
+              "train_cars": "1, 20, 3, 18, 5, 16, 7, 14, [ ], [ ]",
+              "correct_answers": [9, 12]
+            },
+            {
+              "question": 4,
+              "train_cars": "4, 6, 8, 8, 12, 10, 16, 12, [ ], [ ]",
+              "correct_answers": [20, 14]
+            },
+            {
+              "question": 5,
+              "train_cars": "5, 2, 10, 4, 15, 6, 20, 8, [ ], [ ]",
+              "correct_answers": [25, 10]
+            }
+          ]
+        },
+        {
+          "part": "Bài 2: Chọn đoàn tàu đúng",
+          "items": [
+            {
+              "question": 1,
+              "sequence": "2, 4, 6, 8, [ ]",
+              "correct_answer": 10,
+              "options": { "A": 9, "B": 10, "C": 12 }
+            },
+            {
+              "question": 2,
+              "sequence": "1, 3, 5, 7, [ ]",
+              "correct_answer": 9,
+              "options": { "A": 8, "B": 9, "C": 10 }
+            },
+            {
+              "question": 3,
+              "sequence": "5, 4, 8, 8, 11, [ ]",
+              "rule": "Toa lẻ +3 (5, 8, 11), Toa chẵn nhân đôi (4, 8 -> 16)",
+              "correct_answer": 16,
+              "options": { "A": 14, "B": 15, "C": 16 }
+            },
+            {
+              "question": 4,
+              "sequence": "2, 10, 4, 15, 6, [ ]",
+              "rule": "Toa lẻ +2 (2, 4, 6), Toa chẵn +5 (10, 15 -> 20)",
+              "correct_answer": 20,
+              "options": { "A": 20, "B": 8, "C": 7 }
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-006",
+        "mechanic": "train-car-docking",
+        "interaction": "Kéo các toa xe lửa ghép vào khớp nối đoàn tàu."
+      }
+    },
+    {
+      "page_number": 17,
+      "workbook_page_number": 16,
+      "file_path": "pages/page-17.jpg",
+      "page_type": "spatial_number_flower",
+      "title": "Trang 16 – Bông hoa số bí mật",
+      "instruction": "Bài 1: Điền số còn thiếu ⭐ | Bài 2: Khoanh đáp án đúng ⭐ (Gợi ý: Số ở giữa = tổng hai cánh đối diện)",
+      "dialogue": {
+        "gau_logic": "Mỗi bông hoa ẩn chứa quy luật kỳ diệu!",
+        "tho_quan_sat": "Hãy tìm số còn thiếu bằng cách thật thông minh nhé!"
+      },
+      "pedagogical_concept": "Tư duy quan hệ không gian đối xứng (Spatial Relational Thinking): Mô hình bông hoa 4 cánh. Nhụy tròn ở tâm bằng tổng của hai cánh đối diện (Trên + Dưới = Tâm, Trái + Phải = Tâm). Rèn luyện phép tách gộp số và bảo toàn quan hệ.",
+      "exercises": [
+        {
+          "part": "Bài 1: Điền số cánh hoa còn thiếu",
+          "items": [
+            {
+              "question": 1,
+              "sample": "Trên 2, Dưới 4 (Tâm 6); Trái 3, Phải 3",
+              "target": "Trên 4, Dưới 5 (Tâm 9); Trái 2, Phải [ ]",
+              "correct_answer": 7,
+              "calculation": "9 - 2 = 7"
+            },
+            {
+              "question": 2,
+              "sample": "Trên 3, Dưới 5 (Tâm 8); Trái 4, Phải 4",
+              "target": "Trên 6, Dưới 4 (Tâm 10); Trái 3, Phải [ ]",
+              "correct_answer": 7,
+              "calculation": "10 - 3 = 7"
+            },
+            {
+              "question": 3,
+              "sample": "Trên 2, Dưới 6 (Tâm 8); Trái 5, Phải 3",
+              "target": "Trên 5, Dưới 6 (Tâm 11); Trái 4, Phải [ ]",
+              "correct_answer": 7,
+              "calculation": "11 - 4 = 7"
+            },
+            {
+              "question": 4,
+              "sample": "Trên 4, Dưới 3 (Tâm 7); Trái 2, Phải 5",
+              "target": "Trên 7, Dưới 5 (Tâm 12); Trái 6, Phải [ ]",
+              "correct_answer": 6,
+              "calculation": "12 - 6 = 6"
+            },
+            {
+              "question": 5,
+              "sample": "Trên 5, Dưới 4 (Tâm 9); Trái 6, Phải 3",
+              "target": "Trên 4, Dưới 6 (Tâm 10); Trái 5, Phải [ ]",
+              "correct_answer": 5,
+              "calculation": "10 - 5 = 5"
+            },
+            {
+              "question": 6,
+              "sample": "Trên 6, Dưới 2 (Tâm 8); Trái 3, Phải 5",
+              "target": "Trên 8, Dưới 3 (Tâm 11); Trái 7, Phải [ ]",
+              "correct_answer": 4,
+              "calculation": "11 - 7 = 4"
+            }
+          ]
+        },
+        {
+          "part": "Bài 2: Khoanh đáp án đúng",
+          "items": [
+            {
+              "question": 1,
+              "flower": "Cánh trên thiếu, Dưới 4, Trái 5, Phải 3, Tâm 8",
+              "correct_answer": 4,
+              "options": { "A": 4, "B": 3, "C": 5 }
+            },
+            {
+              "question": 2,
+              "flower": "Trên 4, Dưới 5, Trái 3, Phải 6, Tâm thiếu",
+              "correct_answer": 9,
+              "options": { "A": 8, "B": 10, "C": 9 }
+            },
+            {
+              "question": 3,
+              "flower": "Trên 6, Dưới 6, Tâm 12, Trái 5, Phải thiếu",
+              "correct_answer": 7,
+              "options": { "A": 7, "B": 6, "C": 8 }
+            },
+            {
+              "question": 4,
+              "flower": "Trên 4, Trái 6, Phải 3, Tâm 9, Cánh dưới thiếu",
+              "correct_answer": 5,
+              "options": { "A": 4, "B": 6, "C": 5 }
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "flower-petal-balance",
+        "interaction": "Chạm vào cánh hoa khuyết rồi chọn số từ cánh bướm bay quanh để làm bông hoa bừng sáng."
+      }
+    },
+    {
+      "page_number": 18,
+      "workbook_page_number": 17,
+      "file_path": "pages/page-18.jpg",
+      "page_type": "matrix_2x2_logic",
+      "title": "Trang 17 – Ô vuông phép thuật",
+      "instruction": "Bài 1: Điền số còn thiếu ⭐ | Bài 2: Khoanh đáp án đúng ⭐ (Gợi ý: Sang phải và đi xuống luôn theo cùng một mức thay đổi)",
+      "dialogue": {
+        "gau_logic": "Mỗi ô vuông có quy luật riêng!",
+        "tho_quan_sat": "Bé quan sát thật kỹ rồi tìm số còn thiếu nhé!"
+      },
+      "pedagogical_concept": "Tư duy ma trận 2 chiều (2x2 Matrix Logic): Hiểu quan hệ biến thiên số học đồng thời theo hàng ngang và cột dọc, và nhận diện phép biến đổi tịnh tiến (+k) giữa hai ô ma trận.",
+      "exercises": [
+        {
+          "part": "Bài 1: Điền số còn thiếu trong ma trận thứ 2",
+          "items": [
+            {
+              "question": 1,
+              "matrix_1": [[8, 6], [6, 4]],
+              "matrix_2": [[11, 9], [9, "[ ]"]],
+              "correct_answer": 7,
+              "explanation": "Mỗi ô +3; hoặc 9 - 2 = 7"
+            },
+            {
+              "question": 2,
+              "matrix_1": [[9, 6], [7, 4]],
+              "matrix_2": [[12, 9], [10, "[ ]"]],
+              "correct_answer": 7,
+              "explanation": "Mỗi ô +3; hoặc 10 - 3 = 7"
+            },
+            {
+              "question": 3,
+              "matrix_1": [[3, 5], [4, 6]],
+              "matrix_2": [[8, 10], [9, "[ ]"]],
+              "correct_answer": 11,
+              "explanation": "Mỗi ô +5; hoặc 9 + 2 = 11"
+            },
+            {
+              "question": 4,
+              "matrix_1": [[2, 4], [3, 5]],
+              "matrix_2": [[6, 8], [7, "[ ]"]],
+              "correct_answer": 9,
+              "explanation": "Mỗi ô +4; hoặc 7 + 2 = 9"
+            },
+            {
+              "question": 5,
+              "matrix_1": [[6, 4], [7, 5]],
+              "matrix_2": [[8, 6], [9, "[ ]"]],
+              "correct_answer": 7,
+              "explanation": "Mỗi ô +2; hoặc 9 - 2 = 7"
+            },
+            {
+              "question": 6,
+              "matrix_1": [[1, 4], [4, 7]],
+              "matrix_2": [[5, 8], [8, "[ ]"]],
+              "correct_answer": 11,
+              "explanation": "Mỗi ô +4; hoặc 8 + 3 = 11"
+            }
+          ]
+        },
+        {
+          "part": "Bài 2: Khoanh đáp án đúng",
+          "items": [
+            {
+              "question": 1,
+              "matrix_1": [[4, 6], [5, 7]],
+              "matrix_2": [[8, 10], [9, "?"]],
+              "correct_answer": 11,
+              "options": { "A": 11, "B": 10, "C": 12 }
+            },
+            {
+              "question": 2,
+              "matrix_1": [[10, 7], [8, 5]],
+              "matrix_2": [[12, 9], [10, "?"]],
+              "correct_answer": 7,
+              "options": { "A": 6, "B": 8, "C": 7 }
+            },
+            {
+              "question": 3,
+              "matrix_1": [[3, 5], [4, 6]],
+              "matrix_2": [[7, 9], [8, "?"]],
+              "correct_answer": 10,
+              "options": { "A": 9, "B": 10, "C": 11 }
+            },
+            {
+              "question": 4,
+              "matrix_1": [[9, 6], [8, 5]],
+              "matrix_2": [[12, 9], [11, "?"]],
+              "correct_answer": 8,
+              "options": { "A": 8, "B": 7, "C": 9 }
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-011",
+        "mechanic": "matrix-2x2-solver",
+        "interaction": "Chạm ô trống trên lưới 2x2 để mở bàn phím số hoặc chọn thẻ số phù hợp."
+      }
+    },
+    {
+      "page_number": 19,
+      "workbook_page_number": 18,
+      "file_path": "pages/page-19.jpg",
+      "page_type": "matrix_variables_ab",
+      "title": "Trang 18 – Tìm A và B",
+      "instruction": "Bài 1: Quan sát 2 ô đầu rồi tìm A và B ở ô thứ 3 ⭐ | Bài 2: Chọn kết quả đúng ⭐",
+      "dialogue": {
+        "gau_logic": "Mỗi quy luật đều có dấu vết!",
+        "tho_quan_sat": "Quan sát thật kỹ, tìm ra A và B nhé!"
+      },
+      "pedagogical_concept": "Đại số sớm (Early Algebra): Giải tìm 2 ẩn số A và B trong chuỗi 3 ma trận tịnh tiến liên tiếp. Nền tảng tư duy biến số và hệ phương trình trực quan.",
+      "exercises": [
+        {
+          "part": "Bài 1: Tìm A và B ở ô ma trận thứ 3",
+          "items": [
+            {
+              "question": 1,
+              "chain": "[[2,4],[3,5]] -> [[5,7],[6,8]] -> [[8,A],[B,11]]",
+              "step": "+3 mỗi ô",
+              "correct_answers": { "A": 10, "B": 9 }
+            },
+            {
+              "question": 2,
+              "chain": "[[9,7],[6,4]] -> [[12,10],[9,7]] -> [[15,13],[B,A]]",
+              "step": "+3 mỗi ô",
+              "correct_answers": { "A": 10, "B": 12 }
+            },
+            {
+              "question": 3,
+              "chain": "[[6,4],[3,1]] -> [[8,6],[5,3]] -> [[10,A],[B,5]]",
+              "step": "+2 mỗi ô",
+              "correct_answers": { "A": 8, "B": 7 }
+            },
+            {
+              "question": 4,
+              "chain": "[[1,3],[3,5]] -> [[4,6],[6,8]] -> [[7,A],[B,11]]",
+              "step": "+3 mỗi ô",
+              "correct_answers": { "A": 9, "B": 9 }
+            },
+            {
+              "question": 5,
+              "chain": "[[5,4],[8,7]] -> [[7,6],[10,9]] -> [[9,A],[B,11]]",
+              "step": "+2 mỗi ô",
+              "correct_answers": { "A": 8, "B": 12 }
+            },
+            {
+              "question": 6,
+              "chain": "[[2,5],[6,9]] -> [[3,6],[7,10]] -> [[4,A],[B,11]]",
+              "step": "+1 mỗi ô",
+              "correct_answers": { "A": 7, "B": 8 }
+            }
+          ]
+        },
+        {
+          "part": "Bài 2: Chọn kết quả đúng",
+          "items": [
+            {
+              "question": 1,
+              "matrix": "[[6,A],[7,9]]",
+              "rule": "Cột 1: 6->7 (+1); Cột 2: A->9 (+1)",
+              "correct_answer": "8,7",
+              "explanation": "A = 8"
+            },
+            {
+              "question": 2,
+              "matrix": "[[5,A],[7,10]]",
+              "rule": "Cột 1: 5->7 (+2); Cột 2: A->10 (+2)",
+              "correct_answer": "8,9",
+              "explanation": "A = 8"
+            },
+            {
+              "question": 3,
+              "matrix": "[[14,12],[A,7]]",
+              "rule": "Hàng 1: 14->12 (-2); Hàng 2: A->7 (-2)",
+              "correct_answer": 9,
+              "options": { "A": 9, "B": 10, "C": 11 }
+            },
+            {
+              "question": 4,
+              "matrix": "[[3,B],[7,10]]",
+              "rule": "Hàng 2: 7->10 (+3); Hàng 1: 3->B (+3)",
+              "correct_answer": 6,
+              "options": { "A": 5, "B": 6, "C": 7 }
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-011",
+        "mechanic": "matrix-variable-detective",
+        "interaction": "Kính lúp của Gấu soi vào ô A và B để làm hiện ra giá trị ẩn."
+      }
+    },
+    {
+      "page_number": 20,
+      "workbook_page_number": 20,
+      "file_path": "pages/page-20.jpg",
+      "page_type": "growing_dot_patterns",
+      "title": "Trang 20 – Hàng rào lớn dần",
+      "instruction": "Bài 1: Quan sát hình chấm và điền số lượng tiếp theo ⭐ | Bài 2: Khoanh đáp án đúng ⭐",
+      "dialogue": {
+        "gau_logic": "Mỗi hàng rào đều lớn dần lên!",
+        "tho_quan_sat": "Quan sát thật kỹ để tìm quy luật nhé!"
+      },
+      "pedagogical_concept": "Quy luật hình học điểm chấm phát triển (Growing Dot Patterns): Trẻ kết nối hình học không gian với số học thông qua việc đếm số chấm tăng dần theo cấu trúc hình dạng (đường thẳng, góc L, chữ U, dấu +, viền vuông, viền tam giác). (Lưu ý: sách gốc ghi Trang 20, bỏ qua số 19).",
+      "exercises": [
+        {
+          "part": "Bài 1: Quan sát hình chấm và điền số lượng tiếp theo",
+          "items": [
+            {
+              "question": 1,
+              "shape": "Hàng ngang",
+              "dots_progression": "2 -> 4 -> 6",
+              "step": "+2",
+              "correct_answer": 8
+            },
+            {
+              "question": 2,
+              "shape": "Góc vuông chữ L",
+              "dots_progression": "3 -> 5 -> 7",
+              "step": "+2",
+              "correct_answer": 9
+            },
+            {
+              "question": 3,
+              "shape": "Rãnh chữ U",
+              "dots_progression": "5 -> 9 -> 13",
+              "step": "+4",
+              "correct_answer": 17
+            },
+            {
+              "question": 4,
+              "shape": "Dấu cộng (+)",
+              "dots_progression": "5 -> 9 -> 13",
+              "step": "+4",
+              "correct_answer": 17
+            },
+            {
+              "question": 5,
+              "shape": "Viền vuông",
+              "dots_progression": "4 -> 8 -> 12",
+              "step": "+4",
+              "correct_answer": 16
+            },
+            {
+              "question": 6,
+              "shape": "Viền tam giác",
+              "dots_progression": "3 -> 6 -> 9",
+              "step": "+3",
+              "correct_answer": 12
+            }
+          ]
+        },
+        {
+          "part": "Bài 2: Khoanh đáp án đúng",
+          "items": [
+            {
+              "question": 1,
+              "description": "Hàng ngang: 2 -> 4 -> 6 -> ?",
+              "correct_answer": 8,
+              "options": { "A": 8, "B": 9, "C": 10 }
+            },
+            {
+              "question": 2,
+              "description": "Viền vuông: 4 -> 8 -> 12 -> ?",
+              "correct_answer": 16,
+              "options": { "A": 14, "B": 16, "C": 18 }
+            },
+            {
+              "question": 3,
+              "description": "Dấu cộng: 5 -> 9 -> 13 -> ?",
+              "correct_answer": 17,
+              "options": { "A": 15, "B": 17, "C": 19 }
+            },
+            {
+              "question": 4,
+              "description": "Tam giác: 3 -> 6 -> 9 -> ?",
+              "correct_answer": 12,
+              "options": { "A": 10, "B": 11, "C": 12 }
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-022",
+        "mechanic": "growing-dot-builder",
+        "interaction": "Chạm để nở thêm các hạt ngọc phát sáng theo đúng hình dạng quy định."
+      }
+    },
+    {
+      "page_number": 21,
+      "workbook_page_number": 21,
+      "file_path": "pages/page-21.jpg",
+      "page_type": "boss_prep_challenge",
+      "title": "Trang 21 – Đại thử thách Quy Luật",
+      "instruction": "Manh mối 1: Chuỗi hình | Manh mối 2: Chuỗi số | Manh mối 3: Chuỗi số xen kẽ | Manh mối 4: Ô logic & Bông hoa số",
+      "dialogue": {
+        "gau_logic": "Mỗi manh mối dẫn ta đến bí mật của Quy luật!",
+        "tho_quan_sat": "Hãy quan sát thật kỹ và chọn đáp án đúng nhé!"
+      },
+      "pedagogical_concept": "Tổng duyệt thử thách (Grand Review): Ôn tập toàn diện 4 nhóm kỹ năng trước khi vào cửa ải mở cổng cuối cùng.",
+      "exercises": [
+        {
+          "clue": "Manh mối 1: Chuỗi hình",
+          "items": [
+            {
+              "question": "a",
+              "sequence": "Táo - Lê - Táo - Lê - Táo - ?",
+              "correct_answer": "B. Lê",
+              "options": { "A": "Táo", "B": "Lê" }
+            },
+            {
+              "question": "b",
+              "sequence": "Tulip - Tulip - Hoa vàng - Tulip - Tulip - ?",
+              "correct_answer": "B. Hoa vàng",
+              "options": { "A": "Tulip", "B": "Hoa vàng" }
+            },
+            {
+              "question": "c",
+              "sequence": "Thỏ - Gấu - Cáo - Thỏ - Gấu - ?",
+              "correct_answer": "B. Cáo",
+              "options": { "A": "Thỏ", "B": "Cáo" }
+            }
+          ]
+        },
+        {
+          "clue": "Manh mối 2: Chuỗi số",
+          "items": [
+            {
+              "question": "a",
+              "sequence": "2 - 4 - 6 - 8 - ?",
+              "correct_answer": "A. 10",
+              "options": { "A": 10, "B": 12 }
+            },
+            {
+              "question": "b",
+              "sequence": "5 - 7 - 10 - 14 - 19 - ?",
+              "correct_answer": "B. 25",
+              "options": { "A": 23, "B": 25 }
+            },
+            {
+              "question": "c",
+              "sequence": "20 - 18 - 16 - 14 - ?",
+              "correct_answer": "A. 12",
+              "options": { "A": 12, "B": 10 }
+            }
+          ]
+        },
+        {
+          "clue": "Manh mối 3: Chuỗi số xen kẽ",
+          "items": [
+            {
+              "question": "a",
+              "sequence": "2 - 10 - 4 - 12 - 6 - 14 - [ ] - [ ]",
+              "correct_answer": "A. 8, 16",
+              "options": { "A": "8, 16", "B": "10, 18" }
+            },
+            {
+              "question": "b",
+              "sequence": "1 - 9 - 3 - 11 - 5 - 13 - [ ] - [ ]",
+              "correct_answer": "A. 7, 15",
+              "options": { "A": "7, 15", "B": "9, 17" }
+            },
+            {
+              "question": "c",
+              "sequence": "20 - 2 - 18 - 4 - 16 - 6 - [ ] - [ ]",
+              "correct_answer": "A. 14, 8",
+              "options": { "A": "14, 8", "B": "12, 10" }
+            }
+          ]
+        },
+        {
+          "clue": "Manh mối 4: Ô logic & Bông hoa số",
+          "items": [
+            {
+              "question": "a",
+              "matrix": "[[5, 7], [6, ?]]",
+              "correct_answer": "B. 8",
+              "options": { "A": 7, "B": 8 }
+            },
+            {
+              "question": "b",
+              "flower": "Trên 5, Dưới ?, Trái 4, Phải 4; Tâm 8",
+              "correct_answer": "A. 3",
+              "options": { "A": 3, "B": 4 }
+            },
+            {
+              "question": "c",
+              "matrix": "[[6, A], [B, 7]]",
+              "correct_answer": "A. A = 8, B = 5",
+              "options": {
+                "A": "A = 8, B = 5",
+                "B": "A = 5, B = 8",
+                "C": "A = 7, B = 6"
+              }
+            }
+          ]
+        }
+      ],
+      "digital_game_mapping": {
+        "suggested_template": "GT-008",
+        "mechanic": "clue-gathering-puzzle",
+        "interaction": "Thu thập 4 mảnh chìa khóa vàng tương ứng với 4 nhóm manh mối."
+      }
+    },
+    {
+      "page_number": 22,
+      "workbook_page_number": 22,
+      "file_path": "pages/page-22.jpg",
+      "page_type": "boss_final_door",
+      "title": "Trang 22 – Mật mã mở cánh cổng",
+      "instruction": "Chỉ còn một bước nữa thôi! Bé hãy giải 6 mật mã để mở cánh cổng nhé! Điền mật mã cuối: [ 1 ] [ 2 ] [ 3 ] [ 4 ] [ 5 ] [ 6 ]",
+      "dialogue": {
+        "gau_logic": "Chỉ còn một bước nữa thôi!",
+        "tho_quan_sat": "Bé hãy giải 6 mật mã để mở cánh cổng nhé!"
+      },
+      "pedagogical_concept": "Đỉnh cao của Chặng 15 (Boss Stage): 6 câu hỏi cô đọng kiểm tra toàn diện 6 năng lực cốt lõi. Kết quả điền vào 6 ô mật mã mở khóa cánh cổng Thung Lũng Quy Luật sang Chặng 16.",
+      "exercises": [
+        {
+          "code_slot": 1,
+          "name": "Chuỗi hình ⭐",
+          "prompt": "Táo - Lê - Táo - Lê - Táo - ?",
+          "options": { "A": "Táo", "B": "Lê", "C": "Chuối" },
+          "correct_answer": "B (Lê)",
+          "cipher_digit": "B"
+        },
+        {
+          "code_slot": 2,
+          "name": "Chuỗi số ⭐",
+          "prompt": "2 - 4 - 6 - 8 - ?",
+          "options": { "A": 10, "B": 12, "C": 14 },
+          "correct_answer": "A (10)",
+          "cipher_digit": "A"
+        },
+        {
+          "code_slot": 3,
+          "name": "Số xen kẽ ⭐",
+          "prompt": "1 - 9 - 3 - 11 - 5 - 13 - ?",
+          "options": { "A": 7, "B": 8, "C": 9 },
+          "correct_answer": "A (7)",
+          "cipher_digit": "A"
+        },
+        {
+          "code_slot": 4,
+          "name": "Bông hoa số ⭐",
+          "prompt": "Quy tắc: Số dưới = số bên phải + 1. Trên 7, Trái 4, Phải 3, Dưới ?",
+          "options": { "A": 4, "B": 5, "C": 6 },
+          "correct_answer": "A (4)",
+          "cipher_digit": "A"
+        },
+        {
+          "code_slot": 5,
+          "name": "Ô số bí mật ⭐",
+          "prompt": "Quy tắc: Số dưới = số trên + 1. Số trên = 10 -> Số dưới ?",
+          "options": { "A": 9, "B": 11, "C": 12 },
+          "correct_answer": "B (11)",
+          "cipher_digit": "B"
+        },
+        {
+          "code_slot": 6,
+          "name": "Ô vuông lớn dần ⭐",
+          "prompt": "1 × 1 = 1, 2 × 2 = 4, 3 × 3 = 9, 4 × 4 = ?",
+          "options": { "A": 12, "B": 15, "C": 16 },
+          "correct_answer": "C (16)",
+          "cipher_digit": "C"
+        }
+      ],
+      "final_cipher_code": {
+        "letter_code": ["B", "A", "A", "A", "B", "C"],
+        "value_code": ["Lê", 10, 7, 4, 11, 16]
+      },
+      "footer_banner": "MỞ CÁNH CỔNG ĐỂ BƯỚC SANG CHẶNG TIẾP THEO!",
+      "digital_game_mapping": {
+        "suggested_template": "GT-000",
+        "mechanic": "boss-gate-code-unlocker",
+        "interaction": "Mỗi đáp án đúng biến thành 1 viên đá thần phát sáng gắn vào 6 ổ khóa trên cánh cổng. Khi đủ 6 viên, cánh cổng từ từ mở ra với luồng ánh sáng rực rỡ và tiếng nhạc thắng lợi hoành tráng."
+      }
+    }
+  ]
+}

@@ -11,6 +11,7 @@ import { dispatchTransactionalEmail } from "@mindkid/notification";
 import {
   DUNNING_GRACE_PERIOD_DAYS,
   DUNNING_MAX_ATTEMPTS,
+  PACKAGE_CATALOG,
 } from "@mindkid/shared";
 import { and, eq, gt, inArray, isNotNull, lt, lte } from "drizzle-orm";
 
@@ -22,7 +23,7 @@ export type RecurringSubscriptionRow =
 
 export type RecurringChargeHandler = (
   subscription: RecurringSubscriptionRow
-) => Promise<{ paid: boolean; transactionRef?: string }>;
+) => Promise<{ paid?: boolean; ok?: boolean; transactionRef?: string }>;
 
 function extractBillingCycleKey(payload: object | null): string | null {
   if (!payload || typeof payload !== "object") {
@@ -72,23 +73,39 @@ function defaultChargeHandler(
  * Idempotent (Task 6, D-JL)
  */
 export async function runExpirePaymentOrders(
-  now = new Date()
+  now = new Date(),
+  signal?: AbortSignal
 ): Promise<{ expiredCount: number; orderUuids: string[] }> {
+  if (signal?.aborted) {
+    return { expiredCount: 0, orderUuids: [] };
+  }
   const db = getOwnerDb();
 
-  const updatedOrders = await db
-    .update(paymentOrders)
-    .set({
-      status: "expired",
-      updatedAt: now,
-    })
+  const candidateQuery = db
+    .select({ id: paymentOrders.id, uuid: paymentOrders.uuid })
+    .from(paymentOrders)
     .where(
       and(
         inArray(paymentOrders.status, ["draft", "pending", "pending_proof"]),
         isNotNull(paymentOrders.expiresAt),
         lt(paymentOrders.expiresAt, now)
       )
-    )
+    );
+
+  const candidates = await candidateQuery.limit(500);
+
+  if (candidates.length === 0 || signal?.aborted) {
+    return { expiredCount: 0, orderUuids: [] };
+  }
+
+  const ids = candidates.map((o) => o.id);
+  const updatedOrders = await db
+    .update(paymentOrders)
+    .set({
+      status: "expired",
+      updatedAt: now,
+    })
+    .where(inArray(paymentOrders.id, ids))
     .returning({
       uuid: paymentOrders.uuid,
     });
@@ -99,6 +116,8 @@ export async function runExpirePaymentOrders(
   };
 }
 
+export const expireStalePaymentOrders = runExpirePaymentOrders;
+
 /**
  * Sweeps soft_unlock entitlements older than 3 days (expires_at < now)
  * Transitions status: soft_unlock -> expired
@@ -106,23 +125,39 @@ export async function runExpirePaymentOrders(
  * Idempotent (Task 6)
  */
 export async function runExpireSoftUnlockEntitlements(
-  now = new Date()
+  now = new Date(),
+  signal?: AbortSignal
 ): Promise<{ expiredCount: number; userIds: number[] }> {
+  if (signal?.aborted) {
+    return { expiredCount: 0, userIds: [] };
+  }
   const db = getOwnerDb();
 
-  const updatedRows = await db
-    .update(entitlements)
-    .set({
-      status: "expired",
-      updatedAt: now,
-    })
+  const candidateQuery = db
+    .select({ id: entitlements.id, userId: entitlements.userId })
+    .from(entitlements)
     .where(
       and(
         eq(entitlements.status, "soft_unlock"),
         isNotNull(entitlements.expiresAt),
         lt(entitlements.expiresAt, now)
       )
-    )
+    );
+
+  const candidates = await candidateQuery.limit(500);
+
+  if (candidates.length === 0 || signal?.aborted) {
+    return { expiredCount: 0, userIds: [] };
+  }
+
+  const ids = candidates.map((r) => r.id);
+  const updatedRows = await db
+    .update(entitlements)
+    .set({
+      status: "expired",
+      updatedAt: now,
+    })
+    .where(inArray(entitlements.id, ids))
     .returning({
       userId: entitlements.userId,
     });
@@ -134,6 +169,8 @@ export async function runExpireSoftUnlockEntitlements(
     userIds: affectedUserIds,
   };
 }
+
+export const sweepExpiredEntitlements = runExpireSoftUnlockEntitlements;
 
 /**
  * BR-RBL-02: Sends renewal reminder email 3 days before nextBillingAt.
@@ -166,6 +203,41 @@ export async function runRecurringRenewalReminderSweep(
   let remindedCount = 0;
   let skippedCount = 0;
 
+  const candidateUserIds = Array.from(
+    new Set(candidates.map((c) => c.sub.userId))
+  );
+
+  const existingNotificationRows =
+    candidateUserIds.length > 0
+      ? await db
+          .select({
+            recipientId: notifications.recipientId,
+            payload: notifications.payload,
+          })
+          .from(notifications)
+          .where(
+            and(
+              eq(notifications.recipientType, "user"),
+              inArray(notifications.recipientId, candidateUserIds),
+              eq(notifications.templateCode, "subscription_renewal_reminder")
+            )
+          )
+      : [];
+
+  const notificationsByUser = new Map<
+    number,
+    Array<{ payload: object | null }>
+  >();
+  for (const n of existingNotificationRows) {
+    const list = notificationsByUser.get(n.recipientId);
+    const item = { payload: n.payload as object | null };
+    if (list) {
+      list.push(item);
+    } else {
+      notificationsByUser.set(n.recipientId, [item]);
+    }
+  }
+
   for (const row of candidates) {
     const nextBillingAt = row.sub.nextBillingAt;
     if (!nextBillingAt) {
@@ -174,19 +246,10 @@ export async function runRecurringRenewalReminderSweep(
 
     const cycleKey = `${row.sub.id}:${nextBillingAt.toISOString()}`;
 
-    const existingNotifications = await db
-      .select({ payload: notifications.payload })
-      .from(notifications)
-      .where(
-        and(
-          eq(notifications.recipientType, "user"),
-          eq(notifications.recipientId, row.sub.userId),
-          eq(notifications.templateCode, "subscription_renewal_reminder")
-        )
-      );
+    const existingNotifications = notificationsByUser.get(row.sub.userId) || [];
 
     const alreadyReminded = existingNotifications.some(
-      (n) => extractBillingCycleKey(n.payload as object | null) === cycleKey
+      (n) => extractBillingCycleKey(n.payload) === cycleKey
     );
 
     if (alreadyReminded) {
@@ -245,8 +308,13 @@ export async function runRecurringBillingRenewSweep(
 
   for (const sub of dueSubs) {
     const outcome = await chargeHandler(sub);
+    const isPaid = outcome.paid === true || outcome.ok === true;
 
-    if (outcome.paid) {
+    const pkg =
+      PACKAGE_CATALOG[sub.packageCode as keyof typeof PACKAGE_CATALOG];
+    const pkgKeys = pkg ? [...pkg.entitlements] : [];
+
+    if (isPaid) {
       const periodDays = sub.billingPeriod === "monthly" ? 30 : 365;
       const newPeriodStart = sub.currentPeriodEnd;
       const newPeriodEnd = new Date(
@@ -269,6 +337,15 @@ export async function runRecurringBillingRenewSweep(
           })
           .where(eq(recurringSubscriptions.id, sub.id));
 
+        const renewConditions = [
+          eq(entitlements.userId, sub.userId),
+          eq(entitlements.source, "package_order"),
+          inArray(entitlements.status, ["active", "grace_period"]),
+        ];
+        if (pkgKeys.length > 0) {
+          renewConditions.push(inArray(entitlements.entitlementKey, pkgKeys));
+        }
+
         await tx
           .update(entitlements)
           .set({
@@ -276,13 +353,7 @@ export async function runRecurringBillingRenewSweep(
             expiresAt: newPeriodEnd,
             updatedAt: now,
           })
-          .where(
-            and(
-              eq(entitlements.userId, sub.userId),
-              eq(entitlements.source, "package_order"),
-              inArray(entitlements.status, ["active", "grace_period"])
-            )
-          );
+          .where(and(...renewConditions));
 
         await tx.insert(auditLogs).values({
           actorType: "system",
@@ -318,19 +389,22 @@ export async function runRecurringBillingRenewSweep(
           })
           .where(eq(recurringSubscriptions.id, sub.id));
 
+        const pastDueConditions = [
+          eq(entitlements.userId, sub.userId),
+          eq(entitlements.source, "package_order"),
+          eq(entitlements.status, "active"),
+        ];
+        if (pkgKeys.length > 0) {
+          pastDueConditions.push(inArray(entitlements.entitlementKey, pkgKeys));
+        }
+
         await tx
           .update(entitlements)
           .set({
             status: "grace_period",
             updatedAt: now,
           })
-          .where(
-            and(
-              eq(entitlements.userId, sub.userId),
-              eq(entitlements.source, "package_order"),
-              eq(entitlements.status, "active")
-            )
-          );
+          .where(and(...pastDueConditions));
       });
 
       pastDueCount++;
@@ -340,87 +414,270 @@ export async function runRecurringBillingRenewSweep(
   return { renewedCount, pastDueCount };
 }
 
+type WorkerDb = ReturnType<typeof getOwnerDb>;
+type WorkerTx = Parameters<Parameters<WorkerDb["transaction"]>[0]>[0];
+
+const defaultDunningChargeHandler: RecurringChargeHandler = () =>
+  Promise.resolve({ ok: false, paid: false });
+
+async function handleDunningSuccess(
+  tx: WorkerTx,
+  sub: RecurringSubscriptionRow,
+  pkgKeys: readonly string[],
+  chargeResult: { paid?: boolean; ok?: boolean; transactionRef?: string },
+  now: Date
+): Promise<void> {
+  const periodDays = sub.billingPeriod === "monthly" ? 30 : 365;
+  const newPeriodStart = sub.currentPeriodEnd;
+  const newPeriodEnd = new Date(
+    newPeriodStart.getTime() + periodDays * MS_PER_DAY
+  );
+  const nextPriceVnd = resolveNextCyclePriceVnd(sub);
+
+  await tx
+    .update(recurringSubscriptions)
+    .set({
+      currentPeriodStart: newPeriodStart,
+      currentPeriodEnd: newPeriodEnd,
+      nextBillingAt: newPeriodEnd,
+      priceVnd: nextPriceVnd,
+      dunningAttempts: 0,
+      lastDunningAt: null,
+      status: "active",
+      updatedAt: now,
+    })
+    .where(eq(recurringSubscriptions.id, sub.id));
+
+  const entitlementConditions = [
+    eq(entitlements.userId, sub.userId),
+    eq(entitlements.source, "package_order"),
+    inArray(entitlements.status, ["grace_period", "active"]),
+  ];
+  if (pkgKeys.length > 0) {
+    entitlementConditions.push(inArray(entitlements.entitlementKey, pkgKeys));
+  }
+
+  await tx
+    .update(entitlements)
+    .set({
+      status: "active",
+      expiresAt: newPeriodEnd,
+      updatedAt: now,
+    })
+    .where(and(...entitlementConditions));
+
+  await tx.insert(auditLogs).values({
+    actorType: "system",
+    actorId: null,
+    action: "subscription.renewed",
+    entityType: "recurring_subscription",
+    entityId: String(sub.id),
+    afterData: {
+      subscription_id: sub.id,
+      price_vnd: nextPriceVnd,
+      current_period_start: newPeriodStart.toISOString(),
+      current_period_end: newPeriodEnd.toISOString(),
+      transaction_ref: chargeResult.transactionRef ?? null,
+    },
+    createdAt: now,
+    updatedAt: now,
+  });
+}
+
+async function handleDunningFailure(
+  tx: WorkerTx,
+  sub: RecurringSubscriptionRow,
+  now: Date
+): Promise<void> {
+  const nextRetryAt = new Date(now.getTime() + MS_PER_DAY);
+  await tx
+    .update(recurringSubscriptions)
+    .set({
+      dunningAttempts: sub.dunningAttempts + 1,
+      lastDunningAt: now,
+      nextBillingAt: nextRetryAt,
+      updatedAt: now,
+    })
+    .where(eq(recurringSubscriptions.id, sub.id));
+}
+
+async function handleDunningExpired(
+  tx: WorkerTx,
+  sub: RecurringSubscriptionRow,
+  pkgKeys: readonly string[],
+  now: Date
+): Promise<void> {
+  await tx
+    .update(recurringSubscriptions)
+    .set({
+      status: "cancelled",
+      autoRenew: false,
+      cancelledAt: now,
+      cancelledBy: "system",
+      cancelReason: "dunning_grace_period_exceeded",
+      updatedAt: now,
+    })
+    .where(eq(recurringSubscriptions.id, sub.id));
+
+  const cancelConditions = [
+    eq(entitlements.userId, sub.userId),
+    eq(entitlements.source, "package_order"),
+    inArray(entitlements.status, ["grace_period", "active"]),
+  ];
+  if (pkgKeys.length > 0) {
+    cancelConditions.push(inArray(entitlements.entitlementKey, pkgKeys));
+  }
+
+  await tx
+    .update(entitlements)
+    .set({
+      status: "expired",
+      updatedAt: now,
+    })
+    .where(and(...cancelConditions));
+}
+
+function isAbortSignal(
+  val: Date | AbortSignal | undefined
+): val is AbortSignal {
+  return val != null && "aborted" in val;
+}
+
+function resolveDunningParams(
+  dbOrNow?: WorkerDb | Date,
+  maybeNowOrSignal?: Date | AbortSignal,
+  chargeHandler?: RecurringChargeHandler,
+  maybeSignal?: AbortSignal
+): {
+  db: WorkerDb;
+  now: Date;
+  handler: RecurringChargeHandler;
+  signal: AbortSignal | undefined;
+} {
+  const handler = chargeHandler ?? defaultDunningChargeHandler;
+  if (dbOrNow instanceof Date) {
+    const isSignal = isAbortSignal(maybeNowOrSignal);
+    return {
+      db: getOwnerDb(),
+      now: dbOrNow,
+      handler,
+      signal: maybeSignal ?? (isSignal ? maybeNowOrSignal : undefined),
+    };
+  }
+  const isSignal = isAbortSignal(maybeNowOrSignal);
+  return {
+    db: dbOrNow ?? getOwnerDb(),
+    now: isSignal || !maybeNowOrSignal ? new Date() : maybeNowOrSignal,
+    handler,
+    signal: maybeSignal ?? (isSignal ? maybeNowOrSignal : undefined),
+  };
+}
+
+async function processSingleDunningSub(
+  db: WorkerDb,
+  sub: typeof recurringSubscriptions.$inferSelect,
+  handler: RecurringChargeHandler,
+  now: Date
+): Promise<"retried" | "expired"> {
+  const daysSincePeriodEnd = Math.floor(
+    (now.getTime() - sub.currentPeriodEnd.getTime()) / MS_PER_DAY
+  );
+  const shouldRetry =
+    sub.dunningAttempts < DUNNING_MAX_ATTEMPTS &&
+    daysSincePeriodEnd <= DUNNING_GRACE_PERIOD_DAYS;
+
+  const chargeResult = shouldRetry ? await handler(sub) : null;
+
+  return await db.transaction(async (tx) => {
+    const pkg =
+      PACKAGE_CATALOG[sub.packageCode as keyof typeof PACKAGE_CATALOG];
+    const pkgKeys = pkg ? [...pkg.entitlements] : [];
+
+    if (shouldRetry && chargeResult) {
+      const isSuccess = chargeResult.ok === true || chargeResult.paid === true;
+      if (isSuccess) {
+        await handleDunningSuccess(tx, sub, pkgKeys, chargeResult, now);
+      } else {
+        await handleDunningFailure(tx, sub, now);
+      }
+      return "retried" as const;
+    }
+
+    await handleDunningExpired(tx, sub, pkgKeys, now);
+    return "expired" as const;
+  });
+}
+
 /**
  * BR-RBL-04, BR-RBL-05: Sweeps past_due subscriptions.
  * Retries up to 3 attempts within 7-day grace period; otherwise cancels subscription and expires entitlements.
  */
-export async function runRecurringDunningSweep(now = new Date()): Promise<{
+export function runRecurringDunningSweep(
+  now?: Date,
+  signal?: AbortSignal
+): Promise<{
+  totalProcessed: number;
+  retriedCount: number;
+  expiredCount: number;
+}>;
+export function runRecurringDunningSweep(
+  db: WorkerDb,
+  now?: Date,
+  chargeHandler?: RecurringChargeHandler,
+  signal?: AbortSignal
+): Promise<{
+  totalProcessed: number;
+  retriedCount: number;
+  expiredCount: number;
+}>;
+export async function runRecurringDunningSweep(
+  dbOrNow?: WorkerDb | Date,
+  maybeNowOrSignal?: Date | AbortSignal,
+  chargeHandler?: RecurringChargeHandler,
+  maybeSignal?: AbortSignal
+): Promise<{
   totalProcessed: number;
   retriedCount: number;
   expiredCount: number;
 }> {
-  const db = getOwnerDb();
+  const { db, now, handler, signal } = resolveDunningParams(
+    dbOrNow,
+    maybeNowOrSignal,
+    chargeHandler,
+    maybeSignal
+  );
 
-  return await db.transaction(async (tx) => {
-    const pastDueSubs = await tx
-      .select()
-      .from(recurringSubscriptions)
-      .where(
-        and(
-          eq(recurringSubscriptions.status, "past_due"),
-          isNotNull(recurringSubscriptions.nextBillingAt),
-          lte(recurringSubscriptions.nextBillingAt, now)
-        )
-      );
+  const query = db
+    .select()
+    .from(recurringSubscriptions)
+    .where(
+      and(
+        eq(recurringSubscriptions.status, "past_due"),
+        isNotNull(recurringSubscriptions.nextBillingAt),
+        lte(recurringSubscriptions.nextBillingAt, now)
+      )
+    );
 
-    let retriedCount = 0;
-    let expiredCount = 0;
+  const pastDueSubs = await query.limit(200);
 
-    for (const sub of pastDueSubs) {
-      const daysSincePeriodEnd = Math.floor(
-        (now.getTime() - sub.currentPeriodEnd.getTime()) / MS_PER_DAY
-      );
+  let retriedCount = 0;
+  let expiredCount = 0;
 
-      if (
-        sub.dunningAttempts < DUNNING_MAX_ATTEMPTS &&
-        daysSincePeriodEnd <= DUNNING_GRACE_PERIOD_DAYS
-      ) {
-        const nextRetryAt = new Date(now.getTime() + MS_PER_DAY);
-        await tx
-          .update(recurringSubscriptions)
-          .set({
-            dunningAttempts: sub.dunningAttempts + 1,
-            lastDunningAt: now,
-            nextBillingAt: nextRetryAt,
-            updatedAt: now,
-          })
-          .where(eq(recurringSubscriptions.id, sub.id));
-        retriedCount++;
-      } else {
-        await tx
-          .update(recurringSubscriptions)
-          .set({
-            status: "cancelled",
-            autoRenew: false,
-            cancelledAt: now,
-            cancelledBy: "system",
-            cancelReason: "dunning_grace_period_exceeded",
-            updatedAt: now,
-          })
-          .where(eq(recurringSubscriptions.id, sub.id));
-
-        await tx
-          .update(entitlements)
-          .set({
-            status: "expired",
-            updatedAt: now,
-          })
-          .where(
-            and(
-              eq(entitlements.userId, sub.userId),
-              eq(entitlements.source, "package_order"),
-              inArray(entitlements.status, ["grace_period", "active"])
-            )
-          );
-
-        expiredCount++;
-      }
+  for (const sub of pastDueSubs) {
+    if (signal?.aborted) {
+      break;
     }
+    const outcome = await processSingleDunningSub(db, sub, handler, now);
+    if (outcome === "retried") {
+      retriedCount++;
+    } else {
+      expiredCount++;
+    }
+  }
 
-    return {
-      totalProcessed: pastDueSubs.length,
-      retriedCount,
-      expiredCount,
-    };
-  });
+  return {
+    totalProcessed: pastDueSubs.length,
+    retriedCount,
+    expiredCount,
+  };
 }

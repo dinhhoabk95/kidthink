@@ -64,13 +64,15 @@ export class CurrentSessionReauthService {
 
   async markCurrentSessionReauthenticated(
     event: AuthEvent,
-    at: Date = new Date()
+    at: Date = new Date(),
+    now: Date = at
   ): Promise<void> {
     const current = getCurrentSessionReference(event);
     await this.sessions.markReauthenticated(
       current.sessionId,
       current.account,
-      at
+      at,
+      now
     );
   }
 }

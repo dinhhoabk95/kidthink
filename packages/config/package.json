@@ -20,8 +20,7 @@
     "vitest": "catalog:"
   },
   "scripts": {
-    "test": "vitest run",
-    "gen:env-example": "node scripts/generate-env-example.ts"
+    "test": "vitest run"
   },
   "imports": {
     "#src/*": "./src/*.ts",

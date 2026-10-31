@@ -28,10 +28,19 @@ function mockEvent(
         originalUrl: "/",
       },
       res: {
-        setHeader: (name: string, value: string) => {
+        setHeader: (name: string, value: string | string[]) => {
           responseHeaders[name.toLowerCase()] = value;
         },
         getHeader: (name: string) => responseHeaders[name.toLowerCase()],
+        removeHeader: (name: string) => {
+          delete responseHeaders[name.toLowerCase()];
+        },
+        appendHeader: (name: string, value: string) => {
+          const current = responseHeaders[name.toLowerCase()];
+          responseHeaders[name.toLowerCase()] = current
+            ? [...(Array.isArray(current) ? current : [current]), value]
+            : value;
+        },
         statusCode: 200,
       },
     },

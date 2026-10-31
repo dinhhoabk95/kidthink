@@ -138,9 +138,9 @@ Scenario: BR-EGR-03 — audit đầy đủ
   And cả hai có reason không rỗng
 
 Scenario: cấp được add-on chưa bán
-  When cấp package_code = PKG-addon_lesson_plan
+  When cấp package_code = PKG-addon_curriculum
   Then thành công
-  And user có entitlement create_lesson_plan
+  And user có entitlement create_custom_curriculum
 
 Scenario: BR-EGR-05 — content_reviewer bị chặn
   Given manager role content_reviewer

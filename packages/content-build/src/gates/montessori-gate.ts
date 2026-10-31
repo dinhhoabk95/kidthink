@@ -13,10 +13,10 @@ import type {
 } from "#src/types";
 
 export const MONTESSORI_QUOTA_LIMITS: Record<string, number> = {
-  C1: 36,
-  C2: 9,
-  C3: 15,
-  C4: 9,
+  C1: 180,
+  C2: 45,
+  C3: 60,
+  C4: 45,
   C5: 0,
   C6: 0,
 };
@@ -32,11 +32,7 @@ const COMMERCIAL_TEST_KEYWORDS = [
 ];
 
 const MONTESSORI_BATCH_REGEX = /^SEED-MONT-(?:[ABLM])(\d{2})$/;
-const REGEX_MONTESSORI_CODE = /-01\d{2}$/;
-
-function isContentSeed(seed: AnyContentSeed): seed is ContentSeed {
-  return seed.kind !== "activity" && seed.kind !== "lesson";
-}
+const REGEX_MONTESSORI_CODE = /-0[1-9]\d{2}$/;
 
 /**
  * Kiểm tra 1 seed item thuộc lô Montessori
@@ -70,27 +66,25 @@ export function checkMontessoriItemRules(
   }
 
   // 2. Kiểm tra access_tier khớp difficulty cho game level (BR-MGL-12, D-RR)
-  if (isContentSeed(seed)) {
-    const diff = seed.header.difficulty;
-    const tier = seed.header.access_tier;
+  const diff = seed.header.difficulty;
+  const tier = seed.header.access_tier;
 
-    let expectedTier: "free" | "login" | "standard" | "premium" = "free";
-    if (diff === 1) {
-      expectedTier = "free";
-    } else if (diff === 2) {
-      expectedTier = "login";
-    } else if (diff === 3) {
-      expectedTier = "standard";
-    } else if (diff === 4 || diff === 5) {
-      expectedTier = "premium";
-    }
+  let expectedTier: "free" | "login" | "standard" | "premium" = "free";
+  if (diff === 1) {
+    expectedTier = "free";
+  } else if (diff === 2) {
+    expectedTier = "login";
+  } else if (diff === 3) {
+    expectedTier = "standard";
+  } else if (diff === 4 || diff === 5) {
+    expectedTier = "premium";
+  }
 
-    if (tier !== expectedTier) {
-      issues.push({
-        code: "MONTESSORI_TIER_DIFFICULTY_MISMATCH",
-        message: `Mức độ khó difficulty=${diff} của Montessori level phải có access_tier='${expectedTier}' (nhận: '${tier}').`,
-      });
-    }
+  if (tier !== expectedTier) {
+    issues.push({
+      code: "MONTESSORI_TIER_DIFFICULTY_MISMATCH",
+      message: `Mức độ khó difficulty=${diff} của Montessori level phải có access_tier='${expectedTier}' (nhận: '${tier}').`,
+    });
   }
 
   // 3. Kiểm tra tên bài test thương mại & tuyên bố đo trí tuệ (BR-MCM-06)
@@ -212,9 +206,6 @@ export function checkGateMontessori(
 }
 
 export function isMontessoriLevel(seed: AnyContentSeed): boolean {
-  if (seed.kind === "activity" || seed.kind === "lesson") {
-    return false;
-  }
   const header = seed.header;
   return (
     Boolean(header.montessori_ref) || REGEX_MONTESSORI_CODE.test(header.code)
@@ -226,9 +217,7 @@ export function isMontessoriLevel(seed: AnyContentSeed): boolean {
  * Chạy một lần trên toàn bộ seed, không chạy theo từng item.
  */
 export function checkGateMontessoriCorpus(seeds: AnyContentSeed[]): GateResult {
-  const montessoriLevels = seeds
-    .filter(isContentSeed)
-    .filter(isMontessoriLevel);
+  const montessoriLevels = seeds.filter(isMontessoriLevel);
   const issues = checkMontessoriQuotas(montessoriLevels);
   return {
     gate: 9,

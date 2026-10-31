@@ -2,12 +2,11 @@ import { describe, expect, it } from "vitest";
 import { getOwnerDb } from "#src/index";
 import {
   contentEntityTypeEnum,
-  contentObjectiveMap,
   contentSkillMap,
   contentTagMap,
   contentTags,
 } from "#src/schema/tagging";
-import { learningObjectives, skills } from "#src/schema/taxonomy";
+import { skills } from "#src/schema/taxonomy";
 
 describe("Tagging Schema Integration Tests", () => {
   it("BR-SCT-07: content_skill_map.weight must be > 0 and <= 1", async () => {
@@ -34,13 +33,10 @@ describe("Tagging Schema Integration Tests", () => {
     ).rejects.toThrow();
   });
 
-  it("BR-SCT-08: content_tag_map, content_skill_map, and content_objective_map use content_entity_type enum with 5 values", async () => {
+  it("BR-SCT-08: content_tag_map and content_skill_map use content_entity_type enum with 2 values", async () => {
     expect(contentEntityTypeEnum.enumValues).toEqual([
       "game_level",
-      "lesson",
-      "activity",
       "curriculum",
-      "worksheet",
     ]);
 
     const db = getOwnerDb();
@@ -70,19 +66,6 @@ describe("Tagging Schema Integration Tests", () => {
         })
         .returning();
       expect(row?.entityType).toBe(entityType);
-    }
-
-    const [lo] = await db.select().from(learningObjectives).limit(1);
-    if (lo) {
-      const [objRow] = await db
-        .insert(contentObjectiveMap)
-        .values({
-          entityType: "lesson",
-          entityId: baseEntityId + 99,
-          learningObjectiveId: lo.id,
-        })
-        .returning();
-      expect(objRow?.entityType).toBe("lesson");
     }
   });
 

@@ -19,17 +19,16 @@ depends_on:
 
 ## 1. Objective
 
-Một mặt tìm kiếm dùng chung cho catalog công khai, thư viện của User, và studio của Manager.
-Ba bề mặt, cùng một bộ lọc, khác nhau ở **phạm vi quyền** và **trạng thái nội dung thấy
-được**.
+Một mặt tìm kiếm dùng chung cho catalog công khai, thư viện của User, và trang tra cứu của Manager.
+Ba bề mặt, cùng một bộ lọc, khác nhau ở **phạm vi quyền** (`access_tier`).
 
 ## 2. Actors
 
-| Actor | Thấy trạng thái | Thấy bậc |
-|---|---|---|
-| Guest | `published` | metadata mọi bậc, nội dung chỉ `free` |
-| User | `published` | theo `allowedTiers()` |
-| Manager | mọi trạng thái | mọi bậc |
+| Actor | Thấy bậc |
+|---|---|
+| Guest | metadata mọi bậc, nội dung chỉ `free` |
+| User | theo `allowedTiers()` |
+| Manager | mọi bậc |
 
 ## 3. Entry points
 
@@ -37,14 +36,15 @@ Ba bề mặt, cùng một bộ lọc, khác nhau ở **phạm vi quyền** và 
 |---|---|
 | `GET /api/guest/levels` | Catalog công khai |
 | `GET /api/users/levels` | Có ngữ cảnh quyền |
-| `GET /api/managers/levels` | Mọi trạng thái |
-| `GET /api/managers/activities` | Mọi trạng thái, phục vụ studio & thư viện activity (`D-LM`) |
-| `GET /api/{ns}/lessons` · `/curricula` | Cùng bộ lọc |
+| `GET /api/managers/levels` | Tra cứu quản trị |
+| `GET /api/{ns}/curricula` | Cùng bộ lọc |
+
+Đã xóa các route và bảng thuộc `content.ts` (`lessons`, `activities`, `worksheets`, `seo_pages`).
 
 ## 4. Main flow
 
 1. Parse query bằng Zod, ép trần `limit`.
-2. Dựng điều kiện: trạng thái theo actor · bậc theo `allowedTiers()` · bộ lọc §7.1.
+2. Dựng điều kiện: bậc theo `allowedTiers()` · bộ lọc §7.1.
 3. Truy vấn với index phù hợp, phân trang bằng cursor.
 4. Với mỗi kết quả bị chặn bậc: trả **metadata + cờ `locked`**, không trả `content_pack`.
 5. Xếp hạng §7.2.
@@ -63,10 +63,9 @@ Ba bề mặt, cùng một bộ lọc, khác nhau ở **phạm vi quyền** và 
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-SRC-01` | Nội dung bị chặn bậc vẫn **hiện trong kết quả** kèm `locked`, nhưng không kèm `content_pack` | Người dùng phải thấy được thứ mình đang bỏ lỡ để có lý do nâng cấp |
-| `BR-SRC-02` | Trần `limit` ép ở **server** — level ≤ 60, lesson ≤ 40, admin ≤ 100 | Query không trần hạ instance trên t3.small |
+| `BR-SRC-02` | Trần `limit` ép ở **server** — level ≤ 60, admin ≤ 100 | Query không trần hạ instance trên t3.small |
 | `BR-SRC-03` | Zod parse **mọi** query param, kể cả route chỉ đọc | Param đi vào `ilike`/`gte` là đường vào injection |
 | `BR-SRC-04` | Phân trang bằng **cursor**, không offset ở bảng lớn | Offset sâu quét toàn bảng |
-| `BR-SRC-05` | Guest không thấy nội dung khác `published` | Bảo vệ tính bảo mật của nội dung chưa chính thức phát hành |
 | `BR-SRC-06` | Cấm — **NEVER cache** kết quả có nội dung trả phí | [`access-ladder.md`](../00-foundation/access-ladder.md) `BR-LAD-09` |
 | `BR-SRC-07` | Tìm text hoạt động **cả có dấu lẫn không dấu** tiếng Việt | Người dùng gõ không dấu là mặc định |
 
@@ -77,18 +76,14 @@ Ba bề mặt, cùng một bộ lọc, khác nhau ở **phạm vi quyền** và 
 | Tham số | Kiểu | Áp cho |
 |---|---|---|
 | `q` | text | title, description, tag |
-| `age_min` `age_max` | int 3–6 | mọi (activity suy từ giao band skill) |
+| `age_min` `age_max` | int 3–6 | mọi |
 | `competency` | `C1..C6` | mọi |
 | `strand` `skill` | code | mọi |
-| `learning_objective` | code | mọi |
 | `difficulty` | 1–5 | level |
-| `kind` | `activity_kind` | activity |
-| `duration_max` | phút | lesson, activity |
 | `what` `thinking` `mechanic` | tag | mọi |
 | `theme` | tag chủ đề | level |
 | `access_tier` | enum | mọi |
 | `template` | mã GT (ví dụ `GT-003`) | level |
-| `status` | enum | **chỉ** admin |
 | `curriculum` | code | mọi |
 | `sort` | `relevance` \| `newest` \| `popular` \| `difficulty` | |
 
@@ -105,13 +100,12 @@ không phải một thư viện.
 
 ### 7.3 Index cần có
 
-`game_levels(status, access_tier, age_min, age_max)` ·
+`game_levels(access_tier, age_min, age_max)` ·
 `content_tag_map(tag_id, entity_type)` ·
 `content_skill_map(skill_id, entity_type)` ·
 GIN trên `to_tsvector('simple', unaccent(title || ' ' || description))`.
 
-MVP dùng Postgres full-text với `unaccent`. Cấm thêm search engine riêng — một dịch vụ
-nữa để vận hành không đáng cho 120 level.
+Dùng Postgres full-text với `unaccent`. Đã xóa hoàn toàn `content_embeddings` và semantic search khỏi hệ thống.
 
 ## 8. API contract
 
@@ -149,11 +143,6 @@ Scenario: BR-SRC-07 — tìm không dấu ra kết quả
   When tìm với q = "dem qua tao"
   Then level đó xuất hiện trong kết quả
 
-Scenario: BR-SRC-05 — guest không thấy draft
-  Given tồn tại level ở trạng thái draft
-  When guest tìm kiếm
-  Then level đó không xuất hiện
-
 Scenario: xếp hạng ưu tiên nội dung mở được
   Given user standard tìm kiếm
   When kết quả có cả level standard và premium
@@ -182,12 +171,11 @@ Scenario: BR-SRC-06 — không cache kết quả trả phí
 - Nối chuỗi vào truy vấn.
 - Trả `content_pack` của nội dung `locked`.
 - Cache kết quả có nội dung trả phí.
-- Cho guest thấy trạng thái khác `published`.
 
 ## 11. Open questions
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
 | 1 | Postgres full-text đủ tới bao nhiêu nội dung? | Ngưỡng nâng cấp search engine — chịu tải tốt tới 50.000 items | Sau MVP | Infra |
-| ~~2~~ | ~~Tìm kiếm ngữ nghĩa (embedding) thuộc add-on AI hay tính năng chung?~~ **Đã chốt 2026-08-05 (`D-CQ`)**: add-on AI (`use_ai_search`), không đưa vào tìm kiếm cơ bản này. Spec: [`07-addon/semantic-search`](../07-addon/semantic-search.md) | — | Đã đóng | D-CQ |
+| ~~2~~ | ~~Tìm kiếm ngữ nghĩa (embedding)?~~ **Đã đóng (2026-10-25)**: đã xóa hoàn toàn `content_embeddings` và spec `semantic-search.md`; chỉ dùng Postgres full-text + bộ lọc có cấu trúc | — | Đã đóng | — |
 

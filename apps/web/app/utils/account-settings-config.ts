@@ -1,3 +1,5 @@
+import { getFieldErrors } from "@mindkid/errors/client";
+
 export interface SettingsTabItem {
   readonly to: string;
   readonly label: string;
@@ -179,6 +181,11 @@ export function buildPasswordModalFields(
   ];
 }
 
+export const DEFAULT_SETTINGS_PROVIDERS: ProviderItem[] = [
+  { provider: "google", label: "Google", is_enabled: true },
+  { provider: "facebook", label: "Facebook", is_enabled: false },
+];
+
 export const EMAIL_MODAL_FIELDS: readonly EmailModalField[] = [
   {
     id: "emailCurrentPassword",
@@ -201,3 +208,173 @@ export const EMAIL_MODAL_FIELDS: readonly EmailModalField[] = [
     errorTestId: "email-field-error-new",
   },
 ];
+
+export type ErrorInput = Parameters<typeof getFieldErrors>[0];
+
+export function toFieldErrorMap(err: ErrorInput): Record<string, string> {
+  return Object.fromEntries(
+    getFieldErrors(err).map((f) => [f.field, f.message])
+  );
+}
+
+export interface UserSessionData {
+  email?: string;
+  display_name?: string;
+  has_password?: boolean;
+  pending_email?: string | null;
+}
+
+export function applyInitialSettingsData(
+  target: {
+    setUserEmail: (v: string) => void;
+    setDisplayName: (v: string) => void;
+    setHasPassword: (v: boolean) => void;
+    setPendingEmail: (v: string) => void;
+    setProviders: (v: ProviderItem[]) => void;
+    setLinkedIdentities: (v: LinkedIdentityItem[]) => void;
+    setNotifWeekly: (v: boolean) => void;
+    setNotifContent: (v: boolean) => void;
+  },
+  payload: {
+    user: UserSessionData | null;
+    prov: { providers: ProviderItem[] } | null;
+    ident: { items: LinkedIdentityItem[] } | null;
+    notif: { weekly_progress?: boolean; content_new?: boolean } | null;
+  }
+): void {
+  if (payload.user?.email) {
+    target.setUserEmail(payload.user.email);
+  }
+  if (payload.user?.display_name) {
+    target.setDisplayName(payload.user.display_name);
+  }
+  if (typeof payload.user?.has_password === "boolean") {
+    target.setHasPassword(payload.user.has_password);
+  }
+  if (typeof payload.user?.pending_email === "string") {
+    target.setPendingEmail(payload.user.pending_email);
+  }
+  if (payload.prov?.providers) {
+    target.setProviders(payload.prov.providers);
+  }
+  if (payload.ident?.items) {
+    target.setLinkedIdentities(payload.ident.items);
+  }
+  if (typeof payload.notif?.weekly_progress === "boolean") {
+    target.setNotifWeekly(payload.notif.weekly_progress);
+  }
+  if (typeof payload.notif?.content_new === "boolean") {
+    target.setNotifContent(payload.notif.content_new);
+  }
+}
+
+export function validatePasswordForm(params: {
+  hasPassword: boolean;
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}): { valid: boolean; fieldErrors: Record<string, string> } {
+  if (params.hasPassword && !params.currentPassword.trim()) {
+    return {
+      valid: false,
+      fieldErrors: { password: "Vui lòng nhập mật khẩu hiện tại." },
+    };
+  }
+  if (params.newPassword.length < 8) {
+    return {
+      valid: false,
+      fieldErrors: { new_password: "Mật khẩu mới phải có ít nhất 8 ký tự." },
+    };
+  }
+  if (params.newPassword !== params.confirmPassword) {
+    return {
+      valid: false,
+      fieldErrors: { confirm_password: "Mật khẩu xác nhận không khớp." },
+    };
+  }
+  return { valid: true, fieldErrors: {} };
+}
+
+export function resolvePasswordSubmitLabel(
+  isSubmitting: boolean,
+  hasPassword: boolean
+): string {
+  if (isSubmitting) {
+    return "Đang xử lý...";
+  }
+  return hasPassword ? "Cập nhật mật khẩu" : "Đặt mật khẩu";
+}
+
+export interface SettingsStateHolders {
+  userEmail: { value: string };
+  displayNameTarget: { displayName: string };
+  hasPassword: { value: boolean };
+  pendingEmail: { value: string };
+  providers: { value: ProviderItem[] };
+  linkedIdentities: { value: LinkedIdentityItem[] };
+  notifPreferences: { weekly_progress: boolean; content_new: boolean };
+}
+
+export interface SettingsInitialPayload {
+  user: UserSessionData | null;
+  prov: { providers: ProviderItem[] } | null;
+  ident: { items: LinkedIdentityItem[] } | null;
+  notif: { weekly_progress?: boolean; content_new?: boolean } | null;
+}
+
+export function syncSettingsInitialState(
+  holders: SettingsStateHolders,
+  payload: SettingsInitialPayload
+): void {
+  if (payload.user?.email) {
+    holders.userEmail.value = payload.user.email;
+  }
+  if (payload.user?.display_name) {
+    holders.displayNameTarget.displayName = payload.user.display_name;
+  }
+  if (typeof payload.user?.has_password === "boolean") {
+    holders.hasPassword.value = payload.user.has_password;
+  }
+  if (typeof payload.user?.pending_email === "string") {
+    holders.pendingEmail.value = payload.user.pending_email;
+  }
+  if (payload.prov?.providers) {
+    holders.providers.value = payload.prov.providers;
+  }
+  if (payload.ident?.items) {
+    holders.linkedIdentities.value = payload.ident.items;
+  }
+  if (typeof payload.notif?.weekly_progress === "boolean") {
+    holders.notifPreferences.weekly_progress = payload.notif.weekly_progress;
+  }
+  if (typeof payload.notif?.content_new === "boolean") {
+    holders.notifPreferences.content_new = payload.notif.content_new;
+  }
+}
+
+export function resetPasswordModalState(
+  form: {
+    currentPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+  },
+  modalError: { value: string },
+  fieldErrors: { value: Record<string, string> }
+): void {
+  form.currentPassword = "";
+  form.newPassword = "";
+  form.confirmPassword = "";
+  modalError.value = "";
+  fieldErrors.value = {};
+}
+
+export function resetEmailModalState(
+  form: { currentPassword: string; newEmail: string },
+  modalError: { value: string },
+  fieldErrors: { value: Record<string, string> }
+): void {
+  form.currentPassword = "";
+  form.newEmail = "";
+  modalError.value = "";
+  fieldErrors.value = {};
+}

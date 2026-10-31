@@ -44,111 +44,171 @@ export const C5_RIM_01_DATASET: SkillDataset = {
   items: [
     {
       id: "rim_a",
-      label: "vần a",
+      label: "vần a (con cá)",
       glyph: "a",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🐟",
       },
-    },
-    {
-      id: "rim_ă",
-      label: "vần ă",
-      glyph: "ă",
-      image: {
-        kind: "emoji",
-        ref: "📝",
+      value: 1,
+      category: {
+        type: "nguyên âm đơn",
       },
-    },
-    {
-      id: "rim_â",
-      label: "vần â",
-      glyph: "â",
-      image: {
-        kind: "emoji",
-        ref: "📝",
-      },
+      contrast_group: "primary",
     },
     {
       id: "rim_e",
-      label: "vần e",
+      label: "vần e (em bé)",
       glyph: "e",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "👶",
       },
-    },
-    {
-      id: "rim_ê",
-      label: "vần ê",
-      glyph: "ê",
-      image: {
-        kind: "emoji",
-        ref: "📝",
+      value: 2,
+      category: {
+        type: "nguyên âm đơn",
       },
+      contrast_group: "primary",
     },
     {
       id: "rim_i",
-      label: "vần i",
+      label: "vần i (viên bi)",
       glyph: "i",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🔮",
       },
+      value: 3,
+      category: {
+        type: "nguyên âm đơn",
+      },
+      contrast_group: "primary",
     },
     {
       id: "rim_o",
-      label: "vần o",
+      label: "vần o (chùm nho)",
       glyph: "o",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🍇",
       },
-    },
-    {
-      id: "rim_ô",
-      label: "vần ô",
-      glyph: "ô",
-      image: {
-        kind: "emoji",
-        ref: "📝",
+      value: 4,
+      category: {
+        type: "nguyên âm đơn",
       },
-    },
-    {
-      id: "rim_ơ",
-      label: "vần ơ",
-      glyph: "ơ",
-      image: {
-        kind: "emoji",
-        ref: "📝",
-      },
+      contrast_group: "primary",
     },
     {
       id: "rim_u",
-      label: "vần u",
+      label: "vần u (chim cú)",
       glyph: "u",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🦉",
       },
-    },
-    {
-      id: "rim_ư",
-      label: "vần ư",
-      glyph: "ư",
-      image: {
-        kind: "emoji",
-        ref: "📝",
+      value: 5,
+      category: {
+        type: "nguyên âm đơn",
       },
+      contrast_group: "primary",
     },
     {
       id: "rim_y",
-      label: "vần y",
+      label: "vần y (y tá)",
       glyph: "y",
       image: {
         kind: "emoji",
-        ref: "📝",
+        ref: "🩺",
       },
+      value: 6,
+      category: {
+        type: "nguyên âm đơn",
+      },
+      contrast_group: "primary",
+    },
+    {
+      id: "rim_ă",
+      label: "vần ă (mặt trăng)",
+      glyph: "ă",
+      image: {
+        kind: "emoji",
+        ref: "🌙",
+      },
+      value: 7,
+      category: {
+        type: "nguyên âm dấu",
+      },
+      contrast_group: "contrast",
+    },
+    {
+      id: "rim_â",
+      label: "vần â (đám mây)",
+      glyph: "â",
+      image: {
+        kind: "emoji",
+        ref: "☁️",
+      },
+      value: 8,
+      category: {
+        type: "nguyên âm dấu",
+      },
+      contrast_group: "contrast",
+    },
+    {
+      id: "rim_ê",
+      label: "vần ê (con dê)",
+      glyph: "ê",
+      image: {
+        kind: "emoji",
+        ref: "🐐",
+      },
+      value: 9,
+      category: {
+        type: "nguyên âm dấu",
+      },
+      contrast_group: "contrast",
+    },
+    {
+      id: "rim_ô",
+      label: "vần ô (cái ô)",
+      glyph: "ô",
+      image: {
+        kind: "emoji",
+        ref: "☂️",
+      },
+      value: 10,
+      category: {
+        type: "nguyên âm dấu",
+      },
+      contrast_group: "contrast",
+    },
+    {
+      id: "rim_ơ",
+      label: "vần ơ (lá cờ)",
+      glyph: "ơ",
+      image: {
+        kind: "emoji",
+        ref: "🚩",
+      },
+      value: 11,
+      category: {
+        type: "nguyên âm dấu",
+      },
+      contrast_group: "contrast",
+    },
+    {
+      id: "rim_ư",
+      label: "vần ư (sư tử)",
+      glyph: "ư",
+      image: {
+        kind: "emoji",
+        ref: "🦁",
+      },
+      value: 12,
+      category: {
+        type: "nguyên âm dấu",
+      },
+      contrast_group: "contrast",
     },
   ],
   ladder: [
@@ -185,17 +245,40 @@ export const C5_RIM_01_DATASET: SkillDataset = {
   },
   ordering: [
     "rim_a",
-    "rim_ă",
-    "rim_â",
     "rim_e",
-    "rim_ê",
     "rim_i",
     "rim_o",
+    "rim_u",
+    "rim_y",
+    "rim_ă",
+    "rim_â",
+    "rim_ê",
     "rim_ô",
     "rim_ơ",
-    "rim_u",
     "rim_ư",
-    "rim_y",
+  ],
+  axes: {
+    category: {
+      values: ["nguyên âm đơn", "nguyên âm dấu"],
+      ordered: true,
+    },
+  },
+  relations: [
+    {
+      type: "pair",
+      source_id: "rim_a",
+      target_id: "rim_e",
+    },
+    {
+      type: "pair",
+      source_id: "rim_ă",
+      target_id: "rim_â",
+    },
+    {
+      type: "contrast",
+      source_id: "rim_a",
+      target_id: "rim_ă",
+    },
   ],
 };
 
@@ -238,22 +321,6 @@ export const C5_RIM_01_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-RIM-TAP-0004",
-      template: "GT-001",
-      band: "5-6",
-      difficulty: 3,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RIM-TAP-0005",
-      template: "GT-001",
-      band: "5-6",
-      difficulty: 4,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
       code: "GL-C5-RIM-MULTI-0001",
       template: "GT-002",
       band: "5-6",
@@ -275,22 +342,6 @@ export const C5_RIM_01_SEED: SkillSeed = {
       band: "5-6",
       difficulty: 3,
       theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RIM-MULTI-0004",
-      template: "GT-002",
-      band: "5-6",
-      difficulty: 3,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-RIM-MULTI-0005",
-      template: "GT-002",
-      band: "5-6",
-      difficulty: 4,
-      theme: "weather",
       rounds: 3,
     },
   ],

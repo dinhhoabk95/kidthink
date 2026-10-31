@@ -450,7 +450,6 @@
   const PACKAGE_NAME_MAP: Record<string, string> = {
     "PKG-standard": "Gói Tiêu chuẩn",
     "PKG-premium": "Gói Premium",
-    "PKG-addon_lesson_plan": "Add-on Giáo án",
     "PKG-addon_curriculum": "Add-on Lộ trình tùy chỉnh",
     "PKG-addon_custom_game": "Add-on Trò chơi tùy chỉnh",
     "PKG-addon_ai": "Add-on AI Assistant",

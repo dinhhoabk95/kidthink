@@ -79,6 +79,76 @@ export const C1_ADD_04_DATASET: SkillDataset = {
         ref: "5️⃣",
       },
     }),
+    {
+      id: "cp20_apple",
+      label: "quả táo đỏ",
+      value: 2,
+      contrast_group: "cp20_cipher",
+      ordering: 6,
+      category: {
+        type: "biểu tượng mật mã",
+      },
+      image: {
+        kind: "emoji",
+        ref: "🍎",
+      },
+    },
+    {
+      id: "cp20_pear",
+      label: "quả lê xanh",
+      value: 3,
+      contrast_group: "cp20_cipher",
+      ordering: 7,
+      category: {
+        type: "biểu tượng mật mã",
+      },
+      image: {
+        kind: "emoji",
+        ref: "🍐",
+      },
+    },
+    {
+      id: "cp20_strawberry",
+      label: "quả dâu tây",
+      value: 1,
+      contrast_group: "cp20_cipher",
+      ordering: 8,
+      category: {
+        type: "biểu tượng mật mã",
+      },
+      image: {
+        kind: "emoji",
+        ref: "🍓",
+      },
+    },
+    {
+      id: "cp20_honey",
+      label: "hũ mật ong",
+      value: 2,
+      contrast_group: "cp20_cipher",
+      ordering: 9,
+      category: {
+        type: "biểu tượng mật mã",
+      },
+      image: {
+        kind: "emoji",
+        ref: "🍯",
+      },
+    },
+    {
+      id: "cp20_bee",
+      label: "chú ong vàng",
+      value: 3,
+      contrast_group: "cp20_cipher",
+      ordering: 10,
+      category: {
+        type: "biểu tượng mật mã",
+      },
+      image: {
+        kind: "emoji",
+        ref: "🐝",
+      },
+    },
   ],
   relations: [
     {
@@ -168,7 +238,19 @@ export const C1_ADD_04_DATASET: SkillDataset = {
     prompt_template: "Gộp lại có tất cả bao nhiêu {label}?",
     narration_template: "Chúng mình cùng tìm hiểu về Cộng trong phạm vi 5 nhé",
   },
-  ordering: ["n0", "n1", "n2", "n3", "n4", "n5"],
+  ordering: [
+    "n0",
+    "n1",
+    "n2",
+    "n3",
+    "n4",
+    "n5",
+    "cp20_apple",
+    "cp20_pear",
+    "cp20_strawberry",
+    "cp20_honey",
+    "cp20_bee",
+  ],
 };
 
 export const C1_ADD_04_SEED: SkillSeed = {
@@ -334,6 +416,26 @@ export const C1_ADD_04_SEED: SkillSeed = {
       difficulty: 3,
       theme: "animal",
       rounds: 3,
+    },
+    {
+      code: "GL-C1-ADD-SUB-0320",
+      template: "GT-010",
+      band: "5-6",
+      difficulty: 1,
+      access_tier: "free",
+      theme: "farm",
+      rounds: 3,
+      montessori_ref: "WB20-D1",
+    },
+    {
+      code: "GL-C1-ADD-SLOT-0321",
+      template: "GT-008",
+      band: "5-6",
+      difficulty: 2,
+      access_tier: "login",
+      theme: "nature",
+      rounds: 3,
+      montessori_ref: "WB20-D1",
     },
   ],
 };

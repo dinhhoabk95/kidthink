@@ -183,15 +183,6 @@ export const DASHBOARD_CARDS: readonly DashboardCardDefinition[] = [
     href: "/levels",
     roles: ["super_admin", "content_reviewer"],
   },
-  {
-    id: "published_lessons",
-    title: "Lessons đã xuất bản",
-    description: "Tổng số giáo án bài giảng đã xuất bản",
-    group: "content",
-    source: "lessons",
-    href: "/lessons",
-    roles: ["super_admin", "content_reviewer"],
-  },
 
   // 7.4 Hệ thống (System)
   {

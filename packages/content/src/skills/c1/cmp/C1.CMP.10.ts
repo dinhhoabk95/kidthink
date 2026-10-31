@@ -1,5 +1,4 @@
 import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
-import { getMeasureDimension } from "#src/inventories/index";
 
 export const C1_CMP_10_IDENTITY: SkillIdentity = {
   code: "C1.CMP.10",
@@ -37,246 +36,321 @@ export const C1_CMP_10_IDENTITY: SkillIdentity = {
   ],
 };
 
-export const C1_CMP_10_DATASET: SkillDataset = {
+const TOPIC_CMP_MEASURE_SPEED_DATASET: SkillDataset = {
   skill_code: "C1.CMP.10",
-  concept_label: "Nặng hơn",
+  concept_label: "So sánh độ nặng",
   surface: "game",
   items: [
     {
-      id: "weight_more",
-      label: "quả dưa hấu nặng",
-      value: 3,
-      image: {
-        kind: "emoji",
-        ref: "🍉",
-      },
-      contrast_group: "weight",
-      category: {
-        weight: "nặng",
-      },
-    },
-    {
-      id: "weight_less",
-      label: "quả dâu tây nhẹ",
-      value: 2,
-      image: {
-        kind: "emoji",
-        ref: "🍓",
-      },
-      contrast_group: "weight",
-      category: {
-        weight: "nhẹ",
-      },
-    },
-    {
-      id: "weight_elephant_more",
-      label: "con voi rất nặng",
-      value: 4,
-      image: {
-        kind: "emoji",
-        ref: "🐘",
-      },
-      contrast_group: "weight",
-      category: {
-        weight: "rất nặng",
-      },
-    },
-    {
-      id: "weight_feather_less",
-      label: "chiếc lông vũ rất nhẹ",
+      id: "topic_light_bird",
+      label: "con chim nhỏ",
+      glyph: "🐦",
       value: 1,
+      contrast_group: "weight",
+      ordering: 1,
       image: {
         kind: "emoji",
-        ref: "🪶",
+        ref: "🐦",
       },
-      contrast_group: "weight",
       category: {
-        weight: "rất nhẹ",
+        type: "vật nhẹ hơn",
       },
     },
     {
-      id: "heavy_truck",
-      label: "xe tải nặng",
-      value: 5,
-      image: {
-        kind: "emoji",
-        ref: "🚛",
-      },
-      contrast_group: "weight",
-      category: {
-        weight: "rất nặng",
-      },
-    },
-    {
-      id: "light_leaf",
+      id: "topic_light_leaf",
       label: "chiếc lá nhẹ",
-      value: 1,
+      glyph: "🍃",
+      value: 2,
+      contrast_group: "weight",
+      ordering: 2,
       image: {
         kind: "emoji",
         ref: "🍃",
       },
-      contrast_group: "weight",
       category: {
-        weight: "rất nhẹ",
+        type: "vật nhẹ hơn",
+      },
+    },
+    {
+      id: "topic_heavy_rock",
+      label: "tảng đá nặng",
+      glyph: "🪨",
+      value: 4,
+      contrast_group: "weight",
+      ordering: 3,
+      image: {
+        kind: "emoji",
+        ref: "🪨",
+      },
+      category: {
+        type: "vật nặng hơn",
+      },
+    },
+    {
+      id: "topic_heavy_elephant",
+      label: "con voi nặng",
+      glyph: "🐘",
+      value: 5,
+      contrast_group: "weight",
+      ordering: 4,
+      image: {
+        kind: "emoji",
+        ref: "🐘",
+      },
+      category: {
+        type: "vật nặng hơn",
       },
     },
   ],
   relations: [
     {
       type: "contrast",
-      source_id: "weight_more",
-      target_id: "weight_less",
-      metadata: {
-        dimension: getMeasureDimension("dim_weight").unit_kind,
-      },
+      source_id: "topic_light_bird",
+      target_id: "topic_heavy_elephant",
     },
     {
       type: "contrast",
-      source_id: "weight_elephant_more",
-      target_id: "weight_feather_less",
-      metadata: {
-        dimension: getMeasureDimension("dim_weight").unit_kind,
-      },
+      source_id: "topic_light_leaf",
+      target_id: "topic_heavy_rock",
     },
   ],
-  axes: {
-    weight: {
-      values: ["rất nhẹ", "nhẹ", "nặng", "rất nặng"],
-      ordered: true,
-    },
-  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với nặng hơn",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng nặng hơn",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt nặng hơn với phương án nhiễu",
+      description: "Phân biệt với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi nặng hơn",
+      description: "Mở rộng phạm vi so sánh",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục nặng hơn và tự làm một mình",
+      description: "Thuần thục và tự làm một mình",
+      representation: "ten-frame",
     },
   ],
   phrasing: {
-    prompt_template: "Vật nào nặng hơn hả bé?",
-    narration_template: "Chúng mình cùng tìm hiểu về Nặng hơn nhé",
+    prompt_template: "Bé hãy chọn {label} nhé!",
+    narration_template: "Chúng mình cùng so sánh độ nặng nhé",
   },
+  ordering: [
+    "topic_light_bird",
+    "topic_light_leaf",
+    "topic_heavy_rock",
+    "topic_heavy_elephant",
+  ],
 };
 
-/**
- * Chủ đề làm quen — dataset của bài học mở đầu GL-C1-CMP-INTRO-0004.
- * Dạy so sánh sức nặng, khoảng cách và tốc độ: Nặng hơn, nhẹ hơn, xa hơn, gần hơn, nhanh hơn, chậm hơn.
- * Phủ 6 kỹ năng: C1.CMP.10, C1.CMP.11, C1.CMP.12, C1.CMP.13, C1.CMP.14, C1.CMP.15.
- */
-const TOPIC_CMP_MEASURE_SPEED_DATASET: SkillDataset = {
+export const C1_CMP_10_DATASET: SkillDataset = {
   skill_code: "C1.CMP.10",
-  concept_label: "Nặng hơn, nhẹ hơn, xa hơn, gần hơn, nhanh hơn, chậm hơn",
+  concept_label: "Nặng hơn",
   surface: "game",
   items: [
     {
-      id: "heavy_truck",
-      label: "xe tải nặng",
+      id: "cmp10_bird",
+      label: "con chim nhỏ",
+      glyph: "🐦",
+      value: 1,
+      contrast_group: "weight",
+      ordering: 1,
+      category: {
+        type: "vật nhẹ hơn",
+      },
       image: {
         kind: "emoji",
-        ref: "🚛",
-      },
-      category: {
-        type: "phương tiện",
+        ref: "🐦",
       },
     },
     {
-      id: "light_leaf",
+      id: "cmp10_bike",
+      label: "xe đạp nhẹ",
+      glyph: "🚲",
+      value: 1,
+      contrast_group: "weight",
+      ordering: 2,
+      category: {
+        type: "vật nhẹ hơn",
+      },
+      image: {
+        kind: "emoji",
+        ref: "🚲",
+      },
+    },
+    {
+      id: "cmp10_strawberry",
+      label: "quả dâu tây",
+      glyph: "🍓",
+      value: 2,
+      contrast_group: "weight",
+      ordering: 3,
+      category: {
+        type: "vật nhẹ hơn",
+      },
+      image: {
+        kind: "emoji",
+        ref: "🍓",
+      },
+    },
+    {
+      id: "cmp10_leaf",
       label: "chiếc lá nhẹ",
+      glyph: "🍃",
+      value: 2,
+      contrast_group: "weight",
+      ordering: 4,
+      category: {
+        type: "vật nhẹ hơn",
+      },
       image: {
         kind: "emoji",
         ref: "🍃",
       },
+    },
+    {
+      id: "cmp10_watermelon",
+      label: "quả dưa hấu",
+      glyph: "🍉",
+      value: 4,
+      contrast_group: "weight",
+      ordering: 5,
       category: {
-        type: "thiên nhiên",
+        type: "vật nặng hơn",
+      },
+      image: {
+        kind: "emoji",
+        ref: "🍉",
       },
     },
     {
-      id: "far_plane",
-      label: "máy bay ở xa",
+      id: "cmp10_rock",
+      label: "tảng đá lớn",
+      glyph: "🪨",
+      value: 5,
+      contrast_group: "weight",
+      ordering: 6,
+      category: {
+        type: "vật nặng hơn",
+      },
       image: {
         kind: "emoji",
-        ref: "✈️",
-      },
-      category: {
-        type: "phương tiện",
+        ref: "🪨",
       },
     },
     {
-      id: "near_flower",
-      label: "bông hoa ở gần",
+      id: "cmp10_truck",
+      label: "xe tải lớn",
+      glyph: "🚛",
+      value: 5,
+      contrast_group: "weight",
+      ordering: 7,
+      category: {
+        type: "vật nặng hơn",
+      },
       image: {
         kind: "emoji",
-        ref: "🌺",
-      },
-      category: {
-        type: "thiên nhiên",
+        ref: "🚛",
       },
     },
     {
-      id: "fast_cheetah",
-      label: "chú báo chạy nhanh",
+      id: "cmp10_elephant",
+      label: "con voi lớn",
+      glyph: "🐘",
+      value: 5,
+      contrast_group: "weight",
+      ordering: 8,
+      category: {
+        type: "vật nặng hơn",
+      },
       image: {
         kind: "emoji",
-        ref: "🐆",
-      },
-      category: {
-        type: "động vật",
+        ref: "🐘",
       },
     },
+  ],
+  relations: [
     {
-      id: "slow_turtle",
-      label: "chú rùa bò chậm",
-      image: {
-        kind: "emoji",
-        ref: "🐢",
-      },
-      category: {
-        type: "động vật",
-      },
+      type: "contrast",
+      source_id: "cmp10_bird",
+      target_id: "cmp10_elephant",
+    },
+    {
+      type: "contrast",
+      source_id: "cmp10_bike",
+      target_id: "cmp10_truck",
+    },
+    {
+      type: "contrast",
+      source_id: "cmp10_strawberry",
+      target_id: "cmp10_watermelon",
+    },
+    {
+      type: "contrast",
+      source_id: "cmp10_leaf",
+      target_id: "cmp10_rock",
     },
   ],
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Nhận biết nặng hơn, nhẹ hơn, bằng nhau",
+      description: "Làm quen cơ bản với vật nặng hơn",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "So sánh trọng lượng và cân bằng",
+      description: "Nhận biết và chọn đúng vật nặng hơn",
+      representation: "discrete-object",
+    },
+    {
+      rung: 3,
+      dimension: "distractor_count",
+      description: "Phân biệt vật nặng hơn với phương án nhiễu",
+      representation: "ten-frame",
+    },
+    {
+      rung: 4,
+      dimension: "item_count",
+      description: "Mở rộng so sánh vật nặng hơn",
+      representation: "ten-frame",
+    },
+    {
+      rung: 5,
+      dimension: "speed_scaffolding",
+      description: "Thuần thục so sánh nặng hơn và tự làm một mình",
+      representation: "ten-frame",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy làm quen với {label}",
+    prompt_template: "Bé hãy chọn {label} nhé!",
+    narration_template: "Chúng mình cùng tìm vật nặng hơn nhé",
   },
   ordering: [
-    "heavy_truck",
-    "light_leaf",
-    "far_plane",
-    "near_flower",
-    "fast_cheetah",
-    "slow_turtle",
+    "cmp10_bird",
+    "cmp10_bike",
+    "cmp10_strawberry",
+    "cmp10_leaf",
+    "cmp10_watermelon",
+    "cmp10_rock",
+    "cmp10_truck",
+    "cmp10_elephant",
   ],
 };
 
@@ -287,7 +361,7 @@ export const C1_CMP_10_SEED: SkillSeed = {
     {
       code: "GL-C1-CMP-INTRO-0004",
       template: "GT-000",
-      band: "3-4",
+      band: "4-5",
       difficulty: 1,
       theme: "nature",
       rounds: 1,
@@ -309,31 +383,6 @@ export const C1_CMP_10_SEED: SkillSeed = {
       difficulty: 1,
       theme: "school",
       rounds: 3,
-      legacy_v1_ref: "D5-01",
-    },
-    {
-      code: "GL-C1-CMP-TAP-0042",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 1,
-      theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CMP-TAP-0043",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 2,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CMP-TAP-0044",
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 3,
-      theme: "job",
-      rounds: 3,
     },
     {
       code: "GL-C1-CMP-TCNT-0001",
@@ -349,14 +398,6 @@ export const C1_CMP_10_SEED: SkillSeed = {
       band: "4-5",
       difficulty: 2,
       theme: "farm",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CMP-TCNT-0003",
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 3,
-      theme: "home",
       rounds: 3,
     },
     {
@@ -384,83 +425,11 @@ export const C1_CMP_10_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C1-CMP-PAIR-0003",
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 3,
-      theme: "food",
-      rounds: 3,
-    },
-    {
       code: "GL-C1-CMP-PAIR-0004",
       template: "GT-004",
       band: "4-5",
       difficulty: 1,
       theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CMP-PATT-0044",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 1,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CMP-PATT-0045",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 2,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CMP-PATT-0046",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 3,
-      theme: "family",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CMP-PATT-0047",
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 1,
-      theme: "body",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CMP-SHAD-0044",
-      template: "GT-007",
-      band: "3-4",
-      difficulty: 1,
-      theme: "weather",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CMP-SHAD-0045",
-      template: "GT-007",
-      band: "3-4",
-      difficulty: 2,
-      theme: "festival",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CMP-SHAD-0046",
-      template: "GT-007",
-      band: "3-4",
-      difficulty: 3,
-      theme: "job",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-CMP-SHAD-0047",
-      template: "GT-007",
-      band: "3-4",
-      difficulty: 1,
-      theme: "homeland",
       rounds: 3,
     },
   ],

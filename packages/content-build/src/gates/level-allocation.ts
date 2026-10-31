@@ -74,18 +74,16 @@ function resolveChosenTemplates(
   affinityMatrix: SkillAffinityMatrixData
 ): string[] {
   const isC1 = skill.competency_code === "C1";
-  const minTemplates = isC1 ? 4 : 2;
+  const minTemplates = 2;
   const available = [...(affinityMatrix.affinities[skill.code] ?? [])];
 
   if (available.length === 0) {
-    return isC1
-      ? ["GT-001", "GT-002", "GT-003", "GT-004"]
-      : ["GT-001", "GT-002"];
+    return ["GT-001", "GT-002"];
   }
 
   const chosen = available.slice(
     0,
-    Math.max(minTemplates, Math.min(5, available.length))
+    Math.max(minTemplates, Math.min(3, available.length))
   );
   if (chosen.length < minTemplates) {
     const generalPool = isC1
@@ -134,8 +132,7 @@ function buildSkillAllocations(
   themeIndexState: { current: number },
   themeCounts: Record<string, number>
 ): AllocationRow[] {
-  const isC1 = skill.competency_code === "C1";
-  const targetLevels = isC1 ? 20 : 10;
+  const targetLevels = 3;
   const chosenTemplates = resolveChosenTemplates(skill, affinityMatrix);
   const countsPerTemplate = distributeLevelCounts(
     targetLevels,

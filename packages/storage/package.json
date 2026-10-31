@@ -7,7 +7,8 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@mindkid/config": "workspace:*"
+    "@mindkid/config": "workspace:*",
+    "sharp": "catalog:"
   },
   "imports": {
     "#src/*": "./src/*.ts",

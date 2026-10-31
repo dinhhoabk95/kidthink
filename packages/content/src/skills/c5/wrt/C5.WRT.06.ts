@@ -5,8 +5,8 @@ export const C5_WRT_06_IDENTITY: SkillIdentity = {
   strand_code: "C5.WRT",
   competency_code: "C5",
   name: "Viết tên mình",
-  age_min: 6,
-  age_max: 7,
+  age_min: 5,
+  age_max: 6,
   difficulty: 4,
   thinking_processes: ["recall", "create"],
   tier: "advanced",
@@ -43,14 +43,16 @@ export const C5_WRT_06_DATASET: SkillDataset = {
   items: [
     {
       id: "wrt_chu_cai_dau",
-      label: "chữ cái đầu tên mình",
+      label: "chữ cái đầu tên",
       image: {
         kind: "emoji",
         ref: "🔤",
       },
       category: {
-        type: "viết tên",
+        type: "nhận biết tên",
       },
+      value: 1,
+      contrast_group: "primary",
     },
     {
       id: "wrt_the_ten",
@@ -60,41 +62,136 @@ export const C5_WRT_06_DATASET: SkillDataset = {
         ref: "🏷️",
       },
       category: {
-        type: "viết tên",
+        type: "nhận biết tên",
       },
+      value: 2,
+      contrast_group: "primary",
     },
     {
-      id: "wrt_to_ten_minh",
-      label: "tô theo tên của bé",
+      id: "wrt_bien_ten",
+      label: "bảng tên cài áo",
       image: {
         kind: "emoji",
-        ref: "✍️",
+        ref: "📛",
       },
       category: {
-        type: "viết tên",
+        type: "nhận biết tên",
       },
+      value: 3,
+      contrast_group: "primary",
     },
     {
-      id: "wrt_viet_ten_tren_vo",
-      label: "viết tên lên nhãn vở",
-      image: {
-        kind: "emoji",
-        ref: "📓",
-      },
-      category: {
-        type: "viết tên",
-      },
-    },
-    {
-      id: "wrt_chu_ky_cua_be",
-      label: "chữ ký đáng yêu của bé",
+      id: "wrt_ngoi_sao_khen",
+      label: "ngôi sao điểm tốt",
       image: {
         kind: "emoji",
         ref: "⭐",
       },
       category: {
-        type: "viết tên",
+        type: "nhận biết tên",
       },
+      value: 4,
+      contrast_group: "primary",
+    },
+    {
+      id: "wrt_to_ten_minh",
+      label: "tô theo tên bé",
+      image: {
+        kind: "emoji",
+        ref: "✍️",
+      },
+      category: {
+        type: "tập viết tên",
+      },
+      value: 5,
+      contrast_group: "contrast",
+    },
+    {
+      id: "wrt_viet_ten_tren_vo",
+      label: "viết tên lên vở",
+      image: {
+        kind: "emoji",
+        ref: "📓",
+      },
+      category: {
+        type: "tập viết tên",
+      },
+      value: 6,
+      contrast_group: "contrast",
+    },
+    {
+      id: "wrt_chuc_mung",
+      label: "viết tên lên thiệp",
+      image: {
+        kind: "emoji",
+        ref: "💌",
+      },
+      category: {
+        type: "tập viết tên",
+      },
+      value: 7,
+      contrast_group: "contrast",
+    },
+    {
+      id: "wrt_hop_but",
+      label: "ghi tên vào hộp bút",
+      image: {
+        kind: "emoji",
+        ref: "✏️",
+      },
+      category: {
+        type: "tập viết tên",
+      },
+      value: 8,
+      contrast_group: "contrast",
+    },
+  ],
+  axes: {
+    category: {
+      values: ["nhận biết tên", "tập viết tên"],
+      ordered: true,
+    },
+  },
+  relations: [
+    {
+      type: "pair",
+      source_id: "wrt_chu_cai_dau",
+      target_id: "wrt_the_ten",
+    },
+    {
+      type: "pair",
+      source_id: "wrt_bien_ten",
+      target_id: "wrt_ngoi_sao_khen",
+    },
+    {
+      type: "pair",
+      source_id: "wrt_to_ten_minh",
+      target_id: "wrt_viet_ten_tren_vo",
+    },
+    {
+      type: "pair",
+      source_id: "wrt_chuc_mung",
+      target_id: "wrt_hop_but",
+    },
+    {
+      type: "contrast",
+      source_id: "wrt_chu_cai_dau",
+      target_id: "wrt_to_ten_minh",
+    },
+    {
+      type: "contrast",
+      source_id: "wrt_the_ten",
+      target_id: "wrt_viet_ten_tren_vo",
+    },
+    {
+      type: "contrast",
+      source_id: "wrt_bien_ten",
+      target_id: "wrt_chuc_mung",
+    },
+    {
+      type: "contrast",
+      source_id: "wrt_ngoi_sao_khen",
+      target_id: "wrt_hop_but",
     },
   ],
   ladder: [
@@ -131,9 +228,12 @@ export const C5_WRT_06_DATASET: SkillDataset = {
   ordering: [
     "wrt_chu_cai_dau",
     "wrt_the_ten",
+    "wrt_bien_ten",
+    "wrt_ngoi_sao_khen",
     "wrt_to_ten_minh",
     "wrt_viet_ten_tren_vo",
-    "wrt_chu_ky_cua_be",
+    "wrt_chuc_mung",
+    "wrt_hop_but",
   ],
 };
 
@@ -158,67 +258,11 @@ export const C5_WRT_06_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-WRT-SIZE-0001",
-      template: "GT-009",
-      band: "5-6",
-      difficulty: 3,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-SIZE-0002",
-      template: "GT-009",
-      band: "5-6",
-      difficulty: 4,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-PUZZ-0001",
-      template: "GT-010",
-      band: "5-6",
-      difficulty: 3,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-PUZZ-0002",
-      template: "GT-010",
-      band: "5-6",
-      difficulty: 4,
-      theme: "ocean",
-      rounds: 3,
-    },
-    {
       code: "GL-C5-WRT-MEMO-0001",
       template: "GT-012",
       band: "5-6",
       difficulty: 3,
       theme: "food",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-MEMO-0002",
-      template: "GT-012",
-      band: "5-6",
-      difficulty: 4,
-      theme: "vehicle",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-BOND-0001",
-      template: "GT-018",
-      band: "5-6",
-      difficulty: 3,
-      theme: "art",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRT-BOND-0002",
-      template: "GT-018",
-      band: "5-6",
-      difficulty: 4,
-      theme: "space",
       rounds: 3,
     },
   ],

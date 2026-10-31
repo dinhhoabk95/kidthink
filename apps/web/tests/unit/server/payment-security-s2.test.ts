@@ -333,7 +333,7 @@ describe("Task #313 S2 — Payment Proof Soft-Unlock, VietQR Fail-Closed & Entit
     await expect(
       requestExportJob(
         77,
-        "lesson_plan",
+        "curriculum_plan",
         "00000000-0000-4000-8000-000000000099"
       )
     ).rejects.toMatchObject({

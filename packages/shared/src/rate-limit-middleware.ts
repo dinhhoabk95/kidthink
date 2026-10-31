@@ -15,6 +15,8 @@ export interface RateLimitRequestInput {
   remoteIp: string;
   accountIdentifier?: string; // email, user_id, or manager_id
   failedAttempts?: number;
+  /** Skip Axis 1 IP deduction when IP was already checked earlier in the same request. */
+  skipIpCheck?: boolean;
 }
 
 export interface RateLimitResponsePayload {
@@ -61,24 +63,26 @@ export async function enforceTwoAxisRateLimit(
   try {
     const failOpen = cfg.failMode !== "closed";
     // Axis 1: IP Rate Limit
-    const ipKey = `ip:${cfg.className}:${safeIp}`;
-    const ipCheck: RateLimitCheckResult = await checkRateLimit(
-      ipKey,
-      cfg.ipLimit,
-      cfg.windowSeconds,
-      failOpen
-    );
+    if (!input.skipIpCheck) {
+      const ipKey = `ip:${cfg.className}:${safeIp}`;
+      const ipCheck: RateLimitCheckResult = await checkRateLimit(
+        ipKey,
+        cfg.ipLimit,
+        cfg.windowSeconds,
+        failOpen
+      );
 
-    if (!ipCheck.allowed) {
-      return {
-        statusCode: 429,
-        headers: { "Retry-After": String(ipCheck.resetSeconds) },
-        body: {
-          code: "RATE_LIMITED",
-          message: "Bạn thao tác hơi nhanh. Vui lòng thử lại sau ít phút.",
-          details: { retry_after_s: ipCheck.resetSeconds },
-        },
-      };
+      if (!ipCheck.allowed) {
+        return {
+          statusCode: 429,
+          headers: { "Retry-After": String(ipCheck.resetSeconds) },
+          body: {
+            code: "RATE_LIMITED",
+            message: "Bạn thao tác hơi nhanh. Vui lòng thử lại sau ít phút.",
+            details: { retry_after_s: ipCheck.resetSeconds },
+          },
+        };
+      }
     }
 
     // Axis 2: Account / Identifier Rate Limit (if configured)

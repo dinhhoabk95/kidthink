@@ -7,7 +7,7 @@ import {
   loadGoLiveConfig,
 } from "#src/gates/go-live-readiness";
 import type { MvpCurriculumConfig } from "#src/seed-master/roadmap-curricula";
-import type { ContentSeed, LessonSeed } from "#src/types";
+import type { ContentSeed } from "#src/types";
 
 describe("Cổng Điều Kiện Sẵn Sàng Go-Live — Task #125 & #310 (BR-GLR-01..09)", () => {
   const mockConfig: GoLiveConfig = {
@@ -17,7 +17,6 @@ describe("Cổng Điều Kiện Sẵn Sàng Go-Live — Task #125 & #310 (BR-GLR
     thresholds: {
       engine_render_coverage_percent: 100,
       longest_flow_code: "CUR-J42",
-      lesson_supply_target: 126,
       min_levels_per_skill: 2,
       content_depth_step: 0,
     },
@@ -38,36 +37,6 @@ describe("Cổng Điều Kiện Sẵn Sàng Go-Live — Task #125 & #310 (BR-GLR
       weekGoals: [],
     },
   ];
-
-  function createMockLessons(count = 126, skill = "C1.CNT.01"): LessonSeed[] {
-    return Array.from({ length: count }, (_, i) => ({
-      kind: "lesson",
-      header: {
-        code: `LES-TEST-${String(i + 1).padStart(3, "0")}`,
-        content_version: 1,
-        title: `Bài ${i + 1}`,
-        guide: {
-          outcome: "Kết quả mong đợi",
-          preparation: ["Chuẩn bị"],
-          opening: "Bắt đầu bài học",
-          if_child_succeeds: "Khen ngợi trẻ",
-          if_child_needs_help: "Hướng dẫn từng bước",
-        },
-        target_age_min: 3,
-        target_age_max: 6,
-        estimated_minutes: 15,
-        access_tier: "free",
-        skill_codes: [skill],
-        learning_objective_codes: [],
-        activity_codes: [],
-        what_tags: ["concept"],
-        thinking_tags: ["count"],
-        theme_tag: "nature",
-        origin: "human",
-        authored_in: "repo_seed",
-      },
-    }));
-  }
 
   function createMockGameLevels(
     engines: string[],
@@ -106,7 +75,6 @@ describe("Cổng Điều Kiện Sẵn Sàng Go-Live — Task #125 & #310 (BR-GLR
 
   describe("Kịch bản cả hai trục đạt -> Sẵn sàng go-live", () => {
     it("BR-GLR-04, BR-GLR-07, BR-GLR-08, BR-GLR-09: Khi cả hai trục đạt -> XANH, đếm động số engine và kèm lưu ý BR-GLR-07", () => {
-      const lessons = createMockLessons(126, "C1.CNT.01");
       const gameLevels = createMockGameLevels(
         mockConfig.active_engines,
         3,
@@ -119,12 +87,11 @@ describe("Cổng Điều Kiện Sẵn Sàng Go-Live — Task #125 & #310 (BR-GLR
         implementedRenderEngineIds: ["GT-001", "GT-002", "GT-003"],
         depthPassingEngineIds: ["GT-001", "GT-002", "GT-003"],
         curriculaConfigs: mockCurricula,
-        lessons,
         gameLevels,
       });
 
       expect(res.isGameAxisPassed).toBe(true);
-      expect(res.isLessonAxisPassed).toBe(true);
+      expect(res.isCurriculumAxisPassed).toBe(true);
       expect(res.isPassed).toBe(true);
       expect(res.violations.length).toBe(0);
 
@@ -142,7 +109,6 @@ describe("Cổng Điều Kiện Sẵn Sàng Go-Live — Task #125 & #310 (BR-GLR
 
   describe("Các Ca Âm Bắt Buộc (BR-GLR-01..09)", () => {
     it("Ca âm 1: Vượt sàn MVP 120 level (228 level) nhưng thiếu render() -> ĐỎ (BR-GLR-01 / BR-ERC-01)", () => {
-      const lessons = createMockLessons(126);
       const gameLevels = createMockGameLevels(mockConfig.active_engines, 76); // 228 levels > 120 MVP floor
 
       const res = evaluateGoLiveReadiness({
@@ -151,7 +117,6 @@ describe("Cổng Điều Kiện Sẵn Sàng Go-Live — Task #125 & #310 (BR-GLR
         implementedRenderEngineIds: ["GT-001", "GT-002"], // GT-003 thiếu render
         depthPassingEngineIds: ["GT-001", "GT-002", "GT-003"],
         curriculaConfigs: mockCurricula,
-        lessons,
         gameLevels,
       });
 
@@ -162,7 +127,6 @@ describe("Cổng Điều Kiện Sẵn Sàng Go-Live — Task #125 & #310 (BR-GLR
     });
 
     it("Ca âm 2: Một engine tụt dưới sàn nội dung -> ĐỎ (BR-ECD-01)", () => {
-      const lessons = createMockLessons(126);
       const gameLevels = createMockGameLevels(mockConfig.active_engines);
 
       const res = evaluateGoLiveReadiness({
@@ -171,7 +135,6 @@ describe("Cổng Điều Kiện Sẵn Sàng Go-Live — Task #125 & #310 (BR-GLR
         implementedRenderEngineIds: ["GT-001", "GT-002", "GT-003"],
         depthPassingEngineIds: ["GT-001", "GT-002"], // GT-003 thiếu sàn nội dung
         curriculaConfigs: mockCurricula,
-        lessons,
         gameLevels,
       });
 
@@ -180,27 +143,28 @@ describe("Cổng Điều Kiện Sẵn Sàng Go-Live — Task #125 & #310 (BR-GLR
       expect(res.violations.some((v) => v.includes("BR-ECD-01"))).toBe(true);
     });
 
-    it("Ca âm 3: Cung lesson tụt xuống 125/126 -> ĐỎ (BR-LCD-01)", () => {
-      const lessons = createMockLessons(125); // Thiếu 1 lesson
+    it("Ca âm 3: Chương trình dài nhất chưa published -> ĐỎ (BR-LCD-01)", () => {
       const gameLevels = createMockGameLevels(mockConfig.active_engines);
+      const draftCurricula = mockCurricula.map((c) => ({
+        ...c,
+        status: "draft" as const,
+      }));
 
       const res = evaluateGoLiveReadiness({
         config: mockConfig,
         activeEngineIds: ["GT-001", "GT-002", "GT-003"],
         implementedRenderEngineIds: ["GT-001", "GT-002", "GT-003"],
         depthPassingEngineIds: ["GT-001", "GT-002", "GT-003"],
-        curriculaConfigs: mockCurricula,
-        lessons,
+        curriculaConfigs: draftCurricula,
         gameLevels,
       });
 
-      expect(res.isLessonAxisPassed).toBe(false);
+      expect(res.isCurriculumAxisPassed).toBe(false);
       expect(res.isPassed).toBe(false);
       expect(res.violations.some((v) => v.includes("BR-LCD-01"))).toBe(true);
     });
 
     it("Ca âm 4: Một kỹ năng tụt xuống 1 level (< 2) -> ĐỎ (BR-LCD-10)", () => {
-      const lessons = createMockLessons(126, "C1.CNT.01");
       const gameLevels = createMockGameLevels(["GT-001"], 1, "C1.CNT.01"); // Chỉ 1 level duy nhất cho C1.CNT.01
 
       const res = evaluateGoLiveReadiness({
@@ -209,31 +173,32 @@ describe("Cổng Điều Kiện Sẵn Sàng Go-Live — Task #125 & #310 (BR-GLR
         implementedRenderEngineIds: ["GT-001", "GT-002", "GT-003"],
         depthPassingEngineIds: ["GT-001", "GT-002", "GT-003"],
         curriculaConfigs: mockCurricula,
-        lessons,
         gameLevels,
       });
 
-      expect(res.isLessonAxisPassed).toBe(false);
+      expect(res.isCurriculumAxisPassed).toBe(false);
       expect(res.isPassed).toBe(false);
       expect(res.violations.some((v) => v.includes("BR-LCD-10"))).toBe(true);
     });
 
-    it("Ca âm 5: Trục game đạt, trục giáo án không -> ĐỎ (BR-GLR-09)", () => {
-      const lessons = createMockLessons(81); // Trục giáo án chỉ có 81 lesson
+    it("Ca âm 5: Trục game đạt, trục chương trình không -> ĐỎ (BR-GLR-09)", () => {
       const gameLevels = createMockGameLevels(mockConfig.active_engines, 3);
+      const draftCurricula = mockCurricula.map((c) => ({
+        ...c,
+        status: "draft" as const,
+      }));
 
       const res = evaluateGoLiveReadiness({
         config: mockConfig,
         activeEngineIds: ["GT-001", "GT-002", "GT-003"],
         implementedRenderEngineIds: ["GT-001", "GT-002", "GT-003"],
         depthPassingEngineIds: ["GT-001", "GT-002", "GT-003"],
-        curriculaConfigs: mockCurricula,
-        lessons,
+        curriculaConfigs: draftCurricula,
         gameLevels,
       });
 
       expect(res.isGameAxisPassed).toBe(true);
-      expect(res.isLessonAxisPassed).toBe(false);
+      expect(res.isCurriculumAxisPassed).toBe(false);
       expect(res.isPassed).toBe(false); // Cấm xanh khi chỉ 1 trục đạt
     });
 
@@ -244,7 +209,6 @@ describe("Cổng Điều Kiện Sẵn Sàng Go-Live — Task #125 & #310 (BR-GLR
         implementedRenderEngineIds: [],
         depthPassingEngineIds: [],
         curriculaConfigs: [],
-        lessons: [],
         gameLevels: [],
       });
 
@@ -253,7 +217,6 @@ describe("Cổng Điều Kiện Sẵn Sàng Go-Live — Task #125 & #310 (BR-GLR
     });
 
     it("Ca âm 7: Thêm engine active hoặc level ngoài danh sách phạm vi -> ĐỎ (BR-GLR-05)", () => {
-      const lessons = createMockLessons(126);
       const gameLevels = createMockGameLevels([
         ...mockConfig.active_engines,
         "GT-014",
@@ -265,7 +228,6 @@ describe("Cổng Điều Kiện Sẵn Sàng Go-Live — Task #125 & #310 (BR-GLR
         implementedRenderEngineIds: ["GT-001", "GT-002", "GT-003"],
         depthPassingEngineIds: ["GT-001", "GT-002", "GT-003"],
         curriculaConfigs: mockCurricula,
-        lessons,
         gameLevels,
       });
 
@@ -275,7 +237,6 @@ describe("Cổng Điều Kiện Sẵn Sàng Go-Live — Task #125 & #310 (BR-GLR
     });
 
     it("Ca âm 8: Level có content_pack không khớp content_contract -> ĐỎ (BR-GLR-02 / BR-GTC-10)", () => {
-      const lessons = createMockLessons(126);
       const gameLevels = createMockGameLevels(mockConfig.active_engines);
       const first = gameLevels[0];
       if (!first) {
@@ -295,7 +256,6 @@ describe("Cổng Điều Kiện Sẵn Sàng Go-Live — Task #125 & #310 (BR-GLR
         implementedRenderEngineIds: ["GT-001", "GT-002", "GT-003"],
         depthPassingEngineIds: ["GT-001", "GT-002", "GT-003"],
         curriculaConfigs: mockCurricula,
-        lessons,
         gameLevels: brokenLevels,
       });
 
@@ -305,7 +265,6 @@ describe("Cổng Điều Kiện Sẵn Sàng Go-Live — Task #125 & #310 (BR-GLR
     });
 
     it("Ca âm 9: Level gắn theme_tag ngoài từ vựng đóng hoặc sai band tuổi -> ĐỎ (BR-CTR-01 / BR-ECD-13)", () => {
-      const lessons = createMockLessons(126);
       const gameLevels = createMockGameLevels(mockConfig.active_engines);
       const first = gameLevels[0];
       if (!first) {
@@ -330,7 +289,6 @@ describe("Cổng Điều Kiện Sẵn Sàng Go-Live — Task #125 & #310 (BR-GLR
         implementedRenderEngineIds: ["GT-001", "GT-002", "GT-003"],
         depthPassingEngineIds: ["GT-001", "GT-002", "GT-003"],
         curriculaConfigs: mockCurricula,
-        lessons,
         gameLevels: badThemeAndBandLevels,
       });
 

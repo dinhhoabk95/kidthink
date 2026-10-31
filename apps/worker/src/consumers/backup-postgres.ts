@@ -162,7 +162,7 @@ export async function runPostgresBackup(
       .where(eq(backupLog.id, log.id));
 
     pruneLocalDumps(directory);
-  } catch (error: unknown) {
+  } catch (error) {
     const rawMessage = error instanceof Error ? error.message : String(error);
     const message = rawMessage.replace(
       /(:\/\/[^:\s/]+:)[^@\s]+@/g,

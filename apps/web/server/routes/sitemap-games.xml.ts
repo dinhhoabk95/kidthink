@@ -1,6 +1,5 @@
 import { requireEnv } from "@mindkid/config";
 import { gameLevels, getOwnerDb } from "@mindkid/db";
-import { eq } from "drizzle-orm";
 import { defineEventHandler, setHeader } from "h3";
 
 export default defineEventHandler(async (event) => {
@@ -18,8 +17,7 @@ export default defineEventHandler(async (event) => {
         code: gameLevels.code,
         updatedAt: gameLevels.updatedAt,
       })
-      .from(gameLevels)
-      .where(eq(gameLevels.status, "published"));
+      .from(gameLevels);
   } catch (_err) {
     // Fallback if db offline or during static compilation
     levels = [];

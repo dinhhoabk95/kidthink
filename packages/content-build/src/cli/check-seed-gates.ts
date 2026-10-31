@@ -8,15 +8,11 @@
  * Invariant: Strict TypeScript — NO `any`, NO `unknown`.
  */
 
-import { existsSync, readFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
-import { repoPath } from "@mindkid/config/paths";
 import { SKILL_DATASETS } from "@mindkid/content";
 import { ALL_SEED_LEVELS } from "../catalog.js";
 import { runEightGates } from "../gates/runner.js";
 import type { GateIssue, GateResult } from "../types.js";
-
-export const BASELINE_PATH = repoPath("scripts", "seed-gates-baseline.json");
 
 export interface SeedGatesBaseline {
   readonly maxGate9Violations: number;
@@ -41,19 +37,9 @@ export interface SeedGatesReport {
 }
 
 export function readSeedGatesBaseline(): SeedGatesBaseline {
-  if (!existsSync(BASELINE_PATH)) {
-    return {
-      maxGate9Violations: 0,
-      maxTotalViolations: 0,
-    };
-  }
-  const raw = JSON.parse(readFileSync(BASELINE_PATH, "utf-8")) as {
-    maxGate9Violations?: number;
-    maxTotalViolations?: number;
-  };
   return {
-    maxGate9Violations: raw.maxGate9Violations ?? 0,
-    maxTotalViolations: raw.maxTotalViolations ?? 0,
+    maxGate9Violations: 0,
+    maxTotalViolations: 0,
   };
 }
 

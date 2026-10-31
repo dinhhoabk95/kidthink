@@ -20,7 +20,7 @@ import {
   formatGoLiveReport,
   loadGoLiveConfig,
 } from "#src/gates/go-live-readiness";
-import { ALL_SEED_LESSONS, ALL_SEED_LEVELS } from "#src/index";
+import { ALL_SEED_LEVELS } from "#src/index";
 import { ROADMAP_CURRICULA_CONFIGS } from "#src/seed-master/roadmap-curricula";
 
 const renderImplementedSchema = z.array(z.string());
@@ -63,7 +63,6 @@ export function runGoLiveGate(options?: { quiet?: boolean }): number {
     implementedRenderEngineIds: resolveImplementedRenderEngineIds(scope),
     depthPassingEngineIds: resolveDepthPassingEngineIds(scope),
     curriculaConfigs: ROADMAP_CURRICULA_CONFIGS,
-    lessons: [...ALL_SEED_LESSONS],
     gameLevels: ALL_SEED_LEVELS,
     enforceContractParse: true,
   });

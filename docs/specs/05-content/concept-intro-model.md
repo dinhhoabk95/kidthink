@@ -50,8 +50,8 @@ File này sở hữu **input format và ràng buộc biên tập**. Bề mặt c
 việc **một trò chơi có thể cần nhiều bài làm quen trước đó**, ở
 [`concept-intro-gate.md`](../04-play/concept-intro-gate.md).
 
-Khác biệt then chốt so với [`lesson-model.md`](lesson-model.md): lesson cần **người lớn ngồi
-cạnh 20–30 phút** và phần lớn giá trị nằm ngoài màn hình. Bài làm quen chạy **một mình trẻ
+Đặc điểm then chốt: thay vì cần **người lớn ngồi
+cạnh 20–30 phút**, bài làm quen chạy **một mình trẻ
 với máy**, trong dưới hai phút, ngay trước màn chơi.
 
 ## 2. Actors
@@ -85,7 +85,7 @@ Không có.
 |---|---|---|
 | `BR-CIM-01` (là một level) | Bài làm quen là một hàng `game_levels` với `template_code = 'GT-000'`. Cấm — **NEVER** dựng entity nội dung riêng cho nó | Versioning, tier, seeder, QA ảnh chụp, studio và engine runtime đã có sẵn cho level. Entity riêng là bản sao của tất cả những thứ đó, và bản sao sẽ drift |
 | `BR-CIM-02` (một chủ đề) | Một bài làm quen khai **đúng một** khối `content_pack.concept`, và mọi giá trị của nó thuộc **cùng một** strand | Quyết định `A-206-01` gắn theo strand vì một strand "đủ hẹp để 12 hành động phủ được". Đo lại 2026-09-05: strand `C1.NREC` có 12 kỹ năng trải ba dải số 0–5, 0–10, 11–20 — 21 giá trị, không phủ nổi bằng 12 hành động. Đơn vị đúng là **chủ đề** — `BR-CTM-02` (luật một chủ đề một strand). Mã nguồn khuôn `GT-000` vốn đã gắn theo mã kỹ năng từ đầu; luật này đi theo mã nguồn, không ngược lại |
-| `BR-CIM-03` (phân đoạn 2–3 chất liệu, ≤ 12 hành động) | Một `segment` có 2–3 chất liệu và 3–12 hành động. Một bài có 1–8 phân đoạn và tối đa **21** chất liệu phân biệt | Một chất liệu thì không có gì để phân biệt; trên 6 chất liệu trong **một mạch liền** thì vượt trí nhớ làm việc của trẻ 3 tuổi. Nhưng trần đó là trần của một mạch, không phải trần của một chủ đề: dãy số 0–10 có 11 giá trị và trẻ vẫn phải học đủ cả 11. Chia phân đoạn giữ được lý do gốc mà không cắt mất hai phần ba chủ đề. Trần chất liệu hạ từ 6 xuống **3** ngày 2026-09-06 vì `BR-CIM-19` thêm bước `echo`: mỗi chất liệu giờ tốn bốn hành động, nên 4 chất liệu là 16 hành động và vượt trần 12. Trần phân đoạn lên **8** theo cùng phép tính — chủ đề 21 giá trị chia 3 là 7 phân đoạn dạy cộng một phân đoạn ôn |
+| `BR-CIM-03` (phân đoạn 2–6 chất liệu, ≤ 12 hành động) | Một `segment` có 2–6 chất liệu (phân đoạn dạy 2–3, phân đoạn ôn 2–6) và 2–12 hành động. Một bài có 1–8 phân đoạn và tối đa **21** chất liệu phân biệt | Một chất liệu thì không có gì để phân biệt; trên 6 chất liệu trong **một mạch liền** thì vượt trí nhớ làm việc của trẻ 3 tuổi. Chia phân đoạn dạy 2–3 chất liệu giữ được mạch ngắn (mỗi chất liệu chỉ hỏi 1 lượt nhận diện xoay vần); phân đoạn ôn gộp 2–6 chất liệu và hỏi 2–3 câu `recall` đại diện nên tối thiểu là 2 hành động |
 | `BR-CIM-04` (mỗi chất liệu có tên nói được) | Mỗi asset BẮT BUỘC có `label` là tiếng Việt đọc lên được. `audio_path` là tuỳ chọn — thiếu thì runner đọc bằng TTS | Kênh dạy duy nhất mà trẻ chưa đọc chữ nhận được là kênh tai. Chất liệu không có tên nói được là chất liệu không dạy được |
 | `BR-CIM-05` (đổi một chiều) | Chất liệu cùng `contrast_group` chỉ được khác nhau ở **một** chiều: số lượng, hoặc hình, hoặc màu, hoặc âm — Cấm — **NEVER** hai chiều trở lên. Distractor của một step `recognise` BẮT BUỘC lấy trong cùng `contrast_group` với target | Nguyên tắc cô lập khó của Montessori. Đổi hai chiều thì trẻ không biết mình đang được dạy chiều nào; distractor ngoài nhóm biến bước nhận biết thành câu đố mẹo |
 | `BR-CIM-06` (trần 120 giây mỗi phân đoạn) | Mỗi phân đoạn ≤ 120 giây với trẻ trả lời ngay, và cuối mỗi phân đoạn là một chỗ trẻ dừng lại được rồi quay lại đúng chỗ đó | Bài làm quen đứng **giữa** trẻ và trò chơi. Trần thời lượng là để trẻ không bỏ cuộc, nên nó phải là trần của **một lần ngồi**, không phải trần của cả chủ đề. Chủ đề dài mà không có chỗ dừng thì trẻ bỏ ở giữa và mất sạch |
@@ -99,8 +99,8 @@ Không có.
 | `BR-CIM-15` (input format chung) | Mọi step trỏ chất liệu bằng `asset_id`. Cấm — **NEVER** nhúng nhãn, hình, hay đường dẫn audio thẳng vào một step | Đây là thứ làm ký tự, từ và hình dùng chung một khuôn. Nhúng thẳng thì mỗi loại chất liệu sinh một biến thể step, và người soạn phải học ba khuôn |
 | `BR-CIM-16` (ba loại chất liệu, đóng) | `kind ∈ glyph \| word \| image`. Thêm loại phải sửa spec này trước | Trục đóng thì cổng và runner đối chiếu được. Trục mở là chỗ loại thứ tư lọt vào mà không ai dựng đường render cho nó |
 | `BR-CIM-17` (từ phải có hình neo nghĩa) | Bài có asset `kind = 'word'` BẮT BUỘC có ít nhất một asset `kind = 'image'`, và có ít nhất một step `link` nối từ đó với hình | Trẻ chưa đọc không neo được nghĩa của một từ vào mặt chữ. Không có hình thì "mẹ" chỉ là hai nét vẽ |
-| `BR-CIM-18` (mỗi phân đoạn có kết, cả bài có ôn) | Mỗi `segment` BẮT BUỘC kết thúc bằng ít nhất một step `recall`. Phân đoạn cuối của bài BẮT BUỘC là **phân đoạn ôn**, gộp mọi giá trị đã dạy trong bài | `recall` là phép đo xếp chỗ của phân đoạn. Không có phân đoạn ôn thì trẻ học sáu giá trị rời rạc và chưa lần nào thấy chúng đứng cạnh nhau — mà chủ đề chính là chỗ chúng đứng cạnh nhau |
-| `BR-CIM-19` (tập nói theo) | Mỗi phân đoạn **không** phải phân đoạn ôn BẮT BUỘC có ít nhất một step `echo`. Một step `echo` trỏ một asset đã được `present` trước đó trong cùng bài, không có đáp án, không chấm, và Cấm — **NEVER** phát sinh event mang dữ liệu âm thanh | Nghe rồi chạm dạy trẻ **nhận ra** một cái tên; nói theo dạy trẻ **gọi** được nó. Chương trình tham chiếu tách hai bậc đó ra làm hai chế độ riêng, và bậc thứ hai là thứ corpus hiện không có. Miễn cho phân đoạn ôn vì ôn là đo xếp chỗ, không phải dạy thêm |
+| `BR-CIM-18` (mỗi phân đoạn có kết, cả bài có ôn) | Mỗi `segment` BẮT BUỘC kết thúc bằng ít nhất một step `recall`. Phân đoạn cuối của bài BẮT BUỘC là **phân đoạn ôn**, gộp các giá trị đã dạy trong bài và hỏi 2–3 step `recall` đại diện xoay vần | `recall` là phép đo xếp chỗ của phân đoạn. Phân đoạn ôn đặt các giá trị cạnh nhau và chỉ hỏi 2–3 câu `recall` đại diện xoay vần để tránh lặp lại câu hỏi 3–4 lần liên tiếp |
+| `BR-CIM-19` (giới thiệu và tập nói theo) | Mỗi phân đoạn **không** phải phân đoạn ôn BẮT BUỘC có ít nhất một step `present` hoặc `echo`. Step `echo` chỉ sinh khi bài khai `speak_along = 'tap'`; khi `speak_along = 'off'` (mặc định), bộ chiếu bỏ `echo` trùng lặp. Một step `echo` trỏ một asset đã được `present` trước đó trong cùng bài, không có đáp án, không chấm, và Cấm — **NEVER** phát sinh event mang dữ liệu âm thanh | `present` giới thiệu chất liệu; `echo` dạy trẻ gọi tên thành tiếng khi bài bật `speak_along = 'tap'`. Khi `speak_along = 'off'`, bỏ bước `echo` để không bắt trẻ xem lại cùng một thẻ hai lần liên tiếp |
 | `BR-CIM-20` (nhiều tiết thì phải có thứ tự) | Chủ đề chia làm nhiều tiết thì mỗi tiết khai `content_pack.concept.sequence_no`, duy nhất và liên tục từ 1 — `BR-CTM-06` | Hàng đợi bài làm quen sắp theo topo trên kỹ năng; hai tiết của **cùng** một chủ đề không có cạnh nào giữa chúng, nên topo không phân biệt được. Thiếu số thứ tự thì trẻ học tiết 2 trước tiết 1 tuỳ thứ tự truy vấn trả về |
 
 ## 7. Data
@@ -126,8 +126,8 @@ liệu đi qua cùng một hình dạng asset, và mọi step trỏ chất liệ
 | `assets[]` | `array` | Kho chất liệu của cả bài, 2–21 phần tử — `BR-CIM-03` |
 | `segments[]` | `array` | 1–8 phân đoạn, có thứ tự — `BR-CIM-03` |
 | `segments[].segment_id` | `string` | Duy nhất trong bài; là mốc trẻ quay lại được — `BR-CIM-06` |
-| `segments[].asset_ids[]` | `array` | 2–3 mã chất liệu của phân đoạn — `BR-CIM-03` |
-| `segments[].steps[]` | `array` | 3–12 phần tử, có thứ tự — `BR-CIM-03` |
+| `segments[].asset_ids[]` | `array` | 2–6 mã chất liệu của phân đoạn (2–3 cho phân đoạn dạy) — `BR-CIM-03` |
+| `segments[].steps[]` | `array` | 2–12 phần tử, có thứ tự — `BR-CIM-03` |
 | `segments[].is_review` | `boolean` | Mặc định `false`. Phân đoạn cuối BẮT BUỘC `true` — `BR-CIM-18` |
 | `narration` | `object` | Mẫu câu mặc định cho từng hành động, mục 7.3 |
 | `requires_reintro` | `boolean` | Mặc định `false`. `true` thì lần publish này bắt trẻ chạy lại |
@@ -169,13 +169,11 @@ của chủ đề thành các phân đoạn 2–3 giá trị theo đúng thứ t
 
 ```
 present(mọi chất liệu của phân đoạn, theo thứ tự khai)
-  → echo(mọi chất liệu của phân đoạn)                     [BR-CIM-19]
-  → link(mỗi cặp word↔image trong phân đoạn)
-  → recognise(mọi chất liệu của phân đoạn)
-  → recall(mọi chất liệu của phân đoạn)
+  → [tuỳ chọn khi speak_along = 'tap'] echo(mọi chất liệu của phân đoạn)   [BR-CIM-19]
+  → hỏi 1 lượt nhận diện cho mỗi chất liệu của phân đoạn (xoay vần thứ tự và mẫu câu; các chất liệu đầu dùng recognise, chất liệu cuối dùng recall)
 ```
 
-Rồi thêm **một phân đoạn ôn** ở cuối, gồm `recognise` và `recall` trên mọi giá trị của chủ đề.
+Rồi thêm **một phân đoạn ôn** ở cuối (`is_review = true`), xoay vần ngẫu nhiên và hỏi 2–3 câu `recall` đại diện trên tập giá trị đã dạy của chủ đề.
 
 Người soạn được xen kẽ khác đi — dạy xong ký tự thì hỏi ngay ký tự, rồi mới sang từ — miễn
 là giữ `BR-CIM-14`: mỗi asset phải được `present` trước khi bị hỏi. Cấm — **NEVER** để bộ

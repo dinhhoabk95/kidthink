@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import type { RedirectTargetInput } from "@mindkid/shared";
-import { sanitizeRedirectTarget } from "../redirect-target.js";
+import { sanitizeRedirectTarget } from "#src/redirect-target";
 import { isOAuthProvider, type OAuthStatePayload } from "./types.js";
 
 export const OAUTH_COOKIE_NAME = "tm_oauth";

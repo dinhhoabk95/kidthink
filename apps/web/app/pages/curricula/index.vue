@@ -655,26 +655,26 @@
   };
   const router = useRouter();
   const api = useApi();
-  const {
-    data: curriculaData,
-    pending,
-    refresh,
-  } = await useFetch<{ items: PersonalCurriculumItem[] }>(
-    "/api/users/curricula",
-    { key: "personal-curricula-list" }
-  );
+  const [
+    { data: curriculaData, pending, refresh },
+    { data: childrenData },
+    { data: systemCurriculaData },
+  ] = await Promise.all([
+    useFetch<{ items: PersonalCurriculumItem[] }>("/api/users/curricula", {
+      key: "personal-curricula-list",
+    }),
+    useFetch<{
+      children?: ChildProfile[];
+      items?: ChildProfile[];
+    }>("/api/users/children", { key: "personal-curricula-children" }),
+    useFetch<ProgramListPublicResponse>("/api/guest/curricula", {
+      key: "personal-curricula-system-library",
+    }),
+  ]);
   const curriculaList = computed(() => curriculaData.value?.items || []);
-  const { data: childrenData } = await useFetch<{
-    children?: ChildProfile[];
-    items?: ChildProfile[];
-  }>("/api/users/children", { key: "personal-curricula-children" });
   const childrenList = computed(
     () => childrenData.value?.children || childrenData.value?.items || []
   );
-  const { data: systemCurriculaData } =
-    await useFetch<ProgramListPublicResponse>("/api/guest/curricula", {
-      key: "personal-curricula-system-library",
-    });
   const systemPrograms = computed<ProgramCardPublic[]>(() =>
     (systemCurriculaData.value?.groups || []).flatMap((grp) => grp.programs)
   );

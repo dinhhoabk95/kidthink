@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
     throw new ValidationError("VALIDATION_FAILED");
   }
 
-  const validTypes = ["game_level", "lesson", "curriculum", "activity"];
+  const validTypes = ["game_level", "curriculum"];
   if (!validTypes.includes(entityType)) {
     throw new ValidationError("INVALID_ENTITY_TYPE");
   }
@@ -28,11 +28,7 @@ export default defineEventHandler(async (event) => {
 
   await removeLibraryItem(db, {
     userId,
-    entityType: entityType as
-      | "game_level"
-      | "lesson"
-      | "curriculum"
-      | "activity",
+    entityType: entityType as "game_level" | "curriculum",
     entityId,
   });
 
