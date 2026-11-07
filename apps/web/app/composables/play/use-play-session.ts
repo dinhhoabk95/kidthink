@@ -14,6 +14,10 @@ import {
 import type { AgeBand } from "@mindkid/shared/client";
 import { nextTick, type Ref, ref } from "vue";
 import {
+  type CompletionOutcome,
+  presentCompletion,
+} from "~/composables/play/completion-outcome";
+import {
   createTimerBag,
   scheduleRoundOpenNarration,
   scheduleWonRoundCompletion,
@@ -315,9 +319,9 @@ export function usePlaySession(options: UsePlaySessionOptions) {
 
   async function resolveCompletionOutcome(
     sessionUuid: string
-  ): Promise<{ celebration: CelebrationTier; stars: number | null }> {
+  ): Promise<CompletionOutcome | null> {
     if (!roundRunner) {
-      return { celebration: "nice_try", stars: null };
+      return null;
     }
     try {
       await uploadTelemetrySafely(sessionUuid);
@@ -338,20 +342,30 @@ export function usePlaySession(options: UsePlaySessionOptions) {
         stars: typeof result.data.stars === "number" ? result.data.stars : null,
       };
     }
-    return { celebration: "nice_try", stars: null };
+    return null;
   }
 
   async function completeSessionOnFinish(): Promise<void> {
     const sessionUuid = cachedPayload?.session?.uuid;
-    if (sessionUuid && roundRunner) {
-      const outcome = await resolveCompletionOutcome(sessionUuid);
-      earnedCelebration.value = outcome.celebration;
-      earnedStars.value = outcome.stars;
-    } else {
+    if (!(sessionUuid && roundRunner)) {
       earnedCelebration.value = "nice_try";
       earnedStars.value = null;
+      showVictoryModal.value = true;
+      return;
     }
-    showVictoryModal.value = true;
+    // Modal hiện ngay; tier/sao cập nhật khi server trả lời (Task #313 B4).
+    await presentCompletion({
+      fetchOutcome: () => resolveCompletionOutcome(sessionUuid),
+      show: (outcome) => {
+        earnedCelebration.value = outcome.celebration;
+        earnedStars.value = outcome.stars;
+        showVictoryModal.value = true;
+      },
+      update: (outcome) => {
+        earnedCelebration.value = outcome.celebration;
+        earnedStars.value = outcome.stars;
+      },
+    });
   }
 
   function handleRoundWonInternal(): void {

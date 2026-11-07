@@ -16,7 +16,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 ## Phase 1 — Base flow
 - [x] B2 fallback không giọng giữ hint level + `focusIndex` (`systems/scaffolding.ts`)
 - [x] B3 validate content mọi round lúc load; lỗi factory → màn lỗi
-- [ ] B4 modal chiến thắng hiện ngay, tier/sao fetch nền
+- [x] B4 modal chiến thắng hiện ngay, tier/sao fetch nền
 - [ ] B5 pause dừng narration + timer; `game_resumed`; `duration_ms` trừ pause
 - [ ] B6 cooldown ~400ms sau verdict
 - [ ] B8 một đồng hồ hint, `hint_after_ms` theo round
