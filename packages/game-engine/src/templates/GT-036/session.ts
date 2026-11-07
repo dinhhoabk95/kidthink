@@ -24,7 +24,9 @@ import {
   spawnParticlesAtSlot,
   updateParticles,
 } from "#src/render/index";
+import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
+import { MoodPulse } from "#src/systems/mood-pulse";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
   detectRule,
@@ -48,6 +50,15 @@ const QUIET_OK: ActionResult = Object.freeze({
   valid: true,
   feedback: "none",
 });
+
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E036-10`, `BR-FBK-16`). */
+export const GT036_STORY_LINE =
+  "Họa Mi thích hát theo quy luật. Bé xâu các hạt thành một dãy lặp lại, rồi Họa Mi sẽ hát theo dãy của bé nhé!";
+
+/** Mascot vui ngắn sau mỗi hạt đặt. */
+export const GT036_HAPPY_MS = 500;
+/** Mascot khích lệ khi dãy chưa thành quy luật. */
+export const GT036_ENCOURAGE_MS = 1500;
 
 export class GT036Session extends TemplateGameSession<
   GT036Content,
@@ -74,6 +85,7 @@ export class GT036Session extends TemplateGameSession<
   sessionScore = 0;
   sessionStars = 0;
   private particles: Particle[] = [];
+  private readonly mood = new MoodPulse();
   private readonly sfxEngine: SFXEngine;
   private readonly paletteMap: ReadonlyMap<string, GT036PaletteItem>;
 
@@ -87,7 +99,17 @@ export class GT036Session extends TemplateGameSession<
     this.sfxEngine = new SFXEngine();
   }
 
+  override storyLine(): string {
+    return GT036_STORY_LINE;
+  }
+
+  /** Vui sau mỗi hạt, khích lệ khi dãy chưa thành quy luật (`BR-E036-10`). */
+  override mascotMood(): MascotPose | null {
+    return this.isWon ? null : this.mood.current();
+  }
+
   setupEntities(): void {
+    this.mood.clear();
     this.placedItems = new Array(this.content.track_length).fill(null);
     this.selectedPaletteId = this.content.palette[0]?.id ?? null;
     this.submitted = false;
@@ -314,6 +336,9 @@ export class GT036Session extends TemplateGameSession<
     this.submitted = false;
     this.detectedRule = null;
     this.sfxEngine.play("tap");
+    // Tiếng hạt như nhau mọi hạt: bài mở, không có hạt "đúng" (`BR-E036-10`).
+    this.queueSfx("bead_click");
+    this.mood.set("happy", GT036_HAPPY_MS);
 
     this.recordEvent("element_placed", {
       slot_index: slotIdx,
@@ -404,9 +429,11 @@ export class GT036Session extends TemplateGameSession<
 
     // Chưa có luật: tiếng nhẹ như mọi lần đặt, các ô đã đặt sáng mời làm tiếp.
     this.sfxEngine.play("tap");
+    this.mood.set("encourage", GT036_ENCOURAGE_MS);
   }
 
-  update(_deltaMs: number): void {
+  update(deltaMs: number): void {
+    this.mood.tick(deltaMs);
     if (this.particles.length > 0) {
       this.particles = updateParticles(this.particles);
     }

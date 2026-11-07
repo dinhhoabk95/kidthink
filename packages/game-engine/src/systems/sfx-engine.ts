@@ -52,7 +52,8 @@ export type SFXType =
   | "water_pour"
   | "yarn_pull"
   | "wood_beat"
-  | "robot_beep";
+  | "robot_beep"
+  | "bead_click";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -837,6 +838,19 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       volume: 0.05,
       durationSec: 0.08,
       rampOutSec: 0.05,
+    },
+  ],
+
+  /** GT-036: hạt gỗ xâu vào dây "cạch" nhẹ (`BR-E036-10`). */
+  bead_click: [
+    {
+      delaySec: 0,
+      type: "triangle",
+      freq: 880,
+      glideTo: { freq: 740, overSec: 0.05 },
+      volume: 0.06,
+      durationSec: 0.07,
+      rampOutSec: 0.04,
     },
   ],
 
