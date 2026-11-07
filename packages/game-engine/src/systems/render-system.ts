@@ -13,6 +13,9 @@ import {
 import { alpha } from "#src/render/color-utils.js";
 import { designTokens } from "./designTokens";
 
+/** Phần viền đậm lòi ra mỗi bên nét gợi ý. */
+const HINT_OUTLINE_EXTRA_PX = 3;
+
 const CLAY_SHADOW_COLOR = alpha(
   designTokens.colors.montessori.woodBorder,
   0.18
@@ -271,6 +274,22 @@ export class RenderSystem {
     ctx.restore();
   }
 
+  /**
+   * Tô đường dẫn hiện hành bằng nét gợi ý hai lớp (Task #313 Phase 2): viền đậm
+   * `amberDark` bên dưới, nét `amber` bên trên. Amber một mình chỉ ~1.6:1 trên
+   * nền sáng và gần trùng vòng retry (`retry[500]`); viền đậm kéo tương phản nét
+   * lên trên 3:1 và làm vòng gợi ý khác hẳn vòng retry một nét (`BR-FBK-06`).
+   * Người gọi tự đặt `setLineDash` và `beginPath` trước.
+   */
+  strokeHintPath(ctx: CanvasRenderingContext2D, lineWidth: number): void {
+    ctx.strokeStyle = designTokens.colors.montessori.amberDark;
+    ctx.lineWidth = lineWidth + HINT_OUTLINE_EXTRA_PX * 2;
+    ctx.stroke();
+    ctx.strokeStyle = designTokens.colors.montessori.amber;
+    ctx.lineWidth = lineWidth;
+    ctx.stroke();
+  }
+
   /** Montessori Scaffolding golden pulse ring animation for hints (BR-ENG-05) */
   drawScaffoldingHighlight(
     ctx: CanvasRenderingContext2D,
@@ -286,12 +305,10 @@ export class RenderSystem {
 
     ctx.save();
     ctx.translate(x, y);
-    ctx.strokeStyle = designTokens.colors.montessori.amber; // Honey Amber hint pulse
-    ctx.lineWidth = 4;
     ctx.setLineDash([8, 6]);
     ctx.beginPath();
     ctx.arc(0, 0, currentRadius, 0, Math.PI * 2);
-    ctx.stroke();
+    this.strokeHintPath(ctx, 4); // Honey Amber hint pulse, hai lớp để đủ tương phản
     ctx.restore();
   }
 
@@ -390,12 +407,10 @@ export class RenderSystem {
 
     ctx.save();
     ctx.translate(x, y);
-    ctx.strokeStyle = designTokens.colors.montessori.amber;
-    ctx.lineWidth = 4;
     ctx.setLineDash([8, 6]);
     ctx.beginPath();
     ctx.roundRect(-rw / 2, -rh / 2, rw, rh, 12);
-    ctx.stroke();
+    this.strokeHintPath(ctx, 4);
     ctx.restore();
   }
 

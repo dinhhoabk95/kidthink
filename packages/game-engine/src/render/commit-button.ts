@@ -93,6 +93,7 @@ const HINT_PULSE_MIN_ALPHA = 0.35;
 /** Vòng hổ phách quanh nút khi gợi ý trỏ vào nút hành động. */
 function drawHintRing(
   ctx: CanvasRenderingContext2D,
+  rs: RenderSystem,
   left: number,
   top: number,
   rect: { readonly w: number; readonly h: number },
@@ -106,8 +107,6 @@ function drawHintRing(
       (1 - HINT_PULSE_MIN_ALPHA) * (0.5 + 0.5 * Math.sin(phase * 2 * Math.PI));
   ctx.save();
   ctx.globalAlpha = pulse;
-  ctx.strokeStyle = designTokens.colors.montessori.amber;
-  ctx.lineWidth = HINT_RING_WIDTH_PX;
   ctx.beginPath();
   ctx.roundRect(
     left - HINT_RING_PAD_PX,
@@ -116,7 +115,7 @@ function drawHintRing(
     rect.h + 2 * HINT_RING_PAD_PX,
     radius + HINT_RING_PAD_PX
   );
-  ctx.stroke();
+  rs.strokeHintPath(ctx, HINT_RING_WIDTH_PX);
   ctx.restore();
 }
 
@@ -194,7 +193,7 @@ const ICON_PAINTERS: Record<
 
 export function drawCommitButton(
   ctx: CanvasRenderingContext2D,
-  _rs: RenderSystem,
+  rs: RenderSystem,
   rect: CommitButtonRect | ZoneRect,
   options: CommitButtonOptions
 ): void {
@@ -222,6 +221,6 @@ export function drawCommitButton(
   );
   ctx.restore();
   if (options.hint) {
-    drawHintRing(ctx, left, top, rect, radius, options.hint);
+    drawHintRing(ctx, rs, left, top, rect, radius, options.hint);
   }
 }
