@@ -119,3 +119,14 @@ export function resolveLayout(id: LayoutId): LayoutFn {
   }
   return fn;
 }
+
+/**
+ * Bàn cờ đúng `cols`×`rows` trên một trang (mê cung GT-013): ô `i` ở hàng
+ * `i / cols`, cột `i % cols`. Khác `resolveLayout("grid")` — layout đó tự chọn
+ * số cột theo band và phân trang, nên không giữ được toạ độ ô.
+ */
+export function resolveExactGridLayout(cols: number, rows: number): LayoutFn {
+  return placeInStage((input) =>
+    computeGridLayout(input, { exactGrid: { cols, rows } })
+  );
+}

@@ -2,7 +2,7 @@ import type { GT013Content, GT013Difficulty } from "./template.js";
 
 /**
  * Ba level mẫu ánh xạ tới ba dạng bài của workbook 09:
- * `WB09-D1` mê cung đường đơn · `WB09-D2` ngã ba có bẫy · `WB09-D3` thu thập vật phẩm. Cả ba là lưới 3×3 thưa tường: band 4-5 chỉ cần lưới nhỏ (`GT-013.md` §13), và lưới 4×4 ở khung chạy thử không có stage bị chồng hàng cuối lên hàng hai (bộ giải cử chỉ web không thắng nổi).
+ * `WB09-D1` mê cung đường đơn · `WB09-D2` ngã ba có bẫy · `WB09-D3` thu thập vật phẩm. Cả ba là lưới 3×3 thưa tường: band 4-5 chỉ cần lưới nhỏ (`GT-013.md` §13).
  *
  * Chúng sống ở đây, **không** đi qua `seed-content`, nên không tiêu hạn ngạch
  * competency (mục 3 của plan T99).

@@ -1,4 +1,8 @@
 import { describe, expect, it } from "vitest";
+import { GT013Generator } from "#src/generators/gt013";
+import { DEFAULT_LOGIC_SPACE } from "#src/layout/constants";
+import { computeStageZones } from "#src/layout/stage-zones";
+import { createRng } from "#src/rng/mulberry32";
 import { countDeadEnds } from "#src/systems/maze-system";
 import { GT013_FIXTURES } from "#src/templates/GT-013/fixtures";
 import { GT013Session } from "#src/templates/GT-013/session";
@@ -8,6 +12,10 @@ import GT013Template, {
   GT013ContentSchema,
   GT013DifficultySchema,
 } from "#src/templates/GT-013/template";
+import {
+  type SolverFixture,
+  solveWithWebGestures,
+} from "./gates/web-gesture-solver.js";
 
 function getFixture<T>(fixtures: readonly T[], index: number): T {
   const item = fixtures[index];
@@ -439,4 +447,104 @@ describe("GT-013 — ba bậc gợi ý (điều kiện nghiệm thu 15)", () => 
     expect(res?.valid).toBe(true);
     expect(session.getPath().at(-1)).toEqual({ row: 1, col: 0 });
   });
+});
+
+/** Lưới mở n×n, đầu góc trên-trái, đích góc dưới-phải. */
+function openGridSession(n: number, withStage = false): GT013Session {
+  const base = getFixture(GT013_FIXTURES, 0);
+  const session = new GT013Session(
+    {
+      ...base.content,
+      grid: {
+        rows: n,
+        cols: n,
+        walls: [],
+        start: { row: 0, col: 0 },
+        goal: { row: n - 1, col: n - 1 },
+      },
+      required_cells: [],
+    },
+    base.difficulty
+  );
+  if (withStage) {
+    const zones = computeStageZones({
+      logicW: 960,
+      logicH: 540,
+      ageBand: "5-6",
+      cssPerLogic: 1,
+      needsTray: false,
+      needsCommit: false,
+    });
+    session.prepareRound("5-6", DEFAULT_LOGIC_SPACE, zones.stage);
+  } else {
+    session.prepareRound("5-6");
+  }
+  return session;
+}
+
+describe("GT-013 — bố cục lưới khung không stage (band 5-6, lưới 4×4 tới 6×6)", () => {
+  for (const [n, withStage] of [
+    [3, false],
+    [4, false],
+    [5, false],
+    [6, false],
+    [3, true],
+    [5, true],
+    [6, true],
+  ] as const) {
+    it(`lưới ${n}×${n}${withStage ? " có stage" : ""}: đủ ${n * n} ô, mỗi ô một hàng/cột riêng, không ô nào chồng ô khác, cùng một trang`, () => {
+      const slots = openGridSession(n, withStage).slots;
+      expect(slots).toHaveLength(n * n);
+      expect(new Set(slots.map((s) => Math.round(s.y))).size).toBe(n);
+      expect(new Set(slots.map((s) => Math.round(s.x))).size).toBe(n);
+      expect(new Set(slots.map((s) => s.page)).size).toBe(1);
+      for (let i = 0; i < slots.length; i++) {
+        for (let j = i + 1; j < slots.length; j++) {
+          const a = slots[i];
+          const b = slots[j];
+          if (!(a && b)) {
+            continue;
+          }
+          const overlapX = Math.abs(a.x - b.x) < (a.w + b.w) / 2 - 0.5;
+          const overlapY = Math.abs(a.y - b.y) < (a.h + b.h) / 2 - 0.5;
+          expect(overlapX && overlapY).toBe(false);
+        }
+      }
+    });
+  }
+});
+
+describe("GT-013 — mê cung band 5-6 sinh ra giải được bằng cử chỉ web", () => {
+  it("5×5 và 6×6 qua nhiều seed đều thắng được", async () => {
+    const sizes = new Set<number>();
+    for (let seed = 1; seed <= 12; seed++) {
+      const level = GT013Generator.generate({
+        rng: createRng(seed),
+        age_band: "5-6",
+        theme: "school",
+        vocabulary: {
+          theme: "school",
+          nouns: Array.from({ length: 6 }, (_, i) => ({
+            emoji_ref: `EMJ-noun-${i}`,
+            label_vi: `Danh từ ${i}`,
+          })),
+        },
+      });
+      const content = GT013ContentSchema.parse(level.content_pack);
+      const difficulty = GT013DifficultySchema.parse(level.difficulty_params);
+      const grid = content.grid;
+      sizes.add(grid.rows);
+      const outcome = await solveWithWebGestures(
+        "GT-013",
+        {
+          content: content as SolverFixture["content"],
+          difficulty: difficulty as SolverFixture["difficulty"],
+          band: "5-6",
+        },
+        seed
+      );
+      expect(outcome, `seed ${seed} (${grid.rows}×${grid.rows})`).toBe("won");
+    }
+    expect([...sizes].sort()).toEqual([5, 6]);
+  }, 60_000);
 });

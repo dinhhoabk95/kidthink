@@ -35,6 +35,41 @@ function fitWithoutPaging(input: FitInput): { cols: number; rows: number } {
   return { cols, rows: Math.max(1, Math.min(rows, fitRows)) };
 }
 
+/** Bàn cờ đúng `cols`×`rows`, một trang, căn giữa; ô vuông vừa cả chiều rộng lẫn cao. */
+function computeExactGridSlots(
+  input: LayoutInput,
+  grid: { cols: number; rows: number },
+  area: { availW: number; availH: number; touchFloor: number }
+): Slot[] {
+  const cols = Math.max(1, grid.cols);
+  const rows = Math.max(1, grid.rows);
+  const fitW = (area.availW - (cols - 1) * SLOT_GAP_PX) / cols;
+  const fitH = (area.availH - (rows - 1) * SLOT_GAP_PX) / rows;
+  const cell = Math.max(area.touchFloor, Math.min(120, fitW, fitH));
+  const boardW = cols * cell + (cols - 1) * SLOT_GAP_PX;
+  const boardH = rows * cell + (rows - 1) * SLOT_GAP_PX;
+  const startX = SAFE_MARGIN_PX + (area.availW - boardW) / 2;
+  const startY = CONTENT_TOP_PX + (area.availH - boardH) / 2;
+  const slots: Slot[] = [];
+  const count = Math.min(input.slotCount, cols * rows);
+  for (let i = 0; i < count; i++) {
+    slots.push({
+      index: i,
+      x: Math.round(startX + (i % cols) * (cell + SLOT_GAP_PX) + cell / 2),
+      y: Math.round(
+        startY + Math.floor(i / cols) * (cell + SLOT_GAP_PX) + cell / 2
+      ),
+      w: Math.round(cell),
+      h: Math.round(cell),
+      hitW: Math.max(area.touchFloor, Math.round(cell)),
+      hitH: Math.max(area.touchFloor, Math.round(cell)),
+      page: 0,
+      role: "neutral",
+    });
+  }
+  return slots;
+}
+
 /**
  * Tính toán bố cục dạng lưới (grid / grid-2x4 / card-flip-grid / flex-wrap).
  * Tự động phân trang khi số ô vượt quá sức chứa mà không được thu nhỏ dưới sàn chạm (BR-LAY-04).
@@ -46,6 +81,13 @@ export function computeGridLayout(
     maxCols?: number;
     fixedRows?: number;
     aspectRatio?: number;
+    /**
+     * Bàn cờ đúng `cols`×`rows` trên một trang, ô thứ `i` ở hàng `i / cols`
+     * cột `i % cols` (mê cung GT-013). Bỏ trần số hàng/cột theo band và bỏ
+     * phân trang: bàn cờ phân trang hay đổi số cột thì ô chồng nhau và chỉ số
+     * ô không còn là toạ độ ô.
+     */
+    exactGrid?: { cols: number; rows: number };
   }
 ): Slot[] {
   // Che hằng ở phạm vi hàm: mọi phép tính bên dưới giữ nguyên tên, nhưng đọc
@@ -86,6 +128,14 @@ export function computeGridLayout(
       Math.floor((availH + SLOT_GAP_PX) / (minH + SLOT_GAP_PX))
     )
   );
+
+  if (options?.exactGrid) {
+    return computeExactGridSlots(input, options.exactGrid, {
+      availW,
+      availH,
+      touchFloor,
+    });
+  }
 
   let targetCols = options?.fixedCols;
   if (!targetCols) {

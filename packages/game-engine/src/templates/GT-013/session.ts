@@ -10,7 +10,7 @@ import {
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
-import { resolveLayout } from "#src/layout/registry";
+import { resolveExactGridLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 
 function toCellRole(
@@ -550,10 +550,12 @@ export class GT013Session extends TemplateGameSession<
   }
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
-    const layoutFn = resolveLayout("grid");
-    return layoutFn({
-      slotCount: this.content.grid.rows * this.content.grid.cols,
-      targetCount: this.content.grid.cols,
+    const { rows, cols } = this.content.grid;
+    return resolveExactGridLayout(
+      cols,
+      rows
+    )({
+      slotCount: rows * cols,
       ageBand,
       logic: this.logicSpace,
       stage: this.stageRect,

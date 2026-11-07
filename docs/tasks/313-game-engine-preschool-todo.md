@@ -46,7 +46,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 - [ ] 007 (còn lại) — cơ chế kéo/gộp vật thật giữa ô tổng và hai khay phần: viết lại session (toAction/getView/render, bài sinh nội dung `discrete-object`); quá lớn cho một commit, cần plan riêng
 - [ ] 010 (còn lại) — bộ sinh band 4-5 đã sang bảng giá một bước (Phase 4, BR-E010-05); fixture 4-5 ghim tay (hệ hai phương trình) và nội dung đã seed trong DB chưa đổi
 - [ ] 012 (còn lại) — N4/N6 hiện lại nhóm vật sau khi chọn đúng chưa có code (`flash_ms` co giãn ở bộ sinh đã xong ở Phase 4)
-- [ ] 013 (còn lại) — lưới 4×4 trở lên chưa có hàng riêng ở khung không stage (`resolveLayout("grid")` chồng hàng cuối lên hàng hai; band 5-6 sinh 5×5/6×6 chưa được bộ giải cử chỉ web kiểm)
+- [x] 013 (còn lại) — bàn cờ đúng `rows`×`cols` một trang qua `resolveExactGridLayout` (`BR-E013-08`): lỗi thật rộng hơn ghi chú cũ, `resolveLayout("grid")` chọn 4 cột cho lưới 3×3 nên chỉ số ô lệch toạ độ ô, và chồng hàng với lưới ≥4×4; band 5-6 (5×5/6×6) qua 12 seed đều thắng được bằng bộ giải cử chỉ web
 - [ ] 014 (còn lại) — ẩn số khối lượng khỏi vật khay/đĩa (đang in nên thành phép trừ): cần kích thước vật tỉ lệ khối lượng (BR-E014-03, hiện ô khay cùng cỡ) trước khi ẩn số, không thì bài không giải được; thuộc Phase 5
 
 - [ ] 015 (còn lại) — bộ sinh đã sửa (Phase 4); fixture ghim tay (#0 2×2 hai ô trống cùng đáp án, #1 ba ô cùng đáp án) chưa đổi vì nhiều test bám vào chúng; thang hint L1–L3 theo Task #301; GT-015#1-2 vẫn trong sổ nợ web-gesture (chưa có cử chỉ nhấc ký hiệu ra)
