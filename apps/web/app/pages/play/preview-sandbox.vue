@@ -6,6 +6,10 @@
     <canvas
       ref="canvasRef"
       :class="['game-canvas', { 'game-canvas--fill': isFill }]"
+      @pointercancel="handlePointerCancel"
+      @pointerdown="handlePointerDown"
+      @pointermove="handlePointerMove"
+      @pointerup="handlePointerUp"
     ></canvas>
   </div>
 </template>
@@ -13,8 +17,11 @@
 <script lang="ts" setup>
   import {
     computeZonesForSession,
+    drawActiveGestureOverlay,
     drawCommitButton,
+    drawFeedbackPulses,
     drawPromptZone,
+    FeedbackOverlay,
     type StageZones,
     TemplateGameSession,
   } from "@mindkid/game-engine";
@@ -23,27 +30,19 @@
     GameEngine,
     preloadGameSession,
   } from "@mindkid/game-engine/runtime";
-  import type { AgeBand } from "@mindkid/shared/client";
   import { onMounted, onUnmounted, ref } from "vue";
   import { useRoute } from "vue-router";
   import { definePageMeta } from "#imports";
   import { resolveZonePromptText } from "~/composables/play/play-prompt-zone";
+  import { useMascotSprites } from "~/composables/play/use-mascot-sprites";
+  import { usePlayGesture } from "~/composables/play/use-play-gesture";
   import { createSessionFactory } from "~/utils/game-session-factory";
-
-  type JsonPrimitive = string | number | boolean | null;
-  type JsonValue = JsonPrimitive | JsonObject | JsonArray;
-  interface JsonObject {
-    [key: string]: JsonValue;
-  }
-  type JsonArray = JsonValue[];
-
-  interface StudioUpdatePayload {
-    templateCode?: string;
-    levelData?: JsonObject;
-    ageBand?: AgeBand;
-    reducedMotion?: boolean;
-    muted?: boolean;
-  }
+  import {
+    buildDefaultPreviewPayload,
+    type JsonObject,
+    type JsonValue,
+    type StudioUpdatePayload,
+  } from "~/utils/preview-sandbox-payloads";
 
   interface StudioMessageData extends StudioUpdatePayload {
     type?: string;
@@ -60,12 +59,15 @@
   const errorMessage = ref<string | null>(null);
   /** `?fit=fill`: canvas lấp đầy khung (xem portrait, điện thoại ngang) thay vì hộp 16:9 của Studio. */
   const isFill = route.query.fit === "fill";
+  const mascotSprites = useMascotSprites();
+  const feedbackOverlay = new FeedbackOverlay();
 
   let engine: GameEngine | null = null;
   let currentConfig: EngineConfig | null = null;
   let stageZones: StageZones | null = null;
   let trustedParentOrigin = "";
   let startSeq = 0;
+  let replayTimer: ReturnType<typeof setTimeout> | undefined;
   let currentTemplateCode =
     typeof route.query.template === "string" && route.query.template.length > 0
       ? route.query.template
@@ -74,6 +76,58 @@
   function isJsonObject(val: JsonValue | undefined): val is JsonObject {
     return typeof val === "object" && val !== null && !Array.isArray(val);
   }
+
+  function handleRoundWon(): void {
+    feedbackOverlay.trigger(
+      "level_celebrate",
+      undefined,
+      performance.now(),
+      engine?.renderSystem.reducedMotion ?? false
+    );
+    clearTimeout(replayTimer);
+    replayTimer = setTimeout(() => {
+      if (currentConfig) {
+        startSession(currentConfig, currentTemplateCode);
+      }
+    }, 1400);
+  }
+
+  function handleRetryDisallowed(): void {
+    clearTimeout(replayTimer);
+    replayTimer = setTimeout(() => {
+      if (currentConfig) {
+        startSession(currentConfig, currentTemplateCode);
+      }
+    }, 600);
+  }
+
+  const gesture = usePlayGesture({
+    getEngine: () => engine,
+    canvasRef,
+    onRoundWon: handleRoundWon,
+    onRetryDisallowed: handleRetryDisallowed,
+    getStageZones: () => stageZones,
+    onPromptSpeakerTap: () => {
+      const prompt = resolveZonePromptText(engine?.activeSession);
+      if (prompt) {
+        engine?.audio.speakPrompt(prompt);
+      }
+    },
+    onFeedback: (kind, point) =>
+      feedbackOverlay.trigger(
+        kind,
+        point,
+        performance.now(),
+        engine?.renderSystem.reducedMotion ?? false
+      ),
+  });
+
+  const {
+    handlePointerDown,
+    handlePointerMove,
+    handlePointerUp,
+    handlePointerCancel,
+  } = gesture;
 
   async function startSession(
     config: EngineConfig,
@@ -86,6 +140,7 @@
 
     try {
       errorMessage.value = null;
+      feedbackOverlay.reset();
 
       await preloadGameSession(templateCode);
       if (seq !== startSeq || !canvasRef.value) {
@@ -101,6 +156,7 @@
       engine.start(canvasRef.value);
       applyStageZones(config);
       engine.onAfterRender = drawShellZones;
+      gesture.syncView();
 
       if (window.parent) {
         window.parent.postMessage(
@@ -173,9 +229,15 @@
     if (!stageZones) {
       return;
     }
+    const feedback = feedbackOverlay.snapshot(now, rs.reducedMotion);
     const prompt = resolveZonePromptText(session);
     if (prompt) {
-      drawPromptZone(ctx, rs, stageZones, { promptText: prompt });
+      drawPromptZone(ctx, rs, stageZones, {
+        promptText: prompt,
+        mascotPose: feedback.mascotPose,
+        mascotElapsedMs: feedback.mascotElapsedMs,
+        mascotSprites: mascotSprites.value,
+      });
     }
     if (session instanceof TemplateGameSession && session.needsCommit) {
       drawCommitButton(ctx, rs, stageZones.action, {
@@ -187,6 +249,11 @@
           : undefined,
       });
     }
+    const gestureVisual = gesture.getGestureVisualState?.(now);
+    if (gestureVisual) {
+      drawActiveGestureOverlay(ctx, rs, gestureVisual, now);
+    }
+    drawFeedbackPulses(ctx, feedback.pulses);
   }
 
   function parseConfigFromPayload(
@@ -231,6 +298,7 @@
       }
       engine.renderSystem.setupCanvas(canvasRef.value);
       applyStageZones(currentConfig, true);
+      gesture.syncView();
     }, RESIZE_DEBOUNCE_MS);
   }
 
@@ -280,287 +348,6 @@
       return false;
     }
     return false;
-  }
-
-  function buildDefaultPreviewPayload(
-    templateCode: string
-  ): StudioUpdatePayload {
-    switch (templateCode) {
-      case "GT-002":
-        return {
-          templateCode: "GT-002",
-          ageBand: "4-5",
-          levelData: {
-            code: "PREVIEW-GT-002",
-            content_pack: {
-              prompt: "Bé hãy chạm chọn tất cả các quả ngọt nhé",
-              items: [
-                {
-                  item_id: "i1",
-                  asset: { kind: "emoji", ref: "🍎" },
-                  is_target: true,
-                },
-                {
-                  item_id: "i2",
-                  asset: { kind: "emoji", ref: "🍌" },
-                  is_target: true,
-                },
-                {
-                  item_id: "i3",
-                  asset: { kind: "emoji", ref: "🥦" },
-                  is_target: false,
-                },
-              ],
-            },
-            difficulty_params: {
-              distractor_count: 1,
-              target_count: 2,
-              hint_after_ms: 10_000,
-              allow_retry: true,
-            },
-            theme_id: "default",
-          },
-        };
-      case "GT-003":
-        return {
-          templateCode: "GT-003",
-          ageBand: "3-4",
-          levelData: {
-            code: "PREVIEW-GT-003",
-            content_pack: {
-              prompt: "Bỏ bông hoa vào giỏ",
-              baskets: [
-                {
-                  basket_id: "b1",
-                  label: "Giỏ hoa",
-                  asset: { kind: "emoji", ref: "🧺" },
-                },
-              ],
-              items: [
-                {
-                  item_id: "i1",
-                  basket_id: "b1",
-                  asset: { kind: "emoji", ref: "🌸" },
-                },
-                {
-                  item_id: "i2",
-                  basket_id: "b1",
-                  asset: { kind: "emoji", ref: "🌼" },
-                },
-              ],
-            },
-            difficulty_params: {
-              distractor_count: 1,
-              target_count: 1,
-              hint_after_ms: 10_000,
-              allow_retry: true,
-            },
-            theme_id: "default",
-          },
-        };
-      case "GT-004":
-        return {
-          templateCode: "GT-004",
-          ageBand: "4-5",
-          levelData: {
-            code: "PREVIEW-GT-004",
-            content_pack: {
-              prompt: "Phân loại động vật và thực vật",
-              groups: [
-                {
-                  group_id: "g1",
-                  name: "Động vật",
-                  asset: { kind: "emoji", ref: "🐾" },
-                },
-                {
-                  group_id: "g2",
-                  name: "Trái cây",
-                  asset: { kind: "emoji", ref: "🍎" },
-                },
-              ],
-              items: [
-                {
-                  item_id: "i1",
-                  correct_group_id: "g1",
-                  asset: { kind: "emoji", ref: "🐱" },
-                },
-                {
-                  item_id: "i2",
-                  correct_group_id: "g1",
-                  asset: { kind: "emoji", ref: "🐶" },
-                },
-                {
-                  item_id: "i3",
-                  correct_group_id: "g2",
-                  asset: { kind: "emoji", ref: "🍎" },
-                },
-                {
-                  item_id: "i4",
-                  correct_group_id: "g2",
-                  asset: { kind: "emoji", ref: "🍌" },
-                },
-              ],
-            },
-            difficulty_params: {
-              item_count: 4,
-              distractor_count: 0,
-              hint_after_ms: 10_000,
-              allow_retry: true,
-              shuffle_items: true,
-            },
-            theme_id: "default",
-          },
-        };
-      case "GT-005":
-        return {
-          templateCode: "GT-005",
-          ageBand: "3-4",
-          levelData: {
-            code: "PREVIEW-GT-005",
-            content_pack: {
-              prompt: "Ghép cặp hai con vật giống nhau",
-              pairs: [
-                {
-                  pair_id: "p1",
-                  left: { item_id: "l1", asset: { kind: "emoji", ref: "🐱" } },
-                  right: { item_id: "r1", asset: { kind: "emoji", ref: "🐱" } },
-                },
-                {
-                  pair_id: "p2",
-                  left: { item_id: "l2", asset: { kind: "emoji", ref: "🐶" } },
-                  right: { item_id: "r2", asset: { kind: "emoji", ref: "🐶" } },
-                },
-              ],
-            },
-            difficulty_params: {
-              hint_after_ms: 10_000,
-              allow_retry: true,
-              shuffle_sides: true,
-            },
-            theme_id: "default",
-          },
-        };
-      case "GT-006":
-        return {
-          templateCode: "GT-006",
-          ageBand: "5-6",
-          levelData: {
-            code: "PREVIEW-GT-006",
-            content_pack: {
-              prompt: "Xếp các loài chim theo thứ tự đúng",
-              sequence: [
-                {
-                  step_id: "s1",
-                  order_index: 0,
-                  asset: { kind: "emoji", ref: "🐦" },
-                  label: "Chim nhỏ",
-                },
-                {
-                  step_id: "s2",
-                  order_index: 1,
-                  asset: { kind: "emoji", ref: "🕊️" },
-                  label: "Bồ câu",
-                },
-                {
-                  step_id: "s3",
-                  order_index: 2,
-                  asset: { kind: "emoji", ref: "🐧" },
-                  label: "Cánh cụt",
-                },
-              ],
-            },
-            difficulty_params: {
-              hint_after_ms: 15_000,
-              allow_retry: true,
-              shuffle_initial: true,
-            },
-            theme_id: "default",
-          },
-        };
-      case "GT-014":
-        return {
-          templateCode: "GT-014",
-          ageBand: "5-6",
-          levelData: {
-            code: "PREVIEW-GT-014",
-            content_pack: {
-              prompt: "Bé hãy chạm vào đĩa cân của loại quả nặng hơn nhé!",
-              goal: "pick_heavier",
-              left_pan: [
-                {
-                  item_id: "watermelon",
-                  asset: { kind: "emoji", ref: "🍉" },
-                  weight: 5,
-                },
-              ],
-              right_pan: [
-                {
-                  item_id: "apple",
-                  asset: { kind: "emoji", ref: "🍎" },
-                  weight: 1,
-                },
-              ],
-              tray: [
-                {
-                  item_id: "w1",
-                  asset: { kind: "emoji", ref: "1️⃣" },
-                  weight: 1,
-                },
-                {
-                  item_id: "w2",
-                  asset: { kind: "emoji", ref: "2️⃣" },
-                  weight: 2,
-                },
-              ],
-            },
-            difficulty_params: {
-              hint_after_ms: 10_000,
-              allow_retry: true,
-              weight_limit: 10,
-            },
-            theme_id: "default",
-          },
-        };
-      default:
-        return {
-          templateCode,
-          ageBand: "3-4",
-          levelData: {
-            code: `PREVIEW-${templateCode}`,
-            content_pack: {
-              prompt: "Tìm quả táo màu đỏ",
-              target_item: {
-                item_id: "apple_target",
-                asset: { kind: "emoji", ref: "🍎" },
-              },
-              options: [
-                {
-                  item_id: "apple_opt",
-                  asset: { kind: "emoji", ref: "🍎" },
-                  is_correct: true,
-                },
-                {
-                  item_id: "banana_opt",
-                  asset: { kind: "emoji", ref: "🍌" },
-                  is_correct: false,
-                },
-                {
-                  item_id: "orange_opt",
-                  asset: { kind: "emoji", ref: "🍊" },
-                  is_correct: false,
-                },
-              ],
-            },
-            difficulty_params: {
-              distractor_count: 2,
-              hint_after_ms: 8000,
-              allow_retry: true,
-              shuffle_items: true,
-            },
-            theme_id: "default",
-          },
-        };
-    }
   }
 
   function handleMessage(event: MessageEvent<StudioMessageData>): void {
@@ -632,6 +419,7 @@
   onUnmounted(() => {
     ++startSeq;
     clearTimeout(autoInitTimer);
+    clearTimeout(replayTimer);
     window.removeEventListener("message", handleMessage);
     window.removeEventListener("resize", handleResize);
     clearTimeout(resizeTimer);

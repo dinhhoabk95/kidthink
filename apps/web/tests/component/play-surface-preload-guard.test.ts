@@ -40,6 +40,7 @@ vi.mock("~/composables/play/use-play-error", () => ({
     errorEmoji: ref("🐻"),
     errorActionLink: ref(null),
     errorActionText: ref(""),
+    isPlayLimitReached: ref(false),
     handleApiError: vi.fn(() => ({ message: "loi" })),
   }),
 }));

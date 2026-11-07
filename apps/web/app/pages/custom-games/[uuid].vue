@@ -596,11 +596,9 @@
   ];
 
   function copyEmoji(glyph: string): void {
-    if (typeof navigator !== "undefined" && navigator.clipboard) {
-      navigator.clipboard.writeText(glyph).catch(() => {
-        // Bỏ qua lỗi khi clipboard bị từ chối quyền
-      });
-    }
+    navigator.clipboard?.writeText(glyph).catch(() => {
+      // Bỏ qua lỗi khi clipboard bị từ chối quyền
+    });
   }
 
   async function fetchGameDetail() {
@@ -609,24 +607,16 @@
     try {
       const res = await api<CustomGameData>(`/api/users/custom-games/${uuid}`);
       game.value = {
-        uuid: res.uuid,
-        templateId: res.templateId,
-        title: res.title,
-        instruction: res.instruction,
-        themeId: res.themeId,
-        ageMin: res.ageMin,
-        ageMax: res.ageMax,
+        ...res,
         contentPack: res.contentPack || {},
         difficultyParams: res.difficultyParams || {},
-        status: res.status,
-        version: res.version,
       };
       ageBandSelection.value = `${res.ageMin}-${res.ageMax}`;
       rawContentPackJson.value = JSON.stringify(res.contentPack || {}, null, 2);
       await triggerValidation();
     } catch (err) {
-      const apiErr = normalizeApiError(err);
-      loadError.value = apiErr.message || "Không thể tải chi tiết trò chơi.";
+      loadError.value =
+        normalizeApiError(err).message || "Không thể tải chi tiết trò chơi.";
     } finally {
       loading.value = false;
     }
@@ -634,18 +624,13 @@
 
   function applyAgeBand() {
     const [min, max] = ageBandSelection.value.split("-").map(Number);
-    game.value = {
-      ...game.value,
-      ageMin: min || 3,
-      ageMax: max || 4,
-    };
+    game.value = { ...game.value, ageMin: min || 3, ageMax: max || 4 };
   }
 
   function addGT001Option() {
     const currentOptions = game.value.contentPack.options ?? [];
-    const nextIdx = currentOptions.length + 1;
     const nextOption: GT001Option = {
-      item_id: `opt_${nextIdx}`,
+      item_id: `opt_${currentOptions.length + 1}`,
       asset: { kind: "emoji", ref: "🍌" },
       is_correct: false,
     };
@@ -661,18 +646,16 @@
 
   function removeGT001Option(idx: number) {
     const currentOptions = game.value.contentPack.options ?? [];
-    if (currentOptions.length <= 2) {
-      return;
+    if (currentOptions.length > 2) {
+      game.value = {
+        ...game.value,
+        contentPack: {
+          ...game.value.contentPack,
+          options: currentOptions.filter((_, i) => i !== idx),
+        },
+      };
+      triggerValidation();
     }
-    const nextOptions = currentOptions.filter((_, i) => i !== idx);
-    game.value = {
-      ...game.value,
-      contentPack: {
-        ...game.value.contentPack,
-        options: nextOptions,
-      },
-    };
-    triggerValidation();
   }
 
   function parseRawJson() {
@@ -680,10 +663,7 @@
       const parsed: CustomGameContentPack = JSON.parse(
         rawContentPackJson.value
       );
-      game.value = {
-        ...game.value,
-        contentPack: parsed,
-      };
+      game.value = { ...game.value, contentPack: parsed };
       triggerValidation();
     } catch {
       // Giữ trạng thái đang nhập khi JSON chưa hoàn chỉnh
@@ -693,7 +673,6 @@
   function validateClientSide(): ValidationReport {
     const issues: string[] = [];
     const missing: string[] = [];
-
     if (!game.value.title.trim()) {
       issues.push("Tiêu đề trò chơi không được để trống.");
       missing.push("title");
@@ -702,35 +681,26 @@
       issues.push("Lời hướng dẫn trò chơi không được để trống.");
       missing.push("instruction");
     }
-
     const pack = game.value.contentPack;
     if (pack.prompt && typeof pack.prompt === "string" && !pack.prompt.trim()) {
       issues.push("Câu hỏi gợi ý trong nội dung không được để trống.");
       missing.push("prompt");
     }
-
     if (Array.isArray(pack.options)) {
       if (pack.options.length < 2) {
         issues.push("Trò chơi cần ít nhất 2 lựa chọn đáp án.");
         missing.push("options");
       }
-      const hasCorrect = pack.options.some((opt) => opt.is_correct === true);
-      if (!hasCorrect) {
+      if (!pack.options.some((opt) => opt.is_correct === true)) {
         issues.push("Phải có ít nhất một đáp án đúng được chọn.");
         missing.push("options.is_correct");
       }
-      const hasEmptyRef = pack.options.some((opt) => !opt.asset?.ref?.trim());
-      if (hasEmptyRef) {
+      if (pack.options.some((opt) => !opt.asset?.ref?.trim())) {
         issues.push("Tất cả lựa chọn phải có emoji/hình ảnh hợp lệ.");
         missing.push("options.asset");
       }
     }
-
-    return {
-      ok: issues.length === 0,
-      issues,
-      missing,
-    };
+    return { ok: issues.length === 0, issues, missing };
   }
 
   async function triggerValidation() {
@@ -739,17 +709,12 @@
       validationReport.value = clientReport;
       return;
     }
-
     try {
-      const report = await api<ValidationReport>(
+      validationReport.value = await api<ValidationReport>(
         `/api/users/custom-games/${uuid}/validate`,
-        {
-          method: "POST",
-        }
+        { method: "POST" }
       );
-      validationReport.value = report;
     } catch {
-      // Khi server tạm thời không phản hồi, giữ kết quả kiểm tra client
       validationReport.value = clientReport;
     }
   }
@@ -758,50 +723,40 @@
     saving.value = true;
     saveError.value = "";
     feedbackMessage.value = "";
-
     try {
-      const updated = await api<{
-        version: number;
-        status: "draft" | "ready";
-      }>(`/api/users/custom-games/${uuid}`, {
-        method: "PATCH",
-        body: {
-          title: game.value.title,
-          instruction: game.value.instruction,
-          theme_id: game.value.themeId,
-          age_min: game.value.ageMin,
-          age_max: game.value.ageMax,
-          content_pack: game.value.contentPack,
-          difficulty_params: game.value.difficultyParams,
-          status: targetStatus,
-          expected_version: game.value.version,
-        },
-      });
-
-      game.value = {
-        ...game.value,
-        version: updated.version,
-        status: updated.status,
-      };
+      const updated = await api<{ version: number; status: "draft" | "ready" }>(
+        `/api/users/custom-games/${uuid}`,
+        {
+          method: "PATCH",
+          body: {
+            title: game.value.title,
+            instruction: game.value.instruction,
+            theme_id: game.value.themeId,
+            age_min: game.value.ageMin,
+            age_max: game.value.ageMax,
+            content_pack: game.value.contentPack,
+            difficulty_params: game.value.difficultyParams,
+            status: targetStatus,
+            expected_version: game.value.version,
+          },
+        }
+      );
+      game.value = { ...game.value, ...updated };
       feedbackMessage.value =
         targetStatus === "ready"
           ? "Đã lưu và sẵn sàng cho bé chơi!"
           : "Đã lưu bản nháp thành công.";
       await triggerValidation();
     } catch (err) {
-      const apiErr = normalizeApiError(err);
-      saveError.value = apiErr.message || "Lỗi khi lưu trò chơi.";
+      saveError.value =
+        normalizeApiError(err).message || "Lỗi khi lưu trò chơi.";
     } finally {
       saving.value = false;
     }
   }
 
   function postGameToSandbox() {
-    const targetWindow = playIframeRef.value?.contentWindow;
-    if (!targetWindow) {
-      return;
-    }
-    targetWindow.postMessage(
+    playIframeRef.value?.contentWindow?.postMessage(
       {
         type: "MindKid_STUDIO_UPDATE",
         payload: {
@@ -820,21 +775,17 @@
   }
 
   function replaySandbox() {
-    const targetWindow = playIframeRef.value?.contentWindow;
-    if (!targetWindow) {
-      return;
-    }
-    targetWindow.postMessage(
+    playIframeRef.value?.contentWindow?.postMessage(
       { type: "MindKid_STUDIO_REPLAY" },
       window.location.origin
     );
   }
 
   function onWindowMessage(event: MessageEvent<SandboxMessageData>) {
-    if (event.origin !== window.location.origin) {
-      return;
-    }
-    if (event.data?.type === "MindKid_STUDIO_SANDBOX_READY") {
+    if (
+      event.origin === window.location.origin &&
+      event.data?.type === "MindKid_STUDIO_SANDBOX_READY"
+    ) {
       postGameToSandbox();
     }
   }
@@ -848,6 +799,3 @@
     window.removeEventListener("message", onWindowMessage);
   });
 </script>
-
-<style scoped>
-</style>

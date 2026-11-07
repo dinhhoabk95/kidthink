@@ -46,7 +46,7 @@
               @keydown.esc.prevent="close"
             >
             <button
-              class="text-xs px-2 py-1 rounded-md bg-surface-100 dark:bg-surface-800 text-surface-500 hover:text-surface-900 dark:hover:text-surface-200 transition-colors"
+              class="text-xs px-2.5 py-1.5 min-h-10 rounded-xl bg-surface-100 dark:bg-surface-800 text-surface-500 hover:text-surface-900 dark:hover:text-surface-200 transition-colors"
               type="button"
               @click="close"
             >
@@ -61,7 +61,7 @@
             <!-- Navigation Items Group -->
             <div class="space-y-1" v-if="filteredNavItems.length > 0">
               <div
-                class="px-3 pt-1 pb-1 text-[11px] font-bold uppercase tracking-wider text-surface-400 dark:text-surface-500"
+                class="px-3 pt-1 pb-1 text-xs font-bold tracking-wider text-surface-400 dark:text-surface-500"
               >
                 Trang & Phân hệ quản trị
               </div>
@@ -117,7 +117,7 @@
             <!-- Quick Commands Group -->
             <div class="pt-2 space-y-1" v-if="filteredQuickActions.length > 0">
               <div
-                class="px-3 pt-1 pb-1 text-[11px] font-bold uppercase tracking-wider text-surface-400 dark:text-surface-500"
+                class="px-3 pt-1 pb-1 text-xs font-bold tracking-wider text-surface-400 dark:text-surface-500"
               >
                 Thao tác nhanh
               </div>

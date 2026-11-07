@@ -128,10 +128,16 @@
     try {
       const album = await api<StickerAlbum>("/api/users/play/stickers");
       themes.value = album.themes;
-    } catch {
-      // `useApi` đã điều hướng các lỗi cắt ngang (NO_ACTIVE_CHILD…); còn lại
-      // thì hiện mascot khích lệ và nút tải lại, không chữ lỗi cho trẻ.
-      hasError.value = true;
+    } catch (err) {
+      const code =
+        typeof err === "object" && err !== null && "code" in err
+          ? Reflect.get(err, "code")
+          : undefined;
+      if (code === "UNAUTHENTICATED" || code === "NO_ACTIVE_CHILD") {
+        themes.value = [];
+      } else {
+        hasError.value = true;
+      }
     } finally {
       isLoading.value = false;
     }

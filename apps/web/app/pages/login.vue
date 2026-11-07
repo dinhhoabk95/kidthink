@@ -9,7 +9,7 @@
       <div class="mb-6 text-center">
         <NuxtLink
           aria-label="Về trang chủ MindKid"
-          class="mb-3 inline-flex items-center gap-2 font-heading text-2xl font-bold text-brand-600 transition-transform active:scale-95 dark:text-brand-400"
+          class="mb-3 inline-flex min-h-11 items-center gap-2 font-heading text-2xl font-bold text-brand-600 transition-transform active:scale-95 dark:text-brand-400"
           to="/"
         >
           <UIcon
@@ -149,7 +149,7 @@
               Mật khẩu
             </label>
             <NuxtLink
-              class="text-xs font-bold text-brand-600 underline hover:text-brand-500 dark:text-brand-400 dark:hover:text-brand-300"
+              class="inline-flex min-h-11 items-center text-xs font-bold text-brand-600 underline hover:text-brand-500 dark:text-brand-400 dark:hover:text-brand-300"
               data-testid="forgot-password-link"
               to="/quen-mat-khau"
             >

@@ -190,7 +190,8 @@
             Xác nhận rút đồng ý
           </h2>
           <button
-            class="min-h-11 min-w-11 rounded-lg p-1.5 text-surface-500 hover:bg-surface-100"
+            aria-label="Đóng"
+            class="min-h-11 min-w-11 rounded-xl p-1.5 text-surface-500 hover:bg-surface-100"
             data-testid="close-withdraw-modal-btn"
             type="button"
             @click="closeWithdrawModal"
@@ -284,7 +285,8 @@
             Xác nhận xuất dữ liệu cá nhân
           </h2>
           <button
-            class="min-h-11 min-w-11 rounded-lg p-1.5 text-surface-500 hover:bg-surface-100"
+            aria-label="Đóng"
+            class="min-h-11 min-w-11 rounded-xl p-1.5 text-surface-500 hover:bg-surface-100"
             data-testid="close-export-modal-btn"
             type="button"
             @click="closeExportModal"

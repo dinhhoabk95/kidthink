@@ -9,7 +9,21 @@ export type WebApiClient = <T = void>(
   options?: WebApiOptions
 ) => Promise<T>;
 
+function isKidPlaySurface(): boolean {
+  try {
+    const path = useRoute()?.fullPath ?? "";
+    return (
+      path === "/play" || path.startsWith("/play/") || path.startsWith("/play?")
+    );
+  } catch {
+    return false;
+  }
+}
+
 async function handleUnauthenticatedRedirect() {
+  if (isKidPlaySurface()) {
+    return;
+  }
   try {
     const { clear } = useUserSession();
     await clear();
@@ -81,12 +95,16 @@ export function useApi(): WebApiClient {
         }
 
         case "CONSENT_REQUIRED": {
-          await navigateTo("/consent-required");
+          if (!isKidPlaySurface()) {
+            await navigateTo("/consent-required");
+          }
           break;
         }
 
         case "NO_ACTIVE_CHILD": {
-          await navigateTo("/me/children");
+          if (!isKidPlaySurface()) {
+            await navigateTo("/me/children");
+          }
           break;
         }
 

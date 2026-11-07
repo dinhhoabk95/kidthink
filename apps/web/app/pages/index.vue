@@ -420,6 +420,9 @@
   }
 
   .comp-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     font-size: 0.9rem;
     font-weight: 600;
     color: var(--color-brand-600);
@@ -606,6 +609,9 @@
   }
 
   .program-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     font-size: 0.9rem;
     font-weight: 600;
     color: var(--color-brand-600);

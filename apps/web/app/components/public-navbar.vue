@@ -72,8 +72,9 @@
   }
 
   .brand-logo {
-    display: flex;
+    display: inline-flex;
     align-items: center;
+    min-height: 44px;
     gap: 0.375rem;
     text-decoration: none;
     font-family: var(--font-heading, "Fredoka", sans-serif);
@@ -109,6 +110,9 @@
   }
 
   .nav-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     text-decoration: none;
     color: var(--color-surface-700);
     font-weight: 600;
@@ -133,6 +137,9 @@
   }
 
   .nav-link-login {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     text-decoration: none;
     color: var(--color-surface-700);
     font-weight: 700;

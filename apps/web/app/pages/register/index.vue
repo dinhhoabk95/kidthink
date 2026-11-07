@@ -9,7 +9,7 @@
       <div class="mb-6 text-center">
         <NuxtLink
           aria-label="Về trang chủ MindKid"
-          class="mb-3 inline-flex items-center gap-2 font-heading text-2xl font-bold text-brand-600 transition-transform active:scale-95 dark:text-brand-400"
+          class="mb-3 inline-flex min-h-11 items-center gap-2 font-heading text-2xl font-bold text-brand-600 transition-transform active:scale-95 dark:text-brand-400"
           to="/"
         >
           <UIcon

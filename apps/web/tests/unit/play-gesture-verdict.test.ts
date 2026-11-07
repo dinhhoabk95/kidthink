@@ -103,4 +103,103 @@ describe("usePlayGesture — onVerdict", () => {
     tap();
     expect(onVerdict).not.toHaveBeenCalled();
   });
+
+  it("cập nhật getGestureVisualState khi kéo thả trực tiếp và bay đàn hồi khi thả trượt", () => {
+    class DragSession extends TemplateGameSession<
+      Record<string, string>,
+      Record<string, number>
+    > {
+      override setupEntities(): void {
+        /* noop */
+      }
+      override validateAction(): ActionResult {
+        return { valid: false, feedback: "amber_soft" };
+      }
+      override checkWinCondition(): boolean {
+        return false;
+      }
+      protected override computeSlots(): readonly Slot[] {
+        return [];
+      }
+      override dispatch(_gesture: Gesture): ActionResult | null {
+        return { valid: false, feedback: "amber_soft" };
+      }
+    }
+    const engine = {
+      activeSession: new DragSession({}, {}),
+      acceptingInput: true,
+      audio: {
+        playSnapSound: vi.fn(),
+        playPopCelebrateSound: vi.fn(),
+        playSoftFeedbackSound: vi.fn(),
+      },
+      renderSystem: {
+        LOGIC_WIDTH: 960,
+        LOGIC_HEIGHT: 540,
+        toLogicPoint: (x: number, y: number) => ({ x, y }),
+      },
+    };
+    const g = usePlayGesture({
+      getEngine: () => engine as never,
+      canvasRef: ref(null),
+      onRoundWon: vi.fn(),
+      getStageZones: () => zones,
+    });
+    g.viewEntities.value = [
+      {
+        id: "src-1",
+        role: "source",
+        x: 150,
+        y: 420,
+        w: 80,
+        h: 80,
+        glyph: "🍎",
+        state: "idle",
+      },
+      {
+        id: "dst-1",
+        role: "target",
+        x: 480,
+        y: 220,
+        w: 96,
+        h: 96,
+        state: "idle",
+      },
+    ];
+
+    g.handlePointerDown({
+      pointerId: 7,
+      clientX: 150,
+      clientY: 420,
+      timeStamp: 100,
+    } as PointerEvent);
+    const downState = g.getGestureVisualState(110);
+    expect(downState.isPointerDown).toBe(true);
+    expect(downState.isDragging).toBe(false);
+    expect(downState.activeEntity?.id).toBe("src-1");
+
+    g.handlePointerMove({
+      pointerId: 7,
+      clientX: 475,
+      clientY: 225,
+      timeStamp: 150,
+    } as PointerEvent);
+    const moveState = g.getGestureVisualState(150);
+    expect(moveState.isDragging).toBe(true);
+    expect(moveState.currentX).toBe(475);
+    expect(moveState.currentY).toBe(225);
+    expect(moveState.hoveredTarget?.id).toBe("dst-1");
+
+    g.handlePointerUp({
+      pointerId: 7,
+      clientX: 475,
+      clientY: 225,
+      timeStamp: 180,
+    } as PointerEvent);
+    const afterUpState = g.getGestureVisualState(performance.now() + 20);
+    expect(afterUpState.isPointerDown).toBe(false);
+    expect(afterUpState.flight?.kind).toBe("spring_back");
+    expect(afterUpState.flight?.toX).toBe(150);
+    expect(afterUpState.flight?.toY).toBe(420);
+  });
 });

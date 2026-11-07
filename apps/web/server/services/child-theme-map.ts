@@ -87,6 +87,18 @@ const THEME_EMOJI_MAP: Record<string, string> = {
   "Quê hương - Đất nước - Bác Hồ": "🇻🇳",
   "Mùa hè và ôn tập cuối năm": "🎒",
   "Bé lên lớp Một": "🎒",
+  "Toán tư duy — Quy luật và phân loại": "🧩",
+  "Phát triển trí não — Ghép đôi tương đồng": "🧠",
+  "Tinh mắt tìm điểm khác biệt": "🔍",
+  "Thử thách tổng hợp — Bé thông minh 3–4 tuổi": "🏆",
+  "Cán cân kỳ diệu — So sánh và sắp thứ tự": "⚖️",
+  "Mở khóa trí thông minh — Hình khối và tìm hình ẩn": "🔷",
+  "Mật mã tọa độ lưới và phản xạ nhanh": "🗺️",
+  "Thử thách tổng hợp — Mở khóa trí thông minh": "🏅",
+  "Đánh vần tiếng Việt và Mê cung kỳ thú": "🧭",
+  "Thám tử suy luận và Ma trận quy luật": "🕵️",
+  "Sudoku tư duy hình ảnh sáng tạo": "🔢",
+  "Hành trang vào lớp Một — Chinh phục đỉnh cao": "🎓",
 };
 
 export function resolveThemeEmoji(themeTitle: string): string {

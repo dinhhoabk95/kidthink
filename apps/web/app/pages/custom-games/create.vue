@@ -255,7 +255,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { AGE_BANDS } from "@mindkid/shared";
+  import { AGE_BANDS } from "@mindkid/shared/client";
   import { computed, ref } from "vue";
   import PublicFooter from "~/components/public-footer.vue";
   import PublicNavbar from "~/components/public-navbar.vue";

@@ -797,6 +797,3 @@
       "Xây dựng, tùy biến và theo dõi tiến độ lộ trình học toán tư duy dành riêng cho con bạn.",
   });
 </script>
-
-<style scoped>
-</style>

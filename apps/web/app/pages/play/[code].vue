@@ -30,7 +30,7 @@
           <button
             class="btn-primary min-h-16 min-w-16"
             type="button"
-            v-if="errorActionLink"
+            v-if="errorActionText"
             @click="handleErrorAction"
           >
             {{ errorActionText }}
@@ -236,25 +236,26 @@
         @continue="handleContinueNext"
         @replay="handleReplayGame"
       />
-      <ParentGateModal
-        v-if="showParentGate"
-        :client-only="true"
-        @cancel="showParentGate = false"
-        @verified="handleParentVerified"
-      />
-      <KidPlayLimitModal
-        v-if="isPlayLimitReached"
-        :child-uuid="activeChildUuid"
-        @granted="handleExtraTimeGranted"
-        @leave="router.push('/play')"
-      />
     </div>
+    <ParentGateModal
+      v-if="showParentGate"
+      :client-only="true"
+      @cancel="showParentGate = false"
+      @verified="handleParentVerified"
+    />
+    <KidPlayLimitModal
+      v-if="isPlayLimitReached"
+      :child-uuid="activeChildUuid"
+      @granted="handleExtraTimeGranted"
+      @leave="router.push('/play')"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
   import {
     computeZonesForSession,
+    drawActiveGestureOverlay,
     drawCommitButton,
     drawFeedbackPulses,
     drawPromptZone,
@@ -268,6 +269,11 @@
   } from "@mindkid/game-engine";
   import { computed, onMounted, onUnmounted, ref, watch } from "vue";
   import KidMascot from "~/components/kid/mascot.vue";
+  import {
+    attachPlayDebugBridge,
+    createClientPointMapper,
+    detachPlayDebugBridge,
+  } from "~/composables/play/play-debug-bridge";
   import {
     PORTRAIT_GATE_LABEL,
     PORTRAIT_GATE_PARENT_HINT,
@@ -406,6 +412,10 @@
             ? { timeMs: now, reducedMotion: rs.reducedMotion }
             : undefined,
         });
+      }
+      const gestureVisual = gesture.getGestureVisualState?.(now);
+      if (gestureVisual) {
+        drawActiveGestureOverlay(ctx, rs, gestureVisual, now);
       }
       // Lớp trên cùng: pop/nhịp hổ phách tại điểm chạm (`BR-FBK-05`, `BR-FBK-11`).
       drawFeedbackPulses(ctx, feedback.pulses);
@@ -588,6 +598,7 @@
 
   function handleErrorAction(): void {
     if (!errorActionLink.value) {
+      handleReplayGame();
       return;
     }
     if (errorActionLink.value.startsWith("/play")) {
@@ -603,22 +614,12 @@
     if (pendingParentNavigation.value) {
       const target = pendingParentNavigation.value;
       pendingParentNavigation.value = "";
-      if (target.startsWith("/") && !target.startsWith("//")) {
-        navigateTo(target);
-      } else {
-        navigateTo("/play");
-      }
+      navigateTo(
+        target.startsWith("/") && !target.startsWith("//") ? target : "/play"
+      );
       return;
     }
-    const rawReturn = route.query.return_to || route.query.return_level_code;
-    const safeReturn = sanitizeCurriculumWeekCode(
-      typeof rawReturn === "string" ? rawReturn : undefined
-    );
-    if (safeReturn) {
-      router.push(`/play/${safeReturn}`);
-      return;
-    }
-    router.push("/play");
+    router.push(nextDestination());
   }
 
   function replayInstructionAudio(): void {
@@ -641,6 +642,7 @@
 
   function handleReplayGame(): void {
     showVictoryModal.value = false;
+    errorMessage.value = null;
     isLoading.value = true;
     fetchAndStartGame(levelCode).catch(applyLoadError);
   }
@@ -718,7 +720,35 @@
     canvasObserver.observe(canvasRef.value);
   }
 
+  let debugBridgeRef: Parameters<typeof attachPlayDebugBridge>[0] | undefined;
+
   onMounted(async () => {
+    debugBridgeRef = {
+      getEngine,
+      getRoundRunner,
+      getStageZones: () => stageZones.value ?? updateStageZones(),
+      getCachedPayload,
+      dispatchGesture,
+      pressActionButton,
+      toClientPoint: createClientPointMapper(canvasRef, getEngine),
+      getState: () => ({
+        isLoading: isLoading.value,
+        errorMessage: errorMessage.value,
+        currentRound: currentRound.value,
+        totalRounds: totalRounds.value,
+        showVictoryModal: showVictoryModal.value,
+        earnedStars: earnedStars.value,
+        earnedCelebration: earnedCelebration.value,
+        needsPortrait: needsPortrait.value,
+        isEchoStep: isEchoStep.value,
+        isIntroCardStep: isIntroCardStep.value,
+        introStepIndex: introStepIndex.value,
+        acceptingInput: Boolean(getEngine()?.acceptingInput),
+        actionButton: actionButton.value,
+        viewEntitiesCount: viewEntities.value.length,
+      }),
+    };
+    attachPlayDebugBridge(debugBridgeRef);
     window.addEventListener("resize", handleResize);
     if (typeof document !== "undefined") {
       document.addEventListener("visibilitychange", handleVisibilityChange);
@@ -739,6 +769,7 @@
   });
 
   onUnmounted(() => {
+    detachPlayDebugBridge(debugBridgeRef);
     window.removeEventListener("resize", handleResize);
     canvasObserver?.disconnect();
     canvasObserver = null;

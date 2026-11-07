@@ -9,8 +9,6 @@ declare const sessionHooks: {
 };
 
 export default defineNitroPlugin(() => {
-  const service = getBrowserSessionService();
-
   sessionHooks.hook("fetch", async (session: Record<string, unknown>) => {
     const secure = session.secure as { session_token?: string } | undefined;
     const token = secure?.session_token;
@@ -21,7 +19,7 @@ export default defineNitroPlugin(() => {
     }
 
     try {
-      const authCtx = await service.resolve("user", token);
+      const authCtx = await getBrowserSessionService().resolve("user", token);
       if (authCtx?.user) {
         session.user = authCtx.user;
       } else {

@@ -9,7 +9,7 @@
         class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between"
       >
         <NuxtLink
-          class="flex items-center gap-2 font-heading text-xl font-bold text-brand-600 dark:text-brand-400"
+          class="inline-flex min-h-11 items-center gap-2 font-heading text-xl font-bold text-brand-600 dark:text-brand-400"
           to="/me"
         >
           <UIcon
@@ -20,7 +20,7 @@
         </NuxtLink>
         <div class="flex items-center gap-4">
           <NuxtLink
-            class="text-sm font-semibold text-brand-600 hover:text-brand-700 dark:text-brand-400"
+            class="inline-flex min-h-11 items-center text-sm font-semibold text-brand-600 hover:text-brand-700 dark:text-brand-400"
             to="/play"
           >
             Vào góc chơi

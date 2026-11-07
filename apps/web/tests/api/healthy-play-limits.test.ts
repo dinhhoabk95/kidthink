@@ -155,7 +155,7 @@ async function seedPublishedFreeLevel(): Promise<string> {
   return code;
 }
 
-describe.sequential("Healthy Play Limits API (BR-HPL-01..08 & Task #293 S1-S2)", () => {
+describe("Healthy Play Limits API (BR-HPL-01..08 & Task #293 S1-S2)", () => {
   it("computeRemainingPlaySeconds: pure calculation for null stats, exhausted cap, and extra time granted", () => {
     // 1. Chưa có row hôm nay -> trả cap * 60
     expect(computeRemainingPlaySeconds(null, 30)).toBe(1800);

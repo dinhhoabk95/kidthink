@@ -31,11 +31,8 @@
 
   const canvasRef = ref<HTMLCanvasElement | null>(null);
   const sprites = useMascotSprites();
-  const pixelRatio =
-    typeof window === "undefined"
-      ? 1
-      : Math.min(MAX_DEVICE_PIXEL_RATIO, window.devicePixelRatio || 1);
-  const pixelSize = computed(() => Math.round(props.size * pixelRatio));
+  const pixelRatio = ref(1);
+  const pixelSize = computed(() => Math.round(props.size * pixelRatio.value));
 
   let rafId: number | null = null;
   let startMs = 0;
@@ -72,6 +69,12 @@
   );
 
   onMounted(() => {
+    if (typeof window !== "undefined") {
+      pixelRatio.value = Math.min(
+        MAX_DEVICE_PIXEL_RATIO,
+        window.devicePixelRatio || 1
+      );
+    }
     if (typeof requestAnimationFrame === "undefined") {
       return;
     }

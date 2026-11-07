@@ -1,11 +1,13 @@
 import {
   type ActionResult,
+  type ActiveGestureVisualState,
   type CommitIcon,
   type FeedbackPoint,
   findHitEntity,
   type GameEngine,
   type GameSession,
   type Gesture,
+  type GestureTransitionFlight,
   isPointInZone,
   type OverlayFeedbackKind,
   type StageZones,
@@ -123,7 +125,20 @@ export function usePlayGesture(options: GestureOptions) {
   let startClientY = 0;
   let startLogicX = 0;
   let startLogicY = 0;
+  let currentLogicX = 0;
+  let currentLogicY = 0;
   let isDragging = false;
+  let activeDragEntity: ViewEntity | null = null;
+  let hoveredTargetEntity: ViewEntity | null = null;
+  let trailPoints: { readonly x: number; readonly y: number }[] = [];
+  let lastMazeCellId: string | null = null;
+  let didLiveMazeStep = false;
+  let lastVerdictValid = false;
+  let activeFlight: GestureTransitionFlight | null = null;
+
+  function nowClockMs(): number {
+    return typeof performance === "undefined" ? Date.now() : performance.now();
+  }
 
   /**
    * Bề mặt hai bước (kéo-thả) nhận ra qua việc view có ô đích.
@@ -348,8 +363,66 @@ export function usePlayGesture(options: GestureOptions) {
       gesture,
       viewEntities.value
     );
+    lastVerdictValid = Boolean(verdict?.valid);
     if (verdict) {
       handleVerdict(verdict, engine, session, tapped, gesture);
+    }
+  }
+
+  function findDropTargetsFor(
+    dragged: ViewEntity | null
+  ): readonly ViewEntity[] {
+    const all = viewEntities.value;
+    const targets = all.filter((e) => e.role === "target");
+    if (targets.length > 0 && dragged?.role === "source") {
+      return targets;
+    }
+    if (dragged?.role === "target") {
+      return all.filter((e) => e.role === "source" && e.state !== "correct");
+    }
+    if (dragged) {
+      return all.filter((e) => e.id !== dragged.id && e.state !== "correct");
+    }
+    return targets;
+  }
+
+  function stepLiveMazeCellIfLegal(pt: { x: number; y: number }): void {
+    const engine = getEngine();
+    if (!engine) {
+      return;
+    }
+    const session = getActiveSession(engine);
+    if (!session) {
+      return;
+    }
+    const hitCell = findHitEntity(viewEntities.value, pt.x, pt.y);
+    if (!(hitCell?.id.startsWith("cell_") && hitCell.id !== lastMazeCellId)) {
+      return;
+    }
+    const tapGesture: Gesture = {
+      type: "tap",
+      x: hitCell.x,
+      y: hitCell.y,
+      timeMs: Date.now(),
+    };
+    const action = session.toAction?.(tapGesture);
+    if (!(action && session.validateAction(action).valid)) {
+      return;
+    }
+    lastMazeCellId = hitCell.id;
+    didLiveMazeStep = true;
+    dispatchGesture(tapGesture);
+  }
+
+  function appendTrailPoint(pt: { x: number; y: number }): void {
+    const lastPt = trailPoints.at(-1);
+    if (lastPt && Math.hypot(pt.x - lastPt.x, pt.y - lastPt.y) < 6) {
+      return;
+    }
+    if (trailPoints.length >= 48) {
+      trailPoints = [...trailPoints.slice(1), { x: pt.x, y: pt.y }];
+    } else {
+      trailPoints.push({ x: pt.x, y: pt.y });
     }
   }
 
@@ -366,6 +439,15 @@ export function usePlayGesture(options: GestureOptions) {
     const pt = getLogicPoint(e);
     startLogicX = pt.x;
     startLogicY = pt.y;
+    currentLogicX = pt.x;
+    currentLogicY = pt.y;
+    activeDragEntity = findHitEntity(viewEntities.value, pt.x, pt.y);
+    hoveredTargetEntity = null;
+    trailPoints = [{ x: pt.x, y: pt.y }];
+    lastMazeCellId = activeDragEntity?.id.startsWith("cell_")
+      ? activeDragEntity.id
+      : null;
+    didLiveMazeStep = false;
 
     if (canvasRef.value) {
       canvasRef.value.setPointerCapture?.(e.pointerId);
@@ -376,6 +458,9 @@ export function usePlayGesture(options: GestureOptions) {
     if (activePointerId !== e.pointerId) {
       return;
     }
+    const pt = getLogicPoint(e);
+    currentLogicX = pt.x;
+    currentLogicY = pt.y;
     const dist = Math.hypot(e.clientX - startClientX, e.clientY - startClientY);
     if (dist > 12) {
       isDragging = true;
@@ -383,13 +468,106 @@ export function usePlayGesture(options: GestureOptions) {
     if (!isDragging) {
       return;
     }
+
+    appendTrailPoint(pt);
+    const candidates = findDropTargetsFor(activeDragEntity);
+    hoveredTargetEntity = findHitEntity(candidates, pt.x, pt.y);
+
+    if (viewEntities.value.some((ent) => ent.id.startsWith("cell_"))) {
+      stepLiveMazeCellIfLegal(pt);
+    }
+
     // Đích sáng lên khi vật đủ gần — trạng thái "đích đang nhận" của hợp đồng
     // vẽ. Không có đường này thì cờ hover trong session không ai bật.
     const session = getEngine()?.activeSession;
     if (session && acceptsPointerOver(session)) {
-      const pt = getLogicPoint(e);
       session.setPointerOver(pt.x, pt.y);
     }
+  }
+
+  function buildTapReleaseFlight(
+    prevSelected: ViewEntity | null,
+    startMs: number
+  ): GestureTransitionFlight | null {
+    const hitTarget = findHitEntity(
+      viewEntities.value.filter((ent) => ent.role === "target"),
+      startLogicX,
+      startLogicY
+    );
+    if (!(lastVerdictValid && prevSelected && hitTarget)) {
+      return null;
+    }
+    return {
+      entity: prevSelected,
+      fromX: prevSelected.x,
+      fromY: prevSelected.y,
+      toX: hitTarget.x,
+      toY: hitTarget.y,
+      startMs,
+      durationMs: 200,
+      kind: "snap_to_target",
+    };
+  }
+
+  function buildDragReleaseFlight(
+    dragged: ViewEntity | null,
+    endPt: { x: number; y: number },
+    startMs: number
+  ): GestureTransitionFlight | null {
+    if (!(dragged && (dragged.glyph || dragged.label))) {
+      return null;
+    }
+    if (lastVerdictValid && hoveredTargetEntity) {
+      return {
+        entity: dragged,
+        fromX: endPt.x,
+        fromY: endPt.y,
+        toX: hoveredTargetEntity.x,
+        toY: hoveredTargetEntity.y,
+        startMs,
+        durationMs: 160,
+        kind: "snap_to_target",
+      };
+    }
+    if (!lastVerdictValid && dragged.role === "source") {
+      return {
+        entity: dragged,
+        fromX: endPt.x,
+        fromY: endPt.y,
+        toX: dragged.x,
+        toY: dragged.y,
+        startMs,
+        durationMs: 240,
+        kind: "spring_back",
+      };
+    }
+    return null;
+  }
+
+  function triggerPostReleaseFlight(
+    wasTap: boolean,
+    prevSelected: ViewEntity | null,
+    dragged: ViewEntity | null,
+    endPt: { x: number; y: number }
+  ): void {
+    const startMs = nowClockMs();
+    const nextFlight = wasTap
+      ? buildTapReleaseFlight(prevSelected, startMs)
+      : buildDragReleaseFlight(dragged, endPt, startMs);
+    if (nextFlight) {
+      activeFlight = nextFlight;
+    }
+  }
+
+  function resetPointerTracking(): void {
+    activePointerId = null;
+    cachedCanvasRect = null;
+    isDragging = false;
+    activeDragEntity = null;
+    hoveredTargetEntity = null;
+    trailPoints = [];
+    lastMazeCellId = null;
+    didLiveMazeStep = false;
   }
 
   function handlePointerUp(e: PointerEvent): void {
@@ -400,19 +578,24 @@ export function usePlayGesture(options: GestureOptions) {
     const endPt = getLogicPoint(e);
     const timeMs = Date.now();
     const dist = Math.hypot(e.clientX - startClientX, e.clientY - startClientY);
+    const prevSelected =
+      viewEntities.value.find(
+        (ent) => ent.role === "source" && ent.state === "selected"
+      ) ?? stagedSourceEntity.value;
+    const dragged = activeDragEntity;
+    lastVerdictValid = false;
 
     // Không đặt trần thời gian: trẻ 3 tuổi hay nhấn chậm, và một lần nhấn giữ
     // không di chuyển mà không thành tap lẫn drop là im lặng (`BR-FBK-02`).
     if (!isDragging && dist <= 14) {
-      // Tap gesture
       dispatchGesture({
         type: "tap",
         x: startLogicX,
         y: startLogicY,
         timeMs,
       });
-    } else if (isDragging || dist > 14) {
-      // Drop gesture
+      triggerPostReleaseFlight(true, prevSelected, dragged, endPt);
+    } else if (!didLiveMazeStep && (isDragging || dist > 14)) {
       dispatchGesture({
         type: "drop",
         fromX: startLogicX,
@@ -421,19 +604,45 @@ export function usePlayGesture(options: GestureOptions) {
         toY: endPt.y,
         timeMs,
       });
+      triggerPostReleaseFlight(false, prevSelected, dragged, endPt);
     }
 
-    activePointerId = null;
-    cachedCanvasRect = null;
-    isDragging = false;
+    resetPointerTracking();
   }
 
   function handlePointerCancel(e: PointerEvent): void {
     if (activePointerId === e.pointerId) {
-      activePointerId = null;
-      cachedCanvasRect = null;
-      isDragging = false;
+      resetPointerTracking();
     }
+  }
+
+  function getGestureVisualState(nowMs: number): ActiveGestureVisualState {
+    if (
+      activeFlight &&
+      nowMs - activeFlight.startMs >= activeFlight.durationMs
+    ) {
+      activeFlight = null;
+    }
+    const staged =
+      viewEntities.value.find(
+        (ent) => ent.role === "source" && ent.state === "selected"
+      ) ?? stagedSourceEntity.value;
+    const targetEntities = findDropTargetsFor(activeDragEntity ?? staged);
+
+    return {
+      activeEntity: activeDragEntity,
+      stagedEntity: staged,
+      targetEntities,
+      hoveredTarget: hoveredTargetEntity,
+      startX: startLogicX,
+      startY: startLogicY,
+      currentX: currentLogicX,
+      currentY: currentLogicY,
+      isPointerDown: activePointerId !== null,
+      isDragging,
+      trailPoints,
+      flight: activeFlight,
+    };
   }
 
   /** Bước 2 của đường bàn phím: đã có nguồn đang chọn. */
@@ -510,9 +719,8 @@ export function usePlayGesture(options: GestureOptions) {
   }
 
   function destroy(): void {
-    cachedCanvasRect = null;
-    activePointerId = null;
-    isDragging = false;
+    resetPointerTracking();
+    activeFlight = null;
   }
 
   return {
@@ -527,6 +735,7 @@ export function usePlayGesture(options: GestureOptions) {
     handlePointerUp,
     handlePointerCancel,
     handleAccessibleEntityTap,
+    getGestureVisualState,
     destroy,
   };
 }

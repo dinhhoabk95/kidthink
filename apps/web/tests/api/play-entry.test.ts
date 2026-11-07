@@ -39,18 +39,16 @@ function mockEvent(
 }
 
 describe("Play Entry & Kid Lobby API (BR-PEN-01..07)", () => {
-  it("GET /api/users/play/home returns 428 CHILD_SELECTION_REQUIRED when no active_child_id cookie present", async () => {
+  it("GET /api/users/play/home returns 428 NO_ACTIVE_CHILD when no active_child_id cookie present", async () => {
     const event = mockEvent("GET", 501, {});
 
     try {
       await getPlayHomeHandler(event);
-      expect.fail("Should have thrown 428 CHILD_SELECTION_REQUIRED");
+      expect.fail("Should have thrown 428 NO_ACTIVE_CHILD");
     } catch (err: any) {
       const status = err.statusCode || err.status;
       expect(status).toBe(428);
-      expect(err.data?.code || err.statusMessage).toBe(
-        "CHILD_SELECTION_REQUIRED"
-      );
+      expect(err.data?.code || err.statusMessage).toBe("NO_ACTIVE_CHILD");
     }
   });
 

@@ -23,7 +23,7 @@
         }}
       </p>
       <UButton
-        class="w-full justify-center"
+        class="w-full min-h-11 justify-center"
         color="primary"
         size="lg"
         @click="handleClearError"
