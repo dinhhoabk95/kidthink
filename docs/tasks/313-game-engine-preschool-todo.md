@@ -45,7 +45,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 
 - [ ] 007 (còn lại) — cơ chế kéo/gộp vật thật giữa ô tổng và hai khay phần: viết lại session (toAction/getView/render, bài sinh nội dung `discrete-object`); quá lớn cho một commit, cần plan riêng
 - [x] 010 (còn lại) — fixture band 4-5 đã sang bảng giá một bước (🍎 = 3, 🍌 = 2, hỏi tổng = 5, `step_count` 1, `BR-E010-05`), test gác trong `gt-010-substitution.test.ts`, đổi chủ ý các test bám vào hệ hai phương trình cũ. Nội dung đã seed trong DB vẫn chưa đổi (ngoài phạm vi, cần migration nội dung riêng)
-- [ ] 012 (còn lại) — N4/N6 hiện lại nhóm vật sau khi chọn đúng chưa có code (`flash_ms` co giãn ở bộ sinh đã xong ở Phase 4)
+- [x] 012 (còn lại) — N4/N6 hiện lại nhóm vật sau khi chọn đúng đã có code (`BR-E012-07`, `isRecapShown`); `flash_ms` co giãn ở bộ sinh đã xong ở Phase 4
 - [x] 013 (còn lại) — bàn cờ đúng `rows`×`cols` một trang qua `resolveExactGridLayout` (`BR-E013-08`): lỗi thật rộng hơn ghi chú cũ, `resolveLayout("grid")` chọn 4 cột cho lưới 3×3 nên chỉ số ô lệch toạ độ ô, và chồng hàng với lưới ≥4×4; band 5-6 (5×5/6×6) qua 12 seed đều thắng được bằng bộ giải cử chỉ web
 - [ ] 014 (còn lại) — ẩn số khối lượng khỏi vật khay/đĩa (đang in nên thành phép trừ): cần kích thước vật tỉ lệ khối lượng (BR-E014-03, hiện ô khay cùng cỡ) trước khi ẩn số, không thì bài không giải được; thuộc Phase 5
 

@@ -126,3 +126,36 @@ describe("GT-012 — số vật chớp không vượt trần theo band (BR-E012-
     }
   });
 });
+
+describe("GT-012 — hiện lại nhóm vật sau khi chọn đúng (N4/N6)", () => {
+  function playToAnswer(): FlashRecallSession {
+    const session = build();
+    session.dispatch(tapStart(session));
+    session.update(SAMPLE_LEVEL_1.difficulty_params.flash_ms);
+    return session;
+  }
+
+  it("chọn sai: không hiện lại nhóm vật", () => {
+    const session = playToAnswer();
+    const wrong = session.getOptions().find((o) => !o.is_correct);
+    if (!wrong) {
+      throw new Error("Thiếu phương án sai");
+    }
+    session.selectValue(wrong.value);
+    expect(session.isRecapShown()).toBe(false);
+    const ids = session.getView().entities.map((e) => e.id);
+    expect(ids.some((id) => id.startsWith("opt-"))).toBe(true);
+  });
+
+  it("chọn đúng: nhóm vật hiện lại đủ, phương án thôi chạm được", () => {
+    const session = playToAnswer();
+    const right = session.getOptions().find((o) => o.is_correct);
+    if (!right) {
+      throw new Error("Thiếu phương án đúng");
+    }
+    session.selectValue(right.value);
+    expect(session.isRecapShown()).toBe(true);
+    const ids = session.getView().entities.map((e) => e.id);
+    expect(ids).toEqual(session.getFlashItems().map((i) => i.item_id));
+  });
+});

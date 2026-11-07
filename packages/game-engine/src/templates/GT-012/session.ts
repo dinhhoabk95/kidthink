@@ -114,6 +114,11 @@ export class FlashRecallSession extends TemplateGameSession<
     return true;
   }
 
+  /** Chọn đúng: nhóm vật hiện lại đầy đủ để trẻ đối chiếu (N4/N6). */
+  isRecapShown(): boolean {
+    return this.checkWinCondition();
+  }
+
   getFlashItems(): GT012Content["flash_items"] {
     return this.content.flash_items;
   }
@@ -247,6 +252,9 @@ export class FlashRecallSession extends TemplateGameSession<
         ? { type: "start_flash", data: null }
         : null;
     }
+    if (this.isRecapShown()) {
+      return null;
+    }
     if (this.isCovered() && this.timer.canReplay() && this.plateRect) {
       const p = this.plateRect;
       if (
@@ -361,7 +369,7 @@ export class FlashRecallSession extends TemplateGameSession<
         ],
       };
     }
-    if (this.timer.isVisible()) {
+    if (this.timer.isVisible() || this.isRecapShown()) {
       const entities: ViewEntity[] = [];
       this.content.flash_items.forEach((item, i) => {
         const slot = this.flashSlots[i];
@@ -507,8 +515,8 @@ export class FlashRecallSession extends TemplateGameSession<
     }
 
     // Hai pha: đang loé thì mở nắp cloche thấy vật; hết loé thì đậy nắp cloche và hiện thẻ chọn.
-    if (this.timer.isVisible()) {
-      if (!this.stageRect) {
+    if (this.timer.isVisible() || this.isRecapShown()) {
+      if (!(this.stageRect || this.isRecapShown())) {
         drawSubPromptText(ctx, rs, "Nhìn nhanh!");
       }
       drawClocheScene(ctx, plate, true);
