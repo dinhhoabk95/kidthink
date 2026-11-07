@@ -207,6 +207,10 @@ export class GT034Session extends TemplateGameSession<
     this.sfxEngine.playSequence(recipes);
   }
 
+  override onHintCleared(): void {
+    this.stopHintPlayback();
+  }
+
   private stopHintPlayback(): void {
     this.hintPlaybackSec = null;
   }

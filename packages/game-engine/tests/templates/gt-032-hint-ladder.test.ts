@@ -117,3 +117,13 @@ describe("GT-032 — thang hint L1/L2/L3 (N5)", () => {
     expect(digits(frame(session, 100).texts)).toEqual([]);
   });
 });
+
+describe("GT-032 — trợ giúp về L0 thì gợi ý trên cốc biến mất", () => {
+  it("L3 rồi onHintCleared: bậc gợi ý đang hiện về 0", () => {
+    const session = build();
+    session.getHintTargetForLevel(3);
+    expect(session.getShownHintLevel()).toBe(3);
+    session.onHintCleared();
+    expect(session.getShownHintLevel()).toBe(0);
+  });
+});

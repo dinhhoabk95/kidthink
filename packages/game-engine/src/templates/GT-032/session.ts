@@ -163,6 +163,10 @@ export class GT032Session extends TemplateGameSession<
     return super.getHintTargetForLevel(level);
   }
 
+  override onHintCleared(): void {
+    this.clearHintLevel();
+  }
+
   private clearHintLevel(): void {
     this.hintLevel = 0;
     this.columnsStartMs = null;

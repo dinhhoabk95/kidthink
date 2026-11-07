@@ -330,6 +330,14 @@ export abstract class TemplateGameSession<
   }
 
   /**
+   * Trợ giúp vừa về `L0` (trẻ làm đúng, vòng mới…): dọn mọi trạng thái gợi ý
+   * riêng của session — âm phát lặp, hình tách… Mặc định không có gì để dọn.
+   */
+  onHintCleared(): void {
+    // Session không giữ trạng thái gợi ý riêng.
+  }
+
+  /**
    * Mục tiêu gợi ý theo bậc `L1` / `L2` / `L3` (Task #301 S2).
    * Mặc định kiểm tra bộ giải trung tâm (`resolveSteppedHintTarget`), nếu chưa
    * tách bậc thì rơi về `getHintTarget()`.

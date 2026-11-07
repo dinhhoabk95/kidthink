@@ -101,3 +101,15 @@ describe("GT-034 — thang hint L1/L2/L3 (BR-E034-10)", () => {
     expect(session.getHintPlaybackIndex()).toBeNull();
   });
 });
+
+describe("GT-034 — trợ giúp về L0 thì mẫu gợi ý thôi phát lặp", () => {
+  it("L3 đang phát, onHintCleared: không còn ô sáng của mẫu gợi ý", () => {
+    const session = build();
+    session.getHintTargetForLevel(3);
+    expect(session.getHintPlaybackIndex()).toBe(0);
+    session.onHintCleared();
+    expect(session.getHintPlaybackIndex()).toBeNull();
+    session.update(HALF_BEAT_MS);
+    expect(session.getHintPlaybackIndex()).toBeNull();
+  });
+});

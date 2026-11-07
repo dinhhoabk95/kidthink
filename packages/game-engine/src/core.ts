@@ -197,6 +197,8 @@ export class GameEngine {
   } | null = null;
   /** Gợi ý đang trỏ vào nút hành động ở `zones.action`; shell nháy nút (`BR-PSZ-05`). */
   actionHinted = false;
+  /** Session đang hiện gợi ý bậc ≥1 — về `L0` thì phải báo `onHintCleared`. */
+  private sessionHintShown = false;
   /** Danh sách id vùng chú ý đang được tô sáng ở `L1`/`L2` (Task #301 S2). */
   hintRegionIds: readonly string[] = EMPTY_HINT_REGION_IDS;
   skipSuggested = false;
@@ -330,6 +332,7 @@ export class GameEngine {
     this.focusIndex = null;
     this.demoGhostHand = null;
     this.actionHinted = false;
+    this.sessionHintShown = false;
     this.hintRegionIds = EMPTY_HINT_REGION_IDS;
     this.lastViewKey = "";
     this.lastEmittedView = null;
@@ -412,6 +415,14 @@ export class GameEngine {
   }
 
   private applyHintTargetForLevel(level: ScaffoldingLevel): void {
+    if (level === 0 && this.sessionHintShown) {
+      // Session dọn gợi ý riêng của nó (âm phát lặp, cột nước tách…) — không
+      // thì gợi ý cũ ở lại sau khi trẻ đã làm đúng.
+      this.sessionHintShown = false;
+      if (this.activeSession instanceof TemplateGameSession) {
+        this.activeSession.onHintCleared();
+      }
+    }
     if (level === 0 || !(this.activeSession instanceof TemplateGameSession)) {
       if (
         !this.actionHinted &&
@@ -430,6 +441,7 @@ export class GameEngine {
 
     const hintLevel: HintLevel = level === 2 || level === 3 ? level : 1;
     const hint = this.activeSession.getHintTargetForLevel(hintLevel);
+    this.sessionHintShown = true;
     const targetIdx = hint?.kind === "slot" ? hint.index : null;
 
     this.actionHinted = hint?.kind === "action";
