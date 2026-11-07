@@ -10,7 +10,9 @@ import type { EngineView, Gesture } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import type { RenderItem } from "#src/render/index.js";
+import type { MascotPose } from "#src/render/mascot";
 import { AudioController } from "#src/systems/audio-controller";
+import { MoodPulse } from "#src/systems/mood-pulse";
 import type { RenderSystem } from "#src/systems/render-system";
 import {
   computeGlobalStepOffset,
@@ -39,6 +41,15 @@ import {
   type SpeakAlongMode,
 } from "./template.js";
 
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E000-15`, `BR-FBK-16`). */
+export const GT000_STORY_LINE =
+  "Cô Cú dạy bé nhận từng thứ nhé: nghe cô nói, chỉ cho cô, rồi nói cô nghe.";
+
+/** Mascot vui ngắn sau đáp án đúng (`BR-E000-15`). */
+export const GT000_HAPPY_MS = 1000;
+/** Mascot nghiêng người thì thầm lại tên sau chạm nhầm — không báo sai. */
+export const GT000_LISTEN_MS = 1500;
+
 export class GT000Session extends TemplateGameSession<
   GT000Content,
   GT000Difficulty
@@ -62,6 +73,7 @@ export class GT000Session extends TemplateGameSession<
   private stepPromptWaitedMs = 0;
   /** Recall sai đã ghi, chờ `update()` sang bước kế (`BR-CIR-07`). */
   private advancePending = false;
+  private readonly mood = new MoodPulse();
   /** Chất liệu đã báo `tts_unavailable` — nghe lại không nhân đôi telemetry. */
   private readonly ttsMissReported = new Set<string>();
 
@@ -152,6 +164,7 @@ export class GT000Session extends TemplateGameSession<
     this.echoReplayCounts.clear();
     this.ttsMissReported.clear();
     this.advancePending = false;
+    this.mood.clear();
     this.audioPromptCalled = false;
     this.releaseStepPrompt();
     this.lastTtsUsed = false;
@@ -252,7 +265,17 @@ export class GT000Session extends TemplateGameSession<
    * Trần chờ câu hỏi của bước: giọng treo không báo xong thì sau
    * `STEP_PROMPT_SETTLE_TIMEOUT_MS` vẫn mở cổng (`BR-PNR-09`).
    */
+  override storyLine(): string {
+    return GT000_STORY_LINE;
+  }
+
+  /** Vui khi đúng, thì thầm khi chạm nhầm ở recognise/link (`BR-E000-15`). */
+  override mascotMood(): MascotPose | null {
+    return this.isWon ? null : this.mood.current();
+  }
+
   update(deltaMs: number): void {
+    this.mood.tick(deltaMs);
     if (this.advancePending) {
       this.advancePending = false;
       this.advanceStep();
@@ -615,7 +638,27 @@ export class GT000Session extends TemplateGameSession<
         this.advanceStep();
         return;
       default:
-        this.applyStepAnswer(payload, step);
+        this.reactToAnswer(step, this.applyStepAnswer(payload, step));
+    }
+  }
+
+  /**
+   * Cue và mascot sau một câu trả lời (`BR-E000-15`). `recall` sai là phép
+   * đo nên im lặng; `recognise`/`link` sai chỉ thì thầm, không báo sai.
+   */
+  private reactToAnswer(step: GT000Step, result: ActionResult): void {
+    const asks =
+      step.action === "recognise" ||
+      step.action === "link" ||
+      step.action === "recall";
+    if (!asks) {
+      return;
+    }
+    if (result.valid) {
+      this.queueSfx("teacher_chime");
+      this.mood.set("happy", GT000_HAPPY_MS);
+    } else if (step.action !== "recall") {
+      this.mood.set("listen", GT000_LISTEN_MS);
     }
   }
 

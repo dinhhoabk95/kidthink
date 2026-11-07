@@ -28,7 +28,8 @@ export type SFXType =
   | "frog_hop"
   | "cat_munch"
   | "coin_clink"
-  | "net_splash";
+  | "net_splash"
+  | "teacher_chime";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -376,6 +377,26 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       volume: 0.05,
       durationSec: 0.07,
       rampOutSec: 0.05,
+    },
+  ],
+
+  /** GT-000: cô giáo khen khi bé trả lời đúng — hai nốt "ting" dịu (`BR-E000-15`). */
+  teacher_chime: [
+    {
+      delaySec: 0,
+      type: "sine",
+      freq: 660,
+      volume: 0.1,
+      durationSec: 0.12,
+      rampOutSec: 0.06,
+    },
+    {
+      delaySec: 0.12,
+      type: "sine",
+      freq: 880,
+      volume: 0.08,
+      durationSec: 0.18,
+      rampOutSec: 0.08,
     },
   ],
 
