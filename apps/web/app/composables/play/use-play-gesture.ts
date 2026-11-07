@@ -570,6 +570,37 @@ export function usePlayGesture(options: GestureOptions) {
     didLiveMazeStep = false;
   }
 
+  /**
+   * Nét kéo → `stroke` (từ `trailPoints`) khi session có đường đọc nét; ngược
+   * lại là `drop` from→to như cũ. `toAction` thuần với `stroke` nên thăm dò
+   * không đổi state (Task #313 Phase 0).
+   */
+  function buildDragGesture(
+    from: { x: number; y: number },
+    to: { x: number; y: number },
+    timeMs: number
+  ): Gesture {
+    const drop: Gesture = {
+      type: "drop",
+      fromX: from.x,
+      fromY: from.y,
+      toX: to.x,
+      toY: to.y,
+      timeMs,
+    };
+    if (trailPoints.length < 2) {
+      return drop;
+    }
+    const engine = getEngine();
+    const session = engine ? getActiveSession(engine) : null;
+    const stroke: Gesture = {
+      type: "stroke",
+      points: [...trailPoints, { x: to.x, y: to.y }],
+      timeMs,
+    };
+    return session?.toAction?.(stroke) ? stroke : drop;
+  }
+
   function handlePointerUp(e: PointerEvent): void {
     if (activePointerId !== e.pointerId) {
       return;
@@ -596,14 +627,9 @@ export function usePlayGesture(options: GestureOptions) {
       });
       triggerPostReleaseFlight(true, prevSelected, dragged, endPt);
     } else if (!didLiveMazeStep && (isDragging || dist > 14)) {
-      dispatchGesture({
-        type: "drop",
-        fromX: startLogicX,
-        fromY: startLogicY,
-        toX: endPt.x,
-        toY: endPt.y,
-        timeMs,
-      });
+      dispatchGesture(
+        buildDragGesture({ x: startLogicX, y: startLogicY }, endPt, timeMs)
+      );
       triggerPostReleaseFlight(false, prevSelected, dragged, endPt);
     }
 

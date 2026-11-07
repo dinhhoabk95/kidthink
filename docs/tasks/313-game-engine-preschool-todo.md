@@ -3,7 +3,7 @@
 Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu đổi hành vi đã chốt) → test đỏ → sửa → `rtk proxy pnpm check`.
 
 ## Phase 0 — Level không thắng được
-- [ ] Web phát gesture `stroke` từ `trailPoints` (`apps/web/app/composables/play/use-play-gesture.ts`)
+- [x] Web phát gesture `stroke` từ `trailPoints` (`apps/web/app/composables/play/use-play-gesture.ts`)
 - [ ] Web phát `adjust` (kéo xoay / kéo mức) cho GT-019, GT-032
 - [ ] Entity nút `flip` (GT-019) và pad `rest` (GT-034) qua tap
 - [ ] Gate `packages/game-engine/tests/gates/`: mọi fixture giải được chỉ bằng gesture web phát ra + ca âm trong `tests/**/fixtures/`
