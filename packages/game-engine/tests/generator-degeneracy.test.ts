@@ -10,6 +10,10 @@ import {
   GT008ContentSchema,
   GT008DifficultySchema,
 } from "#src/templates/GT-008/template";
+import {
+  GT011ContentSchema,
+  GT011DifficultySchema,
+} from "#src/templates/GT-011/template";
 
 /**
  * Bộ sinh thoái hoá (Task #313 Phase 4): mỗi ca chứng minh một cách bài không
@@ -169,5 +173,102 @@ describe("GT-008 — ô có gợi ý, khay không xếp sẵn, số ô theo band
     expect(maxSlots[0]).toBeLessThanOrEqual(4);
     expect(maxSlots[0]).toBeLessThan(maxSlots[2] ?? 0);
     expect(hints[0]).toBeLessThan(hints[2] ?? 0);
+  });
+});
+
+interface Cell {
+  row: number;
+  col: number;
+  asset: { kind: string; ref?: string } | null;
+}
+
+describe("GT-011 — mỗi seed một bài khác, band khớp age_min (BR-E011-04)", () => {
+  function parsed(seed: number) {
+    const { content_pack, difficulty_params } = gen("GT-011", seed, "5-6");
+    return {
+      content: GT011ContentSchema.parse(content_pack),
+      diff: GT011DifficultySchema.parse(difficulty_params),
+    };
+  }
+
+  /** Dạng ma trận không phụ thuộc ký hiệu: đánh số ký hiệu theo thứ tự xuất hiện. */
+  function shapeOf(cells: readonly Cell[]): string {
+    const ids = new Map<string, number>();
+    return cells
+      .slice()
+      .sort((a, b) => a.row - b.row || a.col - b.col)
+      .map((c) => {
+        if (!c.asset) {
+          return "_";
+        }
+        const key = c.asset.ref ?? "";
+        if (!ids.has(key)) {
+          ids.set(key, ids.size);
+        }
+        return String(ids.get(key));
+      })
+      .join("");
+  }
+
+  it("generator chỉ khai band 5-6 (age_min của engine là 5)", () => {
+    expect(ALL_LEVEL_GENERATORS["GT-011"]?.axes.age_band).toEqual(["5-6"]);
+  });
+
+  it("ô trống không cố định một vị trí và dạng ma trận đổi giữa các seed", () => {
+    const blanks = new Set<string>();
+    const shapes = new Set<string>();
+    for (const seed of SEEDS) {
+      const { content } = parsed(seed);
+      const blank = content.matrix.cells.find((c) => c.asset === null);
+      blanks.add(`${blank?.row},${blank?.col}`);
+      shapes.add(shapeOf(content.matrix.cells));
+    }
+    expect(blanks.size).toBeGreaterThan(2);
+    expect(shapes.size).toBeGreaterThan(3);
+  });
+
+  it("đáp án đúng không luôn là ký hiệu thứ hai và kích thước lưới có cả 2x2 lẫn 3x3", () => {
+    const sizes = new Set<number>();
+    const answerRank = new Set<number>();
+    for (const seed of SEEDS) {
+      const { content, diff } = parsed(seed);
+      sizes.add(diff.grid_size);
+      expect(content.matrix.rows).toBe(diff.grid_size);
+      const order: string[] = [];
+      for (const c of content.matrix.cells
+        .slice()
+        .sort((a, b) => a.row - b.row || a.col - b.col)) {
+        const ref = c.asset && "ref" in c.asset ? c.asset.ref : undefined;
+        if (ref && !order.includes(ref)) {
+          order.push(ref);
+        }
+      }
+      const answer = content.options.find((o) => o.is_correct);
+      const ref = answer && "ref" in answer.asset ? answer.asset.ref : "";
+      answerRank.add(order.indexOf(ref ?? ""));
+    }
+    expect([...sizes].sort()).toEqual([2, 3]);
+    expect(answerRank.size).toBeGreaterThan(1);
+  });
+
+  it("nhiễu gồm cả ký hiệu có trong ma trận lẫn ký hiệu lạ; distractor_count và item_count khớp options", () => {
+    const counts = new Set<number>();
+    for (const seed of SEEDS) {
+      const { content, diff } = parsed(seed);
+      expect(content.options.length).toBe(diff.item_count);
+      expect(diff.distractor_count).toBe(content.options.length - 1);
+      counts.add(content.options.length);
+      const inMatrix = new Set(
+        content.matrix.cells.flatMap((c) =>
+          c.asset && "ref" in c.asset ? [c.asset.ref] : []
+        )
+      );
+      const outside = content.options.filter(
+        (o) => "ref" in o.asset && !inMatrix.has(o.asset.ref)
+      );
+      expect(outside.length).toBeGreaterThan(0);
+      expect(outside.length).toBeLessThan(content.options.length - 1);
+    }
+    expect(counts.size).toBeGreaterThan(1);
   });
 });
