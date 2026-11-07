@@ -73,6 +73,9 @@ const ACTION_LABEL_BY_ICON: Readonly<Record<CommitIcon, string>> = {
   listen: "Nghe mẫu",
 };
 
+/** Số logic px kéo tương ứng một bậc `adjust`. */
+const ADJUST_STEP_PX = 48;
+
 const HIDDEN_ACTION_BUTTON: ActionButtonState = {
   visible: false,
   enabled: false,
@@ -571,9 +574,24 @@ export function usePlayGesture(options: GestureOptions) {
   }
 
   /**
-   * Nét kéo → `stroke` (từ `trailPoints`) khi session có đường đọc nét; ngược
-   * lại là `drop` from→to như cũ. `toAction` thuần với `stroke` nên thăm dò
-   * không đổi state (Task #313 Phase 0).
+   * Quy đổi một nét kéo thành `adjust`: mỗi `ADJUST_STEP_PX` kéo sang phải hoặc
+   * lên là +1 bậc (trái / xuống là -1), tối thiểu một bậc (Task #313 Phase 0).
+   */
+  function adjustDeltaOf(
+    from: { x: number; y: number },
+    to: { x: number; y: number }
+  ): number {
+    const dx = to.x - from.x;
+    const dy = from.y - to.y;
+    const signed = Math.abs(dx) >= Math.abs(dy) ? dx : dy;
+    const steps = Math.max(1, Math.round(Math.abs(signed) / ADJUST_STEP_PX));
+    return signed >= 0 ? steps : -steps;
+  }
+
+  /**
+   * Nét kéo → một gesture mà session đọc được, theo thứ tự `stroke` (từ
+   * `trailPoints`) → `drop` from→to → `adjust`; không ai đọc thì giữ `drop`.
+   * `toAction` thuần với các gesture này nên thăm dò không đổi state.
    */
   function buildDragGesture(
     from: { x: number; y: number },
@@ -588,17 +606,30 @@ export function usePlayGesture(options: GestureOptions) {
       toY: to.y,
       timeMs,
     };
-    if (trailPoints.length < 2) {
-      return drop;
-    }
     const engine = getEngine();
     const session = engine ? getActiveSession(engine) : null;
-    const stroke: Gesture = {
-      type: "stroke",
-      points: [...trailPoints, { x: to.x, y: to.y }],
+    if (!session?.toAction) {
+      return drop;
+    }
+    if (trailPoints.length >= 2) {
+      const stroke: Gesture = {
+        type: "stroke",
+        points: [...trailPoints, { x: to.x, y: to.y }],
+        timeMs,
+      };
+      if (session.toAction(stroke)) {
+        return stroke;
+      }
+    }
+    if (session.toAction(drop)) {
+      return drop;
+    }
+    const adjust: Gesture = {
+      type: "adjust",
+      delta: adjustDeltaOf(from, to),
       timeMs,
     };
-    return session?.toAction?.(stroke) ? stroke : drop;
+    return session.toAction(adjust) ? adjust : drop;
   }
 
   function handlePointerUp(e: PointerEvent): void {

@@ -4,6 +4,8 @@ import {
   type EngineConfig,
   type GT024Content,
   type GT024Difficulty,
+  type GT032Content,
+  type GT032Difficulty,
   preloadGameSession,
   type TemplateGameSession,
 } from "@mindkid/game-engine";
@@ -49,11 +51,11 @@ const CONFIG: EngineConfig = {
   layout_seed: 1,
 };
 
-function buildHarness() {
-  const session = createGameSessionSync(
-    "GT-024",
-    CONFIG
-  ) as TemplateGameSession;
+function buildHarness(
+  code: "GT-024" | "GT-032" = "GT-024",
+  config: EngineConfig = CONFIG
+) {
+  const session = createGameSessionSync(code, config) as TemplateGameSession;
   const space = { w: 960, h: 540 };
   const cssPerLogic = 1;
   const zones = computeStageZones({
@@ -108,6 +110,7 @@ function pointer(x: number, y: number, t: number): PointerEvent {
 describe("Task #313 — web phát stroke từ trailPoints", () => {
   beforeAll(async () => {
     await preloadGameSession("GT-024");
+    await preloadGameSession("GT-032");
   });
 
   it("kéo cong đi qua waypoint kế tiếp (điểm thả lệch xa) vẫn tiến vòng", () => {
@@ -129,5 +132,58 @@ describe("Task #313 — web phát stroke từ trailPoints", () => {
     gesture.handlePointerUp(pointer(end.x, end.y, 50));
 
     expect(correctCount(session)).toBe(2);
+  });
+
+  it("GT-032 pour_to_mark: kéo lên trên vùng trống phát adjust và rót nước", () => {
+    const content: GT032Content = {
+      prompt: "Rót nước đến vạch nhé!",
+      question_type: "pour_to_mark",
+      conservation_trap: false,
+      cups: [
+        {
+          cup_id: "a",
+          shape: "standard",
+          capacity_units: 6,
+          fill_units: 0,
+          target_units: 4,
+          color: "sky",
+        },
+        {
+          cup_id: "b",
+          shape: "standard",
+          capacity_units: 6,
+          fill_units: 2,
+          target_units: 2,
+          color: "sky",
+        },
+      ],
+    };
+    const difficulty: GT032Difficulty = {
+      item_count: 2,
+      cup_count: 2,
+      level_steps: 6,
+      conservation_trap: false,
+      allow_retry: true,
+      hint_after_ms: 8000,
+    };
+    const { session, gesture } = buildHarness("GT-032", {
+      ...CONFIG,
+      level_code: "GL-TEST-GT032",
+      template_code: "GT-032",
+      content_pack: content,
+      difficulty_params: difficulty,
+    });
+    const pours = () =>
+      session
+        .getTelemetry()
+        .events.filter((e) => e.event_name === "liquid_poured").length;
+    expect(pours()).toBe(0);
+
+    // Kéo thẳng lên ~100px từ vùng trống (không trúng cốc).
+    gesture.handlePointerDown(pointer(20, 300, 10));
+    gesture.handlePointerMove(pointer(20, 250, 20));
+    gesture.handlePointerUp(pointer(20, 200, 30));
+
+    expect(pours()).toBe(1);
   });
 });
