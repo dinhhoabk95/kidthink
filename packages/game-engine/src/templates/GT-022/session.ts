@@ -24,6 +24,7 @@ import type { Slot } from "#src/layout/types";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
 import {
   drawLabelText,
+  drawProgressDots,
   drawSceneBackground,
   drawSceneObjectAt,
   drawSlotItem,
@@ -651,6 +652,7 @@ export class GT022Session extends TemplateGameSession<
     }
     drawSceneBackground(ctx, rs, this.themeId);
     this.drawPinnedReferences(ctx, rs);
+    this.drawTargetCounter(ctx, rs);
     if (this.layers) {
       this.renderLayeredScene(ctx, rs, timeMs);
       return;
@@ -725,6 +727,37 @@ export class GT022Session extends TemplateGameSession<
         });
       }
     });
+  }
+
+  /**
+   * `BR-E022-09`: hàng chấm đích đã tìm nằm trong dải hàng hình mẫu, bên phải
+   * hình mẫu cuối. Không có dải (sân khấu quá chật) thì không vẽ.
+   */
+  private drawTargetCounter(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem
+  ): void {
+    const stage = this.stageRect;
+    const last = this.referenceSlots.at(-1);
+    if (!(stage && last && this.difficulty.show_target_counter)) {
+      return;
+    }
+    const left = last.x + last.w / 2 + SLOT_GAP_PX;
+    const right = stage.x + stage.w - SLOT_GAP_PX;
+    if (right - left <= 0) {
+      return;
+    }
+    // Viên thuốc cao tối thiểu 32 và gắn đỉnh vào `rect.y`: đặt đỉnh để nó
+    // thẳng hàng với tâm hàng hình mẫu.
+    drawProgressDots(
+      ctx,
+      rs,
+      {
+        done: this.sceneSystem.getFoundCount(),
+        total: this.sceneSystem.getTotalTargets(),
+      },
+      { x: left, y: last.y - 16, w: right - left, h: 32 }
+    );
   }
 
   private drawWrongHighlight(
