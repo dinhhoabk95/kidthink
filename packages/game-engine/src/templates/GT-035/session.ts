@@ -8,7 +8,7 @@ import {
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
-import { resolveAssetLabels } from "#src/labels/spoken-keyword";
+import { resolveAssetSpeech } from "#src/labels/spoken-keyword";
 import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import {
   computeStageGroupsLayout,
@@ -18,9 +18,9 @@ import {
 } from "#src/layout/stage-groups";
 import type { Slot } from "#src/layout/types";
 import {
+  drawProgressDots,
   drawSceneBackground,
   drawSlotItem,
-  drawSubPromptText,
   getColorsForState,
   spawnParticlesAtSlot,
   updateParticles,
@@ -55,7 +55,8 @@ const QUIET_OK: ActionResult = Object.freeze({
 
 type ExecutionStep = ExecutionResult["steps"][number];
 
-const COMMAND_LABELS: Record<CommandType, string> = {
+/** Tên lệnh chỉ để đọc thành tiếng; thẻ lệnh vẽ bằng biểu tượng (`BR-E035-10`). */
+const COMMAND_SPOKEN: Record<CommandType, string> = {
   forward: "Tiến",
   turn_left: "Xoay trái",
   turn_right: "Xoay phải",
@@ -296,12 +297,8 @@ export class GT035Session extends TemplateGameSession<
       cssPerLogic: this.cssPerLogic,
       groups: [
         { count: rows * cols, role: "target", cols, hasLabels: true },
-        { count: this.maxCommands, role: "target", hasLabels: true },
-        {
-          count: this.allowedCommands.length,
-          role: "source",
-          hasLabels: true,
-        },
+        { count: this.maxCommands, role: "target" },
+        { count: this.allowedCommands.length, role: "source" },
       ],
     });
   }
@@ -661,24 +658,23 @@ export class GT035Session extends TemplateGameSession<
   private describeGridCell(
     col: number,
     row: number
-  ): Pick<ViewEntity, "glyph" | "label" | "spokenLabel"> {
+  ): Pick<ViewEntity, "glyph" | "spokenLabel"> {
     const pos = `Ô hàng ${row + 1} cột ${col + 1}`;
     if (this.robotState.col === col && this.robotState.row === row) {
       return {
         glyph: "🤖",
-        label: "Robot",
         spokenLabel: `${pos}: Robot đang hướng ${FACING_SPOKEN_VI[this.getDisplayFacing()]}`,
       };
     }
     if (this.content.goal.col === col && this.content.goal.row === row) {
-      const { glyph } = resolveAssetLabels(
+      const { glyph } = resolveAssetSpeech(
         this.content.goal.asset ?? DEFAULT_GOAL_ASSET
       );
-      return { glyph, label: "Đích", spokenLabel: `${pos}: Đích đến` };
+      return { glyph, spokenLabel: `${pos}: Đích đến` };
     }
     const cellKey = `${col},${row}`;
     if (this.obstacleSet.has(cellKey)) {
-      return { glyph: "🪨", label: "Vật cản", spokenLabel: `${pos}: Vật cản` };
+      return { glyph: "🪨", spokenLabel: `${pos}: Vật cản` };
     }
     const candidateColItem = this.collectibleMap.get(cellKey);
     const colItem =
@@ -686,17 +682,12 @@ export class GT035Session extends TemplateGameSession<
         ? candidateColItem
         : undefined;
     if (colItem) {
-      const {
-        glyph,
-        label = "Vật phẩm",
-        spokenLabel = "Vật phẩm",
-      } = resolveAssetLabels(colItem.asset);
-      return { glyph, label, spokenLabel: `${pos}: ${spokenLabel}` };
+      const { glyph, spokenLabel = "Vật phẩm" } = resolveAssetSpeech(
+        colItem.asset
+      );
+      return { glyph, spokenLabel: `${pos}: ${spokenLabel}` };
     }
-    return {
-      label: `Ô ${row + 1}-${col + 1}`,
-      spokenLabel: `${pos} đang trống`,
-    };
+    return { spokenLabel: `${pos} đang trống` };
   }
 
   private appendGridEntities(
@@ -739,14 +730,14 @@ export class GT035Session extends TemplateGameSession<
         continue;
       }
       const cmd = commands[i];
-      const cmdLabel = cmd ? COMMAND_LABELS[cmd.type] : undefined;
+      const cmdLabel = cmd ? COMMAND_SPOKEN[cmd.type] : undefined;
       entities.push(
         toCircleViewEntity(slot, gridSlotCount + i, {
           id: `queue_${i}`,
           role: "target",
           state: this.queueCardEntityState(i),
           glyph: cmd ? COMMAND_ICONS[cmd.type] : undefined,
-          label: cmdLabel ?? `${i + 1}`,
+          label: cmdLabel ? undefined : `${i + 1}`,
           spokenLabel: cmdLabel
             ? `Bước ${i + 1}: ${cmdLabel}`
             : `Ô lệnh số ${i + 1} đang trống`,
@@ -766,14 +757,13 @@ export class GT035Session extends TemplateGameSession<
       if (!(slot && cmd)) {
         continue;
       }
-      const cmdLabel = COMMAND_LABELS[cmd];
+      const cmdLabel = COMMAND_SPOKEN[cmd];
       entities.push(
         toCircleViewEntity(slot, palStartIndex + p, {
           id: `pal_${cmd}`,
           role: "source",
           state: "idle",
           glyph: COMMAND_ICONS[cmd],
-          label: cmdLabel,
           spokenLabel: `Lệnh ${cmdLabel}`,
         })
       );
@@ -811,11 +801,10 @@ export class GT035Session extends TemplateGameSession<
     drawSceneBackground(ctx, rs, this.themeId);
     // Có khung thì lời dẫn thuộc shell (`BR-PSZ-01`); số lệnh đã xếp đọc từ hàng lệnh.
     if (!this.stageRect) {
-      drawSubPromptText(
-        ctx,
-        rs,
-        `Đã xếp: ${this.queueSystem.commandCount}/${this.maxCommands} lệnh`
-      );
+      drawProgressDots(ctx, rs, {
+        done: this.queueSystem.commandCount,
+        total: this.maxCommands,
+      });
     }
 
     this.renderGrid(ctx, rs);
@@ -864,7 +853,6 @@ export class GT035Session extends TemplateGameSession<
       drawSlotItem(ctx, rs, slot, {
         id: "goal",
         asset: this.content.goal.asset ?? DEFAULT_GOAL_ASSET,
-        label: this.gridLabel("Đích"),
         state: "idle",
       });
     } else if (this.obstacleSet.has(cellKey)) {
@@ -910,7 +898,6 @@ export class GT035Session extends TemplateGameSession<
           ? {
               id: `queue-${i}`,
               asset: COMMAND_ASSETS[cmd.type],
-              label: COMMAND_LABELS[cmd.type],
               state: this.activeExecutingStep === i ? "touching" : "selected",
             }
           : { id: `empty-queue-${i}`, text: `${i + 1}`, state: "idle" }
@@ -937,7 +924,6 @@ export class GT035Session extends TemplateGameSession<
       drawSlotItem(ctx, rs, slot, {
         id: `pal-${cmd}`,
         asset: COMMAND_ASSETS[cmd],
-        label: COMMAND_LABELS[cmd],
         state: "idle",
       });
     }

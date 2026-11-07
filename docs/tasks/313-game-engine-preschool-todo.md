@@ -86,6 +86,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
   - [x] 029 (một phần: dải phụ "Đã bớt n/m" thành -m + m chấm, BR-E029-05; thẻ "bớt đi n" là câu dẫn do shell đọc)
   - [x] 031 (còn lại Phase 3: "Đã góp x/y đ" thành hàng chấm xu lấp dần, thẻ giá chỉ chữ số, xu bỏ "đ", BR-E031-07)
   - [x] 032 (bỏ dòng phụ bố cục cũ và label "Cốc n", tên cốc chỉ đọc, BR-E032-08)
+  - [x] 035 (còn lại Phase 3: thẻ lệnh chỉ biểu tượng, bỏ chữ "Đích"/"Đã xếp"/tên lệnh trong view, tên lệnh chỉ đọc, BR-E035-10)
 
 ## Phase 5 — Đặc sắc từng game
 - [ ] Đợt demo: 001, 003, 020, 025, 026, 037
@@ -95,6 +96,6 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 - [ ] 031 (còn lại) — mệnh giá phi thực tế ("3đ") và xu chỉ khác số: thuộc nội dung/Phase 4-5 (xu quả kích cỡ/màu theo giá trị, hạt Montessori); nhãn "Đã góp: x / y đ" đã thay bằng hàng chấm xu lấp dần (đợt 4B, BR-E031-07)
 - [ ] 032 (còn lại) — animation rót giữa hai cốc rồi mới hỏi, `L2` hiện số vạch và `L3` tách cột nước xếp cạnh nhau chưa có code (hint hiện chỉ vẽ vạch); cốc `fluted` vẫn vẽ như cốc thường
 - [ ] 034 (còn lại) — bóng nảy theo phách và trống cơm/phách/mõ (Phase 5); mốc dung sai 160 ms (`BEAT_TIMING_TOLERANCE_MS`) chưa đo với trẻ thật (open question #1); `L2` nháy nhạc cụ đúng và `L3` phát nửa tốc độ chưa có code
-- [ ] 035 (còn lại) — robot kiểu Bee-Bot "bíp" và mũi tên tuyệt đối ↑→↓← cho 5 tuổi (Phase 5); chữ trên thẻ lệnh/nhãn lưới vẫn là chữ phải đọc (mục "Gỡ chữ phải đọc"); `L2`/`L3` của phiếu chưa có code; chưa có nút dừng giữa lúc robot đang chạy
+- [ ] 035 (còn lại) — robot kiểu Bee-Bot "bíp" và mũi tên tuyệt đối ↑→↓← cho 5 tuổi (Phase 5); chữ trên thẻ lệnh/nhãn lưới đã gỡ ở đợt 4B (BR-E035-10); `L2`/`L3` của phiếu chưa có code; chưa có nút dừng giữa lúc robot đang chạy
 - [ ] 036 (còn lại) — mô-típ sáng lần lượt kèm lời mời bằng giọng nói (hiện chỉ sáng đồng loạt, không có audio mời); mascot hát quy luật, giao diện xâu hạt (Phase 5); nút xoá dải riêng chưa có
 - [ ] 037 (còn lại) — mật độ 4 tuổi: trần 10 ô đã chặn nhưng vùng chạm/ký hiệu gây nhầm (confusable) chưa giảm theo band; `Date.now()` 800ms vẫn thuộc dòng WrongFlash ở trên; thuộc Phase 4/5
