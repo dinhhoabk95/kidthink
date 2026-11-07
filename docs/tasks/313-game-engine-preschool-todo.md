@@ -96,6 +96,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
   - [x] 003 (khung chuyện Gấu Con dọn nhà, tiếng bịch `drop_thud` khi vật đúng vào rổ, mascot `cheer` từ vật đúng đầu tiên, BR-E003-08)
   - [x] 020 (khung chuyện Gấu Con giấu các bạn dưới thẻ, tiếng lật `card_flip`, mascot `wonder` khi một thẻ chờ cặp, BR-E020-07)
   - [x] 025 (khung chuyện Gấu Con vẽ hai bức tranh, tiếng lấp lánh `sparkle_find` khi tìm ra điểm khác, mascot `wonder` từ điểm đầu tới điểm cuối, BR-E025-05)
+  - [x] 026 (khung chuyện đèn xanh/đèn đỏ, `go_chime` khi chạm đúng và `stop_hum` khi kìm được, mascot `cheer`/`freeze` sau kết quả lượt — không báo trước đáp án, BR-E026-11)
 - [ ] Khác biệt hoá cặp trùng: 003↔004, 022/025/037, 028/029/031, 001/012/018
 - [ ] Các game còn lại theo cột "Hướng đặc sắc" trong plan §1.3
 - [ ] 030 (còn lại) — dải đo vẫn là lưới ô có thể xuống nhiều hàng ở khung hẹp, chưa phải một dải liền kéo tự do theo thước; `representation: number-rod` chưa hiện khe/chồng. Cần thiết kế lại zone-layout (Phase 5 "Dải kéo tự do có snap")

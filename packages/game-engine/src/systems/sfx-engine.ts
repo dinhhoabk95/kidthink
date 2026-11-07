@@ -182,7 +182,7 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
     rampOutSec: 0.06,
   })),
 
-  /** GT-026: đèn xanh — nốt rủ rê lên, mời "đi" (`BR-E026-11`). */
+  /** GT-026: chạm đúng lượt đèn xanh — nốt rủ rê đi lên (`BR-E026-11`). */
   go_chime: [
     {
       delaySec: 0,
@@ -195,7 +195,7 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
     },
   ],
 
-  /** GT-026: đèn đỏ — nốt trầm dài, êm, báo "đứng lại" (`BR-E026-11`). */
+  /** GT-026: kìm được ở lượt đèn đỏ — nốt trầm dài, êm (`BR-E026-11`). */
   stop_hum: [
     {
       delaySec: 0,

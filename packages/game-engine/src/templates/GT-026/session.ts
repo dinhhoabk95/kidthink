@@ -23,14 +23,20 @@ import {
   drawSlotItem,
   drawSubPromptText,
 } from "#src/render/index.js";
+import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
 import {
   InhibitionSystem,
   type TrialItem,
+  type TrialOutcome,
 } from "#src/systems/inhibition-system";
 import type { RenderSystem } from "#src/systems/render-system";
 import { WrongFlash } from "#src/systems/wrong-flash";
 import type { GT026Content, GT026Difficulty } from "./template.js";
+
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E026-11`, `BR-FBK-16`). */
+export const GT026_STORY_LINE =
+  "Gấu Con chơi trò đèn xanh, đèn đỏ: đèn xanh thì chạm, đèn đỏ thì đứng yên như Gấu Con nhé!";
 
 /** Nút "dừng" của lối không tính giờ: cạnh tối thiểu (còn theo sàn chạm). */
 const STOP_PAD_MIN_PX = 72;
@@ -61,6 +67,8 @@ export class GT026Session extends TemplateGameSession<
   private isInputOpen = true;
   /** Số lượt `go` bỏ sót liên tiếp — quyết định bậc thang hạ độ khó (`BR-E026-10`). */
   private consecutiveMissedGo = 0;
+  /** Dáng mascot sau kết quả lượt vừa xong; chỉ giữ trong nhịp nghỉ (`BR-E026-11`). */
+  private outcomeMood: MascotPose | null = null;
 
   isUntimed(): boolean {
     return this.inhibitionSystem?.isUntimed() === true;
@@ -86,6 +94,32 @@ export class GT026Session extends TemplateGameSession<
     }
   }
 
+  /**
+   * Âm và mascot đi theo **kết quả** lượt, không bao giờ theo loại kích thích:
+   * báo trước `go`/`nogo` là đưa đáp án cho trẻ (`BR-E026-11`).
+   */
+  private noteOutcome(outcome: TrialOutcome): void {
+    if (outcome === "hit") {
+      this.queueSfx("go_chime");
+      this.outcomeMood = "cheer";
+    } else if (outcome === "correct_rejection") {
+      this.queueSfx("stop_hum");
+      this.outcomeMood = "freeze";
+    } else {
+      this.outcomeMood = null;
+    }
+  }
+
+  override storyLine(): string {
+    return GT026_STORY_LINE;
+  }
+
+  override mascotMood(): MascotPose | null {
+    return this.inhibitionSystem?.getState() === "stimulus"
+      ? null
+      : this.outcomeMood;
+  }
+
   setInputOpen(isOpen: boolean): void {
     this.isInputOpen = isOpen;
   }
@@ -104,6 +138,7 @@ export class GT026Session extends TemplateGameSession<
     this.wrongFlash.clear();
     this.lastFrameMs = 0;
     this.consecutiveMissedGo = 0;
+    this.outcomeMood = null;
 
     const trials: TrialItem[] = this.content.trials.map((t) => ({
       id: t.id,
@@ -178,6 +213,7 @@ export class GT026Session extends TemplateGameSession<
     if (result.outcome === "hit") {
       this.consecutiveMissedGo = 0;
     }
+    this.noteOutcome(result.outcome);
 
     this.recordEvent("item_selected", {
       outcome: result.outcome,
@@ -220,6 +256,7 @@ export class GT026Session extends TemplateGameSession<
     }
 
     if (verdict) {
+      this.noteOutcome(verdict.outcome);
       this.recordEvent("item_selected", {
         outcome: verdict.outcome,
         is_correct: verdict.isCorrect,

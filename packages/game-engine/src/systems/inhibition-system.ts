@@ -12,7 +12,7 @@ export interface TrialItem<T = string> {
   readonly data?: T;
 }
 
-type TrialOutcome =
+export type TrialOutcome =
   | "hit" // Go + Acted -> Đúng
   | "miss" // Go + No action -> Sai (omission error)
   | "correct_rejection" // No-Go + No action -> Đúng
