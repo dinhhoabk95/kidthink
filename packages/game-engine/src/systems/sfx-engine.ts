@@ -45,7 +45,8 @@ export type SFXType =
   | "block_bump"
   | "torch_click"
   | "mirror_chime"
-  | "piece_click";
+  | "piece_click"
+  | "ant_step";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -709,6 +710,26 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       volume: 0.09,
       durationSec: 0.1,
       rampOutSec: 0.05,
+    },
+  ],
+
+  /** GT-024: bước chân kiến — hai tiếng "tik" rất nhẹ, nhanh (`BR-E024-04`). */
+  ant_step: [
+    {
+      delaySec: 0,
+      type: "triangle",
+      freq: 680,
+      volume: 0.06,
+      durationSec: 0.05,
+      rampOutSec: 0.04,
+    },
+    {
+      delaySec: 0.08,
+      type: "triangle",
+      freq: 760,
+      volume: 0.06,
+      durationSec: 0.05,
+      rampOutSec: 0.04,
     },
   ],
 

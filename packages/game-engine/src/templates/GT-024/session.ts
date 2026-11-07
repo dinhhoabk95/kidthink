@@ -25,7 +25,9 @@ import {
   drawSubPromptText,
   drawWaypointPath,
 } from "#src/render/index.js";
+import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
+import { MoodPulse } from "#src/systems/mood-pulse";
 import type { RenderSystem } from "#src/systems/render-system";
 import {
   type TracePathResult,
@@ -73,6 +75,15 @@ function interpolateSegment(
   return points;
 }
 
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E024-04`, `BR-FBK-16`). */
+export const GT024_STORY_LINE =
+  "Kiến Nhỏ bị lạc, chưa tìm thấy đường về tổ. Bé nối các điểm theo thứ tự để dẫn Kiến Nhỏ về tổ nhé!";
+
+/** Mascot vui sau mỗi điểm nối đúng. */
+export const GT024_HAPPY_MS = 700;
+/** Mascot nghiêng đầu sau lần chạm nhầm điểm. */
+export const GT024_WONDER_MS = 1200;
+
 export class GT024Session extends TemplateGameSession<
   GT024Content,
   GT024Difficulty
@@ -91,11 +102,24 @@ export class GT024Session extends TemplateGameSession<
   private lastFrameMs = 0;
   private wrongWaypointTimestamp = 0;
 
+  private readonly mood = new MoodPulse();
+
+  override storyLine(): string {
+    return GT024_STORY_LINE;
+  }
+
+  /** Chỉ phản ứng sau khi nối hoặc chạm nhầm, không báo trước (`BR-E024-04`). */
+  override mascotMood(): MascotPose | null {
+    return this.isWon ? null : this.mood.current();
+  }
+
   update(deltaMs: number): void {
     this.lastFrameMs += deltaMs;
+    this.mood.tick(deltaMs);
   }
 
   setupEntities(): void {
+    this.mood.clear();
     this.isWon = false;
 
     const waypoints = this.content.waypoints.map((w) => ({
@@ -169,6 +193,8 @@ export class GT024Session extends TemplateGameSession<
     const result = this.traceSystem.checkPoint(point);
 
     if (result.valid && result.reachedWaypointId) {
+      this.queueSfx("ant_step");
+      this.mood.set("happy", GT024_HAPPY_MS);
       this.recordEvent("checkpoint_reached", {
         waypoint_id: result.reachedWaypointId,
         checkpoint_index: result.currentCheckpointIndex,
@@ -294,6 +320,7 @@ export class GT024Session extends TemplateGameSession<
   override commit(action: GameAction): void {
     if (action.type === "tap_waypoint") {
       this.wrongWaypointTimestamp = this.lastFrameMs;
+      this.mood.set("wonder", GT024_WONDER_MS);
       return;
     }
     if (action.type === "trace_point" || action.type === "point_touched") {
