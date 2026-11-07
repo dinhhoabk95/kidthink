@@ -5,6 +5,7 @@ import {
   ACTION_RETRY,
   type ActionResult,
   type GameAction,
+  type HintLevel,
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
@@ -47,8 +48,6 @@ const STOP_PAD_ID = "stop-pad";
 const STOP_PAD_ASSET = { kind: "emoji", ref: "✋" } as const;
 /** Bội số nới ở bậc `L1` (cửa sổ) và `L2` (nhịp nghỉ); `L3` là không tính giờ. */
 const LADDER_WIDEN_FACTOR = 1.5;
-/** Số lượt `go` bỏ sót liên tiếp để lên bậc `L3`. */
-const LADDER_UNTIMED_AT = 3;
 
 export class GT026Session extends TemplateGameSession<
   GT026Content,
@@ -65,8 +64,8 @@ export class GT026Session extends TemplateGameSession<
 
   private inhibitionSystem!: InhibitionSystem;
   private isInputOpen = true;
-  /** Số lượt `go` bỏ sót liên tiếp — quyết định bậc thang hạ độ khó (`BR-E026-10`). */
-  private consecutiveMissedGo = 0;
+  /** Bậc thang hạ độ khó đã áp trong chuỗi không phản ứng hiện tại (`BR-E026-10`). */
+  private appliedLadderLevel = 0;
   /** Dáng mascot sau kết quả lượt vừa xong; chỉ giữ trong nhịp nghỉ (`BR-E026-11`). */
   private outcomeMood: MascotPose | null = null;
 
@@ -82,16 +81,28 @@ export class GT026Session extends TemplateGameSession<
     return this.inhibitionSystem?.getIsiMs() ?? 0;
   }
 
-  /** Bậc thang hạ độ khó sau một lượt `go` bỏ sót: nới cửa sổ, giãn nhịp nghỉ, rồi không tính giờ. */
-  private stepDownAfterMiss(): void {
-    this.consecutiveMissedGo++;
-    if (this.consecutiveMissedGo >= LADDER_UNTIMED_AT) {
-      this.inhibitionSystem.makeUntimed();
-    } else if (this.consecutiveMissedGo === 2) {
-      this.inhibitionSystem.widenIsi(LADDER_WIDEN_FACTOR);
-    } else {
-      this.inhibitionSystem.widenStimulusWindow(LADDER_WIDEN_FACTOR);
+  /**
+   * Thang hạ độ khó theo đồng hồ trợ giúp (`BR-E026-10`): `L1` nới cửa sổ, `L2`
+   * giãn nhịp nghỉ, `L3` bỏ tính giờ. Chỉ leo vì trẻ không phản ứng (`timer`);
+   * chuỗi chạm sai không nới cửa sổ. Nhảy bậc thì áp đủ các bậc còn thiếu.
+   */
+  override onScaffoldEscalated(
+    level: HintLevel,
+    trigger: "timer" | "miss_streak"
+  ): void {
+    if (trigger !== "timer" || !this.inhibitionSystem) {
+      return;
     }
+    for (let step = this.appliedLadderLevel + 1; step <= level; step++) {
+      if (step === 1) {
+        this.inhibitionSystem.widenStimulusWindow(LADDER_WIDEN_FACTOR);
+      } else if (step === 2) {
+        this.inhibitionSystem.widenIsi(LADDER_WIDEN_FACTOR);
+      } else {
+        this.inhibitionSystem.makeUntimed();
+      }
+    }
+    this.appliedLadderLevel = Math.max(this.appliedLadderLevel, level);
   }
 
   /**
@@ -137,7 +148,7 @@ export class GT026Session extends TemplateGameSession<
     this.isWon = false;
     this.wrongFlash.clear();
     this.lastFrameMs = 0;
-    this.consecutiveMissedGo = 0;
+    this.appliedLadderLevel = 0;
     this.outcomeMood = null;
 
     const trials: TrialItem[] = this.content.trials.map((t) => ({
@@ -211,7 +222,8 @@ export class GT026Session extends TemplateGameSession<
       this.wrongFlash.trigger(this.lastFrameMs);
     }
     if (result.outcome === "hit") {
-      this.consecutiveMissedGo = 0;
+      // Đồng hồ trợ giúp đặt lại: chuỗi không phản ứng mới bắt đầu từ `L1`.
+      this.appliedLadderLevel = 0;
     }
     this.noteOutcome(result.outcome);
 
@@ -264,9 +276,9 @@ export class GT026Session extends TemplateGameSession<
       });
 
       // Kìm được ở lượt nogo thì khen. Bỏ sót lượt go là trung tính (`BR-E026-08`):
-      // không báo sai, không vào điểm — chỉ hạ độ khó cho lượt sau (`BR-E026-10`).
+      // không báo sai, không vào điểm; việc hạ độ khó theo đồng hồ trợ giúp
+      // (`onScaffoldEscalated`, `BR-E026-10`), không đếm theo lượt bỏ sót.
       if (verdict.outcome === "miss") {
-        this.stepDownAfterMiss();
         return ACTION_IGNORED;
       }
       return verdict.isCorrect ? ACTION_CORRECT : ACTION_RETRY;

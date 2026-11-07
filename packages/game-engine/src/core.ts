@@ -485,43 +485,7 @@ export class GameEngine {
     }
 
     if (level !== prevLevel && level > 0) {
-      // Payload phải khớp `EVENT_PAYLOAD_FIELDS`/`EVENT_PAYLOAD_SCHEMAS` của
-      // @mindkid/play: field lạ bị `cleanEventPayload` bỏ im lặng, field thiếu
-      // bị `.partial()` che — cả hai đều không báo lỗi ở đâu.
-      const roundIdx = this.currentRoundIndex();
-      // Đồng hồ trợ giúp duy nhất: mỗi lần leo thang là một gợi ý, RoundRunner
-      // đếm `hint_count` theo event này (Task #313 B8).
-      this.emitEvent({
-        event_name: "hint_requested",
-        timestamp_ms: Date.now(),
-        data: {
-          round_index: roundIdx,
-          source:
-            this.scaffolding.lastTrigger === "miss_streak"
-              ? "auto_miss"
-              : "auto_timer",
-        },
-      });
-      this.emitEvent({
-        event_name: "scaffold_escalated",
-        timestamp_ms: Date.now(),
-        data: {
-          round_index: roundIdx,
-          level,
-          trigger: this.scaffolding.lastTrigger,
-          elapsed_ms: Math.round(this.scaffolding.elapsedMs),
-        },
-      });
-      if (level === 2 && this.demoGhostHand !== null) {
-        this.emitEvent({
-          event_name: "demo_shown",
-          timestamp_ms: Date.now(),
-          data: {
-            round_index: roundIdx,
-            speed: this.scaffolding.ghostHandSpeed,
-          },
-        });
-      }
+      this.onScaffoldLevelRaised(this.scaffolding, level);
     }
 
     if (this.scaffolding.isSkipSuggested && !prevSkip) {
@@ -530,6 +494,56 @@ export class GameEngine {
       // vòng chơi và đã ghi event đó kèm `round_index` khi vòng bị bỏ thật.
       // Phát thêm ở engine làm `validateRoundEvents` đếm thừa vòng đã kết thúc.
       this.onSkipAvailable?.();
+    }
+  }
+
+  /** Mức trợ giúp vừa leo: báo session (thang riêng của engine) rồi ghi event. */
+  private onScaffoldLevelRaised(
+    scaffolding: ScaffoldingSystem,
+    level: ScaffoldingLevel
+  ): void {
+    if (this.activeSession instanceof TemplateGameSession) {
+      this.activeSession.onScaffoldEscalated(
+        level === 2 || level === 3 ? level : 1,
+        scaffolding.lastTrigger
+      );
+    }
+    // Payload phải khớp `EVENT_PAYLOAD_FIELDS`/`EVENT_PAYLOAD_SCHEMAS` của
+    // @mindkid/play: field lạ bị `cleanEventPayload` bỏ im lặng, field thiếu
+    // bị `.partial()` che — cả hai đều không báo lỗi ở đâu.
+    const roundIdx = this.currentRoundIndex();
+    // Đồng hồ trợ giúp duy nhất: mỗi lần leo thang là một gợi ý, RoundRunner
+    // đếm `hint_count` theo event này (Task #313 B8).
+    this.emitEvent({
+      event_name: "hint_requested",
+      timestamp_ms: Date.now(),
+      data: {
+        round_index: roundIdx,
+        source:
+          scaffolding.lastTrigger === "miss_streak"
+            ? "auto_miss"
+            : "auto_timer",
+      },
+    });
+    this.emitEvent({
+      event_name: "scaffold_escalated",
+      timestamp_ms: Date.now(),
+      data: {
+        round_index: roundIdx,
+        level,
+        trigger: scaffolding.lastTrigger,
+        elapsed_ms: Math.round(scaffolding.elapsedMs),
+      },
+    });
+    if (level === 2 && this.demoGhostHand !== null) {
+      this.emitEvent({
+        event_name: "demo_shown",
+        timestamp_ms: Date.now(),
+        data: {
+          round_index: roundIdx,
+          speed: scaffolding.ghostHandSpeed,
+        },
+      });
     }
   }
 
@@ -562,6 +576,10 @@ export class GameEngine {
     const isClockHeld = !isInputOpen && holdsClockWhileInputClosed(session);
     const updateResult = session?.update?.(isClockHeld ? 0 : deltaMs);
     if (updateResult && updateResult.feedback !== "none") {
+      // Cấm — NEVER đặt lại đồng hồ trợ giúp ở đây: verdict của nhịp update
+      // (GT-026 kìm được lượt nogo) đến từ việc trẻ *không làm gì*. Đặt lại thì
+      // trẻ không phản ứng được "khen" mỗi lượt nogo và thang `BR-E026-10`
+      // không bao giờ leo. Chỉ một cử chỉ đúng thật mới đặt lại đồng hồ.
       this.onUpdateVerdict?.(updateResult.valid);
     }
     this.flushSessionCues(session);

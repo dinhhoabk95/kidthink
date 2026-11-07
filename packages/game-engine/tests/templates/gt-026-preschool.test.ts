@@ -90,39 +90,60 @@ describe("GT-026 — lối không tính giờ có nút dừng riêng (BR-E026-09
   });
 });
 
-describe("GT-026 — hạ dần tới không tính giờ (BR-E026-10)", () => {
-  it("ba lượt go bỏ sót liên tiếp: cửa sổ rộng ra, nhịp nghỉ giãn ra, rồi không tính giờ", () => {
-    const session = build(["go", "go", "go", "go", "go", "go"]);
-    const win = f.difficulty.stimulus_window_ms;
-    const isi = f.difficulty.isi_ms;
-    expect(session.isUntimed()).toBe(false);
-
-    session.update(win + 10);
-    expect(session.getWindowMs()).toBeGreaterThan(win);
-    session.update(isi + 10);
-
-    session.update(session.getWindowMs() + 10);
-    expect(session.getIsiMs()).toBeGreaterThan(isi);
-    session.update(session.getIsiMs() + 10);
-
-    session.update(session.getWindowMs() + 10);
-    expect(session.isUntimed()).toBe(true);
-    session.update(session.getIsiMs() + 10);
-    expect(session.getState()).toBe("stimulus");
-    expect(session.update(60_000)).toBeNull();
-    expect(session.getState()).toBe("stimulus");
-  });
-
-  it("một lần chạm đúng xoá chuỗi bỏ sót", () => {
+describe("GT-026 — hạ dần tới không tính giờ theo đồng hồ trợ giúp (BR-E026-10)", () => {
+  it("bỏ sót lượt go không tự hạ độ khó", () => {
     const session = build(["go", "go", "go", "go", "go", "go"]);
     const win = f.difficulty.stimulus_window_ms;
     session.update(win + 10);
     session.update(f.difficulty.isi_ms + 10);
+    session.update(win + 10);
+    session.update(f.difficulty.isi_ms + 10);
+    expect(session.getWindowMs()).toBe(win);
+    expect(session.getIsiMs()).toBe(f.difficulty.isi_ms);
+    expect(session.isUntimed()).toBe(false);
+  });
+
+  it("L1 nới cửa sổ, L2 giãn nhịp nghỉ, L3 không tính giờ", () => {
+    const session = build(["go", "go", "go", "go", "go", "go"]);
+    const win = f.difficulty.stimulus_window_ms;
+    const isi = f.difficulty.isi_ms;
+    session.onScaffoldEscalated(1, "timer");
+    expect(session.getWindowMs()).toBe(Math.round(win * 1.5));
+    expect(session.getIsiMs()).toBe(isi);
+    session.onScaffoldEscalated(2, "timer");
+    expect(session.getIsiMs()).toBe(Math.round(isi * 1.5));
+    expect(session.isUntimed()).toBe(false);
+    session.onScaffoldEscalated(3, "timer");
+    expect(session.isUntimed()).toBe(true);
+    // Lối không tính giờ: kích thích đứng yên tới khi trẻ quyết định.
+    session.update(f.difficulty.stimulus_window_ms * 5);
+    expect(session.getState()).toBe("stimulus");
+    expect(session.update(60_000)).toBeNull();
+  });
+
+  it("nhảy thẳng L2 áp đủ L1 và L2, không áp hai lần", () => {
+    const session = build(["go", "go", "go", "go", "go", "go"]);
+    const win = f.difficulty.stimulus_window_ms;
+    session.onScaffoldEscalated(2, "timer");
+    session.onScaffoldEscalated(2, "timer");
+    expect(session.getWindowMs()).toBe(Math.round(win * 1.5));
+    expect(session.getIsiMs()).toBe(Math.round(f.difficulty.isi_ms * 1.5));
+  });
+
+  it("leo vì chuỗi chạm sai (miss_streak) không nới gì", () => {
+    const session = build(["go", "go", "go", "go", "go", "go"]);
+    session.onScaffoldEscalated(3, "miss_streak");
+    expect(session.getWindowMs()).toBe(f.difficulty.stimulus_window_ms);
+    expect(session.isUntimed()).toBe(false);
+  });
+
+  it("một lần chạm đúng đặt lại chuỗi: lần leo L1 kế tiếp lại nới cửa sổ", () => {
+    const session = build(["go", "go", "go", "go", "go", "go"]);
+    const win = f.difficulty.stimulus_window_ms;
+    session.onScaffoldEscalated(1, "timer");
     session.onTapStimulus();
     session.update(session.getIsiMs() + 10);
-    const widened = session.getWindowMs();
-    session.update(widened + 10);
-    // Chuỗi bắt đầu lại: lần bỏ sót kế chỉ là bậc 1 chứ không nhảy bậc.
-    expect(session.getIsiMs()).toBe(f.difficulty.isi_ms);
+    session.onScaffoldEscalated(1, "timer");
+    expect(session.getWindowMs()).toBe(Math.round(win * 1.5 * 1.5));
   });
 });

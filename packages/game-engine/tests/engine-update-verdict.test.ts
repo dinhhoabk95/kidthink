@@ -21,7 +21,10 @@ describe("GameEngine.onUpdateVerdict — verdict ở nhịp update", () => {
       ...content,
       trials: trials.map((kind, i) => ({ id: `t${i}`, kind })),
     };
-    const session = new GT026Session(mixed, difficulty);
+    // Đồng hồ trợ giúp để rất xa: test đo verdict, không đo thang hạ độ khó
+    // (`BR-E026-10`) — trẻ thụ động lâu thì thang leo tới lối không tính giờ.
+    const calm = { ...difficulty, hint_after_ms: 10_000_000 };
+    const session = new GT026Session(mixed, calm);
     const engine = new GameEngine();
     engine.load(
       {
@@ -29,7 +32,7 @@ describe("GameEngine.onUpdateVerdict — verdict ở nhịp update", () => {
         content_version: 1,
         template_code: "GT-026",
         content_pack: mixed,
-        difficulty_params: difficulty,
+        difficulty_params: calm,
         theme_id: "default",
         age_band: "5-6",
         reduced_motion: false,

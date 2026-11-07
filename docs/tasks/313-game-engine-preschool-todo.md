@@ -57,7 +57,8 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 
 - [ ] 023 (còn lại) — mảnh khác cỡ thật (người tuyết 3 cỡ: hiện 3 khối cùng asset nên thay nhau được hết) và bảng bóng hình Montessori: asset/nội dung, Phase 5; sân khấu rất chật vẫn lùi về lưới; legacy (không stage) vẫn lệch hệ toạ độ giữa neo và khay
 
-- [ ] 026 (còn lại) — thang hạ độ khó chạy theo số lượt bỏ sót, chưa theo `hint_after_ms` (Task #301); đèn giao thông/mascot đứng hình (Phase 5); GT-026#0-2 đã gỡ khỏi sổ nợ web-gesture (solver nay biết chờ `update()`)
+- [x] 026 (thang hạ độ khó) — `L1`–`L3` chạy theo đồng hồ trợ giúp chung với `hint_after_ms` của vòng qua hook `onScaffoldEscalated`, chỉ leo do `timer`; kìm được `nogo` không đặt lại đồng hồ (`BR-E026-10`); GT-026#0-2 đã gỡ khỏi sổ nợ web-gesture (solver nay biết chờ `update()`)
+- [ ] 026 (còn lại) — asset đèn giao thông/mascot đứng hình (Phase 5)
 
 - [ ] 029 (còn lại) — chữ phụ "Đã bớt: n/m" đã thành `-m` + chấm (BR-E029-05); câu "bớt đi n" là câu dẫn shell đọc, ô số ban đầu giữ nguyên; mèo ăn cá thật sự (Phase 5); lưới lẻ cột thì vật bớt chia hàng với nhóm nên không có dock riêng
 

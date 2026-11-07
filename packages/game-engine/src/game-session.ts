@@ -312,6 +312,19 @@ export abstract class TemplateGameSession<
   }
 
   /**
+   * Đồng hồ trợ giúp chung vừa leo lên `level` (1–3). `trigger` là `timer` khi trẻ
+   * không phản ứng quá `hint_after_ms`, `miss_streak` khi leo vì chuỗi chạm sai.
+   * Engine có thang riêng (GT-026: nới cửa sổ → giãn nhịp nghỉ → không tính giờ,
+   * `BR-E026-10`) ghi đè; mặc định không làm gì. Gọi đúng một lần mỗi lần leo.
+   */
+  onScaffoldEscalated(
+    _level: HintLevel,
+    _trigger: "timer" | "miss_streak"
+  ): void {
+    // Mặc định: chỉ thang gợi ý chung (`getHintTargetForLevel`).
+  }
+
+  /**
    * Chữ âm đề cần tự đọc khi vòng mở, sau khi câu dẫn của vòng đọc xong
    * (GT-018 `auto_play_audio`, `BR-E018-05`). `null` = không tự đọc; trẻ chạm vật
    * có `spokenLabel` để nghe. Bề mặt chơi đọc đúng một lần mỗi vòng.
