@@ -49,7 +49,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 - [ ] 013 (còn lại) — mê cung ~50% tường, nhiều lối: giảm mật độ tường và số lối ở bộ sinh/fixture 4–5 tuổi (nội dung/generator, Phase 4); GT-013#2 vẫn nằm trong sổ nợ web-gesture
 - [ ] 014 (còn lại) — ẩn số khối lượng khỏi vật khay/đĩa (đang in nên thành phép trừ): cần kích thước vật tỉ lệ khối lượng (BR-E014-03, hiện ô khay cùng cỡ) trước khi ẩn số, không thì bài không giải được; thuộc Phase 5
 
-- [ ] 015 (còn lại) — puzzle thoái hoá (2×2 hai ô trống cùng đáp án, đề không cần suy luận): đổi bộ sinh/fixture, thuộc Phase 4 "Generator 015"; thang hint L1–L3 theo Task #301; GT-015#1-2 vẫn trong sổ nợ web-gesture (chưa có cử chỉ nhấc ký hiệu ra)
+- [ ] 015 (còn lại) — bộ sinh đã sửa (Phase 4); fixture ghim tay (#0 2×2 hai ô trống cùng đáp án, #1 ba ô cùng đáp án) chưa đổi vì nhiều test bám vào chúng; thang hint L1–L3 theo Task #301; GT-015#1-2 vẫn trong sổ nợ web-gesture (chưa có cử chỉ nhấc ký hiệu ra)
 
 - [ ] 021 (còn lại) — nửa phản chiếu dùng asset bất đối xứng thật (giày trái/phải, khủng long) và "Gương thần" hiện live: nội dung/asset, Phase 5; ánh sáng ô đối xứng lúc nhấc (N4) chưa có code
 
@@ -66,7 +66,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 - [x] Generator 008 (ô mang tên vật, khay không xếp sẵn, số ô/hint theo band, BR-E008-04; `distractor_count` còn chết — session ràng items = ô)
 - [x] Generator 011 (hình vuông Latin hoán vị, ô trống/lưới 2x2-3x3 đổi theo seed, chỉ band 5-6, BR-E011-04)
 - [x] Generator 012 (`flash_ms` theo band×số vật 800–3000, số vật cap-1..cap, nhiễu/hint/arrangement theo band-seed, BR-E012-05)
-- [ ] Generator 015 (puzzle có nghiệm duy nhất cần suy luận)
+- [x] Generator 015 (3×3 Latin hoán vị, 2–3 ô trống ngẫu nhiên đạt nghiệm duy nhất/đáp án khác nhau/ô trống liên kết, chỉ band 5-6, BR-E015-06)
 - [ ] Generator 016
 - [ ] Band khớp `age_min` (011, 015, 017)
 - [ ] Giảm mật độ tường/số lối GT-013 4–5 tuổi

@@ -698,8 +698,8 @@ describe("GT-034 — generator contract conformity", () => {
   describe("GT-015 — generator contract conformity & solver verification", () => {
     const themeVocab = vocab(10);
 
-    it("generates valid mini sudoku levels with unique solution for age bands 4-5 and 5-6 across seeds", () => {
-      for (const age_band of ["4-5", "5-6"] as const) {
+    it("generates valid mini sudoku levels with unique solution for age band 5-6 across seeds (age_min 5)", () => {
+      for (const age_band of ["5-6"] as const) {
         for (let seed = 1; seed <= 20; seed++) {
           const { content_pack, difficulty_params } = GT015Generator.generate({
             rng: createRng(seed),

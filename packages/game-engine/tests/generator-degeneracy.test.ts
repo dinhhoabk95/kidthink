@@ -4,6 +4,7 @@ import { pickContrast } from "#src/generators/contrast";
 import { ALL_LEVEL_GENERATORS } from "#src/generators/index";
 import type { ThemeVocabulary } from "#src/generators/types";
 import { createRng } from "#src/rng/mulberry32";
+import { isSudokuCompleteAndValid } from "#src/systems/constraint-system";
 import { GT006Session } from "#src/templates/GT-006/session";
 import { GT006ContentSchema } from "#src/templates/GT-006/template";
 import {
@@ -19,6 +20,10 @@ import {
   GT012ContentSchema,
   GT012DifficultySchema,
 } from "#src/templates/GT-012/template";
+import {
+  GT015ContentSchema,
+  GT015DifficultySchema,
+} from "#src/templates/GT-015/template";
 
 /**
  * Bộ sinh thoái hoá (Task #313 Phase 4): mỗi ca chứng minh một cách bài không
@@ -363,5 +368,98 @@ describe("GT-012 — flash_ms co giãn theo band và số vật, đủ dải đ�
     }
     expect(arrangements.size).toBeGreaterThan(1);
     expect(optionCounts[0]).toBeLessThan(optionCounts[2] ?? 0);
+  });
+});
+
+describe("GT-015 — đề cần suy luận, nghiệm duy nhất, khác nhau giữa các seed (BR-E015-06)", () => {
+  function parsed(seed: number) {
+    const { content_pack, difficulty_params } = gen("GT-015", seed, "5-6");
+    return {
+      content: GT015ContentSchema.parse(content_pack),
+      diff: GT015DifficultySchema.parse(difficulty_params),
+    };
+  }
+
+  /** Mọi cách điền ô trống thành lưới đầy hợp lệ — dùng để đo đáp án. */
+  function solutions(
+    content: ReturnType<typeof parsed>["content"]
+  ): string[][] {
+    const ids = content.symbols.map((s) => s.symbol_id);
+    const blanks = content.cells.filter((c) => c.symbol_id === null);
+    const found: string[][] = [];
+    const assign = (i: number, chosen: string[]) => {
+      if (i === blanks.length) {
+        const grid = {
+          size: content.grid_size,
+          regions: content.regions,
+          cells: content.cells.map((c) => {
+            const bi = blanks.findIndex(
+              (b) => b.row === c.row && b.col === c.col
+            );
+            return {
+              row: c.row,
+              col: c.col,
+              value: bi >= 0 ? (chosen[bi] ?? null) : c.symbol_id,
+            };
+          }),
+        };
+        if (isSudokuCompleteAndValid(grid)) {
+          found.push([...chosen]);
+        }
+        return;
+      }
+      for (const id of ids) {
+        assign(i + 1, [...chosen, id]);
+      }
+    };
+    assign(0, []);
+    return found;
+  }
+
+  it("chỉ khai band 5-6 (age_min của engine là 5)", () => {
+    expect(ALL_LEVEL_GENERATORS["GT-015"]?.axes.age_band).toEqual(["5-6"]);
+  });
+
+  it("nghiệm duy nhất, các ô trống không cùng một đáp án, blank_count khớp lưới", () => {
+    for (const seed of SEEDS) {
+      const { content, diff } = parsed(seed);
+      const blanks = content.cells.filter((c) => c.symbol_id === null);
+      expect(diff.blank_count, `seed=${seed}`).toBe(blanks.length);
+      expect(diff.item_count).toBe(content.grid_size);
+      const sols = solutions(content);
+      expect(sols, `seed=${seed}`).toHaveLength(1);
+      expect(new Set(sols[0]).size, `seed=${seed}`).toBeGreaterThan(1);
+    }
+  });
+
+  it("ít nhất một ô trống phải đọc cả hàng lẫn cột: có ô trống khác cùng hàng hoặc cột", () => {
+    for (const seed of SEEDS) {
+      const { content } = parsed(seed);
+      const blanks = content.cells.filter((c) => c.symbol_id === null);
+      const linked = blanks.some((a) =>
+        blanks.some((b) => b !== a && (a.row === b.row || a.col === b.col))
+      );
+      expect(linked, `seed=${seed}`).toBe(true);
+    }
+  });
+
+  it("vị trí ô trống, số ô trống và ký hiệu đổi giữa các seed", () => {
+    const layouts = new Set<string>();
+    const blankCounts = new Set<number>();
+    const hints = new Set<number>();
+    for (const seed of SEEDS) {
+      const { content, diff } = parsed(seed);
+      layouts.add(
+        content.cells
+          .filter((c) => c.symbol_id === null)
+          .map((c) => `${c.row}${c.col}`)
+          .join(",")
+      );
+      blankCounts.add(diff.blank_count);
+      hints.add(diff.hint_after_ms);
+    }
+    expect(layouts.size).toBeGreaterThan(4);
+    expect([...blankCounts].sort()).toEqual([2, 3]);
+    expect(hints.size).toBe(2);
   });
 });
