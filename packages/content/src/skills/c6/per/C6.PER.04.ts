@@ -123,7 +123,7 @@ export const C6_PER_04_DATASET: SkillDataset = {
     },
     {
       id: "fish",
-      label: "con cá",
+      label: "chú cá nhỏ",
       image: {
         kind: "emoji",
         ref: "🐟",

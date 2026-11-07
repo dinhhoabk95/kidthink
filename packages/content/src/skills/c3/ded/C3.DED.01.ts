@@ -54,6 +54,7 @@ export const C3_DED_01_DATASET: SkillDataset = {
         color: "yellow",
         shape: "circle",
         size: "small",
+        habitat: "tree",
       },
       contrast_group: "birds",
       value: 1,
@@ -71,6 +72,7 @@ export const C3_DED_01_DATASET: SkillDataset = {
         color: "green",
         shape: "circle",
         size: "medium",
+        habitat: "tree",
       },
       contrast_group: "birds",
       value: 2,
@@ -88,6 +90,7 @@ export const C3_DED_01_DATASET: SkillDataset = {
         color: "yellow",
         shape: "circle",
         size: "medium",
+        habitat: "night",
       },
       contrast_group: "birds",
       value: 3,
@@ -105,6 +108,7 @@ export const C3_DED_01_DATASET: SkillDataset = {
         color: "yellow",
         shape: "circle",
         size: "medium",
+        habitat: "water",
       },
       contrast_group: "birds",
       value: 4,
@@ -180,7 +184,7 @@ export const C3_DED_01_DATASET: SkillDataset = {
     },
     {
       id: "mag_glass",
-      label: "kính lúp thám tử",
+      label: "chiếc kính lúp",
       value: 1,
       image: {
         kind: "emoji",
@@ -225,7 +229,7 @@ export const C3_DED_01_DATASET: SkillDataset = {
     },
     {
       id: "blue_gem",
-      label: "viên ngọc xanh lục",
+      label: "viên ngọc xanh",
       value: 6,
       image: {
         kind: "emoji",
@@ -243,7 +247,7 @@ export const C3_DED_01_DATASET: SkillDataset = {
     },
     {
       id: "star_badge",
-      label: "huy hiệu thám tử",
+      label: "ngôi sao vàng",
       value: 8,
       image: {
         kind: "emoji",

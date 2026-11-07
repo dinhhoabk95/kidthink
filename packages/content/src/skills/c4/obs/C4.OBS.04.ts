@@ -134,7 +134,7 @@ export const C4_OBS_04_DATASET: SkillDataset = {
     },
     {
       id: "sketchbook",
-      label: "sổ vẽ tranh",
+      label: "quyển vở vẽ",
       image: {
         kind: "emoji",
         ref: "📓",

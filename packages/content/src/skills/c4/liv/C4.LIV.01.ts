@@ -43,10 +43,10 @@ export const C4_LIV_01_DATASET: SkillDataset = {
   items: [
     {
       id: "plt_leaf",
-      label: "lá cây xanh",
+      label: "lá xanh tươi",
       image: {
         kind: "emoji",
-        ref: "🍃",
+        ref: "🌿",
       },
       category: {
         type: "bộ phận trên",
@@ -73,7 +73,7 @@ export const C4_LIV_01_DATASET: SkillDataset = {
     },
     {
       id: "plt_fruit",
-      label: "quả ngọt lành",
+      label: "quả táo chín",
       image: {
         kind: "emoji",
         ref: "🍎",
@@ -103,7 +103,7 @@ export const C4_LIV_01_DATASET: SkillDataset = {
     },
     {
       id: "plt_root",
-      label: "rễ cây bám đất",
+      label: "củ cà rốt dưới đất",
       image: {
         kind: "emoji",
         ref: "🥕",
@@ -118,7 +118,7 @@ export const C4_LIV_01_DATASET: SkillDataset = {
     },
     {
       id: "plt_seed",
-      label: "hạt giống nhỏ",
+      label: "hạt dẻ nhỏ",
       image: {
         kind: "emoji",
         ref: "🌰",
@@ -133,7 +133,7 @@ export const C4_LIV_01_DATASET: SkillDataset = {
     },
     {
       id: "plt_tuber",
-      label: "củ khoai lang",
+      label: "củ khoai tây",
       image: {
         kind: "emoji",
         ref: "🥔",

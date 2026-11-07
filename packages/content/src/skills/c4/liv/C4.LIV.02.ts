@@ -148,7 +148,7 @@ export const C4_LIV_02_DATASET: SkillDataset = {
     },
     {
       id: "anm_tail",
-      label: "chiếc đuôi cong",
+      label: "đuôi khỉ cong",
       image: {
         kind: "emoji",
         ref: "🐒",

@@ -141,7 +141,7 @@ export const C1_NCOMP_04_DATASET: SkillDataset = {
     },
     {
       id: "wb08_gold_star",
-      label: "ngôi sao dẫn đường vàng",
+      label: "ngôi sao vàng",
       glyph: "⭐",
       value: 2,
       contrast_group: "cipher_star",
@@ -151,7 +151,7 @@ export const C1_NCOMP_04_DATASET: SkillDataset = {
     },
     {
       id: "wb08_padlock_brass",
-      label: "ổ khóa số mạ đồng",
+      label: "chiếc ổ khóa vàng",
       glyph: "🔒",
       value: 5,
       contrast_group: "cipher_lock",
@@ -359,8 +359,8 @@ export const C1_NCOMP_04_SEED: SkillSeed = {
       code: "GL-C1-NCOMP-SLOT-0182",
       template: "GT-008",
       band: "3-4",
-      difficulty: 4,
-      access_tier: "premium",
+      difficulty: 3,
+      access_tier: "standard",
       theme: "vehicle",
       rounds: 3,
       montessori_ref: "WB07-D3",

@@ -46,10 +46,10 @@ export const C5_RHY_05_DATASET: SkillDataset = {
   items: [
     {
       id: "rhy_an",
-      label: "vần an (cái bàn)",
+      label: "vần an (cây đàn)",
       image: {
         kind: "emoji",
-        ref: "🪑",
+        ref: "🎸",
       },
       category: {
         type: "vần mũi vang",

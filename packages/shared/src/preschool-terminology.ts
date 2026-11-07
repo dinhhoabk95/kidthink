@@ -289,9 +289,9 @@ export function formatPluralNoun(
 ): string {
   const promptLabel = formatPromptLabel(label, opts);
 
-  // Nếu nhãn đã chứa số lượng ở đầu (ví dụ: "hai bông hoa", "3 quả táo"), không thêm "các"
+  // Nếu nhãn đã chứa số lượng ở đầu (ví dụ: "hai bông hoa", "3 quả táo"), thêm "nhóm" để tự nhiên khi ghép với "tất cả"
   if (NUMBER_PREFIX_RE.test(promptLabel)) {
-    return promptLabel;
+    return `nhóm ${promptLabel}`;
   }
 
   if (promptLabel.startsWith("hình ")) {
@@ -303,13 +303,8 @@ export function formatPluralNoun(
   if (promptLabel.startsWith("chữ ")) {
     return `tất cả ${promptLabel}`;
   }
-  if (
-    promptLabel.startsWith("con ") ||
-    promptLabel.startsWith("quả ") ||
-    promptLabel.startsWith("cái ") ||
-    promptLabel.startsWith("chiếc ")
-  ) {
-    return `các ${promptLabel.slice(4).trim()}`;
+  if (promptLabel.startsWith("các ") || promptLabel.startsWith("những ")) {
+    return promptLabel;
   }
   return `các ${promptLabel}`;
 }

@@ -47,7 +47,7 @@ export const C5_STO_03_DATASET: SkillDataset = {
       label: "gia đình sum vầy",
       image: {
         kind: "emoji",
-        ref: "🍲",
+        ref: "👨‍👩‍👧",
       },
       category: {
         type: "kết yêu thương",

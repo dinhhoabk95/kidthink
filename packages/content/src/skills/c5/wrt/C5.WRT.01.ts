@@ -69,11 +69,11 @@ export const C5_WRT_01_DATASET: SkillDataset = {
     },
     {
       id: "wrt_tay_chi",
-      label: "tẩy chì",
+      label: "bút mực",
       value: 3,
       image: {
         kind: "emoji",
-        ref: "🧼",
+        ref: "🖊️",
       },
       category: {
         type: "dụng cụ viết",

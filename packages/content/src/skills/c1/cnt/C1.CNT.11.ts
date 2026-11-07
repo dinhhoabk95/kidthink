@@ -46,7 +46,7 @@ export const C1_CNT_11_DATASET: SkillDataset = {
   items: [
     {
       id: "dot_1",
-      label: "nhóm một chấm",
+      label: "một chấm tròn đen",
       glyph: "⚫",
       value: 1,
       contrast_group: "quantity",
@@ -61,7 +61,7 @@ export const C1_CNT_11_DATASET: SkillDataset = {
     },
     {
       id: "dot_2",
-      label: "nhóm hai chấm",
+      label: "hai chấm tròn đen",
       glyph: "⚫⚫",
       value: 2,
       contrast_group: "quantity",
@@ -76,7 +76,7 @@ export const C1_CNT_11_DATASET: SkillDataset = {
     },
     {
       id: "dot_3",
-      label: "nhóm ba chấm",
+      label: "ba chấm tròn đen",
       glyph: "⚫⚫⚫",
       value: 3,
       contrast_group: "quantity",
@@ -91,7 +91,7 @@ export const C1_CNT_11_DATASET: SkillDataset = {
     },
     {
       id: "dot_4",
-      label: "nhóm bốn chấm",
+      label: "bốn chấm tròn đen",
       glyph: "⚫⚫⚫⚫",
       value: 4,
       contrast_group: "quantity",
@@ -106,7 +106,7 @@ export const C1_CNT_11_DATASET: SkillDataset = {
     },
     {
       id: "dot_5",
-      label: "nhóm năm chấm",
+      label: "năm chấm tròn đen",
       glyph: "⚫⚫⚫⚫⚫",
       value: 5,
       contrast_group: "quantity",

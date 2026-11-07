@@ -30,6 +30,14 @@ const BLANKS_3X3: readonly (readonly [number, number])[] = [
   [2, 1],
 ];
 
+/** Ô trống của lưới 4×4 (regions = row_col_box): mỗi hàng, mỗi cột và mỗi ô 2×2 đúng 1 ô trống. */
+const BLANKS_4X4: readonly (readonly [number, number])[] = [
+  [0, 1],
+  [1, 2],
+  [2, 3],
+  [3, 0],
+];
+
 function buildCells3x3(
   sym0: string,
   sym1: string,
@@ -51,8 +59,31 @@ function buildCells3x3(
   );
 }
 
+function buildCells4x4(
+  sym0: string,
+  sym1: string,
+  sym2: string,
+  sym3: string,
+  blankCount: number
+) {
+  const latin4x4 = [
+    [sym0, sym1, sym2, sym3],
+    [sym2, sym3, sym0, sym1],
+    [sym1, sym0, sym3, sym2],
+    [sym3, sym2, sym1, sym0],
+  ];
+  const blanks = BLANKS_4X4.slice(0, Math.min(blankCount, BLANKS_4X4.length));
+  return latin4x4.flatMap((row, r) =>
+    row.map((val, c) => ({
+      row: r,
+      col: c,
+      symbol_id: blanks.some(([br, bc]) => br === r && bc === c) ? null : val,
+    }))
+  );
+}
+
 function resolveGridCells(
-  gridSize: 2 | 3,
+  gridSize: 2 | 3 | 4,
   symbols: { symbol_id: string }[],
   blankCount: number
 ) {
@@ -60,6 +91,15 @@ function resolveGridCells(
   const sym1 = safeGetItem(symbols, 1).symbol_id;
   if (gridSize === 2) {
     return buildCells2x2(sym0, sym1);
+  }
+  if (gridSize === 4) {
+    return buildCells4x4(
+      sym0,
+      sym1,
+      safeGetItem(symbols, 2).symbol_id,
+      safeGetItem(symbols, 3).symbol_id,
+      blankCount
+    );
   }
   return buildCells3x3(
     sym0,
@@ -80,7 +120,13 @@ export const projectGT015: Projection<"GT-015"> = {
     }
 
     const params = getEngineDifficultyParams("GT-015", opts.difficulty);
-    const gridSize = params.item_count as 2 | 3;
+    const use4x4 =
+      (dataset.skill_code === "C3.MTX.02" ||
+        dataset.skill_code === "C3.MTX.03") &&
+      opts.difficulty >= 3 &&
+      dataset.items.length >= 4;
+    const gridSize: 2 | 3 | 4 = use4x4 ? 4 : (params.item_count as 2 | 3);
+    const regions = use4x4 ? ("row_col_box" as const) : ("row_col" as const);
 
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
     const shuffled = shuffleDeterministic(dataset.items, rng);
@@ -97,20 +143,26 @@ export const projectGT015: Projection<"GT-015"> = {
       };
     });
 
-    const blankCount =
-      typeof params.blank_count === "number" ? params.blank_count : 1;
+    let blankCount = 1;
+    if (use4x4) {
+      blankCount = 4;
+    } else if (typeof params.blank_count === "number") {
+      blankCount = params.blank_count;
+    }
     const cells = resolveGridCells(gridSize, symbols, blankCount);
 
     return {
       content_pack: {
-        prompt: "Bé tìm hình còn thiếu vào ô trống nhé!",
+        prompt: use4x4
+          ? "Bé điền đủ bốn hình vào hàng, cột và ô nhé!"
+          : "Bé tìm hình còn thiếu vào ô trống nhé!",
         grid_size: gridSize,
         symbols,
         cells,
-        regions: "row_col" as const,
+        regions,
       },
       difficulty_params: {
-        item_count: params.item_count,
+        item_count: use4x4 ? 4 : params.item_count,
         grid_size: gridSize,
         blank_count: blankCount,
         hint_after_ms: 10_000,

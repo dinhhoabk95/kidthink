@@ -489,7 +489,7 @@ export const C1_NREC_09_SEED: SkillSeed = {
       band: "5-6",
       difficulty: 4,
       access_tier: "premium",
-      theme: "garden",
+      theme: "nature",
       rounds: 3,
       montessori_ref: "WB02-D2",
     },

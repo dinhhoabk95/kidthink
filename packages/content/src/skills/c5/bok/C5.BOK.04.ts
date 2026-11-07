@@ -46,7 +46,7 @@ export const C5_BOK_04_DATASET: SkillDataset = {
   items: [
     {
       id: "bok_sach_dong_vat",
-      label: "sách động vật",
+      label: "sách động vật sư tử",
       image: {
         kind: "emoji",
         ref: "🦁",
@@ -91,7 +91,7 @@ export const C5_BOK_04_DATASET: SkillDataset = {
     },
     {
       id: "bok_sach_co_tich",
-      label: "sách cổ tích",
+      label: "sách cổ tích cô tiên",
       image: {
         kind: "emoji",
         ref: "🧚",
@@ -121,7 +121,7 @@ export const C5_BOK_04_DATASET: SkillDataset = {
     },
     {
       id: "bok_sach_ngu_ngon",
-      label: "sách ngụ ngôn",
+      label: "sách truyện chú cáo",
       image: {
         kind: "emoji",
         ref: "🦊",

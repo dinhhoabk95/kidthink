@@ -367,7 +367,7 @@ export const C2_GEO_04_SEED: SkillSeed = {
       band: "4-5",
       difficulty: 1,
       access_tier: "free",
-      theme: "town",
+      theme: "homeland",
       rounds: 3,
       montessori_ref: "WB19-D1",
     },

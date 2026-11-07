@@ -65,7 +65,7 @@ export const C5_PHO_01_DATASET: SkillDataset = {
       label: "mẹ đi chợ",
       image: {
         kind: "emoji",
-        ref: "🧺",
+        ref: "👩",
       },
       category: {
         type: "câu ba tiếng",
@@ -129,7 +129,7 @@ export const C5_PHO_01_DATASET: SkillDataset = {
       label: "bé yêu ông bà",
       image: {
         kind: "emoji",
-        ref: "🏡",
+        ref: "👴",
       },
       category: {
         type: "câu bốn tiếng",

@@ -13,55 +13,44 @@ interface MazeWall {
   side: "n" | "e" | "s" | "w";
 }
 
-function buildMazeWalls(size: number, variant: number): MazeWall[] {
-  if (size === 4) {
-    if (variant === 0) {
-      return [
-        { row: 0, col: 1, side: "s" },
-        { row: 1, col: 1, side: "e" },
-        { row: 2, col: 2, side: "s" },
-        { row: 1, col: 3, side: "s" },
-      ];
-    }
-    if (variant === 1) {
-      return [
-        { row: 0, col: 2, side: "s" },
-        { row: 1, col: 1, side: "s" },
-        { row: 2, col: 1, side: "e" },
-        { row: 2, col: 3, side: "s" },
-      ];
-    }
-    return [
-      { row: 0, col: 1, side: "e" },
-      { row: 1, col: 2, side: "s" },
-      { row: 2, col: 0, side: "s" },
-      { row: 1, col: 3, side: "s" },
-    ];
-  }
+function buildMazeWalls(variant: number, difficulty: number): MazeWall[] {
   if (variant === 0) {
     return [
       { row: 0, col: 1, side: "s" },
-      { row: 1, col: 2, side: "e" },
+      { row: 1, col: 1, side: "e" },
       { row: 2, col: 2, side: "s" },
-      { row: 3, col: 3, side: "s" },
-      { row: 2, col: 4, side: "s" },
+      { row: 1, col: 3, side: "s" },
+      ...(difficulty >= 3 ? [{ row: 0, col: 3, side: "s" as const }] : []),
     ];
   }
   if (variant === 1) {
     return [
       { row: 0, col: 2, side: "s" },
-      { row: 1, col: 1, side: "e" },
+      { row: 1, col: 1, side: "s" },
+      { row: 2, col: 1, side: "e" },
       { row: 2, col: 3, side: "s" },
-      { row: 3, col: 2, side: "s" },
-      { row: 1, col: 4, side: "s" },
+      ...(difficulty >= 3 ? [{ row: 1, col: 2, side: "e" as const }] : []),
     ];
   }
   return [
     { row: 0, col: 1, side: "e" },
+    { row: 1, col: 2, side: "s" },
+    { row: 2, col: 0, side: "s" },
     { row: 1, col: 3, side: "s" },
-    { row: 2, col: 1, side: "s" },
-    { row: 3, col: 3, side: "s" },
-    { row: 2, col: 4, side: "s" },
+    ...(difficulty >= 3 ? [{ row: 0, col: 2, side: "e" as const }] : []),
+  ];
+}
+
+function buildRequiredCells(count: number): { row: number; col: number }[] {
+  if (count <= 0) {
+    return [];
+  }
+  if (count === 1) {
+    return [{ row: 2, col: 1 }];
+  }
+  return [
+    { row: 2, col: 1 },
+    { row: 3, col: 1 },
   ];
 }
 
@@ -72,10 +61,10 @@ export const projectGT013: Projection<"GT-013"> = {
     const params = getEngineDifficultyParams("GT-013", opts.difficulty);
     const roundIdx = opts.round_index ?? 0;
     const _rng = createRng(opts.seed + roundIdx);
-    const size = opts.band === "5-6" ? 5 : 4;
+    const size = 4;
 
     const variant = (opts.seed + roundIdx) % 3;
-    const walls = buildMazeWalls(size, variant);
+    const walls = buildMazeWalls(variant, opts.difficulty);
 
     const glyphItems = dataset.items.filter((i) => i.glyph);
     const item =
@@ -101,8 +90,9 @@ export const projectGT013: Projection<"GT-013"> = {
           start: { row: 0, col: 0 },
           goal: { row: size - 1, col: size - 1 },
         },
-        required_cells: [],
-        input_mode: "arrows" as const,
+        required_cells: buildRequiredCells(requiredCellCount),
+        input_mode:
+          opts.band === "5-6" ? ("arrows" as const) : ("draw" as const),
       },
       difficulty_params: {
         item_count: params.item_count,

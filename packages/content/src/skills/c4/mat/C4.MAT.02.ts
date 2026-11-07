@@ -43,7 +43,7 @@ export const C4_MAT_02_DATASET: SkillDataset = {
   items: [
     {
       id: "mat_hot_soup",
-      label: "bát súp nóng",
+      label: "nồi súp nóng",
       image: {
         kind: "emoji",
         ref: "🍲",

@@ -56,7 +56,7 @@ export const C2_SOL_06_DATASET: SkillDataset = {
     },
     {
       id: "party_hat",
-      label: "mũ sinh nhật",
+      label: "ống hoa giấy chóp nhọn",
       value: 2,
       image: {
         kind: "emoji",

@@ -88,8 +88,8 @@ export const C1_CMP_07_DATASET: SkillDataset = {
     },
     {
       id: "cmp07_eraser",
-      label: "cục tẩy ngắn",
-      glyph: "🧽",
+      label: "kẹp giấy ngắn",
+      glyph: "📎",
       value: 2,
       contrast_group: "length",
       ordering: 4,
@@ -98,7 +98,7 @@ export const C1_CMP_07_DATASET: SkillDataset = {
       },
       image: {
         kind: "emoji",
-        ref: "🧽",
+        ref: "📎",
       },
     },
     {

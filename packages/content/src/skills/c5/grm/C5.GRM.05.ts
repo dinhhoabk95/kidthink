@@ -92,6 +92,7 @@ export const C5_GRM_05_DATASET: SkillDataset = {
     {
       id: "grm_so_luong_nhieu",
       label: "nhiều chim",
+      glyph: "🐦🐦🐦",
       image: {
         kind: "emoji",
         ref: "🐦",
@@ -106,7 +107,8 @@ export const C5_GRM_05_DATASET: SkillDataset = {
     },
     {
       id: "grm_so_luong_cac",
-      label: "các bạn",
+      label: "các em nhỏ",
+      glyph: "🧒🧒🧒",
       image: {
         kind: "emoji",
         ref: "🧒",
@@ -122,6 +124,7 @@ export const C5_GRM_05_DATASET: SkillDataset = {
     {
       id: "grm_so_luong_dan",
       label: "đàn cá",
+      glyph: "🐟🐟🐟",
       image: {
         kind: "emoji",
         ref: "🐟",

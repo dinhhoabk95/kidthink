@@ -43,7 +43,7 @@ export const C1_OTO_04_DATASET: SkillDataset = {
   items: [
     {
       id: "item_1",
-      label: "1 ngôi sao",
+      label: "ngôi sao vàng",
       value: 1,
       image: {
         kind: "emoji",
@@ -56,7 +56,7 @@ export const C1_OTO_04_DATASET: SkillDataset = {
     },
     {
       id: "item_2",
-      label: "2 trái tim",
+      label: "trái tim hồng",
       value: 2,
       image: {
         kind: "emoji",
@@ -69,7 +69,7 @@ export const C1_OTO_04_DATASET: SkillDataset = {
     },
     {
       id: "item_3",
-      label: "3 bông hoa",
+      label: "bông hoa đào",
       value: 3,
       image: {
         kind: "emoji",
@@ -82,7 +82,7 @@ export const C1_OTO_04_DATASET: SkillDataset = {
     },
     {
       id: "item_4",
-      label: "4 quả táo",
+      label: "quả táo đỏ",
       value: 4,
       image: {
         kind: "emoji",
@@ -95,7 +95,7 @@ export const C1_OTO_04_DATASET: SkillDataset = {
     },
     {
       id: "item_5",
-      label: "5 quả cam",
+      label: "quả cam tươi",
       value: 5,
       image: {
         kind: "emoji",
@@ -108,7 +108,7 @@ export const C1_OTO_04_DATASET: SkillDataset = {
     },
     {
       id: "item_6",
-      label: "6 quả dâu",
+      label: "quả dâu tây",
       value: 6,
       image: {
         kind: "emoji",
@@ -121,7 +121,7 @@ export const C1_OTO_04_DATASET: SkillDataset = {
     },
     {
       id: "item_hand_1",
-      label: "1 ngón tay",
+      label: "1 ngón tay chỉ lên",
       value: 1,
       image: {
         kind: "emoji",
@@ -134,7 +134,7 @@ export const C1_OTO_04_DATASET: SkillDataset = {
     },
     {
       id: "item_hand_2",
-      label: "2 ngón tay",
+      label: "2 ngón tay dấu V",
       value: 2,
       image: {
         kind: "emoji",

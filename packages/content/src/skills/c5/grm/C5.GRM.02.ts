@@ -44,10 +44,10 @@ export const C5_GRM_02_DATASET: SkillDataset = {
   items: [
     {
       id: "grm_thuc_day",
-      label: "buổi sáng thức dậy",
+      label: "bình minh thức dậy",
       image: {
         kind: "emoji",
-        ref: "🌅",
+        ref: "🌄",
       },
       category: {
         type: "việc ở nhà",
@@ -74,7 +74,7 @@ export const C5_GRM_02_DATASET: SkillDataset = {
     },
     {
       id: "grm_an_sang",
-      label: "bé ăn sáng ngon",
+      label: "bé ăn bát cháo sáng",
       image: {
         kind: "emoji",
         ref: "🥣",
@@ -104,7 +104,7 @@ export const C5_GRM_02_DATASET: SkillDataset = {
     },
     {
       id: "grm_di_xe",
-      label: "bố đưa đến trường",
+      label: "bố chở xe máy đi học",
       image: {
         kind: "emoji",
         ref: "🛵",
@@ -122,7 +122,7 @@ export const C5_GRM_02_DATASET: SkillDataset = {
       label: "bé chào cô giáo",
       image: {
         kind: "emoji",
-        ref: "🏫",
+        ref: "🧑‍🏫",
       },
       category: {
         type: "việc đến trường",

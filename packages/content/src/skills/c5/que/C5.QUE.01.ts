@@ -71,7 +71,7 @@ export const C5_QUE_01_DATASET: SkillDataset = {
     },
     {
       id: "que_ai_bao_ve",
-      label: "bác bảo vệ",
+      label: "chú cảnh sát",
       value: 3,
       image: {
         kind: "emoji",
@@ -85,7 +85,7 @@ export const C5_QUE_01_DATASET: SkillDataset = {
     },
     {
       id: "que_ai_lai_xe",
-      label: "chú tài xế",
+      label: "chú phi công",
       value: 4,
       image: {
         kind: "emoji",

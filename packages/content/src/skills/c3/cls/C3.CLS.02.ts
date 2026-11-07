@@ -128,7 +128,7 @@ export const C3_CLS_02_DATASET: SkillDataset = {
     },
     {
       id: "rect_notebook",
-      label: "cuốn sổ vuông",
+      label: "quyển vở vuông",
       image: {
         kind: "emoji",
         ref: "📓",
@@ -456,7 +456,7 @@ export const C3_CLS_02_SEED: SkillSeed = {
       band: "3-4",
       difficulty: 3,
       access_tier: "standard",
-      theme: "town",
+      theme: "homeland",
       rounds: 3,
       montessori_ref: "WB19-D6",
     },

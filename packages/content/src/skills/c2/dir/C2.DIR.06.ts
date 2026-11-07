@@ -127,7 +127,7 @@ export const C2_DIR_06_DATASET: SkillDataset = {
     },
     {
       id: "tree_right",
-      label: "hàng cây bên phải",
+      label: "cây xanh bên phải",
       image: {
         kind: "emoji",
         ref: "🌳",

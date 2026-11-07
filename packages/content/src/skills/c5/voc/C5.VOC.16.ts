@@ -68,7 +68,7 @@ export const C5_VOC_16_DATASET: SkillDataset = {
     },
     {
       id: "voc_banh_chung",
-      label: "mâm quả ngày tết",
+      label: "dưa hấu ngày Tết",
       image: {
         kind: "emoji",
         ref: "🍉",

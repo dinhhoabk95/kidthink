@@ -94,12 +94,12 @@ export const C6_INH_03_DATASET: SkillDataset = {
     },
     {
       id: "megaphone",
-      label: "loa thông báo",
+      label: "tiếng trống vang",
       value: 4,
       ordering: 4,
       image: {
         kind: "emoji",
-        ref: "📢",
+        ref: "🥁",
       },
       category: {
         type: "thẻ hiệu lệnh",
@@ -110,12 +110,12 @@ export const C6_INH_03_DATASET: SkillDataset = {
     },
     {
       id: "shushing",
-      label: "giữ trật tự",
+      label: "giữ im lặng",
       value: 5,
       ordering: 5,
       image: {
         kind: "emoji",
-        ref: "🤫",
+        ref: "😶",
       },
       category: {
         type: "thẻ đứng yên",
@@ -163,7 +163,7 @@ export const C6_INH_03_DATASET: SkillDataset = {
       ordering: 8,
       image: {
         kind: "emoji",
-        ref: "💤",
+        ref: "😴",
       },
       category: {
         type: "thẻ đứng yên",

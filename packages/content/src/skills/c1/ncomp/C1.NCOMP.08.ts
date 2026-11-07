@@ -155,7 +155,7 @@ export const C1_NCOMP_08_DATASET: SkillDataset = {
     }),
     {
       id: "wb13_case_folder",
-      label: "kẹp hồ sơ phá án",
+      label: "bảng kẹp giấy",
       value: 9,
       image: {
         kind: "emoji",
@@ -164,7 +164,7 @@ export const C1_NCOMP_08_DATASET: SkillDataset = {
     },
     {
       id: "wb13_number_stamp",
-      label: "con dấu số học",
+      label: "bảng chữ số",
       value: 9,
       image: {
         kind: "emoji",

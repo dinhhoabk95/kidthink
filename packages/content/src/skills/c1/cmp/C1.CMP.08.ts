@@ -88,7 +88,7 @@ export const C1_CMP_08_DATASET: SkillDataset = {
     },
     {
       id: "cmp08_fence",
-      label: "hàng rào thấp",
+      label: "tường gạch thấp",
       glyph: "🧱",
       value: 2,
       contrast_group: "height",

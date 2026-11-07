@@ -44,11 +44,11 @@ export const C1_MEAS_08_DATASET: SkillDataset = {
   items: [
     {
       id: "meas08-i1",
-      label: "gôm tẩy một gang",
+      label: "kẹp giấy một gang",
       value: 1,
       image: {
         kind: "emoji",
-        ref: "🧽",
+        ref: "📎",
       },
       ordering: 1,
       contrast_group: "length_short",
@@ -104,7 +104,7 @@ export const C1_MEAS_08_DATASET: SkillDataset = {
     },
     {
       id: "meas08-i5",
-      label: "chiếc cặp năm gang",
+      label: "ba lô năm gang",
       value: 5,
       image: {
         kind: "emoji",

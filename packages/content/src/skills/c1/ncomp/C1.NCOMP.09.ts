@@ -166,7 +166,7 @@ export const C1_NCOMP_09_DATASET: SkillDataset = {
     }),
     {
       id: "wb13_magnifying_glass",
-      label: "kính lúp điều tra",
+      label: "chiếc kính lúp",
       value: 10,
       image: {
         kind: "emoji",
@@ -175,7 +175,7 @@ export const C1_NCOMP_09_DATASET: SkillDataset = {
     },
     {
       id: "wb13_case_clipboard",
-      label: "kẹp hồ sơ phá án",
+      label: "bảng kẹp giấy",
       value: 10,
       image: {
         kind: "emoji",
@@ -184,7 +184,7 @@ export const C1_NCOMP_09_DATASET: SkillDataset = {
     },
     {
       id: "wb13_golden_pin",
-      label: "ghim vàng manh mối",
+      label: "chiếc ghim đỏ",
       value: 10,
       image: {
         kind: "emoji",
@@ -193,7 +193,7 @@ export const C1_NCOMP_09_DATASET: SkillDataset = {
     },
     {
       id: "wb13_ten_milestone",
-      label: "mốc tròn mười thám tử",
+      label: "thẻ số mười",
       value: 10,
       image: {
         kind: "emoji",
@@ -202,7 +202,7 @@ export const C1_NCOMP_09_DATASET: SkillDataset = {
     },
     {
       id: "wb13_arithmetic_gem",
-      label: "viên ngọc số học",
+      label: "viên kim cương xanh",
       value: 10,
       image: {
         kind: "emoji",

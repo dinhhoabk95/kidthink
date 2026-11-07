@@ -106,7 +106,7 @@ export const C4_TAC_05_DATASET: SkillDataset = {
     },
     {
       id: "wooden_block",
-      label: "khối gỗ vuông",
+      label: "viên gạch vuông",
       image: {
         kind: "emoji",
         ref: "🧱",

@@ -197,7 +197,7 @@ export const C3_DED_02_DATASET: SkillDataset = {
     },
     {
       id: "clue_scroll",
-      label: "cuộn giấy mật thư",
+      label: "cuộn giấy cổ",
       value: 3,
       image: {
         kind: "emoji",

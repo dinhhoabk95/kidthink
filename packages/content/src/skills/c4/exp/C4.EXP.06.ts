@@ -91,7 +91,7 @@ export const C4_EXP_06_DATASET: SkillDataset = {
     },
     {
       id: "cond_shade",
-      label: "cây trong bóng",
+      label: "mầm cây trong bóng",
       image: {
         kind: "emoji",
         ref: "🌱",

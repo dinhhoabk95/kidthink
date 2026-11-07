@@ -95,7 +95,7 @@ export const C2_ORI_10_DATASET: SkillDataset = {
     },
     {
       id: "table_center",
-      label: "bàn tròn ở trung tâm",
+      label: "ghế sofa ở giữa phòng",
       value: 5,
       image: {
         kind: "emoji",
@@ -108,7 +108,7 @@ export const C2_ORI_10_DATASET: SkillDataset = {
     },
     {
       id: "rug_center",
-      label: "tấm thảm giữa phòng",
+      label: "cuộn len ở giữa phòng",
       value: 6,
       image: {
         kind: "emoji",

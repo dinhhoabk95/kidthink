@@ -145,7 +145,7 @@ export const C6_INI_05_DATASET: SkillDataset = {
       label: "cốc uống nước",
       image: {
         kind: "emoji",
-        ref: "🥛",
+        ref: "🥤",
       },
       category: {
         type: "đồ ăn uống",
@@ -158,7 +158,7 @@ export const C6_INI_05_DATASET: SkillDataset = {
     },
     {
       id: "napkin",
-      label: "khăn lau miệng",
+      label: "giấy lau miệng",
       image: {
         kind: "emoji",
         ref: "🧻",

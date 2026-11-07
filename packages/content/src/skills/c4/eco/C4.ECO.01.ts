@@ -133,7 +133,7 @@ export const C4_ECO_01_DATASET: SkillDataset = {
     },
     {
       id: "keep_backpack",
-      label: "chiếc cặp xinh",
+      label: "ba lô đi học",
       image: {
         kind: "emoji",
         ref: "🎒",

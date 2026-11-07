@@ -57,7 +57,7 @@ export const C1_OTO_05_DATASET: SkillDataset = {
     },
     {
       id: "pos_bottom_1",
-      label: "bạn cún hàng dưới",
+      label: "bạn chó nhỏ hàng dưới",
       value: 2,
       image: {
         kind: "emoji",

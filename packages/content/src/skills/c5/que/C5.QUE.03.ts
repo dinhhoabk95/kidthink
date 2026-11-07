@@ -43,7 +43,7 @@ export const C5_QUE_03_DATASET: SkillDataset = {
   items: [
     {
       id: "que_chim_tren_cay",
-      label: "chú chim trên cây",
+      label: "cây xanh trong vườn",
       value: 1,
       image: {
         kind: "emoji",
@@ -61,7 +61,7 @@ export const C5_QUE_03_DATASET: SkillDataset = {
       value: 2,
       image: {
         kind: "emoji",
-        ref: "🌊",
+        ref: "🐟",
       },
       audio_path: "/audio/vi/c5/que/ca_duoi_nuoc.mp3",
       category: {

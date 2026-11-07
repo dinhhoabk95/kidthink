@@ -46,7 +46,7 @@ export const C6_PER_03_DATASET: SkillDataset = {
   items: [
     {
       id: "notebook",
-      label: "viết bài vở",
+      label: "quyển vở bài tập",
       image: {
         kind: "emoji",
         ref: "📓",
@@ -62,7 +62,7 @@ export const C6_PER_03_DATASET: SkillDataset = {
     },
     {
       id: "book",
-      label: "đọc trang sách",
+      label: "quyển sách đọc",
       image: {
         kind: "emoji",
         ref: "📖",
@@ -78,7 +78,7 @@ export const C6_PER_03_DATASET: SkillDataset = {
     },
     {
       id: "backpack",
-      label: "cất cặp sách",
+      label: "chiếc cặp sách",
       image: {
         kind: "emoji",
         ref: "🎒",
@@ -94,7 +94,7 @@ export const C6_PER_03_DATASET: SkillDataset = {
     },
     {
       id: "basket",
-      label: "dọn gọn đồ",
+      label: "giỏ đựng đồ",
       image: {
         kind: "emoji",
         ref: "🧺",
@@ -110,7 +110,7 @@ export const C6_PER_03_DATASET: SkillDataset = {
     },
     {
       id: "teddy",
-      label: "chơi gấu bông",
+      label: "chú gấu bông",
       image: {
         kind: "emoji",
         ref: "🧸",
@@ -126,7 +126,7 @@ export const C6_PER_03_DATASET: SkillDataset = {
     },
     {
       id: "ball",
-      label: "đá bóng tròn",
+      label: "quả bóng tròn",
       image: {
         kind: "emoji",
         ref: "⚽",
@@ -142,7 +142,7 @@ export const C6_PER_03_DATASET: SkillDataset = {
     },
     {
       id: "kite",
-      label: "thả diều bay",
+      label: "cánh diều bay",
       image: {
         kind: "emoji",
         ref: "🪁",
@@ -158,7 +158,7 @@ export const C6_PER_03_DATASET: SkillDataset = {
     },
     {
       id: "bicycle",
-      label: "đạp xe chơi",
+      label: "chiếc xe đạp",
       image: {
         kind: "emoji",
         ref: "🚲",

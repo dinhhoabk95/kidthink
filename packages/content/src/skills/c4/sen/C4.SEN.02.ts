@@ -149,7 +149,7 @@ export const C4_SEN_02_DATASET: SkillDataset = {
     },
     {
       id: "wood_block",
-      label: "khối gỗ vuông",
+      label: "viên gạch vuông",
       image: {
         kind: "emoji",
         ref: "🧱",

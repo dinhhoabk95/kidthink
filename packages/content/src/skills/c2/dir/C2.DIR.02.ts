@@ -155,7 +155,7 @@ export const C2_DIR_02_DATASET: SkillDataset = {
     },
     {
       id: "moonlight_stream",
-      label: "bờ suối ánh trăng",
+      label: "sóng nước đổ xuống",
       image: {
         kind: "emoji",
         ref: "🌊",

@@ -558,7 +558,7 @@ export const C1_CNT_01_SEED: SkillSeed = {
       band: "4-5",
       difficulty: 2,
       access_tier: "login",
-      theme: "market",
+      theme: "food",
       rounds: 3,
       montessori_ref: "WB04-D3",
     },

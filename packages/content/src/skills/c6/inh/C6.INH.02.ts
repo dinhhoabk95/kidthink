@@ -54,7 +54,7 @@ export const C6_INH_02_DATASET: SkillDataset = {
         ref: "🍎",
       },
       category: {
-        type: "quả chọn đúng",
+        type: "quả màu đỏ",
         color: "red",
         shape: "circle",
       },
@@ -70,7 +70,7 @@ export const C6_INH_02_DATASET: SkillDataset = {
         ref: "🍓",
       },
       category: {
-        type: "quả chọn đúng",
+        type: "quả màu đỏ",
         color: "red",
         shape: "triangle",
       },
@@ -86,7 +86,7 @@ export const C6_INH_02_DATASET: SkillDataset = {
         ref: "🍒",
       },
       category: {
-        type: "quả chọn đúng",
+        type: "quả màu đỏ",
         color: "red",
         shape: "circle",
       },
@@ -102,7 +102,7 @@ export const C6_INH_02_DATASET: SkillDataset = {
         ref: "🍉",
       },
       category: {
-        type: "quả chọn đúng",
+        type: "quả màu đỏ",
         color: "green",
         shape: "triangle",
       },
@@ -118,7 +118,7 @@ export const C6_INH_02_DATASET: SkillDataset = {
         ref: "🍋",
       },
       category: {
-        type: "quả bỏ qua",
+        type: "quả màu khác",
         color: "yellow",
         shape: "circle",
       },
@@ -134,7 +134,7 @@ export const C6_INH_02_DATASET: SkillDataset = {
         ref: "🍌",
       },
       category: {
-        type: "quả bỏ qua",
+        type: "quả màu khác",
         color: "yellow",
         shape: "triangle",
       },
@@ -150,7 +150,7 @@ export const C6_INH_02_DATASET: SkillDataset = {
         ref: "🍇",
       },
       category: {
-        type: "quả bỏ qua",
+        type: "quả màu khác",
         color: "purple",
         shape: "circle",
       },
@@ -166,7 +166,7 @@ export const C6_INH_02_DATASET: SkillDataset = {
         ref: "🍍",
       },
       category: {
-        type: "quả bỏ qua",
+        type: "quả màu khác",
         color: "yellow",
         shape: "square",
       },
@@ -174,7 +174,7 @@ export const C6_INH_02_DATASET: SkillDataset = {
     },
   ],
   axes: {
-    type: ["quả chọn đúng", "quả bỏ qua"],
+    type: ["quả màu đỏ", "quả màu khác"],
     color: ["red", "blue", "yellow", "green", "purple"],
     shape: ["circle", "square", "triangle", "star"],
   },

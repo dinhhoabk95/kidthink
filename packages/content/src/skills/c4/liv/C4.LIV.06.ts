@@ -73,7 +73,7 @@ export const C4_LIV_06_DATASET: SkillDataset = {
     },
     {
       id: "grow_soil",
-      label: "đất màu mỡ",
+      label: "chậu đất trồng cây",
       image: {
         kind: "emoji",
         ref: "🪴",

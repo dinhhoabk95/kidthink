@@ -118,7 +118,7 @@ export const C1_OTO_07_DATASET: SkillDataset = {
     },
     {
       id: "shape_blue_triangle",
-      label: "hình tam giác xanh",
+      label: "hình thoi xanh",
       value: 6,
       image: {
         kind: "emoji",

@@ -85,7 +85,7 @@ function plan(overrides: Partial<CurriculumItemPlan> = {}): CurriculumItemPlan {
 describe("chương trình sinh từ lộ trình", () => {
   it("mỗi lộ trình thành một chương trình khớp khuôn CUR-* của cột code", () => {
     expect(ROADMAP_CURRICULA_CONFIGS).toHaveLength(ALL_ROADMAPS.length);
-    expect(ALL_ROADMAPS).toHaveLength(6);
+    expect(ALL_ROADMAPS).toHaveLength(9);
     for (const roadmap of ALL_ROADMAPS) {
       const config = ROADMAP_CURRICULA_CONFIGS.find(
         (c) => c.code === curriculumCodeForRoadmap(roadmap.code)

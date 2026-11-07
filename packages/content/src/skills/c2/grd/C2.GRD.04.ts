@@ -44,7 +44,7 @@ export const C2_GRD_04_DATASET: SkillDataset = {
   items: [
     {
       id: "blackboard_board",
-      label: "bảng phấn lớp học",
+      label: "khung tranh lớp học",
       image: {
         kind: "emoji",
         ref: "🖼️",

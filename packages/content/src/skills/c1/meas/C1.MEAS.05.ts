@@ -43,11 +43,11 @@ export const C1_MEAS_05_DATASET: SkillDataset = {
   items: [
     {
       id: "meas05-i1",
-      label: "cốc rỗng nước",
+      label: "lọ rỗng nước",
       value: 1,
       image: {
         kind: "emoji",
-        ref: "🥛",
+        ref: "🫙",
       },
       ordering: 1,
       contrast_group: "cap_empty",
@@ -103,11 +103,11 @@ export const C1_MEAS_05_DATASET: SkillDataset = {
     },
     {
       id: "meas05-i5",
-      label: "cốc đầy nước",
+      label: "ly đầy nước",
       value: 5,
       image: {
         kind: "emoji",
-        ref: "☕",
+        ref: "🥤",
       },
       ordering: 5,
       contrast_group: "cap_full",
@@ -118,7 +118,7 @@ export const C1_MEAS_05_DATASET: SkillDataset = {
     },
     {
       id: "meas05-i6",
-      label: "bình đầy nước",
+      label: "ấm đầy trà",
       value: 6,
       image: {
         kind: "emoji",
@@ -133,7 +133,7 @@ export const C1_MEAS_05_DATASET: SkillDataset = {
     },
     {
       id: "meas05-i7",
-      label: "bát đầy súp",
+      label: "nồi đầy canh",
       value: 7,
       image: {
         kind: "emoji",

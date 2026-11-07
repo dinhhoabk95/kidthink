@@ -148,11 +148,11 @@ export const C1_PROB_01_DATASET: SkillDataset = {
     },
     {
       id: "ws_gem_power_nine",
-      label: "ngọc bích quyền năng",
+      label: "viên ngọc lấp lánh",
       value: 9,
       image: {
         kind: "emoji",
-        ref: "🟢",
+        ref: "💎",
       },
     },
   ],
@@ -267,7 +267,7 @@ export const C1_PROB_01_SEED: SkillSeed = {
       band: "5-6",
       difficulty: 5,
       access_tier: "premium",
-      theme: "fairytale",
+      theme: "festival",
       rounds: 4,
       montessori_ref: "WB12-D3",
     },

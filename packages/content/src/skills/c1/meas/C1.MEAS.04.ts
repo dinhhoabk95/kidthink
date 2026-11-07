@@ -44,6 +44,7 @@ export const C1_MEAS_04_DATASET: SkillDataset = {
     {
       id: "meas04-i1",
       label: "ít quả táo",
+      glyph: "🍎",
       value: 1,
       image: {
         kind: "emoji",
@@ -59,6 +60,7 @@ export const C1_MEAS_04_DATASET: SkillDataset = {
     {
       id: "meas04-i2",
       label: "ít bông hoa",
+      glyph: "🌸",
       value: 2,
       image: {
         kind: "emoji",
@@ -74,6 +76,7 @@ export const C1_MEAS_04_DATASET: SkillDataset = {
     {
       id: "meas04-i3",
       label: "ít viên kẹo",
+      glyph: "🍬",
       value: 3,
       image: {
         kind: "emoji",
@@ -89,6 +92,7 @@ export const C1_MEAS_04_DATASET: SkillDataset = {
     {
       id: "meas04-i4",
       label: "ít bóng bay",
+      glyph: "🎈",
       value: 4,
       image: {
         kind: "emoji",
@@ -104,10 +108,11 @@ export const C1_MEAS_04_DATASET: SkillDataset = {
     {
       id: "meas04-i5",
       label: "nhiều quả táo",
+      glyph: "🍎🍎🍎🍎🍎",
       value: 5,
       image: {
         kind: "emoji",
-        ref: "🍏",
+        ref: "🍎",
       },
       ordering: 5,
       contrast_group: "quantity",
@@ -119,10 +124,11 @@ export const C1_MEAS_04_DATASET: SkillDataset = {
     {
       id: "meas04-i6",
       label: "nhiều bông hoa",
+      glyph: "🌸🌸🌸🌸🌸",
       value: 6,
       image: {
         kind: "emoji",
-        ref: "🌻",
+        ref: "🌸",
       },
       ordering: 6,
       contrast_group: "quantity",
@@ -134,10 +140,11 @@ export const C1_MEAS_04_DATASET: SkillDataset = {
     {
       id: "meas04-i7",
       label: "nhiều viên kẹo",
+      glyph: "🍬🍬🍬🍬🍬",
       value: 7,
       image: {
         kind: "emoji",
-        ref: "🍭",
+        ref: "🍬",
       },
       ordering: 7,
       contrast_group: "quantity",
@@ -149,10 +156,11 @@ export const C1_MEAS_04_DATASET: SkillDataset = {
     {
       id: "meas04-i8",
       label: "nhiều bóng bay",
+      glyph: "🎈🎈🎈🎈🎈",
       value: 8,
       image: {
         kind: "emoji",
-        ref: "🎉",
+        ref: "🎈",
       },
       ordering: 8,
       contrast_group: "quantity",

@@ -45,7 +45,7 @@ export const C1_CNT_10_DATASET: SkillDataset = {
     {
       id: "n2",
       label: "hai quả anh đào",
-      glyph: "🍒",
+      glyph: "🍒🍒",
       value: 2,
       contrast_group: "quantity",
       ordering: 1,
@@ -60,7 +60,7 @@ export const C1_CNT_10_DATASET: SkillDataset = {
     {
       id: "n4",
       label: "bốn quả anh đào",
-      glyph: "🍒🍒",
+      glyph: "🍒🍒🍒🍒",
       value: 4,
       contrast_group: "quantity",
       ordering: 2,
@@ -75,7 +75,7 @@ export const C1_CNT_10_DATASET: SkillDataset = {
     {
       id: "n6",
       label: "sáu quả anh đào",
-      glyph: "🍒🍒🍒",
+      glyph: "🍒🍒🍒🍒🍒🍒",
       value: 6,
       contrast_group: "quantity",
       ordering: 3,
@@ -90,7 +90,7 @@ export const C1_CNT_10_DATASET: SkillDataset = {
     {
       id: "n8",
       label: "tám quả anh đào",
-      glyph: "🍒🍒🍒🍒",
+      glyph: "🍒🍒🍒🍒🍒🍒🍒🍒",
       value: 8,
       contrast_group: "quantity",
       ordering: 4,
@@ -105,7 +105,7 @@ export const C1_CNT_10_DATASET: SkillDataset = {
     {
       id: "n10",
       label: "mười quả anh đào",
-      glyph: "🍒🍒🍒🍒🍒",
+      glyph: "🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒",
       value: 10,
       contrast_group: "quantity",
       ordering: 5,
@@ -120,7 +120,7 @@ export const C1_CNT_10_DATASET: SkillDataset = {
     {
       id: "n12",
       label: "mười hai quả anh đào",
-      glyph: "🍒🍒🍒🍒🍒🍒",
+      glyph: "🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒",
       value: 12,
       contrast_group: "quantity",
       ordering: 6,
@@ -135,7 +135,7 @@ export const C1_CNT_10_DATASET: SkillDataset = {
     {
       id: "n14",
       label: "mười bốn quả anh đào",
-      glyph: "🍒🍒🍒🍒🍒🍒🍒",
+      glyph: "🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒",
       value: 14,
       contrast_group: "quantity",
       ordering: 7,
@@ -150,7 +150,7 @@ export const C1_CNT_10_DATASET: SkillDataset = {
     {
       id: "n16",
       label: "mười sáu quả anh đào",
-      glyph: "🍒🍒🍒🍒🍒🍒🍒🍒",
+      glyph: "🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒",
       value: 16,
       contrast_group: "quantity",
       ordering: 8,
@@ -165,7 +165,7 @@ export const C1_CNT_10_DATASET: SkillDataset = {
     {
       id: "n18",
       label: "mười tám quả anh đào",
-      glyph: "🍒🍒🍒🍒🍒🍒🍒🍒🍒",
+      glyph: "🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒",
       value: 18,
       contrast_group: "quantity",
       ordering: 9,
@@ -180,7 +180,7 @@ export const C1_CNT_10_DATASET: SkillDataset = {
     {
       id: "n20",
       label: "hai mươi quả anh đào",
-      glyph: "🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒",
+      glyph: "🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒",
       value: 20,
       contrast_group: "quantity",
       ordering: 10,

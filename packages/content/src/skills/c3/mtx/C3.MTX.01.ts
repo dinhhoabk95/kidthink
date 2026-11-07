@@ -211,7 +211,7 @@ export const C3_MTX_01_DATASET: SkillDataset = {
     },
     {
       id: "geo_triangle_yellow",
-      label: "hình tam giác vàng",
+      label: "hình tam giác đỏ",
       image: {
         kind: "emoji",
         ref: "🔺",
@@ -249,7 +249,7 @@ export const C3_MTX_01_DATASET: SkillDataset = {
         ref: "🧱",
       },
       category: {
-        type: "lâu đài ma trận",
+        type: "lâu đài cổ",
         role: "wall",
       },
       contrast_group: "castle_props",
@@ -258,7 +258,7 @@ export const C3_MTX_01_DATASET: SkillDataset = {
     },
     {
       id: "mystery_matrix_gem",
-      label: "viên ngọc ma trận",
+      label: "viên ngọc lấp lánh",
       image: {
         kind: "emoji",
         ref: "💎",
@@ -317,7 +317,7 @@ export const C3_MTX_01_DATASET: SkillDataset = {
       type: "pair",
       source_id: "castle_block_cube",
       target_id: "mystery_matrix_gem",
-      explanation: "khối đá lâu đài chứa viên ngọc ma trận",
+      explanation: "khối đá lâu đài chứa viên ngọc lấp lánh",
     },
   ],
   axes: {
@@ -383,7 +383,7 @@ export const C3_MTX_01_SEED: SkillSeed = {
       band: "5-6",
       difficulty: 2,
       access_tier: "login",
-      theme: "fairytale",
+      theme: "festival",
       rounds: 3,
       montessori_ref: "WB17-D1",
     },
@@ -393,7 +393,7 @@ export const C3_MTX_01_SEED: SkillSeed = {
       band: "5-6",
       difficulty: 3,
       access_tier: "standard",
-      theme: "fairytale",
+      theme: "festival",
       rounds: 3,
       montessori_ref: "WB17-D1",
     },
@@ -403,7 +403,7 @@ export const C3_MTX_01_SEED: SkillSeed = {
       band: "5-6",
       difficulty: 3,
       access_tier: "standard",
-      theme: "fairytale",
+      theme: "festival",
       rounds: 3,
       montessori_ref: "WB17-D3",
     },
@@ -413,7 +413,7 @@ export const C3_MTX_01_SEED: SkillSeed = {
       band: "5-6",
       difficulty: 4,
       access_tier: "premium",
-      theme: "fairytale",
+      theme: "festival",
       rounds: 3,
       montessori_ref: "WB17-D3",
     },

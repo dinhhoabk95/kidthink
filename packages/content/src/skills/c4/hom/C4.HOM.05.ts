@@ -58,7 +58,7 @@ export const C4_HOM_05_DATASET: SkillDataset = {
     },
     {
       id: "food_buncha",
-      label: "bún chả nướng",
+      label: "nồi bún nấu thơm",
       image: {
         kind: "emoji",
         ref: "🍲",
@@ -73,7 +73,7 @@ export const C4_HOM_05_DATASET: SkillDataset = {
     },
     {
       id: "food_com",
-      label: "hạt cốm thơm",
+      label: "cốm lúa non",
       image: {
         kind: "emoji",
         ref: "🌾",

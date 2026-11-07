@@ -44,6 +44,7 @@ export const C1_ADD_04_DATASET: SkillDataset = {
   surface: "game",
   items: [
     numeralItem("n0", {
+      label: "số 0",
       image: {
         kind: "emoji",
         ref: "0️⃣",

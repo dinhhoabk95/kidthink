@@ -103,7 +103,7 @@ export const C1_PROB_05_DATASET: SkillDataset = {
       value: 4,
       image: {
         kind: "emoji",
-        ref: "🔷",
+        ref: "☄️",
       },
       contrast_group: "cp20_space",
       category: {
@@ -172,7 +172,7 @@ export const C1_PROB_05_DATASET: SkillDataset = {
       },
       contrast_group: "cp20_gate",
       category: {
-        type: "mật mã",
+        type: "chìa khóa",
       },
     },
     {
@@ -185,7 +185,7 @@ export const C1_PROB_05_DATASET: SkillDataset = {
       },
       contrast_group: "cp20_gate",
       category: {
-        type: "mật mã",
+        type: "chìa khóa",
       },
     },
     {
@@ -198,7 +198,7 @@ export const C1_PROB_05_DATASET: SkillDataset = {
       },
       contrast_group: "cp20_gate",
       category: {
-        type: "mật mã",
+        type: "chìa khóa",
       },
     },
   ],

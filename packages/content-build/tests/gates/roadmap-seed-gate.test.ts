@@ -1,7 +1,10 @@
 import {
   RM_3_4_MAM_01,
+  RM_3_4_MAM_02,
   RM_4_5_CHI_01,
+  RM_4_5_CHI_02,
   RM_5_6_LA_01,
+  RM_5_6_LA_02,
   type RoadmapSeed,
 } from "@mindkid/content";
 import { describe, expect, it } from "vitest";
@@ -60,8 +63,11 @@ describe("cổng lộ trình soạn", () => {
   });
 
   it.each([
+    ["RM-3-4-mam-02", RM_3_4_MAM_02],
     ["RM-4-5-chi-01", RM_4_5_CHI_01],
+    ["RM-4-5-chi-02", RM_4_5_CHI_02],
     ["RM-5-6-la-01", RM_5_6_LA_01],
+    ["RM-5-6-la-02", RM_5_6_LA_02],
   ])("%s xanh, phủ 6/6 competency", (_code, roadmap) => {
     const row = measure(roadmap);
     expect(row.violations).toEqual([]);
@@ -74,8 +80,11 @@ describe("cổng lộ trình soạn", () => {
     const rows = evaluateAuthoredRoadmaps();
     expect(rows.map((row) => row.program_code)).toEqual([
       "RM-3-4-mam-01",
+      "RM-3-4-mam-02",
       "RM-4-5-chi-01",
+      "RM-4-5-chi-02",
       "RM-5-6-la-01",
+      "RM-5-6-la-02",
       "RM-3-4-mam-year-01",
       "RM-4-5-chi-year-01",
       "RM-5-6-la-year-01",

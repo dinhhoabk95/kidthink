@@ -83,7 +83,7 @@ export const C1_DAT_05_DATASET: SkillDataset = {
       value: 3,
       image: {
         kind: "emoji",
-        ref: "✨",
+        ref: "⭐",
       },
       ordering: 3,
       contrast_group: "quantity",
@@ -115,7 +115,7 @@ export const C1_DAT_05_DATASET: SkillDataset = {
       value: 5,
       image: {
         kind: "emoji",
-        ref: "🎖️",
+        ref: "⭐",
       },
       ordering: 5,
       contrast_group: "quantity",
@@ -131,7 +131,7 @@ export const C1_DAT_05_DATASET: SkillDataset = {
       value: 6,
       image: {
         kind: "emoji",
-        ref: "🏆",
+        ref: "⭐",
       },
       ordering: 6,
       contrast_group: "quantity",

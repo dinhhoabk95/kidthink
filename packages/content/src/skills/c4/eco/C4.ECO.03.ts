@@ -73,7 +73,7 @@ export const C4_ECO_03_DATASET: SkillDataset = {
     },
     {
       id: "org_leaf",
-      label: "chiếc lá khô",
+      label: "lá rụng khô",
       image: {
         kind: "emoji",
         ref: "🍂",
@@ -103,7 +103,7 @@ export const C4_ECO_03_DATASET: SkillDataset = {
     },
     {
       id: "rec_plastic",
-      label: "chai nhựa rỗng",
+      label: "chai dầu gội nhựa",
       image: {
         kind: "emoji",
         ref: "🧴",

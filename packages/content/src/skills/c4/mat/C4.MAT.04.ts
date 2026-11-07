@@ -58,7 +58,7 @@ export const C4_MAT_04_DATASET: SkillDataset = {
     },
     {
       id: "sea_spring_sprout",
-      label: "chồi non mùa xuân",
+      label: "mầm non mùa xuân",
       image: {
         kind: "emoji",
         ref: "🌱",

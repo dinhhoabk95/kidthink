@@ -74,7 +74,7 @@ export const C4_SAF_03_DATASET: SkillDataset = {
     },
     {
       id: "book",
-      label: "quyển truyện tranh",
+      label: "quyển sách xanh",
       image: {
         kind: "emoji",
         ref: "📘",
@@ -89,10 +89,10 @@ export const C4_SAF_03_DATASET: SkillDataset = {
     },
     {
       id: "blocks",
-      label: "khối gỗ nhỏ",
+      label: "khúc gỗ nhỏ",
       image: {
         kind: "emoji",
-        ref: "🧱",
+        ref: "🪵",
       },
       category: {
         type: "vật an toàn",

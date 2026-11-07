@@ -133,7 +133,7 @@ export const C4_EXP_04_DATASET: SkillDataset = {
     },
     {
       id: "non_leaf",
-      label: "chiếc lá cây",
+      label: "lá cây bay",
       image: {
         kind: "emoji",
         ref: "🍃",

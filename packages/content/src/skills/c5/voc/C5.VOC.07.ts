@@ -135,7 +135,7 @@ export const C5_VOC_07_DATASET: SkillDataset = {
     },
     {
       id: "voc_dao_bep",
-      label: "bộ dĩa thìa",
+      label: "bộ dao nĩa",
       image: {
         kind: "emoji",
         ref: "🍴",

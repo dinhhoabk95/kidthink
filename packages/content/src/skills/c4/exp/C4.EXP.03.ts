@@ -58,7 +58,7 @@ export const C4_EXP_03_DATASET: SkillDataset = {
     },
     {
       id: "sol_sugar",
-      label: "viên đường ngọt",
+      label: "viên kẹo đường",
       image: {
         kind: "emoji",
         ref: "🍬",
@@ -133,7 +133,7 @@ export const C4_EXP_03_DATASET: SkillDataset = {
     },
     {
       id: "insol_spoon",
-      label: "chiếc thìa inox",
+      label: "cái muỗng inox",
       image: {
         kind: "emoji",
         ref: "🥄",

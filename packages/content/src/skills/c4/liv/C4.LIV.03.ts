@@ -118,7 +118,7 @@ export const C4_LIV_03_DATASET: SkillDataset = {
     },
     {
       id: "non_chair",
-      label: "chiếc ghế gỗ",
+      label: "cái ghế gỗ",
       image: {
         kind: "emoji",
         ref: "🪑",
@@ -133,7 +133,7 @@ export const C4_LIV_03_DATASET: SkillDataset = {
     },
     {
       id: "non_car",
-      label: "chiếc ô tô",
+      label: "xe ô tô",
       image: {
         kind: "emoji",
         ref: "🚗",

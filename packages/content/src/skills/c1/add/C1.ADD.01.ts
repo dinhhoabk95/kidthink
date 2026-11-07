@@ -144,11 +144,11 @@ export const C1_ADD_01_DATASET: SkillDataset = {
     {
       id: "wb08_red_ruby",
       label: "viên hồng ngọc đỏ",
-      glyph: "🔴",
+      glyph: "💎",
       value: 1,
       contrast_group: "cipher_gem",
       ordering: 8,
-      image: { kind: "emoji", ref: "🔴" },
+      image: { kind: "emoji", ref: "💎" },
       category: { type: "ngọc bí ẩn" },
     },
     {

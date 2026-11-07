@@ -119,7 +119,7 @@ export const C5_DES_02_DATASET: SkillDataset = {
     },
     {
       id: "des_cong_vien",
-      label: "công viên mát",
+      label: "công viên cây xanh",
       image: {
         kind: "emoji",
         ref: "🌳",

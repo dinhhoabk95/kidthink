@@ -101,7 +101,7 @@ export const C5_VOC_12_DATASET: SkillDataset = {
     },
     {
       id: "voc_cao_cao",
-      label: "cào cào",
+      label: "con dế",
       image: {
         kind: "emoji",
         ref: "🦗",

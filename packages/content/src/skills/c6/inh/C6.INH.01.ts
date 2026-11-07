@@ -113,7 +113,7 @@ export const C6_INH_01_DATASET: SkillDataset = {
       ordering: 5,
       image: {
         kind: "emoji",
-        ref: "🛑",
+        ref: "🔴",
       },
       category: {
         type: "thẻ dừng lại",
@@ -161,7 +161,7 @@ export const C6_INH_01_DATASET: SkillDataset = {
       ordering: 8,
       image: {
         kind: "emoji",
-        ref: "🌧️",
+        ref: "☁️",
       },
       category: {
         type: "thẻ dừng lại",

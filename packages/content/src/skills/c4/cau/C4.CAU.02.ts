@@ -43,7 +43,7 @@ export const C4_CAU_02_DATASET: SkillDataset = {
   items: [
     {
       id: "why_cold",
-      label: "trời gió lạnh",
+      label: "bông tuyết lạnh",
       image: {
         kind: "emoji",
         ref: "❄️",
@@ -73,7 +73,7 @@ export const C4_CAU_02_DATASET: SkillDataset = {
     },
     {
       id: "why_dark",
-      label: "buổi tối đến",
+      label: "trăng ban đêm",
       image: {
         kind: "emoji",
         ref: "🌙",
@@ -118,7 +118,7 @@ export const C4_CAU_02_DATASET: SkillDataset = {
     },
     {
       id: "act_umbrella",
-      label: "chiếc ô che",
+      label: "cái ô che mưa",
       image: {
         kind: "emoji",
         ref: "☂️",
@@ -148,7 +148,7 @@ export const C4_CAU_02_DATASET: SkillDataset = {
     },
     {
       id: "act_hat",
-      label: "chiếc mũ che",
+      label: "mũ rộng vành",
       image: {
         kind: "emoji",
         ref: "👒",

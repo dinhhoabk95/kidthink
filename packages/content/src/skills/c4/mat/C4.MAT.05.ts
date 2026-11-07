@@ -74,7 +74,7 @@ export const C4_MAT_05_DATASET: SkillDataset = {
     },
     {
       id: "liq_river",
-      label: "dòng sông xanh",
+      label: "sóng nước xanh",
       image: {
         kind: "emoji",
         ref: "🌊",

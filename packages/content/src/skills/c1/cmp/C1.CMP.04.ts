@@ -185,7 +185,7 @@ export const CHANG_04_D2_DATASET: SkillDataset = {
     },
     {
       id: "d2_target_4_grasshoppers",
-      label: "bốn chú cào cào",
+      label: "bốn chú dế",
       glyph: "🦗🦗🦗🦗",
       value: 4,
       contrast_group: "insect_compare",
@@ -472,7 +472,7 @@ export const C1_CMP_04_DATASET: SkillDataset = {
     },
     {
       id: "d2_target_4_grasshoppers",
-      label: "bốn chú cào cào",
+      label: "bốn chú dế",
       glyph: "🦗🦗🦗🦗",
       value: 4,
       contrast_group: "insect_compare",

@@ -86,7 +86,7 @@ export const C2_GRD_03_DATASET: SkillDataset = {
     },
     {
       id: "row_marker_target",
-      label: "tâm điểm hàng ngang",
+      label: "phi tiêu hàng ngang",
       image: {
         kind: "emoji",
         ref: "🎯",

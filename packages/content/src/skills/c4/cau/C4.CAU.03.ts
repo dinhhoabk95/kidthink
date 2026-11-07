@@ -74,7 +74,7 @@ export const C4_CAU_03_DATASET: SkillDataset = {
     },
     {
       id: "right_switch",
-      label: "công tắc điện",
+      label: "nút bấm điện",
       image: {
         kind: "emoji",
         ref: "🔘",
@@ -89,7 +89,7 @@ export const C4_CAU_03_DATASET: SkillDataset = {
     },
     {
       id: "right_freeze",
-      label: "ngăn đá lạnh",
+      label: "ngăn tuyết lạnh",
       image: {
         kind: "emoji",
         ref: "❄️",

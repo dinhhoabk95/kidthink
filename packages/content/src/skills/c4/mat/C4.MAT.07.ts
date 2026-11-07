@@ -103,7 +103,7 @@ export const C4_MAT_07_DATASET: SkillDataset = {
     },
     {
       id: "wnd_fan",
-      label: "chiếc quạt máy",
+      label: "luồng gió xoáy",
       image: {
         kind: "emoji",
         ref: "🌀",
@@ -118,7 +118,7 @@ export const C4_MAT_07_DATASET: SkillDataset = {
     },
     {
       id: "wnd_hand_fan",
-      label: "chiếc quạt nan",
+      label: "cái quạt nan",
       image: {
         kind: "emoji",
         ref: "🪭",

@@ -135,7 +135,7 @@ export const C5_VOC_11_DATASET: SkillDataset = {
     },
     {
       id: "voc_than_cay",
-      label: "cây cổ thụ",
+      label: "cây xanh to",
       image: {
         kind: "emoji",
         ref: "🌳",

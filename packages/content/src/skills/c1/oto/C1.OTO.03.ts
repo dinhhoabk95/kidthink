@@ -87,7 +87,7 @@ export const C1_OTO_03_DATASET: SkillDataset = {
       value: 4,
       image: {
         kind: "emoji",
-        ref: "🌙",
+        ref: "🍌",
       },
       contrast_group: "shadow",
       category: {

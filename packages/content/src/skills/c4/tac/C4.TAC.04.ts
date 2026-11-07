@@ -103,7 +103,7 @@ export const C4_TAC_04_DATASET: SkillDataset = {
     },
     {
       id: "water_jug",
-      label: "bình nước đầy",
+      label: "lọ thủy tinh đầy",
       image: {
         kind: "emoji",
         ref: "🫙",

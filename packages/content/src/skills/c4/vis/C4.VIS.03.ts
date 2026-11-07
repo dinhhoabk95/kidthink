@@ -151,7 +151,7 @@ export const C4_VIS_03_DATASET: SkillDataset = {
     },
     {
       id: "button",
-      label: "chiếc cúc áo",
+      label: "nút cúc áo",
       image: {
         kind: "emoji",
         ref: "🔘",

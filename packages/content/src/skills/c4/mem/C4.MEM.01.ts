@@ -119,7 +119,7 @@ export const C4_MEM_01_DATASET: SkillDataset = {
     },
     {
       id: "book",
-      label: "quyển truyện tranh",
+      label: "quyển sách tranh",
       image: {
         kind: "emoji",
         ref: "📖",

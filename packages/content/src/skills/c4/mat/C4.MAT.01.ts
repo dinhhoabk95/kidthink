@@ -89,7 +89,7 @@ export const C4_MAT_01_DATASET: SkillDataset = {
     },
     {
       id: "wth_fan",
-      label: "chiếc quạt nan",
+      label: "cái quạt nan",
       image: {
         kind: "emoji",
         ref: "🪭",
@@ -119,7 +119,7 @@ export const C4_MAT_01_DATASET: SkillDataset = {
     },
     {
       id: "wth_umbrella",
-      label: "chiếc ô che mưa",
+      label: "cái ô che mưa",
       image: {
         kind: "emoji",
         ref: "☂️",
@@ -134,7 +134,7 @@ export const C4_MAT_01_DATASET: SkillDataset = {
     },
     {
       id: "wth_coat",
-      label: "chiếc áo mưa",
+      label: "áo khoác đi mưa",
       image: {
         kind: "emoji",
         ref: "🧥",

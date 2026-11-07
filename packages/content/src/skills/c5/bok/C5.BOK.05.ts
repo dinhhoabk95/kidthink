@@ -46,7 +46,7 @@ export const C5_BOK_05_DATASET: SkillDataset = {
   items: [
     {
       id: "bok_nhan_vat_chinh",
-      label: "nhân vật chính",
+      label: "bé gái trong tranh",
       image: {
         kind: "emoji",
         ref: "👧",
@@ -61,7 +61,7 @@ export const C5_BOK_05_DATASET: SkillDataset = {
     },
     {
       id: "bok_trang_phuc",
-      label: "trang phục bé",
+      label: "chiếc váy của bé",
       image: {
         kind: "emoji",
         ref: "👗",

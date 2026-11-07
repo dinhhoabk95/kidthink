@@ -61,7 +61,7 @@ export const C5_BOK_02_DATASET: SkillDataset = {
       label: "lật từng trang sách",
       image: {
         kind: "emoji",
-        ref: "📑",
+        ref: "📄",
       },
       category: {
         type: "cách đọc sách",
@@ -73,7 +73,7 @@ export const C5_BOK_02_DATASET: SkillDataset = {
     },
     {
       id: "bok_vuot_phang",
-      label: "vuốt phẳng trang",
+      label: "tay vuốt phẳng trang",
       image: {
         kind: "emoji",
         ref: "✋",

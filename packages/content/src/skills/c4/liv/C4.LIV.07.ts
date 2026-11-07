@@ -74,10 +74,10 @@ export const C4_LIV_07_DATASET: SkillDataset = {
     },
     {
       id: "cyc_pupa",
-      label: "kén nhộng nằm",
+      label: "kén lá vàng",
       image: {
         kind: "emoji",
-        ref: "🫒",
+        ref: "🍂",
       },
       category: {
         type: "vòng đời bướm",
@@ -104,7 +104,7 @@ export const C4_LIV_07_DATASET: SkillDataset = {
     },
     {
       id: "cyc_seed",
-      label: "hạt mầm gieo",
+      label: "hạt dẻ gieo",
       image: {
         kind: "emoji",
         ref: "🌰",
@@ -149,7 +149,7 @@ export const C4_LIV_07_DATASET: SkillDataset = {
     },
     {
       id: "cyc_fruit",
-      label: "cây trĩu quả",
+      label: "cây táo sai quả",
       image: {
         kind: "emoji",
         ref: "🍎",

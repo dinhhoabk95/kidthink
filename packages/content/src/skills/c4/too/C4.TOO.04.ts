@@ -73,7 +73,7 @@ export const C4_TOO_04_DATASET: SkillDataset = {
     },
     {
       id: "pencil_mark",
-      label: "thước dây mềm",
+      label: "dải ruy băng đo",
       image: {
         kind: "emoji",
         ref: "🎗️",
@@ -118,7 +118,7 @@ export const C4_TOO_04_DATASET: SkillDataset = {
     },
     {
       id: "stopwatch",
-      label: "quả cân sắt",
+      label: "chiếc mỏ neo nặng",
       image: {
         kind: "emoji",
         ref: "⚓",

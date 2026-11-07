@@ -240,7 +240,7 @@ export const C2_SOL_01_DATASET: SkillDataset = {
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn khối cầu {label} nhé!",
+    prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template:
       "Khối cầu tròn xoe, có thể lăn về mọi phía! Chúng mình cùng tìm khối cầu nhé",
   },

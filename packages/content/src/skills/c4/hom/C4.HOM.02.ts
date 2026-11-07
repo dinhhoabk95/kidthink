@@ -43,7 +43,7 @@ export const C4_HOM_02_DATASET: SkillDataset = {
   items: [
     {
       id: "tet_chung",
-      label: "bánh chưng xanh",
+      label: "bánh chưng cơm nếp",
       image: {
         kind: "emoji",
         ref: "🍙",
@@ -73,7 +73,7 @@ export const C4_HOM_02_DATASET: SkillDataset = {
     },
     {
       id: "tet_jam",
-      label: "khay mứt Tết",
+      label: "khay kẹo mứt Tết",
       image: {
         kind: "emoji",
         ref: "🍬",
@@ -88,7 +88,7 @@ export const C4_HOM_02_DATASET: SkillDataset = {
     },
     {
       id: "tet_fruit_tray",
-      label: "mâm ngũ quả",
+      label: "mâm cam quýt Tết",
       image: {
         kind: "emoji",
         ref: "🍊",
@@ -148,7 +148,7 @@ export const C4_HOM_02_DATASET: SkillDataset = {
     },
     {
       id: "tet_lion",
-      label: "đầu lân múa hội",
+      label: "múa lân sư tử",
       image: {
         kind: "emoji",
         ref: "🦁",

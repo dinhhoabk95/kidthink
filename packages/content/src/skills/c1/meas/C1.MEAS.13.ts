@@ -268,7 +268,7 @@ export const C1_MEAS_13_DATASET: SkillDataset = {
     },
     {
       id: "tower_gear_gold",
-      label: "bánh răng hoàng kim",
+      label: "bánh răng vàng",
       value: 16,
       image: {
         kind: "emoji",
@@ -283,7 +283,7 @@ export const C1_MEAS_13_DATASET: SkillDataset = {
     },
     {
       id: "magic_time_gem",
-      label: "viên ngọc thời gian",
+      label: "viên kim cương xanh",
       value: 17,
       image: {
         kind: "emoji",

@@ -119,10 +119,10 @@ export const C4_TOO_05_DATASET: SkillDataset = {
     },
     {
       id: "screen_cloth",
-      label: "khăn mềm lau",
+      label: "miếng bọt biển mềm",
       image: {
         kind: "emoji",
-        ref: "🧻",
+        ref: "🧽",
       },
       category: {
         type: "đồ bảo vệ",

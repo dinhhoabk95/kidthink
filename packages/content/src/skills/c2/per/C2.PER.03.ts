@@ -147,7 +147,7 @@ export const C2_PER_03_DATASET: SkillDataset = {
     },
     {
       id: "top_view_cube_tower",
-      label: "tháp lập phương từ trên cao",
+      label: "tòa nhà cao tầng",
       value: 9,
       image: {
         kind: "emoji",
@@ -160,7 +160,7 @@ export const C2_PER_03_DATASET: SkillDataset = {
     },
     {
       id: "wireframe_cube_rods",
-      label: "khung que lập phương 3D",
+      label: "thùng giấy vuông vắn",
       value: 10,
       image: {
         kind: "emoji",

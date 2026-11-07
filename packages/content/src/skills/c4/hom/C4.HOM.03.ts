@@ -133,7 +133,7 @@ export const C4_HOM_03_DATASET: SkillDataset = {
     },
     {
       id: "mid_pomelo",
-      label: "quả bưởi tép",
+      label: "quả dưa ngọt",
       image: {
         kind: "emoji",
         ref: "🍈",

@@ -73,10 +73,10 @@ export const C4_EXP_02_DATASET: SkillDataset = {
     },
     {
       id: "float_leaf",
-      label: "chiếc lá nổi",
+      label: "lá xanh nổi",
       image: {
         kind: "emoji",
-        ref: "🍃",
+        ref: "🌿",
       },
       category: {
         type: "vật nổi lên",

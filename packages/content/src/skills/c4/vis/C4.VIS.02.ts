@@ -91,7 +91,7 @@ export const C4_VIS_02_DATASET: SkillDataset = {
     },
     {
       id: "blocks",
-      label: "khối gỗ xếp",
+      label: "viên gạch đỏ",
       image: {
         kind: "emoji",
         ref: "🧱",
@@ -106,7 +106,7 @@ export const C4_VIS_02_DATASET: SkillDataset = {
     },
     {
       id: "book",
-      label: "quyển truyện tranh",
+      label: "quyển sách tranh",
       image: {
         kind: "emoji",
         ref: "📖",

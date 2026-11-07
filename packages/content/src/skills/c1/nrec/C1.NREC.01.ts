@@ -157,7 +157,7 @@ export const C1_NREC_01_DATASET: SkillDataset = {
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng chữ số {label} nhé!",
+    prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template:
       "Chúng mình cùng nhận biết số từ 0 đến 3 trên Chuyến Tàu Toán Học nhé",
   },

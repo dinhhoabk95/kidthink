@@ -229,11 +229,11 @@ export const C1_MEAS_07_DATASET: SkillDataset = {
     },
     {
       id: "ws16-weight-2kg",
-      label: "quả cân hai ký",
+      label: "quả lê hai ký",
       value: 2,
       image: {
         kind: "emoji",
-        ref: "⚖️",
+        ref: "🍐",
       },
       ordering: 13,
       contrast_group: "iron_weights",
@@ -245,11 +245,11 @@ export const C1_MEAS_07_DATASET: SkillDataset = {
     },
     {
       id: "ws16-weight-3kg",
-      label: "quả cân ba ký",
+      label: "quả cam ba ký",
       value: 3,
       image: {
         kind: "emoji",
-        ref: "⚖️",
+        ref: "🍊",
       },
       ordering: 14,
       contrast_group: "iron_weights",
@@ -261,11 +261,11 @@ export const C1_MEAS_07_DATASET: SkillDataset = {
     },
     {
       id: "ws16-weight-5kg",
-      label: "quả cân năm ký",
+      label: "quả bí năm ký",
       value: 5,
       image: {
         kind: "emoji",
-        ref: "⚖️",
+        ref: "🎃",
       },
       ordering: 15,
       contrast_group: "iron_weights",
@@ -277,11 +277,11 @@ export const C1_MEAS_07_DATASET: SkillDataset = {
     },
     {
       id: "ws16-weight-10kg",
-      label: "quả cân mười ký",
+      label: "quả dưa mười ký",
       value: 10,
       image: {
         kind: "emoji",
-        ref: "⚖️",
+        ref: "🍉",
       },
       ordering: 16,
       contrast_group: "iron_weights",
@@ -437,7 +437,7 @@ export const C1_MEAS_07_SEED: SkillSeed = {
       band: "5-6",
       difficulty: 3,
       access_tier: "standard",
-      theme: "market",
+      theme: "food",
       rounds: 3,
       montessori_ref: "WB16-D2",
     },
@@ -447,7 +447,7 @@ export const C1_MEAS_07_SEED: SkillSeed = {
       band: "5-6",
       difficulty: 3,
       access_tier: "standard",
-      theme: "market",
+      theme: "food",
       rounds: 3,
       montessori_ref: "WB16-D2",
     },

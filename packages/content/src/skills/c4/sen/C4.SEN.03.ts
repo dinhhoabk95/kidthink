@@ -58,7 +58,7 @@ export const C4_SEN_03_DATASET: SkillDataset = {
     },
     {
       id: "ceramic_cup",
-      label: "cốc sứ láng",
+      label: "tách trà sứ",
       image: {
         kind: "emoji",
         ref: "🍵",

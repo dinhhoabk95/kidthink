@@ -103,7 +103,7 @@ export const C4_MAT_06_DATASET: SkillDataset = {
     },
     {
       id: "shd_tree",
-      label: "tán cây che",
+      label: "tán cây bóng mát",
       image: {
         kind: "emoji",
         ref: "🌳",
@@ -118,7 +118,7 @@ export const C4_MAT_06_DATASET: SkillDataset = {
     },
     {
       id: "shd_umbrella",
-      label: "chiếc ô che",
+      label: "cái dù che nắng",
       image: {
         kind: "emoji",
         ref: "☂️",
@@ -148,7 +148,7 @@ export const C4_MAT_06_DATASET: SkillDataset = {
     },
     {
       id: "shd_wall",
-      label: "bức tường chắn",
+      label: "tường gạch chắn",
       image: {
         kind: "emoji",
         ref: "🧱",

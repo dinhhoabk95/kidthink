@@ -205,7 +205,7 @@ export const C1_CNT_07_DATASET: SkillDataset = {
     {
       id: "cnt07_wb04_soccer_nine",
       label: "chín quả bóng đá",
-      glyph: "⚽",
+      glyph: "⚽⚽⚽⚽⚽⚽⚽⚽⚽",
       value: 9,
       contrast_group: "sport",
       ordering: 11,
@@ -215,7 +215,7 @@ export const C1_CNT_07_DATASET: SkillDataset = {
     {
       id: "cnt07_wb04_basket_ten",
       label: "mười quả bóng rổ",
-      glyph: "🏀",
+      glyph: "🏀🏀🏀🏀🏀🏀🏀🏀🏀🏀",
       value: 10,
       contrast_group: "sport",
       ordering: 12,
@@ -224,8 +224,8 @@ export const C1_CNT_07_DATASET: SkillDataset = {
     },
     {
       id: "cnt07_wb04_egg_eleven",
-      label: "mười một quả trứng phục sinh",
-      glyph: "🥚",
+      label: "mười một quả trứng",
+      glyph: "🥚🥚🥚🥚🥚🥚🥚🥚🥚🥚🥚",
       value: 11,
       contrast_group: "festival",
       ordering: 13,
@@ -235,7 +235,7 @@ export const C1_CNT_07_DATASET: SkillDataset = {
     {
       id: "cnt07_wb04_bell_twelve",
       label: "mười hai chiếc chuông vàng",
-      glyph: "🔔",
+      glyph: "🔔🔔🔔🔔🔔🔔🔔🔔🔔🔔🔔🔔",
       value: 12,
       contrast_group: "festival",
       ordering: 14,
@@ -387,7 +387,7 @@ export const C1_CNT_07_SEED: SkillSeed = {
       band: "5-6",
       difficulty: 3,
       access_tier: "standard",
-      theme: "market",
+      theme: "food",
       rounds: 3,
       montessori_ref: "WB04-D3",
     },

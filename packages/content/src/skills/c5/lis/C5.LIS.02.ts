@@ -75,7 +75,7 @@ export const C5_LIS_02_DATASET: SkillDataset = {
     },
     {
       id: "lis_khoanh_tay",
-      label: "bé khoanh tay",
+      label: "bé khoanh tay cúi chào",
       image: {
         kind: "emoji",
         ref: "🙇",

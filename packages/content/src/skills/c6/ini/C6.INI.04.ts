@@ -91,7 +91,7 @@ export const C6_INI_04_DATASET: SkillDataset = {
     },
     {
       id: "cup",
-      label: "rót cốc nước",
+      label: "rót cốc sữa",
       image: {
         kind: "emoji",
         ref: "🥛",
@@ -139,7 +139,7 @@ export const C6_INI_04_DATASET: SkillDataset = {
     },
     {
       id: "apple",
-      label: "đặt quả ngọt",
+      label: "đặt quả táo",
       image: {
         kind: "emoji",
         ref: "🍎",
@@ -155,7 +155,7 @@ export const C6_INI_04_DATASET: SkillDataset = {
     },
     {
       id: "clock",
-      label: "ăn đúng giờ",
+      label: "xem đồng hồ",
       image: {
         kind: "emoji",
         ref: "🕰️",

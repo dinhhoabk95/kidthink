@@ -59,7 +59,7 @@ export const C6_INH_04_DATASET: SkillDataset = {
     },
     {
       id: "blue_square",
-      label: "ô lam",
+      label: "ô xanh dương",
       value: 2,
       ordering: 2,
       image: {
@@ -139,7 +139,7 @@ export const C6_INH_04_DATASET: SkillDataset = {
     },
     {
       id: "dark_cloud",
-      label: "mây xám",
+      label: "mây mưa",
       value: 7,
       ordering: 7,
       image: {

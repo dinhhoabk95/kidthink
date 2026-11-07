@@ -178,7 +178,7 @@ export const C1_MEAS_02_DATASET: SkillDataset = {
     },
     {
       id: "meas02-tower",
-      label: "tháp máy cao",
+      label: "ngọn tháp cao",
       value: 10,
       image: {
         kind: "emoji",
@@ -208,7 +208,7 @@ export const C1_MEAS_02_DATASET: SkillDataset = {
     },
     {
       id: "meas02-anvil",
-      label: "đe sắt thấp",
+      label: "hòn đá nhỏ",
       value: 12,
       image: {
         kind: "emoji",

@@ -82,7 +82,7 @@ export const C2_ORI_04_DATASET: SkillDataset = {
     },
     {
       id: "mat_below",
-      label: "thảm trải ở dưới",
+      label: "cuộn len ở dưới",
       value: 4,
       image: {
         kind: "emoji",
@@ -108,7 +108,7 @@ export const C2_ORI_04_DATASET: SkillDataset = {
     },
     {
       id: "tabletop_above",
-      label: "mặt bàn ở trên",
+      label: "ghế sofa ở trên",
       value: 6,
       image: {
         kind: "emoji",

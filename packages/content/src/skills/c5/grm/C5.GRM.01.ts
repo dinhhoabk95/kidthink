@@ -46,7 +46,7 @@ export const C5_GRM_01_DATASET: SkillDataset = {
       label: "cháu chào ông bà",
       image: {
         kind: "emoji",
-        ref: "🙋",
+        ref: "👋",
       },
       category: {
         type: "câu lễ phép",
@@ -88,7 +88,7 @@ export const C5_GRM_01_DATASET: SkillDataset = {
     },
     {
       id: "grm_gioi_thieu",
-      label: "con tên bé An",
+      label: "em tên là bé An",
       image: {
         kind: "emoji",
         ref: "🧒",

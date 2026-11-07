@@ -13,6 +13,8 @@ import {
 } from "./utils.js";
 
 const DIGIT_OR_LETTER_REGEX = /[0-9A-Za-z]/;
+const NUMBER_PREFIX_REGEX =
+  /^(?:một|hai|ba|bốn|năm|sáu|bảy|tám|chín|mười|\d+)\s+/i;
 
 export const projectGT037: Projection<"GT-037"> = {
   template: "GT-037",
@@ -70,10 +72,13 @@ export const projectGT037: Projection<"GT-037"> = {
     const anyOrientationFree = symbols.some((s) => s.orientation_free);
     const rotationJitter = opts.difficulty >= 4 && anyOrientationFree;
     const finishMode = opts.difficulty >= 5 ? "declare" : "auto";
+    const targetPhrase = NUMBER_PREFIX_REGEX.test(targetItem.label.trim())
+      ? `nhóm ${targetItem.label}`
+      : targetItem.label;
 
     return {
       content_pack: {
-        prompt: `Bé hãy tìm tất cả ${targetItem.label} nhé!`,
+        prompt: `Bé hãy tìm tất cả ${targetPhrase} nhé!`,
         target_ids: [targetItem.id],
         item_count: itemCount,
         target_copies: targetCopies,

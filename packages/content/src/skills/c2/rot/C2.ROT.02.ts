@@ -147,7 +147,7 @@ export const C2_ROT_02_DATASET: SkillDataset = {
     },
     {
       id: "mirror_axis_vertical",
-      label: "trục gương nét đứt",
+      label: "chiếc gương soi thẳng",
       value: 9,
       image: {
         kind: "emoji",
@@ -160,7 +160,7 @@ export const C2_ROT_02_DATASET: SkillDataset = {
     },
     {
       id: "color_bead_table_5x6",
-      label: "bảng hạt đối xứng",
+      label: "bảng màu vẽ tranh",
       value: 10,
       image: {
         kind: "emoji",
@@ -249,7 +249,7 @@ export const C2_ROT_02_DATASET: SkillDataset = {
   ],
   phrasing: {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
-    narration_template: "Chúng mình cùng tìm hiểu về Xoay 180° nhé",
+    narration_template: "Chúng mình cùng tìm hiểu về Xoay ngược hình lại nhé",
   },
   ordering: [
     "tree_up",

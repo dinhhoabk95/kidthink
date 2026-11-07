@@ -139,7 +139,7 @@ export const C6_PER_05_DATASET: SkillDataset = {
     },
     {
       id: "broccoli",
-      label: "súp lơ",
+      label: "bông cải xanh",
       image: {
         kind: "emoji",
         ref: "🥦",

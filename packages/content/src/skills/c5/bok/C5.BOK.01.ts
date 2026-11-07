@@ -89,7 +89,7 @@ export const C5_BOK_01_DATASET: SkillDataset = {
     },
     {
       id: "bok_ten_sach",
-      label: "tên truyện",
+      label: "nhãn tên truyện",
       image: {
         kind: "emoji",
         ref: "🏷️",
@@ -104,7 +104,7 @@ export const C5_BOK_01_DATASET: SkillDataset = {
     },
     {
       id: "bok_tac_gia",
-      label: "tác giả",
+      label: "người viết truyện",
       image: {
         kind: "emoji",
         ref: "✍️",
@@ -119,10 +119,10 @@ export const C5_BOK_01_DATASET: SkillDataset = {
     },
     {
       id: "bok_tranh_ve",
-      label: "tranh minh họa",
+      label: "tranh vẽ trong sách",
       image: {
         kind: "emoji",
-        ref: "🎨",
+        ref: "🖼️",
       },
       category: {
         type: "thông tin sách",

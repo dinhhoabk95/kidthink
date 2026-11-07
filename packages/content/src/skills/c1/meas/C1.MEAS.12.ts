@@ -50,7 +50,7 @@ export const C1_MEAS_12_DATASET: SkillDataset = {
       value: 1,
       image: {
         kind: "emoji",
-        ref: "🌅",
+        ref: "🌄",
       },
       ordering: 1,
       contrast_group: "time_morning",

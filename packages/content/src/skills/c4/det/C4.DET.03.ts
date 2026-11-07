@@ -133,7 +133,7 @@ export const C4_DET_03_DATASET: SkillDataset = {
     },
     {
       id: "size_button",
-      label: "cúc áo nhỏ",
+      label: "nút áo nhỏ",
       image: {
         kind: "emoji",
         ref: "🔘",

@@ -208,7 +208,7 @@ export const C1_SUB_05_DATASET: SkillDataset = {
     },
     {
       id: "wb13_evidence_cabinet",
-      label: "tủ chứng cứ",
+      label: "tủ gỗ nhỏ",
       value: 10,
       image: {
         kind: "emoji",
@@ -217,7 +217,7 @@ export const C1_SUB_05_DATASET: SkillDataset = {
     },
     {
       id: "wb13_cipher_bar",
-      label: "thanh mật mã",
+      label: "chìa khóa cổ",
       value: 10,
       image: {
         kind: "emoji",

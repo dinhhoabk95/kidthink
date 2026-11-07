@@ -118,7 +118,7 @@ export const C5_GRM_04_DATASET: SkillDataset = {
     },
     {
       id: "grm_cau_hoi_lam_gi",
-      label: "câu hỏi làm gì",
+      label: "câu hỏi tìm gì",
       image: {
         kind: "emoji",
         ref: "🔍",

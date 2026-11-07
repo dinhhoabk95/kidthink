@@ -43,7 +43,7 @@ export const C1_PROB_03_DATASET: SkillDataset = {
   items: [
     {
       id: "share_all",
-      label: "sáu chiếc bánh",
+      label: "chiếc bánh ngọt",
       value: 6,
       image: {
         kind: "emoji",

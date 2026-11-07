@@ -186,7 +186,7 @@ export const C1_NCOMP_12_DATASET: SkillDataset = {
     },
     {
       id: "wb08_reasoning_gem",
-      label: "Viên Ngọc Suy Luận mười cánh",
+      label: "hình kim cương xanh",
       glyph: "💠",
       value: 10,
       contrast_group: "cipher_badge",

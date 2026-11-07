@@ -107,10 +107,10 @@ export const C6_INI_01_DATASET: SkillDataset = {
     },
     {
       id: "blocks",
-      label: "khối gỗ",
+      label: "mảnh xếp hình",
       image: {
         kind: "emoji",
-        ref: "🧱",
+        ref: "🧩",
       },
       category: {
         type: "đồ chơi",

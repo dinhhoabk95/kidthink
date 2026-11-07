@@ -98,7 +98,7 @@ export const C5_STO_04_DATASET: SkillDataset = {
     },
     {
       id: "sto_rua_thang",
-      label: "kiên trì về đích",
+      label: "rùa con về đích",
       image: {
         kind: "emoji",
         ref: "🐢",
@@ -111,7 +111,7 @@ export const C5_STO_04_DATASET: SkillDataset = {
     },
     {
       id: "sto_se_chia",
-      label: "chia sẻ cùng vui",
+      label: "chia sẻ bánh kem",
       image: {
         kind: "emoji",
         ref: "🍰",

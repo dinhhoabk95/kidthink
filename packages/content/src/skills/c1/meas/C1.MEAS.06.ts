@@ -77,7 +77,7 @@ export const C1_MEAS_06_DATASET: SkillDataset = {
       value: 3,
       image: {
         kind: "emoji",
-        ref: "🧪",
+        ref: "🫙",
       },
       ordering: 3,
       contrast_group: "size_small",

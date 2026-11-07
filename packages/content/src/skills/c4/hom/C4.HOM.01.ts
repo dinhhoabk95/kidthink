@@ -133,7 +133,7 @@ export const C4_HOM_01_DATASET: SkillDataset = {
     },
     {
       id: "vn_hat",
-      label: "chiếc nón lá",
+      label: "mũ nón lá",
       image: {
         kind: "emoji",
         ref: "👒",

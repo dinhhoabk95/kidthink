@@ -58,7 +58,7 @@ export const C1_ORD_06_DATASET: SkillDataset = {
     },
     {
       id: "ord_5",
-      label: "vị trí áp chót (thứ năm)",
+      label: "vị trí gần cuối hàng (thứ năm)",
       value: 5,
       image: {
         kind: "emoji",

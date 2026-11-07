@@ -58,12 +58,12 @@ export const C6_ATT_03_DATASET: SkillDataset = {
     },
     {
       id: "minibus",
-      label: "xe buýt nhỏ",
+      label: "xe ô tô nhỏ",
       value: 2,
       ordering: 2,
       image: {
         kind: "emoji",
-        ref: "🚐",
+        ref: "🚗",
       },
       category: {
         type: "xe cộ",

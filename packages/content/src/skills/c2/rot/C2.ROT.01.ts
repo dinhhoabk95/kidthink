@@ -147,7 +147,7 @@ export const C2_ROT_01_DATASET: SkillDataset = {
     },
     {
       id: "spoke_pentagon_dial",
-      label: "đĩa nan hoa ngũ giác",
+      label: "bánh lái tàu thủy",
       value: 9,
       image: {
         kind: "emoji",
@@ -249,7 +249,7 @@ export const C2_ROT_01_DATASET: SkillDataset = {
   ],
   phrasing: {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
-    narration_template: "Chúng mình cùng tìm hiểu về Xoay 90° nhé",
+    narration_template: "Chúng mình cùng tìm hiểu về Xoay hình một góc nhé",
   },
   ordering: [
     "arrow_north",

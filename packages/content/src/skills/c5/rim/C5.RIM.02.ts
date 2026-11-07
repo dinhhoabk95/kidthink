@@ -46,11 +46,11 @@ export const C5_RIM_02_DATASET: SkillDataset = {
   items: [
     {
       id: "rim_an",
-      label: "vần an (cái bàn)",
+      label: "vần an (cây đàn)",
       glyph: "an",
       image: {
         kind: "emoji",
-        ref: "🪑",
+        ref: "🎸",
       },
       value: 1,
       category: {

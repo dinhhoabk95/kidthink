@@ -135,10 +135,10 @@ export const C5_VOC_09_DATASET: SkillDataset = {
     },
     {
       id: "voc_dau",
-      label: "cái đầu",
+      label: "cái chân",
       image: {
         kind: "emoji",
-        ref: "🧒",
+        ref: "🦵",
       },
       category: {
         type: "tay và chân",

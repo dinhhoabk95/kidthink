@@ -46,7 +46,7 @@ export const C6_PLN_03_DATASET: SkillDataset = {
   items: [
     {
       id: "seed",
-      label: "gieo hạt mầm",
+      label: "mầm cây nhỏ",
       image: {
         kind: "emoji",
         ref: "🌱",
@@ -62,7 +62,7 @@ export const C6_PLN_03_DATASET: SkillDataset = {
     },
     {
       id: "herb",
-      label: "cây mọc lá",
+      label: "nhánh lá xanh",
       image: {
         kind: "emoji",
         ref: "🌿",
@@ -78,7 +78,7 @@ export const C6_PLN_03_DATASET: SkillDataset = {
     },
     {
       id: "tree",
-      label: "cây vươn cao",
+      label: "cây xanh lớn",
       image: {
         kind: "emoji",
         ref: "🌳",
@@ -94,7 +94,7 @@ export const C6_PLN_03_DATASET: SkillDataset = {
     },
     {
       id: "cherry_blossom",
-      label: "cây trổ hoa",
+      label: "hoa anh đào",
       image: {
         kind: "emoji",
         ref: "🌸",

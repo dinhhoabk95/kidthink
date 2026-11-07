@@ -44,7 +44,7 @@ export const C4_CAU_05_DATASET: SkillDataset = {
   items: [
     {
       id: "seq_seed",
-      label: "hạt giống nhỏ",
+      label: "hạt dẻ giống",
       image: {
         kind: "emoji",
         ref: "🌰",

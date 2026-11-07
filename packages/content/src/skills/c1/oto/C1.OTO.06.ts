@@ -69,7 +69,7 @@ export const C1_OTO_06_DATASET: SkillDataset = {
     },
     {
       id: "stage_3",
-      label: "cây non lớn dần",
+      label: "chậu cây lớn dần",
       value: 3,
       image: {
         kind: "emoji",
@@ -95,7 +95,7 @@ export const C1_OTO_06_DATASET: SkillDataset = {
     },
     {
       id: "stage_5",
-      label: "cây kết quả ngọt",
+      label: "cây ra quả táo đỏ",
       value: 5,
       image: {
         kind: "emoji",
@@ -108,7 +108,7 @@ export const C1_OTO_06_DATASET: SkillDataset = {
     },
     {
       id: "stage_6",
-      label: "cây cổ thụ lớn",
+      label: "cây xanh to lớn",
       value: 6,
       image: {
         kind: "emoji",

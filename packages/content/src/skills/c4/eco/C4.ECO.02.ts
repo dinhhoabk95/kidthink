@@ -74,10 +74,10 @@ export const C4_ECO_02_DATASET: SkillDataset = {
     },
     {
       id: "care_plant_leaf",
-      label: "chiếc lá xanh",
+      label: "nhánh lá xanh",
       image: {
         kind: "emoji",
-        ref: "🍃",
+        ref: "🌿",
       },
       category: {
         type: "chăm sóc cây",

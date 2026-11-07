@@ -58,7 +58,7 @@ export const C1_MEAS_09_DATASET: SkillDataset = {
     },
     {
       id: "meas09-i2",
-      label: "cục tẩy hai xăng",
+      label: "miếng bọt biển hai xăng",
       value: 2,
       image: {
         kind: "emoji",

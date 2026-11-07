@@ -133,7 +133,7 @@ export const C4_HOM_06_DATASET: SkillDataset = {
     },
     {
       id: "fes_fan",
-      label: "chiếc quạt lụa",
+      label: "cái quạt lụa",
       image: {
         kind: "emoji",
         ref: "🪭",

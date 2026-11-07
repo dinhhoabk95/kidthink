@@ -59,7 +59,7 @@ export const C4_CAU_04_DATASET: SkillDataset = {
     },
     {
       id: "cue_smoke",
-      label: "vệt khói bốc",
+      label: "làn khói thổi",
       image: {
         kind: "emoji",
         ref: "💨",
@@ -134,7 +134,7 @@ export const C4_CAU_04_DATASET: SkillDataset = {
     },
     {
       id: "hid_cup",
-      label: "chiếc cốc đổ",
+      label: "ly nước đổ",
       image: {
         kind: "emoji",
         ref: "🥤",

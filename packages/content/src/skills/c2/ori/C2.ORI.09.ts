@@ -82,7 +82,7 @@ export const C2_ORI_09_DATASET: SkillDataset = {
     },
     {
       id: "target_middle",
-      label: "vạch kẻ ở giữa",
+      label: "bảng phi tiêu ở giữa",
       value: 4,
       image: {
         kind: "emoji",

@@ -43,7 +43,7 @@ export const C4_ECO_05_DATASET: SkillDataset = {
   items: [
     {
       id: "mat_cloth_bag",
-      label: "chiếc túi vải",
+      label: "túi xách vải",
       image: {
         kind: "emoji",
         ref: "👜",
@@ -118,7 +118,7 @@ export const C4_ECO_05_DATASET: SkillDataset = {
     },
     {
       id: "mat_paper_cup",
-      label: "cốc giấy mỏng",
+      label: "ly nước giấy",
       image: {
         kind: "emoji",
         ref: "🥤",

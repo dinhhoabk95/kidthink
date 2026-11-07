@@ -78,10 +78,10 @@ export const C5_LIS_03_DATASET: SkillDataset = {
     },
     {
       id: "lis_lau_kho_tay",
-      label: "lau khô tay",
+      label: "lau tay bằng khăn",
       image: {
         kind: "emoji",
-        ref: "🧻",
+        ref: "🧣",
       },
       category: {
         type: "bước rửa tay",
@@ -94,10 +94,10 @@ export const C5_LIS_03_DATASET: SkillDataset = {
     },
     {
       id: "lis_moi_nguoi_lon",
-      label: "mời người lớn",
+      label: "lễ phép mời cơm",
       image: {
         kind: "emoji",
-        ref: "🙏",
+        ref: "🙇",
       },
       category: {
         type: "bước ăn cơm",

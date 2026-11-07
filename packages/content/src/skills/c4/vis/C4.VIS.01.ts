@@ -301,7 +301,7 @@ export const C4_VIS_01_DATASET: SkillDataset = {
     },
     {
       id: "target_hot_air_balloon",
-      label: "khinh khí cầu",
+      label: "quả bóng bay",
       image: { kind: "emoji", ref: "🎈" },
       contrast_group: "compound_shape",
       category: {

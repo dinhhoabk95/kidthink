@@ -448,7 +448,7 @@ export const C1_NREC_03_SEED: SkillSeed = {
       band: "5-6",
       difficulty: 4,
       access_tier: "premium",
-      theme: "railway",
+      theme: "vehicle",
       rounds: 3,
       montessori_ref: "WB01-D5",
     },

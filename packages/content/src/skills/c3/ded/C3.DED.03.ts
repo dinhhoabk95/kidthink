@@ -209,7 +209,7 @@ export const C3_DED_03_DATASET: SkillDataset = {
     },
     {
       id: "cipher_dial_lock",
-      label: "ổ khóa xoay mật mã",
+      label: "ổ khóa tròn nhỏ",
       value: 8,
       image: {
         kind: "emoji",

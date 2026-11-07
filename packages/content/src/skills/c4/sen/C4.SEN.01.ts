@@ -104,7 +104,7 @@ export const C4_SEN_01_DATASET: SkillDataset = {
     },
     {
       id: "bright_blue",
-      label: "màu lam nhạt",
+      label: "màu xanh dương",
       image: {
         kind: "emoji",
         ref: "🔵",
@@ -179,7 +179,7 @@ export const C4_SEN_01_DATASET: SkillDataset = {
     },
     {
       id: "crystal_butterfly",
-      label: "chú bướm đối xứng",
+      label: "chú bướm xinh",
       image: {
         kind: "emoji",
         ref: "🦋",
@@ -194,7 +194,7 @@ export const C4_SEN_01_DATASET: SkillDataset = {
     },
     {
       id: "hot_air_balloon",
-      label: "khinh khí cầu dải màu",
+      label: "quả bóng bay đỏ",
       image: {
         kind: "emoji",
         ref: "🎈",
@@ -209,7 +209,7 @@ export const C4_SEN_01_DATASET: SkillDataset = {
     },
     {
       id: "fairy_lantern",
-      label: "chiếc đèn pha lê cổ tích",
+      label: "chiếc đèn lồng đỏ",
       image: {
         kind: "emoji",
         ref: "🏮",
@@ -224,7 +224,7 @@ export const C4_SEN_01_DATASET: SkillDataset = {
     },
     {
       id: "rainbow_gem_crystal",
-      label: "Viên Ngọc Sắc Màu",
+      label: "viên kim cương xanh",
       image: {
         kind: "emoji",
         ref: "💎",
@@ -381,7 +381,7 @@ export const C4_SEN_01_SEED: SkillSeed = {
       template: "GT-005",
       band: "4-5",
       difficulty: 3,
-      theme: "fairytale",
+      theme: "festival",
       rounds: 5,
       montessori_ref: "WB10-D2",
     },

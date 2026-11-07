@@ -43,7 +43,7 @@ export const C2_GRD_01_DATASET: SkillDataset = {
   items: [
     {
       id: "treasure_chest",
-      label: "rương kho báu",
+      label: "đồng xu kho báu",
       image: {
         kind: "emoji",
         ref: "🪙",
@@ -113,7 +113,7 @@ export const C2_GRD_01_DATASET: SkillDataset = {
     },
     {
       id: "obstacle_tree",
-      label: "hàng cây rậm rạp",
+      label: "cây xanh rậm rạp",
       image: {
         kind: "emoji",
         ref: "🌳",
