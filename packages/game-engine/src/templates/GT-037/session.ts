@@ -62,6 +62,16 @@ const SCATTER_BOARD_CAPACITY: Record<AgeBand, number> = {
   "5-6": 20,
 };
 
+/**
+ * Trần số ký hiệu gây nhầm trên bảng theo band (`BR-E037-11`): 3-4 tuổi chưa
+ * phân biệt được b/d, 6/9 nên không có; 4-5 tối đa 2; 5-6 theo `confusable_ids`.
+ */
+const CONFUSABLE_CAP_BY_BAND: Readonly<Record<AgeBand, number>> = {
+  "3-4": 0,
+  "4-5": 2,
+  "5-6": 4,
+};
+
 function buildTargetSymbols(
   targetIds: readonly string[],
   targetCopies: number,
@@ -99,17 +109,25 @@ function buildChosenDistractors(
   targetCopies: number,
   targetSet: ReadonlySet<string>,
   symbolMap: ReadonlyMap<string, GT037Symbol>,
-  seed: number
+  seed: number,
+  band: AgeBand
 ): GT037Symbol[] {
+  const keptIds = content.confusable_ids.slice(0, CONFUSABLE_CAP_BY_BAND[band]);
+  const droppedIds = new Set(content.confusable_ids.slice(keptIds.length));
   const confusableSymbols: GT037Symbol[] = [];
-  for (const cId of content.confusable_ids) {
+  for (const cId of keptIds) {
     const sym = symbolMap.get(cId);
     if (sym) {
       confusableSymbols.push(sym);
     }
   }
 
-  const nonTargetSymbols = content.symbols.filter((s) => !targetSet.has(s.id));
+  const nonTargetAll = content.symbols.filter((s) => !targetSet.has(s.id));
+  // Ký hiệu bị bớt theo band cũng không được rơi vào nhóm gây nhiễu ngẫu nhiên;
+  // chỉ khi không còn ký hiệu nào khác mới giữ lại để bảng đủ ô.
+  const withoutDropped = nonTargetAll.filter((s) => !droppedIds.has(s.id));
+  const nonTargetSymbols =
+    withoutDropped.length > 0 ? withoutDropped : nonTargetAll;
   const distractorsStream = deriveStream(seed, "distractors");
   const chosen = [...confusableSymbols];
   const remainingCount = itemCount - targetCopies - confusableSymbols.length;
@@ -171,6 +189,8 @@ export class GT037Session extends TemplateGameSession<
   targetCopies = 0;
   targetSet = new Set<string>();
   private currentBand: AgeBand = "5-6";
+  /** Band mà `boardSymbols` được dựng cho; lệch `currentBand` thì dựng lại (`BR-E037-11`). */
+  private boardBand: AgeBand | null = null;
   /** Thời gian còn lại của nhịp reo sau ô đích mới tìm. */
   private cheerRemainingMs = 0;
 
@@ -221,6 +241,7 @@ export class GT037Session extends TemplateGameSession<
 
   /** Dựng lại `boardSymbols` theo band hiện tại; không đụng tiến độ của trẻ. */
   private rebuildBoard(): void {
+    this.boardBand = this.currentBand;
     this.targetSet = new Set(this.content.target_ids);
 
     const maxBandCapacity = SCATTER_BOARD_CAPACITY[this.currentBand] ?? 20;
@@ -249,7 +270,8 @@ export class GT037Session extends TemplateGameSession<
       this.targetCopies,
       this.targetSet,
       symbolMap,
-      this.layoutSeed
+      this.layoutSeed,
+      this.currentBand
     );
 
     const assignStream = deriveStream(this.layoutSeed, "assign");
@@ -334,7 +356,7 @@ export class GT037Session extends TemplateGameSession<
     const maxBandCapacity = SCATTER_BOARD_CAPACITY[band] ?? 20;
     if (this.boardSymbols.length === 0) {
       this.setupEntities();
-    } else if (this.itemCount > maxBandCapacity) {
+    } else if (this.itemCount > maxBandCapacity || this.boardBand !== band) {
       this.rebuildBoard();
     }
 
