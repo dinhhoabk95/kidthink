@@ -27,6 +27,7 @@ import {
   drawCheckMark,
   drawEmptyTargetSlot,
   drawSceneBackground,
+  drawSlotItem,
   drawSlotLabel,
   drawWoodenTokenDock,
   getColorsForState,
@@ -44,6 +45,9 @@ import {
 import type { GT019Content, GT019Difficulty } from "./template.js";
 
 type GT019Piece = GT019Content["pieces"][number];
+
+/** Ký hiệu nút lật trên canvas. */
+const FLIP_GLYPH = "⇋";
 
 /** Cạnh ô đích lớn nhất trên sân khấu. */
 const TARGET_CELL_MAX_PX = 96;
@@ -123,7 +127,7 @@ export class GT019Session extends TemplateGameSession<
 
   /** Số vật nguồn trong khay của vòng — shell đo chiều cao khay (`BR-PSZ-13`). */
   override get trayItemCount(): number {
-    return this.content.pieces.length;
+    return this.content.pieces.length + (this.difficulty.allow_flip ? 1 : 0);
   }
   override readonly usesPromptZone = true;
 
@@ -365,6 +369,59 @@ export class GT019Session extends TemplateGameSession<
     return null;
   }
 
+  /** Slot nút lật: slot nguồn thừa ngay sau các mảnh (chỉ có khi `allow_flip`). */
+  private get flipButtonSlot(): Slot | undefined {
+    return this.difficulty.allow_flip
+      ? this.sourceSlots[this.content.pieces.length]
+      : undefined;
+  }
+
+  /** Mảnh nút lật tác động: mảnh đang chọn, không có thì mảnh chưa đặt đầu tiên. */
+  private flipTargetPiece(): GT019Piece | undefined {
+    const stagedId = this.placementMechanic.getStagedItemId();
+    return (
+      this.content.pieces.find((p) => p.piece_id === stagedId) ??
+      this.content.pieces.find(
+        (p) => !this.placementMechanic.getPlacedContainer(p.piece_id)
+      )
+    );
+  }
+
+  private toFlipButtonAction(
+    gesture: Extract<Gesture, { type: "tap" }>
+  ): GameAction | null {
+    const slot = this.flipButtonSlot;
+    if (
+      !(
+        slot &&
+        findHitSlotIndex(
+          [slot],
+          gesture.x,
+          gesture.y,
+          "circle",
+          TAP_TOLERANCE_PX
+        ) >= 0
+      )
+    ) {
+      return null;
+    }
+    const piece = this.flipTargetPiece();
+    if (!piece) {
+      return null;
+    }
+    const targetFlip = toFlipAxis(
+      this.content.target_slots.find((s) => s.slot_id === piece.target_slot_id)
+        ?.target_flip
+    );
+    return {
+      type: "flip_piece",
+      data: {
+        piece_id: piece.piece_id,
+        axis: targetFlip === "vertical" ? "vertical" : "horizontal",
+      },
+    };
+  }
+
   private toAdjustAction(
     gesture: Extract<Gesture, { type: "adjust" }>
   ): GameAction | null {
@@ -391,7 +448,7 @@ export class GT019Session extends TemplateGameSession<
       return this.toDropAction(gesture);
     }
     if (gesture.type === "tap") {
-      return this.toTapAction(gesture);
+      return this.toFlipButtonAction(gesture) ?? this.toTapAction(gesture);
     }
     if (gesture.type === "adjust") {
       return this.toAdjustAction(gesture);
@@ -514,6 +571,24 @@ export class GT019Session extends TemplateGameSession<
       }
     });
 
+    const flipSlot = this.flipButtonSlot;
+    if (flipSlot) {
+      entities.push({
+        id: "btn_flip",
+        slotIndex: targets.length + this.content.pieces.length,
+        role: "neutral",
+        state: "idle",
+        x: flipSlot.x,
+        y: flipSlot.y,
+        w: flipSlot.w,
+        h: flipSlot.h,
+        hitShape: "circle",
+        glyph: FLIP_GLYPH,
+        label: "Lật",
+        spokenLabel: "Nút lật hình",
+      });
+    }
+
     return {
       activePrompt: this.content.prompt,
       entities,
@@ -615,7 +690,7 @@ export class GT019Session extends TemplateGameSession<
         hasLabels: true,
       });
       const sources = computeTraySourceSlots(
-        this.content.pieces.length,
+        this.trayItemCount,
         zones.tray,
         touchFloor,
         targets.length,
@@ -625,7 +700,7 @@ export class GT019Session extends TemplateGameSession<
     }
     const layoutFn = resolveLayout("top-source-bottom-target");
     return layoutFn({
-      slotCount: this.content.pieces.length,
+      slotCount: this.trayItemCount,
       targetCount: this.content.target_slots.length,
       ageBand,
       logic: this.logicSpace,
@@ -745,5 +820,21 @@ export class GT019Session extends TemplateGameSession<
 
     this.renderTargets(ctx, rs, targets);
     this.renderTrayPieces(ctx, rs, sources);
+    this.renderFlipButton(ctx, rs);
+  }
+
+  private renderFlipButton(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem
+  ): void {
+    const slot = this.flipButtonSlot;
+    if (slot) {
+      drawSlotItem(ctx, rs, slot, {
+        id: "btn_flip",
+        text: FLIP_GLYPH,
+        label: "Lật",
+        state: "idle",
+      });
+    }
   }
 }

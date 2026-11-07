@@ -33,6 +33,9 @@ import type { Particle, RenderSystem } from "#src/systems/render-system";
 import { SFXEngine } from "#src/systems/sfx-engine";
 import type { GT034Content, GT034Difficulty } from "./template.js";
 
+/** Ký hiệu pad nhịp nghỉ. */
+const REST_GLYPH = "🤫";
+
 interface GT034ActionPayload {
   readonly instrument_id?: string;
   readonly id?: string;
@@ -124,6 +127,9 @@ export class GT034Session extends TemplateGameSession<
       return null;
     }
     const nextInstId = this.content.target_pattern[this.userSteps.length];
+    if (nextInstId === null && this.hasRestPad) {
+      return patternLen + this.content.instruments.length;
+    }
     if (nextInstId) {
       const instIdx = this.content.instruments.findIndex(
         (inst) => inst.instrument_id === nextInstId
@@ -149,7 +155,7 @@ export class GT034Session extends TemplateGameSession<
           hasLabels: true,
         },
         {
-          count: this.content.instruments.length,
+          count: this.content.instruments.length + (this.hasRestPad ? 1 : 0),
           role: "source",
           hasLabels: true,
         },
@@ -454,6 +460,19 @@ export class GT034Session extends TemplateGameSession<
     }
   }
 
+  /** Pad "Nghỉ": chỉ có khi mẫu có nhịp nghỉ, nếu không không có gì để bấm. */
+  private get hasRestPad(): boolean {
+    return this.content.target_pattern.includes(null);
+  }
+
+  private get restPadSlot(): Slot | undefined {
+    return this.hasRestPad
+      ? this.slots[
+          this.content.target_pattern.length + this.content.instruments.length
+        ]
+      : undefined;
+  }
+
   private findTappedInstrumentId(
     gx: number,
     gy: number,
@@ -507,6 +526,14 @@ export class GT034Session extends TemplateGameSession<
         type: "tap_instrument",
         data: { instrument_id: instId },
       };
+    }
+
+    const restSlot = this.restPadSlot;
+    if (
+      restSlot &&
+      isPointInSlot(restSlot, gesture.x, gesture.y, "circle", TAP_TOLERANCE_PX)
+    ) {
+      return { type: "tap_rest", data: {} };
     }
 
     if (this.isTappedLastStep(gesture.x, gesture.y)) {
@@ -600,6 +627,24 @@ export class GT034Session extends TemplateGameSession<
         label: displayLabel,
         spokenLabel: inst.name_vi ?? spokenLabel ?? displayLabel,
         spokenAudioPath,
+      });
+    }
+
+    const restSlot = this.restPadSlot;
+    if (restSlot) {
+      entities.push({
+        id: "pad_rest",
+        slotIndex: patternLen + instCount,
+        role: "source",
+        state: "idle",
+        x: restSlot.x,
+        y: restSlot.y,
+        w: restSlot.w,
+        h: restSlot.h,
+        hitShape: "circle",
+        glyph: REST_GLYPH,
+        label: "Nghỉ",
+        spokenLabel: "Nghỉ một nhịp",
       });
     }
 
@@ -711,6 +756,16 @@ export class GT034Session extends TemplateGameSession<
 
     if (sourceSlots.length === 0) {
       return;
+    }
+
+    const restSlot = this.restPadSlot;
+    if (restSlot) {
+      drawSlotItem(ctx, rs, restSlot, {
+        id: "pad_rest",
+        text: REST_GLYPH,
+        label: "Nghỉ",
+        state: "idle",
+      });
     }
 
     for (let i = 0; i < sourceSlots.length; i++) {

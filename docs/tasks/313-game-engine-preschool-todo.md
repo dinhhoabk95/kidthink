@@ -5,7 +5,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 ## Phase 0 — Level không thắng được
 - [x] Web phát gesture `stroke` từ `trailPoints` (`apps/web/app/composables/play/use-play-gesture.ts`)
 - [x] Web phát `adjust` (kéo xoay / kéo mức) cho GT-019, GT-032
-- [ ] Entity nút `flip` (GT-019) và pad `rest` (GT-034) qua tap
+- [x] Entity nút `flip` (GT-019) và pad `rest` (GT-034) qua tap
 - [ ] Gate `packages/game-engine/tests/gates/`: mọi fixture giải được chỉ bằng gesture web phát ra + ca âm trong `tests/**/fixtures/`
 - [x] GT-031: hint subset-sum thay greedy (`pickCoinHint` trong `templates/GT-031/template.ts`)
 - [x] GT-018: refine schema (select có đúng/sai, sequence hợp lệ, không giải sẵn)
