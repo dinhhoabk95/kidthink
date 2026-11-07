@@ -118,12 +118,17 @@ export class GT034Session extends TemplateGameSession<
     }));
 
     this.beatSystem = new BeatSystem({
-      tempo_bpm: content.tempo_bpm,
+      tempo_bpm: difficulty.tempo_bpm ?? content.tempo_bpm,
       instruments,
       age_band: "5-6",
     });
 
     this.sfxEngine = new SFXEngine();
+  }
+
+  /** Nhịp thực dùng: độ khó thắng content khi có khai (`BR-E034-11`). */
+  get tempoBpm(): number {
+    return this.difficulty.tempo_bpm ?? this.content.tempo_bpm;
   }
 
   override storyLine(): string {
@@ -487,7 +492,7 @@ export class GT034Session extends TemplateGameSession<
     this.sfxEngine.playSequence(recipes);
 
     this.recordEvent("pattern_played", {
-      tempo_bpm: this.content.tempo_bpm,
+      tempo_bpm: this.tempoBpm,
       pattern_length: this.content.target_pattern.length,
       is_replay: this.replaysUsed > 1,
       round_index: 0,
@@ -884,7 +889,7 @@ export class GT034Session extends TemplateGameSession<
       drawSubPromptText(
         ctx,
         rs,
-        `Đã nghe: ${this.replaysUsed}/${this.replayLimit} | Nhịp: ${this.content.tempo_bpm} BPM`
+        `Đã nghe: ${this.replaysUsed}/${this.replayLimit} | Nhịp: ${this.tempoBpm} BPM`
       );
     }
 
