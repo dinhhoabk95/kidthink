@@ -8,7 +8,10 @@ import {
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
-import { resolveAssetLabels } from "#src/labels/spoken-keyword";
+import {
+  resolveAssetLabels,
+  resolveAssetSpeech,
+} from "#src/labels/spoken-keyword";
 import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import {
   computeStageGroupsLayout,
@@ -18,7 +21,6 @@ import type { Slot } from "#src/layout/types";
 import {
   drawSceneBackground,
   drawSlotItem,
-  drawSubPromptText,
   spawnParticlesAtSlot,
   updateParticles,
 } from "#src/render/index";
@@ -538,7 +540,7 @@ export class GT036Session extends TemplateGameSession<
         h: slot.h,
         hitShape: "circle",
         glyph: assetLabels?.glyph,
-        label: assetLabels?.label ?? `${i + 1}`,
+        label: assetLabels ? undefined : `${i + 1}`,
         spokenLabel: itemSpoken
           ? `Ô số ${i + 1}: ${itemSpoken}`
           : `Ô số ${i + 1} đang trống`,
@@ -558,10 +560,9 @@ export class GT036Session extends TemplateGameSession<
       if (!(slot && pal)) {
         continue;
       }
-      const { glyph, label, spokenLabel, spokenAudioPath } = resolveAssetLabels(
+      const { glyph, spokenLabel, spokenAudioPath } = resolveAssetSpeech(
         pal.asset
       );
-      const displayLabel = label ?? pal.id;
       entities.push({
         id: `palette_${pal.id}`,
         slotIndex: count + p,
@@ -573,8 +574,7 @@ export class GT036Session extends TemplateGameSession<
         h: slot.h,
         hitShape: "circle",
         glyph,
-        label: displayLabel,
-        spokenLabel: spokenLabel ?? displayLabel,
+        spokenLabel: spokenLabel ?? pal.id,
         spokenAudioPath,
       });
     }
@@ -602,21 +602,9 @@ export class GT036Session extends TemplateGameSession<
   render(ctx: CanvasRenderingContext2D, rs: RenderSystem): void {
     drawSceneBackground(ctx, rs, this.themeId);
 
-    // Có khung thì lời dẫn thuộc shell (`BR-PSZ-01`); dòng chữ phụ chỉ ở bề mặt cũ.
-    if (!this.stageRect) {
-      drawSubPromptText(
-        ctx,
-        rs,
-        `Bé chọn hình và xếp dải lặp lại ít nhất ${this.content.min_repetitions} lần nhé!`
-      );
-    }
-
+    // Không vẽ dòng chữ nào: lời mời và lời khen do lời dẫn đọc, mô-típ sáng trên dải (`BR-E036-09`).
     this.renderTrackSlots(ctx, rs);
     this.renderPaletteDock(ctx, rs);
-
-    if (!this.stageRect && this.submitted && this.detectedRule?.detected) {
-      this.renderRuleOverlay(ctx, rs);
-    }
 
     if (
       this.particles.length > 0 &&
@@ -676,22 +664,12 @@ export class GT036Session extends TemplateGameSession<
     }
   }
 
-  /** Lời sau khi chốt: không in mã phần tử thô (`BR-E036-08`); mô-típ sáng trên dải thay cho chữ. */
+  /** Lời đọc sau khi chốt, không vẽ ra canvas (`BR-E036-09`); không in mã phần tử thô (`BR-E036-08`). */
   ruleOverlayText(): string | null {
     if (!(this.submitted && this.detectedRule?.detected)) {
       return null;
     }
     return `Tuyệt vời! Quy luật của bé lặp lại ${this.detectedRule.repetitions} lần!`;
-  }
-
-  private renderRuleOverlay(
-    ctx: CanvasRenderingContext2D,
-    rs: RenderSystem
-  ): void {
-    const text = this.ruleOverlayText();
-    if (text) {
-      drawSubPromptText(ctx, rs, text);
-    }
   }
 
   /** Ô đã đặt sáng lên khi chốt mà chưa có luật, hoặc nằm trong mô-típ vừa đọc ra. */

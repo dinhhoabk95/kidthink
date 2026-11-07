@@ -87,6 +87,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
   - [x] 031 (còn lại Phase 3: "Đã góp x/y đ" thành hàng chấm xu lấp dần, thẻ giá chỉ chữ số, xu bỏ "đ", BR-E031-07)
   - [x] 032 (bỏ dòng phụ bố cục cũ và label "Cốc n", tên cốc chỉ đọc, BR-E032-08)
   - [x] 035 (còn lại Phase 3: thẻ lệnh chỉ biểu tượng, bỏ chữ "Đích"/"Đã xếp"/tên lệnh trong view, tên lệnh chỉ đọc, BR-E035-10)
+  - [x] 036 (bỏ dòng mời và lời khen vẽ ở bố cục cũ, label hình mẫu/ô dải, lời chỉ đọc, BR-E036-09)
 
 ## Phase 5 — Đặc sắc từng game
 - [ ] Đợt demo: 001, 003, 020, 025, 026, 037
