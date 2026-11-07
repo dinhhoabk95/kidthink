@@ -15,7 +15,7 @@ import type {
   ViewEntity,
 } from "#src/interaction";
 import { resolveAssetLabels } from "#src/labels/spoken-keyword";
-import { resolveTouchFloor } from "#src/layout/constants";
+import { resolveTouchFloor, SLOT_GAP_PX } from "#src/layout/constants";
 import { TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
 import { insetDrawSize } from "#src/layout/slot-fit";
@@ -25,6 +25,7 @@ import {
   drawLabelText,
   drawSceneBackground,
   drawSceneObjectAt,
+  drawSlotItem,
   sceneBox,
 } from "#src/render/index";
 import { deriveStream } from "#src/rng/mulberry32";
@@ -67,11 +68,33 @@ function findHitSceneObject(
   return best;
 }
 
+/** Hai vùng chạm cách nhau dưới `SLOT_GAP_PX` thì coi là chồng (`BR-LAY-05`). */
+function hasHitOverlap(slots: readonly Slot[]): boolean {
+  for (let i = 0; i < slots.length; i++) {
+    for (let j = i + 1; j < slots.length; j++) {
+      const a = slots[i];
+      const b = slots[j];
+      if (!(a && b)) {
+        continue;
+      }
+      const dx = Math.abs(a.x - b.x) - (a.hitW + b.hitW) / 2;
+      const dy = Math.abs(a.y - b.y) - (a.hitH + b.hitH) / 2;
+      if (Math.max(dx, dy) < SLOT_GAP_PX) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 export class GT022Session extends TemplateGameSession<
   GT022Content,
   GT022Difficulty
 > {
   override readonly usesPromptZone = true;
+
+  /** Hàng hình mẫu ghim đầu sân khấu suốt lượt (`BR-E022-05`); có stage mới có. */
+  private referenceSlots: readonly Slot[] = [];
 
   degradation: DegradationState | null = null;
 
@@ -218,6 +241,36 @@ export class GT022Session extends TemplateGameSession<
     });
   }
 
+  /** Mỗi hình đích khác nhau một nhóm: asset đại diện và id các vật đích cùng hình. */
+  private referenceGroups(): readonly {
+    asset: GT022Content["scene_objects"][number]["asset"];
+    objectIds: readonly string[];
+  }[] {
+    const groups = new Map<
+      string,
+      {
+        asset: GT022Content["scene_objects"][number]["asset"];
+        objectIds: string[];
+      }
+    >();
+    for (const obj of this.content.scene_objects) {
+      if (!obj.is_target) {
+        continue;
+      }
+      const key = JSON.stringify(obj.asset);
+      const group = groups.get(key) ?? { asset: obj.asset, objectIds: [] };
+      group.objectIds.push(obj.id);
+      groups.set(key, group);
+    }
+    return [...groups.values()];
+  }
+
+  private isReferenceFound(objectIds: readonly string[]): boolean {
+    return objectIds.every(
+      (id) => this.sceneSystem.getObjectState(id)?.isFound === true
+    );
+  }
+
   override toAction(gesture: Gesture): GameAction | null {
     if (gesture.type === "tap") {
       const hitObj = findHitSceneObject(
@@ -292,6 +345,23 @@ export class GT022Session extends TemplateGameSession<
         ...labels,
       };
     });
+    const refSlots = this.referenceSlots;
+    this.referenceGroups().forEach((group, i) => {
+      const slot = refSlots[i];
+      if (slot) {
+        entities.push({
+          id: `ref-${i}`,
+          slotIndex: slot.index,
+          role: "neutral",
+          state: this.isReferenceFound(group.objectIds) ? "correct" : "idle",
+          x: slot.x,
+          y: slot.y,
+          w: slot.w,
+          h: slot.h,
+          ...resolveAssetLabels(group.asset),
+        });
+      }
+    });
     return {
       activePrompt: this.content.prompt,
       entities,
@@ -309,27 +379,70 @@ export class GT022Session extends TemplateGameSession<
     return idx >= 0 ? idx : null;
   }
 
+  /**
+   * Hàng hình mẫu ghim ở đầu sân khấu: cạnh theo sàn chạm, các ô cách nhau
+   * `SLOT_GAP_PX`. Phần còn lại của sân khấu dành cho cảnh (`BR-E022-05`).
+   */
+  private computeReferenceStrip(
+    stage: NonNullable<GT022Session["stageRect"]>,
+    touchFloor: number
+  ): { slots: Slot[]; scene: NonNullable<GT022Session["stageRect"]> } {
+    const count = this.referenceGroups().length;
+    const size = touchFloor;
+    const pitch = size + SLOT_GAP_PX;
+    const strip = size + 2 * SLOT_GAP_PX;
+    const left = stage.x + (stage.w - (count * pitch - SLOT_GAP_PX)) / 2;
+    const base = this.content.scene_objects.length;
+    const slots: Slot[] = Array.from({ length: count }, (_, i) => ({
+      index: base + i,
+      x: Math.round(left + size / 2 + i * pitch),
+      y: Math.round(stage.y + SLOT_GAP_PX + size / 2),
+      w: size,
+      h: size,
+      hitW: size,
+      hitH: size,
+      page: 0,
+      role: "neutral" as const,
+    }));
+    return {
+      slots,
+      scene: { ...stage, y: stage.y + strip, h: stage.h - strip },
+    };
+  }
+
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
+    const stage = this.stageRect;
     const layoutFn = resolveLayout("free-scene");
-    const rawSlots = layoutFn({
-      slotCount: this.content.scene_objects.length,
-      ageBand,
-      logic: this.logicSpace,
-      stage: this.stageRect,
-      cssPerLogic: this.cssPerLogic,
-    });
-    if (this.stageRect) {
-      const touchFloor = resolveTouchFloor(ageBand, this.cssPerLogic);
-      const displaySize = Math.max(touchFloor, 84);
-      return rawSlots.map((s) => ({
+    const layoutIn = (area: typeof stage, minSize: number): Slot[] =>
+      layoutFn({
+        slotCount: this.content.scene_objects.length,
+        ageBand,
+        logic: this.logicSpace,
+        stage: area,
+        cssPerLogic: this.cssPerLogic,
+      }).map((s) => ({
         ...s,
-        w: Math.max(s.w, displaySize),
-        h: Math.max(s.h, displaySize),
-        hitW: Math.max(s.hitW, displaySize),
-        hitH: Math.max(s.hitH, displaySize),
+        w: Math.max(s.w, minSize),
+        h: Math.max(s.h, minSize),
+        hitW: Math.max(s.hitW, minSize),
+        hitH: Math.max(s.hitH, minSize),
       }));
+    if (!stage) {
+      return insetDrawSize(layoutIn(undefined, 0), undefined);
     }
-    return insetDrawSize(rawSlots, this.stageRect);
+    const touchFloor = resolveTouchFloor(ageBand, this.cssPerLogic);
+    const strip = this.computeReferenceStrip(stage, touchFloor);
+    // Thử cỡ vật rộng rồi cỡ sàn chạm; sân khấu quá chật thì bỏ hàng ghim
+    // thay vì để vùng chạm chồng nhau (`BR-LAY-05`).
+    for (const size of [Math.max(touchFloor, 84), touchFloor]) {
+      const scene = layoutIn(strip.scene, size);
+      if (!hasHitOverlap([...scene, ...strip.slots])) {
+        this.referenceSlots = strip.slots;
+        return [...scene, ...strip.slots];
+      }
+    }
+    this.referenceSlots = [];
+    return layoutIn(stage, Math.max(touchFloor, 84));
   }
 
   render(
@@ -342,6 +455,7 @@ export class GT022Session extends TemplateGameSession<
       this.wrongItemId = null;
     }
     drawSceneBackground(ctx, rs, this.themeId);
+    this.drawPinnedReferences(ctx, rs);
     // free-scene: toạ độ tới từ content (đã ở không gian logic), ô nào thiếu
     // toạ độ thì rơi về slot của layout.
     const scene = sceneBox(rs);
@@ -392,6 +506,24 @@ export class GT022Session extends TemplateGameSession<
 
       if (obj.id === this.wrongItemId) {
         this.drawWrongHighlight(ctx, rs, obj, i, timeMs);
+      }
+    });
+  }
+
+  /** Hình mẫu ở khay: đứng yên suốt lượt, sáng khi đã tìm đủ hình đó. */
+  private drawPinnedReferences(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem
+  ): void {
+    const refSlots = this.referenceSlots;
+    this.referenceGroups().forEach((group, i) => {
+      const slot = refSlots[i];
+      if (slot) {
+        drawSlotItem(ctx, rs, slot, {
+          id: `ref-${i}`,
+          asset: group.asset,
+          state: this.isReferenceFound(group.objectIds) ? "correct" : "locked",
+        });
       }
     });
   }
