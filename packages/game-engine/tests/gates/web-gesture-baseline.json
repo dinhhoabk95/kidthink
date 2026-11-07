@@ -1,0 +1,24 @@
+{
+  "_doc": "Fixture chưa giải được chỉ bằng gesture web (Task #313 Phase 0). Chỉ được GIẢM; thêm mục mới = level mới không thắng được.",
+  "unsolved": [
+    "GT-012#0",
+    "GT-012#1",
+    "GT-012#2",
+    "GT-013#2",
+    "GT-014#1",
+    "GT-014#2",
+    "GT-015#1",
+    "GT-015#2",
+    "GT-017#1",
+    "GT-022#2",
+    "GT-026#0",
+    "GT-026#1",
+    "GT-026#2",
+    "GT-027#0",
+    "GT-027#1",
+    "GT-027#2",
+    "GT-031#0",
+    "GT-031#1",
+    "GT-031#2"
+  ]
+}
