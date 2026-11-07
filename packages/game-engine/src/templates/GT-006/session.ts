@@ -23,6 +23,7 @@ import {
   type ItemVisualState,
   sceneBox,
 } from "#src/render/index.js";
+import type { MascotPose } from "#src/render/mascot";
 import { deriveDerangement } from "#src/rng/derangement";
 import { deriveStream } from "#src/rng/mulberry32";
 import type { DegradationState } from "#src/systems/degradation";
@@ -30,9 +31,19 @@ import {
   type ControlOfErrorDiagnostics,
   MontessoriExploreTracker,
 } from "#src/systems/montessori-explore-system";
+import { MoodPulse } from "#src/systems/mood-pulse";
 import type { RenderSystem } from "#src/systems/render-system";
 import { slotsFitStage, splitStageForTrack } from "./stage-strip.js";
 import type { GT006Content, GT006Difficulty } from "./template.js";
+
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E006-05`, `BR-FBK-16`). */
+export const GT006_STORY_LINE =
+  "Rùa Con kể chuyện theo từng thẻ. Bé xếp các thẻ đúng thứ tự rồi bấm xong cho cuộn phim chạy nhé!";
+
+/** Mascot vui ngắn sau mỗi lần đổi chỗ thẻ (`BR-E006-05`). */
+export const GT006_HAPPY_MS = 700;
+/** Mascot nghiêng đầu sau lần bấm xong chưa đúng. */
+export const GT006_WONDER_MS = 1500;
 
 export class GT006Session extends TemplateGameSession<
   GT006Content,
@@ -44,6 +55,7 @@ export class GT006Session extends TemplateGameSession<
   degradation: DegradationState | null = null;
   private stagedIndex: number | null = null;
   private wrongSubmitTimerMs = 0;
+  private readonly mood = new MoodPulse();
 
   private readonly mechanic = new OrderingMechanic();
   private readonly exploreTracker = new MontessoriExploreTracker({
@@ -75,6 +87,7 @@ export class GT006Session extends TemplateGameSession<
     this.isWon = false;
     this.stagedIndex = null;
     this.wrongSubmitTimerMs = 0;
+    this.mood.clear();
   }
 
   startExplorePhase(): void {
@@ -150,6 +163,9 @@ export class GT006Session extends TemplateGameSession<
     if (!this.mechanic.reorder(fromIndex, toIndex)) {
       return;
     }
+    // Cue và mascot không phụ thuộc thẻ vào đúng hay sai chỗ (`BR-E006-05`).
+    this.queueSfx("film_tick");
+    this.mood.set("happy", GT006_HAPPY_MS);
     this.exploreTracker.recordExploreAction("train_car_reordered");
     this.recordEvent("step_reordered", {
       from_index: fromIndex,
@@ -174,6 +190,7 @@ export class GT006Session extends TemplateGameSession<
       this.winSession();
     } else {
       this.wrongSubmitTimerMs = 350;
+      this.mood.set("wonder", GT006_WONDER_MS);
       const mismatchIdx = this.findFirstMismatchIndex();
       const reasonVi =
         mismatchIdx >= 0
@@ -192,7 +209,17 @@ export class GT006Session extends TemplateGameSession<
     }
   }
 
+  override storyLine(): string {
+    return GT006_STORY_LINE;
+  }
+
+  /** Vui sau mỗi lần đổi chỗ, nghiêng đầu sau lần bấm xong chưa đúng (`BR-E006-05`). */
+  override mascotMood(): MascotPose | null {
+    return this.isWon ? null : this.mood.current();
+  }
+
   update(deltaMs: number): void {
+    this.mood.tick(deltaMs);
     this.exploreTracker.tick(deltaMs);
     if (this.wrongSubmitTimerMs > 0) {
       this.wrongSubmitTimerMs = Math.max(0, this.wrongSubmitTimerMs - deltaMs);

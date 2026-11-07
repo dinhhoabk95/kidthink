@@ -30,7 +30,8 @@ export type SFXType =
   | "coin_clink"
   | "net_splash"
   | "teacher_chime"
-  | "peg_clip";
+  | "peg_clip"
+  | "film_tick";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -419,6 +420,26 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       volume: 0.08,
       durationSec: 0.08,
       rampOutSec: 0.05,
+    },
+  ],
+
+  /** GT-006: máy chiếu phim nhích một khung — "tạch" êm (`BR-E006-05`). */
+  film_tick: [
+    {
+      delaySec: 0,
+      type: "square",
+      freq: 180,
+      volume: 0.06,
+      durationSec: 0.05,
+      rampOutSec: 0.04,
+    },
+    {
+      delaySec: 0.07,
+      type: "triangle",
+      freq: 320,
+      volume: 0.08,
+      durationSec: 0.06,
+      rampOutSec: 0.04,
     },
   ],
 
