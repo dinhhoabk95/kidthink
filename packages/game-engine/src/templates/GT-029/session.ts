@@ -13,7 +13,10 @@ import type {
   Gesture,
   ViewEntity,
 } from "#src/interaction";
-import { resolveAssetLabels } from "#src/labels/spoken-keyword";
+import {
+  resolveAssetLabels,
+  resolveAssetSpeech,
+} from "#src/labels/spoken-keyword";
 import { resolveTouchFloor } from "#src/layout/constants";
 import { isPointInSlot, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
@@ -26,9 +29,9 @@ import {
 import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
 import {
+  drawProgressDots,
   drawSceneBackground,
   drawSlotItem,
-  drawSubPromptText,
   drawWoodenTokenDock,
   type ItemVisualState,
   spawnParticlesAtSlot,
@@ -469,7 +472,7 @@ export class GT029Session extends TemplateGameSession<
         y: slot.y,
         w: slot.w,
         h: slot.h,
-        ...resolveAssetLabels(it.asset),
+        ...resolveAssetSpeech(it.asset),
       });
     }
     return entities;
@@ -670,14 +673,15 @@ export class GT029Session extends TemplateGameSession<
 
     const removedCount = this.removedItemIds.size;
     const targetRemove = this.content.remove_count;
-    const subPrompt =
-      removedCount < targetRemove
-        ? `Đã bớt: ${removedCount}/${targetRemove}`
-        : "Đã bớt đủ! Nhóm ban đầu còn lại bao nhiêu?";
-    drawSubPromptText(
+    // Không chữ: `-n` và n chấm lấp dần cho mỗi vật đã bớt (`BR-E029-05`).
+    drawProgressDots(
       ctx,
       rs,
-      subPrompt,
+      {
+        done: Math.min(removedCount, targetRemove),
+        total: targetRemove,
+        badge: `-${targetRemove}`,
+      },
       this.stageRect ? splitCaption(this.stageRect).caption : undefined
     );
 

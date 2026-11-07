@@ -19,19 +19,15 @@ describe("GT-009: thẻ manh mối không chữ phải đọc (BR-E009-06)", () 
   it("manh mối đã mở vẽ ký hiệu số, không vẽ câu chữ", () => {
     const session = makeSession(1);
     session.prepareRound("4-5");
-    const first = session.content.clues[0];
-    if (!first) {
-      throw new Error("Thiếu manh mối");
+    // Manh mối thứ ba là "lớn hơn 3"; không ứng viên nào mang số 3.
+    const slot = session.slots[2];
+    if (!slot) {
+      throw new Error("Thiếu ô manh mối");
     }
-    session.dispatch({
-      type: "tap",
-      x: session.slots[0]?.x ?? 0,
-      y: session.slots[0]?.y ?? 0,
-      timeMs: 0,
-    });
-    const drawn = collectRenderedText(session);
+    session.dispatch({ type: "tap", x: slot.x, y: slot.y, timeMs: 0 });
+    const drawn = collectRenderedText(session, { prepare: false });
     expect(lettersOnly(drawn)).toEqual([]);
-    expect(drawn).toContain("5");
+    expect(drawn).toContain("3");
   });
 
   it("view không đặt label chữ cho manh mối, vẫn có spokenLabel", () => {

@@ -15,10 +15,16 @@ interface RenderableSession {
  */
 export function collectRenderedText(
   session: RenderableSession,
-  timeMs = 0,
-  ageBand: AgeBand = "4-5"
+  options: {
+    timeMs?: number;
+    ageBand?: AgeBand;
+    /** Tắt khi session đã được người gọi chơi dở và không được dựng lại. */
+    prepare?: boolean;
+  } = {}
 ): string[] {
-  session.prepareRound(ageBand);
+  if (options.prepare !== false) {
+    session.prepareRound(options.ageBand ?? "4-5");
+  }
   const ctx = createFakeCanvas(960, 540).getContext("2d");
   if (!ctx) {
     throw new Error("Không lấy được context");
@@ -27,7 +33,11 @@ export function collectRenderedText(
   vi.spyOn(ctx, "fillText").mockImplementation((text: string) => {
     drawn.push(text);
   });
-  session.render(ctx as CanvasRenderingContext2D, new RenderSystem(), timeMs);
+  session.render(
+    ctx as CanvasRenderingContext2D,
+    new RenderSystem(),
+    options.timeMs ?? 0
+  );
   return drawn;
 }
 
