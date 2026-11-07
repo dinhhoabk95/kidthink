@@ -35,7 +35,8 @@ export type SFXType =
   | "candy_drop"
   | "park_thunk"
   | "clue_ping"
-  | "price_bell";
+  | "price_bell"
+  | "seed_plop";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -515,6 +516,27 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       volume: 0.08,
       durationSec: 0.2,
       rampOutSec: 0.1,
+    },
+  ],
+
+  /** GT-011: hạt hoa rơi xuống đất ẩm — "bụp" trầm êm (`BR-E011-05`). */
+  seed_plop: [
+    {
+      delaySec: 0,
+      type: "sine",
+      freq: 300,
+      glideTo: { freq: 150, overSec: 0.09 },
+      volume: 0.12,
+      durationSec: 0.11,
+      rampOutSec: 0.06,
+    },
+    {
+      delaySec: 0.12,
+      type: "triangle",
+      freq: 700,
+      volume: 0.05,
+      durationSec: 0.08,
+      rampOutSec: 0.05,
     },
   ],
 

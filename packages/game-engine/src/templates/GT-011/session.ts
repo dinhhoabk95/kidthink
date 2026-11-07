@@ -31,11 +31,13 @@ import {
   drawWoodenTokenDock,
   sceneBox,
 } from "#src/render/index.js";
+import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
 import {
   type ControlOfErrorDiagnostics,
   MontessoriExploreTracker,
 } from "#src/systems/montessori-explore-system";
+import { MoodPulse } from "#src/systems/mood-pulse";
 import type { RenderSystem } from "#src/systems/render-system";
 import { WRONG_FLASH_MS, WrongFlash } from "#src/systems/wrong-flash";
 import { colMatches, findBlankCell, rowMatches } from "./matrix-rule.js";
@@ -71,6 +73,13 @@ export interface MatrixPreview {
  * hàng và cột chứa ô đó sáng lên khi quy luật khớp, tắt khi không. Trẻ thử và tự
  * thấy, thay vì đoán rồi bị chấm.
  */
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E011-05`, `BR-FBK-16`). */
+export const GT011_STORY_LINE =
+  "Bướm Nhỏ trồng luống hoa, mỗi hàng và mỗi cột phải có đủ các loại, không trùng nhau. Bé chọn cho ô còn trống nhé!";
+
+/** Mascot nghiêng đầu sau lựa chọn chưa đúng (`BR-E011-05`). */
+export const GT011_WONDER_MS = 1500;
+
 export class GT011Session extends TemplateGameSession<
   GT011Content,
   GT011Difficulty
@@ -87,6 +96,7 @@ export class GT011Session extends TemplateGameSession<
   private preview: MatrixPreview | null = null;
   private wrongOptionId: string | null = null;
   private readonly wrongFlash = new WrongFlash();
+  private readonly mood = new MoodPulse();
   private lastFrameMs = 0;
 
   override takePillNarration(): string | null {
@@ -99,6 +109,7 @@ export class GT011Session extends TemplateGameSession<
     this.preview = null;
     this.wrongOptionId = null;
     this.wrongFlash.clear();
+    this.mood.clear();
     this.lastFrameMs = 0;
     this.isWon = false;
   }
@@ -119,7 +130,17 @@ export class GT011Session extends TemplateGameSession<
     return this.exploreTracker.isMicroSandboxActive();
   }
 
+  override storyLine(): string {
+    return GT011_STORY_LINE;
+  }
+
+  /** Nghiêng đầu sau lựa chọn chưa đúng (`BR-E011-05`). */
+  override mascotMood(): MascotPose | null {
+    return this.isWon ? null : this.mood.current();
+  }
+
   update(deltaMs: number): void {
+    this.mood.tick(deltaMs);
     this.lastFrameMs += deltaMs;
     this.exploreTracker.tick(deltaMs);
     if (this.wrongOptionId && this.wrongFlash.hasExpired(this.lastFrameMs)) {
@@ -347,11 +368,13 @@ export class GT011Session extends TemplateGameSession<
     if (option.is_correct) {
       this.wrongOptionId = null;
       this.wrongFlash.clear();
+      this.queueSfx("seed_plop");
       this.exploreTracker.recordCorrectAttempt();
     } else {
       this.wrongOptionId = optionId;
       this.wrongFlash.trigger(this.lastFrameMs);
       this.setRenderItemState(optionId, "wrong");
+      this.mood.set("wonder", GT011_WONDER_MS);
       const rMatch = rowMatches(this.content.matrix, option.asset);
       const cMatch = colMatches(this.content.matrix, option.asset);
       let reasonVi = "Chưa khớp quy luật hai chiều của bảng";
