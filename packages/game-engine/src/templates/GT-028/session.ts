@@ -15,7 +15,7 @@ import type {
   ViewEntity,
 } from "#src/interaction";
 import {
-  resolveAssetLabels,
+  resolveAssetSpeech,
   spokenKeywordForAsset,
 } from "#src/labels/spoken-keyword";
 import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
@@ -29,9 +29,9 @@ import type { Slot } from "#src/layout/types";
 import {
   drawHeaderRepresentation,
   drawMontessoriControlOfErrorPill,
+  drawProgressDots,
   drawSceneBackground,
   drawSlotItem,
-  drawSubPromptText,
   drawWoodenTokenDock,
   sceneBox,
 } from "#src/render/index.js";
@@ -234,7 +234,7 @@ export class GT028Session extends TemplateGameSession<
       const countForTap = isSelected
         ? (selectedIndex + 1) * this.content.step
         : (this.selectedItemIds.length + 1) * this.content.step;
-      const assetLabels = resolveAssetLabels(item.asset);
+      const assetLabels = resolveAssetSpeech(item.asset);
       const spokenLabel =
         spokenKeywordForAsset({ kind: "text", text: String(countForTap) }) ??
         assetLabels.spokenLabel ??
@@ -249,7 +249,7 @@ export class GT028Session extends TemplateGameSession<
         w: slot?.w ?? 80,
         h: slot?.h ?? 80,
         ...assetLabels,
-        label: isSelected ? String(countForTap) : assetLabels.label,
+        label: isSelected ? String(countForTap) : undefined,
         spokenLabel,
       };
     });
@@ -412,11 +412,15 @@ export class GT028Session extends TemplateGameSession<
     }
 
     // Lời dẫn do shell vẽ ở vùng lời dẫn (`BR-PSZ-08`).
-    const subText = `Bước nhảy: +${this.content.step}  |  Đã đếm: ${this.getCurrentCount()} / Mục tiêu: ${this.content.target_total}`;
-    drawSubPromptText(
+    // Không chữ: bước nhảy `+n`, chấm đã nhảy, số đích (`BR-E028-05`).
+    drawProgressDots(
       ctx,
       rs,
-      subText,
+      {
+        done: this.selectedItemIds.length,
+        badge: `+${this.content.step}`,
+        trailing: String(this.content.target_total),
+      },
       this.stageRect ? splitCaption(this.stageRect).caption : undefined
     );
 

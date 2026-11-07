@@ -82,6 +82,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
   - [x] 009 (thẻ manh mối: kính lúp khi chưa mở, ký hiệu số + mũi tên khi mở, câu chữ chỉ đọc, BR-E009-06)
   - [x] 019 (bỏ nhãn độ dưới ô/mảnh và chữ "Lật", góc nhìn từ hình mờ, số độ chỉ đọc, BR-E019-06)
   - [x] 023 (neo rỗng hiện bóng mờ mảnh nhận, bỏ nhãn "Khung n" và tên mảnh, tên chỉ đọc, BR-E023-06)
+  - [x] 028 (dải phụ "Bước nhảy/Đã đếm/Mục tiêu" thành +n, chấm đã nhảy, số đích; BR-E028-05)
 
 ## Phase 5 — Đặc sắc từng game
 - [ ] Đợt demo: 001, 003, 020, 025, 026, 037

@@ -617,6 +617,89 @@ export function drawSubPromptText(
   ctx.restore();
 }
 
+/** Chấm tiến độ trong thẻ phụ: `done` chấm đặc trên `total`, không chữ (`BR-ENG-10`). */
+export interface ProgressDotsSpec {
+  readonly done: number;
+  /** Có `total` thì hiện đủ chấm (đặc + rỗng); không có thì chỉ hiện chấm đặc đã đạt. */
+  readonly total?: number;
+  /** Ký hiệu số ngắn đặt đầu hàng, vd `+2` — chữ số là ký hiệu toán nên giữ. */
+  readonly badge?: string;
+  /** Chữ số đích đặt cuối hàng — số là ký hiệu toán nên giữ. */
+  readonly trailing?: string;
+}
+
+const PROGRESS_DOT_MAX = 12;
+const PROGRESS_DOT_RADIUS = 8;
+const PROGRESS_DOT_GAP = 10;
+
+/** Thay dòng phụ "Đã đếm: x / y" bằng một hàng chấm lấp đầy dần. */
+export function drawProgressDots(
+  ctx: CanvasRenderingContext2D,
+  rs: RenderSystem,
+  spec: ProgressDotsSpec,
+  rect?: ZoneRect
+): void {
+  const total = Math.min(
+    PROGRESS_DOT_MAX,
+    Math.max(0, spec.total ?? spec.done)
+  );
+  const done = Math.min(total, Math.max(0, spec.done));
+  const { space, scale } = spaceOf(rs);
+  const fontPx = canvasFontPx(space, "subPrompt", scale);
+  const step = PROGRESS_DOT_RADIUS * 2 + PROGRESS_DOT_GAP;
+  const badgeW = spec.badge ? fontPx * 2.4 : 0;
+  const trailingW = spec.trailing ? fontPx * 2.4 : 0;
+  const pillW = Math.min(
+    rect?.w ?? Number.POSITIVE_INFINITY,
+    badgeW + trailingW + total * step + 28
+  );
+  const pillH = Math.max(32, fontPx + 14);
+  const centerX = rect ? rect.x + rect.w / 2 : rs.LOGIC_WIDTH / 2;
+  const pillX = centerX - pillW / 2;
+  const pillY = rect ? rect.y : rs.LOGIC_HEIGHT * PROMPT_TOP_RATIO + 56;
+  const cy = pillY + pillH / 2;
+
+  ctx.save();
+  ctx.fillStyle = designTokens.colors.montessori.amberLight;
+  ctx.strokeStyle = designTokens.colors.montessori.amber;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.roundRect(pillX, pillY, pillW, pillH, 16);
+  ctx.fill();
+  ctx.stroke();
+
+  let x = pillX + 14;
+  if (spec.badge) {
+    ctx.font = `${fontPx}px ${designTokens.fonts.sans}`;
+    ctx.fillStyle = designTokens.colors.montessori.amberDark;
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    ctx.fillText(spec.badge, x, cy);
+    x += badgeW;
+  }
+  for (let i = 0; i < total; i++) {
+    const dx = x + PROGRESS_DOT_RADIUS + i * step;
+    ctx.beginPath();
+    ctx.arc(dx, cy, PROGRESS_DOT_RADIUS, 0, Math.PI * 2);
+    if (i < done) {
+      ctx.fillStyle = designTokens.colors.montessori.amberDark;
+      ctx.fill();
+    } else {
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = designTokens.colors.montessori.amberDark;
+      ctx.stroke();
+    }
+  }
+  if (spec.trailing) {
+    ctx.font = `${fontPx}px ${designTokens.fonts.sans}`;
+    ctx.fillStyle = designTokens.colors.montessori.amberDark;
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    ctx.fillText(spec.trailing, pillX + pillW - 14, cy);
+  }
+  ctx.restore();
+}
+
 /** Vẽ nội dung asset vào tâm slot. Trả `false` khi không vẽ được gì. */
 export function drawAssetInSlot(
   ctx: CanvasRenderingContext2D,
