@@ -174,13 +174,22 @@ export class GT035Session extends TemplateGameSession<
     const stage = this.stageRect;
     return stage !== undefined && hasSlotsOutsideStage(this.slots, stage);
   }
-  override readonly commitIcon = "play";
+  /** ▶ lúc soạn, ■ khi robot đang chạy: bấm lúc đó là dừng (`BR-E035-13`). */
+  override get commitIcon(): "play" | "stop" {
+    return this.isExecuting ? "stop" : "play";
+  }
 
   override canCommit(): boolean {
-    return (
-      !(this.isWin || this.isWon || this.isExecuting) &&
-      this.queueSystem.commandCount > 0
-    );
+    if (this.isWin || this.isWon) {
+      return false;
+    }
+    // Đang chạy: nút là nút dừng, luôn bấm được.
+    return this.isExecuting || this.queueSystem.commandCount > 0;
+  }
+
+  /** Đang chạy thì gợi ý không trỏ vào nút dừng (`BR-E035-13`). */
+  override getHintTarget(): HintTarget | null {
+    return this.isExecuting ? null : super.getHintTarget();
   }
 
   degradation: DegradationState | null = null;
@@ -554,6 +563,8 @@ export class GT035Session extends TemplateGameSession<
       case "run_program":
       case "run":
         return this.validateRunProgram();
+      case "stop_program":
+        return this.isExecuting ? QUIET_OK : ACTION_IGNORED;
       default:
         return ACTION_IGNORED;
     }
@@ -624,6 +635,31 @@ export class GT035Session extends TemplateGameSession<
     this.isExecuting = true;
   }
 
+  /**
+   * Dừng giữa lúc chạy: robot về `start`, hàng lệnh giữ nguyên, không tính sai —
+   * không `program_failed`, không `wonder`, không tiếng hổ phách (`BR-E035-13`).
+   */
+  private commitStopProgram(): void {
+    if (!this.isExecuting) {
+      return;
+    }
+    this.recordEvent("program_stopped", {
+      at_step: this.execCursor,
+      command_count: this.queueSystem.commandCount,
+      round_index: 0,
+    });
+    this.robotState = { ...this.content.start };
+    this.collectedItemIds = [];
+    this.activeExecutingStep = null;
+    this.isExecuting = false;
+    this.executionResult = null;
+    this.execSteps = [];
+    this.execOwners = [];
+    this.execCursor = 0;
+    this.execClockMs = 0;
+    this.execPhase = "running";
+  }
+
   override commit(action: GameAction): void {
     const data = (
       typeof action.data === "object" && action.data !== null ? action.data : {}
@@ -645,6 +681,9 @@ export class GT035Session extends TemplateGameSession<
       case "run_program":
       case "run":
         this.commitRunProgram();
+        break;
+      case "stop_program":
+        this.commitStopProgram();
         break;
       default:
         break;
@@ -687,11 +726,13 @@ export class GT035Session extends TemplateGameSession<
   }
 
   override toAction(gesture: Gesture): GameAction | null {
+    if (gesture.type === "commit") {
+      return this.isExecuting
+        ? { type: "stop_program", data: {} }
+        : { type: "run_program", data: {} };
+    }
     if (this.isExecuting) {
       return null;
-    }
-    if (gesture.type === "commit") {
-      return { type: "run_program", data: {} };
     }
     const { rows, cols } = this.content.grid;
     const gridSlotCount = rows * cols;

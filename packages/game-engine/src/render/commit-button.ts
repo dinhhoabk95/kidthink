@@ -67,9 +67,9 @@ export function commitButtonRect(
 
 /**
  * Icon của nút hành động (`BR-PSZ-05`): ✓ nộp (mặc định), ▶ chạy chương trình
- * (GT-035), loa nghe mẫu (GT-034). Không chữ — trẻ chưa đọc (`BR-FBK-12`).
+ * (GT-035), ■ dừng chương trình đang chạy (GT-035), loa nghe mẫu (GT-034). Không chữ — trẻ chưa đọc (`BR-FBK-12`).
  */
-export type CommitIcon = "check" | "play" | "listen";
+export type CommitIcon = "check" | "play" | "listen" | "stop";
 
 export interface CommitButtonOptions {
   /** `false` khi chưa có vật nào được chọn — vẽ mờ, không nhận chạm. */
@@ -155,6 +155,20 @@ function drawPlayIcon(
   ctx.fill();
 }
 
+/** Hình vuông ■ đặc, tâm `(cx, cy)`, cạnh `size`. */
+function drawStopIcon(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number
+): void {
+  const half = size / 2;
+  ctx.fillStyle = designTokens.colors.surface[0];
+  ctx.beginPath();
+  ctx.roundRect(cx - half * 0.8, cy - half * 0.8, half * 1.6, half * 1.6, 4);
+  ctx.fill();
+}
+
 /** Loa: thân chữ nhật, phễu, một sóng âm — tâm `(cx, cy)`, cạnh `size`. */
 function drawListenIcon(
   ctx: CanvasRenderingContext2D,
@@ -189,6 +203,7 @@ const ICON_PAINTERS: Record<
   check: drawCheckIcon,
   play: drawPlayIcon,
   listen: drawListenIcon,
+  stop: drawStopIcon,
 };
 
 export function drawCommitButton(

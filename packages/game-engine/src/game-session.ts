@@ -387,9 +387,12 @@ export abstract class TemplateGameSession<
 
   /**
    * Icon nút ở `zones.action` khi hành động chính không phải nộp (`BR-PSZ-05`):
-   * ▶ chạy (GT-035), loa nghe mẫu (GT-034). Bỏ trống là ✓.
+   * ▶ chạy hoặc ■ dừng khi đang chạy (GT-035), loa nghe mẫu (GT-034). Bỏ trống là ✓.
+   * Là getter để icon đổi theo trạng thái phiên.
    */
-  readonly commitIcon: CommitIcon | undefined = undefined;
+  get commitIcon(): CommitIcon | undefined {
+    return undefined;
+  }
 
   /** Vùng sân khấu được cấp bởi shell (`BR-PSZ-01`, Task #277 S3). */
   stageRect?: ZoneRect;

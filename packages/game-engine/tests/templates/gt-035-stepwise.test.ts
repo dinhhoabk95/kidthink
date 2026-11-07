@@ -80,7 +80,13 @@ describe("GT-035 — robot chạy từng lệnh có nhịp (BR-E035-08)", () => 
     const session = build();
     add(session, ...WIN);
     session.dispatch({ type: "commit", timeMs: 1 });
-    expect(session.toAction({ type: "commit", timeMs: 2 })).toBeNull();
+    const palette = session.getView().entities.find((e) => e.role === "source");
+    if (!palette) {
+      throw new Error("Thiếu thẻ lệnh");
+    }
+    expect(
+      session.toAction({ type: "tap", x: palette.x, y: palette.y, timeMs: 2 })
+    ).toBeNull();
   });
 });
 

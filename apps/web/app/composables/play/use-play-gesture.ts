@@ -74,6 +74,7 @@ export interface ActionButtonState {
 const ACTION_LABEL_BY_ICON: Readonly<Record<CommitIcon, string>> = {
   check: "Xong",
   play: "Chạy chương trình",
+  stop: "Dừng chương trình",
   listen: "Nghe mẫu",
 };
 

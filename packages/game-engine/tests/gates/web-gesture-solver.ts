@@ -148,6 +148,11 @@ function tryAction(
   action: NonNullable<ReturnType<NonNullable<TemplateGameSession["toAction"]>>>,
   uses: Map<string, number>
 ): ActionOutcome {
+  // Nút dừng (GT-035, `BR-E035-13`) là lối thoát của trẻ muốn bỏ chương trình đang chạy;
+  // người giải chờ robot chạy hết thay vì tự dừng nó.
+  if (action.type === "stop_program") {
+    return "skip";
+  }
   const beforeView = viewFingerprint(session);
   if (!session.validateAction(action).valid) {
     return "skip";
