@@ -291,41 +291,12 @@ export class BalanceScaleSession extends TemplateGameSession<
     });
   }
 
-  private swapOutOverweightPlacedItems(
-    targetPan: "left" | "right",
-    incomingWeight: number
-  ): void {
-    if (this.content.goal !== "balance") {
-      return;
-    }
-    const panList = targetPan === "left" ? this.leftItems : this.rightItems;
-    const otherWeight =
-      targetPan === "left" ? this.getRightWeight() : this.getLeftWeight();
-    if (sumWeights(panList) + incomingWeight <= otherWeight) {
-      return;
-    }
-    const initialIds = new Set(
-      (targetPan === "left"
-        ? this.content.left_pan
-        : this.content.right_pan
-      ).map((i) => i.item_id)
-    );
-    for (let i = panList.length - 1; i >= 0; i--) {
-      const existing = panList[i];
-      if (existing && !initialIds.has(existing.item_id)) {
-        panList.splice(i, 1);
-        this.trayItems.push(existing);
-      }
-    }
-  }
-
   placeItem(itemId: string, targetPan: "left" | "right"): boolean {
     const idx = this.trayItems.findIndex((t) => t.item_id === itemId);
     const item = idx >= 0 ? this.trayItems.splice(idx, 1)[0] : undefined;
     if (!item) {
       return false;
     }
-    this.swapOutOverweightPlacedItems(targetPan, item.weight);
     (targetPan === "left" ? this.leftItems : this.rightItems).push(item);
 
     this.recordPanExplore();
@@ -339,22 +310,9 @@ export class BalanceScaleSession extends TemplateGameSession<
       this.wrongSide = null;
       this.exploreTracker.recordCorrectAttempt();
       this.winSession();
-    } else if (this.content.goal === "balance") {
-      const leftW = this.getLeftWeight();
-      const rightW = this.getRightWeight();
-      const isOverweight =
-        (targetPan === "left" && leftW > rightW) ||
-        (targetPan === "right" && rightW > leftW);
-      if (this.trayItems.length === 0 || isOverweight) {
-        this.wrongSide = targetPan;
-        this.wrongFlash.trigger(this.lastFrameMs);
-        this.exploreTracker.recordWrongAttempt({
-          reasonVi: formatHeavierReasonVi(leftW, rightW),
-          actualValue: leftW,
-          expectedValue: rightW,
-        });
-      }
     }
+    // Đặt vật không bao giờ bị báo sai (BR-E014-04): cân chỉ nghiêng thêm, trẻ
+    // tự nhấc vật ra. Engine không đánh dấu lỗi và không đẩy vật về khay hộ.
     return true;
   }
 

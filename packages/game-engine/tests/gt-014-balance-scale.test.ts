@@ -314,24 +314,44 @@ describe("GT-014: Cân hai bên (balance-scale)", () => {
       expect(session.checkWinCondition()).toBe(true);
     });
 
-    it("auto-swaps previous user-placed item back to tray when new item would make pan overweight", () => {
+    it("không tự đẩy món về khay: món đặt thêm làm đĩa quá nặng thì món cũ vẫn nằm yên, trẻ tự bớt (BR-E014-04)", () => {
       const session = new BalanceScaleSession(
         SAMPLE_LEVEL_2.content_pack,
         SAMPLE_LEVEL_2.difficulty_params
       );
       session.prepareRound("5-6");
-      // Place wrong weight opt_2 (weight 2) on right -> right becomes 7
       session.placeItem("opt_2", "right");
       expect(session.getRightWeight()).toBe(7);
 
-      // Without manually returning opt_2, child places opt_3 (weight 3) on right
-      // 7 + 3 = 10 > 8 (left), so opt_2 is auto-returned to tray and opt_3 balances right = 8!
+      // 7 + 3 = 10 > 8: đĩa quá nặng, engine để nguyên cả hai món
       session.placeItem("opt_3", "right");
+      expect(session.getRightWeight()).toBe(10);
+      expect(session.checkWinCondition()).toBe(false);
+      expect(session.getTrayItems().some((t) => t.item_id === "opt_2")).toBe(
+        false
+      );
+
+      // Trẻ tự nhấc món sai ra: cân về lại 8 = 8
+      session.returnItemToTray("opt_2", "right");
       expect(session.getRightWeight()).toBe(8);
       expect(session.checkWinCondition()).toBe(true);
-      expect(session.getTrayItems().some((t) => t.item_id === "opt_2")).toBe(
-        true
+    });
+
+    it("đặt làm đĩa quá nặng hoặc hết khay: không báo sai, cân chỉ nghiêng thêm (BR-E014-04)", () => {
+      const session = new BalanceScaleSession(
+        SAMPLE_LEVEL_2.content_pack,
+        SAMPLE_LEVEL_2.difficulty_params
       );
+      session.prepareRound("5-6");
+      session.placeItem("opt_2", "right"); // 7 < 8, nhẹ hơn
+      session.placeItem("opt_3", "right"); // 10 > 8, quá nặng
+      expect(session.getControlOfError()).toBeNull();
+      const names = session.getTelemetry().events.map((e) => e.event_name);
+      expect(names).not.toContain("control_of_error");
+      const view = session.getView();
+      for (const pan of view.entities.filter((e) => e.id.endsWith("_pan"))) {
+        expect(pan.state).not.toBe("incorrect");
+      }
     });
   });
 });
