@@ -34,7 +34,8 @@ export type SFXType =
   | "film_tick"
   | "candy_drop"
   | "park_thunk"
-  | "clue_ping";
+  | "clue_ping"
+  | "price_bell";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -494,6 +495,26 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       volume: 0.04,
       durationSec: 0.1,
       rampOutSec: 0.07,
+    },
+  ],
+
+  /** GT-010: chuông quầy hàng khi tìm đúng giá — "leng keng" êm (`BR-E010-06`). */
+  price_bell: [
+    {
+      delaySec: 0,
+      type: "sine",
+      freq: 988,
+      volume: 0.1,
+      durationSec: 0.12,
+      rampOutSec: 0.07,
+    },
+    {
+      delaySec: 0.1,
+      type: "sine",
+      freq: 1319,
+      volume: 0.08,
+      durationSec: 0.2,
+      rampOutSec: 0.1,
     },
   ],
 

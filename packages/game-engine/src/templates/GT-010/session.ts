@@ -26,15 +26,24 @@ import {
   resolveEmojiGlyph,
   sceneBox,
 } from "#src/render/index.js";
+import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
 import {
   type ControlOfErrorDiagnostics,
   MontessoriExploreTracker,
 } from "#src/systems/montessori-explore-system";
+import { MoodPulse } from "#src/systems/mood-pulse";
 import type { RenderSystem } from "#src/systems/render-system";
 import { WRONG_FLASH_MS, WrongFlash } from "#src/systems/wrong-flash";
 import { evaluateQuestionAnswer, solveEquationSystem } from "./solver.js";
 import type { GT010Content, GT010Difficulty } from "./template.js";
+
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E010-06`, `BR-FBK-16`). */
+export const GT010_STORY_LINE =
+  "Cô Gà Mái bán hàng ở chợ. Bé xem bảng giá rồi tìm giá của món còn thiếu nhé!";
+
+/** Mascot nghiêng đầu sau giá chưa đúng (`BR-E010-06`). */
+export const GT010_WONDER_MS = 1500;
 
 export class SubstitutionSession extends TemplateGameSession<
   GT010Content,
@@ -55,6 +64,7 @@ export class SubstitutionSession extends TemplateGameSession<
   private glyphBySymbolId: Map<string, string> = new Map();
   private symbolById: Map<string, GT010Content["symbols"][number]> = new Map();
   private readonly wrongFlash = new WrongFlash();
+  private readonly mood = new MoodPulse();
   private lastFrameMs = 0;
 
   override takePillNarration(): string | null {
@@ -67,6 +77,7 @@ export class SubstitutionSession extends TemplateGameSession<
     this.selectedValue = null;
     this.lookedUpEquationId = null;
     this.wrongFlash.clear();
+    this.mood.clear();
     this.lastFrameMs = 0;
     this.isWon = false;
     this.symbolById = new Map(
@@ -161,9 +172,11 @@ export class SubstitutionSession extends TemplateGameSession<
 
     if (isCorrect) {
       this.wrongFlash.clear();
+      this.queueSfx("price_bell");
       this.exploreTracker.recordCorrectAttempt();
     } else {
       this.wrongFlash.trigger(this.lastFrameMs);
+      this.mood.set("wonder", GT010_WONDER_MS);
       const expected = this.getExpectedAnswer();
       const enteredSandbox = this.exploreTracker.recordWrongAttempt({
         reasonVi: `Giá trị ${value} chưa khớp phép thay thế (cần ${expected})`,
@@ -202,7 +215,17 @@ export class SubstitutionSession extends TemplateGameSession<
     }
   }
 
+  override storyLine(): string {
+    return GT010_STORY_LINE;
+  }
+
+  /** Nghiêng đầu sau giá chưa đúng (`BR-E010-06`). */
+  override mascotMood(): MascotPose | null {
+    return this.isWon ? null : this.mood.current();
+  }
+
   update(deltaMs: number): void {
+    this.mood.tick(deltaMs);
     this.exploreTracker.tick(deltaMs);
     this.lastFrameMs += deltaMs;
     if (
