@@ -23,6 +23,7 @@ import {
   drawSlotItem,
   getColorsForState,
 } from "#src/render/index";
+import type { MascotPose } from "#src/render/mascot";
 import { deriveStream } from "#src/rng/mulberry32";
 import { shuffle } from "#src/rng/shuffle";
 import {
@@ -39,6 +40,10 @@ interface FlatCard {
   readonly pairKey: string;
   readonly asset: GT020Content["pairs"][number]["card_a"]["asset"];
 }
+
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E020-07`, `BR-FBK-16`). */
+export const GT020_STORY_LINE =
+  "Gấu Con giấu các bạn dưới thẻ, bé lật tìm hai bạn giống nhau nhé!";
 
 export class GT020Session extends TemplateGameSession<
   GT020Content,
@@ -120,6 +125,10 @@ export class GT020Session extends TemplateGameSession<
     if (!result) {
       return null;
     }
+    // Tiếng lật chỉ khi thẻ thật sự lật ngoài giai đoạn xem trước (`BR-E020-07`).
+    if (!this.isPeeking()) {
+      this.queueSfx("card_flip");
+    }
 
     this.recordEvent("pair_selected", {
       card_id: cardId,
@@ -171,6 +180,24 @@ export class GT020Session extends TemplateGameSession<
     if (this.mismatchElapsedMs >= this.difficulty.flip_back_delay_ms) {
       this.closeMismatch();
     }
+  }
+
+  override storyLine(): string {
+    return GT020_STORY_LINE;
+  }
+
+  /** Gấu Con nghiêng đầu nhớ lại khi một thẻ ngửa đang chờ cặp (`BR-E020-07`). */
+  override mascotMood(): MascotPose | null {
+    if (this.isWon || this.isPeeking()) {
+      return null;
+    }
+    if (this.hasOpenMismatch) {
+      return "wonder";
+    }
+    const faceUp = this.displayCards.filter(
+      (c) => this.cardSystem.getCard(c.cardId)?.state === "face_up"
+    );
+    return faceUp.length === 1 ? "wonder" : null;
   }
 
   override checkWinCondition(): boolean {
