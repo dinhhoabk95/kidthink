@@ -33,7 +33,8 @@ export type SFXType =
   | "peg_clip"
   | "film_tick"
   | "candy_drop"
-  | "park_thunk";
+  | "park_thunk"
+  | "clue_ping";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -473,6 +474,26 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       volume: 0.07,
       durationSec: 0.1,
       rampOutSec: 0.06,
+    },
+  ],
+
+  /** GT-009: gõ nhẹ vào kính khi nghe manh mối — "tinh" nhỏ (`BR-E009-07`). */
+  clue_ping: [
+    {
+      delaySec: 0,
+      type: "sine",
+      freq: 1180,
+      volume: 0.08,
+      durationSec: 0.12,
+      rampOutSec: 0.08,
+    },
+    {
+      delaySec: 0.04,
+      type: "sine",
+      freq: 1770,
+      volume: 0.04,
+      durationSec: 0.1,
+      rampOutSec: 0.07,
     },
   ],
 

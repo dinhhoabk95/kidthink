@@ -24,11 +24,13 @@ import {
   getColorsForState,
   sceneBox,
 } from "#src/render/index.js";
+import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
 import {
   type ControlOfErrorDiagnostics,
   MontessoriExploreTracker,
 } from "#src/systems/montessori-explore-system";
+import { MoodPulse } from "#src/systems/mood-pulse";
 import type { RenderSystem } from "#src/systems/render-system";
 import { WRONG_FLASH_MS, WrongFlash } from "#src/systems/wrong-flash";
 import { survivingCandidates } from "./deduction.js";
@@ -58,6 +60,15 @@ function toClueSymbol(
  * (`BR-E009-05`). Engine không loại thay trẻ; loại nhầm không bị báo sai —
  * chỉ lần chốt mới được chấm (`BR-MTB-14`).
  */
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E009-07`, `BR-FBK-16`). */
+export const GT009_STORY_LINE =
+  "Chồn Thám Tử đi tìm bạn đang trốn. Bé nghe manh mối, úp những bạn không phải, rồi chọn bạn đang trốn nhé!";
+
+/** Mascot nghe kỹ sau manh mối mới (`BR-E009-07`). */
+export const GT009_LISTEN_MS = 1200;
+/** Mascot nghiêng đầu sau ứng viên chưa đúng. */
+export const GT009_WONDER_MS = 1500;
+
 export class GT009Session extends TemplateGameSession<
   GT009Content,
   GT009Difficulty
@@ -78,6 +89,7 @@ export class GT009Session extends TemplateGameSession<
   private readonly eliminatedIds: Set<string> = new Set();
   private wrongCandidateId: string | null = null;
   private readonly wrongFlash = new WrongFlash();
+  private readonly mood = new MoodPulse();
   private lastFrameMs = 0;
 
   override takePillNarration(): string | null {
@@ -91,6 +103,7 @@ export class GT009Session extends TemplateGameSession<
     this.eliminatedIds.clear();
     this.wrongCandidateId = null;
     this.wrongFlash.clear();
+    this.mood.clear();
     this.lastFrameMs = 0;
     this.isWon = false;
   }
@@ -126,7 +139,17 @@ export class GT009Session extends TemplateGameSession<
     return null;
   }
 
+  override storyLine(): string {
+    return GT009_STORY_LINE;
+  }
+
+  /** Nghe kỹ khi có manh mối mới, nghiêng đầu khi chọn chưa đúng (`BR-E009-07`). */
+  override mascotMood(): MascotPose | null {
+    return this.isWon ? null : this.mood.current();
+  }
+
   update(deltaMs: number): void {
+    this.mood.tick(deltaMs);
     this.lastFrameMs += deltaMs;
     this.exploreTracker.tick(deltaMs);
     if (this.wrongCandidateId && this.wrongFlash.hasExpired(this.lastFrameMs)) {
@@ -191,12 +214,17 @@ export class GT009Session extends TemplateGameSession<
    * Trẻ chạm một manh mối: nghe lại và đánh dấu đã dùng. Engine không gạch ứng
    * viên nào thay trẻ (`BR-E009-02`, `BR-E009-05`).
    */
-  onClueRevealed(clueId: string): void {
+  onClueRevealed(clueId: string, byChild = true): void {
     const clue = this.content.clues.find((c) => c.clue_id === clueId);
     if (!clue || this.revealedClueIds.includes(clueId)) {
       return;
     }
     this.revealedClueIds.push(clueId);
+    // Manh mối engine tự lật sau lần chọn sai không có cue (`BR-E009-07`).
+    if (byChild) {
+      this.queueSfx("clue_ping");
+      this.mood.set("listen", GT009_LISTEN_MS);
+    }
     this.exploreTracker.recordExploreAction("clue_revealed");
 
     this.recordEvent("clue_revealed", {
@@ -270,6 +298,7 @@ export class GT009Session extends TemplateGameSession<
       this.wrongCandidateId = candidateId;
       this.wrongFlash.trigger(this.lastFrameMs);
       this.setRenderItemState(candidateId, "wrong");
+      this.mood.set("wonder", GT009_WONDER_MS);
       const violatedClue = this.findViolatedClueForCandidate(candidateId);
       const reasonVi = violatedClue
         ? `Chưa khớp manh mối: ${violatedClue.text}`
@@ -285,7 +314,7 @@ export class GT009Session extends TemplateGameSession<
         violatedClue &&
         !this.revealedClueIds.includes(violatedClue.clue_id)
       ) {
-        this.onClueRevealed(violatedClue.clue_id);
+        this.onClueRevealed(violatedClue.clue_id, false);
       }
       this.recordEvent("control_of_error", {
         candidate_id: candidateId,
