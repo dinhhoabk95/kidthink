@@ -31,7 +31,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 - [ ] Helper `WrongFlash` dùng chung thay ~15 bản tự viết
 - [ ] Retry nói câu khích lệ + mp3 fallback; narration pill Montessori
 - [ ] Tách màu hint vs retry, tăng tương phản
-- [ ] Helper derangement trong `src/rng/`
+- [x] Helper derangement trong `src/rng/` (`deriveDerangement`, Sattolo; chưa nối vào generator — Phase 4)
 
 ## Phase 3 — Spec drift "control of error"
 - [ ] 000 · [ ] 007 · [ ] 009 · [ ] 010 · [ ] 012 · [ ] 013 · [ ] 014 · [ ] 015
