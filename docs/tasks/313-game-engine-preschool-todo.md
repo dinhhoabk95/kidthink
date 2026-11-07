@@ -60,7 +60,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 - [x] 026 (thang hạ độ khó) — `L1`–`L3` chạy theo đồng hồ trợ giúp chung với `hint_after_ms` của vòng qua hook `onScaffoldEscalated`, chỉ leo do `timer`; kìm được `nogo` không đặt lại đồng hồ (`BR-E026-10`); GT-026#0-2 đã gỡ khỏi sổ nợ web-gesture (solver nay biết chờ `update()`)
 - [ ] 026 (còn lại) — asset đèn giao thông/mascot đứng hình (Phase 5)
 
-- [ ] 029 (còn lại) — chữ phụ "Đã bớt: n/m" đã thành `-m` + chấm (BR-E029-05); câu "bớt đi n" là câu dẫn shell đọc, ô số ban đầu giữ nguyên; mèo ăn cá thật sự (Phase 5); lưới lẻ cột thì vật bớt chia hàng với nhóm nên không có dock riêng
+- [ ] 029 (còn lại) — chữ phụ "Đã bớt: n/m" đã thành `-m` + chấm (BR-E029-05); câu "bớt đi n" là câu dẫn shell đọc, ô số ban đầu giữ nguyên; mèo ăn cá thật sự (Phase 5). Đã sửa: lưới lẻ cột thì vật bớt vẫn có dock riêng (tách tối đa hai dock: hàng chia ô với nhóm và khối hàng chỉ có vật bớt), cắt tại giữa khe với nhóm, không đè nhóm (`BR-E029-09`, test `gt-029-removed-dock`)
 
 ## Phase 4 — Generator & difficulty
 - [x] Generator 006 (số đếm tăng dần, session xáo bằng Sattolo, BR-E006-02/04)

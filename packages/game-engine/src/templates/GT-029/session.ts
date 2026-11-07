@@ -66,6 +66,104 @@ export const GT029_MUNCH_MS = 1000;
 /** Mascot nghiêng đầu sau đáp án chưa đúng. */
 export const GT029_WONDER_MS = 1500;
 
+/** Nửa bề ngang/dọc chiếm chỗ của slot: lấy cạnh lớn hơn giữa ô vẽ và vùng chạm. */
+function halfW(slot: Slot): number {
+  return Math.max(slot.w, slot.hitW) / 2;
+}
+
+function halfH(slot: Slot): number {
+  return Math.max(slot.h, slot.hitH) / 2;
+}
+
+/** Hộp chiếm chỗ (ô vẽ lẫn vùng chạm) của một slot, dạng mép trái/phải/trên/dưới. */
+interface Edges {
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
+}
+
+function slotEdges(slot: Slot): Edges {
+  return {
+    left: slot.x - halfW(slot),
+    right: slot.x + halfW(slot),
+    top: slot.y - halfH(slot),
+    bottom: slot.y + halfH(slot),
+  };
+}
+
+function edgesOf(slots: readonly Slot[]): Edges {
+  const all = slots.map(slotEdges);
+  return {
+    left: Math.min(...all.map((e) => e.left)),
+    right: Math.max(...all.map((e) => e.right)),
+    top: Math.min(...all.map((e) => e.top)),
+    bottom: Math.max(...all.map((e) => e.bottom)),
+  };
+}
+
+function rectEdges(rect: ZoneRect): Edges {
+  return {
+    left: rect.x,
+    right: rect.x + rect.w,
+    top: rect.y,
+    bottom: rect.y + rect.h,
+  };
+}
+
+/**
+ * Hai hộp chồng hoặc chạm mép nhau. Chạm mép cũng tính: dock giáp sát ô nhóm thì
+ * mất khe thấy được, phải tách dock như khi chồng.
+ */
+function edgesTouch(a: Edges, b: Edges): boolean {
+  return (
+    a.left <= b.right &&
+    b.left <= a.right &&
+    a.top <= b.bottom &&
+    b.top <= a.bottom
+  );
+}
+
+/**
+ * Cắt dock của một khối vật bớt tại **giữa khe** giữa nó và các ô kề bên
+ * (`BR-E029-09`): ô nhóm cùng hàng cắt theo chiều ngang, ô ở hàng kề
+ * cắt theo chiều dọc. Cắt ở giữa khe (không phải sát mép ô nhóm) nên dock luôn
+ * ôm trọn ô bớt, luôn có bề rộng dương và còn khoảng hở thấy được với nhóm.
+ */
+function trimDockAroundGroup(
+  dock: ZoneRect,
+  removed: readonly Slot[],
+  groupSlots: readonly Slot[]
+): ZoneRect {
+  const inner = edgesOf(removed);
+  const out = rectEdges(dock);
+  for (const slot of groupSlots) {
+    const g = slotEdges(slot);
+    // Hàng xóm cùng dải ngang thì cắt trái/phải; cùng dải dọc thì cắt trên/dưới.
+    // Không đòi chồng thật: dock chỉ chạm mép ô kề bên cũng phải lùi về giữa khe.
+    const sameRow = g.top < out.bottom && out.top < g.bottom;
+    const sameColumn = g.left < out.right && out.left < g.right;
+    if (sameRow && g.right <= inner.left) {
+      out.left = Math.max(out.left, (g.right + inner.left) / 2);
+    } else if (sameRow && g.left >= inner.right) {
+      out.right = Math.min(out.right, (g.left + inner.right) / 2);
+    } else if (sameColumn && g.bottom <= inner.top) {
+      out.top = Math.max(out.top, (g.bottom + inner.top) / 2);
+    } else if (sameColumn && g.top >= inner.bottom) {
+      out.bottom = Math.min(out.bottom, (g.top + inner.bottom) / 2);
+    }
+  }
+  // Làm tròn từng mép (không làm tròn rộng/cao riêng) để hai dock giáp khe không lấn nhau 1 px.
+  const left = Math.ceil(out.left);
+  const top = Math.ceil(out.top);
+  return {
+    x: left,
+    y: top,
+    w: Math.floor(out.right) - left,
+    h: Math.floor(out.bottom) - top,
+  };
+}
+
 export class GT029Session extends TemplateGameSession<
   GT029Content,
   GT029Difficulty
@@ -579,11 +677,13 @@ export class GT029Session extends TemplateGameSession<
   }
 
   /**
-   * Vùng riêng của vật đã bớt: dock ôm các ô cuối lưới. Chỉ vẽ khi dock không
-   * đè lên ô nào của nhóm còn lại (lưới ít cột, hàng cuối chia sẻ ô thì thôi —
-   * vật bớt vẫn nằm sau nhóm và mờ đi).
+   * Dock riêng của vật đã bớt (`BR-E029-09`). Một dock ôm mọi ô bớt khi nó
+   * không đè nhóm còn lại. Lưới lẻ cột thì hàng đầu của phần bớt chia ô với
+   * nhóm: tách thành hai dock — hàng chia ô và khối các hàng chỉ có vật bớt —
+   * mỗi dock cắt tại giữa khe với nhóm và giữa khe với dock kia, nên vật bớt
+   * luôn có dock, dock không đè nhóm và hai dock không chồng nhau.
    */
-  private removedDockRect(): ZoneRect | undefined {
+  getRemovedDockRects(): ZoneRect[] {
     const removedSlots: Slot[] = [];
     const groupSlots: Slot[] = [];
     this.items.forEach((it, i) => {
@@ -594,21 +694,32 @@ export class GT029Session extends TemplateGameSession<
         );
       }
     });
-    const dock = dockRectAroundSlots(removedSlots, this.stageRect);
-    if (!dock) {
-      return undefined;
+    const whole = dockRectAroundSlots(removedSlots, this.stageRect);
+    if (!whole) {
+      return [];
     }
-    const overlapsGroup = groupSlots.some(
-      (slot) =>
-        Math.abs(slot.x - (dock.x + dock.w / 2)) < (slot.w + dock.w) / 2 &&
-        Math.abs(slot.y - (dock.y + dock.h / 2)) < (slot.h + dock.h) / 2
-    );
-    return overlapsGroup ? undefined : dock;
+    if (!groupSlots.some((g) => edgesTouch(rectEdges(whole), slotEdges(g)))) {
+      return [whole];
+    }
+    const groupRows = new Set(groupSlots.map((g) => g.y));
+    const shared = removedSlots.filter((r) => groupRows.has(r.y));
+    const rest = removedSlots.filter((r) => !groupRows.has(r.y));
+    const parts = [shared, rest].filter((p) => p.length > 0);
+    const docks: ZoneRect[] = [];
+    for (const [k, part] of parts.entries()) {
+      const dock = dockRectAroundSlots(part, this.stageRect);
+      if (!dock) {
+        continue;
+      }
+      // Phần bớt còn lại cũng là "hàng xóm" phải cắt khe, để hai dock không chồng.
+      const other = parts[1 - k] ?? [];
+      docks.push(trimDockAroundGroup(dock, part, [...groupSlots, ...other]));
+    }
+    return docks;
   }
 
   private renderItems(ctx: CanvasRenderingContext2D, rs: RenderSystem): void {
-    const removedDock = this.removedDockRect();
-    if (removedDock) {
+    for (const removedDock of this.getRemovedDockRects()) {
       drawWoodenTokenDock(ctx, rs, removedDock);
     }
     for (let i = 0; i < this.items.length; i++) {
