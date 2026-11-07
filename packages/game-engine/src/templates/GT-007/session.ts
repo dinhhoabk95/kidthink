@@ -74,7 +74,6 @@ export class GT007Session extends TemplateGameSession<
 
   private previewedOptionId: string | null = null;
   private stagedOptionId: string | null = null;
-  private wrongOptionId: string | null = null;
   private readonly wrongFlash = new WrongFlash();
   private lastFrameMs = 0;
   private displayOptions: readonly GT007Content["options"][number][] = [];
@@ -103,7 +102,6 @@ export class GT007Session extends TemplateGameSession<
     this.exploreTracker.reset(false);
     this.previewedOptionId = null;
     this.stagedOptionId = null;
-    this.wrongOptionId = null;
     this.wrongFlash.clear();
     this.lastFrameMs = 0;
     this.isWon = false;
@@ -270,7 +268,7 @@ export class GT007Session extends TemplateGameSession<
         expected_whole: expectedWhole,
         micro_sandbox: this.exploreTracker.isMicroSandboxActive(),
       });
-      this.wrongOptionId = optionId;
+      // Tổng chưa khớp: nhịp hổ phách trên ô tổng, lựa chọn đứng yên (BR-E007-04).
       this.wrongFlash.trigger(this.lastFrameMs);
     }
   }
@@ -511,10 +509,6 @@ export class GT007Session extends TemplateGameSession<
     optId: string,
     rawState: ItemVisualState
   ): ViewEntity["state"] {
-    const now = this.lastFrameMs;
-    if (this.wrongOptionId === optId && this.wrongFlash.isActive(now)) {
-      return "incorrect";
-    }
     if (this.stagedOptionId === optId || rawState === "selected") {
       return "selected";
     }
@@ -552,7 +546,9 @@ export class GT007Session extends TemplateGameSession<
           : this.content.whole.id,
         slotIndex: this.slots.indexOf(wholeSlot),
         role: "target",
-        state: "idle",
+        state: this.wrongFlash.isActive(this.lastFrameMs)
+          ? "incorrect"
+          : "idle",
         x: wholeSlot.x,
         y: wholeSlot.y,
         w: wholeSlot.w,
@@ -659,6 +655,7 @@ export class GT007Session extends TemplateGameSession<
         drawSlotItem(ctx, rs, wholeSlot, {
           id: this.content.whole.id,
           text: String(this.content.whole.value),
+          state: this.wrongFlash.isActive(timeMs) ? "wrong" : "idle",
         });
       }
     }
@@ -697,22 +694,12 @@ export class GT007Session extends TemplateGameSession<
       if (!slot) {
         return;
       }
-      const now = timeMs;
-      const isWrong =
-        this.wrongOptionId === opt.id && this.wrongFlash.isActive(now);
-      const shakeX =
-        isWrong && !rs.reducedMotion
-          ? Math.sin(this.wrongFlash.elapsedMs(now) / 30) * 4
-          : 0;
-      const renderSlot = shakeX === 0 ? slot : { ...slot, x: slot.x + shakeX };
       const rawState = this.getRenderItemState(opt.id);
       let state: ItemVisualState = rawState;
-      if (isWrong) {
-        state = "wrong";
-      } else if (this.stagedOptionId === opt.id && rawState === "idle") {
+      if (this.stagedOptionId === opt.id && rawState === "idle") {
         state = "selected";
       }
-      drawSlotItem(ctx, rs, renderSlot, {
+      drawSlotItem(ctx, rs, slot, {
         id: opt.id,
         text: String(opt.value),
         state,

@@ -144,3 +144,23 @@ describe("GT-007 — tách gộp số (number-bond): hit-test, spokenLabel, retr
     expect(session.checkWinCondition()).toBe(true);
   });
 });
+
+describe("GT-007 — tổng chưa khớp báo trên ô tổng, lựa chọn đứng yên (BR-E007-04)", () => {
+  it("điền sai: ô tổng nhịp hổ phách, không lựa chọn nào đỏ, ô phần vẫn trống để thêm bớt", () => {
+    const fixture = getFixture();
+    const session = new GT007Session(fixture.content, fixture.difficulty, 1);
+    session.prepareRound("4-5");
+    session.onPartFilled("o1", "p2");
+
+    const view = session.getView();
+    const whole = view.entities.find((e) => e.id === fixture.content.whole.id);
+    expect(whole?.state).toBe("incorrect");
+    const options = view.entities.filter((e) => e.role === "source");
+    expect(options.length).toBeGreaterThan(0);
+    for (const opt of options) {
+      expect(opt.state).not.toBe("incorrect");
+    }
+    expect(session.filledParts.size).toBe(0);
+    expect(session.checkWinCondition()).toBe(false);
+  });
+});
