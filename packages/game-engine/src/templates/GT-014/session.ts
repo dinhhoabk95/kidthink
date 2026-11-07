@@ -161,9 +161,6 @@ export class BalanceScaleSession extends TemplateGameSession<
     milestoneTarget: 2,
   });
 
-  override takePillNarration(): string | null {
-    return this.exploreTracker.takePillNarration();
-  }
   private smoothTiltDeg = 0;
 
   constructor(
@@ -173,6 +170,10 @@ export class BalanceScaleSession extends TemplateGameSession<
   ) {
     super(content, difficulty, layoutSeed);
     this.needsTray = content.goal === "balance" && content.tray.length > 0;
+  }
+
+  override takePillNarration(): string | null {
+    return this.exploreTracker.takePillNarration();
   }
 
   setupEntities(): void {

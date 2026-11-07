@@ -84,13 +84,14 @@ export class GT011Session extends TemplateGameSession<
     milestoneTarget: 2,
   });
 
-  override takePillNarration(): string | null {
-    return this.exploreTracker.takePillNarration();
-  }
   private preview: MatrixPreview | null = null;
   private wrongOptionId: string | null = null;
   private readonly wrongFlash = new WrongFlash();
   private lastFrameMs = 0;
+
+  override takePillNarration(): string | null {
+    return this.exploreTracker.takePillNarration();
+  }
 
   setupEntities(): void {
     this.mechanic.reset();

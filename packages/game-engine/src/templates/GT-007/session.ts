@@ -72,9 +72,6 @@ export class GT007Session extends TemplateGameSession<
     milestoneTarget: 2,
   });
 
-  override takePillNarration(): string | null {
-    return this.exploreTracker.takePillNarration();
-  }
   private previewedOptionId: string | null = null;
   private stagedOptionId: string | null = null;
   private wrongOptionId: string | null = null;
@@ -96,6 +93,10 @@ export class GT007Session extends TemplateGameSession<
     ).length;
   }
   override readonly usesPromptZone = true;
+
+  override takePillNarration(): string | null {
+    return this.exploreTracker.takePillNarration();
+  }
 
   setupEntities(): void {
     this.filledParts.clear();

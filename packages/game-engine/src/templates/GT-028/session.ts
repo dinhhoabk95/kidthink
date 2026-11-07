@@ -78,9 +78,6 @@ export class GT028Session extends TemplateGameSession<
     milestoneTarget: 2,
   });
 
-  override takePillNarration(): string | null {
-    return this.exploreTracker.takePillNarration();
-  }
   private lastFrameMs = 0;
   private wrongSubmitUntilMs = 0;
 
@@ -103,6 +100,10 @@ export class GT028Session extends TemplateGameSession<
 
   isMicroSandboxActive(): boolean {
     return this.exploreTracker.isMicroSandboxActive();
+  }
+
+  override takePillNarration(): string | null {
+    return this.exploreTracker.takePillNarration();
   }
 
   setupEntities(): void {

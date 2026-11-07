@@ -194,9 +194,6 @@ export class SudokuMiniSession extends TemplateGameSession<
     milestoneTarget: 2,
   });
 
-  override takePillNarration(): string | null {
-    return this.exploreTracker.takePillNarration();
-  }
   private symbolById = new Map<string, GT015Content["symbols"][number]>();
   private selectedSymbolId: string | null = null;
   private activeViolations: readonly ConstraintViolation[] = [];
@@ -216,6 +213,10 @@ export class SudokuMiniSession extends TemplateGameSession<
     return this.content.grid_size;
   }
   override readonly usesPromptZone = true;
+
+  override takePillNarration(): string | null {
+    return this.exploreTracker.takePillNarration();
+  }
 
   setupEntities(): void {
     this.exploreTracker.reset(false);

@@ -50,11 +50,12 @@ export class GT006Session extends TemplateGameSession<
     milestoneTarget: 2,
   });
 
+  private stepById = new Map<string, GT006Content["sequence"][number]>();
+  private targetSequence: readonly string[] = [];
+
   override takePillNarration(): string | null {
     return this.exploreTracker.takePillNarration();
   }
-  private stepById = new Map<string, GT006Content["sequence"][number]>();
-  private targetSequence: readonly string[] = [];
 
   setupEntities(): void {
     this.exploreTracker.reset(false);

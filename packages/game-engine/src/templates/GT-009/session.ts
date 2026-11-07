@@ -53,14 +53,15 @@ export class GT009Session extends TemplateGameSession<
     milestoneTarget: 2,
   });
 
-  override takePillNarration(): string | null {
-    return this.exploreTracker.takePillNarration();
-  }
   private readonly revealedClueIds: string[] = [];
   private readonly eliminatedIds: Set<string> = new Set();
   private wrongCandidateId: string | null = null;
   private readonly wrongFlash = new WrongFlash();
   private lastFrameMs = 0;
+
+  override takePillNarration(): string | null {
+    return this.exploreTracker.takePillNarration();
+  }
 
   setupEntities(): void {
     this.mechanic.reset();

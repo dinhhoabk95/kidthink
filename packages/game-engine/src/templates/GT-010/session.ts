@@ -48,15 +48,16 @@ export class SubstitutionSession extends TemplateGameSession<
     milestoneTarget: 2,
   });
 
-  override takePillNarration(): string | null {
-    return this.exploreTracker.takePillNarration();
-  }
   private readonly pinnedSymbols: Map<string, number> = new Map();
   private selectedValue: number | null = null;
   private glyphBySymbolId: Map<string, string> = new Map();
   private symbolById: Map<string, GT010Content["symbols"][number]> = new Map();
   private readonly wrongFlash = new WrongFlash();
   private lastFrameMs = 0;
+
+  override takePillNarration(): string | null {
+    return this.exploreTracker.takePillNarration();
+  }
 
   setupEntities(): void {
     this.exploreTracker.reset(false);

@@ -180,10 +180,6 @@ export class ClockHandsSession extends TemplateGameSession<
     milestoneTarget: 2,
   });
 
-  override takePillNarration(): string | null {
-    return this.exploreTracker.takePillNarration();
-  }
-
   constructor(
     content: GT016Content,
     difficulty: GT016Difficulty,
@@ -196,6 +192,10 @@ export class ClockHandsSession extends TemplateGameSession<
       hour: content.target_time.hour,
       minute: content.target_time.minute,
     };
+  }
+
+  override takePillNarration(): string | null {
+    return this.exploreTracker.takePillNarration();
   }
 
   setupEntities(): void {
