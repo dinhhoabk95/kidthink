@@ -21,6 +21,7 @@ import {
   spawnParticlesAtSlot,
   updateParticles,
 } from "#src/render/index.js";
+import type { MascotPose } from "#src/render/mascot";
 import { deriveStream } from "#src/rng/mulberry32";
 import { shuffle } from "#src/rng/shuffle";
 import type { DegradationState } from "#src/systems/degradation";
@@ -46,6 +47,13 @@ interface ProgressSnapshot {
   readonly order: readonly GT037OrderStep[];
   readonly commissions: readonly GT037Commission[];
 }
+
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E037-10`, `BR-FBK-16`). */
+export const GT037_STORY_LINE =
+  "Gấu Con đi nhặt đồ bỏ vào lọ, bé tìm giúp Gấu Con tất cả nhé!";
+
+/** Gấu Con reo bấy lâu sau mỗi ô đích mới tìm (`BR-E037-10`). */
+export const GT037_CHEER_MS = 1200;
 
 const SCATTER_BOARD_CAPACITY: Record<AgeBand, number> = {
   "3-4": 10,
@@ -161,6 +169,8 @@ export class GT037Session extends TemplateGameSession<
   targetCopies = 0;
   targetSet = new Set<string>();
   private currentBand: AgeBand = "5-6";
+  /** Thời gian còn lại của nhịp reo sau ô đích mới tìm. */
+  private cheerRemainingMs = 0;
 
   constructor(
     content: GT037Content,
@@ -194,6 +204,7 @@ export class GT037Session extends TemplateGameSession<
     this.particles = [];
     this.wrongSlotIndex = null;
     this.wrongTimestamp = 0;
+    this.cheerRemainingMs = 0;
     this.rebuildBoard();
 
     this.recordEvent("game_started", {
@@ -499,6 +510,8 @@ export class GT037Session extends TemplateGameSession<
 
     if (isTarget) {
       this.foundTargets.add(slotIndex);
+      this.queueSfx("star_collect");
+      this.cheerRemainingMs = GT037_CHEER_MS;
       this.wrongSlotIndex = null;
       const slot = this.slots[slotIndex];
       if (slot) {
@@ -575,7 +588,18 @@ export class GT037Session extends TemplateGameSession<
     super.completeSession();
   }
 
-  update(_deltaMs: number): void {
+  override storyLine(): string {
+    return GT037_STORY_LINE;
+  }
+
+  override mascotMood(): MascotPose | null {
+    return this.cheerRemainingMs > 0 && !this.isWon ? "cheer" : null;
+  }
+
+  update(deltaMs: number): void {
+    if (this.cheerRemainingMs > 0) {
+      this.cheerRemainingMs = Math.max(0, this.cheerRemainingMs - deltaMs);
+    }
     if (this.particles.length > 0) {
       this.particles = updateParticles(this.particles);
     }

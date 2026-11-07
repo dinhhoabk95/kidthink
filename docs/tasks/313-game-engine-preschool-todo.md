@@ -91,12 +91,14 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
   - Chưa gỡ (ngoài phạm vi 4B): pill sai Montessori dùng chung (`drawMontessoriControlOfErrorPill`, vẽ `reasonVi` bằng chữ), pill câu dẫn của shell, nhãn rổ GT-003 (`container-shapes.ts`)
 
 ## Phase 5 — Đặc sắc từng game
-- [ ] Đợt demo: 001, 003, 020, 025, 026, 037 (đợt 5A: mỗi game một khung chuyện nói được + một cue âm tổng hợp + một tâm trạng mascot; hạ tầng `BR-FBK-14..16`)
+- [x] Đợt demo: 001, 003, 020, 025, 026, 037 (đợt 5A: mỗi game một khung chuyện nói được + một cue âm tổng hợp + một tâm trạng mascot; hạ tầng `BR-FBK-14..16`)
   - [x] 001 (khung chuyện Gấu Con đi chợ, tiếng gỗ `wood_tap`, mascot `wonder` sau khi chọn sai, BR-E001-05)
   - [x] 003 (khung chuyện Gấu Con dọn nhà, tiếng bịch `drop_thud` khi vật đúng vào rổ, mascot `cheer` từ vật đúng đầu tiên, BR-E003-08)
   - [x] 020 (khung chuyện Gấu Con giấu các bạn dưới thẻ, tiếng lật `card_flip`, mascot `wonder` khi một thẻ chờ cặp, BR-E020-07)
   - [x] 025 (khung chuyện Gấu Con vẽ hai bức tranh, tiếng lấp lánh `sparkle_find` khi tìm ra điểm khác, mascot `wonder` từ điểm đầu tới điểm cuối, BR-E025-05)
   - [x] 026 (khung chuyện đèn xanh/đèn đỏ, `go_chime` khi chạm đúng và `stop_hum` khi kìm được, mascot `cheer`/`freeze` sau kết quả lượt — không báo trước đáp án, BR-E026-11)
+  - [x] 037 (khung chuyện Gấu Con nhặt đồ bỏ vào lọ, tiếng leng keng `star_collect` khi tìm ra ô đích, mascot `cheer` 1200 ms, BR-E037-10)
+  - [ ] Đợt 5A (còn lại) — cần asset thu/vẽ thật: (1) giọng thu thật cho sáu khung chuyện (hiện chỉ TTS, `BR-FBK-16`); (2) sprite SVG riêng cho `wonder`/`freeze`/`cheer` (hiện dùng chung `thinking`/`waiting`/`jumping`, `MASCOT_SPRITE_FILES`); (3) GT-037 lọ đầy dần/ngôi sao bay vào lọ; (4) GT-026 vẽ đèn giao thông thật thay kích thích emoji; (5) GT-020 thẻ lật 3D và GT-025 vòng khoanh lấp lánh quanh điểm tìm ra; (6) GT-003 rổ rung nhẹ khi vật rơi vào. Chưa kiểm tay trên trình duyệt (run skill) và `preview-sandbox.vue` chưa nối cue/story
 - [ ] Khác biệt hoá cặp trùng: 003↔004, 022/025/037, 028/029/031, 001/012/018
 - [ ] Các game còn lại theo cột "Hướng đặc sắc" trong plan §1.3
 - [ ] 030 (còn lại) — dải đo vẫn là lưới ô có thể xuống nhiều hàng ở khung hẹp, chưa phải một dải liền kéo tự do theo thước; `representation: number-rod` chưa hiện khe/chồng. Cần thiết kế lại zone-layout (Phase 5 "Dải kéo tự do có snap")
