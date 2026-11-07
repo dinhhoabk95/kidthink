@@ -29,6 +29,7 @@ import {
 } from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
 import type { RenderSystem } from "#src/systems/render-system";
+import { WrongFlash } from "#src/systems/wrong-flash";
 import type { GT025Content, GT025Difficulty } from "./template.js";
 
 /** Cạnh ô lớn nhất khi mỗi bên là khối nhiều cột (canvas thấp). */
@@ -95,7 +96,7 @@ export class GT025Session extends TemplateGameSession<
   private readonly foundLeftIds = new Set<string>();
   private readonly foundRightIds = new Set<string>();
   private wrongObjectId: string | null = null;
-  private wrongTimestamp = -1;
+  private readonly wrongFlash = new WrongFlash();
   resolvedObjects: ResolvedDifferenceObject[] = [];
 
   update(deltaMs: number): void {
@@ -104,7 +105,7 @@ export class GT025Session extends TemplateGameSession<
 
   setupEntities(): void {
     this.isWon = false;
-    this.wrongTimestamp = -1;
+    this.wrongFlash.clear();
     this.lastFrameMs = 0;
     this.foundDifferenceIds.clear();
     this.foundLeftIds.clear();
@@ -214,7 +215,7 @@ export class GT025Session extends TemplateGameSession<
 
     if (!diff) {
       this.wrongObjectId = objectId;
-      this.wrongTimestamp = this.lastFrameMs;
+      this.wrongFlash.trigger(this.lastFrameMs);
       this.recordEvent("item_selected", {
         object_id: objectId,
         is_correct: false,
@@ -294,8 +295,7 @@ export class GT025Session extends TemplateGameSession<
 
   override getView(): EngineView {
     const now = this.lastFrameMs;
-    const isWrongNow =
-      this.wrongTimestamp >= 0 && now - this.wrongTimestamp < 400;
+    const isWrongNow = this.wrongFlash.isActive(now);
     const seenIds = new Set<string>();
     const entities: ViewEntity[] = this.resolvedObjects.map((obj) => {
       const isFound =
@@ -420,8 +420,7 @@ export class GT025Session extends TemplateGameSession<
     );
 
     const now = this.lastFrameMs;
-    const isWrongNow =
-      this.wrongTimestamp >= 0 && now - this.wrongTimestamp < 400;
+    const isWrongNow = this.wrongFlash.isActive(now);
 
     this.content.left_objects.forEach((obj, i) => {
       drawSceneObjectAt(ctx, rs, half, this.inLayout(obj), sources[i], {

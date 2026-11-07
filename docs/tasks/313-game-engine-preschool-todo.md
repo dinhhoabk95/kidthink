@@ -31,7 +31,8 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 - [x] `getHintDestinationIndex` cho GT-004/005/006/007/008/014 (chế độ balance)/019/021/023/031/035
 - [ ] `getHintDestinationIndex` GT-015, GT-029, GT-036: hợp đồng hint hiện trỏ vào ô đích/ô chạm (sudoku trỏ ô trống, 029 kéo ra ngoài nhóm không có slot đích, 036 phần tử đã cầm sẵn nên chỉ chạm ô dải); muốn bàn tay ma kéo cần đổi hợp đồng hint hoặc thêm đích dạng toạ độ — để quyết định riêng
 - [x] `demo_shown` chỉ khi demo vẽ thật
-- [ ] Helper `WrongFlash` dùng chung thay ~15 bản tự viết
+- [x] Helper `WrongFlash` (`src/systems/wrong-flash.ts`, một thời lượng 400ms, đồng hồ khung do session truyền) thay bản `wrongTimestamp` tự viết ở GT-007/008/009/010/011/012/014/015/022/023/025/026
+- [ ] Chuyển nốt các bản đếm ngược/khác nền thời gian sang `WrongFlash`: GT-001 (`wrongTimers` theo vật), GT-002/006/018 (đếm lùi theo `update(delta)`), GT-003/004 (`transientStateMs` theo vật, 260ms), GT-027/029/030 (`*UntilMs`), GT-037 (`Date.now()`, 800ms) — cần biến thể theo khoá và quyết định thời lượng riêng
 - [ ] Retry nói câu khích lệ + mp3 fallback; narration pill Montessori
 - [ ] Tách màu hint vs retry, tăng tương phản
 - [x] Helper derangement trong `src/rng/` (`deriveDerangement`, Sattolo; chưa nối vào generator — Phase 4)

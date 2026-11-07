@@ -39,6 +39,7 @@ import {
 } from "#src/systems/assembly-system";
 import type { DegradationState } from "#src/systems/degradation";
 import type { RenderSystem } from "#src/systems/render-system";
+import { WRONG_FLASH_MS, WrongFlash } from "#src/systems/wrong-flash";
 import type { GT023Content, GT023Difficulty } from "./template.js";
 
 interface HitSourcePart {
@@ -88,7 +89,7 @@ export class GT023Session extends TemplateGameSession<
   private readonly placementMechanic = new PlacementMechanic();
   private partById: Map<string, GT023Content["parts"][number]> = new Map();
   private wrongPartId: string | null = null;
-  private wrongTimestamp = 0;
+  private readonly wrongFlash = new WrongFlash();
   private lastFrameMs = 0;
 
   /** Mảnh nằm trong khay, mỏ neo đứng trên sân khấu (`BR-PSZ-01`). */
@@ -107,7 +108,7 @@ export class GT023Session extends TemplateGameSession<
   setupEntities(): void {
     this.isWon = false;
     this.wrongPartId = null;
-    this.wrongTimestamp = 0;
+    this.wrongFlash.clear();
     this.lastFrameMs = 0;
     this.placementMechanic.reset();
     this.partById = new Map(this.content.parts.map((p) => [p.part_id, p]));
@@ -187,7 +188,7 @@ export class GT023Session extends TemplateGameSession<
       }
     } else {
       this.wrongPartId = partId;
-      this.wrongTimestamp = this.lastFrameMs;
+      this.wrongFlash.trigger(this.lastFrameMs);
       this.setRenderItemState(partId, "wrong");
     }
 
@@ -554,7 +555,7 @@ export class GT023Session extends TemplateGameSession<
     timeMs: number
   ): void {
     this.lastFrameMs = timeMs;
-    if (this.wrongPartId && timeMs - this.wrongTimestamp >= 400) {
+    if (this.wrongPartId && this.wrongFlash.hasExpired(timeMs)) {
       this.setRenderItemState(this.wrongPartId, "idle");
       this.wrongPartId = null;
     }
@@ -597,9 +598,9 @@ export class GT023Session extends TemplateGameSession<
         return;
       }
       const isWrong = part.part_id === this.wrongPartId;
-      const elapsed = isWrong ? timeMs - this.wrongTimestamp : 0;
+      const elapsed = isWrong ? this.wrongFlash.elapsedMs(timeMs) : 0;
       const shakeX =
-        isWrong && elapsed < 400 && !rs.reducedMotion
+        isWrong && elapsed < WRONG_FLASH_MS && !rs.reducedMotion
           ? Math.sin(elapsed * 0.05) * 4
           : 0;
       const drawSlot = shakeX === 0 ? slot : { ...slot, x: slot.x + shakeX };
@@ -611,13 +612,13 @@ export class GT023Session extends TemplateGameSession<
         state: this.resolveSourcePartState(part.part_id),
       });
 
-      if (isWrong && elapsed < 400) {
+      if (isWrong && elapsed < WRONG_FLASH_MS) {
         rs.drawRetryRing(
           ctx,
           slot.x + shakeX,
           slot.y,
           Math.min(slot.hitW, slot.hitH) / 2 + 4,
-          elapsed / 400
+          elapsed / WRONG_FLASH_MS
         );
       }
     });

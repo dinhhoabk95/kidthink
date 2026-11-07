@@ -28,6 +28,7 @@ import {
   type TrialItem,
 } from "#src/systems/inhibition-system";
 import type { RenderSystem } from "#src/systems/render-system";
+import { WrongFlash } from "#src/systems/wrong-flash";
 import type { GT026Content, GT026Difficulty } from "./template.js";
 
 export class GT026Session extends TemplateGameSession<
@@ -36,7 +37,7 @@ export class GT026Session extends TemplateGameSession<
 > {
   degradation: DegradationState | null = null;
   private lastFrameMs = 0;
-  private wrongTimestamp = -1;
+  private readonly wrongFlash = new WrongFlash();
 
   override readonly usesPromptZone = true;
 
@@ -61,7 +62,7 @@ export class GT026Session extends TemplateGameSession<
 
   setupEntities(): void {
     this.isWon = false;
-    this.wrongTimestamp = -1;
+    this.wrongFlash.clear();
     this.lastFrameMs = 0;
 
     const trials: TrialItem[] = this.content.trials.map((t) => ({
@@ -132,7 +133,7 @@ export class GT026Session extends TemplateGameSession<
     }
 
     if (!result.isCorrect) {
-      this.wrongTimestamp = this.lastFrameMs;
+      this.wrongFlash.trigger(this.lastFrameMs);
     }
 
     this.recordEvent("item_selected", {
@@ -236,7 +237,7 @@ export class GT026Session extends TemplateGameSession<
     const entities: ViewEntity[] = [];
 
     const now = this.lastFrameMs;
-    const isWrong = this.wrongTimestamp >= 0 && now - this.wrongTimestamp < 400;
+    const isWrong = this.wrongFlash.isActive(now);
 
     if (slot && trial && isStimulus) {
       const stimulus =
@@ -330,11 +331,10 @@ export class GT026Session extends TemplateGameSession<
     const slot = this.slots[0];
     if (slot) {
       const now = this.lastFrameMs;
-      const isWrong =
-        this.wrongTimestamp >= 0 && now - this.wrongTimestamp < 400;
+      const isWrong = this.wrongFlash.isActive(now);
       const shakeX =
         isWrong && !rs.reducedMotion
-          ? Math.sin((now - this.wrongTimestamp) / 30) * 4
+          ? Math.sin(this.wrongFlash.elapsedMs(now) / 30) * 4
           : 0;
       const renderSlot = shakeX === 0 ? slot : { ...slot, x: slot.x + shakeX };
       drawPedestalTarget(ctx, renderSlot);

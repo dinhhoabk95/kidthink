@@ -30,6 +30,7 @@ import {
 import type { DegradationState } from "#src/systems/degradation";
 import type { RenderSystem } from "#src/systems/render-system";
 import { FlashTimer } from "#src/systems/timer-system";
+import { WRONG_FLASH_MS, WrongFlash } from "#src/systems/wrong-flash";
 import type { GT012Content, GT012Difficulty } from "./template.js";
 import {
   computeFlashSlots,
@@ -50,7 +51,7 @@ export class FlashRecallSession extends TemplateGameSession<
   private readonly timer: FlashTimer;
   private selectedValue: number | null = null;
   private wasVisible = false;
-  private wrongTimestamp = 0;
+  private readonly wrongFlash = new WrongFlash();
   private lastFrameMs = 0;
   /** Vùng đĩa và vùng lựa chọn của vòng này (`BR-PSZ-01`). */
   private areas: RecallAreas | null = null;
@@ -71,7 +72,7 @@ export class FlashRecallSession extends TemplateGameSession<
 
   setupEntities(): void {
     this.selectedValue = null;
-    this.wrongTimestamp = 0;
+    this.wrongFlash.clear();
     this.lastFrameMs = 0;
     this.timer.reset();
     this.timer.start();
@@ -133,11 +134,10 @@ export class FlashRecallSession extends TemplateGameSession<
     this.lastFrameMs += deltaMs;
     if (
       this.selectedValue !== null &&
-      this.wrongTimestamp > 0 &&
-      this.lastFrameMs - this.wrongTimestamp >= 400
+      this.wrongFlash.hasExpired(this.lastFrameMs)
     ) {
       this.selectedValue = null;
-      this.wrongTimestamp = 0;
+      this.wrongFlash.clear();
     }
 
     const prevState = this.timer.getState();
@@ -156,9 +156,9 @@ export class FlashRecallSession extends TemplateGameSession<
     this.selectedValue = value;
     const isCorrect = value === this.content.flash_items.length;
     if (isCorrect) {
-      this.wrongTimestamp = 0;
+      this.wrongFlash.clear();
     } else {
-      this.wrongTimestamp = this.lastFrameMs;
+      this.wrongFlash.trigger(this.lastFrameMs);
     }
 
     this.recordEvent("value_selected", {
@@ -395,13 +395,9 @@ export class FlashRecallSession extends TemplateGameSession<
     timeMs: number
   ): void {
     this.lastFrameMs = timeMs;
-    if (
-      this.selectedValue !== null &&
-      this.wrongTimestamp > 0 &&
-      timeMs - this.wrongTimestamp >= 400
-    ) {
+    if (this.selectedValue !== null && this.wrongFlash.hasExpired(timeMs)) {
       this.selectedValue = null;
-      this.wrongTimestamp = 0;
+      this.wrongFlash.clear();
     }
 
     drawSceneBackground(ctx, rs, this.themeId);
@@ -454,15 +450,15 @@ export class FlashRecallSession extends TemplateGameSession<
       if (
         this.selectedValue === opt.value &&
         !opt.is_correct &&
-        timeMs - this.wrongTimestamp < 400
+        this.wrongFlash.isActive(timeMs)
       ) {
-        const elapsed = timeMs - this.wrongTimestamp;
+        const elapsed = this.wrongFlash.elapsedMs(timeMs);
         rs.drawRetryRing(
           ctx,
           slot.x,
           slot.y,
           Math.min(slot.hitW, slot.hitH) / 2 + 4,
-          elapsed / 400
+          elapsed / WRONG_FLASH_MS
         );
       }
     });

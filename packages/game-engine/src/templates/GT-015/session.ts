@@ -44,6 +44,7 @@ import {
   MontessoriExploreTracker,
 } from "#src/systems/montessori-explore-system";
 import type { RenderSystem } from "#src/systems/render-system";
+import { WrongFlash } from "#src/systems/wrong-flash";
 import type { GT015Content, GT015Difficulty } from "./template.js";
 
 /** Cạnh ô lưới lớn nhất trên sân khấu — cùng cỡ ô của `matrix-slot-grid`. */
@@ -195,7 +196,7 @@ export class SudokuMiniSession extends TemplateGameSession<
   private symbolById = new Map<string, GT015Content["symbols"][number]>();
   private selectedSymbolId: string | null = null;
   private activeViolations: readonly ConstraintViolation[] = [];
-  private wrongTimestamp = 0;
+  private readonly wrongFlash = new WrongFlash();
   private lastFrameMs = 0;
 
   /** Ký hiệu nằm trong khay, lưới đứng trên sân khấu (`BR-PSZ-01`). */
@@ -220,7 +221,7 @@ export class SudokuMiniSession extends TemplateGameSession<
     );
     this.activeViolations = [];
     this.selectedSymbolId = null;
-    this.wrongTimestamp = 0;
+    this.wrongFlash.clear();
     this.lastFrameMs = 0;
     this.isWon = false;
 
@@ -341,7 +342,7 @@ export class SudokuMiniSession extends TemplateGameSession<
       });
 
       if (hasConflict) {
-        this.wrongTimestamp = this.lastFrameMs;
+        this.wrongFlash.trigger(this.lastFrameMs);
         this.recordEvent("constraint_violated", {
           row,
           col,
@@ -724,13 +725,13 @@ export class SudokuMiniSession extends TemplateGameSession<
         { id: `${cell.row},${cell.col}`, asset: assetOf(symbolId), state },
         "square"
       );
-      if (state === "wrong" && timeMs - this.wrongTimestamp < 400) {
+      if (state === "wrong" && this.wrongFlash.isActive(timeMs)) {
         rs.drawRetryRing(
           ctx,
           slot.x,
           slot.y,
           Math.min(slot.hitW, slot.hitH) / 2 + 4,
-          Math.min(1, Math.max(0, (timeMs - this.wrongTimestamp) / 400))
+          Math.min(1, Math.max(0, this.wrongFlash.elapsedMs(timeMs) / 400))
         );
       }
     }

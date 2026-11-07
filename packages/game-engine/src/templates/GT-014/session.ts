@@ -43,6 +43,7 @@ import {
   MontessoriExploreTracker,
 } from "#src/systems/montessori-explore-system";
 import type { RenderSystem } from "#src/systems/render-system";
+import { WRONG_FLASH_MS, WrongFlash } from "#src/systems/wrong-flash";
 import type { GT014Content, GT014Difficulty } from "./template.js";
 import {
   panTargetSlots,
@@ -154,7 +155,7 @@ export class BalanceScaleSession extends TemplateGameSession<
   private selectedSide: "left" | "right" | null = null;
   private stagedItemId: string | null = null;
   private wrongSide: "left" | "right" | null = null;
-  private wrongTimestamp = 0;
+  private readonly wrongFlash = new WrongFlash();
   private lastFrameMs = 0;
   private readonly exploreTracker = new MontessoriExploreTracker({
     milestoneTarget: 2,
@@ -179,7 +180,7 @@ export class BalanceScaleSession extends TemplateGameSession<
     this.selectedSide = null;
     this.stagedItemId = null;
     this.wrongSide = null;
-    this.wrongTimestamp = 0;
+    this.wrongFlash.clear();
     this.lastFrameMs = 0;
     this.isWon = false;
     this.exploreTracker.reset(false);
@@ -224,7 +225,7 @@ export class BalanceScaleSession extends TemplateGameSession<
       Math.abs(diff) <= maxStep
         ? targetTilt
         : this.smoothTiltDeg + Math.sign(diff) * maxStep;
-    if (this.wrongSide && this.lastFrameMs - this.wrongTimestamp >= 400) {
+    if (this.wrongSide && this.wrongFlash.hasExpired(this.lastFrameMs)) {
       this.wrongSide = null;
     }
   }
@@ -341,7 +342,7 @@ export class BalanceScaleSession extends TemplateGameSession<
         (targetPan === "right" && rightW > leftW);
       if (this.trayItems.length === 0 || isOverweight) {
         this.wrongSide = targetPan;
-        this.wrongTimestamp = this.lastFrameMs;
+        this.wrongFlash.trigger(this.lastFrameMs);
         this.exploreTracker.recordWrongAttempt({
           reasonVi: formatHeavierReasonVi(leftW, rightW),
           actualValue: leftW,
@@ -386,7 +387,7 @@ export class BalanceScaleSession extends TemplateGameSession<
       this.winSession();
     } else {
       this.wrongSide = side;
-      this.wrongTimestamp = this.lastFrameMs;
+      this.wrongFlash.trigger(this.lastFrameMs);
       const leftW = this.getLeftWeight();
       const rightW = this.getRightWeight();
       this.exploreTracker.recordWrongAttempt({
@@ -790,7 +791,7 @@ export class BalanceScaleSession extends TemplateGameSession<
     timeMs: number
   ): void {
     this.lastFrameMs = timeMs;
-    if (this.wrongSide && timeMs - this.wrongTimestamp >= 400) {
+    if (this.wrongSide && this.wrongFlash.hasExpired(timeMs)) {
       this.wrongSide = null;
     }
     drawSceneBackground(ctx, rs, this.themeId);
@@ -822,15 +823,15 @@ export class BalanceScaleSession extends TemplateGameSession<
     drawPanItems(ctx, rs, rightPan, positioned(this.rightItems));
 
     if (this.wrongSide) {
-      const elapsed = timeMs - this.wrongTimestamp;
-      if (elapsed < 400) {
+      const elapsed = this.wrongFlash.elapsedMs(timeMs);
+      if (elapsed < WRONG_FLASH_MS) {
         const pan = this.wrongSide === "left" ? leftPan : rightPan;
         rs.drawRetryRing(
           ctx,
           pan.x + pan.w / 2,
           pan.y + pan.h / 2,
           Math.max(pan.w, pan.h) / 2 + 6,
-          elapsed / 400
+          elapsed / WRONG_FLASH_MS
         );
       }
     }

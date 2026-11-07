@@ -41,6 +41,7 @@ import {
   MontessoriExploreTracker,
 } from "#src/systems/montessori-explore-system";
 import type { RenderSystem } from "#src/systems/render-system";
+import { WrongFlash } from "#src/systems/wrong-flash";
 import type { GT007Content, GT007Difficulty } from "./template.js";
 
 /** Cạnh ô tổng và ô phần lớn nhất trên sân khấu — cùng cỡ ô của `number-bond-tree`. */
@@ -73,7 +74,7 @@ export class GT007Session extends TemplateGameSession<
   private previewedOptionId: string | null = null;
   private stagedOptionId: string | null = null;
   private wrongOptionId: string | null = null;
-  private wrongTimestamp = 0;
+  private readonly wrongFlash = new WrongFlash();
   private lastFrameMs = 0;
   private displayOptions: readonly GT007Content["options"][number][] = [];
 
@@ -98,7 +99,7 @@ export class GT007Session extends TemplateGameSession<
     this.previewedOptionId = null;
     this.stagedOptionId = null;
     this.wrongOptionId = null;
-    this.wrongTimestamp = 0;
+    this.wrongFlash.clear();
     this.lastFrameMs = 0;
     this.isWon = false;
     this.displayOptions =
@@ -265,7 +266,7 @@ export class GT007Session extends TemplateGameSession<
         micro_sandbox: this.exploreTracker.isMicroSandboxActive(),
       });
       this.wrongOptionId = optionId;
-      this.wrongTimestamp = this.lastFrameMs;
+      this.wrongFlash.trigger(this.lastFrameMs);
     }
   }
 
@@ -506,7 +507,7 @@ export class GT007Session extends TemplateGameSession<
     rawState: ItemVisualState
   ): ViewEntity["state"] {
     const now = this.lastFrameMs;
-    if (this.wrongOptionId === optId && now - this.wrongTimestamp < 400) {
+    if (this.wrongOptionId === optId && this.wrongFlash.isActive(now)) {
       return "incorrect";
     }
     if (this.stagedOptionId === optId || rawState === "selected") {
@@ -693,10 +694,10 @@ export class GT007Session extends TemplateGameSession<
       }
       const now = timeMs;
       const isWrong =
-        this.wrongOptionId === opt.id && now - this.wrongTimestamp < 400;
+        this.wrongOptionId === opt.id && this.wrongFlash.isActive(now);
       const shakeX =
         isWrong && !rs.reducedMotion
-          ? Math.sin((now - this.wrongTimestamp) / 30) * 4
+          ? Math.sin(this.wrongFlash.elapsedMs(now) / 30) * 4
           : 0;
       const renderSlot = shakeX === 0 ? slot : { ...slot, x: slot.x + shakeX };
       const rawState = this.getRenderItemState(opt.id);

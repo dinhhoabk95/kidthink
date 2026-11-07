@@ -32,6 +32,7 @@ import {
   MontessoriExploreTracker,
 } from "#src/systems/montessori-explore-system";
 import type { RenderSystem } from "#src/systems/render-system";
+import { WRONG_FLASH_MS, WrongFlash } from "#src/systems/wrong-flash";
 import { evaluateQuestionAnswer, solveEquationSystem } from "./solver.js";
 import type { GT010Content, GT010Difficulty } from "./template.js";
 
@@ -50,14 +51,14 @@ export class SubstitutionSession extends TemplateGameSession<
   private selectedValue: number | null = null;
   private glyphBySymbolId: Map<string, string> = new Map();
   private symbolById: Map<string, GT010Content["symbols"][number]> = new Map();
-  private wrongTimestamp = 0;
+  private readonly wrongFlash = new WrongFlash();
   private lastFrameMs = 0;
 
   setupEntities(): void {
     this.exploreTracker.reset(false);
     this.pinnedSymbols.clear();
     this.selectedValue = null;
-    this.wrongTimestamp = 0;
+    this.wrongFlash.clear();
     this.lastFrameMs = 0;
     this.isWon = false;
     this.symbolById = new Map(
@@ -140,10 +141,10 @@ export class SubstitutionSession extends TemplateGameSession<
     });
 
     if (isCorrect) {
-      this.wrongTimestamp = 0;
+      this.wrongFlash.clear();
       this.exploreTracker.recordCorrectAttempt();
     } else {
-      this.wrongTimestamp = this.lastFrameMs;
+      this.wrongFlash.trigger(this.lastFrameMs);
       const expected = this.getExpectedAnswer();
       const enteredSandbox = this.exploreTracker.recordWrongAttempt({
         reasonVi: `Giá trị ${value} chưa khớp phép thay thế (cần ${expected})`,
@@ -187,11 +188,10 @@ export class SubstitutionSession extends TemplateGameSession<
     this.lastFrameMs += deltaMs;
     if (
       this.selectedValue !== null &&
-      this.wrongTimestamp > 0 &&
-      this.lastFrameMs - this.wrongTimestamp >= 400
+      this.wrongFlash.hasExpired(this.lastFrameMs)
     ) {
       this.selectedValue = null;
-      this.wrongTimestamp = 0;
+      this.wrongFlash.clear();
     }
   }
 
@@ -414,13 +414,9 @@ export class SubstitutionSession extends TemplateGameSession<
     timeMs: number
   ): void {
     this.lastFrameMs = timeMs;
-    if (
-      this.selectedValue !== null &&
-      this.wrongTimestamp > 0 &&
-      timeMs - this.wrongTimestamp >= 400
-    ) {
+    if (this.selectedValue !== null && this.wrongFlash.hasExpired(timeMs)) {
       this.selectedValue = null;
-      this.wrongTimestamp = 0;
+      this.wrongFlash.clear();
     }
 
     drawSceneBackground(ctx, rs, this.themeId);
@@ -492,15 +488,15 @@ export class SubstitutionSession extends TemplateGameSession<
         state,
       });
 
-      if (state === "wrong" && this.wrongTimestamp > 0) {
-        const elapsed = timeMs - this.wrongTimestamp;
-        if (elapsed < 400) {
+      if (state === "wrong" && this.wrongFlash.started) {
+        const elapsed = this.wrongFlash.elapsedMs(timeMs);
+        if (elapsed < WRONG_FLASH_MS) {
           rs.drawRetryRing(
             ctx,
             slot.x,
             slot.y,
             Math.min(slot.hitW, slot.hitH) / 2 + 4,
-            elapsed / 400
+            elapsed / WRONG_FLASH_MS
           );
         }
       }

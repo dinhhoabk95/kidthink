@@ -36,6 +36,7 @@ import {
   type SceneObject,
   SceneSystem,
 } from "#src/systems/scene-system";
+import { WRONG_FLASH_MS, WrongFlash } from "#src/systems/wrong-flash";
 import type { GT022Content, GT022Difficulty } from "./template";
 
 function findHitSceneObject(
@@ -82,13 +83,13 @@ export class GT022Session extends TemplateGameSession<
     GT022Content["scene_objects"][number]["asset"]
   >();
   private wrongItemId: string | null = null;
-  private wrongTimestamp = 0;
+  private readonly wrongFlash = new WrongFlash();
   private lastFrameMs = 0;
 
   setupEntities(): void {
     this.isWon = false;
     this.wrongItemId = null;
-    this.wrongTimestamp = 0;
+    this.wrongFlash.clear();
     this.lastFrameMs = 0;
     this.selectionMechanic.reset();
     this.assetById = new Map(
@@ -186,7 +187,7 @@ export class GT022Session extends TemplateGameSession<
       this.selectionMechanic.select(itemId);
     } else if (!result.isTarget) {
       this.wrongItemId = itemId;
-      this.wrongTimestamp = this.lastFrameMs;
+      this.wrongFlash.trigger(this.lastFrameMs);
     }
 
     if (this.checkWinCondition()) {
@@ -337,7 +338,7 @@ export class GT022Session extends TemplateGameSession<
     timeMs: number
   ): void {
     this.lastFrameMs = timeMs;
-    if (this.wrongItemId && timeMs - this.wrongTimestamp >= 400) {
+    if (this.wrongItemId && this.wrongFlash.hasExpired(timeMs)) {
       this.wrongItemId = null;
     }
     drawSceneBackground(ctx, rs, this.themeId);
@@ -402,8 +403,8 @@ export class GT022Session extends TemplateGameSession<
     index: number,
     timeMs: number
   ): void {
-    const elapsed = timeMs - this.wrongTimestamp;
-    if (elapsed >= 400) {
+    const elapsed = this.wrongFlash.elapsedMs(timeMs);
+    if (elapsed >= WRONG_FLASH_MS) {
       return;
     }
     // Có stage thì neo vào slot của layout, không phải toạ độ content.
@@ -413,7 +414,7 @@ export class GT022Session extends TemplateGameSession<
       anchor?.x ?? obj.x,
       anchor?.y ?? obj.y,
       36,
-      elapsed / 400
+      elapsed / WRONG_FLASH_MS
     );
   }
 }

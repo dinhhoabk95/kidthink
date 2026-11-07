@@ -36,6 +36,7 @@ import {
 } from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
+import { WRONG_FLASH_MS, WrongFlash } from "#src/systems/wrong-flash";
 import type { GT008Content, GT008Difficulty } from "./template.js";
 
 /** Cạnh ô đích lớn nhất trên sân khấu — cùng cỡ ô của `horizontal-slot-track`. */
@@ -88,7 +89,7 @@ export class GT008Session extends TemplateGameSession<
   private stagedItemId: string | null = null;
   private wrongItemId: string | null = null;
   private wrongSlotId: string | null = null;
-  private wrongTimestamp = 0;
+  private readonly wrongFlash = new WrongFlash();
   private lastFrameMs = 0;
 
   placedSlots: Map<string, string> = new Map(); // slot_id -> item_id
@@ -115,7 +116,7 @@ export class GT008Session extends TemplateGameSession<
     this.stagedItemId = null;
     this.wrongItemId = null;
     this.wrongSlotId = null;
-    this.wrongTimestamp = 0;
+    this.wrongFlash.clear();
     this.lastFrameMs = 0;
     this.isWon = false;
     this.renderParticles = [];
@@ -143,7 +144,7 @@ export class GT008Session extends TemplateGameSession<
 
   update(deltaMs: number): void {
     this.lastFrameMs += deltaMs;
-    if (this.wrongItemId && this.lastFrameMs - this.wrongTimestamp >= 400) {
+    if (this.wrongItemId && this.wrongFlash.hasExpired(this.lastFrameMs)) {
       this.setRenderItemState(this.wrongItemId, "idle");
       this.wrongItemId = null;
       this.wrongSlotId = null;
@@ -428,7 +429,7 @@ export class GT008Session extends TemplateGameSession<
       });
       this.wrongItemId = data.item_id;
       this.wrongSlotId = data.slot_id;
-      this.wrongTimestamp = this.lastFrameMs;
+      this.wrongFlash.trigger(this.lastFrameMs);
       this.setRenderItemState(data.item_id, "wrong");
     }
   }
@@ -531,7 +532,7 @@ export class GT008Session extends TemplateGameSession<
     timeMs: number
   ): void {
     this.lastFrameMs = timeMs;
-    if (this.wrongItemId && timeMs - this.wrongTimestamp >= 400) {
+    if (this.wrongItemId && this.wrongFlash.hasExpired(timeMs)) {
       this.setRenderItemState(this.wrongItemId, "idle");
       this.wrongItemId = null;
       this.wrongSlotId = null;
@@ -571,15 +572,15 @@ export class GT008Session extends TemplateGameSession<
         }
         if (
           defSlot.slot_id === this.wrongSlotId &&
-          timeMs - this.wrongTimestamp < 400
+          this.wrongFlash.isActive(timeMs)
         ) {
-          const elapsed = timeMs - this.wrongTimestamp;
+          const elapsed = this.wrongFlash.elapsedMs(timeMs);
           rs.drawRetryRing(
             ctx,
             slot.x,
             slot.y,
             Math.min(slot.hitW, slot.hitH) / 2 + 4,
-            elapsed / 400
+            elapsed / WRONG_FLASH_MS
           );
         }
         return;
@@ -598,9 +599,9 @@ export class GT008Session extends TemplateGameSession<
         return;
       }
       const isWrong = item.item_id === this.wrongItemId;
-      const elapsed = isWrong ? timeMs - this.wrongTimestamp : 0;
+      const elapsed = isWrong ? this.wrongFlash.elapsedMs(timeMs) : 0;
       const shakeX =
-        isWrong && elapsed < 400 && !rs.reducedMotion
+        isWrong && elapsed < WRONG_FLASH_MS && !rs.reducedMotion
           ? Math.sin(elapsed * 0.05) * 4
           : 0;
       const drawSlot = shakeX === 0 ? slot : { ...slot, x: slot.x + shakeX };
@@ -612,13 +613,13 @@ export class GT008Session extends TemplateGameSession<
         state: this.resolveSourceItemState(item.item_id),
       });
 
-      if (isWrong && elapsed < 400) {
+      if (isWrong && elapsed < WRONG_FLASH_MS) {
         rs.drawRetryRing(
           ctx,
           slot.x + shakeX,
           slot.y,
           Math.min(slot.hitW, slot.hitH) / 2 + 4,
-          elapsed / 400
+          elapsed / WRONG_FLASH_MS
         );
       }
     });

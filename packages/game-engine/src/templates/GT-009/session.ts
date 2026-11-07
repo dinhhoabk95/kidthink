@@ -29,6 +29,7 @@ import {
   MontessoriExploreTracker,
 } from "#src/systems/montessori-explore-system";
 import type { RenderSystem } from "#src/systems/render-system";
+import { WRONG_FLASH_MS, WrongFlash } from "#src/systems/wrong-flash";
 import { survivingCandidates } from "./deduction.js";
 import type { GT009Content, GT009Difficulty } from "./template.js";
 
@@ -54,7 +55,7 @@ export class GT009Session extends TemplateGameSession<
   private readonly revealedClueIds: string[] = [];
   private readonly eliminatedIds: Set<string> = new Set();
   private wrongCandidateId: string | null = null;
-  private wrongTimestamp = 0;
+  private readonly wrongFlash = new WrongFlash();
   private lastFrameMs = 0;
 
   setupEntities(): void {
@@ -63,7 +64,7 @@ export class GT009Session extends TemplateGameSession<
     this.revealedClueIds.length = 0;
     this.eliminatedIds.clear();
     this.wrongCandidateId = null;
-    this.wrongTimestamp = 0;
+    this.wrongFlash.clear();
     this.lastFrameMs = 0;
     this.isWon = false;
   }
@@ -102,10 +103,7 @@ export class GT009Session extends TemplateGameSession<
   update(deltaMs: number): void {
     this.lastFrameMs += deltaMs;
     this.exploreTracker.tick(deltaMs);
-    if (
-      this.wrongCandidateId &&
-      this.lastFrameMs - this.wrongTimestamp >= 400
-    ) {
+    if (this.wrongCandidateId && this.wrongFlash.hasExpired(this.lastFrameMs)) {
       this.setRenderItemState(this.wrongCandidateId, "idle");
       this.wrongCandidateId = null;
     }
@@ -215,7 +213,7 @@ export class GT009Session extends TemplateGameSession<
   onCandidateSelected(candidateId: string): void {
     if (candidateId !== this.content.answer_candidate_id) {
       this.wrongCandidateId = candidateId;
-      this.wrongTimestamp = this.lastFrameMs;
+      this.wrongFlash.trigger(this.lastFrameMs);
       this.setRenderItemState(candidateId, "wrong");
       const violatedClue = this.findViolatedClueForCandidate(candidateId);
       const reasonVi = violatedClue
@@ -428,7 +426,7 @@ export class GT009Session extends TemplateGameSession<
     timeMs: number
   ): void {
     this.lastFrameMs = timeMs;
-    if (this.wrongCandidateId && timeMs - this.wrongTimestamp >= 400) {
+    if (this.wrongCandidateId && this.wrongFlash.hasExpired(timeMs)) {
       this.setRenderItemState(this.wrongCandidateId, "idle");
       this.wrongCandidateId = null;
     }
@@ -511,14 +509,14 @@ export class GT009Session extends TemplateGameSession<
     }
     ctx.restore();
     if (cand.candidate_id === this.wrongCandidateId) {
-      const elapsed = timeMs - this.wrongTimestamp;
-      if (elapsed < 400) {
+      const elapsed = this.wrongFlash.elapsedMs(timeMs);
+      if (elapsed < WRONG_FLASH_MS) {
         rs.drawRetryRing(
           ctx,
           slot.x,
           slot.y,
           Math.min(slot.hitW, slot.hitH) / 2 + 4,
-          elapsed / 400
+          elapsed / WRONG_FLASH_MS
         );
       }
     }

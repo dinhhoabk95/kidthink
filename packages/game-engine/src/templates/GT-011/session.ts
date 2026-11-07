@@ -37,6 +37,7 @@ import {
   MontessoriExploreTracker,
 } from "#src/systems/montessori-explore-system";
 import type { RenderSystem } from "#src/systems/render-system";
+import { WRONG_FLASH_MS, WrongFlash } from "#src/systems/wrong-flash";
 import { colMatches, findBlankCell, rowMatches } from "./matrix-rule.js";
 import type { GT011Content, GT011Difficulty } from "./template.js";
 
@@ -84,7 +85,7 @@ export class GT011Session extends TemplateGameSession<
   });
   private preview: MatrixPreview | null = null;
   private wrongOptionId: string | null = null;
-  private wrongTimestamp = 0;
+  private readonly wrongFlash = new WrongFlash();
   private lastFrameMs = 0;
 
   setupEntities(): void {
@@ -92,7 +93,7 @@ export class GT011Session extends TemplateGameSession<
     this.exploreTracker.reset(false);
     this.preview = null;
     this.wrongOptionId = null;
-    this.wrongTimestamp = 0;
+    this.wrongFlash.clear();
     this.lastFrameMs = 0;
     this.isWon = false;
   }
@@ -116,12 +117,12 @@ export class GT011Session extends TemplateGameSession<
   update(deltaMs: number): void {
     this.lastFrameMs += deltaMs;
     this.exploreTracker.tick(deltaMs);
-    if (this.wrongOptionId && this.lastFrameMs - this.wrongTimestamp >= 400) {
+    if (this.wrongOptionId && this.wrongFlash.hasExpired(this.lastFrameMs)) {
       this.setRenderItemState(this.wrongOptionId, "idle");
       this.mechanic.reset();
       this.preview = null;
       this.wrongOptionId = null;
-      this.wrongTimestamp = 0;
+      this.wrongFlash.clear();
     }
   }
 
@@ -340,11 +341,11 @@ export class GT011Session extends TemplateGameSession<
     this.mechanic.select(optionId);
     if (option.is_correct) {
       this.wrongOptionId = null;
-      this.wrongTimestamp = 0;
+      this.wrongFlash.clear();
       this.exploreTracker.recordCorrectAttempt();
     } else {
       this.wrongOptionId = optionId;
-      this.wrongTimestamp = this.lastFrameMs;
+      this.wrongFlash.trigger(this.lastFrameMs);
       this.setRenderItemState(optionId, "wrong");
       const rMatch = rowMatches(this.content.matrix, option.asset);
       const cMatch = colMatches(this.content.matrix, option.asset);
@@ -411,12 +412,12 @@ export class GT011Session extends TemplateGameSession<
     timeMs: number
   ): void {
     this.lastFrameMs = timeMs;
-    if (this.wrongOptionId && timeMs - this.wrongTimestamp >= 400) {
+    if (this.wrongOptionId && this.wrongFlash.hasExpired(timeMs)) {
       this.setRenderItemState(this.wrongOptionId, "idle");
       this.mechanic.reset();
       this.preview = null;
       this.wrongOptionId = null;
-      this.wrongTimestamp = 0;
+      this.wrongFlash.clear();
     }
 
     drawSceneBackground(ctx, rs, this.themeId);
@@ -482,15 +483,15 @@ export class GT011Session extends TemplateGameSession<
         state,
       });
 
-      if (opt.option_id === this.wrongOptionId && this.wrongTimestamp > 0) {
-        const elapsed = timeMs - this.wrongTimestamp;
-        if (elapsed < 400) {
+      if (opt.option_id === this.wrongOptionId && this.wrongFlash.started) {
+        const elapsed = this.wrongFlash.elapsedMs(timeMs);
+        if (elapsed < WRONG_FLASH_MS) {
           rs.drawRetryRing(
             ctx,
             slot.x,
             slot.y,
             Math.min(slot.hitW, slot.hitH) / 2 + 4,
-            elapsed / 400
+            elapsed / WRONG_FLASH_MS
           );
         }
       }
