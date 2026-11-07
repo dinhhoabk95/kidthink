@@ -13,7 +13,7 @@ import type {
   Gesture,
   ViewEntity,
 } from "#src/interaction";
-import { resolveAssetLabels } from "#src/labels/spoken-keyword.js";
+import { resolveAssetSpeech } from "#src/labels/spoken-keyword.js";
 import { resolveTouchFloor } from "#src/layout/constants";
 import { hasHitOverlap } from "#src/layout/hit-overlap";
 import { TAP_TOLERANCE_PX } from "#src/layout/hit-test.js";
@@ -28,9 +28,9 @@ import type { Slot } from "#src/layout/types";
 import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
 import {
   drawEmptyTargetSlot,
+  drawGhostAssetInSlot,
   drawSceneBackground,
   drawSlotItem,
-  drawSlotLabel,
   drawWoodenTokenDock,
   slotAtPoint,
 } from "#src/render/index.js";
@@ -54,9 +54,8 @@ const MIN_SNAP_RADIUS_PX = 64;
 /** Cạnh ô mỏ neo lớn nhất trên sân khấu. */
 const ANCHOR_CELL_MAX_PX = 96;
 
-/** Bước co ô mỏ neo khi trải mô hình, và hàng nhãn dưới mỗi ô. */
+/** Bước co ô mỏ neo khi trải mô hình. */
 const SHAPE_CELL_STEP_PX = 8;
-const ANCHOR_LABEL_ROW_PX = 24;
 /** Đệm tối thiểu giữa ô mỏ neo ngoài cùng và mép sân khấu. */
 const MODEL_EDGE_PAD_PX = 4;
 /** Mô hình được kéo giãn một trục nhiều nhất bấy nhiêu lần so với trục kia. */
@@ -127,8 +126,9 @@ export class GT023Session extends TemplateGameSession<
     return this.content.parts.length;
   }
 
+  /** Tên mảnh chỉ đọc thành tiếng, không vẽ chữ dưới mảnh (`BR-E023-06`). */
   override get trayHasLabels(): boolean {
-    return this.content.parts.some((part) => Boolean(part.name));
+    return false;
   }
   override readonly usesPromptZone = true;
 
@@ -420,7 +420,7 @@ export class GT023Session extends TemplateGameSession<
       : anchor.anchor_id;
     usedIds.add(id);
     const labelProps = anchor.label
-      ? resolveAssetLabels({ kind: "text", text: anchor.label })
+      ? resolveAssetSpeech({ kind: "text", text: anchor.label })
       : {};
     const slot = pickTrayZones(this.stageRect, this.trayRect)
       ? this.targetSlots[index]
@@ -487,9 +487,9 @@ export class GT023Session extends TemplateGameSession<
         ? `part:${part.part_id}`
         : part.part_id;
       usedIds.add(id);
-      const assetLabels = resolveAssetLabels(part.asset);
+      const assetLabels = resolveAssetSpeech(part.asset);
       const nameLabels = part.name
-        ? resolveAssetLabels({ kind: "text", text: part.name })
+        ? resolveAssetSpeech({ kind: "text", text: part.name })
         : {};
       entities.push({
         id,
@@ -584,12 +584,11 @@ export class GT023Session extends TemplateGameSession<
     const midY = (Math.max(...ys) + Math.min(...ys)) / 2;
     const centerX = stage.x + stage.w / 2;
     const centerY = stage.y + stage.h / 2;
-    const labelRow = anchors.some((a) => a.label) ? ANCHOR_LABEL_ROW_PX : 0;
     // Thử ô lớn trước, co dần tới sàn chạm: ô nhỏ hơn thì mô hình trải rộng hơn.
     for (let size = cell.hitW; size >= touchFloor; size -= SHAPE_CELL_STEP_PX) {
       const room = {
         w: stage.w - 2 * MODEL_EDGE_PAD_PX - size,
-        h: stage.h - 2 * MODEL_EDGE_PAD_PX - size - labelRow,
+        h: stage.h - 2 * MODEL_EDGE_PAD_PX - size,
       };
       const scales = modelScales(spanX, spanY, room);
       if (!scales) {
@@ -604,14 +603,9 @@ export class GT023Session extends TemplateGameSession<
         hitW: size,
         hitH: size,
         x: Math.round(centerX + (a.x - midX) * scaleX),
-        y: Math.round(centerY + (a.y - midY) * scaleY - labelRow / 2),
+        y: Math.round(centerY + (a.y - midY) * scaleY),
       }));
-      // Nhãn nằm dưới ô: vùng cần chừa cao thêm một hàng nhãn.
-      const spaced = shaped.map((slot) => ({
-        ...slot,
-        hitH: slot.hitH + labelRow,
-      }));
-      if (!hasHitOverlap(spaced)) {
+      if (!hasHitOverlap(shaped)) {
         return shaped;
       }
     }
@@ -635,7 +629,7 @@ export class GT023Session extends TemplateGameSession<
         touchFloor,
         maxCell: { w: ANCHOR_CELL_MAX_PX, h: ANCHOR_CELL_MAX_PX },
         role: "target",
-        hasLabels: this.content.anchors.some((anchor) => Boolean(anchor.label)),
+        hasLabels: false,
         firstIndex: parts.length,
       });
       return [
@@ -688,9 +682,12 @@ export class GT023Session extends TemplateGameSession<
       const part = partId ? partById.get(partId) : undefined;
       if (!part) {
         drawEmptyTargetSlot(ctx, slot);
-        if (anchor.label) {
-          drawSlotLabel(ctx, anchor.label, slot, rs);
-        }
+        // Bóng mờ của mảnh ô này nhận thay cho nhãn "Khung n" (`BR-E023-06`).
+        drawGhostAssetInSlot(
+          ctx,
+          partById.get(anchor.accepted_part_id)?.asset,
+          slot
+        );
         continue;
       }
       drawSlotItem(ctx, rs, slot, {
@@ -716,7 +713,6 @@ export class GT023Session extends TemplateGameSession<
       drawSlotItem(ctx, rs, drawSlot, {
         id: part.part_id,
         asset: part.asset,
-        label: part.name,
         state: this.resolveSourcePartState(part.part_id),
       });
 
