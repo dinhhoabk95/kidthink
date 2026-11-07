@@ -28,6 +28,7 @@ import {
   drawWoodenTokenDock,
   type ItemVisualState,
 } from "#src/render/index.js";
+import type { MascotPose } from "#src/render/mascot";
 import { deriveStream } from "#src/rng/mulberry32";
 import { shuffle } from "#src/rng/shuffle";
 import type { DegradationState } from "#src/systems/degradation";
@@ -47,6 +48,13 @@ const LEGACY_BUCKET_HIT: MinHitSize = { w: 140, h: 100 };
 /** Nhịp hổ phách tạm thời khi phân loại nhầm rổ — tự tắt sau 260ms. */
 const WRONG_FEEDBACK_MS = 260;
 
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E004-04`, `BR-FBK-16`). */
+export const GT004_STORY_LINE =
+  "Cún Con đang xếp gọn đồ của mình, bé giúp Cún Con xếp mỗi bạn vào đúng chỗ nhé!";
+
+/** Mascot vui hoặc ngạc nhiên ngắn sau mỗi lần xếp (`BR-E004-04`). */
+export const GT004_REACTION_MS = 1500;
+
 export class GT004Session extends TemplateGameSession<
   GT004Content,
   GT004Difficulty
@@ -61,6 +69,8 @@ export class GT004Session extends TemplateGameSession<
   }[] = [];
   private readonly mechanic = new PlacementMechanic();
   private readonly transientStateMs: Map<string, number> = new Map();
+  private reactionPose: MascotPose | null = null;
+  private reactionRemainingMs = 0;
 
   /** Vật nằm trong khay, rổ đứng trên sân khấu (`BR-PSZ-01`). */
   override readonly needsTray = true;
@@ -75,6 +85,8 @@ export class GT004Session extends TemplateGameSession<
     this.mechanic.reset();
     this.renderItemStates.clear();
     this.transientStateMs.clear();
+    this.reactionPose = null;
+    this.reactionRemainingMs = 0;
     this.isWon = false;
     this.placementTargets = this.content.items.map((i) => ({
       id: i.item_id,
@@ -131,16 +143,41 @@ export class GT004Session extends TemplateGameSession<
       this.mechanic.place(itemId, groupId);
       this.renderItemStates.set(itemId, "correct");
       this.transientStateMs.delete(itemId);
+      this.queueSfx("lid_click");
+      this.react("happy");
       if (this.checkWinCondition()) {
         this.winSession();
       }
     } else {
       this.renderItemStates.set(itemId, "wrong");
       this.transientStateMs.set(itemId, WRONG_FEEDBACK_MS);
+      this.react("wonder");
     }
   }
 
+  private react(pose: MascotPose): void {
+    this.reactionPose = pose;
+    this.reactionRemainingMs = GT004_REACTION_MS;
+  }
+
+  override storyLine(): string {
+    return GT004_STORY_LINE;
+  }
+
+  /** Happy sau vật đúng, wonder sau vật sai, đều ngắn (`BR-E004-04`). */
+  override mascotMood(): MascotPose | null {
+    return this.reactionRemainingMs > 0 && !this.isWon
+      ? this.reactionPose
+      : null;
+  }
+
   update(deltaMs: number): void {
+    if (this.reactionRemainingMs > 0) {
+      this.reactionRemainingMs = Math.max(
+        0,
+        this.reactionRemainingMs - deltaMs
+      );
+    }
     if (this.transientStateMs.size === 0) {
       return;
     }

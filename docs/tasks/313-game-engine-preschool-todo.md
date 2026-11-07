@@ -99,7 +99,8 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
   - [x] 026 (khung chuyện đèn xanh/đèn đỏ, `go_chime` khi chạm đúng và `stop_hum` khi kìm được, mascot `cheer`/`freeze` sau kết quả lượt — không báo trước đáp án, BR-E026-11)
   - [x] 037 (khung chuyện Gấu Con nhặt đồ bỏ vào lọ, tiếng leng keng `star_collect` khi tìm ra ô đích, mascot `cheer` 1200 ms, BR-E037-10)
   - [ ] Đợt 5A (còn lại) — cần asset thu/vẽ thật: (1) giọng thu thật cho sáu khung chuyện (hiện chỉ TTS, `BR-FBK-16`); (2) sprite SVG riêng cho `wonder`/`freeze`/`cheer` (hiện dùng chung `thinking`/`waiting`/`jumping`, `MASCOT_SPRITE_FILES`); (3) GT-037 lọ đầy dần/ngôi sao bay vào lọ; (4) GT-026 vẽ đèn giao thông thật thay kích thích emoji; (5) GT-020 thẻ lật 3D và GT-025 vòng khoanh lấp lánh quanh điểm tìm ra; (6) GT-003 rổ rung nhẹ khi vật rơi vào. Chưa kiểm tay trên trình duyệt (run skill) và `preview-sandbox.vue` chưa nối cue/story
-- [ ] Khác biệt hoá cặp trùng: 003↔004, 022/025/037, 028/029/031, 001/012/018
+- [ ] Đợt 5B — khác biệt hoá cặp trùng (mỗi game: khung chuyện + cue âm + mascot, spec ghi điểm khác game cùng cặp)
+  - [x] 004 (khung chuyện Cún Con xếp gọn đồ, tiếng nắp hộp `lid_click`, mascot `happy`/`wonder` 1500 ms mỗi lần xếp; khác 003 ở khung/âm/nhịp mascot, BR-E004-04)
 - [ ] Các game còn lại theo cột "Hướng đặc sắc" trong plan §1.3
 - [ ] 030 (còn lại) — dải đo vẫn là lưới ô có thể xuống nhiều hàng ở khung hẹp, chưa phải một dải liền kéo tự do theo thước; `representation: number-rod` chưa hiện khe/chồng. Cần thiết kế lại zone-layout (Phase 5 "Dải kéo tự do có snap")
 - [ ] 031 (còn lại) — mệnh giá phi thực tế ("3đ") và xu chỉ khác số: thuộc nội dung/Phase 4-5 (xu quả kích cỡ/màu theo giá trị, hạt Montessori); nhãn "Đã góp: x / y đ" đã thay bằng hàng chấm xu lấp dần (đợt 4B, BR-E031-07)

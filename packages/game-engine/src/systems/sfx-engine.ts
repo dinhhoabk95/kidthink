@@ -20,7 +20,8 @@ export type SFXType =
   | "sparkle_find"
   | "go_chime"
   | "stop_hum"
-  | "star_collect";
+  | "star_collect"
+  | "lid_click";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -220,6 +221,26 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
     durationSec,
     rampOutSec: 0.07,
   })),
+
+  /** GT-004: nắp hộp đóng — "cạch" khô hai nhịp, cao hơn tiếng bịch của GT-003 (`BR-E004-04`). */
+  lid_click: [
+    {
+      delaySec: 0,
+      type: "triangle",
+      freq: 700,
+      volume: 0.1,
+      durationSec: 0.07,
+      rampOutSec: 0.04,
+    },
+    {
+      delaySec: 0.07,
+      type: "triangle",
+      freq: 940,
+      volume: 0.09,
+      durationSec: 0.08,
+      rampOutSec: 0.04,
+    },
+  ],
 
   /** Grand fanfare, level completion only (BR-ENG-08). */
   level_celebrate: FANFARE_NOTES.map((freq, i) => {
