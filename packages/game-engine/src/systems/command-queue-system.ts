@@ -10,9 +10,33 @@
  * - BR-E035-04: Cấm lồng loop trong loop.
  */
 
-export type CommandType = "forward" | "turn_left" | "turn_right" | "loop";
+/** Lệnh tuyệt đối: đi một ô theo màn hình, không phụ thuộc hướng robot (`BR-E035-15`). */
+export type AbsoluteCommandType = "go_up" | "go_right" | "go_down" | "go_left";
+
+export type CommandType =
+  | "forward"
+  | "turn_left"
+  | "turn_right"
+  | "loop"
+  | AbsoluteCommandType;
 
 type FacingDirection = "up" | "right" | "down" | "left";
+
+/** Hướng màn hình của lệnh nếu là lệnh tuyệt đối, ngược lại `null` (`BR-E035-15`). */
+export function absoluteFacing(command: CommandType): FacingDirection | null {
+  switch (command) {
+    case "go_up":
+      return "up";
+    case "go_right":
+      return "right";
+    case "go_down":
+      return "down";
+    case "go_left":
+      return "left";
+    default:
+      return null;
+  }
+}
 
 interface GridCoord {
   col: number;
@@ -154,7 +178,7 @@ export function expandCommands(commands: readonly CommandItem[]): {
 }
 
 function executeForwardStep(
-  currentState: RobotState,
+  stateBefore: RobotState,
   cmdType: CommandType,
   stepIndex: number,
   config: CommandQueueConfig,
@@ -166,6 +190,10 @@ function executeForwardStep(
   nextState: RobotState;
   stepLog?: ExecutionStepLog;
 } {
+  // Lệnh tuyệt đối quay về hướng màn hình rồi mới đi (`BR-E035-15`).
+  const facing = absoluteFacing(cmdType);
+  const currentState: RobotState =
+    facing === null ? stateBefore : { ...stateBefore, facing };
   const nextPos = moveForward(currentState);
 
   if (
@@ -215,7 +243,7 @@ function executeForwardStep(
   const stepLog: ExecutionStepLog = {
     stepIndex,
     command: cmdType,
-    fromState: { ...currentState },
+    fromState: { ...stateBefore },
     toState: nextState,
     collectedId: collected,
   };
@@ -296,7 +324,8 @@ function runCommandLoop(
         fromState,
         toState: currentState,
       });
-    } else if (cmdType === "forward") {
+    } else if (cmdType !== "loop") {
+      // `forward` đi theo hướng robot; lệnh tuyệt đối quay về hướng màn hình rồi đi.
       const { errorResult, nextState, stepLog } = executeForwardStep(
         currentState,
         cmdType,

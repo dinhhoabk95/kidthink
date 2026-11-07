@@ -487,6 +487,12 @@ export type {
   GT035Content,
   GT035Difficulty,
 } from "./templates/GT-035/template.js";
+export {
+  GT035CommandSchema,
+  GT035ContentSchema,
+  GT035DifficultySchema,
+  isSolvableWithinMaxCommands as isGT035SolvableWithinMaxCommands,
+} from "./templates/GT-035/template.js";
 export type {
   GT036Content,
   GT036Difficulty,

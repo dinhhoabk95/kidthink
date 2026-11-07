@@ -5,6 +5,21 @@ const NON_NEGATIVE_INT = z.number().int().nonnegative();
 const CONTENT_ID = z.string().regex(/^[a-zA-Z0-9_.:-]{1,64}$/);
 /** Khuôn một vòng không phát `round_index`; khuôn nhiều vòng thì có. */
 const OPTIONAL_ROUND_INDEX = NON_NEGATIVE_INT.optional();
+/**
+ * Lệnh GT-035 trong `command_added`/`command_removed`: hệ tương đối, `loop` và hệ
+ * tuyệt đối `go_*` (`BR-E035-15`). Phải trùng `GT035CommandSchema` của engine —
+ * test `event-catalog` đo.
+ */
+const GT035_COMMAND = z.enum([
+  "forward",
+  "turn_left",
+  "turn_right",
+  "loop",
+  "go_up",
+  "go_right",
+  "go_down",
+  "go_left",
+]);
 
 export const EVENT_PAYLOAD_SCHEMAS: Readonly<Record<string, z.AnyZodObject>> = {
   game_started: z.object({
@@ -467,12 +482,12 @@ export const EVENT_PAYLOAD_SCHEMAS: Readonly<Record<string, z.AnyZodObject>> = {
     round_index: OPTIONAL_ROUND_INDEX,
   }),
   command_added: z.object({
-    command: z.enum(["forward", "turn_left", "turn_right", "loop"]),
+    command: GT035_COMMAND,
     command_index: NON_NEGATIVE_INT,
     round_index: OPTIONAL_ROUND_INDEX,
   }),
   command_removed: z.object({
-    command: z.enum(["forward", "turn_left", "turn_right", "loop"]),
+    command: GT035_COMMAND,
     command_index: NON_NEGATIVE_INT,
     round_index: OPTIONAL_ROUND_INDEX,
   }),

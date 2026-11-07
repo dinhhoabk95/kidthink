@@ -2,6 +2,7 @@ import { z } from "zod";
 import { assetSchema } from "#src/contracts/shared-fields";
 import { defineTemplate, STANDARD_SCORING } from "#src/contracts/types";
 import {
+  absoluteFacing,
   findShortestSolution,
   MAX_CODE_COMMANDS,
 } from "#src/systems/command-queue-system";
@@ -11,6 +12,16 @@ export const GT035CommandSchema = z.enum([
   "turn_left",
   "turn_right",
   "loop",
+  "go_up",
+  "go_right",
+  "go_down",
+  "go_left",
+]);
+
+const RELATIVE_COMMANDS: ReadonlySet<string> = new Set([
+  "forward",
+  "turn_left",
+  "turn_right",
 ]);
 
 export const GT035FacingSchema = z.enum(["up", "right", "down", "left"]);
@@ -91,6 +102,25 @@ export const GT035ContentSchema = z
       .min(1)
       .default(["forward", "turn_left", "turn_right", "loop"]),
   })
+  .refine(
+    (content) => {
+      const hasAbsolute = content.allowed_commands.some(
+        (c) => absoluteFacing(c) !== null
+      );
+      // Hệ tuyệt đối là bậc dễ: không trộn lệnh tương đối, không có `loop`
+      // (khay 5 thẻ chưa đo vừa sân khấu portrait, `BR-E035-07`).
+      return !(
+        hasAbsolute &&
+        content.allowed_commands.some(
+          (c) => c === "loop" || RELATIVE_COMMANDS.has(c)
+        )
+      );
+    },
+    {
+      message:
+        "BR-E035-15: Lệnh tuyệt đối (go_*) không đi cùng lệnh tương đối (forward, turn_left, turn_right) hay loop.",
+    }
+  )
   .refine(
     (content) => {
       if (

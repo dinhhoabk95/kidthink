@@ -89,7 +89,8 @@ function pickCollectibles(
 function tryGenerateCandidate(
   rng: Rng,
   goalInfo: { ref: string; name_vi: string },
-  colInfo: { ref: string; name_vi: string }
+  colInfo: { ref: string; name_vi: string },
+  absolute: boolean
 ): { content_pack: GT035Content; difficulty_params: GT035Difficulty } | null {
   const rows = 3 + rng.nextInt(2);
   const cols = 3 + rng.nextInt(2);
@@ -126,15 +127,17 @@ function tryGenerateCandidate(
     colInfo.ref
   );
 
-  const allowLoop = rng.nextInt(2) === 1;
-  const allowedCommands = allowLoop
-    ? [
-        "forward" as const,
-        "turn_left" as const,
-        "turn_right" as const,
-        "loop" as const,
-      ]
-    : ["forward" as const, "turn_left" as const, "turn_right" as const];
+  const allowLoop = !absolute && rng.nextInt(2) === 1;
+  let allowedCommands: GT035Content["allowed_commands"] = [
+    "forward",
+    "turn_left",
+    "turn_right",
+  ];
+  if (absolute) {
+    allowedCommands = ["go_up", "go_right", "go_down", "go_left"];
+  } else if (allowLoop) {
+    allowedCommands = ["forward", "turn_left", "turn_right", "loop"];
+  }
 
   const config = {
     rows,
@@ -148,6 +151,10 @@ function tryGenerateCandidate(
 
   const solution = findShortestSolution(config, allowedCommands);
   if (!solution || solution.length > 8) {
+    return null;
+  }
+  // Mục 14 của phiếu: level tuyệt đối phải đòi ít nhất hai hướng khác nhau.
+  if (absolute && new Set(solution.map((c) => c.type)).size < 2) {
     return null;
   }
 
@@ -181,7 +188,7 @@ export const GT035Generator: LevelGenerator = {
     what: ["space", "rule", "pattern"],
     theme: [...VALID_GENERATOR_THEMES],
   },
-  generate({ rng, age_band: _age_band, theme }) {
+  generate({ rng, age_band: _age_band, theme, escalation_step = 0 }) {
     const activeTheme = theme && THEME_GOALS[theme] ? theme : "space";
     const goalInfo = THEME_GOALS[activeTheme] ??
       THEME_GOALS.space ?? {
@@ -194,8 +201,11 @@ export const GT035Generator: LevelGenerator = {
         name_vi: "Ngôi sao",
       };
 
+    // Hệ lệnh theo bậc, không ngẫu nhiên (`BR-E035-15`): vòng đầu (bậc dễ) dùng
+    // mũi tên tuyệt đối theo màn hình; vòng leo thang mới sang lệnh tương đối.
+    const absolute = escalation_step === 0;
     for (let attempt = 0; attempt < 50; attempt++) {
-      const candidate = tryGenerateCandidate(rng, goalInfo, colInfo);
+      const candidate = tryGenerateCandidate(rng, goalInfo, colInfo, absolute);
       if (candidate) {
         return candidate;
       }
@@ -206,14 +216,17 @@ export const GT035Generator: LevelGenerator = {
       prompt: `Bé lập trình mũi tên để đưa robot về ${goalInfo.name_vi} nhé!`,
       grid: { rows: 3, cols: 3 },
       start: { col: 0, row: 0, facing: "right" },
+      // Hệ tuyệt đối: đích lệch một hàng để lời giải phải đổi hướng (mục 14).
       goal: {
         col: 2,
-        row: 0,
+        row: absolute ? 1 : 0,
         asset: { kind: "emoji", ref: goalInfo.ref },
       },
       obstacles: [],
       collectibles: [],
-      allowed_commands: ["forward", "turn_left", "turn_right"],
+      allowed_commands: absolute
+        ? ["go_up", "go_right", "go_down", "go_left"]
+        : ["forward", "turn_left", "turn_right"],
     };
 
     const fallbackDifficulty: GT035Difficulty = {

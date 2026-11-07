@@ -5,7 +5,7 @@ import {
   InvalidSequenceError,
   UnknownEventNameError,
 } from "@mindkid/errors/play";
-import { ALL_TEMPLATES } from "@mindkid/game-engine";
+import { ALL_TEMPLATES, GT035CommandSchema } from "@mindkid/game-engine";
 import { describe, expect, it } from "vitest";
 import {
   ALLOWED_EVENT_NAMES,
@@ -235,5 +235,22 @@ describe("Event Catalog Invariants Gates (Task #209 / #251)", () => {
       ALLOWED_EVENT_NAMES.has(ev)
     );
     expect(negativeMatches.length).toBe(0);
+  });
+
+  it("BR-E035-15: command_added/command_removed nhận đủ mọi lệnh GT-035, kể cả go_*", () => {
+    for (const name of ["command_added", "command_removed"]) {
+      const schema = EVENT_PAYLOAD_SCHEMAS[name];
+      expect(schema).toBeDefined();
+      for (const command of GT035CommandSchema.options) {
+        expect(
+          schema?.safeParse({ command, command_index: 0 }).success,
+          `${name} từ chối lệnh ${command}`
+        ).toBe(true);
+      }
+      // Ca âm: lệnh lạ vẫn bị từ chối.
+      expect(
+        schema?.safeParse({ command: "teleport", command_index: 0 }).success
+      ).toBe(false);
+    }
   });
 });

@@ -29,6 +29,7 @@ import {
 } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
 import {
+  absoluteFacing,
   type CommandItem,
   type CommandQueueConfig,
   CommandQueueSystem,
@@ -66,13 +67,25 @@ const COMMAND_SPOKEN: Record<CommandType, string> = {
   turn_left: "Xoay trái",
   turn_right: "Xoay phải",
   loop: "Lặp 2x",
+  go_up: "Đi lên",
+  go_right: "Đi sang phải",
+  go_down: "Đi xuống",
+  go_left: "Đi sang trái",
 };
 
+/**
+ * Lệnh xoay dùng mũi tên cong (↩️ ↪️) để không trùng hình với mũi tên thẳng của lệnh
+ * tuyệt đối `go_left`/`go_right` (`BR-E035-10`, `BR-E035-15`).
+ */
 const COMMAND_ICONS: Record<CommandType, string> = {
   forward: "⬆️",
-  turn_left: "⬅️",
-  turn_right: "➡️",
+  turn_left: "↩️",
+  turn_right: "↪️",
   loop: "🔁",
+  go_up: "⬆️",
+  go_right: "➡️",
+  go_down: "⬇️",
+  go_left: "⬅️",
 };
 
 const COMMAND_ASSETS: Record<
@@ -83,6 +96,10 @@ const COMMAND_ASSETS: Record<
   turn_left: { kind: "emoji", ref: COMMAND_ICONS.turn_left },
   turn_right: { kind: "emoji", ref: COMMAND_ICONS.turn_right },
   loop: { kind: "emoji", ref: COMMAND_ICONS.loop },
+  go_up: { kind: "emoji", ref: COMMAND_ICONS.go_up },
+  go_right: { kind: "emoji", ref: COMMAND_ICONS.go_right },
+  go_down: { kind: "emoji", ref: COMMAND_ICONS.go_down },
+  go_left: { kind: "emoji", ref: COMMAND_ICONS.go_left },
 };
 
 const ROBOT_ASSET = { kind: "emoji", ref: "🤖" } as const;
@@ -444,7 +461,10 @@ export class GT035Session extends TemplateGameSession<
     const order: RobotState["facing"][] = ["up", "right", "down", "left"];
     let idx = order.indexOf(this.content.start.facing);
     for (const cmd of expandCommands(this.queueSystem.queue).expanded) {
-      if (cmd === "turn_right") {
+      const absolute = absoluteFacing(cmd);
+      if (absolute !== null) {
+        idx = order.indexOf(absolute);
+      } else if (cmd === "turn_right") {
         idx = (idx + 1) % 4;
       } else if (cmd === "turn_left") {
         idx = (idx + 3) % 4;
