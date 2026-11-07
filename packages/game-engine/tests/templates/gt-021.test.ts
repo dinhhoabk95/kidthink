@@ -1,8 +1,11 @@
 import { getByGlyph } from "@mindkid/emoji";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { TAP_TOLERANCE_PX } from "#src/layout/hit-test";
+import { RenderSystem } from "#src/systems/render-system";
 import { GT021_FIXTURES } from "#src/templates/GT-021/fixtures";
 import { GT021Session } from "#src/templates/GT-021/session";
+
+import { createFakeCanvas } from "../gates/fake-canvas.ts";
 
 describe("GT-021 — dung sai chạm, nhãn đọc và đối xứng qua trục (BR-E021)", () => {
   const fixture = GT021_FIXTURES[0];
@@ -100,5 +103,56 @@ describe("GT-021 — dung sai chạm, nhãn đọc và đối xứng qua trục 
         ? getByGlyph(opt0.asset.ref)?.name
         : undefined;
     expect(sourceEntity?.spokenLabel).toBe(expectedOptName);
+  });
+});
+
+describe("GT-021 — nửa phản chiếu vẽ lật gương thật (BR-E021-05)", () => {
+  function flipCalls(axis: "vertical" | "horizontal"): {
+    before: number[][];
+    after: number[][];
+  } {
+    const fixture = GT021_FIXTURES[0];
+    if (!fixture) {
+      throw new Error("Fixture GT-021 not found");
+    }
+    const session = new GT021Session(
+      { ...fixture.content, axis },
+      fixture.difficulty,
+      1
+    );
+    session.prepareRound("4-5");
+    const ctx = createFakeCanvas(960, 540).getContext("2d");
+    if (!ctx) {
+      throw new Error("Cannot get context from fake canvas");
+    }
+    const calls: number[][] = [];
+    vi.spyOn(ctx, "scale").mockImplementation((x, y) => {
+      calls.push([x, y]);
+    });
+    const rs = new RenderSystem();
+    session.render(ctx as CanvasRenderingContext2D, rs, 0);
+    const isFlip = ([x, y]: number[]) => x === -1 || y === -1;
+    const before = calls.filter(isFlip);
+    const target = fixture.content.target_slots[0];
+    const opt = fixture.content.options.find(
+      (o) => o.asset_ref === target?.expected_asset_ref
+    );
+    if (!(target && opt)) {
+      throw new Error("Thiếu ô đích hoặc mảnh đúng");
+    }
+    session.onPlaceOption(opt.item_id, target.slot_id);
+    calls.length = 0;
+    session.render(ctx as CanvasRenderingContext2D, rs, 16);
+    return { before, after: calls.filter(isFlip) };
+  }
+
+  it("trục dọc: vật ở ô đích lật trái-phải, ô trống không lật", () => {
+    const { before, after } = flipCalls("vertical");
+    expect(before).toEqual([]);
+    expect(after).toEqual([[-1, 1]]);
+  });
+
+  it("trục ngang: vật ở ô đích lật trên-dưới", () => {
+    expect(flipCalls("horizontal").after).toEqual([[1, -1]]);
   });
 });

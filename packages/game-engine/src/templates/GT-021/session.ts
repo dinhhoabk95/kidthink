@@ -29,6 +29,7 @@ import {
   drawButterflyWingsBoard,
   drawEmptyTargetSlot,
   drawMirrorAxis,
+  drawMirroredSlotItem,
   drawSceneBackground,
   drawSlotItem,
   drawWoodenTokenDock,
@@ -546,7 +547,8 @@ export class GT021Session extends TemplateGameSession<
         return;
       }
       const isWrong = placedRef !== target.expected_asset_ref;
-      drawSlotItem(
+      // Nửa phản chiếu: vật đặt vào ô đích hiện lật gương qua trục (`BR-E021-05`).
+      drawMirroredSlotItem(
         ctx,
         rs,
         slot,
@@ -555,7 +557,7 @@ export class GT021Session extends TemplateGameSession<
           asset: assetByRef.get(placedRef),
           state: isWrong ? "wrong" : "correct",
         },
-        "square"
+        this.content.axis
       );
       if (isWrong && this.wrongPlacementTimerMs > 0) {
         rs.drawRetryRing(

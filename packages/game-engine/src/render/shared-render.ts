@@ -861,6 +861,43 @@ export function drawSlotItem(
   }
 }
 
+/**
+ * Một vật thể được vẽ **lật gương** qua trục: thân clay đứng yên, nội dung
+ * (glyph hoặc ô giữ chỗ) lật quanh tâm slot — trục `vertical` lật trái-phải,
+ * `horizontal` lật trên-dưới. Dùng cho nửa phản chiếu của bài đối xứng, để hình
+ * bất đối xứng (giày, khủng long) hiện đúng ảnh trong gương chứ không là bản sao.
+ */
+export function drawMirroredSlotItem(
+  ctx: CanvasRenderingContext2D,
+  rs: RenderSystem,
+  slot: Slot,
+  item: RenderItem,
+  axis: "vertical" | "horizontal",
+  shape: "circle" | "square" = "square"
+): void {
+  const state = item.state ?? "idle";
+  const { fill, border } = getColorsForState(state);
+  const radius = Math.min(slot.w, slot.h) / 2;
+  rs.drawClayBody(ctx, slot.x, slot.y, radius, fill, border, shape);
+
+  ctx.save();
+  ctx.translate(slot.x, slot.y);
+  if (axis === "vertical") {
+    ctx.scale(-1, 1);
+  } else {
+    ctx.scale(1, -1);
+  }
+  ctx.translate(-slot.x, -slot.y);
+  if (!drawAssetInSlot(ctx, item.asset, slot)) {
+    drawPlaceholderBox(ctx, slot);
+  }
+  ctx.restore();
+
+  if (state === "correct") {
+    drawCheckMark(ctx, slot);
+  }
+}
+
 /** Ghép danh sách item với danh sách slot theo chỉ số, bỏ qua phần thừa. */
 export function drawSlotItems(
   ctx: CanvasRenderingContext2D,
