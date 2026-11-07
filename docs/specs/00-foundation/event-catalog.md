@@ -185,6 +185,12 @@ set một vòng — xem `BR-RSP-02` ở [`round-sequence-play.md`](../04-play/ro
 | `intro_echo_started` | `{ step_id, target_asset_id, tts_used }` | `GT-000` |
 | `intro_echo_completed` | `{ step_id, target_asset_id, replay_count }` | `GT-000` |
 | `tts_unavailable` | `{ lang }` | `GT-000` |
+| `control_of_error` | `{ micro_sandbox?, ... }` — nhịp kiểm lỗi Montessori khi bé chọn/nộp chưa đúng; field riêng theo khuôn (mọi field tuỳ chọn): `mismatch_index` (`GT-006`) · `option_id`, `actual_sum`, `expected_whole`, `remaining` (`GT-007`) · `candidate_id`, `violated_clue_id` (`GT-009`) · `selected_value`, `expected_value` (`GT-010`) · `option_id`, `row_matches`, `col_matches` (`GT-011`) · `side: "left"\|"right"`, `left_weight`, `right_weight` (`GT-014`) · `row`, `col`, `symbol_id` (`GT-015`) · `mode: "read"\|"set"\|"match"`, `chosen_time`, `current_time`, `target_time`, `card_id`, `card_time`, `expected_time` (`GT-016`) · `current_total`, `target_total` (`GT-028`). Giờ (`*_time`) luôn dạng `HH:MM`; mã (`*_id`) theo khuôn mã nội dung (`BR-EVT-02`). Một schema phẳng toàn field tuỳ chọn thay vì union theo khuôn: payload không mang trường nhận diện khuôn (khuôn đã nằm ở phiên), và `cleanEventPayload` cần một `z.object` để `.partial()`; hợp đồng field theo từng lời gọi do cổng `engine-event-contract` đo | `GT-006` · `GT-007` · `GT-009` · `GT-010` · `GT-011` · `GT-014` · `GT-015` · `GT-016` · `GT-028` |
+| `explore_action` | `{ kind, count }` — một thao tác khám phá trong micro-sandbox (`kind` là slug cử chỉ của khuôn `^[a-z][a-z0-9_]{0,31}$`, vd `pan_item_changed`; `count` là số thao tác khám phá luỹ kế) | `GT-014` |
+| `payment_wrong` | `{ current_total, target_amount }` — bé bấm trả khi số tiền chưa đủ hoặc chưa hợp lệ (`BR-E031-*`); không phạt | `GT-031` |
+| `pour_confirm_wrong` | `{}` — bé xác nhận khi cốc chưa đạt mục tiêu rót; không có field | `GT-032` |
+| `timing_missed` | `{ misses, tolerance_ms }` — gõ đúng nội dung nhưng lệch nhịp mẫu quá dung sai | `GT-034` |
+| `program_stopped` | `{ at_step, command_count, round_index? }` — bé bấm ■ dừng khi robot đang chạy (`BR-E035-13`); dừng không phải sai nên không phải `program_failed` | `GT-035` |
 
 
 ### 7.3 Trợ giúp

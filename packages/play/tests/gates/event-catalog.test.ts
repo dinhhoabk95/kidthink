@@ -253,4 +253,77 @@ describe("Event Catalog Invariants Gates (Task #209 / #251)", () => {
       ).toBe(false);
     }
   });
+  it("BR-E000-07: sáu event engine mới được nhận đủ field và giữ nguyên qua cleanEventPayload", () => {
+    const cases = [
+      ["payment_wrong", { current_total: 3, target_amount: 5 }],
+      ["pour_confirm_wrong", {}],
+      ["timing_missed", { misses: 1, tolerance_ms: 250 }],
+      ["program_stopped", { at_step: 2, command_count: 4, round_index: 0 }],
+      ["explore_action", { kind: "pan_item_changed", count: 2 }],
+      [
+        "control_of_error",
+        { side: "left", left_weight: 2, right_weight: 3, micro_sandbox: false },
+      ],
+      ["control_of_error", { mismatch_index: -1, micro_sandbox: true }],
+      [
+        "control_of_error",
+        { candidate_id: "c1", violated_clue_id: null, micro_sandbox: false },
+      ],
+      [
+        "control_of_error",
+        {
+          mode: "match",
+          card_id: "card_a",
+          card_time: "03:30",
+          expected_time: "04:00",
+          micro_sandbox: false,
+        },
+      ],
+    ] as const;
+    for (const [name, payload] of cases) {
+      expect(ALLOWED_EVENT_NAMES.has(name), name).toBe(true);
+      expect(
+        EVENT_PAYLOAD_SCHEMAS[name]?.safeParse(payload).success,
+        name
+      ).toBe(true);
+      expect(cleanEventPayload(name, payload), name).toEqual(payload);
+      expect(() =>
+        validateBatchPayload([{ seq: 1, event_name: name, payload }])
+      ).not.toThrow();
+    }
+  });
+
+  it("BR-E000-07 ca âm: field lạ bị bỏ, kiểu sai bị loại, tên gõ sai không lọt", () => {
+    expect(
+      cleanEventPayload("timing_missed", {
+        misses: 1,
+        tolerance_ms: 250,
+        child_uuid: "x",
+        hack: 1,
+      })
+    ).toEqual({ misses: 1, tolerance_ms: 250 });
+    expect(
+      EVENT_PAYLOAD_SCHEMAS.program_stopped?.safeParse({
+        at_step: -1,
+        command_count: 4,
+      }).success
+    ).toBe(false);
+    expect(
+      EVENT_PAYLOAD_SCHEMAS.control_of_error?.safeParse({ side: "up" }).success
+    ).toBe(false);
+    expect(ALLOWED_EVENT_NAMES.has("program_stoped")).toBe(false);
+    // BR-EVT-02: chuỗi chỉ là giờ HH:MM hoặc slug, không nhận văn bản tự do.
+    expect(
+      EVENT_PAYLOAD_SCHEMAS.control_of_error?.safeParse({
+        mode: "read",
+        chosen_time: "bé tên An",
+      }).success
+    ).toBe(false);
+    expect(
+      EVENT_PAYLOAD_SCHEMAS.explore_action?.safeParse({
+        kind: "Bé kéo quả táo",
+        count: 1,
+      }).success
+    ).toBe(false);
+  });
 });

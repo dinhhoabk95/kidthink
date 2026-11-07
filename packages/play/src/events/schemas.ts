@@ -3,6 +3,10 @@ import { z } from "zod";
 const NON_NEGATIVE_INT = z.number().int().nonnegative();
 /** Mã nội dung trong payload event tương tác — không phải chuỗi tự do (BR-EVT-02). */
 const CONTENT_ID = z.string().regex(/^[a-zA-Z0-9_.:-]{1,64}$/);
+/** Giờ đồng hồ `HH:MM` do `formatClockTime` dựng — không phải chuỗi tự do (BR-EVT-02). */
+const CLOCK_TIME = z.string().regex(/^\d{2}:\d{2}$/);
+/** Tên cử chỉ khám phá dạng slug của engine, vd `pan_item_changed` (BR-EVT-02). */
+const EXPLORE_KIND = z.string().regex(/^[a-z][a-z0-9_]{0,31}$/);
 /** Khuôn một vòng không phát `round_index`; khuôn nhiều vòng thì có. */
 const OPTIONAL_ROUND_INDEX = NON_NEGATIVE_INT.optional();
 /**
@@ -520,6 +524,53 @@ export const EVENT_PAYLOAD_SCHEMAS: Readonly<Record<string, z.AnyZodObject>> = {
     repetitions: NON_NEGATIVE_INT,
     score: NON_NEGATIVE_INT,
     is_win: z.boolean(),
+    round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  control_of_error: z.object({
+    micro_sandbox: z.boolean().optional(),
+    mismatch_index: z.number().int().optional(),
+    option_id: CONTENT_ID.optional(),
+    actual_sum: z.number().optional(),
+    expected_whole: z.number().optional(),
+    remaining: z.number().optional(),
+    candidate_id: CONTENT_ID.optional(),
+    violated_clue_id: CONTENT_ID.nullable().optional(),
+    selected_value: z.number().optional(),
+    expected_value: z.number().optional(),
+    row_matches: z.boolean().optional(),
+    col_matches: z.boolean().optional(),
+    side: z.enum(["left", "right"]).optional(),
+    left_weight: z.number().optional(),
+    right_weight: z.number().optional(),
+    row: NON_NEGATIVE_INT.optional(),
+    col: NON_NEGATIVE_INT.optional(),
+    symbol_id: CONTENT_ID.optional(),
+    mode: z.enum(["read", "set", "match"]).optional(),
+    chosen_time: CLOCK_TIME.optional(),
+    current_time: CLOCK_TIME.optional(),
+    target_time: CLOCK_TIME.optional(),
+    card_id: CONTENT_ID.optional(),
+    card_time: CLOCK_TIME.optional(),
+    expected_time: CLOCK_TIME.optional(),
+    current_total: z.number().optional(),
+    target_total: z.number().optional(),
+  }),
+  explore_action: z.object({
+    kind: EXPLORE_KIND,
+    count: NON_NEGATIVE_INT,
+  }),
+  payment_wrong: z.object({
+    current_total: z.number().nonnegative(),
+    target_amount: z.number().nonnegative(),
+  }),
+  pour_confirm_wrong: z.object({}),
+  timing_missed: z.object({
+    misses: NON_NEGATIVE_INT,
+    tolerance_ms: NON_NEGATIVE_INT,
+  }),
+  program_stopped: z.object({
+    at_step: NON_NEGATIVE_INT,
+    command_count: NON_NEGATIVE_INT,
     round_index: OPTIONAL_ROUND_INDEX,
   }),
   payment_webhook_received: z.object({

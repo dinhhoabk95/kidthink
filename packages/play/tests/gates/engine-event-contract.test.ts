@@ -20,6 +20,16 @@ const ENGINE_SRC = path.resolve(
   "../../../game-engine/src"
 );
 
+/** Event engine mà field `recordEvent` được đo khít với catalog. */
+const FIELD_CHECKED_EVENTS: ReadonlySet<string> = new Set([
+  "control_of_error",
+  "explore_action",
+  "payment_wrong",
+  "pour_confirm_wrong",
+  "timing_missed",
+  "program_stopped",
+]);
+
 const EMIT_EVENT_NAME_REGEX = /event_name:\s*"([a-z0-9_]+)"/g;
 const RECORD_EVENT_REGEX = /recordEvent\(\s*"([a-z0-9_]+)"/g;
 const PAYLOAD_KEY_REGEX = /^\s*([a-z0-9_]+)\s*(?::|,\s*$|$)/;
@@ -140,4 +150,83 @@ describe("Hợp đồng event của game engine (Task #260)", () => {
 
     expect(problems, problems.join("; ")).toEqual([]);
   });
+
+  // Chỉ đo các event chốt từ lượt catalog này. Event cũ (game_started, game_completed,
+  // liquid_poured…) còn ~45 field lệch catalog — nợ riêng, đổi schema event cũ phải
+  // thành event mới (BR-EVT-07), không mở rộng ở đây.
+  it("field của recordEvent cho các event engine đã chốt nằm trong EVENT_PAYLOAD_FIELDS (BR-E000-07)", () => {
+    const problems: string[] = [];
+    const seen = new Set<string>();
+    for (const file of listSourceFiles(ENGINE_SRC)) {
+      const src = fs.readFileSync(file, "utf8");
+      const rel = path.relative(ENGINE_SRC, file);
+      for (const call of collectRecordEventCalls(src)) {
+        const allowed = EVENT_PAYLOAD_FIELDS[call.name];
+        if (!(allowed && FIELD_CHECKED_EVENTS.has(call.name))) {
+          continue;
+        }
+        seen.add(call.name);
+        for (const key of call.keys) {
+          if (!allowed.has(key)) {
+            problems.push(
+              `${rel}: ${call.name} field lạ \`${key}\` sẽ bị bỏ im lặng`
+            );
+          }
+        }
+      }
+    }
+    // Không tìm thấy lời gọi nào thì cổng đo số không — đỏ.
+    expect([...seen].sort()).toEqual([...FIELD_CHECKED_EVENTS].sort());
+    expect(problems, problems.join("; ")).toEqual([]);
+  });
+
+  it("Ca âm: recordEvent mang field ngoài catalog thì bị bắt", () => {
+    const sample = [
+      'this.recordEvent("timing_missed", {',
+      "  misses: 1,",
+      "  tolerance_ms: 250,",
+      "  tap_x: 12,",
+      "});",
+    ].join("\n");
+    const [call] = collectRecordEventCalls(sample);
+    const allowed = EVENT_PAYLOAD_FIELDS[call?.name ?? ""];
+    expect(call?.keys).toEqual(["misses", "tolerance_ms", "tap_x"]);
+    expect(call?.keys.filter((key) => !allowed?.has(key))).toEqual(["tap_x"]);
+  });
 });
+
+interface RecordEventCall {
+  readonly name: string;
+  readonly keys: readonly string[];
+}
+
+/** Lấy tên + key của object literal đối số thứ hai của `recordEvent("…", { … })`. */
+function collectRecordEventCalls(src: string): RecordEventCall[] {
+  const calls: RecordEventCall[] = [];
+  const regex = /recordEvent\(\s*"([a-z0-9_]+)"\s*,\s*\{/g;
+  let match = regex.exec(src);
+  while (match) {
+    const open = match.index + match[0].length - 1;
+    let depth = 0;
+    let end = src.length;
+    for (let i = open; i < src.length; i++) {
+      if (src[i] === "{") {
+        depth += 1;
+      } else if (src[i] === "}") {
+        depth -= 1;
+        if (depth === 0) {
+          end = i;
+          break;
+        }
+      }
+    }
+    const keys = src
+      .slice(open + 1, end)
+      .split("\n")
+      .map((line) => PAYLOAD_KEY_REGEX.exec(line)?.[1] ?? "")
+      .filter((key) => key.length > 0);
+    calls.push({ name: match[1] ?? "", keys });
+    match = regex.exec(src);
+  }
+  return calls;
+}
