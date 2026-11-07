@@ -5,6 +5,8 @@ import {
   ACTION_RETRY,
   type ActionResult,
   type GameAction,
+  type HintLevel,
+  type HintTarget,
   TemplateGameSession,
 } from "#src/game-session";
 import type {
@@ -91,6 +93,8 @@ export class GT034Session extends TemplateGameSession<
   activePlayingIndex: number | null = null;
   playbackElapsedSec = 0;
   isWin = false;
+  /** Giây đã chạy của mẫu gợi ý `L3` (nửa tốc độ, lặp); null = không phát (`BR-E034-10`). */
+  private hintPlaybackSec: number | null = null;
 
   private particles: Particle[] = [];
   private readonly mood = new MoodPulse();
@@ -147,6 +151,7 @@ export class GT034Session extends TemplateGameSession<
     this.activePlayingIndex = null;
     this.playbackElapsedSec = 0;
     this.isWin = false;
+    this.hintPlaybackSec = null;
     this.particles = [];
 
     this.recordEvent("game_started", {
@@ -162,6 +167,66 @@ export class GT034Session extends TemplateGameSession<
   override destroy(): void {
     this.sfxEngine.dispose();
     super.destroy();
+  }
+
+  /** Một phách của mẫu gợi ý `L3`: nửa tốc độ nên gấp đôi phách thường. */
+  private get hintBeatSec(): number {
+    return this.beatSystem.beatDurationSec * 2;
+  }
+
+  /** Ô bước đang sáng trong mẫu gợi ý `L3`; null khi không phát hoặc đang nghỉ giữa hai vòng. */
+  getHintPlaybackIndex(): number | null {
+    if (this.hintPlaybackSec === null) {
+      return null;
+    }
+    const idx = Math.floor(this.hintPlaybackSec / this.hintBeatSec);
+    return idx < this.content.target_pattern.length ? idx : null;
+  }
+
+  /** Ô bước sáng: mẫu đang phát (lượt nghe) hoặc mẫu gợi ý `L3`. */
+  private get litStepIndex(): number | null {
+    return this.activePlayingIndex ?? this.getHintPlaybackIndex();
+  }
+
+  private startHintPlayback(): void {
+    this.hintPlaybackSec = 0;
+    this.playHintSequence();
+  }
+
+  private playHintSequence(): void {
+    const recipes = this.beatSystem
+      .buildNoteRecipes(this.content.target_pattern)
+      .map((r) => ({ ...r, delaySec: r.delaySec * 2 }));
+    this.sfxEngine.playSequence(recipes);
+  }
+
+  private stopHintPlayback(): void {
+    this.hintPlaybackSec = null;
+  }
+
+  /**
+   * `L1` ô bước kế sáng (chưa chỉ nhạc cụ) · `L2` nhạc cụ đúng nháy · `L3` như `L2`
+   * kèm mẫu phát lại nửa tốc độ, lặp (`BR-E034-10`).
+   */
+  override getHintTargetForLevel(level: HintLevel): HintTarget | null {
+    if (level === 3 && !(this.isWin || this.isWon)) {
+      if (this.hintPlaybackSec === null) {
+        this.startHintPlayback();
+      }
+    } else {
+      this.stopHintPlayback();
+    }
+    if (level !== 1) {
+      return this.getHintTarget();
+    }
+    const idx = this.getHintTargetIndex();
+    if (idx === null) {
+      return null;
+    }
+    const patternLen = this.content.target_pattern.length;
+    // Đã gõ lệch: ô cần gỡ là ô bước cuối; chưa thì ô bước kế.
+    const stepIdx = idx < patternLen ? idx : this.userSteps.length;
+    return { kind: "region", ids: [`step_${stepIdx}`] };
   }
 
   override getHintTargetIndex(): number | null {
@@ -218,6 +283,7 @@ export class GT034Session extends TemplateGameSession<
   update(deltaMs: number): void {
     this.mood.tick(deltaMs);
     this.particles = updateParticles(this.particles);
+    this.tickHintPlayback(deltaMs);
 
     if (!this.isPlayingPattern) {
       return;
@@ -238,6 +304,22 @@ export class GT034Session extends TemplateGameSession<
     const currentIndex = Math.floor(this.playbackElapsedSec / beatSec);
     this.activePlayingIndex =
       currentIndex < this.content.target_pattern.length ? currentIndex : null;
+  }
+
+  private tickHintPlayback(deltaMs: number): void {
+    if (this.hintPlaybackSec === null) {
+      return;
+    }
+    if (this.isPlayingPattern) {
+      this.stopHintPlayback();
+      return;
+    }
+    const loopSec = (this.content.target_pattern.length + 1) * this.hintBeatSec;
+    this.hintPlaybackSec += deltaMs / 1000;
+    if (this.hintPlaybackSec >= loopSec) {
+      this.hintPlaybackSec -= loopSec;
+      this.playHintSequence();
+    }
   }
 
   private verifyPatternMatched(
@@ -546,6 +628,7 @@ export class GT034Session extends TemplateGameSession<
   }
 
   override commit(action: GameAction): void {
+    this.stopHintPlayback();
     const type = action.type;
     const data = (
       typeof action.data === "object" && action.data !== null ? action.data : {}
@@ -677,7 +760,7 @@ export class GT034Session extends TemplateGameSession<
 
   private buildStepEntity(index: number, slot: Slot): ViewEntity {
     let state: EntityVisual = "idle";
-    if (this.activePlayingIndex === index) {
+    if (this.litStepIndex === index) {
       state = "selected";
     } else if (this.userSteps[index] !== undefined) {
       // Đã gõ, chưa chấm: chấm cả chuỗi khi đủ bước (`BR-E034-06`).
@@ -833,7 +916,7 @@ export class GT034Session extends TemplateGameSession<
     index: number,
     slot: Slot
   ): void {
-    const isActive = this.activePlayingIndex === index;
+    const isActive = this.litStepIndex === index;
     const userStep = this.userSteps[index];
 
     if (userStep) {
