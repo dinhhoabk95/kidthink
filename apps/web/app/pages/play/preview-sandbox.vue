@@ -22,6 +22,7 @@
     drawFeedbackPulses,
     drawPromptZone,
     FeedbackOverlay,
+    resolveBaseMascotPose,
     type StageZones,
     TemplateGameSession,
   } from "@mindkid/game-engine";
@@ -78,12 +79,7 @@
   }
 
   function handleRoundWon(): void {
-    feedbackOverlay.trigger(
-      "level_celebrate",
-      undefined,
-      performance.now(),
-      engine?.renderSystem.reducedMotion ?? false
-    );
+    feedbackOverlay.celebrate();
     clearTimeout(replayTimer);
     replayTimer = setTimeout(() => {
       if (currentConfig) {
@@ -114,12 +110,7 @@
       }
     },
     onFeedback: (kind, point) =>
-      feedbackOverlay.trigger(
-        kind,
-        point,
-        performance.now(),
-        engine?.renderSystem.reducedMotion ?? false
-      ),
+      feedbackOverlay.trigger(kind, point, performance.now()),
   });
 
   const {
@@ -229,7 +220,13 @@
     if (!stageZones) {
       return;
     }
-    const feedback = feedbackOverlay.snapshot(now, rs.reducedMotion);
+    // Cùng dáng nền như trang chơi thật (`BR-FBK-15`) để bản xem trước khớp lúc chơi.
+    const basePose = resolveBaseMascotPose({
+      acceptingInput: engine?.acceptingInput ?? false,
+      hintLevel: engine?.scaffolding?.getCurrentLevel() ?? 0,
+      session,
+    });
+    const feedback = feedbackOverlay.frame(now, basePose, rs.reducedMotion);
     const prompt = resolveZonePromptText(session);
     if (prompt) {
       drawPromptZone(ctx, rs, stageZones, {
