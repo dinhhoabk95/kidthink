@@ -22,6 +22,16 @@ function openSession(fixture: (typeof GT014_FIXTURES)[number] | undefined) {
 }
 
 describe("GT-014: khung chuyện Hà Mã Nhỏ chơi bập bênh, tiếng kẽo kẹt, mascot đáp lại thao tác (BR-E014-05)", () => {
+  it("storyLine khớp goal: chọn bên không nhắc đặt quả cân, cân bằng không nhắc chọn bên", () => {
+    const pick = openSession(PICK).session.storyLine() ?? "";
+    const balance = openSession(BALANCE).session.storyLine() ?? "";
+
+    expect(pick).toContain("Hà Mã Nhỏ");
+    expect(pick).not.toContain("quả cân");
+    expect(balance).toContain("bằng nhau");
+    expect(balance).not.toContain("nặng hơn");
+  });
+
   it("storyLine nhắc Hà Mã Nhỏ và bập bênh, không nhắc Gấu Con", () => {
     const story = openSession(BALANCE).session.storyLine() ?? "";
 

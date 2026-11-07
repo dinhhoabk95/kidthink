@@ -1,22 +1,31 @@
 import { describe, expect, it } from "vitest";
-import { SFX_RECIPES, type SFXType } from "#src/systems/sfx-engine";
+import { SFX_RECIPES } from "#src/systems/sfx-engine";
 
 /** Cue đặc trưng từng trò (Task #313 Phase 5A). */
-const SIGNATURE_CUES: readonly SFXType[] = [
-  "wood_tap",
-  "drop_thud",
-  "card_flip",
-  "sparkle_find",
-  "go_chime",
-  "stop_hum",
-  "star_collect",
-];
+/** Tám âm nền của bề mặt chơi — có recipe riêng, không thuộc luật cue đặc trưng. */
+const BASE_CUES: ReadonlySet<string> = new Set([
+  "tap",
+  "pop_celebrate",
+  "amber_soft",
+  "level_celebrate",
+  "longpress_exit",
+  "start_chime",
+  "whoosh_return",
+  "snap_item",
+]);
+
+/** Mọi cue đặc trưng — kể cả cue thêm sau này, không phải khai tay. */
+const SIGNATURE_CUES = Object.entries(SFX_RECIPES).filter(
+  ([cue]) => !BASE_CUES.has(cue)
+);
 
 describe("SFX_RECIPES — cue đặc trưng (BR-FBK-10, BR-ENG-16)", () => {
-  for (const cue of SIGNATURE_CUES) {
-    it(`${cue}: có nốt, thả ≥40ms, âm lượng dưới trần, dài vừa phải`, () => {
-      const notes = SFX_RECIPES[cue];
+  it("có đủ cue đặc trưng của các trò", () => {
+    expect(SIGNATURE_CUES.length).toBeGreaterThanOrEqual(27);
+  });
 
+  for (const [cue, notes] of SIGNATURE_CUES) {
+    it(`${cue}: có nốt, thả ≥40ms, âm lượng dưới trần, dài vừa phải`, () => {
       expect(notes.length).toBeGreaterThan(0);
       for (const note of notes) {
         expect(note.rampOutSec).toBeGreaterThanOrEqual(0.04);

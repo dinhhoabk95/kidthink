@@ -132,8 +132,13 @@ function findTargetPanAt(
 }
 
 /** Khung chuyện đọc một lần ở vòng đầu (`BR-E014-05`, `BR-FBK-16`). */
-export const GT014_STORY_LINE =
-  "Hà Mã Nhỏ chơi bập bênh cùng bạn. Bé xem bên nào nặng hơn, hoặc đặt thêm quả cân cho hai bên bằng nhau nhé!";
+export const GT014_STORY_LINE = {
+  balance:
+    "Hà Mã Nhỏ chơi bập bênh cùng bạn. Bé đặt thêm quả cân cho hai bên bằng nhau nhé!",
+  pick_heavier:
+    "Hà Mã Nhỏ chơi bập bênh cùng bạn. Bé xem bên nào nặng hơn nhé!",
+  pick_lighter: "Hà Mã Nhỏ chơi bập bênh cùng bạn. Bé xem bên nào nhẹ hơn nhé!",
+} as const satisfies Record<GT014Content["goal"], string>;
 
 /** Mascot vui ngắn sau mỗi lần đặt hoặc nhấc vật (`BR-E014-05`). */
 export const GT014_HAPPY_MS = 700;
@@ -234,7 +239,7 @@ export class BalanceScaleSession extends TemplateGameSession<
   }
 
   override storyLine(): string {
-    return GT014_STORY_LINE;
+    return GT014_STORY_LINE[this.content.goal];
   }
 
   /** Vui sau thao tác đặt/nhấc, nghiêng đầu sau lần chọn bên chưa đúng (`BR-E014-05`). */
