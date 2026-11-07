@@ -27,10 +27,15 @@ import {
   drawSceneObjectAt,
   sceneBox,
 } from "#src/render/index.js";
+import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
 import type { RenderSystem } from "#src/systems/render-system";
 import { WrongFlash } from "#src/systems/wrong-flash";
 import type { GT025Content, GT025Difficulty } from "./template.js";
+
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E025-05`, `BR-FBK-16`). */
+export const GT025_STORY_LINE =
+  "Gấu Con vẽ hai bức tranh gần giống nhau, bé tìm giúp Gấu Con chỗ khác nhau nhé!";
 
 /** Cạnh ô lớn nhất khi mỗi bên là khối nhiều cột (canvas thấp). */
 const SPLIT_CELL_MAX_PX = 120;
@@ -228,6 +233,7 @@ export class GT025Session extends TemplateGameSession<
     }
 
     this.foundDifferenceIds.add(diff.id);
+    this.queueSfx("sparkle_find");
     this.foundLeftIds.add(diff.left_id);
     this.foundRightIds.add(diff.right_id);
     this.recordEvent("item_selected", {
@@ -332,6 +338,17 @@ export class GT025Session extends TemplateGameSession<
       activePrompt: this.content.prompt,
       entities,
     };
+  }
+
+  override storyLine(): string {
+    return GT025_STORY_LINE;
+  }
+
+  /** Gấu Con ngó nghiêng tìm tiếp từ điểm đầu tới điểm cuối (`BR-E025-05`). */
+  override mascotMood(): MascotPose | null {
+    return this.foundDifferenceIds.size > 0 && !this.checkWinCondition()
+      ? "wonder"
+      : null;
   }
 
   getFoundCount(): number {
