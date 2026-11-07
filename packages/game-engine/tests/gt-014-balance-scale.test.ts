@@ -11,6 +11,7 @@ import template, {
   GT014DifficultySchema,
 } from "#src/templates/GT-014/template";
 
+const WEIGHT_WORDING = /\d|nặng/;
 const RE_BALANCE_REACHABLE =
   /phải tồn tại cách đặt vật từ khay để 2 đĩa cân bằng nhau/;
 
@@ -215,7 +216,8 @@ describe("GT-014: Cân hai bên (balance-scale)", () => {
       expect(leftPan?.spokenLabel).toBe("Đĩa cân bên trái");
       expect(rightPan?.hitShape).toBe("square");
       expect(rightPan?.spokenLabel).toBe("Đĩa cân bên phải");
-      expect(trayItem?.spokenLabel).toContain("nặng 3");
+      // BR-E014-06: khối lượng lộ qua cỡ vật, spokenLabel không đọc số.
+      expect(trayItem?.spokenLabel ?? "").not.toMatch(WEIGHT_WORDING);
     });
 
     it("supports transitive weight comparison and balance cipher with reference_scales", () => {

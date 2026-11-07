@@ -43,8 +43,8 @@ export const SAMPLE_LEVEL_1: GameLevelFixture<GT014Content, GT014Difficulty> = {
       },
     ],
     tray: [
-      { item_id: "w1", asset: { kind: "emoji", ref: "1️⃣" }, weight: 1 },
-      { item_id: "w2", asset: { kind: "emoji", ref: "2️⃣" }, weight: 2 },
+      { item_id: "w1", asset: { kind: "emoji", ref: "🍒" }, weight: 1 },
+      { item_id: "w2", asset: { kind: "emoji", ref: "🍓" }, weight: 2 },
     ],
   },
   difficulty_params: {
@@ -71,27 +71,27 @@ export const SAMPLE_LEVEL_2: GameLevelFixture<GT014Content, GT014Difficulty> = {
     left_pan: [
       {
         item_id: "weight_8",
-        asset: { kind: "emoji", ref: "8️⃣" },
+        asset: { kind: "emoji", ref: "🍉" },
         weight: 8,
       },
     ],
     right_pan: [
       {
         item_id: "weight_5",
-        asset: { kind: "emoji", ref: "5️⃣" },
+        asset: { kind: "emoji", ref: "🍐" },
         weight: 5,
       },
     ],
     tray: [
-      { item_id: "opt_2", asset: { kind: "emoji", ref: "2️⃣" }, weight: 2 },
+      { item_id: "opt_2", asset: { kind: "emoji", ref: "🍓" }, weight: 2 },
       {
         item_id: "opt_3",
-        asset: { kind: "emoji", ref: "3️⃣" },
+        asset: { kind: "emoji", ref: "🍋" },
         weight: 3,
       },
       {
         item_id: "opt_4",
-        asset: { kind: "emoji", ref: "4️⃣" },
+        asset: { kind: "emoji", ref: "🍊" },
         weight: 4,
       },
     ],

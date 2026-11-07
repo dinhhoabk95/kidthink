@@ -21,7 +21,6 @@ import type { Slot } from "#src/layout/types";
 import {
   drawBalanceScale,
   drawMontessoriControlOfErrorPill,
-  drawPanItems,
   drawReferenceScaleCard,
   drawSceneBackground,
   drawSlotItem,
@@ -47,6 +46,12 @@ import { MoodPulse } from "#src/systems/mood-pulse";
 import type { RenderSystem } from "#src/systems/render-system";
 import { WRONG_FLASH_MS, WrongFlash } from "#src/systems/wrong-flash";
 import type { GT014Content, GT014Difficulty } from "./template.js";
+import {
+  drawWeightedPanItems,
+  maxItemWeight,
+  type WeightedAssetItem,
+  weightSizeFraction,
+} from "./weight-size.js";
 import {
   panTargetSlots,
   referenceScaleBoxesInStage,
@@ -156,9 +161,9 @@ export class BalanceScaleSession extends TemplateGameSession<
     return this.content.goal === "balance" ? this.content.tray.length : 0;
   }
 
-  /** Số đo vẽ dưới mỗi vật khay (`BR-PSZ-13`). */
+  /** Khối lượng nằm ở cỡ vật, không in nhãn dưới vật khay (`BR-E014-06`). */
   override get trayHasLabels(): boolean {
-    return true;
+    return false;
   }
   override readonly usesPromptZone = true;
 
@@ -179,6 +184,20 @@ export class BalanceScaleSession extends TemplateGameSession<
   });
 
   private smoothTiltDeg = 0;
+
+  /** Khối lượng lớn nhất của bài — mốc để vật cùng khối lượng luôn cùng cỡ (`BR-E014-03`). */
+  private get maxWeight(): number {
+    const refs = (this.content.reference_scales ?? []).flatMap((scale) => [
+      scale.left_pan,
+      scale.right_pan,
+    ]);
+    return maxItemWeight([
+      this.content.left_pan,
+      this.content.right_pan,
+      this.content.tray,
+      ...refs,
+    ]);
+  }
 
   constructor(
     content: GT014Content,
@@ -685,10 +704,7 @@ export class BalanceScaleSession extends TemplateGameSession<
         w: slot.w,
         h: slot.h,
         ...labels,
-        label: String(item.weight),
-        spokenLabel: labels.spokenLabel
-          ? `${labels.spokenLabel}, nặng ${item.weight}`
-          : `Nặng ${item.weight}`,
+        spokenLabel: labels.spokenLabel ?? "Quả cân",
       });
     });
 
@@ -755,10 +771,7 @@ export class BalanceScaleSession extends TemplateGameSession<
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
     baseStageBox: { x: number; y: number; w: number; h: number },
-    positioned: (items: readonly { item_id: string }[]) => {
-      id: string;
-      asset: GT014Content["left_pan"][number]["asset"] | undefined;
-    }[]
+    weighted: (items: readonly WeightedItem[]) => WeightedAssetItem[]
   ): void {
     const refScales = this.content.reference_scales ?? [];
     if (refScales.length === 0) {
@@ -777,8 +790,21 @@ export class BalanceScaleSession extends TemplateGameSession<
         ref.left_pan,
         ref.right_pan
       );
-      drawPanItems(ctx, rs, refPans.leftPan, positioned(ref.left_pan));
-      drawPanItems(ctx, rs, refPans.rightPan, positioned(ref.right_pan));
+      const maxWeight = this.maxWeight;
+      drawWeightedPanItems(
+        ctx,
+        rs,
+        refPans.leftPan,
+        weighted(ref.left_pan),
+        maxWeight
+      );
+      drawWeightedPanItems(
+        ctx,
+        rs,
+        refPans.rightPan,
+        weighted(ref.right_pan),
+        maxWeight
+      );
     });
   }
 
@@ -795,12 +821,16 @@ export class BalanceScaleSession extends TemplateGameSession<
     const sources = this.sourceSlots;
     // `WeightedItem` chỉ mang id + khối lượng; asset nằm ở content.
     const assetById = this.resolveAssetById();
-    const positioned = (items: readonly { item_id: string }[]) =>
-      items.map((i) => ({ id: i.item_id, asset: assetById.get(i.item_id) }));
+    const weighted = (items: readonly WeightedItem[]): WeightedAssetItem[] =>
+      items.map((i) => ({
+        item_id: i.item_id,
+        weight: i.weight,
+        asset: assetById.get(i.item_id),
+      }));
 
     const refScales = this.content.reference_scales ?? [];
     const baseStageBox = this.stageRect ?? insetBox(sceneBox(rs), 0.12);
-    this.renderReferenceScales(ctx, rs, baseStageBox, positioned);
+    this.renderReferenceScales(ctx, rs, baseStageBox, weighted);
 
     const scaleBox =
       this.stageRect || refScales.length > 0
@@ -816,8 +846,15 @@ export class BalanceScaleSession extends TemplateGameSession<
       this.rightItems,
       this.smoothTiltDeg
     );
-    drawPanItems(ctx, rs, leftPan, positioned(this.leftItems));
-    drawPanItems(ctx, rs, rightPan, positioned(this.rightItems));
+    const maxWeight = this.maxWeight;
+    drawWeightedPanItems(ctx, rs, leftPan, weighted(this.leftItems), maxWeight);
+    drawWeightedPanItems(
+      ctx,
+      rs,
+      rightPan,
+      weighted(this.rightItems),
+      maxWeight
+    );
 
     if (this.wrongSide) {
       const elapsed = this.wrongFlash.elapsedMs(timeMs);
@@ -838,15 +875,23 @@ export class BalanceScaleSession extends TemplateGameSession<
       if (!slot) {
         return;
       }
-      drawSlotItem(ctx, rs, slot, {
-        id: item.item_id,
-        asset: assetById.get(item.item_id),
-        label: refScales.length > 0 ? undefined : String(item.weight),
-        state:
-          this.stagedItemId === item.item_id
-            ? "selected"
-            : this.getRenderItemState(item.item_id),
-      });
+      // Cỡ vật là khối lượng; cùng ô chạm, thân vật co theo `√khối lượng` (`BR-E014-03`).
+      const side = Math.round(
+        Math.min(slot.w, slot.h) * weightSizeFraction(item.weight, maxWeight)
+      );
+      drawSlotItem(
+        ctx,
+        rs,
+        { ...slot, w: side, h: side },
+        {
+          id: item.item_id,
+          asset: assetById.get(item.item_id),
+          state:
+            this.stagedItemId === item.item_id
+              ? "selected"
+              : this.getRenderItemState(item.item_id),
+        }
+      );
     });
 
     const stage = this.stageRect ?? sceneBox(rs);
@@ -881,10 +926,7 @@ export class BalanceScaleSession extends TemplateGameSession<
         w: slot.w,
         h: slot.h,
         ...labels,
-        label: String(item.weight),
-        spokenLabel: labels.spokenLabel
-          ? `${labels.spokenLabel}, nặng ${item.weight}`
-          : `Nặng ${item.weight}`,
+        spokenLabel: labels.spokenLabel ?? "Quả cân",
       });
     }
   }
