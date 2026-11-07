@@ -37,6 +37,7 @@ import {
   type SceneBox,
   sceneBox,
 } from "#src/render/index";
+import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
 import {
   type CubeCoord,
@@ -45,6 +46,7 @@ import {
   type RotationAngle,
   sortCubesForRender,
 } from "#src/systems/isometric-system";
+import { MoodPulse } from "#src/systems/mood-pulse";
 import type { RenderSystem } from "#src/systems/render-system";
 import type { GT017Content, GT017Difficulty } from "./template.js";
 
@@ -64,6 +66,21 @@ function findHitOptionId(
   return index >= 0 ? (options[index]?.option_id ?? null) : null;
 }
 
+/** Khung chuyện theo câu hỏi, đọc một lần ở vòng đầu (`BR-E017-05`, `BR-FBK-16`). */
+export const GT017_STORY_LINES: Record<GT017Content["question"], string> = {
+  count_cubes:
+    "Hải Ly xây nhà bằng những khối gỗ. Bé đếm xem Hải Ly đã dùng bao nhiêu khối nhé!",
+  top_view:
+    "Hải Ly xây nhà bằng những khối gỗ. Bé nhìn từ trên xuống rồi chọn hình đúng nhé!",
+  match_solid:
+    "Hải Ly xây nhà bằng những khối gỗ. Bé chọn mô hình giống ngôi nhà của Hải Ly nhé!",
+};
+
+/** Mascot vui ngắn sau mỗi lần xoay mô hình. */
+export const GT017_HAPPY_MS = 500;
+/** Mascot nghiêng đầu sau lần chọn chưa đúng. */
+export const GT017_WONDER_MS = 1500;
+
 export class BlockStackSession extends TemplateGameSession<
   GT017Content,
   GT017Difficulty
@@ -75,8 +92,19 @@ export class BlockStackSession extends TemplateGameSession<
   private currentRotation: RotationAngle = 0;
   private selectedOptionId: string | null = null;
   private wrongChoiceTimerMs = 0;
+  private readonly mood = new MoodPulse();
+
+  override storyLine(): string {
+    return GT017_STORY_LINES[this.content.question];
+  }
+
+  /** Vui sau khi xoay, nghiêng đầu sau lần chọn chưa đúng (`BR-E017-05`). */
+  override mascotMood(): MascotPose | null {
+    return this.isWon ? null : this.mood.current();
+  }
 
   setupEntities(): void {
+    this.mood.clear();
     this.currentRotation = 0;
     this.selectedOptionId = null;
     this.wrongChoiceTimerMs = 0;
@@ -131,6 +159,9 @@ export class BlockStackSession extends TemplateGameSession<
     const nextIdx = direction === "cw" ? (currIdx + 1) % 4 : (currIdx + 3) % 4;
 
     this.currentRotation = angles[nextIdx] ?? 0;
+    // Tiếng "bụp" như nhau ở mọi góc: xoay là thao tác nháp (`BR-E017-05`).
+    this.queueSfx("block_bump");
+    this.mood.set("happy", GT017_HAPPY_MS);
 
     this.recordEvent("model_rotated", {
       angle: this.currentRotation,
@@ -151,6 +182,7 @@ export class BlockStackSession extends TemplateGameSession<
       this.wrongChoiceTimerMs = 0;
     } else {
       this.wrongChoiceTimerMs = 400;
+      this.mood.set("wonder", GT017_WONDER_MS);
     }
 
     this.recordEvent("option_selected", {
@@ -328,6 +360,7 @@ export class BlockStackSession extends TemplateGameSession<
   }
 
   update(deltaMs: number): void {
+    this.mood.tick(deltaMs);
     if (this.wrongChoiceTimerMs > 0) {
       this.wrongChoiceTimerMs = Math.max(0, this.wrongChoiceTimerMs - deltaMs);
       if (this.wrongChoiceTimerMs === 0) {

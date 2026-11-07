@@ -41,7 +41,8 @@ export type SFXType =
   | "mouse_step"
   | "scale_creak"
   | "seat_pat"
-  | "clock_tick";
+  | "clock_tick"
+  | "block_bump";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -639,6 +640,19 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       volume: 0.05,
       durationSec: 0.06,
       rampOutSec: 0.04,
+    },
+  ],
+
+  /** GT-017: khối gỗ "bụp" trầm, tròn (`BR-E017-05`). */
+  block_bump: [
+    {
+      delaySec: 0,
+      type: "sine",
+      freq: 220,
+      glideTo: { freq: 140, overSec: 0.1 },
+      volume: 0.14,
+      durationSec: 0.12,
+      rampOutSec: 0.06,
     },
   ],
 
