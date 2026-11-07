@@ -58,6 +58,55 @@ export function liquidCupRect(
   };
 }
 
+/** Cốc `fluted`: đáy hẹp, miệng rộng; trung bình hai bề ngang = 1 nên diện tích thân giữ nguyên (`BR-E032-11`). */
+export const CUP_FLARE_BOTTOM = 0.7;
+export const CUP_FLARE_TOP = 1.3;
+
+/**
+ * Chiều cao mực nước (0..1 so với thân) để diện tích nước bằng `fillRatio` lần
+ * diện tích thân. Cốc chữ nhật thì trùng `fillRatio`; cốc loe giải
+ * `(top - bottom)/2 · s² + bottom · s = fillRatio` (`BR-E032-11`).
+ */
+export function cupWaterLevel(
+  shape: LiquidCupParams["shape"],
+  fillRatio: number
+): number {
+  const r = Math.min(1, Math.max(0, fillRatio));
+  if (shape !== "fluted") {
+    return r;
+  }
+  const a = (CUP_FLARE_TOP - CUP_FLARE_BOTTOM) / 2;
+  return (
+    (Math.sqrt(CUP_FLARE_BOTTOM * CUP_FLARE_BOTTOM + 4 * a * r) -
+      CUP_FLARE_BOTTOM) /
+    (2 * a)
+  );
+}
+
+/** Vạch ngoài cùng của thân cốc: hình thang với `fluted`, chữ nhật bo góc với các hình còn lại. */
+function traceCupBody(
+  ctx: CanvasRenderingContext2D,
+  shape: LiquidCupParams["shape"],
+  rect: LiquidCupRect,
+  grow: number,
+  radii: [number, number, number, number]
+): void {
+  const { x, y, w, h } = rect;
+  if (shape === "fluted") {
+    const cx = x + w / 2;
+    const half = w / 2;
+    const bottom = half * CUP_FLARE_BOTTOM + grow;
+    const top = half * CUP_FLARE_TOP + grow;
+    ctx.moveTo(cx - top, y - grow);
+    ctx.lineTo(cx + top, y - grow);
+    ctx.lineTo(cx + bottom, y + h + grow);
+    ctx.lineTo(cx - bottom, y + h + grow);
+    ctx.closePath();
+    return;
+  }
+  ctx.roundRect(x - grow, y - grow, w + 2 * grow, h + 2 * grow, radii);
+}
+
 function liquidFillColor(color: string | undefined): string {
   if (color === "mint") {
     return designTokens.colors.semantic.success[500];
@@ -127,7 +176,7 @@ export function drawDetachedWaterColumns(
       return;
     }
     const ratio = c.capacityUnits > 0 ? c.fillUnits / c.capacityUnits : 0;
-    const startH = r.h * ratio;
+    const startH = r.h * cupWaterLevel(c.shape, ratio);
     const endH = (stackedH[i] ?? 0) * scale;
     const h = startH + (endH - startH) * eased;
     const startW = r.w;
@@ -140,6 +189,80 @@ export function drawDetachedWaterColumns(
     ctx.beginPath();
     ctx.roundRect(x - w / 2, baseY - h, w, h, [4, 4, 8, 8]);
     ctx.fill();
+  });
+  ctx.restore();
+}
+
+export interface PourDemoCup {
+  readonly slot: Slot;
+  readonly shape: LiquidCupParams["shape"];
+  readonly capacityUnits: number;
+  readonly fillUnits: number;
+  readonly color?: string;
+}
+
+/** Cốc bản sao nghiêng trên miệng cốc nhận (rad). */
+const POUR_TILT_RAD = 0.9;
+
+/**
+ * Màn rót của bài bảo toàn (`BR-E032-12`): cốc bản sao mờ có hình của `source`
+ * nghiêng trên miệng `dest`, cạn dần, nước chảy thành tia tới mặt nước của `dest`.
+ * `progress` 0..1; ngoài khoảng mở (0, 1) thì không vẽ gì. Cốc `dest` thật do
+ * người gọi vẽ với mực nước đang dâng (`destFillUnits`).
+ */
+export function drawPourDemo(
+  ctx: CanvasRenderingContext2D,
+  rs: RenderSystem,
+  source: PourDemoCup,
+  dest: PourDemoCup,
+  maxCapacityUnits: number,
+  progress: number
+): void {
+  if (!(progress > 0 && progress < 1)) {
+    return;
+  }
+  const destRect = liquidCupRect(
+    dest.slot,
+    dest.shape,
+    dest.capacityUnits,
+    maxCapacityUnits
+  );
+  const srcRect = liquidCupRect(
+    source.slot,
+    source.shape,
+    source.capacityUnits,
+    maxCapacityUnits
+  );
+  const lipX = destRect.x + destRect.w / 2 - destRect.w * 0.2;
+  const lipY = destRect.y - 28;
+  const destRatio =
+    dest.capacityUnits > 0
+      ? (dest.fillUnits * progress) / dest.capacityUnits
+      : 0;
+  const surfaceY =
+    destRect.y + destRect.h - destRect.h * cupWaterLevel(dest.shape, destRatio);
+
+  ctx.save();
+  // Tia nước từ môi cốc bản sao xuống mặt nước.
+  ctx.fillStyle = liquidFillColor(source.color);
+  ctx.fillRect(lipX - 3, lipY, 6, Math.max(0, surfaceY - lipY));
+
+  // Cốc bản sao: gốc toạ độ ở môi cốc (góc trên bên phải), nghiêng quanh đó.
+  ctx.translate(lipX, lipY);
+  ctx.rotate(POUR_TILT_RAD);
+  ctx.globalAlpha = 0.6;
+  const ghostSlot: Slot = {
+    ...source.slot,
+    x: -srcRect.w / 2,
+    y: srcRect.h - source.slot.h * 0.425,
+  };
+  drawLiquidCup(ctx, rs, ghostSlot, {
+    cupId: "pour_demo_copy",
+    shape: source.shape,
+    capacityUnits: source.capacityUnits,
+    fillUnits: source.fillUnits * (1 - progress),
+    color: source.color,
+    maxCapacityUnits,
   });
   ctx.restore();
 }
@@ -166,46 +289,59 @@ export function drawLiquidCup(
   ctx.lineWidth = 4;
 
   ctx.beginPath();
-  ctx.roundRect(x, y, cupW, cupH, [6, 6, 16, 16]);
+  traceCupBody(ctx, params.shape, rect, 0, [6, 6, 16, 16]);
   ctx.fill();
   ctx.stroke();
 
-  // Liquid fill calculation (BR-E032-03)
+  // Liquid fill calculation (BR-E032-03, BR-E032-11)
   const fillRatio =
     params.capacityUnits > 0
       ? Math.min(1, Math.max(0, params.fillUnits / params.capacityUnits))
       : 0;
 
-  const liquidH = cupH * fillRatio;
+  const liquidH = cupH * cupWaterLevel(params.shape, fillRatio);
   const liquidY = y + cupH - liquidH;
 
   if (liquidH > 0) {
     ctx.save();
     // Clip inside cup
     ctx.beginPath();
-    ctx.roundRect(x + 2, y + 2, cupW - 4, cupH - 4, [4, 4, 14, 14]);
+    traceCupBody(ctx, params.shape, rect, -2, [4, 4, 14, 14]);
     ctx.clip();
 
-    // Draw liquid
+    // Draw liquid (cốc loe rộng tới 1,3 hộp ở miệng nên tô rộng bằng đó, clip cắt theo thân)
     ctx.fillStyle = liquidFillColor(params.color);
+    const fillW = params.shape === "fluted" ? cupW * CUP_FLARE_TOP : cupW;
+    const fillX = x + (cupW - fillW) / 2;
 
-    ctx.fillRect(x, liquidY, cupW, liquidH);
+    ctx.fillRect(fillX, liquidY, fillW, liquidH);
 
     // Meniscus / surface highlight
     ctx.fillStyle = alpha(designTokens.colors.surface[0], 0.4);
-    ctx.fillRect(x, liquidY, cupW, Math.min(6, liquidH));
+    ctx.fillRect(fillX, liquidY, fillW, Math.min(6, liquidH));
     ctx.restore();
   }
 
-  // Hint Marks (tick marks)
+  // Hint Marks (tick marks): mỗi khoảng giữa hai vạch chứa cùng lượng nước
   if (params.showHintMarks) {
     ctx.strokeStyle = alpha(designTokens.colors.surface[500], 0.6);
     ctx.lineWidth = 2;
     for (let step = 1; step < params.capacityUnits; step++) {
-      const stepY = y + cupH - (cupH * step) / params.capacityUnits;
+      const stepY =
+        y +
+        cupH -
+        cupH * cupWaterLevel(params.shape, step / params.capacityUnits);
+      const edge =
+        params.shape === "fluted"
+          ? (cupW / 2) *
+            (CUP_FLARE_BOTTOM +
+              (CUP_FLARE_TOP - CUP_FLARE_BOTTOM) *
+                cupWaterLevel(params.shape, step / params.capacityUnits))
+          : cupW / 2;
+      const left = x + cupW / 2 - edge;
       ctx.beginPath();
-      ctx.moveTo(x + 4, stepY);
-      ctx.lineTo(x + 14, stepY);
+      ctx.moveTo(left + 4, stepY);
+      ctx.lineTo(left + 14, stepY);
       ctx.stroke();
     }
   }
@@ -215,7 +351,7 @@ export function drawLiquidCup(
     ctx.strokeStyle = designTokens.colors.semantic.success[500];
     ctx.lineWidth = 6;
     ctx.beginPath();
-    ctx.roundRect(x - 4, y - 4, cupW + 8, cupH + 8, [10, 10, 20, 20]);
+    traceCupBody(ctx, params.shape, rect, 4, [10, 10, 20, 20]);
     ctx.stroke();
   }
 

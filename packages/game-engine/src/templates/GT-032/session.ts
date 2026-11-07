@@ -27,6 +27,7 @@ import {
   drawDetachedWaterColumns,
   drawLabelText,
   drawLiquidCup,
+  drawPourDemo,
   drawSceneBackground,
   drawWoodenTokenDock,
   liquidCupRect,
@@ -63,6 +64,8 @@ export const GT032_STORY_LINE_PICK =
 export const GT032_HAPPY_MS = 600;
 /** Cột nước tách khỏi cốc xếp cạnh nhau trong chừng này ms (chậm 0,5× so với 700 ms) — `BR-E032-10`. */
 export const GT032_COLUMNS_TWEEN_MS = 1400;
+/** Màn rót giữa hai cốc của bài bảo toàn chạy chừng này ms đồng hồ khung (`BR-E032-12`). */
+export const GT032_POUR_DEMO_MS = 2000;
 /** Mascot nghiêng đầu sau lần chọn cốc hoặc chốt rót chưa đúng. */
 export const GT032_WONDER_MS = 1500;
 
@@ -81,6 +84,10 @@ export class GT032Session extends TemplateGameSession<
   /** Bậc hint đang hiện trên canvas (0 = chưa có); về 0 khi trẻ thao tác (`BR-E032-10`). */
   private hintLevel: 0 | HintLevel = 0;
   private columnsStartMs: number | null = null;
+  /** Đồng hồ khung của màn rót, cộng dồn từ `update` (`BR-E032-12`). */
+  private pourElapsedMs = 0;
+  /** Lần vẽ gần nhất có giảm chuyển động không: bỏ hoạt ảnh rót, mở cổng ngay. */
+  private reducedMotion = false;
 
   private readonly cupFills: Map<string, number> = new Map();
   private particles: Particle[] = [];
@@ -99,6 +106,49 @@ export class GT032Session extends TemplateGameSession<
 
   update(deltaMs: number): void {
     this.mood.tick(deltaMs);
+    if (this.pourElapsedMs < GT032_POUR_DEMO_MS) {
+      this.pourElapsedMs += deltaMs;
+    }
+  }
+
+  /** Cặp cốc bẫy: hai cốc đầu cùng `fill_units` khác `shape`, ưu tiên cùng dung tích (`BR-E032-02`). */
+  private pourDemoPair(): readonly [number, number] | null {
+    if (
+      !this.content.conservation_trap ||
+      this.content.question_type === "pour_to_mark"
+    ) {
+      return null;
+    }
+    const cups = this.content.cups;
+    let fallback: readonly [number, number] | null = null;
+    for (let i = 0; i < cups.length; i++) {
+      for (let j = i + 1; j < cups.length; j++) {
+        const a = cups[i];
+        const b = cups[j];
+        if (!(a && b) || a.fill_units !== b.fill_units || a.shape === b.shape) {
+          continue;
+        }
+        if (a.capacity_units === b.capacity_units) {
+          return [i, j];
+        }
+        fallback = fallback ?? [i, j];
+      }
+    }
+    return fallback;
+  }
+
+  /** Đang rót giữa hai cốc: chưa hết giờ và không giảm chuyển động (`BR-E032-12`). */
+  private isPourDemoActive(): boolean {
+    return (
+      !this.reducedMotion &&
+      this.pourElapsedMs < GT032_POUR_DEMO_MS &&
+      this.pourDemoPair() !== null
+    );
+  }
+
+  /** Cổng cử chỉ đóng trong lúc rót; bề mặt chơi nuốt cử chỉ, đồng hồ trợ giúp dừng. */
+  override isAcceptingInput(): boolean {
+    return !this.isPourDemoActive();
   }
 
   constructor(
@@ -116,6 +166,7 @@ export class GT032Session extends TemplateGameSession<
 
   setupEntities(): void {
     this.mood.clear();
+    this.pourElapsedMs = 0;
     this.selectedCupId = null;
     this.isWin = false;
     const diff = this.difficulty as GT032Difficulty & {
@@ -693,38 +744,98 @@ export class GT032Session extends TemplateGameSession<
     drawDetachedWaterColumns(ctx, cups, this.maxCapacityUnits(), progress);
   }
 
+  /** Cốc bản sao nghiêng + tia nước từ cốc thứ nhất sang cốc thứ hai (`BR-E032-12`). */
+  private drawPourDemoOverlay(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    pair: readonly [number, number],
+    progress: number
+  ): void {
+    const src = this.content.cups[pair[0]];
+    const dst = this.content.cups[pair[1]];
+    const srcSlot = this.slots[pair[0]];
+    const dstSlot = this.slots[pair[1]];
+    if (!(src && dst && srcSlot && dstSlot)) {
+      return;
+    }
+    drawPourDemo(
+      ctx,
+      rs,
+      {
+        slot: srcSlot,
+        shape: src.shape,
+        capacityUnits: src.capacity_units,
+        fillUnits: src.fill_units,
+        color: src.color,
+      },
+      {
+        slot: dstSlot,
+        shape: dst.shape,
+        capacityUnits: dst.capacity_units,
+        fillUnits: dst.fill_units,
+        color: dst.color,
+      },
+      this.maxCapacityUnits(),
+      progress
+    );
+  }
+
+  /** Một cốc: `fillScale` < 1 là cốc nhận đang dâng trong màn rót (`BR-E032-12`). */
+  private drawCup(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    index: number,
+    detached: boolean,
+    fillScale: number
+  ): void {
+    const cup = this.content.cups[index];
+    const slot = this.slots[index];
+    if (!(cup && slot)) {
+      return;
+    }
+    drawLiquidCup(ctx, rs, slot, {
+      cupId: cup.cup_id,
+      shape: cup.shape,
+      capacityUnits: cup.capacity_units,
+      // L3: nước đã rời cốc, nằm ở cột tách bên dưới.
+      fillUnits: detached ? 0 : this.getCupFill(cup.cup_id) * fillScale,
+      color: cup.color,
+      isSelected: this.selectedCupId === cup.cup_id,
+      showHintMarks: this.showHintMarks || this.hintLevel >= 1,
+      maxCapacityUnits: this.maxCapacityUnits(),
+    });
+    if (this.hintLevel >= 2 && !detached) {
+      this.drawFillCount(ctx, cup, slot);
+    }
+  }
+
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
     timeMs: number
   ): void {
+    this.reducedMotion = rs.reducedMotion;
     drawSceneBackground(ctx, rs, this.themeId);
 
     this.drawCupTray(ctx, rs);
 
     const detached = this.showsDetachedColumns();
+    const pourPair = this.isPourDemoActive() ? this.pourDemoPair() : null;
+    const pourProgress = Math.min(1, this.pourElapsedMs / GT032_POUR_DEMO_MS);
     for (let i = 0; i < this.content.cups.length; i++) {
-      const cup = this.content.cups[i];
-      const slot = this.slots[i];
-      if (cup && slot) {
-        drawLiquidCup(ctx, rs, slot, {
-          cupId: cup.cup_id,
-          shape: cup.shape,
-          capacityUnits: cup.capacity_units,
-          // L3: nước đã rời cốc, nằm ở cột tách bên dưới.
-          fillUnits: detached ? 0 : this.getCupFill(cup.cup_id),
-          color: cup.color,
-          isSelected: this.selectedCupId === cup.cup_id,
-          showHintMarks: this.showHintMarks || this.hintLevel >= 1,
-          maxCapacityUnits: this.maxCapacityUnits(),
-        });
-        if (this.hintLevel >= 2 && !detached) {
-          this.drawFillCount(ctx, cup, slot);
-        }
-      }
+      this.drawCup(
+        ctx,
+        rs,
+        i,
+        detached,
+        pourPair?.[1] === i ? pourProgress : 1
+      );
     }
     if (detached) {
       this.drawDetachedColumns(ctx, rs, timeMs);
+    }
+    if (pourPair) {
+      this.drawPourDemoOverlay(ctx, rs, pourPair, pourProgress);
     }
 
     if (this.degradation?.particles_enabled !== false) {
