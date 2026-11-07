@@ -27,7 +27,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 
 ## Phase 2 — Hint/feedback thống nhất
 - [x] Hạ tầng hint nguồn + đích: `HintTarget.slot.toIndex`, `getHintDestinationIndex()`, bàn tay ma (`RenderSystem.renderGhostHand`) ở L2/L3
-- [ ] Hint ladder còn lại: L3 đọc lại đề; `getHintDestinationIndex` cho các template kéo/đặt khác (mới có GT-003)
+- [x] Hint ladder còn lại: L3 đọc lại đề; `getHintDestinationIndex` cho các template kéo/đặt khác (mới có GT-003)
 - [x] `demo_shown` chỉ khi demo vẽ thật
 - [ ] Helper `WrongFlash` dùng chung thay ~15 bản tự viết
 - [ ] Retry nói câu khích lệ + mp3 fallback; narration pill Montessori

@@ -17,6 +17,7 @@ import {
   type CompletionOutcome,
   presentCompletion,
 } from "~/composables/play/completion-outcome";
+import { isRereadPromptEscalation } from "~/composables/play/hint-narration";
 import {
   createTimerBag,
   scheduleRetryDisallowedSkip,
@@ -215,6 +216,10 @@ export function usePlaySession(options: UsePlaySessionOptions) {
   const { canvasRef, loggedIn, syncView, onFallbackCue } = options;
 
   let engine: GameEngine | null = null;
+
+  /** Hint L3 đã đọc lại đề trong vòng hiện tại chưa. */
+
+  let rereadDone = false;
   let roundRunner: RoundRunner | null = null;
   const roundTimers = createTimerBag();
   let sessionStartGen = 0;
@@ -476,6 +481,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
       onRoundStarted: (roundIndex, roundConfig) => {
         currentRound.value = roundIndex;
         canSkipRound.value = false;
+        rereadDone = false;
         if (engine) {
           engine.roundIndex = roundIndex;
           // Mỗi vòng một ngưỡng `hint_after_ms` riêng (Task #313 B8).
@@ -550,6 +556,11 @@ export function usePlaySession(options: UsePlaySessionOptions) {
       // scaffolding của engine không bao giờ tới `/events`.
       engine.on(ENGINE_EVENT_WILDCARD, (event) => {
         roundRunner?.recordExternalEvent(event);
+        // Hint L3: đọc lại đề, một lần mỗi vòng (spec §7.2).
+        if (isRereadPromptEscalation(event) && !rereadDone) {
+          rereadDone = true;
+          roundRunner?.replayCurrentRoundNarration();
+        }
       });
       // Vòng thắng ở nhịp `update()` (GT-026 chốt lượt cuối khi ISI hết): không
       // có cử chỉ nào để `usePlayGesture` thấy, nên engine báo thẳng.
