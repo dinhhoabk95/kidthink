@@ -1184,6 +1184,10 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
       const res = s.validateAction(c2Act);
       expect(res.valid).toBe(true);
       s.commit?.(c2Act);
+      expect(s.checkWinCondition()).toBe(false);
+      const pay = { type: "pay", data: {} };
+      expect(s.validateAction(pay).valid).toBe(true);
+      s.commit?.(pay);
       expect(s.checkWinCondition()).toBe(true);
     });
 

@@ -131,7 +131,13 @@ export default defineTemplate({
   requires_tap_fallback: true,
   asset_kinds: ["emoji", "image"],
   scoring: STANDARD_SCORING,
-  events: ["game_started", "coin_placed", "coin_removed", "game_completed"],
+  events: [
+    "game_started",
+    "coin_placed",
+    "coin_removed",
+    "payment_wrong",
+    "game_completed",
+  ],
   input: {
     family: "tap",
     verbs: ["tap", "drop"],

@@ -54,6 +54,13 @@ import {
 
 /** Cạnh lớn nhất của thẻ giá / lợn đất giữa sân khấu. */
 const PAYMENT_TARGET_MAX_PX = 160;
+/** Nháy hổ phách ở ô tổng sau một lần trả sai (ms). */
+const WRONG_PAY_MS = 1200;
+/** Bỏ/gỡ xu: hợp lệ nhưng không báo đúng sai — chốt mới là lúc chấm. */
+const QUIET_OK: ActionResult = Object.freeze({
+  valid: true,
+  feedback: "none",
+});
 const RE_DIGITS = /^[0-9]+$/;
 /** Đệm hai bên thẻ giá trong sân khấu. */
 const PAYMENT_TARGET_PAD_PX = 32;
@@ -79,6 +86,8 @@ export class GT031Session extends TemplateGameSession<
     return true;
   }
   override readonly usesPromptZone = true;
+  /** Trẻ tự bấm "trả tiền" để chốt; gom đủ tổng không tự thắng (`BR-E031-05`). */
+  override readonly needsCommit = true;
 
   degradation: DegradationState | null = null;
   depositedCoinIds: string[] = [];
@@ -86,8 +95,23 @@ export class GT031Session extends TemplateGameSession<
   isWin = false;
 
   private particles: Particle[] = [];
+  private lastFrameMs = 0;
+  private wrongPayUntilMs = 0;
+
+  /** Nút trả tiền sáng khi lợn đã có ít nhất một xu. */
+  override canCommit(): boolean {
+    return this.depositedCoinIds.length > 0;
+  }
+
+  update(deltaMs: number): void {
+    this.lastFrameMs += deltaMs;
+    if (this.wrongPayUntilMs > 0 && this.lastFrameMs >= this.wrongPayUntilMs) {
+      this.wrongPayUntilMs = 0;
+    }
+  }
 
   setupEntities(): void {
+    this.wrongPayUntilMs = 0;
     this.depositedCoinIds = [];
     this.currentTotal = 0;
     this.isWin = false;
@@ -108,19 +132,32 @@ export class GT031Session extends TemplateGameSession<
       this.depositedCoinIds,
       this.content.target_amount
     );
-    if (!hint) {
+    // Vượt đích mà hint không chỉ xu nào: gỡ xu nạp gần nhất (`BR-E031-05`).
+    const coinId =
+      hint?.coin_id ??
+      (this.currentTotal > this.content.target_amount
+        ? this.depositedCoinIds.at(-1)
+        : undefined);
+    if (!coinId) {
       return null;
     }
-    const coinIdx = this.content.coins.findIndex(
-      (c) => c.coin_id === hint.coin_id
-    );
+    const coinIdx = this.content.coins.findIndex((c) => c.coin_id === coinId);
     const slot = this.sourceSlots[coinIdx];
     return slot ? slot.index : null;
   }
 
   /** Bước đúng là kéo xu gợi ý vào thẻ giá (slot đích luôn là slot 0). */
   override getHintDestinationIndex(): number | null {
-    return this.getHintTargetIndex() === null || !this.slots[0] ? null : 0;
+    const index = this.getHintTargetIndex();
+    const coinId =
+      this.content.coins[
+        this.sourceSlots.findIndex((slot) => slot.index === index)
+      ]?.coin_id;
+    // Gỡ xu ra chỉ là một cú chạm, không có đích để kéo tới.
+    if (index === null || !coinId || this.depositedCoinIds.includes(coinId)) {
+      return null;
+    }
+    return this.slots[0] ? 0 : null;
   }
 
   protected computeSlots(band: AgeBand): readonly Slot[] {
@@ -148,12 +185,16 @@ export class GT031Session extends TemplateGameSession<
       return insetDrawSize([target, ...coins], zones.stage);
     }
     const layoutFn = resolveLayout("multi-bucket-bottom");
-    return layoutFn({
+    const laidOut = layoutFn({
       slotCount: this.content.coins.length,
       ageBand: band,
       targetCount: 1,
       logic: this.logicSpace,
     });
+    // Session đọc slot 0 là thẻ giá, 1.. là xu; layout cũ để thẻ giá ở cuối.
+    const target = laidOut.filter((slot) => slot.role === "target");
+    const coins = laidOut.filter((slot) => slot.role !== "target");
+    return [...target, ...coins].map((slot, index) => ({ ...slot, index }));
   }
 
   private validateDepositAction(coinId: string): ActionResult {
@@ -166,11 +207,21 @@ export class GT031Session extends TemplateGameSession<
       return ACTION_IGNORED;
     }
 
-    if (this.currentTotal + coin.value > this.content.target_amount) {
-      return ACTION_RETRY;
-    }
+    // Vượt đích không bị chặn: báo đúng/sai chỉ khi trẻ bấm trả (`BR-E031-05`).
+    return QUIET_OK;
+  }
 
-    return ACTION_CORRECT;
+  private isPaymentEnough(): boolean {
+    return this.difficulty.exact_change
+      ? this.currentTotal === this.content.target_amount
+      : this.currentTotal >= this.content.target_amount;
+  }
+
+  private validatePayAction(): ActionResult {
+    if (!this.canCommit()) {
+      return ACTION_IGNORED;
+    }
+    return this.isPaymentEnough() ? ACTION_CORRECT : ACTION_RETRY;
   }
 
   private validateRemoveAction(coinId?: string): ActionResult {
@@ -187,7 +238,7 @@ export class GT031Session extends TemplateGameSession<
       return ACTION_IGNORED;
     }
 
-    return ACTION_CORRECT;
+    return QUIET_OK;
   }
 
   validateAction(action: GameAction): ActionResult {
@@ -220,6 +271,10 @@ export class GT031Session extends TemplateGameSession<
       return this.validateRemoveAction(coinId);
     }
 
+    if (type === "pay") {
+      return this.validatePayAction();
+    }
+
     return ACTION_IGNORED;
   }
 
@@ -238,17 +293,25 @@ export class GT031Session extends TemplateGameSession<
       current_total: this.currentTotal,
       target_amount: this.content.target_amount,
     });
+  }
 
-    if (this.currentTotal === this.content.target_amount) {
-      this.isWin = true;
-      this.isWon = true;
-      const targetSlot = this.slots[0];
-      if (targetSlot) {
-        this.particles.push(...spawnParticlesAtSlot(targetSlot, 16));
-      }
-      this.recordEvent("game_completed", { score: 100 });
-      this.winSession();
+  private commitPay(): void {
+    if (!(this.canCommit() && this.isPaymentEnough())) {
+      this.wrongPayUntilMs = this.lastFrameMs + WRONG_PAY_MS;
+      this.recordEvent("payment_wrong", {
+        current_total: this.currentTotal,
+        target_amount: this.content.target_amount,
+      });
+      return;
     }
+    this.isWin = true;
+    this.isWon = true;
+    const targetSlot = this.slots[0];
+    if (targetSlot) {
+      this.particles.push(...spawnParticlesAtSlot(targetSlot, 16));
+    }
+    this.recordEvent("game_completed", { score: 100 });
+    this.winSession();
   }
 
   private commitRemoveCoin(coinId?: string): void {
@@ -308,6 +371,11 @@ export class GT031Session extends TemplateGameSession<
     ) {
       const coinId = data.coin_id ?? data.id;
       this.commitRemoveCoin(coinId);
+      return;
+    }
+
+    if (type === "pay") {
+      this.commitPay();
     }
   }
 
@@ -371,6 +439,10 @@ export class GT031Session extends TemplateGameSession<
   }
 
   override toAction(gesture: Gesture): GameAction | null {
+    if (gesture.type === "commit") {
+      // Nút trả tiền đang mờ thì nuốt cử chỉ, không tính một lần sai.
+      return this.canCommit() ? { type: "pay", data: {} } : null;
+    }
     if (gesture.type === "drop") {
       return this.toDropAction(gesture);
     }
@@ -402,9 +474,9 @@ export class GT031Session extends TemplateGameSession<
       return null;
     }
     let state: EntityVisual = "idle";
-    if (this.currentTotal === this.content.target_amount) {
+    if (this.isWin) {
       state = "correct";
-    } else if (this.currentTotal > this.content.target_amount) {
+    } else if (this.wrongPayUntilMs > 0) {
       state = "incorrect";
     }
     const itemToBuy = this.content.item_to_buy;
@@ -515,9 +587,9 @@ export class GT031Session extends TemplateGameSession<
     }
 
     let state: ItemVisualState = "idle";
-    if (this.currentTotal === targetPrice) {
+    if (this.isWin) {
       state = "correct";
-    } else if (this.currentTotal > targetPrice) {
+    } else if (this.wrongPayUntilMs > 0) {
       state = "wrong";
     }
 
@@ -550,9 +622,9 @@ export class GT031Session extends TemplateGameSession<
     // Dòng tiến độ hiển thị phía trên thẻ mục tiêu để không bị khay đè lên
     const progressText = `Đã góp: ${this.currentTotal} / ${targetPrice}đ`;
     let progressColor: string = designTokens.colors.surface[700];
-    if (this.currentTotal === targetPrice) {
+    if (this.isWin) {
       progressColor = designTokens.colors.semantic.success[700];
-    } else if (this.currentTotal > targetPrice) {
+    } else if (this.wrongPayUntilMs > 0) {
       progressColor = designTokens.colors.retry[700];
     }
     drawMoneyProgressLabel(ctx, targetSlot, progressText, progressColor);
@@ -581,10 +653,9 @@ export class GT031Session extends TemplateGameSession<
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem
   ): void {
-    const subPrompt =
-      this.currentTotal === this.content.target_amount
-        ? `Chính xác! Đã trả đủ ${this.content.target_amount} đồng.`
-        : `Đã trả: ${this.currentTotal}/${this.content.target_amount} đồng`;
+    const subPrompt = this.isWin
+      ? `Chính xác! Đã trả đủ ${this.content.target_amount} đồng.`
+      : `Đã trả: ${this.currentTotal}/${this.content.target_amount} đồng`;
     drawSubPromptText(ctx, rs, subPrompt);
   }
 

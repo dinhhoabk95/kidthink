@@ -202,6 +202,9 @@ describe("GT-031: Gộp tiền xu (coin-compose)", () => {
       expect(dep3.valid).toBe(true);
       session.commit({ type: "deposit_coin", data: { coin_id: "c1_2" } });
       expect(session.getCurrentTotal()).toBe(3);
+      // Đủ tổng vẫn chưa thắng: trẻ phải bấm trả tiền (BR-E031-05).
+      expect(session.checkWinCondition()).toBe(false);
+      session.commit({ type: "pay", data: {} });
       expect(session.checkWinCondition()).toBe(true);
 
       // Purity check
@@ -223,7 +226,7 @@ describe("GT-031: Gộp tiền xu (coin-compose)", () => {
       const session = new GT031Session(f.content, f.difficulty);
       session.setupEntities();
 
-      // Deposit 5-coin -> hits 5 (win)
+      // Deposit 5-coin -> hits 5, thắng khi bấm trả
       const dep5 = session.validateAction({
         type: "deposit_coin",
         data: { coin_id: "c5_1" },
@@ -231,6 +234,8 @@ describe("GT-031: Gộp tiền xu (coin-compose)", () => {
       expect(dep5.valid).toBe(true);
       session.commit({ type: "deposit_coin", data: { coin_id: "c5_1" } });
       expect(session.getCurrentTotal()).toBe(5);
+      expect(session.checkWinCondition()).toBe(false);
+      session.commit({ type: "pay", data: {} });
       expect(session.checkWinCondition()).toBe(true);
 
       // Reset and test overpayment: 2 + 2 + 2 = 6 > 5
@@ -247,27 +252,23 @@ describe("GT-031: Gộp tiền xu (coin-compose)", () => {
       });
       expect(session2.getCurrentTotal()).toBe(4);
 
-      // Deposit 5 -> 4 + 5 = 9 > 5 -> ACTION_RETRY
+      // Bỏ 5 -> 4 + 5 = 9 > 5: vượt đích không bị chặn (BR-E031-05)
       const overPay = session2.validateAction({
         type: "deposit_coin",
         data: { coin_id: "c5_1" },
       });
-      expect(overPay.valid).toBe(false);
-      // Purity check: total remains 4
+      expect(overPay.valid).toBe(true);
+      // Purity check: validate không đổi tổng
       expect(session2.getCurrentTotal()).toBe(4);
+      session2.commit({ type: "deposit_coin", data: { coin_id: "c5_1" } });
+      expect(session2.getCurrentTotal()).toBe(9);
+      session2.commit({ type: "pay", data: {} });
       expect(session2.checkWinCondition()).toBe(false);
 
-      // Undo c2_2 -> total becomes 2
+      // Gỡ c5_1 -> total quay về 4
       session2.commit({
         type: "remove_coin",
-        data: { coin_id: "c2_2" },
-      });
-      expect(session2.getCurrentTotal()).toBe(2);
-
-      // Deposit c2_2 again -> 4
-      session2.commit({
-        type: "deposit_coin",
-        data: { coin_id: "c2_2" },
+        data: { coin_id: "c5_1" },
       });
       expect(session2.getCurrentTotal()).toBe(4);
 
@@ -282,6 +283,7 @@ describe("GT-031: Gộp tiền xu (coin-compose)", () => {
         data: { coin_id: "c1_1" },
       });
       expect(session2.getCurrentTotal()).toBe(5);
+      session2.commit({ type: "pay", data: {} });
       expect(session2.checkWinCondition()).toBe(true);
     });
 
@@ -325,6 +327,7 @@ describe("GT-031: Gộp tiền xu (coin-compose)", () => {
         data: { coin_id: "custom_6" },
       });
       expect(session.getCurrentTotal()).toBe(13);
+      session.commit({ type: "pay", data: {} });
       expect(session.checkWinCondition()).toBe(true);
     });
 
@@ -398,6 +401,9 @@ describe("GT-031: Gộp tiền xu (coin-compose)", () => {
       });
       expect(tap2?.valid).toBe(true);
       expect(session.getCurrentTotal()).toBe(3);
+      expect(session.checkWinCondition()).toBe(false);
+      const pay = session.dispatch({ type: "commit", timeMs: 600 });
+      expect(pay?.valid).toBe(true);
       expect(session.checkWinCondition()).toBe(true);
 
       const view = session.getView();

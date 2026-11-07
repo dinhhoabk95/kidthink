@@ -40,8 +40,8 @@ vi.mock("#src/render/shared-render", async (importOriginal) => {
  * Lô B6 của Task #283: ba engine xây, đo, đong (GT-030, 031, 033) vào khung năm
  * vùng — vật nguồn trong `zones.tray`, đích trong `zones.stage` (`BR-PSZ-01`),
  * vùng chạm không chồng (`BR-LAY-05`), kéo từ khay và chạm-chạm (`BR-ENG-06`)
- * đều chơi hết vòng. Cả ba `needsCommit = false`: đáp án chốt bằng chính cú chạm
- * (GT-030 chạm đáp án, GT-031 tổng đủ, GT-033 lưới đủ) — xem phiếu engine mục 4.
+ * đều chơi hết vòng. GT-030 và GT-033 `needsCommit = false` (đáp án chốt bằng chính cú
+ * chạm, lưới đủ); GT-031 có nút trả tiền ở `zones.action` (`BR-E031-05`).
  */
 interface Viewport {
   readonly name: string;
@@ -131,6 +131,7 @@ interface TrayFlags {
   readonly trayItemCount: number;
   readonly trayHasLabels?: boolean;
   readonly stageRowCount?: number;
+  readonly needsCommit?: boolean;
 }
 
 function frameFor(viewport: Viewport, tray: TrayFlags): Frame {
@@ -149,7 +150,7 @@ function frameFor(viewport: Viewport, tray: TrayFlags): Frame {
     trayItems: tray.trayItemCount,
     trayLabels: tray.trayHasLabels,
     stageRows: tray.stageRowCount,
-    needsCommit: false,
+    needsCommit: tray.needsCommit ?? false,
   });
   return { zones, space, cssPerLogic };
 }
@@ -327,6 +328,12 @@ function play(
   while (played < limit && !session.checkWinCondition()) {
     const m = nextMove(session);
     if (!m) {
+      // GT-031: gom đủ xu rồi bấm nút trả tiền để chốt.
+      if (session instanceof GT031Session && session.canCommit()) {
+        session.dispatch({ type: "commit", timeMs: PLAY_TIME_MS });
+        played += 1;
+        continue;
+      }
       break;
     }
     how(session, m);
@@ -355,11 +362,11 @@ describe.each(B6_CODES)("%s lô B6 — khay nguồn, đích trên sân khấu", 
     await preloadGameSession(code);
   });
 
-  it("khai needsTray, usesPromptZone, không needsCommit (BR-PSZ-01, BR-PSZ-08)", () => {
+  it("khai needsTray, usesPromptZone, needsCommit đúng cách chốt (BR-PSZ-01, BR-PSZ-08)", () => {
     const session = casesFor(code)[0]?.create();
     expect(session?.needsTray).toBe(true);
     expect(session?.usesPromptZone).toBe(true);
-    expect(session?.needsCommit).toBe(false);
+    expect(session?.needsCommit).toBe(code === "GT-031");
   });
 
   it("có level đã seed để chạy lại, không chỉ level mẫu (BR-LAY-10)", () => {
