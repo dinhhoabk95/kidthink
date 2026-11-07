@@ -35,8 +35,10 @@ import {
   drawWoodenTokenDock,
   sceneBox,
 } from "#src/render/index";
+import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
 import { MirrorSystem } from "#src/systems/mirror-system";
+import { MoodPulse } from "#src/systems/mood-pulse";
 import type { RenderSystem } from "#src/systems/render-system";
 import type { GT021Content, GT021Difficulty } from "./template.js";
 
@@ -79,6 +81,15 @@ function findHitTargetSlot(
   return target ? { target, index } : null;
 }
 
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E021-06`, `BR-FBK-16`). */
+export const GT021_STORY_LINE =
+  "Cô Tiên có một chiếc gương thần. Bé làm cho bên kia gương giống hệt bên này nhé!";
+
+/** Mascot vui sau mỗi ô đặt đúng. */
+export const GT021_HAPPY_MS = 1000;
+/** Mascot nghiêng đầu sau lần đặt chưa đúng. */
+export const GT021_WONDER_MS = 1500;
+
 export class GT021Session extends TemplateGameSession<
   GT021Content,
   GT021Difficulty
@@ -107,7 +118,19 @@ export class GT021Session extends TemplateGameSession<
     this.neutralSlots = this.slots.filter((s) => s.role === "neutral");
   }
 
+  private readonly mood = new MoodPulse();
+
+  override storyLine(): string {
+    return GT021_STORY_LINE;
+  }
+
+  /** Chỉ phản ứng sau lần đặt, không báo trước (`BR-E021-06`). */
+  override mascotMood(): MascotPose | null {
+    return this.isWon ? null : this.mood.current();
+  }
+
   setupEntities(): void {
+    this.mood.clear();
     this.isWon = false;
     this.wrongPlacementTimerMs = 0;
     this.wrongTargetSlotId = null;
@@ -187,6 +210,13 @@ export class GT021Session extends TemplateGameSession<
       is_correct: isCorrect,
     });
 
+    if (isCorrect) {
+      this.queueSfx("mirror_chime");
+      this.mood.set("happy", GT021_HAPPY_MS);
+    } else {
+      this.mood.set("wonder", GT021_WONDER_MS);
+    }
+
     if (this.checkWinCondition()) {
       this.wrongPlacementTimerMs = 0;
       this.wrongTargetSlotId = null;
@@ -214,6 +244,7 @@ export class GT021Session extends TemplateGameSession<
   }
 
   update(deltaMs: number): void {
+    this.mood.tick(deltaMs);
     if (this.wrongPlacementTimerMs > 0) {
       this.wrongPlacementTimerMs = Math.max(
         0,

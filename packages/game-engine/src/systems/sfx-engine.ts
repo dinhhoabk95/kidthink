@@ -43,7 +43,8 @@ export type SFXType =
   | "seat_pat"
   | "clock_tick"
   | "block_bump"
-  | "torch_click";
+  | "torch_click"
+  | "mirror_chime";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -667,6 +668,26 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       volume: 0.05,
       durationSec: 0.06,
       rampOutSec: 0.04,
+    },
+  ],
+
+  /** GT-021: gương thần lấp lánh — hai nốt cao, trong, đi lên (`BR-E021-06`). */
+  mirror_chime: [
+    {
+      delaySec: 0,
+      type: "sine",
+      freq: 1175,
+      volume: 0.08,
+      durationSec: 0.14,
+      rampOutSec: 0.08,
+    },
+    {
+      delaySec: 0.09,
+      type: "sine",
+      freq: 1568,
+      volume: 0.07,
+      durationSec: 0.2,
+      rampOutSec: 0.1,
     },
   ],
 
