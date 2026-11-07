@@ -57,6 +57,6 @@ describe("GT-034 — tempo_bpm của độ khó (BR-E034-11)", () => {
     const played = session
       .getTelemetry()
       .events.find((e) => e.event_name === "pattern_played");
-    expect(played?.data.tempo_bpm).toBe(120);
+    expect(played?.data?.tempo_bpm).toBe(120);
   });
 });
