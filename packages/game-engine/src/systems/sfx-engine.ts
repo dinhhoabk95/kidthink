@@ -21,7 +21,8 @@ export type SFXType =
   | "go_chime"
   | "stop_hum"
   | "star_collect"
-  | "lid_click";
+  | "lid_click"
+  | "bell_open";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -239,6 +240,26 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       volume: 0.09,
       durationSec: 0.08,
       rampOutSec: 0.04,
+    },
+  ],
+
+  /** GT-012: mở nắp chuông — nốt chuông êm ngân dài, không báo đáp án (`BR-E012-06`). */
+  bell_open: [
+    {
+      delaySec: 0,
+      type: "sine",
+      freq: 1175,
+      volume: 0.09,
+      durationSec: 0.5,
+      rampOutSec: 0.3,
+    },
+    {
+      delaySec: 0,
+      type: "sine",
+      freq: 1760,
+      volume: 0.04,
+      durationSec: 0.35,
+      rampOutSec: 0.2,
     },
   ],
 

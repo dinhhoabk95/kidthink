@@ -28,6 +28,7 @@ import {
   drawSubPromptText,
   drawWoodenTokenDock,
 } from "#src/render/index.js";
+import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
 import type { RenderSystem } from "#src/systems/render-system";
 import { FlashTimer } from "#src/systems/timer-system";
@@ -39,6 +40,10 @@ import {
   type RecallAreas,
   splitRecallStage,
 } from "./zone-layout.js";
+
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E012-06`, `BR-FBK-16`). */
+export const GT012_STORY_LINE =
+  "Đom đóm đang nháy sáng dưới nắp chuông. Bé bấm mở nắp, nhìn thật nhanh rồi cho biết có mấy chấm sáng nhé!";
 
 export class FlashRecallSession extends TemplateGameSession<
   GT012Content,
@@ -100,6 +105,7 @@ export class FlashRecallSession extends TemplateGameSession<
       return false;
     }
     this.awaitingStart = false;
+    this.queueSfx("bell_open");
     this.timer.start();
     this.wasVisible = true;
     this.recordEvent("flash_shown", {
@@ -139,6 +145,7 @@ export class FlashRecallSession extends TemplateGameSession<
   replayFlash(): boolean {
     const ok = this.timer.replay();
     if (ok) {
+      this.queueSfx("bell_open");
       this.wasVisible = true;
       this.recordEvent("flash_replayed", {});
       this.recordEvent("flash_shown", {
@@ -146,6 +153,18 @@ export class FlashRecallSession extends TemplateGameSession<
       });
     }
     return ok;
+  }
+
+  override storyLine(): string {
+    return GT012_STORY_LINE;
+  }
+
+  /**
+   * Ngạc nhiên từ lúc mở nắp tới khi thắng. Dáng chỉ theo nhịp chơi, không theo
+   * đáp án: đáp sai không đổi dáng (`BR-E012-06`).
+   */
+  override mascotMood(): MascotPose | null {
+    return this.awaitingStart || this.isWon ? null : "wonder";
   }
 
   update(deltaMs: number): void {
