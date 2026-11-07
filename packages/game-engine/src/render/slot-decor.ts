@@ -277,6 +277,94 @@ export function drawClueText(
   ctx.restore();
 }
 
+/** Ký hiệu của một manh mối số — không chữ, trẻ chưa biết đọc vẫn hiểu hướng (`BR-ENG-10`). */
+export type ClueSymbol =
+  | { kind: "greater_than" | "less_than" | "not_equal"; value: number }
+  | { kind: "between"; min: number; max: number }
+  | { kind: "other" };
+
+function strokeClueArrow(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  size: number,
+  dir: "up" | "down" | "both"
+): void {
+  const half = size / 2;
+  const head = size * 0.28;
+  ctx.beginPath();
+  if (dir === "both") {
+    // Mũi tên hai đầu nằm ngang: "ở giữa hai số".
+    ctx.moveTo(x - half, y);
+    ctx.lineTo(x + half, y);
+    ctx.moveTo(x - half + head, y - head);
+    ctx.lineTo(x - half, y);
+    ctx.lineTo(x - half + head, y + head);
+    ctx.moveTo(x + half - head, y - head);
+    ctx.lineTo(x + half, y);
+    ctx.lineTo(x + half - head, y + head);
+  } else {
+    const tip = dir === "up" ? y - half : y + half;
+    const tail = dir === "up" ? y + half : y - half;
+    const back = dir === "up" ? head : -head;
+    ctx.moveTo(x, tail);
+    ctx.lineTo(x, tip);
+    ctx.moveTo(x - head, tip + back);
+    ctx.lineTo(x, tip);
+    ctx.lineTo(x + head, tip + back);
+  }
+  ctx.stroke();
+}
+
+/** Vẽ ký hiệu manh mối số trong thẻ: chữ số kèm mũi tên lớn hơn/bé hơn/khác/ở giữa (GT-009). */
+export function drawClueSymbol(
+  ctx: CanvasRenderingContext2D,
+  slot: Slot,
+  symbol: ClueSymbol,
+  color = designTokens.colors.surface[700]
+): void {
+  const fontSize = Math.max(18, Math.min(40, Math.floor(slot.h * 0.5)));
+  const arrow = fontSize * 0.9;
+  ctx.save();
+  ctx.fillStyle = color;
+  ctx.strokeStyle = designTokens.colors.montessori.amber;
+  ctx.lineWidth = 4;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  applyCanvasFontAtSize(ctx, fontSize, "sans");
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  if (symbol.kind === "other") {
+    ctx.fillText("\u{1F50D}", slot.x, slot.y);
+  } else if (symbol.kind === "between") {
+    const gap = Math.min(slot.w * 0.28, fontSize * 2);
+    ctx.fillText(String(symbol.min), slot.x - gap - fontSize * 0.6, slot.y);
+    strokeClueArrow(ctx, slot.x, slot.y, gap * 1.2, "both");
+    ctx.fillText(String(symbol.max), slot.x + gap + fontSize * 0.6, slot.y);
+  } else {
+    const offset = fontSize * 0.9;
+    ctx.fillText(String(symbol.value), slot.x - offset / 2, slot.y);
+    if (symbol.kind === "not_equal") {
+      const tx = slot.x - offset / 2;
+      const r = fontSize * 0.7;
+      ctx.strokeStyle = designTokens.colors.montessori.coral;
+      ctx.beginPath();
+      ctx.moveTo(tx - r, slot.y + r);
+      ctx.lineTo(tx + r, slot.y - r);
+      ctx.stroke();
+    } else {
+      strokeClueArrow(
+        ctx,
+        slot.x + fontSize * 0.9,
+        slot.y,
+        arrow,
+        symbol.kind === "greater_than" ? "up" : "down"
+      );
+    }
+  }
+  ctx.restore();
+}
+
 /** Vẽ đường gạch chéo loại trừ ứng viên (GT-009). */
 export function drawSlashLine(
   ctx: CanvasRenderingContext2D,

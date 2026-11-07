@@ -14,8 +14,9 @@ import { insetDrawSize } from "#src/layout/slot-fit";
 import type { Slot } from "#src/layout/types";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
 import {
+  type ClueSymbol,
   drawClueBannerSlot,
-  drawClueText,
+  drawClueSymbol,
   drawMontessoriControlOfErrorPill,
   drawSceneBackground,
   drawSlashLine,
@@ -32,6 +33,22 @@ import type { RenderSystem } from "#src/systems/render-system";
 import { WRONG_FLASH_MS, WrongFlash } from "#src/systems/wrong-flash";
 import { survivingCandidates } from "./deduction.js";
 import type { GT009Content, GT009Difficulty } from "./template.js";
+
+/** Vị ngữ số → ký hiệu vẽ; vị ngữ thuộc tính chưa có hình nên chỉ hiện kính lúp. */
+function toClueSymbol(
+  predicate: GT009Content["clues"][number]["predicate"]
+): ClueSymbol {
+  switch (predicate.kind) {
+    case "greater_than":
+    case "less_than":
+    case "not_equal":
+      return { kind: predicate.kind, value: predicate.value };
+    case "between":
+      return { kind: "between", min: predicate.min, max: predicate.max };
+    default:
+      return { kind: "other" };
+  }
+}
 
 /**
  * `GT-009` — loại trừ theo manh mối.
@@ -451,7 +468,6 @@ export class GT009Session extends TemplateGameSession<
         w: slot.w,
         h: slot.h,
         hitShape: "square",
-        label: isRevealed ? clue.text : "?",
         spokenLabel: isRevealed ? clue.text : "Manh mối bí ẩn",
       });
     });
@@ -513,17 +529,12 @@ export class GT009Session extends TemplateGameSession<
         revealed ? "selected" : "idle"
       );
       drawClueBannerSlot(ctx, slot, fill, border);
-      if (revealed) {
-        drawClueText(ctx, clue.text, slot.x, slot.y, slot.w - 16);
-      } else {
-        drawClueText(
-          ctx,
-          `🔍 Manh mối ${i + 1} (chạm mở)`,
-          slot.x,
-          slot.y,
-          slot.w - 16
-        );
-      }
+      // Thẻ manh mối chỉ có ký hiệu số + mũi tên; lời đọc là `spokenLabel` (`BR-E009-06`).
+      drawClueSymbol(
+        ctx,
+        slot,
+        revealed ? toClueSymbol(clue.predicate) : { kind: "other" }
+      );
     });
 
     this.content.candidates.forEach((cand, i) => {

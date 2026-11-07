@@ -79,6 +79,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
   - `shuffle_items` 028/029: session truy cập `content.items[i]` theo chỉ số, xáo phải đổi cả test thứ tự; để riêng một commit
 - [ ] Gỡ chữ phải đọc khỏi UI trẻ (008, 009, 019, 023, 028, 029, 032, 035, 036)
   - [x] 008 (ô đích hiện bóng mờ của vật nhận, khay chỉ hình, tên chỉ đọc thành tiếng, BR-E008-05)
+  - [x] 009 (thẻ manh mối: kính lúp khi chưa mở, ký hiệu số + mũi tên khi mở, câu chữ chỉ đọc, BR-E009-06)
 
 ## Phase 5 — Đặc sắc từng game
 - [ ] Đợt demo: 001, 003, 020, 025, 026, 037
