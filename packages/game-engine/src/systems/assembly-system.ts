@@ -15,6 +15,8 @@ export interface AssemblyPart {
   readonly partId: string;
   readonly targetAnchorId: string;
   readonly name?: string;
+  /** Hai mảnh cùng `shapeKey` là một hình: đặt thay nhau được (`BR-E023-04`). */
+  readonly shapeKey?: string;
 }
 
 export interface AssemblyPlacementResult {
@@ -75,16 +77,29 @@ export class AssemblySystem {
     return nearest;
   }
 
+  /** Neo nhận mảnh khi đúng mảnh khai báo, hoặc mảnh cùng hình với nó. */
+  acceptsPart(anchorId: string, partId: string): boolean {
+    const anchor = this.anchors.get(anchorId);
+    const part = this.parts.get(partId);
+    if (!(anchor && part)) {
+      return false;
+    }
+    if (anchor.acceptedPartId === partId) {
+      return true;
+    }
+    const accepted = this.parts.get(anchor.acceptedPartId);
+    return part.shapeKey !== undefined && part.shapeKey === accepted?.shapeKey;
+  }
+
   assemblePart(partId: string, anchorId: string): AssemblyPlacementResult {
     const anchor = this.anchors.get(anchorId);
     const part = this.parts.get(partId);
 
-    if (!(anchor && part)) {
+    if (!(anchor && part) || this.placements.has(anchorId)) {
       return { valid: false, isAnchorMatch: false, isComplete: false };
     }
 
-    const isMatch =
-      anchor.acceptedPartId === partId && part.targetAnchorId === anchorId;
+    const isMatch = this.acceptsPart(anchorId, partId);
     if (isMatch) {
       this.placements.set(anchorId, partId);
     }
@@ -106,9 +121,9 @@ export class AssemblySystem {
     if (this.anchors.size === 0 || this.placements.size < this.anchors.size) {
       return false;
     }
-    for (const [anchorId, anchor] of this.anchors.entries()) {
+    for (const anchorId of this.anchors.keys()) {
       const placedPartId = this.placements.get(anchorId);
-      if (placedPartId !== anchor.acceptedPartId) {
+      if (!(placedPartId && this.acceptsPart(anchorId, placedPartId))) {
         return false;
       }
     }

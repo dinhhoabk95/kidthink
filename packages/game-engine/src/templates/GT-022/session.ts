@@ -16,6 +16,7 @@ import type {
 } from "#src/interaction";
 import { resolveAssetLabels } from "#src/labels/spoken-keyword";
 import { resolveTouchFloor, SLOT_GAP_PX } from "#src/layout/constants";
+import { hasHitOverlap } from "#src/layout/hit-overlap";
 import { TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
 import { insetDrawSize } from "#src/layout/slot-fit";
@@ -66,25 +67,6 @@ function findHitSceneObject(
     }
   }
   return best;
-}
-
-/** Hai vùng chạm cách nhau dưới `SLOT_GAP_PX` thì coi là chồng (`BR-LAY-05`). */
-function hasHitOverlap(slots: readonly Slot[]): boolean {
-  for (let i = 0; i < slots.length; i++) {
-    for (let j = i + 1; j < slots.length; j++) {
-      const a = slots[i];
-      const b = slots[j];
-      if (!(a && b)) {
-        continue;
-      }
-      const dx = Math.abs(a.x - b.x) - (a.hitW + b.hitW) / 2;
-      const dy = Math.abs(a.y - b.y) - (a.hitH + b.hitH) / 2;
-      if (Math.max(dx, dy) < SLOT_GAP_PX) {
-        return true;
-      }
-    }
-  }
-  return false;
 }
 
 export class GT022Session extends TemplateGameSession<

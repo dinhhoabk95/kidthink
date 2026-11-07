@@ -15,6 +15,7 @@ import type {
 } from "#src/interaction";
 import { resolveAssetLabels } from "#src/labels/spoken-keyword.js";
 import { resolveTouchFloor } from "#src/layout/constants";
+import { hasHitOverlap } from "#src/layout/hit-overlap";
 import { TAP_TOLERANCE_PX } from "#src/layout/hit-test.js";
 import { resolveLayout } from "#src/layout/registry";
 import { computeStageCellSlots } from "#src/layout/stage-targets";
@@ -53,6 +54,14 @@ const MIN_SNAP_RADIUS_PX = 64;
 /** Cạnh ô mỏ neo lớn nhất trên sân khấu. */
 const ANCHOR_CELL_MAX_PX = 96;
 
+/** Bước co ô mỏ neo khi trải mô hình, và hàng nhãn dưới mỗi ô. */
+const SHAPE_CELL_STEP_PX = 8;
+const ANCHOR_LABEL_ROW_PX = 24;
+/** Đệm tối thiểu giữa ô mỏ neo ngoài cùng và mép sân khấu. */
+const MODEL_EDGE_PAD_PX = 4;
+/** Mô hình được kéo giãn một trục nhiều nhất bấy nhiêu lần so với trục kia. */
+const MODEL_STRETCH_MAX = 2.5;
+
 /** Cỡ thực thể mỏ neo ở bố cục cũ, nơi mỏ neo đứng ở toạ độ của content. */
 const LEGACY_ANCHOR_VIEW_PX = 80;
 
@@ -77,6 +86,24 @@ function findHitSourcePart(
     tolerance
   );
   return open[hit] ?? null;
+}
+
+/** Hệ số co hai trục của mô hình; `null` khi không có chỗ hoặc mô hình suy biến. */
+function modelScales(
+  spanX: number,
+  spanY: number,
+  room: { readonly w: number; readonly h: number }
+): { scaleX: number; scaleY: number } | null {
+  const fitX = spanX > 0 ? room.w / spanX : Number.POSITIVE_INFINITY;
+  const fitY = spanY > 0 ? room.h / spanY : Number.POSITIVE_INFINITY;
+  if (!(Number.isFinite(fitX) || Number.isFinite(fitY)) || room.w <= 0) {
+    return null;
+  }
+  // Hai trục co độc lập nhưng lệch tối đa `MODEL_STRETCH_MAX` lần: sân khấu
+  // thấp thì trải ngang hơn, vẫn giữ thứ tự trên-dưới và trái-phải của mô hình.
+  const scaleY = Math.min(fitY, fitX * MODEL_STRETCH_MAX);
+  const scaleX = Math.min(fitX, fitY * MODEL_STRETCH_MAX);
+  return scaleX > 0 && scaleY > 0 ? { scaleX, scaleY } : null;
 }
 
 export class GT023Session extends TemplateGameSession<
@@ -125,6 +152,7 @@ export class GT023Session extends TemplateGameSession<
       partId: p.part_id,
       targetAnchorId: p.target_anchor_id,
       name: p.name,
+      shapeKey: JSON.stringify(p.asset),
     }));
 
     this.assemblySystem.init(anchors, parts);
@@ -159,17 +187,26 @@ export class GT023Session extends TemplateGameSession<
       const anchor = this.assemblySystem.getAnchor(anchorId);
       const part = this.assemblySystem.getPart(partId);
 
-      if (!(anchor && part)) {
+      // Neo đã có mảnh đúng thì khoá vĩnh viễn (`BR-E023-03`): thả thêm là không có gì.
+      if (
+        !(anchor && part) ||
+        this.assemblySystem.getPlacements().has(anchorId)
+      ) {
         return ACTION_IGNORED;
       }
 
-      return anchor.acceptedPartId === partId ? ACTION_CORRECT : ACTION_RETRY;
+      return this.assemblySystem.acceptsPart(anchorId, partId)
+        ? ACTION_CORRECT
+        : ACTION_RETRY;
     }
 
     return ACTION_IGNORED;
   }
 
   onAssemblePart(partId: string, anchorId: string): AssemblyPlacementResult {
+    if (this.assemblySystem.getPlacements().has(anchorId)) {
+      return { valid: false, isAnchorMatch: false, isComplete: false };
+    }
     const result = this.assemblySystem.assemblePart(partId, anchorId);
 
     if (result.valid) {
@@ -482,7 +519,9 @@ export class GT023Session extends TemplateGameSession<
     const stagedId = this.placementMechanic.getStagedItemId();
     if (stagedId) {
       const anchorIdx = this.content.anchors.findIndex(
-        (a) => !placements.has(a.anchor_id) && a.accepted_part_id === stagedId
+        (a) =>
+          !placements.has(a.anchor_id) &&
+          this.assemblySystem.acceptsPart(a.anchor_id, stagedId)
       );
       const anchorSlot = this.targetSlots[anchorIdx];
       if (anchorSlot) {
@@ -512,10 +551,71 @@ export class GT023Session extends TemplateGameSession<
       return null;
     }
     const anchorIdx = this.content.anchors.findIndex(
-      (a) => !placements.has(a.anchor_id) && a.accepted_part_id === part.part_id
+      (a) =>
+        !placements.has(a.anchor_id) &&
+        this.assemblySystem.acceptsPart(a.anchor_id, part.part_id)
     );
     const slot = this.targetSlots[anchorIdx];
     return slot ? this.slots.indexOf(slot) : null;
+  }
+
+  /**
+   * Mỏ neo đứng đúng hình mô hình: toạ độ `x`/`y` của content co về một khối
+   * trong sân khấu, giữ tỉ lệ (mái trên thân, bánh hai bên thân xe). Kích cỡ ô
+   * lấy từ lưới `grid`; co không đủ chỗ cho vùng chạm không chồng thì lùi về
+   * lưới (`BR-E023-05`, `BR-LAY-05`).
+   */
+  private placeAnchorsAsModel(
+    grid: readonly Slot[],
+    stage: NonNullable<GT023Session["stageRect"]>,
+    firstIndex: number,
+    touchFloor: number
+  ): readonly Slot[] {
+    const anchors = this.content.anchors;
+    const cell = grid[0];
+    if (!cell) {
+      return grid;
+    }
+    const xs = anchors.map((a) => a.x);
+    const ys = anchors.map((a) => a.y);
+    const spanX = Math.max(...xs) - Math.min(...xs);
+    const spanY = Math.max(...ys) - Math.min(...ys);
+    const midX = (Math.max(...xs) + Math.min(...xs)) / 2;
+    const midY = (Math.max(...ys) + Math.min(...ys)) / 2;
+    const centerX = stage.x + stage.w / 2;
+    const centerY = stage.y + stage.h / 2;
+    const labelRow = anchors.some((a) => a.label) ? ANCHOR_LABEL_ROW_PX : 0;
+    // Thử ô lớn trước, co dần tới sàn chạm: ô nhỏ hơn thì mô hình trải rộng hơn.
+    for (let size = cell.hitW; size >= touchFloor; size -= SHAPE_CELL_STEP_PX) {
+      const room = {
+        w: stage.w - 2 * MODEL_EDGE_PAD_PX - size,
+        h: stage.h - 2 * MODEL_EDGE_PAD_PX - size - labelRow,
+      };
+      const scales = modelScales(spanX, spanY, room);
+      if (!scales) {
+        return grid;
+      }
+      const { scaleX, scaleY } = scales;
+      const shaped = anchors.map((a, i) => ({
+        ...cell,
+        index: firstIndex + i,
+        w: Math.min(cell.w, size),
+        h: Math.min(cell.h, size),
+        hitW: size,
+        hitH: size,
+        x: Math.round(centerX + (a.x - midX) * scaleX),
+        y: Math.round(centerY + (a.y - midY) * scaleY - labelRow / 2),
+      }));
+      // Nhãn nằm dưới ô: vùng cần chừa cao thêm một hàng nhãn.
+      const spaced = shaped.map((slot) => ({
+        ...slot,
+        hitH: slot.hitH + labelRow,
+      }));
+      if (!hasHitOverlap(spaced)) {
+        return shaped;
+      }
+    }
+    return grid;
   }
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
@@ -538,7 +638,15 @@ export class GT023Session extends TemplateGameSession<
         hasLabels: this.content.anchors.some((anchor) => Boolean(anchor.label)),
         firstIndex: parts.length,
       });
-      return [...parts, ...anchors];
+      return [
+        ...parts,
+        ...this.placeAnchorsAsModel(
+          anchors,
+          zones.stage,
+          parts.length,
+          touchFloor
+        ),
+      ];
     }
     const layoutFn = resolveLayout("top-source-bottom-target");
     return layoutFn({
