@@ -27,6 +27,7 @@ import type { Slot } from "#src/layout/types";
 import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
 import {
   drawButterflyWingsBoard,
+  drawCircleOutline,
   drawEmptyTargetSlot,
   drawMirrorAxis,
   drawMirroredSlotItem,
@@ -37,6 +38,7 @@ import {
 } from "#src/render/index";
 import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
+import { designTokens } from "#src/systems/designTokens";
 import { MirrorSystem } from "#src/systems/mirror-system";
 import { MoodPulse } from "#src/systems/mood-pulse";
 import type { RenderSystem } from "#src/systems/render-system";
@@ -384,6 +386,25 @@ export class GT021Session extends TemplateGameSession<
     return id;
   }
 
+  /**
+   * Ô đối xứng của mảnh đang nhấc (N4): ô đích còn trống mà mảnh đó thuộc về.
+   * Rỗng khi chưa nhấc mảnh nào hoặc khi đã thắng.
+   */
+  private isSymmetricToStaged(
+    target: GT021Content["target_slots"][number]
+  ): boolean {
+    const stagedId = this.placementMechanic.getStagedItemId();
+    if (!stagedId || this.isWon) {
+      return false;
+    }
+    const staged = this.content.options.find((o) => o.item_id === stagedId);
+    return (
+      staged !== undefined &&
+      staged.asset_ref === target.expected_asset_ref &&
+      this.mirrorSystem.getPlacement(target.slot_id) === undefined
+    );
+  }
+
   private toTargetViewEntity(
     slot: Slot,
     target: GT021Content["target_slots"][number],
@@ -393,6 +414,8 @@ export class GT021Session extends TemplateGameSession<
     let state: EntityVisual = "idle";
     if (placedRef) {
       state = placedRef === target.expected_asset_ref ? "correct" : "incorrect";
+    } else if (this.isSymmetricToStaged(target)) {
+      state = "active";
     }
     const placedAsset = placedRef ? this.assetByRef.get(placedRef) : undefined;
     return {
@@ -575,6 +598,16 @@ export class GT021Session extends TemplateGameSession<
       const placedRef = this.mirrorSystem.getPlacement(target.slot_id);
       if (!placedRef) {
         drawEmptyTargetSlot(ctx, slot);
+        if (this.isSymmetricToStaged(target)) {
+          // Ánh sáng nhẹ, tĩnh: không cần chuyển động nên giữ nguyên khi giảm chuyển động.
+          drawCircleOutline(
+            ctx,
+            slot,
+            designTokens.colors.montessori.amber,
+            4,
+            2
+          );
+        }
         return;
       }
       const isWrong = placedRef !== target.expected_asset_ref;

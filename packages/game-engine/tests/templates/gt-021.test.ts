@@ -155,4 +155,40 @@ describe("GT-021 — nửa phản chiếu vẽ lật gương thật (BR-E021-05)
   it("trục ngang: vật ở ô đích lật trên-dưới", () => {
     expect(flipCalls("horizontal").after).toEqual([[1, -1]]);
   });
+
+  it("N4: nhấc mảnh thì ô đối xứng của nó sáng nhẹ, nhả ra thì tắt", () => {
+    const fixture = GT021_FIXTURES[0];
+    if (!fixture) {
+      throw new Error("Fixture GT-021 not found");
+    }
+    const { content } = fixture;
+    const session = new GT021Session(content, fixture.difficulty, 1);
+    session.prepareRound("4-5");
+    const lit = () =>
+      session
+        .getView()
+        .entities.filter((e) => e.role === "target" && e.state === "active")
+        .map((e) => e.id);
+    expect(lit()).toEqual([]);
+    const targetDef = content.target_slots[0];
+    if (!targetDef) {
+      throw new Error("Thiếu target_slots[0]");
+    }
+    const optIdx = content.options.findIndex(
+      (o) => o.asset_ref === targetDef.expected_asset_ref
+    );
+    const sourceSlot = session.sourceSlots[optIdx];
+    if (!sourceSlot) {
+      throw new Error("Thiếu sourceSlot");
+    }
+    const tapSource = {
+      type: "tap",
+      x: sourceSlot.x,
+      y: sourceSlot.y,
+    } as const;
+    session.dispatch({ ...tapSource, timeMs: 1 });
+    expect(lit()).toContain(targetDef.slot_id);
+    session.dispatch({ ...tapSource, timeMs: 2 });
+    expect(lit()).toEqual([]);
+  });
 });

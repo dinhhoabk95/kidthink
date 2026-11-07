@@ -51,7 +51,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 
 - [x] 015 (còn lại) — fixture ghim tay đã đổi theo `BR-E015-06`: ba level đều 3×3 band 5-6 (#0 hai ô trống cùng cột 1 đáp án chó/chim, #1 ba ô trống đáp án banana/grapes/grapes, #2 hai ô trống cùng hàng 0 đáp án circle/square), nghiệm duy nhất, test gác ở `generator-degeneracy.test.ts`; đổi chủ ý các test bám fixture cũ (`gt-015-sudoku-mini`, `gt-015-experience`, harness). Kéo theo 2 sửa: layout `matrix-slot-grid` hiểu `targetCount` là số ô (GT-015 trước đây truyền cạnh lưới nên 3×3 bị vẽ 2×2 ở khung không stage) và bộ giải cử chỉ web thử thả ký hiệu vào ô được gợi ý + không tính lần ghi lại cùng giá trị là tiến triển → GT-015#1-2 gỡ khỏi `web-gesture-baseline.json` (còn 4 mục). Thang hint L1–L3 vẫn thuộc Task #301
 
-- [ ] 021 (còn lại) — nửa phản chiếu dùng asset bất đối xứng thật (giày trái/phải, khủng long) và "Gương thần" hiện live: nội dung/asset, Phase 5; ánh sáng ô đối xứng lúc nhấc (N4) chưa có code
+- [ ] 021 (còn lại) — nửa phản chiếu dùng asset bất đối xứng thật (giày trái/phải, khủng long) và "Gương thần" hiện live: nội dung/asset, Phase 5; ánh sáng ô đối xứng lúc nhấc (N4) đã có (`BR-E021-07`, chạm-chọn mảnh; kéo thật thuộc web, engine chưa có sự kiện nhấc)
 
 - [ ] 022 (còn lại) — cảnh có lớp che thật (vật nấp sau bụi, layering): hiện cảnh xếp lưới theo slot nên không vật nào đè vật nào; cần mô hình lớp + toạ độ tương đối trong stage, thuộc Phase 5; sân khấu rất chật (điện thoại ngang, level 12 vật) chưa có hàng ghim
 
