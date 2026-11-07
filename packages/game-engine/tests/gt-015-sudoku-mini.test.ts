@@ -270,5 +270,48 @@ describe("GT-015: Sudoku hình ảnh mini (sudoku-mini)", () => {
       expect(session.getViolations()).toHaveLength(0);
       expect(session.checkWinCondition()).toBe(true);
     });
+
+    it("verdict of validateAction matches what commit records (a valid fill is never flagged wrong because of another cell)", () => {
+      const session = new SudokuMiniSession(
+        SAMPLE_LEVEL_1.content_pack,
+        SAMPLE_LEVEL_1.difficulty_params
+      );
+      session.setupEntities();
+
+      const wrong = {
+        type: "fill_cell",
+        data: { row: 0, col: 1, symbol_id: "cat" },
+      };
+      expect(session.validateAction(wrong).valid).toBe(false);
+      session.commit(wrong);
+
+      // (1,0)=dog khong trung hang/cot nao: validateAction chap nhan,
+      // commit khong duoc ghi them mot lan sai chi vi o (0,1) dang sai.
+      const fine = {
+        type: "fill_cell",
+        data: { row: 1, col: 0, symbol_id: "dog" },
+      };
+      expect(session.validateAction(fine).valid).toBe(true);
+      session.commit(fine);
+
+      const flagged = session
+        .getTelemetry()
+        .events.filter((e) => e.event_name === "control_of_error");
+      expect(flagged).toHaveLength(1);
+    });
+
+    it("hint never dead-ends: full but conflicted grid points at a cell the child can change", () => {
+      const session = new SudokuMiniSession(
+        SAMPLE_LEVEL_1.content_pack,
+        SAMPLE_LEVEL_1.difficulty_params
+      );
+      session.setupEntities();
+      session.fillCell(0, 1, "cat");
+      session.fillCell(1, 0, "cat");
+      expect(session.checkWinCondition()).toBe(false);
+      const hint = session.getHintTargetIndex();
+      expect(hint).not.toBeNull();
+      expect([1, 2]).toContain(hint);
+    });
   });
 });

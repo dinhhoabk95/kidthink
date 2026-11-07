@@ -32,7 +32,6 @@ import {
 } from "#src/render/index.js";
 import {
   type ConstraintViolation,
-  countSudokuSolutions,
   findConstraintViolations,
   isSudokuCompleteAndValid,
   type SudokuCell,
@@ -295,25 +294,6 @@ export class SudokuMiniSession extends TemplateGameSession<
     return this.activeViolations.some((v) => v.row === row && v.col === col);
   }
 
-  private isCellMatchingSolution(
-    row: number,
-    col: number,
-    symbolId: string
-  ): boolean {
-    const cells: SudokuCell<string>[] = this.content.cells.map((c) => ({
-      row: c.row,
-      col: c.col,
-      value: c.row === row && c.col === col ? symbolId : c.symbol_id,
-    }));
-    const grid: SudokuGrid<string> = {
-      size: this.content.grid_size,
-      regions: this.content.regions,
-      cells,
-    };
-    const possibleValues = this.content.symbols.map((s) => s.symbol_id);
-    return countSudokuSolutions(grid, possibleValues, 1) > 0;
-  }
-
   fillCell(row: number, col: number, symbolId: string | null): boolean {
     const key = `${row},${col}`;
     const state = this.cellStates.get(key);
@@ -335,10 +315,9 @@ export class SudokuMiniSession extends TemplateGameSession<
 
     if (symbolId !== null) {
       const hasConflict = this.isConflicted(row, col);
-      const isWrongPlacement =
-        hasConflict ||
-        this.getViolations().length > 0 ||
-        !this.isCellMatchingSolution(row, col, symbolId);
+      // Sai là quan hệ trùng hàng/cột/vùng của chính ô vừa đặt — khớp
+      // `validateAction`; ô khác đang sai không làm nước đi này thành sai.
+      const isWrongPlacement = hasConflict;
       this.recordEvent("cell_filled", {
         row,
         col,
@@ -474,6 +453,18 @@ export class SudokuMiniSession extends TemplateGameSession<
   }
 
   override getHintTargetIndex(): number | null {
+    // Lưới đầy mà còn trùng: chỉ ô trẻ đổi được, không để gợi ý ngõ cụt.
+    const conflicted = this.activeViolations
+      .flatMap((v) => [
+        { row: v.row, col: v.col },
+        { row: v.conflictingWith.row, col: v.conflictingWith.col },
+      ])
+      .find(
+        (c) => this.cellStates.get(`${c.row},${c.col}`)?.isInitial === false
+      );
+    if (conflicted) {
+      return conflicted.row * this.content.grid_size + conflicted.col;
+    }
     const emptyCell = this.content.cells.find(
       (c) => this.cellStates.get(`${c.row},${c.col}`)?.value === null
     );
