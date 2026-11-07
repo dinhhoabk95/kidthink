@@ -6,6 +6,10 @@ import type { ThemeVocabulary } from "#src/generators/types";
 import { createRng } from "#src/rng/mulberry32";
 import { GT006Session } from "#src/templates/GT-006/session";
 import { GT006ContentSchema } from "#src/templates/GT-006/template";
+import {
+  GT008ContentSchema,
+  GT008DifficultySchema,
+} from "#src/templates/GT-008/template";
 
 /**
  * Bộ sinh thoái hoá (Task #313 Phase 4): mỗi ca chứng minh một cách bài không
@@ -104,5 +108,66 @@ describe("GT-006 — thứ tự có nội dung, xáo không ra đúng sẵn (BR-
     }
     expect(lengths.size).toBeGreaterThan(1);
     expect(starts.size).toBeGreaterThan(1);
+  });
+});
+
+describe("GT-008 — ô có gợi ý, khay không xếp sẵn, số ô theo band (BR-E008-04)", () => {
+  const BANDS = ["3-4", "4-5", "5-6"] as const;
+
+  it('mỗi ô mang nhãn đúng tên vật nó nhận — không còn ô vô danh "Ô n"', () => {
+    for (const band of BANDS) {
+      for (const seed of SEEDS) {
+        const content = GT008ContentSchema.parse(
+          gen("GT-008", seed, band).content_pack
+        );
+        for (const slot of content.slots) {
+          const item = content.items.find(
+            (i) => i.item_id === slot.expected_item_id
+          );
+          expect(item, `band=${band} seed=${seed}`).toBeDefined();
+          expect(slot.label).toBe(item?.label);
+        }
+        const labels = content.slots.map((s) => s.label);
+        expect(new Set(labels).size).toBe(labels.length);
+      }
+    }
+  });
+
+  it("thứ tự vật ở khay không trùng thứ tự các ô (không xếp sẵn)", () => {
+    for (const band of BANDS) {
+      for (const seed of SEEDS) {
+        const content = GT008ContentSchema.parse(
+          gen("GT-008", seed, band).content_pack
+        );
+        const trayOrder = content.items.map((i) => i.item_id);
+        const slotOrder = content.slots.map((s) => s.expected_item_id);
+        expect(trayOrder, `band=${band} seed=${seed}`).not.toEqual(slotOrder);
+      }
+    }
+  });
+
+  it("số ô và hint_after_ms tăng theo band, slot_count khớp content, 3-4 không quá 4 ô", () => {
+    const maxSlots: number[] = [];
+    const hints: number[] = [];
+    for (const band of BANDS) {
+      let max = 0;
+      let min = 99;
+      let hint = 0;
+      for (const seed of SEEDS) {
+        const { content_pack, difficulty_params } = gen("GT-008", seed, band);
+        const content = GT008ContentSchema.parse(content_pack);
+        const diff = GT008DifficultySchema.parse(difficulty_params);
+        expect(diff.slot_count).toBe(content.slots.length);
+        max = Math.max(max, content.slots.length);
+        min = Math.min(min, content.slots.length);
+        hint = diff.hint_after_ms;
+      }
+      expect(max).toBeGreaterThan(min);
+      maxSlots.push(max);
+      hints.push(hint);
+    }
+    expect(maxSlots[0]).toBeLessThanOrEqual(4);
+    expect(maxSlots[0]).toBeLessThan(maxSlots[2] ?? 0);
+    expect(hints[0]).toBeLessThan(hints[2] ?? 0);
   });
 });

@@ -63,7 +63,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 
 ## Phase 4 — Generator & difficulty
 - [x] Generator 006 (số đếm tăng dần, session xáo bằng Sattolo, BR-E006-02/04)
-- [ ] Generator 008
+- [x] Generator 008 (ô mang tên vật, khay không xếp sẵn, số ô/hint theo band, BR-E008-04; `distractor_count` còn chết — session ràng items = ô)
 - [ ] Generator 011
 - [ ] Generator 012 (+ `flash_ms` co giãn theo band)
 - [ ] Generator 015 (puzzle có nghiệm duy nhất cần suy luận)
