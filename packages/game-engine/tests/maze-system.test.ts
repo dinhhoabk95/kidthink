@@ -247,17 +247,18 @@ describe("mazeSystem — MazePathTracker, kiểm soát lỗi tự thân", () => 
     );
   });
 
-  it("ngõ cụt tự nói nó là ngõ cụt: đâm tường trong ngõ cụt thì lùi về ngã ba", () => {
+  it("đâm tường trong ngõ cụt: đường dừng ở mép, KHÔNG bị xoá hay lùi hộ (BR-E013-04)", () => {
     const tracker = new MazePathTracker(TRAP);
     tracker.step({ row: 0, col: 1 });
     tracker.step({ row: 1, col: 1 });
     tracker.step({ row: 2, col: 1 });
     const res = tracker.step({ row: 2, col: 2 });
     expect(res.status).toBe("blocked");
-    expect(res.retreated_to).toEqual({ row: 0, col: 1 });
     expect(tracker.getPath()).toEqual([
       { row: 0, col: 0 },
       { row: 0, col: 1 },
+      { row: 1, col: 1 },
+      { row: 2, col: 1 },
     ]);
   });
 
@@ -267,7 +268,6 @@ describe("mazeSystem — MazePathTracker, kiểm soát lỗi tự thân", () => 
     tracker.step({ row: 1, col: 1 });
     const res = tracker.step({ row: 1, col: 2 });
     expect(res.status).toBe("blocked");
-    expect(res.retreated_to).toBeUndefined();
     expect(tracker.getPath()).toHaveLength(3);
   });
 

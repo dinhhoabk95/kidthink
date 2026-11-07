@@ -146,17 +146,22 @@ describe("GT-013 — kiểm soát lỗi tự thân (BR-MTB-14)", () => {
     expect(names).toEqual(["path_blocked"]);
   });
 
-  it("kẹt trong ngõ cụt thì nét vẽ tự lùi về ngã ba, trẻ sửa trước khi hệ thống báo", () => {
+  it("kẹt trong ngõ cụt thì đường đã vẽ giữ nguyên, trẻ tự vẽ ngược để lùi (BR-E013-04)", () => {
     const session = newSession(1);
     session.onPathStep({ row: 0, col: 1 });
     session.onPathStep({ row: 1, col: 1 });
     session.onPathStep({ row: 2, col: 1 });
     const blocked = session.onPathStep({ row: 2, col: 2 });
-    expect(blocked.retreated_to).toEqual({ row: 0, col: 1 });
+    expect(blocked.status).toBe("blocked");
     expect(session.getPath()).toEqual([
       { row: 0, col: 0 },
       { row: 0, col: 1 },
+      { row: 1, col: 1 },
+      { row: 2, col: 1 },
     ]);
+    // Trẻ vẽ ngược một bước: lùi được, không bị phạt (BR-E013-02)
+    expect(session.onPathStep({ row: 1, col: 1 }).status).toBe("rewound");
+    expect(session.getPath()).toHaveLength(3);
     const names = session.getTelemetry().events.map((e) => e.event_name);
     expect(names.filter((n) => n === "path_submitted")).toHaveLength(0);
     expect(session.checkWinCondition()).toBe(false);

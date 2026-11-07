@@ -39,13 +39,14 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 - [x] Helper derangement trong `src/rng/` (`deriveDerangement`, Sattolo; chưa nối vào generator — Phase 4)
 
 ## Phase 3 — Spec drift "control of error"
-- [x] 000 · [x] 007 (một phần: lỗi báo trên ô tổng) · [x] 009 · [x] 010 (một phần) · [x] 012 (một phần) · [ ] 013 · [ ] 014 · [ ] 015
+- [x] 000 · [x] 007 (một phần: lỗi báo trên ô tổng) · [x] 009 · [x] 010 (một phần) · [x] 012 (một phần) · [x] 013 (một phần) · [ ] 014 · [ ] 015
 - [ ] 020 · [ ] 021 · [ ] 022 · [ ] 023 · [ ] 026 · [ ] 029 · [ ] 030 · [ ] 031
 - [ ] 032 · [ ] 034 (chấm timing) · [ ] 035 (chạy từng bước) · [ ] 036 · [ ] 037
 
 - [ ] 007 (còn lại) — cơ chế kéo/gộp vật thật giữa ô tổng và hai khay phần: viết lại session (toAction/getView/render, bài sinh nội dung `discrete-object`); quá lớn cho một commit, cần plan riêng
 - [ ] 010 (còn lại) — đổi nội dung 4–5 tuổi sang bảng tra/bảng giá một ẩn (không hệ hai phương trình): cần đổi schema/generator, thuộc Phase 4/5
 - [ ] 012 (còn lại) — `flash_ms` vẫn cố định 1500 ở bộ sinh: co giãn theo band/độ khó (đã nằm ở Phase 4 "Generator 012"); N4/N6 hiện lại nhóm vật sau khi chọn đúng chưa có code
+- [ ] 013 (còn lại) — mê cung ~50% tường, nhiều lối: giảm mật độ tường và số lối ở bộ sinh/fixture 4–5 tuổi (nội dung/generator, Phase 4); GT-013#2 vẫn nằm trong sổ nợ web-gesture
 
 ## Phase 4 — Generator & difficulty
 - [ ] Generator 006, 008, 011, 012, 015, 016; band khớp `age_min` (011, 015, 017)

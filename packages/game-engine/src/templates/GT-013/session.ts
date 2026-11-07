@@ -207,7 +207,8 @@ export class GT013Session extends TemplateGameSession<
         row: cell.row,
         col: cell.col,
         reason: result.blocked_reason,
-        retreated: result.retreated_to !== undefined,
+        // Engine không lùi hộ trẻ (BR-E013-04); trường giữ cho khớp lược đồ event.
+        retreated: false,
       });
     }
     return result;

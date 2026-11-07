@@ -337,8 +337,6 @@ export interface MazeStepResult {
   readonly path: readonly MazeCell[];
   /** Vì sao nét vẽ dừng — chỉ có khi `status` là `blocked`. */
   readonly blocked_reason?: MazeBlockedReason;
-  /** Ngã ba mà nét vẽ lùi về sau khi kẹt trong ngõ cụt. */
-  readonly retreated_to?: MazeCell;
 }
 
 /**
@@ -404,20 +402,16 @@ export class MazePathTracker {
     return canMove(this.grid, this.getHead(), cell) ? null : "wall";
   }
 
+  /**
+   * Đâm tường (kể cả trong ngõ cụt): đường **dừng ở mép**, phần đã vạch giữ
+   * nguyên (`BR-E013-04`). Lùi là việc của trẻ — vẽ ngược một ô, hoặc nút "vẽ
+   * lại" gọi `retreatToJunction()`; engine không lùi hộ.
+   */
   private blockedResult(reason: MazeBlockedReason): MazeStepResult {
-    if (reason !== "wall" || !isDeadEnd(this.grid, this.getHead())) {
-      return {
-        status: "blocked",
-        path: this.getPath(),
-        blocked_reason: reason,
-      };
-    }
-    const retreatedTo = this.retreatToJunction();
     return {
       status: "blocked",
       path: this.getPath(),
       blocked_reason: reason,
-      retreated_to: retreatedTo,
     };
   }
 }
