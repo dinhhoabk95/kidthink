@@ -9,7 +9,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 - [x] Gate `packages/game-engine/tests/gates/`: mọi fixture giải được chỉ bằng gesture web phát ra + ca âm trong `tests/**/fixtures/`
 - [x] GT-031: hint subset-sum thay greedy (`pickCoinHint` trong `templates/GT-031/template.ts`)
 - [x] GT-018: refine schema (select có đúng/sai, sequence hợp lệ, không giải sẵn)
-- [ ] GT-018: sequence không tự thắng, cần nút nộp (session)
+- [x] GT-018: sequence không tự thắng, cần nút nộp (session)
 - [x] GT-016: `initial_time ≠ target`; match-mode phải có nghiệm (superRefine trong `GT-016/template.ts`)
 - [x] GT-035: gate `isSolvableWithinMaxCommands` (fixture + generator đều đạt; chưa nối vào ingest content)
 

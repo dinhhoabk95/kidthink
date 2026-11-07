@@ -243,8 +243,8 @@ export class GT018Session extends TemplateGameSession<
 
   override checkWinCondition(): boolean {
     if (this.content.response_mode === "sequence") {
-      const targetSeq = this.content.target_sequence ?? [];
-      return this.orderingMechanic.isSequenceCorrect(targetSeq);
+      // Xếp đúng chưa đủ: trẻ phải nộp bằng `commit` (`onSubmitSequence`).
+      return this.isWon;
     }
     const items = this.content.options.map((opt) => ({
       id: opt.item_id,
