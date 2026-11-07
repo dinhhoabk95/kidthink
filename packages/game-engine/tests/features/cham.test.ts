@@ -181,7 +181,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       expect(session.getRevealedClueIds().length).toBe(0);
     });
 
-    it("GT-009: chạm manh mối để lật và gạch ứng viên vi phạm, rồi chạm đáp án để thắng", () => {
+    it("GT-009: chạm manh mối chỉ nghe lại; trẻ tự úp ứng viên rồi bấm chốt để thắng", () => {
       const f9 = GT009_FIXTURES[0];
       if (!f9) {
         throw new Error("GT009_FIXTURES[0] must exist");
@@ -201,25 +201,27 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       });
 
       expect(session.getRevealedClueIds()).toContain("k1");
-      expect(session.getEliminatedIds()).toContain("c1");
-      expect(session.getEliminatedIds()).toContain("c2");
-      expect(session.getEliminatedIds()).toContain("c3");
+      // Engine không úp thay trẻ (BR-E009-05)
+      expect(session.getEliminatedIds()).toEqual([]);
       expect(session.getSurvivingIds()).toEqual(["c5"]);
 
-      const candIdx = f9.content.candidates.findIndex(
-        (c) => c.candidate_id === "c5"
-      );
-      const candSlot = session.slots[f9.content.clues.length + candIdx];
-      if (!candSlot) {
-        throw new Error("candSlot must exist");
+      for (const id of ["c1", "c2", "c3"]) {
+        const idx = f9.content.candidates.findIndex(
+          (c) => c.candidate_id === id
+        );
+        const slot = session.slots[f9.content.clues.length + idx];
+        if (!slot) {
+          throw new Error("candSlot must exist");
+        }
+        session.dispatch({ type: "tap", x: slot.x, y: slot.y, timeMs: 200 });
       }
+      expect([...session.getEliminatedIds()].sort()).toEqual([
+        "c1",
+        "c2",
+        "c3",
+      ]);
 
-      const result = session.dispatch({
-        type: "tap",
-        x: candSlot.x,
-        y: candSlot.y,
-        timeMs: 200,
-      });
+      const result = session.dispatch({ type: "commit", timeMs: 300 });
 
       expect(result?.valid).toBe(true);
       expect(session.checkWinCondition()).toBe(true);

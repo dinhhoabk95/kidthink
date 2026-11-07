@@ -31,7 +31,7 @@ describe("GT-009 — loại trừ theo manh mối (clue-deduction): hit-test, sp
     return session;
   }
 
-  it("chạm lệch tâm trong dung sai TAP_TOLERANCE_PX (24px) lật được manh mối và chọn được ứng viên", () => {
+  it("chạm lệch tâm trong dung sai TAP_TOLERANCE_PX (24px) lật được manh mối và úp được ứng viên", () => {
     const session = buildSession();
     const clueSlot = session.slots[0];
     const clueCount = fixture.content.clues.length;
@@ -63,7 +63,7 @@ describe("GT-009 — loại trừ theo manh mối (clue-deduction): hit-test, sp
       timeMs: 10,
     });
     expect(candAction).toEqual({
-      type: "select_item",
+      type: "toggle_eliminate",
       data: { item_id: fixture.content.answer_candidate_id },
     });
   });

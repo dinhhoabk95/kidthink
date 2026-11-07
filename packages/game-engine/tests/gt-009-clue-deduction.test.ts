@@ -105,14 +105,16 @@ describe("GT-009 — contract loại trừ theo manh mối (BR-MTB-06, BR-GTC-03
 });
 
 describe("GT-009 — kiểm soát lỗi tự thân (BR-MTB-14)", () => {
-  it("chạm manh mối gạch ứng viên vi phạm, ứng viên gạch vẫn nằm trong nội dung", () => {
+  it("chạm manh mối không gạch thay trẻ; trẻ tự úp thì ứng viên vẫn nằm trong nội dung", () => {
     const session = newSession(1);
 
     expect(session.getEliminatedIds()).toEqual([]);
-    session.onClueRevealed("k1"); // bé hơn 5 → loại 5 và 6
+    session.onClueRevealed("k1"); // bé hơn 5 → 5 và 6 trái manh mối
 
-    expect([...session.getEliminatedIds()].sort()).toEqual(["c5", "c6"]);
+    expect(session.getEliminatedIds()).toEqual([]); // BR-E009-05
     expect([...session.getSurvivingIds()].sort()).toEqual(["c1", "c2", "c4"]);
+    session.toggleEliminate("c5");
+    expect(session.getEliminatedIds()).toEqual(["c5"]);
     // Ứng viên bị loại vẫn hiển thị được: nội dung không bị cắt hàng nào
     expect(session.content.candidates).toHaveLength(5);
   });
@@ -125,11 +127,9 @@ describe("GT-009 — kiểm soát lỗi tự thân (BR-MTB-14)", () => {
     session.onClueRevealed("k3");
 
     expect(session.getSurvivingIds()).toEqual(["c4"]);
-    // Chưa có phản hồi đúng sai nào: chỉ có clue_revealed và candidate_eliminated
+    // Chưa có phản hồi đúng sai nào: chỉ có clue_revealed, engine không úp thay trẻ
     const names = session.getTelemetry().events.map((e) => e.event_name);
-    expect(new Set(names)).toEqual(
-      new Set(["clue_revealed", "candidate_eliminated"])
-    );
+    expect(new Set(names)).toEqual(new Set(["clue_revealed"]));
     expect(session.checkWinCondition()).toBe(false);
   });
 
@@ -155,13 +155,16 @@ describe("GT-009 — kiểm soát lỗi tự thân (BR-MTB-14)", () => {
 });
 
 describe("GT-009 — journey một phiên đầy đủ (điều kiện nghiệm thu 6, 7, 13)", () => {
-  it("lật ba manh mối, tự loại trừ, rồi chạm đáp án và thắng", () => {
+  it("nghe ba manh mối, tự úp ứng viên sai, rồi chốt đáp án và thắng", () => {
     const session = newSession(2);
 
     for (const clue of THIRD.content.clues) {
       session.onClueRevealed(clue.clue_id);
     }
     expect(session.getSurvivingIds()).toEqual(["c4"]);
+    for (const id of ["c1", "c2", "c5"]) {
+      session.toggleEliminate(id);
+    }
 
     const wrong = session.validateAction({
       type: "tap_option",
@@ -291,11 +294,12 @@ describe("GT-009 — Montessori 2-Phase Explore & Control of Error", () => {
     expect(session.getControlOfError()?.targetId).toBe("k1");
     expect(session.getRevealedClueIds()).toEqual([]);
 
-    // Lần chọn sai 2 liên tiếp -> kích hoạt Micro-Sandbox + tự động lật manh mối k1 và gạch c5, c6
+    // Lần chọn sai 2 liên tiếp -> kích hoạt Micro-Sandbox + tự động đọc lại manh mối k1,
+    // nhưng không gạch ứng viên nào thay trẻ (BR-E009-05)
     session.onCandidateSelected("c6");
     expect(session.isMicroSandboxActive()).toBe(true);
     expect(session.getRevealedClueIds()).toContain("k1");
-    expect([...session.getEliminatedIds()].sort()).toEqual(["c5", "c6"]);
+    expect(session.getEliminatedIds()).toEqual([]);
 
     // Chọn đúng -> thoát Micro-Sandbox và xoá chẩn đoán lỗi
     session.onCandidateSelected("c4");
@@ -373,10 +377,13 @@ describe("GT-009 — loại trừ theo thuộc tính phi số (has_attribute / n
 
     session.onClueRevealed("attr-1");
     expect(session.getSurvivingIds()).toEqual(["cat", "rabbit"]);
-    expect([...session.getEliminatedIds()].sort()).toEqual(["duck", "fish"]);
+    expect(session.getEliminatedIds()).toEqual([]);
 
     session.onClueRevealed("attr-2");
     expect(session.getSurvivingIds()).toEqual(["rabbit"]);
+    for (const id of ["cat", "duck", "fish"]) {
+      session.toggleEliminate(id);
+    }
     expect([...session.getEliminatedIds()].sort()).toEqual([
       "cat",
       "duck",

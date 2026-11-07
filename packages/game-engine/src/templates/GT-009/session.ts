@@ -36,15 +36,19 @@ import type { GT009Content, GT009Difficulty } from "./template.js";
 /**
  * `GT-009` — loại trừ theo manh mối.
  *
- * Kiểm soát lỗi tự thân (`BR-MTB-14`): chạm một manh mối làm mọi ứng viên vi phạm
- * nó **mờ đi và mang dấu gạch, vẫn hiển thị**. Trẻ nhìn tập thu hẹp dần và tự đi
- * tới đáp án; hệ thống không báo sai lần nào trước đó.
+ * Trẻ nghe manh mối (chạm để nghe lại), **tự** úp từng ứng viên không thể đúng
+ * (mờ đi, mang dấu gạch, vẫn hiển thị), rồi bấm chốt ứng viên còn lại
+ * (`BR-E009-05`). Engine không loại thay trẻ; loại nhầm không bị báo sai —
+ * chỉ lần chốt mới được chấm (`BR-MTB-14`).
  */
 export class GT009Session extends TemplateGameSession<
   GT009Content,
   GT009Difficulty
 > {
   override readonly usesPromptZone = true;
+
+  /** Nút chốt ở `zones.action`; sáng khi trẻ đã úp đủ, chỉ còn một ứng viên. */
+  override readonly needsCommit = true;
 
   degradation: DegradationState | null = null;
 
@@ -131,8 +135,44 @@ export class GT009Session extends TemplateGameSession<
     );
   }
 
+  /** Ứng viên trẻ chưa úp, theo thứ tự nội dung. */
+  private getRemainingIds(): string[] {
+    return this.content.candidates
+      .map((c) => c.candidate_id)
+      .filter((id) => !this.eliminatedIds.has(id));
+  }
+
+  override canCommit(): boolean {
+    return this.getRemainingIds().length === 1;
+  }
+
   /**
-   * Trẻ chạm một manh mối: gạch mọi ứng viên vi phạm nó. Không phản hồi đúng sai.
+   * Trẻ úp (hoặc phục hồi) một ứng viên — nháp của trẻ, không phản hồi đúng sai
+   * (`BR-E009-05`). Chỉ ghi `candidate_eliminated` khi có manh mối thật sự loại
+   * ứng viên đó; úp nhầm im lặng.
+   */
+  toggleEliminate(candidateId: string): void {
+    if (!this.content.candidates.some((c) => c.candidate_id === candidateId)) {
+      return;
+    }
+    if (this.eliminatedIds.delete(candidateId)) {
+      this.wrongCandidateId = null;
+      return;
+    }
+    this.eliminatedIds.add(candidateId);
+    this.exploreTracker.recordExploreAction("candidate_eliminated");
+    const clue = this.findViolatedClueForCandidate(candidateId);
+    if (clue) {
+      this.recordEvent("candidate_eliminated", {
+        candidate_id: candidateId,
+        clue_id: clue.clue_id,
+      });
+    }
+  }
+
+  /**
+   * Trẻ chạm một manh mối: nghe lại và đánh dấu đã dùng. Engine không gạch ứng
+   * viên nào thay trẻ (`BR-E009-02`, `BR-E009-05`).
    */
   onClueRevealed(clueId: string): void {
     const clue = this.content.clues.find((c) => c.clue_id === clueId);
@@ -142,24 +182,11 @@ export class GT009Session extends TemplateGameSession<
     this.revealedClueIds.push(clueId);
     this.exploreTracker.recordExploreAction("clue_revealed");
 
-    const surviving = new Set(this.getSurvivingIds());
-    const newlyEliminated = this.content.candidates
-      .map((c) => c.candidate_id)
-      .filter((id) => !(surviving.has(id) || this.eliminatedIds.has(id)));
-
     this.recordEvent("clue_revealed", {
       clue_id: clueId,
       revealed_count: this.revealedClueIds.length,
-      remaining_count: surviving.size,
+      remaining_count: this.getSurvivingIds().length,
     });
-
-    for (const candidateId of newlyEliminated) {
-      this.eliminatedIds.add(candidateId);
-      this.recordEvent("candidate_eliminated", {
-        candidate_id: candidateId,
-        clue_id: clueId,
-      });
-    }
   }
 
   /**
@@ -211,6 +238,18 @@ export class GT009Session extends TemplateGameSession<
         return { valid: true, feedback: "none" };
       }
       return ACTION_IGNORED;
+    }
+    if (action.type === "toggle_eliminate") {
+      const id = Reflect.get(
+        typeof action.data === "object" && action.data !== null
+          ? action.data
+          : {},
+        "item_id"
+      );
+      return typeof id === "string" &&
+        this.content.candidates.some((c) => c.candidate_id === id)
+        ? { valid: true, feedback: "none" }
+        : ACTION_IGNORED;
     }
     return this.mechanic.validate(action, this.selectionItems());
   }
@@ -299,6 +338,13 @@ export class GT009Session extends TemplateGameSession<
   }
 
   override toAction(gesture: Gesture): GameAction | null {
+    if (gesture.type === "commit") {
+      // Chưa úp đủ thì nuốt cử chỉ: nút đang mờ, Cấm — NEVER tính một lần sai.
+      const remaining = this.getRemainingIds()[0];
+      return this.canCommit() && remaining
+        ? { type: "select_item", data: { item_id: remaining } }
+        : null;
+    }
     if (gesture.type !== "tap") {
       return null;
     }
@@ -308,34 +354,59 @@ export class GT009Session extends TemplateGameSession<
       return { type: "reveal_clue", data: { clue_id: hitClue.clue_id } };
     }
     const hitCand = this.findHitCandidate(gesture.x, gesture.y, hitTolerance);
-    if (hitCand && !this.eliminatedIds.has(hitCand.candidate_id)) {
-      return { type: "select_item", data: { item_id: hitCand.candidate_id } };
+    if (hitCand) {
+      return {
+        type: "toggle_eliminate",
+        data: { item_id: hitCand.candidate_id },
+      };
     }
     return null;
   }
 
+  /**
+   * Bước đúng kế tiếp: phục hồi đáp án nếu trẻ lỡ úp nó, không thì úp ứng viên
+   * sai đầu tiên chưa úp; úp đủ rồi thì để nút chốt (`null`).
+   */
   override getHintTargetIndex(): number | null {
-    const nextClue =
-      this.content.clues.find(
-        (c) => !this.revealedClueIds.includes(c.clue_id)
-      ) ?? this.content.clues.at(-1);
-    if (!nextClue) {
+    const answerId = this.content.answer_candidate_id;
+    const clueCount = this.content.clues.length;
+    const nextId = this.eliminatedIds.has(answerId)
+      ? answerId
+      : this.content.candidates.find(
+          (c) =>
+            c.candidate_id !== answerId &&
+            !this.eliminatedIds.has(c.candidate_id)
+        )?.candidate_id;
+    if (!nextId) {
       return null;
     }
-    const idx = this.content.clues.findIndex(
-      (c) => c.clue_id === nextClue.clue_id
+    const idx = this.content.candidates.findIndex(
+      (c) => c.candidate_id === nextId
     );
-    return idx >= 0 ? idx : null;
+    return idx >= 0 ? clueCount + idx : null;
+  }
+
+  /** Đọc một trường chuỗi trong `action.data`, `undefined` nếu không phải chuỗi. */
+  private readDataString(action: GameAction, key: string): string | undefined {
+    if (typeof action.data !== "object" || action.data === null) {
+      return undefined;
+    }
+    const value = Reflect.get(action.data, key);
+    return typeof value === "string" ? value : undefined;
   }
 
   override commit(action: GameAction): void {
     if (action.type === "reveal_clue") {
-      const clueId =
-        typeof action.data === "object" && action.data !== null
-          ? Reflect.get(action.data, "clue_id")
-          : undefined;
-      if (typeof clueId === "string") {
+      const clueId = this.readDataString(action, "clue_id");
+      if (clueId) {
         this.onClueRevealed(clueId);
+      }
+      return;
+    }
+    if (action.type === "toggle_eliminate") {
+      const id = this.readDataString(action, "item_id");
+      if (id) {
+        this.toggleEliminate(id);
       }
       return;
     }
@@ -345,11 +416,9 @@ export class GT009Session extends TemplateGameSession<
       action.type === "select_candidate"
     ) {
       const itemId =
-        typeof action.data === "object" && action.data !== null
-          ? (Reflect.get(action.data, "item_id") ??
-            Reflect.get(action.data, "candidate_id"))
-          : undefined;
-      if (typeof itemId === "string") {
+        this.readDataString(action, "item_id") ??
+        this.readDataString(action, "candidate_id");
+      if (itemId) {
         this.onCandidateSelected(itemId);
       }
     }
