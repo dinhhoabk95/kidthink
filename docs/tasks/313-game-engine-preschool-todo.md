@@ -40,7 +40,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 
 ## Phase 3 — Spec drift "control of error"
 - [x] 000 · [x] 007 (một phần: lỗi báo trên ô tổng) · [x] 009 · [x] 010 (một phần) · [x] 012 (một phần) · [x] 013 (một phần) · [x] 014 (một phần) · [x] 015 (một phần: verdict/hint; bộ sinh thoái hoá còn lại)
-- [ ] 020 · [x] 021 (một phần: lật gương khi vẽ) · [x] 022 (một phần: hình mẫu ghim) · [x] 023 (một phần: mảnh thay nhau, neo giữ hình) · [x] 026 (một phần: go bỏ sót trung tính, nút dừng, hạ độ khó) · [ ] 029 · [ ] 030 · [ ] 031
+- [ ] 020 · [x] 021 (một phần: lật gương khi vẽ) · [x] 022 (một phần: hình mẫu ghim) · [x] 023 (một phần: mảnh thay nhau, neo giữ hình) · [x] 026 (một phần: go bỏ sót trung tính, nút dừng, hạ độ khó) · [x] 029 (một phần: vật bớt rời nhóm) · [ ] 030 · [ ] 031
 - [ ] 032 · [ ] 034 (chấm timing) · [ ] 035 (chạy từng bước) · [ ] 036 · [ ] 037
 
 - [ ] 007 (còn lại) — cơ chế kéo/gộp vật thật giữa ô tổng và hai khay phần: viết lại session (toAction/getView/render, bài sinh nội dung `discrete-object`); quá lớn cho một commit, cần plan riêng
@@ -58,6 +58,8 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 - [ ] 023 (còn lại) — mảnh khác cỡ thật (người tuyết 3 cỡ: hiện 3 khối cùng asset nên thay nhau được hết) và bảng bóng hình Montessori: asset/nội dung, Phase 5; sân khấu rất chật vẫn lùi về lưới; legacy (không stage) vẫn lệch hệ toạ độ giữa neo và khay
 
 - [ ] 026 (còn lại) — thang hạ độ khó chạy theo số lượt bỏ sót, chưa theo `hint_after_ms` (Task #301); đèn giao thông/mascot đứng hình (Phase 5); GT-026#0-2 đã gỡ khỏi sổ nợ web-gesture (solver nay biết chờ `update()`)
+
+- [ ] 029 (còn lại) — chữ phụ "Đã bớt: n/m" ở caption, ô số ban đầu giữ nguyên và thẻ "bớt đi n" bằng hình (chữ phải đọc: Phase 4 "Gỡ chữ"); mèo ăn cá thật sự (Phase 5); lưới lẻ cột thì vật bớt chia hàng với nhóm nên không có dock riêng
 
 ## Phase 4 — Generator & difficulty
 - [ ] Generator 006, 008, 011, 012, 015, 016; band khớp `age_min` (011, 015, 017)

@@ -23,6 +23,7 @@ import {
   legacyStageArea,
   splitCaption,
 } from "#src/layout/slot-fit";
+import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
 import {
   drawSceneBackground,
@@ -96,6 +97,36 @@ export class GT029Session extends TemplateGameSession<
     });
   }
 
+  /**
+   * Ô lưới của vật `itemIndex` (`BR-E029-03`): vật còn trong nhóm dồn về đầu lưới
+   * theo thứ tự gốc, vật đã bớt rời sang cuối lưới theo thứ tự bớt — nhóm co lại
+   * thật và phần bớt nằm riêng, không đứng nguyên tại chỗ.
+   */
+  private itemCellIndex(itemIndex: number): number {
+    const items = this.content.initial_items;
+    const item = items[itemIndex];
+    if (!item) {
+      return itemIndex;
+    }
+    const removedOrder = [...this.removedItemIds];
+    const removedRank = removedOrder.indexOf(item.item_id);
+    if (removedRank >= 0) {
+      return items.length - 1 - removedRank;
+    }
+    let remainingRank = 0;
+    for (let i = 0; i < itemIndex; i++) {
+      const other = items[i];
+      if (other && !this.removedItemIds.has(other.item_id)) {
+        remainingRank++;
+      }
+    }
+    return remainingRank;
+  }
+
+  private itemSlotFor(itemIndex: number): Slot | undefined {
+    return this.slots[this.itemCellIndex(itemIndex)];
+  }
+
   override getHintTargetIndex(): number | null {
     if (this.isWin || this.isWon) {
       return null;
@@ -105,7 +136,7 @@ export class GT029Session extends TemplateGameSession<
       const unremovedIdx = this.content.initial_items.findIndex(
         (it) => !this.removedItemIds.has(it.item_id)
       );
-      return unremovedIdx >= 0 ? unremovedIdx : null;
+      return unremovedIdx >= 0 ? this.itemCellIndex(unremovedIdx) : null;
     }
     const correctOptIdx = this.content.answer_options.findIndex(
       (opt) => opt.is_correct
@@ -335,7 +366,7 @@ export class GT029Session extends TemplateGameSession<
   ): GameAction | null {
     const totalItems = this.content.initial_items.length;
     for (let i = 0; i < totalItems; i++) {
-      const slot = this.slots[i];
+      const slot = this.itemSlotFor(i);
       const item = this.content.initial_items[i];
       if (!(slot && item)) {
         continue;
@@ -357,7 +388,7 @@ export class GT029Session extends TemplateGameSession<
   ): GameAction | null {
     const itemCount = this.content.initial_items.length;
     for (let i = 0; i < itemCount; i++) {
-      const slot = this.slots[i];
+      const slot = this.itemSlotFor(i);
       const item = this.content.initial_items[i];
       if (!(slot && item)) {
         continue;
@@ -424,7 +455,7 @@ export class GT029Session extends TemplateGameSession<
 
     for (let i = 0; i < totalItems; i++) {
       const it = this.content.initial_items[i];
-      const slot = this.slots[i];
+      const slot = this.itemSlotFor(i);
       if (!(it && slot)) {
         continue;
       }
@@ -497,10 +528,42 @@ export class GT029Session extends TemplateGameSession<
     return this.content.initial_items.length - this.removedItemIds.size;
   }
 
+  /**
+   * Vùng riêng của vật đã bớt: dock ôm các ô cuối lưới. Chỉ vẽ khi dock không
+   * đè lên ô nào của nhóm còn lại (lưới ít cột, hàng cuối chia sẻ ô thì thôi —
+   * vật bớt vẫn nằm sau nhóm và mờ đi).
+   */
+  private removedDockRect(): ZoneRect | undefined {
+    const removedSlots: Slot[] = [];
+    const groupSlots: Slot[] = [];
+    this.content.initial_items.forEach((it, i) => {
+      const slot = this.itemSlotFor(i);
+      if (slot) {
+        (this.removedItemIds.has(it.item_id) ? removedSlots : groupSlots).push(
+          slot
+        );
+      }
+    });
+    const dock = dockRectAroundSlots(removedSlots, this.stageRect);
+    if (!dock) {
+      return undefined;
+    }
+    const overlapsGroup = groupSlots.some(
+      (slot) =>
+        Math.abs(slot.x - (dock.x + dock.w / 2)) < (slot.w + dock.w) / 2 &&
+        Math.abs(slot.y - (dock.y + dock.h / 2)) < (slot.h + dock.h) / 2
+    );
+    return overlapsGroup ? undefined : dock;
+  }
+
   private renderItems(ctx: CanvasRenderingContext2D, rs: RenderSystem): void {
+    const removedDock = this.removedDockRect();
+    if (removedDock) {
+      drawWoodenTokenDock(ctx, rs, removedDock);
+    }
     for (let i = 0; i < this.content.initial_items.length; i++) {
       const it = this.content.initial_items[i];
-      const slot = this.slots[i];
+      const slot = this.itemSlotFor(i);
       if (!(it && slot)) {
         continue;
       }
@@ -513,7 +576,6 @@ export class GT029Session extends TemplateGameSession<
         {
           id: it.item_id,
           asset: it.asset,
-          label: isRemoved ? "Đã bớt" : undefined,
           state: isRemoved ? "locked" : "idle",
         },
         "circle"
@@ -625,7 +687,7 @@ export class GT029Session extends TemplateGameSession<
       const itemIdx = this.content.initial_items.findIndex(
         (it) => it.item_id === this.wrongItemId
       );
-      const slot = this.slots[itemIdx];
+      const slot = this.itemSlotFor(itemIdx);
       if (slot) {
         const elapsed = 400 - (this.wrongItemUntilMs - timeMs);
         const progress = Math.min(1, Math.max(0, elapsed / 400));
