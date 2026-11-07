@@ -35,6 +35,7 @@ import { designTokens } from "#src/systems/designTokens";
 import { MoodPulse } from "#src/systems/mood-pulse";
 import type { RenderSystem } from "#src/systems/render-system";
 import { type RuleDefinition, RuleSystem } from "#src/systems/rule-system";
+import { WrongFlash } from "#src/systems/wrong-flash";
 import type { GT027Content, GT027Difficulty } from "./template.js";
 
 function resolveRuleColorToken(color: string): string | null {
@@ -115,7 +116,7 @@ export class GT027Session extends TemplateGameSession<
   private targetSuccessTotal = 0;
   private lastFrameMs = 0;
   private wrongItemId: string | null = null;
-  private wrongUntilMs = 0;
+  private readonly wrongFlash = new WrongFlash();
 
   private readonly mood = new MoodPulse();
 
@@ -228,7 +229,7 @@ export class GT027Session extends TemplateGameSession<
     if (!evalResult.valid) {
       this.setRenderItemState(itemId, "wrong");
       this.wrongItemId = itemId;
-      this.wrongUntilMs = this.lastFrameMs + 400;
+      this.wrongFlash.trigger(this.lastFrameMs);
       this.mood.set("wonder", GT027_WONDER_MS);
       this.recordEvent("item_selected", {
         item_id: itemId,
@@ -350,17 +351,23 @@ export class GT027Session extends TemplateGameSession<
     };
   }
 
+  /** Hết nhịp sai thì vật về trung tính (cùng đồng hồ khung với lúc kích). */
+  private expireWrongFlash(): void {
+    if (!this.wrongFlash.hasExpired(this.lastFrameMs)) {
+      return;
+    }
+    if (this.wrongItemId) {
+      this.setRenderItemState(this.wrongItemId, "idle");
+    }
+    this.wrongFlash.clear();
+    this.wrongItemId = null;
+  }
+
   // biome-ignore lint/suspicious/noConfusingVoidType: void needed for compatibility with update
   update(deltaMs: number): ActionResult | void | null {
     this.lastFrameMs += deltaMs;
     this.mood.tick(deltaMs);
-    if (this.wrongUntilMs > 0 && this.lastFrameMs >= this.wrongUntilMs) {
-      if (this.wrongItemId) {
-        this.setRenderItemState(this.wrongItemId, "idle");
-      }
-      this.wrongUntilMs = 0;
-      this.wrongItemId = null;
-    }
+    this.expireWrongFlash();
     if (!this.ruleSystem) {
       return null;
     }
@@ -425,13 +432,7 @@ export class GT027Session extends TemplateGameSession<
     timeMs: number
   ): void {
     this.lastFrameMs = timeMs;
-    if (this.wrongUntilMs > 0 && timeMs >= this.wrongUntilMs) {
-      if (this.wrongItemId) {
-        this.setRenderItemState(this.wrongItemId, "idle");
-      }
-      this.wrongUntilMs = 0;
-      this.wrongItemId = null;
-    }
+    this.expireWrongFlash();
     drawSceneBackground(ctx, rs, this.themeId);
 
     const bodyRect = this.stageRect
@@ -451,14 +452,13 @@ export class GT027Session extends TemplateGameSession<
       this.stageRect ? splitCaption(this.stageRect).caption : undefined
     );
 
-    if (this.wrongUntilMs > timeMs && this.wrongItemId) {
+    if (this.wrongFlash.isActive(timeMs) && this.wrongItemId) {
       const wrongIndex = this.content.items.findIndex(
         (it) => it.id === this.wrongItemId
       );
       const slot = this.slots[wrongIndex];
       if (slot) {
-        const elapsed = 400 - (this.wrongUntilMs - timeMs);
-        const progress = Math.min(1, Math.max(0, elapsed / 400));
+        const progress = this.wrongFlash.progress(timeMs);
         rs.drawRetryRing(
           ctx,
           slot.x,

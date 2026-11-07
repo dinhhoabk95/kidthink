@@ -27,6 +27,7 @@ import { deriveStream } from "#src/rng/mulberry32";
 import { shuffle } from "#src/rng/shuffle";
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
+import { WrongFlashMap } from "#src/systems/wrong-flash";
 import type { GT001Content, GT001Difficulty } from "./template.js";
 
 type OptionItem = GT001Content["options"][number];
@@ -52,8 +53,7 @@ export class GT001Session extends TemplateGameSession<
   private particles: Particle[] = [];
   private itemStates: Map<string, ItemVisualState> = new Map();
   private wrongItemId: string | null = null;
-  private wrongTimestamp = 0;
-  private readonly wrongTimers = new Map<string, number>();
+  private readonly wrongFlashes = new WrongFlashMap();
   /** Đã chọn sai và chưa chọn đúng — Gấu Con còn ngó nghiêng (`BR-E001-05`). */
   private hasPickedWrong = false;
 
@@ -82,8 +82,8 @@ export class GT001Session extends TemplateGameSession<
     this.particles = [];
     this.itemStates = new Map();
     this.wrongItemId = null;
-    this.wrongTimestamp = 0;
-    this.wrongTimers.clear();
+    this.wrongFlashes.clearAll();
+    this.lastFrameMs = 0;
     this.hasPickedWrong = false;
     this.selectionItems = this.content.options.map((opt) => ({
       id: opt.item_id,
@@ -138,7 +138,7 @@ export class GT001Session extends TemplateGameSession<
     });
   }
 
-  private getItemState(itemId: string): ItemVisualState {
+  getItemState(itemId: string): ItemVisualState {
     return this.itemStates.get(itemId) ?? "idle";
   }
 
@@ -183,8 +183,7 @@ export class GT001Session extends TemplateGameSession<
     } else {
       this.setItemState(itemId, "wrong");
       this.wrongItemId = itemId;
-      this.wrongTimestamp = this.lastFrameMs;
-      this.wrongTimers.set(itemId, 400);
+      this.wrongFlashes.trigger(itemId, this.lastFrameMs);
     }
   }
 
@@ -328,23 +327,18 @@ export class GT001Session extends TemplateGameSession<
   }
 
   update(deltaMs: number): void {
-    for (const [id, remaining] of this.wrongTimers.entries()) {
-      const nextRemaining = remaining - deltaMs;
-      if (nextRemaining <= 0) {
-        this.wrongTimers.delete(id);
-        this.setItemState(id, "idle");
-        if (this.wrongItemId === id) {
-          this.wrongItemId = null;
-        }
-      } else {
-        this.wrongTimers.set(id, nextRemaining);
+    this.lastFrameMs += deltaMs;
+    for (const id of this.wrongFlashes.drainExpired(this.lastFrameMs)) {
+      this.setItemState(id, "idle");
+      if (this.wrongItemId === id) {
+        this.wrongItemId = null;
       }
     }
   }
 
   override destroy(): void {
     super.destroy();
-    this.wrongTimers.clear();
+    this.wrongFlashes.clearAll();
   }
 
   render(
@@ -417,10 +411,10 @@ export class GT001Session extends TemplateGameSession<
     if (itemId !== this.wrongItemId || rs.reducedMotion) {
       return slot;
     }
-    const elapsed = this.lastFrameMs - this.wrongTimestamp;
-    if (elapsed >= 400) {
+    if (!this.wrongFlashes.isActive(itemId, this.lastFrameMs)) {
       return slot;
     }
+    const elapsed = this.wrongFlashes.elapsedMs(itemId, this.lastFrameMs);
     return { ...slot, x: slot.x + Math.sin(elapsed * 0.05) * 4 };
   }
 }

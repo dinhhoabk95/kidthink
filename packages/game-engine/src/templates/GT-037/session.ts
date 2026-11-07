@@ -27,6 +27,7 @@ import { shuffle } from "#src/rng/shuffle";
 import type { DegradationState } from "#src/systems/degradation";
 import { designTokens } from "#src/systems/designTokens";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
+import { WrongFlash } from "#src/systems/wrong-flash";
 import type { GT037Content, GT037Difficulty, GT037Symbol } from "./template.js";
 
 interface GT037Commission {
@@ -164,7 +165,8 @@ export class GT037Session extends TemplateGameSession<
   private particles: Particle[] = [];
   degradation: DegradationState | null = null;
   wrongSlotIndex: number | null = null;
-  wrongTimestamp = 0;
+  private readonly wrongFlash = new WrongFlash();
+  private lastFrameMs = 0;
   itemCount = 0;
   targetCopies = 0;
   targetSet = new Set<string>();
@@ -203,7 +205,8 @@ export class GT037Session extends TemplateGameSession<
     this.order.length = 0;
     this.particles = [];
     this.wrongSlotIndex = null;
-    this.wrongTimestamp = 0;
+    this.wrongFlash.clear();
+    this.lastFrameMs = 0;
     this.cheerRemainingMs = 0;
     this.rebuildBoard();
 
@@ -536,7 +539,7 @@ export class GT037Session extends TemplateGameSession<
         timeMs: now,
       });
       this.wrongSlotIndex = slotIndex;
-      this.wrongTimestamp = now;
+      this.wrongFlash.trigger(now);
       this.recordEvent("item_selected", {
         item_id: symbol.id,
         is_correct: false,
@@ -562,7 +565,7 @@ export class GT037Session extends TemplateGameSession<
   }
 
   override commit(action: GameAction): void {
-    const now = Date.now();
+    const now = this.lastFrameMs;
     if (action.type === "tap_symbol") {
       const data = action.data as { slotIndex: number; symbolId: string };
       this.commitTapSymbol(data.slotIndex, now);
@@ -603,10 +606,14 @@ export class GT037Session extends TemplateGameSession<
     if (this.particles.length > 0) {
       this.particles = updateParticles(this.particles);
     }
-    if (
-      this.wrongSlotIndex !== null &&
-      Date.now() - this.wrongTimestamp > 800
-    ) {
+    this.lastFrameMs += deltaMs;
+    this.expireWrongFlash();
+  }
+
+  /** Hết nhịp sai thì ô về trung tính (cùng đồng hồ khung với lúc kích). */
+  private expireWrongFlash(): void {
+    if (this.wrongFlash.hasExpired(this.lastFrameMs)) {
+      this.wrongFlash.clear();
       this.wrongSlotIndex = null;
     }
   }
@@ -760,6 +767,8 @@ export class GT037Session extends TemplateGameSession<
     rs: RenderSystem,
     timeMs: number
   ): void {
+    this.lastFrameMs = timeMs;
+    this.expireWrongFlash();
     drawSceneBackground(ctx, rs, this.themeId);
     this.renderPrompt(ctx, rs);
     this.renderInteractiveSlots(ctx, rs, timeMs);

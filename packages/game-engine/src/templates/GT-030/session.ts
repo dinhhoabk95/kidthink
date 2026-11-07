@@ -44,6 +44,7 @@ import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
 import { MoodPulse } from "#src/systems/mood-pulse";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
+import { WrongFlash } from "#src/systems/wrong-flash";
 import type { GT030Content, GT030Difficulty } from "./template.js";
 import { computeMeasureStageSlots } from "./zone-layout.js";
 
@@ -101,8 +102,8 @@ export class GT030Session extends TemplateGameSession<
   isWin = false;
 
   private lastFrameMs = 0;
-  private wrongOptionUntilMs = 0;
-  private wrongPlaceUntilMs = 0;
+  private readonly wrongOptionFlash = new WrongFlash();
+  private readonly wrongPlaceFlash = new WrongFlash();
   private gapFlash: (GapFlash & { readonly untilMs: number }) | null = null;
   private particles: Particle[] = [];
   private readonly mood = new MoodPulse();
@@ -119,20 +120,19 @@ export class GT030Session extends TemplateGameSession<
   update(deltaMs: number): void {
     this.lastFrameMs += deltaMs;
     this.mood.tick(deltaMs);
-    if (
-      this.wrongOptionUntilMs > 0 &&
-      this.lastFrameMs >= this.wrongOptionUntilMs
-    ) {
-      this.wrongOptionUntilMs = 0;
+    this.expireWrongFlashes(this.lastFrameMs);
+    this.expireGapFlash();
+  }
+
+  /** Hết nhịp sai thì ô đáp án về trung tính (cùng đồng hồ khung với lúc kích). */
+  private expireWrongFlashes(nowMs: number): void {
+    if (this.wrongOptionFlash.hasExpired(nowMs)) {
+      this.wrongOptionFlash.clear();
       this.selectedOptionId = null;
     }
-    if (
-      this.wrongPlaceUntilMs > 0 &&
-      this.lastFrameMs >= this.wrongPlaceUntilMs
-    ) {
-      this.wrongPlaceUntilMs = 0;
+    if (this.wrongPlaceFlash.hasExpired(nowMs)) {
+      this.wrongPlaceFlash.clear();
     }
-    this.expireGapFlash();
   }
 
   private expireGapFlash(): void {
@@ -323,7 +323,7 @@ export class GT030Session extends TemplateGameSession<
       this.recordEvent("game_completed", { score: 100 });
       this.winSession();
     } else {
-      this.wrongOptionUntilMs = this.lastFrameMs + 400;
+      this.wrongOptionFlash.trigger(this.lastFrameMs);
       this.mood.set("wonder", GT030_WONDER_MS);
     }
   }
@@ -332,7 +332,7 @@ export class GT030Session extends TemplateGameSession<
   private commitPlace(offset: number | undefined): void {
     const targetLength = this.content.object.length_in_units;
     if (this.placedUnitsCount >= targetLength) {
-      this.wrongPlaceUntilMs = this.lastFrameMs + 400;
+      this.wrongPlaceFlash.trigger(this.lastFrameMs);
       return;
     }
     if (offset !== undefined && Math.abs(offset) > this.snapTolerancePx()) {
@@ -733,9 +733,8 @@ export class GT030Session extends TemplateGameSession<
         "circle"
       );
 
-      if (this.wrongPlaceUntilMs > 0) {
-        const elapsed = 400 - (this.wrongPlaceUntilMs - this.lastFrameMs);
-        const progress = Math.min(1, Math.max(0, elapsed / 400));
+      if (this.wrongPlaceFlash.isActive(this.lastFrameMs)) {
+        const progress = this.wrongPlaceFlash.progress(this.lastFrameMs);
         rs.drawRetryRing(
           ctx,
           sourceSlot.x,
@@ -781,9 +780,12 @@ export class GT030Session extends TemplateGameSession<
         "square"
       );
 
-      if (isSelected && !opt.is_correct && this.wrongOptionUntilMs > 0) {
-        const elapsed = 400 - (this.wrongOptionUntilMs - this.lastFrameMs);
-        const progress = Math.min(1, Math.max(0, elapsed / 400));
+      if (
+        isSelected &&
+        !opt.is_correct &&
+        this.wrongOptionFlash.isActive(this.lastFrameMs)
+      ) {
+        const progress = this.wrongOptionFlash.progress(this.lastFrameMs);
         rs.drawRetryRing(
           ctx,
           slot.x,
@@ -813,13 +815,7 @@ export class GT030Session extends TemplateGameSession<
     timeMs: number
   ): void {
     this.lastFrameMs = timeMs;
-    if (this.wrongOptionUntilMs > 0 && timeMs >= this.wrongOptionUntilMs) {
-      this.wrongOptionUntilMs = 0;
-      this.selectedOptionId = null;
-    }
-    if (this.wrongPlaceUntilMs > 0 && timeMs >= this.wrongPlaceUntilMs) {
-      this.wrongPlaceUntilMs = 0;
-    }
+    this.expireWrongFlashes(timeMs);
     this.expireGapFlash();
     drawSceneBackground(ctx, rs, this.themeId);
     const zones = pickTrayZones(this.stageRect, this.trayRect);

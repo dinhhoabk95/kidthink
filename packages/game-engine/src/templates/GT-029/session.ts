@@ -40,6 +40,7 @@ import {
 import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
+import { WrongFlash } from "#src/systems/wrong-flash";
 import type { GT029Content, GT029Difficulty } from "./template.js";
 import {
   computePackedItemsAndOptions,
@@ -75,9 +76,9 @@ export class GT029Session extends TemplateGameSession<
   isWin = false;
 
   private lastFrameMs = 0;
-  private wrongOptionUntilMs = 0;
+  private readonly wrongOptionFlash = new WrongFlash();
   private wrongItemId: string | null = null;
-  private wrongItemUntilMs = 0;
+  private readonly wrongItemFlash = new WrongFlash();
   private particles: Particle[] = [];
   private reactionPose: MascotPose | null = null;
   private reactionRemainingMs = 0;
@@ -106,18 +107,17 @@ export class GT029Session extends TemplateGameSession<
       );
     }
     this.lastFrameMs += deltaMs;
-    if (
-      this.wrongOptionUntilMs > 0 &&
-      this.lastFrameMs >= this.wrongOptionUntilMs
-    ) {
-      this.wrongOptionUntilMs = 0;
+    this.expireWrongFlashes(this.lastFrameMs);
+  }
+
+  /** Hết nhịp sai thì ô đáp án/vật về trung tính (cùng đồng hồ khung với lúc kích). */
+  private expireWrongFlashes(nowMs: number): void {
+    if (this.wrongOptionFlash.hasExpired(nowMs)) {
+      this.wrongOptionFlash.clear();
       this.selectedOptionId = null;
     }
-    if (
-      this.wrongItemUntilMs > 0 &&
-      this.lastFrameMs >= this.wrongItemUntilMs
-    ) {
-      this.wrongItemUntilMs = 0;
+    if (this.wrongItemFlash.hasExpired(nowMs)) {
+      this.wrongItemFlash.clear();
       this.wrongItemId = null;
     }
   }
@@ -247,7 +247,7 @@ export class GT029Session extends TemplateGameSession<
 
     if (this.removedItemIds.size >= this.content.remove_count) {
       this.wrongItemId = itemId;
-      this.wrongItemUntilMs = this.lastFrameMs + 400;
+      this.wrongItemFlash.trigger(this.lastFrameMs);
       return ACTION_RETRY;
     }
 
@@ -303,7 +303,7 @@ export class GT029Session extends TemplateGameSession<
       return ACTION_CORRECT;
     }
 
-    this.wrongOptionUntilMs = this.lastFrameMs + 400;
+    this.wrongOptionFlash.trigger(this.lastFrameMs);
     this.react("wonder", GT029_WONDER_MS);
     return ACTION_RETRY;
   }
@@ -680,9 +680,12 @@ export class GT029Session extends TemplateGameSession<
         "square"
       );
 
-      if (isSelected && !opt.is_correct && this.wrongOptionUntilMs > 0) {
-        const elapsed = 400 - (this.wrongOptionUntilMs - this.lastFrameMs);
-        const progress = Math.min(1, Math.max(0, elapsed / 400));
+      if (
+        isSelected &&
+        !opt.is_correct &&
+        this.wrongOptionFlash.isActive(this.lastFrameMs)
+      ) {
+        const progress = this.wrongOptionFlash.progress(this.lastFrameMs);
         rs.drawRetryRing(
           ctx,
           slot.x,
@@ -700,14 +703,7 @@ export class GT029Session extends TemplateGameSession<
     timeMs: number
   ): void {
     this.lastFrameMs = timeMs;
-    if (this.wrongOptionUntilMs > 0 && timeMs >= this.wrongOptionUntilMs) {
-      this.wrongOptionUntilMs = 0;
-      this.selectedOptionId = null;
-    }
-    if (this.wrongItemUntilMs > 0 && timeMs >= this.wrongItemUntilMs) {
-      this.wrongItemUntilMs = 0;
-      this.wrongItemId = null;
-    }
+    this.expireWrongFlashes(timeMs);
     drawSceneBackground(ctx, rs, this.themeId);
 
     const removedCount = this.removedItemIds.size;
@@ -726,14 +722,13 @@ export class GT029Session extends TemplateGameSession<
 
     this.renderItems(ctx, rs);
 
-    if (this.wrongItemUntilMs > timeMs && this.wrongItemId) {
+    if (this.wrongItemFlash.isActive(timeMs) && this.wrongItemId) {
       const itemIdx = this.content.initial_items.findIndex(
         (it) => it.item_id === this.wrongItemId
       );
       const slot = this.itemSlotFor(itemIdx);
       if (slot) {
-        const elapsed = 400 - (this.wrongItemUntilMs - timeMs);
-        const progress = Math.min(1, Math.max(0, elapsed / 400));
+        const progress = this.wrongItemFlash.progress(timeMs);
         rs.drawRetryRing(
           ctx,
           slot.x,

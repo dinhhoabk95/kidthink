@@ -27,6 +27,7 @@ import { shuffle } from "#src/rng/shuffle.js";
 import type { DegradationState } from "#src/systems/degradation";
 import { MoodPulse } from "#src/systems/mood-pulse";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
+import { WrongFlash } from "#src/systems/wrong-flash";
 import type { GT002Content, GT002Difficulty } from "./template.js";
 
 type TargetItem = GT002Content["items"][number];
@@ -48,7 +49,8 @@ export class GT002Session extends TemplateGameSession<
   private readonly mechanic = new SelectionMechanic({ mode: "multi" });
   degradation: DegradationState | null = null;
   private particles: Particle[] = [];
-  private wrongFlashMs = 0;
+  private readonly wrongFlash = new WrongFlash();
+  private lastFrameMs = 0;
   private readonly mood = new MoodPulse();
 
   /** Nút Xong ở `zones.action` (`BR-PSZ-05`); chỉ sáng khi đã chọn ít nhất một vật. */
@@ -59,7 +61,8 @@ export class GT002Session extends TemplateGameSession<
     this.mechanic.reset();
     this.isWon = false;
     this.particles = [];
-    this.wrongFlashMs = 0;
+    this.wrongFlash.clear();
+    this.lastFrameMs = 0;
     this.mood.clear();
     const rng = deriveStream(this.layoutSeed, "items");
     this.displayItems = shuffle(this.content.items, rng);
@@ -98,9 +101,12 @@ export class GT002Session extends TemplateGameSession<
 
   update(deltaMs: number): void {
     this.mood.tick(deltaMs);
-    if (this.wrongFlashMs > 0) {
-      this.wrongFlashMs = Math.max(0, this.wrongFlashMs - deltaMs);
-    }
+    this.lastFrameMs += deltaMs;
+  }
+
+  /** Các vật đang chọn còn nháy sai (nhịp `WrongFlash` chưa hết). */
+  isWrongFlashing(): boolean {
+    return this.wrongFlash.isActive(this.lastFrameMs);
   }
 
   getItemState(itemId: string): ItemVisualState {
@@ -159,7 +165,7 @@ export class GT002Session extends TemplateGameSession<
       }
       this.winSession();
     } else {
-      this.wrongFlashMs = 350;
+      this.wrongFlash.trigger(this.lastFrameMs);
       this.mood.set("wonder", GT002_WONDER_MS);
     }
   }
@@ -268,6 +274,7 @@ export class GT002Session extends TemplateGameSession<
     rs: RenderSystem,
     timeMs: number
   ): void {
+    this.lastFrameMs = timeMs;
     const slots = this.slots;
     drawSceneBackground(ctx, rs, this.themeId);
     this.drawInteractive(rs, ctx, slots);
@@ -288,7 +295,7 @@ export class GT002Session extends TemplateGameSession<
       const state = this.getItemState(item.item_id);
       const isSelected = state === "selected" || state === "correct";
       const renderState: ItemVisualState =
-        this.wrongFlashMs > 0 && this.mechanic.isSelected(item.item_id)
+        this.isWrongFlashing() && this.mechanic.isSelected(item.item_id)
           ? "wrong"
           : state;
       drawWoodenPlate(ctx, slot, isSelected);

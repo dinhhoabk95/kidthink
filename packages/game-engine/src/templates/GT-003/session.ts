@@ -42,6 +42,7 @@ import { deriveStream } from "#src/rng/mulberry32";
 import { shuffle } from "#src/rng/shuffle";
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
+import { WrongFlashMap } from "#src/systems/wrong-flash";
 import type { GT003Content, GT003Difficulty } from "./template.js";
 
 type DraggableItem = GT003Content["items"][number];
@@ -85,7 +86,9 @@ export class GT003Session extends TemplateGameSession<
   private particles: Particle[] = [];
   private itemStates: Map<string, ItemVisualState> = new Map();
   /** item_id -> mili-giây còn lại của nhịp phản hồi "thả trượt". */
-  private readonly transientStateMs: Map<string, number> = new Map();
+  /** Nhịp hổ phách theo vật; thời lượng riêng 260 ms do spec GT-003 chốt (vật trôi về chỗ cũ). */
+  private readonly wrongFlashes = new WrongFlashMap(WRONG_FEEDBACK_MS);
+  private lastFrameMs = 0;
   hoveredContainer = false;
 
   /** Vật nằm trong khay chung, rổ đứng trên sân khấu (`BR-PSZ-01`). */
@@ -102,7 +105,8 @@ export class GT003Session extends TemplateGameSession<
     this.isWon = false;
     this.particles = [];
     this.itemStates = new Map();
-    this.transientStateMs.clear();
+    this.wrongFlashes.clearAll();
+    this.lastFrameMs = 0;
     this.hoveredContainer = false;
     this.placementTargets = this.content.items
       .filter((i) => i.is_correct)
@@ -355,14 +359,14 @@ export class GT003Session extends TemplateGameSession<
       this.mechanic.place(itemId, containerId);
       this.queueSfx("drop_thud");
       this.setItemState(itemId, "correct");
-      this.transientStateMs.delete(itemId);
+      this.wrongFlashes.clear(itemId);
       this.spawnSuccessParticles(itemId);
       if (this.checkWinCondition()) {
         this.winSession();
       }
     } else {
       this.setItemState(itemId, "wrong");
-      this.transientStateMs.set(itemId, WRONG_FEEDBACK_MS);
+      this.wrongFlashes.trigger(itemId, this.lastFrameMs);
     }
   }
 
@@ -387,17 +391,10 @@ export class GT003Session extends TemplateGameSession<
 
   /** Nhịp hổ phách tắt sau `WRONG_FEEDBACK_MS`; vật về trung tính. */
   update(deltaMs: number): void {
-    if (this.transientStateMs.size > 0) {
-      for (const [itemId, remaining] of this.transientStateMs) {
-        const next = remaining - deltaMs;
-        if (next <= 0) {
-          this.transientStateMs.delete(itemId);
-          if (this.itemStates.get(itemId) === "wrong") {
-            this.itemStates.delete(itemId);
-          }
-        } else {
-          this.transientStateMs.set(itemId, next);
-        }
+    this.lastFrameMs += deltaMs;
+    for (const itemId of this.wrongFlashes.drainExpired(this.lastFrameMs)) {
+      if (this.itemStates.get(itemId) === "wrong") {
+        this.itemStates.delete(itemId);
       }
     }
     this.particles = updateParticles(this.particles);
@@ -574,8 +571,9 @@ export class GT003Session extends TemplateGameSession<
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
-    _timeMs: number
+    timeMs: number
   ): void {
+    this.lastFrameMs = timeMs;
     drawSceneBackground(ctx, rs, this.themeId);
     const zones = this.trayZones();
     if (!zones) {

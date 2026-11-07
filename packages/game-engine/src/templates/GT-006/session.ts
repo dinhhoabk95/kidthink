@@ -33,6 +33,7 @@ import {
 } from "#src/systems/montessori-explore-system";
 import { MoodPulse } from "#src/systems/mood-pulse";
 import type { RenderSystem } from "#src/systems/render-system";
+import { WrongFlash } from "#src/systems/wrong-flash";
 import { slotsFitStage, splitStageForTrack } from "./stage-strip.js";
 import type { GT006Content, GT006Difficulty } from "./template.js";
 
@@ -54,7 +55,8 @@ export class GT006Session extends TemplateGameSession<
   override readonly needsCommit = true;
   degradation: DegradationState | null = null;
   private stagedIndex: number | null = null;
-  private wrongSubmitTimerMs = 0;
+  private readonly wrongSubmitFlash = new WrongFlash();
+  private lastFrameMs = 0;
   private readonly mood = new MoodPulse();
 
   private readonly mechanic = new OrderingMechanic();
@@ -86,7 +88,8 @@ export class GT006Session extends TemplateGameSession<
     }
     this.isWon = false;
     this.stagedIndex = null;
-    this.wrongSubmitTimerMs = 0;
+    this.wrongSubmitFlash.clear();
+    this.lastFrameMs = 0;
     this.mood.clear();
   }
 
@@ -186,10 +189,10 @@ export class GT006Session extends TemplateGameSession<
     this.recordEvent("sequence_submitted", { is_correct: valid });
     if (valid) {
       this.exploreTracker.recordCorrectAttempt();
-      this.wrongSubmitTimerMs = 0;
+      this.wrongSubmitFlash.clear();
       this.winSession();
     } else {
-      this.wrongSubmitTimerMs = 350;
+      this.wrongSubmitFlash.trigger(this.lastFrameMs);
       this.mood.set("wonder", GT006_WONDER_MS);
       const mismatchIdx = this.findFirstMismatchIndex();
       const reasonVi =
@@ -221,9 +224,12 @@ export class GT006Session extends TemplateGameSession<
   update(deltaMs: number): void {
     this.mood.tick(deltaMs);
     this.exploreTracker.tick(deltaMs);
-    if (this.wrongSubmitTimerMs > 0) {
-      this.wrongSubmitTimerMs = Math.max(0, this.wrongSubmitTimerMs - deltaMs);
-    }
+    this.lastFrameMs += deltaMs;
+  }
+
+  /** Các thẻ sai thứ tự còn nháy sau lần kiểm tra chưa đúng. */
+  isWrongSubmitFlashing(): boolean {
+    return this.wrongSubmitFlash.isActive(this.lastFrameMs);
   }
 
   private isStepOutOfOrder(stepId: string, currentIndex: number): boolean {
@@ -405,7 +411,7 @@ export class GT006Session extends TemplateGameSession<
       const rawState = this.getRenderItemState(stepId);
       const isStaged = this.stagedIndex === i;
       const isOutOfOrder =
-        this.wrongSubmitTimerMs > 0 && this.isStepOutOfOrder(stepId, i);
+        this.isWrongSubmitFlashing() && this.isStepOutOfOrder(stepId, i);
       let state = this.toItemEntityState(isStaged, rawState);
       if (isOutOfOrder) {
         state = "incorrect";
@@ -446,8 +452,9 @@ export class GT006Session extends TemplateGameSession<
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
-    _timeMs: number
+    timeMs: number
   ): void {
+    this.lastFrameMs = timeMs;
     drawSceneBackground(ctx, rs, this.themeId);
     this.drawTrackDecor(ctx, rs);
     const order = this.mechanic.getCurrentSequence();
@@ -464,7 +471,7 @@ export class GT006Session extends TemplateGameSession<
         (step as { correct_order?: number; order_index?: number })
           .correct_order ?? step.order_index;
       let state = this.getRenderItemState(stepId);
-      if (this.wrongSubmitTimerMs > 0 && this.isStepOutOfOrder(stepId, i)) {
+      if (this.isWrongSubmitFlashing() && this.isStepOutOfOrder(stepId, i)) {
         state = "wrong";
       } else if (this.stagedIndex === i && state === "idle") {
         state = "selected";

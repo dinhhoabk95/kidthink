@@ -40,6 +40,7 @@ import {
 import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
 import type { RenderSystem } from "#src/systems/render-system";
+import { WrongFlash } from "#src/systems/wrong-flash";
 import type { GT018Content, GT018Difficulty } from "./template";
 
 /** Cạnh vuông của máy hát (logic px). */
@@ -81,7 +82,8 @@ export class GT018Session extends TemplateGameSession<
   });
   private readonly orderingMechanic = new OrderingMechanic();
   selectedItemId: string | null = null;
-  private wrongTimerMs = 0;
+  private readonly wrongFlash = new WrongFlash();
+  private lastFrameMs = 0;
   private wrongItemId: string | null = null;
   private isSequenceWrong = false;
   private stagedStepIndex: number | null = null;
@@ -109,7 +111,8 @@ export class GT018Session extends TemplateGameSession<
   setupEntities(): void {
     this.isWon = false;
     this.selectedItemId = null;
-    this.wrongTimerMs = 0;
+    this.wrongFlash.clear();
+    this.lastFrameMs = 0;
     this.wrongItemId = null;
     this.isSequenceWrong = false;
     this.stagedStepIndex = null;
@@ -171,7 +174,7 @@ export class GT018Session extends TemplateGameSession<
     });
 
     if (isCorrect) {
-      this.wrongTimerMs = 0;
+      this.wrongFlash.clear();
       this.wrongItemId = null;
       this.queueSfx("rabbit_hop");
       this.recordEvent("round_completed", { round_index: 0 });
@@ -180,7 +183,7 @@ export class GT018Session extends TemplateGameSession<
     }
 
     this.react("wonder", GT018_WONDER_MS);
-    this.wrongTimerMs = 400;
+    this.wrongFlash.trigger(this.lastFrameMs);
     this.wrongItemId = itemId;
     this.setRenderItemState(itemId, "wrong");
     return ACTION_RETRY;
@@ -211,7 +214,7 @@ export class GT018Session extends TemplateGameSession<
 
     if (isMatch) {
       this.queueSfx("rabbit_hop");
-      this.wrongTimerMs = 0;
+      this.wrongFlash.clear();
       this.isSequenceWrong = false;
       this.recordEvent("round_completed", { round_index: 0 });
       this.winSession();
@@ -219,7 +222,7 @@ export class GT018Session extends TemplateGameSession<
     }
 
     this.react("wonder", GT018_WONDER_MS);
-    this.wrongTimerMs = 400;
+    this.wrongFlash.trigger(this.lastFrameMs);
     this.isSequenceWrong = true;
     for (const opt of this.content.options) {
       this.setRenderItemState(opt.item_id, "wrong");
@@ -270,11 +273,9 @@ export class GT018Session extends TemplateGameSession<
         this.reactionRemainingMs - deltaMs
       );
     }
-    if (this.wrongTimerMs <= 0) {
-      return;
-    }
-    this.wrongTimerMs = Math.max(0, this.wrongTimerMs - deltaMs);
-    if (this.wrongTimerMs === 0) {
+    this.lastFrameMs += deltaMs;
+    if (this.wrongFlash.hasExpired(this.lastFrameMs)) {
+      this.wrongFlash.clear();
       this.clearWrongState();
     }
   }
@@ -283,7 +284,7 @@ export class GT018Session extends TemplateGameSession<
     super.destroy();
     this.selectedItemId = null;
     this.wrongItemId = null;
-    this.wrongTimerMs = 0;
+    this.wrongFlash.clear();
     this.isSequenceWrong = false;
     this.stagedStepIndex = null;
   }
@@ -552,7 +553,7 @@ export class GT018Session extends TemplateGameSession<
     const orderIndex = chosenOrder.indexOf(opt.item_id);
     const isItemWrong =
       (this.wrongItemId === opt.item_id || this.isSequenceWrong) &&
-      this.wrongTimerMs > 0;
+      this.wrongFlash.isActive(this.lastFrameMs);
     const selected =
       !isItemWrong &&
       (this.selectedItemId === opt.item_id ||
@@ -578,7 +579,7 @@ export class GT018Session extends TemplateGameSession<
         slot.x,
         slot.y,
         (slot.w ?? 64) / 2,
-        1 - this.wrongTimerMs / 400
+        this.wrongFlash.progress(this.lastFrameMs)
       );
     }
   }
@@ -586,8 +587,9 @@ export class GT018Session extends TemplateGameSession<
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
-    _timeMs: number
+    timeMs: number
   ): void {
+    this.lastFrameMs = timeMs;
     drawSceneBackground(ctx, rs, this.themeId);
     const showCaption =
       !this.stageRect ||

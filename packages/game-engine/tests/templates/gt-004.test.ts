@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { ACTION_IGNORED } from "#src/game-session";
 import { TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { computeStageZones } from "#src/layout/stage-zones";
+import { WRONG_FLASH_MS } from "#src/systems/wrong-flash";
 import { GT004_FIXTURES } from "#src/templates/GT-004/fixtures";
 import { GT004Session } from "#src/templates/GT-004/session";
 
@@ -50,7 +51,7 @@ describe("GT-004 — Sort Groups session contract", () => {
     }
   });
 
-  it("bỏ qua vật đã phân loại khi chạm lại ô cũ, bật trạng thái incorrect tạm thời 260ms khi thả nhầm rổ, và hoàn thành bằng cả kéo-thả lẫn chạm-chạm", () => {
+  it("bỏ qua vật đã phân loại khi chạm lại ô cũ, bật trạng thái incorrect tạm thời WRONG_FLASH_MS (400ms) khi thả nhầm rổ, và hoàn thành bằng cả kéo-thả lẫn chạm-chạm", () => {
     const fixture = getFirstFixture();
     const session = new GT004Session(fixture.content, fixture.difficulty, 3);
     const zones = computeStageZones({
@@ -89,7 +90,7 @@ describe("GT-004 — Sort Groups session contract", () => {
       throw new Error("Missing target entities");
     }
 
-    // Thả nhầm rổ -> trả về valid: false, trạng thái incorrect tạm thời 260ms
+    // Thả nhầm rổ -> trả về valid: false, trạng thái incorrect tạm thời WRONG_FLASH_MS (400ms)
     const wrongRes = session.dispatch({
       type: "drop",
       fromX: firstSource.x,
@@ -103,7 +104,11 @@ describe("GT-004 — Sort Groups session contract", () => {
       session.getView().entities.find((e) => e.id === firstSource.id)?.state
     ).toBe("incorrect");
 
-    session.update(260);
+    session.update(WRONG_FLASH_MS - 1);
+    expect(
+      session.getView().entities.find((e) => e.id === firstSource.id)?.state
+    ).toBe("incorrect");
+    session.update(1);
     expect(
       session.getView().entities.find((e) => e.id === firstSource.id)?.state
     ).toBe("idle");

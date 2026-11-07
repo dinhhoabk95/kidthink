@@ -34,6 +34,7 @@ import { shuffle } from "#src/rng/shuffle";
 import type { DegradationState } from "#src/systems/degradation";
 import { designTokens } from "#src/systems/designTokens";
 import type { RenderSystem } from "#src/systems/render-system";
+import { WrongFlashMap } from "#src/systems/wrong-flash";
 import type { GT004Content, GT004Difficulty } from "./template.js";
 
 type SortItem = GT004Content["items"][number];
@@ -44,9 +45,6 @@ const BUCKET_MAX_H_PX = 140;
 
 /** Vùng chạm tối thiểu của rổ ở bố cục cũ — rộng hơn thân rổ vẽ. */
 const LEGACY_BUCKET_HIT: MinHitSize = { w: 140, h: 100 };
-
-/** Nhịp hổ phách tạm thời khi phân loại nhầm rổ — tự tắt sau 260ms. */
-const WRONG_FEEDBACK_MS = 260;
 
 /** Khung chuyện đọc một lần ở vòng đầu (`BR-E004-04`, `BR-FBK-16`). */
 export const GT004_STORY_LINE =
@@ -68,7 +66,8 @@ export class GT004Session extends TemplateGameSession<
     isCorrect: boolean;
   }[] = [];
   private readonly mechanic = new PlacementMechanic();
-  private readonly transientStateMs: Map<string, number> = new Map();
+  private readonly wrongFlashes = new WrongFlashMap();
+  private lastFrameMs = 0;
   private reactionPose: MascotPose | null = null;
   private reactionRemainingMs = 0;
 
@@ -84,7 +83,8 @@ export class GT004Session extends TemplateGameSession<
   setupEntities(): void {
     this.mechanic.reset();
     this.renderItemStates.clear();
-    this.transientStateMs.clear();
+    this.wrongFlashes.clearAll();
+    this.lastFrameMs = 0;
     this.reactionPose = null;
     this.reactionRemainingMs = 0;
     this.isWon = false;
@@ -142,7 +142,7 @@ export class GT004Session extends TemplateGameSession<
     if (isCorrect) {
       this.mechanic.place(itemId, groupId);
       this.renderItemStates.set(itemId, "correct");
-      this.transientStateMs.delete(itemId);
+      this.wrongFlashes.clear(itemId);
       this.queueSfx("lid_click");
       this.react("happy");
       if (this.checkWinCondition()) {
@@ -150,7 +150,7 @@ export class GT004Session extends TemplateGameSession<
       }
     } else {
       this.renderItemStates.set(itemId, "wrong");
-      this.transientStateMs.set(itemId, WRONG_FEEDBACK_MS);
+      this.wrongFlashes.trigger(itemId, this.lastFrameMs);
       this.react("wonder");
     }
   }
@@ -178,18 +178,10 @@ export class GT004Session extends TemplateGameSession<
         this.reactionRemainingMs - deltaMs
       );
     }
-    if (this.transientStateMs.size === 0) {
-      return;
-    }
-    for (const [itemId, remaining] of this.transientStateMs) {
-      const next = remaining - deltaMs;
-      if (next <= 0) {
-        this.transientStateMs.delete(itemId);
-        if (this.renderItemStates.get(itemId) === "wrong") {
-          this.renderItemStates.delete(itemId);
-        }
-      } else {
-        this.transientStateMs.set(itemId, next);
+    this.lastFrameMs += deltaMs;
+    for (const itemId of this.wrongFlashes.drainExpired(this.lastFrameMs)) {
+      if (this.renderItemStates.get(itemId) === "wrong") {
+        this.renderItemStates.delete(itemId);
       }
     }
   }
@@ -493,8 +485,9 @@ export class GT004Session extends TemplateGameSession<
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
-    _timeMs: number
+    timeMs: number
   ): void {
+    this.lastFrameMs = timeMs;
     drawSceneBackground(ctx, rs, this.themeId);
     const zones = pickTrayZones(this.stageRect, this.trayRect);
     if (zones) {
