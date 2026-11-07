@@ -74,7 +74,7 @@ describe("GT-032 — nhãn không lộ mức nước (BR-E032-06)", () => {
     const session = new GT032Session(f.content, f.difficulty);
     session.prepareRound("5-6");
     for (const e of session.getView().entities) {
-      expect(e.label).not.toMatch(RE_FRACTION);
+      expect(e.label ?? "").not.toMatch(RE_FRACTION);
       expect(e.spokenLabel).not.toMatch(RE_VACH);
     }
   });

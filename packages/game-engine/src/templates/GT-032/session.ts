@@ -24,7 +24,6 @@ import type { Slot } from "#src/layout/types";
 import {
   drawLiquidCup,
   drawSceneBackground,
-  drawSubPromptText,
   drawWoodenTokenDock,
   liquidCupRect,
   spawnParticlesAtSlot,
@@ -498,7 +497,6 @@ export class GT032Session extends TemplateGameSession<
         h: slot.h,
         hitShape: "square",
         glyph: "🥛",
-        label: `Cốc ${i + 1}`,
         spokenLabel,
       });
     }
@@ -571,13 +569,6 @@ export class GT032Session extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-
-    if (!this.stageRect) {
-      const subPrompt = this.isWin
-        ? "Bé giỏi lắm! Đúng rồi!"
-        : "Chạm vào cốc bé chọn nhé";
-      drawSubPromptText(ctx, rs, subPrompt);
-    }
 
     this.drawCupTray(ctx, rs);
 

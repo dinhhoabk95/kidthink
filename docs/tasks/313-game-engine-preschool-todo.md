@@ -85,6 +85,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
   - [x] 028 (dải phụ "Bước nhảy/Đã đếm/Mục tiêu" thành +n, chấm đã nhảy, số đích; BR-E028-05)
   - [x] 029 (một phần: dải phụ "Đã bớt n/m" thành -m + m chấm, BR-E029-05; thẻ "bớt đi n" là câu dẫn do shell đọc)
   - [x] 031 (còn lại Phase 3: "Đã góp x/y đ" thành hàng chấm xu lấp dần, thẻ giá chỉ chữ số, xu bỏ "đ", BR-E031-07)
+  - [x] 032 (bỏ dòng phụ bố cục cũ và label "Cốc n", tên cốc chỉ đọc, BR-E032-08)
 
 ## Phase 5 — Đặc sắc từng game
 - [ ] Đợt demo: 001, 003, 020, 025, 026, 037
