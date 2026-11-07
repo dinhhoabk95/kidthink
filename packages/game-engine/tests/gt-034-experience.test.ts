@@ -70,8 +70,8 @@ describe("GT-034: khung chuyện Dế Mèn gõ trống phách mõ, tiếng mõ �
     expect(session.mascotMood()).toBeNull();
   });
 
-  it("đủ bước nhưng sai chuỗi: wonder rồi null", () => {
-    const session = open(PLAIN);
+  /** Gõ sai trọn chuỗi một lượt. */
+  function missWholePattern(session: GT034Session): void {
     const wrong = PLAIN.content.instruments.find(
       (i) => i.instrument_id !== PLAIN.content.target_pattern[0]
     );
@@ -81,6 +81,20 @@ describe("GT-034: khung chuyện Dế Mèn gõ trống phách mõ, tiếng mõ �
         data: { instrument_id: wrong?.instrument_id },
       });
     }
+  }
+
+  it("sai trọn chuỗi khi còn lượt nghe: mẫu phát lại, listen thắng wonder", () => {
+    const session = open(PLAIN);
+    missWholePattern(session);
+    expect(session.mascotMood()).toBe("listen");
+  });
+
+  it("sai trọn chuỗi khi không nghe lại được: wonder rồi null", () => {
+    const session = open({
+      ...PLAIN,
+      difficulty: { ...PLAIN.difficulty, allow_replay: false },
+    });
+    missWholePattern(session);
     expect(session.mascotMood()).toBe("wonder");
     session.update(WONDER_MS + 60_000);
     expect(session.mascotMood()).toBeNull();

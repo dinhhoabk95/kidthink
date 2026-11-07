@@ -132,7 +132,8 @@ export class GT034Session extends TemplateGameSession<
     if (this.isWon) {
       return null;
     }
-    return this.mood.current() ?? (this.isPlayingPattern ? "listen" : null);
+    // Đang phát mẫu thì trẻ phải nghe: `listen` thắng mọi phản ứng còn lại.
+    return this.isPlayingPattern ? "listen" : this.mood.current();
   }
 
   setupEntities(): void {
