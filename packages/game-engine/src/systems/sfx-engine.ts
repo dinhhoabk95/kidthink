@@ -46,7 +46,8 @@ export type SFXType =
   | "torch_click"
   | "mirror_chime"
   | "piece_click"
-  | "ant_step";
+  | "ant_step"
+  | "rule_whistle";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -730,6 +731,27 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       volume: 0.06,
       durationSec: 0.05,
       rampOutSec: 0.04,
+    },
+  ],
+
+  /** GT-027: còi trọng tài báo đổi luật — hai nốt cao lướt lên (`BR-E027-05`). */
+  rule_whistle: [
+    {
+      delaySec: 0,
+      type: "sine",
+      freq: 1400,
+      glideTo: { freq: 1700, overSec: 0.1 },
+      volume: 0.07,
+      durationSec: 0.14,
+      rampOutSec: 0.06,
+    },
+    {
+      delaySec: 0.18,
+      type: "sine",
+      freq: 1700,
+      volume: 0.07,
+      durationSec: 0.2,
+      rampOutSec: 0.1,
     },
   ],
 

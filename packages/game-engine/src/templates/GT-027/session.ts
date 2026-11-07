@@ -29,8 +29,10 @@ import {
   drawSubPromptText,
   drawWoodenTokenDock,
 } from "#src/render/index.js";
+import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
 import { designTokens } from "#src/systems/designTokens";
+import { MoodPulse } from "#src/systems/mood-pulse";
 import type { RenderSystem } from "#src/systems/render-system";
 import { type RuleDefinition, RuleSystem } from "#src/systems/rule-system";
 import type { GT027Content, GT027Difficulty } from "./template.js";
@@ -91,6 +93,15 @@ function getItemId(data: object | null | undefined): string | undefined {
   return undefined;
 }
 
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E027-05`, `BR-FBK-16`). */
+export const GT027_STORY_LINE =
+  "Cáo Con làm trọng tài, cứ thổi còi là luật chơi đổi. Bé nghe còi, nghe kỹ luật mới rồi chọn đúng hình nhé!";
+
+/** Mascot vui sau mỗi lần chọn đúng. */
+export const GT027_HAPPY_MS = 700;
+/** Mascot nghiêng đầu sau lần chọn sai. */
+export const GT027_WONDER_MS = 1500;
+
 export class GT027Session extends TemplateGameSession<
   GT027Content,
   GT027Difficulty
@@ -106,11 +117,23 @@ export class GT027Session extends TemplateGameSession<
   private wrongItemId: string | null = null;
   private wrongUntilMs = 0;
 
+  private readonly mood = new MoodPulse();
+
+  override storyLine(): string {
+    return GT027_STORY_LINE;
+  }
+
+  /** Nghe luật mới suốt lúc báo đổi luật; ngoài ra chỉ đáp lại lượt chọn (`BR-E027-05`). */
+  override mascotMood(): MascotPose | null {
+    return this.isWon ? null : this.mood.current();
+  }
+
   override isTrialBased(): boolean {
     return true;
   }
 
   setupEntities(): void {
+    this.mood.clear();
     this.isWon = false;
     this.successfulTrialCount = 0;
 
@@ -206,6 +229,7 @@ export class GT027Session extends TemplateGameSession<
       this.setRenderItemState(itemId, "wrong");
       this.wrongItemId = itemId;
       this.wrongUntilMs = this.lastFrameMs + 400;
+      this.mood.set("wonder", GT027_WONDER_MS);
       this.recordEvent("item_selected", {
         item_id: itemId,
         is_correct: false,
@@ -216,6 +240,7 @@ export class GT027Session extends TemplateGameSession<
 
     this.setRenderItemState(itemId, "correct");
     this.successfulTrialCount++;
+    this.mood.set("happy", GT027_HAPPY_MS);
     this.recordEvent("item_selected", {
       item_id: itemId,
       is_correct: true,
@@ -223,6 +248,15 @@ export class GT027Session extends TemplateGameSession<
       trial_count: this.successfulTrialCount,
       target_total: this.targetSuccessTotal,
     });
+
+    if (
+      evalResult.triggeredSwitch &&
+      this.successfulTrialCount < this.targetSuccessTotal
+    ) {
+      // Còi đổi luật là thông tin hợp lệ, không lộ đáp án (`BR-E027-05`).
+      this.queueSfx("rule_whistle");
+      this.mood.set("listen", this.difficulty.signal_duration_ms);
+    }
 
     if (evalResult.triggeredSwitch) {
       this.renderItemStates.clear();
@@ -319,6 +353,7 @@ export class GT027Session extends TemplateGameSession<
   // biome-ignore lint/suspicious/noConfusingVoidType: void needed for compatibility with update
   update(deltaMs: number): ActionResult | void | null {
     this.lastFrameMs += deltaMs;
+    this.mood.tick(deltaMs);
     if (this.wrongUntilMs > 0 && this.lastFrameMs >= this.wrongUntilMs) {
       if (this.wrongItemId) {
         this.setRenderItemState(this.wrongItemId, "idle");
