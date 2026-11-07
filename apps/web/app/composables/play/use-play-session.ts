@@ -27,6 +27,7 @@ import {
   type CelebrationTier,
   usePlayTelemetry,
 } from "~/composables/play/use-play-telemetry";
+import { findInvalidRound } from "~/composables/play/validate-rounds";
 import { useApi } from "~/composables/use-api";
 
 export interface JsonObject {
@@ -606,6 +607,19 @@ export function usePlaySession(options: UsePlaySessionOptions) {
     });
   }
 
+  /** Kiểm mọi vòng trước khi chơi (Task #313 B3): vòng sau hỏng sẽ kẹt giữa chừng. */
+  function assertRoundsValid(
+    templateCode: string,
+    rounds: readonly RoundPayload[]
+  ): void {
+    const invalidRound = findInvalidRound(templateCode, rounds);
+    if (invalidRound !== null) {
+      throw new Error(
+        `Câu hỏi ở vòng ${invalidRound + 1} bị lỗi nội dung. Bé thử lại sau nhé!`
+      );
+    }
+  }
+
   async function fetchAndStartGame(levelCode: string): Promise<void> {
     const endpoint = loggedIn.value
       ? `/api/users/levels/${levelCode}/config`
@@ -625,6 +639,8 @@ export function usePlaySession(options: UsePlaySessionOptions) {
         "Cấu hình trò chơi thiếu danh sách câu hỏi. Bé thử lại sau nhé!"
       );
     }
+
+    assertRoundsValid(payload.template_code, rounds);
 
     initSessionTelemetryIfPresent(payload, levelCode);
 
