@@ -54,6 +54,7 @@ import {
   drawRequiredCells,
   drawSceneBackground,
 } from "#src/render/index.js";
+import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
 import {
   canMove,
@@ -67,6 +68,7 @@ import {
   type MazeSide,
   type MazeStepResult,
 } from "#src/systems/maze-system";
+import { MoodPulse } from "#src/systems/mood-pulse";
 import type { RenderSystem } from "#src/systems/render-system";
 import type { GT013Content, GT013Difficulty } from "./template.js";
 
@@ -148,6 +150,13 @@ const ARROW_GLYPHS: Record<MazeSide, string> = {
 /**
  * `GT-013` — tìm đường mê cung.
  */
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E013-07`, `BR-FBK-16`). */
+export const GT013_STORY_LINE =
+  "Chuột Nhắt đi tìm đường về nhà. Bé dẫn Chuột đi, gặp tường thì thử lối khác nhé!";
+
+/** Mascot nhún vai sau khi đụng tường (`BR-E013-07`). */
+export const GT013_SHRUG_MS = 1200;
+
 export class GT013Session extends TemplateGameSession<
   GT013Content,
   GT013Difficulty
@@ -160,17 +169,29 @@ export class GT013Session extends TemplateGameSession<
   private blockedCell: MazeCell | null = null;
   private blockedTimestamp = 0;
   private lastFrameMs = 0;
+  private readonly mood = new MoodPulse();
 
   setupEntities(): void {
     this.tracker = new MazePathTracker(this.content.grid);
     this.syncSequence();
     this.blockedCell = null;
     this.blockedTimestamp = 0;
+    this.mood.clear();
     this.lastFrameMs = 0;
     this.isWon = false;
   }
 
+  override storyLine(): string {
+    return GT013_STORY_LINE;
+  }
+
+  /** Chuột nhún vai sau khi đụng tường (`BR-E013-07`). */
+  override mascotMood(): MascotPose | null {
+    return this.isWon ? null : this.mood.current();
+  }
+
   update(deltaMs: number): void {
+    this.mood.tick(deltaMs);
     this.lastFrameMs += deltaMs;
     if (this.blockedCell && this.lastFrameMs - this.blockedTimestamp >= 400) {
       this.blockedCell = null;
@@ -194,6 +215,8 @@ export class GT013Session extends TemplateGameSession<
     const result = this.tracker.step(cell);
     this.syncSequence();
     if (result.status === "moved") {
+      // Tiếng chân như nhau ở mọi nẻo: không lộ lối đúng (`BR-E013-07`).
+      this.queueSfx("mouse_step");
       this.recordEvent("path_step", {
         row: cell.row,
         col: cell.col,
@@ -201,6 +224,8 @@ export class GT013Session extends TemplateGameSession<
       });
     }
     if (result.status === "blocked") {
+      this.queueSfx("wall_boing");
+      this.mood.set("wonder", GT013_SHRUG_MS);
       this.blockedCell = cell;
       this.blockedTimestamp = this.lastFrameMs;
       this.recordEvent("path_blocked", {

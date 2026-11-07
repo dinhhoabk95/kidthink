@@ -36,7 +36,9 @@ export type SFXType =
   | "park_thunk"
   | "clue_ping"
   | "price_bell"
-  | "seed_plop";
+  | "seed_plop"
+  | "wall_boing"
+  | "mouse_step";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -537,6 +539,40 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       volume: 0.05,
       durationSec: 0.08,
       rampOutSec: 0.05,
+    },
+  ],
+
+  /** GT-013: chân chuột bước một ô — "tíc" nhẹ (`BR-E013-07`). */
+  mouse_step: [
+    {
+      delaySec: 0,
+      type: "sine",
+      freq: 820,
+      volume: 0.07,
+      durationSec: 0.05,
+      rampOutSec: 0.04,
+    },
+  ],
+
+  /** GT-013: chuột đụng tường — "boing" mềm bật lên rồi xuống (`BR-E013-07`). */
+  wall_boing: [
+    {
+      delaySec: 0,
+      type: "sine",
+      freq: 200,
+      glideTo: { freq: 420, overSec: 0.08 },
+      volume: 0.12,
+      durationSec: 0.1,
+      rampOutSec: 0.05,
+    },
+    {
+      delaySec: 0.1,
+      type: "sine",
+      freq: 420,
+      glideTo: { freq: 240, overSec: 0.1 },
+      volume: 0.09,
+      durationSec: 0.12,
+      rampOutSec: 0.06,
     },
   ],
 
