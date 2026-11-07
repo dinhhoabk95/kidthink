@@ -917,7 +917,10 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
 
       expect(result?.valid).toBe(true);
       expect(session.getCurrentCount()).toBe(2);
-      expect(session.selectedItemIds).toContain("apple_1");
+      // `shuffle_items` bật: vật ở ô 0 là vật đang hiện ở đó, không nhất thiết `apple_1`.
+      expect(session.selectedItemIds).toEqual([
+        session.getView().entities[0]?.id,
+      ]);
     });
 
     it("GT-029: khi chạm ngoài vùng slot, không commit action và state không đổi", () => {

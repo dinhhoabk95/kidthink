@@ -38,6 +38,8 @@ import {
   updateParticles,
 } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
+import { deriveDerangement } from "#src/rng/derangement";
+import { deriveStream } from "#src/rng/mulberry32";
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import { WrongFlash } from "#src/systems/wrong-flash";
@@ -75,6 +77,8 @@ export class GT029Session extends TemplateGameSession<
   selectedOptionId: string | null = null;
   isWin = false;
 
+  /** Thứ tự bày vật: content, hoặc hoán vị không động theo seed khi `shuffle_items` bật (`BR-E029-07`). */
+  private items: GT029Content["initial_items"] = this.content.initial_items;
   private lastFrameMs = 0;
   private readonly wrongOptionFlash = new WrongFlash();
   private wrongItemId: string | null = null;
@@ -124,6 +128,14 @@ export class GT029Session extends TemplateGameSession<
 
   setupEntities(): void {
     this.removedItemIds.clear();
+    this.items =
+      this.difficulty.shuffle_items === true &&
+      this.content.initial_items.length > 1
+        ? deriveDerangement(
+            this.content.initial_items,
+            deriveStream(this.layoutSeed, "items")
+          )
+        : this.content.initial_items;
     this.selectedOptionId = null;
     this.isWin = false;
     this.particles = [];
@@ -131,7 +143,7 @@ export class GT029Session extends TemplateGameSession<
     this.reactionRemainingMs = 0;
     this.recordEvent("game_started", {
       template_code: "GT-029",
-      initial_count: this.content.initial_items.length,
+      initial_count: this.items.length,
       remove_count: this.content.remove_count,
     });
   }
@@ -142,7 +154,7 @@ export class GT029Session extends TemplateGameSession<
    * thật và phần bớt nằm riêng, không đứng nguyên tại chỗ.
    */
   private itemCellIndex(itemIndex: number): number {
-    const items = this.content.initial_items;
+    const items = this.items;
     const item = items[itemIndex];
     if (!item) {
       return itemIndex;
@@ -170,9 +182,9 @@ export class GT029Session extends TemplateGameSession<
     if (this.isWin || this.isWon) {
       return null;
     }
-    const totalItems = this.content.initial_items.length;
+    const totalItems = this.items.length;
     if (this.removedItemIds.size < this.content.remove_count) {
-      const unremovedIdx = this.content.initial_items.findIndex(
+      const unremovedIdx = this.items.findIndex(
         (it) => !this.removedItemIds.has(it.item_id)
       );
       return unremovedIdx >= 0 ? this.itemCellIndex(unremovedIdx) : null;
@@ -187,7 +199,7 @@ export class GT029Session extends TemplateGameSession<
   }
 
   protected computeSlots(band: AgeBand): readonly Slot[] {
-    const totalItems = this.content.initial_items.length;
+    const totalItems = this.items.length;
     const optionCount = this.content.answer_options.length;
     const params = {
       ageBand: band,
@@ -227,9 +239,7 @@ export class GT029Session extends TemplateGameSession<
   }
 
   private handleItemRemoval(itemId: string): ActionResult {
-    const itemExists = this.content.initial_items.some(
-      (it) => it.item_id === itemId
-    );
+    const itemExists = this.items.some((it) => it.item_id === itemId);
     if (!itemExists) {
       return ACTION_IGNORED;
     }
@@ -294,7 +304,7 @@ export class GT029Session extends TemplateGameSession<
       this.isWin = true;
       this.isWon = true;
       const optIndex = this.content.answer_options.indexOf(option);
-      const slot = this.slots[this.content.initial_items.length + optIndex];
+      const slot = this.slots[this.items.length + optIndex];
       if (slot) {
         this.particles.push(...spawnParticlesAtSlot(slot, 12));
       }
@@ -313,9 +323,7 @@ export class GT029Session extends TemplateGameSession<
     if (!itemId) {
       return ACTION_IGNORED;
     }
-    const itemExists = this.content.initial_items.some(
-      (it) => it.item_id === itemId
-    );
+    const itemExists = this.items.some((it) => it.item_id === itemId);
     if (!itemExists) {
       return ACTION_IGNORED;
     }
@@ -384,7 +392,7 @@ export class GT029Session extends TemplateGameSession<
     if (this.removedItemIds.size < this.content.remove_count) {
       return null;
     }
-    const totalItems = this.content.initial_items.length;
+    const totalItems = this.items.length;
     for (let i = 0; i < this.content.answer_options.length; i++) {
       const slot = this.slots[totalItems + i];
       const opt = this.content.answer_options[i];
@@ -406,10 +414,10 @@ export class GT029Session extends TemplateGameSession<
   private findTappedItem(
     gesture: Extract<Gesture, { type: "tap" }>
   ): GameAction | null {
-    const totalItems = this.content.initial_items.length;
+    const totalItems = this.items.length;
     for (let i = 0; i < totalItems; i++) {
       const slot = this.itemSlotFor(i);
-      const item = this.content.initial_items[i];
+      const item = this.items[i];
       if (!(slot && item)) {
         continue;
       }
@@ -428,10 +436,10 @@ export class GT029Session extends TemplateGameSession<
   private findDroppedItem(
     gesture: Extract<Gesture, { type: "drop" }>
   ): GameAction | null {
-    const itemCount = this.content.initial_items.length;
+    const itemCount = this.items.length;
     for (let i = 0; i < itemCount; i++) {
       const slot = this.itemSlotFor(i);
-      const item = this.content.initial_items[i];
+      const item = this.items[i];
       if (!(slot && item)) {
         continue;
       }
@@ -492,11 +500,11 @@ export class GT029Session extends TemplateGameSession<
   }
 
   private getItemEntities(): ViewEntity[] {
-    const totalItems = this.content.initial_items.length;
+    const totalItems = this.items.length;
     const entities: ViewEntity[] = [];
 
     for (let i = 0; i < totalItems; i++) {
-      const it = this.content.initial_items[i];
+      const it = this.items[i];
       const slot = this.itemSlotFor(i);
       if (!(it && slot)) {
         continue;
@@ -521,7 +529,7 @@ export class GT029Session extends TemplateGameSession<
     if (this.removedItemIds.size < this.content.remove_count) {
       return [];
     }
-    const totalItems = this.content.initial_items.length;
+    const totalItems = this.items.length;
     const entities: ViewEntity[] = [];
 
     for (let i = 0; i < this.content.answer_options.length; i++) {
@@ -567,7 +575,7 @@ export class GT029Session extends TemplateGameSession<
   }
 
   getRemainingCount(): number {
-    return this.content.initial_items.length - this.removedItemIds.size;
+    return this.items.length - this.removedItemIds.size;
   }
 
   /**
@@ -578,7 +586,7 @@ export class GT029Session extends TemplateGameSession<
   private removedDockRect(): ZoneRect | undefined {
     const removedSlots: Slot[] = [];
     const groupSlots: Slot[] = [];
-    this.content.initial_items.forEach((it, i) => {
+    this.items.forEach((it, i) => {
       const slot = this.itemSlotFor(i);
       if (slot) {
         (this.removedItemIds.has(it.item_id) ? removedSlots : groupSlots).push(
@@ -603,8 +611,8 @@ export class GT029Session extends TemplateGameSession<
     if (removedDock) {
       drawWoodenTokenDock(ctx, rs, removedDock);
     }
-    for (let i = 0; i < this.content.initial_items.length; i++) {
-      const it = this.content.initial_items[i];
+    for (let i = 0; i < this.items.length; i++) {
+      const it = this.items[i];
       const slot = this.itemSlotFor(i);
       if (!(it && slot)) {
         continue;
@@ -631,15 +639,12 @@ export class GT029Session extends TemplateGameSession<
     drawWoodenTokenDock(
       ctx,
       rs,
-      dockRectAroundSlots(
-        this.slots.slice(this.content.initial_items.length),
-        this.stageRect
-      )
+      dockRectAroundSlots(this.slots.slice(this.items.length), this.stageRect)
     );
 
     for (let i = 0; i < this.content.answer_options.length; i++) {
       const opt = this.content.answer_options[i];
-      const slot = this.slots[this.content.initial_items.length + i];
+      const slot = this.slots[this.items.length + i];
       if (!(opt && slot)) {
         continue;
       }
@@ -723,7 +728,7 @@ export class GT029Session extends TemplateGameSession<
     this.renderItems(ctx, rs);
 
     if (this.wrongItemFlash.isActive(timeMs) && this.wrongItemId) {
-      const itemIdx = this.content.initial_items.findIndex(
+      const itemIdx = this.items.findIndex(
         (it) => it.item_id === this.wrongItemId
       );
       const slot = this.itemSlotFor(itemIdx);

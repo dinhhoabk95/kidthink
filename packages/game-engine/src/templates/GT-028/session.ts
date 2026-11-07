@@ -36,6 +36,8 @@ import {
   sceneBox,
 } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
+import { deriveDerangement } from "#src/rng/derangement";
+import { deriveStream } from "#src/rng/mulberry32";
 import type { DegradationState } from "#src/systems/degradation";
 import {
   type ControlOfErrorDiagnostics,
@@ -88,6 +90,8 @@ export class GT028Session extends TemplateGameSession<
     milestoneTarget: 2,
   });
 
+  /** Thứ tự bày vật: content, hoặc hoán vị không động theo seed khi `shuffle_items` bật (`BR-E028-07`). */
+  private items: GT028Content["items"] = this.content.items;
   private lastFrameMs = 0;
   private wrongSubmitUntilMs = 0;
   private reactionPose: MascotPose | null = null;
@@ -147,6 +151,13 @@ export class GT028Session extends TemplateGameSession<
     this.reactionPose = null;
     this.reactionRemainingMs = 0;
     this.exploreTracker.reset(false);
+    this.items =
+      this.difficulty.shuffle_items === true && this.content.items.length > 1
+        ? deriveDerangement(
+            this.content.items,
+            deriveStream(this.layoutSeed, "items")
+          )
+        : this.content.items;
 
     this.recordEvent("game_started", {
       step: this.content.step,
@@ -211,7 +222,7 @@ export class GT028Session extends TemplateGameSession<
       if (hitIndex === -1) {
         return null;
       }
-      const item = this.content.items[hitIndex];
+      const item = this.items[hitIndex];
       if (!item) {
         return null;
       }
@@ -262,7 +273,7 @@ export class GT028Session extends TemplateGameSession<
   }
 
   override getView(): EngineView {
-    const entities: ViewEntity[] = this.content.items.map((item, i) => {
+    const entities: ViewEntity[] = this.items.map((item, i) => {
       const slot = this.slots[i];
       const selectedIndex = this.selectedItemIds.indexOf(item.item_id);
       const isSelected = selectedIndex !== -1;
@@ -399,7 +410,7 @@ export class GT028Session extends TemplateGameSession<
     }
     const currentTotal = this.getCurrentCount();
     if (currentTotal < this.content.target_total) {
-      const nextUnselectedIdx = this.content.items.findIndex(
+      const nextUnselectedIdx = this.items.findIndex(
         (it) => !this.selectedItemIds.includes(it.item_id)
       );
       return nextUnselectedIdx >= 0 ? nextUnselectedIdx : null;
@@ -477,7 +488,7 @@ export class GT028Session extends TemplateGameSession<
       );
     }
 
-    this.content.items.forEach((item, i) => {
+    this.items.forEach((item, i) => {
       const slot = this.slots[i];
       if (!slot) {
         return;
