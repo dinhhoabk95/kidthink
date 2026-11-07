@@ -56,7 +56,39 @@ export const GT016ContentSchema = GT016BaseSchema.refine(
       "Chế độ 'read' yêu cầu ít nhất 2 options và đúng 1 option khớp với target_time. Chế độ 'match' yêu cầu ít nhất 2 activity_cards.",
     path: ["options"],
   }
-);
+).superRefine((content, ctx) => {
+  if (content.mode === "set") {
+    // Đồng hồ khởi tạo = target nếu thiếu initial_time → vòng đã giải sẵn.
+    if (!content.initial_time) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Chế độ 'set' bắt buộc có initial_time",
+        path: ["initial_time"],
+      });
+    } else if (isSameTime(content.initial_time, content.target_time)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "initial_time phải khác target_time (tránh vòng giải sẵn)",
+        path: ["initial_time"],
+      });
+    }
+  }
+  if (content.mode === "match") {
+    // Giờ đồng hồ hiển thị là initial_time nếu có, ngược lại target_time.
+    const shown = content.initial_time ?? content.target_time;
+    const hasMatch = content.activity_cards.some((card) =>
+      isSameTime(card, shown)
+    );
+    if (!hasMatch) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          "Chế độ 'match' cần ít nhất một activity_cards khớp giờ đồng hồ hiển thị",
+        path: ["activity_cards"],
+      });
+    }
+  }
+});
 
 export const GT016DifficultySchema = z.object({
   item_count: z.number().int().min(2).max(4),

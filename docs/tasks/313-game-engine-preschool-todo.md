@@ -9,7 +9,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 - [ ] Gate `packages/game-engine/tests/gates/`: mọi fixture giải được chỉ bằng gesture web phát ra + ca âm trong `tests/**/fixtures/`
 - [x] GT-031: hint subset-sum thay greedy (`pickCoinHint` trong `templates/GT-031/template.ts`)
 - [ ] GT-018: refine schema đúng 1 đáp án; sequence không tự thắng
-- [ ] GT-016: `initial_time ≠ target`; match-mode phải có nghiệm
+- [x] GT-016: `initial_time ≠ target`; match-mode phải có nghiệm (superRefine trong `GT-016/template.ts`)
 - [ ] GT-035: kiểm nghiệm theo `max_commands`
 
 ## Phase 1 — Base flow
