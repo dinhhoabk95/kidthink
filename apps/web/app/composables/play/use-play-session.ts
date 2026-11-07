@@ -19,6 +19,7 @@ import {
 } from "~/composables/play/completion-outcome";
 import {
   createTimerBag,
+  scheduleRetryDisallowedSkip,
   scheduleRoundOpenNarration,
   scheduleWonRoundCompletion,
   skipCurrentRoundIfUnwon,
@@ -207,6 +208,8 @@ const ROUND_OPEN_NARRATION_DELAY_MS = 600;
 
 /** Nhịp ăn mừng giữa lúc thắng một vòng và lúc mở vòng kế. */
 const ROUND_WON_ADVANCE_DELAY_MS = 900;
+/** Chờ sau khi trả lời sai ở vòng cấm thử lại, để bé kịp thấy đáp án đúng. */
+const RETRY_DISALLOWED_REVEAL_MS = 1500;
 
 export function usePlaySession(options: UsePlaySessionOptions) {
   const { canvasRef, loggedIn, syncView, onFallbackCue } = options;
@@ -506,6 +509,10 @@ export function usePlaySession(options: UsePlaySessionOptions) {
         }
       },
       onAllRoundsCompleted: () => {
+        // Hết vòng: session cuối đã huỷ, cổng cử chỉ phải đóng (Task #313 B11).
+        if (engine) {
+          engine.acceptingInput = false;
+        }
         engine?.audio.playLevelCelebrateSound();
         roundTimers.set(() => {
           completeSessionOnFinish().catch((err) => {
@@ -715,9 +722,20 @@ export function usePlaySession(options: UsePlaySessionOptions) {
     if (!roundRunner?.isRetryDisallowed()) {
       return;
     }
-    if (skipCurrentRoundIfUnwon(roundRunner, "retry_disallowed")) {
-      engine?.resetScaffolding();
-    }
+    // Hiện đáp án đúng rồi mới bỏ qua, không đóng vòng cùng nhịp với tiếng sai
+    // (Task #313 B10). Cổng cử chỉ đóng tới khi vòng sau mở.
+    scheduleRetryDisallowedSkip({
+      timers: roundTimers,
+      getRunner: getRoundRunner,
+      delayMs: RETRY_DISALLOWED_REVEAL_MS,
+      onReveal: () => {
+        if (engine) {
+          engine.acceptingInput = false;
+          engine.revealAnswer();
+        }
+      },
+      onSkipped: () => engine?.resetScaffolding(),
+    });
   }
 
   function handleAnswerVerdict(isCorrect: boolean): void {

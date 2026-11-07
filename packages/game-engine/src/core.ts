@@ -332,7 +332,11 @@ export class GameEngine {
     this.activeSession = sessionFactory(config);
     // prepareRound does setupEntities + computeSlots(ageBand) + computeRoundDerived
     if (this.activeSession instanceof TemplateGameSession) {
-      this.activeSession.prepareRound(config.age_band);
+      // RoundRunner đã `prepareRound` (kèm vùng shell) trước khi trả session
+      // về đây; chạy lại sẽ ghi đè slot và phát lại `round_started` (Task #313 B7).
+      if (this.activeSession.roundGeneration === 0) {
+        this.activeSession.prepareRound(config.age_band);
+      }
     } else {
       this.activeSession.setupEntities();
     }
@@ -374,6 +378,14 @@ export class GameEngine {
    * Đặt lại trạng thái trợ giúp và xoá ngay đích gợi ý trên engine về L0
    * (khi trẻ trả lời đúng, qua vòng, hoặc mở vòng mới).
    */
+  /**
+   * Hiện ngay đáp án đúng (hint mức 3) mà không đổi đồng hồ trợ giúp — dùng khi
+   * vòng cấm thử lại sắp đóng, để trẻ thấy đáp án (Task #313 B10).
+   */
+  revealAnswer(): void {
+    this.applyHintTargetForLevel(3);
+  }
+
   /** Đặt `hint_after_ms` của vòng sắp chơi (Task #313 B8). */
   setRoundHintAfterMs(
     difficultyParams: EngineConfig["difficulty_params"]

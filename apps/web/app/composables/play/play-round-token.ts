@@ -187,3 +187,39 @@ export function skipCurrentRoundIfUnwon(
   runner.skipCurrentRound(reason);
   return true;
 }
+
+export interface RetryDisallowedSkipOptions {
+  readonly timers: TimerBag;
+  readonly getRunner: () => RoundRunner | null;
+  /** Chờ để trẻ kịp nhìn đáp án đúng trước khi sang vòng sau. */
+  readonly delayMs: number;
+  /** Khoá cử chỉ và hiện đáp án đúng — chạy ngay. */
+  readonly onReveal: () => void;
+  /** Chạy sau khi vòng thật sự bị bỏ qua. */
+  readonly onSkipped: () => void;
+}
+
+/**
+ * Vòng cấm thử lại (`allow_retry: false`) mà trẻ trả lời sai: hiện đáp án đúng
+ * ngay, rồi mới bỏ qua sau `delayMs` — không bỏ qua cùng nhịp với tiếng sai
+ * (Task #313 B10). Chỉ bỏ qua đúng vòng đã hẹn.
+ */
+export function scheduleRetryDisallowedSkip(
+  options: RetryDisallowedSkipOptions
+): void {
+  const { timers, getRunner, delayMs, onReveal, onSkipped } = options;
+  const runner = getRunner();
+  if (!runner) {
+    return;
+  }
+  const token = captureRoundToken(runner);
+  onReveal();
+  timers.set(
+    bindToRound(token, getRunner, () => {
+      if (skipCurrentRoundIfUnwon(token.runner, "retry_disallowed")) {
+        onSkipped();
+      }
+    }),
+    delayMs
+  );
+}

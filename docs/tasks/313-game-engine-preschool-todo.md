@@ -21,7 +21,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 - [x] B6 cooldown ~400ms sau verdict
 - [x] B8 một đồng hồ hint, `hint_after_ms` theo round
 - [x] B9 drag slop theo age band; drop cực ngắn = tap (chưa làm: whoosh khi spring-back — chưa có asset âm)
-- [ ] B7 bỏ `prepareRound` trùng · B10 `allow_retry:false` cho thấy đáp án trước khi skip · B11 khoá input khi skip round cuối
+- [x] B7 bỏ `prepareRound` trùng · [x] B10 `allow_retry:false` cho thấy đáp án trước khi skip · [x] B11 khoá input khi skip round cuối
 - [ ] B12 replay gọi `cleanupSession`; `seq` ổn định; thống nhất bảng touch floor; nút GT-000 ≥ 96px
 
 ## Phase 2 — Hint/feedback thống nhất

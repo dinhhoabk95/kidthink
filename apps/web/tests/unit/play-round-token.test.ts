@@ -24,6 +24,7 @@ import {
   bindToRound,
   captureRoundToken,
   createTimerBag,
+  scheduleRetryDisallowedSkip,
   scheduleRoundOpenNarration,
   scheduleWonRoundCompletion,
   skipCurrentRoundIfUnwon,
@@ -352,5 +353,60 @@ describe("skipCurrentRoundIfUnwon — GT-002 thật (Task #275 S1a)", () => {
     }
 
     expect(skipCurrentRoundIfUnwon(runner, "user")).toBe(true);
+  });
+});
+
+describe("Task #313 B10 — scheduleRetryDisallowedSkip", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  function twoRoundRunner(): RoundRunner {
+    const rounds: RoundConfig[] = [0, 1].map((i) => ({
+      round_index: i,
+      content_pack: {},
+      difficulty_params: { item_count: 2, allow_retry: false },
+    }));
+    const runner = new RoundRunner({
+      rounds,
+      sessionFactory: () => new WinnableSession(),
+    });
+    runner.startFirstRound();
+    return runner;
+  }
+
+  it("hiện đáp án ngay, chỉ bỏ qua vòng sau khoảng chờ", () => {
+    const runner = twoRoundRunner();
+    const onReveal = vi.fn();
+    const onSkipped = vi.fn();
+    scheduleRetryDisallowedSkip({
+      timers: createTimerBag(),
+      getRunner: () => runner,
+      delayMs: 1500,
+      onReveal,
+      onSkipped,
+    });
+    expect(onReveal).toHaveBeenCalledTimes(1);
+    expect(runner.getState().roundsSkipped).toBe(0);
+    vi.advanceTimersByTime(1500);
+    expect(runner.getState().roundsSkipped).toBe(1);
+    expect(onSkipped).toHaveBeenCalledTimes(1);
+  });
+
+  it("vòng đã đổi trong lúc chờ thì không bỏ qua vòng mới", () => {
+    const runner = twoRoundRunner();
+    scheduleRetryDisallowedSkip({
+      timers: createTimerBag(),
+      getRunner: () => runner,
+      delayMs: 1500,
+      onReveal: vi.fn(),
+      onSkipped: vi.fn(),
+    });
+    runner.skipCurrentRound("user");
+    vi.advanceTimersByTime(1500);
+    expect(runner.getState().roundsSkipped).toBe(1);
   });
 });

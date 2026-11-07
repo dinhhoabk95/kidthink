@@ -133,4 +133,42 @@ describe("GameEngine.acceptingInput / advanceFrame (BR-PNR-11)", () => {
     expect(engine.scaffolding?.getCurrentLevel()).toBeGreaterThanOrEqual(1);
     engine.destroy();
   });
+
+  it("revealAnswer chỉ ra đáp án đúng ngay, không cần leo thang đồng hồ", () => {
+    const engine = buildEngine();
+    expect(engine.focusIndex).toBeNull();
+    engine.revealAnswer();
+    expect(engine.focusIndex).not.toBeNull();
+    expect(engine.scaffolding?.getCurrentLevel()).toBe(0);
+    engine.destroy();
+  });
+
+  it("load không prepareRound lại session đã được RoundRunner chuẩn bị (Task #313 B7)", () => {
+    const prepared = new GT001Session(content, difficulty);
+    prepared.prepareRound("3-4");
+    const engine = new GameEngine();
+    engine.load(
+      {
+        level_code: "LVL-001",
+        content_version: 1,
+        template_code: "GT-001",
+        content_pack: content,
+        difficulty_params: difficulty,
+        theme_id: "default",
+        age_band: "3-4",
+        reduced_motion: false,
+        audio_enabled: false,
+      },
+      () => prepared
+    );
+    expect(prepared.roundGeneration).toBe(1);
+    engine.destroy();
+  });
+
+  it("load vẫn tự prepareRound với session chưa chuẩn bị", () => {
+    const engine = buildEngine();
+    const session = engine.activeSession;
+    expect(session instanceof GT001Session && session.roundGeneration).toBe(1);
+    engine.destroy();
+  });
 });
