@@ -24,6 +24,10 @@ import {
   GT015ContentSchema,
   GT015DifficultySchema,
 } from "#src/templates/GT-015/template";
+import {
+  GT016ContentSchema,
+  GT016DifficultySchema,
+} from "#src/templates/GT-016/template";
 
 /**
  * Bộ sinh thoái hoá (Task #313 Phase 4): mỗi ca chứng minh một cách bài không
@@ -461,5 +465,90 @@ describe("GT-015 — đề cần suy luận, nghiệm duy nhất, khác nhau gi�
     expect(layouts.size).toBeGreaterThan(4);
     expect([...blankCounts].sort()).toEqual([2, 3]);
     expect(hints.size).toBe(2);
+  });
+});
+
+describe("GT-016 — nhiễu không theo khuôn, giờ chẵn và giờ rưỡi là hai bậc (BR-E016-04)", () => {
+  function parsed(seed: number) {
+    const { content_pack, difficulty_params } = gen("GT-016", seed, "5-6");
+    return {
+      content: GT016ContentSchema.parse(content_pack),
+      diff: GT016DifficultySchema.parse(difficulty_params),
+    };
+  }
+
+  it("phương án khác nhau từng đôi, đúng một đáp án, item_count và distractor_count khớp options", () => {
+    for (const seed of SEEDS) {
+      const { content, diff } = parsed(seed);
+      const keys = content.options.map((o) => `${o.hour}:${o.minute}`);
+      expect(new Set(keys).size, `seed=${seed}`).toBe(keys.length);
+      expect(content.options.filter((o) => o.is_correct)).toHaveLength(1);
+      expect(diff.item_count).toBe(content.options.length);
+      expect(diff.distractor_count).toBe(content.options.length - 1);
+    }
+  });
+
+  it("minute_step có cả 60 (giờ chẵn) lẫn 30 (có giờ rưỡi); bước 60 chỉ ra phút 0", () => {
+    const steps = new Set<number>();
+    const minutesAt30 = new Set<number>();
+    for (const seed of SEEDS) {
+      const { content, diff } = parsed(seed);
+      steps.add(diff.minute_step);
+      if (diff.minute_step === 60) {
+        expect(content.target_time.minute).toBe(0);
+        expect(content.options.every((o) => o.minute === 0)).toBe(true);
+      } else {
+        minutesAt30.add(content.target_time.minute);
+      }
+    }
+    expect([...steps].sort()).toEqual([30, 60]);
+    expect([...minutesAt30].sort()).toEqual([0, 30]);
+  });
+
+  it("hint_after_ms phụ thuộc bậc: bước 60 sớm hơn bước 30", () => {
+    const hint = new Map<number, number>();
+    for (const seed of SEEDS) {
+      const { diff } = parsed(seed);
+      hint.set(diff.minute_step, diff.hint_after_ms);
+    }
+    expect(hint.get(60) ?? 0).toBeLessThan(hint.get(30) ?? 0);
+  });
+
+  it("khoảng cách giờ của nhiễu so với đáp án đổi theo seed (không còn +1, +3 cố định)", () => {
+    const offsets = new Set<number>();
+    for (const seed of SEEDS) {
+      const { content } = parsed(seed);
+      const target = content.target_time.hour;
+      for (const o of content.options) {
+        if (!o.is_correct) {
+          offsets.add((((o.hour - target) % 12) + 12) % 12);
+        }
+      }
+    }
+    expect(offsets.size).toBeGreaterThan(4);
+  });
+
+  it("bậc có giờ rưỡi luôn có bẫy lẫn kim: cùng giờ khác phút", () => {
+    for (const seed of SEEDS) {
+      const { content, diff } = parsed(seed);
+      if (diff.minute_step !== 30) {
+        continue;
+      }
+      const trap = content.options.some(
+        (o) =>
+          !o.is_correct &&
+          o.hour === content.target_time.hour &&
+          o.minute !== content.target_time.minute
+      );
+      expect(trap, `seed=${seed}`).toBe(true);
+    }
+  });
+
+  it("giờ đích có đủ mười hai giờ qua nhiều seed", () => {
+    const hours = new Set<number>();
+    for (const seed of SEEDS) {
+      hours.add(parsed(seed).content.target_time.hour);
+    }
+    expect(hours.size).toBeGreaterThan(6);
   });
 });

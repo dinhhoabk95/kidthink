@@ -67,7 +67,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 - [x] Generator 011 (hình vuông Latin hoán vị, ô trống/lưới 2x2-3x3 đổi theo seed, chỉ band 5-6, BR-E011-04)
 - [x] Generator 012 (`flash_ms` theo band×số vật 800–3000, số vật cap-1..cap, nhiễu/hint/arrangement theo band-seed, BR-E012-05)
 - [x] Generator 015 (3×3 Latin hoán vị, 2–3 ô trống ngẫu nhiên đạt nghiệm duy nhất/đáp án khác nhau/ô trống liên kết, chỉ band 5-6, BR-E015-06)
-- [ ] Generator 016
+- [x] Generator 016 (hai bậc minute_step 60/30, nhiễu ngẫu nhiên + bẫy cùng giờ khác phút, hint theo bậc, BR-E016-04)
 - [ ] Band khớp `age_min` (011, 015, 017)
 - [ ] Giảm mật độ tường/số lối GT-013 4–5 tuổi
 - [ ] Nối/xoá trường difficulty chết theo spec sở hữu
