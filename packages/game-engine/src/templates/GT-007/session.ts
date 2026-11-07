@@ -32,6 +32,7 @@ import {
   type ItemVisualState,
   sceneBox,
 } from "#src/render/index.js";
+import type { MascotPose } from "#src/render/mascot";
 import { deriveStream } from "#src/rng/mulberry32";
 import { shuffle } from "#src/rng/shuffle";
 import type { DegradationState } from "#src/systems/degradation";
@@ -40,6 +41,7 @@ import {
   type ControlOfErrorDiagnostics,
   MontessoriExploreTracker,
 } from "#src/systems/montessori-explore-system";
+import { MoodPulse } from "#src/systems/mood-pulse";
 import type { RenderSystem } from "#src/systems/render-system";
 import { WrongFlash } from "#src/systems/wrong-flash";
 import type { GT007Content, GT007Difficulty } from "./template.js";
@@ -63,6 +65,15 @@ function extractOptionId(data: GameActionValue): string | undefined {
   return undefined;
 }
 
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E007-05`, `BR-FBK-16`). */
+export const GT007_STORY_LINE =
+  "Khỉ Nhỏ chia kẹo cho hai bạn. Một bạn đã có phần rồi, bé chọn phần kẹo còn lại cho bạn kia nhé!";
+
+/** Mascot reo ngắn sau phần đúng (`BR-E007-05`). */
+export const GT007_CHEER_MS = 1000;
+/** Mascot nghiêng đầu sau phần chưa đúng. */
+export const GT007_WONDER_MS = 1500;
+
 export class GT007Session extends TemplateGameSession<
   GT007Content,
   GT007Difficulty
@@ -75,6 +86,7 @@ export class GT007Session extends TemplateGameSession<
   private previewedOptionId: string | null = null;
   private stagedOptionId: string | null = null;
   private readonly wrongFlash = new WrongFlash();
+  private readonly mood = new MoodPulse();
   private lastFrameMs = 0;
   private displayOptions: readonly GT007Content["options"][number][] = [];
 
@@ -103,6 +115,7 @@ export class GT007Session extends TemplateGameSession<
     this.previewedOptionId = null;
     this.stagedOptionId = null;
     this.wrongFlash.clear();
+    this.mood.clear();
     this.lastFrameMs = 0;
     this.isWon = false;
     this.displayOptions =
@@ -111,7 +124,17 @@ export class GT007Session extends TemplateGameSession<
         : [...this.content.options];
   }
 
+  override storyLine(): string {
+    return GT007_STORY_LINE;
+  }
+
+  /** Reo sau phần đúng, nghiêng đầu sau phần sai (`BR-E007-05`). */
+  override mascotMood(): MascotPose | null {
+    return this.isWon ? null : this.mood.current();
+  }
+
   update(deltaMs: number): void {
+    this.mood.tick(deltaMs);
     this.exploreTracker.tick(deltaMs);
   }
 
@@ -242,6 +265,8 @@ export class GT007Session extends TemplateGameSession<
     if (isCorrect) {
       this.exploreTracker.recordCorrectAttempt();
       this.filledParts.set(targetId, option.value);
+      this.queueSfx("candy_drop");
+      this.mood.set("cheer", GT007_CHEER_MS);
       this.recordEvent("part_filled", {
         part_id: targetId,
         value: option.value,
@@ -270,6 +295,7 @@ export class GT007Session extends TemplateGameSession<
       });
       // Tổng chưa khớp: nhịp hổ phách trên ô tổng, lựa chọn đứng yên (BR-E007-04).
       this.wrongFlash.trigger(this.lastFrameMs);
+      this.mood.set("wonder", GT007_WONDER_MS);
     }
   }
 

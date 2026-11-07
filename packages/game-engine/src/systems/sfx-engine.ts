@@ -31,7 +31,8 @@ export type SFXType =
   | "net_splash"
   | "teacher_chime"
   | "peg_clip"
-  | "film_tick";
+  | "film_tick"
+  | "candy_drop";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -442,6 +443,16 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       rampOutSec: 0.04,
     },
   ],
+
+  /** GT-007: kẹo rơi vào khay — "lạch cạch" hai tiếng nhỏ (`BR-E007-05`). */
+  candy_drop: [0, 0.07, 0.13].map((delaySec, i) => ({
+    delaySec,
+    type: "triangle" as OscillatorType,
+    freq: 760 - i * 90,
+    volume: 0.09,
+    durationSec: 0.05,
+    rampOutSec: 0.04,
+  })),
 
   /** Grand fanfare, level completion only (BR-ENG-08). */
   level_celebrate: FANFARE_NOTES.map((freq, i) => {
