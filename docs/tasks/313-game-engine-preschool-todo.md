@@ -8,7 +8,8 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 - [ ] Entity nút `flip` (GT-019) và pad `rest` (GT-034) qua tap
 - [ ] Gate `packages/game-engine/tests/gates/`: mọi fixture giải được chỉ bằng gesture web phát ra + ca âm trong `tests/**/fixtures/`
 - [x] GT-031: hint subset-sum thay greedy (`pickCoinHint` trong `templates/GT-031/template.ts`)
-- [ ] GT-018: refine schema đúng 1 đáp án; sequence không tự thắng
+- [x] GT-018: refine schema (select có đúng/sai, sequence hợp lệ, không giải sẵn)
+- [ ] GT-018: sequence không tự thắng, cần nút nộp (session)
 - [x] GT-016: `initial_time ≠ target`; match-mode phải có nghiệm (superRefine trong `GT-016/template.ts`)
 - [ ] GT-035: kiểm nghiệm theo `max_commands`
 

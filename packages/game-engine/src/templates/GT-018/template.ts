@@ -2,28 +2,75 @@ import { z } from "zod";
 import { assetSchema, promptFields } from "#src/contracts/shared-fields";
 import { defineTemplate, STANDARD_SCORING } from "#src/contracts/types";
 
-export const GT018ContentSchema = z.object({
-  ...promptFields(),
-  /**
-   * Chỉ mang **chữ** của lời nghe. Tệp âm đi theo `instruction_audio_path` ở cấp
-   * vòng — một nguồn lời đọc duy nhất (`BR-ETS-04`).
-   */
-  audio_prompt: z.object({
-    text: z.string().min(1),
-  }),
-  response_mode: z.enum(["select", "sequence"]).default("select"),
-  target_sequence: z.array(z.string()).optional(),
-  options: z
-    .array(
-      z.object({
-        item_id: z.string(),
-        asset: assetSchema(),
-        is_correct: z.boolean().default(false),
-      })
-    )
-    .min(2)
-    .max(8),
-});
+export const GT018ContentSchema = z
+  .object({
+    ...promptFields(),
+    /**
+     * Chỉ mang **chữ** của lời nghe. Tệp âm đi theo `instruction_audio_path` ở cấp
+     * vòng — một nguồn lời đọc duy nhất (`BR-ETS-04`).
+     */
+    audio_prompt: z.object({
+      text: z.string().min(1),
+    }),
+    response_mode: z.enum(["select", "sequence"]).default("select"),
+    target_sequence: z.array(z.string()).optional(),
+    options: z
+      .array(
+        z.object({
+          item_id: z.string(),
+          asset: assetSchema(),
+          is_correct: z.boolean().default(false),
+        })
+      )
+      .min(2)
+      .max(8),
+  })
+  .superRefine((content, ctx) => {
+    const ids = content.options.map((o) => o.item_id);
+    if (content.response_mode === "select") {
+      const correct = content.options.filter((o) => o.is_correct).length;
+      // Cần ít nhất 1 đáp án đúng và còn ít nhất 1 mồi nhử, nếu không level vô nghiệm/vô nghĩa.
+      if (correct < 1 || correct >= content.options.length) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message:
+            "Chế độ 'select' cần ít nhất 1 option đúng và ít nhất 1 option sai",
+          path: ["options"],
+        });
+      }
+      return;
+    }
+    const target = content.target_sequence;
+    if (!target || target.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Chế độ 'sequence' bắt buộc có target_sequence không rỗng",
+        path: ["target_sequence"],
+      });
+      return;
+    }
+    const known = new Set(ids);
+    if (
+      new Set(target).size !== target.length ||
+      target.some((t) => !known.has(t))
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          "target_sequence không được lặp và mọi id phải có trong options",
+        path: ["target_sequence"],
+      });
+      return;
+    }
+    if (target.length === ids.length && target.every((t, i) => t === ids[i])) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          "target_sequence trùng thứ tự ban đầu của options (vòng giải sẵn)",
+        path: ["target_sequence"],
+      });
+    }
+  });
 
 const GT018DifficultySchema = z.object({
   hint_after_ms: z.number().int().min(5000).max(30_000).default(8000),
