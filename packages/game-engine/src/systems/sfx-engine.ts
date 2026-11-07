@@ -50,7 +50,8 @@ export type SFXType =
   | "rule_whistle"
   | "clip_link"
   | "water_pour"
-  | "yarn_pull";
+  | "yarn_pull"
+  | "wood_beat";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -810,6 +811,19 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       volume: 0.06,
       durationSec: 0.16,
       rampOutSec: 0.08,
+    },
+  ],
+
+  /** GT-034: mõ gỗ "cộc" tròn, khô ở nhịp nghỉ (`BR-E034-09`). */
+  wood_beat: [
+    {
+      delaySec: 0,
+      type: "triangle",
+      freq: 420,
+      glideTo: { freq: 340, overSec: 0.05 },
+      volume: 0.08,
+      durationSec: 0.09,
+      rampOutSec: 0.05,
     },
   ],
 

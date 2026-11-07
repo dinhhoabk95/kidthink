@@ -27,8 +27,10 @@ import {
   spawnParticlesAtSlot,
   updateParticles,
 } from "#src/render/index.js";
+import type { MascotPose } from "#src/render/mascot";
 import { type BeatInstrument, BeatSystem } from "#src/systems/beat-system";
 import type { DegradationState } from "#src/systems/degradation";
+import { MoodPulse } from "#src/systems/mood-pulse";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import { SFXEngine } from "#src/systems/sfx-engine";
 import type { GT034Content, GT034Difficulty } from "./template.js";
@@ -53,6 +55,15 @@ interface GT034ActionPayload {
   /** Thời điểm chạm (ms) của cử chỉ; thiếu thì bước đó không bị chấm nhịp. */
   readonly time_ms?: number;
 }
+
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E034-09`, `BR-FBK-16`). */
+export const GT034_STORY_LINE =
+  "Dế Mèn gõ trống, gõ phách, gõ mõ thành một điệu vui. Bé nghe điệu của Dế Mèn rồi gõ lại đúng nhịp nhé!";
+
+/** Mascot vui ngắn sau mỗi nhịp gõ, như nhau dù đúng hay sai. */
+export const GT034_HAPPY_MS = 500;
+/** Mascot nghiêng đầu sau khi chuỗi đủ bước mà chưa đúng. */
+export const GT034_WONDER_MS = 1500;
 
 export class GT034Session extends TemplateGameSession<
   GT034Content,
@@ -82,6 +93,7 @@ export class GT034Session extends TemplateGameSession<
   isWin = false;
 
   private particles: Particle[] = [];
+  private readonly mood = new MoodPulse();
   private readonly beatSystem: BeatSystem;
   private readonly sfxEngine: SFXEngine;
 
@@ -108,7 +120,23 @@ export class GT034Session extends TemplateGameSession<
     this.sfxEngine = new SFXEngine();
   }
 
+  override storyLine(): string {
+    return GT034_STORY_LINE;
+  }
+
+  /**
+   * `wonder` sau chuỗi chưa đúng, `listen` suốt lúc phát mẫu, còn lại `happy`
+   * ngắn sau mỗi nhịp gõ — không báo trước phách đúng (`BR-E034-09`).
+   */
+  override mascotMood(): MascotPose | null {
+    if (this.isWon) {
+      return null;
+    }
+    return this.mood.current() ?? (this.isPlayingPattern ? "listen" : null);
+  }
+
   setupEntities(): void {
+    this.mood.clear();
     this.userSteps = [];
     this.stepTimesMs = [];
     this.timingMisses = 0;
@@ -187,6 +215,7 @@ export class GT034Session extends TemplateGameSession<
   }
 
   update(deltaMs: number): void {
+    this.mood.tick(deltaMs);
     this.particles = updateParticles(this.particles);
 
     if (!this.isPlayingPattern) {
@@ -418,6 +447,7 @@ export class GT034Session extends TemplateGameSession<
     }
 
     this.sfxEngine.play("amber_soft");
+    this.mood.set("wonder", GT034_WONDER_MS);
     if (outcome === "timing") {
       // Đúng nội dung nhưng lệch nhịp: dải xoá sạch để gõ lại theo nhịp mẫu.
       this.timingMisses++;
@@ -453,6 +483,7 @@ export class GT034Session extends TemplateGameSession<
       this.sfxEngine.playSequence([singleRecipe]);
     }
 
+    this.mood.set("happy", GT034_HAPPY_MS);
     this.userSteps.push(instrumentId);
     this.stepTimesMs.push(timeMs ?? null);
 
@@ -472,6 +503,9 @@ export class GT034Session extends TemplateGameSession<
     }
 
     const stepIndex = this.userSteps.length;
+    // Nhịp nghỉ không có nhạc cụ nên mõ gõ nhẹ; như nhau dù đúng hay sai chỗ nghỉ.
+    this.queueSfx("wood_beat");
+    this.mood.set("happy", GT034_HAPPY_MS);
     this.userSteps.push(null);
     this.stepTimesMs.push(timeMs ?? null);
 
@@ -506,6 +540,7 @@ export class GT034Session extends TemplateGameSession<
       this.winSession();
     } else {
       this.sfxEngine.play("amber_soft");
+      this.mood.set("wonder", GT034_WONDER_MS);
     }
   }
 
