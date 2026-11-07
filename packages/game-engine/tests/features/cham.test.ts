@@ -655,6 +655,8 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       }
       const session = new GT020Session(f20.content, f20.difficulty);
       session.prepareRound("3-4");
+      // Hết giờ xem trước cả bàn mới nhận chạm (BR-E020-05).
+      session.update(f20.difficulty.peek_all_initial_ms);
 
       const firstSlot = session.slots[0];
       const firstCard = session.displayCards[0];

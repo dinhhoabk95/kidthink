@@ -160,6 +160,8 @@ describe("GT-020 — dung sai chạm và tự động úp cặp lệch (BR-E020)
 
     const session = new GT020Session(customContent, difficulty, 1);
     session.prepareRound("4-5");
+    // Hết giờ xem trước thì thẻ mới úp (BR-E020-05).
+    session.update(difficulty.peek_all_initial_ms);
 
     const viewBefore = session.getView();
     const ids = viewBefore.entities.map((e) => e.id);

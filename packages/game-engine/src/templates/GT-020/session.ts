@@ -2,7 +2,6 @@ import type { AgeBand } from "#src/contracts/types";
 import {
   ACTION_CORRECT,
   ACTION_IGNORED,
-  ACTION_RETRY,
   type ActionResult,
   type GameAction,
   TemplateGameSession,
@@ -23,7 +22,6 @@ import {
   drawSceneBackground,
   drawSlotItem,
   getColorsForState,
-  type ItemVisualState,
 } from "#src/render/index";
 import { deriveStream } from "#src/rng/mulberry32";
 import { shuffle } from "#src/rng/shuffle";
@@ -52,19 +50,16 @@ export class GT020Session extends TemplateGameSession<
   readonly cardSystem = new CardSystem();
   private readonly pairingMechanic = new PairingMechanic();
   displayCards: readonly FlatCard[] = [];
-  private mismatchCardId: string | null = null;
-  private mismatchTimestamp = 0;
+  private peekRemainingMs = 0;
   private hasOpenMismatch = false;
   private mismatchElapsedMs = 0;
-  private lastFrameMs = 0;
 
   setupEntities(): void {
     this.isWon = false;
-    this.mismatchCardId = null;
-    this.mismatchTimestamp = 0;
     this.hasOpenMismatch = false;
     this.mismatchElapsedMs = 0;
-    this.lastFrameMs = 0;
+    // Mở màn: lật ngửa cả bàn `peek_all_initial_ms` rồi úp (`BR-E020-05`).
+    this.peekRemainingMs = this.difficulty.peek_all_initial_ms;
     const flat: FlatCard[] = this.content.pairs.flatMap((p) => [
       { cardId: p.card_a.card_id, pairKey: p.pair_key, asset: p.card_a.asset },
       { cardId: p.card_b.card_id, pairKey: p.pair_key, asset: p.card_b.asset },
@@ -88,22 +83,18 @@ export class GT020Session extends TemplateGameSession<
     });
   }
 
+  /** Cả bàn đang ngửa để xem trước — chưa nhận chạm (`BR-E020-05`). */
+  isPeeking(): boolean {
+    return this.peekRemainingMs > 0;
+  }
+
+  /** Lật thẻ úp là nước đi hợp lệ; cặp lệch không phải lỗi (`BR-E020-04`). */
   private validateTapCard(cardId: string): ActionResult {
-    const card = this.cardSystem.getCard(cardId);
-    if (card?.state !== "face_down") {
+    if (this.isPeeking()) {
       return ACTION_IGNORED;
     }
-    if (!this.hasOpenMismatch) {
-      const openCard = this.cardSystem
-        .getAllCards()
-        .find((c) => c.state === "face_up");
-      if (openCard && openCard.id !== cardId) {
-        return openCard.pairKey === card.pairKey
-          ? ACTION_CORRECT
-          : ACTION_RETRY;
-      }
-    }
-    return ACTION_CORRECT;
+    const card = this.cardSystem.getCard(cardId);
+    return card?.state === "face_down" ? ACTION_CORRECT : ACTION_IGNORED;
   }
 
   validateAction(action: GameAction): ActionResult {
@@ -137,7 +128,6 @@ export class GT020Session extends TemplateGameSession<
     });
 
     if (result.isSecondFlip && result.isMatch) {
-      this.mismatchCardId = null;
       this.hasOpenMismatch = false;
       this.mismatchElapsedMs = 0;
       const pair = this.content.pairs.find(
@@ -157,8 +147,6 @@ export class GT020Session extends TemplateGameSession<
         this.winSession();
       }
     } else if (result.isSecondFlip && !result.isMatch) {
-      this.mismatchCardId = cardId;
-      this.mismatchTimestamp = this.lastFrameMs;
       this.hasOpenMismatch = true;
       this.mismatchElapsedMs = 0;
     }
@@ -170,17 +158,16 @@ export class GT020Session extends TemplateGameSession<
     this.cardSystem.closeMismatch();
     this.hasOpenMismatch = false;
     this.mismatchElapsedMs = 0;
-    this.mismatchCardId = null;
   }
 
   update(deltaMs: number): void {
+    if (this.peekRemainingMs > 0) {
+      this.peekRemainingMs = Math.max(0, this.peekRemainingMs - deltaMs);
+    }
     if (!this.hasOpenMismatch) {
       return;
     }
     this.mismatchElapsedMs += Math.max(0, deltaMs);
-    if (this.mismatchElapsedMs >= 400) {
-      this.mismatchCardId = null;
-    }
     if (this.mismatchElapsedMs >= this.difficulty.flip_back_delay_ms) {
       this.closeMismatch();
     }
@@ -225,8 +212,7 @@ export class GT020Session extends TemplateGameSession<
   override getView(): EngineView {
     const entities: ViewEntity[] = this.displayCards.map((card, i) => {
       const slot = this.slots[i];
-      const cardState =
-        this.cardSystem.getCard(card.cardId)?.state ?? "face_down";
+      const cardState = this.effectiveCardState(card.cardId);
       let state: EntityVisual = "idle";
       if (cardState === "matched") {
         state = "correct";
@@ -254,8 +240,14 @@ export class GT020Session extends TemplateGameSession<
     };
   }
 
+  /** Trạng thái thẻ thấy được: xem trước thì mọi thẻ chưa ghép đều ngửa. */
+  private effectiveCardState(cardId: string): string {
+    const state = this.cardSystem.getCard(cardId)?.state ?? "face_down";
+    return this.isPeeking() && state === "face_down" ? "face_up" : state;
+  }
+
   override getHintTargetIndex(): number | null {
-    if (this.isWon) {
+    if (this.isWon || this.isPeeking()) {
       return null;
     }
     const faceUpCard = this.displayCards.find((c) => {
@@ -291,27 +283,13 @@ export class GT020Session extends TemplateGameSession<
     });
   }
 
-  private getCardItemState(
-    state: string,
-    isMismatch: boolean
-  ): ItemVisualState {
-    if (state === "matched") {
-      return "correct";
-    }
-    if (isMismatch) {
-      return "wrong";
-    }
-    return "selected";
-  }
-
   private renderCardSlot(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
     card: FlatCard,
-    slot: Slot,
-    timeMs: number
+    slot: Slot
   ): void {
-    const state = this.cardSystem.getCard(card.cardId)?.state ?? "face_down";
+    const state = this.effectiveCardState(card.cardId);
     if (state === "face_down") {
       // Mặt úp: thân bài trơn, ❌ NEVER lộ asset — đó là cả trò chơi.
       const { fill, border } = getColorsForState("locked");
@@ -327,51 +305,25 @@ export class GT020Session extends TemplateGameSession<
       drawLabelText(ctx, "?", slot.x, slot.y, 28);
       return;
     }
-    const isMismatch = card.cardId === this.mismatchCardId;
-    const elapsed = isMismatch ? timeMs - this.mismatchTimestamp : 0;
-    const shakeX =
-      isMismatch && elapsed < 400 && !rs.reducedMotion
-        ? Math.sin(elapsed * 0.05) * 4
-        : 0;
-    const drawSlot = shakeX === 0 ? slot : { ...slot, x: slot.x + shakeX };
-
     drawSlotItem(
       ctx,
       rs,
-      drawSlot,
+      slot,
       {
         id: card.cardId,
         asset: card.asset,
-        state: this.getCardItemState(state, isMismatch),
+        state: state === "matched" ? "correct" : "selected",
       },
       "square"
     );
-
-    if (isMismatch && elapsed < 400) {
-      rs.drawRetryRing(
-        ctx,
-        slot.x + shakeX,
-        slot.y,
-        Math.min(slot.hitW, slot.hitH) / 2 + 4,
-        elapsed / 400
-      );
-    }
   }
 
-  render(
-    ctx: CanvasRenderingContext2D,
-    rs: RenderSystem,
-    timeMs: number
-  ): void {
-    this.lastFrameMs = timeMs;
-    if (this.mismatchCardId && timeMs - this.mismatchTimestamp >= 400) {
-      this.mismatchCardId = null;
-    }
+  render(ctx: CanvasRenderingContext2D, rs: RenderSystem): void {
     drawSceneBackground(ctx, rs, this.themeId);
     this.displayCards.forEach((card, i) => {
       const slot = this.slots[i];
       if (slot) {
-        this.renderCardSlot(ctx, rs, card, slot, timeMs);
+        this.renderCardSlot(ctx, rs, card, slot);
       }
     });
   }

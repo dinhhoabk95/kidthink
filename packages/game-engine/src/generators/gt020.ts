@@ -1,15 +1,11 @@
-import { AGE_BANDS } from "#src/contracts/types";
+import { AGE_BANDS, type AgeBand } from "#src/contracts/types";
+import { PAIR_CAP_BY_BAND } from "#src/templates/GT-020/template";
 import { getNouns, sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
-function getPairCount(ageBand: string): number {
-  if (ageBand === "3-4") {
-    return 2;
-  }
-  if (ageBand === "4-5") {
-    return 3;
-  }
-  return 4;
+function getPairCount(ageBand: AgeBand): number {
+  const base = { "3-4": 2, "4-5": 3, "5-6": 4 }[ageBand];
+  return Math.min(base, PAIR_CAP_BY_BAND[ageBand]);
 }
 
 export const GT020Generator: LevelGenerator = {

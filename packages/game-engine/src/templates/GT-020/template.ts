@@ -1,6 +1,20 @@
 import { z } from "zod";
 import { assetSchema, promptFields } from "#src/contracts/shared-fields";
-import { defineTemplate, STANDARD_SCORING } from "#src/contracts/types";
+import {
+  type AgeBand,
+  defineTemplate,
+  STANDARD_SCORING,
+} from "#src/contracts/types";
+
+/**
+ * Trần số cặp theo band — trí nhớ vị trí của trẻ mầm non (`BR-E020-06`):
+ * tối đa 3 · 4 · 6 cặp ở band 3-4 · 4-5 · 5-6.
+ */
+export const PAIR_CAP_BY_BAND: Readonly<Record<AgeBand, number>> = {
+  "3-4": 3,
+  "4-5": 4,
+  "5-6": 6,
+};
 
 const GT020ContentSchema = z.object({
   ...promptFields(),
