@@ -73,16 +73,17 @@ function buildValidIsometricModel(
   return model;
 }
 
+/** Chỉ band 5-6: `age_min` của engine là 5 (khối 3D là khái niệm khó nhất của nhóm). */
 export const GT017Generator: LevelGenerator = {
   engine: "GT-017",
   axes: {
-    age_band: ["4-5", "5-6"],
+    age_band: ["5-6"],
     what: ["spatial", "3d", "geometry", "counting"],
     theme: [...VALID_GENERATOR_THEMES],
   },
-  generate({ rng, age_band }) {
-    const minCubes = age_band === "4-5" ? 3 : 4;
-    const maxExtra = age_band === "4-5" ? 2 : 4;
+  generate({ rng }) {
+    const minCubes = 4;
+    const maxExtra = 4;
     const targetCubeCount = minCubes + rng.nextInt(maxExtra);
 
     const colorTokens = ["berry", "amber", "mint", "sky", "violet", "peach"];
@@ -98,7 +99,7 @@ export const GT017Generator: LevelGenerator = {
     }
 
     const correctCount = model.length;
-    const optionCount = age_band === "4-5" ? 3 : 4;
+    const optionCount = 4;
     const distractorDeltas = [-2, -1, 1, 2, 3].filter(
       (d) => correctCount + d > 0 && correctCount + d <= 10
     );
@@ -125,7 +126,7 @@ export const GT017Generator: LevelGenerator = {
         hidden_cube_count: 0,
         distractor_count: options.length - 1,
         allow_rotate: false,
-        hint_after_ms: age_band === "4-5" ? 10_000 : 15_000,
+        hint_after_ms: 15_000,
         allow_retry: true,
       },
     };

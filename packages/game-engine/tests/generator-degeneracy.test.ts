@@ -1,5 +1,6 @@
 import { CONTENT_THEMES } from "@mindkid/shared/content-themes";
 import { describe, expect, it } from "vitest";
+import { ALL_TEMPLATES } from "#src/generated/template-registry";
 import { pickContrast } from "#src/generators/contrast";
 import { ALL_LEVEL_GENERATORS } from "#src/generators/index";
 import type { ThemeVocabulary } from "#src/generators/types";
@@ -551,4 +552,23 @@ describe("GT-016 — nhiễu không theo khuôn, giờ chẵn và giờ rưỡi 
     }
     expect(hours.size).toBeGreaterThan(6);
   });
+});
+
+describe("band của bộ sinh khớp age_min của template (Task #313 Phase 4)", () => {
+  /** Cận dưới tuổi của band: "4-5" → 4. */
+  const lowerAge = (band: string): number => Number.parseInt(band, 10);
+
+  for (const [code, generator] of Object.entries(ALL_LEVEL_GENERATORS)) {
+    it(`${code}: mọi band khai ở axes đều từ age_min trở lên và không nằm trong banned_age_bands`, () => {
+      const template = ALL_TEMPLATES[code];
+      expect(template, code).toBeDefined();
+      const banned: readonly string[] = template?.banned_age_bands ?? [];
+      for (const band of generator.axes.age_band) {
+        expect(lowerAge(band), `${code} band ${band}`).toBeGreaterThanOrEqual(
+          template?.age_min ?? 0
+        );
+        expect(banned, `${code} band ${band}`).not.toContain(band);
+      }
+    });
+  }
 });

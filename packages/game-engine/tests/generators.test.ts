@@ -791,8 +791,8 @@ describe("GT-034 — generator contract conformity", () => {
   describe("GT-017 — generator contract conformity & isometric geometry verification", () => {
     const themeVocab = vocab(10);
 
-    it("generates valid isometric block models for age bands 4-5 and 5-6 across seeds", () => {
-      for (const age_band of ["4-5", "5-6"] as const) {
+    it("generates valid isometric block models for age band 5-6 across seeds (age_min 5)", () => {
+      for (const age_band of ["5-6"] as const) {
         for (let seed = 1; seed <= 20; seed++) {
           const { content_pack, difficulty_params } = GT017Generator.generate({
             rng: createRng(seed),
@@ -809,9 +809,7 @@ describe("GT-034 — generator contract conformity", () => {
           expect(parsedContent).toBeDefined();
           expect(parsedDiff).toBeDefined();
 
-          expect(content_pack.model.length).toBeGreaterThanOrEqual(
-            age_band === "4-5" ? 3 : 4
-          );
+          expect(content_pack.model.length).toBeGreaterThanOrEqual(4);
         }
       }
     });
@@ -819,7 +817,7 @@ describe("GT-034 — generator contract conformity", () => {
     it("ca âm: mô hình có khối lơ lửng bị schema từ chối", () => {
       const { content_pack } = GT017Generator.generate({
         rng: createRng(1),
-        age_band: "4-5",
+        age_band: "5-6",
         theme: "school",
         vocabulary: themeVocab,
       }) as { content_pack: GT017Content };

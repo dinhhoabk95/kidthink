@@ -1,4 +1,3 @@
-import { AGE_BANDS } from "#src/contracts/types";
 import { shuffle } from "#src/rng/shuffle";
 import { getNouns, sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
@@ -6,13 +5,14 @@ import type { LevelGenerator } from "./types.js";
 export const GT022Generator: LevelGenerator = {
   engine: "GT-022",
   axes: {
-    age_band: [...AGE_BANDS],
+    // `age_min` của engine là 4: không khai band 3-4.
+    age_band: ["4-5", "5-6"],
     what: ["observation", "hidden-object", "scene"],
     theme: [...VALID_GENERATOR_THEMES],
   },
-  generate({ rng, age_band, vocabulary }) {
+  generate({ rng, vocabulary }) {
     const nouns = getNouns(vocabulary, 10);
-    const count = age_band === "3-4" ? 4 : 6;
+    const count = 6;
     const sampled = sampleUnique(rng, nouns, count);
     const target = sampled[0] || {
       emoji_ref: "🍎",
