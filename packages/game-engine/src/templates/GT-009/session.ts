@@ -240,14 +240,8 @@ export class GT009Session extends TemplateGameSession<
       return ACTION_IGNORED;
     }
     if (action.type === "toggle_eliminate") {
-      const id = Reflect.get(
-        typeof action.data === "object" && action.data !== null
-          ? action.data
-          : {},
-        "item_id"
-      );
-      return typeof id === "string" &&
-        this.content.candidates.some((c) => c.candidate_id === id)
+      const id = this.readDataString(action, "item_id");
+      return id && this.content.candidates.some((c) => c.candidate_id === id)
         ? { valid: true, feedback: "none" }
         : ACTION_IGNORED;
     }
