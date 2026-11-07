@@ -511,6 +511,7 @@
 
   const gesture = usePlayGesture({
     getEngine,
+    getAgeBand: () => ageBand.value,
     canvasRef,
     onRoundWon: playSession.handleRoundWonInternal,
     onRetryDisallowed: playSession.handleRetryDisallowed,

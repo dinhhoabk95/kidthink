@@ -15,10 +15,13 @@ import {
   toLogicPoint,
   type ViewEntity,
 } from "@mindkid/game-engine";
+import type { AgeBand } from "@mindkid/shared/client";
 import { computed, type Ref, ref } from "vue";
 
 export interface GestureOptions {
   readonly getEngine: () => GameEngine | null;
+  /** Band tuổi để chọn ngưỡng kéo (`dragSlopCssPx`); thiếu thì dùng 4-5. */
+  readonly getAgeBand?: () => AgeBand;
   readonly canvasRef: Ref<HTMLCanvasElement | null>;
   readonly onRoundWon: () => void;
   /**
@@ -78,6 +81,18 @@ const ACTION_LABEL_BY_ICON: Readonly<Record<CommitIcon, string>> = {
  * không nhảy hint L1/L3 (Task #313 B6).
  */
 const WRONG_COOLDOWN_MS = 400;
+
+/**
+ * Ngưỡng (px CSS) để một cử động thành kéo thay vì chạm. Ngón tay trẻ 3 tuổi
+ * rung nhiều nên rộng hơn trẻ lớn: 12px/14px cố định làm tap rung thành drop
+ * rồi bị nuốt (Task #313 B9).
+ */
+export function dragSlopCssPx(band: AgeBand): number {
+  if (band === "3-4") {
+    return 28;
+  }
+  return band === "4-5" ? 20 : 14;
+}
 
 /** Số logic px kéo tương ứng một bậc `adjust`. */
 const ADJUST_STEP_PX = 48;
@@ -430,6 +445,10 @@ export function usePlayGesture(options: GestureOptions) {
     dispatchGesture(tapGesture);
   }
 
+  function currentSlop(): number {
+    return dragSlopCssPx(options.getAgeBand?.() ?? "4-5");
+  }
+
   function appendTrailPoint(pt: { x: number; y: number }): void {
     const lastPt = trailPoints.at(-1);
     if (lastPt && Math.hypot(pt.x - lastPt.x, pt.y - lastPt.y) < 6) {
@@ -478,7 +497,7 @@ export function usePlayGesture(options: GestureOptions) {
     currentLogicX = pt.x;
     currentLogicY = pt.y;
     const dist = Math.hypot(e.clientX - startClientX, e.clientY - startClientY);
-    if (dist > 12) {
+    if (dist > currentSlop()) {
       isDragging = true;
     }
     if (!isDragging) {
@@ -662,7 +681,7 @@ export function usePlayGesture(options: GestureOptions) {
 
     // Không đặt trần thời gian: trẻ 3 tuổi hay nhấn chậm, và một lần nhấn giữ
     // không di chuyển mà không thành tap lẫn drop là im lặng (`BR-FBK-02`).
-    if (!isDragging && dist <= 14) {
+    if (!isDragging && dist <= currentSlop()) {
       dispatchGesture({
         type: "tap",
         x: startLogicX,
@@ -670,7 +689,7 @@ export function usePlayGesture(options: GestureOptions) {
         timeMs,
       });
       triggerPostReleaseFlight(true, prevSelected, dragged, endPt);
-    } else if (!didLiveMazeStep && (isDragging || dist > 14)) {
+    } else if (!didLiveMazeStep && (isDragging || dist > currentSlop())) {
       dispatchGesture(
         buildDragGesture({ x: startLogicX, y: startLogicY }, endPt, timeMs)
       );
