@@ -646,18 +646,27 @@ export function drawProgressDots(
   const done = Math.min(total, Math.max(0, spec.done));
   const { space, scale } = spaceOf(rs);
   const fontPx = canvasFontPx(space, "subPrompt", scale);
-  const step = PROGRESS_DOT_RADIUS * 2 + PROGRESS_DOT_GAP;
   const badgeW = spec.badge ? fontPx * 2.4 : 0;
   const trailingW = spec.trailing ? fontPx * 2.4 : 0;
   const pillW = Math.min(
     rect?.w ?? Number.POSITIVE_INFINITY,
-    badgeW + trailingW + total * step + 28
+    badgeW +
+      trailingW +
+      total * (PROGRESS_DOT_RADIUS * 2 + PROGRESS_DOT_GAP) +
+      28
   );
   const pillH = Math.max(32, fontPx + 14);
   const centerX = rect ? rect.x + rect.w / 2 : rs.LOGIC_WIDTH / 2;
   const pillX = centerX - pillW / 2;
   const pillY = rect ? rect.y : rs.LOGIC_HEIGHT * PROMPT_TOP_RATIO + 56;
   const cy = pillY + pillH / 2;
+  // Vùng hẹp thì co khoảng cách và cỡ chấm để hàng chấm không tràn khỏi viên thuốc.
+  const dotsW = Math.max(1, pillW - 28 - badgeW - trailingW);
+  const step = Math.min(
+    PROGRESS_DOT_RADIUS * 2 + PROGRESS_DOT_GAP,
+    total > 0 ? dotsW / total : Number.POSITIVE_INFINITY
+  );
+  const radius = Math.min(PROGRESS_DOT_RADIUS, step * 0.38);
 
   ctx.save();
   ctx.fillStyle = designTokens.colors.montessori.amberLight;
@@ -678,9 +687,9 @@ export function drawProgressDots(
     x += badgeW;
   }
   for (let i = 0; i < total; i++) {
-    const dx = x + PROGRESS_DOT_RADIUS + i * step;
+    const dx = x + step / 2 + i * step;
     ctx.beginPath();
-    ctx.arc(dx, cy, PROGRESS_DOT_RADIUS, 0, Math.PI * 2);
+    ctx.arc(dx, cy, radius, 0, Math.PI * 2);
     if (i < done) {
       ctx.fillStyle = designTokens.colors.montessori.amberDark;
       ctx.fill();

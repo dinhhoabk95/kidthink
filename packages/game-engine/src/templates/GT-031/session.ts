@@ -25,7 +25,7 @@ import {
   TAP_TOLERANCE_PX,
 } from "#src/layout/hit-test.js";
 import { resolveLayout } from "#src/layout/registry";
-import { insetDrawSize } from "#src/layout/slot-fit";
+import { insetDrawSize, splitCaption } from "#src/layout/slot-fit";
 import {
   computeStageTargetSlot,
   computeTraySourceSlots,
@@ -33,18 +33,16 @@ import {
 } from "#src/layout/tray-layout";
 import type { Slot } from "#src/layout/types";
 import {
-  drawMoneyProgressLabel,
   drawMontessoriCoin,
+  drawProgressDots,
   drawSceneBackground,
   drawSlotItem,
-  drawSubPromptText,
   drawWoodenTokenDock,
   type ItemVisualState,
   spawnParticlesAtSlot,
   updateParticles,
 } from "#src/render/index";
 import type { DegradationState } from "#src/systems/degradation";
-import { designTokens } from "#src/systems/designTokens";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
   type GT031Content,
@@ -64,6 +62,9 @@ const QUIET_OK: ActionResult = Object.freeze({
 const RE_DIGITS = /^[0-9]+$/;
 /** Đệm hai bên thẻ giá trong sân khấu. */
 const PAYMENT_TARGET_PAD_PX = 32;
+
+/** Số chấm tối đa của hàng tiến độ. */
+const MONEY_PROGRESS_MAX_DOTS = 12;
 
 interface GT031ActionPayload {
   readonly coin_id?: string;
@@ -164,17 +165,19 @@ export class GT031Session extends TemplateGameSession<
     const zones = pickTrayZones(this.stageRect, this.trayRect);
     if (zones) {
       const touchFloor = resolveTouchFloor(band, this.cssPerLogic);
+      // Dải đầu sân khấu dành cho hàng chấm tiến độ; thẻ giá nằm ở phần thân.
+      const { body } = splitCaption(zones.stage);
       const size = Math.max(
         touchFloor,
         Math.floor(
           Math.min(
             PAYMENT_TARGET_MAX_PX,
-            zones.stage.w - PAYMENT_TARGET_PAD_PX,
-            zones.stage.h - PAYMENT_TARGET_PAD_PX
+            body.w - PAYMENT_TARGET_PAD_PX,
+            body.h - PAYMENT_TARGET_PAD_PX
           )
         )
       );
-      const target = computeStageTargetSlot(zones.stage, size, touchFloor, 0);
+      const target = computeStageTargetSlot(body, size, touchFloor, 0);
       const coins = computeTraySourceSlots(
         this.content.coins.length,
         zones.tray,
@@ -485,9 +488,6 @@ export class GT031Session extends TemplateGameSession<
       ref: "🪙",
     };
     const targetLabels = resolveAssetLabels(targetAsset);
-    const targetLabel = itemToBuy
-      ? `${itemToBuy.label} (${this.content.target_amount}đ)`
-      : `Cần trả: ${this.content.target_amount}đ`;
     const targetAmountWord = formatNumberWord(this.content.target_amount);
     const targetSpoken = itemToBuy?.label
       ? formatSpokenLabel(`${itemToBuy.label} ${targetAmountWord} đồng`)
@@ -508,7 +508,7 @@ export class GT031Session extends TemplateGameSession<
       h: targetSlot.h,
       hitShape: "square",
       glyph: targetLabels.glyph,
-      label: targetLabel,
+      label: String(this.content.target_amount),
       spokenLabel: targetSpoken ?? targetLabels.spokenLabel,
       spokenAudioPath: targetLabels.spokenAudioPath,
     };
@@ -544,7 +544,7 @@ export class GT031Session extends TemplateGameSession<
         h: slot.h,
         hitShape: "circle",
         glyph: coinLabels.glyph,
-        label: `${coin.value}đ`,
+        label: String(coin.value),
         spokenLabel: coinSpoken,
         spokenAudioPath: coinLabels.spokenAudioPath,
       });
@@ -581,10 +581,6 @@ export class GT031Session extends TemplateGameSession<
       (this.content as { target_price?: number }).target_price ??
       this.content.target_amount;
     const itemToBuy = this.content.item_to_buy;
-    let label = `Cần trả: ${targetPrice}đ`;
-    if (itemToBuy) {
-      label = `${itemToBuy.label} (${targetPrice}đ)`;
-    }
 
     let state: ItemVisualState = "idle";
     if (this.isWin) {
@@ -613,21 +609,33 @@ export class GT031Session extends TemplateGameSession<
       {
         id: "payment_target",
         asset: displayAsset,
-        label,
+        // Thẻ giá chỉ có chữ số; tên món chỉ đọc thành tiếng (`BR-E031-07`).
+        label: String(targetPrice),
         state,
       },
       "square"
     );
 
-    // Dòng tiến độ hiển thị phía trên thẻ mục tiêu để không bị khay đè lên
-    const progressText = `Đã góp: ${this.currentTotal} / ${targetPrice}đ`;
-    let progressColor: string = designTokens.colors.surface[700];
-    if (this.isWin) {
-      progressColor = designTokens.colors.semantic.success[700];
-    } else if (this.wrongPayUntilMs > 0) {
-      progressColor = designTokens.colors.retry[700];
-    }
-    drawMoneyProgressLabel(ctx, targetSlot, progressText, progressColor);
+    // Tiến độ là hàng chấm xu lấp dần ở dải đầu sân khấu, không chữ (`BR-E031-07`).
+    drawProgressDots(
+      ctx,
+      rs,
+      this.moneyProgress(targetPrice),
+      this.stageRect ? splitCaption(this.stageRect).caption : undefined
+    );
+  }
+
+  /** Mỗi chấm một đồng khi giá nhỏ; giá lớn hơn số chấm tối đa thì chia tỉ lệ. */
+  private moneyProgress(targetPrice: number): {
+    done: number;
+    total: number;
+  } {
+    const total = Math.min(MONEY_PROGRESS_MAX_DOTS, Math.max(1, targetPrice));
+    const done = Math.min(
+      total,
+      Math.floor((this.currentTotal / Math.max(1, targetPrice)) * total)
+    );
+    return { done, total };
   }
 
   private renderCoins(ctx: CanvasRenderingContext2D, rs: RenderSystem): void {
@@ -653,10 +661,7 @@ export class GT031Session extends TemplateGameSession<
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem
   ): void {
-    const subPrompt = this.isWin
-      ? `Chính xác! Đã trả đủ ${this.content.target_amount} đồng.`
-      : `Đã trả: ${this.currentTotal}/${this.content.target_amount} đồng`;
-    drawSubPromptText(ctx, rs, subPrompt);
+    drawProgressDots(ctx, rs, this.moneyProgress(this.content.target_amount));
   }
 
   render(

@@ -534,22 +534,7 @@ export function drawMontessoriCoin(
     : designTokens.colors.surface[900];
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(`${value}đ`, cx, cy);
-  ctx.restore();
-}
-
-/** Nhãn tiến độ thu tiền trên khay nhận (GT-031). */
-export function drawMoneyProgressLabel(
-  ctx: CanvasRenderingContext2D,
-  targetSlot: Slot,
-  text: string,
-  color: string
-): void {
-  ctx.save();
-  applyCanvasFontAtSize(ctx, 16, "heading", "bold");
-  ctx.fillStyle = color;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "bottom";
-  ctx.fillText(text, targetSlot.x, targetSlot.y - targetSlot.h / 2 - 12);
+  // Chỉ chữ số mệnh giá; ký hiệu "đ" là chữ nên bỏ (`BR-E031-07`).
+  ctx.fillText(`${value}`, cx, cy);
   ctx.restore();
 }

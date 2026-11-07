@@ -84,13 +84,14 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
   - [x] 023 (neo rỗng hiện bóng mờ mảnh nhận, bỏ nhãn "Khung n" và tên mảnh, tên chỉ đọc, BR-E023-06)
   - [x] 028 (dải phụ "Bước nhảy/Đã đếm/Mục tiêu" thành +n, chấm đã nhảy, số đích; BR-E028-05)
   - [x] 029 (một phần: dải phụ "Đã bớt n/m" thành -m + m chấm, BR-E029-05; thẻ "bớt đi n" là câu dẫn do shell đọc)
+  - [x] 031 (còn lại Phase 3: "Đã góp x/y đ" thành hàng chấm xu lấp dần, thẻ giá chỉ chữ số, xu bỏ "đ", BR-E031-07)
 
 ## Phase 5 — Đặc sắc từng game
 - [ ] Đợt demo: 001, 003, 020, 025, 026, 037
 - [ ] Khác biệt hoá cặp trùng: 003↔004, 022/025/037, 028/029/031, 001/012/018
 - [ ] Các game còn lại theo cột "Hướng đặc sắc" trong plan §1.3
 - [ ] 030 (còn lại) — dải đo vẫn là lưới ô có thể xuống nhiều hàng ở khung hẹp, chưa phải một dải liền kéo tự do theo thước; `representation: number-rod` chưa hiện khe/chồng. Cần thiết kế lại zone-layout (Phase 5 "Dải kéo tự do có snap")
-- [ ] 031 (còn lại) — mệnh giá phi thực tế ("3đ") và xu chỉ khác số: thuộc nội dung/Phase 4-5 (xu quả kích cỡ/màu theo giá trị, hạt Montessori); nhãn "Đã góp: x / y đ" vẫn là bản số trên canvas
+- [ ] 031 (còn lại) — mệnh giá phi thực tế ("3đ") và xu chỉ khác số: thuộc nội dung/Phase 4-5 (xu quả kích cỡ/màu theo giá trị, hạt Montessori); nhãn "Đã góp: x / y đ" đã thay bằng hàng chấm xu lấp dần (đợt 4B, BR-E031-07)
 - [ ] 032 (còn lại) — animation rót giữa hai cốc rồi mới hỏi, `L2` hiện số vạch và `L3` tách cột nước xếp cạnh nhau chưa có code (hint hiện chỉ vẽ vạch); cốc `fluted` vẫn vẽ như cốc thường
 - [ ] 034 (còn lại) — bóng nảy theo phách và trống cơm/phách/mõ (Phase 5); mốc dung sai 160 ms (`BEAT_TIMING_TOLERANCE_MS`) chưa đo với trẻ thật (open question #1); `L2` nháy nhạc cụ đúng và `L3` phát nửa tốc độ chưa có code
 - [ ] 035 (còn lại) — robot kiểu Bee-Bot "bíp" và mũi tên tuyệt đối ↑→↓← cho 5 tuổi (Phase 5); chữ trên thẻ lệnh/nhãn lưới vẫn là chữ phải đọc (mục "Gỡ chữ phải đọc"); `L2`/`L3` của phiếu chưa có code; chưa có nút dừng giữa lúc robot đang chạy
