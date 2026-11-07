@@ -29,7 +29,9 @@ import {
   spawnParticlesAtSlot,
   updateParticles,
 } from "#src/render/index";
+import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
+import { MoodPulse } from "#src/systems/mood-pulse";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT032Content, GT032Cup, GT032Difficulty } from "./template";
 
@@ -47,6 +49,17 @@ interface GT032ActionPayload {
   readonly fill_units?: number;
 }
 
+/** Khung chuyện theo loại bài, đọc một lần ở vòng đầu (`BR-E032-09`, `BR-FBK-16`). */
+export const GT032_STORY_LINE_POUR =
+  "Ngựa Con khát nước quá. Bé rót nước vào cốc tới vạch rồi bấm xong cho Ngựa Con uống nhé!";
+export const GT032_STORY_LINE_PICK =
+  "Ngựa Con khát nước quá. Bé nhìn kỹ các cốc nước rồi chọn đúng cốc cho Ngựa Con uống nhé!";
+
+/** Mascot vui sau mỗi nấc rót. */
+export const GT032_HAPPY_MS = 600;
+/** Mascot nghiêng đầu sau lần chọn cốc hoặc chốt rót chưa đúng. */
+export const GT032_WONDER_MS = 1500;
+
 export class GT032Session extends TemplateGameSession<
   GT032Content,
   GT032Difficulty
@@ -62,6 +75,22 @@ export class GT032Session extends TemplateGameSession<
 
   private readonly cupFills: Map<string, number> = new Map();
   private particles: Particle[] = [];
+  private readonly mood = new MoodPulse();
+
+  override storyLine(): string {
+    return this.content.question_type === "pour_to_mark"
+      ? GT032_STORY_LINE_POUR
+      : GT032_STORY_LINE_PICK;
+  }
+
+  /** Chỉ phản ứng sau thao tác, không báo trước cốc hay vạch đúng (`BR-E032-09`). */
+  override mascotMood(): MascotPose | null {
+    return this.isWon ? null : this.mood.current();
+  }
+
+  update(deltaMs: number): void {
+    this.mood.tick(deltaMs);
+  }
 
   constructor(
     content: GT032Content,
@@ -77,6 +106,7 @@ export class GT032Session extends TemplateGameSession<
   }
 
   setupEntities(): void {
+    this.mood.clear();
     this.selectedCupId = null;
     this.isWin = false;
     const diff = this.difficulty as GT032Difficulty & {
@@ -309,6 +339,9 @@ export class GT032Session extends TemplateGameSession<
     }
     this.cupFills.set(cup.cup_id, nextFill);
     this.selectedCupId = cup.cup_id;
+    // Tiếng rót như nhau dù đã tới vạch hay chưa: rót là thao tác nháp (`BR-E032-09`).
+    this.queueSfx("water_pour");
+    this.mood.set("happy", GT032_HAPPY_MS);
     const reachedTarget = this.isCupCorrect(cup);
     this.recordEvent("liquid_poured", {
       cup_id: cup.cup_id,
@@ -325,6 +358,7 @@ export class GT032Session extends TemplateGameSession<
       !active ||
       !this.isPourGoalSatisfied(active)
     ) {
+      this.mood.set("wonder", GT032_WONDER_MS);
       this.recordEvent("pour_confirm_wrong", {});
       return;
     }
@@ -370,6 +404,8 @@ export class GT032Session extends TemplateGameSession<
       }
       this.recordEvent("game_completed", { score: 100 });
       this.winSession();
+    } else {
+      this.mood.set("wonder", GT032_WONDER_MS);
     }
   }
 

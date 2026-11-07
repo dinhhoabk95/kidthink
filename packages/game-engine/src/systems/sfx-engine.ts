@@ -48,7 +48,8 @@ export type SFXType =
   | "piece_click"
   | "ant_step"
   | "rule_whistle"
-  | "clip_link";
+  | "clip_link"
+  | "water_pour";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -773,6 +774,28 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       volume: 0.05,
       durationSec: 0.12,
       rampOutSec: 0.07,
+    },
+  ],
+
+  /** GT-032: nước rót "ục ục" — hai nốt trầm lướt xuống rồi lên (`BR-E032-09`). */
+  water_pour: [
+    {
+      delaySec: 0,
+      type: "sine",
+      freq: 520,
+      glideTo: { freq: 380, overSec: 0.12 },
+      volume: 0.08,
+      durationSec: 0.14,
+      rampOutSec: 0.06,
+    },
+    {
+      delaySec: 0.15,
+      type: "sine",
+      freq: 400,
+      glideTo: { freq: 520, overSec: 0.1 },
+      volume: 0.07,
+      durationSec: 0.13,
+      rampOutSec: 0.06,
     },
   ],
 
