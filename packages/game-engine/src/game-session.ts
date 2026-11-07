@@ -312,6 +312,15 @@ export abstract class TemplateGameSession<
   }
 
   /**
+   * Chữ âm đề cần tự đọc khi vòng mở, sau khi câu dẫn của vòng đọc xong
+   * (GT-018 `auto_play_audio`, `BR-E018-05`). `null` = không tự đọc; trẻ chạm vật
+   * có `spokenLabel` để nghe. Bề mặt chơi đọc đúng một lần mỗi vòng.
+   */
+  getOpeningAudioText(): string | null {
+    return null;
+  }
+
+  /**
    * Lời đọc cho pill Montessori đang hiện (`BR-PNR-12`): lý do control-of-error
    * hoặc tiến độ khám phá. Trả nội dung mới đúng một lần; `null` khi không có gì
    * mới hoặc engine không có pill. Bề mặt chơi gọi sau mỗi verdict.

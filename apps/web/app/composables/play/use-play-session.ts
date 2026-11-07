@@ -10,6 +10,7 @@ import {
   type RoundConfig,
   RoundRunner,
   type StageZones,
+  TemplateGameSession,
   type ZoneRect,
 } from "@mindkid/game-engine";
 import type { AgeBand } from "@mindkid/shared/client";
@@ -19,6 +20,7 @@ import {
   presentCompletion,
 } from "~/composables/play/completion-outcome";
 import { isRereadPromptEscalation } from "~/composables/play/hint-narration";
+import { playOpeningAudioThenSettle } from "~/composables/play/opening-audio";
 import {
   createTimerBag,
   scheduleRetryDisallowedSkip,
@@ -36,6 +38,13 @@ import {
 } from "~/composables/play/use-play-telemetry";
 import { findInvalidRound } from "~/composables/play/validate-rounds";
 import { useApi } from "~/composables/use-api";
+
+/** Chỉ session mẫu mới có âm đề tự phát (`getOpeningAudioText`). */
+function openingAudioSource(
+  session: ReturnType<RoundRunner["getCurrentSession"]> | undefined
+): TemplateGameSession | null {
+  return session instanceof TemplateGameSession ? session : null;
+}
 
 export interface JsonObject {
   [key: string]: string | number | boolean | readonly string[] | undefined;
@@ -476,8 +485,18 @@ export function usePlaySession(options: UsePlaySessionOptions) {
           timers: roundTimers,
           getRunner: getRoundRunner,
           delayMs: ROUND_OPEN_NARRATION_DELAY_MS,
+          // Âm đề tự phát sau câu dẫn, trước khi mở cử chỉ (`BR-E018-05`).
           play: (settle) =>
-            playInstructionNarration(spokenPrompt(prompt, trigger), settle),
+            playInstructionNarration(spokenPrompt(prompt, trigger), () =>
+              playOpeningAudioThenSettle(
+                openingAudioSource(roundRunner?.getCurrentSession()),
+                (text, onEnd, onError) =>
+                  engine
+                    ? engine.audio.speakPrompt(text, onEnd, onError)
+                    : onEnd(),
+                settle
+              )
+            ),
           onSettled: () => {
             if (engine) {
               engine.acceptingInput = true;

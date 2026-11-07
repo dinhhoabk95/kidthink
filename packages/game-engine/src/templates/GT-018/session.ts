@@ -373,6 +373,13 @@ export class GT018Session extends TemplateGameSession<
     return null;
   }
 
+  /** `BR-E018-05`: âm đề tự phát khi mở vòng chỉ khi `auto_play_audio` bật. */
+  override getOpeningAudioText(): string | null {
+    return this.difficulty.auto_play_audio
+      ? this.content.audio_prompt.text
+      : null;
+  }
+
   override getHintTargetIndex(): number | null {
     if (this.content.response_mode === "select") {
       const idx = this.content.options.findIndex((o) => o.is_correct === true);
