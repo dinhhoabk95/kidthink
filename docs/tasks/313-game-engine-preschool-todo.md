@@ -40,7 +40,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 
 ## Phase 3 — Spec drift "control of error"
 - [x] 000 · [x] 007 (một phần: lỗi báo trên ô tổng) · [x] 009 · [x] 010 (một phần) · [x] 012 (một phần) · [x] 013 (một phần) · [x] 014 (một phần) · [x] 015 (một phần: verdict/hint; bộ sinh thoái hoá còn lại)
-- [ ] 020 · [x] 021 (một phần: lật gương khi vẽ) · [x] 022 (một phần: hình mẫu ghim) · [x] 023 (một phần: mảnh thay nhau, neo giữ hình) · [x] 026 (một phần: go bỏ sót trung tính, nút dừng, hạ độ khó) · [x] 029 (một phần: vật bớt rời nhóm) · [ ] 030 · [ ] 031
+- [ ] 020 · [x] 021 (một phần: lật gương khi vẽ) · [x] 022 (một phần: hình mẫu ghim) · [x] 023 (một phần: mảnh thay nhau, neo giữ hình) · [x] 026 (một phần: go bỏ sót trung tính, nút dừng, hạ độ khó) · [x] 029 (một phần: vật bớt rời nhóm) · [x] 030 (một phần: ô không vẽ sẵn, khe/chồng nhìn thấy) · [ ] 031
 - [ ] 032 · [ ] 034 (chấm timing) · [ ] 035 (chạy từng bước) · [ ] 036 · [ ] 037
 
 - [ ] 007 (còn lại) — cơ chế kéo/gộp vật thật giữa ô tổng và hai khay phần: viết lại session (toAction/getView/render, bài sinh nội dung `discrete-object`); quá lớn cho một commit, cần plan riêng
@@ -70,3 +70,4 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 - [ ] Đợt demo: 001, 003, 020, 025, 026, 037
 - [ ] Khác biệt hoá cặp trùng: 003↔004, 022/025/037, 028/029/031, 001/012/018
 - [ ] Các game còn lại theo cột "Hướng đặc sắc" trong plan §1.3
+- [ ] 030 (còn lại) — dải đo vẫn là lưới ô có thể xuống nhiều hàng ở khung hẹp, chưa phải một dải liền kéo tự do theo thước; `representation: number-rod` chưa hiện khe/chồng. Cần thiết kế lại zone-layout (Phase 5 "Dải kéo tự do có snap")

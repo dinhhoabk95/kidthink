@@ -34,6 +34,7 @@ import {
   drawSceneBackground,
   drawSlotItem,
   drawSubPromptText,
+  drawUnitGapHatch,
   drawWoodenTokenDock,
   type ItemVisualState,
   spawnParticlesAtSlot,
@@ -48,7 +49,23 @@ interface GT030ActionPayload {
   readonly option_id?: string;
   readonly id?: string;
   readonly value?: number;
+  /** Độ lệch ngang có dấu (px) giữa chỗ thả và mép cần nối; thiếu = đặt đúng mép. */
+  readonly offset_px?: number;
 }
+
+/** Khe hoặc chồng lấn của lần thả vừa rồi — trẻ phải thấy nó (`BR-E030-06`). */
+export interface GapFlash {
+  readonly kind: "gap" | "overlap";
+  /** Chỉ số slot đơn vị đang cần nối. */
+  readonly slotIndex: number;
+  /** Độ rộng khe/chồng (px), đã kẹp trong một cạnh đơn vị. */
+  readonly widthPx: number;
+}
+
+/** Dung sai bám dính tối thiểu (px) để ngón tay run nhẹ vẫn bám (`BR-E030-05`). */
+const MIN_SNAP_PX = 8;
+/** Thời gian khe/chồng còn hiện (ms). */
+const GAP_FLASH_MS = 1500;
 
 export class GT030Session extends TemplateGameSession<
   GT030Content,
@@ -75,6 +92,7 @@ export class GT030Session extends TemplateGameSession<
   private lastFrameMs = 0;
   private wrongOptionUntilMs = 0;
   private wrongPlaceUntilMs = 0;
+  private gapFlash: (GapFlash & { readonly untilMs: number }) | null = null;
   private particles: Particle[] = [];
 
   update(deltaMs: number): void {
@@ -92,12 +110,35 @@ export class GT030Session extends TemplateGameSession<
     ) {
       this.wrongPlaceUntilMs = 0;
     }
+    this.expireGapFlash();
+  }
+
+  private expireGapFlash(): void {
+    if (this.gapFlash && this.lastFrameMs >= this.gapFlash.untilMs) {
+      this.gapFlash = null;
+    }
+  }
+
+  /** Khe/chồng đang hiện, hoặc `null`. */
+  getGapFlash(): GapFlash | null {
+    return this.gapFlash;
+  }
+
+  /** Dung sai bám dính (px) quanh mép cần nối: `gap_tolerance_pct` của cạnh đơn vị. */
+  private snapTolerancePx(): number {
+    const slot = this.slots[1 + this.placedUnitsCount];
+    const unitW = slot?.w ?? 0;
+    return Math.max(
+      MIN_SNAP_PX,
+      (unitW * this.difficulty.gap_tolerance_pct) / 100
+    );
   }
 
   setupEntities(): void {
     this.placedUnitsCount = 0;
     this.selectedOptionId = null;
     this.isWin = false;
+    this.gapFlash = null;
     this.particles = [];
     this.recordEvent("game_started", {
       template_code: "GT-030",
@@ -146,8 +187,14 @@ export class GT030Session extends TemplateGameSession<
     });
   }
 
-  private validatePlaceAction(): ActionResult {
+  private validatePlaceAction(data: GT030ActionPayload): ActionResult {
     if (this.placedUnitsCount >= this.content.object.length_in_units) {
+      return ACTION_RETRY;
+    }
+    if (
+      data.offset_px !== undefined &&
+      Math.abs(data.offset_px) > this.snapTolerancePx()
+    ) {
       return ACTION_RETRY;
     }
     return ACTION_CORRECT;
@@ -199,7 +246,7 @@ export class GT030Session extends TemplateGameSession<
       type === "drag_unit" ||
       type === "snap_unit"
     ) {
-      return this.validatePlaceAction();
+      return this.validatePlaceAction(data);
     }
 
     if (type === "remove_unit" || type === "undo_unit") {
@@ -257,12 +304,37 @@ export class GT030Session extends TemplateGameSession<
     }
   }
 
+  /** Một lần thả: bám dính khi đủ gần mép, không thì để lại khe/chồng nhìn thấy. */
+  private commitPlace(offset: number | undefined): void {
+    const targetLength = this.content.object.length_in_units;
+    if (this.placedUnitsCount >= targetLength) {
+      this.wrongPlaceUntilMs = this.lastFrameMs + 400;
+      return;
+    }
+    if (offset !== undefined && Math.abs(offset) > this.snapTolerancePx()) {
+      const slot = this.slots[1 + this.placedUnitsCount];
+      this.gapFlash = {
+        kind: offset > 0 ? "gap" : "overlap",
+        slotIndex: 1 + this.placedUnitsCount,
+        widthPx: Math.min(Math.abs(offset), slot?.w ?? Math.abs(offset)),
+        untilMs: this.lastFrameMs + GAP_FLASH_MS,
+      };
+      return;
+    }
+    this.gapFlash = null;
+    this.placedUnitsCount++;
+    this.recordEvent("unit_placed", {
+      slot_index: this.placedUnitsCount,
+      placed_count: this.placedUnitsCount,
+      target_count: targetLength,
+    });
+  }
+
   override commit(action: GameAction): void {
     const type = action.type;
     const data = (
       typeof action.data === "object" && action.data !== null ? action.data : {}
     ) as GT030ActionPayload;
-    const targetLength = this.content.object.length_in_units;
 
     if (
       type === "place_unit" ||
@@ -270,16 +342,7 @@ export class GT030Session extends TemplateGameSession<
       type === "drag_unit" ||
       type === "snap_unit"
     ) {
-      if (this.placedUnitsCount < targetLength) {
-        this.placedUnitsCount++;
-        this.recordEvent("unit_placed", {
-          slot_index: this.placedUnitsCount,
-          placed_count: this.placedUnitsCount,
-          target_count: targetLength,
-        });
-      } else {
-        this.wrongPlaceUntilMs = this.lastFrameMs + 400;
-      }
+      this.commitPlace(data.offset_px);
       return;
     }
 
@@ -369,7 +432,21 @@ export class GT030Session extends TemplateGameSession<
       "square",
       TAP_TOLERANCE_PX
     );
-    return isFromSource ? { type: "place_unit", data: {} } : null;
+    if (!isFromSource) {
+      return null;
+    }
+    const next = this.slots[1 + this.placedUnitsCount];
+    if (!next) {
+      return { type: "place_unit", data: {} };
+    }
+    // Thả ngoài dải đo (khay, đáp án) không phải một lần đặt.
+    if (Math.abs(gesture.toY - next.y) > next.h) {
+      return null;
+    }
+    return {
+      type: "place_unit",
+      data: { offset_px: Math.round(gesture.toX - next.x) },
+    };
   }
 
   override toAction(gesture: Gesture): GameAction | null {
@@ -480,6 +557,10 @@ export class GT030Session extends TemplateGameSession<
         continue;
       }
       const isPlaced = i < this.placedUnitsCount;
+      // Ô chưa đặt không vẽ sẵn: chỉ mép kế tiếp để thả vào (`BR-E030-05`).
+      if (i > this.placedUnitsCount) {
+        continue;
+      }
       const numWord = formatNumberWord(i + 1);
       entities.push({
         id: `unit_slot_${i + 1}`,
@@ -542,81 +623,63 @@ export class GT030Session extends TemplateGameSession<
     );
   }
 
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: measurement strip unit & number-rod renderer
+  /** Đơn vị đã đặt nối nhau; ô chưa đặt không vẽ để không lộ đáp số (`BR-E030-05`). */
   private renderStripUnits(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem
   ): void {
     const targetLength = this.content.object.length_in_units;
 
-    const isRod = this.content.representation === "number-rod";
-    if (isRod) {
-      if (this.placedUnitsCount > 0) {
-        const firstSlot = this.slots[1];
-        const lastPlacedSlot = this.slots[this.placedUnitsCount];
-        if (firstSlot && lastPlacedSlot) {
-          drawNumberRodAcrossSlots(
-            ctx,
-            firstSlot,
-            lastPlacedSlot,
-            this.placedUnitsCount,
-            targetLength
-          );
-        }
-      }
-      for (let i = this.placedUnitsCount; i < targetLength; i++) {
-        const slot = this.slots[1 + i];
-        if (slot) {
-          drawSlotItem(
-            ctx,
-            rs,
-            slot,
-            {
-              id: `empty_slot_${i + 1}`,
-              text: "?",
-              state: "idle",
-            },
-            "square"
-          );
-        }
+    if (this.content.representation === "number-rod") {
+      const firstSlot = this.slots[1];
+      const lastPlacedSlot = this.slots[this.placedUnitsCount];
+      if (this.placedUnitsCount > 0 && firstSlot && lastPlacedSlot) {
+        drawNumberRodAcrossSlots(
+          ctx,
+          firstSlot,
+          lastPlacedSlot,
+          this.placedUnitsCount,
+          targetLength
+        );
       }
       return;
     }
 
-    for (let i = 0; i < targetLength; i++) {
+    for (let i = 0; i < this.placedUnitsCount; i++) {
       const slot = this.slots[1 + i];
       if (!slot) {
         continue;
       }
-
-      const isPlaced = i < this.placedUnitsCount;
-      if (isPlaced) {
-        drawSlotItem(
-          ctx,
-          rs,
-          slot,
-          {
-            id: `placed_unit_${i + 1}`,
-            asset: this.content.unit.asset,
-            label: `${i + 1}`,
-            state: "selected",
-          },
-          "square"
-        );
-      } else {
-        drawSlotItem(
-          ctx,
-          rs,
-          slot,
-          {
-            id: `empty_slot_${i + 1}`,
-            text: "?",
-            state: "idle",
-          },
-          "square"
-        );
-      }
+      drawSlotItem(
+        ctx,
+        rs,
+        slot,
+        {
+          id: `placed_unit_${i + 1}`,
+          asset: this.content.unit.asset,
+          label: `${i + 1}`,
+          state: "selected",
+        },
+        "square"
+      );
     }
+  }
+
+  /** Vạch chéo ở khe hoặc chỗ chồng của lần thả vừa rồi (`BR-E030-06`). */
+  private renderGapFlash(ctx: CanvasRenderingContext2D): void {
+    const flash = this.gapFlash;
+    const slot = flash ? this.slots[flash.slotIndex] : undefined;
+    if (!(flash && slot)) {
+      return;
+    }
+    const edgeX = slot.x - slot.w / 2;
+    const left = flash.kind === "gap" ? edgeX : edgeX - flash.widthPx;
+    drawUnitGapHatch(ctx, {
+      x: left,
+      y: slot.y - slot.h / 2,
+      w: flash.widthPx,
+      h: slot.h,
+    });
   }
 
   private renderTray(ctx: CanvasRenderingContext2D, rs: RenderSystem): void {
@@ -730,6 +793,7 @@ export class GT030Session extends TemplateGameSession<
     if (this.wrongPlaceUntilMs > 0 && timeMs >= this.wrongPlaceUntilMs) {
       this.wrongPlaceUntilMs = 0;
     }
+    this.expireGapFlash();
     drawSceneBackground(ctx, rs, this.themeId);
     const zones = pickTrayZones(this.stageRect, this.trayRect);
     if (!zones) {
@@ -738,6 +802,7 @@ export class GT030Session extends TemplateGameSession<
 
     this.renderObject(ctx, rs);
     this.renderStripUnits(ctx, rs);
+    this.renderGapFlash(ctx);
     this.renderTray(ctx, rs);
     this.renderAnswerOptions(ctx, rs);
 

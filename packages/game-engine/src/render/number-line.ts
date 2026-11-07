@@ -221,3 +221,32 @@ export function drawMeasurementGuideBar(
   ctx.stroke();
   ctx.restore();
 }
+
+/**
+ * Vạch chéo tô khe hoặc chỗ chồng giữa hai đơn vị đo (GT-030, `BR-E030-06`).
+ * Là phản hồi dạy học nên dùng màu trung tính, không dùng màu báo sai.
+ */
+export function drawUnitGapHatch(
+  ctx: CanvasRenderingContext2D,
+  rect: {
+    readonly x: number;
+    readonly y: number;
+    readonly w: number;
+    readonly h: number;
+  }
+): void {
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(rect.x, rect.y, rect.w, rect.h);
+  ctx.clip();
+  ctx.strokeStyle = designTokens.colors.surface[500];
+  ctx.lineWidth = 3;
+  const step = 8;
+  for (let d = -rect.h; d < rect.w + rect.h; d += step) {
+    ctx.beginPath();
+    ctx.moveTo(rect.x + d, rect.y + rect.h);
+    ctx.lineTo(rect.x + d + rect.h, rect.y);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
