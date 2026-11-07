@@ -11,7 +11,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 - [x] GT-018: refine schema (select có đúng/sai, sequence hợp lệ, không giải sẵn)
 - [ ] GT-018: sequence không tự thắng, cần nút nộp (session)
 - [x] GT-016: `initial_time ≠ target`; match-mode phải có nghiệm (superRefine trong `GT-016/template.ts`)
-- [ ] GT-035: kiểm nghiệm theo `max_commands`
+- [x] GT-035: gate `isSolvableWithinMaxCommands` (fixture + generator đều đạt; chưa nối vào ingest content)
 
 ## Phase 1 — Base flow
 - [ ] B2 fallback không giọng giữ hint level + `focusIndex` (`systems/scaffolding.ts`)

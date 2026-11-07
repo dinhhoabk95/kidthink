@@ -138,6 +138,31 @@ export const GT035ContentSchema = z
     }
   );
 
+/**
+ * Đường đi ngắn nhất có nằm trong `max_commands` của độ khó không.
+ * Contract content chỉ kiểm tới trần cứng 8 lệnh; hàng lệnh thật chỉ có
+ * `max_commands` ô, nên level có thể vô nghiệm dù qua schema.
+ */
+export function isSolvableWithinMaxCommands(
+  content: GT035Content,
+  maxCommands: number
+): boolean {
+  return (
+    findShortestSolution(
+      {
+        rows: content.grid.rows,
+        cols: content.grid.cols,
+        start: content.start,
+        goal: content.goal,
+        obstacles: content.obstacles,
+        collectibles: content.collectibles,
+        maxCommands,
+      },
+      content.allowed_commands
+    ) !== null
+  );
+}
+
 export const GT035DifficultySchema = z.object({
   item_count: z.number().int().min(1).max(8),
   max_commands: z.number().int().min(1).max(MAX_CODE_COMMANDS).default(8),
