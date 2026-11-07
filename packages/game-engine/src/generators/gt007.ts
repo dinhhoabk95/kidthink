@@ -10,6 +10,8 @@ export const GT007Generator: LevelGenerator = {
     theme: [...VALID_GENERATOR_THEMES],
   },
   generate({ rng, age_band, vocabulary }) {
+    // Band 4-5 chia vật thật, band 5-6 chọn chữ số (`BR-EBD-12`, `BR-E007-06`).
+    const isDiscrete = age_band !== "5-6";
     const nouns = getNouns(vocabulary, 6);
     const item = pickOne(rng, nouns);
 
@@ -66,7 +68,12 @@ export const GT007Generator: LevelGenerator = {
 
     return {
       content_pack: {
-        prompt: "Bé hãy tìm số còn thiếu để ghép thành số đúng nhé!",
+        prompt: isDiscrete
+          ? "Bé hãy chia đồ vật vào khay còn trống cho đủ nhé!"
+          : "Bé hãy tìm số còn thiếu để ghép thành số đúng nhé!",
+        representation: isDiscrete
+          ? ("discrete-object" as const)
+          : ("numeral" as const),
         whole,
         parts,
         options: shuffle(options, rng),

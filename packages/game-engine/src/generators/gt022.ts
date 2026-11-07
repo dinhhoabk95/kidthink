@@ -23,6 +23,9 @@ export const GT022Generator: LevelGenerator = {
       sampled.map((item, idx) => ({ item, isTarget: idx === 0 })),
       rng
     );
+    // Đích nấp sau một vật không phải đích (`BR-E022-08`).
+    const coverIdx = placed.findIndex(({ isTarget }) => !isTarget);
+    const coverId = coverIdx >= 0 ? `obj_${coverIdx + 1}` : undefined;
     const scene_objects = placed.map(({ item, isTarget }, idx) => ({
       id: `obj_${idx + 1}`,
       asset: { kind: "emoji" as const, ref: item.emoji_ref },
@@ -30,6 +33,7 @@ export const GT022Generator: LevelGenerator = {
       is_hidden: false,
       x: 100 + (idx % 3) * 200,
       y: 100 + Math.floor(idx / 3) * 150,
+      ...(isTarget && coverId ? { occluded_by: coverId } : {}),
     }));
 
     return {
