@@ -490,44 +490,91 @@ export function computeDiceSlots(
   }));
 }
 
-/** Đồng xu Montessori có mệnh giá và vành trang trí (GT-031). */
+/**
+ * Bảng màu theo bậc xu: nền và viền, chỉ lấy từ token (`BR-E031-10`). Bốn
+ * màu lặp vòng khi level có hơn bốn mệnh giá; bậc `i` và `i + 4` vẫn khác cỡ
+ * và số chấm.
+ */
+function coinTierPalette(rank: number): { fill: string; rim: string } {
+  const m = designTokens.colors.montessori;
+  const palette = [
+    { fill: m.amber, rim: m.amberDark },
+    { fill: m.emeraldLight, rim: m.emerald },
+    { fill: m.coralLight, rim: m.coral },
+    { fill: m.indigoLight, rim: m.indigo },
+  ];
+  return palette[rank % palette.length] ?? { fill: m.amber, rim: m.amberDark };
+}
+
+/** Cỡ và bậc của một xu: đường kính theo thứ bậc giá trị (`BR-E031-09`). */
+export interface MontessoriCoinStyle {
+  /** Đường kính mặt xu, px logic. */
+  readonly diameter: number;
+  /** Bậc 0..n-1 của mệnh giá; quyết định màu và số chấm (`bậc + 1`). */
+  readonly rank: number;
+}
+
+/**
+ * Đồng xu Montessori vector: cỡ, màu và số chấm theo bậc giá trị, kèm chữ số
+ * mệnh giá (GT-031, `BR-E031-09..11`).
+ */
 export function drawMontessoriCoin(
   ctx: CanvasRenderingContext2D,
   slot: Slot,
   value: number,
-  isDeposited: boolean
+  isDeposited: boolean,
+  style: MontessoriCoinStyle
 ): void {
   ctx.save();
   const cx = slot.x;
   const cy = slot.y;
-  const coinRadius = Math.min(slot.w, slot.h) * 0.42;
+  // `diameter` là mép ngoài kể cả nửa nét viền tràn ra ngoài đường tròn, nên
+  // xu bậc cao nhất đầy ô chạm vẫn không lấn sang xu kề bên (`BR-E031-11`).
+  const outerRadius = style.diameter / 2;
+  const rimWidth = Math.max(2, outerRadius * 0.08);
+  const coinRadius = outerRadius - rimWidth / 2;
+  const palette = coinTierPalette(style.rank);
 
-  // Nền đồng xu vàng Montessori
-  ctx.fillStyle = isDeposited
-    ? designTokens.colors.surface[300]
-    : designTokens.colors.montessori.amber;
+  ctx.fillStyle = isDeposited ? designTokens.colors.surface[300] : palette.fill;
   ctx.beginPath();
   ctx.arc(cx, cy, coinRadius, 0, Math.PI * 2);
   ctx.fill();
 
-  // Viền đồng xu
   ctx.strokeStyle = isDeposited
     ? designTokens.colors.surface[400]
-    : designTokens.colors.montessori.amberDark;
-  ctx.lineWidth = Math.max(2, coinRadius * 0.08);
+    : palette.rim;
+  ctx.lineWidth = rimWidth;
   ctx.stroke();
 
   // Vành trong trang trí
   ctx.strokeStyle = isDeposited
     ? designTokens.colors.surface[200]
-    : designTokens.colors.montessori.amberLight;
+    : designTokens.colors.montessori.paper;
   ctx.lineWidth = 1.5;
   ctx.beginPath();
-  ctx.arc(cx, cy, coinRadius * 0.82, 0, Math.PI * 2);
+  ctx.arc(cx, cy, coinRadius * 0.9, 0, Math.PI * 2);
   ctx.stroke();
 
+  // Hạt Montessori: `bậc + 1` chấm quanh mặt xu, kênh thứ hai ngoài màu.
+  const pipCount = style.rank + 1;
+  const pipRingRadius = coinRadius * 0.74;
+  const pipRadius = Math.max(2, coinRadius * 0.075);
+  ctx.fillStyle = isDeposited ? designTokens.colors.surface[500] : palette.rim;
+  for (let i = 0; i < pipCount; i++) {
+    const angle = -Math.PI / 2 + (Math.PI * 2 * i) / pipCount;
+    ctx.beginPath();
+    ctx.arc(
+      cx + Math.cos(angle) * pipRingRadius,
+      cy + Math.sin(angle) * pipRingRadius,
+      pipRadius,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+  }
+
   // Mệnh giá thật của đồng xu
-  const valFontPx = Math.max(16, Math.round(coinRadius * 0.65));
+  const valFontPx = Math.max(16, Math.round(coinRadius * 0.6));
   applyCanvasFontAtSize(ctx, valFontPx, "heading", "bold");
   ctx.fillStyle = isDeposited
     ? designTokens.colors.surface[500]

@@ -18,6 +18,7 @@ import type {
   ViewEntity,
 } from "#src/interaction";
 import { resolveAssetLabels } from "#src/labels/spoken-keyword.js";
+import { coinDiameter, coinTierOf } from "#src/layout/coin-tiers";
 import { resolveTouchFloor } from "#src/layout/constants";
 import {
   findHitSlotIndex,
@@ -107,6 +108,8 @@ export class GT031Session extends TemplateGameSession<
   private lastFrameMs = 0;
   private wrongPayUntilMs = 0;
   private encourageRemainingMs = 0;
+  /** Sàn chạm của band vòng này, để đo cỡ xu nhỏ nhất (`BR-E031-11`). */
+  private coinTouchFloor = 0;
 
   override storyLine(): string {
     return GT031_STORY_LINE;
@@ -190,9 +193,10 @@ export class GT031Session extends TemplateGameSession<
   }
 
   protected computeSlots(band: AgeBand): readonly Slot[] {
+    this.coinTouchFloor = resolveTouchFloor(band, this.cssPerLogic);
     const zones = pickTrayZones(this.stageRect, this.trayRect);
     if (zones) {
-      const touchFloor = resolveTouchFloor(band, this.cssPerLogic);
+      const touchFloor = this.coinTouchFloor;
       // Dải đầu sân khấu dành cho hàng chấm tiến độ; thẻ giá nằm ở phần thân.
       const { body } = splitCaption(zones.stage);
       const size = Math.max(
@@ -675,6 +679,7 @@ export class GT031Session extends TemplateGameSession<
       pickTrayZones(this.stageRect, this.trayRect)?.tray
     );
 
+    const values = this.content.coins.map((c) => c.value);
     for (let i = 0; i < this.content.coins.length; i++) {
       const coin = this.content.coins[i];
       const slot = this.slots[1 + i];
@@ -683,7 +688,13 @@ export class GT031Session extends TemplateGameSession<
       }
 
       const isDeposited = this.depositedCoinIds.includes(coin.coin_id);
-      drawMontessoriCoin(ctx, slot, coin.value, isDeposited);
+      const tier = coinTierOf(values, coin.value);
+      // Cạnh ngắn của ô chạm: đường tròn không bao giờ lọt ra ngoài ô.
+      const hit = Math.min(slot.hitW, slot.hitH);
+      drawMontessoriCoin(ctx, slot, coin.value, isDeposited, {
+        diameter: coinDiameter(tier.rank, tier.count, hit, this.coinTouchFloor),
+        rank: tier.rank,
+      });
     }
   }
 
