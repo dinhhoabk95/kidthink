@@ -246,7 +246,8 @@ export function evaluateGT000StepAnswer(
       const correctId =
         (step as { correct_asset_id?: string; target_asset_id?: string })
           .correct_asset_id ?? step.target_asset_id;
-      return selectedId === correctId ? ACTION_CORRECT : ACTION_RETRY;
+      // Recall sai không chấm thử lại (`BR-CIR-07`) — xem `handleRecallAction`.
+      return selectedId === correctId ? ACTION_CORRECT : ACTION_IGNORED;
     }
     case "recognise": {
       const selectedId = extractAssetId(payload);
@@ -431,7 +432,8 @@ export interface StepActionContext {
     step: GT000Step & { action: "recognise" | "link" }
   ) => void;
   advanceStep: () => void;
-  setWrongTimer: (ms: number) => void;
+  /** Sang bước kế ở nhịp `update()` tới (recall sai — `BR-CIR-07`). */
+  deferAdvance: () => void;
 }
 
 function handlePresentAction(ctx: StepActionContext): ActionResult {
@@ -552,12 +554,6 @@ function handleRecallAction(
       .correct_asset_id ?? step.target_asset_id;
   const isCorrect = selectedId === correctId;
 
-  if (!isCorrect) {
-    ctx.renderItemStates.set(selectedId, "wrong");
-    ctx.setWrongTimer(350);
-    return ACTION_RETRY;
-  }
-
   ctx.recallAnswers.push({
     asset_id: correctId,
     correct: isCorrect,
@@ -568,6 +564,14 @@ function handleRecallAction(
     target_asset_id: correctId,
     answer_correct: isCorrect,
   });
+
+  if (!isCorrect) {
+    // `recall` là phép đo, không phải cửa (spec §5 nhánh 2, `BR-CIR-07`): sai
+    // thì không báo sai, không bắt thử lại — sang bước kế ở nhịp `update()`
+    // sau, để thắng ở bước cuối đi qua đường `onSessionWon` của engine.
+    ctx.deferAdvance();
+    return ACTION_IGNORED;
+  }
 
   ctx.advanceStep();
   return ACTION_CORRECT;

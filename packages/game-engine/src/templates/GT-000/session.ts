@@ -60,7 +60,8 @@ export class GT000Session extends TemplateGameSession<
   private stepPromptPending = false;
   private stepPromptToken = 0;
   private stepPromptWaitedMs = 0;
-  private wrongResetTimerMs = 0;
+  /** Recall sai đã ghi, chờ `update()` sang bước kế (`BR-CIR-07`). */
+  private advancePending = false;
   /** Chất liệu đã báo `tts_unavailable` — nghe lại không nhân đôi telemetry. */
   private readonly ttsMissReported = new Set<string>();
 
@@ -150,7 +151,7 @@ export class GT000Session extends TemplateGameSession<
     this.recallAnswers.length = 0;
     this.echoReplayCounts.clear();
     this.ttsMissReported.clear();
-    this.wrongResetTimerMs = 0;
+    this.advancePending = false;
     this.audioPromptCalled = false;
     this.releaseStepPrompt();
     this.lastTtsUsed = false;
@@ -244,7 +245,7 @@ export class GT000Session extends TemplateGameSession<
    * dừng đồng hồ trợ giúp (`BR-E000-12`, cùng hợp đồng `BR-PNR-11`).
    */
   override isAcceptingInput(): boolean {
-    return !this.stepPromptPending;
+    return !(this.stepPromptPending || this.advancePending);
   }
 
   /**
@@ -252,16 +253,9 @@ export class GT000Session extends TemplateGameSession<
    * `STEP_PROMPT_SETTLE_TIMEOUT_MS` vẫn mở cổng (`BR-PNR-09`).
    */
   update(deltaMs: number): void {
-    if (this.wrongResetTimerMs > 0) {
-      this.wrongResetTimerMs -= deltaMs;
-      if (this.wrongResetTimerMs <= 0) {
-        this.wrongResetTimerMs = 0;
-        for (const [id, state] of this.renderItemStates) {
-          if (state === "wrong") {
-            this.renderItemStates.set(id, "idle");
-          }
-        }
-      }
+    if (this.advancePending) {
+      this.advancePending = false;
+      this.advanceStep();
     }
     if (!this.stepPromptPending) {
       return;
@@ -642,8 +636,8 @@ export class GT000Session extends TemplateGameSession<
       playEchoModel: (s) => this.playEchoModel(s),
       replayTargetThenAsk: (s) => this.replayTargetThenAsk(s),
       advanceStep: () => this.advanceStep(),
-      setWrongTimer: (ms) => {
-        this.wrongResetTimerMs = ms;
+      deferAdvance: () => {
+        this.advancePending = true;
       },
     });
   }

@@ -164,3 +164,61 @@ describe("GT-000 — thắng đóng phiên bằng winSession (BR-E000-14)", () =
     ).toHaveLength(1);
   });
 });
+
+describe("GT-000 — recall sai vẫn đi tiếp (spec §5 nhánh 2, BR-CIR-07)", () => {
+  const content: GT000Content = {
+    concept: source.content.concept,
+    assets: source.content.assets,
+    steps: [
+      { action: "present", target_asset_id: "num_1" },
+      {
+        action: "recall",
+        target_asset_id: "num_1",
+        option_asset_ids: ["num_1", "num_2"],
+      },
+      {
+        action: "recall",
+        target_asset_id: "num_2",
+        option_asset_ids: ["num_1", "num_2"],
+      },
+    ],
+    requires_reintro: false,
+  };
+
+  it("chạm sai: không đánh dấu sai, không chấm thử lại, ghi kết quả sai rồi sang bước kế", () => {
+    const { session } = makeSession(content);
+    advanceTo(session, 1);
+    const verdict = session.dispatch(tapEntity(session, "num_2"));
+    expect(verdict?.feedback).toBe("none");
+    expect(session.getView().entities.map((e) => e.state)).not.toContain(
+      "wrong"
+    );
+    session.update(16);
+    expect(session.currentStepIndex).toBe(2);
+    expect(session.recallAnswers).toEqual([
+      { asset_id: "num_1", correct: false },
+    ]);
+    const answered = session
+      .getTelemetry()
+      .events.filter((e) => e.event_name === "intro_recall_answered");
+    expect(answered.at(-1)?.data?.answer_correct).toBe(false);
+  });
+
+  it("recall cuối sai: phiên vẫn thắng ở nhịp update kế tiếp", () => {
+    const { session } = makeSession(content);
+    advanceTo(session, 1);
+    session.dispatch(tapEntity(session, "num_1"));
+    expect(session.currentStepIndex).toBe(2);
+    session.dispatch(tapEntity(session, "num_1"));
+    expect(session.checkWinCondition()).toBe(false);
+    session.update(16);
+    expect(session.checkWinCondition()).toBe(true);
+  });
+
+  it("chờ sang bước thì không nhận cử chỉ mới", () => {
+    const { session } = makeSession(content);
+    advanceTo(session, 1);
+    session.dispatch(tapEntity(session, "num_2"));
+    expect(session.isAcceptingInput()).toBe(false);
+  });
+});
