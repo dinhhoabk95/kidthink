@@ -41,7 +41,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 ## Phase 3 — Spec drift "control of error"
 - [x] 000 · [x] 007 (một phần: lỗi báo trên ô tổng) · [x] 009 · [x] 010 (một phần) · [x] 012 (một phần) · [x] 013 (một phần) · [x] 014 (một phần) · [x] 015 (một phần: verdict/hint; bộ sinh thoái hoá còn lại)
 - [ ] 020 · [x] 021 (một phần: lật gương khi vẽ) · [x] 022 (một phần: hình mẫu ghim) · [x] 023 (một phần: mảnh thay nhau, neo giữ hình) · [x] 026 (một phần: go bỏ sót trung tính, nút dừng, hạ độ khó) · [x] 029 (một phần: vật bớt rời nhóm) · [x] 030 (một phần: ô không vẽ sẵn, khe/chồng nhìn thấy) · [x] 031 (một phần: nút trả tiền, hint tới nút trả)
-- [x] 032 (một phần: diện tích nước công bằng, bỏ nhãn lộ đáp án, rót tới vạch phải chốt) · [x] 034 (một phần: chấm nhịp, không chấm từng bước, mẫu không in sẵn) · [ ] 035 (chạy từng bước) · [ ] 036 · [ ] 037
+- [x] 032 (một phần: diện tích nước công bằng, bỏ nhãn lộ đáp án, rót tới vạch phải chốt) · [x] 034 (một phần: chấm nhịp, không chấm từng bước, mẫu không in sẵn) · [x] 035 (một phần: chạy từng bước, hụt có phản hồi, hàng lệnh giữ nguyên) · [ ] 036 · [ ] 037
 
 - [ ] 007 (còn lại) — cơ chế kéo/gộp vật thật giữa ô tổng và hai khay phần: viết lại session (toAction/getView/render, bài sinh nội dung `discrete-object`); quá lớn cho một commit, cần plan riêng
 - [ ] 010 (còn lại) — đổi nội dung 4–5 tuổi sang bảng tra/bảng giá một ẩn (không hệ hai phương trình): cần đổi schema/generator, thuộc Phase 4/5
@@ -74,3 +74,4 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 - [ ] 031 (còn lại) — mệnh giá phi thực tế ("3đ") và xu chỉ khác số: thuộc nội dung/Phase 4-5 (xu quả kích cỡ/màu theo giá trị, hạt Montessori); nhãn "Đã góp: x / y đ" vẫn là bản số trên canvas
 - [ ] 032 (còn lại) — animation rót giữa hai cốc rồi mới hỏi, `L2` hiện số vạch và `L3` tách cột nước xếp cạnh nhau chưa có code (hint hiện chỉ vẽ vạch); cốc `fluted` vẫn vẽ như cốc thường
 - [ ] 034 (còn lại) — bóng nảy theo phách và trống cơm/phách/mõ (Phase 5); mốc dung sai 160 ms (`BEAT_TIMING_TOLERANCE_MS`) chưa đo với trẻ thật (open question #1); `L2` nháy nhạc cụ đúng và `L3` phát nửa tốc độ chưa có code
+- [ ] 035 (còn lại) — robot kiểu Bee-Bot "bíp" và mũi tên tuyệt đối ↑→↓← cho 5 tuổi (Phase 5); chữ trên thẻ lệnh/nhãn lưới vẫn là chữ phải đọc (mục "Gỡ chữ phải đọc"); `L2`/`L3` của phiếu chưa có code; chưa có nút dừng giữa lúc robot đang chạy

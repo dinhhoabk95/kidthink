@@ -1,10 +1,24 @@
 import { describe, expect, it } from "vitest";
+import type { ActionResult } from "#src/game-session";
 import { GT035_FIXTURES } from "#src/templates/GT-035/fixtures";
-import { GT035Session } from "#src/templates/GT-035/session";
+import { GT035_STEP_MS, GT035Session } from "#src/templates/GT-035/session";
 import GT035Template, {
   GT035ContentSchema,
   GT035DifficultySchema,
 } from "#src/templates/GT-035/template";
+
+/** Bấm chạy rồi để robot đi hết từng bước; trả phán quyết ở update() và đợi robot về start nếu hụt. */
+function runProgram(session: GT035Session): ActionResult | null {
+  const run = { type: "run_program", data: {} };
+  session.commit(run);
+  let verdict: ActionResult | null = null;
+  for (let i = 0; i < 60 && !verdict; i++) {
+    const v = session.update(GT035_STEP_MS);
+    verdict = v && v.feedback !== "none" ? v : null;
+  }
+  session.update(GT035_STEP_MS);
+  return verdict;
+}
 
 function getFixture(index: number) {
   const fixture = GT035_FIXTURES[index];
@@ -163,10 +177,10 @@ describe("GT-035 Xếp hàng lệnh (command-sequence) Contract & Session Tests"
     });
 
     // Run -> fails
-    const runFail = session.validateAction({ type: "run_program", data: {} });
-    expect(runFail.valid).toBe(false);
-    expect(runFail.feedback).toBe("amber_soft");
-    session.commit({ type: "run_program", data: {} });
+    // Bấm chạy chỉ bắt đầu; phán quyết đến ở update() khi robot đi xong (BR-E035-08)
+    const runFail = runProgram(session);
+    expect(runFail?.valid).toBe(false);
+    expect(runFail?.feedback).toBe("amber_soft");
     expect(session.isWin).toBe(false);
 
     // 2. Child clears and builds correct sequence:
@@ -194,9 +208,8 @@ describe("GT-035 Xếp hàng lệnh (command-sequence) Contract & Session Tests"
     });
 
     // Run -> wins
-    const runWin = session.validateAction({ type: "run_program", data: {} });
-    expect(runWin.valid).toBe(true);
-    session.commit({ type: "run_program", data: {} });
+    const runWin = runProgram(session);
+    expect(runWin?.valid).toBe(true);
     expect(session.isWin).toBe(true);
 
     const completedEvent = session
@@ -224,9 +237,8 @@ describe("GT-035 Xếp hàng lệnh (command-sequence) Contract & Session Tests"
       data: { command: "forward" },
     });
 
-    const runFail = session.validateAction({ type: "run_program", data: {} });
-    expect(runFail.valid).toBe(false);
-    session.commit({ type: "run_program", data: {} });
+    const runFail = runProgram(session);
+    expect(runFail?.valid).toBe(false);
     expect(session.isWin).toBe(false);
 
     // Path collecting gem and reaching goal:
@@ -264,9 +276,8 @@ describe("GT-035 Xếp hàng lệnh (command-sequence) Contract & Session Tests"
       data: { command: "forward" },
     });
 
-    const runWin = session.validateAction({ type: "run_program", data: {} });
-    expect(runWin.valid).toBe(true);
-    session.commit({ type: "run_program", data: {} });
+    const runWin = runProgram(session);
+    expect(runWin?.valid).toBe(true);
     expect(session.isWin).toBe(true);
   });
 
@@ -301,9 +312,8 @@ describe("GT-035 Xếp hàng lệnh (command-sequence) Contract & Session Tests"
       data: { command: "loop" },
     });
 
-    const runRes = session.validateAction({ type: "run_program", data: {} });
-    expect(runRes.valid).toBe(true);
-    session.commit({ type: "run_program", data: {} });
+    const runRes = runProgram(session);
+    expect(runRes?.valid).toBe(true);
     expect(session.isWin).toBe(true);
   });
 

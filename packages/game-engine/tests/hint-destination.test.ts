@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   createGameSessionSync,
   type EngineConfig,
+  type GameSession,
   type Gesture,
   preloadGameSession,
   TemplateGameSession,
@@ -76,6 +77,9 @@ interface FollowResult {
   readonly problems: readonly string[];
 }
 
+/** Một nhịp chạy chương trình của robot (GT-035). */
+const RUN_BEAT_MS = 600;
+
 /** Làm theo hint (kéo nguồn -> đích) tới khi thắng. */
 function followHint(session: TemplateGameSession): FollowResult {
   const problems: string[] = [];
@@ -90,6 +94,10 @@ function followHint(session: TemplateGameSession): FollowResult {
         break;
       }
       session.commit?.(commit);
+      // GT-035: bấm chạy chỉ bắt đầu, robot đi từng bước qua update() rồi mới thắng.
+      for (let beat = 0; beat < 60 && !session.checkWinCondition(); beat++) {
+        (session as GameSession).update?.(RUN_BEAT_MS);
+      }
       continue;
     }
     if (hint?.kind !== "slot") {

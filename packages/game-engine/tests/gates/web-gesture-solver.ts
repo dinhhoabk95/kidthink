@@ -80,10 +80,12 @@ function candidatesOf(session: TemplateGameSession, t: number): Gesture[] {
   const commit: Gesture[] = session.needsCommit
     ? [{ type: "commit", timeMs: t }]
     : [];
+  // Nút chốt đứng sau gợi ý: còn gợi ý nghĩa là còn việc phải đặt trước khi chốt
+  // (GT-035: chạy chương trình chỉ khi hàng lệnh đã đủ, vì chạy không còn là phán quyết).
   return [
-    ...commit,
     ...hintTap,
     ...hintDrops,
+    ...commit,
     ...taps,
     ...drops,
     { type: "adjust", delta: 1, timeMs: t },

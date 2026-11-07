@@ -31,7 +31,7 @@ import {
   CommandQueueSystem,
   type CommandType,
   type ExecutionResult,
-  executeProgram,
+  expandCommands,
   findShortestSolution,
   type RobotState,
 } from "#src/systems/command-queue-system";
@@ -43,6 +43,17 @@ import type {
   GT035Content,
   GT035Difficulty,
 } from "./template.js";
+
+/** Một lệnh chạy mỗi từng này ms: trẻ theo dõi từng bước, không nhảy tức thì (`BR-E035-08`). */
+export const GT035_STEP_MS = 600;
+
+/** Thêm/gỡ lệnh hợp lệ nhưng không báo đúng sai (`BR-E035-01`). */
+const QUIET_OK: ActionResult = Object.freeze({
+  valid: true,
+  feedback: "none",
+});
+
+type ExecutionStep = ExecutionResult["steps"][number];
 
 const COMMAND_LABELS: Record<CommandType, string> = {
   forward: "Tiến",
@@ -168,6 +179,12 @@ export class GT035Session extends TemplateGameSession<
   executionResult: ExecutionResult | null = null;
   isWin = false;
 
+  private execSteps: readonly ExecutionStep[] = [];
+  private execOwners: readonly number[] = [];
+  private execCursor = 0;
+  private execClockMs = 0;
+  private execPhase: "running" | "bump" = "running";
+
   readonly queueSystem: CommandQueueSystem;
   private readonly sfxEngine: SFXEngine;
   private readonly obstacleSet: ReadonlySet<string>;
@@ -216,6 +233,11 @@ export class GT035Session extends TemplateGameSession<
     this.collectedItemIds = [];
     this.executionResult = null;
     this.isWin = false;
+    this.execSteps = [];
+    this.execOwners = [];
+    this.execCursor = 0;
+    this.execClockMs = 0;
+    this.execPhase = "running";
     this.particles = [];
     this.cachedShortestSolution = undefined;
     this.queueSystem.clear();
@@ -299,8 +321,115 @@ export class GT035Session extends TemplateGameSession<
     return below.y - first.y - first.h >= STAGE_LABEL_ROW_PX ? text : undefined;
   }
 
-  update(_deltaMs: number): void {
+  update(deltaMs: number): ActionResult | null {
     this.particles = updateParticles(this.particles);
+    if (!(this.isExecuting && this.executionResult)) {
+      return null;
+    }
+    this.execClockMs += deltaMs;
+    while (this.execClockMs >= GT035_STEP_MS) {
+      this.execClockMs -= GT035_STEP_MS;
+      const verdict = this.advanceExecutionBeat(this.executionResult);
+      if (verdict) {
+        return verdict;
+      }
+      if (!this.isExecuting) {
+        return null;
+      }
+    }
+    return null;
+  }
+
+  /** Hướng nhân vật đang hiện: lúc soạn, xoay theo các lệnh xoay đã xếp (`N4`). */
+  getDisplayFacing(): RobotState["facing"] {
+    if (this.isExecuting || this.queueSystem.commandCount === 0) {
+      return this.robotState.facing;
+    }
+    const order: RobotState["facing"][] = ["up", "right", "down", "left"];
+    let idx = order.indexOf(this.content.start.facing);
+    for (const cmd of expandCommands(this.queueSystem.queue).expanded) {
+      if (cmd === "turn_right") {
+        idx = (idx + 1) % 4;
+      } else if (cmd === "turn_left") {
+        idx = (idx + 3) % 4;
+      }
+    }
+    return order[idx] ?? this.robotState.facing;
+  }
+
+  /** Thẻ của hàng lệnh sở hữu từng bước đã mở rộng (lệnh `loop` sở hữu các bước lặp). */
+  private ownersOfExpandedSteps(): number[] {
+    const owners: number[] = [];
+    this.queueSystem.queue.forEach((cmd, i) => {
+      if (cmd.type === "loop") {
+        const repeats = Math.max(1, (cmd.count ?? 2) - 1);
+        for (let r = 0; r < repeats; r++) {
+          owners.push(i);
+        }
+        return;
+      }
+      owners.push(i);
+    });
+    return owners;
+  }
+
+  private advanceExecutionBeat(result: ExecutionResult): ActionResult | null {
+    if (this.execPhase === "bump") {
+      // Hụt: nhân vật đã đứng nơi hụt một nhịp, giờ về start; hàng lệnh giữ nguyên.
+      this.robotState = { ...this.content.start };
+      this.collectedItemIds = [];
+      this.activeExecutingStep = null;
+      this.isExecuting = false;
+      return null;
+    }
+    const step = this.execSteps[this.execCursor];
+    if (step) {
+      this.robotState = { ...step.toState };
+      if (
+        step.collectedId &&
+        !this.collectedItemIds.includes(step.collectedId)
+      ) {
+        this.collectedItemIds = [...this.collectedItemIds, step.collectedId];
+      }
+      this.activeExecutingStep = this.execOwners[step.stepIndex] ?? null;
+      this.execCursor++;
+      return null;
+    }
+    return this.finishExecution(result);
+  }
+
+  private finishExecution(result: ExecutionResult): ActionResult {
+    if (result.success) {
+      this.isExecuting = false;
+      this.activeExecutingStep = null;
+      this.isWin = true;
+      this.isWon = true;
+      this.recordEvent("game_completed", {
+        duration_ms: 12_000,
+        rounds_total: 1,
+        rounds_correct: 1,
+      });
+      this.sfxEngine.play("pop_celebrate");
+      const goalSlot = this.getGoalSlot();
+      if (goalSlot) {
+        this.particles.push(...spawnParticlesAtSlot(goalSlot, 25));
+      }
+      this.winSession();
+      return ACTION_CORRECT;
+    }
+    this.recordEvent("program_failed", {
+      failed_step: result.failedAtStep ?? -1,
+      reason: result.failureReason ?? "unknown",
+      round_index: 0,
+    });
+    this.sfxEngine.play("amber_soft");
+    this.robotState = { ...result.finalState };
+    this.activeExecutingStep =
+      result.failedAtStep === undefined
+        ? null
+        : (this.execOwners[result.failedAtStep] ?? null);
+    this.execPhase = "bump";
+    return ACTION_RETRY;
   }
 
   private validateAddCommand(cmd?: CommandType): ActionResult {
@@ -309,21 +438,20 @@ export class GT035Session extends TemplateGameSession<
       !this.allowedCommands.includes(cmd) ||
       this.queueSystem.commandCount >= this.maxCommands
       ? ACTION_IGNORED
-      : ACTION_CORRECT;
+      : QUIET_OK;
   }
 
   private validateRemoveCommand(): ActionResult {
     return this.isExecuting || this.queueSystem.commandCount === 0
       ? ACTION_IGNORED
-      : ACTION_CORRECT;
+      : QUIET_OK;
   }
 
+  /** Bấm chạy chỉ bắt đầu chạy; phán quyết đến ở `update()` khi robot đi xong (`BR-E035-01`). */
   private validateRunProgram(): ActionResult {
-    if (this.isExecuting || this.queueSystem.commandCount === 0) {
-      return ACTION_IGNORED;
-    }
-    const res = executeProgram(this.queueConfig, [...this.queueSystem.queue]);
-    return res.success ? ACTION_CORRECT : ACTION_RETRY;
+    return this.isExecuting || this.queueSystem.commandCount === 0
+      ? ACTION_IGNORED
+      : QUIET_OK;
   }
 
   validateAction(action: GameAction): ActionResult {
@@ -344,7 +472,7 @@ export class GT035Session extends TemplateGameSession<
         return this.validateRemoveCommand();
       case "clear_commands":
       case "reset":
-        return this.isExecuting ? ACTION_IGNORED : ACTION_CORRECT;
+        return this.isExecuting ? ACTION_IGNORED : QUIET_OK;
       case "run_program":
       case "run":
         return this.validateRunProgram();
@@ -362,6 +490,7 @@ export class GT035Session extends TemplateGameSession<
     ) {
       return;
     }
+    this.sfxEngine.play("snap_item");
     this.recordEvent("command_added", {
       command,
       command_index: this.queueSystem.commandCount - 1,
@@ -379,6 +508,7 @@ export class GT035Session extends TemplateGameSession<
         : this.queueSystem.commandCount - 1;
     const removed = this.queueSystem.removeCommand(removeIdx);
     if (removed) {
+      this.sfxEngine.play("snap_item");
       this.recordEvent("command_removed", {
         command: removed.type,
         command_index: removeIdx,
@@ -402,38 +532,18 @@ export class GT035Session extends TemplateGameSession<
       command_count: this.queueSystem.commandCount,
       round_index: 0,
     });
+    // Kết quả tính một lần bằng trình chạy duy nhất (`BR-E035-02`), rồi phát lại từng bước.
     const result = this.queueSystem.run();
     this.executionResult = result;
-    this.robotState = result.finalState;
-    this.collectedItemIds = [...result.collectedIds];
-
-    if (result.success) {
-      this.isWin = true;
-      this.isWon = true;
-      this.recordEvent("game_completed", {
-        duration_ms: 12_000,
-        rounds_total: 1,
-        rounds_correct: 1,
-      });
-      this.sfxEngine.play("pop_celebrate");
-      const goalSlot = this.getGoalSlot();
-      if (goalSlot) {
-        this.particles.push(...spawnParticlesAtSlot(goalSlot, 25));
-      }
-      this.winSession();
-      return;
-    }
-
-    this.recordEvent("program_failed", {
-      failed_step: result.failedAtStep ?? -1,
-      reason: result.failureReason ?? "unknown",
-      round_index: 0,
-    });
-    this.sfxEngine.play("amber_soft");
+    this.execSteps = result.steps;
+    this.execOwners = this.ownersOfExpandedSteps();
+    this.execCursor = 0;
+    this.execClockMs = 0;
+    this.execPhase = "running";
     this.robotState = { ...this.content.start };
-    if (this.queueSystem.isFull) {
-      this.queueSystem.removeCommand(this.queueSystem.commandCount - 1);
-    }
+    this.collectedItemIds = [];
+    this.activeExecutingStep = null;
+    this.isExecuting = true;
   }
 
   override commit(action: GameAction): void {
@@ -557,7 +667,7 @@ export class GT035Session extends TemplateGameSession<
       return {
         glyph: "🤖",
         label: "Robot",
-        spokenLabel: `${pos}: Robot đang hướng ${FACING_SPOKEN_VI[this.robotState.facing]}`,
+        spokenLabel: `${pos}: Robot đang hướng ${FACING_SPOKEN_VI[this.getDisplayFacing()]}`,
       };
     }
     if (this.content.goal.col === col && this.content.goal.row === row) {
@@ -610,6 +720,13 @@ export class GT035Session extends TemplateGameSession<
     }
   }
 
+  private queueCardEntityState(index: number): ViewEntity["state"] {
+    if (this.activeExecutingStep === index) {
+      return "active";
+    }
+    return index < this.queueSystem.commandCount ? "selected" : "idle";
+  }
+
   private appendQueueEntities(
     entities: ViewEntity[],
     gridSlotCount: number,
@@ -627,7 +744,7 @@ export class GT035Session extends TemplateGameSession<
         toCircleViewEntity(slot, gridSlotCount + i, {
           id: `queue_${i}`,
           role: "target",
-          state: i < this.queueSystem.commandCount ? "selected" : "idle",
+          state: this.queueCardEntityState(i),
           glyph: cmd ? COMMAND_ICONS[cmd.type] : undefined,
           label: cmdLabel ?? `${i + 1}`,
           spokenLabel: cmdLabel
@@ -740,9 +857,7 @@ export class GT035Session extends TemplateGameSession<
       drawSlotItem(ctx, rs, slot, {
         id: "robot",
         asset: ROBOT_ASSET,
-        label: this.gridLabel(
-          FACING_ARROWS[this.robotState.facing.toLowerCase()] ?? "→"
-        ),
+        label: this.gridLabel(FACING_ARROWS[this.getDisplayFacing()] ?? "→"),
         state: "selected",
       });
     } else if (this.content.goal.col === col && this.content.goal.row === row) {
@@ -796,7 +911,7 @@ export class GT035Session extends TemplateGameSession<
               id: `queue-${i}`,
               asset: COMMAND_ASSETS[cmd.type],
               label: COMMAND_LABELS[cmd.type],
-              state: "selected",
+              state: this.activeExecutingStep === i ? "touching" : "selected",
             }
           : { id: `empty-queue-${i}`, text: `${i + 1}`, state: "idle" }
       );
