@@ -226,7 +226,7 @@ describe("GT-036 (free-create) TemplateGameSession (BR-E036-01..05)", () => {
     expect(compEvent).toBeDefined();
   });
 
-  it("Scenario 8: Submitting random sequence fails with retry feedback and does not win", () => {
+  it("Scenario 8: Submitting random sequence is a quiet invitation and does not win", () => {
     const session = new GT036Session(
       sampleFixture.content,
       sampleFixture.difficulty,
@@ -248,8 +248,8 @@ describe("GT-036 (free-create) TemplateGameSession (BR-E036-01..05)", () => {
       data: {},
     });
 
-    expect(subRes.valid).toBe(false);
-    expect(subRes.feedback).toBe("amber_soft");
+    // Chưa có luật không phải sai (BR-E036-07): phán quyết im, trẻ làm tiếp.
+    expect(subRes).toEqual({ valid: true, feedback: "none" });
     session.commit({
       type: "submit_creation",
       data: {},
@@ -311,7 +311,9 @@ describe("GT-036 (free-create) TemplateGameSession (BR-E036-01..05)", () => {
       type: "submit_creation",
       data: {},
     });
-    expect(failRes.valid).toBe(false);
+    expect(failRes).toEqual({ valid: true, feedback: "none" });
+    session.commit({ type: "submit_creation", data: {} });
+    expect(session.isWin).toBe(false);
 
     // Complete the 6th item (orange) -> 3 exact repetitions
     session.commit({

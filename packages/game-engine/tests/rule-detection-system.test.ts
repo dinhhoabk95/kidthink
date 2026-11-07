@@ -101,14 +101,20 @@ describe("RuleDetectionSystem (BR-E036-01..02)", () => {
     expect(resExact.repetitions).toBe(2);
   });
 
-  it("Scenario 6: Monotone repeating element works (A A A A)", () => {
+  it("Scenario 6: BR-E036-06 — One repeated element (A A A A) is not a rule", () => {
     const seq = ["red", "red", "red", "red"];
     const res = detectRule(seq, { minRepetitions: 3, paletteSize: 3 });
+    expect(res.detected).toBe(false);
+    expect(res.isWin).toBe(false);
+    expect(res.score).toBe(0);
+  });
+
+  it("Scenario 6b: BR-E036-06 — A motif needs at least two kinds, even when longer (A A A B repeated)", () => {
+    const seq = ["a", "a", "a", "b", "a", "a", "a", "b"];
+    const res = detectRule(seq, { minRepetitions: 2, paletteSize: 2 });
     expect(res.detected).toBe(true);
-    expect(res.motif).toEqual(["red"]);
-    expect(res.repetitions).toBe(4);
-    expect(res.isWin).toBe(true);
-    expect(res.distinctElements).toBe(1);
+    expect(res.motif).toEqual(["a", "a", "a", "b"]);
+    expect(res.distinctElements).toBe(2);
   });
 
   it("Scenario 7: Extra repetitions yield bonus points capped at standard score thresholds", () => {

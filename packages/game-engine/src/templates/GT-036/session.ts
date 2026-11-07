@@ -2,7 +2,6 @@ import type { AgeBand } from "#src/contracts/types";
 import {
   ACTION_CORRECT,
   ACTION_IGNORED,
-  ACTION_RETRY,
   type ActionResult,
   type GameAction,
   type HintTarget,
@@ -41,6 +40,12 @@ export interface GT036ActionPayload {
   readonly slotIndex?: number;
   readonly elementId?: string;
 }
+
+/** Chốt mà chưa có luật: lời mời làm tiếp, không tính sai. */
+const QUIET_OK: ActionResult = Object.freeze({
+  valid: true,
+  feedback: "none",
+});
 
 export class GT036Session extends TemplateGameSession<
   GT036Content,
@@ -105,22 +110,51 @@ export class GT036Session extends TemplateGameSession<
     super.destroy();
   }
 
+  /**
+   * Bước gợi ý kế tiếp: mở đầu một mô-típ hai loại rồi lặp nó (`BR-E036-06`).
+   * Chỉ là gợi ý — hai ô đầu luôn khác loại để dải có luật; `null` khi dải đã khớp.
+   */
+  private hintPlan(): { slot: number; elementId: string } | null {
+    const palette = this.content.palette.map((p) => p.id);
+    const first = this.placedItems[0] ?? palette[0];
+    if (!first) {
+      return null;
+    }
+    const placedSecond = this.placedItems[1];
+    const second =
+      placedSecond && placedSecond !== first
+        ? placedSecond
+        : palette.find((id) => id !== first);
+    if (!second) {
+      return null;
+    }
+    const motif = [first, second];
+    for (let i = 0; i < this.content.track_length; i++) {
+      const want = motif[i % 2];
+      if (want && this.placedItems[i] !== want) {
+        return { slot: i, elementId: want };
+      }
+    }
+    return null;
+  }
+
   override getHintTargetIndex(): number | null {
     if (this.isWin || this.isWon) {
       return null;
     }
-    const count = this.content.track_length;
-    const palCount = this.content.palette.length;
-    // Dải đã đầy thì bước kế là nút xong ở `zones.action` — không phải slot
+    const plan = this.hintPlan();
+    // Dải đã khớp thì bước kế là nút xong ở `zones.action` — không phải slot
     // của sân khấu (`BR-PSZ-05`), nên không có ô nào để chỉ.
-    const emptyTrackIdx = this.placedItems.indexOf(null);
-    if (emptyTrackIdx < 0) {
+    if (!plan) {
       return null;
     }
-    if (!this.selectedPaletteId && palCount > 0) {
-      return count;
+    if (plan.elementId !== this.selectedPaletteId) {
+      const palIdx = this.content.palette.findIndex(
+        (p) => p.id === plan.elementId
+      );
+      return palIdx >= 0 ? this.content.track_length + palIdx : plan.slot;
     }
-    return emptyTrackIdx;
+    return plan.slot;
   }
 
   override getHintTarget(): HintTarget | null {
@@ -131,7 +165,7 @@ export class GT036Session extends TemplateGameSession<
     if (index !== null) {
       return { kind: "slot", index };
     }
-    if (!this.placedItems.includes(null)) {
+    if (this.placedItems.includes(null) === false || this.hintPlan() === null) {
       return { kind: "action" };
     }
     return super.getHintTarget();
@@ -217,7 +251,8 @@ export class GT036Session extends TemplateGameSession<
       strictness: this.difficulty.strictness,
       paletteSize: this.content.palette.length,
     });
-    return result.isWin ? ACTION_CORRECT : ACTION_RETRY;
+    // Không có luật chưa phải sai: tác phẩm của trẻ chỉ cần làm tiếp (`BR-E036-07`).
+    return result.isWin ? ACTION_CORRECT : QUIET_OK;
   }
 
   override commit(action: GameAction): void {
@@ -365,7 +400,8 @@ export class GT036Session extends TemplateGameSession<
       return;
     }
 
-    this.sfxEngine.play("amber_soft");
+    // Chưa có luật: tiếng nhẹ như mọi lần đặt, các ô đã đặt sáng mời làm tiếp.
+    this.sfxEngine.play("tap");
   }
 
   update(_deltaMs: number): void {
@@ -469,6 +505,16 @@ export class GT036Session extends TemplateGameSession<
     );
   }
 
+  private trackEntityState(
+    index: number,
+    placedId: string | null | undefined
+  ): ViewEntity["state"] {
+    if (this.isTrackCellLit(index)) {
+      return "active";
+    }
+    return placedId ? "selected" : "idle";
+  }
+
   private appendTrackEntities(entities: ViewEntity[], count: number): void {
     for (let i = 0; i < count; i++) {
       const slot = this.slots[i];
@@ -485,7 +531,7 @@ export class GT036Session extends TemplateGameSession<
         id: `track_${i}`,
         slotIndex: i,
         role: "target",
-        state: placedId ? "selected" : "idle",
+        state: this.trackEntityState(i, placedId),
         x: slot.x,
         y: slot.y,
         w: slot.w,
@@ -595,7 +641,7 @@ export class GT036Session extends TemplateGameSession<
         drawSlotItem(ctx, rs, slot, {
           id: `placed-${i}`,
           asset: palItem.asset,
-          state: "idle",
+          state: this.isTrackCellLit(i) ? "touching" : "idle",
         });
       } else {
         drawSlotItem(ctx, rs, slot, {
@@ -630,20 +676,33 @@ export class GT036Session extends TemplateGameSession<
     }
   }
 
+  /** Lời sau khi chốt: không in mã phần tử thô (`BR-E036-08`); mô-típ sáng trên dải thay cho chữ. */
+  ruleOverlayText(): string | null {
+    if (!(this.submitted && this.detectedRule?.detected)) {
+      return null;
+    }
+    return `Tuyệt vời! Quy luật của bé lặp lại ${this.detectedRule.repetitions} lần!`;
+  }
+
   private renderRuleOverlay(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem
   ): void {
-    if (!this.detectedRule?.detected) {
-      return;
+    const text = this.ruleOverlayText();
+    if (text) {
+      drawSubPromptText(ctx, rs, text);
     }
-    const motifStr = this.detectedRule.motif.join(" - ");
+  }
 
-    drawSubPromptText(
-      ctx,
-      rs,
-      `Tuyệt vời! Quy luật [${motifStr}] lặp lại ${this.detectedRule.repetitions} lần!`
-    );
+  /** Ô đã đặt sáng lên khi chốt mà chưa có luật, hoặc nằm trong mô-típ vừa đọc ra. */
+  private isTrackCellLit(index: number): boolean {
+    if (!(this.submitted && this.placedItems[index])) {
+      return false;
+    }
+    if (!this.detectedRule?.detected) {
+      return true;
+    }
+    return index < this.detectedRule.motif.length;
   }
 
   get score(): number {

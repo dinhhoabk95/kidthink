@@ -4,6 +4,7 @@
  * Tiêu chuẩn:
  * - BR-E036-01: Chấm là hàm thuần tất định của chuỗi phần tử và min_repetitions.
  * - BR-E036-02: Mọi quy luật tự nhất quán đều đạt; cấm so với mẫu dựng sẵn.
+ * - BR-E036-06: Mô-típ cần ≥2 loại phần tử; một loại lặp lại không phải quy luật.
  * - Hỗ trợ 2 chế độ: "relaxed" (chấp nhận đuôi dở dang) và "strict" (kết thúc đúng ranh giới).
  */
 
@@ -21,6 +22,9 @@ export interface RuleDetectionResult {
   readonly score: number;
   readonly isWin: boolean;
 }
+
+/** Số loại phần tử khác nhau tối thiểu trong một mô-típ (`BR-E036-06`). */
+const MIN_DISTINCT_IN_MOTIF = 2;
 
 function checkMotifMatch(
   sequence: readonly string[],
@@ -130,9 +134,10 @@ export function detectRule(
       strictness
     );
 
-    if (valid) {
-      const motif = cleanSequence.slice(0, len);
-      const distinctInMotif = new Set(motif).size;
+    const motif = cleanSequence.slice(0, len);
+    const distinctInMotif = new Set(motif).size;
+    // Một loại lặp lại không phải quy luật: mô-típ cần ≥2 loại (`BR-E036-06`).
+    if (valid && distinctInMotif >= MIN_DISTINCT_IN_MOTIF) {
       const score = calculateScore(
         repetitions,
         minRepetitions,
