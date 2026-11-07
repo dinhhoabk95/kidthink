@@ -138,7 +138,7 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
     },
   ],
 
-  /** GT-003: vật rơi êm vào hộp — "bịch" trầm, không dội (`BR-E003-12`). */
+  /** GT-003: vật rơi êm vào hộp — "bịch" trầm, không dội (`BR-E003-08`). */
   drop_thud: [
     {
       delaySec: 0,
@@ -151,7 +151,7 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
     },
   ],
 
-  /** GT-020: lật thẻ — vút lên rồi "tích" nhỏ (`BR-E020-06`). */
+  /** GT-020: lật thẻ — vút lên rồi "tích" nhỏ (`BR-E020-07`). */
   card_flip: [
     {
       delaySec: 0,
@@ -172,7 +172,7 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
     },
   ],
 
-  /** GT-025: tìm ra điểm khác — ba nốt lấp lánh đi lên (`BR-E025-06`). */
+  /** GT-025: tìm ra điểm khác — ba nốt lấp lánh đi lên (`BR-E025-05`). */
   sparkle_find: [988, 1319, 1760].map((freq, i) => ({
     delaySec: i * 0.06,
     type: "sine" as OscillatorType,
@@ -182,7 +182,7 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
     rampOutSec: 0.06,
   })),
 
-  /** GT-026: đèn xanh — nốt rủ rê lên, mời "đi" (`BR-E026-10`). */
+  /** GT-026: đèn xanh — nốt rủ rê lên, mời "đi" (`BR-E026-11`). */
   go_chime: [
     {
       delaySec: 0,
@@ -195,7 +195,7 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
     },
   ],
 
-  /** GT-026: đèn đỏ — nốt trầm dài, êm, báo "đứng lại" (`BR-E026-10`). */
+  /** GT-026: đèn đỏ — nốt trầm dài, êm, báo "đứng lại" (`BR-E026-11`). */
   stop_hum: [
     {
       delaySec: 0,
@@ -207,7 +207,7 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
     },
   ],
 
-  /** GT-037: nhặt được một ngôi sao vào lọ — leng keng đi lên (`BR-E037-08`). */
+  /** GT-037: nhặt được một ngôi sao vào lọ — leng keng đi lên (`BR-E037-10`). */
   star_collect: [
     { delaySec: 0, freq: 1047, durationSec: 0.2 },
     { delaySec: 0.07, freq: 1319, durationSec: 0.2 },

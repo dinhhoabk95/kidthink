@@ -37,6 +37,7 @@ import {
   spawnParticlesAtSlot,
   updateParticles,
 } from "#src/render/index.js";
+import type { MascotPose } from "#src/render/mascot";
 import { deriveStream } from "#src/rng/mulberry32";
 import { shuffle } from "#src/rng/shuffle";
 import type { DegradationState } from "#src/systems/degradation";
@@ -44,6 +45,10 @@ import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT003Content, GT003Difficulty } from "./template.js";
 
 type DraggableItem = GT003Content["items"][number];
+
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E003-08`, `BR-FBK-16`). */
+export const GT003_STORY_LINE =
+  "Gấu Con đang dọn nhà, bé giúp Gấu Con bỏ đồ vào đúng chỗ nhé!";
 
 /**
  * Vật thả trượt trôi về chỗ cũ trong 260ms (`GT-003.md` §4 N4). Hết nhịp đó,
@@ -348,6 +353,7 @@ export class GT003Session extends TemplateGameSession<
 
     if (item.is_correct) {
       this.mechanic.place(itemId, containerId);
+      this.queueSfx("drop_thud");
       this.setItemState(itemId, "correct");
       this.transientStateMs.delete(itemId);
       this.spawnSuccessParticles(itemId);
@@ -395,6 +401,17 @@ export class GT003Session extends TemplateGameSession<
       }
     }
     this.particles = updateParticles(this.particles);
+  }
+
+  override storyLine(): string {
+    return GT003_STORY_LINE;
+  }
+
+  /** Gấu Con reo từ vật đúng đầu tiên tới lúc thắng (`BR-E003-08`). */
+  override mascotMood(): MascotPose | null {
+    return !this.isWon && this.mechanic.getPlacements().size > 0
+      ? "cheer"
+      : null;
   }
 
   override getView(): EngineView {
