@@ -28,14 +28,22 @@ function makeRound(overrides: Partial<RoundConfig> = {}): RoundConfig {
   };
 }
 
+/** `duration_ms` của vòng vừa đóng — thước đo "đồng hồ vòng đã bắt đầu từ lúc nào". */
+function completedDurationMs(runner: RoundRunner): unknown {
+  runner.completeCurrentRound();
+  return runner
+    .getAllTelemetry()
+    .find((e) => e.event_name === "round_completed")?.data?.duration_ms;
+}
+
 /**
- * Đồng hồ vòng (`duration_ms`) và hẹn giờ trợ giúp (`hint_after_ms`) chỉ bắt
+ * Đồng hồ vòng (`duration_ms`) chỉ bắt
  * đầu tính từ lúc câu dẫn đọc xong — không phải từ lúc mở vòng (Task #273,
  * `BR-PNR-11`). Mặc định (`gateOnPromptSettle` không khai) giữ đúng hành vi
  * cũ cho mọi lời gọi hiện có.
  */
 describe("RoundRunner — gateOnPromptSettle (BR-PNR-11)", () => {
-  it("mặc định (không khai gateOnPromptSettle): hẹn giờ trợ giúp chạy ngay khi mở vòng — hành vi cũ giữ nguyên", () => {
+  it("mặc định (không khai gateOnPromptSettle): đồng hồ vòng chạy ngay khi mở vòng — hành vi cũ giữ nguyên", () => {
     vi.useFakeTimers();
     try {
       const runner = new RoundRunner({
@@ -45,13 +53,13 @@ describe("RoundRunner — gateOnPromptSettle (BR-PNR-11)", () => {
       runner.startFirstRound();
 
       vi.advanceTimersByTime(2000);
-      expect(runner.getState().hintCountTotal).toBe(1);
+      expect(completedDurationMs(runner)).toBe(2000);
     } finally {
       vi.useRealTimers();
     }
   });
 
-  it("gateOnPromptSettle: true + onPlayNarration (đường bề mặt chơi): hẹn giờ trợ giúp KHÔNG chạy trước khi notePromptSettled()", () => {
+  it("gateOnPromptSettle: true + onPlayNarration (đường bề mặt chơi): đồng hồ vòng KHÔNG chạy trước khi notePromptSettled()", () => {
     vi.useFakeTimers();
     try {
       const runner = new RoundRunner({
@@ -66,12 +74,11 @@ describe("RoundRunner — gateOnPromptSettle (BR-PNR-11)", () => {
       expect(runner.isPromptSettled()).toBe(false);
 
       vi.advanceTimersByTime(5000);
-      expect(runner.getState().hintCountTotal).toBe(0);
 
       runner.notePromptSettled();
       expect(runner.isPromptSettled()).toBe(true);
       vi.advanceTimersByTime(2000);
-      expect(runner.getState().hintCountTotal).toBe(1);
+      expect(completedDurationMs(runner)).toBe(2000);
     } finally {
       vi.useRealTimers();
     }
@@ -122,7 +129,7 @@ describe("RoundRunner — gateOnPromptSettle (BR-PNR-11)", () => {
     }
   });
 
-  it("gateOnPromptSettle: true + đường phát nội bộ, mp3 phát thành công: tự settle, hẹn giờ trợ giúp chạy", () => {
+  it("gateOnPromptSettle: true + đường phát nội bộ, mp3 phát thành công: tự settle, đồng hồ vòng chạy", () => {
     vi.useFakeTimers();
     try {
       const audio = new AudioController(true);
@@ -140,13 +147,12 @@ describe("RoundRunner — gateOnPromptSettle (BR-PNR-11)", () => {
       runner.startFirstRound();
 
       vi.advanceTimersByTime(5000);
-      expect(runner.getState().hintCountTotal).toBe(0);
 
       // mp3 phát xong thật.
       capturedOnEnd?.();
 
       vi.advanceTimersByTime(2000);
-      expect(runner.getState().hintCountTotal).toBe(1);
+      expect(completedDurationMs(runner)).toBe(2000);
     } finally {
       vi.useRealTimers();
     }
@@ -187,12 +193,11 @@ describe("RoundRunner — gateOnPromptSettle (BR-PNR-11)", () => {
       // mp3 đã báo lỗi và rơi xuống TTS, nhưng TTS CHƯA nói xong —
       // Cấm — NEVER đã settle.
       vi.advanceTimersByTime(5000);
-      expect(runner.getState().hintCountTotal).toBe(0);
 
       // TTS nói xong thật.
       ttsOnEnd?.();
       vi.advanceTimersByTime(2000);
-      expect(runner.getState().hintCountTotal).toBe(1);
+      expect(completedDurationMs(runner)).toBe(2000);
     } finally {
       vi.useRealTimers();
     }

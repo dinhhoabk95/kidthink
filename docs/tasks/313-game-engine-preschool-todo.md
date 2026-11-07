@@ -19,7 +19,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 - [x] B4 modal chiến thắng hiện ngay, tier/sao fetch nền
 - [x] B5 pause dừng narration + timer; `game_resumed`; `duration_ms` trừ pause
 - [x] B6 cooldown ~400ms sau verdict
-- [ ] B8 một đồng hồ hint, `hint_after_ms` theo round
+- [x] B8 một đồng hồ hint, `hint_after_ms` theo round
 - [ ] B9 drag slop theo age band; drop cực ngắn = tap; whoosh khi spring-back
 - [ ] B7 bỏ `prepareRound` trùng · B10 `allow_retry:false` cho thấy đáp án trước khi skip · B11 khoá input khi skip round cuối
 - [ ] B12 replay gọi `cleanupSession`; `seq` ổn định; thống nhất bảng touch floor; nút GT-000 ≥ 96px

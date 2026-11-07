@@ -374,6 +374,13 @@ export class GameEngine {
    * Đặt lại trạng thái trợ giúp và xoá ngay đích gợi ý trên engine về L0
    * (khi trẻ trả lời đúng, qua vòng, hoặc mở vòng mới).
    */
+  /** Đặt `hint_after_ms` của vòng sắp chơi (Task #313 B8). */
+  setRoundHintAfterMs(
+    difficultyParams: EngineConfig["difficulty_params"]
+  ): void {
+    this.scaffolding?.configureHintAfter(extractHintAfterMs(difficultyParams));
+  }
+
   resetScaffolding(): void {
     this.scaffolding?.onSuccess();
     this.applyHintTargetForLevel(0);
@@ -425,6 +432,19 @@ export class GameEngine {
       // @mindkid/play: field lạ bị `cleanEventPayload` bỏ im lặng, field thiếu
       // bị `.partial()` che — cả hai đều không báo lỗi ở đâu.
       const roundIdx = this.currentRoundIndex();
+      // Đồng hồ trợ giúp duy nhất: mỗi lần leo thang là một gợi ý, RoundRunner
+      // đếm `hint_count` theo event này (Task #313 B8).
+      this.emitEvent({
+        event_name: "hint_requested",
+        timestamp_ms: Date.now(),
+        data: {
+          round_index: roundIdx,
+          source:
+            this.scaffolding.lastTrigger === "miss_streak"
+              ? "auto_miss"
+              : "auto_timer",
+        },
+      });
       this.emitEvent({
         event_name: "scaffold_escalated",
         timestamp_ms: Date.now(),

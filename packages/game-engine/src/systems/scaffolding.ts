@@ -186,9 +186,9 @@ function advanceState(
 
 export class ScaffoldingSystem {
   private readonly internalAgeBand: AgeBand;
-  private readonly internalHintAfterMs?: number;
+  private internalHintAfterMs?: number;
   private readonly internalState: ScaffoldState;
-  private readonly internalThresholds: ScaffoldingBandThresholds;
+  private internalThresholds: ScaffoldingBandThresholds;
 
   constructor(ageBand: AgeBand = "3-4", hintAfterMs?: number) {
     this.internalAgeBand = ageBand;
@@ -196,6 +196,18 @@ export class ScaffoldingSystem {
     this.internalState = this.createInitialState();
     this.internalThresholds = resolveScaffoldingThresholds(
       ageBand,
+      hintAfterMs
+    );
+  }
+
+  /**
+   * Đổi `hint_after_ms` cho vòng mới: mỗi vòng có ngưỡng riêng, không dùng
+   * mãi giá trị của vòng 0 (Task #313 B8).
+   */
+  configureHintAfter(hintAfterMs?: number): void {
+    this.internalHintAfterMs = hintAfterMs;
+    this.internalThresholds = resolveScaffoldingThresholds(
+      this.internalAgeBand,
       hintAfterMs
     );
   }

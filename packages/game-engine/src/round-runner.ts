@@ -189,10 +189,6 @@ export class RoundRunner {
   private attemptIndex = 0;
   /** Số `answer_*` session tự phát mà runner đã thấy ở vòng hiện tại. */
   private sessionAnswerEventsSeen = 0;
-  private hintTimer: ReturnType<typeof setTimeout> | null = null;
-  /** Hạn nổ của `hintTimer` (ms epoch) — để hẹn lại phần còn lại sau pause. */
-  private hintDueAtMs = 0;
-  private hintRoundIndex = 0;
   /** Lúc bắt đầu pause hiện tại; `null` khi không pause (BR-HPL-07). */
   private pausedSinceMs: number | null = null;
   /** Tổng thời gian pause đã xong của vòng hiện tại. */
@@ -370,7 +366,6 @@ export class RoundRunner {
       return false;
     }
 
-    this.clearHintTimer();
     this.collectSessionTelemetry();
     this.recordEvent("round_completed", {
       round_index: this.currentRoundIndex,
@@ -398,7 +393,6 @@ export class RoundRunner {
       return false;
     }
 
-    this.clearHintTimer();
     this.collectSessionTelemetry();
     this.recordEvent("round_skipped", {
       round_index: this.currentRoundIndex,
@@ -466,6 +460,9 @@ export class RoundRunner {
     ) {
       return;
     }
+    if (event.event_name === "hint_requested") {
+      this.recordHint();
+    }
     this.pushLifecycleAware(event);
   }
 
@@ -515,7 +512,6 @@ export class RoundRunner {
 
   /** Clean up. Must be called when the level is done or abandoned. */
   destroy(): void {
-    this.clearHintTimer();
     this.audioController.stopAll();
     if (this.ownsAudioController) {
       this.audioController.dispose();
@@ -623,49 +619,17 @@ export class RoundRunner {
     speakOrCue();
   }
 
-  private clearHintTimer(): void {
-    if (this.hintTimer !== null) {
-      clearTimeout(this.hintTimer);
-      this.hintTimer = null;
-    }
-    this.hintDueAtMs = 0;
-  }
-
   /**
-   * Bắt đầu đồng hồ vòng (`sessionStartMs`, dùng cho `duration_ms`) và hẹn
-   * giờ trợ giúp — ngay khi mở vòng nếu gate tắt, hoặc từ `notePromptSettled`
-   * nếu gate bật (`BR-PNR-11`).
+   * Bắt đầu đồng hồ vòng (`sessionStartMs`, dùng cho `duration_ms`) — ngay khi
+   * mở vòng nếu gate tắt, hoặc từ `notePromptSettled` nếu gate bật
+   * (`BR-PNR-11`). Đồng hồ trợ giúp thuộc engine, không ở đây (Task #313 B8).
    */
-  private beginRoundTiming(
-    index: number,
-    rawParams: Record<string, GameActionValue> | undefined
-  ): void {
-    const hintAfterMs = rawParams?.hint_after_ms;
-    if (typeof hintAfterMs === "number" && hintAfterMs > 0) {
-      this.scheduleHintTimer(index, hintAfterMs);
-    }
+  private beginRoundTiming(): void {
     this.pausedTotalMs = 0;
     if (this.pausedSinceMs !== null) {
       this.pausedSinceMs = Date.now();
     }
     this.sessionStartMs = Date.now();
-  }
-
-  private scheduleHintTimer(index: number, delayMs: number): void {
-    this.hintRoundIndex = index;
-    this.hintDueAtMs = Date.now() + delayMs;
-    if (this.pausedSinceMs !== null) {
-      // Đang pause: `resume` sẽ hẹn lại với đúng phần còn lại.
-      return;
-    }
-    this.hintTimer = setTimeout(() => {
-      this.hintTimer = null;
-      this.recordEvent("hint_requested", {
-        round_index: index,
-        source: "timer",
-      });
-      this.recordHint();
-    }, delayMs);
   }
 
   /** Thời gian chơi thật của vòng, đã trừ mọi lần pause (BR-HPL-07). */
@@ -679,16 +643,12 @@ export class RoundRunner {
     );
   }
 
-  /** Dừng đồng hồ vòng và hẹn giờ trợ giúp (BR-HPL-07). Gọi lặp là vô hại. */
+  /** Dừng đồng hồ vòng (BR-HPL-07); đồng hồ hint thuộc engine. Gọi lặp là vô hại. */
   pause(): void {
     if (this.pausedSinceMs !== null || this.isFinished) {
       return;
     }
     this.pausedSinceMs = Date.now();
-    if (this.hintTimer !== null) {
-      clearTimeout(this.hintTimer);
-      this.hintTimer = null;
-    }
   }
 
   /** Chạy tiếp: hẹn lại hint với phần còn lại, không tính thời gian đã pause. */
@@ -696,14 +656,8 @@ export class RoundRunner {
     if (this.pausedSinceMs === null) {
       return;
     }
-    const now = Date.now();
-    // Phần còn lại của hint tính tại lúc pause; <= 0 nghĩa là đã nổ hoặc không có.
-    const hintRemainingMs = this.hintDueAtMs - this.pausedSinceMs;
-    this.pausedTotalMs += now - this.pausedSinceMs;
+    this.pausedTotalMs += Date.now() - this.pausedSinceMs;
     this.pausedSinceMs = null;
-    if (hintRemainingMs > 0 && this.currentSession && this.hintTimer === null) {
-      this.scheduleHintTimer(this.hintRoundIndex, hintRemainingMs);
-    }
   }
 
   /**
@@ -721,11 +675,7 @@ export class RoundRunner {
       return;
     }
     this.promptSettled = true;
-    const config = this.rounds[this.currentRoundIndex];
-    const rawParams = config?.difficulty_params as
-      | Record<string, GameActionValue>
-      | undefined;
-    this.beginRoundTiming(this.currentRoundIndex, rawParams);
+    this.beginRoundTiming();
   }
 
   /** Câu dẫn vòng hiện tại đã đọc xong hay chưa — bề mặt chơi gate cử chỉ theo đây (`BR-PNR-11`). */
@@ -740,7 +690,6 @@ export class RoundRunner {
       return;
     }
 
-    this.clearHintTimer();
     this.currentRoundIndex = index;
     this.attemptIndex = 0;
     this.sessionAnswerEventsSeen = 0;
@@ -749,9 +698,6 @@ export class RoundRunner {
       return;
     }
 
-    const rawParams = config.difficulty_params as
-      | Record<string, GameActionValue>
-      | undefined;
     // Constructor đã chặn round thiếu item_count.
     const itemCount = resolveItemCount(config) ?? 1;
 
@@ -781,7 +727,7 @@ export class RoundRunner {
     if (this.gateOnPromptSettle) {
       this.promptSettled = false;
     } else {
-      this.beginRoundTiming(index, rawParams);
+      this.beginRoundTiming();
     }
 
     // Nhịp N2: phát câu dẫn mở vòng (BR-PNR-04, BR-PNR-06)

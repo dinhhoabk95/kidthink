@@ -327,7 +327,7 @@ describe("RoundRunner (BR-RSP)", () => {
       ).toThrow(ERR_MISSING_ITEM_COUNT);
     });
 
-    it("hint_after_ms: phát event hint_requested và tăng hintCountTotal", () => {
+    it("hint_count đếm theo hint_requested của engine; runner không tự hẹn giờ hint (Task #313 B8)", () => {
       vi.useFakeTimers();
       try {
         const runner = new RoundRunner({
@@ -342,20 +342,21 @@ describe("RoundRunner (BR-RSP)", () => {
         });
 
         runner.startFirstRound();
+        vi.advanceTimersByTime(60_000);
+        // Một đồng hồ hint duy nhất ở engine: runner im lặng dù quá hint_after_ms.
         expect(runner.getState().hintCountTotal).toBe(0);
+        expect(
+          runner
+            .getAllTelemetry()
+            .some((e) => e.event_name === "hint_requested")
+        ).toBe(false);
 
-        // Chưa tới 2000ms
-        vi.advanceTimersByTime(1500);
-        expect(runner.getState().hintCountTotal).toBe(0);
-
-        // Qua 2000ms
-        vi.advanceTimersByTime(600);
+        runner.recordExternalEvent({
+          event_name: "hint_requested",
+          timestamp_ms: Date.now(),
+          data: { round_index: 0, source: "auto_timer" },
+        });
         expect(runner.getState().hintCountTotal).toBe(1);
-
-        const events = runner.getAllTelemetry();
-        const hintEvt = events.find((e) => e.event_name === "hint_requested");
-        expect(hintEvt).toBeDefined();
-        expect(hintEvt?.data?.source).toBe("timer");
       } finally {
         vi.useRealTimers();
       }

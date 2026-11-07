@@ -6,7 +6,7 @@ import {
 } from "#src/game-session";
 import { RoundRunner } from "#src/round-runner";
 
-/** Task #313 B5 — pause dừng hint timer và không tính vào `duration_ms` (BR-HPL-07). */
+/** Task #313 B5 — pause không tính vào `duration_ms` (BR-HPL-07). */
 class IdleSession extends BaseGameSession {
   setupEntities(): void {
     this.recordEvent("setup");
@@ -55,20 +55,6 @@ describe("Task #313 B5 — RoundRunner pause/resume", () => {
     runner.completeCurrentRound();
     const done = eventsOf(runner, "round_completed")[0];
     expect(done?.data?.duration_ms).toBe(3000);
-  });
-
-  it("hint timer không nổ khi đang pause, chạy tiếp phần còn lại sau resume", () => {
-    const runner = makeRunner();
-    runner.startFirstRound();
-    vi.advanceTimersByTime(6000);
-    runner.pause();
-    vi.advanceTimersByTime(60_000);
-    expect(eventsOf(runner, "hint_requested")).toHaveLength(0);
-    runner.resume();
-    vi.advanceTimersByTime(3900);
-    expect(eventsOf(runner, "hint_requested")).toHaveLength(0);
-    vi.advanceTimersByTime(200);
-    expect(eventsOf(runner, "hint_requested")).toHaveLength(1);
   });
 
   it("pause/resume lặp không đếm trùng", () => {

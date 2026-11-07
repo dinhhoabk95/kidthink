@@ -110,4 +110,27 @@ describe("GameEngine.acceptingInput / advanceFrame (BR-PNR-11)", () => {
     expect(updateCalls).toBe(1);
     engine.destroy();
   });
+
+  it("leo thang trợ giúp phát hint_requested (đồng hồ hint duy nhất, Task #313 B8)", () => {
+    const engine = buildEngine();
+    const sources: string[] = [];
+    engine.on("hint_requested", (event) => {
+      sources.push(String(event.data?.source));
+    });
+    for (let i = 0; i < 11; i++) {
+      engine.advanceFrame(1000);
+    }
+    expect(sources[0]).toBe("auto_timer");
+    engine.destroy();
+  });
+
+  it("setRoundHintAfterMs đổi ngưỡng theo vòng: hint_after_ms nhỏ leo L1 sớm hơn", () => {
+    const engine = buildEngine();
+    engine.setRoundHintAfterMs({ ...difficulty, hint_after_ms: 2000 });
+    for (let i = 0; i < 3; i++) {
+      engine.advanceFrame(1000);
+    }
+    expect(engine.scaffolding?.getCurrentLevel()).toBeGreaterThanOrEqual(1);
+    engine.destroy();
+  });
 });

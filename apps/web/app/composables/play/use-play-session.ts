@@ -470,11 +470,15 @@ export function usePlaySession(options: UsePlaySessionOptions) {
           },
         });
       },
-      onRoundStarted: (roundIndex) => {
+      onRoundStarted: (roundIndex, roundConfig) => {
         currentRound.value = roundIndex;
         canSkipRound.value = false;
         if (engine) {
           engine.roundIndex = roundIndex;
+          // Mỗi vòng một ngưỡng `hint_after_ms` riêng (Task #313 B8).
+          engine.setRoundHintAfterMs(
+            roundConfig.difficulty_params as EngineConfig["difficulty_params"]
+          );
           engine.resetScaffolding();
           // Chặn cử chỉ tới khi câu dẫn đọc xong (BR-PNR-11) — mở lại ở
           // `onNarrationSettled` bên trên. GT-000 tự quản lý gate riêng.
