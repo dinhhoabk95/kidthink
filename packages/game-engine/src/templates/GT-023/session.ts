@@ -34,11 +34,13 @@ import {
   drawWoodenTokenDock,
   slotAtPoint,
 } from "#src/render/index.js";
+import type { MascotPose } from "#src/render/mascot";
 import {
   type AssemblyPlacementResult,
   AssemblySystem,
 } from "#src/systems/assembly-system";
 import type { DegradationState } from "#src/systems/degradation";
+import { MoodPulse } from "#src/systems/mood-pulse";
 import type { RenderSystem } from "#src/systems/render-system";
 import { WRONG_FLASH_MS, WrongFlash } from "#src/systems/wrong-flash";
 import type { GT023Content, GT023Difficulty } from "./template.js";
@@ -105,6 +107,15 @@ function modelScales(
   return scaleX > 0 && scaleY > 0 ? { scaleX, scaleY } : null;
 }
 
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E023-07`, `BR-FBK-16`). */
+export const GT023_STORY_LINE =
+  "Chim Gõ Kiến đang lắp một mô hình bằng gỗ. Bé giúp Chim Gõ Kiến ghép từng mảnh vào đúng chỗ nhé!";
+
+/** Mascot vui sau mỗi mảnh khớp. */
+export const GT023_HAPPY_MS = 1000;
+/** Mascot nghiêng đầu sau mảnh chưa khớp neo. */
+export const GT023_WONDER_MS = 1500;
+
 export class GT023Session extends TemplateGameSession<
   GT023Content,
   GT023Difficulty
@@ -132,7 +143,23 @@ export class GT023Session extends TemplateGameSession<
   }
   override readonly usesPromptZone = true;
 
+  private readonly mood = new MoodPulse();
+
+  override storyLine(): string {
+    return GT023_STORY_LINE;
+  }
+
+  /** Chỉ phản ứng sau khi thả mảnh, không báo trước (`BR-E023-07`). */
+  override mascotMood(): MascotPose | null {
+    return this.isWon ? null : this.mood.current();
+  }
+
+  update(deltaMs: number): void {
+    this.mood.tick(deltaMs);
+  }
+
   setupEntities(): void {
+    this.mood.clear();
     this.isWon = false;
     this.wrongPartId = null;
     this.wrongFlash.clear();
@@ -210,6 +237,12 @@ export class GT023Session extends TemplateGameSession<
     const result = this.assemblySystem.assemblePart(partId, anchorId);
 
     if (result.valid) {
+      if (result.isAnchorMatch) {
+        this.queueSfx("piece_click");
+        this.mood.set("happy", GT023_HAPPY_MS);
+      } else {
+        this.mood.set("wonder", GT023_WONDER_MS);
+      }
       this.wrongPartId = null;
       this.placementMechanic.place(partId, anchorId);
 

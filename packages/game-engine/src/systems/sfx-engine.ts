@@ -44,7 +44,8 @@ export type SFXType =
   | "clock_tick"
   | "block_bump"
   | "torch_click"
-  | "mirror_chime";
+  | "mirror_chime"
+  | "piece_click";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -688,6 +689,26 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       volume: 0.07,
       durationSec: 0.2,
       rampOutSec: 0.1,
+    },
+  ],
+
+  /** GT-023: mảnh gỗ khớp vào "click" khô, gọn (`BR-E023-07`). */
+  piece_click: [
+    {
+      delaySec: 0,
+      type: "square",
+      freq: 760,
+      volume: 0.06,
+      durationSec: 0.05,
+      rampOutSec: 0.04,
+    },
+    {
+      delaySec: 0.07,
+      type: "triangle",
+      freq: 520,
+      volume: 0.09,
+      durationSec: 0.1,
+      rampOutSec: 0.05,
     },
   ],
 
