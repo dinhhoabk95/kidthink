@@ -45,7 +45,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 
 - [ ] 007 (còn lại) — cơ chế kéo/gộp vật thật giữa ô tổng và hai khay phần: viết lại session (toAction/getView/render, bài sinh nội dung `discrete-object`); quá lớn cho một commit, cần plan riêng
 - [ ] 010 (còn lại) — đổi nội dung 4–5 tuổi sang bảng tra/bảng giá một ẩn (không hệ hai phương trình): cần đổi schema/generator, thuộc Phase 4/5
-- [ ] 012 (còn lại) — `flash_ms` vẫn cố định 1500 ở bộ sinh: co giãn theo band/độ khó (đã nằm ở Phase 4 "Generator 012"); N4/N6 hiện lại nhóm vật sau khi chọn đúng chưa có code
+- [ ] 012 (còn lại) — N4/N6 hiện lại nhóm vật sau khi chọn đúng chưa có code (`flash_ms` co giãn ở bộ sinh đã xong ở Phase 4)
 - [ ] 013 (còn lại) — mê cung ~50% tường, nhiều lối: giảm mật độ tường và số lối ở bộ sinh/fixture 4–5 tuổi (nội dung/generator, Phase 4); GT-013#2 vẫn nằm trong sổ nợ web-gesture
 - [ ] 014 (còn lại) — ẩn số khối lượng khỏi vật khay/đĩa (đang in nên thành phép trừ): cần kích thước vật tỉ lệ khối lượng (BR-E014-03, hiện ô khay cùng cỡ) trước khi ẩn số, không thì bài không giải được; thuộc Phase 5
 
@@ -65,7 +65,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 - [x] Generator 006 (số đếm tăng dần, session xáo bằng Sattolo, BR-E006-02/04)
 - [x] Generator 008 (ô mang tên vật, khay không xếp sẵn, số ô/hint theo band, BR-E008-04; `distractor_count` còn chết — session ràng items = ô)
 - [x] Generator 011 (hình vuông Latin hoán vị, ô trống/lưới 2x2-3x3 đổi theo seed, chỉ band 5-6, BR-E011-04)
-- [ ] Generator 012 (+ `flash_ms` co giãn theo band)
+- [x] Generator 012 (`flash_ms` theo band×số vật 800–3000, số vật cap-1..cap, nhiễu/hint/arrangement theo band-seed, BR-E012-05)
 - [ ] Generator 015 (puzzle có nghiệm duy nhất cần suy luận)
 - [ ] Generator 016
 - [ ] Band khớp `age_min` (011, 015, 017)

@@ -14,6 +14,11 @@ import {
   GT011ContentSchema,
   GT011DifficultySchema,
 } from "#src/templates/GT-011/template";
+import {
+  FLASH_ITEM_CAP_BY_BAND,
+  GT012ContentSchema,
+  GT012DifficultySchema,
+} from "#src/templates/GT-012/template";
 
 /**
  * Bộ sinh thoái hoá (Task #313 Phase 4): mỗi ca chứng minh một cách bài không
@@ -270,5 +275,93 @@ describe("GT-011 — mỗi seed một bài khác, band khớp age_min (BR-E011-0
       expect(outside.length).toBeLessThan(content.options.length - 1);
     }
     expect(counts.size).toBeGreaterThan(1);
+  });
+});
+
+describe("GT-012 — flash_ms co giãn theo band và số vật, đủ dải độ khó (BR-E012-05)", () => {
+  const BANDS = ["3-4", "4-5", "5-6"] as const;
+
+  function parsed(seed: number, band: (typeof BANDS)[number]) {
+    const { content_pack, difficulty_params } = gen("GT-012", seed, band);
+    return {
+      content: GT012ContentSchema.parse(content_pack),
+      diff: GT012DifficultySchema.parse(difficulty_params),
+    };
+  }
+
+  it("flash_ms không cố định 1500, nằm trong 800–3000 và tăng theo số vật trong cùng band", () => {
+    const all = new Set<number>();
+    for (const band of BANDS) {
+      const byCount = new Map<number, number>();
+      for (const seed of SEEDS) {
+        const { content, diff } = parsed(seed, band);
+        expect(diff.flash_ms).toBeGreaterThanOrEqual(800);
+        expect(diff.flash_ms).toBeLessThanOrEqual(3000);
+        all.add(diff.flash_ms);
+        const count = content.flash_items.length;
+        const seen = byCount.get(count);
+        if (seen !== undefined) {
+          expect(diff.flash_ms, `band=${band} count=${count}`).toBe(seen);
+        }
+        byCount.set(count, diff.flash_ms);
+      }
+      const counts = [...byCount.keys()].sort((a, b) => a - b);
+      expect(counts.length, `band=${band}`).toBeGreaterThan(1);
+      for (let i = 1; i < counts.length; i++) {
+        expect(byCount.get(counts[i] ?? 0) ?? 0).toBeGreaterThan(
+          byCount.get(counts[i - 1] ?? 0) ?? 0
+        );
+      }
+    }
+    expect(all.size).toBeGreaterThan(3);
+    expect(all.has(1500) && all.size === 1).toBe(false);
+  });
+
+  it("band nhỏ tuổi được xem lâu hơn ở cùng số vật", () => {
+    const flashAt = (band: (typeof BANDS)[number], count: number) => {
+      for (const seed of SEEDS) {
+        const { content, diff } = parsed(seed, band);
+        if (content.flash_items.length === count) {
+          return diff.flash_ms;
+        }
+      }
+      return null;
+    };
+    const a = flashAt("3-4", 2);
+    const b = flashAt("4-5", 2);
+    expect(a).not.toBeNull();
+    expect(b).not.toBeNull();
+    expect(a ?? 0).toBeGreaterThan(b ?? 0);
+  });
+
+  it("số vật không kẹt ở một giá trị: mỗi band có ít nhất hai mức và không vượt trần", () => {
+    for (const band of BANDS) {
+      const counts = new Set<number>();
+      for (const seed of SEEDS) {
+        const { content, diff } = parsed(seed, band);
+        const n = content.flash_items.length;
+        counts.add(n);
+        expect(n).toBeLessThanOrEqual(FLASH_ITEM_CAP_BY_BAND[band]);
+        expect(diff.item_count).toBe(n);
+        expect(diff.distractor_count).toBe(content.options.length - 1);
+      }
+      expect(counts.size, `band=${band}`).toBeGreaterThan(1);
+    }
+  });
+
+  it("cách bày đổi theo seed và số phương án tăng theo band", () => {
+    const arrangements = new Set<string>();
+    const optionCounts: number[] = [];
+    for (const band of BANDS) {
+      const sizes = new Set<number>();
+      for (const seed of SEEDS) {
+        const { content } = parsed(seed, band);
+        arrangements.add(content.arrangement);
+        sizes.add(content.options.length);
+      }
+      optionCounts.push(Math.max(...sizes));
+    }
+    expect(arrangements.size).toBeGreaterThan(1);
+    expect(optionCounts[0]).toBeLessThan(optionCounts[2] ?? 0);
   });
 });
