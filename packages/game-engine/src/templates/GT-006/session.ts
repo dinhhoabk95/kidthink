@@ -294,17 +294,30 @@ export class GT006Session extends TemplateGameSession<
     return null;
   }
 
-  override getHintTargetIndex(): number | null {
+  /** Vị trí đầu tiên lệch quy luật và toa đúng ra đang nằm ở đâu (nguồn → đích của một cú kéo). */
+  private findNextMove(): {
+    readonly from: number;
+    readonly to: number;
+  } | null {
     const targetSequence = this.resolveTargetSequence();
     const current = this.getCurrentSequence();
     for (let i = 0; i < targetSequence.length; i++) {
       const expectedStepId = targetSequence[i];
       if (expectedStepId !== undefined && current[i] !== expectedStepId) {
-        const fromIdx = current.indexOf(expectedStepId);
-        return fromIdx >= 0 ? fromIdx : null;
+        const from = current.indexOf(expectedStepId);
+        return from >= 0 ? { from, to: i } : null;
       }
     }
     return null;
+  }
+
+  override getHintTargetIndex(): number | null {
+    return this.findNextMove()?.from ?? null;
+  }
+
+  /** Bước đúng là kéo toa tới vị trí đúng của nó trong dãy. */
+  override getHintDestinationIndex(): number | null {
+    return this.findNextMove()?.to ?? null;
   }
 
   override commit(action: GameAction): void {

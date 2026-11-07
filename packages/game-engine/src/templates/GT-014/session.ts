@@ -555,6 +555,30 @@ export class BalanceScaleSession extends TemplateGameSession<
     return slot ? this.slots.indexOf(slot) : null;
   }
 
+  /**
+   * Mục `balance`: bước đúng là kéo vật khay tới đĩa còn đường tới cân bằng
+   * (đĩa trái nếu cả hai đều được). Mục chọn nặng/nhẹ chỉ là chạm, không có đích.
+   */
+  override getHintDestinationIndex(): number | null {
+    if (this.content.goal !== "balance") {
+      return null;
+    }
+    const idx = this.findBalancingTrayIndex();
+    const item = idx >= 0 ? this.trayItems[idx] : undefined;
+    if (!item) {
+      return null;
+    }
+    const rest = this.trayItems.filter((_, j) => j !== idx);
+    const leftOk = canAchieveBalance(
+      [...this.leftItems, item],
+      this.rightItems,
+      rest
+    );
+    const pans = this.targetSlots.slice().sort((a, b) => a.x - b.x);
+    const slot = leftOk ? pans[0] : pans[1];
+    return slot ? this.slots.indexOf(slot) : null;
+  }
+
   /** Vật khay mà đặt xuống (bên nào cũng được) vẫn còn đường tới cân bằng. */
   private findBalancingTrayIndex(): number {
     return this.trayItems.findIndex((item, i) => {

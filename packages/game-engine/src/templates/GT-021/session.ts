@@ -455,6 +455,18 @@ export class GT021Session extends TemplateGameSession<
     return sourceSlot ? sourceSlot.index : null;
   }
 
+  /** Chưa chọn vật thì bước đúng là kéo vật đúng vào ô gương chưa khớp. */
+  override getHintDestinationIndex(): number | null {
+    if (this.isWon || this.placementMechanic.getStagedItemId()) {
+      return null;
+    }
+    const targetIdx = this.content.target_slots.findIndex(
+      (t) => this.mirrorSystem.getPlacement(t.slot_id) !== t.expected_asset_ref
+    );
+    const slot = this.targetSlots[targetIdx];
+    return slot ? slot.index : null;
+  }
+
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
     const zones = pickTrayZones(this.stageRect, this.trayRect);
     if (zones) {

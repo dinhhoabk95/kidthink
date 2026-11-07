@@ -477,6 +477,16 @@ export class GT007Session extends TemplateGameSession<
     return sourceSlot ? this.slots.indexOf(sourceSlot) : null;
   }
 
+  /** Bước đúng là kéo đáp án đúng vào ô thiếu (phần `is_target` chưa điền). */
+  override getHintDestinationIndex(): number | null {
+    const partIdx = this.content.parts.findIndex(
+      (part) => part.is_target && !this.filledParts.has(part.id)
+    );
+    const slot = this.targetSlots[partIdx + 1];
+    const index = partIdx >= 0 && slot ? this.slots.indexOf(slot) : -1;
+    return index >= 0 ? index : null;
+  }
+
   override commit(action: GameAction): void {
     if (
       action.type === "fill_part" &&

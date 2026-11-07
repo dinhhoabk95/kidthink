@@ -416,6 +416,21 @@ export class GT004Session extends TemplateGameSession<
     return idx >= 0 ? idx : null;
   }
 
+  /** Bước đúng là kéo vật chưa phân loại vào rổ nhóm đúng của nó. */
+  override getHintDestinationIndex(): number | null {
+    const itemIdx = this.getHintTargetIndex();
+    const item = itemIdx === null ? undefined : this.displayItems[itemIdx];
+    if (!item) {
+      return null;
+    }
+    const groupIdx = this.content.groups.findIndex(
+      (g) => g.group_id === item.correct_group_id
+    );
+    const slot = this.targetSlots[groupIdx];
+    const index = slot ? this.slots.indexOf(slot) : -1;
+    return index >= 0 ? index : null;
+  }
+
   override commit(action: GameAction): void {
     if (
       action.type === "sort_item" &&

@@ -249,6 +249,16 @@ export class GT035Session extends TemplateGameSession<
     return palIdx >= 0 ? rows * cols + this.maxCommands + palIdx : null;
   }
 
+  /** Bước đúng là kéo lệnh từ khay vào ô trống kế tiếp của hàng lệnh. */
+  override getHintDestinationIndex(): number | null {
+    if (this.getHintTargetIndex() === null) {
+      return null;
+    }
+    const { rows, cols } = this.content.grid;
+    const count = this.queueSystem.commandCount;
+    return count < this.maxCommands ? rows * cols + count : null;
+  }
+
   /** Số ô của hàng lệnh — `max_commands` của độ khó. */
   private get maxCommands(): number {
     return this.difficulty.max_commands ?? 8;

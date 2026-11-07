@@ -465,6 +465,34 @@ export class GT019Session extends TemplateGameSession<
     return slot ? this.slots.indexOf(slot) : null;
   }
 
+  /**
+   * Bước đúng là kéo mảnh chưa đặt tới ô đích của nó. Mảnh còn phải xoay/lật
+   * mới khớp thì chưa có cú kéo đúng nên không có đích (bước kế là chạm nút xoay).
+   */
+  override getHintDestinationIndex(): number | null {
+    const piece = this.content.pieces.find(
+      (p) => !this.placedPieceIds.has(p.piece_id)
+    );
+    if (!piece) {
+      return null;
+    }
+    const targetIdx = this.content.target_slots.findIndex(
+      (s) => s.slot_id === piece.target_slot_id
+    );
+    const target = this.content.target_slots[targetIdx];
+    const transform = this.pieceTransforms.get(piece.piece_id) ?? {
+      rotation: 0,
+      flip: "none",
+    };
+    const matches = isPieceTransformMatch(transform, {
+      rotation: toRotationAngle(target?.target_rotation),
+      flip: toFlipAxis(target?.target_flip),
+    });
+    const slot = this.targetSlots[targetIdx];
+    const index = matches && slot ? this.slots.indexOf(slot) : -1;
+    return index >= 0 ? index : null;
+  }
+
   override commit(action: GameAction): void {
     if (
       action.type === "place_item" ||

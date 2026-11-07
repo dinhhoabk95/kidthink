@@ -499,6 +499,24 @@ export class GT023Session extends TemplateGameSession<
     return null;
   }
 
+  /** Chưa chọn mảnh thì bước đúng là kéo mảnh chưa đặt vào chốt nhận nó. */
+  override getHintDestinationIndex(): number | null {
+    if (this.isWon || this.placementMechanic.getStagedItemId()) {
+      return null;
+    }
+    const placements = this.assemblySystem.getPlacements();
+    const placedPartIds = new Set(placements.values());
+    const part = this.content.parts.find((p) => !placedPartIds.has(p.part_id));
+    if (!part) {
+      return null;
+    }
+    const anchorIdx = this.content.anchors.findIndex(
+      (a) => !placements.has(a.anchor_id) && a.accepted_part_id === part.part_id
+    );
+    const slot = this.targetSlots[anchorIdx];
+    return slot ? this.slots.indexOf(slot) : null;
+  }
+
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
     const zones = pickTrayZones(this.stageRect, this.trayRect);
     if (zones) {

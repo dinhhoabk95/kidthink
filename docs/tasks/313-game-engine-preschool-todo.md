@@ -28,7 +28,8 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 ## Phase 2 — Hint/feedback thống nhất
 - [x] Hạ tầng hint nguồn + đích: `HintTarget.slot.toIndex`, `getHintDestinationIndex()`, bàn tay ma (`RenderSystem.renderGhostHand`) ở L2/L3
 - [x] Hint L3 đọc lại đề (web `isRereadPromptEscalation` → `replayCurrentRoundNarration`, một lần mỗi vòng)
-- [ ] `getHintDestinationIndex` cho các template kéo/đặt khác (mới có GT-003)
+- [x] `getHintDestinationIndex` cho GT-004/005/006/007/008/014 (chế độ balance)/019/021/023/031/035
+- [ ] `getHintDestinationIndex` GT-015, GT-029, GT-036: hợp đồng hint hiện trỏ vào ô đích/ô chạm (sudoku trỏ ô trống, 029 kéo ra ngoài nhóm không có slot đích, 036 phần tử đã cầm sẵn nên chỉ chạm ô dải); muốn bàn tay ma kéo cần đổi hợp đồng hint hoặc thêm đích dạng toạ độ — để quyết định riêng
 - [x] `demo_shown` chỉ khi demo vẽ thật
 - [ ] Helper `WrongFlash` dùng chung thay ~15 bản tự viết
 - [ ] Retry nói câu khích lệ + mp3 fallback; narration pill Montessori

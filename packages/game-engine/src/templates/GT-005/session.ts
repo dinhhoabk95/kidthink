@@ -461,6 +461,25 @@ export class GT005Session extends TemplateGameSession<
     return leftIdx >= 0 ? leftIdx : null;
   }
 
+  /** Chưa chọn trái thì bước đúng là kéo vật trái sang vật phải cùng cặp. */
+  override getHintDestinationIndex(): number | null {
+    if (this.getStagedLeftId()) {
+      return null;
+    }
+    const leftIdx = this.getHintTargetIndex();
+    const left = leftIdx === null ? undefined : this.displayLeft[leftIdx];
+    if (!left) {
+      return null;
+    }
+    const pair = this.content.pairs.find(
+      (p) => p.left.item_id === left.item_id
+    );
+    const rightIdx = this.displayRight.findIndex(
+      (r) => r.item_id === pair?.right.item_id
+    );
+    return rightIdx >= 0 ? this.displayLeft.length + rightIdx : null;
+  }
+
   override commit(action: GameAction): void {
     if (
       action.type === "match_pair" &&

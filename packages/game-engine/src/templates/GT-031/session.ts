@@ -118,6 +118,11 @@ export class GT031Session extends TemplateGameSession<
     return slot ? slot.index : null;
   }
 
+  /** Bước đúng là kéo xu gợi ý vào thẻ giá (slot đích luôn là slot 0). */
+  override getHintDestinationIndex(): number | null {
+    return this.getHintTargetIndex() === null || !this.slots[0] ? null : 0;
+  }
+
   protected computeSlots(band: AgeBand): readonly Slot[] {
     const zones = pickTrayZones(this.stageRect, this.trayRect);
     if (zones) {
