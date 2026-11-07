@@ -33,7 +33,8 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 - [x] `demo_shown` chỉ khi demo vẽ thật
 - [x] Helper `WrongFlash` (`src/systems/wrong-flash.ts`, một thời lượng 400ms, đồng hồ khung do session truyền) thay bản `wrongTimestamp` tự viết ở GT-007/008/009/010/011/012/014/015/022/023/025/026
 - [ ] Chuyển nốt các bản đếm ngược/khác nền thời gian sang `WrongFlash`: GT-001 (`wrongTimers` theo vật), GT-002/006/018 (đếm lùi theo `update(delta)`), GT-003/004 (`transientStateMs` theo vật, 260ms), GT-027/029/030 (`*UntilMs`), GT-037 (`Date.now()`, 800ms) — cần biến thể theo khoá và quyết định thời lượng riêng
-- [ ] Retry nói câu khích lệ + mp3 fallback; narration pill Montessori
+- [x] Retry nói câu khích lệ xoay vòng (`BR-FBK-13`; TTS khi có giọng Việt, mp3 `RETRY_ENCOURAGEMENT_AUDIO` khi không) và đọc pill Montessori (`BR-PNR-12`, `takePillNarration`)
+- [ ] Thu 3 file mp3 `apps/web/public/audio/voice/common/feedback/retry-*.mp3` (đường dẫn trong `RETRY_ENCOURAGEMENT_AUDIO`); thiếu file thì máy không giọng Việt chỉ còn âm mềm và nhịp hổ phách
 - [ ] Tách màu hint vs retry, tăng tương phản
 - [x] Helper derangement trong `src/rng/` (`deriveDerangement`, Sattolo; chưa nối vào generator — Phase 4)
 

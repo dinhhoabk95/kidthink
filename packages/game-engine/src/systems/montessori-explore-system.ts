@@ -35,6 +35,7 @@ export class MontessoriExploreTracker {
   private calloutRemainingMs = 0;
   private lastExploreKind: string | null = null;
   private diagnostics: ControlOfErrorDiagnostics | null = null;
+  private lastNarratedPill: string | null = null;
 
   constructor(config?: MontessoriExploreConfig) {
     this.milestoneTarget = Math.max(
@@ -60,6 +61,7 @@ export class MontessoriExploreTracker {
     this.calloutRemainingMs = 0;
     this.lastExploreKind = null;
     this.diagnostics = null;
+    this.lastNarratedPill = null;
   }
 
   getPhase(): MontessoriPhase {
@@ -92,6 +94,31 @@ export class MontessoriExploreTracker {
 
   getControlOfErrorDiagnostics(): ControlOfErrorDiagnostics | null {
     return this.diagnostics;
+  }
+
+  /** Lời nói tương ứng với chữ đang hiện trên pill; `null` khi pill không hiện. */
+  private describePillNarration(): string | null {
+    if (this.diagnostics) {
+      return this.diagnostics.reasonVi;
+    }
+    if (this.phase === "explore") {
+      const done = Math.min(this.exploreActionsCount, this.milestoneTarget);
+      return `Khám phá tự do, ${done} trên ${this.milestoneTarget}`;
+    }
+    return null;
+  }
+
+  /**
+   * Lời đọc cho pill (`BR-PNR-12`): trả nội dung mới đúng một lần; nội dung
+   * trùng liên tiếp thì `null`; pill tắt rồi hiện lại thì đọc lại.
+   */
+  takePillNarration(): string | null {
+    const line = this.describePillNarration();
+    if (line === this.lastNarratedPill) {
+      return null;
+    }
+    this.lastNarratedPill = line;
+    return line;
   }
 
   /**

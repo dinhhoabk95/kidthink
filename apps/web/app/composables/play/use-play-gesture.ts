@@ -3,6 +3,7 @@ import {
   type ActiveGestureVisualState,
   type CommitIcon,
   type FeedbackPoint,
+  FeedbackSystem,
   findHitEntity,
   type GameEngine,
   type GameSession,
@@ -156,6 +157,8 @@ export function usePlayGesture(options: GestureOptions) {
   let hoveredTargetEntity: ViewEntity | null = null;
   /** Lúc verdict sai gần nhất (ms epoch) — cửa sổ cooldown `WRONG_COOLDOWN_MS`. */
   let lastWrongAtMs = Number.NEGATIVE_INFINITY;
+  /** Xoay vòng câu khích lệ xuyên suốt phiên chơi (không lặp liên tiếp). */
+  const retryVoice = new FeedbackSystem();
   let trailPoints: { readonly x: number; readonly y: number }[] = [];
   let lastMazeCellId: string | null = null;
   let didLiveMazeStep = false;
@@ -234,21 +237,80 @@ export function usePlayGesture(options: GestureOptions) {
   /**
    * Đọc lại tên vật vừa chạm theo thang bậc của `play-narration.md` §7:
    * mp3 của asset → TTS từ `spokenLabel` → không có tên thì im (Task #274 S7b).
+   * `onDone` gọi đúng một lần khi tên đọc xong (hoặc ngay khi không có gì để
+   * đọc), để lời nói kế tiếp không cắt ngang tên vật.
    */
-  function speakKeyword(engine: GameEngine, entity: ViewEntity | null): void {
+  function speakKeyword(
+    engine: GameEngine,
+    entity: ViewEntity | null,
+    onDone?: () => void
+  ): void {
     const label = entity?.spokenLabel;
     const audioPath = entity?.spokenAudioPath;
+    if (!onDone) {
+      if (audioPath) {
+        engine.audio.playPromptAudio(audioPath, undefined, () => {
+          if (label) {
+            engine.audio.speakPrompt(label);
+          }
+        });
+        return;
+      }
+      if (label) {
+        engine.audio.speakPrompt(label);
+      }
+      return;
+    }
+    let done = false;
+    const finish = () => {
+      if (!done) {
+        done = true;
+        onDone();
+      }
+    };
     if (audioPath) {
-      engine.audio.playPromptAudio(audioPath, undefined, () => {
-        if (label) {
-          engine.audio.speakPrompt(label);
+      // `playPromptAudio` báo `onError` rồi `onEnd`: mp3 hỏng rơi xuống TTS và
+      // chỉ TTS mới được báo xong.
+      let fellBack = false;
+      engine.audio.playPromptAudio(
+        audioPath,
+        () => {
+          if (!fellBack) {
+            finish();
+          }
+        },
+        () => {
+          fellBack = true;
+          if (label) {
+            engine.audio.speakPrompt(label, finish);
+          } else {
+            finish();
+          }
         }
-      });
+      );
       return;
     }
     if (label) {
-      engine.audio.speakPrompt(label);
+      engine.audio.speakPrompt(label, finish);
+      return;
     }
+    finish();
+  }
+
+  /**
+   * Lời nói khi chưa đúng (`BR-FBK-13`, `BR-PNR-12`): engine có pill Montessori
+   * thì đọc lời của pill (lý do cụ thể); không thì một câu khích lệ xoay vòng.
+   */
+  function speakRetryVoice(engine: GameEngine, session: GameSession): void {
+    const pillLine =
+      session instanceof TemplateGameSession
+        ? session.takePillNarration()
+        : null;
+    if (pillLine) {
+      engine.audio.speakPrompt(pillLine);
+      return;
+    }
+    engine.audio.speakEncouragement(retryVoice.getRetryEncouragementClip());
   }
 
   /** Điểm gắn phản hồi: chỗ chạm của `tap`/`commit`, chỗ thả của `drop`. */
@@ -276,7 +338,17 @@ export function usePlayGesture(options: GestureOptions) {
     tapped: ViewEntity | null,
     gesture: Gesture
   ): void {
-    speakKeyword(engine, tapped);
+    // Lời nói khi chưa đúng chỉ khi verdict sai được tính (ngoài cooldown) —
+    // tap sai dồn dập không chồng giọng lên nhau.
+    const speaksRetry =
+      verdict.feedback !== "none" &&
+      !verdict.valid &&
+      Date.now() - lastWrongAtMs >= WRONG_COOLDOWN_MS;
+    speakKeyword(
+      engine,
+      tapped,
+      speaksRetry ? () => speakRetryVoice(engine, session) : undefined
+    );
 
     if (verdict.feedback === "none") {
       // Cử chỉ bị nuốt: ngoài mọi slot, trước khi cảnh dựng xong, hoặc vòng

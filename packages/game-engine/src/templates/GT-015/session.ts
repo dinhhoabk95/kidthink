@@ -193,6 +193,10 @@ export class SudokuMiniSession extends TemplateGameSession<
   private readonly exploreTracker = new MontessoriExploreTracker({
     milestoneTarget: 2,
   });
+
+  override takePillNarration(): string | null {
+    return this.exploreTracker.takePillNarration();
+  }
   private symbolById = new Map<string, GT015Content["symbols"][number]>();
   private selectedSymbolId: string | null = null;
   private activeViolations: readonly ConstraintViolation[] = [];

@@ -126,6 +126,7 @@ function makeTapSelectHarness(
       playSnapSound: vi.fn(),
       playPopCelebrateSound: vi.fn(),
       playSoftFeedbackSound: vi.fn(),
+      speakEncouragement: vi.fn(),
       speakPrompt,
     },
     scaffolding: { onMiss, onSuccess },
@@ -166,6 +167,7 @@ function makeHarness(
       playSnapSound: vi.fn(),
       playPopCelebrateSound: vi.fn(),
       playSoftFeedbackSound: vi.fn(),
+      speakEncouragement: vi.fn(),
     },
     scaffolding: { onMiss, onSuccess },
     renderSystem: { LOGIC_WIDTH: 960, LOGIC_HEIGHT: 540 },
@@ -302,7 +304,12 @@ describe("usePlayGesture — chạm ngoài slot và chạm lại minh hoạ (Tas
     gesture.dispatchGesture({ type: "tap", x: 300, y: 100, timeMs: 0 });
 
     expect(session.dispatched).toHaveLength(1);
-    expect(speakPrompt).toHaveBeenCalledWith("nhãn-opt-2");
+    // Tap sai: tên thẻ đọc kèm callback "đọc xong" để câu khích lệ nối sau,
+    // không cắt ngang tên (BR-FBK-13).
+    expect(speakPrompt).toHaveBeenCalledWith(
+      "nhãn-opt-2",
+      expect.any(Function)
+    );
     expect(engine.audio.playSoftFeedbackSound).toHaveBeenCalledTimes(1);
     expect(onMiss).toHaveBeenCalledTimes(1);
   });
@@ -492,6 +499,7 @@ function makeGt002Harness() {
       playSnapSound: vi.fn(),
       playPopCelebrateSound: vi.fn(),
       playSoftFeedbackSound: vi.fn(),
+      speakEncouragement: vi.fn(),
       playPromptAudio: vi.fn(),
       speakPrompt: vi.fn(),
     },
@@ -747,6 +755,7 @@ describe("usePlayGesture — nhấn chậm vẫn là chạm (BR-FBK-02)", () => 
         playSnapSound: vi.fn(),
         playPopCelebrateSound: vi.fn(),
         playSoftFeedbackSound: vi.fn(),
+        speakEncouragement: vi.fn(),
         speakPrompt: vi.fn(),
       },
       scaffolding: { onMiss, onSuccess },

@@ -6,6 +6,7 @@
  * Zero microphone / recording permissions (BR-CDC-04, BR-AST-04).
  */
 
+import type { RetryEncouragementClip } from "./feedback-system";
 import { SFXEngine, type SFXType } from "./sfx-engine";
 import { SpeechSynthesisAdapter } from "./speech-synthesis-adapter";
 
@@ -96,6 +97,23 @@ export class AudioController {
     }
 
     return true;
+  }
+
+  /**
+   * Câu khích lệ khi chưa đúng (`BR-FBK-13`): có giọng Việt thì TTS đọc `text`;
+   * không có giọng thì phát mp3 dự phòng `audioRef`. Một nguồn mỗi lần — không
+   * bao giờ cả hai. `onEnd` gọi đúng một lần khi xong (kể cả khi im).
+   */
+  speakEncouragement(clip: RetryEncouragementClip, onEnd?: () => void): void {
+    if (!this.enabled) {
+      onEnd?.();
+      return;
+    }
+    if (this.isVoiceAvailable()) {
+      this.speakPrompt(clip.text, onEnd);
+      return;
+    }
+    this.playPromptAudio(clip.audioRef, onEnd);
   }
 
   /** Dừng mọi âm thanh và giải phóng `AudioContext` + listener giọng đọc. */

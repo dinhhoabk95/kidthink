@@ -49,6 +49,10 @@ export class GT006Session extends TemplateGameSession<
   private readonly exploreTracker = new MontessoriExploreTracker({
     milestoneTarget: 2,
   });
+
+  override takePillNarration(): string | null {
+    return this.exploreTracker.takePillNarration();
+  }
   private stepById = new Map<string, GT006Content["sequence"][number]>();
   private targetSequence: readonly string[] = [];
 

@@ -80,6 +80,23 @@ export const RETRY_ENCOURAGEMENTS = [
   "Bé thử chỗ khác xem?",
 ] as const;
 
+/**
+ * mp3 dự phòng cho từng câu của `RETRY_ENCOURAGEMENTS` (cùng chỉ số), phát khi
+ * máy không có giọng Việt (`BR-FBK-13`). File do người thu đặt dưới
+ * `apps/web/public/audio/voice/common/feedback/`; thiếu file thì phát im —
+ * vòng pop/nhịp hổ phách của bề mặt chơi vẫn là kênh thị giác (`BR-FBK-02`).
+ */
+export const RETRY_ENCOURAGEMENT_AUDIO = [
+  "/audio/voice/common/feedback/retry-thu-lai-nhe.mp3",
+  "/audio/voice/common/feedback/retry-gan-dung-roi.mp3",
+  "/audio/voice/common/feedback/retry-be-thu-cho-khac.mp3",
+] as const;
+
+export interface RetryEncouragementClip {
+  readonly text: string;
+  readonly audioRef: string;
+}
+
 export const FORBIDDEN_WORDS = [
   "Sai rồi",
   "Không đúng",
@@ -134,6 +151,21 @@ export class FeedbackSystem {
     );
     const item = RETRY_ENCOURAGEMENTS[this.lastRetryIndex];
     return item ?? RETRY_ENCOURAGEMENTS[0];
+  }
+
+  /** Câu khích lệ kèm mp3 dự phòng cùng chỉ số, xoay vòng không lặp liên tiếp. */
+  getRetryEncouragementClip(): RetryEncouragementClip {
+    this.lastRetryIndex = pickNextIndex(
+      RETRY_ENCOURAGEMENTS.length,
+      this.lastRetryIndex,
+      this.rng
+    );
+    const text = RETRY_ENCOURAGEMENTS[this.lastRetryIndex];
+    const audioRef = RETRY_ENCOURAGEMENT_AUDIO[this.lastRetryIndex];
+    return {
+      text: text ?? RETRY_ENCOURAGEMENTS[0],
+      audioRef: audioRef ?? RETRY_ENCOURAGEMENT_AUDIO[0],
+    };
   }
 
   /**

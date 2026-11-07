@@ -268,6 +268,15 @@ export abstract class TemplateGameSession<
   }
 
   /**
+   * Lời đọc cho pill Montessori đang hiện (`BR-PNR-12`): lý do control-of-error
+   * hoặc tiến độ khám phá. Trả nội dung mới đúng một lần; `null` khi không có gì
+   * mới hoặc engine không có pill. Bề mặt chơi gọi sau mỗi verdict.
+   */
+  takePillNarration(): string | null {
+    return null;
+  }
+
+  /**
    * Mục tiêu gợi ý theo bậc `L1` / `L2` / `L3` (Task #301 S2).
    * Mặc định kiểm tra bộ giải trung tâm (`resolveSteppedHintTarget`), nếu chưa
    * tách bậc thì rơi về `getHintTarget()`.

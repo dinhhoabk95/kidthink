@@ -83,6 +83,10 @@ export class GT011Session extends TemplateGameSession<
   private readonly exploreTracker = new MontessoriExploreTracker({
     milestoneTarget: 2,
   });
+
+  override takePillNarration(): string | null {
+    return this.exploreTracker.takePillNarration();
+  }
   private preview: MatrixPreview | null = null;
   private wrongOptionId: string | null = null;
   private readonly wrongFlash = new WrongFlash();

@@ -103,6 +103,7 @@ asset; spec này sở hữu hợp đồng **phát** trên bề mặt trẻ.
 | `BR-PNR-09` (không chặn màn chơi) | Narration BẮT BUỘC bất đồng bộ với vòng đời vòng chơi; quá hạn nạp thì vòng vẫn bắt đầu | Một vòng treo chờ file mp3 trên mạng yếu là một vòng hỏng |
 | `BR-PNR-10` (độ phủ có ratchet) | `scripts/narration-coverage-baseline.json` ghi số dataset có `audio_path` và số engine phát narration; cả hai chỉ được tăng | Số hiện tại là 4/443 dataset và 1/37 engine; không có ratchet thì con số này đã đứng yên nhiều lát cắt |
 | `BR-PNR-11` (đồng hồ chờ câu dẫn đọc xong) | Cử chỉ của trẻ, `hint_after_ms`, và `duration_ms` của vòng BẮT BUỘC chỉ tính từ lúc câu dẫn **đọc xong** (thành công, rơi hết bậc dự phòng, hay quá hạn — không bao giờ quá `NARRATION_SETTLE_TIMEOUT_MS = 12s`), không phải từ lúc mở vòng. Cử chỉ chạm trong lúc đang đọc bị nuốt hoàn toàn — Cấm — NEVER tính là lượt trả lời, Cấm — NEVER tính miss | Người đặt việc yêu cầu 2026-09-17: "tính thời gian, tính điểm chỉ bắt đầu khi máy đọc xong câu hỏi". Trước đó đồng hồ trợ giúp và bộ đếm giờ chạy song song với câu dẫn, nên câu dẫn dài ăn mất phần "thời gian trẻ thật sự có để nghĩ" trong ngưỡng leo thang |
+| `BR-PNR-12` (pill Montessori nghe được) | Chữ trên pill Montessori (lý do control-of-error, tiến độ khám phá) BẮT BUỘC có lời đọc đi kèm: engine trả lời qua `takePillNarration()` đúng một lần cho mỗi nội dung mới, bề mặt chơi đọc sau mỗi verdict sai. Tiến độ đọc bằng lời ("hai trên năm"), Cấm — NEVER đọc ký hiệu "(2/5)". Lời pill thay câu khích lệ chung của `BR-FBK-13`, không đọc cả hai | `BR-PNR-01` — pill là chữ, trẻ chưa đọc thì lý do cụ thể ("Toa thứ 2 chưa đúng nhịp") không tới được |
 
 ## 7. Data
 
@@ -240,6 +241,12 @@ Scenario: BR-PNR-10 — độ phủ giọng đi lùi thì cổng đỏ
   When chạy pnpm check:narration-coverage
   Then cổng thoát khác 0
   And báo cáo nêu độ phủ giảm từ 200 xuống 199
+
+Scenario: BR-PNR-12 — lý do trên pill được đọc đúng một lần
+  Given GT-006 vừa nộp sai dãy và pill hiện lý do
+  When bề mặt chơi gọi takePillNarration
+  Then trả về đúng chữ lý do trên pill
+  And lần gọi kế tiếp trả null cho tới khi lý do đổi
 
 Scenario: BR-PNR-11 — chạm trong lúc câu dẫn đang đọc bị nuốt, không tính miss
   Given vòng vừa mở, câu dẫn đang phát và chưa đọc xong

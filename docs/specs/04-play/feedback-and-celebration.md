@@ -75,6 +75,7 @@ xem §7.4.
 | `BR-FBK-10` | Âm: ramp vào ≥20ms, ra ≥40ms, master ceiling cưỡng chế | Onset tức thì làm trẻ giật mình |
 | `BR-FBK-11` | Mỗi phản hồi đúng/sai có **dáng mascot** đi kèm ngay khung vẽ kế tiếp (≤100ms), và vòng pop/nhịp hổ phách vẽ bởi **một lớp phủ chung** của bề mặt chơi, không phải từng engine | `BR-PSZ-10` — tắt tiếng thì mascot là kênh còn lại; lớp chung để 37 engine phản hồi giống nhau mà không sửa engine |
 | `BR-FBK-12` | Màn tổng kết level **đọc thành tiếng** một lời khen của §7.2 khi mở, và nút của trẻ chỉ có icon (chữ chỉ ở `aria-label`) | `BR-ENG-10` — trẻ 3–6 chưa đọc; tiêu đề chữ một mình không phải phần thưởng |
+| `BR-FBK-13` | Khi chưa đúng, bề mặt chơi **đọc thành tiếng** một câu khích lệ của §7.2, xoay vòng không lặp liên tiếp. Có giọng Việt thì TTS đọc; không có giọng thì phát mp3 dự phòng cùng chỉ số (`RETRY_ENCOURAGEMENT_AUDIO`), mỗi lần đúng một nguồn. Câu nói nối **sau** tên vật vừa chạm, không cắt ngang; tap sai dồn dập trong cooldown 400ms chỉ nói một câu. Engine có pill Montessori thì lời của pill (`BR-PNR-12`) thay câu chung | `BR-FBK-02` — chỉ âm mềm và nhịp hổ phách chưa nói cho trẻ 3–6 tuổi biết phải làm gì; máy không có giọng Việt vẫn nghe được qua mp3 |
 
 ## 7. Data
 
@@ -95,6 +96,10 @@ Xoay vòng, không lặp liên tiếp: "Giỏi quá!" · "Đúng rồi!" · "Bé
 "Tuyệt vời!" · "Bé thật chăm chỉ!"
 
 Khi chưa đúng: "Thử lại nhé!" · "Gần đúng rồi!" · "Bé thử chỗ khác xem?"
+(`BR-FBK-13`). mp3 dự phòng cùng thứ tự tại
+`apps/web/public/audio/voice/common/feedback/retry-thu-lai-nhe.mp3`,
+`retry-gan-dung-roi.mp3`, `retry-be-thu-cho-khac.mp3` — file do người thu; thiếu
+file thì phát im và nhịp hổ phách vẫn là kênh thị giác.
 
 Cấm — **NEVER**: "Sai rồi", "Không đúng", "Bé chưa giỏi", bất kỳ so sánh nào.
 
@@ -188,6 +193,19 @@ Scenario: BR-FBK-12 — màn tổng kết có tiếng và nút icon
   When màn tổng kết level mở
   Then một lời khen của §7.2 được đọc
   And các nút không có chữ hiển thị, chỉ có aria-label
+
+Scenario: BR-FBK-13 — sai thì nói câu khích lệ xoay vòng
+  Given máy có giọng Việt
+  When trẻ chạm sai hai lần, cách nhau hơn 400ms
+  Then mỗi lần trẻ nghe một câu khích lệ của §7.2
+  And hai câu liên tiếp khác nhau
+  And câu khích lệ bắt đầu sau khi tên vật vừa chạm đọc xong
+
+Scenario: BR-FBK-13 — không có giọng Việt thì phát mp3 dự phòng
+  Given hasVietnameseVoice trả false
+  When trẻ chạm sai
+  Then mp3 cùng chỉ số của câu khích lệ được phát
+  And không có lệnh TTS nào
 
 Scenario: BR-FBK-10 — âm không có onset tức thì
   When phân tích mọi file SFX

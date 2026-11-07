@@ -4,6 +4,7 @@ import {
   FEEDBACK_TABLE,
   FeedbackSystem,
   FORBIDDEN_WORDS,
+  RETRY_ENCOURAGEMENT_AUDIO,
   RETRY_ENCOURAGEMENTS,
 } from "#src/systems/feedback-system";
 
@@ -84,5 +85,29 @@ describe("FeedbackSystem (BR-FBK-01..10 & FEEDBACK-AND-CELEBRATION spec)", () =>
     expect(config.durationMs).toBe(400);
     expect(config.particlesCount).toBe(0);
     expect(config.soundType).toBe("level_celebrate");
+  });
+});
+
+const RETRY_AUDIO_PATH = /^\/audio\/voice\/common\/feedback\/.+\.mp3$/;
+
+describe("FeedbackSystem — clip khích lệ khi chưa đúng (Task #313 BR-FBK-13)", () => {
+  it("mỗi câu khích lệ có mp3 dự phòng cùng chỉ số và xoay vòng không lặp liên tiếp", () => {
+    expect(RETRY_ENCOURAGEMENT_AUDIO).toHaveLength(RETRY_ENCOURAGEMENTS.length);
+    const system = new FeedbackSystem();
+    const seen: string[] = [];
+    for (let i = 0; i < RETRY_ENCOURAGEMENTS.length * 2; i++) {
+      const clip = system.getRetryEncouragementClip();
+      const index = RETRY_ENCOURAGEMENTS.indexOf(
+        clip.text as (typeof RETRY_ENCOURAGEMENTS)[number]
+      );
+      expect(index).toBeGreaterThanOrEqual(0);
+      expect(clip.audioRef).toBe(RETRY_ENCOURAGEMENT_AUDIO[index]);
+      expect(clip.audioRef).toMatch(RETRY_AUDIO_PATH);
+      seen.push(clip.text);
+    }
+    for (let i = 1; i < seen.length; i++) {
+      expect(seen[i]).not.toBe(seen[i - 1]);
+    }
+    expect(new Set(seen).size).toBe(RETRY_ENCOURAGEMENTS.length);
   });
 });

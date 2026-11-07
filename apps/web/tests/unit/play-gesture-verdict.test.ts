@@ -48,6 +48,7 @@ describe("usePlayGesture — onVerdict", () => {
         playSnapSound: vi.fn(),
         playPopCelebrateSound: vi.fn(),
         playSoftFeedbackSound: vi.fn(),
+        speakEncouragement: vi.fn(),
       },
       renderSystem: {
         LOGIC_WIDTH: 960,
@@ -132,6 +133,7 @@ describe("usePlayGesture — onVerdict", () => {
         playSnapSound: vi.fn(),
         playPopCelebrateSound: vi.fn(),
         playSoftFeedbackSound: vi.fn(),
+        speakEncouragement: vi.fn(),
       },
       renderSystem: {
         LOGIC_WIDTH: 960,

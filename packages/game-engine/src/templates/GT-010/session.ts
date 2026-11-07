@@ -47,6 +47,10 @@ export class SubstitutionSession extends TemplateGameSession<
   private readonly exploreTracker = new MontessoriExploreTracker({
     milestoneTarget: 2,
   });
+
+  override takePillNarration(): string | null {
+    return this.exploreTracker.takePillNarration();
+  }
   private readonly pinnedSymbols: Map<string, number> = new Map();
   private selectedValue: number | null = null;
   private glyphBySymbolId: Map<string, string> = new Map();

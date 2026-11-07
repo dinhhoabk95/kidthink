@@ -160,6 +160,10 @@ export class BalanceScaleSession extends TemplateGameSession<
   private readonly exploreTracker = new MontessoriExploreTracker({
     milestoneTarget: 2,
   });
+
+  override takePillNarration(): string | null {
+    return this.exploreTracker.takePillNarration();
+  }
   private smoothTiltDeg = 0;
 
   constructor(
