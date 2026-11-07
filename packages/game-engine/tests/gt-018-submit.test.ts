@@ -17,13 +17,18 @@ describe("GT-018 sequence — thắng khi nộp, không tự thắng khi xếp �
     return session;
   }
 
+  /** Xếp đúng bằng `onReorderStep`, theo dõi thứ tự hiện tại bằng bản sao cục bộ. */
   function arrange(session: GT018Session): void {
     const target = fixture?.content.target_sequence ?? [];
+    const current = (fixture?.content.options ?? []).map((o) => o.item_id);
     for (let i = 0; i < target.length; i++) {
-      const current = session.orderingMechanic.getCurrentSequence();
       const from = current.indexOf(target[i] ?? "");
       if (from !== i) {
         session.onReorderStep(from, i);
+        const [moved] = current.splice(from, 1);
+        if (moved !== undefined) {
+          current.splice(i, 0, moved);
+        }
       }
     }
   }

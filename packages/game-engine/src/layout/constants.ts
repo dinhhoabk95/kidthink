@@ -1,5 +1,5 @@
-import { TOUCH_FLOORS } from "@mindkid/shared/touch-floors";
 import type { AgeBand } from "#src/contracts/types";
+import { touchFloorOf } from "./touch-floor";
 
 export const LOGIC_WIDTH = 960;
 export const LOGIC_HEIGHT = 540;
@@ -26,16 +26,7 @@ export const TRAY_ZONE_H_PX = 136;
  * Nguồn sự thật: TOUCH_FLOORS (@mindkid/shared - BR-CFO-07)
  */
 export function getTouchFloor(ageBand: AgeBand): number {
-  switch (ageBand) {
-    case "3-4":
-      return TOUCH_FLOORS.kidBand3_4;
-    case "4-5":
-      return TOUCH_FLOORS.kidPrimary;
-    case "5-6":
-      return TOUCH_FLOORS.kidMin;
-    default:
-      return TOUCH_FLOORS.kidPrimary;
-  }
+  return touchFloorOf(ageBand);
 }
 
 /**

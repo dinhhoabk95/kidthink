@@ -42,7 +42,11 @@
       </div>
     </div>
     <!-- Active Game Viewport -->
-    <div class="game-viewport" v-show="!(isLoading || errorMessage)">
+    <div
+      class="game-viewport"
+      v-show="!(isLoading || errorMessage)"
+      :style="{ '--hud-touch-floor': `${hudTouchFloorPx}px` }"
+    >
       <header
         class="top-hud-bar"
         :class="{ 'ring-4 ring-brand-400 animate-pulse': isPromptPillPulsing }"
@@ -200,6 +204,7 @@
             <button
               aria-label="Quay lại thẻ trước"
               class="min-h-16 min-w-16 px-4 justify-center rounded-2xl border-[3px] border-surface-300 bg-white text-surface-700 font-heading font-bold text-xl shadow-[0_6px_0_var(--color-surface-300)] active:translate-y-1 active:shadow-[0_2px_0_var(--color-surface-300)] flex items-center gap-2 cursor-pointer transition-all"
+              style="min-height: var(--hud-touch-floor, 64px); min-width: var(--hud-touch-floor, 64px)"
               type="button"
               v-if="introStepIndex > 0"
               @click="handleIntroPrev"
@@ -209,6 +214,7 @@
             <button
               aria-label="Nghe lại mẫu"
               class="min-h-16 min-w-16 px-4 justify-center rounded-2xl border-[3px] border-surface-300 bg-white text-surface-700 font-heading font-bold text-xl shadow-[0_6px_0_var(--color-surface-300)] active:translate-y-1 active:shadow-[0_2px_0_var(--color-surface-300)] flex items-center gap-2 cursor-pointer transition-all"
+              style="min-height: var(--hud-touch-floor, 64px); min-width: var(--hud-touch-floor, 64px)"
               type="button"
               @click="handleEchoReplay"
             >
@@ -216,6 +222,7 @@
             </button>
             <button
               class="min-h-16 min-w-20 px-6 justify-center rounded-2xl border-[3px] border-cta-hover bg-cta text-white font-heading font-bold text-xl shadow-[0_6px_0_var(--color-cta-hover)] active:translate-y-1 active:shadow-[0_2px_0_var(--color-cta-hover)] flex items-center gap-3 cursor-pointer transition-all"
+              style="min-height: var(--hud-touch-floor, 64px); min-width: var(--hud-touch-floor, 64px)"
               type="button"
               :aria-label="isEchoStep ? 'Bé nói theo' : 'Tiếp tục'"
               @click="handleEchoDone"
@@ -642,6 +649,9 @@
   }
 
   function handleReplayGame(): void {
+    // Dọn lượt cũ (runner, engine, telemetry, hẹn giờ) trước khi dựng lượt mới
+    // (Task #313 B12).
+    cleanupSession();
     showVictoryModal.value = false;
     errorMessage.value = null;
     isLoading.value = true;

@@ -1,5 +1,5 @@
 import type { AgeBand } from "@mindkid/shared/age-bands";
-import { TOUCH_FLOORS } from "@mindkid/shared/touch-floors";
+import { touchFloorOf } from "#src/layout/touch-floor";
 
 const DEFAULT_LONG_PRESS_EXIT_MS = 800;
 
@@ -181,14 +181,9 @@ export interface TouchTarget {
   draggable?: boolean;
 }
 
-export function getMinTouchTargetSize(
-  ageBand: AgeBand,
-  isPrimary = false
-): number {
-  if (ageBand === "3-4") {
-    return TOUCH_FLOORS.kidBand3_4;
-  }
-  return isPrimary ? TOUCH_FLOORS.kidPrimary : TOUCH_FLOORS.kidMin;
+/** Sàn chạm theo band — cùng bảng với layout (`getTouchFloor`), không giữ bản riêng. */
+export function getMinTouchTargetSize(ageBand: AgeBand): number {
+  return touchFloorOf(ageBand);
 }
 
 export class InteractionManager {
@@ -243,12 +238,8 @@ export class InteractionManager {
     }
   }
 
-  validateTouchTargetSize(
-    target: TouchTarget,
-    ageBand: AgeBand,
-    isPrimary = false
-  ): boolean {
-    const minSize = getMinTouchTargetSize(ageBand, isPrimary);
+  validateTouchTargetSize(target: TouchTarget, ageBand: AgeBand): boolean {
+    const minSize = getMinTouchTargetSize(ageBand);
     return target.width >= minSize && target.height >= minSize;
   }
 }

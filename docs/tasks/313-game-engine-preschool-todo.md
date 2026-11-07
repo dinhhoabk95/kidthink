@@ -22,7 +22,8 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 - [x] B8 một đồng hồ hint, `hint_after_ms` theo round
 - [x] B9 drag slop theo age band; drop cực ngắn = tap (chưa làm: whoosh khi spring-back — chưa có asset âm)
 - [x] B7 bỏ `prepareRound` trùng · [x] B10 `allow_retry:false` cho thấy đáp án trước khi skip · [x] B11 khoá input khi skip round cuối
-- [ ] B12 replay gọi `cleanupSession`; `seq` ổn định; thống nhất bảng touch floor; nút GT-000 ≥ 96px
+- [x] B12 replay gọi `cleanupSession`; thống nhất bảng touch floor; nút GT-000 ≥ sàn chạm band (`--hud-touch-floor`)
+- [ ] B12 còn lại: `seq` telemetry ổn định (unshift `game_started` chỉ lệch nếu upload trước nó — chưa có bằng chứng xảy ra); 2 cờ degradation không ai đọc
 
 ## Phase 2 — Hint/feedback thống nhất
 - [ ] Hint ladder L1/L2 ghost hand/L3 đọc lại đề cho mọi template; trả cả nguồn + đích
