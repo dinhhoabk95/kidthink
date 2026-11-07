@@ -31,6 +31,8 @@ export interface ScaffoldState {
   l3DurationMs: number;
   skipSuggested: boolean;
   voiceAvailable?: boolean;
+  /** Sàn level do fallback không giọng đặt; `tick` không được hạ xuống dưới. */
+  floorLevel?: ScaffoldingLevel;
   lastTrigger?: "timer" | "miss_streak";
 }
 
@@ -139,6 +141,18 @@ function computeTargetLevel(
   return { targetLevel: 0, triggerType: "timer" };
 }
 
+function applyFloor(
+  result: {
+    targetLevel: ScaffoldingLevel;
+    triggerType: "timer" | "miss_streak";
+  },
+  floor: ScaffoldingLevel | undefined
+): { targetLevel: ScaffoldingLevel; triggerType: "timer" | "miss_streak" } {
+  return floor !== undefined && result.targetLevel < floor
+    ? { targetLevel: floor, triggerType: result.triggerType }
+    : result;
+}
+
 /** Advance timers and settle `state` on the level it has escalated to. */
 function advanceState(
   state: ScaffoldState,
@@ -146,7 +160,10 @@ function advanceState(
   deltaMs: number
 ) {
   state.sinceMs += deltaMs;
-  const { targetLevel, triggerType } = computeTargetLevel(state, config);
+  const { targetLevel, triggerType } = applyFloor(
+    computeTargetLevel(state, config),
+    state.floorLevel
+  );
 
   if (targetLevel === 3) {
     state.l3DurationMs += deltaMs;
@@ -208,6 +225,7 @@ export class ScaffoldingSystem {
   ): ScaffoldAction {
     const targetState = state || this.internalState;
     targetState.level = 2;
+    targetState.floorLevel = 2;
     targetState.focusIndex = targetFocusIndex;
 
     return {
@@ -339,6 +357,7 @@ export class ScaffoldingSystem {
     target.focusIndex = null;
     target.l3DurationMs = 0;
     target.skipSuggested = false;
+    target.floorLevel = undefined;
   }
 
   getCurrentLevel(): ScaffoldingLevel {

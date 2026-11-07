@@ -327,4 +327,27 @@ describe("ScaffoldingSystem (BR-SCF-01..08 & SCAFFOLDING-AND-HINTS spec)", () =>
 
     engine.destroy();
   });
+
+  describe("Task #313 B2 — fallback không giọng giữ mức hint", () => {
+    it("tick kế tiếp không kéo level 2 về 0", () => {
+      const scaffolding = new ScaffoldingSystem("3-4");
+      scaffolding.triggerVisualFallback(1);
+      expect(scaffolding.tick(16)).toBe(2);
+      expect(scaffolding.tick(5000)).toBe(2);
+      expect(scaffolding.focusIndex).toBe(1);
+    });
+
+    it("vẫn leo tiếp lên level 3 theo thời gian", () => {
+      const scaffolding = new ScaffoldingSystem("3-4");
+      scaffolding.triggerVisualFallback(0);
+      expect(scaffolding.tick(26_000)).toBe(3);
+    });
+
+    it("trả lời đúng thì xoá sàn level", () => {
+      const scaffolding = new ScaffoldingSystem("3-4");
+      scaffolding.triggerVisualFallback(0);
+      scaffolding.resetOnSuccess();
+      expect(scaffolding.tick(16)).toBe(0);
+    });
+  });
 });
