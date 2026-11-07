@@ -631,13 +631,22 @@ export class GT037Session extends TemplateGameSession<
     if (this.stageRect) {
       return;
     }
+    drawSubPromptText(ctx, rs, this.getCounterText());
+  }
+
+  /** `show_target_counter` tường minh thắng; mặc định bật ở auto, tắt ở declare (`BR-E037-01`). */
+  get showTargetCounter(): boolean {
+    return this.difficulty.show_target_counter ?? this.finishMode === "auto";
+  }
+
+  /** Dòng phụ dưới đề: `Đã tìm: n/m` khi bật bộ đếm, không thì lời nhắc không lộ tổng. */
+  getCounterText(): string {
+    if (this.showTargetCounter) {
+      return `Đã tìm: ${this.foundTargets.size}/${this.targetCopies}`;
+    }
     const targetSym = this.targetSymbol;
     const targetLabel = targetSym?.label ?? targetSym?.id ?? "ký hiệu";
-    const counterText =
-      this.finishMode === "declare"
-        ? `Tìm tất cả ${targetLabel}`
-        : `Đã tìm: ${this.foundTargets.size}/${this.targetCopies}`;
-    drawSubPromptText(ctx, rs, counterText);
+    return `Tìm tất cả ${targetLabel}`;
   }
 
   private renderSingleSlotItem(
