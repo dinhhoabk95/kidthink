@@ -50,6 +50,8 @@ export class SubstitutionSession extends TemplateGameSession<
 
   private readonly pinnedSymbols: Map<string, number> = new Map();
   private selectedValue: number | null = null;
+  /** Dòng luật trẻ vừa chạm tra cứu — phóng to, không tính là trả lời. */
+  private lookedUpEquationId: string | null = null;
   private glyphBySymbolId: Map<string, string> = new Map();
   private symbolById: Map<string, GT010Content["symbols"][number]> = new Map();
   private readonly wrongFlash = new WrongFlash();
@@ -63,6 +65,7 @@ export class SubstitutionSession extends TemplateGameSession<
     this.exploreTracker.reset(false);
     this.pinnedSymbols.clear();
     this.selectedValue = null;
+    this.lookedUpEquationId = null;
     this.wrongFlash.clear();
     this.lastFrameMs = 0;
     this.isWon = false;
@@ -135,7 +138,18 @@ export class SubstitutionSession extends TemplateGameSession<
     });
   }
 
+  /** Trẻ chạm dòng luật để tra: phóng to dòng đó, không ghi event, không chấm. */
+  lookUpRule(equationId: string): void {
+    if (!this.content.equations.some((eq) => eq.equation_id === equationId)) {
+      return;
+    }
+    this.lookedUpEquationId =
+      this.lookedUpEquationId === equationId ? null : equationId;
+    this.exploreTracker.recordExploreAction("rule_lookup");
+  }
+
   selectValue(value: number): boolean {
+    this.lookedUpEquationId = null;
     this.selectedValue = value;
     const opt = this.content.options.find((o) => o.value === value);
     const isCorrect = opt?.is_correct ?? false;
@@ -218,6 +232,12 @@ export class SubstitutionSession extends TemplateGameSession<
     if (action.type === "pin_symbol") {
       return ACTION_IGNORED;
     }
+    if (action.type === "look_up_rule") {
+      return typeof action.data === "string" &&
+        this.content.equations.some((eq) => eq.equation_id === action.data)
+        ? { valid: true, feedback: "none" }
+        : ACTION_IGNORED;
+    }
     if (action.type === "select_value") {
       if (typeof action.data !== "number") {
         return ACTION_RETRY;
@@ -263,6 +283,17 @@ export class SubstitutionSession extends TemplateGameSession<
   override toAction(gesture: Gesture): GameAction | null {
     if (gesture.type !== "tap") {
       return null;
+    }
+    const eqRow = findHitSlotIndex(
+      this.slots.slice(0, this.content.equations.length),
+      gesture.x,
+      gesture.y,
+      "square",
+      TAP_TOLERANCE_PX
+    );
+    const equation = eqRow >= 0 ? this.content.equations[eqRow] : undefined;
+    if (equation) {
+      return { type: "look_up_rule", data: equation.equation_id };
     }
     const optionSlots = this.slots.slice(this.content.equations.length + 1);
     const idx = findHitSlotIndex(
@@ -317,6 +348,10 @@ export class SubstitutionSession extends TemplateGameSession<
   }
 
   override commit(action: GameAction): void {
+    if (action.type === "look_up_rule" && typeof action.data === "string") {
+      this.lookUpRule(action.data);
+      return;
+    }
     if (action.type === "select_value" && typeof action.data === "number") {
       this.selectValue(action.data);
     }
@@ -325,10 +360,22 @@ export class SubstitutionSession extends TemplateGameSession<
   private toOptionState(
     opt: GT010Content["options"][number]
   ): ViewEntity["state"] {
-    if (this.selectedValue === opt.value) {
-      return opt.is_correct ? "correct" : "incorrect";
+    if (this.selectedValue !== opt.value) {
+      return "idle";
     }
-    return "idle";
+    if (opt.is_correct) {
+      return "correct";
+    }
+    // Dấu sai chỉ sống trong nhịp, không phụ thuộc khung vẽ có dọn hay chưa.
+    return this.wrongFlash.isActive(this.lastFrameMs) ? "incorrect" : "idle";
+  }
+
+  /** Dòng luật: tra cứu thì sáng chọn, vừa chọn sai thì sáng nhẹ mời tra lại. */
+  private toEquationState(equationId: string): ViewEntity["state"] {
+    if (this.lookedUpEquationId === equationId) {
+      return "selected";
+    }
+    return this.wrongFlash.isActive(this.lastFrameMs) ? "active" : "idle";
   }
 
   private formatQuestionLhs(): string {
@@ -376,7 +423,7 @@ export class SubstitutionSession extends TemplateGameSession<
         id: eq.equation_id,
         slotIndex: this.slots.indexOf(slot),
         role: "neutral",
-        state: "idle",
+        state: this.toEquationState(eq.equation_id),
         x: slot.x,
         y: slot.y,
         w: slot.w,
@@ -457,7 +504,7 @@ export class SubstitutionSession extends TemplateGameSession<
         `${lhs} = ${eq.right_value}${hint}`,
         slot.x,
         slot.y,
-        28
+        this.lookedUpEquationId === eq.equation_id ? 36 : 28
       );
     });
 
