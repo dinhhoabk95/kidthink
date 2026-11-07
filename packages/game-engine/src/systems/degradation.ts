@@ -2,22 +2,20 @@
  * DegradationManager — sheds visual effects as FPS drops (BR-PRF-03).
  *
  * Touch target size, audio channel, and font size are NEVER degraded: they are
- * accessibility floors, not decoration.
+ * accessibility floors, not decoration. Chỉ hạt và bóng được bỏ (BR-PRF-03):
+ * nền cảnh hiện tĩnh nên chưa có nền động nào để bỏ, còn nhịp gợi ý (scaffolding)
+ * là kênh phản hồi nên cấm tuột. Thêm cờ chỉ khi có code đọc nó.
  */
 
 /** FPS below which each effect switches off, most expendable first. */
 const FPS_FLOOR = {
   particles: 45,
   softShadows: 40,
-  bgAnimation: 35,
-  scaffoldingPulse: 30,
 } as const;
 
 export interface DegradationState {
   particles_enabled: boolean;
   soft_shadows_enabled: boolean;
-  bg_animation_enabled: boolean;
-  scaffolding_pulse_enabled: boolean;
   touch_target_size_degraded: boolean;
   audio_channel_degraded: boolean;
   font_size_degraded: boolean;
@@ -25,15 +23,11 @@ export interface DegradationState {
 
 function createDegradationTier(
   particles: boolean,
-  softShadows: boolean,
-  bgAnimation: boolean,
-  scaffoldingPulse: boolean
+  softShadows: boolean
 ): DegradationState {
   return Object.freeze({
     particles_enabled: particles,
     soft_shadows_enabled: softShadows,
-    bg_animation_enabled: bgAnimation,
-    scaffolding_pulse_enabled: scaffoldingPulse,
     touch_target_size_degraded: false,
     audio_channel_degraded: false,
     font_size_degraded: false,
@@ -41,11 +35,9 @@ function createDegradationTier(
 }
 
 const DEGRADATION_TIERS = {
-  full: createDegradationTier(true, true, true, true),
-  noParticles: createDegradationTier(false, true, true, true),
-  noShadows: createDegradationTier(false, false, true, true),
-  noBgAnim: createDegradationTier(false, false, false, true),
-  minimal: createDegradationTier(false, false, false, false),
+  full: createDegradationTier(true, true),
+  noParticles: createDegradationTier(false, true),
+  noShadows: createDegradationTier(false, false),
 } as const;
 
 export class DegradationManager {
@@ -59,12 +51,6 @@ export class DegradationManager {
     if (fps >= FPS_FLOOR.softShadows) {
       return DEGRADATION_TIERS.noParticles;
     }
-    if (fps >= FPS_FLOOR.bgAnimation) {
-      return DEGRADATION_TIERS.noShadows;
-    }
-    if (fps >= FPS_FLOOR.scaffoldingPulse) {
-      return DEGRADATION_TIERS.noBgAnim;
-    }
-    return DEGRADATION_TIERS.minimal;
+    return DEGRADATION_TIERS.noShadows;
   }
 }

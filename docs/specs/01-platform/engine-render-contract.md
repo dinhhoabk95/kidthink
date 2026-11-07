@@ -164,8 +164,8 @@ Bỏ dần theo thứ tự này, dừng ngay khi khung hình về ngân sách:
 
 1. Hạt và hiệu ứng trang trí của lớp 4.
 2. Đổ bóng và chuyển động mượt.
-3. Nền cảnh trang trí của lớp 1, giữ khung vùng.
-4. Không bao giờ bỏ: lớp 3 và vùng chạm của nó.
+3. Nền cảnh trang trí của lớp 1, giữ khung vùng — **chưa có gì để bỏ**: nền cảnh hiện vẽ tĩnh, nên `degradation.ts` không có cờ nền động (cờ không ai đọc đã gỡ, Task #313). Khi có nền động thật thì thêm cờ cùng chỗ đọc nó.
+4. Không bao giờ bỏ: lớp 3, vùng chạm của nó và nhịp gợi ý (scaffolding) — kênh phản hồi, không phải trang trí (`BR-PRF-03`).
 
 ### 7.5 Hình dạng cổng vẽ
 

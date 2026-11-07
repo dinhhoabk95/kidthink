@@ -23,7 +23,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 - [x] B9 drag slop theo age band; drop cực ngắn = tap (chưa làm: whoosh khi spring-back — chưa có asset âm)
 - [x] B7 bỏ `prepareRound` trùng · [x] B10 `allow_retry:false` cho thấy đáp án trước khi skip · [x] B11 khoá input khi skip round cuối
 - [x] B12 replay gọi `cleanupSession`; thống nhất bảng touch floor; nút GT-000 ≥ sàn chạm band (`--hud-touch-floor`)
-- [ ] B12 còn lại: `seq` telemetry ổn định (unshift `game_started` chỉ lệch nếu upload trước nó — chưa có bằng chứng xảy ra); 2 cờ degradation không ai đọc
+- [x] B12 còn lại: `seq` telemetry ổn định — test `round-runner-lifecycle-events.test.ts` chứng minh trong luồng thật (`startFirstRound` rồi `GameEngine.start()` phát `game_started`, chưa upload nào chen giữa) mọi ảnh chụp `getAllTelemetry()` là tiền tố của ảnh sau, `game_started` luôn ở vị trí 0: không lỗi, không đổi code. Hai cờ degradation không ai đọc (`bg_animation_enabled`, `scaffolding_pulse_enabled`) đã gỡ cùng ngưỡng FPS và tầng của chúng: `BR-PRF-03` chỉ bỏ hạt và bóng, nền cảnh hiện tĩnh, nhịp gợi ý là kênh phản hồi nên cấm tuột; `engine-render-contract.md` §7.4 ghi rõ
 
 ## Phase 2 — Hint/feedback thống nhất
 - [x] Hạ tầng hint nguồn + đích: `HintTarget.slot.toIndex`, `getHintDestinationIndex()`, bàn tay ma (`RenderSystem.renderGhostHand`) ở L2/L3

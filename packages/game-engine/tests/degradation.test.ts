@@ -14,7 +14,6 @@ describe("Task 5 — Performance Budget Degradation (BR-PRF-03)", () => {
     const normal = mgr.updateFps(60);
     expect(normal.particles_enabled).toBe(true);
     expect(normal.soft_shadows_enabled).toBe(true);
-    expect(normal.bg_animation_enabled).toBe(true);
 
     const lowFps = mgr.updateFps(42);
     expect(lowFps.particles_enabled).toBe(false);
@@ -23,6 +22,19 @@ describe("Task 5 — Performance Budget Degradation (BR-PRF-03)", () => {
     const vLowFps = mgr.updateFps(38);
     expect(vLowFps.particles_enabled).toBe(false);
     expect(vLowFps.soft_shadows_enabled).toBe(false);
+  });
+
+  it("BR-PRF-03/BR-ERC-09: chỉ có hạt và bóng để bỏ — không có cờ nào không ai đọc, tụt sâu không bỏ thêm gì", () => {
+    const mgr = new DegradationManager();
+    const floor = mgr.updateFps(5);
+    expect(Object.keys(floor).sort()).toEqual([
+      "audio_channel_degraded",
+      "font_size_degraded",
+      "particles_enabled",
+      "soft_shadows_enabled",
+      "touch_target_size_degraded",
+    ]);
+    expect(floor).toBe(mgr.updateFps(36));
   });
 
   it("BR-PRF-03: touch target size, audio channel, and font size are NEVER degraded", () => {

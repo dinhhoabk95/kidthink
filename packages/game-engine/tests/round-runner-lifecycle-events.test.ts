@@ -120,3 +120,59 @@ describe("RoundRunner — event vòng đời không phát đôi", () => {
     expect(countByName(runner, "round_completed")).toBe(ROUND_COUNT);
   });
 });
+
+/** Session không tự ghi `game_started` (như GT-001): chỉ `GameEngine.start()` phát nó, qua `recordExternalEvent`. */
+class SilentSession extends LifecycleSession {
+  override setupEntities(): void {
+    // Không ghi game_started.
+  }
+
+  override validateAction(): ActionResult {
+    return ACTION_CORRECT;
+  }
+}
+
+describe("RoundRunner — seq telemetry đơn điệu theo luồng thật (B12)", () => {
+  it("game_started của engine chèn đầu mà mọi ảnh chụp trước đó vẫn là tiền tố của ảnh sau (seq = chỉ số + 1 không lệch)", () => {
+    const runner = new RoundRunner({
+      rounds: [makeRound(0), makeRound(1)],
+      sessionFactory: () => new SilentSession(),
+    });
+    // Luồng use-play-session: factory gọi startFirstRound, ngay sau đó
+    // GameEngine.start() phát game_started — chưa lần upload nào chen giữa.
+    runner.startFirstRound();
+    runner.recordExternalEvent({
+      event_name: "game_started",
+      timestamp_ms: Date.now(),
+    });
+
+    const snapshots: string[][] = [];
+    const snap = (): void => {
+      snapshots.push(runner.getAllTelemetry().map((e) => e.event_name));
+    };
+    snap();
+    runner.recordExternalEvent({
+      event_name: "parent_gate_opened",
+      timestamp_ms: Date.now(),
+    });
+    snap();
+    runner.handleAction({ type: "tap", data: {} });
+    runner.completeCurrentRound();
+    snap();
+    runner.recordExternalEvent({
+      event_name: "game_started",
+      timestamp_ms: Date.now(),
+    });
+    snap();
+
+    expect(snapshots[0]?.[0]).toBe("game_started");
+    for (let i = 1; i < snapshots.length; i++) {
+      const prev = snapshots[i - 1] ?? [];
+      const next = snapshots[i] ?? [];
+      expect(next.slice(0, prev.length)).toEqual(prev);
+    }
+    expect(
+      (snapshots.at(-1) ?? []).filter((n) => n === "game_started")
+    ).toHaveLength(1);
+  });
+});
