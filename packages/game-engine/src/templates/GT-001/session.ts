@@ -22,6 +22,7 @@ import {
   spawnParticlesAtSlot,
   updateParticles,
 } from "#src/render/index.js";
+import type { MascotPose } from "#src/render/mascot";
 import { deriveStream } from "#src/rng/mulberry32";
 import { shuffle } from "#src/rng/shuffle";
 import type { DegradationState } from "#src/systems/degradation";
@@ -29,6 +30,10 @@ import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT001Content, GT001Difficulty } from "./template.js";
 
 type OptionItem = GT001Content["options"][number];
+
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E001-05`, `BR-FBK-16`). */
+export const GT001_STORY_LINE =
+  "Gấu Con đi chợ, bé giúp Gấu Con chọn đúng món nhé!";
 
 /** Tiền tố id của entity thẻ đề — tách khỏi không gian id của lựa chọn. */
 const PROMPT_CARD_ID_PREFIX = "prompt:";
@@ -49,6 +54,8 @@ export class GT001Session extends TemplateGameSession<
   private wrongItemId: string | null = null;
   private wrongTimestamp = 0;
   private readonly wrongTimers = new Map<string, number>();
+  /** Đã chọn sai và chưa chọn đúng — Gấu Con còn ngó nghiêng (`BR-E001-05`). */
+  private hasPickedWrong = false;
 
   constructor(
     content: GT001Content,
@@ -77,6 +84,7 @@ export class GT001Session extends TemplateGameSession<
     this.wrongItemId = null;
     this.wrongTimestamp = 0;
     this.wrongTimers.clear();
+    this.hasPickedWrong = false;
     this.selectionItems = this.content.options.map((opt) => ({
       id: opt.item_id,
       isCorrect: opt.is_correct,
@@ -157,6 +165,9 @@ export class GT001Session extends TemplateGameSession<
     this.selectedItemId = itemId;
     this.mechanic.select(itemId);
     const isCorrect = this.findOption(itemId)?.is_correct === true;
+    // Token nằm trên khay gỗ: mỗi lần chạm có tiếng "cộc" (`BR-E001-05`).
+    this.queueSfx("wood_tap");
+    this.hasPickedWrong = !isCorrect;
     this.recordEvent("item_selected", {
       item_id: itemId,
       is_correct: isCorrect,
@@ -175,6 +186,14 @@ export class GT001Session extends TemplateGameSession<
       this.wrongTimestamp = this.lastFrameMs;
       this.wrongTimers.set(itemId, 400);
     }
+  }
+
+  override storyLine(): string {
+    return GT001_STORY_LINE;
+  }
+
+  override mascotMood(): MascotPose | null {
+    return this.hasPickedWrong ? "wonder" : null;
   }
 
   override getView(): EngineView {
