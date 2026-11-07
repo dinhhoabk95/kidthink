@@ -40,7 +40,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 
 ## Phase 3 — Spec drift "control of error"
 - [x] 000 · [x] 007 (một phần: lỗi báo trên ô tổng) · [x] 009 · [x] 010 (một phần) · [x] 012 (một phần) · [x] 013 (một phần) · [x] 014 (một phần) · [x] 015 (một phần: verdict/hint; bộ sinh thoái hoá còn lại)
-- [ ] 020 · [x] 021 (một phần: lật gương khi vẽ) · [x] 022 (một phần: hình mẫu ghim) · [x] 023 (một phần: mảnh thay nhau, neo giữ hình) · [x] 026 (một phần: go bỏ sót trung tính, nút dừng, hạ độ khó) · [x] 029 (một phần: vật bớt rời nhóm) · [x] 030 (một phần: ô không vẽ sẵn, khe/chồng nhìn thấy) · [x] 031 (một phần: nút trả tiền, hint tới nút trả)
+- [x] 020 (lật lệch không phải lỗi, peek chạy thật, trần cặp theo band) · [x] 021 (một phần: lật gương khi vẽ) · [x] 022 (một phần: hình mẫu ghim) · [x] 023 (một phần: mảnh thay nhau, neo giữ hình) · [x] 026 (một phần: go bỏ sót trung tính, nút dừng, hạ độ khó) · [x] 029 (một phần: vật bớt rời nhóm) · [x] 030 (một phần: ô không vẽ sẵn, khe/chồng nhìn thấy) · [x] 031 (một phần: nút trả tiền, hint tới nút trả)
 - [x] 032 (một phần: diện tích nước công bằng, bỏ nhãn lộ đáp án, rót tới vạch phải chốt) · [x] 034 (một phần: chấm nhịp, không chấm từng bước, mẫu không in sẵn) · [x] 035 (một phần: chạy từng bước, hụt có phản hồi, hàng lệnh giữ nguyên) · [x] 036 (một phần: bắt ≥2 loại, chưa có luật không phải sai, bỏ chữ thô) · [x] 037 (một phần: dựng lại bảng giữ ô đã khoanh, item_count trần theo band)
 
 - [ ] 007 (còn lại) — cơ chế kéo/gộp vật thật giữa ô tổng và hai khay phần: viết lại session (toAction/getView/render, bài sinh nội dung `discrete-object`); quá lớn cho một commit, cần plan riêng
