@@ -40,7 +40,8 @@ export type SFXType =
   | "wall_boing"
   | "mouse_step"
   | "scale_creak"
-  | "seat_pat";
+  | "seat_pat"
+  | "clock_tick";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -618,6 +619,26 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       volume: 0.05,
       durationSec: 0.07,
       rampOutSec: 0.05,
+    },
+  ],
+
+  /** GT-016: kim đồng hồ "tích tắc" hai nhịp khô, nhẹ (`BR-E016-05`). */
+  clock_tick: [
+    {
+      delaySec: 0,
+      type: "square",
+      freq: 900,
+      volume: 0.05,
+      durationSec: 0.06,
+      rampOutSec: 0.04,
+    },
+    {
+      delaySec: 0.16,
+      type: "square",
+      freq: 700,
+      volume: 0.05,
+      durationSec: 0.06,
+      rampOutSec: 0.04,
     },
   ],
 

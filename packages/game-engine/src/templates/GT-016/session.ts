@@ -40,11 +40,13 @@ import {
   sceneBox,
   squareBox,
 } from "#src/render/index.js";
+import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
 import {
   type ControlOfErrorDiagnostics,
   MontessoriExploreTracker,
 } from "#src/systems/montessori-explore-system";
+import { MoodPulse } from "#src/systems/mood-pulse";
 import type { RenderSystem } from "#src/systems/render-system";
 import {
   type ClockAngles,
@@ -54,6 +56,19 @@ import {
   timeToAngles,
 } from "#src/systems/rotation-system";
 import type { GT016Content, GT016Difficulty } from "./template.js";
+
+/** Khung chuyện theo mode, đọc một lần ở vòng đầu (`BR-E016-05`, `BR-FBK-16`). */
+export const GT016_STORY_LINES: Record<GT016Content["mode"], string> = {
+  read: "Bạn Mặt Trời và Mặt Trăng cùng bé xem đồng hồ. Bé đọc xem kim đang chỉ mấy giờ nhé!",
+  set: "Bạn Mặt Trời và Mặt Trăng cùng bé chỉnh đồng hồ. Bé xoay kim cho đồng hồ chỉ đúng giờ nhé!",
+  match:
+    "Bạn Mặt Trời và Mặt Trăng cùng bé kể chuyện một ngày. Bé xoay kim rồi chọn hoạt động đúng giờ nhé!",
+};
+
+/** Mascot vui ngắn sau mỗi lần xoay kim. */
+export const GT016_HAPPY_MS = 500;
+/** Mascot nghiêng đầu sau câu trả lời chưa đúng. */
+export const GT016_WONDER_MS = 1500;
 
 /** Phần lề (tỉ lệ) giữa mặt đồng hồ và mép vùng chính của stage. */
 const FACE_INSET = 0.04;
@@ -176,6 +191,7 @@ export class ClockHandsSession extends TemplateGameSession<
   private selectedOptionIndex: number | null = null;
   private wrongChoiceTimerMs = 0;
   private readonly matchedCardIds: Set<string> = new Set();
+  private readonly mood = new MoodPulse();
   private readonly exploreTracker = new MontessoriExploreTracker({
     milestoneTarget: 2,
   });
@@ -194,6 +210,25 @@ export class ClockHandsSession extends TemplateGameSession<
     };
   }
 
+  override storyLine(): string {
+    return GT016_STORY_LINES[this.content.mode];
+  }
+
+  /** Vui sau khi xoay kim, nghiêng đầu sau câu trả lời chưa đúng (`BR-E016-05`). */
+  override mascotMood(): MascotPose | null {
+    return this.isWon ? null : this.mood.current();
+  }
+
+  /** Tiếng tích tắc như nhau dù giờ đúng hay sai: xoay kim là nháp. */
+  private tickClock(): void {
+    this.queueSfx("clock_tick");
+    this.mood.set("happy", GT016_HAPPY_MS);
+  }
+
+  private wonderAfterMiss(): void {
+    this.mood.set("wonder", GT016_WONDER_MS);
+  }
+
   override takePillNarration(): string | null {
     return this.exploreTracker.takePillNarration();
   }
@@ -207,6 +242,7 @@ export class ClockHandsSession extends TemplateGameSession<
     this.wrongChoiceTimerMs = 0;
     this.hasSubmittedTime = false;
     this.matchedCardIds.clear();
+    this.mood.clear();
     this.isWon = false;
     this.exploreTracker.reset(false);
 
@@ -271,6 +307,7 @@ export class ClockHandsSession extends TemplateGameSession<
     const clampedHour = Math.max(1, Math.min(12, Math.round(hour)));
     this.currentTime = { ...this.currentTime, hour: clampedHour };
     this.hasSubmittedTime = false;
+    this.tickClock();
     this.recordEvent("hand_rotated", {
       hand: "hour",
       time: formatClockTime(this.currentTime),
@@ -280,6 +317,7 @@ export class ClockHandsSession extends TemplateGameSession<
   setMinute(minute: 0 | 30): void {
     this.currentTime = { ...this.currentTime, minute };
     this.hasSubmittedTime = false;
+    this.tickClock();
     this.recordEvent("hand_rotated", {
       hand: "minute",
       time: formatClockTime(this.currentTime),
@@ -298,6 +336,7 @@ export class ClockHandsSession extends TemplateGameSession<
       this.exploreTracker.recordCorrectAttempt();
     } else {
       this.wrongChoiceTimerMs = 400;
+      this.wonderAfterMiss();
       const chosenStr = formatClockTime(opt);
       const targetStr = formatClockTime(this.content.target_time);
       this.exploreTracker.recordWrongAttempt({
@@ -336,6 +375,7 @@ export class ClockHandsSession extends TemplateGameSession<
     if (isCorrect) {
       this.exploreTracker.recordCorrectAttempt();
     } else {
+      this.wonderAfterMiss();
       const currentStr = formatClockTime(this.currentTime);
       const targetStr = formatClockTime(this.content.target_time);
       this.exploreTracker.recordWrongAttempt({
@@ -381,6 +421,7 @@ export class ClockHandsSession extends TemplateGameSession<
       return true;
     }
 
+    this.wonderAfterMiss();
     const currentStr = formatClockTime(this.currentTime);
     const cardStr = formatClockTime({ hour: card.hour, minute: card.minute });
     this.exploreTracker.recordWrongAttempt({
@@ -410,6 +451,7 @@ export class ClockHandsSession extends TemplateGameSession<
       this.difficulty.minute_step
     );
     this.hasSubmittedTime = false;
+    this.tickClock();
     this.exploreTracker.recordExploreAction("clock_adjusted");
     this.recordEvent("hand_rotated", {
       hand: "minute",
@@ -610,6 +652,7 @@ export class ClockHandsSession extends TemplateGameSession<
   }
 
   update(deltaMs: number): void {
+    this.mood.tick(deltaMs);
     this.exploreTracker.tick(deltaMs);
     if (this.wrongChoiceTimerMs > 0) {
       this.wrongChoiceTimerMs = Math.max(0, this.wrongChoiceTimerMs - deltaMs);
