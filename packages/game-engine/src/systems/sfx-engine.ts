@@ -29,7 +29,8 @@ export type SFXType =
   | "cat_munch"
   | "coin_clink"
   | "net_splash"
-  | "teacher_chime";
+  | "teacher_chime"
+  | "peg_clip";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -397,6 +398,27 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       volume: 0.08,
       durationSec: 0.18,
       rampOutSec: 0.08,
+    },
+  ],
+
+  /** GT-005: kẹp tất lên dây phơi — "tách" ngắn, êm (`BR-E005-04`). */
+  peg_clip: [
+    {
+      delaySec: 0,
+      type: "triangle",
+      freq: 880,
+      glideTo: { freq: 560, overSec: 0.04 },
+      volume: 0.1,
+      durationSec: 0.06,
+      rampOutSec: 0.04,
+    },
+    {
+      delaySec: 0.07,
+      type: "sine",
+      freq: 400,
+      volume: 0.08,
+      durationSec: 0.08,
+      rampOutSec: 0.05,
     },
   ],
 

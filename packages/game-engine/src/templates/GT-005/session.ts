@@ -16,9 +16,11 @@ import {
   drawSlotItem,
   type ItemVisualState,
 } from "#src/render/index.js";
+import type { MascotPose } from "#src/render/mascot";
 import { deriveStream } from "#src/rng/mulberry32";
 import { shuffle } from "#src/rng/shuffle";
 import type { DegradationState } from "#src/systems/degradation";
+import { MoodPulse } from "#src/systems/mood-pulse";
 import type { RenderSystem } from "#src/systems/render-system";
 import { computePairColumnsInStage } from "./pair-columns.js";
 import type { GT005Content, GT005Difficulty } from "./template.js";
@@ -72,6 +74,15 @@ function nearestHitIndex(
   return best;
 }
 
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E005-04`, `BR-FBK-16`). */
+export const GT005_STORY_LINE =
+  "Sóc Nâu đang kẹp đồ lên dây phơi, bé giúp Sóc nối từng đôi bạn đi cùng nhau nhé!";
+
+/** Mascot reo ngắn sau cặp đúng (`BR-E005-04`). */
+export const GT005_CHEER_MS = 1000;
+/** Mascot nghiêng đầu sau cặp chưa đúng. */
+export const GT005_WONDER_MS = 1500;
+
 export class GT005Session extends TemplateGameSession<
   GT005Content,
   GT005Difficulty
@@ -84,12 +95,14 @@ export class GT005Session extends TemplateGameSession<
   private readonly mechanic = new PairingMechanic();
   private wrongPairIds: readonly [string, string] | null = null;
   private wrongPairTimerMs = 0;
+  private readonly mood = new MoodPulse();
 
   setupEntities(): void {
     this.mechanic.reset();
     this.isWon = false;
     this.wrongPairIds = null;
     this.wrongPairTimerMs = 0;
+    this.mood.clear();
 
     const lefts = this.content.pairs.map((p) => p.left);
     const rights = this.content.pairs.map((p) => p.right);
@@ -125,6 +138,8 @@ export class GT005Session extends TemplateGameSession<
     }
 
     this.mechanic.match(leftItemId, rightItemId);
+    this.queueSfx("peg_clip");
+    this.mood.set("cheer", GT005_CHEER_MS);
     this.recordEvent("pair_matched", {
       pair_id: pair.pair_id,
       left_item_id: leftItemId,
@@ -167,7 +182,17 @@ export class GT005Session extends TemplateGameSession<
     return this.mechanic.getMatchedPairs();
   }
 
+  override storyLine(): string {
+    return GT005_STORY_LINE;
+  }
+
+  /** Reo sau cặp đúng, nghiêng đầu sau cặp sai (`BR-E005-04`). */
+  override mascotMood(): MascotPose | null {
+    return this.isWon ? null : this.mood.current();
+  }
+
   update(deltaMs: number): void {
+    this.mood.tick(deltaMs);
     if (this.wrongPairTimerMs > 0) {
       this.wrongPairTimerMs = Math.max(0, this.wrongPairTimerMs - deltaMs);
       if (this.wrongPairTimerMs === 0) {
@@ -499,6 +524,7 @@ export class GT005Session extends TemplateGameSession<
         } else {
           this.wrongPairIds = [data.left_item_id, data.right_item_id];
           this.wrongPairTimerMs = 350;
+          this.mood.set("wonder", GT005_WONDER_MS);
         }
         this.mechanic.stageLeft(null);
       }
