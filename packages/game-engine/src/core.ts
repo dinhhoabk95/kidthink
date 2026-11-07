@@ -242,6 +242,8 @@ export class GameEngine {
 
   private isRunning = false;
   private isPaused = false;
+  /** Lúc pause hiện tại (ms epoch) — để `game_resumed` báo `paused_ms` (BR-HPL-07). */
+  private pausedAtMs = 0;
   private rafId?: number;
   private lastFrameTimeMs = 0;
 
@@ -678,6 +680,7 @@ export class GameEngine {
       return;
     }
     this.isPaused = true;
+    this.pausedAtMs = Date.now();
     this.cancelFrame();
     this.emitEvent({
       event_name: "game_paused",
@@ -691,6 +694,11 @@ export class GameEngine {
       return;
     }
     this.isPaused = false;
+    this.emitEvent({
+      event_name: "game_resumed",
+      timestamp_ms: Date.now(),
+      data: { paused_ms: Math.max(0, Date.now() - this.pausedAtMs) },
+    });
     this.lastFrameTimeMs = nowMs();
     this.loop();
   }

@@ -190,6 +190,13 @@ export class RoundRunner {
   /** Số `answer_*` session tự phát mà runner đã thấy ở vòng hiện tại. */
   private sessionAnswerEventsSeen = 0;
   private hintTimer: ReturnType<typeof setTimeout> | null = null;
+  /** Hạn nổ của `hintTimer` (ms epoch) — để hẹn lại phần còn lại sau pause. */
+  private hintDueAtMs = 0;
+  private hintRoundIndex = 0;
+  /** Lúc bắt đầu pause hiện tại; `null` khi không pause (BR-HPL-07). */
+  private pausedSinceMs: number | null = null;
+  /** Tổng thời gian pause đã xong của vòng hiện tại. */
+  private pausedTotalMs = 0;
   private logicSpace?: LogicSpace;
   private stageRect?: ZoneRect;
   private trayRect?: ZoneRect;
@@ -367,7 +374,7 @@ export class RoundRunner {
     this.collectSessionTelemetry();
     this.recordEvent("round_completed", {
       round_index: this.currentRoundIndex,
-      duration_ms: Date.now() - this.sessionStartMs,
+      duration_ms: this.roundElapsedMs(),
     });
 
     this.currentSession.completeSession();
@@ -436,7 +443,7 @@ export class RoundRunner {
     this.recordEvent(isCorrect ? "answer_correct" : "answer_incorrect", {
       round_index: this.currentRoundIndex,
       attempt_index: this.attemptIndex,
-      elapsed_ms: Date.now() - this.sessionStartMs,
+      elapsed_ms: this.roundElapsedMs(),
       ...(this.currentSession.isTrialBased?.() ? { trial_based: true } : {}),
     });
   }
@@ -621,6 +628,7 @@ export class RoundRunner {
       clearTimeout(this.hintTimer);
       this.hintTimer = null;
     }
+    this.hintDueAtMs = 0;
   }
 
   /**
@@ -634,15 +642,68 @@ export class RoundRunner {
   ): void {
     const hintAfterMs = rawParams?.hint_after_ms;
     if (typeof hintAfterMs === "number" && hintAfterMs > 0) {
-      this.hintTimer = setTimeout(() => {
-        this.recordEvent("hint_requested", {
-          round_index: index,
-          source: "timer",
-        });
-        this.recordHint();
-      }, hintAfterMs);
+      this.scheduleHintTimer(index, hintAfterMs);
+    }
+    this.pausedTotalMs = 0;
+    if (this.pausedSinceMs !== null) {
+      this.pausedSinceMs = Date.now();
     }
     this.sessionStartMs = Date.now();
+  }
+
+  private scheduleHintTimer(index: number, delayMs: number): void {
+    this.hintRoundIndex = index;
+    this.hintDueAtMs = Date.now() + delayMs;
+    if (this.pausedSinceMs !== null) {
+      // Đang pause: `resume` sẽ hẹn lại với đúng phần còn lại.
+      return;
+    }
+    this.hintTimer = setTimeout(() => {
+      this.hintTimer = null;
+      this.recordEvent("hint_requested", {
+        round_index: index,
+        source: "timer",
+      });
+      this.recordHint();
+    }, delayMs);
+  }
+
+  /** Thời gian chơi thật của vòng, đã trừ mọi lần pause (BR-HPL-07). */
+  private roundElapsedMs(): number {
+    const now = Date.now();
+    const pausedNow =
+      this.pausedSinceMs === null ? 0 : now - this.pausedSinceMs;
+    return Math.max(
+      0,
+      now - this.sessionStartMs - this.pausedTotalMs - pausedNow
+    );
+  }
+
+  /** Dừng đồng hồ vòng và hẹn giờ trợ giúp (BR-HPL-07). Gọi lặp là vô hại. */
+  pause(): void {
+    if (this.pausedSinceMs !== null || this.isFinished) {
+      return;
+    }
+    this.pausedSinceMs = Date.now();
+    if (this.hintTimer !== null) {
+      clearTimeout(this.hintTimer);
+      this.hintTimer = null;
+    }
+  }
+
+  /** Chạy tiếp: hẹn lại hint với phần còn lại, không tính thời gian đã pause. */
+  resume(): void {
+    if (this.pausedSinceMs === null) {
+      return;
+    }
+    const now = Date.now();
+    // Phần còn lại của hint tính tại lúc pause; <= 0 nghĩa là đã nổ hoặc không có.
+    const hintRemainingMs = this.hintDueAtMs - this.pausedSinceMs;
+    this.pausedTotalMs += now - this.pausedSinceMs;
+    this.pausedSinceMs = null;
+    if (hintRemainingMs > 0 && this.currentSession && this.hintTimer === null) {
+      this.scheduleHintTimer(this.hintRoundIndex, hintRemainingMs);
+    }
   }
 
   /**

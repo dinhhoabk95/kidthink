@@ -240,15 +240,20 @@ export function usePlaySession(options: UsePlaySessionOptions) {
     finishSession,
     destroyTelemetrySession,
   } = usePlayTelemetry();
-  const { setInstructionAudio, playInstructionNarration, stopNarrationAudio } =
-    usePlayAudio({
-      getEngine: () => engine,
-      onFallbackCue:
-        onFallbackCue ??
-        (() => {
-          /* noop */
-        }),
-    });
+  const {
+    setInstructionAudio,
+    playInstructionNarration,
+    stopNarrationAudio,
+    pauseNarration,
+    resumeNarration,
+  } = usePlayAudio({
+    getEngine: () => engine,
+    onFallbackCue:
+      onFallbackCue ??
+      (() => {
+        /* noop */
+      }),
+  });
 
   function getEngine(): GameEngine | null {
     return engine;
@@ -719,10 +724,18 @@ export function usePlaySession(options: UsePlaySessionOptions) {
     if (!engine) {
       return;
     }
+    // Pause dừng cả lời dẫn, hẹn giờ vòng và đồng hồ vòng của runner
+    // (BR-HPL-07, Task #313 B5), không chỉ nét vẽ.
     if (isPaused) {
       engine.pause(reason);
+      roundRunner?.pause();
+      roundTimers.pause();
+      pauseNarration();
     } else {
       engine.resume();
+      roundRunner?.resume();
+      roundTimers.resume();
+      resumeNarration();
     }
   }
 

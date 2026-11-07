@@ -140,6 +140,31 @@ export function usePlayAudio(options: PlayAudioOptions) {
     }
   }
 
+  /** Dừng lời dẫn đang phát (mp3 + TTS) và đồng hồ chờ settle (Task #313 B5). */
+  function pauseNarration(): void {
+    clearPendingSettleTimer();
+    try {
+      activeNarrationAudio?.pause();
+    } catch {
+      // Safe ignore
+    }
+    if (typeof window !== "undefined") {
+      window.speechSynthesis?.pause();
+    }
+  }
+
+  /** Phát tiếp lời dẫn; settle còn chờ thì hẹn lại hạn dự phòng đầy đủ. */
+  function resumeNarration(): void {
+    if (typeof window !== "undefined") {
+      window.speechSynthesis?.resume();
+    }
+    activeNarrationAudio?.play().catch(() => undefined);
+    const settle = pendingSettleCallback;
+    if (settle) {
+      pendingSettleTimer = setTimeout(settle, NARRATION_SETTLE_TIMEOUT_MS);
+    }
+  }
+
   function speakErrorPrompt(): void {
     const engine = getEngine();
     if (engine) {
@@ -155,6 +180,8 @@ export function usePlayAudio(options: PlayAudioOptions) {
     setInstructionAudio,
     stopNarrationAudio,
     playInstructionNarration,
+    pauseNarration,
+    resumeNarration,
     speakErrorPrompt,
   };
 }

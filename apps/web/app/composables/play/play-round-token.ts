@@ -47,23 +47,74 @@ export interface TimerBag {
   set(fn: () => void, delayMs: number): void;
   /** Huỷ mọi hẹn giờ đang chờ — gọi khi rời trang và khi bắt đầu lượt mới. */
   clearAll(): void;
+  /** Dừng mọi hẹn giờ, giữ phần còn lại (Task #313 B5). */
+  pause(): void;
+  /** Chạy tiếp mọi hẹn giờ với phần còn lại. */
+  resume(): void;
+}
+
+interface PendingTimer {
+  readonly fn: () => void;
+  remainingMs: number;
+  dueAtMs: number;
+  id: ReturnType<typeof setTimeout> | null;
 }
 
 export function createTimerBag(): TimerBag {
-  const pending = new Set<ReturnType<typeof setTimeout>>();
+  const pending = new Set<PendingTimer>();
+  let paused = false;
+
+  function arm(timer: PendingTimer): void {
+    timer.dueAtMs = Date.now() + timer.remainingMs;
+    timer.id = setTimeout(() => {
+      pending.delete(timer);
+      timer.fn();
+    }, timer.remainingMs);
+  }
+
   return {
     set(fn, delayMs) {
-      const id = setTimeout(() => {
-        pending.delete(id);
-        fn();
-      }, delayMs);
-      pending.add(id);
+      const timer: PendingTimer = {
+        fn,
+        remainingMs: delayMs,
+        dueAtMs: 0,
+        id: null,
+      };
+      pending.add(timer);
+      if (!paused) {
+        arm(timer);
+      }
     },
     clearAll() {
-      for (const id of pending) {
-        clearTimeout(id);
+      for (const timer of pending) {
+        if (timer.id !== null) {
+          clearTimeout(timer.id);
+        }
       }
       pending.clear();
+    },
+    pause() {
+      if (paused) {
+        return;
+      }
+      paused = true;
+      const now = Date.now();
+      for (const timer of pending) {
+        if (timer.id !== null) {
+          clearTimeout(timer.id);
+          timer.id = null;
+          timer.remainingMs = Math.max(0, timer.dueAtMs - now);
+        }
+      }
+    },
+    resume() {
+      if (!paused) {
+        return;
+      }
+      paused = false;
+      for (const timer of pending) {
+        arm(timer);
+      }
     },
   };
 }
