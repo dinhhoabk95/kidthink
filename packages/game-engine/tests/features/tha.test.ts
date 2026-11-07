@@ -382,7 +382,9 @@ describe("Feature: Hành vi kéo thả (drop) và fallback chạm-chạm — tha
 
       const sourceSlot = session.slots.find((s) => s.role === "source");
       const targetAnchor = f23.content.anchors[0];
-      if (!(sourceSlot && targetAnchor)) {
+      // Neo thả/chạm ở đúng ô layout vẽ ra, cùng hệ toạ độ với khay (BR-E023-09).
+      const anchorSlot = session.targetSlots[0];
+      if (!(sourceSlot && targetAnchor && anchorSlot)) {
         throw new Error("slot and anchor must exist");
       }
 
@@ -391,8 +393,8 @@ describe("Feature: Hành vi kéo thả (drop) và fallback chạm-chạm — tha
         type: "drop",
         fromX: sourceSlot.x,
         fromY: sourceSlot.y,
-        toX: targetAnchor.x,
-        toY: targetAnchor.y,
+        toX: anchorSlot.x,
+        toY: anchorSlot.y,
         timeMs: 200,
       });
 
@@ -1028,7 +1030,9 @@ describe("Feature: Hành vi kéo thả (drop) và fallback chạm-chạm — tha
 
       const sourceSlot = session.slots.find((s) => s.role === "source");
       const targetAnchor = f23.content.anchors[0];
-      if (!(sourceSlot && targetAnchor)) {
+      // Neo thả/chạm ở đúng ô layout vẽ ra, cùng hệ toạ độ với khay (BR-E023-09).
+      const anchorSlot = session.targetSlots[0];
+      if (!(sourceSlot && targetAnchor && anchorSlot)) {
         throw new Error("slot and anchor must exist");
       }
 
@@ -1045,8 +1049,8 @@ describe("Feature: Hành vi kéo thả (drop) và fallback chạm-chạm — tha
       // Tap 2: chạm anchor
       const tap2Result = session.dispatch({
         type: "tap",
-        x: targetAnchor.x,
-        y: targetAnchor.y,
+        x: anchorSlot.x,
+        y: anchorSlot.y,
         timeMs: 300,
       });
       expect(tap2Result?.valid).toBe(true);

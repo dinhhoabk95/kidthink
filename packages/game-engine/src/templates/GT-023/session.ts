@@ -32,7 +32,6 @@ import {
   drawSceneBackground,
   drawSlotItem,
   drawWoodenTokenDock,
-  slotAtPoint,
 } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
 import {
@@ -62,9 +61,6 @@ const SHAPE_CELL_STEP_PX = 8;
 const MODEL_EDGE_PAD_PX = 4;
 /** Mô hình được kéo giãn một trục nhiều nhất bấy nhiêu lần so với trục kia. */
 const MODEL_STRETCH_MAX = 2.5;
-
-/** Cỡ thực thể mỏ neo ở bố cục cũ, nơi mỏ neo đứng ở toạ độ của content. */
-const LEGACY_ANCHOR_VIEW_PX = 80;
 
 function findHitSourcePart(
   slots: readonly Slot[],
@@ -270,15 +266,25 @@ export class GT023Session extends TemplateGameSession<
     x: number,
     y: number
   ): AssemblyPlacementResult | null {
+    // Đã có slot thì chỉ hit-test theo ô neo vẽ ra (`BR-E023-09`): rơi về toạ độ
+    // content lúc này là thả trúng một neo vô hình, có khi nằm ngay trên khay.
+    // Toạ độ content chỉ dùng khi chưa dựng slot (phiên chưa `prepareRound`).
+    if (this.targetSlots.length > 0) {
+      const hitAnchor = this.findHitAnchor(x, y);
+      return hitAnchor
+        ? this.onAssemblePart(partId, hitAnchor.anchor_id)
+        : null;
+    }
     // Cùng bán kính hút với `findHitAnchor`: hai đường thả không được lệch nhau.
     const snapRadius = Math.max(
       this.difficulty.snap_radius_px,
       MIN_SNAP_RADIUS_PX
     );
-    const hitAnchor = this.findHitAnchor(x, y);
-    const anchorId =
-      hitAnchor?.anchor_id ??
-      this.assemblySystem.findNearestAnchor(x, y, snapRadius)?.anchorId;
+    const anchorId = this.assemblySystem.findNearestAnchor(
+      x,
+      y,
+      snapRadius
+    )?.anchorId;
     if (!anchorId) {
       return null;
     }
@@ -298,15 +304,12 @@ export class GT023Session extends TemplateGameSession<
   }
 
   /**
-   * Slot của mỏ neo `index`. Trong khung năm vùng mỏ neo là ô đích xếp trên sân
-   * khấu; ở bố cục cũ nó đứng ở toạ độ riêng của content.
+   * Slot của mỏ neo `index`: luôn là ô đích của layout, cùng hệ toạ độ với khay
+   * mảnh — khung năm vùng xếp trên sân khấu, khung cũ ở vùng đích dưới
+   * (`BR-E023-09`). Chưa tính slot thì chưa có neo để thả.
    */
   private anchorSlot(index: number): Slot | null {
-    if (pickTrayZones(this.stageRect, this.trayRect)) {
-      return this.targetSlots[index] ?? null;
-    }
-    const anchor = this.content.anchors[index];
-    return anchor ? slotAtPoint(anchor.x, anchor.y) : null;
+    return this.targetSlots[index] ?? null;
   }
 
   /** Mỏ neo gần điểm thả nhất trong bán kính hút. */
@@ -440,13 +443,13 @@ export class GT023Session extends TemplateGameSession<
     }
   }
 
-  /** Thực thể mỏ neo: ô đích trên sân khấu, hoặc điểm của content ở bố cục cũ. */
+  /** Thực thể mỏ neo: ô đích của layout; chưa có slot thì chưa có thực thể. */
   private toAnchorEntity(
     anchor: GT023Content["anchors"][number],
     index: number,
     isPlaced: boolean,
     usedIds: Set<string>
-  ): ViewEntity {
+  ): ViewEntity | null {
     const state: EntityVisual = isPlaced ? "correct" : "idle";
     const id = usedIds.has(anchor.anchor_id)
       ? `anchor:${anchor.anchor_id}`
@@ -455,21 +458,9 @@ export class GT023Session extends TemplateGameSession<
     const labelProps = anchor.label
       ? resolveAssetSpeech({ kind: "text", text: anchor.label })
       : {};
-    const slot = pickTrayZones(this.stageRect, this.trayRect)
-      ? this.targetSlots[index]
-      : undefined;
+    const slot = this.targetSlots[index];
     if (!slot) {
-      return {
-        id,
-        slotIndex: index,
-        role: "target",
-        state,
-        x: anchor.x,
-        y: anchor.y,
-        w: LEGACY_ANCHOR_VIEW_PX,
-        h: LEGACY_ANCHOR_VIEW_PX,
-        ...labelProps,
-      };
+      return null;
     }
     return {
       id,
@@ -493,14 +484,15 @@ export class GT023Session extends TemplateGameSession<
     const usedIds = new Set<string>();
 
     this.content.anchors.forEach((anchor, i) => {
-      entities.push(
-        this.toAnchorEntity(
-          anchor,
-          i,
-          placements.has(anchor.anchor_id),
-          usedIds
-        )
+      const entity = this.toAnchorEntity(
+        anchor,
+        i,
+        placements.has(anchor.anchor_id),
+        usedIds
       );
+      if (entity) {
+        entities.push(entity);
+      }
     });
 
     for (let i = 0; i < this.content.parts.length; i++) {
