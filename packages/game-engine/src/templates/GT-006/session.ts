@@ -23,8 +23,8 @@ import {
   type ItemVisualState,
   sceneBox,
 } from "#src/render/index.js";
+import { deriveDerangement } from "#src/rng/derangement";
 import { deriveStream } from "#src/rng/mulberry32";
-import { shuffle } from "#src/rng/shuffle";
 import type { DegradationState } from "#src/systems/degradation";
 import {
   type ControlOfErrorDiagnostics,
@@ -69,7 +69,8 @@ export class GT006Session extends TemplateGameSession<
       this.mechanic.setInitialSequence(steps);
     } else {
       const rng = deriveStream(this.layoutSeed, "initial");
-      this.mechanic.setInitialSequence(shuffle(steps, rng));
+      // Sattolo: không bước nào còn ở vị trí cũ nên không bao giờ ra đúng sẵn (BR-E006-02).
+      this.mechanic.setInitialSequence(deriveDerangement(steps, rng));
     }
     this.isWon = false;
     this.stagedIndex = null;

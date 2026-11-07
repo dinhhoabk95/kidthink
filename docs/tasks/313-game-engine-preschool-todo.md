@@ -62,7 +62,14 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 - [ ] 029 (còn lại) — chữ phụ "Đã bớt: n/m" ở caption, ô số ban đầu giữ nguyên và thẻ "bớt đi n" bằng hình (chữ phải đọc: Phase 4 "Gỡ chữ"); mèo ăn cá thật sự (Phase 5); lưới lẻ cột thì vật bớt chia hàng với nhóm nên không có dock riêng
 
 ## Phase 4 — Generator & difficulty
-- [ ] Generator 006, 008, 011, 012, 015, 016; band khớp `age_min` (011, 015, 017)
+- [x] Generator 006 (số đếm tăng dần, session xáo bằng Sattolo, BR-E006-02/04)
+- [ ] Generator 008
+- [ ] Generator 011
+- [ ] Generator 012 (+ `flash_ms` co giãn theo band)
+- [ ] Generator 015 (puzzle có nghiệm duy nhất cần suy luận)
+- [ ] Generator 016
+- [ ] Band khớp `age_min` (011, 015, 017)
+- [ ] Giảm mật độ tường/số lối GT-013 4–5 tuổi
 - [ ] Nối/xoá trường difficulty chết theo spec sở hữu
 - [ ] Gỡ chữ phải đọc khỏi UI trẻ (008, 009, 019, 023, 028, 029, 032, 035, 036)
 
