@@ -32,7 +32,8 @@ export type SFXType =
   | "teacher_chime"
   | "peg_clip"
   | "film_tick"
-  | "candy_drop";
+  | "candy_drop"
+  | "park_thunk";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -453,6 +454,27 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
     durationSec: 0.05,
     rampOutSec: 0.04,
   })),
+
+  /** GT-008: xe vào đúng chỗ đỗ — "cạch" trầm êm (`BR-E008-06`). */
+  park_thunk: [
+    {
+      delaySec: 0,
+      type: "triangle",
+      freq: 240,
+      glideTo: { freq: 160, overSec: 0.06 },
+      volume: 0.12,
+      durationSec: 0.08,
+      rampOutSec: 0.05,
+    },
+    {
+      delaySec: 0.09,
+      type: "sine",
+      freq: 520,
+      volume: 0.07,
+      durationSec: 0.1,
+      rampOutSec: 0.06,
+    },
+  ],
 
   /** Grand fanfare, level completion only (BR-ENG-08). */
   level_celebrate: FANFARE_NOTES.map((freq, i) => {

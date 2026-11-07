@@ -34,7 +34,9 @@ import {
   spawnParticlesAtSlot,
   updateParticles,
 } from "#src/render/index.js";
+import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
+import { MoodPulse } from "#src/systems/mood-pulse";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import { WRONG_FLASH_MS, WrongFlash } from "#src/systems/wrong-flash";
 import type { GT008Content, GT008Difficulty } from "./template.js";
@@ -80,6 +82,15 @@ function extractSlotData(
   return undefined;
 }
 
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E008-06`, `BR-FBK-16`). */
+export const GT008_STORY_LINE =
+  "Voi Con giữ bãi đỗ xe. Bé đưa từng bạn về đúng chỗ của mình nhé!";
+
+/** Mascot reo ngắn khi vật vào đúng ô (`BR-E008-06`). */
+export const GT008_CHEER_MS = 1000;
+/** Mascot nghiêng đầu sau lần thả sai ô. */
+export const GT008_WONDER_MS = 1500;
+
 export class GT008Session extends TemplateGameSession<
   GT008Content,
   GT008Difficulty
@@ -90,6 +101,7 @@ export class GT008Session extends TemplateGameSession<
   private wrongItemId: string | null = null;
   private wrongSlotId: string | null = null;
   private readonly wrongFlash = new WrongFlash();
+  private readonly mood = new MoodPulse();
   private lastFrameMs = 0;
 
   placedSlots: Map<string, string> = new Map(); // slot_id -> item_id
@@ -118,6 +130,7 @@ export class GT008Session extends TemplateGameSession<
     this.wrongItemId = null;
     this.wrongSlotId = null;
     this.wrongFlash.clear();
+    this.mood.clear();
     this.lastFrameMs = 0;
     this.isWon = false;
     this.renderParticles = [];
@@ -143,7 +156,17 @@ export class GT008Session extends TemplateGameSession<
     return new Map(this.content.slots.map((s) => [s.slot_id, s]));
   }
 
+  override storyLine(): string {
+    return GT008_STORY_LINE;
+  }
+
+  /** Reo khi vật vào đúng ô, nghiêng đầu khi thả sai (`BR-E008-06`). */
+  override mascotMood(): MascotPose | null {
+    return this.isWon ? null : this.mood.current();
+  }
+
   update(deltaMs: number): void {
+    this.mood.tick(deltaMs);
     this.lastFrameMs += deltaMs;
     if (this.wrongItemId && this.wrongFlash.hasExpired(this.lastFrameMs)) {
       this.setRenderItemState(this.wrongItemId, "idle");
@@ -194,6 +217,8 @@ export class GT008Session extends TemplateGameSession<
 
     if (isCorrect) {
       this.placedSlots.set(slotId, itemId);
+      this.queueSfx("park_thunk");
+      this.mood.set("cheer", GT008_CHEER_MS);
       const slotDefIdx = this.content.slots.findIndex(
         (s) => s.slot_id === slotId
       );
@@ -432,6 +457,7 @@ export class GT008Session extends TemplateGameSession<
       this.wrongSlotId = data.slot_id;
       this.wrongFlash.trigger(this.lastFrameMs);
       this.setRenderItemState(data.item_id, "wrong");
+      this.mood.set("wonder", GT008_WONDER_MS);
     }
   }
 
