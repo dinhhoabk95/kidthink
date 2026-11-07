@@ -192,13 +192,34 @@ export class GT036Session extends TemplateGameSession<
     return plan.slot;
   }
 
+  /**
+   * `BR-E036-12`: chưa cầm đúng phần tử thì bước đúng là kéo nó từ bảng vào ô dải,
+   * đích là ô dải; đã cầm sẵn thì chỉ còn chạm ô nên không có đích.
+   */
+  override getHintDestinationIndex(): number | null {
+    if (this.isWin || this.isWon) {
+      return null;
+    }
+    const plan = this.hintPlan();
+    if (!plan || plan.elementId === this.selectedPaletteId) {
+      return null;
+    }
+    const palIdx = this.content.palette.findIndex(
+      (p) => p.id === plan.elementId
+    );
+    return palIdx >= 0 ? plan.slot : null;
+  }
+
   override getHintTarget(): HintTarget | null {
     if (this.isWin || this.isWon) {
       return null;
     }
     const index = this.getHintTargetIndex();
     if (index !== null) {
-      return { kind: "slot", index };
+      const toIndex = this.getHintDestinationIndex();
+      return toIndex === null
+        ? { kind: "slot", index }
+        : { kind: "slot", index, toIndex };
     }
     if (this.placedItems.includes(null) === false || this.hintPlan() === null) {
       return { kind: "action" };

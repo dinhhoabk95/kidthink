@@ -145,6 +145,9 @@ const CASES: readonly (readonly [string, number])[] = [
   ["GT-007", 0],
   ["GT-008", 0],
   ["GT-014", 1],
+  ["GT-015", 0],
+  ["GT-015", 1],
+  ["GT-015", 2],
   ["GT-019", 0],
   ["GT-021", 0],
   ["GT-023", 0],
@@ -206,8 +209,6 @@ describe("getHintDestinationIndex — bàn tay ma kéo tới đích", () => {
     ["GT-014", 0, "mục chọn nặng/nhẹ chỉ là chạm"],
     ["GT-029", 0, "kéo vật ra ngoài nhóm, không có slot đích"],
     ["GT-036", 0, "phần tử đã được cầm sẵn, bước đúng là chạm ô dải"],
-    ["GT-015", 0, "hint trỏ vào ô trống cần điền (hợp đồng hint của sudoku)"],
-    ["GT-015", 0, "hint trỏ vào ô trống cần điền (hợp đồng hint của sudoku)"],
   ];
   for (const [code, fixtureIndex, why] of TAP_ONLY) {
     it(`${code}: ${why} nên hint không có đích`, async () => {

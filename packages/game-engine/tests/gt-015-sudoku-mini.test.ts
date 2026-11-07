@@ -172,8 +172,9 @@ describe("GT-015: Sudoku hình ảnh mini (sudoku-mini)", () => {
         }
       }
 
-      // Hint target points to the first empty cell slot index (row 0, col 1 -> index 1)
-      expect(session.getHintTargetIndex()).toBe(1);
+      // BR-E015-08: nguồn là ký hiệu đúng trong khay (dog = slot 9 + 1), đích là ô trống đầu (index 1).
+      expect(session.getHintTargetIndex()).toBe(10);
+      expect(session.getHintDestinationIndex()).toBe(1);
 
       // Tap palette symbol "dog" (index 1 -> slotIndex 9 + 1 = 10) near edge (+18px tolerance)
       const dogSlot = session.slots[10];
@@ -336,9 +337,11 @@ describe("GT-015: Sudoku hình ảnh mini (sudoku-mini)", () => {
       session.fillCell(0, 1, "cat");
       session.fillCell(1, 1, "cat");
       expect(session.checkWinCondition()).toBe(false);
-      const hint = session.getHintTargetIndex();
+      const hint = session.getHintDestinationIndex();
       expect(hint).not.toBeNull();
       expect([1, 4]).toContain(hint);
+      // BR-E015-08: nguồn là ký hiệu đúng của ô đó (ô 1 = dog, ô 4 = bird).
+      expect(session.getHintTargetIndex()).toBe(hint === 1 ? 10 : 11);
     });
   });
 });

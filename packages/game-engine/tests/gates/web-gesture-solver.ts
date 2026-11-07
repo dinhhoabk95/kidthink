@@ -91,12 +91,29 @@ function candidatesOf(session: TemplateGameSession, t: number): Gesture[] {
           timeMs: t,
         }))
     : [];
+  // Bàn tay ma: kéo đúng từ nguồn gợi ý tới đích gợi ý (GT-015/036, BR-E015-08/BR-E036-12).
+  const hintedTo = session.getHintDestinationIndex?.() ?? null;
+  const destEntity = entities.find((e) => e.slotIndex === hintedTo);
+  const ghostDrag: Gesture[] =
+    hintEntity && destEntity
+      ? [
+          {
+            type: "drop",
+            fromX: hintEntity.x,
+            fromY: hintEntity.y,
+            toX: destEntity.x,
+            toY: destEntity.y,
+            timeMs: t,
+          },
+        ]
+      : [];
   const commit: Gesture[] = session.needsCommit
     ? [{ type: "commit", timeMs: t }]
     : [];
   // Nút chốt đứng sau gợi ý: còn gợi ý nghĩa là còn việc phải đặt trước khi chốt
   // (GT-035: chạy chương trình chỉ khi hàng lệnh đã đủ, vì chạy không còn là phán quyết).
   return [
+    ...ghostDrag,
     ...hintTap,
     ...hintDrops,
     ...hintDropsIn,

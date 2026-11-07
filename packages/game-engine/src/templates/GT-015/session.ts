@@ -481,7 +481,8 @@ export class SudokuMiniSession extends TemplateGameSession<
     return this.selectedSymbolId;
   }
 
-  override getHintTargetIndex(): number | null {
+  /** Ô cần điền kế tiếp (chỉ số hàng·cỡ + cột), không bao giờ là ô cho trước. */
+  private pickHintCell(): number | null {
     // Lưới đầy mà còn trùng: chỉ ô trẻ đổi được, không để gợi ý ngõ cụt.
     const conflicted = this.activeViolations
       .flatMap((v) => [
@@ -500,6 +501,84 @@ export class SudokuMiniSession extends TemplateGameSession<
     return emptyCell
       ? emptyCell.row * this.content.grid_size + emptyCell.col
       : null;
+  }
+
+  /**
+   * Nghiệm duy nhất (`BR-E015-01`) giải từ các ô cho trước: ký hiệu đúng của
+   * mỗi ô, theo chỉ số ô. Lưới nhỏ (≤ 4×4) nên quay lui là đủ.
+   */
+  private solveFromGivens(): ReadonlyMap<number, string> | null {
+    const size = this.content.grid_size;
+    const values = new Map<number, string | null>();
+    for (const c of this.content.cells) {
+      values.set(c.row * size + c.col, c.symbol_id);
+    }
+    const blanks = [...values.entries()]
+      .filter(([, v]) => v === null)
+      .map(([k]) => k);
+    const buildGrid = (): SudokuGrid<string> => ({
+      size,
+      regions: this.content.regions,
+      cells: [...values.entries()].map(([k, value]) => ({
+        row: Math.floor(k / size),
+        col: k % size,
+        value,
+      })),
+    });
+    const search = (at: number): boolean => {
+      const key = blanks[at];
+      if (key === undefined) {
+        return true;
+      }
+      for (const sym of this.content.symbols) {
+        values.set(key, sym.symbol_id);
+        const clash = findConstraintViolations(buildGrid()).some(
+          (v) => v.row * size + v.col === key
+        );
+        if (!clash && search(at + 1)) {
+          return true;
+        }
+      }
+      values.set(key, null);
+      return false;
+    };
+    if (!search(0)) {
+      return null;
+    }
+    const solved = new Map<number, string>();
+    for (const key of blanks) {
+      const v = values.get(key);
+      if (v) {
+        solved.set(key, v);
+      }
+    }
+    return solved;
+  }
+
+  private hintSymbolIndex(cell: number): number | null {
+    const symbolId = this.solveFromGivens()?.get(cell);
+    const idx = this.content.symbols.findIndex(
+      (sym) => sym.symbol_id === symbolId
+    );
+    return idx < 0 ? null : idx;
+  }
+
+  /** `BR-E015-08`: nguồn là ký hiệu đúng trong khay; không giải được thì trỏ thẳng ô. */
+  override getHintTargetIndex(): number | null {
+    const cell = this.pickHintCell();
+    if (cell === null) {
+      return null;
+    }
+    const symbolIdx = this.hintSymbolIndex(cell);
+    return symbolIdx === null
+      ? cell
+      : this.content.grid_size * this.content.grid_size + symbolIdx;
+  }
+
+  /** `BR-E015-08`: đích là ô cần điền; thiếu nguồn ký hiệu thì chỉ chạm ô. */
+  override getHintDestinationIndex(): number | null {
+    const cell = this.pickHintCell();
+    return cell !== null && this.hintSymbolIndex(cell) !== null ? cell : null;
   }
 
   override commit(action: GameAction): void {
