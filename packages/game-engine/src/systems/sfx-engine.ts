@@ -42,7 +42,8 @@ export type SFXType =
   | "scale_creak"
   | "seat_pat"
   | "clock_tick"
-  | "block_bump";
+  | "block_bump"
+  | "torch_click";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -653,6 +654,19 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       volume: 0.14,
       durationSec: 0.12,
       rampOutSec: 0.06,
+    },
+  ],
+
+  /** GT-019: công tắc đèn pin "tách" khô, ngắn (`BR-E019-07`). */
+  torch_click: [
+    {
+      delaySec: 0,
+      type: "square",
+      freq: 1100,
+      glideTo: { freq: 800, overSec: 0.04 },
+      volume: 0.05,
+      durationSec: 0.06,
+      rampOutSec: 0.04,
     },
   ],
 

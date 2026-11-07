@@ -31,7 +31,9 @@ import {
   drawWoodenTokenDock,
   getColorsForState,
 } from "#src/render/index";
+import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
+import { MoodPulse } from "#src/systems/mood-pulse";
 import type { RenderSystem } from "#src/systems/render-system";
 import {
   type FlipAxis,
@@ -112,6 +114,15 @@ function applySlotTransform(
   ctx.translate(-slot.x, -slot.y);
 }
 
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E019-07`, `BR-FBK-16`). */
+export const GT019_STORY_LINE =
+  "Dơi Con bật đèn pin chiếu bóng lên tường. Bé xoay hình cho khớp với cái bóng rồi đặt vào nhé!";
+
+/** Mascot vui sau lần đặt đúng mà chưa xong cả bộ. */
+export const GT019_HAPPY_MS = 1000;
+/** Mascot nghiêng đầu sau lần đặt chưa khớp. */
+export const GT019_WONDER_MS = 1500;
+
 export class GT019Session extends TemplateGameSession<
   GT019Content,
   GT019Difficulty
@@ -137,7 +148,23 @@ export class GT019Session extends TemplateGameSession<
   private readonly pieceIdBySlotId: Map<string, string> = new Map();
   private readonly placedPieceIds: Set<string> = new Set();
 
+  private readonly mood = new MoodPulse();
+
+  override storyLine(): string {
+    return GT019_STORY_LINE;
+  }
+
+  /** Chỉ phản ứng sau lần đặt; xoay/lật không đổi dáng (`BR-E019-07`). */
+  override mascotMood(): MascotPose | null {
+    return this.isWon ? null : this.mood.current();
+  }
+
+  update(deltaMs: number): void {
+    this.mood.tick(deltaMs);
+  }
+
   setupEntities(): void {
+    this.mood.clear();
     this.isWon = false;
     this.placementMechanic.reset();
     this.pieceTransforms.clear();
@@ -176,6 +203,8 @@ export class GT019Session extends TemplateGameSession<
       rotation: rotatePiece90(current.rotation, direction),
     };
     this.pieceTransforms.set(pieceId, updated);
+    // Tiếng "tách" như nhau dù đã đúng hướng hay chưa: xoay là nháp (`BR-E019-07`).
+    this.queueSfx("torch_click");
     return updated;
   }
 
@@ -195,6 +224,7 @@ export class GT019Session extends TemplateGameSession<
       flip: togglePieceFlip(current.flip, axis),
     };
     this.pieceTransforms.set(pieceId, updated);
+    this.queueSfx("torch_click");
     return updated;
   }
 
@@ -656,6 +686,7 @@ export class GT019Session extends TemplateGameSession<
     });
 
     if (!isCorrect) {
+      this.mood.set("wonder", GT019_WONDER_MS);
       this.placementMechanic.stageItem(null);
       return ACTION_RETRY;
     }
@@ -663,6 +694,7 @@ export class GT019Session extends TemplateGameSession<
     this.placementMechanic.place(pieceId, slotId);
     this.pieceIdBySlotId.set(slotId, pieceId);
     this.placedPieceIds.add(pieceId);
+    this.mood.set("happy", GT019_HAPPY_MS);
 
     if (this.checkWinCondition()) {
       this.recordEvent("round_completed", { round_index: 0 });
