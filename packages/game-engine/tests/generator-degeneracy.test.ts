@@ -30,6 +30,7 @@ import {
   GT012ContentSchema,
   GT012DifficultySchema,
 } from "#src/templates/GT-012/template";
+import { GT015_FIXTURES } from "#src/templates/GT-015/fixtures";
 import {
   GT015ContentSchema,
   GT015DifficultySchema,
@@ -447,6 +448,26 @@ describe("GT-015 — đề cần suy luận, nghiệm duy nhất, khác nhau gi�
       const sols = solutions(content);
       expect(sols, `seed=${seed}`).toHaveLength(1);
       expect(new Set(sols[0]).size, `seed=${seed}`).toBeGreaterThan(1);
+    }
+  });
+
+  it("fixture ghim tay cũng thoả BR-E015-06: lưới 3×3, band 5-6, nghiệm duy nhất, ô trống không cùng đáp án và có hai ô trống cùng hàng hoặc cột", () => {
+    for (const [index, fixture] of GT015_FIXTURES.entries()) {
+      const content = GT015ContentSchema.parse(fixture.content);
+      const blanks = content.cells.filter((c) => c.symbol_id === null);
+      expect(content.grid_size, `fixture ${index}`).toBe(3);
+      expect(fixture.difficulty.blank_count, `fixture ${index}`).toBe(
+        blanks.length
+      );
+      const sols = solutions(content);
+      expect(sols, `fixture ${index}`).toHaveLength(1);
+      expect(new Set(sols[0]).size, `fixture ${index}`).toBeGreaterThan(1);
+      expect(
+        blanks.some((x) =>
+          blanks.some((y) => y !== x && (x.row === y.row || x.col === y.col))
+        ),
+        `fixture ${index}`
+      ).toBe(true);
     }
   });
 

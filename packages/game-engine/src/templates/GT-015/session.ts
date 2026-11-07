@@ -692,7 +692,7 @@ export class SudokuMiniSession extends TemplateGameSession<
     const layoutFn = resolveLayout("matrix-slot-grid");
     return layoutFn({
       slotCount: this.content.symbols.length,
-      targetCount: this.content.grid_size,
+      targetCount: this.content.grid_size * this.content.grid_size,
       ageBand,
       logic: this.logicSpace,
     });

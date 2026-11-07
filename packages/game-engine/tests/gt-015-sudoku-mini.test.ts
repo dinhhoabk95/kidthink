@@ -74,7 +74,7 @@ describe("GT-015: Sudoku hình ảnh mini (sudoku-mini)", () => {
       );
       session.setupEntities();
 
-      expect(session.getGridSize()).toBe(2);
+      expect(session.getGridSize()).toBe(3);
       expect(session.checkWinCondition()).toBe(false);
 
       // (0,0) is initial (cat), try filling it -> should be rejected
@@ -91,8 +91,8 @@ describe("GT-015: Sudoku hình ảnh mini (sudoku-mini)", () => {
       expect(session.isConflicted(0, 1)).toBe(false);
       expect(session.isConflicted(0, 0)).toBe(false);
 
-      // Fill (1,0) with "dog" -> complete puzzle
-      session.fillCell(1, 0, "dog");
+      // Fill (1,1) with "bird" -> complete puzzle
+      session.fillCell(1, 1, "bird");
       expect(session.checkWinCondition()).toBe(true);
 
       // Calling checkWinCondition 100 times has no side effects
@@ -131,12 +131,12 @@ describe("GT-015: Sudoku hình ảnh mini (sudoku-mini)", () => {
       expect(session.getExploreTracker().getPhase()).toBe("challenge");
       expect(session.getExploreTracker().getExploreActionsCount()).toBe(2);
 
-      // Lần sai 1: điền "cat" vào (1, 0) gây trùng cột 1 và hàng 2
-      session.fillCell(1, 0, "cat");
+      // Lần sai 1: điền "cat" vào (1, 1) gây trùng hàng 2 (với (1,2)) và cột 2 (với (2,1))
+      session.fillCell(1, 1, "cat");
       expect(session.getControlOfError()?.reasonVi).toBe(
-        "Trùng hình trên hàng 2 hoặc cột 1"
+        "Trùng hình trên hàng 2 hoặc cột 2"
       );
-      expect(session.getControlOfError()?.targetId).toBe("1:0");
+      expect(session.getControlOfError()?.targetId).toBe("1:1");
       expect(session.getControlOfError()?.actualValue).toBe("cat");
       expect(session.isMicroSandboxActive()).toBe(false);
 
@@ -149,7 +149,7 @@ describe("GT-015: Sudoku hình ảnh mini (sudoku-mini)", () => {
 
       // Sửa lại cả 2 ô đúng -> hoàn thành và tắt Micro-Sandbox
       session.fillCell(0, 1, "dog");
-      session.fillCell(1, 0, "dog");
+      session.fillCell(1, 1, "bird");
       expect(session.checkWinCondition()).toBe(true);
       expect(session.isMicroSandboxActive()).toBe(false);
       expect(session.getControlOfError()).toBeNull();
@@ -175,36 +175,63 @@ describe("GT-015: Sudoku hình ảnh mini (sudoku-mini)", () => {
       // Hint target points to the first empty cell slot index (row 0, col 1 -> index 1)
       expect(session.getHintTargetIndex()).toBe(1);
 
-      // Tap palette symbol "dog" (index 1 -> slotIndex 4 + 1 = 5) near edge (+18px tolerance)
-      const dogSlot = session.slots[5];
+      // Tap palette symbol "dog" (index 1 -> slotIndex 9 + 1 = 10) near edge (+18px tolerance)
+      const dogSlot = session.slots[10];
       expect(dogSlot).toBeDefined();
       if (!dogSlot) {
         return;
       }
-      const dogR = (dogSlot.hitW ?? dogSlot.w) / 2;
+      const dogR = (dogSlot.hitH ?? dogSlot.h) / 2;
+      // Lệch theo chiều dọc: ba ký hiệu xếp một hàng ngang, lệch ngang 18px đã
+      // rơi vào vùng chạm của ký hiệu kế bên.
       session.dispatch({
         type: "tap",
-        x: dogSlot.x + dogR + 18,
-        y: dogSlot.y,
+        x: dogSlot.x,
+        y: dogSlot.y + dogR + 18,
         timeMs: 10,
       });
       expect(session.getSelectedSymbolId()).toBe("dog");
 
-      // Tap empty cell (0,1) (slotIndex 1) near edge (+18px tolerance)
+      // Tap empty cell (0,1) (slotIndex 1) near edge (18px tolerance)
       const cellSlot = session.slots[1];
       expect(cellSlot).toBeDefined();
       if (!cellSlot) {
         return;
       }
-      const cellHalfW = (cellSlot.hitW ?? cellSlot.w) / 2;
+      const cellHalfH = (cellSlot.hitH ?? cellSlot.h) / 2;
+      // Lệch lên trên (hàng 0): hai bên và phía dưới là ô lân cận cách 16px.
       const verdict = session.dispatch({
         type: "tap",
-        x: cellSlot.x + cellHalfW + 18,
-        y: cellSlot.y,
+        x: cellSlot.x,
+        y: cellSlot.y - cellHalfH - 18,
         timeMs: 20,
       });
       expect(verdict?.valid).toBe(true);
       expect(session.getCellState(0, 1)?.value).toBe("dog");
+    });
+
+    it("bố cục khung không stage: ma trận đúng 3×3 và ba ký hiệu không chồng ô nào", () => {
+      const session = new SudokuMiniSession(
+        SAMPLE_LEVEL_1.content_pack,
+        SAMPLE_LEVEL_1.difficulty_params
+      );
+      session.prepareRound("5-6");
+      expect(session.slots).toHaveLength(12);
+      const cells = session.slots.slice(0, 9);
+      expect(new Set(cells.map((s) => s.y)).size).toBe(3);
+      expect(new Set(cells.map((s) => s.x)).size).toBe(3);
+      for (let i = 0; i < session.slots.length; i++) {
+        for (let j = i + 1; j < session.slots.length; j++) {
+          const a = session.slots[i];
+          const b = session.slots[j];
+          if (a && b) {
+            const hit =
+              Math.abs(a.x - b.x) < (a.w + b.w) / 2 &&
+              Math.abs(a.y - b.y) < (a.h + b.h) / 2;
+            expect(hit, `${i} chồng ${j}`).toBe(false);
+          }
+        }
+      }
     });
 
     it("supports 4x4 grid with row_col_box regions (2x2 sub-boxes) and unique solution", () => {
@@ -285,11 +312,11 @@ describe("GT-015: Sudoku hình ảnh mini (sudoku-mini)", () => {
       expect(session.validateAction(wrong).valid).toBe(false);
       session.commit(wrong);
 
-      // (1,0)=dog khong trung hang/cot nao: validateAction chap nhan,
+      // (1,1)=bird khong trung hang/cot nao: validateAction chap nhan,
       // commit khong duoc ghi them mot lan sai chi vi o (0,1) dang sai.
       const fine = {
         type: "fill_cell",
-        data: { row: 1, col: 0, symbol_id: "dog" },
+        data: { row: 1, col: 1, symbol_id: "bird" },
       };
       expect(session.validateAction(fine).valid).toBe(true);
       session.commit(fine);
@@ -307,11 +334,11 @@ describe("GT-015: Sudoku hình ảnh mini (sudoku-mini)", () => {
       );
       session.setupEntities();
       session.fillCell(0, 1, "cat");
-      session.fillCell(1, 0, "cat");
+      session.fillCell(1, 1, "cat");
       expect(session.checkWinCondition()).toBe(false);
       const hint = session.getHintTargetIndex();
       expect(hint).not.toBeNull();
-      expect([1, 2]).toContain(hint);
+      expect([1, 4]).toContain(hint);
     });
   });
 });

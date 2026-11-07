@@ -245,7 +245,11 @@ export function computeMatrixSlotGridLayout(input: LayoutInput): Slot[] {
   const { h: LOGIC_HEIGHT, w: LOGIC_WIDTH } =
     input.logic ?? DEFAULT_LOGIC_SPACE;
   const { slotCount, ageBand, targetCount: rawGridSize } = input;
-  const gridSize = rawGridSize === 9 ? 3 : 2; // 2x2 hoặc 3x3
+  // `targetCount` là số ô của ma trận (4 → 2×2, 9 → 3×3, 16 → 4×4); thiếu thì 2×2.
+  const gridSize =
+    rawGridSize !== undefined && rawGridSize >= 1
+      ? Math.max(2, Math.round(Math.sqrt(rawGridSize)))
+      : 2;
   const touchFloor = resolveTouchFloor(ageBand, input.cssPerLogic);
   const availH = LOGIC_HEIGHT - CONTENT_TOP_PX - SAFE_MARGIN_PX;
 

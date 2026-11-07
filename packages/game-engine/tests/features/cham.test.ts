@@ -260,7 +260,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       session.prepareRound("4-5");
 
       const optionSlots = session.slots.filter((s) => s.role === "source");
-      const correctSlot = optionSlots[1]; // option value 3 (is_correct: true)
+      const correctSlot = optionSlots[1]; // option value 5 (is_correct: true)
       if (!correctSlot) {
         throw new Error("correctSlot must exist");
       }
@@ -273,7 +273,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       });
 
       expect(result?.valid).toBe(true);
-      expect(session.getSelectedValue()).toBe(3);
+      expect(session.getSelectedValue()).toBe(5);
       expect(session.checkWinCondition()).toBe(true);
     });
 

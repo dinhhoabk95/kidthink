@@ -20,37 +20,39 @@ interface GameLevelFixture<TContent, TDifficulty> {
 export const SAMPLE_LEVEL_1: GameLevelFixture<GT010Content, GT010Difficulty> = {
   id: "SAMPLE-GT010-01",
   template_code: "GT-010",
-  title_vi: "Hệ phương trình trái cây 2 bước",
+  title_vi: "Bảng giá trái cây một bước",
   age_band: "4-5",
   difficulty: 1,
   access_tier: "free",
   layout: "equation-rows",
   content_pack: {
-    prompt: "Bé hãy suy nghĩ xem Quả chuối có giá trị bằng mấy nhé!",
+    prompt: "Bé hãy tra bảng rồi cộng xem hai hình có tất cả bao nhiêu nhé!",
     symbols: [
       { symbol_id: "apple", asset: { kind: "emoji", ref: "🍎" } },
       { symbol_id: "banana", asset: { kind: "emoji", ref: "🍌" } },
     ],
-    // Dòng 1: 🍎 + 🍎 = 10 -> 🍎 = 5
-    // Dòng 2: 🍎 + 🍌 = 8  -> 🍌 = 3
+    // Bảng giá một bước (`BR-E010-05`): mỗi dòng luật chỉ có một ký hiệu.
+    // Dòng 1: 🍎 = 3
+    // Dòng 2: 🍌 = 2
     equations: [
-      { equation_id: "eq_1", left: ["apple", "apple"], right_value: 10 },
-      { equation_id: "eq_2", left: ["apple", "banana"], right_value: 8 },
+      { equation_id: "eq_1", left: ["apple"], right_value: 3 },
+      { equation_id: "eq_2", left: ["banana"], right_value: 2 },
     ],
-    question: { kind: "value", symbol_id: "banana" },
+    // Hỏi: 🍎 + 🍌 = 3 + 2 = 5 (tổng ≤ 8, mỗi giá 1–4)
+    question: { kind: "sum", symbol_ids: ["apple", "banana"] },
     options: [
-      { value: 2, is_correct: false },
-      { value: 3, is_correct: true },
-      { value: 5, is_correct: false },
-      { value: 8, is_correct: false },
+      { value: 4, is_correct: false },
+      { value: 5, is_correct: true },
+      { value: 6, is_correct: false },
+      { value: 7, is_correct: false },
     ],
   },
   difficulty_params: {
     item_count: 4,
     equation_count: 2,
-    step_count: 2,
+    step_count: 1,
     distractor_count: 3,
-    hint_after_ms: 8000,
+    hint_after_ms: 12_000,
     allow_retry: true,
   },
 };

@@ -68,6 +68,23 @@ describe("GT-010: Thay thế biểu tượng (substitution)", () => {
     });
   });
 
+  describe("Fixture band 4-5 theo bảng giá một bước (BR-E010-05)", () => {
+    it("mỗi dòng luật một ký hiệu, câu hỏi là tổng hai ký hiệu, step_count 1, giá 1–4, tổng ≤ 8", () => {
+      const sample = SAMPLE_LEVEL_1;
+      expect(sample.age_band).toBe("4-5");
+      const content = GT010ContentSchema.parse(sample.content_pack);
+      expect(sample.difficulty_params.step_count).toBe(1);
+      for (const eq of content.equations) {
+        expect(eq.left).toHaveLength(1);
+        expect(eq.right_value).toBeGreaterThanOrEqual(1);
+        expect(eq.right_value).toBeLessThanOrEqual(4);
+      }
+      expect(content.question.kind).toBe("sum");
+      const correct = content.options.find((o) => o.is_correct);
+      expect(correct?.value).toBeLessThanOrEqual(8);
+    });
+  });
+
   describe("Session Gameplay & Self-Correction (BR-MTB-14)", () => {
     it("runs complete gameplay loop on Sample Level 1", () => {
       const session = new SubstitutionSession(
@@ -77,21 +94,21 @@ describe("GT-010: Thay thế biểu tượng (substitution)", () => {
       session.setupEntities();
 
       expect(session.getSymbols().length).toBe(2);
-      expect(session.getExpectedAnswer()).toBe(3);
+      expect(session.getExpectedAnswer()).toBe(5);
       expect(session.checkWinCondition()).toBe(false);
 
-      // Pin apple = 5
-      session.pinSymbolValue("apple", 5);
-      expect(session.getPinnedSymbolValue("apple")).toBe(5);
+      // Pin apple = 3
+      session.pinSymbolValue("apple", 3);
+      expect(session.getPinnedSymbolValue("apple")).toBe(3);
       expect(session.checkWinCondition()).toBe(false);
 
       // Select wrong value
-      const wrongResult = session.selectValue(2);
+      const wrongResult = session.selectValue(4);
       expect(wrongResult).toBe(false);
       expect(session.checkWinCondition()).toBe(false);
 
-      // Select correct value (banana = 3)
-      const correctResult = session.selectValue(3);
+      // Select correct value (apple + banana = 3 + 2 = 5)
+      const correctResult = session.selectValue(5);
       expect(correctResult).toBe(true);
       expect(session.checkWinCondition()).toBe(true);
 
@@ -122,10 +139,10 @@ describe("GT-010: Thay thế biểu tượng (substitution)", () => {
 
       expect(session.getExploreTracker().getPhase()).toBe("explore");
 
-      session.pinSymbolValue("apple", 5);
+      session.pinSymbolValue("apple", 3);
       expect(session.getExploreTracker().getPhase()).toBe("explore");
 
-      session.pinSymbolValue("banana", 3);
+      session.pinSymbolValue("banana", 2);
       expect(session.getExploreTracker().getPhase()).toBe("challenge");
 
       // Reset to fresh challenge state with no pinned symbols
@@ -134,20 +151,20 @@ describe("GT-010: Thay thế biểu tượng (substitution)", () => {
       expect(session.isMicroSandboxActive()).toBe(false);
 
       // First wrong attempt -> Control of Error reasonVi
-      expect(session.selectValue(2)).toBe(false);
+      expect(session.selectValue(4)).toBe(false);
       expect(session.getControlOfError()?.reasonVi).toBe(
-        "Giá trị 2 chưa khớp phép thay thế (cần 3)"
+        "Giá trị 4 chưa khớp phép thay thế (cần 5)"
       );
       expect(session.isMicroSandboxActive()).toBe(false);
       expect(session.getPinnedSymbolValue("apple")).toBeUndefined();
 
-      // Second consecutive wrong attempt -> enters Micro-Sandbox and auto-pins base symbol ("apple" = 5)
+      // Second consecutive wrong attempt -> enters Micro-Sandbox and auto-pins base symbol ("apple" = 3)
       expect(session.selectValue(8)).toBe(false);
       expect(session.isMicroSandboxActive()).toBe(true);
-      expect(session.getPinnedSymbolValue("apple")).toBe(5);
+      expect(session.getPinnedSymbolValue("apple")).toBe(3);
 
       // Correct attempt -> clears Control of Error and exits Micro-Sandbox
-      expect(session.selectValue(3)).toBe(true);
+      expect(session.selectValue(5)).toBe(true);
       expect(session.isMicroSandboxActive()).toBe(false);
       expect(session.getControlOfError()).toBeNull();
     });
@@ -156,7 +173,7 @@ describe("GT-010: Thay thế biểu tượng (substitution)", () => {
       const textSymbolPack = {
         ...SAMPLE_LEVEL_1.content_pack,
         symbols: [
-          { symbol_id: "apple", asset: { kind: "text" as const, text: "5" } },
+          { symbol_id: "apple", asset: { kind: "text" as const, text: "7" } },
           { symbol_id: "banana", asset: { kind: "text" as const, text: "2" } },
         ],
       };
@@ -174,10 +191,10 @@ describe("GT-010: Thay thế biểu tượng (substitution)", () => {
       const view = session.getView();
       const eqEntity = view.entities.find((e) => e.id === "eq_1");
       expect(eqEntity?.role).toBe("neutral");
-      expect(eqEntity?.label).toBe("5 + 5 = 10");
+      expect(eqEntity?.label).toBe("7 = 3");
 
       const optEntity = view.entities.find((e) => e.id === "opt-1");
-      expect(optEntity?.spokenLabel).toBe("Số 3");
+      expect(optEntity?.spokenLabel).toBe("Số 5");
     });
   });
 });

@@ -20,31 +20,39 @@ interface GameLevelFixture<TContent, TDifficulty> {
 export const SAMPLE_LEVEL_1: GameLevelFixture<GT015Content, GT015Difficulty> = {
   id: "SAMPLE-GT015-01",
   template_code: "GT-015",
-  title_vi: "Sudoku mini 2x2 Động vật",
-  age_band: "4-5",
+  title_vi: "Sudoku mini 3x3 Động vật, hai ô trống cùng cột",
+  age_band: "5-6",
   difficulty: 1,
   access_tier: "free",
   layout: "grid",
   content_pack: {
     prompt:
       "Bé hãy xếp các bạn động vật sao cho mỗi hàng và cột không bị trùng nhé!",
-    grid_size: 2,
+    grid_size: 3,
     regions: "row_col",
     symbols: [
       { symbol_id: "cat", asset: { kind: "emoji", ref: "🐱" } },
       { symbol_id: "dog", asset: { kind: "emoji", ref: "🐶" } },
+      { symbol_id: "bird", asset: { kind: "emoji", ref: "🐦" } },
     ],
+    // Hình vuông Latin: mèo chó chim / chó chim mèo / chim mèo chó. Hai ô trống
+    // cùng cột 1 có đáp án khác nhau (chó, chim) — đề cần suy luận, `BR-E015-06`.
     cells: [
       { row: 0, col: 0, symbol_id: "cat" },
-      { row: 0, col: 1, symbol_id: null },
-      { row: 1, col: 0, symbol_id: null },
-      { row: 1, col: 1, symbol_id: "cat" },
+      { row: 0, col: 1, symbol_id: null }, // dog
+      { row: 0, col: 2, symbol_id: "bird" },
+      { row: 1, col: 0, symbol_id: "dog" },
+      { row: 1, col: 1, symbol_id: null }, // bird
+      { row: 1, col: 2, symbol_id: "cat" },
+      { row: 2, col: 0, symbol_id: "bird" },
+      { row: 2, col: 1, symbol_id: "cat" },
+      { row: 2, col: 2, symbol_id: "dog" },
     ],
   },
   difficulty_params: {
-    item_count: 2,
+    item_count: 3,
     blank_count: 2,
-    hint_after_ms: 8000,
+    hint_after_ms: 12_000,
     allow_retry: true,
   },
 };
@@ -69,10 +77,10 @@ export const SAMPLE_LEVEL_2: GameLevelFixture<GT015Content, GT015Difficulty> = {
     ],
     cells: [
       { row: 0, col: 0, symbol_id: "apple" },
-      { row: 0, col: 1, symbol_id: "banana" },
+      { row: 0, col: 1, symbol_id: null }, // banana
       { row: 0, col: 2, symbol_id: null }, // grapes
       { row: 1, col: 0, symbol_id: "banana" },
-      { row: 1, col: 1, symbol_id: null }, // grapes
+      { row: 1, col: 1, symbol_id: "grapes" },
       { row: 1, col: 2, symbol_id: "apple" },
       { row: 2, col: 0, symbol_id: null }, // grapes
       { row: 2, col: 1, symbol_id: "apple" },
@@ -90,7 +98,7 @@ export const SAMPLE_LEVEL_2: GameLevelFixture<GT015Content, GT015Difficulty> = {
 export const SAMPLE_LEVEL_3: GameLevelFixture<GT015Content, GT015Difficulty> = {
   id: "SAMPLE-GT015-03",
   template_code: "GT-015",
-  title_vi: "Sudoku mini 3x3 Hình học, hai ô trống",
+  title_vi: "Sudoku mini 3x3 Hình học, hai ô trống cùng hàng",
   age_band: "5-6",
   difficulty: 4,
   access_tier: "standard",
@@ -106,11 +114,11 @@ export const SAMPLE_LEVEL_3: GameLevelFixture<GT015Content, GT015Difficulty> = {
     ],
     cells: [
       { row: 0, col: 0, symbol_id: null }, // circle
-      { row: 0, col: 1, symbol_id: "square" },
+      { row: 0, col: 1, symbol_id: null }, // square
       { row: 0, col: 2, symbol_id: "triangle" },
       { row: 1, col: 0, symbol_id: "square" },
       { row: 1, col: 1, symbol_id: "triangle" },
-      { row: 1, col: 2, symbol_id: null }, // circle
+      { row: 1, col: 2, symbol_id: "circle" },
       { row: 2, col: 0, symbol_id: "triangle" },
       { row: 2, col: 1, symbol_id: "circle" },
       { row: 2, col: 2, symbol_id: "square" },

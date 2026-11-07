@@ -71,7 +71,7 @@ describe("GT-015: khung chuyện Hươu Cao Cổ xếp chỗ ngồi, tiếng b�
   it("điền đủ đúng thì thắng, mascot null", () => {
     const session = openSession();
     fill(session, 0, 1, "dog");
-    fill(session, 1, 0, "dog");
+    fill(session, 1, 1, "bird");
 
     expect(session.checkWinCondition()).toBe(true);
     expect(session.mascotMood()).toBeNull();

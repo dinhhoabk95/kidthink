@@ -612,13 +612,11 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
         };
       };
       s.setupEntities();
-      // Mini 2x2 sudoku solution test
-      const symA = expectDefined(s.content.symbols[0]).symbol_id;
+      // Mini 3x3 sudoku: hai ô trống cùng cột 1 nhận symbol thứ hai và thứ ba
       const symB = expectDefined(s.content.symbols[1]).symbol_id;
-      s.fillCell(0, 0, symA);
+      const symC = expectDefined(s.content.symbols[2]).symbol_id;
       s.fillCell(0, 1, symB);
-      s.fillCell(1, 0, symB);
-      s.fillCell(1, 1, symA);
+      s.fillCell(1, 1, symC);
       expect(s.checkWinCondition()).toBe(true);
     });
 
