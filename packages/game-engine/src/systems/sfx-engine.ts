@@ -24,7 +24,8 @@ export type SFXType =
   | "lid_click"
   | "bell_open"
   | "rabbit_hop"
-  | "lens_pop";
+  | "lens_pop"
+  | "frog_hop";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -297,6 +298,28 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       volume: 0.12,
       durationSec: 0.14,
       rampOutSec: 0.06,
+    },
+  ],
+
+  /** GT-028: ếch nhảy một bước trên tia số — "ọp" thấp rồi bật lên (`BR-E028-06`). */
+  frog_hop: [
+    {
+      delaySec: 0,
+      type: "sine",
+      freq: 220,
+      glideTo: { freq: 330, overSec: 0.07 },
+      volume: 0.12,
+      durationSec: 0.09,
+      rampOutSec: 0.04,
+    },
+    {
+      delaySec: 0.08,
+      type: "triangle",
+      freq: 440,
+      glideTo: { freq: 330, overSec: 0.09 },
+      volume: 0.08,
+      durationSec: 0.1,
+      rampOutSec: 0.05,
     },
   ],
 

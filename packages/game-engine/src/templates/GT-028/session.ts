@@ -35,6 +35,7 @@ import {
   drawWoodenTokenDock,
   sceneBox,
 } from "#src/render/index.js";
+import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
 import {
   type ControlOfErrorDiagnostics,
@@ -61,6 +62,15 @@ function getItemId(data: object | null | undefined): string | undefined {
   return undefined;
 }
 
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E028-06`, `BR-FBK-16`). */
+export const GT028_STORY_LINE =
+  "Ếch Xanh nhảy cóc trên tia số. Bé chạm mỗi quả là Ếch nhảy thêm một bước, nhảy đủ rồi bé bấm xong nhé!";
+
+/** Mascot nhảy theo mỗi bước (`BR-E028-06`). */
+export const GT028_HOP_MS = 700;
+/** Mascot nghiêng đầu sau lần nộp chưa đủ. */
+export const GT028_WONDER_MS = 1500;
+
 export class GT028Session extends TemplateGameSession<
   GT028Content,
   GT028Difficulty
@@ -80,8 +90,32 @@ export class GT028Session extends TemplateGameSession<
 
   private lastFrameMs = 0;
   private wrongSubmitUntilMs = 0;
+  private reactionPose: MascotPose | null = null;
+  private reactionRemainingMs = 0;
+
+  private react(pose: MascotPose, ms: number): void {
+    this.reactionPose = pose;
+    this.reactionRemainingMs = ms;
+  }
+
+  override storyLine(): string {
+    return GT028_STORY_LINE;
+  }
+
+  /** Nhảy theo mỗi bước chạm thêm, nghiêng đầu sau lần nộp chưa đủ (`BR-E028-06`). */
+  override mascotMood(): MascotPose | null {
+    return this.reactionRemainingMs > 0 && !this.isWon
+      ? this.reactionPose
+      : null;
+  }
 
   update(deltaMs: number): void {
+    if (this.reactionRemainingMs > 0) {
+      this.reactionRemainingMs = Math.max(
+        0,
+        this.reactionRemainingMs - deltaMs
+      );
+    }
     this.lastFrameMs += deltaMs;
     this.exploreTracker.tick(deltaMs);
   }
@@ -110,6 +144,8 @@ export class GT028Session extends TemplateGameSession<
     this.isWon = false;
     this.selectedItemIds = [];
     this.renderItemStates.clear();
+    this.reactionPose = null;
+    this.reactionRemainingMs = 0;
     this.exploreTracker.reset(false);
 
     this.recordEvent("game_started", {
@@ -272,6 +308,8 @@ export class GT028Session extends TemplateGameSession<
       this.selectedItemIds.push(itemId);
       this.setRenderItemState(itemId, "selected");
       this.exploreTracker.recordExploreAction("step_counted");
+      this.queueSfx("frog_hop");
+      this.react("happy", GT028_HOP_MS);
       this.recordEvent("item_tapped", {
         item_id: itemId,
         current_total: this.getCurrentCount(),
@@ -330,6 +368,7 @@ export class GT028Session extends TemplateGameSession<
       micro_sandbox: this.exploreTracker.isMicroSandboxActive(),
     });
     this.wrongSubmitUntilMs = this.lastFrameMs + 400;
+    this.react("wonder", GT028_WONDER_MS);
     return ACTION_RETRY;
   }
 
