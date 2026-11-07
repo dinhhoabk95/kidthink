@@ -58,6 +58,92 @@ export function liquidCupRect(
   };
 }
 
+function liquidFillColor(color: string | undefined): string {
+  if (color === "mint") {
+    return designTokens.colors.semantic.success[500];
+  }
+  if (color === "berry") {
+    return designTokens.colors.montessori.coral;
+  }
+  if (color === "amber") {
+    return designTokens.colors.retry[500];
+  }
+  return designTokens.colors.brand[500];
+}
+
+export interface DetachedWaterCup {
+  readonly slot: Slot;
+  readonly shape: LiquidCupParams["shape"];
+  readonly capacityUnits: number;
+  readonly fillUnits: number;
+  readonly color?: string;
+}
+
+/** Bề ngang cột nước tách khỏi cốc (CSS px logic). */
+const DETACHED_COLUMN_W = 36;
+const DETACHED_COLUMN_GAP = 14;
+
+/**
+ * Hai (hoặc nhiều) cột nước tách khỏi cốc và xếp cạnh nhau, chung một đáy, chung
+ * bề ngang — nên chiều cao so được thẳng lượng nước (`BR-E032-03`, `BR-E032-10`).
+ * `progress` 0 = cột còn nằm đúng chỗ nước trong cốc, 1 = đã xếp cạnh nhau.
+ */
+export function drawDetachedWaterColumns(
+  ctx: CanvasRenderingContext2D,
+  cups: readonly DetachedWaterCup[],
+  maxCapacityUnits: number,
+  progress: number
+): void {
+  if (cups.length === 0) {
+    return;
+  }
+  const rects = cups.map((c) =>
+    liquidCupRect(c.slot, c.shape, c.capacityUnits, maxCapacityUnits)
+  );
+  const baseY = Math.max(...rects.map((r) => r.y + r.h));
+  const centerX = cups.reduce((sum, c) => sum + c.slot.x, 0) / cups.length;
+  const stackedH = cups.map((c, i) => {
+    const r = rects[i];
+    const ratio = c.capacityUnits > 0 ? c.fillUnits / c.capacityUnits : 0;
+    return r ? (r.w * r.h * ratio) / DETACHED_COLUMN_W : 0;
+  });
+  const maxCupH = Math.max(...rects.map((r) => r.h));
+  const tallest = Math.max(...stackedH);
+  const scale = tallest > maxCupH ? maxCupH / tallest : 1;
+  const t = Math.min(1, Math.max(0, progress));
+  const eased = 1 - (1 - t) ** 3;
+
+  ctx.save();
+  ctx.strokeStyle = alpha(designTokens.colors.surface[500], 0.6);
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  const span = cups.length * (DETACHED_COLUMN_W + DETACHED_COLUMN_GAP);
+  ctx.moveTo(centerX - span / 2 - 8, baseY);
+  ctx.lineTo(centerX + span / 2 + 8, baseY);
+  ctx.stroke();
+  cups.forEach((c, i) => {
+    const r = rects[i];
+    if (!r) {
+      return;
+    }
+    const ratio = c.capacityUnits > 0 ? c.fillUnits / c.capacityUnits : 0;
+    const startH = r.h * ratio;
+    const endH = (stackedH[i] ?? 0) * scale;
+    const h = startH + (endH - startH) * eased;
+    const startW = r.w;
+    const w = startW + (DETACHED_COLUMN_W - startW) * eased;
+    const endX =
+      centerX +
+      (i - (cups.length - 1) / 2) * (DETACHED_COLUMN_W + DETACHED_COLUMN_GAP);
+    const x = c.slot.x + (endX - c.slot.x) * eased;
+    ctx.fillStyle = liquidFillColor(c.color);
+    ctx.beginPath();
+    ctx.roundRect(x - w / 2, baseY - h, w, h, [4, 4, 8, 8]);
+    ctx.fill();
+  });
+  ctx.restore();
+}
+
 export function drawLiquidCup(
   ctx: CanvasRenderingContext2D,
   _rs: RenderSystem,
@@ -101,14 +187,7 @@ export function drawLiquidCup(
     ctx.clip();
 
     // Draw liquid
-    ctx.fillStyle = designTokens.colors.brand[500];
-    if (params.color === "mint") {
-      ctx.fillStyle = designTokens.colors.semantic.success[500];
-    } else if (params.color === "berry") {
-      ctx.fillStyle = designTokens.colors.montessori.coral;
-    } else if (params.color === "amber") {
-      ctx.fillStyle = designTokens.colors.retry[500];
-    }
+    ctx.fillStyle = liquidFillColor(params.color);
 
     ctx.fillRect(x, liquidY, cupW, liquidH);
 

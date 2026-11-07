@@ -9,6 +9,8 @@ import {
   ACTION_RETRY,
   type ActionResult,
   type GameAction,
+  type HintLevel,
+  type HintTarget,
   TemplateGameSession,
 } from "#src/game-session";
 import type {
@@ -22,6 +24,8 @@ import { resolveLayout } from "#src/layout/registry";
 import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
 import {
+  drawDetachedWaterColumns,
+  drawLabelText,
   drawLiquidCup,
   drawSceneBackground,
   drawWoodenTokenDock,
@@ -57,6 +61,8 @@ export const GT032_STORY_LINE_PICK =
 
 /** Mascot vui sau mỗi nấc rót. */
 export const GT032_HAPPY_MS = 600;
+/** Cột nước tách khỏi cốc xếp cạnh nhau trong chừng này ms (chậm 0,5× so với 700 ms) — `BR-E032-10`. */
+export const GT032_COLUMNS_TWEEN_MS = 1400;
 /** Mascot nghiêng đầu sau lần chọn cốc hoặc chốt rót chưa đúng. */
 export const GT032_WONDER_MS = 1500;
 
@@ -72,6 +78,9 @@ export class GT032Session extends TemplateGameSession<
   selectedCupId: string | null = null;
   isWin = false;
   showHintMarks = false;
+  /** Bậc hint đang hiện trên canvas (0 = chưa có); về 0 khi trẻ thao tác (`BR-E032-10`). */
+  private hintLevel: 0 | HintLevel = 0;
+  private columnsStartMs: number | null = null;
 
   private readonly cupFills: Map<string, number> = new Map();
   private particles: Particle[] = [];
@@ -113,6 +122,7 @@ export class GT032Session extends TemplateGameSession<
       show_hint_marks?: boolean;
     };
     this.showHintMarks = diff.show_hint_marks ?? false;
+    this.clearHintLevel();
     this.particles = [];
     this.cupFills.clear();
     for (const cup of this.content.cups) {
@@ -136,6 +146,33 @@ export class GT032Session extends TemplateGameSession<
 
   getTargetFill(cup: GT032Cup): number {
     return cup.target_units ?? this.content.target_units ?? cup.capacity_units;
+  }
+
+  /** Bậc hint đang hiện trên canvas — test và shell đọc. */
+  getShownHintLevel(): 0 | HintLevel {
+    return this.hintLevel;
+  }
+
+  override getHintTargetForLevel(level: HintLevel): HintTarget | null {
+    if (this.checkWinCondition()) {
+      this.hintLevel = 0;
+    } else if (level !== this.hintLevel) {
+      this.hintLevel = level;
+      this.columnsStartMs = null;
+    }
+    return super.getHintTargetForLevel(level);
+  }
+
+  private clearHintLevel(): void {
+    this.hintLevel = 0;
+    this.columnsStartMs = null;
+  }
+
+  /** `L3` tách cột nước cho ba dạng so sánh; dạng rót giữ `L3` là chỉ cốc cần rót. */
+  private showsDetachedColumns(): boolean {
+    return (
+      this.hintLevel === 3 && this.content.question_type !== "pour_to_mark"
+    );
   }
 
   override getHintTargetIndex(): number | null {
@@ -411,6 +448,9 @@ export class GT032Session extends TemplateGameSession<
 
   override commit(action: GameAction): void {
     const type = action.type;
+    if (type !== "show_hint") {
+      this.clearHintLevel();
+    }
     const data = (
       typeof action.data === "object" && action.data !== null ? action.data : {}
     ) as GT032ActionPayload;
@@ -599,15 +639,66 @@ export class GT032Session extends TemplateGameSession<
     drawWoodenTokenDock(ctx, rs, trayRect);
   }
 
+  /** `L2`: số vạch có nước, chữ số nhỏ dưới mỗi cốc (`BR-E032-10`). */
+  private drawFillCount(
+    ctx: CanvasRenderingContext2D,
+    cup: GT032Cup,
+    slot: Slot
+  ): void {
+    const rect = liquidCupRect(
+      slot,
+      cup.shape,
+      cup.capacity_units,
+      this.maxCapacityUnits()
+    );
+    drawLabelText(
+      ctx,
+      String(this.getCupFill(cup.cup_id)),
+      slot.x,
+      rect.y + rect.h + 18,
+      24
+    );
+  }
+
+  /** `L3`: cột nước tách khỏi cốc, xếp cạnh nhau; chậm 0,5×, giảm chuyển động thì xếp ngay. */
+  private drawDetachedColumns(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    timeMs: number
+  ): void {
+    if (this.columnsStartMs === null) {
+      this.columnsStartMs = timeMs;
+    }
+    const progress = rs.reducedMotion
+      ? 1
+      : (timeMs - this.columnsStartMs) / GT032_COLUMNS_TWEEN_MS;
+    const cups = this.content.cups.flatMap((cup, i) => {
+      const slot = this.slots[i];
+      return slot
+        ? [
+            {
+              slot,
+              shape: cup.shape,
+              capacityUnits: cup.capacity_units,
+              fillUnits: this.getCupFill(cup.cup_id),
+              color: cup.color,
+            },
+          ]
+        : [];
+    });
+    drawDetachedWaterColumns(ctx, cups, this.maxCapacityUnits(), progress);
+  }
+
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
-    _timeMs: number
+    timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
 
     this.drawCupTray(ctx, rs);
 
+    const detached = this.showsDetachedColumns();
     for (let i = 0; i < this.content.cups.length; i++) {
       const cup = this.content.cups[i];
       const slot = this.slots[i];
@@ -616,13 +707,20 @@ export class GT032Session extends TemplateGameSession<
           cupId: cup.cup_id,
           shape: cup.shape,
           capacityUnits: cup.capacity_units,
-          fillUnits: this.getCupFill(cup.cup_id),
+          // L3: nước đã rời cốc, nằm ở cột tách bên dưới.
+          fillUnits: detached ? 0 : this.getCupFill(cup.cup_id),
           color: cup.color,
           isSelected: this.selectedCupId === cup.cup_id,
-          showHintMarks: this.showHintMarks,
+          showHintMarks: this.showHintMarks || this.hintLevel >= 1,
           maxCapacityUnits: this.maxCapacityUnits(),
         });
+        if (this.hintLevel >= 2 && !detached) {
+          this.drawFillCount(ctx, cup, slot);
+        }
       }
+    }
+    if (detached) {
+      this.drawDetachedColumns(ctx, rs, timeMs);
     }
 
     if (this.degradation?.particles_enabled !== false) {
