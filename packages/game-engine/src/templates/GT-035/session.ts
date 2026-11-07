@@ -5,6 +5,8 @@ import {
   ACTION_RETRY,
   type ActionResult,
   type GameAction,
+  type HintLevel,
+  type HintTarget,
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
@@ -32,6 +34,7 @@ import {
   CommandQueueSystem,
   type CommandType,
   type ExecutionResult,
+  executeProgram,
   expandCommands,
   findShortestSolution,
   type RobotState,
@@ -291,6 +294,59 @@ export class GT035Session extends TemplateGameSession<
     const palIdx = nextCmd ? this.allowedCommands.indexOf(nextCmd) : -1;
     const { rows, cols } = this.content.grid;
     return palIdx >= 0 ? rows * cols + this.maxCommands + palIdx : null;
+  }
+
+  /**
+   * Ô lưới kế tiếp robot bước vào trên đường ngắn nhất, tính từ số lệnh đã xếp
+   * (`BR-E035-12`). Lệnh xoay không đổi ô nên đi tiếp tới lệnh làm robot dời chỗ.
+   */
+  private nextHintCellIndex(): number | null {
+    if (this.getHintTargetIndex() === null) {
+      return null;
+    }
+    const sol = this.cachedShortestSolution;
+    if (!sol) {
+      return null;
+    }
+    const count = this.queueSystem.commandCount;
+    const here = executeProgram(
+      this.queueConfig,
+      sol.slice(0, count)
+    ).finalState;
+    for (let n = count + 1; n <= sol.length; n++) {
+      const there = executeProgram(
+        this.queueConfig,
+        sol.slice(0, n)
+      ).finalState;
+      if (there.col !== here.col || there.row !== here.row) {
+        return there.row * this.content.grid.cols + there.col;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * `L1` ô lưới kế tiếp sáng (chưa chỉ thẻ) · `L2` thẻ lệnh tương ứng nháy trong khay ·
+   * `L3` kéo thẻ đó vào ô trống kế tiếp của hàng lệnh (`BR-E035-12`).
+   */
+  override getHintTargetForLevel(level: HintLevel): HintTarget | null {
+    const index = this.getHintTargetIndex();
+    if (index === null) {
+      return null;
+    }
+    if (level === 1) {
+      const cell = this.nextHintCellIndex();
+      return cell === null
+        ? null
+        : { kind: "region", ids: [`grid_cell_${cell}`] };
+    }
+    if (level === 2) {
+      return { kind: "slot", index };
+    }
+    const toIndex = this.getHintDestinationIndex();
+    return toIndex === null
+      ? { kind: "slot", index }
+      : { kind: "slot", index, toIndex };
   }
 
   /** Bước đúng là kéo lệnh từ khay vào ô trống kế tiếp của hàng lệnh. */
