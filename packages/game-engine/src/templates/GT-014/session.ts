@@ -29,6 +29,7 @@ import {
   insetBox,
   sceneBox,
 } from "#src/render/index.js";
+import type { MascotPose } from "#src/render/mascot";
 import {
   type BalanceState,
   canAchieveBalance,
@@ -42,6 +43,7 @@ import {
   type ControlOfErrorDiagnostics,
   MontessoriExploreTracker,
 } from "#src/systems/montessori-explore-system";
+import { MoodPulse } from "#src/systems/mood-pulse";
 import type { RenderSystem } from "#src/systems/render-system";
 import { WRONG_FLASH_MS, WrongFlash } from "#src/systems/wrong-flash";
 import type { GT014Content, GT014Difficulty } from "./template.js";
@@ -129,6 +131,15 @@ function findTargetPanAt(
   return null;
 }
 
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E014-05`, `BR-FBK-16`). */
+export const GT014_STORY_LINE =
+  "Hà Mã Nhỏ chơi bập bênh cùng bạn. Bé xem bên nào nặng hơn, hoặc đặt thêm quả cân cho hai bên bằng nhau nhé!";
+
+/** Mascot vui ngắn sau mỗi lần đặt hoặc nhấc vật (`BR-E014-05`). */
+export const GT014_HAPPY_MS = 700;
+/** Mascot nghiêng đầu sau lần chọn bên chưa đúng. */
+export const GT014_WONDER_MS = 1500;
+
 export class BalanceScaleSession extends TemplateGameSession<
   GT014Content,
   GT014Difficulty
@@ -156,6 +167,7 @@ export class BalanceScaleSession extends TemplateGameSession<
   private stagedItemId: string | null = null;
   private wrongSide: "left" | "right" | null = null;
   private readonly wrongFlash = new WrongFlash();
+  private readonly mood = new MoodPulse();
   private lastFrameMs = 0;
   private readonly exploreTracker = new MontessoriExploreTracker({
     milestoneTarget: 2,
@@ -186,6 +198,7 @@ export class BalanceScaleSession extends TemplateGameSession<
     this.stagedItemId = null;
     this.wrongSide = null;
     this.wrongFlash.clear();
+    this.mood.clear();
     this.lastFrameMs = 0;
     this.isWon = false;
     this.exploreTracker.reset(false);
@@ -220,7 +233,17 @@ export class BalanceScaleSession extends TemplateGameSession<
     return this.assetById.size > 0 ? this.assetById : this.buildAssetMap();
   }
 
+  override storyLine(): string {
+    return GT014_STORY_LINE;
+  }
+
+  /** Vui sau thao tác đặt/nhấc, nghiêng đầu sau lần chọn bên chưa đúng (`BR-E014-05`). */
+  override mascotMood(): MascotPose | null {
+    return this.isWon ? null : this.mood.current();
+  }
+
   update(deltaMs: number): void {
+    this.mood.tick(deltaMs);
     this.lastFrameMs += deltaMs;
     this.exploreTracker.tick(deltaMs);
     const targetTilt = this.getTiltAngle();
@@ -298,6 +321,9 @@ export class BalanceScaleSession extends TemplateGameSession<
       return false;
     }
     (targetPan === "left" ? this.leftItems : this.rightItems).push(item);
+    // Tiếng kẽo kẹt như nhau dù cân nghiêng hay thăng bằng (`BR-E014-05`).
+    this.queueSfx("scale_creak");
+    this.mood.set("happy", GT014_HAPPY_MS);
 
     this.recordPanExplore();
     this.recordEvent("item_placed", { item_id: itemId, pan: targetPan });
@@ -328,6 +354,8 @@ export class BalanceScaleSession extends TemplateGameSession<
       return false;
     }
     this.trayItems.push(item);
+    this.queueSfx("scale_creak");
+    this.mood.set("happy", GT014_HAPPY_MS);
 
     this.recordPanExplore();
     this.recordEvent("balance_changed", {
@@ -351,6 +379,7 @@ export class BalanceScaleSession extends TemplateGameSession<
     } else {
       this.wrongSide = side;
       this.wrongFlash.trigger(this.lastFrameMs);
+      this.mood.set("wonder", GT014_WONDER_MS);
       const leftW = this.getLeftWeight();
       const rightW = this.getRightWeight();
       this.exploreTracker.recordWrongAttempt({

@@ -38,7 +38,8 @@ export type SFXType =
   | "price_bell"
   | "seed_plop"
   | "wall_boing"
-  | "mouse_step";
+  | "mouse_step"
+  | "scale_creak";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -571,6 +572,28 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       freq: 420,
       glideTo: { freq: 240, overSec: 0.1 },
       volume: 0.09,
+      durationSec: 0.12,
+      rampOutSec: 0.06,
+    },
+  ],
+
+  /** GT-014: bập bênh nghiêng — "kẽo kẹt" êm hai nhịp (`BR-E014-05`). */
+  scale_creak: [
+    {
+      delaySec: 0,
+      type: "triangle",
+      freq: 330,
+      glideTo: { freq: 270, overSec: 0.12 },
+      volume: 0.08,
+      durationSec: 0.14,
+      rampOutSec: 0.06,
+    },
+    {
+      delaySec: 0.17,
+      type: "triangle",
+      freq: 250,
+      glideTo: { freq: 310, overSec: 0.1 },
+      volume: 0.07,
       durationSec: 0.12,
       rampOutSec: 0.06,
     },
