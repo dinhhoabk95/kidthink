@@ -10,7 +10,11 @@ import {
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
-import { resolveTouchFloor } from "#src/layout/constants";
+import {
+  CONTENT_TOP_PX,
+  resolveTouchFloor,
+  SAFE_MARGIN_PX,
+} from "#src/layout/constants";
 import { TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
 import { computeStageTreeSlots } from "#src/layout/stage-targets";
@@ -44,6 +48,13 @@ import {
 import { MoodPulse } from "#src/systems/mood-pulse";
 import type { RenderSystem } from "#src/systems/render-system";
 import { WrongFlash } from "#src/systems/wrong-flash";
+import {
+  CANDY_DEFAULT_ASSET,
+  type CandyEndpoint,
+  CandySplit,
+  computeCandySlots,
+  drawCandySplit,
+} from "./candy-split.js";
 import type { GT007Content, GT007Difficulty } from "./template.js";
 
 /** Cạnh ô tổng và ô phần lớn nhất trên sân khấu — cùng cỡ ô của `number-bond-tree`. */
@@ -56,6 +67,19 @@ const HIT_TOLERANCE_PX = TAP_TOLERANCE_PX;
 
 /** Vùng chạm tối thiểu của ô phần ở bố cục cũ — rộng hơn thân ô vẽ. */
 const LEGACY_PART_HIT: MinHitSize = { w: 100, h: 100 };
+
+function isCandyEndpoint(
+  value: object | string | number | boolean | null | undefined
+): value is CandyEndpoint {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+  const kind = Reflect.get(value, "kind");
+  if (kind === "plate") {
+    return true;
+  }
+  return kind === "tray" && typeof Reflect.get(value, "index") === "number";
+}
 
 function extractOptionId(data: GameActionValue): string | undefined {
   if (typeof data === "object" && data !== null && "option_id" in data) {
@@ -73,6 +97,11 @@ export const GT007_STORY_LINE =
 export const GT007_CHEER_MS = 1000;
 /** Mascot nghiêng đầu sau phần chưa đúng. */
 export const GT007_WONDER_MS = 1500;
+
+/** Level chơi bằng kẹo thật thay vì bảng chọn số (`BR-E007-06`). */
+function isCandyContent(content: GT007Content): boolean {
+  return content.representation === "discrete-object";
+}
 
 export class GT007Session extends TemplateGameSession<
   GT007Content,
@@ -92,11 +121,19 @@ export class GT007Session extends TemplateGameSession<
 
   filledParts: Map<string, number> = new Map();
 
+  /** Vật thật (`BR-E007-06`): ô tổng và hai khay ở sân khấu, không có khay lựa chọn. */
+  private candy: CandySplit | null = null;
+  /** Slot đã chạm chọn làm nguồn của lối chạm-chạm ở chế độ vật thật. */
+  private stagedCandySlot: number | null = null;
+
   /** Lựa chọn nằm trong khay, cây tách gộp đứng trên sân khấu (`BR-PSZ-01`). */
-  override readonly needsTray = true;
+  override readonly needsTray: boolean = !isCandyContent(this.content);
 
   /** Số vật nguồn trong khay của vòng — shell đo chiều cao khay (`BR-PSZ-13`). */
   override get trayItemCount(): number {
+    if (isCandyContent(this.content)) {
+      return 0;
+    }
     return (
       this.displayOptions.length > 0
         ? this.displayOptions
@@ -118,6 +155,18 @@ export class GT007Session extends TemplateGameSession<
     this.mood.clear();
     this.lastFrameMs = 0;
     this.isWon = false;
+    this.candy = isCandyContent(this.content)
+      ? new CandySplit(
+          this.content.whole.value,
+          this.content.parts.map((part) => ({
+            id: part.id,
+            locked: !part.is_target,
+            goal: part.value,
+            initial: part.value,
+          }))
+        )
+      : null;
+    this.stagedCandySlot = null;
     this.displayOptions =
       Reflect.get(this.difficulty, "shuffle_items") === true
         ? shuffle(this.content.options, deriveStream(this.layoutSeed, "items"))
@@ -195,6 +244,12 @@ export class GT007Session extends TemplateGameSession<
   }
 
   validateAction(action: GameAction): ActionResult {
+    return this.candy
+      ? this.validateCandyAction(action)
+      : this.validateChoiceAction(action);
+  }
+
+  private validateChoiceAction(action: GameAction): ActionResult {
     if (action.type === "fill_part" || action.type === "tap_option") {
       const optionId = extractOptionId(action.data);
       const options =
@@ -304,6 +359,9 @@ export class GT007Session extends TemplateGameSession<
   }
 
   override checkWinCondition(): boolean {
+    if (this.candy) {
+      return this.isWon;
+    }
     const targetParts = this.content.parts.filter((p) => p.is_target);
     if (targetParts.length === 0) {
       return true;
@@ -316,6 +374,9 @@ export class GT007Session extends TemplateGameSession<
   }
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
+    if (this.candy) {
+      return this.computeCandyLayout(ageBand, this.candy);
+    }
     const options =
       this.displayOptions.length > 0
         ? this.displayOptions
@@ -484,6 +545,9 @@ export class GT007Session extends TemplateGameSession<
   }
 
   override toAction(gesture: Gesture): GameAction | null {
+    if (this.candy) {
+      return this.toCandyAction(gesture);
+    }
     const hitTolerance = HIT_TOLERANCE_PX;
     const sources = this.sourceSlots;
     const targets = this.targetSlots;
@@ -498,6 +562,10 @@ export class GT007Session extends TemplateGameSession<
   }
 
   override getHintTargetIndex(): number | null {
+    if (this.candy) {
+      const step = this.candy.nextStep();
+      return step ? this.candySlotIndex(step.from) : null;
+    }
     const options =
       this.displayOptions.length > 0
         ? this.displayOptions
@@ -509,6 +577,10 @@ export class GT007Session extends TemplateGameSession<
 
   /** Bước đúng là kéo đáp án đúng vào ô thiếu (phần `is_target` chưa điền). */
   override getHintDestinationIndex(): number | null {
+    if (this.candy) {
+      const step = this.candy.nextStep();
+      return step ? this.candySlotIndex(step.to) : null;
+    }
     const partIdx = this.content.parts.findIndex(
       (part) => part.is_target && !this.filledParts.has(part.id)
     );
@@ -518,6 +590,10 @@ export class GT007Session extends TemplateGameSession<
   }
 
   override commit(action: GameAction): void {
+    if (this.candy) {
+      this.commitCandyAction(action);
+      return;
+    }
     if (
       action.type === "fill_part" &&
       action.data &&
@@ -548,6 +624,9 @@ export class GT007Session extends TemplateGameSession<
   }
 
   override getView(): EngineView {
+    if (this.candy) {
+      return this.getCandyView(this.candy);
+    }
     const entities: ViewEntity[] = [];
     const targets = this.targetSlots;
     const sources = this.sourceSlots;
@@ -637,6 +716,205 @@ export class GT007Session extends TemplateGameSession<
     };
   }
 
+  // ── Chế độ vật thật (`BR-E007-06..09`) ──────────────────────────────
+
+  private computeCandyLayout(
+    ageBand: AgeBand,
+    candy: CandySplit
+  ): readonly Slot[] {
+    const touchFloor = resolveTouchFloor(ageBand, this.cssPerLogic);
+    const stage = this.stageRect ?? {
+      x: SAFE_MARGIN_PX,
+      y: CONTENT_TOP_PX,
+      w: this.logicSpace.w - 2 * SAFE_MARGIN_PX,
+      h: this.logicSpace.h - CONTENT_TOP_PX - SAFE_MARGIN_PX,
+    };
+    return computeCandySlots(stage, touchFloor, candy.trays.length);
+  }
+
+  /** Slot của một đầu mút: ô tổng là slot 0, khay `i` là slot `i + 1`. */
+  private candySlotIndex(point: CandyEndpoint): number | null {
+    const slot = this.slots[point.kind === "plate" ? 0 : point.index + 1];
+    return slot ? this.slots.indexOf(slot) : null;
+  }
+
+  private candyEndpointAt(x: number, y: number): CandyEndpoint | null {
+    const index = findNearestHitSlot(this.slots, x, y, HIT_TOLERANCE_PX);
+    if (index < 0) {
+      return null;
+    }
+    return index === 0 ? { kind: "plate" } : { kind: "tray", index: index - 1 };
+  }
+
+  private toCandyAction(gesture: Gesture): GameAction | null {
+    if (gesture.type === "drop") {
+      const from = this.candyEndpointAt(gesture.fromX, gesture.fromY);
+      const to = this.candyEndpointAt(gesture.toX, gesture.toY);
+      return from && to ? this.candyMoveAction(from, to) : null;
+    }
+    if (gesture.type !== "tap") {
+      return null;
+    }
+    const tapped = this.candyEndpointAt(gesture.x, gesture.y);
+    if (!tapped) {
+      return null;
+    }
+    const slot = tapped.kind === "plate" ? 0 : tapped.index + 1;
+    const staged = this.stagedCandySlot;
+    if (staged === null) {
+      this.stagedCandySlot = this.canStageCandy(tapped) ? slot : null;
+      return null;
+    }
+    if (staged === slot) {
+      this.stagedCandySlot = null;
+      return null;
+    }
+    const from: CandyEndpoint =
+      staged === 0 ? { kind: "plate" } : { kind: "tray", index: staged - 1 };
+    return this.candyMoveAction(from, tapped);
+  }
+
+  /** Nguồn chạm-chạm: ô tổng còn vật chưa chia, hoặc khay đích đang có vật. */
+  private canStageCandy(point: CandyEndpoint): boolean {
+    const candy = this.candy;
+    if (!candy) {
+      return false;
+    }
+    if (point.kind === "plate") {
+      return candy.remaining > 0;
+    }
+    return !candy.trays[point.index]?.locked && candy.countOf(point.index) > 0;
+  }
+
+  private candyMoveAction(from: CandyEndpoint, to: CandyEndpoint): GameAction {
+    return { type: "move_candy", data: { from, to } };
+  }
+
+  private parseCandyMove(
+    action: GameAction
+  ): { from: CandyEndpoint; to: CandyEndpoint } | null {
+    if (action.type !== "move_candy" || typeof action.data !== "object") {
+      return null;
+    }
+    const from = Reflect.get(action.data ?? {}, "from");
+    const to = Reflect.get(action.data ?? {}, "to");
+    return isCandyEndpoint(from) && isCandyEndpoint(to) ? { from, to } : null;
+  }
+
+  private validateCandyAction(action: GameAction): ActionResult {
+    const move = this.parseCandyMove(action);
+    if (!(move && this.candy)) {
+      return ACTION_IGNORED;
+    }
+    const outcome = this.candy.preview(move.from, move.to);
+    if (outcome === "moved") {
+      return ACTION_CORRECT;
+    }
+    return outcome === "locked" ? ACTION_RETRY : ACTION_IGNORED;
+  }
+
+  private commitCandyAction(action: GameAction): void {
+    const move = this.parseCandyMove(action);
+    const candy = this.candy;
+    this.stagedCandySlot = null;
+    if (!(move && candy)) {
+      return;
+    }
+    const outcome = candy.move(move.from, move.to);
+    if (outcome === "locked") {
+      this.onCandyLocked(candy);
+      return;
+    }
+    if (outcome !== "moved") {
+      return;
+    }
+    if (move.to.kind === "tray") {
+      const part = this.content.parts[move.to.index];
+      this.recordEvent("part_filled", {
+        part_id: part?.id ?? "",
+        value: candy.countOf(move.to.index),
+      });
+      if (move.from.kind === "plate") {
+        this.queueSfx("candy_drop");
+        this.mood.set("cheer", GT007_CHEER_MS);
+      }
+    }
+    if (candy.isWon()) {
+      this.exploreTracker.recordCorrectAttempt();
+      this.winSession();
+    }
+  }
+
+  /** Vật vào khay khoá: tổng sẽ vượt `whole`, báo trên ô tổng (`BR-E007-08`). */
+  private onCandyLocked(candy: CandySplit): void {
+    const expectedWhole = this.content.whole.value;
+    const actualSum = expectedWhole + 1;
+    this.exploreTracker.recordWrongAttempt({
+      reasonVi: `Khay này đã đủ phần rồi, thêm vào thì nhiều hơn ${expectedWhole}`,
+      targetId: this.content.whole.id,
+      actualValue: actualSum,
+      expectedValue: expectedWhole,
+    });
+    this.recordEvent("control_of_error", {
+      actual_sum: actualSum,
+      expected_whole: expectedWhole,
+      remaining: candy.remaining,
+      micro_sandbox: this.exploreTracker.isMicroSandboxActive(),
+    });
+    this.wrongFlash.trigger(this.lastFrameMs);
+    this.mood.set("wonder", GT007_WONDER_MS);
+  }
+
+  private getCandyView(candy: CandySplit): EngineView {
+    const spoken = (value: number): string => String(value);
+    const entities: ViewEntity[] = this.slots.map((slot, i) => {
+      const isPlate = i === 0;
+      const count = isPlate ? candy.whole : candy.countOf(i - 1);
+      const staged = this.stagedCandySlot === i;
+      let state: ViewEntity["state"] = "idle";
+      if (isPlate && this.wrongFlash.isActive(this.lastFrameMs)) {
+        state = "incorrect";
+      } else if (staged) {
+        state = "selected";
+      }
+      return {
+        id: isPlate
+          ? this.content.whole.id
+          : (this.content.parts[i - 1]?.id ?? `tray_${i}`),
+        slotIndex: this.slots.indexOf(slot),
+        role: isPlate ? "source" : "target",
+        state,
+        x: slot.x,
+        y: slot.y,
+        w: slot.w,
+        h: slot.h,
+        hitShape: "square",
+        label: spoken(count),
+        spokenLabel: formatSpokenLabel(spoken(count)),
+      };
+    });
+    return { entities, activePrompt: this.content.prompt };
+  }
+
+  private renderCandy(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    candy: CandySplit
+  ): void {
+    drawCandySplit(ctx, rs, {
+      state: candy,
+      slots: this.slots,
+      asset: this.content.whole.asset ?? CANDY_DEFAULT_ASSET,
+      won: this.isWon,
+    });
+    drawMontessoriControlOfErrorPill(
+      ctx,
+      this.stageRect ?? sceneBox(rs),
+      this.exploreTracker,
+      rs.viewport?.scale
+    );
+  }
+
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
@@ -644,6 +922,10 @@ export class GT007Session extends TemplateGameSession<
   ): void {
     this.lastFrameMs = timeMs;
     drawSceneBackground(ctx, rs, this.themeId);
+    if (this.candy) {
+      this.renderCandy(ctx, rs, this.candy);
+      return;
+    }
     const zones = pickTrayZones(this.stageRect, this.trayRect);
     if (zones) {
       // Lời dẫn do shell vẽ; lựa chọn nằm trên khay của khung năm vùng.

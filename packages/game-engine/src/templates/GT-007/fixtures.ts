@@ -70,4 +70,58 @@ export const GT007_FIXTURES: {
       allow_retry: true,
     },
   },
+  // Vật thật (`BR-E007-06`): một khay đã cho 3 kẹo, kéo nốt 2 kẹo sang khay trống.
+  {
+    content: {
+      prompt: "Chia 5 viên kẹo cho hai bạn nhé!",
+      whole: {
+        id: "w5c",
+        value: 5,
+        asset: { kind: "emoji", ref: "🍬" },
+      },
+      parts: [
+        { id: "p1", value: 3, is_target: false },
+        { id: "p2", value: 2, is_target: true },
+      ],
+      options: [
+        { id: "o1", value: 2, is_correct: true },
+        { id: "o2", value: 4, is_correct: false },
+      ],
+      representation: "discrete-object",
+    },
+    difficulty: {
+      item_count: 5,
+      part_count: 2,
+      distractor_count: 1,
+      hint_after_ms: 6000,
+      allow_retry: true,
+    },
+  },
+  // Vật thật, mọi khay khuyết: mọi cách chia 4 kẹo đều thắng (`BR-E007-06`).
+  {
+    content: {
+      prompt: "Chia 4 viên kẹo cho hai bạn, chia sao cũng được!",
+      whole: {
+        id: "w4c",
+        value: 4,
+        asset: { kind: "emoji", ref: "🍬" },
+      },
+      parts: [
+        { id: "p1", value: 2, is_target: true },
+        { id: "p2", value: 2, is_target: true },
+      ],
+      options: [
+        { id: "o1", value: 2, is_correct: true },
+        { id: "o2", value: 1, is_correct: true },
+      ],
+      representation: "discrete-object",
+    },
+    difficulty: {
+      item_count: 4,
+      part_count: 2,
+      distractor_count: 1,
+      hint_after_ms: 6000,
+      allow_retry: true,
+    },
+  },
 ];

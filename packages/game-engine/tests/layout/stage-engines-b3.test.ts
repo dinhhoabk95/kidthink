@@ -125,19 +125,33 @@ function narrow(code: string, session: unknown): B3Session {
   throw new Error(`${code} không phải session B3`);
 }
 
+/**
+ * GT-007 vật thật (`representation: discrete-object`) không có khay lựa chọn —
+ * ba vùng chạm nằm trọn ở sân khấu, được đo ở `gt-007-candy-layout.test.ts`.
+ */
+function isCandyPayload(content: unknown): boolean {
+  return (
+    isFixturePayload(content) && content.representation === "discrete-object"
+  );
+}
+
 function casesFor(code: string, band: AgeBand): B3Case[] {
   const make = (config: EngineConfig): B3Session =>
     narrow(code, createGameSessionSync(code, config));
-  const fromFixtures = (FIXTURES_BY_CODE[code] ?? []).map((f, i) => ({
-    name: `mẫu ${i}`,
-    create: () => make(configFor(code, band, f.content, f.difficulty)),
-  }));
+  const fromFixtures = (FIXTURES_BY_CODE[code] ?? [])
+    .map((f, i) => ({ f, i }))
+    .filter(({ f }) => !isCandyPayload(f.content))
+    .map(({ f, i }) => ({
+      name: `mẫu ${i}`,
+      create: () => make(configFor(code, band, f.content, f.difficulty)),
+    }));
   // Runtime chơi level ở band của chính level (`age_band` = `ageMin-ageMax`,
   // `game-config-runtime.ts`), nên level 4-5 không bao giờ chạy ở sàn của 3-4.
   const fromSeeds = ALL_SEED_LEVELS.filter(
     (level) =>
       level.header.template_code === code &&
-      `${level.header.age_min}-${level.header.age_max}` === band
+      `${level.header.age_min}-${level.header.age_max}` === band &&
+      !isCandyPayload(level.content_pack)
   ).map((level) => ({
     name: `seed ${level.header.code}`,
     create: () =>
