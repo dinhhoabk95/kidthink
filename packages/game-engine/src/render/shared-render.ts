@@ -806,6 +806,22 @@ export function drawSlotLabel(
   ctx.restore();
 }
 
+/**
+ * Hình mờ (bóng) của vật trong ô đích: thay cho nhãn chữ để trẻ chưa biết đọc
+ * vẫn thấy ô này nhận vật nào (`BR-ENG-10`). Vẽ mờ để không lẫn với vật thật.
+ */
+export function drawGhostAssetInSlot(
+  ctx: CanvasRenderingContext2D,
+  asset: RenderItem["asset"],
+  slot: Slot,
+  alpha = 0.35
+): void {
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  drawAssetInSlot(ctx, asset, slot);
+  ctx.restore();
+}
+
 function drawSlotAssetOrPlaceholder(
   ctx: CanvasRenderingContext2D,
   slot: Slot,

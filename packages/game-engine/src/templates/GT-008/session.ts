@@ -26,10 +26,10 @@ import type { Slot } from "#src/layout/types";
 import {
   boxFromSlots,
   drawEmptyTargetSlot,
+  drawGhostAssetInSlot,
   drawSceneBackground,
   drawShapeTray,
   drawSlotItem,
-  drawSlotLabel,
   drawWoodenTokenDock,
   spawnParticlesAtSlot,
   updateParticles,
@@ -104,8 +104,9 @@ export class GT008Session extends TemplateGameSession<
     return this.content.items.length;
   }
 
+  /** Không nhãn chữ trên khay: tên vật chỉ đọc thành tiếng (`BR-E008-05`). */
   override get trayHasLabels(): boolean {
-    return this.content.items.some((item) => Boolean(item.label));
+    return false;
   }
   override readonly usesPromptZone = true;
 
@@ -232,7 +233,7 @@ export class GT008Session extends TemplateGameSession<
         touchFloor,
         maxCell: { w: TARGET_CELL_MAX_PX, h: TARGET_CELL_MAX_PX },
         role: "target",
-        hasLabels: this.content.slots.some((slot) => Boolean(slot.label)),
+        hasLabels: false,
       });
       const sources = computeTraySourceSlots(
         this.content.items.length,
@@ -452,7 +453,6 @@ export class GT008Session extends TemplateGameSession<
       const placedLabels = placedItem
         ? resolveAssetLabels(placedItem.asset)
         : undefined;
-      const label = defSlot.label ?? placedLabels?.label;
       const spokenLabel = defSlot.label
         ? formatSpokenLabel(defSlot.label)
         : (placedLabels?.spokenLabel ?? `Ô đích ${i + 1}`);
@@ -466,7 +466,6 @@ export class GT008Session extends TemplateGameSession<
         w: slot.w,
         h: slot.h,
         glyph: placedLabels?.glyph,
-        label,
         spokenLabel,
         spokenAudioPath: placedLabels?.spokenAudioPath,
       });
@@ -480,7 +479,6 @@ export class GT008Session extends TemplateGameSession<
       const isPlaced = placedItemIds.has(item.item_id);
       const isStaged = this.stagedItemId === item.item_id;
       const assetLabels = resolveAssetLabels(item.asset);
-      const label = item.label ?? assetLabels.label;
       const spokenLabel = item.label
         ? formatSpokenLabel(item.label)
         : assetLabels.spokenLabel;
@@ -494,7 +492,6 @@ export class GT008Session extends TemplateGameSession<
         w: slot.w,
         h: slot.h,
         glyph: assetLabels.glyph,
-        label,
         spokenLabel,
         spokenAudioPath: assetLabels.spokenAudioPath,
       });
@@ -543,12 +540,9 @@ export class GT008Session extends TemplateGameSession<
     const sources = this.sourceSlots;
     const targetBox = boxFromSlots(targets);
     if (targetBox) {
-      const adjustedTargetBox = this.content.slots.some((s) => Boolean(s.label))
-        ? { ...targetBox, h: targetBox.h + 18 }
-        : targetBox;
       drawShapeTray(
         ctx,
-        trayBoxWithin(adjustedTargetBox, zones?.stage ?? this.stageRect)
+        trayBoxWithin(targetBox, zones?.stage ?? this.stageRect)
       );
     }
     if (sources.length > 0) {
@@ -567,9 +561,12 @@ export class GT008Session extends TemplateGameSession<
       const placed = placedId ? itemById.get(placedId) : undefined;
       if (!placed) {
         drawEmptyTargetSlot(ctx, slot);
-        if (defSlot.label) {
-          drawSlotLabel(ctx, defSlot.label, slot, rs);
-        }
+        // Bóng mờ của vật ô này nhận thay cho nhãn chữ (`BR-E008-05`).
+        drawGhostAssetInSlot(
+          ctx,
+          itemById.get(defSlot.expected_item_id)?.asset,
+          slot
+        );
         if (
           defSlot.slot_id === this.wrongSlotId &&
           this.wrongFlash.isActive(timeMs)
@@ -588,7 +585,6 @@ export class GT008Session extends TemplateGameSession<
       drawSlotItem(ctx, rs, slot, {
         id: placed.item_id,
         asset: placed.asset,
-        label: defSlot.label,
         state: "correct",
       });
     });
@@ -609,7 +605,6 @@ export class GT008Session extends TemplateGameSession<
       drawSlotItem(ctx, rs, drawSlot, {
         id: item.item_id,
         asset: item.asset,
-        label: item.label,
         state: this.resolveSourceItemState(item.item_id),
       });
 

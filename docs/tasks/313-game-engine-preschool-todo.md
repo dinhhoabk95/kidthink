@@ -78,6 +78,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
   - `distractor_count` (GT-001/002/003/004/007/008/010/011/012/016/017/025) và `target_count` (GT-002/003/025/027) chỉ là số đo lại của content; `hint_after_ms` ở mọi engine chờ thang trợ giúp Task #301
   - `shuffle_items` 028/029: session truy cập `content.items[i]` theo chỉ số, xáo phải đổi cả test thứ tự; để riêng một commit
 - [ ] Gỡ chữ phải đọc khỏi UI trẻ (008, 009, 019, 023, 028, 029, 032, 035, 036)
+  - [x] 008 (ô đích hiện bóng mờ của vật nhận, khay chỉ hình, tên chỉ đọc thành tiếng, BR-E008-05)
 
 ## Phase 5 — Đặc sắc từng game
 - [ ] Đợt demo: 001, 003, 020, 025, 026, 037
