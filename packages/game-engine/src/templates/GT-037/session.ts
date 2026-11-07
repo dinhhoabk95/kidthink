@@ -41,6 +41,12 @@ interface GT037OrderStep {
   readonly timeMs: number;
 }
 
+interface ProgressSnapshot {
+  readonly found: readonly { index: number; symbolId: string }[];
+  readonly order: readonly GT037OrderStep[];
+  readonly commissions: readonly GT037Commission[];
+}
+
 const SCATTER_BOARD_CAPACITY: Record<AgeBand, number> = {
   "3-4": 10,
   "4-5": 16,
@@ -188,6 +194,19 @@ export class GT037Session extends TemplateGameSession<
     this.particles = [];
     this.wrongSlotIndex = null;
     this.wrongTimestamp = 0;
+    this.rebuildBoard();
+
+    this.recordEvent("game_started", {
+      template_code: "GT-037",
+      item_count: this.itemCount,
+      target_copies: this.targetCopies,
+      target_ids: this.content.target_ids,
+      confusable_ids: this.content.confusable_ids,
+    });
+  }
+
+  /** Dựng lại `boardSymbols` theo band hiện tại; không đụng tiến độ của trẻ. */
+  private rebuildBoard(): void {
     this.targetSet = new Set(this.content.target_ids);
 
     const maxBandCapacity = SCATTER_BOARD_CAPACITY[this.currentBand] ?? 20;
@@ -222,14 +241,58 @@ export class GT037Session extends TemplateGameSession<
     const assignStream = deriveStream(this.layoutSeed, "assign");
     const unassignedItems = [...targetSymbols, ...chosenDistractors];
     this.boardSymbols = shuffle(unassignedItems, assignStream);
+  }
 
-    this.recordEvent("game_started", {
-      template_code: "GT-037",
-      item_count: this.itemCount,
-      target_copies: this.targetCopies,
-      target_ids: this.content.target_ids,
-      confusable_ids: this.content.confusable_ids,
-    });
+  /** Chụp tiến độ theo id ký hiệu để dựng lại bảng mà không mất ô đã khoanh. */
+  private snapshotProgress(): ProgressSnapshot {
+    return {
+      found: [...this.foundTargets].map((i) => ({
+        index: i,
+        symbolId: this.boardSymbols[i]?.id ?? "",
+      })),
+      order: [...this.order],
+      commissions: [...this.commissions],
+    };
+  }
+
+  /** Gắn tiến độ đã chụp vào bảng mới: mỗi ô đã khoanh nhận một ô cùng ký hiệu. */
+  private restoreProgress(saved: ProgressSnapshot): void {
+    const claimed = new Map<number, number>();
+    const taken = new Set<number>();
+    for (const f of saved.found) {
+      const next = this.boardSymbols.findIndex(
+        (sym, i) => sym.id === f.symbolId && !taken.has(i)
+      );
+      if (next >= 0) {
+        taken.add(next);
+        claimed.set(f.index, next);
+      }
+    }
+    this.foundTargets.clear();
+    for (const next of claimed.values()) {
+      this.foundTargets.add(next);
+    }
+    const remap = <T extends { slotIndex: number; symbolId: string }>(
+      step: T
+    ): T => {
+      const mapped = claimed.get(step.slotIndex);
+      if (
+        mapped !== undefined &&
+        this.boardSymbols[mapped]?.id === step.symbolId
+      ) {
+        return { ...step, slotIndex: mapped };
+      }
+      const anyIdx = this.boardSymbols.findIndex(
+        (sym) => sym.id === step.symbolId
+      );
+      return anyIdx >= 0 ? { ...step, slotIndex: anyIdx } : step;
+    };
+    this.order.splice(0, this.order.length, ...saved.order.map(remap));
+    this.commissions.splice(
+      0,
+      this.commissions.length,
+      ...saved.commissions.map(remap)
+    );
   }
 
   private trimBoardSymbols(targetCount: number): void {
@@ -253,9 +316,12 @@ export class GT037Session extends TemplateGameSession<
 
   protected computeSlots(band: AgeBand): readonly Slot[] {
     this.currentBand = band;
+    const saved = this.snapshotProgress();
     const maxBandCapacity = SCATTER_BOARD_CAPACITY[band] ?? 20;
-    if (this.boardSymbols.length === 0 || this.itemCount > maxBandCapacity) {
+    if (this.boardSymbols.length === 0) {
       this.setupEntities();
+    } else if (this.itemCount > maxBandCapacity) {
+      this.rebuildBoard();
     }
 
     const layoutFn = resolveLayout("scatter-board");
@@ -293,6 +359,7 @@ export class GT037Session extends TemplateGameSession<
       this.itemCount = currentCount;
       this.trimBoardSymbols(currentCount);
     }
+    this.restoreProgress(saved);
 
     const cellsStream = deriveStream(this.layoutSeed, "cells");
     const shuffledCandidates = shuffle(candidateSlots, cellsStream);
