@@ -39,7 +39,8 @@ export type SFXType =
   | "seed_plop"
   | "wall_boing"
   | "mouse_step"
-  | "scale_creak";
+  | "scale_creak"
+  | "seat_pat";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -596,6 +597,27 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       volume: 0.07,
       durationSec: 0.12,
       rampOutSec: 0.06,
+    },
+  ],
+
+  /** GT-015: bạn thú ngồi vào ghế — "bịch" êm (`BR-E015-07`). */
+  seat_pat: [
+    {
+      delaySec: 0,
+      type: "sine",
+      freq: 190,
+      glideTo: { freq: 130, overSec: 0.09 },
+      volume: 0.12,
+      durationSec: 0.11,
+      rampOutSec: 0.06,
+    },
+    {
+      delaySec: 0.1,
+      type: "triangle",
+      freq: 480,
+      volume: 0.05,
+      durationSec: 0.07,
+      rampOutSec: 0.05,
     },
   ],
 

@@ -30,6 +30,7 @@ import {
   drawWoodenTokenDock,
   sceneBox,
 } from "#src/render/index.js";
+import type { MascotPose } from "#src/render/mascot";
 import {
   type ConstraintViolation,
   findConstraintViolations,
@@ -42,6 +43,7 @@ import {
   type ControlOfErrorDiagnostics,
   MontessoriExploreTracker,
 } from "#src/systems/montessori-explore-system";
+import { MoodPulse } from "#src/systems/mood-pulse";
 import type { RenderSystem } from "#src/systems/render-system";
 import { WrongFlash } from "#src/systems/wrong-flash";
 import type { GT015Content, GT015Difficulty } from "./template.js";
@@ -182,6 +184,15 @@ function resolveCellVisualState(
   return "idle";
 }
 
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E015-07`, `BR-FBK-16`). */
+export const GT015_STORY_LINE =
+  "Hươu Cao Cổ xếp chỗ ngồi cho các bạn thú, mỗi hàng và mỗi cột không có hai bạn giống nhau. Bé giúp Hươu nhé!";
+
+/** Mascot reo ngắn sau chỗ ngồi hợp lệ (`BR-E015-07`). */
+export const GT015_CHEER_MS = 1000;
+/** Mascot nghiêng đầu sau chỗ ngồi bị trùng. */
+export const GT015_WONDER_MS = 1500;
+
 export class SudokuMiniSession extends TemplateGameSession<
   GT015Content,
   GT015Difficulty
@@ -197,6 +208,7 @@ export class SudokuMiniSession extends TemplateGameSession<
   private selectedSymbolId: string | null = null;
   private activeViolations: readonly ConstraintViolation[] = [];
   private readonly wrongFlash = new WrongFlash();
+  private readonly mood = new MoodPulse();
   private lastFrameMs = 0;
 
   /** Ký hiệu nằm trong khay, lưới đứng trên sân khấu (`BR-PSZ-01`). */
@@ -226,6 +238,7 @@ export class SudokuMiniSession extends TemplateGameSession<
     this.activeViolations = [];
     this.selectedSymbolId = null;
     this.wrongFlash.clear();
+    this.mood.clear();
     this.lastFrameMs = 0;
     this.isWon = false;
 
@@ -326,12 +339,18 @@ export class SudokuMiniSession extends TemplateGameSession<
       });
 
       if (hasConflict) {
+        this.mood.set("wonder", GT015_WONDER_MS);
         this.wrongFlash.trigger(this.lastFrameMs);
         this.recordEvent("constraint_violated", {
           row,
           col,
           symbol_id: symbolId,
         });
+      }
+
+      if (!hasConflict) {
+        this.queueSfx("seat_pat");
+        this.mood.set("cheer", GT015_CHEER_MS);
       }
 
       if (isWrongPlacement) {
@@ -365,7 +384,17 @@ export class SudokuMiniSession extends TemplateGameSession<
     return true;
   }
 
+  override storyLine(): string {
+    return GT015_STORY_LINE;
+  }
+
+  /** Reo khi chỗ ngồi hợp lệ, nghiêng đầu khi trùng (`BR-E015-07`). */
+  override mascotMood(): MascotPose | null {
+    return this.isWon ? null : this.mood.current();
+  }
+
   update(deltaMs: number): void {
+    this.mood.tick(deltaMs);
     this.exploreTracker.tick(deltaMs);
     this.lastFrameMs += deltaMs;
   }
