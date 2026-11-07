@@ -26,7 +26,8 @@ export type SFXType =
   | "rabbit_hop"
   | "lens_pop"
   | "frog_hop"
-  | "cat_munch";
+  | "cat_munch"
+  | "coin_clink";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -334,6 +335,26 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
     durationSec: 0.09,
     rampOutSec: 0.05,
   })),
+
+  /** GT-031: xu rơi vào bụng heo đất — "keng" cao rồi "coong" thấp (`BR-E031-08`). */
+  coin_clink: [
+    {
+      delaySec: 0,
+      type: "sine",
+      freq: 1568,
+      volume: 0.09,
+      durationSec: 0.12,
+      rampOutSec: 0.06,
+    },
+    {
+      delaySec: 0.08,
+      type: "sine",
+      freq: 988,
+      volume: 0.08,
+      durationSec: 0.16,
+      rampOutSec: 0.08,
+    },
+  ],
 
   /** Grand fanfare, level completion only (BR-ENG-08). */
   level_celebrate: FANFARE_NOTES.map((freq, i) => {

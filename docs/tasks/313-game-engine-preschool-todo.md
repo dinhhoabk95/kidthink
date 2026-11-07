@@ -106,6 +106,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
   - [x] 022 (khung chuyện Vịt Con cầm kính lúp tìm đồ lạc, tiếng `lens_pop` khi tìm ra, mascot `happy` 1000 ms khi tìm ra và `encourage` khi chạm nhầm; khác 025/037, BR-E022-07). Còn lại: lớp che thật (vật nấp sau bụi) và vẽ kính lúp, giữ ở dòng "022 (còn lại)"
   - [x] 028 (khung chuyện Ếch Xanh nhảy cóc trên tia số, tiếng `frog_hop` mỗi vật thêm, mascot `happy` 700 ms theo bước và `wonder` sau lần nộp chưa đủ; khác 029/031, BR-E028-06). Còn lại: vẽ tia số/ếch, tất theo đôi/bàn tay/bó que tính theo `step` (asset vẽ)
   - [x] 029 (khung chuyện Mèo Mướp đói bụng, tiếng `cat_munch` mỗi vật bớt, mascot `cheer` 1000 ms và `wonder` sau đáp án chưa đúng; khác 028/031, BR-E029-06). Còn lại: nhóm còn lại co nhỏ có chuyển động và vẽ mèo (asset vẽ)
+  - [x] 031 (khung chuyện Heo Đất đi chợ quê, tiếng xu rơi `coin_clink`, mascot im tới khi trả chưa đủ rồi `encourage` 1500 ms; khác 028/029, BR-E031-08)
 - [ ] Các game còn lại theo cột "Hướng đặc sắc" trong plan §1.3
 - [ ] 030 (còn lại) — dải đo vẫn là lưới ô có thể xuống nhiều hàng ở khung hẹp, chưa phải một dải liền kéo tự do theo thước; `representation: number-rod` chưa hiện khe/chồng. Cần thiết kế lại zone-layout (Phase 5 "Dải kéo tự do có snap")
 - [ ] 031 (còn lại) — mệnh giá phi thực tế ("3đ") và xu chỉ khác số: thuộc nội dung/Phase 4-5 (xu quả kích cỡ/màu theo giá trị, hạt Montessori); nhãn "Đã góp: x / y đ" đã thay bằng hàng chấm xu lấp dần (đợt 4B, BR-E031-07)

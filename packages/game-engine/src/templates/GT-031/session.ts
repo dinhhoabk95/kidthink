@@ -42,6 +42,7 @@ import {
   spawnParticlesAtSlot,
   updateParticles,
 } from "#src/render/index";
+import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
@@ -71,6 +72,13 @@ interface GT031ActionPayload {
   readonly id?: string;
 }
 
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E031-08`, `BR-FBK-16`). */
+export const GT031_STORY_LINE =
+  "Heo Đất đi chợ quê, bé gom xu bỏ vào bụng Heo cho đủ tiền mua nhé, gom xong thì bấm trả!";
+
+/** Mascot động viên ngắn sau lần trả chưa đủ (`BR-E031-08`). */
+export const GT031_ENCOURAGE_MS = 1500;
+
 export class GT031Session extends TemplateGameSession<
   GT031Content,
   GT031Difficulty
@@ -98,6 +106,19 @@ export class GT031Session extends TemplateGameSession<
   private particles: Particle[] = [];
   private lastFrameMs = 0;
   private wrongPayUntilMs = 0;
+  private encourageRemainingMs = 0;
+
+  override storyLine(): string {
+    return GT031_STORY_LINE;
+  }
+
+  /**
+   * Chỉ động viên sau lần trả chưa đủ. Bỏ hay gỡ xu không đổi dáng: dáng mascot
+   * theo tổng tiền là báo đúng sai trước khi trẻ chốt (`BR-E031-05`).
+   */
+  override mascotMood(): MascotPose | null {
+    return this.encourageRemainingMs > 0 && !this.isWon ? "encourage" : null;
+  }
 
   /** Nút trả tiền sáng khi lợn đã có ít nhất một xu. */
   override canCommit(): boolean {
@@ -105,6 +126,12 @@ export class GT031Session extends TemplateGameSession<
   }
 
   update(deltaMs: number): void {
+    if (this.encourageRemainingMs > 0) {
+      this.encourageRemainingMs = Math.max(
+        0,
+        this.encourageRemainingMs - deltaMs
+      );
+    }
     this.lastFrameMs += deltaMs;
     if (this.wrongPayUntilMs > 0 && this.lastFrameMs >= this.wrongPayUntilMs) {
       this.wrongPayUntilMs = 0;
@@ -113,6 +140,7 @@ export class GT031Session extends TemplateGameSession<
 
   setupEntities(): void {
     this.wrongPayUntilMs = 0;
+    this.encourageRemainingMs = 0;
     this.depositedCoinIds = [];
     this.currentTotal = 0;
     this.isWin = false;
@@ -289,6 +317,7 @@ export class GT031Session extends TemplateGameSession<
 
     this.depositedCoinIds.push(coinId);
     this.currentTotal += coin.value;
+    this.queueSfx("coin_clink");
 
     this.recordEvent("coin_placed", {
       coin_id: coin.coin_id,
@@ -301,6 +330,7 @@ export class GT031Session extends TemplateGameSession<
   private commitPay(): void {
     if (!(this.canCommit() && this.isPaymentEnough())) {
       this.wrongPayUntilMs = this.lastFrameMs + WRONG_PAY_MS;
+      this.encourageRemainingMs = GT031_ENCOURAGE_MS;
       this.recordEvent("payment_wrong", {
         current_total: this.currentTotal,
         target_amount: this.content.target_amount,
