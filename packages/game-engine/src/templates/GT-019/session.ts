@@ -14,7 +14,7 @@ import type {
   Gesture,
   ViewEntity,
 } from "#src/interaction";
-import { resolveAssetLabels } from "#src/labels/spoken-keyword";
+import { resolveAssetSpeech } from "#src/labels/spoken-keyword";
 import { resolveTouchFloor } from "#src/layout/constants";
 import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
@@ -28,7 +28,6 @@ import {
   drawEmptyTargetSlot,
   drawSceneBackground,
   drawSlotItem,
-  drawSlotLabel,
   drawWoodenTokenDock,
   getColorsForState,
 } from "#src/render/index";
@@ -121,8 +120,9 @@ export class GT019Session extends TemplateGameSession<
 
   override readonly needsTray = true;
 
+  /** Không nhãn chữ dưới vật: góc xoay nhìn từ hình mờ, không đọc số độ (`BR-E019-06`). */
   override get trayHasLabels(): boolean {
-    return true;
+    return false;
   }
 
   /** Số vật nguồn trong khay của vòng — shell đo chiều cao khay (`BR-PSZ-13`). */
@@ -547,7 +547,7 @@ export class GT019Session extends TemplateGameSession<
           placedPiece ??
           this.content.pieces.find((p) => p.target_slot_id === target.slot_id);
         const assetLabels = refPiece
-          ? resolveAssetLabels(refPiece.asset)
+          ? resolveAssetSpeech(refPiece.asset)
           : { spokenLabel: undefined };
         const rotDeg = target.target_rotation ?? 0;
         const spokenBase = assetLabels.spokenLabel ?? `Ô đích ${i + 1}`;
@@ -562,7 +562,6 @@ export class GT019Session extends TemplateGameSession<
           h: slot.h,
           hitShape: "square",
           ...assetLabels,
-          label: `${rotDeg}°`,
           spokenLabel: `${spokenBase}, góc ${rotDeg} độ`,
         });
       }
@@ -579,7 +578,7 @@ export class GT019Session extends TemplateGameSession<
         } else if (isStaged) {
           state = "selected";
         }
-        const assetLabels = resolveAssetLabels(piece.asset);
+        const assetLabels = resolveAssetSpeech(piece.asset);
         const transform = this.pieceTransforms.get(piece.piece_id);
         const rotDeg = transform?.rotation ?? piece.initial_rotation ?? 0;
         entities.push({
@@ -592,7 +591,6 @@ export class GT019Session extends TemplateGameSession<
           w: slot.w,
           h: slot.h,
           ...assetLabels,
-          label: assetLabels.label ?? `${rotDeg}°`,
           spokenLabel:
             assetLabels.spokenLabel ?? `Mảnh ${i + 1}, góc ${rotDeg} độ`,
         });
@@ -612,7 +610,6 @@ export class GT019Session extends TemplateGameSession<
         h: flipSlot.h,
         hitShape: "circle",
         glyph: FLIP_GLYPH,
-        label: "Lật",
         spokenLabel: "Nút lật hình",
       });
     }
@@ -715,14 +712,14 @@ export class GT019Session extends TemplateGameSession<
         touchFloor,
         maxCell: { w: TARGET_CELL_MAX_PX, h: TARGET_CELL_MAX_PX },
         role: "target",
-        hasLabels: true,
+        hasLabels: false,
       });
       const sources = computeTraySourceSlots(
         this.trayItemCount,
         zones.tray,
         touchFloor,
         targets.length,
-        true
+        false
       );
       return [...targets, ...sources];
     }
@@ -737,7 +734,6 @@ export class GT019Session extends TemplateGameSession<
 
   private renderGhostTarget(
     ctx: CanvasRenderingContext2D,
-    rs: RenderSystem,
     target: GT019Content["target_slots"][number],
     slot: Slot
   ): void {
@@ -747,7 +743,6 @@ export class GT019Session extends TemplateGameSession<
     applySlotTransform(ctx, slot, target.target_rotation, target.target_flip);
     drawAssetInSlot(ctx, target.asset, slot);
     ctx.restore();
-    drawSlotLabel(ctx, `${target.target_rotation}°`, slot, rs);
   }
 
   private renderPlacedTarget(
@@ -791,7 +786,6 @@ export class GT019Session extends TemplateGameSession<
     drawAssetInSlot(ctx, piece.asset, slot);
     ctx.restore();
 
-    drawSlotLabel(ctx, `${rot}°`, slot, rs);
     if (state === "wrong") {
       rs.drawRetryRing(ctx, slot.x, slot.y, radius, 0);
     }
@@ -799,7 +793,6 @@ export class GT019Session extends TemplateGameSession<
 
   private renderTargets(
     ctx: CanvasRenderingContext2D,
-    rs: RenderSystem,
     targets: readonly Slot[]
   ): void {
     for (let i = 0; i < this.content.target_slots.length; i++) {
@@ -813,7 +806,7 @@ export class GT019Session extends TemplateGameSession<
       if (piece) {
         this.renderPlacedTarget(ctx, target, slot, piece);
       } else {
-        this.renderGhostTarget(ctx, rs, target, slot);
+        this.renderGhostTarget(ctx, target, slot);
       }
     }
   }
@@ -846,7 +839,7 @@ export class GT019Session extends TemplateGameSession<
       drawWoodenTokenDock(ctx, rs, zones.tray);
     }
 
-    this.renderTargets(ctx, rs, targets);
+    this.renderTargets(ctx, targets);
     this.renderTrayPieces(ctx, rs, sources);
     this.renderFlipButton(ctx, rs);
   }
@@ -860,7 +853,6 @@ export class GT019Session extends TemplateGameSession<
       drawSlotItem(ctx, rs, slot, {
         id: "btn_flip",
         text: FLIP_GLYPH,
-        label: "Lật",
         state: "idle",
       });
     }

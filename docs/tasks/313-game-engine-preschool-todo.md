@@ -80,6 +80,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 - [ ] Gỡ chữ phải đọc khỏi UI trẻ (008, 009, 019, 023, 028, 029, 032, 035, 036)
   - [x] 008 (ô đích hiện bóng mờ của vật nhận, khay chỉ hình, tên chỉ đọc thành tiếng, BR-E008-05)
   - [x] 009 (thẻ manh mối: kính lúp khi chưa mở, ký hiệu số + mũi tên khi mở, câu chữ chỉ đọc, BR-E009-06)
+  - [x] 019 (bỏ nhãn độ dưới ô/mảnh và chữ "Lật", góc nhìn từ hình mờ, số độ chỉ đọc, BR-E019-06)
 
 ## Phase 5 — Đặc sắc từng game
 - [ ] Đợt demo: 001, 003, 020, 025, 026, 037

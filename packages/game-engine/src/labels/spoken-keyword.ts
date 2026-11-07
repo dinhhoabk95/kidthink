@@ -97,6 +97,14 @@ export function resolveAssetLabels(asset: KeywordAsset): AssetLabels {
   return resolved;
 }
 
+/** Phần chỉ-để-nghe của nhãn vật: bỏ `label` chữ để canvas/view không còn chữ phải đọc (`BR-ENG-10`). */
+export type AssetSpeech = Omit<AssetLabels, "label">;
+
+export function resolveAssetSpeech(asset: KeywordAsset): AssetSpeech {
+  const { glyph, spokenLabel, spokenAudioPath } = resolveAssetLabels(asset);
+  return { glyph, spokenLabel, spokenAudioPath };
+}
+
 const GRAPHEMES = new Intl.Segmenter("vi", { granularity: "grapheme" });
 
 /** Keycap: chữ số + (VS16) + U+20E3, lặp một hoặc nhiều lần — `1️⃣5️⃣`. */
