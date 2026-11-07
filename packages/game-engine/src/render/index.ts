@@ -1,5 +1,6 @@
 // biome-ignore lint/performance/noBarrelFile: primitive render library barrel
 export * from "./bead-rods.js";
+export * from "./beat-ball.js";
 export * from "./board-shapes.js";
 export * from "./cache.js";
 export * from "./commit-button.js";

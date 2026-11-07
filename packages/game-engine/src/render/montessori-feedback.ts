@@ -10,6 +10,7 @@
 
 import { designTokens } from "#src/systems/designTokens";
 import type { MontessoriExploreTracker } from "#src/systems/montessori-explore-system";
+import type { BallPoint } from "./beat-ball";
 import { alpha } from "./color-utils";
 import { applyCanvasFontAtSize, legibleFontPx } from "./type-scale";
 import type { SceneBox } from "./types";
@@ -83,5 +84,40 @@ export function drawMontessoriControlOfErrorPill(
     pillY + pillH / 2,
     pillW - padX * 1.2
   );
+  ctx.restore();
+}
+
+/** Vẽ bóng nảy GT-034 (`BR-E034-12`): vector: thân hổ phách, viền gỗ, một đốm sáng. */
+export function drawBeatBall(
+  ctx: CanvasRenderingContext2D,
+  pose: BallPoint,
+  radius: number
+): void {
+  const { montessori } = designTokens.colors;
+  ctx.save();
+  // Bóng đổ nhỏ dưới đáy cho thấy bóng đang chạm ô.
+  ctx.fillStyle = alpha(montessori.woodBorder, 0.25);
+  ctx.beginPath();
+  ctx.arc(pose.x, pose.y + radius * 0.9, radius * 0.8, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = montessori.amber;
+  ctx.strokeStyle = montessori.amberDark;
+  ctx.lineWidth = Math.max(2, radius * 0.18);
+  ctx.beginPath();
+  ctx.arc(pose.x, pose.y, radius, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = montessori.amberGlow;
+  ctx.beginPath();
+  ctx.arc(
+    pose.x - radius * 0.3,
+    pose.y - radius * 0.3,
+    radius * 0.25,
+    0,
+    Math.PI * 2
+  );
+  ctx.fill();
   ctx.restore();
 }

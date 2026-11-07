@@ -23,6 +23,12 @@ import {
 } from "#src/layout/stage-groups";
 import type { Slot } from "#src/layout/types";
 import {
+  type BallPoint,
+  beatBallPose,
+  beatBallRadius,
+} from "#src/render/beat-ball";
+import {
+  drawBeatBall,
   drawSceneBackground,
   drawSlotItem,
   drawSubPromptText,
@@ -67,6 +73,19 @@ export const GT034_HAPPY_MS = 500;
 /** Mascot nghiêng đầu sau khi chuỗi đủ bước mà chưa đúng. */
 export const GT034_WONDER_MS = 1500;
 
+/** Bóng nảy một lần sau mỗi lần trẻ gõ (`BR-E034-12`). */
+export const GT034_BALL_HOP_MS = 400;
+
+/**
+ * Trạng thái bóng nảy: `beat` = theo phách của mẫu tự phát (lượt nghe hoặc `L3`),
+ * `tap` = một cú nảy đáp lại lần gõ; `phase` ∈ [0, 1] trong một phách / cú nảy.
+ */
+export interface GT034BeatBall {
+  readonly kind: "beat" | "tap";
+  readonly step: number;
+  readonly phase: number;
+}
+
 export class GT034Session extends TemplateGameSession<
   GT034Content,
   GT034Difficulty
@@ -97,6 +116,9 @@ export class GT034Session extends TemplateGameSession<
   isWin = false;
   /** Giây đã chạy của mẫu gợi ý `L3` (nửa tốc độ, lặp); null = không phát (`BR-E034-10`). */
   private hintPlaybackSec: number | null = null;
+  /** Ms đã trôi của cú nảy sau lần gõ gần nhất; null = không nảy (`BR-E034-12`). */
+  private tapHopMs: number | null = null;
+  private tapHopStep = 0;
 
   private particles: Particle[] = [];
   private readonly mood = new MoodPulse();
@@ -159,6 +181,7 @@ export class GT034Session extends TemplateGameSession<
     this.playbackElapsedSec = 0;
     this.isWin = false;
     this.hintPlaybackSec = null;
+    this.tapHopMs = null;
     this.particles = [];
 
     this.recordEvent("game_started", {
@@ -193,6 +216,52 @@ export class GT034Session extends TemplateGameSession<
   /** Ô bước sáng: mẫu đang phát (lượt nghe) hoặc mẫu gợi ý `L3`. */
   private get litStepIndex(): number | null {
     return this.activePlayingIndex ?? this.getHintPlaybackIndex();
+  }
+
+  /**
+   * Bóng nảy (`BR-E034-12`). Chỉ có khi mẫu tự phát hoặc ngay sau một lần gõ —
+   * lúc trẻ tự gõ không có bóng chạy theo phách.
+   */
+  getBeatBall(): GT034BeatBall | null {
+    if (this.isPlayingPattern && this.activePlayingIndex !== null) {
+      const beats = this.playbackElapsedSec / this.beatSystem.beatDurationSec;
+      return this.beatOf(this.activePlayingIndex, beats);
+    }
+    const hintIdx = this.getHintPlaybackIndex();
+    if (this.hintPlaybackSec !== null && hintIdx !== null) {
+      return this.beatOf(hintIdx, this.hintPlaybackSec / this.hintBeatSec);
+    }
+    if (this.tapHopMs !== null) {
+      return {
+        kind: "tap",
+        step: this.tapHopStep,
+        phase: this.tapHopMs / GT034_BALL_HOP_MS,
+      };
+    }
+    return null;
+  }
+
+  private beatOf(step: number, beats: number): GT034BeatBall {
+    return {
+      kind: "beat",
+      step,
+      phase: Math.min(1, Math.max(0, beats - step)),
+    };
+  }
+
+  private startTapHop(step: number): void {
+    this.tapHopStep = step;
+    this.tapHopMs = 0;
+  }
+
+  private tickTapHop(deltaMs: number): void {
+    if (this.tapHopMs === null) {
+      return;
+    }
+    this.tapHopMs += deltaMs;
+    if (this.tapHopMs >= GT034_BALL_HOP_MS) {
+      this.tapHopMs = null;
+    }
   }
 
   private startHintPlayback(): void {
@@ -295,6 +364,7 @@ export class GT034Session extends TemplateGameSession<
     this.mood.tick(deltaMs);
     this.particles = updateParticles(this.particles);
     this.tickHintPlayback(deltaMs);
+    this.tickTapHop(deltaMs);
 
     if (!this.isPlayingPattern) {
       return;
@@ -571,6 +641,7 @@ export class GT034Session extends TemplateGameSession<
 
     const stepIndex = this.userSteps.length;
     const expected = this.content.target_pattern[stepIndex];
+    this.startTapHop(stepIndex);
 
     const singleRecipe = this.beatSystem.buildNoteRecipes([instrumentId])[0];
     if (singleRecipe) {
@@ -597,6 +668,7 @@ export class GT034Session extends TemplateGameSession<
     }
 
     const stepIndex = this.userSteps.length;
+    this.startTapHop(stepIndex);
     // Nhịp nghỉ không có nhạc cụ nên mõ gõ nhẹ; như nhau dù đúng hay sai chỗ nghỉ.
     this.queueSfx("wood_beat");
     this.mood.set("happy", GT034_HAPPY_MS);
@@ -899,6 +971,7 @@ export class GT034Session extends TemplateGameSession<
 
     this.renderTrackSteps(ctx, rs);
     this.renderInstrumentDock(ctx, rs);
+    this.renderBeatBall(ctx, rs);
 
     if (
       this.particles.length > 0 &&
@@ -906,6 +979,46 @@ export class GT034Session extends TemplateGameSession<
     ) {
       rs.drawParticles(ctx, this.particles);
     }
+  }
+
+  /** Bóng nảy (`BR-E034-12`): đáy ngay trên ô bước, đỉnh không vượt sân khấu. */
+  private renderBeatBall(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem
+  ): void {
+    const ball = this.getBeatBall();
+    if (!ball || (ball.kind === "tap" && rs.reducedMotion)) {
+      return;
+    }
+    const slot = this.slots[ball.step];
+    if (!slot) {
+      return;
+    }
+    // Ô kế chỉ là ô bước cùng hàng: `slots[len]` đã là nhạc cụ đầu tiên, và ô ở
+    // hàng khác có đáy khác — phách cuối hay xuống dòng thì bóng nảy tại chỗ.
+    const isLastStep = ball.step + 1 >= this.content.target_pattern.length;
+    const nextSlot =
+      ball.kind === "beat" && !isLastStep
+        ? this.slots[ball.step + 1]
+        : undefined;
+    const next = nextSlot && nextSlot.y === slot.y ? nextSlot : undefined;
+    const radius = beatBallRadius(slot.w, slot.h);
+    const floorY = slot.y - slot.h / 2 - radius - 2;
+    const stageTop = this.stageRect?.y ?? 0;
+    const hopPx = Math.max(
+      0,
+      Math.min(slot.h * 0.9, floorY - radius - stageTop)
+    );
+    const to: BallPoint | null = next ? { x: next.x, y: next.y } : null;
+    const pose = beatBallPose({
+      phase: ball.phase,
+      from: { x: slot.x, y: slot.y },
+      to,
+      floorY,
+      hopPx,
+      reducedMotion: rs.reducedMotion,
+    });
+    drawBeatBall(ctx, pose, radius);
   }
 
   private renderTrackSteps(
