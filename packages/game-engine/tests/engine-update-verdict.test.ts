@@ -4,8 +4,9 @@ import { GT026_FIXTURES } from "#src/templates/GT-026/fixtures.js";
 import { GT026Session } from "#src/templates/GT-026/session.js";
 
 /**
- * BR-E026-06: lượt hết giờ không chạm là một lần thử. Engine phải báo verdict
- * của nhịp `update()` cho bề mặt chơi để telemetry có `answer_*`.
+ * BR-E026-06/08: lượt nogo kìm được là một lần thử đúng, engine báo verdict của
+ * nhịp `update()` cho bề mặt chơi để telemetry có `answer_*`; lượt go bỏ sót là
+ * trung tính nên không có verdict.
  */
 describe("GameEngine.onUpdateVerdict — verdict ở nhịp update", () => {
   const fixture = GT026_FIXTURES[0];
@@ -14,15 +15,20 @@ describe("GameEngine.onUpdateVerdict — verdict ở nhịp update", () => {
   }
   const { content, difficulty } = fixture;
 
-  function buildEngine(): GameEngine {
-    const session = new GT026Session(content, difficulty);
+  it("báo verdict đúng cho lượt nogo kìm được; lượt go bỏ sót là trung tính, không có verdict (BR-E026-08)", () => {
+    const trials = ["nogo", "go", "nogo", "nogo"] as const;
+    const mixed = {
+      ...content,
+      trials: trials.map((kind, i) => ({ id: `t${i}`, kind })),
+    };
+    const session = new GT026Session(mixed, difficulty);
     const engine = new GameEngine();
     engine.load(
       {
         level_code: "LVL-026",
         content_version: 1,
         template_code: "GT-026",
-        content_pack: content,
+        content_pack: mixed,
         difficulty_params: difficulty,
         theme_id: "default",
         age_band: "5-6",
@@ -31,24 +37,17 @@ describe("GameEngine.onUpdateVerdict — verdict ở nhịp update", () => {
       },
       () => session
     );
-    return engine;
-  }
-
-  it("báo verdict đúng cho mỗi lượt hết giờ; lượt go bỏ sót là sai", () => {
-    const engine = buildEngine();
     const verdicts: boolean[] = [];
     engine.onUpdateVerdict = (isCorrect: boolean) => {
       verdicts.push(isCorrect);
     };
 
-    for (const trial of content.trials) {
-      engine.advanceFrame(difficulty.stimulus_window_ms + 50);
+    for (const _ of trials) {
+      engine.advanceFrame(10_000);
       engine.advanceFrame(difficulty.isi_ms + 50);
-      expect(trial.kind === "go" || trial.kind === "nogo").toBe(true);
     }
 
-    const expected = content.trials.map((trial) => trial.kind === "nogo");
-    expect(verdicts).toEqual(expected);
+    expect(verdicts).toEqual([true, true, true]);
     engine.destroy();
   });
 });

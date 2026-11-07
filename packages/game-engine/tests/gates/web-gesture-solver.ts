@@ -27,7 +27,7 @@ const MAX_STEPS = 80;
 const MAX_REPEAT = 4;
 /** Một lần chờ khi kẹt và số lần chờ tối đa mỗi level. */
 const WAIT_MS = 6000;
-const MAX_WAITS = 12;
+const MAX_WAITS = 40;
 const BANDS = ["3-4", "4-5", "5-6"] as const;
 type Band = (typeof BANDS)[number];
 
@@ -165,12 +165,16 @@ export async function solveWithWebGestures(
     if (session.checkWinCondition()) {
       return "won";
     }
-    if (!stepOnce(session, step, seen, uses)) {
-      // Trẻ chờ: shell vẫn gọi `update()` khi hết gesture (xem trước, úp lại…).
+    let progressed = stepOnce(session, step, seen, uses);
+    // Trẻ chờ: shell vẫn gọi `update()` khi hết gesture (xem trước, khoảng nghỉ,
+    // hết giờ lượt nogo…), nên chờ rồi thử lại cho tới khi hết lượt chờ.
+    while (!(progressed || session.checkWinCondition()) && waits < MAX_WAITS) {
       (session as GameSession).update?.(WAIT_MS);
-      if (waits++ >= MAX_WAITS || !stepOnce(session, step, seen, uses)) {
-        return "stuck";
-      }
+      waits++;
+      progressed = stepOnce(session, step, seen, uses);
+    }
+    if (!(progressed || session.checkWinCondition())) {
+      return "stuck";
     }
   }
   return session.checkWinCondition() ? "won" : "stuck";

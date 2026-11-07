@@ -36,9 +36,9 @@ interface InhibitionSystemConfig<T = string> {
 
 export class InhibitionSystem<T = string> {
   private readonly trials: readonly TrialItem<T>[];
-  private readonly stimulusWindowMs: number;
-  private readonly isiMs: number;
-  private readonly untimed: boolean;
+  private stimulusWindowMs: number;
+  private isiMs: number;
+  private untimed: boolean;
 
   private currentTrialIndex = 0;
   private trialElapsedMs = 0;
@@ -88,6 +88,29 @@ export class InhibitionSystem<T = string> {
 
   isUntimed(): boolean {
     return this.untimed;
+  }
+
+  getStimulusWindowMs(): number {
+    return this.stimulusWindowMs;
+  }
+
+  getIsiMs(): number {
+    return this.isiMs;
+  }
+
+  /** Nới cửa sổ kích thích từ các lượt sau (thang trợ giúp `L1`). */
+  widenStimulusWindow(factor: number): void {
+    this.stimulusWindowMs = Math.round(this.stimulusWindowMs * factor);
+  }
+
+  /** Giãn khoảng nghỉ giữa các lượt từ lượt sau (thang trợ giúp `L2`). */
+  widenIsi(factor: number): void {
+    this.isiMs = Math.round(this.isiMs * factor);
+  }
+
+  /** Chuyển sang lối không tính giờ (thang trợ giúp `L3`, `BR-EBD-11`). */
+  makeUntimed(): void {
+    this.untimed = true;
   }
 
   getCorrectCount(): number {

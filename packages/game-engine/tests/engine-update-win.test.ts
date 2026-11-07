@@ -15,8 +15,11 @@ describe("GameEngine.onSessionWon — vòng thắng ở nhịp update", () => {
   }
   const { content, difficulty } = fixture;
 
-  function buildEngine(): { engine: GameEngine; session: GT026Session } {
-    const session = new GT026Session(content, difficulty);
+  function buildEngine(diff = difficulty): {
+    engine: GameEngine;
+    session: GT026Session;
+  } {
+    const session = new GT026Session(content, diff);
     const engine = new GameEngine();
     engine.load(
       {
@@ -24,7 +27,7 @@ describe("GameEngine.onSessionWon — vòng thắng ở nhịp update", () => {
         content_version: 1,
         template_code: "GT-026",
         content_pack: content,
-        difficulty_params: difficulty,
+        difficulty_params: diff,
         theme_id: "default",
         age_band: "5-6",
         reduced_motion: false,
@@ -63,14 +66,16 @@ describe("GameEngine.onSessionWon — vòng thắng ở nhịp update", () => {
   });
 
   it("hết lượt với dưới 60% đúng vẫn đóng vòng: gọi onSessionWon đúng một lần (N6, nhánh 2)", () => {
-    const { engine, session } = buildEngine();
+    const { engine, session } = buildEngine({ ...difficulty, untimed: true });
     let wonCalls = 0;
     engine.onSessionWon = () => {
       wonCalls++;
     };
 
-    for (let i = 0; i < content.trials.length * 4; i++) {
-      engine.advanceFrame(difficulty.stimulus_window_ms + 50);
+    // Trẻ bấm dừng ở mọi lượt (lối không tính giờ): đúng ở nogo, sai ở go,
+    // tức dưới 60% đúng; bỏ sót thì chỉ hạ độ khó, không tự đóng vòng (BR-E026-10).
+    for (const _trial of content.trials) {
+      session.onPass();
       engine.advanceFrame(difficulty.isi_ms + 50);
     }
     engine.advanceFrame(1000);

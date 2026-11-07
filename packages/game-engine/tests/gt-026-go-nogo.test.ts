@@ -148,11 +148,21 @@ describe("GT-026: Chỉ chạm khi đúng dấu (go-nogo)", () => {
     expect(session.update(15_000)).toBeNull();
     expect(session.getState()).toBe("stimulus");
 
-    // Tap outside slot in untimed mode dispatches "pass" -> correct for No-Go!
+    // Chạm ra ngoài không phải nhịn (BR-E026-09): lượt vẫn đứng yên.
+    expect(
+      session.dispatch({ type: "tap", x: 10, y: 10, timeMs: 25_900 })
+    ).toEqual({ valid: false, feedback: "none" });
+    expect(session.getState()).toBe("stimulus");
+
+    // Nhịn là bấm nút dừng -> đúng với No-Go.
+    const pad = session.slots[1];
+    if (!pad) {
+      throw new Error("Thiếu nút dừng");
+    }
     const passResult = session.dispatch({
       type: "tap",
-      x: 10,
-      y: 10,
+      x: pad.x,
+      y: pad.y,
       timeMs: 26_000,
     });
     expect(passResult?.valid).toBe(true);
