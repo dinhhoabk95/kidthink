@@ -235,12 +235,14 @@ export {
 } from "./systems/degradation";
 export { designTokens } from "./systems/designTokens";
 export {
+  type BaseMascotPoseInput,
   drawFeedbackPulses,
   type FeedbackFrame,
   FeedbackOverlay,
   type FeedbackPoint,
   MASCOT_FEEDBACK_HOLD_MS,
   type OverlayFeedbackKind,
+  resolveBaseMascotPose,
 } from "./systems/feedback-overlay";
 export {
   COMPLIMENTS,

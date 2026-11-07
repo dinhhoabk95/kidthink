@@ -270,6 +270,7 @@
     type GameEngine,
     getTouchFloor,
     type MascotPose,
+    resolveBaseMascotPose,
     type StageZones,
     TemplateGameSession,
     type ViewEntity,
@@ -345,13 +346,11 @@
   const mascotSprites = useMascotSprites();
 
   function baseMascotPose(engine: GameEngine | null): MascotPose {
-    if (!engine?.acceptingInput) {
-      return "listen";
-    }
-    if ((engine.scaffolding?.getCurrentLevel() ?? 0) > 0) {
-      return "hint";
-    }
-    return "idle";
+    return resolveBaseMascotPose({
+      acceptingInput: engine?.acceptingInput ?? false,
+      hintLevel: engine?.scaffolding?.getCurrentLevel() ?? 0,
+      session: engine?.activeSession,
+    });
   }
 
   const {

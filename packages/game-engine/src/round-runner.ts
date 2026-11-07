@@ -249,6 +249,19 @@ export class RoundRunner {
     return this.currentSession;
   }
 
+  /**
+   * Lời đọc của một lượt phát câu dẫn: ở vòng đầu và nhịp `round_open`, khung
+   * chuyện của session (`storyLine()`) đứng trước câu dẫn trong cùng một lượt
+   * phát; "nghe lại" và các vòng sau chỉ đọc câu dẫn (`BR-FBK-16`).
+   */
+  spokenPromptFor(prompt: string, trigger: NarrationTrigger): string {
+    if (trigger !== "round_open" || this.currentRoundIndex !== 0) {
+      return prompt;
+    }
+    const story = this.currentSession?.storyLine?.();
+    return story ? `${story} ${prompt}` : prompt;
+  }
+
   getCurrentRoundConfig(): RoundConfig | null {
     if (this.currentRoundIndex >= this.rounds.length) {
       return null;
@@ -581,7 +594,8 @@ export class RoundRunner {
     };
 
     const audioPath = config.instruction_audio_path;
-    const text = config.instruction || config.narration_template;
+    const rawText = config.instruction || config.narration_template;
+    const text = rawText ? this.spokenPromptFor(rawText, trigger) : rawText;
 
     const speakOrCue = () => {
       if (text) {

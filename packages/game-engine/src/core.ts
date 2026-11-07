@@ -552,10 +552,22 @@ export class GameEngine {
     if (updateResult && updateResult.feedback !== "none") {
       this.onUpdateVerdict?.(updateResult.valid);
     }
+    this.flushSessionCues(session);
     if (canWinOnUpdate && session && !wasWon && session.checkWinCondition()) {
       this.onSessionWon?.();
     }
     this.notifyViewChange(session);
+  }
+
+  /** Phát cue âm đặc trưng session đã xếp hàng — một lần mỗi khung (`BR-FBK-14`). */
+  private flushSessionCues(session: GameSession | undefined): void {
+    const cues = session?.takeSfxCues?.();
+    if (!cues) {
+      return;
+    }
+    for (const cue of cues) {
+      this.audio.play(cue);
+    }
   }
 
   private notifyViewChange(session: GameSession | undefined): void {

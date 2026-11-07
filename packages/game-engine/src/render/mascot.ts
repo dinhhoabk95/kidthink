@@ -16,6 +16,9 @@ export const MASCOT_POSES = [
   "encourage",
   "hint",
   "celebrate",
+  "wonder",
+  "freeze",
+  "cheer",
 ] as const;
 
 export type MascotPose = (typeof MASCOT_POSES)[number];
@@ -33,6 +36,9 @@ export const MASCOT_SPRITE_FILES: Readonly<Record<MascotPose, string>> = {
   encourage: "/mascot/mascot-bear-thinking.svg",
   hint: "/mascot/mascot-bear-thinking.svg",
   celebrate: "/mascot/mascot-bear-celebrating.svg",
+  wonder: "/mascot/mascot-bear-thinking.svg",
+  freeze: "/mascot/mascot-bear-waiting.svg",
+  cheer: "/mascot/mascot-bear-jumping.svg",
 };
 
 export interface MascotPlacement {
@@ -58,6 +64,8 @@ const BOUNCE_PERIOD_MS = 360;
 const BREATH_PERIOD_MS = 2400;
 const ENCOURAGE_TILT_RAD = 0.18;
 const REDUCED_PULSE_SCALE = 1.08;
+const WONDER_TILT_RAD = 0.12;
+const WONDER_PERIOD_MS = 1800;
 const STILL: MascotMotion = { dy: 0, tilt: 0, scale: 1 };
 
 function wave(elapsedMs: number, periodMs: number): number {
@@ -66,7 +74,7 @@ function wave(elapsedMs: number, periodMs: number): number {
 
 /** Một nhịp scale duy nhất thay cho nảy/nghiêng khi reduced-motion (`BR-FBK-09`). */
 function reducedMotionFor(pose: MascotPose): MascotMotion {
-  if (pose === "happy" || pose === "celebrate") {
+  if (pose === "happy" || pose === "celebrate" || pose === "cheer") {
     return { dy: 0, tilt: 0, scale: REDUCED_PULSE_SCALE };
   }
   return STILL;
@@ -87,6 +95,18 @@ export function mascotMotion(
       return { dy: -0.18 * bounce, tilt: 0, scale: 1.06 };
     case "celebrate":
       return { dy: -0.28 * bounce, tilt: 0, scale: 1.12 };
+    case "cheer":
+      return { dy: -0.14 * bounce, tilt: 0, scale: 1.04 };
+    case "wonder":
+      // Nghiêng qua lại chậm như đang ngó nghiêng tìm (`BR-FBK-15`).
+      return {
+        dy: 0,
+        tilt: WONDER_TILT_RAD * wave(elapsedMs, WONDER_PERIOD_MS),
+        scale: 1,
+      };
+    case "freeze":
+      // Đứng hình: không nảy, không thở — khác `idle` ở chỗ không nhúc nhích.
+      return STILL;
     case "encourage":
       return { dy: 0, tilt: ENCOURAGE_TILT_RAD, scale: 1 };
     case "listen":
@@ -160,7 +180,7 @@ function drawFace(
   ctx.fill();
   ctx.stroke();
 
-  const joyful = pose === "happy" || pose === "celebrate";
+  const joyful = pose === "happy" || pose === "celebrate" || pose === "cheer";
   drawEyes(ctx, r, joyful);
 
   // Mõm sáng, mũi và miệng.

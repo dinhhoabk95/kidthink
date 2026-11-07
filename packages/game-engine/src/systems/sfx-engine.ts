@@ -13,7 +13,14 @@ export type SFXType =
   | "longpress_exit"
   | "start_chime"
   | "whoosh_return"
-  | "snap_item";
+  | "snap_item"
+  | "wood_tap"
+  | "drop_thud"
+  | "card_flip"
+  | "sparkle_find"
+  | "go_chime"
+  | "stop_hum"
+  | "star_collect";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -40,7 +47,7 @@ const FANFARE_NOTES = [523, 659, 784, 1047, 784, 1047]; // C5 E5 G5 C6 G5 C6
 const FANFARE_FINAL_INDEX = FANFARE_NOTES.length - 1;
 const START_CHIME_NOTES = [523, 659, 784, 1047]; // C5 E5 G5 C6 - cheerful rising chime
 
-const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
+export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
   tap: [
     {
       delaySec: 0,
@@ -117,6 +124,102 @@ const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       rampOutSec: 0.06,
     },
   ],
+
+  /** GT-001: chạm một token gỗ — "cộc" ấm, trầm dần (`BR-E001-05`). */
+  wood_tap: [
+    {
+      delaySec: 0,
+      type: "triangle",
+      freq: 330,
+      glideTo: { freq: 260, overSec: 0.07 },
+      volume: 0.12,
+      durationSec: 0.09,
+      rampOutSec: 0.04,
+    },
+  ],
+
+  /** GT-003: vật rơi êm vào hộp — "bịch" trầm, không dội (`BR-E003-12`). */
+  drop_thud: [
+    {
+      delaySec: 0,
+      type: "sine",
+      freq: 180,
+      glideTo: { freq: 110, overSec: 0.14 },
+      volume: 0.14,
+      durationSec: 0.16,
+      rampOutSec: 0.06,
+    },
+  ],
+
+  /** GT-020: lật thẻ — vút lên rồi "tích" nhỏ (`BR-E020-06`). */
+  card_flip: [
+    {
+      delaySec: 0,
+      type: "triangle",
+      freq: 520,
+      glideTo: { freq: 780, overSec: 0.07 },
+      volume: 0.09,
+      durationSec: 0.08,
+      rampOutSec: 0.04,
+    },
+    {
+      delaySec: 0.06,
+      type: "sine",
+      freq: 880,
+      volume: 0.07,
+      durationSec: 0.07,
+      rampOutSec: 0.04,
+    },
+  ],
+
+  /** GT-025: tìm ra điểm khác — ba nốt lấp lánh đi lên (`BR-E025-06`). */
+  sparkle_find: [988, 1319, 1760].map((freq, i) => ({
+    delaySec: i * 0.06,
+    type: "sine" as OscillatorType,
+    freq,
+    volume: 0.1,
+    durationSec: 0.18,
+    rampOutSec: 0.06,
+  })),
+
+  /** GT-026: đèn xanh — nốt rủ rê lên, mời "đi" (`BR-E026-10`). */
+  go_chime: [
+    {
+      delaySec: 0,
+      type: "sine",
+      freq: 523,
+      glideTo: { freq: 784, overSec: 0.16 },
+      volume: 0.12,
+      durationSec: 0.2,
+      rampOutSec: 0.06,
+    },
+  ],
+
+  /** GT-026: đèn đỏ — nốt trầm dài, êm, báo "đứng lại" (`BR-E026-10`). */
+  stop_hum: [
+    {
+      delaySec: 0,
+      type: "triangle",
+      freq: 196,
+      volume: 0.1,
+      durationSec: 0.35,
+      rampOutSec: 0.12,
+    },
+  ],
+
+  /** GT-037: nhặt được một ngôi sao vào lọ — leng keng đi lên (`BR-E037-08`). */
+  star_collect: [
+    { delaySec: 0, freq: 1047, durationSec: 0.2 },
+    { delaySec: 0.07, freq: 1319, durationSec: 0.2 },
+    { delaySec: 0.14, freq: 1568, durationSec: 0.26 },
+  ].map(({ delaySec, freq, durationSec }) => ({
+    delaySec,
+    type: "sine" as OscillatorType,
+    freq,
+    volume: 0.11,
+    durationSec,
+    rampOutSec: 0.07,
+  })),
 
   /** Grand fanfare, level completion only (BR-ENG-08). */
   level_celebrate: FANFARE_NOTES.map((freq, i) => {

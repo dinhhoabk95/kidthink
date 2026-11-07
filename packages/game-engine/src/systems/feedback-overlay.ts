@@ -104,6 +104,30 @@ function toPulseFrame(
   };
 }
 
+export interface BaseMascotPoseInput {
+  readonly acceptingInput: boolean;
+  /** Bậc trợ giúp đang hiện, 0 là chưa có (`scaffolding.getCurrentLevel()`). */
+  readonly hintLevel: number;
+  readonly session?: {
+    mascotMood?(): MascotPose | null;
+  } | null;
+}
+
+/**
+ * Dáng nền của mascot: lời dẫn đang đọc > tâm trạng của session > trợ giúp >
+ * idle (`BR-FBK-15`). Phản hồi đúng/chưa đúng của `FeedbackOverlay` đè lên trên.
+ */
+export function resolveBaseMascotPose(input: BaseMascotPoseInput): MascotPose {
+  if (!input.acceptingInput) {
+    return "listen";
+  }
+  const mood = input.session?.mascotMood?.();
+  if (mood) {
+    return mood;
+  }
+  return input.hintLevel > 0 ? "hint" : "idle";
+}
+
 export class FeedbackOverlay {
   private active: ActiveFeedback | null = null;
   private celebrating = false;

@@ -58,4 +58,51 @@ describe("Mascot (feedback-and-celebration §7.4, BR-PSZ-10)", () => {
     expect(fillText).not.toHaveBeenCalled();
     expect(ellipse).toHaveBeenCalled();
   });
+
+  describe("BR-FBK-15 — ba dáng theo tình huống", () => {
+    it("freeze đứng hình: không nảy, không nghiêng, không thở ở mọi thời điểm", () => {
+      for (const t of [0, 120, 700, 1500]) {
+        expect(mascotMotion("freeze", t, false)).toEqual({
+          dy: 0,
+          tilt: 0,
+          scale: 1,
+        });
+      }
+    });
+
+    it("idle thì thở — khác freeze ở chỗ có nhúc nhích", () => {
+      expect(mascotMotion("idle", 600, false)).not.toEqual(
+        mascotMotion("freeze", 600, false)
+      );
+    });
+
+    it("wonder nghiêng qua lại hai phía theo thời gian", () => {
+      const tilts = [0, 450, 1350].map(
+        (t) => mascotMotion("wonder", t, false).tilt
+      );
+
+      expect(Math.max(...tilts)).toBeGreaterThan(0);
+      expect(Math.min(...tilts)).toBeLessThan(0);
+    });
+
+    it("cheer nảy lên (dy âm) và reduced-motion thu về một nhịp scale", () => {
+      expect(mascotMotion("cheer", 90, false).dy).toBeLessThan(0);
+      const reduced = mascotMotion("cheer", 90, true);
+
+      expect(reduced.dy).toBe(0);
+      expect(reduced.scale).toBeGreaterThan(1);
+    });
+
+    it("ba dáng mới đều vẽ được bằng primitive khi chưa có sprite", () => {
+      const poses: readonly MascotPose[] = ["wonder", "freeze", "cheer"];
+      for (const pose of poses) {
+        const ctx = fakeContext();
+        const drawImage = vi.spyOn(ctx, "drawImage");
+
+        drawMascot(ctx, PLACEMENT, pose, 0);
+
+        expect(drawImage).not.toHaveBeenCalled();
+      }
+    });
+  });
 });

@@ -85,11 +85,11 @@ describe("FeedbackOverlay (BR-FBK-05, BR-FBK-07, BR-FBK-11)", () => {
     expect(overlay.frame(60_001).mascotPose).toBe("idle");
   });
 
-  it("mọi dáng trả về thuộc hợp đồng sáu dáng", () => {
+  it("mọi dáng trả về thuộc hợp đồng chín dáng (ba dáng mới của BR-FBK-15)", () => {
     const overlay = new FeedbackOverlay();
     overlay.trigger("success", { x: 0, y: 0 }, 0);
 
     expect(MASCOT_POSES).toContain(overlay.frame(1).mascotPose);
-    expect(MASCOT_POSES).toHaveLength(6);
+    expect(MASCOT_POSES).toHaveLength(9);
   });
 });

@@ -4,6 +4,7 @@ import {
   ENGINE_EVENT_WILDCARD,
   type EngineConfig,
   GameEngine,
+  type NarrationTrigger,
   preloadGameSession,
   type RenderSystem,
   type RoundConfig,
@@ -454,13 +455,19 @@ export function usePlaySession(options: UsePlaySessionOptions) {
           roundRunner?.notePromptSettled();
           return;
         }
+        // Khung chuyện đứng trước câu dẫn ở vòng đầu (`BR-FBK-16`).
+        const spokenPrompt = (
+          text: string | undefined,
+          when: NarrationTrigger
+        ): string | undefined =>
+          text ? (roundRunner?.spokenPromptFor(text, when) ?? text) : text;
         const prompt =
           (roundConfig.content_pack as { prompt?: string })?.prompt ||
           roundConfig.instruction ||
           cachedPayload?.title;
         if (trigger === "replay") {
           // Nghe lại Cấm — NEVER khoá cử chỉ (BR-PNR-08): không truyền onSettled.
-          playInstructionNarration(prompt);
+          playInstructionNarration(spokenPrompt(prompt, trigger));
           return;
         }
         // Hẹn giờ và settle mang token vòng (Task #274 E6): câu dẫn của vòng
@@ -469,7 +476,8 @@ export function usePlaySession(options: UsePlaySessionOptions) {
           timers: roundTimers,
           getRunner: getRoundRunner,
           delayMs: ROUND_OPEN_NARRATION_DELAY_MS,
-          play: (settle) => playInstructionNarration(prompt, settle),
+          play: (settle) =>
+            playInstructionNarration(spokenPrompt(prompt, trigger), settle),
           onSettled: () => {
             if (engine) {
               engine.acceptingInput = true;

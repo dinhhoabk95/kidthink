@@ -4,6 +4,7 @@ import { DEFAULT_LOGIC_SPACE, type LogicSpace } from "./layout/constants.js";
 import type { ZoneRect } from "./layout/stage-zones.js";
 import type { Slot } from "./layout/types";
 import type { CommitIcon } from "./render/commit-button.js";
+import type { MascotPose } from "./render/mascot.js";
 import type { ItemVisualState } from "./render/types.js";
 import {
   type HintLevel,
@@ -11,6 +12,7 @@ import {
   resolveSteppedHintTarget,
 } from "./systems/hint-ladder.js";
 import type { RenderSystem } from "./systems/render-system";
+import type { SFXType } from "./systems/sfx-engine.js";
 
 export type { HintLevel, HintTarget } from "./systems/hint-ladder.js";
 
@@ -104,7 +106,16 @@ export interface GameSession {
    * (`BR-E026-04`).
    */
   setInputOpen?(isOpen: boolean): void;
+  /** Rút hàng đợi cue âm đặc trưng của session (`BR-FBK-14`). */
+  takeSfxCues?(): readonly SFXType[];
+  /** Tâm trạng mascot của session, `null` là không có (`BR-FBK-15`). */
+  mascotMood?(): MascotPose | null;
+  /** Câu bối cảnh đọc một lần ở vòng đầu (`BR-FBK-16`). */
+  storyLine?(): string | null;
 }
+
+/** Trần hàng đợi cue — lượt chạm dồn dập không xếp hàng vô hạn (`BR-FBK-14`). */
+export const MAX_QUEUED_SFX_CUES = 8;
 
 export abstract class BaseGameSession implements GameSession {
   protected events: TelemetryEvent[] = [];
@@ -164,7 +175,40 @@ export abstract class BaseGameSession implements GameSession {
   isAcceptingInput(): boolean {
     return true;
   }
+
+  private sfxCues: SFXType[] = [];
+
+  /**
+   * Xếp một cue âm tổng hợp đặc trưng của trò. Session Cấm — NEVER giữ
+   * `AudioContext`: `GameEngine.advanceFrame` rút hàng đợi và phát (`BR-FBK-14`).
+   */
+  protected queueSfx(type: SFXType): void {
+    if (this.sfxCues.length < MAX_QUEUED_SFX_CUES) {
+      this.sfxCues.push(type);
+    }
+  }
+
+  takeSfxCues(): readonly SFXType[] {
+    if (this.sfxCues.length === 0) {
+      return NO_CUES;
+    }
+    const cues = this.sfxCues;
+    this.sfxCues = [];
+    return cues;
+  }
+
+  /** Mặc định không có tâm trạng riêng; trò muốn mascot phản ứng thì ghi đè. */
+  mascotMood(): MascotPose | null {
+    return null;
+  }
+
+  /** Mặc định không có khung chuyện; trò có bối cảnh nói được thì ghi đè. */
+  storyLine(): string | null {
+    return null;
+  }
 }
+
+const NO_CUES: readonly SFXType[] = Object.freeze([]);
 
 /**
  * Base for the GT-001..GT-006 template sessions: each one is built from a
