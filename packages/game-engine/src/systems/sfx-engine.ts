@@ -25,7 +25,8 @@ export type SFXType =
   | "bell_open"
   | "rabbit_hop"
   | "lens_pop"
-  | "frog_hop";
+  | "frog_hop"
+  | "cat_munch";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -322,6 +323,17 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       rampOutSec: 0.05,
     },
   ],
+
+  /** GT-029: mèo cắn miếng ăn — hai tiếng "ngoạm" trầm, êm (`BR-E029-06`). */
+  cat_munch: [0, 0.11].map((delaySec) => ({
+    delaySec,
+    type: "triangle" as OscillatorType,
+    freq: 260,
+    glideTo: { freq: 170, overSec: 0.08 },
+    volume: 0.12,
+    durationSec: 0.09,
+    rampOutSec: 0.05,
+  })),
 
   /** Grand fanfare, level completion only (BR-ENG-08). */
   level_celebrate: FANFARE_NOTES.map((freq, i) => {

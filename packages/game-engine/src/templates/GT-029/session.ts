@@ -37,6 +37,7 @@ import {
   spawnParticlesAtSlot,
   updateParticles,
 } from "#src/render/index.js";
+import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT029Content, GT029Difficulty } from "./template.js";
@@ -52,6 +53,15 @@ interface GT029ActionPayload {
   option_id?: string;
   value?: number;
 }
+
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E029-06`, `BR-FBK-16`). */
+export const GT029_STORY_LINE =
+  "Mèo Mướp đói bụng rồi, bé bớt đồ ăn cho Mèo rồi đếm xem còn lại mấy nhé!";
+
+/** Mascot reo ngắn khi Mèo ăn một vật (`BR-E029-06`). */
+export const GT029_MUNCH_MS = 1000;
+/** Mascot nghiêng đầu sau đáp án chưa đúng. */
+export const GT029_WONDER_MS = 1500;
 
 export class GT029Session extends TemplateGameSession<
   GT029Content,
@@ -69,8 +79,32 @@ export class GT029Session extends TemplateGameSession<
   private wrongItemId: string | null = null;
   private wrongItemUntilMs = 0;
   private particles: Particle[] = [];
+  private reactionPose: MascotPose | null = null;
+  private reactionRemainingMs = 0;
+
+  private react(pose: MascotPose, ms: number): void {
+    this.reactionPose = pose;
+    this.reactionRemainingMs = ms;
+  }
+
+  override storyLine(): string {
+    return GT029_STORY_LINE;
+  }
+
+  /** Reo khi Mèo ăn một vật, nghiêng đầu sau đáp án chưa đúng (`BR-E029-06`). */
+  override mascotMood(): MascotPose | null {
+    return this.reactionRemainingMs > 0 && !this.isWon
+      ? this.reactionPose
+      : null;
+  }
 
   update(deltaMs: number): void {
+    if (this.reactionRemainingMs > 0) {
+      this.reactionRemainingMs = Math.max(
+        0,
+        this.reactionRemainingMs - deltaMs
+      );
+    }
     this.lastFrameMs += deltaMs;
     if (
       this.wrongOptionUntilMs > 0 &&
@@ -93,6 +127,8 @@ export class GT029Session extends TemplateGameSession<
     this.selectedOptionId = null;
     this.isWin = false;
     this.particles = [];
+    this.reactionPose = null;
+    this.reactionRemainingMs = 0;
     this.recordEvent("game_started", {
       template_code: "GT-029",
       initial_count: this.content.initial_items.length,
@@ -216,6 +252,8 @@ export class GT029Session extends TemplateGameSession<
     }
 
     this.removedItemIds.add(itemId);
+    this.queueSfx("cat_munch");
+    this.react("cheer", GT029_MUNCH_MS);
     this.recordEvent("item_removed", {
       item_id: itemId,
       removed_count: this.removedItemIds.size,
@@ -266,6 +304,7 @@ export class GT029Session extends TemplateGameSession<
     }
 
     this.wrongOptionUntilMs = this.lastFrameMs + 400;
+    this.react("wonder", GT029_WONDER_MS);
     return ACTION_RETRY;
   }
 
