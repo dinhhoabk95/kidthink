@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { GT030_FIXTURES } from "#src/templates/GT-030/fixtures";
 import { GT030Session } from "#src/templates/GT-030/session";
+import { SOURCE_SLOT, STRIP_SLOT } from "#src/templates/GT-030/zone-layout";
 
 /**
  * Task #313 Phase 3 — GT-030: ô đặt không vẽ sẵn (không lộ đáp số), thả lệch
@@ -18,10 +19,18 @@ function build(): GT030Session {
   return session;
 }
 
+/** Một ô đơn vị trên dải đo: cạnh `w` bằng bề dài dải chia số đơn vị. */
+function unitSlot(session: GT030Session): { w: number } {
+  const strip = session.slots[STRIP_SLOT];
+  if (!strip) {
+    throw new Error("Thiếu dải đo");
+  }
+  return { w: strip.w / f.content.object.length_in_units };
+}
+
 function dropAt(session: GT030Session, dx: number, dy = 0) {
-  const length = f.content.object.length_in_units;
-  const source = session.slots[1 + length];
-  const next = session.slots[1 + session.getPlacedUnitsCount()];
+  const source = session.slots[SOURCE_SLOT];
+  const next = session.getNextCellCenter();
   if (!(source && next)) {
     throw new Error("Thiếu slot");
   }
@@ -40,13 +49,13 @@ describe("GT-030 — không vẽ sẵn số ô (BR-E030-05)", () => {
     const session = build();
     const cells = session
       .getView()
-      .entities.filter((e) => e.id.startsWith("unit_slot_"));
+      .entities.filter((e) => e.id === "measure_strip");
     expect(cells.length).toBeLessThanOrEqual(1);
     dropAt(session, 0);
     dropAt(session, 0);
     const after = session
       .getView()
-      .entities.filter((e) => e.id.startsWith("unit_slot_"));
+      .entities.filter((e) => e.id === "measure_strip");
     expect(after.length).toBeLessThanOrEqual(3);
     expect(after.length).toBeLessThan(f.content.object.length_in_units);
   });
@@ -62,7 +71,7 @@ describe("GT-030 — khe và chồng lấn nhìn thấy được (BR-E030-06)", 
 
   it("thả hở quá dung sai: không bám, báo nhẹ, khe hiện ra", () => {
     const session = build();
-    const next = session.slots[1];
+    const next = unitSlot(session);
     if (!next) {
       throw new Error("Thiếu slot");
     }
@@ -76,7 +85,7 @@ describe("GT-030 — khe và chồng lấn nhìn thấy được (BR-E030-06)", 
   it("thả chồng lấn quá dung sai: không bám, khe loại chồng", () => {
     const session = build();
     dropAt(session, 0);
-    const next = session.slots[2];
+    const next = unitSlot(session);
     if (!next) {
       throw new Error("Thiếu slot");
     }
@@ -88,7 +97,7 @@ describe("GT-030 — khe và chồng lấn nhìn thấy được (BR-E030-06)", 
 
   it("khe tự tắt sau một nhịp", () => {
     const session = build();
-    const next = session.slots[1];
+    const next = unitSlot(session);
     if (!next) {
       throw new Error("Thiếu slot");
     }
@@ -99,8 +108,7 @@ describe("GT-030 — khe và chồng lấn nhìn thấy được (BR-E030-06)", 
 
   it("chạm khay rồi chạm mép kế tiếp (lối thay thế) luôn đặt đúng chỗ", () => {
     const session = build();
-    const length = f.content.object.length_in_units;
-    const source = session.slots[1 + length];
+    const source = session.slots[SOURCE_SLOT];
     if (!source) {
       throw new Error("Thiếu slot");
     }

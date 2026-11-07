@@ -13,6 +13,11 @@ import type { Slot } from "#src/layout/types";
 import { RenderSystem } from "#src/systems/render-system";
 import { GT030_FIXTURES } from "#src/templates/GT-030/fixtures";
 import { GT030Session } from "#src/templates/GT-030/session";
+import {
+  FIRST_OPTION_SLOT,
+  SOURCE_SLOT,
+  STRIP_SLOT,
+} from "#src/templates/GT-030/zone-layout";
 import { GT031_FIXTURES } from "#src/templates/GT-031/fixtures";
 import { GT031Session } from "#src/templates/GT-031/session";
 import { GT033_FIXTURES } from "#src/templates/GT-033/fixtures";
@@ -218,13 +223,13 @@ function move(
 
 function nextMove030(s: GT030Session): Move | null {
   const n = s.content.object.length_in_units;
-  const source = slotAt(s.slots, 1 + n);
+  const source = slotAt(s.slots, SOURCE_SLOT);
   if (s.getPlacedUnitsCount() < n) {
-    const next = slotAt(s.slots, 1 + s.getPlacedUnitsCount());
-    return move(source, next, [source]);
+    const strip = slotAt(s.slots, STRIP_SLOT);
+    return move(source, strip, [source]);
   }
   const index = s.content.answer_options.findIndex((o) => o.is_correct);
-  const option = slotAt(s.slots, 2 + n + index);
+  const option = slotAt(s.slots, FIRST_OPTION_SLOT + index);
   return move(option, option, [option]);
 }
 

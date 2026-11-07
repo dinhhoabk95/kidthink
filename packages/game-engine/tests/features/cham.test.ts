@@ -45,6 +45,7 @@ import { GT029_FIXTURES } from "#src/templates/GT-029/fixtures";
 import { GT029Session } from "#src/templates/GT-029/session";
 import { GT030_FIXTURES } from "#src/templates/GT-030/fixtures";
 import { GT030Session } from "#src/templates/GT-030/session";
+import { SOURCE_SLOT } from "#src/templates/GT-030/zone-layout";
 import { GT031_FIXTURES } from "#src/templates/GT-031/fixtures";
 import { GT031Session } from "#src/templates/GT-031/session";
 import { GT032_FIXTURES } from "#src/templates/GT-032/fixtures";
@@ -1003,8 +1004,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       const session = new GT030Session(f30.content, f30.difficulty);
       session.prepareRound("5-6");
 
-      const targetLength = f30.content.object.length_in_units;
-      const sourceSlot = session.slots[1 + targetLength];
+      const sourceSlot = session.slots[SOURCE_SLOT];
       if (!sourceSlot) {
         throw new Error("sourceSlot must exist");
       }

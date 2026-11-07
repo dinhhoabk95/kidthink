@@ -24,8 +24,8 @@ import {
   isPointInSlot,
   TAP_TOLERANCE_PX,
 } from "#src/layout/hit-test.js";
-import { resolveLayout } from "#src/layout/registry";
-import { insetDrawSize } from "#src/layout/slot-fit";
+import { insetDrawSize, legacyStageArea } from "#src/layout/slot-fit";
+import type { ZoneRect } from "#src/layout/stage-zones";
 import { pickTrayZones } from "#src/layout/tray-layout";
 import type { Slot } from "#src/layout/types";
 import {
@@ -36,7 +36,9 @@ import {
   drawSubPromptText,
   drawUnitGapHatch,
   drawWoodenTokenDock,
+  getWoodenTokenDockRect,
   type ItemVisualState,
+  slotAtPoint,
   spawnParticlesAtSlot,
   updateParticles,
 } from "#src/render/index.js";
@@ -46,7 +48,13 @@ import { MoodPulse } from "#src/systems/mood-pulse";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import { WrongFlash } from "#src/systems/wrong-flash";
 import type { GT030Content, GT030Difficulty } from "./template.js";
-import { computeMeasureStageSlots } from "./zone-layout.js";
+import {
+  computeMeasureStageSlots,
+  FIRST_OPTION_SLOT,
+  OBJECT_SLOT,
+  SOURCE_SLOT,
+  STRIP_SLOT,
+} from "./zone-layout.js";
 
 interface GT030ActionPayload {
   readonly option_id?: string;
@@ -59,7 +67,7 @@ interface GT030ActionPayload {
 /** Khe hoặc chồng lấn của lần thả vừa rồi — trẻ phải thấy nó (`BR-E030-06`). */
 export interface GapFlash {
   readonly kind: "gap" | "overlap";
-  /** Chỉ số slot đơn vị đang cần nối. */
+  /** Chỉ số slot dải đo (`STRIP_SLOT`). */
   readonly slotIndex: number;
   /** Độ rộng khe/chồng (px), đã kẹp trong một cạnh đơn vị. */
   readonly widthPx: number;
@@ -67,6 +75,9 @@ export interface GapFlash {
 
 /** Dung sai bám dính tối thiểu (px) để ngón tay run nhẹ vẫn bám (`BR-E030-05`). */
 const MIN_SNAP_PX = 8;
+/** Khay đơn vị của bố cục cũ (chưa có khung năm vùng): cao và cách đáy. */
+const LEGACY_TRAY_H_PX = 116;
+const LEGACY_TRAY_BOTTOM_PX = 8;
 /** Thời gian khe/chồng còn hiện (ms). */
 const GAP_FLASH_MS = 1500;
 
@@ -146,14 +157,36 @@ export class GT030Session extends TemplateGameSession<
     return this.gapFlash;
   }
 
+  /** Cạnh một đơn vị trên dải đo (px logic); 0 khi chưa dựng bố cục. */
+  private unitPx(): number {
+    const strip = this.slots[STRIP_SLOT];
+    return strip ? strip.w / this.content.object.length_in_units : 0;
+  }
+
+  /** Hoành độ tâm ô thứ `i` (từ 0) trên dải đo: đơn vị nối liền từ mép trái. */
+  private cellCenterX(i: number): number {
+    const strip = this.slots[STRIP_SLOT];
+    if (!strip) {
+      return 0;
+    }
+    const u = this.unitPx();
+    return strip.x - strip.w / 2 + (i + 0.5) * u;
+  }
+
   /** Dung sai bám dính (px) quanh mép cần nối: `gap_tolerance_pct` của cạnh đơn vị. */
   private snapTolerancePx(): number {
-    const slot = this.slots[1 + this.placedUnitsCount];
-    const unitW = slot?.w ?? 0;
     return Math.max(
       MIN_SNAP_PX,
-      (unitW * this.difficulty.gap_tolerance_pct) / 100
+      (this.unitPx() * this.difficulty.gap_tolerance_pct) / 100
     );
+  }
+
+  /** Tâm ô kế tiếp trên dải đo (chỗ đơn vị tiếp theo nối vào), hoặc `null`. */
+  getNextCellCenter(): { readonly x: number; readonly y: number } | null {
+    const strip = this.slots[STRIP_SLOT];
+    return strip
+      ? { x: this.cellCenterX(this.placedUnitsCount), y: strip.y }
+      : null;
   }
 
   setupEntities(): void {
@@ -174,40 +207,61 @@ export class GT030Session extends TemplateGameSession<
     if (this.isWin || this.isWon) {
       return null;
     }
-    const targetLength = this.content.object.length_in_units;
-    if (this.placedUnitsCount < targetLength) {
-      return 1 + targetLength;
+    if (this.placedUnitsCount < this.content.object.length_in_units) {
+      return SOURCE_SLOT;
     }
     const correctOptIdx = this.content.answer_options.findIndex(
       (opt) => opt.is_correct
     );
-    if (correctOptIdx >= 0) {
-      return 2 + targetLength + correctOptIdx;
+    return correctOptIdx >= 0 ? FIRST_OPTION_SLOT + correctOptIdx : null;
+  }
+
+  /** Đơn vị phải kéo tới dải đo cho tới khi xếp đủ. */
+  override getHintDestinationIndex(): number | null {
+    if (this.isWin || this.isWon) {
+      return null;
     }
-    return null;
+    return this.placedUnitsCount < this.content.object.length_in_units
+      ? STRIP_SLOT
+      : null;
+  }
+
+  /** Sân khấu và khay: của shell nếu có, không thì dựng từ khung cũ (`BR-LAY-10`). */
+  private measureZones(): { stage: ZoneRect; tray: ZoneRect; framed: boolean } {
+    const zones = pickTrayZones(this.stageRect, this.trayRect);
+    if (zones) {
+      return { ...zones, framed: true };
+    }
+    // Khay thấp hơn khay cũ để sân khấu đủ chỗ cho vật đo, dải đo và hàng đáp án
+    // ở sàn chạm của band 3-4 (96 px).
+    const dock = getWoodenTokenDockRect(this.logicSpace);
+    const tray = {
+      ...dock,
+      y: this.logicSpace.h - LEGACY_TRAY_BOTTOM_PX - LEGACY_TRAY_H_PX,
+      h: LEGACY_TRAY_H_PX,
+    };
+    const area = legacyStageArea(this.logicSpace);
+    return {
+      stage: { ...area, h: Math.max(0, tray.y - area.y) },
+      tray,
+      framed: false,
+    };
   }
 
   protected computeSlots(band: AgeBand): readonly Slot[] {
-    const zones = pickTrayZones(this.stageRect, this.trayRect);
-    if (zones) {
-      return insetDrawSize(
-        computeMeasureStageSlots({
-          unitCount: this.content.object.length_in_units,
-          optionCount: this.content.answer_options.length,
-          stage: zones.stage,
-          tray: zones.tray,
-          touchFloor: resolveTouchFloor(band, this.cssPerLogic),
-        }),
-        zones.stage
-      );
-    }
-    const layoutFn = resolveLayout("measure-strip");
-    return layoutFn({
-      slotCount: this.content.answer_options.length,
-      ageBand: band,
-      targetCount: this.content.object.length_in_units,
-      logic: this.logicSpace,
+    const zones = this.measureZones();
+    const slots = computeMeasureStageSlots({
+      unitCount: this.content.object.length_in_units,
+      optionCount: this.content.answer_options.length,
+      stage: zones.stage,
+      tray: zones.tray,
+      touchFloor: resolveTouchFloor(band, this.cssPerLogic),
     });
+    // Vật đo và dải đo giữ nguyên cỡ để vẫn dài bằng nhau (`BR-E030-02`).
+    return [
+      ...slots.slice(0, SOURCE_SLOT),
+      ...insetDrawSize(slots.slice(SOURCE_SLOT), zones.stage),
+    ];
   }
 
   private validatePlaceAction(data: GT030ActionPayload): ActionResult {
@@ -315,7 +369,7 @@ export class GT030Session extends TemplateGameSession<
       this.isWin = true;
       this.isWon = true;
       const optIndex = this.content.answer_options.indexOf(option);
-      const slotIndex = 2 + targetLength + optIndex;
+      const slotIndex = FIRST_OPTION_SLOT + optIndex;
       const slot = this.slots[slotIndex];
       if (slot) {
         this.particles.push(...spawnParticlesAtSlot(slot, 12));
@@ -336,11 +390,11 @@ export class GT030Session extends TemplateGameSession<
       return;
     }
     if (offset !== undefined && Math.abs(offset) > this.snapTolerancePx()) {
-      const slot = this.slots[1 + this.placedUnitsCount];
+      const unit = this.unitPx();
       this.gapFlash = {
         kind: offset > 0 ? "gap" : "overlap",
-        slotIndex: 1 + this.placedUnitsCount,
-        widthPx: Math.min(Math.abs(offset), slot?.w ?? Math.abs(offset)),
+        slotIndex: STRIP_SLOT,
+        widthPx: Math.min(Math.abs(offset), unit || Math.abs(offset)),
         untilMs: this.lastFrameMs + GAP_FLASH_MS,
       };
       this.mood.set("wonder", GT030_WONDER_MS);
@@ -391,31 +445,17 @@ export class GT030Session extends TemplateGameSession<
     }
   }
 
-  /**
-   * Mọi đích chạm của lượt này, kèm hành động nó gửi. Chọn theo tâm gần nhất:
-   * ở khung thấp các vùng chạm kề nhau chồng lên nhau (`BR-ENG-06`).
-   */
+  /** Đích chạm khay và đáp án; chọn theo tâm gần nhất (`BR-ENG-06`). */
   private tapTargets(): { slot: Slot; action: GameAction }[] {
     const targetLength = this.content.object.length_in_units;
     const targets: { slot: Slot; action: GameAction }[] = [];
-    const place: GameAction = { type: "place_unit", data: {} };
-    const source = this.slots[1 + targetLength];
+    const source = this.slots[SOURCE_SLOT];
     if (source) {
-      targets.push({ slot: source, action: place });
-    }
-    const next = this.slots[1 + this.placedUnitsCount];
-    if (this.placedUnitsCount < targetLength && next) {
-      targets.push({ slot: next, action: place });
-    }
-    for (let i = 1; i <= this.placedUnitsCount; i++) {
-      const slot = this.slots[i];
-      if (slot) {
-        targets.push({ slot, action: { type: "remove_unit", data: {} } });
-      }
+      targets.push({ slot: source, action: { type: "place_unit", data: {} } });
     }
     if (this.placedUnitsCount >= targetLength) {
       this.content.answer_options.forEach((opt, i) => {
-        const slot = this.slots[2 + targetLength + i];
+        const slot = this.slots[FIRST_OPTION_SLOT + i];
         if (slot) {
           targets.push({
             slot,
@@ -430,6 +470,27 @@ export class GT030Session extends TemplateGameSession<
     return targets;
   }
 
+  /** Chạm dải đo: phần đã đặt gỡ đơn vị cuối, phần trống đặt đúng mép kế. */
+  private toStripTap(
+    gesture: Extract<Gesture, { type: "tap" }>
+  ): GameAction | null {
+    const strip = this.slots[STRIP_SLOT];
+    if (
+      !(
+        strip &&
+        isPointInSlot(strip, gesture.x, gesture.y, "square", TAP_TOLERANCE_PX)
+      )
+    ) {
+      return null;
+    }
+    const placedEdgeX =
+      strip.x - strip.w / 2 + this.placedUnitsCount * this.unitPx();
+    if (this.placedUnitsCount > 0 && gesture.x < placedEdgeX) {
+      return { type: "remove_unit", data: {} };
+    }
+    return { type: "place_unit", data: {} };
+  }
+
   private toTapAction(
     gesture: Extract<Gesture, { type: "tap" }>
   ): GameAction | null {
@@ -441,38 +502,55 @@ export class GT030Session extends TemplateGameSession<
       "square",
       TAP_TOLERANCE_PX
     );
-    return targets[index]?.action ?? null;
+    return targets[index]?.action ?? this.toStripTap(gesture);
   }
 
-  /** Kéo từ khay đơn vị lên sân khấu (`BR-ENG-06`): một lần thả là một đơn vị. */
+  /**
+   * Kéo từ khay đơn vị lên dải đo (`BR-ENG-06`, `BR-E030-08`): một lần thả là
+   * một đơn vị. Chỗ thả tự do dọc dải; lệch bao nhiêu so với mép cần nối thì
+   * mang theo `offset_px`. Cặp chạm–chạm của shell (tâm khay → tâm dải) là đặt đúng mép.
+   */
   private toDropAction(
     gesture: Extract<Gesture, { type: "drop" }>
   ): GameAction | null {
-    const source = this.slots[1 + this.content.object.length_in_units];
-    if (!source) {
+    const source = this.slots[SOURCE_SLOT];
+    const strip = this.slots[STRIP_SLOT];
+    if (!(source && strip)) {
       return null;
     }
-    const isFromSource = isPointInSlot(
-      source,
-      gesture.fromX,
-      gesture.fromY,
-      "square",
-      TAP_TOLERANCE_PX
-    );
-    if (!isFromSource) {
+    if (
+      !isPointInSlot(
+        source,
+        gesture.fromX,
+        gesture.fromY,
+        "square",
+        TAP_TOLERANCE_PX
+      )
+    ) {
       return null;
     }
-    const next = this.slots[1 + this.placedUnitsCount];
-    if (!next) {
+    if (this.placedUnitsCount >= this.content.object.length_in_units) {
+      return { type: "place_unit", data: {} };
+    }
+    const stagedTap =
+      gesture.fromX === source.x &&
+      gesture.fromY === source.y &&
+      gesture.toX === strip.x &&
+      gesture.toY === strip.y;
+    if (stagedTap) {
       return { type: "place_unit", data: {} };
     }
     // Thả ngoài dải đo (khay, đáp án) không phải một lần đặt.
-    if (Math.abs(gesture.toY - next.y) > next.h) {
+    if (Math.abs(gesture.toY - strip.y) > strip.hitH / 2 + TAP_TOLERANCE_PX) {
       return null;
     }
     return {
       type: "place_unit",
-      data: { offset_px: Math.round(gesture.toX - next.x) },
+      data: {
+        offset_px: Math.round(
+          gesture.toX - this.cellCenterX(this.placedUnitsCount)
+        ),
+      },
     };
   }
 
@@ -491,7 +569,7 @@ export class GT030Session extends TemplateGameSession<
     const entities: ViewEntity[] = [];
     for (let i = 0; i < this.content.answer_options.length; i++) {
       const opt = this.content.answer_options[i];
-      const slotIndex = 2 + targetLength + i;
+      const slotIndex = FIRST_OPTION_SLOT + i;
       const slot = this.slots[slotIndex];
       if (!(opt && slot)) {
         continue;
@@ -519,7 +597,7 @@ export class GT030Session extends TemplateGameSession<
   }
 
   private buildObjectEntity(): ViewEntity | null {
-    const objSlot = this.slots[0];
+    const objSlot = this.slots[OBJECT_SLOT];
     if (!objSlot) {
       return null;
     }
@@ -530,7 +608,7 @@ export class GT030Session extends TemplateGameSession<
         : this.content.object.object_id;
     return {
       id: objectEntityId,
-      slotIndex: 0,
+      slotIndex: OBJECT_SLOT,
       role: "neutral",
       state: "idle",
       x: objSlot.x,
@@ -545,15 +623,15 @@ export class GT030Session extends TemplateGameSession<
     };
   }
 
-  private buildSourceUnitEntity(targetLength: number): ViewEntity | null {
-    const sourceSlot = this.slots[1 + targetLength];
+  private buildSourceUnitEntity(): ViewEntity | null {
+    const sourceSlot = this.slots[SOURCE_SLOT];
     if (!sourceSlot) {
       return null;
     }
     const unitLabels = resolveAssetLabels(this.content.unit.asset);
     return {
       id: this.content.unit.unit_id,
-      slotIndex: 1 + targetLength,
+      slotIndex: SOURCE_SLOT,
       role: "source",
       state: "idle",
       x: sourceSlot.x,
@@ -568,52 +646,46 @@ export class GT030Session extends TemplateGameSession<
     };
   }
 
+  /** Một thực thể dải đo liền; vùng chạm là vùng chạm của slot (`BR-E030-08`). */
+  private buildStripEntity(): ViewEntity | null {
+    const strip = this.slots[STRIP_SLOT];
+    if (!strip) {
+      return null;
+    }
+    const placed = this.placedUnitsCount;
+    return {
+      id: "measure_strip",
+      slotIndex: STRIP_SLOT,
+      role: "target",
+      state: placed > 0 ? "active" : "idle",
+      x: strip.x,
+      y: strip.y,
+      w: strip.hitW,
+      h: strip.hitH,
+      hitShape: "square",
+      glyph:
+        placed > 0
+          ? resolveAssetLabels(this.content.unit.asset).glyph
+          : undefined,
+      label: placed > 0 ? String(placed) : "?",
+      spokenLabel: formatSpokenLabel(
+        placed > 0 ? `dải đo, đã đặt ${formatNumberWord(placed)}` : "dải đo"
+      ),
+    };
+  }
+
   override getView(): EngineView {
-    const targetLength = this.content.object.length_in_units;
     const entities: ViewEntity[] = [];
-
-    const objEntity = this.buildObjectEntity();
-    if (objEntity) {
-      entities.push(objEntity);
-    }
-
-    const unitLabels = resolveAssetLabels(this.content.unit.asset);
-    for (let i = 0; i < targetLength; i++) {
-      const slot = this.slots[1 + i];
-      if (!slot) {
-        continue;
+    for (const entity of [
+      this.buildObjectEntity(),
+      this.buildStripEntity(),
+      this.buildSourceUnitEntity(),
+    ]) {
+      if (entity) {
+        entities.push(entity);
       }
-      const isPlaced = i < this.placedUnitsCount;
-      // Ô chưa đặt không vẽ sẵn: chỉ mép kế tiếp để thả vào (`BR-E030-05`).
-      if (i > this.placedUnitsCount) {
-        continue;
-      }
-      const numWord = formatNumberWord(i + 1);
-      entities.push({
-        id: `unit_slot_${i + 1}`,
-        slotIndex: 1 + i,
-        role: "target",
-        state: isPlaced ? "active" : "idle",
-        x: slot.x,
-        y: slot.y,
-        w: slot.w,
-        h: slot.h,
-        hitShape: "square",
-        glyph: isPlaced ? unitLabels.glyph : undefined,
-        label: isPlaced ? `${i + 1}` : "?",
-        spokenLabel: isPlaced
-          ? numWord
-          : formatSpokenLabel(`ô đo số ${numWord}`),
-      });
     }
-
-    const sourceEntity = this.buildSourceUnitEntity(targetLength);
-    if (sourceEntity) {
-      entities.push(sourceEntity);
-    }
-
     entities.push(...this.getOptionEntities());
-
     return {
       activePrompt: this.content.prompt,
       entities,
@@ -629,7 +701,7 @@ export class GT030Session extends TemplateGameSession<
   }
 
   private renderObject(ctx: CanvasRenderingContext2D, rs: RenderSystem): void {
-    const objectSlot = this.slots[0];
+    const objectSlot = this.slots[OBJECT_SLOT];
     if (!objectSlot) {
       return;
     }
@@ -650,37 +722,35 @@ export class GT030Session extends TemplateGameSession<
     );
   }
 
-  /** Đơn vị đã đặt nối nhau; ô chưa đặt không vẽ để không lộ đáp số (`BR-E030-05`). */
+  /** Đơn vị đã đặt nối liền từ mép trái dải; chỗ trống không vẽ (`BR-E030-05`). */
   private renderStripUnits(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem
   ): void {
-    const targetLength = this.content.object.length_in_units;
-
+    const strip = this.slots[STRIP_SLOT];
+    if (!strip) {
+      return;
+    }
+    drawMeasurementGuideBar(ctx, strip);
+    const u = this.unitPx();
+    const placed = this.placedUnitsCount;
     if (this.content.representation === "number-rod") {
-      const firstSlot = this.slots[1];
-      const lastPlacedSlot = this.slots[this.placedUnitsCount];
-      if (this.placedUnitsCount > 0 && firstSlot && lastPlacedSlot) {
+      if (placed > 0) {
         drawNumberRodAcrossSlots(
           ctx,
-          firstSlot,
-          lastPlacedSlot,
-          this.placedUnitsCount,
-          targetLength
+          slotAtPoint(this.cellCenterX(0), strip.y, u),
+          slotAtPoint(this.cellCenterX(placed - 1), strip.y, u),
+          placed,
+          this.content.object.length_in_units
         );
       }
       return;
     }
-
-    for (let i = 0; i < this.placedUnitsCount; i++) {
-      const slot = this.slots[1 + i];
-      if (!slot) {
-        continue;
-      }
+    for (let i = 0; i < placed; i++) {
       drawSlotItem(
         ctx,
         rs,
-        slot,
+        slotAtPoint(this.cellCenterX(i), strip.y, u),
         {
           id: `placed_unit_${i + 1}`,
           asset: this.content.unit.asset,
@@ -695,30 +765,25 @@ export class GT030Session extends TemplateGameSession<
   /** Vạch chéo ở khe hoặc chỗ chồng của lần thả vừa rồi (`BR-E030-06`). */
   private renderGapFlash(ctx: CanvasRenderingContext2D): void {
     const flash = this.gapFlash;
-    const slot = flash ? this.slots[flash.slotIndex] : undefined;
-    if (!(flash && slot)) {
+    const strip = this.slots[STRIP_SLOT];
+    if (!(flash && strip)) {
       return;
     }
-    const edgeX = slot.x - slot.w / 2;
+    const u = this.unitPx();
+    const edgeX = strip.x - strip.w / 2 + this.placedUnitsCount * u;
     const left = flash.kind === "gap" ? edgeX : edgeX - flash.widthPx;
     drawUnitGapHatch(ctx, {
       x: left,
-      y: slot.y - slot.h / 2,
+      y: strip.y - u / 2,
       w: flash.widthPx,
-      h: slot.h,
+      h: u,
     });
   }
 
   private renderTray(ctx: CanvasRenderingContext2D, rs: RenderSystem): void {
-    const targetLength = this.content.object.length_in_units;
-    drawWoodenTokenDock(
-      ctx,
-      rs,
-      pickTrayZones(this.stageRect, this.trayRect)?.tray
-    );
+    drawWoodenTokenDock(ctx, rs, this.measureZones().tray);
 
-    // Source unit in tray
-    const sourceSlot = this.slots[1 + targetLength];
+    const sourceSlot = this.slots[SOURCE_SLOT];
     if (sourceSlot) {
       drawSlotItem(
         ctx,
@@ -757,7 +822,7 @@ export class GT030Session extends TemplateGameSession<
 
     for (let j = 0; j < this.content.answer_options.length; j++) {
       const opt = this.content.answer_options[j];
-      const slot = this.slots[2 + targetLength + j];
+      const slot = this.slots[FIRST_OPTION_SLOT + j];
       if (!(opt && slot)) {
         continue;
       }

@@ -92,4 +92,33 @@ export const GT030_FIXTURES: GT030Fixture[] = [
       hint_after_ms: 8000,
     },
   },
+  {
+    name: "Đo con rắn bằng thanh số (10 đơn vị, hiện khe và chồng)",
+    band: "5-6",
+    content: {
+      prompt: "Bé hãy xếp các thanh để đo xem con rắn dài mấy đơn vị nhé!",
+      representation: "number-rod",
+      object: {
+        object_id: "snake_obj",
+        asset: { kind: "emoji", ref: "🐍" },
+        length_in_units: 10,
+      },
+      unit: {
+        unit_id: "rod_unit",
+        asset: { kind: "emoji", ref: "🟦" },
+      },
+      answer_options: [
+        { option_id: "opt_9", value: 9, is_correct: false },
+        { option_id: "opt_10", value: 10, is_correct: true },
+        { option_id: "opt_11", value: 11, is_correct: false },
+      ],
+    },
+    difficulty: {
+      item_count: 3,
+      length_in_units: 10,
+      gap_tolerance_pct: 10,
+      allow_retry: true,
+      hint_after_ms: 8000,
+    },
+  },
 ];

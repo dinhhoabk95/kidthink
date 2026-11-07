@@ -1,9 +1,12 @@
 /**
- * Bố cục GT-030 trong khung năm vùng:
- * vật đo, dải ô đặt đơn vị và hàng đáp án nằm trong `zones.stage`; đơn vị nguồn
- * nằm trong `zones.tray` (`BR-PSZ-01`). Hàm thuần: chỉ đọc rect, sàn chạm và số
- * ô (`BR-LAY-01`, `BR-PSZ-02`). Chỉ số slot giữ nguyên như layout `measure-strip`:
- * 0 vật đo · 1..N ô đặt · N+1 đơn vị nguồn · N+2.. đáp án.
+ * Bố cục GT-030 trong khung năm vùng: vật đo, **một dải đo liền** và hàng đáp án
+ * nằm trong `zones.stage`; đơn vị nguồn nằm trong `zones.tray` (`BR-PSZ-01`).
+ * Hàm thuần: chỉ đọc rect, sàn chạm và số ô (`BR-LAY-01`, `BR-PSZ-02`).
+ *
+ * Chỉ số slot: 0 vật đo · 1 dải đo · 2 đơn vị nguồn · 3.. đáp án. Dải đo là
+ * **một** vùng chạm dài `length_in_units × cạnh đơn vị` — cạnh đơn vị co theo bề
+ * ngang sân khấu để dải luôn nằm một hàng (`BR-E030-08`), không còn lưới ô xuống
+ * nhiều hàng ở khung hẹp. Vật đo dài đúng bằng dải (`BR-E030-02`).
  */
 
 import { SLOT_GAP_PX } from "#src/layout/constants";
@@ -16,8 +19,18 @@ import type { Slot } from "#src/layout/types";
 const OBJECT_H_PX = 80;
 /** Cao tối thiểu của vật đo khi sân khấu quá thấp cho bố cục rộng rãi. */
 const MIN_OBJECT_H_PX = 40;
-/** Cạnh lớn nhất của ô đặt đơn vị và ô đáp án. */
-const CELL_MAX_PX = 96;
+/** Vạch dóng của thước nhô ra mỗi đầu thân vật từng này px. */
+const GUIDE_TICK_PX = 6;
+/** Cạnh lớn nhất của một đơn vị trên dải đo. */
+export const UNIT_MAX_PX = 96;
+/** Cạnh nhỏ nhất của một đơn vị: dưới cỡ này hình đơn vị không còn nhận ra. */
+export const UNIT_MIN_PX = 24;
+
+/** Chỉ số các slot cố định của GT-030. */
+export const OBJECT_SLOT = 0;
+export const STRIP_SLOT = 1;
+export const SOURCE_SLOT = 2;
+export const FIRST_OPTION_SLOT = 3;
 
 interface MeasureZonesInput {
   readonly unitCount: number;
@@ -27,38 +40,15 @@ interface MeasureZonesInput {
   readonly touchFloor: number;
 }
 
-function widthOf(slots: readonly Slot[]): number {
-  if (slots.length === 0) {
-    return 0;
-  }
-  const left = Math.min(...slots.map((s) => s.x - s.w / 2));
-  const right = Math.max(...slots.map((s) => s.x + s.w / 2));
-  return right - left;
-}
-
-function objectSlot(
-  stage: ZoneRect,
-  stripW: number,
-  touchFloor: number,
-  objectH: number,
-  top: number,
-  hitH: number = objectH
-): Slot {
-  const w = Math.max(
-    touchFloor,
-    Math.min(Math.round(stripW), stage.w - 2 * SLOT_GAP_PX)
-  );
-  return {
-    index: 0,
-    x: Math.round(stage.x + stage.w / 2),
-    y: Math.round(top + objectH / 2),
-    w,
-    h: objectH,
-    hitW: w,
-    hitH,
-    page: 0,
-    role: "neutral",
-  };
+/**
+ * Cạnh một đơn vị trên dải: chia đều bề ngang sân khấu cho `unitCount` đơn vị,
+ * kẹp trong `[UNIT_MIN_PX, UNIT_MAX_PX]`, làm tròn xuống số chẵn để tâm các
+ * cạnh là số nguyên.
+ */
+export function measureUnitSize(unitCount: number, stageW: number): number {
+  const fit = Math.floor((stageW - 2 * SLOT_GAP_PX) / Math.max(1, unitCount));
+  const clamped = Math.min(UNIT_MAX_PX, Math.max(UNIT_MIN_PX, fit));
+  return Math.floor(clamped / 2) * 2;
 }
 
 /** Số hàng một dải `count` ô cần ở bề ngang `width` khi mỗi ô không nhỏ hơn sàn chạm. */
@@ -69,167 +59,91 @@ function rowsFor(count: number, width: number, touchFloor: number): number {
   return Math.ceil(count / Math.max(1, Math.min(count, fit)));
 }
 
-function bandHeight(rows: number, cellH: number): number {
-  return rows * cellH + (rows - 1) * SLOT_GAP_PX + 2 * SLOT_GAP_PX;
-}
-
-/**
- * Chia phần cao còn lại giữa dải ô đặt và hàng đáp án: mỗi dải được ít nhất
- * chiều cao đủ sàn chạm, phần dư chia theo mức mỗi dải muốn nở tới cỡ lớn nhất.
- * Không đủ cho cả hai thì mỗi dải giữ mức tối thiểu và tràn sân khấu.
- */
-function splitBands(
-  rest: number,
-  strip: number,
-  options: number,
-  touchFloor: number,
-  width: number
-): { readonly stripH: number; readonly optionsH: number } {
-  const stripRows = rowsFor(strip, width, touchFloor);
-  const optionRows = rowsFor(options, width, touchFloor);
-  const minStrip = bandHeight(stripRows, touchFloor);
-  const minOptions = bandHeight(optionRows, touchFloor);
-  const wantStrip = Math.max(minStrip, bandHeight(stripRows, CELL_MAX_PX));
-  const wantOptions = Math.max(minOptions, bandHeight(optionRows, CELL_MAX_PX));
-  const grow = wantStrip - minStrip + (wantOptions - minOptions);
-  const share =
-    grow === 0
-      ? 0
-      : Math.min(1, Math.max(0, rest - minStrip - minOptions) / grow);
-  return {
-    stripH: Math.round(minStrip + (wantStrip - minStrip) * share),
-    optionsH: Math.round(minOptions + (wantOptions - minOptions) * share),
-  };
-}
-
 /** Cao nội dung `rows` hàng ô sàn chạm, không đệm. */
 function packedHeight(rows: number, touchFloor: number): number {
   return rows * touchFloor + (rows - 1) * SLOT_GAP_PX;
 }
 
-/**
- * Sân khấu thấp (điện thoại ngang, máy tính): bố cục rộng rãi không vừa nên xếp
- * chặt — vật đo co xuống, hai dải ô sát sàn chạm, chỉ còn khe `SLOT_GAP_PX` giữa
- * ba khối và không đệm mép (`BR-PSZ-04` cấm thu ô dưới sàn, nên co vật đo).
- */
-function computePackedSlots(input: MeasureZonesInput): Slot[] {
-  const { stage, tray, touchFloor, unitCount, optionCount } = input;
-  const stripRows = rowsFor(unitCount, stage.w, touchFloor);
-  const optionRows = rowsFor(optionCount, stage.w, touchFloor);
-  const stripH = packedHeight(stripRows, touchFloor);
-  const optionsH = packedHeight(optionRows, touchFloor);
-  const objectH = Math.min(
-    OBJECT_H_PX,
-    Math.max(MIN_OBJECT_H_PX, stage.h - stripH - optionsH - 2 * SLOT_GAP_PX)
-  );
-  const total = objectH + stripH + optionsH + 2 * SLOT_GAP_PX;
-  const top = stage.y + Math.max(0, (stage.h - total) / 2);
-  // Dải rộng thêm đúng phần đệm trong của `computeStageCellSlots`.
-  const bandAt = (y: number, h: number): ZoneRect => ({
-    x: stage.x,
-    y: y - SLOT_GAP_PX,
-    w: stage.w,
-    h: h + 2 * SLOT_GAP_PX,
-  });
-  const stripY = top + objectH + SLOT_GAP_PX;
-  const optionsY = stripY + stripH + SLOT_GAP_PX;
-  const cell = { w: touchFloor, h: touchFloor };
-  const units = computeStageCellSlots({
-    count: unitCount,
-    stage: bandAt(stripY, stripH),
-    touchFloor,
-    maxCell: cell,
-    role: "target",
-    firstIndex: 1,
-  });
-  const source = computeTraySourceSlots(
-    1,
-    tray,
-    touchFloor,
-    1 + unitCount,
-    true
-  );
-  const options = computeStageCellSlots({
-    count: optionCount,
-    stage: bandAt(optionsY, optionsH),
-    touchFloor,
-    maxCell: cell,
+function objectSlot(
+  stage: ZoneRect,
+  stripW: number,
+  top: number,
+  objectH: number,
+  hitH: number
+): Slot {
+  return {
+    index: OBJECT_SLOT,
+    x: Math.round(stage.x + stage.w / 2),
+    y: Math.round(top + hitH / 2),
+    w: stripW,
+    h: objectH,
+    hitW: stripW,
+    hitH,
+    page: 0,
     role: "neutral",
-    firstIndex: 2 + unitCount,
-  });
-  return [
-    objectSlot(stage, widthOf(units), touchFloor, objectH, top),
-    ...units,
-    ...source,
-    ...options,
-  ];
+  };
+}
+
+function stripSlot(
+  stage: ZoneRect,
+  unitCount: number,
+  unit: number,
+  centerY: number,
+  touchFloor: number
+): Slot {
+  const w = unitCount * unit;
+  return {
+    index: STRIP_SLOT,
+    x: Math.round(stage.x + stage.w / 2),
+    y: Math.round(centerY),
+    w,
+    h: unit,
+    hitW: Math.max(touchFloor, w),
+    hitH: Math.max(touchFloor, unit),
+    page: 0,
+    role: "target",
+  };
 }
 
 export function computeMeasureStageSlots(input: MeasureZonesInput): Slot[] {
   const { stage, tray, touchFloor, unitCount, optionCount } = input;
-  const roomyNeed =
-    OBJECT_H_PX +
-    2 * SLOT_GAP_PX +
-    bandHeight(rowsFor(unitCount, stage.w, touchFloor), touchFloor) +
-    bandHeight(rowsFor(optionCount, stage.w, touchFloor), touchFloor);
-  if (roomyNeed > stage.h) {
-    return computePackedSlots(input);
-  }
-  const objectBand = OBJECT_H_PX + 2 * SLOT_GAP_PX;
-  const rest = Math.max(0, stage.h - objectBand);
-  const { stripH, optionsH } = splitBands(
-    rest,
-    unitCount,
-    optionCount,
-    touchFloor,
-    stage.w
+  const unit = measureUnitSize(unitCount, stage.w);
+  const stripW = unitCount * unit;
+  const stripHitH = Math.max(touchFloor, unit);
+  const optionRows = rowsFor(optionCount, stage.w, touchFloor);
+  const optionsH = packedHeight(optionRows, touchFloor);
+  // Vật đo cao rộng rãi khi vừa, không thì co xuống tối thiểu (`BR-PSZ-04` cấm
+  // thu ô dưới sàn chạm, nên co vật đo chứ không co dải hay đáp án).
+  const room = stage.h - stripHitH - optionsH - 2 * SLOT_GAP_PX;
+  const objectHitH = Math.min(
+    Math.max(touchFloor, OBJECT_H_PX),
+    Math.max(MIN_OBJECT_H_PX, room)
   );
-  const stripBand: ZoneRect = {
-    x: stage.x,
-    y: stage.y + objectBand,
-    w: stage.w,
-    h: stripH,
-  };
+  // Thân vật chừa 6 px mỗi đầu cho vạch dóng của thước (`drawMeasurementGuideBar`).
+  const objectH = Math.min(OBJECT_H_PX, objectHitH - 2 * GUIDE_TICK_PX);
+  const total = objectHitH + stripHitH + optionsH + 2 * SLOT_GAP_PX;
+  const top = stage.y + Math.max(0, (stage.h - total) / 2);
+  const stripTop = top + objectHitH + SLOT_GAP_PX;
+  const optionsTop = stripTop + stripHitH + SLOT_GAP_PX;
+  // Dải rộng thêm đúng phần đệm trong của `computeStageCellSlots`.
   const optionsBand: ZoneRect = {
     x: stage.x,
-    y: stripBand.y + stripH,
+    y: optionsTop - SLOT_GAP_PX,
     w: stage.w,
-    h: optionsH,
+    h: optionsH + 2 * SLOT_GAP_PX,
   };
-  const cell = { w: CELL_MAX_PX, h: CELL_MAX_PX };
-  const units = computeStageCellSlots({
-    count: unitCount,
-    stage: stripBand,
-    touchFloor,
-    maxCell: cell,
-    role: "target",
-    firstIndex: 1,
-  });
-  const source = computeTraySourceSlots(
-    1,
-    tray,
-    touchFloor,
-    1 + unitCount,
-    true
-  );
+  const source = computeTraySourceSlots(1, tray, touchFloor, SOURCE_SLOT, true);
   const options = computeStageCellSlots({
     count: optionCount,
     stage: optionsBand,
     touchFloor,
-    maxCell: cell,
+    maxCell: { w: touchFloor, h: touchFloor },
     role: "neutral",
-    firstIndex: 2 + unitCount,
+    firstIndex: FIRST_OPTION_SLOT,
   });
   return [
-    objectSlot(
-      stage,
-      widthOf(units),
-      touchFloor,
-      OBJECT_H_PX,
-      stage.y + SLOT_GAP_PX,
-      Math.max(touchFloor, OBJECT_H_PX)
-    ),
-    ...units,
+    objectSlot(stage, stripW, top, objectH, objectHitH),
+    stripSlot(stage, unitCount, unit, stripTop + stripHitH / 2, touchFloor),
     ...source,
     ...options,
   ];

@@ -5,6 +5,11 @@ import template, {
   GT030ContentSchema,
   GT030DifficultySchema,
 } from "#src/templates/GT-030/template";
+import {
+  FIRST_OPTION_SLOT,
+  SOURCE_SLOT,
+  STRIP_SLOT,
+} from "#src/templates/GT-030/zone-layout";
 
 const RE_ANSWER_OPTIONS_MATCH =
   /Phải có đúng 1 đáp án đúng và giá trị của nó phải bằng object\.length_in_units/;
@@ -258,7 +263,7 @@ describe("GT-030: Đo bằng đơn vị lặp (measure-with-unit)", () => {
       expect(miss).toEqual({ valid: false, feedback: "none" });
 
       const targetLength = f.content.object.length_in_units;
-      const sourceSlot = session.slots[1 + targetLength];
+      const sourceSlot = session.slots[SOURCE_SLOT];
       if (!sourceSlot) {
         throw new Error("sourceSlot must exist");
       }
@@ -293,7 +298,7 @@ describe("GT-030: Đo bằng đơn vị lặp (measure-with-unit)", () => {
       const correctOptIdx = f.content.answer_options.findIndex(
         (o) => o.is_correct
       );
-      const optSlot = session.slots[2 + targetLength + correctOptIdx];
+      const optSlot = session.slots[FIRST_OPTION_SLOT + correctOptIdx];
       if (!optSlot) {
         throw new Error("optSlot must exist");
       }
@@ -337,8 +342,8 @@ describe("GT-030: Đo bằng đơn vị lặp (measure-with-unit)", () => {
       const session = new GT030Session(f.content, f.difficulty);
       session.prepareRound("5-6");
 
-      const targetLength = f.content.object.length_in_units;
-      expect(session.getHintTargetIndex()).toBe(1 + targetLength);
+      expect(session.getHintTargetIndex()).toBe(SOURCE_SLOT);
+      expect(session.getHintDestinationIndex()).toBe(STRIP_SLOT);
     });
   });
 });
