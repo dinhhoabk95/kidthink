@@ -321,6 +321,15 @@ export abstract class TemplateGameSession<
   }
 
   /**
+   * Lời mời đọc thành tiếng sau một cử chỉ không phải lần sai (phán quyết im,
+   * `valid: true`), ví dụ GT-036 chốt khi dải chưa thành quy luật. Trả nội dung
+   * đúng một lần; `null` khi không có. Bề mặt chơi đọc nó qua giọng nói sẵn có.
+   */
+  takeSpokenInvitation(): string | null {
+    return null;
+  }
+
+  /**
    * Mục tiêu gợi ý theo bậc `L1` / `L2` / `L3` (Task #301 S2).
    * Mặc định kiểm tra bộ giải trung tâm (`resolveSteppedHintTarget`), nếu chưa
    * tách bậc thì rơi về `getHintTarget()`.

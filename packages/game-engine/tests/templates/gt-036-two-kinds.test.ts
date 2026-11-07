@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { GT036_FIXTURES } from "#src/templates/GT-036/fixtures";
-import { GT036Session } from "#src/templates/GT-036/session";
+import {
+  GT036_LIGHT_STEP_MS,
+  GT036Session,
+} from "#src/templates/GT-036/session";
 
 /**
  * Task #313 Phase 3 — GT-036: quy luật phải có ≥2 loại phần tử (`BR-E036-06`),
@@ -59,6 +62,8 @@ describe("GT-036 — dải chưa có luật là lời mời, không phải lỗi
     fill(session, ["star", "star", "star", "star", "star", "star"]);
     const verdict = session.dispatch({ type: "commit", timeMs: 1 });
     expect(verdict).toEqual({ valid: true, feedback: "none" });
+    // Các ô sáng lần lượt (BR-E036-11): chờ đủ nhịp để cả dải đã sáng.
+    session.update(GT036_LIGHT_STEP_MS * 10);
     const placed = session
       .getView()
       .entities.filter((e) => e.id.startsWith("track_") && e.glyph);

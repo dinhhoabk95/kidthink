@@ -57,6 +57,12 @@ export const GT036_STORY_LINE =
 
 /** Mascot vui ngắn sau mỗi hạt đặt. */
 export const GT036_HAPPY_MS = 500;
+/** Mỗi ô sáng cách ô trước chừng này ms khi đọc luật ra (`BR-E036-11`). */
+export const GT036_LIGHT_STEP_MS = 350;
+
+/** Lời mời đọc thành tiếng khi chốt mà dải chưa thành quy luật (`BR-E036-11`). */
+export const GT036_INVITE_LINE = "Bé xâu thêm hạt cho dãy dài hơn nữa nhé!";
+
 /** Mascot khích lệ khi dãy chưa thành quy luật. */
 export const GT036_ENCOURAGE_MS = 1500;
 
@@ -84,6 +90,9 @@ export class GT036Session extends TemplateGameSession<
   isWin = false;
   sessionScore = 0;
   sessionStars = 0;
+  /** Thời gian từ lúc chốt, để các ô sáng lần lượt (`BR-E036-11`). */
+  private litElapsedMs = 0;
+  private pendingInvitation: string | null = null;
   private particles: Particle[] = [];
   private readonly mood = new MoodPulse();
   private readonly sfxEngine: SFXEngine;
@@ -114,9 +123,11 @@ export class GT036Session extends TemplateGameSession<
     this.selectedPaletteId = this.content.palette[0]?.id ?? null;
     this.submitted = false;
     this.detectedRule = null;
+    this.pendingInvitation = null;
     this.isWin = false;
     this.sessionScore = 0;
     this.sessionStars = 0;
+    this.litElapsedMs = 0;
     this.particles = [];
 
     this.recordEvent("game_started", {
@@ -335,6 +346,7 @@ export class GT036Session extends TemplateGameSession<
     this.placedItems[slotIdx] = elementId;
     this.submitted = false;
     this.detectedRule = null;
+    this.pendingInvitation = null;
     this.sfxEngine.play("tap");
     // Tiếng hạt như nhau mọi hạt: bài mở, không có hạt "đúng" (`BR-E036-10`).
     this.queueSfx("bead_click");
@@ -357,6 +369,7 @@ export class GT036Session extends TemplateGameSession<
     this.placedItems[slotIdx] = null;
     this.submitted = false;
     this.detectedRule = null;
+    this.pendingInvitation = null;
     this.sfxEngine.play("tap");
 
     this.recordEvent("element_removed", {
@@ -370,6 +383,7 @@ export class GT036Session extends TemplateGameSession<
     this.placedItems = new Array(this.content.track_length).fill(null);
     this.submitted = false;
     this.detectedRule = null;
+    this.pendingInvitation = null;
     this.isWin = false;
     this.sfxEngine.play("tap");
   }
@@ -387,6 +401,7 @@ export class GT036Session extends TemplateGameSession<
     });
 
     this.submitted = true;
+    this.litElapsedMs = 0;
     this.detectedRule = result;
     this.sessionScore = result.score;
     this.isWin = result.isWin;
@@ -430,10 +445,20 @@ export class GT036Session extends TemplateGameSession<
     // Chưa có luật: tiếng nhẹ như mọi lần đặt, các ô đã đặt sáng mời làm tiếp.
     this.sfxEngine.play("tap");
     this.mood.set("encourage", GT036_ENCOURAGE_MS);
+    this.pendingInvitation = GT036_INVITE_LINE;
+  }
+
+  override takeSpokenInvitation(): string | null {
+    const line = this.pendingInvitation;
+    this.pendingInvitation = null;
+    return line;
   }
 
   update(deltaMs: number): void {
     this.mood.tick(deltaMs);
+    if (this.submitted) {
+      this.litElapsedMs += deltaMs;
+    }
     if (this.particles.length > 0) {
       this.particles = updateParticles(this.particles);
     }
@@ -656,7 +681,7 @@ export class GT036Session extends TemplateGameSession<
         drawSlotItem(ctx, rs, slot, {
           id: `placed-${i}`,
           asset: palItem.asset,
-          state: this.isTrackCellLit(i) ? "touching" : "idle",
+          state: this.isTrackCellLit(i, rs.reducedMotion) ? "touching" : "idle",
         });
       } else {
         drawSlotItem(ctx, rs, slot, {
@@ -699,15 +724,41 @@ export class GT036Session extends TemplateGameSession<
     return `Tuyệt vời! Quy luật của bé lặp lại ${this.detectedRule.repetitions} lần!`;
   }
 
-  /** Ô đã đặt sáng lên khi chốt mà chưa có luật, hoặc nằm trong mô-típ vừa đọc ra. */
-  private isTrackCellLit(index: number): boolean {
+  /**
+   * Ô sáng sau khi chốt: các ô đã đặt (chưa có luật) hoặc các ô của mô-típ vừa
+   * đọc ra, sáng **lần lượt** từ trái sang phải (`BR-E036-11`). `instant` là
+   * `prefers-reduced-motion`: sáng cùng lúc.
+   */
+  private isTrackCellLit(index: number, instant = false): boolean {
     if (!(this.submitted && this.placedItems[index])) {
       return false;
     }
-    if (!this.detectedRule?.detected) {
+    if (
+      this.detectedRule?.detected &&
+      index >= this.detectedRule.motif.length
+    ) {
+      return false;
+    }
+    if (instant) {
       return true;
     }
-    return index < this.detectedRule.motif.length;
+    const order = this.litOrder();
+    const litCount = Math.floor(this.litElapsedMs / GT036_LIGHT_STEP_MS) + 1;
+    return order.indexOf(index) < litCount;
+  }
+
+  /** Thứ tự sáng: chỉ số các ô sẽ sáng, từ trái sang phải. */
+  private litOrder(): number[] {
+    const limit = this.detectedRule?.detected
+      ? this.detectedRule.motif.length
+      : this.placedItems.length;
+    const order: number[] = [];
+    for (let i = 0; i < limit; i++) {
+      if (this.placedItems[i]) {
+        order.push(i);
+      }
+    }
+    return order;
   }
 
   get score(): number {

@@ -332,6 +332,17 @@ export function usePlayGesture(options: GestureOptions) {
     }
   }
 
+  /** Lời mời sau cử chỉ không phải lần sai (GT-036 chốt khi dải chưa có luật). */
+  function speakInvitation(engine: GameEngine, session: GameSession): void {
+    const invitation =
+      session instanceof TemplateGameSession
+        ? session.takeSpokenInvitation()
+        : null;
+    if (invitation) {
+      engine.audio.speakPrompt(invitation);
+    }
+  }
+
   function handleVerdict(
     verdict: ActionResult,
     engine: GameEngine,
@@ -357,6 +368,7 @@ export function usePlayGesture(options: GestureOptions) {
       // mềm, không leo bậc trợ giúp. Tên vừa đọc ở trên (nếu có) là đường
       // "chạm lại minh hoạ để nghe lại từ khoá", không phải một lượt trả lời.
       syncView();
+      speakInvitation(engine, session);
       return;
     }
 
