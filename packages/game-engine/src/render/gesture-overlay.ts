@@ -28,7 +28,12 @@ import {
   drawTextInSlot,
   getColorsForState,
 } from "./shared-render.js";
-import { drawCircleOutline, drawEmptyTargetSlot } from "./slot-decor.js";
+import {
+  drawCircleOutline,
+  drawElasticConnector,
+  drawEmptyTargetSlot,
+  drawTrailRibbon,
+} from "./slot-decor.js";
 
 export interface GestureTransitionFlight {
   readonly entity: ViewEntity;
@@ -55,9 +60,6 @@ export interface ActiveGestureVisualState {
   readonly trailPoints: readonly { readonly x: number; readonly y: number }[];
   readonly flight: GestureTransitionFlight | null;
 }
-
-const DASH_ELASTIC: readonly number[] = Object.freeze([10, 7]);
-const DASH_NONE: readonly number[] = Object.freeze([]);
 
 function entityToSlot(
   entity: ViewEntity,
@@ -113,49 +115,6 @@ function drawFloatingEntityToken(
   }
 }
 
-function drawElasticConnector(
-  ctx: CanvasRenderingContext2D,
-  fromX: number,
-  fromY: number,
-  toX: number,
-  toY: number,
-  isTargetHovered: boolean
-): void {
-  const dx = toX - fromX;
-  const dy = toY - fromY;
-  const dist = Math.hypot(dx, dy);
-  if (dist < 16) {
-    return;
-  }
-
-  const midX = (fromX + toX) / 2;
-  const archOffset = Math.min(36, dist * 0.14);
-  const ctrlX = midX;
-  const ctrlY = (fromY + toY) / 2 - archOffset;
-
-  const strokeColor = isTargetHovered
-    ? designTokens.colors.semantic.success[500]
-    : designTokens.colors.montessori.amber;
-
-  ctx.save();
-  ctx.strokeStyle = alpha(strokeColor, 0.85);
-  ctx.lineWidth = isTargetHovered ? 5 : 4;
-  ctx.lineCap = "round";
-  ctx.setLineDash(isTargetHovered ? DASH_NONE : DASH_ELASTIC);
-  ctx.beginPath();
-  ctx.moveTo(fromX, fromY);
-  ctx.quadraticCurveTo(ctrlX, ctrlY, toX, toY);
-  ctx.stroke();
-
-  ctx.setLineDash(DASH_NONE);
-  ctx.fillStyle = strokeColor;
-  ctx.beginPath();
-  ctx.arc(fromX, fromY, 6, 0, Math.PI * 2);
-  ctx.arc(toX, toY, isTargetHovered ? 8 : 6, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-}
-
 function drawTargetInvitations(
   ctx: CanvasRenderingContext2D,
   targets: readonly ViewEntity[],
@@ -191,44 +150,6 @@ function drawTargetInvitations(
       );
     }
   }
-}
-
-function drawTrailRibbon(
-  ctx: CanvasRenderingContext2D,
-  points: readonly { readonly x: number; readonly y: number }[]
-): void {
-  if (points.length < 2) {
-    return;
-  }
-  const first = points[0];
-  const last = points.at(-1);
-  if (!(first && last)) {
-    return;
-  }
-
-  ctx.save();
-  ctx.strokeStyle = alpha(designTokens.colors.montessori.amber, 0.72);
-  ctx.lineWidth = 10;
-  ctx.lineCap = "round";
-  ctx.lineJoin = "round";
-  ctx.beginPath();
-  ctx.moveTo(first.x, first.y);
-  for (let i = 1; i < points.length; i++) {
-    const pt = points[i];
-    if (pt) {
-      ctx.lineTo(pt.x, pt.y);
-    }
-  }
-  ctx.stroke();
-
-  ctx.fillStyle = designTokens.colors.montessori.amber;
-  ctx.strokeStyle = designTokens.colors.surface[0];
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.arc(last.x, last.y, 9, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.stroke();
-  ctx.restore();
 }
 
 function drawTransitionFlight(
@@ -336,7 +257,17 @@ function drawDraggingSourceOverlay(
     ? state.currentY * 0.72 + hovered.y * 0.28
     : state.currentY - 6;
 
-  drawElasticConnector(ctx, active.x, active.y, drawX, drawY, hovered !== null);
+  drawElasticConnector(
+    ctx,
+    active.x,
+    active.y,
+    drawX,
+    drawY,
+    hovered
+      ? designTokens.colors.semantic.success[500]
+      : designTokens.colors.montessori.amber,
+    hovered !== null
+  );
   drawFloatingEntityToken(
     ctx,
     rs,
@@ -382,5 +313,10 @@ export function drawActiveGestureOverlay(
     return;
   }
 
-  drawTrailRibbon(ctx, state.trailPoints);
+  drawTrailRibbon(
+    ctx,
+    state.trailPoints,
+    designTokens.colors.montessori.amber,
+    designTokens.colors.surface[0]
+  );
 }

@@ -96,6 +96,86 @@ export function drawSlotOutline(
   ctx.restore();
 }
 
+const ELASTIC_DASH: readonly number[] = Object.freeze([10, 7]);
+const NO_DASH: readonly number[] = Object.freeze([]);
+
+/**
+ * Dây nối đàn hồi (Bezier bậc hai) từ vị trí gốc tới ngón tay, hai đầu có chấm.
+ * Màu do nơi gọi truyền từ `designTokens` (không hex ở đây).
+ */
+export function drawElasticConnector(
+  ctx: CanvasRenderingContext2D,
+  fromX: number,
+  fromY: number,
+  toX: number,
+  toY: number,
+  color: string,
+  solid: boolean
+): void {
+  const dist = Math.hypot(toX - fromX, toY - fromY);
+  if (dist < 16) {
+    return;
+  }
+  const archOffset = Math.min(36, dist * 0.14);
+  const ctrlX = (fromX + toX) / 2;
+  const ctrlY = (fromY + toY) / 2 - archOffset;
+
+  ctx.save();
+  ctx.strokeStyle = alpha(color, 0.85);
+  ctx.lineWidth = solid ? 5 : 4;
+  ctx.lineCap = "round";
+  ctx.setLineDash(solid ? NO_DASH : ELASTIC_DASH);
+  ctx.beginPath();
+  ctx.moveTo(fromX, fromY);
+  ctx.quadraticCurveTo(ctrlX, ctrlY, toX, toY);
+  ctx.stroke();
+
+  ctx.setLineDash(NO_DASH);
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.arc(fromX, fromY, 6, 0, Math.PI * 2);
+  ctx.arc(toX, toY, solid ? 8 : 6, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+/** Dải lụa đi theo đường kéo của ngón tay, đầu dải có chấm. */
+export function drawTrailRibbon(
+  ctx: CanvasRenderingContext2D,
+  points: readonly { readonly x: number; readonly y: number }[],
+  color: string,
+  headRimColor: string
+): void {
+  const first = points[0];
+  const last = points.at(-1);
+  if (points.length < 2 || !first || !last) {
+    return;
+  }
+  ctx.save();
+  ctx.strokeStyle = alpha(color, 0.72);
+  ctx.lineWidth = 10;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.beginPath();
+  ctx.moveTo(first.x, first.y);
+  for (let i = 1; i < points.length; i++) {
+    const pt = points[i];
+    if (pt) {
+      ctx.lineTo(pt.x, pt.y);
+    }
+  }
+  ctx.stroke();
+
+  ctx.fillStyle = color;
+  ctx.strokeStyle = headRimColor;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(last.x, last.y, 9, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+}
+
 /** Vòng viền tròn ôm ngoài slot (dùng cho khoanh chọn, highlight đích). */
 export function drawCircleOutline(
   ctx: CanvasRenderingContext2D,
