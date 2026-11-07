@@ -29,6 +29,7 @@ import {
   drawSlotItem,
   sceneBox,
 } from "#src/render/index";
+import type { MascotPose } from "#src/render/mascot";
 import { deriveStream } from "#src/rng/mulberry32";
 import type { DegradationState } from "#src/systems/degradation";
 import { designTokens } from "#src/systems/designTokens";
@@ -69,6 +70,13 @@ function findHitSceneObject(
   return best;
 }
 
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E022-07`, `BR-FBK-16`). */
+export const GT022_STORY_LINE =
+  "Vịt Con làm lạc đồ chơi rồi, bé cầm kính lúp giúp Vịt Con tìm nhé!";
+
+/** Mascot nhảy hoặc động viên ngắn sau mỗi lần chạm (`BR-E022-07`). */
+export const GT022_REACTION_MS = 1000;
+
 export class GT022Session extends TemplateGameSession<
   GT022Content,
   GT022Difficulty
@@ -90,12 +98,16 @@ export class GT022Session extends TemplateGameSession<
   private wrongItemId: string | null = null;
   private readonly wrongFlash = new WrongFlash();
   private lastFrameMs = 0;
+  private reactionPose: MascotPose | null = null;
+  private reactionRemainingMs = 0;
 
   setupEntities(): void {
     this.isWon = false;
     this.wrongItemId = null;
     this.wrongFlash.clear();
     this.lastFrameMs = 0;
+    this.reactionPose = null;
+    this.reactionRemainingMs = 0;
     this.selectionMechanic.reset();
     this.assetById = new Map(
       this.content.scene_objects.map((o) => [o.id, o.asset])
@@ -190,9 +202,12 @@ export class GT022Session extends TemplateGameSession<
 
     if (result.isNewFind) {
       this.selectionMechanic.select(itemId);
+      this.queueSfx("lens_pop");
+      this.react("happy");
     } else if (!result.isTarget) {
       this.wrongItemId = itemId;
       this.wrongFlash.trigger(this.lastFrameMs);
+      this.react("encourage");
     }
 
     if (this.checkWinCondition()) {
@@ -205,6 +220,31 @@ export class GT022Session extends TemplateGameSession<
 
   override checkWinCondition(): boolean {
     return this.sceneSystem.isAllFound();
+  }
+
+  private react(pose: MascotPose): void {
+    this.reactionPose = pose;
+    this.reactionRemainingMs = GT022_REACTION_MS;
+  }
+
+  override storyLine(): string {
+    return GT022_STORY_LINE;
+  }
+
+  /** Nhảy khi tìm ra, động viên khi chạm nhầm vật nhiễu, đều ngắn (`BR-E022-07`). */
+  override mascotMood(): MascotPose | null {
+    return this.reactionRemainingMs > 0 && !this.isWon
+      ? this.reactionPose
+      : null;
+  }
+
+  update(deltaMs: number): void {
+    if (this.reactionRemainingMs > 0) {
+      this.reactionRemainingMs = Math.max(
+        0,
+        this.reactionRemainingMs - deltaMs
+      );
+    }
   }
 
   /**

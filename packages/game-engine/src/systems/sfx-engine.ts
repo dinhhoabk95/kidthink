@@ -23,7 +23,8 @@ export type SFXType =
   | "star_collect"
   | "lid_click"
   | "bell_open"
-  | "rabbit_hop";
+  | "rabbit_hop"
+  | "lens_pop";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -282,6 +283,19 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       glideTo: { freq: 659, overSec: 0.08 },
       volume: 0.11,
       durationSec: 0.12,
+      rampOutSec: 0.06,
+    },
+  ],
+
+  /** GT-022: soi thấy vật qua kính lúp — "bong" tròn vút lên, một nốt (`BR-E022-07`). */
+  lens_pop: [
+    {
+      delaySec: 0,
+      type: "sine",
+      freq: 420,
+      glideTo: { freq: 940, overSec: 0.1 },
+      volume: 0.12,
+      durationSec: 0.14,
       rampOutSec: 0.06,
     },
   ],
