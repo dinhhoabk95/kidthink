@@ -47,7 +47,8 @@ export type SFXType =
   | "mirror_chime"
   | "piece_click"
   | "ant_step"
-  | "rule_whistle";
+  | "rule_whistle"
+  | "clip_link";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -752,6 +753,26 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       volume: 0.07,
       durationSec: 0.2,
       rampOutSec: 0.1,
+    },
+  ],
+
+  /** GT-030: kẹp giấy móc vào nhau "tinh" kim loại nhỏ (`BR-E030-07`). */
+  clip_link: [
+    {
+      delaySec: 0,
+      type: "triangle",
+      freq: 1250,
+      volume: 0.06,
+      durationSec: 0.07,
+      rampOutSec: 0.05,
+    },
+    {
+      delaySec: 0.06,
+      type: "sine",
+      freq: 1650,
+      volume: 0.05,
+      durationSec: 0.12,
+      rampOutSec: 0.07,
     },
   ],
 

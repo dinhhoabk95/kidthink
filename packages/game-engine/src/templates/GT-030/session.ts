@@ -40,7 +40,9 @@ import {
   spawnParticlesAtSlot,
   updateParticles,
 } from "#src/render/index.js";
+import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
+import { MoodPulse } from "#src/systems/mood-pulse";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT030Content, GT030Difficulty } from "./template.js";
 import { computeMeasureStageSlots } from "./zone-layout.js";
@@ -66,6 +68,15 @@ export interface GapFlash {
 const MIN_SNAP_PX = 8;
 /** Thời gian khe/chồng còn hiện (ms). */
 const GAP_FLASH_MS = 1500;
+
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E030-07`, `BR-FBK-16`). */
+export const GT030_STORY_LINE =
+  "Sâu Nhỏ muốn biết mọi thứ dài bao nhiêu. Bé xếp các đơn vị nối liền nhau để đo giúp Sâu Nhỏ nhé!";
+
+/** Mascot vui sau mỗi đơn vị nối khít. */
+export const GT030_HAPPY_MS = 700;
+/** Mascot nghiêng đầu sau khe/chồng hoặc số đo chưa đúng. */
+export const GT030_WONDER_MS = 1500;
 
 export class GT030Session extends TemplateGameSession<
   GT030Content,
@@ -94,9 +105,20 @@ export class GT030Session extends TemplateGameSession<
   private wrongPlaceUntilMs = 0;
   private gapFlash: (GapFlash & { readonly untilMs: number }) | null = null;
   private particles: Particle[] = [];
+  private readonly mood = new MoodPulse();
+
+  override storyLine(): string {
+    return GT030_STORY_LINE;
+  }
+
+  /** Chỉ phản ứng sau khi đặt hoặc chọn số đo, không báo trước (`BR-E030-07`). */
+  override mascotMood(): MascotPose | null {
+    return this.isWon ? null : this.mood.current();
+  }
 
   update(deltaMs: number): void {
     this.lastFrameMs += deltaMs;
+    this.mood.tick(deltaMs);
     if (
       this.wrongOptionUntilMs > 0 &&
       this.lastFrameMs >= this.wrongOptionUntilMs
@@ -138,6 +160,7 @@ export class GT030Session extends TemplateGameSession<
     this.placedUnitsCount = 0;
     this.selectedOptionId = null;
     this.isWin = false;
+    this.mood.clear();
     this.gapFlash = null;
     this.particles = [];
     this.recordEvent("game_started", {
@@ -301,6 +324,7 @@ export class GT030Session extends TemplateGameSession<
       this.winSession();
     } else {
       this.wrongOptionUntilMs = this.lastFrameMs + 400;
+      this.mood.set("wonder", GT030_WONDER_MS);
     }
   }
 
@@ -319,10 +343,13 @@ export class GT030Session extends TemplateGameSession<
         widthPx: Math.min(Math.abs(offset), slot?.w ?? Math.abs(offset)),
         untilMs: this.lastFrameMs + GAP_FLASH_MS,
       };
+      this.mood.set("wonder", GT030_WONDER_MS);
       return;
     }
     this.gapFlash = null;
     this.placedUnitsCount++;
+    this.queueSfx("clip_link");
+    this.mood.set("happy", GT030_HAPPY_MS);
     this.recordEvent("unit_placed", {
       slot_index: this.placedUnitsCount,
       placed_count: this.placedUnitsCount,
