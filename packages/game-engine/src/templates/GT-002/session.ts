@@ -21,13 +21,24 @@ import {
   spawnParticlesAtSlot,
   updateParticles,
 } from "#src/render/index.js";
+import type { MascotPose } from "#src/render/mascot";
 import { deriveStream } from "#src/rng/mulberry32.js";
 import { shuffle } from "#src/rng/shuffle.js";
 import type { DegradationState } from "#src/systems/degradation";
+import { MoodPulse } from "#src/systems/mood-pulse";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT002Content, GT002Difficulty } from "./template.js";
 
 type TargetItem = GT002Content["items"][number];
+
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E002-05`, `BR-FBK-16`). */
+export const GT002_STORY_LINE =
+  "Bé thả lưới bắt cá nhé! Chọn những chú cá đúng rồi bấm kéo lưới lên.";
+
+/** Mascot reo ngắn sau mỗi lần chọn cá (`BR-E002-05`). */
+export const GT002_CHEER_MS = 800;
+/** Mascot nghiêng đầu sau lần kéo lưới chưa đúng. */
+export const GT002_WONDER_MS = 1500;
 
 export class GT002Session extends TemplateGameSession<
   GT002Content,
@@ -38,6 +49,7 @@ export class GT002Session extends TemplateGameSession<
   degradation: DegradationState | null = null;
   private particles: Particle[] = [];
   private wrongFlashMs = 0;
+  private readonly mood = new MoodPulse();
 
   /** Nút Xong ở `zones.action` (`BR-PSZ-05`); chỉ sáng khi đã chọn ít nhất một vật. */
   override readonly needsCommit = true;
@@ -48,6 +60,7 @@ export class GT002Session extends TemplateGameSession<
     this.isWon = false;
     this.particles = [];
     this.wrongFlashMs = 0;
+    this.mood.clear();
     const rng = deriveStream(this.layoutSeed, "items");
     this.displayItems = shuffle(this.content.items, rng);
   }
@@ -74,7 +87,17 @@ export class GT002Session extends TemplateGameSession<
     return this.mechanic.getSelectedIds().length > 0;
   }
 
+  override storyLine(): string {
+    return GT002_STORY_LINE;
+  }
+
+  /** Reo sau khi chọn cá, nghiêng đầu sau lần kéo chưa đúng (`BR-E002-05`). */
+  override mascotMood(): MascotPose | null {
+    return this.isWon ? null : this.mood.current();
+  }
+
   update(deltaMs: number): void {
+    this.mood.tick(deltaMs);
     if (this.wrongFlashMs > 0) {
       this.wrongFlashMs = Math.max(0, this.wrongFlashMs - deltaMs);
     }
@@ -94,7 +117,13 @@ export class GT002Session extends TemplateGameSession<
   }
 
   toggleItemSelection(itemId: string): void {
+    const wasSelected = this.mechanic.isSelected(itemId);
     this.mechanic.toggle(itemId);
+    // Cue và reo giống nhau với cá đúng lẫn sai: không báo trước đáp án.
+    if (!wasSelected) {
+      this.queueSfx("net_splash");
+      this.mood.set("cheer", GT002_CHEER_MS);
+    }
   }
 
   validateAction(action: GameAction): ActionResult {
@@ -131,6 +160,7 @@ export class GT002Session extends TemplateGameSession<
       this.winSession();
     } else {
       this.wrongFlashMs = 350;
+      this.mood.set("wonder", GT002_WONDER_MS);
     }
   }
 

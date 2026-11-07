@@ -27,7 +27,8 @@ export type SFXType =
   | "lens_pop"
   | "frog_hop"
   | "cat_munch"
-  | "coin_clink";
+  | "coin_clink"
+  | "net_splash";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -353,6 +354,28 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       volume: 0.08,
       durationSec: 0.16,
       rampOutSec: 0.08,
+    },
+  ],
+
+  /** GT-002: lưới chạm mặt nước — "tõm" êm đi xuống (`BR-E002-05`). */
+  net_splash: [
+    {
+      delaySec: 0,
+      type: "sine",
+      freq: 420,
+      glideTo: { freq: 240, overSec: 0.1 },
+      volume: 0.1,
+      durationSec: 0.12,
+      rampOutSec: 0.06,
+    },
+    {
+      delaySec: 0.09,
+      type: "triangle",
+      freq: 640,
+      glideTo: { freq: 520, overSec: 0.06 },
+      volume: 0.05,
+      durationSec: 0.07,
+      rampOutSec: 0.05,
     },
   ],
 
