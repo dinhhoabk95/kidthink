@@ -26,8 +26,9 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 - [ ] B12 còn lại: `seq` telemetry ổn định (unshift `game_started` chỉ lệch nếu upload trước nó — chưa có bằng chứng xảy ra); 2 cờ degradation không ai đọc
 
 ## Phase 2 — Hint/feedback thống nhất
-- [ ] Hint ladder L1/L2 ghost hand/L3 đọc lại đề cho mọi template; trả cả nguồn + đích
-- [ ] `demo_shown` chỉ khi demo vẽ thật
+- [x] Hạ tầng hint nguồn + đích: `HintTarget.slot.toIndex`, `getHintDestinationIndex()`, bàn tay ma (`RenderSystem.renderGhostHand`) ở L2/L3
+- [ ] Hint ladder còn lại: L3 đọc lại đề; `getHintDestinationIndex` cho các template kéo/đặt khác (mới có GT-003)
+- [x] `demo_shown` chỉ khi demo vẽ thật
 - [ ] Helper `WrongFlash` dùng chung thay ~15 bản tự viết
 - [ ] Retry nói câu khích lệ + mp3 fallback; narration pill Montessori
 - [ ] Tách màu hint vs retry, tăng tương phản

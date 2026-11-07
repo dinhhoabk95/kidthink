@@ -8,7 +8,13 @@
 export type HintLevel = 1 | 2 | 3;
 
 export type HintTarget =
-  | { readonly kind: "slot"; readonly index: number }
+  | {
+      readonly kind: "slot";
+      /** Slot nguồn (vật cần chạm / kéo). */
+      readonly index: number;
+      /** Slot đích khi bước đúng là kéo/đặt vật tới đó; thiếu = chỉ chạm. */
+      readonly toIndex?: number;
+    }
   | { readonly kind: "action" }
   | { readonly kind: "region"; readonly ids: readonly string[] };
 

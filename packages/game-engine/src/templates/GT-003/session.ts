@@ -518,6 +518,13 @@ export class GT003Session extends TemplateGameSession<
     return null;
   }
 
+  /** Bước đúng là kéo vật tới ô đích duy nhất: bàn tay ma kéo tới đó. */
+  override getHintDestinationIndex(): number | null {
+    const target = this.getTargetSlot();
+    const index = target ? this.slots.indexOf(target) : -1;
+    return index >= 0 ? index : null;
+  }
+
   override getHintTargetIndex(): number | null {
     const placed = this.mechanic.getPlacements();
     const idx = this.displayItems.findIndex(

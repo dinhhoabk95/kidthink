@@ -248,12 +248,23 @@ export abstract class TemplateGameSession<
   getHintTarget(): HintTarget | null {
     const index = this.getHintTargetIndex();
     if (index !== null) {
-      return { kind: "slot", index };
+      const toIndex = this.getHintDestinationIndex();
+      return toIndex === null
+        ? { kind: "slot", index }
+        : { kind: "slot", index, toIndex };
     }
     // Không còn vật nào để chỉ mà nút nộp đang sáng: bước kế là bấm nút.
     return this.needsCommit && !this.isWon && this.canCommit()
       ? { kind: "action" }
       : null;
+  }
+
+  /**
+   * Slot đích của bước đúng kế tiếp khi nó là kéo/đặt `getHintTargetIndex()` tới
+   * đó; `null` khi bước chỉ là chạm. Bàn tay ma kéo từ nguồn tới đích (Task #313).
+   */
+  getHintDestinationIndex(): number | null {
+    return null;
   }
 
   /**

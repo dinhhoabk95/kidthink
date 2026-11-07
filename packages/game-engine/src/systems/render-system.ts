@@ -321,6 +321,38 @@ export class RenderSystem {
     ctx.restore();
   }
 
+  /**
+   * Bàn tay ma (L2/L3): một bàn tay 👆 trượt từ `from` tới `to` theo `progress`
+   * 0→1 rồi chạm; không có `to` thì chỉ chạm ở `from`. Bỏ qua khi toạ độ không
+   * hợp lệ — cấm sinh `NaN` ra canvas. Giảm chuyển động: đứng yên ở đích.
+   */
+  renderGhostHand(
+    ctx: CanvasRenderingContext2D,
+    from: { readonly x: number; readonly y: number },
+    to: { readonly x: number; readonly y: number } | null,
+    progress: number
+  ): void {
+    if (!(Number.isFinite(from.x) && Number.isFinite(from.y))) {
+      return;
+    }
+    const end = to ?? from;
+    if (!(Number.isFinite(end.x) && Number.isFinite(end.y))) {
+      return;
+    }
+    const t = this.reducedMotion
+      ? 1
+      : Math.min(1, Math.max(0, progress)) * (to ? 1 : 0);
+    const x = from.x + (end.x - from.x) * t;
+    const y = from.y + (end.y - from.y) * t;
+    ctx.save();
+    ctx.globalAlpha *= 0.85;
+    ctx.font = "56px sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    ctx.fillText("\u{1F446}", x, y);
+    ctx.restore();
+  }
+
   /** Renders golden amber scaffolding aura around the target (or nothing if target is invalid). */
   renderScaffoldingAura(
     ctx: CanvasRenderingContext2D,

@@ -173,6 +173,9 @@ export const FPS_SAMPLE_INTERVAL_MS = 30_000;
  * mỗi khung hình (`BR-PRF-05`).
  */
 const FPS_SAMPLE_BUFFER_CAPACITY = 3600;
+/** Một vòng trượt của bàn tay ma ở tốc độ 1× (ms). */
+const GHOST_HAND_CYCLE_MS = 1600;
+
 const EMPTY_HINT_REGION_IDS: readonly string[] = Object.freeze([]);
 
 export class GameEngine {
@@ -184,6 +187,14 @@ export class GameEngine {
   readonly audio = new AudioController();
   scaffolding?: ScaffoldingSystem;
   focusIndex: number | null = null;
+  /**
+   * Bàn tay ma đang được vẽ ở L2/L3: slot nguồn → đích (hoặc chỉ chạm). `null`
+   * khi không có gì để vẽ; `demo_shown` chỉ phát khi khác `null` (Task #313).
+   */
+  demoGhostHand: {
+    readonly from: { readonly x: number; readonly y: number };
+    readonly to: { readonly x: number; readonly y: number } | null;
+  } | null = null;
   /** Gợi ý đang trỏ vào nút hành động ở `zones.action`; shell nháy nút (`BR-PSZ-05`). */
   actionHinted = false;
   /** Danh sách id vùng chú ý đang được tô sáng ở `L1`/`L2` (Task #301 S2). */
@@ -317,6 +328,7 @@ export class GameEngine {
       extractHintAfterMs(config.difficulty_params)
     );
     this.focusIndex = null;
+    this.demoGhostHand = null;
     this.actionHinted = false;
     this.hintRegionIds = EMPTY_HINT_REGION_IDS;
     this.lastViewKey = "";
@@ -411,6 +423,7 @@ export class GameEngine {
       this.actionHinted = false;
       this.hintRegionIds = EMPTY_HINT_REGION_IDS;
       this.focusIndex = null;
+      this.demoGhostHand = null;
       this.scaffolding?.setFocusIndex(null);
       return;
     }
@@ -423,7 +436,27 @@ export class GameEngine {
     this.hintRegionIds =
       hint?.kind === "region" ? hint.ids : EMPTY_HINT_REGION_IDS;
     this.focusIndex = targetIdx;
+    this.demoGhostHand =
+      level >= 2 && hint?.kind === "slot"
+        ? this.resolveGhostHand(this.activeSession, hint)
+        : null;
     this.scaffolding?.setFocusIndex(targetIdx);
+  }
+
+  private resolveGhostHand(
+    session: TemplateGameSession,
+    hint: { readonly index: number; readonly toIndex?: number }
+  ): NonNullable<GameEngine["demoGhostHand"]> | null {
+    const from = session.slots[hint.index];
+    if (!from) {
+      return null;
+    }
+    const to =
+      hint.toIndex === undefined ? undefined : session.slots[hint.toIndex];
+    return {
+      from: { x: from.x, y: from.y },
+      to: to ? { x: to.x, y: to.y } : null,
+    };
   }
 
   private tickScaffolding(deltaMs: number): void {
@@ -467,7 +500,7 @@ export class GameEngine {
           elapsed_ms: Math.round(this.scaffolding.elapsedMs),
         },
       });
-      if (level === 2) {
+      if (level === 2 && this.demoGhostHand !== null) {
         this.emitEvent({
           event_name: "demo_shown",
           timestamp_ms: Date.now(),
@@ -647,6 +680,23 @@ export class GameEngine {
     }
   };
 
+  private renderGhostHandOverlay(
+    ctx: CanvasRenderingContext2D,
+    now: number
+  ): void {
+    if (!(this.demoGhostHand && this.scaffolding)) {
+      return;
+    }
+    // Tốc độ theo mức: L2 bình thường, L3 chậm 0,5× như một bài demo.
+    const cycleMs = GHOST_HAND_CYCLE_MS / this.scaffolding.ghostHandSpeed;
+    this.renderSystem.renderGhostHand(
+      ctx,
+      this.demoGhostHand.from,
+      this.demoGhostHand.to,
+      (now % cycleMs) / cycleMs
+    );
+  }
+
   private renderScaffoldingOverlay(
     ctx: CanvasRenderingContext2D,
     now: number
@@ -670,6 +720,7 @@ export class GameEngine {
           pulsePhase
         );
       }
+      this.renderGhostHandOverlay(ctx, now);
       return;
     }
 
