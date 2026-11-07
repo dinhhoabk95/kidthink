@@ -3,18 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "sideEffects": false,
   "scripts": {
-    "gen:templates": "tsx scripts/gen-templates.ts",
-    "gen:engine-index": "tsx scripts/gen-engine-index.ts",
-    "gen:engine-depth-section": "tsx scripts/gen-engine-depth-section.ts",
-    "check:render": "tsx scripts/check-render.ts",
-    "check:engine-specs": "tsx scripts/check-engine-specs.ts",
-    "check:engine-behavior": "tsx scripts/check-engine-behavior.ts",
-    "check:engine-turn": "tsx scripts/check-engine-turn.ts",
-    "check:difficulty-ladder": "tsx scripts/check-difficulty-ladder.ts",
-    "check:hardcoded-params": "tsx scripts/check-hardcoded-params.ts",
-    "test": "vitest run",
-    "new:template": "tsx scripts/create-template.ts"
+    "test": "vitest run"
   },
   "devDependencies": {
     "@mindkid/config": "workspace:*",
@@ -42,8 +33,6 @@
     "#src/*.js": "./src/*.ts",
     "#src/*": "./src/*.ts",
     "#tests/*.js": "./tests/*.ts",
-    "#tests/*": "./tests/*.ts",
-    "#scripts/*.js": "./scripts/*.ts",
-    "#scripts/*": "./scripts/*.ts"
+    "#tests/*": "./tests/*.ts"
   }
 }

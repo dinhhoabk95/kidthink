@@ -222,7 +222,7 @@ function planPacked(
 /**
  * Bố cục dự phòng khi lưới vật phân trang: mọi vật và mọi phương án hiện cùng
  * lúc ở cỡ lớn nhất còn vừa, không dưới sàn chạm. Không vừa cả ở sàn thì giữ sàn
- * và tràn sân khấu (số ca đo ở `tests/layout/stage-engines-b1.test.ts`).
+ * và tràn sân khấu.
  */
 export function computePackedItemsAndOptions(
   stage: ZoneRect,

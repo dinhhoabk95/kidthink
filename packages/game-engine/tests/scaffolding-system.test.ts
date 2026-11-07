@@ -255,4 +255,76 @@ describe("ScaffoldingSystem (BR-SCF-01..08 & SCAFFOLDING-AND-HINTS spec)", () =>
     expect(system.tick(9000)).toBe(2); // 25s -> still L2
     expect(system.tick(1000)).toBe(3); // 26s -> L3
   });
+
+  it("Regression: gợi ý kích hoạt sau khi trả lời sai ở câu 1 phải được xoá sạch khi trả lời đúng hoặc sang câu tiếp theo", () => {
+    const fixture0 = GT002_FIXTURES[0];
+    if (!fixture0) {
+      throw new Error("Expected GT002_FIXTURES[0]");
+    }
+    const round1Session = new GT002Session(
+      fixture0.content,
+      fixture0.difficulty,
+      1
+    );
+    const round2Session = new GT002Session(
+      fixture0.content,
+      fixture0.difficulty,
+      2
+    );
+    const engine = new GameEngine();
+    engine.load(
+      {
+        level_code: "LVL-SCF-RESET",
+        content_version: 1,
+        template_code: "GT-002",
+        content_pack: fixture0.content,
+        difficulty_params: fixture0.difficulty,
+        theme_id: "default",
+        age_band: "3-4",
+        reduced_motion: false,
+        audio_enabled: false,
+      },
+      () => round1Session
+    );
+    round1Session.prepareRound("3-4");
+
+    // Trả lời sai 2 lần ở câu 1 -> bật gợi ý L1
+    engine.scaffolding?.onMiss();
+    engine.scaffolding?.onMiss();
+    engine.advanceFrame(16);
+    expect(engine.scaffolding?.getCurrentLevel()).toBe(1);
+    expect(engine.focusIndex).not.toBeNull();
+
+    // Trả lời đúng qua `onSuccess()` -> khung tiếp theo phải tự xoá focusIndex về null
+    engine.scaffolding?.onSuccess();
+    engine.advanceFrame(16);
+    expect(engine.scaffolding?.getCurrentLevel()).toBe(0);
+    expect(engine.focusIndex).toBeNull();
+    expect(engine.actionHinted).toBe(false);
+    expect(engine.hintRegionIds).toEqual([]);
+
+    // Bật lại gợi ý rồi sang câu 2 bằng `resetScaffolding()` (kể cả khi đang khóa input chờ đọc đề)
+    engine.scaffolding?.onMiss();
+    engine.scaffolding?.onMiss();
+    engine.advanceFrame(16);
+    expect(engine.focusIndex).not.toBeNull();
+
+    round2Session.prepareRound("3-4");
+    engine.activeSession = round2Session;
+    engine.acceptingInput = false;
+    engine.resetScaffolding();
+
+    expect(engine.scaffolding?.getCurrentLevel()).toBe(0);
+    expect(engine.focusIndex).toBeNull();
+    expect(engine.actionHinted).toBe(false);
+    expect(engine.hintRegionIds).toEqual([]);
+
+    // Mở cổng input câu 2 và chạy nhiều khung hình: gợi ý vẫn tắt cho tới khi câu 2 tự đủ ngưỡng
+    engine.acceptingInput = true;
+    engine.advanceFrame(1000);
+    expect(engine.scaffolding?.getCurrentLevel()).toBe(0);
+    expect(engine.focusIndex).toBeNull();
+
+    engine.destroy();
+  });
 });

@@ -1,9 +1,18 @@
 import type { Slot } from "#src/layout/types";
 import { designTokens } from "#src/systems/designTokens";
 import type { RenderSystem } from "#src/systems/render-system";
+import {
+  getCachedGradient,
+  PRIMITIVE_GRADIENTS,
+  setCachedGradient,
+} from "./cache.js";
 import { alpha, readableTextOn } from "./color-utils.js";
 import { resolveEmojiGlyph } from "./shared-render.js";
-import { legibleFontPx } from "./type-scale.js";
+import {
+  applyCanvasFontAtSize,
+  applyEmojiFont,
+  legibleFontPx,
+} from "./type-scale.js";
 
 // ── Bục nấm / Target Go-NoGo (GT-026) ────────────────────────────────
 export function drawPedestalTarget(
@@ -76,7 +85,7 @@ export function drawBasketSlot(
     designTokens.colors.surface[0],
     designTokens.colors.surface[900]
   );
-  ctx.font = `bold ${fontPx}px ${designTokens.fonts.heading}`;
+  applyCanvasFontAtSize(ctx, fontPx, "heading", "bold");
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText(label, cx, cy - h * 0.55 + ribbonH / 2, w * 0.66);
@@ -104,25 +113,46 @@ export interface ContainerBox {
  */
 function drawContainerAura(
   ctx: CanvasRenderingContext2D,
+  rs: RenderSystem,
   box: ContainerBox,
   isHovered: boolean
 ): void {
   const radius = Math.max(box.w, box.h) * (isHovered ? 0.85 : 0.7);
-  const gradient = ctx.createRadialGradient(
-    box.x,
-    box.y,
-    radius * 0.35,
-    box.x,
-    box.y,
-    radius
+  const slotIndex =
+    Math.round(box.x) * 100_000 + Math.round(box.y) * 100 + (isHovered ? 1 : 0);
+  let gradient = getCachedGradient(
+    ctx,
+    rs.paintGeneration,
+    PRIMITIVE_GRADIENTS.CONTAINER_AURA,
+    slotIndex
   );
-  gradient.addColorStop(
-    0,
-    isHovered
-      ? alpha(designTokens.colors.montessori.amber, 0.38)
-      : alpha(designTokens.colors.montessori.amberLight, 0.22)
-  );
-  gradient.addColorStop(1, alpha(designTokens.colors.montessori.amberLight, 0));
+  if (!gradient) {
+    gradient = ctx.createRadialGradient(
+      box.x,
+      box.y,
+      radius * 0.35,
+      box.x,
+      box.y,
+      radius
+    );
+    gradient.addColorStop(
+      0,
+      isHovered
+        ? alpha(designTokens.colors.montessori.amber, 0.38)
+        : alpha(designTokens.colors.montessori.amberLight, 0.22)
+    );
+    gradient.addColorStop(
+      1,
+      alpha(designTokens.colors.montessori.amberLight, 0)
+    );
+    setCachedGradient(
+      ctx,
+      rs.paintGeneration,
+      PRIMITIVE_GRADIENTS.CONTAINER_AURA,
+      slotIndex,
+      gradient
+    );
+  }
 
   ctx.save();
   ctx.fillStyle = gradient;
@@ -165,7 +195,7 @@ function drawContainerPlacedItems(
     ctx.arc(chipX, chipY, chipR, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.font = `${Math.round(chipR * 1.6)}px "Noto Color Emoji", "Apple Color Emoji", sans-serif`;
+    applyEmojiFont(ctx, Math.round(chipR * 1.6));
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     const glyph = item.asset.ref ? resolveEmojiGlyph(item.asset.ref) : "";
@@ -209,7 +239,7 @@ function drawContainerBadge(
   ctx.fillStyle = isComplete
     ? designTokens.colors.surface[0]
     : designTokens.colors.surface[800];
-  ctx.font = `bold ${fontPx}px ${designTokens.fonts.heading}`;
+  applyCanvasFontAtSize(ctx, fontPx, "heading", "bold");
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText(
@@ -245,7 +275,7 @@ export function drawContainerTarget(
   const placedItems = options.placedItems ?? [];
 
   ctx.save();
-  drawContainerAura(ctx, box, isHovered);
+  drawContainerAura(ctx, rs, box, isHovered);
   rs.drawClayContainer(
     ctx,
     box.x,

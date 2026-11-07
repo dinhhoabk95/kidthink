@@ -5,9 +5,12 @@ import {
   ACTION_RETRY,
   type ActionResult,
   type GameAction,
+  type HintTarget,
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
+import { resolveAssetLabels } from "#src/labels/spoken-keyword";
+import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import {
   computeStageGroupsLayout,
   resolveStageRect,
@@ -18,7 +21,8 @@ import {
   drawSlotItem,
   drawSubPromptText,
   spawnParticlesAtSlot,
-} from "#src/render/index.js";
+  updateParticles,
+} from "#src/render/index";
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
@@ -30,7 +34,13 @@ import type {
   GT036Content,
   GT036Difficulty,
   GT036PaletteItem,
-} from "./template.js";
+} from "./template";
+
+export interface GT036ActionPayload {
+  readonly paletteId?: string;
+  readonly slotIndex?: number;
+  readonly elementId?: string;
+}
 
 export class GT036Session extends TemplateGameSession<
   GT036Content,
@@ -58,6 +68,7 @@ export class GT036Session extends TemplateGameSession<
   sessionStars = 0;
   private particles: Particle[] = [];
   private readonly sfxEngine: SFXEngine;
+  private readonly paletteMap: ReadonlyMap<string, GT036PaletteItem>;
 
   constructor(
     content: GT036Content,
@@ -65,6 +76,7 @@ export class GT036Session extends TemplateGameSession<
     _ageBandOrSeed?: AgeBand | number
   ) {
     super(content, difficulty);
+    this.paletteMap = new Map(content.palette.map((p) => [p.id, p]));
     this.sfxEngine = new SFXEngine();
   }
 
@@ -94,7 +106,7 @@ export class GT036Session extends TemplateGameSession<
   }
 
   override getHintTargetIndex(): number | null {
-    if (this.isWin || this.isWon || this.submitted) {
+    if (this.isWin || this.isWon) {
       return null;
     }
     const count = this.content.track_length;
@@ -109,6 +121,20 @@ export class GT036Session extends TemplateGameSession<
       return count;
     }
     return emptyTrackIdx;
+  }
+
+  override getHintTarget(): HintTarget | null {
+    if (this.isWin || this.isWon) {
+      return null;
+    }
+    const index = this.getHintTargetIndex();
+    if (index !== null) {
+      return { kind: "slot", index };
+    }
+    if (!this.placedItems.includes(null)) {
+      return { kind: "action" };
+    }
+    return super.getHintTarget();
   }
 
   protected computeSlots(band: AgeBand): readonly Slot[] {
@@ -131,7 +157,7 @@ export class GT036Session extends TemplateGameSession<
       return ACTION_IGNORED;
     }
 
-    const data = (action.data as Record<string, unknown>) ?? {};
+    const data = (action.data as GT036ActionPayload | undefined) ?? {};
     switch (action.type) {
       case "select_palette":
       case "palette":
@@ -153,13 +179,13 @@ export class GT036Session extends TemplateGameSession<
     }
   }
 
-  private validateSelectPalette(data: Record<string, unknown>): ActionResult {
+  private validateSelectPalette(data: GT036ActionPayload): ActionResult {
     const paletteId = String(data.paletteId ?? "");
     const exists = this.content.palette.some((p) => p.id === paletteId);
     return exists ? ACTION_CORRECT : ACTION_IGNORED;
   }
 
-  private validatePlaceElement(data: Record<string, unknown>): ActionResult {
+  private validatePlaceElement(data: GT036ActionPayload): ActionResult {
     const slotIdx = Number(data.slotIndex ?? -1);
     if (slotIdx < 0 || slotIdx >= this.content.track_length) {
       return ACTION_IGNORED;
@@ -177,7 +203,7 @@ export class GT036Session extends TemplateGameSession<
     return ACTION_CORRECT;
   }
 
-  private validateRemoveElement(data: Record<string, unknown>): ActionResult {
+  private validateRemoveElement(data: GT036ActionPayload): ActionResult {
     const slotIdx = Number(data.slotIndex ?? -1);
     if (slotIdx < 0 || slotIdx >= this.content.track_length) {
       return ACTION_IGNORED;
@@ -195,7 +221,7 @@ export class GT036Session extends TemplateGameSession<
   }
 
   override commit(action: GameAction): void {
-    const data = (action.data as Record<string, unknown>) ?? {};
+    const data = (action.data as GT036ActionPayload | undefined) ?? {};
     switch (action.type) {
       case "select_palette":
       case "palette":
@@ -222,7 +248,7 @@ export class GT036Session extends TemplateGameSession<
     }
   }
 
-  private commitSelectPalette(data: Record<string, unknown>): void {
+  private commitSelectPalette(data: GT036ActionPayload): void {
     const paletteId = String(data.paletteId ?? "");
     const exists = this.content.palette.some((p) => p.id === paletteId);
     if (!exists) {
@@ -232,7 +258,7 @@ export class GT036Session extends TemplateGameSession<
     this.sfxEngine.play("tap");
   }
 
-  private commitPlaceElement(data: Record<string, unknown>): void {
+  private commitPlaceElement(data: GT036ActionPayload): void {
     const slotIdx = Number(data.slotIndex ?? -1);
     if (slotIdx < 0 || slotIdx >= this.content.track_length) {
       return;
@@ -259,7 +285,7 @@ export class GT036Session extends TemplateGameSession<
     });
   }
 
-  private commitRemoveElement(data: Record<string, unknown>): void {
+  private commitRemoveElement(data: GT036ActionPayload): void {
     const slotIdx = Number(data.slotIndex ?? -1);
     if (slotIdx < 0 || slotIdx >= this.content.track_length) {
       return;
@@ -342,88 +368,87 @@ export class GT036Session extends TemplateGameSession<
     this.sfxEngine.play("amber_soft");
   }
 
-  private isHitSlot(slot: Slot, gx: number, gy: number, tol: number): boolean {
-    const hw = (slot.hitW ?? slot.w) / 2 + tol;
-    const hh = (slot.hitH ?? slot.h) / 2 + tol;
-    return Math.abs(gx - slot.x) <= hw && Math.abs(gy - slot.y) <= hh;
+  update(_deltaMs: number): void {
+    if (this.particles.length > 0) {
+      this.particles = updateParticles(this.particles);
+    }
   }
 
-  private findTappedPalette(
-    gx: number,
-    gy: number,
-    tol: number
-  ): GameAction | null {
+  private findTappedPalette(gx: number, gy: number): GameAction | null {
     const count = this.content.track_length;
     const palCount = this.content.palette.length;
-
-    for (let p = 0; p < palCount; p++) {
-      const slot = this.slots[count + p];
-      const pal = this.content.palette[p];
-      if (slot && pal && this.isHitSlot(slot, gx, gy, tol)) {
-        return { type: "select_palette", data: { paletteId: pal.id } };
-      }
-    }
-    return null;
+    const palSlots = this.slots.slice(count, count + palCount);
+    const hitIdx = findHitSlotIndex(
+      palSlots,
+      gx,
+      gy,
+      "circle",
+      TAP_TOLERANCE_PX
+    );
+    const pal = hitIdx >= 0 ? this.content.palette[hitIdx] : undefined;
+    return pal ? { type: "select_palette", data: { paletteId: pal.id } } : null;
   }
 
-  private findTappedTrack(
-    gx: number,
-    gy: number,
-    tol: number
-  ): GameAction | null {
+  private findTappedTrack(gx: number, gy: number): GameAction | null {
     const count = this.content.track_length;
-    for (let i = 0; i < count; i++) {
-      const slot = this.slots[i];
-      if (slot && this.isHitSlot(slot, gx, gy, tol)) {
-        const placed = this.placedItems[i];
-        if (this.selectedPaletteId && placed !== this.selectedPaletteId) {
-          return {
-            type: "place_element",
-            data: { slotIndex: i, elementId: this.selectedPaletteId },
-          };
-        }
-        if (this.placedItems[i]) {
-          return { type: "remove_element", data: { slotIndex: i } };
-        }
-      }
+    const trackSlots = this.slots.slice(0, count);
+    const hitIdx = findHitSlotIndex(
+      trackSlots,
+      gx,
+      gy,
+      "circle",
+      TAP_TOLERANCE_PX
+    );
+    if (hitIdx < 0) {
+      return null;
+    }
+    const placed = this.placedItems[hitIdx];
+    if (this.selectedPaletteId && placed !== this.selectedPaletteId) {
+      return {
+        type: "place_element",
+        data: { slotIndex: hitIdx, elementId: this.selectedPaletteId },
+      };
+    }
+    if (placed) {
+      return { type: "remove_element", data: { slotIndex: hitIdx } };
     }
     return null;
   }
 
   private findDroppedElement(
-    gesture: Extract<Gesture, { type: "drop" }>,
-    tol: number
+    gesture: Extract<Gesture, { type: "drop" }>
   ): GameAction | null {
     const count = this.content.track_length;
     const palCount = this.content.palette.length;
-
-    let draggedPaletteId: string | null = null;
-    for (let p = 0; p < palCount; p++) {
-      const slot = this.slots[count + p];
-      const pal = this.content.palette[p];
-      if (
-        slot &&
-        pal &&
-        this.isHitSlot(slot, gesture.fromX, gesture.fromY, tol)
-      ) {
-        draggedPaletteId = pal.id;
-        break;
-      }
-    }
+    const palSlots = this.slots.slice(count, count + palCount);
+    const palIdx = findHitSlotIndex(
+      palSlots,
+      gesture.fromX,
+      gesture.fromY,
+      "circle",
+      TAP_TOLERANCE_PX
+    );
+    const draggedPaletteId =
+      palIdx >= 0 ? (this.content.palette[palIdx]?.id ?? null) : null;
     if (!draggedPaletteId) {
       return null;
     }
 
-    for (let i = 0; i < count; i++) {
-      const slot = this.slots[i];
-      if (slot && this.isHitSlot(slot, gesture.toX, gesture.toY, tol)) {
-        return {
-          type: "place_element",
-          data: { slotIndex: i, elementId: draggedPaletteId },
-        };
-      }
+    const trackSlots = this.slots.slice(0, count);
+    const trackIdx = findHitSlotIndex(
+      trackSlots,
+      gesture.toX,
+      gesture.toY,
+      "circle",
+      TAP_TOLERANCE_PX
+    );
+    if (trackIdx < 0) {
+      return null;
     }
-    return null;
+    return {
+      type: "place_element",
+      data: { slotIndex: trackIdx, elementId: draggedPaletteId },
+    };
   }
 
   override toAction(gesture: Gesture): GameAction | null {
@@ -431,17 +456,16 @@ export class GT036Session extends TemplateGameSession<
     if (gesture.type === "commit") {
       return { type: "submit_creation", data: {} };
     }
-    const hitTolerance = 24;
     if (gesture.type === "drop") {
-      return this.findDroppedElement(gesture, hitTolerance);
+      return this.findDroppedElement(gesture);
     }
     if (gesture.type !== "tap") {
       return null;
     }
 
     return (
-      this.findTappedPalette(gesture.x, gesture.y, hitTolerance) ??
-      this.findTappedTrack(gesture.x, gesture.y, hitTolerance)
+      this.findTappedPalette(gesture.x, gesture.y) ??
+      this.findTappedTrack(gesture.x, gesture.y)
     );
   }
 
@@ -451,15 +475,28 @@ export class GT036Session extends TemplateGameSession<
       if (!slot) {
         continue;
       }
+      const placedId = this.placedItems[i];
+      const palItem = placedId ? this.paletteMap.get(placedId) : undefined;
+      const assetLabels = palItem
+        ? resolveAssetLabels(palItem.asset)
+        : undefined;
+      const itemSpoken = assetLabels?.spokenLabel ?? assetLabels?.label;
       entities.push({
         id: `track_${i}`,
         slotIndex: i,
         role: "target",
-        state: this.placedItems[i] ? "selected" : "idle",
+        state: placedId ? "selected" : "idle",
         x: slot.x,
         y: slot.y,
         w: slot.w,
         h: slot.h,
+        hitShape: "circle",
+        glyph: assetLabels?.glyph,
+        label: assetLabels?.label ?? `${i + 1}`,
+        spokenLabel: itemSpoken
+          ? `Ô số ${i + 1}: ${itemSpoken}`
+          : `Ô số ${i + 1} đang trống`,
+        spokenAudioPath: assetLabels?.spokenAudioPath,
       });
     }
   }
@@ -475,6 +512,10 @@ export class GT036Session extends TemplateGameSession<
       if (!(slot && pal)) {
         continue;
       }
+      const { glyph, label, spokenLabel, spokenAudioPath } = resolveAssetLabels(
+        pal.asset
+      );
+      const displayLabel = label ?? pal.id;
       entities.push({
         id: `palette_${pal.id}`,
         slotIndex: count + p,
@@ -484,6 +525,11 @@ export class GT036Session extends TemplateGameSession<
         y: slot.y,
         w: slot.w,
         h: slot.h,
+        hitShape: "circle",
+        glyph,
+        label: displayLabel,
+        spokenLabel: spokenLabel ?? displayLabel,
+        spokenAudioPath,
       });
     }
   }
@@ -499,6 +545,7 @@ export class GT036Session extends TemplateGameSession<
     return {
       activePrompt: this.content.prompt,
       entities,
+      focusIndex: this.getHintTargetIndex() ?? undefined,
     };
   }
 
@@ -537,25 +584,19 @@ export class GT036Session extends TemplateGameSession<
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem
   ): void {
-    const palMap = new Map<string, GT036PaletteItem>(
-      this.content.palette.map((p) => [p.id, p])
-    );
-
     for (let i = 0; i < this.content.track_length; i++) {
       const slot = this.slots[i];
       if (!slot) {
         continue;
       }
       const elementId = this.placedItems[i];
-      if (elementId && palMap.has(elementId)) {
-        const palItem = palMap.get(elementId);
-        if (palItem) {
-          drawSlotItem(ctx, rs, slot, {
-            id: `placed-${i}`,
-            asset: palItem.asset,
-            state: "idle",
-          });
-        }
+      const palItem = elementId ? this.paletteMap.get(elementId) : undefined;
+      if (palItem) {
+        drawSlotItem(ctx, rs, slot, {
+          id: `placed-${i}`,
+          asset: palItem.asset,
+          state: "idle",
+        });
       } else {
         drawSlotItem(ctx, rs, slot, {
           id: `empty-track-${i}`,
@@ -572,10 +613,9 @@ export class GT036Session extends TemplateGameSession<
   ): void {
     const count = this.content.track_length;
     const palCount = this.content.palette.length;
-    const palSlots = this.slots.slice(count, count + palCount);
 
     for (let i = 0; i < palCount; i++) {
-      const slot = palSlots[i];
+      const slot = this.slots[count + i];
       const pItem = this.content.palette[i];
       if (!(slot && pItem)) {
         continue;

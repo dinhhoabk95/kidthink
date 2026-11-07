@@ -13,7 +13,9 @@ import type {
   Gesture,
   ViewEntity,
 } from "#src/interaction";
+import { resolveAssetLabels } from "#src/labels/spoken-keyword";
 import { resolveTouchFloor } from "#src/layout/constants";
+import { TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
 import { computeStageMirror, reindexSlots } from "#src/layout/stage-targets";
 import {
@@ -31,14 +33,11 @@ import {
   drawSlotItem,
   drawWoodenTokenDock,
   sceneBox,
-} from "#src/render/index.js";
+} from "#src/render/index";
 import type { DegradationState } from "#src/systems/degradation";
 import { MirrorSystem } from "#src/systems/mirror-system";
 import type { RenderSystem } from "#src/systems/render-system";
 import type { GT021Content, GT021Difficulty } from "./template.js";
-
-/** Khoảng chạm thêm quanh vùng chạm của slot (`GT-021.md` §6). */
-const HIT_TOLERANCE_PX = 24;
 
 /** Cạnh ô mẫu và ô đích lớn nhất trên sân khấu — cùng cỡ ô của `mirror-axis-split`. */
 const MIRROR_CELL_MAX_PX = 96;
@@ -48,7 +47,7 @@ function findHitSourceOption(
   options: readonly { item_id: string }[],
   x: number,
   y: number,
-  tolerance = HIT_TOLERANCE_PX
+  tolerance = TAP_TOLERANCE_PX
 ): { option: { item_id: string }; index: number } | null {
   const sourceSlots = slots.filter((s) => s.role === "source");
   const index = findNearestHitSlot(
@@ -66,7 +65,7 @@ function findHitTargetSlot(
   targets: readonly { slot_id: string }[],
   x: number,
   y: number,
-  tolerance = HIT_TOLERANCE_PX
+  tolerance = TAP_TOLERANCE_PX
 ): { target: { slot_id: string }; index: number } | null {
   const targetSlots = slots.filter((s) => s.role === "target");
   const index = findNearestHitSlot(
@@ -88,6 +87,9 @@ export class GT021Session extends TemplateGameSession<
   readonly mirrorSystem = new MirrorSystem();
   private readonly placementMechanic = new PlacementMechanic();
   neutralSlots: readonly Slot[] = [];
+  private wrongPlacementTimerMs = 0;
+  private wrongTargetSlotId: string | null = null;
+  private wrongItemId: string | null = null;
 
   /** Mảnh chọn nằm trong khay, hai nửa đối xứng đứng trên sân khấu (`BR-PSZ-01`). */
   override readonly needsTray = true;
@@ -106,6 +108,9 @@ export class GT021Session extends TemplateGameSession<
 
   setupEntities(): void {
     this.isWon = false;
+    this.wrongPlacementTimerMs = 0;
+    this.wrongTargetSlotId = null;
+    this.wrongItemId = null;
     this.placementMechanic.reset();
     this.assetByRef = new Map(
       this.content.options.map((o) => [o.asset_ref, o.asset])
@@ -182,16 +187,55 @@ export class GT021Session extends TemplateGameSession<
     });
 
     if (this.checkWinCondition()) {
+      this.wrongPlacementTimerMs = 0;
+      this.wrongTargetSlotId = null;
+      this.wrongItemId = null;
       this.recordEvent("round_completed", { round_index: 0 });
       this.winSession();
       return ACTION_CORRECT;
     }
 
-    return isCorrect ? ACTION_CORRECT : ACTION_RETRY;
+    if (isCorrect) {
+      this.wrongPlacementTimerMs = 0;
+      this.wrongTargetSlotId = null;
+      this.wrongItemId = null;
+      return ACTION_CORRECT;
+    }
+
+    this.wrongPlacementTimerMs = 400;
+    this.wrongTargetSlotId = targetSlotId;
+    this.wrongItemId = itemId;
+    return ACTION_RETRY;
   }
 
   override checkWinCondition(): boolean {
     return this.mirrorSystem.isComplete();
+  }
+
+  update(deltaMs: number): void {
+    if (this.wrongPlacementTimerMs > 0) {
+      this.wrongPlacementTimerMs = Math.max(
+        0,
+        this.wrongPlacementTimerMs - deltaMs
+      );
+      if (this.wrongPlacementTimerMs === 0) {
+        if (this.wrongTargetSlotId) {
+          this.mirrorSystem.remove(this.wrongTargetSlotId);
+          this.wrongTargetSlotId = null;
+        }
+        if (this.wrongItemId) {
+          this.placementMechanic.remove(this.wrongItemId);
+          this.wrongItemId = null;
+        }
+      }
+    }
+  }
+
+  override destroy(): void {
+    super.destroy();
+    this.wrongPlacementTimerMs = 0;
+    this.wrongTargetSlotId = null;
+    this.wrongItemId = null;
   }
 
   getStagedItemId(): string | null {
@@ -242,7 +286,7 @@ export class GT021Session extends TemplateGameSession<
       [...targets, ...sources],
       gesture.x,
       gesture.y,
-      HIT_TOLERANCE_PX
+      TAP_TOLERANCE_PX
     );
     const target = this.content.target_slots[hit];
     if (hit >= 0 && hit < targets.length && target) {
@@ -298,18 +342,51 @@ export class GT021Session extends TemplateGameSession<
     }
   }
 
+  private allocateEntityId(
+    rawId: string,
+    prefix: string,
+    usedIds: Set<string>
+  ): string {
+    const id = usedIds.has(rawId) ? `${prefix}:${rawId}` : rawId;
+    usedIds.add(id);
+    return id;
+  }
+
+  private toTargetViewEntity(
+    slot: Slot,
+    target: GT021Content["target_slots"][number],
+    usedIds: Set<string>
+  ): ViewEntity {
+    const placedRef = this.mirrorSystem.getPlacement(target.slot_id);
+    let state: EntityVisual = "idle";
+    if (placedRef) {
+      state = placedRef === target.expected_asset_ref ? "correct" : "incorrect";
+    }
+    const placedAsset = placedRef ? this.assetByRef.get(placedRef) : undefined;
+    return {
+      id: this.allocateEntityId(target.slot_id, "target", usedIds),
+      slotIndex: slot.index,
+      role: "target",
+      state,
+      x: slot.x,
+      y: slot.y,
+      w: slot.w,
+      h: slot.h,
+      hitShape: "square",
+      ...(placedAsset ? resolveAssetLabels(placedAsset) : {}),
+    };
+  }
+
   override getView(): EngineView {
-    const targets = this.targetSlots;
-    const sources = this.sourceSlots;
-    const neutral = this.neutralSlots;
     const stagedId = this.placementMechanic.getStagedItemId();
     const entities: ViewEntity[] = [];
+    const usedIds = new Set<string>();
 
-    neutral.forEach((slot, i) => {
+    this.neutralSlots.forEach((slot, i) => {
       const ref = this.content.reference_pattern[i];
       if (ref) {
         entities.push({
-          id: ref.slot_id,
+          id: this.allocateEntityId(ref.slot_id, "ref", usedIds),
           slotIndex: slot.index,
           role: "neutral",
           state: "idle",
@@ -317,45 +394,32 @@ export class GT021Session extends TemplateGameSession<
           y: slot.y,
           w: slot.w,
           h: slot.h,
+          hitShape: "square",
+          ...resolveAssetLabels(ref.asset),
         });
       }
     });
 
-    targets.forEach((slot, i) => {
+    this.targetSlots.forEach((slot, i) => {
       const target = this.content.target_slots[i];
       if (target) {
-        const placedRef = this.mirrorSystem.getPlacement(target.slot_id);
-        let state: EntityVisual = "idle";
-        if (placedRef) {
-          state =
-            placedRef === target.expected_asset_ref ? "correct" : "incorrect";
-        }
-        entities.push({
-          id: target.slot_id,
-          slotIndex: slot.index,
-          role: "target",
-          state,
-          x: slot.x,
-          y: slot.y,
-          w: slot.w,
-          h: slot.h,
-        });
+        entities.push(this.toTargetViewEntity(slot, target, usedIds));
       }
     });
 
-    sources.forEach((slot, i) => {
+    this.sourceSlots.forEach((slot, i) => {
       const opt = this.content.options[i];
       if (opt) {
-        const isStaged = stagedId === opt.item_id;
         entities.push({
-          id: opt.item_id,
+          id: this.allocateEntityId(opt.item_id, "src", usedIds),
           slotIndex: slot.index,
           role: "source",
-          state: isStaged ? "selected" : "idle",
+          state: stagedId === opt.item_id ? "selected" : "idle",
           x: slot.x,
           y: slot.y,
           w: slot.w,
           h: slot.h,
+          ...resolveAssetLabels(opt.asset),
         });
       }
     });
@@ -469,6 +533,7 @@ export class GT021Session extends TemplateGameSession<
         drawEmptyTargetSlot(ctx, slot);
         return;
       }
+      const isWrong = placedRef !== target.expected_asset_ref;
       drawSlotItem(
         ctx,
         rs,
@@ -476,10 +541,19 @@ export class GT021Session extends TemplateGameSession<
         {
           id: target.slot_id,
           asset: assetByRef.get(placedRef),
-          state: placedRef === target.expected_asset_ref ? "correct" : "wrong",
+          state: isWrong ? "wrong" : "correct",
         },
         "square"
       );
+      if (isWrong && this.wrongPlacementTimerMs > 0) {
+        rs.drawRetryRing(
+          ctx,
+          slot.x,
+          slot.y,
+          (slot.w ?? 64) / 2,
+          1 - this.wrongPlacementTimerMs / 400
+        );
+      }
     });
 
     this.content.options.forEach((opt, i) => {
@@ -490,7 +564,10 @@ export class GT021Session extends TemplateGameSession<
       drawSlotItem(ctx, rs, slot, {
         id: opt.item_id,
         asset: opt.asset,
-        state: this.getRenderItemState(opt.item_id),
+        state:
+          this.placementMechanic.getStagedItemId() === opt.item_id
+            ? "selected"
+            : this.getRenderItemState(opt.item_id),
       });
     });
   }

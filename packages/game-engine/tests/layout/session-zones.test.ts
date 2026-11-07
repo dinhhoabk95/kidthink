@@ -4,6 +4,7 @@ import { type GameSession, TemplateGameSession } from "#src/game-session";
 import {
   createGameSessionSync,
   type EngineConfig,
+  type GameActionValue,
   preloadGameSession,
 } from "#src/index";
 import { deriveLogicSpace } from "#src/layout/constants";
@@ -127,8 +128,11 @@ describe("số vật khay đổi theo vòng (BR-PSZ-13)", () => {
         level_code: level.header.code,
         content_version: 1,
         template_code: TRAY_CODE,
-        content_pack: level.content_pack,
-        difficulty_params: level.difficulty_params,
+        content_pack: level.content_pack as Record<string, GameActionValue>,
+        difficulty_params: level.difficulty_params as Record<
+          string,
+          GameActionValue
+        >,
         theme_id: "default",
         age_band: "4-5",
         reduced_motion: false,

@@ -4,6 +4,7 @@ import type { RenderSystem } from "#src/systems/render-system";
 import { drawNumberRod, drawRekenrek } from "./bead-rods.js";
 import { alpha } from "./color-utils.js";
 import { drawNumberLine } from "./number-line.js";
+import { applyCanvasFontAtSize, applyEmojiFont } from "./type-scale.js";
 import type { QuantityRepConfig, SceneBox } from "./types.js";
 
 export function drawPlaceholderBox(
@@ -219,7 +220,7 @@ export function drawDotPattern(
   }
 
   if (options?.glyph) {
-    ctx.font = `${Math.round(r * 2.2)}px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", ${designTokens.fonts.sans}`;
+    applyEmojiFont(ctx, Math.round(r * 2.2));
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     for (const dot of dots) {
@@ -487,4 +488,68 @@ export function computeDiceSlots(
     hitW: itemSize,
     hitH: itemSize,
   }));
+}
+
+/** Đồng xu Montessori có mệnh giá và vành trang trí (GT-031). */
+export function drawMontessoriCoin(
+  ctx: CanvasRenderingContext2D,
+  slot: Slot,
+  value: number,
+  isDeposited: boolean
+): void {
+  ctx.save();
+  const cx = slot.x;
+  const cy = slot.y;
+  const coinRadius = Math.min(slot.w, slot.h) * 0.42;
+
+  // Nền đồng xu vàng Montessori
+  ctx.fillStyle = isDeposited
+    ? designTokens.colors.surface[300]
+    : designTokens.colors.montessori.amber;
+  ctx.beginPath();
+  ctx.arc(cx, cy, coinRadius, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Viền đồng xu
+  ctx.strokeStyle = isDeposited
+    ? designTokens.colors.surface[400]
+    : designTokens.colors.montessori.amberDark;
+  ctx.lineWidth = Math.max(2, coinRadius * 0.08);
+  ctx.stroke();
+
+  // Vành trong trang trí
+  ctx.strokeStyle = isDeposited
+    ? designTokens.colors.surface[200]
+    : designTokens.colors.montessori.amberLight;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(cx, cy, coinRadius * 0.82, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Mệnh giá thật của đồng xu
+  const valFontPx = Math.max(16, Math.round(coinRadius * 0.65));
+  applyCanvasFontAtSize(ctx, valFontPx, "heading", "bold");
+  ctx.fillStyle = isDeposited
+    ? designTokens.colors.surface[500]
+    : designTokens.colors.surface[900];
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(`${value}đ`, cx, cy);
+  ctx.restore();
+}
+
+/** Nhãn tiến độ thu tiền trên khay nhận (GT-031). */
+export function drawMoneyProgressLabel(
+  ctx: CanvasRenderingContext2D,
+  targetSlot: Slot,
+  text: string,
+  color: string
+): void {
+  ctx.save();
+  applyCanvasFontAtSize(ctx, 16, "heading", "bold");
+  ctx.fillStyle = color;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "bottom";
+  ctx.fillText(text, targetSlot.x, targetSlot.y - targetSlot.h / 2 - 12);
+  ctx.restore();
 }

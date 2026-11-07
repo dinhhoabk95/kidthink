@@ -1,3 +1,4 @@
+import type { Slot } from "#src/layout/types";
 import {
   getBalanceState,
   sumWeights,
@@ -20,8 +21,13 @@ import {
   squareBox,
   WALL_LINE_PX,
 } from "./shared-render-shapes.js";
-import { legibleFontPx } from "./type-scale.js";
+import { applyCanvasFontAtSize, legibleFontPx } from "./type-scale.js";
 import type { SceneBox } from "./types.js";
+
+const DASH_6_5: readonly number[] = Object.freeze([6, 5]);
+const DASH_12_8: readonly number[] = Object.freeze([12, 8]);
+const DASH_10_8: readonly number[] = Object.freeze([10, 8]);
+const DASH_EMPTY: readonly number[] = Object.freeze([]);
 
 export interface MazeCellBox {
   readonly cellW: number;
@@ -155,6 +161,19 @@ export function drawMazeBoard(
   ctx.fill();
   ctx.stroke();
 
+  // Current head indicator when player has stepped beyond start
+  const headCell = path.at(-1);
+  if (path.length > 1 && headCell) {
+    const headPos = mazeCellCenter(headCell, m);
+    ctx.fillStyle = designTokens.colors.surface[0];
+    ctx.strokeStyle = designTokens.colors.montessori.amberDark;
+    ctx.lineWidth = 3.5;
+    ctx.beginPath();
+    ctx.arc(headPos.x, headPos.y, r * 0.68, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+  }
+
   ctx.restore();
 }
 
@@ -168,7 +187,7 @@ export function drawRequiredCells(
   ctx.save();
   ctx.strokeStyle = designTokens.colors.montessori.amber;
   ctx.lineWidth = BOARD_LINE_PX;
-  ctx.setLineDash([6, 5]);
+  ctx.setLineDash(DASH_6_5);
   for (const cell of cells) {
     const p = mazeCellCenter(cell, m);
     const r = Math.min(m.cellW, m.cellH) * 0.34;
@@ -204,14 +223,19 @@ export function drawBalanceScale(
   ctx: CanvasRenderingContext2D,
   box: SceneBox,
   left: readonly WeightedItem[],
-  right: readonly WeightedItem[]
+  right: readonly WeightedItem[],
+  smoothTiltDeg?: number
 ): { leftPan: SceneBox; rightPan: SceneBox } {
-  const state = getBalanceState(sumWeights(left), sumWeights(right));
   let tiltDeg = 0;
-  if (state === "left_heavy") {
-    tiltDeg = MAX_TILT_DEG;
-  } else if (state === "right_heavy") {
-    tiltDeg = -MAX_TILT_DEG;
+  if (smoothTiltDeg === undefined) {
+    const state = getBalanceState(sumWeights(left), sumWeights(right));
+    if (state === "left_heavy") {
+      tiltDeg = MAX_TILT_DEG;
+    } else if (state === "right_heavy") {
+      tiltDeg = -MAX_TILT_DEG;
+    }
+  } else {
+    tiltDeg = Math.max(-MAX_TILT_DEG, Math.min(MAX_TILT_DEG, -smoothTiltDeg));
   }
   const rad = (tiltDeg * Math.PI) / 180;
 
@@ -337,7 +361,7 @@ export function drawClockFace(
 
   // 12 vạch giờ + số trong phông Fredoka/Quicksand
   ctx.fillStyle = designTokens.colors.surface[900];
-  ctx.font = `bold ${Math.floor(r * 0.19)}px ${designTokens.fonts.heading}`;
+  applyCanvasFontAtSize(ctx, Math.floor(r * 0.19), "heading", "bold");
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   for (let h = 1; h <= 12; h++) {
@@ -443,6 +467,28 @@ function fitIsometric(
   };
 }
 
+const sortedCubeCache = new WeakMap<
+  readonly CubeCoord[],
+  Map<RotationAngle, readonly CubeCoord[]>
+>();
+
+function getCachedSortedCubes(
+  model: readonly CubeCoord[],
+  rotation: RotationAngle
+): readonly CubeCoord[] {
+  let byRotation = sortedCubeCache.get(model);
+  if (!byRotation) {
+    byRotation = new Map<RotationAngle, readonly CubeCoord[]>();
+    sortedCubeCache.set(model, byRotation);
+  }
+  let sorted = byRotation.get(rotation);
+  if (!sorted) {
+    sorted = sortCubesForRender(model, rotation);
+    byRotation.set(rotation, sorted);
+  }
+  return sorted;
+}
+
 export function drawIsometricModel(
   ctx: CanvasRenderingContext2D,
   box: SceneBox,
@@ -454,7 +500,7 @@ export function drawIsometricModel(
   if (model.length === 0) {
     return;
   }
-  const ordered = sortCubesForRender(model, rotation);
+  const ordered = getCachedSortedCubes(model, rotation);
   const baseSize = Math.min(box.w, box.h) / 6;
   const fitted = fit ? fitIsometric(box, ordered, baseSize) : undefined;
   const size = fitted?.size ?? baseSize;
@@ -529,7 +575,7 @@ export function drawMirrorAxis(
   ctx.save();
   ctx.strokeStyle = designTokens.colors.montessori.amber;
   ctx.lineWidth = BOARD_LINE_PX + 1;
-  ctx.setLineDash([12, 8]);
+  ctx.setLineDash(DASH_12_8);
   ctx.beginPath();
   if (axis === "vertical") {
     ctx.moveTo(area.x + area.w / 2, area.y);
@@ -567,7 +613,7 @@ export function drawWaypointPath(
   // Đường dẫn nét đứt mềm mại
   ctx.strokeStyle = designTokens.colors.surface[300];
   ctx.lineWidth = WALL_LINE_PX;
-  ctx.setLineDash([10, 8]);
+  ctx.setLineDash(DASH_10_8);
   ctx.lineCap = "round";
   ctx.beginPath();
   ordered.forEach((w, i) => {
@@ -581,7 +627,7 @@ export function drawWaypointPath(
 
   // Phần đã đồ xong — Honey Amber / Emerald
   if (reachedCount > 1) {
-    ctx.setLineDash([]);
+    ctx.setLineDash(DASH_EMPTY);
     ctx.strokeStyle = designTokens.colors.montessori.amber;
     ctx.beginPath();
     ordered.slice(0, reachedCount).forEach((w, i) => {
@@ -613,12 +659,97 @@ export function drawWaypointPath(
     ctx.fillStyle = done
       ? designTokens.colors.surface[0]
       : designTokens.colors.surface[900];
-    ctx.font = `bold ${waypointFontPx}px ${designTokens.fonts.heading}`;
+    applyCanvasFontAtSize(ctx, waypointFontPx, "heading", "bold");
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(String(i + 1), w.x, w.y);
     ctx.restore();
   });
+}
+
+// ── Khung cân mẫu & Bảng lưới Sudoku (GT-014, GT-015) ───────────────
+
+export function drawReferenceScaleCard(
+  ctx: CanvasRenderingContext2D,
+  box: SceneBox
+): void {
+  const padX = 10;
+  const padY = 6;
+  ctx.save();
+  ctx.fillStyle = alpha(designTokens.colors.montessori.paper, 0.88);
+  ctx.strokeStyle = designTokens.colors.montessori.woodBevel;
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.roundRect(
+    box.x - padX,
+    box.y - padY,
+    box.w + padX * 2,
+    box.h + padY * 2,
+    14
+  );
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+}
+
+export function drawSudokuBoardFrame(
+  ctx: CanvasRenderingContext2D,
+  cellSlots: readonly Slot[],
+  gridSize: 2 | 3 | 4,
+  regions: "row_col" | "row_col_box" = "row_col"
+): void {
+  if (cellSlots.length === 0) {
+    return;
+  }
+  let minX = Number.POSITIVE_INFINITY;
+  let minY = Number.POSITIVE_INFINITY;
+  let maxX = Number.NEGATIVE_INFINITY;
+  let maxY = Number.NEGATIVE_INFINITY;
+  for (const s of cellSlots) {
+    const halfW = s.w / 2;
+    const halfH = s.h / 2;
+    minX = Math.min(minX, s.x - halfW);
+    minY = Math.min(minY, s.y - halfH);
+    maxX = Math.max(maxX, s.x + halfW);
+    maxY = Math.max(maxY, s.y + halfH);
+  }
+  const pad = 12;
+  const bx = minX - pad;
+  const by = minY - pad;
+  const bw = maxX - minX + pad * 2;
+  const bh = maxY - minY + pad * 2;
+
+  ctx.save();
+  ctx.save();
+  ctx.shadowColor = alpha(designTokens.colors.montessori.woodBorder, 0.16);
+  ctx.shadowBlur = 12;
+  ctx.shadowOffsetY = 5;
+  ctx.fillStyle = alpha(designTokens.colors.montessori.paper, 0.92);
+  ctx.beginPath();
+  ctx.roundRect(bx, by, bw, bh, 18);
+  ctx.fill();
+  ctx.restore();
+
+  ctx.strokeStyle = designTokens.colors.montessori.woodBorder;
+  ctx.lineWidth = BOARD_LINE_PX;
+  ctx.beginPath();
+  ctx.roundRect(bx, by, bw, bh, 18);
+  ctx.stroke();
+
+  if (regions === "row_col_box" && gridSize === 4) {
+    const midX = (minX + maxX) / 2;
+    const midY = (minY + maxY) / 2;
+    ctx.strokeStyle = designTokens.colors.montessori.woodBorder;
+    ctx.lineWidth = WALL_LINE_PX;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(midX, by + 6);
+    ctx.lineTo(midX, by + bh - 6);
+    ctx.moveTo(bx + 6, midY);
+    ctx.lineTo(bx + bw - 6, midY);
+    ctx.stroke();
+  }
+  ctx.restore();
 }
 
 // ── Vật thể đặt theo toạ độ của content (GT-022, GT-023, GT-025) ────

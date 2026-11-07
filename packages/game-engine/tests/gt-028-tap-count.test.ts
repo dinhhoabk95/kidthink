@@ -253,5 +253,43 @@ describe("GT-028: Chạm đếm tích luỹ (tap-count)", () => {
       expect(commitWin?.valid).toBe(true);
       expect(session.checkWinCondition()).toBe(true);
     });
+
+    it("supports Montessori 2-Phase explore, Control of Error on under/over count, and Micro-Sandbox after 2 wrong submits", () => {
+      const f = getFixture(0);
+      const session = new GT028Session(f.content, f.difficulty);
+      session.setupEntities();
+      session.startExplorePhase();
+      expect(session.getExploreTracker().getPhase()).toBe("explore");
+
+      // 2 thao tác đếm khám phá tự chuyển sang "challenge"
+      session.commit({ type: "tap_item", data: { item_id: "apple_1" } });
+      expect(session.getExploreTracker().getPhase()).toBe("explore");
+      session.commit({ type: "tap_item", data: { item_id: "apple_2" } });
+      expect(session.getExploreTracker().getPhase()).toBe("challenge");
+
+      // Nộp thiếu lần 1: đang có 4, cần 8
+      session.commit({ type: "submit_count", data: {} });
+      expect(session.getControlOfError()?.reasonVi).toBe(
+        "Đang có 4, còn thiếu 4 để đủ 8"
+      );
+      expect(session.isMicroSandboxActive()).toBe(false);
+
+      // Chạm thêm 3 quả nữa (tổng 5 quả * 2 = 10 > 8) và nộp dư lần 2 -> mở Micro-Sandbox
+      session.commit({ type: "tap_item", data: { item_id: "apple_3" } });
+      session.commit({ type: "tap_item", data: { item_id: "apple_4" } });
+      session.commit({ type: "tap_item", data: { item_id: "apple_5" } });
+      session.commit({ type: "submit_count", data: {} });
+      expect(session.getControlOfError()?.reasonVi).toBe(
+        "Đang có 10, dư 2 so với 8"
+      );
+      expect(session.isMicroSandboxActive()).toBe(true);
+
+      // Bỏ bớt apple_5 để về đúng 8 và nộp -> tắt Micro-Sandbox
+      session.commit({ type: "tap_item", data: { item_id: "apple_5" } });
+      session.commit({ type: "submit_count", data: {} });
+      expect(session.isMicroSandboxActive()).toBe(false);
+      expect(session.getControlOfError()).toBeNull();
+      expect(session.checkWinCondition()).toBe(true);
+    });
   });
 });

@@ -198,4 +198,133 @@ describe("Task P1.6 & #303 — OfflineEventBuffer (BR-OFF-01..06, BR-ING-05, BR-
     buffer.destroy();
     expect(buffer.getPendingEvents()).toHaveLength(0);
   });
+
+  it("drains newly ingested events when flush() is called while another flush is in flight", async () => {
+    const sentBatches: number[][] = [];
+    let notifyFirstBatchStarted: () => void = () => undefined;
+    const firstBatchStarted = new Promise<void>((resolve) => {
+      notifyFirstBatchStarted = resolve;
+    });
+    let releaseFirstBatch: () => void = () => undefined;
+    const firstBatchGate = new Promise<void>((resolve) => {
+      releaseFirstBatch = resolve;
+    });
+
+    const buffer = new OfflineEventBuffer({
+      isGuest: true,
+      sendBatch: async (_sessionUuid, _isGuest, events) => {
+        const seqs = events.map((e) => e.seq);
+        sentBatches.push(seqs);
+        if (sentBatches.length === 1) {
+          notifyFirstBatchStarted();
+          await firstBatchGate;
+        }
+        return { accepted: events.length, skipped: 0 };
+      },
+    });
+
+    buffer.initSession({
+      session_uuid: "concurrent-flush-session",
+      level_code: "GL-C1-CNT-01",
+      content_version: 1,
+      is_guest: true,
+      started_at: Date.now(),
+    });
+
+    buffer.pushEvent("round_started", { round_index: 1 });
+    buffer.pushEvent("answer_correct", { round_index: 1 });
+
+    const firstFlush = buffer.flush();
+    await firstBatchStarted;
+
+    // New event arrives while first flush HTTP request is in flight
+    buffer.pushEvent("round_completed", { round_index: 1 });
+    const secondFlush = buffer.flush();
+
+    releaseFirstBatch();
+    const res = await secondFlush;
+    await firstFlush;
+
+    expect(res.accepted).toBe(3);
+    expect(sentBatches).toEqual([[1, 2], [3]]);
+    expect(buffer.getPendingEvents()).toHaveLength(0);
+    buffer.destroy();
+  });
+
+  it("strips prototype pollution keys and recursively sanitizes nested payload objects", () => {
+    const buffer = new OfflineEventBuffer();
+    buffer.initSession({
+      session_uuid: "proto-session",
+      level_code: "GL-C1-CNT-01",
+      content_version: 1,
+      is_guest: true,
+      started_at: Date.now(),
+    });
+
+    const ev = buffer.pushEvent("malicious_event", {
+      __proto__: { admin: true },
+      constructor: "malicious",
+      prototype: "malicious",
+      nested: {
+        score: 999,
+        display_name: "Hacker",
+        __proto__: { polluted: true },
+        safe: "yes",
+      },
+    });
+
+    expect(ev.payload).toBeDefined();
+    expect(Object.hasOwn(ev.payload ?? {}, "__proto__")).toBe(false);
+    expect(Object.hasOwn(ev.payload ?? {}, "constructor")).toBe(false);
+    expect(Object.hasOwn(ev.payload ?? {}, "prototype")).toBe(false);
+    const nested = ev.payload?.nested as
+      | Record<string, string | number>
+      | undefined;
+    expect(nested?.safe).toBe("yes");
+    expect(nested?.score).toBeUndefined();
+    expect(nested?.display_name).toBeUndefined();
+    buffer.destroy();
+  });
+
+  it("flushBeacon enforces 60KB limit and does not wipe durable storage", async () => {
+    const storage = createInMemoryBufferStorage();
+    const buffer = new OfflineEventBuffer({
+      isGuest: false,
+      storage,
+    });
+    buffer.initSession({
+      session_uuid: "beacon-session",
+      level_code: "GL-C1-CNT-01",
+      content_version: 1,
+      is_guest: false,
+      started_at: Date.now(),
+    });
+
+    buffer.pushEvent("small_event_1", { ok: 1 });
+    buffer.pushEvent("small_event_2", { ok: 2 });
+    await buffer.persistToStorage();
+
+    const sendBeaconSpy = vi.fn().mockReturnValue(true);
+    const originalNavigator = globalThis.navigator;
+    Object.defineProperty(globalThis, "navigator", {
+      value: { sendBeacon: sendBeaconSpy },
+      configurable: true,
+      writable: true,
+    });
+
+    const sent = buffer.flushBeacon();
+    expect(sent).toBe(true);
+    expect(sendBeaconSpy).toHaveBeenCalledTimes(1);
+
+    // Durable storage must NOT be wiped by sendBeacon (sendBeacon only queues)
+    const stored = await storage.load("beacon-session");
+    expect(stored.length).toBe(2);
+
+    Object.defineProperty(globalThis, "navigator", {
+      value: originalNavigator,
+      configurable: true,
+      writable: true,
+    });
+    buffer.destroy();
+  });
 });

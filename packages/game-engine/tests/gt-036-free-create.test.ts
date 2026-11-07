@@ -424,6 +424,28 @@ describe("GT-036 (free-create) TemplateGameSession (BR-E036-01..05)", () => {
     const view = session.getView();
     expect(view.activePrompt).toBe(sampleFixture.content.prompt);
     expect(view.entities.length).toBeGreaterThan(0);
+    const ids = new Set(view.entities.map((e) => e.id));
+    expect(ids.size).toBe(view.entities.length);
+    for (const ent of view.entities) {
+      expect(typeof ent.spokenLabel).toBe("string");
+      expect(ent.spokenLabel?.trim().length).toBeGreaterThan(0);
+      expect(ent.hitShape).toBe("circle");
+    }
+
+    // Near-edge tap within TAP_TOLERANCE_PX on track slot 1
+    const track1Slot = session.slots[1];
+    if (!track1Slot) {
+      throw new Error("track1Slot must exist");
+    }
+    const edgeRadius = Math.min(track1Slot.hitW, track1Slot.hitH) / 2 + 18;
+    const edgeTap = session.dispatch({
+      type: "tap",
+      x: track1Slot.x,
+      y: track1Slot.y - edgeRadius,
+      timeMs: 350,
+    });
+    expect(edgeTap?.valid).toBe(true);
+    expect(session.placedElements[1]).toBe("moon");
   });
 
   it("Scenario 15: handles drop gesture from palette slot onto track slot", () => {

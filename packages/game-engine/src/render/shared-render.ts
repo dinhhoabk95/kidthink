@@ -7,12 +7,22 @@ import type { ZoneRect } from "#src/layout/stage-zones.js";
 import type { Slot } from "#src/layout/types";
 import { designTokens } from "#src/systems/designTokens";
 import type { RenderSystem } from "#src/systems/render-system";
+import {
+  getCachedGradient,
+  getContextGeneration,
+  PRIMITIVE_GRADIENTS,
+  setCachedGradient,
+} from "./cache.js";
 import { alpha } from "./color-utils.js";
 import {
   drawPlaceholderBox,
   drawQuantityRepresentation,
 } from "./numeracy-primitives.js";
-import { drawCheckMark } from "./slot-decor.js";
+import {
+  detectSlotVisualComparisonCue,
+  drawCheckMark,
+  drawSlotVisualComparisonCue,
+} from "./slot-decor.js";
 import {
   canvasFontPx,
   type LogicSpace,
@@ -118,13 +128,30 @@ export function drawTargetHoverAura(
   ctx.save();
   const pulse = 1 + Math.sin(phase * Math.PI * 2) * 0.08;
   const r = radius * pulse;
-  const auraGrad = ctx.createRadialGradient(x, y, r * 0.3, x, y, r * 1.3);
-  auraGrad.addColorStop(0, alpha(designTokens.colors.montessori.amber, 0.45));
-  auraGrad.addColorStop(
-    0.7,
-    alpha(designTokens.colors.montessori.amberLight, 0.2)
+  const slotIndex = Math.round(x) * 100_000 + Math.round(y) * 100;
+  const generation = getContextGeneration(ctx);
+  let auraGrad = getCachedGradient(
+    ctx,
+    generation,
+    PRIMITIVE_GRADIENTS.TARGET_HOVER_AURA,
+    slotIndex
   );
-  auraGrad.addColorStop(1, alpha(designTokens.colors.surface[0], 0));
+  if (!auraGrad) {
+    auraGrad = ctx.createRadialGradient(x, y, r * 0.3, x, y, r * 1.3);
+    auraGrad.addColorStop(0, alpha(designTokens.colors.montessori.amber, 0.45));
+    auraGrad.addColorStop(
+      0.7,
+      alpha(designTokens.colors.montessori.amberLight, 0.2)
+    );
+    auraGrad.addColorStop(1, alpha(designTokens.colors.surface[0], 0));
+    setCachedGradient(
+      ctx,
+      generation,
+      PRIMITIVE_GRADIENTS.TARGET_HOVER_AURA,
+      slotIndex,
+      auraGrad
+    );
+  }
   ctx.fillStyle = auraGrad;
   ctx.beginPath();
   ctx.arc(x, y, r * 1.3, 0, Math.PI * 2);
@@ -198,6 +225,16 @@ function capPromptLines(
   return [...kept, `${chars.join("")}…`];
 }
 
+interface CachedPromptLayout {
+  readonly lines: readonly string[];
+  readonly contentW: number;
+}
+
+const promptWrapCache = new WeakMap<
+  CanvasRenderingContext2D,
+  Map<string, CachedPromptLayout>
+>();
+
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: adaptive multi-line prompt renderer
 export function drawPromptText(
   ctx: CanvasRenderingContext2D,
@@ -227,28 +264,45 @@ export function drawPromptText(
   const maxCardW = Math.min(860, width - 40);
   const maxContentW = maxCardW - 48;
 
-  const singleLineWidth = ctx.measureText(prompt).width;
-  let lines: readonly string[];
-  let contentW: number;
-
-  if (singleLineWidth <= maxContentW) {
-    lines = [prompt];
-    contentW = singleLineWidth;
-  } else {
-    lines = capPromptLines(
-      ctx,
-      wrapPromptText(ctx, prompt, maxContentW),
-      maxContentW
-    );
-    let maxW = 0;
-    for (const line of lines) {
-      const w = ctx.measureText(line).width;
-      if (w > maxW) {
-        maxW = w;
-      }
-    }
-    contentW = maxW;
+  let ctxCache = promptWrapCache.get(ctx);
+  if (!ctxCache) {
+    ctxCache = new Map<string, CachedPromptLayout>();
+    promptWrapCache.set(ctx, ctxCache);
   }
+  const cacheKey = `${fontPx}|${maxContentW}|${prompt}`;
+  let cachedLayout = ctxCache.get(cacheKey);
+
+  if (!cachedLayout) {
+    const singleLineWidth = ctx.measureText(prompt).width;
+    let lines: readonly string[];
+    let contentW: number;
+
+    if (singleLineWidth <= maxContentW) {
+      lines = [prompt];
+      contentW = singleLineWidth;
+    } else {
+      lines = capPromptLines(
+        ctx,
+        wrapPromptText(ctx, prompt, maxContentW),
+        maxContentW
+      );
+      let maxW = 0;
+      for (const line of lines) {
+        const w = ctx.measureText(line).width;
+        if (w > maxW) {
+          maxW = w;
+        }
+      }
+      contentW = maxW;
+    }
+    cachedLayout = { lines, contentW };
+    if (ctxCache.size > 256) {
+      ctxCache.clear();
+    }
+    ctxCache.set(cacheKey, cachedLayout);
+  }
+
+  const { lines, contentW } = cachedLayout;
 
   const cardW = Math.max(280, Math.min(maxCardW, contentW + 48));
   const lineHeight = Math.round(fontPx * 1.35);
@@ -428,23 +482,12 @@ export function getWoodenTokenDockRect(
   space: LogicSpace,
   stage?: ZoneRect
 ): ZoneRect {
-  if (stage) {
-    const dockH = Math.min(130, Math.floor(stage.h * 0.42));
-    const dockW = stage.w * 0.9;
-    const dockX = stage.x + (stage.w - dockW) / 2;
-    const dockY = stage.y + stage.h - dockH - 6;
-    return {
-      x: Math.round(dockX),
-      y: Math.round(dockY),
-      w: Math.round(dockW),
-      h: Math.round(dockH),
-    };
-  }
-  // Toạ độ cũ cho session chưa nhận `zones.tray`: cao đúng khay chung, sát đáy.
-  const dockW = space.w * 0.9;
-  const dockH = TRAY_ZONE_H_PX;
-  const dockX = (space.w - dockW) / 2;
-  const dockY = space.h - dockH - 12;
+  const dockW = (stage ? stage.w : space.w) * 0.9;
+  const dockH = stage
+    ? Math.min(130, Math.floor(stage.h * 0.42))
+    : TRAY_ZONE_H_PX;
+  const dockX = stage ? stage.x + (stage.w - dockW) / 2 : (space.w - dockW) / 2;
+  const dockY = stage ? stage.y + stage.h - dockH - 6 : space.h - dockH - 12;
   return {
     x: Math.round(dockX),
     y: Math.round(dockY),
@@ -578,7 +621,8 @@ export function drawSubPromptText(
 export function drawAssetInSlot(
   ctx: CanvasRenderingContext2D,
   asset: RenderAsset | null | undefined,
-  slot: Slot
+  slot: Slot,
+  glyphScale = 1
 ): boolean {
   if (!asset) {
     return false;
@@ -598,12 +642,71 @@ export function drawAssetInSlot(
     drawPlaceholderBox(ctx, slot);
     return true;
   }
-  drawGlyphInSlot(ctx, glyph, slot);
+  drawGlyphInSlot(ctx, glyph, slot, glyphScale);
   return true;
 }
 
 /** Mã tham chiếu emoji, ví dụ `🍎`. */
 const EMOJI_CODE_REGEX = /^EMJ-[a-z0-9-]+$/i;
+
+const graphemePartsCache = new Map<string, readonly string[]>();
+
+function getGraphemeParts(drawable: string): readonly string[] {
+  const cached = graphemePartsCache.get(drawable);
+  if (cached !== undefined) {
+    return cached;
+  }
+  const parts =
+    drawable.length <= 2
+      ? [drawable]
+      : graphemes(drawable).filter((p) => p.trim().length > 0);
+  if (graphemePartsCache.size > 4096) {
+    graphemePartsCache.clear();
+  }
+  graphemePartsCache.set(drawable, parts);
+  return parts;
+}
+
+function resolveMultiGlyphCols(count: number): number {
+  if (count <= 2) {
+    return count;
+  }
+  if (count <= 4) {
+    return 2;
+  }
+  if (count <= 6) {
+    return 3;
+  }
+  return 4;
+}
+
+function drawMultiGlyphClusterInSlot(
+  ctx: CanvasRenderingContext2D,
+  parts: readonly string[],
+  slot: Slot
+): void {
+  const count = parts.length;
+  const cols = resolveMultiGlyphCols(count);
+  const rows = Math.ceil(count / cols);
+  const cellW = (slot.w * 0.72) / cols;
+  const cellH = (slot.h * 0.72) / rows;
+  const itemSize = Math.max(14, Math.floor(Math.min(cellW, cellH) * 0.86));
+  ctx.font = `${itemSize}px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", ${designTokens.fonts.sans}`;
+  const totalH = (rows - 1) * cellH;
+  const startY = slot.y - totalH / 2;
+  for (let r = 0; r < rows; r++) {
+    const rowStart = r * cols;
+    const rowCount = Math.min(cols, count - rowStart);
+    const totalW = (rowCount - 1) * cellW;
+    const startX = slot.x - totalW / 2;
+    for (let c = 0; c < rowCount; c++) {
+      const g = parts[rowStart + c];
+      if (g) {
+        ctx.fillText(g, startX + c * cellW, startY + r * cellH);
+      }
+    }
+  }
+}
 
 /**
  * Vẽ một glyph vào ô.
@@ -617,7 +720,8 @@ const EMOJI_CODE_REGEX = /^EMJ-[a-z0-9-]+$/i;
 export function drawGlyphInSlot(
   ctx: CanvasRenderingContext2D,
   glyph: string,
-  slot: Slot
+  slot: Slot,
+  glyphScale = 1
 ): void {
   let drawable = glyph;
   if (EMOJI_CODE_REGEX.test(drawable)) {
@@ -631,11 +735,20 @@ export function drawGlyphInSlot(
     }
     drawable = resolved;
   }
-  const size = Math.floor(Math.min(slot.w, slot.h) * GLYPH_FILL_RATIO);
+  const parts = getGraphemeParts(drawable);
   ctx.save();
-  ctx.font = `${size}px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", ${designTokens.fonts.sans}`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
+  if (parts.length > 1 && parts.length <= 12) {
+    drawMultiGlyphClusterInSlot(ctx, parts, slot);
+    ctx.restore();
+    return;
+  }
+  const size = Math.max(
+    14,
+    Math.floor(Math.min(slot.w, slot.h) * GLYPH_FILL_RATIO * glyphScale)
+  );
+  ctx.font = `${size}px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", ${designTokens.fonts.sans}`;
   ctx.fillText(drawable, slot.x, slot.y);
   ctx.restore();
 }
@@ -693,6 +806,21 @@ export function drawSlotLabel(
   ctx.restore();
 }
 
+function drawSlotAssetOrPlaceholder(
+  ctx: CanvasRenderingContext2D,
+  slot: Slot,
+  item: RenderItem
+): void {
+  const emojiRef = item.asset?.kind === "emoji" ? item.asset.ref : undefined;
+  const cue = detectSlotVisualComparisonCue(item.label, item.id, emojiRef);
+  if (cue) {
+    drawSlotVisualComparisonCue(ctx, slot, cue);
+  }
+  if (!drawAssetInSlot(ctx, item.asset, slot, cue?.glyphScale ?? 1)) {
+    drawPlaceholderBox(ctx, slot);
+  }
+}
+
 /**
  * Một vật thể hoàn chỉnh trong một slot: thân clay, nội dung, nhãn, dấu đúng.
  *
@@ -718,10 +846,10 @@ export function drawSlotItem(
     : false;
 
   if (!drawnAsRepresentation) {
-    if (item.text !== undefined) {
+    if (item.text === undefined) {
+      drawSlotAssetOrPlaceholder(ctx, slot, item);
+    } else {
       drawTextInSlot(ctx, item.text, slot);
-    } else if (!drawAssetInSlot(ctx, item.asset, slot)) {
-      drawPlaceholderBox(ctx, slot);
     }
   }
 

@@ -16,7 +16,9 @@ const sessionCache = new Map<string, GameSessionConstructor>();
  * Dynamic lazy loader for GameSession classes by template code (BR-TAK-08).
  * Ensures play surfaces only download the code for the active game template.
  */
-export async function loadGameSession(templateCode: string): Promise<GameSessionConstructor> {
+export async function loadGameSession(
+  templateCode: string
+): Promise<GameSessionConstructor> {
   switch (templateCode) {
     case "GT-000": {
       const mod = await import("#src/templates/GT-000/session.js");
@@ -189,10 +191,15 @@ export async function preloadGameSession(templateCode: string): Promise<void> {
 /**
  * Synchronous session creator using preloaded session classes.
  */
-export function createGameSessionSync(templateCode: string, cfg: EngineConfig): GameSession {
+export function createGameSessionSync(
+  templateCode: string,
+  cfg: EngineConfig
+): GameSession {
   const SessionClass = sessionCache.get(templateCode);
   if (!SessionClass) {
-    throw new Error(`TEMPLATE_NOT_LOADED: Template ${templateCode} must be preloaded before synchronous creation`);
+    throw new Error(
+      `TEMPLATE_NOT_LOADED: Template ${templateCode} must be preloaded before synchronous creation`
+    );
   }
   return Reflect.construct(SessionClass, [
     cfg.content_pack,

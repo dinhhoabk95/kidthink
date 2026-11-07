@@ -84,6 +84,7 @@ const PRIMITIVE_MODULES: readonly string[] = [
   "render/container-shapes.ts",
   "render/number-line.ts",
   "render/bead-rods.ts",
+  "render/montessori-feedback.ts",
 ];
 
 function checkSessionDrawLines(

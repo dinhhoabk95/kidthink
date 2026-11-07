@@ -373,6 +373,23 @@ describe("GT-035 Xếp hàng lệnh (command-sequence) Contract & Session Tests"
     const view = session.getView();
     expect(view.activePrompt).toBe(sampleFixture.content.prompt);
     expect(view.entities.length).toBeGreaterThan(0);
+    const ids = new Set(view.entities.map((e) => e.id));
+    expect(ids.size).toBe(view.entities.length);
+    for (const ent of view.entities) {
+      expect(typeof ent.spokenLabel).toBe("string");
+      expect(ent.spokenLabel?.trim().length).toBeGreaterThan(0);
+      expect(ent.hitShape).toBe("circle");
+    }
+
+    // Near-edge tap within TAP_TOLERANCE_PX on palette slot
+    const edgeRadius = Math.min(pal0Slot.hitW, pal0Slot.hitH) / 2 + 18;
+    const edgeTap = session.dispatch({
+      type: "tap",
+      x: pal0Slot.x + edgeRadius,
+      y: pal0Slot.y,
+      timeMs: 250,
+    });
+    expect(edgeTap?.valid).toBe(true);
   });
 
   it("Scenario 14: handles drop gesture from palette into command queue and locks editing while executing (BR-E035-07)", () => {

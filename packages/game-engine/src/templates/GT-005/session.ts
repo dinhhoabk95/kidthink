@@ -5,6 +5,8 @@ import {
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
+import { resolveAssetLabels } from "#src/labels/spoken-keyword";
+import { TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { PairingMechanic } from "#src/mechanics/pairing-mechanic";
@@ -80,10 +82,14 @@ export class GT005Session extends TemplateGameSession<
   displayLeft: readonly LeftItem[] = [];
   displayRight: readonly RightItem[] = [];
   private readonly mechanic = new PairingMechanic();
+  private wrongPairIds: readonly [string, string] | null = null;
+  private wrongPairTimerMs = 0;
 
   setupEntities(): void {
     this.mechanic.reset();
     this.isWon = false;
+    this.wrongPairIds = null;
+    this.wrongPairTimerMs = 0;
 
     const lefts = this.content.pairs.map((p) => p.left);
     const rights = this.content.pairs.map((p) => p.right);
@@ -161,6 +167,15 @@ export class GT005Session extends TemplateGameSession<
     return this.mechanic.getMatchedPairs();
   }
 
+  update(deltaMs: number): void {
+    if (this.wrongPairTimerMs > 0) {
+      this.wrongPairTimerMs = Math.max(0, this.wrongPairTimerMs - deltaMs);
+      if (this.wrongPairTimerMs === 0) {
+        this.wrongPairIds = null;
+      }
+    }
+  }
+
   getStagedLeftId(): string | null {
     return this.mechanic.getStagedLeftId();
   }
@@ -168,16 +183,17 @@ export class GT005Session extends TemplateGameSession<
   private toItemEntityState(
     isMatched: boolean,
     isStaged: boolean,
+    isWrong: boolean,
     rawState: ItemVisualState
   ): ViewEntity["state"] {
     if (isMatched || rawState === "correct") {
       return "correct";
     }
+    if (isWrong || rawState === "wrong") {
+      return "incorrect";
+    }
     if (isStaged || rawState === "selected") {
       return "selected";
-    }
-    if (rawState === "wrong") {
-      return "incorrect";
     }
     return "idle";
   }
@@ -193,25 +209,34 @@ export class GT005Session extends TemplateGameSession<
       }
       const isMatched = this.mechanic.isLeftMatched(item.item_id);
       const isStaged = item.item_id === stagedLeftId;
+      const isWrong = Boolean(
+        this.wrongPairTimerMs > 0 &&
+          this.wrongPairIds &&
+          this.wrongPairIds.includes(item.item_id)
+      );
       result.push({
         id: item.item_id,
         slotIndex: this.slots.indexOf(slot),
         role: "source",
+        hitShape: "square",
         state: this.toItemEntityState(
           isMatched,
           isStaged,
+          isWrong,
           this.getRenderItemState(item.item_id)
         ),
         x: slot.x,
         y: slot.y,
         w: slot.w,
         h: slot.h,
+        ...resolveAssetLabels(item.asset),
       });
     }
     return result;
   }
 
   private buildTargetEntities(targets: readonly Slot[]): ViewEntity[] {
+    const leftIds = new Set(this.displayLeft.map((item) => item.item_id));
     const result: ViewEntity[] = [];
     for (let i = 0; i < this.displayRight.length; i++) {
       const item = this.displayRight[i];
@@ -220,19 +245,30 @@ export class GT005Session extends TemplateGameSession<
         continue;
       }
       const isMatched = this.mechanic.isRightMatched(item.item_id);
+      const isWrong = Boolean(
+        this.wrongPairTimerMs > 0 &&
+          this.wrongPairIds &&
+          this.wrongPairIds.includes(item.item_id)
+      );
+      const entityId = leftIds.has(item.item_id)
+        ? `right:${item.item_id}`
+        : item.item_id;
       result.push({
-        id: item.item_id,
+        id: entityId,
         slotIndex: this.slots.indexOf(slot),
         role: "target",
+        hitShape: "square",
         state: this.toItemEntityState(
           isMatched,
           false,
+          isWrong,
           this.getRenderItemState(item.item_id)
         ),
         x: slot.x,
         y: slot.y,
         w: slot.w,
         h: slot.h,
+        ...resolveAssetLabels(item.asset),
       });
     }
     return result;
@@ -277,7 +313,13 @@ export class GT005Session extends TemplateGameSession<
       this.displayRight.map((item) =>
         this.mechanic.isRightMatched(item.item_id)
       ),
-      { x, y, hitTolerance, minW: TARGET_MIN_HIT_W, minH: TARGET_MIN_HIT_H }
+      {
+        x,
+        y,
+        hitTolerance,
+        minW: this.stageRect ? 0 : TARGET_MIN_HIT_W,
+        minH: this.stageRect ? 0 : TARGET_MIN_HIT_H,
+      }
     );
     return this.displayRight[idx] ?? null;
   }
@@ -294,25 +336,49 @@ export class GT005Session extends TemplateGameSession<
       sources,
       hitTolerance
     );
-    if (!draggedLeft) {
-      return null;
+    if (draggedLeft) {
+      const targetRight = this.findRightAt(
+        gesture.toX,
+        gesture.toY,
+        targets,
+        hitTolerance
+      );
+      if (!targetRight) {
+        return null;
+      }
+      return {
+        type: "match_pair",
+        data: {
+          left_item_id: draggedLeft.item_id,
+          right_item_id: targetRight.item_id,
+        },
+      };
     }
 
-    const targetRight = this.findRightAt(
-      gesture.toX,
-      gesture.toY,
+    const draggedRight = this.findRightAt(
+      gesture.fromX,
+      gesture.fromY,
       targets,
       hitTolerance
     );
-    if (!targetRight) {
+    if (!draggedRight) {
+      return null;
+    }
+    const targetLeft = this.findLeftAt(
+      gesture.toX,
+      gesture.toY,
+      sources,
+      hitTolerance
+    );
+    if (!targetLeft) {
       return null;
     }
 
     return {
       type: "match_pair",
       data: {
-        left_item_id: draggedLeft.item_id,
-        right_item_id: targetRight.item_id,
+        left_item_id: targetLeft.item_id,
+        right_item_id: draggedRight.item_id,
       },
     };
   }
@@ -368,7 +434,7 @@ export class GT005Session extends TemplateGameSession<
   }
 
   override toAction(gesture: Gesture): GameAction | null {
-    const hitTolerance = 24;
+    const hitTolerance = TAP_TOLERANCE_PX;
     const sources = this.sourceSlots;
     const targets = this.targetSlots;
 
@@ -406,7 +472,15 @@ export class GT005Session extends TemplateGameSession<
         right_item_id?: string;
       };
       if (data.left_item_id && data.right_item_id) {
-        this.onPairMatched(data.left_item_id, data.right_item_id);
+        const pair = this.findPair(data.left_item_id, data.right_item_id);
+        if (pair) {
+          this.onPairMatched(data.left_item_id, data.right_item_id);
+          this.wrongPairIds = null;
+          this.wrongPairTimerMs = 0;
+        } else {
+          this.wrongPairIds = [data.left_item_id, data.right_item_id];
+          this.wrongPairTimerMs = 350;
+        }
         this.mechanic.stageLeft(null);
       }
     }
@@ -429,9 +503,16 @@ export class GT005Session extends TemplateGameSession<
         return;
       }
       const isMatched = this.mechanic.isLeftMatched(item.item_id);
+      const isWrong = Boolean(
+        this.wrongPairTimerMs > 0 &&
+          this.wrongPairIds &&
+          this.wrongPairIds.includes(item.item_id)
+      );
       let state = this.getRenderItemState(item.item_id);
       if (isMatched) {
         state = "correct";
+      } else if (isWrong) {
+        state = "wrong";
       } else if (item.item_id === stagedLeftId) {
         state = "selected";
       }
@@ -447,9 +528,18 @@ export class GT005Session extends TemplateGameSession<
       if (!slot) {
         return;
       }
-      const state = this.mechanic.isRightMatched(item.item_id)
-        ? "correct"
-        : this.getRenderItemState(item.item_id);
+      const isMatched = this.mechanic.isRightMatched(item.item_id);
+      const isWrong = Boolean(
+        this.wrongPairTimerMs > 0 &&
+          this.wrongPairIds &&
+          this.wrongPairIds.includes(item.item_id)
+      );
+      let state = this.getRenderItemState(item.item_id);
+      if (isMatched) {
+        state = "correct";
+      } else if (isWrong) {
+        state = "wrong";
+      }
       drawSlotItem(ctx, rs, slot, {
         id: item.item_id,
         asset: item.asset,

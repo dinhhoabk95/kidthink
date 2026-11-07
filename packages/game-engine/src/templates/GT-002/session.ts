@@ -37,6 +37,7 @@ export class GT002Session extends TemplateGameSession<
   private readonly mechanic = new SelectionMechanic({ mode: "multi" });
   degradation: DegradationState | null = null;
   private particles: Particle[] = [];
+  private wrongFlashMs = 0;
 
   /** Nút Xong ở `zones.action` (`BR-PSZ-05`); chỉ sáng khi đã chọn ít nhất một vật. */
   override readonly needsCommit = true;
@@ -46,6 +47,7 @@ export class GT002Session extends TemplateGameSession<
     this.mechanic.reset();
     this.isWon = false;
     this.particles = [];
+    this.wrongFlashMs = 0;
     const rng = deriveStream(this.layoutSeed, "items");
     this.displayItems = shuffle(this.content.items, rng);
   }
@@ -70,6 +72,12 @@ export class GT002Session extends TemplateGameSession<
 
   private hasSelection(): boolean {
     return this.mechanic.getSelectedIds().length > 0;
+  }
+
+  update(deltaMs: number): void {
+    if (this.wrongFlashMs > 0) {
+      this.wrongFlashMs = Math.max(0, this.wrongFlashMs - deltaMs);
+    }
   }
 
   getItemState(itemId: string): ItemVisualState {
@@ -105,12 +113,12 @@ export class GT002Session extends TemplateGameSession<
   }
 
   onSubmitSelection(): void {
-    const { valid } = this.validateAction({
+    const result = this.validateAction({
       type: "submit_selection",
       data: {},
     });
-    this.recordEvent("selection_submitted", { is_correct: valid });
-    if (valid) {
+    this.recordEvent("selection_submitted", { is_correct: result.valid });
+    if (result.valid) {
       for (const item of this.displayItems) {
         if (item.is_correct) {
           const idx = this.displayItems.indexOf(item);
@@ -121,6 +129,8 @@ export class GT002Session extends TemplateGameSession<
         }
       }
       this.winSession();
+    } else {
+      this.wrongFlashMs = 350;
     }
   }
 
@@ -210,7 +220,13 @@ export class GT002Session extends TemplateGameSession<
       typeof action.data === "object" &&
       "item_id" in action.data
     ) {
-      const itemId = String((action.data as { item_id: unknown }).item_id);
+      const itemId = String(
+        (
+          action.data as {
+            item_id: string | number | boolean | null | undefined;
+          }
+        ).item_id
+      );
       this.toggleItemSelection(itemId);
     } else if (action.type === "submit_selection") {
       this.onSubmitSelection();
@@ -241,6 +257,10 @@ export class GT002Session extends TemplateGameSession<
       }
       const state = this.getItemState(item.item_id);
       const isSelected = state === "selected" || state === "correct";
+      const renderState: ItemVisualState =
+        this.wrongFlashMs > 0 && this.mechanic.isSelected(item.item_id)
+          ? "wrong"
+          : state;
       drawWoodenPlate(ctx, slot, isSelected);
       drawSlotItem(
         ctx,
@@ -249,7 +269,7 @@ export class GT002Session extends TemplateGameSession<
         {
           id: item.item_id,
           asset: item.asset,
-          state,
+          state: renderState,
         },
         "circle"
       );

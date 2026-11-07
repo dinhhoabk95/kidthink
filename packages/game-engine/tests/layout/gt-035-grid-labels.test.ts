@@ -18,7 +18,17 @@ const FRAMES = [
   { name: "điện thoại ngang 610x350", w: 610, h: 350 },
   { name: "máy tính 964x628", w: 964, h: 628 },
 ] as const;
-const GRID_LABELS = new Set(["RIGHT", "LEFT", "UP", "DOWN", "ĐÍCH"]);
+const GRID_LABELS = new Set([
+  "RIGHT",
+  "LEFT",
+  "UP",
+  "DOWN",
+  "ĐÍCH",
+  "↑",
+  "→",
+  "↓",
+  "←",
+]);
 const LABEL_TEXT_PX = 14;
 
 interface LabelCall {

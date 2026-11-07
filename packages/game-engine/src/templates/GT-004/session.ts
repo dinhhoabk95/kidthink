@@ -1,11 +1,14 @@
 import type { AgeBand } from "#src/contracts/types";
 import {
+  ACTION_IGNORED,
   type ActionResult,
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
+import { resolveAssetLabels } from "#src/labels/spoken-keyword.js";
 import { resolveTouchFloor } from "#src/layout/constants";
+import { TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
 import { computeStageCellSlots } from "#src/layout/stage-targets";
 import {
@@ -41,6 +44,9 @@ const BUCKET_MAX_H_PX = 140;
 /** Vùng chạm tối thiểu của rổ ở bố cục cũ — rộng hơn thân rổ vẽ. */
 const LEGACY_BUCKET_HIT: MinHitSize = { w: 140, h: 100 };
 
+/** Nhịp hổ phách tạm thời khi phân loại nhầm rổ — tự tắt sau 260ms. */
+const WRONG_FEEDBACK_MS = 260;
+
 export class GT004Session extends TemplateGameSession<
   GT004Content,
   GT004Difficulty
@@ -48,7 +54,13 @@ export class GT004Session extends TemplateGameSession<
   degradation: DegradationState | null = null;
 
   displayItems: readonly SortItem[] = [];
+  private placementTargets: readonly {
+    id: string;
+    targetId: string;
+    isCorrect: boolean;
+  }[] = [];
   private readonly mechanic = new PlacementMechanic();
+  private readonly transientStateMs: Map<string, number> = new Map();
 
   /** Vật nằm trong khay, rổ đứng trên sân khấu (`BR-PSZ-01`). */
   override readonly needsTray = true;
@@ -61,7 +73,14 @@ export class GT004Session extends TemplateGameSession<
 
   setupEntities(): void {
     this.mechanic.reset();
+    this.renderItemStates.clear();
+    this.transientStateMs.clear();
     this.isWon = false;
+    this.placementTargets = this.content.items.map((i) => ({
+      id: i.item_id,
+      targetId: i.correct_group_id,
+      isCorrect: true,
+    }));
     if (this.difficulty.shuffle_items === false) {
       this.displayItems = [...this.content.items];
     } else {
@@ -75,6 +94,16 @@ export class GT004Session extends TemplateGameSession<
   }
 
   validateAction(action: GameAction): ActionResult {
+    if (
+      action.type === "sort_item" &&
+      action.data &&
+      typeof action.data === "object"
+    ) {
+      const itemId = (action.data as { item_id?: string }).item_id;
+      if (itemId && this.mechanic.getPlacements().has(itemId)) {
+        return ACTION_IGNORED;
+      }
+    }
     const items = this.content.items.map((i) => ({
       id: i.item_id,
       targetId: i.correct_group_id,
@@ -87,7 +116,7 @@ export class GT004Session extends TemplateGameSession<
 
   onItemSorted(itemId: string, groupId: string): void {
     const item = this.findItem(itemId);
-    if (!item) {
+    if (!item || this.mechanic.getPlacements().has(itemId)) {
       return;
     }
 
@@ -100,19 +129,36 @@ export class GT004Session extends TemplateGameSession<
 
     if (isCorrect) {
       this.mechanic.place(itemId, groupId);
+      this.renderItemStates.set(itemId, "correct");
+      this.transientStateMs.delete(itemId);
       if (this.checkWinCondition()) {
         this.winSession();
+      }
+    } else {
+      this.renderItemStates.set(itemId, "wrong");
+      this.transientStateMs.set(itemId, WRONG_FEEDBACK_MS);
+    }
+  }
+
+  update(deltaMs: number): void {
+    if (this.transientStateMs.size === 0) {
+      return;
+    }
+    for (const [itemId, remaining] of this.transientStateMs) {
+      const next = remaining - deltaMs;
+      if (next <= 0) {
+        this.transientStateMs.delete(itemId);
+        if (this.renderItemStates.get(itemId) === "wrong") {
+          this.renderItemStates.delete(itemId);
+        }
+      } else {
+        this.transientStateMs.set(itemId, next);
       }
     }
   }
 
   override checkWinCondition(): boolean {
-    const items = this.content.items.map((i) => ({
-      id: i.item_id,
-      targetId: i.correct_group_id,
-      isCorrect: true,
-    }));
-    return this.mechanic.isPlacementComplete(items);
+    return this.mechanic.isPlacementComplete(this.placementTargets);
   }
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
@@ -161,20 +207,26 @@ export class GT004Session extends TemplateGameSession<
     return this.content.groups[index] ?? null;
   }
 
-  /** Vật đúng chỗ chạm, gần tâm nhất — khay hẹp làm vùng chạm kề nhau chồng lên. */
+  /** Vật chưa phân loại đúng chỗ chạm, gần tâm nhất — khay hẹp làm vùng chạm kề nhau chồng lên. */
   private findHitItem(
     x: number,
     y: number,
     sources: readonly Slot[],
     hitTolerance: number
   ): SortItem | null {
-    const index = findNearestHitSlot(
-      sources.slice(0, this.displayItems.length),
-      x,
-      y,
-      hitTolerance
-    );
-    return this.displayItems[index] ?? null;
+    const placements = this.mechanic.getPlacements();
+    const looseItems: SortItem[] = [];
+    const looseSlots: Slot[] = [];
+    for (let i = 0; i < this.displayItems.length; i++) {
+      const item = this.displayItems[i];
+      const slot = sources[i];
+      if (item && slot && !placements.has(item.item_id)) {
+        looseItems.push(item);
+        looseSlots.push(slot);
+      }
+    }
+    const index = findNearestHitSlot(looseSlots, x, y, hitTolerance);
+    return looseItems[index] ?? null;
   }
 
   private toItemEntityState(
@@ -216,6 +268,7 @@ export class GT004Session extends TemplateGameSession<
         y: slot.y,
         w: slot.w,
         h: slot.h,
+        ...resolveAssetLabels(item.asset),
       });
     }
     return result;
@@ -238,6 +291,10 @@ export class GT004Session extends TemplateGameSession<
         y: slot.y,
         w: slot.w,
         h: slot.h,
+        hitShape: "square",
+        label: group.label,
+        spokenLabel: group.label,
+        glyph: group.label_emoji,
       });
     }
     return result;
@@ -341,15 +398,14 @@ export class GT004Session extends TemplateGameSession<
   }
 
   override toAction(gesture: Gesture): GameAction | null {
-    const hitTolerance = 24;
     const sources = this.sourceSlots;
     const targets = this.targetSlots;
 
     if (gesture.type === "drop") {
-      return this.toDropAction(gesture, sources, targets, hitTolerance);
+      return this.toDropAction(gesture, sources, targets, TAP_TOLERANCE_PX);
     }
     if (gesture.type === "tap") {
-      return this.toTapAction(gesture, sources, targets, hitTolerance);
+      return this.toTapAction(gesture, sources, targets, TAP_TOLERANCE_PX);
     }
     return null;
   }
@@ -407,9 +463,58 @@ export class GT004Session extends TemplateGameSession<
           ? designTokens.colors.montessori.coral
           : designTokens.colors.montessori.amber;
       drawBasketSlot(ctx, slot, group.label, rimColor);
-      drawGlyphInSlot(ctx, group.label_emoji, slot);
+
+      const placedItems = this.displayItems.filter(
+        (item) => placements.get(item.item_id) === group.group_id
+      );
+
+      if (placedItems.length === 0) {
+        drawGlyphInSlot(ctx, group.label_emoji, {
+          ...slot,
+          y: slot.y + slot.h * 0.14,
+          w: slot.w * 0.72,
+          h: slot.h * 0.72,
+        });
+      } else {
+        const badgeSlot: Slot = {
+          ...slot,
+          y: slot.y + slot.h * 0.18,
+        };
+        drawGlyphInSlot(ctx, group.label_emoji, badgeSlot);
+
+        const count = placedItems.length;
+        const innerW = slot.w * 0.72;
+        const chipR = Math.min(20, Math.max(12, innerW / (count * 2.2)));
+        const spacing = Math.min(innerW / count, chipR * 2.4);
+        const startX = slot.x - ((count - 1) * spacing) / 2;
+        const chipY = slot.y - slot.h * 0.12;
+
+        for (let j = 0; j < count; j++) {
+          const pItem = placedItems[j];
+          if (!pItem) {
+            continue;
+          }
+          const chipX = startX + j * spacing;
+          const chipSlot: Slot = {
+            ...slot,
+            role: "target",
+            x: chipX,
+            y: chipY,
+            w: chipR * 2,
+            h: chipR * 2,
+            hitW: chipR * 2,
+            hitH: chipR * 2,
+          };
+          drawSlotItem(ctx, rs, chipSlot, {
+            id: pItem.item_id,
+            asset: pItem.asset,
+            state: "correct",
+          });
+        }
+      }
     });
 
+    const stagedId = this.mechanic.getStagedItemId();
     this.displayItems.forEach((item, i) => {
       const slot = sources[i];
       if (!slot) {
@@ -420,10 +525,14 @@ export class GT004Session extends TemplateGameSession<
         drawEmptyTargetSlot(ctx, slot);
         return;
       }
+      const rawState = this.getRenderItemState(item.item_id);
       drawSlotItem(ctx, rs, slot, {
         id: item.item_id,
         asset: item.asset,
-        state: this.getRenderItemState(item.item_id),
+        state:
+          stagedId === item.item_id && rawState === "idle"
+            ? "selected"
+            : rawState,
       });
     });
   }

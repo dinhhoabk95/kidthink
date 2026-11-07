@@ -1,13 +1,11 @@
 /**
  * Rule System — quản lý chuyển đổi luật (rule switching) cho bài tập linh hoạt nhận thức (C6.FLX).
- * Spec: docs/specs/01-platform/engines/GT-027.md (BR-TGB-07, BR-TGB-10 ở GT-026.md) · docs/specs/01-platform/engine-spec-sheet.md (BR-TGB-08)
- * Business rules: BR-TGB-07, BR-TGB-08, BR-TGB-10
  *
- * System này độc lập với khuôn (BR-TGB-08).
- * Bắt buộc báo đổi luật bằng âm thanh và hình ảnh (BR-TGB-07).
+ * System này độc lập với khuôn.
+ * Bắt buộc báo đổi luật bằng âm thanh và hình ảnh.
  */
 
-export interface RuleDefinition<TItem = unknown> {
+export interface RuleDefinition<TItem = string> {
   readonly id: string;
   readonly name: string;
   readonly description: string;
@@ -16,13 +14,13 @@ export interface RuleDefinition<TItem = unknown> {
   readonly validator: (item: TItem) => boolean;
 }
 
-interface RuleSystemConfig<TItem = unknown> {
+interface RuleSystemConfig<TItem = string> {
   readonly rules: readonly RuleDefinition<TItem>[];
   readonly switchAfterTrials: number;
   readonly signalDurationMs?: number;
 }
 
-export class RuleSystem<TItem = unknown> {
+export class RuleSystem<TItem = string> {
   private readonly rules: readonly RuleDefinition<TItem>[];
   private readonly switchAfterTrials: number;
   private readonly signalDurationMs: number;

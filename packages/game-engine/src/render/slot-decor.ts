@@ -3,7 +3,12 @@ import type { Slot } from "#src/layout/types";
 import { designTokens } from "#src/systems/designTokens";
 import type { RenderSystem } from "#src/systems/render-system";
 import { alpha } from "./color-utils.js";
-import { canvasFontPx, type LogicSpace, spaceOf } from "./type-scale.js";
+import {
+  applyCanvasFontAtSize,
+  canvasFontPx,
+  type LogicSpace,
+  spaceOf,
+} from "./type-scale.js";
 
 export function drawCheckMark(ctx: CanvasRenderingContext2D, slot: Slot): void {
   const r = Math.min(slot.w, slot.h) / 2;
@@ -119,7 +124,7 @@ export function drawLabelText(
 ): void {
   ctx.save();
   ctx.fillStyle = color;
-  ctx.font = `${fontSize}px ${designTokens.fonts.sans}`;
+  applyCanvasFontAtSize(ctx, fontSize, "sans");
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText(text, x, y);
@@ -143,7 +148,7 @@ export function drawCounterBadge(
   ctx.arc(x, y, badgeRadius, 0, Math.PI * 2);
   ctx.fill();
   ctx.fillStyle = designTokens.colors.surface[0];
-  ctx.font = `bold ${fontPx}px ${designTokens.fonts.sans}`;
+  applyCanvasFontAtSize(ctx, fontPx, "sans", "bold");
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText(`${current}/${total}`, x, y);
@@ -211,5 +216,346 @@ export function drawGridCell(
   ctx.strokeStyle = border;
   ctx.lineWidth = 3;
   ctx.strokeRect(rx, ry, slot.hitW, slot.hitH);
+  ctx.restore();
+}
+
+/** Vẽ thẻ manh mối bo góc theo đúng kích thước ngang/dọc của slot (GT-009). */
+export function drawClueBannerSlot(
+  ctx: CanvasRenderingContext2D,
+  slot: Slot,
+  fill: string,
+  border: string
+): void {
+  const rx = slot.x - slot.w / 2;
+  const ry = slot.y - slot.h / 2;
+  const radius = Math.min(16, Math.min(slot.w, slot.h) * 0.28);
+  ctx.save();
+  ctx.save();
+  ctx.shadowColor = alpha(designTokens.colors.montessori.woodBorder, 0.16);
+  ctx.shadowBlur = 8;
+  ctx.shadowOffsetY = 4;
+  ctx.fillStyle = fill;
+  ctx.beginPath();
+  ctx.roundRect(rx, ry, slot.w, slot.h, radius);
+  ctx.fill();
+  ctx.restore();
+
+  ctx.strokeStyle = border;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.roundRect(rx, ry, slot.w, slot.h, radius);
+  ctx.stroke();
+  ctx.restore();
+}
+
+/** Vẽ chữ manh mối 1 hoặc 2 dòng (GT-009). */
+export function drawClueText(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  x: number,
+  y: number,
+  maxW: number,
+  fontSize = 16,
+  color = designTokens.colors.surface[700]
+): void {
+  ctx.save();
+  ctx.fillStyle = color;
+  applyCanvasFontAtSize(ctx, fontSize, "sans");
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  const metrics = ctx.measureText(text);
+  if (metrics.width > maxW && text.includes(" ")) {
+    const words = text.split(" ");
+    const mid = Math.ceil(words.length / 2);
+    const line1 = words.slice(0, mid).join(" ");
+    const line2 = words.slice(mid).join(" ");
+    ctx.fillText(line1, x, y - 10, maxW);
+    ctx.fillText(line2, x, y + 10, maxW);
+  } else {
+    ctx.fillText(text, x, y, maxW);
+  }
+  ctx.restore();
+}
+
+/** Vẽ đường gạch chéo loại trừ ứng viên (GT-009). */
+export function drawSlashLine(
+  ctx: CanvasRenderingContext2D,
+  slot: Slot,
+  color = designTokens.colors.surface[500],
+  lineWidth = 3
+): void {
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lineWidth;
+  ctx.lineCap = "round";
+  const half = Math.min(slot.w, slot.h) * 0.35;
+  ctx.beginPath();
+  ctx.moveTo(slot.x - half, slot.y - half);
+  ctx.lineTo(slot.x + half, slot.y + half);
+  ctx.stroke();
+  ctx.restore();
+}
+
+/** Viền bo góc quanh nhóm ô lưới (GT-011). */
+export function drawRoundedBoxOutline(
+  ctx: CanvasRenderingContext2D,
+  box: { x: number; y: number; w: number; h: number },
+  color = designTokens.colors.scene.sky[400],
+  lineWidth = 3,
+  radius = 8,
+  inset = 4
+): void {
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lineWidth;
+  ctx.beginPath();
+  ctx.roundRect(
+    box.x - inset,
+    box.y - inset,
+    box.w + inset * 2,
+    box.h + inset * 2,
+    radius
+  );
+  ctx.stroke();
+  ctx.restore();
+}
+
+export interface SlotVisualComparisonCue {
+  readonly kind: "length" | "height" | "size" | "weight" | "capacity";
+  readonly glyphScale: number;
+  readonly barRatio: number;
+}
+
+const SLOT_LONG_RE =
+  /(?:^|\s)(rất dài|dài nhất|dài hơn|dài|rộng nhất|rộng hơn|rộng|xa nhất|xa hơn|xa)(?:$|\s)/i;
+const SLOT_SHORT_RE =
+  /(?:^|\s)(rất ngắn|ngắn nhất|ngắn hơn|ngắn|hẹp nhất|hẹp hơn|hẹp|gần nhất|gần hơn|gần)(?:$|\s)/i;
+const SLOT_TALL_RE = /(?:^|\s)(rất cao|cao nhất|cao hơn|cao)(?:$|\s)/i;
+const SLOT_LOW_RE = /(?:^|\s)(rất thấp|thấp nhất|thấp hơn|thấp|lùn)(?:$|\s)/i;
+const SLOT_BIG_RE =
+  /(?:^|\s)(rất to|to lớn|khổng lồ|to nhất|to hơn|lớn nhất|lớn hơn|dày nhất|dày hơn|dày|to|lớn)(?:$|\s)/i;
+const SLOT_SMALL_RE =
+  /(?:^|\s)(nhỏ xíu|rất nhỏ|bé xíu|tí hon|nhỏ nhất|nhỏ hơn|bé nhất|bé hơn|mỏng nhất|mỏng hơn|mỏng|nhỏ|bé)(?:$|\s)/i;
+const SLOT_HEAVY_RE = /(?:^|\s)(rất nặng|nặng nhất|nặng hơn|nặng)(?:$|\s)/i;
+const SLOT_LIGHT_RE = /(?:^|\s)(rất nhẹ|nhẹ nhất|nhẹ hơn|nhẹ)(?:$|\s)/i;
+const SLOT_FULL_RE =
+  /(?:^|\s)(đầy tràn|rất đầy|đầy nước|đầy|nhiều nước)(?:$|\s)/i;
+const SLOT_EMPTY_RE = /(?:^|\s)(vơi|cạn|rỗng|ít nước|trống)(?:$|\s)/i;
+const SKIP_LETTER_NUMBER_RE = /^(?:chữ|số|dấu|âm|vần)\s/i;
+const MEAS_CMP_ID_RE = /^(?:meas|cmp|srt|c1[_-]meas|c1[_-]cmp)/i;
+
+const EMOJI_MEAS_CUE_MAP: Readonly<Record<string, SlotVisualComparisonCue>> = {
+  "🐍": { kind: "length", glyphScale: 1.24, barRatio: 0.86 },
+  "🚂": { kind: "length", glyphScale: 1.24, barRatio: 0.88 },
+  "🥖": { kind: "length", glyphScale: 1.16, barRatio: 0.76 },
+  "📏": { kind: "length", glyphScale: 1.16, barRatio: 0.76 },
+  "🥒": { kind: "length", glyphScale: 1.14, barRatio: 0.74 },
+  "🖍️": { kind: "length", glyphScale: 0.78, barRatio: 0.32 },
+  "🐛": { kind: "length", glyphScale: 0.76, barRatio: 0.3 },
+  "📎": { kind: "length", glyphScale: 0.72, barRatio: 0.24 },
+  "🦒": { kind: "height", glyphScale: 1.26, barRatio: 0.88 },
+  "🌴": { kind: "height", glyphScale: 1.22, barRatio: 0.84 },
+  "🌲": { kind: "height", glyphScale: 1.2, barRatio: 0.82 },
+  "🏢": { kind: "height", glyphScale: 1.24, barRatio: 0.86 },
+  "🍄": { kind: "height", glyphScale: 0.74, barRatio: 0.28 },
+  "🌱": { kind: "height", glyphScale: 0.72, barRatio: 0.26 },
+  "🐘": { kind: "size", glyphScale: 1.28, barRatio: 0.88 },
+  "🐋": { kind: "size", glyphScale: 1.28, barRatio: 0.88 },
+  "🍉": { kind: "size", glyphScale: 1.2, barRatio: 0.78 },
+  "🎃": { kind: "size", glyphScale: 1.2, barRatio: 0.78 },
+  "🐻": { kind: "size", glyphScale: 1.22, barRatio: 0.82 },
+  "🐜": { kind: "size", glyphScale: 0.68, barRatio: 0.24 },
+  "🐝": { kind: "size", glyphScale: 0.7, barRatio: 0.26 },
+  "🍒": { kind: "size", glyphScale: 0.74, barRatio: 0.32 },
+  "🍓": { kind: "size", glyphScale: 0.76, barRatio: 0.34 },
+  "🐞": { kind: "size", glyphScale: 0.7, barRatio: 0.26 },
+  "🪨": { kind: "weight", glyphScale: 1.22, barRatio: 0.86 },
+  "🧱": { kind: "weight", glyphScale: 1.18, barRatio: 0.8 },
+  "🪶": { kind: "weight", glyphScale: 0.74, barRatio: 0.24 },
+  "🎈": { kind: "weight", glyphScale: 0.78, barRatio: 0.28 },
+  "🍃": { kind: "weight", glyphScale: 0.74, barRatio: 0.26 },
+};
+
+const slotCueCache = new Map<string, SlotVisualComparisonCue | null>();
+const EXTREME_LONG_RE = /rất dài|dài nhất|very long/i;
+const EXTREME_SHORT_RE = /rất ngắn|ngắn nhất|very short/i;
+const EXTREME_TALL_RE = /rất cao|cao nhất|very tall/i;
+const EXTREME_LOW_RE = /rất thấp|thấp nhất|very low/i;
+const EXTREME_BIG_RE = /rất to|khổng lồ|to lớn|to nhất|lớn nhất/i;
+const EXTREME_SMALL_RE = /nhỏ xíu|rất nhỏ|bé xíu|tí hon|nhỏ nhất|bé nhất/i;
+
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: fast cached comparison cue detector
+export function detectSlotVisualComparisonCue(
+  label?: string,
+  id?: string,
+  emojiRef?: string
+): SlotVisualComparisonCue | null {
+  if (!(label || id || emojiRef)) {
+    return null;
+  }
+  const cacheKey = `${label ?? ""}|${id ?? ""}|${emojiRef ?? ""}`;
+  const cached = slotCueCache.get(cacheKey);
+  if (cached !== undefined) {
+    return cached;
+  }
+
+  const cleanLabel = (label ?? "").trim();
+  const cleanId = (id ?? "").replaceAll("_", " ").replaceAll("-", " ").trim();
+  const combined = `${cleanLabel} ${cleanId}`;
+
+  let result: SlotVisualComparisonCue | null = null;
+
+  if (!SKIP_LETTER_NUMBER_RE.test(cleanLabel)) {
+    if (SLOT_LONG_RE.test(combined)) {
+      const isExtreme = EXTREME_LONG_RE.test(combined);
+      result = {
+        kind: "length",
+        glyphScale: isExtreme ? 1.24 : 1.15,
+        barRatio: isExtreme ? 0.88 : 0.76,
+      };
+    } else if (SLOT_SHORT_RE.test(combined)) {
+      const isExtreme = EXTREME_SHORT_RE.test(combined);
+      result = {
+        kind: "length",
+        glyphScale: isExtreme ? 0.72 : 0.8,
+        barRatio: isExtreme ? 0.24 : 0.34,
+      };
+    } else if (SLOT_TALL_RE.test(combined)) {
+      const isExtreme = EXTREME_TALL_RE.test(combined);
+      result = {
+        kind: "height",
+        glyphScale: isExtreme ? 1.24 : 1.15,
+        barRatio: isExtreme ? 0.88 : 0.76,
+      };
+    } else if (SLOT_LOW_RE.test(combined)) {
+      const isExtreme = EXTREME_LOW_RE.test(combined);
+      result = {
+        kind: "height",
+        glyphScale: isExtreme ? 0.72 : 0.8,
+        barRatio: isExtreme ? 0.24 : 0.34,
+      };
+    } else if (SLOT_FULL_RE.test(combined)) {
+      result = {
+        kind: "capacity",
+        glyphScale: 1.1,
+        barRatio: 0.84,
+      };
+    } else if (SLOT_EMPTY_RE.test(combined)) {
+      result = {
+        kind: "capacity",
+        glyphScale: 0.9,
+        barRatio: 0.24,
+      };
+    } else if (SLOT_HEAVY_RE.test(combined)) {
+      result = {
+        kind: "weight",
+        glyphScale: 1.2,
+        barRatio: 0.84,
+      };
+    } else if (SLOT_LIGHT_RE.test(combined)) {
+      result = {
+        kind: "weight",
+        glyphScale: 0.78,
+        barRatio: 0.28,
+      };
+    } else if (SLOT_BIG_RE.test(combined)) {
+      const isExtreme = EXTREME_BIG_RE.test(combined);
+      result = {
+        kind: "size",
+        glyphScale: isExtreme ? 1.28 : 1.18,
+        barRatio: isExtreme ? 0.88 : 0.76,
+      };
+    } else if (SLOT_SMALL_RE.test(combined)) {
+      const isExtreme = EXTREME_SMALL_RE.test(combined);
+      result = {
+        kind: "size",
+        glyphScale: isExtreme ? 0.68 : 0.76,
+        barRatio: isExtreme ? 0.26 : 0.36,
+      };
+    } else if (emojiRef && id && MEAS_CMP_ID_RE.test(id)) {
+      const emojiCue = EMOJI_MEAS_CUE_MAP[emojiRef];
+      if (emojiCue) {
+        result = emojiCue;
+      }
+    }
+  }
+
+  if (slotCueCache.size > 2048) {
+    slotCueCache.clear();
+  }
+  slotCueCache.set(cacheKey, result);
+  return result;
+}
+
+/**
+ * Vẽ thước đo trực quan Montessori bên trong ô (`slot`) cho các khái niệm so sánh
+ * (dài-ngắn, cao-thấp, to-nhỏ, nặng-nhẹ, đầy-vơi).
+ */
+export function drawSlotVisualComparisonCue(
+  ctx: CanvasRenderingContext2D,
+  slot: Slot,
+  cue: SlotVisualComparisonCue
+): void {
+  const r = Math.min(slot.w, slot.h) / 2;
+  if (r < 24) {
+    return;
+  }
+
+  ctx.save();
+  if (cue.kind === "length" || cue.kind === "weight") {
+    const trackW = Math.round(r * 1.28);
+    const barH = Math.max(6, Math.round(r * 0.16));
+    const trackX = slot.x - trackW / 2;
+    const trackY = slot.y + Math.round(r * 0.52) - barH / 2;
+    const fillW = Math.max(barH, Math.round(trackW * cue.barRatio));
+
+    ctx.fillStyle = designTokens.colors.surface[100];
+    ctx.strokeStyle = designTokens.colors.surface[300];
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.roundRect(trackX, trackY, trackW, barH, barH / 2);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle =
+      cue.kind === "weight"
+        ? designTokens.colors.brand[500]
+        : designTokens.colors.cta[500];
+    ctx.beginPath();
+    ctx.roundRect(trackX, trackY, fillW, barH, barH / 2);
+    ctx.fill();
+  } else if (cue.kind === "height" || cue.kind === "capacity") {
+    const rodW = Math.max(6, Math.round(r * 0.16));
+    const trackH = Math.round(r * 1.16);
+    const rodX = slot.x + Math.round(r * 0.54) - rodW / 2;
+    const rodBottom = slot.y + Math.round(trackH / 2);
+    const rodTop = rodBottom - trackH;
+    const fillH = Math.max(rodW, Math.round(trackH * cue.barRatio));
+
+    ctx.fillStyle = designTokens.colors.surface[100];
+    ctx.strokeStyle = designTokens.colors.surface[300];
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.roundRect(rodX, rodTop, rodW, trackH, rodW / 2);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle =
+      cue.kind === "capacity"
+        ? designTokens.colors.brand[400]
+        : designTokens.colors.semantic.success[500];
+    ctx.beginPath();
+    ctx.roundRect(rodX, rodBottom - fillH, rodW, fillH, rodW / 2);
+    ctx.fill();
+  } else if (cue.kind === "size") {
+    const ringR = Math.max(10, Math.round(r * (0.28 + 0.46 * cue.barRatio)));
+    ctx.fillStyle = alpha(designTokens.colors.montessori.amberLight, 0.38);
+    ctx.strokeStyle = alpha(designTokens.colors.montessori.amber, 0.75);
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(slot.x, slot.y, ringR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+  }
   ctx.restore();
 }

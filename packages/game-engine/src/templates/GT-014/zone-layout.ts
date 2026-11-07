@@ -16,14 +16,56 @@ const SCALE_INSET_BOTTOM_PX = 16;
 
 /** Cân không rộng quá từng này lần chiều cao: stage ngang thấp thì cân co lại, không tràn. */
 const SCALE_MAX_ASPECT = 2.2;
+const REF_SCALE_HEIGHT_RATIO = 0.34;
+const REF_SCALE_GAP_PX = 8;
 
-export function scaleBoxInStage(stage: ZoneRect): SceneBox {
-  const h = Math.max(0, stage.h - SCALE_INSET_TOP_PX - SCALE_INSET_BOTTOM_PX);
+/** Các hộp cân tham chiếu tĩnh xếp ngang ở dải trên của `stage` (tối đa 2 cân). */
+export function referenceScaleBoxesInStage(
+  stage: SceneBox,
+  referenceCount = 0
+): SceneBox[] {
+  if (referenceCount <= 0) {
+    return [];
+  }
+  const count = Math.min(2, referenceCount);
+  const totalH = Math.max(
+    0,
+    stage.h - SCALE_INSET_TOP_PX - SCALE_INSET_BOTTOM_PX
+  );
+  const refH = Math.floor(totalH * REF_SCALE_HEIGHT_RATIO);
+  const availW = Math.max(0, stage.w - 2 * SCALE_INSET_SIDE_PX);
+  const slotW = Math.floor((availW - (count - 1) * REF_SCALE_GAP_PX) / count);
+  const boxW = Math.min(slotW, Math.floor(refH * SCALE_MAX_ASPECT));
+  const rowW = count * boxW + (count - 1) * REF_SCALE_GAP_PX;
+  const startX = stage.x + (stage.w - rowW) / 2;
+  const y = stage.y + SCALE_INSET_TOP_PX;
+
+  return Array.from({ length: count }, (_, i) => ({
+    x: startX + i * (boxW + REF_SCALE_GAP_PX),
+    y,
+    w: boxW,
+    h: refH,
+  }));
+}
+
+export function scaleBoxInStage(
+  stage: ZoneRect | SceneBox,
+  referenceCount = 0
+): SceneBox {
+  const totalH = Math.max(
+    0,
+    stage.h - SCALE_INSET_TOP_PX - SCALE_INSET_BOTTOM_PX
+  );
+  const refOffset =
+    referenceCount > 0
+      ? Math.floor(totalH * REF_SCALE_HEIGHT_RATIO) + REF_SCALE_GAP_PX
+      : 0;
+  const h = Math.max(0, totalH - refOffset);
   const availW = Math.max(0, stage.w - 2 * SCALE_INSET_SIDE_PX);
   const w = Math.min(availW, Math.floor(h * SCALE_MAX_ASPECT));
   return {
     x: stage.x + (stage.w - w) / 2,
-    y: stage.y + SCALE_INSET_TOP_PX,
+    y: stage.y + SCALE_INSET_TOP_PX + refOffset,
     w,
     h,
   };

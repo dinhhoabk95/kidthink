@@ -12,13 +12,13 @@ export interface SpeechOptions {
   timeoutMs?: number;
   onStart?: () => void;
   onEnd?: () => void;
-  onError?: (error: unknown) => void;
+  onError?: (error: Error | Event | string | null) => void;
 }
 
 /**
  * Utterance đang đọc. Giữ tham chiếu trên instance vì Chrome có thể thu gom
  * một utterance chỉ còn biến cục bộ trỏ tới trước khi `onend` bắn — khi đó cổng
- * chờ đọc (`BR-PNR-11`) khoá cử chỉ tới hết hẹn giờ an toàn (Task #274 S8).
+ * chờ đọc khoá cử chỉ tới hết hẹn giờ an toàn.
  */
 interface ActiveUtterance {
   readonly utterance: SpeechSynthesisUtterance;
@@ -182,7 +182,17 @@ export class SpeechSynthesisAdapter {
       }
       return true;
     } catch (err) {
-      options.onError?.(err);
+      let errorObj: Error | Event | string | null = null;
+      if (
+        err instanceof Error ||
+        err instanceof Event ||
+        typeof err === "string"
+      ) {
+        errorObj = err;
+      } else if (err) {
+        errorObj = String(err);
+      }
+      options.onError?.(errorObj);
       return false;
     }
   }

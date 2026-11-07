@@ -16,6 +16,16 @@ const GT009PredicateSchema = z.discriminatedUnion("kind", [
     min: z.number().int(),
     max: z.number().int(),
   }),
+  z.object({
+    kind: z.literal("has_attribute"),
+    key: z.string().min(1).max(32),
+    attr_value: z.string().min(1).max(32),
+  }),
+  z.object({
+    kind: z.literal("not_attribute"),
+    key: z.string().min(1).max(32),
+    attr_value: z.string().min(1).max(32),
+  }),
 ]);
 
 export const GT009BaseSchema = z.object({
@@ -26,6 +36,9 @@ export const GT009BaseSchema = z.object({
         candidate_id: z.string().min(1).max(32),
         value: z.number().int().min(1).max(20),
         asset: assetSchema().optional(),
+        attributes: z
+          .record(z.string().min(1).max(32), z.string().min(1).max(32))
+          .optional(),
       })
     )
     .min(4)

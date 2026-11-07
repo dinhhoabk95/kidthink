@@ -112,6 +112,22 @@ function floorPlan(spec: StageCellsSpec, area: ZoneRect): CellPlan {
   };
 }
 
+function balancePlan(
+  plan: CellPlan,
+  spec: StageCellsSpec,
+  area: ZoneRect
+): CellPlan {
+  if (plan.rows <= 1) {
+    return plan;
+  }
+  const balancedCols = Math.ceil(spec.count / plan.rows);
+  if (balancedCols >= plan.cols) {
+    return plan;
+  }
+  const fitted = fitCols(spec, area, balancedCols);
+  return fitted ?? { ...plan, cols: balancedCols };
+}
+
 function planCells(spec: StageCellsSpec, area: ZoneRect): CellPlan {
   const fixedCols = spec.cols;
   if (fixedCols !== undefined) {
@@ -122,10 +138,11 @@ function planCells(spec: StageCellsSpec, area: ZoneRect): CellPlan {
   for (let cols = spec.count; cols >= 1; cols--) {
     const plan = fitCols(spec, area, cols);
     if (plan) {
-      return plan;
+      return balancePlan(plan, spec, area);
     }
   }
-  return floorPlan(spec, area);
+  const fallback = floorPlan(spec, area);
+  return balancePlan(fallback, spec, area);
 }
 
 /**
@@ -309,6 +326,7 @@ function mirrorSlot(
  */
 export function computeStageMirror(spec: StageMirrorSpec): StageMirror {
   const first = halfOf(spec.stage, spec.axis, false);
+  const cols = spec.axis === "vertical" && spec.count === 4 ? 2 : undefined;
   const reference = computeStageCellSlots({
     count: spec.count,
     stage: first,
@@ -316,6 +334,7 @@ export function computeStageMirror(spec: StageMirrorSpec): StageMirror {
     maxCell: spec.maxCell,
     role: "neutral",
     firstIndex: spec.firstIndex,
+    cols,
   });
   const targetStart = (spec.firstIndex ?? 0) + reference.length;
   const targets = reference.map((slot, i) =>

@@ -5,6 +5,7 @@ import { type GameSession, TemplateGameSession } from "#src/game-session";
 import {
   createGameSessionSync,
   type EngineConfig,
+  type GameActionValue,
   preloadGameSession,
 } from "#src/index";
 import {
@@ -326,14 +327,25 @@ type ZoneSession = GameSession &
     | "usesPromptZone"
   >;
 
-function isFixturePayload(val: unknown): val is Record<string, unknown> {
+type FixtureParamValue =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | Record<string, GameActionValue>
+  | GameActionValue[];
+
+function isFixturePayload(
+  val: FixtureParamValue | object
+): val is Record<string, GameActionValue> {
   return typeof val === "object" && val !== null;
 }
 
 function configFor(
   code: string,
-  content: unknown,
-  difficulty: unknown
+  content: FixtureParamValue | object,
+  difficulty: FixtureParamValue | object
 ): EngineConfig {
   return {
     level_code: `${code}-LV1`,
@@ -365,7 +377,13 @@ function zoneSessionCases(
   const fromSeeds = seededLevels(code).map((level) => ({
     name: `seed ${level.header.code}`,
     create: () =>
-      make(configFor(code, level.content_pack, level.difficulty_params)),
+      make(
+        configFor(
+          code,
+          level.content_pack as FixtureParamValue,
+          level.difficulty_params as FixtureParamValue
+        )
+      ),
   }));
   return [...fromFixtures, ...fromSeeds];
 }

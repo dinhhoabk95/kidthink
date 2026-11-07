@@ -74,7 +74,7 @@ export function drawLiquidCup(
     if (params.color === "mint") {
       ctx.fillStyle = designTokens.colors.semantic.success[500];
     } else if (params.color === "berry") {
-      ctx.fillStyle = designTokens.colors.semantic.danger[400];
+      ctx.fillStyle = designTokens.colors.montessori.coral;
     } else if (params.color === "amber") {
       ctx.fillStyle = designTokens.colors.retry[500];
     }
@@ -309,7 +309,7 @@ function getColorForYarn(colorId: string): string {
   switch (colorId.toLowerCase()) {
     case "red":
     case "berry":
-      return designTokens.colors.semantic.danger[400];
+      return designTokens.colors.montessori.coral;
     case "blue":
     case "sky":
       return designTokens.colors.brand[500];

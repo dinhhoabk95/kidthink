@@ -21,9 +21,9 @@ const gridCellSchema = () =>
 
 export const GT015BaseSchema = z.object({
   ...promptFields(),
-  grid_size: z.union([z.literal(2), z.literal(3)]),
-  symbols: z.array(symbolItemSchema()).min(2).max(3),
-  cells: z.array(gridCellSchema()).min(4).max(9),
+  grid_size: z.union([z.literal(2), z.literal(3), z.literal(4)]),
+  symbols: z.array(symbolItemSchema()).min(2).max(4),
+  cells: z.array(gridCellSchema()).min(4).max(16),
   regions: z.enum(["row_col", "row_col_box"]).default("row_col"),
 });
 
@@ -91,8 +91,8 @@ export const GT015ContentSchema = GT015BaseSchema.refine(validateGridGeometry, {
 );
 
 export const GT015DifficultySchema = z.object({
-  item_count: z.number().int().min(2).max(3),
-  blank_count: z.number().int().min(1).max(6),
+  item_count: z.number().int().min(2).max(4),
+  blank_count: z.number().int().min(1).max(8),
   hint_after_ms: z.number().int().min(6000).max(30_000),
   allow_retry: z.boolean(),
 });
@@ -108,9 +108,9 @@ export default defineTemplate({
   content_contract: GT015ContentSchema,
   difficulty_contract: GT015DifficultySchema,
   limits: {
-    item_count: [2, 3],
+    item_count: [2, 4],
     distractor_count: [0, 2],
-    target_count: [1, 3],
+    target_count: [1, 4],
   },
   age_min: 5,
   age_max: 6,

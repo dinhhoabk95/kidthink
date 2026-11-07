@@ -8,13 +8,21 @@ import {
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
+import { resolveAssetLabels } from "#src/labels/spoken-keyword";
 import { resolveTouchFloor } from "#src/layout/constants";
+import {
+  findHitSlotIndex,
+  isPointInSlot,
+  TAP_TOLERANCE_PX,
+} from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
-import { computeTraySourceSlots, pickTrayZones } from "#src/layout/tray-layout";
+import { computeTraySourceSlots } from "#src/layout/tray-layout";
 import type { Slot } from "#src/layout/types";
 import {
   drawBalanceScale,
+  drawMontessoriControlOfErrorPill,
   drawPanItems,
+  drawReferenceScaleCard,
   drawSceneBackground,
   drawSlotItem,
   drawWoodenTokenDock,
@@ -30,12 +38,20 @@ import {
   type WeightedItem,
 } from "#src/systems/balance-system";
 import type { DegradationState } from "#src/systems/degradation";
+import {
+  type ControlOfErrorDiagnostics,
+  MontessoriExploreTracker,
+} from "#src/systems/montessori-explore-system";
 import type { RenderSystem } from "#src/systems/render-system";
 import type { GT014Content, GT014Difficulty } from "./template.js";
-import { panTargetSlots, scaleBoxInStage } from "./zone-layout.js";
+import {
+  panTargetSlots,
+  referenceScaleBoxesInStage,
+  scaleBoxInStage,
+} from "./zone-layout.js";
 
 function validateSelectSide(
-  data: unknown,
+  data: GameAction["data"],
   goal: GT014Content["goal"],
   leftW: number,
   rightW: number
@@ -52,32 +68,22 @@ function validateSelectSide(
   return data === expected ? ACTION_CORRECT : ACTION_RETRY;
 }
 
-function validatePlaceItem(data: unknown): ActionResult {
-  if (
-    typeof data === "object" &&
-    data !== null &&
-    "item_id" in data &&
-    "target_pan" in data
-  ) {
-    const pan = Reflect.get(data, "target_pan");
-    if (pan === "left" || pan === "right") {
-      return ACTION_CORRECT;
-    }
-  }
-  return ACTION_RETRY;
+function validatePlaceItem(data: GameAction["data"]): ActionResult {
+  return extractPanItemData(data, "target_pan") ? ACTION_CORRECT : ACTION_RETRY;
 }
 
-function extractPlaceItemData(
-  data: unknown
+function extractPanItemData(
+  data: GameAction["data"],
+  panKey: "target_pan" | "from_pan"
 ): { itemId: string; pan: "left" | "right" } | null {
   if (
     typeof data === "object" &&
     data !== null &&
     "item_id" in data &&
-    "target_pan" in data
+    panKey in data
   ) {
     const itemId = Reflect.get(data, "item_id");
-    const pan = Reflect.get(data, "target_pan");
+    const pan = Reflect.get(data, panKey);
     if (typeof itemId === "string" && (pan === "left" || pan === "right")) {
       return { itemId, pan };
     }
@@ -85,28 +91,10 @@ function extractPlaceItemData(
   return null;
 }
 
-function extractReturnItemData(
-  data: unknown
-): { itemId: string; pan: "left" | "right" } | null {
-  if (
-    typeof data === "object" &&
-    data !== null &&
-    "item_id" in data &&
-    "from_pan" in data
-  ) {
-    const itemId = Reflect.get(data, "item_id");
-    const pan = Reflect.get(data, "from_pan");
-    if (typeof itemId === "string" && (pan === "left" || pan === "right")) {
-      return { itemId, pan };
-    }
-  }
-  return null;
-}
-
-function isPointInSlot(x: number, y: number, slot: Slot, minSize = 0): boolean {
-  const halfW = Math.max(slot.hitW ?? slot.w, slot.w, minSize) / 2 + 24;
-  const halfH = Math.max(slot.hitH ?? slot.h, slot.h, minSize) / 2 + 24;
-  return Math.abs(x - slot.x) <= halfW && Math.abs(y - slot.y) <= halfH;
+function formatHeavierReasonVi(leftW: number, rightW: number): string {
+  return leftW > rightW
+    ? `Bên trái (${leftW}) nặng hơn bên phải (${rightW})`
+    : `Bên phải (${rightW}) nặng hơn bên trái (${leftW})`;
 }
 
 function findTrayItemAt(
@@ -115,14 +103,8 @@ function findTrayItemAt(
   trayItems: readonly WeightedItem[],
   sources: readonly Slot[]
 ): WeightedItem | null {
-  for (let i = 0; i < trayItems.length; i++) {
-    const slot = sources[i];
-    const item = trayItems[i];
-    if (slot && item && isPointInSlot(x, y, slot)) {
-      return item;
-    }
-  }
-  return null;
+  const idx = findHitSlotIndex(sources, x, y, "circle", TAP_TOLERANCE_PX);
+  return idx >= 0 ? (trayItems[idx] ?? null) : null;
 }
 
 function findTargetPanAt(
@@ -131,10 +113,16 @@ function findTargetPanAt(
   leftPanSlot: Slot | undefined,
   rightPanSlot: Slot | undefined
 ): "left" | "right" | null {
-  if (leftPanSlot && isPointInSlot(x, y, leftPanSlot, 80)) {
+  if (
+    leftPanSlot &&
+    isPointInSlot(leftPanSlot, x, y, "square", TAP_TOLERANCE_PX)
+  ) {
     return "left";
   }
-  if (rightPanSlot && isPointInSlot(x, y, rightPanSlot, 80)) {
+  if (
+    rightPanSlot &&
+    isPointInSlot(rightPanSlot, x, y, "square", TAP_TOLERANCE_PX)
+  ) {
     return "right";
   }
   return null;
@@ -144,11 +132,11 @@ export class BalanceScaleSession extends TemplateGameSession<
   GT014Content,
   GT014Difficulty
 > {
-  override readonly needsTray = true;
+  override readonly needsTray: boolean;
 
   /** Số vật nguồn trong khay của vòng — shell đo chiều cao khay (`BR-PSZ-13`). */
   override get trayItemCount(): number {
-    return this.content.tray.length;
+    return this.content.goal === "balance" ? this.content.tray.length : 0;
   }
 
   /** Số đo vẽ dưới mỗi vật khay (`BR-PSZ-13`). */
@@ -162,26 +150,103 @@ export class BalanceScaleSession extends TemplateGameSession<
   private leftItems: WeightedItem[] = [];
   private rightItems: WeightedItem[] = [];
   private trayItems: WeightedItem[] = [];
+  private assetById = new Map<string, GT014Content["tray"][number]["asset"]>();
   private selectedSide: "left" | "right" | null = null;
   private stagedItemId: string | null = null;
   private wrongSide: "left" | "right" | null = null;
   private wrongTimestamp = 0;
+  private lastFrameMs = 0;
+  private readonly exploreTracker = new MontessoriExploreTracker({
+    milestoneTarget: 2,
+  });
+  private smoothTiltDeg = 0;
+
+  constructor(
+    content: GT014Content,
+    difficulty: GT014Difficulty,
+    layoutSeed = 0
+  ) {
+    super(content, difficulty, layoutSeed);
+    this.needsTray = content.goal === "balance" && content.tray.length > 0;
+  }
 
   setupEntities(): void {
     this.leftItems = [...this.content.left_pan];
     this.rightItems = [...this.content.right_pan];
-    this.trayItems = [...this.content.tray];
+    this.trayItems =
+      this.content.goal === "balance" ? [...this.content.tray] : [];
+    this.assetById = this.buildAssetMap();
     this.selectedSide = null;
     this.stagedItemId = null;
     this.wrongSide = null;
     this.wrongTimestamp = 0;
+    this.lastFrameMs = 0;
     this.isWon = false;
+    this.exploreTracker.reset(false);
+    this.smoothTiltDeg = this.getTiltAngle();
 
     this.recordEvent("game_started", {
       template_code: "GT-014",
       goal: this.content.goal,
       initial_tilt: this.getTiltAngle(),
     });
+  }
+
+  private buildAssetMap(): Map<string, GT014Content["tray"][number]["asset"]> {
+    const refItems = (this.content.reference_scales ?? []).flatMap((s) => [
+      ...s.left_pan,
+      ...s.right_pan,
+    ]);
+    return new Map(
+      [
+        ...refItems,
+        ...this.content.left_pan,
+        ...this.content.right_pan,
+        ...this.content.tray,
+      ].map((item) => [item.item_id, item.asset])
+    );
+  }
+
+  private resolveAssetById(): ReadonlyMap<
+    string,
+    GT014Content["tray"][number]["asset"]
+  > {
+    return this.assetById.size > 0 ? this.assetById : this.buildAssetMap();
+  }
+
+  update(deltaMs: number): void {
+    this.lastFrameMs += deltaMs;
+    this.exploreTracker.tick(deltaMs);
+    const targetTilt = this.getTiltAngle();
+    const diff = targetTilt - this.smoothTiltDeg;
+    const maxStep = (Math.max(0, deltaMs) / 250) * 50;
+    this.smoothTiltDeg =
+      Math.abs(diff) <= maxStep
+        ? targetTilt
+        : this.smoothTiltDeg + Math.sign(diff) * maxStep;
+    if (this.wrongSide && this.lastFrameMs - this.wrongTimestamp >= 400) {
+      this.wrongSide = null;
+    }
+  }
+
+  startExplorePhase(): void {
+    this.exploreTracker.reset(true);
+  }
+
+  getExploreTracker(): MontessoriExploreTracker {
+    return this.exploreTracker;
+  }
+
+  getControlOfError(): ControlOfErrorDiagnostics | null {
+    return this.exploreTracker.getControlOfErrorDiagnostics();
+  }
+
+  isMicroSandboxActive(): boolean {
+    return this.exploreTracker.isMicroSandboxActive();
+  }
+
+  getSmoothTiltAngle(): number {
+    return this.smoothTiltDeg;
   }
 
   getLeftItems(): readonly WeightedItem[] {
@@ -212,57 +277,104 @@ export class BalanceScaleSession extends TemplateGameSession<
     return getBalanceState(this.getLeftWeight(), this.getRightWeight());
   }
 
+  private recordPanExplore(): void {
+    this.exploreTracker.recordExploreAction("pan_item_changed");
+    this.recordEvent("explore_action", {
+      kind: "pan_item_changed",
+      count: this.exploreTracker.getExploreActionsCount(),
+    });
+  }
+
+  private swapOutOverweightPlacedItems(
+    targetPan: "left" | "right",
+    incomingWeight: number
+  ): void {
+    if (this.content.goal !== "balance") {
+      return;
+    }
+    const panList = targetPan === "left" ? this.leftItems : this.rightItems;
+    const otherWeight =
+      targetPan === "left" ? this.getRightWeight() : this.getLeftWeight();
+    if (sumWeights(panList) + incomingWeight <= otherWeight) {
+      return;
+    }
+    const initialIds = new Set(
+      (targetPan === "left"
+        ? this.content.left_pan
+        : this.content.right_pan
+      ).map((i) => i.item_id)
+    );
+    for (let i = panList.length - 1; i >= 0; i--) {
+      const existing = panList[i];
+      if (existing && !initialIds.has(existing.item_id)) {
+        panList.splice(i, 1);
+        this.trayItems.push(existing);
+      }
+    }
+  }
+
   placeItem(itemId: string, targetPan: "left" | "right"): boolean {
     const idx = this.trayItems.findIndex((t) => t.item_id === itemId);
-    if (idx === -1) {
-      return false;
-    }
-
-    const item = this.trayItems.splice(idx, 1)[0];
+    const item = idx >= 0 ? this.trayItems.splice(idx, 1)[0] : undefined;
     if (!item) {
       return false;
     }
-    if (targetPan === "left") {
-      this.leftItems.push(item);
-    } else {
-      this.rightItems.push(item);
-    }
+    this.swapOutOverweightPlacedItems(targetPan, item.weight);
+    (targetPan === "left" ? this.leftItems : this.rightItems).push(item);
 
-    this.recordEvent("item_placed", {
-      item_id: itemId,
-      pan: targetPan,
-    });
-
+    this.recordPanExplore();
+    this.recordEvent("item_placed", { item_id: itemId, pan: targetPan });
     this.recordEvent("balance_changed", {
       tilt_angle: this.getTiltAngle(),
       state: this.getBalanceState(),
     });
 
     if (this.checkWinCondition()) {
+      this.wrongSide = null;
+      this.exploreTracker.recordCorrectAttempt();
       this.winSession();
+    } else if (this.content.goal === "balance") {
+      const leftW = this.getLeftWeight();
+      const rightW = this.getRightWeight();
+      const isOverweight =
+        (targetPan === "left" && leftW > rightW) ||
+        (targetPan === "right" && rightW > leftW);
+      if (this.trayItems.length === 0 || isOverweight) {
+        this.wrongSide = targetPan;
+        this.wrongTimestamp = this.lastFrameMs;
+        this.exploreTracker.recordWrongAttempt({
+          reasonVi: formatHeavierReasonVi(leftW, rightW),
+          actualValue: leftW,
+          expectedValue: rightW,
+        });
+      }
     }
-
     return true;
+  }
+
+  returnItem(itemId: string, fromPan: "left" | "right"): boolean {
+    return this.returnItemToTray(itemId, fromPan);
   }
 
   returnItemToTray(itemId: string, fromPan: "left" | "right"): boolean {
     const pan = fromPan === "left" ? this.leftItems : this.rightItems;
     const idx = pan.findIndex((t) => t.item_id === itemId);
-    if (idx === -1) {
-      return false;
-    }
-
-    const item = pan.splice(idx, 1)[0];
+    const item = idx >= 0 ? pan.splice(idx, 1)[0] : undefined;
     if (!item) {
       return false;
     }
     this.trayItems.push(item);
 
+    this.recordPanExplore();
     this.recordEvent("balance_changed", {
       tilt_angle: this.getTiltAngle(),
       state: this.getBalanceState(),
     });
 
+    if (this.checkWinCondition()) {
+      this.exploreTracker.recordCorrectAttempt();
+      this.winSession();
+    }
     return true;
   }
 
@@ -270,10 +382,25 @@ export class BalanceScaleSession extends TemplateGameSession<
     this.selectedSide = side;
     if (this.checkWinCondition()) {
       this.wrongSide = null;
+      this.exploreTracker.recordCorrectAttempt();
       this.winSession();
     } else {
       this.wrongSide = side;
-      this.wrongTimestamp = performance.now();
+      this.wrongTimestamp = this.lastFrameMs;
+      const leftW = this.getLeftWeight();
+      const rightW = this.getRightWeight();
+      this.exploreTracker.recordWrongAttempt({
+        reasonVi: formatHeavierReasonVi(leftW, rightW),
+        targetId: side,
+        actualValue: side === "left" ? leftW : rightW,
+        expectedValue: side === "left" ? rightW : leftW,
+      });
+      this.recordEvent("control_of_error", {
+        side,
+        left_weight: leftW,
+        right_weight: rightW,
+        micro_sandbox: this.exploreTracker.isMicroSandboxActive(),
+      });
     }
   }
 
@@ -333,37 +460,50 @@ export class BalanceScaleSession extends TemplateGameSession<
     };
   }
 
+  private findReturnItemInPan(pan: "left" | "right"): string | null {
+    const initialList =
+      pan === "left" ? this.content.left_pan : this.content.right_pan;
+    const initialIds = new Set(initialList.map((i) => i.item_id));
+    const items = pan === "left" ? this.leftItems : this.rightItems;
+    for (let i = items.length - 1; i >= 0; i--) {
+      const item = items[i];
+      if (item && !initialIds.has(item.item_id)) {
+        return item.item_id;
+      }
+    }
+    return null;
+  }
+
   private toTapAction(
     gesture: Extract<Gesture, { type: "tap" }>,
     leftPanSlot: Slot | undefined,
     rightPanSlot: Slot | undefined,
     sources: readonly Slot[]
   ): GameAction | null {
+    const targetPan = findTargetPanAt(
+      gesture.x,
+      gesture.y,
+      leftPanSlot,
+      rightPanSlot
+    );
     if (
       this.content.goal === "pick_heavier" ||
       this.content.goal === "pick_lighter"
     ) {
-      const side = findTargetPanAt(
-        gesture.x,
-        gesture.y,
-        leftPanSlot,
-        rightPanSlot
-      );
-      return side ? { type: "select_side", data: side } : null;
+      return targetPan ? { type: "select_side", data: targetPan } : null;
     }
 
-    if (this.stagedItemId) {
-      const targetPan = findTargetPanAt(
-        gesture.x,
-        gesture.y,
-        leftPanSlot,
-        rightPanSlot
-      );
-      if (targetPan) {
-        return {
-          type: "place_item",
-          data: { item_id: this.stagedItemId, target_pan: targetPan },
-        };
+    if (this.stagedItemId && targetPan) {
+      return {
+        type: "place_item",
+        data: { item_id: this.stagedItemId, target_pan: targetPan },
+      };
+    }
+
+    if (targetPan) {
+      const returnItemId = this.findReturnItemInPan(targetPan);
+      if (returnItemId) {
+        return { type: "return_item", data: { item_id: returnItemId } };
       }
     }
 
@@ -426,9 +566,25 @@ export class BalanceScaleSession extends TemplateGameSession<
     });
   }
 
+  private commitReturnItem(data: GameAction["data"]): void {
+    const ret = extractPanItemData(data, "from_pan");
+    if (ret) {
+      this.returnItemToTray(ret.itemId, ret.pan);
+      return;
+    }
+    if (typeof data === "object" && data !== null && "item_id" in data) {
+      const itemId = String(Reflect.get(data, "item_id"));
+      if (this.leftItems.some((i) => i.item_id === itemId)) {
+        this.returnItemToTray(itemId, "left");
+      } else if (this.rightItems.some((i) => i.item_id === itemId)) {
+        this.returnItemToTray(itemId, "right");
+      }
+    }
+  }
+
   override commit(action: GameAction): void {
     if (action.type === "place_item") {
-      const place = extractPlaceItemData(action.data);
+      const place = extractPanItemData(action.data, "target_pan");
       if (place) {
         this.placeItem(place.itemId, place.pan);
         this.stagedItemId = null;
@@ -442,10 +598,7 @@ export class BalanceScaleSession extends TemplateGameSession<
       return;
     }
     if (action.type === "return_item") {
-      const ret = extractReturnItemData(action.data);
-      if (ret) {
-        this.returnItemToTray(ret.itemId, ret.pan);
-      }
+      this.commitReturnItem(action.data);
     }
   }
 
@@ -453,40 +606,53 @@ export class BalanceScaleSession extends TemplateGameSession<
     const targets = this.targetSlots.slice().sort((a, b) => a.x - b.x);
     const sources = this.sourceSlots;
     const entities: ViewEntity[] = [];
+    const assetById = this.resolveAssetById();
 
     const leftPanSlot = targets[0];
-    if (leftPanSlot) {
-      entities.push({
-        id: "left_pan",
-        slotIndex: 0,
-        role: "target",
-        state: this.selectedSide === "left" ? "selected" : "idle",
-        x: leftPanSlot.x,
-        y: leftPanSlot.y,
-        w: leftPanSlot.w,
-        h: leftPanSlot.h,
-      });
+    const rightPanSlot = targets[1];
+    for (const [id, side, slotIndex, slot, label] of [
+      ["left_pan", "left", 0, leftPanSlot, "Đĩa cân bên trái"],
+      ["right_pan", "right", 1, rightPanSlot, "Đĩa cân bên phải"],
+    ] as const) {
+      if (slot) {
+        entities.push({
+          id,
+          slotIndex,
+          role: "target",
+          state: this.selectedSide === side ? "selected" : "idle",
+          x: slot.x,
+          y: slot.y,
+          w: slot.w,
+          h: slot.h,
+          hitShape: "square",
+          label,
+          spokenLabel: label,
+        });
+      }
     }
 
-    const rightPanSlot = targets[1];
-    if (rightPanSlot) {
-      entities.push({
-        id: "right_pan",
-        slotIndex: 1,
-        role: "target",
-        state: this.selectedSide === "right" ? "selected" : "idle",
-        x: rightPanSlot.x,
-        y: rightPanSlot.y,
-        w: rightPanSlot.w,
-        h: rightPanSlot.h,
-      });
-    }
+    this.appendPanItemEntities(
+      entities,
+      this.leftItems,
+      leftPanSlot,
+      0,
+      assetById
+    );
+    this.appendPanItemEntities(
+      entities,
+      this.rightItems,
+      rightPanSlot,
+      1,
+      assetById
+    );
 
     this.trayItems.forEach((item, i) => {
       const slot = sources[i];
       if (!slot) {
         return;
       }
+      const asset = assetById.get(item.item_id);
+      const labels = asset ? resolveAssetLabels(asset) : {};
       entities.push({
         id: item.item_id,
         slotIndex: 2 + i,
@@ -496,6 +662,11 @@ export class BalanceScaleSession extends TemplateGameSession<
         y: slot.y,
         w: slot.w,
         h: slot.h,
+        ...labels,
+        label: String(item.weight),
+        spokenLabel: labels.spokenLabel
+          ? `${labels.spokenLabel}, nặng ${item.weight}`
+          : `Nặng ${item.weight}`,
       });
     });
 
@@ -508,23 +679,18 @@ export class BalanceScaleSession extends TemplateGameSession<
   override checkWinCondition(): boolean {
     const leftW = this.getLeftWeight();
     const rightW = this.getRightWeight();
-
     if (this.content.goal === "balance") {
       return leftW === rightW && leftW > 0;
     }
-    if (this.content.goal === "pick_heavier") {
-      if (!this.selectedSide) {
-        return false;
-      }
-      return this.selectedSide === (leftW > rightW ? "left" : "right");
+    if (!this.selectedSide) {
+      return false;
     }
-    if (this.content.goal === "pick_lighter") {
-      if (!this.selectedSide) {
-        return false;
-      }
-      return this.selectedSide === (leftW < rightW ? "left" : "right");
-    }
-    return false;
+    const isHeavier = leftW > rightW ? "left" : "right";
+    const isLighter = leftW < rightW ? "left" : "right";
+    return (
+      this.selectedSide ===
+      (this.content.goal === "pick_heavier" ? isHeavier : isLighter)
+    );
   }
 
   override destroy(): void {
@@ -536,19 +702,23 @@ export class BalanceScaleSession extends TemplateGameSession<
   }
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
-    const zones = pickTrayZones(this.stageRect, this.trayRect);
-    if (zones) {
+    if (this.stageRect) {
       const touchFloor = resolveTouchFloor(ageBand, this.cssPerLogic);
-      return [
-        ...panTargetSlots(scaleBoxInStage(zones.stage), touchFloor),
-        ...computeTraySourceSlots(
-          this.trayItems.length,
-          zones.tray,
-          touchFloor,
-          2,
-          true
-        ),
-      ];
+      const refCount = this.content.reference_scales?.length ?? 0;
+      const targets = panTargetSlots(
+        scaleBoxInStage(this.stageRect, refCount),
+        touchFloor
+      );
+      const sources = this.trayRect
+        ? computeTraySourceSlots(
+            this.trayItems.length,
+            this.trayRect,
+            touchFloor,
+            2,
+            true
+          )
+        : [];
+      return [...targets, ...sources];
     }
     const layoutFn = resolveLayout("split-columns");
     return layoutFn({
@@ -559,39 +729,70 @@ export class BalanceScaleSession extends TemplateGameSession<
     });
   }
 
+  private renderReferenceScales(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    baseStageBox: { x: number; y: number; w: number; h: number },
+    positioned: (items: readonly { item_id: string }[]) => {
+      id: string;
+      asset: GT014Content["left_pan"][number]["asset"] | undefined;
+    }[]
+  ): void {
+    const refScales = this.content.reference_scales ?? [];
+    if (refScales.length === 0) {
+      return;
+    }
+    const refBoxes = referenceScaleBoxesInStage(baseStageBox, refScales.length);
+    refScales.forEach((ref, idx) => {
+      const refBox = refBoxes[idx];
+      if (!refBox) {
+        return;
+      }
+      drawReferenceScaleCard(ctx, refBox);
+      const refPans = drawBalanceScale(
+        ctx,
+        refBox,
+        ref.left_pan,
+        ref.right_pan
+      );
+      drawPanItems(ctx, rs, refPans.leftPan, positioned(ref.left_pan));
+      drawPanItems(ctx, rs, refPans.rightPan, positioned(ref.right_pan));
+    });
+  }
+
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
     timeMs: number
   ): void {
+    this.lastFrameMs = timeMs;
     if (this.wrongSide && timeMs - this.wrongTimestamp >= 400) {
       this.wrongSide = null;
     }
     drawSceneBackground(ctx, rs, this.themeId);
-    const zones = pickTrayZones(this.stageRect, this.trayRect);
     const sources = this.sourceSlots;
     // `WeightedItem` chỉ mang id + khối lượng; asset nằm ở content.
-    const assetById = new Map(
-      [
-        ...this.content.left_pan,
-        ...this.content.right_pan,
-        ...this.content.tray,
-      ].map((i) => [i.item_id, i.asset])
-    );
+    const assetById = this.resolveAssetById();
     const positioned = (items: readonly { item_id: string }[]) =>
       items.map((i) => ({ id: i.item_id, asset: assetById.get(i.item_id) }));
 
-    const scaleBox = zones
-      ? scaleBoxInStage(zones.stage)
-      : insetBox(sceneBox(rs), 0.12);
-    if (zones && sources.length > 0) {
-      drawWoodenTokenDock(ctx, rs, zones.tray);
+    const refScales = this.content.reference_scales ?? [];
+    const baseStageBox = this.stageRect ?? insetBox(sceneBox(rs), 0.12);
+    this.renderReferenceScales(ctx, rs, baseStageBox, positioned);
+
+    const scaleBox =
+      this.stageRect || refScales.length > 0
+        ? scaleBoxInStage(baseStageBox, refScales.length)
+        : baseStageBox;
+    if (this.trayRect && sources.length > 0) {
+      drawWoodenTokenDock(ctx, rs, this.trayRect);
     }
     const { leftPan, rightPan } = drawBalanceScale(
       ctx,
       scaleBox,
       this.leftItems,
-      this.rightItems
+      this.rightItems,
+      this.smoothTiltDeg
     );
     drawPanItems(ctx, rs, leftPan, positioned(this.leftItems));
     drawPanItems(ctx, rs, rightPan, positioned(this.rightItems));
@@ -618,10 +819,52 @@ export class BalanceScaleSession extends TemplateGameSession<
       drawSlotItem(ctx, rs, slot, {
         id: item.item_id,
         asset: assetById.get(item.item_id),
-        label: String(item.weight),
-        state: this.getRenderItemState(item.item_id),
+        label: refScales.length > 0 ? undefined : String(item.weight),
+        state:
+          this.stagedItemId === item.item_id
+            ? "selected"
+            : this.getRenderItemState(item.item_id),
       });
     });
+
+    const stage = this.stageRect ?? sceneBox(rs);
+    drawMontessoriControlOfErrorPill(
+      ctx,
+      stage,
+      this.exploreTracker,
+      rs.viewport?.scale
+    );
+  }
+
+  private appendPanItemEntities(
+    entities: ViewEntity[],
+    items: readonly WeightedItem[],
+    slot: Slot | undefined,
+    slotIndex: number,
+    assetById: ReadonlyMap<string, GT014Content["tray"][number]["asset"]>
+  ): void {
+    if (!slot) {
+      return;
+    }
+    for (const item of items) {
+      const asset = assetById.get(item.item_id);
+      const labels = asset ? resolveAssetLabels(asset) : {};
+      entities.push({
+        id: `pan-${slotIndex}:${item.item_id}`,
+        slotIndex,
+        role: "neutral",
+        state: "correct",
+        x: slot.x,
+        y: slot.y,
+        w: slot.w,
+        h: slot.h,
+        ...labels,
+        label: String(item.weight),
+        spokenLabel: labels.spokenLabel
+          ? `${labels.spokenLabel}, nặng ${item.weight}`
+          : `Nặng ${item.weight}`,
+      });
+    }
   }
 }
 

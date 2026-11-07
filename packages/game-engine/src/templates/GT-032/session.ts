@@ -1,3 +1,7 @@
+import {
+  formatNumberWord,
+  formatSpokenLabel,
+} from "@mindkid/shared/preschool-terminology";
 import type { AgeBand } from "#src/contracts/types";
 import {
   ACTION_CORRECT,
@@ -13,8 +17,9 @@ import type {
   Gesture,
   ViewEntity,
 } from "#src/interaction";
+import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
-import { dockRectAroundSlots } from "#src/layout/slot-fit";
+import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
 import {
   drawLiquidCup,
@@ -23,10 +28,10 @@ import {
   drawWoodenTokenDock,
   spawnParticlesAtSlot,
   updateParticles,
-} from "#src/render/index.js";
+} from "#src/render/index";
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
-import type { GT032Content, GT032Cup, GT032Difficulty } from "./template.js";
+import type { GT032Content, GT032Cup, GT032Difficulty } from "./template";
 
 interface GT032ActionPayload {
   readonly cup_id?: string;
@@ -65,7 +70,10 @@ export class GT032Session extends TemplateGameSession<
   setupEntities(): void {
     this.selectedCupId = null;
     this.isWin = false;
-    this.showHintMarks = false;
+    const diff = this.difficulty as GT032Difficulty & {
+      show_hint_marks?: boolean;
+    };
+    this.showHintMarks = diff.show_hint_marks ?? false;
     this.particles = [];
     this.cupFills.clear();
     for (const cup of this.content.cups) {
@@ -380,23 +388,36 @@ export class GT032Session extends TemplateGameSession<
   }
 
   private toTapAction(x: number, y: number): GameAction | null {
-    const hitTolerance = 24;
-    for (let i = 0; i < this.content.cups.length; i++) {
-      const cup = this.content.cups[i];
-      const slot = this.slots[i];
-      if (!(cup && slot)) {
-        continue;
-      }
-      const hw = (slot.hitW ?? slot.w) / 2 + hitTolerance;
-      const hh = (slot.hitH ?? slot.h) / 2 + hitTolerance;
-      if (Math.abs(x - slot.x) <= hw && Math.abs(y - slot.y) <= hh) {
+    const cupSlots = this.slots.slice(0, this.content.cups.length);
+    const index = findHitSlotIndex(cupSlots, x, y, "square", TAP_TOLERANCE_PX);
+    const cup = this.content.cups[index];
+    if (!cup) {
+      return null;
+    }
+    if (this.content.question_type === "pour_to_mark") {
+      const targetFill = this.getTargetFill(cup);
+      const fill = this.getCupFill(cup.cup_id);
+      if (fill === targetFill) {
         return {
           type: "select_cup",
           data: { cup_id: cup.cup_id },
         };
       }
+      if (fill >= cup.capacity_units) {
+        return {
+          type: "adjust_cup",
+          data: { cup_id: cup.cup_id, delta: -fill },
+        };
+      }
+      return {
+        type: "adjust_cup",
+        data: { cup_id: cup.cup_id, delta: 1 },
+      };
     }
-    return null;
+    return {
+      type: "select_cup",
+      data: { cup_id: cup.cup_id },
+    };
   }
 
   override getView(): EngineView {
@@ -414,6 +435,13 @@ export class GT032Session extends TemplateGameSession<
         state = this.isCupCorrect(cup) ? "correct" : "selected";
       }
 
+      const fillUnits = this.getCupFill(cup.cup_id);
+      const cupNumberWord = formatNumberWord(i + 1);
+      const fillWord = formatNumberWord(fillUnits);
+      const spokenLabel = formatSpokenLabel(
+        `cốc số ${cupNumberWord} có ${fillWord} vạch nước`
+      );
+
       entities.push({
         id: cup.cup_id,
         slotIndex: i,
@@ -423,6 +451,10 @@ export class GT032Session extends TemplateGameSession<
         y: slot.y,
         w: slot.w,
         h: slot.h,
+        hitShape: "square",
+        glyph: "🥛",
+        label: `Cốc ${i + 1} (${fillUnits}/${cup.capacity_units})`,
+        spokenLabel,
       });
     }
 
@@ -440,6 +472,55 @@ export class GT032Session extends TemplateGameSession<
     return this.selectedCupId;
   }
 
+  private drawCupTray(ctx: CanvasRenderingContext2D, rs: RenderSystem): void {
+    const cupSlots = this.slots.slice(0, this.content.cups.length);
+    if (cupSlots.length === 0) {
+      return;
+    }
+    let minX = Number.POSITIVE_INFINITY;
+    let minY = Number.POSITIVE_INFINITY;
+    let maxX = Number.NEGATIVE_INFINITY;
+    let maxY = Number.NEGATIVE_INFINITY;
+    for (let i = 0; i < cupSlots.length; i++) {
+      const slot = cupSlots[i];
+      if (!slot) {
+        continue;
+      }
+      const cup = this.content.cups[i];
+      const baseW = slot.w * 0.8;
+      const baseH = slot.h * 0.85;
+      let wFactor = 1.0;
+      let hFactor = 1.0;
+      if (cup?.shape === "narrow_tall") {
+        wFactor = 0.7;
+        hFactor = 1.25;
+      } else if (cup?.shape === "wide_short") {
+        wFactor = 1.35;
+        hFactor = 0.75;
+      } else if (cup?.shape === "fluted") {
+        wFactor = 1.1;
+        hFactor = 1.0;
+      }
+      const cupW = baseW * wFactor;
+      const cupH = baseH * hFactor;
+      const cupX = slot.x - cupW / 2;
+      const cupY = slot.y + baseH / 2 - cupH;
+      minX = Math.min(minX, cupX);
+      minY = Math.min(minY, cupY);
+      maxX = Math.max(maxX, cupX + cupW);
+      maxY = Math.max(maxY, cupY + cupH);
+    }
+    const padX = 24;
+    const padY = 16;
+    const trayRect: ZoneRect = {
+      x: Math.round(minX - padX),
+      y: Math.round(minY - padY),
+      w: Math.round(maxX - minX + 2 * padX),
+      h: Math.round(maxY - minY + 2 * padY),
+    };
+    drawWoodenTokenDock(ctx, rs, trayRect);
+  }
+
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
@@ -454,11 +535,7 @@ export class GT032Session extends TemplateGameSession<
       drawSubPromptText(ctx, rs, subPrompt);
     }
 
-    drawWoodenTokenDock(
-      ctx,
-      rs,
-      dockRectAroundSlots(this.slots, this.stageRect)
-    );
+    this.drawCupTray(ctx, rs);
 
     for (let i = 0; i < this.content.cups.length; i++) {
       const cup = this.content.cups[i];

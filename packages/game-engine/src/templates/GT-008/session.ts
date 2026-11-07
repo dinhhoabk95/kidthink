@@ -1,3 +1,4 @@
+import { formatSpokenLabel } from "@mindkid/shared/preschool-terminology";
 import type { AgeBand } from "#src/contracts/types";
 import {
   ACTION_CORRECT,
@@ -5,11 +6,15 @@ import {
   ACTION_RETRY,
   type ActionResult,
   type GameAction,
+  type GameActionValue,
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
+import { resolveAssetLabels } from "#src/labels/spoken-keyword";
 import { resolveTouchFloor } from "#src/layout/constants";
+import { TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
+import { trayBoxWithin } from "#src/layout/slot-fit.js";
 import { computeStageCellSlots } from "#src/layout/stage-targets";
 import type { ZoneRect } from "#src/layout/stage-zones";
 import {
@@ -45,7 +50,7 @@ const SHAPE_TRAY_INSET_X_PX = 6;
 const SHAPE_TRAY_INSET_Y_PX = 4;
 
 /** Khoảng chạm thêm quanh vùng chạm của slot (`GT-008.md` §6). */
-const HIT_TOLERANCE_PX = 24;
+const HIT_TOLERANCE_PX = TAP_TOLERANCE_PX;
 
 function insetRect(rect: ZoneRect, insetX: number, insetY: number): ZoneRect {
   return {
@@ -57,7 +62,7 @@ function insetRect(rect: ZoneRect, insetX: number, insetY: number): ZoneRect {
 }
 
 function extractSlotData(
-  data: unknown
+  data: GameActionValue
 ): { item_id: string; slot_id: string } | undefined {
   if (
     typeof data === "object" &&
@@ -82,9 +87,13 @@ export class GT008Session extends TemplateGameSession<
   private renderParticles: Particle[] = [];
   private stagedItemId: string | null = null;
   private wrongItemId: string | null = null;
+  private wrongSlotId: string | null = null;
   private wrongTimestamp = 0;
+  private lastFrameMs = 0;
 
   placedSlots: Map<string, string> = new Map(); // slot_id -> item_id
+  private itemById = new Map<string, GT008Content["items"][number]>();
+  private slotById = new Map<string, GT008Content["slots"][number]>();
 
   /** Vật nằm trong khay, dãy ô đích đứng trên sân khấu (`BR-PSZ-01`). */
   override readonly needsTray = true;
@@ -93,15 +102,52 @@ export class GT008Session extends TemplateGameSession<
   override get trayItemCount(): number {
     return this.content.items.length;
   }
+
+  override get trayHasLabels(): boolean {
+    return this.content.items.some((item) => Boolean(item.label));
+  }
   override readonly usesPromptZone = true;
 
   setupEntities(): void {
     this.placedSlots.clear();
+    this.itemById = new Map(this.content.items.map((it) => [it.item_id, it]));
+    this.slotById = new Map(this.content.slots.map((s) => [s.slot_id, s]));
     this.stagedItemId = null;
     this.wrongItemId = null;
+    this.wrongSlotId = null;
     this.wrongTimestamp = 0;
+    this.lastFrameMs = 0;
     this.isWon = false;
     this.renderParticles = [];
+  }
+
+  private resolveItemById(): ReadonlyMap<
+    string,
+    GT008Content["items"][number]
+  > {
+    if (this.itemById.size === this.content.items.length) {
+      return this.itemById;
+    }
+    return new Map(this.content.items.map((it) => [it.item_id, it]));
+  }
+
+  private resolveSlotById(): ReadonlyMap<
+    string,
+    GT008Content["slots"][number]
+  > {
+    if (this.slotById.size === this.content.slots.length) {
+      return this.slotById;
+    }
+    return new Map(this.content.slots.map((s) => [s.slot_id, s]));
+  }
+
+  update(deltaMs: number): void {
+    this.lastFrameMs += deltaMs;
+    if (this.wrongItemId && this.lastFrameMs - this.wrongTimestamp >= 400) {
+      this.setRenderItemState(this.wrongItemId, "idle");
+      this.wrongItemId = null;
+      this.wrongSlotId = null;
+    }
   }
 
   getStagedItemId(): string | null {
@@ -114,7 +160,7 @@ export class GT008Session extends TemplateGameSession<
       if (!data) {
         return ACTION_RETRY;
       }
-      const slot = this.content.slots.find((s) => s.slot_id === data.slot_id);
+      const slot = this.resolveSlotById().get(data.slot_id);
 
       if (!slot) {
         return ACTION_RETRY;
@@ -131,7 +177,7 @@ export class GT008Session extends TemplateGameSession<
   }
 
   onItemPlaced(itemId: string, slotId: string): void {
-    const slotDef = this.content.slots.find((s) => s.slot_id === slotId);
+    const slotDef = this.resolveSlotById().get(slotId);
     if (!slotDef) {
       return;
     }
@@ -191,7 +237,8 @@ export class GT008Session extends TemplateGameSession<
         this.content.items.length,
         zones.tray,
         touchFloor,
-        targets.length
+        targets.length,
+        this.trayHasLabels
       );
       return [...targets, ...sources];
     }
@@ -370,7 +417,8 @@ export class GT008Session extends TemplateGameSession<
         is_correct: false,
       });
       this.wrongItemId = data.item_id;
-      this.wrongTimestamp = performance.now();
+      this.wrongSlotId = data.slot_id;
+      this.wrongTimestamp = this.lastFrameMs;
       this.setRenderItemState(data.item_id, "wrong");
     }
   }
@@ -378,6 +426,7 @@ export class GT008Session extends TemplateGameSession<
   override getView(): EngineView {
     const targets = this.targetSlots;
     const sources = this.sourceSlots;
+    const itemById = this.resolveItemById();
     const placedItemIds = new Set(this.placedSlots.values());
     const entities: ViewEntity[] = [];
 
@@ -386,7 +435,16 @@ export class GT008Session extends TemplateGameSession<
       if (!slot) {
         return;
       }
-      const isPlaced = this.placedSlots.has(defSlot.slot_id);
+      const placedId = this.placedSlots.get(defSlot.slot_id);
+      const isPlaced = placedId !== undefined;
+      const placedItem = placedId ? itemById.get(placedId) : undefined;
+      const placedLabels = placedItem
+        ? resolveAssetLabels(placedItem.asset)
+        : undefined;
+      const label = defSlot.label ?? placedLabels?.label;
+      const spokenLabel = defSlot.label
+        ? formatSpokenLabel(defSlot.label)
+        : (placedLabels?.spokenLabel ?? `Ô đích ${i + 1}`);
       entities.push({
         id: defSlot.slot_id,
         slotIndex: this.slots.indexOf(slot),
@@ -396,6 +454,10 @@ export class GT008Session extends TemplateGameSession<
         y: slot.y,
         w: slot.w,
         h: slot.h,
+        glyph: placedLabels?.glyph,
+        label,
+        spokenLabel,
+        spokenAudioPath: placedLabels?.spokenAudioPath,
       });
     });
 
@@ -406,15 +468,24 @@ export class GT008Session extends TemplateGameSession<
       }
       const isPlaced = placedItemIds.has(item.item_id);
       const isStaged = this.stagedItemId === item.item_id;
+      const assetLabels = resolveAssetLabels(item.asset);
+      const label = item.label ?? assetLabels.label;
+      const spokenLabel = item.label
+        ? formatSpokenLabel(item.label)
+        : assetLabels.spokenLabel;
       entities.push({
         id: item.item_id,
         slotIndex: this.slots.indexOf(slot),
         role: "source",
-        state: this.toSourceEntityState(isPlaced, isStaged),
+        state: this.toSourceEntityState(item.item_id, isPlaced, isStaged),
         x: slot.x,
         y: slot.y,
         w: slot.w,
         h: slot.h,
+        glyph: assetLabels.glyph,
+        label,
+        spokenLabel,
+        spokenAudioPath: assetLabels.spokenAudioPath,
       });
     });
 
@@ -425,6 +496,7 @@ export class GT008Session extends TemplateGameSession<
   }
 
   private toSourceEntityState(
+    itemId: string,
     isPlaced: boolean,
     isStaged: boolean
   ): ViewEntity["state"] {
@@ -434,6 +506,12 @@ export class GT008Session extends TemplateGameSession<
     if (isStaged) {
       return "selected";
     }
+    if (
+      this.wrongItemId === itemId ||
+      this.getRenderItemState(itemId) === "wrong"
+    ) {
+      return "incorrect";
+    }
     return "idle";
   }
 
@@ -442,9 +520,11 @@ export class GT008Session extends TemplateGameSession<
     rs: RenderSystem,
     timeMs: number
   ): void {
+    this.lastFrameMs = timeMs;
     if (this.wrongItemId && timeMs - this.wrongTimestamp >= 400) {
       this.setRenderItemState(this.wrongItemId, "idle");
       this.wrongItemId = null;
+      this.wrongSlotId = null;
     }
     drawSceneBackground(ctx, rs, this.themeId);
     const zones = pickTrayZones(this.stageRect, this.trayRect);
@@ -452,13 +532,19 @@ export class GT008Session extends TemplateGameSession<
     const sources = this.sourceSlots;
     const targetBox = boxFromSlots(targets);
     if (targetBox) {
-      drawShapeTray(ctx, targetBox);
+      const adjustedTargetBox = this.content.slots.some((s) => Boolean(s.label))
+        ? { ...targetBox, h: targetBox.h + 18 }
+        : targetBox;
+      drawShapeTray(
+        ctx,
+        trayBoxWithin(adjustedTargetBox, zones?.stage ?? this.stageRect)
+      );
     }
     if (sources.length > 0) {
       // Lời dẫn do shell vẽ; khay nguồn là vùng khay của khung năm vùng.
       drawWoodenTokenDock(ctx, rs, zones?.tray);
     }
-    const itemById = new Map(this.content.items.map((i) => [i.item_id, i]));
+    const itemById = this.resolveItemById();
     const placedItemIds = new Set(this.placedSlots.values());
 
     this.content.slots.forEach((defSlot, i) => {
@@ -472,6 +558,19 @@ export class GT008Session extends TemplateGameSession<
         drawEmptyTargetSlot(ctx, slot);
         if (defSlot.label) {
           drawSlotLabel(ctx, defSlot.label, slot, rs);
+        }
+        if (
+          defSlot.slot_id === this.wrongSlotId &&
+          timeMs - this.wrongTimestamp < 400
+        ) {
+          const elapsed = timeMs - this.wrongTimestamp;
+          rs.drawRetryRing(
+            ctx,
+            slot.x,
+            slot.y,
+            Math.min(slot.hitW, slot.hitH) / 2 + 4,
+            elapsed / 400
+          );
         }
         return;
       }
@@ -500,7 +599,7 @@ export class GT008Session extends TemplateGameSession<
         id: item.item_id,
         asset: item.asset,
         label: item.label,
-        state: this.getRenderItemState(item.item_id),
+        state: this.resolveSourceItemState(item.item_id),
       });
 
       if (isWrong && elapsed < 400) {
@@ -514,6 +613,13 @@ export class GT008Session extends TemplateGameSession<
       }
     });
     this.drawRenderFeedback(rs, ctx);
+  }
+
+  private resolveSourceItemState(itemId: string) {
+    const rawState = this.getRenderItemState(itemId);
+    return this.stagedItemId === itemId && rawState === "idle"
+      ? "selected"
+      : rawState;
   }
 
   private drawRenderFeedback(

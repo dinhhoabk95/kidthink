@@ -1,3 +1,4 @@
+import { formatSpokenLabel } from "@mindkid/shared/preschool-terminology";
 import type { AgeBand } from "#src/contracts/types";
 import {
   ACTION_CORRECT,
@@ -5,10 +6,12 @@ import {
   ACTION_RETRY,
   type ActionResult,
   type GameAction,
+  type GameActionValue,
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveTouchFloor } from "#src/layout/constants";
+import { TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
 import { computeStageTreeSlots } from "#src/layout/stage-targets";
 import {
@@ -21,27 +24,37 @@ import type { Slot } from "#src/layout/types";
 import {
   drawEmptyTargetSlot,
   drawMatchLine,
+  drawMontessoriControlOfErrorPill,
   drawQuantityRepresentation,
   drawSceneBackground,
   drawSlotItem,
   drawWoodenTokenDock,
   type ItemVisualState,
+  sceneBox,
 } from "#src/render/index.js";
+import { deriveStream } from "#src/rng/mulberry32";
+import { shuffle } from "#src/rng/shuffle";
 import type { DegradationState } from "#src/systems/degradation";
 import { designTokens } from "#src/systems/designTokens";
+import {
+  type ControlOfErrorDiagnostics,
+  MontessoriExploreTracker,
+} from "#src/systems/montessori-explore-system";
 import type { RenderSystem } from "#src/systems/render-system";
 import type { GT007Content, GT007Difficulty } from "./template.js";
 
 /** Cạnh ô tổng và ô phần lớn nhất trên sân khấu — cùng cỡ ô của `number-bond-tree`. */
 const TREE_CELL_MAX_PX = 96;
 
+export const FIBONACCI_SEQUENCE = [1, 1, 2, 3, 5, 8, 13, 21] as const;
+
 /** Khoảng chạm thêm quanh vùng chạm của slot (`GT-007.md` §6). */
-const HIT_TOLERANCE_PX = 24;
+const HIT_TOLERANCE_PX = TAP_TOLERANCE_PX;
 
 /** Vùng chạm tối thiểu của ô phần ở bố cục cũ — rộng hơn thân ô vẽ. */
 const LEGACY_PART_HIT: MinHitSize = { w: 100, h: 100 };
 
-function extractOptionId(data: unknown): string | undefined {
+function extractOptionId(data: GameActionValue): string | undefined {
   if (typeof data === "object" && data !== null && "option_id" in data) {
     const val = Reflect.get(data, "option_id");
     return typeof val === "string" ? val : undefined;
@@ -54,9 +67,15 @@ export class GT007Session extends TemplateGameSession<
   GT007Difficulty
 > {
   degradation: DegradationState | null = null;
+  private readonly exploreTracker = new MontessoriExploreTracker({
+    milestoneTarget: 2,
+  });
+  private previewedOptionId: string | null = null;
   private stagedOptionId: string | null = null;
   private wrongOptionId: string | null = null;
   private wrongTimestamp = 0;
+  private lastFrameMs = 0;
+  private displayOptions: readonly GT007Content["options"][number][] = [];
 
   filledParts: Map<string, number> = new Map();
 
@@ -65,14 +84,83 @@ export class GT007Session extends TemplateGameSession<
 
   /** Số vật nguồn trong khay của vòng — shell đo chiều cao khay (`BR-PSZ-13`). */
   override get trayItemCount(): number {
-    return this.content.options.length;
+    return (
+      this.displayOptions.length > 0
+        ? this.displayOptions
+        : this.content.options
+    ).length;
   }
   override readonly usesPromptZone = true;
 
   setupEntities(): void {
     this.filledParts.clear();
+    this.exploreTracker.reset(false);
+    this.previewedOptionId = null;
     this.stagedOptionId = null;
+    this.wrongOptionId = null;
+    this.wrongTimestamp = 0;
+    this.lastFrameMs = 0;
     this.isWon = false;
+    this.displayOptions =
+      Reflect.get(this.difficulty, "shuffle_items") === true
+        ? shuffle(this.content.options, deriveStream(this.layoutSeed, "items"))
+        : [...this.content.options];
+  }
+
+  update(deltaMs: number): void {
+    this.exploreTracker.tick(deltaMs);
+  }
+
+  startExplorePhase(): void {
+    this.exploreTracker.reset(true);
+  }
+
+  getExploreTracker(): MontessoriExploreTracker {
+    return this.exploreTracker;
+  }
+
+  getControlOfError(): ControlOfErrorDiagnostics | null {
+    return this.exploreTracker.getControlOfErrorDiagnostics();
+  }
+
+  isMicroSandboxActive(): boolean {
+    return this.exploreTracker.isMicroSandboxActive();
+  }
+
+  getPreviewedOptionId(): string | null {
+    return this.previewedOptionId;
+  }
+
+  previewOption(optionId: string): {
+    optionValue: number;
+    resultingSum: number;
+    expectedWhole: number;
+  } | null {
+    const options =
+      this.displayOptions.length > 0
+        ? this.displayOptions
+        : this.content.options;
+    const option = options.find((o) => o.id === optionId);
+    if (!option) {
+      return null;
+    }
+    const knownSum = this.content.parts
+      .filter((p) => !p.is_target)
+      .reduce((acc, p) => acc + p.value, 0);
+    const resultingSum = knownSum + option.value;
+    this.previewedOptionId = optionId;
+    this.exploreTracker.recordExploreAction("bond_previewed");
+    this.recordEvent("option_previewed", {
+      option_id: optionId,
+      option_value: option.value,
+      resulting_sum: resultingSum,
+      expected_whole: this.content.whole.value,
+    });
+    return {
+      optionValue: option.value,
+      resultingSum,
+      expectedWhole: this.content.whole.value,
+    };
   }
 
   getStagedOptionId(): string | null {
@@ -82,13 +170,35 @@ export class GT007Session extends TemplateGameSession<
   validateAction(action: GameAction): ActionResult {
     if (action.type === "fill_part" || action.type === "tap_option") {
       const optionId = extractOptionId(action.data);
-      const option = this.content.options.find((o) => o.id === optionId);
+      const options =
+        this.displayOptions.length > 0
+          ? this.displayOptions
+          : this.content.options;
+      const option = options.find((o) => o.id === optionId);
 
       if (!option) {
         return ACTION_RETRY;
       }
 
-      if (option.is_correct) {
+      let targetPartId: string | undefined;
+      if (
+        action.data &&
+        typeof action.data === "object" &&
+        "part_id" in action.data
+      ) {
+        const pVal = Reflect.get(action.data, "part_id");
+        if (typeof pVal === "string") {
+          targetPartId = pVal;
+        }
+      }
+      targetPartId ??= this.getTargetPartId();
+      const targetPart = this.content.parts.find((p) => p.id === targetPartId);
+
+      if (
+        option.is_correct &&
+        targetPart &&
+        option.value === targetPart.value
+      ) {
         return ACTION_CORRECT;
       }
 
@@ -105,18 +215,28 @@ export class GT007Session extends TemplateGameSession<
 
   onPartFilled(optionId: string, partId?: string): void {
     const targetId = partId ?? this.getTargetPartId();
-    const option = this.content.options.find((o) => o.id === optionId);
-    if (!option) {
+    const targetPart = this.content.parts.find((p) => p.id === targetId);
+    const options =
+      this.displayOptions.length > 0
+        ? this.displayOptions
+        : this.content.options;
+    const option = options.find((o) => o.id === optionId);
+    if (!(option && targetPart)) {
       return;
     }
+
+    const isCorrect = Boolean(
+      option.is_correct && option.value === targetPart.value
+    );
 
     this.recordEvent("bond_selected", {
       option_id: optionId,
       part_id: targetId,
-      is_correct: option.is_correct,
+      is_correct: isCorrect,
     });
 
-    if (option.is_correct) {
+    if (isCorrect) {
+      this.exploreTracker.recordCorrectAttempt();
       this.filledParts.set(targetId, option.value);
       this.recordEvent("part_filled", {
         part_id: targetId,
@@ -127,8 +247,25 @@ export class GT007Session extends TemplateGameSession<
         this.winSession();
       }
     } else {
+      const knownSum = this.content.parts
+        .filter((p) => !p.is_target)
+        .reduce((acc, p) => acc + p.value, 0);
+      const actualSum = knownSum + option.value;
+      const expectedWhole = this.content.whole.value;
+      this.exploreTracker.recordWrongAttempt({
+        reasonVi: `Gộp ${knownSum} và ${option.value} được ${actualSum} (cần ${expectedWhole})`,
+        targetId,
+        actualValue: actualSum,
+        expectedValue: expectedWhole,
+      });
+      this.recordEvent("control_of_error", {
+        option_id: optionId,
+        actual_sum: actualSum,
+        expected_whole: expectedWhole,
+        micro_sandbox: this.exploreTracker.isMicroSandboxActive(),
+      });
       this.wrongOptionId = optionId;
-      this.wrongTimestamp = Date.now();
+      this.wrongTimestamp = this.lastFrameMs;
     }
   }
 
@@ -149,6 +286,10 @@ export class GT007Session extends TemplateGameSession<
   }
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
+    const options =
+      this.displayOptions.length > 0
+        ? this.displayOptions
+        : this.content.options;
     const zones = pickTrayZones(this.stageRect, this.trayRect);
     if (zones) {
       const touchFloor = resolveTouchFloor(ageBand, this.cssPerLogic);
@@ -158,13 +299,13 @@ export class GT007Session extends TemplateGameSession<
         touchFloor,
         maxCell: TREE_CELL_MAX_PX,
       });
-      const options = computeTraySourceSlots(
-        this.content.options.length,
+      const optionSlots = computeTraySourceSlots(
+        options.length,
         zones.tray,
         touchFloor,
         tree.length
       );
-      return [...tree, ...options];
+      return [...tree, ...optionSlots];
     }
     const layoutKey =
       this.content.layout === "ten-frame-split" ||
@@ -173,7 +314,7 @@ export class GT007Session extends TemplateGameSession<
         : "number-bond-tree";
     const layoutFn = resolveLayout(layoutKey);
     return layoutFn({
-      slotCount: this.content.options.length,
+      slotCount: options.length,
       targetCount: this.content.parts.length,
       ageBand,
       logic: this.logicSpace,
@@ -186,13 +327,17 @@ export class GT007Session extends TemplateGameSession<
     sources: readonly Slot[],
     hitTolerance: number
   ): GT007Content["options"][number] | null {
+    const options =
+      this.displayOptions.length > 0
+        ? this.displayOptions
+        : this.content.options;
     const index = findNearestHitSlot(
-      sources.slice(0, this.content.options.length),
+      sources.slice(0, options.length),
       x,
       y,
       hitTolerance
     );
-    return this.content.options[index] ?? null;
+    return options[index] ?? null;
   }
 
   private findTargetPart(
@@ -323,7 +468,11 @@ export class GT007Session extends TemplateGameSession<
   }
 
   override getHintTargetIndex(): number | null {
-    const idx = this.content.options.findIndex((o) => o.is_correct);
+    const options =
+      this.displayOptions.length > 0
+        ? this.displayOptions
+        : this.content.options;
+    const idx = options.findIndex((o) => o.is_correct);
     const sourceSlot = this.sourceSlots[idx];
     return sourceSlot ? this.slots.indexOf(sourceSlot) : null;
   }
@@ -346,7 +495,7 @@ export class GT007Session extends TemplateGameSession<
     optId: string,
     rawState: ItemVisualState
   ): ViewEntity["state"] {
-    const now = Date.now();
+    const now = this.lastFrameMs;
     if (this.wrongOptionId === optId && now - this.wrongTimestamp < 400) {
       return "incorrect";
     }
@@ -366,11 +515,25 @@ export class GT007Session extends TemplateGameSession<
     const entities: ViewEntity[] = [];
     const targets = this.targetSlots;
     const sources = this.sourceSlots;
+    const options =
+      this.displayOptions.length > 0
+        ? this.displayOptions
+        : this.content.options;
+
+    const rawIds = [
+      this.content.whole.id,
+      ...this.content.parts.map((p) => p.id),
+      ...options.map((o) => o.id),
+    ];
+    const needPrefix = new Set(rawIds).size !== rawIds.length;
 
     const wholeSlot = targets[0];
     if (wholeSlot) {
+      const wholeLabel = String(this.content.whole.value);
       entities.push({
-        id: this.content.whole.id,
+        id: needPrefix
+          ? `whole:${this.content.whole.id}`
+          : this.content.whole.id,
         slotIndex: this.slots.indexOf(wholeSlot),
         role: "target",
         state: "idle",
@@ -378,6 +541,8 @@ export class GT007Session extends TemplateGameSession<
         y: wholeSlot.y,
         w: wholeSlot.w,
         h: wholeSlot.h,
+        label: wholeLabel,
+        spokenLabel: formatSpokenLabel(wholeLabel),
       });
     }
 
@@ -387,8 +552,14 @@ export class GT007Session extends TemplateGameSession<
         return;
       }
       const isFilled = this.filledParts.has(part.id);
+      const isHiddenTarget = part.is_target && !isFilled;
+      const partVal = this.filledParts.get(part.id) ?? part.value;
+      const partLabel = isHiddenTarget ? "?" : String(partVal);
+      const partSpokenLabel = isHiddenTarget
+        ? "Ô trống"
+        : formatSpokenLabel(String(partVal));
       entities.push({
-        id: part.id,
+        id: needPrefix ? `part:${part.id}` : part.id,
         slotIndex: this.slots.indexOf(slot),
         role: "target",
         state: isFilled ? "correct" : "idle",
@@ -396,17 +567,20 @@ export class GT007Session extends TemplateGameSession<
         y: slot.y,
         w: slot.w,
         h: slot.h,
+        label: partLabel,
+        spokenLabel: partSpokenLabel,
       });
     });
 
-    this.content.options.forEach((opt, i) => {
+    options.forEach((opt, i) => {
       const slot = sources[i];
       if (!slot) {
         return;
       }
       const rawState = this.getRenderItemState(opt.id);
+      const optLabel = String(opt.value);
       entities.push({
-        id: opt.id,
+        id: needPrefix ? `opt:${opt.id}` : opt.id,
         slotIndex: this.slots.indexOf(slot),
         role: "source",
         state: this.toOptionEntityState(opt.id, rawState),
@@ -414,6 +588,8 @@ export class GT007Session extends TemplateGameSession<
         y: slot.y,
         w: slot.w,
         h: slot.h,
+        label: optLabel,
+        spokenLabel: formatSpokenLabel(optLabel),
       });
     });
 
@@ -426,8 +602,9 @@ export class GT007Session extends TemplateGameSession<
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
-    _timeMs: number
+    timeMs: number
   ): void {
+    this.lastFrameMs = timeMs;
     drawSceneBackground(ctx, rs, this.themeId);
     const zones = pickTrayZones(this.stageRect, this.trayRect);
     if (zones) {
@@ -495,12 +672,16 @@ export class GT007Session extends TemplateGameSession<
       }
     });
 
-    this.content.options.forEach((opt, i) => {
+    const options =
+      this.displayOptions.length > 0
+        ? this.displayOptions
+        : this.content.options;
+    options.forEach((opt, i) => {
       const slot = sources[i];
       if (!slot) {
         return;
       }
-      const now = Date.now();
+      const now = timeMs;
       const isWrong =
         this.wrongOptionId === opt.id && now - this.wrongTimestamp < 400;
       const shakeX =
@@ -508,11 +689,26 @@ export class GT007Session extends TemplateGameSession<
           ? Math.sin((now - this.wrongTimestamp) / 30) * 4
           : 0;
       const renderSlot = shakeX === 0 ? slot : { ...slot, x: slot.x + shakeX };
+      const rawState = this.getRenderItemState(opt.id);
+      let state: ItemVisualState = rawState;
+      if (isWrong) {
+        state = "wrong";
+      } else if (this.stagedOptionId === opt.id && rawState === "idle") {
+        state = "selected";
+      }
       drawSlotItem(ctx, rs, renderSlot, {
         id: opt.id,
         text: String(opt.value),
-        state: isWrong ? "wrong" : this.getRenderItemState(opt.id),
+        state,
       });
     });
+
+    const stageBox = zones?.stage ?? this.stageRect ?? sceneBox(rs);
+    drawMontessoriControlOfErrorPill(
+      ctx,
+      stageBox,
+      this.exploreTracker,
+      rs.viewport?.scale
+    );
   }
 }

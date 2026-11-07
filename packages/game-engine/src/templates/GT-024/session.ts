@@ -13,7 +13,9 @@ import type {
   Gesture,
   ViewEntity,
 } from "#src/interaction";
+import { resolveAssetLabels } from "#src/labels/spoken-keyword.js";
 import { resolveTouchFloor } from "#src/layout/constants";
+import { TAP_TOLERANCE_PX } from "#src/layout/hit-test.js";
 import { resolveLayout } from "#src/layout/registry";
 import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
@@ -38,6 +40,9 @@ import {
 } from "./stage-fit.js";
 import type { GT024Content, GT024Difficulty } from "./template.js";
 
+const WAYPOINT_VIEW_RADIUS_PX = 24;
+const DROP_INTERPOLATION_STEPS = 16;
+
 function findHitStrokePoint(
   points: readonly { readonly x: number; readonly y: number }[],
   target: { readonly x: number; readonly y: number },
@@ -49,6 +54,23 @@ function findHitStrokePoint(
     }
   }
   return null;
+}
+
+function interpolateSegment(
+  fromX: number,
+  fromY: number,
+  toX: number,
+  toY: number
+): { readonly x: number; readonly y: number }[] {
+  const points: { readonly x: number; readonly y: number }[] = [];
+  for (let i = 0; i <= DROP_INTERPOLATION_STEPS; i++) {
+    const t = i / DROP_INTERPOLATION_STEPS;
+    points.push({
+      x: fromX + (toX - fromX) * t,
+      y: fromY + (toY - fromY) * t,
+    });
+  }
+  return points;
 }
 
 export class GT024Session extends TemplateGameSession<
@@ -66,6 +88,12 @@ export class GT024Session extends TemplateGameSession<
   /** Chỉ số slot chạm của từng waypoint; mặc định mỗi waypoint một slot. */
   private slotOfWaypoint: readonly number[] = [];
   private readonly orderingMechanic = new OrderingMechanic();
+  private lastFrameMs = 0;
+  private wrongWaypointTimestamp = 0;
+
+  update(deltaMs: number): void {
+    this.lastFrameMs += deltaMs;
+  }
 
   setupEntities(): void {
     this.isWon = false;
@@ -91,28 +119,49 @@ export class GT024Session extends TemplateGameSession<
     });
   }
 
-  validateAction(action: GameAction): ActionResult {
-    if (action.type === "trace_point" || action.type === "point_touched") {
-      const data = action.data;
-      const x =
-        typeof data === "object" && data !== null
-          ? Reflect.get(data, "x")
-          : undefined;
-      const y =
-        typeof data === "object" && data !== null
-          ? Reflect.get(data, "y")
-          : undefined;
-      if (typeof x !== "number" || typeof y !== "number") {
-        return ACTION_IGNORED;
-      }
-      const target = this.traceSystem.getCurrentTargetWaypoint();
-      if (!target) {
-        return ACTION_IGNORED;
-      }
-      const dist = Math.hypot(target.x - x, target.y - y);
-      return dist <= this.tolerancePx ? ACTION_CORRECT : ACTION_RETRY;
+  private validateTapWaypoint(
+    data: { index?: number } | undefined
+  ): ActionResult {
+    const hitIdx = data?.index;
+    const target = this.traceSystem.getCurrentTargetWaypoint();
+    const expectedIdx = target
+      ? this.screenWaypoints.findIndex((w) => w.id === target.id)
+      : -1;
+    if (typeof hitIdx === "number" && hitIdx >= 0 && hitIdx !== expectedIdx) {
+      return ACTION_RETRY;
     }
+    return ACTION_IGNORED;
+  }
 
+  private validateTracePoint(data: object | null | undefined): ActionResult {
+    const x =
+      typeof data === "object" && data !== null
+        ? Reflect.get(data, "x")
+        : undefined;
+    const y =
+      typeof data === "object" && data !== null
+        ? Reflect.get(data, "y")
+        : undefined;
+    if (typeof x !== "number" || typeof y !== "number") {
+      return ACTION_IGNORED;
+    }
+    const target = this.traceSystem.getCurrentTargetWaypoint();
+    if (!target) {
+      return ACTION_IGNORED;
+    }
+    const dist = Math.hypot(target.x - x, target.y - y);
+    return dist <= this.tolerancePx ? ACTION_CORRECT : ACTION_RETRY;
+  }
+
+  validateAction(action: GameAction): ActionResult {
+    if (action.type === "tap_waypoint") {
+      return this.validateTapWaypoint(
+        action.data as { index?: number } | undefined
+      );
+    }
+    if (action.type === "trace_point" || action.type === "point_touched") {
+      return this.validateTracePoint(action.data as object | null | undefined);
+    }
     return ACTION_IGNORED;
   }
 
@@ -142,44 +191,111 @@ export class GT024Session extends TemplateGameSession<
     return this.traceSystem.isComplete();
   }
 
+  private toTargetTraceAction(
+    pt: { readonly x: number; readonly y: number },
+    target: TraceWaypoint
+  ): GameAction {
+    const dist = Math.hypot(target.x - pt.x, target.y - pt.y);
+    return {
+      type: "trace_point",
+      data:
+        dist <= this.tolerancePx
+          ? { x: pt.x, y: pt.y }
+          : { x: target.x, y: target.y },
+    };
+  }
+
+  private toStrokeAction(
+    gesture: Extract<Gesture, { type: "stroke" }>,
+    target: TraceWaypoint,
+    hitTolerance: number
+  ): GameAction | null {
+    const first = gesture.points[0];
+    if (!(first && isPointInStage(first.x, first.y, this.stageRect))) {
+      return null;
+    }
+    const inStage = gesture.points.filter((pt) =>
+      isPointInStage(pt.x, pt.y, this.stageRect)
+    );
+    const hitPt = findHitStrokePoint(inStage, target, hitTolerance);
+    return hitPt ? this.toTargetTraceAction(hitPt, target) : null;
+  }
+
+  private toDropAction(
+    gesture: Extract<Gesture, { type: "drop" }>,
+    target: TraceWaypoint,
+    hitTolerance: number
+  ): GameAction | null {
+    if (
+      !(
+        isPointInStage(gesture.fromX, gesture.fromY, this.stageRect) &&
+        isPointInStage(gesture.toX, gesture.toY, this.stageRect)
+      )
+    ) {
+      return null;
+    }
+    const pts = interpolateSegment(
+      gesture.fromX,
+      gesture.fromY,
+      gesture.toX,
+      gesture.toY
+    );
+    const hitPt = findHitStrokePoint(pts, target, hitTolerance);
+    return hitPt ? this.toTargetTraceAction(hitPt, target) : null;
+  }
+
+  private toTapAction(
+    gesture: Extract<Gesture, { type: "tap" }>,
+    target: TraceWaypoint,
+    hitTolerance: number
+  ): GameAction | null {
+    if (!isPointInStage(gesture.x, gesture.y, this.stageRect)) {
+      return null;
+    }
+    if (
+      Math.hypot(target.x - gesture.x, target.y - gesture.y) <= hitTolerance
+    ) {
+      return this.toTargetTraceAction(gesture, target);
+    }
+    const hitIdx = this.screenWaypoints.findIndex(
+      (w) => Math.hypot(w.x - gesture.x, w.y - gesture.y) <= hitTolerance
+    );
+    if (hitIdx >= 0) {
+      return {
+        type: "tap_waypoint",
+        data: { index: hitIdx },
+      };
+    }
+    return null;
+  }
+
   override toAction(gesture: Gesture): GameAction | null {
     const target = this.traceSystem.getCurrentTargetWaypoint();
     if (!target) {
       return null;
     }
-    const tolerance = this.tolerancePx;
+    const hitTolerance = Math.max(
+      this.tolerancePx,
+      WAYPOINT_VIEW_RADIUS_PX + TAP_TOLERANCE_PX
+    );
 
     if (gesture.type === "stroke") {
-      // Nét phải bắt đầu và đi trong stage — không vẽ từ vùng hành động hay HUD.
-      const first = gesture.points[0];
-      if (!(first && isPointInStage(first.x, first.y, this.stageRect))) {
-        return null;
-      }
-      const inStage = gesture.points.filter((pt) =>
-        isPointInStage(pt.x, pt.y, this.stageRect)
-      );
-      const hitPt = findHitStrokePoint(inStage, target, tolerance);
-      if (hitPt) {
-        return {
-          type: "trace_point",
-          data: { x: hitPt.x, y: hitPt.y },
-        };
-      }
-    } else if (
-      gesture.type === "tap" &&
-      isPointInStage(gesture.x, gesture.y, this.stageRect) &&
-      Math.hypot(target.x - gesture.x, target.y - gesture.y) <= tolerance
-    ) {
-      return {
-        type: "trace_point",
-        data: { x: gesture.x, y: gesture.y },
-      };
+      return this.toStrokeAction(gesture, target, hitTolerance);
     }
-
+    if (gesture.type === "drop") {
+      return this.toDropAction(gesture, target, hitTolerance);
+    }
+    if (gesture.type === "tap") {
+      return this.toTapAction(gesture, target, hitTolerance);
+    }
     return null;
   }
 
   override commit(action: GameAction): void {
+    if (action.type === "tap_waypoint") {
+      this.wrongWaypointTimestamp = this.lastFrameMs;
+      return;
+    }
     if (action.type === "trace_point" || action.type === "point_touched") {
       const data = action.data;
       const x =
@@ -198,6 +314,7 @@ export class GT024Session extends TemplateGameSession<
 
   override getView(): EngineView {
     const currentOrder = this.traceSystem.getCurrentOrderIndex();
+    const usedIds = new Set<string>();
     const entities: ViewEntity[] = this.screenWaypoints.map((w, idx) => {
       let state: EntityVisual = "idle";
       if (w.order < currentOrder) {
@@ -205,8 +322,10 @@ export class GT024Session extends TemplateGameSession<
       } else if (w.order === currentOrder) {
         state = "active";
       }
+      const id = usedIds.has(w.id) ? `${w.id}:${idx}` : w.id;
+      usedIds.add(id);
       return {
-        id: w.id,
+        id,
         slotIndex: this.slotOfWaypoint[idx] ?? idx,
         role: "target",
         state,
@@ -214,6 +333,7 @@ export class GT024Session extends TemplateGameSession<
         y: w.y,
         w: 48,
         h: 48,
+        ...(w.label ? resolveAssetLabels({ kind: "text", text: w.label }) : {}),
       };
     });
     return {
@@ -293,8 +413,9 @@ export class GT024Session extends TemplateGameSession<
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
-    _timeMs: number
+    timeMs: number
   ): void {
+    this.lastFrameMs = timeMs;
     drawSceneBackground(ctx, rs, this.themeId);
     if (!this.stageRect) {
       drawSubPromptText(ctx, rs, this.content.shape_name);
@@ -304,5 +425,23 @@ export class GT024Session extends TemplateGameSession<
       this.screenWaypoints,
       this.traceSystem.getCurrentOrderIndex()
     );
+
+    if (this.wrongWaypointTimestamp > 0) {
+      const elapsed = timeMs - this.wrongWaypointTimestamp;
+      if (elapsed < 400) {
+        const target = this.traceSystem.getCurrentTargetWaypoint();
+        if (target) {
+          rs.drawRetryRing(
+            ctx,
+            target.x,
+            target.y,
+            WAYPOINT_VIEW_RADIUS_PX + 8,
+            elapsed / 400
+          );
+        }
+      } else {
+        this.wrongWaypointTimestamp = 0;
+      }
+    }
   }
 }

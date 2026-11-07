@@ -41,12 +41,14 @@ export class GT001Session extends TemplateGameSession<
 
   selectedItemId: string | null = null;
   displayOptions: readonly OptionItem[] = [];
+  private selectionItems: readonly { id: string; isCorrect: boolean }[] = [];
   private readonly mechanic = new SelectionMechanic({ mode: "single" });
   degradation: DegradationState | null = null;
   private particles: Particle[] = [];
   private itemStates: Map<string, ItemVisualState> = new Map();
   private wrongItemId: string | null = null;
   private wrongTimestamp = 0;
+  private readonly wrongTimers = new Map<string, number>();
 
   constructor(
     content: GT001Content,
@@ -74,6 +76,11 @@ export class GT001Session extends TemplateGameSession<
     this.itemStates = new Map();
     this.wrongItemId = null;
     this.wrongTimestamp = 0;
+    this.wrongTimers.clear();
+    this.selectionItems = this.content.options.map((opt) => ({
+      id: opt.item_id,
+      isCorrect: opt.is_correct,
+    }));
     if (this.difficulty.shuffle_items === false) {
       this.displayOptions = [...this.content.options];
     } else {
@@ -166,6 +173,7 @@ export class GT001Session extends TemplateGameSession<
       this.setItemState(itemId, "wrong");
       this.wrongItemId = itemId;
       this.wrongTimestamp = this.lastFrameMs;
+      this.wrongTimers.set(itemId, 400);
     }
   }
 
@@ -285,17 +293,39 @@ export class GT001Session extends TemplateGameSession<
       typeof action.data === "object" &&
       "item_id" in action.data
     ) {
-      const itemId = String((action.data as { item_id: unknown }).item_id);
+      const itemId = String(
+        (
+          action.data as {
+            item_id: string | number | boolean | null | undefined;
+          }
+        ).item_id
+      );
       this.onItemLocked(itemId);
     }
   }
 
   override checkWinCondition(): boolean {
-    const items = this.content.options.map((opt) => ({
-      id: opt.item_id,
-      isCorrect: opt.is_correct,
-    }));
-    return this.mechanic.isSelectionComplete(items);
+    return this.mechanic.isSelectionComplete(this.selectionItems);
+  }
+
+  update(deltaMs: number): void {
+    for (const [id, remaining] of this.wrongTimers.entries()) {
+      const nextRemaining = remaining - deltaMs;
+      if (nextRemaining <= 0) {
+        this.wrongTimers.delete(id);
+        this.setItemState(id, "idle");
+        if (this.wrongItemId === id) {
+          this.wrongItemId = null;
+        }
+      } else {
+        this.wrongTimers.set(id, nextRemaining);
+      }
+    }
+  }
+
+  override destroy(): void {
+    super.destroy();
+    this.wrongTimers.clear();
   }
 
   render(

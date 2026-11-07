@@ -11,7 +11,7 @@ import { CONTENT_PACK_WITH_SECOND_NARRATION_SOURCE } from "./fixtures/turn-scrip
  * Một trường soạn được mà không ai đọc là một trường luôn rỗng: người soạn nội
  * dung điền vào đó thì trẻ không nghe thấy gì và không có gì báo cho họ biết.
  * Đó là cách `prompt_audio_ref` (36/37 contract, 0 nơi đọc) và
- * `audio_prompt.audio_url` của `GT-018` đã tồn tại trước Task #262.
+ * `audio_prompt.audio_url` của `GT-018` từng tồn tại trước đây.
  *
  * KHÔNG thuộc luật này: âm thanh **của từng chất liệu** — `GT-000` đọc tên vật
  * qua `assets[].audio_path` và `GT000Session` thật sự phát nó. Đó là kênh khác

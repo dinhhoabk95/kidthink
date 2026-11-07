@@ -11,11 +11,13 @@ export interface PairDefinition {
   readonly rightId: string;
 }
 
+export type MechanicEventPayload = Record<
+  string,
+  string | number | boolean | null | undefined | readonly string[]
+>;
+
 export interface PairingMechanicOptions {
-  readonly onEvent?: (
-    eventName: string,
-    payload: Record<string, unknown>
-  ) => void;
+  readonly onEvent?: (eventName: string, payload: MechanicEventPayload) => void;
 }
 
 /**
@@ -29,7 +31,7 @@ export class PairingMechanic {
   private stagedLeftId: string | null = null;
   private readonly onEvent?: (
     eventName: string,
-    payload: Record<string, unknown>
+    payload: MechanicEventPayload
   ) => void;
 
   constructor(options?: PairingMechanicOptions) {

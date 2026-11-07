@@ -88,4 +88,58 @@ describe("GT-018: Nghe rồi làm (listen-respond)", () => {
     session.setupEntities();
     expect(session).toBeInstanceOf(GT018Session);
   });
+
+  it("populates spokenLabel on all option entities and supports 24px tap tolerance", () => {
+    if (!f1) {
+      throw new Error("Missing fixture");
+    }
+    const session = new GT018Session(f1.content, f1.difficulty);
+    session.prepareRound("4-5");
+    const view = session.getView();
+    expect(view.entities.length).toBeGreaterThan(0);
+    for (const entity of view.entities) {
+      expect(entity.spokenLabel).toBeTruthy();
+    }
+
+    const hintIdx = session.getHintTargetIndex();
+    expect(hintIdx).not.toBeNull();
+    const targetSlot = hintIdx === null ? undefined : session.slots[hintIdx];
+    expect(targetSlot).toBeDefined();
+    if (targetSlot) {
+      const r =
+        Math.min(
+          targetSlot.hitW ?? targetSlot.w,
+          targetSlot.hitH ?? targetSlot.h
+        ) / 2;
+      const verdict = session.dispatch({
+        type: "tap",
+        x: targetSlot.x,
+        y: targetSlot.y + r + 18,
+        timeMs: 10,
+      });
+      expect(verdict?.valid).toBe(true);
+      expect(session.checkWinCondition()).toBe(true);
+    }
+  });
+
+  it("getHintTarget in sequence mode returns first mismatched index or action when correct", () => {
+    const f3 = GT018_FIXTURES[2];
+    if (!f3) {
+      throw new Error("Missing sequence fixture");
+    }
+    const session = new GT018Session(f3.content, f3.difficulty);
+    session.prepareRound("5-6");
+
+    // Initially sequence is [rabbit, ant, elephant], target is [ant, rabbit, elephant]
+    // Mismatch at index 0
+    expect(session.getHintTarget()).toEqual({ kind: "slot", index: 0 });
+
+    // Reorder step from 1 (ant) to 0: [ant, rabbit, elephant] -> correct
+    session.commit({
+      type: "reorder_step",
+      data: { from_index: 1, to_index: 0 },
+    });
+
+    expect(session.getHintTarget()).toEqual({ kind: "action" });
+  });
 });

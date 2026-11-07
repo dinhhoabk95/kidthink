@@ -5,6 +5,7 @@ import {
   ACTION_RETRY,
   type ActionResult,
   type GameAction,
+  type GameActionValue,
   TemplateGameSession,
 } from "#src/game-session";
 import type {
@@ -13,34 +14,38 @@ import type {
   Gesture,
   ViewEntity,
 } from "#src/interaction";
+import { resolveAssetLabels } from "#src/labels/spoken-keyword";
+import { resolveTouchFloor } from "#src/layout/constants";
+import { TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
 import { insetDrawSize } from "#src/layout/slot-fit";
 import type { Slot } from "#src/layout/types";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
 import {
+  drawLabelText,
   drawSceneBackground,
   drawSceneObjectAt,
   sceneBox,
-} from "#src/render/index.js";
+} from "#src/render/index";
 import { deriveStream } from "#src/rng/mulberry32";
 import type { DegradationState } from "#src/systems/degradation";
+import { designTokens } from "#src/systems/designTokens";
 import type { RenderSystem } from "#src/systems/render-system";
 import {
   type FindResult,
   type SceneObject,
   SceneSystem,
 } from "#src/systems/scene-system";
-import type { GT022Content, GT022Difficulty } from "./template.js";
-
-/** Dung sai quanh vật khi chưa có slot (cảnh cũ); có slot thì hộp chạm đã theo sàn chạm. */
-const LEGACY_HIT_TOLERANCE_PX = 24;
+import type { GT022Content, GT022Difficulty } from "./template";
 
 function findHitSceneObject(
   objects: readonly SceneObject[],
   x: number,
   y: number,
-  tolerance = LEGACY_HIT_TOLERANCE_PX
+  tolerance = TAP_TOLERANCE_PX
 ): SceneObject | null {
+  let best: SceneObject | null = null;
+  let bestDistSq = Number.POSITIVE_INFINITY;
   for (let i = objects.length - 1; i >= 0; i--) {
     const obj = objects[i];
     if (!obj) {
@@ -49,10 +54,16 @@ function findHitSceneObject(
     const hw = obj.width / 2 + tolerance;
     const hh = obj.height / 2 + tolerance;
     if (Math.abs(x - obj.x) <= hw && Math.abs(y - obj.y) <= hh) {
-      return obj;
+      const dx = x - obj.x;
+      const dy = y - obj.y;
+      const distSq = dx * dx + dy * dy;
+      if (distSq < bestDistSq) {
+        bestDistSq = distSq;
+        best = obj;
+      }
     }
   }
-  return null;
+  return best;
 }
 
 export class GT022Session extends TemplateGameSession<
@@ -66,14 +77,23 @@ export class GT022Session extends TemplateGameSession<
   readonly sceneSystem = new SceneSystem();
   private readonly selectionMechanic = new SelectionMechanic();
   resolvedObjects: SceneObject[] = [];
+  private assetById = new Map<
+    string,
+    GT022Content["scene_objects"][number]["asset"]
+  >();
   private wrongItemId: string | null = null;
   private wrongTimestamp = 0;
+  private lastFrameMs = 0;
 
   setupEntities(): void {
     this.isWon = false;
     this.wrongItemId = null;
     this.wrongTimestamp = 0;
+    this.lastFrameMs = 0;
     this.selectionMechanic.reset();
+    this.assetById = new Map(
+      this.content.scene_objects.map((o) => [o.id, o.asset])
+    );
 
     const rng = deriveStream(this.layoutSeed, "items");
     this.resolvedObjects = this.content.scene_objects.map((obj, idx) => {
@@ -102,12 +122,16 @@ export class GT022Session extends TemplateGameSession<
     });
   }
 
-  private validateTapObject(data: unknown): ActionResult {
+  private validateTapObject(data: GameActionValue): ActionResult {
     const itemId =
       typeof data === "object" && data !== null
         ? Reflect.get(data, "item_id")
         : undefined;
     if (typeof itemId !== "string" || itemId.length === 0) {
+      return ACTION_IGNORED;
+    }
+    const state = this.sceneSystem.getObjectState(itemId);
+    if (state?.isFound === true) {
       return ACTION_IGNORED;
     }
     const obj = this.resolvedObjects.find((o) => o.id === itemId);
@@ -117,7 +141,7 @@ export class GT022Session extends TemplateGameSession<
     return obj.isTarget ? ACTION_CORRECT : ACTION_RETRY;
   }
 
-  private validateRevealObject(data: unknown): ActionResult {
+  private validateRevealObject(data: GameActionValue): ActionResult {
     const itemId =
       typeof data === "object" && data !== null
         ? Reflect.get(data, "item_id")
@@ -162,7 +186,7 @@ export class GT022Session extends TemplateGameSession<
       this.selectionMechanic.select(itemId);
     } else if (!result.isTarget) {
       this.wrongItemId = itemId;
-      this.wrongTimestamp = performance.now();
+      this.wrongTimestamp = this.lastFrameMs;
     }
 
     if (this.checkWinCondition()) {
@@ -199,7 +223,7 @@ export class GT022Session extends TemplateGameSession<
         this.resolvedObjects,
         gesture.x,
         gesture.y,
-        this.stageRect ? 0 : LEGACY_HIT_TOLERANCE_PX
+        TAP_TOLERANCE_PX
       );
       if (hitObj) {
         const state = this.sceneSystem.getObjectState(hitObj.id);
@@ -234,13 +258,27 @@ export class GT022Session extends TemplateGameSession<
     }
   }
 
+  private resolveAssetById(): ReadonlyMap<
+    string,
+    GT022Content["scene_objects"][number]["asset"]
+  > {
+    if (this.assetById.size === this.content.scene_objects.length) {
+      return this.assetById;
+    }
+    return new Map(this.content.scene_objects.map((o) => [o.id, o.asset]));
+  }
+
   override getView(): EngineView {
+    const assetById = this.resolveAssetById();
     const entities: ViewEntity[] = this.resolvedObjects.map((obj, i) => {
       const state = this.sceneSystem.getObjectState(obj.id);
       let visual: EntityVisual = "idle";
       if (state?.isFound) {
         visual = "correct";
       }
+      const isCovered = obj.isHidden && state?.isRevealed !== true;
+      const asset = assetById.get(obj.id);
+      const labels = !isCovered && asset ? resolveAssetLabels(asset) : {};
       return {
         id: obj.id,
         slotIndex: i,
@@ -250,6 +288,7 @@ export class GT022Session extends TemplateGameSession<
         y: obj.y,
         w: obj.width,
         h: obj.height,
+        ...labels,
       };
     });
     return {
@@ -271,16 +310,25 @@ export class GT022Session extends TemplateGameSession<
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
     const layoutFn = resolveLayout("free-scene");
-    return insetDrawSize(
-      layoutFn({
-        slotCount: this.content.scene_objects.length,
-        ageBand,
-        logic: this.logicSpace,
-        stage: this.stageRect,
-        cssPerLogic: this.cssPerLogic,
-      }),
-      this.stageRect
-    );
+    const rawSlots = layoutFn({
+      slotCount: this.content.scene_objects.length,
+      ageBand,
+      logic: this.logicSpace,
+      stage: this.stageRect,
+      cssPerLogic: this.cssPerLogic,
+    });
+    if (this.stageRect) {
+      const touchFloor = resolveTouchFloor(ageBand, this.cssPerLogic);
+      const displaySize = Math.max(touchFloor, 84);
+      return rawSlots.map((s) => ({
+        ...s,
+        w: Math.max(s.w, displaySize),
+        h: Math.max(s.h, displaySize),
+        hitW: Math.max(s.hitW, displaySize),
+        hitH: Math.max(s.hitH, displaySize),
+      }));
+    }
+    return insetDrawSize(rawSlots, this.stageRect);
   }
 
   render(
@@ -288,6 +336,7 @@ export class GT022Session extends TemplateGameSession<
     rs: RenderSystem,
     timeMs: number
   ): void {
+    this.lastFrameMs = timeMs;
     if (this.wrongItemId && timeMs - this.wrongTimestamp >= 400) {
       this.wrongItemId = null;
     }
@@ -295,13 +344,34 @@ export class GT022Session extends TemplateGameSession<
     // free-scene: toạ độ tới từ content (đã ở không gian logic), ô nào thiếu
     // toạ độ thì rơi về slot của layout.
     const scene = sceneBox(rs);
-    const assetById = new Map(
-      this.content.scene_objects.map((o) => [o.id, o.asset])
-    );
+    const assetById = this.resolveAssetById();
     this.resolvedObjects.forEach((obj, i) => {
       const state = this.sceneSystem.getObjectState(obj.id);
-      // Vật ẩn sau lớp phủ chỉ hiện sau khi trẻ lật ra — ❌ NEVER vẽ sẵn.
+      const slot = this.slots[i] ?? {
+        index: i,
+        x: obj.x,
+        y: obj.y,
+        w: obj.width,
+        h: obj.height,
+        hitW: obj.width,
+        hitH: obj.height,
+        page: 0,
+        role: "neutral" as const,
+      };
+
+      // Vật ẩn sau lớp phủ chỉ hiện sau khi trẻ lật ra — vẽ đám mây mềm có dấu ? để bé biết vị trí có thể chạm vào lật mở!
       if (obj.isHidden && state?.isRevealed !== true) {
+        const radius = Math.min(slot.w ?? 64, slot.h ?? 64) / 2;
+        rs.drawClayBody(
+          ctx,
+          slot.x,
+          slot.y,
+          radius,
+          designTokens.colors.scene.mist,
+          designTokens.colors.competency.c4,
+          "circle"
+        );
+        drawLabelText(ctx, "?", slot.x, slot.y, 24);
         return;
       }
       drawSceneObjectAt(
@@ -315,7 +385,7 @@ export class GT022Session extends TemplateGameSession<
           // toạ độ content thuộc không gian scene cũ nên bỏ.
           ...(this.stageRect ? {} : { x: obj.x, y: obj.y }),
         },
-        this.slots[i],
+        slot,
         { found: state?.isFound === true }
       );
 

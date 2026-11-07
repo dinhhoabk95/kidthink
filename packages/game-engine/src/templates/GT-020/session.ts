@@ -2,6 +2,7 @@ import type { AgeBand } from "#src/contracts/types";
 import {
   ACTION_CORRECT,
   ACTION_IGNORED,
+  ACTION_RETRY,
   type ActionResult,
   type GameAction,
   TemplateGameSession,
@@ -12,6 +13,8 @@ import type {
   Gesture,
   ViewEntity,
 } from "#src/interaction";
+import { resolveAssetLabels } from "#src/labels/spoken-keyword";
+import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { PairingMechanic } from "#src/mechanics/pairing-mechanic";
@@ -21,7 +24,7 @@ import {
   drawSlotItem,
   getColorsForState,
   type ItemVisualState,
-} from "#src/render/index.js";
+} from "#src/render/index";
 import { deriveStream } from "#src/rng/mulberry32";
 import { shuffle } from "#src/rng/shuffle";
 import {
@@ -39,17 +42,6 @@ interface FlatCard {
   readonly asset: GT020Content["pairs"][number]["card_a"]["asset"];
 }
 
-function isPointInSlot(
-  slot: Slot,
-  x: number,
-  y: number,
-  tolerance = 24
-): boolean {
-  const hw = (slot.hitW ?? slot.w) / 2 + tolerance;
-  const hh = (slot.hitH ?? slot.h) / 2 + tolerance;
-  return Math.abs(x - slot.x) <= hw && Math.abs(y - slot.y) <= hh;
-}
-
 export class GT020Session extends TemplateGameSession<
   GT020Content,
   GT020Difficulty
@@ -62,11 +54,17 @@ export class GT020Session extends TemplateGameSession<
   displayCards: readonly FlatCard[] = [];
   private mismatchCardId: string | null = null;
   private mismatchTimestamp = 0;
+  private hasOpenMismatch = false;
+  private mismatchElapsedMs = 0;
+  private lastFrameMs = 0;
 
   setupEntities(): void {
     this.isWon = false;
     this.mismatchCardId = null;
     this.mismatchTimestamp = 0;
+    this.hasOpenMismatch = false;
+    this.mismatchElapsedMs = 0;
+    this.lastFrameMs = 0;
     const flat: FlatCard[] = this.content.pairs.flatMap((p) => [
       { cardId: p.card_a.card_id, pairKey: p.pair_key, asset: p.card_a.asset },
       { cardId: p.card_b.card_id, pairKey: p.pair_key, asset: p.card_b.asset },
@@ -90,27 +88,43 @@ export class GT020Session extends TemplateGameSession<
     });
   }
 
-  validateAction(action: GameAction): ActionResult {
-    if (action.type === "tap_card" || action.type === "flip_card") {
-      const data = action.data;
-      const cardId =
-        typeof data === "object" && data !== null
-          ? Reflect.get(data, "card_id")
-          : undefined;
-      if (typeof cardId !== "string" || cardId.length === 0) {
-        return ACTION_IGNORED;
-      }
-      const card = this.cardSystem.getCard(cardId);
-      if (card?.state !== "face_down") {
-        return ACTION_IGNORED;
-      }
-      return ACTION_CORRECT;
+  private validateTapCard(cardId: string): ActionResult {
+    const card = this.cardSystem.getCard(cardId);
+    if (card?.state !== "face_down") {
+      return ACTION_IGNORED;
     }
+    if (!this.hasOpenMismatch) {
+      const openCard = this.cardSystem
+        .getAllCards()
+        .find((c) => c.state === "face_up");
+      if (openCard && openCard.id !== cardId) {
+        return openCard.pairKey === card.pairKey
+          ? ACTION_CORRECT
+          : ACTION_RETRY;
+      }
+    }
+    return ACTION_CORRECT;
+  }
 
-    return ACTION_IGNORED;
+  validateAction(action: GameAction): ActionResult {
+    if (action.type !== "tap_card" && action.type !== "flip_card") {
+      return ACTION_IGNORED;
+    }
+    const data = action.data;
+    if (typeof data !== "object" || data === null) {
+      return ACTION_IGNORED;
+    }
+    const cardId = Reflect.get(data, "card_id");
+    if (typeof cardId !== "string" || cardId.length === 0) {
+      return ACTION_IGNORED;
+    }
+    return this.validateTapCard(cardId);
   }
 
   onTapCard(cardId: string): FlipResult | null {
+    if (this.hasOpenMismatch) {
+      this.closeMismatch();
+    }
     const result = this.cardSystem.flipCard(cardId);
     if (!result) {
       return null;
@@ -124,6 +138,8 @@ export class GT020Session extends TemplateGameSession<
 
     if (result.isSecondFlip && result.isMatch) {
       this.mismatchCardId = null;
+      this.hasOpenMismatch = false;
+      this.mismatchElapsedMs = 0;
       const pair = this.content.pairs.find(
         (p) => p.pair_key === result.matchedPairKey
       );
@@ -142,7 +158,9 @@ export class GT020Session extends TemplateGameSession<
       }
     } else if (result.isSecondFlip && !result.isMatch) {
       this.mismatchCardId = cardId;
-      this.mismatchTimestamp = performance.now();
+      this.mismatchTimestamp = this.lastFrameMs;
+      this.hasOpenMismatch = true;
+      this.mismatchElapsedMs = 0;
     }
 
     return result;
@@ -150,6 +168,22 @@ export class GT020Session extends TemplateGameSession<
 
   closeMismatch(): void {
     this.cardSystem.closeMismatch();
+    this.hasOpenMismatch = false;
+    this.mismatchElapsedMs = 0;
+    this.mismatchCardId = null;
+  }
+
+  update(deltaMs: number): void {
+    if (!this.hasOpenMismatch) {
+      return;
+    }
+    this.mismatchElapsedMs += Math.max(0, deltaMs);
+    if (this.mismatchElapsedMs >= 400) {
+      this.mismatchCardId = null;
+    }
+    if (this.mismatchElapsedMs >= this.difficulty.flip_back_delay_ms) {
+      this.closeMismatch();
+    }
   }
 
   override checkWinCondition(): boolean {
@@ -158,10 +192,16 @@ export class GT020Session extends TemplateGameSession<
 
   override toAction(gesture: Gesture): GameAction | null {
     if (gesture.type === "tap") {
-      for (let i = 0; i < this.displayCards.length; i++) {
-        const slot = this.slots[i];
-        const card = this.displayCards[i];
-        if (slot && card && isPointInSlot(slot, gesture.x, gesture.y)) {
+      const hitIdx = findHitSlotIndex(
+        this.slots.slice(0, this.displayCards.length),
+        gesture.x,
+        gesture.y,
+        "square",
+        TAP_TOLERANCE_PX
+      );
+      if (hitIdx !== null) {
+        const card = this.displayCards[hitIdx];
+        if (card) {
           return { type: "tap_card", data: { card_id: card.cardId } };
         }
       }
@@ -193,6 +233,8 @@ export class GT020Session extends TemplateGameSession<
       } else if (cardState === "face_up") {
         state = "selected";
       }
+      const labels =
+        cardState === "face_down" ? {} : resolveAssetLabels(card.asset);
       return {
         id: card.cardId,
         slotIndex: i,
@@ -202,6 +244,8 @@ export class GT020Session extends TemplateGameSession<
         y: slot?.y ?? 0,
         w: slot?.w ?? 80,
         h: slot?.h ?? 80,
+        hitShape: "square",
+        ...labels,
       };
     });
     return {
@@ -235,7 +279,9 @@ export class GT020Session extends TemplateGameSession<
   }
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
-    const layoutFn = resolveLayout("card-flip-grid");
+    const layoutName =
+      this.displayCards.length === 4 ? "grid" : "card-flip-grid";
+    const layoutFn = resolveLayout(layoutName);
     return layoutFn({
       slotCount: this.displayCards.length,
       ageBand,
@@ -317,6 +363,7 @@ export class GT020Session extends TemplateGameSession<
     rs: RenderSystem,
     timeMs: number
   ): void {
+    this.lastFrameMs = timeMs;
     if (this.mismatchCardId && timeMs - this.mismatchTimestamp >= 400) {
       this.mismatchCardId = null;
     }

@@ -10,15 +10,15 @@
  * đầu cột, loa ngay dưới, picto dưới loa nếu còn chỗ. Cột hẹp nên không có chữ phụ.
  */
 
-import type { StageZones, ZoneRect } from "#src/layout/stage-zones.js";
-import type { Slot } from "#src/layout/types.js";
+import type { StageZones, ZoneRect } from "#src/layout/stage-zones";
+import type { Slot } from "#src/layout/types";
 import { designTokens } from "#src/systems/designTokens";
 import type { RenderSystem } from "#src/systems/render-system";
-import { alpha } from "./color-utils.js";
-import { drawMascot, type MascotPose, type MascotSprites } from "./mascot.js";
-import { drawEmojiContent, graphemes } from "./shared-render.js";
-import { canvasFontPx } from "./type-scale.js";
-import type { RenderAsset } from "./types.js";
+import { alpha } from "./color-utils";
+import { drawMascot, type MascotPose, type MascotSprites } from "./mascot";
+import { drawEmojiContent, graphemes } from "./shared-render";
+import { applyCanvasFontAtSize, canvasFontPx } from "./type-scale";
+import type { RenderAsset } from "./types";
 
 export interface PromptZoneOptions {
   readonly promptText?: string;
@@ -121,11 +121,43 @@ function drawPromptSpeaker(
   ctx.arc(speakerCenter.x, speakerCenter.y, speakerRadius, 0, Math.PI * 2);
   ctx.stroke();
 
-  const speakerFontPx = Math.round(speakerRadius * 0.9);
-  ctx.font = `${speakerFontPx}px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", sans-serif`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText("🔊", speakerCenter.x, speakerCenter.y);
+  // Loa + sóng âm bằng Canvas 2D vector
+  const iconSize = speakerRadius * 0.9;
+  const half = iconSize / 2;
+  const left = speakerCenter.x - half * 0.7;
+  const cy = speakerCenter.y;
+  ctx.fillStyle = designTokens.colors.surface[900];
+  ctx.strokeStyle = designTokens.colors.surface[900];
+  ctx.beginPath();
+  ctx.moveTo(left, cy - half * 0.3);
+  ctx.lineTo(left + half * 0.4, cy - half * 0.3);
+  ctx.lineTo(left + half * 0.85, cy - half * 0.75);
+  ctx.lineTo(left + half * 0.85, cy + half * 0.75);
+  ctx.lineTo(left + half * 0.4, cy + half * 0.3);
+  ctx.lineTo(left, cy + half * 0.3);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.lineWidth = Math.max(2, iconSize * 0.1);
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  ctx.arc(
+    speakerCenter.x + half * 0.1,
+    cy,
+    half * 0.45,
+    -Math.PI / 4,
+    Math.PI / 4
+  );
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(
+    speakerCenter.x + half * 0.1,
+    cy,
+    half * 0.8,
+    -Math.PI / 4,
+    Math.PI / 4
+  );
+  ctx.stroke();
   ctx.restore();
 }
 
@@ -133,6 +165,18 @@ const PROMPT_MAX_LINES = 2;
 const SIDE_PICTO_GAP_PX = 12;
 const SIDE_PICTO_MIN_PX = 40;
 const WHITESPACE_RUN = /\s+/;
+
+interface PromptWrapCacheEntry {
+  rawText: string;
+  font: string;
+  maxWidth: number;
+  lines: readonly string[];
+}
+
+const promptWrapCache = new WeakMap<
+  CanvasRenderingContext2D,
+  PromptWrapCacheEntry
+>();
 
 /**
  * Ngắt chữ lời dẫn theo từ thành tối đa `PROMPT_MAX_LINES` dòng. Vùng lời dẫn
@@ -144,7 +188,17 @@ function wrapPromptText(
   ctx: CanvasRenderingContext2D,
   rawText: string,
   maxWidth: number
-): string[] {
+): readonly string[] {
+  const font = ctx.font;
+  const cached = promptWrapCache.get(ctx);
+  if (
+    cached &&
+    cached.rawText === rawText &&
+    cached.font === font &&
+    cached.maxWidth === maxWidth
+  ) {
+    return cached.lines;
+  }
   const words = rawText.split(WHITESPACE_RUN).filter((word) => word.length > 0);
   const lines: string[] = [];
   let current = "";
@@ -160,12 +214,21 @@ function wrapPromptText(
   if (current) {
     lines.push(current);
   }
+  let resolvedLines: readonly string[];
   if (lines.length <= PROMPT_MAX_LINES) {
-    return lines;
+    resolvedLines = lines;
+  } else {
+    const kept = lines.slice(0, PROMPT_MAX_LINES - 1);
+    const rest = lines.slice(PROMPT_MAX_LINES - 1).join(" ");
+    resolvedLines = [...kept, truncateToWidth(ctx, rest, maxWidth)];
   }
-  const kept = lines.slice(0, PROMPT_MAX_LINES - 1);
-  const rest = lines.slice(PROMPT_MAX_LINES - 1).join(" ");
-  return [...kept, truncateToWidth(ctx, rest, maxWidth)];
+  promptWrapCache.set(ctx, {
+    rawText,
+    font,
+    maxWidth,
+    lines: resolvedLines,
+  });
+  return resolvedLines;
 }
 
 function truncateToWidth(
@@ -218,6 +281,44 @@ function drawSidePicto(
   drawEmojiContent(ctx, options.targetAsset.ref, slot);
 }
 
+function drawSidePromptContent(
+  ctx: CanvasRenderingContext2D,
+  rs: RenderSystem,
+  zones: StageZones,
+  options?: PromptZoneOptions
+): void {
+  if (options?.targetAsset) {
+    drawSidePicto(ctx, zones, options);
+    return;
+  }
+  const trimmed = options?.promptText?.trim();
+  if (!trimmed) {
+    return;
+  }
+  const textTop = zones.promptSpeaker.y + zones.promptSpeaker.h + 12;
+  const textW = Math.max(40, zones.prompt.w - 16);
+  const fontPx = Math.max(
+    16,
+    canvasFontPx(rs.logicSpace, "subPrompt", rs.viewport?.scale)
+  );
+  ctx.save();
+  ctx.fillStyle = designTokens.colors.surface[700];
+  applyCanvasFontAtSize(ctx, fontPx, "sans", 600);
+  ctx.textAlign = "center";
+  ctx.textBaseline = "top";
+
+  const lines = wrapPromptText(ctx, trimmed, textW);
+  const lineH = fontPx * 1.3;
+  const centerX = zones.prompt.x + zones.prompt.w / 2;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (line !== undefined) {
+      ctx.fillText(line, centerX, textTop + i * lineH);
+    }
+  }
+  ctx.restore();
+}
+
 function drawPromptContent(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
@@ -225,7 +326,7 @@ function drawPromptContent(
   options?: PromptZoneOptions
 ): void {
   if (zones.promptPlacement === "side") {
-    drawSidePicto(ctx, zones, options);
+    drawSidePromptContent(ctx, rs, zones, options);
     return;
   }
   const { prompt, promptSpeaker } = zones;
@@ -256,22 +357,27 @@ function drawPromptContent(
   }
 
   if (options?.promptText) {
-    const space = { w: rs.LOGIC_WIDTH, h: rs.LOGIC_HEIGHT };
     // Không đặt trần: trần 18 px logic chỉ chạm trên máy dọc, đúng chỗ sàn
     // 16 px CSS cần chữ to hơn (`BR-A11-08`).
-    const fontPx = canvasFontPx(space, "subPrompt", rs.viewport?.scale);
+    const fontPx = Math.max(
+      16,
+      canvasFontPx(rs.logicSpace, "subPrompt", rs.viewport?.scale)
+    );
     ctx.save();
     ctx.fillStyle = designTokens.colors.surface[700];
-    ctx.font = `600 ${fontPx}px ${designTokens.fonts.sans}`;
+    applyCanvasFontAtSize(ctx, fontPx, "sans", 600);
     ctx.textAlign = "left";
     ctx.textBaseline = "middle";
 
     const lines = wrapPromptText(ctx, options.promptText, contentW);
     const lineH = fontPx * 1.3;
     const firstY = prompt.y + prompt.h / 2 - ((lines.length - 1) * lineH) / 2;
-    lines.forEach((line, index) => {
-      ctx.fillText(line, contentLeft, firstY + index * lineH);
-    });
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      if (line !== undefined) {
+        ctx.fillText(line, contentLeft, firstY + i * lineH);
+      }
+    }
     ctx.restore();
   }
 }

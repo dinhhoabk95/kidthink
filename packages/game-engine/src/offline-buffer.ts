@@ -1,4 +1,23 @@
-import type { TelemetryEvent } from "./game-session";
+import {
+  isCritical as checkIsCritical,
+  sanitizeTelemetryPayload as cleanTelemetryPayload,
+  createIndexedDbBufferStorage as makeIdbStorage,
+  createInMemoryBufferStorage as makeMemStorage,
+  stripSensitiveKeys as removeSensitiveKeys,
+  type BufferedEvent as StoredBufferedEvent,
+  type BufferedEventPayload as StoredBufferedEventPayload,
+  type OfflineBufferStorageAdapter as StoredOfflineBufferStorageAdapter,
+} from "#src/offline-buffer-storage";
+
+export type BufferedEvent = StoredBufferedEvent;
+export type BufferedEventPayload = StoredBufferedEventPayload;
+export type OfflineBufferStorageAdapter = StoredOfflineBufferStorageAdapter;
+
+export const createIndexedDbBufferStorage = makeIdbStorage;
+export const createInMemoryBufferStorage = makeMemStorage;
+export const isCritical = checkIsCritical;
+export const sanitizeTelemetryPayload = cleanTelemetryPayload;
+export const stripSensitiveKeys = removeSensitiveKeys;
 
 /** Flush once this many events have queued up. */
 export const FLUSH_THRESHOLD = 20;
@@ -16,36 +35,12 @@ export const MAX_EVENTS_PER_BATCH = 50;
 const GUEST_ENDPOINT = "/api/guest/play-sessions";
 const USER_ENDPOINT = "/api/users/play-sessions";
 
-/** Never leave the device — score is server-computed, the rest is PII (BR-ING-08). */
-const STRIPPED_PAYLOAD_KEYS = new Set(["score", "display_name", "user_id"]);
-
-/** Events worth keeping when the buffer has to be trimmed. */
-const CRITICAL_EVENT_NAMES = new Set(["game_started", "game_completed"]);
-
-export type BufferedEventPayload = TelemetryEvent["data"];
-
-export interface BufferedEvent {
-  session_uuid: string;
-  seq: number;
-  event_name: string;
-  occurred_at_ms?: number;
-  payload?: BufferedEventPayload;
-  client_timestamp?: string;
-  queued_at: number;
-}
-
 export interface SessionMeta {
   session_uuid: string;
   level_code: string;
   content_version: number;
   is_guest: boolean;
   started_at: number;
-}
-
-export interface OfflineBufferStorageAdapter {
-  load(sessionUuid?: string): Promise<BufferedEvent[]>;
-  save(events: readonly BufferedEvent[], sessionUuid?: string): Promise<void>;
-  clear(sessionUuid?: string): Promise<void>;
 }
 
 export type SendBufferedBatchFn = (
@@ -71,194 +66,53 @@ export interface IngestibleTelemetryEvent {
   payload?: BufferedEventPayload;
 }
 
-function isCritical(event: BufferedEvent): boolean {
-  return event.seq === 1 || CRITICAL_EVENT_NAMES.has(event.event_name);
-}
-
-function stripSensitiveKeys(
-  payload?: BufferedEventPayload
-): BufferedEventPayload {
-  const clean: BufferedEventPayload = {};
-  if (!payload || typeof payload !== "object") {
-    return clean;
+function findBeaconBatchPrefix(
+  sorted: readonly BufferedEvent[],
+  maxBytes: number
+): { bestCount: number; bestPayload: string } {
+  if (sorted.length === 0) {
+    return { bestCount: 0, bestPayload: "" };
   }
-  for (const [key, value] of Object.entries(payload)) {
-    if (!STRIPPED_PAYLOAD_KEYS.has(key.toLowerCase())) {
-      clean[key] = value;
+  const serializedList = sorted.map((e) => JSON.stringify(e));
+  let accumulatedBytes = 12; // base {"events":[]}
+  let count = 0;
+
+  for (let i = 0; i < serializedList.length; i++) {
+    const item = serializedList[i];
+    if (!item) {
+      continue;
+    }
+    const itemBytes = new Blob([item]).size + (i > 0 ? 1 : 0);
+    if (accumulatedBytes + itemBytes <= maxBytes) {
+      accumulatedBytes += itemBytes;
+      count++;
+    } else {
+      break;
     }
   }
-  return clean;
-}
 
-export function createInMemoryBufferStorage(): OfflineBufferStorageAdapter {
-  const bySession = new Map<string, BufferedEvent[]>();
-
-  return {
-    load(sessionUuid?: string): Promise<BufferedEvent[]> {
-      if (sessionUuid !== undefined) {
-        const list = bySession.get(sessionUuid) ?? [];
-        return Promise.resolve(list.map((e) => ({ ...e })));
-      }
-      const all: BufferedEvent[] = [];
-      for (const list of bySession.values()) {
-        for (const ev of list) {
-          all.push({ ...ev });
-        }
-      }
-      return Promise.resolve(all);
-    },
-    save(
-      events: readonly BufferedEvent[],
-      sessionUuid?: string
-    ): Promise<void> {
-      if (sessionUuid !== undefined) {
-        if (events.length === 0) {
-          bySession.delete(sessionUuid);
-        } else {
-          bySession.set(
-            sessionUuid,
-            events.map((e) => ({ ...e }))
-          );
-        }
-        return Promise.resolve();
-      }
-      bySession.clear();
-      for (const ev of events) {
-        const list = bySession.get(ev.session_uuid) ?? [];
-        list.push({ ...ev });
-        bySession.set(ev.session_uuid, list);
-      }
-      return Promise.resolve();
-    },
-    clear(sessionUuid?: string): Promise<void> {
-      if (sessionUuid === undefined) {
-        bySession.clear();
-      } else {
-        bySession.delete(sessionUuid);
-      }
-      return Promise.resolve();
-    },
-  };
-}
-
-const IDB_DB_NAME = "mindkid_offline_play";
-const IDB_STORE_NAME = "telemetry_events";
-
-function openIndexedDb(): Promise<IDBDatabase | null> {
-  if (typeof indexedDB === "undefined") {
-    return Promise.resolve(null);
+  if (count === 0) {
+    return { bestCount: 0, bestPayload: "" };
   }
-  return new Promise((resolve) => {
-    try {
-      const request = indexedDB.open(IDB_DB_NAME, 1);
-      request.onupgradeneeded = () => {
-        const db = request.result;
-        if (!db.objectStoreNames.contains(IDB_STORE_NAME)) {
-          db.createObjectStore(IDB_STORE_NAME);
-        }
-      };
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () => resolve(null);
-    } catch {
-      resolve(null);
-    }
-  });
-}
 
-export function createIndexedDbBufferStorage(): OfflineBufferStorageAdapter {
-  const memoryFallback = createInMemoryBufferStorage();
-
-  return {
-    async load(sessionUuid?: string): Promise<BufferedEvent[]> {
-      const db = await openIndexedDb();
-      if (!db) {
-        return memoryFallback.load(sessionUuid);
-      }
-      return new Promise((resolve) => {
-        try {
-          const tx = db.transaction(IDB_STORE_NAME, "readonly");
-          const store = tx.objectStore(IDB_STORE_NAME);
-          const req = store.getAll();
-          req.onsuccess = () => {
-            const rows = (req.result ?? []) as BufferedEvent[];
-            const filtered =
-              sessionUuid === undefined
-                ? rows
-                : rows.filter((e) => e.session_uuid === sessionUuid);
-            resolve(filtered);
-          };
-          req.onerror = () => resolve(memoryFallback.load(sessionUuid));
-        } catch {
-          resolve(memoryFallback.load(sessionUuid));
-        }
-      });
-    },
-    async save(
-      events: readonly BufferedEvent[],
-      sessionUuid?: string
-    ): Promise<void> {
-      await memoryFallback.save(events, sessionUuid);
-      const db = await openIndexedDb();
-      if (!db) {
-        return;
-      }
-      const existing = await this.load();
-      const kept =
-        sessionUuid === undefined
-          ? []
-          : existing.filter((e) => e.session_uuid !== sessionUuid);
-      const merged = [...kept, ...events];
-      await new Promise<void>((resolve) => {
-        try {
-          const tx = db.transaction(IDB_STORE_NAME, "readwrite");
-          const store = tx.objectStore(IDB_STORE_NAME);
-          store.clear();
-          for (const ev of merged) {
-            store.put(ev, `${ev.session_uuid}:${ev.seq}`);
-          }
-          tx.oncomplete = () => resolve();
-          tx.onerror = () => resolve();
-        } catch {
-          resolve();
-        }
-      });
-    },
-    async clear(sessionUuid?: string): Promise<void> {
-      await memoryFallback.clear(sessionUuid);
-      const db = await openIndexedDb();
-      if (!db) {
-        return;
-      }
-      if (sessionUuid === undefined) {
-        await new Promise<void>((resolve) => {
-          try {
-            const tx = db.transaction(IDB_STORE_NAME, "readwrite");
-            tx.objectStore(IDB_STORE_NAME).clear();
-            tx.oncomplete = () => resolve();
-            tx.onerror = () => resolve();
-          } catch {
-            resolve();
-          }
-        });
-        return;
-      }
-      const remaining = (await this.load()).filter(
-        (e) => e.session_uuid !== sessionUuid
-      );
-      await this.save(remaining);
-    },
-  };
+  const bestPayload = `{"events":[${serializedList.slice(0, count).join(",")}]}`;
+  return { bestCount: count, bestPayload };
 }
 
 export class OfflineEventBuffer {
   private memoryEvents: BufferedEvent[] = [];
   private readonly ackedSeqs = new Set<number>();
+  private readonly seenSeqs = new Set<number>();
+  private hasUnflushedPersistedData = true;
   private estimatedBytes = 0;
   private currentSeq = 0;
   private sessionMeta: SessionMeta | null = null;
   private flushTimer: ReturnType<typeof setInterval> | null = null;
   private persistTimer: ReturnType<typeof setInterval> | null = null;
-  private isFlushing = false;
+  private activeFlushPromise: Promise<{
+    accepted: number;
+    skipped: number;
+  }> | null = null;
   private apiEndpoint = USER_ENDPOINT;
   private readonly getCsrfToken: (() => string | null) | null;
   private readonly storage: OfflineBufferStorageAdapter;
@@ -282,11 +136,17 @@ export class OfflineEventBuffer {
     this.currentSeq = 0;
     this.memoryEvents = [];
     this.ackedSeqs.clear();
+    this.seenSeqs.clear();
+    this.hasUnflushedPersistedData = true;
     this.estimatedBytes = 0;
     this.apiEndpoint = meta.is_guest ? GUEST_ENDPOINT : USER_ENDPOINT;
 
     if (typeof window !== "undefined") {
       this.startFlushTimer();
+      if (this.persistTimer) {
+        clearInterval(this.persistTimer);
+        this.persistTimer = null;
+      }
       if (!meta.is_guest) {
         this.startPersistTimer();
       }
@@ -314,9 +174,11 @@ export class OfflineEventBuffer {
     }
 
     const now = Date.now();
+    const seq = this.getNextSeq();
+    this.seenSeqs.add(seq);
     const ev: BufferedEvent = {
       session_uuid: this.sessionMeta.session_uuid,
-      seq: this.getNextSeq(),
+      seq,
       event_name: eventName,
       occurred_at_ms: occurredAtMs ?? now - this.sessionMeta.started_at,
       payload: stripSensitiveKeys(payload),
@@ -341,6 +203,7 @@ export class OfflineEventBuffer {
     }
     const added: BufferedEvent[] = [];
     const now = Date.now();
+    const existingSeqs = new Set(this.memoryEvents.map((e) => e.seq));
 
     for (const item of events) {
       const seq = item.seq ?? this.getNextSeq();
@@ -349,10 +212,12 @@ export class OfflineEventBuffer {
       }
       if (
         this.ackedSeqs.has(seq) ||
-        this.memoryEvents.some((existing) => existing.seq === seq)
+        this.seenSeqs.has(seq) ||
+        existingSeqs.has(seq)
       ) {
         continue;
       }
+      this.seenSeqs.add(seq);
       const ev: BufferedEvent = {
         session_uuid: this.sessionMeta.session_uuid,
         seq,
@@ -364,6 +229,7 @@ export class OfflineEventBuffer {
         queued_at: now,
       };
       this.appendBufferedEvent(ev);
+      existingSeqs.add(seq);
       added.push(ev);
     }
 
@@ -428,7 +294,8 @@ export class OfflineEventBuffer {
       return;
     }
     this.pruneBuffer();
-    await this.storage.save(this.memoryEvents, this.sessionMeta.session_uuid);
+    const snapshot = [...this.memoryEvents];
+    await this.storage.save(snapshot, this.sessionMeta.session_uuid);
   }
 
   private partitionPersistedEvents(
@@ -470,12 +337,13 @@ export class OfflineEventBuffer {
     skipped: number;
     allFlushed: boolean;
   }> {
-    if (this.sessionMeta?.is_guest) {
+    if (this.sessionMeta?.is_guest || !this.hasUnflushedPersistedData) {
       return { accepted: 0, skipped: 0, allFlushed: true };
     }
 
     const persisted = await this.storage.load();
     if (persisted.length === 0) {
+      this.hasUnflushedPersistedData = false;
       return { accepted: 0, skipped: 0, allFlushed: true };
     }
 
@@ -514,6 +382,7 @@ export class OfflineEventBuffer {
       await this.storage.clear(oldSessionUuid);
     }
 
+    this.hasUnflushedPersistedData = false;
     return {
       accepted: totalAccepted,
       skipped: totalSkipped,
@@ -521,26 +390,31 @@ export class OfflineEventBuffer {
     };
   }
 
-  async flush(): Promise<{ accepted: number; skipped: number }> {
-    if (this.isFlushing) {
-      return { accepted: 0, skipped: 0 };
+  flush(): Promise<{ accepted: number; skipped: number }> {
+    if (this.activeFlushPromise) {
+      return this.activeFlushPromise;
     }
 
-    this.isFlushing = true;
-    try {
-      const restored = await this.restoreAndFlushPersisted();
-      if (!restored.allFlushed) {
-        return { accepted: restored.accepted, skipped: restored.skipped };
-      }
+    this.activeFlushPromise = this.executeFlush().finally(() => {
+      this.activeFlushPromise = null;
+    });
+    return this.activeFlushPromise;
+  }
 
-      if (this.memoryEvents.length === 0 || !this.sessionMeta) {
-        return { accepted: restored.accepted, skipped: restored.skipped };
-      }
+  private async executeFlush(): Promise<{ accepted: number; skipped: number }> {
+    const restored = await this.restoreAndFlushPersisted();
+    if (!restored.allFlushed) {
+      return { accepted: restored.accepted, skipped: restored.skipped };
+    }
 
+    let totalAccepted = restored.accepted;
+    let totalSkipped = restored.skipped;
+
+    while (this.memoryEvents.length > 0 && this.sessionMeta) {
       this.pruneBuffer();
       const batch = this.sortedBatch();
       if (batch.length === 0) {
-        return { accepted: restored.accepted, skipped: restored.skipped };
+        break;
       }
 
       const outcome = await this.sendEventsForSession(
@@ -566,13 +440,18 @@ export class OfflineEventBuffer {
         );
       }
 
-      return {
-        accepted: restored.accepted + outcome.accepted,
-        skipped: restored.skipped + outcome.skipped,
-      };
-    } finally {
-      this.isFlushing = false;
+      totalAccepted += outcome.accepted;
+      totalSkipped += outcome.skipped;
+
+      if (!outcome.ok || outcome.sentSeqs.size === 0) {
+        break;
+      }
     }
+
+    return {
+      accepted: totalAccepted,
+      skipped: totalSkipped,
+    };
   }
 
   private async sendSingleChunk(
@@ -667,23 +546,32 @@ export class OfflineEventBuffer {
       return false;
     }
 
-    const batch = this.sortedBatch();
-    const blob = new Blob([JSON.stringify({ events: batch })], {
+    const MAX_BEACON_BYTES = 60 * 1024;
+    const sorted = this.sortedBatch();
+    const { bestCount, bestPayload } = findBeaconBatchPrefix(
+      sorted,
+      MAX_BEACON_BYTES
+    );
+
+    if (bestCount === 0) {
+      return false;
+    }
+
+    const sentBatch = sorted.slice(0, bestCount);
+    const blob = new Blob([bestPayload], {
       type: "application/json",
     });
 
     const sent = navigator.sendBeacon(this.eventsUrl(this.sessionMeta), blob);
-    if (sent) {
-      for (const ev of batch) {
+    if (sent && this.sessionMeta.is_guest) {
+      const sentSeqSet = new Set(sentBatch.map((e) => e.seq));
+      for (const ev of sentBatch) {
         this.ackedSeqs.add(ev.seq);
       }
-      this.memoryEvents = [];
-      this.estimatedBytes = 0;
-      if (!this.sessionMeta.is_guest) {
-        this.storage
-          .clear(this.sessionMeta.session_uuid)
-          .catch(() => undefined);
-      }
+      this.memoryEvents = this.memoryEvents.filter(
+        (e) => !sentSeqSet.has(e.seq)
+      );
+      this.recalcEstimatedBytes();
     }
     return sent;
   }
@@ -708,11 +596,12 @@ export class OfflineEventBuffer {
       );
       window.removeEventListener("online", this.handleOnline);
     }
+    this.ackedSeqs.clear();
+    this.seenSeqs.clear();
     if (this.sessionMeta?.is_guest) {
       // BR-OFF-06: Guest buffer only lives in the open session and is wiped on close/leave.
       const guestSessionUuid = this.sessionMeta.session_uuid;
       this.memoryEvents = [];
-      this.ackedSeqs.clear();
       this.estimatedBytes = 0;
       this.storage.clear(guestSessionUuid).catch(() => undefined);
     }

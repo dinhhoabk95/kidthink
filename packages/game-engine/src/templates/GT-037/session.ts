@@ -41,6 +41,12 @@ interface GT037OrderStep {
   readonly timeMs: number;
 }
 
+const SCATTER_BOARD_CAPACITY: Record<AgeBand, number> = {
+  "3-4": 10,
+  "4-5": 16,
+  "5-6": 20,
+};
+
 function buildTargetSymbols(
   targetIds: readonly string[],
   targetCopies: number,
@@ -148,6 +154,7 @@ export class GT037Session extends TemplateGameSession<
   itemCount = 0;
   targetCopies = 0;
   targetSet = new Set<string>();
+  private currentBand: AgeBand = "5-6";
 
   constructor(
     content: GT037Content,
@@ -158,6 +165,10 @@ export class GT037Session extends TemplateGameSession<
     super(content, difficulty, layoutSeed, themeId);
     this.needsCommit = this.difficulty.finish_mode === "declare";
     this.targetSet = new Set(content.target_ids);
+  }
+
+  override canCommit(): boolean {
+    return !(this.isWon || this.isCompleted);
   }
 
   get finishMode(): "auto" | "declare" {
@@ -179,9 +190,14 @@ export class GT037Session extends TemplateGameSession<
     this.wrongTimestamp = 0;
     this.targetSet = new Set(this.content.target_ids);
 
-    this.itemCount = this.difficulty.item_count ?? this.content.item_count;
-    this.targetCopies =
-      this.difficulty.target_copies ?? this.content.target_copies;
+    const maxBandCapacity = SCATTER_BOARD_CAPACITY[this.currentBand] ?? 20;
+    const requestedCount =
+      this.difficulty.item_count ?? this.content.item_count;
+    this.itemCount = Math.min(requestedCount, maxBandCapacity);
+    this.targetCopies = Math.min(
+      this.difficulty.target_copies ?? this.content.target_copies,
+      this.itemCount
+    );
 
     const symbolMap = new Map<string, GT037Symbol>();
     for (const sym of this.content.symbols) {
@@ -216,19 +232,67 @@ export class GT037Session extends TemplateGameSession<
     });
   }
 
+  private trimBoardSymbols(targetCount: number): void {
+    if (this.boardSymbols.length <= targetCount) {
+      return;
+    }
+    const targets: GT037Symbol[] = [];
+    const distractors: GT037Symbol[] = [];
+    for (const sym of this.boardSymbols) {
+      if (this.targetSet.has(sym.id)) {
+        targets.push(sym);
+      } else {
+        distractors.push(sym);
+      }
+    }
+    const neededDistractors = Math.max(0, targetCount - targets.length);
+    const keptDistractors = distractors.slice(0, neededDistractors);
+    const assignStream = deriveStream(this.layoutSeed, "assign");
+    this.boardSymbols = shuffle([...targets, ...keptDistractors], assignStream);
+  }
+
   protected computeSlots(band: AgeBand): readonly Slot[] {
-    if (this.boardSymbols.length === 0) {
+    this.currentBand = band;
+    const maxBandCapacity = SCATTER_BOARD_CAPACITY[band] ?? 20;
+    if (this.boardSymbols.length === 0 || this.itemCount > maxBandCapacity) {
       this.setupEntities();
     }
 
     const layoutFn = resolveLayout("scatter-board");
-    const candidateSlots = layoutFn({
-      slotCount: this.itemCount,
-      ageBand: band,
-      logic: this.logicSpace,
-      stage: this.stageRect,
-      cssPerLogic: this.cssPerLogic,
-    });
+    let candidateSlots: readonly Slot[] = [];
+    let currentCount = Math.min(this.itemCount, maxBandCapacity);
+    const minCount = Math.max(1, this.targetCopies);
+
+    while (currentCount >= minCount) {
+      try {
+        candidateSlots = layoutFn({
+          slotCount: currentCount,
+          ageBand: band,
+          logic: this.logicSpace,
+          stage: this.stageRect,
+          cssPerLogic: this.cssPerLogic,
+        });
+        break;
+      } catch (_err) {
+        currentCount--;
+      }
+    }
+
+    if (candidateSlots.length === 0) {
+      candidateSlots = layoutFn({
+        slotCount: minCount,
+        ageBand: band,
+        logic: this.logicSpace,
+        stage: this.stageRect,
+        cssPerLogic: this.cssPerLogic,
+      });
+      currentCount = minCount;
+    }
+
+    if (currentCount !== this.itemCount) {
+      this.itemCount = currentCount;
+      this.trimBoardSymbols(currentCount);
+    }
 
     const cellsStream = deriveStream(this.layoutSeed, "cells");
     const shuffledCandidates = shuffle(candidateSlots, cellsStream);
@@ -248,7 +312,10 @@ export class GT037Session extends TemplateGameSession<
       const dx = (jitterStream.next() * 2 - 1) * JITTER_MAX_PX;
       const dy = (jitterStream.next() * 2 - 1) * JITTER_MAX_PX;
       const rawRot = jitterStream.next() * 2 * Math.PI;
-      const rot = symbol?.orientation_free ? rawRot : 0;
+      const rot =
+        this.difficulty.rotation_jitter !== false && symbol?.orientation_free
+          ? rawRot
+          : 0;
       this.rotations.push(rot);
 
       placedSlots.push({
@@ -326,9 +393,6 @@ export class GT037Session extends TemplateGameSession<
         return { valid: true, feedback: "level_celebrate" };
       }
       return ACTION_CORRECT;
-    }
-    if (this.difficulty.allow_retry === false) {
-      return { valid: false, feedback: "none" };
     }
     return ACTION_RETRY;
   }
@@ -464,18 +528,18 @@ export class GT037Session extends TemplateGameSession<
       if (!(slot && symbol)) {
         continue;
       }
-      const isTarget = this.targetSet.has(symbol.id);
       const isFound = this.foundTargets.has(i);
       const isWrong = this.wrongSlotIndex === i;
       const state = resolveEntityState(isFound, isWrong);
       const { glyph, label, spokenLabel, spokenAudioPath } = resolveAssetLabels(
         symbol.asset
       );
+      const displayLabel = symbol.label ?? label ?? symbol.id;
 
       entities.push({
         id: `${symbol.id}_${i}`,
         slotIndex: i,
-        role: isTarget ? "target" : "neutral",
+        role: "neutral",
         state,
         x: slot.x,
         y: slot.y,
@@ -483,8 +547,8 @@ export class GT037Session extends TemplateGameSession<
         h: slot.h,
         hitShape: "circle",
         glyph,
-        label,
-        spokenLabel,
+        label: displayLabel,
+        spokenLabel: spokenLabel ?? symbol.label ?? displayLabel,
         spokenAudioPath,
       });
     }

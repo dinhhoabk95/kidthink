@@ -9,6 +9,7 @@ import {
 } from "./cache.js";
 import { alpha } from "./color-utils.js";
 import { drawSlotItem } from "./shared-render.js";
+import { applyEmojiFont } from "./type-scale.js";
 import type { ItemVisualState, RenderAsset, SceneBox } from "./types.js";
 
 /**
@@ -130,7 +131,7 @@ export function drawPanItems(
   if (items.length === 0) {
     return;
   }
-  const size = Math.min(pan.w / items.length, pan.h) * 0.9;
+  const size = Math.min(pan.w / items.length, pan.h * 2.5) * 0.88;
   const startX = pan.x + (pan.w - size * items.length) / 2 + size / 2;
   items.forEach((item, i) => {
     const slot = slotAtPoint(startX + i * size, pan.y - size / 2, size);
@@ -613,7 +614,7 @@ export function drawGramophone(
 
   // Nốt nhạc bay ra khi đang phát âm
   if (isPlaying) {
-    ctx.font = '22px "Noto Color Emoji", sans-serif';
+    applyEmojiFont(ctx, 22);
     ctx.fillText("🎵", cx + r * 0.65, cy - r * 0.6);
     ctx.fillText("🎶", cx + r * 0.8, cy - r * 0.3);
   }

@@ -1,5 +1,5 @@
 /**
- * Bố cục GT-030 trong khung năm vùng (`play-stage-zones.md`, Task #283 B6):
+ * Bố cục GT-030 trong khung năm vùng:
  * vật đo, dải ô đặt đơn vị và hàng đáp án nằm trong `zones.stage`; đơn vị nguồn
  * nằm trong `zones.tray` (`BR-PSZ-01`). Hàm thuần: chỉ đọc rect, sàn chạm và số
  * ô (`BR-LAY-01`, `BR-PSZ-02`). Chỉ số slot giữ nguyên như layout `measure-strip`:
@@ -76,8 +76,7 @@ function bandHeight(rows: number, cellH: number): number {
 /**
  * Chia phần cao còn lại giữa dải ô đặt và hàng đáp án: mỗi dải được ít nhất
  * chiều cao đủ sàn chạm, phần dư chia theo mức mỗi dải muốn nở tới cỡ lớn nhất.
- * Không đủ cho cả hai thì mỗi dải giữ mức tối thiểu và tràn sân khấu — số ca
- * đo ở `tests/layout/stage-engines-b6.test.ts`.
+ * Không đủ cho cả hai thì mỗi dải giữ mức tối thiểu và tràn sân khấu.
  */
 function splitBands(
   rest: number,

@@ -6,11 +6,13 @@ import {
   type GameAction,
 } from "#src/game-session";
 
+export type MechanicEventPayload = Record<
+  string,
+  string | number | boolean | null | undefined | readonly string[]
+>;
+
 export interface OrderingMechanicOptions {
-  readonly onEvent?: (
-    eventName: string,
-    payload: Record<string, unknown>
-  ) => void;
+  readonly onEvent?: (eventName: string, payload: MechanicEventPayload) => void;
 }
 
 /**
@@ -21,7 +23,7 @@ export class OrderingMechanic {
   private currentSequence: string[] = [];
   private readonly onEvent?: (
     eventName: string,
-    payload: Record<string, unknown>
+    payload: MechanicEventPayload
   ) => void;
 
   constructor(options?: OrderingMechanicOptions) {

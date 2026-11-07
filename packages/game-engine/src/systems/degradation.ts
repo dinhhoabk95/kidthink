@@ -23,19 +23,48 @@ export interface DegradationState {
   font_size_degraded: boolean;
 }
 
+function createDegradationTier(
+  particles: boolean,
+  softShadows: boolean,
+  bgAnimation: boolean,
+  scaffoldingPulse: boolean
+): DegradationState {
+  return Object.freeze({
+    particles_enabled: particles,
+    soft_shadows_enabled: softShadows,
+    bg_animation_enabled: bgAnimation,
+    scaffolding_pulse_enabled: scaffoldingPulse,
+    touch_target_size_degraded: false,
+    audio_channel_degraded: false,
+    font_size_degraded: false,
+  });
+}
+
+const DEGRADATION_TIERS = {
+  full: createDegradationTier(true, true, true, true),
+  noParticles: createDegradationTier(false, true, true, true),
+  noShadows: createDegradationTier(false, false, true, true),
+  noBgAnim: createDegradationTier(false, false, false, true),
+  minimal: createDegradationTier(false, false, false, false),
+} as const;
+
 export class DegradationManager {
   currentFps = 60;
 
   updateFps(fps: number): DegradationState {
     this.currentFps = fps;
-    return {
-      particles_enabled: fps >= FPS_FLOOR.particles,
-      soft_shadows_enabled: fps >= FPS_FLOOR.softShadows,
-      bg_animation_enabled: fps >= FPS_FLOOR.bgAnimation,
-      scaffolding_pulse_enabled: fps >= FPS_FLOOR.scaffoldingPulse,
-      touch_target_size_degraded: false,
-      audio_channel_degraded: false,
-      font_size_degraded: false,
-    };
+    if (fps >= FPS_FLOOR.particles) {
+      return DEGRADATION_TIERS.full;
+    }
+    if (fps >= FPS_FLOOR.softShadows) {
+      return DEGRADATION_TIERS.noParticles;
+    }
+    if (fps >= FPS_FLOOR.bgAnimation) {
+      return DEGRADATION_TIERS.noShadows;
+    }
+    if (fps >= FPS_FLOOR.scaffoldingPulse) {
+      return DEGRADATION_TIERS.noBgAnim;
+    }
+    return DEGRADATION_TIERS.minimal;
   }
 }

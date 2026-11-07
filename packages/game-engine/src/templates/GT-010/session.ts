@@ -10,6 +10,8 @@ import {
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
+import { resolveAssetLabels } from "#src/labels/spoken-keyword";
+import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
 import { dockRectAroundSlots, insetDrawSize } from "#src/layout/slot-fit";
 import type { Slot } from "#src/layout/types";
@@ -17,12 +19,18 @@ import {
   boxFromSlots,
   drawEquationTray,
   drawLabelText,
+  drawMontessoriControlOfErrorPill,
   drawSceneBackground,
   drawSlotItem,
   drawWoodenTokenDock,
   resolveEmojiGlyph,
+  sceneBox,
 } from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
+import {
+  type ControlOfErrorDiagnostics,
+  MontessoriExploreTracker,
+} from "#src/systems/montessori-explore-system";
 import type { RenderSystem } from "#src/systems/render-system";
 import { evaluateQuestionAnswer, solveEquationSystem } from "./solver.js";
 import type { GT010Content, GT010Difficulty } from "./template.js";
@@ -35,21 +43,34 @@ export class SubstitutionSession extends TemplateGameSession<
 
   degradation: DegradationState | null = null;
 
+  private readonly exploreTracker = new MontessoriExploreTracker({
+    milestoneTarget: 2,
+  });
   private readonly pinnedSymbols: Map<string, number> = new Map();
   private selectedValue: number | null = null;
   private glyphBySymbolId: Map<string, string> = new Map();
+  private symbolById: Map<string, GT010Content["symbols"][number]> = new Map();
+  private wrongTimestamp = 0;
+  private lastFrameMs = 0;
 
   setupEntities(): void {
+    this.exploreTracker.reset(false);
     this.pinnedSymbols.clear();
     this.selectedValue = null;
+    this.wrongTimestamp = 0;
+    this.lastFrameMs = 0;
     this.isWon = false;
+    this.symbolById = new Map(
+      this.content.symbols.map((s) => [s.symbol_id, s])
+    );
     this.glyphBySymbolId = new Map(
-      this.content.symbols.map((s) => [
-        s.symbol_id,
-        s.asset.kind === "emoji"
-          ? (resolveEmojiGlyph(s.asset.ref) ?? "?")
-          : "?",
-      ])
+      this.content.symbols.map((s) => {
+        if (s.asset.kind === "emoji") {
+          return [s.symbol_id, resolveEmojiGlyph(s.asset.ref) ?? "?"];
+        }
+        const labels = resolveAssetLabels(s.asset);
+        return [s.symbol_id, labels.glyph ?? labels.label ?? "?"];
+      })
     );
 
     this.recordEvent("game_started", {
@@ -57,6 +78,22 @@ export class SubstitutionSession extends TemplateGameSession<
       equation_count: this.content.equations.length,
       symbol_count: this.content.symbols.length,
     });
+  }
+
+  startExplorePhase(): void {
+    this.exploreTracker.reset(true);
+  }
+
+  getExploreTracker(): MontessoriExploreTracker {
+    return this.exploreTracker;
+  }
+
+  getControlOfError(): ControlOfErrorDiagnostics | null {
+    return this.exploreTracker.getControlOfErrorDiagnostics();
+  }
+
+  isMicroSandboxActive(): boolean {
+    return this.exploreTracker.isMicroSandboxActive();
   }
 
   getSymbols(): GT010Content["symbols"] {
@@ -85,6 +122,7 @@ export class SubstitutionSession extends TemplateGameSession<
 
   pinSymbolValue(symbolId: string, value: number): void {
     this.pinnedSymbols.set(symbolId, value);
+    this.exploreTracker.recordExploreAction("symbol_pinned");
     this.recordEvent("equation_solved", {
       symbol_id: symbolId,
       value,
@@ -101,11 +139,60 @@ export class SubstitutionSession extends TemplateGameSession<
       is_correct: isCorrect,
     });
 
+    if (isCorrect) {
+      this.wrongTimestamp = 0;
+      this.exploreTracker.recordCorrectAttempt();
+    } else {
+      this.wrongTimestamp = this.lastFrameMs;
+      const expected = this.getExpectedAnswer();
+      const enteredSandbox = this.exploreTracker.recordWrongAttempt({
+        reasonVi: `Giá trị ${value} chưa khớp phép thay thế (cần ${expected})`,
+        actualValue: value,
+        expectedValue: expected,
+      });
+      if (enteredSandbox || this.exploreTracker.isMicroSandboxActive()) {
+        this.autoPinFirstSolvedSymbol();
+      }
+      this.recordEvent("control_of_error", {
+        selected_value: value,
+        expected_value: expected,
+        micro_sandbox: this.exploreTracker.isMicroSandboxActive(),
+      });
+    }
+
     if (this.checkWinCondition()) {
       this.winSession();
     }
 
     return isCorrect;
+  }
+
+  private autoPinFirstSolvedSymbol(): void {
+    const symbolIds = this.content.symbols.map((s) => s.symbol_id);
+    const firstSol = solveEquationSystem(symbolIds, this.content.equations)[0];
+    if (!firstSol) {
+      return;
+    }
+    const firstSymbolId = symbolIds[0];
+    if (firstSymbolId && !this.pinnedSymbols.has(firstSymbolId)) {
+      const solvedVal = firstSol.values[firstSymbolId];
+      if (solvedVal !== undefined) {
+        this.pinnedSymbols.set(firstSymbolId, solvedVal);
+      }
+    }
+  }
+
+  update(deltaMs: number): void {
+    this.exploreTracker.tick(deltaMs);
+    this.lastFrameMs += deltaMs;
+    if (
+      this.selectedValue !== null &&
+      this.wrongTimestamp > 0 &&
+      this.lastFrameMs - this.wrongTimestamp >= 400
+    ) {
+      this.selectedValue = null;
+      this.wrongTimestamp = 0;
+    }
   }
 
   getSelectedValue(): number | null {
@@ -158,7 +245,7 @@ export class SubstitutionSession extends TemplateGameSession<
     return insetDrawSize(
       layoutFn({
         slotCount: this.content.options.length,
-        targetCount: this.content.equations.length,
+        targetCount: this.content.equations.length + 1,
         ageBand,
         logic: this.logicSpace,
         stage: this.stageRect,
@@ -172,29 +259,26 @@ export class SubstitutionSession extends TemplateGameSession<
     if (gesture.type !== "tap") {
       return null;
     }
-    const hitTolerance = 24;
-    const optionSlots = this.sourceSlots;
-    for (let i = 0; i < this.content.options.length; i++) {
-      const opt = this.content.options[i];
-      const slot = optionSlots[i];
-      if (!(opt && slot)) {
-        continue;
-      }
-      const hw = Math.max(slot.hitW, slot.w) / 2 + hitTolerance;
-      const hh = Math.max(slot.hitH, slot.h) / 2 + hitTolerance;
-      if (
-        Math.abs(gesture.x - slot.x) <= hw &&
-        Math.abs(gesture.y - slot.y) <= hh
-      ) {
-        return { type: "select_value", data: opt.value };
-      }
-    }
-    return null;
+    const optionSlots = this.slots.slice(this.content.equations.length + 1);
+    const idx = findHitSlotIndex(
+      optionSlots,
+      gesture.x,
+      gesture.y,
+      "circle",
+      TAP_TOLERANCE_PX
+    );
+    const opt = idx >= 0 ? this.content.options[idx] : undefined;
+    return opt ? { type: "select_value", data: opt.value } : null;
   }
 
   override getHintTargetIndex(): number | null {
     const idx = this.content.options.findIndex((o) => o.is_correct);
-    return idx >= 0 ? idx : null;
+    if (idx < 0) {
+      return null;
+    }
+    const optionSlots = this.slots.slice(this.content.equations.length + 1);
+    const slot = optionSlots[idx];
+    return slot ? this.slots.indexOf(slot) : idx;
   }
 
   override getHintTargetForLevel(level: HintLevel): HintTarget | null {
@@ -242,25 +326,59 @@ export class SubstitutionSession extends TemplateGameSession<
     return "idle";
   }
 
+  private formatQuestionLhs(): string {
+    const glyphOf = (symbolId: string): string =>
+      this.glyphBySymbolId.get(symbolId) ?? "?";
+    if (this.content.question.kind === "value") {
+      return glyphOf(this.content.question.symbol_id);
+    }
+    return this.content.question.symbol_ids.map(glyphOf).join(" + ");
+  }
+
+  private formatEquationSpokenLhs(
+    eq: GT010Content["equations"][number]
+  ): string {
+    const symbolMap =
+      this.symbolById.size === this.content.symbols.length
+        ? this.symbolById
+        : new Map(this.content.symbols.map((s) => [s.symbol_id, s]));
+    return eq.left
+      .map((symId) => {
+        const sym = symbolMap.get(symId);
+        if (!sym) {
+          return "hình";
+        }
+        return resolveAssetLabels(sym.asset).spokenLabel;
+      })
+      .join(" cộng ");
+  }
+
   override getView(): EngineView {
     const eqSlots = this.slots.slice(0, this.content.equations.length);
-    const optionSlots = this.sourceSlots;
+    const optionSlots = this.slots.slice(this.content.equations.length + 1);
     const entities: ViewEntity[] = [];
+    const glyphOf = (symbolId: string): string =>
+      this.glyphBySymbolId.get(symbolId) ?? "?";
 
     this.content.equations.forEach((eq, i) => {
       const slot = eqSlots[i];
       if (!slot) {
         return;
       }
+      const lhs = eq.left.map(glyphOf).join(" + ");
+      const spokenLhs = this.formatEquationSpokenLhs(eq);
       entities.push({
         id: eq.equation_id,
         slotIndex: this.slots.indexOf(slot),
-        role: "target",
+        role: "neutral",
         state: "idle",
         x: slot.x,
         y: slot.y,
         w: slot.w,
         h: slot.h,
+        hitShape: "square",
+        label: `${lhs} = ${eq.right_value}`,
+        spokenLabel: `${spokenLhs} bằng ${eq.right_value}`,
       });
     });
 
@@ -269,6 +387,7 @@ export class SubstitutionSession extends TemplateGameSession<
       if (!slot) {
         return;
       }
+      const optLabel = String(opt.value);
       entities.push({
         id: `opt-${i}`,
         slotIndex: this.slots.indexOf(slot),
@@ -278,6 +397,8 @@ export class SubstitutionSession extends TemplateGameSession<
         y: slot.y,
         w: slot.w,
         h: slot.h,
+        label: optLabel,
+        spokenLabel: `Số ${optLabel}`,
       });
     });
 
@@ -290,12 +411,24 @@ export class SubstitutionSession extends TemplateGameSession<
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
-    _timeMs: number
+    timeMs: number
   ): void {
+    this.lastFrameMs = timeMs;
+    if (
+      this.selectedValue !== null &&
+      this.wrongTimestamp > 0 &&
+      timeMs - this.wrongTimestamp >= 400
+    ) {
+      this.selectedValue = null;
+      this.wrongTimestamp = 0;
+    }
+
     drawSceneBackground(ctx, rs, this.themeId);
-    const eqSlots = this.slots.slice(0, this.content.equations.length);
-    const optionSlots = this.sourceSlots;
-    const eqBox = boxFromSlots(eqSlots);
+    const targetSlots = this.slots.slice(0, this.content.equations.length + 1);
+    const eqSlots = targetSlots.slice(0, this.content.equations.length);
+    const questionSlot = targetSlots[this.content.equations.length];
+    const optionSlots = this.slots.slice(this.content.equations.length + 1);
+    const eqBox = boxFromSlots(targetSlots);
     if (eqBox) {
       drawEquationTray(ctx, eqBox);
     }
@@ -327,6 +460,23 @@ export class SubstitutionSession extends TemplateGameSession<
       );
     });
 
+    let questionX = 480;
+    let questionY = 260;
+    if (questionSlot) {
+      questionX = questionSlot.x;
+      questionY = questionSlot.y;
+    } else if (eqBox) {
+      questionX = eqBox.x + eqBox.w / 2;
+      questionY = eqBox.y + eqBox.h - 24;
+    }
+    drawLabelText(
+      ctx,
+      `${this.formatQuestionLhs()} = ?`,
+      questionX,
+      questionY,
+      30
+    );
+
     this.content.options.forEach((opt, i) => {
       const slot = optionSlots[i];
       if (!slot) {
@@ -341,7 +491,27 @@ export class SubstitutionSession extends TemplateGameSession<
         text: String(opt.value),
         state,
       });
+
+      if (state === "wrong" && this.wrongTimestamp > 0) {
+        const elapsed = timeMs - this.wrongTimestamp;
+        if (elapsed < 400) {
+          rs.drawRetryRing(
+            ctx,
+            slot.x,
+            slot.y,
+            Math.min(slot.hitW, slot.hitH) / 2 + 4,
+            elapsed / 400
+          );
+        }
+      }
     });
+
+    drawMontessoriControlOfErrorPill(
+      ctx,
+      this.stageRect ?? sceneBox(rs),
+      this.exploreTracker,
+      rs.viewport?.scale
+    );
   }
 }
 

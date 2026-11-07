@@ -8,14 +8,13 @@
  * single-round sets (BR-RSP-02).
  *
  * Zero network requests during play (BR-ENG-03).
- *
- * Spec sở hữu: round-sequence-play.md §4
  */
 
 import type { AgeBand } from "./contracts/types";
 import {
   type ActionResult,
   type GameAction,
+  type GameActionValue,
   type GameSession,
   type TelemetryEvent,
   TemplateGameSession,
@@ -29,13 +28,13 @@ export interface RoundConfig {
   instruction?: string | null;
   instruction_audio_path?: string | null;
   narration_template?: string | null;
-  content_pack: unknown;
-  difficulty_params: unknown;
+  content_pack: Record<string, GameActionValue> | null | undefined;
+  difficulty_params: Record<string, GameActionValue> | null | undefined;
 }
 
 export type SessionFactory = (
-  contentPack: unknown,
-  difficultyParams: unknown,
+  contentPack: Record<string, GameActionValue> | null | undefined,
+  difficultyParams: Record<string, GameActionValue> | null | undefined,
   layoutSeed: number
 ) => GameSession;
 
@@ -155,6 +154,7 @@ export class RoundRunner {
   private readonly ageBand: AgeBand;
   private readonly layoutSeed: number;
   private readonly audioController: AudioController;
+  private readonly ownsAudioController: boolean;
   /** Tăng mỗi lần mở vòng — callback câu dẫn của vòng cũ tự bỏ qua. */
   private narrationToken = 0;
   private readonly onPlayNarration?: (
@@ -181,6 +181,9 @@ export class RoundRunner {
   private isFinished = false;
   private currentSession: GameSession | null = null;
   private readonly allEvents: TelemetryEvent[] = [];
+  private readonly collectedEvents = new Set<TelemetryEvent>();
+  private readonly collectedEventSeqs = new Set<number>();
+  private readonly lifecycleEventsSeen = new Set<string>();
   private sessionStartMs = 0;
   /** Số lần thử đã ghi ở vòng hiện tại (`attempt_index` của `answer_*`). */
   private attemptIndex = 0;
@@ -212,6 +215,7 @@ export class RoundRunner {
       }
     }
     this.sessionFactory = options.sessionFactory;
+    this.ownsAudioController = !options.audioController;
     this.audioController = options.audioController ?? new AudioController();
     this.onPlayNarration = options.onPlayNarration;
     this.onNarrationFallbackCue = options.onNarrationFallbackCue;
@@ -251,6 +255,9 @@ export class RoundRunner {
 
   /** Start the first round. Call once after construction. */
   startFirstRound(): void {
+    this.collectedEvents.clear();
+    this.collectedEventSeqs.clear();
+    this.lifecycleEventsSeen.clear();
     this.startRound(0);
   }
 
@@ -334,7 +341,7 @@ export class RoundRunner {
   isRetryDisallowed(): boolean {
     const config = this.rounds[this.currentRoundIndex];
     const params = config?.difficulty_params as
-      | Record<string, unknown>
+      | Record<string, GameActionValue>
       | undefined;
     return params?.allow_retry === false;
   }
@@ -411,13 +418,15 @@ export class RoundRunner {
     if (!this.currentSession || this.isFinished) {
       return;
     }
-    const ownAnswers = this.currentSession
-      .getTelemetry()
-      .events.filter(
-        (e) =>
-          e.event_name === "answer_correct" ||
-          e.event_name === "answer_incorrect"
-      ).length;
+    let ownAnswers = 0;
+    for (const e of this.currentSession.getTelemetry().events) {
+      if (
+        e.event_name === "answer_correct" ||
+        e.event_name === "answer_incorrect"
+      ) {
+        ownAnswers++;
+      }
+    }
     if (ownAnswers > this.sessionAnswerEventsSeen) {
       this.sessionAnswerEventsSeen = ownAnswers;
       this.attemptIndex++;
@@ -455,6 +464,17 @@ export class RoundRunner {
 
   /** `game_started` luôn đứng đầu dòng telemetry để `seq = 1` (`play-event-ingestion` §7.3). */
   private pushLifecycleAware(event: TelemetryEvent): void {
+    this.collectedEvents.add(event);
+    const seq =
+      typeof event.data?.seq === "number"
+        ? event.data.seq
+        : (event as { seq?: number }).seq;
+    if (typeof seq === "number") {
+      this.collectedEventSeqs.add(seq);
+    }
+    if (LIFECYCLE_EVENTS.has(event.event_name)) {
+      this.lifecycleEventsSeen.add(event.event_name);
+    }
     if (event.event_name === "game_started") {
       this.allEvents.unshift(event);
       return;
@@ -472,7 +492,7 @@ export class RoundRunner {
     if (!LIFECYCLE_EVENTS.has(eventName)) {
       return false;
     }
-    if (this.allEvents.some((e) => e.event_name === eventName)) {
+    if (this.lifecycleEventsSeen.has(eventName)) {
       return true;
     }
     const isFinalRound = this.currentRoundIndex >= this.rounds.length - 1;
@@ -490,6 +510,9 @@ export class RoundRunner {
   destroy(): void {
     this.clearHintTimer();
     this.audioController.stopAll();
+    if (this.ownsAudioController) {
+      this.audioController.dispose();
+    }
     if (this.currentSession) {
       this.currentSession.destroy();
       this.currentSession = null;
@@ -607,7 +630,7 @@ export class RoundRunner {
    */
   private beginRoundTiming(
     index: number,
-    rawParams: Record<string, unknown> | undefined
+    rawParams: Record<string, GameActionValue> | undefined
   ): void {
     const hintAfterMs = rawParams?.hint_after_ms;
     if (typeof hintAfterMs === "number" && hintAfterMs > 0) {
@@ -639,7 +662,7 @@ export class RoundRunner {
     this.promptSettled = true;
     const config = this.rounds[this.currentRoundIndex];
     const rawParams = config?.difficulty_params as
-      | Record<string, unknown>
+      | Record<string, GameActionValue>
       | undefined;
     this.beginRoundTiming(this.currentRoundIndex, rawParams);
   }
@@ -666,7 +689,7 @@ export class RoundRunner {
     }
 
     const rawParams = config.difficulty_params as
-      | Record<string, unknown>
+      | Record<string, GameActionValue>
       | undefined;
     // Constructor đã chặn round thiếu item_count.
     const itemCount = resolveItemCount(config) ?? 1;
@@ -729,19 +752,36 @@ export class RoundRunner {
       ) {
         continue;
       }
-      // Cùng tham chiếu event thì đã thu rồi; so tên + thời điểm làm rơi event
-      // hai vòng liên tiếp ghi cùng một mili giây.
-      if (!this.allEvents.includes(event)) {
+      const seq =
+        typeof event.data?.seq === "number"
+          ? event.data.seq
+          : (event as { seq?: number }).seq;
+      if (typeof seq === "number" && this.collectedEventSeqs.has(seq)) {
+        continue;
+      }
+      if (!this.collectedEvents.has(event)) {
         this.pushLifecycleAware(event);
       }
     }
   }
 
-  private recordEvent(eventName: string, data?: Record<string, unknown>): void {
-    this.allEvents.push({
+  private recordEvent(
+    eventName: string,
+    data?: Record<string, GameActionValue>
+  ): void {
+    const event: TelemetryEvent = {
       event_name: eventName,
       timestamp_ms: Date.now(),
       data,
-    });
+    };
+    if (LIFECYCLE_EVENTS.has(eventName)) {
+      this.lifecycleEventsSeen.add(eventName);
+    }
+    const seq = data?.seq;
+    if (typeof seq === "number") {
+      this.collectedEventSeqs.add(seq);
+    }
+    this.collectedEvents.add(event);
+    this.allEvents.push(event);
   }
 }

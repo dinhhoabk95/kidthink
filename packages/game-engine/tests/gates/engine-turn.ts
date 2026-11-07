@@ -497,7 +497,7 @@ export function scanEngineTurnGate(
 
 export function formatEngineTurnReport(result: EngineTurnGateResult): string {
   const lines: string[] = [];
-  lines.push("=== CỔNG CHECK:ENGINE-TURN (Task #262) ===");
+  lines.push("=== CỔNG CHECK:ENGINE-TURN ===");
   lines.push(`Tổng số spec đã quét: ${result.totalSpecs}`);
   lines.push(`Số vi phạm: ${result.violations.length}`);
 

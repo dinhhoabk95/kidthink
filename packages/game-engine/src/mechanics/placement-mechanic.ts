@@ -12,11 +12,13 @@ export interface PlacementItem {
   readonly isCorrect?: boolean;
 }
 
+export type MechanicEventPayload = Record<
+  string,
+  string | number | boolean | null | undefined | readonly string[]
+>;
+
 export interface PlacementMechanicOptions {
-  readonly onEvent?: (
-    eventName: string,
-    payload: Record<string, unknown>
-  ) => void;
+  readonly onEvent?: (eventName: string, payload: MechanicEventPayload) => void;
 }
 
 /**
@@ -30,7 +32,7 @@ export class PlacementMechanic {
   private stagedItemId: string | null = null;
   private readonly onEvent?: (
     eventName: string,
-    payload: Record<string, unknown>
+    payload: MechanicEventPayload
   ) => void;
 
   constructor(options?: PlacementMechanicOptions) {

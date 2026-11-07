@@ -1,3 +1,4 @@
+import { formatSpokenLabel } from "@mindkid/shared/preschool-terminology";
 import type { AgeBand } from "#src/contracts/types";
 import {
   ACTION_IGNORED,
@@ -6,17 +7,27 @@ import {
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
+import { resolveAssetLabels } from "#src/labels/spoken-keyword";
+import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
 import { insetDrawSize } from "#src/layout/slot-fit";
 import type { Slot } from "#src/layout/types";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
 import {
-  drawLabelText,
+  drawClueBannerSlot,
+  drawClueText,
+  drawMontessoriControlOfErrorPill,
   drawSceneBackground,
+  drawSlashLine,
   drawSlotItem,
   getColorsForState,
+  sceneBox,
 } from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
+import {
+  type ControlOfErrorDiagnostics,
+  MontessoriExploreTracker,
+} from "#src/systems/montessori-explore-system";
 import type { RenderSystem } from "#src/systems/render-system";
 import { survivingCandidates } from "./deduction.js";
 import type { GT009Content, GT009Difficulty } from "./template.js";
@@ -37,14 +48,67 @@ export class GT009Session extends TemplateGameSession<
   degradation: DegradationState | null = null;
 
   private readonly mechanic = new SelectionMechanic({ mode: "single" });
+  private readonly exploreTracker = new MontessoriExploreTracker({
+    milestoneTarget: 2,
+  });
   private readonly revealedClueIds: string[] = [];
   private readonly eliminatedIds: Set<string> = new Set();
+  private wrongCandidateId: string | null = null;
+  private wrongTimestamp = 0;
+  private lastFrameMs = 0;
 
   setupEntities(): void {
     this.mechanic.reset();
+    this.exploreTracker.reset(false);
     this.revealedClueIds.length = 0;
     this.eliminatedIds.clear();
+    this.wrongCandidateId = null;
+    this.wrongTimestamp = 0;
+    this.lastFrameMs = 0;
     this.isWon = false;
+  }
+
+  startExplorePhase(): void {
+    this.exploreTracker.reset(true);
+  }
+
+  getExploreTracker(): MontessoriExploreTracker {
+    return this.exploreTracker;
+  }
+
+  getControlOfError(): ControlOfErrorDiagnostics | null {
+    return this.exploreTracker.getControlOfErrorDiagnostics();
+  }
+
+  isMicroSandboxActive(): boolean {
+    return this.exploreTracker.isMicroSandboxActive();
+  }
+
+  findViolatedClueForCandidate(
+    candidateId: string
+  ): GT009Content["clues"][number] | null {
+    if (!this.content.candidates.some((c) => c.candidate_id === candidateId)) {
+      return null;
+    }
+    for (const clue of this.content.clues) {
+      const survivors = survivingCandidates(this.content, [clue.clue_id]);
+      if (!survivors.some((c) => c.candidate_id === candidateId)) {
+        return clue;
+      }
+    }
+    return null;
+  }
+
+  update(deltaMs: number): void {
+    this.lastFrameMs += deltaMs;
+    this.exploreTracker.tick(deltaMs);
+    if (
+      this.wrongCandidateId &&
+      this.lastFrameMs - this.wrongTimestamp >= 400
+    ) {
+      this.setRenderItemState(this.wrongCandidateId, "idle");
+      this.wrongCandidateId = null;
+    }
   }
 
   /** Manh mối đã lật, theo thứ tự trẻ chạm. */
@@ -73,6 +137,7 @@ export class GT009Session extends TemplateGameSession<
       return;
     }
     this.revealedClueIds.push(clueId);
+    this.exploreTracker.recordExploreAction("clue_revealed");
 
     const surviving = new Set(this.getSurvivingIds());
     const newlyEliminated = this.content.candidates
@@ -148,6 +213,36 @@ export class GT009Session extends TemplateGameSession<
   }
 
   onCandidateSelected(candidateId: string): void {
+    if (candidateId !== this.content.answer_candidate_id) {
+      this.wrongCandidateId = candidateId;
+      this.wrongTimestamp = this.lastFrameMs;
+      this.setRenderItemState(candidateId, "wrong");
+      const violatedClue = this.findViolatedClueForCandidate(candidateId);
+      const reasonVi = violatedClue
+        ? `Chưa khớp manh mối: ${violatedClue.text}`
+        : "Ứng viên này đã bị loại bởi manh mối";
+      const enteredSandbox = this.exploreTracker.recordWrongAttempt({
+        reasonVi,
+        targetId: violatedClue?.clue_id ?? candidateId,
+        actualValue: candidateId,
+        expectedValue: this.content.answer_candidate_id,
+      });
+      if (
+        enteredSandbox &&
+        violatedClue &&
+        !this.revealedClueIds.includes(violatedClue.clue_id)
+      ) {
+        this.onClueRevealed(violatedClue.clue_id);
+      }
+      this.recordEvent("control_of_error", {
+        candidate_id: candidateId,
+        violated_clue_id: violatedClue?.clue_id ?? null,
+        micro_sandbox: this.exploreTracker.isMicroSandboxActive(),
+      });
+      return;
+    }
+    this.wrongCandidateId = null;
+    this.exploreTracker.recordCorrectAttempt();
     this.mechanic.select(candidateId);
     if (this.checkWinCondition()) {
       this.winSession();
@@ -185,20 +280,9 @@ export class GT009Session extends TemplateGameSession<
     y: number,
     hitTolerance: number
   ): GT009Content["clues"][number] | null {
-    const clueCount = this.content.clues.length;
-    for (let i = 0; i < clueCount; i++) {
-      const clue = this.content.clues[i];
-      const slot = this.slots[i];
-      if (!(clue && slot)) {
-        continue;
-      }
-      const hw = Math.max(slot.hitW, slot.w) / 2 + hitTolerance;
-      const hh = Math.max(slot.hitH, slot.h) / 2 + hitTolerance;
-      if (Math.abs(x - slot.x) <= hw && Math.abs(y - slot.y) <= hh) {
-        return clue;
-      }
-    }
-    return null;
+    const clueSlots = this.slots.slice(0, this.content.clues.length);
+    const idx = findHitSlotIndex(clueSlots, x, y, "square", hitTolerance);
+    return this.content.clues[idx] ?? null;
   }
 
   private findHitCandidate(
@@ -206,27 +290,16 @@ export class GT009Session extends TemplateGameSession<
     y: number,
     hitTolerance: number
   ): GT009Content["candidates"][number] | null {
-    const clueCount = this.content.clues.length;
-    for (let i = 0; i < this.content.candidates.length; i++) {
-      const cand = this.content.candidates[i];
-      const slot = this.slots[clueCount + i];
-      if (!(cand && slot)) {
-        continue;
-      }
-      const hw = Math.max(slot.hitW, slot.w) / 2 + hitTolerance;
-      const hh = Math.max(slot.hitH, slot.h) / 2 + hitTolerance;
-      if (Math.abs(x - slot.x) <= hw && Math.abs(y - slot.y) <= hh) {
-        return cand;
-      }
-    }
-    return null;
+    const candidateSlots = this.slots.slice(this.content.clues.length);
+    const idx = findHitSlotIndex(candidateSlots, x, y, "circle", hitTolerance);
+    return this.content.candidates[idx] ?? null;
   }
 
   override toAction(gesture: Gesture): GameAction | null {
     if (gesture.type !== "tap") {
       return null;
     }
-    const hitTolerance = 24;
+    const hitTolerance = TAP_TOLERANCE_PX;
     const hitClue = this.findHitClue(gesture.x, gesture.y, hitTolerance);
     if (hitClue) {
       return { type: "reveal_clue", data: { clue_id: hitClue.clue_id } };
@@ -263,10 +336,15 @@ export class GT009Session extends TemplateGameSession<
       }
       return;
     }
-    if (action.type === "select_item" || action.type === "tap_option") {
+    if (
+      action.type === "select_item" ||
+      action.type === "tap_option" ||
+      action.type === "select_candidate"
+    ) {
       const itemId =
         typeof action.data === "object" && action.data !== null
-          ? Reflect.get(action.data, "item_id")
+          ? (Reflect.get(action.data, "item_id") ??
+            Reflect.get(action.data, "candidate_id"))
           : undefined;
       if (typeof itemId === "string") {
         this.onCandidateSelected(itemId);
@@ -276,6 +354,9 @@ export class GT009Session extends TemplateGameSession<
 
   private toCandidateState(candId: string): ViewEntity["state"] {
     if (this.eliminatedIds.has(candId)) {
+      return "incorrect";
+    }
+    if (this.wrongCandidateId === candId) {
       return "incorrect";
     }
     if (this.mechanic.isSelected(candId)) {
@@ -303,6 +384,9 @@ export class GT009Session extends TemplateGameSession<
         y: slot.y,
         w: slot.w,
         h: slot.h,
+        hitShape: "square",
+        label: isRevealed ? clue.text : "?",
+        spokenLabel: isRevealed ? clue.text : "Manh mối bí ẩn",
       });
     });
 
@@ -311,6 +395,11 @@ export class GT009Session extends TemplateGameSession<
       if (!slot) {
         return;
       }
+      const assetLabels =
+        cand.asset && cand.asset.kind !== "text"
+          ? resolveAssetLabels(cand.asset)
+          : undefined;
+      const valueStr = String(cand.value);
       entities.push({
         id: cand.candidate_id,
         slotIndex: clueCount + i,
@@ -320,6 +409,10 @@ export class GT009Session extends TemplateGameSession<
         y: slot.y,
         w: slot.w,
         h: slot.h,
+        glyph: assetLabels?.glyph,
+        label: valueStr,
+        spokenLabel: formatSpokenLabel(valueStr),
+        spokenAudioPath: assetLabels?.spokenAudioPath,
       });
     });
 
@@ -332,8 +425,13 @@ export class GT009Session extends TemplateGameSession<
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
-    _timeMs: number
+    timeMs: number
   ): void {
+    this.lastFrameMs = timeMs;
+    if (this.wrongCandidateId && timeMs - this.wrongTimestamp >= 400) {
+      this.setRenderItemState(this.wrongCandidateId, "idle");
+      this.wrongCandidateId = null;
+    }
     drawSceneBackground(ctx, rs, this.themeId);
     // clue-board xếp dải manh mối trước, rồi tới bàn ứng viên.
     const clueSlots = this.slots.slice(0, this.content.clues.length);
@@ -348,47 +446,84 @@ export class GT009Session extends TemplateGameSession<
       const { fill, border } = getColorsForState(
         revealed ? "selected" : "idle"
       );
-      rs.drawClayBody(
-        ctx,
-        slot.x,
-        slot.y,
-        Math.min(slot.w, slot.h) / 2,
-        fill,
-        border,
-        "square"
-      );
-      drawLabelText(ctx, revealed ? clue.text : "?", slot.x, slot.y, 16);
+      drawClueBannerSlot(ctx, slot, fill, border);
+      if (revealed) {
+        drawClueText(ctx, clue.text, slot.x, slot.y, slot.w - 16);
+      } else {
+        drawClueText(
+          ctx,
+          `🔍 Manh mối ${i + 1} (chạm mở)`,
+          slot.x,
+          slot.y,
+          slot.w - 16
+        );
+      }
     });
 
     this.content.candidates.forEach((cand, i) => {
       const slot = boardSlots[i];
-      if (!slot) {
-        return;
-      }
-      const eliminated = this.eliminatedIds.has(cand.candidate_id);
-      let state = this.getRenderItemState(cand.candidate_id);
-      if (eliminated) {
-        state = "locked";
-      } else if (this.mechanic.isSelected(cand.candidate_id)) {
-        state = "selected";
-      }
-      if (cand.asset) {
-        drawSlotItem(ctx, rs, slot, {
-          id: cand.candidate_id,
-          asset: cand.asset,
-          label: String(cand.value),
-          state,
-        });
-      } else {
-        drawSlotItem(ctx, rs, slot, {
-          id: cand.candidate_id,
-          text: String(cand.value),
-          state,
-        });
-      }
-      if (eliminated) {
-        drawLabelText(ctx, "❌", slot.x, slot.y, 32);
+      if (slot) {
+        this.renderCandidate(ctx, rs, cand, slot, timeMs);
       }
     });
+
+    drawMontessoriControlOfErrorPill(
+      ctx,
+      this.stageRect ?? sceneBox(rs),
+      this.exploreTracker,
+      rs.viewport?.scale
+    );
+  }
+
+  private renderCandidate(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    cand: GT009Content["candidates"][number],
+    slot: Slot,
+    timeMs: number
+  ): void {
+    const eliminated = this.eliminatedIds.has(cand.candidate_id);
+    let state = this.getRenderItemState(cand.candidate_id);
+    if (eliminated) {
+      state = "locked";
+    } else if (cand.candidate_id === this.wrongCandidateId) {
+      state = "wrong";
+    } else if (this.mechanic.isSelected(cand.candidate_id)) {
+      state = "selected";
+    }
+    ctx.save();
+    if (eliminated) {
+      ctx.globalAlpha = 0.45;
+    }
+    if (cand.asset && cand.asset.kind !== "text") {
+      drawSlotItem(ctx, rs, slot, {
+        id: cand.candidate_id,
+        asset: cand.asset,
+        label: String(cand.value),
+        state,
+      });
+    } else {
+      drawSlotItem(ctx, rs, slot, {
+        id: cand.candidate_id,
+        text: String(cand.value),
+        state,
+      });
+    }
+    ctx.restore();
+    if (cand.candidate_id === this.wrongCandidateId) {
+      const elapsed = timeMs - this.wrongTimestamp;
+      if (elapsed < 400) {
+        rs.drawRetryRing(
+          ctx,
+          slot.x,
+          slot.y,
+          Math.min(slot.hitW, slot.hitH) / 2 + 4,
+          elapsed / 400
+        );
+      }
+    }
+    if (eliminated) {
+      drawSlashLine(ctx, slot);
+    }
   }
 }

@@ -1,3 +1,7 @@
+import {
+  formatNumberWord,
+  formatSpokenLabel,
+} from "@mindkid/shared/preschool-terminology";
 import type { AgeBand } from "#src/contracts/types";
 import {
   ACTION_CORRECT,
@@ -8,15 +12,13 @@ import {
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
+import { resolveAssetLabels } from "#src/labels/spoken-keyword.js";
 import { resolveTouchFloor } from "#src/layout/constants";
+import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test.js";
 import { resolveLayout } from "#src/layout/registry";
 import { insetDrawSize } from "#src/layout/slot-fit";
 import { computeStageCellSlots } from "#src/layout/stage-targets";
-import {
-  computeTraySourceSlots,
-  findNearestHitSlot,
-  pickTrayZones,
-} from "#src/layout/tray-layout";
+import { computeTraySourceSlots, pickTrayZones } from "#src/layout/tray-layout";
 import type { Slot } from "#src/layout/types";
 import {
   drawSceneBackground,
@@ -41,10 +43,63 @@ import {
   solveWeaveGrid,
 } from "./template.js";
 
-const HIT_TOLERANCE_PX = 24;
-
 /** Cạnh ô dệt lớn nhất trong sân khấu. */
 const WEAVE_CELL_MAX_PX = 68;
+
+const KNOWN_WEAVE_COLOR_KEYS = new Set([
+  "red",
+  "đỏ",
+  "berry",
+  "blue",
+  "xanh dương",
+  "sky",
+  "yellow",
+  "vàng",
+  "amber",
+  "gold",
+  "green",
+  "xanh lá",
+  "emerald",
+  "mint",
+  "purple",
+  "tím",
+  "lavender",
+  "orange",
+  "cam",
+  "coral",
+]);
+
+const FALLBACK_WEAVE_COLORS = [
+  "red",
+  "blue",
+  "yellow",
+  "green",
+  "purple",
+  "orange",
+] as const;
+
+const WEAVE_COLOR_NAME_VI: Readonly<Record<string, string>> = {
+  red: "Đỏ",
+  đỏ: "Đỏ",
+  berry: "Đỏ",
+  blue: "Xanh dương",
+  "xanh dương": "Xanh dương",
+  sky: "Xanh dương",
+  yellow: "Vàng",
+  vàng: "Vàng",
+  amber: "Vàng",
+  gold: "Vàng",
+  green: "Xanh lá",
+  "xanh lá": "Xanh lá",
+  emerald: "Xanh lá",
+  mint: "Xanh lá",
+  purple: "Tím",
+  tím: "Tím",
+  lavender: "Tím",
+  orange: "Cam",
+  cam: "Cam",
+  coral: "Cam",
+};
 
 interface GT033ActionPayload {
   readonly color_id?: string;
@@ -447,9 +502,10 @@ export class GT033Session extends TemplateGameSession<
   private nearestIndex(
     slots: readonly Slot[],
     x: number,
-    y: number
+    y: number,
+    shape: "circle" | "square"
   ): number | null {
-    const index = findNearestHitSlot(slots, x, y, HIT_TOLERANCE_PX);
+    const index = findHitSlotIndex(slots, x, y, shape, TAP_TOLERANCE_PX);
     return index < 0 ? null : index;
   }
 
@@ -462,7 +518,7 @@ export class GT033Session extends TemplateGameSession<
       totalCells,
       totalCells + this.content.palette.length
     );
-    const index = this.nearestIndex(slots, gx, gy);
+    const index = this.nearestIndex(slots, gx, gy, "circle");
     return index === null ? null : (this.content.palette[index] ?? null);
   }
 
@@ -474,7 +530,7 @@ export class GT033Session extends TemplateGameSession<
     const editable = this.slots
       .slice(0, totalCells)
       .filter((_, i) => this.content.cells[i] === null);
-    const index = this.nearestIndex(editable, gx, gy);
+    const index = this.nearestIndex(editable, gx, gy, "square");
     return index === null ? null : (editable[index]?.index ?? null);
   }
 
@@ -564,45 +620,131 @@ export class GT033Session extends TemplateGameSession<
     };
   }
 
+  private resolveVisualColorId(colorId: string | null): string | null {
+    if (!colorId) {
+      return null;
+    }
+    const lower = colorId.toLowerCase();
+    if (KNOWN_WEAVE_COLOR_KEYS.has(lower)) {
+      return colorId;
+    }
+    const palIdx = this.content.palette.findIndex(
+      (p) => p.color_id === colorId
+    );
+    const safeIdx = palIdx >= 0 ? palIdx : 0;
+    return (
+      FALLBACK_WEAVE_COLORS[safeIdx % FALLBACK_WEAVE_COLORS.length] ?? "red"
+    );
+  }
+
+  private resolvePaletteDisplayLabel(
+    item: GT033PaletteItem,
+    index: number
+  ): string {
+    if (item.name_vi) {
+      return item.name_vi;
+    }
+    const visualKey = (
+      this.resolveVisualColorId(item.color_id) ?? "red"
+    ).toLowerCase();
+    return WEAVE_COLOR_NAME_VI[visualKey] ?? `Màu ${index + 1}`;
+  }
+
+  private buildCellEntity(
+    i: number,
+    slot: Slot,
+    paletteColorIds: ReadonlySet<string>
+  ): ViewEntity {
+    const placedColorId = this.placedCells[i] ?? null;
+    const isPlaced = placedColorId !== null;
+    const rawCellId = `cell_${i}`;
+    const cellEntityId = paletteColorIds.has(rawCellId)
+      ? `grid:${rawCellId}`
+      : rawCellId;
+    const palIdx = placedColorId
+      ? this.content.palette.findIndex((p) => p.color_id === placedColorId)
+      : -1;
+    const paletteItem = palIdx >= 0 ? this.content.palette[palIdx] : undefined;
+    const itemLabels = paletteItem
+      ? resolveAssetLabels(paletteItem.asset)
+      : undefined;
+    const displayLabel =
+      paletteItem && palIdx >= 0
+        ? this.resolvePaletteDisplayLabel(paletteItem, palIdx)
+        : "?";
+    const spokenLabel =
+      paletteItem && palIdx >= 0
+        ? (formatSpokenLabel(displayLabel) ??
+          itemLabels?.spokenLabel ??
+          formatSpokenLabel(`ô số ${formatNumberWord(i + 1)}`))
+        : formatSpokenLabel(`ô trống số ${formatNumberWord(i + 1)}`);
+    return {
+      id: cellEntityId,
+      slotIndex: i,
+      role: "target",
+      state: isPlaced ? "selected" : "idle",
+      x: slot.x,
+      y: slot.y,
+      w: slot.w,
+      h: slot.h,
+      hitShape: "square",
+      glyph: itemLabels?.glyph,
+      label: displayLabel,
+      spokenLabel,
+      spokenAudioPath: itemLabels?.spokenAudioPath,
+    };
+  }
+
+  private buildPaletteEntity(
+    p: number,
+    item: GT033PaletteItem,
+    slot: Slot,
+    totalCells: number
+  ): ViewEntity {
+    const isSelected = this.selectedColorId === item.color_id;
+    const itemLabels = resolveAssetLabels(item.asset);
+    const displayLabel = this.resolvePaletteDisplayLabel(item, p);
+    const spokenLabel =
+      formatSpokenLabel(displayLabel) ??
+      itemLabels.spokenLabel ??
+      formatSpokenLabel(`màu số ${formatNumberWord(p + 1)}`);
+    return {
+      id: item.color_id,
+      slotIndex: totalCells + p,
+      role: "source",
+      state: isSelected ? "selected" : "idle",
+      x: slot.x,
+      y: slot.y,
+      w: slot.w,
+      h: slot.h,
+      hitShape: "circle",
+      glyph: itemLabels.glyph,
+      label: displayLabel,
+      spokenLabel,
+      spokenAudioPath: itemLabels.spokenAudioPath,
+    };
+  }
+
   override getView(): EngineView {
     const entities: ViewEntity[] = [];
     const totalCells = this.content.grid.rows * this.content.grid.cols;
+    const paletteColorIds = new Set(
+      this.content.palette.map((p) => p.color_id)
+    );
 
     for (let i = 0; i < totalCells; i++) {
       const slot = this.slots[i];
-      if (!slot) {
-        continue;
+      if (slot) {
+        entities.push(this.buildCellEntity(i, slot, paletteColorIds));
       }
-      const isPlaced = this.placedCells[i] !== null;
-      entities.push({
-        id: `cell_${i}`,
-        slotIndex: i,
-        role: "target",
-        state: isPlaced ? "selected" : "idle",
-        x: slot.x,
-        y: slot.y,
-        w: slot.w,
-        h: slot.h,
-      });
     }
 
     for (let p = 0; p < this.content.palette.length; p++) {
       const item = this.content.palette[p];
       const slot = this.slots[totalCells + p];
-      if (!(item && slot)) {
-        continue;
+      if (item && slot) {
+        entities.push(this.buildPaletteEntity(p, item, slot, totalCells));
       }
-      const isSelected = this.selectedColorId === item.color_id;
-      entities.push({
-        id: item.color_id,
-        slotIndex: totalCells + p,
-        role: "source",
-        state: isSelected ? "selected" : "idle",
-        x: slot.x,
-        y: slot.y,
-        w: slot.w,
-        h: slot.h,
-      });
     }
 
     return {
@@ -657,7 +799,8 @@ export class GT033Session extends TemplateGameSession<
       const row = Math.floor(i / this.content.grid.cols);
       const col = i % this.content.grid.cols;
       const isOriginal = this.content.cells[i] !== null;
-      const colorId = this.placedCells[i] ?? null;
+      const rawColorId = this.placedCells[i] ?? null;
+      const colorId = this.resolveVisualColorId(rawColorId);
 
       drawWeaveCell(ctx, rs, slot, {
         cellIndex: i,
@@ -693,16 +836,18 @@ export class GT033Session extends TemplateGameSession<
           {
             id: item.color_id,
             asset: item.asset,
-            label: item.name_vi ?? item.color_id,
+            label: this.resolvePaletteDisplayLabel(item, p),
             state: isSelected ? "selected" : "idle",
           },
           "circle"
         );
         // Mọi item bảng màu cùng asset 🧶 — chấm màu kèm hình mới phân biệt được.
         const swatchR = Math.min(slot.w, slot.h) * 0.2;
+        const visualColorId =
+          this.resolveVisualColorId(item.color_id) ?? item.color_id;
         drawYarnSwatch(
           ctx,
-          item.color_id,
+          visualColorId,
           slot.x + slot.w / 2 - swatchR,
           slot.y - slot.h / 2 + swatchR,
           swatchR

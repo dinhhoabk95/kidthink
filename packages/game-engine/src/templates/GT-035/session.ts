@@ -8,6 +8,8 @@ import {
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
+import { resolveAssetLabels } from "#src/labels/spoken-keyword";
+import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import {
   computeStageGroupsLayout,
   hasSlotsOutsideStage,
@@ -19,10 +21,12 @@ import {
   drawSceneBackground,
   drawSlotItem,
   drawSubPromptText,
+  getColorsForState,
   spawnParticlesAtSlot,
   updateParticles,
 } from "#src/render/index.js";
 import {
+  type CommandItem,
   type CommandQueueConfig,
   CommandQueueSystem,
   type CommandType,
@@ -54,10 +58,54 @@ const COMMAND_ICONS: Record<CommandType, string> = {
   loop: "🔁",
 };
 
+const COMMAND_ASSETS: Record<
+  CommandType,
+  { readonly kind: "emoji"; readonly ref: string }
+> = {
+  forward: { kind: "emoji", ref: COMMAND_ICONS.forward },
+  turn_left: { kind: "emoji", ref: COMMAND_ICONS.turn_left },
+  turn_right: { kind: "emoji", ref: COMMAND_ICONS.turn_right },
+  loop: { kind: "emoji", ref: COMMAND_ICONS.loop },
+};
+
+const ROBOT_ASSET = { kind: "emoji", ref: "🤖" } as const;
+const DEFAULT_GOAL_ASSET = { kind: "emoji", ref: "⭐" } as const;
+const OBSTACLE_ASSET = { kind: "emoji", ref: "🪨" } as const;
+
+const FACING_SPOKEN_VI: Record<RobotState["facing"], string> = {
+  up: "lên trên",
+  right: "sang phải",
+  down: "xuống dưới",
+  left: "sang trái",
+};
+
+function toCircleViewEntity(
+  slot: Slot,
+  slotIndex: number,
+  info: Omit<ViewEntity, "slotIndex" | "x" | "y" | "w" | "h" | "hitShape">
+): ViewEntity {
+  return {
+    ...info,
+    slotIndex,
+    x: slot.x,
+    y: slot.y,
+    w: slot.w,
+    h: slot.h,
+    hitShape: "circle",
+  };
+}
+
 interface GT035ActionPayload {
   readonly command?: CommandType;
   readonly index?: number;
 }
+
+const FACING_ARROWS: Record<string, string> = {
+  up: "↑",
+  right: "→",
+  down: "↓",
+  left: "←",
+};
 
 export class GT035Session extends TemplateGameSession<
   GT035Content,
@@ -72,16 +120,15 @@ export class GT035Session extends TemplateGameSession<
 
   private get allowedCommands(): readonly CommandType[] {
     const fromContent = this.content.allowed_commands;
-    if (fromContent && Array.isArray(fromContent) && fromContent.length > 0) {
+    if (Array.isArray(fromContent) && fromContent.length > 0) {
       return fromContent;
     }
     const fromDiff = (
       this.difficulty as { readonly allowed_commands?: readonly CommandType[] }
     ).allowed_commands;
-    if (fromDiff && Array.isArray(fromDiff) && fromDiff.length > 0) {
-      return fromDiff;
-    }
-    return GT035Session.DEFAULT_ALLOWED_COMMANDS;
+    return Array.isArray(fromDiff) && fromDiff.length > 0
+      ? fromDiff
+      : GT035Session.DEFAULT_ALLOWED_COMMANDS;
   }
 
   /** Nút ở `zones.action` là nút chạy chương trình (`BR-PSZ-05`). */
@@ -123,7 +170,11 @@ export class GT035Session extends TemplateGameSession<
 
   readonly queueSystem: CommandQueueSystem;
   private readonly sfxEngine: SFXEngine;
+  private readonly obstacleSet: ReadonlySet<string>;
+  private readonly collectibleMap: ReadonlyMap<string, GT035Collectible>;
   private particles: Particle[] = [];
+  private cachedShortestSolution: readonly CommandItem[] | null | undefined =
+    undefined;
 
   constructor(
     content: GT035Content,
@@ -131,18 +182,14 @@ export class GT035Session extends TemplateGameSession<
     _ageBandOrSeed?: AgeBand | number
   ) {
     super(content, difficulty);
-
     this.robotState = { ...content.start };
-    this.queueSystem = new CommandQueueSystem({
-      rows: content.grid.rows,
-      cols: content.grid.cols,
-      start: content.start,
-      goal: content.goal,
-      obstacles: content.obstacles,
-      collectibles: content.collectibles,
-      maxCommands: difficulty.max_commands ?? 8,
-    });
-
+    this.obstacleSet = new Set(
+      content.obstacles.map((o) => `${o.col},${o.row}`)
+    );
+    this.collectibleMap = new Map(
+      content.collectibles.map((c) => [`${c.col},${c.row}`, c])
+    );
+    this.queueSystem = new CommandQueueSystem(this.queueConfig);
     this.sfxEngine = new SFXEngine();
   }
 
@@ -170,6 +217,7 @@ export class GT035Session extends TemplateGameSession<
     this.executionResult = null;
     this.isWin = false;
     this.particles = [];
+    this.cachedShortestSolution = undefined;
     this.queueSystem.clear();
 
     this.recordEvent("game_started", {
@@ -191,21 +239,14 @@ export class GT035Session extends TemplateGameSession<
     if (this.isWin || this.isWon || this.isExecuting) {
       return null;
     }
-    const sol = findShortestSolution(this.queueConfig);
-    const { rows, cols } = this.content.grid;
-    const gridCount = rows * cols;
-    const queueCount = this.maxCommands;
-    const allowed = this.allowedCommands;
-
-    // Đủ lệnh thì bước kế là nút chạy ở `zones.action` — không phải slot của
-    // sân khấu (`BR-PSZ-05`), nên không có ô nào để chỉ.
-    const currentCmdCount = this.queueSystem.commandCount;
-    const nextCmd = sol?.[currentCmdCount]?.type;
-    if (!nextCmd) {
-      return null;
+    if (this.cachedShortestSolution === undefined) {
+      this.cachedShortestSolution = findShortestSolution(this.queueConfig);
     }
-    const palIdx = allowed.indexOf(nextCmd);
-    return palIdx >= 0 ? gridCount + queueCount + palIdx : null;
+    const sol = this.cachedShortestSolution;
+    const nextCmd = sol?.[this.queueSystem.commandCount]?.type;
+    const palIdx = nextCmd ? this.allowedCommands.indexOf(nextCmd) : -1;
+    const { rows, cols } = this.content.grid;
+    return palIdx >= 0 ? rows * cols + this.maxCommands + palIdx : null;
   }
 
   /** Số ô của hàng lệnh — `max_commands` của độ khó. */
@@ -253,21 +294,18 @@ export class GT035Session extends TemplateGameSession<
   }
 
   private validateAddCommand(cmd?: CommandType): ActionResult {
-    if (this.isExecuting || !cmd || !this.allowedCommands.includes(cmd)) {
-      return ACTION_IGNORED;
-    }
-    const maxCmd = this.maxCommands;
-    if (this.queueSystem.commandCount >= maxCmd) {
-      return ACTION_IGNORED;
-    }
-    return ACTION_CORRECT;
+    return this.isExecuting ||
+      !cmd ||
+      !this.allowedCommands.includes(cmd) ||
+      this.queueSystem.commandCount >= this.maxCommands
+      ? ACTION_IGNORED
+      : ACTION_CORRECT;
   }
 
   private validateRemoveCommand(): ActionResult {
-    if (this.isExecuting || this.queueSystem.commandCount === 0) {
-      return ACTION_IGNORED;
-    }
-    return ACTION_CORRECT;
+    return this.isExecuting || this.queueSystem.commandCount === 0
+      ? ACTION_IGNORED
+      : ACTION_CORRECT;
   }
 
   private validateRunProgram(): ActionResult {
@@ -282,13 +320,11 @@ export class GT035Session extends TemplateGameSession<
     if (this.isWin || this.isWon) {
       return ACTION_IGNORED;
     }
-
-    const type = action.type;
     const data = (
       typeof action.data === "object" && action.data !== null ? action.data : {}
     ) as GT035ActionPayload;
 
-    switch (type) {
+    switch (action.type) {
       case "add_command":
       case "tap_command":
       case "command":
@@ -311,20 +347,14 @@ export class GT035Session extends TemplateGameSession<
     if (
       !command ||
       this.isExecuting ||
-      !this.allowedCommands.includes(command)
+      !this.allowedCommands.includes(command) ||
+      !this.queueSystem.addCommand({ type: command })
     ) {
       return;
     }
-
-    const added = this.queueSystem.addCommand({ type: command });
-    if (!added) {
-      return;
-    }
-
-    const cmdIdx = this.queueSystem.commandCount - 1;
     this.recordEvent("command_added", {
       command,
-      command_index: cmdIdx,
+      command_index: this.queueSystem.commandCount - 1,
       round_index: 0,
     });
   }
@@ -333,41 +363,35 @@ export class GT035Session extends TemplateGameSession<
     if (this.isExecuting || this.queueSystem.commandCount === 0) {
       return;
     }
-
     const removeIdx =
       typeof index === "number" && index >= 0
         ? index
         : this.queueSystem.commandCount - 1;
     const removed = this.queueSystem.removeCommand(removeIdx);
-    if (!removed) {
-      return;
+    if (removed) {
+      this.recordEvent("command_removed", {
+        command: removed.type,
+        command_index: removeIdx,
+        round_index: 0,
+      });
     }
-
-    this.recordEvent("command_removed", {
-      command: removed.type,
-      command_index: removeIdx,
-      round_index: 0,
-    });
   }
 
   private commitClearCommands(): void {
-    if (this.isExecuting) {
-      return;
+    if (!this.isExecuting) {
+      this.queueSystem.clear();
+      this.robotState = { ...this.content.start };
     }
-    this.queueSystem.clear();
-    this.robotState = { ...this.content.start };
   }
 
   private commitRunProgram(): void {
     if (this.isExecuting || this.queueSystem.commandCount === 0) {
       return;
     }
-
     this.recordEvent("program_run", {
       command_count: this.queueSystem.commandCount,
       round_index: 0,
     });
-
     const result = this.queueSystem.run();
     this.executionResult = result;
     this.robotState = result.finalState;
@@ -382,7 +406,6 @@ export class GT035Session extends TemplateGameSession<
         rounds_correct: 1,
       });
       this.sfxEngine.play("pop_celebrate");
-
       const goalSlot = this.getGoalSlot();
       if (goalSlot) {
         this.particles.push(...spawnParticlesAtSlot(goalSlot, 25));
@@ -397,15 +420,17 @@ export class GT035Session extends TemplateGameSession<
       round_index: 0,
     });
     this.sfxEngine.play("amber_soft");
+    this.robotState = { ...this.content.start };
+    if (this.queueSystem.isFull) {
+      this.queueSystem.removeCommand(this.queueSystem.commandCount - 1);
+    }
   }
 
   override commit(action: GameAction): void {
-    const type = action.type;
     const data = (
       typeof action.data === "object" && action.data !== null ? action.data : {}
     ) as GT035ActionPayload;
-
-    switch (type) {
+    switch (action.type) {
       case "add_command":
       case "tap_command":
       case "command":
@@ -428,132 +453,150 @@ export class GT035Session extends TemplateGameSession<
     }
   }
 
+  private findHitInRange(
+    gx: number,
+    gy: number,
+    start: number,
+    count: number
+  ): number {
+    return findHitSlotIndex(
+      this.slots.slice(start, start + count),
+      gx,
+      gy,
+      "circle",
+      TAP_TOLERANCE_PX
+    );
+  }
+
   private findTappedPaletteCommand(
     gx: number,
     gy: number,
-    tol: number,
     palStartIndex: number
   ): CommandType | null {
     const allowed = this.allowedCommands;
-    for (let p = 0; p < allowed.length; p++) {
-      const slot = this.slots[palStartIndex + p];
-      const cmd = allowed[p];
-      if (!(slot && cmd)) {
-        continue;
-      }
-      const hw = (slot.hitW ?? slot.w) / 2 + tol;
-      const hh = (slot.hitH ?? slot.h) / 2 + tol;
-      if (Math.abs(gx - slot.x) <= hw && Math.abs(gy - slot.y) <= hh) {
-        return cmd;
-      }
-    }
-    return null;
+    const hitIdx = this.findHitInRange(gx, gy, palStartIndex, allowed.length);
+    return hitIdx >= 0 ? (allowed[hitIdx] ?? null) : null;
   }
 
   private findTappedQueueIndex(
     gx: number,
     gy: number,
-    tol: number,
     queueStartIndex: number,
     maxCmd: number
   ): number | null {
-    for (let i = 0; i < maxCmd; i++) {
-      const slot = this.slots[queueStartIndex + i];
-      if (!slot) {
-        continue;
-      }
-      const hw = (slot.hitW ?? slot.w) / 2 + tol;
-      const hh = (slot.hitH ?? slot.h) / 2 + tol;
-      if (Math.abs(gx - slot.x) <= hw && Math.abs(gy - slot.y) <= hh) {
-        return i;
-      }
-    }
-    return null;
+    const hitIdx = this.findHitInRange(gx, gy, queueStartIndex, maxCmd);
+    return hitIdx >= 0 ? hitIdx : null;
   }
 
   override toAction(gesture: Gesture): GameAction | null {
     if (this.isExecuting) {
       return null;
     }
-    // Chạm nút ở `zones.action` tới đây thành `commit` (`BR-PSZ-05`): chạy chương trình.
     if (gesture.type === "commit") {
       return { type: "run_program", data: {} };
     }
-
-    const hitTolerance = 24;
     const { rows, cols } = this.content.grid;
     const gridSlotCount = rows * cols;
     const maxCmd = this.maxCommands;
+    const palStart = gridSlotCount + maxCmd;
 
     if (gesture.type === "drop") {
       const palCmd = this.findTappedPaletteCommand(
         gesture.fromX,
         gesture.fromY,
-        hitTolerance,
-        gridSlotCount + maxCmd
+        palStart
       );
       const queueIdx = this.findTappedQueueIndex(
         gesture.toX,
         gesture.toY,
-        hitTolerance,
         gridSlotCount,
         maxCmd
       );
-      if (palCmd && queueIdx !== null) {
-        return { type: "add_command", data: { command: palCmd } };
-      }
-      return null;
+      return palCmd && queueIdx !== null
+        ? { type: "add_command", data: { command: palCmd } }
+        : null;
     }
-
     if (gesture.type !== "tap") {
       return null;
     }
-
-    // Check Palette buttons
     const palCmd = this.findTappedPaletteCommand(
       gesture.x,
       gesture.y,
-      hitTolerance,
-      gridSlotCount + maxCmd
+      palStart
     );
     if (palCmd) {
       return { type: "add_command", data: { command: palCmd } };
     }
-
-    // Check Queue slots (tapping removes command)
     const queueIdx = this.findTappedQueueIndex(
       gesture.x,
       gesture.y,
-      hitTolerance,
       gridSlotCount,
       maxCmd
     );
-    if (queueIdx !== null && queueIdx < this.queueSystem.commandCount) {
-      return { type: "remove_command", data: { index: queueIdx } };
-    }
+    return queueIdx !== null && queueIdx < this.queueSystem.commandCount
+      ? { type: "remove_command", data: { index: queueIdx } }
+      : null;
+  }
 
-    return null;
+  private describeGridCell(
+    col: number,
+    row: number
+  ): Pick<ViewEntity, "glyph" | "label" | "spokenLabel"> {
+    const pos = `Ô hàng ${row + 1} cột ${col + 1}`;
+    if (this.robotState.col === col && this.robotState.row === row) {
+      return {
+        glyph: "🤖",
+        label: "Robot",
+        spokenLabel: `${pos}: Robot đang hướng ${FACING_SPOKEN_VI[this.robotState.facing]}`,
+      };
+    }
+    if (this.content.goal.col === col && this.content.goal.row === row) {
+      const { glyph } = resolveAssetLabels(
+        this.content.goal.asset ?? DEFAULT_GOAL_ASSET
+      );
+      return { glyph, label: "Đích", spokenLabel: `${pos}: Đích đến` };
+    }
+    const cellKey = `${col},${row}`;
+    if (this.obstacleSet.has(cellKey)) {
+      return { glyph: "🪨", label: "Vật cản", spokenLabel: `${pos}: Vật cản` };
+    }
+    const candidateColItem = this.collectibleMap.get(cellKey);
+    const colItem =
+      candidateColItem && !this.collectedItemIds.includes(candidateColItem.id)
+        ? candidateColItem
+        : undefined;
+    if (colItem) {
+      const {
+        glyph,
+        label = "Vật phẩm",
+        spokenLabel = "Vật phẩm",
+      } = resolveAssetLabels(colItem.asset);
+      return { glyph, label, spokenLabel: `${pos}: ${spokenLabel}` };
+    }
+    return {
+      label: `Ô ${row + 1}-${col + 1}`,
+      spokenLabel: `${pos} đang trống`,
+    };
   }
 
   private appendGridEntities(
     entities: ViewEntity[],
     gridSlotCount: number
   ): void {
+    const { cols } = this.content.grid;
     for (let i = 0; i < gridSlotCount; i++) {
       const slot = this.slots[i];
       if (!slot) {
         continue;
       }
-      entities.push({
-        id: `grid_cell_${i}`,
-        slotIndex: i,
-        role: "target",
-        state: "idle",
-        x: slot.x,
-        y: slot.y,
-        w: slot.w,
-        h: slot.h,
-      });
+      entities.push(
+        toCircleViewEntity(slot, i, {
+          id: `grid_cell_${i}`,
+          role: "neutral",
+          state: "idle",
+          ...this.describeGridCell(i % cols, Math.floor(i / cols)),
+        })
+      );
     }
   }
 
@@ -562,21 +605,26 @@ export class GT035Session extends TemplateGameSession<
     gridSlotCount: number,
     maxCmd: number
   ): void {
+    const commands = this.queueSystem.queue;
     for (let i = 0; i < maxCmd; i++) {
       const slot = this.slots[gridSlotCount + i];
       if (!slot) {
         continue;
       }
-      entities.push({
-        id: `queue_${i}`,
-        slotIndex: gridSlotCount + i,
-        role: "target",
-        state: i < this.queueSystem.commandCount ? "selected" : "idle",
-        x: slot.x,
-        y: slot.y,
-        w: slot.w,
-        h: slot.h,
-      });
+      const cmd = commands[i];
+      const cmdLabel = cmd ? COMMAND_LABELS[cmd.type] : undefined;
+      entities.push(
+        toCircleViewEntity(slot, gridSlotCount + i, {
+          id: `queue_${i}`,
+          role: "target",
+          state: i < this.queueSystem.commandCount ? "selected" : "idle",
+          glyph: cmd ? COMMAND_ICONS[cmd.type] : undefined,
+          label: cmdLabel ?? `${i + 1}`,
+          spokenLabel: cmdLabel
+            ? `Bước ${i + 1}: ${cmdLabel}`
+            : `Ô lệnh số ${i + 1} đang trống`,
+        })
+      );
     }
   }
 
@@ -591,16 +639,17 @@ export class GT035Session extends TemplateGameSession<
       if (!(slot && cmd)) {
         continue;
       }
-      entities.push({
-        id: `pal_${cmd}`,
-        slotIndex: palStartIndex + p,
-        role: "source",
-        state: "idle",
-        x: slot.x,
-        y: slot.y,
-        w: slot.w,
-        h: slot.h,
-      });
+      const cmdLabel = COMMAND_LABELS[cmd];
+      entities.push(
+        toCircleViewEntity(slot, palStartIndex + p, {
+          id: `pal_${cmd}`,
+          role: "source",
+          state: "idle",
+          glyph: COMMAND_ICONS[cmd],
+          label: cmdLabel,
+          spokenLabel: `Lệnh ${cmdLabel}`,
+        })
+      );
     }
   }
 
@@ -617,6 +666,7 @@ export class GT035Session extends TemplateGameSession<
     return {
       activePrompt: this.content.prompt,
       entities,
+      focusIndex: this.getHintTargetIndex() ?? undefined,
     };
   }
 
@@ -655,19 +705,13 @@ export class GT035Session extends TemplateGameSession<
 
   private renderGrid(ctx: CanvasRenderingContext2D, rs: RenderSystem): void {
     const { rows, cols } = this.content.grid;
-    const obstacleSet = new Set(
-      this.content.obstacles.map((o) => `${o.col},${o.row}`)
-    );
-    const collectibleMap = new Map(
-      this.content.collectibles.map((c) => [`${c.col},${c.row}`, c])
-    );
 
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
         const slotIdx = r * cols + c;
         const slot = this.slots[slotIdx];
         if (slot) {
-          this.renderGridCell(ctx, rs, slot, c, r, obstacleSet, collectibleMap);
+          this.renderGridCell(ctx, rs, slot, c, r);
         }
       }
     }
@@ -678,64 +722,43 @@ export class GT035Session extends TemplateGameSession<
     rs: RenderSystem,
     slot: Slot,
     col: number,
-    row: number,
-    obstacleSet: Set<string>,
-    collectibleMap: Map<string, GT035Collectible>
+    row: number
   ): void {
-    const isRobotHere =
-      this.robotState.col === col && this.robotState.row === row;
-    const isGoal =
-      this.content.goal.col === col && this.content.goal.row === row;
-    const isObstacle = obstacleSet.has(`${col},${row}`);
-    const collectible = collectibleMap.get(`${col},${row}`);
-    const isCollected =
-      collectible && this.collectedItemIds.includes(collectible.id);
-
-    if (isRobotHere) {
+    const cellKey = `${col},${row}`;
+    const collectible = this.collectibleMap.get(cellKey);
+    if (this.robotState.col === col && this.robotState.row === row) {
       drawSlotItem(ctx, rs, slot, {
         id: "robot",
-        asset: { kind: "emoji", ref: "🤖" },
-        label: this.gridLabel(this.robotState.facing.toUpperCase()),
+        asset: ROBOT_ASSET,
+        label: this.gridLabel(
+          FACING_ARROWS[this.robotState.facing.toLowerCase()] ?? "→"
+        ),
         state: "selected",
       });
-      return;
-    }
-
-    if (isGoal) {
+    } else if (this.content.goal.col === col && this.content.goal.row === row) {
       drawSlotItem(ctx, rs, slot, {
         id: "goal",
-        asset: this.content.goal.asset ?? {
-          kind: "emoji",
-          ref: "⭐",
-        },
-        label: this.gridLabel("ĐÍCH"),
+        asset: this.content.goal.asset ?? DEFAULT_GOAL_ASSET,
+        label: this.gridLabel("Đích"),
         state: "idle",
       });
-      return;
-    }
-
-    if (isObstacle) {
+    } else if (this.obstacleSet.has(cellKey)) {
       drawSlotItem(ctx, rs, slot, {
         id: `obs-${col}-${row}`,
-        asset: { kind: "emoji", ref: "🪨" },
+        asset: OBSTACLE_ASSET,
         state: "idle",
       });
-      return;
-    }
-
-    if (collectible && !isCollected) {
+    } else if (collectible && !this.collectedItemIds.includes(collectible.id)) {
       drawSlotItem(ctx, rs, slot, {
         id: collectible.id,
         asset: collectible.asset,
         state: "idle",
       });
-      return;
+    } else {
+      const radius = Math.min(slot.w, slot.h) / 2;
+      const { fill, border } = getColorsForState("idle");
+      rs.drawClayBody(ctx, slot.x, slot.y, radius, fill, border, "square");
     }
-
-    drawSlotItem(ctx, rs, slot, {
-      id: `cell-${col}-${row}`,
-      state: "idle",
-    });
   }
 
   private renderCommandQueue(
@@ -745,30 +768,28 @@ export class GT035Session extends TemplateGameSession<
     const { rows, cols } = this.content.grid;
     const gridSlotCount = rows * cols;
     const maxCmd = this.maxCommands;
-    const queueSlots = this.slots.slice(gridSlotCount, gridSlotCount + maxCmd);
 
     const commands = this.queueSystem.queue;
-    for (let i = 0; i < queueSlots.length; i++) {
-      const slot = queueSlots[i];
+    for (let i = 0; i < maxCmd; i++) {
+      const slot = this.slots[gridSlotCount + i];
       const cmd = commands[i];
       if (!slot) {
         continue;
       }
 
-      if (cmd) {
-        drawSlotItem(ctx, rs, slot, {
-          id: `queue-${i}`,
-          asset: { kind: "emoji", ref: COMMAND_ICONS[cmd.type] },
-          label: COMMAND_LABELS[cmd.type],
-          state: "selected",
-        });
-      } else {
-        drawSlotItem(ctx, rs, slot, {
-          id: `empty-queue-${i}`,
-          text: `${i + 1}`,
-          state: "idle",
-        });
-      }
+      drawSlotItem(
+        ctx,
+        rs,
+        slot,
+        cmd
+          ? {
+              id: `queue-${i}`,
+              asset: COMMAND_ASSETS[cmd.type],
+              label: COMMAND_LABELS[cmd.type],
+              state: "selected",
+            }
+          : { id: `empty-queue-${i}`, text: `${i + 1}`, state: "idle" }
+      );
     }
   }
 
@@ -790,7 +811,7 @@ export class GT035Session extends TemplateGameSession<
 
       drawSlotItem(ctx, rs, slot, {
         id: `pal-${cmd}`,
-        asset: { kind: "emoji", ref: COMMAND_ICONS[cmd] },
+        asset: COMMAND_ASSETS[cmd],
         label: COMMAND_LABELS[cmd],
         state: "idle",
       });

@@ -28,20 +28,24 @@ export const PRIMITIVE_GRADIENTS = {
   BG_BODY: 20,
   BG_WEATHER: 21,
   BG_FESTIVAL: 22,
+  CONTAINER_AURA: 23,
+  TARGET_HOVER_AURA: 24,
 } as const;
 
 export type PrimitiveGradientId =
   (typeof PRIMITIVE_GRADIENTS)[keyof typeof PRIMITIVE_GRADIENTS];
 
 interface GradientCacheEntry {
-  readonly ctx: CanvasRenderingContext2D;
   generation: number;
   readonly primitiveId: number;
   readonly slotIndex: number;
   gradient: CanvasGradient;
 }
 
-const entries: GradientCacheEntry[] = [];
+let contextEntries = new WeakMap<
+  CanvasRenderingContext2D,
+  GradientCacheEntry[]
+>();
 const contextGenerations = new WeakMap<CanvasRenderingContext2D, number>();
 
 export function setContextGeneration(
@@ -61,9 +65,12 @@ export function getCachedGradient(
   primitiveId: number,
   slotIndex: number
 ): CanvasGradient | undefined {
+  const entries = contextEntries.get(ctx);
+  if (!entries) {
+    return undefined;
+  }
   for (const e of entries) {
     if (
-      e.ctx === ctx &&
       e.generation === generation &&
       e.primitiveId === primitiveId &&
       e.slotIndex === slotIndex
@@ -81,19 +88,19 @@ export function setCachedGradient(
   slotIndex: number,
   gradient: CanvasGradient
 ): void {
+  let entries = contextEntries.get(ctx);
+  if (!entries) {
+    entries = [];
+    contextEntries.set(ctx, entries);
+  }
   for (const e of entries) {
-    if (
-      e.ctx === ctx &&
-      e.primitiveId === primitiveId &&
-      e.slotIndex === slotIndex
-    ) {
+    if (e.primitiveId === primitiveId && e.slotIndex === slotIndex) {
       e.generation = generation;
       e.gradient = gradient;
       return;
     }
   }
   entries.push({
-    ctx,
     generation,
     primitiveId,
     slotIndex,
@@ -102,5 +109,8 @@ export function setCachedGradient(
 }
 
 export function clearRenderCache(): void {
-  entries.length = 0;
+  contextEntries = new WeakMap<
+    CanvasRenderingContext2D,
+    GradientCacheEntry[]
+  >();
 }

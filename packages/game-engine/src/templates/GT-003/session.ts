@@ -5,6 +5,7 @@ import {
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
+import { resolveAssetLabels } from "#src/labels/spoken-keyword.js";
 import {
   CONTENT_TOP_PX,
   resolveTouchFloor,
@@ -50,6 +51,14 @@ type DraggableItem = GT003Content["items"][number];
  */
 const WRONG_FEEDBACK_MS = 260;
 
+const VIEW_STATE_MAP: Readonly<
+  Record<string, "idle" | "selected" | "correct" | "incorrect">
+> = {
+  wrong: "incorrect",
+  correct: "correct",
+  selected: "selected",
+};
+
 /** Sân khấu và khay shell cấp cho vòng này (Task #277 S5). */
 interface TrayZones {
   readonly stage: ZoneRect;
@@ -61,6 +70,11 @@ export class GT003Session extends TemplateGameSession<
   GT003Difficulty
 > {
   displayItems: readonly DraggableItem[] = [];
+  private placementTargets: readonly {
+    id: string;
+    targetId: string;
+    isCorrect: boolean;
+  }[] = [];
   private readonly mechanic = new PlacementMechanic();
   degradation: DegradationState | null = null;
   private particles: Particle[] = [];
@@ -85,6 +99,13 @@ export class GT003Session extends TemplateGameSession<
     this.itemStates = new Map();
     this.transientStateMs.clear();
     this.hoveredContainer = false;
+    this.placementTargets = this.content.items
+      .filter((i) => i.is_correct)
+      .map((i) => ({
+        id: i.item_id,
+        targetId: this.content.container.container_id,
+        isCorrect: true,
+      }));
     // Vị trí xuất phát đổi theo seed mỗi lượt chơi (`GT-003.md` §4 N7, §5/8).
     // Không xáo thì đáp án đứng nguyên chỗ cũ và trẻ học vị trí, không học
     // thuộc tính.
@@ -360,45 +381,24 @@ export class GT003Session extends TemplateGameSession<
 
   /** Nhịp hổ phách tắt sau `WRONG_FEEDBACK_MS`; vật về trung tính. */
   update(deltaMs: number): void {
-    for (const [itemId, remaining] of [...this.transientStateMs]) {
-      const next = remaining - deltaMs;
-      if (next <= 0) {
-        this.transientStateMs.delete(itemId);
-        if (this.itemStates.get(itemId) === "wrong") {
-          this.itemStates.delete(itemId);
+    if (this.transientStateMs.size > 0) {
+      for (const [itemId, remaining] of this.transientStateMs) {
+        const next = remaining - deltaMs;
+        if (next <= 0) {
+          this.transientStateMs.delete(itemId);
+          if (this.itemStates.get(itemId) === "wrong") {
+            this.itemStates.delete(itemId);
+          }
+        } else {
+          this.transientStateMs.set(itemId, next);
         }
-      } else {
-        this.transientStateMs.set(itemId, next);
       }
     }
     this.particles = updateParticles(this.particles);
   }
 
-  private toSpokenLabel(item: DraggableItem): string | undefined {
-    if (item.label) {
-      return item.label;
-    }
-    return item.asset.kind === "text" ? item.asset.text : undefined;
-  }
-
-  private toGlyph(item: DraggableItem): string | undefined {
-    return item.asset.kind === "emoji" ? item.asset.ref : undefined;
-  }
-
-  private toSpokenAudioPath(item: DraggableItem): string | undefined {
-    return item.asset.kind === "image" ? undefined : item.asset.audio_path;
-  }
-
   override getView(): EngineView {
     const entities: ViewEntity[] = [];
-    const stateMap: Record<
-      string,
-      "idle" | "selected" | "correct" | "incorrect"
-    > = {
-      wrong: "incorrect",
-      correct: "correct",
-      selected: "selected",
-    };
 
     for (let i = 0; i < this.displayItems.length; i++) {
       const item = this.displayItems[i];
@@ -407,7 +407,8 @@ export class GT003Session extends TemplateGameSession<
         continue;
       }
       const rawState = this.getItemState(item.item_id);
-      const state = stateMap[rawState] ?? "idle";
+      const state = VIEW_STATE_MAP[rawState] ?? "idle";
+      const assetLabels = resolveAssetLabels(item.asset);
       entities.push({
         id: item.item_id,
         slotIndex: i,
@@ -417,10 +418,10 @@ export class GT003Session extends TemplateGameSession<
         y: slot.y,
         w: slot.w,
         h: slot.h,
-        label: item.label,
-        spokenLabel: this.toSpokenLabel(item),
-        spokenAudioPath: this.toSpokenAudioPath(item),
-        glyph: this.toGlyph(item),
+        label: item.label ?? assetLabels.label,
+        spokenLabel: item.label ?? assetLabels.spokenLabel,
+        spokenAudioPath: assetLabels.spokenAudioPath,
+        glyph: assetLabels.glyph,
       });
     }
 
@@ -543,14 +544,7 @@ export class GT003Session extends TemplateGameSession<
   }
 
   override checkWinCondition(): boolean {
-    const items = this.content.items
-      .filter((i) => i.is_correct)
-      .map((i) => ({
-        id: i.item_id,
-        targetId: this.content.container.container_id,
-        isCorrect: true,
-      }));
-    return this.mechanic.isPlacementComplete(items);
+    return this.mechanic.isPlacementComplete(this.placementTargets);
   }
 
   render(

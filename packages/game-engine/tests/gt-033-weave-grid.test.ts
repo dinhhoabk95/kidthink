@@ -375,6 +375,45 @@ describe("GT-033: Dệt hoa văn lưới (weave-grid)", () => {
       const view = session.getView();
       expect(view.activePrompt).toBe(f.content.prompt);
       expect(view.entities.length).toBe(totalCells + f.content.palette.length);
+      const ids = view.entities.map((e) => e.id);
+      expect(new Set(ids).size).toBe(ids.length);
+      for (const entity of view.entities) {
+        expect(entity.spokenLabel).toBeTruthy();
+        expect(entity.hitShape).toBeDefined();
+      }
+    });
+
+    it("maps non-standard palette color_ids to distinct Vietnamese labels and spokenLabels", () => {
+      const f = getFixture(0);
+      const customContent = {
+        ...f.content,
+        palette: [
+          {
+            color_id: "col_pat_car_1_1",
+            asset: { kind: "emoji" as const, ref: "🚗" },
+          },
+          {
+            color_id: "col_pat_bus_1_2",
+            asset: { kind: "emoji" as const, ref: "🚌" },
+          },
+        ],
+        cells: ["col_pat_car_1_1", "col_pat_bus_1_2", "col_pat_bus_1_2", null],
+        solution: [
+          "col_pat_car_1_1",
+          "col_pat_bus_1_2",
+          "col_pat_bus_1_2",
+          "col_pat_car_1_1",
+        ],
+      };
+      const session = new GT033Session(customContent, f.difficulty);
+      session.prepareRound("5-6");
+
+      const view = session.getView();
+      const sourceEntities = view.entities.filter((e) => e.role === "source");
+      expect(sourceEntities[0]?.label).toBe("Đỏ");
+      expect(sourceEntities[1]?.label).toBe("Xanh dương");
+      expect(sourceEntities[0]?.spokenLabel).toBeTruthy();
+      expect(sourceEntities[1]?.spokenLabel).toBeTruthy();
     });
 
     it("BR-E033-02 & BR-E033-03: validates from cell data without solution and flags only broken axis", () => {

@@ -13,6 +13,8 @@ import type {
   Gesture,
   ViewEntity,
 } from "#src/interaction";
+import { resolveAssetLabels } from "#src/labels/spoken-keyword";
+import { isPointInSlot, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import {
   computeStageGroupsLayout,
   resolveStageRect,
@@ -46,7 +48,10 @@ export class GT034Session extends TemplateGameSession<
   override readonly commitIcon = "listen";
 
   override canCommit(): boolean {
-    return !(this.isWin || this.isWon || this.isPlayingPattern);
+    return (
+      !(this.isWin || this.isWon || this.isPlayingPattern) &&
+      this.replaysUsed < this.replayLimit
+    );
   }
 
   degradation: DegradationState | null = null;
@@ -88,7 +93,7 @@ export class GT034Session extends TemplateGameSession<
   setupEntities(): void {
     this.userSteps = [];
     this.replaysUsed = 0;
-    this.showVisualPattern = false;
+    this.showVisualPattern = true;
     this.isPlayingPattern = false;
     this.activePlayingIndex = null;
     this.playbackElapsedSec = 0;
@@ -212,14 +217,8 @@ export class GT034Session extends TemplateGameSession<
       return ACTION_IGNORED;
     }
 
-    if (this.userSteps.length + 1 === this.content.target_pattern.length) {
-      const nextSteps = [...this.userSteps, instrumentId];
-      return this.verifyPatternMatched(nextSteps)
-        ? ACTION_CORRECT
-        : ACTION_RETRY;
-    }
-
-    return ACTION_CORRECT;
+    const expected = this.content.target_pattern[this.userSteps.length];
+    return instrumentId === expected ? ACTION_CORRECT : ACTION_RETRY;
   }
 
   private validateTapRest(): ActionResult {
@@ -341,19 +340,30 @@ export class GT034Session extends TemplateGameSession<
     }
 
     const stepIndex = this.userSteps.length;
-    this.userSteps.push(instrumentId);
+    const expected = this.content.target_pattern[stepIndex];
 
     const singleRecipe = this.beatSystem.buildNoteRecipes([instrumentId])[0];
     if (singleRecipe) {
       this.sfxEngine.playSequence([singleRecipe]);
     }
 
-    const isStepCorrect =
-      this.content.target_pattern[stepIndex] === instrumentId;
+    if (instrumentId !== expected) {
+      this.sfxEngine.play("amber_soft");
+      this.recordEvent("beat_tapped", {
+        instrument_id: instrumentId,
+        step_index: stepIndex,
+        is_correct: false,
+        round_index: 0,
+      });
+      return;
+    }
+
+    this.userSteps.push(instrumentId);
+
     this.recordEvent("beat_tapped", {
       instrument_id: instrumentId,
       step_index: stepIndex,
-      is_correct: isStepCorrect,
+      is_correct: true,
       round_index: 0,
     });
 
@@ -447,7 +457,6 @@ export class GT034Session extends TemplateGameSession<
   private findTappedInstrumentId(
     gx: number,
     gy: number,
-    tol: number,
     patternLen: number,
     instCount: number
   ): string | null {
@@ -457,16 +466,14 @@ export class GT034Session extends TemplateGameSession<
       if (!(inst && slot)) {
         continue;
       }
-      const hw = (slot.hitW ?? slot.w) / 2 + tol;
-      const hh = (slot.hitH ?? slot.h) / 2 + tol;
-      if (Math.abs(gx - slot.x) <= hw && Math.abs(gy - slot.y) <= hh) {
+      if (isPointInSlot(slot, gx, gy, "circle", TAP_TOLERANCE_PX)) {
         return inst.instrument_id;
       }
     }
     return null;
   }
 
-  private isTappedLastStep(gx: number, gy: number, tol: number): boolean {
+  private isTappedLastStep(gx: number, gy: number): boolean {
     if (this.userSteps.length === 0) {
       return false;
     }
@@ -474,9 +481,7 @@ export class GT034Session extends TemplateGameSession<
     if (!slot) {
       return false;
     }
-    const hw = (slot.hitW ?? slot.w) / 2 + tol;
-    const hh = (slot.hitH ?? slot.h) / 2 + tol;
-    return Math.abs(gx - slot.x) <= hw && Math.abs(gy - slot.y) <= hh;
+    return isPointInSlot(slot, gx, gy, "circle", TAP_TOLERANCE_PX);
   }
 
   override toAction(gesture: Gesture): GameAction | null {
@@ -488,14 +493,12 @@ export class GT034Session extends TemplateGameSession<
       return null;
     }
 
-    const hitTolerance = 24;
     const patternLen = this.content.target_pattern.length;
     const instCount = this.content.instruments.length;
 
     const instId = this.findTappedInstrumentId(
       gesture.x,
       gesture.y,
-      hitTolerance,
       patternLen,
       instCount
     );
@@ -506,11 +509,58 @@ export class GT034Session extends TemplateGameSession<
       };
     }
 
-    if (this.isTappedLastStep(gesture.x, gesture.y, hitTolerance)) {
+    if (this.isTappedLastStep(gesture.x, gesture.y)) {
       return { type: "undo_beat", data: {} };
     }
 
     return null;
+  }
+
+  private buildStepEntity(index: number, slot: Slot): ViewEntity {
+    let state: EntityVisual = "idle";
+    if (this.activePlayingIndex === index) {
+      state = "selected";
+    } else if (this.userSteps[index] !== undefined) {
+      state = "correct";
+    }
+
+    const userStep = this.userSteps[index];
+    const matchedInst = userStep
+      ? this.content.instruments.find((item) => item.instrument_id === userStep)
+      : undefined;
+    const assetLabels = matchedInst
+      ? resolveAssetLabels(matchedInst.asset)
+      : undefined;
+    const stepName =
+      matchedInst?.name_vi ??
+      assetLabels?.spokenLabel ??
+      (typeof userStep === "string" ? userStep : undefined);
+
+    let spokenLabel = `Bước ${index + 1}`;
+    let label = `${index + 1}`;
+    if (stepName) {
+      spokenLabel = `Bước ${index + 1}: ${stepName}`;
+      label = stepName;
+    } else if (userStep === null) {
+      spokenLabel = `Bước ${index + 1}: nghỉ`;
+      label = "Nghỉ";
+    }
+
+    return {
+      id: `step_${index}`,
+      slotIndex: index,
+      role: "neutral",
+      state,
+      x: slot.x,
+      y: slot.y,
+      w: slot.w,
+      h: slot.h,
+      hitShape: "circle",
+      glyph: assetLabels?.glyph,
+      label,
+      spokenLabel,
+      spokenAudioPath: assetLabels?.spokenAudioPath,
+    };
   }
 
   override getView(): EngineView {
@@ -523,22 +573,7 @@ export class GT034Session extends TemplateGameSession<
       if (!slot) {
         continue;
       }
-      let state: EntityVisual = "idle";
-      if (this.activePlayingIndex === i) {
-        state = "selected";
-      } else if (this.userSteps[i] !== undefined) {
-        state = "correct";
-      }
-      entities.push({
-        id: `step_${i}`,
-        slotIndex: i,
-        role: "target",
-        state,
-        x: slot.x,
-        y: slot.y,
-        w: slot.w,
-        h: slot.h,
-      });
+      entities.push(this.buildStepEntity(i, slot));
     }
 
     for (let i = 0; i < instCount; i++) {
@@ -547,6 +582,10 @@ export class GT034Session extends TemplateGameSession<
       if (!(inst && slot)) {
         continue;
       }
+      const { glyph, label, spokenLabel, spokenAudioPath } = resolveAssetLabels(
+        inst.asset
+      );
+      const displayLabel = inst.name_vi ?? label ?? inst.instrument_id;
       entities.push({
         id: inst.instrument_id,
         slotIndex: patternLen + i,
@@ -556,12 +595,18 @@ export class GT034Session extends TemplateGameSession<
         y: slot.y,
         w: slot.w,
         h: slot.h,
+        hitShape: "circle",
+        glyph,
+        label: displayLabel,
+        spokenLabel: inst.name_vi ?? spokenLabel ?? displayLabel,
+        spokenAudioPath,
       });
     }
 
     return {
       activePrompt: this.content.prompt,
       entities,
+      focusIndex: this.getHintTargetIndex() ?? undefined,
     };
   }
 
@@ -629,7 +674,7 @@ export class GT034Session extends TemplateGameSession<
     if (userStep === null) {
       drawSlotItem(ctx, rs, slot, {
         id: `step-rest-${index}`,
-        label: "NGHỈ",
+        label: "Nghỉ",
         state: isActive ? "selected" : "idle",
       });
       return;

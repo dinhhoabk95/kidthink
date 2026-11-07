@@ -73,7 +73,7 @@ export const GT000SegmentSchema = z
   .object({
     segment_id: z.string().min(1),
     asset_ids: z.array(z.string().min(1)).min(2).max(6),
-    steps: z.array(GT000StepSchema).min(3).max(12),
+    steps: z.array(GT000StepSchema).min(2).max(12),
     is_review: z.boolean().default(false),
   })
   .refine((seg) => seg.is_review || seg.asset_ids.length <= 3, {
@@ -91,10 +91,14 @@ export const GT000SegmentSchema = z
     }
   )
   .refine(
-    (seg) => seg.is_review || seg.steps.some((step) => step.action === "echo"),
+    (seg) =>
+      seg.is_review ||
+      seg.steps.some(
+        (step) => step.action === "present" || step.action === "echo"
+      ),
     {
       message:
-        "Mọi phân đoạn dạy BẮT BUỘC có ít nhất một hành động echo — tập nói theo (BR-E000-10)",
+        "Mọi phân đoạn dạy BẮT BUỘC có ít nhất một hành động giới thiệu hoặc tập nói (present hoặc echo) (BR-E000-10)",
     }
   );
 
@@ -115,7 +119,7 @@ export const GT000ContentSchema = z
     prompt: z.string().optional(),
     assets: z.array(GT000AssetSchema).min(2).max(21),
     segments: z.array(GT000SegmentSchema).min(1).max(8).optional(),
-    steps: z.array(GT000StepSchema).min(3).max(12).optional(),
+    steps: z.array(GT000StepSchema).min(2).max(12).optional(),
     requires_reintro: z.boolean().default(false),
     resume_segment_index: z.number().int().min(0).optional(),
   })
@@ -136,10 +140,14 @@ export const GT000ContentSchema = z
     }
   )
   .refine(
-    (data) => !data.steps || data.steps.some((step) => step.action === "echo"),
+    (data) =>
+      !data.steps ||
+      data.steps.some(
+        (step) => step.action === "present" || step.action === "echo"
+      ),
     {
       message:
-        "Bài dùng dãy `steps` phẳng BẮT BUỘC có ít nhất một hành động echo (BR-E000-10)",
+        "Bài dùng dãy `steps` phẳng BẮT BUỘC có ít nhất một hành động giới thiệu hoặc tập nói (present hoặc echo) (BR-E000-10)",
     }
   )
   .refine(

@@ -27,7 +27,7 @@ interface CollectibleItem extends GridCoord {
   id: string;
 }
 
-interface CommandItem {
+export interface CommandItem {
   type: CommandType;
   count?: number; // Cho lệnh loop (mặc định 2)
 }
@@ -503,6 +503,13 @@ export class CommandQueueSystem {
         cmd.type !== "loop" || (i > 0 && all[i - 1]?.type !== "loop")
     );
     return removed ?? null;
+  }
+
+  pop(): CommandItem | null {
+    if (this.commands.length === 0) {
+      return null;
+    }
+    return this.removeCommand(this.commands.length - 1);
   }
 
   clear(): void {

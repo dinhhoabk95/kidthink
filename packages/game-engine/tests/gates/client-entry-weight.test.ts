@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import {
@@ -6,6 +7,7 @@ import {
 } from "./client-entry-weight.js";
 
 const GAME_ENGINE_SRC = path.resolve(import.meta.dirname, "../../src");
+const GAME_ENGINE_PKG = path.resolve(import.meta.dirname, "../../package.json");
 
 describe("BR-PRF-01 & BR-TAK-08: Client Entry Weight & Lazy Loading Gate", () => {
   it("src/index.ts does not static-import any GT-*/session or GT-*/fixtures", () => {
@@ -56,5 +58,11 @@ export { GT001Session } from "./templates/GT-001/session.js";
     expect(violations[0]?.importedSpecifier).toBe(
       "./templates/GT-001/session.js"
     );
+  });
+
+  it("package.json declares sideEffects: false to enable bundler tree-shaking of generators and seed tables", () => {
+    const pkgRaw = fs.readFileSync(GAME_ENGINE_PKG, "utf8");
+    const pkg = JSON.parse(pkgRaw) as { sideEffects?: boolean };
+    expect(pkg.sideEffects).toBe(false);
   });
 });

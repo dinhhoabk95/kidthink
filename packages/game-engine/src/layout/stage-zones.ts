@@ -134,13 +134,22 @@ interface PromptFrame {
 function placePrompt(
   canvas: { w: number; h: number },
   orientation: StageZones["orientation"],
-  touchEdge: number
+  touchEdge: number,
+  stageRows?: number
 ): PromptFrame {
   const promptH = Math.max(PROMPT_ZONE_H_PX, touchEdge);
   const classicStageH = canvas.h - ZONE_GAP_PX - (2 * ZONE_GAP_PX + promptH);
+  const isLowLandscapePhone =
+    orientation === "landscape" && canvas.w / canvas.h >= 1.7;
+  const requiredRows = isLowLandscapePhone
+    ? Math.max(SIDE_PROMPT_BELOW_ROWS, stageRows ?? 0)
+    : Math.max(
+        MIN_STAGE_ROWS,
+        Math.min(SIDE_PROMPT_BELOW_ROWS, stageRows ?? MIN_STAGE_ROWS)
+      );
   const isSide =
     orientation === "landscape" &&
-    classicStageH < cellsExtent(SIDE_PROMPT_BELOW_ROWS, touchEdge);
+    classicStageH < cellsExtent(requiredRows, touchEdge);
   if (isSide) {
     // Mascot là ô vuông đầu cột, loa ngay dưới, cùng bề rộng cột.
     const prompt: ZoneRect = {
@@ -191,7 +200,7 @@ export function computeStageZones(input: StageZonesInput): StageZones {
   const { w, h } = sanitizeLogicSize(input);
   const orientation = w >= h ? "landscape" : "portrait";
   const touchEdge = getTouchFloorLogicPx(input.ageBand, input.cssPerLogic);
-  const frame = placePrompt({ w, h }, orientation, touchEdge);
+  const frame = placePrompt({ w, h }, orientation, touchEdge, input.stageRows);
 
   const action: ZoneRect = {
     x: w - ZONE_GAP_PX - touchEdge,
@@ -349,9 +358,13 @@ function placeStrip(input: PlaceInput, load: TrayLoad): StripPlacement {
 function placeColumn(input: PlaceInput, load: TrayLoad): TrayAndStage {
   const { canvas, frame, touchEdge, reserved } = input;
   const colH = canvas.h - ZONE_GAP_PX - frame.stageTop;
+  const rowH = Math.max(
+    touchEdge,
+    load.labelH > 0 ? 104 + load.labelH : touchEdge
+  );
   const rows = Math.max(
     1,
-    Math.floor((colH + ZONE_GAP_PX) / (touchEdge + load.labelH + ZONE_GAP_PX))
+    Math.floor((colH + ZONE_GAP_PX) / (rowH + ZONE_GAP_PX))
   );
   const wantedCols = Math.max(1, Math.ceil(load.items / rows));
   const rightEdge = reserved.x - ZONE_GAP_PX;

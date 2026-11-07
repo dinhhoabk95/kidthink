@@ -9,7 +9,6 @@ import {
   type HintLevel,
   type HintTarget,
   resolveSteppedHintTarget,
-  type SteppedHintSessionCandidate,
 } from "./systems/hint-ladder.js";
 import type { RenderSystem } from "./systems/render-system";
 
@@ -21,10 +20,20 @@ export type FeedbackKind =
   | "pop_celebrate"
   | "level_celebrate";
 
+export type GameActionValue =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | object;
+
+export type TelemetryEventData = Record<string, GameActionValue>;
+
 /** A player interaction handed to `validateAction`. */
 export interface GameAction {
   type: string;
-  data: unknown;
+  data: GameActionValue;
 }
 
 /** Verdict of `validateAction` — pure, no side effects (BR-ENG-13). */
@@ -54,7 +63,7 @@ export const ACTION_RETRY: ActionResult = Object.freeze({
 export interface TelemetryEvent {
   event_name: string;
   timestamp_ms: number;
-  data?: Record<string, unknown>;
+  data?: TelemetryEventData;
 }
 
 export interface SessionTelemetry {
@@ -119,7 +128,7 @@ export abstract class BaseGameSession implements GameSession {
   abstract validateAction(a: GameAction): ActionResult;
   abstract checkWinCondition(): boolean;
 
-  recordEvent(eventName: string, data?: Record<string, unknown>): void {
+  recordEvent(eventName: string, data?: TelemetryEventData): void {
     this.events.push({
       event_name: eventName,
       timestamp_ms: Date.now(),
@@ -175,6 +184,7 @@ export abstract class TemplateGameSession<
   readonly difficulty: TDifficulty;
   readonly layoutSeed: number;
   readonly themeId?: string;
+  readonly isTemplateSession = true;
   protected isWon = false;
 
   /** Backing store for slots — do NOT assign directly, use prepareRound. */
@@ -224,7 +234,7 @@ export abstract class TemplateGameSession<
   }
 
   /**
-   * Returns the index of the slot/entity that hints/scaffolding should target, or null if unknown/none.
+   * Returns the index of the slot/entity that hints/scaffolding should target, or null if none.
    * Default implementation returns null (no guess).
    */
   getHintTargetIndex(): number | null {
@@ -252,20 +262,7 @@ export abstract class TemplateGameSession<
    * tách bậc thì rơi về `getHintTarget()`.
    */
   getHintTargetForLevel(level: HintLevel): HintTarget | null {
-    const candidate: SteppedHintSessionCandidate = {
-      content:
-        typeof this.content === "object" ||
-        typeof this.content === "string" ||
-        typeof this.content === "number" ||
-        typeof this.content === "boolean" ||
-        this.content === null ||
-        this.content === undefined
-          ? this.content
-          : null,
-      checkWinCondition: () => this.checkWinCondition(),
-      getHintTarget: () => this.getHintTarget(),
-    };
-    const stepped = resolveSteppedHintTarget(candidate, level);
+    const stepped = resolveSteppedHintTarget(this, level);
     if (stepped !== undefined) {
       return stepped;
     }
@@ -465,3 +462,33 @@ export abstract class TemplateGameSession<
     return verdict;
   }
 }
+
+function isTemplateGameSessionInstance(
+  this: object,
+  instance: object | null | undefined
+): boolean {
+  if (!instance || typeof instance !== "object") {
+    return false;
+  }
+  if (this !== TemplateGameSession) {
+    return Function.prototype[Symbol.hasInstance].call(this, instance);
+  }
+  if (
+    Function.prototype[Symbol.hasInstance].call(TemplateGameSession, instance)
+  ) {
+    return true;
+  }
+  const candidate = instance as {
+    isTemplateSession?: boolean;
+    prepareRound?: () => void;
+  };
+  return (
+    candidate.isTemplateSession === true &&
+    typeof candidate.prepareRound === "function"
+  );
+}
+
+Object.defineProperty(TemplateGameSession, Symbol.hasInstance, {
+  value: isTemplateGameSessionInstance,
+  configurable: true,
+});

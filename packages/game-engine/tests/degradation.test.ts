@@ -1,5 +1,11 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import { resolveAssetLabels } from "#src/labels/spoken-keyword";
+import { computeStageZones } from "#src/layout/stage-zones";
+import { updateParticles } from "#src/render/particles";
+import { drawPromptZone } from "#src/render/prompt-zone";
 import { DegradationManager } from "#src/systems/degradation";
+import { type Particle, RenderSystem } from "#src/systems/render-system";
+import { createFakeCanvas } from "./gates/fake-canvas";
 
 describe("Task 5 — Performance Budget Degradation (BR-PRF-03)", () => {
   it("degrades non-essential visual elements in strict order when FPS drops below 45", () => {
@@ -64,5 +70,50 @@ describe("Task 5 — Performance Budget Degradation (BR-PRF-03)", () => {
     engine.advanceFrame(16.67);
     expect(samples).toHaveLength(1);
     engine.destroy();
+  });
+
+  it("BR-PRF-05: reuses frozen DegradationState tiers and idle particle arrays across frames", () => {
+    const mgr = new DegradationManager();
+    const first = mgr.updateFps(60);
+    const second = mgr.updateFps(58);
+    expect(first).toBe(second);
+    expect(Object.isFrozen(first)).toBe(true);
+
+    const idleParticles: Particle[] = [];
+    expect(updateParticles(idleParticles)).toBe(idleParticles);
+
+    const asset = { kind: "emoji", ref: "🍎" } as const;
+    expect(resolveAssetLabels(asset)).toBe(resolveAssetLabels(asset));
+  });
+
+  it("BR-ENG-15: drawPromptZone caches wrapped text lines per canvas context across frames", () => {
+    const rawCtx = createFakeCanvas(960, 540).getContext("2d");
+    if (!rawCtx) {
+      throw new Error("Missing fake 2d context");
+    }
+    const ctx = rawCtx as CanvasRenderingContext2D;
+    const measureSpy = vi.spyOn(ctx, "measureText");
+    const rs = new RenderSystem();
+    const zones = computeStageZones({
+      logicW: 960,
+      logicH: 540,
+      ageBand: "3-4",
+      cssPerLogic: 1,
+      needsTray: false,
+      needsCommit: false,
+    });
+
+    drawPromptZone(ctx, rs, zones, {
+      promptText: "Bé hãy kéo 3 quả táo đỏ vào giỏ màu vàng nhé!",
+    });
+    const firstFrameMeasures = measureSpy.mock.calls.length;
+    expect(firstFrameMeasures).toBeGreaterThan(0);
+
+    for (let i = 0; i < 60; i += 1) {
+      drawPromptZone(ctx, rs, zones, {
+        promptText: "Bé hãy kéo 3 quả táo đỏ vào giỏ màu vàng nhé!",
+      });
+    }
+    expect(measureSpy.mock.calls.length).toBe(firstFrameMeasures);
   });
 });

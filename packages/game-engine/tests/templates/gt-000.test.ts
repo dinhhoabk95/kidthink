@@ -374,25 +374,61 @@ describe("GT-000 Concept Intro Session (M0 & M1 Acceptance)", () => {
       expect(res.success).toBe(false);
     });
 
-    it("Ca âm BR-E000-10: phân đoạn dạy không có bước echo bị từ chối", async () => {
+    it("Ca âm BR-E000-10: phân đoạn dạy thiếu cả present lẫn echo bị từ chối", async () => {
       const { GT000SegmentSchema } = await import(
         "#src/templates/GT-000/template"
       );
-      const teachingSegmentWithoutEcho = {
-        ...validSegment,
+      const teachingSegmentWithoutPresentOrEcho = {
         segment_id: "seg_teach",
+        asset_ids: ["a1", "a2"],
+        steps: [
+          {
+            action: "recognise" as const,
+            target_asset_id: "a1",
+            distractor_asset_ids: ["a2"],
+          },
+          {
+            action: "recall" as const,
+            target_asset_id: "a1",
+            option_asset_ids: ["a1", "a2"],
+          },
+        ],
         is_review: false,
       };
-      const res = GT000SegmentSchema.safeParse(teachingSegmentWithoutEcho);
+      const res = GT000SegmentSchema.safeParse(
+        teachingSegmentWithoutPresentOrEcho
+      );
       expect(res.success).toBe(false);
       if (!res.success) {
-        expect(res.error.message).toContain("echo");
+        expect(res.error.message).toContain("BR-E000-10");
       }
     });
 
-    it("Ca dương BR-E000-10: phân đoạn dạy có bước echo được chấp nhận", async () => {
+    it("Ca dương BR-E000-10: phân đoạn dạy có present (tinh gọn không echo) hoặc có echo đều được chấp nhận", async () => {
       const { GT000SegmentSchema } = await import(
         "#src/templates/GT-000/template"
+      );
+      const teachingSegmentConcise = {
+        segment_id: "seg_teach_concise",
+        asset_ids: ["a1", "a2"],
+        steps: [
+          { action: "present" as const, target_asset_id: "a1" },
+          { action: "present" as const, target_asset_id: "a2" },
+          {
+            action: "recognise" as const,
+            target_asset_id: "a1",
+            distractor_asset_ids: ["a2"],
+          },
+          {
+            action: "recall" as const,
+            target_asset_id: "a2",
+            option_asset_ids: ["a1", "a2"],
+          },
+        ],
+        is_review: false,
+      };
+      expect(GT000SegmentSchema.safeParse(teachingSegmentConcise).success).toBe(
+        true
       );
       const teachingSegmentWithEcho = {
         segment_id: "seg_teach",
@@ -995,5 +1031,82 @@ describe("GT-000 Multi-segment & Resume (Task #295 — BR-CIM-03, BR-CIR-17, BR-
     outOfRange.prepareRound("3-4");
     expect(outOfRange.currentSegmentIndex).toBe(0);
     expect(outOfRange.currentStepIndex).toBe(0);
+  });
+
+  it("getView().entities cung cấp đầy đủ spokenLabel, label, glyph, hitShape và bước link hỗ trợ chạm 2 lần trên canvas", () => {
+    const linkContent: GT000Content = {
+      ...twoSegContent,
+      segments: [
+        {
+          segment_id: "seg_link",
+          asset_ids: ["n1", "n2"],
+          steps: [
+            { action: "present", target_asset_id: "n1" },
+            {
+              action: "link",
+              source_asset_id: "n1",
+              target_asset_id: "n2",
+              prompt_line: "Hãy nối số một với số hai nhé!",
+            },
+          ],
+          is_review: false,
+        },
+      ],
+    };
+    const session = new GT000Session(linkContent, baseDifficulty);
+    vi.spyOn(session.audio, "speakPrompt").mockImplementation(
+      (_text, onEnd) => {
+        onEnd?.();
+        return false;
+      }
+    );
+    session.prepareRound("3-4");
+
+    const presentEntity = session.getView().entities[0];
+    expect(presentEntity).toMatchObject({
+      id: "n1",
+      hitShape: "square",
+      label: "Số một",
+      spokenLabel: "Số một",
+      glyph: "1",
+    });
+
+    // Sang bước link
+    session.commit({ type: "tap_item", data: {} });
+    expect(session.currentStepIndex).toBe(1);
+
+    const linkEntities = session.getView().entities;
+    expect(linkEntities).toHaveLength(2);
+    expect(linkEntities[0]?.hitShape).toBe("circle");
+    expect(linkEntities[0]?.spokenLabel).toBeTruthy();
+
+    const first = linkEntities[0];
+    const second = linkEntities[1];
+    if (!(first && second)) {
+      throw new Error("Missing link entities");
+    }
+
+    // Chạm lần 1: chọn phần tử đầu, chưa nộp đáp án
+    const firstTap = session.dispatch({
+      type: "tap",
+      x: first.x,
+      y: first.y,
+      timeMs: 10,
+    });
+    expect(firstTap).toEqual(ACTION_IGNORED);
+    expect(session.selectedAssetId).toBe(first.id);
+    expect(
+      session.getView().entities.find((e) => e.id === first.id)?.state
+    ).toBe("selected");
+
+    // Chạm lần 2 vào phần tử còn lại: hoàn thành bước link
+    const secondTap = session.dispatch({
+      type: "tap",
+      x: second.x,
+      y: second.y,
+      timeMs: 20,
+    });
+    expect(secondTap?.valid).toBe(true);
+    expect(session.checkWinCondition()).toBe(true);
   });
 });

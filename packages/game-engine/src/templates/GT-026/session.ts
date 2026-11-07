@@ -8,6 +8,11 @@ import {
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
+import {
+  resolveAssetLabels,
+  spokenKeywordForAsset,
+} from "#src/labels/spoken-keyword";
+import { isPointInSlot, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
 import { insetDrawSize, splitCaption } from "#src/layout/slot-fit";
 import type { Slot } from "#src/layout/types";
@@ -30,7 +35,8 @@ export class GT026Session extends TemplateGameSession<
   GT026Difficulty
 > {
   degradation: DegradationState | null = null;
-  private wrongTimestamp = 0;
+  private lastFrameMs = 0;
+  private wrongTimestamp = -1;
 
   override readonly usesPromptZone = true;
 
@@ -55,6 +61,8 @@ export class GT026Session extends TemplateGameSession<
 
   setupEntities(): void {
     this.isWon = false;
+    this.wrongTimestamp = -1;
+    this.lastFrameMs = 0;
 
     const trials: TrialItem[] = this.content.trials.map((t) => ({
       id: t.id,
@@ -124,7 +132,7 @@ export class GT026Session extends TemplateGameSession<
     }
 
     if (!result.isCorrect) {
-      this.wrongTimestamp = Date.now();
+      this.wrongTimestamp = this.lastFrameMs;
     }
 
     this.recordEvent("item_selected", {
@@ -134,7 +142,7 @@ export class GT026Session extends TemplateGameSession<
     });
 
     if (this.inhibitionSystem.isFinished()) {
-      // BR-E026-05: hết trials luôn đóng vòng; số lượt đúng chỉ vào telemetry.
+      // Hết trials luôn đóng vòng; số lượt đúng chỉ vào telemetry.
       this.isWon = true;
       this.recordEvent("round_completed", { round_index: 0 });
       this.winSession();
@@ -153,6 +161,7 @@ export class GT026Session extends TemplateGameSession<
 
   // biome-ignore lint/suspicious/noConfusingVoidType: void needed for compatibility with update
   update(deltaMs: number): ActionResult | void | null {
+    this.lastFrameMs += deltaMs;
     if (!this.inhibitionSystem || this.inhibitionSystem.isFinished()) {
       return null;
     }
@@ -191,11 +200,8 @@ export class GT026Session extends TemplateGameSession<
       }
       const slot = this.slots[0];
       if (slot) {
-        const hw = Math.max(slot.hitW, slot.w) / 2 + 24;
-        const hh = Math.max(slot.hitH, slot.h) / 2 + 24;
         if (
-          Math.abs(gesture.x - slot.x) <= hw &&
-          Math.abs(gesture.y - slot.y) <= hh
+          isPointInSlot(slot, gesture.x, gesture.y, "circle", TAP_TOLERANCE_PX)
         ) {
           return { type: "tap_stimulus", data: {} };
         }
@@ -229,10 +235,18 @@ export class GT026Session extends TemplateGameSession<
     const isStimulus = this.isStimulusVisible();
     const entities: ViewEntity[] = [];
 
-    const now = Date.now();
-    const isWrong = now - this.wrongTimestamp < 400;
+    const now = this.lastFrameMs;
+    const isWrong = this.wrongTimestamp >= 0 && now - this.wrongTimestamp < 400;
 
     if (slot && trial && isStimulus) {
+      const stimulus =
+        trial.kind === "go"
+          ? this.content.go_stimulus
+          : this.content.nogo_stimulus;
+      const assetLabels = resolveAssetLabels(stimulus.asset);
+      const spokenLabel =
+        assetLabels.spokenLabel ??
+        spokenKeywordForAsset({ kind: "text", text: stimulus.label });
       entities.push({
         id: trial.id,
         slotIndex: 0,
@@ -242,6 +256,9 @@ export class GT026Session extends TemplateGameSession<
         y: slot.y,
         w: slot.w,
         h: slot.h,
+        ...assetLabels,
+        label: stimulus.label,
+        ...(spokenLabel ? { spokenLabel } : {}),
       });
     }
 
@@ -252,7 +269,7 @@ export class GT026Session extends TemplateGameSession<
   }
 
   override destroy(): void {
-    // cleanup
+    super.destroy();
   }
 
   override getHintTargetIndex(): number | null {
@@ -268,25 +285,28 @@ export class GT026Session extends TemplateGameSession<
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
     const layoutFn = resolveLayout("grid");
+    const bodyRect = this.stageRect
+      ? splitCaption(this.stageRect).body
+      : undefined;
     return insetDrawSize(
       layoutFn({
         slotCount: 1,
         ageBand,
         logic: this.logicSpace,
-        stage: this.stageRect ? splitCaption(this.stageRect).body : undefined,
+        stage: bodyRect,
         cssPerLogic: this.cssPerLogic,
       }),
-      this.stageRect
+      bodyRect ?? this.stageRect
     );
   }
 
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
-    _timeMs: number
+    timeMs: number
   ): void {
+    this.lastFrameMs = timeMs;
     drawSceneBackground(ctx, rs, this.themeId);
-    // Tiến độ không vẽ trên canvas (`BR-PSZ-06`).
     const trial = this.inhibitionSystem.getCurrentTrial();
 
     if (
@@ -294,7 +314,6 @@ export class GT026Session extends TemplateGameSession<
       this.isInputOpen === false ||
       this.inhibitionSystem.getState() !== "stimulus"
     ) {
-      // Khoảng nghỉ giữa hai lượt: màn phải trống, đó là phần của bài kiểm ức chế.
       return;
     }
 
@@ -310,8 +329,9 @@ export class GT026Session extends TemplateGameSession<
     );
     const slot = this.slots[0];
     if (slot) {
-      const now = Date.now();
-      const isWrong = now - this.wrongTimestamp < 400;
+      const now = this.lastFrameMs;
+      const isWrong =
+        this.wrongTimestamp >= 0 && now - this.wrongTimestamp < 400;
       const shakeX =
         isWrong && !rs.reducedMotion
           ? Math.sin((now - this.wrongTimestamp) / 30) * 4

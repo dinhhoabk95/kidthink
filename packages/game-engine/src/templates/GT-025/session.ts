@@ -8,7 +8,12 @@ import {
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
+import {
+  type KeywordAsset,
+  resolveAssetLabels,
+} from "#src/labels/spoken-keyword";
 import { resolveTouchFloor } from "#src/layout/constants";
+import { isPointInSlot, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
 import { insetDrawSize } from "#src/layout/slot-fit";
 import {
@@ -35,24 +40,24 @@ interface ResolvedDifferenceObject {
   readonly y: number;
   readonly w: number;
   readonly h: number;
+  readonly slot: Slot;
   readonly role: "source" | "target";
   readonly slotIndex: number;
+  readonly asset: KeywordAsset;
 }
 
 function findHitDifferenceObject(
   objects: readonly ResolvedDifferenceObject[],
   x: number,
   y: number,
-  tolerance = 24
+  tolerance = TAP_TOLERANCE_PX
 ): ResolvedDifferenceObject | null {
   for (let i = objects.length - 1; i >= 0; i--) {
     const obj = objects[i];
     if (!obj) {
       continue;
     }
-    const hw = obj.w / 2 + tolerance;
-    const hh = obj.h / 2 + tolerance;
-    if (Math.abs(x - obj.x) <= hw && Math.abs(y - obj.y) <= hh) {
+    if (isPointInSlot(obj.slot, x, y, "circle", tolerance)) {
       return obj;
     }
   }
@@ -62,6 +67,21 @@ function findHitDifferenceObject(
 /** Cột phải của bố cục cũ nằm cách cột trái 480 logic px (chỉ dùng khi không có slot). */
 const RIGHT_COLUMN_OFFSET = 480;
 
+export interface GT025ActionPayload {
+  readonly object_id?: string;
+  readonly item_id?: string;
+}
+
+function normalizeObjectId(id: string): string {
+  if (id.startsWith("left:")) {
+    return id.slice(5);
+  }
+  if (id.startsWith("right:")) {
+    return id.slice(6);
+  }
+  return id;
+}
+
 export class GT025Session extends TemplateGameSession<
   GT025Content,
   GT025Difficulty
@@ -70,15 +90,22 @@ export class GT025Session extends TemplateGameSession<
 
   degradation: DegradationState | null = null;
 
+  private lastFrameMs = 0;
   private readonly foundDifferenceIds = new Set<string>();
   private readonly foundLeftIds = new Set<string>();
   private readonly foundRightIds = new Set<string>();
   private wrongObjectId: string | null = null;
-  private wrongTimestamp = 0;
+  private wrongTimestamp = -1;
   resolvedObjects: ResolvedDifferenceObject[] = [];
+
+  update(deltaMs: number): void {
+    this.lastFrameMs += deltaMs;
+  }
 
   setupEntities(): void {
     this.isWon = false;
+    this.wrongTimestamp = -1;
+    this.lastFrameMs = 0;
     this.foundDifferenceIds.clear();
     this.foundLeftIds.clear();
     this.foundRightIds.clear();
@@ -101,48 +128,69 @@ export class GT025Session extends TemplateGameSession<
 
     this.content.left_objects.forEach((obj, i) => {
       const slot = sources[i];
-      const x = slot?.x ?? obj.x ?? 200;
-      const y = slot?.y ?? obj.y ?? 250;
-      resolved.push({
-        id: obj.id,
-        x,
-        y,
+      const resolvedSlot: Slot = slot ?? {
+        index: i,
+        x: obj.x ?? 200,
+        y: obj.y ?? 250,
         w: 64,
         h: 64,
+        hitW: 64,
+        hitH: 64,
+        page: 0,
         role: "source",
-        slotIndex: slot?.index ?? i,
+      };
+      resolved.push({
+        id: obj.id,
+        x: resolvedSlot.x,
+        y: resolvedSlot.y,
+        w: resolvedSlot.w,
+        h: resolvedSlot.h,
+        slot: resolvedSlot,
+        role: "source",
+        slotIndex: resolvedSlot.index,
+        asset: obj.asset,
       });
     });
 
     this.content.right_objects.forEach((obj, i) => {
       const slot = targets[i];
-      const x =
-        slot?.x ?? (obj.x === undefined ? 680 : obj.x + RIGHT_COLUMN_OFFSET);
-      const y = slot?.y ?? obj.y ?? 250;
-      resolved.push({
-        id: obj.id,
-        x,
-        y,
+      const resolvedSlot: Slot = slot ?? {
+        index: this.content.left_objects.length + i,
+        x: obj.x === undefined ? 680 : obj.x + RIGHT_COLUMN_OFFSET,
+        y: obj.y ?? 250,
         w: 64,
         h: 64,
+        hitW: 64,
+        hitH: 64,
+        page: 0,
         role: "target",
-        slotIndex: slot?.index ?? this.content.left_objects.length + i,
+      };
+      resolved.push({
+        id: obj.id,
+        x: resolvedSlot.x,
+        y: resolvedSlot.y,
+        w: resolvedSlot.w,
+        h: resolvedSlot.h,
+        slot: resolvedSlot,
+        role: "target",
+        slotIndex: resolvedSlot.index,
+        asset: obj.asset,
       });
     });
 
     this.resolvedObjects = resolved;
   }
 
-  private validateTapObject(data: unknown): ActionResult {
-    const objectId =
-      typeof data === "object" && data !== null
-        ? (Reflect.get(data, "object_id") ?? Reflect.get(data, "item_id"))
-        : undefined;
+  private validateTapObject(
+    data: GT025ActionPayload | undefined
+  ): ActionResult {
+    const rawObjectId = data ? (data.object_id ?? data.item_id) : undefined;
 
-    if (typeof objectId !== "string") {
+    if (typeof rawObjectId !== "string") {
       return ACTION_IGNORED;
     }
 
+    const objectId = normalizeObjectId(rawObjectId);
     const diff = this.content.differences.find(
       (d) => d.left_id === objectId || d.right_id === objectId
     );
@@ -158,14 +206,15 @@ export class GT025Session extends TemplateGameSession<
     return ACTION_CORRECT;
   }
 
-  onTapObject(objectId: string): ActionResult {
+  onTapObject(rawObjectId: string): ActionResult {
+    const objectId = normalizeObjectId(rawObjectId);
     const diff = this.content.differences.find(
       (d) => d.left_id === objectId || d.right_id === objectId
     );
 
     if (!diff) {
       this.wrongObjectId = objectId;
-      this.wrongTimestamp = Date.now();
+      this.wrongTimestamp = this.lastFrameMs;
       this.recordEvent("item_selected", {
         object_id: objectId,
         is_correct: false,
@@ -200,8 +249,10 @@ export class GT025Session extends TemplateGameSession<
   validateAction(action: GameAction): ActionResult {
     switch (action.type) {
       case "tap_object":
-      case "select_item":
-        return this.validateTapObject(action.data);
+      case "select_item": {
+        const payload = action.data as GT025ActionPayload | undefined;
+        return this.validateTapObject(payload);
+      }
       default:
         return ACTION_IGNORED;
     }
@@ -233,20 +284,19 @@ export class GT025Session extends TemplateGameSession<
 
   override commit(action: GameAction): void {
     if (action.type === "tap_object" || action.type === "select_item") {
-      const data = action.data;
-      const objectId =
-        typeof data === "object" && data !== null
-          ? (Reflect.get(data, "object_id") ?? Reflect.get(data, "item_id"))
-          : undefined;
-      if (typeof objectId === "string") {
-        this.onTapObject(objectId);
+      const data = action.data as GT025ActionPayload | undefined;
+      const rawObjectId = data ? (data.object_id ?? data.item_id) : undefined;
+      if (typeof rawObjectId === "string") {
+        this.onTapObject(rawObjectId);
       }
     }
   }
 
   override getView(): EngineView {
-    const now = Date.now();
-    const isWrongNow = now - this.wrongTimestamp < 400;
+    const now = this.lastFrameMs;
+    const isWrongNow =
+      this.wrongTimestamp >= 0 && now - this.wrongTimestamp < 400;
+    const seenIds = new Set<string>();
     const entities: ViewEntity[] = this.resolvedObjects.map((obj) => {
       const isFound =
         obj.role === "source"
@@ -259,8 +309,15 @@ export class GT025Session extends TemplateGameSession<
       } else if (isWrong) {
         state = "incorrect";
       }
+      const side = obj.role === "source" ? "left" : "right";
+      let entityId = obj.id;
+      if (seenIds.has(entityId)) {
+        entityId = `${side}:${obj.id}`;
+      } else {
+        seenIds.add(entityId);
+      }
       return {
-        id: obj.id,
+        id: entityId,
         slotIndex: obj.slotIndex,
         role: obj.role,
         state,
@@ -268,6 +325,7 @@ export class GT025Session extends TemplateGameSession<
         y: obj.y,
         w: obj.w,
         h: obj.h,
+        ...resolveAssetLabels(obj.asset),
       };
     });
     return {
@@ -281,6 +339,7 @@ export class GT025Session extends TemplateGameSession<
   }
 
   override destroy(): void {
+    super.destroy();
     this.foundDifferenceIds.clear();
     this.foundLeftIds.clear();
     this.foundRightIds.clear();
@@ -337,8 +396,9 @@ export class GT025Session extends TemplateGameSession<
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
-    _timeMs: number
+    timeMs: number
   ): void {
+    this.lastFrameMs = timeMs;
     drawSceneBackground(ctx, rs, this.themeId);
     const scene = this.stageRect ?? sceneBox(rs);
     const half = { x: scene.x, y: scene.y, w: scene.w / 2, h: scene.h };
@@ -359,8 +419,9 @@ export class GT025Session extends TemplateGameSession<
       scene.y + scene.h
     );
 
-    const now = Date.now();
-    const isWrongNow = now - this.wrongTimestamp < 400;
+    const now = this.lastFrameMs;
+    const isWrongNow =
+      this.wrongTimestamp >= 0 && now - this.wrongTimestamp < 400;
 
     this.content.left_objects.forEach((obj, i) => {
       drawSceneObjectAt(ctx, rs, half, this.inLayout(obj), sources[i], {

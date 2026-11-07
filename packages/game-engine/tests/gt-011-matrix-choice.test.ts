@@ -208,4 +208,144 @@ describe("GT-011 — journey một phiên đầy đủ (điều kiện nghiệm 
     expect(session.checkWinCondition()).toBe(true);
     expect(LATIN_3X3.content.matrix.cols).toBe(3);
   });
+
+  it("getHintTargetIndex trỏ đúng slot phương án trong this.slots và getView không đánh dấu matrix_blank là target", () => {
+    const session = new GT011Session(GRID_2X2.content, GRID_2X2.difficulty);
+    session.prepareRound("5-6");
+
+    const hintIdx = session.getHintTargetIndex();
+    expect(hintIdx).not.toBeNull();
+    expect(session.slots[hintIdx ?? -1]?.role).toBe("source");
+
+    const view = session.getView();
+    const blank = view.entities.find((e) => e.id === "matrix_blank");
+    expect(blank?.role).toBe("neutral");
+    expect(blank?.spokenLabel).toBe("Ô trống");
+
+    const opt = view.entities.find((e) => e.id === "o1");
+    expect(opt?.spokenLabel).toBeTruthy();
+  });
+});
+
+describe("GT-011 — Montessori 2-Phase Explore & Control of Error", () => {
+  it("chuyển pha Explore -> Challenge sau 2 thao tác đặt thử (matrix_previewed)", () => {
+    const session = newSession(0);
+    session.startExplorePhase();
+    expect(session.getExploreTracker().getPhase()).toBe("explore");
+
+    session.onOptionPreviewed("o2");
+    expect(session.getExploreTracker().getPhase()).toBe("explore");
+    expect(session.getExploreTracker().getExploreActionsCount()).toBe(1);
+
+    session.onOptionPreviewed("o3");
+    expect(session.getExploreTracker().getPhase()).toBe("challenge");
+    expect(session.getExploreTracker().getExploreActionsCount()).toBe(2);
+  });
+
+  it("phản hồi Nhân-Quả phân biệt lỗi hàng ngang / cột dọc và kích hoạt Micro-Sandbox sau 2 lần sai", () => {
+    // 1. Lỗi cả hàng ngang và cột dọc trên ma trận Latin 3x3
+    const sessionBothWrong = newSession(0);
+    sessionBothWrong.onOptionSelected("o2");
+    expect(sessionBothWrong.getControlOfError()?.reasonVi).toBe(
+      "Chưa khớp quy luật hàng ngang và cột dọc"
+    );
+    expect(sessionBothWrong.isMicroSandboxActive()).toBe(false);
+
+    sessionBothWrong.onOptionSelected("o3");
+    expect(sessionBothWrong.isMicroSandboxActive()).toBe(true);
+
+    sessionBothWrong.onOptionSelected("o1");
+    expect(sessionBothWrong.isMicroSandboxActive()).toBe(false);
+    expect(sessionBothWrong.getControlOfError()).toBeNull();
+
+    // 2. Khớp hàng ngang nhưng chưa khớp cột dọc
+    const rowOnlySession = new GT011Session(
+      {
+        prompt: "Chọn hình cho ô trống",
+        matrix: {
+          rows: 2,
+          cols: 2,
+          cells: [
+            { row: 0, col: 0, asset: { kind: "emoji", ref: "🍎" } },
+            { row: 0, col: 1, asset: { kind: "emoji", ref: "🍌" } },
+            { row: 1, col: 0, asset: { kind: "emoji", ref: "🍎" } },
+            { row: 1, col: 1, asset: null },
+          ],
+        },
+        options: [
+          {
+            option_id: "o_row_only",
+            asset: { kind: "emoji", ref: "🍌" },
+            is_correct: false,
+          },
+          {
+            option_id: "o_correct",
+            asset: { kind: "emoji", ref: "🍎" },
+            is_correct: true,
+          },
+        ],
+      },
+      GRID_2X2.difficulty
+    );
+    rowOnlySession.setupEntities();
+    rowOnlySession.onOptionSelected("o_row_only");
+    expect(rowOnlySession.getControlOfError()?.reasonVi).toBe(
+      "Khớp hàng ngang nhưng chưa khớp cột dọc"
+    );
+
+    // 3. Khớp cột dọc nhưng chưa khớp hàng ngang
+    const colOnlySession = new GT011Session(
+      {
+        prompt: "Chọn hình cho ô trống",
+        matrix: {
+          rows: 2,
+          cols: 2,
+          cells: [
+            { row: 0, col: 0, asset: { kind: "emoji", ref: "🍎" } },
+            { row: 0, col: 1, asset: { kind: "emoji", ref: "🍎" } },
+            { row: 1, col: 0, asset: { kind: "emoji", ref: "🍌" } },
+            { row: 1, col: 1, asset: null },
+          ],
+        },
+        options: [
+          {
+            option_id: "o_col_only",
+            asset: { kind: "emoji", ref: "🍌" },
+            is_correct: false,
+          },
+          {
+            option_id: "o_correct",
+            asset: { kind: "emoji", ref: "🍎" },
+            is_correct: true,
+          },
+        ],
+      },
+      GRID_2X2.difficulty
+    );
+    colOnlySession.setupEntities();
+    colOnlySession.onOptionSelected("o_col_only");
+    expect(colOnlySession.getControlOfError()?.reasonVi).toBe(
+      "Khớp cột dọc nhưng chưa khớp hàng ngang"
+    );
+  });
+
+  it("hỗ trợ cử chỉ kéo thả (drop) phương án từ khay vào ô ma trận", () => {
+    const session = new GT011Session(GRID_2X2.content, GRID_2X2.difficulty);
+    session.prepareRound("5-6");
+    const blankSlot = session.slots[3];
+    const correctOptionSlot = session.slots[4];
+    if (!(blankSlot && correctOptionSlot)) {
+      throw new Error("matrix slots must exist");
+    }
+    const res = session.dispatch({
+      type: "drop",
+      fromX: correctOptionSlot.x,
+      fromY: correctOptionSlot.y,
+      toX: blankSlot.x,
+      toY: blankSlot.y,
+      timeMs: 150,
+    });
+    expect(res?.valid).toBe(true);
+    expect(session.checkWinCondition()).toBe(true);
+  });
 });

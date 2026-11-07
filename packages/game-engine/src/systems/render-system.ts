@@ -10,7 +10,19 @@ import {
   deriveLogicSpace,
   type LogicSpace,
 } from "#src/layout/constants";
+import { alpha } from "#src/render/color-utils.js";
 import { designTokens } from "./designTokens";
+
+const CLAY_SHADOW_COLOR = alpha(
+  designTokens.colors.montessori.woodBorder,
+  0.18
+);
+const CLAY_HIGHLIGHT_STROKE = alpha(designTokens.colors.surface[0], 0.76);
+const CLAY_CONTAINER_SHADOW = alpha(
+  designTokens.colors.montessori.woodBorder,
+  0.16
+);
+const CLAY_CONTAINER_RIM = alpha(designTokens.colors.surface[0], 0.55);
 
 export interface Particle {
   x: number;
@@ -56,6 +68,9 @@ export class RenderSystem {
   /** Global reduced-motion toggle — reduces particles, confetti, and float speed (BR-FBK-09, BR-SCF-06). */
   reducedMotion = false;
 
+  /** Soft shadows toggle — disabled by DegradationManager when FPS drops below 40 (BR-PRF-03 §7.3). */
+  softShadowsEnabled = true;
+
   /** Active theme ID for thematic rendering fallback. */
   themeId?: string;
 
@@ -67,6 +82,10 @@ export class RenderSystem {
    * hiệu hoá cache gradient giữa các lần đổi kích thước hoặc đổi canvas.
    */
   paintGeneration = 0;
+
+  bumpPaintGeneration(): void {
+    this.paintGeneration++;
+  }
 
   /**
    * Đặt canvas về không gian logic đáp ứng theo kích thước khung nhìn (BR-A11-04 & Task #259).
@@ -157,15 +176,17 @@ export class RenderSystem {
     ctx.save();
     ctx.translate(x, y);
 
-    // 1. Warm ambient drop shadow
-    ctx.save();
-    ctx.shadowColor = "rgba(130, 118, 96, 0.18)";
-    ctx.shadowBlur = 10;
-    ctx.shadowOffsetY = 4;
-    ctx.fillStyle = border;
-    this.traceRoundShape(ctx, r, shape);
-    ctx.fill();
-    ctx.restore();
+    // 1. Warm ambient drop shadow (skipped when degraded under low FPS — BR-PRF-03 §7.3)
+    if (this.softShadowsEnabled) {
+      ctx.save();
+      ctx.shadowColor = CLAY_SHADOW_COLOR;
+      ctx.shadowBlur = 10;
+      ctx.shadowOffsetY = 4;
+      ctx.fillStyle = border;
+      this.traceRoundShape(ctx, r, shape);
+      ctx.fill();
+      ctx.restore();
+    }
 
     // 2. Bottom 3D slab offset
     ctx.save();
@@ -187,7 +208,7 @@ export class RenderSystem {
     ctx.stroke();
 
     // 5. White top specular highlight
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.76)";
+    ctx.strokeStyle = CLAY_HIGHLIGHT_STROKE;
     ctx.lineWidth = 3;
     ctx.beginPath();
     if (shape === "square") {
@@ -214,15 +235,17 @@ export class RenderSystem {
     ctx.save();
     ctx.translate(x, y);
 
-    // Warm ambient shadow
-    ctx.save();
-    ctx.shadowColor = "rgba(130, 118, 96, 0.16)";
-    ctx.shadowBlur = 12;
-    ctx.shadowOffsetY = 6;
-    ctx.fillStyle = border;
-    this.traceContainerBody(ctx, w, h, 6);
-    ctx.fill();
-    ctx.restore();
+    // Warm ambient shadow (skipped when degraded under low FPS — BR-PRF-03 §7.3)
+    if (this.softShadowsEnabled) {
+      ctx.save();
+      ctx.shadowColor = CLAY_CONTAINER_SHADOW;
+      ctx.shadowBlur = 12;
+      ctx.shadowOffsetY = 6;
+      ctx.fillStyle = border;
+      this.traceContainerBody(ctx, w, h, 6);
+      ctx.fill();
+      ctx.restore();
+    }
 
     // Drop shadow slab
     ctx.fillStyle = border;
@@ -238,7 +261,7 @@ export class RenderSystem {
     ctx.stroke();
 
     // Top rim highlight
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.55)";
+    ctx.strokeStyle = CLAY_CONTAINER_RIM;
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(-w * 0.42, -h * 0.18);
@@ -256,7 +279,9 @@ export class RenderSystem {
     radius: number,
     pulsePhase: number
   ): void {
-    const pulseScale = 1 + Math.sin(pulsePhase * Math.PI * 2) * 0.12;
+    const pulseScale = this.reducedMotion
+      ? 1
+      : 1 + Math.sin(pulsePhase * Math.PI * 2) * 0.12;
     const currentRadius = radius * pulseScale;
 
     ctx.save();

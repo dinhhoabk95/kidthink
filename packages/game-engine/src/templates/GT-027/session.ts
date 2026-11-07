@@ -13,6 +13,8 @@ import type {
   Gesture,
   ViewEntity,
 } from "#src/interaction";
+import { resolveAssetLabels } from "#src/labels/spoken-keyword";
+import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
 import {
   dockRectAroundSlots,
@@ -21,15 +23,48 @@ import {
 } from "#src/layout/slot-fit";
 import type { Slot } from "#src/layout/types";
 import {
+  drawCircleOutline,
   drawSceneBackground,
   drawSlotItem,
   drawSubPromptText,
   drawWoodenTokenDock,
 } from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
+import { designTokens } from "#src/systems/designTokens";
 import type { RenderSystem } from "#src/systems/render-system";
 import { type RuleDefinition, RuleSystem } from "#src/systems/rule-system";
 import type { GT027Content, GT027Difficulty } from "./template.js";
+
+function resolveRuleColorToken(color: string): string | null {
+  switch (color.toLowerCase()) {
+    case "red":
+    case "đỏ":
+    case "berry":
+      return designTokens.colors.montessori.coral;
+    case "blue":
+    case "xanh dương":
+    case "xanh":
+    case "sky":
+      return designTokens.colors.brand[500];
+    case "yellow":
+    case "vàng":
+    case "amber":
+      return designTokens.colors.montessori.amber;
+    case "green":
+    case "xanh lá":
+    case "mint":
+      return designTokens.colors.semantic.success[500];
+    case "purple":
+    case "tím":
+    case "indigo":
+      return designTokens.colors.montessori.indigo;
+    case "orange":
+    case "cam":
+      return designTokens.colors.cta[500];
+    default:
+      return null;
+  }
+}
 
 interface CardItem {
   id: string;
@@ -67,6 +102,9 @@ export class GT027Session extends TemplateGameSession<
   private ruleSystem!: RuleSystem<CardItem>;
   private successfulTrialCount = 0;
   private targetSuccessTotal = 0;
+  private lastFrameMs = 0;
+  private wrongItemId: string | null = null;
+  private wrongUntilMs = 0;
 
   override isTrialBased(): boolean {
     return true;
@@ -166,6 +204,8 @@ export class GT027Session extends TemplateGameSession<
 
     if (!evalResult.valid) {
       this.setRenderItemState(itemId, "wrong");
+      this.wrongItemId = itemId;
+      this.wrongUntilMs = this.lastFrameMs + 400;
       this.recordEvent("item_selected", {
         item_id: itemId,
         is_correct: false,
@@ -185,6 +225,7 @@ export class GT027Session extends TemplateGameSession<
     });
 
     if (evalResult.triggeredSwitch) {
+      this.renderItemStates.clear();
       // Báo hiệu đổi luật bằng âm thanh và hình ảnh (BR-TGB-07)
       const newRule = this.ruleSystem.getActiveRule();
       this.recordEvent("item_selected", {
@@ -209,29 +250,24 @@ export class GT027Session extends TemplateGameSession<
       return null;
     }
 
-    const hitTolerance = 24;
-    for (let i = 0; i < this.slots.length; i++) {
-      const slot = this.slots[i];
-      const item = this.content.items[i];
-      if (!(slot && item)) {
-        continue;
-      }
-
-      const halfW = Math.max(slot.hitW, slot.w) / 2 + hitTolerance;
-      const halfH = Math.max(slot.hitH, slot.h) / 2 + hitTolerance;
-
-      if (
-        Math.abs(gesture.x - slot.x) <= halfW &&
-        Math.abs(gesture.y - slot.y) <= halfH
-      ) {
-        return {
-          type: "select_item",
-          data: { item_id: item.id },
-        };
-      }
+    const hitIndex = findHitSlotIndex(
+      this.slots,
+      gesture.x,
+      gesture.y,
+      "circle",
+      TAP_TOLERANCE_PX
+    );
+    if (hitIndex === -1) {
+      return null;
     }
-
-    return null;
+    const item = this.content.items[hitIndex];
+    if (!item) {
+      return null;
+    }
+    return {
+      type: "select_item",
+      data: { item_id: item.id },
+    };
   }
 
   override commit(action: GameAction): void {
@@ -270,6 +306,7 @@ export class GT027Session extends TemplateGameSession<
         y: slot.y,
         w: slot.w,
         h: slot.h,
+        ...resolveAssetLabels(item.asset),
       });
     }
 
@@ -281,6 +318,14 @@ export class GT027Session extends TemplateGameSession<
 
   // biome-ignore lint/suspicious/noConfusingVoidType: void needed for compatibility with update
   update(deltaMs: number): ActionResult | void | null {
+    this.lastFrameMs += deltaMs;
+    if (this.wrongUntilMs > 0 && this.lastFrameMs >= this.wrongUntilMs) {
+      if (this.wrongItemId) {
+        this.setRenderItemState(this.wrongItemId, "idle");
+      }
+      this.wrongUntilMs = 0;
+      this.wrongItemId = null;
+    }
     if (!this.ruleSystem) {
       return null;
     }
@@ -296,6 +341,7 @@ export class GT027Session extends TemplateGameSession<
   }
 
   override destroy(): void {
+    super.destroy();
     this.renderItemStates.clear();
   }
 
@@ -307,6 +353,14 @@ export class GT027Session extends TemplateGameSession<
     if (!activeRule) {
       return null;
     }
+    const unselectedIdx = this.content.items.findIndex(
+      (item) =>
+        this.getRenderItemState(item.id) !== "correct" &&
+        activeRule.validator(item)
+    );
+    if (unselectedIdx >= 0) {
+      return unselectedIdx;
+    }
     const validIdx = this.content.items.findIndex((item) =>
       activeRule.validator(item)
     );
@@ -315,24 +369,41 @@ export class GT027Session extends TemplateGameSession<
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
     const layoutFn = resolveLayout("grid");
+    const bodyRect = this.stageRect
+      ? splitCaption(this.stageRect).body
+      : undefined;
     return insetDrawSize(
       layoutFn({
         slotCount: this.content.items.length,
         ageBand,
         logic: this.logicSpace,
-        stage: this.stageRect ? splitCaption(this.stageRect).body : undefined,
+        stage: bodyRect,
         cssPerLogic: this.cssPerLogic,
       }),
-      this.stageRect
+      bodyRect ?? this.stageRect
     );
   }
 
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
-    _timeMs: number
+    timeMs: number
   ): void {
+    this.lastFrameMs = timeMs;
+    if (this.wrongUntilMs > 0 && timeMs >= this.wrongUntilMs) {
+      if (this.wrongItemId) {
+        this.setRenderItemState(this.wrongItemId, "idle");
+      }
+      this.wrongUntilMs = 0;
+      this.wrongItemId = null;
+    }
     drawSceneBackground(ctx, rs, this.themeId);
+
+    const bodyRect = this.stageRect
+      ? splitCaption(this.stageRect).body
+      : undefined;
+    drawWoodenTokenDock(ctx, rs, dockRectAroundSlots(this.slots, bodyRect));
+
     // Tiến độ không vẽ trên canvas (`BR-PSZ-06`).
     const rule = this.ruleSystem.getActiveRule();
     const signal = this.ruleSystem.getSignalInfo();
@@ -344,11 +415,24 @@ export class GT027Session extends TemplateGameSession<
       signal?.text ?? rule.description,
       this.stageRect ? splitCaption(this.stageRect).caption : undefined
     );
-    drawWoodenTokenDock(
-      ctx,
-      rs,
-      dockRectAroundSlots(this.slots, this.stageRect)
-    );
+
+    if (this.wrongUntilMs > timeMs && this.wrongItemId) {
+      const wrongIndex = this.content.items.findIndex(
+        (it) => it.id === this.wrongItemId
+      );
+      const slot = this.slots[wrongIndex];
+      if (slot) {
+        const elapsed = 400 - (this.wrongUntilMs - timeMs);
+        const progress = Math.min(1, Math.max(0, elapsed / 400));
+        rs.drawRetryRing(
+          ctx,
+          slot.x,
+          slot.y,
+          Math.max(slot.w, slot.h) / 2 + 4,
+          progress
+        );
+      }
+    }
 
     this.content.items.forEach((item, i) => {
       const slot = this.slots[i];
@@ -360,6 +444,10 @@ export class GT027Session extends TemplateGameSession<
         asset: item.asset,
         state: this.getRenderItemState(item.id),
       });
+      const colorToken = resolveRuleColorToken(item.color);
+      if (colorToken) {
+        drawCircleOutline(ctx, slot, colorToken, 4, -2);
+      }
     });
   }
 }

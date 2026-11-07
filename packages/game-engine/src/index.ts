@@ -24,6 +24,7 @@ export {
   BaseGameSession,
   type FeedbackKind,
   type GameAction,
+  type GameActionValue,
   type GameSession,
   type HintLevel,
   type HintTarget,
@@ -184,7 +185,9 @@ export {
   type SessionMeta,
 } from "./offline-buffer";
 export {
+  type ActiveGestureVisualState,
   type CommitIcon,
+  drawActiveGestureOverlay,
   drawCentralTargetCard,
   drawCommitButton,
   drawMascot,
@@ -192,6 +195,7 @@ export {
   drawSceneBackground,
   drawTargetHoverAura,
   drawWoodenTokenDock,
+  type GestureTransitionFlight,
   getWoodenTokenDockRect,
   MASCOT_POSES,
   MASCOT_SPRITE_FILES,
@@ -199,6 +203,7 @@ export {
   type MascotSprites,
   type PromptZoneOptions,
 } from "./render/index.js";
+export { drawMontessoriControlOfErrorPill } from "./render/montessori-feedback.js";
 export { createRng, deriveStream } from "./rng/mulberry32.js";
 export { shuffle } from "./rng/shuffle.js";
 export type { Rng, RngStreamName } from "./rng/types.js";
@@ -284,6 +289,12 @@ export {
   MirrorSystem,
   type SymmetricSlotPair,
 } from "./systems/mirror-system.js";
+export {
+  type ControlOfErrorDiagnostics,
+  type MontessoriExploreConfig,
+  MontessoriExploreTracker,
+  type MontessoriPhase,
+} from "./systems/montessori-explore-system.js";
 export {
   type CanvasViewport,
   type Particle,

@@ -24,7 +24,9 @@ describe("Gate check:engine-behavior (BR-EBD-01..13, BR-ESS-16..17)", () => {
   const configPath = repoPath(
     "packages/game-engine/config/engine-behavior-domain.json"
   );
-  const baselinePath = repoPath("scripts/engine-behavior-baseline.json");
+  const baselinePath = repoPath(
+    "packages/game-engine/config/engine-behavior-baseline.json"
+  );
 
   it("baseline: 38 engine, 38 spec, sàn 2 · 5 · 6 đạt, 0 vi phạm", () => {
     const result = scanEngineBehaviorGate({

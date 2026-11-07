@@ -135,7 +135,7 @@ describe("Cổng đếm gradient và cache khung hình (BR-ENG-15)", () => {
     expect(ctx2.gradientCalls.length).toBe(2);
   });
 
-  it("drawTargetHoverAura × 60 khung với phase đổi tạo đúng 60 gradient (không cache)", () => {
+  it("drawTargetHoverAura × 60 khung với phase đổi tạo đúng 1 gradient (dùng cache)", () => {
     const canvas = createFakeCanvas(1280, 720);
     const ctx = canvas.getContext("2d");
     if (!ctx) {
@@ -151,6 +151,6 @@ describe("Cổng đếm gradient và cache khung hình (BR-ENG-15)", () => {
         i / 60
       );
     }
-    expect(ctx.gradientCalls.length).toBe(60);
+    expect(ctx.gradientCalls.length).toBe(1);
   });
 });

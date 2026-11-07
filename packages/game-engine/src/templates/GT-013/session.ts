@@ -5,9 +5,11 @@ import {
   ACTION_RETRY,
   type ActionResult,
   type GameAction,
+  type GameActionValue,
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
+import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 
@@ -23,6 +25,26 @@ function toCellRole(
     return "source";
   }
   return "neutral";
+}
+
+function toCellSpokenLabel(
+  row: number,
+  col: number,
+  isStart: boolean,
+  isGoal: boolean,
+  isRequired: boolean
+): string {
+  const pos = `Hàng ${row + 1} cột ${col + 1}`;
+  if (isStart) {
+    return `Ô xuất phát, ${pos}`;
+  }
+  if (isGoal) {
+    return `Ô đích, ${pos}`;
+  }
+  if (isRequired) {
+    return `Ô phải đi qua, ${pos}`;
+  }
+  return pos;
 }
 
 import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
@@ -55,7 +77,7 @@ interface MazeScaffoldHint {
   readonly slow_repeat: boolean;
 }
 
-function extractMazeCell(data: unknown): MazeCell | null {
+function extractMazeCell(data: GameActionValue): MazeCell | null {
   if (
     typeof data === "object" &&
     data !== null &&
@@ -71,7 +93,7 @@ function extractMazeCell(data: unknown): MazeCell | null {
   return null;
 }
 
-function extractMazeSide(data: unknown): MazeSide | null {
+function extractMazeSide(data: GameActionValue): MazeSide | null {
   if (typeof data === "object" && data !== null && "side" in data) {
     const s = Reflect.get(data, "side");
     if (s === "n" || s === "e" || s === "s" || s === "w") {
@@ -81,7 +103,7 @@ function extractMazeSide(data: unknown): MazeSide | null {
   return null;
 }
 
-function extractMazeCells(data: unknown): MazeCell[] {
+function extractMazeCells(data: GameActionValue): MazeCell[] {
   if (typeof data === "object" && data !== null && "cells" in data) {
     const raw = Reflect.get(data, "cells");
     if (Array.isArray(raw)) {
@@ -135,11 +157,25 @@ export class GT013Session extends TemplateGameSession<
 
   private readonly ordering = new OrderingMechanic();
   private tracker: MazePathTracker = new MazePathTracker(this.content.grid);
+  private blockedCell: MazeCell | null = null;
+  private blockedTimestamp = 0;
+  private lastFrameMs = 0;
 
   setupEntities(): void {
     this.tracker = new MazePathTracker(this.content.grid);
     this.syncSequence();
+    this.blockedCell = null;
+    this.blockedTimestamp = 0;
+    this.lastFrameMs = 0;
     this.isWon = false;
+  }
+
+  update(deltaMs: number): void {
+    this.lastFrameMs += deltaMs;
+    if (this.blockedCell && this.lastFrameMs - this.blockedTimestamp >= 400) {
+      this.blockedCell = null;
+      this.blockedTimestamp = 0;
+    }
   }
 
   getPath(): readonly MazeCell[] {
@@ -165,6 +201,8 @@ export class GT013Session extends TemplateGameSession<
       });
     }
     if (result.status === "blocked") {
+      this.blockedCell = cell;
+      this.blockedTimestamp = this.lastFrameMs;
       this.recordEvent("path_blocked", {
         row: cell.row,
         col: cell.col,
@@ -241,17 +279,8 @@ export class GT013Session extends TemplateGameSession<
     if (!this.isInsideStage(x, y)) {
       return null;
     }
-    for (let i = 0; i < this.slots.length; i++) {
-      const slot = this.slots[i];
-      if (!slot) {
-        continue;
-      }
-      const radius = Math.max(slot.hitW ?? slot.w, slot.hitH ?? slot.h) / 2;
-      if (Math.abs(x - slot.x) <= radius && Math.abs(y - slot.y) <= radius) {
-        return this.slotIndexToCell(i);
-      }
-    }
-    return null;
+    const idx = findHitSlotIndex(this.slots, x, y, "square", TAP_TOLERANCE_PX);
+    return idx >= 0 ? this.slotIndexToCell(idx) : null;
   }
 
   private toStrokeAction(
@@ -285,9 +314,34 @@ export class GT013Session extends TemplateGameSession<
     return { type: "stroke_path", data: { cells } };
   }
 
+  private toDropAction(
+    gesture: Extract<Gesture, { type: "drop" }>
+  ): GameAction | null {
+    const endCell = this.findHitCell(gesture.toX, gesture.toY);
+    if (endCell && this.isLegalStep(endCell)) {
+      return { type: "draw_step", data: endCell };
+    }
+    const steps = 8;
+    const points = Array.from({ length: steps + 1 }, (_, i) => {
+      const t = i / steps;
+      return {
+        x: gesture.fromX + (gesture.toX - gesture.fromX) * t,
+        y: gesture.fromY + (gesture.toY - gesture.fromY) * t,
+      };
+    });
+    return this.toStrokeAction({
+      type: "stroke",
+      points,
+      timeMs: gesture.timeMs,
+    });
+  }
+
   override toAction(gesture: Gesture): GameAction | null {
     if (gesture.type === "stroke") {
       return this.toStrokeAction(gesture);
+    }
+    if (gesture.type === "drop") {
+      return this.toDropAction(gesture);
     }
     if (gesture.type !== "tap") {
       return null;
@@ -384,6 +438,8 @@ export class GT013Session extends TemplateGameSession<
         y: slot.y,
         w: slot.w,
         h: slot.h,
+        hitShape: "square",
+        spokenLabel: toCellSpokenLabel(r, c, isStart, isGoal, isRequired),
         ...(side ? { glyph: ARROW_GLYPHS[side] } : {}),
       });
     }
@@ -465,8 +521,13 @@ export class GT013Session extends TemplateGameSession<
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
-    _timeMs: number
+    timeMs: number
   ): void {
+    this.lastFrameMs = timeMs;
+    if (this.blockedCell && timeMs - this.blockedTimestamp >= 400) {
+      this.blockedCell = null;
+      this.blockedTimestamp = 0;
+    }
     drawSceneBackground(ctx, rs, this.themeId);
     const box = boxFromSlots(this.slots);
     if (!box) {
@@ -474,5 +535,21 @@ export class GT013Session extends TemplateGameSession<
     }
     drawMazeBoard(ctx, this.content.grid, box, this.tracker.getPath());
     drawRequiredCells(ctx, this.content.grid, box, this.content.required_cells);
+
+    if (this.blockedCell) {
+      const idx =
+        this.blockedCell.row * this.content.grid.cols + this.blockedCell.col;
+      const slot = this.slots[idx];
+      const elapsed = timeMs - this.blockedTimestamp;
+      if (slot && elapsed < 400) {
+        rs.drawRetryRing(
+          ctx,
+          slot.x,
+          slot.y,
+          Math.min(slot.hitW, slot.hitH) / 2 + 4,
+          elapsed / 400
+        );
+      }
+    }
   }
 }

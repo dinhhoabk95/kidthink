@@ -15,13 +15,17 @@ import type {
   Gesture,
   ViewEntity,
 } from "#src/interaction";
+import { resolveAssetLabels } from "#src/labels/spoken-keyword";
 import { resolveTouchFloor } from "#src/layout/constants";
 import {
   HERO_OPTION_CELL_MAX_PX,
   heroSlot,
   splitHeroStage,
 } from "#src/layout/hero-split";
-import { findHitSlotIndex as findHitIndex } from "#src/layout/hit-test";
+import {
+  findHitSlotIndex as findHitIndex,
+  TAP_TOLERANCE_PX,
+} from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
 import { computeStageCellSlots } from "#src/layout/stage-targets";
 import type { Slot } from "#src/layout/types";
@@ -32,7 +36,7 @@ import {
   insetBox,
   type SceneBox,
   sceneBox,
-} from "#src/render/index.js";
+} from "#src/render/index";
 import type { DegradationState } from "#src/systems/degradation";
 import {
   type CubeCoord,
@@ -50,7 +54,13 @@ function findHitOptionId(
   x: number,
   y: number
 ): string | null {
-  const index = findHitIndex(slots.slice(0, options.length), x, y);
+  const index = findHitIndex(
+    slots.slice(0, options.length),
+    x,
+    y,
+    "circle",
+    TAP_TOLERANCE_PX
+  );
   return index >= 0 ? (options[index]?.option_id ?? null) : null;
 }
 
@@ -64,10 +74,12 @@ export class BlockStackSession extends TemplateGameSession<
 
   private currentRotation: RotationAngle = 0;
   private selectedOptionId: string | null = null;
+  private wrongChoiceTimerMs = 0;
 
   setupEntities(): void {
     this.currentRotation = 0;
     this.selectedOptionId = null;
+    this.wrongChoiceTimerMs = 0;
     this.isWon = false;
 
     this.recordEvent("game_started", {
@@ -135,6 +147,11 @@ export class BlockStackSession extends TemplateGameSession<
     }
 
     this.selectedOptionId = optionId;
+    if (opt.is_correct) {
+      this.wrongChoiceTimerMs = 0;
+    } else {
+      this.wrongChoiceTimerMs = 400;
+    }
 
     this.recordEvent("option_selected", {
       option_id: optionId,
@@ -158,7 +175,25 @@ export class BlockStackSession extends TemplateGameSession<
         gesture.x,
         gesture.y
       );
-      return hitId ? { type: "select_option", data: hitId } : null;
+      if (hitId) {
+        return { type: "select_option", data: hitId };
+      }
+      if (this.difficulty.allow_rotate) {
+        const targetSlot = this.slots.find((s) => s.role === "target");
+        if (
+          targetSlot &&
+          findHitIndex(
+            [targetSlot],
+            gesture.x,
+            gesture.y,
+            "square",
+            TAP_TOLERANCE_PX
+          ) >= 0
+        ) {
+          return { type: "rotate_model", data: "cw" };
+        }
+      }
+      return null;
     }
     if (gesture.type === "adjust" && this.difficulty.allow_rotate) {
       return {
@@ -171,7 +206,15 @@ export class BlockStackSession extends TemplateGameSession<
 
   override getHintTargetIndex(): number | null {
     const idx = this.content.options.findIndex((o) => o.is_correct);
-    return idx >= 0 ? idx : null;
+    if (idx < 0) {
+      return null;
+    }
+    const slot = this.sourceSlots[idx];
+    if (slot) {
+      const slotIdx = this.slots.indexOf(slot);
+      return slotIdx >= 0 ? slotIdx : idx;
+    }
+    return idx;
   }
 
   override getHintTargetForLevel(level: HintLevel): HintTarget | null {
@@ -231,12 +274,14 @@ export class BlockStackSession extends TemplateGameSession<
       entities.push({
         id: "model-view",
         slotIndex: 0,
-        role: "target",
+        role: "neutral",
         state: "idle",
         x: targetSlot.x,
         y: targetSlot.y,
         w: targetSlot.w,
         h: targetSlot.h,
+        label: "Mô hình khối lập phương",
+        spokenLabel: "Mô hình khối lập phương",
       });
     }
 
@@ -251,15 +296,17 @@ export class BlockStackSession extends TemplateGameSession<
         if (chosen) {
           state = opt.is_correct ? "correct" : "incorrect";
         }
+        const slotIndex = this.slots.indexOf(slot);
         entities.push({
           id: opt.option_id,
-          slotIndex: i + 1,
+          slotIndex: slotIndex >= 0 ? slotIndex : i + 1,
           role: "source",
           state,
           x: slot.x,
           y: slot.y,
           w: slot.w,
           h: slot.h,
+          ...resolveAssetLabels(opt.asset),
         });
       }
     });
@@ -280,9 +327,19 @@ export class BlockStackSession extends TemplateGameSession<
     return opt?.is_correct === true;
   }
 
+  update(deltaMs: number): void {
+    if (this.wrongChoiceTimerMs > 0) {
+      this.wrongChoiceTimerMs = Math.max(0, this.wrongChoiceTimerMs - deltaMs);
+      if (this.wrongChoiceTimerMs === 0) {
+        this.selectedOptionId = null;
+      }
+    }
+  }
+
   override destroy(): void {
     super.destroy();
     this.selectedOptionId = null;
+    this.wrongChoiceTimerMs = 0;
     this.currentRotation = 0;
   }
 
@@ -345,6 +402,15 @@ export class BlockStackSession extends TemplateGameSession<
         asset: opt.asset,
         state,
       });
+      if (chosen && state === "wrong") {
+        rs.drawRetryRing(
+          ctx,
+          slot.x,
+          slot.y,
+          (slot.w ?? 64) / 2,
+          1 - this.wrongChoiceTimerMs / 400
+        );
+      }
     });
   }
 

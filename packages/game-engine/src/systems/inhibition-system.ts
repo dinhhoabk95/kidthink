@@ -1,14 +1,12 @@
 /**
  * Inhibition System — quản lý các lượt kích thích Go / No-Go cho bài tập kìm chế phản xạ.
- * Spec: docs/specs/01-platform/game-template-contract.md §7.4 (BR-TGB-04, BR-TGB-05) · docs/specs/01-platform/engines/GT-026.md (BR-TGB-10) · docs/specs/01-platform/engine-spec-sheet.md (BR-TGB-08)
- * Business rules: BR-TGB-04, BR-TGB-05, BR-TGB-08, BR-TGB-10
  *
- * System này độc lập với khuôn (BR-TGB-08).
+ * System này độc lập với khuôn.
  */
 
 type StimulusKind = "go" | "nogo";
 
-export interface TrialItem<T = unknown> {
+export interface TrialItem<T = string> {
   readonly id: string;
   readonly kind: StimulusKind;
   readonly data?: T;
@@ -29,14 +27,14 @@ interface TrialResult {
   readonly isCorrect: boolean;
 }
 
-interface InhibitionSystemConfig<T = unknown> {
+interface InhibitionSystemConfig<T = string> {
   readonly trials: readonly TrialItem<T>[];
   readonly stimulusWindowMs: number;
   readonly isiMs?: number;
   readonly untimed?: boolean;
 }
 
-export class InhibitionSystem<T = unknown> {
+export class InhibitionSystem<T = string> {
   private readonly trials: readonly TrialItem<T>[];
   private readonly stimulusWindowMs: number;
   private readonly isiMs: number;

@@ -1,3 +1,7 @@
+import {
+  formatNumberWord,
+  formatSpokenLabel,
+} from "@mindkid/shared/preschool-terminology";
 import type { AgeBand } from "#src/contracts/types";
 import {
   ACTION_CORRECT,
@@ -13,12 +17,19 @@ import type {
   Gesture,
   ViewEntity,
 } from "#src/interaction";
+import { resolveAssetLabels } from "#src/labels/spoken-keyword.js";
 import { resolveTouchFloor } from "#src/layout/constants";
+import {
+  findHitSlotIndex,
+  isPointInSlot,
+  TAP_TOLERANCE_PX,
+} from "#src/layout/hit-test.js";
 import { resolveLayout } from "#src/layout/registry";
 import { insetDrawSize } from "#src/layout/slot-fit";
-import { findNearestHitSlot, pickTrayZones } from "#src/layout/tray-layout";
+import { pickTrayZones } from "#src/layout/tray-layout";
 import type { Slot } from "#src/layout/types";
 import {
+  drawMeasurementGuideBar,
   drawNumberRodAcrossSlots,
   drawSceneBackground,
   drawSlotItem,
@@ -32,8 +43,6 @@ import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT030Content, GT030Difficulty } from "./template.js";
 import { computeMeasureStageSlots } from "./zone-layout.js";
-
-const DROP_HIT_TOLERANCE_PX = 24;
 
 interface GT030ActionPayload {
   readonly option_id?: string;
@@ -63,7 +72,27 @@ export class GT030Session extends TemplateGameSession<
   selectedOptionId: string | null = null;
   isWin = false;
 
+  private lastFrameMs = 0;
+  private wrongOptionUntilMs = 0;
+  private wrongPlaceUntilMs = 0;
   private particles: Particle[] = [];
+
+  update(deltaMs: number): void {
+    this.lastFrameMs += deltaMs;
+    if (
+      this.wrongOptionUntilMs > 0 &&
+      this.lastFrameMs >= this.wrongOptionUntilMs
+    ) {
+      this.wrongOptionUntilMs = 0;
+      this.selectedOptionId = null;
+    }
+    if (
+      this.wrongPlaceUntilMs > 0 &&
+      this.lastFrameMs >= this.wrongPlaceUntilMs
+    ) {
+      this.wrongPlaceUntilMs = 0;
+    }
+  }
 
   setupEntities(): void {
     this.placedUnitsCount = 0;
@@ -83,7 +112,7 @@ export class GT030Session extends TemplateGameSession<
     }
     const targetLength = this.content.object.length_in_units;
     if (this.placedUnitsCount < targetLength) {
-      return 0;
+      return 1 + targetLength;
     }
     const correctOptIdx = this.content.answer_options.findIndex(
       (opt) => opt.is_correct
@@ -223,6 +252,8 @@ export class GT030Session extends TemplateGameSession<
       }
       this.recordEvent("game_completed", { score: 100 });
       this.winSession();
+    } else {
+      this.wrongOptionUntilMs = this.lastFrameMs + 400;
     }
   }
 
@@ -246,6 +277,8 @@ export class GT030Session extends TemplateGameSession<
           placed_count: this.placedUnitsCount,
           target_count: targetLength,
         });
+      } else {
+        this.wrongPlaceUntilMs = this.lastFrameMs + 400;
       }
       return;
     }
@@ -311,11 +344,12 @@ export class GT030Session extends TemplateGameSession<
     gesture: Extract<Gesture, { type: "tap" }>
   ): GameAction | null {
     const targets = this.tapTargets();
-    const index = findNearestHitSlot(
+    const index = findHitSlotIndex(
       targets.map((t) => t.slot),
       gesture.x,
       gesture.y,
-      DROP_HIT_TOLERANCE_PX
+      "square",
+      TAP_TOLERANCE_PX
     );
     return targets[index]?.action ?? null;
   }
@@ -328,11 +362,13 @@ export class GT030Session extends TemplateGameSession<
     if (!source) {
       return null;
     }
-    const hw = (source.hitW ?? source.w) / 2 + DROP_HIT_TOLERANCE_PX;
-    const hh = (source.hitH ?? source.h) / 2 + DROP_HIT_TOLERANCE_PX;
-    const isFromSource =
-      Math.abs(gesture.fromX - source.x) <= hw &&
-      Math.abs(gesture.fromY - source.y) <= hh;
+    const isFromSource = isPointInSlot(
+      source,
+      gesture.fromX,
+      gesture.fromY,
+      "square",
+      TAP_TOLERANCE_PX
+    );
     return isFromSource ? { type: "place_unit", data: {} } : null;
   }
 
@@ -370,35 +406,81 @@ export class GT030Session extends TemplateGameSession<
         y: slot.y,
         w: slot.w,
         h: slot.h,
+        hitShape: "square",
+        label: String(opt.value),
+        spokenLabel: formatNumberWord(opt.value),
       });
     }
     return entities;
+  }
+
+  private buildObjectEntity(): ViewEntity | null {
+    const objSlot = this.slots[0];
+    if (!objSlot) {
+      return null;
+    }
+    const objLabels = resolveAssetLabels(this.content.object.asset);
+    const objectEntityId =
+      this.content.object.object_id === this.content.unit.unit_id
+        ? `object:${this.content.object.object_id}`
+        : this.content.object.object_id;
+    return {
+      id: objectEntityId,
+      slotIndex: 0,
+      role: "neutral",
+      state: "idle",
+      x: objSlot.x,
+      y: objSlot.y,
+      w: objSlot.w,
+      h: objSlot.h,
+      hitShape: "square",
+      glyph: objLabels.glyph,
+      label: objLabels.label ?? "Vật cần đo",
+      spokenLabel: objLabels.spokenLabel ?? "vật cần đo",
+      spokenAudioPath: objLabels.spokenAudioPath,
+    };
+  }
+
+  private buildSourceUnitEntity(targetLength: number): ViewEntity | null {
+    const sourceSlot = this.slots[1 + targetLength];
+    if (!sourceSlot) {
+      return null;
+    }
+    const unitLabels = resolveAssetLabels(this.content.unit.asset);
+    return {
+      id: this.content.unit.unit_id,
+      slotIndex: 1 + targetLength,
+      role: "source",
+      state: "idle",
+      x: sourceSlot.x,
+      y: sourceSlot.y,
+      w: sourceSlot.w,
+      h: sourceSlot.h,
+      hitShape: "square",
+      glyph: unitLabels.glyph,
+      label: unitLabels.label ?? "Chạm để xếp",
+      spokenLabel: unitLabels.spokenLabel ?? "đơn vị đo",
+      spokenAudioPath: unitLabels.spokenAudioPath,
+    };
   }
 
   override getView(): EngineView {
     const targetLength = this.content.object.length_in_units;
     const entities: ViewEntity[] = [];
 
-    const objSlot = this.slots[0];
-    if (objSlot) {
-      entities.push({
-        id: this.content.object.object_id,
-        slotIndex: 0,
-        role: "neutral",
-        state: "idle",
-        x: objSlot.x,
-        y: objSlot.y,
-        w: objSlot.w,
-        h: objSlot.h,
-      });
+    const objEntity = this.buildObjectEntity();
+    if (objEntity) {
+      entities.push(objEntity);
     }
 
+    const unitLabels = resolveAssetLabels(this.content.unit.asset);
     for (let i = 0; i < targetLength; i++) {
       const slot = this.slots[1 + i];
       if (!slot) {
         continue;
       }
       const isPlaced = i < this.placedUnitsCount;
+      const numWord = formatNumberWord(i + 1);
       entities.push({
         id: `unit_slot_${i + 1}`,
         slotIndex: 1 + i,
@@ -408,21 +490,18 @@ export class GT030Session extends TemplateGameSession<
         y: slot.y,
         w: slot.w,
         h: slot.h,
+        hitShape: "square",
+        glyph: isPlaced ? unitLabels.glyph : undefined,
+        label: isPlaced ? `${i + 1}` : "?",
+        spokenLabel: isPlaced
+          ? numWord
+          : formatSpokenLabel(`ô đo số ${numWord}`),
       });
     }
 
-    const sourceSlot = this.slots[1 + targetLength];
-    if (sourceSlot) {
-      entities.push({
-        id: this.content.unit.unit_id,
-        slotIndex: 1 + targetLength,
-        role: "source",
-        state: "idle",
-        x: sourceSlot.x,
-        y: sourceSlot.y,
-        w: sourceSlot.w,
-        h: sourceSlot.h,
-      });
+    const sourceEntity = this.buildSourceUnitEntity(targetLength);
+    if (sourceEntity) {
+      entities.push(sourceEntity);
     }
 
     entities.push(...this.getOptionEntities());
@@ -446,6 +525,8 @@ export class GT030Session extends TemplateGameSession<
     if (!objectSlot) {
       return;
     }
+
+    drawMeasurementGuideBar(ctx, objectSlot);
 
     drawSlotItem(
       ctx,
@@ -538,10 +619,7 @@ export class GT030Session extends TemplateGameSession<
     }
   }
 
-  private renderTrayAndOptions(
-    ctx: CanvasRenderingContext2D,
-    rs: RenderSystem
-  ): void {
+  private renderTray(ctx: CanvasRenderingContext2D, rs: RenderSystem): void {
     const targetLength = this.content.object.length_in_units;
     drawWoodenTokenDock(
       ctx,
@@ -564,9 +642,26 @@ export class GT030Session extends TemplateGameSession<
         },
         "circle"
       );
-    }
 
-    // Answer options
+      if (this.wrongPlaceUntilMs > 0) {
+        const elapsed = 400 - (this.wrongPlaceUntilMs - this.lastFrameMs);
+        const progress = Math.min(1, Math.max(0, elapsed / 400));
+        rs.drawRetryRing(
+          ctx,
+          sourceSlot.x,
+          sourceSlot.y,
+          Math.max(sourceSlot.w, sourceSlot.h) / 2 + 4,
+          progress
+        );
+      }
+    }
+  }
+
+  private renderAnswerOptions(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem
+  ): void {
+    const targetLength = this.content.object.length_in_units;
     if (this.placedUnitsCount < targetLength) {
       return;
     }
@@ -595,6 +690,18 @@ export class GT030Session extends TemplateGameSession<
         },
         "square"
       );
+
+      if (isSelected && !opt.is_correct && this.wrongOptionUntilMs > 0) {
+        const elapsed = 400 - (this.wrongOptionUntilMs - this.lastFrameMs);
+        const progress = Math.min(1, Math.max(0, elapsed / 400));
+        rs.drawRetryRing(
+          ctx,
+          slot.x,
+          slot.y,
+          Math.max(slot.w, slot.h) / 2 + 4,
+          progress
+        );
+      }
     }
   }
 
@@ -613,8 +720,16 @@ export class GT030Session extends TemplateGameSession<
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
-    _timeMs: number
+    timeMs: number
   ): void {
+    this.lastFrameMs = timeMs;
+    if (this.wrongOptionUntilMs > 0 && timeMs >= this.wrongOptionUntilMs) {
+      this.wrongOptionUntilMs = 0;
+      this.selectedOptionId = null;
+    }
+    if (this.wrongPlaceUntilMs > 0 && timeMs >= this.wrongPlaceUntilMs) {
+      this.wrongPlaceUntilMs = 0;
+    }
     drawSceneBackground(ctx, rs, this.themeId);
     const zones = pickTrayZones(this.stageRect, this.trayRect);
     if (!zones) {
@@ -623,7 +738,8 @@ export class GT030Session extends TemplateGameSession<
 
     this.renderObject(ctx, rs);
     this.renderStripUnits(ctx, rs);
-    this.renderTrayAndOptions(ctx, rs);
+    this.renderTray(ctx, rs);
+    this.renderAnswerOptions(ctx, rs);
 
     if (this.degradation?.particles_enabled !== false) {
       this.particles = updateParticles(this.particles);

@@ -53,26 +53,26 @@ const PARTICLE_GRAVITY = 0.05;
 const PARTICLE_DECAY = 0.02;
 
 /**
- * Bước một khung hạt — trả mảng MỚI, ❌ NEVER sửa hạt tại chỗ.
- *
- * Bản trước cộng dồn thẳng vào `p.x`/`p.life` rồi mới lọc, nên cùng một mảng bị
- * chia sẻ giữa `renderParticles` của session và bất kỳ ai còn giữ tham chiếu —
- * replay và snapshot test đọc phải trạng thái đã trôi.
+ * Bước một khung hạt — cập nhật tại chỗ và dồn mảng để tránh cấp phát mới mỗi khung hình (zero-allocation).
  */
-export function updateParticles(particles: readonly Particle[]): Particle[] {
-  const next: Particle[] = [];
-  for (const p of particles) {
-    const life = p.life - PARTICLE_DECAY;
-    if (life <= 0) {
-      continue;
-    }
-    next.push({
-      ...p,
-      x: p.x + p.vx,
-      y: p.y + p.vy,
-      vy: p.vy + PARTICLE_GRAVITY,
-      life,
-    });
+export function updateParticles(
+  particles: Particle[],
+  _dtSec?: number
+): Particle[] {
+  if (particles.length === 0) {
+    return particles;
   }
-  return next;
+  let writeIndex = 0;
+  for (const p of particles) {
+    p.life -= PARTICLE_DECAY;
+    if (p.life > 0) {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += PARTICLE_GRAVITY;
+      particles[writeIndex] = p;
+      writeIndex++;
+    }
+  }
+  particles.length = writeIndex;
+  return particles;
 }

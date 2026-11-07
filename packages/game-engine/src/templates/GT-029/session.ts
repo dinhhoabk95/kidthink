@@ -13,12 +13,15 @@ import type {
   Gesture,
   ViewEntity,
 } from "#src/interaction";
+import { resolveAssetLabels } from "#src/labels/spoken-keyword";
 import { resolveTouchFloor } from "#src/layout/constants";
+import { isPointInSlot, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
 import {
   dockRectAroundSlots,
   insetDrawSize,
   legacyStageArea,
+  splitCaption,
 } from "#src/layout/slot-fit";
 import type { Slot } from "#src/layout/types";
 import {
@@ -57,7 +60,29 @@ export class GT029Session extends TemplateGameSession<
   selectedOptionId: string | null = null;
   isWin = false;
 
+  private lastFrameMs = 0;
+  private wrongOptionUntilMs = 0;
+  private wrongItemId: string | null = null;
+  private wrongItemUntilMs = 0;
   private particles: Particle[] = [];
+
+  update(deltaMs: number): void {
+    this.lastFrameMs += deltaMs;
+    if (
+      this.wrongOptionUntilMs > 0 &&
+      this.lastFrameMs >= this.wrongOptionUntilMs
+    ) {
+      this.wrongOptionUntilMs = 0;
+      this.selectedOptionId = null;
+    }
+    if (
+      this.wrongItemUntilMs > 0 &&
+      this.lastFrameMs >= this.wrongItemUntilMs
+    ) {
+      this.wrongItemUntilMs = 0;
+      this.wrongItemId = null;
+    }
+  }
 
   setupEntities(): void {
     this.removedItemIds.clear();
@@ -151,6 +176,8 @@ export class GT029Session extends TemplateGameSession<
     }
 
     if (this.removedItemIds.size >= this.content.remove_count) {
+      this.wrongItemId = itemId;
+      this.wrongItemUntilMs = this.lastFrameMs + 400;
       return ACTION_RETRY;
     }
 
@@ -204,6 +231,7 @@ export class GT029Session extends TemplateGameSession<
       return ACTION_CORRECT;
     }
 
+    this.wrongOptionUntilMs = this.lastFrameMs + 400;
     return ACTION_RETRY;
   }
 
@@ -283,7 +311,6 @@ export class GT029Session extends TemplateGameSession<
     if (this.removedItemIds.size < this.content.remove_count) {
       return null;
     }
-    const hitTolerance = 24;
     const totalItems = this.content.initial_items.length;
     for (let i = 0; i < this.content.answer_options.length; i++) {
       const slot = this.slots[totalItems + i];
@@ -291,11 +318,8 @@ export class GT029Session extends TemplateGameSession<
       if (!(slot && opt)) {
         continue;
       }
-      const hw = (slot.hitW ?? slot.w) / 2 + hitTolerance;
-      const hh = (slot.hitH ?? slot.h) / 2 + hitTolerance;
       if (
-        Math.abs(gesture.x - slot.x) <= hw &&
-        Math.abs(gesture.y - slot.y) <= hh
+        isPointInSlot(slot, gesture.x, gesture.y, "square", TAP_TOLERANCE_PX)
       ) {
         return {
           type: "select_option",
@@ -309,7 +333,6 @@ export class GT029Session extends TemplateGameSession<
   private findTappedItem(
     gesture: Extract<Gesture, { type: "tap" }>
   ): GameAction | null {
-    const hitTolerance = 24;
     const totalItems = this.content.initial_items.length;
     for (let i = 0; i < totalItems; i++) {
       const slot = this.slots[i];
@@ -317,11 +340,8 @@ export class GT029Session extends TemplateGameSession<
       if (!(slot && item)) {
         continue;
       }
-      const hw = (slot.hitW ?? slot.w) / 2 + hitTolerance;
-      const hh = (slot.hitH ?? slot.h) / 2 + hitTolerance;
       if (
-        Math.abs(gesture.x - slot.x) <= hw &&
-        Math.abs(gesture.y - slot.y) <= hh
+        isPointInSlot(slot, gesture.x, gesture.y, "circle", TAP_TOLERANCE_PX)
       ) {
         return {
           type: "remove_item",
@@ -335,7 +355,6 @@ export class GT029Session extends TemplateGameSession<
   private findDroppedItem(
     gesture: Extract<Gesture, { type: "drop" }>
   ): GameAction | null {
-    const hitTolerance = 24;
     const itemCount = this.content.initial_items.length;
     for (let i = 0; i < itemCount; i++) {
       const slot = this.slots[i];
@@ -343,11 +362,14 @@ export class GT029Session extends TemplateGameSession<
       if (!(slot && item)) {
         continue;
       }
-      const hw = (slot.hitW ?? slot.w) / 2 + hitTolerance;
-      const hh = (slot.hitH ?? slot.h) / 2 + hitTolerance;
       if (
-        Math.abs(gesture.fromX - slot.x) <= hw &&
-        Math.abs(gesture.fromY - slot.y) <= hh
+        isPointInSlot(
+          slot,
+          gesture.fromX,
+          gesture.fromY,
+          "circle",
+          TAP_TOLERANCE_PX
+        )
       ) {
         const dragDist = Math.hypot(gesture.toX - slot.x, gesture.toY - slot.y);
         if (dragDist <= slot.w / 2) {
@@ -416,6 +438,7 @@ export class GT029Session extends TemplateGameSession<
         y: slot.y,
         w: slot.w,
         h: slot.h,
+        ...resolveAssetLabels(it.asset),
       });
     }
     return entities;
@@ -448,6 +471,8 @@ export class GT029Session extends TemplateGameSession<
         y: slot.y,
         w: slot.w,
         h: slot.h,
+        hitShape: "square",
+        ...resolveAssetLabels({ kind: "text", text: String(opt.value) }),
       });
     }
     return entities;
@@ -497,9 +522,7 @@ export class GT029Session extends TemplateGameSession<
   }
 
   private renderOptions(ctx: CanvasRenderingContext2D, rs: RenderSystem): void {
-    if (this.removedItemIds.size < this.content.remove_count) {
-      return;
-    }
+    const isReady = this.removedItemIds.size >= this.content.remove_count;
 
     drawWoodenTokenDock(
       ctx,
@@ -514,6 +537,24 @@ export class GT029Session extends TemplateGameSession<
       const opt = this.content.answer_options[i];
       const slot = this.slots[this.content.initial_items.length + i];
       if (!(opt && slot)) {
+        continue;
+      }
+
+      if (!isReady) {
+        ctx.save();
+        ctx.globalAlpha = 0.6;
+        drawSlotItem(
+          ctx,
+          rs,
+          slot,
+          {
+            id: opt.option_id,
+            text: String(opt.value),
+            state: "locked",
+          },
+          "square"
+        );
+        ctx.restore();
         continue;
       }
 
@@ -534,27 +575,70 @@ export class GT029Session extends TemplateGameSession<
         },
         "square"
       );
+
+      if (isSelected && !opt.is_correct && this.wrongOptionUntilMs > 0) {
+        const elapsed = 400 - (this.wrongOptionUntilMs - this.lastFrameMs);
+        const progress = Math.min(1, Math.max(0, elapsed / 400));
+        rs.drawRetryRing(
+          ctx,
+          slot.x,
+          slot.y,
+          Math.max(slot.w, slot.h) / 2 + 4,
+          progress
+        );
+      }
     }
   }
 
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
-    _timeMs: number
+    timeMs: number
   ): void {
+    this.lastFrameMs = timeMs;
+    if (this.wrongOptionUntilMs > 0 && timeMs >= this.wrongOptionUntilMs) {
+      this.wrongOptionUntilMs = 0;
+      this.selectedOptionId = null;
+    }
+    if (this.wrongItemUntilMs > 0 && timeMs >= this.wrongItemUntilMs) {
+      this.wrongItemUntilMs = 0;
+      this.wrongItemId = null;
+    }
     drawSceneBackground(ctx, rs, this.themeId);
 
-    if (!this.stageRect) {
-      const removedCount = this.removedItemIds.size;
-      const targetRemove = this.content.remove_count;
-      const subPrompt =
-        removedCount < targetRemove
-          ? `Đã bớt: ${removedCount}/${targetRemove}`
-          : "Đã bớt đủ! Nhóm ban đầu còn lại bao nhiêu?";
-      drawSubPromptText(ctx, rs, subPrompt);
-    }
+    const removedCount = this.removedItemIds.size;
+    const targetRemove = this.content.remove_count;
+    const subPrompt =
+      removedCount < targetRemove
+        ? `Đã bớt: ${removedCount}/${targetRemove}`
+        : "Đã bớt đủ! Nhóm ban đầu còn lại bao nhiêu?";
+    drawSubPromptText(
+      ctx,
+      rs,
+      subPrompt,
+      this.stageRect ? splitCaption(this.stageRect).caption : undefined
+    );
 
     this.renderItems(ctx, rs);
+
+    if (this.wrongItemUntilMs > timeMs && this.wrongItemId) {
+      const itemIdx = this.content.initial_items.findIndex(
+        (it) => it.item_id === this.wrongItemId
+      );
+      const slot = this.slots[itemIdx];
+      if (slot) {
+        const elapsed = 400 - (this.wrongItemUntilMs - timeMs);
+        const progress = Math.min(1, Math.max(0, elapsed / 400));
+        rs.drawRetryRing(
+          ctx,
+          slot.x,
+          slot.y,
+          Math.max(slot.w, slot.h) / 2 + 4,
+          progress
+        );
+      }
+    }
+
     this.renderOptions(ctx, rs);
 
     if (this.degradation?.particles_enabled !== false) {

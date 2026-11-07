@@ -26,11 +26,17 @@ import {
   FIXTURES_BY_CODE,
   type FixturePayload,
   type FixtureRecord,
-} from "../fixtures-map.js";
+} from "#tests/fixtures-map";
 
 const FIXTURES_MAP = FIXTURES_BY_CODE;
 
-function isFixturePayload(val: unknown): val is FixturePayload {
+function isFixturePayload(
+  val:
+    | FixturePayload
+    | Record<string, object | string | number | boolean | null | undefined>
+    | null
+    | undefined
+): val is FixturePayload {
   return typeof val === "object" && val !== null;
 }
 
@@ -51,6 +57,34 @@ interface SessionWithSlots {
   resolveSlots?: (band: "3-4" | "4-5" | "5-6") => void;
   setupEntities: () => void;
   destroy: () => void;
+  isWon?: boolean;
+}
+
+function asSessionWithSlots(s: {
+  setupEntities: () => void;
+  destroy: () => void;
+}): SessionWithSlots {
+  const candidate = s as {
+    slots?: readonly SlotLike[];
+    resolveSlots?: (band: "3-4" | "4-5" | "5-6") => void;
+    setupEntities: () => void;
+    destroy: () => void;
+    isWon?: boolean;
+  };
+  return {
+    get slots() {
+      return candidate.slots ?? [];
+    },
+    resolveSlots: candidate.resolveSlots?.bind(candidate),
+    setupEntities: () => candidate.setupEntities(),
+    destroy: () => candidate.destroy(),
+    get isWon() {
+      return candidate.isWon;
+    },
+    set isWon(val: boolean | undefined) {
+      candidate.isWon = val;
+    },
+  };
 }
 
 function makeConfig(
@@ -118,17 +152,18 @@ describe("Gate #211 — Round lifecycle: vòng hai phải chơi được", () =>
         runner.startFirstRound();
 
         // Force win on round 1 to advance
-        const session1 = runner.getCurrentSession() as SessionWithSlots | null;
+        const session1 = runner.getCurrentSession();
         if (session1) {
           // Mark as won by manipulating isWon directly
-          (session1 as unknown as { isWon: boolean }).isWon = true;
+          asSessionWithSlots(session1).isWon = true;
         }
         runner.completeCurrentRound();
 
         // Now on round 2
-        const session2 = runner.getCurrentSession() as SessionWithSlots | null;
-        expect(session2).not.toBeNull();
-        if (session2) {
+        const rawSession2 = runner.getCurrentSession();
+        expect(rawSession2).not.toBeNull();
+        if (rawSession2) {
+          const session2 = asSessionWithSlots(rawSession2);
           expect(session2.slots.length).toBeGreaterThan(0);
         }
       });
@@ -160,20 +195,20 @@ describe("Gate #211 — Round lifecycle: vòng hai phải chơi được", () =>
         });
 
         runner.startFirstRound();
-        const session1 = runner.getCurrentSession() as SessionWithSlots | null;
+        const session1 = runner.getCurrentSession();
         if (session1) {
-          (session1 as unknown as { isWon: boolean }).isWon = true;
+          asSessionWithSlots(session1).isWon = true;
         }
         runner.completeCurrentRound();
 
-        const session2 = runner.getCurrentSession() as SessionWithSlots | null;
+        const rawSession2 = runner.getCurrentSession();
+        const session2 = rawSession2 ? asSessionWithSlots(rawSession2) : null;
 
         // Build a fresh session to compare
         const freshCfg = makeConfig(code, fixture);
-        const freshSession = createGameSessionSync(
-          code,
-          freshCfg
-        ) as unknown as SessionWithSlots;
+        const freshSession = asSessionWithSlots(
+          createGameSessionSync(code, freshCfg)
+        );
         freshSession.setupEntities();
         if (typeof freshSession.resolveSlots === "function") {
           freshSession.resolveSlots("4-5");
@@ -189,10 +224,7 @@ describe("Gate #211 — Round lifecycle: vòng hai phải chơi được", () =>
       it("(iv) band 3-4 slots meet touch floor", () => {
         const touchFloor = getTouchFloor("3-4");
         const cfg = makeConfig(code, fixture, "3-4");
-        const session = createGameSessionSync(
-          code,
-          cfg
-        ) as unknown as SessionWithSlots;
+        const session = asSessionWithSlots(createGameSessionSync(code, cfg));
         session.setupEntities();
         if (typeof session.resolveSlots === "function") {
           session.resolveSlots("3-4");

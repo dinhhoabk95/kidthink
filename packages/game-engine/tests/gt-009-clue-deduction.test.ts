@@ -259,3 +259,131 @@ describe("GT-009 — ba bậc gợi ý (điều kiện nghiệm thu 15)", () => 
     expect(hint?.eliminates).toEqual([]);
   });
 });
+
+describe("GT-009 — Montessori 2-Phase Explore & Control of Error", () => {
+  it("chuyển pha Explore -> Challenge sau 2 thao tác lật manh mối", () => {
+    const session = newSession(1);
+    session.startExplorePhase();
+    expect(session.getExploreTracker().getPhase()).toBe("explore");
+
+    session.onClueRevealed("k1");
+    expect(session.getExploreTracker().getPhase()).toBe("explore");
+    expect(session.getExploreTracker().getExploreActionsCount()).toBe(1);
+
+    session.onClueRevealed("k2");
+    expect(session.getExploreTracker().getPhase()).toBe("challenge");
+    expect(session.getExploreTracker().getExploreActionsCount()).toBe(2);
+  });
+
+  it("findViolatedClueForCandidate trả về manh mối đầu tiên loại ứng viên sai và tự lật manh mối khi vào Micro-Sandbox", () => {
+    const session = newSession(1);
+
+    const violatedForC5 = session.findViolatedClueForCandidate("c5");
+    expect(violatedForC5?.clue_id).toBe("k1");
+    expect(session.findViolatedClueForCandidate("c4")).toBeNull();
+
+    // Lần chọn sai 1 (chưa lật manh mối k1)
+    session.onCandidateSelected("c5");
+    expect(session.isMicroSandboxActive()).toBe(false);
+    expect(session.getControlOfError()?.reasonVi).toBe(
+      "Chưa khớp manh mối: Số này bé hơn 5"
+    );
+    expect(session.getControlOfError()?.targetId).toBe("k1");
+    expect(session.getRevealedClueIds()).toEqual([]);
+
+    // Lần chọn sai 2 liên tiếp -> kích hoạt Micro-Sandbox + tự động lật manh mối k1 và gạch c5, c6
+    session.onCandidateSelected("c6");
+    expect(session.isMicroSandboxActive()).toBe(true);
+    expect(session.getRevealedClueIds()).toContain("k1");
+    expect([...session.getEliminatedIds()].sort()).toEqual(["c5", "c6"]);
+
+    // Chọn đúng -> thoát Micro-Sandbox và xoá chẩn đoán lỗi
+    session.onCandidateSelected("c4");
+    expect(session.isMicroSandboxActive()).toBe(false);
+    expect(session.getControlOfError()).toBeNull();
+    expect(session.checkWinCondition()).toBe(true);
+  });
+});
+
+describe("GT-009 — loại trừ theo thuộc tính phi số (has_attribute / not_attribute)", () => {
+  const ATTRIBUTE_PACK = {
+    prompt: "Lật manh mối để tìm con vật bí ẩn nhé!",
+    candidates: [
+      {
+        candidate_id: "cat",
+        value: 1,
+        asset: { kind: "emoji" as const, ref: "🐱" },
+        attributes: { habitat: "land", diet: "meat", legs: "4" },
+      },
+      {
+        candidate_id: "rabbit",
+        value: 2,
+        asset: { kind: "emoji" as const, ref: "🐰" },
+        attributes: { habitat: "land", diet: "plant", legs: "4" },
+      },
+      {
+        candidate_id: "duck",
+        value: 3,
+        asset: { kind: "emoji" as const, ref: "🦆" },
+        attributes: { habitat: "water", diet: "plant", legs: "2" },
+      },
+      {
+        candidate_id: "fish",
+        value: 4,
+        asset: { kind: "emoji" as const, ref: "🐟" },
+        attributes: { habitat: "water", diet: "meat", legs: "0" },
+      },
+    ],
+    clues: [
+      {
+        clue_id: "attr-1",
+        text: "Sống trên cạn",
+        predicate: {
+          kind: "has_attribute" as const,
+          key: "habitat",
+          attr_value: "land",
+        },
+      },
+      {
+        clue_id: "attr-2",
+        text: "Không ăn thịt",
+        predicate: {
+          kind: "not_attribute" as const,
+          key: "diet",
+          attr_value: "meat",
+        },
+      },
+    ],
+    answer_candidate_id: "rabbit",
+  };
+
+  it("schema chấp nhận manh mối thuộc tính khi thu hẹp về đúng 1 ứng viên và từ chối khi còn > 1 ứng viên", () => {
+    expect(GT009ContentSchema.safeParse(ATTRIBUTE_PACK).success).toBe(true);
+    const ambiguous = {
+      ...ATTRIBUTE_PACK,
+      clues: ATTRIBUTE_PACK.clues.slice(0, 1),
+    };
+    expect(GT009ContentSchema.safeParse(ambiguous).success).toBe(false);
+  });
+
+  it("phiên chơi loại trừ dần theo thuộc tính và chốt đúng ứng viên duy nhất", () => {
+    const parsed = GT009ContentSchema.parse(ATTRIBUTE_PACK);
+    const session = new GT009Session(parsed, FIRST.difficulty);
+    session.setupEntities();
+
+    session.onClueRevealed("attr-1");
+    expect(session.getSurvivingIds()).toEqual(["cat", "rabbit"]);
+    expect([...session.getEliminatedIds()].sort()).toEqual(["duck", "fish"]);
+
+    session.onClueRevealed("attr-2");
+    expect(session.getSurvivingIds()).toEqual(["rabbit"]);
+    expect([...session.getEliminatedIds()].sort()).toEqual([
+      "cat",
+      "duck",
+      "fish",
+    ]);
+
+    session.onCandidateSelected("rabbit");
+    expect(session.checkWinCondition()).toBe(true);
+  });
+});

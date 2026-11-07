@@ -13,6 +13,31 @@ import {
   drawScenicStars,
 } from "./scene-decor.js";
 
+const NATURE_WILDFLOWER_DOTS: readonly [number, number, string][] = [
+  [80, 495, alpha(designTokens.colors.semantic.warning[300], 0.5)],
+  [220, 480, alpha(designTokens.colors.surface[0], 0.6)],
+  [450, 505, alpha(designTokens.colors.cta[400], 0.5)],
+  [720, 475, alpha(designTokens.colors.semantic.warning[300], 0.5)],
+  [880, 490, alpha(designTokens.colors.surface[0], 0.6)],
+];
+
+const SPACE_STARS: readonly [number, number, number][] = [
+  [240, 60, 3],
+  [350, 110, 2],
+  [490, 70, 3],
+  [630, 130, 2],
+  [720, 60, 3],
+  [180, 180, 2],
+  [880, 180, 2],
+  [320, 230, 3],
+  [680, 220, 2],
+  [140, 380, 3],
+  [840, 360, 3],
+];
+
+const VEHICLE_DASH_PATTERN: number[] = [16, 12];
+const EMPTY_LINE_DASH: number[] = [];
+
 export function drawNatureScene(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
@@ -66,13 +91,7 @@ export function drawNatureScene(
   ctx.fill();
 
   // Wildflower dots
-  drawScenicFlowerDots(ctx, [
-    [80, 495, alpha(designTokens.colors.semantic.warning[300], 0.5)],
-    [220, 480, alpha(designTokens.colors.surface[0], 0.6)],
-    [450, 505, alpha(designTokens.colors.cta[400], 0.5)],
-    [720, 475, alpha(designTokens.colors.semantic.warning[300], 0.5)],
-    [880, 490, alpha(designTokens.colors.surface[0], 0.6)],
-  ]);
+  drawScenicFlowerDots(ctx, NATURE_WILDFLOWER_DOTS);
 }
 
 export function drawFarmScene(
@@ -194,7 +213,7 @@ export function drawOceanScene(
   ctx.fill();
 
   // Coral silhouettes at corners
-  ctx.fillStyle = alpha(designTokens.colors.semantic.danger[400], 0.28);
+  ctx.fillStyle = alpha(designTokens.colors.montessori.coral, 0.28);
   ctx.beginPath();
   ctx.arc(60, 490, 24, 0, Math.PI * 2);
   ctx.arc(80, 480, 18, 0, Math.PI * 2);
@@ -228,9 +247,9 @@ export function drawSpaceScene(
   );
   if (!spaceGrad) {
     spaceGrad = ctx.createLinearGradient(0, 0, 0, h);
-    spaceGrad.addColorStop(0, designTokens.colors.scene.night[950]);
-    spaceGrad.addColorStop(0.5, designTokens.colors.scene.night[900]);
-    spaceGrad.addColorStop(1, designTokens.colors.scene.night[800]);
+    spaceGrad.addColorStop(0, designTokens.colors.scene.sky[100]);
+    spaceGrad.addColorStop(0.5, designTokens.colors.scene.sky[200]);
+    spaceGrad.addColorStop(1, designTokens.colors.scene.sky[300]);
     setCachedGradient(
       ctx,
       rs.paintGeneration,
@@ -264,22 +283,10 @@ export function drawSpaceScene(
   ctx.stroke();
 
   // Stars
-  drawScenicStars(ctx, [
-    [240, 60, 3],
-    [350, 110, 2],
-    [490, 70, 3],
-    [630, 130, 2],
-    [720, 60, 3],
-    [180, 180, 2],
-    [880, 180, 2],
-    [320, 230, 3],
-    [680, 220, 2],
-    [140, 380, 3],
-    [840, 360, 3],
-  ]);
+  drawScenicStars(ctx, SPACE_STARS);
 
   // Cosmic horizon crest
-  ctx.fillStyle = alpha(designTokens.colors.scene.night[800], 0.45);
+  ctx.fillStyle = alpha(designTokens.colors.scene.sky[400], 0.45);
   ctx.beginPath();
   ctx.moveTo(0, 490);
   ctx.bezierCurveTo(320, 460, 640, 510, w, 480);
@@ -388,12 +395,12 @@ export function drawVehicleScene(
   // Road dash line
   ctx.strokeStyle = alpha(designTokens.colors.surface[0], 0.45);
   ctx.lineWidth = 3;
-  ctx.setLineDash([16, 12]);
+  ctx.setLineDash(VEHICLE_DASH_PATTERN);
   ctx.beginPath();
   ctx.moveTo(0, 510);
   ctx.bezierCurveTo(340, 490, 620, 540, w, 505);
   ctx.stroke();
-  ctx.setLineDash([]);
+  ctx.setLineDash(EMPTY_LINE_DASH);
 }
 
 export function drawWeatherScene(
@@ -426,7 +433,7 @@ export function drawWeatherScene(
 
   // Rainbow arc
   ctx.lineWidth = 14;
-  ctx.strokeStyle = alpha(designTokens.colors.semantic.danger[400], 0.12);
+  ctx.strokeStyle = alpha(designTokens.colors.montessori.coral, 0.12);
   ctx.beginPath();
   ctx.arc(480, 540, 420, Math.PI, 0);
   ctx.stroke();

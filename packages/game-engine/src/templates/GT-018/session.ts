@@ -14,7 +14,11 @@ import type {
   Gesture,
   ViewEntity,
 } from "#src/interaction";
-import { findHitSlotIndex as findHitIndex } from "#src/layout/hit-test";
+import { resolveAssetLabels } from "#src/labels/spoken-keyword";
+import {
+  findHitSlotIndex as findHitIndex,
+  TAP_TOLERANCE_PX,
+} from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
 import {
   dockRectAroundSlots,
@@ -32,10 +36,10 @@ import {
   drawSlotItem,
   drawSubPromptText,
   drawWoodenTokenDock,
-} from "#src/render/index.js";
+} from "#src/render/index";
 import type { DegradationState } from "#src/systems/degradation";
 import type { RenderSystem } from "#src/systems/render-system";
-import type { GT018Content, GT018Difficulty } from "./template.js";
+import type { GT018Content, GT018Difficulty } from "./template";
 
 /** Cạnh vuông của máy hát (logic px). */
 const GRAMOPHONE_SIZE_PX = 130;
@@ -46,7 +50,13 @@ function findHitOptionId(
   x: number,
   y: number
 ): string | null {
-  const index = findHitIndex(slots.slice(0, options.length), x, y);
+  const index = findHitIndex(
+    slots.slice(0, options.length),
+    x,
+    y,
+    "circle",
+    TAP_TOLERANCE_PX
+  );
   return index >= 0 ? (options[index]?.item_id ?? null) : null;
 }
 
@@ -61,6 +71,10 @@ export class GT018Session extends TemplateGameSession<
   });
   private readonly orderingMechanic = new OrderingMechanic();
   selectedItemId: string | null = null;
+  private wrongTimerMs = 0;
+  private wrongItemId: string | null = null;
+  private isSequenceWrong = false;
+  private stagedStepIndex: number | null = null;
 
   override readonly usesPromptZone = true;
 
@@ -83,6 +97,10 @@ export class GT018Session extends TemplateGameSession<
   setupEntities(): void {
     this.isWon = false;
     this.selectedItemId = null;
+    this.wrongTimerMs = 0;
+    this.wrongItemId = null;
+    this.isSequenceWrong = false;
+    this.stagedStepIndex = null;
     this.selectionMechanic.reset();
 
     if (this.content.response_mode === "sequence") {
@@ -139,11 +157,16 @@ export class GT018Session extends TemplateGameSession<
     });
 
     if (isCorrect) {
+      this.wrongTimerMs = 0;
+      this.wrongItemId = null;
       this.recordEvent("round_completed", { round_index: 0 });
       this.winSession();
       return ACTION_CORRECT;
     }
 
+    this.wrongTimerMs = 400;
+    this.wrongItemId = itemId;
+    this.setRenderItemState(itemId, "wrong");
     return ACTION_RETRY;
   }
 
@@ -167,12 +190,55 @@ export class GT018Session extends TemplateGameSession<
     });
 
     if (isMatch) {
+      this.wrongTimerMs = 0;
+      this.isSequenceWrong = false;
       this.recordEvent("round_completed", { round_index: 0 });
       this.winSession();
       return ACTION_CORRECT;
     }
 
+    this.wrongTimerMs = 400;
+    this.isSequenceWrong = true;
+    for (const opt of this.content.options) {
+      this.setRenderItemState(opt.item_id, "wrong");
+    }
     return ACTION_RETRY;
+  }
+
+  private clearWrongState(): void {
+    if (this.wrongItemId) {
+      this.setRenderItemState(this.wrongItemId, "idle");
+      this.selectionMechanic.reset();
+      if (this.selectedItemId === this.wrongItemId) {
+        this.selectedItemId = null;
+      }
+      this.wrongItemId = null;
+    }
+    if (this.isSequenceWrong) {
+      for (const opt of this.content.options) {
+        this.setRenderItemState(opt.item_id, "idle");
+      }
+      this.isSequenceWrong = false;
+    }
+  }
+
+  update(deltaMs: number): void {
+    if (this.wrongTimerMs <= 0) {
+      return;
+    }
+    this.wrongTimerMs = Math.max(0, this.wrongTimerMs - deltaMs);
+    if (this.wrongTimerMs === 0) {
+      this.clearWrongState();
+    }
+  }
+
+  override destroy(): void {
+    super.destroy();
+    this.selectedItemId = null;
+    this.wrongItemId = null;
+    this.wrongTimerMs = 0;
+    this.isSequenceWrong = false;
+    this.stagedStepIndex = null;
   }
 
   override checkWinCondition(): boolean {
@@ -187,7 +253,64 @@ export class GT018Session extends TemplateGameSession<
     return this.selectionMechanic.isSelectionComplete(items);
   }
 
+  private toSequenceAction(gesture: Gesture): GameAction | null {
+    if (gesture.type === "drop") {
+      const fromIdx = findHitIndex(
+        this.slots,
+        gesture.fromX,
+        gesture.fromY,
+        "square",
+        TAP_TOLERANCE_PX
+      );
+      const toIdx = findHitIndex(
+        this.slots,
+        gesture.toX,
+        gesture.toY,
+        "square",
+        TAP_TOLERANCE_PX
+      );
+      if (fromIdx >= 0 && toIdx >= 0 && fromIdx !== toIdx) {
+        return {
+          type: "reorder_step",
+          data: { from_index: fromIdx, to_index: toIdx },
+        };
+      }
+    }
+    if (gesture.type === "tap") {
+      const hitIdx = findHitIndex(
+        this.slots,
+        gesture.x,
+        gesture.y,
+        "square",
+        TAP_TOLERANCE_PX
+      );
+      if (hitIdx >= 0) {
+        if (this.stagedStepIndex === null) {
+          this.stagedStepIndex = hitIdx;
+          return null;
+        }
+        if (this.stagedStepIndex !== hitIdx) {
+          const from = this.stagedStepIndex;
+          this.stagedStepIndex = null;
+          return {
+            type: "reorder_step",
+            data: { from_index: from, to_index: hitIdx },
+          };
+        }
+        this.stagedStepIndex = null;
+        return null;
+      }
+    }
+    if (gesture.type === "commit") {
+      return { type: "submit_order", data: null };
+    }
+    return null;
+  }
+
   override toAction(gesture: Gesture): GameAction | null {
+    if (this.content.response_mode === "sequence") {
+      return this.toSequenceAction(gesture);
+    }
     if (gesture.type === "tap") {
       const hitId = findHitOptionId(
         this.slots,
@@ -198,12 +321,6 @@ export class GT018Session extends TemplateGameSession<
       if (hitId) {
         return { type: "tap_option", data: { item_id: hitId } };
       }
-    }
-    if (
-      gesture.type === "commit" &&
-      this.content.response_mode === "sequence"
-    ) {
-      return { type: "submit_order", data: null };
     }
     return null;
   }
@@ -218,22 +335,56 @@ export class GT018Session extends TemplateGameSession<
 
   override getHintTarget(): HintTarget | null {
     if (this.content.response_mode === "sequence") {
+      if (this.slots.length === 0) {
+        return { kind: "action" };
+      }
+      const targetSeq = (this.content.target_sequence ?? []).map(String);
+      if (this.orderingMechanic.isSequenceCorrect(targetSeq)) {
+        return { kind: "action" };
+      }
+      const current = this.orderingMechanic.getCurrentSequence();
+      for (let i = 0; i < current.length; i++) {
+        if (current[i] !== targetSeq[i]) {
+          return { kind: "slot", index: i };
+        }
+      }
       return { kind: "action" };
     }
     return super.getHintTarget();
   }
 
+  private commitReorder(data: GameAction["data"]): void {
+    this.stagedStepIndex = null;
+    if (typeof data !== "object" || data === null) {
+      return;
+    }
+    const from = Number(Reflect.get(data, "from_index"));
+    const to = Number(Reflect.get(data, "to_index"));
+    if (!(Number.isNaN(from) || Number.isNaN(to))) {
+      this.onReorderStep(from, to);
+    }
+  }
+
+  private commitItemSelect(data: GameAction["data"]): void {
+    if (typeof data !== "object" || data === null) {
+      return;
+    }
+    const itemId = Reflect.get(data, "item_id");
+    if (typeof itemId === "string") {
+      this.onItemSelect(itemId);
+    }
+  }
+
   override commit(action: GameAction): void {
+    if (action.type === "reorder_step") {
+      this.commitReorder(action.data);
+      return;
+    }
     if (action.type === "tap_option" || action.type === "select_item") {
-      const data = action.data;
-      const itemId =
-        typeof data === "object" && data !== null
-          ? Reflect.get(data, "item_id")
-          : undefined;
-      if (typeof itemId === "string") {
-        this.onItemSelect(itemId);
-      }
-    } else if (
+      this.commitItemSelect(action.data);
+      return;
+    }
+    if (
       action.type === "submit_order" ||
       action.type === "sequence_submitted"
     ) {
@@ -260,8 +411,35 @@ export class GT018Session extends TemplateGameSession<
         y: slot?.y ?? 0,
         w: slot?.w ?? 80,
         h: slot?.h ?? 80,
+        ...resolveAssetLabels(opt.asset),
       };
     });
+
+    const showCaption =
+      !this.stageRect ||
+      this.content.audio_prompt.text.trim() !== this.content.prompt.trim();
+    const figure = this.stageRect
+      ? splitFigure(
+          showCaption ? splitCaption(this.stageRect).body : this.stageRect,
+          GRAMOPHONE_SIZE_PX
+        ).figure
+      : null;
+    const size = figure
+      ? Math.min(GRAMOPHONE_SIZE_PX, figure.w, figure.h)
+      : GRAMOPHONE_SIZE_PX;
+    entities.push({
+      id: "gramophone",
+      slotIndex: -1,
+      role: "neutral",
+      state: "idle",
+      x: figure ? figure.x + figure.w / 2 : this.logicSpace.w / 2,
+      y: figure ? figure.y + figure.h / 2 : this.logicSpace.h * 0.32,
+      w: size,
+      h: size,
+      label: "Máy phát âm",
+      spokenLabel: this.content.audio_prompt.text,
+    });
+
     return {
       activePrompt: this.content.prompt,
       entities,
@@ -284,13 +462,22 @@ export class GT018Session extends TemplateGameSession<
 
   /** Stage trừ dải nhãn và máy hát: phần còn lại cho dock phương án. */
   private optionsArea(stage: ZoneRect): ZoneRect {
-    return splitFigure(splitCaption(stage).body, GRAMOPHONE_SIZE_PX).rest;
+    const showCaption =
+      !this.stageRect ||
+      this.content.audio_prompt.text.trim() !== this.content.prompt.trim();
+    const body = showCaption ? splitCaption(stage).body : stage;
+    return splitFigure(body, GRAMOPHONE_SIZE_PX).rest;
   }
 
   private gramophoneSlot(rs: RenderSystem): Slot {
+    const showCaption =
+      !this.stageRect ||
+      this.content.audio_prompt.text.trim() !== this.content.prompt.trim();
     const figure = this.stageRect
-      ? splitFigure(splitCaption(this.stageRect).body, GRAMOPHONE_SIZE_PX)
-          .figure
+      ? splitFigure(
+          showCaption ? splitCaption(this.stageRect).body : this.stageRect,
+          GRAMOPHONE_SIZE_PX
+        ).figure
       : null;
     const size = figure
       ? Math.min(GRAMOPHONE_SIZE_PX, figure.w, figure.h)
@@ -308,18 +495,64 @@ export class GT018Session extends TemplateGameSession<
     };
   }
 
+  private renderOptionSlot(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    opt: GT018Content["options"][number],
+    slot: Slot,
+    chosenOrder: readonly string[]
+  ): void {
+    const orderIndex = chosenOrder.indexOf(opt.item_id);
+    const isItemWrong =
+      (this.wrongItemId === opt.item_id || this.isSequenceWrong) &&
+      this.wrongTimerMs > 0;
+    const selected =
+      !isItemWrong &&
+      (this.selectedItemId === opt.item_id ||
+        this.selectionMechanic.isSelected(opt.item_id));
+
+    let state = this.getRenderItemState(opt.item_id);
+    if (isItemWrong) {
+      state = "wrong";
+    } else if (selected) {
+      state = "selected";
+    }
+
+    drawSlotItem(ctx, rs, slot, {
+      id: opt.item_id,
+      asset: opt.asset,
+      label: orderIndex >= 0 ? String(orderIndex + 1) : undefined,
+      state,
+    });
+
+    if (isItemWrong) {
+      rs.drawRetryRing(
+        ctx,
+        slot.x,
+        slot.y,
+        (slot.w ?? 64) / 2,
+        1 - this.wrongTimerMs / 400
+      );
+    }
+  }
+
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    drawSubPromptText(
-      ctx,
-      rs,
-      this.content.audio_prompt.text,
-      this.stageRect ? splitCaption(this.stageRect).caption : undefined
-    );
+    const showCaption =
+      !this.stageRect ||
+      this.content.audio_prompt.text.trim() !== this.content.prompt.trim();
+    if (showCaption) {
+      drawSubPromptText(
+        ctx,
+        rs,
+        this.content.audio_prompt.text,
+        this.stageRect ? splitCaption(this.stageRect).caption : undefined
+      );
+    }
 
     drawGramophone(ctx, this.gramophoneSlot(rs), false);
     drawWoodenTokenDock(
@@ -333,21 +566,12 @@ export class GT018Session extends TemplateGameSession<
         ? this.orderingMechanic.getCurrentSequence()
         : [];
 
-    this.content.options.forEach((opt, i) => {
+    for (let i = 0; i < this.content.options.length; i++) {
+      const opt = this.content.options[i];
       const slot = this.slots[i];
-      if (!slot) {
-        return;
+      if (opt && slot) {
+        this.renderOptionSlot(ctx, rs, opt, slot, chosenOrder);
       }
-      const orderIndex = chosenOrder.indexOf(opt.item_id);
-      const selected =
-        this.selectedItemId === opt.item_id ||
-        this.selectionMechanic.isSelected(opt.item_id);
-      drawSlotItem(ctx, rs, slot, {
-        id: opt.item_id,
-        asset: opt.asset,
-        label: orderIndex >= 0 ? String(orderIndex + 1) : undefined,
-        state: selected ? "selected" : this.getRenderItemState(opt.item_id),
-      });
-    });
+    }
   }
 }

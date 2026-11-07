@@ -10,12 +10,15 @@ import {
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
+import { resolveAssetLabels } from "#src/labels/spoken-keyword";
+import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
 import {
   dockRectAroundSlots,
   insetDrawSize,
   legacyStageArea,
 } from "#src/layout/slot-fit";
+import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
 import {
   drawClocheScene,
@@ -40,12 +43,15 @@ export class FlashRecallSession extends TemplateGameSession<
   GT012Difficulty
 > {
   override readonly usesPromptZone = true;
+  readonly holdsClockWhileInputClosed = true;
 
   degradation: DegradationState | null = null;
 
   private readonly timer: FlashTimer;
   private selectedValue: number | null = null;
   private wasVisible = false;
+  private wrongTimestamp = 0;
+  private lastFrameMs = 0;
   /** Vùng đĩa và vùng lựa chọn của vòng này (`BR-PSZ-01`). */
   private areas: RecallAreas | null = null;
   /** Vị trí vật loé trên đĩa — không chạm được nên không nằm trong `slots`. */
@@ -65,6 +71,8 @@ export class FlashRecallSession extends TemplateGameSession<
 
   setupEntities(): void {
     this.selectedValue = null;
+    this.wrongTimestamp = 0;
+    this.lastFrameMs = 0;
     this.timer.reset();
     this.timer.start();
     this.wasVisible = true;
@@ -97,6 +105,14 @@ export class FlashRecallSession extends TemplateGameSession<
     return this.timer.isVisible();
   }
 
+  isCovered(): boolean {
+    return !this.timer.isVisible();
+  }
+
+  get plateRect(): ZoneRect | null {
+    return this.areas?.plate ?? null;
+  }
+
   canReplay(): boolean {
     return this.timer.canReplay();
   }
@@ -114,6 +130,16 @@ export class FlashRecallSession extends TemplateGameSession<
   }
 
   update(deltaMs: number): void {
+    this.lastFrameMs += deltaMs;
+    if (
+      this.selectedValue !== null &&
+      this.wrongTimestamp > 0 &&
+      this.lastFrameMs - this.wrongTimestamp >= 400
+    ) {
+      this.selectedValue = null;
+      this.wrongTimestamp = 0;
+    }
+
     const prevState = this.timer.getState();
     this.timer.tick(deltaMs);
     const currState = this.timer.getState();
@@ -129,6 +155,11 @@ export class FlashRecallSession extends TemplateGameSession<
   selectValue(value: number): boolean {
     this.selectedValue = value;
     const isCorrect = value === this.content.flash_items.length;
+    if (isCorrect) {
+      this.wrongTimestamp = 0;
+    } else {
+      this.wrongTimestamp = this.lastFrameMs;
+    }
 
     this.recordEvent("value_selected", {
       value,
@@ -166,26 +197,35 @@ export class FlashRecallSession extends TemplateGameSession<
     if (gesture.type !== "tap") {
       return null;
     }
+    if (this.isCovered() && this.timer.canReplay() && this.plateRect) {
+      const p = this.plateRect;
+      if (
+        gesture.x >= p.x - TAP_TOLERANCE_PX &&
+        gesture.x <= p.x + p.w + TAP_TOLERANCE_PX &&
+        gesture.y >= p.y - TAP_TOLERANCE_PX &&
+        gesture.y <= p.y + p.h + TAP_TOLERANCE_PX
+      ) {
+        return { type: "replay_flash", data: null };
+      }
+    }
     if (this.timer.isVisible()) {
       return null;
     }
-    for (let i = 0; i < this.content.options.length; i++) {
-      const slot = this.slots[i];
-      const opt = this.content.options[i];
-      if (!(slot && opt)) {
-        continue;
-      }
-      const dx = Math.abs(gesture.x - slot.x);
-      const dy = Math.abs(gesture.y - slot.y);
-      const radius = Math.max(slot.hitW ?? slot.w, slot.hitH ?? slot.h) / 2;
-      if (dx <= radius && dy <= radius) {
-        return {
-          type: "select_value",
-          data: opt.value,
-        };
-      }
+    const idx = findHitSlotIndex(
+      this.slots,
+      gesture.x,
+      gesture.y,
+      "circle",
+      TAP_TOLERANCE_PX
+    );
+    const opt = idx >= 0 ? this.content.options[idx] : undefined;
+    if (!opt) {
+      return null;
     }
-    return null;
+    return {
+      type: "select_value",
+      data: opt.value,
+    };
   }
 
   override getHintTargetIndex(): number | null {
@@ -200,9 +240,7 @@ export class FlashRecallSession extends TemplateGameSession<
     if (level === 1) {
       return {
         kind: "region",
-        ids: this.difficulty.allow_replay
-          ? ["replay-button"]
-          : ["cloche-plate"],
+        ids: ["cloche-plate"],
       };
     }
     if (level === 2) {
@@ -248,15 +286,35 @@ export class FlashRecallSession extends TemplateGameSession<
           y: slot.y,
           w: slot.w,
           h: slot.h,
+          ...resolveAssetLabels(item.asset),
         });
       });
       return {
-        activePrompt: "Nhìn nhanh!",
+        activePrompt: this.isCovered()
+          ? this.content.prompt
+          : this.content.prompt || "Bé hãy nhìn kỹ các đồ vật trên đĩa nhé!",
         entities,
       };
     }
 
     const entities: ViewEntity[] = [];
+    if (this.isCovered() && this.timer.canReplay() && this.plateRect) {
+      const p = this.plateRect;
+      entities.push({
+        id: "cloche-plate",
+        role: "neutral",
+        state: "idle",
+        x: p.x + p.w / 2,
+        y: p.y + p.h / 2,
+        w: p.w,
+        h: p.h,
+        hitShape: "circle",
+        slotIndex: -1,
+        label: "Mở lại nắp",
+        spokenLabel: "Chạm để xem lại các đồ vật",
+      });
+    }
+
     this.content.options.forEach((opt, i) => {
       const slot = this.slots[i];
       if (!slot) {
@@ -266,6 +324,7 @@ export class FlashRecallSession extends TemplateGameSession<
       if (this.selectedValue === opt.value) {
         state = opt.is_correct ? "correct" : "incorrect";
       }
+      const optLabel = String(opt.value);
       entities.push({
         id: `opt-${opt.value}`,
         slotIndex: i,
@@ -275,11 +334,15 @@ export class FlashRecallSession extends TemplateGameSession<
         y: slot.y,
         w: slot.w,
         h: slot.h,
+        label: optLabel,
+        spokenLabel: `Số ${optLabel}`,
       });
     });
 
     return {
-      activePrompt: "Bé nhớ có bao nhiêu đồ vật?",
+      activePrompt: this.isCovered()
+        ? this.content.prompt
+        : this.content.prompt || "Bé hãy nhìn kỹ các đồ vật trên đĩa nhé!",
       entities,
     };
   }
@@ -329,8 +392,18 @@ export class FlashRecallSession extends TemplateGameSession<
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
-    _timeMs: number
+    timeMs: number
   ): void {
+    this.lastFrameMs = timeMs;
+    if (
+      this.selectedValue !== null &&
+      this.wrongTimestamp > 0 &&
+      timeMs - this.wrongTimestamp >= 400
+    ) {
+      this.selectedValue = null;
+      this.wrongTimestamp = 0;
+    }
+
     drawSceneBackground(ctx, rs, this.themeId);
 
     const plate = this.areas ? plateSlot(this.areas.plate) : null;
@@ -378,6 +451,20 @@ export class FlashRecallSession extends TemplateGameSession<
         text: String(opt.value),
         state,
       });
+      if (
+        this.selectedValue === opt.value &&
+        !opt.is_correct &&
+        timeMs - this.wrongTimestamp < 400
+      ) {
+        const elapsed = timeMs - this.wrongTimestamp;
+        rs.drawRetryRing(
+          ctx,
+          slot.x,
+          slot.y,
+          Math.min(slot.hitW, slot.hitH) / 2 + 4,
+          elapsed / 400
+        );
+      }
     });
   }
 }

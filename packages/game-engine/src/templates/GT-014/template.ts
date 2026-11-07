@@ -10,6 +10,13 @@ const weightedItemSchema = () =>
     weight: z.number().int().min(1).max(10),
   });
 
+const referenceScaleSchema = () =>
+  z.object({
+    scale_id: z.string().min(1).max(32),
+    left_pan: z.array(weightedItemSchema()).min(1).max(3),
+    right_pan: z.array(weightedItemSchema()).min(1).max(3),
+  });
+
 export const GT014BaseSchema = z.object({
   ...promptFields(),
   left_pan: z.array(weightedItemSchema()).min(0).max(4),
@@ -17,6 +24,7 @@ export const GT014BaseSchema = z.object({
   tray: z.array(weightedItemSchema()).min(2).max(6),
   goal: z.enum(["balance", "pick_heavier", "pick_lighter"]).default("balance"),
   target_side: z.enum(["left", "right"]).optional(),
+  reference_scales: z.array(referenceScaleSchema()).min(1).max(2).optional(),
 });
 
 export const GT014ContentSchema = GT014BaseSchema.refine(

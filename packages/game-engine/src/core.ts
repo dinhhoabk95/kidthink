@@ -9,7 +9,7 @@ import {
   getGameTemplate,
   validateContentPack,
 } from "./generated/template-registry.js";
-import { InteractionManager } from "./interaction.js";
+import { type EngineView, InteractionManager } from "./interaction.js";
 import { isLayoutId, resolveLayout } from "./layout/registry.js";
 import type { LayoutId, Slot } from "./layout/types.js";
 import { clearRenderCache } from "./render/index.js";
@@ -65,9 +65,17 @@ function extractHintAfterMs(
   return undefined;
 }
 
+export type GameActionValue =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | object;
+
 function resolveLevelLayoutId(
   templateCode: string,
-  difficultyParams: unknown
+  difficultyParams: Record<string, GameActionValue> | null | undefined
 ): LayoutId {
   const template = getGameTemplate(templateCode);
   const rawLayoutId =
@@ -93,11 +101,13 @@ function resolveLevelLayoutId(
   return layoutId;
 }
 
-function extractContentDimensions(contentPack: unknown): {
+function extractContentDimensions(
+  contentPack: Record<string, GameActionValue> | null | undefined
+): {
   slotCount: number;
   targetCount: number | undefined;
 } {
-  let optionsArray: unknown[] = [];
+  let optionsArray: GameActionValue[] = [];
   let targetCount: number | undefined;
 
   if (typeof contentPack === "object" && contentPack !== null) {
@@ -138,8 +148,8 @@ export interface EngineConfig {
   level_code: string;
   content_version: number;
   template_code: string;
-  content_pack: unknown;
-  difficulty_params: unknown;
+  content_pack: Record<string, GameActionValue> | null | undefined;
+  difficulty_params: Record<string, GameActionValue> | null | undefined;
   theme_id: string;
   age_band: AgeBand;
   reduced_motion: boolean;
@@ -163,6 +173,7 @@ export const FPS_SAMPLE_INTERVAL_MS = 30_000;
  * mỗi khung hình (`BR-PRF-05`).
  */
 const FPS_SAMPLE_BUFFER_CAPACITY = 3600;
+const EMPTY_HINT_REGION_IDS: readonly string[] = Object.freeze([]);
 
 export class GameEngine {
   config?: EngineConfig;
@@ -176,7 +187,7 @@ export class GameEngine {
   /** Gợi ý đang trỏ vào nút hành động ở `zones.action`; shell nháy nút (`BR-PSZ-05`). */
   actionHinted = false;
   /** Danh sách id vùng chú ý đang được tô sáng ở `L1`/`L2` (Task #301 S2). */
-  hintRegionIds: readonly string[] = [];
+  hintRegionIds: readonly string[] = EMPTY_HINT_REGION_IDS;
   skipSuggested = false;
   /**
    * Cổng chờ câu dẫn đọc xong (`BR-PNR-11`, Task #273).
@@ -221,6 +232,7 @@ export class GameEngine {
   onUpdateVerdict?: (isCorrect: boolean) => void;
 
   private lastViewKey = "";
+  private lastEmittedView: EngineView | null = null;
 
   onAfterRender?: (
     ctx: CanvasRenderingContext2D,
@@ -289,6 +301,7 @@ export class GameEngine {
 
     this.config = config;
     this.renderSystem.themeId = config.theme_id;
+    this.renderSystem.bumpPaintGeneration();
     const effectiveReducedMotion =
       Boolean(config.reduced_motion) ||
       (typeof window !== "undefined" &&
@@ -303,7 +316,9 @@ export class GameEngine {
     );
     this.focusIndex = null;
     this.actionHinted = false;
-    this.hintRegionIds = [];
+    this.hintRegionIds = EMPTY_HINT_REGION_IDS;
+    this.lastViewKey = "";
+    this.lastEmittedView = null;
     this.skipSuggested = false;
     this.fpsSampleCount = 0;
     this.fpsWindowElapsedMs = 0;
@@ -353,10 +368,27 @@ export class GameEngine {
     this.loop();
   }
 
+  /**
+   * Đặt lại trạng thái trợ giúp và xoá ngay đích gợi ý trên engine về L0
+   * (khi trẻ trả lời đúng, qua vòng, hoặc mở vòng mới).
+   */
+  resetScaffolding(): void {
+    this.scaffolding?.onSuccess();
+    this.applyHintTargetForLevel(0);
+    this.skipSuggested = false;
+  }
+
   private applyHintTargetForLevel(level: ScaffoldingLevel): void {
     if (level === 0 || !(this.activeSession instanceof TemplateGameSession)) {
+      if (
+        !this.actionHinted &&
+        this.focusIndex === null &&
+        this.hintRegionIds.length === 0
+      ) {
+        return;
+      }
       this.actionHinted = false;
-      this.hintRegionIds = [];
+      this.hintRegionIds = EMPTY_HINT_REGION_IDS;
       this.focusIndex = null;
       this.scaffolding?.setFocusIndex(null);
       return;
@@ -367,7 +399,8 @@ export class GameEngine {
     const targetIdx = hint?.kind === "slot" ? hint.index : null;
 
     this.actionHinted = hint?.kind === "action";
-    this.hintRegionIds = hint?.kind === "region" ? hint.ids : [];
+    this.hintRegionIds =
+      hint?.kind === "region" ? hint.ids : EMPTY_HINT_REGION_IDS;
     this.focusIndex = targetIdx;
     this.scaffolding?.setFocusIndex(targetIdx);
   }
@@ -381,6 +414,9 @@ export class GameEngine {
     const level = this.scaffolding.tick(deltaMs);
 
     this.applyHintTargetForLevel(level);
+    if (level === 0 && this.skipSuggested) {
+      this.skipSuggested = false;
+    }
 
     if (level !== prevLevel && level > 0) {
       // Payload phải khớp `EVENT_PAYLOAD_FIELDS`/`EVENT_PAYLOAD_SCHEMAS` của
@@ -433,33 +469,51 @@ export class GameEngine {
    * hoạt ảnh nền/particle không đứng hình (`BR-PNR-11`).
    */
   advanceFrame(deltaMs: number): void {
-    if (this.isInputOpen()) {
+    const isInputOpen = this.isInputOpen();
+    if (isInputOpen) {
       this.tickScaffolding(deltaMs);
     }
     this.applyDegradation(deltaMs);
     const session = this.activeSession;
-    const wasWon = session?.checkWinCondition() ?? false;
-    const isInputOpen = this.isInputOpen();
+    const canWinOnUpdate =
+      this.onSessionWon !== undefined && session?.update !== undefined;
+    const wasWon =
+      canWinOnUpdate && session ? session.checkWinCondition() : false;
     session?.setInputOpen?.(isInputOpen);
     const isClockHeld = !isInputOpen && holdsClockWhileInputClosed(session);
     const updateResult = session?.update?.(isClockHeld ? 0 : deltaMs);
     if (updateResult && updateResult.feedback !== "none") {
       this.onUpdateVerdict?.(updateResult.valid);
     }
-    if (session && !wasWon && session.checkWinCondition()) {
+    if (canWinOnUpdate && session && !wasWon && session.checkWinCondition()) {
       this.onSessionWon?.();
     }
     this.notifyViewChange(session);
   }
 
   private notifyViewChange(session: GameSession | undefined): void {
-    if (!(this.onViewChanged && session?.getView)) {
+    if (!(session?.getView && this.onViewChanged)) {
+      this.lastEmittedView = null;
       return;
     }
-    const key = session
-      .getView()
-      .entities.map((e) => `${e.id}:${e.state}:${e.x}:${e.y}`)
-      .join("|");
+    if (this.lastViewKey !== "" && session.update === undefined) {
+      this.lastEmittedView = null;
+      return;
+    }
+    const view = session.getView();
+    this.lastEmittedView = view;
+    const entities = view.entities;
+    let key = "";
+    for (let i = 0; i < entities.length; i++) {
+      const e = entities[i];
+      if (!e) {
+        continue;
+      }
+      if (i > 0) {
+        key += "|";
+      }
+      key += `${e.id}:${e.state}:${e.x}:${e.y}`;
+    }
     if (key === this.lastViewKey) {
       return;
     }
@@ -478,11 +532,13 @@ export class GameEngine {
       this.smoothedFps = this.smoothedFps * 0.9 + frameFps * 0.1;
       this.recordFpsSample(deltaMs, frameFps);
     }
+    const state = this.degradationManager.updateFps(this.smoothedFps);
+    this.renderSystem.softShadowsEnabled = state.soft_shadows_enabled;
     const session = this.activeSession;
     if (!hasDegradationSlot(session)) {
       return;
     }
-    session.degradation = this.degradationManager.updateFps(this.smoothedFps);
+    session.degradation = state;
   }
 
   private recordFpsSample(deltaMs: number, frameFps: number): void {
@@ -561,6 +617,9 @@ export class GameEngine {
     ctx: CanvasRenderingContext2D,
     now: number
   ): void {
+    if ((this.scaffolding?.getCurrentLevel() ?? 0) === 0) {
+      return;
+    }
     const pulsePhase = (now % 1000) / 1000;
     if (
       this.focusIndex !== null &&
@@ -581,7 +640,8 @@ export class GameEngine {
     }
 
     if (this.hintRegionIds.length > 0 && this.activeSession?.getView) {
-      for (const entity of this.activeSession.getView().entities) {
+      const view = this.lastEmittedView ?? this.activeSession.getView();
+      for (const entity of view.entities) {
         if (this.hintRegionIds.includes(entity.id)) {
           this.renderSystem.renderScaffoldingRegion(
             ctx,
@@ -695,6 +755,7 @@ export class GameEngine {
     this.fpsWindowElapsedMs = 0;
     this.cancelFrame();
     this.audio.dispose();
+    this.lastEmittedView = null;
     this.onSkipAvailable = undefined;
     this.onSessionWon = undefined;
     this.onViewChanged = undefined;
@@ -706,6 +767,7 @@ export class GameEngine {
     }
     this.eventListeners.clear();
     this.interaction.clearSelection();
+    this.interaction.cancelLongPressExit();
     clearRenderCache();
   }
 

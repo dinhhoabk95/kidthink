@@ -13,7 +13,9 @@ import type {
   Gesture,
   ViewEntity,
 } from "#src/interaction";
+import { resolveAssetLabels } from "#src/labels/spoken-keyword.js";
 import { resolveTouchFloor } from "#src/layout/constants";
+import { TAP_TOLERANCE_PX } from "#src/layout/hit-test.js";
 import { resolveLayout } from "#src/layout/registry";
 import { computeStageCellSlots } from "#src/layout/stage-targets";
 import {
@@ -44,9 +46,6 @@ interface HitSourcePart {
   readonly slot: Slot;
 }
 
-/** Khoảng chạm thêm quanh vùng chạm của slot (`GT-023.md` §6). */
-const HIT_TOLERANCE_PX = 24;
-
 /** Bán kính hút tối thiểu quanh mỏ neo, dù `snap_radius_px` nhỏ hơn. */
 const MIN_SNAP_RADIUS_PX = 64;
 
@@ -62,7 +61,7 @@ function findHitSourcePart(
   placements: ReadonlyMap<string, string>,
   x: number,
   y: number,
-  tolerance = HIT_TOLERANCE_PX
+  tolerance = TAP_TOLERANCE_PX
 ): HitSourcePart | null {
   const sources = slots.filter((s) => s.role === "source");
   const placedPartIds = new Set(placements.values());
@@ -90,6 +89,7 @@ export class GT023Session extends TemplateGameSession<
   private partById: Map<string, GT023Content["parts"][number]> = new Map();
   private wrongPartId: string | null = null;
   private wrongTimestamp = 0;
+  private lastFrameMs = 0;
 
   /** Mảnh nằm trong khay, mỏ neo đứng trên sân khấu (`BR-PSZ-01`). */
   override readonly needsTray = true;
@@ -98,12 +98,17 @@ export class GT023Session extends TemplateGameSession<
   override get trayItemCount(): number {
     return this.content.parts.length;
   }
+
+  override get trayHasLabels(): boolean {
+    return this.content.parts.some((part) => Boolean(part.name));
+  }
   override readonly usesPromptZone = true;
 
   setupEntities(): void {
     this.isWon = false;
     this.wrongPartId = null;
     this.wrongTimestamp = 0;
+    this.lastFrameMs = 0;
     this.placementMechanic.reset();
     this.partById = new Map(this.content.parts.map((p) => [p.part_id, p]));
 
@@ -131,6 +136,10 @@ export class GT023Session extends TemplateGameSession<
   }
 
   validateAction(action: GameAction): ActionResult {
+    if (action.type === "stage_part") {
+      return ACTION_IGNORED;
+    }
+
     if (
       action.type === "place_item" ||
       action.type === "drop_item" ||
@@ -178,7 +187,7 @@ export class GT023Session extends TemplateGameSession<
       }
     } else {
       this.wrongPartId = partId;
-      this.wrongTimestamp = performance.now();
+      this.wrongTimestamp = this.lastFrameMs;
       this.setRenderItemState(partId, "wrong");
     }
 
@@ -195,11 +204,14 @@ export class GT023Session extends TemplateGameSession<
       this.difficulty.snap_radius_px,
       MIN_SNAP_RADIUS_PX
     );
-    const nearest = this.assemblySystem.findNearestAnchor(x, y, snapRadius);
-    if (!nearest) {
+    const hitAnchor = this.findHitAnchor(x, y);
+    const anchorId =
+      hitAnchor?.anchor_id ??
+      this.assemblySystem.findNearestAnchor(x, y, snapRadius)?.anchorId;
+    if (!anchorId) {
       return null;
     }
-    return this.onAssemblePart(partId, nearest.anchorId);
+    return this.onAssemblePart(partId, anchorId);
   }
 
   override checkWinCondition(): boolean {
@@ -233,7 +245,7 @@ export class GT023Session extends TemplateGameSession<
   ): GT023Content["anchors"][number] | null {
     const maxDist =
       Math.max(this.difficulty.snap_radius_px, MIN_SNAP_RADIUS_PX) +
-      HIT_TOLERANCE_PX;
+      TAP_TOLERANCE_PX;
     let best: GT023Content["anchors"][number] | null = null;
     let bestDist = Number.POSITIVE_INFINITY;
     this.content.anchors.forEach((anchor, i) => {
@@ -299,15 +311,20 @@ export class GT023Session extends TemplateGameSession<
       gesture.y
     );
     if (hitSource) {
-      if (stagedId === hitSource.part.part_id) {
+      const partId = hitSource.part.part_id;
+      if (stagedId === partId) {
         this.placementMechanic.stageItem(null);
       } else {
-        this.placementMechanic.stageItem(hitSource.part.part_id);
+        this.placementMechanic.stageItem(partId);
       }
       return null;
     }
 
-    this.placementMechanic.stageItem(null);
+    if (stagedId) {
+      this.placementMechanic.stageItem(null);
+      return null;
+    }
+
     return null;
   }
 
@@ -322,6 +339,17 @@ export class GT023Session extends TemplateGameSession<
   }
 
   override commit(action: GameAction): void {
+    if (action.type === "stage_part") {
+      const data = action.data as { part_id?: string | null } | undefined;
+      const partId = data?.part_id ?? null;
+      if (partId && this.placementMechanic.getStagedItemId() === partId) {
+        this.placementMechanic.stageItem(null);
+      } else {
+        this.placementMechanic.stageItem(partId);
+      }
+      return;
+    }
+
     if (
       action.type === "place_item" ||
       action.type === "drop_item" ||
@@ -345,15 +373,23 @@ export class GT023Session extends TemplateGameSession<
   private toAnchorEntity(
     anchor: GT023Content["anchors"][number],
     index: number,
-    isPlaced: boolean
+    isPlaced: boolean,
+    usedIds: Set<string>
   ): ViewEntity {
     const state: EntityVisual = isPlaced ? "correct" : "idle";
+    const id = usedIds.has(anchor.anchor_id)
+      ? `anchor:${anchor.anchor_id}`
+      : anchor.anchor_id;
+    usedIds.add(id);
+    const labelProps = anchor.label
+      ? resolveAssetLabels({ kind: "text", text: anchor.label })
+      : {};
     const slot = pickTrayZones(this.stageRect, this.trayRect)
       ? this.targetSlots[index]
       : undefined;
     if (!slot) {
       return {
-        id: anchor.anchor_id,
+        id,
         slotIndex: index,
         role: "target",
         state,
@@ -361,10 +397,11 @@ export class GT023Session extends TemplateGameSession<
         y: anchor.y,
         w: LEGACY_ANCHOR_VIEW_PX,
         h: LEGACY_ANCHOR_VIEW_PX,
+        ...labelProps,
       };
     }
     return {
-      id: anchor.anchor_id,
+      id,
       slotIndex: this.slots.indexOf(slot),
       role: "target",
       state,
@@ -372,6 +409,7 @@ export class GT023Session extends TemplateGameSession<
       y: slot.y,
       w: slot.w,
       h: slot.h,
+      ...labelProps,
     };
   }
 
@@ -381,10 +419,16 @@ export class GT023Session extends TemplateGameSession<
     const stagedId = this.placementMechanic.getStagedItemId();
     const placedPartIds = new Set(placements.values());
     const entities: ViewEntity[] = [];
+    const usedIds = new Set<string>();
 
     this.content.anchors.forEach((anchor, i) => {
       entities.push(
-        this.toAnchorEntity(anchor, i, placements.has(anchor.anchor_id))
+        this.toAnchorEntity(
+          anchor,
+          i,
+          placements.has(anchor.anchor_id),
+          usedIds
+        )
       );
     });
 
@@ -401,8 +445,16 @@ export class GT023Session extends TemplateGameSession<
       } else if (part.part_id === stagedId) {
         state = "selected";
       }
+      const id = usedIds.has(part.part_id)
+        ? `part:${part.part_id}`
+        : part.part_id;
+      usedIds.add(id);
+      const assetLabels = resolveAssetLabels(part.asset);
+      const nameLabels = part.name
+        ? resolveAssetLabels({ kind: "text", text: part.name })
+        : {};
       entities.push({
-        id: part.part_id,
+        id,
         slotIndex: slot.index,
         role: "source",
         state,
@@ -410,6 +462,8 @@ export class GT023Session extends TemplateGameSession<
         y: slot.y,
         w: slot.w,
         h: slot.h,
+        ...assetLabels,
+        ...nameLabels,
       });
     }
 
@@ -452,7 +506,9 @@ export class GT023Session extends TemplateGameSession<
       const parts = computeTraySourceSlots(
         this.content.parts.length,
         zones.tray,
-        touchFloor
+        touchFloor,
+        0,
+        this.trayHasLabels
       );
       const anchors = computeStageCellSlots({
         count: this.content.anchors.length,
@@ -479,6 +535,7 @@ export class GT023Session extends TemplateGameSession<
     rs: RenderSystem,
     timeMs: number
   ): void {
+    this.lastFrameMs = timeMs;
     if (this.wrongPartId && timeMs - this.wrongTimestamp >= 400) {
       this.setRenderItemState(this.wrongPartId, "idle");
       this.wrongPartId = null;
@@ -533,7 +590,7 @@ export class GT023Session extends TemplateGameSession<
         id: part.part_id,
         asset: part.asset,
         label: part.name,
-        state: this.getRenderItemState(part.part_id),
+        state: this.resolveSourcePartState(part.part_id),
       });
 
       if (isWrong && elapsed < 400) {
@@ -546,5 +603,13 @@ export class GT023Session extends TemplateGameSession<
         );
       }
     });
+  }
+
+  private resolveSourcePartState(partId: string) {
+    const rawState = this.getRenderItemState(partId);
+    return this.placementMechanic.getStagedItemId() === partId &&
+      rawState === "idle"
+      ? "selected"
+      : rawState;
   }
 }

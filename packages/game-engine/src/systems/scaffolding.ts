@@ -171,11 +171,16 @@ export class ScaffoldingSystem {
   private readonly internalAgeBand: AgeBand;
   private readonly internalHintAfterMs?: number;
   private readonly internalState: ScaffoldState;
+  private readonly internalThresholds: ScaffoldingBandThresholds;
 
   constructor(ageBand: AgeBand = "3-4", hintAfterMs?: number) {
     this.internalAgeBand = ageBand;
     this.internalHintAfterMs = hintAfterMs;
     this.internalState = this.createInitialState();
+    this.internalThresholds = resolveScaffoldingThresholds(
+      ageBand,
+      hintAfterMs
+    );
   }
 
   createInitialState(): ScaffoldState {
@@ -247,14 +252,7 @@ export class ScaffoldingSystem {
   }
 
   private tickInternal(deltaMs: number): ScaffoldingLevel {
-    advanceState(
-      this.internalState,
-      resolveScaffoldingThresholds(
-        this.internalAgeBand,
-        this.internalHintAfterMs
-      ),
-      deltaMs
-    );
+    advanceState(this.internalState, this.internalThresholds, deltaMs);
     return this.internalState.level;
   }
 

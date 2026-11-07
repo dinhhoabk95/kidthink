@@ -8,10 +8,10 @@
  */
 
 import type { AgeBand } from "#src/contracts/types";
+import { getTouchFloor, type LogicSpace } from "#src/layout/constants";
+import type { ZoneRect } from "#src/layout/stage-zones";
 import { designTokens } from "#src/systems/designTokens";
 import type { RenderSystem } from "#src/systems/render-system";
-import { getTouchFloor, type LogicSpace } from "../layout/constants.js";
-import type { ZoneRect } from "../layout/stage-zones.js";
 
 /** Id entity của nút trong `getView()` — đường bàn phím và screen reader. */
 export const COMMIT_ENTITY_ID = "commit:done";

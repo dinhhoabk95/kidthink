@@ -40,7 +40,10 @@ import GT035Template from "#src/templates/GT-035/template";
 import GT036Template from "#src/templates/GT-036/template";
 import GT037Template from "#src/templates/GT-037/template";
 
-export const TEMPLATE_INPUT_REGISTRY: Record<string, EngineInputConfig | undefined> = {
+export const TEMPLATE_INPUT_REGISTRY: Record<
+  string,
+  EngineInputConfig | undefined
+> = {
   "GT-000": GT000Template.input,
   "GT-001": GT001Template.input,
   "GT-002": GT002Template.input,

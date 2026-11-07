@@ -221,15 +221,11 @@ describe("GT-034 Gõ theo nhịp (beat-sequence) Contract & Session Tests", () =
     });
     expect(session.userSteps).toEqual(["drum"]);
 
-    // Tap mistake
+    // Tap mistake (không push vào userSteps, nháy hổ phách)
     session.commit({
       type: "tap_instrument",
       data: { instrument_id: "drum" },
     });
-    expect(session.userSteps).toEqual(["drum", "drum"]);
-
-    // Undo mistake
-    session.commit({ type: "undo_beat", data: {} });
     expect(session.userSteps).toEqual(["drum"]);
 
     // Tap rest of correct steps: cymbal, drum, cymbal
@@ -395,5 +391,27 @@ describe("GT-034 Gõ theo nhịp (beat-sequence) Contract & Session Tests", () =
     const view = session.getView();
     expect(view.activePrompt).toBe(sampleFixture.content.prompt);
     expect(view.entities.length).toBe(patternLen + instCount);
+    const ids = new Set(view.entities.map((e) => e.id));
+    expect(ids.size).toBe(view.entities.length);
+    for (const ent of view.entities) {
+      expect(typeof ent.spokenLabel).toBe("string");
+      expect(ent.spokenLabel?.trim().length).toBeGreaterThan(0);
+      expect(ent.hitShape).toBe("circle");
+    }
+    // Step entities use role="neutral" so 2-step drag heuristic does not misclassify GT-034
+    expect(
+      view.entities.slice(0, patternLen).every((e) => e.role === "neutral")
+    ).toBe(true);
+
+    // Near-edge tap within TAP_TOLERANCE_PX (outside visual radius, inside hit radius + 24px)
+    const edgeRadius = Math.min(inst0Slot.hitW, inst0Slot.hitH) / 2 + 18;
+    const edgeTap = session.dispatch({
+      type: "tap",
+      x: inst0Slot.x + edgeRadius,
+      y: inst0Slot.y,
+      timeMs: 450,
+    });
+    expect(edgeTap?.valid).toBe(true);
+    expect(session.userSteps.length).toBe(1);
   });
 });

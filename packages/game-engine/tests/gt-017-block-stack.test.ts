@@ -137,5 +137,44 @@ describe("GT-017: Đếm khối lập phương 3D (block-stack)", () => {
         "game_completed",
       ]);
     });
+
+    it("exposes model-view as neutral role, populates spokenLabel on all entities, and aligns getHintTargetIndex with stage slots", () => {
+      const session = new BlockStackSession(
+        SAMPLE_LEVEL_1.content_pack,
+        SAMPLE_LEVEL_1.difficulty_params
+      );
+      session.prepareRound(
+        "5-6",
+        { w: 960, h: 540 },
+        { x: 40, y: 40, w: 880, h: 460 },
+        undefined,
+        1
+      );
+      const view = session.getView();
+      const modelEntity = view.entities.find((e) => e.id === "model-view");
+      expect(modelEntity?.role).toBe("neutral");
+      for (const entity of view.entities) {
+        expect(entity.spokenLabel).toBeTruthy();
+      }
+
+      const hintIdx = session.getHintTargetIndex();
+      expect(hintIdx).not.toBeNull();
+      const hintSlot = hintIdx === null ? undefined : session.slots[hintIdx];
+      expect(hintSlot?.role).toBe("source");
+
+      if (hintSlot) {
+        const r =
+          Math.min(hintSlot.hitW ?? hintSlot.w, hintSlot.hitH ?? hintSlot.h) /
+          2;
+        const verdict = session.dispatch({
+          type: "tap",
+          x: hintSlot.x,
+          y: hintSlot.y + r + 18,
+          timeMs: 10,
+        });
+        expect(verdict?.valid).toBe(true);
+        expect(session.checkWinCondition()).toBe(true);
+      }
+    });
   });
 });

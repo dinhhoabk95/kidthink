@@ -8,6 +8,46 @@ import {
 import { alpha } from "./color-utils.js";
 import { drawScenicCloud, drawScenicFlowerDots } from "./scene-decor.js";
 
+const SCHOOL_CHALK_DOTS: readonly [number, number, string][] = [
+  [60, 12, alpha(designTokens.colors.surface[0], 0.6)],
+  [140, 12, alpha(designTokens.colors.semantic.warning[200], 0.6)],
+  [820, 12, alpha(designTokens.colors.semantic.success[300], 0.6)],
+  [900, 12, alpha(designTokens.colors.scene.pink, 0.6)],
+];
+
+const FOOD_BERRY_DOTS: readonly [number, number, string][] = [
+  [90, 200, alpha(designTokens.colors.montessori.coral, 0.2)],
+  [860, 220, alpha(designTokens.colors.montessori.coral, 0.2)],
+  [140, 360, alpha(designTokens.colors.retry[400], 0.2)],
+  [820, 350, alpha(designTokens.colors.retry[400], 0.2)],
+];
+
+const FESTIVAL_FLAG_COLORS: readonly string[] = [
+  alpha(designTokens.colors.montessori.coral, 0.45),
+  alpha(designTokens.colors.retry[400], 0.45),
+  alpha(designTokens.colors.semantic.success[400], 0.45),
+  alpha(designTokens.colors.scene.blue[500], 0.45),
+  alpha(designTokens.colors.scene.violet[500], 0.45),
+];
+
+const FESTIVAL_CONFETTI_DOTS: readonly [number, number, string][] = [
+  [120, 180, alpha(designTokens.colors.montessori.coral, 0.3)],
+  [220, 280, alpha(designTokens.colors.scene.blue[500], 0.3)],
+  [780, 240, alpha(designTokens.colors.semantic.warning[500], 0.3)],
+  [860, 160, alpha(designTokens.colors.scene.violet[500], 0.3)],
+  [100, 390, alpha(designTokens.colors.semantic.success[400], 0.3)],
+  [880, 390, alpha(designTokens.colors.montessori.coral, 0.3)],
+];
+
+const DEFAULT_FLOWER_DOTS: readonly [number, number, string][] = [
+  [80, 505, alpha(designTokens.colors.retry[400], 0.45)],
+  [140, 515, alpha(designTokens.colors.scene.pink, 0.4)],
+  [220, 510, alpha(designTokens.colors.scene.blue[400], 0.4)],
+  [740, 510, alpha(designTokens.colors.semantic.success[400], 0.45)],
+  [820, 515, alpha(designTokens.colors.retry[400], 0.4)],
+  [890, 505, alpha(designTokens.colors.scene.pink, 0.45)],
+];
+
 export function drawSchoolScene(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
@@ -43,12 +83,7 @@ export function drawSchoolScene(
   ctx.fillRect(0, 24, w, 4);
 
   // Chalk dots
-  drawScenicFlowerDots(ctx, [
-    [60, 12, alpha(designTokens.colors.surface[0], 0.6)],
-    [140, 12, alpha(designTokens.colors.semantic.warning[200], 0.6)],
-    [820, 12, alpha(designTokens.colors.semantic.success[300], 0.6)],
-    [900, 12, alpha(designTokens.colors.scene.pink, 0.6)],
-  ]);
+  drawScenicFlowerDots(ctx, SCHOOL_CHALK_DOTS);
 
   // Wooden classroom floor
   ctx.fillStyle = alpha(designTokens.colors.retry[600], 0.15);
@@ -126,7 +161,7 @@ export function drawFoodScene(
   );
   if (!grad) {
     grad = ctx.createLinearGradient(0, 0, 0, h);
-    grad.addColorStop(0, designTokens.colors.semantic.danger[50]);
+    grad.addColorStop(0, designTokens.colors.cta[50]);
     grad.addColorStop(0.5, designTokens.colors.retry[100]);
     grad.addColorStop(1, designTokens.colors.semantic.success[50]);
     setCachedGradient(
@@ -141,7 +176,7 @@ export function drawFoodScene(
   ctx.fillRect(0, 0, w, h);
 
   // Picnic cloth strip along bottom
-  ctx.fillStyle = alpha(designTokens.colors.semantic.danger[500], 0.14);
+  ctx.fillStyle = alpha(designTokens.colors.montessori.coral, 0.14);
   ctx.fillRect(0, 485, w, 55);
   ctx.fillStyle = alpha(designTokens.colors.surface[0], 0.25);
   for (let x = 0; x < w; x += 40) {
@@ -149,12 +184,7 @@ export function drawFoodScene(
   }
 
   // Gentle berry dots in background
-  drawScenicFlowerDots(ctx, [
-    [90, 200, alpha(designTokens.colors.semantic.danger[400], 0.2)],
-    [860, 220, alpha(designTokens.colors.semantic.danger[400], 0.2)],
-    [140, 360, alpha(designTokens.colors.retry[400], 0.2)],
-    [820, 350, alpha(designTokens.colors.retry[400], 0.2)],
-  ]);
+  drawScenicFlowerDots(ctx, FOOD_BERRY_DOTS);
 }
 
 export function drawArtScene(
@@ -222,7 +252,7 @@ export function drawFamilyScene(
   if (!grad) {
     grad = ctx.createLinearGradient(0, 0, 0, h);
     grad.addColorStop(0, designTokens.colors.cta[50]);
-    grad.addColorStop(0.5, designTokens.colors.semantic.danger[100]);
+    grad.addColorStop(0.5, designTokens.colors.cta[100]);
     grad.addColorStop(1, designTokens.colors.cta[200]);
     setCachedGradient(
       ctx,
@@ -312,7 +342,7 @@ export function drawFestivalScene(
   );
   if (!grad) {
     grad = ctx.createLinearGradient(0, 0, 0, h);
-    grad.addColorStop(0, designTokens.colors.semantic.danger[50]);
+    grad.addColorStop(0, designTokens.colors.cta[50]);
     grad.addColorStop(0.5, designTokens.colors.semantic.warning[50]);
     grad.addColorStop(1, designTokens.colors.scene.sky[100]);
     setCachedGradient(
@@ -335,19 +365,12 @@ export function drawFestivalScene(
   ctx.stroke();
 
   // Pennant flags along bunting
-  const flagColors = [
-    alpha(designTokens.colors.semantic.danger[500], 0.45),
-    alpha(designTokens.colors.retry[400], 0.45),
-    alpha(designTokens.colors.semantic.success[400], 0.45),
-    alpha(designTokens.colors.scene.blue[500], 0.45),
-    alpha(designTokens.colors.scene.violet[500], 0.45),
-  ];
   for (let i = 0; i < 9; i++) {
     const fx = 60 + i * 100;
     const fy = 14 + Math.sin((i / 8) * Math.PI) * 10;
     const color =
-      flagColors[i % flagColors.length] ??
-      alpha(designTokens.colors.semantic.danger[500], 0.45);
+      FESTIVAL_FLAG_COLORS[i % FESTIVAL_FLAG_COLORS.length] ??
+      alpha(designTokens.colors.montessori.coral, 0.45);
     ctx.fillStyle = color;
     ctx.beginPath();
     ctx.moveTo(fx - 14, fy);
@@ -358,14 +381,7 @@ export function drawFestivalScene(
   }
 
   // Confetti dots
-  drawScenicFlowerDots(ctx, [
-    [120, 180, alpha(designTokens.colors.semantic.danger[500], 0.3)],
-    [220, 280, alpha(designTokens.colors.scene.blue[500], 0.3)],
-    [780, 240, alpha(designTokens.colors.semantic.warning[500], 0.3)],
-    [860, 160, alpha(designTokens.colors.scene.violet[500], 0.3)],
-    [100, 390, alpha(designTokens.colors.semantic.success[400], 0.3)],
-    [880, 390, alpha(designTokens.colors.semantic.danger[500], 0.3)],
-  ]);
+  drawScenicFlowerDots(ctx, FESTIVAL_CONFETTI_DOTS);
 }
 
 export function drawDefaultScene(
@@ -404,12 +420,5 @@ export function drawDefaultScene(
   drawScenicCloud(ctx, 800, 80, 0.75);
 
   // Cheerful pastel flower dots along bottom
-  drawScenicFlowerDots(ctx, [
-    [80, 505, alpha(designTokens.colors.retry[400], 0.45)],
-    [140, 515, alpha(designTokens.colors.scene.pink, 0.4)],
-    [220, 510, alpha(designTokens.colors.scene.blue[400], 0.4)],
-    [740, 510, alpha(designTokens.colors.semantic.success[400], 0.45)],
-    [820, 515, alpha(designTokens.colors.retry[400], 0.4)],
-    [890, 505, alpha(designTokens.colors.scene.pink, 0.45)],
-  ]);
+  drawScenicFlowerDots(ctx, DEFAULT_FLOWER_DOTS);
 }

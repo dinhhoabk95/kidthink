@@ -84,4 +84,63 @@ describe("GT-019: Xoay và lật mảnh (rotate-transform)", () => {
     expect(placeRes.valid).toBe(true);
     expect(session.checkWinCondition()).toBe(true);
   });
+
+  it("does not lock piece on wrong rotation placement and allows retry to win, with spokenLabel and 24px tap tolerance", () => {
+    if (!f1) {
+      throw new Error("Missing fixture");
+    }
+    const session = new GT019Session(f1.content, f1.difficulty);
+    session.prepareRound("4-5");
+
+    const view = session.getView();
+    for (const entity of view.entities) {
+      expect(entity.spokenLabel).toBeTruthy();
+      if (entity.role === "target") {
+        expect(entity.hitShape).toBe("square");
+      }
+    }
+
+    const srcSlot = session.sourceSlots[0];
+    const dstSlot = session.targetSlots[0];
+    expect(srcSlot).toBeDefined();
+    expect(dstSlot).toBeDefined();
+    if (!(srcSlot && dstSlot)) {
+      return;
+    }
+
+    // Attempt drop with wrong initial rotation (90° instead of 0°) -> retry, piece remains unplaced
+    const wrongDrop = session.dispatch({
+      type: "drop",
+      fromX: srcSlot.x,
+      fromY: srcSlot.y,
+      toX: dstSlot.x,
+      toY: dstSlot.y,
+      timeMs: 10,
+    });
+    expect(wrongDrop?.valid).toBe(false);
+    expect(session.getPlacements().has("arrow-1")).toBe(false);
+
+    // Stage and rotate 3 times via tap within +18px tolerance, then tap target slot within +18px tolerance
+    const srcR =
+      Math.min(srcSlot.hitW ?? srcSlot.w, srcSlot.hitH ?? srcSlot.h) / 2;
+    const dstHalfW = (dstSlot.hitW ?? dstSlot.w) / 2;
+    for (let i = 0; i < 4; i++) {
+      session.dispatch({
+        type: "tap",
+        x: srcSlot.x + srcR + 18,
+        y: srcSlot.y,
+        timeMs: 20 + i,
+      });
+    }
+    expect(session.getPieceTransform("arrow-1")?.rotation).toBe(0);
+
+    const placeVerdict = session.dispatch({
+      type: "tap",
+      x: dstSlot.x + dstHalfW + 18,
+      y: dstSlot.y,
+      timeMs: 30,
+    });
+    expect(placeVerdict?.valid).toBe(true);
+    expect(session.checkWinCondition()).toBe(true);
+  });
 });

@@ -5,6 +5,7 @@ import {
   ACTION_RETRY,
   type ActionResult,
   type GameAction,
+  type GameActionValue,
   type HintTarget,
   TemplateGameSession,
 } from "#src/game-session";
@@ -14,19 +15,24 @@ import type {
   Gesture,
   ViewEntity,
 } from "#src/interaction";
+import { resolveAssetLabels } from "#src/labels/spoken-keyword";
 import { resolveTouchFloor } from "#src/layout/constants";
 import {
   HERO_OPTION_CELL_MAX_PX,
   heroSlot,
   splitHeroStage,
 } from "#src/layout/hero-split";
-import { findHitSlotIndex as findHitIndex } from "#src/layout/hit-test";
+import {
+  findHitSlotIndex as findHitIndex,
+  TAP_TOLERANCE_PX,
+} from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
 import { computeStageCellSlots } from "#src/layout/stage-targets";
 import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
 import {
   drawClockFace,
+  drawMontessoriControlOfErrorPill,
   drawSceneBackground,
   drawSlotItem,
   insetBox,
@@ -35,6 +41,10 @@ import {
   squareBox,
 } from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
+import {
+  type ControlOfErrorDiagnostics,
+  MontessoriExploreTracker,
+} from "#src/systems/montessori-explore-system";
 import type { RenderSystem } from "#src/systems/render-system";
 import {
   type ClockAngles,
@@ -54,7 +64,11 @@ function findHitSlotIndex(
   x: number,
   y: number
 ): number {
-  return findHitIndex(slots.slice(0, count), x, y);
+  return findHitIndex(slots.slice(0, count), x, y, "circle", TAP_TOLERANCE_PX);
+}
+
+function formatSpokenClockTime(t: ClockTime): string {
+  return t.minute === 0 ? `${t.hour} giờ` : `${t.hour} giờ ${t.minute} phút`;
 }
 
 function stepClockTime(
@@ -78,7 +92,7 @@ function stepClockTime(
 }
 
 function validateSelectOption(
-  data: unknown,
+  data: GameActionValue,
   options: readonly { is_correct: boolean }[]
 ): ActionResult {
   if (typeof data !== "number") {
@@ -89,7 +103,7 @@ function validateSelectOption(
 }
 
 function validateMatchCard(
-  data: unknown,
+  data: GameActionValue,
   cards: readonly { card_id: string; hour: number; minute: number }[],
   currentTime: ClockTime
 ): ActionResult {
@@ -133,7 +147,10 @@ function toMatchAction(
   return card ? { type: "match_card", data: card.card_id } : null;
 }
 
-function toSetAction(gesture: Gesture): GameAction | null {
+function toSetAction(
+  gesture: Gesture,
+  _slots: readonly Slot[]
+): GameAction | null {
   if (gesture.type === "adjust") {
     return { type: "adjust_time", data: { delta: gesture.delta } };
   }
@@ -157,7 +174,11 @@ export class ClockHandsSession extends TemplateGameSession<
   /** `mode = set`: giờ chỉ được chấm sau khi trẻ nộp bằng `commit` (`BR-PSZ-05`). */
   private hasSubmittedTime = false;
   private selectedOptionIndex: number | null = null;
+  private wrongChoiceTimerMs = 0;
   private readonly matchedCardIds: Set<string> = new Set();
+  private readonly exploreTracker = new MontessoriExploreTracker({
+    milestoneTarget: 2,
+  });
 
   constructor(
     content: GT016Content,
@@ -179,15 +200,47 @@ export class ClockHandsSession extends TemplateGameSession<
       minute: this.content.target_time.minute,
     };
     this.selectedOptionIndex = null;
+    this.wrongChoiceTimerMs = 0;
     this.hasSubmittedTime = false;
     this.matchedCardIds.clear();
     this.isWon = false;
+    this.exploreTracker.reset(false);
 
     this.recordEvent("game_started", {
       template_code: "GT-016",
       mode: this.content.mode,
       target_time: formatClockTime(this.content.target_time),
     });
+  }
+
+  startExplorePhase(): void {
+    this.exploreTracker.reset(true);
+  }
+
+  getExploreTracker(): MontessoriExploreTracker {
+    return this.exploreTracker;
+  }
+
+  getControlOfError(): ControlOfErrorDiagnostics | null {
+    return this.exploreTracker.getControlOfErrorDiagnostics();
+  }
+
+  isMicroSandboxActive(): boolean {
+    return this.exploreTracker.isMicroSandboxActive();
+  }
+
+  getDayPeriodLabel(): "Buổi sáng" | "Buổi trưa" | "Buổi chiều" | "Buổi tối" {
+    const h = this.currentTime.hour;
+    if (h >= 6 && h <= 10) {
+      return "Buổi sáng";
+    }
+    if (h >= 11 && h <= 12) {
+      return "Buổi trưa";
+    }
+    if (h >= 1 && h <= 5) {
+      return "Buổi chiều";
+    }
+    return "Buổi tối";
   }
 
   getCurrentTime(): ClockTime {
@@ -236,6 +289,27 @@ export class ClockHandsSession extends TemplateGameSession<
     }
 
     this.selectedOptionIndex = index;
+    if (opt.is_correct) {
+      this.wrongChoiceTimerMs = 0;
+      this.exploreTracker.recordCorrectAttempt();
+    } else {
+      this.wrongChoiceTimerMs = 400;
+      const chosenStr = formatClockTime(opt);
+      const targetStr = formatClockTime(this.content.target_time);
+      this.exploreTracker.recordWrongAttempt({
+        reasonVi: `Đồng hồ chỉ ${formatClockTime(this.currentTime)}, mục tiêu là ${targetStr}`,
+        targetId: `opt-${index}`,
+        actualValue: chosenStr,
+        expectedValue: targetStr,
+      });
+      this.recordEvent("control_of_error", {
+        mode: this.content.mode,
+        chosen_time: chosenStr,
+        target_time: targetStr,
+        micro_sandbox: this.exploreTracker.isMicroSandboxActive(),
+      });
+    }
+
     this.recordEvent("time_submitted", {
       time: formatClockTime(opt),
       is_correct: opt.is_correct,
@@ -248,9 +322,30 @@ export class ClockHandsSession extends TemplateGameSession<
     return opt.is_correct;
   }
 
+  submitTime(): boolean {
+    return this.submitCurrentTime();
+  }
+
   submitCurrentTime(): boolean {
     this.hasSubmittedTime = true;
     const isCorrect = isSameTime(this.currentTime, this.content.target_time);
+    if (isCorrect) {
+      this.exploreTracker.recordCorrectAttempt();
+    } else {
+      const currentStr = formatClockTime(this.currentTime);
+      const targetStr = formatClockTime(this.content.target_time);
+      this.exploreTracker.recordWrongAttempt({
+        reasonVi: `Đồng hồ chỉ ${currentStr}, mục tiêu là ${targetStr}`,
+        actualValue: currentStr,
+        expectedValue: targetStr,
+      });
+      this.recordEvent("control_of_error", {
+        mode: this.content.mode,
+        current_time: currentStr,
+        target_time: targetStr,
+        micro_sandbox: this.exploreTracker.isMicroSandboxActive(),
+      });
+    }
     this.recordEvent("time_submitted", {
       time: formatClockTime(this.currentTime),
       is_correct: isCorrect,
@@ -271,6 +366,7 @@ export class ClockHandsSession extends TemplateGameSession<
       isSameTime(this.currentTime, { hour: card.hour, minute: card.minute })
     ) {
       this.matchedCardIds.add(cardId);
+      this.exploreTracker.recordCorrectAttempt();
       this.recordEvent("time_submitted", {
         card_id: cardId,
         is_correct: true,
@@ -280,7 +376,27 @@ export class ClockHandsSession extends TemplateGameSession<
       }
       return true;
     }
+
+    const currentStr = formatClockTime(this.currentTime);
+    const cardStr = formatClockTime({ hour: card.hour, minute: card.minute });
+    this.exploreTracker.recordWrongAttempt({
+      reasonVi: `Đồng hồ chỉ ${currentStr}, mục tiêu là ${formatClockTime(this.content.target_time)}`,
+      targetId: cardId,
+      actualValue: cardStr,
+      expectedValue: currentStr,
+    });
+    this.recordEvent("control_of_error", {
+      mode: this.content.mode,
+      card_id: cardId,
+      card_time: cardStr,
+      expected_time: currentStr,
+      micro_sandbox: this.exploreTracker.isMicroSandboxActive(),
+    });
     return false;
+  }
+
+  adjustTime(delta: number): void {
+    this.applyTimeDelta(delta);
   }
 
   applyTimeDelta(delta: number): void {
@@ -290,6 +406,7 @@ export class ClockHandsSession extends TemplateGameSession<
       this.difficulty.minute_step
     );
     this.hasSubmittedTime = false;
+    this.exploreTracker.recordExploreAction("clock_adjusted");
     this.recordEvent("hand_rotated", {
       hand: "minute",
       time: formatClockTime(this.currentTime),
@@ -353,7 +470,7 @@ export class ClockHandsSession extends TemplateGameSession<
       return toMatchAction(gesture, this.slots, this.content.activity_cards);
     }
     if (this.content.mode === "set") {
-      return toSetAction(gesture);
+      return toSetAction(gesture, this.slots);
     }
     return null;
   }
@@ -361,11 +478,36 @@ export class ClockHandsSession extends TemplateGameSession<
   override getView(): EngineView {
     const entities: ViewEntity[] = [];
 
+    const isSetMode = this.content.mode === "set";
+    const faceSlot = isSetMode ? this.slots[0] : undefined;
+    const face = this.stageRect
+      ? splitHeroStage(this.stageRect, this.choiceCount() > 0, {
+          count: this.choiceCount(),
+          touchFloor: this.currentTouchFloor,
+        }).hero
+      : undefined;
+
+    entities.push({
+      id: "clock-face",
+      slotIndex: isSetMode ? 0 : -1,
+      role: "neutral",
+      state: "idle",
+      x: faceSlot?.x ?? (face ? face.x + face.w / 2 : 480),
+      y: faceSlot?.y ?? (face ? face.y + face.h / 2 : 180),
+      w: faceSlot?.w ?? face?.w ?? 240,
+      h: faceSlot?.h ?? face?.h ?? 240,
+      label: formatClockTime(this.currentTime),
+      spokenLabel: formatSpokenClockTime(this.currentTime),
+    });
+
     if (this.content.mode === "match") {
-      this.content.activity_cards.forEach((card, i) => {
+      (this.content.activity_cards ?? []).forEach((card, i) => {
         const slot = this.slots[i];
         if (slot) {
           const isMatched = this.matchedCardIds.has(card.card_id);
+          const cardTime: ClockTime = { hour: card.hour, minute: card.minute };
+          const assetLabels = resolveAssetLabels(card.asset);
+          const timeSpoken = formatSpokenClockTime(cardTime);
           entities.push({
             id: card.card_id,
             slotIndex: i,
@@ -375,11 +517,16 @@ export class ClockHandsSession extends TemplateGameSession<
             y: slot.y,
             w: slot.w,
             h: slot.h,
+            ...assetLabels,
+            label: formatClockTime(cardTime),
+            spokenLabel: assetLabels.spokenLabel
+              ? `${assetLabels.spokenLabel}, ${timeSpoken}`
+              : timeSpoken,
           });
         }
       });
     } else if (this.content.mode === "read") {
-      this.content.options.forEach((opt, i) => {
+      (this.content.options ?? []).forEach((opt, i) => {
         const slot = this.slots[i];
         if (slot) {
           const chosen = this.selectedOptionIndex === i;
@@ -387,6 +534,7 @@ export class ClockHandsSession extends TemplateGameSession<
           if (chosen) {
             state = opt.is_correct ? "correct" : "incorrect";
           }
+          const optTime: ClockTime = { hour: opt.hour, minute: opt.minute };
           entities.push({
             id: `opt-${i}`,
             slotIndex: i,
@@ -396,20 +544,10 @@ export class ClockHandsSession extends TemplateGameSession<
             y: slot.y,
             w: slot.w,
             h: slot.h,
+            label: formatClockTime(optTime),
+            spokenLabel: formatSpokenClockTime(optTime),
           });
         }
-      });
-    } else {
-      const face = this.stageRect ? this.slots[0] : undefined;
-      entities.push({
-        id: "clock-face",
-        slotIndex: 0,
-        role: "neutral",
-        state: "idle",
-        x: face?.x ?? 480,
-        y: face?.y ?? 180,
-        w: face?.w ?? 240,
-        h: face?.h ?? 240,
       });
     }
 
@@ -467,9 +605,20 @@ export class ClockHandsSession extends TemplateGameSession<
     return false;
   }
 
+  update(deltaMs: number): void {
+    this.exploreTracker.tick(deltaMs);
+    if (this.wrongChoiceTimerMs > 0) {
+      this.wrongChoiceTimerMs = Math.max(0, this.wrongChoiceTimerMs - deltaMs);
+      if (this.wrongChoiceTimerMs === 0) {
+        this.selectedOptionIndex = null;
+      }
+    }
+  }
+
   override destroy(): void {
     super.destroy();
     this.selectedOptionIndex = null;
+    this.wrongChoiceTimerMs = 0;
     this.matchedCardIds.clear();
   }
 
@@ -483,16 +632,23 @@ export class ClockHandsSession extends TemplateGameSession<
       : (this.content.activity_cards?.length ?? 0);
   }
 
+  private currentTouchFloor = 64;
+
   private computeStageSlots(stage: ZoneRect, ageBand: AgeBand): Slot[] {
     const count = this.choiceCount();
-    const { hero, rest } = splitHeroStage(stage, count > 0);
+    const touchFloor = resolveTouchFloor(ageBand, this.cssPerLogic);
+    this.currentTouchFloor = touchFloor;
+    const { hero, rest } = splitHeroStage(stage, count > 0, {
+      count,
+      touchFloor,
+    });
     if (count === 0) {
       return [heroSlot(hero, 0)];
     }
     return computeStageCellSlots({
       count,
       stage: rest,
-      touchFloor: resolveTouchFloor(ageBand, this.cssPerLogic),
+      touchFloor,
       maxCell: { w: HERO_OPTION_CELL_MAX_PX, h: HERO_OPTION_CELL_MAX_PX },
       role: this.content.mode === "read" ? "source" : "target",
       hasLabels: false,
@@ -502,7 +658,11 @@ export class ClockHandsSession extends TemplateGameSession<
   /** Hộp mặt đồng hồ: vùng chính của stage, hoặc 58% trên của cảnh khi chưa có khung. */
   private faceBox(rs: RenderSystem): SceneBox {
     if (this.stageRect) {
-      const { hero } = splitHeroStage(this.stageRect, this.choiceCount() > 0);
+      const count = this.choiceCount();
+      const { hero } = splitHeroStage(this.stageRect, count > 0, {
+        count,
+        touchFloor: this.currentTouchFloor,
+      });
       return squareBox(insetBox(hero, FACE_INSET));
     }
     const scene = insetBox(sceneBox(rs), 0.08);
@@ -545,7 +705,7 @@ export class ClockHandsSession extends TemplateGameSession<
     drawClockFace(ctx, faceBox, this.currentTime);
 
     if (this.content.mode === "match") {
-      this.content.activity_cards.forEach((card, i) => {
+      (this.content.activity_cards ?? []).forEach((card, i) => {
         const slot = this.slots[i];
         if (!slot) {
           return;
@@ -557,25 +717,41 @@ export class ClockHandsSession extends TemplateGameSession<
           state: this.matchedCardIds.has(card.card_id) ? "correct" : "idle",
         });
       });
-      return;
+    } else if (this.content.mode === "read") {
+      (this.content.options ?? []).forEach((opt, i) => {
+        const slot = this.slots[i];
+        if (!slot) {
+          return;
+        }
+        const chosen = this.selectedOptionIndex === i;
+        let state: "correct" | "wrong" | "idle" = "idle";
+        if (chosen) {
+          state = opt.is_correct ? "correct" : "wrong";
+        }
+        drawSlotItem(ctx, rs, slot, {
+          id: `opt-${i}`,
+          text: formatClockTime({ hour: opt.hour, minute: opt.minute }),
+          state,
+        });
+        if (chosen && state === "wrong") {
+          rs.drawRetryRing(
+            ctx,
+            slot.x,
+            slot.y,
+            (slot.w ?? 64) / 2,
+            1 - this.wrongChoiceTimerMs / 400
+          );
+        }
+      });
     }
 
-    this.content.options.forEach((opt, i) => {
-      const slot = this.slots[i];
-      if (!slot) {
-        return;
-      }
-      const chosen = this.selectedOptionIndex === i;
-      let state: "correct" | "wrong" | "idle" = "idle";
-      if (chosen) {
-        state = opt.is_correct ? "correct" : "wrong";
-      }
-      drawSlotItem(ctx, rs, slot, {
-        id: `opt-${i}`,
-        text: formatClockTime({ hour: opt.hour, minute: opt.minute }),
-        state,
-      });
-    });
+    const box = this.stageRect ?? sceneBox(rs);
+    drawMontessoriControlOfErrorPill(
+      ctx,
+      box,
+      this.exploreTracker,
+      rs.viewport?.scale
+    );
   }
 }
 

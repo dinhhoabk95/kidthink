@@ -1,3 +1,4 @@
+import { formatSpokenLabel } from "@mindkid/shared/preschool-terminology";
 import type { AgeBand } from "#src/contracts/types";
 import {
   type ActionResult,
@@ -5,12 +6,15 @@ import {
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
+import { resolveAssetLabels } from "#src/labels/spoken-keyword";
+import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
 import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
 import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
 import {
   drawLocomotive,
+  drawMontessoriControlOfErrorPill,
   drawNumberLine,
   drawSceneBackground,
   drawSlotItem,
@@ -22,6 +26,10 @@ import {
 import { deriveStream } from "#src/rng/mulberry32";
 import { shuffle } from "#src/rng/shuffle";
 import type { DegradationState } from "#src/systems/degradation";
+import {
+  type ControlOfErrorDiagnostics,
+  MontessoriExploreTracker,
+} from "#src/systems/montessori-explore-system";
 import type { RenderSystem } from "#src/systems/render-system";
 import { slotsFitStage, splitStageForTrack } from "./stage-strip.js";
 import type { GT006Content, GT006Difficulty } from "./template.js";
@@ -35,10 +43,22 @@ export class GT006Session extends TemplateGameSession<
   override readonly needsCommit = true;
   degradation: DegradationState | null = null;
   private stagedIndex: number | null = null;
+  private wrongSubmitTimerMs = 0;
 
   private readonly mechanic = new OrderingMechanic();
+  private readonly exploreTracker = new MontessoriExploreTracker({
+    milestoneTarget: 2,
+  });
+  private stepById = new Map<string, GT006Content["sequence"][number]>();
+  private targetSequence: readonly string[] = [];
 
   setupEntities(): void {
+    this.exploreTracker.reset(false);
+    this.stepById = new Map(this.content.sequence.map((s) => [s.step_id, s]));
+    this.targetSequence = this.content.sequence
+      .slice()
+      .sort((a, b) => a.order_index - b.order_index)
+      .map((s) => s.step_id);
     const steps = this.content.sequence.map((s) => s.step_id);
     if (this.difficulty.shuffle_initial === false) {
       this.mechanic.setInitialSequence(steps);
@@ -48,6 +68,64 @@ export class GT006Session extends TemplateGameSession<
     }
     this.isWon = false;
     this.stagedIndex = null;
+    this.wrongSubmitTimerMs = 0;
+  }
+
+  startExplorePhase(): void {
+    this.exploreTracker.reset(true);
+  }
+
+  getExploreTracker(): MontessoriExploreTracker {
+    return this.exploreTracker;
+  }
+
+  getControlOfError(): ControlOfErrorDiagnostics | null {
+    return this.exploreTracker.getControlOfErrorDiagnostics();
+  }
+
+  isMicroSandboxActive(): boolean {
+    return this.exploreTracker.isMicroSandboxActive();
+  }
+
+  getStepPitchIndex(stepId: string): number {
+    const step = this.resolveStepById().get(stepId);
+    if (step) {
+      return ((step.order_index % 5) + 5) % 5;
+    }
+    const targetIdx = this.resolveTargetSequence().indexOf(stepId);
+    return targetIdx >= 0 ? targetIdx % 5 : 0;
+  }
+
+  findFirstMismatchIndex(): number {
+    const current = this.getCurrentSequence();
+    const target = this.resolveTargetSequence();
+    const len = Math.max(current.length, target.length);
+    for (let i = 0; i < len; i++) {
+      if (current[i] !== target[i]) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  private resolveTargetSequence(): readonly string[] {
+    if (this.targetSequence.length === this.content.sequence.length) {
+      return this.targetSequence;
+    }
+    return this.content.sequence
+      .slice()
+      .sort((a, b) => a.order_index - b.order_index)
+      .map((s) => s.step_id);
+  }
+
+  private resolveStepById(): ReadonlyMap<
+    string,
+    GT006Content["sequence"][number]
+  > {
+    if (this.stepById.size === this.content.sequence.length) {
+      return this.stepById;
+    }
+    return new Map(this.content.sequence.map((s) => [s.step_id, s]));
   }
 
   getCurrentSequence(): readonly string[] {
@@ -66,6 +144,7 @@ export class GT006Session extends TemplateGameSession<
     if (!this.mechanic.reorder(fromIndex, toIndex)) {
       return;
     }
+    this.exploreTracker.recordExploreAction("train_car_reordered");
     this.recordEvent("step_reordered", {
       from_index: fromIndex,
       to_index: toIndex,
@@ -74,12 +153,7 @@ export class GT006Session extends TemplateGameSession<
   }
 
   validateAction(action: GameAction): ActionResult {
-    const targetSequence = this.content.sequence
-      .slice()
-      .sort((a, b) => a.order_index - b.order_index)
-      .map((s) => s.step_id);
-
-    return this.mechanic.validate(action, targetSequence);
+    return this.mechanic.validate(action, this.resolveTargetSequence());
   }
 
   onSubmitSequence(): void {
@@ -89,8 +163,38 @@ export class GT006Session extends TemplateGameSession<
     });
     this.recordEvent("sequence_submitted", { is_correct: valid });
     if (valid) {
+      this.exploreTracker.recordCorrectAttempt();
+      this.wrongSubmitTimerMs = 0;
       this.winSession();
+    } else {
+      this.wrongSubmitTimerMs = 350;
+      const mismatchIdx = this.findFirstMismatchIndex();
+      const reasonVi =
+        mismatchIdx >= 0
+          ? `Toa thứ ${mismatchIdx + 1} chưa đúng nhịp quy luật`
+          : "Thứ tự các toa chưa khớp quy luật";
+      this.exploreTracker.recordWrongAttempt({
+        reasonVi,
+        targetId:
+          mismatchIdx >= 0 ? this.getCurrentSequence()[mismatchIdx] : undefined,
+        actualValue: mismatchIdx + 1,
+      });
+      this.recordEvent("control_of_error", {
+        mismatch_index: mismatchIdx,
+        micro_sandbox: this.exploreTracker.isMicroSandboxActive(),
+      });
     }
+  }
+
+  update(deltaMs: number): void {
+    this.exploreTracker.tick(deltaMs);
+    if (this.wrongSubmitTimerMs > 0) {
+      this.wrongSubmitTimerMs = Math.max(0, this.wrongSubmitTimerMs - deltaMs);
+    }
+  }
+
+  private isStepOutOfOrder(stepId: string, currentIndex: number): boolean {
+    return this.resolveTargetSequence()[currentIndex] !== stepId;
   }
 
   /**
@@ -117,18 +221,7 @@ export class GT006Session extends TemplateGameSession<
   }
 
   private toSlotIndex(x: number, y: number, hitTolerance: number): number {
-    for (let i = 0; i < this.slots.length; i++) {
-      const slot = this.slots[i];
-      if (!slot) {
-        continue;
-      }
-      const halfW = Math.max(slot.hitW, slot.w) / 2 + hitTolerance;
-      const halfH = Math.max(slot.hitH, slot.h) / 2 + hitTolerance;
-      if (Math.abs(x - slot.x) <= halfW && Math.abs(y - slot.y) <= halfH) {
-        return i;
-      }
-    }
-    return -1;
+    return findHitSlotIndex(this.slots, x, y, "square", hitTolerance);
   }
 
   private toDropAction(
@@ -185,7 +278,7 @@ export class GT006Session extends TemplateGameSession<
   }
 
   override toAction(gesture: Gesture): GameAction | null {
-    const hitTolerance = 24;
+    const hitTolerance = TAP_TOLERANCE_PX;
     if (gesture.type === "drop") {
       return this.toDropAction(gesture, hitTolerance);
     }
@@ -202,10 +295,7 @@ export class GT006Session extends TemplateGameSession<
   }
 
   override getHintTargetIndex(): number | null {
-    const targetSequence = this.content.sequence
-      .slice()
-      .sort((a, b) => a.order_index - b.order_index)
-      .map((s) => s.step_id);
+    const targetSequence = this.resolveTargetSequence();
     const current = this.getCurrentSequence();
     for (let i = 0; i < targetSequence.length; i++) {
       const expectedStepId = targetSequence[i];
@@ -255,6 +345,7 @@ export class GT006Session extends TemplateGameSession<
 
   override getView(): EngineView {
     const order = this.mechanic.getCurrentSequence();
+    const byId = this.resolveStepById();
     const entities: ViewEntity[] = [];
 
     for (let i = 0; i < order.length; i++) {
@@ -263,9 +354,25 @@ export class GT006Session extends TemplateGameSession<
       if (!(stepId && slot)) {
         continue;
       }
+      const step = byId.get(stepId);
+      const assetLabels = step ? resolveAssetLabels(step.asset) : {};
       const rawState = this.getRenderItemState(stepId);
       const isStaged = this.stagedIndex === i;
-      const state = this.toItemEntityState(isStaged, rawState);
+      const isOutOfOrder =
+        this.wrongSubmitTimerMs > 0 && this.isStepOutOfOrder(stepId, i);
+      let state = this.toItemEntityState(isStaged, rawState);
+      if (isOutOfOrder) {
+        state = "incorrect";
+      }
+      const correctOrder =
+        (step as { correct_order?: number; order_index?: number })
+          ?.correct_order ??
+        step?.order_index ??
+        i + 1;
+      const label = step?.label ?? assetLabels.label ?? String(correctOrder);
+      const spokenLabel = step?.label
+        ? formatSpokenLabel(step.label)
+        : (assetLabels.spokenLabel ?? formatSpokenLabel(String(correctOrder)));
 
       entities.push({
         id: stepId,
@@ -276,6 +383,11 @@ export class GT006Session extends TemplateGameSession<
         y: slot.y,
         w: slot.w,
         h: slot.h,
+        hitShape: "square",
+        glyph: assetLabels.glyph,
+        label,
+        spokenLabel,
+        spokenAudioPath: assetLabels.spokenAudioPath,
       });
     }
 
@@ -293,13 +405,23 @@ export class GT006Session extends TemplateGameSession<
     drawSceneBackground(ctx, rs, this.themeId);
     this.drawTrackDecor(ctx, rs);
     const order = this.mechanic.getCurrentSequence();
-    const byId = new Map(this.content.sequence.map((s) => [s.step_id, s]));
+    const byId = this.resolveStepById();
 
     order.forEach((stepId, i) => {
       const slot = this.slots[i];
       const step = byId.get(stepId);
       if (!(slot && step)) {
         return;
+      }
+      const assetLabels = resolveAssetLabels(step.asset);
+      const correctOrder =
+        (step as { correct_order?: number; order_index?: number })
+          .correct_order ?? step.order_index;
+      let state = this.getRenderItemState(stepId);
+      if (this.wrongSubmitTimerMs > 0 && this.isStepOutOfOrder(stepId, i)) {
+        state = "wrong";
+      } else if (this.stagedIndex === i && state === "idle") {
+        state = "selected";
       }
       drawSlotItem(
         ctx,
@@ -308,12 +430,18 @@ export class GT006Session extends TemplateGameSession<
         {
           id: stepId,
           asset: step.asset,
-          label: step.label ?? String(i + 1),
-          state: this.getRenderItemState(stepId),
+          label: step.label ?? assetLabels.label ?? String(correctOrder),
+          state,
         },
         "square"
       );
     });
+    drawMontessoriControlOfErrorPill(
+      ctx,
+      this.stageRect ?? sceneBox(rs),
+      this.exploreTracker,
+      rs.viewport?.scale
+    );
   }
 
   /** Trục số hoặc đường ray + đầu tàu; có stage thì nằm trong dải đáy của stage. */

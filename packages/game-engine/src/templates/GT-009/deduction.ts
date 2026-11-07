@@ -4,31 +4,44 @@
  * khác nhau về "ứng viên nào bị loại", và trẻ sẽ thấy đúng chỗ lệch đó.
  */
 
-interface GT009Predicate {
-  readonly kind: "greater_than" | "less_than" | "not_equal" | "between";
+export interface GT009Predicate {
+  readonly kind:
+    | "greater_than"
+    | "less_than"
+    | "not_equal"
+    | "between"
+    | "has_attribute"
+    | "not_attribute";
   readonly value?: number;
   readonly min?: number;
   readonly max?: number;
+  readonly key?: string;
+  readonly attr_value?: string;
 }
 
-interface GT009Candidate {
+export interface GT009Candidate {
   readonly candidate_id: string;
   readonly value: number;
+  readonly attributes?: Readonly<Record<string, string>>;
 }
 
-interface GT009Clue {
+export interface GT009Clue {
   readonly clue_id: string;
   readonly predicate: GT009Predicate;
 }
 
-interface GT009ContentShape {
+export interface GT009ContentShape {
   readonly candidates: readonly GT009Candidate[];
   readonly clues: readonly GT009Clue[];
   readonly answer_candidate_id: string;
 }
 
-/** Một ứng viên thoả một manh mối hay không. */
-function satisfiesClue(value: number, predicate: GT009Predicate): boolean {
+/** Một ứng viên thoả một manh mối hay không (hỗ trợ cả vị ngữ số và thuộc tính). */
+export function satisfiesClue(
+  candidate: GT009Candidate,
+  predicate: GT009Predicate
+): boolean {
+  const { value, attributes } = candidate;
   switch (predicate.kind) {
     case "greater_than":
       return value > (predicate.value ?? Number.POSITIVE_INFINITY);
@@ -40,6 +53,19 @@ function satisfiesClue(value: number, predicate: GT009Predicate): boolean {
       return (
         value >= (predicate.min ?? Number.POSITIVE_INFINITY) &&
         value <= (predicate.max ?? Number.NEGATIVE_INFINITY)
+      );
+    case "has_attribute":
+      return (
+        predicate.key !== undefined &&
+        predicate.attr_value !== undefined &&
+        attributes?.[predicate.key] === predicate.attr_value
+      );
+    case "not_attribute":
+      return (
+        predicate.key !== undefined &&
+        predicate.attr_value !== undefined &&
+        attributes?.[predicate.key] !== undefined &&
+        attributes[predicate.key] !== predicate.attr_value
       );
     default:
       return false;
@@ -55,7 +81,7 @@ export function survivingCandidates(
     ? content.clues.filter((c) => clueIds.includes(c.clue_id))
     : content.clues;
   return content.candidates.filter((candidate) =>
-    applied.every((clue) => satisfiesClue(candidate.value, clue.predicate))
+    applied.every((clue) => satisfiesClue(candidate, clue.predicate))
   );
 }
 

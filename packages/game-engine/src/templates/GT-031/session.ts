@@ -1,3 +1,7 @@
+import {
+  formatNumberWord,
+  formatSpokenLabel,
+} from "@mindkid/shared/preschool-terminology";
 import type { AgeBand } from "#src/contracts/types";
 import {
   ACTION_CORRECT,
@@ -13,17 +17,24 @@ import type {
   Gesture,
   ViewEntity,
 } from "#src/interaction";
+import { resolveAssetLabels } from "#src/labels/spoken-keyword.js";
 import { resolveTouchFloor } from "#src/layout/constants";
+import {
+  findHitSlotIndex,
+  isPointInSlot,
+  TAP_TOLERANCE_PX,
+} from "#src/layout/hit-test.js";
 import { resolveLayout } from "#src/layout/registry";
 import { insetDrawSize } from "#src/layout/slot-fit";
 import {
   computeStageTargetSlot,
   computeTraySourceSlots,
-  findNearestHitSlot,
   pickTrayZones,
 } from "#src/layout/tray-layout";
 import type { Slot } from "#src/layout/types";
 import {
+  drawMoneyProgressLabel,
+  drawMontessoriCoin,
   drawSceneBackground,
   drawSlotItem,
   drawSubPromptText,
@@ -31,21 +42,21 @@ import {
   type ItemVisualState,
   spawnParticlesAtSlot,
   updateParticles,
-} from "#src/render/index.js";
+} from "#src/render/index";
 import type { DegradationState } from "#src/systems/degradation";
+import { designTokens } from "#src/systems/designTokens";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
   type GT031Content,
   type GT031Difficulty,
   pickCoinHint,
-} from "./template.js";
+} from "./template";
 
 /** Cạnh lớn nhất của thẻ giá / lợn đất giữa sân khấu. */
 const PAYMENT_TARGET_MAX_PX = 160;
+const RE_DIGITS = /^[0-9]+$/;
 /** Đệm hai bên thẻ giá trong sân khấu. */
 const PAYMENT_TARGET_PAD_PX = 32;
-
-const DROP_HIT_TOLERANCE_PX = 24;
 
 interface GT031ActionPayload {
   readonly coin_id?: string;
@@ -295,32 +306,63 @@ export class GT031Session extends TemplateGameSession<
     }
   }
 
-  /** Kéo xu từ khay thả vào thẻ giá (`BR-ENG-06`). */
+  /** Kéo xu từ khay thả vào thẻ giá, hoặc kéo xu đã nộp ra ngoài (`BR-ENG-06`). */
   private toDropAction(
     gesture: Extract<Gesture, { type: "drop" }>
   ): GameAction | null {
     const target = this.slots[0];
-    if (!(target && this.isOnSlot(target, gesture.toX, gesture.toY))) {
+    if (!target) {
       return null;
     }
-    const index = this.content.coins.findIndex((coin, i) => {
+
+    // Kéo xu đã nộp từ khay/thẻ giá ra ngoài để rút lại
+    const depositedIndex = this.content.coins.findIndex((coin, i) => {
       const slot = this.slots[1 + i];
       return (
         slot !== undefined &&
-        !this.depositedCoinIds.includes(coin.coin_id) &&
+        this.depositedCoinIds.includes(coin.coin_id) &&
         this.isOnSlot(slot, gesture.fromX, gesture.fromY)
       );
     });
-    const coin = this.content.coins[index];
-    return coin
-      ? { type: "deposit_coin", data: { coin_id: coin.coin_id } }
-      : null;
+    if (depositedIndex >= 0) {
+      const coin = this.content.coins[depositedIndex];
+      if (coin) {
+        return { type: "remove_coin", data: { coin_id: coin.coin_id } };
+      }
+    }
+
+    // Kéo từ thẻ giá ra ngoài: rút đồng xu nộp gần nhất
+    if (
+      this.isOnSlot(target, gesture.fromX, gesture.fromY) &&
+      !this.isOnSlot(target, gesture.toX, gesture.toY)
+    ) {
+      const lastDepositedId = this.depositedCoinIds.at(-1);
+      if (lastDepositedId) {
+        return { type: "remove_coin", data: { coin_id: lastDepositedId } };
+      }
+    }
+
+    // Kéo xu chưa nộp thả vào thẻ giá để nộp
+    if (this.isOnSlot(target, gesture.toX, gesture.toY)) {
+      const index = this.content.coins.findIndex((coin, i) => {
+        const slot = this.slots[1 + i];
+        return (
+          slot !== undefined &&
+          !this.depositedCoinIds.includes(coin.coin_id) &&
+          this.isOnSlot(slot, gesture.fromX, gesture.fromY)
+        );
+      });
+      const coin = this.content.coins[index];
+      return coin
+        ? { type: "deposit_coin", data: { coin_id: coin.coin_id } }
+        : null;
+    }
+
+    return null;
   }
 
   private isOnSlot(slot: Slot, x: number, y: number): boolean {
-    const hw = (slot.hitW ?? slot.w) / 2 + DROP_HIT_TOLERANCE_PX;
-    const hh = (slot.hitH ?? slot.h) / 2 + DROP_HIT_TOLERANCE_PX;
-    return Math.abs(x - slot.x) <= hw && Math.abs(y - slot.y) <= hh;
+    return isPointInSlot(slot, x, y, "square", TAP_TOLERANCE_PX);
   }
 
   override toAction(gesture: Gesture): GameAction | null {
@@ -332,11 +374,12 @@ export class GT031Session extends TemplateGameSession<
     }
 
     const coinSlots = this.slots.slice(1, 1 + this.content.coins.length);
-    const index = findNearestHitSlot(
+    const index = findHitSlotIndex(
       coinSlots,
       gesture.x,
       gesture.y,
-      DROP_HIT_TOLERANCE_PX
+      "circle",
+      TAP_TOLERANCE_PX
     );
     const coin = this.content.coins[index];
     if (!coin) {
@@ -348,27 +391,58 @@ export class GT031Session extends TemplateGameSession<
     return { type: "deposit_coin", data: { coin_id: coin.coin_id } };
   }
 
+  private buildPaymentTargetEntity(): ViewEntity | null {
+    const targetSlot = this.slots[0];
+    if (!targetSlot) {
+      return null;
+    }
+    let state: EntityVisual = "idle";
+    if (this.currentTotal === this.content.target_amount) {
+      state = "correct";
+    } else if (this.currentTotal > this.content.target_amount) {
+      state = "incorrect";
+    }
+    const itemToBuy = this.content.item_to_buy;
+    const targetAsset = itemToBuy?.asset ?? {
+      kind: "emoji" as const,
+      ref: "🪙",
+    };
+    const targetLabels = resolveAssetLabels(targetAsset);
+    const targetLabel = itemToBuy
+      ? `${itemToBuy.label} (${this.content.target_amount}đ)`
+      : `Cần trả: ${this.content.target_amount}đ`;
+    const targetAmountWord = formatNumberWord(this.content.target_amount);
+    const targetSpoken = itemToBuy?.label
+      ? formatSpokenLabel(`${itemToBuy.label} ${targetAmountWord} đồng`)
+      : formatSpokenLabel(`cần trả ${targetAmountWord} đồng`);
+    const targetId = this.content.coins.some(
+      (c) => c.coin_id === "payment_target"
+    )
+      ? "target:payment_target"
+      : "payment_target";
+    return {
+      id: targetId,
+      slotIndex: 0,
+      role: "target",
+      state,
+      x: targetSlot.x,
+      y: targetSlot.y,
+      w: targetSlot.w,
+      h: targetSlot.h,
+      hitShape: "square",
+      glyph: targetLabels.glyph,
+      label: targetLabel,
+      spokenLabel: targetSpoken ?? targetLabels.spokenLabel,
+      spokenAudioPath: targetLabels.spokenAudioPath,
+    };
+  }
+
   override getView(): EngineView {
     const entities: ViewEntity[] = [];
 
-    const targetSlot = this.slots[0];
-    if (targetSlot) {
-      let state: EntityVisual = "idle";
-      if (this.currentTotal === this.content.target_amount) {
-        state = "correct";
-      } else if (this.currentTotal > this.content.target_amount) {
-        state = "incorrect";
-      }
-      entities.push({
-        id: "payment_target",
-        slotIndex: 0,
-        role: "target",
-        state,
-        x: targetSlot.x,
-        y: targetSlot.y,
-        w: targetSlot.w,
-        h: targetSlot.h,
-      });
+    const targetEntity = this.buildPaymentTargetEntity();
+    if (targetEntity) {
+      entities.push(targetEntity);
     }
 
     for (let i = 0; i < this.content.coins.length; i++) {
@@ -378,6 +452,10 @@ export class GT031Session extends TemplateGameSession<
         continue;
       }
       const isDeposited = this.depositedCoinIds.includes(coin.coin_id);
+      const coinLabels = resolveAssetLabels(coin.asset);
+      const coinSpoken =
+        formatSpokenLabel(`${formatNumberWord(coin.value)} đồng`) ??
+        coinLabels.spokenLabel;
       entities.push({
         id: coin.coin_id,
         slotIndex: 1 + i,
@@ -387,6 +465,11 @@ export class GT031Session extends TemplateGameSession<
         y: slot.y,
         w: slot.w,
         h: slot.h,
+        hitShape: "circle",
+        glyph: coinLabels.glyph,
+        label: `${coin.value}đ`,
+        spokenLabel: coinSpoken,
+        spokenAudioPath: coinLabels.spokenAudioPath,
       });
     }
 
@@ -417,17 +500,33 @@ export class GT031Session extends TemplateGameSession<
       return;
     }
 
+    const targetPrice =
+      (this.content as { target_price?: number }).target_price ??
+      this.content.target_amount;
     const itemToBuy = this.content.item_to_buy;
-    let label = `Cần trả: ${this.content.target_amount}đ`;
+    let label = `Cần trả: ${targetPrice}đ`;
     if (itemToBuy) {
-      label = `${itemToBuy.label} (${this.content.target_amount}đ)`;
+      label = `${itemToBuy.label} (${targetPrice}đ)`;
     }
 
     let state: ItemVisualState = "idle";
-    if (this.currentTotal === this.content.target_amount) {
+    if (this.currentTotal === targetPrice) {
       state = "correct";
-    } else if (this.currentTotal > this.content.target_amount) {
+    } else if (this.currentTotal > targetPrice) {
       state = "wrong";
+    }
+
+    let displayAsset = itemToBuy?.asset ?? {
+      kind: "emoji" as const,
+      ref: "🪙",
+    };
+    if (displayAsset.kind === "emoji" && RE_DIGITS.test(displayAsset.ref)) {
+      displayAsset = { kind: "emoji" as const, ref: "🎁" };
+    } else if (
+      displayAsset.kind === "text" &&
+      RE_DIGITS.test(displayAsset.text)
+    ) {
+      displayAsset = { kind: "emoji" as const, ref: "🎁" };
     }
 
     drawSlotItem(
@@ -436,12 +535,22 @@ export class GT031Session extends TemplateGameSession<
       targetSlot,
       {
         id: "payment_target",
-        asset: itemToBuy?.asset ?? { kind: "emoji", ref: "🪙" },
+        asset: displayAsset,
         label,
         state,
       },
       "square"
     );
+
+    // Dòng tiến độ hiển thị phía trên thẻ mục tiêu để không bị khay đè lên
+    const progressText = `Đã góp: ${this.currentTotal} / ${targetPrice}đ`;
+    let progressColor: string = designTokens.colors.surface[700];
+    if (this.currentTotal === targetPrice) {
+      progressColor = designTokens.colors.semantic.success[700];
+    } else if (this.currentTotal > targetPrice) {
+      progressColor = designTokens.colors.retry[700];
+    }
+    drawMoneyProgressLabel(ctx, targetSlot, progressText, progressColor);
   }
 
   private renderCoins(ctx: CanvasRenderingContext2D, rs: RenderSystem): void {
@@ -459,23 +568,7 @@ export class GT031Session extends TemplateGameSession<
       }
 
       const isDeposited = this.depositedCoinIds.includes(coin.coin_id);
-      let state: ItemVisualState = "idle";
-      if (isDeposited) {
-        state = "selected";
-      }
-
-      drawSlotItem(
-        ctx,
-        rs,
-        slot,
-        {
-          id: coin.coin_id,
-          asset: coin.asset,
-          label: `${coin.value}đ`,
-          state,
-        },
-        "circle"
-      );
+      drawMontessoriCoin(ctx, slot, coin.value, isDeposited);
     }
   }
 

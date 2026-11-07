@@ -106,9 +106,78 @@ describe("GT-010: Thay thế biểu tượng (substitution)", () => {
         "game_started",
         "equation_solved",
         "value_selected",
+        "control_of_error",
         "value_selected",
         "game_completed",
       ]);
+    });
+
+    it("supports Montessori 2-phase explore -> challenge, Control of Error, and Micro-Sandbox auto-pinning", () => {
+      const session = new SubstitutionSession(
+        SAMPLE_LEVEL_1.content_pack,
+        SAMPLE_LEVEL_1.difficulty_params
+      );
+      session.setupEntities();
+      session.startExplorePhase();
+
+      expect(session.getExploreTracker().getPhase()).toBe("explore");
+
+      session.pinSymbolValue("apple", 5);
+      expect(session.getExploreTracker().getPhase()).toBe("explore");
+
+      session.pinSymbolValue("banana", 3);
+      expect(session.getExploreTracker().getPhase()).toBe("challenge");
+
+      // Reset to fresh challenge state with no pinned symbols
+      session.setupEntities();
+      expect(session.getPinnedSymbolValue("apple")).toBeUndefined();
+      expect(session.isMicroSandboxActive()).toBe(false);
+
+      // First wrong attempt -> Control of Error reasonVi
+      expect(session.selectValue(2)).toBe(false);
+      expect(session.getControlOfError()?.reasonVi).toBe(
+        "Giá trị 2 chưa khớp phép thay thế (cần 3)"
+      );
+      expect(session.isMicroSandboxActive()).toBe(false);
+      expect(session.getPinnedSymbolValue("apple")).toBeUndefined();
+
+      // Second consecutive wrong attempt -> enters Micro-Sandbox and auto-pins base symbol ("apple" = 5)
+      expect(session.selectValue(8)).toBe(false);
+      expect(session.isMicroSandboxActive()).toBe(true);
+      expect(session.getPinnedSymbolValue("apple")).toBe(5);
+
+      // Correct attempt -> clears Control of Error and exits Micro-Sandbox
+      expect(session.selectValue(3)).toBe(true);
+      expect(session.isMicroSandboxActive()).toBe(false);
+      expect(session.getControlOfError()).toBeNull();
+    });
+
+    it("resolves text symbol glyphs, option slot hint index, and neutral equation roles in getView()", () => {
+      const textSymbolPack = {
+        ...SAMPLE_LEVEL_1.content_pack,
+        symbols: [
+          { symbol_id: "apple", asset: { kind: "text" as const, text: "5" } },
+          { symbol_id: "banana", asset: { kind: "text" as const, text: "2" } },
+        ],
+      };
+      const session = new SubstitutionSession(
+        textSymbolPack,
+        SAMPLE_LEVEL_1.difficulty_params
+      );
+      session.prepareRound("4-5");
+
+      const hintIdx = session.getHintTargetIndex();
+      expect(hintIdx).not.toBeNull();
+      const hintedSlot = session.slots[hintIdx ?? -1];
+      expect(hintedSlot?.role).toBe("source");
+
+      const view = session.getView();
+      const eqEntity = view.entities.find((e) => e.id === "eq_1");
+      expect(eqEntity?.role).toBe("neutral");
+      expect(eqEntity?.label).toBe("5 + 5 = 10");
+
+      const optEntity = view.entities.find((e) => e.id === "opt-1");
+      expect(optEntity?.spokenLabel).toBe("Số 3");
     });
   });
 });

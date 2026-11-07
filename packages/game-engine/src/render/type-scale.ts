@@ -1,15 +1,15 @@
-import type { RenderSystem } from "../systems/render-system.js";
 /**
- * Thang cỡ chữ Canvas 2D suy từ LogicSpace (Task #268 / BR-ERC-12 / BR-A11-08).
- * Spec: `docs/design-system/05-motion-and-surface.md` §3 & `engine-render-contract.md` §7.7.
+ * Thang cỡ chữ Canvas 2D suy từ LogicSpace.
  *
  * Invariant: Strict TypeScript — CẤM any, CẤM unknown.
  * Sàn tối thiểu: 16 px CSS quy về px logic theo tỉ lệ khung nhìn.
  */
 
-import type { LogicSpace } from "../layout/constants.js";
+import type { LogicSpace } from "#src/layout/constants";
+import { designTokens } from "#src/systems/designTokens";
+import type { RenderSystem } from "#src/systems/render-system";
 
-export type { LogicSpace } from "../layout/constants.js";
+export type { LogicSpace } from "#src/layout/constants";
 
 export type CanvasTypeRole =
   | "number"
@@ -109,12 +109,75 @@ export function legibleFontPx(basePx: number, scale?: number): number {
  * cần tỉ lệ thật của khung nhìn. `viewport` chỉ có sau `setupCanvas`; chưa dựng
  * khung thì `canvasFontPx` tự lấy sàn máy dọc thận trọng.
  */
+interface SpaceOfResult {
+  space: LogicSpace;
+  scale?: number;
+}
+
+const spaceOfCache = new WeakMap<RenderSystem, SpaceOfResult>();
+
 export function spaceOf(rs: RenderSystem): {
   space: LogicSpace;
   scale?: number;
 } {
-  return {
-    space: { w: rs.LOGIC_WIDTH, h: rs.LOGIC_HEIGHT },
-    scale: rs.viewport?.scale,
-  };
+  const currentScale = rs.viewport?.scale;
+  const currentSpace = rs.logicSpace;
+  let cached = spaceOfCache.get(rs);
+  if (
+    !cached ||
+    cached.scale !== currentScale ||
+    cached.space.w !== currentSpace.w ||
+    cached.space.h !== currentSpace.h
+  ) {
+    cached = { space: currentSpace, scale: currentScale };
+    spaceOfCache.set(rs, cached);
+  }
+  return cached;
+}
+
+export function applyCanvasFontAtSize(
+  ctx: CanvasRenderingContext2D,
+  sizePx: number,
+  arg3: "sans" | "heading" | number | string = "sans",
+  arg4: "sans" | "heading" | number | string = 400
+): void {
+  let family: "sans" | "heading" = "sans";
+  let weight: number | string = 400;
+
+  if (arg3 === "sans" || arg3 === "heading") {
+    family = arg3;
+    if (typeof arg4 === "number" || typeof arg4 === "string") {
+      weight = arg4;
+    }
+  } else if (arg4 === "sans" || arg4 === "heading") {
+    family = arg4;
+    if (typeof arg3 === "number" || typeof arg3 === "string") {
+      weight = arg3;
+    }
+  } else if (typeof arg3 === "number" || typeof arg3 === "string") {
+    weight = arg3;
+  }
+
+  const fontFace =
+    family === "heading" ? designTokens.fonts.heading : designTokens.fonts.sans;
+  ctx.font = `${weight} ${sizePx}px ${fontFace}`;
+}
+
+export function applyCanvasFont(
+  ctx: CanvasRenderingContext2D,
+  role: CanvasTypeRole,
+  space: LogicSpace,
+  scale?: number,
+  family: "sans" | "heading" = "sans",
+  weight: number | string = 400
+): void {
+  const sizePx = canvasFontPx(space, role, scale);
+  applyCanvasFontAtSize(ctx, sizePx, family, weight);
+}
+
+export function applyEmojiFont(
+  ctx: CanvasRenderingContext2D,
+  sizePx: number
+): void {
+  ctx.font = `${sizePx}px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", ${designTokens.fonts.sans}`;
 }

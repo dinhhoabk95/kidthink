@@ -118,5 +118,32 @@ describe("GT-012: Nhìn chớp rồi nhớ lại (flash-recall)", () => {
         "game_completed",
       ]);
     });
+
+    it("provides Vietnamese spokenLabel on options and accepts taps within TAP_TOLERANCE_PX", () => {
+      const session = new FlashRecallSession(
+        SAMPLE_LEVEL_1.content_pack,
+        SAMPLE_LEVEL_1.difficulty_params
+      );
+      session.prepareRound("3-4");
+      session.update(1600);
+
+      const view = session.getView();
+      const optEntity = view.entities.find((e) => e.id === "opt-3");
+      expect(optEntity?.spokenLabel).toBe("Số 3");
+
+      const hintIdx = session.getHintTargetIndex() ?? 0;
+      const slot = session.slots[hintIdx];
+      expect(slot).toBeDefined();
+      if (slot) {
+        const edgeY = slot.y + slot.hitH / 2 + 12;
+        const action = session.toAction({
+          type: "tap",
+          x: slot.x,
+          y: edgeY,
+          timeMs: 100,
+        });
+        expect(action).toEqual({ type: "select_value", data: 3 });
+      }
+    });
   });
 });

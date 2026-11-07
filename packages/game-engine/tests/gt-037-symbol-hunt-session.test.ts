@@ -451,10 +451,18 @@ describe("GT-037 Session (Task #278 S3)", () => {
       expect(view.entities.length).toBe(singleTargetContent.item_count);
       expect(view.activePrompt).toBe(singleTargetContent.prompt);
 
-      const targetEntity = view.entities.find((e) => e.role === "target");
-      expect(targetEntity).toBeDefined();
-      expect(targetEntity?.hitShape).toBe("circle");
-      expect(targetEntity?.state).toBe("idle");
+      expect(view.entities.every((e) => e.role === "neutral")).toBe(true);
+      const firstEntity = view.entities[0];
+      expect(firstEntity).toBeDefined();
+      expect(firstEntity?.hitShape).toBe("circle");
+      expect(firstEntity?.state).toBe("idle");
+
+      const ids = new Set(view.entities.map((e) => e.id));
+      expect(ids.size).toBe(view.entities.length);
+      for (const ent of view.entities) {
+        expect(typeof ent.spokenLabel).toBe("string");
+        expect(ent.spokenLabel?.trim().length).toBeGreaterThan(0);
+      }
     });
   });
 });

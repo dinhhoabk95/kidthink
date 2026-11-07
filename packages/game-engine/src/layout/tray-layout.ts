@@ -99,7 +99,7 @@ export function computeTraySourceSlots(
   const hit = Math.max(touchFloor, size);
   const padX = Math.min(ZONE_PADDING_PX, trayRowPadX(tray.w, touchFloor));
   const pitch = trayPitch(grid.perRow, tray, hit, padX);
-  const rowH = hit + labelH;
+  const rowH = Math.max(hit, size + labelH);
   const blockH = grid.rows * rowH + (grid.rows - 1) * SLOT_GAP_PX;
   // Khối vật cao hơn khay (không đủ chỗ) thì tràn xuống dưới, không tràn lên trên đè vùng khác.
   const top = tray.y + Math.max(0, (tray.h - blockH) / 2);

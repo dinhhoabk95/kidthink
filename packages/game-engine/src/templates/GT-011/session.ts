@@ -7,6 +7,8 @@ import {
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
+import { resolveAssetLabels } from "#src/labels/spoken-keyword";
+import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
 import {
   dockRectAroundSlots,
@@ -21,12 +23,19 @@ import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
 import {
   boxFromSlots,
   drawEmptyTargetSlot,
+  drawMontessoriControlOfErrorPill,
+  drawRoundedBoxOutline,
   drawSceneBackground,
   drawShapeTray,
   drawSlotItem,
   drawWoodenTokenDock,
+  sceneBox,
 } from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
+import {
+  type ControlOfErrorDiagnostics,
+  MontessoriExploreTracker,
+} from "#src/systems/montessori-explore-system";
 import type { RenderSystem } from "#src/systems/render-system";
 import { colMatches, findBlankCell, rowMatches } from "./matrix-rule.js";
 import type { GT011Content, GT011Difficulty } from "./template.js";
@@ -70,12 +79,50 @@ export class GT011Session extends TemplateGameSession<
   degradation: DegradationState | null = null;
 
   private readonly mechanic = new SelectionMechanic({ mode: "single" });
+  private readonly exploreTracker = new MontessoriExploreTracker({
+    milestoneTarget: 2,
+  });
   private preview: MatrixPreview | null = null;
+  private wrongOptionId: string | null = null;
+  private wrongTimestamp = 0;
+  private lastFrameMs = 0;
 
   setupEntities(): void {
     this.mechanic.reset();
+    this.exploreTracker.reset(false);
     this.preview = null;
+    this.wrongOptionId = null;
+    this.wrongTimestamp = 0;
+    this.lastFrameMs = 0;
     this.isWon = false;
+  }
+
+  startExplorePhase(): void {
+    this.exploreTracker.reset(true);
+  }
+
+  getExploreTracker(): MontessoriExploreTracker {
+    return this.exploreTracker;
+  }
+
+  getControlOfError(): ControlOfErrorDiagnostics | null {
+    return this.exploreTracker.getControlOfErrorDiagnostics();
+  }
+
+  isMicroSandboxActive(): boolean {
+    return this.exploreTracker.isMicroSandboxActive();
+  }
+
+  update(deltaMs: number): void {
+    this.lastFrameMs += deltaMs;
+    this.exploreTracker.tick(deltaMs);
+    if (this.wrongOptionId && this.lastFrameMs - this.wrongTimestamp >= 400) {
+      this.setRenderItemState(this.wrongOptionId, "idle");
+      this.mechanic.reset();
+      this.preview = null;
+      this.wrongOptionId = null;
+      this.wrongTimestamp = 0;
+    }
   }
 
   /** Ô trống của ma trận — đúng một ô, `content_contract` đã ép điều đó. */
@@ -96,6 +143,7 @@ export class GT011Session extends TemplateGameSession<
     if (!option) {
       return null;
     }
+    this.exploreTracker.recordExploreAction("matrix_previewed");
     this.preview = {
       option_id: optionId,
       row_matches: rowMatches(this.content.matrix, option.asset),
@@ -114,33 +162,60 @@ export class GT011Session extends TemplateGameSession<
   }
 
   override toAction(gesture: Gesture): GameAction | null {
-    if (gesture.type !== "tap") {
-      return null;
-    }
     const cellCount = this.content.matrix.rows * this.content.matrix.cols;
     const optionSlots = this.slots.slice(cellCount);
-    for (let i = 0; i < this.content.options.length; i++) {
-      const slot = optionSlots[i];
-      const option = this.content.options[i];
-      if (!(slot && option)) {
-        continue;
-      }
-      const dx = Math.abs(gesture.x - slot.x);
-      const dy = Math.abs(gesture.y - slot.y);
-      const radius = Math.max(slot.hitW ?? slot.w, slot.hitH ?? slot.h) / 2;
-      if (dx <= radius && dy <= radius) {
+    if (gesture.type === "drop") {
+      const fromIdx = findHitSlotIndex(
+        optionSlots,
+        gesture.fromX,
+        gesture.fromY,
+        "circle",
+        TAP_TOLERANCE_PX
+      );
+      const cellSlots = this.slots.slice(0, cellCount);
+      const toCellIdx = findHitSlotIndex(
+        cellSlots,
+        gesture.toX,
+        gesture.toY,
+        "square",
+        TAP_TOLERANCE_PX
+      );
+      const option = fromIdx >= 0 ? this.content.options[fromIdx] : undefined;
+      if (option && toCellIdx >= 0) {
         return {
           type: "select_item",
           data: { item_id: option.option_id },
         };
       }
+      return null;
     }
-    return null;
+    if (gesture.type !== "tap") {
+      return null;
+    }
+    const idx = findHitSlotIndex(
+      optionSlots,
+      gesture.x,
+      gesture.y,
+      "circle",
+      TAP_TOLERANCE_PX
+    );
+    const option = idx >= 0 ? this.content.options[idx] : undefined;
+    if (!option) {
+      return null;
+    }
+    return {
+      type: "select_item",
+      data: { item_id: option.option_id },
+    };
   }
 
   override getHintTargetIndex(): number | null {
     const idx = this.content.options.findIndex((o) => o.is_correct);
-    return idx >= 0 ? idx : null;
+    if (idx < 0) {
+      return null;
+    }
+    const cellCount = this.content.matrix.rows * this.content.matrix.cols;
+    return this.slots.length > cellCount ? cellCount + idx : idx;
   }
 
   override getHintTargetForLevel(level: HintLevel): HintTarget | null {
@@ -203,12 +278,15 @@ export class GT011Session extends TemplateGameSession<
         entities.push({
           id: "matrix_blank",
           slotIndex,
-          role: "target",
+          role: "neutral",
           state: this.preview === null ? "idle" : "active",
           x: slot.x,
           y: slot.y,
           w: slot.w,
           h: slot.h,
+          hitShape: "square",
+          label: "Ô trống",
+          spokenLabel: "Ô trống",
         });
       } else {
         entities.push({
@@ -220,6 +298,8 @@ export class GT011Session extends TemplateGameSession<
           y: slot.y,
           w: slot.w,
           h: slot.h,
+          hitShape: "square",
+          ...resolveAssetLabels(cell.asset),
         });
       }
     }
@@ -242,6 +322,7 @@ export class GT011Session extends TemplateGameSession<
         y: slot.y,
         w: slot.w,
         h: slot.h,
+        ...resolveAssetLabels(opt.asset),
       });
     });
 
@@ -257,6 +338,36 @@ export class GT011Session extends TemplateGameSession<
       return;
     }
     this.mechanic.select(optionId);
+    if (option.is_correct) {
+      this.wrongOptionId = null;
+      this.wrongTimestamp = 0;
+      this.exploreTracker.recordCorrectAttempt();
+    } else {
+      this.wrongOptionId = optionId;
+      this.wrongTimestamp = this.lastFrameMs;
+      this.setRenderItemState(optionId, "wrong");
+      const rMatch = rowMatches(this.content.matrix, option.asset);
+      const cMatch = colMatches(this.content.matrix, option.asset);
+      let reasonVi = "Chưa khớp quy luật hai chiều của bảng";
+      if (rMatch && !cMatch) {
+        reasonVi = "Khớp hàng ngang nhưng chưa khớp cột dọc";
+      } else if (!rMatch && cMatch) {
+        reasonVi = "Khớp cột dọc nhưng chưa khớp hàng ngang";
+      } else if (!(rMatch || cMatch)) {
+        reasonVi = "Chưa khớp quy luật hàng ngang và cột dọc";
+      }
+      this.exploreTracker.recordWrongAttempt({
+        reasonVi,
+        targetId: optionId,
+        actualValue: optionId,
+      });
+      this.recordEvent("control_of_error", {
+        option_id: optionId,
+        row_matches: rMatch,
+        col_matches: cMatch,
+        micro_sandbox: this.exploreTracker.isMicroSandboxActive(),
+      });
+    }
     this.recordEvent("option_selected", {
       option_id: optionId,
       is_correct: option.is_correct,
@@ -297,8 +408,17 @@ export class GT011Session extends TemplateGameSession<
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
-    _timeMs: number
+    timeMs: number
   ): void {
+    this.lastFrameMs = timeMs;
+    if (this.wrongOptionId && timeMs - this.wrongTimestamp >= 400) {
+      this.setRenderItemState(this.wrongOptionId, "idle");
+      this.mechanic.reset();
+      this.preview = null;
+      this.wrongOptionId = null;
+      this.wrongTimestamp = 0;
+    }
+
     drawSceneBackground(ctx, rs, this.themeId);
     const cellCount = this.content.matrix.rows * this.content.matrix.cols;
     const cellSlots = this.slots.slice(0, cellCount);
@@ -313,6 +433,8 @@ export class GT011Session extends TemplateGameSession<
       dockRectAroundSlots(optionSlots, this.stageRect)
     );
     const { cols } = this.content.matrix;
+
+    this.renderMatrixPreviewHighlight(ctx, rs, cellSlots, cols);
 
     for (const cell of this.content.matrix.cells) {
       const slot = cellSlots[cell.row * cols + cell.col];
@@ -359,7 +481,55 @@ export class GT011Session extends TemplateGameSession<
         asset: opt.asset,
         state,
       });
+
+      if (opt.option_id === this.wrongOptionId && this.wrongTimestamp > 0) {
+        const elapsed = timeMs - this.wrongTimestamp;
+        if (elapsed < 400) {
+          rs.drawRetryRing(
+            ctx,
+            slot.x,
+            slot.y,
+            Math.min(slot.hitW, slot.hitH) / 2 + 4,
+            elapsed / 400
+          );
+        }
+      }
     });
+
+    drawMontessoriControlOfErrorPill(
+      ctx,
+      this.stageRect ?? sceneBox(rs),
+      this.exploreTracker,
+      rs.viewport?.scale
+    );
+  }
+
+  private renderMatrixPreviewHighlight(
+    ctx: CanvasRenderingContext2D,
+    _rs: RenderSystem,
+    cellSlots: readonly Slot[],
+    cols: number
+  ): void {
+    if (!this.preview) {
+      return;
+    }
+    const blank = this.getBlankCell();
+    if (this.preview.row_matches) {
+      const rowSlots = cellSlots.filter(
+        (_, idx) => Math.floor(idx / cols) === blank.row
+      );
+      const rowBox = boxFromSlots(rowSlots);
+      if (rowBox) {
+        drawRoundedBoxOutline(ctx, rowBox);
+      }
+    }
+    if (this.preview.col_matches) {
+      const colSlots = cellSlots.filter((_, idx) => idx % cols === blank.col);
+      const colBox = boxFromSlots(colSlots);
+      if (colBox) {
+        drawRoundedBoxOutline(ctx, colBox);
+      }
+    }
   }
 }
 

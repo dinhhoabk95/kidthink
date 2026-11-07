@@ -5,6 +5,7 @@ import {
   ACTION_RETRY,
   type ActionResult,
   type GameAction,
+  type GameActionValue,
   TemplateGameSession,
 } from "#src/game-session";
 import type {
@@ -13,34 +14,37 @@ import type {
   Gesture,
   ViewEntity,
 } from "#src/interaction";
+import { resolveAssetLabels } from "#src/labels/spoken-keyword";
 import { resolveTouchFloor } from "#src/layout/constants";
+import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
 import { computeStageCellSlots } from "#src/layout/stage-targets";
-import {
-  computeTraySourceSlots,
-  findNearestHitSlot,
-  pickTrayZones,
-} from "#src/layout/tray-layout";
+import { computeTraySourceSlots, pickTrayZones } from "#src/layout/tray-layout";
 import type { Slot } from "#src/layout/types";
 import {
   drawEmptyTargetSlot,
+  drawMontessoriControlOfErrorPill,
   drawSceneBackground,
   drawSlotItem,
+  drawSudokuBoardFrame,
   drawWoodenTokenDock,
+  sceneBox,
 } from "#src/render/index.js";
 import {
   type ConstraintViolation,
+  countSudokuSolutions,
   findConstraintViolations,
   isSudokuCompleteAndValid,
   type SudokuCell,
   type SudokuGrid,
 } from "#src/systems/constraint-system";
 import type { DegradationState } from "#src/systems/degradation";
+import {
+  type ControlOfErrorDiagnostics,
+  MontessoriExploreTracker,
+} from "#src/systems/montessori-explore-system";
 import type { RenderSystem } from "#src/systems/render-system";
 import type { GT015Content, GT015Difficulty } from "./template.js";
-
-/** Sudoku chạm đúng vùng chạm của ô, không nới thêm. */
-const NO_HIT_TOLERANCE_PX = 0;
 
 /** Cạnh ô lưới lớn nhất trên sân khấu — cùng cỡ ô của `matrix-slot-grid`. */
 const GRID_CELL_MAX_PX = 96;
@@ -53,7 +57,7 @@ interface SudokuCellState {
 }
 
 function extractFillCellData(
-  data: unknown
+  data: GameActionValue
 ): { row: number; col: number; symbol_id: string } | null {
   if (
     typeof data === "object" &&
@@ -84,11 +88,27 @@ function findHitPaletteIndex(
   x: number,
   y: number
 ): number {
-  return findNearestHitSlot(
+  return findHitSlotIndex(
     slots.slice(cellCount, cellCount + symbolCount),
     x,
     y,
-    NO_HIT_TOLERANCE_PX
+    "circle",
+    TAP_TOLERANCE_PX
+  );
+}
+
+function findHitCellIndex(
+  slots: readonly Slot[],
+  cellCount: number,
+  x: number,
+  y: number
+): number {
+  return findHitSlotIndex(
+    slots.slice(0, cellCount),
+    x,
+    y,
+    "square",
+    TAP_TOLERANCE_PX
   );
 }
 
@@ -98,15 +118,32 @@ function findHitCellCoords(
   x: number,
   y: number
 ): { row: number; col: number } | null {
-  const index = findNearestHitSlot(
-    slots.slice(0, size * size),
-    x,
-    y,
-    NO_HIT_TOLERANCE_PX
-  );
+  const index = findHitCellIndex(slots, size * size, x, y);
   return index >= 0
     ? { row: Math.floor(index / size), col: index % size }
     : null;
+}
+
+function resolveTapSlotIndex(
+  slots: readonly Slot[],
+  cellCount: number,
+  symbolCount: number,
+  x: number,
+  y: number
+): number {
+  const cellIdx = findHitCellIndex(slots, cellCount, x, y);
+  const palOffset = findHitPaletteIndex(slots, cellCount, symbolCount, x, y);
+  const palIdx = palOffset >= 0 ? cellCount + palOffset : -1;
+  if (cellIdx >= 0 && palIdx >= 0) {
+    const cellSlot = slots[cellIdx];
+    const palSlot = slots[palIdx];
+    if (cellSlot && palSlot) {
+      const cellDist = Math.hypot(x - cellSlot.x, y - cellSlot.y);
+      const palDist = Math.hypot(x - palSlot.x, y - palSlot.y);
+      return palDist < cellDist ? palIdx : cellIdx;
+    }
+  }
+  return palIdx >= 0 ? palIdx : cellIdx;
 }
 
 function resolveDropSymbolId(
@@ -152,8 +189,14 @@ export class SudokuMiniSession extends TemplateGameSession<
   degradation: DegradationState | null = null;
 
   private readonly cellStates: Map<string, SudokuCellState> = new Map();
+  private readonly exploreTracker = new MontessoriExploreTracker({
+    milestoneTarget: 2,
+  });
+  private symbolById = new Map<string, GT015Content["symbols"][number]>();
   private selectedSymbolId: string | null = null;
   private activeViolations: readonly ConstraintViolation[] = [];
+  private wrongTimestamp = 0;
+  private lastFrameMs = 0;
 
   /** Ký hiệu nằm trong khay, lưới đứng trên sân khấu (`BR-PSZ-01`). */
   override readonly needsTray = true;
@@ -170,9 +213,15 @@ export class SudokuMiniSession extends TemplateGameSession<
   override readonly usesPromptZone = true;
 
   setupEntities(): void {
+    this.exploreTracker.reset(false);
     this.cellStates.clear();
+    this.symbolById = new Map(
+      this.content.symbols.map((s) => [s.symbol_id, s])
+    );
     this.activeViolations = [];
     this.selectedSymbolId = null;
+    this.wrongTimestamp = 0;
+    this.lastFrameMs = 0;
     this.isWon = false;
 
     for (const c of this.content.cells) {
@@ -189,6 +238,22 @@ export class SudokuMiniSession extends TemplateGameSession<
       template_code: "GT-015",
       grid_size: this.content.grid_size,
     });
+  }
+
+  startExplorePhase(): void {
+    this.exploreTracker.reset(true);
+  }
+
+  getExploreTracker(): MontessoriExploreTracker {
+    return this.exploreTracker;
+  }
+
+  getControlOfError(): ControlOfErrorDiagnostics | null {
+    return this.exploreTracker.getControlOfErrorDiagnostics();
+  }
+
+  isMicroSandboxActive(): boolean {
+    return this.exploreTracker.isMicroSandboxActive();
   }
 
   getGridSize(): number {
@@ -213,6 +278,7 @@ export class SudokuMiniSession extends TemplateGameSession<
 
   selectSymbol(symbolId: string | null): void {
     this.selectedSymbolId = symbolId;
+    this.exploreTracker.recordExploreAction("symbol_selected");
   }
 
   getViolations(): readonly ConstraintViolation[] {
@@ -221,6 +287,25 @@ export class SudokuMiniSession extends TemplateGameSession<
 
   isConflicted(row: number, col: number): boolean {
     return this.activeViolations.some((v) => v.row === row && v.col === col);
+  }
+
+  private isCellMatchingSolution(
+    row: number,
+    col: number,
+    symbolId: string
+  ): boolean {
+    const cells: SudokuCell<string>[] = this.content.cells.map((c) => ({
+      row: c.row,
+      col: c.col,
+      value: c.row === row && c.col === col ? symbolId : c.symbol_id,
+    }));
+    const grid: SudokuGrid<string> = {
+      size: this.content.grid_size,
+      regions: this.content.regions,
+      cells,
+    };
+    const possibleValues = this.content.symbols.map((s) => s.symbol_id);
+    return countSudokuSolutions(grid, possibleValues, 1) > 0;
   }
 
   fillCell(row: number, col: number, symbolId: string | null): boolean {
@@ -244,6 +329,10 @@ export class SudokuMiniSession extends TemplateGameSession<
 
     if (symbolId !== null) {
       const hasConflict = this.isConflicted(row, col);
+      const isWrongPlacement =
+        hasConflict ||
+        this.getViolations().length > 0 ||
+        !this.isCellMatchingSolution(row, col, symbolId);
       this.recordEvent("cell_filled", {
         row,
         col,
@@ -252,19 +341,48 @@ export class SudokuMiniSession extends TemplateGameSession<
       });
 
       if (hasConflict) {
+        this.wrongTimestamp = this.lastFrameMs;
         this.recordEvent("constraint_violated", {
           row,
           col,
           symbol_id: symbolId,
         });
       }
+
+      if (isWrongPlacement) {
+        const hasBoxViolation = this.activeViolations.some(
+          (v) => v.row === row && v.col === col && v.kind === "box"
+        );
+        const reasonVi = hasBoxViolation
+          ? `Trùng hình trong vùng 2×2, hàng ${row + 1} hoặc cột ${col + 1}`
+          : `Trùng hình trên hàng ${row + 1} hoặc cột ${col + 1}`;
+        this.exploreTracker.recordWrongAttempt({
+          reasonVi,
+          targetId: `${row}:${col}`,
+          actualValue: symbolId,
+        });
+        this.recordEvent("control_of_error", {
+          row,
+          col,
+          symbol_id: symbolId,
+          micro_sandbox: this.exploreTracker.isMicroSandboxActive(),
+        });
+      } else {
+        this.exploreTracker.recordExploreAction("cell_filled");
+      }
     }
 
     if (this.checkWinCondition()) {
+      this.exploreTracker.recordCorrectAttempt();
       this.winSession();
     }
 
     return true;
+  }
+
+  update(deltaMs: number): void {
+    this.exploreTracker.tick(deltaMs);
+    this.lastFrameMs += deltaMs;
   }
 
   clearCell(row: number, col: number): boolean {
@@ -350,10 +468,12 @@ export class SudokuMiniSession extends TemplateGameSession<
   }
 
   override getHintTargetIndex(): number | null {
-    const emptyIdx = this.content.cells.findIndex(
+    const emptyCell = this.content.cells.find(
       (c) => this.cellStates.get(`${c.row},${c.col}`)?.value === null
     );
-    return emptyIdx >= 0 ? emptyIdx : null;
+    return emptyCell
+      ? emptyCell.row * this.content.grid_size + emptyCell.col
+      : null;
   }
 
   override commit(action: GameAction): void {
@@ -419,15 +539,17 @@ export class SudokuMiniSession extends TemplateGameSession<
     cellCount: number
   ): GameAction | null {
     const symbolCount = this.content.symbols.length;
-    const hit = findNearestHitSlot(
-      this.slots.slice(0, cellCount + symbolCount),
+    const hit = resolveTapSlotIndex(
+      this.slots,
+      cellCount,
+      symbolCount,
       gesture.x,
-      gesture.y,
-      NO_HIT_TOLERANCE_PX
+      gesture.y
     );
     if (hit >= cellCount) {
-      this.selectedSymbolId =
-        this.content.symbols[hit - cellCount]?.symbol_id ?? null;
+      this.selectSymbol(
+        this.content.symbols[hit - cellCount]?.symbol_id ?? null
+      );
       return null;
     }
     if (hit < 0 || !this.selectedSymbolId) {
@@ -446,11 +568,22 @@ export class SudokuMiniSession extends TemplateGameSession<
     };
   }
 
+  private resolveSymbolById(): ReadonlyMap<
+    string,
+    GT015Content["symbols"][number]
+  > {
+    if (this.symbolById.size === this.content.symbols.length) {
+      return this.symbolById;
+    }
+    return new Map(this.content.symbols.map((s) => [s.symbol_id, s]));
+  }
+
   override getView(): EngineView {
     const cellCount = this.content.grid_size * this.content.grid_size;
     const cellSlots = this.slots.slice(0, cellCount);
     const paletteSlots = this.slots.slice(cellCount);
     const size = this.content.grid_size;
+    const symbolMap = this.resolveSymbolById();
     const entities: ViewEntity[] = [];
 
     this.content.symbols.forEach((sym, i) => {
@@ -465,6 +598,7 @@ export class SudokuMiniSession extends TemplateGameSession<
           y: slot.y,
           w: slot.w,
           h: slot.h,
+          ...resolveAssetLabels(sym.asset),
         });
       }
     });
@@ -479,6 +613,14 @@ export class SudokuMiniSession extends TemplateGameSession<
           isWrong,
           Boolean(state?.value)
         );
+        const symbolId = state?.value ?? cell.symbol_id;
+        const sym = symbolId ? symbolMap.get(symbolId) : undefined;
+        const cellLabels = sym
+          ? resolveAssetLabels(sym.asset)
+          : {
+              label: `H${cell.row + 1}C${cell.col + 1}`,
+              spokenLabel: `Ô hàng ${cell.row + 1} cột ${cell.col + 1}`,
+            };
         entities.push({
           id: `cell-${cell.row}-${cell.col}`,
           slotIndex,
@@ -488,6 +630,8 @@ export class SudokuMiniSession extends TemplateGameSession<
           y: slot.y,
           w: slot.w,
           h: slot.h,
+          hitShape: "square",
+          ...cellLabels,
         });
       }
     }
@@ -531,8 +675,9 @@ export class SudokuMiniSession extends TemplateGameSession<
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
-    _timeMs: number
+    timeMs: number
   ): void {
+    this.lastFrameMs = timeMs;
     drawSceneBackground(ctx, rs, this.themeId);
     const zones = pickTrayZones(this.stageRect, this.trayRect);
     if (zones) {
@@ -543,8 +688,9 @@ export class SudokuMiniSession extends TemplateGameSession<
     const cellSlots = this.slots.slice(0, cellCount);
     const paletteSlots = this.slots.slice(cellCount);
     const size = this.content.grid_size;
-    const assetOf = (symbolId: string) =>
-      this.content.symbols.find((s) => s.symbol_id === symbolId)?.asset;
+    drawSudokuBoardFrame(ctx, cellSlots, size, this.content.regions);
+    const symbolMap = this.resolveSymbolById();
+    const assetOf = (symbolId: string) => symbolMap.get(symbolId)?.asset;
     // Một vi phạm nêu cả ô sai lẫn ô xung đột — tô đỏ cả hai thì trẻ thấy
     // ĐƯỢC quan hệ, thay vì chỉ thấy một ô bị chê.
     const violated = new Set(
@@ -578,6 +724,15 @@ export class SudokuMiniSession extends TemplateGameSession<
         { id: `${cell.row},${cell.col}`, asset: assetOf(symbolId), state },
         "square"
       );
+      if (state === "wrong" && timeMs - this.wrongTimestamp < 400) {
+        rs.drawRetryRing(
+          ctx,
+          slot.x,
+          slot.y,
+          Math.min(slot.hitW, slot.hitH) / 2 + 4,
+          Math.min(1, Math.max(0, (timeMs - this.wrongTimestamp) / 400))
+        );
+      }
     }
 
     this.content.symbols.forEach((sym, i) => {
@@ -591,6 +746,12 @@ export class SudokuMiniSession extends TemplateGameSession<
         state: this.selectedSymbolId === sym.symbol_id ? "selected" : "idle",
       });
     });
+    drawMontessoriControlOfErrorPill(
+      ctx,
+      this.stageRect ?? sceneBox(rs),
+      this.exploreTracker,
+      rs.viewport?.scale
+    );
   }
 }
 

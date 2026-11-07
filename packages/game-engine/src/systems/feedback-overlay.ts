@@ -46,6 +46,7 @@ export const MASCOT_FEEDBACK_HOLD_MS = 700;
 const PULSE_BASE_RADIUS = 18;
 const PULSE_GROWTH = 1.6;
 const RETRY_BEATS = 2;
+const EMPTY_PULSES: readonly PulseFrame[] = Object.freeze([]);
 
 const FEEDBACK_STYLE: Record<
   OverlayFeedbackKind,
@@ -131,17 +132,28 @@ export class FeedbackOverlay {
     reducedMotion = false
   ): FeedbackFrame {
     if (this.celebrating) {
-      return { pulses: [], mascotPose: "celebrate", mascotElapsedMs: nowMs };
+      return {
+        pulses: EMPTY_PULSES,
+        mascotPose: "celebrate",
+        mascotElapsedMs: nowMs,
+      };
     }
     const active = this.active;
     if (!active) {
-      return { pulses: [], mascotPose: basePose, mascotElapsedMs: nowMs };
+      return {
+        pulses: EMPTY_PULSES,
+        mascotPose: basePose,
+        mascotElapsedMs: nowMs,
+      };
     }
     const elapsed = nowMs - active.startMs;
     const pulse = toPulseFrame(active, nowMs, reducedMotion);
     const holding = elapsed >= 0 && elapsed < MASCOT_FEEDBACK_HOLD_MS;
+    if (!pulse && elapsed >= MASCOT_FEEDBACK_HOLD_MS) {
+      this.active = null;
+    }
     return {
-      pulses: pulse ? [pulse] : [],
+      pulses: pulse ? [pulse] : EMPTY_PULSES,
       mascotPose: holding ? FEEDBACK_STYLE[active.kind].pose : basePose,
       mascotElapsedMs: holding ? elapsed : nowMs,
     };
@@ -153,6 +165,9 @@ export function drawFeedbackPulses(
   ctx: CanvasRenderingContext2D,
   pulses: readonly PulseFrame[]
 ): void {
+  if (pulses.length === 0) {
+    return;
+  }
   for (const pulse of pulses) {
     ctx.save();
     ctx.globalAlpha = Math.max(0, Math.min(1, pulse.alpha));

@@ -395,5 +395,27 @@ describe("GT-013 — ba bậc gợi ý (điều kiện nghiệm thu 15)", () => 
     });
     expect(res?.valid).toBe(true);
     expect(session.getPath().at(-1)).toEqual({ row: 0, col: 1 });
+    expect(neighborEntity?.hitShape).toBe("square");
+    expect(neighborEntity?.spokenLabel).toContain("Hàng 1 cột 2");
+  });
+
+  it("hỗ trợ cử chỉ kéo thả (drop) nối từ ô đầu qua ô liền kề", () => {
+    const session = newSession(0);
+    session.prepareRound("4-5");
+    const s00 = session.slots[0];
+    const s10 = session.slots[3];
+    if (!(s00 && s10)) {
+      throw new Error("maze slots must exist");
+    }
+    const res = session.dispatch({
+      type: "drop",
+      fromX: s00.x,
+      fromY: s00.y,
+      toX: s10.x,
+      toY: s10.y,
+      timeMs: 150,
+    });
+    expect(res?.valid).toBe(true);
+    expect(session.getPath().at(-1)).toEqual({ row: 1, col: 0 });
   });
 });

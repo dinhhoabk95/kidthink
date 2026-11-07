@@ -296,6 +296,12 @@ describe("GT-032: So lượng chất lỏng (pour-quantity)", () => {
       expect(view.entities.length).toBe(f.content.cups.length);
       const correctEntity = view.entities.find((e) => e.id === "cup_b");
       expect(correctEntity?.state).toBe("correct");
+      const ids = view.entities.map((e) => e.id);
+      expect(new Set(ids).size).toBe(ids.length);
+      for (const entity of view.entities) {
+        expect(entity.spokenLabel).toBeTruthy();
+        expect(entity.hitShape).toBe("square");
+      }
     });
 
     it("supports adjust gesture for pour_to_mark in discrete integer units and wins on target", () => {

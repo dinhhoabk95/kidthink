@@ -3,9 +3,10 @@ import {
   getTouchFloor,
   type LogicSpace,
 } from "#src/layout/constants";
+import type { Slot } from "#src/layout/types";
 import { designTokens } from "#src/systems/designTokens";
 import type { RenderSystem } from "#src/systems/render-system";
-import { canvasFontPx } from "./type-scale.js";
+import { applyCanvasFontAtSize, canvasFontPx } from "./type-scale.js";
 import type { SceneBox } from "./types.js";
 
 /** Bước tối thiểu giữa hai mốc khi mốc KHÔNG chạm được — đủ chỗ cho một nhãn số. */
@@ -131,7 +132,7 @@ export function drawNumberLine(
    */
   const labelFontPx = canvasFontPx(space, "hud", scale);
   const labelEveryTick = stepW >= labelFontPx * 1.3;
-  ctx.font = `bold ${labelFontPx}px ${designTokens.fonts.sans}`;
+  applyCanvasFontAtSize(ctx, labelFontPx, "sans", "bold");
   ctx.textAlign = "center";
   ctx.textBaseline = "top";
 
@@ -190,4 +191,33 @@ export function drawTrackNumberLine(
     space: { w: rs.LOGIC_WIDTH, h: rs.LOGIC_HEIGHT },
     scale: rs.viewport?.scale,
   });
+}
+
+/** Thanh đỡ vật cần đo kèm 2 vạch giới hạn đứt nét (GT-030). */
+export function drawMeasurementGuideBar(
+  ctx: CanvasRenderingContext2D,
+  slot: Slot
+): void {
+  const barX = slot.x - slot.w / 2;
+  const barY = slot.y - slot.h / 2;
+
+  ctx.save();
+  ctx.fillStyle = designTokens.colors.surface[200];
+  ctx.strokeStyle = designTokens.colors.surface[300];
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.roundRect(barX, barY, slot.w, slot.h, 12);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.strokeStyle = designTokens.colors.surface[400];
+  ctx.lineWidth = 2;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(barX, barY - 6);
+  ctx.lineTo(barX, barY + slot.h + 6);
+  ctx.moveTo(barX + slot.w, barY - 6);
+  ctx.lineTo(barX + slot.w, barY + slot.h + 6);
+  ctx.stroke();
+  ctx.restore();
 }

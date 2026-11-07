@@ -308,5 +308,37 @@ describe("GT-030: Đo bằng đơn vị lặp (measure-with-unit)", () => {
       expect(tapOpt?.valid).toBe(true);
       expect(session.checkWinCondition()).toBe(true);
     });
+
+    it("populates spokenLabel, hitShape and guarantees unique entity IDs in getView()", () => {
+      const f = getFixture(0);
+      const collidingContent = {
+        ...f.content,
+        object: { ...f.content.object, object_id: "same_id" },
+        unit: { ...f.content.unit, unit_id: "same_id" },
+      };
+      const session = new GT030Session(collidingContent, f.difficulty);
+      session.prepareRound("5-6");
+
+      for (let i = 0; i < collidingContent.object.length_in_units; i++) {
+        session.commit({ type: "place_unit", data: {} });
+      }
+
+      const view = session.getView();
+      const ids = view.entities.map((e) => e.id);
+      expect(new Set(ids).size).toBe(ids.length);
+      for (const entity of view.entities) {
+        expect(entity.spokenLabel).toBeTruthy();
+        expect(entity.hitShape).toBe("square");
+      }
+    });
+
+    it("getHintTargetIndex points to unit source slot when units remain to be placed", () => {
+      const f = getFixture(0);
+      const session = new GT030Session(f.content, f.difficulty);
+      session.prepareRound("5-6");
+
+      const targetLength = f.content.object.length_in_units;
+      expect(session.getHintTargetIndex()).toBe(1 + targetLength);
+    });
   });
 });
