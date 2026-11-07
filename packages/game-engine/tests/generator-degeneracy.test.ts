@@ -18,6 +18,10 @@ import {
   GT008DifficultySchema,
 } from "#src/templates/GT-008/template";
 import {
+  GT010ContentSchema,
+  GT010DifficultySchema,
+} from "#src/templates/GT-010/template";
+import {
   GT011ContentSchema,
   GT011DifficultySchema,
 } from "#src/templates/GT-011/template";
@@ -638,6 +642,67 @@ describe("GT-013 — mê cung 4-5 tuổi thưa tường, ít lối, đọc đư�
         seed
       );
       expect(outcome, `seed=${seed}`).toBe("won");
+    }
+  });
+});
+
+describe("GT-010 — band 4-5 tra bảng một bước, band 5-6 giữ hai bước (BR-E010-05)", () => {
+  function parsed(seed: number, band: "4-5" | "5-6") {
+    const { content_pack, difficulty_params } = gen("GT-010", seed, band);
+    return {
+      content: GT010ContentSchema.parse(content_pack),
+      diff: GT010DifficultySchema.parse(difficulty_params),
+    };
+  }
+
+  it("band 4-5: mỗi dòng luật chỉ có một ký hiệu (bảng giá), câu hỏi là tổng, step_count 1", () => {
+    for (const seed of SEEDS) {
+      const { content, diff } = parsed(seed, "4-5");
+      expect(
+        content.equations.every((e) => e.left.length === 1),
+        `seed=${seed}`
+      ).toBe(true);
+      expect(content.question.kind).toBe("sum");
+      expect(diff.step_count).toBe(1);
+      expect(diff.equation_count).toBe(content.equations.length);
+    }
+  });
+
+  it("band 4-5: mỗi ký hiệu có đúng một dòng luật và tổng nằm trong tầm đếm (≤ 8)", () => {
+    for (const seed of SEEDS) {
+      const { content } = parsed(seed, "4-5");
+      const lefts = content.equations.map((e) => e.left[0]);
+      expect(new Set(lefts).size).toBe(content.symbols.length);
+      const total = content.equations.reduce(
+        (sum, e) => sum + e.right_value,
+        0
+      );
+      expect(total).toBeLessThanOrEqual(8);
+      const correct = content.options.find((o) => o.is_correct);
+      expect(correct?.value).toBe(total);
+    }
+  });
+
+  it("band 5-6: vẫn là hệ hai bước (ký hiệu gấp đôi rồi ký hiệu còn lại), step_count 2", () => {
+    for (const seed of SEEDS) {
+      const { content, diff } = parsed(seed, "5-6");
+      expect(content.equations[0]?.left).toHaveLength(2);
+      expect(content.question.kind).toBe("value");
+      expect(diff.step_count).toBe(2);
+    }
+  });
+
+  it("giá trị của các ký hiệu đổi theo seed ở cả hai band", () => {
+    for (const band of ["4-5", "5-6"] as const) {
+      const values = new Set<string>();
+      for (const seed of SEEDS) {
+        values.add(
+          parsed(seed, band)
+            .content.equations.map((e) => e.right_value)
+            .join(",")
+        );
+      }
+      expect(values.size, `band=${band}`).toBeGreaterThan(3);
     }
   });
 });

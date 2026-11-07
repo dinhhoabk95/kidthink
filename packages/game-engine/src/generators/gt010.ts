@@ -1,6 +1,65 @@
 import { shuffle } from "#src/rng/shuffle";
+import type { Rng } from "#src/rng/types";
 import { getNouns, sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
-import type { LevelGenerator } from "./types.js";
+import type {
+  GeneratedLevel,
+  LevelGenerator,
+  VocabularyEntry,
+} from "./types.js";
+
+const LOOKUP_MAX_VALUE = 4; // mỗi ký hiệu 1..4, tổng ≤ 8: trong tầm đếm của trẻ 4-5
+
+/**
+ * Band 4-5 (`BR-E010-05`): bảng giá một bước — mỗi ký hiệu một dòng luật
+ * (`🍎 = 3`), câu hỏi là tổng hai ký hiệu. Trẻ tra từng dòng rồi cộng, không
+ * giải hệ hai phương trình ẩn (hệ đó là bài của band 5-6).
+ */
+function generateLookupTable(
+  rng: Rng,
+  sampled: readonly VocabularyEntry[]
+): GeneratedLevel {
+  const valA = 1 + rng.nextInt(LOOKUP_MAX_VALUE);
+  const valB = 1 + rng.nextInt(LOOKUP_MAX_VALUE);
+  const total = valA + valB;
+  const symbols = sampled.map((noun, idx) => ({
+    symbol_id: `sym_${idx + 1}`,
+    asset: { kind: "emoji" as const, ref: noun.emoji_ref },
+  }));
+  const equations = [
+    { equation_id: "eq_1", left: ["sym_1"], right_value: valA },
+    { equation_id: "eq_2", left: ["sym_2"], right_value: valB },
+  ];
+  const distractors: number[] = [];
+  for (const candidate of [total + 1, total - 1, total + 2, total - 2]) {
+    if (distractors.length < 3 && candidate > 0 && candidate !== total) {
+      distractors.push(candidate);
+    }
+  }
+  const options = shuffle(
+    [
+      { value: total, is_correct: true },
+      ...distractors.map((value) => ({ value, is_correct: false })),
+    ],
+    rng
+  );
+  return {
+    content_pack: {
+      prompt: "Bé hãy tra bảng rồi cộng xem hai hình có tất cả bao nhiêu nhé!",
+      symbols,
+      equations,
+      question: { kind: "sum" as const, symbol_ids: ["sym_1", "sym_2"] },
+      options,
+    },
+    difficulty_params: {
+      item_count: options.length,
+      equation_count: 2,
+      step_count: 1,
+      distractor_count: distractors.length,
+      hint_after_ms: 12_000,
+      allow_retry: true,
+    },
+  };
+}
 
 export const GT010Generator: LevelGenerator = {
   engine: "GT-010",
@@ -9,9 +68,12 @@ export const GT010Generator: LevelGenerator = {
     what: ["equation", "substitution", "logic"],
     theme: [...VALID_GENERATOR_THEMES],
   },
-  generate({ rng, vocabulary }) {
+  generate({ rng, age_band, vocabulary }) {
     const nouns = getNouns(vocabulary, 6);
     const sampled = sampleUnique(rng, nouns, 2);
+    if (age_band === "4-5") {
+      return generateLookupTable(rng, sampled);
+    }
 
     const valA = 2 + rng.nextInt(4); // 2..5
     const valB = 1 + rng.nextInt(4); // 1..4
