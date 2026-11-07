@@ -53,7 +53,7 @@ export const SAMPLE_LEVEL_1: GameLevelFixture<GT017Content, GT017Difficulty> = {
     ],
   },
   difficulty_params: {
-    hidden_cube_count: 0,
+    hidden_cube_count: 1,
     allow_rotate: true,
     distractor_count: 2,
     hint_after_ms: 8000,
@@ -97,7 +97,7 @@ export const SAMPLE_LEVEL_2: GameLevelFixture<GT017Content, GT017Difficulty> = {
     ],
   },
   difficulty_params: {
-    hidden_cube_count: 0,
+    hidden_cube_count: 1,
     allow_rotate: true,
     distractor_count: 2,
     hint_after_ms: 10_000,

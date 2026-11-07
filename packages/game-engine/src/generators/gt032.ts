@@ -106,7 +106,7 @@ export const GT032Generator: LevelGenerator = {
       difficulty_params: {
         item_count: orderedCups.length,
         cup_count: orderedCups.length,
-        level_steps: 8,
+        level_steps: Math.max(...orderedCups.map((c) => c.capacity_units)),
         conservation_trap: isTrap,
         allow_retry: true,
         hint_after_ms: 8000,
