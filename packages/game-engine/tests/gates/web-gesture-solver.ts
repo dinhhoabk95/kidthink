@@ -25,6 +25,8 @@ export type SolveOutcome = "won" | "stuck" | "no-session";
 const MAX_STEPS = 80;
 /** Một hành động hợp lệ không đổi view (xoay…) được lặp tối đa từng này lần. */
 const MAX_REPEAT = 4;
+/** Trẻ chạm đều tay mỗi ~0,8 s: đủ cho engine chấm nhịp gõ (GT-034, 70-80 BPM). */
+const GESTURE_SPACING_MS = 800;
 /** Một lần chờ khi kẹt và số lần chờ tối đa mỗi level. */
 const WAIT_MS = 6000;
 const MAX_WAITS = 40;
@@ -165,13 +167,13 @@ export async function solveWithWebGestures(
     if (session.checkWinCondition()) {
       return "won";
     }
-    let progressed = stepOnce(session, step, seen, uses);
+    let progressed = stepOnce(session, step * GESTURE_SPACING_MS, seen, uses);
     // Trẻ chờ: shell vẫn gọi `update()` khi hết gesture (xem trước, khoảng nghỉ,
     // hết giờ lượt nogo…), nên chờ rồi thử lại cho tới khi hết lượt chờ.
     while (!(progressed || session.checkWinCondition()) && waits < MAX_WAITS) {
       (session as GameSession).update?.(WAIT_MS);
       waits++;
-      progressed = stepOnce(session, step, seen, uses);
+      progressed = stepOnce(session, step * GESTURE_SPACING_MS, seen, uses);
     }
     if (!(progressed || session.checkWinCondition())) {
       return "stuck";

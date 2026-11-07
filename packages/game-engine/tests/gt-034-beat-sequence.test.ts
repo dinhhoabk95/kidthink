@@ -221,11 +221,13 @@ describe("GT-034 Gõ theo nhịp (beat-sequence) Contract & Session Tests", () =
     });
     expect(session.userSteps).toEqual(["drum"]);
 
-    // Tap mistake (không push vào userSteps, nháy hổ phách)
+    // Tap nhầm: vẫn là một bước, không chấm từng bước (BR-E034-06); gỡ bằng undo
     session.commit({
       type: "tap_instrument",
       data: { instrument_id: "drum" },
     });
+    expect(session.userSteps).toEqual(["drum", "drum"]);
+    session.commit({ type: "undo_beat", data: {} });
     expect(session.userSteps).toEqual(["drum"]);
 
     // Tap rest of correct steps: cymbal, drum, cymbal

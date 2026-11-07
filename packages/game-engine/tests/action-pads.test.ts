@@ -78,12 +78,15 @@ describe("Task #313 — pad rest GT-034", () => {
 
   it("gõ clap, chạm pad nghỉ, clap, nghỉ thì thắng", () => {
     const session = build();
+    let clock = 0;
     const tap = (id: string) => {
       const e = session.getView().entities.find((x) => x.id === id);
       if (!e) {
         throw new Error(`Thiếu ${id}`);
       }
-      session.dispatch({ type: "tap", x: e.x, y: e.y, timeMs: 0 });
+      // Gõ đều tay theo phách (70 BPM ≈ 857 ms) để qua chấm nhịp (BR-E034-07).
+      clock += 857;
+      session.dispatch({ type: "tap", x: e.x, y: e.y, timeMs: clock });
     };
     tap("clap");
     tap("pad_rest");

@@ -108,6 +108,7 @@ export default defineTemplate({
     "pattern_played",
     "beat_tapped",
     "sequence_submitted",
+    "timing_missed",
     "game_completed",
   ],
 });
