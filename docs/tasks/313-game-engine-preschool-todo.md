@@ -59,7 +59,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 
 - [ ] 026 (còn lại) — thang hạ độ khó chạy theo số lượt bỏ sót, chưa theo `hint_after_ms` (Task #301); đèn giao thông/mascot đứng hình (Phase 5); GT-026#0-2 đã gỡ khỏi sổ nợ web-gesture (solver nay biết chờ `update()`)
 
-- [ ] 029 (còn lại) — chữ phụ "Đã bớt: n/m" ở caption, ô số ban đầu giữ nguyên và thẻ "bớt đi n" bằng hình (chữ phải đọc: Phase 4 "Gỡ chữ"); mèo ăn cá thật sự (Phase 5); lưới lẻ cột thì vật bớt chia hàng với nhóm nên không có dock riêng
+- [ ] 029 (còn lại) — chữ phụ "Đã bớt: n/m" đã thành `-m` + chấm (BR-E029-05); câu "bớt đi n" là câu dẫn shell đọc, ô số ban đầu giữ nguyên; mèo ăn cá thật sự (Phase 5); lưới lẻ cột thì vật bớt chia hàng với nhóm nên không có dock riêng
 
 ## Phase 4 — Generator & difficulty
 - [x] Generator 006 (số đếm tăng dần, session xáo bằng Sattolo, BR-E006-02/04)
@@ -77,7 +77,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
   - Cờ tính năng chưa có code: GT-023 `show_anchor_outline` · GT-024 `show_numbered_dots` · GT-034 `tempo_bpm`, `instrument_count` · GT-035 `allow_loop`, `obstacle_count`, `collectible_count` · GT-019 `rotation_step`
   - `distractor_count` (GT-001/002/003/004/007/008/010/011/012/016/017/025) và `target_count` (GT-002/003/025/027) chỉ là số đo lại của content; `hint_after_ms` ở mọi engine chờ thang trợ giúp Task #301
   - `shuffle_items` 028/029: session truy cập `content.items[i]` theo chỉ số, xáo phải đổi cả test thứ tự; để riêng một commit
-- [ ] Gỡ chữ phải đọc khỏi UI trẻ (008, 009, 019, 023, 028, 029, 032, 035, 036)
+- [x] Gỡ chữ phải đọc khỏi UI trẻ (008, 009, 019, 023, 028, 029, 032, 035, 036) — đợt 4B xong cho 9 game, mỗi game một commit và một `BR-E0xx` mới
   - [x] 008 (ô đích hiện bóng mờ của vật nhận, khay chỉ hình, tên chỉ đọc thành tiếng, BR-E008-05)
   - [x] 009 (thẻ manh mối: kính lúp khi chưa mở, ký hiệu số + mũi tên khi mở, câu chữ chỉ đọc, BR-E009-06)
   - [x] 019 (bỏ nhãn độ dưới ô/mảnh và chữ "Lật", góc nhìn từ hình mờ, số độ chỉ đọc, BR-E019-06)
@@ -88,6 +88,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
   - [x] 032 (bỏ dòng phụ bố cục cũ và label "Cốc n", tên cốc chỉ đọc, BR-E032-08)
   - [x] 035 (còn lại Phase 3: thẻ lệnh chỉ biểu tượng, bỏ chữ "Đích"/"Đã xếp"/tên lệnh trong view, tên lệnh chỉ đọc, BR-E035-10)
   - [x] 036 (bỏ dòng mời và lời khen vẽ ở bố cục cũ, label hình mẫu/ô dải, lời chỉ đọc, BR-E036-09)
+  - Chưa gỡ (ngoài phạm vi 4B): pill sai Montessori dùng chung (`drawMontessoriControlOfErrorPill`, vẽ `reasonVi` bằng chữ), pill câu dẫn của shell, nhãn rổ GT-003 (`container-shapes.ts`)
 
 ## Phase 5 — Đặc sắc từng game
 - [ ] Đợt demo: 001, 003, 020, 025, 026, 037
