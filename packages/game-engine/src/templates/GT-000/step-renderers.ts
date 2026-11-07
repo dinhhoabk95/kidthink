@@ -426,6 +426,10 @@ export interface StepActionContext {
     data?: Record<string, string | number | boolean | null | undefined>
   ) => void;
   playEchoModel: (step: GT000Step & { action: "echo" }) => void;
+  /** Sai ở recognise/link: chạy lại `present` của mục tiêu rồi hỏi lại (BR-E000-14). */
+  replayTargetThenAsk: (
+    step: GT000Step & { action: "recognise" | "link" }
+  ) => void;
   advanceStep: () => void;
   setWrongTimer: (ms: number) => void;
 }
@@ -478,9 +482,6 @@ function handleRecogniseAction(
     const misses = (ctx.missCounts.get(step.target_asset_id) ?? 0) + 1;
     ctx.missCounts.set(step.target_asset_id, misses);
 
-    ctx.renderItemStates.set(selectedId, "wrong");
-    ctx.setWrongTimer(350);
-
     if (
       misses >= 3 &&
       ctx.requiresReintro &&
@@ -494,6 +495,7 @@ function handleRecogniseAction(
       ctx.advanceStep();
       return ACTION_RETRY;
     }
+    ctx.replayTargetThenAsk(step);
     return ACTION_RETRY;
   }
 
@@ -522,6 +524,9 @@ function handleLinkAction(
     (sourceId === step.target_asset_id && targetId === step.source_asset_id);
 
   if (!isMatch) {
+    const misses = (ctx.missCounts.get(step.target_asset_id) ?? 0) + 1;
+    ctx.missCounts.set(step.target_asset_id, misses);
+    ctx.replayTargetThenAsk(step);
     return ACTION_RETRY;
   }
 

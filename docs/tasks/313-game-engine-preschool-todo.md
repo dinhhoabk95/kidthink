@@ -39,7 +39,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 - [x] Helper derangement trong `src/rng/` (`deriveDerangement`, Sattolo; chưa nối vào generator — Phase 4)
 
 ## Phase 3 — Spec drift "control of error"
-- [ ] 000 · [ ] 007 · [ ] 009 · [ ] 010 · [ ] 012 · [ ] 013 · [ ] 014 · [ ] 015
+- [x] 000 · [ ] 007 · [ ] 009 · [ ] 010 · [ ] 012 · [ ] 013 · [ ] 014 · [ ] 015
 - [ ] 020 · [ ] 021 · [ ] 022 · [ ] 023 · [ ] 026 · [ ] 029 · [ ] 030 · [ ] 031
 - [ ] 032 · [ ] 034 (chấm timing) · [ ] 035 (chạy từng bước) · [ ] 036 · [ ] 037
 

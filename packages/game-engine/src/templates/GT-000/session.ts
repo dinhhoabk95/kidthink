@@ -61,6 +61,8 @@ export class GT000Session extends TemplateGameSession<
   private stepPromptToken = 0;
   private stepPromptWaitedMs = 0;
   private wrongResetTimerMs = 0;
+  /** Chất liệu đã báo `tts_unavailable` — nghe lại không nhân đôi telemetry. */
+  private readonly ttsMissReported = new Set<string>();
 
   readonly audio = new AudioController();
   audioPromptCalled = false;
@@ -147,6 +149,7 @@ export class GT000Session extends TemplateGameSession<
     this.deferredAssetIds.length = 0;
     this.recallAnswers.length = 0;
     this.echoReplayCounts.clear();
+    this.ttsMissReported.clear();
     this.wrongResetTimerMs = 0;
     this.audioPromptCalled = false;
     this.releaseStepPrompt();
@@ -315,13 +318,58 @@ export class GT000Session extends TemplateGameSession<
       });
       this.lastTtsUsed = spoke;
       if (!spoke) {
-        this.recordEvent("tts_unavailable", {
-          lang: "vi-VN",
-          asset_id: asset.asset_id,
-        });
+        this.reportTtsUnavailable(asset.asset_id);
       }
     }
     return asset;
+  }
+
+  /**
+   * Sai ở `recognise`/`link`: không báo sai (BR-E000-14) — đọc lại tên mục tiêu
+   * như lúc giới thiệu, xong mới hỏi lại chính câu đó. Cổng chạm đóng trong lúc
+   * đọc để cử chỉ không chấm lẫn vào lời giới thiệu.
+   */
+  private replayTargetThenAsk(
+    step: GT000Step & { action: "recognise" | "link" }
+  ): void {
+    const asset = this.getAsset(step.target_asset_id);
+    if (!asset) {
+      this.playStepPrompt(step);
+      return;
+    }
+    this.releaseStepPrompt();
+    this.stepPromptPending = true;
+    const token = this.stepPromptToken;
+    const ask = (): void => {
+      if (token !== this.stepPromptToken) {
+        return;
+      }
+      this.stepPromptPending = false;
+      this.playStepPrompt(step);
+    };
+    if (asset.audio_path) {
+      this.lastTtsUsed = false;
+      this.audio.playPromptAudio(asset.audio_path, ask);
+      return;
+    }
+    const text = getStepPromptText(
+      { action: "present", target_asset_id: asset.asset_id },
+      asset,
+      this.speakAlong
+    );
+    const spoke = this.audio.speakPrompt(text, ask);
+    this.lastTtsUsed = spoke;
+    if (!spoke) {
+      this.reportTtsUnavailable(asset.asset_id);
+    }
+  }
+
+  private reportTtsUnavailable(assetId: string): void {
+    if (this.ttsMissReported.has(assetId)) {
+      return;
+    }
+    this.ttsMissReported.add(assetId);
+    this.recordEvent("tts_unavailable", { lang: "vi-VN", asset_id: assetId });
   }
 
   private playEchoModel(step: GT000Step & { action: "echo" }): void {
@@ -426,6 +474,12 @@ export class GT000Session extends TemplateGameSession<
       return this.resolveLinkTapAction(hit.itemId);
     }
 
+    // `present` không đòi thao tác: chạm chỉ để nghe lại, đi tiếp là nút
+    // Tiếp tục (`BR-E000-14`).
+    if (step.action === "present") {
+      return { type: "tap_item", data: { intent: "replay" } };
+    }
+
     return {
       type: "tap_item",
       data: {
@@ -504,11 +558,11 @@ export class GT000Session extends TemplateGameSession<
       return;
     }
 
-    this.isWon = true;
     this.recordEvent("game_completed", {
       completed: true,
       total_steps: this.steps.length,
     });
+    this.winSession();
   }
 
   prevStep(): void {
@@ -555,6 +609,15 @@ export class GT000Session extends TemplateGameSession<
         this.playPresentAudio(step as GT000Step & { action: "present" });
         return;
       case "advance":
+        if (step.action === "present") {
+          this.recordEvent("intro_step_answered", {
+            step_id: `step_${this.currentStepIndex}`,
+            action: "present",
+            answer_correct: true,
+            miss_count: 0,
+            tts_used: this.lastTtsUsed,
+          });
+        }
         this.advanceStep();
         return;
       default:
@@ -577,6 +640,7 @@ export class GT000Session extends TemplateGameSession<
       lastTtsUsed: this.lastTtsUsed,
       recordEvent: (name, data) => this.recordEvent(name, data),
       playEchoModel: (s) => this.playEchoModel(s),
+      replayTargetThenAsk: (s) => this.replayTargetThenAsk(s),
       advanceStep: () => this.advanceStep(),
       setWrongTimer: (ms) => {
         this.wrongResetTimerMs = ms;

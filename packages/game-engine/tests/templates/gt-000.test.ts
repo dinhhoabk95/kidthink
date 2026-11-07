@@ -29,7 +29,7 @@ describe("GT-000 Concept Intro Session (M0 & M1 Acceptance)", () => {
     expect(targetEntity?.id).toBe("num_1");
   });
 
-  it("M0: toAction() maps tap on target slot to tap_item action and advances currentStepIndex on dispatch", () => {
+  it("M0: toAction() maps tap on target slot to tap_item action; ở present chạm chỉ nghe lại, commit advance mới đi tiếp (BR-E000-14)", () => {
     const session = new GT000Session(fixture.content, fixture.difficulty);
     session.prepareRound("3-4");
 
@@ -52,8 +52,10 @@ describe("GT-000 Concept Intro Session (M0 & M1 Acceptance)", () => {
     expect(action).not.toBeNull();
     expect(action?.type).toBe("tap_item");
 
-    // Dispatch gesture qua session
+    // Chạm ở present chỉ nghe lại; nút Tiếp tục mới đi tiếp
     session.dispatch(gesture);
+    expect(session.currentStepIndex).toBe(initialStep);
+    session.dispatch({ type: "commit", intent: "advance", timeMs: 1 });
     expect(session.currentStepIndex).toBe(initialStep + 1);
   });
 
@@ -501,6 +503,11 @@ describe("GT-000 Concept Intro Session (M0 & M1 Acceptance)", () => {
       // Đi hết bài, gồm cả bước echo.
       for (let i = 0; i < 40 && !session.checkWinCondition(); i++) {
         const view = session.getView();
+        const step = session.steps[session.currentStepIndex];
+        if (step?.action === "present") {
+          session.dispatch({ type: "commit", intent: "advance", timeMs: i });
+          continue;
+        }
         const entity = view.entities[0];
         session.dispatch({
           type: "tap",
@@ -632,7 +639,7 @@ describe("GT-000 Concept Intro Session (M0 & M1 Acceptance)", () => {
       expect(session.currentStepIndex).toBe(before);
     });
 
-    it("dispatch một gesture chỉ đẩy đúng một bước, không nhân đôi event", () => {
+    it("dispatch một gesture commit chỉ đẩy đúng một bước, không nhân đôi event", () => {
       const session = new GT000Session(fixture.content, fixture.difficulty);
       session.prepareRound("3-4");
 
@@ -642,13 +649,9 @@ describe("GT-000 Concept Intro Session (M0 & M1 Acceptance)", () => {
         throw new Error("Entity not found");
       }
 
+      expect(entity).toBeDefined();
       const before = session.currentStepIndex;
-      session.dispatch({
-        type: "tap",
-        x: entity.x,
-        y: entity.y,
-        timeMs: 0,
-      });
+      session.dispatch({ type: "commit", intent: "advance", timeMs: 0 });
 
       expect(session.currentStepIndex).toBe(before + 1);
 
