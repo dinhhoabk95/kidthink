@@ -49,7 +49,8 @@ export type SFXType =
   | "ant_step"
   | "rule_whistle"
   | "clip_link"
-  | "water_pour";
+  | "water_pour"
+  | "yarn_pull";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -796,6 +797,19 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       volume: 0.07,
       durationSec: 0.13,
       rampOutSec: 0.06,
+    },
+  ],
+
+  /** GT-033: sợi len kéo qua khung dệt "xẹt" mềm (`BR-E033-05`). */
+  yarn_pull: [
+    {
+      delaySec: 0,
+      type: "triangle",
+      freq: 300,
+      glideTo: { freq: 460, overSec: 0.14 },
+      volume: 0.06,
+      durationSec: 0.16,
+      rampOutSec: 0.08,
     },
   ],
 

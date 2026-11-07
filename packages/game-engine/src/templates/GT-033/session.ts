@@ -30,7 +30,9 @@ import {
   spawnParticlesAtSlot,
   updateParticles,
 } from "#src/render/index.js";
+import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
+import { MoodPulse } from "#src/systems/mood-pulse";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
   areWeaveCellsValid,
@@ -109,6 +111,15 @@ interface GT033ActionPayload {
   readonly slot_index?: number | string;
 }
 
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E033-05`, `BR-FBK-16`). */
+export const GT033_STORY_LINE =
+  "Bà đang dệt một chiếc khăn thổ cẩm nhiều màu. Bé chọn sợi len rồi dệt vào ô trống cho đẹp nhé!";
+
+/** Mascot vui sau sợi đặt đúng. */
+export const GT033_HAPPY_MS = 800;
+/** Mascot nghiêng đầu sau sợi đặt chưa đúng. */
+export const GT033_WONDER_MS = 1500;
+
 export class GT033Session extends TemplateGameSession<
   GT033Content,
   GT033Difficulty
@@ -140,8 +151,23 @@ export class GT033Session extends TemplateGameSession<
   isWin = false;
   private inferredSolution: readonly string[] | null = null;
   private particles: Particle[] = [];
+  private readonly mood = new MoodPulse();
+
+  override storyLine(): string {
+    return GT033_STORY_LINE;
+  }
+
+  /** Chỉ phản ứng sau khi đặt sợi, không báo trước (`BR-E033-05`). */
+  override mascotMood(): MascotPose | null {
+    return this.isWon ? null : this.mood.current();
+  }
+
+  update(deltaMs: number): void {
+    this.mood.tick(deltaMs);
+  }
 
   setupEntities(): void {
+    this.mood.clear();
     this.placedCells = [...this.content.cells];
     this.selectedColorId = this.content.palette[0]?.color_id ?? null;
     this.selectedCellIndex = null;
@@ -392,6 +418,12 @@ export class GT033Session extends TemplateGameSession<
 
     this.placedCells[cellIndex] = colorId;
     this.selectedCellIndex = cellIndex;
+    // Tiếng kéo sợi như nhau dù màu đúng hay sai (`BR-E033-05`).
+    this.queueSfx("yarn_pull");
+    this.mood.set(
+      isCellCorrect ? "happy" : "wonder",
+      isCellCorrect ? GT033_HAPPY_MS : GT033_WONDER_MS
+    );
 
     if (isCellCorrect) {
       this.brokenRowIndex = null;
