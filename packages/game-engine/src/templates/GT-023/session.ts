@@ -714,7 +714,10 @@ export class GT023Session extends TemplateGameSession<
       const partId = placements.get(anchor.anchor_id);
       const part = partId ? partById.get(partId) : undefined;
       if (!part) {
-        drawEmptyTargetSlot(ctx, slot);
+        // Khung viền mỏ neo chỉ vẽ khi `show_anchor_outline` bật (`GT-023.md` N1).
+        if (this.difficulty.show_anchor_outline !== false) {
+          drawEmptyTargetSlot(ctx, slot);
+        }
         // Bóng mờ của mảnh ô này nhận thay cho nhãn "Khung n" (`BR-E023-06`).
         drawGhostAssetInSlot(
           ctx,

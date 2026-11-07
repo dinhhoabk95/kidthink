@@ -72,9 +72,10 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 - [x] Giảm mật độ tường/số lối GT-013 4–5 tuổi (3×3, 3 tường, ≤3 đường, ≤2 ngõ cụt, fixture #2 đổi 3×3, gỡ GT-013#2 khỏi sổ nợ, BR-E013-05)
 - [x] Nối trường difficulty chết, đợt 1: GT-037 `show_target_counter` (BR-E037-09); GT-020 `peek_all_initial_ms` đã nối ở Phase 3
 - [ ] Nối/xoá trường difficulty chết, phần còn lại (đo bằng quét `src/` ngoài `template.ts`/`fixtures.ts`/`generators/`; spec sở hữu đều đã nhắc, nên NỐI chứ không xoá):
-  - Chưa ai đọc ở bất kỳ đâu: GT-018 `auto_play_audio` · GT-022 `show_target_counter` (chưa có bộ đếm vẽ) · GT-024 `show_guide_lines` · GT-025 `show_counter`, `show_difference_counter`
+  - [x] Đã nối (BR-E024-05, BR-E023-08, BR-E025-06): GT-024 `show_guide_lines`, `show_numbered_dots` · GT-023 `show_anchor_outline` · GT-025 `show_counter` (+ `show_difference_counter` là bí danh)
+  - Chưa ai đọc ở bất kỳ đâu: GT-018 `auto_play_audio` (đổi chéo round-runner + lời đọc web, cần hỏi trước) · GT-022 `show_target_counter` (chờ thiết kế lại 022)
   - Session đọc `content.*` thay vì `difficulty.*` (trường lặp lại content, cần chốt nguồn thật): GT-028 `step` (+ `shuffle_items`) · GT-029 `shuffle_items`, `initial_count`, `remove_count` · GT-008 `slot_count` · GT-011 `grid_size` · GT-013 `dead_end_count`, `required_cell_count` · GT-015/033 `blank_count` · GT-009 `clue_count`, `candidate_count` · GT-010 `equation_count`, `step_count` · GT-014 `tray_count`, `weight_span` · GT-007 `part_count` · GT-017 `hidden_cube_count` · GT-030 `length_in_units` · GT-031 `coin_kind_count`, `target_amount` · GT-032 `cup_count`, `level_steps`, `conservation_trap` · GT-036 `palette_size`, `min_repetitions`
-  - Cờ tính năng chưa có code: GT-023 `show_anchor_outline` · GT-024 `show_numbered_dots` · GT-034 `tempo_bpm`, `instrument_count` · GT-035 `allow_loop`, `obstacle_count`, `collectible_count` · GT-019 `rotation_step`
+  - Cờ tính năng chưa có code: GT-034 `tempo_bpm`, `instrument_count` · GT-035 `allow_loop`, `obstacle_count`, `collectible_count` · GT-019 `rotation_step`
   - `distractor_count` (GT-001/002/003/004/007/008/010/011/012/016/017/025) và `target_count` (GT-002/003/025/027) chỉ là số đo lại của content; `hint_after_ms` ở mọi engine chờ thang trợ giúp Task #301
   - `shuffle_items` 028/029: session truy cập `content.items[i]` theo chỉ số, xáo phải đổi cả test thứ tự; để riêng một commit
 - [x] Gỡ chữ phải đọc khỏi UI trẻ (008, 009, 019, 023, 028, 029, 032, 035, 036) — đợt 4B xong cho 9 game, mỗi game một commit và một `BR-E0xx` mới

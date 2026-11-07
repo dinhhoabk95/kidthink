@@ -450,7 +450,11 @@ export class GT024Session extends TemplateGameSession<
     drawWaypointPath(
       ctx,
       this.screenWaypoints,
-      this.traceSystem.getCurrentOrderIndex()
+      this.traceSystem.getCurrentOrderIndex(),
+      {
+        showGuideLines: this.difficulty.show_guide_lines,
+        showNumberedDots: this.difficulty.show_numbered_dots,
+      }
     );
 
     if (this.wrongWaypointTimestamp > 0) {

@@ -600,8 +600,11 @@ export interface TraceWaypointLike {
 export function drawWaypointPath(
   ctx: CanvasRenderingContext2D,
   waypoints: readonly TraceWaypointLike[],
-  reachedCount: number
+  reachedCount: number,
+  options: { showGuideLines?: boolean; showNumberedDots?: boolean } = {}
 ): void {
+  const showGuideLines = options.showGuideLines !== false;
+  const showNumberedDots = options.showNumberedDots !== false;
   if (waypoints.length === 0) {
     return;
   }
@@ -611,19 +614,22 @@ export function drawWaypointPath(
 
   ctx.save();
   // Đường dẫn nét đứt mềm mại
-  ctx.strokeStyle = designTokens.colors.surface[300];
   ctx.lineWidth = WALL_LINE_PX;
-  ctx.setLineDash(DASH_10_8);
   ctx.lineCap = "round";
-  ctx.beginPath();
-  ordered.forEach((w, i) => {
-    if (i === 0) {
-      ctx.moveTo(w.x, w.y);
-    } else {
-      ctx.lineTo(w.x, w.y);
-    }
-  });
-  ctx.stroke();
+  // Đường dẫn mờ chỉ vẽ khi `show_guide_lines` bật (`GT-024.md` N1).
+  if (showGuideLines) {
+    ctx.strokeStyle = designTokens.colors.surface[300];
+    ctx.setLineDash(DASH_10_8);
+    ctx.beginPath();
+    ordered.forEach((w, i) => {
+      if (i === 0) {
+        ctx.moveTo(w.x, w.y);
+      } else {
+        ctx.lineTo(w.x, w.y);
+      }
+    });
+    ctx.stroke();
+  }
 
   // Phần đã đồ xong — Honey Amber / Emerald
   if (reachedCount > 1) {
@@ -659,10 +665,13 @@ export function drawWaypointPath(
     ctx.fillStyle = done
       ? designTokens.colors.surface[0]
       : designTokens.colors.surface[900];
-    applyCanvasFontAtSize(ctx, waypointFontPx, "heading", "bold");
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(String(i + 1), w.x, w.y);
+    // Số thứ tự chỉ hiện khi `show_numbered_dots` bật (`GT-024.md` N1).
+    if (showNumberedDots) {
+      applyCanvasFontAtSize(ctx, waypointFontPx, "heading", "bold");
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(String(i + 1), w.x, w.y);
+    }
     ctx.restore();
   });
 }

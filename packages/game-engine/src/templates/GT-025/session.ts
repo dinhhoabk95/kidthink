@@ -15,14 +15,16 @@ import {
 import { resolveTouchFloor } from "#src/layout/constants";
 import { isPointInSlot, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
-import { insetDrawSize } from "#src/layout/slot-fit";
+import { insetDrawSize, splitCaption } from "#src/layout/slot-fit";
 import {
   computeSplitGridSlots,
   slotsFitStage,
 } from "#src/layout/stage-split-grids";
+import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
 import {
   drawDividerLine,
+  drawProgressDots,
   drawSceneBackground,
   drawSceneObjectAt,
   sceneBox,
@@ -378,6 +380,23 @@ export class GT025Session extends TemplateGameSession<
     return targetObj ? targetObj.slotIndex : null;
   }
 
+  /**
+   * `show_counter` bật (hoặc `show_difference_counter` tường minh, bí danh cũ
+   * của nội dung đã seed) thì bộ đếm điểm khác biệt chiếm dải nhãn ở đỉnh
+   * stage (`GT-025.md` N1, mục 11); hai khối cảnh nằm dưới dải đó.
+   */
+  private showsCounter(): boolean {
+    return (
+      this.difficulty.show_difference_counter ??
+      this.difficulty.show_counter !== false
+    );
+  }
+
+  private sceneStage(): ZoneRect | undefined {
+    const stage = this.stageRect;
+    return stage && this.showsCounter() ? splitCaption(stage).body : stage;
+  }
+
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
     const layoutFn = resolveLayout("split-columns");
     const slots = insetDrawSize(
@@ -386,12 +405,12 @@ export class GT025Session extends TemplateGameSession<
         targetCount: this.content.right_objects.length,
         ageBand,
         logic: this.logicSpace,
-        stage: this.stageRect,
+        stage: this.sceneStage(),
         cssPerLogic: this.cssPerLogic,
       }),
-      this.stageRect
+      this.sceneStage()
     );
-    const stage = this.stageRect;
+    const stage = this.sceneStage();
     if (!stage || slotsFitStage(slots, stage)) {
       return slots;
     }
@@ -417,7 +436,18 @@ export class GT025Session extends TemplateGameSession<
   ): void {
     this.lastFrameMs = timeMs;
     drawSceneBackground(ctx, rs, this.themeId);
-    const scene = this.stageRect ?? sceneBox(rs);
+    const scene = this.sceneStage() ?? sceneBox(rs);
+    if (this.stageRect && this.showsCounter()) {
+      drawProgressDots(
+        ctx,
+        rs,
+        {
+          done: this.foundDifferenceIds.size,
+          total: this.content.target_count,
+        },
+        splitCaption(this.stageRect).caption
+      );
+    }
     const half = { x: scene.x, y: scene.y, w: scene.w / 2, h: scene.h };
     const rightHalf = {
       x: scene.x + scene.w / 2,
