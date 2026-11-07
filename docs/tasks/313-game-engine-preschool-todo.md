@@ -72,3 +72,4 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 - [ ] Các game còn lại theo cột "Hướng đặc sắc" trong plan §1.3
 - [ ] 030 (còn lại) — dải đo vẫn là lưới ô có thể xuống nhiều hàng ở khung hẹp, chưa phải một dải liền kéo tự do theo thước; `representation: number-rod` chưa hiện khe/chồng. Cần thiết kế lại zone-layout (Phase 5 "Dải kéo tự do có snap")
 - [ ] 031 (còn lại) — mệnh giá phi thực tế ("3đ") và xu chỉ khác số: thuộc nội dung/Phase 4-5 (xu quả kích cỡ/màu theo giá trị, hạt Montessori); nhãn "Đã góp: x / y đ" vẫn là bản số trên canvas
+- [ ] 032 (còn lại) — animation rót giữa hai cốc rồi mới hỏi, `L2` hiện số vạch và `L3` tách cột nước xếp cạnh nhau chưa có code (hint hiện chỉ vẽ vạch); cốc `fluted` vẫn vẽ như cốc thường

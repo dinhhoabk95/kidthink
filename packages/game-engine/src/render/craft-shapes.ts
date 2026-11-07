@@ -11,6 +11,51 @@ export interface LiquidCupParams {
   readonly color?: string;
   readonly isSelected?: boolean;
   readonly showHintMarks?: boolean;
+  /** Dung tích lớn nhất trong lượt, để các cốc cùng thang diện tích. */
+  readonly maxCapacityUnits?: number;
+}
+
+/** Hệ số bề ngang × bề cao của từng hình cốc; tích luôn bằng 1 (diện tích như nhau). */
+const CUP_SHAPE_FACTORS: Readonly<
+  Record<LiquidCupParams["shape"], { readonly w: number; readonly h: number }>
+> = {
+  standard: { w: 1, h: 1 },
+  narrow_tall: { w: 0.8, h: 1.25 },
+  wide_short: { w: 1.3, h: 1 / 1.3 },
+  fluted: { w: 1.1, h: 1 / 1.1 },
+};
+
+export interface LiquidCupRect {
+  readonly x: number;
+  readonly y: number;
+  readonly w: number;
+  readonly h: number;
+}
+
+/**
+ * Hình học thân cốc, đáy canh theo đáy ô (`BR-E032-03`, `BR-E032-05`).
+ * Diện tích vẽ tỉ lệ với `capacityUnits`, không phụ thuộc hình cốc: cùng số vạch
+ * nước thì cùng lượng nước nhìn thấy (2D), nên "bằng nhau" là bằng thật.
+ */
+export function liquidCupRect(
+  slot: Slot,
+  shape: LiquidCupParams["shape"],
+  capacityUnits: number,
+  maxCapacityUnits: number
+): LiquidCupRect {
+  const scale =
+    maxCapacityUnits > 0 ? Math.sqrt(capacityUnits / maxCapacityUnits) : 1;
+  const baseW = slot.w * 0.8 * scale;
+  const baseH = slot.h * 0.85 * scale;
+  const f = CUP_SHAPE_FACTORS[shape];
+  const w = baseW * f.w;
+  const h = baseH * f.h;
+  return {
+    x: slot.x - w / 2,
+    y: slot.y + (slot.h * 0.85) / 2 - h,
+    w,
+    h,
+  };
 }
 
 export function drawLiquidCup(
@@ -19,27 +64,13 @@ export function drawLiquidCup(
   slot: Slot,
   params: LiquidCupParams
 ): void {
-  const baseW = slot.w * 0.8;
-  const baseH = slot.h * 0.85;
-
-  let wFactor = 1.0;
-  let hFactor = 1.0;
-
-  if (params.shape === "narrow_tall") {
-    wFactor = 0.7;
-    hFactor = 1.25;
-  } else if (params.shape === "wide_short") {
-    wFactor = 1.35;
-    hFactor = 0.75;
-  } else if (params.shape === "fluted") {
-    wFactor = 1.1;
-    hFactor = 1.0;
-  }
-
-  const cupW = baseW * wFactor;
-  const cupH = baseH * hFactor;
-  const x = slot.x - cupW / 2;
-  const y = slot.y - cupH / 2 + (baseH - cupH) / 2;
+  const rect = liquidCupRect(
+    slot,
+    params.shape,
+    params.capacityUnits,
+    params.maxCapacityUnits ?? params.capacityUnits
+  );
+  const { x, y, w: cupW, h: cupH } = rect;
 
   ctx.save();
 

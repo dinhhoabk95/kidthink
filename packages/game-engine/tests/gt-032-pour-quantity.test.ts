@@ -304,7 +304,7 @@ describe("GT-032: So lượng chất lỏng (pour-quantity)", () => {
       }
     });
 
-    it("supports adjust gesture for pour_to_mark in discrete integer units and wins on target", () => {
+    it("supports adjust gesture for pour_to_mark in discrete integer units and wins when confirmed on target", () => {
       const content = GT032ContentSchema.parse({
         prompt: "Bé hãy rót nước đến vạch 4 cho chiếc cốc nhé!",
         question_type: "pour_to_mark",
@@ -345,7 +345,7 @@ describe("GT-032: So lượng chất lỏng (pour-quantity)", () => {
       expect(session.getCupFill("cup_pour")).toBe(3);
       expect(session.checkWinCondition()).toBe(false);
 
-      // Adjust by +1 unit -> fill becomes 4 (reaches target_units = 4 -> win!)
+      // Adjust by +1 unit -> fill becomes 4 (tới vạch đích nhưng chưa thắng: phải chốt, BR-E032-07)
       const step2 = session.dispatch({
         type: "adjust",
         delta: 1,
@@ -353,6 +353,9 @@ describe("GT-032: So lượng chất lỏng (pour-quantity)", () => {
       });
       expect(step2?.valid).toBe(true);
       expect(session.getCupFill("cup_pour")).toBe(4);
+      expect(session.checkWinCondition()).toBe(false);
+      const confirm = session.dispatch({ type: "commit", timeMs: 300 });
+      expect(confirm?.valid).toBe(true);
       expect(session.checkWinCondition()).toBe(true);
 
       const events = session.getTelemetry().events.map((e) => e.event_name);

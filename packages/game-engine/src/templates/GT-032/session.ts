@@ -26,12 +26,19 @@ import {
   drawSceneBackground,
   drawSubPromptText,
   drawWoodenTokenDock,
+  liquidCupRect,
   spawnParticlesAtSlot,
   updateParticles,
 } from "#src/render/index";
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT032Content, GT032Cup, GT032Difficulty } from "./template";
+
+/** Rót hoặc chọn cốc hợp lệ nhưng chưa chấm đúng sai. */
+const QUIET_OK: ActionResult = Object.freeze({
+  valid: true,
+  feedback: "none",
+});
 
 interface GT032ActionPayload {
   readonly cup_id?: string;
@@ -46,6 +53,8 @@ export class GT032Session extends TemplateGameSession<
   GT032Difficulty
 > {
   override readonly usesPromptZone = true;
+  /** Rót tới vạch phải tự bấm chốt; chạm lướt qua vạch đích không thắng (`BR-E032-07`). */
+  override readonly needsCommit: boolean;
 
   degradation: DegradationState | null = null;
   selectedCupId: string | null = null;
@@ -62,6 +71,7 @@ export class GT032Session extends TemplateGameSession<
     themeId?: string
   ) {
     super(content, difficulty, layoutSeed, themeId);
+    this.needsCommit = content.question_type === "pour_to_mark";
     for (const cup of content.cups) {
       this.cupFills.set(cup.cup_id, cup.fill_units);
     }
@@ -104,8 +114,9 @@ export class GT032Session extends TemplateGameSession<
       return null;
     }
     if (this.content.question_type === "pour_to_mark") {
+      // Đã tới vạch: bước kế là bấm nút chốt, không còn cốc để chỉ.
       const idx = this.content.cups.findIndex((c) => !this.isCupCorrect(c));
-      return idx >= 0 ? idx : 0;
+      return idx >= 0 ? idx : null;
     }
     const idx = this.content.cups.findIndex((c) => this.isCupCorrect(c));
     return idx >= 0 ? idx : null;
@@ -207,13 +218,28 @@ export class GT032Session extends TemplateGameSession<
     if (nextFill === null) {
       return ACTION_IGNORED;
     }
-    return ACTION_CORRECT;
+    // Rót từng vạch không báo đúng sai: chốt mới là lúc chấm (`BR-E032-07`).
+    return QUIET_OK;
+  }
+
+  private validateConfirmPour(): ActionResult {
+    if (this.content.question_type !== "pour_to_mark") {
+      return ACTION_IGNORED;
+    }
+    const active = this.resolvePourTargetCup();
+    return active && this.isPourGoalSatisfied(active)
+      ? ACTION_CORRECT
+      : ACTION_RETRY;
   }
 
   private validateSelectCup(cupId: string): ActionResult {
     const cup = this.content.cups.find((c) => c.cup_id === cupId);
     if (!cup) {
       return ACTION_IGNORED;
+    }
+
+    if (this.content.question_type === "pour_to_mark") {
+      return QUIET_OK;
     }
 
     if (this.isCupCorrect(cup)) {
@@ -245,6 +271,10 @@ export class GT032Session extends TemplateGameSession<
 
     if (type === "adjust_cup" || type === "pour_cup") {
       return this.validateAdjustCup(data);
+    }
+
+    if (type === "confirm_pour") {
+      return this.validateConfirmPour();
     }
 
     if (type === "show_hint") {
@@ -287,20 +317,29 @@ export class GT032Session extends TemplateGameSession<
       target_units: this.getTargetFill(cup),
       is_correct: reachedTarget,
     });
+  }
 
-    if (this.isPourGoalSatisfied(cup)) {
-      this.isWin = true;
-      this.isWon = true;
-      const cupIdx = this.content.cups.findIndex(
-        (c) => c.cup_id === cup.cup_id
-      );
-      const slot = this.slots[cupIdx];
-      if (slot) {
-        this.particles.push(...spawnParticlesAtSlot(slot, 16));
-      }
-      this.recordEvent("game_completed", { score: 100 });
-      this.winSession();
+  private commitConfirmPour(): void {
+    const active = this.resolvePourTargetCup();
+    if (
+      this.content.question_type !== "pour_to_mark" ||
+      !active ||
+      !this.isPourGoalSatisfied(active)
+    ) {
+      this.recordEvent("pour_confirm_wrong", {});
+      return;
     }
+    this.isWin = true;
+    this.isWon = true;
+    const cupIdx = this.content.cups.findIndex(
+      (c) => c.cup_id === active.cup_id
+    );
+    const slot = this.slots[cupIdx];
+    if (slot) {
+      this.particles.push(...spawnParticlesAtSlot(slot, 16));
+    }
+    this.recordEvent("game_completed", { score: 100 });
+    this.winSession();
   }
 
   private commitSelectCup(cupId: string): void {
@@ -311,6 +350,7 @@ export class GT032Session extends TemplateGameSession<
 
     if (this.content.question_type === "pour_to_mark") {
       this.selectedCupId = cup.cup_id;
+      return;
     }
 
     const correct = this.isCupCorrect(cup);
@@ -356,12 +396,20 @@ export class GT032Session extends TemplateGameSession<
       return;
     }
 
+    if (type === "confirm_pour") {
+      this.commitConfirmPour();
+      return;
+    }
+
     if (type === "show_hint") {
       this.showHintMarks = true;
     }
   }
 
   override toAction(gesture: Gesture): GameAction | null {
+    if (gesture.type === "commit") {
+      return this.needsCommit ? { type: "confirm_pour", data: {} } : null;
+    }
     if (gesture.type === "adjust") {
       return this.toAdjustAction(gesture);
     }
@@ -435,12 +483,9 @@ export class GT032Session extends TemplateGameSession<
         state = this.isCupCorrect(cup) ? "correct" : "selected";
       }
 
-      const fillUnits = this.getCupFill(cup.cup_id);
+      // Không đọc hay in mức nước: đó là đáp án (`BR-E032-06`).
       const cupNumberWord = formatNumberWord(i + 1);
-      const fillWord = formatNumberWord(fillUnits);
-      const spokenLabel = formatSpokenLabel(
-        `cốc số ${cupNumberWord} có ${fillWord} vạch nước`
-      );
+      const spokenLabel = formatSpokenLabel(`cốc số ${cupNumberWord}`);
 
       entities.push({
         id: cup.cup_id,
@@ -453,7 +498,7 @@ export class GT032Session extends TemplateGameSession<
         h: slot.h,
         hitShape: "square",
         glyph: "🥛",
-        label: `Cốc ${i + 1} (${fillUnits}/${cup.capacity_units})`,
+        label: `Cốc ${i + 1}`,
         spokenLabel,
       });
     }
@@ -472,6 +517,10 @@ export class GT032Session extends TemplateGameSession<
     return this.selectedCupId;
   }
 
+  private maxCapacityUnits(): number {
+    return Math.max(...this.content.cups.map((c) => c.capacity_units));
+  }
+
   private drawCupTray(ctx: CanvasRenderingContext2D, rs: RenderSystem): void {
     const cupSlots = this.slots.slice(0, this.content.cups.length);
     if (cupSlots.length === 0) {
@@ -487,24 +536,19 @@ export class GT032Session extends TemplateGameSession<
         continue;
       }
       const cup = this.content.cups[i];
-      const baseW = slot.w * 0.8;
-      const baseH = slot.h * 0.85;
-      let wFactor = 1.0;
-      let hFactor = 1.0;
-      if (cup?.shape === "narrow_tall") {
-        wFactor = 0.7;
-        hFactor = 1.25;
-      } else if (cup?.shape === "wide_short") {
-        wFactor = 1.35;
-        hFactor = 0.75;
-      } else if (cup?.shape === "fluted") {
-        wFactor = 1.1;
-        hFactor = 1.0;
+      if (!cup) {
+        continue;
       }
-      const cupW = baseW * wFactor;
-      const cupH = baseH * hFactor;
-      const cupX = slot.x - cupW / 2;
-      const cupY = slot.y + baseH / 2 - cupH;
+      const rect = liquidCupRect(
+        slot,
+        cup.shape,
+        cup.capacity_units,
+        this.maxCapacityUnits()
+      );
+      const cupX = rect.x;
+      const cupY = rect.y;
+      const cupW = rect.w;
+      const cupH = rect.h;
       minX = Math.min(minX, cupX);
       minY = Math.min(minY, cupY);
       maxX = Math.max(maxX, cupX + cupW);
@@ -549,6 +593,7 @@ export class GT032Session extends TemplateGameSession<
           color: cup.color,
           isSelected: this.selectedCupId === cup.cup_id,
           showHintMarks: this.showHintMarks,
+          maxCapacityUnits: this.maxCapacityUnits(),
         });
       }
     }
