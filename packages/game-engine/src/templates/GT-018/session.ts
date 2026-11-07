@@ -37,6 +37,7 @@ import {
   drawSubPromptText,
   drawWoodenTokenDock,
 } from "#src/render/index";
+import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
 import type { RenderSystem } from "#src/systems/render-system";
 import type { GT018Content, GT018Difficulty } from "./template";
@@ -60,6 +61,15 @@ function findHitOptionId(
   return index >= 0 ? (options[index]?.item_id ?? null) : null;
 }
 
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E018-04`, `BR-FBK-16`). */
+export const GT018_STORY_LINE =
+  "Thỏ bảo: bé nghe thật kỹ rồi làm đúng theo lời Thỏ nhé!";
+
+/** Mascot nhảy ngắn theo mỗi lần chạm hoặc xếp, đúng hay sai như nhau. */
+export const GT018_HOP_MS = 600;
+/** Mascot nghiêng đầu "nghe lại nhé" sau một đáp án chưa đúng. */
+export const GT018_WONDER_MS = 1500;
+
 export class GT018Session extends TemplateGameSession<
   GT018Content,
   GT018Difficulty
@@ -75,6 +85,8 @@ export class GT018Session extends TemplateGameSession<
   private wrongItemId: string | null = null;
   private isSequenceWrong = false;
   private stagedStepIndex: number | null = null;
+  private reactionPose: MascotPose | null = null;
+  private reactionRemainingMs = 0;
 
   override readonly usesPromptZone = true;
 
@@ -101,6 +113,8 @@ export class GT018Session extends TemplateGameSession<
     this.wrongItemId = null;
     this.isSequenceWrong = false;
     this.stagedStepIndex = null;
+    this.reactionPose = null;
+    this.reactionRemainingMs = 0;
     this.selectionMechanic.reset();
 
     if (this.content.response_mode === "sequence") {
@@ -159,11 +173,13 @@ export class GT018Session extends TemplateGameSession<
     if (isCorrect) {
       this.wrongTimerMs = 0;
       this.wrongItemId = null;
+      this.queueSfx("rabbit_hop");
       this.recordEvent("round_completed", { round_index: 0 });
       this.winSession();
       return ACTION_CORRECT;
     }
 
+    this.react("wonder", GT018_WONDER_MS);
     this.wrongTimerMs = 400;
     this.wrongItemId = itemId;
     this.setRenderItemState(itemId, "wrong");
@@ -174,7 +190,11 @@ export class GT018Session extends TemplateGameSession<
     if (this.content.response_mode !== "sequence") {
       return false;
     }
-    return this.orderingMechanic.reorder(fromIndex, toIndex);
+    const moved = this.orderingMechanic.reorder(fromIndex, toIndex);
+    if (moved) {
+      this.react("happy", GT018_HOP_MS);
+    }
+    return moved;
   }
 
   onSubmitSequence(): ActionResult {
@@ -190,6 +210,7 @@ export class GT018Session extends TemplateGameSession<
     });
 
     if (isMatch) {
+      this.queueSfx("rabbit_hop");
       this.wrongTimerMs = 0;
       this.isSequenceWrong = false;
       this.recordEvent("round_completed", { round_index: 0 });
@@ -197,6 +218,7 @@ export class GT018Session extends TemplateGameSession<
       return ACTION_CORRECT;
     }
 
+    this.react("wonder", GT018_WONDER_MS);
     this.wrongTimerMs = 400;
     this.isSequenceWrong = true;
     for (const opt of this.content.options) {
@@ -222,7 +244,32 @@ export class GT018Session extends TemplateGameSession<
     }
   }
 
+  private react(pose: MascotPose, ms: number): void {
+    this.reactionPose = pose;
+    this.reactionRemainingMs = ms;
+  }
+
+  override storyLine(): string {
+    return GT018_STORY_LINE;
+  }
+
+  /**
+   * Nhảy theo lượt chạm hoặc xếp (đúng sai như nhau), nghiêng đầu sau đáp án
+   * chưa đúng. Cấm — NEVER có dáng hay cue trước khi trẻ làm (`BR-E018-04`).
+   */
+  override mascotMood(): MascotPose | null {
+    return this.reactionRemainingMs > 0 && !this.isWon
+      ? this.reactionPose
+      : null;
+  }
+
   update(deltaMs: number): void {
+    if (this.reactionRemainingMs > 0) {
+      this.reactionRemainingMs = Math.max(
+        0,
+        this.reactionRemainingMs - deltaMs
+      );
+    }
     if (this.wrongTimerMs <= 0) {
       return;
     }

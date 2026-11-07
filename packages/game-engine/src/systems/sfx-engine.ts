@@ -22,7 +22,8 @@ export type SFXType =
   | "stop_hum"
   | "star_collect"
   | "lid_click"
-  | "bell_open";
+  | "bell_open"
+  | "rabbit_hop";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -260,6 +261,28 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       volume: 0.04,
       durationSec: 0.35,
       rampOutSec: 0.2,
+    },
+  ],
+
+  /** GT-018: làm đúng lời Thỏ bảo — hai bước nhảy tưng tưng đi lên (`BR-E018-04`). */
+  rabbit_hop: [
+    {
+      delaySec: 0,
+      type: "triangle",
+      freq: 392,
+      glideTo: { freq: 523, overSec: 0.08 },
+      volume: 0.11,
+      durationSec: 0.1,
+      rampOutSec: 0.05,
+    },
+    {
+      delaySec: 0.12,
+      type: "triangle",
+      freq: 523,
+      glideTo: { freq: 659, overSec: 0.08 },
+      volume: 0.11,
+      durationSec: 0.12,
+      rampOutSec: 0.06,
     },
   ],
 

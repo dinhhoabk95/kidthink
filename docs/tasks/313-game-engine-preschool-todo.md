@@ -102,6 +102,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 - [ ] Đợt 5B — khác biệt hoá cặp trùng (mỗi game: khung chuyện + cue âm + mascot, spec ghi điểm khác game cùng cặp)
   - [x] 004 (khung chuyện Cún Con xếp gọn đồ, tiếng nắp hộp `lid_click`, mascot `happy`/`wonder` 1500 ms mỗi lần xếp; khác 003 ở khung/âm/nhịp mascot, BR-E004-04)
   - [x] 012 (khung chuyện đom đóm dưới nắp chuông, tiếng chuông `bell_open` khi mở nắp/xem lại, mascot `wonder` suốt pha nhìn–nhớ, không theo đáp án; khác 001/018, BR-E012-06)
+  - [x] 018 (khung chuyện "Thỏ bảo", tiếng `rabbit_hop` chỉ khi làm đúng, mascot `happy` 600 ms theo bước xếp và `wonder` sau đáp án chưa đúng, không báo trước; khác 001/012, BR-E018-04). Còn lại: dải icon khi tắt tiếng (cần trạng thái âm của shell), nhận âm thanh con vật (cần asset thu)
 - [ ] Các game còn lại theo cột "Hướng đặc sắc" trong plan §1.3
 - [ ] 030 (còn lại) — dải đo vẫn là lưới ô có thể xuống nhiều hàng ở khung hẹp, chưa phải một dải liền kéo tự do theo thước; `representation: number-rod` chưa hiện khe/chồng. Cần thiết kế lại zone-layout (Phase 5 "Dải kéo tự do có snap")
 - [ ] 031 (còn lại) — mệnh giá phi thực tế ("3đ") và xu chỉ khác số: thuộc nội dung/Phase 4-5 (xu quả kích cỡ/màu theo giá trị, hạt Montessori); nhãn "Đã góp: x / y đ" đã thay bằng hàng chấm xu lấp dần (đợt 4B, BR-E031-07)
