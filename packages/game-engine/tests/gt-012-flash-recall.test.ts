@@ -73,6 +73,9 @@ describe("GT-012: Nhìn chớp rồi nhớ lại (flash-recall)", () => {
       );
       session.setupEntities();
 
+      // Trẻ phải tự bấm bắt đầu (BR-E012-04)
+      expect(session.isFlashVisible()).toBe(false);
+      session.startFlash();
       expect(session.isFlashVisible()).toBe(true);
       expect(session.checkWinCondition()).toBe(false);
 
@@ -90,12 +93,12 @@ describe("GT-012: Nhìn chớp rồi nhớ lại (flash-recall)", () => {
       expect(session.isFlashVisible()).toBe(false);
 
       // Select wrong value
-      const wrong = session.selectValue(2);
+      const wrong = session.selectValue(3);
       expect(wrong).toBe(false);
       expect(session.checkWinCondition()).toBe(false);
 
-      // Select correct value (3)
-      const correct = session.selectValue(3);
+      // Select correct value (2)
+      const correct = session.selectValue(2);
       expect(correct).toBe(true);
       expect(session.checkWinCondition()).toBe(true);
 
@@ -125,6 +128,7 @@ describe("GT-012: Nhìn chớp rồi nhớ lại (flash-recall)", () => {
         SAMPLE_LEVEL_1.difficulty_params
       );
       session.prepareRound("3-4");
+      session.startFlash();
       session.update(1600);
 
       const view = session.getView();
@@ -142,7 +146,7 @@ describe("GT-012: Nhìn chớp rồi nhớ lại (flash-recall)", () => {
           y: edgeY,
           timeMs: 100,
         });
-        expect(action).toEqual({ type: "select_value", data: 3 });
+        expect(action).toEqual({ type: "select_value", data: 2 });
       }
     });
   });

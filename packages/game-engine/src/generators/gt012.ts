@@ -1,5 +1,6 @@
 import { AGE_BANDS } from "#src/contracts/types";
 import { shuffle } from "#src/rng/shuffle";
+import { FLASH_ITEM_CAP_BY_BAND } from "#src/templates/GT-012/template";
 import { getNouns, pickOne, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
@@ -14,7 +15,9 @@ export const GT012Generator: LevelGenerator = {
     const nouns = getNouns(vocabulary, 6);
     const item = pickOne(rng, nouns);
 
-    const count = age_band === "3-4" ? 2 + rng.nextInt(2) : 3 + rng.nextInt(3); // 2..3 or 3..5
+    // Trần trí nhớ thị giác theo band (BR-E012-03): 2 · 3 · 4 vật.
+    const cap = FLASH_ITEM_CAP_BY_BAND[age_band];
+    const count = 2 + rng.nextInt(cap - 1); // 2..cap
 
     const flash_items = Array.from({ length: count }, (_, i) => ({
       item_id: `flash_${i + 1}`,

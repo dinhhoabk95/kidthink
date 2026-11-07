@@ -361,6 +361,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       }
       const session = new GT012Session(f12.content, f12.difficulty);
       session.prepareRound("3-4");
+      session.startFlash();
       session.update(f12.difficulty.flash_ms + 100);
 
       const correctIndex = f12.content.options.findIndex((o) => o.is_correct);
@@ -377,7 +378,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       });
 
       expect(result?.valid).toBe(true);
-      expect(session.getSelectedValue()).toBe(3);
+      expect(session.getSelectedValue()).toBe(2);
       expect(session.checkWinCondition()).toBe(true);
     });
 

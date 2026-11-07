@@ -1,6 +1,16 @@
 import { z } from "zod";
 import { assetSchema, promptFields } from "#src/contracts/shared-fields";
-import { defineTemplate } from "#src/contracts/types";
+import { type AgeBand, defineTemplate } from "#src/contracts/types";
+
+/**
+ * Trần số vật chớp theo band — dung lượng trí nhớ thị giác ngắn hạn của trẻ
+ * mầm non (`BR-E012-03`): tối đa 2 · 3 · 4 vật ở band 3-4 · 4-5 · 5-6.
+ */
+export const FLASH_ITEM_CAP_BY_BAND: Readonly<Record<AgeBand, number>> = {
+  "3-4": 2,
+  "4-5": 3,
+  "5-6": 4,
+};
 
 const flashItemSchema = () =>
   z.object({

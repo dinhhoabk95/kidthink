@@ -206,6 +206,9 @@ describe("Task #301 S4/S5: bậc thang gợi ý L1/L2/L3 cho 5 engine ưu tiên"
       GT012_SAMPLE_1.difficulty_params
     );
     session.prepareRound("3-4", DEFAULT_LOGIC_SPACE, ZONES.stage, TRAY);
+    // Sau khi trẻ bấm bắt đầu và nhóm vật đã tắt (chờ bắt đầu chỉ có một gợi ý: nút bắt đầu).
+    session.startFlash();
+    session.update(GT012_SAMPLE_1.difficulty_params.flash_ms + 100);
 
     const l1 = session.getHintTargetForLevel(1);
     const l2 = session.getHintTargetForLevel(2);

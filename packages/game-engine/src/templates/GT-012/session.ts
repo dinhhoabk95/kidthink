@@ -22,6 +22,7 @@ import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
 import {
   drawClocheScene,
+  drawLabelText,
   drawSceneBackground,
   drawSlotItem,
   drawSubPromptText,
@@ -51,6 +52,8 @@ export class FlashRecallSession extends TemplateGameSession<
   private readonly timer: FlashTimer;
   private selectedValue: number | null = null;
   private wasVisible = false;
+  /** Trẻ chưa bấm bắt đầu: chưa chớp, đồng hồ chưa chạy (`BR-E012-04`). */
+  private awaitingStart = true;
   private readonly wrongFlash = new WrongFlash();
   private lastFrameMs = 0;
   /** Vùng đĩa và vùng lựa chọn của vòng này (`BR-PSZ-01`). */
@@ -75,8 +78,8 @@ export class FlashRecallSession extends TemplateGameSession<
     this.wrongFlash.clear();
     this.lastFrameMs = 0;
     this.timer.reset();
-    this.timer.start();
-    this.wasVisible = true;
+    this.wasVisible = false;
+    this.awaitingStart = true;
     this.isWon = false;
 
     this.recordEvent("game_started", {
@@ -84,10 +87,25 @@ export class FlashRecallSession extends TemplateGameSession<
       item_count: this.content.flash_items.length,
       flash_ms: this.timer.getDurationMs(),
     });
+  }
 
+  /** Đang chờ trẻ bấm nút bắt đầu — Cấm — NEVER tự đếm ngược (`BR-E012-04`). */
+  isAwaitingStart(): boolean {
+    return this.awaitingStart;
+  }
+
+  /** Trẻ bấm bắt đầu: vật hiện đúng `flash_ms` rồi tắt. */
+  startFlash(): boolean {
+    if (!this.awaitingStart) {
+      return false;
+    }
+    this.awaitingStart = false;
+    this.timer.start();
+    this.wasVisible = true;
     this.recordEvent("flash_shown", {
       duration_ms: this.timer.getDurationMs(),
     });
+    return true;
   }
 
   getFlashItems(): GT012Content["flash_items"] {
@@ -107,7 +125,7 @@ export class FlashRecallSession extends TemplateGameSession<
   }
 
   isCovered(): boolean {
-    return !this.timer.isVisible();
+    return !(this.awaitingStart || this.timer.isVisible());
   }
 
   get plateRect(): ZoneRect | null {
@@ -178,6 +196,14 @@ export class FlashRecallSession extends TemplateGameSession<
   }
 
   validateAction(action: GameAction): ActionResult {
+    if (action.type === "start_flash") {
+      return this.awaitingStart
+        ? { valid: true, feedback: "none" }
+        : ACTION_IGNORED;
+    }
+    if (this.awaitingStart) {
+      return ACTION_IGNORED;
+    }
     if (action.type === "replay_flash") {
       return ACTION_IGNORED;
     }
@@ -196,6 +222,11 @@ export class FlashRecallSession extends TemplateGameSession<
   override toAction(gesture: Gesture): GameAction | null {
     if (gesture.type !== "tap") {
       return null;
+    }
+    if (this.awaitingStart) {
+      return this.hitPlate(gesture.x, gesture.y)
+        ? { type: "start_flash", data: null }
+        : null;
     }
     if (this.isCovered() && this.timer.canReplay() && this.plateRect) {
       const p = this.plateRect;
@@ -228,7 +259,21 @@ export class FlashRecallSession extends TemplateGameSession<
     };
   }
 
+  private hitPlate(x: number, y: number): boolean {
+    const p = this.plateRect;
+    return (
+      p !== null &&
+      x >= p.x - TAP_TOLERANCE_PX &&
+      x <= p.x + p.w + TAP_TOLERANCE_PX &&
+      y >= p.y - TAP_TOLERANCE_PX &&
+      y <= p.y + p.h + TAP_TOLERANCE_PX
+    );
+  }
+
   override getHintTargetIndex(): number | null {
+    if (this.awaitingStart) {
+      return null;
+    }
     const idx = this.content.options.findIndex((o) => o.is_correct);
     return idx >= 0 ? idx : null;
   }
@@ -236,6 +281,10 @@ export class FlashRecallSession extends TemplateGameSession<
   override getHintTargetForLevel(level: HintLevel): HintTarget | null {
     if (this.checkWinCondition()) {
       return null;
+    }
+    if (this.awaitingStart) {
+      // Bước kế là bấm nút bắt đầu: không lộ gì về đáp án.
+      return { kind: "region", ids: ["cloche-plate"] };
     }
     if (level === 1) {
       return {
@@ -264,12 +313,35 @@ export class FlashRecallSession extends TemplateGameSession<
   override commit(action: GameAction): void {
     if (action.type === "select_value" && typeof action.data === "number") {
       this.selectValue(action.data);
+    } else if (action.type === "start_flash") {
+      this.startFlash();
     } else if (action.type === "replay_flash") {
       this.replayFlash();
     }
   }
 
   override getView(): EngineView {
+    if (this.awaitingStart && this.plateRect) {
+      const p = this.plateRect;
+      return {
+        activePrompt: this.content.prompt,
+        entities: [
+          {
+            id: "cloche-plate",
+            role: "neutral",
+            state: "idle",
+            x: p.x + p.w / 2,
+            y: p.y + p.h / 2,
+            w: p.w,
+            h: p.h,
+            hitShape: "circle",
+            slotIndex: -1,
+            label: "Bắt đầu",
+            spokenLabel: "Chạm để mở nắp và nhìn thật kỹ",
+          },
+        ],
+      };
+    }
     if (this.timer.isVisible()) {
       const entities: ViewEntity[] = [];
       this.content.flash_items.forEach((item, i) => {
@@ -359,6 +431,7 @@ export class FlashRecallSession extends TemplateGameSession<
     this.timer.reset();
     this.selectedValue = null;
     this.wasVisible = false;
+    this.awaitingStart = true;
   }
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
@@ -404,6 +477,13 @@ export class FlashRecallSession extends TemplateGameSession<
 
     const plate = this.areas ? plateSlot(this.areas.plate) : null;
     if (!plate) {
+      return;
+    }
+
+    if (this.awaitingStart) {
+      // Chờ trẻ bấm: nắp đậy và nút bắt đầu ▶ ngay trên đĩa (`BR-E012-04`).
+      drawClocheScene(ctx, plate, false);
+      drawLabelText(ctx, "▶", plate.x, plate.y, 48);
       return;
     }
 

@@ -248,6 +248,8 @@ describe("T18.2: Lô Montessori — Luật cơ chế thật (GT-007..GT-017)", (
       const session = new GT012Session(fixture.content, fixture.difficulty);
       session.setupEntities();
 
+      expect(session.isFlashVisible()).toBe(false);
+      session.startFlash();
       expect(session.isFlashVisible()).toBe(true);
       session.update(fixture.difficulty.flash_ms + 100);
       expect(session.isFlashVisible()).toBe(false);
@@ -259,6 +261,7 @@ describe("T18.2: Lô Montessori — Luật cơ chế thật (GT-007..GT-017)", (
         allow_replay: true,
       });
       session.setupEntities();
+      session.startFlash();
       session.update(fixture.difficulty.flash_ms + 100);
       expect(session.isFlashVisible()).toBe(false);
 
