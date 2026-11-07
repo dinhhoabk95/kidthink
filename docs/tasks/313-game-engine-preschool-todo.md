@@ -53,7 +53,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 
 - [ ] 021 (còn lại) — nửa phản chiếu dùng asset bất đối xứng thật (giày trái/phải, khủng long) và "Gương thần" hiện live: nội dung/asset, Phase 5; ánh sáng ô đối xứng lúc nhấc (N4) đã có (`BR-E021-07`, chạm-chọn mảnh; kéo thật thuộc web, engine chưa có sự kiện nhấc)
 
-- [ ] 022 (còn lại) — cảnh có lớp che thật (vật nấp sau bụi, layering): hiện cảnh xếp lưới theo slot nên không vật nào đè vật nào; cần mô hình lớp + toạ độ tương đối trong stage, thuộc Phase 5; sân khấu rất chật (điện thoại ngang, level 12 vật) chưa có hàng ghim
+- [x] 022 (còn lại) — lớp che thật: `occluded_by` trong `scene_objects`, vật che vẽ đè vật nấp, vùng chạm vật nấp là dải lộ ra (≥ sàn chạm, cách vật che ≥ `SLOT_GAP_PX`), cảnh xếp hàng trong `zones.stage` (`layered-scene.ts`), vật nấp tìm ra được kéo lên trên; sân khấu quá chật xếp phẳng như cũ (`BR-E022-08`, fixture #3, test `gt-022-layered-scene`). Chưa làm: bộ sinh `generators/gt022.ts` chưa sinh cặp che–nấp (chỉ fixture dùng); sân khấu rất chật với level 12 vật vẫn bỏ hàng ghim như trước, không thêm phương án mới
 
 - [ ] 023 (còn lại) — mảnh khác cỡ thật (người tuyết 3 cỡ: hiện 3 khối cùng asset nên thay nhau được hết) và bảng bóng hình Montessori: asset/nội dung, Phase 5; sân khấu rất chật vẫn lùi về lưới; legacy (không stage) vẫn lệch hệ toạ độ giữa neo và khay
 
@@ -104,7 +104,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
   - [x] 004 (khung chuyện Cún Con xếp gọn đồ, tiếng nắp hộp `lid_click`, mascot `happy`/`wonder` 1500 ms mỗi lần xếp; khác 003 ở khung/âm/nhịp mascot, BR-E004-04)
   - [x] 012 (khung chuyện đom đóm dưới nắp chuông, tiếng chuông `bell_open` khi mở nắp/xem lại, mascot `wonder` suốt pha nhìn–nhớ, không theo đáp án; khác 001/018, BR-E012-06)
   - [x] 018 (khung chuyện "Thỏ bảo", tiếng `rabbit_hop` chỉ khi làm đúng, mascot `happy` 600 ms theo bước xếp và `wonder` sau đáp án chưa đúng, không báo trước; khác 001/012, BR-E018-04). Còn lại: dải icon khi tắt tiếng (cần trạng thái âm của shell), nhận âm thanh con vật (cần asset thu)
-  - [x] 022 (khung chuyện Vịt Con cầm kính lúp tìm đồ lạc, tiếng `lens_pop` khi tìm ra, mascot `happy` 1000 ms khi tìm ra và `encourage` khi chạm nhầm; khác 025/037, BR-E022-07). Còn lại: lớp che thật (vật nấp sau bụi) và vẽ kính lúp, giữ ở dòng "022 (còn lại)"
+  - [x] 022 (khung chuyện Vịt Con cầm kính lúp tìm đồ lạc, tiếng `lens_pop` khi tìm ra, mascot `happy` 1000 ms khi tìm ra và `encourage` khi chạm nhầm; khác 025/037, BR-E022-07). Lớp che thật đã xong ở dòng 022 (còn lại); còn lại vẽ kính lúp, giữ ở dòng "022 (còn lại)"
   - [x] 028 (khung chuyện Ếch Xanh nhảy cóc trên tia số, tiếng `frog_hop` mỗi vật thêm, mascot `happy` 700 ms theo bước và `wonder` sau lần nộp chưa đủ; khác 029/031, BR-E028-06). Còn lại: vẽ tia số/ếch, tất theo đôi/bàn tay/bó que tính theo `step` (asset vẽ)
   - [x] 029 (khung chuyện Mèo Mướp đói bụng, tiếng `cat_munch` mỗi vật bớt, mascot `cheer` 1000 ms và `wonder` sau đáp án chưa đúng; khác 028/031, BR-E029-06). Còn lại: nhóm còn lại co nhỏ có chuyển động và vẽ mèo (asset vẽ)
   - [x] 031 (khung chuyện Heo Đất đi chợ quê, tiếng xu rơi `coin_clink`, mascot im tới khi trả chưa đủ rồi `encourage` 1500 ms; khác 028/029, BR-E031-08)

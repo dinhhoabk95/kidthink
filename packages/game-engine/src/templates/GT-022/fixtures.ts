@@ -126,4 +126,56 @@ export const GT022_FIXTURES: {
       show_target_counter: true,
     },
   },
+  // Level 4: lớp che thật (`BR-E022-08`) — thỏ nấp sau bụi cây, chuột nấp sau hòn đá.
+  {
+    content: {
+      prompt: "Bé hãy tìm chú thỏ và chú chuột đang nấp nhé!",
+      target_description: "Thỏ và chuột nấp",
+      scene_objects: [
+        {
+          id: "target-rabbit",
+          asset: { kind: "emoji", ref: "🐰" },
+          is_target: true,
+          is_hidden: false,
+          occluded_by: "bush",
+        },
+        {
+          id: "bush",
+          asset: { kind: "emoji", ref: "🌳" },
+          is_target: false,
+          is_hidden: false,
+        },
+        {
+          id: "target-mouse",
+          asset: { kind: "emoji", ref: "🐭" },
+          is_target: true,
+          is_hidden: false,
+          occluded_by: "rock",
+        },
+        {
+          id: "rock",
+          asset: { kind: "emoji", ref: "🪨" },
+          is_target: false,
+          is_hidden: false,
+        },
+        {
+          id: "distractor-bird",
+          asset: { kind: "emoji", ref: "🐦" },
+          is_target: false,
+          is_hidden: false,
+        },
+        {
+          id: "distractor-flower",
+          asset: { kind: "emoji", ref: "🌸" },
+          is_target: false,
+          is_hidden: false,
+        },
+      ],
+    },
+    difficulty: {
+      hint_after_ms: 8000,
+      allow_retry: true,
+      show_target_counter: true,
+    },
+  },
 ];

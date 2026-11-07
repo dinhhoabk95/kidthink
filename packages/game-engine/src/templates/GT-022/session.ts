@@ -28,9 +28,11 @@ import {
   drawSceneObjectAt,
   drawSlotItem,
   sceneBox,
+  slotAtPoint,
 } from "#src/render/index";
 import type { MascotPose } from "#src/render/mascot";
 import { deriveStream } from "#src/rng/mulberry32";
+import { shuffle } from "#src/rng/shuffle";
 import type { DegradationState } from "#src/systems/degradation";
 import { designTokens } from "#src/systems/designTokens";
 import type { RenderSystem } from "#src/systems/render-system";
@@ -40,6 +42,11 @@ import {
   SceneSystem,
 } from "#src/systems/scene-system";
 import { WRONG_FLASH_MS, WrongFlash } from "#src/systems/wrong-flash";
+import {
+  type LayerUnit,
+  layoutLayeredScene,
+  type PlacedLayer,
+} from "./layered-scene";
 import type { GT022Content, GT022Difficulty } from "./template";
 
 function findHitSceneObject(
@@ -85,6 +92,12 @@ export class GT022Session extends TemplateGameSession<
 
   /** Hàng hình mẫu ghim đầu sân khấu suốt lượt (`BR-E022-05`); có stage mới có. */
   private referenceSlots: readonly Slot[] = [];
+
+  /**
+   * Cảnh có lớp che thật (`BR-E022-08`): hộp vẽ và lớp của từng vật. `null` khi
+   * level không có vật nấp hoặc sân khấu quá chật — cảnh xếp phẳng như cũ.
+   */
+  private layers: readonly PlacedLayer[] | null = null;
 
   degradation: DegradationState | null = null;
 
@@ -454,6 +467,11 @@ export class GT022Session extends TemplateGameSession<
     }
     const touchFloor = resolveTouchFloor(ageBand, this.cssPerLogic);
     const strip = this.computeReferenceStrip(stage, touchFloor);
+    const layered = this.computeLayeredSlots(stage, strip, touchFloor);
+    if (layered) {
+      return layered;
+    }
+    this.layers = null;
     // Thử cỡ vật rộng rồi cỡ sàn chạm; sân khấu quá chật thì bỏ hàng ghim
     // thay vì để vùng chạm chồng nhau (`BR-LAY-05`).
     for (const size of [Math.max(touchFloor, 84), touchFloor]) {
@@ -467,6 +485,161 @@ export class GT022Session extends TemplateGameSession<
     return layoutIn(stage, Math.max(touchFloor, 84));
   }
 
+  /** Cặp (vật che, vật nấp) hợp lệ: vật che có thật, không tự che, không chính nó bị che. */
+  private occlusionPairs(): readonly { occluder: number; hidden: number }[] {
+    const objects = this.content.scene_objects;
+    const used = new Set<number>();
+    const pairs: { occluder: number; hidden: number }[] = [];
+    objects.forEach((obj, hidden) => {
+      const occluder = objects.findIndex((o) => o.id === obj.occluded_by);
+      const occluderObj = objects[occluder];
+      if (
+        occluder < 0 ||
+        occluder === hidden ||
+        obj.is_hidden ||
+        occluderObj?.occluded_by !== undefined ||
+        used.has(occluder) ||
+        used.has(hidden)
+      ) {
+        return;
+      }
+      used.add(occluder);
+      used.add(hidden);
+      pairs.push({ occluder, hidden });
+    });
+    return pairs;
+  }
+
+  /**
+   * Cảnh lớp che (`BR-E022-08`): thử có hàng ghim rồi không, mỗi lần thử cỡ vật rộng
+   * rồi cỡ sàn chạm. Không vừa thì trả `null` để cảnh xếp phẳng.
+   */
+  private computeLayeredSlots(
+    stage: NonNullable<GT022Session["stageRect"]>,
+    strip: { slots: Slot[]; scene: NonNullable<GT022Session["stageRect"]> },
+    touchFloor: number
+  ): readonly Slot[] | null {
+    const pairs = this.occlusionPairs();
+    if (pairs.length === 0) {
+      return null;
+    }
+    const rng = deriveStream(this.layoutSeed, "sides");
+    const inPair = new Set(pairs.flatMap((p) => [p.occluder, p.hidden]));
+    const units: LayerUnit[] = shuffle(
+      [
+        ...this.content.scene_objects.flatMap((_, index) =>
+          inPair.has(index) ? [] : [{ index } as LayerUnit]
+        ),
+        ...pairs.map(
+          (p): LayerUnit => ({
+            index: p.occluder,
+            hiddenIndex: p.hidden,
+            side: rng.next() < 0.5 ? "left" : "right",
+          })
+        ),
+      ],
+      rng
+    );
+    const even = (n: number): number => Math.ceil(n / 2) * 2;
+    const sizes = [even(Math.max(touchFloor, 84)), even(touchFloor)];
+    for (const withStrip of [true, false]) {
+      for (const u of sizes) {
+        const slots = this.tryLayered(
+          withStrip ? strip : { slots: [], scene: stage },
+          units,
+          u
+        );
+        if (slots) {
+          return slots;
+        }
+      }
+    }
+    return null;
+  }
+
+  /** Một lần thử xếp cảnh lớp che ở cỡ `u`; ghi `layers` và hàng ghim khi vừa. */
+  private tryLayered(
+    area: {
+      slots: Slot[];
+      scene: NonNullable<GT022Session["stageRect"]>;
+    },
+    units: readonly LayerUnit[],
+    u: number
+  ): readonly Slot[] | null {
+    const placed = layoutLayeredScene(area.scene, units, u, SLOT_GAP_PX);
+    if (!placed) {
+      return null;
+    }
+    const slots = placed.map(
+      (p): Slot => ({
+        index: p.index,
+        x: p.hit.x,
+        y: p.hit.y,
+        w: p.hit.w,
+        h: p.hit.h,
+        hitW: p.hit.w,
+        hitH: p.hit.h,
+        page: 0,
+        role: "neutral",
+      })
+    );
+    const all = [...slots, ...area.slots];
+    if (hasHitOverlap(all)) {
+      return null;
+    }
+    this.layers = placed;
+    this.referenceSlots = area.slots;
+    return all;
+  }
+
+  /** Id vật theo thứ tự vẽ của cảnh lớp che; rỗng khi cảnh xếp phẳng (`BR-E022-08`). */
+  getLayerDrawIds(): readonly string[] {
+    return this.layerDrawOrder().map(
+      (layer) => this.content.scene_objects[layer.index]?.id ?? ""
+    );
+  }
+
+  /** Thứ tự vẽ cảnh lớp che: vật nấp trước, vật che sau, vật nấp đã tìm ra được kéo lên trên. */
+  private layerDrawOrder(): readonly PlacedLayer[] {
+    const rank = (layer: PlacedLayer): number => {
+      const id = this.content.scene_objects[layer.index]?.id ?? "";
+      const found = this.sceneSystem.getObjectState(id)?.isFound === true;
+      return layer.layer === 0 && found ? 2 : layer.layer;
+    };
+    return [...(this.layers ?? [])].sort(
+      (a, b) => rank(a) - rank(b) || a.index - b.index
+    );
+  }
+
+  private renderLayeredScene(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    timeMs: number
+  ): void {
+    const assetById = this.resolveAssetById();
+    for (const layer of this.layerDrawOrder()) {
+      const obj = this.resolvedObjects[layer.index];
+      if (!obj) {
+        continue;
+      }
+      const state = this.sceneSystem.getObjectState(obj.id);
+      const wrong = obj.id === this.wrongItemId;
+      drawSlotItem(
+        ctx,
+        rs,
+        slotAtPoint(layer.draw.x, layer.draw.y, layer.draw.size),
+        {
+          id: obj.id,
+          asset: assetById.get(obj.id),
+          state: state?.isFound === true ? "correct" : "idle",
+        }
+      );
+      if (wrong) {
+        this.drawWrongHighlight(ctx, rs, obj, layer.index, timeMs);
+      }
+    }
+  }
+
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
@@ -478,6 +651,10 @@ export class GT022Session extends TemplateGameSession<
     }
     drawSceneBackground(ctx, rs, this.themeId);
     this.drawPinnedReferences(ctx, rs);
+    if (this.layers) {
+      this.renderLayeredScene(ctx, rs, timeMs);
+      return;
+    }
     // free-scene: toạ độ tới từ content (đã ở không gian logic), ô nào thiếu
     // toạ độ thì rơi về slot của layout.
     const scene = sceneBox(rs);

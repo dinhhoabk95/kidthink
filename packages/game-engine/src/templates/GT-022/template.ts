@@ -12,6 +12,11 @@ export const GT022ContentSchema = z.object({
         asset: assetSchema(),
         is_target: z.boolean(),
         is_hidden: z.boolean().default(false),
+        /**
+         * Id của vật che đứng trước vật này (`BR-E022-08`): vật nấp một phần sau
+         * nó và vẫn chạm được ở phần nhìn thấy. Id không hợp lệ thì bỏ qua lớp che.
+         */
+        occluded_by: z.string().optional(),
         x: z.number().int().min(0).max(960).optional(),
         y: z.number().int().min(0).max(540).optional(),
       })
