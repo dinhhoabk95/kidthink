@@ -5,6 +5,7 @@ import template, {
   canFormTargetAmount,
   GT031ContentSchema,
   GT031DifficultySchema,
+  pickCoinHint,
 } from "#src/templates/GT-031/template";
 
 const RE_SUBSET_SUM =
@@ -19,6 +20,42 @@ function getFixture(index: number) {
 }
 
 describe("GT-031: Gộp tiền xu (coin-compose)", () => {
+  describe("Hint không dẫn vào ngõ cụt", () => {
+    const coins = [
+      { coin_id: "a1", value: 1 },
+      { coin_id: "b2", value: 2 },
+      { coin_id: "c5", value: 5 },
+      { coin_id: "d2", value: 2 },
+      { coin_id: "e1", value: 1 },
+    ];
+
+    it("làm theo hint từng bước luôn đạt đúng target (greedy cũ kẹt ở 6/7)", () => {
+      const deposited: string[] = [];
+      let total = 0;
+      for (let step = 0; step < coins.length && total < 7; step++) {
+        const hint = pickCoinHint(coins, deposited, 7);
+        expect(hint).toEqual({
+          action: "deposit",
+          coin_id: expect.any(String),
+        });
+        const coin = coins.find((c) => c.coin_id === hint?.coin_id);
+        expect(coin).toBeDefined();
+        deposited.push(coin?.coin_id ?? "");
+        total += coin?.value ?? 0;
+      }
+      expect(total).toBe(7);
+    });
+
+    it("trạng thái đã kẹt (1+2+2+1=6, mục tiêu 7) → hint là gỡ xu nạp gần nhất", () => {
+      const hint = pickCoinHint(coins, ["a1", "b2", "d2", "e1"], 7);
+      expect(hint).toEqual({ action: "remove", coin_id: "e1" });
+    });
+
+    it("đã đủ hoặc vượt mục tiêu → không hint nạp thêm", () => {
+      expect(pickCoinHint(coins, ["c5", "b2"], 7)).toBeNull();
+    });
+  });
+
   describe("Template Metadata (BR-MTB-01..05)", () => {
     it("has valid template configuration", () => {
       expect(template.code).toBe("GT-031");
@@ -32,7 +69,7 @@ describe("GT-031: Gộp tiền xu (coin-compose)", () => {
       expect(template.requires_tap_fallback).toBe(true);
       expect(template.input).toEqual({
         family: "tap",
-        verbs: ["tap"],
+        verbs: ["tap", "drop"],
         tolerance_px: 24,
       });
     });
@@ -366,6 +403,12 @@ describe("GT-031: Gộp tiền xu (coin-compose)", () => {
       const view = session.getView();
       expect(view.activePrompt).toBe(f.content.prompt);
       expect(view.entities.length).toBe(1 + f.content.coins.length);
+      const ids = view.entities.map((e) => e.id);
+      expect(new Set(ids).size).toBe(ids.length);
+      for (const entity of view.entities) {
+        expect(entity.spokenLabel).toBeTruthy();
+        expect(entity.hitShape).toBeDefined();
+      }
     });
   });
 });

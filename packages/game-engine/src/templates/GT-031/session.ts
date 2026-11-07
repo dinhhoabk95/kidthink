@@ -34,7 +34,11 @@ import {
 } from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
-import type { GT031Content, GT031Difficulty } from "./template.js";
+import {
+  type GT031Content,
+  type GT031Difficulty,
+  pickCoinHint,
+} from "./template.js";
 
 /** Cạnh lớn nhất của thẻ giá / lợn đất giữa sân khấu. */
 const PAYMENT_TARGET_MAX_PX = 160;
@@ -88,18 +92,19 @@ export class GT031Session extends TemplateGameSession<
     if (this.isWin || this.isWon) {
       return null;
     }
-    const remaining = this.content.target_amount - this.currentTotal;
-    if (remaining <= 0) {
+    const hint = pickCoinHint(
+      this.content.coins,
+      this.depositedCoinIds,
+      this.content.target_amount
+    );
+    if (!hint) {
       return null;
     }
-    const suitableCoinIdx = this.content.coins.findIndex(
-      (c) => !this.depositedCoinIds.includes(c.coin_id) && c.value <= remaining
+    const coinIdx = this.content.coins.findIndex(
+      (c) => c.coin_id === hint.coin_id
     );
-    if (suitableCoinIdx >= 0) {
-      const slot = this.sourceSlots[suitableCoinIdx];
-      return slot ? slot.index : null;
-    }
-    return null;
+    const slot = this.sourceSlots[coinIdx];
+    return slot ? slot.index : null;
   }
 
   protected computeSlots(band: AgeBand): readonly Slot[] {
