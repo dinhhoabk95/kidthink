@@ -144,15 +144,24 @@ export class GT035Session extends TemplateGameSession<
 
   private get allowedCommands(): readonly CommandType[] {
     const fromContent = this.content.allowed_commands;
+    let base: readonly CommandType[];
     if (Array.isArray(fromContent) && fromContent.length > 0) {
-      return fromContent;
+      base = fromContent;
+    } else {
+      const fromDiff = (
+        this.difficulty as {
+          readonly allowed_commands?: readonly CommandType[];
+        }
+      ).allowed_commands;
+      base =
+        Array.isArray(fromDiff) && fromDiff.length > 0
+          ? fromDiff
+          : GT035Session.DEFAULT_ALLOWED_COMMANDS;
     }
-    const fromDiff = (
-      this.difficulty as { readonly allowed_commands?: readonly CommandType[] }
-    ).allowed_commands;
-    return Array.isArray(fromDiff) && fromDiff.length > 0
-      ? fromDiff
-      : GT035Session.DEFAULT_ALLOWED_COMMANDS;
+    // `allow_loop` tắt thì bỏ thẻ lặp khỏi khay (`BR-E035-14`).
+    return this.difficulty.allow_loop === false
+      ? base.filter((c) => c !== "loop")
+      : base;
   }
 
   /** Nút ở `zones.action` là nút chạy chương trình (`BR-PSZ-05`). */
@@ -296,7 +305,10 @@ export class GT035Session extends TemplateGameSession<
       return null;
     }
     if (this.cachedShortestSolution === undefined) {
-      this.cachedShortestSolution = findShortestSolution(this.queueConfig);
+      this.cachedShortestSolution = findShortestSolution(
+        this.queueConfig,
+        this.allowedCommands
+      );
     }
     const sol = this.cachedShortestSolution;
     const nextCmd = sol?.[this.queueSystem.commandCount]?.type;
