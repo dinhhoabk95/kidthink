@@ -73,6 +73,12 @@ const ACTION_LABEL_BY_ICON: Readonly<Record<CommitIcon, string>> = {
   listen: "Nghe mẫu",
 };
 
+/**
+ * Hai tap sai dồn dập trong khoảng này của trẻ nhỏ chỉ tính một miss, để
+ * không nhảy hint L1/L3 (Task #313 B6).
+ */
+const WRONG_COOLDOWN_MS = 400;
+
 /** Số logic px kéo tương ứng một bậc `adjust`. */
 const ADJUST_STEP_PX = 48;
 
@@ -133,6 +139,8 @@ export function usePlayGesture(options: GestureOptions) {
   let isDragging = false;
   let activeDragEntity: ViewEntity | null = null;
   let hoveredTargetEntity: ViewEntity | null = null;
+  /** Lúc verdict sai gần nhất (ms epoch) — cửa sổ cooldown `WRONG_COOLDOWN_MS`. */
+  let lastWrongAtMs = Number.NEGATIVE_INFINITY;
   let trailPoints: { readonly x: number; readonly y: number }[] = [];
   let lastMazeCellId: string | null = null;
   let didLiveMazeStep = false;
@@ -285,7 +293,12 @@ export function usePlayGesture(options: GestureOptions) {
 
     engine.audio.playSoftFeedbackSound();
     emitFeedback("retry", gesture);
-    engine.scaffolding?.onMiss();
+    const now = Date.now();
+    // Tap sai dồn dập trong cooldown chỉ tính một miss; tap đúng vẫn được xử lý.
+    if (now - lastWrongAtMs >= WRONG_COOLDOWN_MS) {
+      engine.scaffolding?.onMiss();
+    }
+    lastWrongAtMs = now;
     syncView();
     onRetryDisallowed?.();
   }
