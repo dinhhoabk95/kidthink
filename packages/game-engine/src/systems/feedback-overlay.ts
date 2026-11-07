@@ -114,18 +114,17 @@ export interface BaseMascotPoseInput {
 }
 
 /**
- * Dáng nền của mascot: lời dẫn đang đọc > tâm trạng của session > trợ giúp >
- * idle (`BR-FBK-15`). Phản hồi đúng/chưa đúng của `FeedbackOverlay` đè lên trên.
+ * Dáng nền của mascot: lời dẫn đang đọc > trợ giúp > tâm trạng của session >
+ * idle (`BR-FBK-15`) — trẻ đang kẹt luôn thấy dáng gợi ý. Phản hồi đúng/chưa đúng của `FeedbackOverlay` đè lên trên.
  */
 export function resolveBaseMascotPose(input: BaseMascotPoseInput): MascotPose {
   if (!input.acceptingInput) {
     return "listen";
   }
-  const mood = input.session?.mascotMood?.();
-  if (mood) {
-    return mood;
+  if (input.hintLevel > 0) {
+    return "hint";
   }
-  return input.hintLevel > 0 ? "hint" : "idle";
+  return input.session?.mascotMood?.() ?? "idle";
 }
 
 export class FeedbackOverlay {

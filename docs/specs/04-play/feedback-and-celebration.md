@@ -77,7 +77,7 @@ xem §7.4.
 | `BR-FBK-12` | Màn tổng kết level **đọc thành tiếng** một lời khen của §7.2 khi mở, và nút của trẻ chỉ có icon (chữ chỉ ở `aria-label`) | `BR-ENG-10` — trẻ 3–6 chưa đọc; tiêu đề chữ một mình không phải phần thưởng |
 | `BR-FBK-13` | Khi chưa đúng, bề mặt chơi **đọc thành tiếng** một câu khích lệ của §7.2, xoay vòng không lặp liên tiếp. Có giọng Việt thì TTS đọc; không có giọng thì phát mp3 dự phòng cùng chỉ số (`RETRY_ENCOURAGEMENT_AUDIO`), mỗi lần đúng một nguồn. Câu nói nối **sau** tên vật vừa chạm, không cắt ngang; tap sai dồn dập trong cooldown 400ms chỉ nói một câu. Engine có pill Montessori thì lời của pill (`BR-PNR-12`) thay câu chung | `BR-FBK-02` — chỉ âm mềm và nhịp hổ phách chưa nói cho trẻ 3–6 tuổi biết phải làm gì; máy không có giọng Việt vẫn nghe được qua mp3 |
 | `BR-FBK-14` | Engine có thể khai **cue âm đặc trưng** của riêng mình (session xếp hàng `SFXType` qua `queueSfx`, hàng đợi trần 8). `GameEngine.advanceFrame` rút hàng đợi mỗi khung và phát qua `audio.play` — trễ tối đa một khung, theo đúng thứ tự xếp, không phát khi âm tắt. Mọi cue là âm tổng hợp (không file) và tuân `BR-FBK-10`; cue **bổ sung** chứ không thay âm đúng/chưa đúng chung của `BR-FBK-02` | `BR-ENG-03` — trải nghiệm riêng của từng trò cần âm riêng mà không để session giữ `AudioContext`; hàng đợi có trần để lượt chạm dồn dập không xếp hàng vô hạn |
-| `BR-FBK-15` | Session khai **tâm trạng mascot** qua `mascotMood()` (dáng, hoặc `null`). Thứ tự dáng nền: lời dẫn đang đọc (`listen`) > tâm trạng của session > trợ giúp (`hint`) > `idle`. Dáng phản hồi đúng/chưa đúng của lớp phủ (`BR-FBK-11`, 700ms) vẫn đè lên dáng nền. Ba dáng mới `wonder` (nghiêng đầu thắc mắc), `freeze` (đứng hình, không nảy), `cheer` (nảy nhẹ khi gom được một thứ) | `BR-FBK-11` — mascot phản ứng theo *tình huống của trò*, không chỉ theo đúng/sai; tắt tiếng thì mascot vẫn nói được trò đang ở nhịp nào |
+| `BR-FBK-15` | Session khai **tâm trạng mascot** qua `mascotMood()` (dáng, hoặc `null`). Thứ tự dáng nền: lời dẫn đang đọc (`listen`) > trợ giúp (`hint`) > tâm trạng của session > `idle` — trẻ đang kẹt luôn thấy dáng gợi ý, tâm trạng (vd `wonder` suốt vòng GT-025) không được che nó. Dáng phản hồi đúng/chưa đúng của lớp phủ (`BR-FBK-11`, 700ms) vẫn đè lên dáng nền. Ba dáng mới `wonder` (nghiêng đầu thắc mắc), `freeze` (đứng hình, không nảy), `cheer` (nảy nhẹ khi gom được một thứ) | `BR-FBK-11` — mascot phản ứng theo *tình huống của trò*, không chỉ theo đúng/sai; tắt tiếng thì mascot vẫn nói được trò đang ở nhịp nào |
 | `BR-FBK-16` | **Khung chuyện**: session khai `storyLine()` — một câu bối cảnh nói được. Bề mặt chơi đọc nó **đúng một lần** ở vòng đầu của level, ngay trước câu dẫn (`round_open`), cùng một lượt phát với câu dẫn; "nghe lại" chỉ đọc câu dẫn. Khung chuyện Cấm — **NEVER** vẽ lên canvas và không phải chữ trẻ phải đọc (`BR-ENG-10`); không so sánh trẻ với trẻ khác (`BR-FBK-08`) | Trẻ 3–6 vào trò bằng câu chuyện nghe được; đọc ở mọi vòng thì lặp lại và nhàm |
 
 ## 7. Data
@@ -227,6 +227,8 @@ Scenario: BR-FBK-15 — mascot theo tâm trạng của session
   Then dáng nền là freeze
   When lời dẫn đang đọc
   Then dáng nền là listen
+  When trợ giúp đã lên bậc 1 và lời dẫn không đang đọc
+  Then dáng nền là hint
 
 Scenario: BR-FBK-16 — khung chuyện đọc một lần ở vòng đầu
   Given session khai storyLine

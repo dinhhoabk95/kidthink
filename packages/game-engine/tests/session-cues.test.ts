@@ -108,13 +108,20 @@ describe("BR-FBK-15 — dáng mascot nền", () => {
     );
   });
 
-  it("tâm trạng của session thắng trợ giúp", () => {
+  it("trợ giúp thắng tâm trạng của session — trẻ đang kẹt cần thấy dáng gợi ý", () => {
     const session = new CueSession();
     session.mood = "freeze";
 
     expect(resolveBaseMascotPose({ ...base, hintLevel: 2, session })).toBe(
-      "freeze"
+      "hint"
     );
+  });
+
+  it("chưa có trợ giúp thì tâm trạng của session thắng idle", () => {
+    const session = new CueSession();
+    session.mood = "freeze";
+
+    expect(resolveBaseMascotPose({ ...base, session })).toBe("freeze");
   });
 
   it("lời dẫn đang đọc thì listen, thắng cả tâm trạng", () => {
