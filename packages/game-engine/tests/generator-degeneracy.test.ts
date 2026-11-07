@@ -6,6 +6,11 @@ import { ALL_LEVEL_GENERATORS } from "#src/generators/index";
 import type { ThemeVocabulary } from "#src/generators/types";
 import { createRng } from "#src/rng/mulberry32";
 import { isSudokuCompleteAndValid } from "#src/systems/constraint-system";
+import {
+  countDeadEnds,
+  countSimpleRoutes,
+  type MazeGrid,
+} from "#src/systems/maze-system";
 import { GT006Session } from "#src/templates/GT-006/session";
 import { GT006ContentSchema } from "#src/templates/GT-006/template";
 import {
@@ -29,6 +34,10 @@ import {
   GT016ContentSchema,
   GT016DifficultySchema,
 } from "#src/templates/GT-016/template";
+import {
+  type SolverFixture,
+  solveWithWebGestures,
+} from "./gates/web-gesture-solver";
 
 /**
  * Bộ sinh thoái hoá (Task #313 Phase 4): mỗi ca chứng minh một cách bài không
@@ -571,4 +580,64 @@ describe("band của bộ sinh khớp age_min của template (Task #313 Phase 4)
       }
     });
   }
+});
+
+describe("GT-013 — mê cung 4-5 tuổi thưa tường, ít lối, đọc được (BR-E013-05)", () => {
+  interface MazeLevel {
+    content_pack: { grid: MazeGrid; input_mode: string };
+    difficulty_params: { dead_end_count: number };
+  }
+  const level = (seed: number, band: "4-5" | "5-6") =>
+    gen("GT-013", seed, band) as unknown as MazeLevel;
+  const candidateEdges = (g: MazeGrid) => 2 * g.rows * (g.cols - 1);
+
+  it("band 4-5: lưới 3x3, đầu và đích ở hai góc đối, tường chiếm tối đa 25% cạnh trong", () => {
+    for (const seed of SEEDS) {
+      const { grid } = level(seed, "4-5").content_pack;
+      expect([grid.rows, grid.cols], `seed=${seed}`).toEqual([3, 3]);
+      expect(Math.abs(grid.start.row - grid.goal.row)).toBe(2);
+      expect(Math.abs(grid.start.col - grid.goal.col)).toBe(2);
+      expect(grid.walls.length / candidateEdges(grid)).toBeLessThanOrEqual(
+        0.25
+      );
+    }
+  });
+
+  it("band 4-5: tối đa 3 đường đơn và 2 ngõ cụt; dead_end_count là số đo thật", () => {
+    for (const seed of SEEDS) {
+      const { content_pack, difficulty_params } = level(seed, "4-5");
+      expect(
+        countSimpleRoutes(content_pack.grid, 50),
+        `seed=${seed}`
+      ).toBeLessThanOrEqual(3);
+      const dead = countDeadEnds(content_pack.grid);
+      expect(dead).toBeLessThanOrEqual(2);
+      expect(difficulty_params.dead_end_count).toBe(dead);
+    }
+  });
+
+  it("band 5-6: dead_end_count là số ngõ cụt đo được (kẹp ở 6 theo schema)", () => {
+    for (const seed of SEEDS) {
+      const { content_pack, difficulty_params } = level(seed, "5-6");
+      expect(difficulty_params.dead_end_count).toBe(
+        Math.min(6, countDeadEnds(content_pack.grid))
+      );
+    }
+  });
+
+  it("level 4-5 do bộ sinh dựng thắng được bằng cử chỉ web", async () => {
+    for (const seed of SEEDS.slice(0, 12)) {
+      const { content_pack, difficulty_params } = gen("GT-013", seed, "4-5");
+      const outcome = await solveWithWebGestures(
+        "GT-013",
+        {
+          content: content_pack as SolverFixture["content"],
+          difficulty: difficulty_params as SolverFixture["difficulty"],
+          band: "4-5",
+        },
+        seed
+      );
+      expect(outcome, `seed=${seed}`).toBe("won");
+    }
+  });
 });

@@ -1,7 +1,6 @@
 {
   "_doc": "Fixture chưa giải được chỉ bằng gesture web (Task #313 Phase 0). Chỉ được GIẢM; thêm mục mới = level mới không thắng được.",
   "unsolved": [
-    "GT-013#2",
     "GT-014#1",
     "GT-014#2",
     "GT-015#1",

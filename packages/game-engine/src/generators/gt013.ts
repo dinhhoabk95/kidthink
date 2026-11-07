@@ -1,4 +1,7 @@
+import type { Rng } from "#src/rng/types";
 import {
+  countDeadEnds,
+  countSimpleRoutes,
   findRouteThrough,
   type MazeCell,
   type MazeGrid,
@@ -41,6 +44,86 @@ function buildMazeWalls(
   return walls;
 }
 
+/** Ngưỡng đọc được của mê cung 4-5 tuổi (`BR-E013-05`). */
+const YOUNG_GRID_SIZE = 3;
+const YOUNG_WALL_COUNT = 3; // 3/12 cạnh trong = 25%
+const YOUNG_MAX_ROUTES = 3;
+const YOUNG_MAX_DEAD_ENDS = 2;
+const YOUNG_MAX_ATTEMPTS = 500;
+const MAX_DEAD_END_PARAM = 6;
+
+interface MazeLayout {
+  grid: MazeGrid;
+}
+
+/**
+ * Band 4-5: lưới 3×3, đầu và đích ở hai góc đối, đúng 3 tường, và chỉ nhận
+ * bố cục có tối đa 3 đường đơn, 2 ngõ cụt — bản cũ dựng 4×4 với 8–10 tường
+ * (33–42% cạnh) tới 7 đường và 5 ngõ cụt, quá rối cho tuổi này.
+ */
+function buildYoungMaze(rng: Rng): MazeLayout {
+  const last = YOUNG_GRID_SIZE - 1;
+  const diagonal = rng.nextInt(2) === 0;
+  const start: MazeCell = { row: 0, col: diagonal ? 0 : last };
+  const goal: MazeCell = { row: last, col: diagonal ? last : 0 };
+  const candidates = generateCandidateWalls(YOUNG_GRID_SIZE, YOUNG_GRID_SIZE);
+  for (let attempt = 0; attempt < YOUNG_MAX_ATTEMPTS; attempt++) {
+    const walls = sampleUnique(rng, candidates, YOUNG_WALL_COUNT);
+    const grid: MazeGrid = {
+      rows: YOUNG_GRID_SIZE,
+      cols: YOUNG_GRID_SIZE,
+      walls,
+      start,
+      goal,
+    };
+    if (
+      findRouteThrough(grid, []) !== null &&
+      countSimpleRoutes(grid, YOUNG_MAX_ROUTES + 1) <= YOUNG_MAX_ROUTES &&
+      countDeadEnds(grid) <= YOUNG_MAX_DEAD_ENDS
+    ) {
+      return { grid };
+    }
+  }
+  throw new Error(
+    `GT-013: không dựng được mê cung 4-5 đạt BR-E013-05 sau ${YOUNG_MAX_ATTEMPTS} lần`
+  );
+}
+
+/** Band 5-6: lưới 5×5 hoặc 6×6, tường rải ngẫu nhiên nhưng luôn còn đường tới đích. */
+function buildOlderMaze(rng: Rng): MazeLayout {
+  const rows = 5 + rng.nextInt(2);
+  const cols = rows;
+
+  const corners: MazeCell[] = [
+    { row: 0, col: 0 },
+    { row: 0, col: cols - 1 },
+    { row: rows - 1, col: 0 },
+    { row: rows - 1, col: cols - 1 },
+  ];
+  const start = corners[rng.nextInt(corners.length)] ?? { row: 0, col: 0 };
+  const goalCandidates = corners.filter(
+    (c) => c.row !== start.row || c.col !== start.col
+  );
+  const goal = goalCandidates[rng.nextInt(goalCandidates.length)] ?? {
+    row: rows - 1,
+    col: cols - 1,
+  };
+
+  const candidateWalls = generateCandidateWalls(rows, cols);
+  const shuffledWalls = sampleUnique(
+    rng,
+    candidateWalls,
+    candidateWalls.length
+  );
+  const targetWallCount = Math.min(
+    Math.floor((rows * cols) / 2) + rng.nextInt(3),
+    candidateWalls.length
+  );
+  const gridBase = { rows, cols, start, goal };
+  const walls = buildMazeWalls(shuffledWalls, targetWallCount, gridBase);
+  return { grid: { ...gridBase, walls } };
+}
+
 export const GT013Generator: LevelGenerator = {
   engine: "GT-013",
   axes: {
@@ -49,51 +132,19 @@ export const GT013Generator: LevelGenerator = {
     theme: [...VALID_GENERATOR_THEMES],
   },
   generate({ rng, age_band, vocabulary }) {
-    const rows = age_band === "4-5" ? 4 : 5 + rng.nextInt(2); // 4 for 4-5, 5 or 6 for 5-6
-    const cols = rows;
-
-    const corners: MazeCell[] = [
-      { row: 0, col: 0 },
-      { row: 0, col: cols - 1 },
-      { row: rows - 1, col: 0 },
-      { row: rows - 1, col: cols - 1 },
-    ];
-    const startIdx = rng.nextInt(corners.length);
-    const start = corners[startIdx] ?? { row: 0, col: 0 };
-
-    const goalCandidates = corners.filter(
-      (c) => c.row !== start.row || c.col !== start.col
-    );
-    const goal = goalCandidates[rng.nextInt(goalCandidates.length)] ?? {
-      row: rows - 1,
-      col: cols - 1,
-    };
-
-    const candidateWalls = generateCandidateWalls(rows, cols);
-    const shuffledWalls = sampleUnique(
-      rng,
-      candidateWalls,
-      candidateWalls.length
-    );
-    const targetWallCount = Math.min(
-      Math.floor((rows * cols) / 2) + rng.nextInt(3),
-      candidateWalls.length
-    );
-
-    const gridBase = { rows, cols, start, goal };
-    const walls = buildMazeWalls(shuffledWalls, targetWallCount, gridBase);
+    const young = age_band === "4-5";
+    const { grid } = young ? buildYoungMaze(rng) : buildOlderMaze(rng);
+    const { rows, cols, walls, start, goal } = grid;
 
     // Bộ giải kiểm tra: tồn tại đường đi hợp lệ từ start đến goal
-    const testGrid: MazeGrid = { ...gridBase, walls };
-    const route = findRouteThrough(testGrid, []);
-    if (!route || route.length < (age_band === "4-5" ? 4 : 5)) {
+    const route = findRouteThrough(grid, []);
+    if (!route || route.length < (young ? 4 : 5)) {
       throw new Error(
         `GT-013 solver verification failed: route missing or too short (length: ${route?.length ?? 0})`
       );
     }
 
-    const inputMode =
-      age_band === "5-6" ? ("arrows" as const) : ("draw" as const);
+    const inputMode = young ? ("draw" as const) : ("arrows" as const);
 
     const nouns = getNouns(vocabulary, 1);
     const noun = nouns[0]?.label_vi || "bạn nhỏ";
@@ -105,21 +156,15 @@ export const GT013Generator: LevelGenerator = {
     return {
       content_pack: {
         prompt,
-        grid: {
-          rows,
-          cols,
-          walls,
-          start,
-          goal,
-        },
+        grid: { rows, cols, walls, start, goal },
         required_cells: [],
         input_mode: inputMode,
       },
       difficulty_params: {
         item_count: 1,
-        dead_end_count: Math.min(6, Math.max(1, Math.floor(walls.length / 3))),
+        dead_end_count: Math.min(MAX_DEAD_END_PARAM, countDeadEnds(grid)),
         required_cell_count: 0,
-        hint_after_ms: age_band === "4-5" ? 10_000 : 15_000,
+        hint_after_ms: young ? 10_000 : 15_000,
         allow_retry: true,
       },
     };

@@ -307,6 +307,35 @@ export function countDeadEnds(grid: MazeGrid): number {
   return reachableCells(grid).filter((cell) => isDeadEnd(grid, cell)).length;
 }
 
+/**
+ * Số đường đơn (không đi lại ô cũ) từ ô đầu tới ô đích, dừng đếm ở `cap`.
+ * Bộ sinh dùng nó để giữ số lối của mê cung nhỏ tuổi trong tầm đọc được.
+ */
+export function countSimpleRoutes(grid: MazeGrid, cap: number): number {
+  const edges = blockedEdges(grid);
+  const visited = new Set<string>([cellKey(grid.start)]);
+  let count = 0;
+  const walk = (cell: MazeCell): void => {
+    if (count >= cap) {
+      return;
+    }
+    if (sameCell(cell, grid.goal)) {
+      count++;
+      return;
+    }
+    for (const next of neighborsWith(grid, edges, cell)) {
+      const key = cellKey(next);
+      if (!visited.has(key)) {
+        visited.add(key);
+        walk(next);
+        visited.delete(key);
+      }
+    }
+  };
+  walk(grid.start);
+  return count;
+}
+
 /** Ngã ba: ô có từ ba lối trở lên. */
 export function isJunction(grid: MazeGrid, cell: MazeCell): boolean {
   return openNeighbors(grid, cell).length >= 3;

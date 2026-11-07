@@ -2,7 +2,7 @@ import type { GT013Content, GT013Difficulty } from "./template.js";
 
 /**
  * Ba level mẫu ánh xạ tới ba dạng bài của workbook 09:
- * `WB09-D1` mê cung đường đơn · `WB09-D2` ngã ba có bẫy · `WB09-D3` thu thập vật phẩm.
+ * `WB09-D1` mê cung đường đơn · `WB09-D2` ngã ba có bẫy · `WB09-D3` thu thập vật phẩm. Cả ba là lưới 3×3 thưa tường: band 4-5 chỉ cần lưới nhỏ (`GT-013.md` §13), và lưới 4×4 ở khung chạy thử không có stage bị chồng hàng cuối lên hàng hai (bộ giải cử chỉ web không thắng nổi).
  *
  * Chúng sống ở đây, **không** đi qua `seed-content`, nên không tiêu hạn ngạch
  * competency (mục 3 của plan T99).
@@ -74,31 +74,24 @@ export const GT013_FIXTURES: {
     content: {
       prompt: "Bé nhặt đủ hai quả trên đường rồi mới ra cổng nhé.",
       grid: {
-        rows: 4,
-        cols: 4,
+        rows: 3,
+        cols: 3,
         walls: [
-          { row: 1, col: 0, side: "e" },
-          { row: 1, col: 1, side: "e" },
           { row: 0, col: 0, side: "s" },
-          { row: 0, col: 3, side: "s" },
-          { row: 1, col: 2, side: "s" },
-          { row: 1, col: 3, side: "s" },
-          { row: 2, col: 0, side: "s" },
-          { row: 2, col: 1, side: "s" },
-          { row: 2, col: 3, side: "s" },
+          { row: 0, col: 1, side: "s" },
         ],
         start: { row: 0, col: 0 },
-        goal: { row: 3, col: 3 },
+        goal: { row: 2, col: 2 },
       },
       required_cells: [
+        { row: 0, col: 2 },
         { row: 1, col: 1 },
-        { row: 2, col: 2 },
       ],
       input_mode: "arrows",
     },
     difficulty: {
       item_count: 1,
-      dead_end_count: 5,
+      dead_end_count: 0,
       required_cell_count: 2,
       hint_after_ms: 12_000,
       allow_retry: true,

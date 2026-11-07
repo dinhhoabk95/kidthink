@@ -237,10 +237,12 @@ describe("GT-013 — journey một phiên đầy đủ (điều kiện nghiệm 
 
   it("level mẫu thu thập vật phẩm chỉ thắng khi qua đủ hai ô bắt buộc", () => {
     const session = newSession(2);
+    // Đường tắt (0,2) → (1,2) → (2,2) tới cổng nhưng bỏ sót ô bắt buộc (1,1).
     for (const cell of [
       { row: 0, col: 1 },
       { row: 0, col: 2 },
-      { row: 0, col: 3 },
+      { row: 1, col: 2 },
+      { row: 2, col: 2 },
     ]) {
       session.onPathStep(cell);
     }
@@ -248,15 +250,29 @@ describe("GT-013 — journey một phiên đầy đủ (điều kiện nghiệm 
     session.setupEntities();
     for (const cell of [
       { row: 0, col: 1 },
+      { row: 0, col: 2 },
+      { row: 1, col: 2 },
       { row: 1, col: 1 },
       { row: 2, col: 1 },
       { row: 2, col: 2 },
-      { row: 3, col: 2 },
-      { row: 3, col: 3 },
     ]) {
       session.onPathStep(cell);
     }
     expect(session.onPathSubmitted()).toBe(true);
+  });
+
+  it("gợi ý không dẫn trẻ lùi về ô vừa đi khi còn đường khác ngắn bằng (lùi xoá ô bắt buộc vừa nhặt)", () => {
+    const session = newSession(2);
+    for (const cell of [
+      { row: 0, col: 1 },
+      { row: 0, col: 2 },
+      { row: 1, col: 2 },
+      { row: 1, col: 1 },
+    ]) {
+      session.onPathStep(cell);
+    }
+    // Đang ở (1,1), ô vừa đi là (1,2). Cả (1,2) lẫn (2,1) đều dẫn tới cổng sau 2 bước.
+    expect(session.getScaffoldHint(1)?.cells).toEqual([{ row: 2, col: 1 }]);
   });
 
   it("BR-GTC-09: checkWinCondition thuần — gọi 100 lần cho cùng kết quả", () => {

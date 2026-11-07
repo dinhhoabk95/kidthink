@@ -486,6 +486,23 @@ export class GT013Session extends TemplateGameSession<
       (rc) => !visitedKeys.has(cellKey(rc))
     );
     const full = findRouteThrough(this.grid, unvisited, current);
+    const previous = this.tracker.getPath().at(-2);
+    const first = full?.[1];
+    if (previous && first && cellKey(first) === cellKey(previous)) {
+      // Bước về ô vừa đi là lùi, xoá ô đó khỏi nét vẽ (BR-E013-02): nếu còn
+      // đường khác thì chỉ đường đó, không dẫn trẻ vào vòng lặp tiến-lùi.
+      const side = neighborSide(current, previous);
+      if (side) {
+        const detour = findRouteThrough(
+          { ...this.grid, walls: [...this.grid.walls, { ...current, side }] },
+          unvisited,
+          current
+        );
+        if (detour && detour.length > 1) {
+          return detour.slice(1);
+        }
+      }
+    }
     return full && full.length > 1 ? full.slice(1) : [];
   }
 

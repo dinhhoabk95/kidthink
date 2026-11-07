@@ -46,7 +46,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 - [ ] 007 (còn lại) — cơ chế kéo/gộp vật thật giữa ô tổng và hai khay phần: viết lại session (toAction/getView/render, bài sinh nội dung `discrete-object`); quá lớn cho một commit, cần plan riêng
 - [ ] 010 (còn lại) — đổi nội dung 4–5 tuổi sang bảng tra/bảng giá một ẩn (không hệ hai phương trình): cần đổi schema/generator, thuộc Phase 4/5
 - [ ] 012 (còn lại) — N4/N6 hiện lại nhóm vật sau khi chọn đúng chưa có code (`flash_ms` co giãn ở bộ sinh đã xong ở Phase 4)
-- [ ] 013 (còn lại) — mê cung ~50% tường, nhiều lối: giảm mật độ tường và số lối ở bộ sinh/fixture 4–5 tuổi (nội dung/generator, Phase 4); GT-013#2 vẫn nằm trong sổ nợ web-gesture
+- [ ] 013 (còn lại) — lưới 4×4 trở lên chưa có hàng riêng ở khung không stage (`resolveLayout("grid")` chồng hàng cuối lên hàng hai; band 5-6 sinh 5×5/6×6 chưa được bộ giải cử chỉ web kiểm)
 - [ ] 014 (còn lại) — ẩn số khối lượng khỏi vật khay/đĩa (đang in nên thành phép trừ): cần kích thước vật tỉ lệ khối lượng (BR-E014-03, hiện ô khay cùng cỡ) trước khi ẩn số, không thì bài không giải được; thuộc Phase 5
 
 - [ ] 015 (còn lại) — bộ sinh đã sửa (Phase 4); fixture ghim tay (#0 2×2 hai ô trống cùng đáp án, #1 ba ô cùng đáp án) chưa đổi vì nhiều test bám vào chúng; thang hint L1–L3 theo Task #301; GT-015#1-2 vẫn trong sổ nợ web-gesture (chưa có cử chỉ nhấc ký hiệu ra)
@@ -69,7 +69,7 @@ Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu 
 - [x] Generator 015 (3×3 Latin hoán vị, 2–3 ô trống ngẫu nhiên đạt nghiệm duy nhất/đáp án khác nhau/ô trống liên kết, chỉ band 5-6, BR-E015-06)
 - [x] Generator 016 (hai bậc minute_step 60/30, nhiễu ngẫu nhiên + bẫy cùng giờ khác phút, hint theo bậc, BR-E016-04)
 - [x] Band khớp `age_min` (011, 015 đã ở commit riêng; 017 + 022 thêm; test chung `generator-degeneracy.test.ts` quét mọi generator, BR-E017-04, BR-E022-06)
-- [ ] Giảm mật độ tường/số lối GT-013 4–5 tuổi
+- [x] Giảm mật độ tường/số lối GT-013 4–5 tuổi (3×3, 3 tường, ≤3 đường, ≤2 ngõ cụt, fixture #2 đổi 3×3, gỡ GT-013#2 khỏi sổ nợ, BR-E013-05)
 - [ ] Nối/xoá trường difficulty chết theo spec sở hữu
 - [ ] Gỡ chữ phải đọc khỏi UI trẻ (008, 009, 019, 023, 028, 029, 032, 035, 036)
 
