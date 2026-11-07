@@ -51,7 +51,8 @@ export type SFXType =
   | "clip_link"
   | "water_pour"
   | "yarn_pull"
-  | "wood_beat";
+  | "wood_beat"
+  | "robot_beep";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -823,6 +824,18 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       glideTo: { freq: 340, overSec: 0.05 },
       volume: 0.08,
       durationSec: 0.09,
+      rampOutSec: 0.05,
+    },
+  ],
+
+  /** GT-035: robot "bíp" điện tử ngắn, một nhịp mỗi bước (`BR-E035-11`). */
+  robot_beep: [
+    {
+      delaySec: 0,
+      type: "square",
+      freq: 988,
+      volume: 0.05,
+      durationSec: 0.08,
       rampOutSec: 0.05,
     },
   ],

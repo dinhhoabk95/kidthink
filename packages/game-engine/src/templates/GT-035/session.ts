@@ -25,6 +25,7 @@ import {
   spawnParticlesAtSlot,
   updateParticles,
 } from "#src/render/index.js";
+import type { MascotPose } from "#src/render/mascot";
 import {
   type CommandItem,
   type CommandQueueConfig,
@@ -36,6 +37,7 @@ import {
   type RobotState,
 } from "#src/systems/command-queue-system";
 import type { DegradationState } from "#src/systems/degradation";
+import { MoodPulse } from "#src/systems/mood-pulse";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import { SFXEngine } from "#src/systems/sfx-engine";
 import type {
@@ -118,6 +120,13 @@ const FACING_ARROWS: Record<string, string> = {
   down: "↓",
   left: "←",
 };
+
+/** Khung chuyện đọc một lần ở vòng đầu (`BR-E035-11`, `BR-FBK-16`). */
+export const GT035_STORY_LINE =
+  "Robot Bíp đi tìm ngôi sao. Bé xếp các thẻ lệnh rồi bấm chạy, Robot Bíp sẽ đi từng bước theo lệnh nhé!";
+
+/** Mascot nghiêng đầu sau khi chương trình chạy xong mà chưa tới đích. */
+export const GT035_WONDER_MS = 1500;
 
 export class GT035Session extends TemplateGameSession<
   GT035Content,
@@ -241,6 +250,7 @@ export class GT035Session extends TemplateGameSession<
     this.execPhase = "running";
     this.particles = [];
     this.cachedShortestSolution = undefined;
+    this.mood.clear();
     this.queueSystem.clear();
 
     this.recordEvent("game_started", {
@@ -251,6 +261,17 @@ export class GT035Session extends TemplateGameSession<
       reduced_motion: false,
       round_index: 0,
     });
+  }
+
+  private readonly mood = new MoodPulse();
+
+  override storyLine(): string {
+    return GT035_STORY_LINE;
+  }
+
+  /** Chỉ phản ứng sau khi robot chạy xong và hụt, không báo trước (`BR-E035-11`). */
+  override mascotMood(): MascotPose | null {
+    return this.isWon ? null : this.mood.current();
   }
 
   override destroy(): void {
@@ -319,6 +340,7 @@ export class GT035Session extends TemplateGameSession<
   }
 
   update(deltaMs: number): ActionResult | null {
+    this.mood.tick(deltaMs);
     this.particles = updateParticles(this.particles);
     if (!(this.isExecuting && this.executionResult)) {
       return null;
@@ -381,6 +403,8 @@ export class GT035Session extends TemplateGameSession<
     }
     const step = this.execSteps[this.execCursor];
     if (step) {
+      // Một tiếng "bíp" mỗi nhịp robot đi, đúng hay sai đường như nhau (`BR-E035-11`).
+      this.queueSfx("robot_beep");
       this.robotState = { ...step.toState };
       if (
         step.collectedId &&
@@ -420,6 +444,7 @@ export class GT035Session extends TemplateGameSession<
       round_index: 0,
     });
     this.sfxEngine.play("amber_soft");
+    this.mood.set("wonder", GT035_WONDER_MS);
     this.robotState = { ...result.finalState };
     this.activeExecutingStep =
       result.failedAtStep === undefined
