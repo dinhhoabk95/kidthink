@@ -7,6 +7,7 @@ import {
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveAssetLabels } from "#src/labels/spoken-keyword";
+import { SLOT_GAP_PX } from "#src/layout/constants";
 import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
 import type { ZoneRect } from "#src/layout/stage-zones";
@@ -53,6 +54,10 @@ export const GT006_WONDER_MS = 1500;
 
 /** Cạnh ô cây lớn dần, px logic (`BR-E006-06`). */
 const FILM_TREE_SIZE_PX = 64;
+const LOCOMOTIVE_W_PX = 90;
+const LOCOMOTIVE_H_PX = 70;
+/** Dưới cỡ này đầu tàu không còn đọc ra là đầu tàu: bỏ thay vì đè ô chạm. */
+const LOCOMOTIVE_MIN_W_PX = 56;
 
 export class GT006Session extends TemplateGameSession<
   GT006Content,
@@ -575,10 +580,26 @@ export class GT006Session extends TemplateGameSession<
     if (!firstSlot) {
       return;
     }
-    const x = Math.max(80, firstSlot.x - firstSlot.w * 1.5);
-    if (strip && x - 45 < strip.x) {
+    // Đầu tàu chỉ nằm ở khoảng trống bên trái ô đầu, cách vùng chạm của ô đó
+    // >= SLOT_GAP_PX (`BR-E006-07`). Khoảng trống hẹp thì thu nhỏ, hẹp hơn sàn
+    // thì bỏ: đầu tàu là hình trang trí, không được đè ô chạm.
+    const roomLeft = strip ? strip.x : 0;
+    const roomRight = firstSlot.x - firstSlot.hitW / 2 - SLOT_GAP_PX;
+    const width = Math.min(LOCOMOTIVE_W_PX, roomRight - roomLeft);
+    if (width < LOCOMOTIVE_MIN_W_PX) {
       return;
     }
-    drawLocomotive(ctx, x, firstSlot.y, 90, 70);
+    const preferred = firstSlot.x - firstSlot.w * 1.5;
+    const x = Math.max(
+      roomLeft + width / 2,
+      Math.min(preferred, roomRight - width / 2)
+    );
+    drawLocomotive(
+      ctx,
+      x,
+      firstSlot.y,
+      width,
+      (width * LOCOMOTIVE_H_PX) / LOCOMOTIVE_W_PX
+    );
   }
 }
