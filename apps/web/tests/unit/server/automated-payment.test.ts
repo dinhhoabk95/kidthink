@@ -7,17 +7,16 @@ import {
   packages,
   paymentOrders,
   paymentTransactions,
-  processAutomatedPaymentWebhook,
-  reconcileAutomatedPayments,
   SEED_ENTITLEMENT_KEYS,
   SEED_PACKAGES,
   users,
 } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
-
-const RE_REPLAY_DETECTED = /quá thời gian|WEBHOOK_REPLAY_DETECTED/;
-const RE_RECONCILIATION_MISMATCH = /không khớp|RECONCILIATION_MISMATCH/;
+import {
+  processAutomatedPaymentWebhook,
+  reconcileAutomatedPayments,
+} from "#server/services/automated-payment";
 
 describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
   beforeEach(async () => {
@@ -203,7 +202,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
 
     await expect(
       processAutomatedPaymentWebhook(payload, now)
-    ).rejects.toThrowError(RE_REPLAY_DETECTED);
+    ).rejects.toMatchObject({ code: "WEBHOOK_REPLAY_DETECTED" });
   });
 
   it("Scenario: BR-APM-06 — detects amount mismatch and records mismatch transaction", async () => {
@@ -250,7 +249,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
 
     await expect(
       processAutomatedPaymentWebhook(payload, now)
-    ).rejects.toThrowError(RE_RECONCILIATION_MISMATCH);
+    ).rejects.toMatchObject({ code: "RECONCILIATION_MISMATCH" });
 
     // Order should NOT be approved
     const [unchangedOrder] = await db
