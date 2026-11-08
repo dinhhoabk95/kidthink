@@ -34,12 +34,16 @@ import {
 } from "#src/layout/tray-layout";
 import type { Slot } from "#src/layout/types";
 import {
+  drawMarketStall,
   drawMontessoriCoin,
+  drawPiggyBank,
   drawProgressDots,
   drawSceneBackground,
   drawSlotItem,
   drawWoodenTokenDock,
   type ItemVisualState,
+  marketStallGeometry,
+  piggyBounceScale,
   spawnParticlesAtSlot,
   updateParticles,
 } from "#src/render/index";
@@ -106,6 +110,8 @@ export class GT031Session extends TemplateGameSession<
 
   private particles: Particle[] = [];
   private lastFrameMs = 0;
+  /** Đồng hồ khung lúc xu gần nhất rơi vào heo, cho nhịp nảy (`BR-E031-12`). */
+  private lastDepositMs = Number.NEGATIVE_INFINITY;
   private wrongPayUntilMs = 0;
   private encourageRemainingMs = 0;
   /** Sàn chạm của band vòng này, để đo cỡ xu nhỏ nhất (`BR-E031-11`). */
@@ -142,6 +148,7 @@ export class GT031Session extends TemplateGameSession<
   }
 
   setupEntities(): void {
+    this.lastDepositMs = Number.NEGATIVE_INFINITY;
     this.wrongPayUntilMs = 0;
     this.encourageRemainingMs = 0;
     this.depositedCoinIds = [];
@@ -320,6 +327,7 @@ export class GT031Session extends TemplateGameSession<
     }
 
     this.depositedCoinIds.push(coinId);
+    this.lastDepositMs = this.lastFrameMs;
     this.currentTotal += coin.value;
     this.queueSfx("coin_clink");
 
@@ -616,6 +624,8 @@ export class GT031Session extends TemplateGameSession<
       this.content.target_amount;
     const itemToBuy = this.content.item_to_buy;
 
+    this.renderMarket(ctx, rs, targetSlot);
+
     let state: ItemVisualState = "idle";
     if (this.isWin) {
       state = "correct";
@@ -657,6 +667,35 @@ export class GT031Session extends TemplateGameSession<
       this.moneyProgress(targetPrice),
       this.stageRect ? splitCaption(this.stageRect).caption : undefined
     );
+  }
+
+  /**
+   * Quầy chợ (mái sọc, quầy gỗ) quanh thẻ giá và heo đất cạnh bên; heo nảy khi
+   * có xu rơi vào (`BR-E031-12`). Chỉ vẽ trong thân sân khấu, ngoài vùng chạm.
+   */
+  private renderMarket(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    targetSlot: Slot
+  ): void {
+    const stage = pickTrayZones(this.stageRect, this.trayRect)?.stage;
+    if (!stage) {
+      return;
+    }
+    const geometry = marketStallGeometry(targetSlot, splitCaption(stage).body);
+    drawMarketStall(ctx, geometry);
+    if (geometry.piggy) {
+      drawPiggyBank(
+        ctx,
+        geometry.piggy.cx,
+        geometry.piggy.cy,
+        geometry.piggy.size,
+        piggyBounceScale(
+          this.lastFrameMs - this.lastDepositMs,
+          rs.reducedMotion
+        )
+      );
+    }
   }
 
   /** Mỗi chấm một đồng khi giá nhỏ; giá lớn hơn số chấm tối đa thì chia tỉ lệ. */
@@ -708,8 +747,9 @@ export class GT031Session extends TemplateGameSession<
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
-    _timeMs: number
+    timeMs: number
   ): void {
+    this.lastFrameMs = timeMs;
     drawSceneBackground(ctx, rs, this.themeId);
     const zones = pickTrayZones(this.stageRect, this.trayRect);
     if (!zones) {

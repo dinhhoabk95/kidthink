@@ -574,3 +574,230 @@ function getColorForYarn(colorId: string): string {
       return designTokens.colors.brand[400];
   }
 }
+
+// ── Quầy chợ và heo đất (GT-031, `BR-E031-12`) ───────────────────────
+
+/** Heo đất nảy nhẹ trong ngần này ms sau mỗi xu bỏ vào. */
+export const PIGGY_BOUNCE_MS = 300;
+const PIGGY_BOUNCE_AMPLITUDE = 0.1;
+const PIGGY_BOUNCE_CYCLES = 2;
+const PIGGY_MAX_PX = 64;
+const PIGGY_GAP_PX = 8;
+const CANOPY_STRIPES = 6;
+
+interface StallRect {
+  readonly h: number;
+  readonly w: number;
+  readonly x: number;
+  readonly y: number;
+}
+
+export interface MarketStallGeometry {
+  /** Quầy gỗ ngay dưới thẻ giá; `null` khi không đủ chỗ. */
+  readonly counter: StallRect | null;
+  /** Mái che sọc ngay trên thẻ giá; `null` khi không đủ chỗ. */
+  readonly canopy: StallRect | null;
+  /** Heo đất cạnh thẻ giá (tâm, cạnh); `null` khi không đủ chỗ hai bên. */
+  readonly piggy: {
+    readonly cx: number;
+    readonly cy: number;
+    readonly size: number;
+  } | null;
+}
+
+/**
+ * Hình học quầy chợ quanh thẻ giá `slot` trong `bounds` (thân sân khấu). Mái
+ * che nằm trên mép trên thẻ, quầy nằm dưới mép dưới thẻ, heo đất đứng cạnh thẻ
+ * (ưu tiên bên phải, rồi bên trái). Mọi thứ bị kẹp trong `bounds` và không
+ * chồng lên thẻ giá nên không che vùng chạm.
+ */
+export function marketStallGeometry(
+  slot: Slot,
+  bounds: StallRect
+): MarketStallGeometry {
+  const top = slot.y - slot.h / 2;
+  const bottom = slot.y + slot.h / 2;
+  const canopyW = Math.min(bounds.w, slot.w * 1.7);
+  const canopyH = Math.min(slot.h * 0.22, top - bounds.y);
+  const canopy: StallRect | null =
+    canopyH >= 8
+      ? { x: slot.x - canopyW / 2, y: top - canopyH, w: canopyW, h: canopyH }
+      : null;
+  const counterW = Math.min(bounds.w, slot.w * 1.5);
+  const counterH = Math.min(slot.h * 0.12, bounds.y + bounds.h - bottom);
+  const counter: StallRect | null =
+    counterH >= 6
+      ? { x: slot.x - counterW / 2, y: bottom, w: counterW, h: counterH }
+      : null;
+  const size = Math.min(PIGGY_MAX_PX, slot.w * 0.5);
+  const cy = bottom - size / 2;
+  const fitsY =
+    cy - size / 2 >= bounds.y && cy + size / 2 <= bounds.y + bounds.h;
+  const rightCx = slot.x + slot.w / 2 + PIGGY_GAP_PX + size / 2;
+  const leftCx = slot.x - slot.w / 2 - PIGGY_GAP_PX - size / 2;
+  let piggy: MarketStallGeometry["piggy"] = null;
+  if (fitsY && rightCx + size / 2 <= bounds.x + bounds.w) {
+    piggy = { cx: rightCx, cy, size };
+  } else if (fitsY && leftCx - size / 2 >= bounds.x) {
+    piggy = { cx: leftCx, cy, size };
+  }
+  return { canopy, counter, piggy };
+}
+
+/**
+ * Độ phồng theo chiều dọc của heo đất ở `elapsedMs` kể từ lúc có xu rơi vào:
+ * sóng sin tắt dần quanh 1, về đúng 1 khi hết nhịp. `reduced_motion` luôn 1.
+ */
+export function piggyBounceScale(
+  elapsedMs: number,
+  reducedMotion: boolean
+): number {
+  if (reducedMotion || elapsedMs <= 0 || elapsedMs >= PIGGY_BOUNCE_MS) {
+    return 1;
+  }
+  const t = elapsedMs / PIGGY_BOUNCE_MS;
+  return (
+    1 +
+    PIGGY_BOUNCE_AMPLITUDE *
+      (1 - t) *
+      Math.sin(Math.PI * 2 * PIGGY_BOUNCE_CYCLES * t)
+  );
+}
+
+/** Mái che sọc đỏ–kem có diềm lượn và quầy gỗ; không vẽ gì khi hình học là `null`. */
+export function drawMarketStall(
+  ctx: CanvasRenderingContext2D,
+  geometry: MarketStallGeometry
+): void {
+  const m = designTokens.colors.montessori;
+  ctx.save();
+  const { canopy, counter } = geometry;
+  if (canopy) {
+    const stripeW = canopy.w / CANOPY_STRIPES;
+    for (let i = 0; i < CANOPY_STRIPES; i++) {
+      ctx.fillStyle = i % 2 === 0 ? m.coral : m.paper;
+      ctx.fillRect(canopy.x + i * stripeW, canopy.y, stripeW, canopy.h);
+      // Diềm lượn dưới mỗi sọc
+      ctx.beginPath();
+      ctx.arc(
+        canopy.x + (i + 0.5) * stripeW,
+        canopy.y + canopy.h,
+        stripeW / 2,
+        0,
+        Math.PI
+      );
+      ctx.fill();
+    }
+  }
+  if (counter) {
+    ctx.fillStyle = m.woodBorder;
+    ctx.fillRect(counter.x, counter.y, counter.w, counter.h);
+    ctx.fillStyle = m.woodBevel;
+    ctx.fillRect(counter.x, counter.y, counter.w, Math.max(2, counter.h * 0.3));
+  }
+  ctx.restore();
+}
+
+/**
+ * Heo đất hồng vẽ vector, tâm `(cx, cy)`, cạnh `size`. `scaleY` (≥ 0) phồng
+ * dọc quanh đáy để heo nảy khi có xu rơi vào. Khe bỏ xu là đúng một `roundRect`.
+ */
+export function drawPiggyBank(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number,
+  scaleY: number
+): void {
+  const m = designTokens.colors.montessori;
+  const base = cy + size * 0.4;
+  const rx = size * 0.46;
+  const ry = size * 0.36;
+  ctx.save();
+  ctx.translate(cx, base);
+  ctx.scale(1, scaleY);
+  ctx.translate(-cx, -base);
+  ctx.fillStyle = m.coralLight;
+  ctx.strokeStyle = m.coral;
+  ctx.lineWidth = 2;
+  // Chân
+  ctx.beginPath();
+  ctx.ellipse(
+    cx - rx * 0.5,
+    cy + ry * 0.95,
+    size * 0.1,
+    size * 0.09,
+    0,
+    0,
+    Math.PI * 2
+  );
+  ctx.ellipse(
+    cx + rx * 0.5,
+    cy + ry * 0.95,
+    size * 0.1,
+    size * 0.09,
+    0,
+    0,
+    Math.PI * 2
+  );
+  ctx.fill();
+  ctx.stroke();
+  // Thân
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  // Tai
+  ctx.beginPath();
+  ctx.ellipse(
+    cx - rx * 0.25,
+    cy - ry * 0.95,
+    size * 0.09,
+    size * 0.12,
+    -0.3,
+    0,
+    Math.PI * 2
+  );
+  ctx.fill();
+  ctx.stroke();
+  // Mõm
+  ctx.beginPath();
+  ctx.ellipse(
+    cx + rx * 0.95,
+    cy + ry * 0.1,
+    size * 0.1,
+    size * 0.13,
+    0,
+    0,
+    Math.PI * 2
+  );
+  ctx.fill();
+  ctx.stroke();
+  // Mắt
+  ctx.fillStyle = designTokens.colors.surface[900];
+  ctx.beginPath();
+  ctx.arc(cx + rx * 0.5, cy - ry * 0.25, size * 0.04, 0, Math.PI * 2);
+  ctx.fill();
+  // Đuôi xoắn
+  ctx.beginPath();
+  ctx.arc(
+    cx - rx * 1.05,
+    cy - ry * 0.1,
+    size * 0.07,
+    0.5 * Math.PI,
+    2.4 * Math.PI
+  );
+  ctx.stroke();
+  // Khe bỏ xu trên lưng
+  ctx.fillStyle = m.coral;
+  ctx.beginPath();
+  ctx.roundRect(
+    cx - size * 0.12,
+    cy - ry * 0.95,
+    size * 0.24,
+    size * 0.05,
+    size * 0.025
+  );
+  ctx.fill();
+  ctx.restore();
+}
