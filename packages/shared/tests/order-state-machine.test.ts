@@ -83,6 +83,58 @@ describe("Payment Order State Machine (BR-PAY-01, BR-PAY-08, Spec §7.1)", () =>
     }
   });
 
+  it("allows webhook-only edges for verified_gateway_webhook (BR-APM-08)", () => {
+    const source = "verified_gateway_webhook" as const;
+    for (const [from, to] of [
+      ["pending", "approved"],
+      ["pending_proof", "approved"],
+      ["pending", "under_review"],
+      ["pending_proof", "under_review"],
+    ] as const) {
+      expect(canTransitionPaymentOrderStatus(from, to, { source })).toBe(true);
+      expect(() =>
+        assertPaymentOrderTransition(from, to, { source })
+      ).not.toThrow();
+    }
+  });
+
+  it("keeps webhook-only edges closed for every other source (BR-APM-08)", () => {
+    for (const [from, to] of [
+      ["pending", "approved"],
+      ["pending_proof", "approved"],
+      ["pending", "under_review"],
+      ["pending_proof", "under_review"],
+    ] as const) {
+      expect(canTransitionPaymentOrderStatus(from, to)).toBe(false);
+      expect(
+        canTransitionPaymentOrderStatus(from, to, { source: "manual" })
+      ).toBe(false);
+      expect(() => assertPaymentOrderTransition(from, to)).toThrowError(
+        ERR_INVALID_TRANSITION
+      );
+    }
+  });
+
+  it("webhook source never reopens terminal states or adds unrelated edges", () => {
+    const source = "verified_gateway_webhook" as const;
+    for (const term of PAYMENT_ORDER_TERMINAL_STATES) {
+      for (const target of ALL_STATES) {
+        expect(canTransitionPaymentOrderStatus(term, target, { source })).toBe(
+          false
+        );
+      }
+    }
+    expect(
+      canTransitionPaymentOrderStatus("draft", "approved", { source })
+    ).toBe(false);
+    expect(
+      canTransitionPaymentOrderStatus("pending", "rejected", { source })
+    ).toBe(false);
+    expect(
+      canTransitionPaymentOrderStatus("pending", "submitted", { source })
+    ).toBe(true);
+  });
+
   it("enforces that all 4 terminal states have 0 outgoing transitions", () => {
     expect(PAYMENT_ORDER_TERMINAL_STATES).toEqual([
       "approved",

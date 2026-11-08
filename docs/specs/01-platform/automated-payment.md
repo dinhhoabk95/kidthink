@@ -65,7 +65,9 @@ không thay thế máy trạng thái đơn hàng cơ sở trong [`../00-foundati
 4. Handler webhook đọc raw-body, xác minh chữ ký số HMAC, timestamp trong cửa sổ replay (≤ 5 phút),
    và kiểm tra idempotency theo `provider_event_id`.
 5. Trong cùng một DB transaction:
-   - Cập nhật trạng thái đơn hàng sang `approved` / `captured`.
+   - Cập nhật trạng thái đơn hàng sang `approved` / `captured`. Đơn đang `pending` hoặc `pending_proof`
+     được chuyển thẳng sang `approved` nhờ cạnh bổ sung nguồn webhook ở
+     [`payment-flow.md` §7.1](../00-foundation/payment-flow.md) (`BR-APM-08`).
    - Cấp phát hoặc gia hạn entitlement tương ứng cho User (`entitlements.status = 'active'`).
    - Ghi nhận `audit_logs` và lưu sự kiện webhook vào bảng nhật ký giao dịch.
 6. Trả HTTP 200 cho provider. Client của User nhận thông báo thành công qua SSE hoặc polling nhẹ
@@ -79,7 +81,10 @@ không thay thế máy trạng thái đơn hàng cơ sở trong [`../00-foundati
 | Webhook gửi lặp | `provider_event_id` đã xử lý thành công | Trả 200 ngay, không cấp quyền lần hai (idempotent) |
 | Webhook quá hạn | Timestamp lệch > 5 phút so với đồng hồ server | Trả 409 `WEBHOOK_REPLAY_DETECTED`, từ chối xử lý |
 | Provider gặp sự cố | Gateway timeout / downtime | Chuyển hướng người dùng sang kênh VietQR chuyển khoản duyệt tay |
-| Sai lệch đối soát | Số tiền thực thu khác giá trị đơn hàng | Đánh dấu `mismatch`, chuyển trạng thái `under_review`, gửi alert quản trị |
+| Sai lệch đối soát | Webhook `success` báo số tiền thực thu khác giá trị đơn hàng (webhook `failed`/`cancelled` không có tiền về nên không tính là lệch) | Cùng một transaction: ghi `payment_transactions` với `status = 'mismatch'` (khoá idempotency theo `provider_event_id`), chuyển đơn sang `under_review` nếu máy trạng thái cho phép (`pending`, `pending_proof`, `submitted`; đơn đã terminal giữ nguyên), ghi `audit_logs` `payment_order.mismatch_flagged`, không cấp entitlement. Sau khi commit, webhook trả 409 `RECONCILIATION_MISMATCH`; provider gửi lại cùng `provider_event_id` thì nhận 200 idempotent, không ghi thêm. Alert quản trị đọc từ bảng đối soát (§8) |
+| Hai webhook khác `provider_event_id` cùng tới một đơn | Ví dụ provider gửi cả `paid` lẫn `captured` | Hàng `payment_orders` bị khoá `FOR UPDATE` trong transaction; webhook tới sau thấy đơn đã `approved`, chỉ ghi `payment_transactions`, không cấp quyền lần hai (`BR-APM-02`) |
+| Webhook `success` khớp tiền cho đơn đang `under_review` | Đơn đã bị gắn cờ lệch tiền hoặc đang chờ Manager duyệt chứng từ | Đi cạnh mặc định `under_review → approved` (không cần cạnh bổ sung): duyệt và cấp quyền. Giao dịch `mismatch` trước đó vẫn nằm trong bảng đối soát để Manager hoàn tiền phần lệch |
+| Webhook `success` cho đơn đã `rejected` / `cancelled` / `expired` | User trả tiền sau khi đơn đã đóng | Hiện trả 409 `INVALID_STATUS_TRANSITION`, transaction rollback, không ghi `payment_transactions`; provider gửi lại thì nhận lại 409. Chưa chốt — xem §11 câu 3 |
 
 ## 6. Business rules
 
@@ -92,6 +97,7 @@ không thay thế máy trạng thái đơn hàng cơ sở trong [`../00-foundati
 | `BR-APM-05` | Log không bao giờ chứa thông tin nhạy cảm của thẻ / phương thức thanh toán đầy đủ hoặc chữ ký bí mật của webhook | Tuân thủ tiêu chuẩn an toàn bảo mật thông tin thanh toán (PCI-DSS) |
 | `BR-APM-06` | Đối soát định kỳ phát hiện sai lệch số tiền/trạng thái giữa provider và DB nội bộ — chỉ cảnh báo tới người quản trị, không tự ý sửa đổi số tiền hay cấp quyền mù | Tránh sai lệch sổ sách kế toán và rò rỉ quyền lợi |
 | `BR-APM-07` | Mọi thay đổi trạng thái thanh toán tự động và cấp phát entitlement phải ghi `audit_logs` có cấu trúc | Luồng tài chính bắt buộc có đầy đủ bằng chứng kiểm toán không thể chối bỏ |
+| `BR-APM-08` | Cạnh `pending → approved`, `pending_proof → approved`, `pending → under_review`, `pending_proof → under_review` chỉ tồn tại cho nguồn `verified_gateway_webhook`; mọi nguồn khác giữ máy trạng thái mặc định (quyết định product owner 2026-11-08). Lệch tiền thì đánh dấu `mismatch` và chuyển `under_review`, không cấp quyền. Cổng: `apps/web/tests/gates/payment-transition-source.test.ts` | Đơn tự động không có bước chứng từ nên không qua `submitted`; lệch tiền cần người xử lý nhưng không được mất dấu |
 
 ## 7. Data
 
@@ -150,6 +156,18 @@ Scenario: BR-APM-03 — giá đơn hàng luôn lấy từ catalog máy chủ
   When User khởi tạo checkout session
   Then số tiền gửi tới cổng thanh toán phải là 599.000 VND
   And không nhận giá trị giá tiền do client truyền lên
+
+Scenario: BR-APM-08 — webhook thành công duyệt thẳng đơn đang pending
+  Given đơn ORD-124 ở trạng thái pending, số tiền khớp catalog
+  When webhook success đã xác minh chữ ký được gửi tới
+  Then đơn chuyển sang approved và entitlement được cấp một lần
+
+Scenario: BR-APM-08 — lệch tiền chuyển đơn sang under_review
+  Given đơn ORD-125 ở trạng thái pending với giá 299.000 VND
+  When webhook success báo 199.000 VND
+  Then payment_transactions ghi status mismatch
+  And đơn chuyển sang under_review, không cấp entitlement, audit_logs có payment_order.mismatch_flagged
+  And webhook gửi lại cùng provider_event_id trả 200 idempotent
 ```
 
 ## 10. Boundaries
@@ -173,3 +191,4 @@ Scenario: BR-APM-03 — giá đơn hàng luôn lấy từ catalog máy chủ
 |---|---|---|---|---|
 | 1 | Provider nào được chọn làm cổng thanh toán chính thức đầu tiên (PayOS, VNPay hay MoMo)? | Cấu hình SDK | P5 | Kế toán |
 | 2 | Ngưỡng dung sai thời gian xử lý webhook timeout của worker đối soát là bao nhiêu phút? | Worker job config | P5 | Backend |
+| 3 | Webhook `success` cho đơn đã terminal (không phải `approved`): tiền đã về nhưng đơn đóng. Nên ghi `payment_transactions` (khoá idempotency, trả 200 lần sau) và gắn cờ cho Manager hoàn tiền, hay giữ 409 để provider gửi lại? Mã 409 hiện tại khiến provider gửi lại tới hết chính sách retry của họ và giao dịch không có dấu trong sổ cái | Đối soát, retry phía provider | P5 | Product owner + Kế toán |

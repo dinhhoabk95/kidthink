@@ -1,0 +1,6 @@
+// Mẫu vi phạm BR-APM-08 / BR-APM-01: route duyệt tay mượn nguồn webhook để
+// đi cạnh pending → approved, và gọi thẳng service webhook không qua chữ ký.
+assertPaymentOrderTransition(currentStatus, "approved", {
+  source: "verified_gateway_webhook",
+});
+await processAutomatedPaymentWebhook(body);

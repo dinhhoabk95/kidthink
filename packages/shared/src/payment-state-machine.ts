@@ -33,6 +33,27 @@ export const PAYMENT_ORDER_TRANSITIONS: Record<
   expired: [],
 };
 
+/**
+ * Nguồn của lần chuyển trạng thái. Mặc định (không truyền) là luật §7.1 cho
+ * mọi nguồn. `verified_gateway_webhook` chỉ dành cho webhook cổng thanh toán
+ * tự động đã xác minh chữ ký (BR-APM-01, BR-APM-08).
+ */
+export type PaymentOrderTransitionSource =
+  | "manual"
+  | "verified_gateway_webhook";
+
+export interface PaymentOrderTransitionOptions {
+  readonly source?: PaymentOrderTransitionSource;
+}
+
+/** Cạnh bổ sung chỉ nguồn webhook đã xác minh được đi (payment-flow §7.1). */
+export const GATEWAY_WEBHOOK_EXTRA_TRANSITIONS: Partial<
+  Record<PaymentOrderStatus, readonly PaymentOrderStatus[]>
+> = {
+  pending: ["approved", "under_review"],
+  pending_proof: ["approved", "under_review"],
+};
+
 import { AppError } from "@mindkid/errors/base";
 
 export class PaymentOrderTransitionError extends AppError<{
@@ -57,17 +78,24 @@ export class PaymentOrderTransitionError extends AppError<{
 
 export function canTransitionPaymentOrderStatus(
   from: PaymentOrderStatus,
-  to: PaymentOrderStatus
+  to: PaymentOrderStatus,
+  options: PaymentOrderTransitionOptions = {}
 ): boolean {
-  const allowed = PAYMENT_ORDER_TRANSITIONS[from];
-  return allowed ? allowed.includes(to) : false;
+  if (PAYMENT_ORDER_TRANSITIONS[from].includes(to)) {
+    return true;
+  }
+  if (options.source === "verified_gateway_webhook") {
+    return GATEWAY_WEBHOOK_EXTRA_TRANSITIONS[from]?.includes(to) ?? false;
+  }
+  return false;
 }
 
 export function assertPaymentOrderTransition(
   from: PaymentOrderStatus,
-  to: PaymentOrderStatus
+  to: PaymentOrderStatus,
+  options: PaymentOrderTransitionOptions = {}
 ): void {
-  if (!canTransitionPaymentOrderStatus(from, to)) {
+  if (!canTransitionPaymentOrderStatus(from, to, options)) {
     throw new PaymentOrderTransitionError(from, to);
   }
 }

@@ -15,10 +15,14 @@ import {
   type AutomatedPaymentProvider,
   type AutomatedPaymentWebhookPayload,
   assertPaymentOrderTransition,
+  canTransitionPaymentOrderStatus,
   isWebhookWithinReplayWindow,
   PACKAGE_CATALOG,
 } from "@mindkid/shared";
 import { and, eq, inArray } from "drizzle-orm";
+
+/** Nguồn duy nhất được dùng cạnh bổ sung của máy trạng thái (BR-APM-08). */
+const WEBHOOK_TRANSITION = { source: "verified_gateway_webhook" } as const;
 
 export interface ProcessWebhookResult {
   success: boolean;
@@ -167,9 +171,71 @@ async function handleNonSuccessWebhook(
   };
 }
 
+const MISMATCH_FLAGGED = Symbol("mismatch_flagged");
+
+/**
+ * Lệch tiền: ghi giao dịch `mismatch` (khoá idempotency), chuyển đơn sang
+ * `under_review` nếu máy trạng thái cho phép, ghi audit. Không cấp quyền.
+ */
+async function flagAmountMismatch(
+  tx: Parameters<
+    Parameters<ReturnType<typeof getOwnerDb>["transaction"]>[0]
+  >[0],
+  order: typeof paymentOrders.$inferSelect,
+  payload: AutomatedPaymentWebhookPayload,
+  now: Date
+) {
+  await tx.insert(paymentTransactions).values({
+    provider: payload.provider,
+    providerEventId: payload.provider_event_id,
+    orderId: order.id,
+    orderUuid: payload.order_uuid,
+    amountVnd: payload.amount_vnd,
+    status: "mismatch",
+    rawPayload: payload,
+    createdAt: now,
+  });
+
+  const movesToReview =
+    order.status !== "under_review" &&
+    canTransitionPaymentOrderStatus(
+      order.status,
+      "under_review",
+      WEBHOOK_TRANSITION
+    );
+  if (movesToReview) {
+    await tx
+      .update(paymentOrders)
+      .set({
+        status: "under_review",
+        adminNote: `Lệch số tiền từ cổng [${payload.provider}:${payload.provider_event_id}]: đơn ${order.amountVnd}, cổng báo ${payload.amount_vnd}`,
+        updatedAt: now,
+      })
+      .where(eq(paymentOrders.id, order.id));
+  }
+
+  await tx.insert(auditLogs).values({
+    actorType: "system",
+    actorId: null,
+    action: "payment_order.mismatch_flagged",
+    entityType: "payment_order",
+    entityId: String(order.id),
+    beforeData: { status: order.status },
+    afterData: {
+      order_uuid: order.uuid,
+      provider: payload.provider,
+      provider_event_id: payload.provider_event_id,
+      expected_amount_vnd: order.amountVnd,
+      reported_amount_vnd: payload.amount_vnd,
+      status: movesToReview ? "under_review" : order.status,
+    },
+    createdAt: now,
+  });
+}
+
 /**
  * Process verified automated payment webhook with exactly-once semantics.
- * BR-APM-01..07
+ * BR-APM-01..08
  */
 export async function processAutomatedPaymentWebhook(
   payload: AutomatedPaymentWebhookPayload,
@@ -189,118 +255,138 @@ export async function processAutomatedPaymentWebhook(
 
   const db = getOwnerDb();
 
-  return await db.transaction(async (tx) => {
-    // 2. Check Idempotency via (provider, provider_event_id)
-    const existingTx = await tx
-      .select()
-      .from(paymentTransactions)
-      .where(
-        and(
-          eq(paymentTransactions.provider, payload.provider),
-          eq(paymentTransactions.providerEventId, payload.provider_event_id)
+  const outcome = await db.transaction(
+    async (tx): Promise<ProcessWebhookResult | typeof MISMATCH_FLAGGED> => {
+      // 2. Check Idempotency via (provider, provider_event_id)
+      const existingTx = await tx
+        .select()
+        .from(paymentTransactions)
+        .where(
+          and(
+            eq(paymentTransactions.provider, payload.provider),
+            eq(paymentTransactions.providerEventId, payload.provider_event_id)
+          )
         )
-      )
-      .limit(1);
+        .limit(1);
 
-    if (existingTx.length > 0) {
-      // Duplicate delivery -> idempotent success without re-applying side effects
-      const [existingOrder] = await tx
+      if (existingTx.length > 0) {
+        // Duplicate delivery -> idempotent success without re-applying side effects
+        const [existingOrder] = await tx
+          .select()
+          .from(paymentOrders)
+          .where(eq(paymentOrders.uuid, payload.order_uuid))
+          .limit(1);
+
+        return {
+          success: true,
+          orderUuid: payload.order_uuid,
+          orderStatus: existingOrder?.status ?? "unknown",
+          isDuplicate: true,
+        };
+      }
+
+      // 3. Lookup Order — khoá hàng để hai webhook khác `provider_event_id`
+      // cho cùng một đơn chạy tuần tự: đơn chỉ được duyệt và cấp quyền một lần.
+      const [order] = await tx
         .select()
         .from(paymentOrders)
         .where(eq(paymentOrders.uuid, payload.order_uuid))
-        .limit(1);
+        .limit(1)
+        .for("update");
+
+      if (!order) {
+        throw new OrderNotFoundError(payload.order_uuid);
+      }
+
+      // 4. Lệch tiền chỉ tính trên tiền thực thu, tức webhook `success`
+      // (automated-payment §5, BR-APM-08). Webhook failed/cancelled không có
+      // tiền về nên không đẩy đơn sang `under_review`.
+      if (
+        payload.status === "success" &&
+        order.amountVnd !== payload.amount_vnd
+      ) {
+        await flagAmountMismatch(tx, order, payload, now);
+        return MISMATCH_FLAGGED;
+      }
+
+      // 5. If webhook status is failed or cancelled
+      if (payload.status !== "success") {
+        return await handleNonSuccessWebhook(tx, order, payload, now);
+      }
+
+      // 6. Webhook status is success -> Atomic state transition + Entitlements + Audit
+      if (order.status !== "approved") {
+        assertPaymentOrderTransition(
+          order.status,
+          "approved",
+          WEBHOOK_TRANSITION
+        );
+
+        // Transition order to approved
+        await tx
+          .update(paymentOrders)
+          .set({
+            status: "approved",
+            reviewedAt: now,
+            adminNote: `Approved via automated gateway webhook [${payload.provider}:${payload.provider_event_id}]`,
+            updatedAt: now,
+          })
+          .where(eq(paymentOrders.id, order.id));
+
+        await grantOrStackEntitlements(
+          tx,
+          order.userId,
+          order.packageCode,
+          order.offerCode,
+          order.uuid,
+          now
+        );
+
+        // Write Audit Log
+        await tx.insert(auditLogs).values({
+          actorType: "system",
+          actorId: null,
+          action: "payment_order.approved_webhook",
+          entityType: "payment_order",
+          entityId: String(order.id),
+          afterData: {
+            order_uuid: order.uuid,
+            provider: payload.provider,
+            provider_event_id: payload.provider_event_id,
+            amount_vnd: payload.amount_vnd,
+            status: "approved",
+          },
+          createdAt: now,
+        });
+      }
+
+      // Insert payment_transactions record
+      await tx.insert(paymentTransactions).values({
+        provider: payload.provider,
+        providerEventId: payload.provider_event_id,
+        orderId: order.id,
+        orderUuid: payload.order_uuid,
+        amountVnd: payload.amount_vnd,
+        status: "success",
+        rawPayload: payload,
+        reconciledAt: now,
+        createdAt: now,
+      });
 
       return {
         success: true,
-        orderUuid: payload.order_uuid,
-        orderStatus: existingOrder?.status ?? "unknown",
-        isDuplicate: true,
+        orderUuid: order.uuid,
+        orderStatus: "approved",
+        isDuplicate: false,
       };
     }
+  );
 
-    // 3. Lookup Order
-    const [order] = await tx
-      .select()
-      .from(paymentOrders)
-      .where(eq(paymentOrders.uuid, payload.order_uuid))
-      .limit(1);
-
-    if (!order) {
-      throw new OrderNotFoundError(payload.order_uuid);
-    }
-
-    // 4. Validate Amount from server-side catalog & order
-    if (order.amountVnd !== payload.amount_vnd) {
-      throw new ReconciliationMismatchError();
-    }
-
-    // 5. If webhook status is failed or cancelled
-    if (payload.status !== "success") {
-      return await handleNonSuccessWebhook(tx, order, payload, now);
-    }
-
-    // 6. Webhook status is success -> Atomic state transition + Entitlements + Audit
-    if (order.status !== "approved") {
-      assertPaymentOrderTransition(order.status, "approved");
-
-      // Transition order to approved
-      await tx
-        .update(paymentOrders)
-        .set({
-          status: "approved",
-          reviewedAt: now,
-          adminNote: `Approved via automated gateway webhook [${payload.provider}:${payload.provider_event_id}]`,
-          updatedAt: now,
-        })
-        .where(eq(paymentOrders.id, order.id));
-
-      await grantOrStackEntitlements(
-        tx,
-        order.userId,
-        order.packageCode,
-        order.offerCode,
-        order.uuid,
-        now
-      );
-
-      // Write Audit Log
-      await tx.insert(auditLogs).values({
-        actorType: "system",
-        actorId: null,
-        action: "payment_order.approved_webhook",
-        entityType: "payment_order",
-        entityId: String(order.id),
-        afterData: {
-          order_uuid: order.uuid,
-          provider: payload.provider,
-          provider_event_id: payload.provider_event_id,
-          amount_vnd: payload.amount_vnd,
-          status: "approved",
-        },
-        createdAt: now,
-      });
-    }
-
-    // Insert payment_transactions record
-    await tx.insert(paymentTransactions).values({
-      provider: payload.provider,
-      providerEventId: payload.provider_event_id,
-      orderId: order.id,
-      orderUuid: payload.order_uuid,
-      amountVnd: payload.amount_vnd,
-      status: "success",
-      rawPayload: payload,
-      reconciledAt: now,
-      createdAt: now,
-    });
-
-    return {
-      success: true,
-      orderUuid: order.uuid,
-      orderStatus: "approved",
-      isDuplicate: false,
-    };
-  });
+  // Ném SAU khi transaction đã commit để dấu `mismatch` + `under_review` còn lại.
+  if (outcome === MISMATCH_FLAGGED) {
+    throw new ReconciliationMismatchError();
+  }
+  return outcome;
 }
 
 /**

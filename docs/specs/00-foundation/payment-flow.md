@@ -85,7 +85,7 @@ status = submitted                   → cấp entitlement status = soft_unlock,
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-PAY-01` | Chỉ đơn `submitted` hoặc `under_review` mới approve/reject được | Đảm bảo đơn đã chốt hoặc đã xử lý xong không bị duyệt đè hoặc thay đổi trạng thái trái phép |
+| `BR-PAY-01` | Chỉ đơn `submitted` hoặc `under_review` mới approve/reject được (ngoại lệ duy nhất: webhook cổng tự động đã xác minh, xem §7.1 và `BR-APM-08`) | Đảm bảo đơn đã chốt hoặc đã xử lý xong không bị duyệt đè hoặc thay đổi trạng thái trái phép |
 | `BR-PAY-02` | **Idempotent theo `order_uuid`.** Approve lần hai → 409, không tạo thêm entitlement | Duyệt trùng tạo hai subscription và mất tiền |
 | `BR-PAY-03` | Approve chạy trong **một transaction**: đổi status + cấp entitlement + ghi audit. Fail bất kỳ bước nào → rollback toàn bộ | Đơn `approved` mà không có quyền là ca hỗ trợ tệ nhất |
 | `BR-PAY-04` | Reject thu hồi entitlement sinh từ đơn đó **ngay, cùng transaction**. Không chờ cron | `soft_unlock` là tin tưởng có thời hạn; rút tin tưởng thì quyền hết cùng lúc |
@@ -118,6 +118,25 @@ draft ──► pending ──► submitted ──► under_review ──► app
 | **approved** / **rejected** / **cancelled** / **expired** | Không | Không | Không | Không | Không | Không | Không |
 
 Bốn trạng thái cuối là **terminal**.
+
+**Cạnh bổ sung cho nguồn webhook cổng tự động (quyết định product owner 2026-11-08).**
+Ma trận trên là luật mặc định cho mọi nguồn (User, Manager duyệt tay, worker). Riêng nguồn
+`verified_gateway_webhook` — webhook cổng thanh toán tự động đã qua xác minh chữ ký raw-body,
+replay window, livemode và merchant ID (`BR-APM-01`) — được thêm các cạnh sau:
+
+| Từ | Sang | Điều kiện nguồn | Lý do |
+|---|---|---|---|
+| `pending` | `approved` | Chỉ `verified_gateway_webhook`, trạng thái webhook `success`, số tiền khớp đơn | Đơn tự động không có bước `submitted` vì User không tải chứng từ; cổng đã xác nhận tiền về |
+| `pending_proof` | `approved` | Như trên | User đã mở nhánh chứng từ rồi mới trả qua cổng |
+| `pending` | `under_review` | Chỉ `verified_gateway_webhook` khi lệch tiền (`BR-APM-08`) | Giữ đơn cho Manager xử lý tay, không cấp quyền |
+| `pending_proof` | `under_review` | Như trên | Như trên |
+
+Duyệt tay của Manager (`approve.post.ts`) và mọi nguồn khác **không** được dùng các cạnh này:
+vẫn phải đi qua `submitted` theo `BR-PAY-01`. Đã được product owner duyệt theo mục Ask first §10.
+Vì `source` là tham số tường minh, máy trạng thái không tự biết chữ ký đã được xác minh. Cổng
+`apps/web/tests/gates/payment-transition-source.test.ts` quét nguồn thật: chuỗi
+`verified_gateway_webhook` chỉ được nằm ở máy trạng thái và `services/automated-payment.ts`, và
+`processAutomatedPaymentWebhook` chỉ được gọi từ route webhook — nơi xác minh chữ ký trước.
 
 ### 7.2 Bảng `payment_orders`
 
