@@ -19,13 +19,17 @@ import { resolveLayout } from "#src/layout/registry";
 import { computeTraySourceSlots } from "#src/layout/tray-layout";
 import type { Slot } from "#src/layout/types";
 import {
+  approachPanSink,
   drawBalanceScale,
   drawMontessoriControlOfErrorPill,
   drawReferenceScaleCard,
   drawSceneBackground,
   drawSlotItem,
+  drawStoryCharacterInStage,
   drawWoodenTokenDock,
   insetBox,
+  panSinkTarget,
+  type SceneBox,
   sceneBox,
 } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
@@ -184,6 +188,29 @@ export class BalanceScaleSession extends TemplateGameSession<
   });
 
   private smoothTiltDeg = 0;
+  private smoothSink: { left: number; right: number } = { left: 0, right: 0 };
+  /** Tổng khối lượng mọi vật của bài (hai đĩa đầu bài + khay) — mốc để độ lún không bão hoà sớm. */
+  private get totalLevelWeight(): number {
+    return (
+      sumWeights(this.content.left_pan) +
+      sumWeights(this.content.right_pan) +
+      sumWeights(this.content.tray)
+    );
+  }
+
+  /** Mức lún đích (0..1) của từng đĩa: chỉ theo vật **đang nằm trên đĩa đó**, không theo đích hay phía đúng. */
+  getPanSinkTarget(): { left: number; right: number } {
+    const total = this.totalLevelWeight;
+    return {
+      left: panSinkTarget(sumWeights(this.leftItems), total),
+      right: panSinkTarget(sumWeights(this.rightItems), total),
+    };
+  }
+
+  /** Mức lún đang vẽ (0..1) của hai đĩa (tiến dần tới đích theo đồng hồ khung). */
+  getPanSink(): { left: number; right: number } {
+    return { ...this.smoothSink };
+  }
 
   /** Khối lượng lớn nhất của bài — mốc để vật cùng khối lượng luôn cùng cỡ (`BR-E014-03`). */
   private get maxWeight(): number {
@@ -227,6 +254,7 @@ export class BalanceScaleSession extends TemplateGameSession<
     this.isWon = false;
     this.exploreTracker.reset(false);
     this.smoothTiltDeg = this.getTiltAngle();
+    this.smoothSink = this.getPanSinkTarget();
 
     this.recordEvent("game_started", {
       template_code: "GT-014",
@@ -277,6 +305,11 @@ export class BalanceScaleSession extends TemplateGameSession<
       Math.abs(diff) <= maxStep
         ? targetTilt
         : this.smoothTiltDeg + Math.sign(diff) * maxStep;
+    const sinkTarget = this.getPanSinkTarget();
+    this.smoothSink = {
+      left: approachPanSink(this.smoothSink.left, sinkTarget.left, deltaMs),
+      right: approachPanSink(this.smoothSink.right, sinkTarget.right, deltaMs),
+    };
     if (this.wrongSide && this.wrongFlash.hasExpired(this.lastFrameMs)) {
       this.wrongSide = null;
     }
@@ -808,6 +841,27 @@ export class BalanceScaleSession extends TemplateGameSession<
     });
   }
 
+  /**
+   * Hà Mã Nhỏ ở góc trống rồi cân với đĩa lún theo vật đã đặt (`BR-E014-07`);
+   * `reduced_motion` vẽ ngay mức lún đích.
+   */
+  private drawScaleWithSink(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    scaleBox: SceneBox
+  ): { leftPan: SceneBox; rightPan: SceneBox } {
+    drawStoryCharacterInStage(ctx, "hippo", this.stageRect, this.slots);
+    const sink = rs.reducedMotion ? this.getPanSinkTarget() : this.smoothSink;
+    return drawBalanceScale(
+      ctx,
+      scaleBox,
+      this.leftItems,
+      this.rightItems,
+      this.smoothTiltDeg,
+      sink
+    );
+  }
+
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
@@ -839,13 +893,7 @@ export class BalanceScaleSession extends TemplateGameSession<
     if (this.trayRect && sources.length > 0) {
       drawWoodenTokenDock(ctx, rs, this.trayRect);
     }
-    const { leftPan, rightPan } = drawBalanceScale(
-      ctx,
-      scaleBox,
-      this.leftItems,
-      this.rightItems,
-      this.smoothTiltDeg
-    );
+    const { leftPan, rightPan } = this.drawScaleWithSink(ctx, rs, scaleBox);
     const maxWeight = this.maxWeight;
     drawWeightedPanItems(ctx, rs, leftPan, weighted(this.leftItems), maxWeight);
     drawWeightedPanItems(

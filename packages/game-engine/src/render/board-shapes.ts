@@ -312,6 +312,41 @@ export function drawMazeCheese(
 
 const MAX_TILT_DEG = 14;
 
+/** Đĩa lún tối đa bằng ngần này phần chiều cao đĩa khi vật trên đĩa nặng bằng tổng khối lượng cả bài (`BR-E014-07`). */
+export const PAN_SINK_MAX_FRACTION = 0.3;
+/** Tốc độ đĩa lún/nảy lại, đơn vị "mức lún đầy" mỗi giây (đầy trong ~0,4 s). */
+const PAN_SINK_RATE_PER_S = 2.5;
+
+/** Mức lún đích 0..1 của một đĩa: tỉ lệ với khối lượng **đang nằm trên đĩa đó** so với tổng cả bài. */
+export function panSinkTarget(panWeight: number, totalWeight: number): number {
+  if (!(panWeight > 0 && totalWeight > 0)) {
+    return 0;
+  }
+  return Math.min(1, panWeight / totalWeight);
+}
+
+/** Mức lún tiến dần từ `current` tới `target` theo đồng hồ khung; không vượt quá đích. */
+export function approachPanSink(
+  current: number,
+  target: number,
+  deltaMs: number
+): number {
+  const step = (Math.max(0, deltaMs) / 1000) * PAN_SINK_RATE_PER_S;
+  const diff = target - current;
+  return Math.abs(diff) <= step ? target : current + Math.sign(diff) * step;
+}
+
+/** Đổi mức lún 0..1 ra px theo chiều cao đĩa. */
+export function panSinkPx(level: number, panH: number): number {
+  return Math.max(0, Math.min(1, level)) * panH * PAN_SINK_MAX_FRACTION;
+}
+
+/** Mức lún 0..1 của hai đĩa. */
+export interface PanSink {
+  readonly left: number;
+  readonly right: number;
+}
+
 /** Hình học cân ở tư thế cân bằng — hàm thuần để engine đặt vùng chạm hai đĩa. */
 export function balanceScaleGeometry(box: SceneBox): {
   readonly pivotX: number;
@@ -334,7 +369,8 @@ export function drawBalanceScale(
   box: SceneBox,
   left: readonly WeightedItem[],
   right: readonly WeightedItem[],
-  smoothTiltDeg?: number
+  smoothTiltDeg?: number,
+  sink?: PanSink
 ): { leftPan: SceneBox; rightPan: SceneBox } {
   let tiltDeg = 0;
   if (smoothTiltDeg === undefined) {
@@ -384,18 +420,36 @@ export function drawBalanceScale(
   ctx.fill();
   ctx.restore();
 
+  const leftSink = panSinkPx(sink?.left ?? 0, panH);
+  const rightSink = panSinkPx(sink?.right ?? 0, panH);
   const leftPan: SceneBox = {
     x: pivotX - dx - panW / 2,
-    y: pivotY + dy,
+    y: pivotY + dy + leftSink,
     w: panW,
     h: panH,
   };
   const rightPan: SceneBox = {
     x: pivotX + dx - panW / 2,
-    y: pivotY - dy,
+    y: pivotY - dy + rightSink,
     w: panW,
     h: panH,
   };
+  // Đĩa lún thì dây treo dài ra từ đầu đòn (`BR-E014-07`).
+  ctx.save();
+  ctx.strokeStyle = designTokens.colors.surface[400];
+  ctx.lineWidth = 1.5;
+  for (const [pan, drop] of [
+    [leftPan, leftSink],
+    [rightPan, rightSink],
+  ] as const) {
+    if (drop > 0) {
+      ctx.beginPath();
+      ctx.moveTo(pan.x + pan.w / 2, pan.y - 12 - drop);
+      ctx.lineTo(pan.x + pan.w / 2, pan.y - 12);
+      ctx.stroke();
+    }
+  }
+  ctx.restore();
   drawPan(ctx, leftPan);
   drawPan(ctx, rightPan);
   return { leftPan, rightPan };
