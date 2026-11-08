@@ -215,6 +215,7 @@ export {
   type RoundRunnerOptions,
   type RoundRunnerState,
   type SessionFactory,
+  withStoryLine,
 } from "./round-runner";
 export {
   type AssemblyAnchor,

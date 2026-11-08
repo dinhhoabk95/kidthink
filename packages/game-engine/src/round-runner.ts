@@ -89,6 +89,18 @@ export interface RoundRunnerOptions {
   gateOnPromptSettle?: boolean;
 }
 
+/**
+ * Ghép khung chuyện trước câu dẫn trong cùng một lượt phát (`BR-FBK-16`).
+ * Nguồn duy nhất của quy tắc ghép: `RoundRunner.spokenPromptFor` (trang chơi)
+ * và lượt đọc mở vòng của Studio preview cùng gọi hàm này.
+ */
+export function withStoryLine(
+  story: string | null | undefined,
+  prompt: string
+): string {
+  return story ? `${story} ${prompt}` : prompt;
+}
+
 export interface RoundRunnerState {
   currentRoundIndex: number;
   roundsTotal: number;
@@ -258,8 +270,7 @@ export class RoundRunner {
     if (trigger !== "round_open" || this.currentRoundIndex !== 0) {
       return prompt;
     }
-    const story = this.currentSession?.storyLine?.();
-    return story ? `${story} ${prompt}` : prompt;
+    return withStoryLine(this.currentSession?.storyLine?.(), prompt);
   }
 
   getCurrentRoundConfig(): RoundConfig | null {

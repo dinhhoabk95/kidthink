@@ -35,6 +35,7 @@
   import { useRoute } from "vue-router";
   import { definePageMeta } from "#imports";
   import { resolveZonePromptText } from "~/composables/play/play-prompt-zone";
+  import { playRoundOpenNarration } from "~/composables/play/round-open-narration";
   import { useMascotSprites } from "~/composables/play/use-mascot-sprites";
   import { usePlayGesture } from "~/composables/play/use-play-gesture";
   import { createSessionFactory } from "~/utils/game-session-factory";
@@ -83,7 +84,7 @@
     clearTimeout(replayTimer);
     replayTimer = setTimeout(() => {
       if (currentConfig) {
-        startSession(currentConfig, currentTemplateCode);
+        startSession(currentConfig, currentTemplateCode, { autoReplay: true });
       }
     }, 1400);
   }
@@ -92,7 +93,7 @@
     clearTimeout(replayTimer);
     replayTimer = setTimeout(() => {
       if (currentConfig) {
-        startSession(currentConfig, currentTemplateCode);
+        startSession(currentConfig, currentTemplateCode, { autoReplay: true });
       }
     }, 600);
   }
@@ -120,9 +121,42 @@
     handlePointerCancel,
   } = gesture;
 
+  /**
+   * Đọc mở vòng như trang chơi thật: khung chuyện (`BR-FBK-16`) + câu dẫn,
+   * rồi âm đề tự phát (`BR-E018-05`). Cue âm của session do engine tự phát
+   * trong `advanceFrame` (`BR-FBK-14`), nên preview không cần nối thêm.
+   *
+   * Preview tự chơi lại sau thắng/sai-không-cho-thử-lại là cùng lượt xem, nên
+   * khung chuyện chỉ kể ở lần mở đầu (`autoReplay` bỏ chuyện, giữ câu dẫn).
+   * `engine.destroy()` cắt lời đang đọc và bắn `onEnd` đồng bộ: mỗi bước nối
+   * tiếp kiểm engine còn là engine đã mở lượt đọc, để lời của phiên cũ không
+   * vang sau khi phiên mới mở hoặc trang đã rời.
+   */
+  function speakRoundOpen(autoReplay: boolean): void {
+    const eng = engine;
+    const session = eng?.activeSession;
+    if (!(eng && session)) {
+      return;
+    }
+    const source = session instanceof TemplateGameSession ? session : null;
+    playRoundOpenNarration(
+      source,
+      resolveZonePromptText(session),
+      (text, onEnd, onError) => {
+        if (engine !== eng) {
+          onEnd();
+          return;
+        }
+        eng.audio.speakPrompt(text, onEnd, onError);
+      },
+      { tellStory: !autoReplay }
+    );
+  }
+
   async function startSession(
     config: EngineConfig,
-    templateCode: string
+    templateCode: string,
+    { autoReplay = false }: { autoReplay?: boolean } = {}
   ): Promise<void> {
     if (!canvasRef.value) {
       return;
@@ -137,10 +171,11 @@
       if (seq !== startSeq || !canvasRef.value) {
         return;
       }
-      if (engine) {
-        engine.destroy();
-        engine = null;
-      }
+      // Bỏ tham chiếu TRƯỚC khi huỷ: `destroy()` bắn `onEnd` của lời đang đọc
+      // đồng bộ, và lượt đọc mở vòng nhận ra engine đã đổi để dừng nối tiếp.
+      const previous = engine;
+      engine = null;
+      previous?.destroy();
 
       engine = new GameEngine();
       engine.load(config, createSessionFactory(templateCode));
@@ -148,6 +183,7 @@
       applyStageZones(config);
       engine.onAfterRender = drawShellZones;
       gesture.syncView();
+      speakRoundOpen(autoReplay);
 
       if (window.parent) {
         window.parent.postMessage(
@@ -420,10 +456,9 @@
     window.removeEventListener("message", handleMessage);
     window.removeEventListener("resize", handleResize);
     clearTimeout(resizeTimer);
-    if (engine) {
-      engine.destroy();
-      engine = null;
-    }
+    const previous = engine;
+    engine = null;
+    previous?.destroy();
   });
 </script>
 
