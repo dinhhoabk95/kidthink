@@ -6,6 +6,8 @@ const GT030ObjectSchema = z.object({
   object_id: z.string().min(1),
   asset: assetSchema(),
   length_in_units: z.number().int().min(2).max(10),
+  // BR-E030-11: tập đóng các con vật dài, nằm ngang được; vắng thì vẽ bằng asset.
+  animal: z.enum(["caterpillar", "snake", "worm", "crocodile"]).optional(),
 });
 
 const GT030UnitSchema = z.object({

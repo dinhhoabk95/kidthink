@@ -276,3 +276,357 @@ export function drawTimeOfDaySky(
   ctx.fill();
   ctx.restore();
 }
+
+// ── Con vật cần đo (GT-030, `BR-E030-11`) ────────────────────────────
+
+/** Con vật dài, nằm ngang được, dùng làm vật đo. Tập đóng (`BR-E030-11`). */
+export const MEASURED_ANIMALS = [
+  "caterpillar",
+  "snake",
+  "worm",
+  "crocodile",
+] as const;
+
+export type MeasuredAnimal = (typeof MEASURED_ANIMALS)[number];
+
+/**
+ * Số lớn nhất trong các nhóm chi tiết lặp của từng con vật (đốt, đốm, vòng, gờ
+ * lưng, chân). Là **hằng số**, không đổi theo chiều dài vẽ, và dưới ngưỡng 4 mà
+ * mục 14 của phiếu coi là "nhìn là đếm xong", nên không đếm chi tiết nào ra
+ * được số đơn vị (`BR-E030-11`).
+ */
+export const MEASURED_ANIMAL_REPEAT_COUNT: Readonly<
+  Record<MeasuredAnimal, number>
+> = {
+  caterpillar: 3,
+  snake: 3,
+  worm: 2,
+  crocodile: 3,
+};
+
+/** Khung của vật đo mà con vật phải khớp hai mép trái/phải. */
+export interface AnimalRect {
+  readonly h: number;
+  readonly w: number;
+  readonly x: number;
+  readonly y: number;
+}
+
+/** Cao thân tối đa so với chiều dài: vật đo ngắn thì thân mảnh lại, không phình. */
+const ANIMAL_MAX_BODY_RATIO = 0.45;
+/** Biên độ ngọ nguậy dọc, tỉ lệ nửa cao thân. */
+const ANIMAL_WIGGLE = 0.08;
+/** Bề dày nét viền (px logic); hình học thụt vào nửa nét để mép mực khớp khung. */
+const ANIMAL_LINE_WIDTH = 2;
+/** Số mẫu dọc thân của rắn và giun: cố định, không theo chiều dài. */
+const ANIMAL_SAMPLES = 24;
+
+interface AnimalFrame {
+  /** Mép trái và mép phải: đầu và đuôi chạm đúng hai chỗ này. */
+  readonly left: number;
+  readonly right: number;
+  readonly cy: number;
+  /** Nửa cao thân. */
+  readonly half: number;
+  readonly w: number;
+}
+
+type Painter = (
+  ctx: CanvasRenderingContext2D,
+  f: AnimalFrame,
+  phase: number
+) => void;
+
+function paintShape(
+  ctx: CanvasRenderingContext2D,
+  fill: string,
+  stroke: string
+): void {
+  ctx.fillStyle = fill;
+  ctx.strokeStyle = stroke;
+  ctx.fill();
+  ctx.stroke();
+}
+
+function paintEllipse(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  rx: number,
+  ry: number,
+  fill: string,
+  stroke: string
+): void {
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+  paintShape(ctx, fill, stroke);
+}
+
+function paintEye(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  r: number
+): void {
+  const m = designTokens.colors.montessori;
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.fillStyle = m.paper;
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(x + r * 0.2, y, r * 0.5, 0, Math.PI * 2);
+  ctx.fillStyle = m.amberDark;
+  ctx.fill();
+}
+
+function paintCaterpillar(
+  ctx: CanvasRenderingContext2D,
+  f: AnimalFrame,
+  phase: number
+): void {
+  const m = designTokens.colors.montessori;
+  // Ba đốt thân to dần và chồng nhau; tâm đốt (kể cả đầu) cách nhau 0,17 ·
+  // 0,26 · 0,31 chiều dài — **không đều**, nên ở chiều dài nào các đốt cũng
+  // không xếp thành "một đốt một đơn vị". Mỗi đốt bập bênh lệch pha.
+  const segments: readonly (readonly [number, number, number])[] = [
+    [0.12, 0.12, 0.6],
+    [0.29, 0.15, 0.76],
+    [0.55, 0.2, 0.9],
+  ];
+  segments.forEach(([cx, rx, ry], i) => {
+    const bob = Math.sin(phase + i * 1.4) * f.half * ANIMAL_WIGGLE;
+    paintEllipse(
+      ctx,
+      f.left + cx * f.w,
+      f.cy + bob,
+      rx * f.w,
+      ry * f.half,
+      m.emeraldBright,
+      m.emerald
+    );
+  });
+  const hx = f.right - 0.14 * f.w;
+  const headRy = f.half * 0.8;
+  ctx.strokeStyle = m.amberDark;
+  for (const dx of [-0.03, 0.05]) {
+    ctx.beginPath();
+    ctx.moveTo(hx + dx * f.w, f.cy - headRy * 0.9);
+    ctx.lineTo(hx + (dx + 0.02) * f.w, f.cy - f.half);
+    ctx.stroke();
+  }
+  paintEllipse(ctx, hx, f.cy, 0.14 * f.w, headRy, m.amber, m.amberDark);
+  const eye = Math.min(f.half * 0.2, 0.025 * f.w);
+  paintEye(ctx, hx - 0.02 * f.w, f.cy - headRy * 0.2, eye);
+  paintEye(ctx, hx + 0.06 * f.w, f.cy - headRy * 0.2, eye);
+}
+
+/** Đa giác thân ống: mép trên đi xuôi, mép dưới đi ngược, `count + 1` điểm mỗi mép. */
+function tracedTube(
+  ctx: CanvasRenderingContext2D,
+  f: AnimalFrame,
+  t1: number,
+  centre: (t: number) => number,
+  thickness: (t: number) => number
+): void {
+  ctx.beginPath();
+  for (let i = 0; i <= ANIMAL_SAMPLES; i++) {
+    const t = (i / ANIMAL_SAMPLES) * t1;
+    const x = f.left + t * f.w;
+    const y = centre(t) - thickness(t);
+    if (i === 0) {
+      ctx.moveTo(x, y);
+    } else {
+      ctx.lineTo(x, y);
+    }
+  }
+  for (let i = ANIMAL_SAMPLES; i >= 0; i--) {
+    const t = (i / ANIMAL_SAMPLES) * t1;
+    ctx.lineTo(f.left + t * f.w, centre(t) + thickness(t));
+  }
+  ctx.closePath();
+}
+
+function paintSnake(
+  ctx: CanvasRenderingContext2D,
+  f: AnimalFrame,
+  phase: number
+): void {
+  const m = designTokens.colors.montessori;
+  const amp = f.half * 0.34;
+  const centre = (t: number): number =>
+    f.cy + amp * Math.sin(Math.PI * 3 * t + phase);
+  // Đuôi nhọn chạm mép trái, thân dày dần rồi giữ nguyên tới cổ.
+  const thickness = (t: number): number => f.half * 0.6 * Math.min(1, t / 0.35);
+  tracedTube(ctx, f, 0.92, centre, thickness);
+  paintShape(ctx, m.indigoLight, m.indigo);
+  // Ba đốm lưng, số đốm cố định, cách nhau không đều (0,13 · 0,21).
+  for (const t of [0.34, 0.47, 0.68]) {
+    paintEllipse(
+      ctx,
+      f.left + t * f.w,
+      centre(t),
+      0.03 * f.w,
+      f.half * 0.22,
+      m.indigo,
+      m.indigo
+    );
+  }
+  // Đầu bầu dục chạm mép phải.
+  const hy = centre(0.92);
+  paintEllipse(
+    ctx,
+    f.right - 0.08 * f.w,
+    hy,
+    0.08 * f.w,
+    f.half * 0.55,
+    m.indigoLight,
+    m.indigo
+  );
+  paintEye(
+    ctx,
+    f.right - 0.06 * f.w,
+    hy - f.half * 0.15,
+    Math.min(f.half * 0.2, 0.025 * f.w)
+  );
+}
+
+function paintWorm(
+  ctx: CanvasRenderingContext2D,
+  f: AnimalFrame,
+  phase: number
+): void {
+  const m = designTokens.colors.montessori;
+  const amp = f.half * 0.18;
+  const centre = (t: number): number =>
+    f.cy + amp * Math.sin(Math.PI * 2 * t + phase);
+  // Hai đầu tròn: dày theo siêu elip, về 0 đúng ở hai mép.
+  const thickness = (t: number): number =>
+    f.half * 0.62 * (1 - Math.abs(2 * t - 1) ** 4) ** 0.25;
+  tracedTube(ctx, f, 1, centre, thickness);
+  paintShape(ctx, m.coralLight, m.coral);
+  // Hai vòng đai.
+  ctx.strokeStyle = m.coral;
+  for (const t of [0.3, 0.37]) {
+    ctx.beginPath();
+    ctx.moveTo(f.left + t * f.w, centre(t) - thickness(t) * 0.9);
+    ctx.lineTo(f.left + t * f.w, centre(t) + thickness(t) * 0.9);
+    ctx.stroke();
+  }
+  paintEye(
+    ctx,
+    f.left + 0.88 * f.w,
+    centre(0.88) - thickness(0.88) * 0.2,
+    Math.min(f.half * 0.16, 0.02 * f.w)
+  );
+}
+
+/** Viền thân cá sấu: (phần chiều dài, phần chiều cao thân tính từ trục). */
+const CROCODILE_OUTLINE: readonly (readonly [number, number])[] = [
+  [0, 0.1],
+  [0.18, -0.12],
+  [0.28, -0.22],
+  [0.62, -0.22],
+  [0.74, -0.14],
+  [0.82, -0.12],
+  [1, -0.06],
+  [1, 0.06],
+  [0.82, 0.1],
+  [0.72, 0.2],
+  [0.62, 0.24],
+  [0.28, 0.24],
+  [0.18, 0.14],
+];
+
+function paintCrocodile(ctx: CanvasRenderingContext2D, f: AnimalFrame): void {
+  const m = designTokens.colors.montessori;
+  const bodyH = f.half * 2;
+  const px = (fx: number): number => f.left + fx * f.w;
+  const py = (fy: number): number => f.cy + fy * bodyH;
+  // Hai chân nhìn thấy (phía gần).
+  for (const fx of [0.34, 0.7]) {
+    paintEllipse(
+      ctx,
+      px(fx),
+      py(0.3),
+      0.045 * f.w,
+      0.16 * bodyH,
+      m.emerald,
+      m.amberDark
+    );
+  }
+  ctx.beginPath();
+  CROCODILE_OUTLINE.forEach(([fx, fy], i) => {
+    if (i === 0) {
+      ctx.moveTo(px(fx), py(fy));
+    } else {
+      ctx.lineTo(px(fx), py(fy));
+    }
+  });
+  ctx.closePath();
+  paintShape(ctx, m.emerald, m.amberDark);
+  // Ba gờ lưng, cách nhau không đều (0,11 · 0,17).
+  for (const fx of [0.29, 0.4, 0.57]) {
+    ctx.beginPath();
+    ctx.moveTo(px(fx - 0.04), py(-0.22));
+    ctx.lineTo(px(fx), py(-0.35));
+    ctx.lineTo(px(fx + 0.04), py(-0.22));
+    ctx.closePath();
+    paintShape(ctx, m.emeraldBright, m.amberDark);
+  }
+  // Đường miệng dài từ mõm vào gần mắt: dấu hiệu cá sấu, không phải chi tiết lặp.
+  ctx.strokeStyle = m.amberDark;
+  ctx.beginPath();
+  ctx.moveTo(px(0.99), py(0.01));
+  ctx.lineTo(px(0.84), py(0.02));
+  ctx.lineTo(px(0.8), py(-0.01));
+  ctx.stroke();
+  paintEye(ctx, px(0.8), py(-0.08), Math.min(0.07 * bodyH, 0.02 * f.w));
+}
+
+const ANIMAL_PAINTERS: Readonly<Record<MeasuredAnimal, Painter>> = {
+  caterpillar: paintCaterpillar,
+  snake: paintSnake,
+  worm: paintWorm,
+  crocodile: (ctx, f) => paintCrocodile(ctx, f),
+};
+
+/**
+ * Vẽ con vật cần đo vào `rect` (`BR-E030-11`): **đầu và đuôi chạm đúng mép trái
+ * và mép phải, tính cả nét viền** — hình học thụt vào nửa nét
+ * (`ANIMAL_LINE_WIDTH / 2`) ở mọi phía nên mép mực ngoài cùng trùng mép `rect`,
+ * và chiều dài nhìn thấy bằng đúng `rect.w` (chiều dài thật của vật đo). Hình
+ * chỉ co giãn ngang theo `rect.w`; cấu trúc (số đốt, đốm, vòng, gờ, chân) cố
+ * định và giãn cách không đều để không đếm hay ướm ra được số đơn vị. Thân
+ * không cao quá `rect.h` và không quá `ANIMAL_MAX_BODY_RATIO × rect.w`. `phase`
+ * (radian, 0 là trạng thái tĩnh) chỉ làm thân ngọ nguậy, không dời hai đầu.
+ * Màu lấy từ `designTokens`.
+ */
+export function drawMeasuredAnimal(
+  ctx: CanvasRenderingContext2D,
+  animal: MeasuredAnimal,
+  rect: AnimalRect,
+  phase: number
+): void {
+  const inset = ANIMAL_LINE_WIDTH / 2;
+  const innerW = rect.w - ANIMAL_LINE_WIDTH;
+  const bodyH = Math.min(
+    rect.h - ANIMAL_LINE_WIDTH,
+    innerW * ANIMAL_MAX_BODY_RATIO
+  );
+  ctx.save();
+  ctx.lineWidth = ANIMAL_LINE_WIDTH;
+  ctx.lineJoin = "round";
+  ctx.lineCap = "round";
+  ANIMAL_PAINTERS[animal](
+    ctx,
+    {
+      left: rect.x + inset,
+      right: rect.x + rect.w - inset,
+      cy: rect.y + rect.h / 2,
+      half: bodyH / 2,
+      w: innerW,
+    },
+    phase
+  );
+  ctx.restore();
+}

@@ -863,6 +863,10 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
     label: "Chiều dài theo đơn vị đo",
     help: "Số lượng đơn vị lặp vừa vặn chiều dài của vật (2-10).",
   },
+  animal: {
+    label: "Con vật cần đo",
+    help: "Tuỳ chọn: sâu, rắn, giun hoặc cá sấu. Có thì vật cần đo được vẽ thành đúng con vật đó, dài đúng bằng chiều dài cần đo (đầu và đuôi chạm hai mép). Để trống thì vẽ bằng hình đồ vật như cũ. Con vật không có đốt hay vạch đếm ra đáp số.",
+  },
   gap_tolerance_pct: {
     label: "Dung sai khe hở (%)",
     help: "Phần trăm khoảng cách cho phép lệch giữa các đơn vị liên tiếp.",

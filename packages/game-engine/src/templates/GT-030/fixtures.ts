@@ -102,6 +102,7 @@ export const GT030_FIXTURES: GT030Fixture[] = [
         object_id: "snake_obj",
         asset: { kind: "emoji", ref: "🐍" },
         length_in_units: 10,
+        animal: "snake",
       },
       unit: {
         unit_id: "rod_unit",

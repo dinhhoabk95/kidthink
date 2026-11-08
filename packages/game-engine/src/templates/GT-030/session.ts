@@ -44,6 +44,7 @@ import {
   updateParticles,
 } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
+import { drawMeasuredAnimal } from "#src/render/scene-decor.js";
 import type { DegradationState } from "#src/systems/degradation";
 import { MoodPulse } from "#src/systems/mood-pulse";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
@@ -90,6 +91,8 @@ export const GT030_STORY_LINE =
 export const GT030_HAPPY_MS = 700;
 /** Mascot nghiêng đầu sau khe/chồng hoặc số đo chưa đúng. */
 export const GT030_WONDER_MS = 1500;
+/** Tốc độ ngọ nguậy của con vật cần đo: radian pha mỗi ms (`BR-E030-11`). */
+const ANIMAL_WIGGLE_RAD_PER_MS = 0.006;
 
 export class GT030Session extends TemplateGameSession<
   GT030Content,
@@ -114,6 +117,8 @@ export class GT030Session extends TemplateGameSession<
   isWin = false;
 
   private lastFrameMs = 0;
+  /** Đồng hồ khung của con vật cần đo: `update` cộng dồn, `render` chỉ đọc (`BR-E030-11`). */
+  private animalElapsedMs = 0;
   private readonly wrongOptionFlash = new WrongFlash();
   private readonly wrongPlaceFlash = new WrongFlash();
   private gapFlash: (GapFlash & { readonly untilMs: number }) | null = null;
@@ -131,6 +136,7 @@ export class GT030Session extends TemplateGameSession<
 
   update(deltaMs: number): void {
     this.lastFrameMs += deltaMs;
+    this.animalElapsedMs += deltaMs;
     this.mood.tick(deltaMs);
     this.expireWrongFlashes(this.lastFrameMs);
     this.expireGapFlash();
@@ -192,6 +198,7 @@ export class GT030Session extends TemplateGameSession<
 
   setupEntities(): void {
     this.placedUnitsCount = 0;
+    this.animalElapsedMs = 0;
     this.selectedOptionId = null;
     this.isWin = false;
     this.mood.clear();
@@ -722,6 +729,22 @@ export class GT030Session extends TemplateGameSession<
 
     drawMeasurementGuideBar(ctx, objectSlot);
 
+    const animal = this.content.object.animal;
+    if (animal) {
+      // Con vật thay asset: đầu và đuôi chạm đúng hai mép dải đo (`BR-E030-11`).
+      drawMeasuredAnimal(
+        ctx,
+        animal,
+        {
+          x: objectSlot.x - objectSlot.w / 2,
+          y: objectSlot.y - objectSlot.h / 2,
+          w: objectSlot.w,
+          h: objectSlot.h,
+        },
+        rs.reducedMotion ? 0 : this.animalElapsedMs * ANIMAL_WIGGLE_RAD_PER_MS
+      );
+      return;
+    }
     drawSlotItem(
       ctx,
       rs,
@@ -898,7 +921,10 @@ export class GT030Session extends TemplateGameSession<
     this.expireGapFlash();
     drawSceneBackground(ctx, rs, this.themeId);
     // Sâu Nhỏ ở góc trống của sân khấu, ngoài mọi vùng chạm (`BR-E030-10`).
-    drawStoryCharacterInStage(ctx, "caterpillar", this.stageRect, this.slots);
+    // Vật đo đã là chính con sâu thì không vẽ thêm Sâu Nhỏ thứ hai (`BR-E030-11`).
+    if (this.content.object.animal !== "caterpillar") {
+      drawStoryCharacterInStage(ctx, "caterpillar", this.stageRect, this.slots);
+    }
     const zones = pickTrayZones(this.stageRect, this.trayRect);
     if (!zones) {
       this.drawLegacySubPrompt(ctx, rs);
