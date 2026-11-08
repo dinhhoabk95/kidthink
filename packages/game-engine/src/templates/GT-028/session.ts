@@ -27,11 +27,12 @@ import {
 } from "#src/layout/slot-fit";
 import type { Slot } from "#src/layout/types";
 import {
+  drawFrogNumberLine,
   drawHeaderRepresentation,
   drawMontessoriControlOfErrorPill,
-  drawProgressDots,
   drawSceneBackground,
   drawSlotItem,
+  drawStepGroupIcon,
   drawWoodenTokenDock,
   sceneBox,
 } from "#src/render/index.js";
@@ -93,6 +94,10 @@ export class GT028Session extends TemplateGameSession<
   /** Thứ tự bày vật: content, hoặc hoán vị không động theo seed khi `shuffle_items` bật (`BR-E028-07`). */
   private items: GT028Content["items"] = this.content.items;
   private lastFrameMs = 0;
+  /** Mốc ếch nhảy từ/tới và đồng hồ khung lúc bắt đầu nhảy (`BR-E028-08`). */
+  private frogFromTick = 0;
+  private frogToTick = 0;
+  private frogHopStartMs = 0;
   private wrongSubmitUntilMs = 0;
   private reactionPose: MascotPose | null = null;
   private reactionRemainingMs = 0;
@@ -121,7 +126,18 @@ export class GT028Session extends TemplateGameSession<
       );
     }
     this.lastFrameMs += deltaMs;
+    this.syncFrog();
     this.exploreTracker.tick(deltaMs);
+  }
+
+  /** Số vật đã chọn đổi thì ếch bắt đầu nhảy từ mốc cũ sang mốc mới. */
+  private syncFrog(): void {
+    const tick = this.selectedItemIds.length;
+    if (tick !== this.frogToTick) {
+      this.frogFromTick = this.frogToTick;
+      this.frogToTick = tick;
+      this.frogHopStartMs = this.lastFrameMs;
+    }
   }
 
   startExplorePhase(): void {
@@ -150,6 +166,9 @@ export class GT028Session extends TemplateGameSession<
     this.renderItemStates.clear();
     this.reactionPose = null;
     this.reactionRemainingMs = 0;
+    this.frogFromTick = 0;
+    this.frogToTick = 0;
+    this.frogHopStartMs = 0;
     this.exploreTracker.reset(false);
     this.items =
       this.difficulty.shuffle_items === true && this.content.items.length > 1
@@ -317,6 +336,7 @@ export class GT028Session extends TemplateGameSession<
     if (index === -1) {
       // Chọn mới
       this.selectedItemIds.push(itemId);
+      this.syncFrog();
       this.setRenderItemState(itemId, "selected");
       this.exploreTracker.recordExploreAction("step_counted");
       this.queueSfx("frog_hop");
@@ -332,6 +352,7 @@ export class GT028Session extends TemplateGameSession<
     // Đã chọn trước đó -> kiểm tra quyền undo (BR-E028-03)
     if (this.difficulty.allow_undo) {
       this.selectedItemIds.splice(index, 1);
+      this.syncFrog();
       this.setRenderItemState(itemId, "idle");
       this.exploreTracker.recordExploreAction("step_counted");
       this.recordEvent("count_undone", {
@@ -462,17 +483,24 @@ export class GT028Session extends TemplateGameSession<
     }
 
     // Lời dẫn do shell vẽ ở vùng lời dẫn (`BR-PSZ-08`).
-    // Không chữ: bước nhảy `+n`, chấm đã nhảy, số đích (`BR-E028-05`).
-    drawProgressDots(
-      ctx,
-      rs,
-      {
-        done: this.selectedItemIds.length,
-        badge: `+${this.content.step}`,
-        trailing: String(this.content.target_total),
-      },
-      this.stageRect ? splitCaption(this.stageRect).caption : undefined
-    );
+    // Không chữ: `+n`, tia số có ếch và số đích (`BR-E028-05`, `BR-E028-08`).
+    this.syncFrog();
+    const captionRect = this.stageRect
+      ? splitCaption(this.stageRect).caption
+      : {
+          x: rs.LOGIC_WIDTH * 0.1,
+          y: rs.LOGIC_HEIGHT * 0.2,
+          w: rs.LOGIC_WIDTH * 0.8,
+          h: 44,
+        };
+    drawFrogNumberLine(ctx, rs, captionRect, {
+      step: this.content.step,
+      target: this.content.target_total,
+      ticks: this.items.length,
+      fromTick: this.frogFromTick,
+      toTick: this.frogToTick,
+      hopElapsedMs: timeMs - this.frogHopStartMs,
+    });
 
     const currentCount = this.getCurrentCount();
     if (
@@ -508,6 +536,17 @@ export class GT028Session extends TemplateGameSession<
         label,
         state,
       });
+      if (isSelected) {
+        // Nhóm của lần nhảy: đôi tất / bàn tay / bó que tính (`BR-E028-09`).
+        const groupSize = Math.max(20, Math.min(slot.w, slot.h) * 0.36);
+        drawStepGroupIcon(
+          ctx,
+          slot.x + slot.w * 0.28,
+          slot.y - slot.h * 0.28,
+          groupSize,
+          this.content.step
+        );
+      }
     });
 
     drawMontessoriControlOfErrorPill(

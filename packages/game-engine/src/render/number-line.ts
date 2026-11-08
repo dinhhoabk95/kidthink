@@ -3,9 +3,11 @@ import {
   getTouchFloor,
   type LogicSpace,
 } from "#src/layout/constants";
+import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
 import { designTokens } from "#src/systems/designTokens";
 import type { RenderSystem } from "#src/systems/render-system";
+import { alpha } from "./color-utils.js";
 import { applyCanvasFontAtSize, canvasFontPx } from "./type-scale.js";
 import type { SceneBox } from "./types.js";
 
@@ -247,6 +249,351 @@ export function drawUnitGapHatch(
     ctx.moveTo(rect.x + d, rect.y + rect.h);
     ctx.lineTo(rect.x + d + rect.h, rect.y);
     ctx.stroke();
+  }
+  ctx.restore();
+}
+
+// ── Tia số có ếch nhảy cóc (GT-028, `BR-E028-08`) ─────────────────────
+
+/** Một cú nhảy của ếch giữa hai mốc kéo dài ngần này ms. */
+export const FROG_HOP_MS = 450;
+
+const FROG_BADGE_W_PX = 40;
+const FROG_TARGET_W_PX = 36;
+const FROG_LINE_INSET_PX = 8;
+const FROG_OVERFLOW_GAP_PX = 12;
+const FROG_MIN_SIZE_PX = 18;
+const FROG_LIFT_CAP_PX = 10;
+
+export interface FrogLineLayout {
+  /** Vị trí ếch khi vượt quá mốc cuối (không trùng mốc đích). */
+  readonly overflowX: number;
+  readonly frogSize: number;
+  readonly lineY: number;
+  /** Hoành độ các mốc 0..N, tăng dần. */
+  readonly tickXs: readonly number[];
+  readonly targetX: number;
+  readonly badgeX: number;
+  readonly x0: number;
+  readonly x1: number;
+}
+
+/**
+ * Bố cục tia số trong dải nhãn `rect`: ký hiệu `+n` bên trái, trục có `ticks + 1`
+ * mốc, số đích bên phải; sau mốc cuối có một chỗ "ngoài mút" cho ếch khi trẻ
+ * đếm vượt đích mà không tô điểm gì thêm.
+ */
+export function frogLineLayout(rect: ZoneRect, ticks: number): FrogLineLayout {
+  const n = Math.max(1, ticks);
+  const x0 = rect.x + FROG_BADGE_W_PX + FROG_LINE_INSET_PX;
+  const x1 =
+    rect.x +
+    rect.w -
+    FROG_TARGET_W_PX -
+    FROG_LINE_INSET_PX -
+    FROG_OVERFLOW_GAP_PX * 2;
+  const spacing = (x1 - x0) / n;
+  const tickXs: number[] = [];
+  for (let i = 0; i <= n; i++) {
+    tickXs.push(x0 + i * spacing);
+  }
+  return {
+    badgeX: rect.x + FROG_BADGE_W_PX / 2,
+    frogSize: Math.max(FROG_MIN_SIZE_PX, Math.min(rect.h * 0.5, spacing * 1.5)),
+    lineY: rect.y + rect.h * 0.78,
+    overflowX: x1 + FROG_OVERFLOW_GAP_PX,
+    targetX: rect.x + rect.w - FROG_TARGET_W_PX / 2,
+    tickXs,
+    x0,
+    x1,
+  };
+}
+
+function frogSpotX(layout: FrogLineLayout, tick: number): number {
+  const last = layout.tickXs.length - 1;
+  if (tick > last) {
+    return layout.overflowX;
+  }
+  return layout.tickXs[Math.max(0, tick)] ?? layout.x0;
+}
+
+function frogRestY(layout: FrogLineLayout): number {
+  return layout.lineY - layout.frogSize * 0.34 - 1;
+}
+
+/**
+ * Toạ độ tâm thân ếch ở `elapsedMs` kể từ lúc bắt đầu nhảy từ mốc `fromTick`
+ * sang `toTick` (mốc lớn hơn N là chỗ ngoài mút). Hàm thuần: nhảy theo cung
+ * parabol, xong cú nhảy thì đứng yên trên trục. `reduced_motion` tới thẳng mốc
+ * cuối, không nhấc lên.
+ */
+export function frogHopPose(
+  layout: FrogLineLayout,
+  fromTick: number,
+  toTick: number,
+  elapsedMs: number,
+  reducedMotion: boolean
+): { x: number; y: number } {
+  const restY = frogRestY(layout);
+  const toX = frogSpotX(layout, toTick);
+  const fromX = frogSpotX(layout, fromTick);
+  const p = Math.min(1, Math.max(0, elapsedMs / FROG_HOP_MS));
+  if (reducedMotion || fromX === toX || p >= 1) {
+    return { x: toX, y: restY };
+  }
+  const eased = p * p * (3 - 2 * p);
+  const lift = Math.min(layout.frogSize * 0.45, FROG_LIFT_CAP_PX);
+  return {
+    x: fromX + (toX - fromX) * eased,
+    y: restY - lift * 4 * p * (1 - p),
+  };
+}
+
+/** Ếch xanh vẽ vector: thân bầu dục, hai mắt nhô, chân sau. Tâm thân tại `(x, y)`. */
+export function drawFrog(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  size: number
+): void {
+  const rx = size * 0.5;
+  const ry = size * 0.34;
+  const green = designTokens.colors.montessori.emeraldBright;
+  const dark = designTokens.colors.montessori.emerald;
+  ctx.save();
+  ctx.fillStyle = green;
+  ctx.strokeStyle = dark;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  // Chân sau
+  ctx.beginPath();
+  ctx.ellipse(
+    x - rx * 0.85,
+    y + ry * 0.75,
+    rx * 0.32,
+    ry * 0.4,
+    0,
+    0,
+    Math.PI * 2
+  );
+  ctx.ellipse(
+    x + rx * 0.85,
+    y + ry * 0.75,
+    rx * 0.32,
+    ry * 0.4,
+    0,
+    0,
+    Math.PI * 2
+  );
+  ctx.fill();
+  // Hai mắt nhô lên đầu
+  for (const dx of [-0.42, 0.42]) {
+    const ex = x + rx * dx;
+    const ey = y - ry * 0.95;
+    ctx.fillStyle = designTokens.colors.surface[0];
+    ctx.beginPath();
+    ctx.arc(ex, ey, size * 0.14, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = designTokens.colors.surface[900];
+    ctx.beginPath();
+    ctx.arc(ex, ey, size * 0.06, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  // Miệng cười
+  ctx.strokeStyle = dark;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(x, y + ry * 0.05, rx * 0.34, 0.15 * Math.PI, 0.85 * Math.PI);
+  ctx.stroke();
+  ctx.restore();
+}
+
+export interface FrogNumberLineSpec {
+  /** Mốc ếch đang nhảy từ đó. */
+  readonly fromTick: number;
+  /** Số `target_total` ở cuối trục. */
+  readonly target: number;
+  readonly hopElapsedMs: number;
+  readonly step: number;
+  /**
+   * Số bước trục vẽ ra (mốc 0..`ticks`) — bằng số vật có thể chạm, **không** suy
+   * từ `target / step`: trục dài đúng bằng số lần cần nhảy thì mốc cuối là đáp án.
+   */
+  readonly ticks: number;
+  /** Mốc ếch nhảy tới (= số vật đã chọn). */
+  readonly toTick: number;
+}
+
+/**
+ * Dải tia số trong dải nhãn: `+n`, trục và mốc, số đích, ếch. Chỉ số và hình —
+ * không chữ cái (`BR-E028-05`). Ếch phản ánh số lần trẻ đã đếm; số đích đứng
+ * riêng bên phải, không gắn vào mốc nào, và trục dài theo số vật chứ không theo
+ * đích — nên tia số không chấm trước khi nộp (`BR-E028-03`).
+ */
+export function drawFrogNumberLine(
+  ctx: CanvasRenderingContext2D,
+  rs: RenderSystem,
+  rect: ZoneRect,
+  spec: FrogNumberLineSpec
+): void {
+  const layout = frogLineLayout(rect, Math.max(1, spec.ticks));
+  const fontPx = canvasFontPx(rs.logicSpace, "hud", rs.viewport?.scale);
+  ctx.save();
+  // Trục
+  ctx.strokeStyle = designTokens.colors.surface[600];
+  ctx.lineWidth = 3;
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  ctx.moveTo(layout.x0, layout.lineY);
+  ctx.lineTo(layout.x1 + FROG_OVERFLOW_GAP_PX * 1.5, layout.lineY);
+  ctx.stroke();
+  // Mốc
+  ctx.strokeStyle = designTokens.colors.surface[700];
+  ctx.lineWidth = 2;
+  for (const tx of layout.tickXs) {
+    ctx.beginPath();
+    ctx.moveTo(tx, layout.lineY - 4);
+    ctx.lineTo(tx, layout.lineY + 4);
+    ctx.stroke();
+  }
+  // Ký hiệu `+n` và số đích
+  applyCanvasFontAtSize(ctx, fontPx, "sans", "bold");
+  ctx.textBaseline = "middle";
+  ctx.fillStyle = designTokens.colors.montessori.amberDark;
+  ctx.textAlign = "center";
+  ctx.fillText(`+${spec.step}`, layout.badgeX, rect.y + rect.h / 2);
+  ctx.fillText(String(spec.target), layout.targetX, rect.y + rect.h / 2);
+  ctx.restore();
+  const pose = frogHopPose(
+    layout,
+    spec.fromTick,
+    spec.toTick,
+    spec.hopElapsedMs,
+    rs.reducedMotion
+  );
+  drawFrog(ctx, pose.x, pose.y, layout.frogSize);
+}
+
+// ── Nhóm theo `step`: đôi tất, bàn tay, bó que tính (GT-028, `BR-E028-09`) ──
+
+/** Số đơn vị trong nhóm: 2 chiếc tất, 5 ngón tay, 10 que tính. */
+export function stepGroupUnitCount(step: 2 | 5 | 10): number {
+  return step;
+}
+
+const HAND_FINGER_HEIGHTS = [0.34, 0.44, 0.5, 0.44, 0.34] as const;
+
+function drawSockPair(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number
+): void {
+  const m = designTokens.colors.montessori;
+  const colors = [m.coral, m.indigo] as const;
+  colors.forEach((color, k) => {
+    const sx = cx + size * (k === 0 ? -0.24 : 0.24);
+    ctx.fillStyle = color;
+    ctx.strokeStyle = m.woodBorder;
+    ctx.beginPath();
+    ctx.roundRect(
+      sx - size * 0.15,
+      cy - size * 0.42,
+      size * 0.3,
+      size * 0.62,
+      4
+    );
+    ctx.fill();
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.ellipse(
+      sx + size * 0.08,
+      cy + size * 0.22,
+      size * 0.2,
+      size * 0.14,
+      0,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+    ctx.stroke();
+  });
+}
+
+function drawHand(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number
+): void {
+  const m = designTokens.colors.montessori;
+  ctx.fillStyle = m.amberLight;
+  ctx.strokeStyle = m.amberDark;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy + size * 0.18, size * 0.3, size * 0.26, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  HAND_FINGER_HEIGHTS.forEach((ratio, i) => {
+    const fx = cx + (i - 2) * size * 0.17;
+    const fh = size * ratio;
+    ctx.beginPath();
+    ctx.roundRect(
+      fx - size * 0.07,
+      cy + size * 0.1 - fh,
+      size * 0.14,
+      fh,
+      size * 0.07
+    );
+    ctx.fill();
+    ctx.stroke();
+  });
+}
+
+function drawStickBundle(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number
+): void {
+  const m = designTokens.colors.montessori;
+  ctx.fillStyle = m.amber;
+  ctx.strokeStyle = m.amberDark;
+  for (let i = 0; i < 10; i++) {
+    const qx = cx + ((i % 5) - 2) * size * 0.17;
+    const qy = cy - size * 0.46 + Math.floor(i / 5) * size * 0.5;
+    ctx.beginPath();
+    ctx.roundRect(qx - size * 0.06, qy, size * 0.12, size * 0.42, 3);
+    ctx.fill();
+    ctx.stroke();
+  }
+  ctx.fillStyle = alpha(m.coral, 0.9);
+  ctx.fillRect(cx - size * 0.5, cy - size * 0.06, size, size * 0.12);
+}
+
+/**
+ * Biểu tượng nhóm của một lần nhảy, tâm `(cx, cy)`, cạnh `size`: đôi tất,
+ * bàn tay, bó que tính. Mỗi đơn vị (tất, ngón, que) đúng một `roundRect` để
+ * đếm được bằng mắt lẫn bằng test.
+ */
+export function drawStepGroupIcon(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number,
+  step: 2 | 5 | 10
+): void {
+  ctx.save();
+  ctx.lineWidth = 1.5;
+  if (step === 2) {
+    drawSockPair(ctx, cx, cy, size);
+  } else if (step === 5) {
+    drawHand(ctx, cx, cy, size);
+  } else {
+    drawStickBundle(ctx, cx, cy, size);
   }
   ctx.restore();
 }
