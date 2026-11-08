@@ -2112,3 +2112,46 @@ export function drawMatchGlow(
   ctx.fill();
   ctx.restore();
 }
+
+// ── Hàng/cột sáng khi đủ và không trùng (GT-015, `BR-E015-09`) ────────
+
+/** Hàng và cột (chỉ số) đã điền **đủ** ô và **không** hai ô nào cùng ký hiệu. */
+export interface CompleteLines {
+  readonly cols: readonly number[];
+  readonly rows: readonly number[];
+}
+
+function isCompleteDistinct(values: readonly (string | null)[]): boolean {
+  if (values.length === 0 || values.some((v) => v === null)) {
+    return false;
+  }
+  return new Set(values).size === values.length;
+}
+
+/**
+ * Hàng/cột đủ không trùng của lưới `size × size`. `valueAt(row, col)` là ký hiệu
+ * đang ở ô (hoặc `null` khi trống). Chỉ đọc trạng thái hiện tại của lưới — một
+ * luật như nhau cho mọi ô, không đọc lời giải.
+ */
+export function completeDistinctLines(
+  size: number,
+  valueAt: (row: number, col: number) => string | null
+): CompleteLines {
+  const rows: number[] = [];
+  const cols: number[] = [];
+  for (let i = 0; i < size; i++) {
+    const rowVals: (string | null)[] = [];
+    const colVals: (string | null)[] = [];
+    for (let j = 0; j < size; j++) {
+      rowVals.push(valueAt(i, j));
+      colVals.push(valueAt(j, i));
+    }
+    if (isCompleteDistinct(rowVals)) {
+      rows.push(i);
+    }
+    if (isCompleteDistinct(colVals)) {
+      cols.push(i);
+    }
+  }
+  return { rows, cols };
+}

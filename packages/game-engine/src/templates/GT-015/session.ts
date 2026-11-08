@@ -22,12 +22,18 @@ import { computeStageCellSlots } from "#src/layout/stage-targets";
 import { computeTraySourceSlots, pickTrayZones } from "#src/layout/tray-layout";
 import type { Slot } from "#src/layout/types";
 import {
+  boxFromSlots,
+  type CompleteLines,
+  completeDistinctLines,
   drawEmptyTargetSlot,
+  drawMatchGlow,
   drawMontessoriControlOfErrorPill,
   drawSceneBackground,
   drawSlotItem,
+  drawStoryCharacterInStage,
   drawSudokuBoardFrame,
   drawWoodenTokenDock,
+  matchGlowAlpha,
   sceneBox,
 } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
@@ -777,6 +783,64 @@ export class SudokuMiniSession extends TemplateGameSession<
     });
   }
 
+  /**
+   * Hàng/cột đã điền đủ và không trùng ký hiệu sáng nhấp nháy dưới các ô
+   * (`BR-E015-09`): cùng một luật cho mọi ô, đọc trạng thái lưới hiện tại,
+   * không đọc lời giải.
+   */
+  private drawCompleteLines(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    cellSlots: readonly Slot[],
+    size: number
+  ): void {
+    const lines = this.getCompleteLines();
+    const glow = matchGlowAlpha(this.lastFrameMs, rs.reducedMotion);
+    for (const r of lines.rows) {
+      const box = boxFromSlots(cellSlots.slice(r * size, r * size + size));
+      if (box) {
+        drawMatchGlow(ctx, box, glow);
+      }
+    }
+    for (const c of lines.cols) {
+      const box = boxFromSlots(
+        cellSlots.filter((_, i) => i % size === c && i < size * size)
+      );
+      if (box) {
+        drawMatchGlow(ctx, box, glow);
+      }
+    }
+  }
+
+  /**
+   * Hàng/cột đang đủ không trùng theo trạng thái lưới hiện tại **và** có ít nhất
+   * một ô do trẻ điền (hàng/cột đã đủ sẵn từ đầu bài không sáng — sáng là thành
+   * quả của trẻ).
+   */
+  getCompleteLines(): CompleteLines {
+    const size = this.content.grid_size;
+    const lines = completeDistinctLines(
+      size,
+      (row, col) => this.cellStates.get(`${row},${col}`)?.value ?? null
+    );
+    const childFilled = (row: number, col: number): boolean => {
+      const st = this.cellStates.get(`${row},${col}`);
+      return st !== undefined && !st.isInitial && st.value !== null;
+    };
+    const anyOf = (index: number, byRow: boolean): boolean => {
+      for (let j = 0; j < size; j++) {
+        if (byRow ? childFilled(index, j) : childFilled(j, index)) {
+          return true;
+        }
+      }
+      return false;
+    };
+    return {
+      rows: lines.rows.filter((r) => anyOf(r, true)),
+      cols: lines.cols.filter((c) => anyOf(c, false)),
+    };
+  }
+
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
@@ -793,7 +857,10 @@ export class SudokuMiniSession extends TemplateGameSession<
     const cellSlots = this.slots.slice(0, cellCount);
     const paletteSlots = this.slots.slice(cellCount);
     const size = this.content.grid_size;
+    // Hươu Cao Cổ ở góc trống, ngoài vùng chạm (`BR-E015-09`).
+    drawStoryCharacterInStage(ctx, "giraffe", this.stageRect, this.slots);
     drawSudokuBoardFrame(ctx, cellSlots, size, this.content.regions);
+    this.drawCompleteLines(ctx, rs, cellSlots, size);
     const symbolMap = this.resolveSymbolById();
     const assetOf = (symbolId: string) => symbolMap.get(symbolId)?.asset;
     // Một vi phạm nêu cả ô sai lẫn ô xung đột — tô đỏ cả hai thì trẻ thấy
