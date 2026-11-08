@@ -21,11 +21,15 @@ import {
   insetDrawSize,
   splitCaption,
 } from "#src/layout/slot-fit";
+import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
 import {
+  CARD_FLIP_MS,
+  cardFlipPose,
   drawCircleOutline,
   drawSceneBackground,
   drawSlotItem,
+  drawStoryCharacterInStage,
   drawSubPromptText,
   drawWoodenTokenDock,
 } from "#src/render/index.js";
@@ -119,6 +123,10 @@ export class GT027Session extends TemplateGameSession<
   private readonly wrongFlash = new WrongFlash();
 
   private readonly mood = new MoodPulse();
+  /** Mặt thẻ luật đang hiện và mặt trước đó, mốc đồng hồ khung lúc đổi (`BR-E027-06`). */
+  private ruleFaceText: string | undefined;
+  private previousRuleFaceText = "";
+  private ruleFlipStartMs = Number.NEGATIVE_INFINITY;
 
   override storyLine(): string {
     return GT027_STORY_LINE;
@@ -135,6 +143,8 @@ export class GT027Session extends TemplateGameSession<
 
   setupEntities(): void {
     this.mood.clear();
+    this.ruleFaceText = undefined;
+    this.ruleFlipStartMs = Number.NEGATIVE_INFINITY;
     this.isWon = false;
     this.successfulTrialCount = 0;
 
@@ -426,6 +436,43 @@ export class GT027Session extends TemplateGameSession<
     );
   }
 
+  /**
+   * Thẻ luật lật bằng co `scaleX` quanh tâm khi mặt chữ đổi (luật đổi hoặc hết
+   * báo hiệu): nửa đầu mặt cũ, nửa sau mặt mới. Lật chỉ theo việc luật đổi —
+   * thông tin trẻ cần biết, không liên quan đáp án (`BR-E027-06`).
+   */
+  private drawRuleCard(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    text: string,
+    caption: ZoneRect | undefined,
+    timeMs: number
+  ): void {
+    if (this.ruleFaceText !== undefined && this.ruleFaceText !== text) {
+      this.previousRuleFaceText = this.ruleFaceText;
+      this.ruleFlipStartMs = timeMs;
+    }
+    this.ruleFaceText = text;
+    const elapsed = timeMs - this.ruleFlipStartMs;
+    if (elapsed >= CARD_FLIP_MS) {
+      drawSubPromptText(ctx, rs, text, caption);
+      return;
+    }
+    const pose = cardFlipPose(elapsed, rs.reducedMotion);
+    const centerX = caption ? caption.x + caption.w / 2 : rs.LOGIC_WIDTH / 2;
+    ctx.save();
+    ctx.translate(centerX, 0);
+    ctx.scale(pose.scaleX, 1);
+    ctx.translate(-centerX, 0);
+    drawSubPromptText(
+      ctx,
+      rs,
+      pose.showsNewFace ? text : this.previousRuleFaceText,
+      caption
+    );
+    ctx.restore();
+  }
+
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
@@ -445,12 +492,15 @@ export class GT027Session extends TemplateGameSession<
     const signal = this.ruleSystem.getSignalInfo();
     // Luật đang hiệu lực phải hiện thường trực: trẻ đổi luật giữa chừng, không
     // ai được yêu cầu nhớ luật cũ.
-    drawSubPromptText(
+    this.drawRuleCard(
       ctx,
       rs,
       signal?.text ?? rule.description,
-      this.stageRect ? splitCaption(this.stageRect).caption : undefined
+      this.stageRect ? splitCaption(this.stageRect).caption : undefined,
+      timeMs
     );
+    // Cáo Con ở góc trống của thân sân khấu, không đè thẻ luật (`BR-E027-06`).
+    drawStoryCharacterInStage(ctx, "fox", bodyRect, this.slots);
 
     if (this.wrongFlash.isActive(timeMs) && this.wrongItemId) {
       const wrongIndex = this.content.items.findIndex(
