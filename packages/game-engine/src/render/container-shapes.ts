@@ -464,3 +464,113 @@ export function drawFlyingStar(
   ctx.stroke();
   ctx.restore();
 }
+
+// ── Đèn giao thông của trò chơi đèn xanh/đèn đỏ (GT-026, `BR-E026-12`) ──
+
+export type TrafficLamp = "red" | "green";
+
+const LAMP_ON_MS = 220;
+const LIGHT_WIDTH_RATIO = 0.34;
+const LIGHT_GAP_PX = 12;
+
+/** Độ sáng 0..1 của đèn vừa bật: ramp trong 220 ms; reduced-motion thì sáng đủ ngay. */
+export function trafficLampGlow(
+  elapsedMs: number,
+  reducedMotion: boolean
+): number {
+  if (reducedMotion) {
+    return 1;
+  }
+  return Math.min(1, Math.max(0, elapsedMs / LAMP_ON_MS));
+}
+
+/** Hộp đèn: dải bên trái ô kích thích, cao bằng ô. */
+export function trafficLightBox(slot: Slot): ContainerBox {
+  return {
+    x: slot.x - slot.w / 2,
+    y: slot.y - slot.h / 2,
+    w: slot.w * LIGHT_WIDTH_RATIO,
+    h: slot.h,
+  };
+}
+
+/** Phần ô còn lại bên phải đèn, dành cho vật kích thích và bục của nó. */
+export function trafficStimulusSlot(slot: Slot): Slot {
+  const light = trafficLightBox(slot);
+  const left = light.x + light.w + LIGHT_GAP_PX;
+  const w = Math.max(1, slot.x + slot.w / 2 - left);
+  const size = Math.min(w, slot.h);
+  return { ...slot, x: left + w / 2, w: size, h: size };
+}
+
+function drawLamp(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  radius: number,
+  color: string,
+  glow: number
+): void {
+  ctx.save();
+  ctx.fillStyle = alpha(color, 0.18 + 0.82 * glow);
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  ctx.fill();
+  if (glow > 0) {
+    ctx.strokeStyle = alpha(color, 0.45 * glow);
+    ctx.lineWidth = Math.max(2, radius * 0.25);
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius * (1 + 0.2 * glow), 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.fillStyle = alpha(designTokens.colors.surface[0], 0.55 * glow);
+    ctx.beginPath();
+    ctx.arc(
+      cx - radius * 0.3,
+      cy - radius * 0.3,
+      radius * 0.22,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+/**
+ * Đèn giao thông hai bóng: đỏ ở trên, xanh ở dưới như đèn thật (vị trí là tín
+ * hiệu thứ hai cho trẻ khó phân biệt màu). Chỉ bóng `lit` sáng, bóng kia mờ.
+ */
+export function drawTrafficLight(
+  ctx: CanvasRenderingContext2D,
+  box: ContainerBox,
+  lit: TrafficLamp,
+  glow: number
+): void {
+  const radius = Math.min(box.w * 0.34, box.h * 0.22);
+  const cx = box.x + box.w / 2;
+  ctx.save();
+  ctx.fillStyle = designTokens.colors.surface[800];
+  ctx.strokeStyle = designTokens.colors.surface[950];
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.roundRect(box.x, box.y, box.w, box.h, box.w * 0.3);
+  ctx.fill();
+  ctx.stroke();
+  drawLamp(
+    ctx,
+    cx,
+    box.y + box.h * 0.28,
+    radius,
+    designTokens.colors.montessori.coral,
+    lit === "red" ? glow : 0
+  );
+  drawLamp(
+    ctx,
+    cx,
+    box.y + box.h * 0.72,
+    radius,
+    designTokens.colors.montessori.emeraldBright,
+    lit === "green" ? glow : 0
+  );
+  ctx.restore();
+}

@@ -23,6 +23,10 @@ import {
   drawSceneBackground,
   drawSlotItem,
   drawSubPromptText,
+  drawTrafficLight,
+  trafficLampGlow,
+  trafficLightBox,
+  trafficStimulusSlot,
 } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
@@ -68,6 +72,9 @@ export class GT026Session extends TemplateGameSession<
   private appliedLadderLevel = 0;
   /** Dáng mascot sau kết quả lượt vừa xong; chỉ giữ trong nhịp nghỉ (`BR-E026-11`). */
   private outcomeMood: MascotPose | null = null;
+  /** Lượt đang hiện kích thích và mốc đồng hồ khung lúc đèn bật (`BR-E026-12`). */
+  private litTrialId: string | null = null;
+  private litSinceMs = 0;
 
   isUntimed(): boolean {
     return this.inhibitionSystem?.isUntimed() === true;
@@ -150,6 +157,7 @@ export class GT026Session extends TemplateGameSession<
     this.lastFrameMs = 0;
     this.appliedLadderLevel = 0;
     this.outcomeMood = null;
+    this.litTrialId = null;
 
     const trials: TrialItem[] = this.content.trials.map((t) => ({
       id: t.id,
@@ -449,6 +457,28 @@ export class GT026Session extends TemplateGameSession<
     return [stim, padSlot];
   }
 
+  /**
+   * Đèn chỉ vẽ trong nhánh đã qua cổng kích thích (`BR-E026-04`): ngoài nhịp
+   * kích thích không có đèn nào sáng, nên màu đèn không báo trước đáp án.
+   */
+  private drawLight(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    slot: Slot,
+    trial: TrialItem
+  ): void {
+    if (this.litTrialId !== trial.id) {
+      this.litTrialId = trial.id;
+      this.litSinceMs = this.lastFrameMs;
+    }
+    drawTrafficLight(
+      ctx,
+      trafficLightBox(slot),
+      trial.kind === "go" ? "green" : "red",
+      trafficLampGlow(this.lastFrameMs - this.litSinceMs, rs.reducedMotion)
+    );
+  }
+
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
@@ -485,7 +515,9 @@ export class GT026Session extends TemplateGameSession<
           ? Math.sin(this.wrongFlash.elapsedMs(now) / 30) * 4
           : 0;
       const renderSlot = shakeX === 0 ? slot : { ...slot, x: slot.x + shakeX };
-      drawPedestalTarget(ctx, renderSlot);
+      this.drawLight(ctx, rs, renderSlot, trial);
+      const stimulusSlot = trafficStimulusSlot(renderSlot);
+      drawPedestalTarget(ctx, stimulusSlot);
       const pad = this.slots[1];
       if (pad && this.isUntimed()) {
         drawSlotItem(ctx, rs, pad, {
@@ -494,7 +526,7 @@ export class GT026Session extends TemplateGameSession<
           state: "idle",
         });
       }
-      drawSlotItem(ctx, rs, renderSlot, {
+      drawSlotItem(ctx, rs, stimulusSlot, {
         id: trial.id,
         asset: stimulus.asset,
         state: isWrong ? "wrong" : "idle",
