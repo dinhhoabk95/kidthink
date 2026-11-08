@@ -33,6 +33,7 @@ import {
   drawIsometricModel,
   drawSceneBackground,
   drawSlotItem,
+  drawStoryCharacterInStage,
   insetBox,
   type SceneBox,
   sceneBox,
@@ -411,6 +412,8 @@ export class BlockStackSession extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
+    // Hải Ly ở góc trống, ngoài vùng chạm (`BR-E017-06`).
+    drawStoryCharacterInStage(ctx, "beaver", this.stageRect, this.slots);
     drawIsometricModel(
       ctx,
       this.modelBox(rs),
