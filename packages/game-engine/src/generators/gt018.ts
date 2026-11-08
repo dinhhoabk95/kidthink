@@ -28,6 +28,8 @@ export const GT018Generator: LevelGenerator = {
         prompt: "Bé hãy lắng nghe âm thanh và chọn hình tương ứng nhé!",
         audio_prompt: {
           text: target.label_vi,
+          // Lời đọc là tên vật đúng (`opt_1`, `BR-E018-06`).
+          strip_item_ids: ["opt_1"],
         },
         response_mode: "select" as const,
         options: shuffle(options, rng),

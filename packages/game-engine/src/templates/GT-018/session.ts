@@ -19,6 +19,7 @@ import {
   findHitSlotIndex as findHitIndex,
   TAP_TOLERANCE_PX,
 } from "#src/layout/hit-test";
+import { computeMutedStripLayout } from "#src/layout/muted-strip";
 import { resolveLayout } from "#src/layout/registry";
 import {
   dockRectAroundSlots,
@@ -31,9 +32,11 @@ import type { Slot } from "#src/layout/types";
 import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
 import {
+  drawGlyphInSlot,
   drawGramophone,
   drawSceneBackground,
   drawSlotItem,
+  drawStripChipCard,
   drawSubPromptText,
   drawWoodenTokenDock,
 } from "#src/render/index";
@@ -470,27 +473,16 @@ export class GT018Session extends TemplateGameSession<
       };
     });
 
-    const showCaption =
-      !this.stageRect ||
-      this.content.audio_prompt.text.trim() !== this.content.prompt.trim();
-    const figure = this.stageRect
-      ? splitFigure(
-          showCaption ? splitCaption(this.stageRect).body : this.stageRect,
-          GRAMOPHONE_SIZE_PX
-        ).figure
-      : null;
-    const size = figure
-      ? Math.min(GRAMOPHONE_SIZE_PX, figure.w, figure.h)
-      : GRAMOPHONE_SIZE_PX;
+    const gram = this.gramophoneGeometry();
     entities.push({
       id: "gramophone",
       slotIndex: -1,
       role: "neutral",
       state: "idle",
-      x: figure ? figure.x + figure.w / 2 : this.logicSpace.w / 2,
-      y: figure ? figure.y + figure.h / 2 : this.logicSpace.h * 0.32,
-      w: size,
-      h: size,
+      x: gram.cx,
+      y: gram.cy,
+      w: gram.size,
+      h: gram.size,
       label: "Máy phát âm",
       spokenLabel: this.content.audio_prompt.text,
     });
@@ -524,30 +516,113 @@ export class GT018Session extends TemplateGameSession<
     return splitFigure(body, GRAMOPHONE_SIZE_PX).rest;
   }
 
-  private gramophoneSlot(rs: RenderSystem): Slot {
+  /** Khung hình của máy hát (không tính dải chỉ dẫn): một nguồn cho chạm và vẽ. */
+  private figureRect(): ZoneRect {
+    if (!this.stageRect) {
+      // Chưa có sân khấu từ shell: khung giả quanh vị trí mặc định cũ.
+      return {
+        x: this.logicSpace.w / 2 - 160,
+        y: this.logicSpace.h * 0.32 - GRAMOPHONE_SIZE_PX / 2,
+        w: 320,
+        h: GRAMOPHONE_SIZE_PX + 20,
+      };
+    }
     const showCaption =
-      !this.stageRect ||
       this.content.audio_prompt.text.trim() !== this.content.prompt.trim();
-    const figure = this.stageRect
-      ? splitFigure(
-          showCaption ? splitCaption(this.stageRect).body : this.stageRect,
-          GRAMOPHONE_SIZE_PX
-        ).figure
-      : null;
-    const size = figure
+    return splitFigure(
+      showCaption ? splitCaption(this.stageRect).body : this.stageRect,
+      GRAMOPHONE_SIZE_PX
+    ).figure;
+  }
+
+  /**
+   * Các vật mà lời đọc gọi tên, theo thứ tự nói — kênh thị giác thay âm thanh.
+   * Rỗng khi còn tiếng (`BR-E018-06`). Nguồn: `audio_prompt.strip_item_ids`;
+   * thiếu thì `sequence` lấy `target_sequence` (lời đọc là chuỗi thao tác),
+   * còn `select` rỗng — không suy từ `is_correct`, vì lời đọc có thể là câu đố
+   * (quy luật, tiếng kêu) mà phương án đúng chính là đáp án.
+   */
+  getInstructionStrip(): readonly GT018Content["options"][number][] {
+    if (this.isAudioEnabled()) {
+      return [];
+    }
+    const ids =
+      this.content.audio_prompt.strip_item_ids ??
+      (this.content.response_mode === "sequence"
+        ? (this.content.target_sequence ?? [])
+        : []);
+    return ids.flatMap((id) => {
+      const opt = this.content.options.find((o) => o.item_id === id);
+      return opt ? [opt] : [];
+    });
+  }
+
+  /** Tâm và cạnh của máy hát; thu nhỏ khi tắt tiếng để chừa chỗ cho dải. */
+  private gramophoneGeometry(): { cx: number; cy: number; size: number } {
+    const strip = this.getInstructionStrip();
+    const figure = this.figureRect();
+    if (strip.length > 0) {
+      // +1 chip cho biểu tượng loa tắt tiếng ở đầu dải.
+      return computeMutedStripLayout(figure, strip.length + 1).gramophone;
+    }
+    const size = this.stageRect
       ? Math.min(GRAMOPHONE_SIZE_PX, figure.w, figure.h)
       : GRAMOPHONE_SIZE_PX;
+    return this.stageRect
+      ? { cx: figure.x + figure.w / 2, cy: figure.y + figure.h / 2, size }
+      : { cx: this.logicSpace.w / 2, cy: this.logicSpace.h * 0.32, size };
+  }
+
+  private gramophoneSlot(): Slot {
+    const g = this.gramophoneGeometry();
     return {
       index: 0,
-      x: figure ? figure.x + figure.w / 2 : rs.LOGIC_WIDTH / 2,
-      y: figure ? figure.y + figure.h / 2 : rs.LOGIC_HEIGHT * 0.32,
-      w: size,
-      h: size,
-      hitW: size,
-      hitH: size,
+      x: g.cx,
+      y: g.cy,
+      w: g.size,
+      h: g.size,
+      hitW: g.size,
+      hitH: g.size,
       page: 0,
       role: "target",
     };
+  }
+
+  /** Dải biểu tượng chỉ dẫn khi tắt tiếng: loa gạch chéo rồi từng bước. */
+  private drawInstructionStrip(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem
+  ): void {
+    const strip = this.getInstructionStrip();
+    if (strip.length === 0) {
+      return;
+    }
+    const layout = computeMutedStripLayout(this.figureRect(), strip.length + 1);
+    layout.chips.forEach((chip, i) => {
+      const slot: Slot = {
+        index: 0,
+        x: chip.cx,
+        y: chip.cy,
+        w: chip.size * 0.78,
+        h: chip.size * 0.78,
+        hitW: chip.size,
+        hitH: chip.size,
+        page: 0,
+        role: "target",
+      };
+      drawStripChipCard(ctx, chip, i === 0);
+      if (i === 0) {
+        drawGlyphInSlot(ctx, "🔇", slot);
+        return;
+      }
+      const opt = strip[i - 1];
+      if (opt) {
+        drawSlotItem(ctx, rs, slot, {
+          id: `strip-${opt.item_id}`,
+          asset: opt.asset,
+        });
+      }
+    });
   }
 
   private renderOptionSlot(
@@ -610,7 +685,8 @@ export class GT018Session extends TemplateGameSession<
       );
     }
 
-    drawGramophone(ctx, this.gramophoneSlot(rs), false);
+    drawGramophone(ctx, this.gramophoneSlot(), false);
+    this.drawInstructionStrip(ctx, rs);
     drawWoodenTokenDock(
       ctx,
       rs,

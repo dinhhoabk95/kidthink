@@ -61,6 +61,8 @@ export const projectGT018: Projection<"GT-018"> = {
         prompt: audioText,
         audio_prompt: {
           text: audioText,
+          // Lời đọc gọi tên đúng vật này (`BR-E018-06`).
+          strip_item_ids: [targetItem.id],
         },
         response_mode: "select" as const,
         options: shuffleDeterministic(options, rng),

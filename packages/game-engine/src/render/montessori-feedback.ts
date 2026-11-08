@@ -121,3 +121,30 @@ export function drawBeatBall(
   ctx.fill();
   ctx.restore();
 }
+
+// ── Thẻ chip của dải biểu tượng thay âm thanh (GT-018, `BR-E018-06`) ──
+
+/**
+ * Nền thẻ cho một chip của dải chỉ dẫn khi tắt tiếng: giấy kem, viền gỗ.
+ * Chỉ vẽ nền; biểu tượng bên trong do engine vẽ bằng primitive của slot.
+ * `speaker` đổi nền sang hổ phách nhạt để phân biệt chip loa tắt tiếng với
+ * các bước chỉ dẫn.
+ */
+export function drawStripChipCard(
+  ctx: CanvasRenderingContext2D,
+  chip: { readonly cx: number; readonly cy: number; readonly size: number },
+  speaker = false
+): void {
+  const half = chip.size / 2;
+  ctx.save();
+  ctx.fillStyle = speaker
+    ? designTokens.colors.montessori.amberLight
+    : designTokens.colors.montessori.paper;
+  ctx.strokeStyle = designTokens.colors.montessori.woodBorder;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.roundRect(chip.cx - half, chip.cy - half, chip.size, chip.size, 8);
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+}

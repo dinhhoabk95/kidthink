@@ -1,7 +1,7 @@
 /** @generated from TEMPLATES@a1b2c3d4 — DO NOT EDIT MANUALLY (BR-TAK-03) */
 
 import type { EngineConfig } from "#src/core.js";
-import type { GameSession } from "#src/game-session.js";
+import { type GameSession, TemplateGameSession } from "#src/game-session.js";
 
 export type GameSessionConstructor = new (
   content: never,
@@ -201,10 +201,16 @@ export function createGameSessionSync(
       `TEMPLATE_NOT_LOADED: Template ${templateCode} must be preloaded before synchronous creation`
     );
   }
-  return Reflect.construct(SessionClass, [
+  const session: GameSession = Reflect.construct(SessionClass, [
     cfg.content_pack,
     cfg.difficulty_params,
     cfg.layout_seed,
     cfg.theme_id,
   ]);
+  // Trạng thái âm của shell đi vào session để engine hiện kênh thị giác thay
+  // âm thanh khi tắt tiếng (`BR-E018-06`).
+  if (session instanceof TemplateGameSession) {
+    session.setAudioEnabled(cfg.audio_enabled);
+  }
+  return session;
 }

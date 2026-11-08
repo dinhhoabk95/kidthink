@@ -11,6 +11,13 @@ export const GT018ContentSchema = z
      */
     audio_prompt: z.object({
       text: z.string().min(1),
+      /**
+       * Các vật mà lời đọc **gọi tên**, theo thứ tự nói — dải biểu tượng khi tắt
+       * tiếng chỉ vẽ đúng chừng này (`BR-E018-06`). Thiếu thì chế độ `sequence`
+       * dùng `target_sequence`, chế độ `select` không vẽ vật nào: engine không
+       * tự đoán lời đọc nói gì, vì vẽ phương án đúng của một câu đố nghe là lộ đáp án.
+       */
+      strip_item_ids: z.array(z.string()).min(1).optional(),
     }),
     response_mode: z.enum(["select", "sequence"]).default("select"),
     target_sequence: z.array(z.string()).optional(),
@@ -27,6 +34,14 @@ export const GT018ContentSchema = z
   })
   .superRefine((content, ctx) => {
     const ids = content.options.map((o) => o.item_id);
+    const stripIds = content.audio_prompt.strip_item_ids;
+    if (stripIds?.some((id) => !ids.includes(id))) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "audio_prompt.strip_item_ids: mọi id phải có trong options",
+        path: ["audio_prompt", "strip_item_ids"],
+      });
+    }
     if (content.response_mode === "select") {
       const correct = content.options.filter((o) => o.is_correct).length;
       // Cần ít nhất 1 đáp án đúng và còn ít nhất 1 mồi nhử, nếu không level vô nghiệm/vô nghĩa.

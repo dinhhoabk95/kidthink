@@ -10,6 +10,7 @@ export const GT018_FIXTURES: {
       prompt: "Bé hãy nghe và chọn hình con mèo nhé!",
       audio_prompt: {
         text: "Con mèo",
+        strip_item_ids: ["cat"],
       },
       response_mode: "select",
       options: [
@@ -42,6 +43,7 @@ export const GT018_FIXTURES: {
       prompt: "Bé hãy nghe quy luật và chọn quả tiếp theo nhé!",
       audio_prompt: {
         text: "Táo đỏ, chuối vàng, táo đỏ, tiếp theo là quả gì?",
+        strip_item_ids: ["apple", "banana", "apple"],
       },
       response_mode: "select",
       options: [

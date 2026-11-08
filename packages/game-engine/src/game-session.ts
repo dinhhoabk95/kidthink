@@ -242,6 +242,21 @@ export abstract class TemplateGameSession<
   /** Increases by 1 every prepareRound. Tests use this to assert slot recomputation count. */
   roundGeneration = 0;
 
+  /**
+   * Âm thanh của thiết bị còn bật không (`audio_enabled` của config tải).
+   * Engine có kênh nghe (GT-018) đọc cờ này để hiện kênh thị giác thay thế
+   * (`BR-E018-06`). Mặc định bật; `createGameSessionSync` gán từ config.
+   */
+  private audioEnabled = true;
+
+  setAudioEnabled(enabled: boolean): void {
+    this.audioEnabled = enabled;
+  }
+
+  isAudioEnabled(): boolean {
+    return this.audioEnabled;
+  }
+
   /** Read-only view of the current round's slots. */
   get slots(): readonly Slot[] {
     return this._slots;
