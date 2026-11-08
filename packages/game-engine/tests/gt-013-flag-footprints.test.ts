@@ -2,8 +2,8 @@ import { describe, expect, it, vi } from "vitest";
 import { DEFAULT_LOGIC_SPACE } from "#src/layout/constants";
 import { computeStageZones } from "#src/layout/stage-zones";
 import {
-  drawMazeCheese,
   drawMazeFootprints,
+  drawMazeGoalFlag,
   MAZE_FOOTPRINTS_PER_STEP,
   mazeFootprints,
 } from "#src/render/board-shapes";
@@ -19,12 +19,12 @@ vi.mock("#src/render/board-shapes", async (importOriginal) => {
     await importOriginal<typeof import("#src/render/board-shapes")>();
   return {
     ...actual,
-    drawMazeCheese: vi.fn(actual.drawMazeCheese),
+    drawMazeGoalFlag: vi.fn(actual.drawMazeGoalFlag),
     drawMazeFootprints: vi.fn(actual.drawMazeFootprints),
   };
 });
 
-/** Phô mai ở đích và dấu chân trên đường đã đi (`BR-E013-09`). */
+/** Lá cờ ở đích (`BR-E013-10`, thay phô mai) và dấu chân trên đường đã đi (`BR-E013-09`). */
 const ZONES = computeStageZones({
   logicW: DEFAULT_LOGIC_SPACE.w,
   logicH: DEFAULT_LOGIC_SPACE.h,
@@ -41,7 +41,7 @@ function openSession(fixture: (typeof GT013_FIXTURES)[number]): GT013Session {
 }
 
 function frame(session: GT013Session, timeMs: number, reduced = false): void {
-  vi.mocked(drawMazeCheese).mockClear();
+  vi.mocked(drawMazeGoalFlag).mockClear();
   vi.mocked(drawMazeFootprints).mockClear();
   const ctx = createFakeCanvas(960, 540).getContext("2d");
   if (!ctx) {
@@ -52,13 +52,13 @@ function frame(session: GT013Session, timeMs: number, reduced = false): void {
   session.render(ctx as CanvasRenderingContext2D, rs, timeMs);
 }
 
-describe("GT-013: phô mai và dấu chân (BR-E013-09)", () => {
-  it("mọi fixture: phô mai vẽ đúng một lần ở ô đích, ngay từ đầu", () => {
+describe("GT-013: cờ ở đích và dấu chân (BR-E013-09, BR-E013-10)", () => {
+  it("mọi fixture: lá cờ vẽ đúng một lần ở ô đích, ngay từ đầu", () => {
     for (const fixture of GT013_FIXTURES) {
       const session = openSession(fixture);
       frame(session, 0);
-      expect(vi.mocked(drawMazeCheese)).toHaveBeenCalledTimes(1);
-      expect(vi.mocked(drawMazeCheese).mock.calls[0]?.[1]).toBe(
+      expect(vi.mocked(drawMazeGoalFlag)).toHaveBeenCalledTimes(1);
+      expect(vi.mocked(drawMazeGoalFlag).mock.calls[0]?.[1]).toBe(
         fixture.content.grid
       );
     }

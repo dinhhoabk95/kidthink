@@ -51,8 +51,8 @@ import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
 import {
   boxFromSlots,
   drawMazeBoard,
-  drawMazeCheese,
   drawMazeFootprints,
+  drawMazeGoalFlag,
   drawRequiredCells,
   drawSceneBackground,
   drawStoryCharacterInStage,
@@ -584,7 +584,7 @@ export class GT013Session extends TemplateGameSession<
       return;
     }
     drawMazeBoard(ctx, this.content.grid, box, this.tracker.getPath());
-    drawMazeCheese(ctx, this.content.grid, box);
+    drawMazeGoalFlag(ctx, this.content.grid, box);
     drawMazeFootprints(ctx, this.content.grid, box, this.tracker.getPath());
     drawRequiredCells(ctx, this.content.grid, box, this.content.required_cells);
 

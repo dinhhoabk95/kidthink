@@ -198,7 +198,7 @@ export function drawRequiredCells(
   ctx.restore();
 }
 
-// ── Phô mai ở đích và dấu chân trên đường (GT-013, `BR-E013-09`) ─────
+// ── Cờ ở đích và dấu chân trên đường (GT-013, `BR-E013-09`, `BR-E013-10`) ─────
 
 /** Số dấu chân mỗi đoạn đường giữa hai ô liền kề. */
 export const MAZE_FOOTPRINTS_PER_STEP = 2;
@@ -273,8 +273,12 @@ export function drawMazeFootprints(
   ctx.restore();
 }
 
-/** Miếng phô mai (hình nêm vàng có lỗ) đặt trên ô đích. */
-export function drawMazeCheese(
+/**
+ * Lá cờ trung tính trên ô đích (`BR-E013-10`). Content không có trường nhân vật
+ * hay vật ở đích, và đề đặt tên đích tuỳ level ("cà rốt", "ngôi nhà", "ô 🥕"),
+ * nên đích không được là một vật cụ thể: cột cờ gỗ cùng cờ đuôi nheo.
+ */
+export function drawMazeGoalFlag(
   ctx: CanvasRenderingContext2D,
   grid: MazeGrid,
   box: SceneBox
@@ -283,28 +287,27 @@ export function drawMazeCheese(
   const c = mazeCellCenter(grid.goal, m);
   const r = Math.min(m.cellW, m.cellH) * 0.26;
   const mo = designTokens.colors.montessori;
+  const poleX = c.x - r * 0.45;
+  const top = c.y - r;
   ctx.save();
-  ctx.fillStyle = mo.amber;
-  ctx.strokeStyle = mo.amberDark;
-  ctx.lineWidth = 2.5;
+  ctx.strokeStyle = mo.woodBorder;
+  ctx.lineWidth = 3;
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  ctx.moveTo(poleX, c.y + r);
+  ctx.lineTo(poleX, top);
+  ctx.stroke();
+  ctx.fillStyle = mo.indigo;
+  ctx.strokeStyle = mo.indigo;
+  ctx.lineWidth = 2;
   ctx.lineJoin = "round";
   ctx.beginPath();
-  ctx.moveTo(c.x - r, c.y + r * 0.6);
-  ctx.lineTo(c.x + r, c.y + r * 0.6);
-  ctx.lineTo(c.x + r, c.y - r * 0.2);
-  ctx.lineTo(c.x - r, c.y + r * 0.6);
+  ctx.moveTo(poleX, top);
+  ctx.lineTo(poleX + r * 1.3, top + r * 0.35);
+  ctx.lineTo(poleX, top + r * 0.8);
   ctx.closePath();
   ctx.fill();
   ctx.stroke();
-  ctx.fillStyle = mo.amberDeep;
-  for (const [dx, dy, k] of [
-    [0.45, 0.2, 0.14],
-    [0.7, 0.4, 0.1],
-  ] as const) {
-    ctx.beginPath();
-    ctx.arc(c.x + r * dx, c.y + r * dy, r * k, 0, Math.PI * 2);
-    ctx.fill();
-  }
   ctx.restore();
 }
 

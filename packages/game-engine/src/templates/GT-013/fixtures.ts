@@ -16,7 +16,7 @@ export const GT013_FIXTURES: {
 }[] = [
   {
     content: {
-      prompt: "Bé đưa bạn thỏ theo lối duy nhất về tới cà rốt nhé.",
+      prompt: "Bé đưa bạn nhỏ theo lối duy nhất về tới lá cờ nhé.",
       grid: {
         rows: 3,
         cols: 3,
