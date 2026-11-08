@@ -139,9 +139,9 @@ export function insetRect(
 }
 
 /** Gờ gỗ đáy của `drawShapeTray`, tịnh tiến xuống dưới mép khay. */
-const TRAY_DECOR_RIM_PX = 4;
-const TRAY_DECOR_DRAW_PAD_X_PX = 22;
-const TRAY_DECOR_DRAW_PAD_Y_PX = 16;
+export const TRAY_DECOR_RIM_PX = 4;
+export const TRAY_DECOR_DRAW_PAD_X_PX = 22;
+export const TRAY_DECOR_DRAW_PAD_Y_PX = 16;
 
 /**
  * Hộp để truyền cho `drawShapeTray` sao cho khay vẽ (hộp cộng lề vẽ cứng) nằm

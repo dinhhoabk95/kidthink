@@ -6,6 +6,12 @@ import {
   SAFE_MARGIN_PX,
   SLOT_GAP_PX,
 } from "./constants.js";
+import {
+  DOCK_PADDING_PX,
+  TRAY_DECOR_DRAW_PAD_X_PX,
+  TRAY_DECOR_DRAW_PAD_Y_PX,
+  TRAY_DECOR_RIM_PX,
+} from "./slot-fit.js";
 import type { LayoutInput, Slot } from "./types.js";
 
 /** Hằng của `equation-rows` (GT-010) — xem computeEquationRowsLayout. */
@@ -317,6 +323,23 @@ export function computeMatrixSlotGridLayout(input: LayoutInput): Slot[] {
 }
 
 /**
+ * Khe giữa lưới và hàng đáp án của `matrix-3x3`. Trong stage, hai khay vẽ lùi ra
+ * ngoài ô nên khe phải cộng phần lùi đó (`BR-E011-07`); ngoài stage giữ
+ * `SLOT_GAP_PX`.
+ */
+function matrixSectionGap(inStage: boolean, sideBySide: boolean): number {
+  if (!inStage) {
+    return SLOT_GAP_PX;
+  }
+  if (sideBySide) {
+    return SLOT_GAP_PX + TRAY_DECOR_DRAW_PAD_X_PX + DOCK_PADDING_PX;
+  }
+  return (
+    SLOT_GAP_PX + TRAY_DECOR_DRAW_PAD_Y_PX + TRAY_DECOR_RIM_PX + DOCK_PADDING_PX
+  );
+}
+
+/**
  * Bố cục ma trận chọn hình (matrix-3x3) — `GT-011`.
  *
  * Khác `matrix-slot-grid` ở chỗ khay chọn nằm **dưới** ma trận chứ không bên phải
@@ -340,14 +363,20 @@ export function computeMatrix3x3Layout(input: LayoutInput): Slot[] {
   // dưới nó — chồng hai tầng ở sân khấu thấp làm ma trận tràn đỉnh.
   const sideBySide =
     input.inStage === true && availW >= availH * MATRIX_SIDE_BY_SIDE_ASPECT;
+  // Trong stage, khay lưới và khay đáp án (dock) vẽ lùi ra ngoài ô, nên khe giữa
+  // hai nhóm ô phải cộng đủ phần lùi để hai khay còn cách nhau `SLOT_GAP_PX`
+  // (`BR-E011-07`). Ngoài stage (bề mặt cũ) giữ khe `SLOT_GAP_PX`.
+  const sectionGap = matrixSectionGap(input.inStage === true, sideBySide);
   const maxCellH = sideBySide
     ? Math.floor((availH - (gridSize - 1) * SLOT_GAP_PX) / gridSize)
-    : Math.floor((availH - gridSize * SLOT_GAP_PX) / (gridSize + 1));
+    : Math.floor(
+        (availH - (gridSize - 1) * SLOT_GAP_PX - sectionGap) / (gridSize + 1)
+      );
   const cell = Math.max(touchFloor, Math.min(MATRIX_3X3_CELL_PX, maxCellH));
   const matrixH = gridSize * cell + (gridSize - 1) * SLOT_GAP_PX;
   const matrixW = matrixH;
 
-  const trayRegionW = sideBySide ? availW - matrixW - SLOT_GAP_PX : availW;
+  const trayRegionW = sideBySide ? availW - matrixW - sectionGap : availW;
   const trayCols = Math.max(
     1,
     Math.min(
@@ -358,13 +387,13 @@ export function computeMatrix3x3Layout(input: LayoutInput): Slot[] {
   const trayRows = Math.max(1, Math.ceil(slotCount / trayCols));
   const trayH = trayRows * cell + (trayRows - 1) * SLOT_GAP_PX;
 
-  const blockH = sideBySide ? matrixH : matrixH + SLOT_GAP_PX + trayH;
+  const blockH = sideBySide ? matrixH : matrixH + sectionGap + trayH;
   const blockStartY = CONTENT_TOP_PX + Math.max(0, (availH - blockH) / 2);
   const matrixStartX = sideBySide
     ? SAFE_MARGIN_PX
     : SAFE_MARGIN_PX + (availW - matrixW) / 2;
   const trayRegionX = sideBySide
-    ? SAFE_MARGIN_PX + matrixW + SLOT_GAP_PX
+    ? SAFE_MARGIN_PX + matrixW + sectionGap
     : SAFE_MARGIN_PX;
 
   const slots: Slot[] = [];
@@ -386,7 +415,7 @@ export function computeMatrix3x3Layout(input: LayoutInput): Slot[] {
 
   const trayStartY = sideBySide
     ? CONTENT_TOP_PX + Math.max(0, (availH - trayH) / 2)
-    : blockStartY + matrixH + SLOT_GAP_PX;
+    : blockStartY + matrixH + sectionGap;
   for (let o = 0; o < slotCount; o++) {
     const row = Math.floor(o / trayCols);
     const col = o % trayCols;
