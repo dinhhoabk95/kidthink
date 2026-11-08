@@ -31,7 +31,9 @@ import {
   drawGhostAssetInSlot,
   drawSceneBackground,
   drawSlotItem,
+  drawStoryCharacterInStage,
   drawWoodenTokenDock,
+  snapWobbleOffset,
 } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
 import {
@@ -124,6 +126,8 @@ export class GT023Session extends TemplateGameSession<
   private wrongPartId: string | null = null;
   private readonly wrongFlash = new WrongFlash();
   private lastFrameMs = 0;
+  /** Mốc đồng hồ khung lúc mảnh khớp từng neo (mảnh rung từ đây, `BR-E023-10`). */
+  private readonly snappedAtMs: Map<string, number> = new Map();
 
   /** Mảnh nằm trong khay, mỏ neo đứng trên sân khấu (`BR-PSZ-01`). */
   override readonly needsTray = true;
@@ -152,6 +156,7 @@ export class GT023Session extends TemplateGameSession<
 
   update(deltaMs: number): void {
     this.mood.tick(deltaMs);
+    this.lastFrameMs += deltaMs;
   }
 
   setupEntities(): void {
@@ -160,6 +165,7 @@ export class GT023Session extends TemplateGameSession<
     this.wrongPartId = null;
     this.wrongFlash.clear();
     this.lastFrameMs = 0;
+    this.snappedAtMs.clear();
     this.placementMechanic.reset();
     this.partById = new Map(this.content.parts.map((p) => [p.part_id, p]));
 
@@ -234,6 +240,7 @@ export class GT023Session extends TemplateGameSession<
 
     if (result.valid) {
       if (result.isAnchorMatch) {
+        this.snappedAtMs.set(anchorId, this.lastFrameMs);
         this.queueSfx("piece_click");
         this.mood.set("happy", GT023_HAPPY_MS);
       } else {
@@ -687,6 +694,8 @@ export class GT023Session extends TemplateGameSession<
       this.wrongPartId = null;
     }
     drawSceneBackground(ctx, rs, this.themeId);
+    // Chim Gõ Kiến ở góc trống, ngoài vùng chạm (`BR-E023-10`).
+    drawStoryCharacterInStage(ctx, "woodpecker", this.stageRect, this.slots);
     const zones = pickTrayZones(this.stageRect, this.trayRect);
     if (zones) {
       // Lời dẫn do shell vẽ; mảnh nằm trên khay của khung năm vùng.
@@ -718,11 +727,7 @@ export class GT023Session extends TemplateGameSession<
         );
         continue;
       }
-      drawSlotItem(ctx, rs, slot, {
-        id: part.part_id,
-        asset: part.asset,
-        state: "correct",
-      });
+      this.drawSnappedPart(ctx, rs, slot, part, anchor.anchor_id, timeMs);
     }
 
     this.content.parts.forEach((part, i) => {
@@ -754,6 +759,27 @@ export class GT023Session extends TemplateGameSession<
         );
       }
     });
+  }
+
+  /** Mảnh đã khớp neo, rung nhẹ rồi đứng yên (`BR-E023-10`); chỉ dời chỗ vẽ, không đổi vùng chạm. */
+  private drawSnappedPart(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    slot: Slot,
+    part: GT023Content["parts"][number],
+    anchorId: string,
+    timeMs: number
+  ): void {
+    const wobble = snapWobbleOffset(
+      timeMs - (this.snappedAtMs.get(anchorId) ?? Number.NEGATIVE_INFINITY),
+      rs.reducedMotion
+    );
+    drawSlotItem(
+      ctx,
+      rs,
+      wobble === 0 ? slot : { ...slot, x: slot.x + wobble },
+      { id: part.part_id, asset: part.asset, state: "correct" }
+    );
   }
 
   private resolveSourcePartState(partId: string) {

@@ -2316,3 +2316,30 @@ export function drawMirrorFlash(
   ctx.stroke();
   ctx.restore();
 }
+
+// ── Mảnh gỗ rung nhẹ khi khớp neo (GT-023, `BR-E023-10`) ──────────────
+
+/** Mảnh vừa khớp neo rung tắt dần trong ngần này ms. */
+export const SNAP_WOBBLE_MS = 400;
+/** Biên độ rung ngang lớn nhất, px logic. */
+export const SNAP_WOBBLE_AMPLITUDE_PX = 3;
+const SNAP_WOBBLE_CYCLES = 3;
+
+/**
+ * Độ lệch ngang (px) của mảnh vừa khớp `elapsedMs` sau lúc khớp: sóng sin tắt
+ * dần về 0 sau `SNAP_WOBBLE_MS`. `reduced_motion` là 0 (trạng thái tĩnh cuối).
+ */
+export function snapWobbleOffset(
+  elapsedMs: number,
+  reducedMotion: boolean
+): number {
+  if (reducedMotion || elapsedMs < 0 || elapsedMs >= SNAP_WOBBLE_MS) {
+    return 0;
+  }
+  const t = elapsedMs / SNAP_WOBBLE_MS;
+  return (
+    SNAP_WOBBLE_AMPLITUDE_PX *
+    (1 - t) *
+    Math.sin(t * SNAP_WOBBLE_CYCLES * Math.PI * 2)
+  );
+}
