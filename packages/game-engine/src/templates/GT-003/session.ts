@@ -27,6 +27,7 @@ import {
 import type { LayoutId, Slot } from "#src/layout/types";
 import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
 import {
+  basketShakeOffset,
   type ContainerBox,
   drawClippedToZone,
   drawContainerTarget,
@@ -89,6 +90,8 @@ export class GT003Session extends TemplateGameSession<
   /** Nhịp hổ phách theo vật; thời lượng riêng 260 ms do spec GT-003 chốt (vật trôi về chỗ cũ). */
   private readonly wrongFlashes = new WrongFlashMap(WRONG_FEEDBACK_MS);
   private lastFrameMs = 0;
+  /** Mốc đồng hồ khung lúc vật đúng vừa rơi vào rổ, cho nhịp rung (`BR-E003-09`). */
+  private basketShakeStartMs: number | null = null;
   hoveredContainer = false;
 
   /** Vật nằm trong khay chung, rổ đứng trên sân khấu (`BR-PSZ-01`). */
@@ -107,6 +110,7 @@ export class GT003Session extends TemplateGameSession<
     this.itemStates = new Map();
     this.wrongFlashes.clearAll();
     this.lastFrameMs = 0;
+    this.basketShakeStartMs = null;
     this.hoveredContainer = false;
     this.placementTargets = this.content.items
       .filter((i) => i.is_correct)
@@ -358,6 +362,7 @@ export class GT003Session extends TemplateGameSession<
     if (item.is_correct) {
       this.mechanic.place(itemId, containerId);
       this.queueSfx("drop_thud");
+      this.basketShakeStartMs = this.lastFrameMs;
       this.setItemState(itemId, "correct");
       this.wrongFlashes.clear(itemId);
       this.spawnSuccessParticles(itemId);
@@ -599,6 +604,16 @@ export class GT003Session extends TemplateGameSession<
       placements.has(i.item_id)
     );
 
+    // Rổ rung nhẹ khi vật đúng rơi vào; vùng chạm (`getContainerBox`) đứng yên.
+    const shakeX =
+      this.basketShakeStartMs === null
+        ? 0
+        : basketShakeOffset(
+            this.lastFrameMs - this.basketShakeStartMs,
+            rs.reducedMotion
+          );
+    ctx.save();
+    ctx.translate(shakeX, 0);
     drawContainerTarget(ctx, rs, box, {
       label: this.content.container.label,
       placedItems,
@@ -607,6 +622,7 @@ export class GT003Session extends TemplateGameSession<
       targetCount: this.content.items.filter((i) => i.is_correct).length,
       isHovered: this.hoveredContainer,
     });
+    ctx.restore();
   }
 
   private drawInteractive(

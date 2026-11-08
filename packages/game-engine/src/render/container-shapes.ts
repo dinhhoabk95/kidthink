@@ -574,3 +574,30 @@ export function drawTrafficLight(
   );
   ctx.restore();
 }
+
+// ── Rổ rung nhẹ khi vật rơi vào (GT-003, `BR-E003-09`) ────────────────
+
+/** Rổ rung trong ngần này ms kể từ lúc vật rơi vào. */
+export const BASKET_SHAKE_MS = 320;
+const BASKET_SHAKE_AMPLITUDE_PX = 5;
+const BASKET_SHAKE_CYCLES = 3;
+
+/**
+ * Độ lệch ngang của rổ ở `elapsedMs` kể từ lúc có vật rơi vào — hàm thuần,
+ * sóng sin tắt dần về 0 đúng lúc hết nhịp. `reduced_motion` hoặc hết nhịp thì
+ * không lệch (trạng thái cuối tĩnh, `BR-FBK-09`).
+ */
+export function basketShakeOffset(
+  elapsedMs: number,
+  reducedMotion: boolean
+): number {
+  if (reducedMotion || elapsedMs < 0 || elapsedMs >= BASKET_SHAKE_MS) {
+    return 0;
+  }
+  const t = elapsedMs / BASKET_SHAKE_MS;
+  return (
+    BASKET_SHAKE_AMPLITUDE_PX *
+    (1 - t) *
+    Math.sin(Math.PI * 2 * BASKET_SHAKE_CYCLES * t)
+  );
+}
