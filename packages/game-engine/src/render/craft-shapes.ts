@@ -1194,6 +1194,109 @@ export function drawStoryCharacter(
   ctx.restore();
 }
 
+// ── Rèm sân khấu cho bước recall (GT-000, `BR-E000-16`) ──────────────
+
+/** Rèm kéo từ giữa ra hai bên trong ngần này ms khi vào bước `recall`. */
+export const CURTAIN_OPEN_MS = 700;
+const CURTAIN_PAD_PX = 10;
+const CURTAIN_STRIP_PX = 22;
+const CURTAIN_FOLDS = 4;
+
+export interface CurtainGeometry {
+  /** Tấm rèm trái; `null` khi rộng dưới 1 px. */
+  readonly left: CharacterRect | null;
+  /** Tấm rèm phải; `null` khi rộng dưới 1 px. */
+  readonly right: CharacterRect | null;
+  /** Ô sân khấu rèm che (bao các vùng chạm cộng lề). */
+  readonly window: CharacterRect;
+}
+
+/**
+ * Độ mở của rèm ở `elapsedMs` kể từ lúc vào bước: 0 là khép kín, 1 là mở hẳn,
+ * theo đường cong êm. `reduced_motion` luôn 1 (trạng thái tĩnh cuối).
+ */
+export function curtainOpenness(
+  elapsedMs: number,
+  reducedMotion: boolean
+): number {
+  if (reducedMotion || elapsedMs >= CURTAIN_OPEN_MS) {
+    return 1;
+  }
+  const p = Math.max(0, elapsedMs / CURTAIN_OPEN_MS);
+  return p * p * (3 - 2 * p);
+}
+
+/**
+ * Hình học hai tấm rèm quanh hàng vật `hitRects` trong bề ngang logic `boundsW`.
+ * Khép kín (`openness = 0`) rèm phủ kín ô sân khấu; mở hẳn (`1`) mỗi tấm chỉ còn
+ * một dải ngoài mép ô, không chạm vùng chạm nào. Rèm luôn nằm trong `[0, boundsW]`.
+ * `null` khi không có vật nào.
+ */
+export function curtainGeometry(
+  hitRects: readonly CharacterRect[],
+  boundsW: number,
+  openness: number
+): CurtainGeometry | null {
+  if (hitRects.length === 0) {
+    return null;
+  }
+  const minX = Math.min(...hitRects.map((r) => r.x)) - CURTAIN_PAD_PX;
+  const maxX = Math.max(...hitRects.map((r) => r.x + r.w)) + CURTAIN_PAD_PX;
+  const minY = Math.min(...hitRects.map((r) => r.y)) - CURTAIN_PAD_PX;
+  const maxY = Math.max(...hitRects.map((r) => r.y + r.h)) + CURTAIN_PAD_PX;
+  const win = { x: minX, y: minY, w: maxX - minX, h: maxY - minY };
+  const o = Math.min(1, Math.max(0, openness));
+  const mid = (minX + maxX) / 2;
+  const leftEdge = Math.max(0, minX - CURTAIN_STRIP_PX);
+  const rightEdge = Math.min(boundsW, maxX + CURTAIN_STRIP_PX);
+  const innerLeft = mid + (minX - mid) * o;
+  const innerRight = mid + (maxX - mid) * o;
+  const left =
+    innerLeft - leftEdge >= 1
+      ? { x: leftEdge, y: minY, w: innerLeft - leftEdge, h: win.h }
+      : null;
+  const right =
+    rightEdge - innerRight >= 1
+      ? { x: innerRight, y: minY, w: rightEdge - innerRight, h: win.h }
+      : null;
+  return { left, right, window: win };
+}
+
+/** Hai tấm rèm đỏ có nếp gấp và thanh treo gỗ phía trên. */
+export function drawCurtains(
+  ctx: CanvasRenderingContext2D,
+  geometry: CurtainGeometry
+): void {
+  const m = designTokens.colors.montessori;
+  ctx.save();
+  ctx.lineWidth = 2;
+  for (const drape of [geometry.left, geometry.right]) {
+    if (!drape) {
+      continue;
+    }
+    ctx.fillStyle = m.coral;
+    ctx.strokeStyle = m.amberDark;
+    ctx.fillRect(drape.x, drape.y, drape.w, drape.h);
+    ctx.strokeRect(drape.x, drape.y, drape.w, drape.h);
+    ctx.strokeStyle = m.coralLight;
+    ctx.beginPath();
+    for (let i = 1; i < CURTAIN_FOLDS; i++) {
+      const fx = drape.x + (drape.w * i) / CURTAIN_FOLDS;
+      ctx.moveTo(fx, drape.y);
+      ctx.lineTo(fx, drape.y + drape.h);
+    }
+    ctx.stroke();
+  }
+  const win = geometry.window;
+  const rodL = geometry.left?.x ?? win.x;
+  const rodR = geometry.right
+    ? geometry.right.x + geometry.right.w
+    : win.x + win.w;
+  ctx.fillStyle = m.woodBorder;
+  ctx.fillRect(rodL, win.y - 6, Math.max(0, rodR - rodL), 6);
+  ctx.restore();
+}
+
 /** Cạnh nhân vật kể chuyện, px logic (nhỏ, chỉ là điểm nhấn ngoài vùng chạm). */
 export const STORY_CHARACTER_SIZE_PX = 52;
 

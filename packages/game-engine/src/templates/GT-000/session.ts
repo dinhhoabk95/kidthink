@@ -9,7 +9,7 @@ import {
 import type { EngineView, Gesture } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
-import type { RenderItem } from "#src/render/index.js";
+import { curtainOpenness, type RenderItem } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
 import { AudioController } from "#src/systems/audio-controller";
 import { MoodPulse } from "#src/systems/mood-pulse";
@@ -74,6 +74,11 @@ export class GT000Session extends TemplateGameSession<
   /** Recall sai đã ghi, chờ `update()` sang bước kế (`BR-CIR-07`). */
   private advancePending = false;
   private readonly mood = new MoodPulse();
+  /** Đồng hồ khung: `update` cộng dồn, `render` gán lại (`BR-E000-16`). */
+  private lastFrameMs = 0;
+  /** Bước đã bắt đầu kéo rèm và mốc đồng hồ khung lúc đó (`BR-E000-16`). */
+  private curtainStepIndex = -1;
+  private curtainStartMs = 0;
   /** Chất liệu đã báo `tts_unavailable` — nghe lại không nhân đôi telemetry. */
   private readonly ttsMissReported = new Set<string>();
 
@@ -275,6 +280,7 @@ export class GT000Session extends TemplateGameSession<
   }
 
   update(deltaMs: number): void {
+    this.lastFrameMs += deltaMs;
     this.mood.tick(deltaMs);
     if (this.advancePending) {
       this.advancePending = false;
@@ -755,8 +761,13 @@ export class GT000Session extends TemplateGameSession<
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
-    _timeMs: number
+    timeMs: number
   ): void {
+    this.lastFrameMs = timeMs;
+    if (this.curtainStepIndex !== this.currentStepIndex) {
+      this.curtainStepIndex = this.currentStepIndex;
+      this.curtainStartMs = timeMs;
+    }
     const step = this.getCurrentStep();
     const renderItems = step ? this.collectRenderItems(step) : [];
     const promptText = step ? this.cachedStepPromptText : "";
@@ -770,6 +781,10 @@ export class GT000Session extends TemplateGameSession<
       renderItems,
       slots: this.slots,
       targetAsset,
+      curtainOpenness: curtainOpenness(
+        timeMs - this.curtainStartMs,
+        rs.reducedMotion
+      ),
     });
   }
 }

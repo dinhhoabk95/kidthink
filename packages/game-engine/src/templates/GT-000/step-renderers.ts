@@ -18,6 +18,8 @@ import {
 } from "#src/layout/hit-test";
 import type { Slot } from "#src/layout/types";
 import {
+  curtainGeometry,
+  drawCurtains,
   drawFlashcard,
   drawPromptText,
   drawSceneBackground,
@@ -270,6 +272,31 @@ export function evaluateGT000StepAnswer(
   }
 }
 
+/** Rèm phủ hàng lựa chọn lúc vào bước `recall`, mở dần ra hai bên (`BR-E000-16`). */
+function drawRecallCurtains(
+  ctx: CanvasRenderingContext2D,
+  rs: RenderSystem,
+  slots: readonly Slot[],
+  openness: number | undefined
+): void {
+  if (openness === undefined) {
+    return;
+  }
+  const curtains = curtainGeometry(
+    slots.map((s) => ({
+      x: s.x - s.hitW / 2,
+      y: s.y - s.hitH / 2,
+      w: s.hitW,
+      h: s.hitH,
+    })),
+    rs.LOGIC_WIDTH,
+    openness
+  );
+  if (curtains) {
+    drawCurtains(ctx, curtains);
+  }
+}
+
 export function renderGT000Step(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
@@ -281,6 +308,8 @@ export function renderGT000Step(
     renderItems: readonly RenderItem[];
     slots: readonly Slot[];
     targetAsset?: GT000Asset;
+    /** Độ mở rèm của bước `recall` (0..1); thiếu thì không vẽ rèm (`BR-E000-16`). */
+    curtainOpenness?: number;
   }
 ): void {
   drawSceneBackground(ctx, rs, options.themeId);
@@ -309,6 +338,14 @@ export function renderGT000Step(
       if (item && slot) {
         drawSlotItem(ctx, rs, slot, item);
       }
+    }
+    if (options.step.action === "recall") {
+      drawRecallCurtains(
+        ctx,
+        rs,
+        options.slots.slice(0, options.renderItems.length),
+        options.curtainOpenness
+      );
     }
   }
 }
