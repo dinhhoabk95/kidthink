@@ -6,9 +6,9 @@ import {
 } from "#src/rate-limiting";
 
 describe("Rate Limiting Registry (Task 6 / BR-RTL-01..05)", () => {
-  it("defines exactly 16 route classes matching spec §7", () => {
+  it("defines exactly 15 route classes matching spec §7", () => {
     const keys = Object.keys(RATE_LIMIT_CONFIGS);
-    expect(keys).toHaveLength(16);
+    expect(keys).toHaveLength(15);
   });
 
   it("auth and payment route classes failMode is 'closed'", () => {
@@ -25,7 +25,6 @@ describe("Rate Limiting Registry (Task 6 / BR-RTL-01..05)", () => {
   });
 
   it("non-auth/payment route classes failMode is 'open'", () => {
-    expect(RATE_LIMIT_CONFIGS["upload:image"]?.failMode).toBe("open");
     expect(RATE_LIMIT_CONFIGS["export:data"]?.failMode).toBe("open");
     expect(RATE_LIMIT_CONFIGS["play:events"]?.failMode).toBe("open");
     expect(RATE_LIMIT_CONFIGS.search?.failMode).toBe("open");

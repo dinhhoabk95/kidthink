@@ -5,7 +5,7 @@ area: platform
 status: implemented
 mvp: true
 phase: P0
-reviewed: 2026-10-18
+reviewed: 2026-11-08
 owns:
   - Bảng giới hạn theo route
   - Hai trục IP và account
@@ -18,7 +18,7 @@ depends_on:
 
 ## 1. Objective
 
-Chặn brute force, quét diện rộng, và lạm dụng tài nguyên đắt (upload, export, ingest event)
+Chặn brute force, quét diện rộng, và lạm dụng tài nguyên đắt (upload chứng từ, export, ingest event)
 trên một instance t3.small.
 
 Hai trục, không phải một: **khoá theo account** chặn nhắm mục tiêu; **giới hạn theo IP**
@@ -89,7 +89,6 @@ Cổng giữ hai bên trùng nhau: `packages/shared/tests/rate-limiting-registry
 | `auth:oauth:callback` | 30 | — | 15 phút | closed |
 | `payment:create` | 20 | 5 | 1 giờ | closed |
 | `payment:proof` | 20 | 10 | 1 giờ | closed |
-| `upload:image` | 60 | 30 | 1 giờ | open |
 | `export:data` | 5 | 1 | 24 giờ | open |
 | `play:events` | 600 | 300 | 10 phút / phiên | open |
 | `search` | 300 | 200 | 5 phút | open |
@@ -119,7 +118,7 @@ Luật đọc **theo thứ tự**, luật đầu tiên khớp thì thắng. Ngu�
 | 5 | `/api/guest/health` | miễn — `health-probe` | probe giám sát chạy mỗi phút, chặn nó là tự làm mù mình |
 | 6 | `/api/{users,managers}/auth/restore` | `auth:refresh` | khôi phục phiên bằng remember-me |
 | 7 | `/api/{users,managers}/auth/reauth` | `auth:login` | xác minh lại mật khẩu — cùng primitive, cùng mối đe doạ, nên **cùng bucket** với login |
-| 8 | `POST /api/managers/images` | `upload:image` | lớp hẹp hơn thắng `managers:*` |
+| ~~8~~ | ~~`POST /api/managers/images`~~ | ~~`upload:image`~~ | gỡ theo quyết định `D4` ([SPEC.md §0](../../SPEC.md)): không có thư viện ảnh hay kho asset động, bỏ pipeline upload ảnh/audio. Route `POST /api/managers/images\|audio`, spec `IMAGE-STORAGE`/`AUDIO-STORAGE` và UI upload của admin đã xoá ở commit `1dc7b60f`; lớp `upload:image` không còn call site nên gỡ khỏi registry. Path cũ giờ rơi về `managers:*` (luật 9). Số thứ tự các luật giữ nguyên để không vỡ tham chiếu. |
 | 9 | `/api/managers/**` | `managers:*` | gồm cả `managers/exports/*` và `managers/audit-logs/export` |
 | 10 | `POST /api/users/orders` | `payment:create` | |
 | 11 | `POST /api/users/orders/{uuid}/proof` | `payment:proof` | |

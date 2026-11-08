@@ -126,20 +126,6 @@ describe("middleware/guards", () => {
     expect(() => guardsMiddleware(event)).not.toThrow();
   });
 
-  it("cho phép upload ảnh lên /api/managers/images trong hạn mức 2 MiB", () => {
-    const event = makeEvent({
-      path: "/api/managers/images",
-      method: "POST",
-      headers: {
-        "content-length": String(1.5 * 1024 * 1024), // 1.5 MiB < 2 MiB
-        "sec-fetch-site": "same-origin",
-        origin: "https://mindkid.test",
-      },
-    });
-
-    expect(() => guardsMiddleware(event)).not.toThrow();
-  });
-
   it("cho phép upload chứng từ 2 MiB lên /api/users/orders/:uuid/proof không bị 413 (C1)", () => {
     const event = makeEvent({
       path: "/api/users/orders/f47ac10b-58cc-4372-a567-0e02b2c3d479/proof",

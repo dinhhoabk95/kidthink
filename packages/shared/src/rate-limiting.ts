@@ -75,13 +75,6 @@ export const RATE_LIMIT_CONFIGS: Record<string, RouteClassConfig> = {
     windowSeconds: 3600, // 1 hour
     failMode: "closed",
   },
-  "upload:image": {
-    className: "upload:image",
-    ipLimit: 60,
-    accountLimit: 30,
-    windowSeconds: 3600, // 1 hour
-    failMode: "open",
-  },
   "export:data": {
     className: "export:data",
     ipLimit: 5,

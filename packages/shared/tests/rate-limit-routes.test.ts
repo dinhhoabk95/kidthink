@@ -77,13 +77,8 @@ describe("resolveRateLimitRouteClass — RATE-LIMITING §7.2 / BR-RTL-10", () =>
     }
   });
 
-  it("rule 8 beats rule 9 — image upload is narrower than managers:*", () => {
+  it("rule 9 — mọi route manager rơi về managers:*", () => {
     expect(resolve("/api/managers/images", "POST")).toEqual({
-      mode: "middleware",
-      className: "upload:image",
-    });
-    // Xoá ảnh không phải upload; nó rơi về lớp chung của manager.
-    expect(resolve("/api/managers/images/12", "DELETE")).toEqual({
       mode: "middleware",
       className: "managers:*",
     });
@@ -177,7 +172,6 @@ describe("resolveRateLimitRouteClass — RATE-LIMITING §7.2 / BR-RTL-10", () =>
       "/api/users/orders/x/proof",
       "/api/users/data-export",
       "/api/users/ai/search",
-      "/api/managers/images",
       "/api/managers/dashboard",
       "/api/users/play-sessions/s/events",
       "/api/users/auth/restore",

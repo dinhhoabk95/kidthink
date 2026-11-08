@@ -82,7 +82,6 @@ const NEWLY_WIRED: ReadonlyArray<{
     path: "/api/users/orders/o-1/proof",
     method: "POST",
   },
-  { className: "upload:image", path: "/api/managers/images", method: "POST" },
   {
     className: "auth:refresh",
     path: "/api/users/auth/restore",

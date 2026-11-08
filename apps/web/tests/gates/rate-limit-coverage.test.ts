@@ -47,7 +47,6 @@ describe("BR-RTL-10: every API route resolves to a rate limit class", () => {
       "auth:refresh",
       "payment:create",
       "payment:proof",
-      "upload:image",
       "export:data",
       "play:events",
       "search",

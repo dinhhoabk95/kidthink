@@ -123,19 +123,9 @@ function resolveSessionRoute(path: string): RateLimitRouteResolution | null {
   return null;
 }
 
-function resolveManagerRoute(
-  path: string,
-  method: string
-): RateLimitRouteResolution | null {
+function resolveManagerRoute(path: string): RateLimitRouteResolution | null {
   if (!(path === "/api/managers" || path.startsWith("/api/managers/"))) {
     return null;
-  }
-  if (
-    (path === "/api/managers/images" ||
-      (path === "/api/managers/audio" && method === "POST")) &&
-    method === "POST"
-  ) {
-    return { mode: "middleware", className: "upload:image" };
   }
   return { mode: "middleware", className: "managers:*" };
 }
@@ -229,7 +219,7 @@ export function resolveRateLimitRouteClass(
     return session;
   }
 
-  const manager = resolveManagerRoute(path, method);
+  const manager = resolveManagerRoute(path);
   if (manager) {
     return manager;
   }
@@ -255,14 +245,10 @@ export function resolveRateLimitRouteClass(
 
 export const DEFAULT_REQUEST_BODY_SIZE_BYTES = 128 * 1024; // 128 KiB (Task #264)
 export const MULTIPART_TRANSPORT_OVERHEAD_BYTES = 64 * 1024; // 64 KiB buffer cho multipart headers
-export const MANAGER_IMAGE_BODY_LIMIT_BYTES =
-  2 * 1024 * 1024 + MULTIPART_TRANSPORT_OVERHEAD_BYTES; // 2 MiB + 64 KiB (BR-IMG-04, I2)
 export const ORDER_PROOF_BODY_LIMIT_BYTES =
   5 * 1024 * 1024 + MULTIPART_TRANSPORT_OVERHEAD_BYTES; // 5 MiB + 64 KiB (PROOF_MAX_IMAGE_SIZE_BYTES, C1)
 
 export const ROUTE_BODY_SIZE_LIMITS: Readonly<Record<string, number>> = {
-  "/api/managers/images": MANAGER_IMAGE_BODY_LIMIT_BYTES,
-  "/api/managers/audio": MANAGER_IMAGE_BODY_LIMIT_BYTES,
   "/api/guest/auth/users/register": 32 * 1024,
 };
 
