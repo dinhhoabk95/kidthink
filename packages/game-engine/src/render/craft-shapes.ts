@@ -176,7 +176,8 @@ export function drawDetachedWaterColumns(
       return;
     }
     const ratio = c.capacityUnits > 0 ? c.fillUnits / c.capacityUnits : 0;
-    const startH = r.h * cupWaterLevel(c.shape, ratio);
+    const level = cupWaterLevel(c.shape, ratio);
+    const startH = r.h * level;
     const endH = (stackedH[i] ?? 0) * scale;
     const h = startH + (endH - startH) * eased;
     const startW = r.w;
@@ -187,7 +188,22 @@ export function drawDetachedWaterColumns(
     const x = c.slot.x + (endX - c.slot.x) * eased;
     ctx.fillStyle = liquidFillColor(c.color);
     ctx.beginPath();
-    ctx.roundRect(x - w / 2, baseY - h, w, h, [4, 4, 8, 8]);
+    if (c.shape === "fluted") {
+      // Nước trong cốc loe là hình thang (đáy hẹp, mặt rộng): vẽ đúng hình đó ở
+      // khung đầu để diện tích bằng lượng nước, rồi thẳng dần thành cột (`BR-E032-13`).
+      const startBottom = r.w * CUP_FLARE_BOTTOM;
+      const startTop =
+        r.w * (CUP_FLARE_BOTTOM + (CUP_FLARE_TOP - CUP_FLARE_BOTTOM) * level);
+      const bottomW = startBottom + (DETACHED_COLUMN_W - startBottom) * eased;
+      const topW = startTop + (DETACHED_COLUMN_W - startTop) * eased;
+      ctx.moveTo(x - topW / 2, baseY - h);
+      ctx.lineTo(x + topW / 2, baseY - h);
+      ctx.lineTo(x + bottomW / 2, baseY);
+      ctx.lineTo(x - bottomW / 2, baseY);
+      ctx.closePath();
+    } else {
+      ctx.roundRect(x - w / 2, baseY - h, w, h, [4, 4, 8, 8]);
+    }
     ctx.fill();
   });
   ctx.restore();
@@ -820,6 +836,13 @@ export const STORY_CHARACTER_KINDS = [
   "fairy",
   "duck",
   "woodpecker",
+  "ant",
+  "fox",
+  "caterpillar",
+  "pony",
+  "cricket",
+  "robot",
+  "nightingale",
 ] as const;
 
 export type StoryCharacterKind = (typeof STORY_CHARACTER_KINDS)[number];
@@ -1503,6 +1526,362 @@ function drawWoodpecker(
   characterEyes(ctx, cx + r * 0.1, cy - r * 0.45, r * 0.15, size * 0.04);
 }
 
+function characterLine(
+  ctx: CanvasRenderingContext2D,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number
+): void {
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+}
+
+function drawAnt(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number,
+  motion: StoryCharacterMotion
+): void {
+  const m = designTokens.colors.montessori;
+  const r = size * 0.2;
+  // Sáu chân co duỗi ngược pha nhau theo `step` (0..1), rồi ba đốt thân và râu.
+  ctx.strokeStyle = m.amberDark;
+  ctx.lineWidth = 2;
+  const swing = Math.sin((motion.step ?? 0) * Math.PI * 2) * r * 0.35;
+  [-1, 0, 1].forEach((leg, i) => {
+    const sign = i % 2 === 0 ? 1 : -1;
+    for (const side of [-1, 1]) {
+      characterLine(
+        ctx,
+        cx + leg * r * 0.9,
+        cy,
+        cx + leg * r * 0.9 + sign * swing,
+        cy + side * r * 1.5
+      );
+    }
+  });
+  characterBlob(ctx, cx - r * 1.5, cy, r * 1.2, r, m.woodBorder, m.amberDark);
+  characterBlob(ctx, cx, cy, r * 0.8, r * 0.7, m.woodBorder, m.amberDark);
+  characterBlob(
+    ctx,
+    cx + r * 1.4,
+    cy,
+    r * 0.8,
+    r * 0.8,
+    m.woodBorder,
+    m.amberDark
+  );
+  characterLine(ctx, cx + r * 1.9, cy - r * 0.5, cx + r * 2.6, cy - r * 1.3);
+  characterLine(ctx, cx + r * 1.9, cy + r * 0.1, cx + r * 2.7, cy - r * 0.6);
+  characterEyes(ctx, cx + r * 1.7, cy - r * 0.2, r * 0.25, size * 0.025);
+}
+
+function drawFox(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number
+): void {
+  const m = designTokens.colors.montessori;
+  const r = size * 0.36;
+  // Tai nhọn, đầu cam, mõm trắng, đuôi xù sau lưng
+  characterBlob(
+    ctx,
+    cx + r * 0.9,
+    cy + r * 0.6,
+    r * 0.55,
+    r * 0.3,
+    m.amberDeep,
+    m.amberDark,
+    -0.6
+  );
+  ctx.fillStyle = m.amberDeep;
+  for (const dir of [-1, 1]) {
+    ctx.beginPath();
+    ctx.moveTo(cx + dir * r * 0.25, cy - r * 0.6);
+    ctx.lineTo(cx + dir * r * 0.85, cy - r * 1.15);
+    ctx.lineTo(cx + dir * r * 0.85, cy - r * 0.2);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+  }
+  characterBlob(ctx, cx, cy, r, r * 0.85, m.amberDeep, m.amberDark);
+  characterBlob(
+    ctx,
+    cx,
+    cy + r * 0.35,
+    r * 0.55,
+    r * 0.4,
+    m.paper,
+    m.amberDark
+  );
+  characterBlob(
+    ctx,
+    cx,
+    cy + r * 0.2,
+    r * 0.12,
+    r * 0.09,
+    m.amberDark,
+    m.amberDark
+  );
+  characterEyes(ctx, cx, cy - r * 0.15, r * 0.4, size * 0.04);
+}
+
+function drawCaterpillar(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number
+): void {
+  const m = designTokens.colors.montessori;
+  const r = size * 0.15;
+  // Bốn đốt thân xanh nối nhau, đầu cam bên phải có hai râu
+  for (let i = 0; i < 4; i++) {
+    characterBlob(
+      ctx,
+      cx - r * 1.5 + i * r * 1.1 - r * 0.6,
+      cy + r * 0.4,
+      r,
+      r,
+      m.emeraldBright,
+      m.emerald
+    );
+  }
+  const hx = cx + r * 2.6;
+  characterBlob(
+    ctx,
+    hx,
+    cy + r * 0.2,
+    r * 1.15,
+    r * 1.15,
+    m.amber,
+    m.amberDark
+  );
+  ctx.strokeStyle = m.amberDark;
+  characterLine(ctx, hx - r * 0.3, cy - r * 0.8, hx - r * 0.6, cy - r * 1.7);
+  characterLine(ctx, hx + r * 0.3, cy - r * 0.8, hx + r * 0.7, cy - r * 1.7);
+  characterEyes(ctx, hx, cy, r * 0.4, size * 0.03);
+}
+
+function drawPony(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number
+): void {
+  const m = designTokens.colors.montessori;
+  const r = size * 0.36;
+  // Bờm chàm sau đầu, tai dựng, mõm dài lệch xuống
+  characterBlob(
+    ctx,
+    cx - r * 0.6,
+    cy - r * 0.2,
+    r * 0.45,
+    r * 0.9,
+    m.indigo,
+    m.amberDark
+  );
+  ctx.fillStyle = m.amberLight;
+  for (const dx of [0.1, 0.55]) {
+    ctx.beginPath();
+    ctx.moveTo(cx + r * dx - r * 0.15, cy - r * 0.7);
+    ctx.lineTo(cx + r * dx, cy - r * 1.3);
+    ctx.lineTo(cx + r * dx + r * 0.2, cy - r * 0.7);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+  }
+  characterBlob(ctx, cx, cy, r * 0.8, r * 0.9, m.amberLight, m.amberDark);
+  characterBlob(
+    ctx,
+    cx + r * 0.3,
+    cy + r * 0.55,
+    r * 0.55,
+    r * 0.4,
+    m.amberLight,
+    m.amberDark
+  );
+  characterBlob(
+    ctx,
+    cx + r * 0.45,
+    cy + r * 0.55,
+    r * 0.07,
+    r * 0.06,
+    m.amberDark,
+    m.amberDark
+  );
+  characterEyes(ctx, cx + r * 0.15, cy - r * 0.2, r * 0.25, size * 0.04);
+}
+
+function drawCricket(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number,
+  motion: StoryCharacterMotion
+): void {
+  const m = designTokens.colors.montessori;
+  const r = size * 0.3;
+  // Thân xanh, đùi sau to, râu dài; tay trước gõ xuống theo `arm` (0 = nâng, 1 = chạm)
+  ctx.strokeStyle = m.emerald;
+  ctx.lineWidth = 2;
+  characterLine(ctx, cx + r * 0.7, cy - r * 0.9, cx + r * 1.5, cy - r * 1.7);
+  characterLine(ctx, cx + r * 0.9, cy - r * 0.8, cx + r * 1.9, cy - r * 1.2);
+  characterBlob(
+    ctx,
+    cx - r * 0.2,
+    cy + r * 0.1,
+    r * 1.05,
+    r * 0.65,
+    m.emeraldBright,
+    m.emerald,
+    -0.15
+  );
+  characterBlob(
+    ctx,
+    cx - r * 0.6,
+    cy + r * 0.35,
+    r * 0.7,
+    r * 0.3,
+    m.emerald,
+    m.emerald,
+    0.5
+  );
+  characterBlob(
+    ctx,
+    cx + r * 0.85,
+    cy - r * 0.35,
+    r * 0.5,
+    r * 0.5,
+    m.emeraldBright,
+    m.emerald
+  );
+  characterEyes(ctx, cx + r * 0.95, cy - r * 0.45, r * 0.15, size * 0.03);
+  const arm = motion.arm ?? 0;
+  characterLine(
+    ctx,
+    cx + r * 0.6,
+    cy + r * 0.3,
+    cx + r * 1.4,
+    cy + r * (0.2 + arm * 0.7)
+  );
+}
+
+function drawRobot(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number,
+  motion: StoryCharacterMotion
+): void {
+  const m = designTokens.colors.montessori;
+  const r = size * 0.36;
+  const glow = Math.max(0, Math.min(1, motion.glow ?? 0));
+  // Kiểu Bee-Bot: thân tròn dẹt, đèn trên đỉnh nháy theo `glow`
+  characterLine(ctx, cx, cy - r * 0.75, cx, cy - r * 1.15);
+  ctx.fillStyle = glow > 0.5 ? m.amber : m.coralLight;
+  ctx.beginPath();
+  ctx.arc(cx, cy - r * 1.2, r * 0.18, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = m.indigoLight;
+  ctx.beginPath();
+  ctx.roundRect(cx - r, cy - r * 0.75, r * 2, r * 1.5, r * 0.4);
+  ctx.fill();
+  ctx.stroke();
+  characterEyes(ctx, cx, cy - r * 0.15, r * 0.4, size * 0.05);
+  ctx.strokeStyle = m.indigo;
+  characterLine(ctx, cx - r * 0.35, cy + r * 0.3, cx + r * 0.35, cy + r * 0.3);
+  // Hai bánh nhỏ dưới thân
+  for (const dir of [-1, 1]) {
+    characterBlob(
+      ctx,
+      cx + dir * r * 0.55,
+      cy + r * 0.8,
+      r * 0.22,
+      r * 0.14,
+      m.woodBorder,
+      m.amberDark
+    );
+  }
+}
+
+function drawNightingale(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number
+): void {
+  const m = designTokens.colors.montessori;
+  const r = size * 0.36;
+  // Đuôi, thân nâu nhạt, cánh, đầu tròn, mỏ vàng, chỏm lông
+  characterBlob(
+    ctx,
+    cx - r * 0.9,
+    cy + r * 0.45,
+    r * 0.55,
+    r * 0.2,
+    m.woodBorder,
+    m.amberDark,
+    -0.5
+  );
+  characterBlob(
+    ctx,
+    cx - r * 0.1,
+    cy + r * 0.2,
+    r * 0.9,
+    r * 0.7,
+    m.woodBevel,
+    m.woodBorder
+  );
+  characterBlob(
+    ctx,
+    cx - r * 0.3,
+    cy + r * 0.25,
+    r * 0.5,
+    r * 0.3,
+    m.woodBorder,
+    m.amberDark,
+    -0.3
+  );
+  characterBlob(
+    ctx,
+    cx + r * 0.55,
+    cy - r * 0.4,
+    r * 0.45,
+    r * 0.45,
+    m.woodBevel,
+    m.woodBorder
+  );
+  ctx.fillStyle = m.amber;
+  ctx.beginPath();
+  ctx.moveTo(cx + r * 0.95, cy - r * 0.5);
+  ctx.lineTo(cx + r * 1.4, cy - r * 0.35);
+  ctx.lineTo(cx + r * 0.95, cy - r * 0.25);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  characterEyes(ctx, cx + r * 0.65, cy - r * 0.5, 0, size * 0.035);
+}
+
+/**
+ * Chuyển động nhỏ của nhân vật, mọi trường tuỳ chọn (thiếu = tư thế đứng yên).
+ * `bob` dịch dọc (px, dương xuống), `lean` nghiêng quanh tâm (radian), `glow`
+ * độ sáng đèn (0..1, robot), `step` pha bước chân (0..1, kiến), `arm` độ hạ
+ * tay trước (0..1, dế mèn).
+ */
+export interface StoryCharacterMotion {
+  readonly arm?: number;
+  readonly bob?: number;
+  readonly glow?: number;
+  readonly lean?: number;
+  readonly step?: number;
+}
+
 const STORY_CHARACTER_DRAWERS: Readonly<
   Record<
     StoryCharacterKind,
@@ -1510,7 +1889,8 @@ const STORY_CHARACTER_DRAWERS: Readonly<
       ctx: CanvasRenderingContext2D,
       cx: number,
       cy: number,
-      size: number
+      size: number,
+      motion: StoryCharacterMotion
     ) => void
   >
 > = {
@@ -1528,6 +1908,13 @@ const STORY_CHARACTER_DRAWERS: Readonly<
   fairy: drawFairy,
   duck: drawDuck,
   woodpecker: drawWoodpecker,
+  ant: drawAnt,
+  fox: drawFox,
+  caterpillar: drawCaterpillar,
+  pony: drawPony,
+  cricket: drawCricket,
+  robot: drawRobot,
+  nightingale: drawNightingale,
 };
 
 /**
@@ -1539,12 +1926,18 @@ export function drawStoryCharacter(
   kind: StoryCharacterKind,
   cx: number,
   cy: number,
-  size: number
+  size: number,
+  motion: StoryCharacterMotion = {}
 ): void {
   ctx.save();
   ctx.lineWidth = 2;
   ctx.strokeStyle = designTokens.colors.montessori.amberDark;
-  STORY_CHARACTER_DRAWERS[kind](ctx, cx, cy, size);
+  if (motion.bob !== undefined || motion.lean !== undefined) {
+    ctx.translate(cx, cy + (motion.bob ?? 0));
+    ctx.rotate(motion.lean ?? 0);
+    ctx.translate(-cx, -cy);
+  }
+  STORY_CHARACTER_DRAWERS[kind](ctx, cx, cy, size, motion);
   ctx.restore();
 }
 
@@ -1684,11 +2077,19 @@ export function drawStoryCharacterInStage(
   ctx: CanvasRenderingContext2D,
   kind: StoryCharacterKind,
   stage: CharacterRect | undefined,
-  slots: readonly Slot[]
+  slots: readonly Slot[],
+  motion: StoryCharacterMotion = {}
 ): void {
   const spot = placeStoryCharacter(stage, slots);
   if (spot) {
-    drawStoryCharacter(ctx, kind, spot.cx, spot.cy, STORY_CHARACTER_SIZE_PX);
+    drawStoryCharacter(
+      ctx,
+      kind,
+      spot.cx,
+      spot.cy,
+      STORY_CHARACTER_SIZE_PX,
+      motion
+    );
   }
 }
 
@@ -2342,4 +2743,517 @@ export function snapWobbleOffset(
     (1 - t) *
     Math.sin(t * SNAP_WOBBLE_CYCLES * Math.PI * 2)
   );
+}
+
+// ── Kiến bò dọc nét đã vẽ, tổ kiến ở điểm cuối (GT-024, `BR-E024-06`) ──
+
+export interface CrawlPoint {
+  readonly x: number;
+  readonly y: number;
+}
+
+/** Kiến bò với tốc độ này (px logic / ms) dọc nét đã vẽ. */
+export const ANT_CRAWL_SPEED_PX_PER_MS = 0.3;
+/** Một lần bò dài tối thiểu / tối đa (ms), để đoạn rất ngắn hay rất dài vẫn đọc được. */
+export const ANT_CRAWL_MIN_MS = 300;
+export const ANT_CRAWL_MAX_MS = 1600;
+/** Số chu kỳ chân kiến co duỗi trong một giây khi bò. */
+const ANT_STEPS_PER_SECOND = 4;
+
+export interface AntCrawl {
+  /** Hướng bò (radian), 0 = sang phải. */
+  readonly heading: number;
+  readonly moving: boolean;
+  /** Pha bước chân 0..1; 0 khi đứng yên. */
+  readonly step: number;
+  readonly x: number;
+  readonly y: number;
+}
+
+function polylineLength(path: readonly CrawlPoint[]): number {
+  let len = 0;
+  for (let i = 1; i < path.length; i++) {
+    const a = path[i - 1];
+    const b = path[i];
+    if (a && b) {
+      len += Math.hypot(b.x - a.x, b.y - a.y);
+    }
+  }
+  return len;
+}
+
+/** Thời gian (ms) kiến bò hết `path`. */
+export function antCrawlDurationMs(path: readonly CrawlPoint[]): number {
+  return Math.min(
+    ANT_CRAWL_MAX_MS,
+    Math.max(ANT_CRAWL_MIN_MS, polylineLength(path) / ANT_CRAWL_SPEED_PX_PER_MS)
+  );
+}
+
+/**
+ * Chỗ kiến sau `elapsedMs` kể từ lúc bắt đầu bò dọc `path` (điểm đầu là chỗ cũ
+ * của kiến, các điểm sau là chính những điểm nối đã đồ xong). Kiến chỉ đi trên
+ * đoạn nét đã vẽ, không bao giờ đi tới điểm chưa nối. Hết nhịp hoặc bật
+ * `reduced_motion`: đứng ở điểm cuối (trạng thái tĩnh cuối).
+ */
+export function antCrawl(
+  path: readonly CrawlPoint[],
+  elapsedMs: number,
+  reducedMotion: boolean
+): AntCrawl | null {
+  const last = path.at(-1);
+  if (!last) {
+    return null;
+  }
+  const prev = path.at(-2) ?? last;
+  const endHeading = Math.atan2(last.y - prev.y, last.x - prev.x);
+  const duration = antCrawlDurationMs(path);
+  if (reducedMotion || elapsedMs >= duration || path.length < 2) {
+    return {
+      x: last.x,
+      y: last.y,
+      heading: endHeading,
+      moving: false,
+      step: 0,
+    };
+  }
+  let remaining = (Math.max(0, elapsedMs) / duration) * polylineLength(path);
+  for (let i = 1; i < path.length; i++) {
+    const a = path[i - 1];
+    const b = path[i];
+    if (!(a && b)) {
+      continue;
+    }
+    const seg = Math.hypot(b.x - a.x, b.y - a.y);
+    if (remaining <= seg && seg > 0) {
+      const t = remaining / seg;
+      return {
+        x: a.x + (b.x - a.x) * t,
+        y: a.y + (b.y - a.y) * t,
+        heading: Math.atan2(b.y - a.y, b.x - a.x),
+        moving: true,
+        step: ((elapsedMs / 1000) * ANT_STEPS_PER_SECOND) % 1,
+      };
+    }
+    remaining -= seg;
+  }
+  return { x: last.x, y: last.y, heading: endHeading, moving: false, step: 0 };
+}
+
+const ANT_SIZE_PX = 30;
+const ANT_NEST_RX_PX = 30;
+const ANT_NEST_RY_PX = 20;
+/** Kiến đậu cách điểm đầu ngần này (px) khi chưa nối điểm nào. */
+export const ANT_PERCH_PX = 40;
+
+/** Nửa cạnh hộp bao của kiến (px logic), để giữ kiến trọn trong sân khấu. */
+export const ANT_HALF_PX = 18;
+
+/**
+ * Chỗ kiến đậu trước khi nối điểm nào: lùi khỏi điểm đầu `ANT_PERCH_PX` theo hướng
+ * ngược đoạn đầu, nên không đè điểm trẻ phải chạm đầu tiên. Hướng đó (rồi hai
+ * hướng vuông góc, rồi hướng xuôi đoạn đầu) mà làm kiến ra ngoài `stage` thì thử
+ * hướng kế; không hướng nào trọn trong sân khấu thì `null` (không vẽ kiến cho tới
+ * khi điểm đầu được nối).
+ */
+export function antPerchPoint(
+  first: CrawlPoint,
+  second: CrawlPoint | undefined,
+  stage?: CharacterRect
+): CrawlPoint | null {
+  const hasPath =
+    second !== undefined && (second.x !== first.x || second.y !== first.y);
+  const len = hasPath ? Math.hypot(second.x - first.x, second.y - first.y) : 0;
+  const ux = hasPath ? (second.x - first.x) / len : 0;
+  const uy = hasPath ? (second.y - first.y) / len : 1;
+  const directions = [
+    { x: -ux, y: -uy },
+    { x: -uy, y: ux },
+    { x: uy, y: -ux },
+    { x: ux, y: uy },
+  ];
+  for (const d of directions) {
+    const point = {
+      x: first.x + d.x * ANT_PERCH_PX,
+      y: first.y + d.y * ANT_PERCH_PX,
+    };
+    const inside =
+      stage === undefined ||
+      (point.x - ANT_HALF_PX >= stage.x &&
+        point.y - ANT_HALF_PX >= stage.y &&
+        point.x + ANT_HALF_PX <= stage.x + stage.w &&
+        point.y + ANT_HALF_PX <= stage.y + stage.h);
+    if (inside) {
+      return point;
+    }
+  }
+  return null;
+}
+
+/** Tổ kiến: gò đất nâu với cửa tối, vẽ dưới điểm cuối của nét. */
+export function drawAntNest(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number
+): void {
+  const m = designTokens.colors.montessori;
+  ctx.save();
+  ctx.lineWidth = 2;
+  characterBlob(
+    ctx,
+    x,
+    y + 6,
+    ANT_NEST_RX_PX,
+    ANT_NEST_RY_PX,
+    m.woodBevel,
+    m.woodBorder
+  );
+  characterBlob(
+    ctx,
+    x,
+    y + 12,
+    ANT_NEST_RX_PX * 0.35,
+    ANT_NEST_RY_PX * 0.3,
+    designTokens.colors.surface[900],
+    m.woodBorder
+  );
+  ctx.restore();
+}
+
+/** Kiến vẽ tại `(x, y)` quay theo `heading`, chân co duỗi theo `step`. */
+export function drawCrawlingAnt(
+  ctx: CanvasRenderingContext2D,
+  crawl: AntCrawl
+): void {
+  drawStoryCharacter(ctx, "ant", crawl.x, crawl.y, ANT_SIZE_PX, {
+    lean: crawl.heading,
+    step: crawl.step,
+  });
+}
+
+// ── Nước dâng trong cốc, Ngựa Con uống (GT-032, `BR-E032-14`) ────────
+
+/** Mực nước dâng êm sang vạch mới trong ngần này ms sau mỗi nấc rót. */
+export const WATER_RISE_MS = 350;
+/** Ngựa Con cúi xuống uống rồi ngẩng lên trong ngần này ms sau mỗi nấc rót. */
+export const PONY_DRINK_MS = 800;
+const PONY_DRINK_LEAN_RAD = 0.35;
+const PONY_DRINK_BOB_PX = 4;
+
+/**
+ * Mực nước hiển thị (đơn vị vạch, có thể lẻ) sau `elapsedMs` kể từ lúc đổi từ
+ * `from` sang `to`: dâng/hạ êm rồi đứng ở `to`. `reduced_motion` hay hết nhịp là
+ * `to` (trạng thái tĩnh cuối). Chỉ phụ thuộc thao tác rót của trẻ, không đọc đáp án.
+ */
+export function waterRiseLevel(
+  from: number,
+  to: number,
+  elapsedMs: number,
+  reducedMotion: boolean
+): number {
+  if (reducedMotion || elapsedMs >= WATER_RISE_MS) {
+    return to;
+  }
+  const t = Math.min(1, Math.max(0, elapsedMs / WATER_RISE_MS));
+  return from + (to - from) * (1 - (1 - t) ** 3);
+}
+
+/**
+ * Chuyển động của Ngựa Con sau một nấc rót: cúi dần rồi ngẩng, một nhịp
+ * `PONY_DRINK_MS`. Ngoài nhịp hoặc `reduced_motion` là đứng yên (`{}`).
+ */
+export function ponyDrinkMotion(
+  elapsedMs: number,
+  reducedMotion: boolean
+): StoryCharacterMotion {
+  if (reducedMotion || elapsedMs < 0 || elapsedMs >= PONY_DRINK_MS) {
+    return {};
+  }
+  const bow = Math.sin((Math.PI * elapsedMs) / PONY_DRINK_MS);
+  return { lean: bow * PONY_DRINK_LEAN_RAD, bob: bow * PONY_DRINK_BOB_PX };
+}
+
+// ── Khung hoa văn thổ cẩm quanh lưới dệt (GT-033, `BR-E033-06`) ──────
+
+/** Bề dày dải thổ cẩm quanh lưới (px logic), tối đa; co lại khi sân khấu chật. */
+export const BROCADE_BAND_PX = 14;
+/** Dưới ngần này thì không vẽ dải (quá mỏng để thấy hoa văn). */
+export const BROCADE_MIN_BAND_PX = 6;
+
+export interface BrocadeFrame {
+  readonly band: number;
+  /** Hộp lưới bên trong dải. */
+  readonly inner: CharacterRect;
+}
+
+/**
+ * Dải thổ cẩm bao quanh `grid`: dày `BROCADE_BAND_PX`, co lại để nằm trọn trong
+ * `stage` (nếu có). Dải luôn ở **ngoài** hộp lưới nên không che ô nào; còn chỗ
+ * dưới `BROCADE_MIN_BAND_PX` thì `null` (không vẽ).
+ */
+export function brocadeFrame(
+  grid: CharacterRect,
+  stage: CharacterRect | undefined
+): BrocadeFrame | null {
+  const room = stage
+    ? Math.min(
+        grid.x - stage.x,
+        grid.y - stage.y,
+        stage.x + stage.w - (grid.x + grid.w),
+        stage.y + stage.h - (grid.y + grid.h)
+      )
+    : BROCADE_BAND_PX;
+  const band = Math.min(BROCADE_BAND_PX, room);
+  return band < BROCADE_MIN_BAND_PX ? null : { band, inner: grid };
+}
+
+/**
+ * Vẽ dải thổ cẩm quanh lưới: nền gỗ nhạt, hàng hình thoi và viền răng cưa màu
+ * gỗ — hoa văn trung tính, không dùng màu sợi nên không lẫn với màu trẻ phải chọn.
+ */
+export function drawBrocadeFrame(
+  ctx: CanvasRenderingContext2D,
+  frame: BrocadeFrame
+): void {
+  const m = designTokens.colors.montessori;
+  const { band, inner } = frame;
+  const x = inner.x - band;
+  const y = inner.y - band;
+  const w = inner.w + band * 2;
+  const h = inner.h + band * 2;
+  ctx.save();
+  ctx.lineWidth = 2;
+  ctx.fillStyle = m.woodBevel;
+  ctx.strokeStyle = m.woodBorder;
+  ctx.beginPath();
+  ctx.roundRect(x, y, w, h, band * 0.6);
+  ctx.roundRect(inner.x, inner.y, inner.w, inner.h, 2);
+  ctx.fill("evenodd");
+  ctx.stroke();
+  // Hàng hình thoi dọc bốn cạnh, cách nhau hai lần bề dày dải
+  const step = band * 2;
+  const r = band * 0.3;
+  ctx.fillStyle = m.woodBorder;
+  const diamond = (cx: number, cy: number): void => {
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - r);
+    ctx.lineTo(cx + r, cy);
+    ctx.lineTo(cx, cy + r);
+    ctx.lineTo(cx - r, cy);
+    ctx.closePath();
+    ctx.fill();
+  };
+  for (let px = x + band; px < x + w - band * 0.5; px += step) {
+    diamond(px, y + band / 2);
+    diamond(px, y + h - band / 2);
+  }
+  for (let py = y + band * 2; py < y + h - band * 1.5; py += step) {
+    diamond(x + band / 2, py);
+    diamond(x + w - band / 2, py);
+  }
+  ctx.restore();
+}
+
+// ── Nhạc cụ vẽ riêng và Dế Mèn gõ tay theo phách (GT-034, `BR-E034-13`) ──
+
+export type InstrumentGlyphKind = "drum" | "clappers" | "woodfish";
+
+const INSTRUMENT_GLYPH_BY_ID: Readonly<Record<string, InstrumentGlyphKind>> = {
+  drum: "drum",
+  trong: "drum",
+  trong_com: "drum",
+  clap: "clappers",
+  clappers: "clappers",
+  phach: "clappers",
+  wood: "woodfish",
+  woodblock: "woodfish",
+  mo: "woodfish",
+};
+
+/** Hình vẽ riêng của nhạc cụ theo `instrument_id` đã biết (trống cơm / phách / mõ); lạ thì `null` (dùng asset). */
+export function instrumentGlyphKind(
+  instrumentId: string
+): InstrumentGlyphKind | null {
+  return INSTRUMENT_GLYPH_BY_ID[instrumentId.toLowerCase()] ?? null;
+}
+
+/** Vẽ nhạc cụ bằng vài hình token: trống cơm (thân thùng, hai mặt, dây), phách (hai thanh gỗ), mõ (khối gỗ tròn có khe). */
+export function drawInstrumentGlyph(
+  ctx: CanvasRenderingContext2D,
+  kind: InstrumentGlyphKind,
+  cx: number,
+  cy: number,
+  size: number
+): void {
+  const m = designTokens.colors.montessori;
+  const r = size / 2;
+  ctx.save();
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = m.amberDark;
+  if (kind === "drum") {
+    // Thân thùng phình giữa, hai mặt da, dây căng chéo
+    characterBlob(ctx, cx, cy, r * 0.75, r * 0.9, m.amberDeep, m.amberDark);
+    characterBlob(
+      ctx,
+      cx,
+      cy - r * 0.75,
+      r * 0.7,
+      r * 0.22,
+      m.paper,
+      m.amberDark
+    );
+    characterBlob(
+      ctx,
+      cx,
+      cy + r * 0.75,
+      r * 0.7,
+      r * 0.22,
+      m.paper,
+      m.amberDark
+    );
+    ctx.strokeStyle = m.woodBevel;
+    characterLine(ctx, cx - r * 0.6, cy - r * 0.7, cx - r * 0.2, cy + r * 0.7);
+    characterLine(ctx, cx - r * 0.2, cy - r * 0.7, cx + r * 0.2, cy + r * 0.7);
+    characterLine(ctx, cx + r * 0.2, cy - r * 0.7, cx + r * 0.6, cy + r * 0.7);
+  } else if (kind === "clappers") {
+    // Hai thanh phách gỗ bắt chéo
+    for (const dir of [-1, 1]) {
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(dir * 0.5);
+      ctx.fillStyle = dir < 0 ? m.amberLight : m.amber;
+      ctx.beginPath();
+      ctx.roundRect(-r * 0.2, -r * 0.9, r * 0.4, r * 1.8, r * 0.18);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+    }
+  } else {
+    // Mõ: khối gỗ tròn, khe ngang, núm cầm
+    characterBlob(ctx, cx, cy, r * 0.85, r * 0.75, m.amberDeep, m.amberDark);
+    characterBlob(
+      ctx,
+      cx,
+      cy + r * 0.1,
+      r * 0.55,
+      r * 0.1,
+      m.amberDark,
+      m.amberDark
+    );
+    characterBlob(
+      ctx,
+      cx,
+      cy - r * 0.85,
+      r * 0.2,
+      r * 0.2,
+      m.amberLight,
+      m.amberDark
+    );
+  }
+  ctx.restore();
+}
+
+/** Phách (0..1) mà Dế Mèn hạ tay hết cỡ ở đầu phách rồi nhấc lại trong ngần này phần của phách. */
+export const CRICKET_HIT_PHASE = 0.4;
+
+/**
+ * Độ hạ tay trước của Dế Mèn theo pha trong phách: hạ hết cỡ (1) ở đầu phách
+ * — lúc nhạc cụ vang — rồi nhấc lên (0) trước giữa phách.
+ */
+export function cricketArm(phase: number): number {
+  return Math.max(0, Math.min(1, 1 - phase / CRICKET_HIT_PHASE));
+}
+
+// ── Dấu vết đường đi của robot (GT-035, `BR-E035-16`) ───────────────
+
+/** Dấu chân robot để lại trên ô nó đã đi qua: hai chấm nhỏ cạnh nhau. */
+export function drawRobotTrail(
+  ctx: CanvasRenderingContext2D,
+  slot: Slot
+): void {
+  const r = Math.max(2, Math.min(slot.w, slot.h) * 0.06);
+  ctx.save();
+  ctx.fillStyle = alpha(designTokens.colors.montessori.emeraldBright, 0.7);
+  for (const dir of [-1, 1]) {
+    ctx.beginPath();
+    ctx.arc(slot.x + dir * r * 1.8, slot.y, r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+// ── Họa Mi nhún theo nhịp nhóm lặp, dây xâu hạt (GT-036, `BR-E036-14`) ──
+
+const NIGHTINGALE_BOB_PX = 4;
+const NIGHTINGALE_LEAN_RAD = 0.12;
+
+/**
+ * Họa Mi nhún theo từng bước sáng của mô-típ: mỗi bước nhún lên một nhịp rồi
+ * hạ, nghiêng đổi bên theo bước. `steps` bước, mỗi bước `stepMs`; hết dãy,
+ * trước lúc bắt đầu hoặc `reduced_motion` là đứng yên (`{}`).
+ */
+export function nightingaleSway(
+  elapsedMs: number,
+  stepMs: number,
+  steps: number,
+  reducedMotion: boolean
+): StoryCharacterMotion {
+  if (
+    reducedMotion ||
+    stepMs <= 0 ||
+    elapsedMs < 0 ||
+    elapsedMs >= stepMs * steps
+  ) {
+    return {};
+  }
+  const step = Math.floor(elapsedMs / stepMs);
+  const phase = (elapsedMs % stepMs) / stepMs;
+  const hop = Math.sin(Math.PI * phase);
+  return {
+    bob: -hop * NIGHTINGALE_BOB_PX,
+    lean: (step % 2 === 0 ? 1 : -1) * hop * NIGHTINGALE_LEAN_RAD,
+  };
+}
+
+export interface BeadStringSegment {
+  readonly x1: number;
+  readonly x2: number;
+  readonly y1: number;
+  readonly y2: number;
+}
+
+/**
+ * Các đoạn dây nối tâm hai ô liền nhau **cùng hàng** (lệch dọc dưới nửa cạnh
+ * ngắn). Ô xuống dòng thì dây ngắt, không vắt chéo qua các ô khác.
+ */
+export function beadStringSegments(
+  slots: readonly Slot[]
+): readonly BeadStringSegment[] {
+  const segments: BeadStringSegment[] = [];
+  for (let i = 1; i < slots.length; i++) {
+    const a = slots[i - 1];
+    const b = slots[i];
+    if (a && b && Math.abs(a.y - b.y) < Math.min(a.h, b.h) / 2) {
+      segments.push({ x1: a.x, y1: a.y, x2: b.x, y2: b.y });
+    }
+  }
+  return segments;
+}
+
+/** Dây xâu hạt vẽ dưới các ô hạt: sợi dây gỗ nối các ô cùng hàng. */
+export function drawBeadString(
+  ctx: CanvasRenderingContext2D,
+  segments: readonly BeadStringSegment[]
+): void {
+  if (segments.length === 0) {
+    return;
+  }
+  ctx.save();
+  ctx.lineWidth = 4;
+  ctx.lineCap = "round";
+  ctx.strokeStyle = designTokens.colors.montessori.woodBorder;
+  for (const seg of segments) {
+    characterLine(ctx, seg.x1, seg.y1, seg.x2, seg.y2);
+  }
+  ctx.restore();
 }
