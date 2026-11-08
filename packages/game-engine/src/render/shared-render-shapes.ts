@@ -469,14 +469,22 @@ export function drawEquationTray(
 }
 
 // ── Bướm đối xứng Montessori (GT-021) ────────────────────────────────
+/** Tỉ lệ rộng/cao tối đa của bướm (khung dẹt không kéo cánh bè ngang). */
+const BUTTERFLY_MAX_ASPECT = 1.05;
+/** Tỉ lệ cao/rộng tối đa (khung cao không kéo cánh quá dài). */
+const BUTTERFLY_MAX_TALL = 1.7;
 export function drawButterflyWingsBoard(
   ctx: CanvasRenderingContext2D,
   box: SceneBox
 ): void {
   const cx = box.x + box.w / 2;
   const cy = box.y + box.h / 2;
-  const w = box.w * 0.85;
-  const h = box.h * 0.82;
+  // Giữ tỉ lệ cánh: khung dẹt (desktop) không kéo cánh bè ngang qua ô mẫu và
+  // ô đích; khung cao (điện thoại) không kéo cánh dài quá (`BR-E021-09`).
+  const maxW = box.w * 0.85;
+  const maxH = box.h * 0.82;
+  const w = Math.min(maxW, maxH * BUTTERFLY_MAX_ASPECT);
+  const h = Math.min(maxH, maxW * BUTTERFLY_MAX_TALL);
 
   ctx.save();
   // Cánh bướm gỗ cắt hình đối xứng
@@ -486,44 +494,24 @@ export function drawButterflyWingsBoard(
   ctx.shadowOffsetY = 6;
   ctx.fillStyle = designTokens.colors.surface[100];
   ctx.beginPath();
+  // Mỗi cánh một nét riêng: `moveTo` tới điểm đầu của cung, nếu không canvas nối
+  // đường thẳng từ cánh trước sang cánh sau.
+  const wing = (
+    x: number,
+    y: number,
+    rx: number,
+    ry: number,
+    rotation: number
+  ): void => {
+    ctx.moveTo(x + rx * Math.cos(rotation), y + rx * Math.sin(rotation));
+    ctx.ellipse(x, y, rx, ry, rotation, 0, Math.PI * 2);
+  };
   // Cánh trái
-  ctx.ellipse(
-    cx - w * 0.24,
-    cy - h * 0.18,
-    w * 0.22,
-    h * 0.28,
-    -0.2,
-    0,
-    Math.PI * 2
-  );
-  ctx.ellipse(
-    cx - w * 0.22,
-    cy + h * 0.22,
-    w * 0.18,
-    h * 0.22,
-    0.3,
-    0,
-    Math.PI * 2
-  );
+  wing(cx - w * 0.24, cy - h * 0.18, w * 0.22, h * 0.28, -0.2);
+  wing(cx - w * 0.22, cy + h * 0.22, w * 0.18, h * 0.22, 0.3);
   // Cánh phải
-  ctx.ellipse(
-    cx + w * 0.24,
-    cy - h * 0.18,
-    w * 0.22,
-    h * 0.28,
-    0.2,
-    0,
-    Math.PI * 2
-  );
-  ctx.ellipse(
-    cx + w * 0.22,
-    cy + h * 0.22,
-    w * 0.18,
-    h * 0.22,
-    -0.3,
-    0,
-    Math.PI * 2
-  );
+  wing(cx + w * 0.24, cy - h * 0.18, w * 0.22, h * 0.28, 0.2);
+  wing(cx + w * 0.22, cy + h * 0.22, w * 0.18, h * 0.22, -0.3);
   ctx.fill();
   ctx.restore();
 
