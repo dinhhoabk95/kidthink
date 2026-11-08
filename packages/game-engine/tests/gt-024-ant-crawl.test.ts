@@ -139,7 +139,7 @@ describe("antCrawl (hàm thuần)", () => {
 });
 
 describe("GT-024: kiến và tổ (BR-E024-06)", () => {
-  it("mọi fixture: tổ ở điểm cuối, kiến đậu cách điểm đầu ANT_PERCH_PX khi chưa nối", () => {
+  it("mọi fixture: tổ cạnh điểm cuối, kiến đậu cách điểm đầu ít nhất ANT_PERCH_PX khi chưa nối", () => {
     for (const fixture of GT024_FIXTURES) {
       const session = openSession(fixture, true);
       const ant = frame(session, 0);
@@ -151,11 +151,21 @@ describe("GT-024: kiến và tổ (BR-E024-06)", () => {
       }
       expect(vi.mocked(drawAntNest)).toHaveBeenCalledTimes(1);
       const nest = vi.mocked(drawAntNest).mock.calls[0];
-      expect([nest?.[1], nest?.[2]]).toEqual([last.x, last.y]);
-      expect(Math.hypot(ant.x - first.x, ant.y - first.y)).toBeCloseTo(
-        ANT_PERCH_PX,
-        5
+      // Tổ cạnh điểm cuối (không đè ô chạm, `BR-E024-08`): điểm mốc gần tổ nhất
+      // là điểm cuối, nên tổ vẫn chỉ đúng điểm cuối. Kiến đậu gần điểm đầu nhất.
+      const nearest = (x: number, y: number) =>
+        Math.min(...wps.map((w) => Math.hypot(w.x - x, w.y - y)));
+      const nestX = Number(nest?.[1]);
+      const nestY = Number(nest?.[2]);
+      expect(Math.hypot(nestX - last.x, nestY - last.y)).toBe(
+        nearest(nestX, nestY)
       );
+      expect(Math.hypot(ant.x - first.x, ant.y - first.y)).toBe(
+        nearest(ant.x, ant.y)
+      );
+      expect(
+        Math.hypot(ant.x - first.x, ant.y - first.y)
+      ).toBeGreaterThanOrEqual(ANT_PERCH_PX);
     }
   });
 

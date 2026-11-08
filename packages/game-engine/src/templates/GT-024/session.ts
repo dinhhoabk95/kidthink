@@ -22,7 +22,10 @@ import type { Slot } from "#src/layout/types";
 import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
 import {
   type AntCrawl,
+  type AvoidBox,
   antCrawl,
+  antNestBox,
+  antNestPoint,
   antPerchPoint,
   type CrawlPoint,
   drawAntNest,
@@ -50,6 +53,8 @@ import type { GT024Content, GT024Difficulty } from "./template.js";
 
 const WAYPOINT_VIEW_RADIUS_PX = 24;
 const DROP_INTERPOLATION_STEPS = 16;
+const GUIDE_BOX_STEP_PX = 10;
+const GUIDE_BOX_HALF_PX = 6;
 
 function findHitStrokePoint(
   points: readonly { readonly x: number; readonly y: number }[],
@@ -90,6 +95,31 @@ export const GT024_HAPPY_MS = 700;
 /** Mascot nghiêng đầu sau lần chạm nhầm điểm. */
 export const GT024_WONDER_MS = 1200;
 
+/** Các hộp nhỏ rải dọc nét dẫn nối các điểm mốc, để kiến không đứng trên nét. */
+function guideBoxes(points: readonly CrawlPoint[]): AvoidBox[] {
+  const boxes: AvoidBox[] = [];
+  for (let i = 1; i < points.length; i++) {
+    const a = points[i - 1];
+    const b = points[i];
+    if (!(a && b)) {
+      continue;
+    }
+    const steps = Math.max(
+      1,
+      Math.ceil(Math.hypot(b.x - a.x, b.y - a.y) / GUIDE_BOX_STEP_PX)
+    );
+    for (let k = 0; k <= steps; k++) {
+      boxes.push({
+        x: a.x + ((b.x - a.x) * k) / steps,
+        y: a.y + ((b.y - a.y) * k) / steps,
+        halfW: GUIDE_BOX_HALF_PX,
+        halfH: GUIDE_BOX_HALF_PX,
+      });
+    }
+  }
+  return boxes;
+}
+
 export class GT024Session extends TemplateGameSession<
   GT024Content,
   GT024Difficulty
@@ -102,6 +132,12 @@ export class GT024Session extends TemplateGameSession<
   private screenWaypoints: readonly TraceWaypoint[] = [];
   /** Dung sai chạm ở toạ độ logic; không nhỏ hơn nửa sàn chạm (`BR-PSZ-04`). */
   private tolerancePx = 0;
+  /** Nửa cạnh ô chạm của mỗi waypoint (px logic), kiến và tổ phải tránh. */
+  private hitHalf = WAYPOINT_VIEW_RADIUS_PX;
+  /** Chỗ tổ và chỗ kiến đậu đã tính (bất biến trong một vòng); `undefined` = chưa tính. */
+  private placement:
+    | { nest: CrawlPoint | null; perch: CrawlPoint | null }
+    | undefined;
   /** Chỉ số slot chạm của từng waypoint; mặc định mỗi waypoint một slot. */
   private slotOfWaypoint: readonly number[] = [];
   private readonly orderingMechanic = new OrderingMechanic();
@@ -116,6 +152,55 @@ export class GT024Session extends TemplateGameSession<
     readonly reached: number;
     readonly startMs: number;
   } | null = null;
+
+  get hitHalfPx(): number {
+    return this.hitHalf;
+  }
+
+  /**
+   * Chỗ tổ và chỗ kiến đậu: ngoài hộp chạm của mọi waypoint và trọn trong sân
+   * khấu (`BR-E024-08`). Tổ đặt trước, kiến đậu tránh cả tổ.
+   */
+  private computePlacement(): {
+    nest: CrawlPoint | null;
+    perch: CrawlPoint | null;
+  } {
+    const wps = this.screenWaypoints;
+    const first = wps[0];
+    const last = wps.at(-1);
+    if (!(first && last)) {
+      return { nest: null, perch: null };
+    }
+    const boxes: AvoidBox[] = wps.map((w) => ({
+      x: w.x,
+      y: w.y,
+      halfW: this.hitHalf,
+      halfH: this.hitHalf,
+    }));
+    const cx = wps.reduce((sum, w) => sum + w.x, 0) / wps.length;
+    const cy = wps.reduce((sum, w) => sum + w.y, 0) / wps.length;
+    const stage = this.stageRect ?? undefined;
+    const centre = { x: cx, y: cy };
+    const guides = guideBoxes(wps);
+    // Tổ và kiến ưu tiên chỗ không nằm trên nét dẫn nối các điểm; hết chỗ thì chỉ
+    // cần tránh ô chạm.
+    const nest =
+      antNestPoint(last, stage, [...boxes, ...guides], centre) ??
+      antNestPoint(last, stage, boxes, centre);
+    const withNest = nest ? [...boxes, antNestBox(nest)] : boxes;
+    const perch =
+      antPerchPoint(first, wps[1], stage, [...withNest, ...guides]) ??
+      antPerchPoint(first, wps[1], stage, withNest);
+    return { nest, perch };
+  }
+
+  private getPlacement(): {
+    nest: CrawlPoint | null;
+    perch: CrawlPoint | null;
+  } {
+    this.placement ??= this.computePlacement();
+    return this.placement;
+  }
 
   override storyLine(): string {
     return GT024_STORY_LINE;
@@ -134,6 +219,7 @@ export class GT024Session extends TemplateGameSession<
   setupEntities(): void {
     this.mood.clear();
     this.ant = null;
+    this.placement = undefined;
     this.isWon = false;
 
     const waypoints = this.content.waypoints.map((w) => ({
@@ -428,6 +514,8 @@ export class GT024Session extends TemplateGameSession<
     );
     this.traceSystem.rescale(this.screenWaypoints, this.tolerancePx);
     const hit = Math.round(floor);
+    this.hitHalf = Math.max(WAYPOINT_VIEW_RADIUS_PX, hit / 2);
+    this.placement = undefined;
     // Waypoint trùng toạ độ (nét đóng hình) dùng chung một slot chạm.
     const slots: Slot[] = [];
     this.slotOfWaypoint = this.screenWaypoints.map((w) => {
@@ -453,14 +541,10 @@ export class GT024Session extends TemplateGameSession<
 
   /** Chỗ kiến đứng khi đã nối `reached` điểm: điểm vừa nối, hoặc chỗ đậu trước điểm đầu (có thể không có). */
   private antHome(reached: number): CrawlPoint | null {
-    const first = this.screenWaypoints[0];
-    if (!first) {
+    if (!this.screenWaypoints[0]) {
       return null;
     }
-    return (
-      this.screenWaypoints[reached - 1] ??
-      antPerchPoint(first, this.screenWaypoints[1], this.stageRect)
-    );
+    return this.screenWaypoints[reached - 1] ?? this.getPlacement().perch;
   }
 
   /** Đường kiến đang bò: chỗ cũ rồi từng điểm vừa nối; chỉ điểm đã nối, không điểm nào sau đó. */
@@ -519,10 +603,10 @@ export class GT024Session extends TemplateGameSession<
     if (!this.stageRect) {
       drawSubPromptText(ctx, rs, this.content.shape_name);
     }
-    // Tổ kiến dưới điểm cuối, chỉ khi điểm cuối đã có số (`BR-E024-06`).
-    const endPoint = this.screenWaypoints.at(-1);
-    if (endPoint && this.difficulty.show_numbered_dots) {
-      drawAntNest(ctx, endPoint.x, endPoint.y);
+    // Tổ kiến cạnh điểm cuối, chỉ khi điểm cuối đã có số (`BR-E024-06`, `BR-E024-08`).
+    const nest = this.getPlacement().nest;
+    if (nest && this.difficulty.show_numbered_dots) {
+      drawAntNest(ctx, nest.x, nest.y);
     }
     drawWaypointPath(
       ctx,

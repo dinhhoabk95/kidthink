@@ -811,8 +811,12 @@ export function drawWaypointPath(
   }
   ctx.restore();
 
-  // Waypoint beads
+  // Waypoint beads. Điểm khép kín trùng toạ độ với điểm đã vẽ trước đó chỉ vẽ một
+  // lần (giữ nhãn đầu), tránh nhãn sau đè lên nhãn đầu (`BR-E024-07`).
   ordered.forEach((w, i) => {
+    if (ordered.slice(0, i).some((p) => p.x === w.x && p.y === w.y)) {
+      return;
+    }
     const done = i < reachedCount;
     ctx.save();
     ctx.fillStyle = done
@@ -834,7 +838,7 @@ export function drawWaypointPath(
       applyCanvasFontAtSize(ctx, waypointFontPx, "heading", "bold");
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText(String(i + 1), w.x, w.y);
+      ctx.fillText(w.label ?? String(i + 1), w.x, w.y);
     }
     ctx.restore();
   });

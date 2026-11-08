@@ -95,6 +95,10 @@ describe("GT-024 — show_guide_lines và show_numbered_dots (GT-024.md N1, mụ
 
   const digits = (frame: DrawnFrame): string[] =>
     frame.texts.filter((t) => DIGITS_ONLY.test(t));
+  // Điểm khép kín trùng toạ độ điểm đầu chỉ vẽ một lần (`BR-E024-07`).
+  const distinctPoints = new Set(
+    fixture.content.waypoints.map((w) => `${w.x},${w.y}`)
+  ).size;
 
   it("bật cả hai: có đường dẫn nét đứt và số thứ tự trên mọi điểm mốc", () => {
     const frame = frameWith({
@@ -102,7 +106,7 @@ describe("GT-024 — show_guide_lines và show_numbered_dots (GT-024.md N1, mụ
       show_numbered_dots: true,
     });
     expect(frame.dashes.length).toBeGreaterThan(0);
-    expect(digits(frame)).toHaveLength(fixture.content.waypoints.length);
+    expect(digits(frame)).toHaveLength(distinctPoints);
   });
 
   it("tắt show_guide_lines: không còn đường dẫn nét đứt, số vẫn hiện", () => {
@@ -111,7 +115,7 @@ describe("GT-024 — show_guide_lines và show_numbered_dots (GT-024.md N1, mụ
       show_numbered_dots: true,
     });
     expect(frame.dashes).toEqual([]);
-    expect(digits(frame)).toHaveLength(fixture.content.waypoints.length);
+    expect(digits(frame)).toHaveLength(distinctPoints);
   });
 
   it("tắt show_numbered_dots: không còn số thứ tự, đường dẫn vẫn hiện", () => {

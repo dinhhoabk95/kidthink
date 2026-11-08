@@ -2854,45 +2854,181 @@ export const ANT_PERCH_PX = 40;
 /** Nửa cạnh hộp bao của kiến (px logic), để giữ kiến trọn trong sân khấu. */
 export const ANT_HALF_PX = 18;
 
+/** Hộp chữ nhật (tâm + nửa cạnh) mà kiến hay tổ không được đè lên. */
+export interface AvoidBox {
+  readonly halfH: number;
+  readonly halfW: number;
+  readonly x: number;
+  readonly y: number;
+}
+
+/** Hộp bao của tổ kiến so với điểm neo: tâm lệch xuống 6 px, nửa cạnh 30 x 20 (cộng nét viền). */
+const ANT_NEST_BOX_DY_PX = 6;
+const ANT_NEST_BOX_HALF_W_PX = ANT_NEST_RX_PX + 1;
+const ANT_NEST_BOX_HALF_H_PX = ANT_NEST_RY_PX + 1;
+/** Các khoảng lùi thử lần lượt khi chỗ gần nhất bị chiếm (px). */
+const SPOT_DISTANCES_PX = [0, 50, 70, 90, 115, 140, 170, 200] as const;
+
+function boxInsideStage(
+  x: number,
+  y: number,
+  halfW: number,
+  halfH: number,
+  stage: CharacterRect | undefined
+): boolean {
+  return (
+    stage === undefined ||
+    (x - halfW >= stage.x &&
+      y - halfH >= stage.y &&
+      x + halfW <= stage.x + stage.w &&
+      y + halfH <= stage.y + stage.h)
+  );
+}
+
+function boxClearOf(
+  x: number,
+  y: number,
+  halfW: number,
+  halfH: number,
+  avoid: readonly AvoidBox[]
+): boolean {
+  return avoid.every(
+    (b) =>
+      Math.abs(x - b.x) >= halfW + b.halfW ||
+      Math.abs(y - b.y) >= halfH + b.halfH
+  );
+}
+
+/** Tám hướng đơn vị, bắt đầu từ `primary`, xoay dần ±45°, ±90°, ±135°, 180°. */
+function directionsFrom(primary: {
+  readonly x: number;
+  readonly y: number;
+}): { x: number; y: number }[] {
+  const base = Math.atan2(primary.y, primary.x);
+  return [0, 1, -1, 2, -2, 3, -3, 4].map((k) => ({
+    x: Math.cos(base + (k * Math.PI) / 4),
+    y: Math.sin(base + (k * Math.PI) / 4),
+  }));
+}
+
 /**
  * Chỗ kiến đậu trước khi nối điểm nào: lùi khỏi điểm đầu `ANT_PERCH_PX` theo hướng
  * ngược đoạn đầu, nên không đè điểm trẻ phải chạm đầu tiên. Hướng đó (rồi hai
  * hướng vuông góc, rồi hướng xuôi đoạn đầu) mà làm kiến ra ngoài `stage` thì thử
  * hướng kế; không hướng nào trọn trong sân khấu thì `null` (không vẽ kiến cho tới
  * khi điểm đầu được nối).
+ *
+ * `avoid` (hộp chạm của mọi điểm mốc, hộp tổ): kiến không được đè hộp nào. Khi đó
+ * thử thêm bốn hướng chéo và các khoảng lùi xa dần (`BR-E024-08`).
  */
 export function antPerchPoint(
   first: CrawlPoint,
   second: CrawlPoint | undefined,
-  stage?: CharacterRect
+  stage?: CharacterRect,
+  avoid: readonly AvoidBox[] = []
 ): CrawlPoint | null {
   const hasPath =
     second !== undefined && (second.x !== first.x || second.y !== first.y);
   const len = hasPath ? Math.hypot(second.x - first.x, second.y - first.y) : 0;
   const ux = hasPath ? (second.x - first.x) / len : 0;
   const uy = hasPath ? (second.y - first.y) / len : 1;
+  const compass = directionsFrom({ x: -ux, y: -uy });
+  // Bốn hướng gốc giữ nguyên thứ tự cũ; bốn hướng chéo (±45°, ±135°) xếp sau.
   const directions = [
     { x: -ux, y: -uy },
     { x: -uy, y: ux },
     { x: uy, y: -ux },
     { x: ux, y: uy },
+    ...[1, 2, 5, 6].map((i) => compass[i] ?? { x: 0, y: 1 }),
   ];
-  for (const d of directions) {
-    const point = {
-      x: first.x + d.x * ANT_PERCH_PX,
-      y: first.y + d.y * ANT_PERCH_PX,
-    };
-    const inside =
-      stage === undefined ||
-      (point.x - ANT_HALF_PX >= stage.x &&
-        point.y - ANT_HALF_PX >= stage.y &&
-        point.x + ANT_HALF_PX <= stage.x + stage.w &&
-        point.y + ANT_HALF_PX <= stage.y + stage.h);
-    if (inside) {
+  const distances =
+    avoid.length === 0
+      ? [ANT_PERCH_PX]
+      : [ANT_PERCH_PX, ...SPOT_DISTANCES_PX.filter((d) => d > ANT_PERCH_PX)];
+  for (const dist of distances) {
+    for (const d of directions) {
+      const point = { x: first.x + d.x * dist, y: first.y + d.y * dist };
+      if (
+        boxInsideStage(point.x, point.y, ANT_HALF_PX, ANT_HALF_PX, stage) &&
+        boxClearOf(point.x, point.y, ANT_HALF_PX, ANT_HALF_PX, avoid)
+      ) {
+        return point;
+      }
+    }
+  }
+  return null;
+}
+
+/**
+ * Chỗ đặt tổ kiến cạnh điểm cuối `last`: không đè hộp nào trong `avoid` (hộp chạm
+ * của mọi điểm mốc, kể cả chính điểm cuối), trọn trong `stage`. Ưu tiên nửa phía
+ * ngoài (từ `toward`, tâm hình, ra xa) ở mọi khoảng trước, rồi mới tới phía trong;
+ * không có chỗ thì `null` (không vẽ tổ). `BR-E024-08`.
+ */
+export function antNestPoint(
+  last: CrawlPoint,
+  stage: CharacterRect | undefined,
+  avoid: readonly AvoidBox[],
+  toward?: CrawlPoint
+): CrawlPoint | null {
+  const dx = toward ? last.x - toward.x : 0;
+  const dy = toward ? last.y - toward.y : 1;
+  const norm = Math.hypot(dx, dy);
+  const primary = norm > 0 ? { x: dx / norm, y: dy / norm } : { x: 0, y: 1 };
+  const directions = directionsFrom(primary);
+  // Năm hướng đầu (ra xa tâm, ±45°, ±90°) thử hết mọi khoảng trước; ba hướng vào
+  // trong hình chỉ dùng khi phía ngoài không còn chỗ, kẻo tổ nằm giữa hình.
+  const passes = [directions.slice(0, 5), directions.slice(5)];
+  for (const pass of passes) {
+    const point = firstNestSpot(last, stage, avoid, pass);
+    if (point) {
       return point;
     }
   }
   return null;
+}
+
+function firstNestSpot(
+  last: CrawlPoint,
+  stage: CharacterRect | undefined,
+  avoid: readonly AvoidBox[],
+  directions: readonly { readonly x: number; readonly y: number }[]
+): CrawlPoint | null {
+  for (const dist of SPOT_DISTANCES_PX) {
+    for (const d of directions) {
+      const point = { x: last.x + d.x * dist, y: last.y + d.y * dist };
+      const cy = point.y + ANT_NEST_BOX_DY_PX;
+      if (
+        boxInsideStage(
+          point.x,
+          cy,
+          ANT_NEST_BOX_HALF_W_PX,
+          ANT_NEST_BOX_HALF_H_PX,
+          stage
+        ) &&
+        boxClearOf(
+          point.x,
+          cy,
+          ANT_NEST_BOX_HALF_W_PX,
+          ANT_NEST_BOX_HALF_H_PX,
+          avoid
+        )
+      ) {
+        return point;
+      }
+    }
+  }
+  return null;
+}
+
+/** Hộp bao của tổ kiến đặt tại `point`, để kiến tránh. */
+export function antNestBox(point: CrawlPoint): AvoidBox {
+  return {
+    x: point.x,
+    y: point.y + ANT_NEST_BOX_DY_PX,
+    halfW: ANT_NEST_BOX_HALF_W_PX,
+    halfH: ANT_NEST_BOX_HALF_H_PX,
+  };
 }
 
 /** Tổ kiến: gò đất nâu với cửa tối, vẽ dưới điểm cuối của nét. */
