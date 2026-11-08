@@ -141,3 +141,32 @@ describe("GT-020: session vẽ thẻ lật (BR-E020-08)", () => {
     );
   });
 });
+
+describe("GT-020: view không đẩy thẻ ngửa vào lớp phủ chọn-nguồn (BR-E020-09)", () => {
+  it("thẻ ngửa/đang xem trước không phải nguồn đang chọn của shell", () => {
+    const fixture = GT020_FIXTURES[0];
+    if (!fixture) {
+      throw new Error("Thiếu fixture");
+    }
+    const session = new GT020Session(fixture.content, fixture.difficulty, 0);
+    session.prepareRound("3-4");
+    // Đang xem trước: mọi thẻ ngửa.
+    const peeking = session.getView().entities;
+    expect(peeking.some((e) => e.state === "selected")).toBe(true);
+    expect(
+      peeking.filter((e) => e.role === "source" && e.state === "selected")
+    ).toEqual([]);
+    // Sau xem trước và một lần chạm: thẻ ngửa vẫn không là nguồn đang chọn.
+    session.update(session.difficulty.peek_all_initial_ms + 1);
+    const first = session.displayCards[0];
+    session.commit({
+      type: "tap_card",
+      data: { card_id: first?.cardId ?? "" },
+    });
+    const after = session.getView().entities;
+    expect(after.some((e) => e.state === "selected")).toBe(true);
+    expect(
+      after.filter((e) => e.role === "source" && e.state === "selected")
+    ).toEqual([]);
+  });
+});

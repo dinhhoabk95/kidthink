@@ -182,6 +182,9 @@
       engine.start(canvasRef.value);
       applyStageZones(config);
       engine.onAfterRender = drawShellZones;
+      // Như trang chơi thật: view đổi (hết xem trước, lật thẻ...) thì gesture đọc
+      // lại view, không giữ ảnh chụp cũ (`BR-E020-09`).
+      engine.onViewChanged = () => gesture.syncView();
       gesture.syncView();
       speakRoundOpen(autoReplay);
 

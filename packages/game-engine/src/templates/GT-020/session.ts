@@ -259,7 +259,10 @@ export class GT020Session extends TemplateGameSession<
       return {
         id: card.cardId,
         slotIndex: i,
-        role: "source",
+        // Không phải "source": shell coi nguồn đang "selected" là vật đã chọn chờ
+        // thả (nâng lên + vòng vàng quanh mọi ô khác). Thẻ ngửa chỉ là mặt lật
+        // (`BR-E020-09`).
+        role: "target",
         state,
         x: slot?.x ?? 0,
         y: slot?.y ?? 0,
