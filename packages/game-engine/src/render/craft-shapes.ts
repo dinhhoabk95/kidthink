@@ -2155,3 +2155,100 @@ export function completeDistinctLines(
   }
   return { rows, cols };
 }
+
+// ── Chùm sáng đèn pin và bóng đổ trên tường (GT-019, `BR-E019-08`) ────
+
+/** Chùm sáng và bóng hiện dần trong ngần này ms sau khi mảnh vào ô đích. */
+export const BEAM_FADE_MS = 450;
+
+/** Độ hiện 0..1 của chùm sáng/bóng sau `elapsedMs`; `reduced_motion` hiện đủ ngay. */
+export function beamFadeIn(elapsedMs: number, reducedMotion: boolean): number {
+  if (reducedMotion) {
+    return 1;
+  }
+  return Math.min(1, Math.max(0, elapsedMs / BEAM_FADE_MS));
+}
+
+interface BeamTarget {
+  readonly h: number;
+  readonly w: number;
+  readonly x: number;
+  readonly y: number;
+}
+
+/** Hình thang chùm sáng từ `from` tới ô `target` (tâm `x, y`): hai mép mở rộng thành bề ngang ô. */
+export function flashlightBeamPolygon(
+  from: { readonly x: number; readonly y: number },
+  target: BeamTarget
+): { readonly x: number; readonly y: number }[] {
+  const dx = target.x - from.x;
+  const dy = target.y - from.y;
+  const len = Math.hypot(dx, dy);
+  if (len < 1) {
+    return [];
+  }
+  const px = -dy / len;
+  const py = dx / len;
+  const half = (Math.max(target.w, target.h) / 2) * 1.15;
+  const narrow = 3;
+  return [
+    { x: from.x + px * narrow, y: from.y + py * narrow },
+    { x: target.x + px * half, y: target.y + py * half },
+    { x: target.x - px * half, y: target.y - py * half },
+    { x: from.x - px * narrow, y: from.y - py * narrow },
+  ];
+}
+
+/** Chùm sáng hổ phách từ đèn pin tới ô đích đã đặt mảnh, `strength` 0..1. */
+export function drawFlashlightBeam(
+  ctx: CanvasRenderingContext2D,
+  from: { readonly x: number; readonly y: number },
+  target: BeamTarget,
+  strength: number
+): void {
+  const poly = flashlightBeamPolygon(from, target);
+  const first = poly[0];
+  if (!first || strength <= 0) {
+    return;
+  }
+  ctx.save();
+  ctx.globalAlpha = 0.28 * Math.min(1, strength);
+  ctx.fillStyle = designTokens.colors.montessori.amberGlow;
+  ctx.strokeStyle = designTokens.colors.montessori.amber;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(first.x, first.y);
+  for (const pt of poly.slice(1)) {
+    ctx.lineTo(pt.x, pt.y);
+  }
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+}
+
+/** Bóng đổ mềm lệch xuống-phải của mảnh đã đặt trên tường, `strength` 0..1. */
+export function drawWallShadow(
+  ctx: CanvasRenderingContext2D,
+  slot: BeamTarget,
+  strength: number
+): void {
+  if (strength <= 0) {
+    return;
+  }
+  ctx.save();
+  ctx.globalAlpha = 0.22 * Math.min(1, strength);
+  ctx.fillStyle = designTokens.colors.montessori.woodBorder;
+  const w = slot.w * 0.9;
+  const h = slot.h * 0.9;
+  ctx.beginPath();
+  ctx.roundRect(
+    slot.x - w / 2 + slot.w * 0.08,
+    slot.y - h / 2 + slot.h * 0.1,
+    w,
+    h,
+    12
+  );
+  ctx.fill();
+  ctx.restore();
+}

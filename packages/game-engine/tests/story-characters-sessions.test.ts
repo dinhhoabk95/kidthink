@@ -30,6 +30,8 @@ import { GT015_FIXTURES } from "#src/templates/GT-015/fixtures.js";
 import { GT015Session } from "#src/templates/GT-015/session.js";
 import { GT017_FIXTURES } from "#src/templates/GT-017/fixtures.js";
 import { GT017Session } from "#src/templates/GT-017/session.js";
+import { GT019_FIXTURES } from "#src/templates/GT-019/fixtures.js";
+import { GT019Session } from "#src/templates/GT-019/session.js";
 import { createFakeCanvas } from "./gates/fake-canvas.ts";
 
 vi.mock("#src/render/craft-shapes", async (importOriginal) => {
@@ -146,6 +148,13 @@ const PROBES: readonly Probe[] = [
     kind: "beaver",
     sessions: GT017_FIXTURES.map(
       (f) => () => new GT017Session(f.content, f.difficulty, 0)
+    ),
+  },
+  {
+    code: "GT-019",
+    kind: "bat",
+    sessions: GT019_FIXTURES.map(
+      (f) => () => new GT019Session(f.content, f.difficulty, 0)
     ),
   },
 ];

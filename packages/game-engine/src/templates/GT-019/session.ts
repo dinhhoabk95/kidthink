@@ -23,13 +23,18 @@ import { computeTraySourceSlots, pickTrayZones } from "#src/layout/tray-layout";
 import type { Slot } from "#src/layout/types";
 import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
 import {
+  beamFadeIn,
   drawAssetInSlot,
   drawCheckMark,
   drawEmptyTargetSlot,
+  drawFlashlightBeam,
   drawSceneBackground,
   drawSlotItem,
+  drawStoryCharacterInStage,
+  drawWallShadow,
   drawWoodenTokenDock,
   getColorsForState,
+  placeStoryCharacter,
 } from "#src/render/index";
 import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
@@ -149,6 +154,12 @@ export class GT019Session extends TemplateGameSession<
   private readonly placedPieceIds: Set<string> = new Set();
 
   private readonly mood = new MoodPulse();
+  private lastFrameMs = 0;
+  private reducedMotion = false;
+  /** Mốc đồng hồ khung lúc mảnh vào từng ô đích (chùm sáng hiện dần từ đây). */
+  private readonly placedAtMs: Map<string, number> = new Map();
+  /** Đầu đèn pin của khung hiện tại: tâm Dơi Con, hoặc giữa mép trên sân khấu. */
+  private beamOrigin: { x: number; y: number } | null = null;
 
   override storyLine(): string {
     return GT019_STORY_LINE;
@@ -161,10 +172,13 @@ export class GT019Session extends TemplateGameSession<
 
   update(deltaMs: number): void {
     this.mood.tick(deltaMs);
+    this.lastFrameMs += deltaMs;
   }
 
   setupEntities(): void {
     this.mood.clear();
+    this.lastFrameMs = 0;
+    this.placedAtMs.clear();
     this.isWon = false;
     this.placementMechanic.reset();
     this.pieceTransforms.clear();
@@ -694,6 +708,7 @@ export class GT019Session extends TemplateGameSession<
     this.placementMechanic.place(pieceId, slotId);
     this.pieceIdBySlotId.set(slotId, pieceId);
     this.placedPieceIds.add(pieceId);
+    this.placedAtMs.set(slotId, this.lastFrameMs);
     this.mood.set("happy", GT019_HAPPY_MS);
 
     if (this.checkWinCondition()) {
@@ -795,6 +810,27 @@ export class GT019Session extends TemplateGameSession<
     drawCheckMark(ctx, slot);
   }
 
+  /**
+   * Chùm sáng đèn pin và bóng đổ của mảnh **đã đặt đúng** (`BR-E019-08`). Chỉ
+   * ô đã có mảnh mới có; ô trống và mảnh trong khay không có, nên không báo
+   * trước mảnh nào hợp ô nào. `reduced_motion`: hiện đủ ngay.
+   */
+  private renderPlacedLight(
+    ctx: CanvasRenderingContext2D,
+    slotId: string,
+    slot: Slot
+  ): void {
+    const placedAt = this.placedAtMs.get(slotId) ?? 0;
+    const strength = beamFadeIn(
+      this.lastFrameMs - placedAt,
+      this.reducedMotion
+    );
+    drawWallShadow(ctx, slot, strength);
+    if (this.beamOrigin) {
+      drawFlashlightBeam(ctx, this.beamOrigin, slot, strength);
+    }
+  }
+
   private renderTrayPiece(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
@@ -827,6 +863,15 @@ export class GT019Session extends TemplateGameSession<
     ctx: CanvasRenderingContext2D,
     targets: readonly Slot[]
   ): void {
+    // Chùm sáng/bóng vẽ một lượt **trước mọi ô đích**: chùm từ góc sân khấu
+    // băng qua ô khác thì nằm dưới hình mờ của ô đó, không che hình trẻ cần so.
+    for (let i = 0; i < this.content.target_slots.length; i++) {
+      const target = this.content.target_slots[i];
+      const slot = targets[i];
+      if (target && slot && this.pieceIdBySlotId.has(target.slot_id)) {
+        this.renderPlacedLight(ctx, target.slot_id, slot);
+      }
+    }
     for (let i = 0; i < this.content.target_slots.length; i++) {
       const target = this.content.target_slots[i];
       const slot = targets[i];
@@ -858,12 +903,33 @@ export class GT019Session extends TemplateGameSession<
     }
   }
 
+  /**
+   * Dơi Con ở góc trống cầm đèn pin, ngoài vùng chạm (`BR-E019-08`); không còn
+   * góc trống thì đầu đèn rơi về giữa mép trên sân khấu, không có sân khấu thì
+   * không có chùm sáng.
+   */
+  private drawFlashlightHolder(ctx: CanvasRenderingContext2D): void {
+    const spot = placeStoryCharacter(this.stageRect, this.slots);
+    const stage = this.stageRect;
+    if (spot) {
+      this.beamOrigin = { x: spot.cx, y: spot.cy };
+    } else if (stage) {
+      this.beamOrigin = { x: stage.x + stage.w / 2, y: stage.y };
+    } else {
+      this.beamOrigin = null;
+    }
+    drawStoryCharacterInStage(ctx, "bat", stage, this.slots);
+  }
+
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
-    _timeMs: number
+    timeMs: number
   ): void {
+    this.lastFrameMs = timeMs;
+    this.reducedMotion = rs.reducedMotion;
     drawSceneBackground(ctx, rs, this.themeId);
+    this.drawFlashlightHolder(ctx);
     const zones = pickTrayZones(this.stageRect, this.trayRect);
     const targets = this.targetSlots;
     const sources = this.sourceSlots;
