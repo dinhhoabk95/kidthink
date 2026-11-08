@@ -2,6 +2,7 @@
 import type { AgeBand } from "#src/contracts/types";
 import {
   CONTENT_TOP_PX,
+  cssPxToLogicPx,
   DEFAULT_LOGIC_SPACE,
   JITTER_MAX_PX,
   type LogicSpace,
@@ -609,7 +610,14 @@ export function computeScatterBoardLayout(
   }
 
   const jitterMax = options?.jitterMaxPx ?? JITTER_MAX_PX;
-  const touchFloor = resolveTouchFloor(ageBand, input.cssPerLogic);
+  const bandFloor = resolveTouchFloor(ageBand, input.cssPerLogic);
+  const touchFloor =
+    input.minTouchCssPx === undefined
+      ? bandFloor
+      : Math.max(
+          bandFloor,
+          cssPxToLogicPx(input.minTouchCssPx, input.cssPerLogic ?? 1)
+        );
   const cellStep = touchFloor + SLOT_GAP_PX + 2 * jitterMax;
 
   const availW = LOGIC_WIDTH - 2 * SAFE_MARGIN_PX;

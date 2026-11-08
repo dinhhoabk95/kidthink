@@ -79,7 +79,7 @@ describe("GT-037 BR-E037-09: item_count trần theo band", () => {
   }
 });
 
-describe("GT-037 BR-E037-09: show_target_counter điều khiển bộ đếm đã tìm / tổng", () => {
+describe("GT-037 BR-E037-13: show_target_counter điều khiển bộ đếm đã tìm / tổng", () => {
   function counterText(
     difficulty: ConstructorParameters<typeof GT037Session>[1]
   ): string {

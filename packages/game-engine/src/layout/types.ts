@@ -38,6 +38,11 @@ export interface LayoutInput {
    */
   readonly cssPerLogic?: number;
   /**
+   * Sàn chạm riêng của engine tính bằng px CSS, lớn hơn sàn chung của band
+   * (`BR-E037-12`). Chỉ `scatter-board` đọc; bỏ trống thì dùng sàn band.
+   */
+  readonly minTouchCssPx?: number;
+  /**
    * `placeInStage` đặt khi có `stage` (`BR-PSZ-01`): hàm hình học được phép thích
    * nghi với sân khấu — làm tròn xuống cạnh ô để tâm làm tròn không kéo hai vùng
    * chạm lại gần nhau hơn `SLOT_GAP_PX` (`BR-LAY-05`), thêm cột khi vùng thấp.

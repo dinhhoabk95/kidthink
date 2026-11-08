@@ -1,3 +1,4 @@
+import { TOUCH_FLOORS } from "@mindkid/shared/touch-floors";
 import type { AgeBand } from "#src/contracts/types";
 import {
   ACTION_CORRECT,
@@ -55,6 +56,18 @@ export const GT037_STORY_LINE =
 
 /** Gấu Con reo bấy lâu sau mỗi ô đích mới tìm (`BR-E037-10`). */
 export const GT037_CHEER_MS = 1200;
+
+/**
+ * Vùng chạm riêng của GT-037 theo band, px CSS (`BR-E037-12`). Chỉ band 4-5 có;
+ * bằng sàn 3-4 (`TOUCH_FLOORS.kidBand3_4`) vì trẻ 4 tuổi còn vận động tinh gần lứa 3-4.
+ */
+export const GT037_TOUCH_CSS_PX_4_5 = TOUCH_FLOORS.kidBand3_4;
+const GT037_TOUCH_CSS_PX_BY_BAND: Readonly<Partial<Record<AgeBand, number>>> = {
+  "4-5": GT037_TOUCH_CSS_PX_4_5,
+};
+
+/** Tỉ lệ bản sao đích tối đa trên bảng (spec mục 14: 15-35%). */
+const GT037_MAX_TARGET_RATIO = 0.35;
 
 const SCATTER_BOARD_CAPACITY: Record<AgeBand, number> = {
   "3-4": 10,
@@ -188,6 +201,11 @@ export class GT037Session extends TemplateGameSession<
   itemCount = 0;
   targetCopies = 0;
   targetSet = new Set<string>();
+  /** `true` khi bảng hiện dùng vùng chạm riêng của band (`BR-E037-12`). */
+  usesOwnTouchFloor = false;
+  /** `setupEntities` đã chạy, chờ `computeSlots` chốt số ô rồi mới ghi `game_started`. */
+  private pendingStartEvent = false;
+
   private currentBand: AgeBand = "5-6";
   /** Band mà `boardSymbols` được dựng cho; lệch `currentBand` thì dựng lại (`BR-E037-11`). */
   private boardBand: AgeBand | null = null;
@@ -229,7 +247,17 @@ export class GT037Session extends TemplateGameSession<
     this.lastFrameMs = 0;
     this.cheerRemainingMs = 0;
     this.rebuildBoard();
+    // Ghi `game_started` sau khi `computeSlots` hạ số ô theo khung (`BR-E037-12`),
+    // để `item_count` là số ô thật trên bảng chứ không phải số khai.
+    this.pendingStartEvent = true;
+  }
 
+  /** Ghi `game_started` một lần mỗi lượt, với số ô thật sau khi bảng vừa khung. */
+  private flushStartEvent(): void {
+    if (!this.pendingStartEvent) {
+      return;
+    }
+    this.pendingStartEvent = false;
     this.recordEvent("game_started", {
       template_code: "GT-037",
       item_count: this.itemCount,
@@ -350,6 +378,61 @@ export class GT037Session extends TemplateGameSession<
     this.boardSymbols = shuffle([...targets, ...keptDistractors], assignStream);
   }
 
+  /**
+   * Chọn ô ứng viên cho bảng. Band 4-5 thử sàn chạm riêng trước (`BR-E037-12`),
+   * không vừa khung thì co về sàn band — không bao giờ dưới sàn band.
+   */
+  private chooseCandidateSlots(
+    band: AgeBand,
+    maxBandCapacity: number
+  ): { slots: readonly Slot[]; count: number } {
+    const layoutFn = resolveLayout("scatter-board");
+    const layoutBoard = (
+      slotCount: number,
+      minTouchCssPx: number | undefined
+    ): readonly Slot[] =>
+      layoutFn({
+        slotCount,
+        ageBand: band,
+        logic: this.logicSpace,
+        stage: this.stageRect,
+        cssPerLogic: this.cssPerLogic,
+        minTouchCssPx,
+      });
+    const minCount = Math.max(1, this.targetCopies);
+    const startCount = Math.min(this.itemCount, maxBandCapacity);
+    this.usesOwnTouchFloor = false;
+
+    const ownTouch = GT037_TOUCH_CSS_PX_BY_BAND[band];
+    if (ownTouch !== undefined) {
+      const ownMinCount = Math.min(
+        startCount,
+        Math.max(
+          minCount,
+          Math.ceil(this.targetCopies / GT037_MAX_TARGET_RATIO)
+        )
+      );
+      for (let n = startCount; n >= ownMinCount; n--) {
+        try {
+          const slots = layoutBoard(n, ownTouch);
+          this.usesOwnTouchFloor = true;
+          return { slots, count: n };
+        } catch (_err) {
+          // Không vừa khung: hạ thêm một ô.
+        }
+      }
+    }
+
+    for (let n = startCount; n >= minCount; n--) {
+      try {
+        return { slots: layoutBoard(n, undefined), count: n };
+      } catch (_err) {
+        // Không vừa khung: hạ thêm một ô.
+      }
+    }
+    return { slots: layoutBoard(minCount, undefined), count: minCount };
+  }
+
   protected computeSlots(band: AgeBand): readonly Slot[] {
     this.currentBand = band;
     const saved = this.snapshotProgress();
@@ -360,42 +443,15 @@ export class GT037Session extends TemplateGameSession<
       this.rebuildBoard();
     }
 
-    const layoutFn = resolveLayout("scatter-board");
-    let candidateSlots: readonly Slot[] = [];
-    let currentCount = Math.min(this.itemCount, maxBandCapacity);
-    const minCount = Math.max(1, this.targetCopies);
-
-    while (currentCount >= minCount) {
-      try {
-        candidateSlots = layoutFn({
-          slotCount: currentCount,
-          ageBand: band,
-          logic: this.logicSpace,
-          stage: this.stageRect,
-          cssPerLogic: this.cssPerLogic,
-        });
-        break;
-      } catch (_err) {
-        currentCount--;
-      }
-    }
-
-    if (candidateSlots.length === 0) {
-      candidateSlots = layoutFn({
-        slotCount: minCount,
-        ageBand: band,
-        logic: this.logicSpace,
-        stage: this.stageRect,
-        cssPerLogic: this.cssPerLogic,
-      });
-      currentCount = minCount;
-    }
+    const { slots: candidateSlots, count: currentCount } =
+      this.chooseCandidateSlots(band, maxBandCapacity);
 
     if (currentCount !== this.itemCount) {
       this.itemCount = currentCount;
       this.trimBoardSymbols(currentCount);
     }
     this.restoreProgress(saved);
+    this.flushStartEvent();
 
     const cellsStream = deriveStream(this.layoutSeed, "cells");
     const shuffledCandidates = shuffle(candidateSlots, cellsStream);

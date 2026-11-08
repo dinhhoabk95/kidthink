@@ -38,9 +38,17 @@ export function getTouchFloorLogicPx(
   ageBand: AgeBand,
   cssPerLogic: number
 ): number {
+  return cssPxToLogicPx(getTouchFloor(ageBand), cssPerLogic);
+}
+
+/**
+ * Đổi một cạnh tính bằng px CSS ra logic px (làm tròn lên để không dưới ngưỡng).
+ * `cssPerLogic` không hợp lệ coi như 1.
+ */
+export function cssPxToLogicPx(cssPx: number, cssPerLogic: number): number {
   const scale =
     Number.isFinite(cssPerLogic) && cssPerLogic > 0 ? cssPerLogic : 1;
-  return Math.ceil(getTouchFloor(ageBand) / scale);
+  return Math.ceil(cssPx / scale);
 }
 
 /**
