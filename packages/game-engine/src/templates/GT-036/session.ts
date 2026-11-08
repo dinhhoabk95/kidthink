@@ -21,8 +21,12 @@ import {
 import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
 import {
+  beadStringSegments,
+  drawBeadString,
   drawSceneBackground,
   drawSlotItem,
+  drawStoryCharacterInStage,
+  nightingaleSway,
   spawnParticlesAtSlot,
   updateParticles,
 } from "#src/render/index";
@@ -823,6 +827,24 @@ export class GT036Session extends TemplateGameSession<
 
     // Không vẽ dòng chữ nào: lời mời và lời khen do lời dẫn đọc, mô-típ sáng trên dải (`BR-E036-09`).
     this.renderClearSlot(ctx, rs);
+    // Dây xâu hạt nối các ô dải cùng hàng, dưới các hạt (`BR-E036-14`).
+    drawBeadString(
+      ctx,
+      beadStringSegments(this.slots.slice(0, this.content.track_length))
+    );
+    // Họa Mi ở góc trống, nhún theo từng bước sáng của mô-típ sau khi chốt (`BR-E036-14`).
+    drawStoryCharacterInStage(
+      ctx,
+      "nightingale",
+      this.stageRect,
+      this.slots,
+      nightingaleSway(
+        this.litElapsedMs,
+        GT036_LIGHT_STEP_MS,
+        this.submitted ? this.litOrder().length : 0,
+        rs.reducedMotion
+      )
+    );
     this.renderTrackSlots(ctx, rs);
     this.renderPaletteDock(ctx, rs);
 
