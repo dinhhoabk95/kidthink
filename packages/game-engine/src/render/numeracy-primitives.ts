@@ -585,3 +585,130 @@ export function drawMontessoriCoin(
   ctx.fillText(`${value}`, cx, cy);
   ctx.restore();
 }
+
+// ── Nhóm còn lại co nhỏ trượt về ô mới và Mèo Mướp ngoạm (GT-029) ─────
+
+/** Nhóm trượt về ô mới trong ngần này ms. */
+export const CAT_SLIDE_MS = 350;
+/** Mèo nhai trong ngần này ms sau mỗi lần ngoạm một vật. */
+export const CAT_BITE_MS = 400;
+const CAT_CHEW_PERIOD_MS = 100;
+const SLIDE_SHRINK = 0.14;
+
+export interface SlidePose {
+  readonly scale: number;
+  readonly x: number;
+  readonly y: number;
+}
+
+/**
+ * Tư thế vẽ của một vật đang dồn về ô mới ở `elapsedMs` kể từ lúc nhóm đổi:
+ * trượt theo đường cong êm từ `from` sang `to`, co nhỏ giữa chừng (tối đa
+ * 14 %) rồi nở về đúng cỡ. Hàm thuần — chỉ ảnh hưởng chỗ vẽ, không đổi vùng
+ * chạm. `reduced_motion` hoặc không đổi ô thì đứng ở ô mới, đúng cỡ.
+ */
+export function groupSlidePose(
+  from: { readonly x: number; readonly y: number },
+  to: { readonly x: number; readonly y: number },
+  elapsedMs: number,
+  reducedMotion: boolean
+): SlidePose {
+  const p = Math.min(1, Math.max(0, elapsedMs / CAT_SLIDE_MS));
+  if (reducedMotion || p >= 1 || (from.x === to.x && from.y === to.y)) {
+    return { x: to.x, y: to.y, scale: 1 };
+  }
+  const eased = p * p * (3 - 2 * p);
+  return {
+    x: from.x + (to.x - from.x) * eased,
+    y: from.y + (to.y - from.y) * eased,
+    scale: 1 - SLIDE_SHRINK * Math.sin(Math.PI * p),
+  };
+}
+
+/** Mèo há miệng nhai xen kẽ trong `CAT_BITE_MS` sau lần ngoạm; còn lại ngậm. */
+export function catMouthOpen(
+  elapsedMs: number,
+  reducedMotion: boolean
+): boolean {
+  if (reducedMotion || elapsedMs < 0 || elapsedMs >= CAT_BITE_MS) {
+    return false;
+  }
+  return Math.floor(elapsedMs / CAT_CHEW_PERIOD_MS) % 2 === 0;
+}
+
+/**
+ * Mèo Mướp vẽ vector: đầu bầu dục, hai tai, vằn trán, mắt, mũi, râu. Miệng há
+ * thì vẽ thêm một ellipse tối; ngậm thì một nét cong.
+ */
+export function drawCat(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number,
+  mouthOpen: boolean
+): void {
+  const rx = size * 0.5;
+  const ry = size * 0.44;
+  const fur = designTokens.colors.montessori.amber;
+  const dark = designTokens.colors.montessori.amberDark;
+  ctx.save();
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = dark;
+  // Hai tai
+  ctx.fillStyle = fur;
+  for (const dir of [-1, 1]) {
+    ctx.beginPath();
+    ctx.moveTo(cx + dir * rx * 0.2, cy - ry * 0.8);
+    ctx.lineTo(cx + dir * rx * 0.85, cy - ry * 1.3);
+    ctx.lineTo(cx + dir * rx * 0.95, cy - ry * 0.2);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+  }
+  // Đầu
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  // Vằn trán mướp
+  ctx.beginPath();
+  for (const dx of [-0.3, 0, 0.3]) {
+    ctx.moveTo(cx + rx * dx, cy - ry * 0.95);
+    ctx.lineTo(cx + rx * dx, cy - ry * 0.55);
+  }
+  ctx.stroke();
+  // Mắt
+  ctx.fillStyle = designTokens.colors.surface[900];
+  for (const dx of [-0.38, 0.38]) {
+    ctx.beginPath();
+    ctx.arc(cx + rx * dx, cy - ry * 0.1, size * 0.06, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  // Mũi
+  ctx.fillStyle = designTokens.colors.montessori.coral;
+  ctx.beginPath();
+  ctx.arc(cx, cy + ry * 0.2, size * 0.05, 0, Math.PI * 2);
+  ctx.fill();
+  // Miệng
+  if (mouthOpen) {
+    ctx.fillStyle = designTokens.colors.surface[900];
+    ctx.beginPath();
+    ctx.ellipse(cx, cy + ry * 0.58, rx * 0.22, ry * 0.2, 0, 0, Math.PI * 2);
+    ctx.fill();
+  } else {
+    ctx.beginPath();
+    ctx.arc(cx, cy + ry * 0.35, rx * 0.2, 0.15 * Math.PI, 0.85 * Math.PI);
+    ctx.stroke();
+  }
+  // Râu
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  for (const dir of [-1, 1]) {
+    for (const dy of [0.25, 0.5]) {
+      ctx.moveTo(cx + dir * rx * 0.55, cy + ry * dy);
+      ctx.lineTo(cx + dir * rx * 1.15, cy + ry * (dy - 0.12));
+    }
+  }
+  ctx.stroke();
+  ctx.restore();
+}

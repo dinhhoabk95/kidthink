@@ -29,10 +29,13 @@ import {
 import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
 import {
+  catMouthOpen,
+  drawCat,
   drawProgressDots,
   drawSceneBackground,
   drawSlotItem,
   drawWoodenTokenDock,
+  groupSlidePose,
   type ItemVisualState,
   spawnParticlesAtSlot,
   updateParticles,
@@ -178,6 +181,16 @@ export class GT029Session extends TemplateGameSession<
   /** Thứ tự bày vật: content, hoặc hoán vị không động theo seed khi `shuffle_items` bật (`BR-E029-07`). */
   private items: GT029Content["initial_items"] = this.content.initial_items;
   private lastFrameMs = 0;
+  /** Ô lưới mỗi vật đang hướng tới; đổi ô thì nhóm trượt (`BR-E029-10`). */
+  private readonly itemCellTo = new Map<string, number>();
+  /** Chỗ vẽ ban đầu của vật vừa đổi ô, tính tới `slideStartMs`. */
+  private readonly itemSlideFrom = new Map<
+    string,
+    { readonly x: number; readonly y: number }
+  >();
+  private slideStartMs = 0;
+  /** Đồng hồ khung lúc Mèo ngoạm vật gần nhất (`BR-E029-11`). */
+  private lastBiteMs = Number.NEGATIVE_INFINITY;
   private readonly wrongOptionFlash = new WrongFlash();
   private wrongItemId: string | null = null;
   private readonly wrongItemFlash = new WrongFlash();
@@ -226,6 +239,9 @@ export class GT029Session extends TemplateGameSession<
 
   setupEntities(): void {
     this.removedItemIds.clear();
+    this.itemSlideFrom.clear();
+    this.slideStartMs = 0;
+    this.lastBiteMs = Number.NEGATIVE_INFINITY;
     this.items =
       this.difficulty.shuffle_items === true &&
       this.content.initial_items.length > 1
@@ -234,6 +250,10 @@ export class GT029Session extends TemplateGameSession<
             deriveStream(this.layoutSeed, "items")
           )
         : this.content.initial_items;
+    this.itemCellTo.clear();
+    this.items.forEach((it, i) => {
+      this.itemCellTo.set(it.item_id, i);
+    });
     this.selectedOptionId = null;
     this.isWin = false;
     this.particles = [];
@@ -270,6 +290,33 @@ export class GT029Session extends TemplateGameSession<
       }
     }
     return remainingRank;
+  }
+
+  /**
+   * Vật đổi ô thì ghi lại chỗ cũ và mốc đồng hồ khung để `renderItems` trượt từ
+   * đó (`BR-E029-10`). Gọi ngay sau khi tập vật bớt đổi và đầu mỗi khung.
+   */
+  private syncSlide(): void {
+    const moved: [string, number, number][] = [];
+    this.items.forEach((it, i) => {
+      const cell = this.itemCellIndex(i);
+      const prev = this.itemCellTo.get(it.item_id) ?? cell;
+      if (cell !== prev) {
+        moved.push([it.item_id, prev, cell]);
+      }
+    });
+    if (moved.length === 0) {
+      return;
+    }
+    this.itemSlideFrom.clear();
+    for (const [id, prev, cell] of moved) {
+      const from = this.slots[prev];
+      if (from) {
+        this.itemSlideFrom.set(id, { x: from.x, y: from.y });
+      }
+      this.itemCellTo.set(id, cell);
+    }
+    this.slideStartMs = this.lastFrameMs;
   }
 
   private itemSlotFor(itemIndex: number): Slot | undefined {
@@ -344,6 +391,7 @@ export class GT029Session extends TemplateGameSession<
 
     if (this.removedItemIds.has(itemId)) {
       this.removedItemIds.delete(itemId);
+      this.syncSlide();
       this.selectedOptionId = null;
       this.recordEvent("item_restored", {
         item_id: itemId,
@@ -360,6 +408,8 @@ export class GT029Session extends TemplateGameSession<
     }
 
     this.removedItemIds.add(itemId);
+    this.syncSlide();
+    this.lastBiteMs = this.lastFrameMs;
     this.queueSfx("cat_munch");
     this.react("cheer", GT029_MUNCH_MS);
     this.recordEvent("item_removed", {
@@ -730,10 +780,27 @@ export class GT029Session extends TemplateGameSession<
       }
 
       const isRemoved = this.removedItemIds.has(it.item_id);
+      const from = this.itemSlideFrom.get(it.item_id);
+      const pose = from
+        ? groupSlidePose(
+            from,
+            slot,
+            this.lastFrameMs - this.slideStartMs,
+            rs.reducedMotion
+          )
+        : { x: slot.x, y: slot.y, scale: 1 };
       drawSlotItem(
         ctx,
         rs,
-        slot,
+        pose.scale === 1 && pose.x === slot.x && pose.y === slot.y
+          ? slot
+          : {
+              ...slot,
+              x: pose.x,
+              y: pose.y,
+              w: slot.w * pose.scale,
+              h: slot.h * pose.scale,
+            },
         {
           id: it.item_id,
           asset: it.asset,
@@ -824,6 +891,16 @@ export class GT029Session extends TemplateGameSession<
 
     const removedCount = this.removedItemIds.size;
     const targetRemove = this.content.remove_count;
+    this.syncSlide();
+    // Mèo Mướp ở cuối dải nhãn; hàng chấm nhường chỗ (`BR-E029-11`).
+    const caption = this.stageRect
+      ? splitCaption(this.stageRect).caption
+      : undefined;
+    const catSize = Math.min(40, (caption?.h ?? 44) - 4);
+    const catCx = caption
+      ? caption.x + caption.w - catSize / 2 - 6
+      : rs.LOGIC_WIDTH - catSize / 2 - 12;
+    const catCy = caption ? caption.y + caption.h / 2 : rs.LOGIC_HEIGHT * 0.12;
     // Không chữ: `-n` và n chấm lấp dần cho mỗi vật đã bớt (`BR-E029-05`).
     drawProgressDots(
       ctx,
@@ -833,7 +910,16 @@ export class GT029Session extends TemplateGameSession<
         total: targetRemove,
         badge: `-${targetRemove}`,
       },
-      this.stageRect ? splitCaption(this.stageRect).caption : undefined
+      caption
+        ? { ...caption, w: Math.max(0, caption.w - catSize - 12) }
+        : undefined
+    );
+    drawCat(
+      ctx,
+      catCx,
+      catCy,
+      catSize,
+      catMouthOpen(timeMs - this.lastBiteMs, rs.reducedMotion)
     );
 
     this.renderItems(ctx, rs);
