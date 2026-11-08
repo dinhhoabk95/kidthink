@@ -32,6 +32,7 @@ import {
   drawQuantityRepresentation,
   drawSceneBackground,
   drawSlotItem,
+  drawStoryCharacterInStage,
   drawWoodenTokenDock,
   type ItemVisualState,
   sceneBox,
@@ -922,11 +923,18 @@ export class GT007Session extends TemplateGameSession<
   ): void {
     this.lastFrameMs = timeMs;
     drawSceneBackground(ctx, rs, this.themeId);
+    const zones = pickTrayZones(this.stageRect, this.trayRect);
+    // Khỉ Nhỏ vẽ ngay sau nền, ở góc trống ngoài vùng chạm (`BR-E007-10`).
+    drawStoryCharacterInStage(
+      ctx,
+      "monkey",
+      zones?.stage ?? this.stageRect,
+      this.slots
+    );
     if (this.candy) {
       this.renderCandy(ctx, rs, this.candy);
       return;
     }
-    const zones = pickTrayZones(this.stageRect, this.trayRect);
     if (zones) {
       // Lời dẫn do shell vẽ; lựa chọn nằm trên khay của khung năm vùng.
       drawWoodenTokenDock(ctx, rs, zones.tray);
