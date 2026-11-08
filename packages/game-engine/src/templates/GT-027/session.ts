@@ -26,7 +26,6 @@ import type { Slot } from "#src/layout/types";
 import {
   CARD_FLIP_MS,
   cardFlipPose,
-  drawCircleOutline,
   drawSceneBackground,
   drawSlotItem,
   drawStoryCharacterInStage,
@@ -35,43 +34,11 @@ import {
 } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
-import { designTokens } from "#src/systems/designTokens";
 import { MoodPulse } from "#src/systems/mood-pulse";
 import type { RenderSystem } from "#src/systems/render-system";
 import { type RuleDefinition, RuleSystem } from "#src/systems/rule-system";
 import { WrongFlash } from "#src/systems/wrong-flash";
 import type { GT027Content, GT027Difficulty } from "./template.js";
-
-function resolveRuleColorToken(color: string): string | null {
-  switch (color.toLowerCase()) {
-    case "red":
-    case "đỏ":
-    case "berry":
-      return designTokens.colors.montessori.coral;
-    case "blue":
-    case "xanh dương":
-    case "xanh":
-    case "sky":
-      return designTokens.colors.brand[500];
-    case "yellow":
-    case "vàng":
-    case "amber":
-      return designTokens.colors.montessori.amber;
-    case "green":
-    case "xanh lá":
-    case "mint":
-      return designTokens.colors.semantic.success[500];
-    case "purple":
-    case "tím":
-    case "indigo":
-      return designTokens.colors.montessori.indigo;
-    case "orange":
-    case "cam":
-      return designTokens.colors.cta[500];
-    default:
-      return null;
-  }
-}
 
 interface CardItem {
   id: string;
@@ -529,10 +496,8 @@ export class GT027Session extends TemplateGameSession<
         asset: item.asset,
         state: this.getRenderItemState(item.id),
       });
-      const colorToken = resolveRuleColorToken(item.color);
-      if (colorToken) {
-        drawCircleOutline(ctx, slot, colorToken, 4, -2);
-      }
+      // Viền ô trung tính: không tô theo màu/hình/cỡ của vật, vì viền theo thuộc
+      // tính của luật đang chạy là đánh dấu sẵn đáp án (`BR-E027-07`).
     });
   }
 }
