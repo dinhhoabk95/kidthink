@@ -28,10 +28,14 @@ import {
   beatBallRadius,
 } from "#src/render/beat-ball";
 import {
+  cricketArm,
   drawBeatBall,
+  drawInstrumentGlyph,
   drawSceneBackground,
   drawSlotItem,
+  drawStoryCharacterInStage,
   drawSubPromptText,
+  instrumentGlyphKind,
   spawnParticlesAtSlot,
   updateParticles,
 } from "#src/render/index.js";
@@ -969,6 +973,10 @@ export class GT034Session extends TemplateGameSession<
       );
     }
 
+    // Dế Mèn ở góc trống, gõ tay theo phách chỉ khi mẫu tự phát (`BR-E034-13`).
+    drawStoryCharacterInStage(ctx, "cricket", this.stageRect, this.slots, {
+      arm: this.cricketArmNow(rs.reducedMotion),
+    });
     this.renderTrackSteps(ctx, rs);
     this.renderInstrumentDock(ctx, rs);
     this.renderBeatBall(ctx, rs);
@@ -1047,9 +1055,7 @@ export class GT034Session extends TemplateGameSession<
       const inst = this.content.instruments.find(
         (item) => item.instrument_id === userStep
       );
-      drawSlotItem(ctx, rs, slot, {
-        id: userStep,
-        asset: inst?.asset,
+      this.drawInstrumentSlot(ctx, rs, slot, userStep, inst?.asset, {
         label: inst?.name_vi ?? userStep,
         state: isActive ? "selected" : "idle",
       });
@@ -1070,12 +1076,17 @@ export class GT034Session extends TemplateGameSession<
       const inst = this.content.instruments.find(
         (item) => item.instrument_id === targetStep
       );
-      drawSlotItem(ctx, rs, slot, {
-        id: targetStep ?? `step-target-${index}`,
-        asset: inst?.asset,
-        label: inst?.name_vi ?? targetStep ?? undefined,
-        state: isActive ? "selected" : "idle",
-      });
+      this.drawInstrumentSlot(
+        ctx,
+        rs,
+        slot,
+        targetStep ?? `step-target-${index}`,
+        inst?.asset,
+        {
+          label: inst?.name_vi ?? targetStep ?? undefined,
+          state: isActive ? "selected" : "idle",
+        }
+      );
       return;
     }
 
@@ -1115,13 +1126,53 @@ export class GT034Session extends TemplateGameSession<
         continue;
       }
 
-      drawSlotItem(ctx, rs, slot, {
-        id: inst.instrument_id,
-        asset: inst.asset,
+      this.drawInstrumentSlot(ctx, rs, slot, inst.instrument_id, inst.asset, {
         label: inst.name_vi ?? inst.instrument_id,
         state: "idle",
       });
     }
+  }
+
+  /**
+   * Một ô nhạc cụ: id đã biết (trống cơm, phách, mõ) vẽ bằng hình vector riêng
+   * thay asset, id lạ giữ asset của content (`BR-E034-13`). Hình chỉ là mặt nhạc cụ,
+   * không liên quan phách hay đáp án.
+   */
+  private drawInstrumentSlot(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    slot: Slot,
+    instrumentId: string,
+    asset: GT034Content["instruments"][number]["asset"] | undefined,
+    face: { readonly label?: string; readonly state: "idle" | "selected" }
+  ): void {
+    const glyph = instrumentGlyphKind(instrumentId);
+    if (!glyph) {
+      drawSlotItem(ctx, rs, slot, { id: instrumentId, asset, ...face });
+      return;
+    }
+    drawSlotItem(ctx, rs, slot, { id: instrumentId, text: "", ...face });
+    drawInstrumentGlyph(
+      ctx,
+      glyph,
+      slot.x,
+      slot.y,
+      Math.min(slot.w, slot.h) * 0.5
+    );
+  }
+
+  /** Độ hạ tay Dế Mèn: chỉ khi mẫu tự phát, chỉ ở phách có tiếng (`BR-E034-13`). */
+  private cricketArmNow(reducedMotion: boolean): number {
+    const ball = this.getBeatBall();
+    if (
+      reducedMotion ||
+      !ball ||
+      ball.kind !== "beat" ||
+      this.content.target_pattern[ball.step] == null
+    ) {
+      return 0;
+    }
+    return cricketArm(ball.phase);
   }
 
   override completeSession(): void {
