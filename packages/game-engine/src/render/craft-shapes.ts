@@ -1511,3 +1511,65 @@ export function drawGrowingTree(
   }
   ctx.restore();
 }
+
+// ── Chuồng "thở" khi trẻ đã cầm vật (GT-008, `BR-E008-07`) ───────────
+
+/** Một nhịp thở của chuồng, ms. */
+export const STABLE_BREATH_MS = 1200;
+const STABLE_BREATH_AMPLITUDE = 0.06;
+
+/**
+ * Độ phồng của chuồng ở đồng hồ khung `timeMs`: quanh 1, nở tới
+ * `1 + STABLE_BREATH_AMPLITUDE` rồi xẹp lại. Chỉ thở khi `active` (trẻ đã cầm
+ * một vật); `reduced_motion` luôn 1. Mọi chuồng dùng chung một giá trị này.
+ */
+export function stableBreathScale(
+  timeMs: number,
+  active: boolean,
+  reducedMotion: boolean
+): number {
+  if (!active || reducedMotion) {
+    return 1;
+  }
+  const phase = (timeMs / STABLE_BREATH_MS) * Math.PI * 2;
+  return 1 + STABLE_BREATH_AMPLITUDE * (0.5 + 0.5 * Math.sin(phase));
+}
+
+/**
+ * Chuồng vẽ vector quanh ô đích `slot`: mái dốc, hai cột và nền, màu gỗ trung
+ * tính như nhau cho mọi chuồng nên không lộ ô nào hợp với vật nào. `scale`
+ * phồng quanh tâm ô; vùng chạm của ô không đổi.
+ */
+export function drawStable(
+  ctx: CanvasRenderingContext2D,
+  slot: Slot,
+  scale: number
+): void {
+  const m = designTokens.colors.montessori;
+  const w = slot.w * scale;
+  const h = slot.h * scale;
+  const left = slot.x - w / 2;
+  const top = slot.y - h / 2;
+  const roofH = h * 0.2;
+  ctx.save();
+  ctx.lineWidth = 3;
+  ctx.lineJoin = "round";
+  ctx.strokeStyle = m.woodBorder;
+  ctx.fillStyle = m.woodBevel;
+  ctx.beginPath();
+  ctx.moveTo(left, top + roofH);
+  ctx.lineTo(slot.x, top);
+  ctx.lineTo(left + w, top + roofH);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(left, top + roofH);
+  ctx.lineTo(left, top + h);
+  ctx.moveTo(left + w, top + roofH);
+  ctx.lineTo(left + w, top + h);
+  ctx.moveTo(left, top + h);
+  ctx.lineTo(left + w, top + h);
+  ctx.stroke();
+  ctx.restore();
+}

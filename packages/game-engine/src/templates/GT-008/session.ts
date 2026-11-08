@@ -30,8 +30,11 @@ import {
   drawSceneBackground,
   drawShapeTray,
   drawSlotItem,
+  drawStable,
+  drawStoryCharacterInStage,
   drawWoodenTokenDock,
   spawnParticlesAtSlot,
+  stableBreathScale,
   updateParticles,
 } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
@@ -562,6 +565,19 @@ export class GT008Session extends TemplateGameSession<
     }
     drawSceneBackground(ctx, rs, this.themeId);
     const zones = pickTrayZones(this.stageRect, this.trayRect);
+    // Voi Con vẽ ngay sau nền, ở góc trống ngoài vùng chạm (`BR-E008-07`).
+    drawStoryCharacterInStage(
+      ctx,
+      "elephant",
+      zones?.stage ?? this.stageRect,
+      this.slots
+    );
+    // Chuồng thở khi đã cầm một vật: cùng nhịp cho mọi chuồng còn trống.
+    const breath = stableBreathScale(
+      timeMs,
+      this.stagedItemId !== null,
+      rs.reducedMotion
+    );
     const targets = this.targetSlots;
     const sources = this.sourceSlots;
     const targetBox = boxFromSlots(targets);
@@ -587,6 +603,7 @@ export class GT008Session extends TemplateGameSession<
       const placed = placedId ? itemById.get(placedId) : undefined;
       if (!placed) {
         drawEmptyTargetSlot(ctx, slot);
+        drawStable(ctx, slot, breath);
         // Bóng mờ của vật ô này nhận thay cho nhãn chữ (`BR-E008-05`).
         drawGhostAssetInSlot(
           ctx,
