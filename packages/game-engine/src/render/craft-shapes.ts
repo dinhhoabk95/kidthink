@@ -801,3 +801,436 @@ export function drawPiggyBank(
   ctx.fill();
   ctx.restore();
 }
+
+// ── Nhân vật kể chuyện vẽ vector (Task #313 Đợt A) ───────────────────
+
+/** Sáu nhân vật còn thiếu hình: một con thú mỗi khung chuyện. */
+export const STORY_CHARACTER_KINDS = [
+  "squirrel",
+  "monkey",
+  "elephant",
+  "weasel",
+  "hen",
+  "butterfly",
+] as const;
+
+export type StoryCharacterKind = (typeof STORY_CHARACTER_KINDS)[number];
+
+interface CharacterRect {
+  readonly h: number;
+  readonly w: number;
+  readonly x: number;
+  readonly y: number;
+}
+
+const CHARACTER_MARGIN_PX = 6;
+const CHARACTER_CLEARANCE_PX = 4;
+
+/**
+ * Chỗ đặt nhân vật cạnh `size` trong `bounds`: thử bốn góc (trên-phải, trên-trái,
+ * dưới-phải, dưới-trái), lấy góc đầu tiên không chạm hình nào trong `occupied`
+ * (vùng chạm). Không góc nào trống thì `null` — khi đó không vẽ nhân vật.
+ */
+export function pickCharacterSpot(
+  bounds: CharacterRect,
+  occupied: readonly CharacterRect[],
+  size: number
+): { readonly cx: number; readonly cy: number } | null {
+  if (
+    size <= 0 ||
+    bounds.w < size + CHARACTER_MARGIN_PX * 2 ||
+    bounds.h < size + CHARACTER_MARGIN_PX * 2
+  ) {
+    return null;
+  }
+  const left = bounds.x + CHARACTER_MARGIN_PX + size / 2;
+  const right = bounds.x + bounds.w - CHARACTER_MARGIN_PX - size / 2;
+  const top = bounds.y + CHARACTER_MARGIN_PX + size / 2;
+  const bottom = bounds.y + bounds.h - CHARACTER_MARGIN_PX - size / 2;
+  const corners = [
+    { cx: right, cy: top },
+    { cx: left, cy: top },
+    { cx: right, cy: bottom },
+    { cx: left, cy: bottom },
+  ];
+  const pad = CHARACTER_CLEARANCE_PX;
+  for (const c of corners) {
+    const box = {
+      x: c.cx - size / 2 - pad,
+      y: c.cy - size / 2 - pad,
+      w: size + pad * 2,
+      h: size + pad * 2,
+    };
+    const clear = occupied.every(
+      (o) =>
+        box.x + box.w <= o.x ||
+        o.x + o.w <= box.x ||
+        box.y + box.h <= o.y ||
+        o.y + o.h <= box.y
+    );
+    if (clear) {
+      return c;
+    }
+  }
+  return null;
+}
+
+function characterEyes(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  dx: number,
+  r: number
+): void {
+  ctx.fillStyle = designTokens.colors.surface[900];
+  for (const dir of [-1, 1]) {
+    ctx.beginPath();
+    ctx.arc(cx + dir * dx, cy, r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function characterBlob(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  rx: number,
+  ry: number,
+  fill: string,
+  stroke: string,
+  rotation = 0
+): void {
+  ctx.fillStyle = fill;
+  ctx.strokeStyle = stroke;
+  ctx.beginPath();
+  ctx.ellipse(x, y, rx, ry, rotation, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+}
+
+function characterSmile(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  r: number
+): void {
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0.15 * Math.PI, 0.85 * Math.PI);
+  ctx.stroke();
+}
+
+function drawSquirrel(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number
+): void {
+  const m = designTokens.colors.montessori;
+  const ink = designTokens.colors.surface[900];
+  const r = size * 0.36;
+  // Đuôi xù cong sau lưng, hai tai nhọn, má sáng
+  characterBlob(
+    ctx,
+    cx - r * 1.1,
+    cy - r * 0.2,
+    r * 0.5,
+    r * 1.1,
+    m.amberDeep,
+    m.amberDark,
+    -0.35
+  );
+  characterBlob(ctx, cx, cy, r, r * 0.9, m.amberDeep, m.amberDark);
+  for (const dir of [-1, 1]) {
+    characterBlob(
+      ctx,
+      cx + dir * r * 0.6,
+      cy - r * 0.95,
+      r * 0.22,
+      r * 0.34,
+      m.amberDeep,
+      m.amberDark
+    );
+  }
+  characterBlob(
+    ctx,
+    cx,
+    cy + r * 0.3,
+    r * 0.55,
+    r * 0.4,
+    m.amberLight,
+    m.amberDark
+  );
+  characterEyes(ctx, cx, cy - r * 0.15, r * 0.4, size * 0.05);
+  ctx.fillStyle = ink;
+  ctx.beginPath();
+  ctx.arc(cx, cy + r * 0.2, size * 0.04, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawMonkey(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number
+): void {
+  const m = designTokens.colors.montessori;
+  const ink = designTokens.colors.surface[900];
+  const r = size * 0.36;
+  // Hai tai tròn, mặt sáng hình bầu dục
+  for (const dir of [-1, 1]) {
+    characterBlob(
+      ctx,
+      cx + dir * r * 1.05,
+      cy,
+      r * 0.32,
+      r * 0.32,
+      m.amberDeep,
+      m.amberDark
+    );
+  }
+  characterBlob(ctx, cx, cy, r, r * 0.95, m.amberDeep, m.amberDark);
+  characterBlob(
+    ctx,
+    cx,
+    cy + r * 0.2,
+    r * 0.72,
+    r * 0.65,
+    m.amberLight,
+    m.amberDark
+  );
+  characterEyes(ctx, cx, cy - r * 0.1, r * 0.3, size * 0.045);
+  ctx.fillStyle = ink;
+  ctx.beginPath();
+  ctx.arc(cx, cy + r * 0.2, size * 0.035, 0, Math.PI * 2);
+  ctx.fill();
+  characterSmile(ctx, cx, cy + r * 0.28, r * 0.25);
+}
+
+function drawElephant(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number
+): void {
+  const m = designTokens.colors.montessori;
+  const r = size * 0.36;
+  // Hai tai to, vòi cong xuống
+  for (const dir of [-1, 1]) {
+    characterBlob(
+      ctx,
+      cx + dir * r * 1.05,
+      cy,
+      r * 0.5,
+      r * 0.7,
+      m.indigoLight,
+      m.indigo
+    );
+  }
+  characterBlob(
+    ctx,
+    cx,
+    cy - r * 0.1,
+    r * 0.85,
+    r * 0.8,
+    m.indigoLight,
+    m.indigo
+  );
+  ctx.fillStyle = m.indigoLight;
+  ctx.beginPath();
+  ctx.roundRect(cx - r * 0.2, cy + r * 0.1, r * 0.4, r * 0.95, r * 0.2);
+  ctx.fill();
+  ctx.stroke();
+  characterEyes(ctx, cx, cy - r * 0.3, r * 0.35, size * 0.045);
+}
+
+function drawWeasel(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number
+): void {
+  const m = designTokens.colors.montessori;
+  const ink = designTokens.colors.surface[900];
+  const r = size * 0.36;
+  // Đầu thon, tai tròn nhỏ, mõm và bụng sáng, mặt nạ thám tử
+  for (const dir of [-1, 1]) {
+    characterBlob(
+      ctx,
+      cx + dir * r * 0.65,
+      cy - r * 0.8,
+      r * 0.2,
+      r * 0.2,
+      m.amber,
+      m.amberDark
+    );
+  }
+  characterBlob(ctx, cx, cy, r * 0.9, r * 0.8, m.amber, m.amberDark);
+  characterBlob(
+    ctx,
+    cx,
+    cy + r * 0.35,
+    r * 0.5,
+    r * 0.35,
+    m.amberGlow,
+    m.amberDark
+  );
+  characterEyes(ctx, cx, cy - r * 0.15, r * 0.35, size * 0.045);
+  ctx.fillStyle = ink;
+  ctx.beginPath();
+  ctx.arc(cx, cy + r * 0.22, size * 0.035, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawHen(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number
+): void {
+  const m = designTokens.colors.montessori;
+  const r = size * 0.36;
+  // Thân tròn trắng, mào đỏ, mỏ vàng
+  ctx.strokeStyle = m.woodBorder;
+  characterBlob(ctx, cx, cy, r, r * 0.95, m.paper, m.woodBorder);
+  ctx.fillStyle = m.coral;
+  ctx.strokeStyle = m.coral;
+  for (const dx of [-0.35, 0, 0.35]) {
+    ctx.beginPath();
+    ctx.arc(cx + r * dx, cy - r * 0.98, r * 0.2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.fillStyle = m.amber;
+  ctx.strokeStyle = m.amberDark;
+  ctx.beginPath();
+  ctx.moveTo(cx - r * 0.2, cy + r * 0.05);
+  ctx.lineTo(cx + r * 0.2, cy + r * 0.05);
+  ctx.lineTo(cx, cy + r * 0.4);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  characterEyes(ctx, cx, cy - r * 0.25, r * 0.38, size * 0.045);
+}
+
+function drawButterfly(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number
+): void {
+  const m = designTokens.colors.montessori;
+  const ink = designTokens.colors.surface[900];
+  const r = size * 0.36;
+  // Bướm: hai cặp cánh, thân dọc, hai râu
+  ctx.strokeStyle = m.indigo;
+  for (const dir of [-1, 1]) {
+    characterBlob(
+      ctx,
+      cx + dir * r * 0.65,
+      cy - r * 0.35,
+      r * 0.62,
+      r * 0.5,
+      m.coralLight,
+      m.coral,
+      dir * -0.4
+    );
+    characterBlob(
+      ctx,
+      cx + dir * r * 0.5,
+      cy + r * 0.45,
+      r * 0.42,
+      r * 0.35,
+      m.indigoLight,
+      m.indigo,
+      dir * 0.4
+    );
+  }
+  ctx.strokeStyle = ink;
+  ctx.fillStyle = ink;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, r * 0.12, r * 0.75, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  for (const dir of [-1, 1]) {
+    ctx.moveTo(cx, cy - r * 0.7);
+    ctx.lineTo(cx + dir * r * 0.4, cy - r * 1.1);
+  }
+  ctx.stroke();
+}
+
+const STORY_CHARACTER_DRAWERS: Readonly<
+  Record<
+    StoryCharacterKind,
+    (
+      ctx: CanvasRenderingContext2D,
+      cx: number,
+      cy: number,
+      size: number
+    ) => void
+  >
+> = {
+  squirrel: drawSquirrel,
+  monkey: drawMonkey,
+  elephant: drawElephant,
+  weasel: drawWeasel,
+  hen: drawHen,
+  butterfly: drawButterfly,
+};
+
+/**
+ * Vẽ một nhân vật kể chuyện bằng vài ellipse/đường (tâm `(cx, cy)`, cạnh
+ * `size`). Chỉ dùng màu token; chỉ là hình trang trí đặt ngoài vùng chạm.
+ */
+export function drawStoryCharacter(
+  ctx: CanvasRenderingContext2D,
+  kind: StoryCharacterKind,
+  cx: number,
+  cy: number,
+  size: number
+): void {
+  ctx.save();
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = designTokens.colors.montessori.amberDark;
+  STORY_CHARACTER_DRAWERS[kind](ctx, cx, cy, size);
+  ctx.restore();
+}
+
+/** Cạnh nhân vật kể chuyện, px logic (nhỏ, chỉ là điểm nhấn ngoài vùng chạm). */
+export const STORY_CHARACTER_SIZE_PX = 52;
+
+/**
+ * Chỗ nhân vật kể chuyện trong sân khấu `stage`, tránh mọi vùng chạm của `slots`
+ * (ô chạm thật `hitW × hitH`, rộng hơn ô vẽ). `null` khi chưa có sân khấu hoặc
+ * không còn góc trống — khi đó không vẽ nhân vật.
+ */
+export function placeStoryCharacter(
+  stage: CharacterRect | undefined,
+  slots: readonly Slot[],
+  size: number = STORY_CHARACTER_SIZE_PX
+): { readonly cx: number; readonly cy: number } | null {
+  if (!stage) {
+    return null;
+  }
+  return pickCharacterSpot(
+    stage,
+    slots.map((s) => ({
+      x: s.x - Math.max(s.hitW, s.w) / 2,
+      y: s.y - Math.max(s.hitH, s.h) / 2,
+      w: Math.max(s.hitW, s.w),
+      h: Math.max(s.hitH, s.h),
+    })),
+    size
+  );
+}
+
+/** Vẽ nhân vật kể chuyện ở góc trống của sân khấu, nếu có chỗ (`placeStoryCharacter`). */
+export function drawStoryCharacterInStage(
+  ctx: CanvasRenderingContext2D,
+  kind: StoryCharacterKind,
+  stage: CharacterRect | undefined,
+  slots: readonly Slot[]
+): void {
+  const spot = placeStoryCharacter(stage, slots);
+  if (spot) {
+    drawStoryCharacter(ctx, kind, spot.cx, spot.cy, STORY_CHARACTER_SIZE_PX);
+  }
+}
