@@ -58,6 +58,7 @@ export const SAMPLE_LEVEL_2: GameLevelFixture<GT016Content, GT016Difficulty> = {
     mode: "set",
     target_time: { hour: 4, minute: 30 },
     initial_time: { hour: 12, minute: 0 },
+    time_of_day: "afternoon",
     options: [],
     activity_cards: [],
   },

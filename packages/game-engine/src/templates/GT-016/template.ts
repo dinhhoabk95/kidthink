@@ -31,6 +31,7 @@ const GT016BaseSchema = z.object({
   initial_time: clockTimeSchema().optional(),
   options: z.array(readOptionSchema()).min(0).max(4).default([]),
   activity_cards: z.array(activityCardSchema()).min(0).max(3).default([]),
+  time_of_day: z.enum(["morning", "noon", "afternoon", "night"]).optional(),
 });
 
 export const GT016ContentSchema = GT016BaseSchema.refine(
@@ -57,6 +58,15 @@ export const GT016ContentSchema = GT016BaseSchema.refine(
     path: ["options"],
   }
 ).superRefine((content, ctx) => {
+  // BR-E016-06: bầu trời theo giờ ở `read`/`match` là manh mối trên kênh đáp án.
+  if (content.time_of_day && content.mode !== "set") {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message:
+        "time_of_day chỉ dùng ở chế độ 'set': ở 'read' và 'match' bầu trời gợi trước đáp án",
+      path: ["time_of_day"],
+    });
+  }
   if (content.mode === "set") {
     // Đồng hồ khởi tạo = target nếu thiếu initial_time → vòng đã giải sẵn.
     if (!content.initial_time) {

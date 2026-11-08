@@ -422,6 +422,10 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
     label: "Thời gian ban đầu",
     help: "Vị trí kim đồng hồ khi bắt đầu màn chơi.",
   },
+  time_of_day: {
+    label: "Buổi trong ngày của cảnh",
+    help: "Chỉ dùng ở chế độ xoay kim: sáng, trưa, chiều hoặc tối để vẽ bầu trời cho cảnh. Để trống thì giữ nền cũ. Không dùng ở chế độ đọc giờ và ghép thẻ vì bầu trời sẽ gợi trước đáp án.",
+  },
   activity_cards: {
     label: "Danh sách thẻ hoạt động",
     help: "Các thẻ mô tả sinh hoạt gắn với giờ trong ngày.",

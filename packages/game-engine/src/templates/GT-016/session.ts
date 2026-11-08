@@ -41,6 +41,7 @@ import {
   squareBox,
 } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
+import { drawTimeOfDaySky } from "#src/render/scene-decor.js";
 import type { DegradationState } from "#src/systems/degradation";
 import {
   type ControlOfErrorDiagnostics,
@@ -69,6 +70,9 @@ export const GT016_STORY_LINES: Record<GT016Content["mode"], string> = {
 export const GT016_HAPPY_MS = 500;
 /** Mascot nghiêng đầu sau câu trả lời chưa đúng. */
 export const GT016_WONDER_MS = 1500;
+
+/** Thời gian mặt trời lên chỗ / trăng sao hiện dần (`BR-E016-06`). */
+export const GT016_SKY_RISE_MS = 1200;
 
 /** Phần lề (tỉ lệ) giữa mặt đồng hồ và mép vùng chính của stage. */
 const FACE_INSET = 0.04;
@@ -243,6 +247,7 @@ export class ClockHandsSession extends TemplateGameSession<
     this.hasSubmittedTime = false;
     this.matchedCardIds.clear();
     this.mood.clear();
+    this.skyElapsedMs = 0;
     this.isWon = false;
     this.exploreTracker.reset(false);
 
@@ -652,6 +657,7 @@ export class ClockHandsSession extends TemplateGameSession<
   }
 
   update(deltaMs: number): void {
+    this.skyElapsedMs += deltaMs;
     this.mood.tick(deltaMs);
     this.exploreTracker.tick(deltaMs);
     if (this.wrongChoiceTimerMs > 0) {
@@ -680,6 +686,9 @@ export class ClockHandsSession extends TemplateGameSession<
   }
 
   private currentTouchFloor = 64;
+
+  /** Đồng hồ khung của bầu trời: `update` cộng dồn, `render` chỉ đọc, không `Date.now` (`BR-E016-06`). */
+  private skyElapsedMs = 0;
 
   private computeStageSlots(stage: ZoneRect, ageBand: AgeBand): Slot[] {
     const count = this.choiceCount();
@@ -748,6 +757,18 @@ export class ClockHandsSession extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
+    // `time_of_day` chỉ có nghĩa ở `set`: ở `read`/`match` bầu trời gợi đáp án
+    // nên bỏ qua dù nội dung thô có mang trường (`BR-E016-06`). Vẽ gọn trong
+    // sân khấu, không tràn ra các vùng khác của khung (`BR-PSZ-01`).
+    const timeOfDay = this.content.time_of_day;
+    if (timeOfDay && this.content.mode === "set") {
+      drawTimeOfDaySky(
+        ctx,
+        this.stageRect ?? sceneBox(rs),
+        timeOfDay,
+        rs.reducedMotion ? 1 : this.skyElapsedMs / GT016_SKY_RISE_MS
+      );
+    }
     const faceBox = this.faceBox(rs);
     drawClockFace(ctx, faceBox, this.currentTime);
 
