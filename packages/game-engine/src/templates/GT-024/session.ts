@@ -21,6 +21,12 @@ import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
 import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
 import {
+  type AntCrawl,
+  antCrawl,
+  antPerchPoint,
+  type CrawlPoint,
+  drawAntNest,
+  drawCrawlingAnt,
   drawSceneBackground,
   drawSubPromptText,
   drawWaypointPath,
@@ -103,6 +109,13 @@ export class GT024Session extends TemplateGameSession<
   private wrongWaypointTimestamp = 0;
 
   private readonly mood = new MoodPulse();
+  /** Kiến bò dọc nét đã vẽ (`BR-E024-06`); `null` tới khi vẽ khung đầu. */
+  private ant: {
+    readonly from: CrawlPoint;
+    readonly fromReached: number;
+    readonly reached: number;
+    readonly startMs: number;
+  } | null = null;
 
   override storyLine(): string {
     return GT024_STORY_LINE;
@@ -120,6 +133,7 @@ export class GT024Session extends TemplateGameSession<
 
   setupEntities(): void {
     this.mood.clear();
+    this.ant = null;
     this.isWon = false;
 
     const waypoints = this.content.waypoints.map((w) => ({
@@ -437,6 +451,64 @@ export class GT024Session extends TemplateGameSession<
     return slots;
   }
 
+  /** Chỗ kiến đứng khi đã nối `reached` điểm: điểm vừa nối, hoặc chỗ đậu trước điểm đầu (có thể không có). */
+  private antHome(reached: number): CrawlPoint | null {
+    const first = this.screenWaypoints[0];
+    if (!first) {
+      return null;
+    }
+    return (
+      this.screenWaypoints[reached - 1] ??
+      antPerchPoint(first, this.screenWaypoints[1], this.stageRect)
+    );
+  }
+
+  /** Đường kiến đang bò: chỗ cũ rồi từng điểm vừa nối; chỉ điểm đã nối, không điểm nào sau đó. */
+  private antPath(): readonly CrawlPoint[] {
+    const ant = this.ant;
+    if (!ant) {
+      return [];
+    }
+    const home = this.antHome(ant.reached);
+    if (!home) {
+      return [];
+    }
+    if (ant.reached <= ant.fromReached) {
+      return [home];
+    }
+    return [
+      ant.from,
+      ...this.screenWaypoints.slice(Math.max(0, ant.fromReached), ant.reached),
+    ];
+  }
+
+  private antState(timeMs: number, reducedMotion: boolean): AntCrawl | null {
+    const reached = Math.min(
+      this.traceSystem.getCurrentOrderIndex(),
+      this.screenWaypoints.length
+    );
+    const home = this.antHome(reached);
+    if (!home) {
+      return null;
+    }
+    if (!this.ant) {
+      this.ant = { from: home, fromReached: reached, reached, startMs: timeMs };
+    } else if (this.ant.reached !== reached) {
+      const now = antCrawl(
+        this.antPath(),
+        timeMs - this.ant.startMs,
+        reducedMotion
+      );
+      this.ant = {
+        from: now ?? home,
+        fromReached: this.ant.reached,
+        reached,
+        startMs: timeMs,
+      };
+    }
+    return antCrawl(this.antPath(), timeMs - this.ant.startMs, reducedMotion);
+  }
+
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
@@ -447,6 +519,11 @@ export class GT024Session extends TemplateGameSession<
     if (!this.stageRect) {
       drawSubPromptText(ctx, rs, this.content.shape_name);
     }
+    // Tổ kiến dưới điểm cuối, chỉ khi điểm cuối đã có số (`BR-E024-06`).
+    const endPoint = this.screenWaypoints.at(-1);
+    if (endPoint && this.difficulty.show_numbered_dots) {
+      drawAntNest(ctx, endPoint.x, endPoint.y);
+    }
     drawWaypointPath(
       ctx,
       this.screenWaypoints,
@@ -456,6 +533,11 @@ export class GT024Session extends TemplateGameSession<
         showNumberedDots: this.difficulty.show_numbered_dots,
       }
     );
+
+    const crawl = this.antState(timeMs, rs.reducedMotion);
+    if (crawl) {
+      drawCrawlingAnt(ctx, crawl);
+    }
 
     if (this.wrongWaypointTimestamp > 0) {
       const elapsed = timeMs - this.wrongWaypointTimestamp;
