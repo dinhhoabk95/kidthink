@@ -36,10 +36,10 @@ export const GT035_FIXTURES: GT035Fixture[] = [
   },
   {
     id: "gt035-f02-with-obstacle",
-    name_vi: "Tránh vật cản & nhặt quà (4x4)",
+    name_vi: "Tránh vật cản & nhặt quà (4x3)",
     content: {
       prompt: "Bé lập trình robot tránh đá và nhặt viên kim cương về đích nhé!",
-      grid: { rows: 4, cols: 4 },
+      grid: { rows: 3, cols: 4 },
       start: { col: 0, row: 0, facing: "right" },
       goal: {
         col: 3,
@@ -69,17 +69,17 @@ export const GT035_FIXTURES: GT035Fixture[] = [
   },
   {
     id: "gt035-f03-with-loop",
-    name_vi: "Dùng lệnh lặp tiến nhanh (4x4)",
+    name_vi: "Dùng lệnh lặp tiến nhanh (4x3)",
     content: {
       prompt: "Bé dùng lệnh lặp để robot đi nhanh hơn về đích nhé!",
-      grid: { rows: 4, cols: 4 },
+      grid: { rows: 3, cols: 4 },
       start: { col: 0, row: 2, facing: "up" },
       goal: {
         col: 2,
         row: 0,
         asset: { kind: "emoji", ref: "🏆" },
       },
-      obstacles: [{ col: 0, row: 3 }],
+      obstacles: [{ col: 3, row: 2 }],
       collectibles: [],
       allowed_commands: ["forward", "turn_left", "turn_right", "loop"],
     },
@@ -121,10 +121,10 @@ export const GT035_FIXTURES: GT035Fixture[] = [
   },
   {
     id: "gt035-f05-absolute-gem",
-    name_vi: "Mũi tên tránh đá, nhặt kim cương (4x4)",
+    name_vi: "Mũi tên tránh đá, nhặt kim cương (4x3)",
     content: {
       prompt: "Bé bấm mũi tên cho robot nhặt kim cương rồi về nhà nhé!",
-      grid: { rows: 4, cols: 4 },
+      grid: { rows: 3, cols: 4 },
       start: { col: 0, row: 0, facing: "up" },
       goal: {
         col: 3,

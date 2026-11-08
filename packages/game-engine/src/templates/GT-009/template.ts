@@ -28,6 +28,12 @@ const GT009PredicateSchema = z.discriminatedUnion("kind", [
   }),
 ]);
 
+/**
+ * Trần số ứng viên (`BR-E009-09`): dải manh mối cộng bảng ứng viên phải nằm trọn
+ * sân khấu khung nhỏ nhất 360x640 ở sàn chạm 96 px (`BR-LAY-04` cấm co ô).
+ */
+const GT009_MAX_CANDIDATES = 6;
+
 export const GT009BaseSchema = z.object({
   ...promptFields(),
   candidates: z
@@ -42,7 +48,7 @@ export const GT009BaseSchema = z.object({
       })
     )
     .min(4)
-    .max(10),
+    .max(GT009_MAX_CANDIDATES),
   clues: z
     .array(
       z.object({
@@ -74,9 +80,9 @@ export const GT009ContentSchema = GT009BaseSchema.refine(
 );
 
 export const GT009DifficultySchema = z.object({
-  item_count: z.number().int().min(4).max(10),
+  item_count: z.number().int().min(4).max(GT009_MAX_CANDIDATES),
   clue_count: z.number().int().min(1).max(4),
-  candidate_count: z.number().int().min(4).max(10),
+  candidate_count: z.number().int().min(4).max(GT009_MAX_CANDIDATES),
   hint_after_ms: z.number().int().min(6000).max(30_000),
   allow_retry: z.boolean(),
 });
@@ -97,8 +103,8 @@ export default defineTemplate({
   content_contract: GT009ContentSchema,
   difficulty_contract: GT009DifficultySchema,
   limits: {
-    item_count: [4, 10],
-    distractor_count: [3, 9],
+    item_count: [4, GT009_MAX_CANDIDATES],
+    distractor_count: [3, GT009_MAX_CANDIDATES - 1],
     target_count: [1, 1],
   },
   age_min: 4,

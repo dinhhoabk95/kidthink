@@ -60,25 +60,13 @@ function configFor(
 }
 
 /**
- * Nợ bố cục vật lý ở khung nhỏ nhất 360x640: số hàng ô ở sàn chạm không chứa nổi
- * trong sân khấu (stage dừng trước hàng nút hành động, `BR-LAY-04` cấm co ô dưới
- * sàn), nên hàng cuối tràn xuống đè nút. Sửa cần quyết định sản phẩm (phân trang
- * hoặc bỏ bớt ô ở level), không sửa được bằng layout. Bậc thang: tăng là đỏ, ca
- * nào hết tràn mà còn trong danh sách cũng đỏ để dọn nợ.
+ * Nợ bố cục vật lý ở khung nhỏ nhất 360x640: ĐÃ HẾT (Phase 25, product owner chốt
+ * 2026-11-08, giảm số ô thay vì phân trang). GT-009 trần 6 ứng viên (`BR-E009-09`),
+ * GT-035 lưới tối đa 3 hàng (`BR-E035-17`), cùng luật chung `BR-LAY-12`. Bậc thang
+ * giữ nguyên: ca tràn mới (không có trong sổ nợ) là đỏ, và sổ nợ rỗng nên mọi ca
+ * tràn đều đỏ. Cần thêm nợ thì phải có quyết định sản phẩm, không thêm lặng lẽ.
  */
-const KNOWN_PHYSICAL_OVERFLOW: ReadonlySet<string> = new Set([
-  "GT-009 3-4 360x640 seed GL-C1-ADD-SIZE-0001",
-  "GT-009 3-4 360x640 seed GL-C1-PROB-SIZE-0005",
-  "GT-009 3-4 360x640 seed GL-C1-PROB-SIZE-0006",
-  "GT-009 3-4 360x640 seed GL-C1-PROB-SIZE-0007",
-  "GT-009 3-4 360x640 seed GL-C1-PROB-SIZE-0008",
-  "GT-009 3-4 360x640 seed GL-C3-DED-CLUE-0206",
-  "GT-009 3-4 360x640 seed GL-C4-CAU-SIZE-0009",
-  "GT-009 3-4 360x640 seed GL-C6-PLN-SIZE-0003",
-  "GT-035 5-6 360x640 mẫu 1",
-  "GT-035 5-6 360x640 mẫu 2",
-  "GT-035 5-6 360x640 mẫu 4",
-]);
+const KNOWN_PHYSICAL_OVERFLOW: ReadonlySet<string> = new Set<string>();
 
 function intersects(slot: Slot, zone: ZoneRect): boolean {
   const left = slot.x - slot.hitW / 2;

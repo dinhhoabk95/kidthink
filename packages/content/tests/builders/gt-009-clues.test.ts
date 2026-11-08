@@ -71,13 +71,37 @@ const DATASET: SkillDataset = {
   },
 };
 
+function survivorsAfter(content: PackShape, clueCount: number): number {
+  return survivors({ ...content, clues: content.clues.slice(0, clueCount) })
+    .length;
+}
+
 describe("GT-009 builder — số manh mối theo bậc (BR-E009-04)", () => {
-  it("độ khó 5 ở band 5-6 có 4 manh mối, 8 ứng viên và đúng một đáp án", () => {
+  it("độ khó 5 ở band 5-6 có 4 manh mối, 6 ứng viên và đúng một đáp án", () => {
     const content = contentOf("5-6", 5);
 
     expect(content.clues).toHaveLength(4);
-    expect(content.candidates).toHaveLength(8);
+    expect(content.candidates).toHaveLength(6);
     expect(survivors(content)).toEqual([content.answer_candidate_id]);
+  });
+
+  it("mọi bậc, mọi band: không quá 6 ứng viên (BR-E009-09) và mỗi manh mối loại thêm ít nhất một ứng viên (BR-E009-03)", () => {
+    for (const band of ["4-5", "5-6"] as const) {
+      for (let difficulty = 1; difficulty <= 5; difficulty++) {
+        const content = contentOf(band, difficulty);
+        const label = `band ${band} bậc ${difficulty}`;
+        expect(content.candidates.length, label).toBeLessThanOrEqual(6);
+        expect(survivors(content), label).toEqual([
+          content.answer_candidate_id,
+        ]);
+        let previous = content.candidates.length;
+        for (let n = 1; n <= content.clues.length; n++) {
+          const left = survivorsAfter(content, n);
+          expect(left, `${label} manh mối ${n}`).toBeLessThan(previous);
+          previous = left;
+        }
+      }
+    }
   });
 
   it("độ khó 5 ở band 4-5 giữ tối đa 3 manh mối", () => {

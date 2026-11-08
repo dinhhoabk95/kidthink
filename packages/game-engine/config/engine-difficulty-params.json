@@ -101,7 +101,7 @@
     },
     "GT-009": {
       "difficulty_fixed": false,
-      "reason": "Số lượng ứng viên tăng từ 4 lên 8 (không quá 8 để manh mối và mọi ứng viên cùng hiện trên điện thoại ngang, BR-PSZ-13) cùng số lượng manh mối suy luận tăng dần tới 4 ở bậc 5 (band 5-6) đòi hỏi loại trừ nhiều bước",
+      "reason": "Số lượng ứng viên tăng từ 4 lên 6 (không quá 6 để dải manh mối và mọi ứng viên cùng nằm trong sân khấu ở khung nhỏ nhất 360x640 với sàn chạm 96 px, BR-LAY-12, BR-E009-09) cùng số lượng manh mối suy luận tăng dần tới 4 ở bậc 5 (band 5-6) đòi hỏi loại trừ nhiều bước; từ bậc 3 độ khó tăng bằng số manh mối, không bằng số ứng viên",
       "levels": {
         "1": {
           "item_count": 4,
@@ -122,16 +122,16 @@
           "distractor_count": 5
         },
         "4": {
-          "item_count": 8,
+          "item_count": 6,
           "clue_count": 3,
-          "candidate_count": 8,
-          "distractor_count": 7
+          "candidate_count": 6,
+          "distractor_count": 5
         },
         "5": {
-          "item_count": 8,
+          "item_count": 6,
           "clue_count": 4,
-          "candidate_count": 8,
-          "distractor_count": 7
+          "candidate_count": 6,
+          "distractor_count": 5
         }
       }
     },

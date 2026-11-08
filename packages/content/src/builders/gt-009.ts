@@ -9,6 +9,12 @@ import type {
 import { createRng, resolveItemAsset, safeGetItem } from "./utils.js";
 
 const MAX_CLUES_BAND_4_5 = 3;
+
+/**
+ * Trần số ứng viên (`BR-E009-09`): dải manh mối cộng bảng ứng viên phải nằm trong
+ * sân khấu khung nhỏ nhất 360x640 ở sàn chạm 96 px, `BR-LAY-04` cấm co ô.
+ */
+export const GT009_MAX_CANDIDATES = 6;
 const FOUR_CLUES = 4;
 
 interface ClueSpec {
@@ -99,8 +105,8 @@ function buildDed01HighClues(clueTotal: number): ClueSpec[] {
     },
     {
       clue_id: "clue_3",
-      text: "Số thứ tự nhỏ hơn 7",
-      predicate: { kind: "less_than", value: 7 },
+      text: "Số thứ tự nhỏ hơn 6",
+      predicate: { kind: "less_than", value: 6 },
     },
   ];
 }
@@ -142,29 +148,30 @@ function buildNumericClues(
     };
   }
   if (clueTotal >= FOUR_CLUES) {
+    // Sáu ứng viên (trần `BR-E009-09`): mỗi manh mối loại thêm ít nhất một ứng viên.
     return {
       prompt,
       answerCandidateId: "c5",
       clues: [
         {
           clue_id: "clue_1",
-          text: "Số này lớn hơn 3",
-          predicate: { kind: "greater_than", value: 3 },
+          text: "Số này lớn hơn 2",
+          predicate: { kind: "greater_than", value: 2 },
         },
         {
           clue_id: "clue_2",
-          text: "Số này nhỏ hơn 7",
-          predicate: { kind: "less_than", value: 7 },
+          text: "Số này nhỏ hơn 6",
+          predicate: { kind: "less_than", value: 6 },
         },
         {
           clue_id: "clue_3",
-          text: "Số này khác 4",
-          predicate: { kind: "not_equal", value: 4 },
+          text: "Số này khác 3",
+          predicate: { kind: "not_equal", value: 3 },
         },
         {
           clue_id: "clue_4",
-          text: "Số này khác 6",
-          predicate: { kind: "not_equal", value: 6 },
+          text: "Số này khác 4",
+          predicate: { kind: "not_equal", value: 4 },
         },
       ],
     };
@@ -261,12 +268,19 @@ function buildCluesForSkill(
     };
   }
   if (dataset.skill_code === "C3.DED.03" && opts.difficulty >= 4) {
+    // Sáu ứng viên (trần `BR-E009-09`): c1–c4 thú, c5 xe đỏ, c6 xe vàng. Manh mối
+    // "nhỏ hơn 6" cũ chỉ loại c7/c8 (đã bỏ) nên thành dư thừa (`BR-E009-03`).
     return {
       prompt: attrPrompt,
       answerCandidateId: "c5",
       clues: [
         {
           clue_id: "clue_1",
+          text: "Số thứ tự lớn hơn 3",
+          predicate: { kind: "greater_than", value: 3 },
+        },
+        {
+          clue_id: "clue_2",
           text: "Vật này thuộc nhóm xe cộ chạy",
           predicate: {
             kind: "has_attribute",
@@ -275,18 +289,13 @@ function buildCluesForSkill(
           },
         },
         {
-          clue_id: "clue_2",
+          clue_id: "clue_3",
           text: "Vật này không có màu vàng",
           predicate: {
             kind: "not_attribute",
             key: "color",
             attr_value: "yellow",
           },
-        },
-        {
-          clue_id: "clue_3",
-          text: "Số thứ tự nhỏ hơn 6",
-          predicate: { kind: "less_than", value: 6 },
         },
       ],
     };
@@ -316,7 +325,7 @@ export const projectGT009: Projection<"GT-009"> = {
       opts.band === "4-5"
         ? Math.min(params.clue_count ?? 2, MAX_CLUES_BAND_4_5)
         : (params.clue_count ?? 2);
-    const candidateCount = params.item_count;
+    const candidateCount = Math.min(params.item_count, GT009_MAX_CANDIDATES);
 
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
     const baseItem = safeGetItem(

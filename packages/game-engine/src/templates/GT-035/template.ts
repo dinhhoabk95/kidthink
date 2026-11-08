@@ -86,11 +86,18 @@ function validateObstaclesAndCollectibles(
   return true;
 }
 
+/**
+ * Trần số hàng lưới robot (`BR-E035-17`): ở khung nhỏ nhất 360x640 và sàn chạm
+ * 64 px, lưới 4 hàng cộng hàng lệnh và khay lệnh tràn xuống đè nút chạy khi
+ * `max_commands` từ 5 trở lên (`BR-LAY-04` cấm co ô); lưới 3 hàng vừa đến 8 lệnh.
+ */
+export const GT035_MAX_GRID_ROWS = 3;
+
 export const GT035ContentSchema = z
   .object({
     prompt: z.string().min(1),
     grid: z.object({
-      rows: z.number().int().min(3).max(6),
+      rows: z.number().int().min(3).max(GT035_MAX_GRID_ROWS),
       cols: z.number().int().min(3).max(6),
     }),
     start: GT035StartSchema,

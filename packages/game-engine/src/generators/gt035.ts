@@ -4,12 +4,13 @@ import {
   findShortestSolution,
   MAX_CODE_COMMANDS,
 } from "#src/systems/command-queue-system";
-import type {
-  GT035CollectibleSchema,
-  GT035Content,
-  GT035Difficulty,
-  GT035FacingSchema,
-  GT035GridCoordSchema,
+import {
+  GT035_MAX_GRID_ROWS,
+  type GT035CollectibleSchema,
+  type GT035Content,
+  type GT035Difficulty,
+  type GT035FacingSchema,
+  type GT035GridCoordSchema,
 } from "#src/templates/GT-035/template";
 import { VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
@@ -92,7 +93,8 @@ function tryGenerateCandidate(
   colInfo: { ref: string; name_vi: string },
   absolute: boolean
 ): { content_pack: GT035Content; difficulty_params: GT035Difficulty } | null {
-  const rows = 3 + rng.nextInt(2);
+  // Lưới đúng 3 hàng (`BR-E035-17`): 4 hàng không vừa khung 360x640.
+  const rows = GT035_MAX_GRID_ROWS;
   const cols = 3 + rng.nextInt(2);
 
   const facings: Facing[] = ["up", "right", "down", "left"];
