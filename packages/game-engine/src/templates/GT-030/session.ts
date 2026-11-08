@@ -33,6 +33,7 @@ import {
   drawNumberRodAcrossSlots,
   drawSceneBackground,
   drawSlotItem,
+  drawStoryCharacterInStage,
   drawSubPromptText,
   drawUnitGapHatch,
   drawWoodenTokenDock,
@@ -224,6 +225,19 @@ export class GT030Session extends TemplateGameSession<
     return this.placedUnitsCount < this.content.object.length_in_units
       ? STRIP_SLOT
       : null;
+  }
+
+  /**
+   * Bàn tay ma kéo dọc dải đo tới mép: đích là tâm ô kế tiếp (chỗ đơn vị sau nối
+   * liền vào mép các đơn vị đã đặt), không phải giữa dải (`BR-E030-10`).
+   */
+  override getHintDestinationPoint(): {
+    readonly x: number;
+    readonly y: number;
+  } | null {
+    return this.getHintDestinationIndex() === null
+      ? null
+      : this.getNextCellCenter();
   }
 
   /** Sân khấu và khay: của shell nếu có, không thì dựng từ khung cũ (`BR-LAY-10`). */
@@ -883,6 +897,8 @@ export class GT030Session extends TemplateGameSession<
     this.expireWrongFlashes(timeMs);
     this.expireGapFlash();
     drawSceneBackground(ctx, rs, this.themeId);
+    // Sâu Nhỏ ở góc trống của sân khấu, ngoài mọi vùng chạm (`BR-E030-10`).
+    drawStoryCharacterInStage(ctx, "caterpillar", this.stageRect, this.slots);
     const zones = pickTrayZones(this.stageRect, this.trayRect);
     if (!zones) {
       this.drawLegacySubPrompt(ctx, rs);
