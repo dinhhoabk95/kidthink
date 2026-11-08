@@ -1399,3 +1399,115 @@ export function drawSplitLine(
   ctx.stroke();
   ctx.restore();
 }
+
+// ── Cuộn phim tự chạy và cây lớn dần khi xếp đúng (GT-006, `BR-E006-06`) ──
+
+/** Mỗi thẻ sáng lần lượt cách nhau ngần này ms khi cuộn phim chạy. */
+export const FILM_STEP_MS = 450;
+
+export interface FilmPlayback {
+  /** Số thẻ đã sáng (0..count), theo thứ tự đã xếp. */
+  readonly lit: number;
+  /** Thẻ đang "chiếu" (ô đang sáng đậm) hoặc `null` khi đã chiếu xong. */
+  readonly playhead: number | null;
+}
+
+/**
+ * Tiến độ cuộn phim `elapsedMs` sau lúc xếp đúng: thẻ 0 sáng ngay, rồi mỗi
+ * `FILM_STEP_MS` sáng thêm một thẻ. `reduced_motion` về trạng thái tĩnh cuối
+ * (mọi thẻ đã sáng, không còn đầu chiếu).
+ */
+export function filmPlayback(
+  count: number,
+  elapsedMs: number,
+  reducedMotion: boolean
+): FilmPlayback {
+  if (count <= 0) {
+    return { lit: 0, playhead: null };
+  }
+  if (reducedMotion) {
+    return { lit: count, playhead: null };
+  }
+  if (elapsedMs < 0) {
+    return { lit: 0, playhead: null };
+  }
+  const lit = Math.min(count, Math.floor(elapsedMs / FILM_STEP_MS) + 1);
+  const finished = elapsedMs >= count * FILM_STEP_MS;
+  return { lit, playhead: finished ? null : lit - 1 };
+}
+
+/** Tỉ lệ lớn của cây: mỗi thẻ sáng thêm một nấc, 0 (hạt) tới 1 (cây trọn). */
+export function treeGrowth(lit: number, count: number): number {
+  return count <= 0 ? 0 : Math.min(1, Math.max(0, lit / count));
+}
+
+/**
+ * Viền khung phim quanh ô `slot` (to hơn ô vẽ 4 px mỗi bên, không đổi vùng
+ * chạm). `isPlayhead` vẽ đậm hơn cho thẻ đang chiếu.
+ */
+export function drawFilmFrameGlow(
+  ctx: CanvasRenderingContext2D,
+  slot: Slot,
+  isPlayhead: boolean
+): void {
+  const m = designTokens.colors.montessori;
+  const pad = 4;
+  ctx.save();
+  ctx.strokeStyle = isPlayhead ? m.amberDeep : m.amber;
+  ctx.lineWidth = isPlayhead ? 5 : 3;
+  ctx.beginPath();
+  ctx.roundRect(
+    slot.x - slot.w / 2 - pad,
+    slot.y - slot.h / 2 - pad,
+    slot.w + pad * 2,
+    slot.h + pad * 2,
+    8
+  );
+  ctx.stroke();
+  ctx.restore();
+}
+
+/**
+ * Cây lớn dần trong ô vuông cạnh `size` tâm `(cx, cy)`: `growth` 0 là mầm nhỏ,
+ * 1 là thân cao với tán tròn và hai quả. Gốc cây cố định ở đáy ô.
+ */
+export function drawGrowingTree(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number,
+  growth: number
+): void {
+  const m = designTokens.colors.montessori;
+  const g = Math.min(1, Math.max(0, growth));
+  const base = cy + size / 2;
+  const trunkH = size * (0.12 + 0.4 * g);
+  const trunkW = size * (0.06 + 0.06 * g);
+  const crown = size * (0.1 + 0.3 * g);
+  ctx.save();
+  ctx.lineWidth = 2;
+  ctx.fillStyle = m.woodBorder;
+  ctx.strokeStyle = m.amberDark;
+  ctx.fillRect(cx - trunkW / 2, base - trunkH, trunkW, trunkH);
+  ctx.fillStyle = m.emeraldBright;
+  ctx.strokeStyle = m.emerald;
+  ctx.beginPath();
+  ctx.arc(cx, base - trunkH - crown * 0.6, crown, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  if (g >= 1) {
+    ctx.fillStyle = m.coral;
+    for (const dx of [-0.45, 0.4]) {
+      ctx.beginPath();
+      ctx.arc(
+        cx + crown * dx,
+        base - trunkH - crown * 0.5,
+        size * 0.04,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+    }
+  }
+  ctx.restore();
+}

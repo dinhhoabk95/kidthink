@@ -13,6 +13,8 @@ import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
 import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
 import {
+  drawFilmFrameGlow,
+  drawGrowingTree,
   drawLocomotive,
   drawMontessoriControlOfErrorPill,
   drawNumberLine,
@@ -20,8 +22,11 @@ import {
   drawSlotItem,
   drawTrackNumberLine,
   drawTrainRailway,
+  filmPlayback,
   type ItemVisualState,
+  placeStoryCharacter,
   sceneBox,
+  treeGrowth,
 } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
 import { deriveDerangement } from "#src/rng/derangement";
@@ -46,6 +51,9 @@ export const GT006_HAPPY_MS = 700;
 /** Mascot nghiêng đầu sau lần bấm xong chưa đúng. */
 export const GT006_WONDER_MS = 1500;
 
+/** Cạnh ô cây lớn dần, px logic (`BR-E006-06`). */
+const FILM_TREE_SIZE_PX = 64;
+
 export class GT006Session extends TemplateGameSession<
   GT006Content,
   GT006Difficulty
@@ -57,6 +65,8 @@ export class GT006Session extends TemplateGameSession<
   private stagedIndex: number | null = null;
   private readonly wrongSubmitFlash = new WrongFlash();
   private lastFrameMs = 0;
+  /** Đồng hồ khung lúc xếp đúng: cuộn phim tự chạy từ mốc này (`BR-E006-06`). */
+  private winMs: number | null = null;
   private readonly mood = new MoodPulse();
 
   private readonly mechanic = new OrderingMechanic();
@@ -90,6 +100,7 @@ export class GT006Session extends TemplateGameSession<
     this.stagedIndex = null;
     this.wrongSubmitFlash.clear();
     this.lastFrameMs = 0;
+    this.winMs = null;
     this.mood.clear();
   }
 
@@ -190,6 +201,7 @@ export class GT006Session extends TemplateGameSession<
     if (valid) {
       this.exploreTracker.recordCorrectAttempt();
       this.wrongSubmitFlash.clear();
+      this.winMs = this.lastFrameMs;
       this.winSession();
     } else {
       this.wrongSubmitFlash.trigger(this.lastFrameMs);
@@ -489,12 +501,43 @@ export class GT006Session extends TemplateGameSession<
         "square"
       );
     });
+    this.renderFilmPlayback(ctx, rs);
     drawMontessoriControlOfErrorPill(
       ctx,
       this.stageRect ?? sceneBox(rs),
       this.exploreTracker,
       rs.viewport?.scale
     );
+  }
+
+  /**
+   * Xếp đúng thì cuộn phim tự chạy: viền khung phim sáng lần lượt theo thứ tự
+   * đã xếp và cây lớn dần một nấc mỗi thẻ (`BR-E006-06`). Chỉ sau khi thắng.
+   */
+  private renderFilmPlayback(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem
+  ): void {
+    if (!this.isWon || this.winMs === null) {
+      return;
+    }
+    const count = this.mechanic.getCurrentSequence().length;
+    const play = filmPlayback(
+      count,
+      this.lastFrameMs - this.winMs,
+      rs.reducedMotion
+    );
+    for (let i = 0; i < play.lit; i++) {
+      const slot = this.slots[i];
+      if (slot) {
+        drawFilmFrameGlow(ctx, slot, play.playhead === i);
+      }
+    }
+    const size = FILM_TREE_SIZE_PX;
+    const spot = placeStoryCharacter(this.stageRect, this.slots, size);
+    if (spot) {
+      drawGrowingTree(ctx, spot.cx, spot.cy, size, treeGrowth(play.lit, count));
+    }
   }
 
   /** Trục số hoặc đường ray + đầu tàu; có stage thì nằm trong dải đáy của stage. */
