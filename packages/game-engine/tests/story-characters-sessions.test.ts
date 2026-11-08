@@ -38,6 +38,16 @@ import { GT022_FIXTURES } from "#src/templates/GT-022/fixtures.js";
 import { GT022Session } from "#src/templates/GT-022/session.js";
 import { GT023_FIXTURES } from "#src/templates/GT-023/fixtures.js";
 import { GT023Session } from "#src/templates/GT-023/session.js";
+import { GT027_FIXTURES } from "#src/templates/GT-027/fixtures.js";
+import { GT027Session } from "#src/templates/GT-027/session.js";
+import { GT030_FIXTURES } from "#src/templates/GT-030/fixtures.js";
+import { GT030Session } from "#src/templates/GT-030/session.js";
+import { GT032_FIXTURES } from "#src/templates/GT-032/fixtures.js";
+import { GT032Session } from "#src/templates/GT-032/session.js";
+import { GT034_FIXTURES } from "#src/templates/GT-034/fixtures.js";
+import { GT034Session } from "#src/templates/GT-034/session.js";
+import { GT036_FIXTURES } from "#src/templates/GT-036/fixtures.js";
+import { GT036Session } from "#src/templates/GT-036/session.js";
 import { createFakeCanvas } from "./gates/fake-canvas.ts";
 
 vi.mock("#src/render/craft-shapes", async (importOriginal) => {
@@ -182,6 +192,41 @@ const PROBES: readonly Probe[] = [
     kind: "woodpecker",
     sessions: GT023_FIXTURES.map(
       (f) => () => new GT023Session(f.content, f.difficulty, 0)
+    ),
+  },
+  {
+    code: "GT-027",
+    kind: "fox",
+    sessions: GT027_FIXTURES.map(
+      (f) => () => new GT027Session(f.content, f.difficulty, 0)
+    ),
+  },
+  {
+    code: "GT-030",
+    kind: "caterpillar",
+    sessions: GT030_FIXTURES.map(
+      (f) => () => new GT030Session(f.content, f.difficulty, 0)
+    ),
+  },
+  {
+    code: "GT-032",
+    kind: "pony",
+    sessions: GT032_FIXTURES.map(
+      (f) => () => new GT032Session(f.content, f.difficulty, 0)
+    ),
+  },
+  {
+    code: "GT-034",
+    kind: "cricket",
+    sessions: GT034_FIXTURES.map(
+      (f) => () => new GT034Session(f.content, f.difficulty, 0)
+    ),
+  },
+  {
+    code: "GT-036",
+    kind: "nightingale",
+    sessions: GT036_FIXTURES.map(
+      (f) => () => new GT036Session(f.content, f.difficulty, 0)
     ),
   },
 ];
