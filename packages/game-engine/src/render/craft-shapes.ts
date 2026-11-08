@@ -1573,3 +1573,70 @@ export function drawStable(
   ctx.stroke();
   ctx.restore();
 }
+
+// ── Kính lúp soi ứng viên đang chọn (GT-009, `BR-E009-08`) ───────────
+
+/** Một vòng lắc của kính lúp, ms. */
+export const MAGNIFIER_SWAY_MS = 1600;
+const MAGNIFIER_SWAY_SHARE = 0.06;
+
+export interface MagnifierPose {
+  /** Bán kính vành kính. */
+  readonly r: number;
+  readonly x: number;
+  readonly y: number;
+}
+
+/**
+ * Tư thế kính lúp soi ô `slot` ở đồng hồ khung `timeMs`: vành bao quanh ô, lắc
+ * nhẹ quanh tâm ô theo sóng sin. `reduced_motion` đứng yên ở tâm ô.
+ */
+export function magnifierPose(
+  slot: Slot,
+  timeMs: number,
+  reducedMotion: boolean
+): MagnifierPose {
+  const r = Math.min(slot.w, slot.h) * 0.5;
+  const swing = reducedMotion ? 0 : r * MAGNIFIER_SWAY_SHARE;
+  const phase = (timeMs / MAGNIFIER_SWAY_MS) * Math.PI * 2;
+  return {
+    x: slot.x + swing * Math.sin(phase),
+    y: slot.y + swing * Math.cos(phase),
+    r,
+  };
+}
+
+/**
+ * Kính lúp vẽ vector: vành gỗ rỗng (không che vật bên trong) kèm tay cầm chéo
+ * xuống dưới-phải và một vệt sáng trên mặt kính.
+ */
+export function drawMagnifier(
+  ctx: CanvasRenderingContext2D,
+  pose: MagnifierPose
+): void {
+  const m = designTokens.colors.montessori;
+  const handleLen = pose.r * 0.9;
+  const dx = Math.SQRT1_2;
+  ctx.save();
+  ctx.lineCap = "round";
+  ctx.strokeStyle = m.woodBorder;
+  ctx.lineWidth = Math.max(4, pose.r * 0.16);
+  ctx.beginPath();
+  ctx.moveTo(pose.x + pose.r * dx, pose.y + pose.r * dx);
+  ctx.lineTo(
+    pose.x + (pose.r + handleLen) * dx,
+    pose.y + (pose.r + handleLen) * dx
+  );
+  ctx.stroke();
+  ctx.strokeStyle = m.amberDeep;
+  ctx.lineWidth = Math.max(3, pose.r * 0.1);
+  ctx.beginPath();
+  ctx.arc(pose.x, pose.y, pose.r, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.strokeStyle = m.amberGlow;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(pose.x, pose.y, pose.r * 0.7, 1.15 * Math.PI, 1.45 * Math.PI);
+  ctx.stroke();
+  ctx.restore();
+}

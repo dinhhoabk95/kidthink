@@ -17,11 +17,14 @@ import {
   type ClueSymbol,
   drawClueBannerSlot,
   drawClueSymbol,
+  drawMagnifier,
   drawMontessoriControlOfErrorPill,
   drawSceneBackground,
   drawSlashLine,
   drawSlotItem,
+  drawStoryCharacterInStage,
   getColorsForState,
+  magnifierPose,
   sceneBox,
 } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
@@ -544,6 +547,8 @@ export class GT009Session extends TemplateGameSession<
       this.wrongCandidateId = null;
     }
     drawSceneBackground(ctx, rs, this.themeId);
+    // Chồn Thám Tử vẽ ngay sau nền, ở góc trống ngoài vùng chạm (`BR-E009-08`).
+    drawStoryCharacterInStage(ctx, "weasel", this.stageRect, this.slots);
     // clue-board xếp dải manh mối trước, rồi tới bàn ứng viên.
     const clueSlots = this.slots.slice(0, this.content.clues.length);
     const boardSlots = this.slots.slice(this.content.clues.length);
@@ -573,12 +578,40 @@ export class GT009Session extends TemplateGameSession<
       }
     });
 
+    this.renderMagnifier(ctx, rs, boardSlots, timeMs);
     drawMontessoriControlOfErrorPill(
       ctx,
       this.stageRect ?? sceneBox(rs),
       this.exploreTracker,
       rs.viewport?.scale
     );
+  }
+
+  /**
+   * Kính lúp soi ứng viên trẻ vừa chốt, **sau** kết quả (`BR-E009-08`): ứng
+   * viên chốt sai trong nhịp nháy sai, hoặc ứng viên đúng khi đã thắng. Trước
+   * khi chốt không có kính lúp nên không chỉ ứng viên nào.
+   */
+  private renderMagnifier(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    boardSlots: readonly Slot[],
+    timeMs: number
+  ): void {
+    this.content.candidates.forEach((cand, i) => {
+      const slot = boardSlots[i];
+      if (!slot) {
+        return;
+      }
+      const inspectedWrong =
+        cand.candidate_id === this.wrongCandidateId &&
+        this.wrongFlash.isActive(timeMs);
+      const inspectedRight =
+        this.isWon && cand.candidate_id === this.content.answer_candidate_id;
+      if (inspectedWrong || inspectedRight) {
+        drawMagnifier(ctx, magnifierPose(slot, timeMs, rs.reducedMotion));
+      }
+    });
   }
 
   private renderCandidate(
