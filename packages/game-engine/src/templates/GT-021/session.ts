@@ -31,9 +31,13 @@ import {
   drawEmptyTargetSlot,
   drawMirrorAxis,
   drawMirroredSlotItem,
+  drawMirrorFlash,
   drawSceneBackground,
   drawSlotItem,
+  drawStoryCharacterInStage,
   drawWoodenTokenDock,
+  mirrorFlashStrength,
+  mirrorRevealAlpha,
   sceneBox,
 } from "#src/render/index";
 import type { MascotPose } from "#src/render/mascot";
@@ -121,6 +125,11 @@ export class GT021Session extends TemplateGameSession<
   }
 
   private readonly mood = new MoodPulse();
+  private lastFrameMs = 0;
+  /** Mốc đồng hồ khung lúc vật vào từng ô đích (ảnh phản chiếu hiện dần từ đây). */
+  private readonly placedAtMs: Map<string, number> = new Map();
+  /** Mốc đồng hồ khung của lần đặt đúng gần nhất (trục gương loé từ đây), `null` nếu chưa có. */
+  private lastCorrectAtMs: number | null = null;
 
   override storyLine(): string {
     return GT021_STORY_LINE;
@@ -133,6 +142,9 @@ export class GT021Session extends TemplateGameSession<
 
   setupEntities(): void {
     this.mood.clear();
+    this.lastFrameMs = 0;
+    this.placedAtMs.clear();
+    this.lastCorrectAtMs = null;
     this.isWon = false;
     this.wrongPlacementTimerMs = 0;
     this.wrongTargetSlotId = null;
@@ -204,6 +216,7 @@ export class GT021Session extends TemplateGameSession<
 
     this.placementMechanic.place(itemId, targetSlotId);
     const isCorrect = this.mirrorSystem.place(targetSlotId, opt.asset_ref);
+    this.placedAtMs.set(targetSlotId, this.lastFrameMs);
 
     this.recordEvent("item_placed", {
       item_id: itemId,
@@ -213,6 +226,7 @@ export class GT021Session extends TemplateGameSession<
     });
 
     if (isCorrect) {
+      this.lastCorrectAtMs = this.lastFrameMs;
       this.queueSfx("mirror_chime");
       this.mood.set("happy", GT021_HAPPY_MS);
     } else {
@@ -247,6 +261,7 @@ export class GT021Session extends TemplateGameSession<
 
   update(deltaMs: number): void {
     this.mood.tick(deltaMs);
+    this.lastFrameMs += deltaMs;
     if (this.wrongPlacementTimerMs > 0) {
       this.wrongPlacementTimerMs = Math.max(
         0,
@@ -559,14 +574,26 @@ export class GT021Session extends TemplateGameSession<
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
-    _timeMs: number
+    timeMs: number
   ): void {
+    this.lastFrameMs = timeMs;
     drawSceneBackground(ctx, rs, this.themeId);
+    // Cô Tiên ở góc trống, ngoài vùng chạm (`BR-E021-08`).
+    drawStoryCharacterInStage(ctx, "fairy", this.stageRect, this.slots);
     const zones = pickTrayZones(this.stageRect, this.trayRect);
     // Có khung: bàn đối xứng ở sân khấu, mảnh chọn trên khay, lời dẫn do shell vẽ.
     drawButterflyWingsBoard(ctx, zones?.stage ?? sceneBox(rs));
     if (this.difficulty.show_axis_guide) {
       drawMirrorAxis(ctx, rs, this.content.axis, zones?.stage);
+      // Trục gương loé sáng sau lần đặt đúng (`BR-E021-08`).
+      if (this.lastCorrectAtMs !== null) {
+        drawMirrorFlash(
+          ctx,
+          this.content.axis,
+          zones?.stage ?? sceneBox(rs),
+          mirrorFlashStrength(timeMs - this.lastCorrectAtMs, rs.reducedMotion)
+        );
+      }
     }
     drawWoodenTokenDock(ctx, rs, zones?.tray);
 
@@ -611,7 +638,13 @@ export class GT021Session extends TemplateGameSession<
         return;
       }
       const isWrong = placedRef !== target.expected_asset_ref;
-      // Nửa phản chiếu: vật đặt vào ô đích hiện lật gương qua trục (`BR-E021-05`).
+      // Nửa phản chiếu: vật đặt vào ô đích hiện lật gương qua trục (`BR-E021-05`),
+      // hiện dần sau khi đặt (`BR-E021-08`).
+      ctx.save();
+      ctx.globalAlpha = mirrorRevealAlpha(
+        timeMs - (this.placedAtMs.get(target.slot_id) ?? 0),
+        rs.reducedMotion
+      );
       drawMirroredSlotItem(
         ctx,
         rs,
@@ -623,6 +656,7 @@ export class GT021Session extends TemplateGameSession<
         },
         this.content.axis
       );
+      ctx.restore();
       if (isWrong && this.wrongPlacementTimerMs > 0) {
         rs.drawRetryRing(
           ctx,

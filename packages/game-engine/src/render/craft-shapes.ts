@@ -2252,3 +2252,67 @@ export function drawWallShadow(
   ctx.fill();
   ctx.restore();
 }
+
+// ── Mặt gương loé sáng, ảnh phản chiếu hiện dần (GT-021, `BR-E021-08`) ─
+
+/** Ảnh phản chiếu của vật vừa đặt hiện dần trong ngần này ms. */
+export const MIRROR_REVEAL_MS = 450;
+/** Trục gương loé sáng trong ngần này ms sau lần đặt đúng. */
+export const MIRROR_FLASH_MS = 600;
+
+/** Độ hiện 0..1 của ảnh phản chiếu sau `elapsedMs`; `reduced_motion` hiện đủ ngay. */
+export function mirrorRevealAlpha(
+  elapsedMs: number,
+  reducedMotion: boolean
+): number {
+  if (reducedMotion) {
+    return 1;
+  }
+  return Math.min(1, Math.max(0, elapsedMs / MIRROR_REVEAL_MS));
+}
+
+/**
+ * Cường độ loé 0..1 của trục gương `elapsedMs` sau lần đặt đúng: tắt dần tuyến
+ * tính. Hết `MIRROR_FLASH_MS` hoặc `reduced_motion` (trạng thái tĩnh cuối) là 0.
+ */
+export function mirrorFlashStrength(
+  elapsedMs: number,
+  reducedMotion: boolean
+): number {
+  if (reducedMotion || elapsedMs < 0 || elapsedMs >= MIRROR_FLASH_MS) {
+    return 0;
+  }
+  return 1 - elapsedMs / MIRROR_FLASH_MS;
+}
+
+/** Quầng sáng phủ trục gương trong `area` (cùng hộp với `drawMirrorAxis`). */
+export function drawMirrorFlash(
+  ctx: CanvasRenderingContext2D,
+  axis: "vertical" | "horizontal",
+  area: {
+    readonly h: number;
+    readonly w: number;
+    readonly x: number;
+    readonly y: number;
+  },
+  strength: number
+): void {
+  if (strength <= 0) {
+    return;
+  }
+  ctx.save();
+  ctx.globalAlpha = 0.55 * Math.min(1, strength);
+  ctx.strokeStyle = designTokens.colors.montessori.amberGlow;
+  ctx.lineWidth = 14;
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  if (axis === "vertical") {
+    ctx.moveTo(area.x + area.w / 2, area.y);
+    ctx.lineTo(area.x + area.w / 2, area.y + area.h);
+  } else {
+    ctx.moveTo(area.x, area.y + area.h / 2);
+    ctx.lineTo(area.x + area.w, area.y + area.h / 2);
+  }
+  ctx.stroke();
+  ctx.restore();
+}
