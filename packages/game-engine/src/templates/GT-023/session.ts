@@ -14,7 +14,7 @@ import type {
   ViewEntity,
 } from "#src/interaction";
 import { resolveAssetSpeech } from "#src/labels/spoken-keyword.js";
-import { resolveTouchFloor } from "#src/layout/constants";
+import { resolveTouchFloor, SLOT_GAP_PX } from "#src/layout/constants";
 import { hasHitOverlap } from "#src/layout/hit-overlap";
 import { TAP_TOLERANCE_PX } from "#src/layout/hit-test.js";
 import { resolveLayout } from "#src/layout/registry";
@@ -61,8 +61,6 @@ const ANCHOR_CELL_MAX_PX = 96;
 const SHAPE_CELL_STEP_PX = 8;
 /** Đệm tối thiểu giữa ô mỏ neo ngoài cùng và mép sân khấu. */
 const MODEL_EDGE_PAD_PX = 4;
-/** Mô hình được kéo giãn một trục nhiều nhất bấy nhiêu lần so với trục kia. */
-const MODEL_STRETCH_MAX = 2.5;
 
 function findHitSourcePart(
   slots: readonly Slot[],
@@ -87,22 +85,40 @@ function findHitSourcePart(
   return open[hit] ?? null;
 }
 
-/** Hệ số co hai trục của mô hình; `null` khi không có chỗ hoặc mô hình suy biến. */
-function modelScales(
-  spanX: number,
-  spanY: number,
+/**
+ * Hệ số co của mô hình (`BR-E023-11`): **một** hệ số cho cả hai trục để giữ tỉ lệ
+ * hình mẫu, và không lớn hơn mức làm cặp mỏ neo gần nhất cách nhau đúng
+ * `SLOT_GAP_PX` — mô hình là một hình ghép liền nhau, không phải các ô rải khắp
+ * sân khấu. `null` khi không có chỗ hoặc mô hình suy biến.
+ */
+function modelScale(
+  points: readonly { readonly x: number; readonly y: number }[],
+  size: number,
   room: { readonly w: number; readonly h: number }
-): { scaleX: number; scaleY: number } | null {
+): number | null {
+  const xs = points.map((p) => p.x);
+  const ys = points.map((p) => p.y);
+  const spanX = Math.max(...xs) - Math.min(...xs);
+  const spanY = Math.max(...ys) - Math.min(...ys);
   const fitX = spanX > 0 ? room.w / spanX : Number.POSITIVE_INFINITY;
   const fitY = spanY > 0 ? room.h / spanY : Number.POSITIVE_INFINITY;
   if (!(Number.isFinite(fitX) || Number.isFinite(fitY)) || room.w <= 0) {
     return null;
   }
-  // Hai trục co độc lập nhưng lệch tối đa `MODEL_STRETCH_MAX` lần: sân khấu
-  // thấp thì trải ngang hơn, vẫn giữ thứ tự trên-dưới và trái-phải của mô hình.
-  const scaleY = Math.min(fitY, fitX * MODEL_STRETCH_MAX);
-  const scaleX = Math.min(fitX, fitY * MODEL_STRETCH_MAX);
-  return scaleX > 0 && scaleY > 0 ? { scaleX, scaleY } : null;
+  let nearest = Number.POSITIVE_INFINITY;
+  for (const [i, a] of points.entries()) {
+    for (const b of points.slice(i + 1)) {
+      const sep = Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y));
+      if (sep > 0) {
+        nearest = Math.min(nearest, sep);
+      }
+    }
+  }
+  const tight = Number.isFinite(nearest)
+    ? (size + SLOT_GAP_PX) / nearest
+    : Number.POSITIVE_INFINITY;
+  const scale = Math.min(fitX, fitY, tight);
+  return Number.isFinite(scale) && scale > 0 ? scale : null;
 }
 
 /** Khung chuyện đọc một lần ở vòng đầu (`BR-E023-07`, `BR-FBK-16`). */
@@ -610,8 +626,6 @@ export class GT023Session extends TemplateGameSession<
     }
     const xs = anchors.map((a) => a.x);
     const ys = anchors.map((a) => a.y);
-    const spanX = Math.max(...xs) - Math.min(...xs);
-    const spanY = Math.max(...ys) - Math.min(...ys);
     const midX = (Math.max(...xs) + Math.min(...xs)) / 2;
     const midY = (Math.max(...ys) + Math.min(...ys)) / 2;
     const centerX = stage.x + stage.w / 2;
@@ -622,11 +636,10 @@ export class GT023Session extends TemplateGameSession<
         w: stage.w - 2 * MODEL_EDGE_PAD_PX - size,
         h: stage.h - 2 * MODEL_EDGE_PAD_PX - size,
       };
-      const scales = modelScales(spanX, spanY, room);
-      if (!scales) {
+      const scale = modelScale(anchors, size, room);
+      if (scale === null) {
         return grid;
       }
-      const { scaleX, scaleY } = scales;
       const shaped = anchors.map((a, i) => ({
         ...cell,
         index: firstIndex + i,
@@ -634,8 +647,8 @@ export class GT023Session extends TemplateGameSession<
         h: Math.min(cell.h, size),
         hitW: size,
         hitH: size,
-        x: Math.round(centerX + (a.x - midX) * scaleX),
-        y: Math.round(centerY + (a.y - midY) * scaleY),
+        x: Math.round(centerX + (a.x - midX) * scale),
+        y: Math.round(centerY + (a.y - midY) * scale),
       }));
       if (!hasHitOverlap(shaped)) {
         return shaped;
