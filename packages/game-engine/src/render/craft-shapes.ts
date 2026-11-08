@@ -804,7 +804,7 @@ export function drawPiggyBank(
 
 // ── Nhân vật kể chuyện vẽ vector (Task #313 Đợt A) ───────────────────
 
-/** Sáu nhân vật còn thiếu hình: một con thú mỗi khung chuyện. */
+/** Nhân vật kể chuyện còn thiếu hình: một nhân vật mỗi khung chuyện. */
 export const STORY_CHARACTER_KINDS = [
   "squirrel",
   "monkey",
@@ -812,6 +812,14 @@ export const STORY_CHARACTER_KINDS = [
   "weasel",
   "hen",
   "butterfly",
+  "mouse",
+  "hippo",
+  "giraffe",
+  "beaver",
+  "bat",
+  "fairy",
+  "duck",
+  "woodpecker",
 ] as const;
 
 export type StoryCharacterKind = (typeof STORY_CHARACTER_KINDS)[number];
@@ -1157,6 +1165,344 @@ function drawButterfly(
   ctx.stroke();
 }
 
+function drawMouse(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number
+): void {
+  const m = designTokens.colors.montessori;
+  const ink = designTokens.colors.surface[900];
+  const r = size * 0.36;
+  // Hai tai tròn to, mặt xám nhạt, mũi hồng, râu
+  for (const dir of [-1, 1]) {
+    characterBlob(
+      ctx,
+      cx + dir * r * 0.75,
+      cy - r * 0.7,
+      r * 0.42,
+      r * 0.42,
+      m.coralLight,
+      m.woodBorder
+    );
+  }
+  characterBlob(ctx, cx, cy, r * 0.9, r * 0.85, m.woodBevel, m.woodBorder);
+  characterEyes(ctx, cx, cy - r * 0.15, r * 0.32, size * 0.045);
+  ctx.fillStyle = m.coral;
+  ctx.beginPath();
+  ctx.arc(cx, cy + r * 0.3, size * 0.04, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = ink;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  for (const dir of [-1, 1]) {
+    ctx.moveTo(cx + dir * r * 0.2, cy + r * 0.3);
+    ctx.lineTo(cx + dir * r * 0.95, cy + r * 0.2);
+    ctx.moveTo(cx + dir * r * 0.2, cy + r * 0.38);
+    ctx.lineTo(cx + dir * r * 0.95, cy + r * 0.5);
+  }
+  ctx.stroke();
+}
+
+function drawHippo(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number
+): void {
+  const m = designTokens.colors.montessori;
+  const ink = designTokens.colors.surface[900];
+  const r = size * 0.36;
+  // Đầu to màu tím nhạt, mõm rộng có hai lỗ mũi, tai nhỏ trên đỉnh
+  for (const dir of [-1, 1]) {
+    characterBlob(
+      ctx,
+      cx + dir * r * 0.7,
+      cy - r * 0.85,
+      r * 0.2,
+      r * 0.25,
+      m.indigoLight,
+      m.indigo
+    );
+  }
+  characterBlob(
+    ctx,
+    cx,
+    cy - r * 0.2,
+    r * 0.95,
+    r * 0.75,
+    m.indigoLight,
+    m.indigo
+  );
+  characterBlob(
+    ctx,
+    cx,
+    cy + r * 0.45,
+    r * 0.85,
+    r * 0.5,
+    m.coralLight,
+    m.indigo
+  );
+  characterEyes(ctx, cx, cy - r * 0.55, r * 0.4, size * 0.045);
+  ctx.fillStyle = ink;
+  for (const dir of [-1, 1]) {
+    ctx.beginPath();
+    ctx.arc(cx + dir * r * 0.3, cy + r * 0.38, size * 0.03, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function drawGiraffe(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number
+): void {
+  const m = designTokens.colors.montessori;
+  const r = size * 0.36;
+  // Cổ dài vàng có đốm, đầu nhỏ, hai sừng nhỏ
+  ctx.fillStyle = m.amberLight;
+  ctx.strokeStyle = m.amberDark;
+  ctx.beginPath();
+  ctx.roundRect(cx - r * 0.3, cy - r * 0.2, r * 0.6, r * 1.3, r * 0.2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = m.amberDeep;
+  for (const [dx, dy] of [
+    [-0.1, 0.35],
+    [0.1, 0.75],
+  ] as const) {
+    ctx.beginPath();
+    ctx.arc(cx + r * dx, cy + r * dy, r * 0.1, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.strokeStyle = m.amberDark;
+  for (const dir of [-1, 1]) {
+    ctx.beginPath();
+    ctx.moveTo(cx + dir * r * 0.2, cy - r * 0.75);
+    ctx.lineTo(cx + dir * r * 0.25, cy - r * 1.0);
+    ctx.stroke();
+    ctx.fillStyle = m.amberDark;
+    ctx.beginPath();
+    ctx.arc(cx + dir * r * 0.25, cy - r * 1.02, r * 0.07, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  characterBlob(
+    ctx,
+    cx,
+    cy - r * 0.4,
+    r * 0.55,
+    r * 0.45,
+    m.amberLight,
+    m.amberDark
+  );
+  characterEyes(ctx, cx, cy - r * 0.5, r * 0.22, size * 0.04);
+}
+
+function drawBeaver(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number
+): void {
+  const m = designTokens.colors.montessori;
+  const r = size * 0.36;
+  // Mặt nâu, tai tròn nhỏ, hai răng cửa to
+  for (const dir of [-1, 1]) {
+    characterBlob(
+      ctx,
+      cx + dir * r * 0.7,
+      cy - r * 0.75,
+      r * 0.25,
+      r * 0.25,
+      m.amberDeep,
+      m.amberDark
+    );
+  }
+  characterBlob(ctx, cx, cy, r * 0.95, r * 0.85, m.amberDeep, m.amberDark);
+  characterBlob(
+    ctx,
+    cx,
+    cy + r * 0.3,
+    r * 0.5,
+    r * 0.35,
+    m.amberLight,
+    m.amberDark
+  );
+  characterEyes(ctx, cx, cy - r * 0.2, r * 0.38, size * 0.045);
+  ctx.fillStyle = m.paper;
+  ctx.strokeStyle = m.amberDark;
+  ctx.beginPath();
+  ctx.roundRect(cx - r * 0.2, cy + r * 0.35, r * 0.4, r * 0.35, r * 0.06);
+  ctx.fill();
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(cx, cy + r * 0.35);
+  ctx.lineTo(cx, cy + r * 0.7);
+  ctx.stroke();
+}
+
+function drawBat(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number
+): void {
+  const m = designTokens.colors.montessori;
+  const ink = designTokens.colors.surface[900];
+  const r = size * 0.36;
+  // Hai cánh dơi xoè, thân tròn tối, tai nhọn
+  for (const dir of [-1, 1]) {
+    ctx.fillStyle = m.indigo;
+    ctx.strokeStyle = ink;
+    ctx.beginPath();
+    ctx.moveTo(cx + dir * r * 0.4, cy - r * 0.1);
+    ctx.lineTo(cx + dir * r * 1.25, cy - r * 0.6);
+    ctx.lineTo(cx + dir * r * 1.1, cy + r * 0.1);
+    ctx.lineTo(cx + dir * r * 0.85, cy + r * 0.0);
+    ctx.lineTo(cx + dir * r * 0.7, cy + r * 0.5);
+    ctx.lineTo(cx + dir * r * 0.35, cy + r * 0.25);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx + dir * r * 0.2, cy - r * 0.6);
+    ctx.lineTo(cx + dir * r * 0.35, cy - r * 1.0);
+    ctx.lineTo(cx + dir * r * 0.5, cy - r * 0.5);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+  }
+  characterBlob(ctx, cx, cy, r * 0.5, r * 0.6, m.indigo, ink);
+  ctx.fillStyle = m.amber;
+  for (const dir of [-1, 1]) {
+    ctx.beginPath();
+    ctx.arc(cx + dir * r * 0.2, cy - r * 0.15, size * 0.04, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function drawFairy(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number
+): void {
+  const m = designTokens.colors.montessori;
+  const r = size * 0.36;
+  // Hai cánh mỏng, váy hình chuông, đầu tròn, đũa phép có sao
+  for (const dir of [-1, 1]) {
+    characterBlob(
+      ctx,
+      cx + dir * r * 0.75,
+      cy - r * 0.2,
+      r * 0.5,
+      r * 0.8,
+      m.indigoLight,
+      m.indigo,
+      dir * 0.5
+    );
+  }
+  ctx.fillStyle = m.coralLight;
+  ctx.strokeStyle = m.coral;
+  ctx.beginPath();
+  ctx.moveTo(cx - r * 0.2, cy - r * 0.1);
+  ctx.lineTo(cx + r * 0.2, cy - r * 0.1);
+  ctx.lineTo(cx + r * 0.65, cy + r * 0.95);
+  ctx.lineTo(cx - r * 0.65, cy + r * 0.95);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  characterBlob(
+    ctx,
+    cx,
+    cy - r * 0.45,
+    r * 0.38,
+    r * 0.38,
+    m.plateLight,
+    m.amberDark
+  );
+  characterEyes(ctx, cx, cy - r * 0.45, r * 0.16, size * 0.03);
+  ctx.strokeStyle = m.amberDark;
+  ctx.beginPath();
+  ctx.moveTo(cx + r * 0.3, cy + r * 0.3);
+  ctx.lineTo(cx + r * 1.0, cy - r * 0.5);
+  ctx.stroke();
+  ctx.fillStyle = m.amber;
+  ctx.beginPath();
+  ctx.arc(cx + r * 1.0, cy - r * 0.55, r * 0.14, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawDuck(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number
+): void {
+  const m = designTokens.colors.montessori;
+  const r = size * 0.36;
+  // Đầu tròn vàng, mỏ dẹt cam, chỏm lông nhỏ
+  ctx.strokeStyle = m.amberDark;
+  ctx.fillStyle = m.amber;
+  for (const dx of [-0.1, 0.1]) {
+    ctx.beginPath();
+    ctx.arc(cx + r * dx, cy - r * 1.0, r * 0.1, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  characterBlob(ctx, cx, cy, r, r * 0.95, m.amber, m.amberDark);
+  characterBlob(
+    ctx,
+    cx,
+    cy + r * 0.35,
+    r * 0.55,
+    r * 0.28,
+    m.amberDeep,
+    m.amberDark
+  );
+  characterEyes(ctx, cx, cy - r * 0.2, r * 0.4, size * 0.045);
+}
+
+function drawWoodpecker(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number
+): void {
+  const m = designTokens.colors.montessori;
+  const r = size * 0.36;
+  // Thân đen trắng, mào đỏ, mỏ dài nhọn
+  characterBlob(ctx, cx, cy, r * 0.9, r, m.paper, m.woodBorder);
+  characterBlob(
+    ctx,
+    cx - r * 0.45,
+    cy + r * 0.1,
+    r * 0.4,
+    r * 0.8,
+    m.indigo,
+    m.woodBorder
+  );
+  ctx.fillStyle = m.coral;
+  ctx.strokeStyle = m.coral;
+  ctx.beginPath();
+  ctx.moveTo(cx - r * 0.3, cy - r * 0.9);
+  ctx.lineTo(cx, cy - r * 1.35);
+  ctx.lineTo(cx + r * 0.3, cy - r * 0.9);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = m.amberDark;
+  ctx.strokeStyle = m.amberDark;
+  ctx.beginPath();
+  ctx.moveTo(cx + r * 0.2, cy - r * 0.35);
+  ctx.lineTo(cx + r * 1.0, cy - r * 0.2);
+  ctx.lineTo(cx + r * 0.2, cy - r * 0.05);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  characterEyes(ctx, cx + r * 0.1, cy - r * 0.45, r * 0.15, size * 0.04);
+}
+
 const STORY_CHARACTER_DRAWERS: Readonly<
   Record<
     StoryCharacterKind,
@@ -1174,6 +1520,14 @@ const STORY_CHARACTER_DRAWERS: Readonly<
   weasel: drawWeasel,
   hen: drawHen,
   butterfly: drawButterfly,
+  mouse: drawMouse,
+  hippo: drawHippo,
+  giraffe: drawGiraffe,
+  beaver: drawBeaver,
+  bat: drawBat,
+  fairy: drawFairy,
+  duck: drawDuck,
+  woodpecker: drawWoodpecker,
 };
 
 /**
