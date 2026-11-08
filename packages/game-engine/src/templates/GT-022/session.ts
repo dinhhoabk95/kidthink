@@ -24,10 +24,13 @@ import type { Slot } from "#src/layout/types";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
 import {
   drawLabelText,
+  drawMagnifier,
   drawProgressDots,
   drawSceneBackground,
   drawSceneObjectAt,
   drawSlotItem,
+  drawStoryCharacterInStage,
+  magnifierPose,
   sceneBox,
   slotAtPoint,
 } from "#src/render/index";
@@ -85,6 +88,9 @@ export const GT022_STORY_LINE =
 /** Mascot nhảy hoặc động viên ngắn sau mỗi lần chạm (`BR-E022-07`). */
 export const GT022_REACTION_MS = 1000;
 
+/** Kính lúp của Vịt Con soi vật vừa chạm trong ngần này ms (`BR-E022-10`). */
+export const GT022_LENS_MS = 900;
+
 export class GT022Session extends TemplateGameSession<
   GT022Content,
   GT022Difficulty
@@ -112,6 +118,9 @@ export class GT022Session extends TemplateGameSession<
   private wrongItemId: string | null = null;
   private readonly wrongFlash = new WrongFlash();
   private lastFrameMs = 0;
+  /** Vật Vịt Con soi bằng kính lúp: vật trẻ vừa chạm (đúng hay nhầm như nhau) và mốc đồng hồ khung lúc chạm. */
+  private lensObjectId: string | null = null;
+  private lensStartedMs = 0;
   private reactionPose: MascotPose | null = null;
   private reactionRemainingMs = 0;
 
@@ -120,6 +129,8 @@ export class GT022Session extends TemplateGameSession<
     this.wrongItemId = null;
     this.wrongFlash.clear();
     this.lastFrameMs = 0;
+    this.lensObjectId = null;
+    this.lensStartedMs = 0;
     this.reactionPose = null;
     this.reactionRemainingMs = 0;
     this.selectionMechanic.reset();
@@ -205,6 +216,9 @@ export class GT022Session extends TemplateGameSession<
 
   onTapObject(itemId: string): FindResult {
     const result = this.sceneSystem.findTarget(itemId);
+    // Vịt Con soi vật vừa chạm — đúng hay nhầm như nhau (`BR-E022-10`).
+    this.lensObjectId = itemId;
+    this.lensStartedMs = this.lastFrameMs;
 
     this.recordEvent("item_selected", {
       item_id: itemId,
@@ -625,16 +639,13 @@ export class GT022Session extends TemplateGameSession<
       }
       const state = this.sceneSystem.getObjectState(obj.id);
       const wrong = obj.id === this.wrongItemId;
-      drawSlotItem(
-        ctx,
-        rs,
-        slotAtPoint(layer.draw.x, layer.draw.y, layer.draw.size),
-        {
-          id: obj.id,
-          asset: assetById.get(obj.id),
-          state: state?.isFound === true ? "correct" : "idle",
-        }
-      );
+      const drawSlot = slotAtPoint(layer.draw.x, layer.draw.y, layer.draw.size);
+      drawSlotItem(ctx, rs, drawSlot, {
+        id: obj.id,
+        asset: assetById.get(obj.id),
+        state: state?.isFound === true ? "correct" : "idle",
+      });
+      this.drawLens(ctx, rs, obj.id, drawSlot, timeMs);
       if (wrong) {
         this.drawWrongHighlight(ctx, rs, obj, layer.index, timeMs);
       }
@@ -651,6 +662,8 @@ export class GT022Session extends TemplateGameSession<
       this.wrongItemId = null;
     }
     drawSceneBackground(ctx, rs, this.themeId);
+    // Vịt Con ở góc trống, ngoài vùng chạm (`BR-E022-10`).
+    drawStoryCharacterInStage(ctx, "duck", this.stageRect, this.slots);
     this.drawPinnedReferences(ctx, rs);
     this.drawTargetCounter(ctx, rs);
     if (this.layers) {
@@ -705,10 +718,33 @@ export class GT022Session extends TemplateGameSession<
         { found: state?.isFound === true }
       );
 
+      this.drawLens(ctx, rs, obj.id, slot, timeMs);
       if (obj.id === this.wrongItemId) {
         this.drawWrongHighlight(ctx, rs, obj, i, timeMs);
       }
     });
+  }
+
+  /**
+   * Kính lúp của Vịt Con soi vật trẻ vừa chạm trong `GT022_LENS_MS` (`BR-E022-10`).
+   * Chỉ có sau lần chạm và cùng một luật cho vật đúng lẫn vật nhiễu, nên không
+   * chỉ vật nào là đích. `reduced_motion`: kính đứng yên (không lắc).
+   */
+  private drawLens(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    objectId: string,
+    slot: Slot,
+    timeMs: number
+  ): void {
+    if (this.lensObjectId !== objectId) {
+      return;
+    }
+    const elapsed = timeMs - this.lensStartedMs;
+    if (elapsed < 0 || elapsed >= GT022_LENS_MS) {
+      return;
+    }
+    drawMagnifier(ctx, magnifierPose(slot, timeMs, rs.reducedMotion));
   }
 
   /** Hình mẫu ở khay: đứng yên suốt lượt, sáng khi đã tìm đủ hình đó. */
