@@ -20,8 +20,10 @@ const REGEX_MONTESSORI_CODE = /-0[1-9]\d{2}$/;
  * khung năm vùng, recall GT-000 (`BR-CSA-17` khoá băm nội dung ở `content-version.lock.json`).
  * Đổi nội dung level đã gieo (kể cả `title`) thì tăng số này — seeder archive
  * bản cũ và publish bản mới trong một transaction; giữ nguyên số thì seeder bỏ qua.
+ * v11: #313 Phase 25 — GT-013 đề "lá cờ số N" + `goal_glyph`, GT-009 tối đa 6 ứng viên,
+ * GT-035 lưới tối đa 3 hàng (`BR-LAY-12`).
  */
-export const GENERATED_LEVEL_CONTENT_VERSION = 10;
+export const GENERATED_LEVEL_CONTENT_VERSION = 11;
 
 /**
  * Chỗ trống trong `phrasing.prompt_template` mà bộ dựng level thay được.
