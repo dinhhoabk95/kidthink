@@ -27,7 +27,7 @@ Chọn skill theo `using-agent-skills`. Vòng đời:
 
 Thứ tự ưu tiên khi trùng việc:
 
-1. Luật cứng của repo — file này, `docs/specs/`, cổng `scripts/check.sh`. Đây là **ràng buộc**
+1. Luật cứng của repo — file này, `docs/specs/`, cổng `pnpm check` và các test cổng trong `tests/gates/`. Đây là **ràng buộc**
    skill phải tuân, không phải một quy trình song song.
 2. agent-skills — quy trình mặc định cho mọi việc.
 3. OpenSpec (`opsx-*`, `openspec-*`), agent `tinimath-*` và `.agents/commands/` cục bộ — chỉ chạy
@@ -40,7 +40,7 @@ Chỗ skill có mặc định khác repo — **repo thắng**:
 | Viết `SPEC.md`                   | Contract gốc là `docs/SPEC.md` (root `SPEC.md` là symlink). Hành vi mới → một file outcome trong `docs/specs/<nhóm>/` theo `CONVENTIONS.md` + `TEMPLATE.md`, thêm dòng vào `index.md`, rule mới mang mã `BR-*`. |
 | `tasks/plan.md`, `tasks/todo.md` | `docs/tasks/NN-<slug>-plan.md` và `NN-<slug>-todo.md`. `NN` chưa dùng: quét cả tên file lẫn tham chiếu `Task #NN`.                                                                |
 | ADR ở `docs/adr/`                | Quyết định định hình ghi vào bảng `D*` ở `docs/SPEC.md` §0, kèm lý do.                                                                                                              |
-| `CONSTRAINTS.md`                 | Thanh chất lượng đã chốt là cổng trong `scripts/check.sh` và các mục bên dưới. Không đặt ngưỡng thấp hơn.                                                                            |
+| `CONSTRAINTS.md`                 | Thanh chất lượng đã chốt là `pnpm check`, các test cổng (`**/tests/gates/`) và các mục bên dưới. Không đặt ngưỡng thấp hơn.                                                                            |
 | Chạy test / lint / build         | Qua `rtk proxy` (xem "Luật đo cổng"); `pnpm check` trước khi xong.                                                                                                                 |
 | Branch + PR                      | Commit thẳng vào `main` (xem "Git workflow").                                                                                                                                     |
 | Viết spec, tài liệu              | Tiếng Việt.                                                                                                                                                                        |
@@ -110,30 +110,22 @@ Các khối `catch` còn lại trong `apps/web/server` đều có logic thật (
 | `tsc -p tsconfig.json` một mình | Chỉ là 1/10 project. `apps/*` sinh tsconfig ở `.nuxt/`         |
 | `biome check` chạy **không** qua `rtk proxy` | Hook `rtk` **thay output** thành `Lint: No issues found` dù biome báo lỗi và exit 1. Đây là xanh giả **có chữ**, không phải output bị nén |
 
-**Luật đo cổng**: mọi lệnh cổng (`biome`, `vitest`, `depcruise`, `tsc`, script `check:*`)
+**Luật đo cổng**: mọi lệnh cổng (`biome`, `vitest`, `depcruise`, `tsc`, `vue-tsc`)
 chạy qua `rtk proxy <lệnh>`. Không phải để dễ đọc — mà vì hook `rtk` lọc dòng lỗi và
 in ra một câu xanh của riêng nó. Tin exit code hơn tin dòng chữ; và exit code cũng chỉ
 đọc được khi lệnh **không** bị bọc.
 
-`pnpm typecheck` chạy **cổng bậc thang** `scripts/typecheck/typecheck-gate.ts`:
-cả 10 project TypeScript của repo (root · worker · web:app/server/shared/node ·
-admin:app/server/shared/node), so từng file với
-`scripts/typecheck/typecheck-baseline.json`. File tăng lỗi hoặc file mới có lỗi → đỏ.
-Giảm → xanh kèm nhắc chạy `pnpm typecheck:update`. Đây là **chỗ duy nhất** typecheck
-chạy: không app hay package nào còn script `typecheck` riêng.
-
-Nợ trong `typecheck-baseline.json` là **0** trên cả 10 project: mọi lỗi type mới đều đỏ.
-`--update` từ chối mọi lần tăng (`scripts/typecheck/ratchet.ts:refuseIncrease`); muốn tăng
-phải có `--allow-increase` kèm lý do trong PR. `pnpm typecheck --only web` chạy riêng một app;
-`--only web:app` chạy riêng một project.
+`pnpm typecheck` = `tsc --noEmit` ở gốc (lưới `root` include
+`packages/*/{src,tests,scripts,vitest}`) rồi script `typecheck` của từng app
+(`apps/worker`: `tsc --noEmit`; `apps/web`, `apps/admin`: `vue-tsc` trên bốn tsconfig
+`.nuxt/tsconfig.{app,server,shared,node}.json`). Không còn baseline hay bậc thang nợ
+(`scripts/typecheck/` bị gỡ ở `1dc7b60f`, 2026-10-31): **mọi** lỗi type đều đỏ.
+Package trong `packages/*` ❌ NEVER khai script `typecheck` riêng — lưới `root` đã phủ.
 
 Convention của workspace — `tsconfig.json` extend đúng một base, `vitest.config.ts` đi
-qua `defineWorkspaceTest`, script `test`, dependency khai `catalog:`, `pnpm check` đủ
-bốn bước — ❌ KHÔNG còn cổng nào đo (gỡ 2026-08-29); giữ bằng lượt review. Workspace ❌ NEVER khai script `typecheck` riêng: lưới `root` đã include
-`packages/*/{src,tests,scripts,vitest}`, nên bản sao cấp workspace phủ thêm số không và
-đỏ ngay khi chạy vì không có baseline (Task #111). `apps/web`/`apps/admin` không extend base (Nuxt sinh
-`compilerOptions` riêng) — `tsconfig.json` của chúng chỉ `references` tới đúng danh sách
-project mà cổng typecheck chạy.
+qua `defineWorkspaceTest`, script `test`, dependency khai `catalog:` — ❌ KHÔNG còn cổng
+nào đo (gỡ 2026-08-29); giữ bằng lượt review. `apps/web`/`apps/admin` không extend base
+(Nuxt sinh `compilerOptions` riêng).
 
 ## Môi trường
 
@@ -147,33 +139,25 @@ project mà cổng typecheck chạy.
 
 `packages/gates` đã bị xoá theo quyết định người dùng (trùng việc với Biome và `vue-tsc`).
 
-Danh sách cổng đầy đủ là `scripts/check.sh` (đọc file đó, đừng tin bảng này là đủ). Các cổng hay đụng tới:
+`scripts/check.sh` và mọi script `check:*` (`intro-coverage`, `value-inventory`,
+`error-codes`, `logic-space`, `hint-target`, `migration-hashes`, `engine-specs`,
+`engine-turn`, `engine-behavior*`, `test-ratchet`) đã bị gỡ ở `1dc7b60f` (2026-10-31).
+Cổng hiện có — đọc `package.json` gốc, đừng tin bảng này là đủ:
 
-| Lệnh | Đo gì | Phase của `check.sh` |
-| --- | --- | --- |
-| `pnpm lint` | Biome trên toàn cây | 1 |
-| `pnpm lint:deps` | Ranh giới package (dependency-cruiser) | 1 |
-| `pnpm check:intro-coverage` | Bậc thang độ phủ bài làm quen (`BR-CIG-18`) | 1 |
-| `pnpm check:value-inventory` | Kho giá trị kỹ năng hai chiều (`BR-SVI-01..05`) | 1 |
-| `pnpm check:error-codes` | Bậc thang mã lỗi | 1 |
-| `pnpm check:logic-space` | Mỗi `LayoutInput` trong thân `computeSlots` phải có `logic:` | 1 |
-| `pnpm check:hint-target` | 37 template phải cài `getHintTargetIndex` thật, không stub | 1 |
-| `pnpm check:migration-hashes` | Migration đã apply Cấm — NEVER bị sửa nội dung | 1 |
-| `pnpm check:engine-specs` | 37 mã engine có phiếu đủ khuôn SDD, 0 mồ côi (`BR-ESS-*`) | 1 |
-| `pnpm check:engine-turn` | Mục 4 và mục 5 của 37 phiếu theo bảy nhịp `N1`…`N7` và tám nhánh (`BR-ETS-*`) | 1 |
-| `pnpm check:engine-behavior` | Miền hành vi theo registry, bậc thang kênh thắng cuộc (`BR-EBD-*`) | 1 |
-| `pnpm check:engine-behavior-corpus` | Nửa corpus của `BR-EBD-04`: miền phải có level thật để chơi | 1 |
-| `pnpm typecheck` | `tsc` + `vue-tsc` trên 10 project, bậc thang nợ | 2 |
-| `pnpm check:test-ratchet` | Toàn bộ vitest, không `--bail`; file đỏ mới hoặc số suite tụt → đỏ | 3 |
-| `pnpm test:deploy` | Script hạ tầng | 4 (đang tắt) |
+| Lệnh | Đo gì |
+| --- | --- |
+| `pnpm check` | `pnpm lint && pnpm lint:deps && pnpm typecheck` (không chạy test) |
+| `pnpm lint` | Biome trên toàn cây |
+| `pnpm lint:deps` | Ranh giới package (dependency-cruiser) |
+| `pnpm typecheck` | `tsc` gốc + `tsc`/`vue-tsc` từng app, không baseline |
+| vitest từng workspace | Gồm test cổng trong `**/tests/gates/` (vd. `packages/game-engine/tests/gates/render.test.ts`, `apps/web/tests/gates/`) |
+| `pnpm test:deploy` | Script hạ tầng (đang tắt) |
+| lefthook pre-commit | `lint` + `lint:deps` |
 
-`pnpm check --fast` chỉ chạy `--project=@mindkid/game-engine` và **nói rõ** đó là tập con.
-Chế độ đầy đủ gặp `pnpm services` exit 1 thì **đỏ**, không lặng lẽ hạ xuống tập con.
-
-Ba cổng bậc thang mới nhất (`logic-space`, `hint-target`, `test-ratchet`) đều từ chối
-`--update` khi nợ **tăng**; muốn nới phải `--force` để diff nhìn thấy. `test-baseline.json`
-có thêm sàn `minTotalSuites`: xoá test hay `describe.skip` làm số suite tụt → đỏ, vì
-không có sàn thì nợ giảm được bằng cách bỏ đo.
+`pnpm check` **không** chạy test: trước khi xong phải chạy thêm vitest của các workspace
+đã đụng (`cd <workspace> && rtk proxy npx vitest run --reporter=dot; echo EXIT=$?`).
+Bậc thang trong test (vd. `KNOWN_PHYSICAL_OVERFLOW` ở `layout/action-clear.test.ts`)
+phải đỏ cả khi nợ tăng lẫn khi ca đã lành mà còn trong danh sách.
 
 Thứ ❌ KHÔNG còn ai đo: corpus spec (frontmatter, section, link, mã lỗi), từ vựng
 người dùng, design token/hex literal, ép kiểu `as T`, `any` trong test, tên biến môi
