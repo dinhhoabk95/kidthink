@@ -20,13 +20,14 @@ import {
 import type { Slot } from "#src/layout/types";
 import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
 import {
-  drawBasketSlot,
   drawEmptyTargetSlot,
   drawGlyphInSlot,
   drawSceneBackground,
   drawSlotItem,
+  drawSortTray,
   drawWoodenTokenDock,
   type ItemVisualState,
+  sortTrayGeometry,
 } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
 import { deriveStream } from "#src/rng/mulberry32";
@@ -507,32 +508,29 @@ export class GT004Session extends TemplateGameSession<
         i === 0
           ? designTokens.colors.montessori.coral
           : designTokens.colors.montessori.amber;
-      drawBasketSlot(ctx, slot, group.label, rimColor);
+      drawSortTray(ctx, slot, group.label, rimColor);
+
+      // Thẻ kiểm tra hình: hình nhóm luôn hiện trên mặt trước ngăn kéo.
+      const { card } = sortTrayGeometry(slot);
+      drawGlyphInSlot(ctx, group.label_emoji, {
+        ...slot,
+        x: card.x + card.w / 2,
+        y: card.y + card.h / 2,
+        w: card.w,
+        h: card.h,
+      });
 
       const placedItems = this.displayItems.filter(
         (item) => placements.get(item.item_id) === group.group_id
       );
 
-      if (placedItems.length === 0) {
-        drawGlyphInSlot(ctx, group.label_emoji, {
-          ...slot,
-          y: slot.y + slot.h * 0.14,
-          w: slot.w * 0.72,
-          h: slot.h * 0.72,
-        });
-      } else {
-        const badgeSlot: Slot = {
-          ...slot,
-          y: slot.y + slot.h * 0.18,
-        };
-        drawGlyphInSlot(ctx, group.label_emoji, badgeSlot);
-
+      if (placedItems.length > 0) {
         const count = placedItems.length;
         const innerW = slot.w * 0.72;
         const chipR = Math.min(20, Math.max(12, innerW / (count * 2.2)));
         const spacing = Math.min(innerW / count, chipR * 2.4);
         const startX = slot.x - ((count - 1) * spacing) / 2;
-        const chipY = slot.y - slot.h * 0.12;
+        const chipY = slot.y - slot.h * 0.15;
 
         for (let j = 0; j < count; j++) {
           const pItem = placedItems[j];

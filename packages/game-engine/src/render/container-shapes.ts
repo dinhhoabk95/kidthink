@@ -601,3 +601,143 @@ export function basketShakeOffset(
     Math.sin(Math.PI * 2 * BASKET_SHAKE_CYCLES * t)
   );
 }
+
+// ── Khay phân loại kèm thẻ kiểm tra hình (GT-004, `BR-E004-05`) ───────
+
+export interface TrayRect {
+  readonly h: number;
+  readonly w: number;
+  readonly x: number;
+  readonly y: number;
+}
+
+export interface SortTrayGeometry {
+  /** Thân khay (cùng cỡ thân rổ cũ: 0,9 × 0,75 slot). */
+  readonly body: TrayRect;
+  /** Thẻ kiểm tra hình: hình của nhóm, vuông, ở mặt trước ngăn kéo. */
+  readonly card: TrayRect;
+  /** Mặt trước ngăn kéo — nửa dưới thân khay. */
+  readonly front: TrayRect;
+  /** Tay nắm ngăn kéo, cạnh thẻ. */
+  readonly handle: TrayRect;
+  /** Dải nhãn nhóm, nhô lên mép trên thân khay. */
+  readonly label: TrayRect;
+}
+
+const TRAY_FRONT_RATIO = 0.45;
+
+/**
+ * Hình học khay phân loại — hàm thuần để vẽ và test dùng chung một nguồn.
+ * Nửa trên để trống cho vật đã xếp; nửa dưới là mặt trước ngăn kéo mang thẻ
+ * kiểm tra hình (control card Montessori) và tay nắm. Thẻ chỉ là hình nhóm
+ * đã có trên màn nên không lộ đáp án, và không đổi vùng thả của slot.
+ */
+export function sortTrayGeometry(slot: Slot): SortTrayGeometry {
+  const w = slot.w * 0.9;
+  const h = slot.h * 0.75;
+  const body: TrayRect = { x: slot.x - w / 2, y: slot.y - h / 2, w, h };
+  const frontH = h * TRAY_FRONT_RATIO;
+  const front: TrayRect = {
+    x: body.x,
+    y: body.y + h - frontH,
+    w,
+    h: frontH,
+  };
+  const side = Math.max(20, frontH * 0.8);
+  const pad = (frontH - side) / 2;
+  const card: TrayRect = {
+    x: front.x + Math.max(6, w * 0.08),
+    y: front.y + pad,
+    w: side,
+    h: side,
+  };
+  const handleX = card.x + side + w * 0.1;
+  const handleH = Math.max(6, frontH * 0.2);
+  const handle: TrayRect = {
+    x: handleX,
+    y: front.y + (frontH - handleH) / 2,
+    w: Math.max(12, body.x + w - Math.max(6, w * 0.08) - handleX),
+    h: handleH,
+  };
+  const fontPx = legibleFontPx(15);
+  const ribbonH = fontPx + 13;
+  const label: TrayRect = {
+    x: slot.x - w * 0.35,
+    y: slot.y - h * 0.55,
+    w: w * 0.7,
+    h: ribbonH,
+  };
+  return { body, card, front, handle, label };
+}
+
+/**
+ * Vẽ khay phân loại: thân gỗ, mặt trước ngăn kéo, khung thẻ kiểm tra, tay nắm
+ * và dải nhãn. Hình của nhóm do engine vẽ vào `card` bằng `drawGlyphInSlot`.
+ */
+export function drawSortTray(
+  ctx: CanvasRenderingContext2D,
+  slot: Slot,
+  label: string,
+  rimColor: string
+): void {
+  const { body, card, front, handle, label: ribbon } = sortTrayGeometry(slot);
+  const wood = designTokens.colors.montessori;
+
+  ctx.save();
+  ctx.save();
+  ctx.shadowColor = alpha(wood.woodBorder, 0.18);
+  ctx.shadowBlur = 10;
+  ctx.shadowOffsetY = 5;
+  ctx.fillStyle = wood.woodTray;
+  ctx.beginPath();
+  ctx.roundRect(body.x, body.y, body.w, body.h, 14);
+  ctx.fill();
+  ctx.restore();
+
+  // Mặt trước ngăn kéo
+  ctx.fillStyle = wood.basket;
+  ctx.beginPath();
+  ctx.roundRect(front.x, front.y, front.w, front.h, 10);
+  ctx.fill();
+  ctx.strokeStyle = wood.woodBevel;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Viền màu nhóm quanh thân khay
+  ctx.strokeStyle = rimColor;
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.roundRect(body.x, body.y, body.w, body.h, 14);
+  ctx.stroke();
+
+  // Khung thẻ kiểm tra hình
+  ctx.fillStyle = wood.paper;
+  ctx.beginPath();
+  ctx.roundRect(card.x, card.y, card.w, card.h, 6);
+  ctx.fill();
+  ctx.strokeStyle = wood.woodBorder;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Tay nắm
+  ctx.fillStyle = wood.woodBorder;
+  ctx.beginPath();
+  ctx.roundRect(handle.x, handle.y, handle.w, handle.h, handle.h / 2);
+  ctx.fill();
+
+  // Dải nhãn nhóm
+  ctx.fillStyle = rimColor;
+  ctx.beginPath();
+  ctx.roundRect(ribbon.x, ribbon.y, ribbon.w, ribbon.h, ribbon.h / 2);
+  ctx.fill();
+  ctx.fillStyle = readableTextOn(
+    rimColor,
+    designTokens.colors.surface[0],
+    designTokens.colors.surface[900]
+  );
+  applyCanvasFontAtSize(ctx, legibleFontPx(15), "heading", "bold");
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(label, slot.x, ribbon.y + ribbon.h / 2, ribbon.w * 0.94);
+  ctx.restore();
+}
