@@ -1,0 +1,74 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mascot Bear Freeze</title>
+  <!-- Mascot Bear: Freeze / Stop -->
+  <circle
+    cx="60"
+    cy="65"
+    fill="#d97706"
+    r="38"
+    stroke="#92400e"
+    stroke-width="4"
+  />
+  <!-- Ears -->
+  <circle
+    cx="36"
+    cy="36"
+    fill="#d97706"
+    r="14"
+    stroke="#92400e"
+    stroke-width="4"
+  />
+  <circle cx="36" cy="36" fill="#fde68a" r="7" />
+  <circle
+    cx="84"
+    cy="36"
+    fill="#d97706"
+    r="14"
+    stroke="#92400e"
+    stroke-width="4"
+  />
+  <circle cx="84" cy="36" fill="#fde68a" r="7" />
+  <!-- Muzzle -->
+  <ellipse
+    cx="60"
+    cy="74"
+    fill="#fffbeb"
+    rx="18"
+    ry="13"
+    stroke="#92400e"
+    stroke-width="3"
+  />
+  <ellipse cx="60" cy="68" fill="#451a03" rx="6" ry="4" />
+  <!-- Mouth: flat, calm -->
+  <path
+    d="M60 72v3M53 79h14"
+    stroke="#451a03"
+    stroke-linecap="round"
+    stroke-width="2.5"
+  />
+  <!-- Eyes: wide open, steady -->
+  <circle cx="47" cy="56" fill="#1c1917" r="5.5" />
+  <circle cx="73" cy="56" fill="#1c1917" r="5.5" />
+  <circle cx="48.5" cy="54.5" fill="#fffbeb" r="1.8" />
+  <circle cx="74.5" cy="54.5" fill="#fffbeb" r="1.8" />
+  <!-- Eyebrows: level -->
+  <path
+    d="M40 45h14M66 45h14"
+    stroke="#92400e"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+  <!-- Raised paw: stop -->
+  <circle
+    cx="100"
+    cy="86"
+    fill="#d97706"
+    r="11"
+    stroke="#92400e"
+    stroke-width="4"
+  />
+  <circle cx="100" cy="88" fill="#fde68a" r="5" />
+  <!-- Cheeks -->
+  <circle cx="38" cy="67" fill="#fb923c" fill-opacity="0.4" r="5" />
+  <circle cx="82" cy="67" fill="#fb923c" fill-opacity="0.4" r="5" />
+</svg>

@@ -1,0 +1,73 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mascot Bear Wonder</title>
+  <!-- Mascot Bear: Wonder / Searching -->
+  <circle
+    cx="60"
+    cy="65"
+    fill="#d97706"
+    r="38"
+    stroke="#92400e"
+    stroke-width="4"
+  />
+  <!-- Ears -->
+  <circle
+    cx="36"
+    cy="36"
+    fill="#d97706"
+    r="14"
+    stroke="#92400e"
+    stroke-width="4"
+  />
+  <circle cx="36" cy="36" fill="#fde68a" r="7" />
+  <circle
+    cx="84"
+    cy="36"
+    fill="#d97706"
+    r="14"
+    stroke="#92400e"
+    stroke-width="4"
+  />
+  <circle cx="84" cy="36" fill="#fde68a" r="7" />
+  <!-- Muzzle -->
+  <ellipse
+    cx="60"
+    cy="74"
+    fill="#fffbeb"
+    rx="18"
+    ry="13"
+    stroke="#92400e"
+    stroke-width="3"
+  />
+  <ellipse cx="60" cy="68" fill="#451a03" rx="6" ry="4" />
+  <!-- Mouth: small round "o" -->
+  <ellipse cx="60" cy="79" fill="#451a03" rx="3.5" ry="4" />
+  <!-- Eyes: wide with highlights -->
+  <circle cx="47" cy="56" fill="#1c1917" r="6" />
+  <circle cx="73" cy="56" fill="#1c1917" r="6" />
+  <circle cx="49" cy="54" fill="#fffbeb" r="2" />
+  <circle cx="75" cy="54" fill="#fffbeb" r="2" />
+  <!-- Eyebrows: raised, one higher -->
+  <path
+    d="M40 44q7-5 14-1"
+    stroke="#92400e"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+  <path
+    d="M66 41q7-4 14 1"
+    stroke="#92400e"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+  <!-- Sparkle -->
+  <path
+    d="M100 18l2.5 6 6 2.5-6 2.5-2.5 6-2.5-6-6-2.5 6-2.5z"
+    fill="#fde68a"
+    stroke="#92400e"
+    stroke-linejoin="round"
+    stroke-width="2"
+  />
+  <!-- Cheeks -->
+  <circle cx="38" cy="67" fill="#fb923c" fill-opacity="0.4" r="5" />
+  <circle cx="82" cy="67" fill="#fb923c" fill-opacity="0.4" r="5" />
+</svg>

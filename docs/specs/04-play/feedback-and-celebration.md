@@ -79,6 +79,7 @@ xem §7.4.
 | `BR-FBK-14` | Engine có thể khai **cue âm đặc trưng** của riêng mình (session xếp hàng `SFXType` qua `queueSfx`, hàng đợi trần 8). `GameEngine.advanceFrame` rút hàng đợi mỗi khung và phát qua `audio.play` — trễ tối đa một khung, theo đúng thứ tự xếp, không phát khi âm tắt. Mọi cue là âm tổng hợp (không file) và tuân `BR-FBK-10`; cue **bổ sung** chứ không thay âm đúng/chưa đúng chung của `BR-FBK-02` | `BR-ENG-03` — trải nghiệm riêng của từng trò cần âm riêng mà không để session giữ `AudioContext`; hàng đợi có trần để lượt chạm dồn dập không xếp hàng vô hạn |
 | `BR-FBK-15` | Session khai **tâm trạng mascot** qua `mascotMood()` (dáng, hoặc `null`). Thứ tự dáng nền: lời dẫn đang đọc (`listen`) > trợ giúp (`hint`) > tâm trạng của session > `idle` — trẻ đang kẹt luôn thấy dáng gợi ý, tâm trạng (vd `wonder` suốt vòng GT-025) không được che nó. Dáng phản hồi đúng/chưa đúng của lớp phủ (`BR-FBK-11`, 700ms) vẫn đè lên dáng nền. Ba dáng mới `wonder` (nghiêng đầu thắc mắc), `freeze` (đứng hình, không nảy), `cheer` (nảy nhẹ khi gom được một thứ) | `BR-FBK-11` — mascot phản ứng theo *tình huống của trò*, không chỉ theo đúng/sai; tắt tiếng thì mascot vẫn nói được trò đang ở nhịp nào |
 | `BR-FBK-16` | **Khung chuyện**: session khai `storyLine()` — một câu bối cảnh nói được. Bề mặt chơi đọc nó **đúng một lần** ở vòng đầu của level, ngay trước câu dẫn (`round_open`), cùng một lượt phát với câu dẫn; "nghe lại" chỉ đọc câu dẫn. Khung chuyện Cấm — **NEVER** vẽ lên canvas và không phải chữ trẻ phải đọc (`BR-ENG-10`); không so sánh trẻ với trẻ khác (`BR-FBK-08`) | Trẻ 3–6 vào trò bằng câu chuyện nghe được; đọc ở mọi vòng thì lặp lại và nhàm |
+| `BR-FBK-17` | Ba dáng `wonder`, `freeze`, `cheer` có **sprite SVG riêng** (`mascot-bear-wonder/freeze/cheer.svg`, cùng viewBox 120 và bảng màu với bốn sprite gốc) — không còn dùng chung `thinking`/`waiting`/`jumping`. Mỗi dáng khác nhau ở nét mặt/tay, không chỉ ở chuyển động, để trẻ tắt tiếng vẫn phân biệt được. Phần giọng thu vẫn thuộc đội thu âm. |
 
 ## 7. Data
 
@@ -116,7 +117,7 @@ Cấm — **NEVER**: "Sai rồi", "Không đúng", "Bé chưa giỏi", bất k�
 
 ### 7.4 Dáng mascot
 
-Mascot là **Gấu Con** — người quyết chốt 2026-10-03 (#279). Asset là bốn sprite SVG đặt ngoài engine (`apps/web/public/mascot/`); engine giữ
+Mascot là **Gấu Con** — người quyết chốt 2026-10-03 (#279). Asset là bảy sprite SVG (bốn gốc + ba dáng riêng `wonder`/`freeze`/`cheer`) đặt ngoài engine (`apps/web/public/mascot/`); engine giữ
 hợp đồng chín dáng (`MASCOT_SPRITE_FILES`) và có bản vẽ thay thế bằng primitive khi sprite chưa nạp.
 
 | Dáng | Khi nào | Giữ | Sprite |
@@ -127,9 +128,9 @@ hợp đồng chín dáng (`MASCOT_SPRITE_FILES`) và có bản vẽ thay thế 
 | `encourage` | Chưa đúng | 700 ms — giống hệt mỗi lần (`BR-FBK-07`) | `mascot-bear-thinking.svg` |
 | `hint` | Trợ giúp bậc L1+ đang hiện | Tới khi trợ giúp tắt | `mascot-bear-thinking.svg` |
 | `celebrate` | Hoàn thành level | Tới khi rời màn | `mascot-bear-celebrating.svg` |
-| `wonder` | Session đang ở nhịp tìm/thắc mắc (`BR-FBK-15`) | Tới khi session đổi tâm trạng | `mascot-bear-thinking.svg` |
-| `freeze` | Session đang cần trẻ **dừng** (đèn đỏ GT-026) | Tới khi session đổi tâm trạng | `mascot-bear-waiting.svg` |
-| `cheer` | Session vừa gom được một thứ (`BR-FBK-15`) | Tới khi session đổi tâm trạng | `mascot-bear-jumping.svg` |
+| `wonder` | Session đang ở nhịp tìm/thắc mắc (`BR-FBK-15`) | Tới khi session đổi tâm trạng | `mascot-bear-wonder.svg` (`BR-FBK-17`) |
+| `freeze` | Session đang cần trẻ **dừng** (đèn đỏ GT-026) | Tới khi session đổi tâm trạng | `mascot-bear-freeze.svg` (`BR-FBK-17`) |
+| `cheer` | Session vừa gom được một thứ (`BR-FBK-15`) | Tới khi session đổi tâm trạng | `mascot-bear-cheer.svg` (`BR-FBK-17`) |
 
 `reduced-motion`: dáng vẫn đổi, chuyển động nảy/nghiêng thu về một nhịp scale (`BR-FBK-09`).
 
@@ -236,6 +237,10 @@ Scenario: BR-FBK-16 — khung chuyện đọc một lần ở vòng đầu
   Then lượt đọc là storyLine rồi câu dẫn
   When nghe lại hoặc mở vòng sau
   Then chỉ đọc câu dẫn
+
+Scenario: BR-FBK-17 — ba dáng có sprite riêng
+  When đọc MASCOT_SPRITE_FILES
+  Then wonder, freeze, cheer mỗi dáng một file SVG riêng, tồn tại, viewBox 120
 
 Scenario: BR-FBK-10 — âm không có onset tức thì
   When phân tích mọi file SFX

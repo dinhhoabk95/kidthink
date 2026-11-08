@@ -26,8 +26,9 @@ export type MascotPose = (typeof MASCOT_POSES)[number];
 export type MascotSprites = Partial<Record<MascotPose, CanvasImageSource>>;
 
 /**
- * Sáu dáng ánh xạ vào bốn tư thế đã vẽ của Gấu Con (§7.4). Đường dẫn tương
- * đối với gốc public của web; engine không tự nạp ảnh.
+ * Sáu dáng dùng chung bốn tư thế gốc, ba dáng wonder/freeze/cheer có sprite
+ * riêng (§7.4, `BR-FBK-17`). Đường dẫn tương đối với gốc public của web;
+ * engine không tự nạp ảnh.
  */
 export const MASCOT_SPRITE_FILES: Readonly<Record<MascotPose, string>> = {
   idle: "/mascot/mascot-bear-waiting.svg",
@@ -36,9 +37,9 @@ export const MASCOT_SPRITE_FILES: Readonly<Record<MascotPose, string>> = {
   encourage: "/mascot/mascot-bear-thinking.svg",
   hint: "/mascot/mascot-bear-thinking.svg",
   celebrate: "/mascot/mascot-bear-celebrating.svg",
-  wonder: "/mascot/mascot-bear-thinking.svg",
-  freeze: "/mascot/mascot-bear-waiting.svg",
-  cheer: "/mascot/mascot-bear-jumping.svg",
+  wonder: "/mascot/mascot-bear-wonder.svg",
+  freeze: "/mascot/mascot-bear-freeze.svg",
+  cheer: "/mascot/mascot-bear-cheer.svg",
 };
 
 export interface MascotPlacement {
