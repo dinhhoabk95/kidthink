@@ -1640,3 +1640,81 @@ export function drawMagnifier(
   ctx.stroke();
   ctx.restore();
 }
+
+// ── Bảng giá có xu thật (GT-010, `BR-E010-07`) ───────────────────────
+
+/** Số xu tối đa vẽ trên một thẻ giá; giá lớn hơn thì thẻ chỉ có chữ số, không xu. */
+export const PRICE_COINS_MAX = 10;
+
+export interface PriceCoin {
+  readonly r: number;
+  readonly x: number;
+  readonly y: number;
+}
+
+/**
+ * Vị trí các xu trên dải đáy của thẻ giá `slot`: đúng `value` xu xếp đều một
+ * hàng, tâm nằm trong ô và xu không chồng nhau. Giá không dương hoặc lớn hơn
+ * `PRICE_COINS_MAX` thì không có xu — số xu luôn bằng đúng giá, không cắt bớt
+ * (cắt ở 10 xu cho giá 11 là dạy trẻ đếm sai).
+ */
+export function priceCoinLayout(
+  slot: Slot,
+  value: number
+): readonly PriceCoin[] {
+  const count = Math.max(0, Math.floor(value));
+  if (count === 0 || count > PRICE_COINS_MAX) {
+    return [];
+  }
+  const r = Math.min(slot.h * 0.09, (slot.w * 0.8) / (count * 2.4));
+  const pitch = r * 2.4;
+  const rowW = pitch * (count - 1);
+  const y = slot.y + slot.h / 2 - r - 4;
+  return Array.from({ length: count }, (_, i) => ({
+    x: slot.x - rowW / 2 + i * pitch,
+    y,
+    r,
+  }));
+}
+
+/**
+ * Thẻ giá gỗ vẽ vector trong ô `slot` (có lỗ xỏ dây bên trái) cùng hàng xu thật
+ * theo `value`: trẻ đếm được giá thay vì chỉ đọc con số.
+ */
+export function drawPriceTag(
+  ctx: CanvasRenderingContext2D,
+  slot: Slot,
+  value: number
+): void {
+  const m = designTokens.colors.montessori;
+  const inset = 3;
+  ctx.save();
+  ctx.lineWidth = 2;
+  ctx.fillStyle = m.plateLight;
+  ctx.strokeStyle = m.woodBorder;
+  ctx.beginPath();
+  ctx.roundRect(
+    slot.x - slot.w / 2 + inset,
+    slot.y - slot.h / 2 + inset,
+    slot.w - inset * 2,
+    slot.h - inset * 2,
+    8
+  );
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = m.woodBevel;
+  ctx.beginPath();
+  ctx.arc(slot.x - slot.w / 2 + inset + 9, slot.y, 4, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = m.amber;
+  ctx.strokeStyle = m.amberDark;
+  ctx.lineWidth = 1.5;
+  for (const coin of priceCoinLayout(slot, value)) {
+    ctx.beginPath();
+    ctx.arc(coin.x, coin.y, coin.r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+  }
+  ctx.restore();
+}

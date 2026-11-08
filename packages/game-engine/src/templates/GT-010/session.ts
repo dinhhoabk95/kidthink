@@ -20,8 +20,10 @@ import {
   drawEquationTray,
   drawLabelText,
   drawMontessoriControlOfErrorPill,
+  drawPriceTag,
   drawSceneBackground,
   drawSlotItem,
+  drawStoryCharacterInStage,
   drawWoodenTokenDock,
   resolveEmojiGlyph,
   sceneBox,
@@ -495,6 +497,8 @@ export class SubstitutionSession extends TemplateGameSession<
     }
 
     drawSceneBackground(ctx, rs, this.themeId);
+    // Cô Gà Mái vẽ ngay sau nền, ở góc trống ngoài vùng chạm (`BR-E010-07`).
+    drawStoryCharacterInStage(ctx, "hen", this.stageRect, this.slots);
     const targetSlots = this.slots.slice(0, this.content.equations.length + 1);
     const eqSlots = targetSlots.slice(0, this.content.equations.length);
     const questionSlot = targetSlots[this.content.equations.length];
@@ -516,6 +520,8 @@ export class SubstitutionSession extends TemplateGameSession<
       if (!slot) {
         return;
       }
+      // Thẻ giá gỗ và hàng xu thật theo giá của dòng luật (`BR-E010-07`).
+      drawPriceTag(ctx, slot, eq.right_value);
       const lhs = eq.left.map(glyphOf).join(" + ");
       const pinned = eq.left
         .map((id) => this.pinnedSymbols.get(id))
@@ -531,6 +537,10 @@ export class SubstitutionSession extends TemplateGameSession<
       );
     });
 
+    if (questionSlot) {
+      // Ô câu hỏi: thẻ giá trống, không xu — tổng cần tìm không được vẽ ra.
+      drawPriceTag(ctx, questionSlot, 0);
+    }
     let questionX = 480;
     let questionY = 260;
     if (questionSlot) {
