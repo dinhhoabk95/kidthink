@@ -13,31 +13,32 @@ interface MazeWall {
   side: "n" | "e" | "s" | "w";
 }
 
+/**
+ * Bàn mê cung 3×3 (`BR-E013-12`): bốn cột không vừa khung 360 px ở sàn chạm
+ * 96 px của band `3-4`. Đầu (0,0), đích (2,2); mọi biến thể giữ đường đi qua
+ * các ô bắt buộc `buildRequiredCells` (ô giữa và ô giữa-phải).
+ */
+const MAZE_SIZE = 3;
+
 function buildMazeWalls(variant: number, difficulty: number): MazeWall[] {
   if (variant === 0) {
     return [
       { row: 0, col: 1, side: "s" },
-      { row: 1, col: 1, side: "e" },
-      { row: 2, col: 2, side: "s" },
-      { row: 1, col: 3, side: "s" },
-      ...(difficulty >= 3 ? [{ row: 0, col: 3, side: "s" as const }] : []),
+      { row: 2, col: 0, side: "e" },
+      ...(difficulty >= 3 ? [{ row: 0, col: 0, side: "e" as const }] : []),
     ];
   }
   if (variant === 1) {
     return [
-      { row: 0, col: 2, side: "s" },
-      { row: 1, col: 1, side: "s" },
+      { row: 0, col: 0, side: "s" },
       { row: 2, col: 1, side: "e" },
-      { row: 2, col: 3, side: "s" },
-      ...(difficulty >= 3 ? [{ row: 1, col: 2, side: "e" as const }] : []),
+      ...(difficulty >= 3 ? [{ row: 1, col: 0, side: "e" as const }] : []),
     ];
   }
   return [
-    { row: 0, col: 1, side: "e" },
-    { row: 1, col: 2, side: "s" },
-    { row: 2, col: 0, side: "s" },
-    { row: 1, col: 3, side: "s" },
-    ...(difficulty >= 3 ? [{ row: 0, col: 2, side: "e" as const }] : []),
+    { row: 0, col: 0, side: "e" },
+    { row: 1, col: 1, side: "s" },
+    ...(difficulty >= 3 ? [{ row: 0, col: 1, side: "e" as const }] : []),
   ];
 }
 
@@ -46,11 +47,11 @@ function buildRequiredCells(count: number): { row: number; col: number }[] {
     return [];
   }
   if (count === 1) {
-    return [{ row: 2, col: 1 }];
+    return [{ row: 1, col: 1 }];
   }
   return [
-    { row: 2, col: 1 },
-    { row: 3, col: 1 },
+    { row: 1, col: 1 },
+    { row: 1, col: 2 },
   ];
 }
 
@@ -82,7 +83,7 @@ export const projectGT013: Projection<"GT-013"> = {
     const params = getEngineDifficultyParams("GT-013", opts.difficulty);
     const roundIdx = opts.round_index ?? 0;
     const _rng = createRng(opts.seed + roundIdx);
-    const size = 4;
+    const size = MAZE_SIZE;
 
     const variant = (opts.seed + roundIdx) % 3;
     const walls = buildMazeWalls(variant, opts.difficulty);

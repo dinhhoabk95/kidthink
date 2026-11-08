@@ -22,8 +22,9 @@ const REGEX_MONTESSORI_CODE = /-0[1-9]\d{2}$/;
  * bản cũ và publish bản mới trong một transaction; giữ nguyên số thì seeder bỏ qua.
  * v11: #313 Phase 25 — GT-013 đề "lá cờ số N" + `goal_glyph`, GT-009 tối đa 6 ứng viên,
  * GT-035 lưới tối đa 3 hàng (`BR-LAY-12`).
+ * v12: #313 Phase 26 — GT-013 mê cung 3×3 (trần 3 cột, 4 hàng, `BR-E013-12`).
  */
-export const GENERATED_LEVEL_CONTENT_VERSION = 11;
+export const GENERATED_LEVEL_CONTENT_VERSION = 12;
 
 /**
  * Chỗ trống trong `phrasing.prompt_template` mà bộ dựng level thay được.

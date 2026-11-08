@@ -8,6 +8,8 @@ import { GT013_FIXTURES } from "#src/templates/GT-013/fixtures";
 import { GT013Session } from "#src/templates/GT-013/session";
 import GT013Template, {
   defaultInputModeForBand,
+  GT013_MAX_COLS,
+  GT013_MAX_ROWS,
   GT013BaseSchema,
   GT013ContentSchema,
   GT013DifficultySchema,
@@ -515,8 +517,8 @@ describe("GT-013 — bố cục lưới khung không stage (band 5-6, lưới 4�
 });
 
 describe("GT-013 — mê cung band 5-6 sinh ra giải được bằng cử chỉ web", () => {
-  it("5×5 và 6×6 qua nhiều seed đều thắng được", async () => {
-    const sizes = new Set<number>();
+  it("lưới 4×3 (trần BR-E013-12) qua nhiều seed đều thắng được", async () => {
+    const sizes = new Set<string>();
     for (let seed = 1; seed <= 12; seed++) {
       const level = GT013Generator.generate({
         rng: createRng(seed),
@@ -533,7 +535,7 @@ describe("GT-013 — mê cung band 5-6 sinh ra giải được bằng cử chỉ
       const content = GT013ContentSchema.parse(level.content_pack);
       const difficulty = GT013DifficultySchema.parse(level.difficulty_params);
       const grid = content.grid;
-      sizes.add(grid.rows);
+      sizes.add(`${grid.rows}×${grid.cols}`);
       const outcome = await solveWithWebGestures(
         "GT-013",
         {
@@ -543,8 +545,8 @@ describe("GT-013 — mê cung band 5-6 sinh ra giải được bằng cử chỉ
         },
         seed
       );
-      expect(outcome, `seed ${seed} (${grid.rows}×${grid.rows})`).toBe("won");
+      expect(outcome, `seed ${seed} (${grid.rows}×${grid.cols})`).toBe("won");
     }
-    expect([...sizes].sort()).toEqual([5, 6]);
+    expect([...sizes]).toEqual([`${GT013_MAX_ROWS}×${GT013_MAX_COLS}`]);
   }, 60_000);
 });

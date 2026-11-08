@@ -4,7 +4,15 @@ import type { AgeBand } from "#src/contracts/types";
 import { defineTemplate } from "#src/contracts/types";
 import { findRouteThrough, type MazeCell } from "#src/systems/maze-system";
 
-/** Lưới tối đa 7×7 nên chỉ số ô chạy từ 0 tới 6. */
+/**
+ * Trần bàn mê cung (`BR-E013-12`, `BR-LAY-12`): ở sàn chạm 96 px CSS của band `3-4`
+ * trên khung 360 px, bốn cột không vừa; layout giữ sàn chạm (`BR-LAY-04`) nên bàn
+ * tràn ngang. Giảm số ô ở nội dung thay vì co ô.
+ */
+export const GT013_MAX_COLS = 3;
+export const GT013_MAX_ROWS = 4;
+
+/** Chỉ số ô chạy từ 0 tới 6 (schema tường/ô cũ rộng hơn trần bàn; trần nằm ở `grid`). */
 const cellSchema = () =>
   z.object({
     row: z.number().int().min(0).max(6),
@@ -17,8 +25,8 @@ const MAX_WALLS = 84;
 export const GT013BaseSchema = z.object({
   ...promptFields(),
   grid: z.object({
-    rows: z.number().int().min(3).max(7),
-    cols: z.number().int().min(3).max(7),
+    rows: z.number().int().min(3).max(GT013_MAX_ROWS),
+    cols: z.number().int().min(3).max(GT013_MAX_COLS),
     walls: z
       .array(
         z.object({

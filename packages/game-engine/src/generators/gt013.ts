@@ -89,10 +89,14 @@ function buildYoungMaze(rng: Rng): MazeLayout {
   );
 }
 
-/** Band 5-6: lưới 5×5 hoặc 6×6, tường rải ngẫu nhiên nhưng luôn còn đường tới đích. */
+/** Band 5-6: lưới 4 hàng × 3 cột (trần `BR-E013-12`), đầu và đích ở hai góc đối. */
+const OLDER_GRID_ROWS = 4;
+const OLDER_GRID_COLS = 3;
+
+/** Band 5-6: tường rải ngẫu nhiên nhưng luôn còn đường tới đích. */
 function buildOlderMaze(rng: Rng): MazeLayout {
-  const rows = 5 + rng.nextInt(2);
-  const cols = rows;
+  const rows = OLDER_GRID_ROWS;
+  const cols = OLDER_GRID_COLS;
 
   const corners: MazeCell[] = [
     { row: 0, col: 0 },
@@ -101,12 +105,10 @@ function buildOlderMaze(rng: Rng): MazeLayout {
     { row: rows - 1, col: cols - 1 },
   ];
   const start = corners[rng.nextInt(corners.length)] ?? { row: 0, col: 0 };
-  const goalCandidates = corners.filter(
-    (c) => c.row !== start.row || c.col !== start.col
-  );
-  const goal = goalCandidates[rng.nextInt(goalCandidates.length)] ?? {
-    row: rows - 1,
-    col: cols - 1,
+  // Góc đối: lưới hẹp mà chọn góc kề thì đường chỉ dài 3-4 ô, dưới ngưỡng đọc được.
+  const goal: MazeCell = {
+    row: rows - 1 - start.row,
+    col: cols - 1 - start.col,
   };
 
   const candidateWalls = generateCandidateWalls(rows, cols);
