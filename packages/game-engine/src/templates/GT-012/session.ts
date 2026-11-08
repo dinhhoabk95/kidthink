@@ -152,8 +152,18 @@ export class FlashRecallSession extends TemplateGameSession<
     return !(this.awaitingStart || this.timer.isVisible());
   }
 
+  /**
+   * Đĩa ở giữa sân khấu khi chưa có hàng lựa chọn (chờ bấm, đang loé, xem lại
+   * sau khi thắng); đã che nắp chờ trả lời thì sang một bên nhường lựa chọn
+   * (`BR-E012-09`).
+   */
   get plateRect(): ZoneRect | null {
-    return this.areas?.plate ?? null;
+    if (!this.areas) {
+      return null;
+    }
+    return this.isCovered() && !this.isRecapShown()
+      ? this.areas.plate
+      : this.areas.plateAlone;
   }
 
   canReplay(): boolean {
@@ -497,7 +507,7 @@ export class FlashRecallSession extends TemplateGameSession<
       return;
     }
     this.flashSlots = computeFlashSlots(
-      this.areas.plate,
+      this.areas.plateAlone,
       this.content.flash_items.length,
       this.content.arrangement
     );
@@ -516,7 +526,8 @@ export class FlashRecallSession extends TemplateGameSession<
 
     drawSceneBackground(ctx, rs, this.themeId);
 
-    const plate = this.areas ? plateSlot(this.areas.plate) : null;
+    const plateRect = this.plateRect;
+    const plate = plateRect ? plateSlot(plateRect) : null;
     if (!plate) {
       return;
     }
