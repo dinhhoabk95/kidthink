@@ -19,6 +19,15 @@ export type HintTarget =
   | { readonly kind: "region"; readonly ids: readonly string[] };
 
 /**
+ * Một bước của chuỗi demo bàn tay ma ở `L3`: kéo slot `from` tới slot `to`
+ * (hoặc chỉ chạm `from` khi `to` thiếu). Xem `getHintDemoSequence` (Task #313).
+ */
+export interface HintDemoStep {
+  readonly from: number;
+  readonly to?: number;
+}
+
+/**
  * Danh sách template cài bậc thang gợi ý thông qua bộ giải trung tâm
  * (để tránh đụng chạm trực tiếp file `session.ts` đang khoá).
  */

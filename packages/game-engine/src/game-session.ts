@@ -7,6 +7,7 @@ import type { CommitIcon } from "./render/commit-button.js";
 import type { MascotPose } from "./render/mascot.js";
 import type { ItemVisualState } from "./render/types.js";
 import {
+  type HintDemoStep,
   type HintLevel,
   type HintTarget,
   resolveSteppedHintTarget,
@@ -14,7 +15,11 @@ import {
 import type { RenderSystem } from "./systems/render-system";
 import type { SFXType } from "./systems/sfx-engine.js";
 
-export type { HintLevel, HintTarget } from "./systems/hint-ladder.js";
+export type {
+  HintDemoStep,
+  HintLevel,
+  HintTarget,
+} from "./systems/hint-ladder.js";
 
 export type FeedbackKind =
   | "none"
@@ -370,6 +375,16 @@ export abstract class TemplateGameSession<
       return stepped;
     }
     return this.getHintTarget();
+  }
+
+  /**
+   * Chuỗi bước demo cho bàn tay ma ở `L3` (Task #313): nhiều cặp nguồn→đích
+   * diễn liền nhau (GT-035 `BR-E035-12`: ba thẻ đầu của lời giải). `null` (mặc
+   * định) = chỉ một bàn tay theo `getHintTargetForLevel`. Bước đầu phải trùng
+   * hint của cùng bậc để slot được tô sáng khớp bàn tay.
+   */
+  getHintDemoSequence(_level: HintLevel): readonly HintDemoStep[] | null {
+    return null;
   }
 
   /** Phiên có cần khay vật thể riêng không (`BR-PSZ-01`). Mặc định false. */

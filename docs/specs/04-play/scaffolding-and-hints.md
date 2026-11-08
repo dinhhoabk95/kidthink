@@ -67,6 +67,7 @@ theo yêu cầu.
 | `BR-SCF-06` | `prefers-reduced-motion` **giảm** trình diễn, không bỏ | Bỏ trình diễn là bỏ kênh chỉ dẫn duy nhất cho trẻ chưa đọc |
 | `BR-SCF-07` | Mỗi lần leo thang phát event | `hint_rate` là tín hiệu chất lượng nội dung |
 | `BR-SCF-08` | Trợ giúp Cấm — **NEVER kèm giọng chê** | Âm và lời luôn khích lệ |
+| `BR-SCF-09` | Bàn tay ma mặc định là **một** cặp nguồn→đích. Session có thể cài `getHintDemoSequence(3)` trả ≥2 bước (nguồn→đích) để `L3` diễn **các bước liền nhau**: mỗi bước một chu kỳ (`GHOST_HAND_CYCLE_MS` / `ghostHandSpeed`), xong bước cuối thì lặp lại từ bước đầu; nhịp lấy từ đồng hồ khung, không `Date.now`. Bước đầu phải trùng hint `L3` (cùng slot với `focusIndex`); khi diễn, vòng sáng đi theo slot nguồn của bước đang diễn để tay và vòng sáng luôn chỉ cùng một thẻ. Không cài hook, hoặc chuỗi <2 bước, thì y như cũ. `prefers-reduced-motion`: tay đứng yên ở đích từng bước, lần lượt đổi bước (`BR-SCF-06`). `demo_shown` vẫn chỉ phát ở `L2` khi tay thật được vẽ | Một số engine (GT-035) dạy một chuỗi thao tác; demo từng thẻ rời làm trẻ không thấy thứ tự. Mặc định giữ nguyên để 36 engine còn lại không đổi hành vi |
 
 ## 7. Data
 
@@ -155,6 +156,16 @@ Scenario: BR-SCF-06 — reduced-motion vẫn có trình diễn
   When scaffolding tới L2
   Then vẫn có chỉ dẫn hình ảnh về target
   And chuyển động được giảm
+
+Scenario: BR-SCF-09 — L3 diễn chuỗi bước liền nhau
+  Given session cài getHintDemoSequence(3) trả ba bước
+  When scaffolding tới L3
+  Then engine.demoGhostSequence có ba bước và bước đầu trùng demoGhostHand
+  And bàn tay diễn bước 1, rồi 2, rồi 3, rồi lặp lại từ bước 1
+  And vòng sáng nằm ở nguồn của bước đang diễn
+  Given session không cài hook
+  When scaffolding tới L3
+  Then demoGhostSequence rỗng và chỉ có một bàn tay như trước
 
 Scenario: BR-SCF-08 — không có giọng chê
   When phát mọi chuỗi audio của scaffolding

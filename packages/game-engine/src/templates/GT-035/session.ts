@@ -5,6 +5,7 @@ import {
   ACTION_RETRY,
   type ActionResult,
   type GameAction,
+  type HintDemoStep,
   type HintLevel,
   type HintTarget,
   TemplateGameSession,
@@ -52,6 +53,9 @@ import type {
 
 /** Một lệnh chạy mỗi từng này ms: trẻ theo dõi từng bước, không nhảy tức thì (`BR-E035-08`). */
 export const GT035_STEP_MS = 600;
+
+/** Số thẻ đầu của lời giải mà `L3` demo liền nhau (`BR-E035-12`). */
+const GT035_DEMO_STEPS = 3;
 
 /** Thêm/gỡ lệnh hợp lệ nhưng không báo đúng sai (`BR-E035-01`). */
 const QUIET_OK: ActionResult = Object.freeze({
@@ -385,6 +389,57 @@ export class GT035Session extends TemplateGameSession<
     return toIndex === null
       ? { kind: "slot", index }
       : { kind: "slot", index, toIndex };
+  }
+
+  /**
+   * `L3` demo tối đa ba thẻ đầu còn lại của lời giải liền nhau (`BR-E035-12`):
+   * thẻ thứ i kéo từ khay vào ô `count + i` của hàng lệnh, `count` là số lệnh đã
+   * xếp (tiền tố đã có thì demo các thẻ kế tiếp). Bước đầu trùng hint `L3`.
+   * Hàng lệnh lệch lời giải thì không có chuỗi: diễn ba thẻ nối vào nền sai chỉ
+   * dẫn trẻ sai thêm — runtime lùi về một bàn tay như cũ.
+   */
+  override getHintDemoSequence(
+    level: HintLevel
+  ): readonly HintDemoStep[] | null {
+    if (level !== 3 || this.getHintTargetIndex() === null) {
+      return null;
+    }
+    const sol = this.cachedShortestSolution;
+    if (!(sol && this.queueMatchesSolution(sol))) {
+      return null;
+    }
+    const { rows, cols } = this.content.grid;
+    const count = this.queueSystem.commandCount;
+    const last = Math.min(
+      sol.length,
+      this.maxCommands,
+      count + GT035_DEMO_STEPS
+    );
+    const steps: HintDemoStep[] = [];
+    for (let n = count; n < last; n++) {
+      const type = sol[n]?.type;
+      const palIdx = type ? this.allowedCommands.indexOf(type) : -1;
+      if (palIdx < 0) {
+        break;
+      }
+      steps.push({
+        from: rows * cols + this.maxCommands + palIdx,
+        to: rows * cols + n,
+      });
+    }
+    return steps.length > 0 ? steps : null;
+  }
+
+  /** Các lệnh đã xếp trùng đúng tiền tố của lời giải ngắn nhất (cả số lặp của `loop`). */
+  private queueMatchesSolution(sol: readonly CommandItem[]): boolean {
+    return this.queueSystem.queue.every((cmd, i) => {
+      const want = sol[i];
+      return (
+        want !== undefined &&
+        want.type === cmd.type &&
+        (want.count ?? 2) === (cmd.count ?? 2)
+      );
+    });
   }
 
   /** Bước đúng là kéo lệnh từ khay vào ô trống kế tiếp của hàng lệnh. */

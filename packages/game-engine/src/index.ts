@@ -26,6 +26,7 @@ export {
   type GameAction,
   type GameActionValue,
   type GameSession,
+  type HintDemoStep,
   type HintLevel,
   type HintTarget,
   type SessionTelemetry,

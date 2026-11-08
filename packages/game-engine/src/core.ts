@@ -18,6 +18,7 @@ import {
   DegradationManager,
   type DegradationState,
 } from "./systems/degradation.js";
+import { resolveGhostHandFrame } from "./systems/ghost-hand-sequence.js";
 import { RenderSystem } from "./systems/render-system.js";
 import {
   type ScaffoldingLevel,
@@ -178,6 +179,10 @@ const GHOST_HAND_CYCLE_MS = 1600;
 
 const EMPTY_HINT_REGION_IDS: readonly string[] = Object.freeze([]);
 
+type GhostHandStep = NonNullable<GameEngine["demoGhostHand"]>;
+const EMPTY_GHOST_SEQUENCE: readonly GhostHandStep[] = Object.freeze([]);
+const EMPTY_GHOST_SOURCES: readonly number[] = Object.freeze([]);
+
 export class GameEngine {
   config?: EngineConfig;
   activeSession?: GameSession;
@@ -195,6 +200,17 @@ export class GameEngine {
     readonly from: { readonly x: number; readonly y: number };
     readonly to: { readonly x: number; readonly y: number } | null;
   } | null = null;
+  /**
+   * Chuỗi bàn tay ma nhiều bước ở `L3` (`getHintDemoSequence`): diễn tuần tự,
+   * mỗi bước một chu kỳ. Rỗng = chỉ vẽ `demoGhostHand` như mọi engine khác.
+   * Phần tử đầu luôn trùng `demoGhostHand`.
+   */
+  demoGhostSequence: readonly GhostHandStep[] = EMPTY_GHOST_SEQUENCE;
+  /**
+   * Slot nguồn của từng bước trong `demoGhostSequence` (cùng độ dài): vòng sáng
+   * đi theo nguồn của bước đang diễn, không đứng yên ở bước 1 (`BR-SCF-09`).
+   */
+  private demoGhostSources: readonly number[] = EMPTY_GHOST_SOURCES;
   /** Gợi ý đang trỏ vào nút hành động ở `zones.action`; shell nháy nút (`BR-PSZ-05`). */
   actionHinted = false;
   /** Session đang hiện gợi ý bậc ≥1 — về `L0` thì phải báo `onHintCleared`. */
@@ -331,6 +347,8 @@ export class GameEngine {
     );
     this.focusIndex = null;
     this.demoGhostHand = null;
+    this.demoGhostSequence = EMPTY_GHOST_SEQUENCE;
+    this.demoGhostSources = EMPTY_GHOST_SOURCES;
     this.actionHinted = false;
     this.sessionHintShown = false;
     this.hintRegionIds = EMPTY_HINT_REGION_IDS;
@@ -435,6 +453,8 @@ export class GameEngine {
       this.hintRegionIds = EMPTY_HINT_REGION_IDS;
       this.focusIndex = null;
       this.demoGhostHand = null;
+      this.demoGhostSequence = EMPTY_GHOST_SEQUENCE;
+      this.demoGhostSources = EMPTY_GHOST_SOURCES;
       this.scaffolding?.setFocusIndex(null);
       return;
     }
@@ -448,11 +468,61 @@ export class GameEngine {
     this.hintRegionIds =
       hint?.kind === "region" ? hint.ids : EMPTY_HINT_REGION_IDS;
     this.focusIndex = targetIdx;
+    this.applyDemoGhost(this.activeSession, level, hint);
+    this.scaffolding?.setFocusIndex(targetIdx);
+  }
+
+  /** Dựng bàn tay ma (L2/L3) và chuỗi nhiều bước (L3) từ hint của bậc hiện tại. */
+  private applyDemoGhost(
+    session: TemplateGameSession,
+    level: ScaffoldingLevel,
+    hint: ReturnType<TemplateGameSession["getHintTargetForLevel"]>
+  ): void {
     this.demoGhostHand =
       level >= 2 && hint?.kind === "slot"
-        ? this.resolveGhostHand(this.activeSession, hint)
+        ? this.resolveGhostHand(session, hint)
         : null;
-    this.scaffolding?.setFocusIndex(targetIdx);
+    const sequence =
+      level === 3 && this.demoGhostHand && hint?.kind === "slot"
+        ? this.resolveGhostSequence(session, this.demoGhostHand, hint.index)
+        : null;
+    this.demoGhostSequence = sequence?.steps ?? EMPTY_GHOST_SEQUENCE;
+    this.demoGhostSources = sequence?.sources ?? EMPTY_GHOST_SOURCES;
+  }
+
+  /**
+   * Chuỗi nhiều bước từ hook `getHintDemoSequence(3)` của session. Chỉ nhận khi
+   * có ≥2 bước đều quy được ra toạ độ; bước đầu thay bằng `first` (đúng hint) để
+   * bàn tay và vòng sáng không lệch nhau. Ngược lại `null` → một bàn tay như cũ.
+   */
+  private resolveGhostSequence(
+    session: TemplateGameSession,
+    first: GhostHandStep,
+    firstSource: number
+  ): {
+    readonly steps: readonly GhostHandStep[];
+    readonly sources: readonly number[];
+  } | null {
+    const raw = session.getHintDemoSequence(3);
+    if (!raw || raw.length < 2) {
+      return null;
+    }
+    const steps: GhostHandStep[] = [];
+    const sources: number[] = [];
+    for (const step of raw) {
+      const resolved = this.resolveGhostHand(session, {
+        index: step.from,
+        toIndex: step.to,
+      });
+      if (!resolved) {
+        return null;
+      }
+      steps.push(resolved);
+      sources.push(step.from);
+    }
+    steps[0] = first;
+    sources[0] = firstSource;
+    return { steps, sources };
   }
 
   private resolveGhostHand(
@@ -722,20 +792,38 @@ export class GameEngine {
     }
   };
 
+  /**
+   * Bước bàn tay ma đang diễn ở khung `now`. Chuỗi nhiều bước: mỗi bước một chu
+   * kỳ, nối tiếp rồi lặp (`BR-SCF-09`); không có chuỗi thì bước 0 = một bàn tay.
+   */
+  private currentGhostFrame(now: number): {
+    readonly step: number;
+    readonly progress: number;
+  } {
+    // Tốc độ theo mức: L2 bình thường, L3 chậm 0,5× như một bài demo.
+    const cycleMs =
+      GHOST_HAND_CYCLE_MS / (this.scaffolding?.ghostHandSpeed ?? 1);
+    return resolveGhostHandFrame(
+      Math.max(1, this.demoGhostSequence.length),
+      cycleMs,
+      now
+    );
+  }
+
   private renderGhostHandOverlay(
     ctx: CanvasRenderingContext2D,
-    now: number
+    frame: { readonly step: number; readonly progress: number }
   ): void {
     if (!(this.demoGhostHand && this.scaffolding)) {
       return;
     }
-    // Tốc độ theo mức: L2 bình thường, L3 chậm 0,5× như một bài demo.
-    const cycleMs = GHOST_HAND_CYCLE_MS / this.scaffolding.ghostHandSpeed;
+    // reduced_motion do `renderGhostHand` xử lý: tay đứng yên ở đích từng bước.
+    const current = this.demoGhostSequence[frame.step] ?? this.demoGhostHand;
     this.renderSystem.renderGhostHand(
       ctx,
-      this.demoGhostHand.from,
-      this.demoGhostHand.to,
-      (now % cycleMs) / cycleMs
+      current.from,
+      current.to,
+      frame.progress
     );
   }
 
@@ -751,7 +839,10 @@ export class GameEngine {
       this.focusIndex !== null &&
       this.activeSession instanceof TemplateGameSession
     ) {
-      const slot = this.activeSession.slots[this.focusIndex];
+      const frame = this.currentGhostFrame(now);
+      // Có chuỗi: vòng sáng theo nguồn của bước đang diễn, khớp bàn tay.
+      const auraIndex = this.demoGhostSources[frame.step] ?? this.focusIndex;
+      const slot = this.activeSession.slots[auraIndex];
       if (slot) {
         const radius = Math.min(slot.hitW, slot.hitH) / 2 + 6;
         this.renderSystem.renderScaffoldingAura(
@@ -762,7 +853,7 @@ export class GameEngine {
           pulsePhase
         );
       }
-      this.renderGhostHandOverlay(ctx, now);
+      this.renderGhostHandOverlay(ctx, frame);
       return;
     }
 
