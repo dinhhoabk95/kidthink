@@ -442,12 +442,25 @@
         : "GT-001";
     currentTemplateCode = tCode;
 
-    autoInitTimer = setTimeout(() => {
-      if (!currentConfig) {
-        const payload = buildDefaultPreviewPayload(currentTemplateCode);
+    autoInitTimer = setTimeout(async () => {
+      if (currentConfig) {
+        return;
+      }
+      try {
+        const payload = await buildDefaultPreviewPayload(currentTemplateCode);
+        // Studio gửi level trong lúc đang nạp fixture thì level của Studio thắng.
+        if (currentConfig) {
+          return;
+        }
         const config = parseConfigFromPayload(payload, currentTemplateCode);
         currentConfig = config;
         startSession(config, currentTemplateCode);
+      } catch (err) {
+        if (currentConfig) {
+          return;
+        }
+        errorMessage.value =
+          err instanceof Error ? err.message : "Lỗi nạp level mẫu";
       }
     }, 150);
   });
@@ -511,6 +524,9 @@
     font-family: var(--font-sans);
     font-size: 1rem;
     line-height: 1.5;
+    /* Chuỗi JSON dài của lỗi hợp đồng không có khoảng trắng: phải tự xuống dòng. */
+    overflow-wrap: anywhere;
+    word-break: break-word;
     border-radius: var(--radius-button);
     z-index: 10;
   }
