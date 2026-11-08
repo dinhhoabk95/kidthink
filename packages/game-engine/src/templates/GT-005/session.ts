@@ -14,7 +14,11 @@ import {
   drawMatchLine,
   drawSceneBackground,
   drawSlotItem,
+  drawSplitLine,
+  drawStoryCharacterInStage,
   type ItemVisualState,
+  LINE_SPLIT_MS,
+  splitLineSegments,
 } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
 import { deriveStream } from "#src/rng/mulberry32";
@@ -96,12 +100,22 @@ export class GT005Session extends TemplateGameSession<
   private wrongPairIds: readonly [string, string] | null = null;
   private wrongPairTimerMs = 0;
   private readonly mood = new MoodPulse();
+  /** Đồng hồ khung: `update` cộng dồn, `render` gán lại (`BR-E005-05`). */
+  private lastFrameMs = 0;
+  /** Cặp vừa nối chưa đúng: dây tách đôi từ mốc này (`BR-E005-05`). */
+  private splitPair: {
+    readonly leftId: string;
+    readonly rightId: string;
+    readonly startMs: number;
+  } | null = null;
 
   setupEntities(): void {
     this.mechanic.reset();
     this.isWon = false;
     this.wrongPairIds = null;
     this.wrongPairTimerMs = 0;
+    this.lastFrameMs = 0;
+    this.splitPair = null;
     this.mood.clear();
 
     const lefts = this.content.pairs.map((p) => p.left);
@@ -192,6 +206,7 @@ export class GT005Session extends TemplateGameSession<
   }
 
   update(deltaMs: number): void {
+    this.lastFrameMs += deltaMs;
     this.mood.tick(deltaMs);
     if (this.wrongPairTimerMs > 0) {
       this.wrongPairTimerMs = Math.max(0, this.wrongPairTimerMs - deltaMs);
@@ -521,9 +536,15 @@ export class GT005Session extends TemplateGameSession<
           this.onPairMatched(data.left_item_id, data.right_item_id);
           this.wrongPairIds = null;
           this.wrongPairTimerMs = 0;
+          this.splitPair = null;
         } else {
           this.wrongPairIds = [data.left_item_id, data.right_item_id];
           this.wrongPairTimerMs = 350;
+          this.splitPair = {
+            leftId: data.left_item_id,
+            rightId: data.right_item_id,
+            startMs: this.lastFrameMs,
+          };
           this.mood.set("wonder", GT005_WONDER_MS);
         }
         this.mechanic.stageLeft(null);
@@ -534,8 +555,9 @@ export class GT005Session extends TemplateGameSession<
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
-    _timeMs: number
+    timeMs: number
   ): void {
+    this.lastFrameMs = timeMs;
     drawSceneBackground(ctx, rs, this.themeId);
     const sources = this.sourceSlots;
     const targets = this.targetSlots;
@@ -601,6 +623,33 @@ export class GT005Session extends TemplateGameSession<
       if (ls && rslot) {
         drawMatchLine(ctx, ls.x, ls.y, rslot.x, rslot.y);
       }
+    }
+    this.renderSplitLine(ctx, rs, sources, targets);
+    drawStoryCharacterInStage(ctx, "squirrel", this.stageRect, this.slots);
+  }
+
+  /** Dây thử nối chưa đúng tách đôi rồi co về hai đầu (`BR-E005-05`). */
+  private renderSplitLine(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    sources: readonly Slot[],
+    targets: readonly Slot[]
+  ): void {
+    const split = this.splitPair;
+    if (!split) {
+      return;
+    }
+    const ls =
+      sources[this.displayLeft.findIndex((x) => x.item_id === split.leftId)];
+    const rslot =
+      targets[this.displayRight.findIndex((x) => x.item_id === split.rightId)];
+    if (!(ls && rslot)) {
+      return;
+    }
+    const elapsed = this.lastFrameMs - split.startMs;
+    const segments = splitLineSegments(ls, rslot, elapsed, rs.reducedMotion);
+    if (segments) {
+      drawSplitLine(ctx, segments, elapsed / LINE_SPLIT_MS);
     }
   }
 }

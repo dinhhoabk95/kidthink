@@ -1337,3 +1337,65 @@ export function drawStoryCharacterInStage(
     drawStoryCharacter(ctx, kind, spot.cx, spot.cy, STORY_CHARACTER_SIZE_PX);
   }
 }
+
+// ── Dây phơi nối rồi "tách" khi cặp chưa đúng (GT-005, `BR-E005-05`) ──
+
+/** Dây nối hai vật tách đôi và co về hai đầu trong ngần này ms. */
+export const LINE_SPLIT_MS = 450;
+
+export interface LineSegment {
+  readonly x1: number;
+  readonly x2: number;
+  readonly y1: number;
+  readonly y2: number;
+}
+
+/**
+ * Hai nửa của sợi dây từ `from` tới `to` sau `elapsedMs` kể từ lúc thử nối:
+ * nửa đầu co về `from`, nửa sau co về `to`, chừa khe giữa ngày một rộng. Trả
+ * `null` khi hết nhịp, trước lúc bắt đầu hoặc bật `reduced_motion` (trạng
+ * thái tĩnh cuối là không còn dây).
+ */
+export function splitLineSegments(
+  from: { readonly x: number; readonly y: number },
+  to: { readonly x: number; readonly y: number },
+  elapsedMs: number,
+  reducedMotion: boolean
+): readonly [LineSegment, LineSegment] | null {
+  if (reducedMotion || elapsedMs < 0 || elapsedMs >= LINE_SPLIT_MS) {
+    return null;
+  }
+  const p = elapsedMs / LINE_SPLIT_MS;
+  const reach = 0.5 * (1 - p);
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  return [
+    {
+      x1: from.x,
+      y1: from.y,
+      x2: from.x + dx * reach,
+      y2: from.y + dy * reach,
+    },
+    { x1: to.x, y1: to.y, x2: to.x - dx * reach, y2: to.y - dy * reach },
+  ];
+}
+
+/** Vẽ hai nửa dây đã tách, mờ dần theo nhịp (`progress` 0..1). */
+export function drawSplitLine(
+  ctx: CanvasRenderingContext2D,
+  segments: readonly [LineSegment, LineSegment],
+  progress: number
+): void {
+  ctx.save();
+  ctx.globalAlpha = Math.max(0, 1 - progress);
+  ctx.strokeStyle = designTokens.colors.montessori.woodBorder;
+  ctx.lineWidth = 3;
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  for (const s of segments) {
+    ctx.moveTo(s.x1, s.y1);
+    ctx.lineTo(s.x2, s.y2);
+  }
+  ctx.stroke();
+  ctx.restore();
+}
