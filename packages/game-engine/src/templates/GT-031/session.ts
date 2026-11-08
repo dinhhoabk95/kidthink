@@ -44,6 +44,7 @@ import {
   type ItemVisualState,
   marketStallGeometry,
   piggyBounceScale,
+  slotLabelBandPx,
   spawnParticlesAtSlot,
   updateParticles,
 } from "#src/render/index";
@@ -682,7 +683,11 @@ export class GT031Session extends TemplateGameSession<
     if (!stage) {
       return;
     }
-    const geometry = marketStallGeometry(targetSlot, splitCaption(stage).body);
+    const geometry = marketStallGeometry(
+      targetSlot,
+      splitCaption(stage).body,
+      slotLabelBandPx(targetSlot, rs)
+    );
     drawMarketStall(ctx, geometry);
     if (geometry.piggy) {
       drawPiggyBank(

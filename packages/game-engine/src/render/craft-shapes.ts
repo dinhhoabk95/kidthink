@@ -634,7 +634,9 @@ export interface MarketStallGeometry {
  */
 export function marketStallGeometry(
   slot: Slot,
-  bounds: StallRect
+  bounds: StallRect,
+  /** Dải dưới thẻ dành cho nhãn giá (`slotLabelBandPx`); thanh quầy nằm dưới dải này. */
+  labelBandPx = 0
 ): MarketStallGeometry {
   const top = slot.y - slot.h / 2;
   const bottom = slot.y + slot.h / 2;
@@ -645,10 +647,11 @@ export function marketStallGeometry(
       ? { x: slot.x - canopyW / 2, y: top - canopyH, w: canopyW, h: canopyH }
       : null;
   const counterW = Math.min(bounds.w, slot.w * 1.5);
-  const counterH = Math.min(slot.h * 0.12, bounds.y + bounds.h - bottom);
+  const counterTop = bottom + labelBandPx;
+  const counterH = Math.min(slot.h * 0.12, bounds.y + bounds.h - counterTop);
   const counter: StallRect | null =
     counterH >= 6
-      ? { x: slot.x - counterW / 2, y: bottom, w: counterW, h: counterH }
+      ? { x: slot.x - counterW / 2, y: counterTop, w: counterW, h: counterH }
       : null;
   const size = Math.min(PIGGY_MAX_PX, slot.w * 0.5);
   const cy = bottom - size / 2;
@@ -696,7 +699,8 @@ export function drawMarketStall(
   if (canopy) {
     const stripeW = canopy.w / CANOPY_STRIPES;
     for (let i = 0; i < CANOPY_STRIPES; i++) {
-      ctx.fillStyle = i % 2 === 0 ? m.coral : m.paper;
+      // Sọc sáng phải khác nền giấy (`paper`), không thì mái rã thành các cục đỏ rời.
+      ctx.fillStyle = i % 2 === 0 ? m.coral : m.amberLight;
       ctx.fillRect(canopy.x + i * stripeW, canopy.y, stripeW, canopy.h);
       // Diềm lượn dưới mỗi sọc
       ctx.beginPath();

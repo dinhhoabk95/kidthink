@@ -863,6 +863,26 @@ export function drawTextInSlot(
   ctx.restore();
 }
 
+/** Cỡ chữ nhãn dưới ô (`drawSlotLabel`). */
+function slotLabelFontPx(slot: Slot, rs?: RenderSystem): number {
+  const space: LogicSpace = rs
+    ? { w: rs.LOGIC_WIDTH, h: rs.LOGIC_HEIGHT }
+    : DEFAULT_LOGIC_SPACE;
+  return Math.max(
+    minLegiblePx(space, rs?.viewport?.scale),
+    Math.floor(Math.min(slot.w, slot.h) * LABEL_FONT_RATIO)
+  );
+}
+
+/**
+ * Chiều cao dải nhãn dưới ô tính từ mép dưới ô: lề 4 px cộng một dòng chữ.
+ * Đồ trang trí đặt dưới ô (thanh quầy GT-031) phải bắt đầu dưới dải này để
+ * không đè nhãn.
+ */
+export function slotLabelBandPx(slot: Slot, rs?: RenderSystem): number {
+  return 4 + slotLabelFontPx(slot, rs);
+}
+
 /**
  * Nhãn chữ dưới một slot.
  *
@@ -876,13 +896,7 @@ export function drawSlotLabel(
   slot: Slot,
   rs?: RenderSystem
 ): void {
-  const space: LogicSpace = rs
-    ? { w: rs.LOGIC_WIDTH, h: rs.LOGIC_HEIGHT }
-    : DEFAULT_LOGIC_SPACE;
-  const size = Math.max(
-    minLegiblePx(space, rs?.viewport?.scale),
-    Math.floor(Math.min(slot.w, slot.h) * LABEL_FONT_RATIO)
-  );
+  const size = slotLabelFontPx(slot, rs);
   ctx.save();
   ctx.fillStyle = designTokens.colors.surface[600];
   ctx.font = `${size}px ${designTokens.fonts.sans}`;
