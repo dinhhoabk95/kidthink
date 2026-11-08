@@ -24,16 +24,22 @@ import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
 import {
   drawDividerLine,
+  drawFindRing,
   drawProgressDots,
   drawSceneBackground,
   drawSceneObjectAt,
+  findRingPose,
   sceneBox,
+  sceneObjectSlot,
 } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
 import type { RenderSystem } from "#src/systems/render-system";
 import { WrongFlash } from "#src/systems/wrong-flash";
 import type { GT025Content, GT025Difficulty } from "./template.js";
+
+/** Bán kính vòng khoanh theo cạnh ô của vật (`BR-E025-07`). */
+const FIND_RING_RADIUS_RATIO = 0.62;
 
 /** Khung chuyện đọc một lần ở vòng đầu (`BR-E025-05`, `BR-FBK-16`). */
 export const GT025_STORY_LINE =
@@ -102,6 +108,13 @@ export class GT025Session extends TemplateGameSession<
   private readonly foundDifferenceIds = new Set<string>();
   private readonly foundLeftIds = new Set<string>();
   private readonly foundRightIds = new Set<string>();
+  /**
+   * Mốc đồng hồ khung lúc mỗi vật được tìm ra, cho vòng khoanh lấp lánh
+   * (`BR-E025-07`). Tách theo bên vì schema không cấm hai bức tranh dùng chung
+   * id: một map chung sẽ khoanh nhầm vật chưa tìm ở bên kia.
+   */
+  private readonly foundLeftAtMs = new Map<string, number>();
+  private readonly foundRightAtMs = new Map<string, number>();
   private wrongObjectId: string | null = null;
   private readonly wrongFlash = new WrongFlash();
   resolvedObjects: ResolvedDifferenceObject[] = [];
@@ -117,6 +130,8 @@ export class GT025Session extends TemplateGameSession<
     this.foundDifferenceIds.clear();
     this.foundLeftIds.clear();
     this.foundRightIds.clear();
+    this.foundLeftAtMs.clear();
+    this.foundRightAtMs.clear();
     this.updateResolvedObjects();
 
     this.recordEvent("round_started", {
@@ -238,6 +253,8 @@ export class GT025Session extends TemplateGameSession<
     this.queueSfx("sparkle_find");
     this.foundLeftIds.add(diff.left_id);
     this.foundRightIds.add(diff.right_id);
+    this.foundLeftAtMs.set(diff.left_id, this.lastFrameMs);
+    this.foundRightAtMs.set(diff.right_id, this.lastFrameMs);
     this.recordEvent("item_selected", {
       object_id: objectId,
       is_correct: true,
@@ -481,6 +498,58 @@ export class GT025Session extends TemplateGameSession<
         wrong: isWrongNow && this.wrongObjectId === obj.id,
       });
     });
+    this.renderFindRings(ctx, rs, half, rightHalf, now);
+  }
+
+  /**
+   * Vòng khoanh lấp lánh quanh cả hai vật của mỗi điểm khác biệt đã tìm ra
+   * (`BR-E025-07`); chỉ vẽ cho vật đã tìm, nên không lộ điểm chưa tìm.
+   */
+  private renderFindRings(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    leftHalf: ZoneRect,
+    rightHalf: ZoneRect,
+    now: number
+  ): void {
+    const sides = [
+      {
+        objects: this.content.left_objects,
+        half: leftHalf,
+        slots: this.sourceSlots,
+        foundAtMs: this.foundLeftAtMs,
+      },
+      {
+        objects: this.content.right_objects,
+        half: rightHalf,
+        slots: this.targetSlots,
+        foundAtMs: this.foundRightAtMs,
+      },
+    ];
+    for (const side of sides) {
+      side.objects.forEach((obj, i) => {
+        const startMs = side.foundAtMs.get(obj.id);
+        if (startMs === undefined) {
+          return;
+        }
+        const slot = sceneObjectSlot(
+          rs,
+          side.half,
+          this.inLayout(obj),
+          side.slots[i]
+        );
+        if (!slot) {
+          return;
+        }
+        drawFindRing(
+          ctx,
+          slot.x,
+          slot.y,
+          Math.min(slot.w, slot.h) * FIND_RING_RADIUS_RATIO,
+          findRingPose(now - startMs, rs.reducedMotion)
+        );
+      });
+    }
   }
 
   /**

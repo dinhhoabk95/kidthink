@@ -727,3 +727,95 @@ export function drawSlotVisualComparisonCue(
   }
   ctx.restore();
 }
+
+// ── Vòng khoanh lấp lánh quanh điểm tìm ra (GT-025, `BR-E025-07`) ─────
+
+/** Vòng khoanh được vẽ liền nét trong ngần này ms kể từ lúc tìm ra. */
+export const FIND_RING_SWEEP_MS = 350;
+const FIND_RING_TWINKLE_MS = 900;
+export const FIND_RING_SPARKLES = 4;
+
+export interface FindRingPose {
+  /** Phần vòng đã vẽ, 0..1. */
+  readonly sweep: number;
+  /** Độ sáng 0..1 của từng tia lấp lánh; đứng yên cho tới khi vòng khép kín. */
+  readonly sparkles: readonly number[];
+}
+
+/**
+ * Tư thế vòng khoanh ở `elapsedMs` kể từ lúc tìm ra — hàm thuần. Vòng khép dần
+ * rồi bốn tia lấp lánh nhấp nháy lệch pha. `reduced_motion` là trạng thái
+ * cuối tĩnh: vòng đầy, mọi tia sáng đều (`BR-FBK-09`).
+ */
+export function findRingPose(
+  elapsedMs: number,
+  reducedMotion: boolean
+): FindRingPose {
+  if (reducedMotion) {
+    return {
+      sweep: 1,
+      sparkles: Array.from({ length: FIND_RING_SPARKLES }, () => 1),
+    };
+  }
+  const sweep = Math.min(1, Math.max(0, elapsedMs / FIND_RING_SWEEP_MS));
+  const phase = (elapsedMs - FIND_RING_SWEEP_MS) / FIND_RING_TWINKLE_MS;
+  return {
+    sweep,
+    sparkles: Array.from({ length: FIND_RING_SPARKLES }, (_, i) =>
+      sweep < 1
+        ? 0
+        : 0.5 + 0.5 * Math.sin(Math.PI * 2 * (phase + i / FIND_RING_SPARKLES))
+    ),
+  };
+}
+
+/** Vòng khoanh vàng quanh tâm `(cx, cy)` bán kính `radius`, kèm bốn tia lấp lánh. */
+export function drawFindRing(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  radius: number,
+  pose: FindRingPose
+): void {
+  ctx.save();
+  if (pose.sweep > 0) {
+    const start = -Math.PI / 2;
+    ctx.strokeStyle = designTokens.colors.montessori.amber;
+    ctx.lineWidth = Math.max(3, radius * 0.08);
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, start, start + Math.PI * 2 * pose.sweep);
+    ctx.stroke();
+  }
+  pose.sparkles.forEach((brightness, i) => {
+    if (brightness <= 0) {
+      return;
+    }
+    const angle = Math.PI / 4 + (i * Math.PI * 2) / pose.sparkles.length;
+    const sx = cx + Math.cos(angle) * radius;
+    const sy = cy + Math.sin(angle) * radius;
+    const arm = radius * (0.08 + 0.14 * brightness);
+    ctx.fillStyle = alpha(
+      designTokens.colors.montessori.amberGlow,
+      0.4 + 0.6 * brightness
+    );
+    ctx.strokeStyle = alpha(
+      designTokens.colors.montessori.amberDeep,
+      brightness
+    );
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(sx, sy - arm);
+    ctx.lineTo(sx + arm * 0.35, sy - arm * 0.35);
+    ctx.lineTo(sx + arm, sy);
+    ctx.lineTo(sx + arm * 0.35, sy + arm * 0.35);
+    ctx.lineTo(sx, sy + arm);
+    ctx.lineTo(sx - arm * 0.35, sy + arm * 0.35);
+    ctx.lineTo(sx - arm, sy);
+    ctx.lineTo(sx - arm * 0.35, sy - arm * 0.35);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+  });
+  ctx.restore();
+}

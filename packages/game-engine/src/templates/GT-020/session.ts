@@ -18,6 +18,8 @@ import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { PairingMechanic } from "#src/mechanics/pairing-mechanic";
 import {
+  CARD_FLIP_MS,
+  cardFlipPose,
   drawLabelText,
   drawSceneBackground,
   drawSlotItem,
@@ -58,8 +60,14 @@ export class GT020Session extends TemplateGameSession<
   private peekRemainingMs = 0;
   private hasOpenMismatch = false;
   private mismatchElapsedMs = 0;
+  /** Mặt thẻ ở khung vẽ trước (`true` là ngửa); đổi mặt thì khởi động nhịp lật (`BR-E020-08`). */
+  private readonly lastFaceUp = new Map<string, boolean>();
+  /** Mốc đồng hồ khung lúc thẻ bắt đầu lật. */
+  private readonly flipStartMs = new Map<string, number>();
 
   setupEntities(): void {
+    this.lastFaceUp.clear();
+    this.flipStartMs.clear();
     this.isWon = false;
     this.hasOpenMismatch = false;
     this.mismatchElapsedMs = 0;
@@ -310,15 +318,16 @@ export class GT020Session extends TemplateGameSession<
     });
   }
 
-  private renderCardSlot(
+  /** Vẽ một mặt thẻ: ngửa (asset) hoặc úp (thân trơn, ❌ NEVER lộ asset). */
+  private drawCardFace(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
     card: FlatCard,
-    slot: Slot
+    slot: Slot,
+    isFaceUp: boolean,
+    state: string
   ): void {
-    const state = this.effectiveCardState(card.cardId);
-    if (state === "face_down") {
-      // Mặt úp: thân bài trơn, ❌ NEVER lộ asset — đó là cả trò chơi.
+    if (!isFaceUp) {
       const { fill, border } = getColorsForState("locked");
       rs.drawClayBody(
         ctx,
@@ -345,12 +354,55 @@ export class GT020Session extends TemplateGameSession<
     );
   }
 
-  render(ctx: CanvasRenderingContext2D, rs: RenderSystem): void {
+  /**
+   * Thẻ lật bằng co `scaleX` quanh tâm (`BR-E020-08`). Nhịp lật chỉ phụ thuộc
+   * việc đổi mặt ngửa/úp — cùng một chuyển động cho cặp khớp và cặp lệch, nên
+   * không báo trước kết quả. Mặt thẻ đang úp vẫn không bao giờ lộ asset.
+   */
+  private renderCardSlot(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    card: FlatCard,
+    slot: Slot,
+    timeMs: number
+  ): void {
+    const state = this.effectiveCardState(card.cardId);
+    const isFaceUp = state !== "face_down";
+    const previous = this.lastFaceUp.get(card.cardId);
+    if (previous !== undefined && previous !== isFaceUp) {
+      this.flipStartMs.set(card.cardId, timeMs);
+    }
+    this.lastFaceUp.set(card.cardId, isFaceUp);
+
+    const startMs = this.flipStartMs.get(card.cardId);
+    const elapsed = startMs === undefined ? CARD_FLIP_MS : timeMs - startMs;
+    if (elapsed >= CARD_FLIP_MS) {
+      this.flipStartMs.delete(card.cardId);
+      this.drawCardFace(ctx, rs, card, slot, isFaceUp, state);
+      return;
+    }
+    const pose = cardFlipPose(elapsed, rs.reducedMotion);
+    ctx.save();
+    ctx.translate(slot.x, slot.y);
+    ctx.scale(pose.scaleX, 1);
+    ctx.translate(-slot.x, -slot.y);
+    this.drawCardFace(
+      ctx,
+      rs,
+      card,
+      slot,
+      pose.showsNewFace ? isFaceUp : !isFaceUp,
+      state
+    );
+    ctx.restore();
+  }
+
+  render(ctx: CanvasRenderingContext2D, rs: RenderSystem, timeMs = 0): void {
     drawSceneBackground(ctx, rs, this.themeId);
     this.displayCards.forEach((card, i) => {
       const slot = this.slots[i];
       if (slot) {
-        this.renderCardSlot(ctx, rs, card, slot);
+        this.renderCardSlot(ctx, rs, card, slot, timeMs);
       }
     });
   }

@@ -90,6 +90,21 @@ export function slotAtPoint(x: number, y: number, size = SCENE_ITEM_PX): Slot {
   };
 }
 
+/** Ô mà một vật cảnh được vẽ vào: theo toạ độ content trong `box`, không có thì `fallback`. */
+export function sceneObjectSlot(
+  rs: RenderSystem,
+  box: SceneBox,
+  obj: PositionedObject,
+  fallback: Slot | undefined
+): Slot | undefined {
+  return obj.x === undefined || obj.y === undefined
+    ? fallback
+    : slotAtPoint(
+        box.x + (obj.x / rs.LOGIC_WIDTH) * box.w,
+        box.y + (obj.y / rs.LOGIC_HEIGHT) * box.h
+      );
+}
+
 export function drawSceneObjectAt(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
@@ -98,13 +113,7 @@ export function drawSceneObjectAt(
   fallback: Slot | undefined,
   opts: { found?: boolean; wrong?: boolean } = {}
 ): void {
-  const slot =
-    obj.x === undefined || obj.y === undefined
-      ? fallback
-      : slotAtPoint(
-          box.x + (obj.x / rs.LOGIC_WIDTH) * box.w,
-          box.y + (obj.y / rs.LOGIC_HEIGHT) * box.h
-        );
+  const slot = sceneObjectSlot(rs, box, obj, fallback);
   if (!slot) {
     return;
   }

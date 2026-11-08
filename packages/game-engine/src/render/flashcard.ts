@@ -453,3 +453,35 @@ export function drawFlashcard(
     );
   }
 }
+
+// ── Lật thẻ giả 3D (GT-020, `BR-E020-08`) ─────────────────────────────
+
+/** Thời gian một lần lật thẻ. */
+export const CARD_FLIP_MS = 260;
+const CARD_FLIP_MIN_SCALE = 0.04;
+
+export interface CardFlipPose {
+  /** Co ngang quanh tâm thẻ để giả xoay quanh trục dọc. */
+  readonly scaleX: number;
+  /** `true` khi đã qua nửa vòng: vẽ mặt mới thay vì mặt cũ. */
+  readonly showsNewFace: boolean;
+}
+
+/**
+ * Tư thế lật ở `elapsedMs` kể từ lúc đổi mặt — hàm thuần. Nửa đầu co mặt cũ về
+ * mỏng, nửa sau bung mặt mới ra. Hết thời gian hoặc `reduced_motion` là trạng
+ * thái cuối: mặt mới, không co (`BR-FBK-09`).
+ */
+export function cardFlipPose(
+  elapsedMs: number,
+  reducedMotion: boolean
+): CardFlipPose {
+  if (reducedMotion || elapsedMs >= CARD_FLIP_MS) {
+    return { scaleX: 1, showsNewFace: true };
+  }
+  const t = Math.min(1, Math.max(0, elapsedMs / CARD_FLIP_MS));
+  return {
+    scaleX: Math.max(CARD_FLIP_MIN_SCALE, Math.abs(Math.cos(Math.PI * t))),
+    showsNewFace: t >= 0.5,
+  };
+}
