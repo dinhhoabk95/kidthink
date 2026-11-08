@@ -29,10 +29,13 @@ import {
   drawLiquidCup,
   drawPourDemo,
   drawSceneBackground,
+  drawStoryCharacterInStage,
   drawWoodenTokenDock,
   liquidCupRect,
+  ponyDrinkMotion,
   spawnParticlesAtSlot,
   updateParticles,
+  waterRiseLevel,
 } from "#src/render/index";
 import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
@@ -88,6 +91,14 @@ export class GT032Session extends TemplateGameSession<
   private pourElapsedMs = 0;
   /** Lần vẽ gần nhất có giảm chuyển động không: bỏ hoạt ảnh rót, mở cổng ngay. */
   private reducedMotion = false;
+  /** Đồng hồ khung (render gán) và mốc nấc rót gần nhất, cho Ngựa Con (`BR-E032-14`). */
+  private frameMs = 0;
+  private lastPourMs = Number.NEGATIVE_INFINITY;
+  /** Mực nước đang dâng của từng cốc: từ vạch nào, tới vạch nào, từ lúc nào. */
+  private readonly fillRise: Map<
+    string,
+    { readonly from: number; readonly startMs: number; readonly to: number }
+  > = new Map();
 
   private readonly cupFills: Map<string, number> = new Map();
   private particles: Particle[] = [];
@@ -176,6 +187,8 @@ export class GT032Session extends TemplateGameSession<
     this.clearHintLevel();
     this.particles = [];
     this.cupFills.clear();
+    this.fillRise.clear();
+    this.lastPourMs = Number.NEGATIVE_INFINITY;
     for (const cup of this.content.cups) {
       this.cupFills.set(cup.cup_id, cup.fill_units);
     }
@@ -433,6 +446,7 @@ export class GT032Session extends TemplateGameSession<
     this.selectedCupId = cup.cup_id;
     // Tiếng rót như nhau dù đã tới vạch hay chưa: rót là thao tác nháp (`BR-E032-09`).
     this.queueSfx("water_pour");
+    this.lastPourMs = this.frameMs;
     this.mood.set("happy", GT032_HAPPY_MS);
     const reachedTarget = this.isCupCorrect(cup);
     this.recordEvent("liquid_poured", {
@@ -780,13 +794,38 @@ export class GT032Session extends TemplateGameSession<
     );
   }
 
+  /**
+   * Mực nước đang hiển thị của một cốc, đơn vị vạch (có thể lẻ): dâng/hạ êm khi
+   * mực thật đổi vì trẻ rót, đứng yên khi không đổi (`BR-E032-14`).
+   */
+  private displayedFill(cupId: string, timeMs: number): number {
+    const target = this.getCupFill(cupId);
+    const rise = this.fillRise.get(cupId);
+    if (!rise) {
+      this.fillRise.set(cupId, { from: target, to: target, startMs: timeMs });
+      return target;
+    }
+    const current = waterRiseLevel(
+      rise.from,
+      rise.to,
+      timeMs - rise.startMs,
+      this.reducedMotion
+    );
+    if (rise.to === target) {
+      return current;
+    }
+    this.fillRise.set(cupId, { from: current, to: target, startMs: timeMs });
+    return waterRiseLevel(current, target, 0, this.reducedMotion);
+  }
+
   /** Một cốc: `fillScale` < 1 là cốc nhận đang dâng trong màn rót (`BR-E032-12`). */
   private drawCup(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
     index: number,
     detached: boolean,
-    fillScale: number
+    fillScale: number,
+    timeMs: number
   ): void {
     const cup = this.content.cups[index];
     const slot = this.slots[index];
@@ -798,7 +837,9 @@ export class GT032Session extends TemplateGameSession<
       shape: cup.shape,
       capacityUnits: cup.capacity_units,
       // L3: nước đã rời cốc, nằm ở cột tách bên dưới.
-      fillUnits: detached ? 0 : this.getCupFill(cup.cup_id) * fillScale,
+      fillUnits: detached
+        ? 0
+        : this.displayedFill(cup.cup_id, timeMs) * fillScale,
       color: cup.color,
       isSelected: this.selectedCupId === cup.cup_id,
       showHintMarks: this.showHintMarks || this.hintLevel >= 1,
@@ -815,7 +856,16 @@ export class GT032Session extends TemplateGameSession<
     timeMs: number
   ): void {
     this.reducedMotion = rs.reducedMotion;
+    this.frameMs = timeMs;
     drawSceneBackground(ctx, rs, this.themeId);
+    // Ngựa Con ở góc trống, cúi uống sau mỗi nấc rót — như nhau dù đã tới vạch hay chưa (`BR-E032-14`).
+    drawStoryCharacterInStage(
+      ctx,
+      "pony",
+      this.stageRect,
+      this.slots,
+      ponyDrinkMotion(timeMs - this.lastPourMs, rs.reducedMotion)
+    );
 
     this.drawCupTray(ctx, rs);
 
@@ -828,7 +878,8 @@ export class GT032Session extends TemplateGameSession<
         rs,
         i,
         detached,
-        pourPair?.[1] === i ? pourProgress : 1
+        pourPair?.[1] === i ? pourProgress : 1,
+        timeMs
       );
     }
     if (detached) {
