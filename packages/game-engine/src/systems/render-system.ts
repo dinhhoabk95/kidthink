@@ -57,6 +57,29 @@ export interface CanvasViewport {
   logicSpace?: LogicSpace;
 }
 
+/**
+ * Hình học khung vẽ suy từ hộp canvas theo px CSS: không gian logic, tỉ lệ và
+ * lề letterbox. `setupCanvas` và các test bố cục đều đi qua đây (`BR-LAY-13`),
+ * để số đo ở test đúng bằng số shell đưa cho engine.
+ */
+export function deriveCanvasViewport(
+  width: number,
+  height: number,
+  dpr = 1
+): CanvasViewport & { logicSpace: LogicSpace } {
+  const space = deriveLogicSpace(width, height);
+  const scale = Math.min(width / space.w, height / space.h);
+  return {
+    cssHeight: height,
+    cssWidth: width,
+    dpr,
+    offsetX: (width - space.w * scale) / 2,
+    offsetY: (height - space.h * scale) / 2,
+    scale,
+    logicSpace: space,
+  };
+}
+
 export class RenderSystem {
   logicSpace: LogicSpace = DEFAULT_LOGIC_SPACE;
 
@@ -100,18 +123,13 @@ export class RenderSystem {
     const width = rect.width || 960;
     const height = rect.height || 540;
 
-    const space = deriveLogicSpace(width, height);
+    const viewport = deriveCanvasViewport(width, height, dpr);
+    const { logicSpace: space, scale, offsetX, offsetY } = viewport;
     this.logicSpace = space;
 
     // Gán width/height reset luôn transform của ngữ cảnh về identity.
     canvas.width = Math.round(width * dpr);
     canvas.height = Math.round(height * dpr);
-
-    const scaleX = width / space.w;
-    const scaleY = height / space.h;
-    const scale = Math.min(scaleX, scaleY);
-    const offsetX = (width - space.w * scale) / 2;
-    const offsetY = (height - space.h * scale) / 2;
 
     const ctx = canvas.getContext("2d");
     if (ctx) {
@@ -128,15 +146,6 @@ export class RenderSystem {
 
     this.paintGeneration++;
 
-    const viewport: CanvasViewport = {
-      cssHeight: height,
-      cssWidth: width,
-      dpr,
-      offsetX,
-      offsetY,
-      scale,
-      logicSpace: space,
-    };
     this.viewport = viewport;
     return viewport;
   }

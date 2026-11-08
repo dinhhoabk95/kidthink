@@ -1,23 +1,25 @@
-import { ALL_SEED_LEVELS } from "@mindkid/content-build";
 import { beforeAll, describe, expect, it } from "vitest";
 import type { AgeBand } from "#src/contracts/types";
 import { TemplateGameSession } from "#src/game-session";
 import {
   ALL_TEMPLATE_CODES,
   createGameSessionSync,
-  type EngineConfig,
   preloadGameSession,
-  TEMPLATE_SEED_ENTRIES,
 } from "#src/index";
-import { deriveLogicSpace } from "#src/layout/constants";
-import { computeStageZones, type ZoneRect } from "#src/layout/stage-zones";
-import type { Slot } from "#src/layout/types";
 import {
   GT035ContentSchema,
   GT035DifficultySchema,
 } from "#src/templates/GT-035/template";
-import { FIXTURES_BY_CODE, type FixturePayload } from "../fixtures-map.ts";
+import { FIXTURES_BY_CODE } from "../fixtures-map.ts";
 import { GT035SlotOnActionSession } from "./fixtures/action-zone-overlap.ts";
+import {
+  bandsOf,
+  casesFor,
+  configFor,
+  createSession,
+  overflowReasons,
+  placeRound,
+} from "./helpers/shell-frame.ts";
 
 /**
  * Phase 24 mục 1: vùng hành động (nút nộp/chạy) không được giao với ô chạm nào,
@@ -31,34 +33,6 @@ const FRAMES = [
   { name: "610x350", w: 610, h: 350 },
 ] as const;
 
-/** Kiểu `content_pack`/`difficulty_params` của seed, lấy từ chính catalog. */
-type SeedPayload = (typeof ALL_SEED_LEVELS)[number]["content_pack"];
-
-function asPayload(val: SeedPayload): FixturePayload {
-  return typeof val === "object" && val !== null && !Array.isArray(val)
-    ? { ...val }
-    : {};
-}
-
-function configFor(
-  code: string,
-  band: AgeBand,
-  content: FixturePayload,
-  difficulty: FixturePayload
-): EngineConfig {
-  return {
-    level_code: `${code}-LV1`,
-    content_version: 1,
-    template_code: code,
-    content_pack: content,
-    difficulty_params: difficulty,
-    theme_id: "default",
-    age_band: band,
-    reduced_motion: false,
-    audio_enabled: true,
-  };
-}
-
 /**
  * Nợ bố cục vật lý ở khung nhỏ nhất 360x640: ĐÃ HẾT (Phase 25, product owner chốt
  * 2026-11-08, giảm số ô thay vì phân trang). GT-009 trần 6 ứng viên (`BR-E009-09`),
@@ -68,67 +42,21 @@ function configFor(
  */
 const KNOWN_PHYSICAL_OVERFLOW: ReadonlySet<string> = new Set<string>();
 
-function intersects(slot: Slot, zone: ZoneRect): boolean {
-  const left = slot.x - slot.hitW / 2;
-  const right = slot.x + slot.hitW / 2;
-  const top = slot.y - slot.hitH / 2;
-  const bottom = slot.y + slot.hitH / 2;
-  return (
-    left < zone.x + zone.w &&
-    right > zone.x &&
-    top < zone.y + zone.h &&
-    bottom > zone.y
-  );
-}
-
-function casesFor(code: string, band: AgeBand) {
-  const fixtures = (FIXTURES_BY_CODE[code] ?? []).map((f, i) => ({
-    name: `mẫu ${i}`,
-    config: configFor(code, band, f.content, f.difficulty),
-  }));
-  const seeds = ALL_SEED_LEVELS.filter(
-    (level) => level.header.template_code === code
-  ).map((level) => ({
-    name: `seed ${level.header.code}`,
-    config: configFor(
-      code,
-      band,
-      asPayload(level.content_pack),
-      asPayload(level.difficulty_params)
-    ),
-  }));
-  return [...fixtures, ...seeds];
-}
-
 type Frame = (typeof FRAMES)[number];
 
-/** Dựng vòng ở khung `frame`; `true` khi có ô chạm giao `zones.action`. */
+/**
+ * Dựng vòng ở khung `frame` (canvas lấp viewport) qua helper khung thật
+ * (`BR-LAY-13`); `true` khi có ô chạm giao `zones.action`.
+ */
 function hitsAction(
   session: TemplateGameSession,
   band: AgeBand,
   frame: Frame
 ): boolean {
-  const space = deriveLogicSpace(frame.w, frame.h);
-  const cssPerLogic = frame.w / space.w;
-  const zones = computeStageZones({
-    logicW: space.w,
-    logicH: space.h,
-    ageBand: band,
-    cssPerLogic,
-    needsTray: session.needsTray,
-    trayItems: session.trayItemCount,
-    trayLabels: session.trayHasLabels,
-    needsCommit: session.needsCommit,
-    stageRows: session.stageRowCount,
-  });
-  session.prepareRound(
-    band,
-    space,
-    zones.stage,
-    zones.tray ?? undefined,
-    cssPerLogic
+  const round = placeRound(session, band, { w: frame.w, h: frame.h });
+  return overflowReasons(round, session.needsCommit).includes(
+    "đè nút hành động"
   );
-  return session.slots.some((s) => intersects(s, zones.action));
 }
 
 /** Bậc thang: ca mới không có trong sổ nợ, và ca trong sổ nợ của `code` đã hết tràn. */
@@ -196,16 +124,11 @@ describe.each(ALL_TEMPLATE_CODES)(
 
     it("mọi khung điện thoại, mọi band", () => {
       const problems: string[] = [];
-      const banned: readonly string[] =
-        TEMPLATE_SEED_ENTRIES.find((e) => e.templateCode === code)
-          ?.bannedAgeBands ?? [];
-      for (const band of BANDS.filter((b) => !banned.includes(b))) {
+      for (const band of bandsOf(code, BANDS)) {
         for (const frame of FRAMES) {
           for (const { name, config } of casesFor(code, band)) {
-            const session = createGameSessionSync(code, config);
-            if (
-              !(session instanceof TemplateGameSession && session.needsCommit)
-            ) {
+            const session = createSession(code, config);
+            if (!session?.needsCommit) {
               continue;
             }
             if (hitsAction(session, band, frame)) {

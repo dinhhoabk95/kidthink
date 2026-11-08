@@ -1,4 +1,5 @@
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
+import { preloadGameSession } from "#src/index";
 import { GT009_FIXTURES } from "#src/templates/GT-009/fixtures";
 import {
   GT009ContentSchema,
@@ -9,6 +10,15 @@ import {
   GT035_MAX_GRID_ROWS,
   GT035ContentSchema,
 } from "#src/templates/GT-035/template";
+import { FIXTURES_BY_CODE } from "../fixtures-map.ts";
+import {
+  canvasBoxOf,
+  configFor,
+  createSession,
+  overflowReasons,
+  placeRound,
+  SHELL_VIEWPORTS,
+} from "./helpers/shell-frame.ts";
 
 /**
  * Phase 25 (`BR-LAY-12`): contract chặn level vượt sức chứa khung nhỏ nhất
@@ -56,5 +66,34 @@ describe("contract giữ level vừa khung 360x640 (BR-LAY-12)", () => {
         GT035_MAX_GRID_ROWS
       );
     }
+  });
+});
+
+describe("ca âm: helper bắt ô ra ngoài canvas (BR-LAY-13)", () => {
+  beforeAll(async () => {
+    await preloadGameSession("GT-035");
+  });
+
+  it("GT-035 ở band 3-4 (sàn 96 px) tràn đáy và đè nút ở 360x640", () => {
+    const fixture = FIXTURES_BY_CODE["GT-035"]?.[0];
+    const small = SHELL_VIEWPORTS[0];
+    if (!(fixture && small)) {
+      throw new Error("Thiếu fixture GT-035 hoặc viewport");
+    }
+    const session = createSession(
+      "GT-035",
+      configFor("GT-035", "3-4", fixture.content, fixture.difficulty)
+    );
+    if (!session) {
+      throw new Error("GT-035 không phải TemplateGameSession");
+    }
+    const round = placeRound(
+      session,
+      "3-4",
+      canvasBoxOf(small, "3-4", "preview")
+    );
+    const reasons = overflowReasons(round, session.needsCommit);
+    expect(reasons).toContain("ngoài canvas");
+    expect(reasons).toContain("đè nút hành động");
   });
 });
