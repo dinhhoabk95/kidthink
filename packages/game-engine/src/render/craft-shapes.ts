@@ -1718,3 +1718,43 @@ export function drawPriceTag(
   }
   ctx.restore();
 }
+
+// ── Hàng/cột sáng khi phương án thử khớp (GT-011, `BR-E011-06`) ───────
+
+/** Một nhịp sáng của hàng/cột khớp, ms. */
+export const MATCH_GLOW_MS = 1400;
+const MATCH_GLOW_MIN_ALPHA = 0.12;
+const MATCH_GLOW_MAX_ALPHA = 0.32;
+
+/**
+ * Độ đậm của lớp sáng phủ hàng/cột khớp ở đồng hồ khung `timeMs`: sóng sin giữa
+ * mức tối thiểu và tối đa. `reduced_motion` đứng ở mức giữa (trạng thái tĩnh).
+ */
+export function matchGlowAlpha(timeMs: number, reducedMotion: boolean): number {
+  const mid = (MATCH_GLOW_MIN_ALPHA + MATCH_GLOW_MAX_ALPHA) / 2;
+  if (reducedMotion) {
+    return mid;
+  }
+  const amp = (MATCH_GLOW_MAX_ALPHA - MATCH_GLOW_MIN_ALPHA) / 2;
+  return mid + amp * Math.sin((timeMs / MATCH_GLOW_MS) * Math.PI * 2);
+}
+
+/** Lớp sáng hổ phách bo góc phủ một hàng hoặc cột khớp, trong `box`. */
+export function drawMatchGlow(
+  ctx: CanvasRenderingContext2D,
+  box: {
+    readonly h: number;
+    readonly w: number;
+    readonly x: number;
+    readonly y: number;
+  },
+  alpha: number
+): void {
+  ctx.save();
+  ctx.globalAlpha = Math.min(1, Math.max(0, alpha));
+  ctx.fillStyle = designTokens.colors.montessori.amber;
+  ctx.beginPath();
+  ctx.roundRect(box.x, box.y, box.w, box.h, 10);
+  ctx.fill();
+  ctx.restore();
+}

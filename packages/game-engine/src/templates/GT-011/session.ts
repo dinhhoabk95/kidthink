@@ -23,12 +23,15 @@ import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
 import {
   boxFromSlots,
   drawEmptyTargetSlot,
+  drawMatchGlow,
   drawMontessoriControlOfErrorPill,
   drawRoundedBoxOutline,
   drawSceneBackground,
   drawShapeTray,
   drawSlotItem,
+  drawStoryCharacterInStage,
   drawWoodenTokenDock,
+  matchGlowAlpha,
   sceneBox,
 } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
@@ -449,6 +452,8 @@ export class GT011Session extends TemplateGameSession<
     }
 
     drawSceneBackground(ctx, rs, this.themeId);
+    // Bướm Nhỏ vẽ ngay sau nền, ở góc trống ngoài vùng chạm (`BR-E011-06`).
+    drawStoryCharacterInStage(ctx, "butterfly", this.stageRect, this.slots);
     const cellCount = this.content.matrix.rows * this.content.matrix.cols;
     const cellSlots = this.slots.slice(0, cellCount);
     const optionSlots = this.slots.slice(cellCount);
@@ -535,13 +540,14 @@ export class GT011Session extends TemplateGameSession<
 
   private renderMatrixPreviewHighlight(
     ctx: CanvasRenderingContext2D,
-    _rs: RenderSystem,
+    rs: RenderSystem,
     cellSlots: readonly Slot[],
     cols: number
   ): void {
     if (!this.preview) {
       return;
     }
+    const glow = matchGlowAlpha(this.lastFrameMs, rs.reducedMotion);
     const blank = this.getBlankCell();
     if (this.preview.row_matches) {
       const rowSlots = cellSlots.filter(
@@ -549,6 +555,7 @@ export class GT011Session extends TemplateGameSession<
       );
       const rowBox = boxFromSlots(rowSlots);
       if (rowBox) {
+        drawMatchGlow(ctx, rowBox, glow);
         drawRoundedBoxOutline(ctx, rowBox);
       }
     }
@@ -556,6 +563,7 @@ export class GT011Session extends TemplateGameSession<
       const colSlots = cellSlots.filter((_, idx) => idx % cols === blank.col);
       const colBox = boxFromSlots(colSlots);
       if (colBox) {
+        drawMatchGlow(ctx, colBox, glow);
         drawRoundedBoxOutline(ctx, colBox);
       }
     }
