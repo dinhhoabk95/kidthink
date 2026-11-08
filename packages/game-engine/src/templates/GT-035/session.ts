@@ -22,8 +22,10 @@ import {
 import type { Slot } from "#src/layout/types";
 import {
   drawProgressDots,
+  drawRobotTrail,
   drawSceneBackground,
   drawSlotItem,
+  drawStoryCharacter,
   getColorsForState,
   spawnParticlesAtSlot,
   updateParticles,
@@ -106,7 +108,6 @@ const COMMAND_ASSETS: Record<
   go_left: { kind: "emoji", ref: COMMAND_ICONS.go_left },
 };
 
-const ROBOT_ASSET = { kind: "emoji", ref: "🤖" } as const;
 const DEFAULT_GOAL_ASSET = { kind: "emoji", ref: "⭐" } as const;
 const OBSTACLE_ASSET = { kind: "emoji", ref: "🪨" } as const;
 
@@ -1016,6 +1017,8 @@ export class GT035Session extends TemplateGameSession<
       });
     }
 
+    this.trailCells = this.walkedCells();
+    this.lampGlow = this.robotLampGlow(rs.reducedMotion);
     this.renderGrid(ctx, rs);
     this.renderCommandQueue(ctx, rs);
     this.renderCommandPalette(ctx, rs);
@@ -1026,6 +1029,39 @@ export class GT035Session extends TemplateGameSession<
     ) {
       rs.drawParticles(ctx, this.particles);
     }
+  }
+
+  /** Ô robot đã đi qua trong lần chạy này (dấu vết), tính một lần mỗi khung vẽ (`BR-E035-16`). */
+  private trailCells: ReadonlySet<string> = new Set();
+  /** Độ sáng đèn robot của khung vẽ này (0 hoặc 1). */
+  private lampGlow = 0;
+
+  /**
+   * Các ô robot đã đi qua từ lúc bấm chạy, chỉ khi đang chạy hoặc đã thắng; hụt
+   * rồi về start hay dừng giữa chừng thì không còn dấu. Chỉ là phần đường robot
+   * đã chạy thật, không báo trước đường đúng.
+   */
+  private walkedCells(): ReadonlySet<string> {
+    const cells = new Set<string>();
+    if (!(this.isExecuting || this.isWin)) {
+      return cells;
+    }
+    const { col, row } = this.content.start;
+    cells.add(`${col},${row}`);
+    for (const step of this.execSteps.slice(0, this.execCursor)) {
+      cells.add(`${step.toState.col},${step.toState.row}`);
+    }
+    return cells;
+  }
+
+  /** Đèn robot sáng nửa đầu mỗi nhịp bước khi đang chạy; `reduced_motion` thì tắt (`BR-E035-16`). */
+  private robotLampGlow(reducedMotion: boolean): number {
+    return !reducedMotion &&
+      this.isExecuting &&
+      this.execPhase === "running" &&
+      this.execClockMs < GT035_STEP_MS / 2
+      ? 1
+      : 0;
   }
 
   private renderGrid(ctx: CanvasRenderingContext2D, rs: RenderSystem): void {
@@ -1054,10 +1090,19 @@ export class GT035Session extends TemplateGameSession<
     if (this.robotState.col === col && this.robotState.row === row) {
       drawSlotItem(ctx, rs, slot, {
         id: "robot",
-        asset: ROBOT_ASSET,
+        text: "",
         label: this.gridLabel(FACING_ARROWS[this.getDisplayFacing()] ?? "→"),
         state: "selected",
       });
+      // Robot kiểu Bee-Bot vẽ vector, đèn đỉnh nhấp nháy mỗi bước (`BR-E035-16`).
+      drawStoryCharacter(
+        ctx,
+        "robot",
+        slot.x,
+        slot.y,
+        Math.min(slot.w, slot.h) * 0.7,
+        { glow: this.lampGlow }
+      );
     } else if (this.content.goal.col === col && this.content.goal.row === row) {
       drawSlotItem(ctx, rs, slot, {
         id: "goal",
@@ -1080,6 +1125,9 @@ export class GT035Session extends TemplateGameSession<
       const radius = Math.min(slot.w, slot.h) / 2;
       const { fill, border } = getColorsForState("idle");
       rs.drawClayBody(ctx, slot.x, slot.y, radius, fill, border, "square");
+      if (this.trailCells.has(cellKey)) {
+        drawRobotTrail(ctx, slot);
+      }
     }
   }
 
