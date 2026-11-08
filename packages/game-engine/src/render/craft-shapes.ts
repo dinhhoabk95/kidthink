@@ -567,6 +567,11 @@ export function drawYarnSwatch(
   drawYarnMark(ctx, colorId, cx, cy, radius * 1.1);
 }
 
+/** Màu vẽ của sợi/cuộn len theo `color_id` (một nguồn cho ô, cuộn, sợi kéo). */
+export function yarnFillColor(colorId: string): string {
+  return getColorForYarn(colorId);
+}
+
 function getColorForYarn(colorId: string): string {
   switch (colorId.toLowerCase()) {
     case "red":
@@ -574,7 +579,7 @@ function getColorForYarn(colorId: string): string {
       return designTokens.colors.montessori.coral;
     case "blue":
     case "sky":
-      return designTokens.colors.brand[500];
+      return designTokens.colors.scene.blue[500];
     case "yellow":
     case "amber":
       return designTokens.colors.montessori.amber;
@@ -3051,6 +3056,169 @@ export function drawBrocadeFrame(
     diamond(x + band / 2, py);
     diamond(x + w - band / 2, py);
   }
+  ctx.restore();
+}
+
+/**
+ * Cuộn len vẽ vector, tô bằng chính màu của sợi (không dùng emoji 🧶 một màu):
+ * thân tròn, các vòng len quấn chéo sáng hơn, đuôi sợi thòng xuống, kèm dấu hình
+ * theo màu cho trẻ mù màu (`BR-A11-03`).
+ */
+export function drawYarnBall(
+  ctx: CanvasRenderingContext2D,
+  colorId: string,
+  cx: number,
+  cy: number,
+  radius: number
+): void {
+  const fill = getColorForYarn(colorId);
+  ctx.save();
+  ctx.fillStyle = fill;
+  ctx.strokeStyle = designTokens.colors.surface[800];
+  ctx.lineWidth = Math.max(2, radius * 0.08);
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  // Vòng len quấn chéo, cắt trong thân cuộn
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  ctx.clip();
+  ctx.strokeStyle = alpha(designTokens.colors.surface[0], 0.45);
+  ctx.lineWidth = Math.max(2, radius * 0.07);
+  for (const k of [-0.5, 0, 0.5]) {
+    ctx.beginPath();
+    ctx.ellipse(
+      cx,
+      cy + k * radius,
+      radius * 1.1,
+      radius * 0.45,
+      -0.5,
+      0,
+      Math.PI * 2
+    );
+    ctx.stroke();
+  }
+  ctx.restore();
+  // Đuôi sợi
+  ctx.save();
+  ctx.strokeStyle = fill;
+  ctx.lineWidth = Math.max(2, radius * 0.1);
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  ctx.moveTo(cx + radius * 0.7, cy + radius * 0.7);
+  ctx.quadraticCurveTo(
+    cx + radius * 1.1,
+    cy + radius * 0.95,
+    cx + radius * 0.85,
+    cy + radius * 1.1
+  );
+  ctx.stroke();
+  ctx.restore();
+  drawYarnMark(ctx, colorId, cx, cy, radius * 0.7);
+}
+
+// ── Sợi chỉ kéo dài theo ngón tay (GT-033, `BR-E033-07`) ──────────────
+
+export interface YarnPoint {
+  readonly x: number;
+  readonly y: number;
+}
+
+/** Hình chữ nhật vùng được vẽ (sân khấu hoặc khay). */
+export interface YarnRect {
+  readonly x: number;
+  readonly y: number;
+  readonly w: number;
+  readonly h: number;
+}
+
+/**
+ * Một sợi đang kéo: từ tâm cuộn tới ngón tay; `straight` là `reduced_motion`.
+ * `clip` là các vùng engine được vẽ (`BR-PSZ-01`): nét sợi bị cắt theo hợp của
+ * chúng, nên đoạn đi qua khe giữa khay và sân khấu không vẽ. Rỗng thì không cắt.
+ */
+export interface YarnThread {
+  readonly from: YarnPoint;
+  readonly to: YarnPoint;
+  readonly colorId: string;
+  readonly straight: boolean;
+  readonly clip: readonly YarnRect[];
+}
+
+/** Võng của sợi so với độ dài (tỉ lệ) khi không `reduced_motion`. */
+const YARN_SAG_RATIO = 0.12;
+/** Nét sợi: viền sáng ngoài và lõi màu. */
+const YARN_THREAD_OUTER_PX = 9;
+const YARN_THREAD_CORE_PX = 5;
+/** Nút đầu sợi dưới ngón tay. */
+const YARN_TIP_RADIUS_PX = 7;
+const YARN_TIP_STROKE_PX = 2;
+/** Đầu sợi lùi vào trong sân khấu đủ để nút đầu sợi kể cả viền nằm trọn bên trong. */
+export const YARN_TIP_INSET_PX = YARN_TIP_RADIUS_PX + YARN_TIP_STROKE_PX / 2;
+
+/** Kẹp đầu sợi trong sân khấu, chừa `YARN_TIP_INSET_PX`; không có sân khấu thì giữ nguyên. */
+export function clampYarnThreadTip(
+  point: YarnPoint,
+  stage: CharacterRect | undefined
+): YarnPoint {
+  if (!stage) {
+    return { x: point.x, y: point.y };
+  }
+  const inset = Math.min(YARN_TIP_INSET_PX, stage.w / 2, stage.h / 2);
+  return {
+    x: Math.min(stage.x + stage.w - inset, Math.max(stage.x + inset, point.x)),
+    y: Math.min(stage.y + stage.h - inset, Math.max(stage.y + inset, point.y)),
+  };
+}
+
+/**
+ * Vẽ sợi chỉ: viền sáng rồi lõi màu cuộn, võng nhẹ xuống dưới; `straight` vẽ
+ * thẳng. Màu chỉ phụ thuộc cuộn trẻ kéo nên không gợi ý ô đúng.
+ */
+export function drawYarnThread(
+  ctx: CanvasRenderingContext2D,
+  thread: YarnThread
+): void {
+  const { from, to, colorId, straight, clip } = thread;
+  const sag = straight
+    ? 0
+    : Math.hypot(to.x - from.x, to.y - from.y) * YARN_SAG_RATIO;
+  const path = (): void => {
+    ctx.beginPath();
+    ctx.moveTo(from.x, from.y);
+    ctx.quadraticCurveTo(
+      (from.x + to.x) / 2,
+      (from.y + to.y) / 2 + sag,
+      to.x,
+      to.y
+    );
+  };
+  ctx.save();
+  if (clip.length > 0) {
+    ctx.beginPath();
+    for (const r of clip) {
+      ctx.rect(r.x, r.y, r.w, r.h);
+    }
+    ctx.clip();
+  }
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.strokeStyle = designTokens.colors.surface[0];
+  ctx.lineWidth = YARN_THREAD_OUTER_PX;
+  path();
+  ctx.stroke();
+  ctx.strokeStyle = getColorForYarn(colorId);
+  ctx.lineWidth = YARN_THREAD_CORE_PX;
+  path();
+  ctx.stroke();
+  ctx.fillStyle = getColorForYarn(colorId);
+  ctx.strokeStyle = designTokens.colors.surface[0];
+  ctx.lineWidth = YARN_TIP_STROKE_PX;
+  ctx.beginPath();
+  ctx.arc(to.x, to.y, YARN_TIP_RADIUS_PX, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
   ctx.restore();
 }
 

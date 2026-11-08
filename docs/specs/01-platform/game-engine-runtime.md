@@ -88,6 +88,7 @@ một tầng theo dõi không đoán trước được vào đúng chỗ không 
 | `BR-ENG-15` (zero alloc) | Cấm cấp phát object mỗi frame, cấm DOM mutation mỗi frame, cấm `JSON.parse` trong hot path | GC pause đọc thành giật |
 | `BR-ENG-16` (audio) | Audio: master ceiling cưỡng chế trong code, mục tiêu −16 LUFS, true peak ≤ −1 dBTP, ramp vào ≥20ms ra ≥40ms | Onset tức thì làm trẻ giật mình |
 | `BR-ENG-17` (bundle) | Ngân sách bundle mỗi template ≤ **80 KB** gzipped | Tablet 2GB trên mạng 4G |
+| `BR-ENG-18` (hook con trỏ) | `TemplateGameSession` có hai hook tuỳ chọn, mặc định **không làm gì**: `onPointerMove(point, origin)` và `onPointerRelease()`. Shell gọi `onPointerMove` (toạ độ logic, `origin` là điểm nhấn xuống) chỉ khi con trỏ đã vượt ngưỡng kéo (`dragSlopCssPx`), và gọi `onPointerRelease()` sau khi gesture thả/chạm đã `dispatch` (cả khi bị huỷ). Hook chỉ để vẽ phản hồi theo ngón tay: không được đổi `validateAction`, `commit`, điểm hay telemetry, nên engine không ghi đè hành vi y hệt như cũ. Không thay `setPointerOver` (cờ hover đích của GT-003) | Phản hồi theo ngón tay cần toạ độ kéo, nhưng chấm điểm vẫn chỉ đi qua gesture thả để mọi lối vào (chạm, kéo, bàn phím) ra cùng một kết quả |
 
 ## 7. Data
 

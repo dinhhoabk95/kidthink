@@ -342,6 +342,26 @@ export abstract class TemplateGameSession<
   }
 
   /**
+   * Ngón tay đang kéo qua `point` (toạ độ logic) sau khi đã vượt ngưỡng kéo;
+   * `origin` là điểm nhấn xuống. Chỉ để vẽ phản hồi theo tay (GT-033 sợi chỉ,
+   * `BR-ENG-18`) — không được đổi luật, điểm hay telemetry. Mặc định không làm gì.
+   */
+  onPointerMove(
+    _point: { readonly x: number; readonly y: number },
+    _origin: { readonly x: number; readonly y: number }
+  ): void {
+    // Mặc định: không có phản hồi theo ngón tay.
+  }
+
+  /**
+   * Ngón tay đã nhả (hoặc bị huỷ), gọi sau khi gesture thả/chạm đã `dispatch`.
+   * Mặc định không làm gì (`BR-ENG-18`).
+   */
+  onPointerRelease(): void {
+    // Mặc định: không có phản hồi theo ngón tay để dọn.
+  }
+
+  /**
    * Đồng hồ trợ giúp chung vừa leo lên `level` (1–3). `trigger` là `timer` khi trẻ
    * không phản ứng quá `hint_after_ms`, `miss_streak` khi leo vì chuỗi chạm sai.
    * Engine có thang riêng (GT-026: nới cửa sổ → giãn nhịp nghỉ → không tính giờ,

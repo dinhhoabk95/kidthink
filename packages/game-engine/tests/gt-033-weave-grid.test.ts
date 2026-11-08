@@ -171,7 +171,8 @@ describe("GT-033: Dệt hoa văn lưới (weave-grid)", () => {
       const session = new GT033Session(f.content, f.difficulty);
       session.setupEntities();
 
-      expect(session.getSelectedColorId()).toBe("red");
+      // Chưa cầm màu nào khi mở vòng (`BR-E033-08`).
+      expect(session.getSelectedColorId()).toBeNull();
       expect(session.getPlacedCells()[3]).toBeNull();
       const eventsBefore = session.getTelemetry().events.length;
 
@@ -181,7 +182,7 @@ describe("GT-033: Dệt hoa văn lưới (weave-grid)", () => {
         data: { color_id: "blue" },
       });
       expect(vColor.valid).toBe(true);
-      expect(session.getSelectedColorId()).toBe("red"); // Not mutated!
+      expect(session.getSelectedColorId()).toBeNull(); // Not mutated!
 
       // Pure validation for yarn placement
       const vPlace = session.validateAction({

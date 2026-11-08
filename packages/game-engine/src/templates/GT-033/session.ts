@@ -18,20 +18,24 @@ import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test.js";
 import { resolveLayout } from "#src/layout/registry";
 import { insetDrawSize } from "#src/layout/slot-fit";
 import { computeStageCellSlots } from "#src/layout/stage-targets";
+import type { ZoneRect } from "#src/layout/stage-zones";
 import { computeTraySourceSlots, pickTrayZones } from "#src/layout/tray-layout";
 import type { Slot } from "#src/layout/types";
 import {
   boxFromSlots,
   brocadeFrame,
+  clampYarnThreadTip,
   drawBrocadeFrame,
   drawSceneBackground,
   drawSlotItem,
   drawSubPromptText,
   drawWeaveCell,
   drawWoodenTokenDock,
-  drawYarnSwatch,
+  drawYarnBall,
+  drawYarnThread,
   spawnParticlesAtSlot,
   updateParticles,
+  type YarnThread,
 } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
@@ -123,6 +127,26 @@ export const GT033_HAPPY_MS = 800;
 /** Mascot nghiêng đầu sau sợi đặt chưa đúng. */
 export const GT033_WONDER_MS = 1500;
 
+/** Sợi co về cuộn khi nhả ngoài ô (`BR-E033-07`). */
+export const GT033_THREAD_RETRACT_MS = 200;
+
+interface PointXY {
+  readonly x: number;
+  readonly y: number;
+}
+
+/**
+ * Sợi đang theo ngón tay hoặc đang co về cuộn. Giữ chỉ số cuộn và điểm ngón tay
+ * thô; tâm cuộn và đầu sợi kẹp tính lại mỗi lần đọc nên đổi khung giữa lúc kéo
+ * vẫn đúng chỗ (`BR-E033-07`).
+ */
+interface ThreadState {
+  readonly paletteIndex: number;
+  readonly point: PointXY;
+  /** Ms đã co; `null` = ngón tay còn giữ. */
+  retractedMs: number | null;
+}
+
 export class GT033Session extends TemplateGameSession<
   GT033Content,
   GT033Difficulty
@@ -155,6 +179,7 @@ export class GT033Session extends TemplateGameSession<
   private inferredSolution: readonly string[] | null = null;
   private particles: Particle[] = [];
   private readonly mood = new MoodPulse();
+  private thread: ThreadState | null = null;
 
   override storyLine(): string {
     return GT033_STORY_LINE;
@@ -167,12 +192,82 @@ export class GT033Session extends TemplateGameSession<
 
   update(deltaMs: number): void {
     this.mood.tick(deltaMs);
+    const t = this.thread;
+    if (t && t.retractedMs !== null) {
+      t.retractedMs += deltaMs;
+      if (t.retractedMs >= GT033_THREAD_RETRACT_MS) {
+        this.thread = null;
+      }
+    }
+  }
+
+  /** Ngón tay kéo từ `origin`: sợi chỉ vẽ từ tâm cuộn bị nhấn tới `point` (`BR-E033-07`). */
+  override onPointerMove(point: PointXY, origin: PointXY): void {
+    if (this.isWin || this.isWon) {
+      this.thread = null;
+      return;
+    }
+    const totalCells = this.content.grid.rows * this.content.grid.cols;
+    const item = this.findTappedPalette(origin.x, origin.y, totalCells);
+    this.thread = item
+      ? {
+          paletteIndex: this.content.palette.indexOf(item),
+          point: { x: point.x, y: point.y },
+          retractedMs: null,
+        }
+      : null;
+  }
+
+  /** Nhả tay: ô đã nhận sợi thì `commit` đã xoá; còn lại sợi co về cuộn. */
+  override onPointerRelease(): void {
+    if (this.thread && this.thread.retractedMs === null) {
+      this.thread.retractedMs = 0;
+    }
+  }
+
+  /**
+   * Sợi cần vẽ lúc này. `reducedMotion`: vẽ thẳng và biến mất ngay khi nhả,
+   * không co. Chỉ có cuộn trẻ kéo, ngón tay và màu cuộn — không đọc đáp án.
+   * Tâm cuộn đọc từ slot hiện tại, đầu sợi kẹp trong sân khấu hiện tại; nét vẽ
+   * cắt theo sân khấu và khay (`BR-PSZ-01`).
+   */
+  getYarnThread(reducedMotion: boolean): YarnThread | null {
+    const t = this.thread;
+    if (!t || (reducedMotion && t.retractedMs !== null)) {
+      return null;
+    }
+    const totalCells = this.content.grid.rows * this.content.grid.cols;
+    const item = this.content.palette[t.paletteIndex];
+    const slot = this.slots[totalCells + t.paletteIndex];
+    if (!(item && slot)) {
+      return null;
+    }
+    const from = { x: slot.x, y: slot.y };
+    const tip = clampYarnThreadTip(t.point, this.stageRect);
+    const k =
+      t.retractedMs === null
+        ? 1
+        : 1 - Math.min(1, t.retractedMs / GT033_THREAD_RETRACT_MS);
+    return {
+      from,
+      to: {
+        x: from.x + (tip.x - from.x) * k,
+        y: from.y + (tip.y - from.y) * k,
+      },
+      colorId: this.resolveVisualColorId(item.color_id) ?? item.color_id,
+      straight: reducedMotion,
+      clip: [this.stageRect, this.trayRect].filter(
+        (r): r is ZoneRect => r !== undefined
+      ),
+    };
   }
 
   setupEntities(): void {
     this.mood.clear();
+    this.thread = null;
     this.placedCells = [...this.content.cells];
-    this.selectedColorId = this.content.palette[0]?.color_id ?? null;
+    // Chưa cầm màu nào: chọn sẵn một màu có thể trùng đáp án (`BR-E033-08`).
+    this.selectedColorId = null;
     this.selectedCellIndex = null;
     this.brokenRowIndex = null;
     this.brokenColIndex = null;
@@ -421,6 +516,10 @@ export class GT033Session extends TemplateGameSession<
 
     this.placedCells[cellIndex] = colorId;
     this.selectedCellIndex = cellIndex;
+    // Kéo-thả từ cuộn ngầm cầm luôn màu cuộn đó, như chạm chọn (`BR-E033-07`).
+    this.selectedColorId = colorId;
+    // Ô đã nhận sợi: sợi kéo biến mất ngay, không co (`BR-E033-07`).
+    this.thread = null;
     // Tiếng kéo sợi như nhau dù màu đúng hay sai (`BR-E033-05`).
     this.queueSfx("yarn_pull");
     this.mood.set(
@@ -875,28 +974,25 @@ export class GT033Session extends TemplateGameSession<
       const slot = this.slots[totalCells + p];
       if (item && slot) {
         const isSelected = this.selectedColorId === item.color_id;
+        // Thân khay + nhãn tên màu; cuộn len vector tô đúng màu vẽ đè lên.
         drawSlotItem(
           ctx,
           rs,
           slot,
           {
             id: item.color_id,
-            asset: item.asset,
+            text: "",
             label: this.resolvePaletteDisplayLabel(item, p),
             state: isSelected ? "selected" : "idle",
           },
           "circle"
         );
-        // Mọi item bảng màu cùng asset 🧶 — chấm màu kèm hình mới phân biệt được.
-        const swatchR = Math.min(slot.w, slot.h) * 0.2;
-        const visualColorId =
-          this.resolveVisualColorId(item.color_id) ?? item.color_id;
-        drawYarnSwatch(
+        drawYarnBall(
           ctx,
-          visualColorId,
-          slot.x + slot.w / 2 - swatchR,
-          slot.y - slot.h / 2 + swatchR,
-          swatchR
+          this.resolveVisualColorId(item.color_id) ?? item.color_id,
+          slot.x,
+          slot.y,
+          Math.min(slot.w, slot.h) * 0.36
         );
       }
     }
@@ -926,6 +1022,10 @@ export class GT033Session extends TemplateGameSession<
     this.renderBrocadeFrame(ctx);
     this.renderGridCells(ctx, rs);
     this.renderPaletteDock(ctx, rs);
+    const thread = this.getYarnThread(rs.reducedMotion);
+    if (thread) {
+      drawYarnThread(ctx, thread);
+    }
 
     if (this.degradation?.particles_enabled !== false) {
       this.particles = updateParticles(this.particles);

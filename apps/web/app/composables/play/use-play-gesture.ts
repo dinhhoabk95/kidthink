@@ -511,6 +511,11 @@ export function usePlayGesture(options: GestureOptions) {
     if (!session) {
       return;
     }
+    // Bề mặt có khay thả sợi/vật vào ô (GT-033): chỉ đặt khi nhả, không đặt
+    // vật đang chọn lên mọi ô ngón tay lướt qua.
+    if (session instanceof TemplateGameSession && session.needsTray) {
+      return;
+    }
     const hitCell = findHitEntity(viewEntities.value, pt.x, pt.y);
     if (!(hitCell?.id.startsWith("cell_") && hitCell.id !== lastMazeCellId)) {
       return;
@@ -602,6 +607,19 @@ export function usePlayGesture(options: GestureOptions) {
     const session = getEngine()?.activeSession;
     if (session && acceptsPointerOver(session)) {
       session.setPointerOver(pt.x, pt.y);
+    }
+    // Phản hồi theo ngón tay (sợi chỉ GT-033): chỉ khi đã vượt ngưỡng kéo
+    // (`BR-ENG-18`). Hook mặc định không làm gì nên engine khác không đổi.
+    if (session instanceof TemplateGameSession) {
+      session.onPointerMove(pt, { x: startLogicX, y: startLogicY });
+    }
+  }
+
+  /** Nhả hoặc huỷ: báo session dọn phản hồi theo tay, sau khi gesture đã dispatch. */
+  function releasePointerFeedback(): void {
+    const session = getEngine()?.activeSession;
+    if (session instanceof TemplateGameSession) {
+      session.onPointerRelease();
     }
   }
 
@@ -781,11 +799,13 @@ export function usePlayGesture(options: GestureOptions) {
       triggerPostReleaseFlight(false, prevSelected, dragged, endPt);
     }
 
+    releasePointerFeedback();
     resetPointerTracking();
   }
 
   function handlePointerCancel(e: PointerEvent): void {
     if (activePointerId === e.pointerId) {
+      releasePointerFeedback();
       resetPointerTracking();
     }
   }
