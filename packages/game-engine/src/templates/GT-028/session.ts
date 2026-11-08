@@ -325,9 +325,22 @@ export class GT028Session extends TemplateGameSession<
     });
 
     return {
-      activePrompt: this.content.prompt,
+      activePrompt: this.spokenPrompt(),
       entities,
     };
+  }
+
+  /**
+   * Lời đề cho trình đọc màn hình và giọng đọc. Đích tia số là lá cờ không số
+   * (`BR-E028-12`) nên số đích chỉ còn đi qua đây: đề nhắc số rồi thì giữ nguyên,
+   * chưa nhắc thì thêm một câu đọc số.
+   */
+  private spokenPrompt(): string {
+    const total = String(this.content.target_total);
+    if (new RegExp(`(?<!\\d)${total}(?!\\d)`).test(this.content.prompt)) {
+      return this.content.prompt;
+    }
+    return `${this.content.prompt} Đếm tới ${total} nhé!`;
   }
 
   onTapItem(itemId: string): ActionResult {
@@ -499,7 +512,6 @@ export class GT028Session extends TemplateGameSession<
         };
     drawFrogNumberLine(ctx, rs, captionRect, {
       step: this.content.step,
-      target: this.content.target_total,
       ticks: this.items.length,
       fromTick: this.frogFromTick,
       toTick: this.frogToTick,

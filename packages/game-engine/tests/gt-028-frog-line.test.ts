@@ -191,7 +191,7 @@ describe("GT-028: session vẽ ếch trên tia số (BR-E028-08)", () => {
     );
   });
 
-  it("tia số không chứa chữ cái (BR-E028-05 giữ nguyên: chỉ +n và số)", () => {
+  it("tia số không chứa chữ cái và không in số đích (BR-E028-05, BR-E028-12: chỉ +n, cờ thay số đích)", () => {
     const session = openSession();
     const ctx = createFakeCanvas(960, 540).getContext("2d");
     if (!ctx) {
@@ -203,6 +203,6 @@ describe("GT-028: session vẽ ếch trên tia số (BR-E028-08)", () => {
     });
     session.render(ctx as CanvasRenderingContext2D, new RenderSystem(), 0);
     expect(texts).toContain(`+${FIXTURE.content.step}`);
-    expect(texts).toContain(String(FIXTURE.content.target_total));
+    expect(texts).not.toContain(String(FIXTURE.content.target_total));
   });
 });

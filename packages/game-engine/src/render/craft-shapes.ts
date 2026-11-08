@@ -3565,3 +3565,39 @@ export function drawBeadString(
   }
   ctx.restore();
 }
+
+/**
+ * Lá cờ trung tính tâm `(cx, cy)`, bán kính `r` (cột cờ gỗ cùng cờ đuôi nheo màu
+ * `indigo`, màu từ `designTokens`). Dùng chung cho đích mê cung (`BR-E013-10`) và
+ * đích tia số GT-028 (`BR-E028-12`): hình không mang số hay vật cụ thể.
+ */
+export function drawGoalFlag(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  r: number
+): void {
+  const mo = designTokens.colors.montessori;
+  const poleX = cx - r * 0.45;
+  const top = cy - r;
+  ctx.save();
+  ctx.strokeStyle = mo.woodBorder;
+  ctx.lineWidth = 3;
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  ctx.moveTo(poleX, cy + r);
+  ctx.lineTo(poleX, top);
+  ctx.stroke();
+  ctx.fillStyle = mo.indigo;
+  ctx.strokeStyle = mo.indigo;
+  ctx.lineWidth = 2;
+  ctx.lineJoin = "round";
+  ctx.beginPath();
+  ctx.moveTo(poleX, top);
+  ctx.lineTo(poleX + r * 1.3, top + r * 0.35);
+  ctx.lineTo(poleX, top + r * 0.8);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+}

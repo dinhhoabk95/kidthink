@@ -8,6 +8,7 @@ import type { Slot } from "#src/layout/types";
 import { designTokens } from "#src/systems/designTokens";
 import type { RenderSystem } from "#src/systems/render-system";
 import { alpha } from "./color-utils.js";
+import { drawGoalFlag } from "./craft-shapes.js";
 import { applyCanvasFontAtSize, canvasFontPx } from "./type-scale.js";
 import type { SceneBox } from "./types.js";
 
@@ -425,8 +426,6 @@ export function drawFrog(
 export interface FrogNumberLineSpec {
   /** Mốc ếch đang nhảy từ đó. */
   readonly fromTick: number;
-  /** Số `target_total` ở cuối trục. */
-  readonly target: number;
   readonly hopElapsedMs: number;
   readonly step: number;
   /**
@@ -438,10 +437,15 @@ export interface FrogNumberLineSpec {
   readonly toTick: number;
 }
 
+/** Bán kính lá cờ đích: cờ rộng ≈ 1,3 r nên vừa cột đích 36 px và dải nhãn. */
+export function goalFlagRadius(rect: ZoneRect): number {
+  return Math.min(FROG_TARGET_W_PX / 2, rect.h * 0.4);
+}
+
 /**
- * Dải tia số trong dải nhãn: `+n`, trục và mốc, số đích, ếch. Chỉ số và hình —
- * không chữ cái (`BR-E028-05`). Ếch phản ánh số lần trẻ đã đếm; số đích đứng
- * riêng bên phải, không gắn vào mốc nào, và trục dài theo số vật chứ không theo
+ * Dải tia số trong dải nhãn: `+n`, trục và mốc, lá cờ đích, ếch. Chỉ số và hình —
+ * không chữ cái (`BR-E028-05`). Ếch phản ánh số lần trẻ đã đếm; lá cờ đích
+ * không số đứng riêng bên phải (`BR-E028-12`), không gắn vào mốc nào, và trục dài theo số vật chứ không theo
  * đích — nên tia số không chấm trước khi nộp (`BR-E028-03`).
  */
 export function drawFrogNumberLine(
@@ -476,8 +480,9 @@ export function drawFrogNumberLine(
   ctx.fillStyle = designTokens.colors.montessori.amberDark;
   ctx.textAlign = "center";
   ctx.fillText(`+${spec.step}`, layout.badgeX, rect.y + rect.h / 2);
-  ctx.fillText(String(spec.target), layout.targetX, rect.y + rect.h / 2);
   ctx.restore();
+  // Đích là lá cờ không số (`BR-E028-12`); số đích chỉ đọc thành tiếng.
+  drawGoalFlag(ctx, layout.targetX, rect.y + rect.h / 2, goalFlagRadius(rect));
   const pose = frogHopPose(
     layout,
     spec.fromTick,
