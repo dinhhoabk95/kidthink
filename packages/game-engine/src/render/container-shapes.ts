@@ -741,3 +741,132 @@ export function drawSortTray(
   ctx.fillText(label, slot.x, ribbon.y + ribbon.h / 2, ribbon.w * 0.94);
   ctx.restore();
 }
+
+// ── Đom đóm nhấp nháy dưới nắp chuông thuỷ tinh (GT-012, `BR-E012-08`) ──
+
+/** Một nhịp nhấp nháy của đom đóm. */
+export const FIREFLY_PERIOD_MS = 1200;
+/** Nắp chuông nhấc lên (đầu pha nhìn) và hạ xuống (cuối pha nhìn) trong ngần này ms. */
+export const BELL_LIFT_MS = 250;
+const FIREFLY_MIN_GLOW = 0.35;
+const FIREFLY_PHASE_STEP = 0.37;
+const BELL_LIFT_FRACTION_OF_RADIUS = 0.55;
+
+function smoothstep01(t: number): number {
+  const c = Math.min(1, Math.max(0, t));
+  return c * c * (3 - 2 * c);
+}
+
+/**
+ * Độ sáng của đom đóm thứ `index` ở `elapsedMs` kể từ lúc mở nắp: sóng sin
+ * trong [0,35; 1], mỗi con lệch pha. `reduced_motion` sáng tĩnh ở mức cao nhất.
+ * Chỉ là độ sáng quầng — vật luôn vẽ đủ, nên nhấp nháy không giấu số lượng.
+ */
+export function fireflyGlow(
+  elapsedMs: number,
+  index: number,
+  reducedMotion: boolean
+): number {
+  if (reducedMotion) {
+    return 1;
+  }
+  const phase = elapsedMs / FIREFLY_PERIOD_MS + index * FIREFLY_PHASE_STEP;
+  const mid = (1 + FIREFLY_MIN_GLOW) / 2;
+  const amp = (1 - FIREFLY_MIN_GLOW) / 2;
+  return mid + amp * Math.sin(Math.PI * 2 * phase);
+}
+
+/** Bán kính quầng sáng theo độ sáng — dùng chung cho vẽ và test. */
+export function fireflyHaloRadius(slot: Slot, glow: number): number {
+  return Math.min(slot.w, slot.h) * (0.5 + 0.3 * glow);
+}
+
+/** Quầng sáng vàng nhạt quanh một đom đóm; vẽ trước vật để vật luôn rõ. */
+export function drawFireflyGlow(
+  ctx: CanvasRenderingContext2D,
+  slot: Slot,
+  glow: number
+): void {
+  const r = fireflyHaloRadius(slot, glow);
+  const g = ctx.createRadialGradient(
+    slot.x,
+    slot.y,
+    r * 0.1,
+    slot.x,
+    slot.y,
+    r
+  );
+  g.addColorStop(
+    0,
+    alpha(designTokens.colors.montessori.amberGlow, 0.35 + 0.5 * glow)
+  );
+  g.addColorStop(1, alpha(designTokens.colors.montessori.amberGlow, 0));
+  ctx.save();
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.arc(slot.x, slot.y, r, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+/**
+ * Độ nhấc của nắp chuông trong [0,1] ở `elapsedMs` kể từ lúc mở nắp: lên ở
+ * `BELL_LIFT_MS` đầu, hạ ở `BELL_LIFT_MS` cuối của `durationMs`, ngoài pha nhìn
+ * thì đậy kín (0). `reduced_motion` mở hẳn trong pha, không chuyển tiếp.
+ */
+export function bellLiftProgress(
+  elapsedMs: number,
+  durationMs: number,
+  reducedMotion: boolean
+): number {
+  if (elapsedMs < 0 || elapsedMs >= durationMs) {
+    return 0;
+  }
+  if (reducedMotion) {
+    return 1;
+  }
+  const rise = smoothstep01(elapsedMs / BELL_LIFT_MS);
+  const fall = smoothstep01((durationMs - elapsedMs) / BELL_LIFT_MS);
+  return Math.min(rise, fall);
+}
+
+/**
+ * Nắp chuông thuỷ tinh đặt trên đĩa: vòm trong mờ, vệt sáng và núm. `lift`
+ * (0..1) nhấc nắp lên và làm nó mờ đi. Không che gì dưới nó — vật chỉ hiện khi
+ * engine vẽ vật, nên nắp đậy không lộ đáp án.
+ */
+export function drawGlassBell(
+  ctx: CanvasRenderingContext2D,
+  slot: Slot,
+  lift: number
+): void {
+  const r = Math.min(slot.w, slot.h) / 2;
+  const bellR = r * 0.82;
+  ctx.save();
+  ctx.translate(0, -lift * r * BELL_LIFT_FRACTION_OF_RADIUS);
+  ctx.globalAlpha = 1 - 0.5 * lift;
+  ctx.fillStyle = alpha(designTokens.colors.surface[100], 0.45);
+  ctx.strokeStyle = designTokens.colors.surface[400];
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(slot.x, slot.y, bellR, Math.PI, 0, false);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  // Vệt sáng trên vòm
+  ctx.strokeStyle = alpha(designTokens.colors.surface[0], 0.85);
+  ctx.lineWidth = 4;
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  ctx.arc(slot.x, slot.y, bellR * 0.78, Math.PI * 1.15, Math.PI * 1.4, false);
+  ctx.stroke();
+  // Núm cầm
+  ctx.fillStyle = designTokens.colors.montessori.amber;
+  ctx.strokeStyle = designTokens.colors.montessori.amberDark;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(slot.x, slot.y - bellR - 6, 8, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+}

@@ -21,12 +21,16 @@ import {
 import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
 import {
-  drawClocheScene,
+  bellLiftProgress,
+  drawFireflyGlow,
+  drawGlassBell,
   drawLabelText,
   drawSceneBackground,
   drawSlotItem,
   drawSubPromptText,
+  drawWoodenPlate,
   drawWoodenTokenDock,
+  fireflyGlow,
 } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
@@ -61,6 +65,8 @@ export class FlashRecallSession extends TemplateGameSession<
   private awaitingStart = true;
   private readonly wrongFlash = new WrongFlash();
   private lastFrameMs = 0;
+  /** Mốc đồng hồ khung lúc mở nắp (bấm bắt đầu hoặc xem lại), cho nhấp nháy và nắp nhấc (`BR-E012-08`). */
+  private flashStartMs = 0;
   /** Vùng đĩa và vùng lựa chọn của vòng này (`BR-PSZ-01`). */
   private areas: RecallAreas | null = null;
   /** Vị trí vật loé trên đĩa — không chạm được nên không nằm trong `slots`. */
@@ -82,6 +88,7 @@ export class FlashRecallSession extends TemplateGameSession<
     this.selectedValue = null;
     this.wrongFlash.clear();
     this.lastFrameMs = 0;
+    this.flashStartMs = 0;
     this.timer.reset();
     this.wasVisible = false;
     this.awaitingStart = true;
@@ -105,6 +112,7 @@ export class FlashRecallSession extends TemplateGameSession<
       return false;
     }
     this.awaitingStart = false;
+    this.flashStartMs = this.lastFrameMs;
     this.queueSfx("bell_open");
     this.timer.start();
     this.wasVisible = true;
@@ -117,6 +125,11 @@ export class FlashRecallSession extends TemplateGameSession<
   /** Chọn đúng: nhóm vật hiện lại đầy đủ để trẻ đối chiếu (N4/N6). */
   isRecapShown(): boolean {
     return this.checkWinCondition();
+  }
+
+  /** Vị trí đom đóm trên đĩa (chỉ đọc) — để test đo quầng sáng. */
+  getFlashSlots(): readonly Slot[] {
+    return this.flashSlots;
   }
 
   getFlashItems(): GT012Content["flash_items"] {
@@ -150,6 +163,7 @@ export class FlashRecallSession extends TemplateGameSession<
   replayFlash(): boolean {
     const ok = this.timer.replay();
     if (ok) {
+      this.flashStartMs = this.lastFrameMs;
       this.queueSfx("bell_open");
       this.wasVisible = true;
       this.recordEvent("flash_replayed", {});
@@ -509,7 +523,8 @@ export class FlashRecallSession extends TemplateGameSession<
 
     if (this.awaitingStart) {
       // Chờ trẻ bấm: nắp đậy và nút bắt đầu ▶ ngay trên đĩa (`BR-E012-04`).
-      drawClocheScene(ctx, plate, false);
+      drawWoodenPlate(ctx, plate, false);
+      drawGlassBell(ctx, plate, 0);
       drawLabelText(ctx, "▶", plate.x, plate.y, 48);
       return;
     }
@@ -519,12 +534,25 @@ export class FlashRecallSession extends TemplateGameSession<
       if (!(this.stageRect || this.isRecapShown())) {
         drawSubPromptText(ctx, rs, "Nhìn nhanh!");
       }
-      drawClocheScene(ctx, plate, true);
+      const elapsed = timeMs - this.flashStartMs;
+      drawWoodenPlate(ctx, plate, false);
+      drawGlassBell(
+        ctx,
+        plate,
+        this.isRecapShown()
+          ? 1
+          : bellLiftProgress(
+              elapsed,
+              this.timer.getDurationMs(),
+              rs.reducedMotion
+            )
+      );
       this.content.flash_items.forEach((item, i) => {
         const slot = this.flashSlots[i];
         if (!slot) {
           return;
         }
+        drawFireflyGlow(ctx, slot, fireflyGlow(elapsed, i, rs.reducedMotion));
         drawSlotItem(ctx, rs, slot, { id: item.item_id, asset: item.asset });
       });
       return;
@@ -533,7 +561,8 @@ export class FlashRecallSession extends TemplateGameSession<
     if (!this.stageRect) {
       drawSubPromptText(ctx, rs, "Bé nhớ có bao nhiêu đồ vật?");
     }
-    drawClocheScene(ctx, plate, false);
+    drawWoodenPlate(ctx, plate, false);
+    drawGlassBell(ctx, plate, 0);
     drawWoodenTokenDock(
       ctx,
       rs,
