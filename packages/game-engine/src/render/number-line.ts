@@ -258,10 +258,12 @@ export function drawUnitGapHatch(
 /** Một cú nhảy của ếch giữa hai mốc kéo dài ngần này ms. */
 export const FROG_HOP_MS = 450;
 
-const FROG_BADGE_W_PX = 40;
-const FROG_TARGET_W_PX = 36;
+export const FROG_BADGE_W_PX = 48;
+export const FROG_TARGET_W_PX = 36;
 const FROG_LINE_INSET_PX = 8;
 const FROG_OVERFLOW_GAP_PX = 12;
+/** Khe tối thiểu giữa thân ếch và nhãn kề (`+n`, số đích). */
+const FROG_CLEARANCE_PX = 4;
 const FROG_MIN_SIZE_PX = 18;
 const FROG_LIFT_CAP_PX = 10;
 
@@ -285,13 +287,21 @@ export interface FrogLineLayout {
  */
 export function frogLineLayout(rect: ZoneRect, ticks: number): FrogLineLayout {
   const n = Math.max(1, ticks);
-  const x0 = rect.x + FROG_BADGE_W_PX + FROG_LINE_INSET_PX;
-  const x1 =
+  const frogSizeFor = (spacing: number): number =>
+    Math.max(FROG_MIN_SIZE_PX, Math.min(rect.h * 0.5, spacing * 1.5));
+  // Lượt đầu đo cỡ ếch lớn nhất có thể; chừa nửa thân ếch ở hai đầu trục để ếch
+  // ở vạch 0 không chạm nhãn `+n` và ếch ngoài mút không chạm số đích
+  // (`BR-E028-10`). Lượt hai dùng đúng khoảng trống đã chừa.
+  const rawX0 = rect.x + FROG_BADGE_W_PX + FROG_LINE_INSET_PX;
+  const rawX1 =
     rect.x +
     rect.w -
     FROG_TARGET_W_PX -
     FROG_LINE_INSET_PX -
     FROG_OVERFLOW_GAP_PX * 2;
+  const reserve = frogSizeFor((rawX1 - rawX0) / n) / 2 + FROG_CLEARANCE_PX;
+  const x0 = rawX0 + reserve;
+  const x1 = rawX1 - reserve;
   const spacing = (x1 - x0) / n;
   const tickXs: number[] = [];
   for (let i = 0; i <= n; i++) {
@@ -299,7 +309,7 @@ export function frogLineLayout(rect: ZoneRect, ticks: number): FrogLineLayout {
   }
   return {
     badgeX: rect.x + FROG_BADGE_W_PX / 2,
-    frogSize: Math.max(FROG_MIN_SIZE_PX, Math.min(rect.h * 0.5, spacing * 1.5)),
+    frogSize: frogSizeFor(spacing),
     lineY: rect.y + rect.h * 0.78,
     overflowX: x1 + FROG_OVERFLOW_GAP_PX,
     targetX: rect.x + rect.w - FROG_TARGET_W_PX / 2,

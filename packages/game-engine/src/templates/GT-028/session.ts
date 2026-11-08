@@ -308,7 +308,11 @@ export class GT028Session extends TemplateGameSession<
       return {
         id: item.item_id,
         slotIndex: slot?.index ?? i,
-        role: "source",
+        // Chạm để đếm, không có kéo-thả: mọi vật cùng vai `target` (`BR-E028-11`,
+        // như `BR-E020-09`). `source` + `selected` làm shell nâng vật lên và vẽ vòng
+        // vàng quanh vật khác; trộn `source` với `target` làm shell coi bề mặt là
+        // kéo-thả hai bước nên phím Enter không còn đếm được vật thứ hai.
+        role: "target",
         state,
         x: slot?.x ?? 0,
         y: slot?.y ?? 0,

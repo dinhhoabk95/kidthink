@@ -634,7 +634,11 @@ export class GT032Session extends TemplateGameSession<
       entities.push({
         id: cup.cup_id,
         slotIndex: i,
-        role: "source",
+        // Chọn/rót cốc bằng chạm, không có kéo-thả: mọi cốc cùng vai `target`
+        // (`BR-E032-15`, như `BR-E020-09`). `source` + `selected` làm shell nâng cốc
+        // lên và vẽ vòng vàng quanh cốc khác; trộn `source` với `target` làm shell
+        // coi bề mặt là kéo-thả hai bước nên phím Enter không chọn được cốc khác.
+        role: "target",
         state,
         x: slot.x,
         y: slot.y,
