@@ -222,7 +222,15 @@ describe.each([
       ]) {
         expect(ids).not.toContain(buttonId);
       }
-      expect(session.getView().entities).toHaveLength(session.slots.length);
+      // GT-036 có thêm ô xoá dải (slot cuối, `neutral`), ẩn khi dải rỗng
+      // (`BR-E036-13`).
+      const hidden =
+        code === "GT-036"
+          ? session.slots.filter((slot) => slot.role === "neutral").length
+          : 0;
+      expect(session.getView().entities).toHaveLength(
+        session.slots.length - hidden
+      );
     });
   }
 );

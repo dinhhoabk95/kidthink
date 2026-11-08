@@ -15,8 +15,10 @@ import {
 import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import {
   computeStageGroupsLayout,
+  hasSlotsOutsideStage,
   resolveStageRect,
 } from "#src/layout/stage-groups";
+import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
 import {
   drawSceneBackground,
@@ -45,6 +47,15 @@ export interface GT036ActionPayload {
   readonly elementId?: string;
 }
 
+/**
+ * Ô phụ "xoá hết dải" (`BR-E036-13`, ngoại lệ có phạm vi của `BR-PSZ-05`): slot
+ * cuối, sau dải và bảng phần tử, nên chỉ số dải và bảng không đổi; trên màn nó
+ * đứng trên dải — xa nút xong ở góc dưới. Hình chổi, không chữ.
+ */
+const CLEAR_ID = "clear-track";
+const CLEAR_ASSET = { kind: "emoji", ref: "🧹" } as const;
+const CLEAR_SPOKEN_LABEL = "Xoá hết dải";
+
 /** Chốt mà chưa có luật: lời mời làm tiếp, không tính sai. */
 const QUIET_OK: ActionResult = Object.freeze({
   valid: true,
@@ -66,19 +77,37 @@ export const GT036_INVITE_LINE = "Bé xâu thêm hạt cho dãy dài hơn nữa 
 /** Mascot khích lệ khi dãy chưa thành quy luật. */
 export const GT036_ENCOURAGE_MS = 1500;
 
+/** Số slot có vùng chạm ra ngoài sân khấu (`BR-PSZ-01`). */
+function countOutsideStage(slots: readonly Slot[], stage: ZoneRect): number {
+  return slots.filter((slot) => hasSlotsOutsideStage([slot], stage)).length;
+}
+
+/** Đưa slot ở chỉ số `from` về cuối (ô xoá), các slot sau nó lùi một. */
+function moveSlotToEnd(slots: readonly Slot[], from: number): Slot[] {
+  const last = slots.length - 1;
+  return slots
+    .map((slot): Slot => {
+      if (slot.index === from) {
+        return { ...slot, index: last, role: "neutral" };
+      }
+      return slot.index > from ? { ...slot, index: slot.index - 1 } : slot;
+    })
+    .sort((a, b) => a.index - b.index);
+}
+
 export class GT036Session extends TemplateGameSession<
   GT036Content,
   GT036Difficulty
 > {
-  /** Nút ở `zones.action` là nút xong (`BR-PSZ-05`); không có nút xoá. */
+  /**
+   * Nút ở `zones.action` là nút xong (`BR-PSZ-05`); nút xoá dải là ô phụ trong
+   * sân khấu (`BR-E036-13`), không phải nút thứ hai ở vùng hành động.
+   */
   override readonly needsCommit = true;
   override readonly usesPromptZone = true;
 
   override canCommit(): boolean {
-    return (
-      !(this.isWin || this.isWon) &&
-      this.placedItems.some((item) => item !== null)
-    );
+    return !(this.isWin || this.isWon) && this.hasPlaced;
   }
 
   degradation: DegradationState | null = null;
@@ -106,6 +135,37 @@ export class GT036Session extends TemplateGameSession<
     super(content, difficulty);
     this.paletteMap = new Map(content.palette.map((p) => [p.id, p]));
     this.sfxEngine = new SFXEngine();
+  }
+
+  /** Slot đầu của bảng phần tử: ngay sau dải (dải là slot 0..track_length-1). */
+  private get paletteBase(): number {
+    return this.content.track_length;
+  }
+
+  /** Chỉ số ô xoá: sau dải và bảng phần tử. */
+  private get clearSlotIndex(): number {
+    return this.paletteBase + this.content.palette.length;
+  }
+
+  /**
+   * Slot ô xoá; không có khi sân khấu không còn chỗ mà không làm tràn thêm
+   * (`BR-E036-13`) — khi đó trẻ gỡ từng hạt như cũ.
+   */
+  private get clearSlot(): Slot | undefined {
+    return this.slots[this.clearSlotIndex];
+  }
+
+  /** Có hạt nào trên dải để xoá không (nút xoá chỉ hiện khi có). */
+  private get hasPlaced(): boolean {
+    return this.placedItems.some((item) => item !== null);
+  }
+
+  private get isClearVisible(): boolean {
+    return (
+      this.clearSlot !== undefined &&
+      this.hasPlaced &&
+      !(this.isWin || this.isWon)
+    );
   }
 
   override storyLine(): string {
@@ -187,7 +247,7 @@ export class GT036Session extends TemplateGameSession<
       const palIdx = this.content.palette.findIndex(
         (p) => p.id === plan.elementId
       );
-      return palIdx >= 0 ? this.content.track_length + palIdx : plan.slot;
+      return palIdx >= 0 ? this.paletteBase + palIdx : plan.slot;
     }
     return plan.slot;
   }
@@ -229,17 +289,53 @@ export class GT036Session extends TemplateGameSession<
 
   protected computeSlots(band: AgeBand): readonly Slot[] {
     // Dải mẫu trên, bảng phần tử dưới — trong sân khấu của khung (`BR-PSZ-01`).
-    // Nút xong không còn là slot: shell vẽ ở `zones.action`; nút xoá bỏ hẳn
-    // (`BR-PSZ-05`) — chạm lại ô đang mang đúng phần tử đang cầm là gỡ nó.
-    return computeStageGroupsLayout({
+    // Nút xong không còn là slot: shell vẽ ở `zones.action` (`BR-PSZ-05`). Ô xoá
+    // dải là slot cuối (`BR-E036-13`); chạm lại ô đang mang đúng phần tử đang
+    // cầm vẫn gỡ phần tử đó.
+    const base = {
       stage: resolveStageRect(this.logicSpace, band, this.stageRect),
       ageBand: band,
       cssPerLogic: this.cssPerLogic,
-      groups: [
-        { count: this.content.track_length, role: "target" },
-        { count: this.content.palette.length, role: "source" },
-      ],
+    };
+    const track = { count: this.content.track_length, role: "target" } as const;
+    const palette = {
+      count: this.content.palette.length,
+      role: "source",
+    } as const;
+    const plain = computeStageGroupsLayout({
+      ...base,
+      groups: [track, palette],
     });
+    // Ô xoá không bao giờ được làm tràn thêm sân khấu: ô dải hay phần tử bị
+    // đẩy ra ngoài là bài không chơi được, mất nút xoá thì chỉ chậm hơn.
+    const plainOutside = countOutsideStage(plain, base.stage);
+    const fits = (slots: readonly Slot[], clearIndex: number): boolean => {
+      const clear = slots.find((slot) => slot.index === clearIndex);
+      return (
+        clear !== undefined &&
+        !hasSlotsOutsideStage([clear], base.stage) &&
+        countOutsideStage(slots, base.stage) <= plainOutside
+      );
+    };
+    // Ưu tiên: ô xoá là nhóm riêng đứng trước dải — xa nút xong ở góc dưới nhất.
+    const onTop = computeStageGroupsLayout({
+      ...base,
+      groups: [{ count: 1, role: "neutral", cols: 1 }, track, palette],
+    });
+    if (fits(onTop, 0)) {
+      return moveSlotToEnd(onTop, 0);
+    }
+    // Sân khấu chật (điện thoại ngang, dải dài): ô xoá nhường vào đầu hàng bảng
+    // phần tử — ô ngoài cùng bên trái, xa nút xong ở góc phải.
+    const merged = computeStageGroupsLayout({
+      ...base,
+      groups: [track, { count: palette.count + 1, role: "source" }],
+    });
+    if (fits(merged, track.count)) {
+      return moveSlotToEnd(merged, track.count);
+    }
+    // Không còn chỗ: không có ô xoá, bố cục như khi chưa có nút.
+    return plain;
   }
 
   override validateAction(action: GameAction): ActionResult {
@@ -260,7 +356,8 @@ export class GT036Session extends TemplateGameSession<
         return this.validateRemoveElement(data);
       case "clear_track":
       case "clear":
-        return ACTION_CORRECT;
+        // Dải rỗng thì không có gì để xoá (`BR-E036-13`).
+        return this.hasPlaced ? ACTION_CORRECT : ACTION_IGNORED;
       case "submit_creation":
       case "submit":
         return this.validateSubmitCreation();
@@ -401,6 +498,17 @@ export class GT036Session extends TemplateGameSession<
   }
 
   private commitClearTrack(): void {
+    // Mỗi hạt gỡ ghi một `element_removed` (đã có trong catalog); không phải lượt
+    // sai, không đụng điểm (`BR-E036-13`).
+    this.placedItems.forEach((removedId, slotIndex) => {
+      if (removedId) {
+        this.recordEvent("element_removed", {
+          slot_index: slotIndex,
+          removed_id: removedId,
+          round_index: 0,
+        });
+      }
+    });
     this.placedItems = new Array(this.content.track_length).fill(null);
     this.submitted = false;
     this.detectedRule = null;
@@ -485,10 +593,21 @@ export class GT036Session extends TemplateGameSession<
     }
   }
 
+  private findTappedClear(gx: number, gy: number): GameAction | null {
+    const slot = this.clearSlot;
+    if (!(slot && this.isClearVisible)) {
+      return null;
+    }
+    const hit = findHitSlotIndex([slot], gx, gy, "circle", TAP_TOLERANCE_PX);
+    return hit >= 0 ? { type: "clear_track", data: {} } : null;
+  }
+
   private findTappedPalette(gx: number, gy: number): GameAction | null {
-    const count = this.content.track_length;
     const palCount = this.content.palette.length;
-    const palSlots = this.slots.slice(count, count + palCount);
+    const palSlots = this.slots.slice(
+      this.paletteBase,
+      this.paletteBase + palCount
+    );
     const hitIdx = findHitSlotIndex(
       palSlots,
       gx,
@@ -531,7 +650,10 @@ export class GT036Session extends TemplateGameSession<
   ): GameAction | null {
     const count = this.content.track_length;
     const palCount = this.content.palette.length;
-    const palSlots = this.slots.slice(count, count + palCount);
+    const palSlots = this.slots.slice(
+      this.paletteBase,
+      this.paletteBase + palCount
+    );
     const palIdx = findHitSlotIndex(
       palSlots,
       gesture.fromX,
@@ -575,6 +697,7 @@ export class GT036Session extends TemplateGameSession<
     }
 
     return (
+      this.findTappedClear(gesture.x, gesture.y) ??
       this.findTappedPalette(gesture.x, gesture.y) ??
       this.findTappedTrack(gesture.x, gesture.y)
     );
@@ -624,11 +747,10 @@ export class GT036Session extends TemplateGameSession<
 
   private appendPaletteEntities(
     entities: ViewEntity[],
-    count: number,
     palCount: number
   ): void {
     for (let p = 0; p < palCount; p++) {
-      const slot = this.slots[count + p];
+      const slot = this.slots[this.paletteBase + p];
       const pal = this.content.palette[p];
       if (!(slot && pal)) {
         continue;
@@ -638,7 +760,7 @@ export class GT036Session extends TemplateGameSession<
       );
       entities.push({
         id: `palette_${pal.id}`,
-        slotIndex: count + p,
+        slotIndex: this.paletteBase + p,
         role: "source",
         state: this.selectedPaletteId === pal.id ? "selected" : "idle",
         x: slot.x,
@@ -653,13 +775,37 @@ export class GT036Session extends TemplateGameSession<
     }
   }
 
+  /** Ô xoá dải: chỉ có trong view khi có slot và dải có hạt (`BR-E036-13`). */
+  private appendClearEntity(entities: ViewEntity[]): void {
+    const slot = this.clearSlot;
+    if (!(slot && this.isClearVisible)) {
+      return;
+    }
+    // `neutral` như nút lật của GT-019: là nút, không phải vật kéo — đường bàn
+    // phím gửi chạm thẳng thay vì "cầm" nó như một phần tử.
+    entities.push({
+      id: CLEAR_ID,
+      slotIndex: this.clearSlotIndex,
+      role: "neutral",
+      state: "idle",
+      x: slot.x,
+      y: slot.y,
+      w: slot.w,
+      h: slot.h,
+      hitShape: "circle",
+      glyph: resolveAssetLabels(CLEAR_ASSET).glyph,
+      spokenLabel: CLEAR_SPOKEN_LABEL,
+    });
+  }
+
   override getView(): EngineView {
     const entities: ViewEntity[] = [];
     const count = this.content.track_length;
     const palCount = this.content.palette.length;
 
     this.appendTrackEntities(entities, count);
-    this.appendPaletteEntities(entities, count, palCount);
+    this.appendPaletteEntities(entities, palCount);
+    this.appendClearEntity(entities);
 
     return {
       activePrompt: this.content.prompt,
@@ -676,6 +822,7 @@ export class GT036Session extends TemplateGameSession<
     drawSceneBackground(ctx, rs, this.themeId);
 
     // Không vẽ dòng chữ nào: lời mời và lời khen do lời dẫn đọc, mô-típ sáng trên dải (`BR-E036-09`).
+    this.renderClearSlot(ctx, rs);
     this.renderTrackSlots(ctx, rs);
     this.renderPaletteDock(ctx, rs);
 
@@ -684,6 +831,20 @@ export class GT036Session extends TemplateGameSession<
       this.degradation?.particles_enabled !== false
     ) {
       rs.drawParticles(ctx, this.particles);
+    }
+  }
+
+  private renderClearSlot(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem
+  ): void {
+    const slot = this.clearSlot;
+    if (slot && this.isClearVisible) {
+      drawSlotItem(ctx, rs, slot, {
+        id: CLEAR_ID,
+        asset: CLEAR_ASSET,
+        state: "idle",
+      });
     }
   }
 
@@ -718,11 +879,10 @@ export class GT036Session extends TemplateGameSession<
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem
   ): void {
-    const count = this.content.track_length;
     const palCount = this.content.palette.length;
 
     for (let i = 0; i < palCount; i++) {
-      const slot = this.slots[count + i];
+      const slot = this.slots[this.paletteBase + i];
       const pItem = this.content.palette[i];
       if (!(slot && pItem)) {
         continue;
