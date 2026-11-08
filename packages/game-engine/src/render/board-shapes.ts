@@ -275,18 +275,25 @@ export function drawMazeFootprints(
 }
 
 /**
- * Lá cờ trung tính trên ô đích (`BR-E013-10`). Content không có trường nhân vật
- * hay vật ở đích, và đề đặt tên đích tuỳ level ("cà rốt", "ngôi nhà", "ô 🥕"),
- * nên đích không được là một vật cụ thể: cột cờ gỗ cùng cờ đuôi nheo.
+ * Lá cờ trên ô đích (`BR-E013-10`). Content không có trường nhân vật hay vật ở
+ * đích, nên đích không được là một vật cụ thể: cột cờ gỗ cùng lá cờ. Có
+ * `goalGlyph` (`BR-E013-11`) thì cờ to hơn và mang con số đó, khớp đề "về tới lá
+ * cờ số N"; con số chỉ là tên của đích, không chỉ đường.
  */
 export function drawMazeGoalFlag(
   ctx: CanvasRenderingContext2D,
   grid: MazeGrid,
-  box: SceneBox
+  box: SceneBox,
+  goalGlyph?: string
 ): void {
   const m = mazeMetrics(grid, box);
   const c = mazeCellCenter(grid.goal, m);
-  drawGoalFlag(ctx, c.x, c.y, Math.min(m.cellW, m.cellH) * 0.26);
+  const cell = Math.min(m.cellW, m.cellH);
+  if (goalGlyph) {
+    drawGoalFlag(ctx, c.x, c.y, cell * 0.36, goalGlyph);
+    return;
+  }
+  drawGoalFlag(ctx, c.x, c.y, cell * 0.26);
 }
 
 // ── Cân thăng bằng (GT-014) ─────────────────────────────────────────

@@ -6,6 +6,8 @@ import {
 } from "#src/render/board-shapes";
 import { designTokens } from "#src/systems/designTokens";
 import { GT013_FIXTURES } from "#src/templates/GT-013/fixtures";
+import { GT013Session } from "#src/templates/GT-013/session";
+import { GT013ContentSchema } from "#src/templates/GT-013/template";
 import { createFakeCanvas } from "./gates/fake-canvas.ts";
 
 /**
@@ -82,6 +84,94 @@ describe("GT-013: đích trung tính (BR-E013-10)", () => {
   it("đề mẫu không nhắc nhân vật hay vật mà bàn không vẽ", () => {
     for (const f of GT013_FIXTURES) {
       expect(f.content.prompt).not.toMatch(HARD_CODED_GOAL);
+    }
+  });
+});
+
+interface TextCall {
+  readonly text: string;
+  readonly x: number;
+  readonly y: number;
+}
+
+function recordWithText() {
+  const base = record();
+  const texts: TextCall[] = [];
+  base.ctx.fillText = (text: string, x: number, y: number) => {
+    texts.push({ text, x, y });
+  };
+  base.ctx.rect = (x: number, y: number, w: number, h: number) => {
+    base.points.push({ x, y }, { x: x + w, y: y + h });
+  };
+  return { ...base, texts };
+}
+
+describe("GT-013: lá cờ mang số khi đề gọi 'lá cờ số N' (BR-E013-11)", () => {
+  const grid = {
+    rows: 4,
+    cols: 4,
+    walls: [],
+    start: { row: 0, col: 0 },
+    goal: { row: 3, col: 3 },
+  };
+
+  it("có goal_glyph: vẽ đúng con số đó, cờ và số nằm trọn trong ô đích", () => {
+    const { ctx, points, texts, depth } = recordWithText();
+    drawMazeGoalFlag(ctx as CanvasRenderingContext2D, grid, BOX, "7");
+    const m = mazeMetrics(grid, BOX);
+    const c = mazeCellCenter(grid.goal, m);
+    expect(texts.map((t) => t.text)).toEqual(["7"]);
+    for (const p of [...points, ...texts]) {
+      expect(Math.abs(p.x - c.x)).toBeLessThanOrEqual(m.cellW / 2);
+      expect(Math.abs(p.y - c.y)).toBeLessThanOrEqual(m.cellH / 2);
+    }
+    expect(depth()).toBe(0);
+  });
+
+  it("không có goal_glyph: cờ trung tính, không vẽ chữ hay số nào", () => {
+    const { ctx, texts } = recordWithText();
+    drawMazeGoalFlag(ctx as CanvasRenderingContext2D, grid, BOX);
+    expect(texts).toEqual([]);
+  });
+
+  it("contract chỉ nhận con số làm goal_glyph", () => {
+    const base = GT013_FIXTURES[0]?.content;
+    if (!base) {
+      throw new Error("Thiếu fixture GT-013");
+    }
+    expect(
+      GT013ContentSchema.safeParse({ ...base, goal_glyph: "5" }).success
+    ).toBe(true);
+    for (const bad of ["", "🥕", "a", "item_1", "123"]) {
+      expect(
+        GT013ContentSchema.safeParse({ ...base, goal_glyph: bad }).success,
+        bad
+      ).toBe(false);
+    }
+  });
+
+  it("ô đích đọc 'lá cờ số N' cho trình đọc màn hình; ô khác không nhắc số", () => {
+    const fixture = GT013_FIXTURES[0];
+    if (!fixture) {
+      throw new Error("Thiếu fixture GT-013");
+    }
+    const session = new GT013Session(
+      { ...fixture.content, goal_glyph: "4" },
+      fixture.difficulty
+    );
+    session.setupEntities();
+    session.prepareRound("4-5");
+    const { goal } = fixture.content.grid;
+    const entities = session.getView().entities;
+    const goalCell = entities.find(
+      (e) => e.id === `cell_${goal.row}_${goal.col}`
+    );
+    expect(entities.length).toBeGreaterThan(1);
+    expect(goalCell?.spokenLabel).toContain("lá cờ số 4");
+    for (const e of entities) {
+      if (e !== goalCell) {
+        expect(e.spokenLabel ?? "").not.toContain("lá cờ số");
+      }
     }
   });
 });

@@ -54,6 +54,27 @@ function buildRequiredCells(count: number): { row: number; col: number }[] {
   ];
 }
 
+/** Lời đề khi level không có con số nào để gọi tên đích. */
+export const GT013_PROMPT = "Bé hãy tìm đường qua mê cung về tới lá cờ nhé!";
+
+/** Chỉ con số mới được gọi "lá cờ số …" và vẽ lên cờ (`BR-E013-11`). */
+const NUMERAL_GLYPH = /^\d{1,2}$/;
+
+/** Lời đề khi đích mang con số `glyph`: số chỉ là tên đích, không chỉ đường. */
+export function gt013NumberedPrompt(glyph: string): string {
+  return `Bé hãy tìm đường về tới lá cờ số ${glyph} nhé!`;
+}
+
+/** Con số gọi tên đích của vòng `roundIdx`, hoặc `null` nếu dataset không có số. */
+function pickGoalGlyph(dataset: SkillDataset, roundIdx: number): string | null {
+  const numerals = dataset.items
+    .map((item) => item.glyph)
+    .filter((glyph): glyph is string =>
+      typeof glyph === "string" ? NUMERAL_GLYPH.test(glyph) : false
+    );
+  return numerals[roundIdx % Math.max(1, numerals.length)] ?? null;
+}
+
 export const projectGT013: Projection<"GT-013"> = {
   template: "GT-013",
   requires: { min_items: 0, max_items: 10 },
@@ -66,14 +87,11 @@ export const projectGT013: Projection<"GT-013"> = {
     const variant = (opts.seed + roundIdx) % 3;
     const walls = buildMazeWalls(variant, opts.difficulty);
 
-    const glyphItems = dataset.items.filter((i) => i.glyph);
-    const item =
-      glyphItems.length > 0
-        ? glyphItems[roundIdx % glyphItems.length]
-        : dataset.items[roundIdx % Math.max(1, dataset.items.length)];
-    const prompt = item?.glyph
-      ? `Bé hãy tìm đường qua mê cung đến ô ${item.glyph} nhé!`
-      : "Bé hãy tìm đường đi qua mê cung đến đích nhé!";
+    // Đề gọi đích đúng như bàn vẽ (`BR-E013-10`, `BR-E013-11`): có con số thì
+    // "lá cờ số N" và cờ mang số N; không thì lá cờ trung tính. Không bao giờ
+    // nói "ô <glyph>" hay id của vật dữ liệu.
+    const goalGlyph = pickGoalGlyph(dataset, roundIdx);
+    const prompt = goalGlyph ? gt013NumberedPrompt(goalGlyph) : GT013_PROMPT;
 
     const deadEndCount =
       (params as { dead_end_count?: number }).dead_end_count ?? 0;
@@ -91,6 +109,7 @@ export const projectGT013: Projection<"GT-013"> = {
           goal: { row: size - 1, col: size - 1 },
         },
         required_cells: buildRequiredCells(requiredCellCount),
+        ...(goalGlyph ? { goal_glyph: goalGlyph } : {}),
         input_mode:
           opts.band === "5-6" ? ("arrows" as const) : ("draw" as const),
       },

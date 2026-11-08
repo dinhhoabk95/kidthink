@@ -2,6 +2,7 @@ import type { Slot } from "#src/layout/types";
 import { designTokens } from "#src/systems/designTokens";
 import type { RenderSystem } from "#src/systems/render-system";
 import { alpha } from "./color-utils.js";
+import { applyCanvasFontAtSize } from "./type-scale.js";
 
 export interface LiquidCupParams {
   readonly cupId: string;
@@ -3567,15 +3568,18 @@ export function drawBeadString(
 }
 
 /**
- * Lá cờ trung tính tâm `(cx, cy)`, bán kính `r` (cột cờ gỗ cùng cờ đuôi nheo màu
- * `indigo`, màu từ `designTokens`). Dùng chung cho đích mê cung (`BR-E013-10`) và
- * đích tia số GT-028 (`BR-E028-12`): hình không mang số hay vật cụ thể.
+ * Lá cờ đích tâm `(cx, cy)`, bán kính `r` (cột cờ gỗ, cờ màu `indigo`, màu từ
+ * `designTokens`). Không có `label`: cờ đuôi nheo trung tính, không mang số hay
+ * vật cụ thể (đích tia số GT-028, `BR-E028-12`). Có `label`: cờ chữ nhật mang
+ * con số đó, chữ `paper` trên nền `indigo` (đích mê cung GT-013, `BR-E013-10`).
+ * Hình nằm trọn trong hình vuông cạnh `2r` quanh tâm.
  */
 export function drawGoalFlag(
   ctx: CanvasRenderingContext2D,
   cx: number,
   cy: number,
-  r: number
+  r: number,
+  label?: string
 ): void {
   const mo = designTokens.colors.montessori;
   const poleX = cx - r * 0.45;
@@ -3593,11 +3597,24 @@ export function drawGoalFlag(
   ctx.lineWidth = 2;
   ctx.lineJoin = "round";
   ctx.beginPath();
-  ctx.moveTo(poleX, top);
-  ctx.lineTo(poleX + r * 1.3, top + r * 0.35);
-  ctx.lineTo(poleX, top + r * 0.8);
-  ctx.closePath();
-  ctx.fill();
-  ctx.stroke();
+  if (label) {
+    const flagW = r * 1.4;
+    const flagH = r * 0.95;
+    ctx.rect(poleX, top, flagW, flagH);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = mo.paper;
+    applyCanvasFontAtSize(ctx, Math.round(flagH * 0.8), "heading", "bold");
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(label, poleX + flagW / 2, top + flagH / 2);
+  } else {
+    ctx.moveTo(poleX, top);
+    ctx.lineTo(poleX + r * 1.3, top + r * 0.35);
+    ctx.lineTo(poleX, top + r * 0.8);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+  }
   ctx.restore();
 }

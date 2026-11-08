@@ -33,6 +33,15 @@ export const GT013BaseSchema = z.object({
   }),
   required_cells: z.array(cellSchema()).min(0).max(2),
   /**
+   * Con số vẽ trên lá cờ đích (`BR-E013-10`, `BR-E013-11`): level nhận biết số
+   * gọi đích là "lá cờ số N" để số hiện cả trên đề lẫn trên hình. Chỉ là tên của
+   * đích, không mang thông tin đường đi. Không khai thì cờ trung tính.
+   */
+  goal_glyph: z
+    .string()
+    .regex(/^\d{1,2}$/)
+    .optional(),
+  /**
    * Câu hỏi mở số 7 của spec khuôn đóng bằng `D-RY`: giữ **cả hai** dạng đầu vào và
    * khai chúng trong `content_pack`. Nguồn workbook 09 có cả hai, và ép một dạng
    * làm mất một nửa dạng bài.

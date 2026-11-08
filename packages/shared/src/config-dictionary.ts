@@ -290,6 +290,10 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
     label: "Các ô bắt buộc đi qua",
     help: "Danh sách toạ độ các chốt kiểm soát bé phải đi qua.",
   },
+  goal_glyph: {
+    label: "Con số trên lá cờ đích",
+    help: 'Để trống thì lá cờ không có số. Có số thì đề gọi đích là "lá cờ số N".',
+  },
   input_mode: {
     label: "Chế độ điều khiển",
     help: "Vẽ đường trực tiếp (drag) hoặc ấn mũi tên (step).",

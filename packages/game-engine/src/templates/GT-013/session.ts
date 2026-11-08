@@ -32,14 +32,17 @@ function toCellSpokenLabel(
   col: number,
   isStart: boolean,
   isGoal: boolean,
-  isRequired: boolean
+  isRequired: boolean,
+  goalGlyph: string | undefined
 ): string {
   const pos = `Hàng ${row + 1} cột ${col + 1}`;
   if (isStart) {
     return `Ô xuất phát, ${pos}`;
   }
   if (isGoal) {
-    return `Ô đích, ${pos}`;
+    return goalGlyph
+      ? `Ô đích, lá cờ số ${goalGlyph}, ${pos}`
+      : `Ô đích, ${pos}`;
   }
   if (isRequired) {
     return `Ô phải đi qua, ${pos}`;
@@ -468,7 +471,14 @@ export class GT013Session extends TemplateGameSession<
         w: slot.w,
         h: slot.h,
         hitShape: "square",
-        spokenLabel: toCellSpokenLabel(r, c, isStart, isGoal, isRequired),
+        spokenLabel: toCellSpokenLabel(
+          r,
+          c,
+          isStart,
+          isGoal,
+          isRequired,
+          this.content.goal_glyph
+        ),
         ...(side ? { glyph: ARROW_GLYPHS[side] } : {}),
       });
     }
@@ -584,7 +594,7 @@ export class GT013Session extends TemplateGameSession<
       return;
     }
     drawMazeBoard(ctx, this.content.grid, box, this.tracker.getPath());
-    drawMazeGoalFlag(ctx, this.content.grid, box);
+    drawMazeGoalFlag(ctx, this.content.grid, box, this.content.goal_glyph);
     drawMazeFootprints(ctx, this.content.grid, box, this.tracker.getPath());
     drawRequiredCells(ctx, this.content.grid, box, this.content.required_cells);
 
