@@ -332,6 +332,16 @@ export abstract class TemplateGameSession<
   }
 
   /**
+   * Điểm đích chính xác của bàn tay ma khi đích nằm trong một slot dài (dải đo
+   * GT-030: kéo dọc dải tới mép ô kế tiếp). Chỉ có nghĩa khi
+   * `getHintDestinationIndex()` khác `null`; mặc định `null` = tâm slot đích
+   * (`BR-SCF-10`).
+   */
+  getHintDestinationPoint(): { readonly x: number; readonly y: number } | null {
+    return null;
+  }
+
+  /**
    * Đồng hồ trợ giúp chung vừa leo lên `level` (1–3). `trigger` là `timer` khi trẻ
    * không phản ứng quá `hint_after_ms`, `miss_streak` khi leo vì chuỗi chạm sai.
    * Engine có thang riêng (GT-026: nới cửa sổ → giãn nhịp nghỉ → không tính giờ,

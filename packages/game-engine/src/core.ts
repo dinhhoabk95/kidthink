@@ -480,7 +480,7 @@ export class GameEngine {
   ): void {
     this.demoGhostHand =
       level >= 2 && hint?.kind === "slot"
-        ? this.resolveGhostHand(session, hint)
+        ? this.resolveGhostHand(session, hint, true)
         : null;
     const sequence =
       level === 3 && this.demoGhostHand && hint?.kind === "slot"
@@ -527,7 +527,8 @@ export class GameEngine {
 
   private resolveGhostHand(
     session: TemplateGameSession,
-    hint: { readonly index: number; readonly toIndex?: number }
+    hint: { readonly index: number; readonly toIndex?: number },
+    preciseDestination = false
   ): NonNullable<GameEngine["demoGhostHand"]> | null {
     const from = session.slots[hint.index];
     if (!from) {
@@ -535,9 +536,18 @@ export class GameEngine {
     }
     const to =
       hint.toIndex === undefined ? undefined : session.slots[hint.toIndex];
+    // Đích nằm trong slot dài: session chỉ điểm chính xác (`BR-SCF-10`). Chỉ cho
+    // bàn tay của hint hiện tại, không cho các bước sau của chuỗi `L3` — điểm
+    // session trả là của bước kế tiếp, không phải của bước thứ n.
+    const point =
+      preciseDestination &&
+      hint.toIndex !== undefined &&
+      hint.toIndex === session.getHintDestinationIndex()
+        ? session.getHintDestinationPoint()
+        : null;
     return {
       from: { x: from.x, y: from.y },
-      to: to ? { x: to.x, y: to.y } : null,
+      to: point ?? (to ? { x: to.x, y: to.y } : null),
     };
   }
 
