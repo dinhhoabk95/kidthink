@@ -22,6 +22,8 @@ import { GT010_FIXTURES } from "#src/templates/GT-010/fixtures.js";
 import { SubstitutionSession } from "#src/templates/GT-010/session.js";
 import { GT011_FIXTURES } from "#src/templates/GT-011/fixtures.js";
 import { GT011Session } from "#src/templates/GT-011/session.js";
+import { GT013_FIXTURES } from "#src/templates/GT-013/fixtures.js";
+import { GT013Session } from "#src/templates/GT-013/session.js";
 import { createFakeCanvas } from "./gates/fake-canvas.ts";
 
 vi.mock("#src/render/craft-shapes", async (importOriginal) => {
@@ -34,8 +36,8 @@ vi.mock("#src/render/craft-shapes", async (importOriginal) => {
 });
 
 /**
- * Nhân vật kể chuyện của GT-005, GT-007..011 (Sóc Nâu, Khỉ Nhỏ, Voi Con, Chồn,
- * Cô Gà Mái, Bướm Nhỏ): ở mọi khung, mọi band, mọi fixture, nhân vật (nếu vẽ)
+ * Nhân vật kể chuyện của GT-005, GT-007..011 (Đợt A) và GT-013..015, GT-017,
+ * GT-019, GT-021..023 (Đợt B): ở mọi khung, mọi band, mọi fixture, nhân vật (nếu vẽ)
  * nằm trong sân khấu, không chồng vùng chạm nào và không đổi `slots`.
  */
 interface ProbeSession {
@@ -112,6 +114,13 @@ const PROBES: readonly Probe[] = [
       (f) => () => new GT011Session(f.content, f.difficulty, 0)
     ),
   },
+  {
+    code: "GT-013",
+    kind: "mouse",
+    sessions: GT013_FIXTURES.map(
+      (f) => () => new GT013Session(f.content, f.difficulty, 0)
+    ),
+  },
 ];
 
 const VIEWPORTS = [
@@ -167,7 +176,7 @@ function hitsOf(session: ProbeSession): readonly number[][] {
   return session.slots.map((s) => [s.x, s.y, s.hitW, s.hitH]);
 }
 
-describe("Nhân vật kể chuyện GT-005, GT-007..011 (Task #313 Đợt A)", () => {
+describe("Nhân vật kể chuyện GT-005, GT-007..011, GT-013..015, GT-017, GT-019, GT-021..023 (Task #313 Đợt A, B)", () => {
   for (const probe of PROBES) {
     it(`${probe.code}: có fixture để đo`, () => {
       expect(probe.sessions.length).toBeGreaterThan(0);

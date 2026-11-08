@@ -51,8 +51,11 @@ import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
 import {
   boxFromSlots,
   drawMazeBoard,
+  drawMazeCheese,
+  drawMazeFootprints,
   drawRequiredCells,
   drawSceneBackground,
+  drawStoryCharacterInStage,
 } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
@@ -574,11 +577,15 @@ export class GT013Session extends TemplateGameSession<
       this.blockedTimestamp = 0;
     }
     drawSceneBackground(ctx, rs, this.themeId);
+    // Chuột Nhắt ở góc trống, ngoài vùng chạm (`BR-E013-09`).
+    drawStoryCharacterInStage(ctx, "mouse", this.stageRect, this.slots);
     const box = boxFromSlots(this.slots);
     if (!box) {
       return;
     }
     drawMazeBoard(ctx, this.content.grid, box, this.tracker.getPath());
+    drawMazeCheese(ctx, this.content.grid, box);
+    drawMazeFootprints(ctx, this.content.grid, box, this.tracker.getPath());
     drawRequiredCells(ctx, this.content.grid, box, this.content.required_cells);
 
     if (this.blockedCell) {

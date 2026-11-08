@@ -198,6 +198,116 @@ export function drawRequiredCells(
   ctx.restore();
 }
 
+// ── Phô mai ở đích và dấu chân trên đường (GT-013, `BR-E013-09`) ─────
+
+/** Số dấu chân mỗi đoạn đường giữa hai ô liền kề. */
+export const MAZE_FOOTPRINTS_PER_STEP = 2;
+
+/** Một dấu chân: toạ độ tâm và góc hướng đi (rad). */
+export interface MazeFootprint {
+  readonly angle: number;
+  readonly x: number;
+  readonly y: number;
+}
+
+/**
+ * Dấu chân dọc **đúng đoạn đường đã đi** (`path`): mỗi cặp ô liền kề cho
+ * `MAZE_FOOTPRINTS_PER_STEP` dấu, so le trái/phải. Hàm thuần, chỉ đọc nét vẽ
+ * của trẻ — không đọc đích hay đường đúng.
+ */
+export function mazeFootprints(
+  grid: MazeGrid,
+  box: SceneBox,
+  path: readonly MazeCell[]
+): MazeFootprint[] {
+  const m = mazeMetrics(grid, box);
+  const out: MazeFootprint[] = [];
+  const side = Math.min(m.cellW, m.cellH) * 0.1;
+  for (let i = 1; i < path.length; i++) {
+    const prev = path[i - 1];
+    const cur = path[i];
+    if (!(prev && cur)) {
+      continue;
+    }
+    const a = mazeCellCenter(prev, m);
+    const b = mazeCellCenter(cur, m);
+    const angle = Math.atan2(b.y - a.y, b.x - a.x);
+    for (let k = 0; k < MAZE_FOOTPRINTS_PER_STEP; k++) {
+      const t = (k + 1) / (MAZE_FOOTPRINTS_PER_STEP + 1);
+      const lateral = (k + i) % 2 === 0 ? side : -side;
+      out.push({
+        angle,
+        x: a.x + (b.x - a.x) * t - Math.sin(angle) * lateral,
+        y: a.y + (b.y - a.y) * t + Math.cos(angle) * lateral,
+      });
+    }
+  }
+  return out;
+}
+
+/** Dấu chân chuột: một đệm và ba ngón nhỏ, xoay theo hướng đi. */
+export function drawMazeFootprints(
+  ctx: CanvasRenderingContext2D,
+  grid: MazeGrid,
+  box: SceneBox,
+  path: readonly MazeCell[]
+): void {
+  const m = mazeMetrics(grid, box);
+  const r = Math.max(2.5, Math.min(m.cellW, m.cellH) * 0.045);
+  ctx.save();
+  ctx.fillStyle = alpha(designTokens.colors.montessori.amberDark, 0.55);
+  for (const f of mazeFootprints(grid, box, path)) {
+    ctx.save();
+    ctx.translate(f.x, f.y);
+    ctx.rotate(f.angle);
+    ctx.beginPath();
+    ctx.ellipse(0, 0, r * 1.3, r, 0, 0, Math.PI * 2);
+    ctx.fill();
+    for (const dy of [-1, 0, 1]) {
+      ctx.beginPath();
+      ctx.arc(r * 1.9, dy * r * 0.9, r * 0.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+  ctx.restore();
+}
+
+/** Miếng phô mai (hình nêm vàng có lỗ) đặt trên ô đích. */
+export function drawMazeCheese(
+  ctx: CanvasRenderingContext2D,
+  grid: MazeGrid,
+  box: SceneBox
+): void {
+  const m = mazeMetrics(grid, box);
+  const c = mazeCellCenter(grid.goal, m);
+  const r = Math.min(m.cellW, m.cellH) * 0.26;
+  const mo = designTokens.colors.montessori;
+  ctx.save();
+  ctx.fillStyle = mo.amber;
+  ctx.strokeStyle = mo.amberDark;
+  ctx.lineWidth = 2.5;
+  ctx.lineJoin = "round";
+  ctx.beginPath();
+  ctx.moveTo(c.x - r, c.y + r * 0.6);
+  ctx.lineTo(c.x + r, c.y + r * 0.6);
+  ctx.lineTo(c.x + r, c.y - r * 0.2);
+  ctx.lineTo(c.x - r, c.y + r * 0.6);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = mo.amberDeep;
+  for (const [dx, dy, k] of [
+    [0.45, 0.2, 0.14],
+    [0.7, 0.4, 0.1],
+  ] as const) {
+    ctx.beginPath();
+    ctx.arc(c.x + r * dx, c.y + r * dy, r * k, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
 // ── Cân thăng bằng (GT-014) ─────────────────────────────────────────
 
 const MAX_TILT_DEG = 14;
