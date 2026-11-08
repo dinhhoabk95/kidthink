@@ -497,6 +497,26 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
     help: "Đảo lộn thứ tự ban đầu để bé sắp xếp lại.",
   },
 
+  attributes: {
+    label: "Thuộc tính của đối tượng",
+    help: "Cặp tên thuộc tính và giá trị (vd: màu = đỏ) để manh mối suy luận so khớp.",
+  },
+  reference_scales: {
+    label: "Cân mẫu",
+    help: "Một hoặc hai cân tham chiếu cho bé đối chiếu khối lượng (tối đa 2).",
+  },
+  scale_id: {
+    label: "Mã cân mẫu",
+    help: "Mã định danh duy nhất của cân mẫu trong màn chơi.",
+  },
+  strip_item_ids: {
+    label: "Vật lời đọc gọi tên (dải icon khi tắt tiếng)",
+    help: "Các mã vật phẩm mà lời đọc nhắc tới; hiện thành dải icon khi bé tắt tiếng. Mỗi mã phải có trong danh sách phương án.",
+  },
+  occluded_by: {
+    label: "Bị che bởi vật",
+    help: "Mã vật che khuất vật thể này; bé phải chạm mở vật che trước khi tìm thấy.",
+  },
   // Legacy v1 templates (GT-018..024)
   audio_prompt: {
     label: "Lời nhắc âm thanh",
@@ -1244,6 +1264,9 @@ export const TEXT_FALLBACK_ALLOWLIST: Record<string, string> = {
   color: "Tên mã màu hoặc token màu của vật thể.",
   shape: "Tên hình dạng của vật thể.",
   size: "Kích thước của vật thể.",
+  attributes:
+    "Bản đồ tự do tên thuộc tính -> giá trị chuỗi ngắn (khoá do người soạn tự đặt, không có tập cố định); form builder chưa có widget key-value nên nhập dạng text.",
+  scale_id: "Mã định danh kỹ thuật của cân mẫu trong content pack.",
 };
 
 export function getFieldDictionaryEntry(
