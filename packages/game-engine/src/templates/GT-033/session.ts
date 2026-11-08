@@ -21,6 +21,9 @@ import { computeStageCellSlots } from "#src/layout/stage-targets";
 import { computeTraySourceSlots, pickTrayZones } from "#src/layout/tray-layout";
 import type { Slot } from "#src/layout/types";
 import {
+  boxFromSlots,
+  brocadeFrame,
+  drawBrocadeFrame,
   drawSceneBackground,
   drawSlotItem,
   drawSubPromptText,
@@ -817,6 +820,17 @@ export class GT033Session extends TemplateGameSession<
     );
   }
 
+  /** Dải thổ cẩm quanh lưới dệt: ngoài ô, trong sân khấu, không đổi vùng chạm (`BR-E033-06`). */
+  private renderBrocadeFrame(ctx: CanvasRenderingContext2D): void {
+    const totalCells = this.content.grid.rows * this.content.grid.cols;
+    const grid = boxFromSlots(this.slots.slice(0, totalCells));
+    const frame =
+      grid && this.stageRect ? brocadeFrame(grid, this.stageRect) : null;
+    if (frame) {
+      drawBrocadeFrame(ctx, frame);
+    }
+  }
+
   private renderGridCells(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem
@@ -909,6 +923,7 @@ export class GT033Session extends TemplateGameSession<
       this.drawLegacySubPrompt(ctx, rs);
     }
 
+    this.renderBrocadeFrame(ctx);
     this.renderGridCells(ctx, rs);
     this.renderPaletteDock(ctx, rs);
 
