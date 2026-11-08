@@ -15,11 +15,19 @@ import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test.js";
 import { resolveLayout } from "#src/layout/registry.js";
 import type { Slot } from "#src/layout/types";
 import {
+  collectJarBox,
   drawCircleOutline,
+  drawCollectJar,
+  drawFlyingStar,
   drawSceneBackground,
   drawSlotItem,
   drawSubPromptText,
+  JAR_STAR_FLIGHT_MS,
+  jarFillLevel,
+  jarMouth,
+  type StarFlightPose,
   spawnParticlesAtSlot,
+  starFlightPose,
   updateParticles,
 } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
@@ -43,6 +51,16 @@ interface GT037OrderStep {
   readonly isTarget: boolean;
   readonly timeMs: number;
 }
+
+/** Một ngôi sao đang bay từ ô đích vào lọ (`BR-E037-14`). */
+interface StarInFlight {
+  readonly x: number;
+  readonly y: number;
+  readonly startMs: number;
+}
+
+/** Bán kính ngoài của sao bay, theo cạnh ô. */
+const STAR_RADIUS_RATIO = 0.22;
 
 interface ProgressSnapshot {
   readonly found: readonly { index: number; symbolId: string }[];
@@ -211,6 +229,8 @@ export class GT037Session extends TemplateGameSession<
   private boardBand: AgeBand | null = null;
   /** Thời gian còn lại của nhịp reo sau ô đích mới tìm. */
   private cheerRemainingMs = 0;
+  /** Sao đang bay vào lọ, theo đồng hồ khung (`lastFrameMs`). */
+  private starsInFlight: StarInFlight[] = [];
 
   constructor(
     content: GT037Content,
@@ -246,6 +266,7 @@ export class GT037Session extends TemplateGameSession<
     this.wrongFlash.clear();
     this.lastFrameMs = 0;
     this.cheerRemainingMs = 0;
+    this.starsInFlight = [];
     this.rebuildBoard();
     // Ghi `game_started` sau khi `computeSlots` hạ số ô theo khung (`BR-E037-12`),
     // để `item_count` là số ô thật trên bảng chứ không phải số khai.
@@ -597,6 +618,7 @@ export class GT037Session extends TemplateGameSession<
       const slot = this.slots[slotIndex];
       if (slot) {
         this.particles.push(...spawnParticlesAtSlot(slot, 6));
+        this.starsInFlight.push({ x: slot.x, y: slot.y, startMs: now });
       }
       this.recordEvent("item_selected", {
         item_id: symbol.id,
@@ -686,6 +708,9 @@ export class GT037Session extends TemplateGameSession<
     }
     this.lastFrameMs += deltaMs;
     this.expireWrongFlash();
+    this.starsInFlight = this.starsInFlight.filter(
+      (star) => this.lastFrameMs - star.startMs < JAR_STAR_FLIGHT_MS
+    );
   }
 
   /** Hết nhịp sai thì ô về trung tính (cùng đồng hồ khung với lúc kích). */
@@ -840,6 +865,44 @@ export class GT037Session extends TemplateGameSession<
     }
   }
 
+  /**
+   * Lọ ở mép sân khấu và sao bay vào lọ (`BR-E037-14`). Mức đầy chỉ đếm sao đã
+   * vào lọ; khi không được lộ tổng (`BR-E037-13`) lọ dâng dần mà không bao giờ đầy.
+   * Reduced-motion: không có sao bay, lọ nhảy thẳng tới mức cuối.
+   */
+  private renderJar(ctx: CanvasRenderingContext2D, rs: RenderSystem): void {
+    if (!this.stageRect) {
+      return;
+    }
+    const box = collectJarBox(this.stageRect, rs.LOGIC_WIDTH, rs.LOGIC_HEIGHT);
+    if (!box) {
+      return;
+    }
+    const mouth = jarMouth(box);
+    const flying: StarFlightPose[] = [];
+    for (const star of this.starsInFlight) {
+      const pose = starFlightPose(
+        star,
+        mouth,
+        this.lastFrameMs - star.startMs,
+        rs.reducedMotion
+      );
+      if (pose) {
+        flying.push(pose);
+      }
+    }
+    const landed = Math.max(0, this.foundTargets.size - flying.length);
+    drawCollectJar(
+      ctx,
+      box,
+      jarFillLevel(landed, this.showTargetCounter ? this.targetCopies : null)
+    );
+    const edge = this.slots[0]?.w ?? box.w;
+    for (const pose of flying) {
+      drawFlyingStar(ctx, pose, edge * STAR_RADIUS_RATIO);
+    }
+  }
+
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
@@ -851,5 +914,6 @@ export class GT037Session extends TemplateGameSession<
     this.renderPrompt(ctx, rs);
     this.renderInteractiveSlots(ctx, rs, timeMs);
     this.renderFeedback(ctx, rs);
+    this.renderJar(ctx, rs);
   }
 }
