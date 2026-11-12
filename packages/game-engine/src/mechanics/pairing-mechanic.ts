@@ -90,13 +90,21 @@ export class PairingMechanic {
       return ACTION_IGNORED;
     }
 
-    const data = action.data as
-      | { left_item_id?: string; right_item_id?: string }
-      | undefined;
-    const leftId = data?.left_item_id;
-    const rightId = data?.right_item_id;
+    if (!action.data || typeof action.data !== "object") {
+      return ACTION_IGNORED;
+    }
 
-    if (!(leftId && rightId)) {
+    const leftId: string | symbol | number | boolean | object | undefined =
+      Reflect.get(action.data, "left_item_id");
+    const rightId: string | symbol | number | boolean | object | undefined =
+      Reflect.get(action.data, "right_item_id");
+
+    if (
+      typeof leftId !== "string" ||
+      leftId.length === 0 ||
+      typeof rightId !== "string" ||
+      rightId.length === 0
+    ) {
       return ACTION_IGNORED;
     }
 

@@ -46,7 +46,7 @@ const KNOWN_SHELL_OVERFLOW: Readonly<
   // phẩm cho từng engine; chỉ đóng băng, không nới. Số đếm gồm từng vòng của
   // level seed (`rounds[]`), không chỉ `content_pack` cấp level.
   preview: {
-    "GT-005": { "3-4@360x640": 110, "3-4@390x844": 12 },
+    "GT-005": { "3-4@360x640": 110 },
     "GT-011": { "3-4@360x640": 1 },
     "GT-015": { "3-4@360x640": 12, "3-4@390x844": 12 },
     "GT-021": { "3-4@360x640": 12, "3-4@390x844": 12 },
@@ -56,7 +56,7 @@ const KNOWN_SHELL_OVERFLOW: Readonly<
   // band 3-4 ở 360 px: ba cột 96 px cộng khe vẫn rộng hơn 300 px. GT-035 cần
   // lưới 3 hàng + hàng lệnh + khay lệnh, quá 4 hàng của hộp 300x505.
   play: {
-    "GT-005": { "3-4@360x640": 205, "3-4@390x844": 48, "4-5@360x640": 110 },
+    "GT-005": { "3-4@360x640": 205, "4-5@360x640": 110 },
     "GT-007": { "3-4@360x640": 240 },
     "GT-008": { "3-4@360x640": 12 },
     "GT-009": { "3-4@360x640": 96 },
