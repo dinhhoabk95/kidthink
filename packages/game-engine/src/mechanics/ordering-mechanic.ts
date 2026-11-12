@@ -15,6 +15,18 @@ export interface OrderingMechanicOptions {
   readonly onEvent?: (eventName: string, payload: MechanicEventPayload) => void;
 }
 
+function readIntegerField(
+  data: GameAction["data"],
+  key: string
+): number | null {
+  if (!data || typeof data !== "object") {
+    return null;
+  }
+  const val: string | symbol | number | boolean | object | undefined =
+    Reflect.get(data, key);
+  return typeof val === "number" && Number.isInteger(val) ? val : null;
+}
+
 /**
  * OrderingMechanic — Primitive for sequence ordering / step arrangement (GT-006) (BR-TAK-05, BR-TAK-06).
  * Manages in-bounds swaps, reordering, and target sequence validation.
@@ -39,11 +51,18 @@ export class OrderingMechanic {
   }
 
   isInBounds(index: number): boolean {
-    return index >= 0 && index < this.currentSequence.length;
+    return (
+      Number.isInteger(index) &&
+      index >= 0 &&
+      index < this.currentSequence.length
+    );
   }
 
   reorder(fromIndex: number, toIndex: number): boolean {
-    if (!(this.isInBounds(fromIndex) && this.isInBounds(toIndex))) {
+    if (
+      fromIndex === toIndex ||
+      !(this.isInBounds(fromIndex) && this.isInBounds(toIndex))
+    ) {
       return false;
     }
     const moved = this.currentSequence[fromIndex];
@@ -63,7 +82,10 @@ export class OrderingMechanic {
   }
 
   swap(indexA: number, indexB: number): boolean {
-    if (!(this.isInBounds(indexA) && this.isInBounds(indexB))) {
+    if (
+      indexA === indexB ||
+      !(this.isInBounds(indexA) && this.isInBounds(indexB))
+    ) {
       return false;
     }
     const itemA = this.currentSequence[indexA];
@@ -81,32 +103,29 @@ export class OrderingMechanic {
    */
   validate(
     action: GameAction,
-    targetSequence: readonly string[]
+    targetSequence: readonly string[],
+    isMatchOverride?: boolean
   ): ActionResult {
     if (action.type === "reorder_step") {
-      const data = action.data as
-        | { from_index?: number; to_index?: number }
-        | undefined;
-      const fromIndex = data?.from_index;
-      const toIndex = data?.to_index;
-      if (fromIndex === undefined || toIndex === undefined) {
+      const fromIndex = readIntegerField(action.data, "from_index");
+      const toIndex = readIntegerField(action.data, "to_index");
+      if (
+        fromIndex === null ||
+        toIndex === null ||
+        fromIndex === toIndex ||
+        !(this.isInBounds(fromIndex) && this.isInBounds(toIndex))
+      ) {
         return ACTION_IGNORED;
       }
-      return this.isInBounds(fromIndex) && this.isInBounds(toIndex)
-        ? ACTION_CORRECT
-        : ACTION_IGNORED;
+      return ACTION_CORRECT;
     }
 
-    // `sequence_submitted` là tên GT-018 dùng: thiếu ở đây thì verdict là
-    // IGNORED trong khi session vẫn nộp, hai bên lệch nhau.
     if (
       action.type === "check_sequence" ||
       action.type === "submit_order" ||
       action.type === "sequence_submitted"
     ) {
-      const isMatch =
-        this.currentSequence.length === targetSequence.length &&
-        this.currentSequence.every((id, idx) => id === targetSequence[idx]);
+      const isMatch = isMatchOverride ?? this.isSequenceCorrect(targetSequence);
       return isMatch ? ACTION_CORRECT : ACTION_RETRY;
     }
 
