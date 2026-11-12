@@ -3,12 +3,15 @@ import type { Slot } from "#src/layout/types";
 import { designTokens } from "#src/systems/designTokens";
 import type { RenderSystem } from "#src/systems/render-system";
 import { alpha } from "./color-utils.js";
+import { resolveGT000FlashcardRect } from "./gt-000-shapes.js";
+import { drawPlaceholderBox } from "./numeracy-primitives.js";
 import {
   applyCanvasFontAtSize,
   applyEmojiFont,
   minLegiblePx,
   spaceOf,
 } from "./type-scale.js";
+import type { ItemVisualState } from "./types.js";
 
 const DIGIT_REGEX = /^\d+$/;
 
@@ -194,37 +197,67 @@ const FLASHCARD_COUNTER_EMOJIS: readonly string[] = [
   "🐸",
 ];
 
+export interface FlashcardRenderOptions {
+  readonly state?: ItemVisualState;
+  readonly depressed?: boolean;
+  readonly scale?: number;
+  readonly offsetY?: number;
+  readonly softShadowsEnabled?: boolean;
+}
+
 export function drawFlashcardFrame(
   ctx: CanvasRenderingContext2D,
   left: number,
   top: number,
   cardW: number,
-  cardH: number
+  cardH: number,
+  options?: FlashcardRenderOptions
 ): void {
-  // 1. Warm ambient drop shadow
+  const isSelected = options?.state === "selected";
+  const isTouching = options?.state === "touching";
+  const isDepressed = Boolean(options?.depressed || isTouching);
+  const slabOffset = isDepressed ? 2 : 5;
+
+  // 1. Warm ambient drop shadow (tôn trọng rs.softShadowsEnabled — BR-ERC-09)
   ctx.save();
-  ctx.shadowColor = alpha(designTokens.colors.scene.night[900], 0.12);
-  ctx.shadowBlur = 18;
-  ctx.shadowOffsetY = 8;
+  if (options?.softShadowsEnabled !== false) {
+    ctx.shadowColor = alpha(designTokens.colors.scene.night[900], 0.12);
+    ctx.shadowBlur = 18;
+    ctx.shadowOffsetY = 8;
+  }
   ctx.fillStyle = designTokens.colors.surface[200];
   ctx.beginPath();
   ctx.roundRect(left, top, cardW, cardH, 28);
   ctx.fill();
   ctx.restore();
 
-  // 2. 3D bottom slab
+  // 2. 3D bottom slab (≥2 kênh thị giác khi chạm/chọn)
   ctx.save();
-  ctx.fillStyle = designTokens.colors.surface[200];
+  ctx.fillStyle =
+    isSelected || isTouching
+      ? designTokens.colors.montessori.amberDark
+      : designTokens.colors.surface[200];
   ctx.beginPath();
-  ctx.roundRect(left, top + 5, cardW, cardH, 28);
+  ctx.roundRect(left, top + slabOffset, cardW, cardH, 28);
   ctx.fill();
   ctx.restore();
 
-  // 3. Main card white body
+  // 3. Main card body
   ctx.save();
-  ctx.fillStyle = designTokens.colors.surface[0];
-  ctx.strokeStyle = designTokens.colors.surface[200];
-  ctx.lineWidth = 4;
+  ctx.fillStyle =
+    isSelected || isTouching
+      ? designTokens.colors.montessori.amberLight
+      : designTokens.colors.surface[0];
+  if (isTouching) {
+    ctx.strokeStyle = designTokens.colors.brand[500];
+    ctx.lineWidth = 5;
+  } else if (isSelected) {
+    ctx.strokeStyle = designTokens.colors.montessori.amber;
+    ctx.lineWidth = 5;
+  } else {
+    ctx.strokeStyle = designTokens.colors.surface[200];
+    ctx.lineWidth = 4;
+  }
   ctx.beginPath();
   ctx.roundRect(left, top, cardW, cardH, 28);
   ctx.fill();
@@ -240,6 +273,108 @@ export function drawFlashcardFrame(
   ctx.restore();
 }
 
+function drawFlashcardFallbackEmblem(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  cardW: number,
+  minFontPx: number,
+  labelToDraw: string
+): void {
+  ctx.save();
+  ctx.fillStyle = designTokens.colors.montessori.amberLight;
+  ctx.strokeStyle = designTokens.colors.montessori.amber;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.roundRect(x - 44, y - 72, 88, 88, 22);
+  ctx.fill();
+  ctx.stroke();
+
+  const initial = labelToDraw.trim().charAt(0).toUpperCase() || "★";
+  const emblemFontPx = Math.max(minFontPx, Math.round(cardW * 0.14));
+  applyCanvasFontAtSize(ctx, emblemFontPx, "heading", "bold");
+  ctx.fillStyle = designTokens.colors.brand[600];
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(initial, x, y - 28);
+  ctx.restore();
+}
+
+function drawFlashcardMainVisual(
+  ctx: CanvasRenderingContext2D,
+  asset: {
+    glyph?: string;
+    text?: string;
+    image_ref?: {
+      kind: string;
+      ref?: string;
+      path?: string;
+      text?: string;
+      url?: string;
+    };
+  },
+  cue: FlashcardComparisonCue | null,
+  cardW: number,
+  x: number,
+  y: number,
+  labelToDraw: string,
+  minFontPx: number
+): void {
+  const emojiRef =
+    asset.image_ref?.kind === "emoji" ? asset.image_ref.ref?.trim() : undefined;
+  if (emojiRef) {
+    const emojiFontSize = cue ? Math.round(82 * cue.glyphScale) : 84;
+    ctx.save();
+    applyEmojiFont(ctx, emojiFontSize);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(emojiRef, x, y - 28);
+    ctx.restore();
+    return;
+  }
+
+  if (asset.glyph?.trim()) {
+    ctx.save();
+    applyCanvasFontAtSize(ctx, 100, "heading", "bold");
+    ctx.fillStyle = designTokens.colors.brand[600];
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(asset.glyph, x, y - 25);
+    ctx.restore();
+    return;
+  }
+
+  const textRef =
+    asset.image_ref?.kind === "text" ? asset.image_ref.text?.trim() : undefined;
+  const word = textRef || asset.text?.trim();
+  if (word) {
+    const wordFontPx = Math.max(minFontPx, Math.round(cardW * 0.2));
+    ctx.save();
+    applyCanvasFontAtSize(ctx, wordFontPx, "heading", "bold");
+    ctx.fillStyle = designTokens.colors.brand[600];
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(word, x, y - 25, cardW - 40);
+    ctx.restore();
+    return;
+  }
+
+  if (asset.image_ref?.kind === "image") {
+    drawPlaceholderBox(ctx, {
+      index: 0,
+      page: 0,
+      role: "neutral",
+      x,
+      y: y - 28,
+      w: Math.round(cardW * 0.52),
+      h: 176,
+      hitW: 88,
+      hitH: 88,
+    });
+  }
+  drawFlashcardFallbackEmblem(ctx, x, y, cardW, minFontPx, labelToDraw);
+}
+
 function drawFlashcardNonNumberContent(
   ctx: CanvasRenderingContext2D,
   asset: {
@@ -247,6 +382,7 @@ function drawFlashcardNonNumberContent(
     label: string;
     value?: number;
     glyph?: string;
+    text?: string;
     contrast_group?: string;
     image_ref?: {
       kind: string;
@@ -267,23 +403,7 @@ function drawFlashcardNonNumberContent(
     drawFlashcardComparisonCue(ctx, cue, cardW, x, y);
   }
 
-  if (asset.image_ref?.kind === "emoji" && asset.image_ref.ref) {
-    const emojiFontSize = cue ? Math.round(82 * cue.glyphScale) : 84;
-    ctx.save();
-    applyEmojiFont(ctx, emojiFontSize);
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(asset.image_ref.ref, x, y - 28);
-    ctx.restore();
-  } else if (asset.glyph) {
-    ctx.save();
-    applyCanvasFontAtSize(ctx, 100, "heading", "bold");
-    ctx.fillStyle = designTokens.colors.brand[600];
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(asset.glyph, x, y - 25);
-    ctx.restore();
-  }
+  drawFlashcardMainVisual(ctx, asset, cue, cardW, x, y, labelToDraw, minFontPx);
 
   ctx.save();
   applyCanvasFontAtSize(ctx, Math.max(24, minFontPx), "sans", "bold");
@@ -379,6 +499,28 @@ function drawFlashcardNumberContent(
   ctx.restore();
 }
 
+function resolveFlashcardNumericValue(asset: {
+  label: string;
+  value?: number;
+  glyph?: string;
+  contrast_group?: string;
+}): number | undefined {
+  const hasDigit = Boolean(asset.glyph && DIGIT_REGEX.test(asset.glyph));
+  const isNumericCard =
+    hasDigit ||
+    isNumberEntity(asset.label, { glyph: asset.glyph }) ||
+    asset.contrast_group === "quantity" ||
+    asset.contrast_group === "num" ||
+    asset.contrast_group === "numbers";
+  if (!isNumericCard) {
+    return undefined;
+  }
+  if (asset.value !== undefined) {
+    return asset.value;
+  }
+  return hasDigit && asset.glyph ? Number.parseInt(asset.glyph, 10) : undefined;
+}
+
 export function drawFlashcard(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
@@ -388,6 +530,7 @@ export function drawFlashcard(
     label: string;
     value?: number;
     glyph?: string;
+    text?: string;
     contrast_group?: string;
     image_ref?: {
       kind: string;
@@ -397,46 +540,38 @@ export function drawFlashcard(
       url?: string;
     };
   },
-  displayLabel?: string
+  displayLabel?: string,
+  options?: FlashcardRenderOptions
 ): void {
-  const cardW = Math.max(
-    280,
-    Math.min(slot.w > 0 ? slot.w : 350, rs.LOGIC_WIDTH * 0.42)
-  );
-  const cardH = Math.max(
-    260,
-    Math.min(slot.h > 0 ? slot.h : 320, rs.LOGIC_HEIGHT * 0.62)
-  );
-  const x = slot.x;
-  const y = slot.y;
-  const left = x - cardW / 2;
-  const top = y - cardH / 2;
-
-  drawFlashcardFrame(ctx, left, top, cardW, cardH);
-
-  const hasDigit = Boolean(asset.glyph && DIGIT_REGEX.test(asset.glyph));
-  const isNumericCard =
-    hasDigit ||
-    isNumberEntity(asset.label, { glyph: asset.glyph }) ||
-    asset.contrast_group === "quantity" ||
-    asset.contrast_group === "num" ||
-    asset.contrast_group === "numbers";
-  const val = isNumericCard
-    ? (asset.value ??
-      (hasDigit ? Number.parseInt(asset.glyph as string, 10) : undefined))
-    : undefined;
-
-  const labelToDraw = displayLabel ?? asset.label;
   const { space, scale } = spaceOf(rs);
+  const rect = resolveGT000FlashcardRect(space, slot);
+  const poseScale = options?.scale ?? 1;
+  const poseOffsetY = options?.offsetY ?? 0;
+  const hasTransform = poseScale !== 1 || poseOffsetY !== 0;
+
+  if (hasTransform) {
+    ctx.save();
+    ctx.translate(rect.x, rect.y + poseOffsetY);
+    ctx.scale(poseScale, poseScale);
+    ctx.translate(-rect.x, -rect.y);
+  }
+
+  drawFlashcardFrame(ctx, rect.left, rect.top, rect.w, rect.h, {
+    ...options,
+    softShadowsEnabled: options?.softShadowsEnabled ?? rs.softShadowsEnabled,
+  });
+
+  const val = resolveFlashcardNumericValue(asset);
+  const labelToDraw = displayLabel ?? asset.label;
   const minFontPx = minLegiblePx(space, scale);
 
   if (val === undefined) {
     drawFlashcardNonNumberContent(
       ctx,
       asset,
-      cardW,
-      x,
-      y,
+      rect.w,
+      rect.x,
+      rect.y,
       labelToDraw,
       minFontPx
     );
@@ -445,12 +580,16 @@ export function drawFlashcard(
       ctx,
       asset,
       val,
-      cardW,
-      x,
-      y,
+      rect.w,
+      rect.x,
+      rect.y,
       labelToDraw,
       minFontPx
     );
+  }
+
+  if (hasTransform) {
+    ctx.restore();
   }
 }
 

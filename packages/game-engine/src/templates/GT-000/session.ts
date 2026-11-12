@@ -1,59 +1,77 @@
 import type { AgeBand } from "#src/contracts/types";
 import {
-  ACTION_CORRECT,
-  ACTION_IGNORED,
   type ActionResult,
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture } from "#src/interaction";
-import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
-import { curtainOpenness, type RenderItem } from "#src/render/index.js";
+import {
+  GT000_CARD_BOUNCE_DURATION_MS,
+  GT000_NUDGE_DURATION_MS,
+  GT000_SPOTLIGHT_DURATION_MS,
+} from "#src/render/gt-000-shapes.js";
+import type { RenderItem } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
 import { AudioController } from "#src/systems/audio-controller";
+import type { DegradationState } from "#src/systems/degradation";
 import { MoodPulse } from "#src/systems/mood-pulse";
-import type { RenderSystem } from "#src/systems/render-system";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
-  computeGlobalStepOffset,
-  computeStepAssetIds,
-  createRenderItem,
-  evaluateGT000StepAnswer,
-  findTappedItem,
-  getStepItemCount,
-  getStepPromptText,
+  buildGT000StepCacheSnapshot,
+  buildGT000StepRenderOptions,
+  collectGT000DecoratedItems,
+  computeGT000StepSlots,
+  EMPTY_STEP_CACHE,
+  type GT000StepCacheSnapshot,
+  type GT000TimedAsset,
+  playGT000CardAudioWithFallback,
+  playGT000TargetThenAsk,
+  RENDER_ORIGIN_BY_SESSION,
+  resolveGT000EngineView,
+  resolveGT000GestureToAction,
+  resolveGT000PointerHoverState,
+  spawnGT000AssetCelebration,
+  startGT000StepPromptSpeech,
+  stepGT000ParticlesInPlace,
+  tickGT000TimedAsset,
+} from "#src/templates/GT-000/audio-flow.js";
+import {
   handleGT000Action,
   renderGT000Step,
-  resolveNormalizedSegments,
-  resolveStartSegmentIndex,
-  routeGT000Action,
   STEP_PROMPT_SETTLE_TIMEOUT_MS,
-  syncSegmentCursorFromStepIndex,
-  toGT000ViewEntity,
-} from "./step-renderers.js";
+} from "#src/templates/GT-000/step-renderers.js";
 import {
+  computeGT000TotalMisses,
   type GT000Asset,
   type GT000Content,
   type GT000Difficulty,
   type GT000Segment,
   type GT000Step,
+  readGT000ActionPayload,
+  resolveGT000AnswerReaction,
+  resolveGT000HintDestinationIndex,
+  resolveGT000HintTargetIndex,
+  resolveGT000InitialState,
+  resolveNormalizedSegments,
   resolveSpeakAlong,
+  routeGT000Action,
   type SpeakAlongMode,
-} from "./template.js";
+  syncSegmentCursorFromStepIndex,
+  validateGT000SessionAction,
+} from "#src/templates/GT-000/template.js";
 
 /** Khung chuyện đọc một lần ở vòng đầu (`BR-E000-15`, `BR-FBK-16`). */
 export const GT000_STORY_LINE =
   "Cô Cú dạy bé nhận từng thứ nhé: nghe cô nói, chỉ cho cô, rồi nói cô nghe.";
-
-/** Mascot vui ngắn sau đáp án đúng (`BR-E000-15`). */
 export const GT000_HAPPY_MS = 1000;
-/** Mascot nghiêng người thì thầm lại tên sau chạm nhầm — không báo sai. */
 export const GT000_LISTEN_MS = 1500;
 
 export class GT000Session extends TemplateGameSession<
   GT000Content,
   GT000Difficulty
 > {
+  degradation: DegradationState | null = null;
   currentStepIndex = 0;
   currentSegmentIndex = 0;
   currentSegmentStepIndex = 0;
@@ -61,25 +79,19 @@ export class GT000Session extends TemplateGameSession<
   readonly missCounts = new Map<string, number>();
   readonly deferredAssetIds: string[] = [];
   readonly recallAnswers: { asset_id: string; correct: boolean }[] = [];
-  /** Số lần trẻ bấm nghe lại ở từng bước tập nói — BR-CIR-22. */
+  readonly particles: Particle[] = [];
   private readonly echoReplayCounts = new Map<string, number>();
-  /**
-   * Câu hỏi của bước (`prompt_line`) đang đọc — chạm chưa được chấm
-   * (`BR-E000-12`). Token chặn `onEnd` của câu hỏi cũ mở cổng câu mới: đọc câu
-   * mới `cancel()` câu cũ, và câu cũ báo `onEnd` ngay lúc đó.
-   */
   private stepPromptPending = false;
   private stepPromptToken = 0;
   private stepPromptWaitedMs = 0;
-  /** Recall sai đã ghi, chờ `update()` sang bước kế (`BR-CIR-07`). */
   private advancePending = false;
   private readonly mood = new MoodPulse();
-  /** Đồng hồ khung: `update` cộng dồn, `render` gán lại (`BR-E000-16`). */
-  private lastFrameMs = 0;
-  /** Bước đã bắt đầu kéo rèm và mốc đồng hồ khung lúc đó (`BR-E000-16`). */
-  private curtainStepIndex = -1;
-  private curtainStartMs = 0;
-  /** Chất liệu đã báo `tts_unavailable` — nghe lại không nhân đôi telemetry. */
+  stepElapsedMs = 0;
+  cardBounceMs = 0;
+  rePresentSpotlight: GT000TimedAsset | null = null;
+  tappedNudge: GT000TimedAsset | null = null;
+  hoveredSlotIndex: number | null = null;
+  pointerHoverPoint: { readonly x: number; readonly y: number } | null = null;
   private readonly ttsMissReported = new Set<string>();
 
   readonly audio = new AudioController();
@@ -91,11 +103,7 @@ export class GT000Session extends TemplateGameSession<
   private segmentMissBaseline = 0;
   private readonly initialResumeSegmentIndex?: number;
   private currentAgeBand: AgeBand = "3-4";
-
-  private cachedStepIdx = -1;
-  private cachedStepAssets: readonly string[] = [];
-  private cachedStepPromptText = "";
-  private cachedStepRenderItems: RenderItem[] = [];
+  private stepCache: GT000StepCacheSnapshot = EMPTY_STEP_CACHE;
 
   constructor(
     content: GT000Content,
@@ -108,11 +116,6 @@ export class GT000Session extends TemplateGameSession<
     this.initialResumeSegmentIndex = resumeSegmentIndex;
   }
 
-  /**
-   * Bậc "tập nói theo" đang áp dụng — trường thiếu là `off` (`BR-E000-11`).
-   * Bề mặt chơi đọc getter này, Cấm — NEVER tự đọc `difficulty.speak_along`
-   * rồi đoán mặc định riêng.
-   */
   get speakAlong(): SpeakAlongMode {
     return resolveSpeakAlong(this.difficulty);
   }
@@ -133,32 +136,26 @@ export class GT000Session extends TemplateGameSession<
 
   private emitSegmentStarted(segmentIndex: number): void {
     const seg = this.normalizedSegments[segmentIndex];
-    if (!seg) {
-      return;
+    if (seg) {
+      this.recordEvent("intro_segment_started", {
+        segment_id: seg.segment_id,
+        segment_index: segmentIndex,
+        asset_count: seg.asset_ids.length,
+        is_review: seg.is_review ?? false,
+      });
     }
-    this.recordEvent("intro_segment_started", {
-      segment_id: seg.segment_id,
-      segment_index: segmentIndex,
-      asset_count: seg.asset_ids.length,
-      is_review: seg.is_review ?? false,
-    });
-  }
-
-  private getTotalMissCount(): number {
-    let total = 0;
-    for (const count of this.missCounts.values()) {
-      total += count;
-    }
-    return total;
   }
 
   private resetStepState(): void {
     this.renderItemStates.clear();
     this.selectedAssetId = null;
-    this.cachedStepIdx = -1;
-    this.cachedStepAssets = [];
-    this.cachedStepPromptText = "";
-    this.cachedStepRenderItems = [];
+    this.stepElapsedMs = 0;
+    this.cardBounceMs = 0;
+    this.rePresentSpotlight = null;
+    this.tappedNudge = null;
+    this.clearPointerOver();
+    this.stepCache = EMPTY_STEP_CACHE;
+    RENDER_ORIGIN_BY_SESSION.delete(this);
   }
 
   setupEntities(): void {
@@ -166,6 +163,7 @@ export class GT000Session extends TemplateGameSession<
     this.missCounts.clear();
     this.deferredAssetIds.length = 0;
     this.recallAnswers.length = 0;
+    this.particles.length = 0;
     this.echoReplayCounts.clear();
     this.ttsMissReported.clear();
     this.advancePending = false;
@@ -175,44 +173,32 @@ export class GT000Session extends TemplateGameSession<
     this.lastTtsUsed = false;
     this.segmentMissBaseline = 0;
     this.resetStepState();
-    this.normalizedSegments = resolveNormalizedSegments(this.content);
-    this.allSteps = this.normalizedSegments.flatMap((s) => s.steps);
-
-    const startSegIdx = resolveStartSegmentIndex(
-      this.initialResumeSegmentIndex,
-      this.difficulty.resume_segment_index,
-      this.content.resume_segment_index,
-      this.normalizedSegments.length
+    const init = resolveGT000InitialState(
+      this.content,
+      this.difficulty,
+      this.initialResumeSegmentIndex
     );
-    this.currentSegmentIndex = startSegIdx;
+    this.normalizedSegments = init.normalizedSegments;
+    this.allSteps = init.allSteps;
+    this.currentSegmentIndex = init.currentSegmentIndex;
     this.currentSegmentStepIndex = 0;
-    this.currentStepIndex = computeGlobalStepOffset(
-      this.normalizedSegments,
-      startSegIdx
-    );
-
+    this.currentStepIndex = init.currentStepIndex;
     this.recordEvent("game_started", {
       template_code: "GT-000",
       total_steps: this.steps.length,
     });
-
-    this.emitSegmentStarted(startSegIdx);
+    this.emitSegmentStarted(this.currentSegmentIndex);
     this.updateCurrentStepLayout();
   }
 
   protected computeSlots(band: AgeBand): readonly Slot[] {
     this.currentAgeBand = band;
-    const step = this.getCurrentStep();
-    if (!step) {
-      return [];
-    }
-    const itemCount = getStepItemCount(step);
-    const layoutId = itemCount <= 1 ? "single-focus" : "grid";
-    return resolveLayout(layoutId)({
-      slotCount: itemCount,
-      ageBand: band,
-      logic: this.logicSpace,
-    });
+    return computeGT000StepSlots(
+      this.getCurrentStep(),
+      band,
+      this.logicSpace,
+      this.cssPerLogic ?? 1
+    );
   }
 
   private getCurrentStep(): GT000Step | undefined {
@@ -228,22 +214,18 @@ export class GT000Session extends TemplateGameSession<
     if (!step) {
       return;
     }
-
     this.resolveSlots(this.currentAgeBand);
+    this.ensureStepAssetsCached(step);
     this.releaseStepPrompt();
-
-    const targetId = step.target_asset_id;
-    const assetKind = this.getAsset(targetId)?.kind ?? "glyph";
-
     this.recordEvent("intro_step_started", {
       step_id: `step_${this.currentStepIndex}`,
       action: step.action,
-      target_asset_id: targetId,
-      asset_kind: assetKind,
+      target_asset_id: step.target_asset_id,
+      asset_kind: this.getAsset(step.target_asset_id)?.kind ?? "glyph",
     });
 
     if (step.action === "present") {
-      this.playPresentAudio(step);
+      this.playCardStepAudio(step, step.narration_line);
     } else if (step.action === "echo") {
       this.playEchoModel(step);
     } else {
@@ -251,47 +233,70 @@ export class GT000Session extends TemplateGameSession<
     }
   }
 
-  /** Mở cổng câu hỏi của bước và vô hiệu mọi `onEnd` còn treo của câu cũ. */
   private releaseStepPrompt(): void {
     this.stepPromptToken++;
     this.stepPromptPending = false;
     this.stepPromptWaitedMs = 0;
   }
 
-  /**
-   * `false` khi câu hỏi của bước đang đọc — bề mặt chơi nuốt cử chỉ, engine
-   * dừng đồng hồ trợ giúp (`BR-E000-12`, cùng hợp đồng `BR-PNR-11`).
-   */
   override isAcceptingInput(): boolean {
     return !(this.stepPromptPending || this.advancePending);
   }
 
-  /**
-   * Trần chờ câu hỏi của bước: giọng treo không báo xong thì sau
-   * `STEP_PROMPT_SETTLE_TIMEOUT_MS` vẫn mở cổng (`BR-PNR-09`).
-   */
   override storyLine(): string {
     return GT000_STORY_LINE;
   }
 
-  /** Vui khi đúng, thì thầm khi chạm nhầm ở recognise/link (`BR-E000-15`). */
   override mascotMood(): MascotPose | null {
     return this.isWon ? null : this.mood.current();
   }
 
+  setPointerOver(x: number, y: number): void {
+    const step = this.getCurrentStep();
+    const hover = resolveGT000PointerHoverState(
+      x,
+      y,
+      step,
+      step ? this.collectRenderItems(step, true) : [],
+      this.slots,
+      this.logicSpace,
+      this.selectedAssetId
+    );
+    this.hoveredSlotIndex = hover.hoveredSlotIndex;
+    this.pointerHoverPoint = hover.pointerHoverPoint;
+  }
+
+  clearPointerOver(): void {
+    this.hoveredSlotIndex = null;
+    this.pointerHoverPoint = null;
+  }
+
+  private triggerCardBounce(): void {
+    this.cardBounceMs = GT000_CARD_BOUNCE_DURATION_MS;
+    this.queueSfx("tap");
+  }
+
   update(deltaMs: number): void {
-    this.lastFrameMs += deltaMs;
+    this.stepElapsedMs += deltaMs;
+    if (this.cardBounceMs > 0) {
+      this.cardBounceMs = Math.max(0, this.cardBounceMs - deltaMs);
+    }
+    this.rePresentSpotlight = tickGT000TimedAsset(
+      this.rePresentSpotlight,
+      deltaMs
+    );
+    this.tappedNudge = tickGT000TimedAsset(this.tappedNudge, deltaMs);
+    stepGT000ParticlesInPlace(this.particles, deltaMs);
     this.mood.tick(deltaMs);
     if (this.advancePending) {
       this.advancePending = false;
       this.advanceStep();
     }
-    if (!this.stepPromptPending) {
-      return;
-    }
-    this.stepPromptWaitedMs += deltaMs;
-    if (this.stepPromptWaitedMs >= STEP_PROMPT_SETTLE_TIMEOUT_MS) {
-      this.stepPromptPending = false;
+    if (this.stepPromptPending) {
+      this.stepPromptWaitedMs += deltaMs;
+      if (this.stepPromptWaitedMs >= STEP_PROMPT_SETTLE_TIMEOUT_MS) {
+        this.stepPromptPending = false;
+      }
     }
   }
 
@@ -299,24 +304,22 @@ export class GT000Session extends TemplateGameSession<
     step: GT000Step & { action: "recognise" | "link" | "recall" }
   ): void {
     this.audioPromptCalled = true;
-    const promptText = step.prompt_line;
-    if (!promptText) {
-      return;
-    }
-    this.stepPromptPending = true;
-    this.stepPromptWaitedMs = 0;
     const token = this.stepPromptToken;
-    const spoke = this.audio.speakPrompt(promptText, () => {
-      if (token === this.stepPromptToken) {
-        this.stepPromptPending = false;
-      }
-    });
-    this.lastTtsUsed = spoke;
-    if (!spoke) {
-      this.recordEvent("tts_unavailable", {
-        lang: "vi-VN",
-        asset_id: step.target_asset_id,
-      });
+    const speech = startGT000StepPromptSpeech(
+      this.audio,
+      step,
+      () => {
+        if (token === this.stepPromptToken) {
+          this.stepPromptPending = false;
+        }
+      },
+      (id) =>
+        this.recordEvent("tts_unavailable", { lang: "vi-VN", asset_id: id })
+    );
+    this.stepPromptPending = speech.pending;
+    this.stepPromptWaitedMs = 0;
+    if (speech.spoke || speech.pending) {
+      this.lastTtsUsed = speech.spoke;
     }
   }
 
@@ -326,35 +329,30 @@ export class GT000Session extends TemplateGameSession<
   ): GT000Asset | undefined {
     this.audioPromptCalled = true;
     const asset = this.getAsset(step.target_asset_id);
-    if (!asset) {
-      return undefined;
-    }
-
-    if (asset.audio_path) {
-      this.lastTtsUsed = false;
-      this.audio.playPromptAudio(asset.audio_path);
-    } else {
-      const text =
-        promptToSpeak ?? getStepPromptText(step, asset, this.speakAlong);
-      const spoke = this.audio.speakPrompt(text, undefined, () => {
-        this.renderItemStates.set(asset.asset_id, "selected");
-      });
-      this.lastTtsUsed = spoke;
-      if (!spoke) {
-        this.reportTtsUnavailable(asset.asset_id);
-      }
+    if (asset) {
+      playGT000CardAudioWithFallback(
+        this.audio,
+        step,
+        asset,
+        this.speakAlong,
+        promptToSpeak,
+        () => this.renderItemStates.set(asset.asset_id, "selected"),
+        (spoke) => {
+          this.lastTtsUsed = spoke;
+        },
+        (id) => this.reportTtsUnavailable(id)
+      );
     }
     return asset;
   }
 
-  /**
-   * Sai ở `recognise`/`link`: không báo sai (BR-E000-14) — đọc lại tên mục tiêu
-   * như lúc giới thiệu, xong mới hỏi lại chính câu đó. Cổng chạm đóng trong lúc
-   * đọc để cử chỉ không chấm lẫn vào lời giới thiệu.
-   */
   private replayTargetThenAsk(
     step: GT000Step & { action: "recognise" | "link" }
   ): void {
+    this.rePresentSpotlight = {
+      assetId: step.target_asset_id,
+      timerMs: GT000_SPOTLIGHT_DURATION_MS,
+    };
     const asset = this.getAsset(step.target_asset_id);
     if (!asset) {
       this.playStepPrompt(step);
@@ -363,213 +361,103 @@ export class GT000Session extends TemplateGameSession<
     this.releaseStepPrompt();
     this.stepPromptPending = true;
     const token = this.stepPromptToken;
-    const ask = (): void => {
-      if (token !== this.stepPromptToken) {
-        return;
-      }
-      this.stepPromptPending = false;
-      this.playStepPrompt(step);
-    };
-    if (asset.audio_path) {
-      this.lastTtsUsed = false;
-      this.audio.playPromptAudio(asset.audio_path, ask);
-      return;
-    }
-    const text = getStepPromptText(
-      { action: "present", target_asset_id: asset.asset_id },
+    let askCalled = false;
+    playGT000TargetThenAsk(
+      this.audio,
       asset,
-      this.speakAlong
+      this.speakAlong,
+      () => {
+        if (!askCalled && token === this.stepPromptToken) {
+          askCalled = true;
+          this.stepPromptPending = false;
+          this.playStepPrompt(step);
+        }
+      },
+      (spoke) => {
+        this.lastTtsUsed = spoke;
+      },
+      (id) => this.reportTtsUnavailable(id)
     );
-    const spoke = this.audio.speakPrompt(text, ask);
-    this.lastTtsUsed = spoke;
-    if (!spoke) {
-      this.reportTtsUnavailable(asset.asset_id);
-    }
   }
 
   private reportTtsUnavailable(assetId: string): void {
-    if (this.ttsMissReported.has(assetId)) {
-      return;
+    if (!this.ttsMissReported.has(assetId)) {
+      this.ttsMissReported.add(assetId);
+      this.recordEvent("tts_unavailable", { lang: "vi-VN", asset_id: assetId });
     }
-    this.ttsMissReported.add(assetId);
-    this.recordEvent("tts_unavailable", { lang: "vi-VN", asset_id: assetId });
   }
 
   private playEchoModel(step: GT000Step & { action: "echo" }): void {
     const asset = this.playCardStepAudio(step);
-    if (!asset) {
-      return;
+    if (asset) {
+      this.recordEvent("intro_echo_started", {
+        step_id: `step_${this.currentStepIndex}`,
+        target_asset_id: asset.asset_id,
+        tts_used: this.lastTtsUsed,
+      });
     }
-    this.recordEvent("intro_echo_started", {
-      step_id: `step_${this.currentStepIndex}`,
-      target_asset_id: asset.asset_id,
-      tts_used: this.lastTtsUsed,
-    });
-  }
-
-  private playPresentAudio(step: GT000Step & { action: "present" }): void {
-    this.playCardStepAudio(step, step.narration_line);
-  }
-
-  override getView(): EngineView {
-    const step = this.getCurrentStep();
-    if (!step) {
-      return {
-        entities: [],
-        activePrompt: "Bé đã hoàn thành bài làm quen!",
-      };
-    }
-
-    const renderItems = this.collectRenderItems(step);
-    const isCard = step.action === "present" || step.action === "echo";
-    const entities: ReturnType<typeof toGT000ViewEntity>[] = [];
-
-    for (let i = 0; i < renderItems.length; i++) {
-      const item = renderItems[i];
-      const slot = this.slots[i];
-      if (item && slot) {
-        entities.push(
-          toGT000ViewEntity(item, slot, i, isCard, this.getAsset(item.id))
-        );
-      }
-    }
-
-    return {
-      entities,
-      activePrompt: this.getStepPromptText(step),
-    };
-  }
-
-  private resolveLinkTapAction(itemId: string): GameAction | null {
-    if (this.selectedAssetId === null) {
-      this.selectedAssetId = itemId;
-      this.renderItemStates.set(itemId, "selected");
-      return null;
-    }
-    if (this.selectedAssetId === itemId) {
-      this.selectedAssetId = null;
-      this.renderItemStates.delete(itemId);
-      return null;
-    }
-    const sourceId = this.selectedAssetId;
-    this.selectedAssetId = null;
-    this.renderItemStates.delete(sourceId);
-    return {
-      type: "tap_item",
-      data: {
-        source_id: sourceId,
-        target_id: itemId,
-        item_id: itemId,
-        asset_id: itemId,
-      },
-    };
   }
 
   override toAction(gesture: Gesture): GameAction | null {
-    if (gesture.type === "commit") {
-      const intent = gesture.intent ?? "advance";
-      return {
-        type: "tap_item",
-        data: { intent },
-      };
-    }
-
-    if (
-      gesture.type !== "tap" ||
-      !this.audioPromptCalled ||
-      this.stepPromptPending
-    ) {
-      return null;
-    }
-
     const step = this.getCurrentStep();
-    if (!step) {
-      return null;
+    const res = resolveGT000GestureToAction(
+      gesture,
+      step,
+      this.audioPromptCalled && !this.stepPromptPending,
+      step ? this.collectRenderItems(step) : [],
+      this.slots,
+      this.logicSpace,
+      this.selectedAssetId,
+      this.renderItemStates
+    );
+    if (res.linkSelectionChanged) {
+      this.selectedAssetId = res.nextSelectedAssetId;
+      this.pointerHoverPoint = null;
     }
-
-    const renderItems = this.collectRenderItems(step);
-    const hit = findTappedItem(gesture, step, renderItems, this.slots);
-    if (!hit) {
-      return null;
-    }
-
-    if (hit.isLink) {
-      return this.resolveLinkTapAction(hit.itemId);
-    }
-
-    // `present` không đòi thao tác: chạm chỉ để nghe lại, đi tiếp là nút
-    // Tiếp tục (`BR-E000-14`).
-    if (step.action === "present") {
-      return { type: "tap_item", data: { intent: "replay" } };
-    }
-
-    return {
-      type: "tap_item",
-      data: {
-        item_id: hit.itemId,
-        asset_id: hit.itemId,
-      },
-    };
-  }
-
-  private readPayload(
-    action: GameAction
-  ): Record<string, string | boolean | number> {
-    return typeof action.data === "object" && action.data !== null
-      ? (action.data as Record<string, string | boolean | number>)
-      : {};
+    return res.action;
   }
 
   validateAction(action: GameAction): ActionResult {
-    const step = this.getCurrentStep();
-    if (!step) {
-      return ACTION_IGNORED;
-    }
-
-    const payload = this.readPayload(action);
-
-    switch (routeGT000Action(payload, step)) {
-      case "prev":
-      case "replay_present":
-      case "advance":
-        return ACTION_CORRECT;
-      case "replay_echo": {
-        const used =
-          this.echoReplayCounts.get(`step_${this.currentStepIndex}`) ?? 0;
-        return used >= (step as GT000Step & { action: "echo" }).repeat_count
-          ? ACTION_IGNORED
-          : ACTION_CORRECT;
-      }
-      default:
-        return evaluateGT000StepAnswer(payload, step);
-    }
+    return validateGT000SessionAction(
+      action,
+      this.getCurrentStep(),
+      this.currentStepIndex,
+      this.echoReplayCounts
+    );
   }
 
   private advanceStep(): void {
     this.audio.stopAll();
+    const prevSlot = this.slots[0];
     this.resetStepState();
 
     const currentSeg = this.normalizedSegments[this.currentSegmentIndex];
     this.currentStepIndex += 1;
     this.currentSegmentStepIndex += 1;
-
-    const isSegmentDone =
-      !currentSeg || this.currentSegmentStepIndex >= currentSeg.steps.length;
-    if (!isSegmentDone) {
+    if (currentSeg && this.currentSegmentStepIndex < currentSeg.steps.length) {
       this.updateCurrentStepLayout();
       return;
     }
 
-    const totalMisses = this.getTotalMissCount();
+    const totalMisses = computeGT000TotalMisses(this.missCounts);
     const segmentMisses = Math.max(0, totalMisses - this.segmentMissBaseline);
     this.segmentMissBaseline = totalMisses;
-
     if (currentSeg) {
       this.recordEvent("intro_segment_completed", {
         segment_id: currentSeg.segment_id,
         segment_index: this.currentSegmentIndex,
         miss_count: segmentMisses,
       });
+      if (prevSlot) {
+        spawnGT000AssetCelebration(
+          this.particles,
+          this.degradation?.particles_enabled !== false,
+          [prevSlot],
+          [],
+          "",
+          14
+        );
+      }
     }
 
     if (this.currentSegmentIndex + 1 < this.normalizedSegments.length) {
@@ -580,7 +468,6 @@ export class GT000Session extends TemplateGameSession<
       this.updateCurrentStepLayout();
       return;
     }
-
     this.recordEvent("game_completed", {
       completed: true,
       total_steps: this.steps.length,
@@ -618,9 +505,7 @@ export class GT000Session extends TemplateGameSession<
     if (!step) {
       return;
     }
-
-    const payload = this.readPayload(action);
-
+    const payload = readGT000ActionPayload(action);
     switch (routeGT000Action(payload, step)) {
       case "prev":
         this.prevStep();
@@ -629,42 +514,35 @@ export class GT000Session extends TemplateGameSession<
         this.applyStepAnswer(payload, step);
         return;
       case "replay_present":
-        this.playPresentAudio(step as GT000Step & { action: "present" });
+        if (step.action === "present") {
+          this.triggerCardBounce();
+          this.playCardStepAudio(step, step.narration_line);
+        }
         return;
       case "advance":
         if (step.action === "present") {
-          this.recordEvent("intro_step_answered", {
-            step_id: `step_${this.currentStepIndex}`,
-            action: "present",
-            answer_correct: true,
-            miss_count: 0,
-            tts_used: this.lastTtsUsed,
-          });
+          this.applyStepAnswer(payload, step);
+        } else {
+          this.advanceStep();
         }
-        this.advanceStep();
         return;
-      default:
-        this.reactToAnswer(step, this.applyStepAnswer(payload, step));
-    }
-  }
-
-  /**
-   * Cue và mascot sau một câu trả lời (`BR-E000-15`). `recall` sai là phép
-   * đo nên im lặng; `recognise`/`link` sai chỉ thì thầm, không báo sai.
-   */
-  private reactToAnswer(step: GT000Step, result: ActionResult): void {
-    const asks =
-      step.action === "recognise" ||
-      step.action === "link" ||
-      step.action === "recall";
-    if (!asks) {
-      return;
-    }
-    if (result.valid) {
-      this.queueSfx("teacher_chime");
-      this.mood.set("happy", GT000_HAPPY_MS);
-    } else if (step.action !== "recall") {
-      this.mood.set("listen", GT000_LISTEN_MS);
+      default: {
+        if (step.action === "link") {
+          this.selectedAssetId = null;
+          this.renderItemStates.clear();
+          this.clearPointerOver();
+        }
+        const reaction = resolveGT000AnswerReaction(
+          step,
+          this.applyStepAnswer(payload, step)
+        );
+        if (reaction === "happy") {
+          this.queueSfx("teacher_chime");
+          this.mood.set("happy", GT000_HAPPY_MS);
+        } else if (reaction === "listen") {
+          this.mood.set("listen", GT000_LISTEN_MS);
+        }
+      }
     }
   }
 
@@ -683,6 +561,18 @@ export class GT000Session extends TemplateGameSession<
       lastTtsUsed: this.lastTtsUsed,
       recordEvent: (name, data) => this.recordEvent(name, data),
       playEchoModel: (s) => this.playEchoModel(s),
+      onReplayCard: () => this.triggerCardBounce(),
+      onCorrectAnswer: (assetId) =>
+        spawnGT000AssetCelebration(
+          this.particles,
+          this.degradation?.particles_enabled !== false,
+          this.slots,
+          this.cachedStepAssets() ?? [],
+          assetId
+        ),
+      onWrongTap: (assetId) => {
+        this.tappedNudge = { assetId, timerMs: GT000_NUDGE_DURATION_MS };
+      },
       replayTargetThenAsk: (s) => this.replayTargetThenAsk(s),
       advanceStep: () => this.advanceStep(),
       deferAdvance: () => {
@@ -691,71 +581,75 @@ export class GT000Session extends TemplateGameSession<
     });
   }
 
-  override getHintTargetIndex(): number | null {
-    const step = this.getCurrentStep();
-    if (!step) {
+  private cachedStepAssets(): readonly string[] | null {
+    const s = this.getCurrentStep();
+    if (!s) {
       return null;
     }
-    if (step.action === "present" || step.action === "echo") {
-      return 0;
-    }
-    const ids = this.getStepAssetIds(step);
-    const wanted =
-      step.action === "link" ? step.source_asset_id : step.target_asset_id;
-    const idx = ids.indexOf(wanted);
-    return idx >= 0 ? idx : null;
+    this.ensureStepAssetsCached(s);
+    return this.stepCache.assets;
   }
 
-  private getStepPromptText(step: GT000Step): string {
-    const asset = this.getAsset(step.target_asset_id);
-    return getStepPromptText(step, asset, this.speakAlong);
+  override getHintTargetIndex(): number | null {
+    const s = this.getCurrentStep();
+    const assets = this.cachedStepAssets();
+    return s && assets
+      ? resolveGT000HintTargetIndex(s, assets, this.selectedAssetId)
+      : null;
+  }
+
+  override getHintDestinationIndex(): number | null {
+    const s = this.getCurrentStep();
+    const assets = this.cachedStepAssets();
+    return s && assets
+      ? resolveGT000HintDestinationIndex(s, assets, this.selectedAssetId)
+      : null;
   }
 
   private ensureStepAssetsCached(step: GT000Step): void {
-    if (this.cachedStepIdx === this.currentStepIndex) {
+    if (this.stepCache.stepIdx === this.currentStepIndex) {
       return;
     }
-    const shouldShuffle =
-      Reflect.get(this.difficulty, "shuffle_items") !== false;
-    const ids = computeStepAssetIds(
+    this.stepCache = buildGT000StepCacheSnapshot(
       step,
-      this.layoutSeed,
       this.currentStepIndex,
-      shouldShuffle
+      this.layoutSeed,
+      this.difficulty,
+      this.speakAlong,
+      this.content.assets,
+      this.renderItemStates
     );
-    this.cachedStepIdx = this.currentStepIndex;
-    this.cachedStepAssets = ids;
-    this.cachedStepPromptText = this.getStepPromptText(step);
+  }
 
-    if (step.action === "present" || step.action === "echo") {
-      const asset = this.getAsset(step.target_asset_id);
-      this.cachedStepRenderItems = asset
-        ? [createRenderItem(asset, "idle")]
-        : [];
-    } else {
-      const renderItems: RenderItem[] = [];
-      for (const id of ids) {
-        const asset = this.getAsset(id);
-        if (asset) {
-          const state = this.renderItemStates.get(id) ?? "idle";
-          renderItems.push(createRenderItem(asset, state));
-        }
-      }
-      this.cachedStepRenderItems = renderItems;
+  private collectRenderItems(step: GT000Step, pure = false): RenderItem[] {
+    if (this.stepCache.stepIdx !== this.currentStepIndex && !pure) {
+      this.ensureStepAssetsCached(step);
     }
+    return collectGT000DecoratedItems(
+      step,
+      this.currentStepIndex,
+      this.stepCache,
+      this.layoutSeed,
+      this.difficulty,
+      this.content.assets,
+      this.renderItemStates,
+      this.hoveredSlotIndex
+    );
   }
 
-  private getStepAssetIds(step: GT000Step): readonly string[] {
-    this.ensureStepAssetsCached(step);
-    return this.cachedStepAssets;
-  }
-
-  private collectRenderItems(step: GT000Step): RenderItem[] {
-    this.ensureStepAssetsCached(step);
-    return this.cachedStepRenderItems.map((item) => ({
-      ...item,
-      state: this.renderItemStates.get(item.id) ?? "idle",
-    }));
+  override getView(): EngineView {
+    const step = this.getCurrentStep();
+    if (step) {
+      this.ensureStepAssetsCached(step);
+    }
+    return resolveGT000EngineView(
+      step,
+      step ? this.collectRenderItems(step) : [],
+      this.slots,
+      this.content.assets,
+      this.logicSpace,
+      this.stepCache.promptText
+    );
   }
 
   render(
@@ -763,28 +657,18 @@ export class GT000Session extends TemplateGameSession<
     rs: RenderSystem,
     timeMs: number
   ): void {
-    this.lastFrameMs = timeMs;
-    if (this.curtainStepIndex !== this.currentStepIndex) {
-      this.curtainStepIndex = this.currentStepIndex;
-      this.curtainStartMs = timeMs;
-    }
     const step = this.getCurrentStep();
-    const renderItems = step ? this.collectRenderItems(step) : [];
-    const promptText = step ? this.cachedStepPromptText : "";
-    const targetAsset = step ? this.getAsset(step.target_asset_id) : undefined;
-
-    renderGT000Step(ctx, rs, {
-      themeId: this.themeId,
-      step,
-      promptText,
-      conceptLabel: this.content.concept.label,
-      renderItems,
-      slots: this.slots,
-      targetAsset,
-      curtainOpenness: curtainOpenness(
-        timeMs - this.curtainStartMs,
-        rs.reducedMotion
-      ),
-    });
+    renderGT000Step(
+      ctx,
+      rs,
+      buildGT000StepRenderOptions(
+        rs,
+        timeMs,
+        this,
+        step,
+        this.stepCache,
+        step ? this.collectRenderItems(step, true) : []
+      )
+    );
   }
 }

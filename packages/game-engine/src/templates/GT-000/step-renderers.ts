@@ -1,6 +1,5 @@
 import {
   formatDisplayLabel,
-  formatPromptLabel,
   formatSpokenLabel,
 } from "@mindkid/shared/preschool-terminology";
 import {
@@ -11,12 +10,23 @@ import {
   type GameAction,
 } from "#src/game-session";
 import type { Gesture, ViewEntity } from "#src/interaction";
+import { DEFAULT_LOGIC_SPACE, type LogicSpace } from "#src/layout/constants";
 import {
   findHitSlotIndex,
   isPointInSlot,
   TAP_TOLERANCE_PX,
 } from "#src/layout/hit-test";
 import type { Slot } from "#src/layout/types";
+import {
+  drawGT000EchoWaves,
+  drawGT000GridItemAccent,
+  drawGT000LinkConnector,
+  drawGT000RePresentSpotlight,
+  drawGT000ReplayRipple,
+  drawGT000SegmentProgress,
+  type GT000SegmentProgressInfo,
+  resolveGT000FlashcardRect,
+} from "#src/render/gt-000-shapes.js";
 import {
   curtainGeometry,
   drawCurtains,
@@ -31,19 +41,17 @@ import {
 } from "#src/render/index.js";
 import { deriveStream } from "#src/rng/mulberry32";
 import { shuffle } from "#src/rng/shuffle";
-import type { RenderSystem } from "#src/systems/render-system";
-import type {
-  GT000Asset,
-  GT000Content,
-  GT000Segment,
-  GT000Step,
-  SpeakAlongMode,
-} from "./template.js";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
+import {
+  computeGT000CardPose,
+  extractAssetId,
+  type GT000Asset,
+  type GT000Step,
+  resolveRecallCorrectAssetId,
+  type SpeakAlongMode,
+} from "#src/templates/GT-000/template.js";
 
-/**
- * Trần chờ câu hỏi của bước đọc xong — cùng mốc `NARRATION_SETTLE_TIMEOUT_MS`
- * của câu dẫn vòng ở bề mặt chơi (`BR-E000-12`, `BR-PNR-09`).
- */
+/** Trần chờ câu hỏi của bước đọc xong (`BR-E000-12`, `BR-PNR-09`). */
 export const STEP_PROMPT_SETTLE_TIMEOUT_MS = 12_000;
 
 export function resolveRenderAsset(asset: GT000Asset): RenderAsset | null {
@@ -63,29 +71,46 @@ export function createRenderItem(
   asset: GT000Asset,
   state: ItemVisualState = "idle"
 ): RenderItem {
+  const fmt = { value: asset.value, glyph: asset.glyph };
   return {
     id: asset.asset_id,
-    label: formatDisplayLabel(asset.label, {
-      value: asset.value,
-      glyph: asset.glyph,
-    }),
+    label: formatDisplayLabel(asset.label, fmt),
     text: asset.glyph ?? asset.text,
     asset: resolveRenderAsset(asset),
     state,
   };
 }
 
-export function getStepItemCount(step: GT000Step): number {
-  if (step.action === "recognise") {
-    return 1 + step.distractor_asset_ids.length;
+export function buildGT000BaseRenderItems(
+  step: GT000Step,
+  ids: readonly string[],
+  assets: readonly GT000Asset[],
+  states: ReadonlyMap<string, ItemVisualState>
+): RenderItem[] {
+  if (step.action === "present" || step.action === "echo") {
+    const asset = assets.find((a) => a.asset_id === step.target_asset_id);
+    return asset ? [createRenderItem(asset, "idle")] : [];
   }
-  if (step.action === "link") {
-    return 2;
+  const items: RenderItem[] = [];
+  for (const id of ids) {
+    const asset = assets.find((a) => a.asset_id === id);
+    if (asset) {
+      items.push(createRenderItem(asset, states.get(id) ?? "idle"));
+    }
   }
-  if (step.action === "recall") {
-    return step.option_asset_ids.length;
-  }
-  return 1;
+  return items;
+}
+
+export function decorateGT000RenderItems(
+  baseItems: readonly RenderItem[],
+  states: ReadonlyMap<string, ItemVisualState>,
+  hoveredSlotIndex: number | null
+): RenderItem[] {
+  return baseItems.map((item, idx) => ({
+    ...item,
+    state:
+      states.get(item.id) ?? (hoveredSlotIndex === idx ? "touching" : "idle"),
+  }));
 }
 
 export function computeStepAssetIds(
@@ -95,7 +120,6 @@ export function computeStepAssetIds(
   shouldShuffle: boolean
 ): string[] {
   const stream = deriveStream(layoutSeed * 31 + stepIndex, "items");
-
   if (step.action === "recognise") {
     const items = [step.target_asset_id, ...step.distractor_asset_ids];
     return shouldShuffle ? shuffle(items, stream) : items;
@@ -111,58 +135,13 @@ export function computeStepAssetIds(
   return [];
 }
 
-export function getStepPromptText(
-  step: GT000Step,
-  asset: GT000Asset | undefined,
-  speakAlong: SpeakAlongMode
-): string {
-  const label = asset
-    ? formatPromptLabel(asset.label, {
-        value: asset.value,
-        glyph: asset.glyph,
-      })
-    : "";
-  const spokenLabel = asset
-    ? formatSpokenLabel(asset.label, {
-        value: asset.value,
-        glyph: asset.glyph,
-      })
-    : "";
-
-  if (step.action === "present") {
-    return step.narration_line ?? `Đây là ${label}`;
-  }
-  if (step.action === "echo") {
-    if (speakAlong === "off") {
-      return `Đây là ${label}`;
-    }
-    return step.prompt_line ?? `Bé nói theo cô nhé: ${spokenLabel}`;
-  }
-  if (step.action === "recognise") {
-    return step.prompt_line ?? `Bé hãy chỉ cho cô ${label} nhé!`;
-  }
-  if (step.action === "recall") {
-    return step.prompt_line ?? `Đâu là ${label}?`;
-  }
-  if (step.action === "link") {
-    return step.prompt_line ?? "Nối đối tượng tương ứng";
-  }
-  return "Đây là gì?";
-}
-
 export function resolveItemState(
   state?: string
 ): "idle" | "selected" | "correct" | "incorrect" {
   if (state === "wrong") {
     return "incorrect";
   }
-  if (state === "correct") {
-    return "correct";
-  }
-  if (state === "selected") {
-    return "selected";
-  }
-  return "idle";
+  return state === "correct" || state === "selected" ? state : "idle";
 }
 
 export function toGT000ViewEntity(
@@ -170,25 +149,24 @@ export function toGT000ViewEntity(
   slot: Slot,
   slotIndex: number,
   isCard: boolean,
-  asset: GT000Asset | undefined
+  asset: GT000Asset | undefined,
+  logic: LogicSpace = DEFAULT_LOGIC_SPACE
 ): ViewEntity {
   const spokenLabel = asset
-    ? formatSpokenLabel(asset.label, {
-        value: asset.value,
-        glyph: asset.glyph,
-      })
+    ? formatSpokenLabel(asset.label, { value: asset.value, glyph: asset.glyph })
     : item.label;
   const emojiRef =
     asset?.image_ref?.kind === "emoji" ? asset.image_ref.ref : undefined;
+  const cardRect = isCard ? resolveGT000FlashcardRect(logic, slot) : null;
   return {
     id: item.id,
     slotIndex,
-    role: "target",
+    role: isCard ? "neutral" : "source",
     state: resolveItemState(item.state),
     x: slot.x,
     y: slot.y,
-    w: isCard ? 350 : slot.w,
-    h: isCard ? 320 : slot.h,
+    w: cardRect ? cardRect.w : slot.w,
+    h: cardRect ? cardRect.h : slot.h,
     hitShape: isCard ? "square" : "circle",
     label: item.label,
     spokenLabel,
@@ -197,82 +175,26 @@ export function toGT000ViewEntity(
   };
 }
 
-export function extractAssetId(data: GameAction["data"]): string {
-  if (typeof data === "object" && data !== null) {
-    const item = Reflect.get(data, "item_id");
-    if (typeof item === "string") {
-      return item;
-    }
-    const asset = Reflect.get(data, "asset_id");
-    if (typeof asset === "string") {
-      return asset;
+export function buildGT000ViewEntities(
+  step: GT000Step,
+  renderItems: readonly RenderItem[],
+  slots: readonly Slot[],
+  assets: readonly GT000Asset[],
+  logic: LogicSpace
+): ViewEntity[] {
+  const isCard = step.action === "present" || step.action === "echo";
+  const entities: ViewEntity[] = [];
+  for (let i = 0; i < renderItems.length; i++) {
+    const item = renderItems[i];
+    const slot = slots[i];
+    if (item && slot) {
+      const asset = assets.find((a) => a.asset_id === item.id);
+      entities.push(toGT000ViewEntity(item, slot, i, isCard, asset, logic));
     }
   }
-  return "";
+  return entities;
 }
 
-export function routeGT000Action(
-  payload: Record<string, string | boolean | number>,
-  step: GT000Step
-): "prev" | "replay_echo" | "replay_present" | "advance" | "step" {
-  if (payload.intent === "prev") {
-    return "prev";
-  }
-  if (payload.intent === "replay") {
-    if (step.action === "echo") {
-      return "replay_echo";
-    }
-    if (step.action === "present") {
-      return "replay_present";
-    }
-  }
-  if (
-    payload.intent === "advance" &&
-    (step.action === "present" || step.action === "echo")
-  ) {
-    return "advance";
-  }
-  return "step";
-}
-
-export function evaluateGT000StepAnswer(
-  payload: Record<string, string | boolean | number>,
-  step: GT000Step
-): ActionResult {
-  switch (step.action) {
-    case "present":
-    case "echo":
-      return ACTION_CORRECT;
-    case "recall": {
-      const selectedId = extractAssetId(payload);
-      const correctId =
-        (step as { correct_asset_id?: string; target_asset_id?: string })
-          .correct_asset_id ?? step.target_asset_id;
-      // Recall sai không chấm thử lại (`BR-CIR-07`) — xem `handleRecallAction`.
-      return selectedId === correctId ? ACTION_CORRECT : ACTION_IGNORED;
-    }
-    case "recognise": {
-      const selectedId = extractAssetId(payload);
-      return selectedId === step.target_asset_id
-        ? ACTION_CORRECT
-        : ACTION_RETRY;
-    }
-    case "link": {
-      const sourceId = String(payload.source_id ?? "");
-      const targetId = String(payload.target_id ?? "");
-      const isMatch =
-        (sourceId === step.source_asset_id &&
-          targetId === step.target_asset_id) ||
-        (sourceId === step.target_asset_id &&
-          targetId === step.source_asset_id);
-      return isMatch ? ACTION_CORRECT : ACTION_RETRY;
-    }
-    default:
-      return ACTION_IGNORED;
-  }
-}
-
-/** Rèm phủ hàng lựa chọn lúc vào bước `recall`, mở dần ra hai bên (`BR-E000-16`). */
 function drawRecallCurtains(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
@@ -282,159 +204,196 @@ function drawRecallCurtains(
   if (openness === undefined) {
     return;
   }
-  const curtains = curtainGeometry(
-    slots.map((s) => ({
-      x: s.x - s.hitW / 2,
-      y: s.y - s.hitH / 2,
-      w: s.hitW,
-      h: s.hitH,
-    })),
-    rs.LOGIC_WIDTH,
-    openness
-  );
+  const boxes = slots.map((s) => ({
+    x: s.x - s.hitW / 2,
+    y: s.y - s.hitH / 2,
+    w: s.hitW,
+    h: s.hitH,
+  }));
+  const curtains = curtainGeometry(boxes, rs.LOGIC_WIDTH, openness);
   if (curtains) {
     drawCurtains(ctx, curtains);
+  }
+}
+
+export interface GT000RenderOptions {
+  readonly themeId?: string;
+  readonly step?: GT000Step;
+  readonly promptText: string;
+  readonly conceptLabel: string;
+  readonly renderItems: readonly RenderItem[];
+  readonly slots: readonly Slot[];
+  readonly targetAsset?: GT000Asset;
+  readonly speakAlong?: SpeakAlongMode;
+  readonly stepElapsedMs?: number;
+  readonly cardBounceMs?: number;
+  readonly segmentProgress?: GT000SegmentProgressInfo;
+  readonly rePresentSpotlight?: {
+    readonly assetId: string;
+    readonly timerMs: number;
+  } | null;
+  readonly tappedNudge?: {
+    readonly assetId: string;
+    readonly timerMs: number;
+  } | null;
+  readonly linkConnector?: {
+    readonly from: { readonly x: number; readonly y: number };
+    readonly to: { readonly x: number; readonly y: number };
+  } | null;
+  readonly particles?: Particle[];
+  readonly particlesEnabled?: boolean;
+  readonly curtainOpenness?: number;
+}
+
+function renderGT000CardLayer(
+  ctx: CanvasRenderingContext2D,
+  rs: RenderSystem,
+  step: GT000Step,
+  options: GT000RenderOptions
+): void {
+  const item = options.renderItems[0];
+  const slot = options.slots[0];
+  if (!(item && slot && options.targetAsset)) {
+    return;
+  }
+  const rect = resolveGT000FlashcardRect(rs.logicSpace, slot);
+  const elapsedMs = options.stepElapsedMs ?? 0;
+  const bounceMs = options.cardBounceMs ?? 0;
+
+  if (step.action === "echo" && options.speakAlong === "tap") {
+    drawGT000EchoWaves(ctx, rs, rect, elapsedMs);
+  }
+  const pose = computeGT000CardPose(elapsedMs, bounceMs, rs.reducedMotion);
+  drawFlashcard(ctx, rs, slot, options.targetAsset, item.label, {
+    state: item.state,
+    depressed: pose.depressed,
+    scale: pose.scale,
+    offsetY: pose.offsetY,
+    softShadowsEnabled: rs.softShadowsEnabled,
+  });
+  if (bounceMs > 0) {
+    drawGT000ReplayRipple(ctx, rs, rect, bounceMs);
+  }
+}
+
+function renderGT000GridLayer(
+  ctx: CanvasRenderingContext2D,
+  rs: RenderSystem,
+  step: GT000Step,
+  options: GT000RenderOptions
+): void {
+  const nudge = options.tappedNudge;
+  for (let i = 0; i < options.renderItems.length; i++) {
+    const item = options.renderItems[i];
+    const slot = options.slots[i];
+    if (item && slot) {
+      drawSlotItem(ctx, rs, slot, item);
+      const nudgeMs = nudge && nudge.assetId === item.id ? nudge.timerMs : 0;
+      if (
+        item.state === "touching" ||
+        item.state === "selected" ||
+        nudgeMs > 0
+      ) {
+        drawGT000GridItemAccent(ctx, rs, slot, item.state, nudgeMs);
+      }
+    }
+  }
+  if (step.action === "link" && options.linkConnector) {
+    drawGT000LinkConnector(
+      ctx,
+      options.linkConnector.from,
+      options.linkConnector.to
+    );
+  }
+  if (step.action === "recall") {
+    drawRecallCurtains(
+      ctx,
+      rs,
+      options.slots.slice(0, options.renderItems.length),
+      options.curtainOpenness
+    );
+  }
+}
+
+function renderGT000FeedbackLayer(
+  ctx: CanvasRenderingContext2D,
+  rs: RenderSystem,
+  isCard: boolean,
+  options: GT000RenderOptions
+): void {
+  const spot = options.rePresentSpotlight;
+  if (!isCard && spot && spot.timerMs > 0) {
+    const idx = options.renderItems.findIndex((it) => it.id === spot.assetId);
+    const targetSlot = idx >= 0 ? options.slots[idx] : undefined;
+    if (targetSlot) {
+      drawGT000RePresentSpotlight(ctx, rs, targetSlot, spot.timerMs);
+    }
+  }
+  if (
+    options.particlesEnabled !== false &&
+    options.particles &&
+    options.particles.length > 0
+  ) {
+    rs.drawParticles(ctx, options.particles);
   }
 }
 
 export function renderGT000Step(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
-  options: {
-    themeId?: string;
-    step?: GT000Step;
-    promptText: string;
-    conceptLabel: string;
-    renderItems: readonly RenderItem[];
-    slots: readonly Slot[];
-    targetAsset?: GT000Asset;
-    /** Độ mở rèm của bước `recall` (0..1); thiếu thì không vẽ rèm (`BR-E000-16`). */
-    curtainOpenness?: number;
-  }
+  options: GT000RenderOptions
 ): void {
   drawSceneBackground(ctx, rs, options.themeId);
-
   if (!options.step) {
     drawPromptText(ctx, rs, "Bé đã hoàn thành bài làm quen!");
+    renderGT000FeedbackLayer(ctx, rs, true, options);
     return;
   }
-
   drawPromptText(ctx, rs, options.promptText);
   drawSubPromptText(ctx, rs, options.conceptLabel);
-
+  if (options.segmentProgress) {
+    drawGT000SegmentProgress(ctx, rs, options.segmentProgress);
+  }
   const isCard =
     options.step.action === "present" || options.step.action === "echo";
-
   if (isCard) {
-    const item = options.renderItems[0];
-    const slot = options.slots[0];
-    if (item && slot && options.targetAsset) {
-      drawFlashcard(ctx, rs, slot, options.targetAsset, item.label);
-    }
+    renderGT000CardLayer(ctx, rs, options.step, options);
   } else {
-    for (let i = 0; i < options.renderItems.length; i++) {
-      const item = options.renderItems[i];
-      const slot = options.slots[i];
-      if (item && slot) {
-        drawSlotItem(ctx, rs, slot, item);
-      }
-    }
-    if (options.step.action === "recall") {
-      drawRecallCurtains(
-        ctx,
-        rs,
-        options.slots.slice(0, options.renderItems.length),
-        options.curtainOpenness
-      );
-    }
+    renderGT000GridLayer(ctx, rs, options.step, options);
   }
-}
-
-export function resolveNormalizedSegments(
-  content: GT000Content
-): GT000Segment[] {
-  if (content.segments && content.segments.length > 0) {
-    return [...content.segments];
-  }
-  return [
-    {
-      segment_id: "seg_1",
-      asset_ids: content.assets.map((a) => a.asset_id),
-      steps: [...(content.steps ?? [])],
-      is_review: false,
-    },
-  ];
-}
-
-export function resolveStartSegmentIndex(
-  initialResumeSegmentIndex: number | undefined,
-  difficultyResume: number | undefined,
-  contentResume: number | undefined,
-  totalSegments: number
-): number {
-  const raw =
-    initialResumeSegmentIndex ?? difficultyResume ?? contentResume ?? 0;
-  if (!Number.isInteger(raw) || raw <= 0 || raw >= totalSegments) {
-    return 0;
-  }
-  return raw;
-}
-
-export function computeGlobalStepOffset(
-  segments: readonly GT000Segment[],
-  segmentIndex: number
-): number {
-  let offset = 0;
-  for (let i = 0; i < segmentIndex; i++) {
-    offset += segments[i]?.steps.length ?? 0;
-  }
-  return offset;
-}
-
-export function syncSegmentCursorFromStepIndex(
-  segments: readonly GT000Segment[],
-  globalStepIdx: number
-): { segmentIndex: number; segmentStepIndex: number } {
-  let remaining = globalStepIdx;
-  for (let i = 0; i < segments.length; i++) {
-    const len = segments[i]?.steps.length ?? 0;
-    if (remaining < len) {
-      return { segmentIndex: i, segmentStepIndex: remaining };
-    }
-    remaining -= len;
-  }
-  return { segmentIndex: 0, segmentStepIndex: 0 };
+  renderGT000FeedbackLayer(ctx, rs, isCard, options);
 }
 
 export function findTappedItem(
-  gesture: Extract<Gesture, { type: "tap" }>,
+  gesture: { readonly x: number; readonly y: number },
   step: GT000Step,
   renderItems: readonly RenderItem[],
-  slots: readonly Slot[]
-): { itemId: string; isLink: boolean } | null {
-  const isCard = step.action === "present" || step.action === "echo";
-
-  if (isCard) {
+  slots: readonly Slot[],
+  logic: LogicSpace = DEFAULT_LOGIC_SPACE
+): { itemId: string; isLink: boolean; slotIndex: number } | null {
+  if (step.action === "present" || step.action === "echo") {
     const item = renderItems[0];
     const slot = slots[0];
     if (!(item && slot)) {
       return null;
     }
+    const rect = resolveGT000FlashcardRect(logic, slot);
     const cardSlot: Slot = {
       ...slot,
-      w: Math.max(slot.w, 350),
-      h: Math.max(slot.h, 320),
-      hitW: Math.max(slot.hitW, 350),
-      hitH: Math.max(slot.hitH, 320),
+      w: rect.w,
+      h: rect.h,
+      hitW: rect.w,
+      hitH: rect.h,
     };
-    if (
-      !isPointInSlot(cardSlot, gesture.x, gesture.y, "square", TAP_TOLERANCE_PX)
-    ) {
-      return null;
-    }
-    return { itemId: item.id, isLink: false };
+    const hit = isPointInSlot(
+      cardSlot,
+      gesture.x,
+      gesture.y,
+      "square",
+      TAP_TOLERANCE_PX
+    );
+    return hit ? { itemId: item.id, isLink: false, slotIndex: 0 } : null;
   }
-
   const hitIdx = findHitSlotIndex(
     slots.slice(0, renderItems.length),
     gesture.x,
@@ -443,11 +402,86 @@ export function findTappedItem(
     TAP_TOLERANCE_PX
   );
   const item = hitIdx >= 0 ? renderItems[hitIdx] : undefined;
-  if (!item) {
+  return item
+    ? { itemId: item.id, isLink: step.action === "link", slotIndex: hitIdx }
+    : null;
+}
+
+export function resolveLinkDropAction(
+  gesture: Extract<Gesture, { type: "drop" }>,
+  renderItems: readonly RenderItem[],
+  slots: readonly Slot[]
+): GameAction | null {
+  const active = slots.slice(0, renderItems.length);
+  const fromIdx = findHitSlotIndex(
+    active,
+    gesture.fromX,
+    gesture.fromY,
+    "circle",
+    TAP_TOLERANCE_PX
+  );
+  const toIdx = findHitSlotIndex(
+    active,
+    gesture.toX,
+    gesture.toY,
+    "circle",
+    TAP_TOLERANCE_PX
+  );
+  if (fromIdx < 0 || toIdx < 0 || fromIdx === toIdx) {
     return null;
   }
+  const fromItem = renderItems[fromIdx];
+  const toItem = renderItems[toIdx];
+  if (!(fromItem && toItem)) {
+    return null;
+  }
+  return {
+    type: "tap_item",
+    data: {
+      source_id: fromItem.id,
+      target_id: toItem.id,
+      item_id: toItem.id,
+      asset_id: toItem.id,
+    },
+  };
+}
 
-  return { itemId: item.id, isLink: step.action === "link" };
+export function resolveGT000LinkConnector(
+  step: GT000Step | undefined,
+  selectedAssetId: string | null,
+  renderItems: readonly RenderItem[],
+  slots: readonly Slot[],
+  pointerHoverPoint?: { readonly x: number; readonly y: number } | null
+): {
+  readonly from: { readonly x: number; readonly y: number };
+  readonly to: { readonly x: number; readonly y: number };
+} | null {
+  if (step?.action !== "link" || !selectedAssetId) {
+    return null;
+  }
+  const fromIdx = renderItems.findIndex((it) => it.id === selectedAssetId);
+  const fromSlot = fromIdx >= 0 ? slots[fromIdx] : undefined;
+  if (!fromSlot) {
+    return null;
+  }
+  if (pointerHoverPoint) {
+    return {
+      from: { x: fromSlot.x, y: fromSlot.y },
+      to: { x: pointerHoverPoint.x, y: pointerHoverPoint.y },
+    };
+  }
+  const otherIdx = renderItems.findIndex((it) => it.id !== selectedAssetId);
+  const otherSlot = otherIdx >= 0 ? slots[otherIdx] : undefined;
+  if (!otherSlot) {
+    return null;
+  }
+  return {
+    from: { x: fromSlot.x, y: fromSlot.y },
+    to: {
+      x: Math.round((fromSlot.x + otherSlot.x) / 2),
+      y: Math.round((fromSlot.y + otherSlot.y) / 2),
+    },
+  };
 }
 
 export interface StepActionContext {
@@ -464,12 +498,13 @@ export interface StepActionContext {
     data?: Record<string, string | number | boolean | null | undefined>
   ) => void;
   playEchoModel: (step: GT000Step & { action: "echo" }) => void;
-  /** Sai ở recognise/link: chạy lại `present` của mục tiêu rồi hỏi lại (BR-E000-14). */
+  onReplayCard?: () => void;
+  onCorrectAnswer?: (assetId: string) => void;
+  onWrongTap?: (assetId: string) => void;
   replayTargetThenAsk: (
     step: GT000Step & { action: "recognise" | "link" }
   ) => void;
   advanceStep: () => void;
-  /** Sang bước kế ở nhịp `update()` tới (recall sai — `BR-CIR-07`). */
   deferAdvance: () => void;
 }
 
@@ -497,6 +532,7 @@ function handleEchoAction(
       return ACTION_IGNORED;
     }
     ctx.echoReplayCounts.set(stepId, used + 1);
+    ctx.onReplayCard?.();
     ctx.playEchoModel(step);
     return ACTION_CORRECT;
   }
@@ -515,12 +551,12 @@ function handleRecogniseAction(
   ctx: StepActionContext
 ): ActionResult {
   const selectedId = String(payload.item_id ?? payload.asset_id ?? "");
-  const isCorrect = selectedId === step.target_asset_id;
-
-  if (!isCorrect) {
+  if (selectedId !== step.target_asset_id) {
+    if (selectedId) {
+      ctx.onWrongTap?.(selectedId);
+    }
     const misses = (ctx.missCounts.get(step.target_asset_id) ?? 0) + 1;
     ctx.missCounts.set(step.target_asset_id, misses);
-
     if (
       misses >= 3 &&
       ctx.requiresReintro &&
@@ -537,7 +573,6 @@ function handleRecogniseAction(
     ctx.replayTargetThenAsk(step);
     return ACTION_RETRY;
   }
-
   ctx.renderItemStates.set(selectedId, "correct");
   ctx.recordEvent("intro_step_answered", {
     step_id: `step_${ctx.currentStepIndex}`,
@@ -546,6 +581,7 @@ function handleRecogniseAction(
     miss_count: ctx.missCounts.get(step.target_asset_id) ?? 0,
     tts_used: false,
   });
+  ctx.onCorrectAnswer?.(selectedId);
   ctx.advanceStep();
   return ACTION_CORRECT;
 }
@@ -555,20 +591,23 @@ function handleLinkAction(
   payload: Record<string, string | boolean | number>,
   ctx: StepActionContext
 ): ActionResult {
-  const sourceId = String(payload.source_id ?? "");
-  const targetId = String(payload.target_id ?? "");
-
+  const sId = String(payload.source_id ?? "");
+  const tId = String(payload.target_id ?? "");
   const isMatch =
-    (sourceId === step.source_asset_id && targetId === step.target_asset_id) ||
-    (sourceId === step.target_asset_id && targetId === step.source_asset_id);
-
+    (sId === step.source_asset_id && tId === step.target_asset_id) ||
+    (sId === step.target_asset_id && tId === step.source_asset_id);
   if (!isMatch) {
-    const misses = (ctx.missCounts.get(step.target_asset_id) ?? 0) + 1;
-    ctx.missCounts.set(step.target_asset_id, misses);
+    const tappedId = tId || sId;
+    if (tappedId) {
+      ctx.onWrongTap?.(tappedId);
+    }
+    ctx.missCounts.set(
+      step.target_asset_id,
+      (ctx.missCounts.get(step.target_asset_id) ?? 0) + 1
+    );
     ctx.replayTargetThenAsk(step);
     return ACTION_RETRY;
   }
-
   ctx.recordEvent("intro_step_answered", {
     step_id: `step_${ctx.currentStepIndex}`,
     action: "link",
@@ -576,6 +615,7 @@ function handleLinkAction(
     miss_count: 0,
     tts_used: false,
   });
+  ctx.onCorrectAnswer?.(step.target_asset_id);
   ctx.advanceStep();
   return ACTION_CORRECT;
 }
@@ -586,30 +626,19 @@ function handleRecallAction(
   ctx: StepActionContext
 ): ActionResult {
   const selectedId = extractAssetId(payload);
-  const correctId =
-    (step as { correct_asset_id?: string; target_asset_id?: string })
-      .correct_asset_id ?? step.target_asset_id;
+  const correctId = resolveRecallCorrectAssetId(step);
   const isCorrect = selectedId === correctId;
-
-  ctx.recallAnswers.push({
-    asset_id: correctId,
-    correct: isCorrect,
-  });
-
+  ctx.recallAnswers.push({ asset_id: correctId, correct: isCorrect });
   ctx.recordEvent("intro_recall_answered", {
     step_id: `step_${ctx.currentStepIndex}`,
     target_asset_id: correctId,
     answer_correct: isCorrect,
   });
-
   if (!isCorrect) {
-    // `recall` là phép đo, không phải cửa (spec §5 nhánh 2, `BR-CIR-07`): sai
-    // thì không báo sai, không bắt thử lại — sang bước kế ở nhịp `update()`
-    // sau, để thắng ở bước cuối đi qua đường `onSessionWon` của engine.
     ctx.deferAdvance();
     return ACTION_IGNORED;
   }
-
+  ctx.onCorrectAnswer?.(correctId);
   ctx.advanceStep();
   return ACTION_CORRECT;
 }

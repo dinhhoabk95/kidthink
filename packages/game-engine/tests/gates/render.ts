@@ -77,6 +77,7 @@ const PRIMITIVE_MODULES: readonly string[] = [
   "render/scene-themes-outdoor.ts",
   "render/scene-decor.ts",
   "render/flashcard.ts",
+  "render/gt-000-shapes.ts",
   "render/craft-shapes.ts",
   "render/particles.ts",
   "render/slot-decor.ts",

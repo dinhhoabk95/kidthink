@@ -1,6 +1,13 @@
 import { z } from "zod";
 import { assetSchema } from "#src/contracts/shared-fields";
 import { defineTemplate } from "#src/contracts/types";
+import {
+  ACTION_CORRECT,
+  ACTION_IGNORED,
+  ACTION_RETRY,
+  type ActionResult,
+  type GameAction,
+} from "#src/game-session";
 
 const GT000AssetKindSchema = z.enum(["glyph", "word", "image"]);
 
@@ -207,6 +214,341 @@ export type GT000Step = z.infer<typeof GT000StepSchema>;
 export type GT000Segment = z.infer<typeof GT000SegmentSchema>;
 export type GT000Content = z.infer<typeof GT000ContentSchema>;
 export type GT000Difficulty = z.infer<typeof GT000DifficultySchema>;
+
+export function getStepItemCount(step: GT000Step): number {
+  if (step.action === "recognise") {
+    return 1 + step.distractor_asset_ids.length;
+  }
+  if (step.action === "link") {
+    return 2;
+  }
+  return step.action === "recall" ? step.option_asset_ids.length : 1;
+}
+
+export function resolveNormalizedSegments(
+  content: GT000Content
+): GT000Segment[] {
+  if (content.segments && content.segments.length > 0) {
+    return [...content.segments];
+  }
+  return [
+    {
+      segment_id: "seg_1",
+      asset_ids: content.assets.map((a) => a.asset_id),
+      steps: [...(content.steps ?? [])],
+      is_review: false,
+    },
+  ];
+}
+
+export function resolveStartSegmentIndex(
+  initialResumeSegmentIndex: number | undefined,
+  difficultyResume: number | undefined,
+  contentResume: number | undefined,
+  totalSegments: number
+): number {
+  const raw =
+    initialResumeSegmentIndex ?? difficultyResume ?? contentResume ?? 0;
+  return Number.isInteger(raw) && raw > 0 && raw < totalSegments ? raw : 0;
+}
+
+export function computeGlobalStepOffset(
+  segments: readonly GT000Segment[],
+  segmentIndex: number
+): number {
+  let offset = 0;
+  for (let i = 0; i < segmentIndex; i++) {
+    offset += segments[i]?.steps.length ?? 0;
+  }
+  return offset;
+}
+
+export function syncSegmentCursorFromStepIndex(
+  segments: readonly GT000Segment[],
+  globalStepIdx: number
+): { segmentIndex: number; segmentStepIndex: number } {
+  let remaining = globalStepIdx;
+  for (let i = 0; i < segments.length; i++) {
+    const len = segments[i]?.steps.length ?? 0;
+    if (remaining < len) {
+      return { segmentIndex: i, segmentStepIndex: remaining };
+    }
+    remaining -= len;
+  }
+  return { segmentIndex: 0, segmentStepIndex: 0 };
+}
+
+export function resolveGT000HintTargetIndex(
+  step: GT000Step | undefined,
+  ids: readonly string[],
+  selectedAssetId: string | null
+): number | null {
+  if (!step) {
+    return null;
+  }
+  if (step.action === "present" || step.action === "echo") {
+    return 0;
+  }
+  let wanted = step.target_asset_id;
+  if (step.action === "link") {
+    wanted =
+      selectedAssetId === step.source_asset_id
+        ? step.target_asset_id
+        : step.source_asset_id;
+  }
+  const idx = ids.indexOf(wanted);
+  return idx >= 0 ? idx : null;
+}
+
+export function resolveGT000HintDestinationIndex(
+  step: GT000Step | undefined,
+  ids: readonly string[],
+  selectedAssetId: string | null
+): number | null {
+  if (step?.action !== "link") {
+    return null;
+  }
+  const wanted =
+    selectedAssetId === step.target_asset_id
+      ? step.source_asset_id
+      : step.target_asset_id;
+  const idx = ids.indexOf(wanted);
+  return idx >= 0 ? idx : null;
+}
+
+export function routeGT000Action(
+  payload: Record<string, string | boolean | number>,
+  step: GT000Step
+): "prev" | "replay_echo" | "replay_present" | "advance" | "step" {
+  if (payload.intent === "prev") {
+    return "prev";
+  }
+  if (payload.intent === "replay") {
+    if (step.action === "echo") {
+      return "replay_echo";
+    }
+    if (step.action === "present") {
+      return "replay_present";
+    }
+  }
+  if (
+    payload.intent === "advance" &&
+    (step.action === "present" || step.action === "echo")
+  ) {
+    return "advance";
+  }
+  return "step";
+}
+
+export function extractAssetId(data: GameAction["data"]): string {
+  if (typeof data === "object" && data !== null) {
+    const item = Reflect.get(data, "item_id");
+    if (typeof item === "string") {
+      return item;
+    }
+    const asset = Reflect.get(data, "asset_id");
+    if (typeof asset === "string") {
+      return asset;
+    }
+  }
+  return "";
+}
+
+export function resolveRecallCorrectAssetId(
+  step: Extract<GT000Step, { action: "recall" }>
+): string {
+  const legacy = Reflect.get(step, "correct_asset_id");
+  return typeof legacy === "string" && legacy.length > 0
+    ? legacy
+    : step.target_asset_id;
+}
+
+export function evaluateGT000StepAnswer(
+  payload: Record<string, string | boolean | number>,
+  step: GT000Step
+): ActionResult {
+  switch (step.action) {
+    case "present":
+    case "echo":
+      return ACTION_CORRECT;
+    case "recall":
+      return extractAssetId(payload) === resolveRecallCorrectAssetId(step)
+        ? ACTION_CORRECT
+        : ACTION_IGNORED;
+    case "recognise":
+      return extractAssetId(payload) === step.target_asset_id
+        ? ACTION_CORRECT
+        : ACTION_RETRY;
+    case "link": {
+      const sId = String(payload.source_id ?? "");
+      const tId = String(payload.target_id ?? "");
+      const matched =
+        (sId === step.source_asset_id && tId === step.target_asset_id) ||
+        (sId === step.target_asset_id && tId === step.source_asset_id);
+      return matched ? ACTION_CORRECT : ACTION_RETRY;
+    }
+    default:
+      return ACTION_IGNORED;
+  }
+}
+
+export function resolveGT000LinkTapSelection(
+  currentSelectedId: string | null,
+  tappedItemId: string,
+  renderItemStates: Map<
+    string,
+    | "idle"
+    | "selected"
+    | "correct"
+    | "wrong"
+    | "disabled"
+    | "touching"
+    | "locked"
+  >
+): {
+  readonly nextSelectedId: string | null;
+  readonly action: GameAction | null;
+} {
+  if (currentSelectedId === null) {
+    renderItemStates.set(tappedItemId, "selected");
+    return { nextSelectedId: tappedItemId, action: null };
+  }
+  if (currentSelectedId === tappedItemId) {
+    renderItemStates.delete(tappedItemId);
+    return { nextSelectedId: null, action: null };
+  }
+  renderItemStates.delete(currentSelectedId);
+  return {
+    nextSelectedId: null,
+    action: {
+      type: "tap_item",
+      data: {
+        source_id: currentSelectedId,
+        target_id: tappedItemId,
+        item_id: tappedItemId,
+        asset_id: tappedItemId,
+      },
+    },
+  };
+}
+
+export function resolveGT000InitialState(
+  content: GT000Content,
+  difficulty: GT000Difficulty,
+  initialResumeSegmentIndex?: number
+): {
+  readonly normalizedSegments: GT000Segment[];
+  readonly allSteps: GT000Step[];
+  readonly currentSegmentIndex: number;
+  readonly currentStepIndex: number;
+} {
+  const normalizedSegments = resolveNormalizedSegments(content);
+  const allSteps = normalizedSegments.flatMap((s) => s.steps);
+  const currentSegmentIndex = resolveStartSegmentIndex(
+    initialResumeSegmentIndex,
+    difficulty.resume_segment_index,
+    content.resume_segment_index,
+    normalizedSegments.length
+  );
+  return {
+    normalizedSegments,
+    allSteps,
+    currentSegmentIndex,
+    currentStepIndex: computeGlobalStepOffset(
+      normalizedSegments,
+      currentSegmentIndex
+    ),
+  };
+}
+
+export function readGT000ActionPayload(
+  action: GameAction
+): Record<string, string | boolean | number> {
+  return typeof action.data === "object" && action.data !== null
+    ? (action.data as Record<string, string | boolean | number>)
+    : {};
+}
+
+export function validateGT000SessionAction(
+  action: GameAction,
+  step: GT000Step | undefined,
+  currentStepIndex: number,
+  echoReplayCounts: ReadonlyMap<string, number>
+): ActionResult {
+  if (!step) {
+    return ACTION_IGNORED;
+  }
+  const payload = readGT000ActionPayload(action);
+  switch (routeGT000Action(payload, step)) {
+    case "prev":
+    case "replay_present":
+    case "advance":
+      return ACTION_CORRECT;
+    case "replay_echo": {
+      if (step.action !== "echo") {
+        return ACTION_IGNORED;
+      }
+      const used = echoReplayCounts.get(`step_${currentStepIndex}`) ?? 0;
+      return used >= step.repeat_count ? ACTION_IGNORED : ACTION_CORRECT;
+    }
+    default:
+      return evaluateGT000StepAnswer(payload, step);
+  }
+}
+
+export function computeGT000TotalMisses(
+  missCounts: ReadonlyMap<string, number>
+): number {
+  let total = 0;
+  for (const count of missCounts.values()) {
+    total += count;
+  }
+  return total;
+}
+
+export function resolveGT000AnswerReaction(
+  step: GT000Step,
+  result: ActionResult
+): "happy" | "listen" | null {
+  if (step.action === "present" || step.action === "echo") {
+    return null;
+  }
+  if (result.valid) {
+    return "happy";
+  }
+  return step.action === "recall" ? null : "listen";
+}
+
+export interface GT000CardPose {
+  readonly scale: number;
+  readonly offsetY: number;
+  readonly depressed: boolean;
+}
+
+/** Tư thế động của Flashcard ở `present` / `echo`; tĩnh khi `reducedMotion`. */
+export function computeGT000CardPose(
+  stepElapsedMs: number,
+  cardBounceMs: number,
+  reducedMotion: boolean
+): GT000CardPose {
+  const depressed = cardBounceMs > 0;
+  if (reducedMotion) {
+    return { scale: 1, offsetY: 0, depressed };
+  }
+  const t = Math.max(0, Math.min(1, stepElapsedMs / 200));
+  let scale =
+    stepElapsedMs < 200
+      ? 0.94 + 0.06 * (1 - (1 - t) ** 3)
+      : 1 + 0.008 * Math.sin(((stepElapsedMs - 200) / 1400) * Math.PI * 2);
+  let offsetY = 0;
+  if (cardBounceMs > 0) {
+    const p = 1 - Math.max(0, Math.min(1, cardBounceMs / 220));
+    const wave = Math.sin(p * Math.PI);
+    scale *= 1 - 0.024 * wave;
+    offsetY = Math.round(3 * wave);
+  }
+  return { scale, offsetY, depressed };
+}
 
 const INTRO_SCORING = {
   max_score: 0,

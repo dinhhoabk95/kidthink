@@ -116,12 +116,20 @@ describe("GT-000 Concept Intro Session (M0 & M1 Acceptance)", () => {
     };
 
     const session = new GT000Session(contentWithAudio, fixture.difficulty);
-    const playPromptSpy = vi.spyOn(session.audio, "playPromptAudio");
+    const playPromptSpy = vi
+      .spyOn(session.audio, "playPromptAudio")
+      .mockImplementation(() => {
+        /* giả lập phát MP3 thành công */
+      });
     const speakSpy = vi.spyOn(session.audio, "speakPrompt");
 
     session.prepareRound("3-4");
 
-    expect(playPromptSpy).toHaveBeenCalledWith("/audio/numbers/1.mp3");
+    expect(playPromptSpy).toHaveBeenCalledWith(
+      "/audio/numbers/1.mp3",
+      undefined,
+      expect.any(Function)
+    );
     expect(speakSpy).not.toHaveBeenCalled();
     expect(session.lastTtsUsed).toBe(false);
   });
