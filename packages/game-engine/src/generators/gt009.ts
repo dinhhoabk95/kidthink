@@ -1,8 +1,12 @@
 import { cluesNarrowToExactlyOne } from "#src/templates/GT-009/deduction";
+import type {
+  GT009Content,
+  GT009Difficulty,
+} from "#src/templates/GT-009/template";
 import { getNouns, sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
-export const GT009Generator: LevelGenerator = {
+export const GT009Generator: LevelGenerator<GT009Content, GT009Difficulty> = {
   engine: "GT-009",
   axes: {
     age_band: ["4-5", "5-6"],
