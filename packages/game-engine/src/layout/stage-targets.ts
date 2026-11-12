@@ -199,7 +199,8 @@ function treeExtent(partCount: number, cell: number, isStacked: boolean): Size {
 }
 
 function planTree(spec: StageTreeSpec, area: ZoneRect): TreePlan {
-  for (let cell = spec.maxCell; cell >= spec.touchFloor; cell -= CELL_STEP_PX) {
+  const startCell = Math.max(spec.maxCell, spec.touchFloor);
+  for (let cell = startCell; cell >= spec.touchFloor; cell -= CELL_STEP_PX) {
     // Tầng trên–dưới trước (đúng hình cây); sân khấu thấp thì tổng bên trái.
     for (const isStacked of [true, false]) {
       const extent = treeExtent(spec.partCount, cell, isStacked);

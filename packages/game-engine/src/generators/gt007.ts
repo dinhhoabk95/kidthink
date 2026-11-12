@@ -1,8 +1,12 @@
 import { shuffle } from "#src/rng/shuffle";
+import type {
+  GT007Content,
+  GT007Difficulty,
+} from "#src/templates/GT-007/template";
 import { getNouns, pickOne, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
-export const GT007Generator: LevelGenerator = {
+export const GT007Generator: LevelGenerator<GT007Content, GT007Difficulty> = {
   engine: "GT-007",
   axes: {
     age_band: ["4-5", "5-6"],
@@ -49,19 +53,16 @@ export const GT007Generator: LevelGenerator = {
       {
         id: "opt_1",
         value: part2Val,
-        label: `${part2Val}`,
         is_correct: true,
       },
       {
         id: "opt_2",
         value: distractor1,
-        label: `${distractor1}`,
         is_correct: false,
       },
       {
         id: "opt_3",
         value: distractor2,
-        label: `${distractor2}`,
         is_correct: false,
       },
     ];
@@ -79,6 +80,7 @@ export const GT007Generator: LevelGenerator = {
         options: shuffle(options, rng),
       },
       difficulty_params: {
+        item_count: options.length,
         part_count: 2,
         distractor_count: 2,
         hint_after_ms: 12_000,

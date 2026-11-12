@@ -1,4 +1,3 @@
-import { formatSpokenLabel } from "@mindkid/shared/preschool-terminology";
 import type { AgeBand } from "#src/contracts/types";
 import {
   ACTION_CORRECT,
@@ -6,103 +5,86 @@ import {
   ACTION_RETRY,
   type ActionResult,
   type GameAction,
-  type GameActionValue,
+  type HintLevel,
+  type HintTarget,
   TemplateGameSession,
 } from "#src/game-session";
-import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
-import {
-  CONTENT_TOP_PX,
-  resolveTouchFloor,
-  SAFE_MARGIN_PX,
-} from "#src/layout/constants";
-import { TAP_TOLERANCE_PX } from "#src/layout/hit-test";
-import { resolveLayout } from "#src/layout/registry";
-import { computeStageTreeSlots } from "#src/layout/stage-targets";
-import {
-  computeTraySourceSlots,
-  findNearestHitSlot,
-  type MinHitSize,
-  pickTrayZones,
-} from "#src/layout/tray-layout";
+import type { EngineView, Gesture } from "#src/interaction";
+import { pickTrayZones } from "#src/layout/tray-layout";
 import type { Slot } from "#src/layout/types";
 import {
-  drawEmptyTargetSlot,
-  drawMatchLine,
+  drawGT007BondConnector,
+  drawGT007OptionToken,
+  drawGT007PartSocket,
+  drawGT007WholeFrame,
+} from "#src/render/gt-007-shapes";
+import {
   drawMontessoriControlOfErrorPill,
   drawQuantityRepresentation,
   drawSceneBackground,
-  drawSlotItem,
   drawStoryCharacterInStage,
   drawWoodenTokenDock,
-  type ItemVisualState,
   sceneBox,
+  spawnParticlesAtSlot,
 } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
 import { deriveStream } from "#src/rng/mulberry32";
 import { shuffle } from "#src/rng/shuffle";
 import type { DegradationState } from "#src/systems/degradation";
-import { designTokens } from "#src/systems/designTokens";
 import {
   type ControlOfErrorDiagnostics,
   MontessoriExploreTracker,
 } from "#src/systems/montessori-explore-system";
 import { MoodPulse } from "#src/systems/mood-pulse";
-import type { RenderSystem } from "#src/systems/render-system";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
 import { WrongFlash } from "#src/systems/wrong-flash";
 import {
+  buildGT007CandyView,
   CANDY_DEFAULT_ASSET,
-  type CandyEndpoint,
-  CandySplit,
-  computeCandySlots,
+  type CandySplit,
+  candySlotIndex,
+  computeCandyStageSlots,
+  createCandySplit,
   drawCandySplit,
-} from "./candy-split.js";
-import type { GT007Content, GT007Difficulty } from "./template.js";
+  parseCandyMoveData,
+  resolveCandyGesture,
+} from "#src/templates/GT-007/candy-split";
+import {
+  buildGT007ChoiceView,
+  canOptionSatisfyBond,
+  computeChoiceSlots,
+  computeKnownSum,
+  extractOptionId,
+  extractPartId,
+  findGT007ChoiceOption,
+  findGT007HoveredSlot,
+  findGT007TargetPart,
+  type GT007OptionPreview,
+  getGT007Clock,
+  isBondChoiceComplete,
+  isCandyContent,
+  isTenFrameContent,
+  resetGT007Clock,
+  resolveNextTargetPartId,
+  resolveOptionEntityState,
+  resolveOptionVisualState,
+  resolvePartPopScale,
+  resolveWrongFlashProgress,
+  stepParticlesWithinStage,
+} from "#src/templates/GT-007/layout";
+import type {
+  GT007Content,
+  GT007Difficulty,
+} from "#src/templates/GT-007/template";
 
-/** Cạnh ô tổng và ô phần lớn nhất trên sân khấu — cùng cỡ ô của `number-bond-tree`. */
-const TREE_CELL_MAX_PX = 96;
+type Opt = GT007Content["options"][number];
+type Part = GT007Content["parts"][number];
 
 export const FIBONACCI_SEQUENCE = [1, 1, 2, 3, 5, 8, 13, 21] as const;
-
-/** Khoảng chạm thêm quanh vùng chạm của slot (`GT-007.md` §6). */
-const HIT_TOLERANCE_PX = TAP_TOLERANCE_PX;
-
-/** Vùng chạm tối thiểu của ô phần ở bố cục cũ — rộng hơn thân ô vẽ. */
-const LEGACY_PART_HIT: MinHitSize = { w: 100, h: 100 };
-
-function isCandyEndpoint(
-  value: object | string | number | boolean | null | undefined
-): value is CandyEndpoint {
-  if (typeof value !== "object" || value === null) {
-    return false;
-  }
-  const kind = Reflect.get(value, "kind");
-  if (kind === "plate") {
-    return true;
-  }
-  return kind === "tray" && typeof Reflect.get(value, "index") === "number";
-}
-
-function extractOptionId(data: GameActionValue): string | undefined {
-  if (typeof data === "object" && data !== null && "option_id" in data) {
-    const val = Reflect.get(data, "option_id");
-    return typeof val === "string" ? val : undefined;
-  }
-  return undefined;
-}
-
-/** Khung chuyện đọc một lần ở vòng đầu (`BR-E007-05`, `BR-FBK-16`). */
 export const GT007_STORY_LINE =
   "Khỉ Nhỏ chia kẹo cho hai bạn. Một bạn đã có phần rồi, bé chọn phần kẹo còn lại cho bạn kia nhé!";
-
-/** Mascot reo ngắn sau phần đúng (`BR-E007-05`). */
 export const GT007_CHEER_MS = 1000;
-/** Mascot nghiêng đầu sau phần chưa đúng. */
 export const GT007_WONDER_MS = 1500;
-
-/** Level chơi bằng kẹo thật thay vì bảng chọn số (`BR-E007-06`). */
-function isCandyContent(content: GT007Content): boolean {
-  return content.representation === "discrete-object";
-}
 
 export class GT007Session extends TemplateGameSession<
   GT007Content,
@@ -112,36 +94,34 @@ export class GT007Session extends TemplateGameSession<
   private readonly exploreTracker = new MontessoriExploreTracker({
     milestoneTarget: 2,
   });
-
   private previewedOptionId: string | null = null;
   private stagedOptionId: string | null = null;
   private readonly wrongFlash = new WrongFlash();
   private readonly mood = new MoodPulse();
-  private lastFrameMs = 0;
-  private displayOptions: readonly GT007Content["options"][number][] = [];
+  private logicClockMs = 0;
+  private isRoundClosed = false;
+  private touchingSlotIndex: number | null = null;
+  private hoveredSlotIndex: number | null = null;
+  private particles: Particle[] = [];
+  private displayOptions: readonly Opt[] = [];
 
   filledParts: Map<string, number> = new Map();
-
-  /** Vật thật (`BR-E007-06`): ô tổng và hai khay ở sân khấu, không có khay lựa chọn. */
+  private readonly filledOptionIds = new Map<string, string>();
   private candy: CandySplit | null = null;
-  /** Slot đã chạm chọn làm nguồn của lối chạm-chạm ở chế độ vật thật. */
   private stagedCandySlot: number | null = null;
 
-  /** Lựa chọn nằm trong khay, cây tách gộp đứng trên sân khấu (`BR-PSZ-01`). */
   override readonly needsTray: boolean = !isCandyContent(this.content);
-
-  /** Số vật nguồn trong khay của vòng — shell đo chiều cao khay (`BR-PSZ-13`). */
-  override get trayItemCount(): number {
-    if (isCandyContent(this.content)) {
-      return 0;
-    }
-    return (
-      this.displayOptions.length > 0
-        ? this.displayOptions
-        : this.content.options
-    ).length;
-  }
   override readonly usesPromptZone = true;
+
+  override get trayItemCount(): number {
+    return isCandyContent(this.content) ? 0 : this.getOptions().length;
+  }
+
+  private getOptions(): readonly Opt[] {
+    return this.displayOptions.length > 0
+      ? this.displayOptions
+      : this.content.options;
+  }
 
   override takePillNarration(): string | null {
     return this.exploreTracker.takePillNarration();
@@ -149,43 +129,94 @@ export class GT007Session extends TemplateGameSession<
 
   setupEntities(): void {
     this.filledParts.clear();
+    this.filledOptionIds.clear();
     this.exploreTracker.reset(false);
     this.previewedOptionId = null;
     this.stagedOptionId = null;
     this.wrongFlash.clear();
     this.mood.clear();
-    this.lastFrameMs = 0;
+    this.logicClockMs = 0;
+    this.isRoundClosed = false;
+    this.touchingSlotIndex = null;
+    this.hoveredSlotIndex = null;
+    this.particles = [];
     this.isWon = false;
-    this.candy = isCandyContent(this.content)
-      ? new CandySplit(
-          this.content.whole.value,
-          this.content.parts.map((part) => ({
-            id: part.id,
-            locked: !part.is_target,
-            goal: part.value,
-            initial: part.value,
-          }))
-        )
-      : null;
+    resetGT007Clock(this);
+    this.candy = createCandySplit(this.content);
     this.stagedCandySlot = null;
-    this.displayOptions =
-      Reflect.get(this.difficulty, "shuffle_items") === true
-        ? shuffle(this.content.options, deriveStream(this.layoutSeed, "items"))
-        : [...this.content.options];
+    const shuf = Reflect.get(this.difficulty, "shuffle_items") === true;
+    const rng = deriveStream(this.layoutSeed, "items");
+    this.displayOptions = shuf
+      ? shuffle(this.content.options, rng)
+      : [...this.content.options];
+  }
+
+  override destroy(): void {
+    resetGT007Clock(this);
+    super.destroy();
   }
 
   override storyLine(): string {
     return GT007_STORY_LINE;
   }
 
-  /** Reo sau phần đúng, nghiêng đầu sau phần sai (`BR-E007-05`). */
   override mascotMood(): MascotPose | null {
-    return this.isWon ? null : this.mood.current();
+    return this.isWon || this.isRoundClosed ? null : this.mood.current();
   }
 
   update(deltaMs: number): void {
+    if (deltaMs > 0) {
+      this.logicClockMs += deltaMs;
+    }
+    if (this.wrongFlash.hasExpired(this.logicClockMs)) {
+      this.wrongFlash.clear();
+    }
     this.mood.tick(deltaMs);
     this.exploreTracker.tick(deltaMs);
+    const stage =
+      pickTrayZones(this.stageRect, this.trayRect)?.stage ?? this.stageRect;
+    this.particles = stepParticlesWithinStage(this.particles, deltaMs, stage);
+  }
+
+  setTouchingSlot(slotIndex: number | null): void {
+    this.touchingSlotIndex =
+      this.isWon || this.isRoundClosed ? null : slotIndex;
+  }
+
+  getTouchingSlot(): number | null {
+    return this.touchingSlotIndex;
+  }
+
+  setPointerOver(x: number, y: number): void {
+    if (this.isWon || this.isRoundClosed) {
+      this.clearPointerOver();
+      return;
+    }
+    this.hoveredSlotIndex = findGT007HoveredSlot(
+      this.slots,
+      this.candy !== null,
+      x,
+      y
+    );
+  }
+
+  clearPointerOver(): void {
+    this.hoveredSlotIndex = null;
+    this.touchingSlotIndex = null;
+  }
+
+  getHoveredSlot(): number | null {
+    return this.hoveredSlotIndex;
+  }
+
+  override isAcceptingInput(): boolean {
+    return super.isAcceptingInput() && !this.isRoundClosed;
+  }
+
+  override dispatch(gesture: Gesture): ActionResult | undefined {
+    return this.isWon || this.isRoundClosed
+      ? ACTION_IGNORED
+      : super.dispatch(gesture);
   }
 
   startExplorePhase(): void {
@@ -208,151 +239,144 @@ export class GT007Session extends TemplateGameSession<
     return this.previewedOptionId;
   }
 
-  previewOption(optionId: string): {
-    optionValue: number;
-    resultingSum: number;
-    expectedWhole: number;
-  } | null {
-    const options =
-      this.displayOptions.length > 0
-        ? this.displayOptions
-        : this.content.options;
-    const option = options.find((o) => o.id === optionId);
+  previewOption(optionId: string): GT007OptionPreview | null {
+    const option = this.getOptions().find((o) => o.id === optionId);
     if (!option) {
       return null;
     }
-    const knownSum = this.content.parts
-      .filter((p) => !p.is_target)
-      .reduce((acc, p) => acc + p.value, 0);
-    const resultingSum = knownSum + option.value;
+    const resultingSum =
+      computeKnownSum(this.content, this.filledParts) + option.value;
+    const expectedWhole = this.content.whole.value;
     this.previewedOptionId = optionId;
     this.exploreTracker.recordExploreAction("bond_previewed");
     this.recordEvent("option_previewed", {
       option_id: optionId,
       option_value: option.value,
       resulting_sum: resultingSum,
-      expected_whole: this.content.whole.value,
+      expected_whole: expectedWhole,
     });
-    return {
-      optionValue: option.value,
-      resultingSum,
-      expectedWhole: this.content.whole.value,
-    };
+    return { optionValue: option.value, resultingSum, expectedWhole };
   }
 
   getStagedOptionId(): string | null {
     return this.stagedOptionId;
   }
 
-  validateAction(action: GameAction): ActionResult {
-    return this.candy
-      ? this.validateCandyAction(action)
-      : this.validateChoiceAction(action);
+  private getTargetPartId(): string {
+    return resolveNextTargetPartId(this.content, this.filledParts);
   }
 
-  private validateChoiceAction(action: GameAction): ActionResult {
-    if (action.type === "fill_part" || action.type === "tap_option") {
-      const optionId = extractOptionId(action.data);
-      const options =
-        this.displayOptions.length > 0
-          ? this.displayOptions
-          : this.content.options;
-      const option = options.find((o) => o.id === optionId);
+  private canSatisfy(targetId: string, option: Opt): boolean {
+    const opts = this.getOptions();
+    return canOptionSatisfyBond(
+      this.content,
+      this.filledParts,
+      this.filledOptionIds,
+      targetId,
+      option,
+      opts
+    );
+  }
 
-      if (!option) {
-        return ACTION_RETRY;
-      }
-
-      let targetPartId: string | undefined;
-      if (
-        action.data &&
-        typeof action.data === "object" &&
-        "part_id" in action.data
-      ) {
-        const pVal = Reflect.get(action.data, "part_id");
-        if (typeof pVal === "string") {
-          targetPartId = pVal;
-        }
-      }
-      targetPartId ??= this.getTargetPartId();
-      const targetPart = this.content.parts.find((p) => p.id === targetPartId);
-
-      if (
-        option.is_correct &&
-        targetPart &&
-        option.value === targetPart.value
-      ) {
-        return ACTION_CORRECT;
-      }
-
+  validateAction(action: GameAction): ActionResult {
+    if (this.isWon || this.isRoundClosed) {
+      return ACTION_IGNORED;
+    }
+    if (this.candy) {
+      return this.validateCandyAction(action);
+    }
+    if (action.type !== "fill_part" && action.type !== "tap_option") {
+      return ACTION_IGNORED;
+    }
+    const optionId = extractOptionId(action.data);
+    const option = this.getOptions().find((o) => o.id === optionId);
+    if (!option) {
       return ACTION_RETRY;
     }
-
-    return ACTION_IGNORED;
+    const targetId = extractPartId(action.data) ?? this.getTargetPartId();
+    return this.canSatisfy(targetId, option) ? ACTION_CORRECT : ACTION_RETRY;
   }
 
-  private getTargetPartId(): string {
-    const targetPart = this.content.parts.find((p) => p.is_target);
-    return targetPart ? targetPart.id : (this.content.parts[0]?.id ?? "part_0");
+  private spawnSlotBurst(slot: Slot | undefined): void {
+    if (!slot || this.degradation?.particles_enabled === false) {
+      return;
+    }
+    const stage =
+      pickTrayZones(this.stageRect, this.trayRect)?.stage ?? this.stageRect;
+    this.particles.push(
+      ...stepParticlesWithinStage(spawnParticlesAtSlot(slot, 6), 0.1, stage)
+    );
+  }
+
+  private recordWrongBond(
+    reasonVi: string,
+    targetId: string,
+    actualSum: number,
+    payload: Record<string, string | number | boolean>
+  ): void {
+    const expectedValue = this.content.whole.value;
+    this.exploreTracker.recordWrongAttempt({
+      reasonVi,
+      targetId,
+      actualValue: actualSum,
+      expectedValue,
+    });
+    this.recordEvent("control_of_error", {
+      ...payload,
+      actual_sum: actualSum,
+      expected_whole: expectedValue,
+      micro_sandbox: this.exploreTracker.isMicroSandboxActive(),
+    });
+    this.wrongFlash.trigger(this.logicClockMs);
+    this.mood.set("wonder", GT007_WONDER_MS);
+    if (!this.difficulty.allow_retry) {
+      this.isRoundClosed = true;
+      this.stagedOptionId = null;
+      this.completeSession();
+    }
   }
 
   onPartFilled(optionId: string, partId?: string): void {
-    const targetId = partId ?? this.getTargetPartId();
-    const targetPart = this.content.parts.find((p) => p.id === targetId);
-    const options =
-      this.displayOptions.length > 0
-        ? this.displayOptions
-        : this.content.options;
-    const option = options.find((o) => o.id === optionId);
-    if (!(option && targetPart)) {
+    if (this.isWon || this.isRoundClosed) {
       return;
     }
-
-    const isCorrect = Boolean(
-      option.is_correct && option.value === targetPart.value
-    );
-
+    const targetId = partId ?? this.getTargetPartId();
+    const targetPart = this.content.parts.find((p) => p.id === targetId);
+    const option = this.getOptions().find((o) => o.id === optionId);
+    if (!(option && targetPart?.is_target)) {
+      return;
+    }
+    const isCorrect = this.canSatisfy(targetId, option);
     this.recordEvent("bond_selected", {
       option_id: optionId,
       part_id: targetId,
       is_correct: isCorrect,
     });
-
     if (isCorrect) {
+      this.wrongFlash.clear();
       this.exploreTracker.recordCorrectAttempt();
       this.filledParts.set(targetId, option.value);
+      this.filledOptionIds.set(targetId, option.id);
+      const clock = getGT007Clock(this);
+      clock.partPopAtMs.set(targetId, this.logicClockMs);
+      const partIdx = this.content.parts.findIndex((p) => p.id === targetId);
+      this.spawnSlotBurst(this.targetSlots[partIdx + 1]);
       this.queueSfx("candy_drop");
       this.mood.set("cheer", GT007_CHEER_MS);
       this.recordEvent("part_filled", {
         part_id: targetId,
         value: option.value,
       });
-
       if (this.checkWinCondition()) {
+        clock.winAtMs = this.logicClockMs;
         this.winSession();
       }
-    } else {
-      const knownSum = this.content.parts
-        .filter((p) => !p.is_target)
-        .reduce((acc, p) => acc + p.value, 0);
-      const actualSum = knownSum + option.value;
-      const expectedWhole = this.content.whole.value;
-      this.exploreTracker.recordWrongAttempt({
-        reasonVi: `Gộp ${knownSum} và ${option.value} được ${actualSum} (cần ${expectedWhole})`,
-        targetId,
-        actualValue: actualSum,
-        expectedValue: expectedWhole,
-      });
-      this.recordEvent("control_of_error", {
-        option_id: optionId,
-        actual_sum: actualSum,
-        expected_whole: expectedWhole,
-        micro_sandbox: this.exploreTracker.isMicroSandboxActive(),
-      });
-      // Tổng chưa khớp: nhịp hổ phách trên ô tổng, lựa chọn đứng yên (BR-E007-04).
-      this.wrongFlash.trigger(this.lastFrameMs);
-      this.mood.set("wonder", GT007_WONDER_MS);
+      return;
     }
+    const known = computeKnownSum(this.content, this.filledParts, targetId);
+    const actual = known + option.value;
+    const reason = `Gộp ${known} và ${option.value} được ${actual} (cần ${this.content.whole.value})`;
+    this.recordWrongBond(reason, targetId, actual, { option_id: optionId });
   }
 
   onItemPlaced(itemId: string, slotId?: string): void {
@@ -360,227 +384,133 @@ export class GT007Session extends TemplateGameSession<
   }
 
   override checkWinCondition(): boolean {
-    if (this.candy) {
-      return this.isWon;
-    }
-    const targetParts = this.content.parts.filter((p) => p.is_target);
-    if (targetParts.length === 0) {
-      return true;
-    }
-
-    return targetParts.every((tp) => {
-      const filledVal = this.filledParts.get(tp.id);
-      return filledVal === tp.value;
-    });
+    return this.candy
+      ? this.isWon
+      : isBondChoiceComplete(this.content, this.filledParts);
   }
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
     if (this.candy) {
-      return this.computeCandyLayout(ageBand, this.candy);
-    }
-    const options =
-      this.displayOptions.length > 0
-        ? this.displayOptions
-        : this.content.options;
-    const zones = pickTrayZones(this.stageRect, this.trayRect);
-    if (zones) {
-      const touchFloor = resolveTouchFloor(ageBand, this.cssPerLogic);
-      const tree = computeStageTreeSlots({
-        partCount: this.content.parts.length,
-        stage: zones.stage,
-        touchFloor,
-        maxCell: TREE_CELL_MAX_PX,
-      });
-      const optionSlots = computeTraySourceSlots(
-        options.length,
-        zones.tray,
-        touchFloor,
-        tree.length
+      return computeCandyStageSlots(
+        this.candy,
+        ageBand,
+        this.cssPerLogic,
+        this.logicSpace,
+        this.stageRect
       );
-      return [...tree, ...optionSlots];
     }
-    const layoutKey =
-      this.content.layout === "ten-frame-split" ||
-      this.content.representation === "ten-frame"
-        ? "ten-frame-split"
-        : "number-bond-tree";
-    const layoutFn = resolveLayout(layoutKey);
-    return layoutFn({
-      slotCount: options.length,
-      targetCount: this.content.parts.length,
+    return computeChoiceSlots(
+      this.content,
+      this.getOptions().length,
       ageBand,
-      logic: this.logicSpace,
-    });
+      this.cssPerLogic,
+      this.logicSpace,
+      this.stageRect,
+      this.trayRect
+    );
   }
 
-  private findDraggedOption(
-    x: number,
-    y: number,
-    sources: readonly Slot[],
-    hitTolerance: number
-  ): GT007Content["options"][number] | null {
-    const options =
-      this.displayOptions.length > 0
-        ? this.displayOptions
-        : this.content.options;
-    const index = findNearestHitSlot(
-      sources.slice(0, options.length),
+  private hitOption(x: number, y: number): Opt | null {
+    const src = this.sourceSlots;
+    return findGT007ChoiceOption(
+      this.getOptions(),
+      src,
+      this.filledOptionIds,
+      x,
+      y
+    );
+  }
+
+  private hitPart(x: number, y: number, inc = false): Part | null {
+    const inF = pickTrayZones(this.stageRect, this.trayRect) !== null;
+    const t = this.targetSlots;
+    return findGT007TargetPart(
+      this.content,
+      t,
+      this.filledParts,
+      inF,
       x,
       y,
-      hitTolerance
+      inc
     );
-    return options[index] ?? null;
-  }
-
-  private findTargetPart(
-    x: number,
-    y: number,
-    targets: readonly Slot[],
-    hitTolerance: number
-  ): GT007Content["parts"][number] | null {
-    const isInFrame = pickTrayZones(this.stageRect, this.trayRect) !== null;
-    const open = this.content.parts.flatMap((part, i) => {
-      const slot = targets[i + 1];
-      return slot && part.is_target && !this.filledParts.has(part.id)
-        ? [{ part, slot }]
-        : [];
-    });
-    const hit = findNearestHitSlot(
-      open.map((entry) => entry.slot),
-      x,
-      y,
-      hitTolerance,
-      isInFrame ? undefined : LEGACY_PART_HIT
-    );
-    return open[hit]?.part ?? null;
-  }
-
-  private toDropAction(
-    gesture: Extract<Gesture, { type: "drop" }>,
-    sources: readonly Slot[],
-    targets: readonly Slot[],
-    hitTolerance: number
-  ): GameAction | null {
-    const opt = this.findDraggedOption(
-      gesture.fromX,
-      gesture.fromY,
-      sources,
-      hitTolerance
-    );
-    if (!opt) {
-      return null;
-    }
-    const part = this.findTargetPart(
-      gesture.toX,
-      gesture.toY,
-      targets,
-      hitTolerance
-    );
-    if (!part) {
-      return null;
-    }
-    return {
-      type: "fill_part",
-      data: {
-        option_id: opt.id,
-        part_id: part.id,
-      },
-    };
-  }
-
-  private handleTapTarget(
-    gesture: Extract<Gesture, { type: "tap" }>,
-    targets: readonly Slot[],
-    hitTolerance: number
-  ): GameAction | null {
-    if (!this.stagedOptionId) {
-      return null;
-    }
-    const part = this.findTargetPart(
-      gesture.x,
-      gesture.y,
-      targets,
-      hitTolerance
-    );
-    if (!part) {
-      return null;
-    }
-    return {
-      type: "fill_part",
-      data: {
-        option_id: this.stagedOptionId,
-        part_id: part.id,
-      },
-    };
-  }
-
-  private handleTapSource(
-    gesture: Extract<Gesture, { type: "tap" }>,
-    sources: readonly Slot[],
-    hitTolerance: number
-  ): void {
-    const opt = this.findDraggedOption(
-      gesture.x,
-      gesture.y,
-      sources,
-      hitTolerance
-    );
-    if (!opt) {
-      return;
-    }
-    this.stagedOptionId = this.stagedOptionId === opt.id ? null : opt.id;
   }
 
   private toTapAction(
-    gesture: Extract<Gesture, { type: "tap" }>,
-    sources: readonly Slot[],
-    targets: readonly Slot[],
-    hitTolerance: number
+    gesture: Extract<Gesture, { type: "tap" }>
   ): GameAction | null {
-    const targetAction = this.handleTapTarget(gesture, targets, hitTolerance);
-    if (targetAction) {
-      return targetAction;
+    if (this.stagedOptionId) {
+      const part = this.hitPart(gesture.x, gesture.y, true);
+      if (part) {
+        return {
+          type: "fill_part",
+          data: { option_id: this.stagedOptionId, part_id: part.id },
+        };
+      }
     }
-    this.handleTapSource(gesture, sources, hitTolerance);
+    const opt = this.hitOption(gesture.x, gesture.y);
+    if (opt) {
+      this.wrongFlash.clear();
+      this.stagedOptionId = this.stagedOptionId === opt.id ? null : opt.id;
+      const clock = getGT007Clock(this);
+      clock.stagedAtMs =
+        this.stagedOptionId === null ? null : this.logicClockMs;
+      return null;
+    }
+    const filled = this.hitPart(gesture.x, gesture.y, true);
+    if (filled && this.filledParts.has(filled.id)) {
+      this.filledParts.delete(filled.id);
+      this.filledOptionIds.delete(filled.id);
+      this.wrongFlash.clear();
+    }
     return null;
   }
 
   override toAction(gesture: Gesture): GameAction | null {
+    if (this.isWon || this.isRoundClosed) {
+      return null;
+    }
     if (this.candy) {
-      return this.toCandyAction(gesture);
+      const stg = this.stagedCandySlot;
+      const step = resolveCandyGesture(this.candy, this.slots, gesture, stg);
+      if (step.clearWrong) {
+        this.wrongFlash.clear();
+      }
+      this.stagedCandySlot = step.stagedSlot;
+      return step.action;
     }
-    const hitTolerance = HIT_TOLERANCE_PX;
-    const sources = this.sourceSlots;
-    const targets = this.targetSlots;
-
     if (gesture.type === "drop") {
-      return this.toDropAction(gesture, sources, targets, hitTolerance);
+      const opt = this.hitOption(gesture.fromX, gesture.fromY);
+      const part = opt ? this.hitPart(gesture.toX, gesture.toY, true) : null;
+      return opt && part
+        ? { type: "fill_part", data: { option_id: opt.id, part_id: part.id } }
+        : null;
     }
-    if (gesture.type === "tap") {
-      return this.toTapAction(gesture, sources, targets, hitTolerance);
-    }
-    return null;
+    return gesture.type === "tap" ? this.toTapAction(gesture) : null;
   }
 
   override getHintTargetIndex(): number | null {
+    if (this.isWon || this.isRoundClosed) {
+      return null;
+    }
     if (this.candy) {
       const step = this.candy.nextStep();
-      return step ? this.candySlotIndex(step.from) : null;
+      return step ? candySlotIndex(this.slots, step.from) : null;
     }
-    const options =
-      this.displayOptions.length > 0
-        ? this.displayOptions
-        : this.content.options;
-    const idx = options.findIndex((o) => o.is_correct);
+    const targetId = this.getTargetPartId();
+    const idx = this.getOptions().findIndex((o) =>
+      this.canSatisfy(targetId, o)
+    );
     const sourceSlot = this.sourceSlots[idx];
     return sourceSlot ? this.slots.indexOf(sourceSlot) : null;
   }
 
-  /** Bước đúng là kéo đáp án đúng vào ô thiếu (phần `is_target` chưa điền). */
   override getHintDestinationIndex(): number | null {
+    if (this.isWon || this.isRoundClosed) {
+      return null;
+    }
     if (this.candy) {
       const step = this.candy.nextStep();
-      return step ? this.candySlotIndex(step.to) : null;
+      return step ? candySlotIndex(this.slots, step.to) : null;
     }
     const partIdx = this.content.parts.findIndex(
       (part) => part.is_target && !this.filledParts.has(part.id)
@@ -590,220 +520,80 @@ export class GT007Session extends TemplateGameSession<
     return index >= 0 ? index : null;
   }
 
+  private isStagedSourceValid(hintSrcSlotIdx: number): boolean {
+    if (this.candy) {
+      return this.stagedCandySlot === hintSrcSlotIdx;
+    }
+    const opt = this.getOptions().find((o) => o.id === this.stagedOptionId);
+    return opt ? this.canSatisfy(this.getTargetPartId(), opt) : false;
+  }
+
+  override getHintTargetForLevel(level: HintLevel): HintTarget | null {
+    const srcIdx = this.getHintTargetIndex();
+    const destIdx = this.getHintDestinationIndex();
+    if (srcIdx === null) {
+      return null;
+    }
+    if (level === 1) {
+      const useDest = destIdx !== null && this.isStagedSourceValid(srcIdx);
+      return { kind: "slot", index: useDest ? destIdx : srcIdx };
+    }
+    return destIdx === null
+      ? { kind: "slot", index: srcIdx }
+      : { kind: "slot", index: srcIdx, toIndex: destIdx };
+  }
+
   override commit(action: GameAction): void {
+    if (this.isWon || this.isRoundClosed) {
+      return;
+    }
     if (this.candy) {
       this.commitCandyAction(action);
       return;
     }
-    if (
-      action.type === "fill_part" &&
-      action.data &&
-      typeof action.data === "object"
-    ) {
-      const data = action.data as { option_id?: string; part_id?: string };
-      if (data.option_id) {
-        this.onPartFilled(data.option_id, data.part_id);
+    if (action.type === "fill_part") {
+      const optionId = extractOptionId(action.data);
+      const partId = extractPartId(action.data);
+      if (optionId) {
+        this.onPartFilled(optionId, partId);
         this.stagedOptionId = null;
+        getGT007Clock(this).stagedAtMs = null;
       }
     }
-  }
-
-  private toOptionEntityState(
-    optId: string,
-    rawState: ItemVisualState
-  ): ViewEntity["state"] {
-    if (this.stagedOptionId === optId || rawState === "selected") {
-      return "selected";
-    }
-    if (rawState === "correct") {
-      return "correct";
-    }
-    if (rawState === "wrong") {
-      return "incorrect";
-    }
-    return "idle";
   }
 
   override getView(): EngineView {
+    const isWrong = this.wrongFlash.isActive(this.logicClockMs);
     if (this.candy) {
-      return this.getCandyView(this.candy);
+      const stg = this.stagedCandySlot;
+      return buildGT007CandyView(
+        this.candy,
+        this.content,
+        this.slots,
+        isWrong,
+        stg
+      );
     }
-    const entities: ViewEntity[] = [];
-    const targets = this.targetSlots;
-    const sources = this.sourceSlots;
-    const options =
-      this.displayOptions.length > 0
-        ? this.displayOptions
-        : this.content.options;
-
-    const rawIds = [
-      this.content.whole.id,
-      ...this.content.parts.map((p) => p.id),
-      ...options.map((o) => o.id),
-    ];
-    const needPrefix = new Set(rawIds).size !== rawIds.length;
-
-    const wholeSlot = targets[0];
-    if (wholeSlot) {
-      const wholeLabel = String(this.content.whole.value);
-      entities.push({
-        id: needPrefix
-          ? `whole:${this.content.whole.id}`
-          : this.content.whole.id,
-        slotIndex: this.slots.indexOf(wholeSlot),
-        role: "target",
-        state: this.wrongFlash.isActive(this.lastFrameMs)
-          ? "incorrect"
-          : "idle",
-        x: wholeSlot.x,
-        y: wholeSlot.y,
-        w: wholeSlot.w,
-        h: wholeSlot.h,
-        label: wholeLabel,
-        spokenLabel: formatSpokenLabel(wholeLabel),
-      });
-    }
-
-    this.content.parts.forEach((part, i) => {
-      const slot = targets[i + 1];
-      if (!slot) {
-        return;
-      }
-      const isFilled = this.filledParts.has(part.id);
-      const isHiddenTarget = part.is_target && !isFilled;
-      const partVal = this.filledParts.get(part.id) ?? part.value;
-      const partLabel = isHiddenTarget ? "?" : String(partVal);
-      const partSpokenLabel = isHiddenTarget
-        ? "Ô trống"
-        : formatSpokenLabel(String(partVal));
-      entities.push({
-        id: needPrefix ? `part:${part.id}` : part.id,
-        slotIndex: this.slots.indexOf(slot),
-        role: "target",
-        state: isFilled ? "correct" : "idle",
-        x: slot.x,
-        y: slot.y,
-        w: slot.w,
-        h: slot.h,
-        label: partLabel,
-        spokenLabel: partSpokenLabel,
-      });
-    });
-
-    options.forEach((opt, i) => {
-      const slot = sources[i];
-      if (!slot) {
-        return;
-      }
-      const rawState = this.getRenderItemState(opt.id);
-      const optLabel = String(opt.value);
-      entities.push({
-        id: needPrefix ? `opt:${opt.id}` : opt.id,
-        slotIndex: this.slots.indexOf(slot),
-        role: "source",
-        state: this.toOptionEntityState(opt.id, rawState),
-        x: slot.x,
-        y: slot.y,
-        w: slot.w,
-        h: slot.h,
-        label: optLabel,
-        spokenLabel: formatSpokenLabel(optLabel),
-      });
-    });
-
-    return {
-      entities,
-      activePrompt: this.content.prompt,
-    };
-  }
-
-  // ── Chế độ vật thật (`BR-E007-06..09`) ──────────────────────────────
-
-  private computeCandyLayout(
-    ageBand: AgeBand,
-    candy: CandySplit
-  ): readonly Slot[] {
-    const touchFloor = resolveTouchFloor(ageBand, this.cssPerLogic);
-    const stage = this.stageRect ?? {
-      x: SAFE_MARGIN_PX,
-      y: CONTENT_TOP_PX,
-      w: this.logicSpace.w - 2 * SAFE_MARGIN_PX,
-      h: this.logicSpace.h - CONTENT_TOP_PX - SAFE_MARGIN_PX,
-    };
-    return computeCandySlots(stage, touchFloor, candy.trays.length);
-  }
-
-  /** Slot của một đầu mút: ô tổng là slot 0, khay `i` là slot `i + 1`. */
-  private candySlotIndex(point: CandyEndpoint): number | null {
-    const slot = this.slots[point.kind === "plate" ? 0 : point.index + 1];
-    return slot ? this.slots.indexOf(slot) : null;
-  }
-
-  private candyEndpointAt(x: number, y: number): CandyEndpoint | null {
-    const index = findNearestHitSlot(this.slots, x, y, HIT_TOLERANCE_PX);
-    if (index < 0) {
-      return null;
-    }
-    return index === 0 ? { kind: "plate" } : { kind: "tray", index: index - 1 };
-  }
-
-  private toCandyAction(gesture: Gesture): GameAction | null {
-    if (gesture.type === "drop") {
-      const from = this.candyEndpointAt(gesture.fromX, gesture.fromY);
-      const to = this.candyEndpointAt(gesture.toX, gesture.toY);
-      return from && to ? this.candyMoveAction(from, to) : null;
-    }
-    if (gesture.type !== "tap") {
-      return null;
-    }
-    const tapped = this.candyEndpointAt(gesture.x, gesture.y);
-    if (!tapped) {
-      return null;
-    }
-    const slot = tapped.kind === "plate" ? 0 : tapped.index + 1;
-    const staged = this.stagedCandySlot;
-    if (staged === null) {
-      this.stagedCandySlot = this.canStageCandy(tapped) ? slot : null;
-      return null;
-    }
-    if (staged === slot) {
-      this.stagedCandySlot = null;
-      return null;
-    }
-    const from: CandyEndpoint =
-      staged === 0 ? { kind: "plate" } : { kind: "tray", index: staged - 1 };
-    return this.candyMoveAction(from, tapped);
-  }
-
-  /** Nguồn chạm-chạm: ô tổng còn vật chưa chia, hoặc khay đích đang có vật. */
-  private canStageCandy(point: CandyEndpoint): boolean {
-    const candy = this.candy;
-    if (!candy) {
-      return false;
-    }
-    if (point.kind === "plate") {
-      return candy.remaining > 0;
-    }
-    return !candy.trays[point.index]?.locked && candy.countOf(point.index) > 0;
-  }
-
-  private candyMoveAction(from: CandyEndpoint, to: CandyEndpoint): GameAction {
-    return { type: "move_candy", data: { from, to } };
-  }
-
-  private parseCandyMove(
-    action: GameAction
-  ): { from: CandyEndpoint; to: CandyEndpoint } | null {
-    if (action.type !== "move_candy" || typeof action.data !== "object") {
-      return null;
-    }
-    const from = Reflect.get(action.data ?? {}, "from");
-    const to = Reflect.get(action.data ?? {}, "to");
-    return isCandyEndpoint(from) && isCandyEndpoint(to) ? { from, to } : null;
+    const stFn = (id: string) =>
+      resolveOptionEntityState(
+        id,
+        this.stagedOptionId,
+        this.filledOptionIds,
+        this.getRenderItemState(id)
+      );
+    return buildGT007ChoiceView(
+      this.content,
+      this.getOptions(),
+      this.slots,
+      this.filledParts,
+      isWrong,
+      stFn
+    );
   }
 
   private validateCandyAction(action: GameAction): ActionResult {
-    const move = this.parseCandyMove(action);
+    const move =
+      action.type === "move_candy" ? parseCandyMoveData(action.data) : null;
     if (!(move && this.candy)) {
       return ACTION_IGNORED;
     }
@@ -815,7 +605,8 @@ export class GT007Session extends TemplateGameSession<
   }
 
   private commitCandyAction(action: GameAction): void {
-    const move = this.parseCandyMove(action);
+    const move =
+      action.type === "move_candy" ? parseCandyMoveData(action.data) : null;
     const candy = this.candy;
     this.stagedCandySlot = null;
     if (!(move && candy)) {
@@ -823,18 +614,24 @@ export class GT007Session extends TemplateGameSession<
     }
     const outcome = candy.move(move.from, move.to);
     if (outcome === "locked") {
-      this.onCandyLocked(candy);
+      const expected = this.content.whole.value;
+      const reason = `Khay này đã đủ phần rồi, thêm vào thì nhiều hơn ${expected}`;
+      this.recordWrongBond(reason, this.content.whole.id, expected + 1, {
+        remaining: candy.remaining,
+      });
       return;
     }
     if (outcome !== "moved") {
       return;
     }
+    this.wrongFlash.clear();
     if (move.to.kind === "tray") {
       const part = this.content.parts[move.to.index];
       this.recordEvent("part_filled", {
         part_id: part?.id ?? "",
         value: candy.countOf(move.to.index),
       });
+      this.spawnSlotBurst(this.slots[move.to.index + 1]);
       if (move.from.kind === "plate") {
         this.queueSfx("candy_drop");
         this.mood.set("cheer", GT007_CHEER_MS);
@@ -846,134 +643,85 @@ export class GT007Session extends TemplateGameSession<
     }
   }
 
-  /** Vật vào khay khoá: tổng sẽ vượt `whole`, báo trên ô tổng (`BR-E007-08`). */
-  private onCandyLocked(candy: CandySplit): void {
-    const expectedWhole = this.content.whole.value;
-    const actualSum = expectedWhole + 1;
-    this.exploreTracker.recordWrongAttempt({
-      reasonVi: `Khay này đã đủ phần rồi, thêm vào thì nhiều hơn ${expectedWhole}`,
-      targetId: this.content.whole.id,
-      actualValue: actualSum,
-      expectedValue: expectedWhole,
-    });
-    this.recordEvent("control_of_error", {
-      actual_sum: actualSum,
-      expected_whole: expectedWhole,
-      remaining: candy.remaining,
-      micro_sandbox: this.exploreTracker.isMicroSandboxActive(),
-    });
-    this.wrongFlash.trigger(this.lastFrameMs);
-    this.mood.set("wonder", GT007_WONDER_MS);
-  }
-
-  private getCandyView(candy: CandySplit): EngineView {
-    const spoken = (value: number): string => String(value);
-    const entities: ViewEntity[] = this.slots.map((slot, i) => {
-      const isPlate = i === 0;
-      const count = isPlate ? candy.whole : candy.countOf(i - 1);
-      const staged = this.stagedCandySlot === i;
-      let state: ViewEntity["state"] = "idle";
-      if (isPlate && this.wrongFlash.isActive(this.lastFrameMs)) {
-        state = "incorrect";
-      } else if (staged) {
-        state = "selected";
-      }
-      return {
-        id: isPlate
-          ? this.content.whole.id
-          : (this.content.parts[i - 1]?.id ?? `tray_${i}`),
-        slotIndex: this.slots.indexOf(slot),
-        role: isPlate ? "source" : "target",
-        state,
-        x: slot.x,
-        y: slot.y,
-        w: slot.w,
-        h: slot.h,
-        hitShape: "square",
-        label: spoken(count),
-        spokenLabel: formatSpokenLabel(spoken(count)),
-      };
-    });
-    return { entities, activePrompt: this.content.prompt };
-  }
-
-  private renderCandy(
-    ctx: CanvasRenderingContext2D,
-    rs: RenderSystem,
-    candy: CandySplit
-  ): void {
-    drawCandySplit(ctx, rs, {
-      state: candy,
-      slots: this.slots,
-      asset: this.content.whole.asset ?? CANDY_DEFAULT_ASSET,
-      won: this.isWon,
-    });
-    drawMontessoriControlOfErrorPill(
-      ctx,
-      this.stageRect ?? sceneBox(rs),
-      this.exploreTracker,
-      rs.viewport?.scale
-    );
-  }
-
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
     timeMs: number
   ): void {
-    this.lastFrameMs = timeMs;
     drawSceneBackground(ctx, rs, this.themeId);
     const zones = pickTrayZones(this.stageRect, this.trayRect);
-    // Khỉ Nhỏ vẽ ngay sau nền, ở góc trống ngoài vùng chạm (`BR-E007-10`).
-    drawStoryCharacterInStage(
-      ctx,
-      "monkey",
-      zones?.stage ?? this.stageRect,
-      this.slots
+    const stageZone = zones?.stage ?? this.stageRect ?? null;
+    const stg = stageZone ?? undefined;
+    drawStoryCharacterInStage(ctx, "monkey", stg, this.slots);
+    const wrongProgress = resolveWrongFlashProgress(
+      this.wrongFlash,
+      this.logicClockMs
     );
+
     if (this.candy) {
-      this.renderCandy(ctx, rs, this.candy);
-      return;
+      drawCandySplit(ctx, rs, {
+        state: this.candy,
+        slots: this.slots,
+        asset: this.content.whole.asset ?? CANDY_DEFAULT_ASSET,
+        won: this.isWon,
+        wrongProgress,
+        stagedSlot: this.stagedCandySlot,
+        touchingSlot: this.touchingSlotIndex,
+        hoveredSlot: this.hoveredSlotIndex,
+      });
+    } else {
+      if (zones) {
+        drawWoodenTokenDock(ctx, rs, zones.tray);
+      }
+      this.drawTreeBond(ctx, rs, timeMs, wrongProgress, stageZone);
     }
-    if (zones) {
-      // Lời dẫn do shell vẽ; lựa chọn nằm trên khay của khung năm vùng.
-      drawWoodenTokenDock(ctx, rs, zones.tray);
+    if (this.degradation?.particles_enabled !== false) {
+      rs.drawParticles(ctx, this.particles);
     }
+    const pillBox = stageZone ?? sceneBox(rs);
+    drawMontessoriControlOfErrorPill(
+      ctx,
+      pillBox,
+      this.exploreTracker,
+      rs.viewport?.scale
+    );
+  }
+
+  private drawTreeBond(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    timeMs: number,
+    wrongProgress: number | null,
+    stageZone: Slot | { x: number; y: number; w: number; h: number } | null
+  ): void {
     const targets = this.targetSlots;
-    const sources = this.sourceSlots;
-
-    const isTenFrame =
-      this.content.layout === "ten-frame-split" ||
-      this.content.representation === "ten-frame";
-
-    // Slot 0 của number-bond-tree / ten-frame-split là ô tổng, các ô sau là nhánh.
     const wholeSlot = targets[0];
+    const isTenFrame = isTenFrameContent(this.content);
+    const clock = getGT007Clock(this);
+    const logicMs = this.logicClockMs;
+
     if (wholeSlot) {
+      this.content.parts.forEach((part, i) => {
+        const s = targets[i + 1];
+        if (s) {
+          const ok = !part.is_target || this.filledParts.has(part.id);
+          drawGT007BondConnector(ctx, wholeSlot, s, ok, this.isWon);
+        }
+      });
       if (isTenFrame) {
+        const count = this.content.whole.value;
         drawQuantityRepresentation(ctx, rs, wholeSlot, {
           kind: "ten-frame",
-          count: this.content.whole.value,
-        });
-      } else {
-        this.content.parts.forEach((_, i) => {
-          const slot = targets[i + 1];
-          if (slot) {
-            drawMatchLine(
-              ctx,
-              wholeSlot.x,
-              wholeSlot.y,
-              slot.x,
-              slot.y,
-              designTokens.colors.montessori.woodBevel
-            );
-          }
-        });
-        drawSlotItem(ctx, rs, wholeSlot, {
-          id: this.content.whole.id,
-          text: String(this.content.whole.value),
-          state: this.wrongFlash.isActive(timeMs) ? "wrong" : "idle",
+          count,
         });
       }
+      drawGT007WholeFrame(ctx, rs, wholeSlot, {
+        label: String(this.content.whole.value),
+        isTenFrame,
+        isWon: this.isWon,
+        wrongProgress,
+        stage: stageZone,
+      });
     }
 
     this.content.parts.forEach((part, i) => {
@@ -982,52 +730,50 @@ export class GT007Session extends TemplateGameSession<
         return;
       }
       const filled = this.filledParts.get(part.id);
-      if (part.is_target && filled === undefined) {
-        drawEmptyTargetSlot(ctx, slot);
-        return;
-      }
+      const isFilled = filled !== undefined;
+      const reveal = this.isRoundClosed && !this.isWon && part.is_target;
       const partVal = filled ?? part.value;
-      if (isTenFrame) {
+      if (isTenFrame && (!part.is_target || isFilled || reveal)) {
         drawQuantityRepresentation(ctx, rs, slot, {
           kind: "ten-frame",
           count: partVal,
         });
-      } else {
-        drawSlotItem(ctx, rs, slot, {
-          id: part.id,
-          text: String(partVal),
-          state: filled === undefined ? "idle" : "correct",
-        });
       }
-    });
-
-    const options =
-      this.displayOptions.length > 0
-        ? this.displayOptions
-        : this.content.options;
-    options.forEach((opt, i) => {
-      const slot = sources[i];
-      if (!slot) {
-        return;
-      }
-      const rawState = this.getRenderItemState(opt.id);
-      let state: ItemVisualState = rawState;
-      if (this.stagedOptionId === opt.id && rawState === "idle") {
-        state = "selected";
-      }
-      drawSlotItem(ctx, rs, slot, {
-        id: opt.id,
-        text: String(opt.value),
-        state,
+      const popAt = clock.partPopAtMs.get(part.id);
+      const popDelta = popAt === undefined ? null : logicMs - popAt;
+      drawGT007PartSocket(ctx, slot, {
+        valueText: String(partVal),
+        isTarget: part.is_target,
+        isFilled,
+        isHovered: this.hoveredSlotIndex === this.slots.indexOf(slot),
+        isStagedReady: this.stagedOptionId !== null,
+        isSolutionReveal: reveal,
+        isTenFrame,
+        popScale: resolvePartPopScale(popDelta, rs.reducedMotion),
       });
     });
 
-    const stageBox = zones?.stage ?? this.stageRect ?? sceneBox(rs);
-    drawMontessoriControlOfErrorPill(
-      ctx,
-      stageBox,
-      this.exploreTracker,
-      rs.viewport?.scale
-    );
+    const sources = this.sourceSlots;
+    const stgElapsed =
+      clock.stagedAtMs === null ? null : logicMs - clock.stagedAtMs;
+    this.getOptions().forEach((opt, i) => {
+      const slot = sources[i];
+      if (slot) {
+        const touch = this.touchingSlotIndex === this.slots.indexOf(slot);
+        const raw = this.getRenderItemState(opt.id);
+        const state = resolveOptionVisualState(
+          opt.id,
+          this.stagedOptionId,
+          this.filledOptionIds,
+          raw,
+          touch
+        );
+        drawGT007OptionToken(ctx, rs, slot, String(opt.value), {
+          state,
+          timeMs,
+          stagedElapsedMs: stgElapsed,
+        });
+      }
+    });
   }
 }
