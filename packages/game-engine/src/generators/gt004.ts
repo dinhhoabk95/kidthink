@@ -1,4 +1,8 @@
 import { shuffle } from "#src/rng/shuffle";
+import type {
+  GT004Content,
+  GT004Difficulty,
+} from "#src/templates/GT-004/template";
 import {
   getContrast,
   getNouns,
@@ -7,7 +11,7 @@ import {
 } from "./helpers.js";
 import type { GeneratorInput, LevelGenerator } from "./types.js";
 
-export const GT004Generator: LevelGenerator = {
+export const GT004Generator: LevelGenerator<GT004Content, GT004Difficulty> = {
   engine: "GT-004",
   axes: {
     age_band: ["4-5", "5-6"],
@@ -25,7 +29,8 @@ export const GT004Generator: LevelGenerator = {
       {
         group_id: "g1",
         label: vocabulary.label_vi ?? vocabulary.theme,
-        label_emoji: vocabulary.icon_emoji_ref ?? group1Items[0]?.emoji_ref,
+        label_emoji:
+          vocabulary.icon_emoji_ref ?? group1Items[0]?.emoji_ref ?? "",
       },
       {
         group_id: "g2",
@@ -53,6 +58,7 @@ export const GT004Generator: LevelGenerator = {
         items,
       },
       difficulty_params: {
+        item_count: items.length,
         distractor_count: 0,
         hint_after_ms: 15_000,
         allow_retry: true,
