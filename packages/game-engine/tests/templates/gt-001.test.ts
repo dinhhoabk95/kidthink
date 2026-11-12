@@ -1,15 +1,22 @@
 import { getByGlyph } from "@mindkid/emoji";
 import { describe, expect, it, vi } from "vitest";
 import { getOptionCount } from "#src/generators/gt001";
-import { DEFAULT_LOGIC_SPACE } from "#src/layout/constants";
-import { computeStageZones, type ZoneRect } from "#src/layout/stage-zones";
+import { DEFAULT_LOGIC_SPACE, deriveLogicSpace } from "#src/layout/constants";
+import { computeStageZones } from "#src/layout/stage-zones";
 import { RenderSystem } from "#src/systems/render-system";
+import { WRONG_FLASH_MS } from "#src/systems/wrong-flash";
 import { GT001_FIXTURES } from "#src/templates/GT-001/fixtures";
 import { GT001Session } from "#src/templates/GT-001/session";
 import {
   GT001ContentSchema,
   validateGT001BandLimits,
 } from "#src/templates/GT-001/template";
+import { createFakeCanvas } from "#tests/gates/fake-canvas";
+import {
+  findDrawsOutsideStage,
+  findHitPairViolations,
+  findSlotsOutsideStage,
+} from "#tests/layout/stage-checks";
 
 vi.mock("#src/render/shared-render", async (importOriginal) => {
   const actual =
@@ -237,100 +244,6 @@ describe("GT-001 — mp3 của từ khoá (Task #274 S7b)", () => {
   });
 });
 
-function createBoundsCheckingContext(stage: ZoneRect): {
-  ctx: CanvasRenderingContext2D;
-  getViolations: () => string[];
-} {
-  const violations: string[] = [];
-  let tx = 0;
-  let ty = 0;
-  const transformStack: [number, number][] = [];
-
-  function checkPoint(name: string, x: number, y: number): void {
-    const px = x + tx;
-    const py = y + ty;
-    if (
-      px < stage.x - 1 ||
-      px > stage.x + stage.w + 1 ||
-      py < stage.y - 1 ||
-      py > stage.y + stage.h + 1
-    ) {
-      violations.push(
-        `${name} at (${px}, ${py}) outside stage [${stage.x}, ${stage.y}, ${stage.w}, ${stage.h}]`
-      );
-    }
-  }
-
-  function checkRect(
-    name: string,
-    x: number,
-    y: number,
-    w: number,
-    h: number
-  ): void {
-    checkPoint(`${name}:topLeft`, x, y);
-    checkPoint(`${name}:bottomRight`, x + w, y + h);
-  }
-
-  const ctx = {
-    save: () => {
-      transformStack.push([tx, ty]);
-    },
-    restore: () => {
-      const popped = transformStack.pop();
-      if (popped) {
-        [tx, ty] = popped;
-      }
-    },
-    translate: (dx: number, dy: number) => {
-      tx += dx;
-      ty += dy;
-    },
-    roundRect: (x: number, y: number, w: number, h: number) => {
-      checkRect("roundRect", x, y, w, h);
-    },
-    fillRect: (x: number, y: number, w: number, h: number) => {
-      checkRect("fillRect", x, y, w, h);
-    },
-    strokeRect: (x: number, y: number, w: number, h: number) => {
-      checkRect("strokeRect", x, y, w, h);
-    },
-    arc: (x: number, y: number, r: number) => {
-      checkRect("arc", x - r, y - r, r * 2, r * 2);
-    },
-    fillText: (text: string, x: number, y: number) => {
-      checkPoint(`fillText(${text})`, x, y);
-    },
-    moveTo: (x: number, y: number) => {
-      checkPoint("moveTo", x, y);
-    },
-    lineTo: (x: number, y: number) => {
-      checkPoint("lineTo", x, y);
-    },
-    beginPath: () => undefined,
-    closePath: () => undefined,
-    fill: () => undefined,
-    stroke: () => undefined,
-    clip: () => undefined,
-    setLineDash: () => undefined,
-    getLineDash: () => [],
-    scale: () => undefined,
-    measureText: (text: string) => ({
-      width: text.length * 10,
-      actualBoundingBoxAscent: 10,
-      actualBoundingBoxDescent: 2,
-    }),
-    createLinearGradient: () => ({ addColorStop: () => undefined }),
-    createRadialGradient: () => ({ addColorStop: () => undefined }),
-    fillStyle: "#000",
-    strokeStyle: "#000",
-    lineWidth: 1,
-    font: "16px sans-serif",
-  } as unknown as CanvasRenderingContext2D;
-
-  return { ctx, getViolations: () => violations };
-}
-
 describe("GT-001 — vẽ nằm trọn trong zones.stage (BR-PSZ-01)", () => {
   const fixture = GT001_FIXTURES[0];
   if (!fixture) {
@@ -350,10 +263,9 @@ describe("GT-001 — vẽ nằm trọn trong zones.stage (BR-PSZ-01)", () => {
     session.prepareRound("4-5", DEFAULT_LOGIC_SPACE, zones.stage);
 
     const rs = new RenderSystem();
-    const { ctx, getViolations } = createBoundsCheckingContext(zones.stage);
-
-    session.render(ctx, rs, 0);
-    const violations = getViolations();
+    const violations = findDrawsOutsideStage(zones.stage, (ctx) =>
+      session.render(ctx, rs, 0)
+    );
     expect(violations).toEqual([]);
   });
 
@@ -370,10 +282,9 @@ describe("GT-001 — vẽ nằm trọn trong zones.stage (BR-PSZ-01)", () => {
     session.prepareRound("4-5", DEFAULT_LOGIC_SPACE);
 
     const rs = new RenderSystem();
-    const { ctx, getViolations } = createBoundsCheckingContext(zones.stage);
-
-    session.render(ctx, rs, 0);
-    const violations = getViolations();
+    const violations = findDrawsOutsideStage(zones.stage, (ctx) =>
+      session.render(ctx, rs, 0)
+    );
     expect(violations.length).toBeGreaterThan(0);
   });
 });
@@ -473,5 +384,349 @@ describe("GT-001 — Business Rules (BR-E001-01..04)", () => {
     expect(GT001ContentSchema.safeParse(baseFixture.content).success).toBe(
       true
     );
+  });
+});
+
+interface RecordedContext {
+  readonly ctx: CanvasRenderingContext2D;
+  readonly calls: string[];
+  readonly maxShadowBlur: () => number;
+}
+
+function createRecordingContext(): RecordedContext {
+  const fake = createFakeCanvas(960, 540);
+  const rawCtx = fake.getContext("2d");
+  if (!rawCtx) {
+    throw new Error("Fake canvas missing 2d context");
+  }
+  const calls: string[] = [];
+  let maxBlur = 0;
+
+  const trackBlur = (): void => {
+    if (rawCtx.shadowBlur > maxBlur) {
+      maxBlur = rawCtx.shadowBlur;
+    }
+  };
+
+  vi.spyOn(rawCtx, "arc").mockImplementation((x, y, r, s, e) => {
+    trackBlur();
+    calls.push(
+      `arc(${x.toFixed(2)},${y.toFixed(2)},${r.toFixed(2)},${s.toFixed(2)},${e.toFixed(2)})`
+    );
+  });
+  vi.spyOn(rawCtx, "roundRect").mockImplementation((x, y, w, h) => {
+    trackBlur();
+    calls.push(
+      `roundRect(${x.toFixed(2)},${y.toFixed(2)},${w.toFixed(2)},${h.toFixed(2)})`
+    );
+  });
+  vi.spyOn(rawCtx, "fill").mockImplementation(() => {
+    trackBlur();
+    calls.push(`fill(${String(rawCtx.fillStyle)})`);
+  });
+  vi.spyOn(rawCtx, "stroke").mockImplementation(() => {
+    trackBlur();
+    calls.push(
+      `stroke(${String(rawCtx.strokeStyle)},${rawCtx.lineWidth.toFixed(1)})`
+    );
+  });
+  vi.spyOn(rawCtx, "fillText").mockImplementation((t, x, y) => {
+    trackBlur();
+    calls.push(`fillText(${t},${x.toFixed(2)},${y.toFixed(2)})`);
+  });
+
+  return {
+    ctx: rawCtx as CanvasRenderingContext2D,
+    calls,
+    maxShadowBlur: () => maxBlur,
+  };
+}
+
+describe("GT-001 — Regression & UI/UX Contract (BUG-01..05)", () => {
+  const fixture = GT001_FIXTURES[0];
+  if (!fixture) {
+    throw new Error("Fixture GT-001 not found");
+  }
+
+  it("BUG-01: chạm lại đúng ô sai sau WRONG_FLASH_MS vẫn nháy hổ phách, xếp wood_tap và ghi event", () => {
+    const session = new GT001Session(fixture.content, fixture.difficulty, 1);
+    session.prepareRound("4-5", DEFAULT_LOGIC_SPACE);
+    session.commit({ type: "select_item", data: { item_id: "banana_opt" } });
+    expect(session.getItemState("banana_opt")).toBe("wrong");
+    expect(session.takeSfxCues()).toEqual(["wood_tap"]);
+
+    session.update(WRONG_FLASH_MS);
+    expect(session.getItemState("banana_opt")).toBe("idle");
+
+    session.commit({ type: "select_item", data: { item_id: "banana_opt" } });
+    expect(session.getItemState("banana_opt")).toBe("wrong");
+    expect(session.takeSfxCues()).toEqual(["wood_tap"]);
+    const selectedEvents = session
+      .getTelemetry()
+      .events.filter((e) => e.event_name === "item_selected");
+    expect(selectedEvents).toHaveLength(2);
+  });
+
+  it("BUG-01: chạm lại ô sai ngay khi đang nháy (< WRONG_FLASH_MS) làm mới đồng hồ nháy", () => {
+    const session = new GT001Session(fixture.content, fixture.difficulty, 1);
+    session.prepareRound("4-5", DEFAULT_LOGIC_SPACE);
+    session.commit({ type: "select_item", data: { item_id: "banana_opt" } });
+    session.takeSfxCues();
+
+    session.update(250);
+    expect(session.getItemState("banana_opt")).toBe("wrong");
+
+    session.commit({ type: "select_item", data: { item_id: "banana_opt" } });
+    expect(session.takeSfxCues()).toEqual([]);
+
+    session.update(WRONG_FLASH_MS - 1);
+    expect(session.getItemState("banana_opt")).toBe("wrong");
+
+    session.update(2);
+    expect(session.getItemState("banana_opt")).toBe("idle");
+  });
+
+  it("BUG-01 ca âm: sau khi chọn đúng (isWon), chạm tiếp bị bỏ qua hoàn toàn", () => {
+    const session = new GT001Session(fixture.content, fixture.difficulty, 1);
+    session.prepareRound("4-5", DEFAULT_LOGIC_SPACE);
+    const correctSlot =
+      session.slots[
+        session.displayOptions.findIndex((o) => o.item_id === "apple_opt")
+      ];
+    const wrongSlot =
+      session.slots[
+        session.displayOptions.findIndex((o) => o.item_id === "banana_opt")
+      ];
+    if (!(correctSlot && wrongSlot)) {
+      throw new Error("Thiếu slot");
+    }
+
+    session.dispatch({
+      type: "tap",
+      x: correctSlot.x,
+      y: correctSlot.y,
+      timeMs: 0,
+    });
+    expect(session.checkWinCondition()).toBe(true);
+    session.takeSfxCues();
+
+    const afterWin = session.dispatch({
+      type: "tap",
+      x: wrongSlot.x,
+      y: wrongSlot.y,
+      timeMs: 50,
+    });
+    expect(afterWin?.valid).toBe(false);
+    expect(afterWin?.feedback).toBe("none");
+    expect(session.takeSfxCues()).toEqual([]);
+    expect(session.getItemState("banana_opt")).toBe("idle");
+  });
+
+  it("BUG-02 (BR-ERC-02): render() thuần 100% — Object.entries(session) bất biến và gọi 60 lần cùng timeMs không làm tiêu biến hạt", () => {
+    const session = new GT001Session(fixture.content, fixture.difficulty, 1);
+    session.prepareRound("4-5", DEFAULT_LOGIC_SPACE);
+    session.commit({ type: "select_item", data: { item_id: "apple_opt" } });
+
+    const rs = new RenderSystem();
+    const beforeEntries = Object.entries(session).map(([k, v]) => [
+      k,
+      structuredClone(v),
+    ]);
+    const first = createRecordingContext();
+    session.render(first.ctx, rs, 100);
+    expect(Object.entries(session)).toEqual(beforeEntries);
+
+    let lastCalls: string[] = [];
+    for (let i = 0; i < 60; i++) {
+      const rec = createRecordingContext();
+      session.render(rec.ctx, rs, 100);
+      lastCalls = rec.calls;
+    }
+    expect(lastCalls).toEqual(first.calls);
+    expect(Object.entries(session)).toEqual(beforeEntries);
+
+    session.update(1000);
+    const afterUpdate = createRecordingContext();
+    session.render(afterUpdate.ctx, rs, 1100);
+    expect(afterUpdate.calls).not.toEqual(first.calls);
+  });
+
+  it("BUG-04: allow_retry: false đóng vòng khi chọn sai, tiết lộ đáp án đúng (selected) và khoá hint", () => {
+    const session = new GT001Session(
+      fixture.content,
+      { ...fixture.difficulty, allow_retry: false },
+      1
+    );
+    session.prepareRound("4-5", DEFAULT_LOGIC_SPACE);
+    const wrongIdx = session.displayOptions.findIndex((o) => !o.is_correct);
+    const correctIdx = session.displayOptions.findIndex((o) => o.is_correct);
+    const wrongOpt = session.displayOptions[wrongIdx];
+    const correctOpt = session.displayOptions[correctIdx];
+    const correctSlot = session.slots[correctIdx];
+    if (!(wrongOpt && correctOpt && correctSlot)) {
+      throw new Error("Thiếu option");
+    }
+
+    session.commit({
+      type: "select_item",
+      data: { item_id: wrongOpt.item_id },
+    });
+    expect(session.getItemState(wrongOpt.item_id)).toBe("wrong");
+    expect(session.getItemState(correctOpt.item_id)).toBe("selected");
+    expect(session.isAcceptingInput()).toBe(false);
+    expect(session.getHintTargetIndex()).toBeNull();
+
+    const nextVerdict = session.dispatch({
+      type: "tap",
+      x: correctSlot.x,
+      y: correctSlot.y,
+      timeMs: 100,
+    });
+    expect(nextVerdict?.valid).toBe(false);
+    expect(nextVerdict?.feedback).toBe("none");
+  });
+
+  it("BUG-04: khi isWon === true thì getHintTargetIndex() trả null", () => {
+    const session = new GT001Session(fixture.content, fixture.difficulty, 1);
+    session.prepareRound("4-5", DEFAULT_LOGIC_SPACE);
+    expect(session.getHintTargetIndex()).not.toBeNull();
+    session.commit({ type: "select_item", data: { item_id: "apple_opt" } });
+    expect(session.getHintTargetIndex()).toBeNull();
+  });
+
+  it("BUG-05: setTouchingItem kích hoạt trạng thái vẽ touching (≥3 kênh), trả null về lại idle", () => {
+    const session = new GT001Session(fixture.content, fixture.difficulty, 1);
+    session.prepareRound("4-5", DEFAULT_LOGIC_SPACE);
+    const firstOpt = session.displayOptions[0];
+    if (!firstOpt) {
+      throw new Error("Thiếu option 0");
+    }
+    const rs = new RenderSystem();
+    rs.reducedMotion = true;
+
+    const idleRec = createRecordingContext();
+    session.render(idleRec.ctx, rs, 0);
+
+    session.setTouchingItem(firstOpt.item_id);
+    const touchingRec = createRecordingContext();
+    session.render(touchingRec.ctx, rs, 0);
+    expect(touchingRec.calls).not.toEqual(idleRec.calls);
+
+    session.setTouchingItem(null);
+    const releasedRec = createRecordingContext();
+    session.render(releasedRec.ctx, rs, 0);
+    expect(releasedRec.calls).toEqual(idleRec.calls);
+  });
+
+  it("Spec §5 Nhánh 5: target_item có asset hỏng vẫn vẽ hộp giữ chỗ an toàn và không in mã lỗi ra canvas", () => {
+    const brokenContent = {
+      ...fixture.content,
+      target_item: {
+        item_id: "broken_target",
+        asset: {
+          id: "broken_target_asset",
+          kind: "emoji" as const,
+          ref: "EMJ-BROKEN-999",
+        },
+      },
+    };
+    const session = new GT001Session(brokenContent, fixture.difficulty, 1);
+    session.prepareRound("4-5", DEFAULT_LOGIC_SPACE);
+    const rs = new RenderSystem();
+    const rec = createRecordingContext();
+
+    expect(() => session.render(rec.ctx, rs, 0)).not.toThrow();
+    const fillTexts = rec.calls.filter((c) => c.startsWith("fillText("));
+    for (const call of fillTexts) {
+      expect(call).not.toContain("EMJ-BROKEN-999");
+      expect(call).not.toContain("broken_target");
+    }
+  });
+
+  it("BUG-05: tôn trọng softShadowsEnabled = false, particles_enabled = false và reducedMotion = true", () => {
+    const session = new GT001Session(fixture.content, fixture.difficulty, 1);
+    session.degradation = {
+      particles_enabled: false,
+      soft_shadows_enabled: false,
+      touch_target_size_degraded: false,
+      audio_channel_degraded: false,
+      font_size_degraded: false,
+    };
+    session.prepareRound("4-5", DEFAULT_LOGIC_SPACE);
+    const rs = new RenderSystem();
+    rs.softShadowsEnabled = false;
+    rs.reducedMotion = true;
+    const spyParticles = vi.spyOn(rs, "drawParticles");
+
+    const idle100 = createRecordingContext();
+    const idle750 = createRecordingContext();
+    session.render(idle100.ctx, rs, 100);
+    session.render(idle750.ctx, rs, 750);
+    expect(idle100.maxShadowBlur()).toBe(0);
+    expect(idle100.calls).toEqual(idle750.calls);
+
+    session.commit({ type: "select_item", data: { item_id: "banana_opt" } });
+    const wrong120 = createRecordingContext();
+    const wrong300 = createRecordingContext();
+    session.render(wrong120.ctx, rs, 120);
+    session.render(wrong300.ctx, rs, 300);
+    expect(wrong120.calls).toEqual(wrong300.calls);
+
+    session.commit({ type: "select_item", data: { item_id: "apple_opt" } });
+    const win320 = createRecordingContext();
+    const win900 = createRecordingContext();
+    session.render(win320.ctx, rs, 320);
+    session.render(win900.ctx, rs, 900);
+    expect(win320.calls).toEqual(win900.calls);
+    expect(spyParticles).not.toHaveBeenCalled();
+  });
+
+  it("BUG-03: với 4 và 6 lựa chọn trên hộp play 360x640, mọi slot đạt sàn chạm, không chồng vùng hit và nằm trọn trong sân khấu", () => {
+    const box = { w: 300, h: 493 };
+    const space = deriveLogicSpace(box.w, box.h);
+    const cssPerLogic = Math.min(box.w / space.w, box.h / space.h);
+    const zones = computeStageZones({
+      logicW: space.w,
+      logicH: space.h,
+      ageBand: "4-5",
+      cssPerLogic,
+      needsTray: false,
+      needsCommit: false,
+    });
+
+    for (const count of [4, 6]) {
+      const options = Array.from({ length: count }, (_, idx) => ({
+        item_id: `opt_${idx}`,
+        asset: {
+          kind: "emoji" as const,
+          ref: ["🍎", "🍌", "🍊", "🍇", "🍓", "🍉"][idx] ?? "🍎",
+        },
+        is_correct: idx === 0,
+      }));
+      const session = new GT001Session(
+        {
+          ...fixture.content,
+          options,
+        },
+        {
+          ...fixture.difficulty,
+          distractor_count: count - 1,
+        },
+        1
+      );
+      session.prepareRound("4-5", space, zones.stage, undefined, cssPerLogic);
+
+      expect(findHitPairViolations(session.slots)).toEqual([]);
+      expect(findSlotsOutsideStage(session.slots, zones.stage)).toEqual([]);
+
+      const card = session.getView().entities.find((e) => e.role === "neutral");
+      expect(card).toBeDefined();
+      if (card) {
+        const cardBottom = card.y + card.h / 2;
+        for (const s of session.slots) {
+          expect(s.y - s.hitH / 2).toBeGreaterThanOrEqual(cardBottom);
+        }
+      }
+    }
   });
 });
