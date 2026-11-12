@@ -3,6 +3,9 @@ import {
   ACTION_IGNORED,
   type ActionResult,
   type GameAction,
+  type HintDemoStep,
+  type HintLevel,
+  type HintTarget,
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
@@ -13,13 +16,14 @@ import { insetDrawSize } from "#src/layout/slot-fit";
 import type { Slot } from "#src/layout/types";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
 import {
-  drawCheckMark,
+  drawGT002BoardFrame,
+  drawGT002ChoicePlate,
+  drawGT002WrongRing,
+} from "#src/render/gt-002-shapes.js";
+import {
   drawSceneBackground,
-  drawSlotItem,
-  drawWoodenPlate,
   type ItemVisualState,
   spawnParticlesAtSlot,
-  updateParticles,
 } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
 import { deriveStream } from "#src/rng/mulberry32.js";
@@ -28,9 +32,60 @@ import type { DegradationState } from "#src/systems/degradation";
 import { MoodPulse } from "#src/systems/mood-pulse";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import { WrongFlash } from "#src/systems/wrong-flash";
+import {
+  computeGT002BoardRect,
+  type GT002TokenAnimState,
+  stepParticlesByDelta,
+} from "./layout.js";
 import type { GT002Content, GT002Difficulty } from "./template.js";
 
 type TargetItem = GT002Content["items"][number];
+
+interface SessionClockState {
+  ms: number;
+  winAtMs: number | null;
+  selectedAtMs: Map<string, number>;
+}
+
+const SESSION_CLOCKS = new WeakMap<GT002Session, SessionClockState>();
+
+function getClockState(session: GT002Session): SessionClockState {
+  let state = SESSION_CLOCKS.get(session);
+  if (!state) {
+    state = { ms: 0, winAtMs: null, selectedAtMs: new Map() };
+    SESSION_CLOCKS.set(session, state);
+  }
+  return state;
+}
+
+function resetClockState(session: GT002Session): void {
+  const state = getClockState(session);
+  state.ms = 0;
+  state.winAtMs = null;
+  state.selectedAtMs.clear();
+}
+
+function readClockMs(session: GT002Session): number {
+  return getClockState(session).ms;
+}
+
+function writeClockMs(session: GT002Session, ms: number): void {
+  getClockState(session).ms = ms;
+}
+
+function extractItemId(data: GameAction["data"]): string | null {
+  if (!data || typeof data !== "object") {
+    return null;
+  }
+  const raw = Reflect.get(data, "item_id");
+  if (typeof raw === "string" && raw.length > 0) {
+    return raw;
+  }
+  if (typeof raw === "number" || typeof raw === "boolean") {
+    return String(raw);
+  }
+  return null;
+}
 
 /** Khung chuyện đọc một lần ở vòng đầu (`BR-E002-05`, `BR-FBK-16`). */
 export const GT002_STORY_LINE =
@@ -50,8 +105,9 @@ export class GT002Session extends TemplateGameSession<
   degradation: DegradationState | null = null;
   private particles: Particle[] = [];
   private readonly wrongFlash = new WrongFlash();
-  private lastFrameMs = 0;
   private readonly mood = new MoodPulse();
+  private isRoundClosed = false;
+  private pressedItemId: string | null = null;
 
   /** Nút Xong ở `zones.action` (`BR-PSZ-05`); chỉ sáng khi đã chọn ít nhất một vật. */
   override readonly needsCommit = true;
@@ -60,10 +116,12 @@ export class GT002Session extends TemplateGameSession<
   setupEntities(): void {
     this.mechanic.reset();
     this.isWon = false;
+    this.isRoundClosed = false;
+    this.pressedItemId = null;
     this.particles = [];
     this.wrongFlash.clear();
-    this.lastFrameMs = 0;
     this.mood.clear();
+    resetClockState(this);
     const rng = deriveStream(this.layoutSeed, "items");
     this.displayItems = shuffle(this.content.items, rng);
   }
@@ -82,8 +140,12 @@ export class GT002Session extends TemplateGameSession<
     );
   }
 
+  override isAcceptingInput(): boolean {
+    return !this.isRoundClosed;
+  }
+
   override canCommit(): boolean {
-    return this.hasSelection();
+    return !(this.isWon || this.isRoundClosed) && this.hasSelection();
   }
 
   private hasSelection(): boolean {
@@ -101,43 +163,102 @@ export class GT002Session extends TemplateGameSession<
 
   update(deltaMs: number): void {
     this.mood.tick(deltaMs);
-    this.lastFrameMs += deltaMs;
+    writeClockMs(this, readClockMs(this) + deltaMs);
+    if (this.particles.length > 0) {
+      this.particles = stepParticlesByDelta(this.particles, deltaMs);
+    }
+  }
+
+  override destroy(): void {
+    super.destroy();
+    this.wrongFlash.clear();
+    this.mood.clear();
+    this.pressedItemId = null;
+    this.isRoundClosed = false;
+    this.particles = [];
+    resetClockState(this);
   }
 
   /** Các vật đang chọn còn nháy sai (nhịp `WrongFlash` chưa hết). */
   isWrongFlashing(): boolean {
-    return this.wrongFlash.isActive(this.lastFrameMs);
+    return this.wrongFlash.isActive(readClockMs(this));
+  }
+
+  setTouchingItem(itemId: string | null): void {
+    if (this.isWon || this.isRoundClosed) {
+      this.pressedItemId = null;
+      return;
+    }
+    if (
+      itemId !== null &&
+      this.displayItems.some((it) => it.item_id === itemId)
+    ) {
+      this.pressedItemId = itemId;
+      return;
+    }
+    this.pressedItemId = null;
   }
 
   getItemState(itemId: string): ItemVisualState {
+    const item = this.content.items.find((it) => it.item_id === itemId);
     if (this.isWon) {
-      const item = this.content.items.find((it) => it.item_id === itemId);
-      if (item?.is_correct) {
-        return "correct";
-      }
+      return item?.is_correct ? "correct" : "idle";
+    }
+    if (this.isRoundClosed) {
+      return item?.is_correct ? "selected" : "idle";
     }
     if (this.mechanic.isSelected(itemId)) {
       return "selected";
     }
+    if (this.pressedItemId === itemId) {
+      return "touching";
+    }
     return "idle";
   }
 
+  getRenderState(itemId: string): ItemVisualState {
+    if (
+      !this.isWon &&
+      this.isWrongFlashing() &&
+      this.mechanic.isSelected(itemId)
+    ) {
+      return "wrong";
+    }
+    return this.getItemState(itemId);
+  }
+
   toggleItemSelection(itemId: string): void {
+    if (this.isWon || this.isRoundClosed) {
+      return;
+    }
+    const item = this.content.items.find((it) => it.item_id === itemId);
+    if (!item) {
+      return;
+    }
+    this.pressedItemId = null;
+    this.wrongFlash.clear();
     const wasSelected = this.mechanic.isSelected(itemId);
     this.mechanic.toggle(itemId);
-    // Cue và reo giống nhau với cá đúng lẫn sai: không báo trước đáp án.
-    if (!wasSelected) {
-      this.queueSfx("net_splash");
-      this.mood.set("cheer", GT002_CHEER_MS);
+    const clock = getClockState(this);
+    if (wasSelected) {
+      clock.selectedAtMs.delete(itemId);
+      return;
     }
+    clock.selectedAtMs.set(itemId, clock.ms);
+    this.recordEvent("item_selected", {
+      item_id: item.item_id,
+      is_correct: item.is_correct,
+    });
+    // Cue và reo giống nhau với cá đúng lẫn sai: không báo trước đáp án.
+    this.queueSfx("net_splash");
+    this.mood.set("cheer", GT002_CHEER_MS);
   }
 
   validateAction(action: GameAction): ActionResult {
     if (action.type === "toggle_item") {
-      const data = action.data as { item_id?: string } | undefined;
-      const exists = this.content.items.some(
-        (i) => i.item_id === data?.item_id
-      );
+      const itemId = extractItemId(action.data);
+      const exists =
+        itemId !== null && this.content.items.some((i) => i.item_id === itemId);
       return exists ? { valid: true, feedback: "none" } : ACTION_IGNORED;
     }
     const items = this.content.items.map((i) => ({
@@ -147,26 +268,41 @@ export class GT002Session extends TemplateGameSession<
     return this.mechanic.validate(action, items);
   }
 
+  private spawnVictoryParticles(): void {
+    if (this.degradation?.particles_enabled === false) {
+      return;
+    }
+    for (let i = 0; i < this.displayItems.length; i++) {
+      const item = this.displayItems[i];
+      const slot = this.slots[i];
+      if (item?.is_correct && slot) {
+        this.particles.push(...spawnParticlesAtSlot(slot, 6));
+      }
+    }
+  }
+
   onSubmitSelection(): void {
+    if (this.isWon || this.isRoundClosed) {
+      return;
+    }
+    this.pressedItemId = null;
     const result = this.validateAction({
       type: "submit_selection",
       data: {},
     });
+    const nowMs = readClockMs(this);
     this.recordEvent("selection_submitted", { is_correct: result.valid });
     if (result.valid) {
-      for (const item of this.displayItems) {
-        if (item.is_correct) {
-          const idx = this.displayItems.indexOf(item);
-          const slot = this.slots[idx];
-          if (slot) {
-            this.particles.push(...spawnParticlesAtSlot(slot, 6));
-          }
-        }
-      }
+      getClockState(this).winAtMs = nowMs;
+      this.spawnVictoryParticles();
       this.winSession();
-    } else {
-      this.wrongFlash.trigger(this.lastFrameMs);
-      this.mood.set("wonder", GT002_WONDER_MS);
+      return;
+    }
+    this.wrongFlash.trigger(nowMs);
+    this.mood.set("wonder", GT002_WONDER_MS);
+    if (this.difficulty.allow_retry === false) {
+      this.isRoundClosed = true;
+      this.completeSession();
     }
   }
 
@@ -210,7 +346,17 @@ export class GT002Session extends TemplateGameSession<
     };
   }
 
+  override dispatch(gesture: Gesture): ActionResult | undefined {
+    if (this.isRoundClosed) {
+      return ACTION_IGNORED;
+    }
+    return super.dispatch(gesture);
+  }
+
   override toAction(gesture: Gesture): GameAction | null {
+    if (this.isWon || this.isRoundClosed) {
+      return null;
+    }
     if (gesture.type === "commit") {
       // Chưa chọn vật nào thì nuốt cử chỉ: nút đang mờ (`N1`), Cấm — NEVER
       // tính một lần sai.
@@ -243,27 +389,58 @@ export class GT002Session extends TemplateGameSession<
   }
 
   override getHintTargetIndex(): number | null {
-    const idx = this.displayItems.findIndex(
-      (it) => it.is_correct && this.getItemState(it.item_id) !== "selected"
+    if (this.isWon || this.isRoundClosed) {
+      return null;
+    }
+    const missingCorrectIdx = this.displayItems.findIndex(
+      (it) => it.is_correct && !this.mechanic.isSelected(it.item_id)
     );
-    return idx >= 0 ? idx : null;
+    if (missingCorrectIdx >= 0) {
+      return missingCorrectIdx;
+    }
+    const extraDistractorIdx = this.displayItems.findIndex(
+      (it) => !it.is_correct && this.mechanic.isSelected(it.item_id)
+    );
+    return extraDistractorIdx >= 0 ? extraDistractorIdx : null;
+  }
+
+  override getHintTarget(): HintTarget | null {
+    if (this.isWon || this.isRoundClosed) {
+      return null;
+    }
+    return super.getHintTarget();
+  }
+
+  override getHintDemoSequence(
+    level: HintLevel
+  ): readonly HintDemoStep[] | null {
+    if (level !== 3 || this.isWon || this.isRoundClosed) {
+      return null;
+    }
+    const missingCorrect: number[] = [];
+    const extraDistractor: number[] = [];
+    for (let i = 0; i < this.displayItems.length; i++) {
+      const item = this.displayItems[i];
+      if (!item) {
+        continue;
+      }
+      const selected = this.mechanic.isSelected(item.item_id);
+      if (item.is_correct && !selected) {
+        missingCorrect.push(i);
+      } else if (!item.is_correct && selected) {
+        extraDistractor.push(i);
+      }
+    }
+    const steps = [...missingCorrect, ...extraDistractor];
+    return steps.length >= 2 ? steps.map((idx) => ({ from: idx })) : null;
   }
 
   override commit(action: GameAction): void {
-    if (
-      action.type === "toggle_item" &&
-      action.data &&
-      typeof action.data === "object" &&
-      "item_id" in action.data
-    ) {
-      const itemId = String(
-        (
-          action.data as {
-            item_id: string | number | boolean | null | undefined;
-          }
-        ).item_id
-      );
-      this.toggleItemSelection(itemId);
+    if (action.type === "toggle_item") {
+      const itemId = extractItemId(action.data);
+      if (itemId !== null) {
+        this.toggleItemSelection(itemId);
+      }
     } else if (action.type === "submit_selection") {
       this.onSubmitSelection();
     }
@@ -274,17 +451,43 @@ export class GT002Session extends TemplateGameSession<
     rs: RenderSystem,
     timeMs: number
   ): void {
-    this.lastFrameMs = timeMs;
+    writeClockMs(this, timeMs);
     const slots = this.slots;
+    const boardRect = computeGT002BoardRect(
+      slots,
+      this.logicSpace,
+      this.stageRect
+    );
+
     drawSceneBackground(ctx, rs, this.themeId);
-    this.drawInteractive(rs, ctx, slots);
-    this.drawFeedback(rs, ctx, timeMs);
+    drawGT002BoardFrame(ctx, rs, boardRect);
+    this.drawInteractive(rs, ctx, slots, timeMs);
+    this.drawFeedback(rs, ctx, slots, timeMs);
+  }
+
+  private buildTokenAnim(itemId: string, timeMs: number): GT002TokenAnimState {
+    const clock = getClockState(this);
+    const selectedAt = clock.selectedAtMs.get(itemId);
+    const selectElapsedMs =
+      selectedAt === undefined ? 9999 : Math.max(0, timeMs - selectedAt);
+    const winElapsedMs =
+      clock.winAtMs === null ? 0 : Math.max(0, timeMs - clock.winAtMs);
+    const isActiveWrong = this.wrongFlash.isActive(timeMs);
+    const wrongProgress = isActiveWrong ? this.wrongFlash.progress(timeMs) : 0;
+    return {
+      timeMs,
+      selectElapsedMs,
+      winElapsedMs,
+      wrongProgress,
+      isActiveWrong,
+    };
   }
 
   private drawInteractive(
     rs: RenderSystem,
     ctx: CanvasRenderingContext2D,
-    slots: readonly Slot[]
+    slots: readonly Slot[],
+    timeMs: number
   ): void {
     for (let i = 0; i < this.displayItems.length; i++) {
       const item = this.displayItems[i];
@@ -292,39 +495,46 @@ export class GT002Session extends TemplateGameSession<
       if (!(slot && item)) {
         continue;
       }
-      const state = this.getItemState(item.item_id);
-      const isSelected = state === "selected" || state === "correct";
-      const renderState: ItemVisualState =
-        this.isWrongFlashing() && this.mechanic.isSelected(item.item_id)
-          ? "wrong"
-          : state;
-      drawWoodenPlate(ctx, slot, isSelected);
-      drawSlotItem(
+      const renderState = this.getRenderState(item.item_id);
+      const anim = this.buildTokenAnim(item.item_id, timeMs);
+      drawGT002ChoicePlate(
         ctx,
         rs,
         slot,
+        i,
         {
           id: item.item_id,
           asset: item.asset,
           state: renderState,
         },
-        "circle"
+        anim
       );
-      if (state === "selected") {
-        drawCheckMark(ctx, slot);
-      }
     }
   }
 
   private drawFeedback(
     rs: RenderSystem,
     ctx: CanvasRenderingContext2D,
-    _timeMs: number
+    slots: readonly Slot[],
+    timeMs: number
   ): void {
+    for (let i = 0; i < this.displayItems.length; i++) {
+      const item = this.displayItems[i];
+      const slot = slots[i];
+      if (!(slot && item)) {
+        continue;
+      }
+      if (this.getRenderState(item.item_id) === "wrong") {
+        const anim = this.buildTokenAnim(item.item_id, timeMs);
+        drawGT002WrongRing(ctx, rs, slot, i, anim);
+      }
+    }
     if (this.degradation?.particles_enabled === false) {
       return;
     }
-    this.particles = updateParticles(this.particles);
+    if (this.particles.length === 0) {
+      return;
+    }
     rs.drawParticles(ctx, this.particles);
   }
 }

@@ -1,8 +1,12 @@
-import { describe, expect, it } from "vitest";
-import type { LogicSpace } from "#src/layout/constants";
+import { describe, expect, it, vi } from "vitest";
+import { DEFAULT_LOGIC_SPACE, type LogicSpace } from "#src/layout/constants";
 import { findHitEntity } from "#src/layout/hit-test.js";
+import { designTokens } from "#src/systems/designTokens";
+import { RenderSystem } from "#src/systems/render-system";
+import { WRONG_FLASH_MS } from "#src/systems/wrong-flash";
 import { GT002_FIXTURES } from "#src/templates/GT-002/fixtures";
 import { GT002Session } from "#src/templates/GT-002/session";
+import { createFakeCanvas } from "#tests/gates/fake-canvas";
 
 /**
  * GT-002 chấm tập chọn **chỉ** khi `commit` (`BR-E002-02`, `N4`, `N6`).
@@ -276,11 +280,318 @@ describe("GT-002 — chạm vật đọc tên, một hình học chạm (R6, E4/
           typeof action.data === "object" &&
           action.data !== null &&
           "item_id" in action.data
-            ? String((action.data as { item_id: unknown }).item_id)
+            ? String(Reflect.get(action.data, "item_id"))
             : null;
 
         expect(actionItemId).toBe(hitEntity ? hitEntity.id : null);
       }
     }
+  });
+});
+
+interface RecordedDrawContext {
+  readonly ctx: CanvasRenderingContext2D;
+  readonly calls: string[];
+  readonly maxShadowBlur: () => number;
+}
+
+function createRecordingContext(w = 960, h = 540): RecordedDrawContext {
+  const fake = createFakeCanvas(w, h);
+  const rawCtx = fake.getContext("2d");
+  if (!rawCtx) {
+    throw new Error("Fake canvas missing 2d context");
+  }
+  const calls: string[] = [];
+  let maxBlur = 0;
+
+  const trackBlur = (): void => {
+    if (rawCtx.shadowBlur > maxBlur) {
+      maxBlur = rawCtx.shadowBlur;
+    }
+  };
+
+  vi.spyOn(rawCtx, "arc").mockImplementation((x, y, r, s, e) => {
+    trackBlur();
+    calls.push(
+      `arc(${x.toFixed(2)},${y.toFixed(2)},${r.toFixed(2)},${s.toFixed(2)},${e.toFixed(2)})`
+    );
+  });
+  vi.spyOn(rawCtx, "roundRect").mockImplementation((x, y, rw, rh) => {
+    trackBlur();
+    calls.push(
+      `roundRect(${x.toFixed(2)},${y.toFixed(2)},${rw.toFixed(2)},${rh.toFixed(2)})`
+    );
+  });
+  vi.spyOn(rawCtx, "fill").mockImplementation(() => {
+    trackBlur();
+    calls.push(`fill(${String(rawCtx.fillStyle)})`);
+  });
+  vi.spyOn(rawCtx, "stroke").mockImplementation(() => {
+    trackBlur();
+    calls.push(
+      `stroke(${String(rawCtx.strokeStyle)},${rawCtx.lineWidth.toFixed(1)})`
+    );
+  });
+  vi.spyOn(rawCtx, "fillText").mockImplementation((t, x, y) => {
+    trackBlur();
+    calls.push(`fillText(${t},${x.toFixed(2)},${y.toFixed(2)})`);
+  });
+
+  return {
+    ctx: rawCtx as CanvasRenderingContext2D,
+    calls,
+    maxShadowBlur: () => maxBlur,
+  };
+}
+
+describe("GT-002 — Regression & UI/UX Contract (Hint, Retry, Telemetry, 7 Render Gates)", () => {
+  it("Hint khi chọn thừa distractor: trỏ vào distractor để bỏ chọn, KHÔNG trỏ nút action", () => {
+    const session = buildSession();
+    const [firstDistractor] = distractorIds;
+    if (!firstDistractor) {
+      throw new Error("Thiếu distractor");
+    }
+
+    for (const id of correctIds) {
+      tapItem(session, id);
+    }
+    tapItem(session, firstDistractor);
+
+    const distractorIdx = session.displayItems.findIndex(
+      (i) => i.item_id === firstDistractor
+    );
+    expect(session.getHintTargetIndex()).toBe(distractorIdx);
+    expect(session.getHintTarget()).toEqual({
+      kind: "slot",
+      index: distractorIdx,
+    });
+
+    tapItem(session, firstDistractor);
+    expect(session.getHintTargetIndex()).toBeNull();
+    expect(session.getHintTarget()).toEqual({ kind: "action" });
+  });
+
+  it("Hint sau khi thắng hoặc đóng vòng trả null; getHintDemoSequence(3) trả chuỗi bước khi còn >= 2 bước", () => {
+    const session = buildSession();
+    const demoInitial = session.getHintDemoSequence(3);
+    expect(demoInitial).not.toBeNull();
+    expect(demoInitial?.length).toBe(correctIds.length);
+    expect(demoInitial?.[0]?.from).toBe(session.getHintTargetIndex());
+    expect(session.getHintDemoSequence(2)).toBeNull();
+
+    for (const id of correctIds) {
+      tapItem(session, id);
+    }
+    expect(session.getHintDemoSequence(3)).toBeNull();
+
+    session.dispatch({ type: "commit", timeMs: 0 });
+    expect(session.checkWinCondition()).toBe(true);
+    expect(session.getHintTargetIndex()).toBeNull();
+    expect(session.getHintTarget()).toBeNull();
+    expect(session.getHintDemoSequence(3)).toBeNull();
+  });
+
+  it("allow_retry: false — nộp sai đóng vòng, khoá input và sau WRONG_FLASH_MS làm sáng các vật đúng", () => {
+    const session = new GT002Session(
+      content,
+      { ...difficulty, allow_retry: false },
+      1
+    );
+    session.prepareRound("4-5", DEFAULT_LOGIC_SPACE);
+    const [firstDistractor] = distractorIds;
+    const [firstCorrect] = correctIds;
+    if (!(firstDistractor && firstCorrect)) {
+      throw new Error("Thiếu item");
+    }
+
+    tapItem(session, firstDistractor);
+    const submitVerdict = session.dispatch({ type: "commit", timeMs: 0 });
+    expect(submitVerdict?.valid).toBe(false);
+    expect(session.isAcceptingInput()).toBe(false);
+    expect(session.canCommit()).toBe(false);
+    expect(session.getHintTargetIndex()).toBeNull();
+    expect(session.getHintTarget()).toBeNull();
+    expect(session.getRenderState(firstDistractor)).toBe("wrong");
+
+    const slot0 = session.slots[0];
+    if (!slot0) {
+      throw new Error("Thiếu slot 0");
+    }
+    expect(
+      session.toAction({ type: "tap", x: slot0.x, y: slot0.y, timeMs: 10 })
+    ).toBeNull();
+    expect(
+      session.dispatch({ type: "tap", x: slot0.x, y: slot0.y, timeMs: 10 })
+    ).toEqual({ valid: false, feedback: "none" });
+
+    session.update(WRONG_FLASH_MS);
+    expect(session.isWrongFlashing()).toBe(false);
+    for (const id of correctIds) {
+      expect(session.getItemState(id)).toBe("selected");
+      expect(session.getRenderState(id)).toBe("selected");
+    }
+    for (const id of distractorIds) {
+      expect(session.getItemState(id)).toBe("idle");
+      expect(session.getRenderState(id)).toBe("idle");
+    }
+  });
+
+  it("allow_retry: true — nộp sai lại làm mới nhịp nháy, chạm sửa dọn ngay nhịp nháy, chặn ID lạ và phát item_selected khi chọn", () => {
+    const session = buildSession();
+    const [firstDistractor] = distractorIds;
+    const [firstCorrect] = correctIds;
+    if (!(firstDistractor && firstCorrect)) {
+      throw new Error("Thiếu item");
+    }
+
+    session.toggleItemSelection("unknown_ghost_id");
+    expect(session.canCommit()).toBe(false);
+
+    tapItem(session, firstDistractor);
+    const selectedEvents1 = session
+      .getTelemetry()
+      .events.filter((e) => e.event_name === "item_selected");
+    expect(selectedEvents1).toHaveLength(1);
+    expect(selectedEvents1[0]?.data).toEqual({
+      item_id: firstDistractor,
+      is_correct: false,
+    });
+
+    session.dispatch({ type: "commit", timeMs: 0 });
+    expect(session.isWrongFlashing()).toBe(true);
+    session.update(250);
+    session.dispatch({ type: "commit", timeMs: 250 });
+    session.update(WRONG_FLASH_MS - 1);
+    expect(session.isWrongFlashing()).toBe(true);
+
+    tapItem(session, firstCorrect);
+    expect(session.isWrongFlashing()).toBe(false);
+    expect(session.getRenderState(firstCorrect)).toBe("selected");
+
+    tapItem(session, firstDistractor);
+    const selectedEventsAfterDeselect = session
+      .getTelemetry()
+      .events.filter((e) => e.event_name === "item_selected");
+    expect(selectedEventsAfterDeselect).toHaveLength(2);
+  });
+
+  it("BR-ERC-02: render() thuần 100% — gọi 100 lần cùng timeMs giữ nguyên Object.entries(session), 0 telemetry mới và hạt chỉ bước ở update()", () => {
+    const session = buildSession(DEFAULT_LOGIC_SPACE);
+    for (const id of correctIds) {
+      tapItem(session, id);
+    }
+    session.dispatch({ type: "commit", timeMs: 0 });
+    expect(session.checkWinCondition()).toBe(true);
+
+    const rs = new RenderSystem();
+    const beforeEntries = Object.entries(session).map(([k, v]) => [
+      k,
+      structuredClone(v),
+    ]);
+    const telemetryCountBefore = session.getTelemetry().events.length;
+
+    const first = createRecordingContext();
+    session.render(first.ctx, rs, 100);
+    expect(Object.entries(session)).toEqual(beforeEntries);
+
+    let lastCalls: string[] = [];
+    for (let i = 0; i < 100; i++) {
+      const rec = createRecordingContext();
+      session.render(rec.ctx, rs, 100);
+      lastCalls = rec.calls;
+    }
+    expect(lastCalls).toEqual(first.calls);
+    expect(Object.entries(session)).toEqual(beforeEntries);
+    expect(session.getTelemetry().events).toHaveLength(telemetryCountBefore);
+
+    session.update(800);
+    const afterUpdate = createRecordingContext();
+    session.render(afterUpdate.ctx, rs, 900);
+    expect(afterUpdate.calls).not.toEqual(first.calls);
+  });
+
+  it("Spec §12: đủ 5 trạng thái thị giác (idle, touching, selected, wrong, correct), selected dùng brand thay vì màu đúng/sai", () => {
+    const session = buildSession(DEFAULT_LOGIC_SPACE);
+    const [firstCorrect] = correctIds;
+    if (!firstCorrect) {
+      throw new Error("Thiếu vật đúng");
+    }
+    const rs = new RenderSystem();
+    rs.reducedMotion = true;
+
+    const idleRec = createRecordingContext();
+    session.render(idleRec.ctx, rs, 0);
+
+    session.setTouchingItem(firstCorrect);
+    expect(session.getItemState(firstCorrect)).toBe("touching");
+    const touchingRec = createRecordingContext();
+    session.render(touchingRec.ctx, rs, 0);
+    expect(touchingRec.calls).not.toEqual(idleRec.calls);
+
+    session.setTouchingItem(null);
+    const backToIdleRec = createRecordingContext();
+    session.render(backToIdleRec.ctx, rs, 0);
+    expect(backToIdleRec.calls).toEqual(idleRec.calls);
+
+    tapItem(session, firstCorrect);
+    const selectedRec = createRecordingContext();
+    session.render(selectedRec.ctx, rs, 0);
+    expect(selectedRec.calls).not.toEqual(idleRec.calls);
+    expect(selectedRec.calls).toContain(
+      `fill(${designTokens.colors.brand[500]})`
+    );
+    expect(selectedRec.calls).not.toContain(
+      `fill(${designTokens.colors.montessori.emeraldBright})`
+    );
+  });
+
+  it("Spec §5 Nhánh 5 & 6: tôn trọng reducedMotion, softShadowsEnabled = false, particles_enabled = false và fallback drawPlaceholderBox khi asset hỏng", () => {
+    const brokenContent = {
+      ...content,
+      items: content.items.map((item, idx) =>
+        idx === 0
+          ? {
+              ...item,
+              asset: {
+                id: "broken_fish",
+                kind: "emoji" as const,
+                ref: "EMJ-BROKEN-999",
+              },
+            }
+          : item
+      ),
+    };
+    const session = new GT002Session(brokenContent, difficulty, 1);
+    session.degradation = {
+      particles_enabled: false,
+      soft_shadows_enabled: false,
+      touch_target_size_degraded: false,
+      audio_channel_degraded: false,
+      font_size_degraded: false,
+    };
+    session.prepareRound("4-5", DEFAULT_LOGIC_SPACE);
+
+    const rs = new RenderSystem();
+    rs.softShadowsEnabled = false;
+    rs.reducedMotion = true;
+    const spyParticles = vi.spyOn(rs, "drawParticles");
+
+    const rec100 = createRecordingContext();
+    const rec800 = createRecordingContext();
+    expect(() => session.render(rec100.ctx, rs, 100)).not.toThrow();
+    session.render(rec800.ctx, rs, 800);
+    expect(rec100.maxShadowBlur()).toBe(0);
+    expect(rec100.calls).toEqual(rec800.calls);
+    for (const call of rec100.calls.filter((c) => c.startsWith("fillText("))) {
+      expect(call).not.toContain("EMJ-BROKEN-999");
+    }
+
+    for (const id of correctIds) {
+      tapItem(session, id);
+    }
+    session.dispatch({ type: "commit", timeMs: 0 });
+    const winRec = createRecordingContext();
+    session.render(winRec.ctx, rs, 900);
+    expect(spyParticles).not.toHaveBeenCalled();
   });
 });
