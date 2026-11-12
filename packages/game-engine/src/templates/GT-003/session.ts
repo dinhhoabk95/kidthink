@@ -1,42 +1,34 @@
 import type { AgeBand } from "#src/contracts/types";
 import {
+  ACTION_IGNORED,
   type ActionResult,
   type GameAction,
+  type HintTarget,
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveAssetLabels } from "#src/labels/spoken-keyword.js";
-import {
-  CONTENT_TOP_PX,
-  resolveTouchFloor,
-  SAFE_MARGIN_PX,
-  SLOT_GAP_PX,
-} from "#src/layout/constants";
+import { resolveTouchFloor } from "#src/layout/constants";
 import { isPointInSlot, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
 import type { ZoneRect } from "#src/layout/stage-zones";
 import {
-  CONTAINER_HEIGHT_PER_ITEM,
-  CONTAINER_MIN_H,
-  CONTAINER_MIN_W,
-  CONTAINER_WIDTH_PER_ITEM,
-  computeStageContainerBox,
   computeStageTargetSlot,
   computeTraySourceSlots,
 } from "#src/layout/tray-layout";
 import type { LayoutId, Slot } from "#src/layout/types";
 import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
 import {
-  basketShakeOffset,
+  drawGT003BasketTarget,
+  drawGT003SourceToken,
+} from "#src/render/gt-003-shapes";
+import {
   type ContainerBox,
   drawClippedToZone,
-  drawContainerTarget,
   drawSceneBackground,
-  drawSlotItem,
   drawWoodenTokenDock,
   type ItemVisualState,
   spawnParticlesAtSlot,
-  updateParticles,
 } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
 import { deriveStream } from "#src/rng/mulberry32";
@@ -44,6 +36,13 @@ import { shuffle } from "#src/rng/shuffle";
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import { WrongFlashMap } from "#src/systems/wrong-flash";
+import {
+  computeGT003ContainerBox,
+  extractGT003DropPayload,
+  type GT003RenderItem,
+  type GT003TokenVisualState,
+  stepParticlesByDelta,
+} from "./layout.js";
 import type { GT003Content, GT003Difficulty } from "./template.js";
 
 type DraggableItem = GT003Content["items"][number];
@@ -52,11 +51,8 @@ type DraggableItem = GT003Content["items"][number];
 export const GT003_STORY_LINE =
   "Gấu Con đang dọn nhà, bé giúp Gấu Con bỏ đồ vào đúng chỗ nhé!";
 
-/**
- * Vật thả trượt trôi về chỗ cũ trong 260ms (`GT-003.md` §4 N4). Hết nhịp đó,
- * vật trở lại trung tính: dấu sai KHÔNG ở lại trên màn (Montessori).
- */
-const WRONG_FEEDBACK_MS = 260;
+/** Vật thả trượt trôi về chỗ cũ trong 260ms (`GT-003.md` §4 N4). */
+export const WRONG_FEEDBACK_MS = 260;
 
 const VIEW_STATE_MAP: Readonly<
   Record<string, "idle" | "selected" | "correct" | "incorrect">
@@ -66,10 +62,36 @@ const VIEW_STATE_MAP: Readonly<
   selected: "selected",
 };
 
-/** Sân khấu và khay shell cấp cho vòng này (Task #277 S5). */
 interface TrayZones {
   readonly stage: ZoneRect;
   readonly tray: ZoneRect;
+}
+
+interface SessionClockState {
+  ms: number;
+  basketShakeStartMs: number | null;
+  winAtMs: number | null;
+  stagedAtMs: number | null;
+}
+
+const SESSION_CLOCK = new WeakMap<GT003Session, SessionClockState>();
+
+function getClockState(session: GT003Session): SessionClockState {
+  let state = SESSION_CLOCK.get(session);
+  if (!state) {
+    state = {
+      ms: 0,
+      basketShakeStartMs: null,
+      winAtMs: null,
+      stagedAtMs: null,
+    };
+    SESSION_CLOCK.set(session, state);
+  }
+  return state;
+}
+
+function readClockMs(session: GT003Session): number {
+  return getClockState(session).ms;
 }
 
 export class GT003Session extends TemplateGameSession<
@@ -86,18 +108,13 @@ export class GT003Session extends TemplateGameSession<
   degradation: DegradationState | null = null;
   private particles: Particle[] = [];
   private itemStates: Map<string, ItemVisualState> = new Map();
-  /** item_id -> mili-giây còn lại của nhịp phản hồi "thả trượt". */
-  /** Nhịp hổ phách theo vật; thời lượng riêng 260 ms do spec GT-003 chốt (vật trôi về chỗ cũ). */
   private readonly wrongFlashes = new WrongFlashMap(WRONG_FEEDBACK_MS);
-  private lastFrameMs = 0;
-  /** Mốc đồng hồ khung lúc vật đúng vừa rơi vào rổ, cho nhịp rung (`BR-E003-09`). */
-  private basketShakeStartMs: number | null = null;
+  private isRoundClosed = false;
+  private pressedItemId: string | null = null;
   hoveredContainer = false;
 
-  /** Vật nằm trong khay chung, rổ đứng trên sân khấu (`BR-PSZ-01`). */
   override readonly needsTray = true;
 
-  /** Số vật nguồn trong khay của vòng — shell đo chiều cao khay (`BR-PSZ-13`). */
   override get trayItemCount(): number {
     return this.content.items.length;
   }
@@ -106,12 +123,18 @@ export class GT003Session extends TemplateGameSession<
   setupEntities(): void {
     this.mechanic.reset();
     this.isWon = false;
+    this.isRoundClosed = false;
+    this.pressedItemId = null;
     this.particles = [];
     this.itemStates = new Map();
     this.wrongFlashes.clearAll();
-    this.lastFrameMs = 0;
-    this.basketShakeStartMs = null;
     this.hoveredContainer = false;
+    SESSION_CLOCK.set(this, {
+      ms: 0,
+      basketShakeStartMs: null,
+      winAtMs: null,
+      stagedAtMs: null,
+    });
     this.placementTargets = this.content.items
       .filter((i) => i.is_correct)
       .map((i) => ({
@@ -119,27 +142,23 @@ export class GT003Session extends TemplateGameSession<
         targetId: this.content.container.container_id,
         isCorrect: true,
       }));
-    // Vị trí xuất phát đổi theo seed mỗi lượt chơi (`GT-003.md` §4 N7, §5/8).
-    // Không xáo thì đáp án đứng nguyên chỗ cũ và trẻ học vị trí, không học
-    // thuộc tính.
     this.displayItems =
       this.difficulty.shuffle_items === false
         ? [...this.content.items]
         : shuffle(this.content.items, deriveStream(this.layoutSeed, "items"));
   }
 
-  /**
-   * Bố cục chọn theo khung nhìn, trong hai bố cục `template.ts` khai:
-   * màn cao hơn rộng thì xếp nguồn–đích theo chiều ngang, vì một hàng 6 vật
-   * không vừa bề ngang 540px.
-   */
+  override destroy(): void {
+    SESSION_CLOCK.delete(this);
+    super.destroy();
+  }
+
   private resolveLayoutId(): LayoutId {
     return this.logicSpace.h > this.logicSpace.w
       ? "left-source-right-target"
       : "top-source-bottom-target";
   }
 
-  /** Có đủ sân khấu và khay từ shell thì chơi trong khung năm vùng. */
   private trayZones(): TrayZones | null {
     return this.stageRect && this.trayRect
       ? { stage: this.stageRect, tray: this.trayRect }
@@ -152,8 +171,6 @@ export class GT003Session extends TemplateGameSession<
       return this.computeZoneSlots(ageBand, zones);
     }
     const layoutFn = resolveLayout(this.resolveLayoutId());
-    // `slotCount` của bố cục lưỡng phân là số slot **nguồn**, còn `targetCount`
-    // là số slot đích — layout tự cộng hai vế. GT-003 luôn có đúng một đích.
     return layoutFn({
       slotCount: this.displayItems.length,
       ageBand,
@@ -164,7 +181,6 @@ export class GT003Session extends TemplateGameSession<
     });
   }
 
-  /** Nguồn xếp trong khay, đích giữa sân khấu (Task #277 S5). */
   private computeZoneSlots(ageBand: AgeBand, zones: TrayZones): Slot[] {
     const touchFloor = resolveTouchFloor(ageBand, this.cssPerLogic);
     const sources = computeTraySourceSlots(
@@ -190,64 +206,16 @@ export class GT003Session extends TemplateGameSession<
     return this.sourceSlots[index] ?? this.slots[index];
   }
 
-  /**
-   * Hộp vẽ **và** hộp chạm của đích chứa — một nguồn duy nhất.
-   *
-   * Slot đích do bố cục cấp có cùng cỡ với slot nguồn, nên vẽ đúng cỡ slot thì
-   * cái chứa nhỏ hơn cái được bỏ vào. Hộp này nở ra tới sát vùng an toàn,
-   * nhưng cấm — NEVER lấn sang vùng nguồn: lấn là chạm nhầm.
-   */
   getContainerBox(): ContainerBox | null {
-    const slot = this.getTargetSlot();
-    if (!slot) {
-      return null;
-    }
-    if (this.stageRect && this.trayRect) {
-      return computeStageContainerBox(slot, this.stageRect);
-    }
-
-    const sources = this.sourceSlots.length ? this.sourceSlots : [];
-    const itemW = Math.max(slot.w, ...sources.map((s) => s.w));
-    const itemH = Math.max(slot.h, ...sources.map((s) => s.h));
-
-    const srcBottom = sources.length
-      ? Math.max(...sources.map((s) => s.y + s.h / 2))
-      : CONTENT_TOP_PX;
-    const srcRight = sources.length
-      ? Math.max(...sources.map((s) => s.x + s.w / 2))
-      : SAFE_MARGIN_PX;
-
-    const topLimit =
-      slot.y > srcBottom ? srcBottom + SLOT_GAP_PX : CONTENT_TOP_PX;
-    const leftLimit =
-      slot.x > srcRight ? srcRight + SLOT_GAP_PX : SAFE_MARGIN_PX;
-
-    const maxW =
-      2 *
-      Math.min(slot.x - leftLimit, this.logicSpace.w - SAFE_MARGIN_PX - slot.x);
-    const maxH =
-      2 *
-      Math.min(slot.y - topLimit, this.logicSpace.h - SAFE_MARGIN_PX - slot.y);
-
-    const w = Math.max(
-      slot.hitW,
-      Math.min(
-        Math.max(CONTAINER_MIN_W, itemW * CONTAINER_WIDTH_PER_ITEM),
-        maxW
-      )
+    return computeGT003ContainerBox(
+      this.getTargetSlot(),
+      this.sourceSlots,
+      this.logicSpace,
+      this.stageRect,
+      this.trayRect
     );
-    const h = Math.max(
-      slot.hitH,
-      Math.min(
-        Math.max(CONTAINER_MIN_H, itemH * CONTAINER_HEIGHT_PER_ITEM),
-        maxH
-      )
-    );
-
-    return { x: slot.x, y: slot.y, w, h };
   }
 
-  /** Cùng hình học chạm cho `toAction()` và cho bề mặt web (`hitShape`). */
   private isPointInContainer(x: number, y: number): boolean {
     const box = this.getContainerBox();
     if (!box) {
@@ -267,7 +235,6 @@ export class GT003Session extends TemplateGameSession<
     return isPointInSlot(boxSlot, x, y, "square", TAP_TOLERANCE_PX);
   }
 
-  /** Chỉ số vật **chưa bỏ vào rổ** trúng điểm chạm, `-1` nếu không có. */
   private findLooseItemIndex(x: number, y: number): number {
     const placements = this.mechanic.getPlacements();
     for (let i = 0; i < this.displayItems.length; i++) {
@@ -276,7 +243,6 @@ export class GT003Session extends TemplateGameSession<
       if (!(slot && item) || placements.has(item.item_id)) {
         continue;
       }
-      // Vật vẽ bằng `drawSlotItem(..., "circle")` nên vùng chạm cũng tròn.
       if (isPointInSlot(slot, x, y, "circle", TAP_TOLERANCE_PX)) {
         return i;
       }
@@ -289,17 +255,69 @@ export class GT003Session extends TemplateGameSession<
   }
 
   getItemState(itemId: string): ItemVisualState {
-    const stagedId = this.mechanic.getStagedItemId();
-    if (stagedId === itemId) {
+    if (this.mechanic.getPlacements().has(itemId)) {
+      return "correct";
+    }
+    if (this.mechanic.getStagedItemId() === itemId) {
       return "selected";
+    }
+    const nowMs = readClockMs(this);
+    if (
+      this.wrongFlashes.isActive(itemId, nowMs) ||
+      this.itemStates.get(itemId) === "wrong"
+    ) {
+      return "wrong";
+    }
+    if (this.pressedItemId === itemId) {
+      return "touching";
     }
     return this.itemStates.get(itemId) ?? "idle";
   }
 
+  private resolveTokenState(
+    itemId: string,
+    nowMs: number
+  ): GT003TokenVisualState {
+    if (this.mechanic.getPlacements().has(itemId)) {
+      return "locked";
+    }
+    if (this.mechanic.getStagedItemId() === itemId) {
+      return "selected";
+    }
+    if (
+      this.wrongFlashes.isActive(itemId, nowMs) ||
+      this.itemStates.get(itemId) === "wrong"
+    ) {
+      return "wrong";
+    }
+    if (this.pressedItemId === itemId) {
+      return "touching";
+    }
+    return "idle";
+  }
+
   stageItem(itemId: string | null): void {
+    if (this.isWon || this.isRoundClosed) {
+      this.mechanic.stageItem(null);
+      this.hoveredContainer = false;
+      getClockState(this).stagedAtMs = null;
+      return;
+    }
+    if (itemId === null) {
+      getClockState(this).stagedAtMs = null;
+    } else {
+      const exists = this.content.items.some((i) => i.item_id === itemId);
+      const isPlaced = this.mechanic.getPlacements().has(itemId);
+      if (!exists || isPlaced) {
+        return;
+      }
+      this.wrongFlashes.clear(itemId);
+      if (this.itemStates.get(itemId) === "wrong") {
+        this.itemStates.delete(itemId);
+      }
+      getClockState(this).stagedAtMs = readClockMs(this);
+    }
     this.mechanic.stageItem(itemId);
-    // Chạm vật lần 1 bật luôn trạng thái "đích đang nhận" — đường chạm-chạm
-    // dùng chung trạng thái với đường kéo (`GT-003.md` §12).
     this.hoveredContainer = itemId !== null;
   }
 
@@ -307,8 +325,32 @@ export class GT003Session extends TemplateGameSession<
     return this.mechanic.getStagedItemId();
   }
 
-  /** Bề mặt chơi gọi khi ngón tay đi ngang qua đích trong lúc kéo. */
+  setTouchingItem(itemId: string | null): void {
+    if (this.isWon || this.isRoundClosed) {
+      this.pressedItemId = null;
+      return;
+    }
+    if (
+      itemId !== null &&
+      !this.mechanic.getPlacements().has(itemId) &&
+      this.displayItems.some((item) => item.item_id === itemId)
+    ) {
+      this.pressedItemId = itemId;
+      return;
+    }
+    this.pressedItemId = null;
+  }
+
+  getTouchingItemId(): string | null {
+    return this.pressedItemId;
+  }
+
   setPointerOver(x: number, y: number): void {
+    if (this.isWon || this.isRoundClosed) {
+      this.hoveredContainer = false;
+      this.pressedItemId = null;
+      return;
+    }
     this.hoveredContainer =
       this.getStagedItemId() !== null || this.isPointInContainer(x, y);
   }
@@ -342,17 +384,16 @@ export class GT003Session extends TemplateGameSession<
   }
 
   onItemDropped(itemId: string, containerId: string): void {
-    const item = this.resolveDrop(itemId, containerId);
-    if (!item) {
+    if (this.isWon || this.isRoundClosed) {
       return;
     }
-    // Vật đã nằm trong rổ thì cú thả thứ hai không phải một lượt trả lời: ghi
-    // event lần nữa là thổi phồng telemetry, và `scaffolding.onSuccess()` của
-    // bề mặt sẽ hạ thang trợ giúp về L0 nên gợi ý không bao giờ leo lên.
-    if (this.mechanic.getPlacements().has(itemId)) {
+    const item = this.resolveDrop(itemId, containerId);
+    if (!item || this.mechanic.getPlacements().has(itemId)) {
       return;
     }
 
+    this.pressedItemId = null;
+    const nowMs = readClockMs(this);
     this.recordEvent("item_dropped", {
       item_id: itemId,
       container_id: containerId,
@@ -362,23 +403,31 @@ export class GT003Session extends TemplateGameSession<
     if (item.is_correct) {
       this.mechanic.place(itemId, containerId);
       this.queueSfx("drop_thud");
-      this.basketShakeStartMs = this.lastFrameMs;
+      const clock = getClockState(this);
+      clock.basketShakeStartMs = nowMs;
       this.setItemState(itemId, "correct");
       this.wrongFlashes.clear(itemId);
       this.spawnSuccessParticles(itemId);
       if (this.checkWinCondition()) {
+        clock.winAtMs = nowMs;
+        this.hoveredContainer = false;
         this.winSession();
       }
-    } else {
-      this.setItemState(itemId, "wrong");
-      this.wrongFlashes.trigger(itemId, this.lastFrameMs);
+      return;
+    }
+
+    this.setItemState(itemId, "wrong");
+    this.wrongFlashes.trigger(itemId, nowMs);
+    if (this.difficulty.allow_retry === false) {
+      this.isRoundClosed = true;
+      this.mechanic.stageItem(null);
+      this.hoveredContainer = false;
+      this.pressedItemId = null;
+      getClockState(this).stagedAtMs = null;
+      this.completeSession();
     }
   }
 
-  /**
-   * Hạt mừng ở chỗ vật rời đi và ở rổ. Máy yếu thì cấm — NEVER sinh: mô phỏng
-   * hạt rồi không vẽ vẫn tốn đúng số phép tính đã định bỏ.
-   */
   private spawnSuccessParticles(itemId: string): void {
     if (this.degradation?.particles_enabled === false) {
       return;
@@ -394,24 +443,35 @@ export class GT003Session extends TemplateGameSession<
     }
   }
 
-  /** Nhịp hổ phách tắt sau `WRONG_FEEDBACK_MS`; vật về trung tính. */
   update(deltaMs: number): void {
-    this.lastFrameMs += deltaMs;
-    for (const itemId of this.wrongFlashes.drainExpired(this.lastFrameMs)) {
+    const clock = getClockState(this);
+    clock.ms += deltaMs;
+    for (const itemId of this.wrongFlashes.drainExpired(clock.ms)) {
       if (this.itemStates.get(itemId) === "wrong") {
         this.itemStates.delete(itemId);
       }
     }
-    this.particles = updateParticles(this.particles);
+    this.particles = stepParticlesByDelta(this.particles, deltaMs);
+  }
+
+  override isAcceptingInput(): boolean {
+    return !this.isRoundClosed;
+  }
+
+  override dispatch(gesture: Gesture): ActionResult | undefined {
+    if (this.isRoundClosed) {
+      return ACTION_IGNORED;
+    }
+    return super.dispatch(gesture);
   }
 
   override storyLine(): string {
     return GT003_STORY_LINE;
   }
 
-  /** Gấu Con reo từ vật đúng đầu tiên tới lúc thắng (`BR-E003-08`). */
   override mascotMood(): MascotPose | null {
-    return !this.isWon && this.mechanic.getPlacements().size > 0
+    return !(this.isWon || this.isRoundClosed) &&
+      this.mechanic.getPlacements().size > 0
       ? "cheer"
       : null;
   }
@@ -455,8 +515,6 @@ export class GT003Session extends TemplateGameSession<
         y: box.y,
         w: box.w,
         h: box.h,
-        // Khay là hình chữ nhật: bề mặt phải chạm theo hộp, không theo đường
-        // tròn nội tiếp, nếu không sẽ có vành chạm được mà không đọc tên.
         hitShape: "square",
         label: this.content.container.label,
         spokenLabel: this.content.container.label,
@@ -481,13 +539,7 @@ export class GT003Session extends TemplateGameSession<
   ): GameAction | null {
     const index = this.findLooseItemIndex(gesture.fromX, gesture.fromY);
     const draggedItem = index >= 0 ? this.displayItems[index] : null;
-    if (!draggedItem) {
-      return null;
-    }
-
-    if (!this.isPointInContainer(gesture.toX, gesture.toY)) {
-      // Thả ra vùng trống: không sinh action, nên không tính một lần sai
-      // (`BR-E003-02`).
+    if (!(draggedItem && this.isPointInContainer(gesture.toX, gesture.toY))) {
       return null;
     }
 
@@ -528,6 +580,9 @@ export class GT003Session extends TemplateGameSession<
   }
 
   override toAction(gesture: Gesture): GameAction | null {
+    if (this.isWon || this.isRoundClosed) {
+      return null;
+    }
     if (gesture.type === "drop") {
       return this.toDropAction(gesture);
     }
@@ -537,14 +592,23 @@ export class GT003Session extends TemplateGameSession<
     return null;
   }
 
-  /** Bước đúng là kéo vật tới ô đích duy nhất: bàn tay ma kéo tới đó. */
   override getHintDestinationIndex(): number | null {
+    if (
+      this.isWon ||
+      this.isRoundClosed ||
+      this.getHintTargetIndex() === null
+    ) {
+      return null;
+    }
     const target = this.getTargetSlot();
     const index = target ? this.slots.indexOf(target) : -1;
     return index >= 0 ? index : null;
   }
 
   override getHintTargetIndex(): number | null {
+    if (this.isWon || this.isRoundClosed) {
+      return null;
+    }
     const placed = this.mechanic.getPlacements();
     const idx = this.displayItems.findIndex(
       (it) => it.is_correct && !placed.has(it.item_id)
@@ -552,19 +616,22 @@ export class GT003Session extends TemplateGameSession<
     return idx >= 0 ? idx : null;
   }
 
+  override getHintTarget(): HintTarget | null {
+    if (this.isWon || this.isRoundClosed) {
+      return null;
+    }
+    return super.getHintTarget();
+  }
+
   override commit(action: GameAction): void {
-    if (
-      (action.type === "drop_item" || action.type === "tap_tap_item") &&
-      action.data &&
-      typeof action.data === "object"
-    ) {
-      const data = action.data as {
-        item_id?: string;
-        container_id?: string;
-      };
-      if (data.item_id && data.container_id) {
-        this.onItemDropped(data.item_id, data.container_id);
+    if (this.isWon || this.isRoundClosed) {
+      return;
+    }
+    if (action.type === "drop_item" || action.type === "tap_tap_item") {
+      const payload = extractGT003DropPayload(action.data);
+      if (payload) {
         this.stageItem(null);
+        this.onItemDropped(payload.itemId, payload.containerId);
       }
     }
   }
@@ -578,84 +645,84 @@ export class GT003Session extends TemplateGameSession<
     rs: RenderSystem,
     timeMs: number
   ): void {
-    this.lastFrameMs = timeMs;
+    getClockState(this).ms = timeMs;
     drawSceneBackground(ctx, rs, this.themeId);
     const zones = this.trayZones();
     if (!zones) {
-      this.drawContainer(rs, ctx);
-      this.drawInteractive(rs, ctx);
+      this.drawContainer(rs, ctx, timeMs);
+      this.drawInteractive(rs, ctx, timeMs);
       this.drawFeedback(rs, ctx);
       return;
     }
-    // Lời dẫn do shell vẽ ở vùng lời dẫn; engine chỉ vẽ trong sân khấu và khay.
-    drawClippedToZone(ctx, zones.stage, () => this.drawContainer(rs, ctx));
+    drawClippedToZone(ctx, zones.stage, () =>
+      this.drawContainer(rs, ctx, timeMs)
+    );
     drawWoodenTokenDock(ctx, rs, zones.tray);
-    this.drawInteractive(rs, ctx);
+    drawClippedToZone(ctx, zones.tray, () =>
+      this.drawInteractive(rs, ctx, timeMs)
+    );
     this.drawFeedback(rs, ctx);
   }
 
-  private drawContainer(rs: RenderSystem, ctx: CanvasRenderingContext2D): void {
+  private drawContainer(
+    rs: RenderSystem,
+    ctx: CanvasRenderingContext2D,
+    timeMs: number
+  ): void {
     const box = this.getContainerBox();
     if (!box) {
       return;
     }
     const placements = this.mechanic.getPlacements();
-    const placedItems = this.content.items.filter((i) =>
-      placements.has(i.item_id)
-    );
+    const placedItems: GT003RenderItem[] = this.content.items
+      .filter((i) => placements.has(i.item_id))
+      .map((i) => ({
+        id: i.item_id,
+        asset: i.asset,
+        label: i.label,
+      }));
+    const shakeStartMs = getClockState(this).basketShakeStartMs;
+    const shakeElapsedMs = shakeStartMs === null ? null : timeMs - shakeStartMs;
 
-    // Rổ rung nhẹ khi vật đúng rơi vào; vùng chạm (`getContainerBox`) đứng yên.
-    const shakeX =
-      this.basketShakeStartMs === null
-        ? 0
-        : basketShakeOffset(
-            this.lastFrameMs - this.basketShakeStartMs,
-            rs.reducedMotion
-          );
-    ctx.save();
-    ctx.translate(shakeX, 0);
-    drawContainerTarget(ctx, rs, box, {
+    drawGT003BasketTarget(ctx, rs, box, {
       label: this.content.container.label,
       placedItems,
-      // Số trên rổ là số vật thật sự phải bỏ vào — cùng một số với điều kiện
-      // thắng. `target_count` chỉ là bản sao trong `difficulty_params`.
       targetCount: this.content.items.filter((i) => i.is_correct).length,
       isHovered: this.hoveredContainer,
+      isWon: this.isWon,
+      shakeElapsedMs,
     });
-    ctx.restore();
   }
 
   private drawInteractive(
     rs: RenderSystem,
-    ctx: CanvasRenderingContext2D
+    ctx: CanvasRenderingContext2D,
+    timeMs: number
   ): void {
-    const placements = this.mechanic.getPlacements();
-
+    const stagedAtMs = getClockState(this).stagedAtMs;
     for (let i = 0; i < this.displayItems.length; i++) {
       const item = this.displayItems[i];
       const slot = this.getSourceSlot(i);
       if (!(slot && item)) {
         continue;
       }
-      const isPlaced = placements.has(item.item_id);
-      const state = isPlaced ? "locked" : this.getItemState(item.item_id);
-
-      ctx.save();
-      if (isPlaced) {
-        ctx.globalAlpha = 0.35;
-      }
-      drawSlotItem(
+      const state = this.resolveTokenState(item.item_id, timeMs);
+      drawGT003SourceToken(
         ctx,
         rs,
         slot,
         {
           id: item.item_id,
           asset: item.asset,
-          state,
+          label: item.label,
         },
-        "circle"
+        {
+          state,
+          timeMs,
+          stagedAtMs,
+          wrongProgress: this.wrongFlashes.progress(item.item_id, timeMs),
+        }
       );
-      ctx.restore();
     }
   }
 
