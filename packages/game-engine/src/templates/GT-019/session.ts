@@ -8,124 +8,54 @@ import {
   type GameActionValue,
   TemplateGameSession,
 } from "#src/game-session";
-import type {
-  EngineView,
-  EntityVisual,
-  Gesture,
-  ViewEntity,
-} from "#src/interaction";
-import { resolveAssetSpeech } from "#src/labels/spoken-keyword";
-import { resolveTouchFloor } from "#src/layout/constants";
-import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
-import { resolveLayout } from "#src/layout/registry";
-import { computeStageCellSlots } from "#src/layout/stage-targets";
-import { computeTraySourceSlots, pickTrayZones } from "#src/layout/tray-layout";
+import type { EngineView, Gesture } from "#src/interaction";
 import type { Slot } from "#src/layout/types";
 import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
-import {
-  beamFadeIn,
-  drawAssetInSlot,
-  drawCheckMark,
-  drawEmptyTargetSlot,
-  drawFlashlightBeam,
-  drawSceneBackground,
-  drawSlotItem,
-  drawStoryCharacterInStage,
-  drawWallShadow,
-  drawWoodenTokenDock,
-  getColorsForState,
-  placeStoryCharacter,
-} from "#src/render/index";
 import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
+import type {
+  HintDemoStep,
+  HintLevel,
+  HintTarget,
+} from "#src/systems/hint-ladder";
 import { MoodPulse } from "#src/systems/mood-pulse";
 import type { RenderSystem } from "#src/systems/render-system";
 import {
-  type FlipAxis,
   isPieceTransformMatch,
   type PieceTransform,
-  type RotationAngle90,
   rotatePiece90,
   togglePieceFlip,
 } from "#src/systems/rotation-system";
-import type { GT019Content, GT019Difficulty } from "./template.js";
+import {
+  buildGT019HintDemoSequence,
+  buildGT019ViewEntities,
+  computeGT019LayoutSlots,
+  type GT019BoardState,
+  type GT019HoverInput,
+  type GT019Piece,
+  getGT019Clock,
+  readGT019ActionStr,
+  recordGT019FlipAnim,
+  recordGT019Placed,
+  recordGT019RotateAnim,
+  renderGT019Board,
+  resolveGT019GestureAction,
+  resolveGT019HintDestinationIndex,
+  resolveGT019HintTargetIndex,
+  resolveGT019HoverId,
+  resolveGT019RoundSetup,
+  stepGT019Clock,
+  toFlipAxis,
+  toRotationAngle,
+} from "#src/templates/GT-019/layout";
+import type {
+  GT019Content,
+  GT019Difficulty,
+} from "#src/templates/GT-019/template";
 
-type GT019Piece = GT019Content["pieces"][number];
-
-/** Ký hiệu nút lật trên canvas. */
-const FLIP_GLYPH = "⇋";
-
-/** Cạnh ô đích lớn nhất trên sân khấu. */
-const TARGET_CELL_MAX_PX = 96;
-
-function toRotationAngle(val: number | undefined): RotationAngle90 {
-  if (val === 90 || val === 180 || val === 270) {
-    return val;
-  }
-  return 0;
-}
-
-function toFlipAxis(val: string | undefined): FlipAxis {
-  if (val === "horizontal" || val === "vertical") {
-    return val;
-  }
-  return "none";
-}
-
-function findHitSourcePiece(
-  slots: readonly Slot[],
-  pieces: readonly { piece_id: string }[],
-  x: number,
-  y: number
-): { piece: { piece_id: string }; index: number } | null {
-  const sourceSlots = slots
-    .filter((s) => s.role === "source")
-    .slice(0, pieces.length);
-  const index = findHitSlotIndex(sourceSlots, x, y, "circle", TAP_TOLERANCE_PX);
-  const piece = index >= 0 ? pieces[index] : undefined;
-  return piece ? { piece, index } : null;
-}
-
-function findHitTargetSlot(
-  slots: readonly Slot[],
-  targets: readonly { slot_id: string }[],
-  x: number,
-  y: number
-): { target: { slot_id: string }; index: number } | null {
-  const targetSlots = slots
-    .filter((s) => s.role === "target")
-    .slice(0, targets.length);
-  const index = findHitSlotIndex(targetSlots, x, y, "square", TAP_TOLERANCE_PX);
-  const target = index >= 0 ? targets[index] : undefined;
-  return target ? { target, index } : null;
-}
-
-function applySlotTransform(
-  ctx: CanvasRenderingContext2D,
-  slot: Slot,
-  rotDeg: number,
-  flip?: FlipAxis
-): void {
-  ctx.translate(slot.x, slot.y);
-  const rotRad = (rotDeg * Math.PI) / 180;
-  if (rotRad !== 0) {
-    ctx.rotate(rotRad);
-  }
-  if (flip === "horizontal") {
-    ctx.scale(-1, 1);
-  } else if (flip === "vertical") {
-    ctx.scale(1, -1);
-  }
-  ctx.translate(-slot.x, -slot.y);
-}
-
-/** Khung chuyện đọc một lần ở vòng đầu (`BR-E019-07`, `BR-FBK-16`). */
 export const GT019_STORY_LINE =
   "Dơi Con bật đèn pin chiếu bóng lên tường. Bé xoay hình cho khớp với cái bóng rồi đặt vào nhé!";
-
-/** Mascot vui sau lần đặt đúng mà chưa xong cả bộ. */
 export const GT019_HAPPY_MS = 1000;
-/** Mascot nghiêng đầu sau lần đặt chưa khớp. */
 export const GT019_WONDER_MS = 1500;
 
 export class GT019Session extends TemplateGameSession<
@@ -133,66 +63,101 @@ export class GT019Session extends TemplateGameSession<
   GT019Difficulty
 > {
   degradation: DegradationState | null = null;
-
   override readonly needsTray = true;
+  override readonly usesPromptZone = true;
 
-  /** Không nhãn chữ dưới vật: góc xoay nhìn từ hình mờ, không đọc số độ (`BR-E019-06`). */
   override get trayHasLabels(): boolean {
     return false;
   }
-
-  /** Số vật nguồn trong khay của vòng — shell đo chiều cao khay (`BR-PSZ-13`). */
   override get trayItemCount(): number {
     return this.content.pieces.length + (this.difficulty.allow_flip ? 1 : 0);
   }
-  override readonly usesPromptZone = true;
-
   private readonly placementMechanic = new PlacementMechanic();
-  private readonly pieceTransforms: Map<string, PieceTransform> = new Map();
-  private pieceById: Map<string, GT019Piece> = new Map();
-  private readonly pieceIdBySlotId: Map<string, string> = new Map();
-  private readonly placedPieceIds: Set<string> = new Set();
-
+  private readonly pieceTransforms = new Map<string, PieceTransform>();
+  private readonly pieceIdBySlotId = new Map<string, string>();
+  private readonly placedPieceIds = new Set<string>();
+  private displayPieces: GT019Piece[] = [];
   private readonly mood = new MoodPulse();
-  private lastFrameMs = 0;
-  private reducedMotion = false;
-  /** Mốc đồng hồ khung lúc mảnh vào từng ô đích (chùm sáng hiện dần từ đây). */
-  private readonly placedAtMs: Map<string, number> = new Map();
-  /** Đầu đèn pin của khung hiện tại: tâm Dơi Con, hoặc giữa mép trên sân khấu. */
-  private beamOrigin: { x: number; y: number } | null = null;
+  private hoveredId: string | null = null;
+  private activeHintLevel: 0 | HintLevel = 0;
+  private roundClosedOnWrong = false;
 
+  constructor(
+    content: GT019Content,
+    difficulty: GT019Difficulty,
+    layoutSeed = 0,
+    themeId?: string
+  ) {
+    super(content, difficulty, layoutSeed, themeId);
+    this.syncInitialRoundState();
+  }
+  private get activePieces(): readonly GT019Piece[] {
+    return this.displayPieces.length > 0
+      ? this.displayPieces
+      : this.content.pieces;
+  }
+  private get flipButtonSlot(): Slot | undefined {
+    return this.difficulty.allow_flip
+      ? this.sourceSlots[this.content.pieces.length]
+      : undefined;
+  }
+  private syncInitialRoundState(): void {
+    this.pieceTransforms.clear();
+    const setup = resolveGT019RoundSetup(
+      this.content,
+      this.layoutSeed,
+      this.roundGeneration
+    );
+    this.displayPieces = setup.displayPieces;
+    for (const [id, tf] of setup.transforms.entries()) {
+      this.pieceTransforms.set(id, tf);
+    }
+  }
   override storyLine(): string {
     return GT019_STORY_LINE;
   }
-
-  /** Chỉ phản ứng sau lần đặt; xoay/lật không đổi dáng (`BR-E019-07`). */
   override mascotMood(): MascotPose | null {
     return this.isWon ? null : this.mood.current();
   }
-
+  override isAcceptingInput(): boolean {
+    return !this.roundClosedOnWrong && super.isAcceptingInput();
+  }
+  override onScaffoldEscalated(
+    level: HintLevel,
+    _trigger?: "timer" | "miss_streak"
+  ): void {
+    this.activeHintLevel = level;
+  }
+  override onHintCleared(): void {
+    this.activeHintLevel = 0;
+  }
+  setPointerOver(arg: GT019HoverInput, y?: number): void {
+    this.hoveredId = resolveGT019HoverId(
+      this.boardState(),
+      this.isAcceptingInput(),
+      arg,
+      y
+    );
+  }
+  clearPointerOver(): void {
+    this.hoveredId = null;
+  }
   update(deltaMs: number): void {
     this.mood.tick(deltaMs);
-    this.lastFrameMs += deltaMs;
+    stepGT019Clock(this, deltaMs, this.roundClosedOnWrong);
   }
 
   setupEntities(): void {
     this.mood.clear();
-    this.lastFrameMs = 0;
-    this.placedAtMs.clear();
+    this.hoveredId = null;
+    this.activeHintLevel = 0;
+    this.roundClosedOnWrong = false;
+    getGT019Clock(this, true);
     this.isWon = false;
     this.placementMechanic.reset();
-    this.pieceTransforms.clear();
-    this.pieceById = new Map(this.content.pieces.map((p) => [p.piece_id, p]));
     this.pieceIdBySlotId.clear();
     this.placedPieceIds.clear();
-
-    for (const p of this.content.pieces) {
-      this.pieceTransforms.set(p.piece_id, {
-        rotation: toRotationAngle(p.initial_rotation),
-        flip: toFlipAxis(p.initial_flip),
-      });
-    }
-
+    this.syncInitialRoundState();
     this.recordEvent("round_started", {
       round_index: 0,
       piece_count: this.content.pieces.length,
@@ -208,16 +173,24 @@ export class GT019Session extends TemplateGameSession<
     pieceId: string,
     direction: "cw" | "ccw" = "cw"
   ): PieceTransform | undefined {
+    if (
+      this.isWon ||
+      this.roundClosedOnWrong ||
+      this.placedPieceIds.has(pieceId)
+    ) {
+      return undefined;
+    }
     const current = this.pieceTransforms.get(pieceId);
     if (!current) {
       return undefined;
     }
+    recordGT019RotateAnim(this, pieceId, current.rotation, direction);
     const updated: PieceTransform = {
       ...current,
       rotation: rotatePiece90(current.rotation, direction),
     };
     this.pieceTransforms.set(pieceId, updated);
-    // Tiếng "tách" như nhau dù đã đúng hướng hay chưa: xoay là nháp (`BR-E019-07`).
+    this.activeHintLevel = 0;
     this.queueSfx("torch_click");
     return updated;
   }
@@ -226,470 +199,223 @@ export class GT019Session extends TemplateGameSession<
     pieceId: string,
     axis: "horizontal" | "vertical"
   ): PieceTransform | undefined {
-    if (!this.difficulty.allow_flip) {
+    if (
+      !this.difficulty.allow_flip ||
+      this.isWon ||
+      this.roundClosedOnWrong ||
+      this.placedPieceIds.has(pieceId)
+    ) {
       return undefined;
     }
     const current = this.pieceTransforms.get(pieceId);
     if (!current) {
       return undefined;
     }
-    const updated: PieceTransform = {
-      ...current,
-      flip: togglePieceFlip(current.flip, axis),
-    };
+    const nextFlip = togglePieceFlip(current.flip, axis);
+    recordGT019FlipAnim(this, pieceId, current.flip, nextFlip);
+    const updated: PieceTransform = { ...current, flip: nextFlip };
     this.pieceTransforms.set(pieceId, updated);
+    this.activeHintLevel = 0;
     this.queueSfx("torch_click");
     return updated;
   }
 
-  private validateRotateAction(data: GameActionValue): ActionResult {
-    const pieceId =
-      typeof data === "object" && data !== null
-        ? Reflect.get(data, "piece_id")
-        : undefined;
-    if (typeof pieceId === "string" && this.pieceTransforms.has(pieceId)) {
-      return ACTION_CORRECT;
-    }
-    return ACTION_IGNORED;
+  private validatePieceAction(data: GameActionValue): ActionResult {
+    const pieceId = readGT019ActionStr(data, "piece_id");
+    return pieceId &&
+      this.pieceTransforms.has(pieceId) &&
+      !this.placedPieceIds.has(pieceId)
+      ? ACTION_CORRECT
+      : ACTION_IGNORED;
   }
 
-  private validateFlipAction(data: GameActionValue): ActionResult {
-    if (!this.difficulty.allow_flip) {
-      return ACTION_IGNORED;
-    }
-    const pieceId =
-      typeof data === "object" && data !== null
-        ? Reflect.get(data, "piece_id")
-        : undefined;
-    if (typeof pieceId === "string" && this.pieceTransforms.has(pieceId)) {
-      return ACTION_CORRECT;
-    }
-    return ACTION_IGNORED;
+  private isPieceMatchingSlot(piece: GT019Piece): boolean {
+    const slot = this.content.target_slots.find(
+      (s) => s.slot_id === piece.target_slot_id
+    );
+    const transform = this.pieceTransforms.get(piece.piece_id) ?? {
+      rotation: 0,
+      flip: "none",
+    };
+    return (
+      slot !== undefined &&
+      isPieceTransformMatch(transform, {
+        rotation: toRotationAngle(slot.target_rotation),
+        flip: toFlipAxis(slot.target_flip),
+      })
+    );
   }
 
   validateAction(action: GameAction): ActionResult {
+    if (!this.isAcceptingInput() || this.isWon) {
+      return ACTION_IGNORED;
+    }
     if (action.type === "rotate_piece") {
-      return this.validateRotateAction(action.data);
+      return this.validatePieceAction(action.data);
     }
-
     if (action.type === "flip_piece") {
-      return this.validateFlipAction(action.data);
+      return this.difficulty.allow_flip
+        ? this.validatePieceAction(action.data)
+        : ACTION_IGNORED;
     }
-
     if (
       action.type === "place_item" ||
       action.type === "drop_item" ||
       action.type === "tap_tap_item"
     ) {
-      const items = this.content.pieces.map((p) => {
-        const slot = this.content.target_slots.find(
-          (s) => s.slot_id === p.target_slot_id
-        );
-        const transform = this.pieceTransforms.get(p.piece_id) ?? {
-          rotation: 0,
-          flip: "none",
-        };
-        const targetTransform: PieceTransform = {
-          rotation: toRotationAngle(slot?.target_rotation),
-          flip: toFlipAxis(slot?.target_flip),
-        };
-        const transformMatch = isPieceTransformMatch(
-          transform,
-          targetTransform
-        );
-        return {
-          id: p.piece_id,
-          targetId: p.target_slot_id,
-          isCorrect: transformMatch,
-        };
-      });
+      const items = this.content.pieces.map((p) => ({
+        id: p.piece_id,
+        targetId: p.target_slot_id,
+        isCorrect: this.isPieceMatchingSlot(p),
+      }));
       return this.placementMechanic.validate(action, items);
     }
-
     return ACTION_IGNORED;
   }
 
   getStagedItemId(): string | null {
     return this.placementMechanic.getStagedItemId();
   }
-
   stageItem(pieceId: string | null): void {
     this.placementMechanic.stageItem(pieceId);
   }
-
   getPlacements(): ReadonlyMap<string, string> {
     return this.placementMechanic.getPlacements();
   }
-
-  private toDropAction(
-    gesture: Extract<Gesture, { type: "drop" }>
-  ): GameAction | null {
-    const hitSource = findHitSourcePiece(
-      this.slots,
-      this.content.pieces,
-      gesture.fromX,
-      gesture.fromY
-    );
-    if (
-      !hitSource ||
-      this.placementMechanic.getPlacedContainer(hitSource.piece.piece_id)
-    ) {
-      return null;
-    }
-    const hitTarget = findHitTargetSlot(
-      this.slots,
-      this.content.target_slots,
-      gesture.toX,
-      gesture.toY
-    );
-    if (!hitTarget) {
-      return null;
-    }
-    return {
-      type: "drop_item",
-      data: {
-        piece_id: hitSource.piece.piece_id,
-        target_slot_id: hitTarget.target.slot_id,
-        item_id: hitSource.piece.piece_id,
-        target_id: hitTarget.target.slot_id,
-      },
-    };
-  }
-
-  private toTapAction(
-    gesture: Extract<Gesture, { type: "tap" }>
-  ): GameAction | null {
-    const hitTarget = findHitTargetSlot(
-      this.slots,
-      this.content.target_slots,
-      gesture.x,
-      gesture.y
-    );
-    const hitSource = findHitSourcePiece(
-      this.slots,
-      this.content.pieces,
-      gesture.x,
-      gesture.y
-    );
-    const stagedId = this.placementMechanic.getStagedItemId();
-
-    if (stagedId && hitTarget) {
-      const targetSlot = this.targetSlots[hitTarget.index];
-      const sourceSlot = hitSource
-        ? this.sourceSlots[hitSource.index]
-        : undefined;
-      const targetCloser =
-        !(sourceSlot && targetSlot) ||
-        Math.hypot(gesture.x - targetSlot.x, gesture.y - targetSlot.y) <=
-          Math.hypot(gesture.x - sourceSlot.x, gesture.y - sourceSlot.y);
-      if (targetCloser) {
-        return {
-          type: "tap_tap_item",
-          data: {
-            piece_id: stagedId,
-            target_slot_id: hitTarget.target.slot_id,
-            item_id: stagedId,
-            target_id: hitTarget.target.slot_id,
-          },
-        };
-      }
-    }
-
-    if (
-      hitSource &&
-      !this.placementMechanic.getPlacedContainer(hitSource.piece.piece_id)
-    ) {
-      if (stagedId === hitSource.piece.piece_id) {
-        return {
-          type: "rotate_piece",
-          data: { piece_id: hitSource.piece.piece_id, direction: "cw" },
-        };
-      }
-      this.placementMechanic.stageItem(hitSource.piece.piece_id);
-      return null;
-    }
-
-    this.placementMechanic.stageItem(null);
-    return null;
-  }
-
-  /** Slot nút lật: slot nguồn thừa ngay sau các mảnh (chỉ có khi `allow_flip`). */
-  private get flipButtonSlot(): Slot | undefined {
-    return this.difficulty.allow_flip
-      ? this.sourceSlots[this.content.pieces.length]
-      : undefined;
-  }
-
-  /** Mảnh nút lật tác động: mảnh đang chọn, không có thì mảnh chưa đặt đầu tiên. */
-  private flipTargetPiece(): GT019Piece | undefined {
-    const stagedId = this.placementMechanic.getStagedItemId();
-    return (
-      this.content.pieces.find((p) => p.piece_id === stagedId) ??
-      this.content.pieces.find(
-        (p) => !this.placementMechanic.getPlacedContainer(p.piece_id)
-      )
-    );
-  }
-
-  private toFlipButtonAction(
-    gesture: Extract<Gesture, { type: "tap" }>
-  ): GameAction | null {
-    const slot = this.flipButtonSlot;
-    if (
-      !(
-        slot &&
-        findHitSlotIndex(
-          [slot],
-          gesture.x,
-          gesture.y,
-          "circle",
-          TAP_TOLERANCE_PX
-        ) >= 0
-      )
-    ) {
-      return null;
-    }
-    const piece = this.flipTargetPiece();
-    if (!piece) {
-      return null;
-    }
-    const targetFlip = toFlipAxis(
-      this.content.target_slots.find((s) => s.slot_id === piece.target_slot_id)
-        ?.target_flip
-    );
-    return {
-      type: "flip_piece",
-      data: {
-        piece_id: piece.piece_id,
-        axis: targetFlip === "vertical" ? "vertical" : "horizontal",
-      },
-    };
-  }
-
-  private toAdjustAction(
-    gesture: Extract<Gesture, { type: "adjust" }>
-  ): GameAction | null {
-    const stagedId = this.placementMechanic.getStagedItemId();
-    const targetPieceId =
-      stagedId ??
-      this.content.pieces.find(
-        (p) => !this.placementMechanic.getPlacedContainer(p.piece_id)
-      )?.piece_id;
-    if (!targetPieceId) {
-      return null;
-    }
-    return {
-      type: "rotate_piece",
-      data: {
-        piece_id: targetPieceId,
-        direction: gesture.delta >= 0 ? "cw" : "ccw",
-      },
-    };
-  }
-
   override toAction(gesture: Gesture): GameAction | null {
-    if (gesture.type === "drop") {
-      return this.toDropAction(gesture);
-    }
-    if (gesture.type === "tap") {
-      return this.toFlipButtonAction(gesture) ?? this.toTapAction(gesture);
-    }
-    if (gesture.type === "adjust") {
-      return this.toAdjustAction(gesture);
-    }
-    return null;
+    return this.isAcceptingInput() && !this.isWon
+      ? resolveGT019GestureAction(this.boardState(), gesture, (id) =>
+          this.placementMechanic.stageItem(id)
+        )
+      : null;
   }
-
-  /** Chỉ số trong `this.slots` — ở stage, slot xếp đích trước rồi mới tới mảnh ghép. */
-  override getHintTargetIndex(): number | null {
-    const unplaced = this.content.pieces.findIndex(
-      (p) => !this.placedPieceIds.has(p.piece_id)
-    );
-    const slot = unplaced >= 0 ? this.sourceSlots[unplaced] : undefined;
-    return slot ? this.slots.indexOf(slot) : null;
-  }
-
-  /**
-   * Bước đúng là kéo mảnh chưa đặt tới ô đích của nó. Mảnh còn phải xoay/lật
-   * mới khớp thì chưa có cú kéo đúng nên không có đích (bước kế là chạm nút xoay).
-   */
-  override getHintDestinationIndex(): number | null {
-    const piece = this.content.pieces.find(
-      (p) => !this.placedPieceIds.has(p.piece_id)
-    );
-    if (!piece) {
+  private firstUnplacedPiece(): GT019Piece | null {
+    if (this.isWon || this.roundClosedOnWrong) {
       return null;
     }
-    const targetIdx = this.content.target_slots.findIndex(
-      (s) => s.slot_id === piece.target_slot_id
+    return (
+      this.activePieces.find((p) => !this.placedPieceIds.has(p.piece_id)) ??
+      null
     );
-    const target = this.content.target_slots[targetIdx];
-    const transform = this.pieceTransforms.get(piece.piece_id) ?? {
-      rotation: 0,
-      flip: "none",
-    };
-    const matches = isPieceTransformMatch(transform, {
-      rotation: toRotationAngle(target?.target_rotation),
-      flip: toFlipAxis(target?.target_flip),
-    });
-    const slot = this.targetSlots[targetIdx];
-    const index = matches && slot ? this.slots.indexOf(slot) : -1;
-    return index >= 0 ? index : null;
+  }
+  override getHintTargetIndex(): number | null {
+    return resolveGT019HintTargetIndex(this.boardState());
+  }
+  override getHintDestinationIndex(): number | null {
+    return resolveGT019HintDestinationIndex(this.boardState());
+  }
+  override getHintTargetForLevel(level: HintLevel): HintTarget | null {
+    const first = this.firstUnplacedPiece();
+    if (!first) {
+      return null;
+    }
+    if (level === 1) {
+      return { kind: "region", ids: [first.target_slot_id] };
+    }
+    if (level === 2) {
+      return {
+        kind: "region",
+        ids: [first.piece_id, first.target_slot_id],
+      };
+    }
+    return this.getHintTarget();
+  }
+  override getHintDemoSequence(
+    level: HintLevel
+  ): readonly HintDemoStep[] | null {
+    return buildGT019HintDemoSequence(this.boardState(), level);
+  }
+
+  private commitTransform(type: string, d: GameActionValue): void {
+    const pieceId = readGT019ActionStr(d, "piece_id");
+    if (!pieceId) {
+      return;
+    }
+    if (type === "rotate_piece") {
+      const dir = readGT019ActionStr(d, "direction") === "ccw" ? "ccw" : "cw";
+      this.onRotatePiece(pieceId, dir);
+    } else if (type === "flip_piece") {
+      const axis =
+        readGT019ActionStr(d, "axis") === "vertical"
+          ? "vertical"
+          : "horizontal";
+      this.onFlipPiece(pieceId, axis);
+    }
   }
 
   override commit(action: GameAction): void {
+    const d = action.data;
     if (
       action.type === "place_item" ||
       action.type === "drop_item" ||
       action.type === "tap_tap_item"
     ) {
-      const data = action.data as
-        | {
-            piece_id?: string;
-            target_slot_id?: string;
-            item_id?: string;
-            target_id?: string;
-          }
-        | undefined;
-      const pieceId = data?.piece_id ?? data?.item_id;
-      const slotId = data?.target_slot_id ?? data?.target_id;
+      const pieceId =
+        readGT019ActionStr(d, "piece_id") ?? readGT019ActionStr(d, "item_id");
+      const slotId =
+        readGT019ActionStr(d, "target_slot_id") ??
+        readGT019ActionStr(d, "target_id");
       if (pieceId && slotId) {
         this.onPlacePiece(pieceId, slotId);
       }
-    } else if (action.type === "rotate_piece") {
-      const data = action.data as
-        | { piece_id?: string; direction?: "cw" | "ccw" }
-        | undefined;
-      if (data?.piece_id) {
-        this.onRotatePiece(data.piece_id, data.direction ?? "cw");
-      }
-    } else if (action.type === "flip_piece") {
-      const data = action.data as
-        | { piece_id?: string; axis?: "horizontal" | "vertical" }
-        | undefined;
-      if (data?.piece_id) {
-        this.onFlipPiece(data.piece_id, data.axis ?? "horizontal");
-      }
+      return;
     }
+    this.commitTransform(action.type, d);
   }
 
-  override getView(): EngineView {
-    const targets = this.targetSlots;
-    const sources = this.sourceSlots;
-    const placements = this.placementMechanic.getPlacements();
-    const stagedId = this.placementMechanic.getStagedItemId();
-    const entities: ViewEntity[] = [];
-
-    targets.forEach((slot, i) => {
-      const target = this.content.target_slots[i];
-      if (target) {
-        const placedPieceId = this.pieceIdBySlotId.get(target.slot_id);
-        const placedPiece = placedPieceId
-          ? this.pieceById.get(placedPieceId)
-          : undefined;
-        const refPiece =
-          placedPiece ??
-          this.content.pieces.find((p) => p.target_slot_id === target.slot_id);
-        const assetLabels = refPiece
-          ? resolveAssetSpeech(refPiece.asset)
-          : { spokenLabel: undefined };
-        const rotDeg = target.target_rotation ?? 0;
-        const spokenBase = assetLabels.spokenLabel ?? `Ô đích ${i + 1}`;
-        entities.push({
-          id: target.slot_id,
-          slotIndex: i,
-          role: "target",
-          state: placedPiece ? "correct" : "idle",
-          x: slot.x,
-          y: slot.y,
-          w: slot.w,
-          h: slot.h,
-          hitShape: "square",
-          ...assetLabels,
-          spokenLabel: `${spokenBase}, góc ${rotDeg} độ`,
-        });
-      }
-    });
-
-    sources.forEach((slot, i) => {
-      const piece = this.content.pieces[i];
-      if (piece) {
-        const isPlaced = placements.has(piece.piece_id);
-        const isStaged = stagedId === piece.piece_id;
-        let state: EntityVisual = "idle";
-        if (isPlaced) {
-          state = "correct";
-        } else if (isStaged) {
-          state = "selected";
-        }
-        const assetLabels = resolveAssetSpeech(piece.asset);
-        const transform = this.pieceTransforms.get(piece.piece_id);
-        const rotDeg = transform?.rotation ?? piece.initial_rotation ?? 0;
-        entities.push({
-          id: piece.piece_id,
-          slotIndex: targets.length + i,
-          role: "source",
-          state,
-          x: slot.x,
-          y: slot.y,
-          w: slot.w,
-          h: slot.h,
-          ...assetLabels,
-          spokenLabel:
-            assetLabels.spokenLabel ?? `Mảnh ${i + 1}, góc ${rotDeg} độ`,
-        });
-      }
-    });
-
-    const flipSlot = this.flipButtonSlot;
-    if (flipSlot) {
-      entities.push({
-        id: "btn_flip",
-        slotIndex: targets.length + this.content.pieces.length,
-        role: "neutral",
-        state: "idle",
-        x: flipSlot.x,
-        y: flipSlot.y,
-        w: flipSlot.w,
-        h: flipSlot.h,
-        hitShape: "circle",
-        glyph: FLIP_GLYPH,
-        spokenLabel: "Nút lật hình",
-      });
-    }
-
+  private boardState(particlesEnabled = true): GT019BoardState {
     return {
-      activePrompt: this.content.prompt,
-      entities,
+      owner: this,
+      content: this.content,
+      difficulty: this.difficulty,
+      displayPieces: this.activePieces,
+      slots: this.slots,
+      targetSlots: this.targetSlots,
+      sourceSlots: this.sourceSlots,
+      flipButtonSlot: this.flipButtonSlot,
+      pieceTransforms: this.pieceTransforms,
+      pieceIdBySlotId: this.pieceIdBySlotId,
+      placedPieceIds: this.placedPieceIds,
+      stagedId: this.placementMechanic.getStagedItemId(),
+      hoveredId: this.hoveredId,
+      activeHintLevel: this.activeHintLevel,
+      isWon: this.isWon,
+      roundClosedOnWrong: this.roundClosedOnWrong,
+      particlesEnabled,
+      firstPiece: this.firstUnplacedPiece(),
+      themeId: this.themeId ?? "default",
+      stageRect: this.stageRect,
+      trayRect: this.trayRect,
+      getBaseItemState: (pieceId: string) => this.getRenderItemState(pieceId),
     };
   }
 
-  /**
-   * Place piece onto slot (supports both drag-drop and tap-tap fallback — BR-GTC-06).
-   */
-  onPlacePiece(pieceId: string, slotId: string): ActionResult {
-    const piece = this.content.pieces.find((p) => p.piece_id === pieceId);
-    const slot = this.content.target_slots.find((s) => s.slot_id === slotId);
+  override getView(): EngineView {
+    return {
+      activePrompt: this.content.prompt,
+      entities: buildGT019ViewEntities(this.boardState()),
+    };
+  }
 
-    if (!(piece && slot)) {
+  onPlacePiece(pieceId: string, slotId: string): ActionResult {
+    if (this.isWon || this.roundClosedOnWrong) {
       return ACTION_IGNORED;
     }
-
+    const piece = this.content.pieces.find((p) => p.piece_id === pieceId);
+    const slot = this.content.target_slots.find((s) => s.slot_id === slotId);
+    if (!(piece && slot) || this.placedPieceIds.has(pieceId)) {
+      return ACTION_IGNORED;
+    }
     const transform = this.pieceTransforms.get(pieceId) ?? {
       rotation: 0,
       flip: "none",
     };
-    const targetTransform: PieceTransform = {
-      rotation: toRotationAngle(slot.target_rotation),
-      flip: toFlipAxis(slot.target_flip),
-    };
-
-    const isSlotMatch = piece.target_slot_id === slotId;
-    const isTransformMatchResult = isPieceTransformMatch(
-      transform,
-      targetTransform
-    );
-    const isCorrect = isSlotMatch && isTransformMatchResult;
+    const isCorrect =
+      piece.target_slot_id === slotId &&
+      isPieceTransformMatch(transform, {
+        rotation: toRotationAngle(slot.target_rotation),
+        flip: toFlipAxis(slot.target_flip),
+      });
 
     this.recordEvent("item_placed", {
       piece_id: pieceId,
@@ -702,21 +428,25 @@ export class GT019Session extends TemplateGameSession<
     if (!isCorrect) {
       this.mood.set("wonder", GT019_WONDER_MS);
       this.placementMechanic.stageItem(null);
+      const clock = getGT019Clock(this);
+      clock.pieceWrongFlashes.trigger(pieceId, clock.logicMs);
+      clock.slotWrongFlashes.trigger(slotId, clock.logicMs);
+      if (this.difficulty.allow_retry === false) {
+        this.roundClosedOnWrong = true;
+      }
       return ACTION_RETRY;
     }
 
     this.placementMechanic.place(pieceId, slotId);
     this.pieceIdBySlotId.set(slotId, pieceId);
     this.placedPieceIds.add(pieceId);
-    this.placedAtMs.set(slotId, this.lastFrameMs);
+    recordGT019Placed(this, slotId);
     this.mood.set("happy", GT019_HAPPY_MS);
-
+    this.activeHintLevel = 0;
     if (this.checkWinCondition()) {
       this.recordEvent("round_completed", { round_index: 0 });
       this.winSession();
-      return ACTION_CORRECT;
     }
-
     return ACTION_CORRECT;
   }
 
@@ -725,200 +455,19 @@ export class GT019Session extends TemplateGameSession<
       id: p.piece_id,
       targetId: p.target_slot_id,
     }));
-    const allPlaced = this.placementMechanic.isPlacementComplete(items);
-    if (!allPlaced) {
-      return false;
-    }
-
-    return this.content.pieces.every((piece) => {
-      const slot = this.content.target_slots.find(
-        (s) => s.slot_id === piece.target_slot_id
-      );
-      if (!slot) {
-        return false;
-      }
-      const transform = this.pieceTransforms.get(piece.piece_id) ?? {
-        rotation: 0,
-        flip: "none",
-      };
-      const targetTransform: PieceTransform = {
-        rotation: toRotationAngle(slot.target_rotation),
-        flip: toFlipAxis(slot.target_flip),
-      };
-      return isPieceTransformMatch(transform, targetTransform);
-    });
+    return (
+      this.placementMechanic.isPlacementComplete(items) &&
+      this.content.pieces.every((p) => this.isPieceMatchingSlot(p))
+    );
   }
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
-    const zones = pickTrayZones(this.stageRect, this.trayRect);
-    if (zones) {
-      const touchFloor = resolveTouchFloor(ageBand, this.cssPerLogic);
-      const targets = computeStageCellSlots({
-        count: this.content.target_slots.length,
-        stage: zones.stage,
-        touchFloor,
-        maxCell: { w: TARGET_CELL_MAX_PX, h: TARGET_CELL_MAX_PX },
-        role: "target",
-        hasLabels: false,
-      });
-      const sources = computeTraySourceSlots(
-        this.trayItemCount,
-        zones.tray,
-        touchFloor,
-        targets.length,
-        false
-      );
-      return [...targets, ...sources];
-    }
-    const layoutFn = resolveLayout("top-source-bottom-target");
-    return layoutFn({
-      slotCount: this.trayItemCount,
-      targetCount: this.content.target_slots.length,
+    return computeGT019LayoutSlots(
+      this.boardState(),
       ageBand,
-      logic: this.logicSpace,
-    });
-  }
-
-  private renderGhostTarget(
-    ctx: CanvasRenderingContext2D,
-    target: GT019Content["target_slots"][number],
-    slot: Slot
-  ): void {
-    drawEmptyTargetSlot(ctx, slot);
-    ctx.save();
-    ctx.globalAlpha = 0.28;
-    applySlotTransform(ctx, slot, target.target_rotation, target.target_flip);
-    drawAssetInSlot(ctx, target.asset, slot);
-    ctx.restore();
-  }
-
-  private renderPlacedTarget(
-    ctx: CanvasRenderingContext2D,
-    target: GT019Content["target_slots"][number],
-    slot: Slot,
-    piece: GT019Piece
-  ): void {
-    const transform = this.pieceTransforms.get(piece.piece_id);
-    const rot = transform?.rotation ?? target.target_rotation;
-    const flip = transform?.flip ?? target.target_flip;
-
-    drawEmptyTargetSlot(ctx, slot);
-    ctx.save();
-    applySlotTransform(ctx, slot, rot, flip);
-    drawAssetInSlot(ctx, piece.asset, slot);
-    ctx.restore();
-    drawCheckMark(ctx, slot);
-  }
-
-  /**
-   * Chùm sáng đèn pin và bóng đổ của mảnh **đã đặt đúng** (`BR-E019-08`). Chỉ
-   * ô đã có mảnh mới có; ô trống và mảnh trong khay không có, nên không báo
-   * trước mảnh nào hợp ô nào. `reduced_motion`: hiện đủ ngay.
-   */
-  private renderPlacedLight(
-    ctx: CanvasRenderingContext2D,
-    slotId: string,
-    slot: Slot
-  ): void {
-    const placedAt = this.placedAtMs.get(slotId) ?? 0;
-    const strength = beamFadeIn(
-      this.lastFrameMs - placedAt,
-      this.reducedMotion
+      this.cssPerLogic ?? 1,
+      this.logicSpace
     );
-    drawWallShadow(ctx, slot, strength);
-    if (this.beamOrigin) {
-      drawFlashlightBeam(ctx, this.beamOrigin, slot, strength);
-    }
-  }
-
-  private renderTrayPiece(
-    ctx: CanvasRenderingContext2D,
-    rs: RenderSystem,
-    piece: GT019Content["pieces"][number],
-    slot: Slot
-  ): void {
-    const transform = this.pieceTransforms.get(piece.piece_id);
-    const rot = transform?.rotation ?? piece.initial_rotation;
-    const flip = transform?.flip ?? piece.initial_flip;
-    const state =
-      this.placementMechanic.getStagedItemId() === piece.piece_id
-        ? "selected"
-        : this.getRenderItemState(piece.piece_id);
-    const { fill, border } = getColorsForState(state);
-    const radius = Math.min(slot.w, slot.h) / 2;
-
-    rs.drawClayBody(ctx, slot.x, slot.y, radius, fill, border, "circle");
-
-    ctx.save();
-    applySlotTransform(ctx, slot, rot, flip);
-    drawAssetInSlot(ctx, piece.asset, slot);
-    ctx.restore();
-
-    if (state === "wrong") {
-      rs.drawRetryRing(ctx, slot.x, slot.y, radius, 0);
-    }
-  }
-
-  private renderTargets(
-    ctx: CanvasRenderingContext2D,
-    targets: readonly Slot[]
-  ): void {
-    // Chùm sáng/bóng vẽ một lượt **trước mọi ô đích**: chùm từ góc sân khấu
-    // băng qua ô khác thì nằm dưới hình mờ của ô đó, không che hình trẻ cần so.
-    for (let i = 0; i < this.content.target_slots.length; i++) {
-      const target = this.content.target_slots[i];
-      const slot = targets[i];
-      if (target && slot && this.pieceIdBySlotId.has(target.slot_id)) {
-        this.renderPlacedLight(ctx, target.slot_id, slot);
-      }
-    }
-    for (let i = 0; i < this.content.target_slots.length; i++) {
-      const target = this.content.target_slots[i];
-      const slot = targets[i];
-      if (!(target && slot)) {
-        continue;
-      }
-      const pieceId = this.pieceIdBySlotId.get(target.slot_id);
-      const piece = pieceId ? this.pieceById.get(pieceId) : undefined;
-      if (piece) {
-        this.renderPlacedTarget(ctx, target, slot, piece);
-      } else {
-        this.renderGhostTarget(ctx, target, slot);
-      }
-    }
-  }
-
-  private renderTrayPieces(
-    ctx: CanvasRenderingContext2D,
-    rs: RenderSystem,
-    sources: readonly Slot[]
-  ): void {
-    for (let i = 0; i < this.content.pieces.length; i++) {
-      const piece = this.content.pieces[i];
-      const slot = sources[i];
-      if (!(piece && slot) || this.placedPieceIds.has(piece.piece_id)) {
-        continue;
-      }
-      this.renderTrayPiece(ctx, rs, piece, slot);
-    }
-  }
-
-  /**
-   * Dơi Con ở góc trống cầm đèn pin, ngoài vùng chạm (`BR-E019-08`); không còn
-   * góc trống thì đầu đèn rơi về giữa mép trên sân khấu, không có sân khấu thì
-   * không có chùm sáng.
-   */
-  private drawFlashlightHolder(ctx: CanvasRenderingContext2D): void {
-    const spot = placeStoryCharacter(this.stageRect, this.slots);
-    const stage = this.stageRect;
-    if (spot) {
-      this.beamOrigin = { x: spot.cx, y: spot.cy };
-    } else if (stage) {
-      this.beamOrigin = { x: stage.x + stage.w / 2, y: stage.y };
-    } else {
-      this.beamOrigin = null;
-    }
-    drawStoryCharacterInStage(ctx, "bat", stage, this.slots);
   }
 
   render(
@@ -926,33 +475,8 @@ export class GT019Session extends TemplateGameSession<
     rs: RenderSystem,
     timeMs: number
   ): void {
-    this.lastFrameMs = timeMs;
-    this.reducedMotion = rs.reducedMotion;
-    drawSceneBackground(ctx, rs, this.themeId);
-    this.drawFlashlightHolder(ctx);
-    const zones = pickTrayZones(this.stageRect, this.trayRect);
-    const targets = this.targetSlots;
-    const sources = this.sourceSlots;
-    if (zones && sources.length > 0) {
-      drawWoodenTokenDock(ctx, rs, zones.tray);
-    }
-
-    this.renderTargets(ctx, targets);
-    this.renderTrayPieces(ctx, rs, sources);
-    this.renderFlipButton(ctx, rs);
-  }
-
-  private renderFlipButton(
-    ctx: CanvasRenderingContext2D,
-    rs: RenderSystem
-  ): void {
-    const slot = this.flipButtonSlot;
-    if (slot) {
-      drawSlotItem(ctx, rs, slot, {
-        id: "btn_flip",
-        text: FLIP_GLYPH,
-        state: "idle",
-      });
-    }
+    const pEnabled =
+      (this.degradation?.particles_enabled ?? true) && !rs.reducedMotion;
+    renderGT019Board(this.boardState(pEnabled), ctx, rs, timeMs);
   }
 }

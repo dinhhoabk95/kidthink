@@ -108,3 +108,40 @@ export interface GT017OptionCardParams {
   readonly wrongProgress: number;
   readonly showParticles?: boolean;
 }
+
+export interface GT019LitTarget {
+  readonly slot: SceneBox;
+  readonly strength: number;
+}
+
+export interface GT019TargetSlotParams {
+  readonly mode: "empty" | "placed" | "auto_resolved";
+  readonly asset: RenderAsset;
+  readonly rotDeg: number;
+  readonly flipScaleX: number;
+  readonly flipScaleY: number;
+  readonly hintLevel: 0 | 1 | 2 | 3;
+  readonly wrongProgress: number;
+  readonly burstProgress: number;
+  readonly autoResolveProgress: number;
+  readonly isWon: boolean;
+  readonly showParticles: boolean;
+}
+
+export interface GT019TrayPieceParams {
+  readonly asset: RenderAsset;
+  readonly state: ItemVisualState;
+  readonly visualRotDeg: number;
+  readonly flipScaleX: number;
+  readonly flipScaleY: number;
+  readonly isHinted: boolean;
+  readonly wrongProgress: number;
+  readonly timeMs: number;
+}
+
+export interface GT019FlipButtonParams {
+  readonly isFlipped: boolean;
+  readonly isHovered: boolean;
+  readonly isHinted: boolean;
+  readonly pulseProgress: number;
+}
