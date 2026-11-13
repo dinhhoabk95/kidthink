@@ -5,58 +5,24 @@ import {
   ACTION_RETRY,
   type ActionResult,
   type GameAction,
-  type GameActionValue,
+  type HintDemoStep,
+  type HintLevel,
+  type HintTarget,
   TemplateGameSession,
 } from "#src/game-session";
-import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
+import type { EngineView, Gesture } from "#src/interaction";
 import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
-import { resolveExactGridLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
-
-function toCellRole(
-  isGoal: boolean,
-  isRequired: boolean,
-  isStart: boolean
-): ViewEntity["role"] {
-  if (isGoal || isRequired) {
-    return "target";
-  }
-  if (isStart) {
-    return "source";
-  }
-  return "neutral";
-}
-
-function toCellSpokenLabel(
-  row: number,
-  col: number,
-  isStart: boolean,
-  isGoal: boolean,
-  isRequired: boolean,
-  goalGlyph: string | undefined
-): string {
-  const pos = `Hàng ${row + 1} cột ${col + 1}`;
-  if (isStart) {
-    return `Ô xuất phát, ${pos}`;
-  }
-  if (isGoal) {
-    return goalGlyph
-      ? `Ô đích, lá cờ số ${goalGlyph}, ${pos}`
-      : `Ô đích, ${pos}`;
-  }
-  if (isRequired) {
-    return `Ô phải đi qua, ${pos}`;
-  }
-  return pos;
-}
-
 import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
 import {
+  drawGT013BoardUnderlay,
+  drawGT013HeadAndFeedback,
+  drawGT013WaypointsAndWalls,
+} from "#src/render/gt-013-shapes";
+import {
   boxFromSlots,
-  drawMazeBoard,
   drawMazeFootprints,
   drawMazeGoalFlag,
-  drawRequiredCells,
   drawSceneBackground,
   drawStoryCharacterInStage,
 } from "#src/render/index.js";
@@ -67,7 +33,6 @@ import {
   cellKey,
   cellTowards,
   findRouteThrough,
-  isJunction,
   type MazeCell,
   type MazeGrid,
   MazePathTracker,
@@ -76,91 +41,39 @@ import {
 } from "#src/systems/maze-system";
 import { MoodPulse } from "#src/systems/mood-pulse";
 import type { RenderSystem } from "#src/systems/render-system";
+import {
+  buildGT013RenderView,
+  buildGT013View,
+  cellToSlotIndex,
+  clockOf,
+  computeGT013Slots,
+  computeHintCells,
+  computeRemainingRoute,
+  deriveGT013DecorGrains,
+  extractMazeCell,
+  extractMazeCells,
+  extractMazeSide,
+  neighborSide,
+  resetClock,
+  resolvePointerCoords,
+  sameCell,
+  TOUCH_PULSE_MS,
+  tickGT013Clock,
+} from "./layout.js";
 import type { GT013Content, GT013Difficulty } from "./template.js";
 
-interface MazeScaffoldHint {
-  /** Ô mà gợi ý vẽ tới, tính từ đầu nét vẽ hiện tại. */
+type PtInput = { readonly x: number; readonly y: number } | number;
+type StrokeG = Extract<Gesture, { type: "stroke" }>;
+type DropG = Extract<Gesture, { type: "drop" }>;
+
+export interface MazeScaffoldHint {
   readonly cells: readonly MazeCell[];
   readonly ghost_hand: boolean;
   readonly slow_repeat: boolean;
 }
 
-function extractMazeCell(data: GameActionValue): MazeCell | null {
-  if (
-    typeof data === "object" &&
-    data !== null &&
-    "row" in data &&
-    "col" in data
-  ) {
-    const r = Reflect.get(data, "row");
-    const c = Reflect.get(data, "col");
-    if (typeof r === "number" && typeof c === "number") {
-      return { row: r, col: c };
-    }
-  }
-  return null;
-}
-
-function extractMazeSide(data: GameActionValue): MazeSide | null {
-  if (typeof data === "object" && data !== null && "side" in data) {
-    const s = Reflect.get(data, "side");
-    if (s === "n" || s === "e" || s === "s" || s === "w") {
-      return s;
-    }
-  }
-  return null;
-}
-
-function extractMazeCells(data: GameActionValue): MazeCell[] {
-  if (typeof data === "object" && data !== null && "cells" in data) {
-    const raw = Reflect.get(data, "cells");
-    if (Array.isArray(raw)) {
-      const result: MazeCell[] = [];
-      for (const item of raw) {
-        const cell = extractMazeCell(item);
-        if (cell) {
-          result.push(cell);
-        }
-      }
-      return result;
-    }
-  }
-  return [];
-}
-
-function neighborSide(from: MazeCell, to: MazeCell): MazeSide | null {
-  const dr = to.row - from.row;
-  const dc = to.col - from.col;
-  if (dr === -1 && dc === 0) {
-    return "n";
-  }
-  if (dr === 1 && dc === 0) {
-    return "s";
-  }
-  if (dr === 0 && dc === 1) {
-    return "e";
-  }
-  if (dr === 0 && dc === -1) {
-    return "w";
-  }
-  return null;
-}
-
-const ARROW_GLYPHS: Record<MazeSide, string> = {
-  n: "⬆️",
-  e: "➡️",
-  s: "⬇️",
-  w: "⬅️",
-};
-
-/**
- * `GT-013` — tìm đường mê cung.
- */
-/** Khung chuyện đọc một lần ở vòng đầu (`BR-E013-07`, `BR-FBK-16`). */
 export const GT013_STORY_LINE =
   "Chuột Nhắt đi tìm đường về nhà. Bé dẫn Chuột đi, gặp tường thì thử lối khác nhé!";
-
-/** Mascot nhún vai sau khi đụng tường (`BR-E013-07`). */
 export const GT013_SHRUG_MS = 1200;
 
 export class GT013Session extends TemplateGameSession<
@@ -169,80 +82,118 @@ export class GT013Session extends TemplateGameSession<
 > {
   override readonly usesPromptZone = true;
   degradation: DegradationState | null = null;
-
   private readonly ordering = new OrderingMechanic();
   private tracker: MazePathTracker = new MazePathTracker(this.content.grid);
-  private blockedCell: MazeCell | null = null;
-  private blockedTimestamp = 0;
-  private lastFrameMs = 0;
   private readonly mood = new MoodPulse();
+  private isRoundClosed = false;
+  private solutionRoute: readonly MazeCell[] = [];
+  private decorGrains: readonly number[] = [];
 
   setupEntities(): void {
+    resetClock(this);
     this.tracker = new MazePathTracker(this.content.grid);
     this.syncSequence();
-    this.blockedCell = null;
-    this.blockedTimestamp = 0;
     this.mood.clear();
-    this.lastFrameMs = 0;
     this.isWon = false;
+    this.isRoundClosed = false;
+    this.isCompleted = false;
+    this.endTimeMs = undefined;
+    const { grid, required_cells: req } = this.content;
+    this.solutionRoute = findRouteThrough(grid, req) ?? [];
+    const total = grid.rows * grid.cols;
+    this.decorGrains = deriveGT013DecorGrains(this.layoutSeed, total);
   }
 
+  override destroy(): void {
+    super.destroy();
+    resetClock(this);
+    this.mood.clear();
+    this.isWon = false;
+    this.isRoundClosed = false;
+  }
+
+  override isAcceptingInput(): boolean {
+    return super.isAcceptingInput() && !this.isWon && !this.isRoundClosed;
+  }
+  override dispatch(gesture: Gesture): ActionResult | undefined {
+    return this.isAcceptingInput() ? super.dispatch(gesture) : ACTION_IGNORED;
+  }
+  isRoundClosedState(): boolean {
+    return this.isRoundClosed;
+  }
+  getSolutionRoute(): readonly MazeCell[] {
+    if (this.solutionRoute.length === 0) {
+      const req = this.content.required_cells;
+      this.solutionRoute = findRouteThrough(this.grid, req) ?? [];
+    }
+    return this.solutionRoute;
+  }
   override storyLine(): string {
     return GT013_STORY_LINE;
   }
-
-  /** Chuột nhún vai sau khi đụng tường (`BR-E013-07`). */
   override mascotMood(): MascotPose | null {
-    return this.isWon ? null : this.mood.current();
+    return this.isWon || this.isRoundClosed ? null : this.mood.current();
   }
-
   update(deltaMs: number): void {
-    this.mood.tick(deltaMs);
-    this.lastFrameMs += deltaMs;
-    if (this.blockedCell && this.lastFrameMs - this.blockedTimestamp >= 400) {
-      this.blockedCell = null;
-      this.blockedTimestamp = 0;
-    }
+    tickGT013Clock(clockOf(this), deltaMs);
+    this.mood.tick(Math.max(0, deltaMs));
   }
-
   getPath(): readonly MazeCell[] {
     return this.tracker.getPath();
   }
-
   getPathSequence(): readonly string[] {
     return this.ordering.getCurrentSequence();
   }
-
   getInputMode(): "draw" | "arrows" {
     return this.content.input_mode;
   }
 
+  private closeFailedRound(): void {
+    const clk = clockOf(this);
+    this.isRoundClosed = true;
+    clk.closeAtMs = clk.logicMs;
+    clk.activeHintLevel = 0;
+    this.mood.clear();
+    this.getSolutionRoute();
+    this.completeSession();
+  }
+
   onPathStep(cell: MazeCell): MazeStepResult {
-    const result = this.tracker.step(cell);
-    this.syncSequence();
-    if (result.status === "moved") {
-      // Tiếng chân như nhau ở mọi nẻo: không lộ lối đúng (`BR-E013-07`).
-      this.queueSfx("mouse_step");
-      this.recordEvent("path_step", {
-        row: cell.row,
-        col: cell.col,
-        step_index: this.tracker.getPath().length - 1,
-      });
+    if (this.isWon || this.isRoundClosed) {
+      return { status: "blocked", path: this.tracker.getPath() };
     }
-    if (result.status === "blocked") {
+    const clk = clockOf(this);
+    const sideAttempted = neighborSide(this.tracker.getHead(), cell);
+    const res = this.tracker.step(cell);
+    this.syncSequence();
+
+    if (res.status === "moved") {
+      clk.stepAtMs = clk.logicMs;
+      clk.activeHintLevel = 0;
+      clk.blockedCell = null;
+      clk.blockedWallSide = null;
+      this.queueSfx("mouse_step");
+      const step_index = this.tracker.getPath().length - 1;
+      this.recordEvent("path_step", { ...cell, step_index });
+      const miss = sameCell(cell, this.grid.goal) && !this.checkWinCondition();
+      clk.missingRequiredUntilMs = miss ? clk.logicMs + 900 : -9999;
+    } else if (res.status === "rewound") {
+      clk.backtrackAtMs = clk.logicMs;
+      clk.missingRequiredUntilMs = -9999;
+    } else if (res.status === "blocked") {
       this.queueSfx("wall_boing");
       this.mood.set("wonder", GT013_SHRUG_MS);
-      this.blockedCell = cell;
-      this.blockedTimestamp = this.lastFrameMs;
-      this.recordEvent("path_blocked", {
-        row: cell.row,
-        col: cell.col,
-        reason: result.blocked_reason,
-        // Engine không lùi hộ trẻ (BR-E013-04); trường giữ cho khớp lược đồ event.
-        retreated: false,
-      });
+      const reason = res.blocked_reason;
+      clk.blockedCell = cell;
+      clk.blockedWallSide =
+        reason === "wall" || reason === "outside" ? sideAttempted : null;
+      clk.blockedAtMs = clk.logicMs;
+      this.recordEvent("path_blocked", { ...cell, reason, retreated: false });
+      if (this.difficulty.allow_retry === false && reason === "wall") {
+        this.closeFailedRound();
+      }
     }
-    return result;
+    return res;
   }
 
   onArrowPressed(side: MazeSide): MazeStepResult {
@@ -250,15 +201,27 @@ export class GT013Session extends TemplateGameSession<
   }
 
   onPathSubmitted(): boolean {
-    const isCorrect = this.checkWinCondition();
-    this.recordEvent("path_submitted", {
-      is_correct: isCorrect,
-      step_count: this.tracker.getPath().length - 1,
-    });
-    if (isCorrect) {
-      this.winSession();
+    if (this.isWon || this.isRoundClosed) {
+      return this.isWon;
     }
-    return isCorrect;
+    const clk = clockOf(this);
+    const ok = this.checkWinCondition();
+    const steps = this.tracker.getPath().length - 1;
+    this.recordEvent("path_submitted", { is_correct: ok, step_count: steps });
+    if (ok) {
+      clk.winAtMs = clk.logicMs;
+      clk.activeHintLevel = 0;
+      clk.missingRequiredUntilMs = -9999;
+      this.mood.clear();
+      this.winSession();
+    } else {
+      clk.submitRetryUntilMs = clk.logicMs + 700;
+      clk.missingRequiredUntilMs = clk.logicMs + 900;
+      if (this.difficulty.allow_retry === false) {
+        this.closeFailedRound();
+      }
+    }
+    return ok;
   }
 
   getScaffoldHint(level: 1 | 2 | 3): MazeScaffoldHint | null {
@@ -266,165 +229,182 @@ export class GT013Session extends TemplateGameSession<
     if (ahead.length === 0) {
       return null;
     }
-    return {
-      cells: this.hintCells(ahead, level),
-      ghost_hand: level >= 2,
-      slow_repeat: level === 3,
-    };
+    const cells = computeHintCells(this.grid, ahead, level);
+    return { cells, ghost_hand: level >= 2, slow_repeat: level === 3 };
   }
 
-  validateAction(action: GameAction): ActionResult {
-    if (action.type === "submit_path") {
-      return this.checkWinCondition() ? ACTION_CORRECT : ACTION_RETRY;
-    }
-    if (action.type === "stroke_path") {
-      const cells = extractMazeCells(action.data);
-      const first = cells[0];
-      if (!first) {
-        return ACTION_IGNORED;
-      }
-      return this.isLegalStep(first) ? ACTION_CORRECT : ACTION_IGNORED;
-    }
-    const cell = this.actionCell(action);
-    if (!cell) {
-      return ACTION_IGNORED;
-    }
-    return this.isLegalStep(cell) ? ACTION_CORRECT : ACTION_IGNORED;
+  override onScaffoldEscalated(lv: HintLevel, _t?: string): void {
+    clockOf(this).activeHintLevel = lv;
   }
-
-  private isInsideStage(x: number, y: number): boolean {
-    if (!this.stageRect) {
-      return true;
-    }
-    const s = this.stageRect;
-    return x >= s.x && x <= s.x + s.w && y >= s.y && y <= s.y + s.h;
+  override onHintCleared(): void {
+    clockOf(this).activeHintLevel = 0;
   }
-
-  private slotIndexToCell(i: number): MazeCell | null {
-    const { rows, cols } = this.content.grid;
-    const r = Math.floor(i / cols);
-    const c = i % cols;
-    return r < rows && c < cols ? { row: r, col: c } : null;
-  }
-
-  private findHitCell(x: number, y: number): MazeCell | null {
-    if (!this.isInsideStage(x, y)) {
-      return null;
-    }
-    const idx = findHitSlotIndex(this.slots, x, y, "square", TAP_TOLERANCE_PX);
-    return idx >= 0 ? this.slotIndexToCell(idx) : null;
-  }
-
-  private toStrokeAction(
-    gesture: Extract<Gesture, { type: "stroke" }>
-  ): GameAction | null {
-    const firstPt = gesture.points[0];
-    if (!(firstPt && this.isInsideStage(firstPt.x, firstPt.y))) {
-      return null;
-    }
-
-    const head = this.tracker.getHead();
-    const cells: MazeCell[] = [];
-    for (const pt of gesture.points) {
-      const cell = this.findHitCell(pt.x, pt.y);
-      if (!cell) {
-        continue;
-      }
-      const prev = cells.at(-1) ?? head;
-      if (cell.row === prev.row && cell.col === prev.col) {
-        continue;
-      }
-      cells.push(cell);
-    }
-
-    if (cells.length === 0) {
-      return null;
-    }
-    if (cells.length === 1) {
-      return { type: "draw_step", data: cells[0] };
-    }
-    return { type: "stroke_path", data: { cells } };
-  }
-
-  private toDropAction(
-    gesture: Extract<Gesture, { type: "drop" }>
-  ): GameAction | null {
-    const endCell = this.findHitCell(gesture.toX, gesture.toY);
-    if (endCell && this.isLegalStep(endCell)) {
-      return { type: "draw_step", data: endCell };
-    }
-    const steps = 8;
-    const points = Array.from({ length: steps + 1 }, (_, i) => {
-      const t = i / steps;
-      return {
-        x: gesture.fromX + (gesture.toX - gesture.fromX) * t,
-        y: gesture.fromY + (gesture.toY - gesture.fromY) * t,
-      };
-    });
-    return this.toStrokeAction({
-      type: "stroke",
-      points,
-      timeMs: gesture.timeMs,
-    });
-  }
-
-  override toAction(gesture: Gesture): GameAction | null {
-    if (gesture.type === "stroke") {
-      return this.toStrokeAction(gesture);
-    }
-    if (gesture.type === "drop") {
-      return this.toDropAction(gesture);
-    }
-    if (gesture.type !== "tap") {
-      return null;
-    }
-    const cell = this.findHitCell(gesture.x, gesture.y);
-    if (!cell) {
-      return null;
-    }
-    if (this.content.input_mode === "arrows") {
-      const side = neighborSide(this.tracker.getHead(), cell);
-      if (side) {
-        return {
-          type: "move_arrow",
-          data: { side },
-        };
-      }
-    }
-    return {
-      type: "tap_cell",
-      data: cell,
-    };
+  private isHintActive(): boolean {
+    return this.isAcceptingInput() && !this.checkWinCondition();
   }
 
   override getHintTargetIndex(): number | null {
-    if (this.checkWinCondition() || this.isWon) {
+    if (!this.isHintActive()) {
       return null;
     }
-    const nextCell = this.remainingRoute()[0] ?? this.content.grid.goal;
-    const idx = nextCell.row * this.content.grid.cols + nextCell.col;
-    return idx >= 0 && idx < this.slots.length ? idx : null;
+    const nextCell = this.remainingRoute()[0] ?? this.grid.goal;
+    return cellToSlotIndex(nextCell, this.grid.cols, this.slots.length);
+  }
+
+  override getHintTargetForLevel(lv: HintLevel): HintTarget | null {
+    const ahead = this.remainingRoute();
+    const n = this.slots.length;
+    const cols = this.grid.cols;
+    if (lv === 1) {
+      const idx = ahead[0] ? cellToSlotIndex(ahead[0], cols, n) : null;
+      return idx === null ? null : { kind: "slot", index: idx };
+    }
+    const h = computeHintCells(this.grid, ahead, lv);
+    const tc = lv === 2 ? h.at(-1) : h[0];
+    const toIndex = tc ? cellToSlotIndex(tc, cols, n) : null;
+    const index = cellToSlotIndex(this.tracker.getHead(), cols, n) ?? toIndex;
+    return toIndex === null || index === null
+      ? null
+      : { kind: "slot", index, toIndex };
+  }
+
+  override getHintDemoSequence(lv: HintLevel): readonly HintDemoStep[] | null {
+    const c3 = lv === 3 ? (this.getScaffoldHint(3)?.cells ?? []) : [];
+    const n = this.slots.length;
+    const idx = [this.tracker.getHead(), ...c3].map((c) =>
+      cellToSlotIndex(c, this.grid.cols, n)
+    );
+    const steps = idx
+      .slice(0, -1)
+      .map((from, i) => ({ from: from ?? -1, to: idx[i + 1] ?? -1 }))
+      .filter((s) => s.from >= 0 && s.to >= 0);
+    return steps.length >= 2 ? steps : null;
+  }
+
+  onPointerDown(ptOrX: PtInput, maybeY?: number): void {
+    const pt = resolvePointerCoords(ptOrX, maybeY);
+    if (pt && this.isAcceptingInput()) {
+      const clk = clockOf(this);
+      const idx = this.hitSlotAt(pt.x, pt.y);
+      clk.touchingSlotIndex = idx >= 0 ? idx : null;
+      clk.touchingUntilMs = idx >= 0 ? clk.logicMs + TOUCH_PULSE_MS : -9999;
+    }
+  }
+
+  setPointerOver(ptOrX: PtInput | null, maybeY?: number): void {
+    const clk = clockOf(this);
+    const pt = resolvePointerCoords(ptOrX, maybeY);
+    const idx = pt && this.isAcceptingInput() ? this.hitSlotAt(pt.x, pt.y) : -1;
+    clk.hoveredSlotIndex = idx >= 0 ? idx : null;
+  }
+
+  validateAction(action: GameAction): ActionResult {
+    if (!this.isAcceptingInput()) {
+      return ACTION_IGNORED;
+    }
+    if (action.type === "submit_path") {
+      return this.checkWinCondition() ? ACTION_CORRECT : ACTION_RETRY;
+    }
+    const sc = extractMazeCells(action.data)[0];
+    const first = action.type === "stroke_path" ? sc : this.actionCell(action);
+    return first && this.isLegalStep(first) ? ACTION_CORRECT : ACTION_IGNORED;
+  }
+
+  private isInsideStage(x: number, y: number): boolean {
+    const s = this.stageRect;
+    return !s || (x >= s.x && x <= s.x + s.w && y >= s.y && y <= s.y + s.h);
+  }
+  private hitSlotAt(x: number, y: number): number {
+    return this.isInsideStage(x, y)
+      ? findHitSlotIndex(this.slots, x, y, "square", TAP_TOLERANCE_PX)
+      : -1;
+  }
+  private findHitCell(x: number, y: number): MazeCell | null {
+    const i = this.hitSlotAt(x, y);
+    const { rows, cols } = this.grid;
+    const r = Math.floor(i / cols);
+    const c = i % cols;
+    return i >= 0 && r < rows && c < cols ? { row: r, col: c } : null;
+  }
+
+  private toStrokeAction(g: StrokeG): GameAction | null {
+    const p0 = g.points[0];
+    if (!(p0 && this.isInsideStage(p0.x, p0.y))) {
+      return null;
+    }
+    const head = this.tracker.getHead();
+    const cells: MazeCell[] = [];
+    for (const pt of g.points) {
+      const cell = this.findHitCell(pt.x, pt.y);
+      if (cell && !sameCell(cell, cells.at(-1) ?? head)) {
+        cells.push(cell);
+      }
+    }
+    if (cells.length === 0) {
+      return null;
+    }
+    return cells.length === 1
+      ? { type: "draw_step", data: cells[0] }
+      : { type: "stroke_path", data: { cells } };
+  }
+
+  private toDropAction(g: DropG): GameAction | null {
+    const endCell = this.findHitCell(g.toX, g.toY);
+    if (endCell && this.isLegalStep(endCell)) {
+      return { type: "draw_step", data: endCell };
+    }
+    const points = Array.from({ length: 9 }, (_, i) => ({
+      x: g.fromX + ((g.toX - g.fromX) * i) / 8,
+      y: g.fromY + ((g.toY - g.fromY) * i) / 8,
+    }));
+    return this.toStrokeAction({ type: "stroke", points, timeMs: g.timeMs });
+  }
+
+  override toAction(g: Gesture): GameAction | null {
+    if (!this.isAcceptingInput()) {
+      return null;
+    }
+    if (g.type === "stroke" || g.type === "drop") {
+      return g.type === "stroke"
+        ? this.toStrokeAction(g)
+        : this.toDropAction(g);
+    }
+    const cell = g.type === "tap" ? this.findHitCell(g.x, g.y) : null;
+    if (!cell) {
+      return null;
+    }
+    const isArrows = this.content.input_mode === "arrows";
+    const side = isArrows ? neighborSide(this.tracker.getHead(), cell) : null;
+    return side
+      ? { type: "move_arrow", data: { side } }
+      : { type: "tap_cell", data: cell };
+  }
+
+  private commitStrokeCells(cells: readonly MazeCell[]): void {
+    for (const cell of cells) {
+      const res = this.onPathStep(cell);
+      if (res.status === "blocked" || this.isRoundClosed) {
+        return;
+      }
+      if (this.checkWinCondition()) {
+        this.onPathSubmitted();
+        return;
+      }
+    }
   }
 
   override commit(action: GameAction): void {
+    if (!this.isAcceptingInput()) {
+      return;
+    }
     if (action.type === "stroke_path") {
-      const cells = extractMazeCells(action.data);
-      for (const cell of cells) {
-        const res = this.onPathStep(cell);
-        if (res.status === "blocked") {
-          break;
-        }
-        if (this.checkWinCondition()) {
-          this.onPathSubmitted();
-          break;
-        }
-      }
+      this.commitStrokeCells(extractMazeCells(action.data));
       return;
     }
     const cell = this.actionCell(action);
     if (cell) {
       this.onPathStep(cell);
-      if (this.checkWinCondition()) {
+      if (!this.isRoundClosed && this.checkWinCondition()) {
         this.onPathSubmitted();
       }
     } else if (action.type === "submit_path") {
@@ -433,185 +413,71 @@ export class GT013Session extends TemplateGameSession<
   }
 
   override getView(): EngineView {
-    const { rows, cols, start, goal } = this.content.grid;
-    const entities: ViewEntity[] = [];
-    const pathKeys = new Set(this.tracker.getPath().map(cellKey));
-    const head = this.tracker.getHead();
-
-    for (let i = 0; i < this.slots.length; i++) {
-      const slot = this.slots[i];
-      if (!slot) {
-        continue;
-      }
-      const r = Math.floor(i / cols);
-      const c = i % cols;
-      if (r >= rows || c >= cols) {
-        continue;
-      }
-      const isStart = r === start.row && c === start.col;
-      const isGoal = r === goal.row && c === goal.col;
-      const isRequired = this.content.required_cells.some(
-        (rc) => rc.row === r && rc.col === c
-      );
-      const isInPath = pathKeys.has(cellKey({ row: r, col: c }));
-      const role = toCellRole(isGoal, isRequired, isStart);
-      const state: ViewEntity["state"] = isInPath ? "active" : "idle";
-      const side =
-        this.content.input_mode === "arrows"
-          ? neighborSide(head, { row: r, col: c })
-          : null;
-
-      entities.push({
-        id: `cell_${r}_${c}`,
-        slotIndex: i,
-        role,
-        state,
-        x: slot.x,
-        y: slot.y,
-        w: slot.w,
-        h: slot.h,
-        hitShape: "square",
-        spokenLabel: toCellSpokenLabel(
-          r,
-          c,
-          isStart,
-          isGoal,
-          isRequired,
-          this.content.goal_glyph
-        ),
-        ...(side ? { glyph: ARROW_GLYPHS[side] } : {}),
-      });
-    }
-
-    return {
-      activePrompt: this.content.prompt,
-      entities,
-    };
+    const { content: ct, slots: sl, isWon: w, isRoundClosed: cl } = this;
+    return buildGT013View(ct, sl, this.tracker.getPath(), clockOf(this), w, cl);
   }
 
   override checkWinCondition(): boolean {
-    return this.tracker.isComplete(this.content.required_cells);
+    const req = this.content.required_cells;
+    return !this.isRoundClosed && this.tracker.isComplete(req);
   }
 
   private get grid(): MazeGrid {
     return this.content.grid;
   }
-
   private syncSequence(): void {
     this.ordering.setInitialSequence(this.tracker.getPath().map(cellKey));
   }
-
-  private actionCell(action: GameAction): MazeCell | null {
-    if (action.type === "draw_step" || action.type === "tap_cell") {
-      return extractMazeCell(action.data);
+  private actionCell(a: GameAction): MazeCell | null {
+    if (a.type === "draw_step" || a.type === "tap_cell") {
+      return extractMazeCell(a.data);
     }
-    if (action.type === "move_arrow") {
-      const side = extractMazeSide(action.data);
-      return side ? cellTowards(this.tracker.getHead(), side) : null;
-    }
-    return null;
+    const s = a.type === "move_arrow" ? extractMazeSide(a.data) : null;
+    return s ? cellTowards(this.tracker.getHead(), s) : null;
   }
-
   private isLegalStep(cell: MazeCell): boolean {
-    const current = this.tracker.getHead();
-    return canMove(this.grid, current, cell);
+    return canMove(this.grid, this.tracker.getHead(), cell);
   }
-
   private remainingRoute(): MazeCell[] {
-    const current = this.tracker.getHead();
-    const visitedKeys = new Set(this.tracker.getPath().map(cellKey));
-    const unvisited = this.content.required_cells.filter(
-      (rc) => !visitedKeys.has(cellKey(rc))
-    );
-    const full = findRouteThrough(this.grid, unvisited, current);
-    const previous = this.tracker.getPath().at(-2);
-    const first = full?.[1];
-    if (previous && first && cellKey(first) === cellKey(previous)) {
-      // Bước về ô vừa đi là lùi, xoá ô đó khỏi nét vẽ (BR-E013-02): nếu còn
-      // đường khác thì chỉ đường đó, không dẫn trẻ vào vòng lặp tiến-lùi.
-      const side = neighborSide(current, previous);
-      if (side) {
-        const detour = findRouteThrough(
-          { ...this.grid, walls: [...this.grid.walls, { ...current, side }] },
-          unvisited,
-          current
-        );
-        if (detour && detour.length > 1) {
-          return detour.slice(1);
-        }
-      }
+    if (!this.isHintActive()) {
+      return [];
     }
-    return full && full.length > 1 ? full.slice(1) : [];
+    const req = this.content.required_cells;
+    return computeRemainingRoute(this.grid, this.tracker.getPath(), req);
   }
-
-  private hintCells(ahead: readonly MazeCell[], level: 1 | 2 | 3): MazeCell[] {
-    if (level === 1) {
-      return ahead.slice(0, 1);
-    }
-    if (level === 2) {
-      return ahead.slice(0, Math.min(2, ahead.length));
-    }
-    let count = 0;
-    while (count < ahead.length) {
-      const cell = ahead[count];
-      if (cell && isJunction(this.grid, cell)) {
-        return ahead.slice(0, count + 1);
-      }
-      count++;
-    }
-    return [...ahead];
-  }
-
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
-    const { rows, cols } = this.content.grid;
-    return resolveExactGridLayout(
-      cols,
-      rows
-    )({
-      slotCount: rows * cols,
-      ageBand,
-      logic: this.logicSpace,
-      stage: this.stageRect,
-      cssPerLogic: this.cssPerLogic,
-    });
+    const { grid, logicSpace: logic, stageRect: stage, cssPerLogic } = this;
+    return computeGT013Slots({ grid, ageBand, logic, stage, cssPerLogic });
   }
 
-  render(
-    ctx: CanvasRenderingContext2D,
-    rs: RenderSystem,
-    timeMs: number
-  ): void {
-    this.lastFrameMs = timeMs;
-    if (this.blockedCell && timeMs - this.blockedTimestamp >= 400) {
-      this.blockedCell = null;
-      this.blockedTimestamp = 0;
-    }
+  render(ctx: CanvasRenderingContext2D, rs: RenderSystem, tMs: number): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    // Chuột Nhắt ở góc trống, ngoài vùng chạm (`BR-E013-09`).
     drawStoryCharacterInStage(ctx, "mouse", this.stageRect, this.slots);
     const box = boxFromSlots(this.slots);
     if (!box) {
       return;
     }
-    drawMazeBoard(ctx, this.content.grid, box, this.tracker.getPath());
-    drawMazeGoalFlag(ctx, this.content.grid, box, this.content.goal_glyph);
-    drawMazeFootprints(ctx, this.content.grid, box, this.tracker.getPath());
-    drawRequiredCells(ctx, this.content.grid, box, this.content.required_cells);
-
-    if (this.blockedCell) {
-      const idx =
-        this.blockedCell.row * this.content.grid.cols + this.blockedCell.col;
-      const slot = this.slots[idx];
-      const elapsed = timeMs - this.blockedTimestamp;
-      if (slot && elapsed < 400) {
-        rs.drawRetryRing(
-          ctx,
-          slot.x,
-          slot.y,
-          Math.min(slot.hitW, slot.hitH) / 2 + 4,
-          elapsed / 400
-        );
-      }
-    }
+    const path = this.tracker.getPath();
+    const view = buildGT013RenderView({
+      content: this.content,
+      box,
+      stageRect: this.stageRect,
+      path,
+      solutionRoute: this.getSolutionRoute(),
+      decorGrains: this.decorGrains,
+      clk: clockOf(this),
+      isWon: this.isWon,
+      isRoundClosed: this.isRoundClosed,
+      degradation: this.degradation,
+      timeMs: tMs,
+    });
+    drawGT013BoardUnderlay(ctx, rs, view);
+    drawMazeFootprints(ctx, this.grid, box, path);
+    drawGT013WaypointsAndWalls(ctx, rs, view);
+    drawMazeGoalFlag(ctx, this.grid, box, this.content.goal_glyph);
+    drawGT013HeadAndFeedback(ctx, rs, view);
   }
 }
+
+export const MazeRouteSession = GT013Session;
+export default GT013Session;

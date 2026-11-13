@@ -7,6 +7,10 @@ import {
   type MazeGrid,
   type MazeWall,
 } from "#src/systems/maze-system";
+import type {
+  GT013Content,
+  GT013Difficulty,
+} from "#src/templates/GT-013/template";
 import { getNouns, sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
@@ -126,7 +130,7 @@ function buildOlderMaze(rng: Rng): MazeLayout {
   return { grid: { ...gridBase, walls } };
 }
 
-export const GT013Generator: LevelGenerator = {
+export const GT013Generator: LevelGenerator<GT013Content, GT013Difficulty> = {
   engine: "GT-013",
   axes: {
     age_band: ["4-5", "5-6"],
@@ -158,7 +162,7 @@ export const GT013Generator: LevelGenerator = {
     return {
       content_pack: {
         prompt,
-        grid: { rows, cols, walls, start, goal },
+        grid: { rows, cols, walls: [...walls], start, goal },
         required_cells: [],
         input_mode: inputMode,
       },
