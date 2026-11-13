@@ -4,6 +4,10 @@ import {
   hasNoFloatingCubes,
   isModelConnected,
 } from "#src/systems/isometric-system";
+import type {
+  GT017Content,
+  GT017Difficulty,
+} from "#src/templates/GT-017/template";
 import {
   numberKeycap,
   pickOne,
@@ -20,7 +24,9 @@ interface CubeCoord {
 }
 
 function buildValidIsometricModel(
-  rng: Parameters<LevelGenerator["generate"]>[0]["rng"],
+  rng: Parameters<
+    LevelGenerator<GT017Content, GT017Difficulty>["generate"]
+  >[0]["rng"],
   targetCubeCount: number,
   chosenColor: string
 ): CubeCoord[] {
@@ -74,14 +80,17 @@ function buildValidIsometricModel(
 }
 
 /** Chỉ band 5-6: `age_min` của engine là 5 (khối 3D là khái niệm khó nhất của nhóm). */
-export const GT017Generator: LevelGenerator = {
+export const GT017Generator: LevelGenerator<GT017Content, GT017Difficulty> = {
   engine: "GT-017",
   axes: {
     age_band: ["5-6"],
     what: ["spatial", "3d", "geometry", "counting"],
     theme: [...VALID_GENERATOR_THEMES],
   },
-  generate({ rng }) {
+  generate({ rng }): {
+    content_pack: GT017Content;
+    difficulty_params: GT017Difficulty;
+  } {
     const minCubes = 4;
     const maxExtra = 4;
     const targetCubeCount = minCubes + rng.nextInt(maxExtra);
@@ -109,17 +118,19 @@ export const GT017Generator: LevelGenerator = {
       rng
     );
 
-    const options = counts.map((count) => ({
+    const options: GT017Content["options"] = counts.map((count) => ({
       option_id: `opt_${count}`,
-      asset: { kind: "emoji" as const, ref: numberKeycap(count) },
+      asset: { kind: "emoji", ref: numberKeycap(count) },
       is_correct: count === correctCount,
     }));
+
+    const question: GT017Content["question"] = "count_cubes";
 
     return {
       content_pack: {
         prompt: "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé!",
         model,
-        question: "count_cubes" as const,
+        question,
         options,
       },
       difficulty_params: {

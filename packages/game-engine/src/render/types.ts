@@ -45,3 +45,66 @@ export interface SceneBox {
   readonly w: number;
   readonly h: number;
 }
+
+export type GT017QuestionKind = "count_cubes" | "top_view" | "match_solid";
+
+export interface GT017KnobGeom {
+  readonly cx: number;
+  readonly cy: number;
+  readonly r: number;
+}
+
+export interface GT017TurntableGeom {
+  readonly cx: number;
+  readonly cy: number;
+  readonly rx: number;
+  readonly ry: number;
+  readonly rimH: number;
+  readonly leftKnob: GT017KnobGeom;
+  readonly rightKnob: GT017KnobGeom;
+}
+
+export interface GT017HeroLayout {
+  readonly heroBox: SceneBox;
+  readonly badgeBox: SceneBox;
+  readonly topViewBox: SceneBox;
+  readonly turntable: GT017TurntableGeom;
+  readonly modelBox: SceneBox;
+}
+
+export interface GT017TurntableParams {
+  readonly question: GT017QuestionKind;
+  readonly allowRotate: boolean;
+  readonly visualAngleDeg: number;
+  readonly spinProgress: number;
+  readonly rotateDir?: "cw" | "ccw";
+  readonly hoveredSide: "cw" | "ccw" | "center" | null;
+  readonly disableShadows: boolean;
+}
+
+export interface GT017ProjectedCube {
+  readonly sx: number;
+  readonly sy: number;
+  readonly z: number;
+  readonly hidden: boolean;
+}
+
+export interface GT017ModelOverlayParams {
+  readonly cubes: readonly GT017ProjectedCube[];
+  readonly cubeSize: number;
+  readonly topView: readonly (readonly number[])[];
+  readonly question: GT017QuestionKind;
+  readonly hintLevel: 0 | 1 | 2 | 3;
+  readonly showXray: boolean;
+  readonly timeMs: number;
+}
+
+export interface GT017OptionCardParams {
+  readonly id: string;
+  readonly asset: RenderAsset;
+  readonly state: ItemVisualState;
+  readonly isHovered: boolean;
+  readonly isHinted: boolean;
+  readonly wrongProgress: number;
+  readonly showParticles?: boolean;
+}
