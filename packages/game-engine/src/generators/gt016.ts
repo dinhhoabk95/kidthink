@@ -1,6 +1,10 @@
 import { shuffle } from "#src/rng/shuffle";
 import type { Rng } from "#src/rng/types";
 import { timeToAngles } from "#src/systems/rotation-system";
+import type {
+  GT016Content,
+  GT016Difficulty,
+} from "#src/templates/GT-016/template";
 import { sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
@@ -66,14 +70,17 @@ function pickDistractors(
  * đó cho đáp án luôn là phương án đứng trước khoảng trống lớn nhất theo vòng
  * giờ. Bậc 30 luôn có một bẫy lẫn kim: cùng giờ khác phút (`BR-E016-04`).
  */
-export const GT016Generator: LevelGenerator = {
+export const GT016Generator: LevelGenerator<GT016Content, GT016Difficulty> = {
   engine: "GT-016",
   axes: {
     age_band: ["5-6"],
     what: ["time", "measurement", "clock", "angle"],
     theme: [...VALID_GENERATOR_THEMES],
   },
-  generate({ rng }) {
+  generate({ rng }): {
+    content_pack: GT016Content;
+    difficulty_params: GT016Difficulty;
+  } {
     const minuteStep = rng.nextInt(2) === 0 ? (60 as const) : (30 as const);
 
     const target = pickTarget(rng, minuteStep);
@@ -97,9 +104,10 @@ export const GT016Generator: LevelGenerator = {
     return {
       content_pack: {
         prompt: "Bé hãy xem đồng hồ chỉ mấy giờ nhé!",
-        mode: "read" as const,
+        mode: "read",
         target_time: target,
         options,
+        activity_cards: [],
       },
       difficulty_params: {
         item_count: options.length,

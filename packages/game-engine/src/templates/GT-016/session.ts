@@ -1,47 +1,20 @@
 import type { AgeBand } from "#src/contracts/types";
 import {
-  ACTION_CORRECT,
   ACTION_IGNORED,
-  ACTION_RETRY,
   type ActionResult,
   type GameAction,
-  type GameActionValue,
+  type HintLevel,
   type HintTarget,
   TemplateGameSession,
 } from "#src/game-session";
-import type {
-  EngineView,
-  EntityVisual,
-  Gesture,
-  ViewEntity,
-} from "#src/interaction";
-import { resolveAssetLabels } from "#src/labels/spoken-keyword";
-import { resolveTouchFloor } from "#src/layout/constants";
-import {
-  HERO_OPTION_CELL_MAX_PX,
-  heroSlot,
-  splitHeroStage,
-} from "#src/layout/hero-split";
-import {
-  findHitSlotIndex as findHitIndex,
-  TAP_TOLERANCE_PX,
-} from "#src/layout/hit-test";
-import { resolveLayout } from "#src/layout/registry";
-import { computeStageCellSlots } from "#src/layout/stage-targets";
-import type { ZoneRect } from "#src/layout/stage-zones";
+import type { EngineView, Gesture } from "#src/interaction";
 import type { Slot } from "#src/layout/types";
 import {
-  drawClockFace,
-  drawMontessoriControlOfErrorPill,
+  drawClippedToZone,
   drawSceneBackground,
-  drawSlotItem,
-  insetBox,
-  type SceneBox,
   sceneBox,
-  squareBox,
 } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
-import { drawTimeOfDaySky } from "#src/render/scene-decor.js";
 import type { DegradationState } from "#src/systems/degradation";
 import {
   type ControlOfErrorDiagnostics,
@@ -56,201 +29,199 @@ import {
   isSameTime,
   timeToAngles,
 } from "#src/systems/rotation-system";
+import {
+  buildGT016View,
+  checkGT016Win,
+  computeGT016SlotsForBand,
+  extractAdjustDelta,
+  GT016_CELEB_MS,
+  GT016_TICK_MS,
+  GT016_WRONG_MS,
+  type GT016DayLabel,
+  type GT016Point,
+  type GT016ViewInput,
+  renderGT016StageContent,
+  resolveDayPeriodLabel,
+  resolveGT016BaseHintTarget,
+  resolveGT016HintDestPoint,
+  resolveGT016HintLevelTarget,
+  resolveGT016HintTargetIndex,
+  resolveGT016HoverSlot,
+  resolveGT016ToAction,
+  validateGT016Action,
+} from "./clock-view.js";
+import {
+  createGT016AnimState,
+  extractSetClockTimeData,
+  type GT016AnimState,
+  resolveGT016RoundOrder,
+  stepClockTime,
+  stepGT016AnimState,
+} from "./layout.js";
 import type { GT016Content, GT016Difficulty } from "./template.js";
 
+type C = GT016Content;
+type D = GT016Difficulty;
+type Mode = C["mode"];
+type RS = RenderSystem;
+
 /** Khung chuyện theo mode, đọc một lần ở vòng đầu (`BR-E016-05`, `BR-FBK-16`). */
-export const GT016_STORY_LINES: Record<GT016Content["mode"], string> = {
+export const GT016_STORY_LINES: Record<Mode, string> = {
   read: "Bạn Mặt Trời và Mặt Trăng cùng bé xem đồng hồ. Bé đọc xem kim đang chỉ mấy giờ nhé!",
   set: "Bạn Mặt Trời và Mặt Trăng cùng bé chỉnh đồng hồ. Bé xoay kim cho đồng hồ chỉ đúng giờ nhé!",
   match:
     "Bạn Mặt Trời và Mặt Trăng cùng bé kể chuyện một ngày. Bé xoay kim rồi chọn hoạt động đúng giờ nhé!",
 };
 
-/** Mascot vui ngắn sau mỗi lần xoay kim. */
 export const GT016_HAPPY_MS = 500;
-/** Mascot nghiêng đầu sau câu trả lời chưa đúng. */
 export const GT016_WONDER_MS = 1500;
-
-/** Thời gian mặt trời lên chỗ / trăng sao hiện dần (`BR-E016-06`). */
 export const GT016_SKY_RISE_MS = 1200;
 
-/** Phần lề (tỉ lệ) giữa mặt đồng hồ và mép vùng chính của stage. */
-const FACE_INSET = 0.04;
-
-function findHitSlotIndex(
-  slots: readonly Slot[],
-  count: number,
-  x: number,
-  y: number
-): number {
-  return findHitIndex(slots.slice(0, count), x, y, "circle", TAP_TOLERANCE_PX);
-}
-
-function formatSpokenClockTime(t: ClockTime): string {
-  return t.minute === 0 ? `${t.hour} giờ` : `${t.hour} giờ ${t.minute} phút`;
-}
-
-function stepClockTime(
-  current: ClockTime,
-  delta: number,
-  step: 15 | 30 | 60
-): ClockTime {
-  let totalMinutes = current.hour * 60 + current.minute;
-  if (delta > 0) {
-    totalMinutes += step;
-  } else if (delta < 0) {
-    totalMinutes -= step;
-  }
-  totalMinutes = ((totalMinutes % 720) + 720) % 720;
-  let hour = Math.floor(totalMinutes / 60);
-  if (hour === 0) {
-    hour = 12;
-  }
-  const minute = totalMinutes % 60;
-  return { hour, minute };
-}
-
-function validateSelectOption(
-  data: GameActionValue,
-  options: readonly { is_correct: boolean }[]
-): ActionResult {
-  if (typeof data !== "number") {
-    return ACTION_RETRY;
-  }
-  const opt = options[data];
-  return opt?.is_correct ? ACTION_CORRECT : ACTION_RETRY;
-}
-
-function validateMatchCard(
-  data: GameActionValue,
-  cards: readonly { card_id: string; hour: number; minute: number }[],
-  currentTime: ClockTime
-): ActionResult {
-  if (typeof data !== "string") {
-    return ACTION_RETRY;
-  }
-  const card = cards.find((c) => c.card_id === data);
-  if (!card) {
-    return ACTION_IGNORED;
-  }
-  return isSameTime(currentTime, { hour: card.hour, minute: card.minute })
-    ? ACTION_CORRECT
-    : ACTION_RETRY;
-}
-
-function toReadAction(
-  gesture: Gesture,
-  slots: readonly Slot[],
-  optionCount: number
-): GameAction | null {
-  if (gesture.type !== "tap") {
-    return null;
-  }
-  const hitIdx = findHitSlotIndex(slots, optionCount, gesture.x, gesture.y);
-  return hitIdx >= 0 ? { type: "select_option", data: hitIdx } : null;
-}
-
-function toMatchAction(
-  gesture: Gesture,
-  slots: readonly Slot[],
-  cards: readonly { card_id: string }[]
-): GameAction | null {
-  if (gesture.type !== "tap") {
-    return null;
-  }
-  const hitIdx = findHitSlotIndex(slots, cards.length, gesture.x, gesture.y);
-  if (hitIdx < 0) {
-    return null;
-  }
-  const card = cards[hitIdx];
-  return card ? { type: "match_card", data: card.card_id } : null;
-}
-
-function toSetAction(
-  gesture: Gesture,
-  _slots: readonly Slot[]
-): GameAction | null {
-  if (gesture.type === "adjust") {
-    return { type: "adjust_time", data: { delta: gesture.delta } };
-  }
-  // Chỉ `commit` nộp giờ: `tap` lên mặt đồng hồ không nộp (`BR-PSZ-05`).
-  if (gesture.type === "commit") {
-    return { type: "submit_time", data: null };
-  }
-  return null;
-}
-
-export class ClockHandsSession extends TemplateGameSession<
-  GT016Content,
-  GT016Difficulty
-> {
+export class ClockHandsSession extends TemplateGameSession<C, D> {
   override readonly usesPromptZone = true;
   override readonly needsCommit: boolean;
-
   degradation: DegradationState | null = null;
 
   private currentTime: ClockTime;
-  /** `mode = set`: giờ chỉ được chấm sau khi trẻ nộp bằng `commit` (`BR-PSZ-05`). */
+  private resolvedOptions: C["options"] = [];
+  private resolvedActivityCards: C["activity_cards"] = [];
   private hasSubmittedTime = false;
+  private roundClosedOnWrong = false;
   private selectedOptionIndex: number | null = null;
-  private wrongChoiceTimerMs = 0;
+  private activeHintLevel: 0 | 1 | 2 | 3 = 0;
+  private currentTouchFloor = 64;
+  private skyElapsedMs = 0;
+  private anim: GT016AnimState;
   private readonly matchedCardIds: Set<string> = new Set();
   private readonly mood = new MoodPulse();
   private readonly exploreTracker = new MontessoriExploreTracker({
     milestoneTarget: 2,
   });
 
-  constructor(
-    content: GT016Content,
-    difficulty: GT016Difficulty,
-    layoutSeed = 0
-  ) {
+  constructor(content: C, difficulty: D, layoutSeed = 0) {
     super(content, difficulty, layoutSeed);
-    // Chỉ `mode = set` có bước nộp; `read` và `match` trả lời ngay khi chạm.
     this.needsCommit = content.mode === "set";
-    this.currentTime = content.initial_time ?? {
-      hour: content.target_time.hour,
-      minute: content.target_time.minute,
-    };
+    const r = resolveGT016RoundOrder(content, difficulty, this.layoutSeed);
+    this.currentTime = r.initialTime;
+    this.resolvedOptions = r.options;
+    this.resolvedActivityCards = r.activityCards;
+    this.anim = createGT016AnimState(this.currentTime);
   }
 
   override storyLine(): string {
     return GT016_STORY_LINES[this.content.mode];
   }
-
-  /** Vui sau khi xoay kim, nghiêng đầu sau câu trả lời chưa đúng (`BR-E016-05`). */
   override mascotMood(): MascotPose | null {
     return this.isWon ? null : this.mood.current();
   }
-
-  /** Tiếng tích tắc như nhau dù giờ đúng hay sai: xoay kim là nháp. */
-  private tickClock(): void {
-    this.queueSfx("clock_tick");
-    this.mood.set("happy", GT016_HAPPY_MS);
+  override isAcceptingInput(): boolean {
+    return !(this.isWon || this.roundClosedOnWrong);
   }
-
-  private wonderAfterMiss(): void {
-    this.mood.set("wonder", GT016_WONDER_MS);
+  override canCommit(): boolean {
+    return this.needsCommit && this.isAcceptingInput();
   }
-
   override takePillNarration(): string | null {
     return this.exploreTracker.takePillNarration();
   }
+  override onScaffoldEscalated(level: HintLevel): void {
+    this.activeHintLevel = level;
+  }
+  override onHintCleared(): void {
+    this.activeHintLevel = 0;
+  }
+  startExplorePhase(): void {
+    this.exploreTracker.reset(true);
+  }
+  getExploreTracker(): MontessoriExploreTracker {
+    return this.exploreTracker;
+  }
+  getControlOfError(): ControlOfErrorDiagnostics | null {
+    return this.exploreTracker.getControlOfErrorDiagnostics();
+  }
+  isMicroSandboxActive(): boolean {
+    return this.exploreTracker.isMicroSandboxActive();
+  }
+  getCurrentTime(): ClockTime {
+    return this.currentTime;
+  }
+  getAngles(): ClockAngles {
+    return timeToAngles(this.currentTime);
+  }
+  getMode(): Mode {
+    return this.content.mode;
+  }
+  getOptions(): C["options"] {
+    return this.resolvedOptions;
+  }
+  getActivityCards(): C["activity_cards"] {
+    return this.resolvedActivityCards;
+  }
+  getDayPeriodLabel(): GT016DayLabel {
+    return resolveDayPeriodLabel(this.currentTime.hour);
+  }
+
+  private finishAttempt(ok: boolean): boolean {
+    if (this.checkWinCondition()) {
+      this.anim.celebrateMs = GT016_CELEB_MS;
+      this.winSession();
+    }
+    return ok;
+  }
+
+  private onWrongAttempt(
+    actualValue: string,
+    expectedValue: string,
+    payload: Record<string, string | boolean>,
+    targetId?: string
+  ): void {
+    this.mood.set("wonder", GT016_WONDER_MS);
+    const curStr = formatClockTime(this.currentTime);
+    const targetStr = formatClockTime(this.content.target_time);
+    this.exploreTracker.recordWrongAttempt({
+      reasonVi: `Đồng hồ chỉ ${curStr}, mục tiêu là ${targetStr}`,
+      targetId,
+      actualValue,
+      expectedValue,
+    });
+    this.recordEvent("control_of_error", {
+      mode: this.content.mode,
+      ...payload,
+      micro_sandbox: this.exploreTracker.isMicroSandboxActive(),
+    });
+    if (this.difficulty.allow_retry === false) {
+      this.roundClosedOnWrong = true;
+    }
+  }
+
+  setPointerOver(xOrPt: number | GT016Point | null, y?: number): void {
+    this.anim.hoveredSlotIndex = this.isAcceptingInput()
+      ? resolveGT016HoverSlot(this.viewInput(), xOrPt, y)
+      : null;
+  }
+
+  clearPointerOver(): void {
+    this.anim.hoveredSlotIndex = null;
+  }
 
   setupEntities(): void {
-    this.currentTime = this.content.initial_time ?? {
-      hour: this.content.target_time.hour,
-      minute: this.content.target_time.minute,
-    };
+    const r = resolveGT016RoundOrder(
+      this.content,
+      this.difficulty,
+      this.layoutSeed
+    );
+    this.currentTime = r.initialTime;
+    this.resolvedOptions = r.options;
+    this.resolvedActivityCards = r.activityCards;
     this.selectedOptionIndex = null;
-    this.wrongChoiceTimerMs = 0;
     this.hasSubmittedTime = false;
+    this.roundClosedOnWrong = false;
+    this.activeHintLevel = 0;
     this.matchedCardIds.clear();
     this.mood.clear();
     this.skyElapsedMs = 0;
     this.isWon = false;
+    this.anim = createGT016AnimState(this.currentTime);
     this.exploreTracker.reset(false);
-
     this.recordEvent("game_started", {
       template_code: "GT-016",
       mode: this.content.mode,
@@ -258,116 +229,50 @@ export class ClockHandsSession extends TemplateGameSession<
     });
   }
 
-  startExplorePhase(): void {
-    this.exploreTracker.reset(true);
-  }
-
-  getExploreTracker(): MontessoriExploreTracker {
-    return this.exploreTracker;
-  }
-
-  getControlOfError(): ControlOfErrorDiagnostics | null {
-    return this.exploreTracker.getControlOfErrorDiagnostics();
-  }
-
-  isMicroSandboxActive(): boolean {
-    return this.exploreTracker.isMicroSandboxActive();
-  }
-
-  getDayPeriodLabel(): "Buổi sáng" | "Buổi trưa" | "Buổi chiều" | "Buổi tối" {
-    const h = this.currentTime.hour;
-    if (h >= 6 && h <= 10) {
-      return "Buổi sáng";
-    }
-    if (h >= 11 && h <= 12) {
-      return "Buổi trưa";
-    }
-    if (h >= 1 && h <= 5) {
-      return "Buổi chiều";
-    }
-    return "Buổi tối";
-  }
-
-  getCurrentTime(): ClockTime {
-    return this.currentTime;
-  }
-
-  getAngles(): ClockAngles {
-    return timeToAngles(this.currentTime);
-  }
-
-  getMode(): GT016Content["mode"] {
-    return this.content.mode;
-  }
-
-  getOptions(): GT016Content["options"] {
-    return this.content.options;
-  }
-
-  getActivityCards(): GT016Content["activity_cards"] {
-    return this.content.activity_cards;
-  }
-
   setHour(hour: number): void {
-    const clampedHour = Math.max(1, Math.min(12, Math.round(hour)));
-    this.currentTime = { ...this.currentTime, hour: clampedHour };
-    this.hasSubmittedTime = false;
-    this.tickClock();
-    this.recordEvent("hand_rotated", {
-      hand: "hour",
-      time: formatClockTime(this.currentTime),
-    });
+    this.currentTime = {
+      ...this.currentTime,
+      hour: Math.max(1, Math.min(12, Math.round(hour))),
+    };
+    this.anim.displayAngles = timeToAngles(this.currentTime);
+    this.onClockAdjusted("hour", false);
   }
 
   setMinute(minute: 0 | 30): void {
     this.currentTime = { ...this.currentTime, minute };
-    this.hasSubmittedTime = false;
-    this.tickClock();
-    this.recordEvent("hand_rotated", {
-      hand: "minute",
-      time: formatClockTime(this.currentTime),
-    });
+    this.anim.displayAngles = timeToAngles(this.currentTime);
+    this.onClockAdjusted("minute", false);
   }
 
   selectOption(index: number): boolean {
-    const opt = this.content.options[index];
+    if (!this.isAcceptingInput()) {
+      return false;
+    }
+    const opt = this.resolvedOptions[index];
     if (!opt) {
       return false;
     }
-
     this.selectedOptionIndex = index;
+    this.activeHintLevel = 0;
+    const chosenStr = formatClockTime(opt);
     if (opt.is_correct) {
-      this.wrongChoiceTimerMs = 0;
+      this.anim.wrongChoiceTimerMs = 0;
       this.exploreTracker.recordCorrectAttempt();
     } else {
-      this.wrongChoiceTimerMs = 400;
-      this.wonderAfterMiss();
-      const chosenStr = formatClockTime(opt);
+      this.anim.wrongChoiceTimerMs = GT016_WRONG_MS;
       const targetStr = formatClockTime(this.content.target_time);
-      this.exploreTracker.recordWrongAttempt({
-        reasonVi: `Đồng hồ chỉ ${formatClockTime(this.currentTime)}, mục tiêu là ${targetStr}`,
-        targetId: `opt-${index}`,
-        actualValue: chosenStr,
-        expectedValue: targetStr,
-      });
-      this.recordEvent("control_of_error", {
-        mode: this.content.mode,
-        chosen_time: chosenStr,
-        target_time: targetStr,
-        micro_sandbox: this.exploreTracker.isMicroSandboxActive(),
-      });
+      this.onWrongAttempt(
+        chosenStr,
+        targetStr,
+        { chosen_time: chosenStr, target_time: targetStr },
+        `opt-${index}`
+      );
     }
-
     this.recordEvent("time_submitted", {
-      time: formatClockTime(opt),
+      time: chosenStr,
       is_correct: opt.is_correct,
     });
-
-    if (this.checkWinCondition()) {
-      this.winSession();
-    }
-
-    return opt.is_correct;
+    return this.finishAttempt(opt.is_correct);
   }
 
   submitTime(): boolean {
@@ -375,73 +280,61 @@ export class ClockHandsSession extends TemplateGameSession<
   }
 
   submitCurrentTime(): boolean {
+    if (!this.isAcceptingInput()) {
+      return false;
+    }
     this.hasSubmittedTime = true;
-    const isCorrect = isSameTime(this.currentTime, this.content.target_time);
-    if (isCorrect) {
+    this.activeHintLevel = 0;
+    const ok = isSameTime(this.currentTime, this.content.target_time);
+    const curStr = formatClockTime(this.currentTime);
+    if (ok) {
+      this.anim.wrongClockTimerMs = 0;
       this.exploreTracker.recordCorrectAttempt();
     } else {
-      this.wonderAfterMiss();
-      const currentStr = formatClockTime(this.currentTime);
+      this.anim.wrongClockTimerMs = GT016_WRONG_MS;
       const targetStr = formatClockTime(this.content.target_time);
-      this.exploreTracker.recordWrongAttempt({
-        reasonVi: `Đồng hồ chỉ ${currentStr}, mục tiêu là ${targetStr}`,
-        actualValue: currentStr,
-        expectedValue: targetStr,
-      });
-      this.recordEvent("control_of_error", {
-        mode: this.content.mode,
-        current_time: currentStr,
+      this.onWrongAttempt(curStr, targetStr, {
+        current_time: curStr,
         target_time: targetStr,
-        micro_sandbox: this.exploreTracker.isMicroSandboxActive(),
       });
     }
-    this.recordEvent("time_submitted", {
-      time: formatClockTime(this.currentTime),
-      is_correct: isCorrect,
-    });
-    if (this.checkWinCondition()) {
-      this.winSession();
+    this.recordEvent("time_submitted", { time: curStr, is_correct: ok });
+    if (this.roundClosedOnWrong) {
+      this.hasSubmittedTime = false;
+      this.currentTime = { ...this.content.target_time };
+      return false;
     }
-    return isCorrect;
+    return this.finishAttempt(ok);
   }
 
   matchCard(cardId: string): boolean {
-    const card = this.content.activity_cards.find((c) => c.card_id === cardId);
+    if (!this.isAcceptingInput()) {
+      return false;
+    }
+    const card = this.resolvedActivityCards.find((c) => c.card_id === cardId);
     if (!card) {
       return false;
     }
-
-    if (
-      isSameTime(this.currentTime, { hour: card.hour, minute: card.minute })
-    ) {
+    this.activeHintLevel = 0;
+    const cardTime: ClockTime = { hour: card.hour, minute: card.minute };
+    if (isSameTime(this.currentTime, cardTime)) {
       this.matchedCardIds.add(cardId);
+      this.anim.wrongCardId = null;
+      this.anim.wrongChoiceTimerMs = 0;
       this.exploreTracker.recordCorrectAttempt();
-      this.recordEvent("time_submitted", {
-        card_id: cardId,
-        is_correct: true,
-      });
-      if (this.checkWinCondition()) {
-        this.winSession();
-      }
-      return true;
+      this.recordEvent("time_submitted", { card_id: cardId, is_correct: true });
+      return this.finishAttempt(true);
     }
-
-    this.wonderAfterMiss();
-    const currentStr = formatClockTime(this.currentTime);
-    const cardStr = formatClockTime({ hour: card.hour, minute: card.minute });
-    this.exploreTracker.recordWrongAttempt({
-      reasonVi: `Đồng hồ chỉ ${currentStr}, mục tiêu là ${formatClockTime(this.content.target_time)}`,
-      targetId: cardId,
-      actualValue: cardStr,
-      expectedValue: currentStr,
-    });
-    this.recordEvent("control_of_error", {
-      mode: this.content.mode,
-      card_id: cardId,
-      card_time: cardStr,
-      expected_time: currentStr,
-      micro_sandbox: this.exploreTracker.isMicroSandboxActive(),
-    });
+    this.anim.wrongCardId = cardId;
+    this.anim.wrongChoiceTimerMs = GT016_WRONG_MS;
+    const curStr = formatClockTime(this.currentTime);
+    const cardStr = formatClockTime(cardTime);
+    this.onWrongAttempt(
+      cardStr,
+      curStr,
+      { card_id: cardId, card_time: cardStr, expected_time: curStr },
+      cardId
+    );
     return false;
   }
 
@@ -450,376 +343,173 @@ export class ClockHandsSession extends TemplateGameSession<
   }
 
   applyTimeDelta(delta: number): void {
+    if (!this.isAcceptingInput()) {
+      return;
+    }
     this.currentTime = stepClockTime(
       this.currentTime,
       delta,
       this.difficulty.minute_step
     );
+    this.onClockAdjusted("minute", true);
+  }
+
+  private onClockAdjusted(hand: "hour" | "minute", explore: boolean): void {
     this.hasSubmittedTime = false;
-    this.tickClock();
-    this.exploreTracker.recordExploreAction("clock_adjusted");
+    this.activeHintLevel = 0;
+    this.queueSfx("clock_tick");
+    this.mood.set("happy", GT016_HAPPY_MS);
+    if (explore) {
+      this.anim.tickPulseMs = GT016_TICK_MS;
+      this.exploreTracker.recordExploreAction("clock_adjusted");
+    }
     this.recordEvent("hand_rotated", {
-      hand: "minute",
+      hand,
       time: formatClockTime(this.currentTime),
     });
   }
 
   override getHintTargetIndex(): number | null {
-    if (this.content.mode === "read") {
-      const idx = this.content.options.findIndex((o) => o.is_correct);
-      return idx >= 0 ? idx : null;
-    }
-    if (this.content.mode === "match") {
-      const idx = this.content.activity_cards.findIndex((c) =>
-        isSameTime(this.currentTime, { hour: c.hour, minute: c.minute })
-      );
-      return idx >= 0 ? idx : null;
-    }
-    return 0;
+    return this.isAcceptingInput()
+      ? resolveGT016HintTargetIndex(this.viewInput())
+      : null;
   }
 
-  /** Mode set: kim đã đúng giờ thì bước kế là bấm Xong, không phải chỉnh kim (`BR-PSZ-05`). */
+  override getHintDestinationIndex(): number | null {
+    const isSet = this.content.mode === "set" && this.isAcceptingInput();
+    return isSet && !isSameTime(this.currentTime, this.content.target_time)
+      ? 0
+      : null;
+  }
+
+  override getHintDestinationPoint(): GT016Point | null {
+    return this.getHintDestinationIndex() === null
+      ? null
+      : resolveGT016HintDestPoint(this.viewInput());
+  }
+
   override getHintTarget(): HintTarget | null {
-    if (
-      this.content.mode === "set" &&
-      isSameTime(this.currentTime, this.content.target_time)
-    ) {
-      return { kind: "action" };
-    }
-    return super.getHintTarget();
+    return this.isAcceptingInput()
+      ? resolveGT016BaseHintTarget(this.viewInput(), super.getHintTarget())
+      : null;
+  }
+
+  override getHintTargetForLevel(level: HintLevel): HintTarget | null {
+    return this.isAcceptingInput()
+      ? resolveGT016HintLevelTarget(
+          level,
+          this.viewInput(),
+          this.getHintTarget()
+        )
+      : null;
   }
 
   override commit(action: GameAction): void {
+    if (!this.isAcceptingInput()) {
+      return;
+    }
     if (action.type === "select_option" && typeof action.data === "number") {
       this.selectOption(action.data);
-      return;
-    }
-    if (action.type === "match_card" && typeof action.data === "string") {
+    } else if (
+      action.type === "match_card" &&
+      typeof action.data === "string"
+    ) {
       this.matchCard(action.data);
-      return;
-    }
-    if (action.type === "adjust_time") {
-      const delta =
-        typeof action.data === "object" &&
-        action.data !== null &&
-        "delta" in action.data
-          ? Number(Reflect.get(action.data, "delta"))
-          : 0;
-      this.applyTimeDelta(delta);
-      return;
-    }
-    if (action.type === "submit_time") {
+    } else if (action.type === "set_clock_time") {
+      const p = extractSetClockTimeData(action.data);
+      if (p) {
+        this.currentTime = { hour: p.hour, minute: p.minute };
+        this.onClockAdjusted(p.hand, true);
+      }
+    } else if (action.type === "adjust_time") {
+      this.applyTimeDelta(extractAdjustDelta(action.data));
+    } else if (action.type === "submit_time") {
       this.submitCurrentTime();
     }
   }
 
-  override toAction(gesture: Gesture): GameAction | null {
-    if (this.content.mode === "read") {
-      return toReadAction(gesture, this.slots, this.content.options.length);
-    }
-    if (this.content.mode === "match") {
-      return toMatchAction(gesture, this.slots, this.content.activity_cards);
-    }
-    if (this.content.mode === "set") {
-      return toSetAction(gesture, this.slots);
-    }
-    return null;
+  override toAction(g: Gesture): GameAction | null {
+    return this.isAcceptingInput()
+      ? resolveGT016ToAction(g, this.viewInput())
+      : null;
   }
 
-  override getView(): EngineView {
-    const entities: ViewEntity[] = [];
-
-    const isSetMode = this.content.mode === "set";
-    const faceSlot = isSetMode ? this.slots[0] : undefined;
-    const face = this.stageRect
-      ? splitHeroStage(this.stageRect, this.choiceCount() > 0, {
-          count: this.choiceCount(),
-          touchFloor: this.currentTouchFloor,
-        }).hero
-      : undefined;
-
-    entities.push({
-      id: "clock-face",
-      slotIndex: isSetMode ? 0 : -1,
-      role: "neutral",
-      state: "idle",
-      x: faceSlot?.x ?? (face ? face.x + face.w / 2 : 480),
-      y: faceSlot?.y ?? (face ? face.y + face.h / 2 : 180),
-      w: faceSlot?.w ?? face?.w ?? 240,
-      h: faceSlot?.h ?? face?.h ?? 240,
-      label: formatClockTime(this.currentTime),
-      spokenLabel: formatSpokenClockTime(this.currentTime),
-    });
-
-    if (this.content.mode === "match") {
-      (this.content.activity_cards ?? []).forEach((card, i) => {
-        const slot = this.slots[i];
-        if (slot) {
-          const isMatched = this.matchedCardIds.has(card.card_id);
-          const cardTime: ClockTime = { hour: card.hour, minute: card.minute };
-          const assetLabels = resolveAssetLabels(card.asset);
-          const timeSpoken = formatSpokenClockTime(cardTime);
-          entities.push({
-            id: card.card_id,
-            slotIndex: i,
-            role: "target",
-            state: isMatched ? "correct" : "idle",
-            x: slot.x,
-            y: slot.y,
-            w: slot.w,
-            h: slot.h,
-            ...assetLabels,
-            label: formatClockTime(cardTime),
-            spokenLabel: assetLabels.spokenLabel
-              ? `${assetLabels.spokenLabel}, ${timeSpoken}`
-              : timeSpoken,
-          });
-        }
-      });
-    } else if (this.content.mode === "read") {
-      (this.content.options ?? []).forEach((opt, i) => {
-        const slot = this.slots[i];
-        if (slot) {
-          const chosen = this.selectedOptionIndex === i;
-          let state: EntityVisual = "idle";
-          if (chosen) {
-            state = opt.is_correct ? "correct" : "incorrect";
-          }
-          const optTime: ClockTime = { hour: opt.hour, minute: opt.minute };
-          entities.push({
-            id: `opt-${i}`,
-            slotIndex: i,
-            role: "source",
-            state,
-            x: slot.x,
-            y: slot.y,
-            w: slot.w,
-            h: slot.h,
-            label: formatClockTime(optTime),
-            spokenLabel: formatSpokenClockTime(optTime),
-          });
-        }
-      });
-    }
-
+  private viewInput(): GT016ViewInput {
     return {
-      activePrompt: this.content.prompt,
-      entities,
+      content: this.content,
+      difficulty: this.difficulty,
+      currentTime: this.currentTime,
+      options: this.resolvedOptions,
+      activityCards: this.resolvedActivityCards,
+      slots: this.slots,
+      stageRect: this.stageRect,
+      logicSpace: this.logicSpace,
+      touchFloor: this.currentTouchFloor,
+      selectedOptionIndex: this.selectedOptionIndex,
+      matchedCardIds: this.matchedCardIds,
+      anim: this.anim,
+      roundClosedOnWrong: this.roundClosedOnWrong,
+      hasSubmittedTime: this.hasSubmittedTime,
+      activeHintLevel: this.activeHintLevel,
+      isWon: this.isWon,
+      skyProgress: this.skyElapsedMs / GT016_SKY_RISE_MS,
+      degradation: this.degradation,
+      exploreTracker: this.exploreTracker,
     };
   }
 
+  override getView(): EngineView {
+    return buildGT016View(this.viewInput());
+  }
+
   validateAction(action: GameAction): ActionResult {
-    if (action.type === "adjust_time") {
-      return ACTION_CORRECT;
-    }
-    if (action.type === "select_option") {
-      return validateSelectOption(action.data, this.content.options);
-    }
-    if (action.type === "match_card") {
-      return validateMatchCard(
-        action.data,
-        this.content.activity_cards,
-        this.currentTime
-      );
-    }
-    if (action.type === "submit_time") {
-      return isSameTime(this.currentTime, this.content.target_time)
-        ? ACTION_CORRECT
-        : ACTION_RETRY;
-    }
-    return ACTION_IGNORED;
+    return this.isAcceptingInput()
+      ? validateGT016Action(action, this.viewInput())
+      : ACTION_IGNORED;
   }
 
   override checkWinCondition(): boolean {
-    if (this.content.mode === "read") {
-      if (this.selectedOptionIndex === null) {
-        return false;
-      }
-      const opt = this.content.options[this.selectedOptionIndex];
-      return opt?.is_correct === true;
-    }
-    if (this.content.mode === "set") {
-      return (
-        this.hasSubmittedTime &&
-        isSameTime(this.currentTime, this.content.target_time)
-      );
-    }
-    if (this.content.mode === "match") {
-      const correctCards = this.content.activity_cards.filter((c) =>
-        isSameTime(this.currentTime, { hour: c.hour, minute: c.minute })
-      );
-      return (
-        correctCards.length > 0 &&
-        correctCards.every((c) => this.matchedCardIds.has(c.card_id))
-      );
-    }
-    return false;
+    return checkGT016Win(this.viewInput());
   }
 
   update(deltaMs: number): void {
     this.skyElapsedMs += deltaMs;
     this.mood.tick(deltaMs);
     this.exploreTracker.tick(deltaMs);
-    if (this.wrongChoiceTimerMs > 0) {
-      this.wrongChoiceTimerMs = Math.max(0, this.wrongChoiceTimerMs - deltaMs);
-      if (this.wrongChoiceTimerMs === 0) {
-        this.selectedOptionIndex = null;
-      }
+    if (
+      stepGT016AnimState(this.anim, this.currentTime, deltaMs) &&
+      !this.roundClosedOnWrong
+    ) {
+      this.selectedOptionIndex = null;
     }
   }
 
   override destroy(): void {
     super.destroy();
     this.selectedOptionIndex = null;
-    this.wrongChoiceTimerMs = 0;
     this.matchedCardIds.clear();
   }
 
-  /** Số ô lựa chọn (phương án hoặc thẻ hoạt động) của vòng — 0 ở `mode = set`. */
-  private choiceCount(): number {
-    if (this.content.mode === "set") {
-      return 0;
-    }
-    return this.content.mode === "read"
-      ? (this.content.options?.length ?? 0)
-      : (this.content.activity_cards?.length ?? 0);
-  }
-
-  private currentTouchFloor = 64;
-
-  /** Đồng hồ khung của bầu trời: `update` cộng dồn, `render` chỉ đọc, không `Date.now` (`BR-E016-06`). */
-  private skyElapsedMs = 0;
-
-  private computeStageSlots(stage: ZoneRect, ageBand: AgeBand): Slot[] {
-    const count = this.choiceCount();
-    const touchFloor = resolveTouchFloor(ageBand, this.cssPerLogic);
-    this.currentTouchFloor = touchFloor;
-    const { hero, rest } = splitHeroStage(stage, count > 0, {
-      count,
-      touchFloor,
-    });
-    if (count === 0) {
-      return [heroSlot(hero, 0)];
-    }
-    return computeStageCellSlots({
-      count,
-      stage: rest,
-      touchFloor,
-      maxCell: { w: HERO_OPTION_CELL_MAX_PX, h: HERO_OPTION_CELL_MAX_PX },
-      role: this.content.mode === "read" ? "source" : "target",
-      hasLabels: false,
-    });
-  }
-
-  /** Hộp mặt đồng hồ: vùng chính của stage, hoặc 58% trên của cảnh khi chưa có khung. */
-  private faceBox(rs: RenderSystem): SceneBox {
-    if (this.stageRect) {
-      const count = this.choiceCount();
-      const { hero } = splitHeroStage(this.stageRect, count > 0, {
-        count,
-        touchFloor: this.currentTouchFloor,
-      });
-      return squareBox(insetBox(hero, FACE_INSET));
-    }
-    const scene = insetBox(sceneBox(rs), 0.08);
-    return squareBox({
-      x: scene.x,
-      y: scene.y,
-      w: scene.w,
-      h: scene.h * 0.58,
-    });
-  }
-
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
-    if (this.stageRect) {
-      return this.computeStageSlots(this.stageRect, ageBand);
-    }
-    const layoutFn = resolveLayout("grid");
-    // `options` và `activity_cards` khai `.default([])` trong contract, nhưng
-    // session nhận `content_pack` **thô** nên default không bao giờ tới nơi:
-    // level ở `mode: "read"` không có `activity_cards`, và đọc thẳng `.length`
-    // ném "Cannot read properties of undefined". Bắt được khi chụp thật
-    // `GL-C1-ADD-BAL-0001` trên cả ba khung nhìn, 2026-09-01.
-    return layoutFn({
-      slotCount: Math.max(
-        this.content.options?.length ?? 0,
-        this.content.activity_cards?.length ?? 0,
-        1
-      ),
+    const res = computeGT016SlotsForBand(
+      this.viewInput(),
       ageBand,
-      logic: this.logicSpace,
-    });
+      this.cssPerLogic ?? 1
+    );
+    this.currentTouchFloor = res.touchFloor;
+    return res.slots;
   }
 
-  render(
-    ctx: CanvasRenderingContext2D,
-    rs: RenderSystem,
-    _timeMs: number
-  ): void {
+  render(ctx: CanvasRenderingContext2D, rs: RS, _timeMs: number): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    // `time_of_day` chỉ có nghĩa ở `set`: ở `read`/`match` bầu trời gợi đáp án
-    // nên bỏ qua dù nội dung thô có mang trường (`BR-E016-06`). Vẽ gọn trong
-    // sân khấu, không tràn ra các vùng khác của khung (`BR-PSZ-01`).
-    const timeOfDay = this.content.time_of_day;
-    if (timeOfDay && this.content.mode === "set") {
-      drawTimeOfDaySky(
-        ctx,
-        this.stageRect ?? sceneBox(rs),
-        timeOfDay,
-        rs.reducedMotion ? 1 : this.skyElapsedMs / GT016_SKY_RISE_MS
-      );
+    const sb = this.stageRect ?? sceneBox(rs);
+    const draw = (): void =>
+      renderGT016StageContent(ctx, rs, sb, this.viewInput());
+    if (this.stageRect) {
+      drawClippedToZone(ctx, this.stageRect, draw);
+    } else {
+      draw();
     }
-    const faceBox = this.faceBox(rs);
-    drawClockFace(ctx, faceBox, this.currentTime);
-
-    if (this.content.mode === "match") {
-      (this.content.activity_cards ?? []).forEach((card, i) => {
-        const slot = this.slots[i];
-        if (!slot) {
-          return;
-        }
-        drawSlotItem(ctx, rs, slot, {
-          id: card.card_id,
-          asset: card.asset,
-          label: formatClockTime({ hour: card.hour, minute: card.minute }),
-          state: this.matchedCardIds.has(card.card_id) ? "correct" : "idle",
-        });
-      });
-    } else if (this.content.mode === "read") {
-      (this.content.options ?? []).forEach((opt, i) => {
-        const slot = this.slots[i];
-        if (!slot) {
-          return;
-        }
-        const chosen = this.selectedOptionIndex === i;
-        let state: "correct" | "wrong" | "idle" = "idle";
-        if (chosen) {
-          state = opt.is_correct ? "correct" : "wrong";
-        }
-        drawSlotItem(ctx, rs, slot, {
-          id: `opt-${i}`,
-          text: formatClockTime({ hour: opt.hour, minute: opt.minute }),
-          state,
-        });
-        if (chosen && state === "wrong") {
-          rs.drawRetryRing(
-            ctx,
-            slot.x,
-            slot.y,
-            (slot.w ?? 64) / 2,
-            1 - this.wrongChoiceTimerMs / 400
-          );
-        }
-      });
-    }
-
-    const box = this.stageRect ?? sceneBox(rs);
-    drawMontessoriControlOfErrorPill(
-      ctx,
-      box,
-      this.exploreTracker,
-      rs.viewport?.scale
-    );
   }
 }
 
