@@ -5,33 +5,30 @@ import {
   ACTION_RETRY,
   type ActionResult,
   type GameAction,
-  type GameActionValue,
+  type HintLevel,
+  type HintTarget,
   TemplateGameSession,
 } from "#src/game-session";
-import type {
-  EngineView,
-  EntityVisual,
-  Gesture,
-  ViewEntity,
-} from "#src/interaction";
-import { resolveAssetLabels } from "#src/labels/spoken-keyword";
+import type { EngineView, Gesture } from "#src/interaction";
 import { resolveTouchFloor } from "#src/layout/constants";
-import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
 import { computeStageCellSlots } from "#src/layout/stage-targets";
+import type { ZoneRect } from "#src/layout/stage-zones";
 import { computeTraySourceSlots, pickTrayZones } from "#src/layout/tray-layout";
 import type { Slot } from "#src/layout/types";
+import {
+  drawGT015Board,
+  drawGT015PaletteItem,
+  type GT015RenderContext,
+} from "#src/render/gt-015-shapes.js";
 import {
   boxFromSlots,
   type CompleteLines,
   completeDistinctLines,
-  drawEmptyTargetSlot,
   drawMatchGlow,
   drawMontessoriControlOfErrorPill,
   drawSceneBackground,
-  drawSlotItem,
   drawStoryCharacterInStage,
-  drawSudokuBoardFrame,
   drawWoodenTokenDock,
   matchGlowAlpha,
   sceneBox,
@@ -41,8 +38,6 @@ import {
   type ConstraintViolation,
   findConstraintViolations,
   isSudokuCompleteAndValid,
-  type SudokuCell,
-  type SudokuGrid,
 } from "#src/systems/constraint-system";
 import type { DegradationState } from "#src/systems/degradation";
 import {
@@ -52,428 +47,288 @@ import {
 import { MoodPulse } from "#src/systems/mood-pulse";
 import type { RenderSystem } from "#src/systems/render-system";
 import { WrongFlash } from "#src/systems/wrong-flash";
+import {
+  type GT015Clock,
+  type GT015HintInput,
+  type GT015Symbol,
+  L,
+  type SolMap,
+  type SudokuCellState,
+} from "./layout.js";
 import type { GT015Content, GT015Difficulty } from "./template.js";
 
-/** Cạnh ô lưới lớn nhất trên sân khấu — cùng cỡ ô của `matrix-slot-grid`. */
-const GRID_CELL_MAX_PX = 96;
+const CELL_MAX = { w: 96, h: 96 } as const;
+type PtArg = { readonly x: number; readonly y: number } | number;
+type Ctx = CanvasRenderingContext2D;
+type Sys = RenderSystem;
+type V = GT015RenderContext & {
+  readonly clock: GT015Clock;
+  readonly content: GT015Content;
+};
 
-interface SudokuCellState {
-  readonly row: number;
-  readonly col: number;
-  readonly value: string | null;
-  readonly isInitial: boolean;
-}
-
-function extractFillCellData(
-  data: GameActionValue
-): { row: number; col: number; symbol_id: string } | null {
-  if (
-    typeof data === "object" &&
-    data !== null &&
-    "row" in data &&
-    "col" in data &&
-    "symbol_id" in data
-  ) {
-    const r = Reflect.get(data, "row");
-    const c = Reflect.get(data, "col");
-    const s = Reflect.get(data, "symbol_id");
-    if (
-      typeof r === "number" &&
-      typeof c === "number" &&
-      typeof s === "string"
-    ) {
-      return { row: r, col: c, symbol_id: s };
-    }
-  }
-  return null;
-}
-
-/** Lưới tràn sân khấu thì hàng cuối chồng lên khay; chọn theo tâm gần nhất. */
-function findHitPaletteIndex(
-  slots: readonly Slot[],
-  cellCount: number,
-  symbolCount: number,
-  x: number,
-  y: number
-): number {
-  return findHitSlotIndex(
-    slots.slice(cellCount, cellCount + symbolCount),
-    x,
-    y,
-    "circle",
-    TAP_TOLERANCE_PX
-  );
-}
-
-function findHitCellIndex(
-  slots: readonly Slot[],
-  cellCount: number,
-  x: number,
-  y: number
-): number {
-  return findHitSlotIndex(
-    slots.slice(0, cellCount),
-    x,
-    y,
-    "square",
-    TAP_TOLERANCE_PX
-  );
-}
-
-function findHitCellCoords(
-  slots: readonly Slot[],
-  size: number,
-  x: number,
-  y: number
-): { row: number; col: number } | null {
-  const index = findHitCellIndex(slots, size * size, x, y);
-  return index >= 0
-    ? { row: Math.floor(index / size), col: index % size }
-    : null;
-}
-
-function resolveTapSlotIndex(
-  slots: readonly Slot[],
-  cellCount: number,
-  symbolCount: number,
-  x: number,
-  y: number
-): number {
-  const cellIdx = findHitCellIndex(slots, cellCount, x, y);
-  const palOffset = findHitPaletteIndex(slots, cellCount, symbolCount, x, y);
-  const palIdx = palOffset >= 0 ? cellCount + palOffset : -1;
-  if (cellIdx >= 0 && palIdx >= 0) {
-    const cellSlot = slots[cellIdx];
-    const palSlot = slots[palIdx];
-    if (cellSlot && palSlot) {
-      const cellDist = Math.hypot(x - cellSlot.x, y - cellSlot.y);
-      const palDist = Math.hypot(x - palSlot.x, y - palSlot.y);
-      return palDist < cellDist ? palIdx : cellIdx;
-    }
-  }
-  return palIdx >= 0 ? palIdx : cellIdx;
-}
-
-function resolveDropSymbolId(
-  gesture: Extract<Gesture, { type: "drop" }>,
-  selectedSymbolId: string | null,
-  slots: readonly Slot[],
-  cellCount: number,
-  symbols: readonly { symbol_id: string }[]
-): string | null {
-  if (selectedSymbolId) {
-    return selectedSymbolId;
-  }
-  const paletteIndex = findHitPaletteIndex(
-    slots,
-    cellCount,
-    symbols.length,
-    gesture.fromX,
-    gesture.fromY
-  );
-  if (paletteIndex >= 0) {
-    return symbols[paletteIndex]?.symbol_id ?? null;
-  }
-  return null;
-}
-
-function resolveCellVisualState(
-  isWrong: boolean,
-  hasValue: boolean
-): EntityVisual {
-  if (isWrong) {
-    return "incorrect";
-  }
-  if (hasValue) {
-    return "correct";
-  }
-  return "idle";
-}
-
-/** Khung chuyện đọc một lần ở vòng đầu (`BR-E015-07`, `BR-FBK-16`). */
 export const GT015_STORY_LINE =
   "Hươu Cao Cổ xếp chỗ ngồi cho các bạn thú, mỗi hàng và mỗi cột không có hai bạn giống nhau. Bé giúp Hươu nhé!";
-
-/** Mascot reo ngắn sau chỗ ngồi hợp lệ (`BR-E015-07`). */
 export const GT015_CHEER_MS = 1000;
-/** Mascot nghiêng đầu sau chỗ ngồi bị trùng. */
 export const GT015_WONDER_MS = 1500;
+
+function drawCells(ctx: Ctx, rs: Sys, v: V): void {
+  const [n, ph] = [v.content.grid_size, v.clock.elapsedMs / 600];
+  for (let i = 0; i < n * n; i++) {
+    const s0 = v.slots[i];
+    if (s0) {
+      L.drawCellAt(ctx, rs, v, i, s0);
+      if (v.clock.scaffoldHintLevel === 1 && v.hintIdx === i) {
+        const hr = Math.min(s0.w, s0.h) * 0.45;
+        rs.drawScaffoldingHighlight(ctx, s0.x, s0.y, hr, ph);
+      }
+    }
+  }
+}
 
 export class SudokuMiniSession extends TemplateGameSession<
   GT015Content,
   GT015Difficulty
 > {
   degradation: DegradationState | null = null;
-
-  private readonly cellStates: Map<string, SudokuCellState> = new Map();
+  private readonly cellStates = new Map<string, SudokuCellState>();
   private readonly exploreTracker = new MontessoriExploreTracker({
     milestoneTarget: 2,
   });
-
-  private symbolById = new Map<string, GT015Content["symbols"][number]>();
+  private displaySymbols: GT015Symbol[] = [];
+  private solution: SolMap = null;
   private selectedSymbolId: string | null = null;
   private activeViolations: readonly ConstraintViolation[] = [];
+  private isRoundClosed = false;
+  private viewCache: EngineView | null = null;
   private readonly wrongFlash = new WrongFlash();
   private readonly mood = new MoodPulse();
-  private lastFrameMs = 0;
 
-  /** Ký hiệu nằm trong khay, lưới đứng trên sân khấu (`BR-PSZ-01`). */
   override readonly needsTray = true;
+  override readonly usesPromptZone = true;
 
-  /** Số vật nguồn trong khay của vòng — shell đo chiều cao khay (`BR-PSZ-13`). */
   override get trayItemCount(): number {
     return this.content.symbols.length;
   }
-
-  /** Lưới `grid_size` hàng đứng trên sân khấu, không thu dưới sàn chạm. */
   override get stageRowCount(): number {
     return this.content.grid_size;
   }
-  override readonly usesPromptZone = true;
-
   override takePillNarration(): string | null {
     return this.exploreTracker.takePillNarration();
   }
 
   setupEntities(): void {
+    const c = this.content;
+    const n = c.grid_size;
     this.exploreTracker.reset(false);
     this.cellStates.clear();
-    this.symbolById = new Map(
-      this.content.symbols.map((s) => [s.symbol_id, s])
-    );
+    this.displaySymbols = L.dispSyms(c.symbols, this.layoutSeed);
+    this.solution = L.solveGivens(c);
     this.activeViolations = [];
     this.selectedSymbolId = null;
     this.wrongFlash.clear();
     this.mood.clear();
-    this.lastFrameMs = 0;
     this.isWon = false;
-
-    for (const c of this.content.cells) {
-      const key = `${c.row},${c.col}`;
-      this.cellStates.set(key, {
-        row: c.row,
-        col: c.col,
-        value: c.symbol_id,
-        isInitial: c.symbol_id !== null,
-      });
+    this.isRoundClosed = false;
+    this.viewCache = null;
+    L.resetClk(this);
+    const givens = new Map(c.cells.map((x) => [`${x.row},${x.col}`, x]));
+    for (let i = 0; i < n * n; i++) {
+      const [row, col] = [Math.floor(i / n), i % n];
+      const value = givens.get(`${row},${col}`)?.symbol_id ?? null;
+      const isInitial = value !== null;
+      this.cellStates.set(`${row},${col}`, { row, col, value, isInitial });
     }
-
-    this.recordEvent("game_started", {
-      template_code: "GT-015",
-      grid_size: this.content.grid_size,
-    });
+    const g = L.gridOf(c, this.cellStates);
+    this.activeViolations = findConstraintViolations(g);
+    this.recordEvent("game_started", { template_code: "GT-015", grid_size: n });
   }
 
+  override isAcceptingInput(): boolean {
+    return super.isAcceptingInput() && !this.isWon && !this.isRoundClosed;
+  }
+  override dispatch(gesture: Gesture): ActionResult | undefined {
+    return this.isAcceptingInput() ? super.dispatch(gesture) : ACTION_IGNORED;
+  }
   startExplorePhase(): void {
     this.exploreTracker.reset(true);
   }
-
   getExploreTracker(): MontessoriExploreTracker {
     return this.exploreTracker;
   }
-
   getControlOfError(): ControlOfErrorDiagnostics | null {
     return this.exploreTracker.getControlOfErrorDiagnostics();
   }
-
   isMicroSandboxActive(): boolean {
     return this.exploreTracker.isMicroSandboxActive();
   }
-
   getGridSize(): number {
     return this.content.grid_size;
   }
-
-  getSymbols(): GT015Content["symbols"] {
-    return this.content.symbols;
+  getSymbols(): readonly GT015Symbol[] {
+    return this.displaySymbols.length
+      ? this.displaySymbols
+      : this.content.symbols;
   }
-
   getCellState(row: number, col: number): SudokuCellState | undefined {
     return this.cellStates.get(`${row},${col}`);
   }
-
   getAllCellStates(): readonly SudokuCellState[] {
-    return Array.from(this.cellStates.values());
+    return [...this.cellStates.values()];
   }
-
+  clearCell(row: number, col: number): boolean {
+    return this.fillCell(row, col, null);
+  }
   getSelectedSymbolId(): string | null {
     return this.selectedSymbolId;
   }
-
-  selectSymbol(symbolId: string | null): void {
-    this.selectedSymbolId = symbolId;
-    this.exploreTracker.recordExploreAction("symbol_selected");
+  getStagedItemId(): string | null {
+    return this.selectedSymbolId;
   }
-
+  isRoundClosedState(): boolean {
+    return this.isRoundClosed;
+  }
+  getGhostSolution(): SolMap {
+    return this.solution;
+  }
+  selectSymbol(symbolId: string | null): void {
+    if (this.isAcceptingInput()) {
+      this.selectedSymbolId = symbolId;
+      this.viewCache = null;
+      this.exploreTracker.recordExploreAction("symbol_selected");
+    }
+  }
   getViolations(): readonly ConstraintViolation[] {
     return this.activeViolations;
   }
-
   isConflicted(row: number, col: number): boolean {
     return this.activeViolations.some((v) => v.row === row && v.col === col);
   }
 
+  private onFilledSymbol(row: number, col: number, symId: string): void {
+    const clk = L.getClk(this);
+    clk.stepPopMap.set(`${row},${col}`, clk.elapsedMs);
+    const bad = this.isConflicted(row, col);
+    const ev = { row, col, symbol_id: symId };
+    this.recordEvent("cell_filled", { ...ev, is_valid: !bad });
+    if (!bad) {
+      this.wrongFlash.clear();
+      clk.scaffoldHintLevel = 0;
+      this.queueSfx("seat_pat");
+      this.mood.set("cheer", GT015_CHEER_MS);
+      this.exploreTracker.recordExploreAction("cell_filled");
+      return;
+    }
+    this.mood.set("wonder", GT015_WONDER_MS);
+    this.wrongFlash.trigger(clk.elapsedMs);
+    this.recordEvent("constraint_violated", ev);
+    const box = this.activeViolations.some(
+      (v) => v.row === row && v.col === col && v.kind === "box"
+    );
+    const pfx = box
+      ? "Trùng hình trong vùng 2×2, hàng"
+      : "Trùng hình trên hàng";
+    const reasonVi = `${pfx} ${row + 1} hoặc cột ${col + 1}`;
+    const diag = { reasonVi, targetId: `${row}:${col}`, actualValue: symId };
+    this.exploreTracker.recordWrongAttempt(diag);
+    const ms = this.exploreTracker.isMicroSandboxActive();
+    this.recordEvent("control_of_error", { ...ev, micro_sandbox: ms });
+    if (!this.difficulty.allow_retry) {
+      this.isRoundClosed = true;
+      this.selectedSymbolId = null;
+      clk.selectedCellIndex = null;
+      this.completeSession();
+    }
+  }
+
   fillCell(row: number, col: number, symbolId: string | null): boolean {
+    if (!this.isAcceptingInput()) {
+      return false;
+    }
     const key = `${row},${col}`;
-    const state = this.cellStates.get(key);
-    if (!state) {
+    const st = this.cellStates.get(key);
+    const clk = L.getClk(this);
+    if (!st || st.isInitial) {
+      if (st?.isInitial) {
+        clk.lockedShakeMap.set(key, clk.elapsedMs);
+      }
       return false;
     }
-
-    if (state.isInitial) {
+    const known = this.content.symbols.some((s) => s.symbol_id === symbolId);
+    if (symbolId !== null && !known) {
       return false;
     }
-
-    this.cellStates.set(key, {
-      ...state,
-      value: symbolId,
-    });
-
-    const grid = this.getCurrentGrid();
-    this.activeViolations = findConstraintViolations(grid);
-
+    this.cellStates.set(key, { ...st, value: symbolId });
+    this.viewCache = null;
+    const g = L.gridOf(this.content, this.cellStates);
+    this.activeViolations = findConstraintViolations(g);
     if (symbolId !== null) {
-      const hasConflict = this.isConflicted(row, col);
-      // Sai là quan hệ trùng hàng/cột/vùng của chính ô vừa đặt — khớp
-      // `validateAction`; ô khác đang sai không làm nước đi này thành sai.
-      const isWrongPlacement = hasConflict;
-      this.recordEvent("cell_filled", {
-        row,
-        col,
-        symbol_id: symbolId,
-        is_valid: !hasConflict,
-      });
-
-      if (hasConflict) {
-        this.mood.set("wonder", GT015_WONDER_MS);
-        this.wrongFlash.trigger(this.lastFrameMs);
-        this.recordEvent("constraint_violated", {
-          row,
-          col,
-          symbol_id: symbolId,
-        });
+      this.onFilledSymbol(row, col, symbolId);
+      if (this.isRoundClosed) {
+        return true;
       }
-
-      if (!hasConflict) {
-        this.queueSfx("seat_pat");
-        this.mood.set("cheer", GT015_CHEER_MS);
-      }
-
-      if (isWrongPlacement) {
-        const hasBoxViolation = this.activeViolations.some(
-          (v) => v.row === row && v.col === col && v.kind === "box"
-        );
-        const reasonVi = hasBoxViolation
-          ? `Trùng hình trong vùng 2×2, hàng ${row + 1} hoặc cột ${col + 1}`
-          : `Trùng hình trên hàng ${row + 1} hoặc cột ${col + 1}`;
-        this.exploreTracker.recordWrongAttempt({
-          reasonVi,
-          targetId: `${row}:${col}`,
-          actualValue: symbolId,
-        });
-        this.recordEvent("control_of_error", {
-          row,
-          col,
-          symbol_id: symbolId,
-          micro_sandbox: this.exploreTracker.isMicroSandboxActive(),
-        });
-      } else {
-        this.exploreTracker.recordExploreAction("cell_filled");
-      }
+    } else if (this.activeViolations.length === 0) {
+      this.wrongFlash.clear();
     }
-
     if (this.checkWinCondition()) {
+      clk.winAtMs = clk.winAtMs ?? clk.elapsedMs;
+      this.selectedSymbolId = null;
+      clk.selectedCellIndex = null;
       this.exploreTracker.recordCorrectAttempt();
       this.winSession();
     }
-
     return true;
   }
 
   override storyLine(): string {
     return GT015_STORY_LINE;
   }
-
-  /** Reo khi chỗ ngồi hợp lệ, nghiêng đầu khi trùng (`BR-E015-07`). */
   override mascotMood(): MascotPose | null {
     return this.isWon ? null : this.mood.current();
   }
 
   update(deltaMs: number): void {
+    if (!(deltaMs > 0 && Number.isFinite(deltaMs))) {
+      return;
+    }
     this.mood.tick(deltaMs);
     this.exploreTracker.tick(deltaMs);
-    this.lastFrameMs += deltaMs;
-  }
-
-  clearCell(row: number, col: number): boolean {
-    return this.fillCell(row, col, null);
-  }
-
-  getCurrentGrid(): SudokuGrid<string> {
-    const cells: SudokuCell<string>[] = [];
-    for (const state of this.cellStates.values()) {
-      cells.push({
-        row: state.row,
-        col: state.col,
-        value: state.value,
-      });
+    const clk = L.getClk(this);
+    clk.elapsedMs += deltaMs;
+    if (clk.pressedSlotIndex !== null && clk.elapsedMs >= clk.pressedUntilMs) {
+      clk.pressedSlotIndex = null;
     }
-    return {
-      size: this.content.grid_size,
-      regions: this.content.regions,
-      cells,
-    };
   }
 
-  private getSimulatedGrid(
-    targetRow: number,
-    targetCol: number,
-    targetSymbolId: string | null
-  ): SudokuGrid<string> {
-    const cells: SudokuCell<string>[] = [];
-    for (const state of this.cellStates.values()) {
-      cells.push({
-        row: state.row,
-        col: state.col,
-        value:
-          state.row === targetRow && state.col === targetCol
-            ? targetSymbolId
-            : state.value,
-      });
+  override validateAction(action: GameAction): ActionResult {
+    const f = L.actFields(action.data);
+    if (!this.isAcceptingInput() || f.r === null || f.c === null || !f.sym) {
+      return ACTION_IGNORED;
     }
-    return {
-      size: this.content.grid_size,
-      regions: this.content.regions,
-      cells,
-    };
-  }
-
-  validateAction(action: GameAction): ActionResult {
-    if (action.type === "fill_cell") {
-      const payload = extractFillCellData(action.data);
-      if (!payload) {
-        return ACTION_RETRY;
-      }
-      const state = this.cellStates.get(`${payload.row},${payload.col}`);
-      if (!state || state.isInitial) {
+    const ts = this.cellStates.get(`${f.r},${f.c}`);
+    const known = this.content.symbols.some((s) => s.symbol_id === f.sym);
+    if (!ts || ts.isInitial || !known) {
+      return ACTION_IGNORED;
+    }
+    const fk = action.type === "move_cell" ? `${f.fr},${f.fc}` : undefined;
+    if (fk !== undefined) {
+      const fs = this.cellStates.get(fk);
+      if (!fs || fs.isInitial || !fs.value) {
         return ACTION_IGNORED;
       }
-      const simGrid = this.getSimulatedGrid(
-        payload.row,
-        payload.col,
-        payload.symbol_id
-      );
-      const violations = findConstraintViolations(simGrid);
-      const hasConflict = violations.some(
-        (v) => v.row === payload.row && v.col === payload.col
-      );
-      return hasConflict ? ACTION_RETRY : ACTION_CORRECT;
+    } else if (action.type !== "fill_cell") {
+      return ACTION_IGNORED;
     }
-    return ACTION_IGNORED;
+    const ov = { clearKey: fk, setRow: f.r, setCol: f.c, setValue: f.sym };
+    const g = L.gridOf(this.content, this.cellStates, ov);
+    const bad = findConstraintViolations(g).some(
+      (v) => v.row === f.r && v.col === f.c
+    );
+    return bad ? ACTION_RETRY : ACTION_CORRECT;
   }
 
   override checkWinCondition(): boolean {
-    return isSudokuCompleteAndValid(this.getCurrentGrid());
+    const g = L.gridOf(this.content, this.cellStates);
+    return isSudokuCompleteAndValid(g);
   }
 
   override destroy(): void {
@@ -481,449 +336,212 @@ export class SudokuMiniSession extends TemplateGameSession<
     this.cellStates.clear();
     this.activeViolations = [];
     this.selectedSymbolId = null;
+    this.isRoundClosed = false;
+    L.resetClk(this);
   }
 
-  getStagedItemId(): string | null {
-    return this.selectedSymbolId;
+  private hintIn(): GT015HintInput {
+    const { content, cellStates: states, solution } = this;
+    return { content, states, violations: this.activeViolations, solution };
   }
 
-  /** Ô cần điền kế tiếp (chỉ số hàng·cỡ + cột), không bao giờ là ô cho trước. */
   private pickHintCell(): number | null {
-    // Lưới đầy mà còn trùng: chỉ ô trẻ đổi được, không để gợi ý ngõ cụt.
-    const conflicted = this.activeViolations
-      .flatMap((v) => [
-        { row: v.row, col: v.col },
-        { row: v.conflictingWith.row, col: v.conflictingWith.col },
-      ])
-      .find(
-        (c) => this.cellStates.get(`${c.row},${c.col}`)?.isInitial === false
-      );
-    if (conflicted) {
-      return conflicted.row * this.content.grid_size + conflicted.col;
-    }
-    const emptyCell = this.content.cells.find(
-      (c) => this.cellStates.get(`${c.row},${c.col}`)?.value === null
-    );
-    return emptyCell
-      ? emptyCell.row * this.content.grid_size + emptyCell.col
-      : null;
+    return this.isAcceptingInput() ? L.pickHint(this.hintIn()) : null;
   }
 
-  /**
-   * Nghiệm duy nhất (`BR-E015-01`) giải từ các ô cho trước: ký hiệu đúng của
-   * mỗi ô, theo chỉ số ô. Lưới nhỏ (≤ 4×4) nên quay lui là đủ.
-   */
-  private solveFromGivens(): ReadonlyMap<number, string> | null {
-    const size = this.content.grid_size;
-    const values = new Map<number, string | null>();
-    for (const c of this.content.cells) {
-      values.set(c.row * size + c.col, c.symbol_id);
-    }
-    const blanks = [...values.entries()]
-      .filter(([, v]) => v === null)
-      .map(([k]) => k);
-    const buildGrid = (): SudokuGrid<string> => ({
-      size,
-      regions: this.content.regions,
-      cells: [...values.entries()].map(([k, value]) => ({
-        row: Math.floor(k / size),
-        col: k % size,
-        value,
-      })),
-    });
-    const search = (at: number): boolean => {
-      const key = blanks[at];
-      if (key === undefined) {
-        return true;
-      }
-      for (const sym of this.content.symbols) {
-        values.set(key, sym.symbol_id);
-        const clash = findConstraintViolations(buildGrid()).some(
-          (v) => v.row * size + v.col === key
-        );
-        if (!clash && search(at + 1)) {
-          return true;
-        }
-      }
-      values.set(key, null);
-      return false;
-    };
-    if (!search(0)) {
-      return null;
-    }
-    const solved = new Map<number, string>();
-    for (const key of blanks) {
-      const v = values.get(key);
-      if (v) {
-        solved.set(key, v);
-      }
-    }
-    return solved;
-  }
-
-  private hintSymbolIndex(cell: number): number | null {
-    const symbolId = this.solveFromGivens()?.get(cell);
-    const idx = this.content.symbols.findIndex(
-      (sym) => sym.symbol_id === symbolId
-    );
-    return idx < 0 ? null : idx;
-  }
-
-  /** `BR-E015-08`: nguồn là ký hiệu đúng trong khay; không giải được thì trỏ thẳng ô. */
-  override getHintTargetIndex(): number | null {
+  private hintPair(): [number, number] | null {
     const cell = this.pickHintCell();
     if (cell === null) {
       return null;
     }
-    const symbolIdx = this.hintSymbolIndex(cell);
-    return symbolIdx === null
-      ? cell
-      : this.content.grid_size * this.content.grid_size + symbolIdx;
+    const id = L.hintSym(this.hintIn(), cell);
+    return [cell, this.getSymbols().findIndex((s) => s.symbol_id === id)];
   }
 
-  /** `BR-E015-08`: đích là ô cần điền; thiếu nguồn ký hiệu thì chỉ chạm ô. */
+  override getHintTargetIndex(): number | null {
+    const p = this.hintPair();
+    if (!p) {
+      return null;
+    }
+    return p[1] < 0 ? p[0] : this.content.grid_size ** 2 + p[1];
+  }
+
   override getHintDestinationIndex(): number | null {
+    const p = this.hintPair();
+    return p && p[1] >= 0 ? p[0] : null;
+  }
+
+  override getHintTargetForLevel(level: HintLevel): HintTarget | null {
     const cell = this.pickHintCell();
-    return cell !== null && this.hintSymbolIndex(cell) !== null ? cell : null;
+    if (cell === null) {
+      return null;
+    }
+    const n = this.content.grid_size;
+    if (level === 1 || level === 2) {
+      const ids =
+        level === 1
+          ? [`cell-${Math.floor(cell / n)}-${cell % n}`]
+          : L.hintL2(this.content, cell, this.cellStates);
+      return { kind: "region", ids };
+    }
+    return this.getHintTarget();
+  }
+
+  override onScaffoldEscalated(level: HintLevel, _tr: string): void {
+    L.getClk(this).scaffoldHintLevel = level;
+  }
+  override onHintCleared(): void {
+    L.getClk(this).scaffoldHintLevel = 0;
+  }
+
+  private hitSlot(ptOrX: PtArg, maybeY?: number): number | null | undefined {
+    const pt = L.parsePt(ptOrX, maybeY);
+    const n2 = this.content.grid_size ** 2;
+    return pt ? L.hitAt(this.slots, n2, pt) : undefined;
+  }
+
+  onPointerDown(ptOrX: PtArg, maybeY?: number): void {
+    const hit = this.hitSlot(ptOrX, maybeY);
+    if (hit !== undefined) {
+      const clk = L.getClk(this);
+      clk.pressedSlotIndex = hit;
+      clk.pressedUntilMs = hit === null ? 0 : clk.elapsedMs + L.PRESS_MS;
+    }
+  }
+
+  setPointerOver(ptOrX: PtArg, maybeY?: number): void {
+    const hit = this.hitSlot(ptOrX, maybeY);
+    if (hit !== undefined) {
+      L.getClk(this).hoveredSlotIndex = hit;
+    }
+  }
+
+  clearPointerOver(): void {
+    const clk = L.getClk(this);
+    clk.hoveredSlotIndex = null;
+    clk.pressedSlotIndex = null;
   }
 
   override commit(action: GameAction): void {
-    if (action.type === "fill_cell") {
-      const payload = extractFillCellData(action.data);
-      if (payload) {
-        this.fillCell(payload.row, payload.col, payload.symbol_id);
-        this.selectedSymbolId = null;
-      }
+    const f = L.actFields(action.data);
+    if (!this.isAcceptingInput() || f.r === null || f.c === null) {
+      return;
     }
+    L.getClk(this).selectedCellIndex = null;
+    if (action.type === "clear_cell") {
+      this.fillCell(f.r, f.c, null);
+    } else if (action.type === "move_cell" && f.fr !== null && f.fc !== null) {
+      if (f.sym && this.fillCell(f.fr, f.fc, null)) {
+        this.fillCell(f.r, f.c, f.sym);
+      }
+    } else if (action.type === "fill_cell" && f.sym !== undefined) {
+      this.fillCell(f.r, f.c, f.sym);
+      this.selectedSymbolId = null;
+    }
+  }
+
+  private buildRenderCtx(st?: ZoneRect, tr?: ZoneRect, withHint = false): V {
+    const clk = L.getClk(this);
+    const { w, h } = this.logicSpace;
+    const stageBounds = st ?? this.stageRect ?? { x: 0, y: 0, w, h };
+    const wf = this.wrongFlash.isActive(clk.elapsedMs)
+      ? Math.max(0.02, this.wrongFlash.progress(clk.elapsedMs))
+      : 0;
+    const syms = this.getSymbols();
+    const sel = this.selectedSymbolId;
+    const needHint =
+      withHint && (clk.scaffoldHintLevel === 1 || clk.scaffoldHintLevel === 2);
+    const hintIdx = needHint ? this.pickHintCell() : null;
+    const a = { slots: this.slots, symbols: syms, selectedSymbolId: sel };
+    const b = { hintIdx, clock: clk, trayBounds: tr };
+    const deg = Boolean(
+      this.degradation && !this.degradation.soft_shadows_enabled
+    );
+    const c = { stageBounds, isWon: this.isWon, degraded: deg };
+    const d = { isRoundClosed: this.isRoundClosed, wrongFlashAlpha: wf };
+    return { ...this.hintIn(), ...a, ...b, ...c, ...d };
   }
 
   override toAction(gesture: Gesture): GameAction | null {
-    const cellCount = this.content.grid_size * this.content.grid_size;
-    if (gesture.type === "drop") {
-      return this.toDropAction(gesture, cellCount);
-    }
-    if (gesture.type === "tap") {
-      return this.toTapAction(gesture, cellCount);
-    }
-    return null;
-  }
-
-  private toDropAction(
-    gesture: Extract<Gesture, { type: "drop" }>,
-    cellCount: number
-  ): GameAction | null {
-    const symbolId = resolveDropSymbolId(
-      gesture,
-      this.selectedSymbolId,
-      this.slots,
-      cellCount,
-      this.content.symbols
-    );
-    if (!symbolId) {
-      return null;
-    }
-    const targetCell = findHitCellCoords(
-      this.slots,
-      this.content.grid_size,
-      gesture.toX,
-      gesture.toY
-    );
-    if (!targetCell) {
-      return null;
-    }
-    const state = this.cellStates.get(`${targetCell.row},${targetCell.col}`);
-    if (!state || state.isInitial) {
-      return null;
-    }
-    return {
-      type: "fill_cell",
-      data: {
-        row: targetCell.row,
-        col: targetCell.col,
-        symbol_id: symbolId,
-      },
-    };
-  }
-
-  private toTapAction(
-    gesture: Extract<Gesture, { type: "tap" }>,
-    cellCount: number
-  ): GameAction | null {
-    const symbolCount = this.content.symbols.length;
-    const hit = resolveTapSlotIndex(
-      this.slots,
-      cellCount,
-      symbolCount,
-      gesture.x,
-      gesture.y
-    );
-    if (hit >= cellCount) {
-      this.selectSymbol(
-        this.content.symbols[hit - cellCount]?.symbol_id ?? null
-      );
-      return null;
-    }
-    if (hit < 0 || !this.selectedSymbolId) {
-      return null;
-    }
-    const size = this.content.grid_size;
-    const row = Math.floor(hit / size);
-    const col = hit % size;
-    const state = this.cellStates.get(`${row},${col}`);
-    if (!state || state.isInitial) {
-      return null;
-    }
-    return {
-      type: "fill_cell",
-      data: { row, col, symbol_id: this.selectedSymbolId },
-    };
-  }
-
-  private resolveSymbolById(): ReadonlyMap<
-    string,
-    GT015Content["symbols"][number]
-  > {
-    if (this.symbolById.size === this.content.symbols.length) {
-      return this.symbolById;
-    }
-    return new Map(this.content.symbols.map((s) => [s.symbol_id, s]));
+    this.viewCache = null;
+    return this.isAcceptingInput()
+      ? L.onGesture(this.buildRenderCtx(), gesture, (id) =>
+          this.selectSymbol(id)
+        )
+      : null;
   }
 
   override getView(): EngineView {
-    const cellCount = this.content.grid_size * this.content.grid_size;
-    const cellSlots = this.slots.slice(0, cellCount);
-    const paletteSlots = this.slots.slice(cellCount);
-    const size = this.content.grid_size;
-    const symbolMap = this.resolveSymbolById();
-    const entities: ViewEntity[] = [];
-
-    this.content.symbols.forEach((sym, i) => {
-      const slot = paletteSlots[i];
-      if (slot) {
-        entities.push({
-          id: sym.symbol_id,
-          slotIndex: cellCount + i,
-          role: "source",
-          state: this.selectedSymbolId === sym.symbol_id ? "selected" : "idle",
-          x: slot.x,
-          y: slot.y,
-          w: slot.w,
-          h: slot.h,
-          ...resolveAssetLabels(sym.asset),
-        });
-      }
-    });
-
-    for (const cell of this.content.cells) {
-      const slotIndex = cell.row * size + cell.col;
-      const slot = cellSlots[slotIndex];
-      if (slot) {
-        const state = this.cellStates.get(`${cell.row},${cell.col}`);
-        const isWrong = this.isConflicted(cell.row, cell.col);
-        const entityState = resolveCellVisualState(
-          isWrong,
-          Boolean(state?.value)
-        );
-        const symbolId = state?.value ?? cell.symbol_id;
-        const sym = symbolId ? symbolMap.get(symbolId) : undefined;
-        const cellLabels = sym
-          ? resolveAssetLabels(sym.asset)
-          : {
-              label: `H${cell.row + 1}C${cell.col + 1}`,
-              spokenLabel: `Ô hàng ${cell.row + 1} cột ${cell.col + 1}`,
-            };
-        entities.push({
-          id: `cell-${cell.row}-${cell.col}`,
-          slotIndex,
-          role: "target",
-          state: entityState,
-          x: slot.x,
-          y: slot.y,
-          w: slot.w,
-          h: slot.h,
-          hitShape: "square",
-          ...cellLabels,
-        });
-      }
-    }
-
-    return {
+    this.viewCache ??= {
       activePrompt: this.content.prompt,
-      entities,
+      entities: L.viewEnts(this.buildRenderCtx()),
     };
+    return this.viewCache;
   }
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
-    const zones = pickTrayZones(this.stageRect, this.trayRect);
-    if (zones) {
-      const touchFloor = resolveTouchFloor(ageBand, this.cssPerLogic);
-      const size = this.content.grid_size;
-      const cells = computeStageCellSlots({
-        count: size * size,
-        cols: size,
-        stage: zones.stage,
-        touchFloor,
-        maxCell: { w: GRID_CELL_MAX_PX, h: GRID_CELL_MAX_PX },
-        role: "target",
-      });
-      const palette = computeTraySourceSlots(
-        this.content.symbols.length,
-        zones.tray,
-        touchFloor,
-        cells.length
-      );
-      return [...cells, ...palette];
+    this.viewCache = null;
+    const syms = this.getSymbols();
+    const n = this.content.grid_size;
+    const z = pickTrayZones(this.stageRect, this.trayRect);
+    if (!z) {
+      const a = { slotCount: syms.length, targetCount: n * n, ageBand };
+      const fn = resolveLayout("matrix-slot-grid");
+      return fn({ ...a, logic: this.logicSpace });
     }
-    const layoutFn = resolveLayout("matrix-slot-grid");
-    return layoutFn({
-      slotCount: this.content.symbols.length,
-      targetCount: this.content.grid_size * this.content.grid_size,
-      ageBand,
-      logic: this.logicSpace,
-    });
+    const tf = resolveTouchFloor(ageBand, this.cssPerLogic);
+    const a = { count: n * n, cols: n, stage: z.stage, touchFloor: tf };
+    const b = { ...a, maxCell: CELL_MAX, role: "target" as const };
+    const cs = computeStageCellSlots(b);
+    return [
+      ...cs,
+      ...computeTraySourceSlots(syms.length, z.tray, tf, cs.length),
+    ];
   }
 
-  /**
-   * Hàng/cột đã điền đủ và không trùng ký hiệu sáng nhấp nháy dưới các ô
-   * (`BR-E015-09`): cùng một luật cho mọi ô, đọc trạng thái lưới hiện tại,
-   * không đọc lời giải.
-   */
-  private drawCompleteLines(
-    ctx: CanvasRenderingContext2D,
-    rs: RenderSystem,
-    cellSlots: readonly Slot[],
-    size: number
-  ): void {
-    const lines = this.getCompleteLines();
-    const glow = matchGlowAlpha(this.lastFrameMs, rs.reducedMotion);
-    for (const r of lines.rows) {
-      const box = boxFromSlots(cellSlots.slice(r * size, r * size + size));
-      if (box) {
-        drawMatchGlow(ctx, box, glow);
-      }
-    }
-    for (const c of lines.cols) {
-      const box = boxFromSlots(
-        cellSlots.filter((_, i) => i % size === c && i < size * size)
-      );
-      if (box) {
-        drawMatchGlow(ctx, box, glow);
-      }
-    }
-  }
-
-  /**
-   * Hàng/cột đang đủ không trùng theo trạng thái lưới hiện tại **và** có ít nhất
-   * một ô do trẻ điền (hàng/cột đã đủ sẵn từ đầu bài không sáng — sáng là thành
-   * quả của trẻ).
-   */
   getCompleteLines(): CompleteLines {
-    const size = this.content.grid_size;
-    const lines = completeDistinctLines(
-      size,
-      (row, col) => this.cellStates.get(`${row},${col}`)?.value ?? null
-    );
-    const childFilled = (row: number, col: number): boolean => {
-      const st = this.cellStates.get(`${row},${col}`);
-      return st !== undefined && !st.isInitial && st.value !== null;
-    };
-    const anyOf = (index: number, byRow: boolean): boolean => {
-      for (let j = 0; j < size; j++) {
-        if (byRow ? childFilled(index, j) : childFilled(j, index)) {
-          return true;
-        }
-      }
-      return false;
-    };
+    const n = this.content.grid_size;
+    const st = (r: number, c: number) => this.cellStates.get(`${r},${c}`);
+    const ch = (r: number, c: number) =>
+      st(r, c)?.isInitial === false && Boolean(st(r, c)?.value);
+    const idx = Array.from({ length: n }, (_, i) => i);
+    const l = completeDistinctLines(n, (r, c) => st(r, c)?.value ?? null);
     return {
-      rows: lines.rows.filter((r) => anyOf(r, true)),
-      cols: lines.cols.filter((c) => anyOf(c, false)),
+      rows: l.rows.filter((r) => idx.some((c) => ch(r, c))),
+      cols: l.cols.filter((c) => idx.some((r) => ch(r, c))),
     };
   }
 
-  render(
-    ctx: CanvasRenderingContext2D,
-    rs: RenderSystem,
-    timeMs: number
-  ): void {
-    this.lastFrameMs = timeMs;
+  render(ctx: CanvasRenderingContext2D, rs: Sys, timeMs: number): void {
     drawSceneBackground(ctx, rs, this.themeId);
     const zones = pickTrayZones(this.stageRect, this.trayRect);
     if (zones) {
-      // Lời dẫn do shell vẽ; ký hiệu nằm trên khay của khung năm vùng.
       drawWoodenTokenDock(ctx, rs, zones.tray);
     }
-    const cellCount = this.content.grid_size * this.content.grid_size;
-    const cellSlots = this.slots.slice(0, cellCount);
-    const paletteSlots = this.slots.slice(cellCount);
-    const size = this.content.grid_size;
-    // Hươu Cao Cổ ở góc trống, ngoài vùng chạm (`BR-E015-09`).
+    const n = this.content.grid_size;
+    const cs = this.slots.slice(0, n * n);
+    const stageBounds = this.stageRect ?? sceneBox(rs);
+    const rctx = this.buildRenderCtx(stageBounds, zones?.tray, true);
     drawStoryCharacterInStage(ctx, "giraffe", this.stageRect, this.slots);
-    drawSudokuBoardFrame(ctx, cellSlots, size, this.content.regions);
-    this.drawCompleteLines(ctx, rs, cellSlots, size);
-    const symbolMap = this.resolveSymbolById();
-    const assetOf = (symbolId: string) => symbolMap.get(symbolId)?.asset;
-    // Một vi phạm nêu cả ô sai lẫn ô xung đột — tô đỏ cả hai thì trẻ thấy
-    // ĐƯỢC quan hệ, thay vì chỉ thấy một ô bị chê.
-    const violated = new Set(
-      this.activeViolations.flatMap((v) => [
-        `${v.row},${v.col}`,
-        `${v.conflictingWith.row},${v.conflictingWith.col}`,
-      ])
-    );
-
-    for (const cell of this.content.cells) {
-      const slot = cellSlots[cell.row * size + cell.col];
-      if (!slot) {
-        continue;
-      }
-      const filled = this.cellStates.get(`${cell.row},${cell.col}`);
-      const symbolId = filled?.value ?? cell.symbol_id;
-      if (!symbolId) {
-        drawEmptyTargetSlot(ctx, slot);
-        continue;
-      }
-      let state: "wrong" | "locked" | "correct" = "correct";
-      if (violated.has(`${cell.row},${cell.col}`)) {
-        state = "wrong";
-      } else if (cell.symbol_id) {
-        state = "locked";
-      }
-      drawSlotItem(
-        ctx,
-        rs,
-        slot,
-        { id: `${cell.row},${cell.col}`, asset: assetOf(symbolId), state },
-        "square"
-      );
-      if (state === "wrong" && this.wrongFlash.isActive(timeMs)) {
-        rs.drawRetryRing(
-          ctx,
-          slot.x,
-          slot.y,
-          Math.min(slot.hitW, slot.hitH) / 2 + 4,
-          Math.min(1, Math.max(0, this.wrongFlash.elapsedMs(timeMs) / 400))
-        );
+    drawGT015Board(ctx, rs, rctx);
+    const lines = this.getCompleteLines();
+    const glow = matchGlowAlpha(timeMs, rs.reducedMotion);
+    const grps = [
+      ...lines.rows.map((r) => cs.slice(r * n, (r + 1) * n)),
+      ...lines.cols.map((c) => cs.filter((_, i) => i % n === c)),
+    ];
+    for (const grp of grps) {
+      const box = boxFromSlots(grp);
+      if (box) {
+        drawMatchGlow(ctx, box, glow);
       }
     }
-
-    this.content.symbols.forEach((sym, i) => {
-      const slot = paletteSlots[i];
-      if (!slot) {
-        return;
-      }
-      drawSlotItem(ctx, rs, slot, {
-        id: sym.symbol_id,
-        asset: sym.asset,
-        state: this.selectedSymbolId === sym.symbol_id ? "selected" : "idle",
-      });
-    });
-    drawMontessoriControlOfErrorPill(
-      ctx,
-      this.stageRect ?? sceneBox(rs),
-      this.exploreTracker,
-      rs.viewport?.scale
-    );
+    drawCells(ctx, rs, rctx);
+    for (let i = 0; i < rctx.symbols.length; i++) {
+      drawGT015PaletteItem(ctx, rs, rctx, i);
+    }
+    const [trk, sc] = [this.exploreTracker, rs.viewport?.scale];
+    drawMontessoriControlOfErrorPill(ctx, stageBounds, trk, sc);
   }
 }
 

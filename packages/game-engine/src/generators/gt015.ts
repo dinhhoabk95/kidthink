@@ -3,6 +3,10 @@ import {
   hasUniqueSolution,
   type SudokuGrid,
 } from "#src/systems/constraint-system";
+import type {
+  GT015Content,
+  GT015Difficulty,
+} from "#src/templates/GT-015/template";
 import { getNouns, sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
@@ -33,7 +37,7 @@ function hasLinkedBlanks(blanks: readonly Blank[]): boolean {
  * và cả ba cùng một đáp án; 2×2 thì hai ô trống cùng đáp án. Band 5-6 duy nhất:
  * `age_min` của engine là 5.
  */
-export const GT015Generator: LevelGenerator = {
+export const GT015Generator: LevelGenerator<GT015Content, GT015Difficulty> = {
   engine: "GT-015",
   axes: {
     age_band: ["5-6"],
