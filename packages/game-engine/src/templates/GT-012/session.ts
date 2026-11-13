@@ -9,9 +9,12 @@ import {
   type HintTarget,
   TemplateGameSession,
 } from "#src/game-session";
-import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
-import { resolveAssetLabels } from "#src/labels/spoken-keyword";
-import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
+import type { EngineView, Gesture } from "#src/interaction";
+import {
+  findHitSlotIndex,
+  isPointInSlot,
+  TAP_TOLERANCE_PX,
+} from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
 import {
   dockRectAroundSlots,
@@ -20,32 +23,30 @@ import {
 } from "#src/layout/slot-fit";
 import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
-import {
-  bellLiftProgress,
-  drawFireflyGlow,
-  drawGlassBell,
-  drawLabelText,
-  drawSceneBackground,
-  drawSlotItem,
-  drawSubPromptText,
-  drawWoodenPlate,
-  drawWoodenTokenDock,
-  fireflyGlow,
-} from "#src/render/index.js";
+import { drawSceneBackground, type SceneBox } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
 import type { RenderSystem } from "#src/systems/render-system";
 import { FlashTimer } from "#src/systems/timer-system";
-import { WRONG_FLASH_MS, WrongFlash } from "#src/systems/wrong-flash";
+import { WrongFlash } from "#src/systems/wrong-flash";
+import {
+  buildGT012View,
+  clockOf,
+  renderGT012Scene,
+  resetClock,
+  TOUCH_PULSE_MS,
+  tickGT012Clock,
+} from "./layout.js";
 import type { GT012Content, GT012Difficulty } from "./template.js";
 import {
   computeFlashSlots,
+  type GT012SessionVariant,
   plateSlot,
   type RecallAreas,
+  resolveSessionVariant,
   splitRecallStage,
 } from "./zone-layout.js";
 
-/** Khung chuyện đọc một lần ở vòng đầu (`BR-E012-06`, `BR-FBK-16`). */
 export const GT012_STORY_LINE =
   "Đom đóm đang nháy sáng dưới nắp chuông. Bé bấm mở nắp, nhìn thật nhanh rồi cho biết có mấy chấm sáng nhé!";
 
@@ -55,45 +56,39 @@ export class FlashRecallSession extends TemplateGameSession<
 > {
   override readonly usesPromptZone = true;
   readonly holdsClockWhileInputClosed = true;
-
   degradation: DegradationState | null = null;
-
   private readonly timer: FlashTimer;
   private selectedValue: number | null = null;
   private wasVisible = false;
-  /** Trẻ chưa bấm bắt đầu: chưa chớp, đồng hồ chưa chạy (`BR-E012-04`). */
   private awaitingStart = true;
+  private isRoundClosed = false;
+  private scaffoldHintLevel = 0;
   private readonly wrongFlash = new WrongFlash();
-  private lastFrameMs = 0;
-  /** Mốc đồng hồ khung lúc mở nắp (bấm bắt đầu hoặc xem lại), cho nhấp nháy và nắp nhấc (`BR-E012-08`). */
-  private flashStartMs = 0;
-  /** Vùng đĩa và vùng lựa chọn của vòng này (`BR-PSZ-01`). */
+  private variant: GT012SessionVariant;
   private areas: RecallAreas | null = null;
-  /** Vị trí vật loé trên đĩa — không chạm được nên không nằm trong `slots`. */
   private flashSlots: readonly Slot[] = [];
+  private cachedDockRect: SceneBox | null = null;
 
-  constructor(
-    content: GT012Content,
-    difficulty: GT012Difficulty,
-    layoutSeed = 0
-  ) {
-    super(content, difficulty, layoutSeed);
+  constructor(c: GT012Content, d: GT012Difficulty, seed = 0) {
+    super(c, d, seed);
     this.timer = new FlashTimer({
-      flashMs: difficulty.flash_ms,
-      allowReplay: difficulty.allow_replay,
+      flashMs: d.flash_ms,
+      allowReplay: d.allow_replay,
     });
+    this.variant = resolveSessionVariant(c, seed);
   }
 
   setupEntities(): void {
+    resetClock(this);
     this.selectedValue = null;
     this.wrongFlash.clear();
-    this.lastFrameMs = 0;
-    this.flashStartMs = 0;
     this.timer.reset();
     this.wasVisible = false;
     this.awaitingStart = true;
+    this.isRoundClosed = false;
     this.isWon = false;
-
+    this.scaffoldHintLevel = 0;
+    this.variant = resolveSessionVariant(this.content, this.layoutSeed);
     this.recordEvent("game_started", {
       template_code: "GT-012",
       item_count: this.content.flash_items.length,
@@ -101,18 +96,65 @@ export class FlashRecallSession extends TemplateGameSession<
     });
   }
 
-  /** Đang chờ trẻ bấm nút bắt đầu — Cấm — NEVER tự đếm ngược (`BR-E012-04`). */
+  override isAcceptingInput(): boolean {
+    return !(this.isWon || this.isRoundClosed);
+  }
   isAwaitingStart(): boolean {
     return this.awaitingStart;
   }
+  isRecapShown(): boolean {
+    return this.checkWinCondition();
+  }
+  isRevealShown(): boolean {
+    return this.checkWinCondition() || this.isRoundClosed;
+  }
+  getFlashSlots(): readonly Slot[] {
+    return this.flashSlots;
+  }
+  getFlashItems(): GT012Content["flash_items"] {
+    return this.content.flash_items;
+  }
+  getArrangement(): GT012Content["arrangement"] {
+    return this.variant.effectiveArrangement;
+  }
+  getOptions(): GT012Content["options"] {
+    return [...this.variant.displayOptions];
+  }
+  isFlashVisible(): boolean {
+    return this.timer.isVisible();
+  }
+  isCovered(): boolean {
+    return !(this.awaitingStart || this.timer.isVisible());
+  }
+  canReplay(): boolean {
+    return this.timer.canReplay();
+  }
+  getSelectedValue(): number | null {
+    return this.selectedValue;
+  }
+  override storyLine(): string {
+    return GT012_STORY_LINE;
+  }
+  override mascotMood(): MascotPose | null {
+    const done = this.awaitingStart || this.isWon || this.isRoundClosed;
+    return done ? null : "wonder";
+  }
+  get plateRect(): ZoneRect | null {
+    if (!this.areas) {
+      return null;
+    }
+    const showList = this.isCovered() && !this.isRevealShown();
+    return showList ? this.areas.plate : this.areas.plateAlone;
+  }
 
-  /** Trẻ bấm bắt đầu: vật hiện đúng `flash_ms` rồi tắt. */
-  startFlash(): boolean {
+  startFlash(originTimeMs = 0): boolean {
     if (!this.awaitingStart) {
       return false;
     }
+    const clk = clockOf(this);
     this.awaitingStart = false;
-    this.flashStartMs = this.lastFrameMs;
+    clk.flashStartLogicMs = clk.logicMs;
+    clk.flashStartOriginMs = originTimeMs;
     this.queueSfx("bell_open");
     this.timer.start();
     this.wasVisible = true;
@@ -122,58 +164,12 @@ export class FlashRecallSession extends TemplateGameSession<
     return true;
   }
 
-  /** Chọn đúng: nhóm vật hiện lại đầy đủ để trẻ đối chiếu (N4/N6). */
-  isRecapShown(): boolean {
-    return this.checkWinCondition();
-  }
-
-  /** Vị trí đom đóm trên đĩa (chỉ đọc) — để test đo quầng sáng. */
-  getFlashSlots(): readonly Slot[] {
-    return this.flashSlots;
-  }
-
-  getFlashItems(): GT012Content["flash_items"] {
-    return this.content.flash_items;
-  }
-
-  getArrangement(): GT012Content["arrangement"] {
-    return this.content.arrangement;
-  }
-
-  getOptions(): GT012Content["options"] {
-    return this.content.options;
-  }
-
-  isFlashVisible(): boolean {
-    return this.timer.isVisible();
-  }
-
-  isCovered(): boolean {
-    return !(this.awaitingStart || this.timer.isVisible());
-  }
-
-  /**
-   * Đĩa ở giữa sân khấu khi chưa có hàng lựa chọn (chờ bấm, đang loé, xem lại
-   * sau khi thắng); đã che nắp chờ trả lời thì sang một bên nhường lựa chọn
-   * (`BR-E012-09`).
-   */
-  get plateRect(): ZoneRect | null {
-    if (!this.areas) {
-      return null;
-    }
-    return this.isCovered() && !this.isRecapShown()
-      ? this.areas.plate
-      : this.areas.plateAlone;
-  }
-
-  canReplay(): boolean {
-    return this.timer.canReplay();
-  }
-
-  replayFlash(): boolean {
+  replayFlash(originTimeMs = 0): boolean {
     const ok = this.timer.replay();
     if (ok) {
-      this.flashStartMs = this.lastFrameMs;
+      const clk = clockOf(this);
+      clk.flashStartLogicMs = clk.logicMs;
+      clk.flashStartOriginMs = originTimeMs;
       this.queueSfx("bell_open");
       this.wasVisible = true;
       this.recordEvent("flash_replayed", {});
@@ -184,33 +180,25 @@ export class FlashRecallSession extends TemplateGameSession<
     return ok;
   }
 
-  override storyLine(): string {
-    return GT012_STORY_LINE;
-  }
-
-  /**
-   * Ngạc nhiên từ lúc mở nắp tới khi thắng. Dáng chỉ theo nhịp chơi, không theo
-   * đáp án: đáp sai không đổi dáng (`BR-E012-06`).
-   */
-  override mascotMood(): MascotPose | null {
-    return this.awaitingStart || this.isWon ? null : "wonder";
-  }
-
   update(deltaMs: number): void {
-    this.lastFrameMs += deltaMs;
+    const clk = clockOf(this);
+    tickGT012Clock(clk, deltaMs);
+    const active = !(this.isWon || this.isRoundClosed);
     if (
+      active &&
       this.selectedValue !== null &&
-      this.wrongFlash.hasExpired(this.lastFrameMs)
+      this.wrongFlash.hasExpired(clk.logicMs)
     ) {
       this.selectedValue = null;
       this.wrongFlash.clear();
     }
-
-    const prevState = this.timer.getState();
+    const prev = this.timer.getState();
     this.timer.tick(deltaMs);
-    const currState = this.timer.getState();
-
-    if (prevState === "running" && currState === "expired" && this.wasVisible) {
+    if (
+      prev === "running" &&
+      this.timer.getState() === "expired" &&
+      this.wasVisible
+    ) {
       this.wasVisible = false;
       this.recordEvent("flash_hidden", {
         elapsed_ms: this.timer.getElapsedMs(),
@@ -219,31 +207,49 @@ export class FlashRecallSession extends TemplateGameSession<
   }
 
   selectValue(value: number): boolean {
+    if (!this.isAcceptingInput()) {
+      return false;
+    }
+    const clk = clockOf(this);
     this.selectedValue = value;
     const isCorrect = value === this.content.flash_items.length;
     if (isCorrect) {
       this.wrongFlash.clear();
+      clk.winAtMs = clk.logicMs;
+      this.scaffoldHintLevel = 0;
     } else {
-      this.wrongFlash.trigger(this.lastFrameMs);
+      this.wrongFlash.trigger(clk.logicMs);
     }
-
-    this.recordEvent("value_selected", {
-      value,
-      is_correct: isCorrect,
-    });
-
+    this.recordEvent("value_selected", { value, is_correct: isCorrect });
     if (this.checkWinCondition()) {
       this.winSession();
+    } else if (!this.difficulty.allow_retry) {
+      this.isRoundClosed = true;
+      clk.closeAtMs = clk.logicMs;
+      this.scaffoldHintLevel = 0;
+      this.completeSession();
     }
-
     return isCorrect;
   }
 
-  getSelectedValue(): number | null {
-    return this.selectedValue;
+  private canReplayNow(): boolean {
+    return this.isCovered() && !this.isRevealShown() && this.timer.canReplay();
+  }
+  private hitPlate(x: number, y: number): boolean {
+    const p = this.plateRect;
+    return (
+      p !== null &&
+      isPointInSlot(plateSlot(p), x, y, "circle", TAP_TOLERANCE_PX)
+    );
+  }
+  private findOptIndex(x: number, y: number): number {
+    return findHitSlotIndex(this.slots, x, y, "circle", TAP_TOLERANCE_PX);
   }
 
   validateAction(action: GameAction): ActionResult {
+    if (!this.isAcceptingInput()) {
+      return ACTION_IGNORED;
+    }
     if (action.type === "start_flash") {
       return this.awaitingStart
         ? { valid: true, feedback: "none" }
@@ -253,14 +259,15 @@ export class FlashRecallSession extends TemplateGameSession<
       return ACTION_IGNORED;
     }
     if (action.type === "replay_flash") {
-      return ACTION_IGNORED;
+      return this.canReplayNow()
+        ? { valid: true, feedback: "none" }
+        : ACTION_IGNORED;
     }
-    if (action.type === "select_value") {
+    if (action.type === "select_value" && !this.timer.isVisible()) {
       if (typeof action.data !== "number") {
         return ACTION_RETRY;
       }
-      const val = action.data;
-      return val === this.content.flash_items.length
+      return action.data === this.content.flash_items.length
         ? ACTION_CORRECT
         : ACTION_RETRY;
     }
@@ -268,249 +275,170 @@ export class FlashRecallSession extends TemplateGameSession<
   }
 
   override toAction(gesture: Gesture): GameAction | null {
-    if (gesture.type !== "tap") {
+    if (gesture.type !== "tap" || !this.isAcceptingInput()) {
       return null;
     }
     if (this.awaitingStart) {
       return this.hitPlate(gesture.x, gesture.y)
-        ? { type: "start_flash", data: null }
+        ? { type: "start_flash", data: gesture.timeMs }
         : null;
     }
-    if (this.isRecapShown()) {
+    if (this.isRevealShown()) {
       return null;
     }
-    if (this.isCovered() && this.timer.canReplay() && this.plateRect) {
-      const p = this.plateRect;
-      if (
-        gesture.x >= p.x - TAP_TOLERANCE_PX &&
-        gesture.x <= p.x + p.w + TAP_TOLERANCE_PX &&
-        gesture.y >= p.y - TAP_TOLERANCE_PX &&
-        gesture.y <= p.y + p.h + TAP_TOLERANCE_PX
-      ) {
-        return { type: "replay_flash", data: null };
-      }
+    if (this.canReplayNow() && this.hitPlate(gesture.x, gesture.y)) {
+      return { type: "replay_flash", data: gesture.timeMs };
     }
     if (this.timer.isVisible()) {
       return null;
     }
-    const idx = findHitSlotIndex(
-      this.slots,
-      gesture.x,
-      gesture.y,
-      "circle",
-      TAP_TOLERANCE_PX
-    );
-    const opt = idx >= 0 ? this.content.options[idx] : undefined;
-    if (!opt) {
-      return null;
-    }
-    return {
-      type: "select_value",
-      data: opt.value,
-    };
+    const idx = this.findOptIndex(gesture.x, gesture.y);
+    const opt = idx >= 0 ? this.variant.displayOptions[idx] : undefined;
+    return opt ? { type: "select_value", data: opt.value } : null;
   }
 
-  private hitPlate(x: number, y: number): boolean {
-    const p = this.plateRect;
-    return (
-      p !== null &&
-      x >= p.x - TAP_TOLERANCE_PX &&
-      x <= p.x + p.w + TAP_TOLERANCE_PX &&
-      y >= p.y - TAP_TOLERANCE_PX &&
-      y <= p.y + p.h + TAP_TOLERANCE_PX
-    );
+  onPointerDown(x: number, y: number): void {
+    if (!this.isAcceptingInput()) {
+      return;
+    }
+    const clk = clockOf(this);
+    if ((this.awaitingStart || this.canReplayNow()) && this.hitPlate(x, y)) {
+      clk.touchingPlateUntilMs = clk.logicMs + TOUCH_PULSE_MS;
+      return;
+    }
+    if (this.isCovered() && !this.isRevealShown()) {
+      const idx = this.findOptIndex(x, y);
+      if (idx >= 0) {
+        clk.touchingOptIndex = idx;
+        clk.touchingOptUntilMs = clk.logicMs + TOUCH_PULSE_MS;
+      }
+    }
+  }
+
+  setPointerOver(x: number, y: number): void {
+    const clk = clockOf(this);
+    if (!this.isAcceptingInput()) {
+      clk.hoveredPlate = false;
+      clk.hoveredOptIndex = null;
+      return;
+    }
+    clk.hoveredPlate =
+      (this.awaitingStart || this.canReplayNow()) && this.hitPlate(x, y);
+    const idx =
+      this.isCovered() && !this.isRevealShown() ? this.findOptIndex(x, y) : -1;
+    clk.hoveredOptIndex = idx >= 0 ? idx : null;
+  }
+
+  override onScaffoldEscalated(
+    level: HintLevel,
+    _trigger?: "timer" | "miss_streak"
+  ): void {
+    this.scaffoldHintLevel = level;
+  }
+  override onHintCleared(): void {
+    this.scaffoldHintLevel = 0;
   }
 
   override getHintTargetIndex(): number | null {
-    if (this.awaitingStart) {
+    if (this.awaitingStart || !this.isAcceptingInput()) {
       return null;
     }
-    const idx = this.content.options.findIndex((o) => o.is_correct);
+    const idx = this.variant.displayOptions.findIndex((o) => o.is_correct);
     return idx >= 0 ? idx : null;
   }
 
   override getHintTargetForLevel(level: HintLevel): HintTarget | null {
-    if (this.checkWinCondition()) {
+    if (!this.isAcceptingInput()) {
       return null;
     }
     if (this.awaitingStart) {
-      // Bước kế là bấm nút bắt đầu: không lộ gì về đáp án.
       return { kind: "region", ids: ["cloche-plate"] };
     }
     if (level === 1) {
+      const allIds = this.variant.displayOptions.map((o) => `opt-${o.value}`);
       return {
         kind: "region",
-        ids: ["cloche-plate"],
+        ids: this.timer.canReplay() ? ["cloche-plate"] : allIds,
       };
     }
     if (level === 2) {
-      const correctOpt = this.content.options.find((o) => o.is_correct);
-      const distractorOpt = this.content.options.find((o) => !o.is_correct);
-      const narrowedIds: string[] = [];
-      if (correctOpt) {
-        narrowedIds.push(`opt-${correctOpt.value}`);
-      }
-      if (distractorOpt) {
-        narrowedIds.push(`opt-${distractorOpt.value}`);
-      }
+      const nIds = this.variant.narrowedIds;
       return {
         kind: "region",
-        ids: narrowedIds.length > 0 ? narrowedIds : ["options-narrowed"],
+        ids: nIds.length > 0 ? [...nIds] : ["options-narrowed"],
       };
     }
     return this.getHintTarget();
   }
 
   override commit(action: GameAction): void {
+    const originTimeMs = typeof action.data === "number" ? action.data : 0;
     if (action.type === "select_value" && typeof action.data === "number") {
       this.selectValue(action.data);
     } else if (action.type === "start_flash") {
-      this.startFlash();
+      this.startFlash(originTimeMs);
     } else if (action.type === "replay_flash") {
-      this.replayFlash();
+      this.replayFlash(originTimeMs);
     }
   }
 
   override getView(): EngineView {
-    if (this.awaitingStart && this.plateRect) {
-      const p = this.plateRect;
-      return {
-        activePrompt: this.content.prompt,
-        entities: [
-          {
-            id: "cloche-plate",
-            role: "neutral",
-            state: "idle",
-            x: p.x + p.w / 2,
-            y: p.y + p.h / 2,
-            w: p.w,
-            h: p.h,
-            hitShape: "circle",
-            slotIndex: -1,
-            label: "Bắt đầu",
-            spokenLabel: "Chạm để mở nắp và nhìn thật kỹ",
-          },
-        ],
-      };
-    }
-    if (this.timer.isVisible() || this.isRecapShown()) {
-      const entities: ViewEntity[] = [];
-      this.content.flash_items.forEach((item, i) => {
-        const slot = this.flashSlots[i];
-        if (!slot) {
-          return;
-        }
-        entities.push({
-          id: item.item_id,
-          slotIndex: i,
-          role: "neutral",
-          state: "idle",
-          x: slot.x,
-          y: slot.y,
-          w: slot.w,
-          h: slot.h,
-          ...resolveAssetLabels(item.asset),
-        });
-      });
-      return {
-        activePrompt: this.isCovered()
-          ? this.content.prompt
-          : this.content.prompt || "Bé hãy nhìn kỹ các đồ vật trên đĩa nhé!",
-        entities,
-      };
-    }
-
-    const entities: ViewEntity[] = [];
-    if (this.isCovered() && this.timer.canReplay() && this.plateRect) {
-      const p = this.plateRect;
-      entities.push({
-        id: "cloche-plate",
-        role: "neutral",
-        state: "idle",
-        x: p.x + p.w / 2,
-        y: p.y + p.h / 2,
-        w: p.w,
-        h: p.h,
-        hitShape: "circle",
-        slotIndex: -1,
-        label: "Mở lại nắp",
-        spokenLabel: "Chạm để xem lại các đồ vật",
-      });
-    }
-
-    this.content.options.forEach((opt, i) => {
-      const slot = this.slots[i];
-      if (!slot) {
-        return;
-      }
-      let state: ViewEntity["state"] = "idle";
-      if (this.selectedValue === opt.value) {
-        state = opt.is_correct ? "correct" : "incorrect";
-      }
-      const optLabel = String(opt.value);
-      entities.push({
-        id: `opt-${opt.value}`,
-        slotIndex: i,
-        role: "source",
-        state,
-        x: slot.x,
-        y: slot.y,
-        w: slot.w,
-        h: slot.h,
-        label: optLabel,
-        spokenLabel: `Số ${optLabel}`,
-      });
+    const clk = clockOf(this);
+    return buildGT012View({
+      content: this.content,
+      variant: this.variant,
+      slots: this.slots,
+      flashSlots: this.flashSlots,
+      plateRect: this.plateRect,
+      clk,
+      awaitingStart: this.awaitingStart,
+      isFlashVisible: this.timer.isVisible(),
+      isWon: this.checkWinCondition(),
+      isRoundClosed: this.isRoundClosed,
+      canReplay: this.timer.canReplay(),
+      selectedValue: this.selectedValue,
+      wrongActive: this.wrongFlash.isActive(clk.logicMs),
     });
-
-    return {
-      activePrompt: this.isCovered()
-        ? this.content.prompt
-        : this.content.prompt || "Bé hãy nhìn kỹ các đồ vật trên đĩa nhé!",
-      entities,
-    };
   }
 
   override checkWinCondition(): boolean {
-    if (this.selectedValue === null) {
-      return false;
-    }
-    return this.selectedValue === this.content.flash_items.length;
+    const exp = this.content.flash_items.length;
+    return this.selectedValue !== null && this.selectedValue === exp;
   }
 
   override destroy(): void {
     super.destroy();
+    resetClock(this);
     this.timer.reset();
     this.selectedValue = null;
     this.wasVisible = false;
     this.awaitingStart = true;
+    this.isRoundClosed = false;
   }
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
-    this.areas = splitRecallStage(
-      this.stageRect ?? legacyStageArea(this.logicSpace)
-    );
+    const fallback = legacyStageArea(this.logicSpace);
+    this.areas = splitRecallStage(this.stageRect ?? fallback);
     const layoutFn = resolveLayout("grid");
-    return insetDrawSize(
-      layoutFn({
-        slotCount: this.content.options.length,
-        ageBand,
-        logic: this.logicSpace,
-        stage: this.areas.options,
-        cssPerLogic: this.cssPerLogic,
-      }),
-      this.stageRect
-    );
+    const raw = layoutFn({
+      slotCount: this.variant.displayOptions.length,
+      ageBand,
+      logic: this.logicSpace,
+      stage: this.areas.options,
+      cssPerLogic: this.cssPerLogic,
+    });
+    const slots = insetDrawSize(raw, this.stageRect);
+    this.cachedDockRect = dockRectAroundSlots(slots, this.stageRect) ?? null;
+    return slots;
   }
 
   protected override computeRoundDerived(): void {
     if (!this.areas) {
       return;
     }
-    this.flashSlots = computeFlashSlots(
-      this.areas.plateAlone,
-      this.content.flash_items.length,
-      this.content.arrangement
-    );
+    const n = this.content.flash_items.length;
+    const arr = this.variant.effectiveArrangement;
+    this.flashSlots = computeFlashSlots(this.areas.plateAlone, n, arr);
   }
 
   render(
@@ -518,96 +446,32 @@ export class FlashRecallSession extends TemplateGameSession<
     rs: RenderSystem,
     timeMs: number
   ): void {
-    this.lastFrameMs = timeMs;
-    if (this.selectedValue !== null && this.wrongFlash.hasExpired(timeMs)) {
-      this.selectedValue = null;
-      this.wrongFlash.clear();
-    }
-
     drawSceneBackground(ctx, rs, this.themeId);
-
-    const plateRect = this.plateRect;
-    const plate = plateRect ? plateSlot(plateRect) : null;
-    if (!plate) {
-      return;
-    }
-
-    if (this.awaitingStart) {
-      // Chờ trẻ bấm: nắp đậy và nút bắt đầu ▶ ngay trên đĩa (`BR-E012-04`).
-      drawWoodenPlate(ctx, plate, false);
-      drawGlassBell(ctx, plate, 0);
-      drawLabelText(ctx, "▶", plate.x, plate.y, 48);
-      return;
-    }
-
-    // Hai pha: đang loé thì mở nắp cloche thấy vật; hết loé thì đậy nắp cloche và hiện thẻ chọn.
-    if (this.timer.isVisible() || this.isRecapShown()) {
-      if (!(this.stageRect || this.isRecapShown())) {
-        drawSubPromptText(ctx, rs, "Nhìn nhanh!");
-      }
-      const elapsed = timeMs - this.flashStartMs;
-      drawWoodenPlate(ctx, plate, false);
-      drawGlassBell(
-        ctx,
-        plate,
-        this.isRecapShown()
-          ? 1
-          : bellLiftProgress(
-              elapsed,
-              this.timer.getDurationMs(),
-              rs.reducedMotion
-            )
-      );
-      this.content.flash_items.forEach((item, i) => {
-        const slot = this.flashSlots[i];
-        if (!slot) {
-          return;
-        }
-        drawFireflyGlow(ctx, slot, fireflyGlow(elapsed, i, rs.reducedMotion));
-        drawSlotItem(ctx, rs, slot, { id: item.item_id, asset: item.asset });
-      });
-      return;
-    }
-
-    if (!this.stageRect) {
-      drawSubPromptText(ctx, rs, "Bé nhớ có bao nhiêu đồ vật?");
-    }
-    drawWoodenPlate(ctx, plate, false);
-    drawGlassBell(ctx, plate, 0);
-    drawWoodenTokenDock(
+    const clk = clockOf(this);
+    const wrongActive = this.wrongFlash.isActive(clk.logicMs);
+    renderGT012Scene({
       ctx,
       rs,
-      dockRectAroundSlots(this.slots, this.stageRect)
-    );
-
-    this.content.options.forEach((opt, i) => {
-      const slot = this.slots[i];
-      if (!slot) {
-        return;
-      }
-      let state: "correct" | "wrong" | "idle" = "idle";
-      if (this.selectedValue === opt.value) {
-        state = opt.is_correct ? "correct" : "wrong";
-      }
-      drawSlotItem(ctx, rs, slot, {
-        id: `opt-${opt.value}`,
-        text: String(opt.value),
-        state,
-      });
-      if (
-        this.selectedValue === opt.value &&
-        !opt.is_correct &&
-        this.wrongFlash.isActive(timeMs)
-      ) {
-        const elapsed = this.wrongFlash.elapsedMs(timeMs);
-        rs.drawRetryRing(
-          ctx,
-          slot.x,
-          slot.y,
-          Math.min(slot.hitW, slot.hitH) / 2 + 4,
-          elapsed / WRONG_FLASH_MS
-        );
-      }
+      timeMs,
+      plateRect: this.plateRect,
+      stageRect: this.stageRect,
+      cachedDockRect: this.cachedDockRect,
+      content: this.content,
+      variant: this.variant,
+      slots: this.slots,
+      flashSlots: this.flashSlots,
+      clk,
+      awaitingStart: this.awaitingStart,
+      isFlashVisible: this.timer.isVisible(),
+      isWon: this.checkWinCondition(),
+      isRoundClosed: this.isRoundClosed,
+      canReplay: this.timer.canReplay(),
+      durationMs: this.timer.getDurationMs(),
+      selectedValue: this.selectedValue,
+      wrongActive,
+      wrongProg: wrongActive ? this.wrongFlash.progress(clk.logicMs) : null,
+      scaffoldHintLevel: this.scaffoldHintLevel,
+      degraded: this.degradation?.particles_enabled === false,
     });
   }
 }

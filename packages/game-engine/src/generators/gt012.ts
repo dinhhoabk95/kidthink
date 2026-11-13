@@ -1,5 +1,9 @@
 import { AGE_BANDS, type AgeBand } from "#src/contracts/types";
-import { FLASH_ITEM_CAP_BY_BAND } from "#src/templates/GT-012/template";
+import {
+  FLASH_ITEM_CAP_BY_BAND,
+  type GT012Content,
+  type GT012Difficulty,
+} from "#src/templates/GT-012/template";
 import {
   generateNumericOptions,
   getNouns,
@@ -36,7 +40,7 @@ const MAX_OPTION_VALUE = 10;
  * mọi level nên tham số độ khó chính của engine không đổi. Số vật nằm ở hai
  * mức sát trần band (`cap-1`, `cap`) để band 3-4 không còn kẹt ở đúng 2 vật.
  */
-export const GT012Generator: LevelGenerator = {
+export const GT012Generator: LevelGenerator<GT012Content, GT012Difficulty> = {
   engine: "GT-012",
   axes: {
     age_band: [...AGE_BANDS],

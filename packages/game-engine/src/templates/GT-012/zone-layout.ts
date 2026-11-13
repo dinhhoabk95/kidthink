@@ -2,37 +2,53 @@ import { SLOT_GAP_PX } from "#src/layout/constants";
 import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
 import { computeDiceSlots } from "#src/render/index.js";
+import { deriveStream } from "#src/rng/mulberry32";
+import { shuffle } from "#src/rng/shuffle";
 import type { GT012Content } from "./template.js";
 
-/**
- * Chia sân khấu của GT-012 (`BR-PSZ-01`): đĩa cloche cho pha loé ở một bên, hàng
- * lựa chọn trên dock ở bên kia. Portrait xếp đĩa trên, lựa chọn dưới; ngang xếp
- * đĩa trái, lựa chọn phải — sân khấu ngang quá thấp để chồng hai tầng.
- */
 const PLATE_MAX_PX = 220;
-
-/** Cạnh vật trên đĩa — vật loé không chạm được nên không chịu sàn chạm. */
 const FLASH_ITEM_PX = 64;
-
-/** Cạnh vật nhỏ nhất khi đĩa chật: dưới ngưỡng này vật không còn đọc ra. */
 const FLASH_ITEM_MIN_PX = 24;
 const FLASH_ITEM_STEP_PX = 4;
-
-/** Khe giữa hai vật loé liền nhau trên đĩa. */
 const FLASH_ITEM_GAP_PX = 8;
 
-/**
- * Bán kính lòng đĩa theo phần bán kính đĩa. Vành gỗ và mép đĩa chiếm phần ngoài
- * (`drawWoodenPlate`), nên vật loé phải nằm trong vòng này, không tràn ra mép.
- */
 export const FLASH_DISH_INNER_FRACTION = 0.72;
 
+export type GT012StagePhase =
+  | "awaiting_start"
+  | "flashing"
+  | "answering"
+  | "reveal_win"
+  | "reveal_closed";
+
+export type GT012OptionVisualState =
+  | "idle"
+  | "touching"
+  | "selected"
+  | "correct"
+  | "wrong";
+
+export interface GT012OptionTokenProps {
+  readonly value: number;
+  readonly state: GT012OptionVisualState;
+  readonly dimmed: boolean;
+  readonly wrongProgress: number | null;
+  readonly winPop01: number;
+  readonly degraded: boolean;
+  readonly stageRect?: ZoneRect | null;
+}
+
 export interface RecallAreas {
-  /** Đĩa khi có hàng lựa chọn bên cạnh (đã che nắp, chờ trẻ trả lời). */
   readonly plate: ZoneRect;
-  /** Cùng cỡ đĩa nhưng ở giữa sân khấu: lúc chờ bấm và lúc loé chưa có lựa chọn. */
   readonly plateAlone: ZoneRect;
   readonly options: ZoneRect;
+}
+
+export interface GT012SessionVariant {
+  readonly displayOptions: readonly GT012Content["options"][number][];
+  readonly effectiveArrangement: GT012Content["arrangement"];
+  readonly narrowedValues: ReadonlySet<number>;
+  readonly narrowedIds: readonly string[];
 }
 
 function centeredPlate(stage: ZoneRect, side: number): ZoneRect {
@@ -81,7 +97,6 @@ export function splitRecallStage(stage: ZoneRect): RecallAreas {
   };
 }
 
-/** Slot hình vuông của đĩa — tâm đĩa, cạnh đĩa. */
 export function plateSlot(plate: ZoneRect): Slot {
   return {
     index: 0,
@@ -96,24 +111,158 @@ export function plateSlot(plate: ZoneRect): Slot {
   };
 }
 
+export function clampRetryRadiusToStage(
+  slot: Slot,
+  stageRect?: ZoneRect | null
+): number {
+  const raw = Math.min(slot.hitW, slot.hitH) / 2 + 2;
+  if (!stageRect) {
+    return raw;
+  }
+  const avail = Math.min(
+    slot.x - stageRect.x - 2,
+    stageRect.x + stageRect.w - slot.x - 2,
+    slot.y - stageRect.y - 2,
+    stageRect.y + stageRect.h - slot.y - 2
+  );
+  return Math.max(8, Math.min(raw, avail));
+}
+
 interface Point {
   readonly x: number;
   readonly y: number;
 }
 
-/** Hàng lưới căn giữa quanh gốc: số cột ~ căn bậc hai, hàng cuối căn giữa. */
-function gridOffsets(count: number, pitch: number): Point[] {
-  const cols = Math.ceil(Math.sqrt(count));
-  const rows = Math.ceil(count / cols);
-  return Array.from({ length: count }, (_, i) => {
-    const row = Math.floor(i / cols);
-    const inRow = Math.min(cols, count - row * cols);
-    const col = i % cols;
-    return {
-      x: (col - (inRow - 1) / 2) * pitch,
-      y: (row - (rows - 1) / 2) * pitch,
-    };
+function recenterPoints(pts: readonly Point[]): Point[] {
+  if (pts.length === 0) {
+    return [];
+  }
+  const mx = pts.reduce((s, p) => s + p.x, 0) / pts.length;
+  const my = pts.reduce((s, p) => s + p.y, 0) / pts.length;
+  return pts.map((p) => ({ x: p.x - mx, y: p.y - my }));
+}
+
+function lineOffsets(count: number, pitch: number): Point[] {
+  if (count <= 4) {
+    return Array.from({ length: count }, (_, i) => ({
+      x: (i - (count - 1) / 2) * pitch,
+      y: 0,
+    }));
+  }
+  const top = Math.ceil(count / 2);
+  const bot = count - top;
+  return Array.from({ length: count }, (_, i) =>
+    i < top
+      ? { x: (i - (top - 1) / 2) * pitch, y: -pitch / 2 }
+      : { x: (i - top - (bot - 1) / 2) * pitch, y: pitch / 2 }
+  );
+}
+
+const TRI_ROWS: readonly (readonly number[])[] = [
+  [],
+  [1],
+  [1, 1],
+  [1, 2],
+  [1, 3],
+  [2, 3],
+  [1, 2, 3],
+];
+
+function triangleOffsets(count: number, pitch: number): Point[] {
+  if (count === 2) {
+    return [
+      { x: -pitch * 0.28, y: -pitch * 0.5 },
+      { x: pitch * 0.28, y: pitch * 0.5 },
+    ];
+  }
+  const rows = TRI_ROWS[count] ?? [Math.ceil(count / 2), Math.floor(count / 2)];
+  const pts: Point[] = [];
+  rows.forEach((n, r) => {
+    for (let c = 0; c < n; c++) {
+      pts.push({
+        x: (c - (n - 1) / 2) * pitch,
+        y: (r - (rows.length - 1) / 2) * pitch,
+      });
+    }
   });
+  return recenterPoints(pts);
+}
+
+const HAND_UNIT: readonly (readonly Point[])[] = [
+  [],
+  [{ x: 0, y: 0 }],
+  [
+    { x: -0.55, y: -0.2 },
+    { x: 0.55, y: 0.2 },
+  ],
+  [
+    { x: -0.88, y: 0.35 },
+    { x: 0, y: -0.68 },
+    { x: 0.88, y: 0.35 },
+  ],
+  [
+    { x: -1.04, y: 0.48 },
+    { x: -0.52, y: -0.55 },
+    { x: 0.52, y: -0.55 },
+    { x: 1.04, y: 0.48 },
+  ],
+  [
+    { x: -1, y: 0.55 },
+    { x: -1, y: -0.48 },
+    { x: 0, y: -0.82 },
+    { x: 1, y: -0.48 },
+    { x: 1, y: 0.55 },
+  ],
+  [
+    { x: -1, y: 0.55 },
+    { x: -1, y: -0.48 },
+    { x: 0, y: -0.82 },
+    { x: 1, y: -0.48 },
+    { x: 1, y: 0.55 },
+    { x: 0, y: 0.55 },
+  ],
+];
+
+function handOffsets(count: number, pitch: number): Point[] {
+  const unit = HAND_UNIT[count] ?? HAND_UNIT[6] ?? [];
+  return recenterPoints(unit.map((p) => ({ x: p.x * pitch, y: p.y * pitch })));
+}
+
+function randomOffsets(count: number, pitch: number): Point[] {
+  if (count <= 1) {
+    return [{ x: 0, y: 0 }];
+  }
+  const pts = Array.from({ length: count }, (_, i) => {
+    const angle = i * 2.399_96 + 0.55;
+    const r = Math.sqrt(i + 0.6) * pitch * 0.85;
+    return { x: Math.cos(angle) * r, y: Math.sin(angle) * r };
+  });
+  return recenterPoints(pts);
+}
+
+function arrangementOffsets(
+  arrangement: GT012Content["arrangement"],
+  parent: Slot,
+  count: number,
+  size: number
+): Point[] {
+  const pitch = size + FLASH_ITEM_GAP_PX;
+  if (arrangement === "dice") {
+    return computeDiceSlots(parent, count, size).map((slot) => ({
+      x: slot.x - parent.x,
+      y: slot.y - parent.y,
+    }));
+  }
+  if (arrangement === "line") {
+    return lineOffsets(count, pitch);
+  }
+  if (arrangement === "triangle") {
+    return triangleOffsets(count, pitch);
+  }
+  if (arrangement === "hand") {
+    return handOffsets(count, pitch);
+  }
+  return randomOffsets(count, pitch);
 }
 
 function reachOf(offsets: readonly Point[], size: number): number {
@@ -133,11 +282,6 @@ interface FlashFit {
   readonly offsets: readonly Point[];
 }
 
-/**
- * Cỡ lớn nhất (không quá `FLASH_ITEM_PX`) mà mọi vật nằm trong lòng đĩa và
- * không chồng nhau. `offsetsAt(size)` là vị trí tương đối so với tâm đĩa; vị
- * trí nào vượt lòng đĩa thì kéo dần về tâm (giữ hình sắp xếp) trước khi hạ cỡ.
- */
 function fitInsideDish(
   plate: ZoneRect,
   offsetsAt: (size: number) => Point[]
@@ -165,11 +309,6 @@ function fitInsideDish(
   return last;
 }
 
-/**
- * Vị trí vật loé trên đĩa. `arrangement` nói vật được **xếp** thế nào: xúc xắc
- * dùng bảng toạ độ cố định của `computeDiceSlots`, các kiểu còn lại xếp lưới
- * căn giữa. Mọi vật nằm trọn trong lòng đĩa (`BR-E012-10`).
- */
 export function computeFlashSlots(
   plate: ZoneRect,
   count: number,
@@ -177,12 +316,7 @@ export function computeFlashSlots(
 ): Slot[] {
   const parent = plateSlot(plate);
   const fit = fitInsideDish(plate, (size) =>
-    arrangement === "dice"
-      ? computeDiceSlots(parent, count, size).map((slot) => ({
-          x: slot.x - parent.x,
-          y: slot.y - parent.y,
-        }))
-      : gridOffsets(count, size + FLASH_ITEM_GAP_PX)
+    arrangementOffsets(arrangement, parent, count, size)
   );
   return fit.offsets.map((o, index) => ({
     ...parent,
@@ -195,4 +329,85 @@ export function computeFlashSlots(
     hitH: fit.size,
     role: "neutral" as const,
   }));
+}
+
+const ALL_ARRANGEMENTS: readonly GT012Content["arrangement"][] = [
+  "dice",
+  "line",
+  "triangle",
+  "random",
+  "hand",
+];
+
+function resolveShuffledOptions(
+  options: readonly GT012Content["options"][number][],
+  layoutSeed: number
+): readonly GT012Content["options"][number][] {
+  if (layoutSeed === 0 || options.length < 2) {
+    return [...options];
+  }
+  const shuffled = shuffle(options, deriveStream(layoutSeed, "distractors"));
+  const unchanged = shuffled.every((o, i) => o.value === options[i]?.value);
+  return unchanged && shuffled[0]
+    ? [...shuffled.slice(1), shuffled[0]]
+    : shuffled;
+}
+
+function resolveEffectiveArrangement(
+  base: GT012Content["arrangement"],
+  layoutSeed: number
+): GT012Content["arrangement"] {
+  if (layoutSeed === 0) {
+    return base;
+  }
+  const candidates = ALL_ARRANGEMENTS.filter((a) => a !== base);
+  const rng = deriveStream(layoutSeed, "assign");
+  return candidates[rng.nextInt(candidates.length)] ?? base;
+}
+
+export function computeNarrowedOptionValues(
+  options: readonly GT012Content["options"][number][]
+): ReadonlySet<number> {
+  const correctOpt = options.find((o) => o.is_correct);
+  if (!correctOpt) {
+    return new Set(options.slice(0, 2).map((o) => o.value));
+  }
+  let closestDistractor: GT012Content["options"][number] | null = null;
+  let minDiff = Number.POSITIVE_INFINITY;
+  for (const opt of options) {
+    if (opt.is_correct) {
+      continue;
+    }
+    const diff = Math.abs(opt.value - correctOpt.value);
+    if (diff < minDiff) {
+      minDiff = diff;
+      closestDistractor = opt;
+    }
+  }
+  const values = [correctOpt.value];
+  if (closestDistractor) {
+    values.push(closestDistractor.value);
+  }
+  return new Set(values);
+}
+
+export function resolveSessionVariant(
+  content: GT012Content,
+  layoutSeed: number
+): GT012SessionVariant {
+  const displayOptions = resolveShuffledOptions(content.options, layoutSeed);
+  const effectiveArrangement = resolveEffectiveArrangement(
+    content.arrangement,
+    layoutSeed
+  );
+  const narrowedValues = computeNarrowedOptionValues(displayOptions);
+  const narrowedIds = displayOptions
+    .filter((o) => narrowedValues.has(o.value))
+    .map((o) => `opt-${o.value}`);
+  return {
+    displayOptions,
+    effectiveArrangement,
+    narrowedValues,
+    narrowedIds,
+  };
 }
