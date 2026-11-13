@@ -145,3 +145,27 @@ export interface GT019FlipButtonParams {
   readonly isHinted: boolean;
   readonly pulseProgress: number;
 }
+
+export type GT020CardVisualMode =
+  | "face_down"
+  | "hovered"
+  | "face_up"
+  | "mismatch_open"
+  | "matched"
+  | "auto_reveal";
+
+export interface GT020CardRenderParams {
+  readonly slot: SceneBox & { readonly hitW: number; readonly hitH: number };
+  readonly asset: RenderAsset;
+  readonly pairIndex: number;
+  readonly isFaceUp: boolean;
+  readonly mode: GT020CardVisualMode;
+  readonly flipElapsedMs: number;
+  readonly matchElapsedMs: number | null;
+  readonly mismatchRatio: number;
+  readonly isHovered: boolean;
+  readonly hintLevel: 0 | 1 | 2 | 3;
+  readonly isDimmedByMismatch: boolean;
+  readonly timeMs: number;
+  readonly showParticles: boolean;
+}

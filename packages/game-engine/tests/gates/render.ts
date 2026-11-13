@@ -93,6 +93,7 @@ const PRIMITIVE_MODULES: readonly string[] = [
   "render/gt-017-shapes.ts",
   "render/gt-018-shapes.ts",
   "render/gt-019-shapes.ts",
+  "render/gt-020-shapes.ts",
   "render/craft-shapes.ts",
   "render/particles.ts",
   "render/slot-decor.ts",

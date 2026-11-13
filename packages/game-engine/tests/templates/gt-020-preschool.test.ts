@@ -4,10 +4,7 @@ import { GT020Generator } from "#src/generators/gt020";
 import { createRng } from "#src/rng/mulberry32";
 import { GT020_FIXTURES } from "#src/templates/GT-020/fixtures";
 import { GT020Session } from "#src/templates/GT-020/session";
-import {
-  type GT020Content,
-  PAIR_CAP_BY_BAND,
-} from "#src/templates/GT-020/template";
+import { PAIR_CAP_BY_BAND } from "#src/templates/GT-020/template";
 
 const VOCAB = {
   theme: "animals",
@@ -18,7 +15,7 @@ const VOCAB = {
 };
 
 /**
- * Task #313 Phase 3 — GT-020: lật cặp lệch không phải lỗi (`BR-E020-04`),
+ * GT-020: lật cặp lệch không phải lỗi (`BR-E020-04`),
  * `peek_all_initial_ms` có tác dụng (`BR-E020-05`), số cặp theo band (`BR-E020-06`).
  */
 function build(fixtureIndex: number): GT020Session {
@@ -102,7 +99,7 @@ describe("GT-020 — trần số cặp theo band (BR-E020-06)", () => {
         age_band: band,
         theme: "animals",
         vocabulary: VOCAB,
-      }) as { content_pack: GT020Content };
+      });
       expect(out.content_pack.pairs.length).toBeLessThanOrEqual(
         PAIR_CAP_BY_BAND[band]
       );

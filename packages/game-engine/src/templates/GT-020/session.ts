@@ -6,42 +6,43 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
-import type {
-  EngineView,
-  EntityVisual,
-  Gesture,
-  ViewEntity,
-} from "#src/interaction";
-import { resolveAssetLabels } from "#src/labels/spoken-keyword";
+import type { EngineView, Gesture } from "#src/interaction";
 import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
-import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { PairingMechanic } from "#src/mechanics/pairing-mechanic";
-import {
-  CARD_FLIP_MS,
-  cardFlipPose,
-  drawLabelText,
-  drawSceneBackground,
-  drawSlotItem,
-  getColorsForState,
-} from "#src/render/index";
 import type { MascotPose } from "#src/render/mascot";
-import { deriveStream } from "#src/rng/mulberry32";
-import { shuffle } from "#src/rng/shuffle";
 import {
   type CardItem,
   CardSystem,
   type FlipResult,
 } from "#src/systems/card-system";
 import type { DegradationState } from "#src/systems/degradation";
+import type {
+  HintDemoStep,
+  HintLevel,
+  HintTarget,
+} from "#src/systems/hint-ladder";
 import type { RenderSystem } from "#src/systems/render-system";
+import {
+  buildGT020HintDemoSequence,
+  buildGT020HintTarget,
+  buildGT020View,
+  clearGT020Clock,
+  clearGT020Hint,
+  computeGT020Slots,
+  escalateGT020Scaffold,
+  type FlatCard,
+  type GT020HintContext,
+  type GT020ViewContext,
+  getGT020Clock,
+  markGT020CardSeen,
+  markGT020PairMatched,
+  renderGT020Board,
+  resolveGT020HintPair,
+  shuffleGT020Cards,
+  tickGT020Clock,
+} from "./layout.js";
 import type { GT020Content, GT020Difficulty } from "./template.js";
-
-interface FlatCard {
-  readonly cardId: string;
-  readonly pairKey: string;
-  readonly asset: GT020Content["pairs"][number]["card_a"]["asset"];
-}
 
 /** Khung chuyện đọc một lần ở vòng đầu (`BR-E020-07`, `BR-FBK-16`). */
 export const GT020_STORY_LINE =
@@ -60,28 +61,23 @@ export class GT020Session extends TemplateGameSession<
   private peekRemainingMs = 0;
   private hasOpenMismatch = false;
   private mismatchElapsedMs = 0;
-  /** Mặt thẻ ở khung vẽ trước (`true` là ngửa); đổi mặt thì khởi động nhịp lật (`BR-E020-08`). */
-  private readonly lastFaceUp = new Map<string, boolean>();
-  /** Mốc đồng hồ khung lúc thẻ bắt đầu lật. */
-  private readonly flipStartMs = new Map<string, number>();
+  private roundClosedOnWrong = false;
 
   setupEntities(): void {
-    this.lastFaceUp.clear();
-    this.flipStartMs.clear();
     this.isWon = false;
     this.hasOpenMismatch = false;
     this.mismatchElapsedMs = 0;
-    // Mở màn: lật ngửa cả bàn `peek_all_initial_ms` rồi úp (`BR-E020-05`).
+    this.roundClosedOnWrong = false;
     this.peekRemainingMs = this.difficulty.peek_all_initial_ms;
-    const flat: FlatCard[] = this.content.pairs.flatMap((p) => [
-      { cardId: p.card_a.card_id, pairKey: p.pair_key, asset: p.card_a.asset },
-      { cardId: p.card_b.card_id, pairKey: p.pair_key, asset: p.card_b.asset },
-    ]);
 
-    const rng = deriveStream(this.layoutSeed, "items");
-    this.displayCards = shuffle(flat, rng);
+    this.displayCards = shuffleGT020Cards(
+      this,
+      this.content.pairs,
+      this.layoutSeed,
+      this.roundGeneration
+    );
 
-    const cardItems: CardItem[] = flat.map((c) => ({
+    const cardItems: CardItem[] = this.displayCards.map((c) => ({
       id: c.cardId,
       pairKey: c.pairKey,
     }));
@@ -92,7 +88,7 @@ export class GT020Session extends TemplateGameSession<
     this.recordEvent("round_started", {
       round_index: 0,
       total_pairs: this.content.pairs.length,
-      card_count: flat.length,
+      card_count: this.displayCards.length,
     });
   }
 
@@ -101,9 +97,16 @@ export class GT020Session extends TemplateGameSession<
     return this.peekRemainingMs > 0;
   }
 
+  override isAcceptingInput(): boolean {
+    return (
+      !(this.isPeeking() || this.isWon || this.roundClosedOnWrong) &&
+      super.isAcceptingInput()
+    );
+  }
+
   /** Lật thẻ úp là nước đi hợp lệ; cặp lệch không phải lỗi (`BR-E020-04`). */
   private validateTapCard(cardId: string): ActionResult {
-    if (this.isPeeking()) {
+    if (this.isPeeking() || this.isWon || this.roundClosedOnWrong) {
       return ACTION_IGNORED;
     }
     const card = this.cardSystem.getCard(cardId);
@@ -126,6 +129,9 @@ export class GT020Session extends TemplateGameSession<
   }
 
   onTapCard(cardId: string): FlipResult | null {
+    if (this.isWon || this.roundClosedOnWrong) {
+      return null;
+    }
     if (this.hasOpenMismatch) {
       this.closeMismatch();
     }
@@ -133,7 +139,7 @@ export class GT020Session extends TemplateGameSession<
     if (!result) {
       return null;
     }
-    // Tiếng lật chỉ khi thẻ thật sự lật ngoài giai đoạn xem trước (`BR-E020-07`).
+    markGT020CardSeen(this, cardId);
     if (!this.isPeeking()) {
       this.queueSfx("card_flip");
     }
@@ -152,6 +158,7 @@ export class GT020Session extends TemplateGameSession<
       );
       if (pair) {
         this.pairingMechanic.match(pair.card_a.card_id, pair.card_b.card_id);
+        markGT020PairMatched(this, pair.pair_key, this.displayCards);
       }
       this.recordEvent("pair_matched", {
         pair_key: result.matchedPairKey,
@@ -166,6 +173,13 @@ export class GT020Session extends TemplateGameSession<
     } else if (result.isSecondFlip && !result.isMatch) {
       this.hasOpenMismatch = true;
       this.mismatchElapsedMs = 0;
+      if (this.difficulty.allow_retry === false) {
+        this.roundClosedOnWrong = true;
+        getGT020Clock(this).autoRevealRemainingMs = Math.max(
+          this.difficulty.flip_back_delay_ms,
+          1200
+        );
+      }
     }
 
     return result;
@@ -178,16 +192,35 @@ export class GT020Session extends TemplateGameSession<
   }
 
   update(deltaMs: number): void {
+    const step = Math.max(0, deltaMs);
+    tickGT020Clock(this, step);
     if (this.peekRemainingMs > 0) {
-      this.peekRemainingMs = Math.max(0, this.peekRemainingMs - deltaMs);
+      this.peekRemainingMs = Math.max(0, this.peekRemainingMs - step);
     }
     if (!this.hasOpenMismatch) {
       return;
     }
-    this.mismatchElapsedMs += Math.max(0, deltaMs);
+    this.mismatchElapsedMs += step;
     if (this.mismatchElapsedMs >= this.difficulty.flip_back_delay_ms) {
       this.closeMismatch();
     }
+  }
+
+  setPointerOver(x: number, y: number): void {
+    const hitIdx = findHitSlotIndex(
+      this.slots.slice(0, this.displayCards.length),
+      x,
+      y,
+      "square",
+      TAP_TOLERANCE_PX
+    );
+    const hovered =
+      hitIdx === null ? null : (this.displayCards[hitIdx]?.cardId ?? null);
+    getGT020Clock(this).hoveredCardId = hovered;
+  }
+
+  clearPointerOver(): void {
+    getGT020Clock(this).hoveredCardId = null;
   }
 
   override storyLine(): string {
@@ -196,7 +229,7 @@ export class GT020Session extends TemplateGameSession<
 
   /** Gấu Con nghiêng đầu nhớ lại khi một thẻ ngửa đang chờ cặp (`BR-E020-07`). */
   override mascotMood(): MascotPose | null {
-    if (this.isWon || this.isPeeking()) {
+    if (this.isWon || this.isPeeking() || this.roundClosedOnWrong) {
       return null;
     }
     if (this.hasOpenMismatch) {
@@ -244,169 +277,73 @@ export class GT020Session extends TemplateGameSession<
     }
   }
 
-  override getView(): EngineView {
-    const entities: ViewEntity[] = this.displayCards.map((card, i) => {
-      const slot = this.slots[i];
-      const cardState = this.effectiveCardState(card.cardId);
-      let state: EntityVisual = "idle";
-      if (cardState === "matched") {
-        state = "correct";
-      } else if (cardState === "face_up") {
-        state = "selected";
-      }
-      const labels =
-        cardState === "face_down" ? {} : resolveAssetLabels(card.asset);
-      return {
-        id: card.cardId,
-        slotIndex: i,
-        // Không phải "source": shell coi nguồn đang "selected" là vật đã chọn chờ
-        // thả (nâng lên + vòng vàng quanh mọi ô khác). Thẻ ngửa chỉ là mặt lật
-        // (`BR-E020-09`).
-        role: "target",
-        state,
-        x: slot?.x ?? 0,
-        y: slot?.y ?? 0,
-        w: slot?.w ?? 80,
-        h: slot?.h ?? 80,
-        hitShape: "square",
-        ...labels,
-      };
-    });
+  private hintContext(): GT020HintContext {
     return {
-      activePrompt: this.content.prompt,
-      entities,
+      session: this,
+      displayCards: this.displayCards,
+      cardSystem: this.cardSystem,
+      isWon: this.isWon,
+      isPeeking: this.isPeeking(),
+      roundClosedOnWrong: this.roundClosedOnWrong,
+      hasOpenMismatch: this.hasOpenMismatch,
     };
   }
 
-  /** Trạng thái thẻ thấy được: xem trước thì mọi thẻ chưa ghép đều ngửa. */
-  private effectiveCardState(cardId: string): string {
-    const state = this.cardSystem.getCard(cardId)?.state ?? "face_down";
-    return this.isPeeking() && state === "face_down" ? "face_up" : state;
+  private viewContext(): GT020ViewContext {
+    return {
+      ...this.hintContext(),
+      prompt: this.content.prompt,
+      slots: this.slots,
+      mismatchElapsedMs: this.mismatchElapsedMs,
+      flipBackDelayMs: this.difficulty.flip_back_delay_ms,
+      themeId: this.themeId,
+      degradation: this.degradation,
+    };
+  }
+
+  override onScaffoldEscalated(level: HintLevel): void {
+    escalateGT020Scaffold(this.hintContext(), level);
+  }
+
+  override onHintCleared(): void {
+    clearGT020Hint(this);
+  }
+
+  override getHintTargetForLevel(level: HintLevel): HintTarget | null {
+    return buildGT020HintTarget(this.hintContext(), level);
   }
 
   override getHintTargetIndex(): number | null {
-    if (this.isWon || this.isPeeking()) {
-      return null;
-    }
-    const faceUpCard = this.displayCards.find((c) => {
-      const state = this.cardSystem.getCard(c.cardId)?.state;
-      return state === "face_up";
-    });
-    if (faceUpCard) {
-      const matchingIdx = this.displayCards.findIndex((c) => {
-        const state = this.cardSystem.getCard(c.cardId)?.state;
-        return c.pairKey === faceUpCard.pairKey && state === "face_down";
-      });
-      if (matchingIdx >= 0) {
-        return matchingIdx;
-      }
-    }
-    const firstFaceDown = this.displayCards.findIndex((c) => {
-      const state = this.cardSystem.getCard(c.cardId)?.state;
-      return state === "face_down";
-    });
-    return firstFaceDown >= 0 ? firstFaceDown : null;
+    return resolveGT020HintPair(this.hintContext())?.nextTapIdx ?? null;
+  }
+
+  override getHintDemoSequence(
+    level: HintLevel
+  ): readonly HintDemoStep[] | null {
+    return buildGT020HintDemoSequence(this.hintContext(), level);
+  }
+
+  override getView(): EngineView {
+    return buildGT020View(this.viewContext());
   }
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
-    const layoutName =
-      this.displayCards.length === 4 ? "grid" : "card-flip-grid";
-    const layoutFn = resolveLayout(layoutName);
-    return layoutFn({
-      slotCount: this.displayCards.length,
+    return computeGT020Slots(
+      this,
+      this.displayCards.length,
       ageBand,
-      logic: this.logicSpace,
-      stage: this.stageRect,
-      cssPerLogic: this.cssPerLogic,
-    });
-  }
-
-  /** Vẽ một mặt thẻ: ngửa (asset) hoặc úp (thân trơn, ❌ NEVER lộ asset). */
-  private drawCardFace(
-    ctx: CanvasRenderingContext2D,
-    rs: RenderSystem,
-    card: FlatCard,
-    slot: Slot,
-    isFaceUp: boolean,
-    state: string
-  ): void {
-    if (!isFaceUp) {
-      const { fill, border } = getColorsForState("locked");
-      rs.drawClayBody(
-        ctx,
-        slot.x,
-        slot.y,
-        Math.min(slot.w, slot.h) / 2,
-        fill,
-        border,
-        "square"
-      );
-      drawLabelText(ctx, "?", slot.x, slot.y, 28);
-      return;
-    }
-    drawSlotItem(
-      ctx,
-      rs,
-      slot,
-      {
-        id: card.cardId,
-        asset: card.asset,
-        state: state === "matched" ? "correct" : "selected",
-      },
-      "square"
+      this.logicSpace,
+      this.stageRect,
+      this.cssPerLogic ?? 1
     );
-  }
-
-  /**
-   * Thẻ lật bằng co `scaleX` quanh tâm (`BR-E020-08`). Nhịp lật chỉ phụ thuộc
-   * việc đổi mặt ngửa/úp — cùng một chuyển động cho cặp khớp và cặp lệch, nên
-   * không báo trước kết quả. Mặt thẻ đang úp vẫn không bao giờ lộ asset.
-   */
-  private renderCardSlot(
-    ctx: CanvasRenderingContext2D,
-    rs: RenderSystem,
-    card: FlatCard,
-    slot: Slot,
-    timeMs: number
-  ): void {
-    const state = this.effectiveCardState(card.cardId);
-    const isFaceUp = state !== "face_down";
-    const previous = this.lastFaceUp.get(card.cardId);
-    if (previous !== undefined && previous !== isFaceUp) {
-      this.flipStartMs.set(card.cardId, timeMs);
-    }
-    this.lastFaceUp.set(card.cardId, isFaceUp);
-
-    const startMs = this.flipStartMs.get(card.cardId);
-    const elapsed = startMs === undefined ? CARD_FLIP_MS : timeMs - startMs;
-    if (elapsed >= CARD_FLIP_MS) {
-      this.flipStartMs.delete(card.cardId);
-      this.drawCardFace(ctx, rs, card, slot, isFaceUp, state);
-      return;
-    }
-    const pose = cardFlipPose(elapsed, rs.reducedMotion);
-    ctx.save();
-    ctx.translate(slot.x, slot.y);
-    ctx.scale(pose.scaleX, 1);
-    ctx.translate(-slot.x, -slot.y);
-    this.drawCardFace(
-      ctx,
-      rs,
-      card,
-      slot,
-      pose.showsNewFace ? isFaceUp : !isFaceUp,
-      state
-    );
-    ctx.restore();
   }
 
   render(ctx: CanvasRenderingContext2D, rs: RenderSystem, timeMs = 0): void {
-    drawSceneBackground(ctx, rs, this.themeId);
-    this.displayCards.forEach((card, i) => {
-      const slot = this.slots[i];
-      if (slot) {
-        this.renderCardSlot(ctx, rs, card, slot, timeMs);
-      }
-    });
+    renderGT020Board(ctx, rs, this.viewContext(), timeMs);
+  }
+
+  override destroy(): void {
+    clearGT020Clock(this);
+    super.destroy();
   }
 }
