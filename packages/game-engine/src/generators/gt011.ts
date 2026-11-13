@@ -1,8 +1,28 @@
 import { shuffle } from "#src/rng/shuffle";
+import type {
+  GT011Content,
+  GT011Difficulty,
+} from "#src/templates/GT-011/template";
 import { getNouns, sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
-import type { LevelGenerator } from "./types.js";
+import type { LevelGenerator, VocabularyEntry } from "./types.js";
 
 const HINT_AFTER_MS_BY_GRID = { 2: 9000, 3: 12_000 } as const;
+
+function deduplicateNounsByEmoji(
+  nouns: readonly VocabularyEntry[]
+): VocabularyEntry[] {
+  const seen = new Set<string>();
+  const unique: VocabularyEntry[] = [];
+  for (const noun of nouns) {
+    const ref = noun.emoji_ref.trim();
+    if (ref.length === 0 || seen.has(ref)) {
+      continue;
+    }
+    seen.add(ref);
+    unique.push(noun);
+  }
+  return unique;
+}
 
 /**
  * Ma trận là hình vuông Latin: mỗi hàng và mỗi cột chứa cùng một tập ký hiệu
@@ -11,7 +31,7 @@ const HINT_AFTER_MS_BY_GRID = { 2: 9000, 3: 12_000 } as const;
  * ký hiệu thứ hai) nên trẻ học vị trí chứ không học quy luật (`BR-E011-04`).
  * Chỉ khai band 5-6: `age_min` của engine là 5.
  */
-export const GT011Generator: LevelGenerator = {
+export const GT011Generator: LevelGenerator<GT011Content, GT011Difficulty> = {
   engine: "GT-011",
   axes: {
     age_band: ["5-6"],
@@ -19,7 +39,9 @@ export const GT011Generator: LevelGenerator = {
     theme: [...VALID_GENERATOR_THEMES],
   },
   generate({ rng, vocabulary }) {
-    const nouns = getNouns(vocabulary, 6);
+    const rawNouns = getNouns(vocabulary, 6);
+    const uniqueNouns = deduplicateNounsByEmoji(rawNouns);
+    const nouns = uniqueNouns.length >= 6 ? uniqueNouns : rawNouns;
     const n = rng.nextInt(3) === 0 ? 2 : 3;
     const foreignCount = 1 + rng.nextInt(2);
     const picked = sampleUnique(rng, nouns, n + foreignCount);
