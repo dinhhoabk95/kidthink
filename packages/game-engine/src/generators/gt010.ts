@@ -1,5 +1,9 @@
 import { shuffle } from "#src/rng/shuffle";
 import type { Rng } from "#src/rng/types";
+import type {
+  GT010Content,
+  GT010Difficulty,
+} from "#src/templates/GT-010/template";
 import { getNouns, sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type {
   GeneratedLevel,
@@ -17,7 +21,7 @@ const LOOKUP_MAX_VALUE = 4; // mỗi ký hiệu 1..4, tổng ≤ 8: trong tầm 
 function generateLookupTable(
   rng: Rng,
   sampled: readonly VocabularyEntry[]
-): GeneratedLevel {
+): GeneratedLevel<GT010Content, GT010Difficulty> {
   const valA = 1 + rng.nextInt(LOOKUP_MAX_VALUE);
   const valB = 1 + rng.nextInt(LOOKUP_MAX_VALUE);
   const total = valA + valB;
@@ -61,7 +65,7 @@ function generateLookupTable(
   };
 }
 
-export const GT010Generator: LevelGenerator = {
+export const GT010Generator: LevelGenerator<GT010Content, GT010Difficulty> = {
   engine: "GT-010",
   axes: {
     age_band: ["4-5", "5-6"],
@@ -80,11 +84,11 @@ export const GT010Generator: LevelGenerator = {
 
     const symA = {
       symbol_id: "sym_1",
-      asset: { kind: "emoji" as const, ref: sampled[0]?.emoji_ref },
+      asset: { kind: "emoji" as const, ref: sampled[0]?.emoji_ref ?? "apple" },
     };
     const symB = {
       symbol_id: "sym_2",
-      asset: { kind: "emoji" as const, ref: sampled[1]?.emoji_ref },
+      asset: { kind: "emoji" as const, ref: sampled[1]?.emoji_ref ?? "banana" },
     };
 
     const equations = [
