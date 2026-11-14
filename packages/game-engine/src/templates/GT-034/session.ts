@@ -5,125 +5,77 @@ import {
   ACTION_RETRY,
   type ActionResult,
   type GameAction,
+  type HintDemoStep,
   type HintLevel,
   type HintTarget,
   TemplateGameSession,
 } from "#src/game-session";
-import type {
-  EngineView,
-  EntityVisual,
-  Gesture,
-  ViewEntity,
-} from "#src/interaction";
-import { resolveAssetLabels } from "#src/labels/spoken-keyword";
-import { isPointInSlot, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
+import type { EngineView, Gesture } from "#src/interaction";
 import {
   computeStageGroupsLayout,
   resolveStageRect,
 } from "#src/layout/stage-groups";
 import type { Slot } from "#src/layout/types";
-import {
-  type BallPoint,
-  beatBallPose,
-  beatBallRadius,
-} from "#src/render/beat-ball";
-import {
-  cricketArm,
-  drawBeatBall,
-  drawInstrumentGlyph,
-  drawSceneBackground,
-  drawSlotItem,
-  drawStoryCharacterInStage,
-  drawSubPromptText,
-  instrumentGlyphKind,
-  spawnParticlesAtSlot,
-  updateParticles,
-} from "#src/render/index.js";
+import { spawnParticlesAtSlot, updateParticles } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
 import { type BeatInstrument, BeatSystem } from "#src/systems/beat-system";
 import type { DegradationState } from "#src/systems/degradation";
 import { MoodPulse } from "#src/systems/mood-pulse";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import { SFXEngine } from "#src/systems/sfx-engine";
+import {
+  buildGT034View,
+  deleteGT034Clock,
+  deriveGT034RoundContent,
+  findHoveredGT034Slot,
+  type GT034BeatBall,
+  getGT034Clock,
+  judgeGT034Sequence,
+  parseGT034Action,
+  resolveGT034GestureAction,
+  resolveHintDemoSequence,
+  resolveHintForLevel,
+  resolveHintTargetIndex,
+  TIMING_WIDEN_STEP,
+} from "./layout.js";
+import { renderGT034Scene } from "./scene.js";
 import type { GT034Content, GT034Difficulty } from "./template.js";
 
-/** Ký hiệu pad nhịp nghỉ. */
-const REST_GLYPH = "🤫";
-/** Trượt nhịp liên tiếp từng này lần thì bỏ chấm nhịp (`BR-E034-07`). */
-const TIMING_WAIVE_AFTER = 3;
-/** Mỗi lần trượt nhịp nới dung sai thêm tỉ lệ này. */
-const TIMING_WIDEN_STEP = 0.5;
-/** Gõ/nghỉ hợp lệ nhưng chưa chấm: chấm cả chuỗi khi gõ đủ bước (`BR-E034-06`). */
-const QUIET_OK: ActionResult = Object.freeze({
-  valid: true,
-  feedback: "none",
-});
-
-type SequenceOutcome = "ok" | "wrong" | "timing";
-
-interface GT034ActionPayload {
-  readonly instrument_id?: string;
-  readonly id?: string;
-  /** Thời điểm chạm (ms) của cử chỉ; thiếu thì bước đó không bị chấm nhịp. */
-  readonly time_ms?: number;
-}
-
-/** Khung chuyện đọc một lần ở vòng đầu (`BR-E034-09`, `BR-FBK-16`). */
 export const GT034_STORY_LINE =
   "Dế Mèn gõ trống, gõ phách, gõ mõ thành một điệu vui. Bé nghe điệu của Dế Mèn rồi gõ lại đúng nhịp nhé!";
-
-/** Mascot vui ngắn sau mỗi nhịp gõ, như nhau dù đúng hay sai. */
 export const GT034_HAPPY_MS = 500;
-/** Mascot nghiêng đầu sau khi chuỗi đủ bước mà chưa đúng. */
 export const GT034_WONDER_MS = 1500;
-
-/** Bóng nảy một lần sau mỗi lần trẻ gõ (`BR-E034-12`). */
 export const GT034_BALL_HOP_MS = 400;
 
-/**
- * Trạng thái bóng nảy: `beat` = theo phách của mẫu tự phát (lượt nghe hoặc `L3`),
- * `tap` = một cú nảy đáp lại lần gõ; `phase` ∈ [0, 1] trong một phách / cú nảy.
- */
-export interface GT034BeatBall {
-  readonly kind: "beat" | "tap";
-  readonly step: number;
-  readonly phase: number;
-}
+export type { GT034BeatBall } from "./layout.js";
+
+const QUIET_OK: ActionResult = Object.freeze({ valid: true, feedback: "none" });
 
 export class GT034Session extends TemplateGameSession<
   GT034Content,
   GT034Difficulty
 > {
-  /** Nút ở `zones.action` là nút nghe mẫu (`BR-PSZ-05`); chuỗi tự chấm khi đủ bước. */
   override readonly needsCommit = true;
   override readonly usesPromptZone = true;
   override get commitIcon(): "listen" {
     return "listen";
   }
 
-  override canCommit(): boolean {
-    return (
-      !(this.isWin || this.isWon || this.isPlayingPattern) &&
-      this.replaysUsed < this.replayLimit
-    );
-  }
-
-  degradation: DegradationState | null = null;
   userSteps: (string | null)[] = [];
-  stepTimesMs: (number | null)[] = [];
-  timingMisses = 0;
   replaysUsed = 0;
   showVisualPattern = false;
+  isWin = false;
   isPlayingPattern = false;
+  degradation: DegradationState | null = null;
+  stepTimesMs: (number | null)[] = [];
+  timingMisses = 0;
   activePlayingIndex: number | null = null;
   playbackElapsedSec = 0;
-  isWin = false;
-  /** Giây đã chạy của mẫu gợi ý `L3` (nửa tốc độ, lặp); null = không phát (`BR-E034-10`). */
+
+  private activeContent: GT034Content;
   private hintPlaybackSec: number | null = null;
-  /** Ms đã trôi của cú nảy sau lần gõ gần nhất; null = không nảy (`BR-E034-12`). */
   private tapHopMs: number | null = null;
   private tapHopStep = 0;
-
   private particles: Particle[] = [];
   private readonly mood = new MoodPulse();
   private readonly beatSystem: BeatSystem;
@@ -135,45 +87,74 @@ export class GT034Session extends TemplateGameSession<
     _ageBandOrSeed?: AgeBand | number
   ) {
     super(content, difficulty);
-
+    this.activeContent = content;
     const instruments: BeatInstrument[] = content.instruments.map((inst) => ({
       instrument_id: inst.instrument_id,
       freq: inst.freq,
       type: inst.type,
       name_vi: inst.name_vi,
     }));
-
     this.beatSystem = new BeatSystem({
       tempo_bpm: difficulty.tempo_bpm ?? content.tempo_bpm,
       instruments,
       age_band: "5-6",
     });
-
     this.sfxEngine = new SFXEngine();
   }
 
-  /** Nhịp thực dùng: độ khó thắng content khi có khai (`BR-E034-11`). */
   get tempoBpm(): number {
-    return this.difficulty.tempo_bpm ?? this.content.tempo_bpm;
+    return this.difficulty.tempo_bpm ?? this.activeContent.tempo_bpm;
+  }
+
+  get replayLimit(): number {
+    return this.difficulty.replay_limit ?? 2;
+  }
+
+  private get hasRestPad(): boolean {
+    return this.activeContent.target_pattern.includes(null);
+  }
+
+  private get restPadSlot(): Slot | undefined {
+    return this.hasRestPad
+      ? this.slots[
+          this.activeContent.target_pattern.length +
+            this.activeContent.instruments.length
+        ]
+      : undefined;
+  }
+
+  private get won(): boolean {
+    return this.isWin || this.isWon;
+  }
+
+  override canCommit(): boolean {
+    return (
+      !(this.won || this.isPlayingPattern) &&
+      this.replaysUsed < this.replayLimit
+    );
+  }
+
+  override isAcceptingInput(): boolean {
+    return super.isAcceptingInput() && !this.won && !this.isPlayingPattern;
   }
 
   override storyLine(): string {
     return GT034_STORY_LINE;
   }
 
-  /**
-   * `wonder` sau chuỗi chưa đúng, `listen` suốt lúc phát mẫu, còn lại `happy`
-   * ngắn sau mỗi nhịp gõ — không báo trước phách đúng (`BR-E034-09`).
-   */
   override mascotMood(): MascotPose | null {
-    if (this.isWon) {
+    if (this.won) {
       return null;
     }
-    // Đang phát mẫu thì trẻ phải nghe: `listen` thắng mọi phản ứng còn lại.
     return this.isPlayingPattern ? "listen" : this.mood.current();
   }
 
   setupEntities(): void {
+    this.activeContent = deriveGT034RoundContent(
+      this.content,
+      this.roundGeneration,
+      this.layoutSeed
+    );
     this.mood.clear();
     this.userSteps = [];
     this.stepTimesMs = [];
@@ -184,10 +165,11 @@ export class GT034Session extends TemplateGameSession<
     this.activePlayingIndex = null;
     this.playbackElapsedSec = 0;
     this.isWin = false;
+    this.isWon = false;
     this.hintPlaybackSec = null;
     this.tapHopMs = null;
     this.particles = [];
-
+    getGT034Clock(this, true);
     this.recordEvent("game_started", {
       template_code: "GT-034",
       difficulty: this.difficulty.pattern_length ?? 4,
@@ -200,72 +182,65 @@ export class GT034Session extends TemplateGameSession<
 
   override destroy(): void {
     this.sfxEngine.dispose();
+    deleteGT034Clock(this);
     super.destroy();
   }
 
-  /** Một phách của mẫu gợi ý `L3`: nửa tốc độ nên gấp đôi phách thường. */
   private get hintBeatSec(): number {
     return this.beatSystem.beatDurationSec * 2;
   }
 
-  /** Ô bước đang sáng trong mẫu gợi ý `L3`; null khi không phát hoặc đang nghỉ giữa hai vòng. */
-  getHintPlaybackIndex(): number | null {
+  private get litStepIndex(): number | null {
+    if (this.isPlayingPattern) {
+      return this.activePlayingIndex;
+    }
     if (this.hintPlaybackSec === null) {
       return null;
     }
     const idx = Math.floor(this.hintPlaybackSec / this.hintBeatSec);
-    return idx < this.content.target_pattern.length ? idx : null;
+    return idx < this.activeContent.target_pattern.length ? idx : null;
   }
 
-  /** Ô bước sáng: mẫu đang phát (lượt nghe) hoặc mẫu gợi ý `L3`. */
-  private get litStepIndex(): number | null {
-    return this.activePlayingIndex ?? this.getHintPlaybackIndex();
+  getHintPlaybackIndex(): number | null {
+    return this.hintPlaybackSec === null ? null : this.litStepIndex;
   }
 
-  /**
-   * Bóng nảy (`BR-E034-12`). Chỉ có khi mẫu tự phát hoặc ngay sau một lần gõ —
-   * lúc trẻ tự gõ không có bóng chạy theo phách.
-   */
   getBeatBall(): GT034BeatBall | null {
     if (this.isPlayingPattern && this.activePlayingIndex !== null) {
-      const beats = this.playbackElapsedSec / this.beatSystem.beatDurationSec;
-      return this.beatOf(this.activePlayingIndex, beats);
+      return {
+        kind: "beat",
+        step: this.activePlayingIndex,
+        phase: Math.max(
+          0,
+          Math.min(
+            1,
+            this.playbackElapsedSec / this.beatSystem.beatDurationSec -
+              this.activePlayingIndex
+          )
+        ),
+      };
     }
-    const hintIdx = this.getHintPlaybackIndex();
-    if (this.hintPlaybackSec !== null && hintIdx !== null) {
-      return this.beatOf(hintIdx, this.hintPlaybackSec / this.hintBeatSec);
+    if (this.hintPlaybackSec !== null) {
+      const step = this.litStepIndex;
+      if (step !== null) {
+        return {
+          kind: "beat",
+          step,
+          phase: Math.max(
+            0,
+            Math.min(1, this.hintPlaybackSec / this.hintBeatSec - step)
+          ),
+        };
+      }
     }
     if (this.tapHopMs !== null) {
       return {
         kind: "tap",
         step: this.tapHopStep,
-        phase: this.tapHopMs / GT034_BALL_HOP_MS,
+        phase: Math.min(1, this.tapHopMs / GT034_BALL_HOP_MS),
       };
     }
     return null;
-  }
-
-  private beatOf(step: number, beats: number): GT034BeatBall {
-    return {
-      kind: "beat",
-      step,
-      phase: Math.min(1, Math.max(0, beats - step)),
-    };
-  }
-
-  private startTapHop(step: number): void {
-    this.tapHopStep = step;
-    this.tapHopMs = 0;
-  }
-
-  private tickTapHop(deltaMs: number): void {
-    if (this.tapHopMs === null) {
-      return;
-    }
-    this.tapHopMs += deltaMs;
-    if (this.tapHopMs >= GT034_BALL_HOP_MS) {
-      this.tapHopMs = null;
-    }
   }
 
   private startHintPlayback(): void {
@@ -274,89 +249,102 @@ export class GT034Session extends TemplateGameSession<
   }
 
   private playHintSequence(): void {
-    const recipes = this.beatSystem
-      .buildNoteRecipes(this.content.target_pattern)
-      .map((r) => ({ ...r, delaySec: r.delaySec * 2 }));
-    this.sfxEngine.playSequence(recipes);
+    const recipes = this.beatSystem.buildNoteRecipes(
+      this.activeContent.target_pattern
+    );
+    this.sfxEngine.playSequence(
+      recipes.map((r) => ({
+        ...r,
+        delaySec: r.delaySec * 2,
+        durationSec: r.durationSec * 2,
+      }))
+    );
+  }
+
+  override onScaffoldEscalated(level: HintLevel): void {
+    getGT034Clock(this).activeHintLevel = level;
+    if (level < 3) {
+      this.hintPlaybackSec = null;
+    } else if (
+      !(this.won || this.isPlayingPattern) &&
+      this.hintPlaybackSec === null
+    ) {
+      this.startHintPlayback();
+    }
   }
 
   override onHintCleared(): void {
-    this.stopHintPlayback();
-  }
-
-  private stopHintPlayback(): void {
+    getGT034Clock(this).activeHintLevel = 0;
     this.hintPlaybackSec = null;
   }
 
-  /**
-   * `L1` ô bước kế sáng (chưa chỉ nhạc cụ) · `L2` nhạc cụ đúng nháy · `L3` như `L2`
-   * kèm mẫu phát lại nửa tốc độ, lặp (`BR-E034-10`).
-   */
   override getHintTargetForLevel(level: HintLevel): HintTarget | null {
-    if (level === 3 && !(this.isWin || this.isWon)) {
-      if (this.hintPlaybackSec === null) {
-        this.startHintPlayback();
-      }
-    } else {
-      this.stopHintPlayback();
+    if (level < 3) {
+      this.hintPlaybackSec = null;
+    } else if (
+      this.hintPlaybackSec === null &&
+      !this.isPlayingPattern &&
+      !this.won
+    ) {
+      this.startHintPlayback();
     }
-    if (level !== 1) {
-      return this.getHintTarget();
-    }
-    const idx = this.getHintTargetIndex();
-    if (idx === null) {
-      return null;
-    }
-    const patternLen = this.content.target_pattern.length;
-    // Đã gõ lệch: ô cần gỡ là ô bước cuối; chưa thì ô bước kế.
-    const stepIdx = idx < patternLen ? idx : this.userSteps.length;
-    return { kind: "region", ids: [`step_${stepIdx}`] };
+    return resolveHintForLevel(
+      level,
+      this.getHintTargetIndex(),
+      this.activeContent.target_pattern.length,
+      this.userSteps.length
+    );
   }
 
   override getHintTargetIndex(): number | null {
-    if (this.isWin || this.isWon) {
-      return null;
-    }
-    const patternLen = this.content.target_pattern.length;
-    // Đã gõ lệch mẫu: bước kế là gỡ bước cuối (chạm vào nó), không gõ thêm.
-    const hasWrongStep = this.userSteps.some(
-      (step, i) => step !== this.content.target_pattern[i]
+    return resolveHintTargetIndex(
+      this.won,
+      this.userSteps,
+      this.activeContent.target_pattern,
+      this.activeContent.instruments,
+      this.hasRestPad
     );
-    if (hasWrongStep || this.userSteps.length >= patternLen) {
-      return this.userSteps.length > 0 && hasWrongStep
-        ? this.userSteps.length - 1
-        : null;
-    }
-    const nextInstId = this.content.target_pattern[this.userSteps.length];
-    if (nextInstId === null && this.hasRestPad) {
-      return patternLen + this.content.instruments.length;
-    }
-    if (nextInstId) {
-      const instIdx = this.content.instruments.findIndex(
-        (inst) => inst.instrument_id === nextInstId
-      );
-      if (instIdx >= 0) {
-        return patternLen + instIdx;
-      }
-    }
-    return null;
+  }
+
+  override getHintDemoSequence(
+    level: HintLevel
+  ): readonly HintDemoStep[] | null {
+    return this.isAcceptingInput()
+      ? resolveHintDemoSequence(level, this.getHintTargetIndex())
+      : null;
+  }
+
+  setPointerOver(x: number, y: number): void {
+    const clock = getGT034Clock(this);
+    clock.hoveredSlotIdx = this.isAcceptingInput()
+      ? findHoveredGT034Slot(
+          x,
+          y,
+          this.slots,
+          this.activeContent.target_pattern.length,
+          this.userSteps.length
+        )
+      : null;
+  }
+
+  clearPointerOver(): void {
+    getGT034Clock(this).hoveredSlotIdx = null;
   }
 
   protected computeSlots(band: AgeBand): readonly Slot[] {
-    // Dải bước trên, nhạc cụ dưới — trong sân khấu của khung (`BR-PSZ-01`).
-    // Nút nghe mẫu không còn là slot: shell vẽ ở `zones.action` (`BR-PSZ-05`).
     return computeStageGroupsLayout({
       stage: resolveStageRect(this.logicSpace, band, this.stageRect),
       ageBand: band,
       cssPerLogic: this.cssPerLogic,
       groups: [
         {
-          count: this.content.target_pattern.length,
+          count: this.activeContent.target_pattern.length,
           role: "target",
           hasLabels: true,
         },
         {
-          count: this.content.instruments.length + (this.hasRestPad ? 1 : 0),
+          count:
+            this.activeContent.instruments.length + (this.hasRestPad ? 1 : 0),
           role: "source",
           hasLabels: true,
         },
@@ -365,191 +353,179 @@ export class GT034Session extends TemplateGameSession<
   }
 
   update(deltaMs: number): void {
+    const clock = getGT034Clock(this);
+    clock.elapsedMs += deltaMs;
     this.mood.tick(deltaMs);
     this.particles = updateParticles(this.particles);
-    this.tickHintPlayback(deltaMs);
-    this.tickTapHop(deltaMs);
-
+    if (this.tapHopMs !== null) {
+      this.tapHopMs =
+        this.tapHopMs + deltaMs >= GT034_BALL_HOP_MS
+          ? null
+          : this.tapHopMs + deltaMs;
+    }
+    if (this.hintPlaybackSec !== null) {
+      this.hintPlaybackSec += deltaMs / 1000;
+      if (
+        this.hintPlaybackSec >=
+        (this.activeContent.target_pattern.length + 1) * this.hintBeatSec
+      ) {
+        this.hintPlaybackSec = 0;
+        this.playHintSequence();
+      }
+    }
     if (!this.isPlayingPattern) {
       return;
     }
-
     this.playbackElapsedSec += deltaMs / 1000;
     const beatSec = this.beatSystem.beatDurationSec;
-    const totalDuration = this.content.target_pattern.length * beatSec;
-
-    if (this.playbackElapsedSec >= totalDuration) {
+    if (
+      this.playbackElapsedSec >=
+      this.activeContent.target_pattern.length * beatSec
+    ) {
       this.isPlayingPattern = false;
       this.activePlayingIndex = null;
       this.playbackElapsedSec = 0;
-      this.revealPatternWhenExhausted();
-      return;
-    }
-
-    const currentIndex = Math.floor(this.playbackElapsedSec / beatSec);
-    this.activePlayingIndex =
-      currentIndex < this.content.target_pattern.length ? currentIndex : null;
-  }
-
-  private tickHintPlayback(deltaMs: number): void {
-    if (this.hintPlaybackSec === null) {
-      return;
-    }
-    if (this.isPlayingPattern) {
-      this.stopHintPlayback();
-      return;
-    }
-    const loopSec = (this.content.target_pattern.length + 1) * this.hintBeatSec;
-    this.hintPlaybackSec += deltaMs / 1000;
-    if (this.hintPlaybackSec >= loopSec) {
-      this.hintPlaybackSec -= loopSec;
-      this.playHintSequence();
-    }
-  }
-
-  private verifyPatternMatched(
-    steps: readonly (string | null)[] = this.userSteps
-  ): boolean {
-    const target = this.content.target_pattern;
-    if (steps.length !== target.length) {
-      return false;
-    }
-    for (let i = 0; i < target.length; i++) {
-      if (steps[i] !== target[i]) {
-        return false;
+      if (this.replaysUsed >= this.replayLimit) {
+        this.showVisualPattern = true;
       }
+      return;
     }
-    return true;
+    this.activePlayingIndex = Math.min(
+      this.activeContent.target_pattern.length - 1,
+      Math.floor(this.playbackElapsedSec / beatSec)
+    );
   }
 
   private get toleranceMs(): number {
     return (
       this.beatSystem.getTimingToleranceMs() *
-      (1 + TIMING_WIDEN_STEP * this.timingMisses)
+      (1 + this.timingMisses * TIMING_WIDEN_STEP)
     );
   }
 
-  /** Chấm cả chuỗi: nội dung trước, rồi nhịp gõ giữa hai bước liền nhau (`BR-E034-07`). */
-  private judge(
-    steps: readonly (string | null)[],
-    times: readonly (number | null)[]
-  ): SequenceOutcome {
-    if (!this.verifyPatternMatched(steps)) {
-      return "wrong";
-    }
-    if (this.timingMisses >= TIMING_WAIVE_AFTER) {
-      return "ok";
-    }
-    const beatMs = this.beatSystem.beatDurationSec * 1000;
-    for (let i = 1; i < times.length; i++) {
-      const prev = times[i - 1];
-      const cur = times[i];
-      if (
-        prev !== null &&
-        prev !== undefined &&
-        cur !== null &&
-        cur !== undefined &&
-        Math.abs(cur - prev - beatMs) > this.toleranceMs
-      ) {
-        return "timing";
-      }
-    }
-    return "ok";
-  }
-
-  private get replayLimit(): number {
-    return this.difficulty.replay_limit ?? 3;
-  }
-
-  private validatePlayPattern(): ActionResult {
-    if (this.replaysUsed >= this.replayLimit) {
-      return ACTION_IGNORED;
-    }
-    return ACTION_CORRECT;
-  }
-
-  /** Bước vừa gõ chỉ có phán quyết khi nó khép chuỗi; giữa chừng không báo đúng sai. */
-  private verdictForNextStep(
-    step: string | null,
+  private validateTapAction(
+    instrumentId: string | null,
     timeMs: number | undefined
   ): ActionResult {
-    const nextSteps = [...this.userSteps, step];
-    if (nextSteps.length < this.content.target_pattern.length) {
-      return QUIET_OK;
-    }
-    const nextTimes = [...this.stepTimesMs, timeMs ?? null];
-    return this.judge(nextSteps, nextTimes) === "ok"
-      ? ACTION_CORRECT
-      : ACTION_RETRY;
-  }
-
-  private validateTapInstrument(
-    instrumentId: string,
-    timeMs: number | undefined
-  ): ActionResult {
-    const instrument = this.content.instruments.find(
-      (inst) => inst.instrument_id === instrumentId
-    );
-    if (
-      !instrument ||
-      this.userSteps.length >= this.content.target_pattern.length
-    ) {
-      return ACTION_IGNORED;
-    }
-
-    return this.verdictForNextStep(instrumentId, timeMs);
-  }
-
-  private validateTapRest(timeMs: number | undefined): ActionResult {
-    if (this.userSteps.length >= this.content.target_pattern.length) {
-      return ACTION_IGNORED;
-    }
-    return this.verdictForNextStep(null, timeMs);
-  }
-
-  private validateInstrumentAction(data: GT034ActionPayload): ActionResult {
-    const instrumentId = data.instrument_id ?? data.id ?? "";
-    return this.validateTapInstrument(instrumentId, data.time_ms);
+    const ok =
+      instrumentId &&
+      this.activeContent.instruments.some(
+        (i) => i.instrument_id === instrumentId
+      );
+    return ok ? this.verdictForNextStep(instrumentId, timeMs) : ACTION_IGNORED;
   }
 
   validateAction(action: GameAction): ActionResult {
-    if (this.isWin || this.isWon) {
+    if (this.won) {
       return ACTION_IGNORED;
     }
-
-    const type = action.type;
-    const data = (
-      typeof action.data === "object" && action.data !== null ? action.data : {}
-    ) as GT034ActionPayload;
-
-    switch (type) {
+    switch (action.type) {
       case "play_pattern":
       case "replay_pattern":
       case "listen":
-        return this.validatePlayPattern();
+        return this.replaysUsed >= this.replayLimit
+          ? ACTION_IGNORED
+          : ACTION_CORRECT;
       case "show_hint":
+      case "clear_sequence":
+      case "reset":
         return ACTION_CORRECT;
       case "tap_instrument":
       case "play_instrument":
       case "tap_item":
-        return this.validateInstrumentAction(data);
+      case "tap": {
+        const parsed = parseGT034Action(action);
+        return this.validateTapAction(parsed.instrumentId, parsed.timeMs);
+      }
       case "tap_rest":
       case "rest":
-        return this.validateTapRest(data.time_ms);
+        return this.verdictForNextStep(null, parseGT034Action(action).timeMs);
       case "undo_beat":
       case "undo_step":
       case "undo":
-        return this.userSteps.length === 0 ? ACTION_IGNORED : ACTION_CORRECT;
-      case "clear_sequence":
-      case "reset":
-        return ACTION_CORRECT;
+        return this.userSteps.length > 0 ? ACTION_CORRECT : ACTION_IGNORED;
       case "submit_sequence":
       case "submit":
-        return this.judge(this.userSteps, this.stepTimesMs) === "ok"
-          ? ACTION_CORRECT
-          : ACTION_RETRY;
+        return this.judgeCurrent();
       default:
         return ACTION_IGNORED;
+    }
+  }
+
+  private judgeCurrent(): ActionResult {
+    const ok =
+      judgeGT034Sequence(
+        this.userSteps,
+        this.stepTimesMs,
+        this.activeContent.target_pattern,
+        this.beatSystem.beatDurationSec * 1000,
+        this.toleranceMs,
+        this.timingMisses
+      ) === "ok";
+    return ok ? ACTION_CORRECT : ACTION_RETRY;
+  }
+
+  private verdictForNextStep(
+    stepValue: string | null,
+    timeMs: number | undefined
+  ): ActionResult {
+    const nextIdx = this.userSteps.length;
+    const len = this.activeContent.target_pattern.length;
+    if (nextIdx >= len) {
+      return ACTION_IGNORED;
+    }
+    if (nextIdx + 1 < len) {
+      return QUIET_OK;
+    }
+    const outcome = judgeGT034Sequence(
+      [...this.userSteps, stepValue],
+      [...this.stepTimesMs, timeMs ?? null],
+      this.activeContent.target_pattern,
+      this.beatSystem.beatDurationSec * 1000,
+      this.toleranceMs,
+      this.timingMisses
+    );
+    return outcome === "ok" ? ACTION_CORRECT : ACTION_RETRY;
+  }
+
+  override commit(action: GameAction): void {
+    const clock = getGT034Clock(this);
+    const parsed = parseGT034Action(action);
+    const { type } = action;
+    if (
+      type === "play_pattern" ||
+      type === "replay_pattern" ||
+      type === "listen"
+    ) {
+      this.commitPlayPattern();
+    } else if (type === "show_hint") {
+      this.showVisualPattern = true;
+    } else if (
+      (type === "tap_instrument" ||
+        type === "play_instrument" ||
+        type === "tap_item" ||
+        type === "tap") &&
+      parsed.instrumentId
+    ) {
+      this.commitTap(parsed.instrumentId, parsed.timeMs);
+    } else if (type === "tap_rest" || type === "rest") {
+      this.commitTap(null, parsed.timeMs);
+    } else if (
+      type === "undo_beat" ||
+      type === "undo_step" ||
+      type === "undo"
+    ) {
+      this.userSteps.pop();
+      this.stepTimesMs.pop();
+      clock.activeHintLevel = 0;
+      this.hintPlaybackSec = null;
+      clock.wrongFlashStartMs = null;
+      clock.wrongFlashKind = null;
+    } else if (type === "clear_sequence" || type === "reset") {
+      this.userSteps = [];
+      this.stepTimesMs = [];
+    } else if (type === "submit_sequence" || type === "submit") {
+      this.commitStepCompletion(this.userSteps.length - 1);
     }
   }
 
@@ -558,66 +534,111 @@ export class GT034Session extends TemplateGameSession<
       this.showVisualPattern = true;
       return;
     }
-
     this.replaysUsed++;
     this.isPlayingPattern = true;
     this.playbackElapsedSec = 0;
     this.activePlayingIndex = 0;
-
-    const recipes = this.beatSystem.buildNoteRecipes(
-      this.content.target_pattern
+    this.sfxEngine.playSequence(
+      this.beatSystem.buildNoteRecipes(this.activeContent.target_pattern)
     );
-    this.sfxEngine.playSequence(recipes);
-
     this.recordEvent("pattern_played", {
       tempo_bpm: this.tempoBpm,
-      pattern_length: this.content.target_pattern.length,
+      pattern_length: this.activeContent.target_pattern.length,
       is_replay: this.replaysUsed > 1,
       round_index: 0,
     });
   }
 
-  /** Hết lượt nghe thì mẫu hiện bằng hình, âm không phát thêm (`BR-E034-08`). */
-  private revealPatternWhenExhausted(): void {
-    if (this.replaysUsed >= this.replayLimit) {
-      this.showVisualPattern = true;
+  private commitTap(
+    instrumentId: string | null,
+    timeMs: number | undefined
+  ): void {
+    if (this.userSteps.length >= this.activeContent.target_pattern.length) {
+      return;
     }
-  }
-
-  /** Nghe lại mẫu sau một lượt hụt, nếu còn lượt nghe (`BR-E034-08`). */
-  private replayAfterMiss(): void {
-    if (this.difficulty.allow_replay !== false && this.canCommit()) {
-      this.commitPlayPattern();
+    if (instrumentId === null && !this.hasRestPad) {
+      return;
     }
+    if (
+      instrumentId !== null &&
+      !this.activeContent.instruments.some(
+        (i) => i.instrument_id === instrumentId
+      )
+    ) {
+      return;
+    }
+    const clock = getGT034Clock(this);
+    const stepIndex = this.userSteps.length;
+    const instIdx =
+      instrumentId === null
+        ? this.activeContent.instruments.length
+        : this.activeContent.instruments.findIndex(
+            (i) => i.instrument_id === instrumentId
+          );
+    this.userSteps.push(instrumentId);
+    this.stepTimesMs.push(timeMs ?? null);
+    this.tapHopMs = 0;
+    this.tapHopStep = stepIndex;
+    this.hintPlaybackSec = null;
+    clock.activeHintLevel = 0;
+    clock.lastTapMs = clock.elapsedMs;
+    clock.lastTappedSlotIdx = stepIndex;
+    clock.lastTappedSourceIdx =
+      instIdx >= 0 ? this.activeContent.target_pattern.length + instIdx : null;
+    clock.wrongFlashStartMs = null;
+    clock.wrongFlashKind = null;
+    if (instrumentId === null) {
+      this.queueSfx("wood_beat");
+    } else {
+      const recipe = this.beatSystem.buildNoteRecipes([instrumentId])[0];
+      if (recipe) {
+        this.sfxEngine.playSequence([recipe]);
+      }
+    }
+    this.mood.set("happy", GT034_HAPPY_MS);
+    this.commitStepCompletion(stepIndex);
   }
 
   private commitStepCompletion(stepIndex: number): void {
-    if (this.userSteps.length !== this.content.target_pattern.length) {
+    if (this.userSteps.length !== this.activeContent.target_pattern.length) {
       return;
     }
-
-    const outcome = this.judge(this.userSteps, this.stepTimesMs);
+    const clock = getGT034Clock(this);
+    const outcome = judgeGT034Sequence(
+      this.userSteps,
+      this.stepTimesMs,
+      this.activeContent.target_pattern,
+      this.beatSystem.beatDurationSec * 1000,
+      this.toleranceMs,
+      this.timingMisses
+    );
     if (outcome === "ok") {
       this.isWin = true;
-      this.isWon = true;
+      clock.victoryStartMs = clock.elapsedMs;
+      clock.activeHintLevel = 0;
       this.recordEvent("game_completed", {
         duration_ms: 12_000,
         rounds_total: 1,
         rounds_correct: 1,
       });
       this.sfxEngine.play("pop_celebrate");
+      this.sfxEngine.playSequence(
+        this.beatSystem
+          .buildNoteRecipes(this.userSteps)
+          .map((r) => ({ ...r, delaySec: r.delaySec + 0.18 }))
+      );
       const lastSlot = this.slots[stepIndex];
-      if (lastSlot) {
+      if (lastSlot && this.degradation?.particles_enabled !== false) {
         this.particles.push(...spawnParticlesAtSlot(lastSlot, 20));
       }
       this.winSession();
       return;
     }
-
     this.sfxEngine.play("amber_soft");
     this.mood.set("wonder", GT034_WONDER_MS);
+    clock.wrongFlashKind = outcome === "timing" ? "timing" : "content";
+    clock.wrongFlashStartMs = clock.elapsedMs;
     if (outcome === "timing") {
-      // Đúng nội dung nhưng lệch nhịp: dải xoá sạch để gõ lại theo nhịp mẫu.
       this.timingMisses++;
       this.recordEvent("timing_missed", {
         misses: this.timingMisses,
@@ -626,553 +647,75 @@ export class GT034Session extends TemplateGameSession<
       this.userSteps = [];
       this.stepTimesMs = [];
     }
-    this.replayAfterMiss();
-  }
-
-  private commitTapInstrument(
-    instrumentId: string,
-    timeMs: number | undefined
-  ): void {
-    const instrument = this.content.instruments.find(
-      (inst) => inst.instrument_id === instrumentId
-    );
-    if (
-      !instrument ||
-      this.userSteps.length >= this.content.target_pattern.length
-    ) {
-      return;
+    if (this.replaysUsed >= this.replayLimit) {
+      this.showVisualPattern = true;
+    } else if (this.difficulty.allow_replay !== false && this.canCommit()) {
+      this.commitPlayPattern();
     }
-
-    const stepIndex = this.userSteps.length;
-    const expected = this.content.target_pattern[stepIndex];
-    this.startTapHop(stepIndex);
-
-    const singleRecipe = this.beatSystem.buildNoteRecipes([instrumentId])[0];
-    if (singleRecipe) {
-      this.sfxEngine.playSequence([singleRecipe]);
-    }
-
-    this.mood.set("happy", GT034_HAPPY_MS);
-    this.userSteps.push(instrumentId);
-    this.stepTimesMs.push(timeMs ?? null);
-
-    this.recordEvent("beat_tapped", {
-      instrument_id: instrumentId,
-      step_index: stepIndex,
-      is_correct: instrumentId === expected,
-      round_index: 0,
-    });
-
-    this.commitStepCompletion(stepIndex);
-  }
-
-  private commitTapRest(timeMs: number | undefined): void {
-    if (this.userSteps.length >= this.content.target_pattern.length) {
-      return;
-    }
-
-    const stepIndex = this.userSteps.length;
-    this.startTapHop(stepIndex);
-    // Nhịp nghỉ không có nhạc cụ nên mõ gõ nhẹ; như nhau dù đúng hay sai chỗ nghỉ.
-    this.queueSfx("wood_beat");
-    this.mood.set("happy", GT034_HAPPY_MS);
-    this.userSteps.push(null);
-    this.stepTimesMs.push(timeMs ?? null);
-
-    const isStepCorrect = this.content.target_pattern[stepIndex] === null;
-    this.recordEvent("beat_tapped", {
-      instrument_id: "rest",
-      step_index: stepIndex,
-      is_correct: isStepCorrect,
-      round_index: 0,
-    });
-
-    this.commitStepCompletion(stepIndex);
-  }
-
-  private commitSubmitSequence(): void {
-    const isCorrect = this.judge(this.userSteps, this.stepTimesMs) === "ok";
-
-    this.recordEvent("sequence_submitted", {
-      is_correct: isCorrect,
-      round_index: 0,
-    });
-
-    if (isCorrect) {
-      this.isWin = true;
-      this.isWon = true;
-      this.recordEvent("game_completed", {
-        duration_ms: 12_000,
-        rounds_total: 1,
-        rounds_correct: 1,
-      });
-      this.sfxEngine.play("pop_celebrate");
-      this.winSession();
-    } else {
-      this.sfxEngine.play("amber_soft");
-      this.mood.set("wonder", GT034_WONDER_MS);
-    }
-  }
-
-  override commit(action: GameAction): void {
-    this.stopHintPlayback();
-    const type = action.type;
-    const data = (
-      typeof action.data === "object" && action.data !== null ? action.data : {}
-    ) as GT034ActionPayload;
-
-    switch (type) {
-      case "play_pattern":
-      case "replay_pattern":
-      case "listen":
-        this.commitPlayPattern();
-        break;
-      case "show_hint":
-        this.showVisualPattern = true;
-        break;
-      case "tap_instrument":
-      case "play_instrument":
-      case "tap_item":
-        this.commitTapInstrument(
-          data.instrument_id ?? data.id ?? "",
-          data.time_ms
-        );
-        break;
-      case "tap_rest":
-      case "rest":
-        this.commitTapRest(data.time_ms);
-        break;
-      case "undo_beat":
-      case "undo_step":
-      case "undo":
-        this.userSteps.pop();
-        this.stepTimesMs.pop();
-        break;
-      case "clear_sequence":
-      case "reset":
-        this.userSteps = [];
-        this.stepTimesMs = [];
-        break;
-      case "submit_sequence":
-      case "submit":
-        this.commitSubmitSequence();
-        break;
-      default:
-        break;
-    }
-  }
-
-  /** Pad "Nghỉ": chỉ có khi mẫu có nhịp nghỉ, nếu không không có gì để bấm. */
-  private get hasRestPad(): boolean {
-    return this.content.target_pattern.includes(null);
-  }
-
-  private get restPadSlot(): Slot | undefined {
-    return this.hasRestPad
-      ? this.slots[
-          this.content.target_pattern.length + this.content.instruments.length
-        ]
-      : undefined;
-  }
-
-  private findTappedInstrumentId(
-    gx: number,
-    gy: number,
-    patternLen: number,
-    instCount: number
-  ): string | null {
-    for (let i = 0; i < instCount; i++) {
-      const inst = this.content.instruments[i];
-      const slot = this.slots[patternLen + i];
-      if (!(inst && slot)) {
-        continue;
-      }
-      if (isPointInSlot(slot, gx, gy, "circle", TAP_TOLERANCE_PX)) {
-        return inst.instrument_id;
-      }
-    }
-    return null;
-  }
-
-  private isTappedLastStep(gx: number, gy: number): boolean {
-    if (this.userSteps.length === 0) {
-      return false;
-    }
-    const slot = this.slots[this.userSteps.length - 1];
-    if (!slot) {
-      return false;
-    }
-    return isPointInSlot(slot, gx, gy, "circle", TAP_TOLERANCE_PX);
   }
 
   override toAction(gesture: Gesture): GameAction | null {
-    // Chạm nút ở `zones.action` tới đây thành `commit` (`BR-PSZ-05`): nghe mẫu.
-    if (gesture.type === "commit") {
-      return { type: "play_pattern", data: {} };
-    }
-    if (gesture.type !== "tap") {
+    if (this.won) {
       return null;
     }
-
-    const patternLen = this.content.target_pattern.length;
-    const instCount = this.content.instruments.length;
-
-    const instId = this.findTappedInstrumentId(
-      gesture.x,
-      gesture.y,
-      patternLen,
-      instCount
+    return resolveGT034GestureAction(
+      gesture,
+      this.slots,
+      this.activeContent.instruments,
+      this.activeContent.target_pattern.length,
+      this.userSteps.length,
+      this.restPadSlot
     );
-    if (instId) {
-      return {
-        type: "tap_instrument",
-        data: { instrument_id: instId, time_ms: gesture.timeMs },
-      };
-    }
-
-    const restSlot = this.restPadSlot;
-    if (
-      restSlot &&
-      isPointInSlot(restSlot, gesture.x, gesture.y, "circle", TAP_TOLERANCE_PX)
-    ) {
-      return { type: "tap_rest", data: { time_ms: gesture.timeMs } };
-    }
-
-    if (this.isTappedLastStep(gesture.x, gesture.y)) {
-      return { type: "undo_beat", data: {} };
-    }
-
-    return null;
-  }
-
-  private buildStepEntity(index: number, slot: Slot): ViewEntity {
-    let state: EntityVisual = "idle";
-    if (this.litStepIndex === index) {
-      state = "selected";
-    } else if (this.userSteps[index] !== undefined) {
-      // Đã gõ, chưa chấm: chấm cả chuỗi khi đủ bước (`BR-E034-06`).
-      state = "active";
-    }
-
-    const userStep = this.userSteps[index];
-    const matchedInst = userStep
-      ? this.content.instruments.find((item) => item.instrument_id === userStep)
-      : undefined;
-    const assetLabels = matchedInst
-      ? resolveAssetLabels(matchedInst.asset)
-      : undefined;
-    const stepName =
-      matchedInst?.name_vi ??
-      assetLabels?.spokenLabel ??
-      (typeof userStep === "string" ? userStep : undefined);
-
-    let spokenLabel = `Bước ${index + 1}`;
-    let label = `${index + 1}`;
-    if (stepName) {
-      spokenLabel = `Bước ${index + 1}: ${stepName}`;
-      label = stepName;
-    } else if (userStep === null) {
-      spokenLabel = `Bước ${index + 1}: nghỉ`;
-      label = "Nghỉ";
-    }
-
-    return {
-      id: `step_${index}`,
-      slotIndex: index,
-      role: "neutral",
-      state,
-      x: slot.x,
-      y: slot.y,
-      w: slot.w,
-      h: slot.h,
-      hitShape: "circle",
-      glyph: assetLabels?.glyph,
-      label,
-      spokenLabel,
-      spokenAudioPath: assetLabels?.spokenAudioPath,
-    };
   }
 
   override getView(): EngineView {
-    const entities: ViewEntity[] = [];
-    const patternLen = this.content.target_pattern.length;
-    const instCount = this.content.instruments.length;
-
-    for (let i = 0; i < patternLen; i++) {
-      const slot = this.slots[i];
-      if (!slot) {
-        continue;
-      }
-      entities.push(this.buildStepEntity(i, slot));
-    }
-
-    for (let i = 0; i < instCount; i++) {
-      const inst = this.content.instruments[i];
-      const slot = this.slots[patternLen + i];
-      if (!(inst && slot)) {
-        continue;
-      }
-      const { glyph, label, spokenLabel, spokenAudioPath } = resolveAssetLabels(
-        inst.asset
-      );
-      const displayLabel = inst.name_vi ?? label ?? inst.instrument_id;
-      entities.push({
-        id: inst.instrument_id,
-        slotIndex: patternLen + i,
-        role: "source",
-        state: "idle",
-        x: slot.x,
-        y: slot.y,
-        w: slot.w,
-        h: slot.h,
-        hitShape: "circle",
-        glyph,
-        label: displayLabel,
-        spokenLabel: inst.name_vi ?? spokenLabel ?? displayLabel,
-        spokenAudioPath,
-      });
-    }
-
-    const restSlot = this.restPadSlot;
-    if (restSlot) {
-      entities.push({
-        id: "pad_rest",
-        slotIndex: patternLen + instCount,
-        role: "source",
-        state: "idle",
-        x: restSlot.x,
-        y: restSlot.y,
-        w: restSlot.w,
-        h: restSlot.h,
-        hitShape: "circle",
-        glyph: REST_GLYPH,
-        label: "Nghỉ",
-        spokenLabel: "Nghỉ một nhịp",
-      });
-    }
-
-    return {
-      activePrompt: this.content.prompt,
-      entities,
-      focusIndex: this.getHintTargetIndex() ?? undefined,
-    };
+    const clock = getGT034Clock(this);
+    const wrongActive =
+      clock.wrongFlashStartMs !== null &&
+      clock.elapsedMs - clock.wrongFlashStartMs < 520;
+    return buildGT034View({
+      content: this.activeContent,
+      hintTargetIndex:
+        clock.activeHintLevel > 0 ? this.getHintTargetIndex() : null,
+      hoveredSlotIdx: clock.hoveredSlotIdx,
+      isWon: this.won,
+      litStepIndex: this.litStepIndex,
+      restPadSlot: this.restPadSlot,
+      slots: this.slots,
+      userSteps: this.userSteps,
+      wrongActive,
+    });
   }
 
   override checkWinCondition(): boolean {
-    return this.isWin || this.isWon;
+    return this.won;
   }
 
   render(ctx: CanvasRenderingContext2D, rs: RenderSystem): void {
-    drawSceneBackground(ctx, rs, this.themeId);
-    // Có khung thì lời dẫn thuộc shell (`BR-PSZ-01`); số lượt nghe không hiện (`BR-PSZ-06`).
-    if (!this.stageRect) {
-      drawSubPromptText(
-        ctx,
-        rs,
-        `Đã nghe: ${this.replaysUsed}/${this.replayLimit} | Nhịp: ${this.tempoBpm} BPM`
-      );
-    }
-
-    // Dế Mèn ở góc trống, gõ tay theo phách chỉ khi mẫu tự phát (`BR-E034-13`).
-    drawStoryCharacterInStage(ctx, "cricket", this.stageRect, this.slots, {
-      arm: this.cricketArmNow(rs.reducedMotion),
+    renderGT034Scene(ctx, rs, {
+      ball: this.getBeatBall(),
+      clock: getGT034Clock(this),
+      content: this.activeContent,
+      hintTargetIndex:
+        getGT034Clock(this).activeHintLevel > 0
+          ? this.getHintTargetIndex()
+          : null,
+      isWon: this.won,
+      litStepIndex: this.litStepIndex,
+      logicSpace: { w: this.logicSpace.w, h: this.logicSpace.h },
+      particles: this.particles,
+      particlesEnabled:
+        !rs.reducedMotion && this.degradation?.particles_enabled !== false,
+      replayLimit: this.replayLimit,
+      replaysUsed: this.replaysUsed,
+      restPadSlot: this.restPadSlot,
+      showVisualPattern: this.showVisualPattern,
+      slots: this.slots,
+      stageRect: this.stageRect,
+      tempoBpm: this.tempoBpm,
+      themeId: this.themeId,
+      userSteps: this.userSteps,
     });
-    this.renderTrackSteps(ctx, rs);
-    this.renderInstrumentDock(ctx, rs);
-    this.renderBeatBall(ctx, rs);
-
-    if (
-      this.particles.length > 0 &&
-      this.degradation?.particles_enabled !== false
-    ) {
-      rs.drawParticles(ctx, this.particles);
-    }
-  }
-
-  /** Bóng nảy (`BR-E034-12`): đáy ngay trên ô bước, đỉnh không vượt sân khấu. */
-  private renderBeatBall(
-    ctx: CanvasRenderingContext2D,
-    rs: RenderSystem
-  ): void {
-    const ball = this.getBeatBall();
-    if (!ball || (ball.kind === "tap" && rs.reducedMotion)) {
-      return;
-    }
-    const slot = this.slots[ball.step];
-    if (!slot) {
-      return;
-    }
-    // Ô kế chỉ là ô bước cùng hàng: `slots[len]` đã là nhạc cụ đầu tiên, và ô ở
-    // hàng khác có đáy khác — phách cuối hay xuống dòng thì bóng nảy tại chỗ.
-    const isLastStep = ball.step + 1 >= this.content.target_pattern.length;
-    const nextSlot =
-      ball.kind === "beat" && !isLastStep
-        ? this.slots[ball.step + 1]
-        : undefined;
-    const next = nextSlot && nextSlot.y === slot.y ? nextSlot : undefined;
-    const radius = beatBallRadius(slot.w, slot.h);
-    const floorY = slot.y - slot.h / 2 - radius - 2;
-    const stageTop = this.stageRect?.y ?? 0;
-    const hopPx = Math.max(
-      0,
-      Math.min(slot.h * 0.9, floorY - radius - stageTop)
-    );
-    const to: BallPoint | null = next ? { x: next.x, y: next.y } : null;
-    const pose = beatBallPose({
-      phase: ball.phase,
-      from: { x: slot.x, y: slot.y },
-      to,
-      floorY,
-      hopPx,
-      reducedMotion: rs.reducedMotion,
-    });
-    drawBeatBall(ctx, pose, radius);
-  }
-
-  private renderTrackSteps(
-    ctx: CanvasRenderingContext2D,
-    rs: RenderSystem
-  ): void {
-    const patternLen = this.content.target_pattern.length;
-    for (let i = 0; i < patternLen; i++) {
-      const slot = this.slots[i];
-      if (slot) {
-        this.renderSingleTrackStep(ctx, rs, i, slot);
-      }
-    }
-  }
-
-  private renderSingleTrackStep(
-    ctx: CanvasRenderingContext2D,
-    rs: RenderSystem,
-    index: number,
-    slot: Slot
-  ): void {
-    const isActive = this.litStepIndex === index;
-    const userStep = this.userSteps[index];
-
-    if (userStep) {
-      const inst = this.content.instruments.find(
-        (item) => item.instrument_id === userStep
-      );
-      this.drawInstrumentSlot(ctx, rs, slot, userStep, inst?.asset, {
-        label: inst?.name_vi ?? userStep,
-        state: isActive ? "selected" : "idle",
-      });
-      return;
-    }
-
-    if (userStep === null) {
-      drawSlotItem(ctx, rs, slot, {
-        id: `step-rest-${index}`,
-        label: "Nghỉ",
-        state: isActive ? "selected" : "idle",
-      });
-      return;
-    }
-
-    if (this.showVisualPattern || isActive) {
-      const targetStep = this.content.target_pattern[index];
-      const inst = this.content.instruments.find(
-        (item) => item.instrument_id === targetStep
-      );
-      this.drawInstrumentSlot(
-        ctx,
-        rs,
-        slot,
-        targetStep ?? `step-target-${index}`,
-        inst?.asset,
-        {
-          label: inst?.name_vi ?? targetStep ?? undefined,
-          state: isActive ? "selected" : "idle",
-        }
-      );
-      return;
-    }
-
-    drawSlotItem(ctx, rs, slot, {
-      id: `step-empty-${index}`,
-      text: `${index + 1}`,
-      state: isActive ? "selected" : "idle",
-    });
-  }
-
-  private renderInstrumentDock(
-    ctx: CanvasRenderingContext2D,
-    rs: RenderSystem
-  ): void {
-    const patternLen = this.content.target_pattern.length;
-    const instCount = this.content.instruments.length;
-    const sourceSlots = this.slots.slice(patternLen, patternLen + instCount);
-
-    if (sourceSlots.length === 0) {
-      return;
-    }
-
-    const restSlot = this.restPadSlot;
-    if (restSlot) {
-      drawSlotItem(ctx, rs, restSlot, {
-        id: "pad_rest",
-        text: REST_GLYPH,
-        label: "Nghỉ",
-        state: "idle",
-      });
-    }
-
-    for (let i = 0; i < sourceSlots.length; i++) {
-      const slot = sourceSlots[i];
-      const inst = this.content.instruments[i];
-      if (!(slot && inst)) {
-        continue;
-      }
-
-      this.drawInstrumentSlot(ctx, rs, slot, inst.instrument_id, inst.asset, {
-        label: inst.name_vi ?? inst.instrument_id,
-        state: "idle",
-      });
-    }
-  }
-
-  /**
-   * Một ô nhạc cụ: id đã biết (trống cơm, phách, mõ) vẽ bằng hình vector riêng
-   * thay asset, id lạ giữ asset của content (`BR-E034-13`). Hình chỉ là mặt nhạc cụ,
-   * không liên quan phách hay đáp án.
-   */
-  private drawInstrumentSlot(
-    ctx: CanvasRenderingContext2D,
-    rs: RenderSystem,
-    slot: Slot,
-    instrumentId: string,
-    asset: GT034Content["instruments"][number]["asset"] | undefined,
-    face: { readonly label?: string; readonly state: "idle" | "selected" }
-  ): void {
-    const glyph = instrumentGlyphKind(instrumentId);
-    if (!glyph) {
-      drawSlotItem(ctx, rs, slot, { id: instrumentId, asset, ...face });
-      return;
-    }
-    drawSlotItem(ctx, rs, slot, { id: instrumentId, text: "", ...face });
-    drawInstrumentGlyph(
-      ctx,
-      glyph,
-      slot.x,
-      slot.y,
-      Math.min(slot.w, slot.h) * 0.5
-    );
-  }
-
-  /** Độ hạ tay Dế Mèn: chỉ khi mẫu tự phát, chỉ ở phách có tiếng (`BR-E034-13`). */
-  private cricketArmNow(reducedMotion: boolean): number {
-    const ball = this.getBeatBall();
-    if (
-      reducedMotion ||
-      !ball ||
-      ball.kind !== "beat" ||
-      this.content.target_pattern[ball.step] == null
-    ) {
-      return 0;
-    }
-    return cricketArm(ball.phase);
   }
 
   override completeSession(): void {
