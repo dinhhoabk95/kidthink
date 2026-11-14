@@ -1,0 +1,53 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bóng bay</title>
+  <defs>
+    <radialGradient cx="35%" cy="30%" id="balloonBody" r="68%">
+      <stop offset="0%" stop-color="#fda4af" />
+      <stop offset="42%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#be123c" />
+    </radialGradient>
+  </defs>
+  <!-- String -->
+  <path
+    d="M60 88C64 95 54 100 59 109"
+    stroke="#92400e"
+    stroke-linecap="round"
+    stroke-width="3.5"
+  />
+  <!-- 2.5D base shadow -->
+  <ellipse
+    cx="60"
+    cy="51"
+    fill="#881337"
+    opacity="0.28"
+    rx="34"
+    ry="38"
+    transform="translate(0 4)"
+  />
+  <!-- Balloon knot -->
+  <path
+    d="M54 84L66 84L62 90H58Z"
+    fill="#e11d48"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3"
+  />
+  <!-- Balloon sphere -->
+  <path
+    d="M60 12C80 12 94 27 94 49C94 69 78 84 60 84C42 84 26 69 26 49C26 27 40 12 60 12Z"
+    fill="url(#balloonBody)"
+    stroke="#881337"
+    stroke-width="4"
+  />
+  <!-- Specular shine -->
+  <ellipse
+    cx="42"
+    cy="34"
+    fill="#ffffff"
+    fill-opacity="0.52"
+    rx="7"
+    ry="13"
+    transform="rotate(-24 42 34)"
+  />
+  <circle cx="36" cy="52" fill="#ffffff" fill-opacity="0.45" r="3" />
+</svg>

@@ -1,0 +1,61 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Dâu tây</title>
+  <defs>
+    <radialGradient cx="38%" cy="34%" id="berryBody" r="68%">
+      <stop offset="0%" stop-color="#fda4af" />
+      <stop offset="40%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#be123c" />
+    </radialGradient>
+    <linearGradient id="berryLeaf" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#86efac" />
+      <stop offset="100%" stop-color="#15803d" />
+    </linearGradient>
+  </defs>
+  <!-- 2.5D base shadow -->
+  <path
+    d="M60 36C34 36 22 52 26 73C30 93 48 109 60 109C72 109 90 93 94 73C98 52 86 36 60 36Z"
+    fill="#881337"
+    opacity="0.35"
+  />
+  <!-- Main strawberry body -->
+  <path
+    d="M60 32C33 32 21 48 25 69C29 89 47 105 60 105C73 105 91 89 95 69C99 48 87 32 60 32Z"
+    fill="url(#berryBody)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <!-- Golden seeds -->
+  <ellipse cx="43" cy="56" fill="#fde047" rx="2.2" ry="3.3" />
+  <ellipse cx="60" cy="54" fill="#fde047" rx="2.2" ry="3.3" />
+  <ellipse cx="77" cy="56" fill="#fde047" rx="2.2" ry="3.3" />
+  <ellipse cx="51" cy="70" fill="#fde047" rx="2.2" ry="3.3" />
+  <ellipse cx="69" cy="70" fill="#fde047" rx="2.2" ry="3.3" />
+  <ellipse cx="42" cy="78" fill="#fde047" rx="2" ry="3" />
+  <ellipse cx="78" cy="78" fill="#fde047" rx="2" ry="3" />
+  <ellipse cx="60" cy="86" fill="#fde047" rx="2.2" ry="3.3" />
+  <!-- Stem & leafy crown -->
+  <path
+    d="M60 22V13"
+    stroke="#14532d"
+    stroke-linecap="round"
+    stroke-width="4.5"
+  />
+  <path
+    d="M33 34C38 24 48 22 54 27C56 20 64 20 66 27C72 22 82 24 87 34C78 39 71 38 66 34C63 39 57 39 54 34C49 38 42 39 33 34Z"
+    fill="url(#berryLeaf)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.5"
+  />
+  <!-- Specular highlight -->
+  <ellipse
+    cx="40"
+    cy="46"
+    fill="#ffffff"
+    fill-opacity="0.45"
+    rx="5.5"
+    ry="9"
+    transform="rotate(-25 40 46)"
+  />
+</svg>

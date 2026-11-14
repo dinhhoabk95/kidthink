@@ -1,0 +1,49 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chuối vàng</title>
+  <defs>
+    <linearGradient id="bananaBody" x1="20%" x2="85%" y1="15%" y2="85%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="42%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+  </defs>
+  <!-- 2.5D warm base shadow -->
+  <path
+    d="M84 22C93 38 92 73 68 93C49 109 24 106 16 97C26 91 45 84 61 65C74 49 76 31 76 22Z"
+    fill="#78350f"
+    opacity="0.32"
+  />
+  <!-- Main banana body -->
+  <path
+    d="M82 18C93 34 92 70 67 90C48 105 23 102 15 93C13 90 15 86 19 85C35 80 51 71 63 54C73 40 74 26 74 19C74 15 79 14 82 18Z"
+    fill="url(#bananaBody)"
+    stroke="#854d0e"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <!-- Inner peel ridge -->
+  <path
+    d="M77 27C79 47 70 68 54 81C44 89 32 93 23 93"
+    opacity="0.4"
+    stroke="#b45309"
+    stroke-linecap="round"
+    stroke-width="2.5"
+  />
+  <!-- Stem & dark tip -->
+  <path
+    d="M77 16L82 11"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="5.5"
+  />
+  <circle cx="16" cy="92" fill="#78350f" r="3" />
+  <!-- Specular highlight -->
+  <path
+    d="M72 37C67 53 57 67 44 76"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.55"
+    stroke-width="5"
+  />
+</svg>

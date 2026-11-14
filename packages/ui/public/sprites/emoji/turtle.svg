@@ -1,0 +1,100 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Con rùa</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="turtleShell" r="68%">
+      <stop offset="0%" stop-color="#4ade80" />
+      <stop offset="55%" stop-color="#16a34a" />
+      <stop offset="100%" stop-color="#14532d" />
+    </radialGradient>
+    <radialGradient cx="35%" cy="35%" id="turtleSkin" r="68%">
+      <stop offset="0%" stop-color="#d9f99d" />
+      <stop offset="100%" stop-color="#65a30d" />
+    </radialGradient>
+  </defs>
+  <!-- 2.5D base shadow -->
+  <ellipse cx="56" cy="84" fill="#14532d" opacity="0.32" rx="40" ry="16" />
+  <!-- Legs & tail -->
+  <rect
+    fill="url(#turtleSkin)"
+    height="22"
+    rx="7.5"
+    stroke="#365314"
+    stroke-width="3.8"
+    width="15"
+    x="27"
+    y="75"
+  />
+  <rect
+    fill="url(#turtleSkin)"
+    height="22"
+    rx="7.5"
+    stroke="#365314"
+    stroke-width="3.8"
+    width="15"
+    x="68"
+    y="75"
+  />
+  <path
+    d="M19 73L11 77L21 81Z"
+    fill="url(#turtleSkin)"
+    stroke="#365314"
+    stroke-linejoin="round"
+    stroke-width="3"
+  />
+  <!-- Cute head -->
+  <circle
+    cx="93"
+    cy="63"
+    fill="url(#turtleSkin)"
+    r="17"
+    stroke="#365314"
+    stroke-width="3.8"
+  />
+  <circle cx="96" cy="59" fill="#1c1917" r="3.8" />
+  <circle cx="94.8" cy="57.4" fill="#ffffff" r="1.8" />
+  <circle cx="95" cy="68" fill="#fb7185" fill-opacity="0.45" r="3.8" />
+  <path
+    d="M98 69C102 71 106 69 107 66"
+    stroke="#365314"
+    stroke-linecap="round"
+    stroke-width="2.5"
+  />
+  <!-- Domed shell -->
+  <path
+    d="M18 76C18 45 34 30 55 30C76 30 92 45 92 76Z"
+    fill="url(#turtleShell)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <!-- Wooden rim under shell -->
+  <rect
+    fill="#fde047"
+    height="10"
+    rx="5"
+    stroke="#854d0e"
+    stroke-width="3.5"
+    width="78"
+    x="16"
+    y="72"
+  />
+  <!-- Hexagon shell pattern -->
+  <polygon
+    fill="#86efac"
+    fill-opacity="0.45"
+    points="55,40 66,47 66,59 55,66 44,59 44,47"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="2.8"
+  />
+  <!-- Specular -->
+  <ellipse
+    cx="38"
+    cy="46"
+    fill="#ffffff"
+    fill-opacity="0.4"
+    rx="8"
+    ry="4"
+    transform="rotate(-28 38 46)"
+  />
+</svg>

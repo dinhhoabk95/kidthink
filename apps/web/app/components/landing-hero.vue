@@ -51,10 +51,18 @@
       </div>
       <div aria-hidden="true" class="hero-visual">
         <div class="hero-card-preview">
-          <span class="hero-emoji-bubble">🍎</span>
-          <span class="hero-emoji-bubble">🧩</span>
-          <span class="hero-emoji-bubble">📐</span>
-          <span class="hero-emoji-bubble">💡</span>
+          <span class="hero-emoji-bubble">
+            <BrandEmoji emoji="🍎" hero />
+          </span>
+          <span class="hero-emoji-bubble">
+            <BrandEmoji emoji="🧩" />
+          </span>
+          <span class="hero-emoji-bubble">
+            <BrandEmoji emoji="📐" />
+          </span>
+          <span class="hero-emoji-bubble">
+            <BrandEmoji emoji="💡" />
+          </span>
         </div>
       </div>
     </div>
@@ -62,6 +70,8 @@
 </template>
 
 <script lang="ts" setup>
+  import BrandEmoji from "@mindkid/ui/brand-emoji";
+
   /**
    * `BR-LND-09` — số lượng thư viện đến từ `/api/guest/home`, Cấm — NEVER viết
    * số cứng vào template. Mặc định là chuỗi rỗng chứ Cấm — NEVER là một con số

@@ -1,0 +1,98 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Con thỏ</title>
+  <defs>
+    <radialGradient cx="40%" cy="35%" id="rabbitBody" r="68%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="60%" stop-color="#fafaf9" />
+      <stop offset="100%" stop-color="#e7e5e4" />
+    </radialGradient>
+    <linearGradient id="rabbitEar" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fbcfe8" />
+      <stop offset="100%" stop-color="#f472b6" />
+    </linearGradient>
+  </defs>
+  <!-- 2.5D warm base shadow -->
+  <ellipse cx="60" cy="79" fill="#78716c" opacity="0.3" rx="35" ry="29" />
+  <!-- Ears -->
+  <ellipse
+    cx="43"
+    cy="34"
+    fill="url(#rabbitBody)"
+    rx="11"
+    ry="24"
+    stroke="#78716c"
+    stroke-width="4"
+    transform="rotate(-12 43 34)"
+  />
+  <ellipse
+    cx="43"
+    cy="35"
+    fill="url(#rabbitEar)"
+    rx="5.5"
+    ry="15"
+    transform="rotate(-12 43 35)"
+  />
+  <ellipse
+    cx="77"
+    cy="34"
+    fill="url(#rabbitBody)"
+    rx="11"
+    ry="24"
+    stroke="#78716c"
+    stroke-width="4"
+    transform="rotate(12 77 34)"
+  />
+  <ellipse
+    cx="77"
+    cy="35"
+    fill="url(#rabbitEar)"
+    rx="5.5"
+    ry="15"
+    transform="rotate(12 77 35)"
+  />
+  <!-- Main head -->
+  <ellipse
+    cx="60"
+    cy="75"
+    fill="url(#rabbitBody)"
+    rx="35"
+    ry="29"
+    stroke="#78716c"
+    stroke-width="4"
+  />
+  <!-- Eyes -->
+  <circle cx="46" cy="70" fill="#1c1917" r="5" />
+  <circle cx="44.5" cy="68" fill="#ffffff" r="2" />
+  <circle cx="74" cy="70" fill="#1c1917" r="5" />
+  <circle cx="72.5" cy="68" fill="#ffffff" r="2" />
+  <!-- Cheeks -->
+  <circle cx="36" cy="79" fill="#fb7185" fill-opacity="0.45" r="5.5" />
+  <circle cx="84" cy="79" fill="#fb7185" fill-opacity="0.45" r="5.5" />
+  <!-- Nose & mouth -->
+  <ellipse
+    cx="60"
+    cy="78"
+    fill="#f472b6"
+    rx="4.5"
+    ry="3.2"
+    stroke="#9d174d"
+    stroke-width="2"
+  />
+  <path
+    d="M60 81V85M53 85C55 88 58 88 60 85C62 88 65 88 67 85"
+    stroke="#57534e"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="2.8"
+  />
+  <!-- Specular highlight -->
+  <ellipse
+    cx="45"
+    cy="56"
+    fill="#ffffff"
+    fill-opacity="0.8"
+    rx="8"
+    ry="4"
+    transform="rotate(-22 45 56)"
+  />
+</svg>

@@ -10,6 +10,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@mindkid/emoji": "workspace:*",
     "@mindkid/errors": "workspace:*",
     "@mindkid/shared": "workspace:*",
     "@mindkid/ui": "workspace:*"

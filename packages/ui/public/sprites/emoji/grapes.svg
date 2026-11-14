@@ -1,0 +1,97 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chùm nho</title>
+  <defs>
+    <radialGradient cx="35%" cy="32%" id="grapeOrb" r="68%">
+      <stop offset="0%" stop-color="#e9d5ff" />
+      <stop offset="45%" stop-color="#a855f7" />
+      <stop offset="100%" stop-color="#6b21a8" />
+    </radialGradient>
+    <linearGradient id="grapeLeaf" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#86efac" />
+      <stop offset="100%" stop-color="#16a34a" />
+    </linearGradient>
+  </defs>
+  <!-- 2.5D base shadow -->
+  <g fill="#4c1d95" opacity="0.3">
+    <circle cx="42" cy="51" r="14" />
+    <circle cx="60" cy="51" r="14" />
+    <circle cx="78" cy="51" r="14" />
+    <circle cx="51" cy="70" r="14" />
+    <circle cx="69" cy="70" r="14" />
+    <circle cx="60" cy="90" r="14" />
+  </g>
+  <!-- Stem & leaf -->
+  <path
+    d="M60 32C60 22 65 15 73 14"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="5"
+  />
+  <path
+    d="M58 26C50 15 34 17 29 26C37 33 50 32 58 26Z"
+    fill="url(#grapeLeaf)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.5"
+  />
+  <!-- Back row grapes -->
+  <circle
+    cx="42"
+    cy="47"
+    fill="url(#grapeOrb)"
+    r="14"
+    stroke="#4c1d95"
+    stroke-width="3.5"
+  />
+  <circle
+    cx="78"
+    cy="47"
+    fill="url(#grapeOrb)"
+    r="14"
+    stroke="#4c1d95"
+    stroke-width="3.5"
+  />
+  <circle
+    cx="60"
+    cy="47"
+    fill="url(#grapeOrb)"
+    r="14"
+    stroke="#4c1d95"
+    stroke-width="3.5"
+  />
+  <!-- Middle row -->
+  <circle
+    cx="50"
+    cy="66"
+    fill="url(#grapeOrb)"
+    r="14"
+    stroke="#4c1d95"
+    stroke-width="3.5"
+  />
+  <circle
+    cx="70"
+    cy="66"
+    fill="url(#grapeOrb)"
+    r="14"
+    stroke="#4c1d95"
+    stroke-width="3.5"
+  />
+  <!-- Bottom grape -->
+  <circle
+    cx="60"
+    cy="86"
+    fill="url(#grapeOrb)"
+    r="14"
+    stroke="#4c1d95"
+    stroke-width="3.5"
+  />
+  <!-- Specular highlights -->
+  <g fill="#ffffff" fill-opacity="0.52">
+    <circle cx="37" cy="42" r="3.2" />
+    <circle cx="55" cy="42" r="3.2" />
+    <circle cx="73" cy="42" r="3.2" />
+    <circle cx="45" cy="61" r="3.2" />
+    <circle cx="65" cy="61" r="3.2" />
+    <circle cx="55" cy="81" r="3.2" />
+  </g>
+</svg>

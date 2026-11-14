@@ -1,0 +1,43 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ngôi sao vàng</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="starBody" r="68%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="45%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </radialGradient>
+  </defs>
+  <!-- 2.5D warm base shadow -->
+  <path
+    d="M60 18L73 44L102 48L81 68L86 97L60 83L34 97L39 68L18 48L47 44Z"
+    fill="#b45309"
+    opacity="0.45"
+    stroke="#92400e"
+    stroke-linejoin="round"
+    stroke-width="6"
+    transform="translate(0 6)"
+  />
+  <!-- Main chubby star -->
+  <path
+    d="M60 15L73 42L103 46L81 67L86 97L60 83L34 97L39 67L17 46L47 42Z"
+    fill="url(#starBody)"
+    stroke="#92400e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <!-- Inner bevel facet -->
+  <path
+    d="M60 30L67 45L83 47L71 58L74 75L60 67L46 75L49 58L37 47L53 45Z"
+    fill="#fef08a"
+    fill-opacity="0.4"
+  />
+  <!-- Specular highlight -->
+  <path
+    d="M57 25L51 39"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.7"
+    stroke-width="4"
+  />
+  <circle cx="34" cy="49" fill="#ffffff" fill-opacity="0.65" r="2.8" />
+</svg>

@@ -1,0 +1,61 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bắp ngô</title>
+  <defs>
+    <linearGradient id="cornCob" x1="25%" x2="80%" y1="15%" y2="85%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="45%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#ca8a04" />
+    </linearGradient>
+    <linearGradient id="cornHusk" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#86efac" />
+      <stop offset="100%" stop-color="#15803d" />
+    </linearGradient>
+  </defs>
+  <!-- 2.5D base shadow -->
+  <ellipse cx="60" cy="65" fill="#713f12" opacity="0.3" rx="24" ry="42" />
+  <!-- Corn cob -->
+  <path
+    d="M60 16C74 16 81 35 81 60C81 84 72 100 60 100C48 100 39 84 39 60C39 35 46 16 60 16Z"
+    fill="url(#cornCob)"
+    stroke="#854d0e"
+    stroke-width="4"
+  />
+  <!-- Kernel texture -->
+  <path
+    d="M52 24V78M60 20V80M68 24V78"
+    opacity="0.45"
+    stroke="#a16207"
+    stroke-linecap="round"
+    stroke-width="2.2"
+  />
+  <path
+    d="M44 34H76M42 46H78M42 58H78"
+    opacity="0.45"
+    stroke="#a16207"
+    stroke-linecap="round"
+    stroke-width="2.2"
+  />
+  <!-- Specular highlight on cob -->
+  <path
+    d="M49 27V56"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.52"
+    stroke-width="4.5"
+  />
+  <!-- Left & right husks -->
+  <path
+    d="M38 50C26 59 24 85 45 102C52 106 58 104 60 100C54 83 47 64 38 50Z"
+    fill="url(#cornHusk)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M82 50C94 59 96 85 75 102C68 106 62 104 60 100C66 83 73 64 82 50Z"
+    fill="url(#cornHusk)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+</svg>

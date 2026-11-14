@@ -1,0 +1,75 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Con gấu</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="bearBody" r="68%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="48%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#b45309" />
+    </radialGradient>
+  </defs>
+  <!-- 2.5D warm base shadow -->
+  <circle cx="60" cy="70" fill="#78350f" opacity="0.34" r="39" />
+  <!-- Ears -->
+  <circle
+    cx="33"
+    cy="34"
+    fill="url(#bearBody)"
+    r="14"
+    stroke="#92400e"
+    stroke-width="4"
+  />
+  <circle cx="33" cy="34" fill="#fde68a" r="7" />
+  <circle
+    cx="87"
+    cy="34"
+    fill="url(#bearBody)"
+    r="14"
+    stroke="#92400e"
+    stroke-width="4"
+  />
+  <circle cx="87" cy="34" fill="#fde68a" r="7" />
+  <!-- Head -->
+  <circle
+    cx="60"
+    cy="66"
+    fill="url(#bearBody)"
+    r="39"
+    stroke="#92400e"
+    stroke-width="4"
+  />
+  <!-- Muzzle -->
+  <ellipse
+    cx="60"
+    cy="75"
+    fill="#fffbeb"
+    rx="18"
+    ry="13"
+    stroke="#92400e"
+    stroke-width="3"
+  />
+  <ellipse cx="60" cy="69" fill="#451a03" rx="6" ry="4" />
+  <path
+    d="M60 73V78M54 78C56 82 64 82 66 78"
+    stroke="#451a03"
+    stroke-linecap="round"
+    stroke-width="2.8"
+  />
+  <!-- Eyes -->
+  <circle cx="46" cy="57" fill="#1c1917" r="5" />
+  <circle cx="44.5" cy="55" fill="#ffffff" r="2" />
+  <circle cx="74" cy="57" fill="#1c1917" r="5" />
+  <circle cx="72.5" cy="55" fill="#ffffff" r="2" />
+  <!-- Cheeks -->
+  <circle cx="36" cy="68" fill="#fb923c" fill-opacity="0.45" r="5.5" />
+  <circle cx="84" cy="68" fill="#fb923c" fill-opacity="0.45" r="5.5" />
+  <!-- Specular highlight -->
+  <ellipse
+    cx="43"
+    cy="40"
+    fill="#ffffff"
+    fill-opacity="0.38"
+    rx="8"
+    ry="4"
+    transform="rotate(-24 43 40)"
+  />
+</svg>

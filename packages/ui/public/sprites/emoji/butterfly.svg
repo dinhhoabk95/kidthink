@@ -1,0 +1,94 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Con bướm</title>
+  <defs>
+    <linearGradient id="wingTop" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fde047" />
+      <stop offset="50%" stop-color="#fb923c" />
+      <stop offset="100%" stop-color="#f43f5e" />
+    </linearGradient>
+    <linearGradient id="wingBot" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#7dd3fc" />
+      <stop offset="100%" stop-color="#6366f1" />
+    </linearGradient>
+  </defs>
+  <!-- 2.5D base shadow -->
+  <g fill="#4c1d95" opacity="0.26">
+    <ellipse cx="36" cy="49" rx="22" ry="20" />
+    <ellipse cx="84" cy="49" rx="22" ry="20" />
+    <ellipse cx="39" cy="83" rx="16" ry="17" />
+    <ellipse cx="81" cy="83" rx="16" ry="17" />
+  </g>
+  <!-- Lower wings -->
+  <path
+    d="M57 62C42 61 23 70 25 86C27 99 45 101 56 82Z"
+    fill="url(#wingBot)"
+    stroke="#312e81"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M63 62C78 61 97 70 95 86C93 99 75 101 64 82Z"
+    fill="url(#wingBot)"
+    stroke="#312e81"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <!-- Upper wings -->
+  <path
+    d="M57 58C45 30 16 24 14 45C12 63 36 69 57 63Z"
+    fill="url(#wingTop)"
+    stroke="#9a3412"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M63 58C75 30 104 24 106 45C108 63 84 69 63 63Z"
+    fill="url(#wingTop)"
+    stroke="#9a3412"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <!-- Wing dots -->
+  <circle cx="31" cy="45" fill="#fef08a" fill-opacity="0.85" r="5.5" />
+  <circle cx="89" cy="45" fill="#fef08a" fill-opacity="0.85" r="5.5" />
+  <circle cx="37" cy="83" fill="#e0f2fe" fill-opacity="0.8" r="4" />
+  <circle cx="83" cy="83" fill="#e0f2fe" fill-opacity="0.8" r="4" />
+  <!-- Antennae -->
+  <path
+    d="M56 36C51 25 44 21 39 22M64 36C69 25 76 21 81 22"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.5"
+  />
+  <circle
+    cx="38"
+    cy="22"
+    fill="#facc15"
+    r="3"
+    stroke="#78350f"
+    stroke-width="2"
+  />
+  <circle
+    cx="82"
+    cy="22"
+    fill="#facc15"
+    r="3"
+    stroke="#78350f"
+    stroke-width="2"
+  />
+  <!-- Cute body & face -->
+  <rect
+    fill="#92400e"
+    height="54"
+    rx="7"
+    stroke="#451a03"
+    stroke-width="3.5"
+    width="14"
+    x="53"
+    y="34"
+  />
+  <circle cx="57" cy="42" fill="#1c1917" r="2.2" />
+  <circle cx="56.5" cy="41.2" fill="#ffffff" r="0.9" />
+  <circle cx="63" cy="42" fill="#1c1917" r="2.2" />
+  <circle cx="62.5" cy="41.2" fill="#ffffff" r="0.9" />
+</svg>

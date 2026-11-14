@@ -7,6 +7,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@mindkid/emoji": "workspace:*",
     "@mindkid/game-engine": "workspace:*",
     "@mindkid/shared": "workspace:*",
     "@iconify-json/lucide": "catalog:",
@@ -16,12 +17,21 @@
   },
   "devDependencies": {
     "@mindkid/config": "workspace:*",
+    "@vitejs/plugin-vue": "catalog:",
+    "@vue/test-utils": "catalog:",
+    "happy-dom": "catalog:",
     "nuxt": "catalog:",
     "typescript": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "vue": "catalog:"
   },
   "exports": {
     ".": "./src/index.ts",
+    "./brand-emoji": {
+      "types": "./src/brand-emoji.d.ts",
+      "import": "./components/brand-emoji.vue",
+      "default": "./components/brand-emoji.vue"
+    },
     "./css": "./assets/css/tailwind.css"
   },
   "imports": {

@@ -1,0 +1,67 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Con vịt</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="duckHead" r="68%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="50%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#eab308" />
+    </radialGradient>
+    <linearGradient id="duckBeak" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fdba74" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </linearGradient>
+  </defs>
+  <!-- 2.5D base shadow -->
+  <ellipse cx="60" cy="70" fill="#854d0e" opacity="0.3" rx="38" ry="36" />
+  <!-- Top tuft & head -->
+  <path
+    d="M55 24C52 16 61 13 64 21C68 15 74 18 70 26"
+    fill="#facc15"
+    stroke="#854d0e"
+    stroke-linejoin="round"
+    stroke-width="3.5"
+  />
+  <ellipse
+    cx="60"
+    cy="65"
+    fill="url(#duckHead)"
+    rx="38"
+    ry="35"
+    stroke="#854d0e"
+    stroke-width="4"
+  />
+  <!-- Eyes -->
+  <circle cx="45" cy="56" fill="#1c1917" r="5" />
+  <circle cx="43.5" cy="54" fill="#ffffff" r="2" />
+  <circle cx="75" cy="56" fill="#1c1917" r="5" />
+  <circle cx="73.5" cy="54" fill="#ffffff" r="2" />
+  <!-- Cheeks -->
+  <circle cx="33" cy="67" fill="#fb923c" fill-opacity="0.45" r="5.5" />
+  <circle cx="87" cy="67" fill="#fb923c" fill-opacity="0.45" r="5.5" />
+  <!-- Smiling orange bill -->
+  <ellipse
+    cx="60"
+    cy="72"
+    fill="url(#duckBeak)"
+    rx="17"
+    ry="10"
+    stroke="#9a3412"
+    stroke-width="3.5"
+  />
+  <path
+    d="M47 72C53 77 67 77 73 72"
+    stroke="#9a3412"
+    stroke-linecap="round"
+    stroke-width="2.5"
+  />
+  <!-- Specular -->
+  <ellipse
+    cx="42"
+    cy="41"
+    fill="#ffffff"
+    fill-opacity="0.55"
+    rx="8"
+    ry="4"
+    transform="rotate(-24 42 41)"
+  />
+</svg>

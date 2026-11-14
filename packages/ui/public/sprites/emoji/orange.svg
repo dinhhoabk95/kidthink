@@ -1,0 +1,57 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Quả cam</title>
+  <defs>
+    <radialGradient cx="35%" cy="32%" id="orangeBody" r="68%">
+      <stop offset="0%" stop-color="#fde047" />
+      <stop offset="38%" stop-color="#fb923c" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </radialGradient>
+    <linearGradient id="orangeLeaf" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#86efac" />
+      <stop offset="100%" stop-color="#16a34a" />
+    </linearGradient>
+  </defs>
+  <!-- 2.5D base shadow -->
+  <ellipse cx="60" cy="68" fill="#7c2d12" opacity="0.34" rx="40" ry="38" />
+  <!-- Stem -->
+  <path
+    d="M60 28V16"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="5"
+  />
+  <!-- Leaf -->
+  <path
+    d="M61 23C67 11 85 11 91 20C84 29 69 30 61 23Z"
+    fill="url(#orangeLeaf)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.5"
+  />
+  <!-- Main orange sphere -->
+  <ellipse
+    cx="60"
+    cy="64"
+    fill="url(#orangeBody)"
+    rx="40"
+    ry="38"
+    stroke="#9a3412"
+    stroke-width="4"
+  />
+  <!-- Tactile dimples -->
+  <circle cx="78" cy="54" fill="#c2410c" opacity="0.45" r="1.8" />
+  <circle cx="84" cy="65" fill="#c2410c" opacity="0.45" r="1.8" />
+  <circle cx="74" cy="76" fill="#c2410c" opacity="0.45" r="1.8" />
+  <circle cx="42" cy="80" fill="#c2410c" opacity="0.35" r="1.8" />
+  <!-- Specular highlights -->
+  <ellipse
+    cx="42"
+    cy="48"
+    fill="#ffffff"
+    fill-opacity="0.48"
+    rx="8"
+    ry="12"
+    transform="rotate(-30 42 48)"
+  />
+  <circle cx="34" cy="63" fill="#ffffff" fill-opacity="0.4" r="3" />
+</svg>

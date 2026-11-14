@@ -30,7 +30,8 @@ Dev UI · reviewer.
 ## 3. Entry points
 
 `packages/ui/nuxt.config.ts` (gốc layer) · `packages/ui/assets/css/tailwind.css` `@theme` ·
-`packages/ui/app.config.ts` · `packages/game-engine/src/systems/designTokens.ts`.
+`packages/ui/app.config.ts` · `packages/ui/components/brand-emoji.vue` ·
+`packages/ui/public/sprites/` · `packages/game-engine/src/systems/designTokens.ts`.
 
 Gốc layer là **thư mục** `packages/ui`, không phải tên package `@mindkid/ui`. Xem `BR-DSC-21`.
 

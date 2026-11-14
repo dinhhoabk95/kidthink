@@ -36,6 +36,7 @@
   import { definePageMeta } from "#imports";
   import { resolveZonePromptText } from "~/composables/play/play-prompt-zone";
   import { playRoundOpenNarration } from "~/composables/play/round-open-narration";
+  import { preloadSpritesForSession } from "~/composables/play/use-item-sprites";
   import { useMascotSprites } from "~/composables/play/use-mascot-sprites";
   import { usePlayGesture } from "~/composables/play/use-play-gesture";
   import { createSessionFactory } from "~/utils/game-session-factory";
@@ -167,7 +168,12 @@
       errorMessage.value = null;
       feedbackOverlay.reset();
 
-      await preloadGameSession(templateCode);
+      await Promise.all([
+        preloadGameSession(templateCode),
+        preloadSpritesForSession(config.content_pack, {
+          includeFlashcardCounters: templateCode === "GT-000",
+        }),
+      ]);
       if (seq !== startSeq || !canvasRef.value) {
         return;
       }

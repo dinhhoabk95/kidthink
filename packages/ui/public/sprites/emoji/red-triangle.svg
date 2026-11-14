@@ -1,0 +1,42 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hình tam giác đỏ</title>
+  <defs>
+    <linearGradient id="triBlock" x1="25%" x2="85%" y1="15%" y2="90%">
+      <stop offset="0%" stop-color="#fda4af" />
+      <stop offset="48%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#dc2626" />
+    </linearGradient>
+  </defs>
+  <!-- 2.5D wooden block extrusion -->
+  <path
+    d="M60 22L104 97C106 101 103 106 98 106H22C17 106 14 101 16 97L60 22Z"
+    fill="#991b1b"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <!-- Front beveled triangle -->
+  <path
+    d="M60 15L103 90C105 94 102 99 97 99H23C18 99 15 94 17 90L60 15Z"
+    fill="url(#triBlock)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <!-- Inner Montessori bevel -->
+  <path
+    d="M60 28L92 88H28L60 28Z"
+    stroke="#fecaca"
+    stroke-linejoin="round"
+    stroke-opacity="0.55"
+    stroke-width="2.5"
+  />
+  <!-- Specular highlight -->
+  <path
+    d="M56 29L38 61"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.55"
+    stroke-width="4.5"
+  />
+</svg>

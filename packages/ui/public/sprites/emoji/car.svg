@@ -1,0 +1,96 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ô tô</title>
+  <defs>
+    <linearGradient id="carBody" x1="20%" x2="80%" y1="15%" y2="85%">
+      <stop offset="0%" stop-color="#fda4af" />
+      <stop offset="45%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#b91c1c" />
+    </linearGradient>
+    <linearGradient id="carGlass" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#e0f2fe" />
+      <stop offset="100%" stop-color="#38bdf8" />
+    </linearGradient>
+  </defs>
+  <!-- Ground shadow -->
+  <ellipse cx="60" cy="95" fill="#78350f" opacity="0.22" rx="44" ry="7" />
+  <!-- Cabin -->
+  <path
+    d="M35 55L44 33C46 29 50 27 54 27H77C82 27 86 30 88 35L95 55Z"
+    fill="url(#carBody)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <!-- Windows -->
+  <path
+    d="M43 52L49 36C50 34 52 33 54 33H62V52H43Z"
+    fill="url(#carGlass)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="2.5"
+  />
+  <path
+    d="M67 33H76C79 33 81 35 82 37L88 52H67V33Z"
+    fill="url(#carGlass)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="2.5"
+  />
+  <!-- Main chassis -->
+  <rect
+    fill="url(#carBody)"
+    height="32"
+    rx="13"
+    stroke="#7f1d1d"
+    stroke-width="4"
+    width="94"
+    x="13"
+    y="52"
+  />
+  <!-- Headlight & bumper -->
+  <circle
+    cx="21"
+    cy="65"
+    fill="#fef08a"
+    r="5"
+    stroke="#92400e"
+    stroke-width="2.5"
+  />
+  <rect
+    fill="#fbbf24"
+    height="10"
+    rx="3"
+    stroke="#92400e"
+    stroke-width="2"
+    width="7"
+    x="97"
+    y="61"
+  />
+  <!-- Specular -->
+  <path
+    d="M27 59H78"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.45"
+    stroke-width="3.5"
+  />
+  <!-- Wheels -->
+  <circle
+    cx="36"
+    cy="84"
+    fill="#44403c"
+    r="12"
+    stroke="#1c1917"
+    stroke-width="3.8"
+  />
+  <circle cx="36" cy="84" fill="#fef3c7" r="5" />
+  <circle
+    cx="84"
+    cy="84"
+    fill="#44403c"
+    r="12"
+    stroke="#1c1917"
+    stroke-width="3.8"
+  />
+  <circle cx="84" cy="84" fill="#fef3c7" r="5" />
+</svg>

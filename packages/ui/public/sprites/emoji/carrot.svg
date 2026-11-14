@@ -1,0 +1,66 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cà rốt</title>
+  <defs>
+    <linearGradient id="carrotBody" x1="20%" x2="80%" y1="20%" y2="85%">
+      <stop offset="0%" stop-color="#fdba74" />
+      <stop offset="45%" stop-color="#f97316" />
+      <stop offset="100%" stop-color="#c2410c" />
+    </linearGradient>
+    <linearGradient id="carrotTop" x1="0%" x2="100%" y1="100%" y2="0%">
+      <stop offset="0%" stop-color="#16a34a" />
+      <stop offset="100%" stop-color="#86efac" />
+    </linearGradient>
+  </defs>
+  <!-- Leafy plumes -->
+  <path
+    d="M77 41C74 26 83 14 91 14C96 14 96 25 83 41"
+    fill="url(#carrotTop)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.5"
+  />
+  <path
+    d="M80 43C94 27 106 25 107 32C108 39 94 45 81 45"
+    fill="url(#carrotTop)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.5"
+  />
+  <path
+    d="M75 39C68 23 71 14 77 14C81 14 82 26 78 40"
+    fill="url(#carrotTop)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.5"
+  />
+  <!-- 2.5D base shadow -->
+  <path
+    d="M68 38C82 38 90 52 79 68L31 106C25 110 18 103 22 97L56 44C60 39 64 38 68 38Z"
+    fill="#7c2d12"
+    opacity="0.33"
+  />
+  <!-- Main carrot body -->
+  <path
+    d="M67 34C81 34 89 48 78 64L30 102C24 106 17 99 21 93L55 40C59 35 63 34 67 34Z"
+    fill="url(#carrotBody)"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <!-- Tactile root creases -->
+  <path
+    d="M49 54L58 60M39 70L46 75M58 44L66 49"
+    opacity="0.45"
+    stroke="#7c2d12"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+  <!-- Specular streak -->
+  <path
+    d="M60 41L32 85"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.48"
+    stroke-width="4.5"
+  />
+</svg>

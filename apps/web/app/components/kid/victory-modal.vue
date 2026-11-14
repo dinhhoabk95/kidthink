@@ -61,9 +61,9 @@
           v-if="sticker"
           :aria-label="`Sticker mới: ${sticker.label}`"
         >
-          <span aria-hidden="true" class="sticker-emoji">{{
-            sticker.emoji
-          }}</span>
+          <span aria-hidden="true" class="sticker-emoji">
+            <BrandEmoji hero :emoji="sticker.emoji" />
+          </span>
         </div>
 
         <!-- Headline -->
@@ -119,6 +119,7 @@
 
 <script lang="ts" setup>
   import { FeedbackSystem } from "@mindkid/game-engine";
+  import BrandEmoji from "@mindkid/ui/brand-emoji";
   import { computed, ref, toRef, watch } from "vue";
   import KidMascot from "~/components/kid/mascot.vue";
   import ParentGateModal from "~/components/parent-gate-modal.vue";

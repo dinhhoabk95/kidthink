@@ -203,12 +203,11 @@
               </span>
               <div class="flex items-center gap-1.5">
                 <span
-                  class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 text-2xl font-emoji"
-                  style="font-family: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;"
+                  class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 text-2xl"
                   v-for="(emoji, idx) in activeTemplate.sampleEmojis"
                   :key="idx"
                 >
-                  {{ emoji }}
+                  <BrandEmoji :emoji="emoji" />
                 </span>
               </div>
             </div>
@@ -256,6 +255,7 @@
 
 <script lang="ts" setup>
   import { AGE_BANDS } from "@mindkid/shared/client";
+  import BrandEmoji from "@mindkid/ui/brand-emoji";
   import { computed, ref } from "vue";
   import PublicFooter from "~/components/public-footer.vue";
   import PublicNavbar from "~/components/public-navbar.vue";

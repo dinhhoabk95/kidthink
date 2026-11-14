@@ -1,0 +1,87 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bánh kem nhỏ</title>
+  <defs>
+    <linearGradient id="cupBase" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+    <linearGradient id="cupFrost" x1="25%" x2="75%" y1="15%" y2="85%">
+      <stop offset="0%" stop-color="#fce7f3" />
+      <stop offset="50%" stop-color="#f472b6" />
+      <stop offset="100%" stop-color="#db2777" />
+    </linearGradient>
+  </defs>
+  <!-- 2.5D base shadow -->
+  <path
+    d="M31 68H89L82 104C81 107 77 109 74 109H46C43 109 39 107 38 104L31 68Z"
+    fill="#78350f"
+    opacity="0.32"
+  />
+  <!-- Wrapper cup -->
+  <path
+    d="M30 64H90L82 100C81 103 77 105 74 105H46C43 105 39 103 38 100L30 64Z"
+    fill="url(#cupBase)"
+    stroke="#92400e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M44 68L48 101M60 68V101M76 68L72 101"
+    opacity="0.45"
+    stroke="#92400e"
+    stroke-linecap="round"
+    stroke-width="2.5"
+  />
+  <!-- Frosting swirl -->
+  <path
+    d="M24 58C21 48 31 39 42 40C45 27 65 24 76 34C88 34 99 45 96 58C94 67 84 68 78 65C72 69 65 69 60 65C55 69 48 69 42 65C36 68 26 67 24 58Z"
+    fill="url(#cupFrost)"
+    stroke="#9d174d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <!-- Sprinkles -->
+  <rect
+    fill="#38bdf8"
+    height="3"
+    rx="1.5"
+    transform="rotate(-20 40 47)"
+    width="7"
+    x="40"
+    y="47"
+  />
+  <rect
+    fill="#fde047"
+    height="3"
+    rx="1.5"
+    transform="rotate(25 72 45)"
+    width="7"
+    x="72"
+    y="45"
+  />
+  <rect
+    fill="#4ade80"
+    height="3"
+    rx="1.5"
+    transform="rotate(10 57 54)"
+    width="7"
+    x="57"
+    y="54"
+  />
+  <!-- Cherry on top -->
+  <path
+    d="M62 21C66 13 73 11 77 13"
+    stroke="#15803d"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+  <circle
+    cx="60"
+    cy="25"
+    fill="#ef4444"
+    r="9.5"
+    stroke="#881337"
+    stroke-width="3.5"
+  />
+  <circle cx="57" cy="22" fill="#ffffff" fill-opacity="0.7" r="2.5" />
+</svg>

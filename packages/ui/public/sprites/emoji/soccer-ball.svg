@@ -1,0 +1,82 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Quả bóng đá</title>
+  <defs>
+    <radialGradient cx="35%" cy="32%" id="ballSphere" r="68%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="60%" stop-color="#f5f5f4" />
+      <stop offset="100%" stop-color="#d6d3d1" />
+    </radialGradient>
+  </defs>
+  <!-- 2.5D base shadow -->
+  <circle cx="60" cy="64" fill="#334155" opacity="0.28" r="43" />
+  <!-- Sphere -->
+  <circle
+    cx="60"
+    cy="59"
+    fill="url(#ballSphere)"
+    r="43"
+    stroke="#334155"
+    stroke-width="4"
+  />
+  <!-- Seam lines -->
+  <path
+    d="M60 44V26M46 54L27 48M74 54L93 48M51 70L38 87M69 70L82 87"
+    stroke="#475569"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+  <!-- Center pentagon -->
+  <polygon
+    fill="#334155"
+    points="60,44 74,54 69,70 51,70 46,54"
+    stroke="#1e293b"
+    stroke-linejoin="round"
+    stroke-width="3"
+  />
+  <!-- Edge pentagons -->
+  <path
+    d="M49 20L60 27L71 20"
+    fill="#334155"
+    stroke="#1e293b"
+    stroke-linejoin="round"
+    stroke-width="2.5"
+  />
+  <path
+    d="M19 52L28 48L24 36"
+    fill="#334155"
+    stroke="#1e293b"
+    stroke-linejoin="round"
+    stroke-width="2.5"
+  />
+  <path
+    d="M101 52L92 48L96 36"
+    fill="#334155"
+    stroke="#1e293b"
+    stroke-linejoin="round"
+    stroke-width="2.5"
+  />
+  <path
+    d="M32 88L40 85L43 96"
+    fill="#334155"
+    stroke="#1e293b"
+    stroke-linejoin="round"
+    stroke-width="2.5"
+  />
+  <path
+    d="M88 88L80 85L77 96"
+    fill="#334155"
+    stroke="#1e293b"
+    stroke-linejoin="round"
+    stroke-width="2.5"
+  />
+  <!-- Specular highlight -->
+  <ellipse
+    cx="42"
+    cy="36"
+    fill="#ffffff"
+    fill-opacity="0.78"
+    rx="9"
+    ry="5"
+    transform="rotate(-32 42 36)"
+  />
+</svg>

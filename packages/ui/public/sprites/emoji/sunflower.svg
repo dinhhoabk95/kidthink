@@ -1,0 +1,67 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hoa hướng dương</title>
+  <defs>
+    <radialGradient cx="40%" cy="35%" id="petalGold" r="70%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="55%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </radialGradient>
+    <radialGradient cx="38%" cy="35%" id="sunCenter" r="68%">
+      <stop offset="0%" stop-color="#b45309" />
+      <stop offset="100%" stop-color="#78350f" />
+    </radialGradient>
+  </defs>
+  <!-- 2.5D warm base shadow -->
+  <circle cx="60" cy="64" fill="#92400e" opacity="0.22" r="44" />
+  <!-- 12 Petals ring -->
+  <g
+    fill="url(#petalGold)"
+    stroke="#b45309"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  >
+    <ellipse cx="60" cy="24" rx="9" ry="15" />
+    <ellipse cx="60" cy="96" rx="9" ry="15" />
+    <ellipse cx="24" cy="60" rx="15" ry="9" />
+    <ellipse cx="96" cy="60" rx="15" ry="9" />
+    <ellipse cx="60" cy="24" rx="9" ry="15" transform="rotate(30 60 60)" />
+    <ellipse cx="60" cy="24" rx="9" ry="15" transform="rotate(60 60 60)" />
+    <ellipse cx="60" cy="24" rx="9" ry="15" transform="rotate(120 60 60)" />
+    <ellipse cx="60" cy="24" rx="9" ry="15" transform="rotate(150 60 60)" />
+    <ellipse cx="60" cy="24" rx="9" ry="15" transform="rotate(210 60 60)" />
+    <ellipse cx="60" cy="24" rx="9" ry="15" transform="rotate(240 60 60)" />
+    <ellipse cx="60" cy="24" rx="9" ry="15" transform="rotate(300 60 60)" />
+    <ellipse cx="60" cy="24" rx="9" ry="15" transform="rotate(330 60 60)" />
+  </g>
+  <!-- Seed core -->
+  <circle
+    cx="60"
+    cy="60"
+    fill="url(#sunCenter)"
+    r="24"
+    stroke="#451a03"
+    stroke-width="3.8"
+  />
+  <!-- Seed dots -->
+  <g fill="#fde68a" fill-opacity="0.5">
+    <circle cx="51" cy="51" r="2" />
+    <circle cx="60" cy="48" r="2" />
+    <circle cx="69" cy="51" r="2" />
+    <circle cx="48" cy="60" r="2" />
+    <circle cx="60" cy="60" r="2.2" />
+    <circle cx="72" cy="60" r="2" />
+    <circle cx="51" cy="69" r="2" />
+    <circle cx="60" cy="72" r="2" />
+    <circle cx="69" cy="69" r="2" />
+  </g>
+  <!-- Specular highlight -->
+  <ellipse
+    cx="50"
+    cy="48"
+    fill="#ffffff"
+    fill-opacity="0.3"
+    rx="6"
+    ry="3"
+    transform="rotate(-30 50 48)"
+  />
+</svg>

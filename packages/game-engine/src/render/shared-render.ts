@@ -23,6 +23,7 @@ import {
   drawCheckMark,
   drawSlotVisualComparisonCue,
 } from "./slot-decor.js";
+import { getEmojiSprite, getImageSprite } from "./sprite-registry.js";
 import {
   canvasFontPx,
   type LogicSpace,
@@ -50,6 +51,18 @@ import type {
 const PROMPT_TOP_RATIO = 0.045;
 const LABEL_FONT_RATIO = 0.16;
 const GLYPH_FILL_RATIO = 0.52;
+export const SPRITE_FILL_RATIO = 0.68;
+
+function drawCenteredSprite(
+  ctx: CanvasRenderingContext2D,
+  sprite: CanvasImageSource,
+  cx: number,
+  cy: number,
+  size: number
+): void {
+  const half = size / 2;
+  ctx.drawImage(sprite, cx - half, cy - half, size, size);
+}
 
 export function getColorsForState(state: ItemVisualState): {
   fill: string;
@@ -724,6 +737,15 @@ export function drawAssetInSlot(
     return true;
   }
   if (asset.kind === "image") {
+    const sprite = getImageSprite(asset.path);
+    if (sprite) {
+      const size = Math.max(
+        18,
+        Math.floor(Math.min(slot.w, slot.h) * SPRITE_FILL_RATIO * glyphScale)
+      );
+      drawCenteredSprite(ctx, sprite, slot.x, slot.y, size);
+      return true;
+    }
     // Ảnh bitmap chưa có đường nạp trong engine — ô thay thế trung tính
     // (`BR-ENG-09`: asset hỏng ❌ NEVER làm trống màn).
     drawPlaceholderBox(ctx, slot);
@@ -733,6 +755,19 @@ export function drawAssetInSlot(
   if (!glyph) {
     drawPlaceholderBox(ctx, slot);
     return true;
+  }
+  const parts = getGraphemeParts(glyph);
+  if (parts.length === 1) {
+    const single = parts[0] ?? glyph;
+    const sprite = getEmojiSprite(single);
+    if (sprite) {
+      const size = Math.max(
+        18,
+        Math.floor(Math.min(slot.w, slot.h) * SPRITE_FILL_RATIO * glyphScale)
+      );
+      drawCenteredSprite(ctx, sprite, slot.x, slot.y, size);
+      return true;
+    }
   }
   drawGlyphInSlot(ctx, glyph, slot, glyphScale);
   return true;
@@ -794,7 +829,14 @@ function drawMultiGlyphClusterInSlot(
     for (let c = 0; c < rowCount; c++) {
       const g = parts[rowStart + c];
       if (g) {
-        ctx.fillText(g, startX + c * cellW, startY + r * cellH);
+        const gx = startX + c * cellW;
+        const gy = startY + r * cellH;
+        const sprite = getEmojiSprite(g);
+        if (sprite) {
+          drawCenteredSprite(ctx, sprite, gx, gy, itemSize);
+        } else {
+          ctx.fillText(g, gx, gy);
+        }
       }
     }
   }
@@ -833,6 +875,17 @@ export function drawGlyphInSlot(
   ctx.textBaseline = "middle";
   if (parts.length > 1 && parts.length <= 12) {
     drawMultiGlyphClusterInSlot(ctx, parts, slot);
+    ctx.restore();
+    return;
+  }
+  const single = parts.length === 1 ? (parts[0] ?? drawable) : drawable;
+  const sprite = getEmojiSprite(single);
+  if (sprite) {
+    const spriteSize = Math.max(
+      18,
+      Math.floor(Math.min(slot.w, slot.h) * SPRITE_FILL_RATIO * glyphScale)
+    );
+    drawCenteredSprite(ctx, sprite, slot.x, slot.y, spriteSize);
     ctx.restore();
     return;
   }

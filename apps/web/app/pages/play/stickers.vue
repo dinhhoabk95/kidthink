@@ -62,7 +62,7 @@
                 :key="sticker.emoji"
                 :aria-label="sticker.label"
               >
-                {{ sticker.emoji }}
+                <BrandEmoji :emoji="sticker.emoji" />
               </li>
             </ul>
           </li>
@@ -81,6 +81,7 @@
 
 <script lang="ts" setup>
   import { getTheme } from "@mindkid/shared/client";
+  import BrandEmoji from "@mindkid/ui/brand-emoji";
   import { onMounted, ref } from "vue";
   import KidMascot from "~/components/kid/mascot.vue";
   import KidParentLockButton from "~/components/kid/parent-lock-button.vue";

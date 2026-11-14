@@ -2,7 +2,7 @@
   <div class="catalog-card">
     <div class="card-top">
       <span aria-hidden="true" class="card-emoji">
-        {{ game.thumbnail_emoji || "🎲" }}
+        <BrandEmoji :emoji="game.thumbnail_emoji || '🎲'" />
       </span>
       <div class="flex flex-wrap items-center justify-end gap-1.5">
         <!-- Huy hiệu "Đã học xong" trên thẻ bài dạy (BR-CIG-08, Task #254) -->
@@ -107,6 +107,7 @@
     findCompetency,
     type LevelCta,
   } from "@mindkid/shared/client";
+  import BrandEmoji from "@mindkid/ui/brand-emoji";
   import { ref } from "vue";
   import { useApi } from "~/composables/use-api";
 

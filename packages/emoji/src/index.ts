@@ -34,6 +34,14 @@ export {
 
 // Search
 export { searchEmoji } from "./search";
+// Sprites
+export type { CustomSpriteTier, EmojiSpriteMeta } from "./sprites";
+export {
+  CUSTOM_EMOJI_SPRITES,
+  hasCustomEmojiSprite,
+  listCustomEmojiSprites,
+  resolveCustomEmojiSprite,
+} from "./sprites";
 // Types
 export type {
   CurriculumTheme,

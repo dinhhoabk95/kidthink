@@ -13,5 +13,6 @@ export * from "./numeracy-primitives.js";
 export * from "./prompt-zone.js";
 export * from "./shared-render.js";
 export * from "./shared-render-shapes.js";
+export * from "./sprite-registry.js";
 export * from "./type-scale.js";
 export * from "./types.js";

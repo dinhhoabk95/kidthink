@@ -29,6 +29,10 @@ import {
   skipCurrentRoundIfUnwon,
 } from "~/composables/play/play-round-token";
 import {
+  preloadSpritesForSession,
+  type SpriteScanValue,
+} from "~/composables/play/use-item-sprites";
+import {
   preloadPlayAssets,
   usePlayAudio,
 } from "~/composables/play/use-play-audio";
@@ -716,9 +720,22 @@ export function usePlaySession(options: UsePlaySessionOptions) {
     // trước khi tắt màn hình chờ và bắt đầu Vòng 1.
     const gen = ++sessionStartGen;
     const allAssets = collectSessionAssets(payload);
+    const spriteSource: SpriteScanValue = [
+      payload.content_pack,
+      rounds.map((round) => round.content_pack),
+      allAssets.map((asset) => ({
+        kind: asset.kind,
+        url: asset.url,
+        ref: asset.ref,
+        glyph: asset.glyph,
+      })),
+    ];
     await Promise.all([
       preloadPlayAssets(allAssets),
       preloadGameSession(payload.template_code),
+      preloadSpritesForSession(spriteSource, {
+        includeFlashcardCounters: payload.template_code === "GT-000",
+      }),
     ]);
 
     if (gen !== sessionStartGen || !canvasRef.value) {

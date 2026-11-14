@@ -6,6 +6,11 @@ import { alpha } from "./color-utils.js";
 import { resolveGT000FlashcardRect } from "./gt-000-shapes.js";
 import { drawPlaceholderBox } from "./numeracy-primitives.js";
 import {
+  getEmojiSprite,
+  getHeroEmojiSprite,
+  getImageSprite,
+} from "./sprite-registry.js";
+import {
   applyCanvasFontAtSize,
   applyEmojiFont,
   minLegiblePx,
@@ -173,7 +178,7 @@ function drawFlashcardComparisonCue(
   ctx.restore();
 }
 
-const FLASHCARD_COUNTER_EMOJIS: readonly string[] = [
+export const FLASHCARD_COUNTER_EMOJI_POOL: readonly string[] = [
   "🍎",
   "🍓",
   "🍌",
@@ -196,6 +201,8 @@ const FLASHCARD_COUNTER_EMOJIS: readonly string[] = [
   "🐱",
   "🐸",
 ];
+
+const FLASHCARD_COUNTER_EMOJIS = FLASHCARD_COUNTER_EMOJI_POOL;
 
 export interface FlashcardRenderOptions {
   readonly state?: ItemVisualState;
@@ -300,6 +307,61 @@ function drawFlashcardFallbackEmblem(
   ctx.restore();
 }
 
+function drawFlashcardEmojiVisual(
+  ctx: CanvasRenderingContext2D,
+  emojiRef: string,
+  cue: FlashcardComparisonCue | null,
+  x: number,
+  y: number
+): void {
+  const sprite = getHeroEmojiSprite(emojiRef) ?? getEmojiSprite(emojiRef);
+  if (sprite) {
+    const spriteSize = Math.round(118 * (cue ? cue.glyphScale : 1));
+    const half = spriteSize / 2;
+    ctx.drawImage(sprite, x - half, y - 28 - half, spriteSize, spriteSize);
+    return;
+  }
+  const emojiFontSize = cue ? Math.round(82 * cue.glyphScale) : 84;
+  ctx.save();
+  applyEmojiFont(ctx, emojiFontSize);
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(emojiRef, x, y - 28);
+  ctx.restore();
+}
+
+function drawFlashcardImageVisual(
+  ctx: CanvasRenderingContext2D,
+  imageRef: { readonly path?: string; readonly url?: string },
+  cue: FlashcardComparisonCue | null,
+  cardW: number,
+  x: number,
+  y: number
+): boolean {
+  const imgPath = imageRef.path?.trim() || imageRef.url?.trim();
+  const sprite = imgPath ? getImageSprite(imgPath) : null;
+  if (sprite) {
+    const spriteSize = Math.round(
+      Math.min(cardW * 0.54, 148) * (cue ? cue.glyphScale : 1)
+    );
+    const half = spriteSize / 2;
+    ctx.drawImage(sprite, x - half, y - 28 - half, spriteSize, spriteSize);
+    return true;
+  }
+  drawPlaceholderBox(ctx, {
+    index: 0,
+    page: 0,
+    role: "neutral",
+    x,
+    y: y - 28,
+    w: Math.round(cardW * 0.52),
+    h: 176,
+    hitW: 88,
+    hitH: 88,
+  });
+  return false;
+}
+
 function drawFlashcardMainVisual(
   ctx: CanvasRenderingContext2D,
   asset: {
@@ -323,13 +385,7 @@ function drawFlashcardMainVisual(
   const emojiRef =
     asset.image_ref?.kind === "emoji" ? asset.image_ref.ref?.trim() : undefined;
   if (emojiRef) {
-    const emojiFontSize = cue ? Math.round(82 * cue.glyphScale) : 84;
-    ctx.save();
-    applyEmojiFont(ctx, emojiFontSize);
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(emojiRef, x, y - 28);
-    ctx.restore();
+    drawFlashcardEmojiVisual(ctx, emojiRef, cue, x, y);
     return;
   }
 
@@ -359,18 +415,11 @@ function drawFlashcardMainVisual(
     return;
   }
 
-  if (asset.image_ref?.kind === "image") {
-    drawPlaceholderBox(ctx, {
-      index: 0,
-      page: 0,
-      role: "neutral",
-      x,
-      y: y - 28,
-      w: Math.round(cardW * 0.52),
-      h: 176,
-      hitW: 88,
-      hitH: 88,
-    });
+  if (
+    asset.image_ref?.kind === "image" &&
+    drawFlashcardImageVisual(ctx, asset.image_ref, cue, cardW, x, y)
+  ) {
+    return;
   }
   drawFlashcardFallbackEmblem(ctx, x, y, cardW, minFontPx, labelToDraw);
 }
@@ -425,9 +474,21 @@ function drawFlashcardCounterItems(
   const maxCount = Math.min(val, 10);
   const gap = Math.min(60, (cardW - 60) / maxCount);
   const startX = x - ((maxCount - 1) * gap) / 2;
+  const sprite = getEmojiSprite(itemEmoji);
+
+  if (sprite) {
+    const size = Math.max(24, Math.min(48, Math.floor(gap * 0.86)));
+    const half = size / 2;
+    const cy = y + 55;
+    for (let i = 0; i < maxCount; i++) {
+      const cx = startX + i * gap;
+      ctx.drawImage(sprite, cx - half, cy - half, size, size);
+    }
+    return;
+  }
 
   ctx.save();
-  applyEmojiFont(ctx, 44);
+  applyEmojiFont(ctx, Math.max(22, Math.min(44, Math.floor(gap * 0.82))));
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   for (let i = 0; i < maxCount; i++) {
