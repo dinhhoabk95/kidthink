@@ -65,6 +65,7 @@ const PRIMITIVE_MODULES: readonly string[] = [
   "render/gt-015-shapes.ts",
   "render/gt-031-shapes.ts",
   "render/gt-034-shapes.ts",
+  "render/gt-036-shapes.ts",
   // Nút Xong tách file riêng thay vì nhồi tiếp vào `shared-render.ts`
   // (Task #275 S1b). Cùng hạng với bốn file trên: thư viện vẽ dùng chung,
   // không engine nào sở hữu.

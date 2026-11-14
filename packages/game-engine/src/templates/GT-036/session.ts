@@ -4,27 +4,25 @@ import {
   ACTION_IGNORED,
   type ActionResult,
   type GameAction,
+  type HintDemoStep,
+  type HintLevel,
   type HintTarget,
   TemplateGameSession,
 } from "#src/game-session";
-import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
-import {
-  resolveAssetLabels,
-  resolveAssetSpeech,
-} from "#src/labels/spoken-keyword";
+import type { EngineView, Gesture } from "#src/interaction";
 import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
-import {
-  computeStageGroupsLayout,
-  hasSlotsOutsideStage,
-  resolveStageRect,
-} from "#src/layout/stage-groups";
-import type { ZoneRect } from "#src/layout/stage-zones";
+import { resolveStageRect } from "#src/layout/stage-groups";
 import type { Slot } from "#src/layout/types";
+import {
+  drawGT036Bead,
+  drawGT036ClearButton,
+  drawGT036MotifGroups,
+  drawGT036RackAndTray,
+} from "#src/render/gt-036-shapes";
 import {
   beadStringSegments,
   drawBeadString,
   drawSceneBackground,
-  drawSlotItem,
   drawStoryCharacterInStage,
   nightingaleSway,
   spawnParticlesAtSlot,
@@ -38,81 +36,55 @@ import {
   detectRule,
   type RuleDetectionResult,
 } from "#src/systems/rule-detection-system";
-import { SFXEngine } from "#src/systems/sfx-engine";
+import {
+  computeBeadRackRows,
+  computeGT036HintState,
+  computeGT036Slots,
+  computeMotifGroupSegments,
+  computePaletteTrayBox,
+  extractGT036Payload,
+  type GT036ActionPayload,
+  type GT036HintState,
+  resolveGT036GestureAction,
+} from "#src/templates/GT-036/layout";
 import type {
   GT036Content,
   GT036Difficulty,
   GT036PaletteItem,
-} from "./template";
+} from "#src/templates/GT-036/template";
+import {
+  buildGT036View,
+  buildPaletteBeadRenderParams,
+  buildTrackBeadRenderParams,
+  computeBeadPopProgress,
+  computeLitOrder,
+  deleteGT036Clock,
+  GT036_CLEAR_ASSET,
+  getGT036Clock,
+  isTrackCellLit,
+  peekGT036Clock,
+  GT036_LIGHT_STEP_MS as VIEW_LIGHT_STEP_MS,
+} from "#src/templates/GT-036/view";
 
-export interface GT036ActionPayload {
-  readonly paletteId?: string;
-  readonly slotIndex?: number;
-  readonly elementId?: string;
-}
+export const GT036_LIGHT_STEP_MS = VIEW_LIGHT_STEP_MS;
 
-/**
- * Ô phụ "xoá hết dải" (`BR-E036-13`, ngoại lệ có phạm vi của `BR-PSZ-05`): slot
- * cuối, sau dải và bảng phần tử, nên chỉ số dải và bảng không đổi; trên màn nó
- * đứng trên dải — xa nút xong ở góc dưới. Hình chổi, không chữ.
- */
-const CLEAR_ID = "clear-track";
-const CLEAR_ASSET = { kind: "emoji", ref: "🧹" } as const;
-const CLEAR_SPOKEN_LABEL = "Xoá hết dải";
-
-/** Chốt mà chưa có luật: lời mời làm tiếp, không tính sai. */
 const QUIET_OK: ActionResult = Object.freeze({
   valid: true,
   feedback: "none",
 });
 
-/** Khung chuyện đọc một lần ở vòng đầu (`BR-E036-10`, `BR-FBK-16`). */
 export const GT036_STORY_LINE =
   "Họa Mi thích hát theo quy luật. Bé xâu các hạt thành một dãy lặp lại, rồi Họa Mi sẽ hát theo dãy của bé nhé!";
-
-/** Mascot vui ngắn sau mỗi hạt đặt. */
 export const GT036_HAPPY_MS = 500;
-/** Mỗi ô sáng cách ô trước chừng này ms khi đọc luật ra (`BR-E036-11`). */
-export const GT036_LIGHT_STEP_MS = 350;
-
-/** Lời mời đọc thành tiếng khi chốt mà dải chưa thành quy luật (`BR-E036-11`). */
 export const GT036_INVITE_LINE = "Bé xâu thêm hạt cho dãy dài hơn nữa nhé!";
-
-/** Mascot khích lệ khi dãy chưa thành quy luật. */
 export const GT036_ENCOURAGE_MS = 1500;
-
-/** Số slot có vùng chạm ra ngoài sân khấu (`BR-PSZ-01`). */
-function countOutsideStage(slots: readonly Slot[], stage: ZoneRect): number {
-  return slots.filter((slot) => hasSlotsOutsideStage([slot], stage)).length;
-}
-
-/** Đưa slot ở chỉ số `from` về cuối (ô xoá), các slot sau nó lùi một. */
-function moveSlotToEnd(slots: readonly Slot[], from: number): Slot[] {
-  const last = slots.length - 1;
-  return slots
-    .map((slot): Slot => {
-      if (slot.index === from) {
-        return { ...slot, index: last, role: "neutral" };
-      }
-      return slot.index > from ? { ...slot, index: slot.index - 1 } : slot;
-    })
-    .sort((a, b) => a.index - b.index);
-}
 
 export class GT036Session extends TemplateGameSession<
   GT036Content,
   GT036Difficulty
 > {
-  /**
-   * Nút ở `zones.action` là nút xong (`BR-PSZ-05`); nút xoá dải là ô phụ trong
-   * sân khấu (`BR-E036-13`), không phải nút thứ hai ở vùng hành động.
-   */
   override readonly needsCommit = true;
   override readonly usesPromptZone = true;
-
-  override canCommit(): boolean {
-    return !(this.isWin || this.isWon) && this.hasPlaced;
-  }
 
   degradation: DegradationState | null = null;
 
@@ -123,43 +95,41 @@ export class GT036Session extends TemplateGameSession<
   isWin = false;
   sessionScore = 0;
   sessionStars = 0;
-  /** Thời gian từ lúc chốt, để các ô sáng lần lượt (`BR-E036-11`). */
+
   private litElapsedMs = 0;
+  private ageBand: AgeBand = "5-6";
   private pendingInvitation: string | null = null;
   private particles: Particle[] = [];
   private readonly mood = new MoodPulse();
-  private readonly sfxEngine: SFXEngine;
   private readonly paletteMap: ReadonlyMap<string, GT036PaletteItem>;
 
   constructor(
     content: GT036Content,
     difficulty: GT036Difficulty,
-    _ageBandOrSeed?: AgeBand | number
+    seedOrBand?: AgeBand | number,
+    themeId?: string
   ) {
-    super(content, difficulty);
+    super(
+      content,
+      difficulty,
+      typeof seedOrBand === "number" ? seedOrBand : 0,
+      themeId
+    );
     this.paletteMap = new Map(content.palette.map((p) => [p.id, p]));
-    this.sfxEngine = new SFXEngine();
   }
 
-  /** Slot đầu của bảng phần tử: ngay sau dải (dải là slot 0..track_length-1). */
   private get paletteBase(): number {
     return this.content.track_length;
   }
 
-  /** Chỉ số ô xoá: sau dải và bảng phần tử. */
   private get clearSlotIndex(): number {
     return this.paletteBase + this.content.palette.length;
   }
 
-  /**
-   * Slot ô xoá; không có khi sân khấu không còn chỗ mà không làm tràn thêm
-   * (`BR-E036-13`) — khi đó trẻ gỡ từng hạt như cũ.
-   */
   private get clearSlot(): Slot | undefined {
     return this.slots[this.clearSlotIndex];
   }
 
-  /** Có hạt nào trên dải để xoá không (nút xoá chỉ hiện khi có). */
   private get hasPlaced(): boolean {
     return this.placedItems.some((item) => item !== null);
   }
@@ -172,11 +142,14 @@ export class GT036Session extends TemplateGameSession<
     );
   }
 
+  override canCommit(): boolean {
+    return !(this.isWin || this.isWon) && this.hasPlaced;
+  }
+
   override storyLine(): string {
     return GT036_STORY_LINE;
   }
 
-  /** Vui sau mỗi hạt, khích lệ khi dãy chưa thành quy luật (`BR-E036-10`). */
   override mascotMood(): MascotPose | null {
     return this.isWon ? null : this.mood.current();
   }
@@ -189,15 +162,20 @@ export class GT036Session extends TemplateGameSession<
     this.detectedRule = null;
     this.pendingInvitation = null;
     this.isWin = false;
+    this.isWon = false;
     this.sessionScore = 0;
     this.sessionStars = 0;
     this.litElapsedMs = 0;
     this.particles = [];
+    const clock = getGT036Clock(this);
+    clock.activeHintLevel = 0;
+    clock.hoveredSlotIndex = null;
+    clock.lastPlacedSlotIndex = null;
 
     this.recordEvent("game_started", {
       template_code: "GT-036",
       difficulty: this.difficulty.track_length ?? 6,
-      age_band: "5-6",
+      age_band: this.ageBand,
       device: "tablet",
       reduced_motion: false,
       round_index: 0,
@@ -205,73 +183,36 @@ export class GT036Session extends TemplateGameSession<
   }
 
   override destroy(): void {
-    this.sfxEngine.dispose();
+    deleteGT036Clock(this);
     super.destroy();
   }
 
-  /**
-   * Bước gợi ý kế tiếp: mở đầu một mô-típ hai loại rồi lặp nó (`BR-E036-06`).
-   * Chỉ là gợi ý — hai ô đầu luôn khác loại để dải có luật; `null` khi dải đã khớp.
-   */
-  private hintPlan(): { slot: number; elementId: string } | null {
-    const palette = this.content.palette.map((p) => p.id);
-    const first = this.placedItems[0] ?? palette[0];
-    if (!first) {
-      return null;
-    }
-    const placedSecond = this.placedItems[1];
-    const second =
-      placedSecond && placedSecond !== first
-        ? placedSecond
-        : palette.find((id) => id !== first);
-    if (!second) {
-      return null;
-    }
-    const motif = [first, second];
-    for (let i = 0; i < this.content.track_length; i++) {
-      const want = motif[i % 2];
-      if (want && this.placedItems[i] !== want) {
-        return { slot: i, elementId: want };
-      }
-    }
-    return null;
+  private currentHintState(): GT036HintState {
+    return computeGT036HintState({
+      placedItems: this.placedItems,
+      palette: this.content.palette,
+      minRepetitions: this.content.min_repetitions,
+      strictness: this.difficulty.strictness,
+      selectedPaletteId: this.selectedPaletteId,
+      paletteBase: this.paletteBase,
+      slots: this.slots,
+    });
   }
 
   override getHintTargetIndex(): number | null {
     if (this.isWin || this.isWon) {
       return null;
     }
-    const plan = this.hintPlan();
-    // Dải đã khớp thì bước kế là nút xong ở `zones.action` — không phải slot
-    // của sân khấu (`BR-PSZ-05`), nên không có ô nào để chỉ.
-    if (!plan) {
-      return null;
-    }
-    if (plan.elementId !== this.selectedPaletteId) {
-      const palIdx = this.content.palette.findIndex(
-        (p) => p.id === plan.elementId
-      );
-      return palIdx >= 0 ? this.paletteBase + palIdx : plan.slot;
-    }
-    return plan.slot;
+    const hint = this.currentHintState();
+    return hint.isReadyToCommit ? null : hint.singleTargetIndex;
   }
 
-  /**
-   * `BR-E036-12`: chưa cầm đúng phần tử thì bước đúng là kéo nó từ bảng vào ô dải,
-   * đích là ô dải; đã cầm sẵn thì chỉ còn chạm ô nên không có đích.
-   */
   override getHintDestinationIndex(): number | null {
     if (this.isWin || this.isWon) {
       return null;
     }
-    const plan = this.hintPlan();
-    if (!plan || plan.elementId === this.selectedPaletteId) {
-      return null;
-    }
-    const palIdx = this.content.palette.findIndex(
-      (p) => p.id === plan.elementId
-    );
-    return palIdx >= 0 ? plan.slot : null;
+    const hint = this.currentHintState();
+    return hint.isReadyToCommit ? null : hint.singleDestinationIndex;
   }
 
   override getHintTarget(): HintTarget | null {
@@ -285,69 +226,113 @@ export class GT036Session extends TemplateGameSession<
         ? { kind: "slot", index }
         : { kind: "slot", index, toIndex };
     }
-    if (this.placedItems.includes(null) === false || this.hintPlan() === null) {
+    if (
+      this.placedItems.includes(null) === false ||
+      this.currentHintState().isReadyToCommit
+    ) {
       return { kind: "action" };
     }
     return super.getHintTarget();
   }
 
-  protected computeSlots(band: AgeBand): readonly Slot[] {
-    // Dải mẫu trên, bảng phần tử dưới — trong sân khấu của khung (`BR-PSZ-01`).
-    // Nút xong không còn là slot: shell vẽ ở `zones.action` (`BR-PSZ-05`). Ô xoá
-    // dải là slot cuối (`BR-E036-13`); chạm lại ô đang mang đúng phần tử đang
-    // cầm vẫn gỡ phần tử đó.
-    const base = {
-      stage: resolveStageRect(this.logicSpace, band, this.stageRect),
-      ageBand: band,
-      cssPerLogic: this.cssPerLogic,
-    };
-    const track = { count: this.content.track_length, role: "target" } as const;
-    const palette = {
-      count: this.content.palette.length,
-      role: "source",
-    } as const;
-    const plain = computeStageGroupsLayout({
-      ...base,
-      groups: [track, palette],
-    });
-    // Ô xoá không bao giờ được làm tràn thêm sân khấu: ô dải hay phần tử bị
-    // đẩy ra ngoài là bài không chơi được, mất nút xoá thì chỉ chậm hơn.
-    const plainOutside = countOutsideStage(plain, base.stage);
-    const fits = (slots: readonly Slot[], clearIndex: number): boolean => {
-      const clear = slots.find((slot) => slot.index === clearIndex);
-      return (
-        clear !== undefined &&
-        !hasSlotsOutsideStage([clear], base.stage) &&
-        countOutsideStage(slots, base.stage) <= plainOutside
+  override getHintTargetForLevel(level: HintLevel): HintTarget | null {
+    if (this.isWin || this.isWon) {
+      return null;
+    }
+    const hint = this.currentHintState();
+    if (hint.isReadyToCommit) {
+      return { kind: "action" };
+    }
+    if (level === 1) {
+      return { kind: "region", ids: [...hint.l1Ids] };
+    }
+    if (level === 2) {
+      return { kind: "region", ids: [...hint.l2Ids] };
+    }
+    const firstDemo = hint.demoSteps?.[0];
+    if (firstDemo) {
+      return { kind: "slot", index: firstDemo.from, toIndex: firstDemo.to };
+    }
+    return this.getHintTarget();
+  }
+
+  override getHintDemoSequence(
+    level: HintLevel
+  ): readonly HintDemoStep[] | null {
+    if (level !== 3 || this.isWin || this.isWon) {
+      return null;
+    }
+    const hint = this.currentHintState();
+    if (hint.isReadyToCommit) {
+      return null;
+    }
+    return hint.demoSteps;
+  }
+
+  override onScaffoldEscalated(level: HintLevel): void {
+    getGT036Clock(this).activeHintLevel = level;
+  }
+
+  override onHintCleared(): void {
+    const clock = peekGT036Clock(this);
+    if (clock) {
+      clock.activeHintLevel = 0;
+    }
+  }
+
+  setPointerOver(x: number, y: number): void {
+    const clock = getGT036Clock(this);
+    if (this.isClearVisible && this.clearSlot) {
+      const clearHit = findHitSlotIndex(
+        [this.clearSlot],
+        x,
+        y,
+        "circle",
+        TAP_TOLERANCE_PX
       );
-    };
-    // Ưu tiên: ô xoá là nhóm riêng đứng trước dải — xa nút xong ở góc dưới nhất.
-    const onTop = computeStageGroupsLayout({
-      ...base,
-      groups: [{ count: 1, role: "neutral", cols: 1 }, track, palette],
-    });
-    if (fits(onTop, 0)) {
-      return moveSlotToEnd(onTop, 0);
+      if (clearHit >= 0) {
+        clock.hoveredSlotIndex = this.clearSlotIndex;
+        return;
+      }
     }
-    // Sân khấu chật (điện thoại ngang, dải dài): ô xoá nhường vào đầu hàng bảng
-    // phần tử — ô ngoài cùng bên trái, xa nút xong ở góc phải.
-    const merged = computeStageGroupsLayout({
-      ...base,
-      groups: [track, { count: palette.count + 1, role: "source" }],
-    });
-    if (fits(merged, track.count)) {
-      return moveSlotToEnd(merged, track.count);
+    const interactiveSlots = this.slots.slice(
+      0,
+      this.paletteBase + this.content.palette.length
+    );
+    const hitIdx = findHitSlotIndex(
+      interactiveSlots,
+      x,
+      y,
+      "circle",
+      TAP_TOLERANCE_PX
+    );
+    clock.hoveredSlotIndex = hitIdx >= 0 ? hitIdx : null;
+  }
+
+  clearPointerOver(): void {
+    const clock = peekGT036Clock(this);
+    if (clock) {
+      clock.hoveredSlotIndex = null;
     }
-    // Không còn chỗ: không có ô xoá, bố cục như khi chưa có nút.
-    return plain;
+  }
+
+  protected computeSlots(band: AgeBand): readonly Slot[] {
+    this.ageBand = band;
+    return computeGT036Slots({
+      logicSpace: this.logicSpace,
+      stageRect: this.stageRect ?? null,
+      band,
+      cssPerLogic: this.cssPerLogic ?? 1,
+      trackLength: this.content.track_length,
+      paletteLength: this.content.palette.length,
+    });
   }
 
   override validateAction(action: GameAction): ActionResult {
     if (this.isWin || this.isWon) {
       return ACTION_IGNORED;
     }
-
-    const data = (action.data as GT036ActionPayload | undefined) ?? {};
+    const data = extractGT036Payload(action.data);
     switch (action.type) {
       case "select_palette":
       case "palette":
@@ -360,7 +345,6 @@ export class GT036Session extends TemplateGameSession<
         return this.validateRemoveElement(data);
       case "clear_track":
       case "clear":
-        // Dải rỗng thì không có gì để xoá (`BR-E036-13`).
         return this.hasPlaced ? ACTION_CORRECT : ACTION_IGNORED;
       case "submit_creation":
       case "submit":
@@ -371,35 +355,28 @@ export class GT036Session extends TemplateGameSession<
   }
 
   private validateSelectPalette(data: GT036ActionPayload): ActionResult {
-    const paletteId = String(data.paletteId ?? "");
+    const paletteId = data.paletteId ?? "";
     const exists = this.content.palette.some((p) => p.id === paletteId);
     return exists ? ACTION_CORRECT : ACTION_IGNORED;
   }
 
   private validatePlaceElement(data: GT036ActionPayload): ActionResult {
-    const slotIdx = Number(data.slotIndex ?? -1);
+    const slotIdx = data.slotIndex ?? -1;
     if (slotIdx < 0 || slotIdx >= this.content.track_length) {
       return ACTION_IGNORED;
     }
-
     const elementId =
       typeof data.elementId === "string" && data.elementId !== ""
         ? data.elementId
         : this.selectedPaletteId;
-
-    if (!elementId) {
-      return ACTION_IGNORED;
-    }
-
-    return ACTION_CORRECT;
+    return elementId ? ACTION_CORRECT : ACTION_IGNORED;
   }
 
   private validateRemoveElement(data: GT036ActionPayload): ActionResult {
-    const slotIdx = Number(data.slotIndex ?? -1);
-    if (slotIdx < 0 || slotIdx >= this.content.track_length) {
-      return ACTION_IGNORED;
-    }
-    return ACTION_CORRECT;
+    const slotIdx = data.slotIndex ?? -1;
+    return slotIdx >= 0 && slotIdx < this.content.track_length
+      ? ACTION_CORRECT
+      : ACTION_IGNORED;
   }
 
   private validateSubmitCreation(): ActionResult {
@@ -408,12 +385,11 @@ export class GT036Session extends TemplateGameSession<
       strictness: this.difficulty.strictness,
       paletteSize: this.content.palette.length,
     });
-    // Không có luật chưa phải sai: tác phẩm của trẻ chỉ cần làm tiếp (`BR-E036-07`).
     return result.isWin ? ACTION_CORRECT : QUIET_OK;
   }
 
   override commit(action: GameAction): void {
-    const data = (action.data as GT036ActionPayload | undefined) ?? {};
+    const data = extractGT036Payload(action.data);
     switch (action.type) {
       case "select_palette":
       case "palette":
@@ -441,36 +417,33 @@ export class GT036Session extends TemplateGameSession<
   }
 
   private commitSelectPalette(data: GT036ActionPayload): void {
-    const paletteId = String(data.paletteId ?? "");
-    const exists = this.content.palette.some((p) => p.id === paletteId);
-    if (!exists) {
+    const paletteId = data.paletteId ?? "";
+    if (!this.content.palette.some((p) => p.id === paletteId)) {
       return;
     }
     this.selectedPaletteId = paletteId;
-    this.sfxEngine.play("tap");
   }
 
   private commitPlaceElement(data: GT036ActionPayload): void {
-    const slotIdx = Number(data.slotIndex ?? -1);
+    const slotIdx = data.slotIndex ?? -1;
     if (slotIdx < 0 || slotIdx >= this.content.track_length) {
       return;
     }
-
     const elementId =
       typeof data.elementId === "string" && data.elementId !== ""
         ? data.elementId
         : this.selectedPaletteId;
-
     if (!elementId) {
       return;
     }
-
     this.placedItems[slotIdx] = elementId;
     this.submitted = false;
     this.detectedRule = null;
     this.pendingInvitation = null;
-    this.sfxEngine.play("tap");
-    // Tiếng hạt như nhau mọi hạt: bài mở, không có hạt "đúng" (`BR-E036-10`).
+    const clock = getGT036Clock(this);
+    clock.activeHintLevel = 0;
+    clock.lastPlacedSlotIndex = slotIdx;
+    clock.lastPlacedAtMs = clock.simMs;
     this.queueSfx("bead_click");
     this.mood.set("happy", GT036_HAPPY_MS);
 
@@ -482,17 +455,16 @@ export class GT036Session extends TemplateGameSession<
   }
 
   private commitRemoveElement(data: GT036ActionPayload): void {
-    const slotIdx = Number(data.slotIndex ?? -1);
+    const slotIdx = data.slotIndex ?? -1;
     if (slotIdx < 0 || slotIdx >= this.content.track_length) {
       return;
     }
-
     const removedId = this.placedItems[slotIdx];
     this.placedItems[slotIdx] = null;
     this.submitted = false;
     this.detectedRule = null;
     this.pendingInvitation = null;
-    this.sfxEngine.play("tap");
+    getGT036Clock(this).activeHintLevel = 0;
 
     this.recordEvent("element_removed", {
       slot_index: slotIdx,
@@ -502,8 +474,6 @@ export class GT036Session extends TemplateGameSession<
   }
 
   private commitClearTrack(): void {
-    // Mỗi hạt gỡ ghi một `element_removed` (đã có trong catalog); không phải lượt
-    // sai, không đụng điểm (`BR-E036-13`).
     this.placedItems.forEach((removedId, slotIndex) => {
       if (removedId) {
         this.recordEvent("element_removed", {
@@ -518,7 +488,7 @@ export class GT036Session extends TemplateGameSession<
     this.detectedRule = null;
     this.pendingInvitation = null;
     this.isWin = false;
-    this.sfxEngine.play("tap");
+    getGT036Clock(this).activeHintLevel = 0;
   }
 
   private commitSubmitCreation(): void {
@@ -526,18 +496,17 @@ export class GT036Session extends TemplateGameSession<
       placed_items: this.placedItems,
       round_index: 0,
     });
-
     const result = detectRule(this.placedItems, {
       minRepetitions: this.content.min_repetitions,
       strictness: this.difficulty.strictness,
       paletteSize: this.content.palette.length,
     });
-
     this.submitted = true;
     this.litElapsedMs = 0;
     this.detectedRule = result;
     this.sessionScore = result.score;
     this.isWin = result.isWin;
+    getGT036Clock(this).activeHintLevel = 0;
 
     this.recordEvent("rule_detected", {
       detected: result.detected,
@@ -557,16 +526,16 @@ export class GT036Session extends TemplateGameSession<
       } else {
         this.sessionStars = 1;
       }
-      this.sfxEngine.play("pop_celebrate");
       this.recordEvent("game_completed", {
         duration_ms: 10_000,
         rounds_total: 1,
         rounds_correct: 1,
       });
-
-      for (let i = 0; i < this.content.track_length; i++) {
+      const winSpan = result.motif.length * result.repetitions;
+      const limit = Math.min(this.content.track_length, winSpan);
+      for (let i = 0; i < limit; i++) {
         const slot = this.slots[i];
-        if (slot) {
+        if (this.placedItems[i] && slot) {
           this.particles.push(...spawnParticlesAtSlot(slot, 8));
         }
       }
@@ -575,8 +544,6 @@ export class GT036Session extends TemplateGameSession<
       return;
     }
 
-    // Chưa có luật: tiếng nhẹ như mọi lần đặt, các ô đã đặt sáng mời làm tiếp.
-    this.sfxEngine.play("tap");
     this.mood.set("encourage", GT036_ENCOURAGE_MS);
     this.pendingInvitation = GT036_INVITE_LINE;
   }
@@ -588,6 +555,7 @@ export class GT036Session extends TemplateGameSession<
   }
 
   update(deltaMs: number): void {
+    getGT036Clock(this).simMs += deltaMs;
     this.mood.tick(deltaMs);
     if (this.submitted) {
       this.litElapsedMs += deltaMs;
@@ -597,242 +565,71 @@ export class GT036Session extends TemplateGameSession<
     }
   }
 
-  private findTappedClear(gx: number, gy: number): GameAction | null {
-    const slot = this.clearSlot;
-    if (!(slot && this.isClearVisible)) {
-      return null;
-    }
-    const hit = findHitSlotIndex([slot], gx, gy, "circle", TAP_TOLERANCE_PX);
-    return hit >= 0 ? { type: "clear_track", data: {} } : null;
-  }
-
-  private findTappedPalette(gx: number, gy: number): GameAction | null {
-    const palCount = this.content.palette.length;
-    const palSlots = this.slots.slice(
-      this.paletteBase,
-      this.paletteBase + palCount
-    );
-    const hitIdx = findHitSlotIndex(
-      palSlots,
-      gx,
-      gy,
-      "circle",
-      TAP_TOLERANCE_PX
-    );
-    const pal = hitIdx >= 0 ? this.content.palette[hitIdx] : undefined;
-    return pal ? { type: "select_palette", data: { paletteId: pal.id } } : null;
-  }
-
-  private findTappedTrack(gx: number, gy: number): GameAction | null {
-    const count = this.content.track_length;
-    const trackSlots = this.slots.slice(0, count);
-    const hitIdx = findHitSlotIndex(
-      trackSlots,
-      gx,
-      gy,
-      "circle",
-      TAP_TOLERANCE_PX
-    );
-    if (hitIdx < 0) {
-      return null;
-    }
-    const placed = this.placedItems[hitIdx];
-    if (this.selectedPaletteId && placed !== this.selectedPaletteId) {
-      return {
-        type: "place_element",
-        data: { slotIndex: hitIdx, elementId: this.selectedPaletteId },
-      };
-    }
-    if (placed) {
-      return { type: "remove_element", data: { slotIndex: hitIdx } };
-    }
-    return null;
-  }
-
-  private findDroppedElement(
-    gesture: Extract<Gesture, { type: "drop" }>
-  ): GameAction | null {
-    const count = this.content.track_length;
-    const palCount = this.content.palette.length;
-    const palSlots = this.slots.slice(
-      this.paletteBase,
-      this.paletteBase + palCount
-    );
-    const palIdx = findHitSlotIndex(
-      palSlots,
-      gesture.fromX,
-      gesture.fromY,
-      "circle",
-      TAP_TOLERANCE_PX
-    );
-    const draggedPaletteId =
-      palIdx >= 0 ? (this.content.palette[palIdx]?.id ?? null) : null;
-    if (!draggedPaletteId) {
-      return null;
-    }
-
-    const trackSlots = this.slots.slice(0, count);
-    const trackIdx = findHitSlotIndex(
-      trackSlots,
-      gesture.toX,
-      gesture.toY,
-      "circle",
-      TAP_TOLERANCE_PX
-    );
-    if (trackIdx < 0) {
-      return null;
-    }
-    return {
-      type: "place_element",
-      data: { slotIndex: trackIdx, elementId: draggedPaletteId },
-    };
-  }
-
   override toAction(gesture: Gesture): GameAction | null {
-    // Chạm nút ở `zones.action` tới đây thành `commit` (`BR-PSZ-05`): nộp dải.
-    if (gesture.type === "commit") {
-      return { type: "submit_creation", data: {} };
-    }
-    if (gesture.type === "drop") {
-      return this.findDroppedElement(gesture);
-    }
-    if (gesture.type !== "tap") {
-      return null;
-    }
-
-    return (
-      this.findTappedClear(gesture.x, gesture.y) ??
-      this.findTappedPalette(gesture.x, gesture.y) ??
-      this.findTappedTrack(gesture.x, gesture.y)
-    );
-  }
-
-  private trackEntityState(
-    index: number,
-    placedId: string | null | undefined
-  ): ViewEntity["state"] {
-    if (this.isTrackCellLit(index)) {
-      return "active";
-    }
-    return placedId ? "selected" : "idle";
-  }
-
-  private appendTrackEntities(entities: ViewEntity[], count: number): void {
-    for (let i = 0; i < count; i++) {
-      const slot = this.slots[i];
-      if (!slot) {
-        continue;
-      }
-      const placedId = this.placedItems[i];
-      const palItem = placedId ? this.paletteMap.get(placedId) : undefined;
-      const assetLabels = palItem
-        ? resolveAssetLabels(palItem.asset)
-        : undefined;
-      const itemSpoken = assetLabels?.spokenLabel ?? assetLabels?.label;
-      entities.push({
-        id: `track_${i}`,
-        slotIndex: i,
-        role: "target",
-        state: this.trackEntityState(i, placedId),
-        x: slot.x,
-        y: slot.y,
-        w: slot.w,
-        h: slot.h,
-        hitShape: "circle",
-        glyph: assetLabels?.glyph,
-        label: assetLabels ? undefined : `${i + 1}`,
-        spokenLabel: itemSpoken
-          ? `Ô số ${i + 1}: ${itemSpoken}`
-          : `Ô số ${i + 1} đang trống`,
-        spokenAudioPath: assetLabels?.spokenAudioPath,
-      });
-    }
-  }
-
-  private appendPaletteEntities(
-    entities: ViewEntity[],
-    palCount: number
-  ): void {
-    for (let p = 0; p < palCount; p++) {
-      const slot = this.slots[this.paletteBase + p];
-      const pal = this.content.palette[p];
-      if (!(slot && pal)) {
-        continue;
-      }
-      const { glyph, spokenLabel, spokenAudioPath } = resolveAssetSpeech(
-        pal.asset
-      );
-      entities.push({
-        id: `palette_${pal.id}`,
-        slotIndex: this.paletteBase + p,
-        role: "source",
-        state: this.selectedPaletteId === pal.id ? "selected" : "idle",
-        x: slot.x,
-        y: slot.y,
-        w: slot.w,
-        h: slot.h,
-        hitShape: "circle",
-        glyph,
-        spokenLabel: spokenLabel ?? pal.id,
-        spokenAudioPath,
-      });
-    }
-  }
-
-  /** Ô xoá dải: chỉ có trong view khi có slot và dải có hạt (`BR-E036-13`). */
-  private appendClearEntity(entities: ViewEntity[]): void {
-    const slot = this.clearSlot;
-    if (!(slot && this.isClearVisible)) {
-      return;
-    }
-    // `neutral` như nút lật của GT-019: là nút, không phải vật kéo — đường bàn
-    // phím gửi chạm thẳng thay vì "cầm" nó như một phần tử.
-    entities.push({
-      id: CLEAR_ID,
-      slotIndex: this.clearSlotIndex,
-      role: "neutral",
-      state: "idle",
-      x: slot.x,
-      y: slot.y,
-      w: slot.w,
-      h: slot.h,
-      hitShape: "circle",
-      glyph: resolveAssetLabels(CLEAR_ASSET).glyph,
-      spokenLabel: CLEAR_SPOKEN_LABEL,
+    return resolveGT036GestureAction({
+      gesture,
+      slots: this.slots,
+      trackLength: this.content.track_length,
+      paletteBase: this.paletteBase,
+      palette: this.content.palette,
+      placedItems: this.placedItems,
+      selectedPaletteId: this.selectedPaletteId,
+      clearSlot: this.clearSlot ?? null,
+      isClearVisible: this.isClearVisible,
     });
   }
 
   override getView(): EngineView {
-    const entities: ViewEntity[] = [];
-    const count = this.content.track_length;
-    const palCount = this.content.palette.length;
-
-    this.appendTrackEntities(entities, count);
-    this.appendPaletteEntities(entities, palCount);
-    this.appendClearEntity(entities);
-
-    return {
-      activePrompt: this.content.prompt,
-      entities,
+    return buildGT036View({
+      content: this.content,
+      paletteMap: this.paletteMap,
+      slots: this.slots,
+      placedItems: this.placedItems,
+      selectedPaletteId: this.selectedPaletteId,
+      submitted: this.submitted,
+      detectedRule: this.detectedRule,
+      litElapsedMs: this.litElapsedMs,
+      clearSlotIndex: this.clearSlotIndex,
+      isClearVisible: this.isClearVisible,
       focusIndex: this.getHintTargetIndex() ?? undefined,
-    };
+    });
   }
 
   override checkWinCondition(): boolean {
     return this.isWin || this.isWon;
   }
 
-  render(ctx: CanvasRenderingContext2D, rs: RenderSystem): void {
+  render(ctx: CanvasRenderingContext2D, rs: RenderSystem, timeMs = 0): void {
     drawSceneBackground(ctx, rs, this.themeId);
-
-    // Không vẽ dòng chữ nào: lời mời và lời khen do lời dẫn đọc, mô-típ sáng trên dải (`BR-E036-09`).
-    this.renderClearSlot(ctx, rs);
-    // Dây xâu hạt nối các ô dải cùng hàng, dưới các hạt (`BR-E036-14`).
-    drawBeadString(
-      ctx,
-      beadStringSegments(this.slots.slice(0, this.content.track_length))
+    const clock = peekGT036Clock(this);
+    const softShadowsEnabled = this.degradation?.soft_shadows_enabled !== false;
+    const stageBounds = resolveStageRect(
+      this.logicSpace,
+      this.ageBand,
+      this.stageRect
     );
-    // Họa Mi ở góc trống, nhún theo từng bước sáng của mô-típ sau khi chốt (`BR-E036-14`).
+    const trackSlots = this.slots.slice(0, this.content.track_length);
+    const paletteSlots = this.slots.slice(
+      this.paletteBase,
+      this.paletteBase + this.content.palette.length
+    );
+    const hintLevel = clock?.activeHintLevel ?? 0;
+    const hint = hintLevel > 0 ? this.currentHintState() : null;
+    const animMs = clock && clock.simMs > 0 ? clock.simMs : timeMs;
+
+    drawGT036RackAndTray(ctx, rs, {
+      rows: computeBeadRackRows(trackSlots, stageBounds),
+      trayBox: computePaletteTrayBox(paletteSlots, stageBounds),
+      hintL2Active: hintLevel === 2,
+      softShadowsEnabled,
+      timeMs: animMs,
+    });
+
+    drawBeadString(ctx, beadStringSegments(trackSlots));
+
+    const litLen = this.submitted
+      ? computeLitOrder(this.placedItems, this.detectedRule).length
+      : 0;
     drawStoryCharacterInStage(
       ctx,
       "nightingale",
@@ -841,12 +638,55 @@ export class GT036Session extends TemplateGameSession<
       nightingaleSway(
         this.litElapsedMs,
         GT036_LIGHT_STEP_MS,
-        this.submitted ? this.litOrder().length : 0,
+        litLen,
         rs.reducedMotion
       )
     );
-    this.renderTrackSlots(ctx, rs);
-    this.renderPaletteDock(ctx, rs);
+
+    if (this.submitted && this.detectedRule?.detected) {
+      const showRepeatBadge = !(
+        this.degradation?.particles_enabled === false &&
+        this.degradation?.soft_shadows_enabled === false
+      );
+      drawGT036MotifGroups(ctx, rs, {
+        segments: computeMotifGroupSegments(
+          trackSlots,
+          this.detectedRule.motif.length,
+          this.detectedRule.repetitions,
+          stageBounds
+        ),
+        showRepeatBadge,
+      });
+    }
+
+    if (this.clearSlot && this.isClearVisible) {
+      drawGT036ClearButton(ctx, rs, {
+        slot: this.clearSlot,
+        asset: GT036_CLEAR_ASSET,
+        isHovered: clock?.hoveredSlotIndex === this.clearSlotIndex,
+        softShadowsEnabled,
+      });
+    }
+
+    this.renderTrackBeads(
+      ctx,
+      rs,
+      trackSlots,
+      clock,
+      hintLevel,
+      hint,
+      softShadowsEnabled
+    );
+    this.renderPaletteBeads(
+      ctx,
+      rs,
+      paletteSlots,
+      clock,
+      hintLevel,
+      hint,
+      softShadowsEnabled,
+      animMs
+    );
 
     if (
       this.particles.length > 0 &&
@@ -856,112 +696,89 @@ export class GT036Session extends TemplateGameSession<
     }
   }
 
-  private renderClearSlot(
+  private renderTrackBeads(
     ctx: CanvasRenderingContext2D,
-    rs: RenderSystem
+    rs: RenderSystem,
+    trackSlots: readonly Slot[],
+    clock: ReturnType<typeof peekGT036Clock>,
+    hintLevel: number,
+    hint: GT036HintState | null,
+    softShadowsEnabled: boolean
   ): void {
-    const slot = this.clearSlot;
-    if (slot && this.isClearVisible) {
-      drawSlotItem(ctx, rs, slot, {
-        id: CLEAR_ID,
-        asset: CLEAR_ASSET,
-        state: "idle",
-      });
-    }
-  }
-
-  private renderTrackSlots(
-    ctx: CanvasRenderingContext2D,
-    rs: RenderSystem
-  ): void {
-    for (let i = 0; i < this.content.track_length; i++) {
-      const slot = this.slots[i];
+    const l1Set = new Set(hint?.l1Ids ?? []);
+    for (let i = 0; i < trackSlots.length; i++) {
+      const slot = trackSlots[i];
       if (!slot) {
         continue;
       }
-      const elementId = this.placedItems[i];
-      const palItem = elementId ? this.paletteMap.get(elementId) : undefined;
-      if (palItem) {
-        drawSlotItem(ctx, rs, slot, {
-          id: `placed-${i}`,
-          asset: palItem.asset,
-          state: this.isTrackCellLit(i, rs.reducedMotion) ? "touching" : "idle",
-        });
-      } else {
-        drawSlotItem(ctx, rs, slot, {
-          id: `empty-track-${i}`,
-          text: `${i + 1}`,
-          state: "idle",
-        });
-      }
+      const lit = isTrackCellLit({
+        placedItems: this.placedItems,
+        submitted: this.submitted,
+        detectedRule: this.detectedRule,
+        litElapsedMs: this.litElapsedMs,
+        index: i,
+        instant: rs.reducedMotion,
+      });
+      drawGT036Bead(
+        ctx,
+        rs,
+        buildTrackBeadRenderParams({
+          slot,
+          index: i,
+          elementId: this.placedItems[i],
+          palette: this.content.palette,
+          paletteMap: this.paletteMap,
+          lit,
+          isHovered: clock?.hoveredSlotIndex === i,
+          isHintL1: hintLevel === 1 && l1Set.has(`track_${i}`),
+          popProgress: computeBeadPopProgress(clock, i, rs.reducedMotion),
+          reducedMotion: rs.reducedMotion,
+          softShadowsEnabled,
+        })
+      );
     }
   }
 
-  private renderPaletteDock(
+  private renderPaletteBeads(
     ctx: CanvasRenderingContext2D,
-    rs: RenderSystem
+    rs: RenderSystem,
+    paletteSlots: readonly Slot[],
+    clock: ReturnType<typeof peekGT036Clock>,
+    hintLevel: number,
+    hint: GT036HintState | null,
+    softShadowsEnabled: boolean,
+    animMs: number
   ): void {
-    const palCount = this.content.palette.length;
-
-    for (let i = 0; i < palCount; i++) {
-      const slot = this.slots[this.paletteBase + i];
-      const pItem = this.content.palette[i];
-      if (!(slot && pItem)) {
+    const l2Set = new Set(hint?.l2Ids ?? []);
+    for (let i = 0; i < paletteSlots.length; i++) {
+      const slot = paletteSlots[i];
+      const item = this.content.palette[i];
+      if (!(slot && item)) {
         continue;
       }
-
-      const isSelected = this.selectedPaletteId === pItem.id;
-      drawSlotItem(ctx, rs, slot, {
-        id: pItem.id,
-        asset: pItem.asset,
-        state: isSelected ? "selected" : "idle",
-      });
+      drawGT036Bead(
+        ctx,
+        rs,
+        buildPaletteBeadRenderParams({
+          slot,
+          item,
+          paletteIndex: i,
+          isSelected: this.selectedPaletteId === item.id,
+          isHovered: clock?.hoveredSlotIndex === this.paletteBase + i,
+          isHintL2: hintLevel === 2 && l2Set.has(`palette_${item.id}`),
+          reducedMotion: rs.reducedMotion,
+          softShadowsEnabled,
+          animMs,
+        })
+      );
     }
   }
 
-  /** Lời đọc sau khi chốt, không vẽ ra canvas (`BR-E036-09`); không in mã phần tử thô (`BR-E036-08`). */
   ruleOverlayText(): string | null {
     if (!(this.submitted && this.detectedRule?.detected)) {
       return null;
     }
     return `Tuyệt vời! Quy luật của bé lặp lại ${this.detectedRule.repetitions} lần!`;
-  }
-
-  /**
-   * Ô sáng sau khi chốt: các ô đã đặt (chưa có luật) hoặc các ô của mô-típ vừa
-   * đọc ra, sáng **lần lượt** từ trái sang phải (`BR-E036-11`). `instant` là
-   * `prefers-reduced-motion`: sáng cùng lúc.
-   */
-  private isTrackCellLit(index: number, instant = false): boolean {
-    if (!(this.submitted && this.placedItems[index])) {
-      return false;
-    }
-    if (
-      this.detectedRule?.detected &&
-      index >= this.detectedRule.motif.length
-    ) {
-      return false;
-    }
-    if (instant) {
-      return true;
-    }
-    const order = this.litOrder();
-    const litCount = Math.floor(this.litElapsedMs / GT036_LIGHT_STEP_MS) + 1;
-    return order.indexOf(index) < litCount;
-  }
-
-  /** Thứ tự sáng: chỉ số các ô sẽ sáng, từ trái sang phải. */
-  private litOrder(): number[] {
-    const limit = this.detectedRule?.detected
-      ? this.detectedRule.motif.length
-      : this.placedItems.length;
-    const order: number[] = [];
-    for (let i = 0; i < limit; i++) {
-      if (this.placedItems[i]) {
-        order.push(i);
-      }
-    }
-    return order;
   }
 
   get score(): number {
