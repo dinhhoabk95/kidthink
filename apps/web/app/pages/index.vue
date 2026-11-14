@@ -27,9 +27,9 @@
               v-for="comp in homeData.competencies"
               :key="comp.code"
             >
-              <span aria-hidden="true" class="comp-emoji">{{
-                comp.emoji
-              }}</span>
+              <span aria-hidden="true" class="comp-emoji">
+                <BrandEmoji :emoji="comp.emoji" />
+              </span>
               <h3 class="comp-name">{{ comp.name }}</h3>
               <p class="comp-desc">{{ comp.description }}</p>
               <NuxtLink
@@ -89,9 +89,9 @@
               :key="game.code"
             >
               <div class="game-emoji-wrap">
-                <span aria-hidden="true" class="game-emoji">{{
-                  game.emoji
-                }}</span>
+                <span aria-hidden="true" class="game-emoji">
+                  <BrandEmoji :emoji="game.emoji" />
+                </span>
                 <span class="badge-free">Miễn phí</span>
               </div>
               <h3 class="game-title">{{ game.title }}</h3>
@@ -197,6 +197,7 @@
     FEATURED_GUEST_LEVELS,
     findCompetency,
   } from "@mindkid/shared/client";
+  import BrandEmoji from "@mindkid/ui/brand-emoji";
   import { computed } from "vue";
   import { useFetch, useHead, useSeoMeta } from "#imports";
   import CookieNoticeBanner from "~/components/cookie-notice-banner.vue";

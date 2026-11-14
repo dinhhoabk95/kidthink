@@ -735,6 +735,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
       preloadGameSession(payload.template_code),
       preloadSpritesForSession(spriteSource, {
         includeFlashcardCounters: payload.template_code === "GT-000",
+        highRes: payload.template_code === "GT-000",
       }),
     ]);
 

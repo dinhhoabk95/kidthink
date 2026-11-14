@@ -1,0 +1,48 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ngôi nhà</title>
+  <ellipse cx="60" cy="104" fill="#78350f" opacity="0.26" rx="44" ry="6" />
+  <rect
+    fill="#dc2626"
+    height="22"
+    rx="3"
+    stroke="#7f1d1d"
+    stroke-width="3.8"
+    width="13"
+    x="78"
+    y="24"
+  />
+  <rect
+    fill="#fef3c7"
+    height="48"
+    rx="6"
+    stroke="#78350f"
+    stroke-width="4"
+    width="68"
+    x="26"
+    y="54"
+  />
+  <path
+    d="M14 58L60 18L106 58H14Z"
+    fill="#ef4444"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M40 102V73C40 68 56 68 56 73V102Z"
+    fill="#b45309"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <rect
+    fill="#bae6fd"
+    height="17"
+    rx="3"
+    stroke="#1e3a8a"
+    stroke-width="3.2"
+    width="18"
+    x="66"
+    y="68"
+  />
+</svg>

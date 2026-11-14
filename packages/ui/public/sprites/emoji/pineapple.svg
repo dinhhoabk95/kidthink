@@ -1,0 +1,43 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Quả dứa</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="pineGold" r="70%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="50%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.28" rx="27" ry="6" />
+  <path
+    d="M60 44L47 18L56 32L60 12L64 32L73 18L60 44ZM49 44L33 27L45 44ZM71 44L87 27L75 44Z"
+    fill="#22c55e"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <ellipse
+    cx="60"
+    cy="72"
+    fill="url(#pineGold)"
+    rx="29"
+    ry="33"
+    stroke="#92400e"
+    stroke-width="4"
+  />
+  <path
+    d="M40 54L80 90M35 69L69 100M51 44L85 75M80 54L40 90M85 69L51 100M69 44L35 75"
+    stroke="#92400e"
+    stroke-linecap="round"
+    stroke-opacity="0.55"
+    stroke-width="2.6"
+  />
+  <ellipse
+    cx="46"
+    cy="57"
+    fill="#ffffff"
+    fill-opacity="0.45"
+    rx="5"
+    ry="9"
+    transform="rotate(-18 46 57)"
+  />
+</svg>

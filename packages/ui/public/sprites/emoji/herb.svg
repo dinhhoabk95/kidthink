@@ -1,0 +1,28 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Nhành lá</title>
+  <defs>
+    <linearGradient id="herbGreen" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#bbf7d0" />
+      <stop offset="100%" stop-color="#16a34a" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#14532d" opacity="0.2" rx="30" ry="5" />
+  <path
+    d="M34 98C44 74 58 50 82 24"
+    stroke="#14532d"
+    stroke-linecap="round"
+    stroke-width="4.5"
+  />
+  <g
+    fill="url(#herbGreen)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  >
+    <path d="M76 30C76 16 90 13 96 20C92 31 83 34 76 30Z" />
+    <path d="M58 50C42 44 33 29 41 21C54 24 61 37 58 50Z" />
+    <path d="M64 45C80 43 94 52 91 63C78 65 67 57 64 45Z" />
+    <path d="M46 71C30 66 20 52 28 43C41 46 49 58 46 71Z" />
+    <path d="M51 67C67 65 82 74 79 85C66 87 54 79 51 67Z" />
+  </g>
+</svg>

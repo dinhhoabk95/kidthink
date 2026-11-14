@@ -1,0 +1,46 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Kính lúp khám phá</title>
+  <defs>
+    <radialGradient cx="36%" cy="32%" id="lensSky" r="70%">
+      <stop offset="0%" stop-color="#f0f9ff" />
+      <stop offset="65%" stop-color="#bae6fd" />
+      <stop offset="100%" stop-color="#7dd3fc" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="62" cy="103" fill="#1e3a8a" opacity="0.2" rx="34" ry="5" />
+  <rect
+    fill="#d97706"
+    height="40"
+    rx="6"
+    stroke="#78350f"
+    stroke-width="4"
+    transform="rotate(-45 85 85)"
+    width="14"
+    x="78"
+    y="65"
+  />
+  <circle
+    cx="51"
+    cy="51"
+    fill="#3b82f6"
+    r="32"
+    stroke="#1e3a8a"
+    stroke-width="4"
+  />
+  <circle
+    cx="51"
+    cy="51"
+    fill="url(#lensSky)"
+    r="23"
+    stroke="#1e3a8a"
+    stroke-width="3.2"
+  />
+  <path
+    d="M37 42C40 35 47 32 54 34"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.85"
+    stroke-width="4.5"
+  />
+  <circle cx="35" cy="51" fill="#ffffff" r="2.5" />
+</svg>

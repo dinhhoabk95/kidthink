@@ -1,0 +1,41 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Quả lê</title>
+  <defs>
+    <radialGradient cx="38%" cy="35%" id="pearGreen" r="70%">
+      <stop offset="0%" stop-color="#ecfccb" />
+      <stop offset="48%" stop-color="#a3e635" />
+      <stop offset="100%" stop-color="#4d7c0f" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#365314" opacity="0.26" rx="29" ry="6" />
+  <path
+    d="M59 29C59 20 63 14 68 12"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4.5"
+  />
+  <path
+    d="M62 23C69 14 84 14 89 23C81 30 69 30 62 23Z"
+    fill="#4ade80"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.5"
+  />
+  <path
+    d="M60 28C48 28 45 40 42 51C38 63 29 70 29 82C29 97 43 104 60 104C77 104 91 97 91 82C91 70 82 63 78 51C75 40 72 28 60 28Z"
+    fill="url(#pearGreen)"
+    stroke="#365314"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="44"
+    cy="76"
+    fill="#ffffff"
+    fill-opacity="0.5"
+    rx="6"
+    ry="12"
+    transform="rotate(-16 44 76)"
+  />
+  <circle cx="72" cy="84" fill="#fb923c" fill-opacity="0.32" r="7" />
+</svg>

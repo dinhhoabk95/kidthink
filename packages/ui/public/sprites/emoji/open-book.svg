@@ -1,0 +1,42 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Sách mở</title>
+  <ellipse cx="60" cy="100" fill="#7f1d1d" opacity="0.24" rx="46" ry="6" />
+  <rect
+    fill="#dc2626"
+    height="62"
+    rx="8"
+    stroke="#7f1d1d"
+    stroke-width="4"
+    width="96"
+    x="12"
+    y="31"
+  />
+  <path
+    d="M18 26C34 24 50 28 60 35V87C50 80 34 77 18 79Z"
+    fill="#fffbeb"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M102 26C86 24 70 28 60 35V87C70 80 86 77 102 79Z"
+    fill="#fef3c7"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M27 42H50M27 54H50M27 66H45M70 42H93M70 54H93M70 66H88"
+    stroke="#92400e"
+    stroke-linecap="round"
+    stroke-opacity="0.55"
+    stroke-width="3"
+  />
+  <path
+    d="M60 85V102L66 97L72 102V83"
+    fill="#ef4444"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3"
+  />
+</svg>

@@ -1,0 +1,66 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cá nhiệt đới</title>
+  <defs>
+    <radialGradient cx="38%" cy="35%" id="tropGold" r="70%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="52%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </radialGradient>
+    <linearGradient id="tropBlue" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#7dd3fc" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="56" cy="99" fill="#1e3a8a" opacity="0.22" rx="34" ry="6" />
+  <path
+    d="M44 37C50 14 73 14 82 40Z"
+    fill="url(#tropBlue)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M44 83C50 106 73 106 82 80Z"
+    fill="url(#tropBlue)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M84 60L108 42L102 60L108 78Z"
+    fill="url(#tropBlue)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M16 60C24 40 42 32 58 32C75 32 88 44 88 60C88 76 75 88 58 88C42 88 24 80 16 60Z"
+    fill="url(#tropGold)"
+    stroke="#92400e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M53 34C50 51 50 69 53 86M69 36C66 52 66 68 69 84"
+    stroke="#0369a1"
+    stroke-linecap="round"
+    stroke-opacity="0.9"
+    stroke-width="6.5"
+  />
+  <circle
+    cx="34"
+    cy="55"
+    fill="#ffffff"
+    r="5.5"
+    stroke="#92400e"
+    stroke-width="2.5"
+  />
+  <circle cx="33.5" cy="55" fill="#1c1917" r="3" />
+  <circle cx="37" cy="66" fill="#fb7185" fill-opacity="0.5" r="4" />
+  <path
+    d="M22 64C25 67 29 67 31 64"
+    stroke="#92400e"
+    stroke-linecap="round"
+    stroke-width="2.6"
+  />
+</svg>

@@ -1,0 +1,43 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cầu vồng</title>
+  <ellipse cx="60" cy="98" fill="#57534e" opacity="0.2" rx="46" ry="6" />
+  <path
+    d="M12 84C12 46 33 22 60 22C87 22 108 46 108 84H76C76 66 69 56 60 56C51 56 44 66 44 84Z"
+    fill="#ef4444"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M21 84C21 53 38 31 60 31C82 31 99 53 99 84H76C76 66 69 56 60 56C51 56 44 66 44 84Z"
+    fill="#facc15"
+  />
+  <path
+    d="M29 84C29 58 43 40 60 40C77 40 91 58 91 84H76C76 66 69 56 60 56C51 56 44 66 44 84Z"
+    fill="#22c55e"
+  />
+  <path
+    d="M37 84C37 63 47 48 60 48C73 48 83 63 83 84H74C74 68 68 58 60 58C52 58 46 68 46 84Z"
+    fill="#3b82f6"
+  />
+  <path
+    d="M44 84C44 66 51 56 60 56C69 56 76 66 76 84"
+    stroke="#1e3a8a"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M16 94H43C49 94 53 90 53 84C53 79 49 75 44 75C42 69 36 66 30 66C23 66 18 70 16 76C11 77 8 81 8 86C8 91 11 94 16 94Z"
+    fill="#ffffff"
+    stroke="#57534e"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M77 94H104C109 94 112 91 112 86C112 81 109 77 104 76C102 70 97 66 90 66C84 66 78 69 76 75C71 75 67 79 67 84C67 90 71 94 77 94Z"
+    fill="#ffffff"
+    stroke="#57534e"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+</svg>

@@ -11,7 +11,7 @@
       aria-hidden="true"
       class="w-10 h-10 rounded-xl bg-brand-50 border-2 border-brand-200 flex items-center justify-center text-2xl shrink-0"
     >
-      {{ resolveAvatarEmoji(activeChild.avatar_id) }}
+      <BrandEmoji :emoji="resolveAvatarEmoji(activeChild.avatar_id)" />
     </div>
 
     <div class="flex flex-col min-w-0">
@@ -36,6 +36,7 @@
 </template>
 
 <script lang="ts" setup>
+  import BrandEmoji from "@mindkid/ui/brand-emoji";
   import { computed } from "vue";
   import type { KidProfileItem } from "~/composables/play/use-kid-profile";
   import { resolveAvatarEmoji } from "~/utils/child-avatar";

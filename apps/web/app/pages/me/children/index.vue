@@ -101,7 +101,7 @@
               aria-hidden="true"
               class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border-2 border-surface-200 bg-surface-100 text-2xl transition-transform group-hover:scale-105 dark:border-surface-600 dark:bg-surface-700"
             >
-              {{ resolveAvatarEmoji(child.avatar_id) }}
+              <BrandEmoji :emoji="resolveAvatarEmoji(child.avatar_id)" />
             </span>
             <span class="min-w-0 flex-1">
               <span
@@ -169,7 +169,7 @@
           >
             <div class="flex min-w-0 items-center gap-3">
               <span aria-hidden="true" class="text-xl">
-                {{ resolveAvatarEmoji(child.avatar_id) }}
+                <BrandEmoji :emoji="resolveAvatarEmoji(child.avatar_id)" />
               </span>
               <div class="min-w-0">
                 <p
@@ -210,7 +210,7 @@
           >
             <div class="flex min-w-0 items-center gap-3">
               <span aria-hidden="true" class="text-xl">
-                {{ resolveAvatarEmoji(child.avatar_id) }}
+                <BrandEmoji :emoji="resolveAvatarEmoji(child.avatar_id)" />
               </span>
               <div class="min-w-0">
                 <p
@@ -246,6 +246,7 @@
 <script lang="ts" setup>
   import { isApiError, normalizeApiError } from "@mindkid/errors/client";
   import { sanitizeRedirectTarget } from "@mindkid/shared/client";
+  import BrandEmoji from "@mindkid/ui/brand-emoji";
   import { computed, ref } from "vue";
   import { useRoute, useRouter } from "vue-router";
 

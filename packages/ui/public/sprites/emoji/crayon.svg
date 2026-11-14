@@ -1,0 +1,26 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bút sáp màu</title>
+  <ellipse cx="60" cy="103" fill="#7f1d1d" opacity="0.22" rx="36" ry="5" />
+  <path
+    d="M34 68L52 86L98 40C102 36 102 30 98 26L94 22C90 18 84 18 80 22Z"
+    fill="#ef4444"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M44 58L62 76L88 50L70 32Z"
+    fill="#fca5a5"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path d="M51 51L69 69M63 39L81 57" stroke="#7f1d1d" stroke-width="3.5" />
+  <path
+    d="M34 68L21 99L52 86Z"
+    fill="#dc2626"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+</svg>

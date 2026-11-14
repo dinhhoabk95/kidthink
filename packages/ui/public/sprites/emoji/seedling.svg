@@ -1,0 +1,44 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mầm cây</title>
+  <defs>
+    <linearGradient id="seedLeaf" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#bef264" />
+      <stop offset="100%" stop-color="#16a34a" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="102" fill="#78350f" opacity="0.26" rx="38" ry="6" />
+  <path
+    d="M26 98C30 83 44 77 60 77C76 77 90 83 94 98Z"
+    fill="#92400e"
+    stroke="#451a03"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M60 80V44"
+    stroke="#15803d"
+    stroke-linecap="round"
+    stroke-width="6"
+  />
+  <path
+    d="M60 52C55 31 33 23 20 33C23 52 42 59 60 52Z"
+    fill="url(#seedLeaf)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M60 45C65 24 87 18 100 28C97 47 78 53 60 45Z"
+    fill="url(#seedLeaf)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M32 38L52 48M88 33L68 42"
+    stroke="#14532d"
+    stroke-linecap="round"
+    stroke-opacity="0.55"
+    stroke-width="2.5"
+  />
+</svg>

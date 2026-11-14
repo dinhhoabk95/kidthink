@@ -1,0 +1,40 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cái kéo</title>
+  <ellipse cx="60" cy="103" fill="#57534e" opacity="0.22" rx="36" ry="5" />
+  <path
+    d="M47 68L88 22C93 18 98 23 94 29L57 74Z"
+    fill="#e2e8f0"
+    stroke="#57534e"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M73 68L32 22C27 18 22 23 26 29L63 74Z"
+    fill="#cbd5e1"
+    stroke="#57534e"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="60"
+    cy="58"
+    fill="#fbbf24"
+    r="4.5"
+    stroke="#78350f"
+    stroke-width="2.5"
+  />
+  <path
+    d="M38 67A17 17 0 1 0 38 101A17 17 0 1 0 38 67ZM38 75A9 9 0 1 1 38 93A9 9 0 1 1 38 75Z"
+    fill="#fb923c"
+    fill-rule="evenodd"
+    stroke="#9a3412"
+    stroke-width="3.8"
+  />
+  <path
+    d="M82 67A17 17 0 1 0 82 101A17 17 0 1 0 82 67ZM82 75A9 9 0 1 1 82 93A9 9 0 1 1 82 75Z"
+    fill="#fb923c"
+    fill-rule="evenodd"
+    stroke="#9a3412"
+    stroke-width="3.8"
+  />
+</svg>

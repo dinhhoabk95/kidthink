@@ -1,0 +1,35 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bông tuyết</title>
+  <ellipse cx="60" cy="107" fill="#1e3a8a" opacity="0.2" rx="28" ry="4.5" />
+  <g
+    stroke="#1e3a8a"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="9"
+  >
+    <path d="M60 16V104M22 38L98 82M98 38L22 82" />
+    <path d="M50 26L60 35L70 26M50 94L60 85L70 94" />
+    <path d="M27 52L39 48L35 36M85 84L81 72L93 68" />
+    <path d="M35 84L39 72L27 68M93 52L81 48L85 36" />
+  </g>
+  <g
+    stroke="#bae6fd"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-opacity="0.95"
+    stroke-width="3.6"
+  >
+    <path d="M60 16V104M22 38L98 82M98 38L22 82" />
+    <path d="M50 26L60 35L70 26M50 94L60 85L70 94" />
+    <path d="M27 52L39 48L35 36M85 84L81 72L93 68" />
+    <path d="M35 84L39 72L27 68M93 52L81 48L85 36" />
+  </g>
+  <circle
+    cx="60"
+    cy="60"
+    fill="#e0f2fe"
+    r="9"
+    stroke="#1e3a8a"
+    stroke-width="3.8"
+  />
+</svg>

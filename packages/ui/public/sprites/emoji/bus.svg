@@ -1,0 +1,59 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Xe buýt</title>
+  <defs>
+    <linearGradient id="busGold" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="52%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#eab308" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="98" fill="#78350f" opacity="0.24" rx="46" ry="6" />
+  <rect
+    fill="url(#busGold)"
+    height="52"
+    rx="13"
+    stroke="#92400e"
+    stroke-width="4"
+    width="96"
+    x="12"
+    y="33"
+  />
+  <g fill="#bae6fd" stroke="#1e3a8a" stroke-width="3">
+    <rect height="18" rx="4" width="18" x="20" y="42" />
+    <rect height="18" rx="4" width="19" x="44" y="42" />
+    <rect height="18" rx="4" width="19" x="69" y="42" />
+    <rect height="18" rx="4" width="10" x="93" y="42" />
+  </g>
+  <path
+    d="M16 68H104"
+    stroke="#dc2626"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="18"
+    cy="76"
+    fill="#fef9c3"
+    r="4"
+    stroke="#92400e"
+    stroke-width="2.5"
+  />
+  <circle
+    cx="35"
+    cy="86"
+    fill="#44403c"
+    r="11"
+    stroke="#1c1917"
+    stroke-width="3.8"
+  />
+  <circle cx="35" cy="86" fill="#fde68a" r="4.5" />
+  <circle
+    cx="85"
+    cy="86"
+    fill="#44403c"
+    r="11"
+    stroke="#1c1917"
+    stroke-width="3.8"
+  />
+  <circle cx="85" cy="86" fill="#fde68a" r="4.5" />
+</svg>

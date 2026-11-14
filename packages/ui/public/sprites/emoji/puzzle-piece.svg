@@ -1,0 +1,30 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mảnh ghép hình</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="puzGreen" r="70%">
+      <stop offset="0%" stop-color="#86efac" />
+      <stop offset="50%" stop-color="#22c55e" />
+      <stop offset="100%" stop-color="#15803d" />
+    </radialGradient>
+  </defs>
+  <path
+    d="M32 34H50C48 22 68 22 66 34H84C88 34 90 36 90 40V56C102 54 102 74 90 72V88C90 92 88 94 84 94H32C28 94 26 92 26 88V72C37 74 37 54 26 56V40C26 36 28 34 32 34Z"
+    fill="#14532d"
+    opacity="0.28"
+    transform="translate(0 6)"
+  />
+  <path
+    d="M32 32H50C48 19 68 19 66 32H84C88 32 90 34 90 38V55C103 53 103 73 90 71V88C90 92 88 94 84 94H32C28 94 26 92 26 88V71C38 73 38 53 26 55V38C26 34 28 32 32 32Z"
+    fill="url(#puzGreen)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M35 40H47"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.55"
+    stroke-width="4"
+  />
+</svg>

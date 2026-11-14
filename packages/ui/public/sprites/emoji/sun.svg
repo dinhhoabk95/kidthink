@@ -1,0 +1,50 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mặt trời</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="sunDisc" r="70%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="52%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </radialGradient>
+  </defs>
+  <circle cx="60" cy="66" fill="#9a3412" opacity="0.24" r="32" />
+  <g fill="#facc15" stroke="#9a3412" stroke-linejoin="round" stroke-width="3.8">
+    <path d="M50 35L60 10L70 35Z" />
+    <path d="M50 35L60 10L70 35Z" transform="rotate(45 60 60)" />
+    <path d="M50 35L60 10L70 35Z" transform="rotate(90 60 60)" />
+    <path d="M50 35L60 10L70 35Z" transform="rotate(135 60 60)" />
+    <path d="M50 35L60 10L70 35Z" transform="rotate(180 60 60)" />
+    <path d="M50 35L60 10L70 35Z" transform="rotate(225 60 60)" />
+    <path d="M50 35L60 10L70 35Z" transform="rotate(270 60 60)" />
+    <path d="M50 35L60 10L70 35Z" transform="rotate(315 60 60)" />
+  </g>
+  <circle
+    cx="60"
+    cy="60"
+    fill="url(#sunDisc)"
+    r="31"
+    stroke="#9a3412"
+    stroke-width="4"
+  />
+  <circle cx="49" cy="56" fill="#451a03" r="4" />
+  <circle cx="47.8" cy="54.6" fill="#ffffff" r="1.6" />
+  <circle cx="71" cy="56" fill="#451a03" r="4" />
+  <circle cx="69.8" cy="54.6" fill="#ffffff" r="1.6" />
+  <circle cx="41" cy="65" fill="#fb7185" fill-opacity="0.48" r="4.5" />
+  <circle cx="79" cy="65" fill="#fb7185" fill-opacity="0.48" r="4.5" />
+  <path
+    d="M52 67C56 72 64 72 68 67"
+    stroke="#7c2d12"
+    stroke-linecap="round"
+    stroke-width="2.8"
+  />
+  <ellipse
+    cx="48"
+    cy="41"
+    fill="#ffffff"
+    fill-opacity="0.58"
+    rx="7"
+    ry="3.2"
+    transform="rotate(-22 48 41)"
+  />
+</svg>

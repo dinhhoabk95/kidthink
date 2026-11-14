@@ -527,9 +527,9 @@
               :key="child.uuid"
             >
               <div class="flex items-center gap-3">
-                <span class="text-2xl">{{
-                  resolveAvatarEmoji(child.avatar_id)
-                }}</span>
+                <span class="text-2xl">
+                  <BrandEmoji :emoji="resolveAvatarEmoji(child.avatar_id)" />
+                </span>
                 <div>
                   <div
                     class="font-bold text-base text-surface-900 dark:text-white"
@@ -619,13 +619,13 @@
     ProgramCardPublic,
     ProgramListPublicResponse,
   } from "@mindkid/shared/client";
+  import BrandEmoji from "@mindkid/ui/brand-emoji";
   import { computed, ref } from "vue";
   import { definePageMeta, useFetch, useRouter, useSeoMeta } from "#imports";
   import { useApi } from "~/composables/use-api";
   import { resolveAvatarEmoji } from "~/utils/child-avatar";
 
   definePageMeta({ layout: false });
-
   interface PersonalCurriculumItem {
     id: number;
     uuid: string;
@@ -638,7 +638,6 @@
     version: number;
     item_count: number;
   }
-
   interface ChildProfile {
     id?: number;
     uuid: string;
@@ -702,7 +701,6 @@
   }
   const createForm = ref(defaultCreateForm());
   const copyForm = ref({ system_curriculum_code: "", title: "" });
-
   async function runAction(fallbackMsg: string, action: () => Promise<void>) {
     isSubmitting.value = true;
     errorMessage.value = null;
@@ -714,7 +712,6 @@
       isSubmitting.value = false;
     }
   }
-
   function openCopyWithProgram(prog: ProgramCardPublic) {
     copyForm.value = {
       system_curriculum_code: prog.code,
@@ -722,7 +719,6 @@
     };
     activeModal.value = "copy";
   }
-
   async function handleCreateSubmit() {
     await runAction("Không thể tạo lộ trình.", async () => {
       const created = await api<PersonalCurriculumItem>(
@@ -736,7 +732,6 @@
       await router.push(`/curricula/${created.uuid}`);
     });
   }
-
   async function handleCopySubmit() {
     await runAction("Không thể sao chép lộ trình.", async () => {
       const copied = await api<PersonalCurriculumItem>(
@@ -750,13 +745,11 @@
       await router.push(`/curricula/${copied.uuid}`);
     });
   }
-
   function openEnrollModal(item: PersonalCurriculumItem) {
     activeCurriculum.value = item;
     selectedChildUuid.value = childrenList.value[0]?.uuid || null;
     activeModal.value = "enroll";
   }
-
   async function handleEnrollSubmit() {
     const childUuid = selectedChildUuid.value;
     const curriculum = activeCurriculum.value;
@@ -772,12 +765,10 @@
       bannerMessage.value = "Đã ghi danh lộ trình thành công cho bé.";
     });
   }
-
   function confirmDelete(item: PersonalCurriculumItem) {
     deletingCurriculum.value = item;
     activeModal.value = "delete";
   }
-
   async function handleDeleteSubmit() {
     const item = deletingCurriculum.value;
     if (!item) {
@@ -790,7 +781,6 @@
       await refresh();
     });
   }
-
   useSeoMeta({
     title: "Lộ trình học cá nhân — MindKid",
     description:

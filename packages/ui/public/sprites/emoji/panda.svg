@@ -1,0 +1,81 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Gấu trúc</title>
+  <defs>
+    <radialGradient cx="40%" cy="32%" id="pandaHead" r="70%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="62%" stop-color="#fafaf9" />
+      <stop offset="100%" stop-color="#e7e5e4" />
+    </radialGradient>
+    <radialGradient cx="35%" cy="35%" id="pandaDark" r="70%">
+      <stop offset="0%" stop-color="#57534e" />
+      <stop offset="100%" stop-color="#292524" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="73" fill="#57534e" opacity="0.28" rx="40" ry="36" />
+  <circle
+    cx="31"
+    cy="33"
+    fill="url(#pandaDark)"
+    r="15"
+    stroke="#44403c"
+    stroke-width="4"
+  />
+  <circle
+    cx="89"
+    cy="33"
+    fill="url(#pandaDark)"
+    r="15"
+    stroke="#44403c"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="60"
+    cy="68"
+    fill="url(#pandaHead)"
+    rx="40"
+    ry="36"
+    stroke="#57534e"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="43"
+    cy="63"
+    fill="url(#pandaDark)"
+    rx="11"
+    ry="13"
+    transform="rotate(20 43 63)"
+  />
+  <ellipse
+    cx="77"
+    cy="63"
+    fill="url(#pandaDark)"
+    rx="11"
+    ry="13"
+    transform="rotate(-20 77 63)"
+  />
+  <circle cx="45" cy="61" fill="#ffffff" r="4.8" />
+  <circle cx="45.5" cy="61.5" fill="#1c1917" r="2.8" />
+  <circle cx="44.2" cy="59.8" fill="#ffffff" r="1.4" />
+  <circle cx="75" cy="61" fill="#ffffff" r="4.8" />
+  <circle cx="74.5" cy="61.5" fill="#1c1917" r="2.8" />
+  <circle cx="73.2" cy="59.8" fill="#ffffff" r="1.4" />
+  <circle cx="32" cy="77" fill="#fb7185" fill-opacity="0.48" r="5.5" />
+  <circle cx="88" cy="77" fill="#fb7185" fill-opacity="0.48" r="5.5" />
+  <ellipse cx="60" cy="74" fill="#292524" rx="6" ry="4" />
+  <path
+    d="M60 78V83M52 83C55 87 58 87 60 83C62 87 65 87 68 83"
+    stroke="#44403c"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="2.8"
+  />
+  <ellipse
+    cx="48"
+    cy="43"
+    fill="#ffffff"
+    fill-opacity="0.75"
+    rx="9"
+    ry="4"
+    transform="rotate(-18 48 43)"
+  />
+</svg>

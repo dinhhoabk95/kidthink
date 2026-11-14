@@ -1,0 +1,29 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cây nấm</title>
+  <defs>
+    <radialGradient cx="38%" cy="28%" id="mushCap" r="70%">
+      <stop offset="0%" stop-color="#fda4af" />
+      <stop offset="45%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#b91c1c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#78350f" opacity="0.26" rx="28" ry="6" />
+  <path
+    d="M44 63H76L80 93C81 99 73 103 60 103C47 103 39 99 40 93Z"
+    fill="#fef3c7"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M18 62C18 33 37 18 60 18C83 18 102 33 102 62C102 68 84 71 60 71C36 71 18 68 18 62Z"
+    fill="url(#mushCap)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle cx="40" cy="44" fill="#fffbeb" r="7" />
+  <circle cx="64" cy="34" fill="#fffbeb" r="8" />
+  <circle cx="82" cy="50" fill="#fffbeb" r="6.5" />
+  <circle cx="55" cy="56" fill="#fffbeb" r="5" />
+</svg>

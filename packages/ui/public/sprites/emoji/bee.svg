@@ -1,0 +1,77 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ong vàng</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="beeGold" r="70%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="52%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#eab308" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="96" fill="#78350f" opacity="0.24" rx="36" ry="7" />
+  <ellipse
+    cx="50"
+    cy="36"
+    fill="#e0f2fe"
+    rx="14"
+    ry="19"
+    stroke="#57534e"
+    stroke-width="3.6"
+    transform="rotate(-18 50 36)"
+  />
+  <ellipse
+    cx="70"
+    cy="36"
+    fill="#f0f9ff"
+    rx="14"
+    ry="19"
+    stroke="#57534e"
+    stroke-width="3.6"
+    transform="rotate(18 70 36)"
+  />
+  <path
+    d="M93 66L107 69L93 74Z"
+    fill="#451a03"
+    stroke="#451a03"
+    stroke-linejoin="round"
+    stroke-width="3"
+  />
+  <path
+    d="M35 47C30 35 23 33 20 36M44 45C42 33 36 30 33 32"
+    stroke="#451a03"
+    stroke-linecap="round"
+    stroke-width="3.5"
+  />
+  <ellipse
+    cx="60"
+    cy="68"
+    fill="url(#beeGold)"
+    rx="36"
+    ry="25"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M55 44C53 60 53 76 55 92M73 46C71 60 71 76 73 90"
+    stroke="#451a03"
+    stroke-linecap="round"
+    stroke-width="8"
+  />
+  <circle cx="37" cy="64" fill="#1c1917" r="4.5" />
+  <circle cx="35.6" cy="62.3" fill="#ffffff" r="1.8" />
+  <circle cx="42" cy="74" fill="#fb7185" fill-opacity="0.5" r="4.5" />
+  <path
+    d="M29 72C32 76 37 76 40 73"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="2.8"
+  />
+  <ellipse
+    cx="47"
+    cy="53"
+    fill="#ffffff"
+    fill-opacity="0.55"
+    rx="7"
+    ry="3"
+    transform="rotate(-14 47 53)"
+  />
+</svg>

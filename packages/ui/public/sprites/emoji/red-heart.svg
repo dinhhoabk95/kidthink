@@ -1,0 +1,32 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Trái tim ấm</title>
+  <defs>
+    <radialGradient cx="36%" cy="30%" id="heartWarm" r="70%">
+      <stop offset="0%" stop-color="#fda4af" />
+      <stop offset="45%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#dc2626" />
+    </radialGradient>
+  </defs>
+  <path
+    d="M60 100C57 100 16 74 16 45C16 28 30 18 44 18C52 18 57 23 60 28C63 23 68 18 76 18C90 18 104 28 104 45C104 74 63 100 60 100Z"
+    fill="#991b1b"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+    transform="translate(0 6)"
+  />
+  <path
+    d="M60 98C57 98 16 72 16 43C16 26 30 16 44 16C52 16 57 21 60 26C63 21 68 16 76 16C90 16 104 26 104 43C104 72 63 98 60 98Z"
+    fill="url(#heartWarm)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M29 41C29 32 36 27 44 27"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.65"
+    stroke-width="5"
+  />
+</svg>

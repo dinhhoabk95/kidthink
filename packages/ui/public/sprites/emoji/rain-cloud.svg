@@ -1,0 +1,21 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mây mưa</title>
+  <defs>
+    <linearGradient id="rainCloud" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#f8fafc" />
+      <stop offset="100%" stop-color="#cbd5e1" />
+    </linearGradient>
+  </defs>
+  <path
+    d="M33 76H89C99 76 107 69 107 59C107 50 100 43 90 42C88 28 75 18 59 18C44 18 33 27 30 39C20 41 13 49 13 59C13 69 21 76 33 76Z"
+    fill="url(#rainCloud)"
+    stroke="#475569"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <g fill="#38bdf8" stroke="#1e3a8a" stroke-linejoin="round" stroke-width="3.5">
+    <path d="M38 82L31 96C29 100 32 104 36 104C40 104 43 100 41 96Z" />
+    <path d="M60 85L53 99C51 103 54 107 58 107C62 107 65 103 63 99Z" />
+    <path d="M82 82L75 96C73 100 76 104 80 104C84 104 87 100 85 96Z" />
+  </g>
+</svg>

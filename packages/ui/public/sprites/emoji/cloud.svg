@@ -1,0 +1,30 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đám mây</title>
+  <defs>
+    <linearGradient id="cloudFluff" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="68%" stop-color="#f1f5f9" />
+      <stop offset="100%" stop-color="#cbd5e1" />
+    </linearGradient>
+  </defs>
+  <path
+    d="M33 93H89C101 93 109 85 109 74C109 64 101 56 91 55C89 39 75 28 58 28C43 28 31 38 28 52C18 54 11 63 11 73C11 85 20 93 33 93Z"
+    fill="#57534e"
+    opacity="0.24"
+    transform="translate(0 5)"
+  />
+  <path
+    d="M33 91H89C101 91 109 83 109 72C109 62 101 54 91 53C89 37 75 26 58 26C43 26 31 36 28 50C18 52 11 61 11 71C11 83 20 91 33 91Z"
+    fill="url(#cloudFluff)"
+    stroke="#57534e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M41 42C47 35 58 33 67 37"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.85"
+    stroke-width="4.5"
+  />
+</svg>

@@ -40,6 +40,59 @@ function lookupNormalizedEmoji(
   return null;
 }
 
+export interface RegisterImageSpriteOptions {
+  readonly closeOnEvict?: boolean;
+}
+
+interface ClosableBitmap {
+  close(): void;
+}
+
+function isClosableBitmap(
+  source: CanvasImageSource
+): source is CanvasImageSource & ClosableBitmap {
+  return (
+    typeof source === "object" &&
+    source !== null &&
+    "close" in source &&
+    typeof source.close === "function"
+  );
+}
+
+function mapContainsSource(
+  map: ReadonlyMap<string, CanvasImageSource>,
+  target: CanvasImageSource
+): boolean {
+  for (const current of map.values()) {
+    if (current === target) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function isSourceReferencedInRegistry(source: CanvasImageSource): boolean {
+  return (
+    mapContainsSource(imagePathSprites, source) ||
+    mapContainsSource(emojiSprites, source) ||
+    mapContainsSource(heroEmojiSprites, source)
+  );
+}
+
+export function closeSpriteBitmapIfUnreferenced(
+  source: CanvasImageSource
+): boolean {
+  if (!isClosableBitmap(source) || isSourceReferencedInRegistry(source)) {
+    return false;
+  }
+  try {
+    source.close();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export function registerEmojiSprite(
   emoji: string,
   source: CanvasImageSource
@@ -56,21 +109,45 @@ export function registerHeroEmojiSprite(
 
 export function registerImageSprite(
   path: string,
-  source: CanvasImageSource
+  source: CanvasImageSource,
+  options?: RegisterImageSpriteOptions
 ): void {
   const key = path.trim();
   if (!key) {
     return;
   }
+  let displaced: CanvasImageSource | undefined;
   if (imagePathSprites.has(key)) {
+    displaced = imagePathSprites.get(key);
     imagePathSprites.delete(key);
   } else if (imagePathSprites.size >= MAX_IMAGE_SPRITES) {
     const oldestKey = imagePathSprites.keys().next().value;
     if (oldestKey !== undefined) {
+      displaced = imagePathSprites.get(oldestKey);
       imagePathSprites.delete(oldestKey);
     }
   }
   imagePathSprites.set(key, source);
+  if (options?.closeOnEvict && displaced && displaced !== source) {
+    closeSpriteBitmapIfUnreferenced(displaced);
+  }
+}
+
+export function unregisterImageSprite(
+  path: string,
+  expectedSource?: CanvasImageSource
+): void {
+  const key = path.trim();
+  if (!key) {
+    return;
+  }
+  if (expectedSource !== undefined) {
+    const current = imagePathSprites.get(key);
+    if (current !== expectedSource) {
+      return;
+    }
+  }
+  imagePathSprites.delete(key);
 }
 
 export function getEmojiSprite(emoji: string): CanvasImageSource | null {

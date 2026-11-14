@@ -193,7 +193,7 @@
               <div
                 class="w-12 h-12 rounded-2xl bg-surface-100 dark:bg-surface-700 flex items-center justify-center text-xl shrink-0 border border-surface-200 dark:border-surface-600"
               >
-                {{ resolveAvatarEmoji(child.avatar_id) }}
+                <BrandEmoji :emoji="resolveAvatarEmoji(child.avatar_id)" />
               </div>
               <div class="space-y-1 min-w-0 flex-1">
                 <div class="flex flex-wrap items-center gap-2">
@@ -569,6 +569,7 @@
 
 <script lang="ts" setup>
   import { isApiError, normalizeApiError } from "@mindkid/errors/client";
+  import BrandEmoji from "@mindkid/ui/brand-emoji";
   import { computed, ref } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import { definePageMeta, useFetch } from "#imports";
@@ -781,6 +782,3 @@
     }
   }
 </script>
-
-<style scoped>
-</style>

@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import type { Slot } from "#src/layout/types";
 import {
   clearAllSprites,
+  closeSpriteBitmapIfUnreferenced,
   drawAssetInSlot,
   drawFlashcard,
   drawGlyphInSlot,
@@ -15,6 +16,7 @@ import {
   registerHeroEmojiSprite,
   registerImageSprite,
   SPRITE_FILL_RATIO,
+  unregisterImageSprite,
 } from "#src/render/index.js";
 import { RenderSystem } from "#src/systems/render-system";
 import { createFakeCanvas } from "#tests/gates/fake-canvas";
@@ -29,6 +31,22 @@ function makeCtx(w = 960, h = 540): CanvasRenderingContext2D {
 
 function makeSprite(w = 120, h = 120): CanvasImageSource {
   return makeCtx(w, h).canvas;
+}
+
+function makeClosableBitmap(
+  w = 120,
+  h = 120
+): {
+  readonly bitmap: ImageBitmap;
+  readonly closeSpy: ReturnType<typeof vi.fn>;
+} {
+  const closeSpy = vi.fn<() => void>();
+  const bitmap: ImageBitmap = {
+    width: w,
+    height: h,
+    close: closeSpy,
+  };
+  return { bitmap, closeSpy };
 }
 
 function makeRs(): RenderSystem {
@@ -269,5 +287,67 @@ describe("SpriteRegistry & 3-tier sprite rendering", () => {
     registerImageSprite("/img/extra.webp", makeSprite(20, 20));
     expect(getImageSprite("/img/2.webp")).toBe(updated);
     expect(getImageSprite("/img/3.webp")).toBeNull();
+  });
+
+  it("unregisterImageSprite và closeSpriteBitmapIfUnreferenced không bao giờ đóng bitmap còn tham chiếu", () => {
+    const { bitmap: bmpA, closeSpy: closeA } = makeClosableBitmap(200, 200);
+    const { bitmap: bmpB, closeSpy: closeB } = makeClosableBitmap(200, 200);
+
+    registerImageSprite(" /custom/a.webp ", bmpA);
+    registerImageSprite("/custom/a-alias.webp", bmpA);
+
+    // Gỡ kèm expectedSource khác thì không xoá nhầm
+    unregisterImageSprite("/custom/a.webp", bmpB);
+    expect(getImageSprite("/custom/a.webp")).toBe(bmpA);
+
+    // Gỡ 1 alias nhưng vẫn còn alias thứ 2 -> closeSpriteBitmapIfUnreferenced phải trả false
+    unregisterImageSprite("/custom/a.webp", bmpA);
+    expect(getImageSprite("/custom/a.webp")).toBeNull();
+    expect(closeSpriteBitmapIfUnreferenced(bmpA)).toBe(false);
+    expect(closeA).not.toHaveBeenCalled();
+
+    // Gỡ nốt alias cuối cùng -> không còn trong registry -> được phép close()
+    unregisterImageSprite("/custom/a-alias.webp");
+    expect(getImageSprite("/custom/a-alias.webp")).toBeNull();
+    expect(closeSpriteBitmapIfUnreferenced(bmpA)).toBe(true);
+    expect(closeA).toHaveBeenCalledTimes(1);
+
+    // Nếu bitmap đang nằm trong heroEmojiSprites thì tuyệt đối không close()
+    registerHeroEmojiSprite("🦊", bmpB);
+    expect(closeSpriteBitmapIfUnreferenced(bmpB)).toBe(false);
+    expect(closeB).not.toHaveBeenCalled();
+  });
+
+  it("registerImageSprite với closeOnEvict đóng ImageBitmap bị đẩy ra khi không còn alias", () => {
+    const { bitmap: oldestBmp, closeSpy: closeOldest } = makeClosableBitmap();
+    const { bitmap: sharedBmp, closeSpy: closeShared } = makeClosableBitmap();
+
+    registerImageSprite("/evict/0.webp", oldestBmp);
+    registerImageSprite("/evict/1.webp", sharedBmp);
+    registerImageSprite("/evict/2.webp", sharedBmp);
+    for (let i = 3; i < MAX_IMAGE_SPRITES; i++) {
+      registerImageSprite(`/evict/${i}.webp`, makeSprite(10, 10));
+    }
+
+    // Đẩy /evict/0.webp ra khỏi LRU kèm closeOnEvict -> oldestBmp được close()
+    registerImageSprite("/evict/overflow-1.webp", makeSprite(10, 10), {
+      closeOnEvict: true,
+    });
+    expect(getImageSprite("/evict/0.webp")).toBeNull();
+    expect(closeOldest).toHaveBeenCalledTimes(1);
+
+    // Đẩy /evict/1.webp ra nhưng /evict/2.webp vẫn giữ sharedBmp -> CHƯA close()!
+    registerImageSprite("/evict/overflow-2.webp", makeSprite(10, 10), {
+      closeOnEvict: true,
+    });
+    expect(getImageSprite("/evict/1.webp")).toBeNull();
+    expect(closeShared).not.toHaveBeenCalled();
+
+    // Đẩy nốt /evict/2.webp (đang là phần tử cũ nhất kế tiếp) ra -> sharedBmp hết tham chiếu -> close()!
+    registerImageSprite("/evict/overflow-3.webp", makeSprite(10, 10), {
+      closeOnEvict: true,
+    });
+    expect(getImageSprite("/evict/2.webp")).toBeNull();
+    expect(closeShared).toHaveBeenCalledTimes(1);
   });
 });

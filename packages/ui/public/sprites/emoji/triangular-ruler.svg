@@ -1,0 +1,30 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Thước ê-ke</title>
+  <defs>
+    <linearGradient id="triRule" x1="15%" x2="85%" y1="15%" y2="85%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="55%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+  </defs>
+  <path
+    d="M22 25V99H98Z"
+    fill="#92400e"
+    opacity="0.28"
+    transform="translate(0 5)"
+  />
+  <path
+    d="M22 20V96H98L22 20ZM38 56L62 80H38V56Z"
+    fill="url(#triRule)"
+    fill-rule="evenodd"
+    stroke="#92400e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M22 36H30M22 48H28M22 60H30M22 72H28M22 84H30M36 96V88M48 96V90M60 96V88M72 96V90"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+</svg>

@@ -189,6 +189,7 @@ export {
   type ActiveGestureVisualState,
   type CommitIcon,
   clearAllSprites,
+  closeSpriteBitmapIfUnreferenced,
   drawActiveGestureOverlay,
   drawCentralTargetCard,
   drawCommitButton,
@@ -205,12 +206,15 @@ export {
   getWoodenTokenDockRect,
   MASCOT_POSES,
   MASCOT_SPRITE_FILES,
+  MAX_IMAGE_SPRITES,
   type MascotPose,
   type MascotSprites,
   type PromptZoneOptions,
+  type RegisterImageSpriteOptions,
   registerEmojiSprite,
   registerHeroEmojiSprite,
   registerImageSprite,
+  unregisterImageSprite,
 } from "./render/index.js";
 export { drawMontessoriControlOfErrorPill } from "./render/montessori-feedback.js";
 export { createRng, deriveStream } from "./rng/mulberry32.js";

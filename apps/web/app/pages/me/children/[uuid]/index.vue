@@ -151,7 +151,7 @@
               aria-hidden="true"
               class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border-2 border-surface-200 bg-surface-100 text-3xl dark:border-surface-600 dark:bg-surface-700"
             >
-              {{ resolveAvatarEmoji(child.avatar_id) }}
+              <BrandEmoji :emoji="resolveAvatarEmoji(child.avatar_id)" />
             </div>
             <div class="space-y-1">
               <div class="flex flex-wrap items-center gap-2.5">
@@ -420,6 +420,7 @@
 
 <script lang="ts" setup>
   import { isApiError, normalizeApiError } from "@mindkid/errors/client";
+  import BrandEmoji from "@mindkid/ui/brand-emoji";
   import { computed, onMounted, ref } from "vue";
   import { useApi } from "~/composables/use-api";
   import { resolveAvatarEmoji } from "~/utils/child-avatar";

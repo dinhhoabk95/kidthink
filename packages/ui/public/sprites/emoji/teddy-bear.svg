@@ -1,0 +1,94 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Gấu bông</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="teddyFur" r="70%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="52%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#92400e" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#78350f" opacity="0.28" rx="38" ry="6" />
+  <circle
+    cx="38"
+    cy="24"
+    fill="url(#teddyFur)"
+    r="10"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="82"
+    cy="24"
+    fill="url(#teddyFur)"
+    r="10"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <ellipse
+    cx="29"
+    cy="68"
+    fill="url(#teddyFur)"
+    rx="12"
+    ry="8"
+    stroke="#78350f"
+    stroke-width="3.8"
+    transform="rotate(-28 29 68)"
+  />
+  <ellipse
+    cx="91"
+    cy="68"
+    fill="url(#teddyFur)"
+    rx="12"
+    ry="8"
+    stroke="#78350f"
+    stroke-width="3.8"
+    transform="rotate(28 91 68)"
+  />
+  <ellipse
+    cx="60"
+    cy="78"
+    fill="url(#teddyFur)"
+    rx="25"
+    ry="23"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <ellipse cx="60" cy="80" fill="#fef3c7" rx="14" ry="13" />
+  <circle
+    cx="38"
+    cy="94"
+    fill="url(#teddyFur)"
+    r="11"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <circle cx="38" cy="94" fill="#fef3c7" r="5.5" />
+  <circle
+    cx="82"
+    cy="94"
+    fill="url(#teddyFur)"
+    r="11"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <circle cx="82" cy="94" fill="#fef3c7" r="5.5" />
+  <circle
+    cx="60"
+    cy="41"
+    fill="url(#teddyFur)"
+    r="23"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <ellipse cx="60" cy="46" fill="#fef3c7" rx="10" ry="7.5" />
+  <circle cx="51" cy="37" fill="#1c1917" r="3.4" />
+  <circle cx="69" cy="37" fill="#1c1917" r="3.4" />
+  <ellipse cx="60" cy="44" fill="#451a03" rx="4" ry="2.8" />
+  <path
+    d="M50 59L60 63L50 67ZM70 59L60 63L70 67Z"
+    fill="#ef4444"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="2.6"
+  />
+</svg>

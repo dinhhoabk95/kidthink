@@ -1,0 +1,41 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Máy bay</title>
+  <defs>
+    <linearGradient id="planeBody" x1="15%" x2="85%" y1="15%" y2="85%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#bae6fd" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#1e3a8a" opacity="0.18" rx="34" ry="5" />
+  <path
+    d="M46 53L18 41L25 32L66 42ZM67 74L79 102L88 95L78 54Z"
+    fill="#ef4444"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M27 79L15 75L20 67L35 71ZM41 93L45 105L53 100L49 85Z"
+    fill="#ef4444"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M26 94C21 89 28 76 47 57L74 30C87 17 101 15 104 18C107 21 105 35 92 48L65 75C46 94 33 101 26 94Z"
+    fill="url(#planeBody)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M82 28C88 23 95 22 97 25C99 27 98 34 92 40Z"
+    fill="#38bdf8"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3"
+  />
+  <circle cx="72" cy="48" fill="#38bdf8" r="3.2" />
+  <circle cx="62" cy="58" fill="#38bdf8" r="3.2" />
+  <circle cx="52" cy="68" fill="#38bdf8" r="3.2" />
+</svg>

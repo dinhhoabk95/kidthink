@@ -91,7 +91,7 @@
                 aria-hidden="true"
                 class="w-12 h-12 shrink-0 rounded-2xl bg-surface-100 border-2 border-surface-300 flex items-center justify-center text-2xl"
               >
-                {{ w.theme_emoji }}
+                <BrandEmoji :emoji="w.theme_emoji" />
               </span>
               <div class="min-w-0">
                 <span
@@ -159,7 +159,9 @@
                 :class="getLessonButtonClass(les.status)"
                 @click="openLesson(les.code)"
               >
-                <span aria-hidden="true">{{ les.thumbnail_emoji }}</span>
+                <span aria-hidden="true">
+                  <BrandEmoji :emoji="les.thumbnail_emoji" />
+                </span>
 
                 <!-- Icon huy hiệu nhỏ góc nút -->
                 <div
@@ -201,6 +203,7 @@
 </template>
 
 <script lang="ts" setup>
+  import BrandEmoji from "@mindkid/ui/brand-emoji";
   import { onMounted, ref } from "vue";
   import KidMascot from "~/components/kid/mascot.vue";
   import KidParentLockButton from "~/components/kid/parent-lock-button.vue";

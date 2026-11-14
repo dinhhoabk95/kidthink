@@ -1,0 +1,27 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Khối gạch xếp hình</title>
+  <defs>
+    <linearGradient id="brickClay" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fdba74" />
+      <stop offset="50%" stop-color="#ea580c" />
+      <stop offset="100%" stop-color="#c2410c" />
+    </linearGradient>
+  </defs>
+  <rect fill="#7c2d12" height="68" rx="10" width="92" x="14" y="32" />
+  <rect
+    fill="url(#brickClay)"
+    height="68"
+    rx="10"
+    stroke="#9a3412"
+    stroke-width="4"
+    width="92"
+    x="14"
+    y="26"
+  />
+  <path
+    d="M14 49H106M14 72H106M60 26V49M38 49V72M82 49V72M60 72V94"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+</svg>

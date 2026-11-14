@@ -172,6 +172,7 @@
         preloadGameSession(templateCode),
         preloadSpritesForSession(config.content_pack, {
           includeFlashcardCounters: templateCode === "GT-000",
+          highRes: templateCode === "GT-000",
         }),
       ]);
       if (seq !== startSeq || !canvasRef.value) {

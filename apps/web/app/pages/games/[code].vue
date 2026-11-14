@@ -107,10 +107,9 @@
               <span
                 aria-hidden="true"
                 class="detail-emoji text-5xl flex items-center justify-center w-20 h-20 shrink-0 bg-surface-100 rounded-2xl"
-                >{{
-                  game.thumbnail_emoji || "🎮"
-                }}</span
               >
+                <BrandEmoji hero :emoji="game.thumbnail_emoji || '🎮'" />
+              </span>
               <div class="hero-info min-w-0">
                 <div class="hero-tags flex flex-wrap items-center gap-2 mb-2">
                   <NuxtLink
@@ -242,10 +241,9 @@
                     <span
                       aria-hidden="true"
                       class="preview-placeholder-emoji text-3xl"
-                      >{{
-                        preview.emoji
-                      }}</span
                     >
+                      <BrandEmoji :emoji="preview.emoji" />
+                    </span>
                     <span
                       class="preview-caption text-sm font-semibold text-surface-600"
                       >{{
@@ -378,9 +376,9 @@
                 :key="rel.code"
                 :to="`/games/${rel.code}`"
               >
-                <span aria-hidden="true" class="related-emoji text-3xl">{{
-                  rel.emoji || "🎲"
-                }}</span>
+                <span aria-hidden="true" class="related-emoji text-3xl">
+                  <BrandEmoji :emoji="rel.emoji || '🎲'" />
+                </span>
                 <span
                   class="related-title text-base font-bold text-surface-900"
                   >{{
@@ -414,6 +412,7 @@
     resolveLevelCta,
     type StrandCatalogEntry,
   } from "@mindkid/shared/client";
+  import BrandEmoji from "@mindkid/ui/brand-emoji";
   import { computed, onMounted, ref } from "vue";
   import { useRoute } from "vue-router";
   import { definePageMeta, useFetch, useUserSession } from "#imports";

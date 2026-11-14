@@ -1,0 +1,51 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bảng pha màu</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="palWood" r="70%">
+      <stop offset="0%" stop-color="#fef3c7" />
+      <stop offset="58%" stop-color="#fcd34d" />
+      <stop offset="100%" stop-color="#d97706" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="101" fill="#78350f" opacity="0.24" rx="42" ry="6" />
+  <path
+    d="M60 20C32 20 14 39 14 63C14 86 33 100 57 100C70 100 77 92 75 83C73 75 80 70 89 71C100 72 106 64 106 53C106 33 86 20 60 20ZM56 84C50 84 46 80 46 75C46 70 50 66 56 66C62 66 66 70 66 75C66 80 62 84 56 84Z"
+    fill="url(#palWood)"
+    fill-rule="evenodd"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="36"
+    cy="54"
+    fill="#ef4444"
+    r="7.5"
+    stroke="#7f1d1d"
+    stroke-width="2.5"
+  />
+  <circle
+    cx="50"
+    cy="38"
+    fill="#facc15"
+    r="7.5"
+    stroke="#92400e"
+    stroke-width="2.5"
+  />
+  <circle
+    cx="72"
+    cy="38"
+    fill="#22c55e"
+    r="7.5"
+    stroke="#14532d"
+    stroke-width="2.5"
+  />
+  <circle
+    cx="86"
+    cy="52"
+    fill="#3b82f6"
+    r="7.5"
+    stroke="#1e3a8a"
+    stroke-width="2.5"
+  />
+</svg>

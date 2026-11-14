@@ -1,0 +1,25 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Viên ngọc</title>
+  <defs>
+    <linearGradient id="gemCyan" x1="20%" x2="80%" y1="10%" y2="90%">
+      <stop offset="0%" stop-color="#e0f2fe" />
+      <stop offset="45%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e3a8a" opacity="0.24" rx="28" ry="5" />
+  <path
+    d="M35 24H85L104 48L60 102L16 48Z"
+    fill="url(#gemCyan)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M16 48H104M35 24L44 48L60 102L76 48L85 24M44 48L60 24L76 48"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3"
+  />
+  <path d="M40 30H54L47 43Z" fill="#ffffff" fill-opacity="0.65" />
+</svg>

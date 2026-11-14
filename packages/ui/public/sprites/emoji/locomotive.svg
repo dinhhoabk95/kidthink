@@ -1,0 +1,108 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đầu tàu hoả</title>
+  <defs>
+    <linearGradient id="trainRed" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#f87171" />
+      <stop offset="100%" stop-color="#dc2626" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="100" fill="#78350f" opacity="0.24" rx="46" ry="6" />
+  <circle
+    cx="31"
+    cy="22"
+    fill="#f1f5f9"
+    r="7"
+    stroke="#57534e"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="43"
+    cy="17"
+    fill="#f8fafc"
+    r="5"
+    stroke="#57534e"
+    stroke-width="3"
+  />
+  <rect
+    fill="#475569"
+    height="22"
+    rx="3"
+    stroke="#1e293b"
+    stroke-width="3.8"
+    width="14"
+    x="24"
+    y="32"
+  />
+  <rect
+    fill="url(#trainRed)"
+    height="46"
+    rx="7"
+    stroke="#7f1d1d"
+    stroke-width="4"
+    width="38"
+    x="66"
+    y="34"
+  />
+  <rect
+    fill="#bae6fd"
+    height="18"
+    rx="4"
+    stroke="#1e3a8a"
+    stroke-width="3.2"
+    width="22"
+    x="74"
+    y="42"
+  />
+  <rect
+    fill="#3b82f6"
+    height="30"
+    rx="8"
+    stroke="#1e3a8a"
+    stroke-width="4"
+    width="52"
+    x="18"
+    y="50"
+  />
+  <path
+    d="M18 80L10 92H24Z"
+    fill="#facc15"
+    stroke="#92400e"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="18"
+    cy="62"
+    fill="#fef08a"
+    r="5"
+    stroke="#92400e"
+    stroke-width="3"
+  />
+  <circle
+    cx="35"
+    cy="88"
+    fill="#44403c"
+    r="11"
+    stroke="#1c1917"
+    stroke-width="3.8"
+  />
+  <circle cx="35" cy="88" fill="#fde68a" r="4.5" />
+  <circle
+    cx="62"
+    cy="88"
+    fill="#44403c"
+    r="11"
+    stroke="#1c1917"
+    stroke-width="3.8"
+  />
+  <circle cx="62" cy="88" fill="#fde68a" r="4.5" />
+  <circle
+    cx="89"
+    cy="88"
+    fill="#44403c"
+    r="11"
+    stroke="#1c1917"
+    stroke-width="3.8"
+  />
+  <circle cx="89" cy="88" fill="#fde68a" r="4.5" />
+</svg>

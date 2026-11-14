@@ -132,9 +132,9 @@
             :key="game.level_code"
           >
             <div class="flex min-w-0 flex-1 items-center gap-3">
-              <span aria-hidden="true" class="text-2xl">{{
-                game.thumbnail_emoji
-              }}</span>
+              <span aria-hidden="true" class="text-2xl">
+                <BrandEmoji :emoji="game.thumbnail_emoji" />
+              </span>
               <div class="min-w-0">
                 <p class="font-semibold text-slate-900 text-sm">
                   {{ game.title }}
@@ -441,7 +441,9 @@
           >
             <div>
               <div class="flex items-center justify-between gap-2">
-                <span aria-hidden="true" class="text-2xl">{{ sug.emoji }}</span>
+                <span aria-hidden="true" class="text-2xl">
+                  <BrandEmoji :emoji="sug.emoji" />
+                </span>
                 <span
                   class="rounded-full px-2.5 py-0.5 font-semibold text-sm"
                   :class="
@@ -476,6 +478,7 @@
     type BasicReportPeriod,
     type BasicReportResult,
   } from "@mindkid/shared/client";
+  import BrandEmoji from "@mindkid/ui/brand-emoji";
   import { computed, onMounted, ref } from "vue";
   import { useApi } from "~/composables/use-api";
 
@@ -541,7 +544,3 @@
     fetchReport();
   });
 </script>
-
-<style scoped>
-  /* Scoped styles keeping strictly with design tokens */
-</style>

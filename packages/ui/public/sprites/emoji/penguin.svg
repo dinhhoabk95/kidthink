@@ -1,0 +1,79 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chim cánh cụt</title>
+  <defs>
+    <radialGradient cx="36%" cy="28%" id="pengBody" r="72%">
+      <stop offset="0%" stop-color="#64748b" />
+      <stop offset="52%" stop-color="#334155" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </radialGradient>
+    <linearGradient id="pengBelly" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#e2e8f0" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="102" fill="#475569" opacity="0.28" rx="34" ry="7" />
+  <ellipse
+    cx="44"
+    cy="98"
+    fill="#fb923c"
+    rx="10"
+    ry="5.5"
+    stroke="#9a3412"
+    stroke-width="3.5"
+  />
+  <ellipse
+    cx="76"
+    cy="98"
+    fill="#fb923c"
+    rx="10"
+    ry="5.5"
+    stroke="#9a3412"
+    stroke-width="3.5"
+  />
+  <path
+    d="M27 56C15 62 13 78 20 84C26 86 31 76 31 66Z"
+    fill="url(#pengBody)"
+    stroke="#1e293b"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M93 56C105 62 107 78 100 84C94 86 89 76 89 66Z"
+    fill="url(#pengBody)"
+    stroke="#1e293b"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M60 18C38 18 25 36 25 63C25 87 38 100 60 100C82 100 95 87 95 63C95 36 82 18 60 18Z"
+    fill="url(#pengBody)"
+    stroke="#1e293b"
+    stroke-width="4"
+  />
+  <path
+    d="M60 40C51 35 37 41 37 60C37 82 46 95 60 95C74 95 83 82 83 60C83 41 69 35 60 40Z"
+    fill="url(#pengBelly)"
+  />
+  <circle cx="47" cy="49" fill="#1c1917" r="4.6" />
+  <circle cx="45.6" cy="47.4" fill="#ffffff" r="1.8" />
+  <circle cx="73" cy="49" fill="#1c1917" r="4.6" />
+  <circle cx="71.6" cy="47.4" fill="#ffffff" r="1.8" />
+  <circle cx="39" cy="58" fill="#fb7185" fill-opacity="0.48" r="4.8" />
+  <circle cx="81" cy="58" fill="#fb7185" fill-opacity="0.48" r="4.8" />
+  <path
+    d="M51 56Q60 52 69 56L60 66Z"
+    fill="#fb923c"
+    stroke="#9a3412"
+    stroke-linejoin="round"
+    stroke-width="3"
+  />
+  <ellipse
+    cx="46"
+    cy="28"
+    fill="#ffffff"
+    fill-opacity="0.35"
+    rx="8"
+    ry="3.5"
+    transform="rotate(-22 46 28)"
+  />
+</svg>

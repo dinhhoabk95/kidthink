@@ -68,7 +68,7 @@ describe("BrandEmoji component (@mindkid/ui)", () => {
   it("renders native emoji glyph cleanly when emoji is not yet in custom sprite registry", () => {
     const wrapper = mount(BrandEmoji, {
       props: {
-        emoji: "🐮",
+        emoji: "🛸",
       },
     });
 
@@ -76,7 +76,7 @@ describe("BrandEmoji component (@mindkid/ui)", () => {
     const glyph = wrapper.find(".brand-emoji__glyph");
     expect(glyph.exists()).toBe(true);
     expect(glyph.attributes("aria-hidden")).toBe("true");
-    expect(wrapper.text()).toBe("🐮");
+    expect(wrapper.text()).toBe("🛸");
   });
 
   it("exposes accessible alt text and removes aria-hidden when alt is provided", () => {

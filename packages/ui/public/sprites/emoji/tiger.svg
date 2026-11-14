@@ -1,0 +1,84 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hổ con</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="tigerBody" r="68%">
+      <stop offset="0%" stop-color="#fed7aa" />
+      <stop offset="45%" stop-color="#fb923c" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="72" fill="#7c2d12" opacity="0.32" rx="40" ry="35" />
+  <circle
+    cx="32"
+    cy="34"
+    fill="url(#tigerBody)"
+    r="14"
+    stroke="#9a3412"
+    stroke-width="4"
+  />
+  <circle cx="32" cy="34" fill="#fef3c7" r="7" />
+  <circle
+    cx="88"
+    cy="34"
+    fill="url(#tigerBody)"
+    r="14"
+    stroke="#9a3412"
+    stroke-width="4"
+  />
+  <circle cx="88" cy="34" fill="#fef3c7" r="7" />
+  <ellipse
+    cx="60"
+    cy="67"
+    fill="url(#tigerBody)"
+    rx="40"
+    ry="35"
+    stroke="#9a3412"
+    stroke-width="4"
+  />
+  <path
+    d="M60 33V45M50 35L53 45M70 35L67 45M22 61H32M21 69H30M98 61H88M99 69H90"
+    stroke="#451a03"
+    stroke-linecap="round"
+    stroke-width="4.5"
+  />
+  <ellipse
+    cx="60"
+    cy="77"
+    fill="#fffbeb"
+    rx="19"
+    ry="13"
+    stroke="#9a3412"
+    stroke-width="3"
+  />
+  <ellipse
+    cx="60"
+    cy="71"
+    fill="#f43f5e"
+    rx="5.5"
+    ry="3.8"
+    stroke="#881337"
+    stroke-width="2"
+  />
+  <path
+    d="M60 75V81M52 81C55 85 58 85 60 81C62 85 65 85 68 81"
+    stroke="#451a03"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="2.8"
+  />
+  <circle cx="45" cy="59" fill="#1c1917" r="4.8" />
+  <circle cx="43.5" cy="57.2" fill="#ffffff" r="1.9" />
+  <circle cx="75" cy="59" fill="#1c1917" r="4.8" />
+  <circle cx="73.5" cy="57.2" fill="#ffffff" r="1.9" />
+  <circle cx="35" cy="73" fill="#fb7185" fill-opacity="0.45" r="5" />
+  <circle cx="85" cy="73" fill="#fb7185" fill-opacity="0.45" r="5" />
+  <ellipse
+    cx="42"
+    cy="45"
+    fill="#ffffff"
+    fill-opacity="0.38"
+    rx="7"
+    ry="3.5"
+    transform="rotate(-24 42 45)"
+  />
+</svg>

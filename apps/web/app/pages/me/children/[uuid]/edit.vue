@@ -146,7 +146,7 @@
             ]"
             @click="avatarId = preset.id"
           >
-            {{ preset.emoji }}
+            <BrandEmoji :emoji="preset.emoji" />
           </button>
         </div>
       </fieldset>
@@ -217,6 +217,7 @@
 <script lang="ts" setup>
   import { normalizeApiError } from "@mindkid/errors/client";
   import { deriveAgeBand } from "@mindkid/shared/client";
+  import BrandEmoji from "@mindkid/ui/brand-emoji";
   import { computed, onMounted, ref } from "vue";
   import { useApi } from "~/composables/use-api";
   import { AVATAR_PRESETS } from "~/utils/child-avatar";

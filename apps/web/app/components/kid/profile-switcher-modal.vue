@@ -61,7 +61,7 @@
             aria-hidden="true"
             class="w-12 h-12 rounded-xl bg-surface-100 border-2 border-surface-200 flex items-center justify-center text-3xl shrink-0"
           >
-            {{ resolveAvatarEmoji(child.avatar_id) }}
+            <BrandEmoji :emoji="resolveAvatarEmoji(child.avatar_id)" />
           </div>
 
           <div class="flex flex-col min-w-0 flex-1">
@@ -101,6 +101,7 @@
 </template>
 
 <script lang="ts" setup>
+  import BrandEmoji from "@mindkid/ui/brand-emoji";
   import { ref } from "vue";
   import { useFocusTrap } from "~/composables/play/use-focus-trap";
   import type { KidProfileItem } from "~/composables/play/use-kid-profile";

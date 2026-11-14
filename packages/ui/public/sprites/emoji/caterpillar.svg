@@ -1,0 +1,86 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Sâu xanh</title>
+  <defs>
+    <radialGradient cx="36%" cy="30%" id="catGreen" r="70%">
+      <stop offset="0%" stop-color="#d9f99d" />
+      <stop offset="50%" stop-color="#4ade80" />
+      <stop offset="100%" stop-color="#16a34a" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="98" fill="#14532d" opacity="0.24" rx="44" ry="7" />
+  <circle
+    cx="96"
+    cy="80"
+    fill="url(#catGreen)"
+    r="13"
+    stroke="#14532d"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="78"
+    cy="74"
+    fill="url(#catGreen)"
+    r="16"
+    stroke="#14532d"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="57"
+    cy="78"
+    fill="url(#catGreen)"
+    r="18"
+    stroke="#14532d"
+    stroke-width="3.8"
+  />
+  <path
+    d="M30 43L23 26M42 42L46 25"
+    stroke="#14532d"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="22"
+    cy="24"
+    fill="#facc15"
+    r="4.5"
+    stroke="#92400e"
+    stroke-width="2.5"
+  />
+  <circle
+    cx="47"
+    cy="23"
+    fill="#facc15"
+    r="4.5"
+    stroke="#92400e"
+    stroke-width="2.5"
+  />
+  <circle
+    cx="35"
+    cy="64"
+    fill="url(#catGreen)"
+    r="22"
+    stroke="#14532d"
+    stroke-width="4"
+  />
+  <circle cx="27" cy="60" fill="#1c1917" r="4" />
+  <circle cx="25.8" cy="58.6" fill="#ffffff" r="1.6" />
+  <circle cx="43" cy="60" fill="#1c1917" r="4" />
+  <circle cx="41.8" cy="58.6" fill="#ffffff" r="1.6" />
+  <circle cx="22" cy="69" fill="#fb7185" fill-opacity="0.5" r="4" />
+  <circle cx="48" cy="69" fill="#fb7185" fill-opacity="0.5" r="4" />
+  <path
+    d="M30 71C33 75 38 75 41 71"
+    stroke="#14532d"
+    stroke-linecap="round"
+    stroke-width="2.8"
+  />
+  <ellipse
+    cx="28"
+    cy="49"
+    fill="#ffffff"
+    fill-opacity="0.5"
+    rx="6"
+    ry="2.8"
+    transform="rotate(-22 28 49)"
+  />
+</svg>

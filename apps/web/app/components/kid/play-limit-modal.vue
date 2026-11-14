@@ -46,7 +46,7 @@
             :key="act.title"
           >
             <span class="text-2xl shrink-0" role="img" :aria-label="act.title">
-              {{ act.emoji }}
+              <BrandEmoji decorative :emoji="act.emoji" />
             </span>
             <div>
               <h3 class="font-heading font-bold text-brand-900 text-base">
@@ -126,6 +126,7 @@
 
 <script lang="ts" setup>
   import { normalizeApiError } from "@mindkid/errors/client";
+  import BrandEmoji from "@mindkid/ui/brand-emoji";
   import { ref } from "vue";
   import KidMascot from "~/components/kid/mascot.vue";
   import ParentGateModal from "~/components/parent-gate-modal.vue";

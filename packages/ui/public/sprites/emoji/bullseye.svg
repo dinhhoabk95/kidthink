@@ -1,0 +1,49 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bảng mục tiêu</title>
+  <circle cx="58" cy="67" fill="#7f1d1d" opacity="0.28" r="41" />
+  <circle
+    cx="58"
+    cy="61"
+    fill="#ef4444"
+    r="41"
+    stroke="#7f1d1d"
+    stroke-width="4"
+  />
+  <circle
+    cx="58"
+    cy="61"
+    fill="#fffbeb"
+    r="29"
+    stroke="#7f1d1d"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="58"
+    cy="61"
+    fill="#ef4444"
+    r="18"
+    stroke="#7f1d1d"
+    stroke-width="3"
+  />
+  <circle
+    cx="58"
+    cy="61"
+    fill="#facc15"
+    r="8"
+    stroke="#92400e"
+    stroke-width="2.8"
+  />
+  <path
+    d="M96 23L60 59"
+    stroke="#1e3a8a"
+    stroke-linecap="round"
+    stroke-width="5"
+  />
+  <path
+    d="M88 18L99 21L96 32L85 29Z"
+    fill="#38bdf8"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+</svg>

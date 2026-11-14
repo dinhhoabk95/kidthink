@@ -1,0 +1,55 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hộp quà</title>
+  <defs>
+    <linearGradient id="giftGold" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#78350f" opacity="0.26" rx="38" ry="6" />
+  <path
+    d="M60 36C44 36 34 25 39 18C44 12 56 20 60 34C64 20 76 12 81 18C86 25 76 36 60 36Z"
+    fill="#ef4444"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="url(#giftGold)"
+    height="52"
+    rx="8"
+    stroke="#92400e"
+    stroke-width="4"
+    width="72"
+    x="24"
+    y="50"
+  />
+  <rect
+    fill="#ef4444"
+    height="52"
+    stroke="#7f1d1d"
+    stroke-width="3.6"
+    width="16"
+    x="52"
+    y="50"
+  />
+  <rect
+    fill="url(#giftGold)"
+    height="18"
+    rx="6"
+    stroke="#92400e"
+    stroke-width="4"
+    width="84"
+    x="18"
+    y="35"
+  />
+  <rect
+    fill="#ef4444"
+    height="18"
+    stroke="#7f1d1d"
+    stroke-width="3.6"
+    width="16"
+    x="52"
+    y="35"
+  />
+</svg>

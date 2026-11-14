@@ -1,0 +1,37 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ly sữa</title>
+  <defs>
+    <linearGradient id="milkFill" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#e2e8f0" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#57534e" opacity="0.26" rx="28" ry="6" />
+  <path
+    d="M31 24H89L82 97C81 101 77 103 72 103H48C43 103 39 101 38 97Z"
+    fill="#e0f2fe"
+    stroke="#57534e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M34 44C45 40 55 48 66 44C74 41 80 43 86 44L80 96H40Z"
+    fill="url(#milkFill)"
+  />
+  <ellipse
+    cx="60"
+    cy="24"
+    fill="#f0f9ff"
+    rx="29"
+    ry="5.5"
+    stroke="#57534e"
+    stroke-width="3.8"
+  />
+  <path
+    d="M41 35L45 88"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.8"
+    stroke-width="4"
+  />
+</svg>

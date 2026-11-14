@@ -1,9 +1,11 @@
 import { resolveCustomEmojiSprite } from "@mindkid/emoji";
 import {
+  closeSpriteBitmapIfUnreferenced,
   FLASHCARD_COUNTER_EMOJI_POOL,
   registerEmojiSprite,
   registerHeroEmojiSprite,
   registerImageSprite,
+  unregisterImageSprite,
 } from "@mindkid/game-engine";
 
 export type SpriteScanValue =
@@ -16,15 +18,22 @@ export type SpriteScanValue =
   | readonly SpriteScanValue[]
   | { readonly [key: string]: SpriteScanValue };
 
-export interface PreloadSpritesOptions {
+export interface PreloadItemSpritesOptions {
   readonly includeFlashcardCounters?: boolean;
   readonly dpr?: number;
+  readonly highRes?: boolean;
 }
 
+export type PreloadSpritesOptions = PreloadItemSpritesOptions;
+
 const LOAD_TIMEOUT_MS = 2500;
-const MAX_CACHE_ENTRIES = 256;
-const SVG_RASTER_BASE_PX = 192;
-const SVG_RASTER_MAX_PX = 384;
+const MAX_HERO_CACHE_ENTRIES = 64;
+export const MAX_DECODED_BITMAP_CACHE_ENTRIES = 256;
+export const MIN_RASTER_PX = 120;
+export const STANDARD_RASTER_BASE_PX = 128;
+export const MAX_STANDARD_RASTER_PX = 256;
+export const HIGH_RES_RASTER_BASE_PX = 192;
+export const MAX_HIGH_RES_RASTER_PX = 384;
 
 const PICTOGRAPHIC_REGEX = /\p{Extended_Pictographic}/u;
 const GRAPHEME_SEGMENTER =
@@ -32,9 +41,19 @@ const GRAPHEME_SEGMENTER =
     ? new Intl.Segmenter("vi", { granularity: "grapheme" })
     : null;
 
+interface DecodedBitmapEntry {
+  readonly src: string;
+  readonly promise: Promise<CanvasImageSource>;
+  resolved: CanvasImageSource | null;
+  readonly registeredPaths: Set<string>;
+  evicted: boolean;
+  closed: boolean;
+}
+
 const loadedImageCache = new Map<string, Promise<HTMLImageElement | null>>();
 const rasterizedSvgCache = new Map<string, CanvasImageSource>();
-const decodedBitmapCache = new Map<string, Promise<CanvasImageSource>>();
+const heroBitmapCache = new Map<string, Promise<CanvasImageSource>>();
+const decodedBitmapCache = new Map<string, DecodedBitmapEntry>();
 
 function collectEmojisFromString(text: string, out: Set<string>): void {
   if (!PICTOGRAPHIC_REGEX.test(text)) {
@@ -58,17 +77,32 @@ interface ImageTarget {
 function setBoundedCache<V>(
   cache: Map<string, V>,
   key: string,
-  value: V
+  value: V,
+  maxEntries = MAX_DECODED_BITMAP_CACHE_ENTRIES
 ): void {
   if (cache.has(key)) {
     cache.delete(key);
-  } else if (cache.size >= MAX_CACHE_ENTRIES) {
+  } else if (cache.size >= maxEntries) {
     const oldest = cache.keys().next().value;
     if (oldest !== undefined) {
       cache.delete(oldest);
     }
   }
   cache.set(key, value);
+}
+
+export function resolveSvgRasterSize(dpr: number, highRes = false): number {
+  const clampedDpr = Number.isFinite(dpr) && dpr > 0 ? Math.min(3, dpr) : 1;
+  if (highRes) {
+    return Math.min(
+      MAX_HIGH_RES_RASTER_PX,
+      Math.max(MIN_RASTER_PX, Math.ceil(HIGH_RES_RASTER_BASE_PX * clampedDpr))
+    );
+  }
+  return Math.min(
+    MAX_STANDARD_RASTER_PX,
+    Math.max(MIN_RASTER_PX, Math.ceil(STANDARD_RASTER_BASE_PX * clampedDpr))
+  );
 }
 
 function collectImageTarget(
@@ -174,14 +208,11 @@ function loadHtmlImage(src: string): Promise<HTMLImageElement | null> {
 function rasterizeSvgToCanvas(
   img: HTMLImageElement,
   svgPath: string,
-  dpr: number
+  dpr: number,
+  highRes: boolean
 ): CanvasImageSource {
-  const safeDpr = Number.isFinite(dpr) && dpr > 0 ? dpr : 1;
-  const targetSize = Math.min(
-    SVG_RASTER_MAX_PX,
-    Math.ceil(SVG_RASTER_BASE_PX * Math.max(1, safeDpr))
-  );
-  const cacheKey = `${svgPath}@${targetSize}`;
+  const targetPx = resolveSvgRasterSize(dpr, highRes);
+  const cacheKey = `${svgPath}@${targetPx}`;
   const cached = rasterizedSvgCache.get(cacheKey);
   if (cached) {
     rasterizedSvgCache.delete(cacheKey);
@@ -192,36 +223,103 @@ function rasterizeSvgToCanvas(
     return img;
   }
   const canvas = document.createElement("canvas");
-  canvas.width = targetSize;
-  canvas.height = targetSize;
+  canvas.width = targetPx;
+  canvas.height = targetPx;
   const ctx = canvas.getContext("2d");
   if (!ctx) {
     return img;
   }
-  ctx.drawImage(img, 0, 0, targetSize, targetSize);
+  ctx.drawImage(img, 0, 0, targetPx, targetPx);
   setBoundedCache(rasterizedSvgCache, cacheKey, canvas);
   return canvas;
 }
 
-function decodeBitmapOrImage(
+function decodeHeroBitmapOrImage(
   img: HTMLImageElement,
   src: string
 ): Promise<CanvasImageSource> {
   if (typeof createImageBitmap !== "function") {
     return Promise.resolve(img);
   }
-  const existing = decodedBitmapCache.get(src);
+  const existing = heroBitmapCache.get(src);
   if (existing) {
+    heroBitmapCache.delete(src);
+    heroBitmapCache.set(src, existing);
+    return existing;
+  }
+  const promise = createImageBitmap(img).catch(() => img);
+  setBoundedCache(heroBitmapCache, src, promise, MAX_HERO_CACHE_ENTRIES);
+  return promise;
+}
+
+function disposeDecodedBitmapEntry(entry: DecodedBitmapEntry): void {
+  if (entry.closed || entry.resolved === null) {
+    return;
+  }
+  entry.closed = true;
+  for (const pathKey of entry.registeredPaths) {
+    unregisterImageSprite(pathKey, entry.resolved);
+  }
+  entry.registeredPaths.clear();
+  closeSpriteBitmapIfUnreferenced(entry.resolved);
+}
+
+function evictDecodedBitmapEntry(entry: DecodedBitmapEntry): void {
+  entry.evicted = true;
+  disposeDecodedBitmapEntry(entry);
+}
+
+function acquireDecodedImageEntry(
+  img: HTMLImageElement,
+  src: string
+): DecodedBitmapEntry {
+  const existing = decodedBitmapCache.get(src);
+  if (existing && !existing.evicted) {
     decodedBitmapCache.delete(src);
     decodedBitmapCache.set(src, existing);
     return existing;
   }
-  const promise = createImageBitmap(img).catch(() => img);
-  setBoundedCache(decodedBitmapCache, src, promise);
-  return promise;
+  if (decodedBitmapCache.size >= MAX_DECODED_BITMAP_CACHE_ENTRIES) {
+    const oldestKey = decodedBitmapCache.keys().next().value;
+    if (oldestKey !== undefined) {
+      const oldestEntry = decodedBitmapCache.get(oldestKey);
+      decodedBitmapCache.delete(oldestKey);
+      if (oldestEntry) {
+        evictDecodedBitmapEntry(oldestEntry);
+      }
+    }
+  }
+  const rawPromise: Promise<CanvasImageSource> =
+    typeof createImageBitmap === "function"
+      ? createImageBitmap(img).then(
+          (bmp) => bmp,
+          () => img
+        )
+      : Promise.resolve(img);
+
+  const entry: DecodedBitmapEntry = {
+    src,
+    promise: rawPromise.then((resolved) => {
+      entry.resolved = resolved;
+      if (entry.evicted) {
+        disposeDecodedBitmapEntry(entry);
+      }
+      return resolved;
+    }),
+    resolved: null,
+    registeredPaths: new Set<string>(),
+    evicted: false,
+    closed: false,
+  };
+  decodedBitmapCache.set(src, entry);
+  return entry;
 }
 
-async function preloadEmojiMeta(emoji: string, dpr: number): Promise<void> {
+async function preloadEmojiMeta(
+  emoji: string,
+  dpr: number,
+  highRes: boolean
+): Promise<void> {
   const meta = resolveCustomEmojiSprite(emoji);
   if (!meta) {
     return;
@@ -231,7 +329,7 @@ async function preloadEmojiMeta(emoji: string, dpr: number): Promise<void> {
       if (!img) {
         return;
       }
-      const source = rasterizeSvgToCanvas(img, meta.svgPath, dpr);
+      const source = rasterizeSvgToCanvas(img, meta.svgPath, dpr, highRes);
       registerEmojiSprite(emoji, source);
       registerEmojiSprite(meta.emoji, source);
     }),
@@ -244,7 +342,7 @@ async function preloadEmojiMeta(emoji: string, dpr: number): Promise<void> {
         if (!img) {
           return;
         }
-        const source = await decodeBitmapOrImage(img, heroPath);
+        const source = await decodeHeroBitmapOrImage(img, heroPath);
         registerHeroEmojiSprite(emoji, source);
         registerHeroEmojiSprite(meta.emoji, source);
       })
@@ -259,15 +357,36 @@ async function preloadImageTarget(target: ImageTarget): Promise<void> {
   if (!img) {
     return;
   }
-  const source = await decodeBitmapOrImage(img, target.fetchUrl);
-  for (const key of target.registerKeys) {
-    registerImageSprite(key, source);
+  const entry = acquireDecodedImageEntry(img, target.fetchUrl);
+  const decoded = await entry.promise;
+  // Nếu entry đã bị đẩy ra khỏi LRU trong lúc chờ decode, bitmap đã được đóng —
+  // fallback về HTMLImageElement để ctx.drawImage không bao giờ chạm bitmap đã close().
+  const activeSource: CanvasImageSource = entry.evicted ? img : decoded;
+  for (const rawKey of target.registerKeys) {
+    const key = rawKey.trim();
+    if (!key) {
+      continue;
+    }
+    if (!entry.evicted) {
+      entry.registeredPaths.add(key);
+    }
+    registerImageSprite(key, activeSource);
   }
+}
+
+export function resetItemSpriteCachesForTests(): void {
+  loadedImageCache.clear();
+  rasterizedSvgCache.clear();
+  heroBitmapCache.clear();
+  for (const entry of decodedBitmapCache.values()) {
+    evictDecodedBitmapEntry(entry);
+  }
+  decodedBitmapCache.clear();
 }
 
 export async function preloadSpritesForSession(
   source: SpriteScanValue,
-  options?: PreloadSpritesOptions
+  options?: PreloadItemSpritesOptions
 ): Promise<void> {
   if (typeof window === "undefined" || typeof Image === "undefined") {
     return;
@@ -284,10 +403,11 @@ export async function preloadSpritesForSession(
   }
 
   const dpr = options?.dpr ?? (window.devicePixelRatio || 1);
+  const highRes = options?.highRes === true;
   const tasks: Promise<void>[] = [];
 
   for (const emoji of emojis) {
-    tasks.push(preloadEmojiMeta(emoji, dpr));
+    tasks.push(preloadEmojiMeta(emoji, dpr, highRes));
   }
   for (const [fetchUrl, keys] of images) {
     tasks.push(

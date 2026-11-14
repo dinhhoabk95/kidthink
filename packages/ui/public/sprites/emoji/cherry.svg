@@ -1,0 +1,64 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Quả anh đào</title>
+  <defs>
+    <radialGradient cx="36%" cy="30%" id="cherryRed" r="68%">
+      <stop offset="0%" stop-color="#fda4af" />
+      <stop offset="45%" stop-color="#e11d48" />
+      <stop offset="100%" stop-color="#9f1239" />
+    </radialGradient>
+    <linearGradient id="cherryLeaf" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#86efac" />
+      <stop offset="100%" stop-color="#16a34a" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="40" cy="100" fill="#7f1d1d" opacity="0.26" rx="22" ry="6" />
+  <ellipse cx="81" cy="96" fill="#7f1d1d" opacity="0.26" rx="22" ry="6" />
+  <path
+    d="M40 62C42 40 53 24 66 17C69 34 76 46 81 58"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="4.5"
+  />
+  <path
+    d="M66 19C75 11 94 14 98 25C88 33 74 31 66 19Z"
+    fill="url(#cherryLeaf)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="40"
+    cy="79"
+    fill="url(#cherryRed)"
+    r="22"
+    stroke="#7f1d1d"
+    stroke-width="4"
+  />
+  <circle
+    cx="81"
+    cy="75"
+    fill="url(#cherryRed)"
+    r="22"
+    stroke="#7f1d1d"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="32"
+    cy="70"
+    fill="#ffffff"
+    fill-opacity="0.55"
+    rx="5"
+    ry="8"
+    transform="rotate(-24 32 70)"
+  />
+  <ellipse
+    cx="73"
+    cy="66"
+    fill="#ffffff"
+    fill-opacity="0.55"
+    rx="5"
+    ry="8"
+    transform="rotate(-24 73 66)"
+  />
+</svg>

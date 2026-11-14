@@ -393,7 +393,6 @@
             </div>
           </div>
 
-          <!-- Quick Emoji Reference Guide -->
           <div
             class="p-5 rounded-3xl bg-surface-100 dark:bg-surface-800/60 border border-surface-200 dark:border-surface-700"
           >
@@ -411,7 +410,9 @@
                 :title="`Sao chép ${item.label}`"
                 @click="copyEmoji(item.glyph)"
               >
-                <span class="text-2xl font-emoji">{{ item.glyph }}</span>
+                <span class="text-2xl font-emoji">
+                  <BrandEmoji :emoji="item.glyph" />
+                </span>
                 <span
                   class="text-sm text-surface-600 dark:text-surface-300 font-medium truncate"
                   >{{
@@ -424,8 +425,6 @@
         </div>
       </div>
     </main>
-
-    <!-- Test Play Modal -->
     <div
       aria-modal="true"
       class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
@@ -494,6 +493,7 @@
 
 <script lang="ts" setup>
   import { normalizeApiError } from "@mindkid/errors/client";
+  import BrandEmoji from "@mindkid/ui/brand-emoji";
   import { onBeforeUnmount, onMounted, ref } from "vue";
   import { useRoute } from "vue-router";
   import PublicFooter from "~/components/public-footer.vue";
@@ -501,15 +501,12 @@
   import { useApi } from "~/composables/use-api";
 
   definePageMeta({ layout: false });
-
   type PackScalar = string | number | boolean | null;
-
   interface GT001Option {
     item_id?: string;
     asset: { kind: string; ref: string };
     is_correct?: boolean;
   }
-
   interface CustomGameContentPack {
     prompt?: string;
     options?: GT001Option[];
@@ -520,12 +517,10 @@
       | GT001Option[]
       | undefined;
   }
-
   type CustomGameDifficultyParams = Record<
     string,
     PackScalar | PackScalar[] | undefined
   >;
-
   interface CustomGameData {
     uuid: string;
     templateId: string;
@@ -539,21 +534,17 @@
     status: "draft" | "ready";
     version: number;
   }
-
   interface ValidationReport {
     ok: boolean;
     issues: string[];
     missing: string[];
   }
-
   interface SandboxMessageData {
     type?: string;
   }
-
   const api = useApi();
   const route = useRoute();
   const uuid = String(route.params.uuid || "");
-
   const loading = ref(true);
   const loadError = ref("");
   const saving = ref(false);
@@ -563,7 +554,6 @@
   const playIframeRef = ref<HTMLIFrameElement | null>(null);
   const rawContentPackJson = ref("");
   const ageBandSelection = ref("3-4");
-
   const game = ref<CustomGameData>({
     uuid: "",
     templateId: "GT-001",
@@ -577,13 +567,11 @@
     status: "draft",
     version: 1,
   });
-
   const validationReport = ref<ValidationReport>({
     ok: true,
     issues: [],
     missing: [],
   });
-
   const commonEmojis = [
     { glyph: "🍎", label: "Quả táo" },
     { glyph: "🍌", label: "Quả chuối" },
@@ -594,11 +582,8 @@
     { glyph: "🎈", label: "Bóng bay" },
     { glyph: "🍓", label: "Dâu tây" },
   ];
-
   function copyEmoji(glyph: string): void {
-    navigator.clipboard?.writeText(glyph).catch(() => {
-      // Bỏ qua lỗi khi clipboard bị từ chối quyền
-    });
+    navigator.clipboard?.writeText(glyph).catch(() => undefined);
   }
 
   async function fetchGameDetail() {

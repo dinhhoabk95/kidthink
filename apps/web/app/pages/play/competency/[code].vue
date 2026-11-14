@@ -128,7 +128,7 @@
               :class="palette.iconBgClass"
             >
               <span class="text-4xl sm:text-5xl select-none leading-none">
-                {{ game.thumbnail_emoji }}
+                <BrandEmoji :emoji="game.thumbnail_emoji" />
               </span>
             </div>
 
@@ -176,7 +176,7 @@
               <span
                 class="text-4xl sm:text-5xl select-none leading-none opacity-40"
               >
-                {{ game.thumbnail_emoji }}
+                <BrandEmoji :emoji="game.thumbnail_emoji" />
               </span>
             </div>
 
@@ -219,6 +219,7 @@
    */
   import { getTouchFloor } from "@mindkid/game-engine";
   import { type AccessTier, findCompetency } from "@mindkid/shared/client";
+  import BrandEmoji from "@mindkid/ui/brand-emoji";
   import { computed, onMounted, ref } from "vue";
   import { useUserSession } from "#imports";
   import KidMascot from "~/components/kid/mascot.vue";

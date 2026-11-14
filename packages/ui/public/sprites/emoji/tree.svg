@@ -1,0 +1,34 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cây xanh</title>
+  <defs>
+    <radialGradient cx="38%" cy="28%" id="treeCanopy" r="70%">
+      <stop offset="0%" stop-color="#bbf7d0" />
+      <stop offset="48%" stop-color="#22c55e" />
+      <stop offset="100%" stop-color="#15803d" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#78350f" opacity="0.28" rx="34" ry="6" />
+  <path
+    d="M51 66H69L74 102H46Z"
+    fill="#b45309"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M60 15C73 15 83 23 85 35C96 38 103 48 100 59C98 70 88 76 76 76H44C32 76 22 70 20 59C17 48 24 38 35 35C37 23 47 15 60 15Z"
+    fill="url(#treeCanopy)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="47"
+    cy="31"
+    fill="#ffffff"
+    fill-opacity="0.42"
+    rx="9"
+    ry="4"
+    transform="rotate(-20 47 31)"
+  />
+</svg>

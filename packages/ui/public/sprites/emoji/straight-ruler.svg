@@ -1,0 +1,29 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Thước kẻ</title>
+  <defs>
+    <linearGradient id="woodRule" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#78350f" opacity="0.22" rx="38" ry="5" />
+  <g transform="rotate(-45 60 60)">
+    <rect fill="#92400e" height="30" rx="6" width="96" x="12" y="49" />
+    <rect
+      fill="url(#woodRule)"
+      height="30"
+      rx="6"
+      stroke="#78350f"
+      stroke-width="4"
+      width="96"
+      x="12"
+      y="45"
+    />
+    <path
+      d="M26 45V56M38 45V52M50 45V56M62 45V52M74 45V56M86 45V52M98 45V56"
+      stroke="#78350f"
+      stroke-linecap="round"
+      stroke-width="3.2"
+    />
+  </g>
+</svg>

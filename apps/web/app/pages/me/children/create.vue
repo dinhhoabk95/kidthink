@@ -94,7 +94,7 @@
             ]"
             @click="avatarId = preset.id"
           >
-            {{ preset.emoji }}
+            <BrandEmoji :emoji="preset.emoji" />
           </button>
         </div>
       </fieldset>
@@ -167,6 +167,7 @@
     deriveAgeBand,
     sanitizeRedirectTarget,
   } from "@mindkid/shared/client";
+  import BrandEmoji from "@mindkid/ui/brand-emoji";
   import { computed, ref } from "vue";
   import { useRoute, useRouter } from "vue-router";
 

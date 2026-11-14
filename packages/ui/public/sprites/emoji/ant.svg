@@ -1,0 +1,70 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Kiến nhỏ</title>
+  <defs>
+    <radialGradient cx="36%" cy="30%" id="antBody" r="70%">
+      <stop offset="0%" stop-color="#fb923c" />
+      <stop offset="52%" stop-color="#c2410c" />
+      <stop offset="100%" stop-color="#7c2d12" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="98" fill="#451a03" opacity="0.24" rx="42" ry="7" />
+  <path
+    d="M46 76L38 95M60 76L60 96M74 76L82 95"
+    stroke="#451a03"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M29 44L20 27L13 31M39 43L37 25L44 24"
+    stroke="#451a03"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.5"
+  />
+  <ellipse
+    cx="89"
+    cy="72"
+    fill="url(#antBody)"
+    rx="19"
+    ry="15"
+    stroke="#451a03"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="61"
+    cy="70"
+    fill="url(#antBody)"
+    rx="13"
+    ry="11"
+    stroke="#451a03"
+    stroke-width="4"
+  />
+  <circle
+    cx="35"
+    cy="61"
+    fill="url(#antBody)"
+    r="19"
+    stroke="#451a03"
+    stroke-width="4"
+  />
+  <circle cx="28" cy="58" fill="#ffffff" r="5" />
+  <circle cx="28" cy="58" fill="#1c1917" r="2.8" />
+  <circle cx="42" cy="58" fill="#ffffff" r="5" />
+  <circle cx="42" cy="58" fill="#1c1917" r="2.8" />
+  <circle cx="24" cy="67" fill="#fb7185" fill-opacity="0.48" r="3.8" />
+  <path
+    d="M30 69C33 73 39 73 42 69"
+    stroke="#451a03"
+    stroke-linecap="round"
+    stroke-width="2.6"
+  />
+  <ellipse
+    cx="84"
+    cy="63"
+    fill="#ffffff"
+    fill-opacity="0.38"
+    rx="6"
+    ry="2.8"
+    transform="rotate(-12 84 63)"
+  />
+</svg>

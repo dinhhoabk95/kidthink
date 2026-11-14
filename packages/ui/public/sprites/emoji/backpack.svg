@@ -1,0 +1,58 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ba lô đi học</title>
+  <defs>
+    <linearGradient id="bagRed" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#f87171" />
+      <stop offset="100%" stop-color="#dc2626" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#7f1d1d" opacity="0.26" rx="36" ry="6" />
+  <path
+    d="M46 28V19C46 14 74 14 74 19V28"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="6"
+  />
+  <rect
+    fill="#3b82f6"
+    height="32"
+    rx="8"
+    stroke="#1e3a8a"
+    stroke-width="3.8"
+    width="84"
+    x="18"
+    y="56"
+  />
+  <path
+    d="M26 52C26 34 38 25 60 25C82 25 94 34 94 52V94C94 99 90 102 84 102H36C30 102 26 99 26 94Z"
+    fill="url(#bagRed)"
+    stroke="#7f1d1d"
+    stroke-width="4"
+  />
+  <rect
+    fill="#fef08a"
+    height="28"
+    rx="9"
+    stroke="#92400e"
+    stroke-width="3.8"
+    width="46"
+    x="37"
+    y="64"
+  />
+  <path
+    d="M43 75H77"
+    stroke="#92400e"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+  <rect
+    fill="#3b82f6"
+    height="12"
+    rx="4"
+    stroke="#1e3a8a"
+    stroke-width="3"
+    width="16"
+    x="52"
+    y="42"
+  />
+</svg>

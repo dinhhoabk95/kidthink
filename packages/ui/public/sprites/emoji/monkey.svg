@@ -1,0 +1,67 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Khỉ con</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="monkeyFur" r="70%">
+      <stop offset="0%" stop-color="#d97706" />
+      <stop offset="55%" stop-color="#92400e" />
+      <stop offset="100%" stop-color="#78350f" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="72" fill="#451a03" opacity="0.3" rx="38" ry="34" />
+  <circle
+    cx="22"
+    cy="60"
+    fill="url(#monkeyFur)"
+    r="14"
+    stroke="#451a03"
+    stroke-width="4"
+  />
+  <circle cx="22" cy="60" fill="#fde68a" r="8" />
+  <circle
+    cx="98"
+    cy="60"
+    fill="url(#monkeyFur)"
+    r="14"
+    stroke="#451a03"
+    stroke-width="4"
+  />
+  <circle cx="98" cy="60" fill="#fde68a" r="8" />
+  <circle
+    cx="60"
+    cy="62"
+    fill="url(#monkeyFur)"
+    r="35"
+    stroke="#451a03"
+    stroke-width="4"
+  />
+  <path
+    d="M60 47C55 39 40 40 40 53C40 60 44 64 44 64C37 67 36 77 44 84C52 90 68 90 76 84C84 77 83 67 76 64C76 64 80 60 80 53C80 40 65 39 60 47Z"
+    fill="#ffedd5"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3"
+  />
+  <circle cx="49" cy="55" fill="#1c1917" r="4.5" />
+  <circle cx="47.7" cy="53.4" fill="#ffffff" r="1.8" />
+  <circle cx="71" cy="55" fill="#1c1917" r="4.5" />
+  <circle cx="69.7" cy="53.4" fill="#ffffff" r="1.8" />
+  <circle cx="43" cy="73" fill="#fb7185" fill-opacity="0.45" r="4.5" />
+  <circle cx="77" cy="73" fill="#fb7185" fill-opacity="0.45" r="4.5" />
+  <ellipse cx="56" cy="67" fill="#78350f" rx="2.2" ry="1.6" />
+  <ellipse cx="64" cy="67" fill="#78350f" rx="2.2" ry="1.6" />
+  <path
+    d="M49 76C54 83 66 83 71 76"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+  <ellipse
+    cx="47"
+    cy="34"
+    fill="#ffffff"
+    fill-opacity="0.32"
+    rx="7"
+    ry="3"
+    transform="rotate(-18 47 34)"
+  />
+</svg>

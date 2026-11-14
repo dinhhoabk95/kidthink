@@ -19,7 +19,7 @@
         <div
           class="emoji-box min-h-16 min-w-16 h-16 w-16 rounded-2xl bg-surface-100 flex items-center justify-center text-3xl select-none shrink-0"
         >
-          <span>{{ recommendations.primary.thumbnail_emoji }}</span>
+          <BrandEmoji :emoji="recommendations.primary.thumbnail_emoji" />
         </div>
         <div class="flex flex-col gap-1 min-w-0">
           <h4
@@ -69,7 +69,7 @@
         <div
           class="emoji-box min-h-16 min-w-16 h-16 w-16 rounded-xl bg-surface-100 flex items-center justify-center text-xl select-none shrink-0"
         >
-          <span>{{ alt.thumbnail_emoji }}</span>
+          <BrandEmoji :emoji="alt.thumbnail_emoji" />
         </div>
         <div class="flex flex-col flex-1 min-w-0">
           <p class="text-base font-bold text-surface-800 truncate font-heading">
@@ -98,6 +98,8 @@
 </template>
 
 <script lang="ts" setup>
+  import BrandEmoji from "@mindkid/ui/brand-emoji";
+
   interface RecommendationItem {
     level_code: string;
     title: string;

@@ -1,0 +1,61 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hoa hồng</title>
+  <defs>
+    <radialGradient cx="40%" cy="30%" id="roseRed" r="70%">
+      <stop offset="0%" stop-color="#fda4af" />
+      <stop offset="48%" stop-color="#e11d48" />
+      <stop offset="100%" stop-color="#9f1239" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#14532d" opacity="0.24" rx="26" ry="5" />
+  <path
+    d="M60 72V104"
+    stroke="#15803d"
+    stroke-linecap="round"
+    stroke-width="6"
+  />
+  <path
+    d="M60 88C46 80 34 83 31 92C42 98 53 96 60 88Z"
+    fill="#4ade80"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.5"
+  />
+  <path
+    d="M60 84C74 76 86 79 89 88C78 94 67 92 60 84Z"
+    fill="#22c55e"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.5"
+  />
+  <path
+    d="M40 66L32 75L52 74M80 66L88 75L68 74"
+    fill="#22c55e"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.5"
+  />
+  <path
+    d="M29 44C29 25 44 17 60 17C76 17 91 25 91 44C91 64 77 75 60 75C43 75 29 64 29 44Z"
+    fill="url(#roseRed)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M42 36C49 27 71 27 78 36C74 47 46 47 42 36ZM48 34C54 41 66 41 72 34M37 48C48 59 72 59 83 48"
+    stroke="#7f1d1d"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <ellipse
+    cx="44"
+    cy="27"
+    fill="#ffffff"
+    fill-opacity="0.45"
+    rx="6"
+    ry="2.8"
+    transform="rotate(-18 44 27)"
+  />
+</svg>

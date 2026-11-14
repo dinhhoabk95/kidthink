@@ -1,0 +1,28 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Quả trứng</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="eggCream" r="70%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="62%" stop-color="#fef3c7" />
+      <stop offset="100%" stop-color="#e7e5e4" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#6b635b" opacity="0.28" rx="28" ry="6" />
+  <path
+    d="M60 17C42 17 27 48 27 72C27 92 41 103 60 103C79 103 93 92 93 72C93 48 78 17 60 17Z"
+    fill="url(#eggCream)"
+    stroke="#6b635b"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="45"
+    cy="48"
+    fill="#ffffff"
+    fill-opacity="0.82"
+    rx="6"
+    ry="13"
+    transform="rotate(-18 45 48)"
+  />
+  <circle cx="73" cy="76" fill="#d6d3d1" r="2.5" />
+  <circle cx="66" cy="85" fill="#d6d3d1" r="2" />
+</svg>

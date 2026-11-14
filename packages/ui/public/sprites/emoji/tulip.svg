@@ -1,0 +1,54 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hoa tulip</title>
+  <defs>
+    <linearGradient id="tulipPink" x1="20%" x2="80%" y1="10%" y2="90%">
+      <stop offset="0%" stop-color="#fbcfe8" />
+      <stop offset="48%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#be123c" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#14532d" opacity="0.24" rx="30" ry="5" />
+  <path
+    d="M60 66V103"
+    stroke="#15803d"
+    stroke-linecap="round"
+    stroke-width="6"
+  />
+  <path
+    d="M58 101C36 95 25 77 29 63C42 70 52 84 58 101Z"
+    fill="#4ade80"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M62 101C84 95 95 77 91 63C78 70 68 84 62 101Z"
+    fill="#22c55e"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M44 33L60 16L76 33V58H44Z"
+    fill="#fb7185"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M31 24C45 27 55 39 60 56C65 39 75 27 89 24C92 49 81 68 60 68C39 68 28 49 31 24Z"
+    fill="url(#tulipPink)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="42"
+    cy="45"
+    fill="#ffffff"
+    fill-opacity="0.48"
+    rx="4.5"
+    ry="10"
+    transform="rotate(-10 42 45)"
+  />
+</svg>

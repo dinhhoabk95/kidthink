@@ -1,0 +1,76 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Gấu túi</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="koalaFur" r="70%">
+      <stop offset="0%" stop-color="#f1f5f9" />
+      <stop offset="52%" stop-color="#cbd5e1" />
+      <stop offset="100%" stop-color="#94a3b8" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="73" fill="#475569" opacity="0.28" rx="37" ry="33" />
+  <circle
+    cx="25"
+    cy="51"
+    fill="url(#koalaFur)"
+    r="19"
+    stroke="#57534e"
+    stroke-width="4"
+  />
+  <circle cx="25" cy="51" fill="#fbcfe8" fill-opacity="0.7" r="10" />
+  <circle
+    cx="95"
+    cy="51"
+    fill="url(#koalaFur)"
+    r="19"
+    stroke="#57534e"
+    stroke-width="4"
+  />
+  <circle cx="95" cy="51" fill="#fbcfe8" fill-opacity="0.7" r="10" />
+  <ellipse
+    cx="60"
+    cy="67"
+    fill="url(#koalaFur)"
+    rx="36"
+    ry="33"
+    stroke="#57534e"
+    stroke-width="4"
+  />
+  <circle cx="43" cy="60" fill="#1c1917" r="4.8" />
+  <circle cx="41.5" cy="58.2" fill="#ffffff" r="1.9" />
+  <circle cx="77" cy="60" fill="#1c1917" r="4.8" />
+  <circle cx="75.5" cy="58.2" fill="#ffffff" r="1.9" />
+  <circle cx="35" cy="73" fill="#fb7185" fill-opacity="0.45" r="5.5" />
+  <circle cx="85" cy="73" fill="#fb7185" fill-opacity="0.45" r="5.5" />
+  <ellipse
+    cx="60"
+    cy="68"
+    fill="#334155"
+    rx="8.5"
+    ry="12"
+    stroke="#1e293b"
+    stroke-width="2.8"
+  />
+  <ellipse
+    cx="57.5"
+    cy="63"
+    fill="#ffffff"
+    fill-opacity="0.45"
+    rx="2.5"
+    ry="4"
+  />
+  <path
+    d="M53 84C56 87 64 87 67 84"
+    stroke="#475569"
+    stroke-linecap="round"
+    stroke-width="2.8"
+  />
+  <ellipse
+    cx="47"
+    cy="44"
+    fill="#ffffff"
+    fill-opacity="0.65"
+    rx="8"
+    ry="3.8"
+    transform="rotate(-20 47 44)"
+  />
+</svg>

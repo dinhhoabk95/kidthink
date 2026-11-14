@@ -1,0 +1,37 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Lá bay</title>
+  <defs>
+    <linearGradient id="flutLeaf" x1="15%" x2="85%" y1="15%" y2="85%">
+      <stop offset="0%" stop-color="#bef264" />
+      <stop offset="50%" stop-color="#4ade80" />
+      <stop offset="100%" stop-color="#15803d" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="101" fill="#14532d" opacity="0.2" rx="34" ry="5" />
+  <path
+    d="M26 88L40 74"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="5"
+  />
+  <path
+    d="M36 78C26 52 45 24 92 20C88 67 62 86 36 78Z"
+    fill="url(#flutLeaf)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M38 76L82 30M54 60L50 45M67 46L63 34M57 57L72 60"
+    stroke="#14532d"
+    stroke-linecap="round"
+    stroke-opacity="0.65"
+    stroke-width="3"
+  />
+  <path
+    d="M22 48C32 42 40 46 46 40M64 92C76 86 86 92 96 84"
+    stroke="#0f766e"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+</svg>

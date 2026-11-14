@@ -1,0 +1,44 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bóng đèn sáng kiến</title>
+  <defs>
+    <radialGradient cx="42%" cy="35%" id="bulbGlow" r="68%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="45%" stop-color="#fef08a" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#57534e" opacity="0.24" rx="20" ry="4" />
+  <g stroke="#b45309" stroke-linecap="round" stroke-width="4">
+    <path d="M60 10V18M22 30L29 35M98 30L91 35M16 58H24M104 58H96" />
+  </g>
+  <rect
+    fill="#cbd5e1"
+    height="18"
+    rx="5"
+    stroke="#57534e"
+    stroke-width="3.8"
+    width="28"
+    x="46"
+    y="84"
+  />
+  <path
+    d="M52 102C54 106 66 106 68 102"
+    fill="#94a3b8"
+    stroke="#57534e"
+    stroke-width="3.5"
+  />
+  <path
+    d="M60 23C41 23 28 36 28 53C28 65 36 73 44 80L46 85H74L76 80C84 73 92 65 92 53C92 36 79 23 60 23Z"
+    fill="url(#bulbGlow)"
+    stroke="#92400e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M52 84V66L60 72L68 66V84"
+    stroke="#c2410c"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.5"
+  />
+</svg>

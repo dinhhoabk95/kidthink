@@ -1,0 +1,41 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đồng xu vàng</title>
+  <defs>
+    <radialGradient cx="36%" cy="30%" id="coinGold" r="70%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="48%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#d97706" />
+    </radialGradient>
+  </defs>
+  <circle
+    cx="60"
+    cy="65"
+    fill="#b45309"
+    r="42"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <circle
+    cx="60"
+    cy="57"
+    fill="url(#coinGold)"
+    r="42"
+    stroke="#92400e"
+    stroke-width="4"
+  />
+  <circle
+    cx="60"
+    cy="57"
+    fill="none"
+    r="31"
+    stroke="#b45309"
+    stroke-width="3"
+  />
+  <path
+    d="M60 39L65 51L78 52L68 61L71 73L60 66L49 73L52 61L42 52L55 51Z"
+    fill="#fef08a"
+    stroke="#92400e"
+    stroke-linejoin="round"
+    stroke-width="2.8"
+  />
+</svg>

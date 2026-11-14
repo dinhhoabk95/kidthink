@@ -1,0 +1,47 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đàn ghi-ta</title>
+  <defs>
+    <radialGradient cx="40%" cy="35%" id="guitWood" r="70%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="55%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="48" cy="105" fill="#78350f" opacity="0.25" rx="34" ry="5" />
+  <path
+    d="M62 46L93 15L103 25L72 56Z"
+    fill="#78350f"
+    stroke="#451a03"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M91 17L99 9L110 20L102 28Z"
+    fill="#b45309"
+    stroke="#451a03"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M71 49C62 40 49 43 46 53C44 60 36 60 28 62C13 67 10 85 22 98C35 110 53 107 58 92C60 84 60 76 67 74C77 71 80 58 71 49Z"
+    fill="url(#guitWood)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="52"
+    cy="68"
+    fill="#451a03"
+    r="10"
+    stroke="#fef3c7"
+    stroke-opacity="0.9"
+    stroke-width="3"
+  />
+  <path
+    d="M31 81L41 91"
+    stroke="#451a03"
+    stroke-linecap="round"
+    stroke-width="5.5"
+  />
+</svg>

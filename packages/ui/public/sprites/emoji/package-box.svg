@@ -1,0 +1,32 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chiếc hộp</title>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.26" rx="40" ry="6" />
+  <path
+    d="M60 18L100 38L60 58L20 38Z"
+    fill="#fde68a"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M20 38L60 58V102L20 82Z"
+    fill="#f59e0b"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M100 38L60 58V102L100 82Z"
+    fill="#d97706"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M38 29L78 49V67L66 73V55L26 35Z"
+    fill="#fef3c7"
+    stroke="#92400e"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+</svg>

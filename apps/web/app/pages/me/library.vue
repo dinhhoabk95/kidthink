@@ -247,7 +247,7 @@
               class="w-11 h-11 rounded-2xl bg-surface-50 dark:bg-surface-700 border border-surface-200 dark:border-surface-600 flex items-center justify-center text-lg shrink-0"
             >
               <span aria-hidden="true" v-if="item.thumbnail_emoji">
-                {{ item.thumbnail_emoji }}
+                <BrandEmoji :emoji="item.thumbnail_emoji" />
               </span>
               <UIcon
                 aria-hidden="true"
@@ -374,7 +374,7 @@
                 class="text-xl shrink-0"
                 v-if="rec.thumbnail_emoji"
               >
-                {{ rec.thumbnail_emoji }}
+                <BrandEmoji :emoji="rec.thumbnail_emoji" />
               </span>
               <UIcon
                 aria-hidden="true"
@@ -489,6 +489,7 @@
 
 <script lang="ts" setup>
   import { normalizeApiError } from "@mindkid/errors/client";
+  import BrandEmoji from "@mindkid/ui/brand-emoji";
   import { computed, ref, watch } from "vue";
   import { useRouter } from "vue-router";
   import { definePageMeta, useFetch } from "#imports";
@@ -663,6 +664,3 @@
     }
   }
 </script>
-
-<style scoped>
-</style>

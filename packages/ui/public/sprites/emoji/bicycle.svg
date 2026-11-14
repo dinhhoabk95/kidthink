@@ -1,0 +1,50 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Xe đạp</title>
+  <ellipse cx="60" cy="99" fill="#57534e" opacity="0.22" rx="46" ry="6" />
+  <circle
+    cx="31"
+    cy="77"
+    fill="#f8fafc"
+    r="18"
+    stroke="#44403c"
+    stroke-width="5"
+  />
+  <circle cx="31" cy="77" fill="#44403c" r="4.5" />
+  <circle
+    cx="89"
+    cy="77"
+    fill="#f8fafc"
+    r="18"
+    stroke="#44403c"
+    stroke-width="5"
+  />
+  <circle cx="89" cy="77" fill="#44403c" r="4.5" />
+  <path
+    d="M31 77L50 49H78L57 77ZM78 49L89 77M50 49L46 39"
+    stroke="#dc2626"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="5.5"
+  />
+  <path
+    d="M39 39H55"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="6"
+  />
+  <path
+    d="M74 36H84L78 49"
+    stroke="#44403c"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="4.5"
+  />
+  <circle
+    cx="57"
+    cy="77"
+    fill="#fbbf24"
+    r="6"
+    stroke="#92400e"
+    stroke-width="3.2"
+  />
+</svg>

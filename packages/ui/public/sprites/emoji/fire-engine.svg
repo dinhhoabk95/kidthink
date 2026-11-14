@@ -1,0 +1,83 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Xe cứu hoả</title>
+  <defs>
+    <linearGradient id="fireRed" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fca5a5" />
+      <stop offset="50%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#b91c1c" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="99" fill="#7f1d1d" opacity="0.24" rx="46" ry="6" />
+  <rect
+    fill="#f8fafc"
+    height="10"
+    rx="4"
+    stroke="#57534e"
+    stroke-width="3.5"
+    width="60"
+    x="44"
+    y="26"
+  />
+  <path
+    d="M54 26V36M68 26V36M82 26V36M94 26V36"
+    stroke="#57534e"
+    stroke-width="3"
+  />
+  <rect
+    fill="#38bdf8"
+    height="9"
+    rx="4"
+    stroke="#1e3a8a"
+    stroke-width="3"
+    width="11"
+    x="25"
+    y="28"
+  />
+  <path
+    d="M14 54L22 37H104C107 37 109 39 109 42V85H14Z"
+    fill="url(#fireRed)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M21 55L26 43H42V55Z"
+    fill="#bae6fd"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3"
+  />
+  <path
+    d="M18 68H105"
+    stroke="#fef08a"
+    stroke-linecap="round"
+    stroke-opacity="0.92"
+    stroke-width="4"
+  />
+  <circle
+    cx="66"
+    cy="55"
+    fill="#fde68a"
+    r="7"
+    stroke="#92400e"
+    stroke-width="3"
+  />
+  <circle
+    cx="35"
+    cy="86"
+    fill="#44403c"
+    r="11"
+    stroke="#1c1917"
+    stroke-width="3.8"
+  />
+  <circle cx="35" cy="86" fill="#f8fafc" r="4.5" />
+  <circle
+    cx="85"
+    cy="86"
+    fill="#44403c"
+    r="11"
+    stroke="#1c1917"
+    stroke-width="3.8"
+  />
+  <circle cx="85" cy="86" fill="#f8fafc" r="4.5" />
+</svg>

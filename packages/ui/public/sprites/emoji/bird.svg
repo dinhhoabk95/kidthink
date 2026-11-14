@@ -1,0 +1,68 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chim non</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="birdBlue" r="70%">
+      <stop offset="0%" stop-color="#bae6fd" />
+      <stop offset="50%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="58" cy="98" fill="#1e3a8a" opacity="0.24" rx="34" ry="7" />
+  <path
+    d="M48 92L44 103M66 92L70 103"
+    stroke="#9a3412"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <path
+    d="M26 67L12 58L18 75Z"
+    fill="url(#birdBlue)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M54 27C49 18 57 14 62 24C67 16 73 20 67 28"
+    fill="#38bdf8"
+    stroke="#1e3a8a"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <ellipse
+    cx="58"
+    cy="62"
+    fill="url(#birdBlue)"
+    rx="35"
+    ry="31"
+    stroke="#1e3a8a"
+    stroke-width="4"
+  />
+  <ellipse cx="66" cy="71" fill="#f0f9ff" rx="20" ry="17" />
+  <path
+    d="M36 60C46 53 64 59 60 74C52 81 35 76 36 60Z"
+    fill="#0ea5e9"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.5"
+  />
+  <circle cx="74" cy="51" fill="#1c1917" r="4.8" />
+  <circle cx="72.6" cy="49.3" fill="#ffffff" r="1.9" />
+  <circle cx="69" cy="61" fill="#fb7185" fill-opacity="0.48" r="4.8" />
+  <path
+    d="M90 52L106 58L90 65Z"
+    fill="#fbbf24"
+    stroke="#92400e"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <ellipse
+    cx="50"
+    cy="40"
+    fill="#ffffff"
+    fill-opacity="0.52"
+    rx="8"
+    ry="3.5"
+    transform="rotate(-18 50 40)"
+  />
+</svg>
