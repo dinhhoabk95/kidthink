@@ -67,6 +67,24 @@ export class RuleSystem<TItem = string> {
     return this.totalSwitches;
   }
 
+  getCurrentRuleIndex(): number {
+    return this.currentRuleIndex;
+  }
+
+  getCorrectInCurrentRule(): number {
+    return this.correctInCurrentRule;
+  }
+
+  getSignalProgress(): number {
+    if (!this.isSignalingSwitch || this.signalDurationMs <= 0) {
+      return 0;
+    }
+    return Math.max(
+      0,
+      Math.min(1, this.signalElapsedMs / this.signalDurationMs)
+    );
+  }
+
   /**
    * Đánh giá một lựa chọn theo luật đang hiệu lực.
    * Nếu đang trong trạng thái báo đổi luật, từ chối nhận hành động.
