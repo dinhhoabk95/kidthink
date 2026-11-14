@@ -1,13 +1,13 @@
 import { z } from "zod";
 import { assetSchema } from "#src/contracts/shared-fields";
-import { defineTemplate } from "#src/contracts/types";
 import {
   ACTION_CORRECT,
   ACTION_IGNORED,
   ACTION_RETRY,
   type ActionResult,
+  defineTemplate,
   type GameAction,
-} from "#src/game-session";
+} from "#src/contracts/types";
 
 const GT000AssetKindSchema = z.enum(["glyph", "word", "image"]);
 

@@ -104,3 +104,49 @@ export function defineTemplate<
 >(def: TemplateDefinition<C, D>): TemplateDefinition<C, D> {
   return def;
 }
+
+export type FeedbackKind =
+  | "none"
+  | "amber_soft"
+  | "pop_celebrate"
+  | "level_celebrate";
+
+export type GameActionValue =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | object;
+
+export type TelemetryEventData = Record<string, GameActionValue>;
+
+/** A player interaction handed to `validateAction`. */
+export interface GameAction {
+  type: string;
+  data: GameActionValue;
+}
+
+/** Verdict of `validateAction` — pure, no side effects (BR-ENG-13). */
+export interface ActionResult {
+  valid: boolean;
+  feedback: FeedbackKind;
+}
+
+/** Action the session does not handle — no feedback owed. */
+export const ACTION_IGNORED: ActionResult = Object.freeze({
+  valid: false,
+  feedback: "none",
+});
+
+/** Correct answer — small pop at the touch point (BR-ENG-08). */
+export const ACTION_CORRECT: ActionResult = Object.freeze({
+  valid: true,
+  feedback: "pop_celebrate",
+});
+
+/** Wrong answer — amber nudge, never punitive, never silent (BR-ENG-07). */
+export const ACTION_RETRY: ActionResult = Object.freeze({
+  valid: false,
+  feedback: "amber_soft",
+});

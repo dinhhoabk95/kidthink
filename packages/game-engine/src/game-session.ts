@@ -1,4 +1,9 @@
-import type { AgeBand } from "./contracts/types.js";
+import type {
+  ActionResult,
+  AgeBand,
+  GameAction,
+  TelemetryEventData,
+} from "./contracts/types.js";
 import type { EngineView, Gesture, SystemBeat } from "./interaction.js";
 import { DEFAULT_LOGIC_SPACE, type LogicSpace } from "./layout/constants.js";
 import type { ZoneRect } from "./layout/stage-zones.js";
@@ -16,38 +21,17 @@ import type { RenderSystem } from "./systems/render-system";
 import type { SFXType } from "./systems/sfx-engine.js";
 
 export type {
+  ActionResult,
+  FeedbackKind,
+  GameAction,
+  GameActionValue,
+  TelemetryEventData,
+} from "./contracts/types.js";
+export type {
   HintDemoStep,
   HintLevel,
   HintTarget,
 } from "./systems/hint-ladder.js";
-
-export type FeedbackKind =
-  | "none"
-  | "amber_soft"
-  | "pop_celebrate"
-  | "level_celebrate";
-
-export type GameActionValue =
-  | string
-  | number
-  | boolean
-  | null
-  | undefined
-  | object;
-
-export type TelemetryEventData = Record<string, GameActionValue>;
-
-/** A player interaction handed to `validateAction`. */
-export interface GameAction {
-  type: string;
-  data: GameActionValue;
-}
-
-/** Verdict of `validateAction` — pure, no side effects (BR-ENG-13). */
-export interface ActionResult {
-  valid: boolean;
-  feedback: FeedbackKind;
-}
 
 /** Action the session does not handle — no feedback owed. */
 export const ACTION_IGNORED: ActionResult = Object.freeze({

@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { assetSchema, promptFields } from "#src/contracts/shared-fields";
-import { defineTemplate } from "#src/contracts/types";
-import type { GameAction } from "#src/game-session";
+import { defineTemplate, type GameAction } from "#src/contracts/types";
 import type { KeywordAsset } from "#src/labels/spoken-keyword";
 import type { RenderAsset } from "#src/render/types";
 import {
