@@ -113,6 +113,7 @@ const PRIMITIVE_MODULES: readonly string[] = [
   "render/gt-002-shapes.ts",
   "render/gt-003-shapes.ts",
   "render/gt-004-shapes.ts",
+  "render/gt-030-shapes.ts",
 ];
 
 function checkSessionDrawLines(

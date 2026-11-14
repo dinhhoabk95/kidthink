@@ -9,11 +9,14 @@
  * nhiều hàng ở khung hẹp. Vật đo dài đúng bằng dải (`BR-E030-02`).
  */
 
-import { SLOT_GAP_PX } from "#src/layout/constants";
+import type { AgeBand } from "#src/contracts/types";
+import { resolveTouchFloor, SLOT_GAP_PX } from "#src/layout/constants";
+import { insetDrawSize, legacyStageArea } from "#src/layout/slot-fit";
 import { computeStageCellSlots } from "#src/layout/stage-targets";
 import type { ZoneRect } from "#src/layout/stage-zones";
-import { computeTraySourceSlots } from "#src/layout/tray-layout";
+import { computeTraySourceSlots, pickTrayZones } from "#src/layout/tray-layout";
 import type { Slot } from "#src/layout/types";
+import { getWoodenTokenDockRect } from "#src/render/index.js";
 
 /** Cao thân vật đo trên dải. */
 const OBJECT_H_PX = 80;
@@ -146,5 +149,57 @@ export function computeMeasureStageSlots(input: MeasureZonesInput): Slot[] {
     stripSlot(stage, unitCount, unit, stripTop + stripHitH / 2, touchFloor),
     ...source,
     ...options,
+  ];
+}
+
+const LEGACY_TRAY_H_PX = 116;
+const LEGACY_TRAY_BOTTOM_PX = 8;
+
+export interface GT030ZoneHost {
+  readonly content: { readonly object: { readonly length_in_units: number } };
+  readonly cssPerLogic?: number;
+  readonly displayOptions: readonly { readonly option_id: string }[];
+  readonly logicSpace: { readonly w: number; readonly h: number };
+  readonly stageRect?: ZoneRect;
+  readonly trayRect?: ZoneRect;
+}
+
+export interface GT030Zones {
+  readonly framed: boolean;
+  readonly stage: ZoneRect;
+  readonly tray: ZoneRect;
+}
+
+export function measureGT030Zones(host: GT030ZoneHost): GT030Zones {
+  const zones = pickTrayZones(host.stageRect, host.trayRect);
+  if (zones) {
+    return { ...zones, framed: true };
+  }
+  const dock = getWoodenTokenDockRect(host.logicSpace);
+  const ty = host.logicSpace.h - LEGACY_TRAY_BOTTOM_PX - LEGACY_TRAY_H_PX;
+  const tray: ZoneRect = { ...dock, y: ty, h: LEGACY_TRAY_H_PX };
+  const area = legacyStageArea(host.logicSpace);
+  return {
+    stage: { ...area, h: Math.max(0, tray.y - area.y) },
+    tray,
+    framed: false,
+  };
+}
+
+export function computeGT030Slots(
+  host: GT030ZoneHost,
+  band: AgeBand
+): readonly Slot[] {
+  const zones = measureGT030Zones(host);
+  const slots = computeMeasureStageSlots({
+    unitCount: host.content.object.length_in_units,
+    optionCount: host.displayOptions.length,
+    stage: zones.stage,
+    tray: zones.tray,
+    touchFloor: resolveTouchFloor(band, host.cssPerLogic),
+  });
+  return [
+    ...slots.slice(0, SOURCE_SLOT),
+    ...insetDrawSize(slots.slice(SOURCE_SLOT), zones.stage),
   ];
 }
