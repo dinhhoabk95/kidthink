@@ -1,42 +1,19 @@
 import { z } from "zod";
 import { assetSchema, promptFields } from "#src/contracts/shared-fields";
 import { defineTemplate, STANDARD_SCORING } from "#src/contracts/types";
-
-const GT033PaletteItemSchema = z.object({
-  color_id: z.string().min(1),
-  asset: assetSchema(),
-  name_vi: z.string().optional(),
-});
-
-function isWeavePairConsistent(
-  a: string,
-  b: string,
-  dist: number,
-  period: number
-): boolean {
-  return dist % period === 0 ? a === b : a !== b;
-}
+import {
+  areWeaveCellsValid as checkWeaveCellsValid,
+  isWeaveLineValid as checkWeaveLineValid,
+  solveWeaveGrid as findWeaveSolutions,
+  extractWeaveCol as getWeaveCol,
+  extractWeaveRow as getWeaveRow,
+} from "./weave-rules.js";
 
 export function isWeaveLineValid(
   line: readonly (string | null)[],
   period: number
 ): boolean {
-  if (period < 2) {
-    return false;
-  }
-  for (let i = 0; i < line.length; i++) {
-    const a = line[i];
-    if (!a) {
-      continue;
-    }
-    for (let j = i + 1; j < line.length; j++) {
-      const b = line[j];
-      if (b && !isWeavePairConsistent(a, b, j - i, period)) {
-        return false;
-      }
-    }
-  }
-  return true;
+  return checkWeaveLineValid(line, period);
 }
 
 export function extractWeaveRow(
@@ -44,11 +21,7 @@ export function extractWeaveRow(
   cols: number,
   row: number
 ): (string | null)[] {
-  const line: (string | null)[] = [];
-  for (let c = 0; c < cols; c++) {
-    line.push(cells[row * cols + c] ?? null);
-  }
-  return line;
+  return getWeaveRow(cells, cols, row);
 }
 
 export function extractWeaveCol(
@@ -57,11 +30,7 @@ export function extractWeaveCol(
   cols: number,
   col: number
 ): (string | null)[] {
-  const line: (string | null)[] = [];
-  for (let r = 0; r < rows; r++) {
-    line.push(cells[r * cols + col] ?? null);
-  }
-  return line;
+  return getWeaveCol(cells, rows, cols, col);
 }
 
 export function areWeaveCellsValid(
@@ -70,35 +39,7 @@ export function areWeaveCellsValid(
   cells: readonly (string | null)[],
   period: number
 ): boolean {
-  if (cells.length !== rows * cols) {
-    return false;
-  }
-  for (let r = 0; r < rows; r++) {
-    if (!isWeaveLineValid(extractWeaveRow(cells, cols, r), period)) {
-      return false;
-    }
-  }
-  for (let c = 0; c < cols; c++) {
-    if (!isWeaveLineValid(extractWeaveCol(cells, rows, cols, c), period)) {
-      return false;
-    }
-  }
-  return true;
-}
-
-function isWeavePlacementValid(
-  board: readonly (string | null)[],
-  rows: number,
-  cols: number,
-  cellIdx: number,
-  period: number
-): boolean {
-  const r = Math.floor(cellIdx / cols);
-  const c = cellIdx % cols;
-  return (
-    isWeaveLineValid(extractWeaveRow(board, cols, r), period) &&
-    isWeaveLineValid(extractWeaveCol(board, rows, cols, c), period)
-  );
+  return checkWeaveCellsValid(rows, cols, cells, period);
 }
 
 export function solveWeaveGrid(
@@ -108,40 +49,14 @@ export function solveWeaveGrid(
   cells: readonly (string | null)[],
   maxSolutions = 2
 ): string[][] {
-  const period = paletteIds.length;
-  if (!areWeaveCellsValid(rows, cols, cells, period)) {
-    return [];
-  }
-  const board: (string | null)[] = [...cells];
-  const blanks: number[] = [];
-  for (let i = 0; i < board.length; i++) {
-    if (board[i] === null) {
-      blanks.push(i);
-    }
-  }
-
-  const solutions: string[][] = [];
-  const backtrack = (blankIdx: number): void => {
-    if (solutions.length >= maxSolutions) {
-      return;
-    }
-    const cellIdx = blanks[blankIdx];
-    if (cellIdx === undefined) {
-      solutions.push(board.map((c) => c ?? ""));
-      return;
-    }
-    for (const colorId of paletteIds) {
-      board[cellIdx] = colorId;
-      if (isWeavePlacementValid(board, rows, cols, cellIdx, period)) {
-        backtrack(blankIdx + 1);
-      }
-    }
-    board[cellIdx] = null;
-  };
-
-  backtrack(0);
-  return solutions;
+  return findWeaveSolutions(rows, cols, paletteIds, cells, maxSolutions);
 }
+
+const GT033PaletteItemSchema = z.object({
+  color_id: z.string().min(1),
+  asset: assetSchema(),
+  name_vi: z.string().optional(),
+});
 
 export const GT033ContentSchema = z
   .object({
