@@ -1,190 +1,138 @@
-import { getNouns, pickOne, VALID_GENERATOR_THEMES } from "./helpers.js";
+import type {
+  GT024Content,
+  GT024Difficulty,
+} from "#src/templates/GT-024/template.js";
+import { pickOne, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
 interface ShapePreset {
-  name: string;
-  points: Array<{ x: number; y: number }>;
+  readonly emoji: string;
+  readonly name: string;
+  readonly pts: readonly number[];
 }
 
 const SHAPE_PRESETS: ShapePreset[] = [
   {
     name: "Hình tam giác",
-    points: [
-      { x: 480, y: 120 },
-      { x: 680, y: 420 },
-      { x: 280, y: 420 },
-      { x: 480, y: 120 },
-    ],
+    emoji: "🔺",
+    pts: [480, 120, 680, 420, 280, 420, 480, 120],
   },
   {
     name: "Hình chữ nhật",
-    points: [
-      { x: 300, y: 150 },
-      { x: 660, y: 150 },
-      { x: 660, y: 390 },
-      { x: 300, y: 390 },
-      { x: 300, y: 150 },
-    ],
+    emoji: "🟧",
+    pts: [300, 150, 660, 150, 660, 390, 300, 390, 300, 150],
   },
   {
     name: "Hình vuông",
-    points: [
-      { x: 340, y: 130 },
-      { x: 620, y: 130 },
-      { x: 620, y: 410 },
-      { x: 340, y: 410 },
-      { x: 340, y: 130 },
-    ],
+    emoji: "🟦",
+    pts: [340, 130, 620, 130, 620, 410, 340, 410, 340, 130],
   },
   {
     name: "Hình thoi",
-    points: [
-      { x: 480, y: 110 },
-      { x: 680, y: 270 },
-      { x: 480, y: 430 },
-      { x: 280, y: 270 },
-      { x: 480, y: 110 },
-    ],
+    emoji: "🔶",
+    pts: [480, 110, 680, 270, 480, 430, 280, 270, 480, 110],
+  },
+  {
+    name: "Ngôi sao",
+    emoji: "⭐",
+    pts: [480, 120, 592, 464, 299, 251, 661, 251, 368, 464, 480, 120],
   },
   {
     name: "Hình ngũ giác",
-    points: [
-      { x: 480, y: 110 },
-      { x: 680, y: 240 },
-      { x: 600, y: 430 },
-      { x: 360, y: 430 },
-      { x: 280, y: 240 },
-      { x: 480, y: 110 },
-    ],
+    emoji: "⬟",
+    pts: [480, 110, 680, 240, 600, 430, 360, 430, 280, 240, 480, 110],
   },
   {
     name: "Hình lục giác",
-    points: [
-      { x: 380, y: 120 },
-      { x: 580, y: 120 },
-      { x: 680, y: 270 },
-      { x: 580, y: 420 },
-      { x: 380, y: 420 },
-      { x: 280, y: 270 },
-      { x: 380, y: 120 },
-    ],
+    emoji: "⬡",
+    pts: [380, 120, 580, 120, 680, 270, 580, 420, 380, 420, 280, 270, 380, 120],
   },
   {
     name: "Ngôi nhà",
-    points: [
-      { x: 480, y: 110 },
-      { x: 660, y: 230 },
-      { x: 660, y: 430 },
-      { x: 300, y: 430 },
-      { x: 300, y: 230 },
-      { x: 480, y: 110 },
-    ],
+    emoji: "🏠",
+    pts: [480, 110, 660, 230, 660, 430, 300, 430, 300, 230, 480, 110],
   },
   {
     name: "Mũi tên",
-    points: [
-      { x: 480, y: 110 },
-      { x: 640, y: 240 },
-      { x: 540, y: 240 },
-      { x: 540, y: 430 },
-      { x: 420, y: 430 },
-      { x: 420, y: 240 },
-      { x: 320, y: 240 },
-      { x: 480, y: 110 },
+    emoji: "⬆️",
+    pts: [
+      480, 110, 640, 240, 540, 240, 540, 430, 420, 430, 420, 240, 320, 240, 480,
+      110,
     ],
   },
-  {
-    name: "Chữ V",
-    points: [
-      { x: 320, y: 140 },
-      { x: 480, y: 420 },
-      { x: 640, y: 140 },
-    ],
-  },
+  { name: "Chữ V", emoji: "✌️", pts: [320, 140, 480, 420, 640, 140] },
   {
     name: "Chữ Z",
-    points: [
-      { x: 320, y: 140 },
-      { x: 640, y: 140 },
-      { x: 320, y: 420 },
-      { x: 640, y: 420 },
-    ],
+    emoji: "⚡",
+    pts: [320, 140, 640, 140, 320, 420, 640, 420],
   },
   {
     name: "Số 4",
-    points: [
-      { x: 540, y: 120 },
-      { x: 320, y: 320 },
-      { x: 640, y: 320 },
-      { x: 540, y: 120 },
-      { x: 540, y: 440 },
-    ],
+    emoji: "4️⃣",
+    pts: [540, 120, 320, 320, 640, 320, 540, 120, 540, 440],
   },
 ];
 
-export const GT024Generator: LevelGenerator = {
+function resolveBaseTolerance(levelDiff: number): number {
+  if (levelDiff <= 2) {
+    return 46;
+  }
+  return levelDiff <= 4 ? 38 : 32;
+}
+
+export const GT024Generator: LevelGenerator<GT024Content, GT024Difficulty> = {
   engine: "GT-024",
   axes: {
     age_band: ["5-6"],
     what: ["motor", "geometry", "path", "writing"],
     theme: [...VALID_GENERATOR_THEMES],
   },
-  generate({ rng, vocabulary }) {
+  generate({ rng, escalation_step }) {
     const preset = pickOne(rng, SHAPE_PRESETS);
-
-    // Thêm độ lệch ngẫu nhiên về vị trí và tỉ lệ
-    const dx = rng.nextInt(61) - 30; // -30..+30
-    const dy = rng.nextInt(41) - 20; // -20..+20
-    const scalePercent = 90 + rng.nextInt(21); // 90..110%
-    const scale = scalePercent / 100;
-
+    const dx = rng.nextInt(41) - 20;
+    const dy = rng.nextInt(25) - 12;
+    const scale = (92 + rng.nextInt(15)) / 100;
     const centerX = 480;
     const centerY = 270;
 
-    const waypoints = preset.points.map((pt, idx) => {
-      const rx = Math.round(centerX + (pt.x - centerX) * scale + dx);
-      const ry = Math.round(centerY + (pt.y - centerY) * scale + dy);
-      // Safe margin 48px trên canvas 960x540
+    let distinctCounter = 0;
+    const waypoints: GT024Content["waypoints"] = [];
+    const total = Math.floor(preset.pts.length / 2);
+    for (let idx = 0; idx < total; idx++) {
+      const px = preset.pts[idx * 2] ?? centerX;
+      const py = preset.pts[idx * 2 + 1] ?? centerY;
+      const rx = Math.round(centerX + (px - centerX) * scale + dx);
+      const ry = Math.round(centerY + (py - centerY) * scale + dy);
       const clampedX = Math.max(64, Math.min(896, rx));
       const clampedY = Math.max(64, Math.min(476, ry));
-
-      return {
+      const prevSame = waypoints.find(
+        (w) => w.x === clampedX && w.y === clampedY
+      );
+      const label = prevSame ? prevSame.label : String(++distinctCounter);
+      waypoints.push({
         id: `p${idx + 1}`,
         x: clampedX,
         y: clampedY,
         order: idx,
-        label: `${idx + 1}`,
-      };
-    });
-
-    // Kiểm tra hình học: mọi điểm nằm trọn vẹn trong vùng an toàn
-    const isInsideSafeArea = waypoints.every(
-      (p) => p.x >= 48 && p.x <= 912 && p.y >= 48 && p.y <= 492
-    );
-    if (!isInsideSafeArea) {
-      throw new Error(
-        "GT-024 geometry check failed: waypoints exceed safe area boundaries"
-      );
+        label,
+      });
     }
 
-    const nouns = getNouns(vocabulary, 1);
-    const guideNoun = nouns[0];
-    const guideAsset = guideNoun
-      ? { kind: "emoji" as const, ref: guideNoun.emoji_ref }
-      : undefined;
+    const levelDiff = Math.max(1, Math.min(5, escalation_step ?? 2));
+    const tolerancePx = resolveBaseTolerance(levelDiff) + rng.nextInt(7);
 
     return {
       content_pack: {
         prompt: `Bé hãy nối các điểm theo thứ tự để vẽ ${preset.name} nhé!`,
         shape_name: preset.name,
-        guide_asset: guideAsset,
+        guide_asset: { kind: "emoji", ref: preset.emoji },
         waypoints,
       },
       difficulty_params: {
         item_count: waypoints.length,
-        tolerance_px: 35 + rng.nextInt(15),
+        tolerance_px: tolerancePx,
         show_numbered_dots: true,
-        show_guide_lines: true,
+        show_guide_lines: levelDiff < 5,
         hint_after_ms: 8000,
         allow_retry: true,
       },
