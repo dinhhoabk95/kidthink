@@ -1,7 +1,3 @@
-import {
-  formatNumberWord,
-  formatSpokenLabel,
-} from "@mindkid/shared/preschool-terminology";
 import type { AgeBand } from "#src/contracts/types";
 import {
   ACTION_CORRECT,
@@ -9,30 +5,31 @@ import {
   ACTION_RETRY,
   type ActionResult,
   type GameAction,
+  type HintDemoStep,
+  type HintLevel,
+  type HintTarget,
   TemplateGameSession,
 } from "#src/game-session";
-import type {
-  EngineView,
-  EntityVisual,
-  Gesture,
-  ViewEntity,
-} from "#src/interaction";
-import { resolveAssetLabels } from "#src/labels/spoken-keyword.js";
+import type { EngineView, Gesture } from "#src/interaction";
 import { coinDiameter, coinTierOf } from "#src/layout/coin-tiers";
 import { resolveTouchFloor } from "#src/layout/constants";
-import {
-  findHitSlotIndex,
-  isPointInSlot,
-  TAP_TOLERANCE_PX,
-} from "#src/layout/hit-test.js";
+import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test.js";
 import { resolveLayout } from "#src/layout/registry";
 import { insetDrawSize, splitCaption } from "#src/layout/slot-fit";
+import type { ZoneRect } from "#src/layout/stage-zones";
 import {
   computeStageTargetSlot,
   computeTraySourceSlots,
   pickTrayZones,
 } from "#src/layout/tray-layout";
 import type { Slot } from "#src/layout/types";
+import {
+  drawGT031CoinTrayDecor,
+  drawGT031DepositedStack,
+  drawGT031SolutionGhost,
+  drawGT031TargetDecor,
+  drawGT031TotalMeter,
+} from "#src/render/gt-031-shapes";
 import {
   drawMarketStall,
   drawMontessoriCoin,
@@ -49,40 +46,65 @@ import {
   updateParticles,
 } from "#src/render/index";
 import type { MascotPose } from "#src/render/mascot";
+import { spaceOf } from "#src/render/type-scale";
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
-  type GT031Content,
-  type GT031Difficulty,
-  pickCoinHint,
-} from "./template";
+  buildDepositedCoinViews,
+  clearDepositAnchor,
+  computeCoinTrayBox,
+  computeDepositedStackLayout,
+  computeSolutionGhostPills,
+  computeSolutionSubset,
+  computeTargetDecorLayout,
+  computeTotalMeterDots,
+  computeTotalMeterRect,
+  deleteGT031VisualState,
+  derangeCoins,
+  extractCoinIdFromData,
+  type GT031Coin,
+  getGT031VisualState,
+  markDepositAnchor,
+  resetGT031VisualState,
+  resolveHintDemoSequence,
+  resolveHintTargetForLevel,
+  resolveNextHintStep,
+  sampleDisplayedTotal,
+  samplePiggyElapsedMs,
+  sampleWrongIntensity,
+  startCounterAnim,
+} from "#src/templates/GT-031/layout";
+import type {
+  GT031Content,
+  GT031Difficulty,
+} from "#src/templates/GT-031/template";
+import {
+  buildGT031EngineView,
+  resolveGT031DisplayAsset,
+  resolveGT031DropAction,
+} from "#src/templates/GT-031/view";
 
-/** Cạnh lớn nhất của thẻ giá / lợn đất giữa sân khấu. */
 const PAYMENT_TARGET_MAX_PX = 160;
-/** Nháy hổ phách ở ô tổng sau một lần trả sai (ms). */
 const WRONG_PAY_MS = 1200;
-/** Bỏ/gỡ xu: hợp lệ nhưng không báo đúng sai — chốt mới là lúc chấm. */
-const QUIET_OK: ActionResult = Object.freeze({
-  valid: true,
-  feedback: "none",
-});
-const RE_DIGITS = /^[0-9]+$/;
-/** Đệm hai bên thẻ giá trong sân khấu. */
+const QUIET_OK: ActionResult = Object.freeze({ valid: true, feedback: "none" });
 const PAYMENT_TARGET_PAD_PX = 32;
-
-/** Số chấm tối đa của hàng tiến độ. */
 const MONEY_PROGRESS_MAX_DOTS = 12;
 
-interface GT031ActionPayload {
-  readonly coin_id?: string;
-  readonly id?: string;
-}
+const DEPOSIT_ACTION_TYPES = new Set([
+  "deposit_coin",
+  "place_coin",
+  "tap_coin",
+  "select_coin",
+  "drag_coin",
+]);
+const REMOVE_ACTION_TYPES = new Set([
+  "remove_coin",
+  "undo_coin",
+  "withdraw_coin",
+]);
 
-/** Khung chuyện đọc một lần ở vòng đầu (`BR-E031-08`, `BR-FBK-16`). */
 export const GT031_STORY_LINE =
   "Heo Đất đi chợ quê, bé gom xu bỏ vào bụng Heo cho đủ tiền mua nhé, gom xong thì bấm trả!";
-
-/** Mascot động viên ngắn sau lần trả chưa đủ (`BR-E031-08`). */
 export const GT031_ENCOURAGE_MS = 1500;
 
 export class GT031Session extends TemplateGameSession<
@@ -90,19 +112,15 @@ export class GT031Session extends TemplateGameSession<
   GT031Difficulty
 > {
   override readonly needsTray = true;
+  override readonly usesPromptZone = true;
+  override readonly needsCommit = true;
 
-  /** Số vật nguồn trong khay của vòng — shell đo chiều cao khay (`BR-PSZ-13`). */
   override get trayItemCount(): number {
     return this.content.coins.length;
   }
-
-  /** Giá xu / tên màu vẽ dưới thân vật: khay chừa dải nhãn (`BR-PSZ-13`). */
   override get trayHasLabels(): boolean {
     return true;
   }
-  override readonly usesPromptZone = true;
-  /** Trẻ tự bấm "trả tiền" để chốt; gom đủ tổng không tự thắng (`BR-E031-05`). */
-  override readonly needsCommit = true;
 
   degradation: DegradationState | null = null;
   depositedCoinIds: string[] = [];
@@ -110,47 +128,99 @@ export class GT031Session extends TemplateGameSession<
   isWin = false;
 
   private particles: Particle[] = [];
-  private lastFrameMs = 0;
-  /** Đồng hồ khung lúc xu gần nhất rơi vào heo, cho nhịp nảy (`BR-E031-12`). */
-  private lastDepositMs = Number.NEGATIVE_INFINITY;
-  private wrongPayUntilMs = 0;
   private encourageRemainingMs = 0;
-  /** Sàn chạm của band vòng này, để đo cỡ xu nhỏ nhất (`BR-E031-11`). */
   private coinTouchFloor = 0;
+  private orderedCoins: readonly GT031Coin[] = [];
+  private replayRound = 0;
+
+  private getTrayCoins(): readonly GT031Coin[] {
+    if (this.orderedCoins.length === this.content.coins.length) {
+      return this.orderedCoins;
+    }
+    return derangeCoins(this.content.coins, this.layoutSeed, this.replayRound);
+  }
+
+  getOrderedCoins(): readonly GT031Coin[] {
+    return this.getTrayCoins();
+  }
 
   override storyLine(): string {
     return GT031_STORY_LINE;
   }
 
-  /**
-   * Chỉ động viên sau lần trả chưa đủ. Bỏ hay gỡ xu không đổi dáng: dáng mascot
-   * theo tổng tiền là báo đúng sai trước khi trẻ chốt (`BR-E031-05`).
-   */
   override mascotMood(): MascotPose | null {
-    return this.encourageRemainingMs > 0 && !this.isWon ? "encourage" : null;
+    const visual = getGT031VisualState(this);
+    if (visual.isClosedWrong || this.isWon) {
+      return null;
+    }
+    return this.encourageRemainingMs > 0 ? "encourage" : null;
   }
 
-  /** Nút trả tiền sáng khi lợn đã có ít nhất một xu. */
   override canCommit(): boolean {
+    const visual = getGT031VisualState(this);
+    if (this.isWin || this.isWon || visual.isClosedWrong) {
+      return false;
+    }
     return this.depositedCoinIds.length > 0;
   }
 
+  override isAcceptingInput(): boolean {
+    const visual = getGT031VisualState(this);
+    return !(this.isWin || this.isWon || visual.isClosedWrong);
+  }
+
+  override destroy(): void {
+    deleteGT031VisualState(this);
+    this.particles = [];
+    super.destroy();
+  }
+
+  override onHintCleared(): void {
+    const visual = getGT031VisualState(this);
+    visual.hintTargetId = null;
+    visual.hintLevel = 0;
+  }
+
+  setPointerOver(x: number, y: number): void {
+    if (!this.isAcceptingInput()) {
+      this.clearPointerOver();
+      return;
+    }
+    const visual = getGT031VisualState(this);
+    const coins = this.getTrayCoins();
+    const coinSlots = this.slots.slice(1, 1 + coins.length);
+    const index = findHitSlotIndex(coinSlots, x, y, "circle", TAP_TOLERANCE_PX);
+    const coin = coins[index];
+    visual.hoveredCoinId = coin ? coin.coin_id : null;
+  }
+
+  clearPointerOver(): void {
+    getGT031VisualState(this).hoveredCoinId = null;
+  }
+
   update(deltaMs: number): void {
+    const visual = getGT031VisualState(this);
+    visual.simMs += deltaMs;
     if (this.encourageRemainingMs > 0) {
       this.encourageRemainingMs = Math.max(
         0,
         this.encourageRemainingMs - deltaMs
       );
     }
-    this.lastFrameMs += deltaMs;
-    if (this.wrongPayUntilMs > 0 && this.lastFrameMs >= this.wrongPayUntilMs) {
-      this.wrongPayUntilMs = 0;
+    if (this.particles.length > 0) {
+      this.particles = updateParticles(this.particles);
     }
   }
 
   setupEntities(): void {
-    this.lastDepositMs = Number.NEGATIVE_INFINITY;
-    this.wrongPayUntilMs = 0;
+    resetGT031VisualState(this);
+    this.replayRound += 1;
+    this.orderedCoins = derangeCoins(
+      this.content.coins,
+      this.layoutSeed,
+      this.replayRound,
+      this.orderedCoins.length > 0 ? this.orderedCoins : undefined
+    );
     this.encourageRemainingMs = 0;
     this.depositedCoinIds = [];
     this.currentTotal = 0;
@@ -163,41 +233,128 @@ export class GT031Session extends TemplateGameSession<
     });
   }
 
-  override getHintTargetIndex(): number | null {
-    if (this.isWin || this.isWon) {
+  override getHintTarget(): HintTarget | null {
+    if (!this.isAcceptingInput()) {
       return null;
     }
-    const hint = pickCoinHint(
-      this.content.coins,
+    const step = resolveNextHintStep(
+      this.getTrayCoins(),
       this.depositedCoinIds,
-      this.content.target_amount
+      this.content.target_amount,
+      this.difficulty.exact_change
     );
-    // Vượt đích mà hint không chỉ xu nào: gỡ xu nạp gần nhất (`BR-E031-05`).
-    const coinId =
-      hint?.coin_id ??
-      (this.currentTotal > this.content.target_amount
-        ? this.depositedCoinIds.at(-1)
-        : undefined);
-    if (!coinId) {
+    if (step.kind === "submit") {
+      return { kind: "action" };
+    }
+    return super.getHintTarget();
+  }
+
+  override getHintTargetIndex(): number | null {
+    if (!this.isAcceptingInput()) {
       return null;
     }
-    const coinIdx = this.content.coins.findIndex((c) => c.coin_id === coinId);
+    const coins = this.getTrayCoins();
+    const step = resolveNextHintStep(
+      coins,
+      this.depositedCoinIds,
+      this.content.target_amount,
+      this.difficulty.exact_change
+    );
+    if (!step.coinId || step.kind === "submit") {
+      return null;
+    }
+    const coinIdx = coins.findIndex((c) => c.coin_id === step.coinId);
     const slot = this.sourceSlots[coinIdx];
     return slot ? slot.index : null;
   }
 
-  /** Bước đúng là kéo xu gợi ý vào thẻ giá (slot đích luôn là slot 0). */
   override getHintDestinationIndex(): number | null {
     const index = this.getHintTargetIndex();
-    const coinId =
-      this.content.coins[
-        this.sourceSlots.findIndex((slot) => slot.index === index)
-      ]?.coin_id;
-    // Gỡ xu ra chỉ là một cú chạm, không có đích để kéo tới.
-    if (index === null || !coinId || this.depositedCoinIds.includes(coinId)) {
+    if (index === null || index === 0) {
+      return null;
+    }
+    const coins = this.getTrayCoins();
+    const coinIdx = this.sourceSlots.findIndex((slot) => slot.index === index);
+    const coin = coins[coinIdx];
+    if (!coin || this.depositedCoinIds.includes(coin.coin_id)) {
       return null;
     }
     return this.slots[0] ? 0 : null;
+  }
+
+  override getHintTargetForLevel(level: HintLevel): HintTarget | null {
+    if (!this.isAcceptingInput()) {
+      return null;
+    }
+    const visual = getGT031VisualState(this);
+    const coins = this.getTrayCoins();
+    visual.hintLevel = level;
+    visual.hintTargetId = resolveHintTargetForLevel(
+      level,
+      coins,
+      this.depositedCoinIds,
+      this.content.target_amount,
+      this.difficulty.exact_change
+    );
+    const step = resolveNextHintStep(
+      coins,
+      this.depositedCoinIds,
+      this.content.target_amount,
+      this.difficulty.exact_change
+    );
+    if (step.kind === "submit") {
+      return { kind: "action" };
+    }
+    if (!step.coinId) {
+      return null;
+    }
+    if (level === 1) {
+      return { kind: "region", ids: ["current-total", "payment-target"] };
+    }
+    if (level === 2) {
+      return { kind: "region", ids: [step.coinId] };
+    }
+    const coinIdx = coins.findIndex((c) => c.coin_id === step.coinId);
+    const slot = this.sourceSlots[coinIdx];
+    if (!slot) {
+      return null;
+    }
+    return step.kind === "deposit"
+      ? { kind: "slot", index: slot.index, toIndex: 0 }
+      : { kind: "slot", index: slot.index };
+  }
+
+  override getHintDemoSequence(
+    level: HintLevel
+  ): readonly HintDemoStep[] | null {
+    if (!this.isAcceptingInput() || level < 3) {
+      return null;
+    }
+    const coins = this.getTrayCoins();
+    const seqSteps = resolveHintDemoSequence(
+      level,
+      coins,
+      this.depositedCoinIds,
+      this.content.target_amount,
+      this.difficulty.exact_change
+    );
+    const steps: HintDemoStep[] = [];
+    for (const step of seqSteps) {
+      if (!step.coinId || step.kind === "submit") {
+        break;
+      }
+      const coinIdx = coins.findIndex((c) => c.coin_id === step.coinId);
+      const slot = this.sourceSlots[coinIdx];
+      if (!slot) {
+        continue;
+      }
+      steps.push(
+        step.kind === "remove"
+          ? { from: slot.index }
+          : { from: slot.index, to: 0 }
+      );
+    }
+    return steps.length >= 2 ? steps : null;
   }
 
   protected computeSlots(band: AgeBand): readonly Slot[] {
@@ -205,7 +362,6 @@ export class GT031Session extends TemplateGameSession<
     const zones = pickTrayZones(this.stageRect, this.trayRect);
     if (zones) {
       const touchFloor = this.coinTouchFloor;
-      // Dải đầu sân khấu dành cho hàng chấm tiến độ; thẻ giá nằm ở phần thân.
       const { body } = splitCaption(zones.stage);
       const size = Math.max(
         touchFloor,
@@ -234,24 +390,9 @@ export class GT031Session extends TemplateGameSession<
       targetCount: 1,
       logic: this.logicSpace,
     });
-    // Session đọc slot 0 là thẻ giá, 1.. là xu; layout cũ để thẻ giá ở cuối.
     const target = laidOut.filter((slot) => slot.role === "target");
     const coins = laidOut.filter((slot) => slot.role !== "target");
     return [...target, ...coins].map((slot, index) => ({ ...slot, index }));
-  }
-
-  private validateDepositAction(coinId: string): ActionResult {
-    const coin = this.content.coins.find((c) => c.coin_id === coinId);
-    if (!coin) {
-      return ACTION_IGNORED;
-    }
-
-    if (this.depositedCoinIds.includes(coinId)) {
-      return ACTION_IGNORED;
-    }
-
-    // Vượt đích không bị chặn: báo đúng/sai chỉ khi trẻ bấm trả (`BR-E031-05`).
-    return QUIET_OK;
   }
 
   private isPaymentEnough(): boolean {
@@ -260,65 +401,31 @@ export class GT031Session extends TemplateGameSession<
       : this.currentTotal >= this.content.target_amount;
   }
 
-  private validatePayAction(): ActionResult {
-    if (!this.canCommit()) {
-      return ACTION_IGNORED;
-    }
-    return this.isPaymentEnough() ? ACTION_CORRECT : ACTION_RETRY;
-  }
-
-  private validateRemoveAction(coinId?: string): ActionResult {
-    if (this.depositedCoinIds.length === 0) {
-      return ACTION_IGNORED;
-    }
-
-    const targetId = coinId ?? this.depositedCoinIds.at(-1);
-    if (!targetId) {
-      return ACTION_IGNORED;
-    }
-
-    if (!this.depositedCoinIds.includes(targetId)) {
-      return ACTION_IGNORED;
-    }
-
-    return QUIET_OK;
-  }
-
   validateAction(action: GameAction): ActionResult {
-    if (this.isWin || this.isWon) {
+    if (!this.isAcceptingInput()) {
       return ACTION_IGNORED;
     }
-
-    const type = action.type;
-    const data = (
-      typeof action.data === "object" && action.data !== null ? action.data : {}
-    ) as GT031ActionPayload;
-
-    if (
-      type === "deposit_coin" ||
-      type === "place_coin" ||
-      type === "tap_coin" ||
-      type === "select_coin" ||
-      type === "drag_coin"
-    ) {
-      const coinId = data.coin_id ?? data.id ?? "";
-      return this.validateDepositAction(coinId);
+    const coinId = extractCoinIdFromData(action.data);
+    if (DEPOSIT_ACTION_TYPES.has(action.type)) {
+      return this.canDepositCoin(coinId) ? QUIET_OK : ACTION_IGNORED;
     }
-
-    if (
-      type === "remove_coin" ||
-      type === "undo_coin" ||
-      type === "withdraw_coin"
-    ) {
-      const coinId = data.coin_id ?? data.id;
-      return this.validateRemoveAction(coinId);
+    if (REMOVE_ACTION_TYPES.has(action.type)) {
+      const targetId = coinId ?? this.depositedCoinIds.at(-1);
+      return targetId && this.depositedCoinIds.includes(targetId)
+        ? QUIET_OK
+        : ACTION_IGNORED;
     }
-
-    if (type === "pay") {
-      return this.validatePayAction();
+    if (action.type === "pay" && this.canCommit()) {
+      return this.isPaymentEnough() ? ACTION_CORRECT : ACTION_RETRY;
     }
-
     return ACTION_IGNORED;
+  }
+
+  private canDepositCoin(coinId: string | null): boolean {
+    if (!coinId || this.depositedCoinIds.includes(coinId)) {
+      return false;
+    }
+    return this.content.coins.some((c) => c.coin_id === coinId);
   }
 
   private commitDepositCoin(coinId: string): void {
@@ -326,12 +433,13 @@ export class GT031Session extends TemplateGameSession<
     if (!coin || this.depositedCoinIds.includes(coinId)) {
       return;
     }
-
+    const visual = getGT031VisualState(this);
+    const prevTotal = this.currentTotal;
     this.depositedCoinIds.push(coinId);
-    this.lastDepositMs = this.lastFrameMs;
     this.currentTotal += coin.value;
+    markDepositAnchor(visual);
+    startCounterAnim(visual, prevTotal, this.currentTotal, false);
     this.queueSfx("coin_clink");
-
     this.recordEvent("coin_placed", {
       coin_id: coin.coin_id,
       value: coin.value,
@@ -341,19 +449,28 @@ export class GT031Session extends TemplateGameSession<
   }
 
   private commitPay(): void {
+    const visual = getGT031VisualState(this);
     if (!(this.canCommit() && this.isPaymentEnough())) {
-      this.wrongPayUntilMs = this.lastFrameMs + WRONG_PAY_MS;
-      this.encourageRemainingMs = GT031_ENCOURAGE_MS;
+      visual.wrongDurationMs = WRONG_PAY_MS;
+      visual.wrongAnchorRenderMs = visual.lastSeenRenderMs;
+      visual.wrongAnchorSimMs = visual.simMs;
       this.recordEvent("payment_wrong", {
         current_total: this.currentTotal,
         target_amount: this.content.target_amount,
       });
+      if (this.difficulty.allow_retry === false) {
+        visual.isClosedWrong = true;
+        this.encourageRemainingMs = 0;
+        this.recordEvent("game_completed", { score: 0 });
+      } else {
+        this.encourageRemainingMs = GT031_ENCOURAGE_MS;
+      }
       return;
     }
     this.isWin = true;
     this.isWon = true;
     const targetSlot = this.slots[0];
-    if (targetSlot) {
+    if (targetSlot && this.degradation?.particles_enabled !== false) {
       this.particles.push(...spawnParticlesAtSlot(targetSlot, 16));
     }
     this.recordEvent("game_completed", { score: 100 });
@@ -361,29 +478,26 @@ export class GT031Session extends TemplateGameSession<
   }
 
   private commitRemoveCoin(coinId?: string): void {
-    if (this.depositedCoinIds.length === 0) {
-      return;
-    }
-
     const targetId = coinId ?? this.depositedCoinIds.at(-1);
     if (!targetId) {
       return;
     }
-
     const coinIndex = this.depositedCoinIds.indexOf(targetId);
     if (coinIndex === -1) {
       return;
     }
-
     const coin = this.content.coins.find((c) => c.coin_id === targetId);
     if (!coin) {
       return;
     }
 
+    const visual = getGT031VisualState(this);
+    const prevTotal = this.currentTotal;
     this.depositedCoinIds.splice(coinIndex, 1);
     this.currentTotal -= coin.value;
     this.isWin = false;
-
+    clearDepositAnchor(visual);
+    startCounterAnim(visual, prevTotal, this.currentTotal, false);
     this.recordEvent("coin_removed", {
       coin_id: coin.coin_id,
       value: coin.value,
@@ -394,10 +508,7 @@ export class GT031Session extends TemplateGameSession<
 
   override commit(action: GameAction): void {
     const type = action.type;
-    const data = (
-      typeof action.data === "object" && action.data !== null ? action.data : {}
-    ) as GT031ActionPayload;
-
+    const coinId = extractCoinIdFromData(action.data);
     if (
       type === "deposit_coin" ||
       type === "place_coin" ||
@@ -405,98 +516,43 @@ export class GT031Session extends TemplateGameSession<
       type === "select_coin" ||
       type === "drag_coin"
     ) {
-      const coinId = data.coin_id ?? data.id ?? "";
-      this.commitDepositCoin(coinId);
+      this.commitDepositCoin(coinId ?? "");
       return;
     }
-
     if (
       type === "remove_coin" ||
       type === "undo_coin" ||
       type === "withdraw_coin"
     ) {
-      const coinId = data.coin_id ?? data.id;
-      this.commitRemoveCoin(coinId);
+      this.commitRemoveCoin(coinId ?? undefined);
       return;
     }
-
     if (type === "pay") {
       this.commitPay();
     }
   }
 
-  /** Kéo xu từ khay thả vào thẻ giá, hoặc kéo xu đã nộp ra ngoài (`BR-ENG-06`). */
-  private toDropAction(
-    gesture: Extract<Gesture, { type: "drop" }>
-  ): GameAction | null {
-    const target = this.slots[0];
-    if (!target) {
+  override toAction(gesture: Gesture): GameAction | null {
+    if (!this.isAcceptingInput()) {
       return null;
     }
-
-    // Kéo xu đã nộp từ khay/thẻ giá ra ngoài để rút lại
-    const depositedIndex = this.content.coins.findIndex((coin, i) => {
-      const slot = this.slots[1 + i];
-      return (
-        slot !== undefined &&
-        this.depositedCoinIds.includes(coin.coin_id) &&
-        this.isOnSlot(slot, gesture.fromX, gesture.fromY)
-      );
-    });
-    if (depositedIndex >= 0) {
-      const coin = this.content.coins[depositedIndex];
-      if (coin) {
-        return { type: "remove_coin", data: { coin_id: coin.coin_id } };
-      }
-    }
-
-    // Kéo từ thẻ giá ra ngoài: rút đồng xu nộp gần nhất
-    if (
-      this.isOnSlot(target, gesture.fromX, gesture.fromY) &&
-      !this.isOnSlot(target, gesture.toX, gesture.toY)
-    ) {
-      const lastDepositedId = this.depositedCoinIds.at(-1);
-      if (lastDepositedId) {
-        return { type: "remove_coin", data: { coin_id: lastDepositedId } };
-      }
-    }
-
-    // Kéo xu chưa nộp thả vào thẻ giá để nộp
-    if (this.isOnSlot(target, gesture.toX, gesture.toY)) {
-      const index = this.content.coins.findIndex((coin, i) => {
-        const slot = this.slots[1 + i];
-        return (
-          slot !== undefined &&
-          !this.depositedCoinIds.includes(coin.coin_id) &&
-          this.isOnSlot(slot, gesture.fromX, gesture.fromY)
-        );
-      });
-      const coin = this.content.coins[index];
-      return coin
-        ? { type: "deposit_coin", data: { coin_id: coin.coin_id } }
-        : null;
-    }
-
-    return null;
-  }
-
-  private isOnSlot(slot: Slot, x: number, y: number): boolean {
-    return isPointInSlot(slot, x, y, "square", TAP_TOLERANCE_PX);
-  }
-
-  override toAction(gesture: Gesture): GameAction | null {
     if (gesture.type === "commit") {
-      // Nút trả tiền đang mờ thì nuốt cử chỉ, không tính một lần sai.
       return this.canCommit() ? { type: "pay", data: {} } : null;
     }
+    const coins = this.getTrayCoins();
     if (gesture.type === "drop") {
-      return this.toDropAction(gesture);
+      return resolveGT031DropAction({
+        gesture,
+        coins,
+        slots: this.slots,
+        depositedCoinIds: this.depositedCoinIds,
+      });
     }
     if (gesture.type !== "tap") {
       return null;
     }
 
-    const coinSlots = this.slots.slice(1, 1 + this.content.coins.length);
+    const coinSlots = this.slots.slice(1, 1 + coins.length);
     const index = findHitSlotIndex(
       coinSlots,
       gesture.x,
@@ -504,99 +560,29 @@ export class GT031Session extends TemplateGameSession<
       "circle",
       TAP_TOLERANCE_PX
     );
-    const coin = this.content.coins[index];
+    const coin = coins[index];
     if (!coin) {
       return null;
     }
-    if (this.depositedCoinIds.includes(coin.coin_id)) {
-      return { type: "remove_coin", data: { coin_id: coin.coin_id } };
-    }
-    return { type: "deposit_coin", data: { coin_id: coin.coin_id } };
-  }
-
-  private buildPaymentTargetEntity(): ViewEntity | null {
-    const targetSlot = this.slots[0];
-    if (!targetSlot) {
-      return null;
-    }
-    let state: EntityVisual = "idle";
-    if (this.isWin) {
-      state = "correct";
-    } else if (this.wrongPayUntilMs > 0) {
-      state = "incorrect";
-    }
-    const itemToBuy = this.content.item_to_buy;
-    const targetAsset = itemToBuy?.asset ?? {
-      kind: "emoji" as const,
-      ref: "🪙",
-    };
-    const targetLabels = resolveAssetLabels(targetAsset);
-    const targetAmountWord = formatNumberWord(this.content.target_amount);
-    const targetSpoken = itemToBuy?.label
-      ? formatSpokenLabel(`${itemToBuy.label} ${targetAmountWord} đồng`)
-      : formatSpokenLabel(`cần trả ${targetAmountWord} đồng`);
-    const targetId = this.content.coins.some(
-      (c) => c.coin_id === "payment_target"
-    )
-      ? "target:payment_target"
-      : "payment_target";
-    return {
-      id: targetId,
-      slotIndex: 0,
-      role: "target",
-      state,
-      x: targetSlot.x,
-      y: targetSlot.y,
-      w: targetSlot.w,
-      h: targetSlot.h,
-      hitShape: "square",
-      glyph: targetLabels.glyph,
-      label: String(this.content.target_amount),
-      spokenLabel: targetSpoken ?? targetLabels.spokenLabel,
-      spokenAudioPath: targetLabels.spokenAudioPath,
-    };
+    return this.depositedCoinIds.includes(coin.coin_id)
+      ? { type: "remove_coin", data: { coin_id: coin.coin_id } }
+      : { type: "deposit_coin", data: { coin_id: coin.coin_id } };
   }
 
   override getView(): EngineView {
-    const entities: ViewEntity[] = [];
-
-    const targetEntity = this.buildPaymentTargetEntity();
-    if (targetEntity) {
-      entities.push(targetEntity);
-    }
-
-    for (let i = 0; i < this.content.coins.length; i++) {
-      const coin = this.content.coins[i];
-      const slot = this.slots[1 + i];
-      if (!(coin && slot)) {
-        continue;
-      }
-      const isDeposited = this.depositedCoinIds.includes(coin.coin_id);
-      const coinLabels = resolveAssetLabels(coin.asset);
-      const coinSpoken =
-        formatSpokenLabel(`${formatNumberWord(coin.value)} đồng`) ??
-        coinLabels.spokenLabel;
-      entities.push({
-        id: coin.coin_id,
-        slotIndex: 1 + i,
-        role: "source",
-        state: isDeposited ? "selected" : "idle",
-        x: slot.x,
-        y: slot.y,
-        w: slot.w,
-        h: slot.h,
-        hitShape: "circle",
-        glyph: coinLabels.glyph,
-        label: String(coin.value),
-        spokenLabel: coinSpoken,
-        spokenAudioPath: coinLabels.spokenAudioPath,
-      });
-    }
-
-    return {
-      activePrompt: this.content.prompt,
-      entities,
-    };
+    const visual = getGT031VisualState(this);
+    const isWrong =
+      visual.isClosedWrong ||
+      sampleWrongIntensity(visual, visual.lastSeenRenderMs) > 0;
+    return buildGT031EngineView({
+      content: this.content,
+      coins: this.getTrayCoins(),
+      slots: this.slots,
+      depositedCoinIds: this.depositedCoinIds,
+      hoveredCoinId: visual.hoveredCoinId,
+      isWin: this.isWin,
+      isWrong,
+    });
   }
 
   override checkWinCondition(): boolean {
@@ -611,103 +597,141 @@ export class GT031Session extends TemplateGameSession<
     return this.depositedCoinIds;
   }
 
+  private renderPiggyStall(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    targetSlot: Slot,
+    bodyRect: ZoneRect,
+    visual: ReturnType<typeof getGT031VisualState>,
+    timeMs: number
+  ): { cx: number; cy: number; size: number } | null {
+    const geometry = marketStallGeometry(
+      targetSlot,
+      bodyRect,
+      slotLabelBandPx(targetSlot, rs)
+    );
+    drawMarketStall(ctx, geometry);
+    if (!geometry.piggy) {
+      return null;
+    }
+    drawPiggyBank(
+      ctx,
+      geometry.piggy.cx,
+      geometry.piggy.cy,
+      geometry.piggy.size,
+      piggyBounceScale(samplePiggyElapsedMs(visual, timeMs), rs.reducedMotion)
+    );
+    return geometry.piggy;
+  }
+
   private renderTargetArea(
     ctx: CanvasRenderingContext2D,
-    rs: RenderSystem
+    rs: RenderSystem,
+    timeMs: number
   ): void {
     const targetSlot = this.slots[0];
     if (!targetSlot) {
       return;
     }
 
-    const targetPrice =
-      (this.content as { target_price?: number }).target_price ??
-      this.content.target_amount;
-    const itemToBuy = this.content.item_to_buy;
+    const visual = getGT031VisualState(this);
+    const targetPrice = this.content.target_amount;
+    const zones = pickTrayZones(this.stageRect, this.trayRect);
+    const stage = zones?.stage;
+    const bodyRect = stage ? splitCaption(stage).body : undefined;
+    const { space, scale } = spaceOf(rs);
+    const wrongIntensity = sampleWrongIntensity(visual, timeMs);
+    const isHintL1 = visual.hintLevel === 1;
+    const softShadowsEnabled = this.degradation?.soft_shadows_enabled !== false;
 
-    this.renderMarket(ctx, rs, targetSlot);
+    const piggyBox =
+      stage && bodyRect
+        ? this.renderPiggyStall(ctx, rs, targetSlot, bodyRect, visual, timeMs)
+        : null;
 
-    let state: ItemVisualState = "idle";
+    let targetState: ItemVisualState = "idle";
     if (this.isWin) {
-      state = "correct";
-    } else if (this.wrongPayUntilMs > 0) {
-      state = "wrong";
+      targetState = "correct";
+    } else if (visual.isClosedWrong || wrongIntensity > 0) {
+      targetState = "wrong";
     }
-
-    let displayAsset = itemToBuy?.asset ?? {
-      kind: "emoji" as const,
-      ref: "🪙",
-    };
-    if (displayAsset.kind === "emoji" && RE_DIGITS.test(displayAsset.ref)) {
-      displayAsset = { kind: "emoji" as const, ref: "🎁" };
-    } else if (
-      displayAsset.kind === "text" &&
-      RE_DIGITS.test(displayAsset.text)
-    ) {
-      displayAsset = { kind: "emoji" as const, ref: "🎁" };
-    }
-
     drawSlotItem(
       ctx,
       rs,
       targetSlot,
       {
         id: "payment_target",
-        asset: displayAsset,
-        // Thẻ giá chỉ có chữ số; tên món chỉ đọc thành tiếng (`BR-E031-07`).
+        asset: resolveGT031DisplayAsset(this.content),
         label: String(targetPrice),
-        state,
+        state: targetState,
       },
       "square"
     );
 
-    // Tiến độ là hàng chấm xu lấp dần ở dải đầu sân khấu, không chữ (`BR-E031-07`).
-    drawProgressDots(
-      ctx,
-      rs,
-      this.moneyProgress(targetPrice),
-      this.stageRect ? splitCaption(this.stageRect).caption : undefined
-    );
-  }
-
-  /**
-   * Quầy chợ (mái sọc, quầy gỗ) quanh thẻ giá và heo đất cạnh bên; heo nảy khi
-   * có xu rơi vào (`BR-E031-12`). Chỉ vẽ trong thân sân khấu, ngoài vùng chạm.
-   */
-  private renderMarket(
-    ctx: CanvasRenderingContext2D,
-    rs: RenderSystem,
-    targetSlot: Slot
-  ): void {
-    const stage = pickTrayZones(this.stageRect, this.trayRect)?.stage;
-    if (!stage) {
-      return;
-    }
-    const geometry = marketStallGeometry(
-      targetSlot,
-      splitCaption(stage).body,
-      slotLabelBandPx(targetSlot, rs)
-    );
-    drawMarketStall(ctx, geometry);
-    if (geometry.piggy) {
-      drawPiggyBank(
+    if (stage && bodyRect) {
+      drawGT031TargetDecor(ctx, {
+        ...computeTargetDecorLayout(targetSlot, bodyRect, targetPrice),
+        isHintL1,
+        timeMs,
+      });
+      const stackLayout = computeDepositedStackLayout(
+        buildDepositedCoinViews(this.content.coins, this.depositedCoinIds),
+        targetSlot,
+        bodyRect,
+        softShadowsEnabled,
+        rs.reducedMotion
+      );
+      drawGT031DepositedStack(ctx, { ...stackLayout, space, scale });
+      const meterRect = computeTotalMeterRect(stage, targetSlot);
+      const displayedTotal = sampleDisplayedTotal(
+        visual,
+        timeMs,
+        this.currentTotal,
+        rs.reducedMotion
+      );
+      drawGT031TotalMeter(ctx, {
+        rect: meterRect,
+        space,
+        scale,
+        displayedTotal,
+        dots: computeTotalMeterDots(
+          meterRect,
+          displayedTotal,
+          targetPrice,
+          this.isWin
+        ),
+        isHintL1,
+        wrongIntensity,
+        isClosedWrong: visual.isClosedWrong,
+        isWin: this.isWin,
+        softShadowsEnabled,
+        reducedMotion: rs.reducedMotion,
+        timeMs,
+      });
+      if (visual.isClosedWrong) {
+        const pills = computeSolutionGhostPills(
+          computeSolutionSubset(
+            this.content.coins,
+            targetPrice,
+            this.difficulty.exact_change
+          ),
+          targetSlot,
+          bodyRect,
+          piggyBox
+        );
+        drawGT031SolutionGhost(ctx, { pills, space, scale });
+      }
+    } else {
+      drawProgressDots(
         ctx,
-        geometry.piggy.cx,
-        geometry.piggy.cy,
-        geometry.piggy.size,
-        piggyBounceScale(
-          this.lastFrameMs - this.lastDepositMs,
-          rs.reducedMotion
-        )
+        rs,
+        this.moneyProgress(targetPrice),
+        this.stageRect ? splitCaption(this.stageRect).caption : undefined
       );
     }
   }
 
-  /** Mỗi chấm một đồng khi giá nhỏ; giá lớn hơn số chấm tối đa thì chia tỉ lệ. */
-  private moneyProgress(targetPrice: number): {
-    done: number;
-    total: number;
-  } {
+  private moneyProgress(targetPrice: number): { done: number; total: number } {
     const total = Math.min(MONEY_PROGRESS_MAX_DOTS, Math.max(1, targetPrice));
     const done = Math.min(
       total,
@@ -716,24 +740,36 @@ export class GT031Session extends TemplateGameSession<
     return { done, total };
   }
 
-  private renderCoins(ctx: CanvasRenderingContext2D, rs: RenderSystem): void {
-    drawWoodenTokenDock(
-      ctx,
-      rs,
-      pickTrayZones(this.stageRect, this.trayRect)?.tray
-    );
+  private renderCoins(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    timeMs: number
+  ): void {
+    const trayRect = pickTrayZones(this.stageRect, this.trayRect)?.tray;
+    drawWoodenTokenDock(ctx, rs, trayRect);
 
-    const values = this.content.coins.map((c) => c.value);
-    for (let i = 0; i < this.content.coins.length; i++) {
-      const coin = this.content.coins[i];
+    const visual = getGT031VisualState(this);
+    const coins = this.getTrayCoins();
+    const values = coins.map((c) => c.value);
+    for (let i = 0; i < coins.length; i++) {
+      const coin = coins[i];
       const slot = this.slots[1 + i];
       if (!(coin && slot)) {
         continue;
       }
 
       const isDeposited = this.depositedCoinIds.includes(coin.coin_id);
+      if (trayRect) {
+        drawGT031CoinTrayDecor(ctx, {
+          box: computeCoinTrayBox(slot, trayRect),
+          isDeposited,
+          isHovered: visual.hoveredCoinId === coin.coin_id,
+          isHintL2:
+            visual.hintLevel >= 2 && visual.hintTargetId === coin.coin_id,
+          timeMs,
+        });
+      }
       const tier = coinTierOf(values, coin.value);
-      // Cạnh ngắn của ô chạm: đường tròn không bao giờ lọt ra ngoài ô.
       const hit = Math.min(slot.hitW, slot.hitH);
       drawMontessoriCoin(ctx, slot, coin.value, isDeposited, {
         diameter: coinDiameter(tier.rank, tier.count, hit, this.coinTouchFloor),
@@ -742,30 +778,19 @@ export class GT031Session extends TemplateGameSession<
     }
   }
 
-  private drawLegacySubPrompt(
-    ctx: CanvasRenderingContext2D,
-    rs: RenderSystem
-  ): void {
-    drawProgressDots(ctx, rs, this.moneyProgress(this.content.target_amount));
-  }
-
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
     timeMs: number
   ): void {
-    this.lastFrameMs = timeMs;
+    getGT031VisualState(this).lastSeenRenderMs = timeMs;
     drawSceneBackground(ctx, rs, this.themeId);
-    const zones = pickTrayZones(this.stageRect, this.trayRect);
-    if (!zones) {
-      this.drawLegacySubPrompt(ctx, rs);
+    if (!pickTrayZones(this.stageRect, this.trayRect)) {
+      drawProgressDots(ctx, rs, this.moneyProgress(this.content.target_amount));
     }
-
-    this.renderTargetArea(ctx, rs);
-    this.renderCoins(ctx, rs);
-
+    this.renderTargetArea(ctx, rs, timeMs);
+    this.renderCoins(ctx, rs, timeMs);
     if (this.degradation?.particles_enabled !== false) {
-      this.particles = updateParticles(this.particles);
       rs.drawParticles(ctx, this.particles);
     }
   }
