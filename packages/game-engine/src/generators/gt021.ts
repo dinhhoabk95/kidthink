@@ -1,7 +1,11 @@
+import type {
+  GT021Content,
+  GT021Difficulty,
+} from "#src/templates/GT-021/template";
 import { getNouns, sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
-export const GT021Generator: LevelGenerator = {
+export const GT021Generator: LevelGenerator<GT021Content, GT021Difficulty> = {
   engine: "GT-021",
   axes: {
     age_band: ["4-5", "5-6"],
@@ -10,36 +14,34 @@ export const GT021Generator: LevelGenerator = {
   },
   generate({ rng, age_band, vocabulary }) {
     const nouns = getNouns(vocabulary, 6);
-    // Band 4-5: 2 item; Band 5-6: 3 item
     const patternLength = age_band === "4-5" ? 2 : 3;
-
-    // Lấy patternLength item khác nhau để nửa cho sẵn không bị đồng nhất/tự đối xứng
     const sampled = sampleUnique(rng, nouns, patternLength + 2);
     const patternNouns = sampled.slice(0, patternLength);
 
-    // `sampleUnique` trả vật đôi một khác nhau nên nửa cho sẵn không thể tự đối xứng.
+    const axis: GT021Content["axis"] =
+      age_band === "5-6" && rng.next() < 0.5 ? "horizontal" : "vertical";
 
     const referencePattern = patternNouns.map((n, idx) => ({
       slot_id: `ref_slot_${idx + 1}`,
       asset: { kind: "emoji" as const, ref: n.emoji_ref },
     }));
 
-    // Chiều thuận: target_slots đối xứng qua trục
     const targetSlots = patternNouns.map((n, idx) => ({
       slot_id: `target_slot_${idx + 1}`,
       expected_asset_ref: n.emoji_ref,
     }));
 
-    const options = sampled.map((n, idx) => ({
+    const rawOptions = sampled.map((n, idx) => ({
       item_id: `opt_${idx + 1}`,
       asset: { kind: "emoji" as const, ref: n.emoji_ref },
       asset_ref: n.emoji_ref,
     }));
+    const options = sampleUnique(rng, rawOptions, rawOptions.length);
 
     return {
       content_pack: {
         prompt: "Bé hãy xếp các hình đối xứng qua trục nhé!",
-        axis: "vertical",
+        axis,
         reference_pattern: referencePattern,
         target_slots: targetSlots,
         options,

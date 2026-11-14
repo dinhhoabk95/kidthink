@@ -5,286 +5,283 @@ import {
   ACTION_RETRY,
   type ActionResult,
   type GameAction,
+  type GameActionValue,
   TemplateGameSession,
 } from "#src/game-session";
-import type {
-  EngineView,
-  EntityVisual,
-  Gesture,
-  ViewEntity,
-} from "#src/interaction";
-import { resolveAssetLabels } from "#src/labels/spoken-keyword";
-import { resolveTouchFloor } from "#src/layout/constants";
+import type { EngineView, Gesture } from "#src/interaction";
 import { TAP_TOLERANCE_PX } from "#src/layout/hit-test";
-import { resolveLayout } from "#src/layout/registry";
-import { computeStageMirror, reindexSlots } from "#src/layout/stage-targets";
-import {
-  computeTraySourceSlots,
-  findNearestHitSlot,
-  pickTrayZones,
-} from "#src/layout/tray-layout";
+import { findNearestHitSlot } from "#src/layout/tray-layout";
 import type { Slot } from "#src/layout/types";
 import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
-import {
-  drawButterflyWingsBoard,
-  drawCircleOutline,
-  drawEmptyTargetSlot,
-  drawMirrorAxis,
-  drawMirroredSlotItem,
-  drawMirrorFlash,
-  drawSceneBackground,
-  drawSlotItem,
-  drawStoryCharacterInStage,
-  drawWoodenTokenDock,
-  mirrorFlashStrength,
-  mirrorRevealAlpha,
-  sceneBox,
-} from "#src/render/index";
+import type { ItemVisualState } from "#src/render/index";
 import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
-import { designTokens } from "#src/systems/designTokens";
+import type { HintLevel, HintTarget } from "#src/systems/hint-ladder";
 import { MirrorSystem } from "#src/systems/mirror-system";
 import { MoodPulse } from "#src/systems/mood-pulse";
 import type { RenderSystem } from "#src/systems/render-system";
+import { WRONG_FLASH_MS, WrongFlashMap } from "#src/systems/wrong-flash";
+import {
+  buildGT021ViewEntities,
+  computeDisplayOptions,
+  computeGT021Slots,
+  type GT021BoardHost,
+  type GT021DemoStep,
+  type GT021Option,
+  type GT021TargetDef,
+  getSessionClock,
+  INSPECT_HIGHLIGHT_MS,
+  renderGT021,
+  resetSessionClock,
+  resolveGT021HintDemoSequence,
+  resolveGT021HintDestinationIndex,
+  resolveGT021HintTargetForLevel,
+  resolveGT021HintTargetIndex,
+  stampNow,
+} from "./layout";
 import type { GT021Content, GT021Difficulty } from "./template.js";
-
-/** Cạnh ô mẫu và ô đích lớn nhất trên sân khấu — cùng cỡ ô của `mirror-axis-split`. */
-const MIRROR_CELL_MAX_PX = 96;
-
-function findHitSourceOption(
-  slots: readonly Slot[],
-  options: readonly { item_id: string }[],
-  x: number,
-  y: number,
-  tolerance = TAP_TOLERANCE_PX
-): { option: { item_id: string }; index: number } | null {
-  const sourceSlots = slots.filter((s) => s.role === "source");
-  const index = findNearestHitSlot(
-    sourceSlots.slice(0, options.length),
-    x,
-    y,
-    tolerance
-  );
-  const option = options[index];
-  return option ? { option, index } : null;
-}
-
-function findHitTargetSlot(
-  slots: readonly Slot[],
-  targets: readonly { slot_id: string }[],
-  x: number,
-  y: number,
-  tolerance = TAP_TOLERANCE_PX
-): { target: { slot_id: string }; index: number } | null {
-  const targetSlots = slots.filter((s) => s.role === "target");
-  const index = findNearestHitSlot(
-    targetSlots.slice(0, targets.length),
-    x,
-    y,
-    tolerance
-  );
-  const target = targets[index];
-  return target ? { target, index } : null;
-}
 
 /** Khung chuyện đọc một lần ở vòng đầu (`BR-E021-06`, `BR-FBK-16`). */
 export const GT021_STORY_LINE =
   "Cô Tiên có một chiếc gương thần. Bé làm cho bên kia gương giống hệt bên này nhé!";
-
-/** Mascot vui sau mỗi ô đặt đúng. */
 export const GT021_HAPPY_MS = 1000;
-/** Mascot nghiêng đầu sau lần đặt chưa đúng. */
 export const GT021_WONDER_MS = 1500;
 
-export class GT021Session extends TemplateGameSession<
-  GT021Content,
-  GT021Difficulty
-> {
-  degradation: DegradationState | null = null;
+function readPlacePayload(d: GameActionValue) {
+  const o = typeof d === "object" && d !== null ? d : null;
+  const itemId = o ? Reflect.get(o, "item_id") : null;
+  const tRaw = o ? Reflect.get(o, "target_id") : null;
+  const targetId = tRaw ?? (o ? Reflect.get(o, "target_slot_id") : null);
+  const ok =
+    typeof itemId === "string" &&
+    Boolean(itemId) &&
+    typeof targetId === "string" &&
+    Boolean(targetId);
+  return ok ? { itemId, targetId } : null;
+}
 
+const isPlaceAction = (t: string): boolean =>
+  t === "place_item" || t === "drop_item" || t === "tap_tap_item";
+
+export class GT021Session
+  extends TemplateGameSession<GT021Content, GT021Difficulty>
+  implements GT021BoardHost
+{
+  degradation: DegradationState | null = null;
   readonly mirrorSystem = new MirrorSystem();
   private readonly placementMechanic = new PlacementMechanic();
+  private readonly wrongSlotItems = new Map<string, string>();
+  readonly wrongFlashes = new WrongFlashMap(WRONG_FLASH_MS);
+  readonly wrongSourceFlashes = new WrongFlashMap(WRONG_FLASH_MS);
+  private readonly mood = new MoodPulse();
   neutralSlots: readonly Slot[] = [];
-  private wrongPlacementTimerMs = 0;
-  private wrongTargetSlotId: string | null = null;
-  private wrongItemId: string | null = null;
-
-  /** Mảnh chọn nằm trong khay, hai nửa đối xứng đứng trên sân khấu (`BR-PSZ-01`). */
+  private displayOptions: GT021Option[] = [];
+  assetByRef = new Map<string, GT021Option["asset"]>();
+  hoveredTargetIdx: number | null = null;
+  hoveredSourceIdx: number | null = null;
+  scaffoldLevel: 0 | HintLevel = 0;
+  roundClosedOnWrong = false;
   override readonly needsTray = true;
+  override readonly usesPromptZone = true;
 
-  /** Số vật nguồn trong khay của vòng — shell đo chiều cao khay (`BR-PSZ-13`). */
   override get trayItemCount(): number {
     return this.content.options.length;
   }
-  override readonly usesPromptZone = true;
-  private assetByRef: Map<string, GT021Content["options"][number]["asset"]> =
-    new Map();
+
+  constructor(
+    content: GT021Content,
+    difficulty: GT021Difficulty,
+    layoutSeed = 0,
+    themeId?: string
+  ) {
+    super(content, difficulty, layoutSeed, themeId);
+    const opts = this.content.options;
+    this.displayOptions = computeDisplayOptions(opts, this.layoutSeed, 0);
+  }
 
   protected override computeRoundDerived(): void {
     this.neutralSlots = this.slots.filter((s) => s.role === "neutral");
   }
 
-  private readonly mood = new MoodPulse();
-  private lastFrameMs = 0;
-  /** Mốc đồng hồ khung lúc vật vào từng ô đích (ảnh phản chiếu hiện dần từ đây). */
-  private readonly placedAtMs: Map<string, number> = new Map();
-  /** Mốc đồng hồ khung của lần đặt đúng gần nhất (trục gương loé từ đây), `null` nếu chưa có. */
-  private lastCorrectAtMs: number | null = null;
-
   override storyLine(): string {
     return GT021_STORY_LINE;
   }
 
-  /** Chỉ phản ứng sau lần đặt, không báo trước (`BR-E021-06`). */
   override mascotMood(): MascotPose | null {
     return this.isWon ? null : this.mood.current();
   }
 
+  override isAcceptingInput(): boolean {
+    return !(this.isWon || this.roundClosedOnWrong);
+  }
+
+  getDisplayOptions(): readonly GT021Option[] {
+    const d = this.displayOptions;
+    return d.length > 0 ? d : this.content.options;
+  }
+
+  getScaffoldLevel(): 0 | HintLevel {
+    return this.scaffoldLevel;
+  }
+
+  getBaseItemState(id: string): ItemVisualState {
+    return this.getRenderItemState(id);
+  }
+
+  private clearWrongPlacements(): void {
+    this.wrongSlotItems.clear();
+    this.wrongFlashes.clearAll();
+    this.wrongSourceFlashes.clearAll();
+  }
+
   setupEntities(): void {
     this.mood.clear();
-    this.lastFrameMs = 0;
-    this.placedAtMs.clear();
-    this.lastCorrectAtMs = null;
+    resetSessionClock(this);
     this.isWon = false;
-    this.wrongPlacementTimerMs = 0;
-    this.wrongTargetSlotId = null;
-    this.wrongItemId = null;
+    this.roundClosedOnWrong = false;
+    this.scaffoldLevel = 0;
+    [this.hoveredTargetIdx, this.hoveredSourceIdx] = [null, null];
+    this.clearWrongPlacements();
     this.placementMechanic.reset();
-    this.assetByRef = new Map(
-      this.content.options.map((o) => [o.asset_ref, o.asset])
+    const opts = this.content.options;
+    const gen = this.roundGeneration;
+    this.displayOptions = computeDisplayOptions(opts, this.layoutSeed, gen);
+    this.assetByRef = new Map(opts.map((o) => [o.asset_ref, o.asset]));
+    const refs = this.content.reference_pattern;
+    this.mirrorSystem.init(
+      this.content.target_slots.map((t, i) => ({
+        referenceSlotId: refs[i]?.slot_id ?? `ref-${i}`,
+        targetSlotId: t.slot_id,
+        expectedAssetRef: t.expected_asset_ref,
+      }))
     );
-
-    const symmetricPairs = this.content.target_slots.map((t, idx) => ({
-      referenceSlotId:
-        this.content.reference_pattern[idx]?.slot_id ?? `ref-${idx}`,
-      targetSlotId: t.slot_id,
-      expectedAssetRef: t.expected_asset_ref,
-    }));
-
-    this.mirrorSystem.init(symmetricPairs);
-
     this.recordEvent("round_started", {
       round_index: 0,
       axis: this.content.axis,
       target_count: this.content.target_slots.length,
-      option_count: this.content.options.length,
+      option_count: opts.length,
     });
+  }
+
+  private isTargetCorrectlyFilled(targetSlotId: string): boolean {
+    const t = this.content.target_slots.find((s) => s.slot_id === targetSlotId);
+    const cur = this.mirrorSystem.getPlacement(targetSlotId);
+    return Boolean(t && cur === t.expected_asset_ref);
+  }
+
+  private resolveValidPlace(
+    itemId: string,
+    targetId: string
+  ): { opt: GT021Option; target: GT021TargetDef } | null {
+    if (!this.isAcceptingInput() || this.isTargetCorrectlyFilled(targetId)) {
+      return null;
+    }
+    const opt = this.content.options.find((o) => o.item_id === itemId);
+    const target = this.content.target_slots.find(
+      (t) => t.slot_id === targetId
+    );
+    return opt && target ? { opt, target } : null;
   }
 
   validateAction(action: GameAction): ActionResult {
-    if (
-      action.type === "place_item" ||
-      action.type === "drop_item" ||
-      action.type === "tap_tap_item"
-    ) {
-      const data = action.data as
-        | { item_id?: string; target_id?: string }
-        | undefined;
-      const itemId = data?.item_id;
-      const targetId = data?.target_id;
-
-      if (!(itemId && targetId)) {
-        return ACTION_IGNORED;
-      }
-
-      const opt = this.content.options.find((o) => o.item_id === itemId);
-      const target = this.content.target_slots.find(
-        (t) => t.slot_id === targetId
-      );
-
-      if (!(opt && target)) {
-        return ACTION_IGNORED;
-      }
-
-      return opt.asset_ref === target.expected_asset_ref
-        ? ACTION_CORRECT
-        : ACTION_RETRY;
+    const p = isPlaceAction(action.type) ? readPlacePayload(action.data) : null;
+    const v = p ? this.resolveValidPlace(p.itemId, p.targetId) : null;
+    if (!v) {
+      return ACTION_IGNORED;
     }
+    return v.opt.asset_ref === v.target.expected_asset_ref
+      ? ACTION_CORRECT
+      : ACTION_RETRY;
+  }
 
-    return ACTION_IGNORED;
+  private removeWrongItemIfUnused(itemId: string): void {
+    if (![...this.wrongSlotItems.values()].includes(itemId)) {
+      this.placementMechanic.remove(itemId);
+      this.wrongSourceFlashes.clear(itemId);
+    }
   }
 
   onPlaceOption(itemId: string, targetSlotId: string): ActionResult {
-    const opt = this.content.options.find((o) => o.item_id === itemId);
-    const target = this.content.target_slots.find(
-      (t) => t.slot_id === targetSlotId
-    );
-
-    if (!(opt && target)) {
+    const v = this.resolveValidPlace(itemId, targetSlotId);
+    if (!v) {
       return ACTION_IGNORED;
     }
-
+    const prevWrong = this.wrongSlotItems.get(targetSlotId);
+    if (prevWrong !== undefined) {
+      this.wrongSlotItems.delete(targetSlotId);
+      this.wrongFlashes.clear(targetSlotId);
+      this.removeWrongItemIfUnused(prevWrong);
+    }
+    const clock = getSessionClock(this);
+    const stamp = stampNow(clock);
     this.placementMechanic.place(itemId, targetSlotId);
-    const isCorrect = this.mirrorSystem.place(targetSlotId, opt.asset_ref);
-    this.placedAtMs.set(targetSlotId, this.lastFrameMs);
-
+    const isCorrect = this.mirrorSystem.place(targetSlotId, v.opt.asset_ref);
+    clock.placedStamps.set(targetSlotId, stamp);
     this.recordEvent("item_placed", {
       item_id: itemId,
       target_slot_id: targetSlotId,
-      asset_ref: opt.asset_ref,
+      asset_ref: v.opt.asset_ref,
       is_correct: isCorrect,
     });
-
     if (isCorrect) {
-      this.lastCorrectAtMs = this.lastFrameMs;
+      clock.lastCorrectStamp = stamp;
+      clock.inspectedPair = null;
+      this.scaffoldLevel = 0;
+      this.wrongSlotItems.delete(targetSlotId);
+      this.wrongFlashes.clear(targetSlotId);
+      this.wrongSourceFlashes.clear(itemId);
       this.queueSfx("mirror_chime");
       this.mood.set("happy", GT021_HAPPY_MS);
-    } else {
-      this.mood.set("wonder", GT021_WONDER_MS);
-    }
-
-    if (this.checkWinCondition()) {
-      this.wrongPlacementTimerMs = 0;
-      this.wrongTargetSlotId = null;
-      this.wrongItemId = null;
-      this.recordEvent("round_completed", { round_index: 0 });
-      this.winSession();
+      if (this.checkWinCondition()) {
+        this.clearWrongPlacements();
+        this.recordEvent("round_completed", { round_index: 0 });
+        this.winSession();
+      }
       return ACTION_CORRECT;
     }
-
-    if (isCorrect) {
-      this.wrongPlacementTimerMs = 0;
-      this.wrongTargetSlotId = null;
-      this.wrongItemId = null;
-      return ACTION_CORRECT;
+    this.mood.set("wonder", GT021_WONDER_MS);
+    this.wrongSlotItems.set(targetSlotId, itemId);
+    this.wrongFlashes.trigger(targetSlotId, clock.logicMs);
+    this.wrongSourceFlashes.trigger(itemId, clock.logicMs);
+    if (this.difficulty.allow_retry === false) {
+      this.roundClosedOnWrong = true;
+      this.placementMechanic.stageItem(null);
+      this.completeSession();
     }
-
-    this.wrongPlacementTimerMs = 400;
-    this.wrongTargetSlotId = targetSlotId;
-    this.wrongItemId = itemId;
     return ACTION_RETRY;
   }
 
   override checkWinCondition(): boolean {
-    return this.mirrorSystem.isComplete();
+    return !this.roundClosedOnWrong && this.mirrorSystem.isComplete();
   }
 
   update(deltaMs: number): void {
-    this.mood.tick(deltaMs);
-    this.lastFrameMs += deltaMs;
-    if (this.wrongPlacementTimerMs > 0) {
-      this.wrongPlacementTimerMs = Math.max(
-        0,
-        this.wrongPlacementTimerMs - deltaMs
-      );
-      if (this.wrongPlacementTimerMs === 0) {
-        if (this.wrongTargetSlotId) {
-          this.mirrorSystem.remove(this.wrongTargetSlotId);
-          this.wrongTargetSlotId = null;
-        }
-        if (this.wrongItemId) {
-          this.placementMechanic.remove(this.wrongItemId);
-          this.wrongItemId = null;
-        }
+    const dt = Math.max(0, deltaMs);
+    this.mood.tick(dt);
+    const clock = getSessionClock(this);
+    clock.logicMs += dt;
+    for (const slotId of this.wrongFlashes.drainExpired(clock.logicMs)) {
+      const wrongItemId = this.wrongSlotItems.get(slotId);
+      this.wrongSlotItems.delete(slotId);
+      if (!this.isTargetCorrectlyFilled(slotId)) {
+        this.mirrorSystem.remove(slotId);
+        clock.placedStamps.delete(slotId);
       }
+      if (wrongItemId !== undefined) {
+        this.removeWrongItemIfUnused(wrongItemId);
+      }
+    }
+    this.wrongSourceFlashes.drainExpired(clock.logicMs);
+    const insp = clock.inspectedPair;
+    if (insp && clock.logicMs - insp.stamp.logicAt >= INSPECT_HIGHLIGHT_MS) {
+      clock.inspectedPair = null;
     }
   }
 
   override destroy(): void {
     super.destroy();
-    this.wrongPlacementTimerMs = 0;
-    this.wrongTargetSlotId = null;
-    this.wrongItemId = null;
+    this.clearWrongPlacements();
+    [this.hoveredTargetIdx, this.hoveredSourceIdx] = [null, null];
   }
 
   getStagedItemId(): string | null {
@@ -295,280 +292,131 @@ export class GT021Session extends TemplateGameSession<
     return this.placementMechanic.getPlacements();
   }
 
-  private toDropAction(
-    gesture: Extract<Gesture, { type: "drop" }>
-  ): GameAction | null {
-    const hitSource = findHitSourceOption(
-      this.slots,
-      this.content.options,
-      gesture.fromX,
-      gesture.fromY
-    );
-    if (!hitSource) {
-      return null;
+  setPointerOver(x: number, y: number): void {
+    if (!this.isAcceptingInput()) {
+      this.clearPointerOver();
+      return;
     }
-    const hitTarget = findHitTargetSlot(
-      this.slots,
-      this.content.target_slots,
-      gesture.toX,
-      gesture.toY
-    );
-    if (!hitTarget) {
-      return null;
-    }
-    return {
-      type: "drop_item",
-      data: {
-        item_id: hitSource.option.item_id,
-        target_id: hitTarget.target.slot_id,
-      },
-    };
+    const targets = this.targetSlots.slice(0, this.content.target_slots.length);
+    const sources = this.sourceSlots.slice(0, this.getDisplayOptions().length);
+    const tIdx = findNearestHitSlot(targets, x, y, TAP_TOLERANCE_PX);
+    const t = this.content.target_slots[tIdx];
+    const ok = tIdx >= 0 && t && !this.isTargetCorrectlyFilled(t.slot_id);
+    this.hoveredTargetIdx = ok ? tIdx : null;
+    const sIdx = findNearestHitSlot(sources, x, y, TAP_TOLERANCE_PX);
+    this.hoveredSourceIdx = sIdx >= 0 ? sIdx : null;
   }
 
-  private toTapAction(
-    gesture: Extract<Gesture, { type: "tap" }>
-  ): GameAction | null {
-    // Ô đích tràn sân khấu thì chồng lên khay: chọn theo tâm gần nhất trong cả hai.
+  clearPointerOver(): void {
+    [this.hoveredTargetIdx, this.hoveredSourceIdx] = [null, null];
+  }
+
+  override onScaffoldEscalated(level: HintLevel): void {
+    this.scaffoldLevel = level;
+  }
+
+  override onHintCleared(): void {
+    this.scaffoldLevel = 0;
+  }
+
+  private handleTap(x: number, y: number): GameAction | null {
+    const [opts, stgId] = [this.getDisplayOptions(), this.getStagedItemId()];
     const targets = this.targetSlots.slice(0, this.content.target_slots.length);
-    const sources = this.sourceSlots.slice(0, this.content.options.length);
+    const sources = this.sourceSlots.slice(0, opts.length);
     const hit = findNearestHitSlot(
       [...targets, ...sources],
-      gesture.x,
-      gesture.y,
+      x,
+      y,
       TAP_TOLERANCE_PX
     );
     const target = this.content.target_slots[hit];
     if (hit >= 0 && hit < targets.length && target) {
-      const stagedId = this.placementMechanic.getStagedItemId();
-      return stagedId
-        ? {
-            type: "tap_tap_item",
-            data: { item_id: stagedId, target_id: target.slot_id },
-          }
-        : null;
+      const data = { item_id: stgId ?? "", target_id: target.slot_id };
+      return stgId ? { type: "tap_tap_item", data } : null;
     }
-
-    const option = this.content.options[hit - targets.length];
-    if (hit >= targets.length && option) {
-      const stagedId = this.placementMechanic.getStagedItemId();
-      this.placementMechanic.stageItem(
-        stagedId === option.item_id ? null : option.item_id
-      );
+    const opt = opts[hit - targets.length];
+    if (hit >= targets.length && opt) {
+      const next = stgId === opt.item_id ? null : opt.item_id;
+      this.placementMechanic.stageItem(next);
       return null;
     }
-
+    const nLen = this.content.reference_pattern.length;
+    const neutrals = this.neutralSlots.slice(0, nLen);
+    const refIdx = findNearestHitSlot(neutrals, x, y, TAP_TOLERANCE_PX);
+    if (refIdx >= 0) {
+      if (this.difficulty.show_axis_guide) {
+        const clock = getSessionClock(this);
+        clock.inspectedPair = { index: refIdx, stamp: stampNow(clock) };
+      }
+      return null;
+    }
     this.placementMechanic.stageItem(null);
     return null;
   }
 
-  override toAction(gesture: Gesture): GameAction | null {
-    if (gesture.type === "drop") {
-      return this.toDropAction(gesture);
+  override toAction(g: Gesture): GameAction | null {
+    if (!this.isAcceptingInput()) {
+      return null;
     }
-    if (gesture.type === "tap") {
-      return this.toTapAction(gesture);
+    if (g.type === "drop") {
+      const opts = this.getDisplayOptions();
+      const sources = this.sourceSlots.slice(0, opts.length);
+      const tLen = this.content.target_slots.length;
+      const targets = this.targetSlots.slice(0, tLen);
+      const sIdx = findNearestHitSlot(
+        sources,
+        g.fromX,
+        g.fromY,
+        TAP_TOLERANCE_PX
+      );
+      const tIdx = findNearestHitSlot(targets, g.toX, g.toY, TAP_TOLERANCE_PX);
+      const [opt, tgt] = [opts[sIdx], this.content.target_slots[tIdx]];
+      const data = {
+        item_id: opt?.item_id ?? "",
+        target_id: tgt?.slot_id ?? "",
+      };
+      return opt && tgt ? { type: "drop_item", data } : null;
     }
-    return null;
+    return g.type === "tap" ? this.handleTap(g.x, g.y) : null;
   }
 
   override commit(action: GameAction): void {
-    if (
-      action.type === "place_item" ||
-      action.type === "drop_item" ||
-      action.type === "tap_tap_item"
-    ) {
-      const data = action.data as
-        | { item_id?: string; target_id?: string }
-        | undefined;
-      const itemId = data?.item_id;
-      const targetId = data?.target_id;
-      if (itemId && targetId) {
-        this.onPlaceOption(itemId, targetId);
-        if (this.placementMechanic.getStagedItemId() === itemId) {
-          this.placementMechanic.stageItem(null);
-        }
+    const p = isPlaceAction(action.type) ? readPlacePayload(action.data) : null;
+    if (p) {
+      this.onPlaceOption(p.itemId, p.targetId);
+      if (this.placementMechanic.getStagedItemId() === p.itemId) {
+        this.placementMechanic.stageItem(null);
       }
     }
-  }
-
-  private allocateEntityId(
-    rawId: string,
-    prefix: string,
-    usedIds: Set<string>
-  ): string {
-    const id = usedIds.has(rawId) ? `${prefix}:${rawId}` : rawId;
-    usedIds.add(id);
-    return id;
-  }
-
-  /**
-   * Ô đối xứng của mảnh đang nhấc (N4): ô đích còn trống mà mảnh đó thuộc về.
-   * Rỗng khi chưa nhấc mảnh nào hoặc khi đã thắng.
-   */
-  private isSymmetricToStaged(
-    target: GT021Content["target_slots"][number]
-  ): boolean {
-    const stagedId = this.placementMechanic.getStagedItemId();
-    if (!stagedId || this.isWon) {
-      return false;
-    }
-    const staged = this.content.options.find((o) => o.item_id === stagedId);
-    return (
-      staged !== undefined &&
-      staged.asset_ref === target.expected_asset_ref &&
-      this.mirrorSystem.getPlacement(target.slot_id) === undefined
-    );
-  }
-
-  private toTargetViewEntity(
-    slot: Slot,
-    target: GT021Content["target_slots"][number],
-    usedIds: Set<string>
-  ): ViewEntity {
-    const placedRef = this.mirrorSystem.getPlacement(target.slot_id);
-    let state: EntityVisual = "idle";
-    if (placedRef) {
-      state = placedRef === target.expected_asset_ref ? "correct" : "incorrect";
-    } else if (this.isSymmetricToStaged(target)) {
-      state = "active";
-    }
-    const placedAsset = placedRef ? this.assetByRef.get(placedRef) : undefined;
-    return {
-      id: this.allocateEntityId(target.slot_id, "target", usedIds),
-      slotIndex: slot.index,
-      role: "target",
-      state,
-      x: slot.x,
-      y: slot.y,
-      w: slot.w,
-      h: slot.h,
-      hitShape: "square",
-      ...(placedAsset ? resolveAssetLabels(placedAsset) : {}),
-    };
   }
 
   override getView(): EngineView {
-    const stagedId = this.placementMechanic.getStagedItemId();
-    const entities: ViewEntity[] = [];
-    const usedIds = new Set<string>();
-
-    this.neutralSlots.forEach((slot, i) => {
-      const ref = this.content.reference_pattern[i];
-      if (ref) {
-        entities.push({
-          id: this.allocateEntityId(ref.slot_id, "ref", usedIds),
-          slotIndex: slot.index,
-          role: "neutral",
-          state: "idle",
-          x: slot.x,
-          y: slot.y,
-          w: slot.w,
-          h: slot.h,
-          hitShape: "square",
-          ...resolveAssetLabels(ref.asset),
-        });
-      }
-    });
-
-    this.targetSlots.forEach((slot, i) => {
-      const target = this.content.target_slots[i];
-      if (target) {
-        entities.push(this.toTargetViewEntity(slot, target, usedIds));
-      }
-    });
-
-    this.sourceSlots.forEach((slot, i) => {
-      const opt = this.content.options[i];
-      if (opt) {
-        entities.push({
-          id: this.allocateEntityId(opt.item_id, "src", usedIds),
-          slotIndex: slot.index,
-          role: "source",
-          state: stagedId === opt.item_id ? "selected" : "idle",
-          x: slot.x,
-          y: slot.y,
-          w: slot.w,
-          h: slot.h,
-          ...resolveAssetLabels(opt.asset),
-        });
-      }
-    });
-
     return {
       activePrompt: this.content.prompt,
-      entities,
+      entities: buildGT021ViewEntities(this),
     };
   }
 
   override getHintTargetIndex(): number | null {
-    if (this.isWon) {
-      return null;
-    }
-    const unplacedTarget = this.content.target_slots.find(
-      (t) => this.mirrorSystem.getPlacement(t.slot_id) !== t.expected_asset_ref
-    );
-    if (!unplacedTarget) {
-      return null;
-    }
-    const stagedId = this.placementMechanic.getStagedItemId();
-    if (stagedId) {
-      const targetIdx = this.content.target_slots.findIndex(
-        (t) => t.slot_id === unplacedTarget.slot_id
-      );
-      const targetSlot = this.targetSlots[targetIdx];
-      return targetSlot ? targetSlot.index : null;
-    }
-    const optIdx = this.content.options.findIndex(
-      (o) => o.asset_ref === unplacedTarget.expected_asset_ref
-    );
-    const sourceSlot = this.sourceSlots[optIdx];
-    return sourceSlot ? sourceSlot.index : null;
+    return resolveGT021HintTargetIndex(this);
   }
 
-  /** Chưa chọn vật thì bước đúng là kéo vật đúng vào ô gương chưa khớp. */
   override getHintDestinationIndex(): number | null {
-    if (this.isWon || this.placementMechanic.getStagedItemId()) {
-      return null;
-    }
-    const targetIdx = this.content.target_slots.findIndex(
-      (t) => this.mirrorSystem.getPlacement(t.slot_id) !== t.expected_asset_ref
-    );
-    const slot = this.targetSlots[targetIdx];
-    return slot ? slot.index : null;
+    return resolveGT021HintDestinationIndex(this);
+  }
+
+  override getHintTargetForLevel(level: HintLevel): HintTarget | null {
+    return resolveGT021HintTargetForLevel(this, level) ?? this.getHintTarget();
+  }
+
+  override getHintDemoSequence(
+    level: HintLevel = 3
+  ): readonly GT021DemoStep[] | null {
+    return resolveGT021HintDemoSequence(this, level);
   }
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
-    const zones = pickTrayZones(this.stageRect, this.trayRect);
-    if (zones) {
-      const touchFloor = resolveTouchFloor(ageBand, this.cssPerLogic);
-      const mirror = computeStageMirror({
-        count: Math.max(
-          this.content.reference_pattern.length,
-          this.content.target_slots.length
-        ),
-        axis: this.content.axis,
-        stage: zones.stage,
-        touchFloor,
-        maxCell: { w: MIRROR_CELL_MAX_PX, h: MIRROR_CELL_MAX_PX },
-      });
-      const options = computeTraySourceSlots(
-        this.content.options.length,
-        zones.tray,
-        touchFloor
-      );
-      return reindexSlots([
-        ...mirror.reference.slice(0, this.content.reference_pattern.length),
-        ...mirror.targets.slice(0, this.content.target_slots.length),
-        ...options,
-      ]);
-    }
-    const layoutFn = resolveLayout("mirror-axis-split");
-    return layoutFn({
-      slotCount: this.content.options.length,
-      targetCount: this.content.target_slots.length,
-      ageBand,
-      logic: this.logicSpace,
-    });
+    return computeGT021Slots(this, ageBand);
   }
 
   render(
@@ -576,111 +424,8 @@ export class GT021Session extends TemplateGameSession<
     rs: RenderSystem,
     timeMs: number
   ): void {
-    this.lastFrameMs = timeMs;
-    drawSceneBackground(ctx, rs, this.themeId);
-    // Cô Tiên ở góc trống, ngoài vùng chạm (`BR-E021-08`).
-    drawStoryCharacterInStage(ctx, "fairy", this.stageRect, this.slots);
-    const zones = pickTrayZones(this.stageRect, this.trayRect);
-    // Có khung: bàn đối xứng ở sân khấu, mảnh chọn trên khay, lời dẫn do shell vẽ.
-    drawButterflyWingsBoard(ctx, zones?.stage ?? sceneBox(rs));
-    if (this.difficulty.show_axis_guide) {
-      drawMirrorAxis(ctx, rs, this.content.axis, zones?.stage);
-      // Trục gương loé sáng sau lần đặt đúng (`BR-E021-08`).
-      if (this.lastCorrectAtMs !== null) {
-        drawMirrorFlash(
-          ctx,
-          this.content.axis,
-          zones?.stage ?? sceneBox(rs),
-          mirrorFlashStrength(timeMs - this.lastCorrectAtMs, rs.reducedMotion)
-        );
-      }
-    }
-    drawWoodenTokenDock(ctx, rs, zones?.tray);
-
-    const targets = this.targetSlots;
-    const sources = this.sourceSlots;
-    const neutral = this.neutralSlots;
-    const assetByRef = this.assetByRef;
-
-    // Mẫu tham chiếu nằm ở vùng neutral bên kia trục.
-    this.content.reference_pattern.forEach((ref, i) => {
-      const slot = neutral[i];
-      if (!slot) {
-        return;
-      }
-      drawSlotItem(
-        ctx,
-        rs,
-        slot,
-        { id: ref.slot_id, asset: ref.asset, state: "locked" },
-        "square"
-      );
-    });
-
-    this.content.target_slots.forEach((target, i) => {
-      const slot = targets[i];
-      if (!slot) {
-        return;
-      }
-      const placedRef = this.mirrorSystem.getPlacement(target.slot_id);
-      if (!placedRef) {
-        drawEmptyTargetSlot(ctx, slot);
-        if (this.isSymmetricToStaged(target)) {
-          // Ánh sáng nhẹ, tĩnh: không cần chuyển động nên giữ nguyên khi giảm chuyển động.
-          drawCircleOutline(
-            ctx,
-            slot,
-            designTokens.colors.montessori.amber,
-            4,
-            2
-          );
-        }
-        return;
-      }
-      const isWrong = placedRef !== target.expected_asset_ref;
-      // Nửa phản chiếu: vật đặt vào ô đích hiện lật gương qua trục (`BR-E021-05`),
-      // hiện dần sau khi đặt (`BR-E021-08`).
-      ctx.save();
-      ctx.globalAlpha = mirrorRevealAlpha(
-        timeMs - (this.placedAtMs.get(target.slot_id) ?? 0),
-        rs.reducedMotion
-      );
-      drawMirroredSlotItem(
-        ctx,
-        rs,
-        slot,
-        {
-          id: target.slot_id,
-          asset: assetByRef.get(placedRef),
-          state: isWrong ? "wrong" : "correct",
-        },
-        this.content.axis
-      );
-      ctx.restore();
-      if (isWrong && this.wrongPlacementTimerMs > 0) {
-        rs.drawRetryRing(
-          ctx,
-          slot.x,
-          slot.y,
-          (slot.w ?? 64) / 2,
-          1 - this.wrongPlacementTimerMs / 400
-        );
-      }
-    });
-
-    this.content.options.forEach((opt, i) => {
-      const slot = sources[i];
-      if (!slot) {
-        return;
-      }
-      drawSlotItem(ctx, rs, slot, {
-        id: opt.item_id,
-        asset: opt.asset,
-        state:
-          this.placementMechanic.getStagedItemId() === opt.item_id
-            ? "selected"
-            : this.getRenderItemState(opt.item_id),
-      });
-    });
+    const degraded =
+      this.degradation?.particles_enabled === false || !rs.softShadowsEnabled;
+    renderGT021(this, ctx, rs, timeMs, degraded);
   }
 }

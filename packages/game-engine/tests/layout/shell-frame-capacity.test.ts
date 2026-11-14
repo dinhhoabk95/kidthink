@@ -48,7 +48,7 @@ const KNOWN_SHELL_OVERFLOW: Readonly<
   preview: {
     "GT-005": { "3-4@360x640": 110 },
     "GT-015": { "3-4@360x640": 12, "3-4@390x844": 12 },
-    "GT-021": { "3-4@360x640": 12, "3-4@390x844": 12 },
+    "GT-021": { "3-4@360x640": 12 },
   },
   // Hộp canvas đo trên Chromium (360x640: 300x473/493/505 CSS theo band
   // 3-4/4-5/5-6): bước ô 96/76/64 px CSS chỉ chứa 2-3 cột và 3-5 hàng. GT-013
