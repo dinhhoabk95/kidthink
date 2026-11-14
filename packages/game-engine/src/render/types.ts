@@ -169,3 +169,35 @@ export interface GT020CardRenderParams {
   readonly timeMs: number;
   readonly showParticles: boolean;
 }
+
+export interface GT022QuestRefItem {
+  readonly slot: SceneBox & { readonly hitW: number; readonly hitH: number };
+  readonly asset: RenderAsset;
+  readonly isFound: boolean;
+  readonly index: number;
+}
+
+export interface GT022HintOverlayParams {
+  readonly level: 0 | 1 | 2 | 3;
+  readonly quadrantBox: SceneBox | null;
+  readonly targetSlot: SceneBox | null;
+  readonly stageRect?: SceneBox;
+  readonly timeMs: number;
+}
+
+export interface GT022SceneObjectParams {
+  readonly slot: SceneBox & { readonly hitW: number; readonly hitH: number };
+  readonly asset?: RenderAsset;
+  readonly index: number;
+  readonly isCovered: boolean;
+  readonly isFound: boolean;
+  readonly isHovered: boolean;
+  readonly isAutoRevealed: boolean;
+  readonly wrongProgress: number | null;
+  readonly foundElapsedMs: number | null;
+  readonly winElapsedMs: number | null;
+  readonly hintLevel: 0 | 1 | 2 | 3;
+  readonly stageRect?: SceneBox;
+  readonly timeMs: number;
+  readonly showParticles: boolean;
+}

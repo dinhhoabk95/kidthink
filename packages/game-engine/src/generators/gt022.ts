@@ -1,11 +1,15 @@
 import { shuffle } from "#src/rng/shuffle";
+import type {
+  GT022Content,
+  GT022Difficulty,
+} from "#src/templates/GT-022/template";
 import { getNouns, sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
-export const GT022Generator: LevelGenerator = {
+export const GT022Generator: LevelGenerator<GT022Content, GT022Difficulty> = {
   engine: "GT-022",
   axes: {
-    // `age_min` của engine là 4: không khai band 3-4.
+    // `age_min` của engine là 4: không khai band 3-4 (`BR-E022-06`).
     age_band: ["4-5", "5-6"],
     what: ["observation", "hidden-object", "scene"],
     theme: [...VALID_GENERATOR_THEMES],
@@ -45,6 +49,7 @@ export const GT022Generator: LevelGenerator = {
       difficulty_params: {
         hint_after_ms: 8000,
         allow_retry: true,
+        show_target_counter: true,
       },
     };
   },
