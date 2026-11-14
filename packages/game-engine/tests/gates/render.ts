@@ -109,6 +109,7 @@ const PRIMITIVE_MODULES: readonly string[] = [
   "render/number-line.ts",
   "render/bead-rods.ts",
   "render/montessori-feedback.ts",
+  "render/gt-029-shapes.ts",
   "render/gt-001-shapes.ts",
   "render/gt-002-shapes.ts",
   "render/gt-003-shapes.ts",
