@@ -201,3 +201,54 @@ export interface GT022SceneObjectParams {
   readonly timeMs: number;
   readonly showParticles: boolean;
 }
+
+export interface GT023WorkbenchParams {
+  readonly stageRect?: SceneBox;
+  readonly anchorSlots: readonly (SceneBox & {
+    readonly hitW: number;
+    readonly hitH: number;
+  })[];
+  readonly isWon: boolean;
+  readonly winElapsedMs: number | null;
+}
+
+export interface GT023ModelCardParams {
+  readonly box: SceneBox & { readonly hitW: number; readonly hitH: number };
+  readonly asset: RenderAsset;
+  readonly isWon: boolean;
+  readonly isHovered: boolean;
+  readonly stageRect?: SceneBox;
+  readonly softShadows?: boolean;
+}
+
+export interface GT023AnchorOverlayParams {
+  readonly slot: SceneBox & { readonly hitW: number; readonly hitH: number };
+  readonly index: number;
+  readonly showOutline: boolean;
+  readonly isSnapPreview: boolean;
+  readonly hintLevel: 0 | 1 | 2 | 3;
+  readonly wrongProgress: number | null;
+  readonly placedAsset?: RenderAsset;
+  readonly expectedAsset?: RenderAsset;
+  readonly isAutoSolved: boolean;
+  readonly autoSolveProgress: number;
+  readonly wobbleX: number;
+  readonly snappedElapsedMs: number | null;
+  readonly winElapsedMs: number | null;
+  readonly stageRect?: SceneBox;
+  readonly timeMs: number;
+  readonly showParticles: boolean;
+}
+
+export interface GT023TrayPartParams {
+  readonly slot: SceneBox & { readonly hitW: number; readonly hitH: number };
+  readonly asset: RenderAsset;
+  readonly index: number;
+  readonly isHovered: boolean;
+  readonly isStaged: boolean;
+  readonly isHintL2: boolean;
+  readonly wrongProgress: number | null;
+  readonly trayRect?: SceneBox;
+  readonly timeMs: number;
+  readonly softShadows?: boolean;
+}
