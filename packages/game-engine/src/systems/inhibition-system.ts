@@ -18,7 +18,7 @@ export type TrialOutcome =
   | "correct_rejection" // No-Go + No action -> Đúng
   | "false_alarm"; // No-Go + Acted -> Sai (commission error)
 
-interface TrialResult {
+export interface TrialResult {
   readonly trialIndex: number;
   readonly stimulusId: string;
   readonly kind: StimulusKind;
@@ -96,6 +96,10 @@ export class InhibitionSystem<T = string> {
 
   getIsiMs(): number {
     return this.isiMs;
+  }
+
+  getTrialElapsedMs(): number {
+    return this.trialElapsedMs;
   }
 
   /** Nới cửa sổ kích thích từ các lượt sau (thang trợ giúp `L1`). */

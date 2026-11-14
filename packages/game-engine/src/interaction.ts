@@ -99,6 +99,8 @@ export interface ViewEntity {
   readonly y: number;
   readonly w: number;
   readonly h: number;
+  readonly hitW?: number;
+  readonly hitH?: number;
   readonly label?: string;
   /**
    * Hình vùng chạm của entity trên bề mặt — phải khớp hình đang vẽ. Mặc định

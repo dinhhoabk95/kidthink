@@ -252,3 +252,74 @@ export interface GT023TrayPartParams {
   readonly timeMs: number;
   readonly softShadows?: boolean;
 }
+
+export type GT026DotStatus = "upcoming" | "current" | "correct" | "passed";
+
+export interface GT026HeaderSpec {
+  readonly rect: SceneBox;
+  readonly stageBounds?: SceneBox;
+  readonly goAsset: RenderAsset;
+  readonly nogoAsset: RenderAsset;
+  readonly dots: readonly GT026DotStatus[];
+  readonly highlightedRule: "go" | "nogo" | null;
+  readonly isWon: boolean;
+  readonly timeMs: number;
+  readonly disableShadows: boolean;
+}
+
+export interface GT026WindowFrameSpec {
+  readonly rect: SceneBox;
+  readonly stageBounds?: SceneBox;
+  readonly isWaitingForStart: boolean;
+  readonly startSlot?: SceneBox;
+  readonly isStartHovered: boolean;
+  readonly showTimerBar: boolean;
+  readonly remainingRatio: number;
+  readonly isWon: boolean;
+  readonly timeMs: number;
+  readonly disableShadows: boolean;
+}
+
+export interface GT026StimulusPodSpec {
+  readonly slot: SceneBox & {
+    readonly index: number;
+    readonly hitW: number;
+    readonly hitH: number;
+    readonly page: number;
+    readonly role: "source" | "target" | "neutral";
+  };
+  readonly stageBounds?: SceneBox;
+  readonly kind: "go" | "nogo";
+  readonly asset: RenderAsset;
+  readonly glow: number;
+  readonly isHovered: boolean;
+  readonly isHinted: boolean;
+  readonly wrongProgress: number | null;
+  readonly shakeX: number;
+  readonly timeMs: number;
+  readonly disableShadows: boolean;
+}
+
+export interface GT026StopPadSpec {
+  readonly slot: SceneBox & {
+    readonly index: number;
+    readonly hitW: number;
+    readonly hitH: number;
+    readonly page: number;
+    readonly role: "source" | "target" | "neutral";
+  };
+  readonly stageBounds?: SceneBox;
+  readonly asset: RenderAsset;
+  readonly isHovered: boolean;
+  readonly isHinted: boolean;
+  readonly timeMs: number;
+  readonly disableShadows: boolean;
+}
+
+export interface GT026OutcomeFeedbackSpec {
+  readonly center: { readonly x: number; readonly y: number };
+  readonly stageBounds?: SceneBox;
+  readonly kind: "hit" | "correct_rejection" | "retry";
+  readonly progress: number;
+  readonly disableParticles: boolean;
+}

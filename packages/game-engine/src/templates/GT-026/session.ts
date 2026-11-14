@@ -5,76 +5,74 @@ import {
   ACTION_RETRY,
   type ActionResult,
   type GameAction,
+  type HintDemoStep,
   type HintLevel,
+  type HintTarget,
   TemplateGameSession,
 } from "#src/game-session";
-import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
-import {
-  resolveAssetLabels,
-  spokenKeywordForAsset,
-} from "#src/labels/spoken-keyword";
-import { resolveTouchFloor, SLOT_GAP_PX } from "#src/layout/constants";
+import type { EngineView, Gesture } from "#src/interaction";
 import { isPointInSlot, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
-import { resolveLayout } from "#src/layout/registry";
-import { insetDrawSize, splitCaption } from "#src/layout/slot-fit";
+import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
-import {
-  drawPedestalTarget,
-  drawSceneBackground,
-  drawSlotItem,
-  drawSubPromptText,
-  drawTrafficLight,
-  trafficLampGlow,
-  trafficLightBox,
-  trafficStimulusSlot,
-} from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
 import type { DegradationState } from "#src/systems/degradation";
 import {
   InhibitionSystem,
   type TrialItem,
   type TrialOutcome,
+  type TrialResult,
 } from "#src/systems/inhibition-system";
 import type { RenderSystem } from "#src/systems/render-system";
-import { WrongFlash } from "#src/systems/wrong-flash";
+import {
+  buildGT026View,
+  computeGT026Slots,
+  computeGT026StartSlot,
+  type GT026LayoutHost,
+  getGT026Clock,
+  renderGT026Frame,
+  resetGT026Clock,
+  resolveGT026HintDemo,
+  resolveGT026HintTarget,
+  resolveGT026HintTargetIndex,
+  resolveRoundTrials,
+} from "./layout.js";
 import type { GT026Content, GT026Difficulty } from "./template.js";
 
 /** Khung chuyện đọc một lần ở vòng đầu (`BR-E026-11`, `BR-FBK-16`). */
 export const GT026_STORY_LINE =
   "Gấu Con chơi trò đèn xanh, đèn đỏ: đèn xanh thì chạm, đèn đỏ thì đứng yên như Gấu Con nhé!";
 
-/** Nút "dừng" của lối không tính giờ: cạnh tối thiểu (còn theo sàn chạm). */
-const STOP_PAD_MIN_PX = 72;
-/** Chừa mép dưới sân khấu cho viền thân đất sét của nút dừng. */
-const STOP_PAD_EDGE_PX = 8;
-/** Tên và asset nút dừng — bàn tay giơ lên, không phải chữ (`BR-E026-09`). */
-const STOP_PAD_ID = "stop-pad";
-const STOP_PAD_ASSET = { kind: "emoji", ref: "✋" } as const;
 /** Bội số nới ở bậc `L1` (cửa sổ) và `L2` (nhịp nghỉ); `L3` là không tính giờ. */
 const LADDER_WIDEN_FACTOR = 1.5;
 
-export class GT026Session extends TemplateGameSession<
-  GT026Content,
-  GT026Difficulty
-> {
+export class GT026Session
+  extends TemplateGameSession<GT026Content, GT026Difficulty>
+  implements GT026LayoutHost
+{
   degradation: DegradationState | null = null;
-  private lastFrameMs = 0;
-  private readonly wrongFlash = new WrongFlash();
-
   override readonly usesPromptZone = true;
-
-  /** Cửa sổ kích thích không chạy lúc câu dẫn còn đọc (`BR-E026-04`). */
   readonly holdsClockWhileInputClosed = true;
 
   private inhibitionSystem!: InhibitionSystem;
   private isInputOpen = true;
-  /** Bậc thang hạ độ khó đã áp trong chuỗi không phản ứng hiện tại (`BR-E026-10`). */
+  private waitingForStart = false;
+  private currentBand: AgeBand = "4-5";
   private appliedLadderLevel = 0;
-  /** Dáng mascot sau kết quả lượt vừa xong; chỉ giữ trong nhịp nghỉ (`BR-E026-11`). */
   private outcomeMood: MascotPose | null = null;
-  /** Lượt đang hiện kích thích và mốc đồng hồ khung lúc đèn bật (`BR-E026-12`). */
-  private litTrialId: string | null = null;
-  private litSinceMs = 0;
+
+  enableStartGate(): void {
+    if (!this.isFinished()) {
+      this.waitingForStart = true;
+    }
+  }
+
+  isWaitingForStart(): boolean {
+    return this.waitingForStart && !this.isFinished();
+  }
+
+  isInputOpenState(): boolean {
+    return this.isInputOpen;
+  }
 
   isUntimed(): boolean {
     return this.inhibitionSystem?.isUntimed() === true;
@@ -88,15 +86,55 @@ export class GT026Session extends TemplateGameSession<
     return this.inhibitionSystem?.getIsiMs() ?? 0;
   }
 
-  /**
-   * Thang hạ độ khó theo đồng hồ trợ giúp (`BR-E026-10`): `L1` nới cửa sổ, `L2`
-   * giãn nhịp nghỉ, `L3` bỏ tính giờ. Chỉ leo vì trẻ không phản ứng (`timer`);
-   * chuỗi chạm sai không nới cửa sổ. Nhảy bậc thì áp đủ các bậc còn thiếu.
-   */
+  getAgeBand(): AgeBand {
+    return this.currentBand;
+  }
+
+  getStageRect(): ZoneRect {
+    if (this.stageRect) {
+      return this.stageRect;
+    }
+    const w = Math.max(240, this.logicSpace.w - 32);
+    const h = Math.max(180, this.logicSpace.h - 32);
+    return { x: 16, y: 16, w, h };
+  }
+
+  getCurrentTrialIndex(): number {
+    return this.inhibitionSystem?.getCurrentTrialIndex() ?? 0;
+  }
+
+  getTotalTrials(): number {
+    return (
+      this.inhibitionSystem?.getTotalTrials() ?? this.content.trials.length
+    );
+  }
+
+  getResults(): readonly TrialResult[] {
+    return this.inhibitionSystem?.getResults() ?? [];
+  }
+
+  isFinished(): boolean {
+    return this.inhibitionSystem?.isFinished() ?? false;
+  }
+
+  getTrialElapsedRatio(): number {
+    if (
+      !this.inhibitionSystem ||
+      this.isUntimed() ||
+      !this.isStimulusVisible()
+    ) {
+      return 0;
+    }
+    const winMs = Math.max(1, this.inhibitionSystem.getStimulusWindowMs());
+    const ratio = this.inhibitionSystem.getTrialElapsedMs() / winMs;
+    return Math.max(0, Math.min(1, ratio));
+  }
+
   override onScaffoldEscalated(
     level: HintLevel,
     trigger: "timer" | "miss_streak"
   ): void {
+    getGT026Clock(this).activeHintLevel = level;
     if (trigger !== "timer" || !this.inhibitionSystem) {
       return;
     }
@@ -112,10 +150,14 @@ export class GT026Session extends TemplateGameSession<
     this.appliedLadderLevel = Math.max(this.appliedLadderLevel, level);
   }
 
-  /**
-   * Âm và mascot đi theo **kết quả** lượt, không bao giờ theo loại kích thích:
-   * báo trước `go`/`nogo` là đưa đáp án cho trẻ (`BR-E026-11`).
-   */
+  onHintTriggered(level: HintLevel): void {
+    getGT026Clock(this).activeHintLevel = level;
+  }
+
+  override onHintCleared(): void {
+    getGT026Clock(this).activeHintLevel = 0;
+  }
+
   private noteOutcome(outcome: TrialOutcome): void {
     if (outcome === "hit") {
       this.queueSfx("go_chime");
@@ -142,9 +184,12 @@ export class GT026Session extends TemplateGameSession<
     this.isInputOpen = isOpen;
   }
 
-  /** Kích thích chỉ hiện khi chạm được (`BR-E026-04`). */
-  private isStimulusVisible(): boolean {
-    return this.isInputOpen && this.inhibitionSystem?.getState() === "stimulus";
+  isStimulusVisible(): boolean {
+    return (
+      this.isInputOpen &&
+      !this.waitingForStart &&
+      this.inhibitionSystem?.getState() === "stimulus"
+    );
   }
 
   override isTrialBased(): boolean {
@@ -153,13 +198,17 @@ export class GT026Session extends TemplateGameSession<
 
   setupEntities(): void {
     this.isWon = false;
-    this.wrongFlash.clear();
-    this.lastFrameMs = 0;
+    this.waitingForStart = false;
     this.appliedLadderLevel = 0;
     this.outcomeMood = null;
-    this.litTrialId = null;
+    resetGT026Clock(this);
 
-    const trials: TrialItem[] = this.content.trials.map((t) => ({
+    const ordered = resolveRoundTrials(
+      this.content.trials,
+      this.layoutSeed,
+      this.roundGeneration
+    );
+    const trials: TrialItem[] = ordered.map((t) => ({
       id: t.id,
       kind: t.kind,
     }));
@@ -177,16 +226,19 @@ export class GT026Session extends TemplateGameSession<
     });
   }
 
-  getCurrentTrial() {
+  getCurrentTrial(): TrialItem | null {
     return this.inhibitionSystem?.getCurrentTrial() ?? null;
   }
 
-  getState() {
+  getState(): "stimulus" | "isi" | "finished" {
     return this.inhibitionSystem?.getState() ?? "finished";
   }
 
   validateAction(action: GameAction): ActionResult {
     if (!this.inhibitionSystem || this.inhibitionSystem.isFinished()) {
+      return ACTION_IGNORED;
+    }
+    if (this.waitingForStart) {
       return ACTION_IGNORED;
     }
     if (this.inhibitionSystem.getState() !== "stimulus") {
@@ -196,7 +248,6 @@ export class GT026Session extends TemplateGameSession<
     if (!trial) {
       return ACTION_IGNORED;
     }
-
     if (
       action.type === "tap_stimulus" ||
       action.type === "tap_card" ||
@@ -204,7 +255,6 @@ export class GT026Session extends TemplateGameSession<
     ) {
       return trial.kind === "go" ? ACTION_CORRECT : ACTION_RETRY;
     }
-
     if (
       action.type === "pass" ||
       action.type === "skip" ||
@@ -212,29 +262,43 @@ export class GT026Session extends TemplateGameSession<
     ) {
       return trial.kind === "nogo" ? ACTION_CORRECT : ACTION_RETRY;
     }
-
     return ACTION_IGNORED;
   }
 
   private handleTrialAction(actionType: "tap" | "pass"): ActionResult {
-    if (!this.inhibitionSystem || this.inhibitionSystem.isFinished()) {
+    if (
+      !this.inhibitionSystem ||
+      this.inhibitionSystem.isFinished() ||
+      this.waitingForStart
+    ) {
       return ACTION_IGNORED;
     }
-
     const result = this.inhibitionSystem.handleAction(actionType);
     if (!result) {
       return ACTION_IGNORED;
     }
 
-    if (!result.isCorrect) {
-      this.wrongFlash.trigger(this.lastFrameMs);
+    const clock = getGT026Clock(this);
+    clock.activeHintLevel = 0;
+    clock.hoveredSlot = null;
+    const slotIndex = actionType === "pass" ? 1 : 0;
+
+    if (result.isCorrect) {
+      const kind =
+        result.outcome === "correct_rejection" ? "correct_rejection" : "hit";
+      clock.outcomeFx = { kind, triggeredAtMs: clock.lastFrameMs, slotIndex };
+    } else {
+      clock.wrongFlash.trigger(clock.lastFrameMs);
+      clock.outcomeFx = {
+        kind: "retry",
+        triggeredAtMs: clock.lastFrameMs,
+        slotIndex,
+      };
     }
     if (result.outcome === "hit") {
-      // Đồng hồ trợ giúp đặt lại: chuỗi không phản ứng mới bắt đầu từ `L1`.
       this.appliedLadderLevel = 0;
     }
     this.noteOutcome(result.outcome);
-
     this.recordEvent("item_selected", {
       outcome: result.outcome,
       is_correct: result.isCorrect,
@@ -242,12 +306,11 @@ export class GT026Session extends TemplateGameSession<
     });
 
     if (this.inhibitionSystem.isFinished()) {
-      // Hết trials luôn đóng vòng; số lượt đúng chỉ vào telemetry.
       this.isWon = true;
+      clock.winAtMs = clock.lastFrameMs;
       this.recordEvent("round_completed", { round_index: 0 });
       this.winSession();
     }
-
     return result.isCorrect ? ACTION_CORRECT : ACTION_RETRY;
   }
 
@@ -261,16 +324,20 @@ export class GT026Session extends TemplateGameSession<
 
   // biome-ignore lint/suspicious/noConfusingVoidType: void needed for compatibility with update
   update(deltaMs: number): ActionResult | void | null {
-    this.lastFrameMs += deltaMs;
-    if (!this.inhibitionSystem || this.inhibitionSystem.isFinished()) {
+    const clock = getGT026Clock(this);
+    clock.lastFrameMs += deltaMs;
+    if (
+      !this.inhibitionSystem ||
+      this.inhibitionSystem.isFinished() ||
+      this.waitingForStart
+    ) {
       return null;
     }
 
     const verdict = this.inhibitionSystem.tick(deltaMs);
-
     if (this.inhibitionSystem.isFinished() && !this.isWon) {
-      // BR-E026-05: hết trials luôn đóng vòng; số lượt đúng chỉ vào telemetry.
       this.isWon = true;
+      clock.winAtMs = clock.lastFrameMs;
       this.recordEvent("round_completed", { round_index: 0 });
       this.completeSession();
     }
@@ -282,16 +349,18 @@ export class GT026Session extends TemplateGameSession<
         is_correct: verdict.isCorrect,
         action_type: "timeout_no_tap",
       });
-
-      // Kìm được ở lượt nogo thì khen. Bỏ sót lượt go là trung tính (`BR-E026-08`):
-      // không báo sai, không vào điểm; việc hạ độ khó theo đồng hồ trợ giúp
-      // (`onScaffoldEscalated`, `BR-E026-10`), không đếm theo lượt bỏ sót.
+      if (verdict.outcome === "correct_rejection") {
+        clock.outcomeFx = {
+          kind: "correct_rejection",
+          triggeredAtMs: clock.lastFrameMs,
+          slotIndex: 0,
+        };
+      }
       if (verdict.outcome === "miss") {
         return ACTION_IGNORED;
       }
       return verdict.isCorrect ? ACTION_CORRECT : ACTION_RETRY;
     }
-
     return null;
   }
 
@@ -299,14 +368,61 @@ export class GT026Session extends TemplateGameSession<
     return this.isWon;
   }
 
+  setPointerOver(x: number, y: number): void {
+    const clock = getGT026Clock(this);
+    if (!this.isInputOpen || this.isFinished()) {
+      clock.hoveredSlot = null;
+      return;
+    }
+    if (this.waitingForStart) {
+      const startSlot = computeGT026StartSlot(this);
+      clock.hoveredSlot = isPointInSlot(
+        startSlot,
+        x,
+        y,
+        "circle",
+        TAP_TOLERANCE_PX
+      )
+        ? 0
+        : null;
+      return;
+    }
+    const pad = this.slots[1];
+    if (
+      this.isUntimed() &&
+      pad &&
+      isPointInSlot(pad, x, y, "circle", TAP_TOLERANCE_PX)
+    ) {
+      clock.hoveredSlot = 1;
+      return;
+    }
+    const stim = this.slots[0];
+    clock.hoveredSlot =
+      stim && isPointInSlot(stim, x, y, "square", TAP_TOLERANCE_PX) ? 0 : null;
+  }
+
+  clearPointerOver(): void {
+    getGT026Clock(this).hoveredSlot = null;
+  }
+
   override toAction(gesture: Gesture): GameAction | null {
-    if (gesture.type !== "tap") {
+    if (gesture.type !== "tap" || !this.isInputOpen) {
       return null;
+    }
+    if (this.waitingForStart) {
+      const startSlot = computeGT026StartSlot(this);
+      const hitStart = isPointInSlot(
+        startSlot,
+        gesture.x,
+        gesture.y,
+        "circle",
+        TAP_TOLERANCE_PX
+      );
+      return hitStart ? { type: "start_trials", data: {} } : null;
     }
     if (this.inhibitionSystem?.getState() !== "stimulus") {
       return null;
     }
-    // Lối không tính giờ: nhịn là bấm nút dừng, không phải chạm ra ngoài (`BR-E026-09`).
     const pad = this.slots[1];
     if (
       this.isUntimed() &&
@@ -315,10 +431,10 @@ export class GT026Session extends TemplateGameSession<
     ) {
       return { type: "pass", data: {} };
     }
-    const slot = this.slots[0];
+    const slot0 = this.slots[0];
     if (
-      slot &&
-      isPointInSlot(slot, gesture.x, gesture.y, "circle", TAP_TOLERANCE_PX)
+      slot0 &&
+      isPointInSlot(slot0, gesture.x, gesture.y, "square", TAP_TOLERANCE_PX)
     ) {
       return { type: "tap_stimulus", data: {} };
     }
@@ -326,6 +442,11 @@ export class GT026Session extends TemplateGameSession<
   }
 
   override commit(action: GameAction): void {
+    if (action.type === "start_trials") {
+      this.waitingForStart = false;
+      getGT026Clock(this).litTrialId = null;
+      return;
+    }
     if (
       action.type === "tap_stimulus" ||
       action.type === "tap_card" ||
@@ -342,141 +463,32 @@ export class GT026Session extends TemplateGameSession<
   }
 
   override getView(): EngineView {
-    const slot = this.slots[0];
-    const trial = this.inhibitionSystem?.getCurrentTrial();
-    const isStimulus = this.isStimulusVisible();
-    const entities: ViewEntity[] = [];
-
-    const now = this.lastFrameMs;
-    const isWrong = this.wrongFlash.isActive(now);
-
-    if (slot && trial && isStimulus) {
-      const stimulus =
-        trial.kind === "go"
-          ? this.content.go_stimulus
-          : this.content.nogo_stimulus;
-      const assetLabels = resolveAssetLabels(stimulus.asset);
-      const spokenLabel =
-        assetLabels.spokenLabel ??
-        spokenKeywordForAsset({ kind: "text", text: stimulus.label });
-      entities.push({
-        id: trial.id,
-        slotIndex: 0,
-        role: "source",
-        state: isWrong ? "incorrect" : "idle",
-        x: slot.x,
-        y: slot.y,
-        w: slot.w,
-        h: slot.h,
-        ...assetLabels,
-        label: stimulus.label,
-        ...(spokenLabel ? { spokenLabel } : {}),
-      });
-    }
-
-    const pad = this.slots[1];
-    if (pad && trial && isStimulus && this.isUntimed()) {
-      entities.push({
-        id: STOP_PAD_ID,
-        slotIndex: 1,
-        role: "source",
-        state: "idle",
-        x: pad.x,
-        y: pad.y,
-        w: pad.w,
-        h: pad.h,
-        ...resolveAssetLabels(STOP_PAD_ASSET),
-        spokenLabel: "Dừng lại",
-      });
-    }
-
-    return {
-      activePrompt: this.content.prompt,
-      entities,
-    };
+    return buildGT026View(this);
   }
 
   override destroy(): void {
+    resetGT026Clock(this);
     super.destroy();
   }
 
   override getHintTargetIndex(): number | null {
-    if (this.isWon) {
-      return null;
-    }
-    const trial = this.inhibitionSystem?.getCurrentTrial();
-    if (!this.isStimulusVisible()) {
-      return null;
-    }
-    if (trial?.kind === "go") {
-      return 0;
-    }
-    return this.isUntimed() && this.slots[1] ? 1 : null;
+    return resolveGT026HintTargetIndex(this);
+  }
+
+  override getHintTargetForLevel(level: HintLevel): HintTarget | null {
+    getGT026Clock(this).activeHintLevel = level;
+    return resolveGT026HintTarget(this, level);
+  }
+
+  override getHintDemoSequence(
+    level: HintLevel
+  ): readonly HintDemoStep[] | null {
+    return resolveGT026HintDemo(this, level);
   }
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
-    const layoutFn = resolveLayout("grid");
-    const pad = Math.max(
-      resolveTouchFloor(ageBand, this.cssPerLogic),
-      STOP_PAD_MIN_PX
-    );
-    const body = this.stageRect ? splitCaption(this.stageRect).body : undefined;
-    // Chừa chỗ cho nút dừng dưới kích thích: kích thích co lại chứ không chồng nút.
-    const stimArea = body
-      ? {
-          ...body,
-          h: Math.max(0, body.h - pad - STOP_PAD_EDGE_PX - SLOT_GAP_PX),
-        }
-      : undefined;
-    const [stim] = insetDrawSize(
-      layoutFn({
-        slotCount: 1,
-        ageBand,
-        logic: this.logicSpace,
-        stage: stimArea,
-        cssPerLogic: this.cssPerLogic,
-      }),
-      stimArea ?? this.stageRect
-    );
-    if (!stim) {
-      return [];
-    }
-    const padSlot: Slot = {
-      index: 1,
-      x: body ? Math.round(body.x + body.w / 2) : stim.x,
-      y: body
-        ? Math.round(body.y + body.h - pad / 2 - STOP_PAD_EDGE_PX)
-        : Math.round(stim.y + stim.h / 2 + SLOT_GAP_PX + pad / 2),
-      w: pad,
-      h: pad,
-      hitW: pad,
-      hitH: pad,
-      page: 0,
-      role: "source",
-    };
-    return [stim, padSlot];
-  }
-
-  /**
-   * Đèn chỉ vẽ trong nhánh đã qua cổng kích thích (`BR-E026-04`): ngoài nhịp
-   * kích thích không có đèn nào sáng, nên màu đèn không báo trước đáp án.
-   */
-  private drawLight(
-    ctx: CanvasRenderingContext2D,
-    rs: RenderSystem,
-    slot: Slot,
-    trial: TrialItem
-  ): void {
-    if (this.litTrialId !== trial.id) {
-      this.litTrialId = trial.id;
-      this.litSinceMs = this.lastFrameMs;
-    }
-    drawTrafficLight(
-      ctx,
-      trafficLightBox(slot),
-      trial.kind === "go" ? "green" : "red",
-      trafficLampGlow(this.lastFrameMs - this.litSinceMs, rs.reducedMotion)
-    );
+    this.currentBand = ageBand;
+    return computeGT026Slots(this, ageBand);
   }
 
   render(
@@ -484,53 +496,6 @@ export class GT026Session extends TemplateGameSession<
     rs: RenderSystem,
     timeMs: number
   ): void {
-    this.lastFrameMs = timeMs;
-    drawSceneBackground(ctx, rs, this.themeId);
-    const trial = this.inhibitionSystem.getCurrentTrial();
-
-    if (
-      !trial ||
-      this.isInputOpen === false ||
-      this.inhibitionSystem.getState() !== "stimulus"
-    ) {
-      return;
-    }
-
-    const stimulus =
-      trial.kind === "go"
-        ? this.content.go_stimulus
-        : this.content.nogo_stimulus;
-    drawSubPromptText(
-      ctx,
-      rs,
-      stimulus.label,
-      this.stageRect ? splitCaption(this.stageRect).caption : undefined
-    );
-    const slot = this.slots[0];
-    if (slot) {
-      const now = this.lastFrameMs;
-      const isWrong = this.wrongFlash.isActive(now);
-      const shakeX =
-        isWrong && !rs.reducedMotion
-          ? Math.sin(this.wrongFlash.elapsedMs(now) / 30) * 4
-          : 0;
-      const renderSlot = shakeX === 0 ? slot : { ...slot, x: slot.x + shakeX };
-      this.drawLight(ctx, rs, renderSlot, trial);
-      const stimulusSlot = trafficStimulusSlot(renderSlot);
-      drawPedestalTarget(ctx, stimulusSlot);
-      const pad = this.slots[1];
-      if (pad && this.isUntimed()) {
-        drawSlotItem(ctx, rs, pad, {
-          id: STOP_PAD_ID,
-          asset: STOP_PAD_ASSET,
-          state: "idle",
-        });
-      }
-      drawSlotItem(ctx, rs, stimulusSlot, {
-        id: trial.id,
-        asset: stimulus.asset,
-        state: isWrong ? "wrong" : "idle",
-      });
-    }
+    renderGT026Frame(this, ctx, rs, timeMs);
   }
 }
