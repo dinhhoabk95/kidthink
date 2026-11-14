@@ -87,15 +87,57 @@ function pickCollectibles(
   return collectibles;
 }
 
+function resolveAllowedCommands(
+  absolute: boolean,
+  allowLoop: boolean
+): GT035Content["allowed_commands"] {
+  if (absolute) {
+    return ["go_up", "go_right", "go_down", "go_left"];
+  }
+  if (allowLoop) {
+    return ["forward", "turn_left", "turn_right", "loop"];
+  }
+  return ["forward", "turn_left", "turn_right"];
+}
+
+function isValidSolutionForStep(
+  solution: ReturnType<typeof findShortestSolution>,
+  absolute: boolean,
+  allowLoop: boolean
+): boolean {
+  if (!solution || solution.length > 8) {
+    return false;
+  }
+  if (absolute) {
+    return new Set(solution.map((c) => c.type)).size >= 2;
+  }
+  const hasTurn = solution.some(
+    (c) => c.type === "turn_left" || c.type === "turn_right"
+  );
+  if (!hasTurn) {
+    return false;
+  }
+  if (allowLoop) {
+    const hasRepeatedRun = solution.some(
+      (c, idx) => idx > 0 && c.type === solution[idx - 1]?.type
+    );
+    if (!hasRepeatedRun) {
+      return false;
+    }
+  }
+  return true;
+}
+
 function tryGenerateCandidate(
   rng: Rng,
   goalInfo: { ref: string; name_vi: string },
   colInfo: { ref: string; name_vi: string },
-  absolute: boolean
+  absolute: boolean,
+  allowLoop: boolean
 ): { content_pack: GT035Content; difficulty_params: GT035Difficulty } | null {
   // Lưới đúng 3 hàng (`BR-E035-17`): 4 hàng không vừa khung 360x640.
   const rows = GT035_MAX_GRID_ROWS;
-  const cols = 3 + rng.nextInt(2);
+  const cols = allowLoop ? 4 : 3 + rng.nextInt(2);
 
   const facings: Facing[] = ["up", "right", "down", "left"];
   const startFacing = facings[rng.nextInt(4)] ?? "right";
@@ -129,17 +171,7 @@ function tryGenerateCandidate(
     colInfo.ref
   );
 
-  const allowLoop = !absolute && rng.nextInt(2) === 1;
-  let allowedCommands: GT035Content["allowed_commands"] = [
-    "forward",
-    "turn_left",
-    "turn_right",
-  ];
-  if (absolute) {
-    allowedCommands = ["go_up", "go_right", "go_down", "go_left"];
-  } else if (allowLoop) {
-    allowedCommands = ["forward", "turn_left", "turn_right", "loop"];
-  }
+  const allowedCommands = resolveAllowedCommands(absolute, allowLoop);
 
   const config = {
     rows,
@@ -152,11 +184,7 @@ function tryGenerateCandidate(
   };
 
   const solution = findShortestSolution(config, allowedCommands);
-  if (!solution || solution.length > 8) {
-    return null;
-  }
-  // Mục 14 của phiếu: level tuyệt đối phải đòi ít nhất hai hướng khác nhau.
-  if (absolute && new Set(solution.map((c) => c.type)).size < 2) {
+  if (!(solution && isValidSolutionForStep(solution, absolute, allowLoop))) {
     return null;
   }
 
@@ -205,38 +233,43 @@ export const GT035Generator: LevelGenerator = {
 
     // Hệ lệnh theo bậc, không ngẫu nhiên (`BR-E035-15`): vòng đầu (bậc dễ) dùng
     // mũi tên tuyệt đối theo màn hình; vòng leo thang mới sang lệnh tương đối.
-    const absolute = escalation_step === 0;
-    for (let attempt = 0; attempt < 50; attempt++) {
-      const candidate = tryGenerateCandidate(rng, goalInfo, colInfo, absolute);
+    const absolute = escalation_step <= 0;
+    const allowLoop = escalation_step >= 2;
+    for (let attempt = 0; attempt < 120; attempt++) {
+      const candidate = tryGenerateCandidate(
+        rng,
+        goalInfo,
+        colInfo,
+        absolute,
+        allowLoop
+      );
       if (candidate) {
         return candidate;
       }
     }
 
-    // Fallback nếu ngẫu nhiên không ra (luôn hợp lệ)
+    // Fallback nếu ngẫu nhiên không ra (luôn hợp lệ theo Spec mục 14)
     const fallbackContent: GT035Content = {
       prompt: `Bé lập trình mũi tên để đưa robot về ${goalInfo.name_vi} nhé!`,
-      grid: { rows: 3, cols: 3 },
+      grid: { rows: 3, cols: 4 },
       start: { col: 0, row: 0, facing: "right" },
-      // Hệ tuyệt đối: đích lệch một hàng để lời giải phải đổi hướng (mục 14).
+      // Hệ tuyệt đối/tương đối: đích lệch hàng để lời giải phải đổi hướng hoặc dùng vòng lặp.
       goal: {
-        col: 2,
-        row: absolute ? 1 : 0,
+        col: allowLoop ? 3 : 2,
+        row: 1,
         asset: { kind: "emoji", ref: goalInfo.ref },
       },
       obstacles: [],
       collectibles: [],
-      allowed_commands: absolute
-        ? ["go_up", "go_right", "go_down", "go_left"]
-        : ["forward", "turn_left", "turn_right"],
+      allowed_commands: resolveAllowedCommands(absolute, allowLoop),
     };
 
     const fallbackDifficulty: GT035Difficulty = {
       item_count: 2,
-      max_commands: 4,
+      max_commands: 6,
       obstacle_count: 0,
       collectible_count: 0,
-      allow_loop: false,
+      allow_loop: allowLoop,
       allow_retry: true,
       hint_after_ms: 10_000,
     };
