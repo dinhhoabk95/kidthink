@@ -1,0 +1,69 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chuột túi</title>
+  <defs>
+    <radialGradient cx="40%" cy="32%" id="kgFur" r="70%">
+      <stop offset="0%" stop-color="#fdba74" />
+      <stop offset="55%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#92400e" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="58" cy="105" fill="#5c3d2e" opacity="0.25" rx="38" ry="5.5" />
+  <path
+    d="M66 89C86 93 100 84 105 66C98 76 85 81 68 78Z"
+    fill="url(#kgFur)"
+    stroke="#5c3d2e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="44"
+    cy="97"
+    fill="url(#kgFur)"
+    rx="15"
+    ry="5.5"
+    stroke="#5c3d2e"
+    stroke-width="3.8"
+  />
+  <ellipse
+    cx="58"
+    cy="70"
+    fill="url(#kgFur)"
+    rx="21"
+    ry="25"
+    stroke="#5c3d2e"
+    stroke-width="4"
+  />
+  <path
+    d="M43 72C43 85 65 85 65 72Z"
+    fill="#fef3c7"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="53"
+    cy="68"
+    fill="#fbbf24"
+    r="6.5"
+    stroke="#78350f"
+    stroke-width="3.4"
+  />
+  <path
+    d="M42 29L36 14L49 24M56 27L62 13L64 28"
+    fill="url(#kgFur)"
+    stroke="#5c3d2e"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <ellipse
+    cx="49"
+    cy="39"
+    fill="url(#kgFur)"
+    rx="16"
+    ry="14"
+    stroke="#5c3d2e"
+    stroke-width="4"
+  />
+  <circle cx="43" cy="38" fill="#292524" r="2.8" />
+  <circle cx="35" cy="43" fill="#5c3d2e" r="3" />
+</svg>

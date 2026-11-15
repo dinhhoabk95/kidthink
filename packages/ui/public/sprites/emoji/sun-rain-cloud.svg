@@ -1,0 +1,42 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mưa bóng mây</title>
+  <defs>
+    <radialGradient cx="40%" cy="35%" id="srcSun" r="68%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="60%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#eab308" />
+    </radialGradient>
+    <linearGradient id="srcCloud" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#bae6fd" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#1e3a8a" opacity="0.22" rx="38" ry="4.5" />
+  <path
+    d="M38 14V20M16 36H22M22 20L27 25M54 20L49 25"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="38"
+    cy="38"
+    fill="url(#srcSun)"
+    r="16"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <path
+    d="M34 74H88C97 74 104 67 104 58C104 50 98 44 90 43C87 32 76 26 64 29C54 27 44 33 42 43C31 44 24 52 24 61C24 68 28 74 34 74Z"
+    fill="url(#srcCloud)"
+    stroke="#1e3a5f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M40 82L35 95M60 82L55 95M80 82L75 95"
+    stroke="#1e3a8a"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+</svg>

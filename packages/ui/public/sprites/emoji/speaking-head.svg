@@ -1,0 +1,32 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bạn đang nói</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="shBlue" r="70%">
+      <stop offset="0%" stop-color="#bae6fd" />
+      <stop offset="55%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="52" cy="105" fill="#1e3a5f" opacity="0.24" rx="34" ry="5.5" />
+  <path
+    d="M26 96V82C18 76 16 61 19 46C22 29 38 20 55 23C68 25 76 34 77 45L85 54L77 59V65L69 67L75 73C73 82 65 86 55 86V96Z"
+    fill="url(#shBlue)"
+    stroke="#1e3a5f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle cx="62" cy="44" fill="#1e3a5f" r="3" />
+  <path
+    d="M89 58C94 62 94 70 89 74M97 51C105 58 105 74 97 81"
+    stroke="#b45309"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <path
+    d="M33 36C38 30 46 28 54 29"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.65"
+    stroke-width="3.2"
+  />
+</svg>

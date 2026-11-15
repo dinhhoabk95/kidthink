@@ -1,0 +1,58 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Thành cổ mái cong</title>
+  <defs>
+    <linearGradient id="pcRoof" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#2dd4bf" />
+      <stop offset="100%" stop-color="#0f766e" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#334155" opacity="0.26" rx="44" ry="5.5" />
+  <polygon
+    fill="#a8a29e"
+    points="22,76 98,76 104,100 16,100"
+    stroke="#44403c"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#fffbeb"
+    height="22"
+    stroke="#44403c"
+    stroke-width="3.8"
+    width="58"
+    x="31"
+    y="54"
+  />
+  <rect
+    fill="#fffbeb"
+    height="18"
+    stroke="#44403c"
+    stroke-width="3.8"
+    width="40"
+    x="40"
+    y="34"
+  />
+  <path
+    d="M26 36C38 35 48 22 60 22C72 22 82 35 94 36L88 41H32Z"
+    fill="url(#pcRoof)"
+    stroke="#115e59"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M16 56C30 55 44 46 60 46C76 46 90 55 104 56L98 62H22Z"
+    fill="url(#pcRoof)"
+    stroke="#115e59"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path d="M52 100V84C52 79 68 79 68 84V100Z" fill="#5c3d2e" />
+  <circle
+    cx="60"
+    cy="18"
+    fill="#facc15"
+    r="3.8"
+    stroke="#78350f"
+    stroke-width="2.6"
+  />
+</svg>

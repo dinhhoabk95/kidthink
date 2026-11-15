@@ -1,0 +1,38 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Sao xoay lấp lánh</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="osStar" r="68%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="55%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#eab308" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.22" rx="36" ry="4.5" />
+  <path
+    d="M22 76C8 68 20 42 54 28C86 15 110 24 104 42"
+    stroke="#1e3a8a"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <polygon
+    fill="url(#osStar)"
+    points="58,24 67,44 89,46 72,61 77,83 58,72 39,83 44,61 27,46 49,44"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M104 42C98 58 68 78 38 84C24 87 16 83 22 76"
+    stroke="#0284c7"
+    stroke-linecap="round"
+    stroke-opacity="0.9"
+    stroke-width="5"
+  />
+  <polygon
+    fill="#fef08a"
+    points="95,68 98,75 106,76 100,81 102,89 95,85 88,89 90,81 84,76 92,75"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+</svg>

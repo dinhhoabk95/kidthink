@@ -1,0 +1,41 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đôi đũa tre</title>
+  <defs>
+    <linearGradient id="cpWood" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="55%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#5c3d2e" opacity="0.25" rx="36" ry="5" />
+  <rect
+    fill="#e11d48"
+    height="14"
+    rx="7"
+    stroke="#881337"
+    stroke-width="3.8"
+    width="44"
+    x="22"
+    y="76"
+  />
+  <polygon
+    fill="url(#cpWood)"
+    points="92,16 99,22 25,92 21,88"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <polygon
+    fill="url(#cpWood)"
+    points="103,29 109,36 31,100 27,96"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M84 24L90 30M95 36L101 42"
+    stroke="#991b1b"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+</svg>

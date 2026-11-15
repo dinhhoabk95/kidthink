@@ -1,0 +1,51 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chai thuỷ tinh</title>
+  <defs>
+    <linearGradient id="ckGlass" x1="20%" x2="85%" y1="10%" y2="95%">
+      <stop offset="0%" stop-color="#86efac" />
+      <stop offset="55%" stop-color="#16a34a" />
+      <stop offset="100%" stop-color="#166534" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#14532d" opacity="0.25" rx="28" ry="5.5" />
+  <rect
+    fill="#d97706"
+    height="14"
+    rx="4"
+    stroke="#78350f"
+    stroke-width="3.8"
+    width="14"
+    x="53"
+    y="13"
+  />
+  <path
+    d="M51 25H69V40C77 48 82 57 82 70V93C82 97 78 100 73 100H47C42 100 38 97 38 93V70C38 57 43 48 51 40Z"
+    fill="url(#ckGlass)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#fef3c7"
+    height="22"
+    rx="4"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="32"
+    x="44"
+    y="64"
+  />
+  <path
+    d="M51 75H69"
+    stroke="#d97706"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+  <path
+    d="M45 54V88"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.55"
+    stroke-width="3"
+  />
+</svg>

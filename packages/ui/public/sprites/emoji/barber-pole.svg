@@ -1,0 +1,81 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đèn hiệu tiệm tóc</title>
+  <defs>
+    <linearGradient id="bpGlass" x1="0%" x2="100%" y1="0%" y2="0%">
+      <stop offset="0%" stop-color="#f8fafc" />
+      <stop offset="50%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#cbd5e1" />
+    </linearGradient>
+    <radialGradient cx="38%" cy="32%" id="bpCap" r="68%">
+      <stop offset="0%" stop-color="#f1f5f9" />
+      <stop offset="60%" stop-color="#94a3b8" />
+      <stop offset="100%" stop-color="#475569" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="108" fill="#1e293b" opacity="0.25" rx="26" ry="5" />
+  <circle
+    cx="60"
+    cy="15"
+    fill="url(#bpCap)"
+    r="6"
+    stroke="#334155"
+    stroke-width="3.6"
+  />
+  <path
+    d="M40 32C40 20 80 20 80 32Z"
+    fill="url(#bpCap)"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <rect fill="url(#bpGlass)" height="56" rx="4" width="36" x="42" y="34" />
+  <polygon fill="#ef4444" points="42,46 78,34 78,45 42,57" />
+  <polygon fill="#2563eb" points="42,66 78,54 78,65 42,77" />
+  <polygon fill="#ef4444" points="42,86 78,74 78,85 52,90 42,90" />
+  <rect
+    height="56"
+    rx="4"
+    stroke="#334155"
+    stroke-width="4"
+    width="36"
+    x="42"
+    y="34"
+  />
+  <path
+    d="M49 39V85"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.7"
+    stroke-width="4"
+  />
+  <rect
+    fill="url(#bpCap)"
+    height="8"
+    rx="4"
+    stroke="#334155"
+    stroke-width="3.8"
+    width="44"
+    x="38"
+    y="30"
+  />
+  <rect
+    fill="url(#bpCap)"
+    height="8"
+    rx="4"
+    stroke="#334155"
+    stroke-width="3.8"
+    width="44"
+    x="38"
+    y="88"
+  />
+  <rect
+    fill="url(#bpCap)"
+    height="7"
+    rx="3.5"
+    stroke="#334155"
+    stroke-width="3.6"
+    width="32"
+    x="44"
+    y="96"
+  />
+</svg>

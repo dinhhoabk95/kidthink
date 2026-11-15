@@ -1,0 +1,55 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hình vuông nâu gỗ</title>
+  <defs>
+    <linearGradient id="brBlock" x1="15%" x2="85%" y1="15%" y2="85%">
+      <stop offset="0%" stop-color="#d97706" />
+      <stop offset="50%" stop-color="#b45309" />
+      <stop offset="100%" stop-color="#92400e" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#6b3410" opacity="0.25" rx="40" ry="5" />
+  <rect
+    fill="#78350f"
+    height="82"
+    rx="18"
+    stroke="#44403c"
+    stroke-width="4"
+    width="86"
+    x="17"
+    y="22"
+  />
+  <rect
+    fill="url(#brBlock)"
+    height="82"
+    rx="18"
+    stroke="#6b3410"
+    stroke-width="4"
+    width="86"
+    x="17"
+    y="14"
+  />
+  <rect
+    height="66"
+    rx="12"
+    stroke="#fde68a"
+    stroke-opacity="0.45"
+    stroke-width="2.5"
+    width="70"
+    x="25"
+    y="22"
+  />
+  <path
+    d="M31 54C46 49 74 59 89 54M31 70C48 66 72 74 89 70"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-opacity="0.45"
+    stroke-width="2.8"
+  />
+  <path
+    d="M30 26H58"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.5"
+    stroke-width="4.5"
+  />
+</svg>

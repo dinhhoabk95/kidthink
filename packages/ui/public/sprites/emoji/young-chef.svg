@@ -1,0 +1,70 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đầu bếp khéo tay</title>
+  <defs>
+    <linearGradient id="ycCoat" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fffbeb" />
+      <stop offset="100%" stop-color="#fde68a" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#44403c" opacity="0.24" rx="36" ry="5.5" />
+  <path
+    d="M26 99C28 81 41 75 58 75C75 75 88 81 90 99Z"
+    fill="url(#ycCoat)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M47 75L58 87L69 75"
+    fill="#22c55e"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <circle
+    cx="58"
+    cy="58"
+    fill="#fed7aa"
+    r="19"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <path
+    d="M36 37C31 24 44 14 58 16C72 14 85 24 80 37Z"
+    fill="#ffffff"
+    stroke="#475569"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <rect
+    fill="#f1f5f9"
+    height="9"
+    rx="3.5"
+    stroke="#475569"
+    stroke-width="3.6"
+    width="42"
+    x="37"
+    y="34"
+  />
+  <circle cx="51" cy="57" fill="#1c1917" r="2.8" />
+  <circle cx="65" cy="57" fill="#1c1917" r="2.8" />
+  <path
+    d="M53 65C56 68 60 68 63 65"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+  <path
+    d="M77 83H104C102 92 95 96 89 96C83 96 79 92 77 83Z"
+    fill="#64748b"
+    stroke="#1e293b"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M68 83H79"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+</svg>

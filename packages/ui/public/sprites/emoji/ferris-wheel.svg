@@ -1,0 +1,99 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Vòng quay mặt trời</title>
+  <defs>
+    <radialGradient cx="50%" cy="50%" id="fwHub" r="60%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#1e3a8a" opacity="0.24" rx="38" ry="5" />
+  <path
+    d="M36 101L60 54L84 101"
+    stroke="#0f766e"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="5.5"
+  />
+  <circle
+    cx="60"
+    cy="54"
+    fill="none"
+    r="34"
+    stroke="#1e3a8a"
+    stroke-width="4.2"
+  />
+  <path
+    d="M60 20V88M26 54H94M36 30L84 78M84 30L36 78"
+    stroke="#3b82f6"
+    stroke-opacity="0.85"
+    stroke-width="2.6"
+  />
+  <rect
+    fill="#fb7185"
+    height="11"
+    rx="3.5"
+    stroke="#881337"
+    stroke-width="3.2"
+    width="13"
+    x="53.5"
+    y="13"
+  />
+  <rect
+    fill="#38bdf8"
+    height="11"
+    rx="3.5"
+    stroke="#1e3a8a"
+    stroke-width="3.2"
+    width="13"
+    x="88"
+    y="48"
+  />
+  <rect
+    fill="#4ade80"
+    height="11"
+    rx="3.5"
+    stroke="#14532d"
+    stroke-width="3.2"
+    width="13"
+    x="19"
+    y="48"
+  />
+  <rect
+    fill="#facc15"
+    height="11"
+    rx="3.5"
+    stroke="#78350f"
+    stroke-width="3.2"
+    width="13"
+    x="78"
+    y="76"
+  />
+  <rect
+    fill="#c084fc"
+    height="11"
+    rx="3.5"
+    stroke="#4c1d95"
+    stroke-width="3.2"
+    width="13"
+    x="29"
+    y="76"
+  />
+  <circle
+    cx="60"
+    cy="54"
+    fill="url(#fwHub)"
+    r="9"
+    stroke="#78350f"
+    stroke-width="3.6"
+  />
+  <rect
+    fill="#14b8a6"
+    height="8"
+    rx="4"
+    stroke="#115e59"
+    stroke-width="3.6"
+    width="66"
+    x="27"
+    y="96"
+  />
+</svg>

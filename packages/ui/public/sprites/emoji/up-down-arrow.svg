@@ -1,0 +1,32 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mũi tên dọc hai chiều</title>
+  <defs>
+    <linearGradient id="udaPurp" x1="15%" x2="85%" y1="15%" y2="85%">
+      <stop offset="0%" stop-color="#c4b5fd" />
+      <stop offset="55%" stop-color="#8b5cf6" />
+      <stop offset="100%" stop-color="#6d28d9" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#4c1d95" opacity="0.24" rx="28" ry="4.5" />
+  <path
+    d="M64 14L86 38H74V80H86L64 104L42 80H54V38H42Z"
+    fill="#5b21b6"
+    stroke="#4c1d95"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M60 12L82 36H70V78H82L60 102L38 78H50V36H38Z"
+    fill="url(#udaPurp)"
+    stroke="#4c1d95"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M56 42V72"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.65"
+    stroke-width="3.2"
+  />
+</svg>

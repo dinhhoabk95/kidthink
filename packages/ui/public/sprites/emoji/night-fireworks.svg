@@ -1,0 +1,38 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Pháo hoa rực rỡ</title>
+  <defs>
+    <linearGradient id="nfSky" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#312e81" />
+      <stop offset="100%" stop-color="#1e1b4b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#1e1b4b" opacity="0.26" rx="40" ry="5" />
+  <rect
+    fill="url(#nfSky)"
+    height="82"
+    rx="22"
+    stroke="#1e1b4b"
+    stroke-width="4"
+    width="84"
+    x="18"
+    y="16"
+  />
+  <path
+    d="M50 28V58M35 43H65M39 32L61 54M61 32L39 54"
+    stroke="#fde047"
+    stroke-linecap="round"
+    stroke-opacity="0.95"
+    stroke-width="3.6"
+  />
+  <path
+    d="M80 54V76M69 65H91M72 57L88 73M88 57L72 73"
+    stroke="#fb7185"
+    stroke-linecap="round"
+    stroke-opacity="0.95"
+    stroke-width="3.4"
+  />
+  <circle cx="50" cy="43" fill="#ffffff" r="4" />
+  <circle cx="80" cy="65" fill="#fef08a" r="3.5" />
+  <circle cx="38" cy="72" fill="#38bdf8" r="3.2" />
+  <path d="M22 92V80H36V86H50V76H66V92Z" fill="#4338ca" />
+</svg>

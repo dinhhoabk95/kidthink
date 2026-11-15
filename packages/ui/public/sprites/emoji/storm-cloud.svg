@@ -1,0 +1,44 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mây giông</title>
+  <defs>
+    <radialGradient cx="38%" cy="28%" id="stCloud" r="72%">
+      <stop offset="0%" stop-color="#cbd5e1" />
+      <stop offset="55%" stop-color="#94a3b8" />
+      <stop offset="100%" stop-color="#64748b" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#334155" opacity="0.24" rx="38" ry="5.5" />
+  <path
+    d="M30 72C19 72 13 63 15 53C17 44 25 39 33 40C37 26 52 20 66 24C77 27 84 36 85 45C95 45 103 53 102 63C101 70 94 72 86 72Z"
+    fill="url(#stCloud)"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M59 68L47 85H58L53 101L72 81H60L66 68Z"
+    fill="#facc15"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M35 80L30 91"
+    stroke="#0369a1"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <path
+    d="M84 80L79 91"
+    stroke="#0369a1"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <path
+    d="M42 33C49 28 58 27 65 30"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.65"
+    stroke-width="3.2"
+  />
+</svg>

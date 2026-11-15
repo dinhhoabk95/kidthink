@@ -1,0 +1,54 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bìa hồ sơ mở</title>
+  <defs>
+    <linearGradient id="ofFlap" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="55%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="62" cy="105" fill="#78350f" opacity="0.25" rx="44" ry="5" />
+  <path
+    d="M16 28C16 23 20 20 25 20H46L54 29H88C93 29 96 33 96 38V94H16Z"
+    fill="#b45309"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#f8fafc"
+    height="44"
+    rx="4"
+    stroke="#475569"
+    stroke-width="3.4"
+    transform="rotate(-5 56 54)"
+    width="62"
+    x="25"
+    y="32"
+  />
+  <rect
+    fill="#ffffff"
+    height="44"
+    rx="4"
+    stroke="#475569"
+    stroke-width="3.4"
+    transform="rotate(4 60 56)"
+    width="62"
+    x="29"
+    y="36"
+  />
+  <path
+    d="M16 96L28 52H108L96 96Z"
+    fill="url(#ofFlap)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M35 60H76"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.65"
+    stroke-width="3.5"
+  />
+</svg>

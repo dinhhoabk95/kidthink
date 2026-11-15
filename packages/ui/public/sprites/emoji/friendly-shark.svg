@@ -1,0 +1,47 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cá mập xanh</title>
+  <defs>
+    <linearGradient id="fsBlue" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#7dd3fc" />
+      <stop offset="55%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#0369a1" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#1e3a8a" opacity="0.25" rx="38" ry="5" />
+  <path
+    d="M90 64L108 46L102 66L108 84Z"
+    fill="#0284c7"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M14 62C22 40 45 34 62 38L56 18C70 20 78 30 80 42C90 48 96 56 96 66C96 78 76 88 50 88C30 88 18 76 14 62Z"
+    fill="url(#fsBlue)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M20 68C34 66 56 68 78 79C64 87 34 88 20 68Z"
+    fill="#fffbeb"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M52 72L60 92L68 76Z"
+    fill="#38bdf8"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle cx="34" cy="53" fill="#ffffff" r="5" />
+  <circle cx="33" cy="53" fill="#1c1917" r="2.8" />
+  <path
+    d="M68 56V65M74 57V65"
+    stroke="#1e3a8a"
+    stroke-linecap="round"
+    stroke-width="2.6"
+  />
+</svg>

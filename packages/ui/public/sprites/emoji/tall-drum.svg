@@ -1,0 +1,44 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Trống gỗ cao</title>
+  <defs>
+    <linearGradient id="tdWood" x1="15%" x2="85%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="52%" stop-color="#b45309" />
+      <stop offset="100%" stop-color="#78350f" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#6b3410" opacity="0.26" rx="30" ry="5" />
+  <path
+    d="M32 30H88C88 53 75 64 73 76L78 100H42L47 76C45 64 32 53 32 30Z"
+    fill="url(#tdWood)"
+    stroke="#6b3410"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="60"
+    cy="28"
+    fill="#fef3c7"
+    rx="29"
+    ry="9"
+    stroke="#6b3410"
+    stroke-width="4"
+  />
+  <path
+    d="M33 35L42 52L51 37L60 53L69 37L78 52L87 35"
+    stroke="#fde047"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="2.8"
+  />
+  <rect
+    fill="#fde047"
+    height="7"
+    rx="3"
+    stroke="#6b3410"
+    stroke-width="3.2"
+    width="32"
+    x="44"
+    y="83"
+  />
+</svg>

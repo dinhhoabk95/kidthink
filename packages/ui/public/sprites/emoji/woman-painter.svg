@@ -1,0 +1,56 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cô hoạ sĩ</title>
+  <defs>
+    <radialGradient cx="42%" cy="35%" id="wpSkin" r="68%">
+      <stop offset="0%" stop-color="#ffedd5" />
+      <stop offset="100%" stop-color="#fdba74" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#4c1d95" opacity="0.24" rx="38" ry="5" />
+  <path
+    d="M22 102C24 82 36 74 52 74C68 74 80 82 82 102Z"
+    fill="#6366f1"
+    stroke="#312e81"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="52"
+    cy="52"
+    fill="url(#wpSkin)"
+    r="23"
+    stroke="#5c3d2e"
+    stroke-width="4"
+  />
+  <path
+    d="M26 42C24 26 44 17 65 21C79 24 83 34 73 39C59 35 40 36 26 42Z"
+    fill="#e11d48"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M55 18L59 12"
+    stroke="#881337"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <circle cx="44" cy="53" fill="#1c1917" r="2.6" />
+  <circle cx="60" cy="53" fill="#1c1917" r="2.6" />
+  <path
+    d="M46 63C50 67 54 67 58 63"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="2.6"
+  />
+  <path
+    d="M70 82C70 69 84 64 95 70C104 75 104 90 93 95C84 99 76 94 78 88C80 84 74 85 70 82Z"
+    fill="#fde68a"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle cx="85" cy="75" fill="#ef4444" r="3.2" />
+  <circle cx="95" cy="80" fill="#3b82f6" r="3.2" />
+  <circle cx="89" cy="88" fill="#22c55e" r="3.2" />
+</svg>

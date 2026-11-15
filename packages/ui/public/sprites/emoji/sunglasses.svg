@@ -1,0 +1,32 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Kính mát đi nắng</title>
+  <defs>
+    <linearGradient id="sgLens" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#1e1b4b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="96" fill="#1e293b" opacity="0.22" rx="44" ry="5" />
+  <path
+    d="M16 48L34 32M104 48L86 32"
+    stroke="#1e293b"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <path
+    d="M12 48H52L56 54H64L68 48H108L104 70C102 80 92 84 80 84C69 84 63 76 60 64C57 76 51 84 40 84C28 84 18 80 16 70Z"
+    fill="#334155"
+    stroke="#1e293b"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect fill="url(#sgLens)" height="24" rx="8" width="32" x="20" y="54" />
+  <rect fill="url(#sgLens)" height="24" rx="8" width="32" x="68" y="54" />
+  <path
+    d="M26 72L38 58M74 72L86 58"
+    stroke="#bae6fd"
+    stroke-linecap="round"
+    stroke-opacity="0.75"
+    stroke-width="3.6"
+  />
+</svg>

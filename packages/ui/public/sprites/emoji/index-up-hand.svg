@@ -1,0 +1,64 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Giơ một ngón tay</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="iuSkin" r="70%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="55%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.25" rx="30" ry="5.5" />
+  <path
+    d="M44 54V23C44 17 48 13 53 13C58 13 62 17 62 23V50H80C86 50 90 55 90 62V76C90 89 79 98 64 98H48C36 98 30 89 30 77V66C30 59 36 54 44 54Z"
+    fill="url(#iuSkin)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#fde047"
+    height="17"
+    rx="5.5"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="12"
+    x="61"
+    y="48"
+  />
+  <rect
+    fill="#fde047"
+    height="17"
+    rx="5.5"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="12"
+    x="72"
+    y="51"
+  />
+  <rect
+    fill="#fde047"
+    height="16"
+    rx="5.5"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="11"
+    x="82"
+    y="55"
+  />
+  <path
+    d="M31 68C31 61 38 58 45 61L52 66C55 69 53 75 48 75H36"
+    fill="#fcd34d"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <ellipse
+    cx="52"
+    cy="21"
+    fill="#fffbeb"
+    fill-opacity="0.65"
+    rx="3.5"
+    ry="4.5"
+  />
+</svg>

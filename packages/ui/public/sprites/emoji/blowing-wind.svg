@@ -1,0 +1,38 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cơn gió thổi</title>
+  <defs>
+    <radialGradient cx="36%" cy="30%" id="bwCloud" r="70%">
+      <stop offset="0%" stop-color="#f0f9ff" />
+      <stop offset="60%" stop-color="#bae6fd" />
+      <stop offset="100%" stop-color="#7dd3fc" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#1e3a5f" opacity="0.22" rx="38" ry="5.5" />
+  <path
+    d="M18 68C12 64 12 52 19 47C18 36 29 28 40 33C48 27 60 34 58 45C64 51 62 63 53 67C46 74 26 74 18 68Z"
+    fill="url(#bwCloud)"
+    stroke="#1e3a5f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle cx="43" cy="46" fill="#1e3a5f" r="2.5" />
+  <circle cx="36" cy="55" fill="#fb7185" fill-opacity="0.55" r="5" />
+  <path
+    d="M62 46H94C101 46 105 40 101 35C98 31 92 33 92 38"
+    stroke="#0369a1"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <path
+    d="M58 58H102C108 58 109 67 102 70C97 72 93 68 95 64"
+    stroke="#0369a1"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <path
+    d="M50 72H82C88 72 90 80 84 83C80 85 76 82 78 78"
+    stroke="#0e7490"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+</svg>

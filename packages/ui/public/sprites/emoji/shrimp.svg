@@ -1,0 +1,32 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Con tôm</title>
+  <defs>
+    <radialGradient cx="45%" cy="40%" id="shCoral" r="68%">
+      <stop offset="0%" stop-color="#fed7aa" />
+      <stop offset="52%" stop-color="#fb923c" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#7c2d12" opacity="0.24" rx="32" ry="5" />
+  <path
+    d="M36 32C18 24 14 38 22 48M38 28C22 14 34 10 48 16"
+    stroke="#c2410c"
+    stroke-linecap="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M40 28C66 18 96 34 96 62C96 84 78 96 56 92L44 100L48 86L38 82L50 76C66 78 74 70 74 60C74 49 62 44 46 48L30 40Z"
+    fill="url(#shCoral)"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M68 32L60 47M84 46L70 54M86 68L72 65"
+    stroke="#9a3412"
+    stroke-linecap="round"
+    stroke-width="3.2"
+  />
+  <circle cx="45" cy="36" fill="#1c1917" r="3.4" />
+  <circle cx="44" cy="35" fill="#ffffff" r="1.2" />
+</svg>

@@ -1,0 +1,37 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Nắng xen mây</title>
+  <defs>
+    <radialGradient cx="42%" cy="38%" id="sbcSun" r="65%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="55%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </radialGradient>
+    <linearGradient id="sbcCloud" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#e2e8f0" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="64" cy="104" fill="#334155" opacity="0.23" rx="38" ry="5" />
+  <path
+    d="M44 13V21M17 40H25M24 21L30 27M64 21L58 27M24 59L30 53"
+    stroke="#b45309"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="44"
+    cy="42"
+    fill="url(#sbcSun)"
+    r="19"
+    stroke="#92400e"
+    stroke-width="3.8"
+  />
+  <path
+    d="M32 92C20 92 16 78 26 71C27 56 44 48 57 56C66 44 88 48 91 64C103 65 107 79 98 88C94 92 88 92 82 92Z"
+    fill="url(#sbcCloud)"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse cx="52" cy="66" fill="#ffffff" fill-opacity="0.8" rx="10" ry="4.5" />
+</svg>

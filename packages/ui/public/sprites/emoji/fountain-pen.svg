@@ -1,0 +1,49 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bút mực</title>
+  <defs>
+    <linearGradient id="fpBody" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6" />
+      <stop offset="55%" stop-color="#1d4ed8" />
+      <stop offset="100%" stop-color="#1e3a8a" />
+    </linearGradient>
+    <linearGradient id="fpNib" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="56" cy="105" fill="#1e3a8a" opacity="0.24" rx="34" ry="5" />
+  <polygon
+    fill="url(#fpNib)"
+    points="22,98 30,72 48,90"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M23 97L36 84"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+  <circle cx="37" cy="83" fill="#78350f" r="2.2" />
+  <path
+    d="M32 70L82 20C87 15 95 15 100 20C105 25 105 33 100 38L50 88Z"
+    fill="url(#fpBody)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <polygon
+    fill="#fbbf24"
+    points="35,67 40,62 58,80 53,85"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <path
+    d="M89 24L68 45"
+    stroke="#fde047"
+    stroke-linecap="round"
+    stroke-width="2.8"
+  />
+</svg>

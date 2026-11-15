@@ -1,0 +1,68 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cột gió xoáy</title>
+  <defs>
+    <linearGradient id="wtCloud" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#e0f2fe" />
+      <stop offset="55%" stop-color="#94a3b8" />
+      <stop offset="100%" stop-color="#64748b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="56" cy="106" fill="#334155" opacity="0.24" rx="26" ry="5" />
+  <ellipse
+    cx="62"
+    cy="27"
+    fill="url(#wtCloud)"
+    rx="40"
+    ry="11"
+    stroke="#334155"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="56"
+    cy="45"
+    fill="url(#wtCloud)"
+    rx="32"
+    ry="9.5"
+    stroke="#334155"
+    stroke-width="3.8"
+  />
+  <ellipse
+    cx="64"
+    cy="62"
+    fill="url(#wtCloud)"
+    rx="24"
+    ry="8.5"
+    stroke="#334155"
+    stroke-width="3.8"
+  />
+  <ellipse
+    cx="57"
+    cy="78"
+    fill="url(#wtCloud)"
+    rx="16"
+    ry="7"
+    stroke="#334155"
+    stroke-width="3.6"
+  />
+  <path
+    d="M49 87C48 95 53 101 61 101C66 101 67 95 63 87Z"
+    fill="#94a3b8"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="96"
+    cy="52"
+    fill="#4ade80"
+    r="4.5"
+    stroke="#14532d"
+    stroke-width="2.8"
+  />
+  <path
+    d="M20 58C15 54 17 48 23 48"
+    stroke="#0369a1"
+    stroke-linecap="round"
+    stroke-width="3.4"
+  />
+</svg>

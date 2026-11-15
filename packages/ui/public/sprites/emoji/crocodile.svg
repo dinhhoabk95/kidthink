@@ -1,0 +1,55 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chú cá sấu</title>
+  <defs>
+    <linearGradient id="crGreen" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#86efac" />
+      <stop offset="55%" stop-color="#22c55e" />
+      <stop offset="100%" stop-color="#15803d" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="102" fill="#14532d" opacity="0.25" rx="46" ry="5" />
+  <polygon
+    fill="#16a34a"
+    points="28,60 34,50 40,60 46,50 52,60 58,50 64,60"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M12 66C12 52 24 58 34 60H72L76 48C82 48 86 52 86 58H106C110 58 110 72 104 74H82L102 80C104 86 96 88 86 88H30C18 88 12 78 12 66Z"
+    fill="url(#crGreen)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#16a34a"
+    height="14"
+    rx="4"
+    stroke="#14532d"
+    stroke-width="3.6"
+    width="11"
+    x="36"
+    y="84"
+  />
+  <rect
+    fill="#16a34a"
+    height="14"
+    rx="4"
+    stroke="#14532d"
+    stroke-width="3.6"
+    width="11"
+    x="64"
+    y="84"
+  />
+  <polygon fill="#ffffff" points="88,74 91,79 94,74 97,79 100,74" />
+  <circle
+    cx="80"
+    cy="55"
+    fill="#fef08a"
+    r="4.5"
+    stroke="#14532d"
+    stroke-width="2.4"
+  />
+  <circle cx="81" cy="55" fill="#1c1917" r="2.2" />
+</svg>

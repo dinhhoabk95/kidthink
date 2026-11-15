@@ -1,0 +1,65 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chú hoạ sĩ</title>
+  <defs>
+    <radialGradient cx="40%" cy="35%" id="mpSkin" r="68%">
+      <stop offset="0%" stop-color="#ffedd5" />
+      <stop offset="65%" stop-color="#fdba74" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#4c1d95" opacity="0.24" rx="36" ry="5.5" />
+  <path
+    d="M27 98C27 79 40 70 58 70C76 70 89 79 89 98Z"
+    fill="#bae6fd"
+    stroke="#1e3a5f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M33 84H83M30 92H86"
+    stroke="#1d4ed8"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="58"
+    cy="48"
+    fill="url(#mpSkin)"
+    r="20"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M34 38C30 24 46 16 66 20C82 23 88 33 78 39Z"
+    fill="#9333ea"
+    stroke="#4c1d95"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M58 18L62 12"
+    stroke="#4c1d95"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <circle cx="51" cy="49" fill="#292524" r="2.5" />
+  <circle cx="65" cy="49" fill="#292524" r="2.5" />
+  <path
+    d="M52 57C56 60 60 60 64 57"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="2.6"
+  />
+  <ellipse
+    cx="86"
+    cy="84"
+    fill="#fde68a"
+    rx="16"
+    ry="12"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <circle cx="80" cy="81" fill="#ef4444" r="3" />
+  <circle cx="88" cy="79" fill="#22c55e" r="3" />
+  <circle cx="92" cy="86" fill="#3b82f6" r="3" />
+</svg>

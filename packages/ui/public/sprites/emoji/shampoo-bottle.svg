@@ -1,0 +1,56 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chai dầu gội</title>
+  <defs>
+    <linearGradient id="sbTeal" x1="15%" x2="85%" y1="10%" y2="95%">
+      <stop offset="0%" stop-color="#99f6e4" />
+      <stop offset="55%" stop-color="#2dd4bf" />
+      <stop offset="100%" stop-color="#0d9488" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#115e59" opacity="0.25" rx="30" ry="5" />
+  <path
+    d="M56 20H78C83 20 85 26 80 27H64V35H56Z"
+    fill="#fef3c7"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <rect
+    fill="#fde68a"
+    height="10"
+    rx="3"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="22"
+    x="49"
+    y="33"
+  />
+  <rect
+    fill="url(#sbTeal)"
+    height="58"
+    rx="16"
+    stroke="#115e59"
+    stroke-width="4"
+    width="52"
+    x="34"
+    y="42"
+  />
+  <rect
+    fill="#fffbeb"
+    height="26"
+    rx="6"
+    stroke="#115e59"
+    stroke-width="3.2"
+    width="34"
+    x="43"
+    y="59"
+  />
+  <circle cx="60" cy="72" fill="#f472b6" r="5.5" />
+  <path
+    d="M43 52C47 48 53 47 58 47"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.7"
+    stroke-width="3"
+  />
+</svg>

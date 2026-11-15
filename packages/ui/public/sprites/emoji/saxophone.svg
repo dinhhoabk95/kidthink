@@ -1,0 +1,62 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Kèn sắc-xô-phôn</title>
+  <defs>
+    <linearGradient id="sxBrass" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="50%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="62" cy="106" fill="#78350f" opacity="0.25" rx="34" ry="5" />
+  <path
+    d="M30 24H42C50 24 54 30 54 38V76C54 84 58 88 64 88C70 88 74 83 74 75V60L96 54C96 84 84 100 63 100C46 100 38 90 38 74V40C38 35 35 32 30 32Z"
+    fill="url(#sxBrass)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="85"
+    cy="57"
+    fill="#92400e"
+    rx="12"
+    ry="5.5"
+    stroke="#78350f"
+    stroke-width="3.6"
+    transform="rotate(-15 85 57)"
+  />
+  <rect
+    fill="#292524"
+    height="8"
+    rx="3"
+    stroke="#1c1917"
+    stroke-width="3"
+    width="12"
+    x="20"
+    y="24"
+  />
+  <circle
+    cx="46"
+    cy="48"
+    fill="#fffbeb"
+    r="3.2"
+    stroke="#78350f"
+    stroke-width="2.2"
+  />
+  <circle
+    cx="46"
+    cy="60"
+    fill="#fffbeb"
+    r="3.2"
+    stroke="#78350f"
+    stroke-width="2.2"
+  />
+  <circle
+    cx="46"
+    cy="72"
+    fill="#fffbeb"
+    r="3.2"
+    stroke="#78350f"
+    stroke-width="2.2"
+  />
+</svg>

@@ -1,0 +1,44 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chú thằn lằn</title>
+  <defs>
+    <linearGradient id="glGreen" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#bef264" />
+      <stop offset="55%" stop-color="#4ade80" />
+      <stop offset="100%" stop-color="#16a34a" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="58" cy="104" fill="#14532d" opacity="0.24" rx="36" ry="5" />
+  <path
+    d="M42 42L24 32M74 44L92 34M40 68L22 76M72 68L90 78"
+    stroke="#14532d"
+    stroke-linecap="round"
+    stroke-width="4.5"
+  />
+  <path
+    d="M58 18C71 18 76 29 70 40C74 52 72 68 62 78C54 86 64 96 76 92C84 89 87 96 77 100C58 106 42 93 48 76C42 66 40 52 46 40C40 29 45 18 58 18Z"
+    fill="url(#glGreen)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="51"
+    cy="28"
+    fill="#fef08a"
+    r="4.5"
+    stroke="#14532d"
+    stroke-width="2.6"
+  />
+  <circle
+    cx="65"
+    cy="28"
+    fill="#fef08a"
+    r="4.5"
+    stroke="#14532d"
+    stroke-width="2.6"
+  />
+  <circle cx="51" cy="28" fill="#1c1917" r="2" />
+  <circle cx="65" cy="28" fill="#1c1917" r="2" />
+  <circle cx="58" cy="50" fill="#fde047" r="3.5" />
+  <circle cx="56" cy="64" fill="#fde047" r="3" />
+</svg>

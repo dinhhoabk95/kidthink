@@ -1,0 +1,58 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Quả việt quất</title>
+  <defs>
+    <radialGradient cx="36%" cy="30%" id="bbFruit" r="70%">
+      <stop offset="0%" stop-color="#818cf8" />
+      <stop offset="52%" stop-color="#4338ca" />
+      <stop offset="100%" stop-color="#1e1b4b" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#312e81" opacity="0.25" rx="38" ry="5.5" />
+  <path
+    d="M58 34C46 18 24 22 28 38C40 43 52 40 58 34Z"
+    fill="#22c55e"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M62 34C74 18 96 22 92 38C80 43 68 40 62 34Z"
+    fill="#4ade80"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="42"
+    cy="68"
+    fill="url(#bbFruit)"
+    r="22"
+    stroke="#312e81"
+    stroke-width="4"
+  />
+  <circle
+    cx="78"
+    cy="69"
+    fill="url(#bbFruit)"
+    r="21"
+    stroke="#312e81"
+    stroke-width="4"
+  />
+  <circle
+    cx="60"
+    cy="56"
+    fill="url(#bbFruit)"
+    r="23"
+    stroke="#312e81"
+    stroke-width="4"
+  />
+  <polygon
+    fill="#312e81"
+    points="60,42 63,47 69,47 64,51 66,56 60,53 54,56 56,51 51,47 57,47"
+    stroke="#c7d2fe"
+    stroke-linejoin="round"
+    stroke-width="1.8"
+  />
+  <circle cx="34" cy="61" fill="#ffffff" fill-opacity="0.55" r="3.5" />
+  <circle cx="84" cy="62" fill="#ffffff" fill-opacity="0.55" r="3.5" />
+</svg>

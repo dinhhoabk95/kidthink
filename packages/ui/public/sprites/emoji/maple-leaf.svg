@@ -1,0 +1,31 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chiếc lá phong</title>
+  <defs>
+    <radialGradient cx="45%" cy="35%" id="mlAut" r="68%">
+      <stop offset="0%" stop-color="#fde047" />
+      <stop offset="48%" stop-color="#f97316" />
+      <stop offset="100%" stop-color="#dc2626" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#7c2d12" opacity="0.24" rx="32" ry="5.5" />
+  <path
+    d="M60 82V102"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4.4"
+  />
+  <path
+    d="M60 15L69 36L89 29L82 50L103 57L84 71L89 84L60 80L31 84L36 71L17 57L38 50L31 29L51 36Z"
+    fill="url(#mlAut)"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M60 32V80M60 58L36 44M60 58L84 44M60 69L36 65M60 69L84 65"
+    stroke="#7c2d12"
+    stroke-linecap="round"
+    stroke-opacity="0.55"
+    stroke-width="2.6"
+  />
+</svg>

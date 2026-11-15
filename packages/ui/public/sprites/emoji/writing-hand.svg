@@ -1,0 +1,73 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Tay tập viết</title>
+  <defs>
+    <radialGradient cx="40%" cy="35%" id="whSkin" r="68%">
+      <stop offset="0%" stop-color="#ffedd5" />
+      <stop offset="62%" stop-color="#fdba74" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#5c3d2e" opacity="0.24" rx="40" ry="5.5" />
+  <rect
+    fill="#fffbeb"
+    height="22"
+    rx="5"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="76"
+    x="18"
+    y="78"
+  />
+  <path
+    d="M27 89C34 85 40 93 47 89C54 85 60 93 67 89"
+    stroke="#1d4ed8"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+  <g transform="rotate(32 54 54)">
+    <rect
+      fill="#facc15"
+      height="58"
+      rx="4"
+      stroke="#78350f"
+      stroke-width="3.8"
+      width="12"
+      x="48"
+      y="16"
+    />
+    <rect
+      fill="#fb7185"
+      height="10"
+      rx="3"
+      stroke="#881337"
+      stroke-width="3.6"
+      width="12"
+      x="48"
+      y="10"
+    />
+    <path
+      d="M48 74L54 87L60 74Z"
+      fill="#fed7aa"
+      stroke="#78350f"
+      stroke-linejoin="round"
+      stroke-width="3.6"
+    />
+    <circle cx="54" cy="85" fill="#292524" r="2.2" />
+  </g>
+  <path
+    d="M44 54C44 44 56 40 68 43L94 51C99 54 99 66 92 69L62 70C50 70 44 63 44 54Z"
+    fill="url(#whSkin)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="47"
+    cy="63"
+    fill="url(#whSkin)"
+    rx="10"
+    ry="6"
+    stroke="#78350f"
+    stroke-width="3.6"
+  />
+</svg>

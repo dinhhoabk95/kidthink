@@ -1,0 +1,50 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hai tay reo vui</title>
+  <defs>
+    <linearGradient id="hhWarm" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.24" rx="38" ry="5" />
+  <path
+    d="M60 14V26M45 19L51 28M75 19L69 28"
+    stroke="#be123c"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <path
+    d="M18 46C18 39 26 39 26 46V60H29V36C29 30 37 30 37 36V58H40V42C40 36 48 36 48 42V76L44 92H22L18 74Z"
+    fill="url(#hhWarm)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M102 46C102 39 94 39 94 46V60H91V36C91 30 83 30 83 36V58H80V42C80 36 72 36 72 42V76L76 92H98L102 74Z"
+    fill="url(#hhWarm)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <rect
+    fill="#fb7185"
+    height="11"
+    rx="4"
+    stroke="#881337"
+    stroke-width="3.6"
+    width="26"
+    x="20"
+    y="89"
+  />
+  <rect
+    fill="#fb7185"
+    height="11"
+    rx="4"
+    stroke="#881337"
+    stroke-width="3.6"
+    width="26"
+    x="74"
+    y="89"
+  />
+</svg>

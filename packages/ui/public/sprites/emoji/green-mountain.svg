@@ -1,0 +1,47 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ngọn núi xanh</title>
+  <defs>
+    <linearGradient id="gmFront" x1="50%" x2="50%" y1="10%" y2="95%">
+      <stop offset="0%" stop-color="#86efac" />
+      <stop offset="55%" stop-color="#22c55e" />
+      <stop offset="100%" stop-color="#15803d" />
+    </linearGradient>
+    <linearGradient id="gmBack" x1="50%" x2="50%" y1="10%" y2="95%">
+      <stop offset="0%" stop-color="#5eead4" />
+      <stop offset="100%" stop-color="#0f766e" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#14532d" opacity="0.25" rx="46" ry="6" />
+  <path
+    d="M46 95L75 34C78 28 85 28 88 34L108 95Z"
+    fill="url(#gmBack)"
+    stroke="#134e4a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M12 95L46 25C49 19 57 19 60 25L92 95Z"
+    fill="url(#gmFront)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M53 22L64 52L52 62L68 93H90L59 25Z"
+    fill="#15803d"
+    fill-opacity="0.32"
+  />
+  <path
+    d="M80 24H98C102 24 104 19 100 17C99 12 92 12 90 16C85 15 80 19 80 24Z"
+    fill="#fffbeb"
+    stroke="#475569"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M22 95H98"
+    stroke="#14532d"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+</svg>

@@ -1,0 +1,46 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cặp kính mắt</title>
+  <defs>
+    <radialGradient cx="35%" cy="30%" id="egLens" r="70%">
+      <stop offset="0%" stop-color="#f0f9ff" />
+      <stop offset="65%" stop-color="#bae6fd" />
+      <stop offset="100%" stop-color="#7dd3fc" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="96" fill="#5c3d2e" opacity="0.22" rx="42" ry="5.5" />
+  <path
+    d="M18 58L30 40C33 36 39 36 41 40M102 58L90 40C87 36 81 36 79 40"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4.4"
+  />
+  <path
+    d="M52 62C56 57 64 57 68 62"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="5"
+  />
+  <circle
+    cx="36"
+    cy="64"
+    fill="url(#egLens)"
+    r="19"
+    stroke="#5c3d2e"
+    stroke-width="4.4"
+  />
+  <circle
+    cx="84"
+    cy="64"
+    fill="url(#egLens)"
+    r="19"
+    stroke="#5c3d2e"
+    stroke-width="4.4"
+  />
+  <path
+    d="M28 57L35 50M76 57L83 50"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.8"
+    stroke-width="3.2"
+  />
+</svg>

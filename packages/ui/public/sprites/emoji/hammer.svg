@@ -1,0 +1,52 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cái búa gỗ</title>
+  <defs>
+    <linearGradient id="hmShaft" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="55%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
+    </linearGradient>
+    <linearGradient id="hmHead" x1="15%" x2="85%" y1="15%" y2="85%">
+      <stop offset="0%" stop-color="#e2e8f0" />
+      <stop offset="55%" stop-color="#94a3b8" />
+      <stop offset="100%" stop-color="#475569" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#5c3d2e" opacity="0.24" rx="36" ry="5.5" />
+  <rect
+    fill="url(#hmShaft)"
+    height="68"
+    rx="8"
+    stroke="#78350f"
+    stroke-width="4"
+    transform="rotate(-42 66 68)"
+    width="16"
+    x="58"
+    y="34"
+  />
+  <path
+    d="M23 50L55 18C59 14 66 15 72 21L80 29C71 30 64 35 60 42L37 65C33 69 27 68 23 64L19 60C16 57 19 54 23 50Z"
+    fill="url(#hmHead)"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#fbbf24"
+    height="12"
+    rx="4"
+    stroke="#78350f"
+    stroke-width="3.6"
+    transform="rotate(-42 52 54)"
+    width="20"
+    x="42"
+    y="48"
+  />
+  <path
+    d="M31 51L53 29"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.7"
+    stroke-width="3"
+  />
+</svg>

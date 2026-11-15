@@ -1,0 +1,32 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Vòng tròn rỗng</title>
+  <defs>
+    <linearGradient id="hrCoral" x1="20%" x2="80%" y1="15%" y2="85%">
+      <stop offset="0%" stop-color="#fda4af" />
+      <stop offset="50%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#be123c" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#881337" opacity="0.24" rx="36" ry="5" />
+  <path
+    d="M60 22A40 40 0 1 0 60 102A40 40 0 1 0 60 22ZM60 44A18 18 0 1 1 60 80A18 18 0 1 1 60 44Z"
+    fill="#9f1239"
+    fill-rule="evenodd"
+    stroke="#881337"
+    stroke-width="4"
+  />
+  <path
+    d="M60 17A40 40 0 1 0 60 97A40 40 0 1 0 60 17ZM60 39A18 18 0 1 1 60 75A18 18 0 1 1 60 39Z"
+    fill="url(#hrCoral)"
+    fill-rule="evenodd"
+    stroke="#881337"
+    stroke-width="4"
+  />
+  <path
+    d="M35 34C41 27 50 24 60 24"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.7"
+    stroke-width="4"
+  />
+</svg>

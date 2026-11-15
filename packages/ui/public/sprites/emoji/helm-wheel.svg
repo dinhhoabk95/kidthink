@@ -1,0 +1,64 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bánh lái tàu</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="hwWood" r="70%">
+      <stop offset="0%" stop-color="#fdba74" />
+      <stop offset="55%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#92400e" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#5c3d2e" opacity="0.25" rx="34" ry="5.5" />
+  <path
+    d="M60 13V103M15 58H105M28 26L92 90M92 26L28 90"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="6.5"
+  />
+  <path
+    d="M60 13V103M15 58H105M28 26L92 90M92 26L28 90"
+    stroke="#d97706"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+  <circle
+    cx="60"
+    cy="58"
+    fill="none"
+    r="31"
+    stroke="#5c3d2e"
+    stroke-width="13"
+  />
+  <circle
+    cx="60"
+    cy="58"
+    fill="none"
+    r="31"
+    stroke="url(#hwWood)"
+    stroke-width="7"
+  />
+  <circle
+    cx="60"
+    cy="58"
+    fill="none"
+    r="35"
+    stroke="#5c3d2e"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="60"
+    cy="58"
+    fill="none"
+    r="26"
+    stroke="#5c3d2e"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="60"
+    cy="58"
+    fill="#fbbf24"
+    r="10"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <circle cx="60" cy="58" fill="#78350f" r="3.5" />
+</svg>

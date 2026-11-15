@@ -1,0 +1,53 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hòn đảo nhỏ</title>
+  <defs>
+    <linearGradient id="piSand" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e3a8a" opacity="0.24" rx="46" ry="4.5" />
+  <path
+    d="M56 76C54 58 58 44 64 32"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="6.5"
+  />
+  <path
+    d="M64 32C46 24 30 34 26 46C40 40 52 38 64 32ZM64 32C82 24 98 34 102 46C88 40 76 38 64 32ZM64 32C50 14 34 14 28 24C42 24 54 26 64 32ZM64 32C78 14 94 14 100 24C86 24 74 26 64 32Z"
+    fill="#22c55e"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="61"
+    cy="36"
+    fill="#92400e"
+    r="4"
+    stroke="#451a03"
+    stroke-width="2.4"
+  />
+  <circle
+    cx="68"
+    cy="36"
+    fill="#92400e"
+    r="4"
+    stroke="#451a03"
+    stroke-width="2.4"
+  />
+  <path
+    d="M26 90C32 70 88 70 94 90Z"
+    fill="url(#piSand)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M14 90C30 84 46 94 60 88C74 82 90 94 106 88C104 98 92 100 60 100C28 100 16 98 14 90Z"
+    fill="#38bdf8"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+</svg>

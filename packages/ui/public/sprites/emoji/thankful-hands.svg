@@ -1,0 +1,44 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chắp tay cảm ơn</title>
+  <defs>
+    <linearGradient id="thSkin" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e3a8a" opacity="0.24" rx="34" ry="5" />
+  <path
+    d="M60 12V20M43 17L48 23M77 17L72 23"
+    stroke="#b45309"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M60 26C54 26 51 32 49 44L38 72L56 84L60 76Z"
+    fill="url(#thSkin)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M60 26C66 26 69 32 71 44L82 72L64 84L60 76Z"
+    fill="url(#thSkin)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <polygon
+    fill="#38bdf8"
+    points="26,88 42,72 58,86 46,101"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <polygon
+    fill="#38bdf8"
+    points="94,88 78,72 62,86 74,101"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+</svg>

@@ -1,0 +1,53 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mũi tên lên đỉnh</title>
+  <defs>
+    <linearGradient id="tabBlue" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#60a5fa" />
+      <stop offset="55%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#1e40af" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#1e3a8a" opacity="0.26" rx="38" ry="5" />
+  <rect
+    fill="#1e3a8a"
+    height="80"
+    rx="18"
+    stroke="#172554"
+    stroke-width="4"
+    width="80"
+    x="20"
+    y="23"
+  />
+  <rect
+    fill="url(#tabBlue)"
+    height="80"
+    rx="18"
+    stroke="#1e3a8a"
+    stroke-width="4"
+    width="80"
+    x="20"
+    y="18"
+  />
+  <polygon
+    fill="#fde047"
+    points="60,27 82,51 69,51 69,62 51,62 51,51 38,51"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M33 72H47M40 72V86M55 72H65V86H55ZM73 86V72H84V79H73"
+    stroke="#fffbeb"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-opacity="0.95"
+    stroke-width="3.6"
+  />
+  <path
+    d="M30 26H52"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.55"
+    stroke-width="3"
+  />
+</svg>

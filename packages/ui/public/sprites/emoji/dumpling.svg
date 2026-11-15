@@ -1,0 +1,43 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bánh xếp hấp</title>
+  <defs>
+    <radialGradient cx="42%" cy="38%" id="dpDough" r="68%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="62%" stop-color="#fef3c7" />
+      <stop offset="100%" stop-color="#fcd34d" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="101" fill="#14532d" opacity="0.24" rx="44" ry="6" />
+  <ellipse
+    cx="60"
+    cy="87"
+    fill="#4ade80"
+    rx="44"
+    ry="12"
+    stroke="#14532d"
+    stroke-width="3.8"
+  />
+  <path
+    d="M18 76C18 46 38 30 60 30C82 30 102 46 102 76C90 88 30 88 18 76Z"
+    fill="url(#dpDough)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M32 42C36 33 44 33 46 40C50 31 58 31 60 39C62 31 70 31 74 40C76 33 84 33 88 42"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M44 43L48 55M60 40V54M76 43L72 55"
+    stroke="#b45309"
+    stroke-linecap="round"
+    stroke-opacity="0.65"
+    stroke-width="2.8"
+  />
+  <circle cx="44" cy="68" fill="#fb7185" fill-opacity="0.4" r="5" />
+  <circle cx="76" cy="68" fill="#fb7185" fill-opacity="0.4" r="5" />
+</svg>

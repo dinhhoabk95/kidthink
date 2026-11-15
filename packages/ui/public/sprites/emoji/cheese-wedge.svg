@@ -1,0 +1,51 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Miếng phô mai</title>
+  <defs>
+    <linearGradient id="cwFront" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fde047" />
+      <stop offset="60%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#eab308" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="102" fill="#78350f" opacity="0.25" rx="44" ry="6" />
+  <path
+    d="M16 56L76 26C93 32 102 42 104 56Z"
+    fill="#fef08a"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M16 56H104V86C104 91 99 94 94 94H68C68 87 58 87 58 94H24C19 94 16 90 16 85Z"
+    fill="url(#cwFront)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="38"
+    cy="73"
+    fill="#ca8a04"
+    r="7.5"
+    stroke="#78350f"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="82"
+    cy="72"
+    fill="#ca8a04"
+    r="9"
+    stroke="#78350f"
+    stroke-width="3.4"
+  />
+  <circle cx="60" cy="68" fill="#d97706" r="4.5" />
+  <ellipse
+    cx="69"
+    cy="44"
+    fill="#eab308"
+    rx="7"
+    ry="3.8"
+    stroke="#78350f"
+    stroke-width="2.8"
+  />
+</svg>

@@ -1,0 +1,37 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chiếc ô che mưa</title>
+  <defs>
+    <radialGradient cx="42%" cy="32%" id="ruCanopy" r="70%">
+      <stop offset="0%" stop-color="#d8b4fe" />
+      <stop offset="55%" stop-color="#9333ea" />
+      <stop offset="100%" stop-color="#6b21a8" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#4c1d95" opacity="0.24" rx="30" ry="5" />
+  <path
+    d="M60 28V93C60 101 49 101 49 93"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4.5"
+  />
+  <path
+    d="M16 64C18 37 38 26 60 26C82 26 102 37 104 64C94 58 83 58 75 64C66 58 54 58 45 64C37 58 26 58 16 64Z"
+    fill="url(#ruCanopy)"
+    stroke="#4c1d95"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M60 26C48 37 45 50 45 64M60 26C72 37 75 50 75 64"
+    stroke="#4c1d95"
+    stroke-opacity="0.65"
+    stroke-width="3"
+  />
+  <path
+    d="M31 12L27 21C25 25 32 27 33 22ZM60 8L56 17C54 21 61 23 62 18ZM89 12L85 21C83 25 90 27 91 22Z"
+    fill="#38bdf8"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+</svg>

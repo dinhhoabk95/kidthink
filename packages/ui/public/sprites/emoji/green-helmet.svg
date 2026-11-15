@@ -1,0 +1,48 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mũ bảo hộ xanh</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="ghDome" r="70%">
+      <stop offset="0%" stop-color="#86efac" />
+      <stop offset="55%" stop-color="#16a34a" />
+      <stop offset="100%" stop-color="#15803d" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#14532d" opacity="0.26" rx="44" ry="5.5" />
+  <path
+    d="M36 74C40 92 48 98 60 98C72 98 80 92 84 74"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <path
+    d="M20 68C20 35 37 22 60 22C83 22 100 35 100 68Z"
+    fill="url(#ghDome)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#b45309"
+    height="9"
+    rx="3"
+    stroke="#5c3d2e"
+    stroke-width="3.4"
+    width="80"
+    x="20"
+    y="57"
+  />
+  <path
+    d="M12 69H108C104 78 88 80 60 80C32 80 16 78 12 69Z"
+    fill="#15803d"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <polygon
+    fill="#fde047"
+    points="60,32 63,40 72,40 65,45 67,53 60,48 53,53 55,45 48,40 57,40"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="2.8"
+  />
+</svg>

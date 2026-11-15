@@ -1,0 +1,38 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Dấu trừ</title>
+  <defs>
+    <linearGradient id="msBlue" x1="15%" x2="85%" y1="15%" y2="85%">
+      <stop offset="0%" stop-color="#93c5fd" />
+      <stop offset="50%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="96" fill="#1e3a5f" opacity="0.24" rx="42" ry="5.5" />
+  <rect
+    fill="#1e40af"
+    height="28"
+    rx="14"
+    stroke="#1e3a5f"
+    stroke-width="4"
+    width="88"
+    x="16"
+    y="50"
+  />
+  <rect
+    fill="url(#msBlue)"
+    height="28"
+    rx="14"
+    stroke="#1e3a5f"
+    stroke-width="4"
+    width="88"
+    x="16"
+    y="43"
+  />
+  <path
+    d="M30 52H74"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.7"
+    stroke-width="4"
+  />
+</svg>

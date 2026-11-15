@@ -1,0 +1,52 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Khung hình vuông</title>
+  <defs>
+    <linearGradient id="fsOuter" x1="12%" x2="88%" y1="12%" y2="88%">
+      <stop offset="0%" stop-color="#64748b" />
+      <stop offset="52%" stop-color="#334155" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+    <linearGradient id="fsInner" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#fef3c7" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#1e293b" opacity="0.25" rx="40" ry="5" />
+  <rect
+    fill="#1e293b"
+    height="82"
+    rx="16"
+    stroke="#1c1917"
+    stroke-width="4"
+    width="84"
+    x="18"
+    y="21"
+  />
+  <rect
+    fill="url(#fsOuter)"
+    height="82"
+    rx="16"
+    stroke="#1e293b"
+    stroke-width="4"
+    width="84"
+    x="18"
+    y="15"
+  />
+  <rect
+    fill="url(#fsInner)"
+    height="48"
+    rx="9"
+    stroke="#1e293b"
+    stroke-width="3.8"
+    width="50"
+    x="35"
+    y="32"
+  />
+  <path
+    d="M24 21L35 32M96 21L85 32"
+    stroke="#94a3b8"
+    stroke-linecap="round"
+    stroke-opacity="0.55"
+    stroke-width="2.8"
+  />
+</svg>

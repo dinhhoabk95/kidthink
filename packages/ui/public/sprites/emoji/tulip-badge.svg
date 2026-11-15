@@ -1,0 +1,49 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Huy hiệu tên bé</title>
+  <defs>
+    <radialGradient cx="38%" cy="28%" id="tbRed" r="72%">
+      <stop offset="0%" stop-color="#fda4af" />
+      <stop offset="50%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#b91c1c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#7f1d1d" opacity="0.26" rx="34" ry="5" />
+  <path
+    d="M22 50C20 26 36 18 44 35L60 16L76 35C84 18 100 26 98 50C96 84 80 100 60 100C40 100 24 84 22 50Z"
+    fill="url(#tbRed)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#fffbeb"
+    height="24"
+    rx="7"
+    stroke="#7f1d1d"
+    stroke-width="3.6"
+    width="54"
+    x="33"
+    y="58"
+  />
+  <path
+    d="M42 70H78"
+    stroke="#9f1239"
+    stroke-linecap="round"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="60"
+    cy="44"
+    fill="#fde047"
+    r="5"
+    stroke="#78350f"
+    stroke-width="2.8"
+  />
+  <path
+    d="M29 44C30 35 34 31 38 33"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.65"
+    stroke-width="3.2"
+  />
+</svg>

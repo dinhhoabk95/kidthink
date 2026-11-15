@@ -1,0 +1,57 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Túi xách tay</title>
+  <defs>
+    <linearGradient id="hbLeather" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fed7aa" />
+      <stop offset="50%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#92400e" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#451a03" opacity="0.26" rx="40" ry="5" />
+  <path
+    d="M40 46C40 16 80 16 80 46"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="4.5"
+  />
+  <polygon
+    fill="url(#hbLeather)"
+    points="24,44 96,44 102,98 18,98"
+    stroke="#5c3d2e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M24 44H96L86 68H34Z"
+    fill="#f59e0b"
+    stroke="#5c3d2e"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <rect
+    fill="#fde047"
+    height="12"
+    rx="3"
+    stroke="#78350f"
+    stroke-width="3.4"
+    width="14"
+    x="53"
+    y="61"
+  />
+  <circle
+    cx="40"
+    cy="48"
+    fill="#fde047"
+    r="3.5"
+    stroke="#78350f"
+    stroke-width="2.4"
+  />
+  <circle
+    cx="80"
+    cy="48"
+    fill="#fde047"
+    r="3.5"
+    stroke="#78350f"
+    stroke-width="2.4"
+  />
+</svg>

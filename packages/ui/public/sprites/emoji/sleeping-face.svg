@@ -1,0 +1,42 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Khuôn mặt ngủ ngon</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="slFace" r="70%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="58%" stop-color="#fde047" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="58" cy="105" fill="#78350f" opacity="0.24" rx="35" ry="5.5" />
+  <circle
+    cx="57"
+    cy="60"
+    fill="url(#slFace)"
+    r="37"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M36 55C40 61 48 61 52 55M62 55C66 61 74 61 78 55"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="57"
+    cy="74"
+    fill="#92400e"
+    r="5"
+    stroke="#78350f"
+    stroke-width="3.2"
+  />
+  <circle cx="35" cy="64" fill="#fb7185" fill-opacity="0.45" r="5.5" />
+  <circle cx="79" cy="64" fill="#fb7185" fill-opacity="0.45" r="5.5" />
+  <path
+    d="M77 27H89L77 39H89M91 14H105L91 28H105"
+    stroke="#1e3a8a"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+</svg>

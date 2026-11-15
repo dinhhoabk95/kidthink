@@ -1,0 +1,60 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bàn tay chữ V</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="vhGold" r="70%">
+      <stop offset="0%" stop-color="#fef3c7" />
+      <stop offset="55%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#78350f" opacity="0.24" rx="28" ry="5" />
+  <rect
+    fill="url(#vhGold)"
+    height="48"
+    rx="8.5"
+    stroke="#78350f"
+    stroke-width="4"
+    transform="rotate(-15 47 40)"
+    width="17"
+    x="39"
+    y="16"
+  />
+  <rect
+    fill="url(#vhGold)"
+    height="48"
+    rx="8.5"
+    stroke="#78350f"
+    stroke-width="4"
+    transform="rotate(15 71 40)"
+    width="17"
+    x="62"
+    y="16"
+  />
+  <path
+    d="M36 58H84C88 64 88 80 82 90C77 97 68 99 58 99C44 99 34 90 33 75C32 66 34 61 36 58Z"
+    fill="url(#vhGold)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="url(#vhGold)"
+    height="15"
+    rx="7.5"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="26"
+    x="58"
+    y="57"
+  />
+  <rect
+    fill="url(#vhGold)"
+    height="15"
+    rx="7.5"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="28"
+    x="35"
+    y="64"
+  />
+</svg>

@@ -1,0 +1,56 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Quả dừa tươi</title>
+  <defs>
+    <radialGradient cx="40%" cy="35%" id="ccShell" r="70%">
+      <stop offset="0%" stop-color="#b45309" />
+      <stop offset="65%" stop-color="#78350f" />
+      <stop offset="100%" stop-color="#451a03" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#451a03" opacity="0.26" rx="36" ry="5.5" />
+  <path
+    d="M24 38C12 28 16 16 32 22C38 25 42 32 42 40Z"
+    fill="#4ade80"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M74 48L90 16L97 19L81 51Z"
+    fill="#fb7185"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M20 56C20 85 38 100 60 100C82 100 100 85 100 56Z"
+    fill="url(#ccShell)"
+    stroke="#451a03"
+    stroke-linejoin="round"
+    stroke-width="4.2"
+  />
+  <ellipse
+    cx="60"
+    cy="56"
+    fill="#ffffff"
+    rx="40"
+    ry="16"
+    stroke="#451a03"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="60"
+    cy="56"
+    fill="#bae6fd"
+    rx="28"
+    ry="9.5"
+    stroke="#0f766e"
+    stroke-width="2.6"
+  />
+  <path
+    d="M34 74L40 78M78 76L85 72M56 86L64 87"
+    stroke="#d97706"
+    stroke-linecap="round"
+    stroke-width="2.8"
+  />
+</svg>

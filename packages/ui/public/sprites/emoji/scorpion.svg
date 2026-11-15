@@ -1,0 +1,63 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Con bọ cạp</title>
+  <defs>
+    <radialGradient cx="40%" cy="35%" id="scBody" r="68%">
+      <stop offset="0%" stop-color="#fed7aa" />
+      <stop offset="55%" stop-color="#ea580c" />
+      <stop offset="100%" stop-color="#9a3412" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="58" cy="103" fill="#7c2d12" opacity="0.25" rx="38" ry="5" />
+  <path
+    d="M44 74L32 92M56 76L48 95M68 74L64 94M44 62L30 50M58 60L52 46"
+    stroke="#7c2d12"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M68 68C96 68 104 38 84 24C74 18 62 22 60 30"
+    stroke="#7c2d12"
+    stroke-linecap="round"
+    stroke-width="8"
+  />
+  <path
+    d="M68 68C96 68 104 38 84 24C74 18 62 22 60 30"
+    stroke="#fb923c"
+    stroke-linecap="round"
+    stroke-opacity="0.9"
+    stroke-width="3.5"
+  />
+  <circle
+    cx="58"
+    cy="31"
+    fill="#fb923c"
+    r="6"
+    stroke="#7c2d12"
+    stroke-width="3.4"
+  />
+  <ellipse
+    cx="56"
+    cy="68"
+    fill="url(#scBody)"
+    rx="24"
+    ry="14"
+    stroke="#7c2d12"
+    stroke-width="4"
+  />
+  <path
+    d="M34 66C20 64 14 50 22 40L28 48L34 42C36 50 36 58 34 66Z"
+    fill="url(#scBody)"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M36 74C22 82 14 74 18 62L25 67L30 61C34 66 36 70 36 74Z"
+    fill="url(#scBody)"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle cx="42" cy="65" fill="#1c1917" r="2.5" />
+  <circle cx="42" cy="72" fill="#1c1917" r="2.5" />
+</svg>

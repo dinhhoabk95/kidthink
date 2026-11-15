@@ -1,0 +1,68 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mèo con buồn</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="tcFur" r="70%">
+      <stop offset="0%" stop-color="#fef3c7" />
+      <stop offset="55%" stop-color="#fcd34d" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.25" rx="38" ry="5" />
+  <path
+    d="M24 50L20 20L46 34Z"
+    fill="url(#tcFur)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M96 50L100 20L74 34Z"
+    fill="url(#tcFur)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <polygon fill="#fda4af" points="26,42 25,27 40,36" />
+  <polygon fill="#fda4af" points="94,42 95,27 80,36" />
+  <ellipse
+    cx="60"
+    cy="67"
+    fill="url(#tcFur)"
+    rx="39"
+    ry="34"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M36 52L48 47M84 52L72 47"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.4"
+  />
+  <circle cx="44" cy="60" fill="#1c1917" r="5" />
+  <circle cx="42.5" cy="58" fill="#ffffff" r="2" />
+  <circle cx="76" cy="60" fill="#1c1917" r="5" />
+  <circle cx="74.5" cy="58" fill="#ffffff" r="2" />
+  <ellipse
+    cx="60"
+    cy="71"
+    fill="#fb7185"
+    rx="5"
+    ry="3.5"
+    stroke="#881337"
+    stroke-width="2.2"
+  />
+  <path
+    d="M52 83C56 78 64 78 68 83M18 68H30M18 75H30M102 68H90M102 75H90"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="2.8"
+  />
+  <path
+    d="M36 66C36 66 28 77 31 83C33 87 39 87 41 83C44 77 36 66 36 66Z"
+    fill="#38bdf8"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+</svg>

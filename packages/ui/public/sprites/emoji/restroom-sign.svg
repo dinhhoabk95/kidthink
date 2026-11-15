@@ -1,0 +1,46 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Biển nhà vệ sinh</title>
+  <defs>
+    <linearGradient id="rsBoard" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="55%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#0369a1" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#1e3a8a" opacity="0.26" rx="40" ry="5" />
+  <rect
+    fill="url(#rsBoard)"
+    height="80"
+    rx="16"
+    stroke="#1e3a8a"
+    stroke-width="4"
+    width="84"
+    x="18"
+    y="18"
+  />
+  <path
+    d="M60 30V86"
+    stroke="#fffbeb"
+    stroke-linecap="round"
+    stroke-opacity="0.85"
+    stroke-width="3.4"
+  />
+  <circle cx="40" cy="37" fill="#fffbeb" r="6.5" />
+  <rect fill="#fffbeb" height="22" rx="5" width="14" x="33" y="47" />
+  <path
+    d="M37 68V83M43 68V83"
+    stroke="#fffbeb"
+    stroke-linecap="round"
+    stroke-opacity="0.95"
+    stroke-width="4"
+  />
+  <circle cx="80" cy="37" fill="#fde047" r="6.5" />
+  <polygon fill="#fde047" points="80,46 91,71 69,71" />
+  <path
+    d="M77 70V83M83 70V83"
+    stroke="#fde047"
+    stroke-linecap="round"
+    stroke-opacity="0.95"
+    stroke-width="4"
+  />
+</svg>

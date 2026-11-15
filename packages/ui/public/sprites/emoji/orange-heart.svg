@@ -1,0 +1,36 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Trái tim cam</title>
+  <defs>
+    <radialGradient cx="35%" cy="28%" id="ohWarm" r="70%">
+      <stop offset="0%" stop-color="#fed7aa" />
+      <stop offset="48%" stop-color="#fb923c" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#7c2d12" opacity="0.25" rx="32" ry="4.8" />
+  <path
+    d="M60 99C56 99 15 73 15 44C15 27 29 17 43 17C51 17 57 22 60 28C63 22 69 17 77 17C91 17 105 27 105 44C105 73 64 99 60 99Z"
+    fill="#9a3412"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="4"
+    transform="translate(0 5)"
+  />
+  <path
+    d="M60 97C56 97 15 71 15 42C15 25 29 15 43 15C51 15 57 20 60 26C63 20 69 15 77 15C91 15 105 25 105 42C105 71 64 97 60 97Z"
+    fill="url(#ohWarm)"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="36"
+    cy="34"
+    fill="#ffffff"
+    fill-opacity="0.65"
+    rx="9"
+    ry="5"
+    transform="rotate(-32 36 34)"
+  />
+  <circle cx="28" cy="46" fill="#ffffff" fill-opacity="0.55" r="3" />
+</svg>

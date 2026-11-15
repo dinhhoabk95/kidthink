@@ -1,0 +1,42 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Biển chú ý</title>
+  <defs>
+    <linearGradient id="cautGold" x1="50%" x2="50%" y1="10%" y2="95%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="55%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#78350f" opacity="0.25" rx="42" ry="6" />
+  <path
+    d="M52 24C56 17 64 17 68 24L104 86C108 93 103 100 95 100H25C17 100 12 93 16 86Z"
+    fill="#b45309"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M52 19C56 12 64 12 68 19L104 81C108 88 103 95 95 95H25C17 95 12 88 16 81Z"
+    fill="url(#cautGold)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M60 32L90 84H30Z"
+    fill="none"
+    stroke="#b45309"
+    stroke-linejoin="round"
+    stroke-opacity="0.45"
+    stroke-width="2.6"
+  />
+  <rect fill="#5c3d2e" height="25" rx="5" width="10" x="55" y="42" />
+  <circle cx="60" cy="78" fill="#5c3d2e" r="5.5" />
+  <path
+    d="M46 35L32 60"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.65"
+    stroke-width="3.5"
+  />
+</svg>

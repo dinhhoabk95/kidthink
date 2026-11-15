@@ -1,0 +1,31 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bàn tay xoè</title>
+  <defs>
+    <radialGradient cx="45%" cy="38%" id="rbSkin" r="68%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="60%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="58" cy="105" fill="#78350f" opacity="0.25" rx="28" ry="5" />
+  <path
+    d="M32 68V34C32 27 42 27 42 34V52H45V23C45 16 55 16 55 23V50H58V25C58 18 68 18 68 25V53H71V35C71 28 81 28 81 35V62L93 50C99 45 106 53 100 59L81 80C78 94 68 102 54 102C40 102 32 92 32 76Z"
+    fill="url(#rbSkin)"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse cx="37" cy="33" fill="#fef3c7" rx="3" ry="3.5" />
+  <ellipse cx="50" cy="22" fill="#fef3c7" rx="3" ry="3.5" />
+  <ellipse cx="63" cy="24" fill="#fef3c7" rx="3" ry="3.5" />
+  <ellipse cx="76" cy="34" fill="#fef3c7" rx="3" ry="3.5" />
+  <path
+    d="M44 69H69"
+    stroke="#92400e"
+    stroke-dasharray="3 7"
+    stroke-linecap="round"
+    stroke-opacity="0.55"
+    stroke-width="3"
+  />
+</svg>

@@ -1,0 +1,48 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chiếc ô gấp</title>
+  <defs>
+    <linearGradient id="fuSilk" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#c084fc" />
+      <stop offset="55%" stop-color="#9333ea" />
+      <stop offset="100%" stop-color="#6b21a8" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="56" cy="105" fill="#4c1d95" opacity="0.24" rx="30" ry="5" />
+  <g transform="rotate(32 60 60)">
+    <path
+      d="M60 12V24"
+      stroke="#78350f"
+      stroke-linecap="round"
+      stroke-width="5"
+    />
+    <path
+      d="M60 78V95C60 103 48 103 48 94"
+      stroke="#78350f"
+      stroke-linecap="round"
+      stroke-width="5.5"
+    />
+    <path
+      d="M55 22H65L74 78C68 82 64 76 60 80C56 76 52 82 46 78Z"
+      fill="url(#fuSilk)"
+      stroke="#4c1d95"
+      stroke-linejoin="round"
+      stroke-width="4"
+    />
+    <path
+      d="M60 24V78"
+      stroke="#4c1d95"
+      stroke-linecap="round"
+      stroke-width="3.2"
+    />
+    <rect
+      fill="#facc15"
+      height="8"
+      rx="3"
+      stroke="#78350f"
+      stroke-width="3.2"
+      width="22"
+      x="49"
+      y="52"
+    />
+  </g>
+</svg>

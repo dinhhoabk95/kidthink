@@ -1,0 +1,79 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Nàng tiên nhỏ</title>
+  <defs>
+    <radialGradient cx="40%" cy="40%" id="lfWing" r="65%">
+      <stop offset="0%" stop-color="#e0f2fe" />
+      <stop offset="100%" stop-color="#67e8f9" />
+    </radialGradient>
+    <linearGradient id="lfDress" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#f9a8d4" />
+      <stop offset="100%" stop-color="#ec4899" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="58" cy="106" fill="#831843" opacity="0.22" rx="30" ry="5" />
+  <path
+    d="M52 60C28 42 15 56 26 73C19 82 32 92 48 78Z"
+    fill="url(#lfWing)"
+    stroke="#0369a1"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M64 60C88 42 101 56 90 73C97 82 84 92 68 78Z"
+    fill="url(#lfWing)"
+    stroke="#0369a1"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M40 97L49 69H67L76 97C65 101 51 101 40 97Z"
+    fill="url(#lfDress)"
+    stroke="#831843"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="58"
+    cy="22"
+    fill="#facc15"
+    r="9"
+    stroke="#78350f"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="58"
+    cy="48"
+    fill="#fed7aa"
+    r="18"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <path
+    d="M40 46C42 32 74 32 76 46C69 39 47 39 40 46Z"
+    fill="#facc15"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <circle cx="52" cy="49" fill="#1c1917" r="2.7" />
+  <circle cx="64" cy="49" fill="#1c1917" r="2.7" />
+  <path
+    d="M54 56C57 59 60 59 63 56"
+    stroke="#831843"
+    stroke-linecap="round"
+    stroke-width="2.8"
+  />
+  <path
+    d="M76 76L95 40"
+    stroke="#92400e"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <polygon
+    fill="#fde047"
+    points="96,26 99,33 107,34 101,39 103,46 96,42 89,46 91,39 85,34 93,33"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+</svg>

@@ -1,0 +1,75 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Con trâu nước</title>
+  <defs>
+    <radialGradient cx="40%" cy="32%" id="wbGrey" r="70%">
+      <stop offset="0%" stop-color="#94a3b8" />
+      <stop offset="58%" stop-color="#64748b" />
+      <stop offset="100%" stop-color="#475569" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="62" cy="103" fill="#334155" opacity="0.28" rx="42" ry="5.5" />
+  <rect
+    fill="#475569"
+    height="22"
+    rx="4"
+    stroke="#1e293b"
+    stroke-width="3.6"
+    width="10"
+    x="42"
+    y="78"
+  />
+  <rect
+    fill="#475569"
+    height="22"
+    rx="4"
+    stroke="#1e293b"
+    stroke-width="3.6"
+    width="10"
+    x="80"
+    y="78"
+  />
+  <ellipse
+    cx="69"
+    cy="68"
+    fill="url(#wbGrey)"
+    rx="31"
+    ry="22"
+    stroke="#1e293b"
+    stroke-width="4"
+  />
+  <path
+    d="M98 62C106 66 107 78 102 85"
+    stroke="#1e293b"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M26 39C12 37 10 21 22 18C18 25 22 31 32 32ZM56 39C70 37 72 21 60 18C64 25 60 31 50 32Z"
+    fill="#cbd5e1"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <ellipse
+    cx="41"
+    cy="54"
+    fill="url(#wbGrey)"
+    rx="22"
+    ry="19"
+    stroke="#1e293b"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="41"
+    cy="64"
+    fill="#cbd5e1"
+    rx="15"
+    ry="10"
+    stroke="#334155"
+    stroke-width="3.4"
+  />
+  <circle cx="33" cy="49" fill="#1c1917" r="3" />
+  <circle cx="49" cy="49" fill="#1c1917" r="3" />
+  <circle cx="36" cy="64" fill="#334155" r="2.2" />
+  <circle cx="46" cy="64" fill="#334155" r="2.2" />
+</svg>

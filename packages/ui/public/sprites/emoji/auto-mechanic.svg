@@ -1,0 +1,71 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chú thợ máy</title>
+  <defs>
+    <linearGradient id="amSuit" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#1e3a8a" opacity="0.24" rx="36" ry="5.5" />
+  <path
+    d="M26 99C28 81 41 75 58 75C75 75 88 81 90 99Z"
+    fill="#fde047"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M39 76H47V84H69V76H77V99H39Z"
+    fill="url(#amSuit)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="58"
+    cy="56"
+    fill="#fed7aa"
+    r="19"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <path
+    d="M38 43C39 26 77 26 78 43Z"
+    fill="#2563eb"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M35 42H87"
+    stroke="#1e3a8a"
+    stroke-linecap="round"
+    stroke-width="5"
+  />
+  <circle cx="51" cy="56" fill="#1c1917" r="2.8" />
+  <circle cx="65" cy="56" fill="#1c1917" r="2.8" />
+  <path
+    d="M53 64C56 67 60 67 63 64"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+  <path
+    d="M95 62V94"
+    stroke="#475569"
+    stroke-linecap="round"
+    stroke-width="7"
+  />
+  <path
+    d="M95 62V94"
+    stroke="#1e293b"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M89 58C89 51 101 51 101 58"
+    stroke="#1e293b"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+</svg>

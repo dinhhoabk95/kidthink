@@ -1,0 +1,107 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bàn tính hạt gỗ</title>
+  <defs>
+    <linearGradient id="waFrame" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="55%" stop-color="#b45309" />
+      <stop offset="100%" stop-color="#78350f" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#6b3410" opacity="0.25" rx="42" ry="5.5" />
+  <path
+    d="M26 39H94M26 57H94M26 75H94"
+    stroke="#44403c"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="42"
+    cy="39"
+    fill="#ef4444"
+    rx="6"
+    ry="8"
+    stroke="#7f1d1d"
+    stroke-width="3.2"
+  />
+  <ellipse
+    cx="55"
+    cy="39"
+    fill="#ef4444"
+    rx="6"
+    ry="8"
+    stroke="#7f1d1d"
+    stroke-width="3.2"
+  />
+  <ellipse
+    cx="80"
+    cy="39"
+    fill="#ef4444"
+    rx="6"
+    ry="8"
+    stroke="#7f1d1d"
+    stroke-width="3.2"
+  />
+  <ellipse
+    cx="42"
+    cy="57"
+    fill="#facc15"
+    rx="6"
+    ry="8"
+    stroke="#78350f"
+    stroke-width="3.2"
+  />
+  <ellipse
+    cx="67"
+    cy="57"
+    fill="#facc15"
+    rx="6"
+    ry="8"
+    stroke="#78350f"
+    stroke-width="3.2"
+  />
+  <ellipse
+    cx="80"
+    cy="57"
+    fill="#facc15"
+    rx="6"
+    ry="8"
+    stroke="#78350f"
+    stroke-width="3.2"
+  />
+  <ellipse
+    cx="42"
+    cy="75"
+    fill="#3b82f6"
+    rx="6"
+    ry="8"
+    stroke="#1e3a8a"
+    stroke-width="3.2"
+  />
+  <ellipse
+    cx="55"
+    cy="75"
+    fill="#22c55e"
+    rx="6"
+    ry="8"
+    stroke="#14532d"
+    stroke-width="3.2"
+  />
+  <path
+    d="M18 22H102V94H18ZM30 30V86H90V30Z"
+    fill="url(#waFrame)"
+    fill-rule="evenodd"
+    stroke="#6b3410"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#92400e"
+    height="7"
+    rx="3.5"
+    stroke="#6b3410"
+    stroke-width="3.6"
+    width="92"
+    x="14"
+    y="92"
+  />
+</svg>

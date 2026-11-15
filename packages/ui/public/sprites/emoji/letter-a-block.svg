@@ -1,0 +1,46 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Thẻ chữ A</title>
+  <defs>
+    <linearGradient id="laRed" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb7185" />
+      <stop offset="55%" stop-color="#e11d48" />
+      <stop offset="100%" stop-color="#be123c" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#7f1d1d" opacity="0.26" rx="38" ry="5" />
+  <rect
+    fill="#9f1239"
+    height="78"
+    rx="18"
+    stroke="#7f1d1d"
+    stroke-width="4"
+    width="78"
+    x="21"
+    y="24"
+  />
+  <rect
+    fill="url(#laRed)"
+    height="78"
+    rx="18"
+    stroke="#7f1d1d"
+    stroke-width="4"
+    width="78"
+    x="21"
+    y="18"
+  />
+  <path
+    d="M60 31L82 83H69L65 72H55L51 83H38ZM57 62H63L60 51Z"
+    fill="#fffbeb"
+    fill-rule="evenodd"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M32 27H54"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.6"
+    stroke-width="3"
+  />
+</svg>

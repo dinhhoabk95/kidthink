@@ -1,0 +1,36 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cánh tay khoẻ mạnh</title>
+  <defs>
+    <radialGradient cx="42%" cy="35%" id="saSkin" r="68%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="55%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.25" rx="38" ry="5.5" />
+  <path
+    d="M26 42C22 33 28 22 39 22C48 22 53 29 50 38L44 62C52 53 68 51 79 58C91 66 95 79 88 90C82 98 68 98 46 98H29C20 98 16 90 18 80Z"
+    fill="url(#saSkin)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M35 30H45M33 36H43"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.2"
+  />
+  <path
+    d="M56 72C62 65 72 65 77 72"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M68 38L74 28M80 45L90 38"
+    stroke="#991b1b"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+</svg>

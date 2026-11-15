@@ -1,0 +1,35 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Loa âm lớn</title>
+  <defs>
+    <linearGradient id="lsBell" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fde047" />
+      <stop offset="55%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="52" cy="105" fill="#78350f" opacity="0.25" rx="34" ry="5" />
+  <rect
+    fill="#475569"
+    height="28"
+    rx="6"
+    stroke="#1e293b"
+    stroke-width="4"
+    width="20"
+    x="14"
+    y="46"
+  />
+  <polygon
+    fill="url(#lsBell)"
+    points="32,46 66,22 66,98 32,74"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path d="M66 49C73 49 76 71 66 71Z" fill="#78350f" />
+  <path
+    d="M78 46C85 54 85 66 78 74M89 36C100 49 100 71 89 84M100 26C114 44 114 76 100 94"
+    stroke="#0369a1"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+</svg>

@@ -1,0 +1,54 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bát cơm trắng</title>
+  <defs>
+    <radialGradient cx="42%" cy="30%" id="rbRice" r="68%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="65%" stop-color="#fafaf9" />
+      <stop offset="100%" stop-color="#e7e5e4" />
+    </radialGradient>
+    <linearGradient id="rbBowl" x1="15%" x2="85%" y1="15%" y2="95%">
+      <stop offset="0%" stop-color="#93c5fd" />
+      <stop offset="55%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#1e40af" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#1e3a5f" opacity="0.25" rx="36" ry="5.5" />
+  <path
+    d="M24 58C24 41 34 33 45 34C50 25 70 25 75 34C86 33 96 41 96 58Z"
+    fill="url(#rbRice)"
+    stroke="#57534e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M46 42C49 40 53 40 56 42M66 39C69 37 73 37 76 39M55 49C58 47 62 47 65 49"
+    stroke="#a8a29e"
+    stroke-linecap="round"
+    stroke-opacity="0.7"
+    stroke-width="2.6"
+  />
+  <rect
+    fill="#1d4ed8"
+    height="9"
+    rx="4"
+    stroke="#1e3a5f"
+    stroke-width="3.8"
+    width="40"
+    x="40"
+    y="91"
+  />
+  <path
+    d="M18 56H102C100 81 84 94 60 94C36 94 20 81 18 56Z"
+    fill="url(#rbBowl)"
+    stroke="#1e3a5f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M28 69H92"
+    stroke="#fef3c7"
+    stroke-linecap="round"
+    stroke-opacity="0.85"
+    stroke-width="3"
+  />
+</svg>

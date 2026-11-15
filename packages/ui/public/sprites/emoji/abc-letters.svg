@@ -1,0 +1,54 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bảng chữ cái ABC</title>
+  <defs>
+    <linearGradient id="abcTile" x1="15%" x2="85%" y1="15%" y2="90%">
+      <stop offset="0%" stop-color="#60a5fa" />
+      <stop offset="55%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e3a5f" opacity="0.25" rx="40" ry="5.5" />
+  <rect
+    fill="#1e40af"
+    height="76"
+    rx="20"
+    stroke="#1e3a5f"
+    stroke-width="4"
+    width="88"
+    x="16"
+    y="24"
+  />
+  <rect
+    fill="url(#abcTile)"
+    height="76"
+    rx="20"
+    stroke="#1e3a5f"
+    stroke-width="4"
+    width="88"
+    x="16"
+    y="18"
+  />
+  <path
+    d="M27 69L35 44L43 69M29.5 62H40.5"
+    stroke="#fef08a"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-opacity="0.98"
+    stroke-width="4.5"
+  />
+  <path
+    d="M52 44V69H61C65 69 67 66 67 62.5C67 59 64 56.5 60 56.5H52M52 44H60C64 44 66 46.5 66 50C66 53.5 64 56.5 60 56.5"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-opacity="0.98"
+    stroke-width="4.4"
+  />
+  <path
+    d="M91 48C88 44 82 44 79 48C75 53 75 61 79 66C82 70 88 70 91 66"
+    stroke="#fed7aa"
+    stroke-linecap="round"
+    stroke-opacity="0.98"
+    stroke-width="4.5"
+  />
+</svg>

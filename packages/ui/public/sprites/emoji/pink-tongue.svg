@@ -1,0 +1,46 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cái lưỡi hồng</title>
+  <defs>
+    <radialGradient cx="42%" cy="32%" id="ptPink" r="70%">
+      <stop offset="0%" stop-color="#fecdd3" />
+      <stop offset="52%" stop-color="#fb7185" />
+      <stop offset="100%" stop-color="#e11d48" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#881337" opacity="0.24" rx="34" ry="5.5" />
+  <path
+    d="M20 40C32 54 88 54 100 40C96 64 80 74 60 74C40 74 24 64 20 40Z"
+    fill="#991b1b"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M35 46H85V68C85 86 74 97 60 97C46 97 35 86 35 68Z"
+    fill="url(#ptPink)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M60 48V76"
+    stroke="#9f1239"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M18 39C36 50 84 50 102 39"
+    stroke="#7f1d1d"
+    stroke-linecap="round"
+    stroke-width="4.5"
+  />
+  <ellipse
+    cx="47"
+    cy="76"
+    fill="#ffffff"
+    fill-opacity="0.6"
+    rx="5"
+    ry="9"
+    transform="rotate(-12 47 76)"
+  />
+</svg>

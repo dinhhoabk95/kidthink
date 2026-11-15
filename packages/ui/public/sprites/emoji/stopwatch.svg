@@ -1,0 +1,64 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đồng hồ bấm giờ</title>
+  <defs>
+    <radialGradient cx="36%" cy="30%" id="swCase" r="70%">
+      <stop offset="0%" stop-color="#93c5fd" />
+      <stop offset="55%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#1e3a8a" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#1e3a8a" opacity="0.25" rx="34" ry="5.5" />
+  <circle
+    cx="60"
+    cy="18"
+    fill="none"
+    r="6"
+    stroke="#475569"
+    stroke-width="3.6"
+  />
+  <rect
+    fill="#f59e0b"
+    height="10"
+    rx="3"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="16"
+    x="52"
+    y="21"
+  />
+  <path
+    d="M84 36L93 27M36 36L27 27"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-width="5"
+  />
+  <circle
+    cx="60"
+    cy="66"
+    fill="url(#swCase)"
+    r="36"
+    stroke="#1e3a8a"
+    stroke-width="4"
+  />
+  <circle
+    cx="60"
+    cy="66"
+    fill="#fffbeb"
+    r="27"
+    stroke="#1e3a8a"
+    stroke-width="3.6"
+  />
+  <path
+    d="M60 44V48M82 66H78M60 88V84M38 66H42"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-width="3.2"
+  />
+  <path
+    d="M60 66L73 51"
+    stroke="#991b1b"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <circle cx="60" cy="66" fill="#1e3a8a" r="4" />
+</svg>

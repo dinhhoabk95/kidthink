@@ -1,0 +1,32 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Nút phát tam giác</title>
+  <defs>
+    <linearGradient id="ptGrn" x1="15%" x2="85%" y1="15%" y2="85%">
+      <stop offset="0%" stop-color="#86efac" />
+      <stop offset="50%" stop-color="#22c55e" />
+      <stop offset="100%" stop-color="#15803d" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="58" cy="105" fill="#14532d" opacity="0.24" rx="36" ry="5.5" />
+  <path
+    d="M30 28C30 21 38 17 44 21L96 53C102 57 102 65 96 69L44 101C38 105 30 101 30 94Z"
+    fill="#166534"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M30 22C30 15 38 11 44 15L96 47C102 51 102 59 96 63L44 95C38 99 30 95 30 88Z"
+    fill="url(#ptGrn)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M41 29L74 49"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.7"
+    stroke-width="4"
+  />
+</svg>

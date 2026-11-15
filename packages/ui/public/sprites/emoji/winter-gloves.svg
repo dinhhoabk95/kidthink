@@ -1,0 +1,51 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đôi găng tay ấm</title>
+  <defs>
+    <linearGradient id="wgRed" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb7185" />
+      <stop offset="55%" stop-color="#e11d48" />
+      <stop offset="100%" stop-color="#9f1239" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#881337" opacity="0.25" rx="40" ry="5.5" />
+  <g transform="rotate(-14 39 62)">
+    <path
+      d="M20 52C20 33 30 24 41 24C52 24 60 33 60 50L69 44C74 41 79 47 75 53L60 70V78H22Z"
+      fill="url(#wgRed)"
+      stroke="#881337"
+      stroke-linejoin="round"
+      stroke-width="3.8"
+    />
+    <rect
+      fill="#fde68a"
+      height="15"
+      rx="5"
+      stroke="#78350f"
+      stroke-width="3.6"
+      width="42"
+      x="20"
+      y="76"
+    />
+    <circle cx="40" cy="52" fill="#fffbeb" r="5" />
+  </g>
+  <g transform="rotate(14 81 62)">
+    <path
+      d="M100 52C100 33 90 24 79 24C68 24 60 33 60 50L51 44C46 41 41 47 45 53L60 70V78H98Z"
+      fill="url(#wgRed)"
+      stroke="#881337"
+      stroke-linejoin="round"
+      stroke-width="3.8"
+    />
+    <rect
+      fill="#fde68a"
+      height="15"
+      rx="5"
+      stroke="#78350f"
+      stroke-width="3.6"
+      width="42"
+      x="58"
+      y="76"
+    />
+    <circle cx="80" cy="52" fill="#fffbeb" r="5" />
+  </g>
+</svg>

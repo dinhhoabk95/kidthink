@@ -1,0 +1,44 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Loa tắt tiếng</title>
+  <defs>
+    <linearGradient id="msCone" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#cbd5e1" />
+      <stop offset="55%" stop-color="#64748b" />
+      <stop offset="100%" stop-color="#334155" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="58" cy="104" fill="#334155" opacity="0.24" rx="38" ry="5.5" />
+  <rect
+    fill="#94a3b8"
+    height="28"
+    rx="6"
+    stroke="#1e293b"
+    stroke-width="4"
+    width="18"
+    x="18"
+    y="46"
+  />
+  <path
+    d="M34 46L64 24V96L34 74Z"
+    fill="url(#msCone)"
+    stroke="#1e293b"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="64"
+    cy="60"
+    fill="#e2e8f0"
+    rx="5"
+    ry="36"
+    stroke="#1e293b"
+    stroke-width="3.8"
+  />
+  <polygon
+    fill="#f87171"
+    points="76,47 82,41 90,51 98,41 104,47 96,58 104,69 98,75 90,65 82,75 76,69 84,58"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+</svg>

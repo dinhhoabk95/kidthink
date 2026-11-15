@@ -1,0 +1,84 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Nhân viên y tế</title>
+  <defs>
+    <radialGradient cx="40%" cy="32%" id="hwSkin" r="68%">
+      <stop offset="0%" stop-color="#ffedd5" />
+      <stop offset="65%" stop-color="#fed7aa" />
+      <stop offset="100%" stop-color="#fdba74" />
+    </radialGradient>
+    <linearGradient id="hwCoat" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#e2e8f0" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#1e293b" opacity="0.24" rx="38" ry="5" />
+  <path
+    d="M24 102C24 80 38 70 60 70C82 70 96 80 96 102Z"
+    fill="#14b8a6"
+    stroke="#134e4a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M24 102C24 81 36 71 49 71L57 92V102ZM96 102C96 81 84 71 71 71L63 92V102Z"
+    fill="url(#hwCoat)"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M44 72C42 84 46 92 52 94M76 72C78 84 74 92 70 92"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="72"
+    cy="92"
+    fill="#fde047"
+    r="5"
+    stroke="#78350f"
+    stroke-width="2.8"
+  />
+  <path
+    d="M36 44C36 26 84 26 84 44Z"
+    fill="#44403c"
+    stroke="#292524"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="60"
+    cy="49"
+    fill="url(#hwSkin)"
+    r="21"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <rect
+    fill="#ffffff"
+    height="15"
+    rx="5"
+    stroke="#334155"
+    stroke-width="3.6"
+    width="32"
+    x="44"
+    y="15"
+  />
+  <path
+    d="M60 19V26M56.5 22.5H63.5"
+    stroke="#b91c1c"
+    stroke-linecap="round"
+    stroke-width="3.4"
+  />
+  <circle cx="52" cy="49" fill="#1c1917" r="3.2" />
+  <circle cx="68" cy="49" fill="#1c1917" r="3.2" />
+  <circle cx="46" cy="55" fill="#fb7185" fill-opacity="0.5" r="3.8" />
+  <circle cx="74" cy="55" fill="#fb7185" fill-opacity="0.5" r="3.8" />
+  <path
+    d="M54 57C57 61 63 61 66 57"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="2.8"
+  />
+</svg>

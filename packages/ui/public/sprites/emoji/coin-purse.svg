@@ -1,0 +1,47 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ví nhỏ</title>
+  <defs>
+    <radialGradient cx="38%" cy="35%" id="cpRose" r="70%">
+      <stop offset="0%" stop-color="#fda4af" />
+      <stop offset="55%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#be123c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#881337" opacity="0.25" rx="38" ry="5.5" />
+  <circle
+    cx="53"
+    cy="27"
+    fill="#fbbf24"
+    r="6.5"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="67"
+    cy="27"
+    fill="#fbbf24"
+    r="6.5"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <path
+    d="M32 45C32 36 44 33 60 33C76 33 88 36 88 45"
+    stroke="#b45309"
+    stroke-linecap="round"
+    stroke-width="6"
+  />
+  <path
+    d="M30 44H90C101 58 100 84 86 94C76 100 44 100 34 94C20 84 19 58 30 44Z"
+    fill="url(#cpRose)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M34 58C40 52 48 50 56 50"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.65"
+    stroke-width="3.4"
+  />
+</svg>

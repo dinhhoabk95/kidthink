@@ -1,0 +1,36 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chiếc lược chải tóc</title>
+  <defs>
+    <linearGradient id="hcCoral" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fda4af" />
+      <stop offset="50%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#be123c" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#881337" opacity="0.24" rx="38" ry="5" />
+  <g transform="rotate(-28 60 58)">
+    <path
+      d="M16 48C16 36 28 32 60 32C92 32 104 36 104 48V76C104 79 99 79 99 76V52H91V76C91 79 86 79 86 76V52H78V76C78 79 73 79 73 76V52H65V76C65 79 60 79 60 76V52H52V76C52 79 47 79 47 76V52H39V76C39 79 34 79 34 76V52H26V76C26 79 16 79 16 74Z"
+      fill="url(#hcCoral)"
+      stroke="#881337"
+      stroke-linejoin="round"
+      stroke-width="3.8"
+    />
+    <path
+      d="M30 40H74"
+      stroke="#ffffff"
+      stroke-linecap="round"
+      stroke-opacity="0.65"
+      stroke-width="3"
+    />
+    <circle
+      cx="88"
+      cy="41"
+      fill="#fde047"
+      r="4.5"
+      stroke="#78350f"
+      stroke-width="2.4"
+    />
+    <circle cx="24" cy="42" fill="#ffffff" fill-opacity="0.7" r="2.2" />
+  </g>
+</svg>

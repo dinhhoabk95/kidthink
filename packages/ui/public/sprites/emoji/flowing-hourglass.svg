@@ -1,0 +1,56 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đồng hồ cát chảy</title>
+  <defs>
+    <linearGradient id="fhGlass" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#f0f9ff" />
+      <stop offset="100%" stop-color="#bae6fd" />
+    </linearGradient>
+    <linearGradient id="fhWood" x1="0%" x2="100%" y1="0%" y2="0%">
+      <stop offset="0%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#92400e" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#78350f" opacity="0.26" rx="36" ry="5.5" />
+  <path
+    d="M34 24V96M86 24V96"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <path
+    d="M38 24H82C82 43 70 53 63 60C70 67 82 77 82 96H38C38 77 50 67 57 60C50 53 38 43 38 24Z"
+    fill="url(#fhGlass)"
+    stroke="#1e3a5f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path d="M45 38H75C72 47 65 53 60 57C55 53 48 47 45 38Z" fill="#f59e0b" />
+  <path
+    d="M60 57V84"
+    stroke="#d97706"
+    stroke-dasharray="3 3"
+    stroke-linecap="round"
+    stroke-width="2.8"
+  />
+  <path d="M43 93C47 82 54 78 60 78C66 78 73 82 77 93Z" fill="#f59e0b" />
+  <rect
+    fill="url(#fhWood)"
+    height="10"
+    rx="5"
+    stroke="#6b3410"
+    stroke-width="3.8"
+    width="64"
+    x="28"
+    y="15"
+  />
+  <rect
+    fill="url(#fhWood)"
+    height="10"
+    rx="5"
+    stroke="#6b3410"
+    stroke-width="3.8"
+    width="64"
+    x="28"
+    y="95"
+  />
+</svg>

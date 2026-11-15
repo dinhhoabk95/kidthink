@@ -1,0 +1,91 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cần cẩu xây dựng</title>
+  <defs>
+    <linearGradient id="bcYellow" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="60%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="56" cy="106" fill="#334155" opacity="0.25" rx="42" ry="5" />
+  <path
+    d="M38 14L18 26M38 14L96 26M84 34V66"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <rect
+    fill="url(#bcYellow)"
+    height="74"
+    rx="3"
+    stroke="#78350f"
+    stroke-width="3.8"
+    width="14"
+    x="31"
+    y="20"
+  />
+  <path
+    d="M31 38L45 48L31 58L45 68L31 78L45 88"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="2.6"
+  />
+  <rect
+    fill="url(#bcYellow)"
+    height="10"
+    rx="3"
+    stroke="#78350f"
+    stroke-width="3.8"
+    width="92"
+    x="14"
+    y="24"
+  />
+  <rect
+    fill="#64748b"
+    height="14"
+    rx="3"
+    stroke="#334155"
+    stroke-width="3.6"
+    width="14"
+    x="14"
+    y="22"
+  />
+  <rect
+    fill="#38bdf8"
+    height="15"
+    rx="3"
+    stroke="#1e3a8a"
+    stroke-width="3.6"
+    width="16"
+    x="43"
+    y="38"
+  />
+  <circle
+    cx="84"
+    cy="68"
+    fill="#fbbf24"
+    r="5"
+    stroke="#78350f"
+    stroke-width="3.2"
+  />
+  <rect
+    fill="#fb923c"
+    height="12"
+    rx="3"
+    stroke="#7c2d12"
+    stroke-width="3.6"
+    width="30"
+    x="69"
+    y="76"
+  />
+  <rect
+    fill="#94a3b8"
+    height="10"
+    rx="3"
+    stroke="#334155"
+    stroke-width="3.8"
+    width="34"
+    x="21"
+    y="92"
+  />
+</svg>

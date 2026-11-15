@@ -1,0 +1,47 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Nút dây thừng</title>
+  <defs>
+    <linearGradient id="rkHemp" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="55%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#5c3d2e" opacity="0.25" rx="38" ry="5" />
+  <path
+    d="M16 60H36M84 60H104"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="14"
+  />
+  <path
+    d="M16 60H36M84 60H104"
+    stroke="#fcd34d"
+    stroke-linecap="round"
+    stroke-opacity="0.95"
+    stroke-width="7"
+  />
+  <path
+    d="M30 60C30 38 56 34 68 52C76 64 90 62 90 60C90 82 64 86 52 68C44 56 30 58 30 60Z"
+    fill="url(#rkHemp)"
+    stroke="#5c3d2e"
+    stroke-linejoin="round"
+    stroke-width="4.2"
+  />
+  <ellipse
+    cx="60"
+    cy="60"
+    fill="#fcd34d"
+    rx="14"
+    ry="19"
+    stroke="#5c3d2e"
+    stroke-width="4"
+    transform="rotate(28 60 60)"
+  />
+  <path
+    d="M53 50L67 56M53 64L67 70"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.2"
+  />
+</svg>

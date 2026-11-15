@@ -1,0 +1,35 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Khúc xương trắng</title>
+  <defs>
+    <linearGradient id="dbIvory" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="65%" stop-color="#fef3c7" />
+      <stop offset="100%" stop-color="#d6d3d1" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="102" fill="#44403c" opacity="0.24" rx="40" ry="5.5" />
+  <g transform="rotate(-28 60 60)">
+    <path
+      d="M26 49C17 45 15 34 23 30C30 27 36 33 38 42H82C84 33 90 27 97 30C105 34 103 45 94 49C103 53 105 64 97 68C90 71 84 65 82 56H38C36 65 30 71 23 68C15 64 17 53 26 49Z"
+      fill="#a8a29e"
+      stroke="#44403c"
+      stroke-linejoin="round"
+      stroke-width="4"
+      transform="translate(0 5)"
+    />
+    <path
+      d="M26 49C17 45 15 34 23 30C30 27 36 33 38 42H82C84 33 90 27 97 30C105 34 103 45 94 49C103 53 105 64 97 68C90 71 84 65 82 56H38C36 65 30 71 23 68C15 64 17 53 26 49Z"
+      fill="url(#dbIvory)"
+      stroke="#44403c"
+      stroke-linejoin="round"
+      stroke-width="4"
+    />
+    <path
+      d="M42 47H76"
+      stroke="#ffffff"
+      stroke-linecap="round"
+      stroke-opacity="0.85"
+      stroke-width="3.5"
+    />
+  </g>
+</svg>

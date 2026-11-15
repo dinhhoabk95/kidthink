@@ -1,0 +1,24 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bàn tay tách ngón</title>
+  <defs>
+    <radialGradient cx="40%" cy="35%" id="vlHand" r="70%">
+      <stop offset="0%" stop-color="#fef3c7" />
+      <stop offset="55%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#78350f" opacity="0.24" rx="30" ry="5" />
+  <path
+    d="M33 65L25 27C24 21 32 18 35 24L40 21C44 17 51 20 51 26L56 54L67 25C69 19 77 19 78 25L84 23C89 21 94 26 92 32L82 67C80 86 70 98 54 98C39 98 31 87 30 73L19 62C15 57 21 49 27 54Z"
+    fill="url(#vlHand)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M36 25L43 54M78 26L73 55"
+    stroke="#92400e"
+    stroke-linecap="round"
+    stroke-width="3.2"
+  />
+</svg>

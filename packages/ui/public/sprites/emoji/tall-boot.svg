@@ -1,0 +1,45 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đôi ủng cao</title>
+  <defs>
+    <linearGradient id="tbLeather" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fdba74" />
+      <stop offset="55%" stop-color="#c2410c" />
+      <stop offset="100%" stop-color="#7c2d12" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="62" cy="105" fill="#451a03" opacity="0.26" rx="38" ry="5" />
+  <path
+    d="M30 26H64V64L92 74C99 77 100 84 98 92H28V26Z"
+    fill="url(#tbLeather)"
+    stroke="#451a03"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#fef3c7"
+    height="12"
+    rx="5"
+    stroke="#451a03"
+    stroke-width="3.8"
+    width="38"
+    x="28"
+    y="18"
+  />
+  <path
+    d="M26 90H100V99H66V95H50V99H26Z"
+    fill="#451a03"
+    stroke="#292524"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <rect
+    fill="#facc15"
+    height="8"
+    rx="2"
+    stroke="#78350f"
+    stroke-width="2.8"
+    width="36"
+    x="29"
+    y="64"
+  />
+</svg>

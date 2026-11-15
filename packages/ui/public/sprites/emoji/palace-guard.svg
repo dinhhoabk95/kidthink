@@ -1,0 +1,90 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Người lính gác</title>
+  <defs>
+    <linearGradient id="pgHat" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#57534e" />
+      <stop offset="55%" stop-color="#292524" />
+      <stop offset="100%" stop-color="#1c1917" />
+    </linearGradient>
+    <linearGradient id="pgCoat" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#f87171" />
+      <stop offset="100%" stop-color="#dc2626" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#7f1d1d" opacity="0.24" rx="35" ry="5.5" />
+  <path
+    d="M30 99C32 82 43 76 60 76C77 76 88 82 90 99Z"
+    fill="url(#pgCoat)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#ffffff"
+    height="7"
+    rx="3"
+    stroke="#334155"
+    stroke-width="3"
+    width="22"
+    x="49"
+    y="74"
+  />
+  <circle
+    cx="54"
+    cy="87"
+    fill="#fde047"
+    r="2.8"
+    stroke="#78350f"
+    stroke-width="2"
+  />
+  <circle
+    cx="66"
+    cy="87"
+    fill="#fde047"
+    r="2.8"
+    stroke="#78350f"
+    stroke-width="2"
+  />
+  <circle
+    cx="54"
+    cy="95"
+    fill="#fde047"
+    r="2.8"
+    stroke="#78350f"
+    stroke-width="2"
+  />
+  <circle
+    cx="66"
+    cy="95"
+    fill="#fde047"
+    r="2.8"
+    stroke="#78350f"
+    stroke-width="2"
+  />
+  <circle
+    cx="60"
+    cy="61"
+    fill="#fed7aa"
+    r="17"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <rect
+    fill="url(#pgHat)"
+    height="38"
+    rx="19"
+    stroke="#1c1917"
+    stroke-width="4"
+    width="44"
+    x="38"
+    y="13"
+  />
+  <path
+    d="M44 52C48 67 72 67 76 52"
+    stroke="#facc15"
+    stroke-linecap="round"
+    stroke-width="2.8"
+  />
+  <circle cx="53" cy="59" fill="#1c1917" r="2.6" />
+  <circle cx="67" cy="59" fill="#1c1917" r="2.6" />
+</svg>

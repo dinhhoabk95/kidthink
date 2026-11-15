@@ -1,0 +1,51 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cái móc treo</title>
+  <defs>
+    <linearGradient id="mhSteel" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#f8fafc" />
+      <stop offset="50%" stop-color="#94a3b8" />
+      <stop offset="100%" stop-color="#475569" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="58" cy="106" fill="#334155" opacity="0.24" rx="30" ry="5" />
+  <path
+    d="M62 36V72C62 86 52 95 40 95C28 95 20 86 22 73L32 76"
+    stroke="#1e293b"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="14"
+  />
+  <path
+    d="M62 36V72C62 86 52 95 40 95C28 95 20 86 22 73L32 76"
+    stroke="url(#mhSteel)"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="7.5"
+  />
+  <circle
+    cx="62"
+    cy="25"
+    fill="#f1f5f9"
+    r="11"
+    stroke="#1e293b"
+    stroke-width="4"
+  />
+  <circle
+    cx="62"
+    cy="25"
+    fill="#FFFBF2"
+    r="4.5"
+    stroke="#334155"
+    stroke-width="3.2"
+  />
+  <rect
+    fill="#f59e0b"
+    height="9"
+    rx="4"
+    stroke="#78350f"
+    stroke-width="3.4"
+    width="18"
+    x="53"
+    y="37"
+  />
+</svg>

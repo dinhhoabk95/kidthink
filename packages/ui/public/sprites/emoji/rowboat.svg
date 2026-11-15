@@ -1,0 +1,71 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Thuyền chèo tay</title>
+  <defs>
+    <linearGradient id="rbWood" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fdba74" />
+      <stop offset="55%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#92400e" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e3a8a" opacity="0.24" rx="46" ry="4.5" />
+  <path
+    d="M44 64C44 51 50 46 58 46C66 46 72 51 72 64Z"
+    fill="#fb923c"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="58"
+    cy="34"
+    fill="#fed7aa"
+    r="12"
+    stroke="#78350f"
+    stroke-width="3.6"
+  />
+  <path
+    d="M46 31C47 20 69 20 70 31Z"
+    fill="#facc15"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <circle cx="54" cy="35" fill="#1c1917" r="2" />
+  <circle cx="62" cy="35" fill="#1c1917" r="2" />
+  <path
+    d="M55 40C57 42 59 42 61 40"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="2.2"
+  />
+  <polygon
+    fill="url(#rbWood)"
+    points="14,62 106,62 90,88 30,88"
+    stroke="#5c3d2e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M14 88C32 82 46 94 60 88C74 82 88 94 106 88C102 98 88 100 60 100C32 100 18 98 14 88Z"
+    fill="#38bdf8"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M52 56L80 96"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <ellipse
+    cx="82"
+    cy="97"
+    fill="#fbbf24"
+    rx="6"
+    ry="3.5"
+    stroke="#5c3d2e"
+    stroke-width="3.2"
+    transform="rotate(55 82 97)"
+  />
+</svg>

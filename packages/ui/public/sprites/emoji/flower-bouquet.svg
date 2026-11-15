@@ -1,0 +1,63 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bó hoa tươi</title>
+  <defs>
+    <linearGradient id="fbWrap" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="60%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#78350f" opacity="0.25" rx="28" ry="4.5" />
+  <path
+    d="M24 54C14 40 24 22 40 34ZM96 54C106 40 96 22 80 34Z"
+    fill="#22c55e"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M28 42C26 30 38 24 44 33C50 26 58 34 52 46C46 54 30 52 28 42Z"
+    fill="#fb7185"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M68 46C62 34 70 26 76 33C82 24 94 30 92 42C90 52 74 54 68 46Z"
+    fill="#c084fc"
+    stroke="#4c1d95"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M60 14C66 14 69 20 67 24C73 24 76 30 71 35C74 40 68 46 63 43C60 48 53 45 53 40C47 41 44 35 48 30C45 25 50 18 55 20C56 16 58 14 60 14Z"
+    fill="#fde047"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="60"
+    cy="30"
+    fill="#fb923c"
+    r="5.5"
+    stroke="#7c2d12"
+    stroke-width="2.4"
+  />
+  <circle cx="40" cy="40" fill="#fef08a" r="3.5" />
+  <circle cx="80" cy="40" fill="#fef08a" r="3.5" />
+  <polygon
+    fill="url(#fbWrap)"
+    points="30,52 90,52 68,100 52,100"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M45 78L60 84L75 78L71 90L60 84L49 90Z"
+    fill="#ef4444"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+</svg>

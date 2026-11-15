@@ -1,0 +1,40 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Khuôn mặt mỉm cười</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="wsFace" r="70%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="52%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#eab308" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#78350f" opacity="0.24" rx="36" ry="5.5" />
+  <circle
+    cx="60"
+    cy="58"
+    fill="url(#wsFace)"
+    r="41"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M39 52C42 47 48 47 51 52M69 52C72 47 78 47 81 52"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <circle cx="36" cy="64" fill="#fb7185" fill-opacity="0.55" r="7" />
+  <circle cx="84" cy="64" fill="#fb7185" fill-opacity="0.55" r="7" />
+  <path
+    d="M45 68C51 77 69 77 75 68"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <path
+    d="M36 33C42 26 51 23 61 23"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.7"
+    stroke-width="4"
+  />
+</svg>

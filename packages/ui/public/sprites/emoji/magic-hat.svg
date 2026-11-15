@@ -1,0 +1,60 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mũ ảo thuật</title>
+  <defs>
+    <linearGradient id="mhSilk" x1="0%" x2="100%" y1="0%" y2="0%">
+      <stop offset="0%" stop-color="#475569" />
+      <stop offset="50%" stop-color="#334155" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#1e293b" opacity="0.26" rx="44" ry="5.5" />
+  <ellipse
+    cx="60"
+    cy="86"
+    fill="url(#mhSilk)"
+    rx="46"
+    ry="13"
+    stroke="#1e293b"
+    stroke-width="4"
+  />
+  <path
+    d="M35 84L29 28H91L85 84Z"
+    fill="url(#mhSilk)"
+    stroke="#1e293b"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M34 70H86L85 82H35Z"
+    fill="#ef4444"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <rect
+    fill="#facc15"
+    height="12"
+    rx="2"
+    stroke="#78350f"
+    stroke-width="2.8"
+    width="12"
+    x="54"
+    y="70"
+  />
+  <ellipse
+    cx="60"
+    cy="28"
+    fill="#64748b"
+    rx="31"
+    ry="8"
+    stroke="#1e293b"
+    stroke-width="3.8"
+  />
+  <polygon
+    fill="#fde047"
+    points="18,34 21,40 27,41 22,45 24,51 18,48 12,51 14,45 9,41 15,40"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="2.4"
+  />
+</svg>

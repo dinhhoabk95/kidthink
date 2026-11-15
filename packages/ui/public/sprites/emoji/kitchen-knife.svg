@@ -1,0 +1,49 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Dao làm bếp</title>
+  <defs>
+    <linearGradient id="kkSteel" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#f8fafc" />
+      <stop offset="55%" stop-color="#cbd5e1" />
+      <stop offset="100%" stop-color="#94a3b8" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#334155" opacity="0.25" rx="38" ry="5" />
+  <g transform="rotate(-40 60 60)">
+    <rect
+      fill="#78350f"
+      height="14"
+      rx="6"
+      stroke="#451a03"
+      stroke-width="3.8"
+      width="38"
+      x="12"
+      y="51"
+    />
+    <circle cx="23" cy="58" fill="#fde68a" r="2.6" />
+    <circle cx="37" cy="58" fill="#fde68a" r="2.6" />
+    <path
+      d="M48 49H108C104 71 84 79 48 76Z"
+      fill="url(#kkSteel)"
+      stroke="#334155"
+      stroke-linejoin="round"
+      stroke-width="4"
+    />
+    <rect
+      fill="#64748b"
+      height="22"
+      rx="2"
+      stroke="#334155"
+      stroke-width="3.4"
+      width="6"
+      x="46"
+      y="48"
+    />
+    <path
+      d="M58 55H94"
+      stroke="#ffffff"
+      stroke-linecap="round"
+      stroke-opacity="0.75"
+      stroke-width="3"
+    />
+  </g>
+</svg>

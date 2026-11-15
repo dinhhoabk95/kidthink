@@ -1,0 +1,89 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chú lười cây</title>
+  <defs>
+    <radialGradient cx="40%" cy="35%" id="slothFur" r="68%">
+      <stop offset="0%" stop-color="#e7e5e4" />
+      <stop offset="55%" stop-color="#a8a29e" />
+      <stop offset="100%" stop-color="#78716c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#44403c" opacity="0.23" rx="34" ry="5" />
+  <path
+    d="M24 30C16 18 28 12 36 24ZM92 22C98 10 110 12 106 24Z"
+    fill="#4ade80"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M38 32C34 48 38 64 48 68M82 26C86 44 82 62 72 66"
+    stroke="#44403c"
+    stroke-linecap="round"
+    stroke-width="9"
+  />
+  <path
+    d="M12 35L108 22"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="8"
+  />
+  <circle
+    cx="38"
+    cy="31"
+    fill="#fef3c7"
+    r="4.5"
+    stroke="#44403c"
+    stroke-width="2.8"
+  />
+  <circle
+    cx="82"
+    cy="25"
+    fill="#fef3c7"
+    r="4.5"
+    stroke="#44403c"
+    stroke-width="2.8"
+  />
+  <ellipse
+    cx="62"
+    cy="70"
+    fill="url(#slothFur)"
+    rx="25"
+    ry="19"
+    stroke="#44403c"
+    stroke-width="4"
+  />
+  <circle
+    cx="46"
+    cy="68"
+    fill="url(#slothFur)"
+    r="18"
+    stroke="#44403c"
+    stroke-width="4"
+  />
+  <ellipse cx="46" cy="69" fill="#fef3c7" rx="14" ry="11.5" />
+  <ellipse
+    cx="39.5"
+    cy="67"
+    fill="#57534e"
+    rx="5"
+    ry="3.5"
+    transform="rotate(-22 39.5 67)"
+  />
+  <ellipse
+    cx="52.5"
+    cy="67"
+    fill="#57534e"
+    rx="5"
+    ry="3.5"
+    transform="rotate(22 52.5 67)"
+  />
+  <circle cx="40" cy="67" fill="#1c1917" r="2" />
+  <circle cx="52" cy="67" fill="#1c1917" r="2" />
+  <ellipse cx="46" cy="71.5" fill="#44403c" rx="2.8" ry="2" />
+  <path
+    d="M41 75.5C44 78.5 48 78.5 51 75.5"
+    stroke="#44403c"
+    stroke-linecap="round"
+    stroke-width="2.4"
+  />
+</svg>

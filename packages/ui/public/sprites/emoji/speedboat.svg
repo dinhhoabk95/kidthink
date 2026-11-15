@@ -1,0 +1,62 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ca nô lướt sóng</title>
+  <defs>
+    <linearGradient id="sbHull" x1="10%" x2="90%" y1="15%" y2="88%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="55%" stop-color="#f1f5f9" />
+      <stop offset="100%" stop-color="#cbd5e1" />
+    </linearGradient>
+    <linearGradient id="sbWave" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e3a8a" opacity="0.24" rx="44" ry="5.5" />
+  <path
+    d="M40 52L58 36H80L72 54Z"
+    fill="#7dd3fc"
+    stroke="#1e3a5f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <rect
+    fill="#475569"
+    height="18"
+    rx="4"
+    stroke="#1e293b"
+    stroke-width="3.6"
+    width="11"
+    x="15"
+    y="54"
+  />
+  <path
+    d="M22 58H96L107 65C99 79 82 86 58 86H24L18 72Z"
+    fill="url(#sbHull)"
+    stroke="#1e3a5f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M23 68H99L94 74H21Z"
+    fill="#f97316"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <path
+    d="M12 86C22 80 32 80 42 86C52 92 62 92 72 86C82 80 94 80 108 86V96C94 99 26 99 12 96Z"
+    fill="url(#sbWave)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="96"
+    cy="83"
+    fill="#ffffff"
+    r="4"
+    stroke="#0369a1"
+    stroke-width="2.5"
+  />
+  <circle cx="104" cy="79" fill="#e0f2fe" r="2.8" />
+</svg>

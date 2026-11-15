@@ -1,0 +1,65 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Miếng bánh pizza</title>
+  <defs>
+    <linearGradient id="pzCheese" x1="20%" x2="80%" y1="15%" y2="90%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="55%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#eab308" />
+    </linearGradient>
+    <linearGradient id="pzCrust" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fcd34d" />
+      <stop offset="55%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#92400e" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="58" cy="105" fill="#78350f" opacity="0.25" rx="36" ry="5.5" />
+  <path
+    d="M24 31C46 13 84 18 101 44C105 51 98 59 90 54C76 33 48 29 31 43C24 48 18 37 24 31Z"
+    fill="url(#pzCrust)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M31 40C50 27 76 31 91 51L41 96C36 100 28 96 29 89L30 76C26 79 22 76 23 71L25 58Z"
+    fill="url(#pzCheese)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="54"
+    cy="51"
+    fill="#dc2626"
+    r="9.5"
+    stroke="#7f1d1d"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="71"
+    cy="61"
+    fill="#dc2626"
+    r="8.5"
+    stroke="#7f1d1d"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="44"
+    cy="74"
+    fill="#dc2626"
+    r="8"
+    stroke="#7f1d1d"
+    stroke-width="3.6"
+  />
+  <circle cx="51" cy="49" fill="#fecaca" r="2" />
+  <circle cx="69" cy="59" fill="#fecaca" r="1.8" />
+  <path
+    d="M56 66C61 60 70 63 67 71C62 74 56 71 56 66Z"
+    fill="#22c55e"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <circle cx="39" cy="56" fill="#44403c" r="4.5" />
+  <circle cx="39" cy="56" fill="#facc15" r="1.8" />
+</svg>

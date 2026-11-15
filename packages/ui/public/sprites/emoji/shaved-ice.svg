@@ -1,0 +1,64 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đá bào trái cây</title>
+  <defs>
+    <linearGradient id="siSyrup" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb7185" />
+      <stop offset="55%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e3a8a" opacity="0.24" rx="30" ry="5" />
+  <path
+    d="M26 58C26 31 41 20 60 20C79 20 94 31 94 58Z"
+    fill="#fffbeb"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M32 48C35 28 47 21 60 21C73 21 85 28 88 48C81 54 74 46 68 52C62 57 55 47 48 53C41 57 36 52 32 48Z"
+    fill="url(#siSyrup)"
+  />
+  <path
+    d="M26 58C26 31 41 20 60 20C79 20 94 31 94 58Z"
+    fill="none"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M22 56H98C95 76 80 84 60 84C40 84 25 76 22 56Z"
+    fill="#bae6fd"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#7dd3fc"
+    height="14"
+    rx="3"
+    stroke="#1e3a8a"
+    stroke-width="3.6"
+    width="12"
+    x="54"
+    y="83"
+  />
+  <rect
+    fill="#38bdf8"
+    height="7"
+    rx="3.5"
+    stroke="#1e3a8a"
+    stroke-width="3.6"
+    width="40"
+    x="40"
+    y="95"
+  />
+  <circle
+    cx="60"
+    cy="18"
+    fill="#ef4444"
+    r="6"
+    stroke="#7f1d1d"
+    stroke-width="3.2"
+  />
+</svg>

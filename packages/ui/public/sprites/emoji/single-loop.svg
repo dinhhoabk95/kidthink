@@ -1,0 +1,33 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Nét khuyết đơn</title>
+  <defs>
+    <linearGradient id="slCord" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#93c5fd" />
+      <stop offset="50%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#1e3a8a" opacity="0.24" rx="38" ry="5" />
+  <path
+    d="M18 82C34 82 82 70 82 42C82 22 68 16 60 16C50 16 38 24 38 44C38 72 84 82 102 82C106 82 106 92 102 92C78 92 26 80 26 44C26 18 44 6 60 6C76 6 94 18 94 42C94 78 40 92 18 92C14 92 14 82 18 82Z"
+    fill="url(#slCord)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+    transform="translate(0 6)"
+  />
+  <path
+    d="M47 68C55 76 69 82 82 85L79 94C64 90 49 83 40 74Z"
+    fill="url(#slCord)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M48 24C53 19 62 18 69 22"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.7"
+    stroke-width="3.2"
+  />
+</svg>

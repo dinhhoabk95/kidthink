@@ -1,0 +1,42 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chú hải cẩu</title>
+  <defs>
+    <radialGradient cx="40%" cy="32%" id="hsFur" r="70%">
+      <stop offset="0%" stop-color="#e2e8f0" />
+      <stop offset="55%" stop-color="#94a3b8" />
+      <stop offset="100%" stop-color="#475569" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="58" cy="103" fill="#1e293b" opacity="0.24" rx="42" ry="5.5" />
+  <path
+    d="M88 83C98 76 107 79 105 88C103 95 93 96 84 91Z"
+    fill="#64748b"
+    stroke="#1e293b"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M22 46C22 30 35 22 49 26C60 29 64 41 67 54C74 66 90 69 92 82C94 93 80 97 53 97C31 97 20 86 22 68Z"
+    fill="url(#hsFur)"
+    stroke="#1e293b"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M46 84C52 93 64 95 66 87C67 81 58 76 46 84Z"
+    fill="#94a3b8"
+    stroke="#1e293b"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle cx="34" cy="40" fill="#1c1917" r="4.2" />
+  <circle cx="32.8" cy="38.5" fill="#ffffff" r="1.5" />
+  <ellipse cx="22" cy="46" fill="#1e293b" rx="4.5" ry="3.5" />
+  <path
+    d="M27 52L16 55M28 49L16 49"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-width="2.4"
+  />
+  <circle cx="40" cy="48" fill="#fb7185" fill-opacity="0.48" r="4.5" />
+</svg>

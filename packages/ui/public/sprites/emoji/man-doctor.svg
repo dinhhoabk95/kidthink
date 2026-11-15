@@ -1,0 +1,77 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chú bác sĩ</title>
+  <defs>
+    <radialGradient cx="40%" cy="32%" id="mdSkin" r="68%">
+      <stop offset="0%" stop-color="#ffedd5" />
+      <stop offset="65%" stop-color="#fdba74" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#334155" opacity="0.24" rx="36" ry="5.5" />
+  <path
+    d="M26 99C26 78 40 68 60 68C80 68 94 78 94 99Z"
+    fill="#f8fafc"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M49 68L60 88L71 68Z"
+    fill="#3b82f6"
+    stroke="#1e3a5f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M42 71V86C42 90 46 93 50 93M78 71V85"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="78"
+    cy="88"
+    fill="#fbbf24"
+    r="5"
+    stroke="#78350f"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="60"
+    cy="44"
+    fill="url(#mdSkin)"
+    r="21"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M39 41C38 26 49 18 62 19C75 20 82 28 81 41C76 34 69 31 61 32L55 27L51 33C45 34 41 37 39 41Z"
+    fill="#44403c"
+    stroke="#292524"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="52"
+    cy="45"
+    fill="#e0f2fe"
+    r="5.5"
+    stroke="#334155"
+    stroke-width="2.6"
+  />
+  <circle
+    cx="68"
+    cy="45"
+    fill="#e0f2fe"
+    r="5.5"
+    stroke="#334155"
+    stroke-width="2.6"
+  />
+  <path d="M57.5 45H62.5" stroke="#334155" stroke-width="2.6" />
+  <path
+    d="M54 55C57 58 63 58 66 55"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="2.8"
+  />
+</svg>

@@ -1,0 +1,42 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Trái tim nhịp đập</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="hoRed" r="70%">
+      <stop offset="0%" stop-color="#fda4af" />
+      <stop offset="52%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#be123c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#881337" opacity="0.25" rx="34" ry="5.5" />
+  <rect
+    fill="#38bdf8"
+    height="22"
+    rx="5"
+    stroke="#1e3a8a"
+    stroke-width="3.8"
+    width="13"
+    x="43"
+    y="18"
+  />
+  <path
+    d="M61 38V22C61 16 66 13 73 15L80 18V29L72 27V38Z"
+    fill="#fb7185"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M34 52C32 36 46 30 60 36C76 30 90 40 88 58C86 79 69 96 56 98C42 96 36 74 34 52Z"
+    fill="url(#hoRed)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M40 65H50L55 53L63 75L69 61L74 65H82"
+    stroke="#fffbeb"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="2.8"
+  />
+</svg>

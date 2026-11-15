@@ -1,0 +1,49 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hình vuông kem trắng</title>
+  <defs>
+    <linearGradient id="crmBlock" x1="15%" x2="85%" y1="15%" y2="85%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="55%" stop-color="#fafaf9" />
+      <stop offset="100%" stop-color="#e7e5e4" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="109" fill="#57534e" opacity="0.22" rx="38" ry="4.5" />
+  <rect
+    fill="#d6d3d1"
+    height="80"
+    rx="18"
+    stroke="#57534e"
+    stroke-width="4"
+    width="84"
+    x="18"
+    y="23"
+  />
+  <rect
+    fill="url(#crmBlock)"
+    height="80"
+    rx="18"
+    stroke="#57534e"
+    stroke-width="4"
+    width="84"
+    x="18"
+    y="15"
+  />
+  <rect
+    height="64"
+    rx="12"
+    stroke="#a8a29e"
+    stroke-opacity="0.55"
+    stroke-width="2.5"
+    width="68"
+    x="26"
+    y="23"
+  />
+  <path
+    d="M31 27H59"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.85"
+    stroke-width="4.5"
+  />
+  <circle cx="28" cy="36" fill="#ffffff" fill-opacity="0.7" r="2.5" />
+</svg>

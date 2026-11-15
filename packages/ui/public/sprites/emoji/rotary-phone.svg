@@ -1,0 +1,59 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Điện thoại bàn</title>
+  <defs>
+    <linearGradient id="rpRed" x1="20%" x2="80%" y1="15%" y2="95%">
+      <stop offset="0%" stop-color="#fda4af" />
+      <stop offset="50%" stop-color="#e11d48" />
+      <stop offset="100%" stop-color="#9f1239" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#881337" opacity="0.26" rx="42" ry="6" />
+  <rect
+    fill="#be123c"
+    height="14"
+    rx="4"
+    stroke="#881337"
+    stroke-width="3.8"
+    width="10"
+    x="40"
+    y="34"
+  />
+  <rect
+    fill="#be123c"
+    height="14"
+    rx="4"
+    stroke="#881337"
+    stroke-width="3.8"
+    width="10"
+    x="70"
+    y="34"
+  />
+  <path
+    d="M16 34C16 22 34 19 60 19C86 19 104 22 104 34C104 40 96 42 88 40L82 32H38L32 40C24 42 16 40 16 34Z"
+    fill="url(#rpRed)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M22 95L32 46H88L98 95C99 98 96 100 92 100H28C24 100 21 98 22 95Z"
+    fill="url(#rpRed)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="60"
+    cy="73"
+    fill="#fffbeb"
+    r="18"
+    stroke="#881337"
+    stroke-width="3.8"
+  />
+  <circle cx="60" cy="73" fill="#fda4af" r="6" />
+  <circle cx="60" cy="61" fill="#881337" r="2.2" />
+  <circle cx="71" cy="68" fill="#881337" r="2.2" />
+  <circle cx="69" cy="80" fill="#881337" r="2.2" />
+  <circle cx="51" cy="80" fill="#881337" r="2.2" />
+  <circle cx="49" cy="68" fill="#881337" r="2.2" />
+</svg>

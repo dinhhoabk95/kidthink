@@ -1,0 +1,48 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Giỏ đựng rác</title>
+  <defs>
+    <linearGradient id="tbBin" x1="15%" x2="85%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#cbd5e1" />
+      <stop offset="55%" stop-color="#94a3b8" />
+      <stop offset="100%" stop-color="#64748b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#334155" opacity="0.26" rx="32" ry="5.5" />
+  <path
+    d="M42 32C40 22 51 17 58 24C65 16 79 21 76 32Z"
+    fill="#fef3c7"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M28 36H92L83 96C82 100 78 102 73 102H47C42 102 38 100 37 96Z"
+    fill="url(#tbBin)"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#e2e8f0"
+    height="10"
+    rx="5"
+    stroke="#334155"
+    stroke-width="3.8"
+    width="72"
+    x="24"
+    y="30"
+  />
+  <path
+    d="M43 48L47 90M60 48V90M77 48L73 90"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M36 62H84M39 78H81"
+    stroke="#475569"
+    stroke-linecap="round"
+    stroke-opacity="0.65"
+    stroke-width="2.6"
+  />
+</svg>

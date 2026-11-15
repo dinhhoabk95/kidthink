@@ -1,0 +1,34 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bông hoa điểm tốt</title>
+  <defs>
+    <radialGradient cx="42%" cy="35%" id="fsPetal" r="68%">
+      <stop offset="0%" stop-color="#fff1f2" />
+      <stop offset="60%" stop-color="#fecdd3" />
+      <stop offset="100%" stop-color="#fda4af" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#881337" opacity="0.24" rx="34" ry="5.5" />
+  <path
+    d="M60 16C69 16 75 23 73 32C82 29 91 35 90 44C99 47 101 58 94 65C100 72 95 83 86 84C85 93 74 98 66 92C60 99 49 97 46 89C37 92 28 85 30 76C21 72 20 60 28 54C23 46 29 35 38 35C40 25 50 16 60 16Z"
+    fill="url(#fsPetal)"
+    stroke="#9f1239"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="60"
+    cy="57"
+    fill="#fb7185"
+    r="18"
+    stroke="#9f1239"
+    stroke-width="3.8"
+  />
+  <path
+    d="M51 57L57 63L70 50"
+    stroke="#fffbeb"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-opacity="0.98"
+    stroke-width="4.5"
+  />
+</svg>

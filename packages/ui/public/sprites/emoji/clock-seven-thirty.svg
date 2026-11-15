@@ -1,0 +1,53 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đồng hồ 7 giờ rưỡi</title>
+  <defs>
+    <radialGradient cx="36%" cy="30%" id="c73Rim" r="70%">
+      <stop offset="0%" stop-color="#5eead4" />
+      <stop offset="55%" stop-color="#14b8a6" />
+      <stop offset="100%" stop-color="#0f766e" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#134e4a" opacity="0.25" rx="36" ry="5.5" />
+  <circle
+    cx="60"
+    cy="58"
+    fill="url(#c73Rim)"
+    r="41"
+    stroke="#134e4a"
+    stroke-width="4"
+  />
+  <circle
+    cx="60"
+    cy="58"
+    fill="#fffbeb"
+    r="31"
+    stroke="#134e4a"
+    stroke-width="3.6"
+  />
+  <path
+    d="M60 31V34M87 58H84M60 85V82M33 58H36"
+    stroke="#475569"
+    stroke-linecap="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M60 58V80"
+    stroke="#134e4a"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M60 58L48.7 69.3"
+    stroke="#c2410c"
+    stroke-linecap="round"
+    stroke-width="4.4"
+  />
+  <circle
+    cx="60"
+    cy="58"
+    fill="#fb923c"
+    r="3.8"
+    stroke="#7c2d12"
+    stroke-width="3.2"
+  />
+</svg>

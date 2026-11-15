@@ -1,0 +1,54 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Huy chương thể thao</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="spmGold" r="70%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="55%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#ca8a04" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#78350f" opacity="0.25" rx="28" ry="4.5" />
+  <rect
+    fill="#22c55e"
+    height="32"
+    rx="3"
+    stroke="#14532d"
+    stroke-width="3.8"
+    width="32"
+    x="44"
+    y="16"
+  />
+  <rect fill="#fffbeb" height="30" width="10" x="55" y="17" />
+  <rect
+    fill="#fde047"
+    height="8"
+    rx="4"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="40"
+    x="40"
+    y="12"
+  />
+  <polygon
+    fill="url(#spmGold)"
+    points="60,44 71,48 81,55 86,66 86,78 81,89 71,96 60,100 49,96 39,89 34,78 34,66 39,55 49,48"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="60"
+    cy="72"
+    fill="#f59e0b"
+    r="18"
+    stroke="#78350f"
+    stroke-width="3.2"
+  />
+  <polygon
+    fill="#fffbeb"
+    points="60,59 63.5,67 72,68 65.5,74 67.5,82 60,77.5 52.5,82 54.5,74 48,68 56.5,67"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="2.8"
+  />
+</svg>

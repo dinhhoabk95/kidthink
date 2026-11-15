@@ -1,0 +1,53 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mặt nạ sân khấu</title>
+  <defs>
+    <radialGradient cx="40%" cy="32%" id="smSad" r="70%">
+      <stop offset="0%" stop-color="#ddd6fe" />
+      <stop offset="60%" stop-color="#818cf8" />
+      <stop offset="100%" stop-color="#4f46e5" />
+    </radialGradient>
+    <radialGradient cx="38%" cy="32%" id="smJoy" r="70%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="60%" stop-color="#fde047" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#312e81" opacity="0.24" rx="40" ry="5" />
+  <g transform="rotate(12 76 58)">
+    <path
+      d="M52 34H100V64C100 82 88 94 76 94C64 94 52 82 52 64Z"
+      fill="url(#smSad)"
+      stroke="#312e81"
+      stroke-linejoin="round"
+      stroke-width="3.8"
+    />
+    <path
+      d="M62 52L70 48M90 52L82 48M66 76C71 70 81 70 86 76"
+      stroke="#1e1b4b"
+      stroke-linecap="round"
+      stroke-width="3.2"
+    />
+  </g>
+  <g transform="rotate(-10 44 54)">
+    <path
+      d="M20 28H68V58C68 78 56 90 44 90C32 90 20 78 20 58Z"
+      fill="url(#smJoy)"
+      stroke="#78350f"
+      stroke-linejoin="round"
+      stroke-width="4"
+    />
+    <path
+      d="M30 48C33 43 38 43 40 48M48 48C50 43 55 43 58 48"
+      stroke="#451a03"
+      stroke-linecap="round"
+      stroke-width="3.4"
+    />
+    <path
+      d="M32 62H56C56 73 50 77 44 77C38 77 32 73 32 62Z"
+      fill="#881337"
+      stroke="#451a03"
+      stroke-linejoin="round"
+      stroke-width="3.2"
+    />
+  </g>
+</svg>

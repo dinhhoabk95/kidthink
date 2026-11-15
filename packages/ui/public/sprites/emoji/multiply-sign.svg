@@ -1,0 +1,33 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Dấu nhân</title>
+  <defs>
+    <linearGradient id="msViolet" x1="20%" x2="80%" y1="15%" y2="90%">
+      <stop offset="0%" stop-color="#ddd6fe" />
+      <stop offset="50%" stop-color="#8b5cf6" />
+      <stop offset="100%" stop-color="#6d28d9" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#312e81" opacity="0.25" rx="34" ry="5" />
+  <path
+    d="M36 22L60 46L84 22L98 36L74 60L98 84L84 98L60 74L36 98L22 84L46 60L22 36Z"
+    fill="#4c1d95"
+    stroke="#312e81"
+    stroke-linejoin="round"
+    stroke-width="4"
+    transform="translate(0 4)"
+  />
+  <path
+    d="M36 20L60 44L84 20L98 34L74 58L98 82L84 96L60 72L36 96L22 82L46 58L22 34Z"
+    fill="url(#msViolet)"
+    stroke="#312e81"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M30 34L44 48M76 34L90 48"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.6"
+    stroke-width="3.5"
+  />
+</svg>

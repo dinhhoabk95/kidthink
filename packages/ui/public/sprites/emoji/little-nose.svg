@@ -1,0 +1,35 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cái mũi xinh</title>
+  <defs>
+    <radialGradient cx="45%" cy="42%" id="lnSkin" r="68%">
+      <stop offset="0%" stop-color="#ffedd5" />
+      <stop offset="60%" stop-color="#fdba74" />
+      <stop offset="100%" stop-color="#fb923c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#7c2d12" opacity="0.24" rx="32" ry="5" />
+  <path
+    d="M49 20H71L76 58C88 61 93 74 86 84C80 91 71 90 66 86C62 90 58 90 54 86C49 90 40 91 34 84C27 74 32 61 44 58Z"
+    fill="url(#lnSkin)"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="46"
+    cy="80"
+    fill="#7c2d12"
+    rx="5"
+    ry="3.2"
+    transform="rotate(18 46 80)"
+  />
+  <ellipse
+    cx="74"
+    cy="80"
+    fill="#7c2d12"
+    rx="5"
+    ry="3.2"
+    transform="rotate(-18 74 80)"
+  />
+  <ellipse cx="57" cy="66" fill="#ffffff" fill-opacity="0.65" rx="6" ry="9" />
+</svg>

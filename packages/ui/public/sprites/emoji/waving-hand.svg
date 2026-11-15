@@ -1,0 +1,48 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bàn tay vẫy chào</title>
+  <defs>
+    <radialGradient cx="42%" cy="40%" id="whGold" r="68%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="55%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="58" cy="105" fill="#78350f" opacity="0.24" rx="28" ry="5" />
+  <path
+    d="M22 36C16 44 16 54 22 62M94 24C102 31 103 42 97 50"
+    stroke="#0369a1"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <path
+    d="M14 42C10 47 10 53 14 58M102 20C107 26 108 34 104 41"
+    stroke="#38bdf8"
+    stroke-linecap="round"
+    stroke-opacity="0.8"
+    stroke-width="2.8"
+  />
+  <g transform="rotate(-16 58 60)">
+    <path
+      d="M36 65L23 54C19 50 24 43 30 47L40 56V32C40 25 49 25 49 32V50H52V23C52 16 62 16 62 23V50H65V27C65 20 75 20 75 27V53H78V38C78 32 87 32 87 39V74C87 91 75 100 58 100C43 100 36 90 36 75Z"
+      fill="url(#whGold)"
+      stroke="#78350f"
+      stroke-linejoin="round"
+      stroke-width="4"
+    />
+    <path
+      d="M49 72C55 68 65 68 71 74"
+      stroke="#92400e"
+      stroke-linecap="round"
+      stroke-opacity="0.55"
+      stroke-width="2.8"
+    />
+    <ellipse
+      cx="57"
+      cy="24"
+      fill="#ffffff"
+      fill-opacity="0.55"
+      rx="2.5"
+      ry="4"
+    />
+  </g>
+</svg>

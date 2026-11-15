@@ -1,0 +1,32 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đôi môi cười</title>
+  <defs>
+    <radialGradient cx="42%" cy="35%" id="slPink" r="68%">
+      <stop offset="0%" stop-color="#fda4af" />
+      <stop offset="52%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#be123c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="100" fill="#881337" opacity="0.22" rx="38" ry="5.5" />
+  <path
+    d="M16 56C28 40 46 38 60 47C74 38 92 40 104 56C92 84 74 92 60 92C46 92 28 84 16 56Z"
+    fill="url(#slPink)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M26 57C42 54 78 54 94 57C84 71 72 75 60 75C48 75 36 71 26 57Z"
+    fill="#fffbeb"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M46 82C54 85 66 85 74 82"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.7"
+    stroke-width="3.5"
+  />
+</svg>

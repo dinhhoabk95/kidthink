@@ -1,0 +1,52 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đồng hồ để bàn</title>
+  <defs>
+    <linearGradient id="dcWood" x1="20%" x2="80%" y1="10%" y2="95%">
+      <stop offset="0%" stop-color="#fdba74" />
+      <stop offset="50%" stop-color="#b45309" />
+      <stop offset="100%" stop-color="#78350f" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#5c3d2e" opacity="0.26" rx="44" ry="6" />
+  <path
+    d="M22 88C24 66 32 24 60 24C88 24 96 66 98 88Z"
+    fill="url(#dcWood)"
+    stroke="#5c3d2e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#92400e"
+    height="12"
+    rx="5"
+    stroke="#5c3d2e"
+    stroke-width="4"
+    width="88"
+    x="16"
+    y="86"
+  />
+  <circle
+    cx="60"
+    cy="58"
+    fill="#fbbf24"
+    r="23"
+    stroke="#5c3d2e"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="60"
+    cy="58"
+    fill="#fffbeb"
+    r="18"
+    stroke="#78350f"
+    stroke-width="3.6"
+  />
+  <path
+    d="M60 46V58L69 63"
+    stroke="#44403c"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle cx="60" cy="58" fill="#d97706" r="3" />
+</svg>

@@ -1,0 +1,61 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chùm nốt nhạc</title>
+  <defs>
+    <linearGradient id="mnViolet" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#d8b4fe" />
+      <stop offset="55%" stop-color="#a855f7" />
+      <stop offset="100%" stop-color="#7e22ce" />
+    </linearGradient>
+    <linearGradient id="mnBlue" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#7dd3fc" />
+      <stop offset="60%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="46" cy="105" fill="#4c1d95" opacity="0.22" rx="28" ry="4.5" />
+  <ellipse cx="92" cy="99" fill="#1e3a8a" opacity="0.22" rx="16" ry="4" />
+  <path
+    d="M34 30L70 22V68H62V34L42 39V76H34Z"
+    fill="url(#mnViolet)"
+    stroke="#4c1d95"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <ellipse
+    cx="29"
+    cy="80"
+    fill="url(#mnViolet)"
+    rx="12"
+    ry="9"
+    stroke="#4c1d95"
+    stroke-width="3.8"
+    transform="rotate(-18 29 80)"
+  />
+  <ellipse
+    cx="57"
+    cy="72"
+    fill="url(#mnViolet)"
+    rx="12"
+    ry="9"
+    stroke="#4c1d95"
+    stroke-width="3.8"
+    transform="rotate(-18 57 72)"
+  />
+  <path
+    d="M94 34C104 38 108 46 104 54C101 48 98 45 94 44V76H86V34Z"
+    fill="url(#mnBlue)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <ellipse
+    cx="82"
+    cy="80"
+    fill="url(#mnBlue)"
+    rx="11"
+    ry="8.5"
+    stroke="#1e3a8a"
+    stroke-width="3.8"
+    transform="rotate(-18 82 80)"
+  />
+</svg>

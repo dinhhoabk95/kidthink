@@ -1,0 +1,72 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cờ cá chép</title>
+  <defs>
+    <linearGradient id="csRed" x1="0%" x2="100%" y1="0%" y2="0%">
+      <stop offset="0%" stop-color="#fca5a5" />
+      <stop offset="55%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#dc2626" />
+    </linearGradient>
+    <linearGradient id="csBlue" x1="0%" x2="100%" y1="0%" y2="0%">
+      <stop offset="0%" stop-color="#bae6fd" />
+      <stop offset="55%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="38" cy="107" fill="#78350f" opacity="0.24" rx="22" ry="4.5" />
+  <rect
+    fill="#d97706"
+    height="90"
+    rx="3.5"
+    stroke="#78350f"
+    stroke-width="3.8"
+    width="7"
+    x="20"
+    y="16"
+  />
+  <circle
+    cx="23.5"
+    cy="14"
+    fill="#facc15"
+    r="6"
+    stroke="#78350f"
+    stroke-width="3.4"
+  />
+  <path
+    d="M27 32L36 28M27 66L36 62"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M36 24H88L102 18L96 36L102 52L88 46H36Z"
+    fill="url(#csRed)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="47"
+    cy="35"
+    fill="#fffbeb"
+    r="5"
+    stroke="#7f1d1d"
+    stroke-width="2.4"
+  />
+  <circle cx="47" cy="35" fill="#1c1917" r="2.2" />
+  <path
+    d="M36 60H80L92 55L87 70L92 84L80 79H36Z"
+    fill="url(#csBlue)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="46"
+    cy="69"
+    fill="#fffbeb"
+    r="4.2"
+    stroke="#1e3a8a"
+    stroke-width="2.2"
+  />
+  <circle cx="46" cy="69" fill="#1c1917" r="2" />
+</svg>

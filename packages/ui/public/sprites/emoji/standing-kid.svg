@@ -1,0 +1,106 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bạn đứng thẳng</title>
+  <defs>
+    <radialGradient cx="40%" cy="32%" id="skSkin" r="68%">
+      <stop offset="0%" stop-color="#ffedd5" />
+      <stop offset="65%" stop-color="#fdba74" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </radialGradient>
+    <linearGradient id="skShirt" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fde047" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#5c3d2e" opacity="0.25" rx="26" ry="5.5" />
+  <rect
+    fill="#2563eb"
+    height="24"
+    rx="5"
+    stroke="#1e3a5f"
+    stroke-width="3.8"
+    width="11"
+    x="46"
+    y="76"
+  />
+  <rect
+    fill="#2563eb"
+    height="24"
+    rx="5"
+    stroke="#1e3a5f"
+    stroke-width="3.8"
+    width="11"
+    x="63"
+    y="76"
+  />
+  <ellipse
+    cx="51"
+    cy="101"
+    fill="#ef4444"
+    rx="8"
+    ry="4.5"
+    stroke="#7f1d1d"
+    stroke-width="3.6"
+  />
+  <ellipse
+    cx="69"
+    cy="101"
+    fill="#ef4444"
+    rx="8"
+    ry="4.5"
+    stroke="#7f1d1d"
+    stroke-width="3.6"
+  />
+  <rect
+    fill="url(#skSkin)"
+    height="24"
+    rx="5"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="9"
+    x="34"
+    y="52"
+  />
+  <rect
+    fill="url(#skSkin)"
+    height="24"
+    rx="5"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="9"
+    x="77"
+    y="52"
+  />
+  <rect
+    fill="url(#skShirt)"
+    height="30"
+    rx="10"
+    stroke="#78350f"
+    stroke-width="4"
+    width="34"
+    x="43"
+    y="49"
+  />
+  <circle
+    cx="60"
+    cy="31"
+    fill="url(#skSkin)"
+    r="16"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M44 29C45 17 55 13 64 14C72 15 77 21 76 29C71 24 62 23 53 25C49 26 46 27 44 29Z"
+    fill="#78350f"
+    stroke="#5c3d2e"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle cx="54" cy="32" fill="#292524" r="2.2" />
+  <circle cx="66" cy="32" fill="#292524" r="2.2" />
+  <path
+    d="M56 38C58 40 62 40 64 38"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="2.4"
+  />
+</svg>

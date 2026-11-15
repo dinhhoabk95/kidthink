@@ -1,0 +1,25 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cờ lê sửa chữa</title>
+  <defs>
+    <linearGradient id="wrSteel" x1="15%" x2="85%" y1="15%" y2="85%">
+      <stop offset="0%" stop-color="#f1f5f9" />
+      <stop offset="52%" stop-color="#94a3b8" />
+      <stop offset="100%" stop-color="#64748b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#334155" opacity="0.24" rx="34" ry="5.5" />
+  <path
+    d="M77 18C67 20 61 30 63 40L37 66C27 64 17 70 15 80L27 84L31 73L42 77L38 89L48 101C58 99 64 89 62 79L88 53C98 55 108 49 110 39L98 35L94 46L83 42L87 30Z"
+    fill="url(#wrSteel)"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M48 72L72 48"
+    stroke="#475569"
+    stroke-linecap="round"
+    stroke-opacity="0.55"
+    stroke-width="4"
+  />
+</svg>

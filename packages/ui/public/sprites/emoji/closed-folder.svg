@@ -1,0 +1,55 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bìa hồ sơ</title>
+  <defs>
+    <linearGradient id="cfFront" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="55%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.25" rx="42" ry="5" />
+  <path
+    d="M18 30C18 25 22 21 27 21H48L56 30H93C98 30 102 34 102 39V92C102 97 98 100 93 100H27C22 100 18 97 18 92Z"
+    fill="#d97706"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#ffffff"
+    height="12"
+    rx="3"
+    stroke="#78350f"
+    stroke-width="3.2"
+    width="72"
+    x="24"
+    y="34"
+  />
+  <rect
+    fill="url(#cfFront)"
+    height="58"
+    rx="8"
+    stroke="#78350f"
+    stroke-width="4"
+    width="84"
+    x="18"
+    y="42"
+  />
+  <rect
+    fill="#fffbeb"
+    height="12"
+    rx="4"
+    stroke="#78350f"
+    stroke-width="3"
+    width="32"
+    x="60"
+    y="54"
+  />
+  <path
+    d="M26 50H48"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.7"
+    stroke-width="3.5"
+  />
+</svg>

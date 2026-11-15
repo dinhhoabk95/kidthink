@@ -1,0 +1,56 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Biểu đồ cột</title>
+  <defs>
+    <linearGradient id="bcBoard" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#f1f5f9" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#334155" opacity="0.24" rx="42" ry="5.5" />
+  <rect
+    fill="url(#bcBoard)"
+    height="78"
+    rx="14"
+    stroke="#334155"
+    stroke-width="4"
+    width="88"
+    x="16"
+    y="19"
+  />
+  <rect
+    fill="#fb923c"
+    height="28"
+    rx="4"
+    stroke="#7c2d12"
+    stroke-width="3.6"
+    width="15"
+    x="30"
+    y="57"
+  />
+  <rect
+    fill="#4ade80"
+    height="44"
+    rx="4"
+    stroke="#14532d"
+    stroke-width="3.6"
+    width="15"
+    x="53"
+    y="41"
+  />
+  <rect
+    fill="#38bdf8"
+    height="36"
+    rx="4"
+    stroke="#1e3a5f"
+    stroke-width="3.6"
+    width="15"
+    x="76"
+    y="49"
+  />
+  <path
+    d="M26 85H94"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+</svg>

@@ -1,0 +1,49 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Giày leo núi</title>
+  <defs>
+    <linearGradient id="hbTan" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fcd34d" />
+      <stop offset="55%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#92400e" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="62" cy="103" fill="#44403c" opacity="0.28" rx="45" ry="5.5" />
+  <path
+    d="M24 30H58V54L92 66C102 69 106 77 105 86H19V42C19 35 21 30 24 30Z"
+    fill="url(#hbTan)"
+    stroke="#5c3d2e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#dc2626"
+    height="12"
+    rx="5"
+    stroke="#7f1d1d"
+    stroke-width="3.6"
+    width="38"
+    x="21"
+    y="24"
+  />
+  <path
+    d="M82 63C96 66 105 74 105 86H78C76 76 78 68 82 63Z"
+    fill="#78350f"
+    stroke="#5c3d2e"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M16 85H107V95L98 95L95 91L88 95H78L75 91L68 95H54L51 91L44 95H16Z"
+    fill="#44403c"
+    stroke="#292524"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M54 42L66 47M56 52L69 57M59 62L73 66"
+    stroke="#fef08a"
+    stroke-linecap="round"
+    stroke-opacity="0.95"
+    stroke-width="3.4"
+  />
+</svg>

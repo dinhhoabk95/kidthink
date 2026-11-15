@@ -1,0 +1,65 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bánh kếp mật ong</title>
+  <defs>
+    <linearGradient id="pcGold" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="55%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#5c3d2e" opacity="0.25" rx="44" ry="6" />
+  <ellipse
+    cx="60"
+    cy="88"
+    fill="#f8fafc"
+    rx="46"
+    ry="12"
+    stroke="#475569"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="60"
+    cy="79"
+    fill="url(#pcGold)"
+    rx="35"
+    ry="11"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <ellipse
+    cx="60"
+    cy="67"
+    fill="url(#pcGold)"
+    rx="35"
+    ry="11"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <ellipse
+    cx="60"
+    cy="54"
+    fill="url(#pcGold)"
+    rx="35"
+    ry="11"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M40 50C52 46 68 46 80 51C81 58 76 62 73 72C71 78 66 76 66 68C61 63 54 64 52 75C50 81 44 79 45 70C45 61 39 57 40 50Z"
+    fill="#d97706"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <rect
+    fill="#fef08a"
+    height="11"
+    rx="3"
+    stroke="#78350f"
+    stroke-width="3.4"
+    transform="rotate(-10 60 47)"
+    width="16"
+    x="52"
+    y="42"
+  />
+</svg>

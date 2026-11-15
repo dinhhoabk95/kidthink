@@ -1,0 +1,57 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Biển gỗ chỉ dẫn</title>
+  <defs>
+    <linearGradient id="wpBoard" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="55%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#5c3d2e" opacity="0.26" rx="34" ry="5.5" />
+  <rect
+    fill="#92400e"
+    height="84"
+    rx="5"
+    stroke="#5c3d2e"
+    stroke-width="4"
+    width="14"
+    x="53"
+    y="18"
+  />
+  <path
+    d="M18 30H94L104 46L94 62H18C15 62 14 59 14 56V36C14 33 15 30 18 30Z"
+    fill="url(#wpBoard)"
+    stroke="#5c3d2e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M26 41H72M26 51H60"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="60"
+    cy="36"
+    fill="#fef3c7"
+    r="2.8"
+    stroke="#5c3d2e"
+    stroke-width="2.2"
+  />
+  <circle
+    cx="60"
+    cy="56"
+    fill="#fef3c7"
+    r="2.8"
+    stroke="#5c3d2e"
+    stroke-width="2.2"
+  />
+  <path
+    d="M36 102C39 91 48 90 53 96C58 88 67 89 70 96C75 91 83 93 85 102Z"
+    fill="#4ade80"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+</svg>

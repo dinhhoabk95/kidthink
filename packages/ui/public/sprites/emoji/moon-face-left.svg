@@ -1,0 +1,38 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Trăng khuyết mỉm cười</title>
+  <defs>
+    <radialGradient cx="45%" cy="32%" id="mfGold" r="70%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="55%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#d97706" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="58" cy="106" fill="#78350f" opacity="0.24" rx="32" ry="5" />
+  <path
+    d="M40 20C68 15 94 36 94 62C94 88 68 105 40 99C54 92 61 81 61 71L52 65L61 57C61 42 53 28 40 20Z"
+    fill="url(#mfGold)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M69 51C72 47 77 47 80 51"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M65 71C70 76 77 75 80 70"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <circle cx="81" cy="61" fill="#fb7185" fill-opacity="0.5" r="5" />
+  <polygon
+    fill="#fef08a"
+    points="28,34 30,40 36,41 31,45 32,51 28,48 23,51 24,45 20,41 26,40"
+    stroke="#92400e"
+    stroke-linejoin="round"
+    stroke-width="2.8"
+  />
+</svg>

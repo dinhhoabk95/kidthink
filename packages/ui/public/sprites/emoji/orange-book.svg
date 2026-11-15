@@ -1,0 +1,63 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Quyển sách cam</title>
+  <defs>
+    <linearGradient id="obCover" x1="15%" x2="88%" y1="10%" y2="92%">
+      <stop offset="0%" stop-color="#fdba74" />
+      <stop offset="50%" stop-color="#f97316" />
+      <stop offset="100%" stop-color="#c2410c" />
+    </linearGradient>
+    <linearGradient id="obSpine" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ea580c" />
+      <stop offset="100%" stop-color="#9a3412" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#7c2d12" opacity="0.24" rx="36" ry="5.5" />
+  <rect
+    fill="#fffbeb"
+    height="76"
+    rx="8"
+    stroke="#78350f"
+    stroke-width="3.8"
+    width="66"
+    x="29"
+    y="22"
+  />
+  <rect
+    fill="url(#obCover)"
+    height="76"
+    rx="9"
+    stroke="#7c2d12"
+    stroke-width="4"
+    width="64"
+    x="25"
+    y="16"
+  />
+  <path
+    d="M25 25C25 20 29 16 34 16H39V92H34C29 92 25 88 25 83Z"
+    fill="url(#obSpine)"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M68 92V104L73 99L78 104V92"
+    fill="#38bdf8"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <polygon
+    fill="#fef08a"
+    points="64,36 68,45 78,46 70,53 72,62 64,57 56,62 58,53 50,46 60,45"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <path
+    d="M51 74H77"
+    stroke="#ffedd5"
+    stroke-linecap="round"
+    stroke-opacity="0.7"
+    stroke-width="3.5"
+  />
+</svg>

@@ -1,0 +1,32 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mũi tên ngang hai chiều</title>
+  <defs>
+    <linearGradient id="lraTeal" x1="15%" x2="85%" y1="15%" y2="85%">
+      <stop offset="0%" stop-color="#5eead4" />
+      <stop offset="55%" stop-color="#14b8a6" />
+      <stop offset="100%" stop-color="#0f766e" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#134e4a" opacity="0.24" rx="42" ry="5.5" />
+  <path
+    d="M12 63L36 41V53H84V41L108 63L84 85V73H36V85Z"
+    fill="#0f766e"
+    stroke="#134e4a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M12 57L36 35V47H84V35L108 57L84 79V67H36V79Z"
+    fill="url(#lraTeal)"
+    stroke="#134e4a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M42 53H78"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.65"
+    stroke-width="3.2"
+  />
+</svg>

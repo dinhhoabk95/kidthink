@@ -1,0 +1,51 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bánh trung thu</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="mcBake" r="70%">
+      <stop offset="0%" stop-color="#fcd34d" />
+      <stop offset="52%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#92400e" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#5c3d2e" opacity="0.26" rx="38" ry="5.5" />
+  <path
+    d="M60 16C66 16 70 20 75 22C80 20 86 23 89 28C94 29 99 35 98 41C103 45 104 52 101 58C104 64 103 71 98 75C99 81 94 87 89 88C86 93 80 96 75 94C70 96 66 100 60 100C54 100 50 96 45 94C40 96 34 93 31 88C26 87 21 81 22 75C17 71 16 64 19 58C16 52 17 45 22 41C21 35 26 29 31 28C34 23 40 20 45 22C50 20 54 16 60 16Z"
+    fill="url(#mcBake)"
+    stroke="#5c3d2e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="60"
+    cy="58"
+    fill="none"
+    r="29"
+    stroke="#78350f"
+    stroke-width="3.4"
+  />
+  <rect
+    fill="#f59e0b"
+    height="28"
+    rx="6"
+    stroke="#78350f"
+    stroke-width="3.4"
+    width="28"
+    x="46"
+    y="44"
+  />
+  <circle
+    cx="60"
+    cy="58"
+    fill="#fef08a"
+    r="6.5"
+    stroke="#78350f"
+    stroke-width="3"
+  />
+  <path
+    d="M60 35V44M60 72V81M37 58H46M74 58H83"
+    stroke="#fde68a"
+    stroke-linecap="round"
+    stroke-opacity="0.85"
+    stroke-width="2.8"
+  />
+</svg>

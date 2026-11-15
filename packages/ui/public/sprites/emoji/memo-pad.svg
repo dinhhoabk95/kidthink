@@ -1,0 +1,62 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Giấy ghi chú</title>
+  <defs>
+    <linearGradient id="mpPage" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fffbeb" />
+      <stop offset="100%" stop-color="#fde68a" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="58" cy="105" fill="#78350f" opacity="0.24" rx="38" ry="5.5" />
+  <rect
+    fill="url(#mpPage)"
+    height="78"
+    rx="9"
+    stroke="#78350f"
+    stroke-width="4"
+    width="64"
+    x="22"
+    y="19"
+  />
+  <path
+    d="M22 28C22 23 26 19 31 19H77C82 19 86 23 86 28V34H22Z"
+    fill="#f97316"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M33 48H72M33 61H66M33 74H56"
+    stroke="#92400e"
+    stroke-linecap="round"
+    stroke-width="3.4"
+  />
+  <g transform="rotate(35 84 68)">
+    <rect
+      fill="#facc15"
+      height="44"
+      rx="3"
+      stroke="#78350f"
+      stroke-width="3.6"
+      width="12"
+      x="78"
+      y="44"
+    />
+    <rect
+      fill="#fb7185"
+      height="10"
+      rx="3"
+      stroke="#881337"
+      stroke-width="3.4"
+      width="12"
+      x="78"
+      y="36"
+    />
+    <polygon
+      fill="#fed7aa"
+      points="78,88 90,88 84,100"
+      stroke="#78350f"
+      stroke-linejoin="round"
+      stroke-width="3.4"
+    />
+  </g>
+</svg>

@@ -1,0 +1,75 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Máy chụp ảnh</title>
+  <defs>
+    <linearGradient id="pcBodyCam" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#5eead4" />
+      <stop offset="55%" stop-color="#0d9488" />
+      <stop offset="100%" stop-color="#115e59" />
+    </linearGradient>
+    <radialGradient cx="36%" cy="32%" id="pcLens" r="68%">
+      <stop offset="0%" stop-color="#93c5fd" />
+      <stop offset="52%" stop-color="#1d4ed8" />
+      <stop offset="100%" stop-color="#1e1b4b" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#134e4a" opacity="0.25" rx="42" ry="5.5" />
+  <rect
+    fill="#f97316"
+    height="10"
+    rx="4"
+    stroke="#7c2d12"
+    stroke-width="3.6"
+    width="16"
+    x="28"
+    y="25"
+  />
+  <path
+    d="M48 33L54 23H74L80 33Z"
+    fill="#f8fafc"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <rect
+    fill="url(#pcBodyCam)"
+    height="60"
+    rx="14"
+    stroke="#134e4a"
+    stroke-width="4"
+    width="88"
+    x="16"
+    y="33"
+  />
+  <path
+    d="M16 47C16 39 22 33 30 33H90C98 33 104 39 104 47V51H16Z"
+    fill="#fffbeb"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="62"
+    cy="65"
+    fill="#f8fafc"
+    r="21"
+    stroke="#1e293b"
+    stroke-width="4"
+  />
+  <circle
+    cx="62"
+    cy="65"
+    fill="url(#pcLens)"
+    r="14"
+    stroke="#1e3a8a"
+    stroke-width="3.4"
+  />
+  <circle cx="57" cy="60" fill="#ffffff" fill-opacity="0.8" r="4" />
+  <circle
+    cx="89"
+    cy="42"
+    fill="#fde047"
+    r="4"
+    stroke="#78350f"
+    stroke-width="2.4"
+  />
+</svg>

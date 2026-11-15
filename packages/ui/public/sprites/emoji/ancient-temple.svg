@@ -1,0 +1,65 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ngôi đền cổ</title>
+  <defs>
+    <linearGradient id="atGold" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fde047" />
+      <stop offset="55%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#5c3d2e" opacity="0.26" rx="44" ry="5.5" />
+  <path
+    d="M60 12L66 26H54Z"
+    fill="#facc15"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <rect
+    fill="url(#atGold)"
+    height="16"
+    rx="3"
+    stroke="#78350f"
+    stroke-width="3.8"
+    width="32"
+    x="44"
+    y="26"
+  />
+  <rect
+    fill="url(#atGold)"
+    height="20"
+    rx="3"
+    stroke="#78350f"
+    stroke-width="3.8"
+    width="52"
+    x="34"
+    y="42"
+  />
+  <rect
+    fill="url(#atGold)"
+    height="26"
+    rx="3"
+    stroke="#78350f"
+    stroke-width="4"
+    width="72"
+    x="24"
+    y="62"
+  />
+  <rect
+    fill="#d97706"
+    height="12"
+    rx="3"
+    stroke="#5c3d2e"
+    stroke-width="4"
+    width="88"
+    x="16"
+    y="88"
+  />
+  <path d="M51 88V72C51 66 69 66 69 72V88Z" fill="#5c3d2e" />
+  <path
+    d="M42 52H78M32 72H45M75 72H88"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.2"
+  />
+</svg>

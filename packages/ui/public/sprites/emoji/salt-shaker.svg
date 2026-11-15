@@ -1,0 +1,42 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Lọ muối nhỏ</title>
+  <defs>
+    <linearGradient id="ssJar" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#e0f2fe" />
+      <stop offset="100%" stop-color="#bae6fd" />
+    </linearGradient>
+    <linearGradient id="ssCap" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#f1f5f9" />
+      <stop offset="100%" stop-color="#94a3b8" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#334155" opacity="0.25" rx="30" ry="5" />
+  <path
+    d="M38 40L32 90C31 96 36 100 42 100H78C84 100 89 96 88 90L82 40Z"
+    fill="url(#ssJar)"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M35 66C46 61 56 68 66 64C73 61 80 63 85 66L87 91C87 95 83 97 78 97H42C37 97 33 95 33 91Z"
+    fill="#ffffff"
+  />
+  <path
+    d="M38 40L32 90C31 96 36 100 42 100H78C84 100 89 96 88 90L82 40Z"
+    fill="none"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M38 40C38 24 47 18 60 18C73 18 82 24 82 40Z"
+    fill="url(#ssCap)"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle cx="52" cy="28" fill="#334155" r="2.2" />
+  <circle cx="60" cy="25" fill="#334155" r="2.2" />
+  <circle cx="68" cy="28" fill="#334155" r="2.2" />
+</svg>

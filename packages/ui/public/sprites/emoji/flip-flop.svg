@@ -1,0 +1,45 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Dép xỏ ngón</title>
+  <defs>
+    <linearGradient id="ffSole" x1="20%" x2="80%" y1="10%" y2="90%">
+      <stop offset="0%" stop-color="#5eead4" />
+      <stop offset="55%" stop-color="#14b8a6" />
+      <stop offset="100%" stop-color="#0f766e" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#134e4a" opacity="0.25" rx="28" ry="5" />
+  <path
+    d="M39 36C39 21 48 14 60 14C72 14 81 21 81 36C81 50 76 62 77 77C78 91 71 101 60 101C49 101 42 91 43 77C44 62 39 50 39 36Z"
+    fill="#0f766e"
+    stroke="#134e4a"
+    stroke-width="3.8"
+    transform="translate(0 4)"
+  />
+  <path
+    d="M39 36C39 21 48 14 60 14C72 14 81 21 81 36C81 50 76 62 77 77C78 91 71 101 60 101C49 101 42 91 43 77C44 62 39 50 39 36Z"
+    fill="url(#ffSole)"
+    stroke="#134e4a"
+    stroke-width="4"
+  />
+  <path
+    d="M44 74H76M44 82H76"
+    stroke="#fde047"
+    stroke-linecap="round"
+    stroke-width="2.8"
+  />
+  <path
+    d="M60 30L39 63L45 68L60 43L75 68L81 63Z"
+    fill="#f97316"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="60"
+    cy="31"
+    fill="#fde047"
+    r="5"
+    stroke="#7c2d12"
+    stroke-width="3.2"
+  />
+</svg>

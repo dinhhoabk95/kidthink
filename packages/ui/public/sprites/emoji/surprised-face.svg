@@ -1,0 +1,53 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Khuôn mặt ngạc nhiên</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="sfYellow" r="70%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="58%" stop-color="#fde047" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.24" rx="35" ry="5.5" />
+  <circle
+    cx="60"
+    cy="57"
+    fill="url(#sfYellow)"
+    r="39"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M36 35C40 30 48 30 52 35M68 35C72 30 80 30 84 35"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="45"
+    cy="50"
+    fill="#ffffff"
+    r="7.5"
+    stroke="#78350f"
+    stroke-width="3.4"
+  />
+  <circle cx="45" cy="50" fill="#1c1917" r="3.8" />
+  <circle
+    cx="75"
+    cy="50"
+    fill="#ffffff"
+    r="7.5"
+    stroke="#78350f"
+    stroke-width="3.4"
+  />
+  <circle cx="75" cy="50" fill="#1c1917" r="3.8" />
+  <ellipse
+    cx="60"
+    cy="74"
+    fill="#991b1b"
+    rx="9"
+    ry="11"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <ellipse cx="60" cy="80" fill="#fb7185" rx="5.5" ry="3.5" />
+</svg>

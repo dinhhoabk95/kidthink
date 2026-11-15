@@ -1,0 +1,26 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Nét khuyết kép</title>
+  <defs>
+    <linearGradient id="dlCord" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#5eead4" />
+      <stop offset="55%" stop-color="#14b8a6" />
+      <stop offset="100%" stop-color="#0f766e" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#134e4a" opacity="0.24" rx="44" ry="5" />
+  <path
+    d="M14 78C26 78 51 66 51 43C51 28 44 22 37 22C29 22 22 29 22 43C22 65 45 78 60 78C75 78 98 65 98 43C98 29 91 22 83 22C76 22 69 28 69 43C69 66 94 78 106 78C110 78 110 88 106 88C88 88 59 73 59 43C59 22 70 12 83 12C97 12 108 23 108 43C108 71 81 88 60 88C39 88 12 71 12 43C12 23 23 12 37 12C50 12 61 22 61 43C61 73 32 88 14 88C10 88 10 78 14 78Z"
+    fill="url(#dlCord)"
+    stroke="#134e4a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+    transform="translate(0 6)"
+  />
+  <path
+    d="M29 24C34 20 41 20 45 24M75 24C80 20 87 20 91 24"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.75"
+    stroke-width="2.8"
+  />
+</svg>

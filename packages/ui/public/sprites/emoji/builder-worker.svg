@@ -1,0 +1,85 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cô chú xây dựng</title>
+  <defs>
+    <radialGradient cx="38%" cy="28%" id="bwHelm" r="70%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="55%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#d97706" />
+    </radialGradient>
+    <linearGradient id="bwVest" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb923c" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#7c2d12" opacity="0.24" rx="36" ry="5.5" />
+  <path
+    d="M27 99C30 81 42 75 60 75C78 75 90 81 93 99Z"
+    fill="url(#bwVest)"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#fde047"
+    height="22"
+    rx="2"
+    stroke="#78350f"
+    stroke-width="3"
+    width="8"
+    x="41"
+    y="77"
+  />
+  <rect
+    fill="#fde047"
+    height="22"
+    rx="2"
+    stroke="#78350f"
+    stroke-width="3"
+    width="8"
+    x="71"
+    y="77"
+  />
+  <circle
+    cx="60"
+    cy="57"
+    fill="#fed7aa"
+    r="20"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M35 44C35 26 46 17 60 17C74 17 85 26 85 44Z"
+    fill="url(#bwHelm)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#fef08a"
+    height="19"
+    rx="4"
+    stroke="#78350f"
+    stroke-width="3.2"
+    width="10"
+    x="55"
+    y="15"
+  />
+  <rect
+    fill="#f59e0b"
+    height="8"
+    rx="4"
+    stroke="#78350f"
+    stroke-width="3.8"
+    width="62"
+    x="29"
+    y="40"
+  />
+  <circle cx="52" cy="57" fill="#1c1917" r="3" />
+  <circle cx="68" cy="57" fill="#1c1917" r="3" />
+  <path
+    d="M54 66C58 70 62 70 66 66"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.2"
+  />
+</svg>

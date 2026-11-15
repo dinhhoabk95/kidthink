@@ -1,0 +1,55 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mũi tên vòng lại</title>
+  <defs>
+    <linearGradient id="clBadge" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#93c5fd" />
+      <stop offset="55%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#1e3a8a" opacity="0.24" rx="40" ry="5" />
+  <rect
+    fill="#1d4ed8"
+    height="80"
+    rx="18"
+    stroke="#1e3a8a"
+    stroke-width="4"
+    width="84"
+    x="18"
+    y="21"
+  />
+  <rect
+    fill="url(#clBadge)"
+    height="80"
+    rx="18"
+    stroke="#1e3a8a"
+    stroke-width="4"
+    width="84"
+    x="18"
+    y="15"
+  />
+  <rect
+    height="64"
+    rx="12"
+    stroke="#dbeafe"
+    stroke-opacity="0.45"
+    stroke-width="2.4"
+    width="68"
+    x="26"
+    y="23"
+  />
+  <path
+    d="M68 35H76C85 35 91 41 91 50C91 59 85 65 76 65H48V77L29 59L48 41V53H74C77 53 79 51 79 48C79 45 77 43 74 43H68Z"
+    fill="#ffffff"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M30 26H52"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.5"
+    stroke-width="4"
+  />
+</svg>

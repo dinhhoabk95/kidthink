@@ -1,0 +1,53 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hộp giấy đựng thức ăn</title>
+  <defs>
+    <linearGradient id="tbCard" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="65%" stop-color="#fef3c7" />
+      <stop offset="100%" stop-color="#fde68a" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#78350f" opacity="0.25" rx="34" ry="5.5" />
+  <path
+    d="M32 48C32 20 88 20 88 48"
+    stroke="#44403c"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M34 42C44 33 56 35 62 41C68 34 80 35 86 42"
+    fill="#facc15"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <polygon
+    fill="url(#tbCard)"
+    points="26,44 94,44 84,98 36,98"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <polygon
+    fill="#fef9c3"
+    points="20,34 46,44 26,54"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <polygon
+    fill="#fef9c3"
+    points="100,34 74,44 94,54"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M44 68H76M48 62H72L76 68H44Z"
+    fill="#ef4444"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <rect fill="#ef4444" height="12" rx="2" width="16" x="52" y="72" />
+</svg>

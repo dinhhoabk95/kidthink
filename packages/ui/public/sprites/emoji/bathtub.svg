@@ -1,0 +1,64 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bồn tắm bọt</title>
+  <defs>
+    <linearGradient id="btTub" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#cbd5e1" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#334155" opacity="0.24" rx="42" ry="5" />
+  <path
+    d="M94 52V28C94 22 84 22 84 28"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <path
+    d="M24 54C24 44 33 40 40 44C45 35 58 35 63 43C70 37 82 41 84 52Z"
+    fill="#e0f2fe"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="34"
+    cy="96"
+    fill="#fbbf24"
+    r="5"
+    stroke="#78350f"
+    stroke-width="3.4"
+  />
+  <circle
+    cx="86"
+    cy="96"
+    fill="#fbbf24"
+    r="5"
+    stroke="#78350f"
+    stroke-width="3.4"
+  />
+  <path
+    d="M18 56H102L96 80C93 90 82 95 60 95C38 95 27 90 24 80Z"
+    fill="url(#btTub)"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#f8fafc"
+    height="9"
+    rx="4.5"
+    stroke="#334155"
+    stroke-width="3.8"
+    width="94"
+    x="13"
+    y="50"
+  />
+  <circle
+    cx="52"
+    cy="30"
+    fill="#bae6fd"
+    r="4.5"
+    stroke="#1e3a8a"
+    stroke-width="2.6"
+  />
+</svg>

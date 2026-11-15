@@ -1,0 +1,73 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Gia đình có bé gái</title>
+  <defs>
+    <radialGradient cx="42%" cy="35%" id="fdSkin" r="68%">
+      <stop offset="0%" stop-color="#ffedd5" />
+      <stop offset="100%" stop-color="#fdba74" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#5c3d2e" opacity="0.25" rx="46" ry="5" />
+  <path
+    d="M12 100C14 78 24 70 36 70C48 70 56 78 58 100Z"
+    fill="#38bdf8"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M62 100C64 78 72 70 84 70C96 70 106 78 108 100Z"
+    fill="#fb7185"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="36"
+    cy="44"
+    fill="url(#fdSkin)"
+    r="17"
+    stroke="#5c3d2e"
+    stroke-width="3.8"
+  />
+  <path
+    d="M19 42C20 27 28 22 36 22C44 22 52 27 53 42C46 35 40 34 36 34C32 34 26 35 19 42Z"
+    fill="#451a03"
+    stroke="#292524"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <circle
+    cx="84"
+    cy="44"
+    fill="url(#fdSkin)"
+    r="17"
+    stroke="#5c3d2e"
+    stroke-width="3.8"
+  />
+  <path
+    d="M67 45C67 28 75 22 84 22C93 22 101 28 101 45C95 37 89 35 84 36C79 35 73 37 67 45Z"
+    fill="#78350f"
+    stroke="#451a03"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M40 102C42 84 50 78 60 78C70 78 78 84 80 102Z"
+    fill="#fde047"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle cx="44" cy="58" fill="#451a03" r="5.5" />
+  <circle cx="76" cy="58" fill="#451a03" r="5.5" />
+  <circle
+    cx="60"
+    cy="63"
+    fill="url(#fdSkin)"
+    r="14"
+    stroke="#5c3d2e"
+    stroke-width="3.8"
+  />
+  <circle cx="56" cy="63" fill="#1c1917" r="2" />
+  <circle cx="64" cy="63" fill="#1c1917" r="2" />
+</svg>

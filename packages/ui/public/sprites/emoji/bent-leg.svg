@@ -1,0 +1,41 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đôi chân khoẻ</title>
+  <defs>
+    <linearGradient id="blSkin" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="64" cy="104" fill="#7c2d12" opacity="0.24" rx="34" ry="5" />
+  <path
+    d="M30 28L76 46C84 49 86 58 80 65L58 86H42L58 58L24 44Z"
+    fill="url(#blSkin)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <polygon
+    fill="#38bdf8"
+    points="20,22 44,30 34,50 14,42"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <rect
+    fill="#fffbeb"
+    height="10"
+    rx="2"
+    stroke="#475569"
+    stroke-width="3.2"
+    width="18"
+    x="41"
+    y="79"
+  />
+  <path
+    d="M39 87H74C81 87 84 92 84 97H37V90Z"
+    fill="#ef4444"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+</svg>

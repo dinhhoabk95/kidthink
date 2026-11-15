@@ -1,0 +1,63 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bạn đi xe đạp</title>
+  <defs>
+    <linearGradient id="cyHelmet" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e293b" opacity="0.24" rx="44" ry="5.5" />
+  <circle
+    cx="32"
+    cy="84"
+    fill="#f8fafc"
+    r="16"
+    stroke="#334155"
+    stroke-width="4.2"
+  />
+  <circle cx="32" cy="84" fill="#64748b" r="4" />
+  <circle
+    cx="88"
+    cy="84"
+    fill="#f8fafc"
+    r="16"
+    stroke="#334155"
+    stroke-width="4.2"
+  />
+  <circle cx="88" cy="84" fill="#64748b" r="4" />
+  <path
+    d="M32 84L52 62H78L60 84ZM78 62L88 84M74 52L80 64"
+    stroke="#991b1b"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="4.2"
+  />
+  <path
+    d="M47 61H57"
+    stroke="#44403c"
+    stroke-linecap="round"
+    stroke-width="4.5"
+  />
+  <path
+    d="M49 58L61 42L77 51L73 57L63 51L55 61Z"
+    fill="#f97316"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="67"
+    cy="33"
+    fill="#fed7aa"
+    r="10"
+    stroke="#78350f"
+    stroke-width="3.6"
+  />
+  <path
+    d="M56 31C57 21 76 20 79 31Z"
+    fill="url(#cyHelmet)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+</svg>

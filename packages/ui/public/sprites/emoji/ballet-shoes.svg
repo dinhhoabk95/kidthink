@@ -1,0 +1,53 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Giày múa ba-lê</title>
+  <defs>
+    <linearGradient id="bsPink" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fce7f3" />
+      <stop offset="55%" stop-color="#f472b6" />
+      <stop offset="100%" stop-color="#db2777" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#881337" opacity="0.24" rx="34" ry="5" />
+  <path
+    d="M36 22L54 48M54 22L36 48M68 22L86 48M86 22L68 48"
+    stroke="#be185d"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <g transform="rotate(-10 44 70)">
+    <path
+      d="M31 44C31 38 55 38 55 44L57 85C57 96 49 101 43 101C37 101 29 96 29 85Z"
+      fill="url(#bsPink)"
+      stroke="#881337"
+      stroke-linejoin="round"
+      stroke-width="3.8"
+    />
+    <ellipse
+      cx="43"
+      cy="58"
+      fill="#fdf2f8"
+      rx="7"
+      ry="13"
+      stroke="#881337"
+      stroke-width="3"
+    />
+  </g>
+  <g transform="rotate(10 76 70)">
+    <path
+      d="M65 44C65 38 89 38 89 44L91 85C91 96 83 101 77 101C71 101 63 96 63 85Z"
+      fill="url(#bsPink)"
+      stroke="#881337"
+      stroke-linejoin="round"
+      stroke-width="3.8"
+    />
+    <ellipse
+      cx="77"
+      cy="58"
+      fill="#fdf2f8"
+      rx="7"
+      ry="13"
+      stroke="#881337"
+      stroke-width="3"
+    />
+  </g>
+</svg>

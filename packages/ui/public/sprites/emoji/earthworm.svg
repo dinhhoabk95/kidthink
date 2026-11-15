@@ -1,0 +1,47 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chú giun đất</title>
+  <defs>
+    <linearGradient id="ewPink" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fda4af" />
+      <stop offset="55%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#be123c" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#5c3d2e" opacity="0.26" rx="42" ry="6" />
+  <path
+    d="M26 94C22 72 48 70 46 50C44 30 68 20 82 32C94 42 84 58 72 52C64 48 64 56 66 66C68 80 52 84 52 94Z"
+    fill="url(#ewPink)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M46 50C54 48 60 51 65 55"
+    stroke="#fecdd3"
+    stroke-linecap="round"
+    stroke-opacity="0.85"
+    stroke-width="5"
+  />
+  <circle cx="76" cy="36" fill="#1c1917" r="3" />
+  <circle cx="84" cy="40" fill="#1c1917" r="2.8" />
+  <path
+    d="M75 45C78 48 82 48 84 45"
+    stroke="#881337"
+    stroke-linecap="round"
+    stroke-width="2.4"
+  />
+  <path
+    d="M18 98C26 85 44 85 52 92C62 84 84 85 98 98Z"
+    fill="#92400e"
+    stroke="#5c3d2e"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M84 88C84 78 94 76 96 84C91 88 86 89 84 88Z"
+    fill="#4ade80"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+</svg>

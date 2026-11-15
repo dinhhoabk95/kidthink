@@ -1,0 +1,82 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bò vàng</title>
+  <defs>
+    <radialGradient cx="42%" cy="35%" id="boCoat" r="70%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="55%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#92400e" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="58" cy="104" fill="#451a03" opacity="0.26" rx="42" ry="5" />
+  <path
+    d="M22 58C12 64 12 78 16 86"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <rect
+    fill="#b45309"
+    height="24"
+    rx="4"
+    stroke="#5c3d2e"
+    stroke-width="3.8"
+    width="10"
+    x="28"
+    y="76"
+  />
+  <rect
+    fill="#b45309"
+    height="24"
+    rx="4"
+    stroke="#5c3d2e"
+    stroke-width="3.8"
+    width="10"
+    x="44"
+    y="76"
+  />
+  <rect
+    fill="#b45309"
+    height="24"
+    rx="4"
+    stroke="#5c3d2e"
+    stroke-width="3.8"
+    width="10"
+    x="66"
+    y="76"
+  />
+  <ellipse
+    cx="52"
+    cy="64"
+    fill="url(#boCoat)"
+    rx="30"
+    ry="20"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M74 36C68 24 72 16 80 20M96 36C102 24 98 16 90 20"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <circle
+    cx="85"
+    cy="52"
+    fill="url(#boCoat)"
+    r="16"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="92"
+    cy="59"
+    fill="#fed7aa"
+    rx="10"
+    ry="7.5"
+    stroke="#78350f"
+    stroke-width="3.2"
+  />
+  <circle cx="84" cy="48" fill="#1c1917" r="2.8" />
+  <circle cx="90" cy="59" fill="#5c3d2e" r="1.8" />
+  <circle cx="96" cy="59" fill="#5c3d2e" r="1.8" />
+</svg>

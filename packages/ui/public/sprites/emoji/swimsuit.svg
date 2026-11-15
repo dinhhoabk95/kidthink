@@ -1,0 +1,35 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Áo bơi một mảnh</title>
+  <defs>
+    <linearGradient id="swTeal" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#5eead4" />
+      <stop offset="55%" stop-color="#14b8a6" />
+      <stop offset="100%" stop-color="#0f766e" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#134e4a" opacity="0.24" rx="28" ry="4.5" />
+  <path
+    d="M36 18H46L48 36C52 43 68 43 72 36L74 18H84L88 68C88 80 76 90 68 100H52C44 90 32 80 32 68Z"
+    fill="url(#swTeal)"
+    stroke="#134e4a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#fb7185"
+    height="12"
+    rx="2"
+    stroke="#881337"
+    stroke-width="3.2"
+    width="52"
+    x="34"
+    y="52"
+  />
+  <polygon
+    fill="#fde047"
+    points="60,69 62.5,74 68,75 64,79 65,84 60,81.5 55,84 56,79 52,75 57.5,74"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="2.4"
+  />
+</svg>

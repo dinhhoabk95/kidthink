@@ -1,0 +1,85 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cô đầu bếp</title>
+  <defs>
+    <linearGradient id="wcHat" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#e2e8f0" />
+    </linearGradient>
+    <radialGradient cx="40%" cy="35%" id="wcSkin" r="68%">
+      <stop offset="0%" stop-color="#ffedd5" />
+      <stop offset="100%" stop-color="#fdba74" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#7c2d12" opacity="0.24" rx="36" ry="5.5" />
+  <path
+    d="M32 54C26 62 27 76 35 80H85C93 76 94 62 88 54C84 44 36 44 32 54Z"
+    fill="#92400e"
+    stroke="#44403c"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M29 99C31 82 43 76 60 76C77 76 89 82 91 99Z"
+    fill="#ffffff"
+    stroke="#44403c"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M49 77L60 89L71 77"
+    fill="#f97316"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <circle
+    cx="60"
+    cy="59"
+    fill="url(#wcSkin)"
+    r="19"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <path
+    d="M38 38C30 35 30 21 42 20C46 12 60 10 68 15C78 12 90 20 84 34L81 42H39Z"
+    fill="url(#wcHat)"
+    stroke="#475569"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <rect
+    fill="#f8fafc"
+    height="9"
+    rx="3.5"
+    stroke="#475569"
+    stroke-width="3.6"
+    width="44"
+    x="38"
+    y="36"
+  />
+  <circle cx="53" cy="58" fill="#1c1917" r="2.8" />
+  <circle cx="67" cy="58" fill="#1c1917" r="2.8" />
+  <circle cx="46" cy="63" fill="#fb7185" fill-opacity="0.5" r="3.5" />
+  <circle cx="74" cy="63" fill="#fb7185" fill-opacity="0.5" r="3.5" />
+  <path
+    d="M55 66C58 69 62 69 65 66"
+    stroke="#7c2d12"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+  <ellipse
+    cx="97"
+    cy="69"
+    fill="#d97706"
+    rx="7"
+    ry="9"
+    stroke="#78350f"
+    stroke-width="3.4"
+  />
+  <path
+    d="M97 78V98"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+</svg>

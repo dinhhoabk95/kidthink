@@ -1,0 +1,48 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Khuôn mặt suy nghĩ</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="tfFace" r="68%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="58%" stop-color="#fde047" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.24" rx="34" ry="5" />
+  <circle
+    cx="60"
+    cy="54"
+    fill="url(#tfFace)"
+    r="38"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M37 36C41 31 48 31 52 35"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M68 39H82"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <circle cx="46" cy="48" fill="#1c1917" r="4.5" />
+  <circle cx="47.5" cy="46.2" fill="#ffffff" r="1.6" />
+  <circle cx="74" cy="49" fill="#1c1917" r="4.5" />
+  <circle cx="75.5" cy="47.2" fill="#ffffff" r="1.6" />
+  <path
+    d="M49 67L70 63"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M40 86C40 78 46 74 52 74L66 71C70 70 72 75 68 77L58 80L68 83C74 85 73 96 63 98H46C41 98 40 92 40 86Z"
+    fill="#fcd34d"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+</svg>

@@ -1,0 +1,52 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Vòng xoay mũi tên</title>
+  <defs>
+    <linearGradient id="caTile" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#60a5fa" />
+      <stop offset="55%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#1e3a8a" opacity="0.26" rx="38" ry="5" />
+  <rect
+    fill="#1e40af"
+    height="80"
+    rx="20"
+    stroke="#1e3a8a"
+    stroke-width="4"
+    width="80"
+    x="20"
+    y="23"
+  />
+  <rect
+    fill="url(#caTile)"
+    height="80"
+    rx="20"
+    stroke="#1e3a8a"
+    stroke-width="4"
+    width="80"
+    x="20"
+    y="18"
+  />
+  <path
+    d="M37 52C40 37 55 30 70 36L76 29L85 49L64 51L70 44C59 40 48 45 46 55Z"
+    fill="#fffbeb"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M83 64C80 79 65 86 50 80L44 87L35 67L56 65L50 72C61 76 72 71 74 61Z"
+    fill="#fffbeb"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M30 27H58"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.5"
+    stroke-width="3"
+  />
+</svg>

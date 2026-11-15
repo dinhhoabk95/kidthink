@@ -1,0 +1,49 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Con mực ống</title>
+  <defs>
+    <linearGradient id="sqRose" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fda4af" />
+      <stop offset="55%" stop-color="#fb7185" />
+      <stop offset="100%" stop-color="#e11d48" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#881337" opacity="0.24" rx="30" ry="5" />
+  <path
+    d="M44 74C38 86 30 92 34 99M52 76C50 88 46 95 50 101M68 76C70 88 74 95 70 101M76 74C82 86 90 92 86 99"
+    stroke="#9f1239"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <polygon
+    fill="#f43f5e"
+    points="60,12 90,38 60,46 30,38"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M44 30C44 20 52 16 60 16C68 16 76 20 76 30L74 74C74 79 46 79 46 74Z"
+    fill="url(#sqRose)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="51"
+    cy="60"
+    fill="#ffffff"
+    r="5.5"
+    stroke="#881337"
+    stroke-width="2.6"
+  />
+  <circle
+    cx="69"
+    cy="60"
+    fill="#ffffff"
+    r="5.5"
+    stroke="#881337"
+    stroke-width="2.6"
+  />
+  <circle cx="51" cy="60" fill="#1c1917" r="2.6" />
+  <circle cx="69" cy="60" fill="#1c1917" r="2.6" />
+</svg>

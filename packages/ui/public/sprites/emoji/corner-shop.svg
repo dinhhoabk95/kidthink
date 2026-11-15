@@ -1,0 +1,105 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cửa hàng tiện lợi</title>
+  <defs>
+    <linearGradient id="csWall" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fffbeb" />
+      <stop offset="100%" stop-color="#fde68a" />
+    </linearGradient>
+    <linearGradient id="csGlass" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#bae6fd" />
+      <stop offset="100%" stop-color="#38bdf8" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#5c3d2e" opacity="0.26" rx="46" ry="5.5" />
+  <rect
+    fill="url(#csWall)"
+    height="56"
+    rx="4"
+    stroke="#5c3d2e"
+    stroke-width="4"
+    width="80"
+    x="20"
+    y="45"
+  />
+  <rect
+    fill="#22c55e"
+    height="16"
+    rx="5"
+    stroke="#14532d"
+    stroke-width="3.8"
+    width="76"
+    x="22"
+    y="21"
+  />
+  <path
+    d="M32 29H88"
+    stroke="#fef08a"
+    stroke-linecap="round"
+    stroke-opacity="0.9"
+    stroke-width="4"
+  />
+  <rect
+    fill="url(#csGlass)"
+    height="35"
+    rx="3"
+    stroke="#1e3a8a"
+    stroke-width="3.6"
+    width="24"
+    x="28"
+    y="66"
+  />
+  <rect
+    fill="url(#csGlass)"
+    height="24"
+    rx="4"
+    stroke="#1e3a8a"
+    stroke-width="3.6"
+    width="32"
+    x="60"
+    y="66"
+  />
+  <path
+    d="M46 82V88"
+    stroke="#1e3a8a"
+    stroke-linecap="round"
+    stroke-width="3.2"
+  />
+  <path
+    d="M16 37H38V51C38 56 31 59 27 59C21 59 16 55 16 50Z"
+    fill="#f97316"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M38 37H60V51C60 56 54 59 49 59C44 59 38 56 38 51Z"
+    fill="#fffbeb"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M60 37H82V51C82 56 76 59 71 59C66 59 60 56 60 51Z"
+    fill="#f97316"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M82 37H104V50C104 55 99 59 93 59C89 59 82 56 82 51Z"
+    fill="#fffbeb"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <rect
+    fill="#a8a29e"
+    height="6"
+    rx="3"
+    stroke="#44403c"
+    stroke-width="3.4"
+    width="90"
+    x="15"
+    y="98"
+  />
+</svg>

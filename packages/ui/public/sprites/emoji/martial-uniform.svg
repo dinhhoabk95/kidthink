@@ -1,0 +1,49 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Võ phục trắng</title>
+  <defs>
+    <linearGradient id="muWhite" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="65%" stop-color="#f8fafc" />
+      <stop offset="100%" stop-color="#e2e8f0" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#334155" opacity="0.25" rx="38" ry="5" />
+  <path
+    d="M42 22L14 44L25 60L38 50V96H82V50L95 60L106 44L78 22L60 44Z"
+    fill="url(#muWhite)"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M44 23L60 48L76 23M60 48L46 68"
+    stroke="#475569"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <rect
+    fill="#1e293b"
+    height="10"
+    rx="4"
+    stroke="#1e293b"
+    stroke-width="3.2"
+    width="48"
+    x="36"
+    y="66"
+  />
+  <polygon
+    fill="#334155"
+    points="56,72 45,94 54,96 62,74"
+    stroke="#1e293b"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <polygon
+    fill="#334155"
+    points="64,72 75,94 66,96 58,74"
+    stroke="#1e293b"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+</svg>

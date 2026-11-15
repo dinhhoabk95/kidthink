@@ -1,0 +1,41 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Biển không được phép</title>
+  <defs>
+    <linearGradient id="pcRed" x1="15%" x2="85%" y1="15%" y2="85%">
+      <stop offset="0%" stop-color="#fb7185" />
+      <stop offset="50%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#b91c1c" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#7f1d1d" opacity="0.26" rx="36" ry="5" />
+  <circle
+    cx="60"
+    cy="58"
+    fill="url(#pcRed)"
+    r="42"
+    stroke="#7f1d1d"
+    stroke-width="4.2"
+  />
+  <circle
+    cx="60"
+    cy="58"
+    fill="#fffbeb"
+    r="27"
+    stroke="#7f1d1d"
+    stroke-width="3.8"
+  />
+  <path
+    d="M35 39L81 85L86 78L40 32Z"
+    fill="url(#pcRed)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M34 31C42 23 54 20 66 22"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.65"
+    stroke-width="3.2"
+  />
+</svg>

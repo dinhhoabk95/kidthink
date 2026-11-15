@@ -1,0 +1,72 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cây xương rồng</title>
+  <defs>
+    <linearGradient id="cacGreen" x1="20%" x2="80%" y1="10%" y2="95%">
+      <stop offset="0%" stop-color="#86efac" />
+      <stop offset="50%" stop-color="#22c55e" />
+      <stop offset="100%" stop-color="#15803d" />
+    </linearGradient>
+    <linearGradient id="cacPot" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fdba74" />
+      <stop offset="55%" stop-color="#ea580c" />
+      <stop offset="100%" stop-color="#9a3412" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#5c3d2e" opacity="0.26" rx="32" ry="5.5" />
+  <path
+    d="M46 58H33C26 58 22 53 22 46V38C22 33 26 29 31 29C36 29 40 33 40 38V45H46"
+    fill="url(#cacGreen)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M74 63H87C94 63 98 58 98 51V41C98 36 94 32 89 32C84 32 80 36 80 41V50H74"
+    fill="url(#cacGreen)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="url(#cacGreen)"
+    height="58"
+    rx="15"
+    stroke="#14532d"
+    stroke-width="4"
+    width="30"
+    x="45"
+    y="22"
+  />
+  <path
+    d="M60 28V72"
+    stroke="#14532d"
+    stroke-dasharray="4 6"
+    stroke-linecap="round"
+    stroke-opacity="0.45"
+    stroke-width="2.5"
+  />
+  <path
+    d="M53 22C50 14 57 11 60 16C63 11 70 14 67 22Z"
+    fill="#fb7185"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M38 78H82L76 101H44Z"
+    fill="url(#cacPot)"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#fb923c"
+    height="9"
+    rx="4"
+    stroke="#7c2d12"
+    stroke-width="3.8"
+    width="52"
+    x="34"
+    y="73"
+  />
+</svg>

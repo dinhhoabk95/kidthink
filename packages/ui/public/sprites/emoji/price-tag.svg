@@ -1,0 +1,38 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Thẻ nhãn dán</title>
+  <defs>
+    <linearGradient id="ptKraft" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="55%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="62" cy="105" fill="#78350f" opacity="0.25" rx="34" ry="5" />
+  <path
+    d="M36 36C18 28 16 14 31 16C42 18 44 30 39 38"
+    stroke="#991b1b"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <polygon
+    fill="url(#ptKraft)"
+    points="30,30 62,30 100,68 68,100 30,62"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="44"
+    cy="44"
+    fill="#fffbeb"
+    r="6"
+    stroke="#78350f"
+    stroke-width="3.6"
+  />
+  <path
+    d="M54 58L74 78M62 50L82 70"
+    stroke="#92400e"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+</svg>

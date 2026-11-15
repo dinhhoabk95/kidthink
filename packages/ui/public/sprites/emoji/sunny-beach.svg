@@ -1,0 +1,56 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bãi biển nắng vàng</title>
+  <defs>
+    <linearGradient id="sbSand" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+    <linearGradient id="sbSea" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.24" rx="44" ry="5.5" />
+  <circle
+    cx="28"
+    cy="28"
+    fill="#facc15"
+    r="11"
+    stroke="#92400e"
+    stroke-width="3.6"
+  />
+  <path
+    d="M16 76C38 69 78 69 104 76V90H16Z"
+    fill="url(#sbSea)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M14 86C40 76 80 80 106 88C102 98 84 102 60 102C36 102 18 98 14 86Z"
+    fill="url(#sbSand)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M68 42L56 88"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <path
+    d="M36 42C42 22 65 16 86 24C96 28 102 39 101 51Z"
+    fill="#ef4444"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M56 45C61 28 69 21 76 21C80 29 81 38 79 48Z"
+    fill="#fffbeb"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+</svg>

@@ -1,0 +1,63 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Xe mô-tô</title>
+  <defs>
+    <linearGradient id="mbRed" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb923c" />
+      <stop offset="55%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#b91c1c" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#1e293b" opacity="0.25" rx="44" ry="5.5" />
+  <circle
+    cx="29"
+    cy="82"
+    fill="#475569"
+    r="16"
+    stroke="#1e293b"
+    stroke-width="4.2"
+  />
+  <circle cx="29" cy="82" fill="#e2e8f0" r="7" />
+  <circle
+    cx="91"
+    cy="82"
+    fill="#475569"
+    r="16"
+    stroke="#1e293b"
+    stroke-width="4.2"
+  />
+  <circle cx="91" cy="82" fill="#e2e8f0" r="7" />
+  <path
+    d="M26 78L44 58H69L80 42L91 82M45 78H74"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="4.5"
+  />
+  <path
+    d="M36 58C40 48 56 48 64 56H83L76 70H46Z"
+    fill="url(#mbRed)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M35 55H53"
+    stroke="#44403c"
+    stroke-linecap="round"
+    stroke-width="6"
+  />
+  <circle
+    cx="88"
+    cy="52"
+    fill="#fde047"
+    r="5.5"
+    stroke="#78350f"
+    stroke-width="3.2"
+  />
+  <path
+    d="M72 40H82"
+    stroke="#1e293b"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+</svg>

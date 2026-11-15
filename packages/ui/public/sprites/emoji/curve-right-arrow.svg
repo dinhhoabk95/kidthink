@@ -1,0 +1,40 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mũi tên vòng sang</title>
+  <defs>
+    <linearGradient id="crBadge" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#67e8f9" />
+      <stop offset="55%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#0369a1" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#164e63" opacity="0.24" rx="40" ry="5" />
+  <rect
+    fill="#0369a1"
+    height="80"
+    rx="18"
+    stroke="#164e63"
+    stroke-width="4"
+    width="84"
+    x="18"
+    y="20"
+  />
+  <rect
+    fill="url(#crBadge)"
+    height="80"
+    rx="18"
+    stroke="#164e63"
+    stroke-width="4"
+    width="84"
+    x="18"
+    y="14"
+  />
+  <path
+    d="M52 34H44C35 34 29 40 29 49C29 58 35 64 44 64H72V76L91 58L72 40V52H46C43 52 41 50 41 47C41 44 43 42 46 42H52Z"
+    fill="#fffbeb"
+    stroke="#164e63"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle cx="88" cy="26" fill="#ffffff" fill-opacity="0.55" r="3.5" />
+  <circle cx="78" cy="26" fill="#ffffff" fill-opacity="0.4" r="2.2" />
+</svg>

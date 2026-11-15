@@ -1,0 +1,37 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chiếc lông vũ</title>
+  <defs>
+    <linearGradient id="fthGrad" x1="80%" x2="20%" y1="15%" y2="85%">
+      <stop offset="0%" stop-color="#5eead4" />
+      <stop offset="50%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#fbbf24" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="58" cy="104" fill="#134e4a" opacity="0.24" rx="34" ry="5.5" />
+  <path
+    d="M94 20C68 18 42 36 32 62L43 60L28 76C34 84 48 86 64 78L60 68L75 71C92 56 100 36 94 20Z"
+    fill="url(#fthGrad)"
+    stroke="#134e4a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M22 96C42 76 68 48 90 24"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <path
+    d="M23 95C43 75 68 48 89 25"
+    stroke="#fffbeb"
+    stroke-linecap="round"
+    stroke-width="2"
+  />
+  <path
+    d="M56 38L66 36M45 50L58 48M66 56L79 50"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.65"
+    stroke-width="2.6"
+  />
+</svg>

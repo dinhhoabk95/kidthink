@@ -1,0 +1,49 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Làn sương mù</title>
+  <defs>
+    <linearGradient id="mfCloud" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#f8fafc" />
+      <stop offset="60%" stop-color="#e2e8f0" />
+      <stop offset="100%" stop-color="#cbd5e1" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#334155" opacity="0.22" rx="40" ry="5" />
+  <path
+    d="M26 62C17 62 14 50 23 45C24 31 40 24 52 32C60 20 81 23 85 38C97 38 103 50 95 59C91 63 85 62 79 62Z"
+    fill="url(#mfCloud)"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <rect
+    fill="#e2e8f0"
+    height="10"
+    rx="5"
+    stroke="#334155"
+    stroke-width="3.6"
+    width="76"
+    x="22"
+    y="68"
+  />
+  <rect
+    fill="#f1f5f9"
+    height="10"
+    rx="5"
+    stroke="#334155"
+    stroke-width="3.6"
+    width="62"
+    x="16"
+    y="83"
+  />
+  <rect
+    fill="#cbd5e1"
+    height="8"
+    rx="4"
+    stroke="#334155"
+    stroke-width="3.4"
+    width="38"
+    x="66"
+    y="84"
+  />
+  <ellipse cx="46" cy="39" fill="#ffffff" fill-opacity="0.75" rx="9" ry="4" />
+</svg>

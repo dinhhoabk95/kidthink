@@ -1,0 +1,39 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hình tam giác ngược</title>
+  <defs>
+    <linearGradient id="drtBlock" x1="25%" x2="85%" y1="15%" y2="90%">
+      <stop offset="0%" stop-color="#fda4af" />
+      <stop offset="48%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#dc2626" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="108" fill="#7f1d1d" opacity="0.24" rx="22" ry="4.5" />
+  <path
+    d="M22 22H98C103 22 106 27 104 31L60 105L16 31C14 27 17 22 22 22Z"
+    fill="#991b1b"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M23 16H97C102 16 105 21 103 25L60 98L17 25C15 21 18 16 23 16Z"
+    fill="url(#drtBlock)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M30 26H90L60 79Z"
+    stroke="#fecaca"
+    stroke-linejoin="round"
+    stroke-opacity="0.55"
+    stroke-width="2.5"
+  />
+  <path
+    d="M32 23H66"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.6"
+    stroke-width="4"
+  />
+</svg>

@@ -1,0 +1,68 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hoạ sĩ nhí</title>
+  <defs>
+    <linearGradient id="yaSmock" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#60a5fa" />
+      <stop offset="100%" stop-color="#2563eb" />
+    </linearGradient>
+    <radialGradient cx="40%" cy="30%" id="yaBeret" r="70%">
+      <stop offset="0%" stop-color="#fb7185" />
+      <stop offset="100%" stop-color="#be123c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#1e3a8a" opacity="0.24" rx="36" ry="5.5" />
+  <path
+    d="M28 99C30 81 42 75 60 75C78 75 90 81 92 99Z"
+    fill="url(#yaSmock)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M50 75L60 88L70 75"
+    fill="#fde047"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <circle
+    cx="60"
+    cy="56"
+    fill="#fed7aa"
+    r="20"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M34 40C30 25 54 17 78 24C90 28 89 41 78 42Z"
+    fill="url(#yaBeret)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M58 21L62 15"
+    stroke="#881337"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <circle cx="52" cy="56" fill="#1c1917" r="2.9" />
+  <circle cx="68" cy="56" fill="#1c1917" r="2.9" />
+  <path
+    d="M55 65C58 68 62 68 65 65"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.2"
+  />
+  <ellipse
+    cx="86"
+    cy="89"
+    fill="#fde68a"
+    rx="14"
+    ry="10"
+    stroke="#78350f"
+    stroke-width="3.6"
+  />
+  <circle cx="81" cy="88" fill="#ef4444" r="3" />
+  <circle cx="90" cy="86" fill="#22c55e" r="3" />
+</svg>

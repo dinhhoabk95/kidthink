@@ -1,0 +1,58 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Loa cổ vũ</title>
+  <defs>
+    <linearGradient id="chCone" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb923c" />
+      <stop offset="55%" stop-color="#ea580c" />
+      <stop offset="100%" stop-color="#c2410c" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="56" cy="104" fill="#7c2d12" opacity="0.25" rx="34" ry="5" />
+  <path
+    d="M36 68L43 92C45 97 53 95 52 89L48 69Z"
+    fill="#fde68a"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M24 52L82 26V86L24 64Z"
+    fill="url(#chCone)"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path d="M50 40L58 37V75L50 72Z" fill="#fffbeb" />
+  <path
+    d="M24 52L82 26V86L24 64Z"
+    fill="none"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#facc15"
+    height="18"
+    rx="5"
+    stroke="#78350f"
+    stroke-width="3.8"
+    width="12"
+    x="15"
+    y="49"
+  />
+  <ellipse
+    cx="83"
+    cy="56"
+    fill="#fed7aa"
+    rx="7"
+    ry="30"
+    stroke="#7c2d12"
+    stroke-width="3.8"
+  />
+  <path
+    d="M96 42L107 35M98 56H110M96 70L107 77"
+    stroke="#92400e"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+</svg>

@@ -1,0 +1,41 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Nhón tay tí xíu</title>
+  <defs>
+    <radialGradient cx="42%" cy="35%" id="pfHand" r="68%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="55%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="62" cy="105" fill="#78350f" opacity="0.24" rx="34" ry="5" />
+  <rect
+    fill="#3b82f6"
+    height="32"
+    rx="8"
+    stroke="#1e3a8a"
+    stroke-width="3.8"
+    width="18"
+    x="86"
+    y="56"
+  />
+  <path
+    d="M29 44H58C76 44 90 54 90 70C90 86 80 96 64 96H48C38 96 31 90 31 82C31 76 37 72 45 72H58C62 72 62 64 56 63L30 57C24 55 23 44 29 44Z"
+    fill="url(#pfHand)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M66 45C76 40 86 45 85 54M72 56C81 53 88 58 87 66"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <circle cx="31" cy="50" fill="#fffbeb" fill-opacity="0.7" r="2.8" />
+  <path
+    d="M16 58H24M16 71H24"
+    stroke="#991b1b"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+</svg>

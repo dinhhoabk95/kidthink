@@ -1,0 +1,57 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mặt chuột nhỏ</title>
+  <defs>
+    <radialGradient cx="42%" cy="32%" id="cmFur" r="68%">
+      <stop offset="0%" stop-color="#f5f5f4" />
+      <stop offset="55%" stop-color="#d6d3d1" />
+      <stop offset="100%" stop-color="#a8a29e" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#44403c" opacity="0.24" rx="36" ry="5.5" />
+  <circle
+    cx="28"
+    cy="36"
+    fill="url(#cmFur)"
+    r="20"
+    stroke="#44403c"
+    stroke-width="4"
+  />
+  <circle cx="28" cy="36" fill="#fda4af" r="12" />
+  <circle
+    cx="92"
+    cy="36"
+    fill="url(#cmFur)"
+    r="20"
+    stroke="#44403c"
+    stroke-width="4"
+  />
+  <circle cx="92" cy="36" fill="#fda4af" r="12" />
+  <ellipse
+    cx="60"
+    cy="67"
+    fill="url(#cmFur)"
+    rx="35"
+    ry="31"
+    stroke="#44403c"
+    stroke-width="4"
+  />
+  <circle cx="46" cy="61" fill="#1c1917" r="4.8" />
+  <circle cx="44.5" cy="59.2" fill="#ffffff" r="1.7" />
+  <circle cx="74" cy="61" fill="#1c1917" r="4.8" />
+  <circle cx="72.5" cy="59.2" fill="#ffffff" r="1.7" />
+  <ellipse
+    cx="60"
+    cy="73"
+    fill="#fb7185"
+    rx="6.5"
+    ry="5"
+    stroke="#881337"
+    stroke-width="3.2"
+  />
+  <path
+    d="M54 82C57 86 63 86 66 82M18 69L36 72M18 79L36 77M102 69L84 72M102 79L84 77"
+    stroke="#44403c"
+    stroke-linecap="round"
+    stroke-width="3.2"
+  />
+</svg>

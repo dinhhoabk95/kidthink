@@ -1,0 +1,62 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Khuôn mặt hốt hoảng</title>
+  <defs>
+    <linearGradient id="shGrad" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#bae6fd" />
+      <stop offset="42%" stop-color="#fef08a" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#78350f" opacity="0.24" rx="36" ry="5.5" />
+  <circle
+    cx="60"
+    cy="55"
+    fill="url(#shGrad)"
+    r="38"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="46"
+    cy="47"
+    fill="#ffffff"
+    rx="7"
+    ry="10"
+    stroke="#1e3a8a"
+    stroke-width="3.4"
+  />
+  <circle cx="46" cy="48" fill="#1c1917" r="3.5" />
+  <ellipse
+    cx="74"
+    cy="47"
+    fill="#ffffff"
+    rx="7"
+    ry="10"
+    stroke="#1e3a8a"
+    stroke-width="3.4"
+  />
+  <circle cx="74" cy="48" fill="#1c1917" r="3.5" />
+  <ellipse
+    cx="60"
+    cy="74"
+    fill="#7f1d1d"
+    rx="8.5"
+    ry="13"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <path
+    d="M22 65C22 56 30 55 33 63L39 84C35 94 24 91 22 80Z"
+    fill="#fcd34d"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M98 65C98 56 90 55 87 63L81 84C85 94 96 91 98 80Z"
+    fill="#fcd34d"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+</svg>

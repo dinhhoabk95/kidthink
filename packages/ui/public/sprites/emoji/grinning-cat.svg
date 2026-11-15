@@ -1,0 +1,61 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mèo cười tít mắt</title>
+  <defs>
+    <radialGradient cx="40%" cy="32%" id="gcOrg" r="70%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="55%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.24" rx="36" ry="5.5" />
+  <path
+    d="M24 50L20 18L47 32Z"
+    fill="url(#gcOrg)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M96 50L100 18L73 32Z"
+    fill="url(#gcOrg)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path d="M27 42L25 25L40 33Z" fill="#fda4af" />
+  <path d="M93 42L95 25L80 33Z" fill="#fda4af" />
+  <ellipse
+    cx="60"
+    cy="64"
+    fill="url(#gcOrg)"
+    rx="40"
+    ry="35"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M54 32V41M60 30V41M66 32V41"
+    stroke="#b45309"
+    stroke-linecap="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M38 59C42 52 48 52 52 59M68 59C72 52 78 52 82 59"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <path
+    d="M46 72H74C73 83 66 87 60 87C54 87 47 83 46 72Z"
+    fill="#fb7185"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M15 62H28M16 71H29M92 62H105M91 71H104"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.4"
+  />
+</svg>

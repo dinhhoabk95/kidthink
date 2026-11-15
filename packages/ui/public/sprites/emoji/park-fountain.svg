@@ -1,0 +1,87 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đài phun nước</title>
+  <defs>
+    <linearGradient id="pfStone" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#f5f5f4" />
+      <stop offset="55%" stop-color="#d6d3d1" />
+      <stop offset="100%" stop-color="#a8a29e" />
+    </linearGradient>
+    <linearGradient id="pfWater" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#7dd3fc" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#44403c" opacity="0.26" rx="44" ry="6" />
+  <path
+    d="M60 44C52 24 33 22 28 38M60 44C68 24 87 22 92 38M60 42V18"
+    stroke="#0369a1"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="25"
+    cy="46"
+    fill="#38bdf8"
+    r="4"
+    stroke="#0369a1"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="95"
+    cy="46"
+    fill="#38bdf8"
+    r="4"
+    stroke="#0369a1"
+    stroke-width="3.2"
+  />
+  <circle cx="60" cy="14" fill="#7dd3fc" r="3.5" />
+  <rect
+    fill="url(#pfStone)"
+    height="32"
+    rx="4"
+    stroke="#44403c"
+    stroke-width="3.8"
+    width="18"
+    x="51"
+    y="46"
+  />
+  <path
+    d="M34 45H86C84 57 74 62 60 62C46 62 36 57 34 45Z"
+    fill="url(#pfStone)"
+    stroke="#44403c"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <ellipse
+    cx="60"
+    cy="45"
+    fill="url(#pfWater)"
+    rx="24"
+    ry="5.5"
+    stroke="#44403c"
+    stroke-width="3.4"
+  />
+  <path
+    d="M16 78H104C101 95 85 101 60 101C35 101 19 95 16 78Z"
+    fill="url(#pfStone)"
+    stroke="#44403c"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="60"
+    cy="78"
+    fill="url(#pfWater)"
+    rx="43"
+    ry="9.5"
+    stroke="#44403c"
+    stroke-width="3.8"
+  />
+  <path
+    d="M36 78C46 75 74 75 84 78"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.7"
+    stroke-width="2.6"
+  />
+</svg>

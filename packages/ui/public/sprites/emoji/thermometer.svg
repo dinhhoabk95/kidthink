@@ -1,0 +1,40 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Nhiệt kế đo ấm</title>
+  <defs>
+    <linearGradient id="tmTube" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="65%" stop-color="#f1f5f9" />
+      <stop offset="100%" stop-color="#cbd5e1" />
+    </linearGradient>
+    <radialGradient cx="38%" cy="35%" id="tmRed" r="68%">
+      <stop offset="0%" stop-color="#fca5a5" />
+      <stop offset="50%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#b91c1c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#7f1d1d" opacity="0.24" rx="28" ry="5" />
+  <path
+    d="M48 26C48 19 53 14 60 14C67 14 72 19 72 26V67C79 71 83 79 81 88C79 97 70 103 60 103C50 103 41 97 39 88C37 79 41 71 48 67Z"
+    fill="url(#tmTube)"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect fill="#e2e8f0" height="44" rx="5" width="10" x="55" y="24" />
+  <rect fill="#ef4444" height="34" rx="5" width="10" x="55" y="42" />
+  <circle
+    cx="60"
+    cy="83"
+    fill="url(#tmRed)"
+    r="13"
+    stroke="#7f1d1d"
+    stroke-width="3.6"
+  />
+  <path
+    d="M76 30H84M76 41H82M76 52H84M76 63H82"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <circle cx="55" cy="79" fill="#ffffff" fill-opacity="0.65" r="3.5" />
+</svg>

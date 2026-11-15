@@ -1,0 +1,45 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bàn tay yêu thương</title>
+  <defs>
+    <radialGradient cx="40%" cy="35%" id="lhSkin" r="70%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="55%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#78350f" opacity="0.25" rx="32" ry="5" />
+  <path
+    d="M38 62V24C38 18 48 18 48 24V56H74V26C74 20 84 20 84 26V74C84 90 72 98 56 98C42 98 34 90 32 78L16 66C12 62 16 54 23 56L38 62Z"
+    fill="url(#lhSkin)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#fcd34d"
+    height="22"
+    rx="5.5"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="12"
+    x="49"
+    y="46"
+  />
+  <rect
+    fill="#fcd34d"
+    height="22"
+    rx="5.5"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="12"
+    x="62"
+    y="48"
+  />
+  <path
+    d="M62 28C61 28 54 22 54 17C54 14 57 12 59 12C60.5 12 61.5 13 62 14.5C62.5 13 63.5 12 65 12C67 12 70 14 70 17C70 22 63 28 62 28Z"
+    fill="#fb7185"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+</svg>

@@ -1,0 +1,48 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Khuông nhạc khoá Sol</title>
+  <defs>
+    <linearGradient id="tcCard" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fffbeb" />
+      <stop offset="100%" stop-color="#fde68a" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#78350f" opacity="0.24" rx="40" ry="5" />
+  <rect
+    fill="url(#tcCard)"
+    height="76"
+    rx="14"
+    stroke="#78350f"
+    stroke-width="4"
+    width="88"
+    x="16"
+    y="20"
+  />
+  <path
+    d="M24 38H96M24 49H96M24 60H96M24 71H96M24 82H96"
+    stroke="#b45309"
+    stroke-linecap="round"
+    stroke-opacity="0.55"
+    stroke-width="2.4"
+  />
+  <path
+    d="M58 88C49 89 45 82 50 77C56 72 63 77 60 84M58 88L58 23C66 22 70 32 62 41L46 56C40 63 44 75 56 75C68 75 74 66 70 57C66 49 54 51 54 61"
+    stroke="#881337"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="5.2"
+  />
+  <circle
+    cx="82"
+    cy="49"
+    fill="#2563eb"
+    r="4.5"
+    stroke="#1e3a8a"
+    stroke-width="2.6"
+  />
+  <path
+    d="M86 49V31"
+    stroke="#1e3a8a"
+    stroke-linecap="round"
+    stroke-width="3.2"
+  />
+</svg>

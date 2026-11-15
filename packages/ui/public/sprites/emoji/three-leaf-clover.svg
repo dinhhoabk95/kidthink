@@ -1,0 +1,47 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cỏ ba lá</title>
+  <defs>
+    <radialGradient cx="42%" cy="38%" id="tlcGreen" r="68%">
+      <stop offset="0%" stop-color="#bbf7d0" />
+      <stop offset="55%" stop-color="#22c55e" />
+      <stop offset="100%" stop-color="#15803d" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="62" cy="106" fill="#14532d" opacity="0.24" rx="28" ry="4.5" />
+  <path
+    d="M60 62C60 80 66 94 78 102"
+    stroke="#14532d"
+    stroke-linecap="round"
+    stroke-width="4.5"
+  />
+  <path
+    d="M60 58C44 46 36 28 46 20C52 15 58 20 60 25C62 20 68 15 74 20C84 28 76 46 60 58Z"
+    fill="url(#tlcGreen)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M60 58C44 46 36 28 46 20C52 15 58 20 60 25C62 20 68 15 74 20C84 28 76 46 60 58Z"
+    fill="url(#tlcGreen)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+    transform="rotate(115 60 60)"
+  />
+  <path
+    d="M60 58C44 46 36 28 46 20C52 15 58 20 60 25C62 20 68 15 74 20C84 28 76 46 60 58Z"
+    fill="url(#tlcGreen)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+    transform="rotate(-115 60 60)"
+  />
+  <path
+    d="M60 56V34M63 60L81 70M57 60L39 70"
+    stroke="#dcfce7"
+    stroke-linecap="round"
+    stroke-opacity="0.8"
+    stroke-width="2.6"
+  />
+</svg>

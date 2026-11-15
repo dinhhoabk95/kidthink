@@ -1,0 +1,52 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Rót nước</title>
+  <defs>
+    <linearGradient id="pwBlue" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#7dd3fc" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="44" cy="104" fill="#1e3a8a" opacity="0.24" rx="28" ry="5" />
+  <path
+    d="M54 44C36 50 32 72 34 94H52C50 74 52 58 64 50Z"
+    fill="url(#pwBlue)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <ellipse
+    cx="43"
+    cy="95"
+    fill="#38bdf8"
+    rx="22"
+    ry="6"
+    stroke="#1e3a8a"
+    stroke-width="3.6"
+  />
+  <g transform="rotate(-52 78 38)">
+    <path
+      d="M60 16H96L91 60C90 64 87 66 83 66H73C69 66 66 64 65 60Z"
+      fill="#e0f2fe"
+      stroke="#1e3a8a"
+      stroke-linejoin="round"
+      stroke-width="3.8"
+    />
+    <path d="M63 38H93L91 59H65Z" fill="#38bdf8" />
+  </g>
+  <circle
+    cx="22"
+    cy="86"
+    fill="#7dd3fc"
+    r="4"
+    stroke="#1e3a8a"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="66"
+    cy="88"
+    fill="#7dd3fc"
+    r="3.5"
+    stroke="#1e3a8a"
+    stroke-width="3.2"
+  />
+</svg>

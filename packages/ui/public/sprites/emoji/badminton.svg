@@ -1,0 +1,67 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Vợt và cầu lông</title>
+  <defs>
+    <radialGradient cx="45%" cy="40%" id="bmHead" r="65%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#e0f2fe" />
+    </radialGradient>
+    <linearGradient id="bmRim" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb923c" />
+      <stop offset="100%" stop-color="#dc2626" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#7c2d12" opacity="0.24" rx="40" ry="5.5" />
+  <path
+    d="M47 69L21 96"
+    stroke="#1e3a8a"
+    stroke-linecap="round"
+    stroke-width="6.5"
+  />
+  <polygon
+    fill="#3b82f6"
+    points="35,83 39,87 22,102 18,98"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <ellipse
+    cx="67"
+    cy="46"
+    fill="url(#bmHead)"
+    rx="23"
+    ry="29"
+    stroke="url(#bmRim)"
+    stroke-width="6"
+    transform="rotate(42 67 46)"
+  />
+  <ellipse
+    cx="67"
+    cy="46"
+    rx="23"
+    ry="29"
+    stroke="#7f1d1d"
+    stroke-width="3.6"
+    transform="rotate(42 67 46)"
+  />
+  <path
+    d="M54 34L80 58M62 27L86 50M48 42L72 64M53 58L80 33M61 65L86 41"
+    stroke="#64748b"
+    stroke-opacity="0.55"
+    stroke-width="2"
+  />
+  <polygon
+    fill="#f8fafc"
+    points="82,82 104,70 98,95"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="80"
+    cy="85"
+    fill="#ef4444"
+    r="6.5"
+    stroke="#7f1d1d"
+    stroke-width="3.4"
+  />
+</svg>

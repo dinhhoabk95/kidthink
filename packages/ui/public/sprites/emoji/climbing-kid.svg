@@ -1,0 +1,65 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bạn leo núi</title>
+  <defs>
+    <linearGradient id="ckRock" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#d6d3d1" />
+      <stop offset="100%" stop-color="#a8a29e" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="56" cy="106" fill="#44403c" opacity="0.25" rx="38" ry="4.5" />
+  <path
+    d="M16 16H46L52 44L44 72L50 102H16Z"
+    fill="url(#ckRock)"
+    stroke="#44403c"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="36"
+    cy="30"
+    fill="#fb7185"
+    r="5"
+    stroke="#881337"
+    stroke-width="3"
+  />
+  <circle
+    cx="32"
+    cy="64"
+    fill="#38bdf8"
+    r="5"
+    stroke="#1e3a8a"
+    stroke-width="3"
+  />
+  <path
+    d="M68 58L41 34M68 68L40 65M72 80L56 96M78 80L92 94"
+    stroke="#1e3a8a"
+    stroke-linecap="round"
+    stroke-width="6.5"
+  />
+  <rect
+    fill="#22c55e"
+    height="24"
+    rx="8"
+    stroke="#14532d"
+    stroke-width="3.8"
+    width="22"
+    x="62"
+    y="56"
+  />
+  <circle
+    cx="74"
+    cy="40"
+    fill="#fed7aa"
+    r="14"
+    stroke="#5c3d2e"
+    stroke-width="3.8"
+  />
+  <path
+    d="M60 38C60 26 67 22 74 22C81 22 88 26 88 38Z"
+    fill="#facc15"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle cx="70" cy="43" fill="#1c1917" r="2.2" />
+</svg>

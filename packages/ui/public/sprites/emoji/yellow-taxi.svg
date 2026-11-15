@@ -1,0 +1,69 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Xe ta-xi vàng</title>
+  <defs>
+    <linearGradient id="ytBody" x1="15%" x2="85%" y1="15%" y2="90%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="52%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#eab308" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="102" fill="#5c3d2e" opacity="0.25" rx="46" ry="6" />
+  <rect
+    fill="#fffbeb"
+    height="10"
+    rx="4"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="22"
+    x="49"
+    y="24"
+  />
+  <path
+    d="M26 56L37 34H81L93 56Z"
+    fill="url(#ytBody)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M34 55L41 39H58V55ZM63 55V39H77L85 55Z"
+    fill="#bae6fd"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <rect
+    fill="url(#ytBody)"
+    height="30"
+    rx="12"
+    stroke="#78350f"
+    stroke-width="4"
+    width="96"
+    x="12"
+    y="54"
+  />
+  <path
+    d="M28 69H92"
+    stroke="#292524"
+    stroke-dasharray="6 6"
+    stroke-width="4"
+  />
+  <circle
+    cx="34"
+    cy="86"
+    fill="#44403c"
+    r="12"
+    stroke="#292524"
+    stroke-width="4"
+  />
+  <circle cx="34" cy="86" fill="#fde68a" r="5" />
+  <circle
+    cx="86"
+    cy="86"
+    fill="#44403c"
+    r="12"
+    stroke="#292524"
+    stroke-width="4"
+  />
+  <circle cx="86" cy="86" fill="#fde68a" r="5" />
+</svg>

@@ -1,0 +1,65 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Khủng long xanh</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="trGreen" r="70%">
+      <stop offset="0%" stop-color="#86efac" />
+      <stop offset="52%" stop-color="#22c55e" />
+      <stop offset="100%" stop-color="#15803d" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="58" cy="105" fill="#14532d" opacity="0.26" rx="40" ry="5.5" />
+  <polygon
+    fill="#fb923c"
+    points="40,26 48,18 52,28"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <polygon
+    fill="#fb923c"
+    points="33,42 39,34 44,45"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <polygon
+    fill="#fb923c"
+    points="28,60 32,51 39,61"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <path
+    d="M38 64C23 68 14 78 16 86C19 93 33 93 45 89L43 99H56V91H66V99H79L77 82C82 71 78 58 68 54V49H88C96 49 100 41 99 33C98 22 86 18 68 18C49 18 39 29 39 46Z"
+    fill="url(#trGreen)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M56 62C67 62 73 70 72 82C71 89 65 91 57 90C52 82 52 70 56 62Z"
+    fill="#fef08a"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <path
+    d="M72 64L83 68"
+    stroke="#14532d"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <polygon fill="#ffffff" points="75,49 79,54 83,49" />
+  <polygon fill="#ffffff" points="85,49 89,54 93,49" />
+  <circle
+    cx="67"
+    cy="32"
+    fill="#ffffff"
+    r="6"
+    stroke="#14532d"
+    stroke-width="2.8"
+  />
+  <circle cx="68.5" cy="32" fill="#1c1917" r="3.4" />
+  <circle cx="88" cy="30" fill="#14532d" r="2.2" />
+  <circle cx="58" cy="39" fill="#fb7185" fill-opacity="0.45" r="4" />
+</svg>

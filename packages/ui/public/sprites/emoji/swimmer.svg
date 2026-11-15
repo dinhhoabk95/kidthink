@@ -1,0 +1,61 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bạn tập bơi</title>
+  <defs>
+    <radialGradient cx="40%" cy="35%" id="swSkin" r="68%">
+      <stop offset="0%" stop-color="#ffedd5" />
+      <stop offset="65%" stop-color="#fdba74" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </radialGradient>
+    <linearGradient id="swWave" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#7dd3fc" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e3a5f" opacity="0.24" rx="44" ry="5.5" />
+  <path
+    d="M48 68C58 54 76 46 95 54C99 56 98 63 92 64L66 74Z"
+    fill="url(#swSkin)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="40"
+    cy="54"
+    fill="url(#swSkin)"
+    r="16"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M24 52C25 40 34 36 44 37C52 38 56 44 56 51Z"
+    fill="#facc15"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <rect
+    fill="#38bdf8"
+    height="8"
+    rx="4"
+    stroke="#1e3a5f"
+    stroke-width="3.6"
+    width="22"
+    x="31"
+    y="48"
+  />
+  <path
+    d="M14 76C24 70 34 70 44 76C54 82 66 82 76 76C86 70 96 70 106 76V94C96 98 24 98 14 94Z"
+    fill="url(#swWave)"
+    stroke="#1e3a5f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M24 86C34 82 46 82 56 86C66 90 78 90 88 86"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.7"
+    stroke-width="3"
+  />
+</svg>

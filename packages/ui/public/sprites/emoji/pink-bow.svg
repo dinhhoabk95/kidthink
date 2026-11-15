@@ -1,0 +1,55 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chiếc nơ hồng</title>
+  <defs>
+    <radialGradient cx="42%" cy="35%" id="pbSilk" r="70%">
+      <stop offset="0%" stop-color="#fbcfe8" />
+      <stop offset="55%" stop-color="#f472b6" />
+      <stop offset="100%" stop-color="#db2777" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#881337" opacity="0.24" rx="34" ry="5" />
+  <polygon
+    fill="#ec4899"
+    points="54,60 32,96 44,90 50,99 60,66"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <polygon
+    fill="#ec4899"
+    points="66,60 88,96 76,90 70,99 60,66"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M56 52L24 30C15 24 14 74 26 68L56 58Z"
+    fill="url(#pbSilk)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M64 52L96 30C105 24 106 74 94 68L64 58Z"
+    fill="url(#pbSilk)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M30 48H46M74 48H90"
+    stroke="#9d174d"
+    stroke-linecap="round"
+    stroke-width="3.2"
+  />
+  <rect
+    fill="url(#pbSilk)"
+    height="24"
+    rx="9"
+    stroke="#881337"
+    stroke-width="4"
+    width="20"
+    x="50"
+    y="42"
+  />
+</svg>

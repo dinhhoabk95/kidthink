@@ -1,0 +1,49 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mạng nhện</title>
+  <defs>
+    <radialGradient cx="50%" cy="50%" id="swGlow" r="55%">
+      <stop offset="0%" stop-color="#f8fafc" />
+      <stop offset="100%" stop-color="#cbd5e1" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#334155" opacity="0.22" rx="34" ry="4.5" />
+  <polygon
+    fill="url(#swGlow)"
+    fill-opacity="0.55"
+    points="60,16 91,29 104,60 91,91 60,104 29,91 16,60 29,29"
+  />
+  <path
+    d="M60 14V106M14 60H106M27 27L93 93M93 27L27 93"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M60 22Q72 30 87 33Q86 48 98 60Q86 72 87 87Q72 90 60 98Q48 90 33 87Q34 72 22 60Q34 48 33 33Q48 30 60 22Z"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M60 40Q67 45 74 46Q73 54 80 60Q73 66 74 74Q67 75 60 80Q53 75 46 74Q47 66 40 60Q47 54 46 46Q53 45 60 40Z"
+    stroke="#475569"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="84"
+    cy="40"
+    fill="#7dd3fc"
+    r="4.5"
+    stroke="#1e3a8a"
+    stroke-width="2.8"
+  />
+  <circle
+    cx="38"
+    cy="77"
+    fill="#7dd3fc"
+    r="3.8"
+    stroke="#1e3a8a"
+    stroke-width="2.6"
+  />
+</svg>

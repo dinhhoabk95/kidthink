@@ -1,0 +1,66 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chó sói xám</title>
+  <defs>
+    <radialGradient cx="42%" cy="32%" id="gwFur" r="70%">
+      <stop offset="0%" stop-color="#cbd5e1" />
+      <stop offset="55%" stop-color="#64748b" />
+      <stop offset="100%" stop-color="#334155" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e293b" opacity="0.25" rx="34" ry="5.5" />
+  <polygon
+    fill="url(#gwFur)"
+    points="26,50 22,16 48,34"
+    stroke="#1e293b"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <polygon fill="#fde68a" points="29,44 27,24 42,35" />
+  <polygon
+    fill="url(#gwFur)"
+    points="94,50 98,16 72,34"
+    stroke="#1e293b"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <polygon fill="#fde68a" points="91,44 93,24 78,35" />
+  <path
+    d="M24 62C24 40 39 30 60 30C81 30 96 40 96 62C96 78 80 96 60 98C40 96 24 78 24 62Z"
+    fill="url(#gwFur)"
+    stroke="#1e293b"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M34 66C42 58 51 64 60 54C69 64 78 58 86 66C84 84 72 96 60 98C48 96 36 84 34 66Z"
+    fill="#f8fafc"
+    stroke="#1e293b"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="46"
+    cy="56"
+    fill="#fde047"
+    r="5"
+    stroke="#1e293b"
+    stroke-width="2.6"
+  />
+  <circle cx="46" cy="56" fill="#1c1917" r="2.5" />
+  <circle
+    cx="74"
+    cy="56"
+    fill="#fde047"
+    r="5"
+    stroke="#1e293b"
+    stroke-width="2.6"
+  />
+  <circle cx="74" cy="56" fill="#1c1917" r="2.5" />
+  <ellipse cx="60" cy="78" fill="#1e293b" rx="7" ry="5" />
+  <path
+    d="M53 86C57 90 63 90 67 86"
+    stroke="#1e293b"
+    stroke-linecap="round"
+    stroke-width="3.2"
+  />
+</svg>

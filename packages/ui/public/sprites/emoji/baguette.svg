@@ -1,0 +1,36 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bánh mì dài</title>
+  <defs>
+    <linearGradient id="bgCrust" x1="15%" x2="85%" y1="15%" y2="85%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="50%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#78350f" opacity="0.24" rx="38" ry="5.5" />
+  <g transform="rotate(-40 60 58)">
+    <rect
+      fill="url(#bgCrust)"
+      height="32"
+      rx="16"
+      stroke="#78350f"
+      stroke-width="4"
+      width="96"
+      x="12"
+      y="42"
+    />
+    <path
+      d="M30 49L40 67M48 49L58 67M66 49L76 67M84 49L94 67"
+      stroke="#fef9c3"
+      stroke-linecap="round"
+      stroke-opacity="0.9"
+      stroke-width="5"
+    />
+    <path
+      d="M30 49L40 67M48 49L58 67M66 49L76 67M84 49L94 67"
+      stroke="#92400e"
+      stroke-linecap="round"
+      stroke-width="3.2"
+    />
+  </g>
+</svg>

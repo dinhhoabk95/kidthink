@@ -1,0 +1,50 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Củ gừng vàng</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="grBody" r="70%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="52%" stop-color="#eab308" />
+      <stop offset="100%" stop-color="#a16207" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#78350f" opacity="0.25" rx="38" ry="5.5" />
+  <path
+    d="M24 72C17 64 21 49 33 48C35 34 49 26 59 35C68 25 84 29 85 43C98 44 104 58 96 69C101 80 91 93 78 90C69 97 52 96 45 88C32 91 22 82 24 72Z"
+    fill="url(#grBody)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="53"
+    cy="31"
+    fill="#fda4af"
+    r="5"
+    stroke="#881337"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="81"
+    cy="36"
+    fill="#fda4af"
+    r="4.5"
+    stroke="#881337"
+    stroke-width="3.2"
+  />
+  <path
+    d="M36 59C43 56 50 57 56 61M59 73C67 70 75 71 82 75M45 45C50 43 56 44 60 47"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-opacity="0.55"
+    stroke-width="2.8"
+  />
+  <ellipse
+    cx="42"
+    cy="52"
+    fill="#ffffff"
+    fill-opacity="0.45"
+    rx="7"
+    ry="3.5"
+    transform="rotate(-20 42 52)"
+  />
+</svg>

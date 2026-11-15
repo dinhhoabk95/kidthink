@@ -1,0 +1,48 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bánh nướng nhân quả</title>
+  <defs>
+    <linearGradient id="bpCrust" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="60%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#78350f" opacity="0.26" rx="42" ry="5.5" />
+  <ellipse
+    cx="60"
+    cy="56"
+    fill="#be123c"
+    rx="38"
+    ry="18"
+    stroke="#881337"
+    stroke-width="3.6"
+  />
+  <path
+    d="M36 44L78 68M52 40L88 60M30 56L66 72M84 44L42 68M68 40L32 60"
+    stroke="#fbbf24"
+    stroke-linecap="round"
+    stroke-opacity="0.95"
+    stroke-width="5.5"
+  />
+  <path
+    d="M16 62C22 54 30 62 36 56C42 50 50 58 60 54C70 58 78 50 84 56C90 62 98 54 104 62C102 70 18 70 16 62Z"
+    fill="url(#bpCrust)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <polygon
+    fill="#93c5fd"
+    points="18,66 102,66 90,96 30,96"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M32 78H88"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.65"
+    stroke-width="3.5"
+  />
+</svg>

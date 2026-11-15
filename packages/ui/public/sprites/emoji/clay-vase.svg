@@ -1,0 +1,52 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bình gốm hoa</title>
+  <defs>
+    <radialGradient cx="38%" cy="35%" id="cvTerra" r="68%">
+      <stop offset="0%" stop-color="#fed7aa" />
+      <stop offset="50%" stop-color="#ea580c" />
+      <stop offset="100%" stop-color="#9a3412" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#5c3d2e" opacity="0.26" rx="28" ry="5" />
+  <path
+    d="M44 34C24 34 22 58 36 64M76 34C96 34 98 58 84 64"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <path
+    d="M46 24H74L69 40C86 48 90 72 76 92H44C30 72 34 48 51 40Z"
+    fill="url(#cvTerra)"
+    stroke="#5c3d2e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#f59e0b"
+    height="8"
+    rx="4"
+    stroke="#5c3d2e"
+    stroke-width="3.6"
+    width="34"
+    x="43"
+    y="18"
+  />
+  <rect
+    fill="#b45309"
+    height="8"
+    rx="3"
+    stroke="#5c3d2e"
+    stroke-width="3.6"
+    width="38"
+    x="41"
+    y="92"
+  />
+  <path
+    d="M36 64L46 56L56 64L64 56L74 64L84 56"
+    stroke="#fef3c7"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-opacity="0.9"
+    stroke-width="3.4"
+  />
+</svg>

@@ -1,0 +1,53 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chim đại bàng</title>
+  <defs>
+    <radialGradient cx="42%" cy="35%" id="egWing" r="70%">
+      <stop offset="0%" stop-color="#92400e" />
+      <stop offset="65%" stop-color="#78350f" />
+      <stop offset="100%" stop-color="#451a03" />
+    </radialGradient>
+    <radialGradient cx="45%" cy="30%" id="egHead" r="70%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#e7e5e4" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#451a03" opacity="0.26" rx="38" ry="5" />
+  <path
+    d="M18 52C28 46 42 52 46 64L38 94C26 86 16 70 18 52ZM102 52C92 46 78 52 74 64L82 94C94 86 104 70 102 52Z"
+    fill="url(#egWing)"
+    stroke="#451a03"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="60"
+    cy="76"
+    fill="url(#egWing)"
+    rx="25"
+    ry="24"
+    stroke="#451a03"
+    stroke-width="4"
+  />
+  <path
+    d="M36 52C36 31 46 20 60 20C74 20 84 31 84 52L76 60L68 55L60 62L52 55L44 60Z"
+    fill="url(#egHead)"
+    stroke="#57534e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle cx="48" cy="40" fill="#1c1917" r="3.6" />
+  <circle cx="72" cy="40" fill="#1c1917" r="3.6" />
+  <path
+    d="M51 43C56 39 64 39 69 43C71 51 64 59 60 61C56 59 49 51 51 43Z"
+    fill="#facc15"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M48 98H55M65 98H72"
+    stroke="#92400e"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+</svg>

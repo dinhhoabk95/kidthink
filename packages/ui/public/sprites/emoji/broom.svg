@@ -1,0 +1,47 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cây chổi quét</title>
+  <defs>
+    <linearGradient id="brStraw" x1="20%" x2="80%" y1="10%" y2="95%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="55%" stop-color="#eab308" />
+      <stop offset="100%" stop-color="#b45309" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="48" cy="104" fill="#5c3d2e" opacity="0.25" rx="32" ry="5.5" />
+  <g transform="rotate(42 60 60)">
+    <rect
+      fill="#d97706"
+      height="60"
+      rx="5.5"
+      stroke="#78350f"
+      stroke-width="3.8"
+      width="11"
+      x="54.5"
+      y="6"
+    />
+    <path
+      d="M47 62H73L81 98C68 103 52 103 39 98Z"
+      fill="url(#brStraw)"
+      stroke="#78350f"
+      stroke-linejoin="round"
+      stroke-width="4"
+    />
+    <rect
+      fill="#ef4444"
+      height="10"
+      rx="5"
+      stroke="#7f1d1d"
+      stroke-width="3.8"
+      width="28"
+      x="46"
+      y="58"
+    />
+    <path
+      d="M53 74L49 94M67 74L71 94"
+      stroke="#78350f"
+      stroke-linecap="round"
+      stroke-opacity="0.6"
+      stroke-width="2.6"
+    />
+  </g>
+</svg>

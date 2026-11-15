@@ -1,0 +1,69 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đoàn tàu điện</title>
+  <defs>
+    <linearGradient id="ctBody" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="65%" stop-color="#e2e8f0" />
+      <stop offset="100%" stop-color="#cbd5e1" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#1e293b" opacity="0.25" rx="44" ry="5.5" />
+  <path
+    d="M22 98H98M34 90L26 102M86 90L94 102"
+    stroke="#44403c"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <path
+    d="M48 24L60 15L72 24"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <rect
+    fill="url(#ctBody)"
+    height="66"
+    rx="16"
+    stroke="#1e3a5f"
+    stroke-width="4"
+    width="60"
+    x="30"
+    y="24"
+  />
+  <rect
+    fill="#38bdf8"
+    height="22"
+    rx="7"
+    stroke="#1e3a5f"
+    stroke-width="3.6"
+    width="44"
+    x="38"
+    y="34"
+  />
+  <rect
+    fill="#22c55e"
+    height="10"
+    stroke="#14532d"
+    stroke-width="3.4"
+    width="60"
+    x="30"
+    y="63"
+  />
+  <circle
+    cx="43"
+    cy="81"
+    fill="#fde047"
+    r="4.5"
+    stroke="#78350f"
+    stroke-width="2.8"
+  />
+  <circle
+    cx="77"
+    cy="81"
+    fill="#fde047"
+    r="4.5"
+    stroke="#78350f"
+    stroke-width="2.8"
+  />
+</svg>

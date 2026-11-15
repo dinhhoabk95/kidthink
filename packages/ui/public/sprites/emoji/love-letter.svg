@@ -1,0 +1,57 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bức thư trái tim</title>
+  <defs>
+    <linearGradient id="llPaper" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fffbeb" />
+      <stop offset="100%" stop-color="#fde68a" />
+    </linearGradient>
+    <radialGradient cx="36%" cy="30%" id="llHeart" r="70%">
+      <stop offset="0%" stop-color="#fda4af" />
+      <stop offset="55%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#be123c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#78350f" opacity="0.25" rx="42" ry="5.5" />
+  <rect
+    fill="#f59e0b"
+    height="62"
+    rx="9"
+    stroke="#78350f"
+    stroke-width="4"
+    width="88"
+    x="16"
+    y="34"
+  />
+  <rect
+    fill="url(#llPaper)"
+    height="62"
+    rx="9"
+    stroke="#78350f"
+    stroke-width="4"
+    width="88"
+    x="16"
+    y="30"
+  />
+  <path
+    d="M20 89L48 63M100 89L72 63"
+    stroke="#b45309"
+    stroke-linecap="round"
+    stroke-width="3.2"
+  />
+  <path
+    d="M18 33L60 67L102 33"
+    fill="#fef3c7"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M60 79C58 79 41 67 41 55C41 48 47 44 53 44C56 44 59 46 60 49C61 46 64 44 67 44C73 44 79 48 79 55C79 67 62 79 60 79Z"
+    fill="url(#llHeart)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle cx="51" cy="52" fill="#ffffff" fill-opacity="0.7" r="2.6" />
+</svg>

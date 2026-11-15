@@ -1,0 +1,60 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hành tinh có vành đai</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="rpOrb" r="70%">
+      <stop offset="0%" stop-color="#fed7aa" />
+      <stop offset="52%" stop-color="#fb923c" />
+      <stop offset="100%" stop-color="#c2410c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#7c2d12" opacity="0.23" rx="38" ry="5.5" />
+  <ellipse
+    cx="60"
+    cy="58"
+    fill="none"
+    rx="50"
+    ry="15"
+    stroke="#78350f"
+    stroke-width="11"
+    transform="rotate(-24 60 58)"
+  />
+  <ellipse
+    cx="60"
+    cy="58"
+    fill="none"
+    rx="50"
+    ry="15"
+    stroke="#fde047"
+    stroke-opacity="0.95"
+    stroke-width="5"
+    transform="rotate(-24 60 58)"
+  />
+  <circle
+    cx="60"
+    cy="58"
+    fill="url(#rpOrb)"
+    r="27"
+    stroke="#7c2d12"
+    stroke-width="4"
+  />
+  <path
+    d="M36 53C50 47 70 47 84 53"
+    stroke="#9a3412"
+    stroke-linecap="round"
+    stroke-opacity="0.45"
+    stroke-width="3.5"
+  />
+  <path
+    d="M14 78C26 85 56 79 82 65C97 57 107 46 105 38"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="10"
+  />
+  <path
+    d="M14 78C26 85 56 79 82 65C97 57 107 46 105 38"
+    stroke="#fde047"
+    stroke-linecap="round"
+    stroke-opacity="0.98"
+    stroke-width="4.5"
+  />
+</svg>

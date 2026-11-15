@@ -1,0 +1,46 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Kính lúp soi</title>
+  <defs>
+    <radialGradient cx="36%" cy="32%" id="rmLens" r="70%">
+      <stop offset="0%" stop-color="#f0f9ff" />
+      <stop offset="65%" stop-color="#bae6fd" />
+      <stop offset="100%" stop-color="#38bdf8" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="58" cy="104" fill="#134e4a" opacity="0.22" rx="34" ry="5" />
+  <rect
+    fill="#d97706"
+    height="42"
+    rx="6.5"
+    stroke="#5c3d2e"
+    stroke-width="4"
+    transform="rotate(45 34 86)"
+    width="14"
+    x="27"
+    y="65"
+  />
+  <circle
+    cx="69"
+    cy="50"
+    fill="#14b8a6"
+    r="32"
+    stroke="#134e4a"
+    stroke-width="4"
+  />
+  <circle
+    cx="69"
+    cy="50"
+    fill="url(#rmLens)"
+    r="23"
+    stroke="#134e4a"
+    stroke-width="3.4"
+  />
+  <path
+    d="M56 41C59 34 66 31 73 33"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.85"
+    stroke-width="4.5"
+  />
+  <circle cx="54" cy="50" fill="#ffffff" r="2.6" />
+</svg>

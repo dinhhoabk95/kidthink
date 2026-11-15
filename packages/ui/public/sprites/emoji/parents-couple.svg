@@ -1,0 +1,72 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bố và mẹ</title>
+  <defs>
+    <linearGradient id="pcDad" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#60a5fa" />
+      <stop offset="100%" stop-color="#2563eb" />
+    </linearGradient>
+    <linearGradient id="pcMom" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb7185" />
+      <stop offset="100%" stop-color="#e11d48" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e293b" opacity="0.24" rx="44" ry="5.5" />
+  <path
+    d="M18 98C20 80 28 73 40 73C51 73 58 80 60 98Z"
+    fill="url(#pcDad)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="39"
+    cy="54"
+    fill="#fed7aa"
+    r="15"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <path
+    d="M24 50C25 36 53 36 54 50C47 43 31 43 24 50Z"
+    fill="#44403c"
+    stroke="#1c1917"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M68 53C64 60 65 72 71 75H91C97 72 98 60 94 53Z"
+    fill="#78350f"
+    stroke="#44403c"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M60 98C62 80 70 73 81 73C92 73 100 80 102 98Z"
+    fill="url(#pcMom)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="81"
+    cy="55"
+    fill="#fed7aa"
+    r="14.5"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <path
+    d="M67 51C69 39 93 39 95 51C88 45 74 45 67 51Z"
+    fill="#78350f"
+    stroke="#44403c"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M60 32C58 32 51 26 51 21C51 18 54 16 57 16C58.5 16 60 17 60 19C60 17 61.5 16 63 16C66 16 69 18 69 21C69 26 62 32 60 32Z"
+    fill="#fb7185"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3"
+  />
+</svg>

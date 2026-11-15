@@ -1,0 +1,43 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Dấu hỏi trắng</title>
+  <defs>
+    <linearGradient id="lqCream" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="65%" stop-color="#f5f5f4" />
+      <stop offset="100%" stop-color="#e2e8f0" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="58" cy="106" fill="#44403c" opacity="0.24" rx="26" ry="5" />
+  <path
+    d="M34 44C34 27 46 20 60 20C75 20 86 29 86 43C86 55 75 60 67 66C64 68 64 71 64 76H49C49 66 51 60 59 55C65 51 69 47 69 42C69 36 65 33 59 33C52 33 48 37 48 44Z"
+    fill="#cbd5e1"
+    stroke="#44403c"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M34 40C34 23 46 16 60 16C75 16 86 25 86 39C86 51 75 56 67 62C64 64 64 67 64 72H49C49 62 51 56 59 51C65 47 69 43 69 38C69 32 65 29 59 29C52 29 48 33 48 40Z"
+    fill="url(#lqCream)"
+    stroke="#44403c"
+    stroke-linejoin="round"
+    stroke-width="4.2"
+  />
+  <rect
+    fill="url(#lqCream)"
+    height="18"
+    rx="9"
+    stroke="#44403c"
+    stroke-width="4"
+    width="18"
+    x="48"
+    y="81"
+  />
+  <polygon
+    fill="#fde047"
+    points="92,20 94,26 100,28 94,30 92,36 90,30 84,28 90,26"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="2.6"
+  />
+  <circle cx="57" cy="87" fill="#ffffff" r="3" />
+</svg>

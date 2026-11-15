@@ -1,0 +1,46 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Trăng non</title>
+  <defs>
+    <radialGradient cx="36%" cy="32%" id="dmSphere" r="70%">
+      <stop offset="0%" stop-color="#64748b" />
+      <stop offset="55%" stop-color="#334155" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#1e293b" opacity="0.26" rx="34" ry="5" />
+  <circle
+    cx="60"
+    cy="59"
+    fill="url(#dmSphere)"
+    r="41"
+    stroke="#1e293b"
+    stroke-width="4.2"
+  />
+  <circle
+    cx="44"
+    cy="46"
+    fill="#1e293b"
+    fill-opacity="0.55"
+    r="8"
+    stroke="#1e293b"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="72"
+    cy="68"
+    fill="#1e293b"
+    fill-opacity="0.55"
+    r="10"
+    stroke="#1e293b"
+    stroke-width="3.2"
+  />
+  <circle cx="50" cy="76" fill="#1e293b" fill-opacity="0.55" r="5.5" />
+  <circle cx="74" cy="40" fill="#1e293b" fill-opacity="0.55" r="5" />
+  <path
+    d="M84 30C96 44 96 74 82 88"
+    stroke="#fde68a"
+    stroke-linecap="round"
+    stroke-opacity="0.65"
+    stroke-width="3.5"
+  />
+</svg>

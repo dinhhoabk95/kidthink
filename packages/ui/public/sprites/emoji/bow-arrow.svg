@@ -1,0 +1,45 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cung tên đồ chơi</title>
+  <defs>
+    <linearGradient id="baWood" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fcd34d" />
+      <stop offset="55%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#92400e" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#5c3d2e" opacity="0.24" rx="36" ry="5" />
+  <path
+    d="M32 22L86 92"
+    stroke="#44403c"
+    stroke-linecap="round"
+    stroke-width="3.2"
+  />
+  <path
+    d="M30 20C68 16 96 44 88 94C80 54 58 34 30 20Z"
+    fill="url(#baWood)"
+    stroke="#5c3d2e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M26 94L92 28"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4.5"
+  />
+  <polygon
+    fill="#38bdf8"
+    points="22,90 34,86 38,98 26,102"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <circle
+    cx="95"
+    cy="25"
+    fill="#f97316"
+    r="7"
+    stroke="#7c2d12"
+    stroke-width="3.6"
+  />
+</svg>

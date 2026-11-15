@@ -1,0 +1,58 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Huy chương bạc</title>
+  <defs>
+    <radialGradient cx="36%" cy="30%" id="smDisc" r="70%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="55%" stop-color="#cbd5e1" />
+      <stop offset="100%" stop-color="#64748b" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#334155" opacity="0.24" rx="28" ry="4.5" />
+  <polygon
+    fill="#38bdf8"
+    points="32,14 50,14 60,48 46,48"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <polygon
+    fill="#6366f1"
+    points="88,14 70,14 60,48 74,48"
+    stroke="#312e81"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <rect
+    fill="#e2e8f0"
+    height="8"
+    rx="3"
+    stroke="#334155"
+    stroke-width="3.6"
+    width="26"
+    x="47"
+    y="44"
+  />
+  <circle
+    cx="60"
+    cy="74"
+    fill="url(#smDisc)"
+    r="28"
+    stroke="#334155"
+    stroke-width="4"
+  />
+  <circle
+    cx="60"
+    cy="74"
+    r="21"
+    stroke="#475569"
+    stroke-opacity="0.45"
+    stroke-width="2.4"
+  />
+  <path
+    d="M50 66C50 60 55 58 61 58C67 58 71 61 71 66C71 71 66 75 58 82H71V88H49V83L61 72C63 70 64 68 64 66C64 64 62 63 60 63C57 63 56 65 55 67Z"
+    fill="#ffffff"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+</svg>

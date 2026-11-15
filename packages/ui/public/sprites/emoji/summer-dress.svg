@@ -1,0 +1,46 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chiếc váy xinh</title>
+  <defs>
+    <linearGradient id="sdPink" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fbcfe8" />
+      <stop offset="55%" stop-color="#f472b6" />
+      <stop offset="100%" stop-color="#db2777" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#881337" opacity="0.24" rx="40" ry="5" />
+  <path
+    d="M43 18H50L53 28H67L70 18H77L75 50H45Z"
+    fill="url(#sdPink)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M44 50H76L98 95C86 101 74 97 60 100C46 97 34 101 22 95Z"
+    fill="url(#sdPink)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#fde047"
+    height="8"
+    rx="4"
+    stroke="#78350f"
+    stroke-width="3.4"
+    width="34"
+    x="43"
+    y="46"
+  />
+  <circle
+    cx="60"
+    cy="50"
+    fill="#fbbf24"
+    r="4.5"
+    stroke="#78350f"
+    stroke-width="2.8"
+  />
+  <circle cx="44" cy="76" fill="#fffbeb" r="3.5" />
+  <circle cx="60" cy="82" fill="#fffbeb" r="3.5" />
+  <circle cx="76" cy="76" fill="#fffbeb" r="3.5" />
+</svg>

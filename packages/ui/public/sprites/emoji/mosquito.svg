@@ -1,0 +1,69 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Con muỗi nhỏ</title>
+  <defs>
+    <linearGradient id="mqBody" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="55%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#92400e" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#44403c" opacity="0.22" rx="34" ry="5" />
+  <path
+    d="M47 68L28 84M57 72L48 94M68 72L82 94M76 66L95 80"
+    stroke="#57534e"
+    stroke-linecap="round"
+    stroke-width="3.5"
+  />
+  <ellipse
+    cx="52"
+    cy="37"
+    fill="#e0f2fe"
+    rx="22"
+    ry="10"
+    stroke="#0369a1"
+    stroke-width="3.6"
+    transform="rotate(-28 52 37)"
+  />
+  <ellipse
+    cx="74"
+    cy="39"
+    fill="#bae6fd"
+    rx="20"
+    ry="9"
+    stroke="#0369a1"
+    stroke-width="3.6"
+    transform="rotate(24 74 39)"
+  />
+  <path
+    d="M35 58L16 68"
+    stroke="#44403c"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <ellipse
+    cx="70"
+    cy="61"
+    fill="url(#mqBody)"
+    rx="23"
+    ry="11"
+    stroke="#78350f"
+    stroke-width="3.8"
+    transform="rotate(14 70 61)"
+  />
+  <path
+    d="M66 52L63 69M77 55L74 71"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="42"
+    cy="54"
+    fill="#fbbf24"
+    r="11"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <circle cx="39" cy="53" fill="#ffffff" r="4.5" />
+  <circle cx="38" cy="53" fill="#1c1917" r="2.6" />
+</svg>

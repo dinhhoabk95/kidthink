@@ -1,0 +1,51 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chiếc xô xách nước</title>
+  <defs>
+    <linearGradient id="wbBody" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#7dd3fc" />
+      <stop offset="55%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#0369a1" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e3a8a" opacity="0.25" rx="30" ry="5" />
+  <path
+    d="M28 46C28 16 92 16 92 46"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <rect
+    fill="#fbbf24"
+    height="8"
+    rx="4"
+    stroke="#78350f"
+    stroke-width="3.4"
+    width="22"
+    x="49"
+    y="16"
+  />
+  <path
+    d="M28 44H92L82 96C81 100 39 100 38 96Z"
+    fill="url(#wbBody)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="60"
+    cy="44"
+    fill="#38bdf8"
+    rx="34"
+    ry="10"
+    stroke="#1e3a8a"
+    stroke-width="3.8"
+  />
+  <ellipse cx="60" cy="45" fill="#e0f2fe" rx="26" ry="6" />
+  <path
+    d="M39 58L43 88"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.55"
+    stroke-width="3.8"
+  />
+</svg>

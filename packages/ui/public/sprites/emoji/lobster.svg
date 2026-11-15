@@ -1,0 +1,55 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Tôm hùm đỏ</title>
+  <defs>
+    <radialGradient cx="42%" cy="35%" id="lbRed" r="70%">
+      <stop offset="0%" stop-color="#fda4af" />
+      <stop offset="50%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#b91c1c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#7f1d1d" opacity="0.24" rx="30" ry="4.5" />
+  <path
+    d="M52 36C44 18 28 14 18 20M68 36C76 18 92 14 102 20M44 58L28 64M44 68L30 76M76 58L92 64M76 68L90 76"
+    stroke="#7f1d1d"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M44 50C24 46 18 28 28 18L34 30L41 22C47 30 47 42 44 50Z"
+    fill="url(#lbRed)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M76 50C96 46 102 28 92 18L86 30L79 22C73 30 73 42 76 50Z"
+    fill="url(#lbRed)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M48 86L38 100H54L60 94L66 100H82L72 86Z"
+    fill="url(#lbRed)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <ellipse
+    cx="60"
+    cy="60"
+    fill="url(#lbRed)"
+    rx="16"
+    ry="24"
+    stroke="#7f1d1d"
+    stroke-width="4"
+  />
+  <path
+    d="M46 66H74M48 76H72"
+    stroke="#7f1d1d"
+    stroke-linecap="round"
+    stroke-width="3.2"
+  />
+  <circle cx="54" cy="40" fill="#1c1917" r="2.6" />
+  <circle cx="66" cy="40" fill="#1c1917" r="2.6" />
+</svg>

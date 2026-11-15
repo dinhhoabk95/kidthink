@@ -1,0 +1,73 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Dấu chéo gỗ</title>
+  <defs>
+    <linearGradient id="cmWoodA" x1="15%" x2="85%" y1="15%" y2="85%">
+      <stop offset="0%" stop-color="#fef3c7" />
+      <stop offset="50%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+    <linearGradient id="cmWoodB" x1="85%" x2="15%" y1="15%" y2="85%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="55%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#78350f" opacity="0.24" rx="38" ry="6" />
+  <g transform="translate(0 4)">
+    <rect
+      fill="#b45309"
+      height="24"
+      rx="12"
+      transform="rotate(45 60 58)"
+      width="92"
+      x="14"
+      y="46"
+    />
+    <rect
+      fill="#b45309"
+      height="24"
+      rx="12"
+      transform="rotate(-45 60 58)"
+      width="92"
+      x="14"
+      y="46"
+    />
+  </g>
+  <rect
+    fill="url(#cmWoodB)"
+    height="24"
+    rx="12"
+    stroke="#78350f"
+    stroke-width="4"
+    transform="rotate(-45 60 56)"
+    width="92"
+    x="14"
+    y="44"
+  />
+  <rect
+    fill="url(#cmWoodA)"
+    height="24"
+    rx="12"
+    stroke="#78350f"
+    stroke-width="4"
+    transform="rotate(45 60 56)"
+    width="92"
+    x="14"
+    y="44"
+  />
+  <path
+    d="M33 30L50 47M70 67L85 82"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.6"
+    stroke-width="3"
+  />
+  <circle
+    cx="60"
+    cy="56"
+    fill="#fde68a"
+    r="5.5"
+    stroke="#78350f"
+    stroke-width="3.6"
+  />
+</svg>

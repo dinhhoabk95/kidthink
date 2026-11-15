@@ -1,0 +1,49 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Quả bóng bầu dục</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="obLeather" r="70%">
+      <stop offset="0%" stop-color="#ea580c" />
+      <stop offset="55%" stop-color="#b45309" />
+      <stop offset="100%" stop-color="#78350f" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#5c3d2e" opacity="0.26" rx="36" ry="5.5" />
+  <g transform="rotate(-35 60 58)">
+    <path
+      d="M14 58C26 28 94 28 106 58C94 88 26 88 14 58Z"
+      fill="url(#obLeather)"
+      stroke="#5c3d2e"
+      stroke-linejoin="round"
+      stroke-width="4.2"
+    />
+    <path
+      d="M29 43C33 53 33 63 29 73M91 43C87 53 87 63 91 73"
+      stroke="#fffbeb"
+      stroke-linecap="round"
+      stroke-opacity="0.92"
+      stroke-width="5"
+    />
+    <path
+      d="M14 58C26 28 94 28 106 58C94 88 26 88 14 58Z"
+      fill="none"
+      stroke="#5c3d2e"
+      stroke-linejoin="round"
+      stroke-width="4.2"
+    />
+    <path
+      d="M44 58H76M50 51V65M57 51V65M63 51V65M70 51V65"
+      stroke="#fffbeb"
+      stroke-linecap="round"
+      stroke-opacity="0.95"
+      stroke-width="3.2"
+    />
+    <ellipse
+      cx="52"
+      cy="42"
+      fill="#ffffff"
+      fill-opacity="0.38"
+      rx="14"
+      ry="4"
+    />
+  </g>
+</svg>

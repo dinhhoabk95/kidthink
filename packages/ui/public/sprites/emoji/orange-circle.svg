@@ -1,0 +1,43 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hình tròn cam</title>
+  <defs>
+    <radialGradient cx="36%" cy="32%" id="orgDisc" r="68%">
+      <stop offset="0%" stop-color="#fdba74" />
+      <stop offset="48%" stop-color="#f97316" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="109" fill="#7c2d12" opacity="0.22" rx="34" ry="4.5" />
+  <circle
+    cx="60"
+    cy="64"
+    fill="#c2410c"
+    r="42"
+    stroke="#7c2d12"
+    stroke-width="4"
+  />
+  <circle
+    cx="60"
+    cy="56"
+    fill="url(#orgDisc)"
+    r="42"
+    stroke="#7c2d12"
+    stroke-width="4"
+  />
+  <circle
+    cx="60"
+    cy="56"
+    r="33"
+    stroke="#ffedd5"
+    stroke-opacity="0.6"
+    stroke-width="2.5"
+  />
+  <path
+    d="M34 40C40 30 51 24 64 24"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.65"
+    stroke-width="5"
+  />
+  <circle cx="31" cy="50" fill="#ffffff" fill-opacity="0.55" r="2.8" />
+</svg>

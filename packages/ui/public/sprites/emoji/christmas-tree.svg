@@ -1,0 +1,81 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cây thông Giáng sinh</title>
+  <defs>
+    <linearGradient id="xtGreen" x1="20%" x2="80%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#4ade80" />
+      <stop offset="55%" stop-color="#16a34a" />
+      <stop offset="100%" stop-color="#15803d" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#14532d" opacity="0.25" rx="38" ry="5.5" />
+  <rect
+    fill="#92400e"
+    height="17"
+    rx="3"
+    stroke="#6b3410"
+    stroke-width="3.8"
+    width="16"
+    x="52"
+    y="86"
+  />
+  <polygon
+    fill="url(#xtGreen)"
+    points="60,46 22,88 98,88"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <polygon
+    fill="url(#xtGreen)"
+    points="60,31 29,67 91,67"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <polygon
+    fill="url(#xtGreen)"
+    points="60,18 37,48 83,48"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <polygon
+    fill="#fde047"
+    points="60,10 63,17 71,18 65,23 67,30 60,26 53,30 55,23 49,18 57,17"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="48"
+    cy="59"
+    fill="#ef4444"
+    r="4.5"
+    stroke="#7f1d1d"
+    stroke-width="2.6"
+  />
+  <circle
+    cx="72"
+    cy="56"
+    fill="#fde047"
+    r="4.5"
+    stroke="#78350f"
+    stroke-width="2.6"
+  />
+  <circle
+    cx="42"
+    cy="79"
+    fill="#38bdf8"
+    r="4.5"
+    stroke="#1e3a8a"
+    stroke-width="2.6"
+  />
+  <circle
+    cx="74"
+    cy="78"
+    fill="#fb7185"
+    r="4.5"
+    stroke="#881337"
+    stroke-width="2.6"
+  />
+</svg>

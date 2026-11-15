@@ -1,0 +1,48 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cờ về đích</title>
+  <defs>
+    <linearGradient id="cfPole" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="55%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#92400e" />
+    </linearGradient>
+    <linearGradient id="cfCloth" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#e7e5e4" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="52" cy="105" fill="#44403c" opacity="0.26" rx="34" ry="5.5" />
+  <path
+    d="M35 24C52 17 69 31 86 24C94 21 100 22 103 25L95 72C78 79 61 65 44 72L27 72Z"
+    fill="url(#cfCloth)"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path d="M35 24C44 20 52 22 60 25L57 40C49 37 41 35 32 39Z" fill="#334155" />
+  <path d="M77 26C86 23 95 21 102 25L99 41C92 38 83 39 74 42Z" fill="#334155" />
+  <path d="M57 40C65 43 70 43 74 42L71 57C65 58 60 58 54 55Z" fill="#334155" />
+  <path d="M30 55C39 51 47 52 54 55L51 70C43 68 36 69 27 72Z" fill="#334155" />
+  <path d="M71 57C80 54 88 53 97 56L94 71C86 69 78 70 68 72Z" fill="#334155" />
+  <path
+    d="M22 100L37 18"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="7.5"
+  />
+  <path
+    d="M22 100L37 18"
+    stroke="url(#cfPole)"
+    stroke-linecap="round"
+    stroke-opacity="0.9"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="38"
+    cy="16"
+    fill="#fbbf24"
+    r="6.5"
+    stroke="#78350f"
+    stroke-width="3.6"
+  />
+</svg>

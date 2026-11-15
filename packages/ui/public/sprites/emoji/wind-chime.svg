@@ -1,0 +1,52 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chuông gió thuỷ tinh</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="wcGlass" r="70%">
+      <stop offset="0%" stop-color="#f0f9ff" />
+      <stop offset="60%" stop-color="#7dd3fc" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="108" fill="#1e3a8a" opacity="0.22" rx="24" ry="4" />
+  <path
+    d="M60 12V24M60 56V74"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M32 48C32 24 88 24 88 48C88 55 84 58 78 58H42C36 58 32 55 32 48Z"
+    fill="url(#wcGlass)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle cx="52" cy="44" fill="#fb7185" r="5" />
+  <circle cx="52" cy="44" fill="#fde047" r="2" />
+  <circle
+    cx="60"
+    cy="58"
+    fill="#d97706"
+    r="4.5"
+    stroke="#78350f"
+    stroke-width="2.6"
+  />
+  <rect
+    fill="#fef08a"
+    height="30"
+    rx="4"
+    stroke="#881337"
+    stroke-width="3.6"
+    transform="rotate(-7 60 88)"
+    width="20"
+    x="50"
+    y="73"
+  />
+  <path
+    d="M41 36C44 31 50 29 56 30"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.8"
+    stroke-width="3.5"
+  />
+</svg>

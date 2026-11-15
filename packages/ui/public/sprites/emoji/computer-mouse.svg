@@ -1,0 +1,50 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chuột máy tính</title>
+  <defs>
+    <radialGradient cx="38%" cy="28%" id="cmBody" r="70%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="58%" stop-color="#e2e8f0" />
+      <stop offset="100%" stop-color="#94a3b8" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#334155" opacity="0.25" rx="28" ry="5.5" />
+  <path
+    d="M60 24C60 15 72 13 76 19"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="url(#cmBody)"
+    height="74"
+    rx="25"
+    stroke="#334155"
+    stroke-width="4"
+    width="50"
+    x="35"
+    y="24"
+  />
+  <path
+    d="M36 52H84M60 25V52"
+    stroke="#475569"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <rect
+    fill="#f97316"
+    height="13"
+    rx="4"
+    stroke="#7c2d12"
+    stroke-width="3.6"
+    width="8"
+    x="56"
+    y="33"
+  />
+  <path
+    d="M46 66C45 75 48 84 53 89"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.75"
+    stroke-width="3.2"
+  />
+</svg>

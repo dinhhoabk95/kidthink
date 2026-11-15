@@ -1,0 +1,43 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Khuôn mặt buồn khóc</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="stFace" r="70%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="58%" stop-color="#fde047" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.24" rx="35" ry="5.5" />
+  <circle
+    cx="60"
+    cy="57"
+    fill="url(#stFace)"
+    r="39"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M35 42L50 37M85 42L70 37"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <circle cx="45" cy="52" fill="#1c1917" r="5" />
+  <circle cx="43.5" cy="50" fill="#ffffff" r="1.8" />
+  <circle cx="75" cy="52" fill="#1c1917" r="5" />
+  <circle cx="73.5" cy="50" fill="#ffffff" r="1.8" />
+  <path
+    d="M46 77C52 69 68 69 74 77"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <path
+    d="M39 60C39 60 31 71 31 77C31 82 35 85 39 85C43 85 47 82 47 77C47 71 39 60 39 60Z"
+    fill="#38bdf8"
+    stroke="#0369a1"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <circle cx="37" cy="76" fill="#ffffff" fill-opacity="0.7" r="2" />
+</svg>

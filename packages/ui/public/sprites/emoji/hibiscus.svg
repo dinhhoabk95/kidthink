@@ -1,0 +1,90 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hoa dâm bụt</title>
+  <defs>
+    <radialGradient cx="50%" cy="50%" id="hbPetal" r="65%">
+      <stop offset="0%" stop-color="#be123c" />
+      <stop offset="38%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#fda4af" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#881337" opacity="0.24" rx="34" ry="5" />
+  <path
+    d="M26 84C12 80 12 62 28 60C34 66 34 78 26 84ZM94 84C108 80 108 62 92 60C86 66 86 78 94 84Z"
+    fill="#22c55e"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <ellipse
+    cx="60"
+    cy="34"
+    fill="url(#hbPetal)"
+    rx="17"
+    ry="21"
+    stroke="#881337"
+    stroke-width="3.8"
+  />
+  <ellipse
+    cx="85"
+    cy="52"
+    fill="url(#hbPetal)"
+    rx="17"
+    ry="21"
+    stroke="#881337"
+    stroke-width="3.8"
+    transform="rotate(72 85 52)"
+  />
+  <ellipse
+    cx="75"
+    cy="81"
+    fill="url(#hbPetal)"
+    rx="17"
+    ry="21"
+    stroke="#881337"
+    stroke-width="3.8"
+    transform="rotate(144 75 81)"
+  />
+  <ellipse
+    cx="45"
+    cy="81"
+    fill="url(#hbPetal)"
+    rx="17"
+    ry="21"
+    stroke="#881337"
+    stroke-width="3.8"
+    transform="rotate(-144 45 81)"
+  />
+  <ellipse
+    cx="35"
+    cy="52"
+    fill="url(#hbPetal)"
+    rx="17"
+    ry="21"
+    stroke="#881337"
+    stroke-width="3.8"
+    transform="rotate(-72 35 52)"
+  />
+  <circle cx="60" cy="60" fill="#9f1239" r="10" />
+  <path
+    d="M60 60Q75 42 88 26"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="89"
+    cy="25"
+    fill="#facc15"
+    r="5"
+    stroke="#78350f"
+    stroke-width="2.8"
+  />
+  <circle
+    cx="81"
+    cy="31"
+    fill="#fde047"
+    r="3.5"
+    stroke="#78350f"
+    stroke-width="2.4"
+  />
+</svg>

@@ -1,0 +1,96 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chim công xoè đuôi</title>
+  <defs>
+    <radialGradient cx="50%" cy="55%" id="pcFan" r="62%">
+      <stop offset="0%" stop-color="#6ee7b7" />
+      <stop offset="55%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#047857" />
+    </radialGradient>
+    <linearGradient id="pcBody" x1="20%" x2="80%" y1="10%" y2="95%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="50%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#1e3a8a" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#134e4a" opacity="0.26" rx="40" ry="5.5" />
+  <path
+    d="M16 74C13 42 33 20 60 20C87 20 107 42 104 74C98 86 82 91 60 91C38 91 22 86 16 74Z"
+    fill="url(#pcFan)"
+    stroke="#134e4a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="29"
+    cy="58"
+    fill="#fde047"
+    r="7"
+    stroke="#134e4a"
+    stroke-width="3.2"
+  />
+  <circle cx="29" cy="58" fill="#1d4ed8" r="3.2" />
+  <circle
+    cx="42"
+    cy="37"
+    fill="#fde047"
+    r="7"
+    stroke="#134e4a"
+    stroke-width="3.2"
+  />
+  <circle cx="42" cy="37" fill="#1d4ed8" r="3.2" />
+  <circle
+    cx="60"
+    cy="30"
+    fill="#fde047"
+    r="7.5"
+    stroke="#134e4a"
+    stroke-width="3.2"
+  />
+  <circle cx="60" cy="30" fill="#1d4ed8" r="3.5" />
+  <circle
+    cx="78"
+    cy="37"
+    fill="#fde047"
+    r="7"
+    stroke="#134e4a"
+    stroke-width="3.2"
+  />
+  <circle cx="78" cy="37" fill="#1d4ed8" r="3.2" />
+  <circle
+    cx="91"
+    cy="58"
+    fill="#fde047"
+    r="7"
+    stroke="#134e4a"
+    stroke-width="3.2"
+  />
+  <circle cx="91" cy="58" fill="#1d4ed8" r="3.2" />
+  <path
+    d="M53 93L49 103M67 93L71 103"
+    stroke="#92400e"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M60 40L56 32M60 40V30M60 40L64 32"
+    stroke="#1e3a8a"
+    stroke-linecap="round"
+    stroke-width="3.2"
+  />
+  <path
+    d="M46 78C46 66 52 58 55 48C56 42 64 42 65 48C68 58 74 66 74 78C74 89 68 95 60 95C52 95 46 89 46 78Z"
+    fill="url(#pcBody)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle cx="56" cy="49" fill="#1c1917" r="2.3" />
+  <circle cx="64" cy="49" fill="#1c1917" r="2.3" />
+  <polygon
+    fill="#f59e0b"
+    points="57,53 63,53 60,59"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="2.4"
+  />
+</svg>

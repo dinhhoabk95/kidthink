@@ -1,0 +1,57 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cô chú phi công</title>
+  <defs>
+    <radialGradient cx="42%" cy="35%" id="apSkin" r="68%">
+      <stop offset="0%" stop-color="#ffedd5" />
+      <stop offset="100%" stop-color="#fdba74" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#1e293b" opacity="0.25" rx="38" ry="5" />
+  <path
+    d="M22 102C24 81 37 74 60 74C83 74 96 81 98 102Z"
+    fill="#1e3a8a"
+    stroke="#172554"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <polygon
+    fill="#fffbeb"
+    points="50,74 60,94 70,74"
+    stroke="#172554"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <rect fill="#facc15" height="6" rx="2" width="14" x="28" y="77" />
+  <rect fill="#facc15" height="6" rx="2" width="14" x="78" y="77" />
+  <circle
+    cx="60"
+    cy="53"
+    fill="url(#apSkin)"
+    r="22"
+    stroke="#5c3d2e"
+    stroke-width="4"
+  />
+  <path
+    d="M30 37L38 19H82L90 37Z"
+    fill="#1e3a8a"
+    stroke="#172554"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M34 37H86C82 44 38 44 34 37Z"
+    fill="#334155"
+    stroke="#172554"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <polygon fill="#facc15" points="60,24 68,29 60,33 52,29" />
+  <circle cx="52" cy="54" fill="#1c1917" r="2.6" />
+  <circle cx="68" cy="54" fill="#1c1917" r="2.6" />
+  <path
+    d="M54 63C58 67 62 67 66 63"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="2.6"
+  />
+</svg>

@@ -1,0 +1,76 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Xe đua đỏ</title>
+  <defs>
+    <linearGradient id="rcRed" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fca5a5" />
+      <stop offset="50%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#b91c1c" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="99" fill="#1e293b" opacity="0.26" rx="46" ry="5" />
+  <polygon
+    fill="#dc2626"
+    points="90,42 106,42 102,64 90,64"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="62"
+    cy="50"
+    fill="#f8fafc"
+    r="9"
+    stroke="#334155"
+    stroke-width="3.4"
+  />
+  <path
+    d="M54 49H62V54H55Z"
+    fill="#38bdf8"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="2"
+  />
+  <path
+    d="M12 78L28 62L54 52H92L102 78Z"
+    fill="url(#rcRed)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#fde047"
+    height="5"
+    rx="2"
+    stroke="#78350f"
+    stroke-width="2.4"
+    width="14"
+    x="8"
+    y="75"
+  />
+  <circle
+    cx="60"
+    cy="66"
+    fill="#fffbeb"
+    r="7"
+    stroke="#7f1d1d"
+    stroke-width="2.6"
+  />
+  <circle
+    cx="34"
+    cy="79"
+    fill="#334155"
+    r="14"
+    stroke="#1e293b"
+    stroke-width="4"
+  />
+  <circle cx="34" cy="79" fill="#facc15" r="6" />
+  <circle
+    cx="84"
+    cy="79"
+    fill="#334155"
+    r="15"
+    stroke="#1e293b"
+    stroke-width="4"
+  />
+  <circle cx="84" cy="79" fill="#facc15" r="6.5" />
+</svg>

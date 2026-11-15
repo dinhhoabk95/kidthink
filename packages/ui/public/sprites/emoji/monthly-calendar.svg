@@ -1,0 +1,72 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Tờ lịch tháng</title>
+  <defs>
+    <linearGradient id="mcHead" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb7185" />
+      <stop offset="100%" stop-color="#dc2626" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#1e293b" opacity="0.24" rx="40" ry="5" />
+  <rect
+    fill="#cbd5e1"
+    height="76"
+    rx="12"
+    stroke="#334155"
+    stroke-width="4"
+    width="84"
+    x="18"
+    y="26"
+  />
+  <rect
+    fill="#fffbeb"
+    height="74"
+    rx="12"
+    stroke="#334155"
+    stroke-width="4"
+    width="84"
+    x="18"
+    y="22"
+  />
+  <path
+    d="M18 34C18 27 23 22 30 22H90C97 22 102 27 102 34V46H18Z"
+    fill="url(#mcHead)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#e2e8f0"
+    height="16"
+    rx="4"
+    stroke="#334155"
+    stroke-width="3.6"
+    width="9"
+    x="35"
+    y="14"
+  />
+  <rect
+    fill="#e2e8f0"
+    height="16"
+    rx="4"
+    stroke="#334155"
+    stroke-width="3.6"
+    width="9"
+    x="76"
+    y="14"
+  />
+  <rect fill="#cbd5e1" height="11" rx="3" width="14" x="30" y="55" />
+  <rect fill="#cbd5e1" height="11" rx="3" width="14" x="53" y="55" />
+  <rect
+    fill="#fbbf24"
+    height="12"
+    rx="3"
+    stroke="#78350f"
+    stroke-width="2.8"
+    width="14"
+    x="76"
+    y="54"
+  />
+  <rect fill="#cbd5e1" height="11" rx="3" width="14" x="30" y="74" />
+  <rect fill="#cbd5e1" height="11" rx="3" width="14" x="53" y="74" />
+  <rect fill="#cbd5e1" height="11" rx="3" width="14" x="76" y="74" />
+</svg>

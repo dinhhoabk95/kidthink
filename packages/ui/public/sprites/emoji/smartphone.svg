@@ -1,0 +1,37 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Điện thoại thông minh</title>
+  <defs>
+    <linearGradient id="spScreen" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#bae6fd" />
+      <stop offset="55%" stop-color="#60a5fa" />
+      <stop offset="100%" stop-color="#3b82f6" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#1e293b" opacity="0.26" rx="28" ry="4.5" />
+  <rect
+    fill="#334155"
+    height="88"
+    rx="14"
+    stroke="#1e293b"
+    stroke-width="4"
+    width="54"
+    x="33"
+    y="14"
+  />
+  <rect
+    fill="url(#spScreen)"
+    height="66"
+    rx="6"
+    stroke="#1e3a8a"
+    stroke-width="3.2"
+    width="42"
+    x="39"
+    y="24"
+  />
+  <rect fill="#94a3b8" height="3.5" rx="1.75" width="14" x="53" y="18" />
+  <rect fill="#fde047" height="11" rx="3" width="11" x="45" y="32" />
+  <rect fill="#fb7185" height="11" rx="3" width="11" x="64" y="32" />
+  <rect fill="#4ade80" height="11" rx="3" width="11" x="45" y="49" />
+  <rect fill="#fffbeb" height="11" rx="3" width="11" x="64" y="49" />
+  <circle cx="60" cy="96" fill="#cbd5e1" r="3" />
+</svg>
