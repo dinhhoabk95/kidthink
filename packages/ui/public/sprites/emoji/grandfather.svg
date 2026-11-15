@@ -1,0 +1,76 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ông</title>
+  <defs>
+    <radialGradient cx="42%" cy="35%" id="gfSkin" r="68%">
+      <stop offset="0%" stop-color="#ffedd5" />
+      <stop offset="100%" stop-color="#fdba74" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#44403c" opacity="0.24" rx="34" ry="5.5" />
+  <path
+    d="M30 100C33 85 44 79 60 79C76 79 87 85 90 100Z"
+    fill="#d97706"
+    stroke="#5c3d2e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="28"
+    cy="50"
+    fill="#f1f5f9"
+    r="12"
+    stroke="#475569"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="92"
+    cy="50"
+    fill="#f1f5f9"
+    r="12"
+    stroke="#475569"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="60"
+    cy="55"
+    fill="url(#gfSkin)"
+    r="29"
+    stroke="#5c3d2e"
+    stroke-width="4"
+  />
+  <path
+    d="M43 45H53M67 45H77"
+    stroke="#f8fafc"
+    stroke-linecap="round"
+    stroke-opacity="0.95"
+    stroke-width="4"
+  />
+  <circle
+    cx="48"
+    cy="54"
+    fill="#ffffff"
+    fill-opacity="0.35"
+    r="7.5"
+    stroke="#44403c"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="72"
+    cy="54"
+    fill="#ffffff"
+    fill-opacity="0.35"
+    r="7.5"
+    stroke="#44403c"
+    stroke-width="3.2"
+  />
+  <line stroke="#44403c" stroke-width="3" x1="55.5" x2="64.5" y1="54" y2="54" />
+  <circle cx="48" cy="54" fill="#1c1917" r="2.8" />
+  <circle cx="72" cy="54" fill="#1c1917" r="2.8" />
+  <path
+    d="M46 69C51 64 57 65 60 69C63 65 69 64 74 69C69 74 63 73 60 70C57 73 51 74 46 69Z"
+    fill="#f8fafc"
+    stroke="#475569"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+</svg>

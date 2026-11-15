@@ -1,0 +1,59 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Xe chở hàng</title>
+  <defs>
+    <linearGradient id="trkBox" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fcd34d" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="100" fill="#44403c" opacity="0.26" rx="48" ry="6" />
+  <rect
+    fill="url(#trkBox)"
+    height="48"
+    rx="7"
+    stroke="#78350f"
+    stroke-width="4"
+    width="60"
+    x="12"
+    y="34"
+  />
+  <path
+    d="M72 46H92L106 62V82H72Z"
+    fill="#3b82f6"
+    stroke="#1e3a5f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <polygon
+    fill="#bae6fd"
+    points="78,52 90,52 99,62 78,62"
+    stroke="#1e3a5f"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <path
+    d="M24 46V70M42 46V70M58 46V70"
+    stroke="#92400e"
+    stroke-linecap="round"
+    stroke-opacity="0.5"
+    stroke-width="2.8"
+  />
+  <circle
+    cx="34"
+    cy="86"
+    fill="#44403c"
+    r="12"
+    stroke="#292524"
+    stroke-width="4"
+  />
+  <circle cx="34" cy="86" fill="#e7e5e4" r="5" />
+  <circle
+    cx="88"
+    cy="86"
+    fill="#44403c"
+    r="12"
+    stroke="#292524"
+    stroke-width="4"
+  />
+  <circle cx="88" cy="86" fill="#e7e5e4" r="5" />
+</svg>

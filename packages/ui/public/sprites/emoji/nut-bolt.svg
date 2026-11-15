@@ -1,0 +1,69 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đai ốc và bu lông</title>
+  <defs>
+    <linearGradient id="boltSteel" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#e2e8f0" />
+      <stop offset="55%" stop-color="#94a3b8" />
+      <stop offset="100%" stop-color="#475569" />
+    </linearGradient>
+    <linearGradient id="nutBrass" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#334155" opacity="0.24" rx="36" ry="5.5" />
+  <rect
+    fill="url(#boltSteel)"
+    height="64"
+    rx="6"
+    stroke="#334155"
+    stroke-width="4"
+    transform="rotate(42 66 44)"
+    width="22"
+    x="55"
+    y="28"
+  />
+  <path
+    d="M59 54L73 67M51 63L65 76M43 72L57 85"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <polygon
+    fill="url(#boltSteel)"
+    points="68,16 92,19 102,38 86,55 62,52 52,33"
+    stroke="#1e293b"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="77"
+    cy="35"
+    fill="#cbd5e1"
+    r="8"
+    stroke="#334155"
+    stroke-width="3.6"
+  />
+  <polygon
+    fill="url(#nutBrass)"
+    points="26,64 46,67 54,84 40,98 20,95 12,78"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="33"
+    cy="81"
+    fill="#475569"
+    r="7"
+    stroke="#78350f"
+    stroke-width="3.6"
+  />
+  <path
+    d="M68 23L86 25"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.7"
+    stroke-width="3"
+  />
+</svg>

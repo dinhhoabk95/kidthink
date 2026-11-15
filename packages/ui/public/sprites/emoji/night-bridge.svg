@@ -1,0 +1,58 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cây cầu đêm</title>
+  <defs>
+    <linearGradient id="nbSky" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#312e81" />
+      <stop offset="100%" stop-color="#1e40af" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e3a5f" opacity="0.26" rx="44" ry="5.5" />
+  <rect
+    fill="url(#nbSky)"
+    height="84"
+    rx="18"
+    stroke="#1e3a5f"
+    stroke-width="4"
+    width="92"
+    x="14"
+    y="16"
+  />
+  <circle cx="84" cy="34" fill="#fde047" r="8" />
+  <path
+    d="M18 68C26 62 34 50 38 40C50 64 70 64 82 40C86 50 94 62 102 68"
+    stroke="#fdba74"
+    stroke-linecap="round"
+    stroke-opacity="0.9"
+    stroke-width="3"
+  />
+  <rect
+    fill="#f97316"
+    height="58"
+    rx="3"
+    stroke="#7c2d12"
+    stroke-width="3.4"
+    width="8"
+    x="34"
+    y="38"
+  />
+  <rect
+    fill="#f97316"
+    height="58"
+    rx="3"
+    stroke="#7c2d12"
+    stroke-width="3.4"
+    width="8"
+    x="78"
+    y="38"
+  />
+  <rect
+    fill="#fb923c"
+    height="8"
+    rx="3"
+    stroke="#7c2d12"
+    stroke-width="3.4"
+    width="84"
+    x="18"
+    y="72"
+  />
+</svg>

@@ -1,0 +1,43 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Thuyền chèo</title>
+  <defs>
+    <linearGradient id="cnWood" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="55%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#92400e" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="99" fill="#1e3a8a" opacity="0.24" rx="46" ry="6" />
+  <path
+    d="M12 58C26 52 94 52 108 58C98 84 82 91 60 91C38 91 22 84 12 58Z"
+    fill="url(#cnWood)"
+    stroke="#5c3d2e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M22 60C44 66 76 66 98 60"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <line stroke="#5c3d2e" stroke-width="3.8" x1="46" x2="46" y1="56" y2="65" />
+  <line stroke="#5c3d2e" stroke-width="3.8" x1="74" x2="74" y1="56" y2="65" />
+  <rect fill="#ef4444" height="5" rx="2.5" width="68" x="26" y="70" />
+  <path
+    d="M42 26L78 88"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4.5"
+  />
+  <ellipse
+    cx="82"
+    cy="93"
+    fill="#f59e0b"
+    rx="7"
+    ry="12"
+    stroke="#5c3d2e"
+    stroke-width="3.6"
+    transform="rotate(-30 82 93)"
+  />
+</svg>

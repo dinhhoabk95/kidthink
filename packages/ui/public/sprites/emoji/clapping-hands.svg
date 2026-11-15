@@ -1,0 +1,31 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Vỗ tay khen</title>
+  <defs>
+    <linearGradient id="chWarm" x1="15%" x2="85%" y1="10%" y2="90%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="55%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.24" rx="34" ry="5" />
+  <path
+    d="M44 20L40 12M60 17V9M76 20L80 12"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <path
+    d="M38 88C25 77 24 58 34 45L49 28C53 24 59 27 56 33L62 27C66 23 72 27 68 33L73 30C77 27 82 32 78 38L63 86C56 95 45 94 38 88Z"
+    fill="#f59e0b"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M52 94C38 86 34 68 42 53L56 33C60 28 66 31 64 37L71 31C75 27 81 31 78 37L84 35C89 33 93 39 89 45L78 72L86 64C91 60 96 65 92 71L76 91C69 98 59 98 52 94Z"
+    fill="url(#chWarm)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+</svg>

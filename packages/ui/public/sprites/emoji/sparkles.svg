@@ -1,0 +1,33 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ánh sao lấp lánh</title>
+  <defs>
+    <radialGradient cx="42%" cy="38%" id="skGold" r="65%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="48%" stop-color="#fde047" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="56" cy="105" fill="#78350f" opacity="0.22" rx="34" ry="5" />
+  <path
+    d="M52 16L61 43L88 52L61 61L52 88L43 61L16 52L43 43Z"
+    fill="url(#skGold)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M90 18L95 31L108 36L95 41L90 54L85 41L72 36L85 31Z"
+    fill="#fde047"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M84 68L88 80L100 84L88 88L84 100L80 88L68 84L80 80Z"
+    fill="#fbcfe8"
+    stroke="#831843"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle cx="52" cy="52" fill="#ffffff" fill-opacity="0.7" r="5" />
+</svg>

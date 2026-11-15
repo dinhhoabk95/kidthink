@@ -1,0 +1,59 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bác nông dân</title>
+  <defs>
+    <linearGradient id="nonLa" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+    <linearGradient id="farmShirt" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#b45309" />
+      <stop offset="100%" stop-color="#78350f" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#451a03" opacity="0.24" rx="34" ry="5" />
+  <path
+    d="M30 98C32 80 44 73 60 73C76 73 88 80 90 98Z"
+    fill="url(#farmShirt)"
+    stroke="#451a03"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M47 75L60 88L73 75"
+    stroke="#fde68a"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-opacity="0.9"
+    stroke-width="3"
+  />
+  <circle
+    cx="60"
+    cy="56"
+    fill="#fed7aa"
+    r="21"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <circle cx="52" cy="56" fill="#1c1917" r="3" />
+  <circle cx="68" cy="56" fill="#1c1917" r="3" />
+  <path
+    d="M54 65C57 69 63 69 66 65"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.2"
+  />
+  <polygon
+    fill="url(#nonLa)"
+    points="60,14 104,44 16,44"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M34 32H86"
+    stroke="#92400e"
+    stroke-linecap="round"
+    stroke-opacity="0.55"
+    stroke-width="2.6"
+  />
+</svg>

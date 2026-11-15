@@ -1,0 +1,38 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ngựa phi</title>
+  <defs>
+    <linearGradient id="ghCoat" x1="15%" x2="85%" y1="15%" y2="85%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="55%" stop-color="#b45309" />
+      <stop offset="100%" stop-color="#78350f" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="58" cy="103" fill="#5c3d2e" opacity="0.24" rx="40" ry="5.5" />
+  <path
+    d="M88 52C101 46 109 55 104 68C98 63 93 62 88 64"
+    fill="#451a03"
+    stroke="#292524"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M36 70L18 86M46 72L33 94M74 72L86 94M84 68L101 84"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="6.5"
+  />
+  <path
+    d="M32 32C40 26 48 31 50 40"
+    stroke="#451a03"
+    stroke-linecap="round"
+    stroke-width="6"
+  />
+  <path
+    d="M22 44L31 28L38 34L48 48H82C90 48 94 55 91 64C89 71 82 74 74 74H44C36 74 32 67 34 58L29 50L21 51Z"
+    fill="url(#ghCoat)"
+    stroke="#5c3d2e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle cx="30" cy="39" fill="#1c1917" r="2.6" />
+</svg>

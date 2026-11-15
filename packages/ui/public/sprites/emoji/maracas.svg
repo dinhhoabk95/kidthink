@@ -1,0 +1,72 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Lục lạc gỗ</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="maracaOrange" r="68%">
+      <stop offset="0%" stop-color="#fde047" />
+      <stop offset="55%" stop-color="#f97316" />
+      <stop offset="100%" stop-color="#c2410c" />
+    </radialGradient>
+    <radialGradient cx="38%" cy="32%" id="maracaTeal" r="68%">
+      <stop offset="0%" stop-color="#99f6e4" />
+      <stop offset="55%" stop-color="#14b8a6" />
+      <stop offset="100%" stop-color="#0f766e" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.24" rx="36" ry="5" />
+  <g transform="rotate(-24 44 58)">
+    <rect
+      fill="#d97706"
+      height="40"
+      rx="5"
+      stroke="#78350f"
+      stroke-width="3.8"
+      width="10"
+      x="39"
+      y="62"
+    />
+    <ellipse
+      cx="44"
+      cy="43"
+      fill="url(#maracaTeal)"
+      rx="18"
+      ry="23"
+      stroke="#115e59"
+      stroke-width="4"
+    />
+    <path
+      d="M27 43H61"
+      stroke="#fde047"
+      stroke-opacity="0.9"
+      stroke-width="3"
+    />
+  </g>
+  <g transform="rotate(24 76 58)">
+    <rect
+      fill="#b45309"
+      height="40"
+      rx="5"
+      stroke="#451a03"
+      stroke-width="3.8"
+      width="10"
+      x="71"
+      y="62"
+    />
+    <ellipse
+      cx="76"
+      cy="43"
+      fill="url(#maracaOrange)"
+      rx="18"
+      ry="23"
+      stroke="#7c2d12"
+      stroke-width="4"
+    />
+    <path
+      d="M59 43L67 38L76 45L85 38L93 43"
+      stroke="#fef08a"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-opacity="0.9"
+      stroke-width="2.8"
+    />
+  </g>
+</svg>

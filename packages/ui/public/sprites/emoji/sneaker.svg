@@ -1,0 +1,41 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Giày thể thao</title>
+  <defs>
+    <linearGradient id="shoeRed" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb7185" />
+      <stop offset="100%" stop-color="#dc2626" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="99" fill="#7f1d1d" opacity="0.26" rx="46" ry="6" />
+  <path
+    d="M18 44H42L52 56C63 64 78 65 92 67C101 68 106 75 106 84H14V60C14 50 16 44 18 44Z"
+    fill="url(#shoeRed)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M84 66C97 67 106 74 106 84H80C80 75 81 69 84 66Z"
+    fill="#fffbeb"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <rect
+    fill="#fffbeb"
+    height="11"
+    rx="5"
+    stroke="#44403c"
+    stroke-width="3.8"
+    width="94"
+    x="13"
+    y="82"
+  />
+  <path
+    d="M49 54L57 48M58 60L66 54M68 64L75 57"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.9"
+    stroke-width="3"
+  />
+</svg>

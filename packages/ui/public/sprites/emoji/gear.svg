@@ -1,0 +1,48 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bánh răng</title>
+  <defs>
+    <radialGradient cx="36%" cy="30%" id="gearSteel" r="70%">
+      <stop offset="0%" stop-color="#f1f5f9" />
+      <stop offset="55%" stop-color="#94a3b8" />
+      <stop offset="100%" stop-color="#64748b" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#334155" opacity="0.26" rx="34" ry="6" />
+  <path
+    d="M52 14H68L71 25L81 29L91 22L102 33L95 43L99 53L110 56V72L99 75L95 85L102 95L91 106L81 99L71 103L68 114H52L49 103L39 99L29 106L18 95L25 85L21 75L10 72V56L21 53L25 43L18 33L29 22L39 29L49 25Z"
+    fill="#475569"
+    opacity="0.35"
+    transform="translate(0 3) scale(0.92)"
+    transform-origin="60 60"
+  />
+  <path
+    d="M53 16H67L70 26L79 30L88 23L98 33L91 42L95 51L105 54V68L95 71L91 80L98 89L88 99L79 92L70 96L67 106H53L50 96L41 92L32 99L22 89L29 80L25 71L15 68V54L25 51L29 42L22 33L32 23L41 30L50 26Z"
+    fill="url(#gearSteel)"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="60"
+    cy="61"
+    fill="#cbd5e1"
+    r="23"
+    stroke="#334155"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="60"
+    cy="61"
+    fill="#fffbeb"
+    r="11"
+    stroke="#334155"
+    stroke-width="3.8"
+  />
+  <path
+    d="M44 46C49 41 56 39 64 40"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.7"
+    stroke-width="3"
+  />
+</svg>

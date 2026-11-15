@@ -1,0 +1,53 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Loa thông báo</title>
+  <defs>
+    <linearGradient id="megaCone" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb7185" />
+      <stop offset="100%" stop-color="#e11d48" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="58" cy="104" fill="#881337" opacity="0.22" rx="36" ry="5" />
+  <rect
+    fill="#fde68a"
+    height="26"
+    rx="5"
+    stroke="#78350f"
+    stroke-width="3.8"
+    transform="rotate(18 35 76)"
+    width="13"
+    x="28"
+    y="64"
+  />
+  <rect
+    fill="#fef3c7"
+    height="20"
+    rx="5"
+    stroke="#78350f"
+    stroke-width="3.8"
+    width="16"
+    x="16"
+    y="46"
+  />
+  <polygon
+    fill="url(#megaCone)"
+    points="30,46 88,22 88,90 30,66"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="88"
+    cy="56"
+    fill="#fecdd3"
+    rx="7"
+    ry="34"
+    stroke="#881337"
+    stroke-width="4"
+  />
+  <path
+    d="M101 42L109 36M103 56H112M101 70L109 76"
+    stroke="#b45309"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+</svg>

@@ -1,0 +1,84 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cổng gỗ đỏ</title>
+  <defs>
+    <linearGradient id="tgRed" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#f87171" />
+      <stop offset="50%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#b91c1c" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#7f1d1d" opacity="0.24" rx="42" ry="5.5" />
+  <rect
+    fill="url(#tgRed)"
+    height="68"
+    rx="3"
+    stroke="#7f1d1d"
+    stroke-width="4"
+    width="12"
+    x="32"
+    y="33"
+  />
+  <rect
+    fill="url(#tgRed)"
+    height="68"
+    rx="3"
+    stroke="#7f1d1d"
+    stroke-width="4"
+    width="12"
+    x="76"
+    y="33"
+  />
+  <rect
+    fill="#44403c"
+    height="9"
+    rx="3"
+    stroke="#292524"
+    stroke-width="3.6"
+    width="20"
+    x="28"
+    y="95"
+  />
+  <rect
+    fill="#44403c"
+    height="9"
+    rx="3"
+    stroke="#292524"
+    stroke-width="3.6"
+    width="20"
+    x="72"
+    y="95"
+  />
+  <rect
+    fill="url(#tgRed)"
+    height="10"
+    rx="4"
+    stroke="#7f1d1d"
+    stroke-width="3.8"
+    width="76"
+    x="22"
+    y="44"
+  />
+  <rect
+    fill="#fbbf24"
+    height="14"
+    rx="2"
+    stroke="#78350f"
+    stroke-width="3.4"
+    width="10"
+    x="55"
+    y="31"
+  />
+  <path
+    d="M14 23C36 30 84 30 106 23L101 34C80 39 40 39 19 34Z"
+    fill="url(#tgRed)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M14 21C36 27 84 27 106 21"
+    stroke="#292524"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+</svg>

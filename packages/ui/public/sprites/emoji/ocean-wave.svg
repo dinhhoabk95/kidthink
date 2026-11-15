@@ -1,0 +1,40 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Sóng biển</title>
+  <defs>
+    <linearGradient id="wavBlue" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="55%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#0369a1" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#0c4a6e" opacity="0.24" rx="46" ry="5.5" />
+  <path
+    d="M14 96V64C18 34 44 22 72 28C60 36 56 50 68 58C82 67 98 62 106 54V96Z"
+    fill="url(#wavBlue)"
+    stroke="#0c4a6e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M52 26C64 20 82 24 86 36C77 42 66 40 62 34C56 36 49 32 52 26Z"
+    fill="#ffffff"
+    stroke="#0c4a6e"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="94"
+    cy="42"
+    fill="#ffffff"
+    r="6"
+    stroke="#0c4a6e"
+    stroke-width="3.4"
+  />
+  <path
+    d="M26 82C40 74 56 76 72 84C84 89 94 86 98 82"
+    stroke="#bae6fd"
+    stroke-linecap="round"
+    stroke-opacity="0.75"
+    stroke-width="3"
+  />
+</svg>

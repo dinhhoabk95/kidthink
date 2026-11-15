@@ -1,0 +1,60 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bạn nhỏ</title>
+  <defs>
+    <radialGradient cx="42%" cy="35%" id="kidSkin" r="70%">
+      <stop offset="0%" stop-color="#ffedd5" />
+      <stop offset="65%" stop-color="#fed7aa" />
+      <stop offset="100%" stop-color="#fdba74" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.24" rx="34" ry="5.5" />
+  <path
+    d="M32 102C35 88 46 83 60 83C74 83 85 88 88 102Z"
+    fill="#facc15"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="29"
+    cy="60"
+    fill="#fed7aa"
+    r="7"
+    stroke="#5c3d2e"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="91"
+    cy="60"
+    fill="#fed7aa"
+    r="7"
+    stroke="#5c3d2e"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="60"
+    cy="58"
+    fill="url(#kidSkin)"
+    r="28"
+    stroke="#5c3d2e"
+    stroke-width="4"
+  />
+  <path
+    d="M31 52C32 30 46 22 60 22C74 22 88 30 89 52L80 43L73 49L64 41L55 49L46 42L38 49Z"
+    fill="#78350f"
+    stroke="#5c3d2e"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle cx="48" cy="59" fill="#1c1917" r="4.2" />
+  <circle cx="46.8" cy="57.6" fill="#ffffff" r="1.5" />
+  <circle cx="72" cy="59" fill="#1c1917" r="4.2" />
+  <circle cx="70.8" cy="57.6" fill="#ffffff" r="1.5" />
+  <path
+    d="M51 70C55 76 65 76 69 70Z"
+    fill="#ef4444"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+</svg>

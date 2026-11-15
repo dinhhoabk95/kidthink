@@ -1,0 +1,43 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Kẹo mút</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="lpPink" r="68%">
+      <stop offset="0%" stop-color="#fce7f3" />
+      <stop offset="48%" stop-color="#f472b6" />
+      <stop offset="100%" stop-color="#db2777" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#831843" opacity="0.22" rx="22" ry="4.5" />
+  <rect
+    fill="#fef3c7"
+    height="44"
+    rx="4"
+    stroke="#78350f"
+    stroke-width="3.8"
+    width="9"
+    x="55.5"
+    y="62"
+  />
+  <circle
+    cx="60"
+    cy="45"
+    fill="url(#lpPink)"
+    r="31"
+    stroke="#831843"
+    stroke-width="4"
+  />
+  <path
+    d="M60 45C64 45 65 49 62 51C57 55 50 51 50 45C50 36 58 31 66 33C75 35 79 44 76 53"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.88"
+    stroke-width="5"
+  />
+  <path
+    d="M60 45C64 45 66 49 63 52C58 56 50 53 49 46C48 36 57 29 66 31"
+    stroke="#fde047"
+    stroke-linecap="round"
+    stroke-opacity="0.7"
+    stroke-width="2.5"
+  />
+</svg>

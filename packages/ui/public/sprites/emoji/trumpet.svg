@@ -1,0 +1,44 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Kèn đồng</title>
+  <defs>
+    <linearGradient id="trpGold" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="50%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#ca8a04" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="99" fill="#78350f" opacity="0.24" rx="40" ry="6" />
+  <path
+    d="M44 42V58M54 42V58M64 42V58"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <rect
+    fill="url(#trpGold)"
+    height="14"
+    rx="7"
+    stroke="#78350f"
+    stroke-width="3.8"
+    width="40"
+    x="34"
+    y="62"
+  />
+  <path
+    d="M18 52H76C86 52 96 42 102 34V78C96 70 86 60 76 60H18Z"
+    fill="url(#trpGold)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#fde047"
+    height="16"
+    rx="3"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="7"
+    x="13"
+    y="48"
+  />
+</svg>

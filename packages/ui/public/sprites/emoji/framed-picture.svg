@@ -1,0 +1,32 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Khung tranh</title>
+  <ellipse cx="60" cy="104" fill="#5c3d2e" opacity="0.26" rx="44" ry="6" />
+  <rect
+    fill="#d97706"
+    height="74"
+    rx="10"
+    stroke="#5c3d2e"
+    stroke-width="4"
+    width="88"
+    x="16"
+    y="22"
+  />
+  <rect
+    fill="#bae6fd"
+    height="54"
+    rx="5"
+    stroke="#5c3d2e"
+    stroke-width="3.6"
+    width="68"
+    x="26"
+    y="32"
+  />
+  <circle cx="76" cy="46" fill="#facc15" r="8" />
+  <path
+    d="M26 76L48 56L68 74L80 63L94 76V86H26Z"
+    fill="#4ade80"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+</svg>

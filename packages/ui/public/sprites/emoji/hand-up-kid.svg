@@ -1,0 +1,55 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Giơ tay phát biểu</title>
+  <defs>
+    <linearGradient id="kidTop" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#eab308" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="58" cy="105" fill="#78350f" opacity="0.24" rx="34" ry="5" />
+  <path
+    d="M82 74L92 26C93 20 85 18 82 24L72 68Z"
+    fill="#fed7aa"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="88"
+    cy="21"
+    fill="#fed7aa"
+    r="8"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <path
+    d="M26 98C28 80 40 72 56 72C72 72 84 80 86 98Z"
+    fill="url(#kidTop)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="55"
+    cy="50"
+    fill="#fed7aa"
+    r="21"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M34 47C35 28 75 28 76 47C66 39 44 39 34 47Z"
+    fill="#57534e"
+    stroke="#292524"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle cx="48" cy="52" fill="#1c1917" r="3" />
+  <circle cx="62" cy="52" fill="#1c1917" r="3" />
+  <path
+    d="M49 60C53 64 58 64 62 60"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.2"
+  />
+</svg>

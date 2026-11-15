@@ -1,0 +1,40 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Quả cà tím</title>
+  <defs>
+    <radialGradient cx="36%" cy="32%" id="epPurp" r="70%">
+      <stop offset="0%" stop-color="#c084fc" />
+      <stop offset="48%" stop-color="#7e22ce" />
+      <stop offset="100%" stop-color="#4c1d95" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="58" cy="105" fill="#3b0764" opacity="0.25" rx="32" ry="5.5" />
+  <path
+    d="M40 31C30 48 25 76 42 93C59 108 88 99 93 78C97 60 83 49 72 41C63 34 55 24 40 31Z"
+    fill="url(#epPurp)"
+    stroke="#3b0764"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M35 20C38 14 44 13 47 19"
+    stroke="#14532d"
+    stroke-linecap="round"
+    stroke-width="4.5"
+  />
+  <path
+    d="M32 34L39 20L48 28L58 21L56 34L45 33Z"
+    fill="#22c55e"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <ellipse
+    cx="47"
+    cy="66"
+    fill="#ffffff"
+    fill-opacity="0.48"
+    rx="6"
+    ry="13"
+    transform="rotate(-24 47 66)"
+  />
+</svg>

@@ -1,0 +1,61 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Xe tay ga</title>
+  <defs>
+    <linearGradient id="sbTeal" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#67e8f9" />
+      <stop offset="55%" stop-color="#06b6d4" />
+      <stop offset="100%" stop-color="#0e7490" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#155e75" opacity="0.25" rx="44" ry="5.5" />
+  <circle
+    cx="30"
+    cy="86"
+    fill="#334155"
+    r="13"
+    stroke="#1c1917"
+    stroke-width="4"
+  />
+  <circle cx="30" cy="86" fill="#f8fafc" r="5.5" />
+  <circle
+    cx="88"
+    cy="86"
+    fill="#334155"
+    r="13"
+    stroke="#1c1917"
+    stroke-width="4"
+  />
+  <circle cx="88" cy="86" fill="#f8fafc" r="5.5" />
+  <path
+    d="M35 32H46L41 78"
+    stroke="#155e75"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="4.2"
+  />
+  <circle
+    cx="33"
+    cy="34"
+    fill="#fde047"
+    r="5.5"
+    stroke="#78350f"
+    stroke-width="3.2"
+  />
+  <path
+    d="M20 78C21 66 30 60 40 62L45 78H66L68 60C76 56 96 58 100 72L98 81H20Z"
+    fill="url(#sbTeal)"
+    stroke="#155e75"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#78350f"
+    height="10"
+    rx="5"
+    stroke="#451a03"
+    stroke-width="3.6"
+    width="32"
+    x="63"
+    y="52"
+  />
+</svg>

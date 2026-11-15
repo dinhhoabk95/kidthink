@@ -1,0 +1,75 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ấm pha trà</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="teapotBody" r="68%">
+      <stop offset="0%" stop-color="#99f6e4" />
+      <stop offset="52%" stop-color="#14b8a6" />
+      <stop offset="100%" stop-color="#0f766e" />
+    </radialGradient>
+    <linearGradient id="teapotWood" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="58" cy="101" fill="#134e4a" opacity="0.25" rx="38" ry="6" />
+  <path
+    d="M84 53C99 51 106 62 102 76C99 86 90 89 81 85"
+    stroke="#115e59"
+    stroke-linecap="round"
+    stroke-width="8"
+  />
+  <path
+    d="M84 53C99 51 106 62 102 76C99 86 90 89 81 85"
+    stroke="#5eead4"
+    stroke-linecap="round"
+    stroke-opacity="0.7"
+    stroke-width="3"
+  />
+  <path
+    d="M29 66C19 63 14 53 16 43C17 39 12 37 10 38L20 33C25 35 27 42 28 49L35 56Z"
+    fill="url(#teapotBody)"
+    stroke="#115e59"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="58"
+    cy="70"
+    fill="url(#teapotBody)"
+    rx="33"
+    ry="27"
+    stroke="#115e59"
+    stroke-width="4"
+  />
+  <path
+    d="M38 46C43 38 73 38 78 46Z"
+    fill="#2dd4bf"
+    stroke="#115e59"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="58"
+    cy="34"
+    fill="url(#teapotWood)"
+    r="7"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <path
+    d="M30 72C46 78 70 78 86 72"
+    stroke="#fde68a"
+    stroke-linecap="round"
+    stroke-opacity="0.85"
+    stroke-width="3"
+  />
+  <ellipse
+    cx="45"
+    cy="58"
+    fill="#ffffff"
+    fill-opacity="0.55"
+    rx="8"
+    ry="4"
+    transform="rotate(-24 45 58)"
+  />
+</svg>

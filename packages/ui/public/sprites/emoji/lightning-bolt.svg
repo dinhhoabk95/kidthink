@@ -1,0 +1,33 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Tia chớp</title>
+  <defs>
+    <linearGradient id="lbGold" x1="20%" x2="80%" y1="10%" y2="90%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="48%" stop-color="#fde047" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="56" cy="107" fill="#78350f" opacity="0.24" rx="24" ry="4.5" />
+  <path
+    d="M69 17L31 66H59L49 105L89 53H61Z"
+    fill="#d97706"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+    transform="translate(3 3)"
+  />
+  <path
+    d="M69 14L31 63H59L49 102L89 50H61Z"
+    fill="url(#lbGold)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M62 27L43 53"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.7"
+    stroke-width="4.5"
+  />
+</svg>

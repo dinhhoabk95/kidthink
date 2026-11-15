@@ -1,0 +1,48 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Trứng ốp la</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="feYolk" r="65%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="52%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#d97706" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="52" cy="103" fill="#292524" opacity="0.25" rx="38" ry="6" />
+  <path
+    d="M80 74L106 96"
+    stroke="#292524"
+    stroke-linecap="round"
+    stroke-width="11"
+  />
+  <path
+    d="M80 74L106 96"
+    stroke="#57534e"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="52"
+    cy="54"
+    fill="#334155"
+    r="38"
+    stroke="#1c1917"
+    stroke-width="4"
+  />
+  <circle cx="52" cy="54" fill="#475569" r="31" />
+  <path
+    d="M30 46C32 34 45 29 56 32C67 35 76 41 75 53C74 64 67 74 54 75C40 76 28 69 27 57C27 52 29 49 30 46Z"
+    fill="#fffbeb"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="52"
+    cy="53"
+    fill="url(#feYolk)"
+    r="12"
+    stroke="#78350f"
+    stroke-width="3.2"
+  />
+  <circle cx="48" cy="49" fill="#ffffff" fill-opacity="0.7" r="3.2" />
+</svg>

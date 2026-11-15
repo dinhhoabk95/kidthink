@@ -1,0 +1,32 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bàn tay giơ lên</title>
+  <defs>
+    <linearGradient id="rhWarm" x1="25%" x2="80%" y1="10%" y2="95%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="55%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="62" cy="105" fill="#78350f" opacity="0.25" rx="28" ry="5.5" />
+  <path
+    d="M38 66L25 56C20 52 24 44 31 47L42 54V28C42 22 52 22 52 28V19C52 13 63 13 63 19V22C63 16 74 16 74 22V30C74 24 84 24 84 31V74C84 91 73 101 59 101C45 101 38 91 38 75Z"
+    fill="url(#rhWarm)"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M52 28V54M63 22V54M74 30V56"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M49 72C55 67 66 67 72 73"
+    stroke="#92400e"
+    stroke-linecap="round"
+    stroke-opacity="0.6"
+    stroke-width="2.8"
+  />
+</svg>

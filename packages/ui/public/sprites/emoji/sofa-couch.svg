@@ -1,0 +1,88 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ghế sô-pha</title>
+  <defs>
+    <linearGradient id="sfTeal" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#5eead4" />
+      <stop offset="55%" stop-color="#14b8a6" />
+      <stop offset="100%" stop-color="#0f766e" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#115e59" opacity="0.25" rx="46" ry="5.5" />
+  <rect
+    fill="#78350f"
+    height="12"
+    rx="3"
+    stroke="#451a03"
+    stroke-width="3.4"
+    width="8"
+    x="22"
+    y="88"
+  />
+  <rect
+    fill="#78350f"
+    height="12"
+    rx="3"
+    stroke="#451a03"
+    stroke-width="3.4"
+    width="8"
+    x="90"
+    y="88"
+  />
+  <rect
+    fill="url(#sfTeal)"
+    height="42"
+    rx="14"
+    stroke="#115e59"
+    stroke-width="4"
+    width="76"
+    x="22"
+    y="32"
+  />
+  <rect
+    fill="url(#sfTeal)"
+    height="34"
+    rx="10"
+    stroke="#115e59"
+    stroke-width="4"
+    width="18"
+    x="12"
+    y="54"
+  />
+  <rect
+    fill="url(#sfTeal)"
+    height="34"
+    rx="10"
+    stroke="#115e59"
+    stroke-width="4"
+    width="18"
+    x="90"
+    y="54"
+  />
+  <rect
+    fill="#2dd4bf"
+    height="22"
+    rx="8"
+    stroke="#115e59"
+    stroke-width="3.8"
+    width="68"
+    x="26"
+    y="66"
+  />
+  <path
+    d="M60 36V86"
+    stroke="#115e59"
+    stroke-linecap="round"
+    stroke-width="3.4"
+  />
+  <rect
+    fill="#fde047"
+    height="18"
+    rx="6"
+    stroke="#78350f"
+    stroke-width="3.2"
+    transform="rotate(-12 33 48)"
+    width="18"
+    x="33"
+    y="48"
+  />
+</svg>

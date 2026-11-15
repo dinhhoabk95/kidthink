@@ -1,0 +1,39 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hình thoi xanh dương</title>
+  <defs>
+    <linearGradient id="bdFace" x1="20%" x2="80%" y1="15%" y2="85%">
+      <stop offset="0%" stop-color="#93c5fd" />
+      <stop offset="48%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="108" fill="#1e3a8a" opacity="0.24" rx="28" ry="5" />
+  <path
+    d="M60 20L102 62L60 104L18 62Z"
+    fill="#1e40af"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M60 13L102 55L60 97L18 55Z"
+    fill="url(#bdFace)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M60 25L90 55L60 85L30 55Z"
+    stroke="#dbeafe"
+    stroke-linejoin="round"
+    stroke-opacity="0.58"
+    stroke-width="2.5"
+  />
+  <path
+    d="M40 43L56 27"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.6"
+    stroke-width="4.5"
+  />
+</svg>

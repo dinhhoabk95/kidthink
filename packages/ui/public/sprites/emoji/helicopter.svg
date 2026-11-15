@@ -1,0 +1,40 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Máy bay trực thăng</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="heliRed" r="70%">
+      <stop offset="0%" stop-color="#fca5a5" />
+      <stop offset="55%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#dc2626" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="56" cy="103" fill="#334155" opacity="0.24" rx="40" ry="5.5" />
+  <path
+    d="M18 26H92M55 26V38M36 84V94M72 84V94M24 94H82C87 94 90 91 91 88"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <path
+    d="M76 58H104L108 48V68L102 64H76Z"
+    fill="#ef4444"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <ellipse
+    cx="53"
+    cy="61"
+    fill="url(#heliRed)"
+    rx="31"
+    ry="23"
+    stroke="#7f1d1d"
+    stroke-width="4"
+  />
+  <path
+    d="M26 59C28 45 40 40 53 41V63H26Z"
+    fill="#bae6fd"
+    stroke="#1e3a5f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+</svg>

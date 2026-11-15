@@ -1,0 +1,48 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Viên pin</title>
+  <defs>
+    <linearGradient id="btGreen" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#86efac" />
+      <stop offset="50%" stop-color="#22c55e" />
+      <stop offset="100%" stop-color="#15803d" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#14532d" opacity="0.24" rx="28" ry="5.5" />
+  <rect
+    fill="#cbd5e1"
+    height="10"
+    rx="4"
+    stroke="#334155"
+    stroke-width="3.8"
+    width="24"
+    x="48"
+    y="14"
+  />
+  <rect
+    fill="#f8fafc"
+    height="76"
+    rx="11"
+    stroke="#14532d"
+    stroke-width="4"
+    width="52"
+    x="34"
+    y="23"
+  />
+  <rect
+    fill="url(#btGreen)"
+    height="52"
+    rx="8"
+    stroke="#14532d"
+    stroke-width="3.6"
+    width="44"
+    x="38"
+    y="43"
+  />
+  <path
+    d="M63 52L51 69H61L57 86L69 69H59Z"
+    fill="#fde047"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+</svg>

@@ -1,0 +1,55 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đồng hồ báo thức</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="clkRed" r="70%">
+      <stop offset="0%" stop-color="#fca5a5" />
+      <stop offset="50%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#dc2626" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#7f1d1d" opacity="0.26" rx="36" ry="6" />
+  <path
+    d="M36 92L28 103M84 92L92 103M60 18V27"
+    stroke="#44403c"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <path
+    d="M20 35C15 26 25 16 36 21L41 28L25 40Z"
+    fill="#fbbf24"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M100 35C105 26 95 16 84 21L79 28L95 40Z"
+    fill="#fbbf24"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="60"
+    cy="63"
+    fill="url(#clkRed)"
+    r="37"
+    stroke="#7f1d1d"
+    stroke-width="4"
+  />
+  <circle
+    cx="60"
+    cy="63"
+    fill="#fffbeb"
+    r="27"
+    stroke="#7f1d1d"
+    stroke-width="3.6"
+  />
+  <path
+    d="M60 46V63H74"
+    stroke="#292524"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle cx="60" cy="63" fill="#ef4444" r="3.5" />
+</svg>

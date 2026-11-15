@@ -1,0 +1,55 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bản đồ khám phá</title>
+  <defs>
+    <linearGradient id="wmPaper" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef3c7" />
+      <stop offset="100%" stop-color="#fcd34d" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#78350f" opacity="0.24" rx="44" ry="5.5" />
+  <path
+    d="M16 30L45 22L75 30L104 22V88L75 96L45 88L16 96Z"
+    fill="url(#wmPaper)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M24 37L43 32L75 40L96 34V81L75 87L45 79L24 85Z"
+    fill="#7dd3fc"
+    stroke="#1e3a5f"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <path
+    d="M31 48C38 44 43 49 41 58C38 66 30 65 31 48ZM62 47C72 44 85 50 83 62C81 72 68 73 64 64Z"
+    fill="#4ade80"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="2.8"
+  />
+  <line
+    stroke="#78350f"
+    stroke-opacity="0.55"
+    stroke-width="2.6"
+    x1="45"
+    x2="45"
+    y1="22"
+    y2="88"
+  />
+  <line
+    stroke="#78350f"
+    stroke-opacity="0.55"
+    stroke-width="2.6"
+    x1="75"
+    x2="75"
+    y1="30"
+    y2="96"
+  />
+  <path
+    d="M80 54L88 62M88 54L80 62"
+    stroke="#7f1d1d"
+    stroke-linecap="round"
+    stroke-width="3.4"
+  />
+</svg>

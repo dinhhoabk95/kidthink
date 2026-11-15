@@ -1,0 +1,52 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bong bóng xà phòng</title>
+  <defs>
+    <radialGradient cx="34%" cy="30%" id="bubIridescent" r="70%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="52%" stop-color="#e0f2fe" />
+      <stop offset="82%" stop-color="#f5d0fe" />
+      <stop offset="100%" stop-color="#7dd3fc" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="56" cy="105" fill="#0c4a6e" opacity="0.18" rx="34" ry="4.5" />
+  <circle
+    cx="46"
+    cy="60"
+    fill="url(#bubIridescent)"
+    r="28"
+    stroke="#0c4a6e"
+    stroke-width="4"
+  />
+  <path
+    d="M30 48C33 41 40 37 47 37"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.85"
+    stroke-width="4"
+  />
+  <circle
+    cx="84"
+    cy="36"
+    fill="url(#bubIridescent)"
+    r="16"
+    stroke="#0c4a6e"
+    stroke-width="3.8"
+  />
+  <circle cx="79" cy="30" fill="#ffffff" fill-opacity="0.8" r="3.5" />
+  <circle
+    cx="80"
+    cy="80"
+    fill="url(#bubIridescent)"
+    r="12"
+    stroke="#4c1d95"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="28"
+    cy="24"
+    fill="url(#bubIridescent)"
+    r="7.5"
+    stroke="#0c4a6e"
+    stroke-width="3.6"
+  />
+</svg>

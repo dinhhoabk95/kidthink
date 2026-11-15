@@ -1,0 +1,33 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cánh diều</title>
+  <ellipse cx="58" cy="106" fill="#1e3a5f" opacity="0.22" rx="30" ry="5" />
+  <path
+    d="M56 84C64 94 78 90 86 102"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <polygon
+    fill="#fbbf24"
+    points="56,14 90,48 56,84 22,48"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <polygon fill="#ef4444" points="56,14 90,48 56,48" />
+  <polygon fill="#38bdf8" points="22,48 56,48 56,84" />
+  <path
+    d="M56 14V84M22 48H90M56 14L90 48L56 84L22 48Z"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <polygon
+    fill="#f43f5e"
+    points="70,91 78,86 76,97"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+</svg>

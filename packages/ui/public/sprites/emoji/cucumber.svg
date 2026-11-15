@@ -1,0 +1,35 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Quả dưa chuột</title>
+  <defs>
+    <linearGradient id="cukeGreen" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#86efac" />
+      <stop offset="50%" stop-color="#22c55e" />
+      <stop offset="100%" stop-color="#15803d" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#14532d" opacity="0.24" rx="38" ry="5.5" />
+  <path
+    d="M89 24L98 16"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4.5"
+  />
+  <path
+    d="M26 92C16 82 18 68 32 52C48 34 68 22 84 22C96 22 102 32 96 44C88 60 72 78 52 92C40 100 32 98 26 92Z"
+    fill="url(#cukeGreen)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M36 82C52 68 68 52 82 34"
+    stroke="#bbf7d0"
+    stroke-linecap="round"
+    stroke-opacity="0.65"
+    stroke-width="3"
+  />
+  <circle cx="46" cy="58" fill="#14532d" r="2.2" />
+  <circle cx="64" cy="44" fill="#14532d" r="2.2" />
+  <circle cx="58" cy="70" fill="#14532d" r="2.2" />
+  <circle cx="76" cy="52" fill="#14532d" r="2.2" />
+</svg>

@@ -1,0 +1,88 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bạn đi bộ</title>
+  <defs>
+    <linearGradient id="walkShirt" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb923c" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#44403c" opacity="0.24" rx="28" ry="5" />
+  <path
+    d="M54 74L41 98M66 74L79 98"
+    stroke="#1e3a8a"
+    stroke-linecap="round"
+    stroke-width="10"
+  />
+  <ellipse
+    cx="38"
+    cy="100"
+    fill="#ef4444"
+    rx="8"
+    ry="4.5"
+    stroke="#7f1d1d"
+    stroke-width="3.6"
+  />
+  <ellipse
+    cx="83"
+    cy="100"
+    fill="#ef4444"
+    rx="8"
+    ry="4.5"
+    stroke="#7f1d1d"
+    stroke-width="3.6"
+  />
+  <rect
+    fill="#fed7aa"
+    height="10"
+    rx="5"
+    stroke="#78350f"
+    stroke-width="3.6"
+    transform="rotate(-38 41 58)"
+    width="22"
+    x="30"
+    y="53"
+  />
+  <rect
+    fill="#fed7aa"
+    height="10"
+    rx="5"
+    stroke="#78350f"
+    stroke-width="3.6"
+    transform="rotate(34 78 58)"
+    width="22"
+    x="67"
+    y="53"
+  />
+  <rect
+    fill="url(#walkShirt)"
+    height="30"
+    rx="10"
+    stroke="#7c2d12"
+    stroke-width="4"
+    width="26"
+    x="47"
+    y="46"
+  />
+  <circle
+    cx="60"
+    cy="30"
+    fill="#fed7aa"
+    r="14"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M46 28C47 17 72 15 74 28C68 23 55 23 46 28Z"
+    fill="#57534e"
+    stroke="#292524"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle cx="65" cy="30" fill="#1c1917" r="2.4" />
+  <path
+    d="M61 36C64 38 67 38 69 36"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="2.4"
+  />
+</svg>

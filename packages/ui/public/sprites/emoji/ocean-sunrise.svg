@@ -1,0 +1,52 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bình minh trên biển</title>
+  <defs>
+    <linearGradient id="dawnSky" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fed7aa" />
+      <stop offset="100%" stop-color="#fb923c" />
+    </linearGradient>
+    <linearGradient id="dawnSea" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0369a1" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#0c4a6e" opacity="0.22" rx="38" ry="5" />
+  <rect
+    fill="url(#dawnSky)"
+    height="82"
+    rx="20"
+    stroke="#7c2d12"
+    stroke-width="4"
+    width="84"
+    x="18"
+    y="17"
+  />
+  <circle
+    cx="60"
+    cy="60"
+    fill="#fde047"
+    r="20"
+    stroke="#92400e"
+    stroke-width="3.8"
+  />
+  <path
+    d="M60 27V33M35 38L40 43M85 38L80 43"
+    stroke="#92400e"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M18 62H102V79C102 90 93 99 82 99H38C27 99 18 90 18 79Z"
+    fill="url(#dawnSea)"
+    stroke="#0c4a6e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M46 72H74M52 82H68"
+    stroke="#fef08a"
+    stroke-linecap="round"
+    stroke-opacity="0.85"
+    stroke-width="3"
+  />
+</svg>

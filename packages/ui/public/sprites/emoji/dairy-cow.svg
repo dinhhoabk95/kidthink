@@ -1,0 +1,48 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đàn bò sữa</title>
+  <ellipse cx="60" cy="103" fill="#44403c" opacity="0.25" rx="40" ry="6" />
+  <path
+    d="M46 78V99M57 78V99M77 78V99M88 78V99"
+    stroke="#44403c"
+    stroke-linecap="round"
+    stroke-width="4.5"
+  />
+  <rect
+    fill="#fafaf9"
+    height="34"
+    rx="16"
+    stroke="#44403c"
+    stroke-width="4"
+    width="54"
+    x="40"
+    y="50"
+  />
+  <circle cx="64" cy="61" fill="#292524" r="7" />
+  <circle cx="81" cy="69" fill="#292524" r="6" />
+  <circle
+    cx="35"
+    cy="48"
+    fill="#fafaf9"
+    r="17"
+    stroke="#44403c"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="30"
+    cy="55"
+    fill="#fda4af"
+    rx="11"
+    ry="7"
+    stroke="#881337"
+    stroke-width="3.4"
+  />
+  <circle cx="32" cy="43" fill="#1c1917" r="3.4" />
+  <circle
+    cx="42"
+    cy="64"
+    fill="#fbbf24"
+    r="4.5"
+    stroke="#78350f"
+    stroke-width="3.2"
+  />
+</svg>

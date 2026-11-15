@@ -1,0 +1,52 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bát ăn</title>
+  <defs>
+    <linearGradient id="bowlBody" x1="20%" x2="80%" y1="10%" y2="95%">
+      <stop offset="0%" stop-color="#e0f2fe" />
+      <stop offset="55%" stop-color="#7dd3fc" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="58" cy="102" fill="#1e3a5f" opacity="0.26" rx="36" ry="6" />
+  <path
+    d="M74 52L97 23C100 19 106 24 103 28L82 56Z"
+    fill="#f59e0b"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M18 56H98C98 81 81 96 58 96C35 96 18 81 18 56Z"
+    fill="url(#bowlBody)"
+    stroke="#1e3a5f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#0369a1"
+    height="8"
+    rx="4"
+    stroke="#1e3a5f"
+    stroke-width="3.6"
+    width="38"
+    x="39"
+    y="92"
+  />
+  <ellipse
+    cx="58"
+    cy="56"
+    fill="#fef3c7"
+    rx="40"
+    ry="11"
+    stroke="#1e3a5f"
+    stroke-width="3.8"
+  />
+  <ellipse cx="58" cy="57" fill="#fbbf24" rx="32" ry="7" />
+  <path
+    d="M32 72H84"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.65"
+    stroke-width="3"
+  />
+</svg>

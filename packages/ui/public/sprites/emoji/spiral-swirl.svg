@@ -1,0 +1,32 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Vòng xoáy gió</title>
+  <defs>
+    <radialGradient cx="50%" cy="50%" id="swirlDisc" r="60%">
+      <stop offset="0%" stop-color="#e0f2fe" />
+      <stop offset="55%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#0c4a6e" opacity="0.2" rx="34" ry="5" />
+  <circle
+    cx="60"
+    cy="58"
+    fill="url(#swirlDisc)"
+    r="40"
+    stroke="#0c4a6e"
+    stroke-width="4"
+  />
+  <path
+    d="M60 58C60 52 66 50 70 54C76 60 72 72 62 74C48 77 38 64 42 49C46 32 66 24 82 33C94 40 98 56 92 70"
+    stroke="#1e3a8a"
+    stroke-linecap="round"
+    stroke-width="5.5"
+  />
+  <path
+    d="M60 58C60 52 66 50 70 54C76 60 72 72 62 74C48 77 38 64 42 49"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.7"
+    stroke-width="2.4"
+  />
+</svg>

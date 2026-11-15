@@ -1,0 +1,52 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ngọn lửa ấm</title>
+  <defs>
+    <radialGradient cx="50%" cy="68%" id="flameOuter" r="68%">
+      <stop offset="0%" stop-color="#fde047" />
+      <stop offset="48%" stop-color="#f97316" />
+      <stop offset="100%" stop-color="#dc2626" />
+    </radialGradient>
+    <radialGradient cx="50%" cy="72%" id="flameInner" r="62%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="65%" stop-color="#fef08a" />
+      <stop offset="100%" stop-color="#facc15" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#7c2d12" opacity="0.25" rx="38" ry="5.5" />
+  <rect
+    fill="#92400e"
+    height="12"
+    rx="6"
+    stroke="#451a03"
+    stroke-width="3.8"
+    transform="rotate(-14 60 95)"
+    width="68"
+    x="26"
+    y="89"
+  />
+  <rect
+    fill="#b45309"
+    height="12"
+    rx="6"
+    stroke="#451a03"
+    stroke-width="3.8"
+    transform="rotate(14 60 95)"
+    width="68"
+    x="26"
+    y="89"
+  />
+  <path
+    d="M60 14C66 28 84 36 86 58C88 76 76 90 60 90C44 90 32 76 34 58C36 45 43 38 45 31C48 41 53 42 54 32C55 24 57 18 60 14Z"
+    fill="url(#flameOuter)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M60 44C65 54 73 60 72 72C71 81 66 86 60 86C54 86 49 81 48 72C47 62 55 54 60 44Z"
+    fill="url(#flameInner)"
+    stroke="#9a3412"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+</svg>

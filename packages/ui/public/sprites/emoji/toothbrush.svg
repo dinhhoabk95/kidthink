@@ -1,0 +1,49 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bàn chải đánh răng</title>
+  <defs>
+    <linearGradient id="brushHandle" x1="0%" x2="100%" y1="100%" y2="0%">
+      <stop offset="0%" stop-color="#fb7185" />
+      <stop offset="100%" stop-color="#e11d48" />
+    </linearGradient>
+    <linearGradient id="mintPaste" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#a7f3d0" />
+      <stop offset="100%" stop-color="#10b981" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="58" cy="104" fill="#881337" opacity="0.22" rx="36" ry="5" />
+  <path
+    d="M68 25L86 43L76 53L58 35Z"
+    fill="#fffbeb"
+    stroke="#44403c"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M73 30L63 40M79 36L69 46"
+    stroke="#78716c"
+    stroke-linecap="round"
+    stroke-opacity="0.65"
+    stroke-width="2.4"
+  />
+  <path
+    d="M72 18C79 14 91 20 93 29C95 36 89 41 84 38C78 35 71 31 67 25C64 21 67 19 72 18Z"
+    fill="url(#mintPaste)"
+    stroke="#065f46"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M18 94C14 90 15 83 20 78L78 34C83 30 90 31 94 35C98 39 97 46 92 50L34 96C29 100 22 98 18 94Z"
+    fill="url(#brushHandle)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M27 85L56 61"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.55"
+    stroke-width="3"
+  />
+</svg>

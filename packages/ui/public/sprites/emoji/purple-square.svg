@@ -1,0 +1,49 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hình vuông tím</title>
+  <defs>
+    <linearGradient id="psBlock" x1="15%" x2="85%" y1="15%" y2="85%">
+      <stop offset="0%" stop-color="#d8b4fe" />
+      <stop offset="48%" stop-color="#a855f7" />
+      <stop offset="100%" stop-color="#7e22ce" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="108" fill="#4c1d95" opacity="0.24" rx="36" ry="5" />
+  <rect
+    fill="#6b21a8"
+    height="80"
+    rx="18"
+    stroke="#4c1d95"
+    stroke-width="4"
+    width="84"
+    x="18"
+    y="23"
+  />
+  <rect
+    fill="url(#psBlock)"
+    height="80"
+    rx="18"
+    stroke="#4c1d95"
+    stroke-width="4"
+    width="84"
+    x="18"
+    y="15"
+  />
+  <rect
+    height="64"
+    rx="12"
+    stroke="#f3e8ff"
+    stroke-opacity="0.55"
+    stroke-width="2.5"
+    width="68"
+    x="26"
+    y="23"
+  />
+  <path
+    d="M31 27H59"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.58"
+    stroke-width="4.5"
+  />
+  <circle cx="28" cy="36" fill="#ffffff" fill-opacity="0.5" r="2.5" />
+</svg>

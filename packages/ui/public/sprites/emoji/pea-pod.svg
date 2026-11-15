@@ -1,0 +1,61 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Trái đậu Hà Lan</title>
+  <defs>
+    <linearGradient id="ppPod" x1="15%" x2="85%" y1="15%" y2="85%">
+      <stop offset="0%" stop-color="#86efac" />
+      <stop offset="55%" stop-color="#22c55e" />
+      <stop offset="100%" stop-color="#15803d" />
+    </linearGradient>
+    <radialGradient cx="35%" cy="32%" id="ppBean" r="65%">
+      <stop offset="0%" stop-color="#d9f99d" />
+      <stop offset="100%" stop-color="#4ade80" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#14532d" opacity="0.24" rx="36" ry="5.5" />
+  <path
+    d="M88 26C94 18 101 19 102 25"
+    stroke="#14532d"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <path
+    d="M20 88C24 52 52 26 90 24C94 60 66 92 20 88Z"
+    fill="url(#ppPod)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="42"
+    cy="70"
+    fill="url(#ppBean)"
+    r="11"
+    stroke="#14532d"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="58"
+    cy="56"
+    fill="url(#ppBean)"
+    r="11"
+    stroke="#14532d"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="74"
+    cy="42"
+    fill="url(#ppBean)"
+    r="10.5"
+    stroke="#14532d"
+    stroke-width="3.6"
+  />
+  <path
+    d="M22 88C48 86 76 64 90 26"
+    stroke="#14532d"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <circle cx="39" cy="67" fill="#ffffff" fill-opacity="0.65" r="2.8" />
+  <circle cx="55" cy="53" fill="#ffffff" fill-opacity="0.65" r="2.8" />
+  <circle cx="71" cy="39" fill="#ffffff" fill-opacity="0.65" r="2.8" />
+</svg>

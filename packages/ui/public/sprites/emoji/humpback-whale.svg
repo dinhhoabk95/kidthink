@@ -1,0 +1,51 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cá voi xanh</title>
+  <defs>
+    <linearGradient id="hwBody" x1="15%" x2="85%" y1="15%" y2="90%">
+      <stop offset="0%" stop-color="#60a5fa" />
+      <stop offset="55%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="58" cy="102" fill="#1e3a8a" opacity="0.24" rx="42" ry="6" />
+  <path
+    d="M96 42C102 31 110 30 109 40C108 46 101 50 97 52C104 54 111 60 108 67C105 73 96 68 92 59"
+    fill="url(#hwBody)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M14 66C14 42 36 30 62 34C80 37 89 48 96 52C88 68 76 88 48 89C26 90 14 80 14 66Z"
+    fill="url(#hwBody)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M18 72C34 70 50 74 68 84C52 91 28 90 18 72Z"
+    fill="#e0f2fe"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M52 74C49 85 41 95 33 93C32 85 38 76 44 71"
+    fill="url(#hwBody)"
+    stroke="#1e3a8a"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle cx="33" cy="57" fill="#1c1917" r="4.2" />
+  <circle cx="31.8" cy="55.6" fill="#ffffff" r="1.6" />
+  <ellipse
+    cx="48"
+    cy="43"
+    fill="#ffffff"
+    fill-opacity="0.45"
+    rx="11"
+    ry="4"
+    transform="rotate(-8 48 43)"
+  />
+</svg>

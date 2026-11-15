@@ -1,0 +1,55 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cuộn len</title>
+  <defs>
+    <radialGradient cx="36%" cy="32%" id="yarnPink" r="70%">
+      <stop offset="0%" stop-color="#fda4af" />
+      <stop offset="55%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#be123c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="56" cy="102" fill="#881337" opacity="0.25" rx="36" ry="6" />
+  <path
+    d="M22 92L98 22"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <circle
+    cx="99"
+    cy="21"
+    fill="#fbbf24"
+    r="5"
+    stroke="#78350f"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="56"
+    cy="61"
+    fill="url(#yarnPink)"
+    r="35"
+    stroke="#881337"
+    stroke-width="4"
+  />
+  <path
+    d="M26 48C44 38 68 42 86 58M24 63C45 52 70 57 88 73M36 86C48 64 64 44 77 33M48 92C58 72 72 52 84 43"
+    stroke="#881337"
+    stroke-linecap="round"
+    stroke-opacity="0.65"
+    stroke-width="2.8"
+  />
+  <path
+    d="M74 90C84 98 95 94 102 100"
+    stroke="#881337"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="43"
+    cy="43"
+    fill="#ffffff"
+    fill-opacity="0.45"
+    rx="8"
+    ry="4"
+    transform="rotate(-25 43 43)"
+  />
+</svg>

@@ -1,0 +1,54 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Quả địa cầu</title>
+  <defs>
+    <radialGradient cx="36%" cy="30%" id="egSea" r="70%">
+      <stop offset="0%" stop-color="#7dd3fc" />
+      <stop offset="52%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#1e40af" />
+    </radialGradient>
+    <linearGradient id="egLand" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#86efac" />
+      <stop offset="100%" stop-color="#16a34a" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e3a8a" opacity="0.25" rx="34" ry="5.5" />
+  <circle
+    cx="60"
+    cy="58"
+    fill="url(#egSea)"
+    r="40"
+    stroke="#1e3a8a"
+    stroke-width="4"
+  />
+  <path
+    d="M36 35C45 31 55 34 56 43C57 51 48 55 51 63C54 70 63 72 60 82C56 89 44 86 38 76C31 64 27 42 36 35Z"
+    fill="url(#egLand)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <path
+    d="M72 32C82 35 90 46 88 58C86 67 77 71 73 64C69 57 65 38 72 32Z"
+    fill="url(#egLand)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="60"
+    cy="58"
+    fill="none"
+    r="40"
+    stroke="#1e3a8a"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="43"
+    cy="34"
+    fill="#ffffff"
+    fill-opacity="0.5"
+    rx="9"
+    ry="4"
+    transform="rotate(-24 43 34)"
+  />
+</svg>

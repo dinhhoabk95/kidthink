@@ -1,0 +1,35 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Củ khoai tây</title>
+  <defs>
+    <radialGradient cx="36%" cy="32%" id="spudTan" r="70%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="55%" stop-color="#eab308" />
+      <stop offset="100%" stop-color="#a16207" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="102" fill="#451a03" opacity="0.24" rx="40" ry="6" />
+  <path
+    d="M22 66C18 46 32 30 54 28C72 26 98 34 100 56C102 78 86 94 62 94C38 94 25 82 22 66Z"
+    fill="url(#spudTan)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M42 48C45 46 49 46 51 49M74 46C77 44 80 45 82 48M56 74C59 72 63 72 65 75"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.4"
+  />
+  <circle cx="38" cy="70" fill="#78350f" fill-opacity="0.55" r="2.5" />
+  <circle cx="82" cy="68" fill="#78350f" fill-opacity="0.55" r="2.5" />
+  <ellipse
+    cx="46"
+    cy="38"
+    fill="#ffffff"
+    fill-opacity="0.45"
+    rx="9"
+    ry="4"
+    transform="rotate(-15 46 38)"
+  />
+</svg>

@@ -1,0 +1,74 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Máy kéo nông trại</title>
+  <defs>
+    <linearGradient id="trGreen" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#86efac" />
+      <stop offset="50%" stop-color="#22c55e" />
+      <stop offset="100%" stop-color="#15803d" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#14532d" opacity="0.25" rx="44" ry="6" />
+  <path
+    d="M35 55V35H41V55"
+    fill="#475569"
+    stroke="#1e293b"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M54 26H92L96 56H54Z"
+    fill="#bae6fd"
+    stroke="#1e3a5f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#ef4444"
+    height="8"
+    rx="4"
+    stroke="#7f1d1d"
+    stroke-width="3.6"
+    width="46"
+    x="50"
+    y="22"
+  />
+  <path
+    d="M22 54H98V80H22C19 80 18 76 18 71V60C18 56 19 54 22 54Z"
+    fill="url(#trGreen)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="79"
+    cy="80"
+    fill="#334155"
+    r="21"
+    stroke="#1c1917"
+    stroke-width="4.2"
+  />
+  <circle
+    cx="79"
+    cy="80"
+    fill="#fbbf24"
+    r="10"
+    stroke="#78350f"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="31"
+    cy="87"
+    fill="#334155"
+    r="13"
+    stroke="#1c1917"
+    stroke-width="4"
+  />
+  <circle
+    cx="31"
+    cy="87"
+    fill="#fbbf24"
+    r="5.5"
+    stroke="#78350f"
+    stroke-width="2.8"
+  />
+</svg>

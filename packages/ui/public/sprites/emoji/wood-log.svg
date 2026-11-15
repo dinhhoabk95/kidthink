@@ -1,0 +1,58 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Khúc gỗ</title>
+  <defs>
+    <linearGradient id="logBark" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#b45309" />
+      <stop offset="55%" stop-color="#92400e" />
+      <stop offset="100%" stop-color="#78350f" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="62" cy="99" fill="#5c3d2e" opacity="0.28" rx="44" ry="7" />
+  <path
+    d="M32 42H90C100 42 106 53 106 67C106 81 100 92 90 92H32Z"
+    fill="url(#logBark)"
+    stroke="#5c3d2e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="32"
+    cy="67"
+    fill="#fde68a"
+    rx="16"
+    ry="25"
+    stroke="#5c3d2e"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="32"
+    cy="67"
+    fill="none"
+    rx="9"
+    ry="15"
+    stroke="#b45309"
+    stroke-opacity="0.6"
+    stroke-width="2.5"
+  />
+  <circle cx="32" cy="67" fill="#92400e" r="3.5" />
+  <path
+    d="M54 55H88M62 70H95M50 82H80"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-opacity="0.6"
+    stroke-width="2.8"
+  />
+  <path
+    d="M68 42V29"
+    stroke="#14532d"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M68 31C68 21 82 19 85 28C79 34 72 34 68 31Z"
+    fill="#4ade80"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+</svg>

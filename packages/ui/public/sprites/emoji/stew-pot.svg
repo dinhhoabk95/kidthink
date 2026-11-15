@@ -1,0 +1,43 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Nồi súp nóng</title>
+  <defs>
+    <linearGradient id="potTerra" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb7185" />
+      <stop offset="55%" stop-color="#e11d48" />
+      <stop offset="100%" stop-color="#9f1239" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#7f1d1d" opacity="0.26" rx="38" ry="6" />
+  <path
+    d="M46 34C42 26 48 20 45 14M62 32C58 24 64 18 61 12M76 34C72 26 78 20 75 14"
+    stroke="#78716c"
+    stroke-linecap="round"
+    stroke-opacity="0.65"
+    stroke-width="3"
+  />
+  <path
+    d="M14 58H26M94 58H106"
+    stroke="#44403c"
+    stroke-linecap="round"
+    stroke-width="5"
+  />
+  <path
+    d="M24 52H96V76C96 91 81 99 60 99C39 99 24 91 24 76Z"
+    fill="url(#potTerra)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="60"
+    cy="52"
+    fill="#fde68a"
+    rx="36"
+    ry="12"
+    stroke="#7f1d1d"
+    stroke-width="3.8"
+  />
+  <ellipse cx="60" cy="53" fill="#f59e0b" rx="29" ry="8" />
+  <circle cx="48" cy="52" fill="#ef4444" r="4" />
+  <circle cx="67" cy="54" fill="#22c55e" r="3.8" />
+</svg>

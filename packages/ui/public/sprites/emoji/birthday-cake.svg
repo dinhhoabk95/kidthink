@@ -1,0 +1,73 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bánh sinh nhật</title>
+  <defs>
+    <linearGradient id="cakePink" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fda4af" />
+      <stop offset="100%" stop-color="#f43f5e" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#881337" opacity="0.24" rx="44" ry="5.5" />
+  <ellipse
+    cx="60"
+    cy="96"
+    fill="#fde68a"
+    rx="44"
+    ry="8"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <rect
+    fill="url(#cakePink)"
+    height="42"
+    rx="10"
+    stroke="#881337"
+    stroke-width="4"
+    width="72"
+    x="24"
+    y="52"
+  />
+  <path
+    d="M24 60C24 53 30 48 38 48H82C90 48 96 53 96 60C96 66 91 70 86 70C81 70 79 64 74 64C69 64 66 72 60 72C54 72 51 64 46 64C41 64 39 70 34 70C29 70 24 66 24 60Z"
+    fill="#fffbeb"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <rect
+    fill="#38bdf8"
+    height="20"
+    rx="3"
+    stroke="#0c4a6e"
+    stroke-width="3.4"
+    width="8"
+    x="38"
+    y="28"
+  />
+  <rect
+    fill="#4ade80"
+    height="20"
+    rx="3"
+    stroke="#14532d"
+    stroke-width="3.4"
+    width="8"
+    x="56"
+    y="28"
+  />
+  <rect
+    fill="#facc15"
+    height="20"
+    rx="3"
+    stroke="#78350f"
+    stroke-width="3.4"
+    width="8"
+    x="74"
+    y="28"
+  />
+  <path
+    d="M42 15C46 20 46 25 42 26C38 25 38 20 42 15ZM60 15C64 20 64 25 60 26C56 25 56 20 60 15ZM78 15C82 20 82 25 78 26C74 25 74 20 78 15Z"
+    fill="#fb923c"
+    stroke="#9a3412"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+</svg>

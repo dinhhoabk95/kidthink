@@ -1,0 +1,67 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chú ngựa</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="hfCoat" r="70%">
+      <stop offset="0%" stop-color="#d97706" />
+      <stop offset="55%" stop-color="#b45309" />
+      <stop offset="100%" stop-color="#78350f" />
+    </radialGradient>
+    <linearGradient id="hfMuzzle" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef3c7" />
+      <stop offset="100%" stop-color="#fde68a" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#5c3d2e" opacity="0.26" rx="32" ry="5.5" />
+  <path
+    d="M32 40L25 16L45 28Z"
+    fill="url(#hfCoat)"
+    stroke="#5c3d2e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M88 40L95 16L75 28Z"
+    fill="url(#hfCoat)"
+    stroke="#5c3d2e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path d="M31 35L28 21L41 29Z" fill="#fda4af" />
+  <path d="M89 35L92 21L79 29Z" fill="#fda4af" />
+  <path
+    d="M33 52C31 33 43 24 60 24C77 24 89 33 87 52L83 84C81 96 72 103 60 103C48 103 39 96 37 84Z"
+    fill="url(#hfCoat)"
+    stroke="#5c3d2e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M47 24C52 15 68 15 73 24C70 35 63 40 57 38C51 36 48 31 47 24Z"
+    fill="#451a03"
+    stroke="#292524"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path d="M60 43L65 52L60 61L55 52Z" fill="#fffbeb" />
+  <ellipse
+    cx="60"
+    cy="85"
+    fill="url(#hfMuzzle)"
+    rx="22"
+    ry="17"
+    stroke="#5c3d2e"
+    stroke-width="3.8"
+  />
+  <circle cx="45" cy="57" fill="#1c1917" r="4.6" />
+  <circle cx="43.6" cy="55.5" fill="#ffffff" r="1.7" />
+  <circle cx="75" cy="57" fill="#1c1917" r="4.6" />
+  <circle cx="73.6" cy="55.5" fill="#ffffff" r="1.7" />
+  <ellipse cx="51" cy="82" fill="#5c3d2e" rx="3.2" ry="4.2" />
+  <ellipse cx="69" cy="82" fill="#5c3d2e" rx="3.2" ry="4.2" />
+  <path
+    d="M52 92C56 96 64 96 68 92"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+</svg>

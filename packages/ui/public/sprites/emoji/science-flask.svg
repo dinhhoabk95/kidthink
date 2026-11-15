@@ -1,0 +1,44 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bình thí nghiệm</title>
+  <defs>
+    <linearGradient id="potionTeal" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#5eead4" />
+      <stop offset="100%" stop-color="#0d9488" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#134e4a" opacity="0.24" rx="38" ry="5" />
+  <path
+    d="M48 20H72V44L96 86C100 93 95 100 87 100H33C25 100 20 93 24 86L48 44Z"
+    fill="#f0f9ff"
+    stroke="#1e3a5f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M36 68C48 63 72 73 84 68L94 86C97 91 93 96 87 96H33C27 96 23 91 26 86Z"
+    fill="url(#potionTeal)"
+    stroke="#115e59"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <rect
+    fill="#cbd5e1"
+    height="8"
+    rx="4"
+    stroke="#1e3a5f"
+    stroke-width="3.8"
+    width="32"
+    x="44"
+    y="16"
+  />
+  <circle cx="54" cy="82" fill="#ffffff" fill-opacity="0.75" r="4.5" />
+  <circle cx="68" cy="87" fill="#ffffff" fill-opacity="0.75" r="3.2" />
+  <circle
+    cx="60"
+    cy="54"
+    fill="#5eead4"
+    r="3.5"
+    stroke="#115e59"
+    stroke-width="3"
+  />
+</svg>

@@ -1,0 +1,61 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hoa sen</title>
+  <defs>
+    <linearGradient id="lotPink" x1="50%" x2="50%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fce7f3" />
+      <stop offset="55%" stop-color="#f472b6" />
+      <stop offset="100%" stop-color="#db2777" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="102" fill="#14532d" opacity="0.24" rx="44" ry="6" />
+  <path
+    d="M16 84C30 98 90 98 104 84C88 76 32 76 16 84Z"
+    fill="#4ade80"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M52 84C24 82 14 58 24 40C40 44 52 60 56 82Z"
+    fill="url(#lotPink)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M68 84C96 82 106 58 96 40C80 44 68 60 64 82Z"
+    fill="url(#lotPink)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M56 84C34 74 32 42 44 26C56 36 62 56 60 82Z"
+    fill="url(#lotPink)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M64 84C86 74 88 42 76 26C64 36 58 56 60 82Z"
+    fill="url(#lotPink)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M60 18C75 36 75 68 60 86C45 68 45 36 60 18Z"
+    fill="url(#lotPink)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="60"
+    cy="70"
+    fill="#facc15"
+    r="8"
+    stroke="#78350f"
+    stroke-width="3.2"
+  />
+</svg>

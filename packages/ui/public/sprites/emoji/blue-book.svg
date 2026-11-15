@@ -1,0 +1,50 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Quyển sách xanh dương</title>
+  <defs>
+    <linearGradient id="bbCover" x1="15%" x2="85%" y1="10%" y2="90%">
+      <stop offset="0%" stop-color="#93c5fd" />
+      <stop offset="50%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#1e40af" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e3a8a" opacity="0.25" rx="36" ry="5.5" />
+  <rect
+    fill="#fffbeb"
+    height="78"
+    rx="8"
+    stroke="#78350f"
+    stroke-width="3.8"
+    width="66"
+    x="29"
+    y="21"
+  />
+  <rect
+    fill="url(#bbCover)"
+    height="78"
+    rx="9"
+    stroke="#1e3a8a"
+    stroke-width="4"
+    width="64"
+    x="25"
+    y="15"
+  />
+  <line stroke="#1e3a8a" stroke-width="4" x1="38" x2="38" y1="15" y2="93" />
+  <path d="M25 32H38M25 76H38" stroke="#1e3a8a" stroke-width="3.4" />
+  <rect
+    fill="#eff6ff"
+    height="22"
+    rx="5"
+    stroke="#1e3a8a"
+    stroke-width="3.4"
+    width="34"
+    x="47"
+    y="29"
+  />
+  <path
+    d="M64 62L67 69L75 70L69 75L71 83L64 79L57 83L59 75L53 70L61 69Z"
+    fill="#fde047"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+</svg>

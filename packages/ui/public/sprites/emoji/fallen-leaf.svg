@@ -1,0 +1,39 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Lá thu vàng</title>
+  <defs>
+    <linearGradient id="flAmber" x1="15%" x2="85%" y1="10%" y2="90%">
+      <stop offset="0%" stop-color="#fde047" />
+      <stop offset="50%" stop-color="#f97316" />
+      <stop offset="100%" stop-color="#c2410c" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#7c2d12" opacity="0.24" rx="34" ry="5.5" />
+  <path
+    d="M22 96L42 76"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4.5"
+  />
+  <path
+    d="M96 22C74 20 55 28 45 42C34 39 24 46 26 57C29 66 36 72 39 79C46 82 52 89 61 92C72 94 79 84 76 73C90 63 98 44 96 22Z"
+    fill="url(#flAmber)"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M39 79L84 34M55 63L47 48M67 51L61 38M58 60L73 66"
+    stroke="#7c2d12"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+  <ellipse
+    cx="69"
+    cy="36"
+    fill="#ffffff"
+    fill-opacity="0.45"
+    rx="7"
+    ry="3"
+    transform="rotate(-40 69 36)"
+  />
+</svg>

@@ -1,0 +1,56 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>La bàn chỉ hướng</title>
+  <defs>
+    <radialGradient cx="36%" cy="32%" id="compBrass" r="70%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="55%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.24" rx="34" ry="5" />
+  <circle cx="60" cy="16" fill="none" r="6" stroke="#78350f" stroke-width="4" />
+  <circle
+    cx="60"
+    cy="61"
+    fill="url(#compBrass)"
+    r="40"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <circle
+    cx="60"
+    cy="61"
+    fill="#fffbeb"
+    r="30"
+    stroke="#92400e"
+    stroke-width="3.6"
+  />
+  <path
+    d="M60 35V40M60 82V87M34 61H39M81 61H86"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <polygon
+    fill="#ef4444"
+    points="76,45 65,66 55,56"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <polygon
+    fill="#64748b"
+    points="44,77 55,56 65,66"
+    stroke="#1e293b"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="60"
+    cy="61"
+    fill="#fde047"
+    r="4.5"
+    stroke="#78350f"
+    stroke-width="3.4"
+  />
+</svg>

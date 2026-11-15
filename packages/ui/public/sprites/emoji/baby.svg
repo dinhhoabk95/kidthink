@@ -1,0 +1,64 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Em bé</title>
+  <defs>
+    <radialGradient cx="40%" cy="32%" id="babySkin" r="70%">
+      <stop offset="0%" stop-color="#ffedd5" />
+      <stop offset="65%" stop-color="#fed7aa" />
+      <stop offset="100%" stop-color="#fdba74" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#78350f" opacity="0.24" rx="34" ry="6" />
+  <circle
+    cx="23"
+    cy="64"
+    fill="#fed7aa"
+    r="9"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="97"
+    cy="64"
+    fill="#fed7aa"
+    r="9"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="60"
+    cy="62"
+    fill="url(#babySkin)"
+    r="36"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M55 26C65 24 72 34 64 41C58 46 51 42 54 36"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <circle cx="46" cy="60" fill="#1c1917" r="4.5" />
+  <circle cx="44.7" cy="58.5" fill="#ffffff" r="1.6" />
+  <circle cx="74" cy="60" fill="#1c1917" r="4.5" />
+  <circle cx="72.7" cy="58.5" fill="#ffffff" r="1.6" />
+  <circle cx="37" cy="70" fill="#fb7185" fill-opacity="0.48" r="5.5" />
+  <circle cx="83" cy="70" fill="#fb7185" fill-opacity="0.48" r="5.5" />
+  <ellipse
+    cx="60"
+    cy="78"
+    fill="#38bdf8"
+    rx="10"
+    ry="7"
+    stroke="#0c4a6e"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="60"
+    cy="83"
+    fill="none"
+    r="6"
+    stroke="#0c4a6e"
+    stroke-width="3.2"
+  />
+</svg>

@@ -1,0 +1,49 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Khăn quàng cổ</title>
+  <defs>
+    <linearGradient id="scfRed" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb7185" />
+      <stop offset="55%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#dc2626" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#7f1d1d" opacity="0.24" rx="34" ry="5.5" />
+  <path
+    d="M62 48H84L88 94H66Z"
+    fill="url(#scfRed)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M40 48H64L58 84H36Z"
+    fill="url(#scfRed)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="60"
+    cy="38"
+    fill="url(#scfRed)"
+    rx="34"
+    ry="15"
+    stroke="#7f1d1d"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="60"
+    cy="35"
+    fill="#FFFBF2"
+    rx="18"
+    ry="6"
+    stroke="#7f1d1d"
+    stroke-width="3.4"
+  />
+  <path
+    d="M39 84V92M47 84V92M55 84V92M69 94V102M77 94V102M85 94V102"
+    stroke="#7f1d1d"
+    stroke-linecap="round"
+    stroke-width="3.4"
+  />
+</svg>

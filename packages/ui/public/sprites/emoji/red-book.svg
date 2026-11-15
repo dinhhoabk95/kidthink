@@ -1,0 +1,49 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Quyển sách đỏ</title>
+  <defs>
+    <linearGradient id="rbCover" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#f87171" />
+      <stop offset="55%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#b91c1c" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#7f1d1d" opacity="0.26" rx="34" ry="5.5" />
+  <rect
+    fill="#fffbeb"
+    height="78"
+    rx="8"
+    stroke="#7f1d1d"
+    stroke-width="3.8"
+    width="64"
+    x="30"
+    y="22"
+  />
+  <rect
+    fill="url(#rbCover)"
+    height="78"
+    rx="8"
+    stroke="#7f1d1d"
+    stroke-width="4"
+    width="64"
+    x="26"
+    y="16"
+  />
+  <path d="M39 16V94" stroke="#7f1d1d" stroke-width="3.8" />
+  <rect
+    height="36"
+    rx="4"
+    stroke="#fde68a"
+    stroke-opacity="0.8"
+    stroke-width="2.6"
+    width="32"
+    x="48"
+    y="32"
+  />
+  <path
+    d="M58 94V106L64 101L70 106V94"
+    fill="#facc15"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+</svg>

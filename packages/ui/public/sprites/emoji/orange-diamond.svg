@@ -1,0 +1,39 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hình thoi cam</title>
+  <defs>
+    <linearGradient id="orgDia" x1="20%" x2="80%" y1="15%" y2="85%">
+      <stop offset="0%" stop-color="#fdba74" />
+      <stop offset="50%" stop-color="#f97316" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </linearGradient>
+  </defs>
+  <polygon
+    fill="#c2410c"
+    points="60,18 102,60 60,102 18,60"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="4"
+    transform="translate(0 6)"
+  />
+  <polygon
+    fill="url(#orgDia)"
+    points="60,14 102,56 60,98 18,56"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <polygon
+    points="60,26 89,56 60,86 31,56"
+    stroke="#ffedd5"
+    stroke-linejoin="round"
+    stroke-opacity="0.55"
+    stroke-width="2.5"
+  />
+  <path
+    d="M56 26L38 44"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.6"
+    stroke-width="4.5"
+  />
+</svg>

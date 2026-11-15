@@ -1,0 +1,75 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bánh vòng ngọt</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="dntDough" r="70%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="60%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
+    </radialGradient>
+    <radialGradient cx="36%" cy="30%" id="dntPink" r="70%">
+      <stop offset="0%" stop-color="#fbcfe8" />
+      <stop offset="50%" stop-color="#ec4899" />
+      <stop offset="100%" stop-color="#be185d" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.26" rx="40" ry="6" />
+  <circle
+    cx="60"
+    cy="61"
+    fill="url(#dntDough)"
+    r="41"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M23 55C23 33 39 21 60 21C81 21 97 33 97 55C97 65 89 72 82 68C75 76 66 75 60 69C54 75 45 76 38 68C31 72 23 65 23 55Z"
+    fill="url(#dntPink)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="60"
+    cy="59"
+    fill="#FFFBF2"
+    r="14"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <rect
+    fill="#38bdf8"
+    height="3.5"
+    rx="1.7"
+    transform="rotate(-24 38 38)"
+    width="8"
+    x="38"
+    y="38"
+  />
+  <rect
+    fill="#fde047"
+    height="3.5"
+    rx="1.7"
+    transform="rotate(20 74 36)"
+    width="8"
+    x="74"
+    y="36"
+  />
+  <rect
+    fill="#4ade80"
+    height="3.5"
+    rx="1.7"
+    transform="rotate(15 80 54)"
+    width="8"
+    x="80"
+    y="54"
+  />
+  <rect
+    fill="#ffffff"
+    height="3.5"
+    rx="1.7"
+    transform="rotate(-15 33 54)"
+    width="8"
+    x="33"
+    y="54"
+  />
+</svg>

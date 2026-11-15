@@ -1,0 +1,60 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hoàng hôn ấm áp</title>
+  <defs>
+    <linearGradient id="duskSky" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#c084fc" />
+      <stop offset="55%" stop-color="#fb7185" />
+      <stop offset="100%" stop-color="#fb923c" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#3b0764" opacity="0.24" rx="40" ry="5" />
+  <rect
+    fill="url(#duskSky)"
+    height="82"
+    rx="18"
+    stroke="#581c87"
+    stroke-width="4"
+    width="84"
+    x="18"
+    y="17"
+  />
+  <circle
+    cx="64"
+    cy="54"
+    fill="#fde047"
+    r="16"
+    stroke="#9a3412"
+    stroke-width="3.6"
+  />
+  <rect
+    fill="#4c1d95"
+    height="40"
+    stroke="#2e1065"
+    stroke-width="3.8"
+    width="24"
+    x="24"
+    y="58"
+  />
+  <rect
+    fill="#312e81"
+    height="50"
+    stroke="#1e1b4b"
+    stroke-width="3.8"
+    width="24"
+    x="48"
+    y="48"
+  />
+  <rect
+    fill="#581c87"
+    height="32"
+    stroke="#2e1065"
+    stroke-width="3.8"
+    width="24"
+    x="72"
+    y="66"
+  />
+  <rect fill="#fef08a" height="6" width="6" x="33" y="66" />
+  <rect fill="#fef08a" height="6" width="6" x="57" y="56" />
+  <rect fill="#fef08a" height="6" width="6" x="57" y="68" />
+  <rect fill="#fef08a" height="6" width="6" x="81" y="74" />
+</svg>

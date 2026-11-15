@@ -1,0 +1,44 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chồng sách</title>
+  <ellipse cx="60" cy="103" fill="#44403c" opacity="0.26" rx="46" ry="6" />
+  <rect
+    fill="#22c55e"
+    height="20"
+    rx="6"
+    stroke="#14532d"
+    stroke-width="4"
+    width="84"
+    x="18"
+    y="76"
+  />
+  <rect fill="#fffbeb" height="10" rx="3" width="22" x="76" y="81" />
+  <rect
+    fill="#3b82f6"
+    height="20"
+    rx="6"
+    stroke="#1e3a5f"
+    stroke-width="4"
+    width="80"
+    x="22"
+    y="54"
+  />
+  <rect fill="#fffbeb" height="10" rx="3" width="22" x="26" y="59" />
+  <rect
+    fill="#ef4444"
+    height="20"
+    rx="6"
+    stroke="#7f1d1d"
+    stroke-width="4"
+    width="76"
+    x="20"
+    y="32"
+  />
+  <rect fill="#fffbeb" height="10" rx="3" width="20" x="72" y="37" />
+  <path
+    d="M56 52V64L61 60L66 64V52"
+    fill="#facc15"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+</svg>

@@ -1,0 +1,34 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bánh sừng bò</title>
+  <defs>
+    <radialGradient cx="50%" cy="35%" id="crsGold" r="68%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="55%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="98" fill="#78350f" opacity="0.25" rx="42" ry="6" />
+  <path
+    d="M16 76C12 62 21 48 34 46C42 33 78 33 86 46C99 48 108 62 104 76C100 88 86 88 82 77C74 68 46 68 38 77C34 88 20 88 16 76Z"
+    fill="url(#crsGold)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="60"
+    cy="52"
+    fill="url(#crsGold)"
+    rx="22"
+    ry="18"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <path
+    d="M36 47C34 57 36 66 40 73M84 47C86 57 84 66 80 73"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <ellipse cx="56" cy="44" fill="#ffffff" fill-opacity="0.5" rx="9" ry="3.5" />
+</svg>

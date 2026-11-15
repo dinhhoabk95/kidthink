@@ -1,0 +1,38 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cọ vẽ tranh</title>
+  <defs>
+    <linearGradient id="brshWood" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#0c4a6e" opacity="0.24" rx="36" ry="5.5" />
+  <path
+    d="M56 54L96 94C100 98 93 105 89 101L49 61Z"
+    fill="url(#brshWood)"
+    stroke="#0c4a6e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <polygon
+    fill="#cbd5e1"
+    points="44,56 58,42 65,49 51,63"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M44 56C31 55 21 43 18 22C36 24 49 32 58 42Z"
+    fill="#fde68a"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M18 22C29 23 38 27 44 33C38 39 32 42 25 39C21 34 19 28 18 22Z"
+    fill="#f43f5e"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+</svg>

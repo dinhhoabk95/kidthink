@@ -1,0 +1,83 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Quả bí ngô</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="pkOuter" r="70%">
+      <stop offset="0%" stop-color="#fdba74" />
+      <stop offset="48%" stop-color="#f97316" />
+      <stop offset="100%" stop-color="#c2410c" />
+    </radialGradient>
+    <radialGradient cx="42%" cy="30%" id="pkCenter" r="70%">
+      <stop offset="0%" stop-color="#fed7aa" />
+      <stop offset="52%" stop-color="#fb923c" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#7c2d12" opacity="0.26" rx="42" ry="6.5" />
+  <path
+    d="M55 34C54 22 60 15 69 14L73 21C66 23 64 27 65 34Z"
+    fill="#16a34a"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M66 28C75 23 84 26 85 33"
+    stroke="#14532d"
+    stroke-linecap="round"
+    stroke-width="3.4"
+  />
+  <ellipse
+    cx="36"
+    cy="66"
+    fill="url(#pkOuter)"
+    rx="23"
+    ry="33"
+    stroke="#7c2d12"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="84"
+    cy="66"
+    fill="url(#pkOuter)"
+    rx="23"
+    ry="33"
+    stroke="#7c2d12"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="48"
+    cy="67"
+    fill="url(#pkOuter)"
+    rx="21"
+    ry="35"
+    stroke="#7c2d12"
+    stroke-width="3.8"
+  />
+  <ellipse
+    cx="72"
+    cy="67"
+    fill="url(#pkOuter)"
+    rx="21"
+    ry="35"
+    stroke="#7c2d12"
+    stroke-width="3.8"
+  />
+  <ellipse
+    cx="60"
+    cy="68"
+    fill="url(#pkCenter)"
+    rx="18"
+    ry="36"
+    stroke="#7c2d12"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="53"
+    cy="48"
+    fill="#ffffff"
+    fill-opacity="0.48"
+    rx="4.5"
+    ry="10"
+    transform="rotate(-12 53 48)"
+  />
+</svg>

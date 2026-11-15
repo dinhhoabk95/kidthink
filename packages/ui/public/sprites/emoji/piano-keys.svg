@@ -1,0 +1,84 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đàn pi-a-nô</title>
+  <defs>
+    <linearGradient id="pkCase" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#b91c1c" />
+      <stop offset="100%" stop-color="#7f1d1d" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#292524" opacity="0.25" rx="44" ry="5.5" />
+  <rect
+    fill="url(#pkCase)"
+    height="72"
+    rx="12"
+    stroke="#292524"
+    stroke-width="4"
+    width="92"
+    x="14"
+    y="22"
+  />
+  <rect
+    fill="#fffbeb"
+    height="52"
+    rx="6"
+    stroke="#292524"
+    stroke-width="3.8"
+    width="78"
+    x="21"
+    y="36"
+  />
+  <line
+    stroke="#44403c"
+    stroke-width="3.4"
+    x1="40.5"
+    x2="40.5"
+    y1="36"
+    y2="88"
+  />
+  <line stroke="#44403c" stroke-width="3.4" x1="60" x2="60" y1="36" y2="88" />
+  <line
+    stroke="#44403c"
+    stroke-width="3.4"
+    x1="79.5"
+    x2="79.5"
+    y1="36"
+    y2="88"
+  />
+  <rect
+    fill="#292524"
+    height="31"
+    rx="3"
+    stroke="#1c1917"
+    stroke-width="3.2"
+    width="11"
+    x="35"
+    y="36"
+  />
+  <rect
+    fill="#292524"
+    height="31"
+    rx="3"
+    stroke="#1c1917"
+    stroke-width="3.2"
+    width="11"
+    x="54.5"
+    y="36"
+  />
+  <rect
+    fill="#292524"
+    height="31"
+    rx="3"
+    stroke="#1c1917"
+    stroke-width="3.2"
+    width="11"
+    x="74"
+    y="36"
+  />
+  <path
+    d="M26 29H58"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.45"
+    stroke-width="3.5"
+  />
+</svg>

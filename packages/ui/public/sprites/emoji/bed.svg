@@ -1,0 +1,38 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chiếc giường</title>
+  <ellipse cx="60" cy="103" fill="#5c3d2e" opacity="0.26" rx="46" ry="6" />
+  <path
+    d="M18 34V98M102 58V98"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="5"
+  />
+  <rect
+    fill="#fffbeb"
+    height="14"
+    rx="6"
+    stroke="#5c3d2e"
+    stroke-width="3.6"
+    width="24"
+    x="23"
+    y="52"
+  />
+  <path
+    d="M44 54H96C100 54 102 58 102 64V80H44Z"
+    fill="#60a5fa"
+    stroke="#1e3a5f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <rect
+    fill="#d97706"
+    height="12"
+    rx="4"
+    stroke="#5c3d2e"
+    stroke-width="4"
+    width="88"
+    x="16"
+    y="76"
+  />
+  <circle cx="74" cy="66" fill="#fde047" r="4.5" />
+</svg>

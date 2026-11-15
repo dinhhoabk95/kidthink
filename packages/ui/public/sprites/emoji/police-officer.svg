@@ -1,0 +1,61 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chú cảnh sát</title>
+  <defs>
+    <linearGradient id="copCap" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e3a8a" opacity="0.24" rx="34" ry="5" />
+  <path
+    d="M28 98C30 80 43 74 60 74C77 74 90 80 92 98Z"
+    fill="#2563eb"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <polygon
+    fill="#fde047"
+    points="73,83 78,86 76,92 73,94 70,92 68,86"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="60"
+    cy="56"
+    fill="#fed7aa"
+    r="21"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M32 38L40 20H80L88 38Z"
+    fill="url(#copCap)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M30 39C44 45 76 45 90 39"
+    stroke="#1c1917"
+    stroke-linecap="round"
+    stroke-width="5.5"
+  />
+  <circle
+    cx="60"
+    cy="30"
+    fill="#fde047"
+    r="5"
+    stroke="#78350f"
+    stroke-width="3.2"
+  />
+  <circle cx="52" cy="56" fill="#1c1917" r="3" />
+  <circle cx="68" cy="56" fill="#1c1917" r="3" />
+  <path
+    d="M54 65C58 68 62 68 66 65"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.2"
+  />
+</svg>

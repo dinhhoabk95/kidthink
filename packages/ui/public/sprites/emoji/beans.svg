@@ -1,0 +1,61 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hạt đậu</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="beanRed" r="68%">
+      <stop offset="0%" stop-color="#fca5a5" />
+      <stop offset="50%" stop-color="#b91c1c" />
+      <stop offset="100%" stop-color="#7f1d1d" />
+    </radialGradient>
+    <radialGradient cx="38%" cy="32%" id="beanAmber" r="68%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="55%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#92400e" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="102" fill="#451a03" opacity="0.24" rx="40" ry="6" />
+  <path
+    d="M26 42C16 32 24 16 39 20C52 24 58 38 50 50C43 60 28 60 25 50C24 46 28 45 26 42Z"
+    fill="url(#beanAmber)"
+    stroke="#451a03"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="32"
+    cy="42"
+    fill="#fffbeb"
+    rx="4"
+    ry="2.2"
+    transform="rotate(-30 32 42)"
+  />
+  <path
+    d="M74 34C64 26 70 12 85 16C99 20 106 36 98 50C90 62 74 60 72 48C71 43 77 39 74 34Z"
+    fill="url(#beanRed)"
+    stroke="#451a03"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="78"
+    cy="39"
+    fill="#fffbeb"
+    rx="4"
+    ry="2.2"
+    transform="rotate(-25 78 39)"
+  />
+  <path
+    d="M42 74C38 62 52 54 66 60C82 67 86 84 74 93C61 102 41 96 40 83C40 79 44 78 42 74Z"
+    fill="url(#beanRed)"
+    stroke="#451a03"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="55"
+    cy="73"
+    fill="#fffbeb"
+    rx="5"
+    ry="2.4"
+    transform="rotate(15 55 73)"
+  />
+</svg>

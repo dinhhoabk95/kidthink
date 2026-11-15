@@ -1,0 +1,47 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hòn đá</title>
+  <defs>
+    <radialGradient cx="38%" cy="28%" id="rockMain" r="72%">
+      <stop offset="0%" stop-color="#d6d3d1" />
+      <stop offset="55%" stop-color="#a8a29e" />
+      <stop offset="100%" stop-color="#78716c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="99" fill="#44403c" opacity="0.28" rx="44" ry="7" />
+  <path
+    d="M18 78C15 62 25 41 43 32L67 26C86 28 101 46 103 68C104 83 93 95 75 96H36C24 96 19 88 18 78Z"
+    fill="url(#rockMain)"
+    stroke="#44403c"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M43 34L65 52L98 66C96 82 86 92 73 93H38L49 68L24 62C28 48 35 39 43 34Z"
+    fill="#78716c"
+    fill-opacity="0.35"
+  />
+  <path
+    d="M44 33L64 51L50 69M64 51L97 65"
+    stroke="#57534e"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-opacity="0.55"
+    stroke-width="2.6"
+  />
+  <path
+    d="M25 91C27 83 36 82 40 88C45 83 53 85 54 93H25Z"
+    fill="#4ade80"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <ellipse
+    cx="48"
+    cy="40"
+    fill="#ffffff"
+    fill-opacity="0.55"
+    rx="10"
+    ry="4"
+    transform="rotate(-16 48 40)"
+  />
+</svg>

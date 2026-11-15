@@ -1,0 +1,64 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chiếc gương soi</title>
+  <defs>
+    <linearGradient id="mirrorGlass" x1="20%" x2="80%" y1="15%" y2="85%">
+      <stop offset="0%" stop-color="#e0f2fe" />
+      <stop offset="55%" stop-color="#bae6fd" />
+      <stop offset="100%" stop-color="#7dd3fc" />
+    </linearGradient>
+    <linearGradient id="mirrorWood" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#92400e" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#451a03" opacity="0.25" rx="30" ry="5" />
+  <path
+    d="M40 98C46 90 74 90 80 98Z"
+    fill="url(#mirrorWood)"
+    stroke="#451a03"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#92400e"
+    height="14"
+    stroke="#451a03"
+    stroke-width="3.8"
+    width="10"
+    x="55"
+    y="82"
+  />
+  <circle
+    cx="60"
+    cy="16"
+    fill="#fde047"
+    r="5"
+    stroke="#78350f"
+    stroke-width="3.6"
+  />
+  <ellipse
+    cx="60"
+    cy="52"
+    fill="url(#mirrorWood)"
+    rx="29"
+    ry="35"
+    stroke="#451a03"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="60"
+    cy="52"
+    fill="url(#mirrorGlass)"
+    rx="21"
+    ry="27"
+    stroke="#0c4a6e"
+    stroke-width="3.6"
+  />
+  <path
+    d="M49 38L65 28M47 52L71 37"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.75"
+    stroke-width="3.5"
+  />
+</svg>

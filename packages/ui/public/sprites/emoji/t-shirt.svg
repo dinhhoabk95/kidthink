@@ -1,0 +1,32 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Áo phông</title>
+  <defs>
+    <linearGradient id="teeCoral" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fda4af" />
+      <stop offset="50%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#e11d48" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#881337" opacity="0.24" rx="34" ry="5.5" />
+  <path
+    d="M42 22C47 30 73 30 78 22L106 38L94 58L82 51V96C82 99 79 101 76 101H44C41 101 38 99 38 96V51L26 58L14 38Z"
+    fill="url(#teeCoral)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M43 23C49 33 71 33 77 23"
+    stroke="#fde047"
+    stroke-linecap="round"
+    stroke-opacity="0.9"
+    stroke-width="3"
+  />
+  <polygon
+    fill="#fde047"
+    points="60,48 64,56 73,57 66,63 68,72 60,67 52,72 54,63 47,57 56,56"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+</svg>

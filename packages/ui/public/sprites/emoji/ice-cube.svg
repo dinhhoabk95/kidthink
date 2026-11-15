@@ -1,0 +1,47 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Viên đá lạnh</title>
+  <defs>
+    <linearGradient id="iceFront" x1="15%" x2="85%" y1="10%" y2="90%">
+      <stop offset="0%" stop-color="#e0f2fe" />
+      <stop offset="55%" stop-color="#7dd3fc" />
+      <stop offset="100%" stop-color="#38bdf8" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#0c4a6e" opacity="0.24" rx="40" ry="6" />
+  <path
+    d="M24 40L60 22L96 40V82L60 99L24 82Z"
+    fill="url(#iceFront)"
+    stroke="#0c4a6e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M24 40L60 56L96 40L60 22Z"
+    fill="#f0f9ff"
+    stroke="#0c4a6e"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M60 56V98"
+    stroke="#0c4a6e"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M35 63L47 51M38 76L50 64"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.8"
+    stroke-width="3"
+  />
+  <ellipse
+    cx="97"
+    cy="96"
+    fill="#7dd3fc"
+    rx="7"
+    ry="4"
+    stroke="#0c4a6e"
+    stroke-width="3.6"
+  />
+</svg>

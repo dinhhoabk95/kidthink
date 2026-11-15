@@ -1,0 +1,46 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mặt trời mọc sau núi</title>
+  <defs>
+    <linearGradient id="mtnSky" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef3c7" />
+      <stop offset="100%" stop-color="#fdba74" />
+    </linearGradient>
+    <linearGradient id="mtnPeak" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#4ade80" />
+      <stop offset="100%" stop-color="#15803d" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#14532d" opacity="0.22" rx="42" ry="5" />
+  <rect
+    fill="url(#mtnSky)"
+    height="80"
+    rx="18"
+    stroke="#78350f"
+    stroke-width="4"
+    width="88"
+    x="16"
+    y="18"
+  />
+  <circle
+    cx="62"
+    cy="52"
+    fill="#facc15"
+    r="18"
+    stroke="#92400e"
+    stroke-width="3.8"
+  />
+  <polygon
+    fill="#16a34a"
+    points="54,98 82,50 104,88 104,98"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <polygon
+    fill="url(#mtnPeak)"
+    points="16,98 16,84 44,44 76,98"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+</svg>

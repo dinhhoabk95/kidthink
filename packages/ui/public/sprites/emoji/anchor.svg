@@ -1,0 +1,60 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mỏ neo</title>
+  <defs>
+    <linearGradient id="anSteel" x1="15%" x2="85%" y1="10%" y2="90%">
+      <stop offset="0%" stop-color="#93c5fd" />
+      <stop offset="50%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#1e40af" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e3a8a" opacity="0.24" rx="36" ry="5.5" />
+  <circle
+    cx="60"
+    cy="24"
+    fill="none"
+    r="10"
+    stroke="#1e3a8a"
+    stroke-width="6.5"
+  />
+  <rect
+    fill="url(#anSteel)"
+    height="10"
+    rx="5"
+    stroke="#1e3a8a"
+    stroke-width="3.8"
+    width="44"
+    x="38"
+    y="39"
+  />
+  <rect
+    fill="url(#anSteel)"
+    height="62"
+    rx="5"
+    stroke="#1e3a8a"
+    stroke-width="4"
+    width="12"
+    x="54"
+    y="33"
+  />
+  <path
+    d="M22 68C25 89 41 101 60 101C79 101 95 89 98 68L88 72C85 84 74 91 60 91C46 91 35 84 32 72Z"
+    fill="url(#anSteel)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M16 74L24 58L35 72Z"
+    fill="url(#anSteel)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M104 74L96 58L85 72Z"
+    fill="url(#anSteel)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+</svg>

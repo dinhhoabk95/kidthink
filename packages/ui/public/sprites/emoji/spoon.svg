@@ -1,0 +1,43 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chiếc muỗng</title>
+  <defs>
+    <linearGradient id="spoonSilv" x1="20%" x2="80%" y1="15%" y2="85%">
+      <stop offset="0%" stop-color="#f8fafc" />
+      <stop offset="55%" stop-color="#cbd5e1" />
+      <stop offset="100%" stop-color="#94a3b8" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#334155" opacity="0.24" rx="34" ry="5.5" />
+  <path
+    d="M55 58L21 92C17 96 24 103 28 99L62 65Z"
+    fill="url(#spoonSilv)"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="77"
+    cy="43"
+    fill="url(#spoonSilv)"
+    rx="20"
+    ry="27"
+    stroke="#334155"
+    stroke-width="4"
+    transform="rotate(45 77 43)"
+  />
+  <ellipse
+    cx="78"
+    cy="42"
+    fill="#e2e8f0"
+    rx="12"
+    ry="18"
+    transform="rotate(45 78 42)"
+  />
+  <path
+    d="M72 34C77 29 83 27 88 29"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.85"
+    stroke-width="3"
+  />
+</svg>

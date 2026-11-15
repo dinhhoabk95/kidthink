@@ -1,0 +1,30 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Trăng rằm</title>
+  <defs>
+    <radialGradient cx="36%" cy="32%" id="moonGlow" r="68%">
+      <stop offset="0%" stop-color="#fefce8" />
+      <stop offset="55%" stop-color="#fde047" />
+      <stop offset="100%" stop-color="#eab308" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.22" rx="36" ry="5" />
+  <circle
+    cx="60"
+    cy="56"
+    fill="url(#moonGlow)"
+    r="41"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <circle cx="44" cy="42" fill="#ca8a04" fill-opacity="0.32" r="8" />
+  <circle cx="75" cy="48" fill="#ca8a04" fill-opacity="0.28" r="10" />
+  <circle cx="54" cy="70" fill="#ca8a04" fill-opacity="0.3" r="6.5" />
+  <circle cx="72" cy="73" fill="#ca8a04" fill-opacity="0.25" r="4.5" />
+  <path
+    d="M20 84C20 78 25 74 31 75C34 70 42 70 46 75C52 75 56 79 56 84C56 89 52 92 46 92H28C23 92 20 89 20 84Z"
+    fill="#f8fafc"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+</svg>

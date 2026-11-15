@@ -1,0 +1,51 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bánh xe tròn</title>
+  <defs>
+    <radialGradient cx="38%" cy="34%" id="tireRubber" r="68%">
+      <stop offset="0%" stop-color="#57534e" />
+      <stop offset="100%" stop-color="#292524" />
+    </radialGradient>
+    <radialGradient cx="40%" cy="35%" id="rimAlloy" r="65%">
+      <stop offset="0%" stop-color="#f8fafc" />
+      <stop offset="100%" stop-color="#94a3b8" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1c1917" opacity="0.25" rx="34" ry="5" />
+  <circle
+    cx="60"
+    cy="58"
+    fill="url(#tireRubber)"
+    r="42"
+    stroke="#1c1917"
+    stroke-width="4.2"
+  />
+  <circle
+    cx="60"
+    cy="58"
+    fill="url(#rimAlloy)"
+    r="25"
+    stroke="#1e293b"
+    stroke-width="3.8"
+  />
+  <path
+    d="M60 33V83M38 45L82 71M82 45L38 71"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <circle
+    cx="60"
+    cy="58"
+    fill="#f59e0b"
+    r="8"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <path
+    d="M32 32C40 24 50 20 60 20"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.35"
+    stroke-width="3.5"
+  />
+</svg>

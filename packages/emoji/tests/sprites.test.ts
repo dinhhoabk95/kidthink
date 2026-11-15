@@ -15,146 +15,88 @@ const MAX_WEBP_BYTES = 35_000;
 const MIN_BORDER_CONTRAST = 3.0;
 const MIN_LIGHT_SPRITE_BORDER_CONTRAST = 4.0;
 const LEADING_SLASH_RE = /^\//;
+const WHITESPACE_SPLIT_RE = /\s+/;
 const SVG_SHAPE_TAG_RE = /<(?:path|circle|ellipse|rect|polygon|g)\b[^>]*>/g;
 const STROKE_COLOR_RE = /\bstroke="(#[0-9a-fA-F]{6})"/;
 const STROKE_WIDTH_RE = /\bstroke-width="([^"]+)"/;
 const OPACITY_ATTR_RE = /\b(?:stroke-opacity|opacity)=/;
 
-const EXPECTED_SLUGS: ReadonlyArray<readonly [string, string]> = [
-  // Core PoC (27)
-  ["🍎", "apple"],
-  ["🍌", "banana"],
-  ["🍊", "orange"],
-  ["🍓", "strawberry"],
-  ["🍉", "watermelon"],
-  ["🍇", "grapes"],
-  ["🥕", "carrot"],
-  ["🌽", "corn"],
-  ["🧁", "cupcake"],
-  ["🐟", "fish"],
-  ["🐰", "rabbit"],
-  ["🐻", "bear"],
-  ["🐱", "cat"],
-  ["🐶", "dog"],
-  ["🦆", "duck"],
-  ["🐸", "frog"],
-  ["🦋", "butterfly"],
-  ["🐢", "turtle"],
-  ["🔴", "red-circle"],
-  ["🟦", "blue-square"],
-  ["🟥", "red-square"],
-  ["🔺", "red-triangle"],
-  ["⭐", "star"],
-  ["🌻", "sunflower"],
-  ["🎈", "balloon"],
-  ["🚗", "car"],
-  ["⚽", "soccer-ball"],
+const EXPECTED_CATALOG_SPEC = `
+  🍎:apple 🍌:banana 🍊:orange 🍓:strawberry 🍉:watermelon 🍇:grapes
+  🥕:carrot 🌽:corn 🧁:cupcake 🐟:fish 🐰:rabbit 🐻:bear 🐱:cat 🐶:dog
+  🦆:duck 🐸:frog 🦋:butterfly 🐢:turtle 🔴:red-circle 🟦:blue-square
+  🟥:red-square 🔺:red-triangle ⭐:star 🌻:sunflower 🎈:balloon 🚗:car
+  ⚽:soccer-ball 🦊:fox 🐼:panda 🦁:lion 🐯:tiger 🐨:koala 🐧:penguin
+  🦉:owl 🐘:elephant 🐮:cow 🐦:bird 🐔:hen 🐷:pig 🐑:sheep 🐒:monkey
+  🦒:giraffe 🐝:bee 🐞:ladybug 🐛:caterpillar 🐜:ant 🐌:snail 🦀:crab
+  🐠:tropical-fish 🐬:dolphin 🍒:cherry 🍐:pear 🍋:lemon 🍑:peach
+  🍍:pineapple 🥭:mango 🍅:tomato 🍄:mushroom 🍬:candy 🍪:cookie 🥚:egg
+  🥛:milk 🌸:cherry-blossom 🌹:rose 🌷:tulip 🌳:tree 🌱:seedling
+  🍃:fluttering-leaf 🌿:herb 🍀:four-leaf-clover ☀️:sun 🌙:crescent-moon
+  🌟:glowing-star ☁️:cloud 🌧️:rain-cloud 🌈:rainbow 💧:droplet
+  ❄️:snowflake 🚂:locomotive 🚌:bus 🚒:fire-engine 🚲:bicycle ✈️:airplane
+  ⛵:sailboat 🚀:rocket 🔢:input-numbers 📐:triangular-ruler
+  🧩:puzzle-piece 🔍:magnifying-glass 💬:speech-balloon 🎯:bullseye
+  🎮:video-game 🎲:game-die 🖐️:hand-splayed ✏️:pencil 🖍️:crayon
+  📏:straight-ruler ✂️:scissors 📖:open-book 🎒:backpack 🔔:bell
+  🎨:palette 🧸:teddy-bear 🎁:gift 🥁:drum 🎸:guitar 🏀:basketball
+  🔵:blue-circle 🟢:green-circle ⚫:black-circle ⚪:white-circle
+  ❤️:red-heart 💎:gem 🪙:coin ⬆️:up-arrow ➡️:right-arrow 🏠:house 🧱:brick
+  📦:package-box 💡:light-bulb 🪨:rock 🥣:bowl-spoon ⚙️:gear 🪵:wood-log
+  🗝️:old-key 🏡:house-garden 🧊:ice-cube ⏰:alarm-clock 🪑:chair 🧶:yarn
+  🥄:spoon 🧺:basket 📎:paperclip 🦗:cricket 🗼:tokyo-tower 🪁:kite
+  ⬇️:down-arrow 👟:sneaker ☂️:umbrella 👶:baby 📓:notebook 🔑:key
+  🐕:pet-dog ⬅️:left-arrow 🚩:red-flag 🧢:billed-cap 🐍:snake
+  🐇:bunny-rabbit 🐐:goat 🎺:trumpet 🛏️:bed 🚪:door 🐄:dairy-cow
+  🟧:orange-square 🏫:school 🔒:padlock 🐣:hatching-chick 🍩:doughnut
+  🌾:rice-sheaf 🟡:yellow-circle 📚:books ✋:raised-hand 🧼:soap 👨:father
+  🚚:delivery-truck 🌲:pine-tree 🥐:croissant 🟩:green-square 🍲:stew-pot
+  🍰:shortcake 🔶:orange-diamond 🥫:canned-food 👀:eyes 🐿️:squirrel
+  🐥:front-chick 🚁:helicopter 📕:red-book 🏢:office-building
+  🍞:bread-loaf 🟨:yellow-square 🪷:lotus 🐈:house-cat 🔮:crystal-ball
+  🌊:ocean-wave 🐳:spouting-whale 🌉:night-bridge 🖼️:framed-picture
+  🍽️:plate-cutlery 🛑:stop-sign ☕:hot-cup 👒:sun-hat 🧣:scarf
+  📄:paper-sheet 👩:mother 👵:grandmother 🧒:child 🖌️:paintbrush
+  📗:green-book 🐁:mouse 🎃:pumpkin 🚛:lorry-truck 🥤:straw-cup
+  🐴:horse-face 🍦:ice-cream 🔷:blue-diamond 🤖:robot 🐙:octopus
+  🐚:seashell 🪀:yo-yo 🍂:fallen-leaf 🏮:red-lantern 🏃:runner
+  🐵:monkey-face 🚢:ship 🎻:violin 🎵:music-note 🍯:honey-pot 🚜:tractor
+  🐋:humpback-whale 🫛:pea-pod 🪴:potted-plant 🌰:chestnut 🔘:round-button
+  🏰:castle ⛩️:torii-gate ⚓:anchor 👣:footprints 🛋️:sofa-couch
+  🚿:shower-head 🥦:broccoli ✨:sparkles 👧:girl 👩‍🏫:teacher 🚑:ambulance
+  📌:pushpin 📘:blue-book 🛶:canoe 🕷️:spider 🫙:glass-jar 🐓:rooster
+  🍭:lollipop 🪹:empty-nest 🌼:daisy-blossom 🐎:galloping-horse 👑:crown
+  🩷:pink-heart 🔋:battery ⚡:lightning-bolt 🪜:ladder 🚦:traffic-light
+  🪟:window 🌍:earth-globe 🕊️:peace-dove 🕯️:candle 🗺️:world-map
+  👏:clapping-hands 🎹:piano-keys 🧥:warm-coat 💨:wind-gust
+  🟣:purple-circle 🪭:folding-fan 🎋:bamboo-branch 🍜:pho-bowl
+  👴:grandfather 👦:boy 🍳:fried-egg 👨‍🚒:firefighter 🛵:scooter-bike
+  🏔️:snow-mountain 🐆:leopard 🍆:eggplant 🦌:deer 🍏:green-apple
+  🟪:purple-square 🫖:teapot 🔩:nut-bolt 🧽:sponge 🪥:toothbrush
+  🛌:sleeping-bed 📋:clipboard 🔟:number-ten 💠:diamond-flower ✉️:envelope
+  🦓:zebra 🚃:train-car 🐤:baby-chick 🦢:swan 🚙:suv-car ☄️:comet
+  🗄️:filing-cabinet 🏛️:museum-hall 🛞:wheel 🧭:compass 🪺:egg-nest
+  🕳️:burrow-hole 〰️:wavy-line 🚶:walking-kid 🦜:parrot 🚧:road-barrier
+  🪞:mirror 🚰:water-tap 👕:t-shirt 🫘:beans 🪼:jellyfish 🕹️:joystick
+  🚨:beacon-light ⛄:snowman 🌅:ocean-sunrise 🫧:soap-bubbles 🤫:quiet-face
+  🪇:maracas 🪈:bamboo-flute 🔥:campfire-flame 🟤:brown-circle
+  ♨️:steam-swirl 🌕:full-moon 🌌:starry-galaxy 🩺:stethoscope 🧑‍🌾:farmer
+  👮:police-officer 🙇:polite-bow 🤝:handshake 🙋:hand-up-kid 👂:ear
+  📢:megaphone ⬛:dark-square 🥒:cucumber 🦔:hedgehog 🍈:melon
+  🎖️:star-medal 🌴:palm-tree 🌄:mountain-sunrise 🍱:bento-box
+  🌇:city-sunset 🧃:juice-box 🚓:police-car 💖:sparkling-heart
+  💛:yellow-heart 🛡️:shield 🎂:birthday-cake 🌀:spiral-swirl
+  ⚗️:science-flask ⛺:camping-tent 🛴:kick-scooter 🚄:bullet-train
+  📺:television 🥔:potato 📍:round-pin 🧦:socks 🏆:trophy
+`;
 
-  // 1. Động vật & 12 Avatar bé (23)
-  ["🦊", "fox"],
-  ["🐼", "panda"],
-  ["🦁", "lion"],
-  ["🐯", "tiger"],
-  ["🐨", "koala"],
-  ["🐧", "penguin"],
-  ["🦉", "owl"],
-  ["🐘", "elephant"],
-  ["🐮", "cow"],
-  ["🐦", "bird"],
-  ["🐔", "hen"],
-  ["🐷", "pig"],
-  ["🐑", "sheep"],
-  ["🐒", "monkey"],
-  ["🦒", "giraffe"],
-  ["🐝", "bee"],
-  ["🐞", "ladybug"],
-  ["🐛", "caterpillar"],
-  ["🐜", "ant"],
-  ["🐌", "snail"],
-  ["🦀", "crab"],
-  ["🐠", "tropical-fish"],
-  ["🐬", "dolphin"],
-
-  // 2. Trái cây, Rau củ & Thực phẩm (12)
-  ["🍒", "cherry"],
-  ["🍐", "pear"],
-  ["🍋", "lemon"],
-  ["🍑", "peach"],
-  ["🍍", "pineapple"],
-  ["🥭", "mango"],
-  ["🍅", "tomato"],
-  ["🍄", "mushroom"],
-  ["🍬", "candy"],
-  ["🍪", "cookie"],
-  ["🥚", "egg"],
-  ["🥛", "milk"],
-
-  // 3. Thiên nhiên, Hoa lá & Thời tiết (16)
-  ["🌸", "cherry-blossom"],
-  ["🌹", "rose"],
-  ["🌷", "tulip"],
-  ["🌳", "tree"],
-  ["🌱", "seedling"],
-  ["🍃", "fluttering-leaf"],
-  ["🌿", "herb"],
-  ["🍀", "four-leaf-clover"],
-  ["☀️", "sun"],
-  ["🌙", "crescent-moon"],
-  ["🌟", "glowing-star"],
-  ["☁️", "cloud"],
-  ["🌧️", "rain-cloud"],
-  ["🌈", "rainbow"],
-  ["💧", "droplet"],
-  ["❄️", "snowflake"],
-
-  // 4. Phương tiện giao thông (7)
-  ["🚂", "locomotive"],
-  ["🚌", "bus"],
-  ["🚒", "fire-engine"],
-  ["🚲", "bicycle"],
-  ["✈️", "airplane"],
-  ["⛵", "sailboat"],
-  ["🚀", "rocket"],
-
-  // 5. Trường học, Nghệ thuật, Đồ chơi & 6 Năng lực C1–C6 (20)
-  ["🔢", "input-numbers"],
-  ["📐", "triangular-ruler"],
-  ["🧩", "puzzle-piece"],
-  ["🔍", "magnifying-glass"],
-  ["💬", "speech-balloon"],
-  ["🎯", "bullseye"],
-  ["🎮", "video-game"],
-  ["🎲", "game-die"],
-  ["🖐️", "hand-splayed"],
-  ["✏️", "pencil"],
-  ["🖍️", "crayon"],
-  ["📏", "straight-ruler"],
-  ["✂️", "scissors"],
-  ["📖", "open-book"],
-  ["🎒", "backpack"],
-  ["🔔", "bell"],
-  ["🎨", "palette"],
-  ["🧸", "teddy-bear"],
-  ["🎁", "gift"],
-  ["🥁", "drum"],
-
-  // 6. Hình khối gỗ Montessori, Mũi tên & Đồ vật quen thuộc (15)
-  ["🎸", "guitar"],
-  ["🏀", "basketball"],
-  ["🔵", "blue-circle"],
-  ["🟢", "green-circle"],
-  ["⚫", "black-circle"],
-  ["⚪", "white-circle"],
-  ["❤️", "red-heart"],
-  ["💎", "gem"],
-  ["🪙", "coin"],
-  ["⬆️", "up-arrow"],
-  ["➡️", "right-arrow"],
-  ["🏠", "house"],
-  ["🧱", "brick"],
-  ["📦", "package-box"],
-  ["💡", "light-bulb"],
-];
+const EXPECTED_SLUGS: ReadonlyArray<readonly [string, string]> =
+  EXPECTED_CATALOG_SPEC.trim()
+    .split(WHITESPACE_SPLIT_RE)
+    .map((entry) => {
+      const sep = entry.indexOf(":");
+      return [entry.slice(0, sep), entry.slice(sep + 1)] as const;
+    });
 
 const HERO_EMOJIS = new Set([
   "🍎",
@@ -173,6 +115,14 @@ const HERO_EMOJIS = new Set([
   "🍒",
   "🌸",
   "☀️",
+  "🐣",
+  "🍩",
+  "🍰",
+  "🪷",
+  "🐳",
+  "🍦",
+  "🤖",
+  "🐙",
 ]);
 
 const LIGHT_SILHOUETTE_SLUGS = new Set([
@@ -194,6 +144,40 @@ const LIGHT_SILHOUETTE_SLUGS = new Set([
   "sun",
   "game-die",
   "open-book",
+  "ice-cube",
+  "bunny-rabbit",
+  "goat",
+  "dairy-cow",
+  "hatching-chick",
+  "yellow-circle",
+  "soap",
+  "yellow-square",
+  "lotus",
+  "plate-cutlery",
+  "hot-cup",
+  "paper-sheet",
+  "mouse",
+  "ice-cream",
+  "seashell",
+  "sparkles",
+  "ambulance",
+  "daisy-blossom",
+  "peace-dove",
+  "candle",
+  "fried-egg",
+  "snow-mountain",
+  "toothbrush",
+  "clipboard",
+  "envelope",
+  "zebra",
+  "baby-chick",
+  "swan",
+  "snowman",
+  "soap-bubbles",
+  "full-moon",
+  "yellow-heart",
+  "science-flask",
+  "bullet-train",
 ]);
 
 function srgbToLinear(channel: number): number {
@@ -259,15 +243,19 @@ function readWebpDimensions(buffer: Buffer): { width: number; height: number } {
 }
 
 describe("@mindkid/emoji custom sprites registry", () => {
-  it("registers exactly 120 custom sprites with unique slugs", () => {
-    expect(EXPECTED_SLUGS).toHaveLength(120);
-    expect(CUSTOM_EMOJI_SPRITES.size).toBe(120);
-    expect(listCustomEmojiSprites()).toHaveLength(120);
+  it("registers exactly 350 custom sprites with unique slugs", () => {
+    expect(EXPECTED_SLUGS).toHaveLength(350);
+    expect(CUSTOM_EMOJI_SPRITES.size).toBe(350);
+    const listed = listCustomEmojiSprites();
+    expect(listed).toHaveLength(350);
 
     const seenSlugs = new Set<string>();
-    for (const [emoji, slug] of EXPECTED_SLUGS) {
+    for (const [index, [emoji, slug]] of EXPECTED_SLUGS.entries()) {
       expect(seenSlugs.has(slug)).toBe(false);
       seenSlugs.add(slug);
+
+      expect(listed[index]?.emoji).toBe(emoji);
+      expect(listed[index]?.slug).toBe(slug);
 
       const meta = resolveCustomEmojiSprite(emoji);
       expect(meta).not.toBeNull();
@@ -278,8 +266,8 @@ describe("@mindkid/emoji custom sprites registry", () => {
     }
   });
 
-  it("assigns tier hero_webp to all 16 hero sprites and vector_craft to the 104 others", () => {
-    expect(HERO_EMOJIS.size).toBe(16);
+  it("assigns tier hero_webp to all 24 hero sprites and vector_craft to the 326 others", () => {
+    expect(HERO_EMOJIS.size).toBe(24);
     let heroCount = 0;
     let vectorCount = 0;
 
@@ -295,25 +283,46 @@ describe("@mindkid/emoji custom sprites registry", () => {
       }
     }
 
-    expect(heroCount).toBe(16);
-    expect(vectorCount).toBe(104);
+    expect(heroCount).toBe(24);
+    expect(vectorCount).toBe(326);
   });
 
   it("normalizes NFC and strips variation selector U+FE0F in both directions", () => {
-    const vs16Pairs: ReadonlyArray<readonly [string, string, string]> = [
-      ["⭐", "⭐️", "star"],
-      ["☀️", "☀", "sun"],
-      ["☁️", "☁", "cloud"],
-      ["❄️", "❄", "snowflake"],
-      ["✈️", "✈", "airplane"],
-      ["⛵", "⛵\uFE0F", "sailboat"],
-      ["✏️", "✏", "pencil"],
-      ["❤️", "❤", "red-heart"],
-      ["⬆️", "⬆", "up-arrow"],
-      ["➡️", "➡", "right-arrow"],
+    const vs16Specs = [
+      "⭐|⭐️|star",
+      "☀️|☀|sun",
+      "☁️|☁|cloud",
+      "❄️|❄|snowflake",
+      "✈️|✈|airplane",
+      "⛵|⛵\uFE0F|sailboat",
+      "✏️|✏|pencil",
+      "❤️|❤|red-heart",
+      "⬆️|⬆|up-arrow",
+      "➡️|➡|right-arrow",
+      "⚙️|⚙|gear",
+      "🗝️|🗝|old-key",
+      "⬇️|⬇|down-arrow",
+      "⬅️|⬅|left-arrow",
+      "☂️|☂|umbrella",
+      "🛏️|🛏|bed",
+      "🐿️|🐿|squirrel",
+      "🖼️|🖼|framed-picture",
+      "🍽️|🍽|plate-cutlery",
+      "🖌️|🖌|paintbrush",
+      "🕊️|🕊|peace-dove",
+      "🕯️|🕯|candle",
+      "🏔️|🏔|snow-mountain",
+      "☄️|☄|comet",
+      "🎖️|🎖|star-medal",
+      "✉️|✉|envelope",
+      "🕹️|🕹|joystick",
+      "♨️|♨|steam-swirl",
+      "🛡️|🛡|shield",
+      "⚗️|⚗|science-flask",
     ];
 
-    for (const [a, b, slug] of vs16Pairs) {
+    for (const spec of vs16Specs) {
+      const [a = "", b = "", slug = ""] = spec.split("|");
       const metaA = resolveCustomEmojiSprite(a);
       const metaB = resolveCustomEmojiSprite(b);
       expect(metaA?.slug).toBe(slug);
@@ -332,15 +341,17 @@ describe("@mindkid/emoji custom sprites registry", () => {
     expect(hasCustomEmojiSprite("🛸")).toBe(false);
   });
 
-  it("verifies all 120 SVG files exist on disk, stay < 4,500 B, and avoid #000000", () => {
+  it("verifies all 350 SVG files exist on disk, stay < 4,500 B, and avoid #000000", () => {
     for (const meta of listCustomEmojiSprites()) {
       const relativeSvg = meta.svgPath.replace(LEADING_SLASH_RE, "");
       const absSvg = resolve(PUBLIC_ROOT, relativeSvg);
-      expect(existsSync(absSvg)).toBe(true);
+      expect(existsSync(absSvg), `missing SVG: ${meta.slug}`).toBe(true);
 
       const stat = statSync(absSvg);
-      expect(stat.size).toBeGreaterThan(200);
-      expect(stat.size).toBeLessThan(MAX_SVG_BYTES);
+      expect(stat.size, `SVG too small: ${meta.slug}`).toBeGreaterThan(200);
+      expect(stat.size, `SVG too large: ${meta.slug}`).toBeLessThan(
+        MAX_SVG_BYTES
+      );
 
       const content = readFileSync(absSvg, "utf8");
       expect(content).toContain('viewBox="0 0 120 120"');
@@ -357,20 +368,29 @@ describe("@mindkid/emoji custom sprites registry", () => {
       const content = readFileSync(absSvg, "utf8");
       const borderColors = extractSilhouetteBorderColors(content);
 
-      expect(borderColors.length).toBeGreaterThan(0);
+      expect(
+        borderColors.length,
+        `no qualifying border stroke in ${meta.slug}.svg`
+      ).toBeGreaterThan(0);
 
       const threshold = LIGHT_SILHOUETTE_SLUGS.has(meta.slug)
         ? MIN_LIGHT_SPRITE_BORDER_CONTRAST
         : MIN_BORDER_CONTRAST;
 
       for (const hex of borderColors) {
-        expect(contrastRatio(hex, "#ffffff")).toBeGreaterThanOrEqual(threshold);
-        expect(contrastRatio(hex, "#FFFBF2")).toBeGreaterThanOrEqual(threshold);
+        expect(
+          contrastRatio(hex, "#ffffff"),
+          `low white contrast in ${meta.slug}.svg (${hex})`
+        ).toBeGreaterThanOrEqual(threshold);
+        expect(
+          contrastRatio(hex, "#FFFBF2"),
+          `low warm contrast in ${meta.slug}.svg (${hex})`
+        ).toBeGreaterThanOrEqual(threshold);
       }
     }
   });
 
-  it("verifies all 16 Tier-3 Hero WebP assets exist on disk, measure 360x360, and stay < 35 KB", () => {
+  it("verifies all 24 Tier-3 Hero WebP assets exist on disk, measure 360x360, and stay < 35 KB", () => {
     for (const emoji of HERO_EMOJIS) {
       const meta = resolveCustomEmojiSprite(emoji);
       expect(meta?.heroWebpPath).toBeDefined();
@@ -379,7 +399,7 @@ describe("@mindkid/emoji custom sprites registry", () => {
         ""
       );
       const absWebp = resolve(PUBLIC_ROOT, relativeWebp);
-      expect(existsSync(absWebp)).toBe(true);
+      expect(existsSync(absWebp), `missing WebP: ${meta?.slug}`).toBe(true);
 
       const stat = statSync(absWebp);
       expect(stat.size).toBeGreaterThan(1000);

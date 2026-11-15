@@ -1,0 +1,41 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chiếc giỏ</title>
+  <defs>
+    <linearGradient id="baskGold" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="55%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#78350f" opacity="0.26" rx="38" ry="6" />
+  <path
+    d="M33 54C33 22 87 22 87 54"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4.5"
+  />
+  <path
+    d="M23 56H97L87 95C86 98 83 100 79 100H41C37 100 34 98 33 95L23 56Z"
+    fill="url(#baskGold)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#fbbf24"
+    height="11"
+    rx="5.5"
+    stroke="#78350f"
+    stroke-width="3.8"
+    width="82"
+    x="19"
+    y="49"
+  />
+  <path
+    d="M40 62L48 97M60 62V97M80 62L72 97M29 74H91M32 86H88"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-opacity="0.55"
+    stroke-width="2.6"
+  />
+</svg>

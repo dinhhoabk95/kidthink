@@ -1,0 +1,85 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ti-vi</title>
+  <defs>
+    <linearGradient id="tvWood" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
+    </linearGradient>
+    <linearGradient id="tvScreen" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#bae6fd" />
+      <stop offset="100%" stop-color="#38bdf8" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#451a03" opacity="0.25" rx="40" ry="5" />
+  <path
+    d="M32 92L26 102M88 92L94 102"
+    stroke="#451a03"
+    stroke-linecap="round"
+    stroke-width="4.5"
+  />
+  <path
+    d="M60 34L40 16M60 34L80 16"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="40"
+    cy="16"
+    fill="#ef4444"
+    r="4"
+    stroke="#7f1d1d"
+    stroke-width="3"
+  />
+  <circle
+    cx="80"
+    cy="16"
+    fill="#ef4444"
+    r="4"
+    stroke="#7f1d1d"
+    stroke-width="3"
+  />
+  <rect
+    fill="url(#tvWood)"
+    height="58"
+    rx="12"
+    stroke="#451a03"
+    stroke-width="4"
+    width="84"
+    x="18"
+    y="34"
+  />
+  <rect
+    fill="url(#tvScreen)"
+    height="42"
+    rx="8"
+    stroke="#0c4a6e"
+    stroke-width="3.8"
+    width="54"
+    x="26"
+    y="42"
+  />
+  <circle
+    cx="91"
+    cy="52"
+    fill="#fef3c7"
+    r="5"
+    stroke="#451a03"
+    stroke-width="3.4"
+  />
+  <circle
+    cx="91"
+    cy="68"
+    fill="#fef3c7"
+    r="5"
+    stroke="#451a03"
+    stroke-width="3.4"
+  />
+  <path
+    d="M34 52L46 46"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.7"
+    stroke-width="3"
+  />
+</svg>

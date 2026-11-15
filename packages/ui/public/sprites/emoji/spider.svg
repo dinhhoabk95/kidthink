@@ -1,0 +1,61 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chú nhện nhỏ</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="spPurp" r="68%">
+      <stop offset="0%" stop-color="#a78bfa" />
+      <stop offset="55%" stop-color="#6d28d9" />
+      <stop offset="100%" stop-color="#4c1d95" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#292524" opacity="0.24" rx="36" ry="5" />
+  <line
+    stroke="#94a3b8"
+    stroke-dasharray="4 4"
+    stroke-linecap="round"
+    stroke-width="2.5"
+    x1="60"
+    x2="60"
+    y1="10"
+    y2="34"
+  />
+  <path
+    d="M40 54L20 42L14 54M38 62L16 60L12 74M40 70L20 78L18 92M44 76L28 90L30 101"
+    stroke="#3b0764"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M80 54L100 42L106 54M82 62L104 60L108 74M80 70L100 78L102 92M76 76L92 90L90 101"
+    stroke="#3b0764"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="60"
+    cy="52"
+    fill="url(#spPurp)"
+    r="20"
+    stroke="#3b0764"
+    stroke-width="4"
+  />
+  <circle
+    cx="60"
+    cy="75"
+    fill="url(#spPurp)"
+    r="16"
+    stroke="#3b0764"
+    stroke-width="4"
+  />
+  <circle cx="52" cy="73" fill="#ffffff" r="5" />
+  <circle cx="52.5" cy="73.5" fill="#1c1917" r="2.8" />
+  <circle cx="68" cy="73" fill="#ffffff" r="5" />
+  <circle cx="67.5" cy="73.5" fill="#1c1917" r="2.8" />
+  <path
+    d="M56 82C58 85 62 85 64 82"
+    stroke="#fde047"
+    stroke-linecap="round"
+    stroke-width="2.8"
+  />
+</svg>

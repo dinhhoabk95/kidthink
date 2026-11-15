@@ -1,0 +1,35 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cây sáo trúc</title>
+  <defs>
+    <linearGradient id="fluteBamboo" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="55%" stop-color="#eab308" />
+      <stop offset="100%" stop-color="#a16207" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#78350f" opacity="0.22" rx="38" ry="5" />
+  <path
+    d="M25 83V98M21 98L25 90L29 98"
+    stroke="#be123c"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <g transform="rotate(-38 60 56)">
+    <rect
+      fill="url(#fluteBamboo)"
+      height="16"
+      rx="8"
+      stroke="#78350f"
+      stroke-width="4"
+      width="96"
+      x="12"
+      y="48"
+    />
+    <path d="M30 48V64M90 48V64" stroke="#78350f" stroke-width="3.6" />
+    <circle cx="42" cy="56" fill="#451a03" r="3" />
+    <circle cx="55" cy="56" fill="#451a03" r="3" />
+    <circle cx="67" cy="56" fill="#451a03" r="3" />
+    <circle cx="79" cy="56" fill="#451a03" r="3" />
+  </g>
+</svg>

@@ -1,0 +1,43 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Tách ấm</title>
+  <ellipse cx="56" cy="104" fill="#5c3d2e" opacity="0.25" rx="42" ry="6" />
+  <path
+    d="M46 34C42 26 48 20 45 14M64 34C60 26 66 20 63 14"
+    stroke="#78716c"
+    stroke-linecap="round"
+    stroke-opacity="0.65"
+    stroke-width="3"
+  />
+  <ellipse
+    cx="56"
+    cy="96"
+    fill="#fef3c7"
+    rx="40"
+    ry="8"
+    stroke="#5c3d2e"
+    stroke-width="3.8"
+  />
+  <path
+    d="M84 54H95C103 54 104 74 93 76H82"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="4.5"
+  />
+  <path
+    d="M26 46H86V68C86 85 73 94 56 94C39 94 26 85 26 68Z"
+    fill="#fffbeb"
+    stroke="#5c3d2e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="56"
+    cy="46"
+    fill="#92400e"
+    rx="30"
+    ry="8"
+    stroke="#5c3d2e"
+    stroke-width="3.8"
+  />
+</svg>

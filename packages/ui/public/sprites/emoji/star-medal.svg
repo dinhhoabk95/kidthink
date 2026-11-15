@@ -1,0 +1,50 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Huy chương</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="medalGold" r="68%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="55%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#d97706" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#78350f" opacity="0.24" rx="30" ry="4.5" />
+  <polygon
+    fill="#ef4444"
+    points="34,14 52,14 60,48 46,48"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <polygon
+    fill="#3b82f6"
+    points="86,14 68,14 60,48 74,48"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <rect
+    fill="#fde68a"
+    height="8"
+    rx="3"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="24"
+    x="48"
+    y="44"
+  />
+  <circle
+    cx="60"
+    cy="74"
+    fill="url(#medalGold)"
+    r="27"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <polygon
+    fill="#fffbeb"
+    points="60,57 65,67 76,69 68,77 70,88 60,83 50,88 52,77 44,69 55,67"
+    stroke="#92400e"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+</svg>

@@ -1,0 +1,68 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cây dừa biển</title>
+  <defs>
+    <linearGradient id="palmLeaf" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#86efac" />
+      <stop offset="100%" stop-color="#16a34a" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#78350f" opacity="0.24" rx="40" ry="5.5" />
+  <path
+    d="M28 100C38 90 82 90 92 100Z"
+    fill="#fde047"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M54 94C52 74 56 56 64 38H74C67 56 64 74 66 94Z"
+    fill="#b45309"
+    stroke="#451a03"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M68 36C50 20 26 24 18 40C34 36 52 38 68 36Z"
+    fill="url(#palmLeaf)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M70 36C86 20 104 26 108 44C94 38 82 38 70 36Z"
+    fill="url(#palmLeaf)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M68 34C56 12 40 12 34 22C48 22 58 26 68 34Z"
+    fill="#4ade80"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M70 34C82 12 96 14 100 24C88 23 78 27 70 34Z"
+    fill="#4ade80"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="62"
+    cy="43"
+    fill="#78350f"
+    r="5.5"
+    stroke="#451a03"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="73"
+    cy="44"
+    fill="#78350f"
+    r="5.5"
+    stroke="#451a03"
+    stroke-width="3.2"
+  />
+</svg>

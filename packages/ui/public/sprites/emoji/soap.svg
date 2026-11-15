@@ -1,0 +1,68 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bánh xà phòng</title>
+  <defs>
+    <linearGradient id="soapPink" x1="15%" x2="85%" y1="15%" y2="85%">
+      <stop offset="0%" stop-color="#fbcfe8" />
+      <stop offset="55%" stop-color="#f472b6" />
+      <stop offset="100%" stop-color="#db2777" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="58" cy="101" fill="#881337" opacity="0.24" rx="40" ry="6" />
+  <rect
+    fill="#be185d"
+    height="44"
+    rx="18"
+    stroke="#881337"
+    stroke-width="4"
+    transform="rotate(-10 58 68)"
+    width="76"
+    x="20"
+    y="46"
+  />
+  <rect
+    fill="url(#soapPink)"
+    height="44"
+    rx="18"
+    stroke="#881337"
+    stroke-width="4"
+    transform="rotate(-10 58 61)"
+    width="76"
+    x="20"
+    y="39"
+  />
+  <rect
+    height="26"
+    rx="11"
+    stroke="#fce7f3"
+    stroke-opacity="0.7"
+    stroke-width="2.5"
+    transform="rotate(-10 58 61)"
+    width="56"
+    x="30"
+    y="48"
+  />
+  <circle
+    cx="88"
+    cy="27"
+    fill="#e0f2fe"
+    r="10"
+    stroke="#0c4a6e"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="101"
+    cy="42"
+    fill="#f0f9ff"
+    r="6"
+    stroke="#0c4a6e"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="30"
+    cy="30"
+    fill="#e0f2fe"
+    r="7"
+    stroke="#0c4a6e"
+    stroke-width="3.2"
+  />
+</svg>

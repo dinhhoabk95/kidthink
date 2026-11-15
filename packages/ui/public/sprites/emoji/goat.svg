@@ -1,0 +1,55 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chú dê</title>
+  <defs>
+    <radialGradient cx="40%" cy="32%" id="goatCream" r="70%">
+      <stop offset="0%" stop-color="#fef3c7" />
+      <stop offset="65%" stop-color="#fde68a" />
+      <stop offset="100%" stop-color="#fcd34d" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#5c3d2e" opacity="0.25" rx="38" ry="6" />
+  <path
+    d="M46 78V99M56 78V99M76 78V99M86 78V99"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="4.5"
+  />
+  <path
+    d="M36 28C42 16 54 18 53 30M43 30C50 20 60 22 58 32"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="67"
+    cy="68"
+    fill="url(#goatCream)"
+    rx="25"
+    ry="17"
+    stroke="#5c3d2e"
+    stroke-width="4"
+  />
+  <path
+    d="M90 60L99 52"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="40"
+    cy="46"
+    fill="url(#goatCream)"
+    r="16"
+    stroke="#5c3d2e"
+    stroke-width="4"
+  />
+  <path
+    d="M33 60L30 70L38 63Z"
+    fill="#fde68a"
+    stroke="#5c3d2e"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <circle cx="35" cy="44" fill="#1c1917" r="3.5" />
+  <circle cx="34" cy="42.8" fill="#ffffff" r="1.3" />
+</svg>

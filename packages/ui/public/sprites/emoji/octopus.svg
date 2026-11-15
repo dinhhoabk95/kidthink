@@ -1,0 +1,55 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bạch tuộc</title>
+  <defs>
+    <radialGradient cx="38%" cy="28%" id="ocBody" r="70%">
+      <stop offset="0%" stop-color="#fda4af" />
+      <stop offset="50%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#be123c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#881337" opacity="0.25" rx="44" ry="6" />
+  <path
+    d="M32 68C20 73 13 83 18 91C22 97 32 94 35 84C35 94 42 100 50 98C56 96 58 88 60 82C62 88 64 96 70 98C78 100 85 94 85 84C88 94 98 97 102 91C107 83 100 73 88 68Z"
+    fill="url(#ocBody)"
+    stroke="#881337"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="60"
+    cy="49"
+    fill="url(#ocBody)"
+    rx="33"
+    ry="31"
+    stroke="#881337"
+    stroke-width="4"
+  />
+  <circle cx="24" cy="89" fill="#fecdd3" r="3.2" />
+  <circle cx="44" cy="93" fill="#fecdd3" r="3.2" />
+  <circle cx="76" cy="93" fill="#fecdd3" r="3.2" />
+  <circle cx="96" cy="89" fill="#fecdd3" r="3.2" />
+  <circle cx="47" cy="50" fill="#ffffff" r="6.5" />
+  <circle cx="48" cy="50.5" fill="#1c1917" r="3.8" />
+  <circle cx="46.5" cy="48.8" fill="#ffffff" r="1.5" />
+  <circle cx="73" cy="50" fill="#ffffff" r="6.5" />
+  <circle cx="72" cy="50.5" fill="#1c1917" r="3.8" />
+  <circle cx="70.5" cy="48.8" fill="#ffffff" r="1.5" />
+  <circle cx="38" cy="60" fill="#ffe4e6" fill-opacity="0.55" r="4.5" />
+  <circle cx="82" cy="60" fill="#ffe4e6" fill-opacity="0.55" r="4.5" />
+  <path
+    d="M54 61C57 66 63 66 66 61"
+    stroke="#881337"
+    stroke-linecap="round"
+    stroke-width="3.2"
+  />
+  <ellipse
+    cx="47"
+    cy="30"
+    fill="#ffffff"
+    fill-opacity="0.55"
+    rx="9"
+    ry="4"
+    transform="rotate(-20 47 30)"
+  />
+</svg>

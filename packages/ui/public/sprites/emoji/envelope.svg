@@ -1,0 +1,45 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Phong bì thư</title>
+  <defs>
+    <linearGradient id="envPaper" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fffbeb" />
+      <stop offset="100%" stop-color="#fde68a" />
+    </linearGradient>
+    <linearGradient id="envFlap" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef3c7" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="100" fill="#78350f" opacity="0.24" rx="44" ry="6" />
+  <rect
+    fill="url(#envPaper)"
+    height="62"
+    rx="10"
+    stroke="#78350f"
+    stroke-width="4"
+    width="88"
+    x="16"
+    y="30"
+  />
+  <path
+    d="M20 88L48 62M100 88L72 62"
+    stroke="#92400e"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M18 33L60 66L102 33"
+    fill="url(#envFlap)"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M60 73C55 68 49 69 49 75C49 80 60 86 60 86C60 86 71 80 71 75C71 69 65 68 60 73Z"
+    fill="#ef4444"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+</svg>

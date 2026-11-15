@@ -1,0 +1,71 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Thẻ số 10</title>
+  <defs>
+    <linearGradient id="tenTile" x1="15%" x2="85%" y1="10%" y2="90%">
+      <stop offset="0%" stop-color="#60a5fa" />
+      <stop offset="55%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+  </defs>
+  <rect
+    fill="#1e3a8a"
+    height="80"
+    rx="18"
+    stroke="#1e3a5f"
+    stroke-width="4"
+    width="84"
+    x="18"
+    y="24"
+  />
+  <rect
+    fill="url(#tenTile)"
+    height="80"
+    rx="18"
+    stroke="#1e3a5f"
+    stroke-width="4"
+    width="84"
+    x="18"
+    y="16"
+  />
+  <path
+    d="M35 45L44 37V75"
+    stroke="#1e3a5f"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="11"
+  />
+  <path
+    d="M35 45L44 37V75"
+    stroke="#fef08a"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-opacity="0.98"
+    stroke-width="6.5"
+  />
+  <ellipse
+    cx="73"
+    cy="56"
+    fill="none"
+    rx="13"
+    ry="19"
+    stroke="#1e3a5f"
+    stroke-width="11"
+  />
+  <ellipse
+    cx="73"
+    cy="56"
+    fill="none"
+    rx="13"
+    ry="19"
+    stroke="#fef08a"
+    stroke-opacity="0.98"
+    stroke-width="6.5"
+  />
+  <path
+    d="M30 26H58"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.55"
+    stroke-width="4"
+  />
+</svg>

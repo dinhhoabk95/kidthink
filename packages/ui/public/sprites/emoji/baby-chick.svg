@@ -1,0 +1,51 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Gà non</title>
+  <defs>
+    <radialGradient cx="40%" cy="32%" id="chickGold" r="68%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="55%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#eab308" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="62" cy="103" fill="#78350f" opacity="0.24" rx="30" ry="5.5" />
+  <path
+    d="M52 86V99M46 99H58M72 86V99M66 99H78"
+    stroke="#c2410c"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M36 47L18 53L36 60Z"
+    fill="#fb923c"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M51 26C48 16 56 14 58 23C62 14 70 18 65 27"
+    fill="#fde047"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M62 28C47 28 36 39 36 53C36 61 40 67 42 72C46 84 57 90 70 90C86 90 98 78 98 63C98 51 89 44 80 42C76 33 70 28 62 28Z"
+    fill="url(#chickGold)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M59 58C71 54 83 61 81 73C75 79 62 77 58 68"
+    fill="#fde047"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle cx="49" cy="48" fill="#1c1917" r="4.2" />
+  <circle cx="47.8" cy="46.6" fill="#ffffff" r="1.5" />
+  <circle cx="53" cy="58" fill="#fb7185" fill-opacity="0.5" r="5" />
+</svg>

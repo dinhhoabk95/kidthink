@@ -1,0 +1,76 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Vòi hoa sen</title>
+  <defs>
+    <linearGradient id="shMetal" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#f1f5f9" />
+      <stop offset="55%" stop-color="#94a3b8" />
+      <stop offset="100%" stop-color="#64748b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="52" cy="105" fill="#1e3a8a" opacity="0.2" rx="34" ry="5" />
+  <path
+    d="M98 14V23H68C59 23 53 29 53 38V44H44V38C44 24 54 14 68 14Z"
+    fill="url(#shMetal)"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M26 56C29 42 40 36 52 38C64 40 72 49 72 62Z"
+    fill="url(#shMetal)"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#fbbf24"
+    height="8"
+    rx="4"
+    stroke="#78350f"
+    stroke-width="3.4"
+    transform="rotate(8 24 54)"
+    width="52"
+    x="24"
+    y="54"
+  />
+  <circle
+    cx="32"
+    cy="76"
+    fill="#38bdf8"
+    r="4"
+    stroke="#1e3a8a"
+    stroke-width="2.6"
+  />
+  <circle
+    cx="46"
+    cy="80"
+    fill="#38bdf8"
+    r="4"
+    stroke="#1e3a8a"
+    stroke-width="2.6"
+  />
+  <circle
+    cx="60"
+    cy="82"
+    fill="#38bdf8"
+    r="4"
+    stroke="#1e3a8a"
+    stroke-width="2.6"
+  />
+  <circle
+    cx="38"
+    cy="92"
+    fill="#38bdf8"
+    r="4"
+    stroke="#1e3a8a"
+    stroke-width="2.6"
+  />
+  <circle
+    cx="53"
+    cy="94"
+    fill="#38bdf8"
+    r="4"
+    stroke="#1e3a8a"
+    stroke-width="2.6"
+  />
+</svg>

@@ -1,0 +1,40 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Quạt giấy</title>
+  <defs>
+    <radialGradient cx="50%" cy="88%" id="ffPaper" r="72%">
+      <stop offset="0%" stop-color="#fde047" />
+      <stop offset="45%" stop-color="#fb7185" />
+      <stop offset="100%" stop-color="#e11d48" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#78350f" opacity="0.24" rx="32" ry="5" />
+  <path
+    d="M60 92L14 50C32 23 88 23 106 50Z"
+    fill="url(#ffPaper)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M60 92L34 70C47 56 73 56 86 70Z"
+    fill="#fcd34d"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M60 92L29 39M60 92L48 31M60 92V29M60 92L72 31M60 92L91 39"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-opacity="0.65"
+    stroke-width="2.6"
+  />
+  <circle
+    cx="60"
+    cy="92"
+    fill="#b45309"
+    r="6.5"
+    stroke="#5c3d2e"
+    stroke-width="3.6"
+  />
+</svg>

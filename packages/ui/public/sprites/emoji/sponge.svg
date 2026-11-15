@@ -1,0 +1,46 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Miếng bọt biển</title>
+  <defs>
+    <radialGradient cx="36%" cy="30%" id="spongeTop" r="70%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="60%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#eab308" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="102" fill="#78350f" opacity="0.24" rx="40" ry="6" />
+  <path
+    d="M22 50C20 62 24 72 21 84C19 92 27 97 38 97H82C93 97 101 92 99 84C96 72 100 62 98 50Z"
+    fill="#ca8a04"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M24 34C22 46 27 56 23 70C21 78 29 83 40 83H80C91 83 99 78 97 70C93 56 98 46 96 34C94 26 86 23 76 23H44C34 23 26 26 24 34Z"
+    fill="url(#spongeTop)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle cx="42" cy="42" fill="#a16207" fill-opacity="0.55" r="6" />
+  <circle cx="68" cy="37" fill="#a16207" fill-opacity="0.5" r="4.5" />
+  <circle cx="78" cy="56" fill="#a16207" fill-opacity="0.55" r="6.5" />
+  <circle cx="53" cy="63" fill="#a16207" fill-opacity="0.5" r="5" />
+  <circle cx="36" cy="67" fill="#a16207" fill-opacity="0.45" r="3.8" />
+  <circle
+    cx="88"
+    cy="24"
+    fill="#e0f2fe"
+    r="8"
+    stroke="#0c4a6e"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="98"
+    cy="34"
+    fill="#bae6fd"
+    r="5"
+    stroke="#0c4a6e"
+    stroke-width="3.6"
+  />
+</svg>

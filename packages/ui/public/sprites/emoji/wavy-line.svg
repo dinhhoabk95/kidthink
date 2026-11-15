@@ -1,0 +1,25 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đường lượn sóng</title>
+  <defs>
+    <linearGradient id="waveRibbon" x1="0%" x2="100%" y1="0%" y2="0%">
+      <stop offset="0%" stop-color="#818cf8" />
+      <stop offset="50%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#2dd4bf" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="96" fill="#1e3a8a" opacity="0.2" rx="44" ry="5.5" />
+  <path
+    d="M12 54C22 36 36 36 46 54C56 72 70 72 80 54C90 36 100 36 108 54V72C100 54 90 54 80 72C70 90 56 90 46 72C36 54 22 54 12 72Z"
+    fill="url(#waveRibbon)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M17 56C24 44 35 44 43 57"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.65"
+    stroke-width="3"
+  />
+</svg>

@@ -1,0 +1,35 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Trái tim hồng</title>
+  <defs>
+    <radialGradient cx="36%" cy="30%" id="phBody" r="70%">
+      <stop offset="0%" stop-color="#fce7f3" />
+      <stop offset="48%" stop-color="#f472b6" />
+      <stop offset="100%" stop-color="#db2777" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#831843" opacity="0.24" rx="30" ry="5" />
+  <path
+    d="M60 97C56 97 18 73 18 45C18 29 31 19 45 19C52 19 57 23 60 29C63 23 68 19 75 19C89 19 102 29 102 45C102 73 64 97 60 97Z"
+    fill="url(#phBody)"
+    stroke="#831843"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M60 85C57 85 28 66 28 46C28 36 36 29 45 29C51 29 56 33 60 39C64 33 69 29 75 29C84 29 92 36 92 46C92 66 63 85 60 85Z"
+    stroke="#fbcfe8"
+    stroke-dasharray="5 5"
+    stroke-linejoin="round"
+    stroke-opacity="0.7"
+    stroke-width="2.5"
+  />
+  <ellipse
+    cx="38"
+    cy="39"
+    fill="#ffffff"
+    fill-opacity="0.65"
+    rx="8"
+    ry="4"
+    transform="rotate(-32 38 39)"
+  />
+</svg>

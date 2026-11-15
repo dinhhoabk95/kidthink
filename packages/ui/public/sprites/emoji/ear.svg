@@ -1,0 +1,32 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cái tai lắng nghe</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="earPeach" r="70%">
+      <stop offset="0%" stop-color="#ffedd5" />
+      <stop offset="55%" stop-color="#fdba74" />
+      <stop offset="100%" stop-color="#fb923c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="56" cy="105" fill="#7c2d12" opacity="0.22" rx="28" ry="5" />
+  <path
+    d="M34 44C34 25 48 16 64 20C80 24 88 40 84 60C81 74 71 80 67 90C64 98 54 102 46 98C39 94 38 85 43 79"
+    fill="url(#earPeach)"
+    stroke="#7c2d12"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="4.2"
+  />
+  <path
+    d="M48 44C50 33 64 31 70 42C74 51 67 62 58 65C52 67 50 74 54 78"
+    stroke="#9a3412"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M95 40C101 47 101 59 95 66M103 33C112 44 112 62 103 73"
+    stroke="#0284c7"
+    stroke-linecap="round"
+    stroke-opacity="0.8"
+    stroke-width="3.2"
+  />
+</svg>

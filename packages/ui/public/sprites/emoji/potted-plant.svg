@@ -1,0 +1,66 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chậu cây xanh</title>
+  <defs>
+    <linearGradient id="ptLeaf" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#86efac" />
+      <stop offset="100%" stop-color="#16a34a" />
+    </linearGradient>
+    <linearGradient id="ptPot" x1="10%" x2="90%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fdba74" />
+      <stop offset="55%" stop-color="#ea580c" />
+      <stop offset="100%" stop-color="#9a3412" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#7c2d12" opacity="0.25" rx="28" ry="5.5" />
+  <path
+    d="M60 62V32"
+    stroke="#14532d"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <path
+    d="M60 54C42 54 27 42 30 27C45 25 58 37 60 54Z"
+    fill="url(#ptLeaf)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M60 50C78 50 93 38 90 23C75 21 62 33 60 50Z"
+    fill="url(#ptLeaf)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M60 36C51 25 53 13 60 11C67 13 69 25 60 36Z"
+    fill="url(#ptLeaf)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M38 66H82L75 101C74 103 71 104 68 104H52C49 104 46 103 45 101Z"
+    fill="url(#ptPot)"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="url(#ptPot)"
+    height="11"
+    rx="5"
+    stroke="#7c2d12"
+    stroke-width="3.8"
+    width="54"
+    x="33"
+    y="58"
+  />
+  <path
+    d="M46 76L49 95"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.45"
+    stroke-width="3.5"
+  />
+</svg>

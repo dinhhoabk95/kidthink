@@ -1,0 +1,50 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chú rắn nhỏ</title>
+  <defs>
+    <linearGradient id="snkGreen" x1="20%" x2="80%" y1="10%" y2="95%">
+      <stop offset="0%" stop-color="#86efac" />
+      <stop offset="55%" stop-color="#22c55e" />
+      <stop offset="100%" stop-color="#15803d" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="102" fill="#14532d" opacity="0.26" rx="40" ry="6" />
+  <path
+    d="M30 88C20 88 18 73 32 73H84C98 73 98 95 82 95H28C22 95 16 92 16 88"
+    stroke="#14532d"
+    stroke-linecap="round"
+    stroke-width="18"
+  />
+  <path
+    d="M30 88C20 88 18 73 32 73H84C98 73 98 95 82 95H28"
+    stroke="#22c55e"
+    stroke-linecap="round"
+    stroke-opacity="0.95"
+    stroke-width="10"
+  />
+  <path
+    d="M52 75V44C52 31 74 31 74 44C74 56 64 62 64 75Z"
+    fill="url(#snkGreen)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="62"
+    cy="36"
+    fill="url(#snkGreen)"
+    rx="18"
+    ry="14"
+    stroke="#14532d"
+    stroke-width="4"
+  />
+  <circle cx="55" cy="34" fill="#1c1917" r="3.6" />
+  <circle cx="54" cy="32.8" fill="#ffffff" r="1.4" />
+  <circle cx="69" cy="34" fill="#1c1917" r="3.6" />
+  <path
+    d="M44 38H34L30 35M34 38L30 41"
+    stroke="#be123c"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+</svg>

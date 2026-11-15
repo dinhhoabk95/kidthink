@@ -1,0 +1,76 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bé gái</title>
+  <defs>
+    <radialGradient cx="42%" cy="35%" id="glSkin" r="68%">
+      <stop offset="0%" stop-color="#ffedd5" />
+      <stop offset="100%" stop-color="#fdba74" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#5c3d2e" opacity="0.24" rx="34" ry="5.5" />
+  <circle
+    cx="21"
+    cy="56"
+    fill="#451a03"
+    r="13"
+    stroke="#292524"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="99"
+    cy="56"
+    fill="#451a03"
+    r="13"
+    stroke="#292524"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="31"
+    cy="50"
+    fill="#ec4899"
+    r="5.5"
+    stroke="#831843"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="89"
+    cy="50"
+    fill="#ec4899"
+    r="5.5"
+    stroke="#831843"
+    stroke-width="3.2"
+  />
+  <path
+    d="M34 98C36 84 46 78 60 78C74 78 84 84 86 98Z"
+    fill="#f472b6"
+    stroke="#831843"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="60"
+    cy="54"
+    fill="url(#glSkin)"
+    r="29"
+    stroke="#5c3d2e"
+    stroke-width="4"
+  />
+  <path
+    d="M31 52C31 32 44 22 60 22C76 22 89 32 89 52C82 41 72 37 60 39C48 37 38 41 31 52Z"
+    fill="#451a03"
+    stroke="#292524"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle cx="48" cy="56" fill="#1c1917" r="4.2" />
+  <circle cx="46.8" cy="54.5" fill="#ffffff" r="1.5" />
+  <circle cx="72" cy="56" fill="#1c1917" r="4.2" />
+  <circle cx="70.8" cy="54.5" fill="#ffffff" r="1.5" />
+  <circle cx="41" cy="65" fill="#fb7185" fill-opacity="0.5" r="4.5" />
+  <circle cx="79" cy="65" fill="#fb7185" fill-opacity="0.5" r="4.5" />
+  <path
+    d="M53 68C57 73 63 73 67 68"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+</svg>

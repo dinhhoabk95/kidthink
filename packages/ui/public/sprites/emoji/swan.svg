@@ -1,0 +1,40 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chim thiên nga</title>
+  <defs>
+    <radialGradient cx="40%" cy="35%" id="swanCream" r="70%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="68%" stop-color="#fafaf9" />
+      <stop offset="100%" stop-color="#e7e5e4" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="62" cy="98" fill="#0c4a6e" opacity="0.22" rx="42" ry="6.5" />
+  <path
+    d="M29 36L15 41L29 45Z"
+    fill="#fb923c"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M45 72C34 65 38 48 42 36C45 26 39 20 33 22C27 24 25 31 28 38C31 45 24 58 29 74C33 88 50 93 70 93C89 93 102 82 104 66C95 62 88 55 78 55C65 55 54 62 45 72Z"
+    fill="url(#swanCream)"
+    stroke="#57534e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M54 71C64 62 82 62 92 70C84 80 67 83 54 76"
+    fill="#f5f5f4"
+    stroke="#57534e"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle cx="33" cy="31" fill="#1c1917" r="2.8" />
+  <path
+    d="M22 95C36 91 48 99 62 95C76 91 88 99 102 95"
+    stroke="#0369a1"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+</svg>

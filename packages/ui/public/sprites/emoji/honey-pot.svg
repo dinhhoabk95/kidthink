@@ -1,0 +1,59 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hũ mật ong</title>
+  <defs>
+    <radialGradient cx="38%" cy="35%" id="hpClay" r="68%">
+      <stop offset="0%" stop-color="#fde047" />
+      <stop offset="52%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#78350f" opacity="0.26" rx="34" ry="6" />
+  <path
+    d="M68 28L82 14"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="5"
+  />
+  <ellipse
+    cx="60"
+    cy="69"
+    fill="url(#hpClay)"
+    rx="35"
+    ry="32"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <rect
+    fill="#d97706"
+    height="12"
+    rx="6"
+    stroke="#78350f"
+    stroke-width="3.8"
+    width="52"
+    x="34"
+    y="25"
+  />
+  <path
+    d="M35 37H85C85 45 79 49 74 46C70 44 67 53 61 53C55 53 53 45 48 47C43 49 35 45 35 37Z"
+    fill="#fef08a"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M60 66L68 71V80L60 85L52 80V71Z"
+    fill="#fef3c7"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <ellipse
+    cx="41"
+    cy="64"
+    fill="#ffffff"
+    fill-opacity="0.5"
+    rx="4.5"
+    ry="9"
+    transform="rotate(-15 41 64)"
+  />
+</svg>

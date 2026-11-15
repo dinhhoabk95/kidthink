@@ -1,0 +1,32 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mũi tên xuống</title>
+  <defs>
+    <linearGradient id="arrDown" x1="15%" x2="85%" y1="15%" y2="85%">
+      <stop offset="0%" stop-color="#93c5fd" />
+      <stop offset="50%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+  </defs>
+  <path
+    d="M60 102L22 62H44V20H76V62H98Z"
+    fill="#1e40af"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+    transform="translate(0 5)"
+  />
+  <path
+    d="M60 100L22 60H44V18H76V60H98Z"
+    fill="url(#arrDown)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M53 27V62"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.6"
+    stroke-width="4.5"
+  />
+</svg>

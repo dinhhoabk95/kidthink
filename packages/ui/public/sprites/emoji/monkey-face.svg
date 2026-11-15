@@ -1,0 +1,67 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mặt khỉ con</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="mfBrown" r="70%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="52%" stop-color="#b45309" />
+      <stop offset="100%" stop-color="#78350f" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#5c3d2e" opacity="0.26" rx="34" ry="5.5" />
+  <ellipse
+    cx="21"
+    cy="58"
+    fill="url(#mfBrown)"
+    rx="13"
+    ry="16"
+    stroke="#5c3d2e"
+    stroke-width="4"
+  />
+  <ellipse cx="21" cy="58" fill="#fed7aa" rx="7.5" ry="10" />
+  <ellipse
+    cx="99"
+    cy="58"
+    fill="url(#mfBrown)"
+    rx="13"
+    ry="16"
+    stroke="#5c3d2e"
+    stroke-width="4"
+  />
+  <ellipse cx="99" cy="58" fill="#fed7aa" rx="7.5" ry="10" />
+  <ellipse
+    cx="60"
+    cy="59"
+    fill="url(#mfBrown)"
+    rx="36"
+    ry="34"
+    stroke="#5c3d2e"
+    stroke-width="4"
+  />
+  <path
+    d="M54 25C56 17 64 16 66 24C70 19 75 22 72 28"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M60 44C53 36 37 38 38 52C38 58 42 62 42 62C34 66 35 80 45 87C53 92 67 92 75 87C85 80 86 66 78 62C78 62 82 58 82 52C83 38 67 36 60 44Z"
+    fill="#fde68a"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <circle cx="48" cy="53" fill="#1c1917" r="4.6" />
+  <circle cx="46.6" cy="51.4" fill="#ffffff" r="1.7" />
+  <circle cx="72" cy="53" fill="#1c1917" r="4.6" />
+  <circle cx="70.6" cy="51.4" fill="#ffffff" r="1.7" />
+  <path
+    d="M50 73H70C70 81 65 85 60 85C55 85 50 81 50 73Z"
+    fill="#fb7185"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <circle cx="39" cy="70" fill="#fb7185" fill-opacity="0.45" r="4.5" />
+  <circle cx="81" cy="70" fill="#fb7185" fill-opacity="0.45" r="4.5" />
+</svg>

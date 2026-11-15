@@ -1,0 +1,43 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hoa cúc vàng</title>
+  <defs>
+    <radialGradient cx="40%" cy="35%" id="dbCenter" r="65%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="55%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#d97706" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#14532d" opacity="0.22" rx="30" ry="5" />
+  <path
+    d="M60 72V102"
+    stroke="#14532d"
+    stroke-linecap="round"
+    stroke-width="5"
+  />
+  <path
+    d="M60 92C72 90 79 82 77 75C68 75 62 82 60 92Z"
+    fill="#4ade80"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <g fill="#fffbeb" stroke="#78350f" stroke-width="3.6">
+    <ellipse cx="60" cy="24" rx="9" ry="15" />
+    <ellipse cx="60" cy="76" rx="9" ry="15" />
+    <ellipse cx="34" cy="50" rx="15" ry="9" />
+    <ellipse cx="86" cy="50" rx="15" ry="9" />
+    <ellipse cx="42" cy="32" rx="9" ry="15" transform="rotate(-45 42 32)" />
+    <ellipse cx="78" cy="68" rx="9" ry="15" transform="rotate(-45 78 68)" />
+    <ellipse cx="78" cy="32" rx="9" ry="15" transform="rotate(45 78 32)" />
+    <ellipse cx="42" cy="68" rx="9" ry="15" transform="rotate(45 42 68)" />
+  </g>
+  <circle
+    cx="60"
+    cy="50"
+    fill="url(#dbCenter)"
+    r="15"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <circle cx="55" cy="45" fill="#ffffff" fill-opacity="0.6" r="3.5" />
+</svg>

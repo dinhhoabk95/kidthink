@@ -1,0 +1,42 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Quả táo xanh</title>
+  <defs>
+    <radialGradient cx="36%" cy="30%" id="gaBody" r="68%">
+      <stop offset="0%" stop-color="#ecfccb" />
+      <stop offset="45%" stop-color="#84cc16" />
+      <stop offset="100%" stop-color="#15803d" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#14532d" opacity="0.25" rx="34" ry="5.5" />
+  <path
+    d="M61 35C61 25 56 17 49 14"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="4.5"
+  />
+  <path
+    d="M58 29C51 16 33 15 27 25C35 34 49 36 58 29Z"
+    fill="#4ade80"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M60 35C47 26 22 32 20 58C18 83 35 103 51 103C56 103 58 100 60 100C62 100 64 103 69 103C85 103 102 83 100 58C98 32 73 26 60 35Z"
+    fill="url(#gaBody)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle cx="77" cy="56" fill="#d9f99d" fill-opacity="0.7" r="2.5" />
+  <circle cx="83" cy="68" fill="#d9f99d" fill-opacity="0.7" r="2.2" />
+  <ellipse
+    cx="38"
+    cy="52"
+    fill="#ffffff"
+    fill-opacity="0.52"
+    rx="6.5"
+    ry="12"
+    transform="rotate(-20 38 52)"
+  />
+</svg>

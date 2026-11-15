@@ -1,0 +1,54 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Lều cắm trại</title>
+  <defs>
+    <linearGradient id="tentCanvas" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="102" fill="#14532d" opacity="0.24" rx="46" ry="6" />
+  <rect
+    fill="#4ade80"
+    height="8"
+    rx="4"
+    stroke="#14532d"
+    stroke-width="3.8"
+    width="96"
+    x="12"
+    y="92"
+  />
+  <path
+    d="M53 16L67 28M67 16L53 28"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <polygon
+    fill="url(#tentCanvas)"
+    points="60,22 102,92 18,92"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <polygon
+    fill="#451a03"
+    points="60,52 76,92 44,92"
+    stroke="#451a03"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <polygon
+    fill="#fde68a"
+    points="60,52 44,92 34,92"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <polygon
+    fill="#fde68a"
+    points="60,52 76,92 86,92"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+</svg>

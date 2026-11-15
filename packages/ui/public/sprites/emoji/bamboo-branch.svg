@@ -1,0 +1,73 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cành tre xanh</title>
+  <defs>
+    <linearGradient id="bmCulm" x1="0%" x2="100%" y1="0%" y2="0%">
+      <stop offset="0%" stop-color="#86efac" />
+      <stop offset="55%" stop-color="#22c55e" />
+      <stop offset="100%" stop-color="#15803d" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="52" cy="105" fill="#14532d" opacity="0.24" rx="28" ry="5" />
+  <g
+    fill="url(#bmCulm)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  >
+    <rect
+      height="26"
+      rx="4"
+      transform="rotate(10 46 18)"
+      width="14"
+      x="46"
+      y="18"
+    />
+    <rect
+      height="28"
+      rx="4"
+      transform="rotate(10 42 44)"
+      width="14"
+      x="42"
+      y="44"
+    />
+    <rect
+      height="28"
+      rx="4"
+      transform="rotate(10 37 72)"
+      width="14"
+      x="37"
+      y="72"
+    />
+  </g>
+  <path
+    d="M58 34C72 26 88 28 96 36C84 42 69 41 58 34Z"
+    fill="#4ade80"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M55 58C71 52 87 56 94 66C80 70 65 67 55 58Z"
+    fill="#22c55e"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M43 48C29 41 18 45 14 54C25 58 36 55 43 48Z"
+    fill="#4ade80"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <rect
+    fill="#fbcfe8"
+    height="18"
+    rx="2"
+    stroke="#831843"
+    stroke-width="3"
+    width="11"
+    x="76"
+    y="38"
+  />
+</svg>

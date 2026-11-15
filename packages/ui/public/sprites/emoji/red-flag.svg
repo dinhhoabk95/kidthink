@@ -1,0 +1,42 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cờ tam giác</title>
+  <defs>
+    <linearGradient id="flagRed" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb7185" />
+      <stop offset="55%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#dc2626" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="44" cy="105" fill="#5c3d2e" opacity="0.25" rx="28" ry="5.5" />
+  <path
+    d="M34 24V100"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="4.5"
+  />
+  <rect
+    fill="#b45309"
+    height="8"
+    rx="4"
+    stroke="#5c3d2e"
+    stroke-width="3.6"
+    width="28"
+    x="20"
+    y="96"
+  />
+  <path
+    d="M36 26C56 22 76 34 100 44C76 54 56 64 36 62Z"
+    fill="url(#flagRed)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="34"
+    cy="20"
+    fill="#fbbf24"
+    r="6"
+    stroke="#78350f"
+    stroke-width="3.6"
+  />
+</svg>

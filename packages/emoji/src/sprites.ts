@@ -1,41 +1,18 @@
 /**
  * @mindkid/emoji — Custom 2.5D "Giấy & Gỗ" Emoji-Art & Tier-3 Hero Sprite Registry
- * Phủ 120 emoji custom nội bộ (104 Vector Craft SVG + 16 Tier-3 Soft Clay Hero WebP).
+ * Phủ 350 emoji custom nội bộ (326 Vector Craft SVG + 24 Tier-3 Soft Clay Hero WebP).
  */
 
-export type CustomSpriteTier = "vector_craft" | "hero_webp";
+import {
+  BATCH_2_SPRITES,
+  type EmojiSpriteMeta,
+  hero,
+  sprite,
+} from "./sprites-batch2";
 
-export interface EmojiSpriteMeta {
-  readonly emoji: string;
-  readonly slug: string;
-  readonly nameVi: string;
-  readonly svgPath: string;
-  readonly heroWebpPath?: string;
-  readonly tier: CustomSpriteTier;
-}
+export type { CustomSpriteTier, EmojiSpriteMeta } from "./sprites-batch2";
 
-function sprite(emoji: string, slug: string, nameVi: string): EmojiSpriteMeta {
-  return {
-    emoji,
-    slug,
-    nameVi,
-    svgPath: `/sprites/emoji/${slug}.svg`,
-    tier: "vector_craft",
-  };
-}
-
-function hero(emoji: string, slug: string, nameVi: string): EmojiSpriteMeta {
-  return {
-    emoji,
-    slug,
-    nameVi,
-    svgPath: `/sprites/emoji/${slug}.svg`,
-    heroWebpPath: `/sprites/hero/${slug}.webp`,
-    tier: "hero_webp",
-  };
-}
-
-const CUSTOM_SPRITE_LIST: readonly EmojiSpriteMeta[] = [
+const BATCH_1_SPRITES: readonly EmojiSpriteMeta[] = [
   // Core PoC — Trái cây & Đồ ăn (9)
   hero("🍎", "apple", "Táo đỏ"),
   sprite("🍌", "banana", "Chuối vàng"),
@@ -177,6 +154,11 @@ const CUSTOM_SPRITE_LIST: readonly EmojiSpriteMeta[] = [
   sprite("💡", "light-bulb", "Bóng đèn sáng kiến"),
 ];
 
+const CUSTOM_SPRITE_LIST: readonly EmojiSpriteMeta[] = [
+  ...BATCH_1_SPRITES,
+  ...BATCH_2_SPRITES,
+];
+
 const VARIATION_SELECTOR_16_RE = /\uFE0F/g;
 
 function stripVariationSelector(value: string): string {
@@ -235,7 +217,7 @@ export function hasCustomEmojiSprite(emoji: string): boolean {
 }
 
 /**
- * Liệt kê toàn bộ 120 sprite custom theo thứ tự khai báo.
+ * Liệt kê toàn bộ 350 sprite custom theo thứ tự khai báo.
  */
 export function listCustomEmojiSprites(): readonly EmojiSpriteMeta[] {
   return CUSTOM_SPRITE_LIST;

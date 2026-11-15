@@ -1,0 +1,66 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bông lúa chín</title>
+  <ellipse cx="56" cy="105" fill="#78350f" opacity="0.24" rx="28" ry="5" />
+  <path
+    d="M52 100C52 72 56 46 76 24M52 100C50 74 44 50 28 32"
+    stroke="#14532d"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <path
+    d="M52 94C36 80 30 66 26 56M52 94C68 80 76 68 82 56"
+    stroke="#166534"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <ellipse
+    cx="64"
+    cy="40"
+    fill="#facc15"
+    rx="6"
+    ry="10"
+    stroke="#78350f"
+    stroke-width="3.6"
+    transform="rotate(32 64 40)"
+  />
+  <ellipse
+    cx="76"
+    cy="27"
+    fill="#fde047"
+    rx="6"
+    ry="10"
+    stroke="#78350f"
+    stroke-width="3.6"
+    transform="rotate(42 76 27)"
+  />
+  <ellipse
+    cx="83"
+    cy="41"
+    fill="#f59e0b"
+    rx="6"
+    ry="10"
+    stroke="#78350f"
+    stroke-width="3.6"
+    transform="rotate(52 83 41)"
+  />
+  <ellipse
+    cx="38"
+    cy="46"
+    fill="#facc15"
+    rx="6"
+    ry="10"
+    stroke="#78350f"
+    stroke-width="3.6"
+    transform="rotate(-32 38 46)"
+  />
+  <ellipse
+    cx="28"
+    cy="33"
+    fill="#fde047"
+    rx="6"
+    ry="10"
+    stroke="#78350f"
+    stroke-width="3.6"
+    transform="rotate(-42 28 33)"
+  />
+</svg>

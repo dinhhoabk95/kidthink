@@ -1,0 +1,47 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Giữ trật tự nhé</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="quietSkin" r="68%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="58%" stop-color="#fde047" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#78350f" opacity="0.24" rx="34" ry="5" />
+  <circle
+    cx="60"
+    cy="54"
+    fill="url(#quietSkin)"
+    r="38"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M40 46C43 42 48 42 51 46M69 46C72 42 77 42 80 46"
+    stroke="#292524"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <circle cx="38" cy="58" fill="#fb7185" fill-opacity="0.45" r="5.5" />
+  <circle cx="82" cy="58" fill="#fb7185" fill-opacity="0.45" r="5.5" />
+  <circle cx="60" cy="64" fill="#78350f" r="4.5" />
+  <rect
+    fill="#fde68a"
+    height="30"
+    rx="5.5"
+    stroke="#78350f"
+    stroke-width="3.8"
+    width="11"
+    x="54.5"
+    y="56"
+  />
+  <ellipse
+    cx="60"
+    cy="90"
+    fill="#fcd34d"
+    rx="14"
+    ry="10"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+</svg>

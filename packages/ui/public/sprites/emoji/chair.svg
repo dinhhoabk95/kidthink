@@ -1,0 +1,51 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cái ghế</title>
+  <defs>
+    <linearGradient id="chairWood" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fcd34d" />
+      <stop offset="55%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#5c3d2e" opacity="0.26" rx="36" ry="6" />
+  <path
+    d="M35 18V99M75 18V62M45 68V103M87 68V103"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="4.5"
+  />
+  <rect
+    fill="url(#chairWood)"
+    height="12"
+    rx="4"
+    stroke="#5c3d2e"
+    stroke-width="3.8"
+    width="44"
+    x="33"
+    y="22"
+  />
+  <rect
+    fill="url(#chairWood)"
+    height="10"
+    rx="4"
+    stroke="#5c3d2e"
+    stroke-width="3.8"
+    width="44"
+    x="33"
+    y="40"
+  />
+  <path
+    d="M29 62H81L93 72H39Z"
+    fill="url(#chairWood)"
+    stroke="#5c3d2e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M43 66H77"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.55"
+    stroke-width="2.6"
+  />
+</svg>

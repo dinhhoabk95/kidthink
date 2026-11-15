@@ -1,0 +1,73 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Dấu chân</title>
+  <defs>
+    <radialGradient cx="40%" cy="35%" id="fpWarm" r="68%">
+      <stop offset="0%" stop-color="#fdba74" />
+      <stop offset="55%" stop-color="#f97316" />
+      <stop offset="100%" stop-color="#c2410c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#7c2d12" opacity="0.22" rx="36" ry="5" />
+  <path
+    d="M36 46C26 47 22 60 26 72C29 81 27 93 36 95C45 97 49 87 47 77C45 66 48 45 36 46Z"
+    fill="url(#fpWarm)"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="24"
+    cy="36"
+    fill="url(#fpWarm)"
+    r="5"
+    stroke="#7c2d12"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="34"
+    cy="32"
+    fill="url(#fpWarm)"
+    r="5.5"
+    stroke="#7c2d12"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="45"
+    cy="34"
+    fill="url(#fpWarm)"
+    r="6"
+    stroke="#7c2d12"
+    stroke-width="3.2"
+  />
+  <path
+    d="M84 36C94 37 98 50 94 62C91 71 93 83 84 85C75 87 71 77 73 67C75 56 72 35 84 36Z"
+    fill="url(#fpWarm)"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="75"
+    cy="24"
+    fill="url(#fpWarm)"
+    r="6"
+    stroke="#7c2d12"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="86"
+    cy="22"
+    fill="url(#fpWarm)"
+    r="5.5"
+    stroke="#7c2d12"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="96"
+    cy="26"
+    fill="url(#fpWarm)"
+    r="5"
+    stroke="#7c2d12"
+    stroke-width="3.2"
+  />
+</svg>

@@ -1,0 +1,39 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đỉnh núi tuyết</title>
+  <defs>
+    <linearGradient id="smRock" x1="20%" x2="80%" y1="15%" y2="100%">
+      <stop offset="0%" stop-color="#94a3b8" />
+      <stop offset="55%" stop-color="#64748b" />
+      <stop offset="100%" stop-color="#475569" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#334155" opacity="0.25" rx="46" ry="5.5" />
+  <path
+    d="M58 96L84 42L110 96Z"
+    fill="#64748b"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M75 61L84 42L93 61L87 57L84 62L80 57Z"
+    fill="#f8fafc"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M12 96L50 22L88 96Z"
+    fill="url(#smRock)"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M35 51L50 22L65 51L57 46L50 54L43 46Z"
+    fill="#ffffff"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+</svg>

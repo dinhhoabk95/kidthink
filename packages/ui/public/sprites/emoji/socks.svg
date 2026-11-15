@@ -1,0 +1,41 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đôi tất ấm</title>
+  <defs>
+    <linearGradient id="sockWool" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb923c" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#7c2d12" opacity="0.24" rx="38" ry="5.5" />
+  <path
+    d="M56 22H82V66C82 78 96 80 96 90C96 97 88 100 76 100H62C54 100 50 94 50 86V22Z"
+    fill="#38bdf8"
+    stroke="#0c4a6e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M32 18H58V62C58 74 74 76 74 86C74 94 65 98 52 98H38C30 98 26 92 26 84V18Z"
+    fill="url(#sockWool)"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#fef3c7"
+    height="11"
+    rx="3"
+    stroke="#7c2d12"
+    stroke-width="3.6"
+    width="32"
+    x="26"
+    y="18"
+  />
+  <path
+    d="M58 77C67 78 74 82 74 87C74 93 66 98 56 98C56 90 56 83 58 77Z"
+    fill="#fef3c7"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+</svg>

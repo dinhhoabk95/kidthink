@@ -1,0 +1,45 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bánh kem dâu</title>
+  <defs>
+    <linearGradient id="scSponge" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#78350f" opacity="0.25" rx="44" ry="6" />
+  <path
+    d="M20 58L98 48V90L20 96Z"
+    fill="url(#scSponge)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M20 73L98 66V76L20 83Z"
+    fill="#fffbeb"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M20 58L66 28L98 48C88 56 80 56 74 52C67 59 56 58 50 54C42 62 30 62 20 58Z"
+    fill="#ffffff"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M58 18C65 18 71 25 69 34C67 41 53 41 51 34C49 25 55 18 58 18Z"
+    fill="#ef4444"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M52 19L60 14L68 19"
+    stroke="#14532d"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+</svg>

@@ -1,0 +1,49 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Con quay yoyo</title>
+  <defs>
+    <radialGradient cx="35%" cy="30%" id="yyBody" r="70%">
+      <stop offset="0%" stop-color="#6ee7b7" />
+      <stop offset="50%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#047857" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="54" cy="105" fill="#14532d" opacity="0.24" rx="32" ry="5.5" />
+  <path
+    d="M74 44C92 36 104 22 96 14C89 8 79 16 85 24C91 31 105 33 106 48"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="58"
+    cy="66"
+    fill="#065f46"
+    r="35"
+    stroke="#14532d"
+    stroke-width="4"
+  />
+  <circle
+    cx="52"
+    cy="62"
+    fill="url(#yyBody)"
+    r="35"
+    stroke="#14532d"
+    stroke-width="4"
+  />
+  <circle
+    cx="52"
+    cy="62"
+    fill="#fde047"
+    r="14"
+    stroke="#78350f"
+    stroke-width="3.6"
+  />
+  <circle cx="52" cy="62" fill="#ffffff" r="4.5" />
+  <path
+    d="M31 44C36 36 45 32 55 33"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.6"
+    stroke-width="4.5"
+  />
+</svg>

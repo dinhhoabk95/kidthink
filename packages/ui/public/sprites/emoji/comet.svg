@@ -1,0 +1,53 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Sao chổi</title>
+  <defs>
+    <linearGradient id="cometTail" x1="15%" x2="90%" y1="85%" y2="15%">
+      <stop offset="0%" stop-color="#fde047" />
+      <stop offset="50%" stop-color="#fb923c" />
+      <stop offset="100%" stop-color="#60a5fa" />
+    </linearGradient>
+    <radialGradient cx="38%" cy="35%" id="cometCore" r="65%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="55%" stop-color="#fde047" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="48" cy="104" fill="#1e3a8a" opacity="0.2" rx="32" ry="5" />
+  <path
+    d="M24 72C40 44 72 22 106 16L92 36L108 38C82 54 62 76 48 96Z"
+    fill="url(#cometTail)"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M56 54L88 28M64 66L92 44"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.65"
+    stroke-width="3"
+  />
+  <circle
+    cx="37"
+    cy="81"
+    fill="url(#cometCore)"
+    r="21"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <polygon
+    fill="#fef08a"
+    points="37,67 41,76 50,77 43,83 45,92 37,87 29,92 31,83 24,77 33,76"
+    stroke="#92400e"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="80"
+    cy="76"
+    fill="#fde047"
+    r="4"
+    stroke="#78350f"
+    stroke-width="3.6"
+  />
+</svg>

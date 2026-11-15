@@ -1,0 +1,61 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bảng kẹp giấy</title>
+  <defs>
+    <linearGradient id="clipWood" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#78350f" opacity="0.24" rx="34" ry="5" />
+  <rect
+    fill="url(#clipWood)"
+    height="82"
+    rx="11"
+    stroke="#78350f"
+    stroke-width="4"
+    width="68"
+    x="26"
+    y="21"
+  />
+  <rect
+    fill="#fffbeb"
+    height="64"
+    rx="6"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="52"
+    x="34"
+    y="31"
+  />
+  <rect
+    fill="#cbd5e1"
+    height="14"
+    rx="5"
+    stroke="#334155"
+    stroke-width="3.8"
+    width="32"
+    x="44"
+    y="14"
+  />
+  <circle
+    cx="60"
+    cy="14"
+    fill="#94a3b8"
+    r="5"
+    stroke="#334155"
+    stroke-width="3.6"
+  />
+  <path
+    d="M43 49L48 54L57 44"
+    stroke="#15803d"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M63 49H77M44 65H77M44 77H69"
+    stroke="#57534e"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+</svg>

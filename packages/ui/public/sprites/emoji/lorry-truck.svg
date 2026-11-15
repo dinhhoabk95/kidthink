@@ -1,0 +1,90 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Xe tải lớn</title>
+  <defs>
+    <linearGradient id="ltCargo" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#6ee7b7" />
+      <stop offset="55%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#047857" />
+    </linearGradient>
+    <linearGradient id="ltCab" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fde047" />
+      <stop offset="100%" stop-color="#eab308" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="101" fill="#1e293b" opacity="0.25" rx="48" ry="6" />
+  <rect
+    fill="url(#ltCargo)"
+    height="50"
+    rx="8"
+    stroke="#14532d"
+    stroke-width="4"
+    width="60"
+    x="48"
+    y="32"
+  />
+  <path
+    d="M62 42V72M78 42V72M94 42V72"
+    stroke="#14532d"
+    stroke-linecap="round"
+    stroke-opacity="0.35"
+    stroke-width="3"
+  />
+  <path
+    d="M14 62C14 54 19 44 27 44H44V82H14Z"
+    fill="url(#ltCab)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M20 60L26 50H39V60Z"
+    fill="#bae6fd"
+    stroke="#1e3a5f"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <rect
+    fill="#475569"
+    height="8"
+    rx="3"
+    stroke="#1e293b"
+    stroke-width="3.4"
+    width="96"
+    x="12"
+    y="80"
+  />
+  <circle
+    cx="30"
+    cy="90"
+    fill="#334155"
+    r="11"
+    stroke="#1c1917"
+    stroke-width="4"
+  />
+  <circle cx="30" cy="90" fill="#e2e8f0" r="4.5" />
+  <circle
+    cx="72"
+    cy="90"
+    fill="#334155"
+    r="11"
+    stroke="#1c1917"
+    stroke-width="4"
+  />
+  <circle cx="72" cy="90" fill="#e2e8f0" r="4.5" />
+  <circle
+    cx="95"
+    cy="90"
+    fill="#334155"
+    r="11"
+    stroke="#1c1917"
+    stroke-width="4"
+  />
+  <circle cx="95" cy="90" fill="#e2e8f0" r="4.5" />
+  <path
+    d="M56 39H82"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.55"
+    stroke-width="4"
+  />
+</svg>

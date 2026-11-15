@@ -1,0 +1,59 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cánh cửa</title>
+  <defs>
+    <linearGradient id="doorOak" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#d97706" />
+      <stop offset="55%" stop-color="#b45309" />
+      <stop offset="100%" stop-color="#92400e" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#5c3d2e" opacity="0.26" rx="34" ry="5.5" />
+  <rect
+    fill="#fef3c7"
+    height="88"
+    rx="6"
+    stroke="#5c3d2e"
+    stroke-width="4"
+    width="60"
+    x="30"
+    y="14"
+  />
+  <rect
+    fill="url(#doorOak)"
+    height="82"
+    rx="4"
+    stroke="#5c3d2e"
+    stroke-width="3.8"
+    width="48"
+    x="36"
+    y="20"
+  />
+  <rect
+    fill="#92400e"
+    height="26"
+    rx="3"
+    stroke="#5c3d2e"
+    stroke-width="3.2"
+    width="30"
+    x="45"
+    y="28"
+  />
+  <rect
+    fill="#92400e"
+    height="24"
+    rx="3"
+    stroke="#5c3d2e"
+    stroke-width="3.2"
+    width="30"
+    x="45"
+    y="66"
+  />
+  <circle
+    cx="75"
+    cy="60"
+    fill="#fbbf24"
+    r="4.5"
+    stroke="#5c3d2e"
+    stroke-width="3.2"
+  />
+</svg>

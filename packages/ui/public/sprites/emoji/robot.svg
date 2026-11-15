@@ -1,0 +1,91 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Người máy</title>
+  <defs>
+    <linearGradient id="rbBody" x1="20%" x2="80%" y1="10%" y2="90%">
+      <stop offset="0%" stop-color="#bae6fd" />
+      <stop offset="50%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+    <linearGradient id="rbVisor" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#334155" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e3a5f" opacity="0.25" rx="38" ry="5.5" />
+  <path
+    d="M60 32V19"
+    stroke="#1e3a5f"
+    stroke-linecap="round"
+    stroke-width="4.5"
+  />
+  <circle
+    cx="60"
+    cy="15"
+    fill="#fbbf24"
+    r="7"
+    stroke="#78350f"
+    stroke-width="3.6"
+  />
+  <rect
+    fill="#f59e0b"
+    height="24"
+    rx="6"
+    stroke="#78350f"
+    stroke-width="3.8"
+    width="12"
+    x="13"
+    y="54"
+  />
+  <rect
+    fill="#f59e0b"
+    height="24"
+    rx="6"
+    stroke="#78350f"
+    stroke-width="3.8"
+    width="12"
+    x="95"
+    y="54"
+  />
+  <rect
+    fill="url(#rbBody)"
+    height="64"
+    rx="20"
+    stroke="#1e3a5f"
+    stroke-width="4"
+    width="74"
+    x="23"
+    y="33"
+  />
+  <rect
+    fill="url(#rbVisor)"
+    height="26"
+    rx="11"
+    stroke="#1e3a5f"
+    stroke-width="3.4"
+    width="54"
+    x="33"
+    y="45"
+  />
+  <circle cx="47" cy="58" fill="#67e8f9" r="6" />
+  <circle cx="45.5" cy="56.2" fill="#ffffff" r="2.2" />
+  <circle cx="73" cy="58" fill="#67e8f9" r="6" />
+  <circle cx="71.5" cy="56.2" fill="#ffffff" r="2.2" />
+  <rect
+    fill="#e0f2fe"
+    height="10"
+    rx="5"
+    stroke="#1e3a5f"
+    stroke-width="3.2"
+    width="32"
+    x="44"
+    y="79"
+  />
+  <path d="M54 80V88M60 80V88M66 80V88" stroke="#1e3a5f" stroke-width="2.4" />
+  <path
+    d="M36 40H54"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.65"
+    stroke-width="4"
+  />
+</svg>

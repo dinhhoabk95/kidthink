@@ -1,0 +1,41 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Vỏ sò biển</title>
+  <defs>
+    <radialGradient cx="50%" cy="32%" id="shBody" r="68%">
+      <stop offset="0%" stop-color="#fff1f2" />
+      <stop offset="52%" stop-color="#fbcfe8" />
+      <stop offset="100%" stop-color="#f472b6" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#831843" opacity="0.24" rx="34" ry="5.5" />
+  <path
+    d="M43 88H77L83 98C84 101 81 103 77 103H43C39 103 36 101 37 98Z"
+    fill="#f9a8d4"
+    stroke="#831843"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M60 92L18 62C14 52 20 41 30 42C32 30 43 23 53 26C57 18 63 18 67 26C77 23 88 30 90 42C100 41 106 52 102 62Z"
+    fill="url(#shBody)"
+    stroke="#831843"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M60 90L32 43M60 90L48 28M60 90V23M60 90L72 28M60 90L88 43"
+    stroke="#9d174d"
+    stroke-linecap="round"
+    stroke-opacity="0.55"
+    stroke-width="2.6"
+  />
+  <ellipse
+    cx="45"
+    cy="42"
+    fill="#ffffff"
+    fill-opacity="0.6"
+    rx="6"
+    ry="3"
+    transform="rotate(-25 45 42)"
+  />
+</svg>

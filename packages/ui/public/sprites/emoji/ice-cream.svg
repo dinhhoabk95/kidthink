@@ -1,0 +1,63 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Kem ốc quế</title>
+  <defs>
+    <radialGradient cx="36%" cy="28%" id="icSwirl" r="70%">
+      <stop offset="0%" stop-color="#fff1f2" />
+      <stop offset="48%" stop-color="#fda4af" />
+      <stop offset="100%" stop-color="#fb7185" />
+    </radialGradient>
+    <linearGradient id="icCone" x1="15%" x2="85%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fcd34d" />
+      <stop offset="55%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#78350f" opacity="0.25" rx="22" ry="5" />
+  <path
+    d="M38 60L56 103C58 107 62 107 64 103L82 60Z"
+    fill="url(#icCone)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M44 68L70 86M49 82L65 94M76 68L50 86M71 82L55 94"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-opacity="0.45"
+    stroke-width="2.5"
+  />
+  <path
+    d="M31 56C31 48 37 43 44 43H76C83 43 89 48 89 56C89 63 83 67 75 66C70 69 65 69 60 66C55 69 50 69 45 66C37 67 31 63 31 56Z"
+    fill="url(#icSwirl)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M39 44C39 35 46 30 54 30H66C74 30 81 35 81 44Z"
+    fill="url(#icSwirl)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M48 31C48 21 56 15 62 12C61 20 68 22 72 31Z"
+    fill="url(#icSwirl)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle cx="49" cy="53" fill="#3b82f6" r="2.6" />
+  <circle cx="71" cy="51" fill="#10b981" r="2.6" />
+  <circle cx="61" cy="39" fill="#f59e0b" r="2.6" />
+  <ellipse
+    cx="44"
+    cy="49"
+    fill="#ffffff"
+    fill-opacity="0.65"
+    rx="6"
+    ry="3"
+    transform="rotate(-20 44 49)"
+  />
+</svg>

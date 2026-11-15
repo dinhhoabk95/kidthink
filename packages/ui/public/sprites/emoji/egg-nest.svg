@@ -1,0 +1,57 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Tổ chim có trứng</title>
+  <defs>
+    <linearGradient id="nestWood" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#78350f" />
+    </linearGradient>
+    <radialGradient cx="38%" cy="32%" id="eggBlue" r="68%">
+      <stop offset="0%" stop-color="#e0f2fe" />
+      <stop offset="100%" stop-color="#7dd3fc" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="101" fill="#451a03" opacity="0.25" rx="40" ry="6" />
+  <ellipse
+    cx="44"
+    cy="54"
+    fill="url(#eggBlue)"
+    rx="13"
+    ry="17"
+    stroke="#0c4a6e"
+    stroke-width="3.8"
+    transform="rotate(-14 44 54)"
+  />
+  <ellipse
+    cx="76"
+    cy="54"
+    fill="#fef3c7"
+    rx="13"
+    ry="17"
+    stroke="#78350f"
+    stroke-width="3.8"
+    transform="rotate(14 76 54)"
+  />
+  <ellipse
+    cx="60"
+    cy="50"
+    fill="url(#eggBlue)"
+    rx="14"
+    ry="18"
+    stroke="#0c4a6e"
+    stroke-width="3.8"
+  />
+  <path
+    d="M16 60C16 84 35 96 60 96C85 96 104 84 104 60C90 66 74 68 60 68C46 68 30 66 16 60Z"
+    fill="url(#nestWood)"
+    stroke="#451a03"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M26 73C44 80 76 80 94 73M34 84C50 89 70 89 86 84"
+    stroke="#fef3c7"
+    stroke-linecap="round"
+    stroke-opacity="0.55"
+    stroke-width="2.8"
+  />
+</svg>

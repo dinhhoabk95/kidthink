@@ -1,0 +1,76 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Quyển sách xanh lá</title>
+  <defs>
+    <linearGradient id="gbCover" x1="15%" x2="88%" y1="10%" y2="92%">
+      <stop offset="0%" stop-color="#86efac" />
+      <stop offset="50%" stop-color="#22c55e" />
+      <stop offset="100%" stop-color="#15803d" />
+    </linearGradient>
+    <linearGradient id="gbSpine" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#16a34a" />
+      <stop offset="100%" stop-color="#14532d" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#14532d" opacity="0.24" rx="36" ry="6" />
+  <rect
+    fill="#fef3c7"
+    height="76"
+    rx="8"
+    stroke="#78350f"
+    stroke-width="3.8"
+    width="66"
+    x="30"
+    y="22"
+  />
+  <path
+    d="M36 92H92"
+    stroke="#d97706"
+    stroke-linecap="round"
+    stroke-opacity="0.45"
+    stroke-width="2.5"
+  />
+  <rect
+    fill="url(#gbCover)"
+    height="76"
+    rx="9"
+    stroke="#14532d"
+    stroke-width="4"
+    width="64"
+    x="26"
+    y="16"
+  />
+  <path
+    d="M26 25C26 20 30 16 35 16H40V92H35C30 92 26 88 26 83Z"
+    fill="url(#gbSpine)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M56 92V105L62 100L68 105V92"
+    fill="#f59e0b"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <path
+    d="M65 38C76 36 81 46 74 56C67 64 55 62 55 52C55 44 59 39 65 38Z"
+    fill="#dcfce7"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <path
+    d="M58 58C63 52 68 47 73 42"
+    stroke="#14532d"
+    stroke-linecap="round"
+    stroke-width="2.6"
+  />
+  <path
+    d="M46 25H68"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.55"
+    stroke-width="4"
+  />
+</svg>

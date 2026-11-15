@@ -1,0 +1,40 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mũ lưỡi trai</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="capBlue" r="70%">
+      <stop offset="0%" stop-color="#93c5fd" />
+      <stop offset="55%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="62" cy="96" fill="#1e3a5f" opacity="0.25" rx="44" ry="6" />
+  <path
+    d="M58 68H106C109 78 96 86 76 84L52 76Z"
+    fill="#1d4ed8"
+    stroke="#1e3a5f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M18 72C18 42 36 28 56 28C76 28 88 44 88 72Z"
+    fill="url(#capBlue)"
+    stroke="#1e3a5f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M55 28C46 40 44 55 45 72"
+    stroke="#1e3a5f"
+    stroke-linecap="round"
+    stroke-opacity="0.55"
+    stroke-width="2.8"
+  />
+  <circle
+    cx="55"
+    cy="26"
+    fill="#fbbf24"
+    r="5"
+    stroke="#78350f"
+    stroke-width="3.6"
+  />
+</svg>

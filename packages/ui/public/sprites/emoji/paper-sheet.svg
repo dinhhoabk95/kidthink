@@ -1,0 +1,25 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Tờ giấy</title>
+  <ellipse cx="60" cy="105" fill="#44403c" opacity="0.24" rx="34" ry="5.5" />
+  <path
+    d="M30 16H74L94 36V98C94 101 91 103 88 103H30C27 103 25 101 25 98V21C25 18 27 16 30 16Z"
+    fill="#fffbeb"
+    stroke="#44403c"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M74 16V36H94Z"
+    fill="#fde68a"
+    stroke="#44403c"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M38 50H80M38 64H80M38 78H68"
+    stroke="#78716c"
+    stroke-linecap="round"
+    stroke-opacity="0.65"
+    stroke-width="3"
+  />
+</svg>

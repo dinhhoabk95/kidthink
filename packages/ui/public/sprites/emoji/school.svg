@@ -1,0 +1,72 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Trường học</title>
+  <ellipse cx="60" cy="105" fill="#5c3d2e" opacity="0.25" rx="48" ry="6" />
+  <rect
+    fill="#fef3c7"
+    height="50"
+    rx="5"
+    stroke="#78350f"
+    stroke-width="4"
+    width="88"
+    x="16"
+    y="50"
+  />
+  <path
+    d="M12 52L28 36H92L108 52Z"
+    fill="#ef4444"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M42 100V44L60 28L78 44V100Z"
+    fill="#fde68a"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="60"
+    cy="48"
+    fill="#ffffff"
+    r="8"
+    stroke="#78350f"
+    stroke-width="3.4"
+  />
+  <path
+    d="M60 44V48H64"
+    stroke="#292524"
+    stroke-linecap="round"
+    stroke-width="2.4"
+  />
+  <rect
+    fill="#38bdf8"
+    height="24"
+    rx="3"
+    stroke="#1e3a5f"
+    stroke-width="3.6"
+    width="16"
+    x="52"
+    y="76"
+  />
+  <rect
+    fill="#bae6fd"
+    height="14"
+    rx="2"
+    stroke="#1e3a5f"
+    stroke-width="3.2"
+    width="12"
+    x="23"
+    y="64"
+  />
+  <rect
+    fill="#bae6fd"
+    height="14"
+    rx="2"
+    stroke="#1e3a5f"
+    stroke-width="3.2"
+    width="12"
+    x="85"
+    y="64"
+  />
+</svg>

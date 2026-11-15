@@ -1,0 +1,28 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Kẹp giấy</title>
+  <ellipse cx="60" cy="104" fill="#334155" opacity="0.24" rx="28" ry="5" />
+  <path
+    d="M46 78V38C46 25 66 25 66 38V84C66 101 38 101 38 84V34C38 14 76 14 76 34V78"
+    stroke="#94a3b8"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-opacity="0.45"
+    stroke-width="9"
+    transform="rotate(22 60 60)"
+  />
+  <path
+    d="M46 78V38C46 25 66 25 66 38V84C66 101 38 101 38 84V34C38 14 76 14 76 34V78"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="4.5"
+    transform="rotate(22 60 60)"
+  />
+  <path
+    d="M55 26L41 58"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.7"
+    stroke-width="2.4"
+  />
+</svg>

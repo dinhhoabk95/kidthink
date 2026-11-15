@@ -1,0 +1,70 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Gà bông vàng</title>
+  <defs>
+    <radialGradient cx="40%" cy="30%" id="fchkYel" r="70%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="55%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#eab308" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.25" rx="32" ry="5.5" />
+  <path
+    d="M48 90V102M42 102H54M72 90V102M66 102H78"
+    stroke="#7c2d12"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="26"
+    cy="66"
+    fill="url(#fchkYel)"
+    rx="11"
+    ry="15"
+    stroke="#78350f"
+    stroke-width="3.8"
+    transform="rotate(24 26 66)"
+  />
+  <ellipse
+    cx="94"
+    cy="66"
+    fill="url(#fchkYel)"
+    rx="11"
+    ry="15"
+    stroke="#78350f"
+    stroke-width="3.8"
+    transform="rotate(-24 94 66)"
+  />
+  <ellipse
+    cx="60"
+    cy="68"
+    fill="url(#fchkYel)"
+    rx="28"
+    ry="26"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <circle
+    cx="60"
+    cy="39"
+    fill="url(#fchkYel)"
+    r="22"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M56 17L60 11L65 17"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle cx="50" cy="37" fill="#1c1917" r="3.8" />
+  <circle cx="70" cy="37" fill="#1c1917" r="3.8" />
+  <polygon
+    fill="#f97316"
+    points="60,40 66,45 60,50 54,45"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+</svg>

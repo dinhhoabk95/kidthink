@@ -1,0 +1,41 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Tổ chim rơm</title>
+  <defs>
+    <linearGradient id="enStraw" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fcd34d" />
+      <stop offset="52%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#92400e" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="99" fill="#5c3d2e" opacity="0.26" rx="42" ry="6.5" />
+  <path
+    d="M18 58C18 84 36 95 60 95C84 95 102 84 102 58Z"
+    fill="url(#enStraw)"
+    stroke="#5c3d2e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="60"
+    cy="58"
+    fill="#fef3c7"
+    rx="42"
+    ry="14"
+    stroke="#5c3d2e"
+    stroke-width="4"
+  />
+  <ellipse cx="60" cy="59" fill="#78350f" rx="30" ry="8.5" />
+  <path
+    d="M26 70C44 77 76 77 94 70M33 82C50 87 70 87 87 82"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="3.2"
+  />
+  <path
+    d="M92 52C101 46 107 48 104 55"
+    fill="#4ade80"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+</svg>

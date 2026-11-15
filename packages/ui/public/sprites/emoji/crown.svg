@@ -1,0 +1,75 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Vương miện vàng</title>
+  <defs>
+    <linearGradient id="crGold" x1="15%" x2="85%" y1="10%" y2="90%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="50%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#78350f" opacity="0.25" rx="40" ry="5.5" />
+  <path
+    d="M18 40L39 60L60 28L81 60L102 40L94 88H26Z"
+    fill="url(#crGold)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#f59e0b"
+    height="12"
+    rx="5"
+    stroke="#78350f"
+    stroke-width="3.8"
+    width="74"
+    x="23"
+    y="82"
+  />
+  <circle
+    cx="18"
+    cy="36"
+    fill="#fde047"
+    r="6"
+    stroke="#78350f"
+    stroke-width="3.4"
+  />
+  <circle
+    cx="60"
+    cy="24"
+    fill="#fde047"
+    r="7"
+    stroke="#78350f"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="102"
+    cy="36"
+    fill="#fde047"
+    r="6"
+    stroke="#78350f"
+    stroke-width="3.4"
+  />
+  <path
+    d="M60 60L66 68L60 76L54 68Z"
+    fill="#ef4444"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="39"
+    cy="70"
+    fill="#38bdf8"
+    r="4.5"
+    stroke="#1e3a8a"
+    stroke-width="2.8"
+  />
+  <circle
+    cx="81"
+    cy="70"
+    fill="#10b981"
+    r="4.5"
+    stroke="#14532d"
+    stroke-width="2.8"
+  />
+</svg>

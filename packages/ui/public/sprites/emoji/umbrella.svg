@@ -1,0 +1,31 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cái ô</title>
+  <defs>
+    <radialGradient cx="40%" cy="28%" id="umbPurp" r="70%">
+      <stop offset="0%" stop-color="#d8b4fe" />
+      <stop offset="55%" stop-color="#9333ea" />
+      <stop offset="100%" stop-color="#6b21a8" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#4c1d95" opacity="0.24" rx="34" ry="5.5" />
+  <path
+    d="M60 16V91C60 100 46 100 46 91"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4.5"
+  />
+  <path
+    d="M14 60C16 33 36 20 60 20C84 20 104 33 106 60C95 54 83 54 75 60C66 54 54 54 45 60C37 54 25 54 14 60Z"
+    fill="url(#umbPurp)"
+    stroke="#4c1d95"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M60 20C50 32 46 45 45 60M60 20C70 32 74 45 75 60"
+    stroke="#4c1d95"
+    stroke-linecap="round"
+    stroke-opacity="0.55"
+    stroke-width="2.6"
+  />
+</svg>

@@ -1,0 +1,53 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hang nhỏ</title>
+  <defs>
+    <linearGradient id="earthRim" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#92400e" />
+    </linearGradient>
+    <radialGradient cx="50%" cy="65%" id="holeDepth" r="65%">
+      <stop offset="0%" stop-color="#1c1917" />
+      <stop offset="100%" stop-color="#44403c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="95" fill="#451a03" opacity="0.22" rx="48" ry="8" />
+  <path
+    d="M24 56C18 43 22 33 29 44C31 32 39 34 37 48Z"
+    fill="#4ade80"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M88 54C86 41 94 37 95 48C101 38 107 45 99 56Z"
+    fill="#4ade80"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <ellipse
+    cx="60"
+    cy="74"
+    fill="url(#earthRim)"
+    rx="46"
+    ry="20"
+    stroke="#451a03"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="60"
+    cy="73"
+    fill="url(#holeDepth)"
+    rx="35"
+    ry="13"
+    stroke="#292524"
+    stroke-width="3.8"
+  />
+  <path
+    d="M31 66C44 61 76 61 89 66"
+    stroke="#fde68a"
+    stroke-linecap="round"
+    stroke-opacity="0.45"
+    stroke-width="2.6"
+  />
+</svg>

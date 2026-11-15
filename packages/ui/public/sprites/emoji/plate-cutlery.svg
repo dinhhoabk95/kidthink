@@ -1,0 +1,35 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bộ bát đĩa</title>
+  <ellipse cx="60" cy="103" fill="#334155" opacity="0.24" rx="44" ry="6" />
+  <path
+    d="M18 32V52C18 58 26 58 26 52V32M22 32V92"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M100 30C94 34 94 56 100 62V92"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="4.2"
+  />
+  <circle
+    cx="60"
+    cy="61"
+    fill="#ffffff"
+    r="30"
+    stroke="#334155"
+    stroke-width="4"
+  />
+  <circle
+    cx="60"
+    cy="61"
+    fill="#f1f5f9"
+    r="19"
+    stroke="#64748b"
+    stroke-opacity="0.55"
+    stroke-width="2.5"
+  />
+</svg>

@@ -1,0 +1,54 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mèo mướp</title>
+  <defs>
+    <radialGradient cx="40%" cy="32%" id="catOrg" r="70%">
+      <stop offset="0%" stop-color="#fed7aa" />
+      <stop offset="55%" stop-color="#fb923c" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="58" cy="103" fill="#7c2d12" opacity="0.25" rx="36" ry="6" />
+  <path
+    d="M74 92C96 92 102 68 92 52C88 46 96 40 101 47"
+    stroke="#7c2d12"
+    stroke-linecap="round"
+    stroke-width="6"
+  />
+  <path
+    d="M40 98L44 60H70L76 98Z"
+    fill="url(#catOrg)"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <polygon
+    fill="#fb923c"
+    points="35,36 39,18 51,30"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <polygon
+    fill="#fb923c"
+    points="75,36 71,18 59,30"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="55"
+    cy="44"
+    fill="url(#catOrg)"
+    r="19"
+    stroke="#7c2d12"
+    stroke-width="4"
+  />
+  <path
+    d="M55 26V34M48 68H64M46 78H66"
+    stroke="#9a3412"
+    stroke-linecap="round"
+    stroke-width="3.4"
+  />
+  <circle cx="48" cy="43" fill="#1c1917" r="3.4" />
+  <circle cx="62" cy="43" fill="#1c1917" r="3.4" />
+</svg>

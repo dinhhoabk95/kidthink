@@ -1,0 +1,63 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bông cải xanh</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="bcFloret" r="68%">
+      <stop offset="0%" stop-color="#86efac" />
+      <stop offset="50%" stop-color="#22c55e" />
+      <stop offset="100%" stop-color="#15803d" />
+    </radialGradient>
+    <linearGradient id="bcStalk" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#d9f99d" />
+      <stop offset="100%" stop-color="#84cc16" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#14532d" opacity="0.24" rx="28" ry="5.5" />
+  <path
+    d="M46 62H74L69 98C68 102 65 104 60 104C55 104 52 102 51 98Z"
+    fill="url(#bcStalk)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M53 68L45 56M67 68L75 56"
+    stroke="#14532d"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="36"
+    cy="52"
+    fill="url(#bcFloret)"
+    r="20"
+    stroke="#14532d"
+    stroke-width="4"
+  />
+  <circle
+    cx="84"
+    cy="52"
+    fill="url(#bcFloret)"
+    r="20"
+    stroke="#14532d"
+    stroke-width="4"
+  />
+  <circle
+    cx="60"
+    cy="36"
+    fill="url(#bcFloret)"
+    r="23"
+    stroke="#14532d"
+    stroke-width="4"
+  />
+  <circle cx="52" cy="56" fill="url(#bcFloret)" r="17" />
+  <circle cx="68" cy="56" fill="url(#bcFloret)" r="17" />
+  <ellipse
+    cx="52"
+    cy="26"
+    fill="#ffffff"
+    fill-opacity="0.45"
+    rx="7"
+    ry="3.5"
+    transform="rotate(-18 52 26)"
+  />
+</svg>

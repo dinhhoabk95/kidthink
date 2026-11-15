@@ -1,0 +1,57 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Tàu cao tốc</title>
+  <defs>
+    <linearGradient id="shinkansen" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="70%" stop-color="#f1f5f9" />
+      <stop offset="100%" stop-color="#cbd5e1" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="98" fill="#1e293b" opacity="0.24" rx="48" ry="5" />
+  <path
+    d="M12 88H108"
+    stroke="#475569"
+    stroke-linecap="round"
+    stroke-width="5"
+  />
+  <path
+    d="M106 38H58C38 38 14 58 14 74C14 80 19 84 28 84H106Z"
+    fill="url(#shinkansen)"
+    stroke="#1e3a5f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M20 73H106"
+    stroke="#2563eb"
+    stroke-linecap="round"
+    stroke-width="6"
+  />
+  <path
+    d="M32 58C40 49 50 45 58 45V58Z"
+    fill="#38bdf8"
+    stroke="#1e3a5f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <rect
+    fill="#bae6fd"
+    height="12"
+    rx="3"
+    stroke="#1e3a5f"
+    stroke-width="3.4"
+    width="14"
+    x="68"
+    y="46"
+  />
+  <rect
+    fill="#bae6fd"
+    height="12"
+    rx="3"
+    stroke="#1e3a5f"
+    stroke-width="3.4"
+    width="14"
+    x="88"
+    y="46"
+  />
+</svg>
