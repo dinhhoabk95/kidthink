@@ -143,6 +143,16 @@ export function drawGT014ScaleOrnament(ctx: Ctx, _rs: RS, o: Orn): void {
   ctx.arc(px, my, mr, 0, Math.PI * 2);
   ctx.fill();
   ctx.stroke();
+  ctx.fillStyle = alpha(cl.surface[0], 0.72);
+  ctx.beginPath();
+  ctx.arc(
+    px - mr * 0.3,
+    my - mr * 0.3,
+    Math.max(1.8, mr * 0.18),
+    0,
+    Math.PI * 2
+  );
+  ctx.fill();
   drawGlyph(ctx, o.goal, px, my, mr);
   ctx.restore();
 }

@@ -1,14 +1,19 @@
-import type { CelebrationTier } from "~/composables/play/use-play-telemetry";
+import type {
+  CelebrationTier,
+  SessionCompleteSticker,
+} from "~/composables/play/use-play-telemetry";
 
 export interface CompletionOutcome {
   readonly celebration: CelebrationTier;
   readonly stars: number | null;
+  readonly sticker?: SessionCompleteSticker | null;
 }
 
 /** Tier tạm khi vừa chơi xong: hoàn thành là thắng, chưa biết sao. */
 const PROVISIONAL_OUTCOME: CompletionOutcome = {
   celebration: "good",
   stars: null,
+  sticker: null,
 };
 
 interface PresentCompletionOptions {

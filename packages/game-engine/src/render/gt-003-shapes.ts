@@ -97,13 +97,14 @@ function drawSingleSocketWell(
     drawTokenContent(ctx, well.slot, placedItem);
   } else {
     const wood = designTokens.colors.montessori.woodBorder;
-    ctx.fillStyle = alpha(wood, 0.16);
-    ctx.strokeStyle = alpha(wood, 0.42);
+    const recess = designTokens.colors.montessori.slotRecess;
+    ctx.fillStyle = alpha(recess, 0.85);
+    ctx.strokeStyle = alpha(wood, 0.48);
     ctx.lineWidth = 2;
     traceCircle(ctx, well.cx, well.cy, well.r);
     ctx.fill();
     ctx.stroke();
-    ctx.fillStyle = alpha(wood, 0.32);
+    ctx.fillStyle = alpha(wood, 0.34);
     traceCircle(ctx, well.cx, well.cy, Math.max(3, well.r * 0.2));
     ctx.fill();
   }

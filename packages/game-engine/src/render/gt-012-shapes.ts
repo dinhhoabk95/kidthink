@@ -124,6 +124,13 @@ export function drawGT012PlayMedallion(
   fillDisk(c, cx, cy, r, grad);
   strokeDisk(c, cx, cy, r, WOOD.amberDark, 2.6);
   strokeDisk(c, cx, cy, Math.max(8, r - 3.5), COLORS.surface[0], 1.6);
+  fillDisk(
+    c,
+    cx - r * 0.32,
+    cy - r * 0.34,
+    Math.max(2.5, r * 0.16),
+    alpha(COLORS.surface[0], 0.72)
+  );
   const [tx, tw, th] = [cx + r * 0.08, r * 0.42, r * 0.46];
   c.beginPath();
   c.moveTo(tx - tw * 0.72, cy - th);

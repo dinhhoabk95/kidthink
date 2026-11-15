@@ -21,9 +21,15 @@ import type { ViewEntity } from "#src/interaction";
 import type { Slot } from "#src/layout/types";
 import { designTokens } from "#src/systems/designTokens";
 import type { RenderSystem } from "#src/systems/render-system";
+import {
+  computeMagneticPull,
+  computeSquashStretch,
+  sampleTactileSpring,
+} from "#src/systems/spring-physics";
 import { alpha } from "./color-utils.js";
 import {
   drawGlyphInSlot,
+  drawMagneticSnapHalo,
   drawTargetHoverAura,
   drawTextInSlot,
   getColorsForState,
@@ -132,7 +138,7 @@ function drawTargetInvitations(
     const isHovered = hoveredTarget?.id === target.id;
     const radius = Math.min(target.w, target.h) / 2;
     if (isHovered) {
-      drawTargetHoverAura(ctx, target.x, target.y, radius * 1.15, phase);
+      drawMagneticSnapHalo(ctx, target.x, target.y, radius * 1.18, 1, phase);
       drawCircleOutline(
         ctx,
         entityToSlot(target),
@@ -162,7 +168,7 @@ function drawTransitionFlight(
   if (rawProgress < 0 || rawProgress >= 1) {
     return;
   }
-  const t = rs.reducedMotion ? 1 : 1 - (1 - rawProgress) ** 3;
+  const t = sampleTactileSpring(rawProgress, rs.reducedMotion);
   const x = flight.fromX + (flight.toX - flight.fromX) * t;
   const baseLinearY = flight.fromY + (flight.toY - flight.fromY) * t;
   const arcLift = rs.reducedMotion
@@ -170,20 +176,26 @@ function drawTransitionFlight(
     : Math.sin(rawProgress * Math.PI) *
       (flight.kind === "snap_to_target" ? -28 : -16);
   const y = baseLinearY + arcLift;
-  const scale =
+  const squash = computeSquashStretch(rawProgress, "drop", rs.reducedMotion);
+  const baseScale =
     flight.kind === "snap_to_target"
       ? 1 + 0.14 * Math.sin(rawProgress * Math.PI)
-      : 1.12 - 0.12 * t;
+      : 1.12 - 0.12 * Math.min(1, Math.max(0, t));
 
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(squash.scaleX, squash.scaleY);
+  ctx.translate(-x, -y);
   drawFloatingEntityToken(
     ctx,
     rs,
     flight.entity,
     x,
     y,
-    scale,
+    baseScale,
     flight.kind === "snap_to_target" ? "correct" : "selected"
   );
+  ctx.restore();
 }
 
 function drawStagedEntityBob(
@@ -250,12 +262,24 @@ function drawDraggingSourceOverlay(
   );
 
   const hovered = state.hoveredTarget;
-  const drawX = hovered
-    ? state.currentX * 0.72 + hovered.x * 0.28
-    : state.currentX;
-  const drawY = hovered
-    ? state.currentY * 0.72 + hovered.y * 0.28
-    : state.currentY - 6;
+  let drawX = state.currentX;
+  let drawY = state.currentY - 6;
+  if (hovered) {
+    const snapRadius = Math.max(hovered.w, hovered.h) * 0.95;
+    const pulled = computeMagneticPull(
+      state.currentX,
+      state.currentY,
+      hovered.x,
+      hovered.y,
+      snapRadius
+    );
+    drawX = pulled.snapped
+      ? pulled.x
+      : state.currentX * 0.72 + hovered.x * 0.28;
+    drawY = pulled.snapped
+      ? pulled.y
+      : state.currentY * 0.72 + hovered.y * 0.28;
+  }
 
   drawElasticConnector(
     ctx,

@@ -38,6 +38,7 @@ import {
 } from "~/composables/play/use-play-audio";
 import {
   type CelebrationTier,
+  type SessionCompleteSticker,
   usePlayTelemetry,
 } from "~/composables/play/use-play-telemetry";
 import { findInvalidRound } from "~/composables/play/validate-rounds";
@@ -254,6 +255,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
   const showVictoryModal = ref(false);
   const earnedCelebration = ref<CelebrationTier>("great");
   const earnedStars = ref<number | null>(null);
+  const earnedSticker = ref<SessionCompleteSticker | null>(null);
 
   const {
     initTelemetrySession,
@@ -367,6 +369,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
       return {
         celebration: result.data.celebration ?? "good",
         stars: typeof result.data.stars === "number" ? result.data.stars : null,
+        sticker: result.data.sticker ?? null,
       };
     }
     return null;
@@ -377,20 +380,23 @@ export function usePlaySession(options: UsePlaySessionOptions) {
     if (!(sessionUuid && roundRunner)) {
       earnedCelebration.value = "nice_try";
       earnedStars.value = null;
+      earnedSticker.value = null;
       showVictoryModal.value = true;
       return;
     }
-    // Modal hiện ngay; tier/sao cập nhật khi server trả lời (Task #313 B4).
+    // Modal hiện ngay; tier/sao/sticker cập nhật khi server trả lời (Task #313 B4, BR-FBK-18).
     await presentCompletion({
       fetchOutcome: () => resolveCompletionOutcome(sessionUuid),
       show: (outcome) => {
         earnedCelebration.value = outcome.celebration;
         earnedStars.value = outcome.stars;
+        earnedSticker.value = outcome.sticker ?? null;
         showVictoryModal.value = true;
       },
       update: (outcome) => {
         earnedCelebration.value = outcome.celebration;
         earnedStars.value = outcome.stars;
+        earnedSticker.value = outcome.sticker ?? null;
       },
     });
   }
@@ -428,6 +434,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
     totalRounds.value = rounds.length;
     currentRound.value = 0;
     earnedStars.value = null;
+    earnedSticker.value = null;
 
     const roundConfigs: RoundConfig[] = rounds.map((r) => ({
       round_index: r.round_index,
@@ -849,6 +856,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
     showVictoryModal,
     earnedCelebration,
     earnedStars,
+    earnedSticker,
     getEngine,
     getRoundRunner,
     getCachedPayload,

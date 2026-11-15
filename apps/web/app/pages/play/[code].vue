@@ -239,6 +239,7 @@
         :is-intro="isIntroLevel"
         :show="showVictoryModal"
         :stars="earnedStars"
+        :sticker="earnedSticker"
         @announce="speakCelebration"
         @continue="handleContinueNext"
         @replay="handleReplayGame"
@@ -277,6 +278,7 @@
   } from "@mindkid/game-engine";
   import { computed, onMounted, onUnmounted, ref, watch } from "vue";
   import KidMascot from "~/components/kid/mascot.vue";
+  import { resolveNextPlayDestination } from "~/composables/play/adventure-navigation";
   import {
     attachPlayDebugBridge,
     createClientPointMapper,
@@ -306,24 +308,7 @@
   const router = useRouter();
   const levelCode = route.params.code as string;
 
-  const SAFE_RETURN_TARGET_PATTERN = /^[A-Za-z0-9_-]{1,64}$/;
-
-  function sanitizeCurriculumWeekCode(raw: string | undefined): string | null {
-    return typeof raw === "string" && SAFE_RETURN_TARGET_PATTERN.test(raw)
-      ? raw
-      : null;
-  }
-
-  function nextDestination(): string {
-    const rawReturn = route.query.return_to || route.query.return_level_code;
-    const safeReturn = sanitizeCurriculumWeekCode(
-      typeof rawReturn === "string" ? rawReturn : undefined
-    );
-    if (safeReturn) {
-      return `/play/${safeReturn}`;
-    }
-    return "/play";
-  }
+  const nextDestination = (): string => resolveNextPlayDestination(route.query);
   const { loggedIn, fetch: fetchSession } = useUserSession();
 
   const canvasRef = ref<HTMLCanvasElement | null>(null);
@@ -441,6 +426,7 @@
     showVictoryModal,
     earnedCelebration,
     earnedStars,
+    earnedSticker,
     getEngine,
     getRoundRunner,
     getCachedPayload,

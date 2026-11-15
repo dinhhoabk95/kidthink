@@ -27,7 +27,7 @@
       </div>
 
       <div class="flex flex-wrap items-center gap-3">
-        <!-- Vào bản đồ chủ đề tuần: chỉ icon, chữ ở aria-label (`BR-WTM-05`). -->
+        <!-- Vào bản đồ con đường chủ đề: chỉ icon, chữ ở aria-label (`BR-WTM-05`). -->
         <NuxtLink
           aria-label="Bản đồ học tập của bé"
           class="min-h-16 min-w-16 rounded-2xl bg-white border-[3px] border-brand-300 shadow-[0_4px_0_var(--color-brand-300)] active:shadow-[0_1px_0_var(--color-brand-300)] active:translate-y-0.5 flex items-center justify-center transition-all"
@@ -37,7 +37,7 @@
           <UIcon class="w-8 h-8 text-brand-600" name="i-lucide-map" />
         </NuxtLink>
 
-        <!-- Vào album sticker: chỉ icon, chữ ở aria-label (`BR-STK-06`). -->
+        <!-- Vào sân chơi dán sticker bối cảnh: chỉ icon, chữ ở aria-label (`BR-STK-06`). -->
         <NuxtLink
           aria-label="Album sticker của bé"
           class="min-h-16 min-w-16 rounded-2xl bg-white border-[3px] border-brand-300 shadow-[0_4px_0_var(--color-brand-300)] active:shadow-[0_1px_0_var(--color-brand-300)] active:translate-y-0.5 flex items-center justify-center transition-all"
@@ -46,28 +46,42 @@
         >
           <UIcon class="w-8 h-8 text-brand-600" name="i-lucide-sticker" />
         </NuxtLink>
-        <KidMascot pose="idle" :size="56" />
+
+        <!-- Vào Hộp đồ chơi tự do Montessori (`montessori-toybox.md`, `BR-TBX-03`). -->
+        <NuxtLink
+          aria-label="Hộp đồ chơi gỗ tự do của bé"
+          class="min-h-16 min-w-16 rounded-2xl bg-white border-[3px] border-warning-400 shadow-[0_4px_0_var(--color-warning-400)] active:shadow-[0_1px_0_var(--color-warning-400)] active:translate-y-0.5 flex items-center justify-center transition-all"
+          data-testid="kid-toybox-link"
+          to="/play/toybox"
+        >
+          <UIcon class="w-8 h-8 text-warning-600" name="i-lucide-blocks" />
+        </NuxtLink>
+
         <div
           class="bg-white border-[3px] border-surface-300 px-5 py-2 rounded-2xl shadow-sm hidden md:block"
         >
           <span class="font-heading font-bold text-brand-700 text-xl"
-            >Sảnh Chơi Bé Yêu</span
+            >Phòng Chơi Gấu Con</span
           >
         </div>
       </div>
     </header>
 
-    <!-- Main 6 Competency Grid -->
     <main class="max-w-5xl mx-auto w-full flex-1 flex flex-col justify-center">
-      <div class="text-center mb-8">
-        <h1
-          class="text-3xl sm:text-4xl font-heading font-bold text-surface-900 mb-2"
-        >
-          Bé muốn chơi gì hôm nay?
-        </h1>
-        <p class="text-surface-600 text-base sm:text-lg">
-          Chọn một thế giới trò chơi để bắt đầu khám phá nhé!
-        </p>
+      <!-- Khu trung tâm: Phòng chơi Gấu Con + Khởi động Phiêu lưu 1 chạm -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6">
+        <KidPlayroomStage
+          :child-name="activeChild?.display_name"
+          :equipped-gear-code="equippedGearCode"
+          :unlocked-gears="unlockedGears"
+          @equip="handleEquipMascotGear"
+        />
+
+        <KidAdventureLauncher
+          :greeting-vi="adventureGreeting"
+          :steps="effectiveAdventureSteps"
+          @launch="handleLaunchAdventure"
+        />
       </div>
 
       <div class="mb-6" v-if="activeChildUuid">
@@ -81,43 +95,57 @@
         <KidRecommendationsRow :recommendations="recommendations" />
       </div>
 
+      <!-- Kệ 6 Đảo Năng Lực C1–C6 kèm nút nghe tên đảo -->
       <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6">
-        <NuxtLink
+        <div
+          class="relative flex flex-col"
           v-for="c in competencies"
           :key="c.code"
-          :aria-label="`Chơi ${c.title}`"
-          :class="[
-            'flex flex-col items-center justify-center p-4 sm:p-6 rounded-3xl border-4 bg-white transition-all',
-            'min-h-20 min-w-20 shadow-[0_8px_0_var(--color-surface-300)] active:shadow-[0_2px_0_var(--color-surface-300)] active:translate-y-1.5',
-            c.borderClass,
-            c.hoverBgClass
-          ]"
-          :to="`/play/competency/${c.code}`"
         >
-          <div
+          <NuxtLink
+            :aria-label="`Chơi ${c.title}`"
             :class="[
-              'w-20 h-20 sm:w-24 sm:h-24 rounded-2xl flex items-center justify-center mb-3 p-3 border-2',
-              c.iconBgClass
+              'flex-1 flex flex-col items-center justify-center p-4 sm:p-6 rounded-3xl border-4 bg-white transition-all',
+              'min-h-24 min-w-20 shadow-[0_8px_0_var(--color-surface-300)] active:shadow-[0_2px_0_var(--color-surface-300)] active:translate-y-1.5',
+              c.borderClass,
+              c.hoverBgClass
             ]"
+            :to="`/play/competency/${c.code}`"
           >
-            <img
-              class="w-full h-full object-contain"
-              decoding="async"
-              height="80"
-              width="80"
-              :alt="c.title"
-              :src="c.icon"
+            <div
+              :class="[
+                'w-20 h-20 sm:w-24 sm:h-24 rounded-2xl flex items-center justify-center mb-3 p-3 border-2',
+                c.iconBgClass
+              ]"
             >
-          </div>
-          <span
-            class="font-heading font-bold text-lg sm:text-xl text-surface-900 text-center"
+              <img
+                class="w-full h-full object-contain"
+                decoding="async"
+                height="80"
+                width="80"
+                :alt="c.title"
+                :src="c.icon"
+              >
+            </div>
+            <span
+              class="font-heading font-bold text-lg sm:text-xl text-surface-900 text-center"
+            >
+              {{ c.title }}
+            </span>
+            <span class="text-base text-surface-600 text-center mt-1">
+              {{ c.desc }}
+            </span>
+          </NuxtLink>
+
+          <button
+            class="absolute top-3 right-3 min-h-16 min-w-16 rounded-2xl bg-surface-50 border-2 border-surface-300 flex items-center justify-center cursor-pointer active:scale-95 transition-transform"
+            type="button"
+            :aria-label="`Nghe tên đảo ${c.title}`"
+            @click.stop="speakIsland(c.title, c.desc)"
           >
-            {{ c.title }}
-          </span>
-          <span class="text-base text-surface-500 text-center mt-1">
-            {{ c.desc }}
-          </span>
-        </NuxtLink>
+            <UIcon class="w-6 h-6 text-brand-600" name="i-lucide-volume-2" />
+          </button>
+        </div>
       </div>
     </main>
 
@@ -167,25 +195,33 @@
 
 <script lang="ts" setup>
   /**
-   * Sảnh chơi cho trẻ — nhãn dẫn xuất từ `COMPETENCY_CATALOG`.
-   * Tích hợp nhận diện và đổi hồ sơ bé an toàn (`BR-CPS-01..07`, `BR-PEN-01`).
-   * Tích hợp chúc mừng huy hiệu kỷ niệm (`BR-PRG-04`, `BR-PRG-07`).
+   * Phòng chơi Gấu Con & Sảnh chơi của trẻ (`/play`).
+   * Tích hợp Phiêu lưu 1 chạm (`daily-adventure-flow.md`), Phụ kiện kỷ niệm Gấu Con
+   * (`mascot-playroom.md`), Hộp đồ chơi tự do (`montessori-toybox.md`), và 6 Đảo Năng Lực.
    */
-  import { COMPETENCY_CATALOG } from "@mindkid/shared/client";
-  import { onMounted, ref, watch } from "vue";
+  import {
+    type AdventureStepItem,
+    COMPETENCY_CATALOG,
+    type DailyAdventureResponse,
+    type MascotGearPublicItem,
+    type MascotGearResponse,
+    resolveUnlockedMascotGear,
+  } from "@mindkid/shared/client";
+  import { computed, onMounted, ref, watch } from "vue";
   import CurriculumProgressCard from "~/components/curriculum-progress-card.vue";
+  import KidAdventureLauncher from "~/components/kid/adventure-launcher.vue";
   import KidBadgeCelebrationModal from "~/components/kid/badge-celebration-modal.vue";
-  import KidMascot from "~/components/kid/mascot.vue";
   import KidParentLockButton from "~/components/kid/parent-lock-button.vue";
+  import KidPlayroomStage from "~/components/kid/playroom-stage.vue";
   import KidProfileBadge from "~/components/kid/profile-badge.vue";
   import KidProfileSwitcherModal from "~/components/kid/profile-switcher-modal.vue";
   import KidRecommendationsRow from "~/components/kid-recommendations-row.vue";
   import ParentGateModal from "~/components/parent-gate-modal.vue";
   import { useBadgeCelebration } from "~/composables/play/use-badge-celebration";
   import { useKidProfile } from "~/composables/play/use-kid-profile";
+  import { useKidSound } from "~/composables/play/use-kid-sound";
   import { useApi } from "~/composables/use-api";
 
-  /** Bề mặt trẻ: layout kid không navbar/footer người lớn (`BR-PSZ-11`, `BR-CLF-05`). */
   definePageMeta({ layout: "kid" });
 
   interface CompetencyStyle {
@@ -212,11 +248,20 @@
     lock?: (orientation: "landscape") => Promise<void>;
   }
 
+  const STARTER_GUEST_GEARS: readonly MascotGearPublicItem[] =
+    resolveUnlockedMascotGear([]).map((item) => ({
+      code: item.code,
+      slot: item.slot,
+      label_vi: item.label_vi,
+      spoken_vi: item.spoken_vi,
+      icon_emoji: item.icon_emoji,
+    }));
+
   const router = useRouter();
   const apiFetch = useApi();
+  const { speakVi } = useKidSound();
   const showParentGate = ref(false);
 
-  /** Khoá màn hình ngang best-effort khi vào sảnh chơi (`BR-PEN-07`). */
   function lockLandscapeBestEffort(): void {
     if (typeof window === "undefined" || !window.screen?.orientation) {
       return;
@@ -241,7 +286,14 @@
     router.push("/");
   }
 
-  // Quản lý hồ sơ trẻ và luồng đổi bé an toàn (`BR-CPS-01..07`, `BR-PEN-01`)
+  function handleLaunchAdventure(href: string): void {
+    router.push(href);
+  }
+
+  function speakIsland(title: string, desc: string): void {
+    speakVi(`${title}. ${desc}`, "wood_pickup");
+  }
+
   const {
     children,
     activeChildUuid,
@@ -280,9 +332,40 @@
     parentGateToken.value = null;
   }
 
-  // Gợi ý bài chơi kế tiếp cho bé hoặc guest (`next-game-recommendation.md`, S5b)
   const recommendations = ref<RecommendationsPayload | null>(null);
+  const serverAdventure = ref<DailyAdventureResponse | null>(null);
+  const unlockedGears =
+    ref<readonly MascotGearPublicItem[]>(STARTER_GUEST_GEARS);
+  const equippedGearCode = ref<string | null>(null);
   let isLoadingRecommendations = false;
+
+  const effectiveAdventureSteps = computed<readonly AdventureStepItem[]>(() => {
+    const serverSteps = serverAdventure.value?.steps;
+    if (Array.isArray(serverSteps) && serverSteps.length > 0) {
+      return serverSteps;
+    }
+    const rec = recommendations.value;
+    if (!rec?.primary) {
+      return [];
+    }
+    const altList = Array.isArray(rec.alternatives) ? rec.alternatives : [];
+    const items = [rec.primary, ...altList]
+      .filter((item) => Boolean(item && !item.locked))
+      .slice(0, 2);
+    return items.map((item, idx) => ({
+      step_index: idx,
+      level_code: item.level_code,
+      title: item.title,
+      thumbnail_emoji: item.thumbnail_emoji || "⭐",
+      kind: "play",
+    }));
+  });
+
+  const adventureGreeting = computed(
+    () =>
+      serverAdventure.value?.greeting_vi ??
+      "Mình cùng bắt đầu chuyến phiêu lưu vui nhộn hôm nay nhé!"
+  );
 
   async function loadRecommendations(): Promise<void> {
     if (isLoadingRecommendations) {
@@ -302,7 +385,47 @@
     }
   }
 
-  // Quản lý chúc mừng huy hiệu kỷ niệm (`BR-PRG-04`, `BR-PRG-07`, spec §4 item 5, §7.2)
+  async function loadKidPlayroomData(): Promise<void> {
+    if (!activeChildUuid.value) {
+      serverAdventure.value = null;
+      unlockedGears.value = STARTER_GUEST_GEARS;
+      return;
+    }
+    try {
+      const [advRes, gearRes] = await Promise.all([
+        apiFetch<DailyAdventureResponse>("/api/users/play/adventure").catch(
+          () => null
+        ),
+        apiFetch<MascotGearResponse>("/api/users/play/mascot-gear").catch(
+          () => null
+        ),
+      ]);
+      serverAdventure.value = Array.isArray(advRes?.steps) ? advRes : null;
+      if (Array.isArray(gearRes?.unlocked_gears)) {
+        unlockedGears.value = gearRes.unlocked_gears;
+        equippedGearCode.value = gearRes.equipped_gear_code ?? null;
+      }
+    } catch {
+      // Giữ trạng thái mặc định khi mạng gián đoạn
+    }
+  }
+
+  async function handleEquipMascotGear(nextCode: string | null): Promise<void> {
+    const previous = equippedGearCode.value;
+    equippedGearCode.value = nextCode;
+    if (!activeChildUuid.value) {
+      return;
+    }
+    try {
+      await apiFetch("/api/users/play/mascot-gear", {
+        method: "PUT",
+        body: { equipped_gear_code: nextCode },
+      });
+    } catch {
+      equippedGearCode.value = previous;
+    }
+  }
+
   const { activeCelebrationBadge, checkAndCelebrate, dismissCelebration } =
     useBadgeCelebration();
 
@@ -325,7 +448,7 @@
         checkAndCelebrate(activeChildUuid.value, childBadgesList.value);
       }
     } catch {
-      // Bỏ qua lỗi kết nối để sảnh chơi vẫn tiếp tục hoạt động mượt mà
+      // Bỏ qua lỗi kết nối để sảnh chơi vẫn hoạt động mượt mà
     } finally {
       isCheckingBadges = false;
     }
@@ -335,18 +458,21 @@
     lockLandscapeBestEffort();
     checkBadgesForActiveChild();
     loadRecommendations();
+    loadKidPlayroomData();
   });
 
   watch(activeChildUuid, (newUuid, oldUuid) => {
     if (newUuid !== oldUuid) {
       checkBadgesForActiveChild();
       loadRecommendations();
+      loadKidPlayroomData();
     }
   });
 
   function handleConfirmBadge(): void {
     if (activeChildUuid.value) {
       dismissCelebration(activeChildUuid.value, childBadgesList.value);
+      loadKidPlayroomData();
     }
   }
 

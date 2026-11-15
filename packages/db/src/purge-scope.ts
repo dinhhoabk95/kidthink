@@ -85,6 +85,18 @@ export const PURGE_TABLE_CLASSIFICATIONS: readonly TablePurgeMetadata[] = [
     legalBasis: "BR-CDC-10 & BR-ADL-01",
   },
   {
+    tableName: "child_sticker_placements",
+    classification: "delete",
+    reason: "Xoá bố cục bày sticker bối cảnh của trẻ khi xoá hồ sơ trẻ",
+    legalBasis: "BR-CDC-10 & BR-ADL-01",
+  },
+  {
+    tableName: "child_mascot_gear",
+    classification: "delete",
+    reason: "Xoá trạng thái phụ kiện Gấu Con của trẻ khi xoá hồ sơ trẻ",
+    legalBasis: "BR-CDC-10 & BR-ADL-01",
+  },
+  {
     tableName: "play_sessions",
     classification: "delete",
     reason: "Xoá phiên chơi tương tác của trẻ",

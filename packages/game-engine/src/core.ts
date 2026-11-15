@@ -722,6 +722,7 @@ export class GameEngine {
       this.recordFpsSample(deltaMs, frameFps);
     }
     const state = this.degradationManager.updateFps(this.smoothedFps);
+    this.renderSystem.ambientMotionEnabled = state.ambient_motion_enabled;
     this.renderSystem.softShadowsEnabled = state.soft_shadows_enabled;
     const session = this.activeSession;
     if (!hasDegradationSlot(session)) {
@@ -894,6 +895,7 @@ export class GameEngine {
     this.advanceFrame(deltaMs);
 
     if (this.ctx) {
+      this.renderSystem.frameTimeMs = now;
       this.renderSystem.clear(this.ctx);
       this.activeSession?.render?.(this.ctx, this.renderSystem, now);
       this.renderScaffoldingOverlay(this.ctx, now);

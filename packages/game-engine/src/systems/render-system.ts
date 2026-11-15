@@ -94,8 +94,14 @@ export class RenderSystem {
   /** Global reduced-motion toggle — reduces particles, confetti, and float speed (BR-FBK-09, BR-SCF-06). */
   reducedMotion = false;
 
+  /** Ambient background motion toggle — disabled by DegradationManager when FPS drops below 42 (BR-ERC-17). */
+  ambientMotionEnabled = true;
+
   /** Soft shadows toggle — disabled by DegradationManager when FPS drops below 40 (BR-PRF-03 §7.3). */
   softShadowsEnabled = true;
+
+  /** Current frame timestamp (ms) injected by GameEngine.renderFrame; 0 in static headless renders. */
+  frameTimeMs = 0;
 
   /** Active theme ID for thematic rendering fallback. */
   themeId?: string;
@@ -347,10 +353,109 @@ export class RenderSystem {
     ctx.restore();
   }
 
+  private sampleQuadraticPoint(
+    from: { readonly x: number; readonly y: number },
+    ctrlX: number,
+    ctrlY: number,
+    end: { readonly x: number; readonly y: number },
+    t: number,
+    archLift: number
+  ): { x: number; y: number } {
+    if (archLift <= 0) {
+      return {
+        x: from.x + (end.x - from.x) * t,
+        y: from.y + (end.y - from.y) * t,
+      };
+    }
+    const inv = 1 - t;
+    return {
+      x: inv * inv * from.x + 2 * inv * t * ctrlX + t * t * end.x,
+      y: inv * inv * from.y + 2 * inv * t * ctrlY + t * t * end.y,
+    };
+  }
+
+  private drawGhostHandTrail(
+    ctx: CanvasRenderingContext2D,
+    from: { readonly x: number; readonly y: number },
+    ctrlX: number,
+    ctrlY: number,
+    end: { readonly x: number; readonly y: number },
+    t: number
+  ): void {
+    ctx.save();
+    ctx.strokeStyle = alpha(designTokens.colors.montessori.amber, 0.72);
+    ctx.lineWidth = 5;
+    ctx.lineCap = "round";
+    ctx.setLineDash([10, 8]);
+    ctx.beginPath();
+    ctx.moveTo(from.x, from.y);
+    ctx.quadraticCurveTo(ctrlX, ctrlY, end.x, end.y);
+    ctx.stroke();
+    ctx.restore();
+
+    for (let i = 1; i <= 3; i += 1) {
+      const st = Math.max(0, t - i * 0.14);
+      const spark = this.sampleQuadraticPoint(from, ctrlX, ctrlY, end, st, 1);
+      ctx.fillStyle = alpha(
+        designTokens.colors.montessori.amberGlow,
+        0.75 - i * 0.18
+      );
+      ctx.beginPath();
+      ctx.arc(spark.x, spark.y, Math.max(3, 7 - i * 1.4), 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  private isFinitePoint(pt: {
+    readonly x: number;
+    readonly y: number;
+  }): boolean {
+    return Number.isFinite(pt.x) && Number.isFinite(pt.y);
+  }
+
+  private drawGhostHandCushion(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    clamped: number,
+    showRipple: boolean
+  ): void {
+    if (showRipple) {
+      const ripple = 22 + Math.sin(clamped * Math.PI * 2) * 5;
+      ctx.strokeStyle = alpha(designTokens.colors.montessori.amber, 0.65);
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(x, y, ripple, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    ctx.globalAlpha *= 0.92;
+    ctx.fillStyle = designTokens.colors.montessori.pawCream;
+    ctx.strokeStyle = designTokens.colors.montessori.amberDark;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(x, y + 22, 26, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = alpha(designTokens.colors.montessori.pawPad, 0.35);
+    ctx.beginPath();
+    ctx.arc(x, y + 24, 14, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.font = `44px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", ${designTokens.fonts.sans}`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    ctx.fillText("\u{1F446}", x, y);
+  }
+
   /**
-   * Bàn tay ma (L2/L3): một bàn tay 👆 trượt từ `from` tới `to` theo `progress`
-   * 0→1 rồi chạm; không có `to` thì chỉ chạm ở `from`. Bỏ qua khi toạ độ không
-   * hợp lệ — cấm sinh `NaN` ra canvas. Giảm chuyển động: đứng yên ở đích.
+   * Bàn tay dẫn đường 2.5D của Gấu Con (L2/L3):
+   * - Khi kéo từ `from` tới `to`, vẽ đường cong bụi sao hổ phách (`quadraticCurveTo`)
+   *   và các hạt sáng dẫn hướng để bé hiểu rõ thao tác kéo-thả.
+   * - Ở đầu tay có vòng gợn chạm êm + đệm kem 2.5D và bàn tay chỉ hướng.
+   * - Bỏ qua khi toạ độ không hợp lệ — cấm sinh `NaN` ra canvas.
+   * - `reducedMotion`: đứng yên ở đích, bỏ đường vệt động.
    */
   renderGhostHand(
     ctx: CanvasRenderingContext2D,
@@ -358,24 +463,43 @@ export class RenderSystem {
     to: { readonly x: number; readonly y: number } | null,
     progress: number
   ): void {
-    if (!(Number.isFinite(from.x) && Number.isFinite(from.y))) {
-      return;
-    }
     const end = to ?? from;
-    if (!(Number.isFinite(end.x) && Number.isFinite(end.y))) {
+    if (!(this.isFinitePoint(from) && this.isFinitePoint(end))) {
       return;
     }
-    const t = this.reducedMotion
-      ? 1
-      : Math.min(1, Math.max(0, progress)) * (to ? 1 : 0);
-    const x = from.x + (end.x - from.x) * t;
-    const y = from.y + (end.y - from.y) * t;
+    const clamped = Math.min(1, Math.max(0, progress));
+    const hasDragPath = Boolean(to) && !this.reducedMotion;
+    let t = 0;
+    if (this.reducedMotion) {
+      t = 1;
+    } else if (to) {
+      t = clamped;
+    }
+    const dist = Math.hypot(end.x - from.x, end.y - from.y);
+    const archLift = hasDragPath && dist > 12 ? Math.min(34, dist * 0.16) : 0;
+    const ctrlX = (from.x + end.x) / 2;
+    const ctrlY = (from.y + end.y) / 2 - archLift;
+    const { x, y } = this.sampleQuadraticPoint(
+      from,
+      ctrlX,
+      ctrlY,
+      end,
+      t,
+      archLift
+    );
+
     ctx.save();
-    ctx.globalAlpha *= 0.85;
-    ctx.font = "56px sans-serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "top";
-    ctx.fillText("\u{1F446}", x, y);
+    if (hasDragPath && dist > 8) {
+      this.drawGhostHandTrail(ctx, from, ctrlX, ctrlY, end, t);
+    }
+    const isPressing = !to || t > 0.78 || t < 0.15;
+    this.drawGhostHandCushion(
+      ctx,
+      x,
+      y,
+      clamped,
+      isPressing && !this.reducedMotion
+    );
     ctx.restore();
   }
 

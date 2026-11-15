@@ -193,6 +193,7 @@ export {
   drawActiveGestureOverlay,
   drawCentralTargetCard,
   drawCommitButton,
+  drawMagneticSnapHalo,
   drawMascot,
   drawPromptZone,
   drawSceneBackground,
@@ -349,6 +350,14 @@ export {
   type SpeechOptions,
   SpeechSynthesisAdapter,
 } from "./systems/speech-synthesis-adapter";
+export {
+  computeMagneticPull,
+  computeSquashStretch,
+  type MagneticPullResult,
+  type SquashStretchScale,
+  sampleTactileSpring,
+  type TactileMotionKind,
+} from "./systems/spring-physics";
 export {
   type TracePathResult,
   type TracePoint,

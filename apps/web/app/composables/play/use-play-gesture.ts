@@ -568,6 +568,12 @@ export function usePlayGesture(options: GestureOptions) {
     currentLogicY = pt.y;
     activeDragEntity = findHitEntity(viewEntities.value, pt.x, pt.y);
     hoveredTargetEntity = null;
+    if (
+      activeDragEntity?.role === "source" &&
+      activeDragEntity.state !== "correct"
+    ) {
+      getEngine()?.audio.play("wood_pickup");
+    }
     trailPoints = [{ x: pt.x, y: pt.y }];
     lastMazeCellId = activeDragEntity?.id.startsWith("cell_")
       ? activeDragEntity.id
@@ -576,6 +582,31 @@ export function usePlayGesture(options: GestureOptions) {
 
     if (canvasRef.value) {
       canvasRef.value.setPointerCapture?.(e.pointerId);
+    }
+  }
+
+  function updateDragHoverFeedback(pt: { x: number; y: number }): void {
+    const candidates = findDropTargetsFor(activeDragEntity);
+    const prevHoveredId = hoveredTargetEntity?.id ?? null;
+    hoveredTargetEntity = findHitEntity(candidates, pt.x, pt.y);
+    if (hoveredTargetEntity && hoveredTargetEntity.id !== prevHoveredId) {
+      getEngine()?.audio.play("wood_clack_snap");
+    }
+
+    if (viewEntities.value.some((ent) => ent.id.startsWith("cell_"))) {
+      stepLiveMazeCellIfLegal(pt);
+    }
+
+    // Đích sáng lên khi vật đủ gần — trạng thái "đích đang nhận" của hợp đồng
+    // vẽ. Không có đường này thì cờ hover trong session không ai bật.
+    const session = getEngine()?.activeSession;
+    if (session && acceptsPointerOver(session)) {
+      session.setPointerOver(pt.x, pt.y);
+    }
+    // Phản hồi theo ngón tay (sợi chỉ GT-033): chỉ khi đã vượt ngưỡng kéo
+    // (`BR-ENG-18`). Hook mặc định không làm gì nên engine khác không đổi.
+    if (session instanceof TemplateGameSession) {
+      session.onPointerMove(pt, { x: startLogicX, y: startLogicY });
     }
   }
 
@@ -595,24 +626,7 @@ export function usePlayGesture(options: GestureOptions) {
     }
 
     appendTrailPoint(pt);
-    const candidates = findDropTargetsFor(activeDragEntity);
-    hoveredTargetEntity = findHitEntity(candidates, pt.x, pt.y);
-
-    if (viewEntities.value.some((ent) => ent.id.startsWith("cell_"))) {
-      stepLiveMazeCellIfLegal(pt);
-    }
-
-    // Đích sáng lên khi vật đủ gần — trạng thái "đích đang nhận" của hợp đồng
-    // vẽ. Không có đường này thì cờ hover trong session không ai bật.
-    const session = getEngine()?.activeSession;
-    if (session && acceptsPointerOver(session)) {
-      session.setPointerOver(pt.x, pt.y);
-    }
-    // Phản hồi theo ngón tay (sợi chỉ GT-033): chỉ khi đã vượt ngưỡng kéo
-    // (`BR-ENG-18`). Hook mặc định không làm gì nên engine khác không đổi.
-    if (session instanceof TemplateGameSession) {
-      session.onPointerMove(pt, { x: startLogicX, y: startLogicY });
-    }
+    updateDragHoverFeedback(pt);
   }
 
   /** Nhả hoặc huỷ: báo session dọn phản hồi theo tay, sau khi gesture đã dispatch. */

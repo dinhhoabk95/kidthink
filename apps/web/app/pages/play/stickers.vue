@@ -1,11 +1,21 @@
 <template>
   <div class="album-surface">
-    <!-- Chỉ một lối ra: khoá phụ huynh nhấn giữ (`BR-STK-06`). -->
+    <!-- HUD bề mặt trẻ: khoá phụ huynh + nút về Phòng Chơi Gấu Con (không thẻ <a>, BR-STK-06) -->
     <header class="album-hud">
       <KidParentLockButton
         data-testid="album-parent-lock"
         @unlock="showParentGate = true"
       />
+
+      <button
+        aria-label="Về Phòng Chơi Gấu Con"
+        class="home-button min-h-16 min-w-16"
+        data-testid="album-home"
+        type="button"
+        @click="goPlayroom"
+      >
+        <UIcon class="w-7 h-7 text-brand-600" name="i-lucide-house" />
+      </button>
     </header>
 
     <main class="album-main">
@@ -36,33 +46,57 @@
       </div>
 
       <template v-else>
-        <KidMascot pose="happy" :size="120" />
+        <!-- Sân chơi bối cảnh dán sticker chủ đề (`sticker-diorama.md`, `BR-SDM-01..07`) -->
+        <KidStickerDioramaCanvas
+          v-if="activeThemeCode"
+          :pending-sticker="selectedSticker"
+          :placements="activeScenePlacements"
+          :theme-code="activeThemeCode"
+          @update-placements="handleUpdateScenePlacements"
+        />
+
+        <!-- Khay gỗ bộ sưu tập sticker của bé: chạm phát tiếng + chọn dán tranh (BR-STK-06, BR-SDM-04..05) -->
         <ul aria-label="Album sticker của bé" class="album-themes">
           <li
             class="album-theme"
             data-testid="album-theme"
             v-for="(theme, index) in themes"
             :key="theme.theme_code"
-            :aria-label="themeLabel(theme.theme_code)"
+            :class="{
+              'album-theme--active': activeThemeCode === theme.theme_code,
+            }"
           >
-            <!-- Dải màu trang trí, không phải ô: emoji chủ đề cạnh sticker làm
-                 trẻ thấy thừa một ô (QA 2026-10-03, `BR-STK-06`). -->
-            <span
-              aria-hidden="true"
+            <!-- Dải màu chọn cảnh chủ đề, không chứa chữ hay emoji (`QA 2026-10-03`, `BR-STK-06`). -->
+            <button
               class="album-theme-band"
               data-testid="album-theme-band"
+              type="button"
+              :aria-label="themeLabel(theme.theme_code)"
               :class="`album-theme-band--${index % BAND_COUNT}`"
+              @click="selectThemeScene(theme.theme_code)"
             />
             <ul class="album-stickers">
               <li
-                class="album-sticker"
-                data-testid="album-sticker"
-                role="img"
-                v-for="sticker in theme.stickers"
+                class="album-sticker-cell"
+                v-for="(sticker, sIdx) in theme.stickers"
                 :key="sticker.emoji"
-                :aria-label="sticker.label"
               >
-                <BrandEmoji :emoji="sticker.emoji" />
+                <button
+                  class="album-sticker"
+                  data-testid="album-sticker"
+                  type="button"
+                  :aria-label="sticker.label"
+                  :class="{
+                    'album-sticker--selected':
+                      selectedSticker?.theme_code === theme.theme_code &&
+                      selectedSticker?.emoji === sticker.emoji,
+                    'album-sticker--bounce':
+                      bouncingTrayKey === `${theme.theme_code}:${sticker.emoji}`,
+                  }"
+                  @click="handleTrayStickerTap(theme.theme_code, sticker, sIdx)"
+                >
+                  <BrandEmoji :emoji="sticker.emoji" />
+                </button>
               </li>
             </ul>
           </li>
@@ -80,16 +114,25 @@
 </template>
 
 <script lang="ts" setup>
-  import { getTheme } from "@mindkid/shared/client";
+  import {
+    getTheme,
+    type StickerDioramaPlacementItem,
+    type StickerDioramaResponse,
+  } from "@mindkid/shared/client";
   import BrandEmoji from "@mindkid/ui/brand-emoji";
-  import { onMounted, ref } from "vue";
+  import { computed, onMounted, onUnmounted, ref } from "vue";
   import KidMascot from "~/components/kid/mascot.vue";
   import KidParentLockButton from "~/components/kid/parent-lock-button.vue";
+  import KidStickerDioramaCanvas, {
+    type PendingTraySticker,
+  } from "~/components/kid/sticker-diorama-canvas.vue";
+  import ParentGateModal from "~/components/parent-gate-modal.vue";
+  import { useKidSound } from "~/composables/play/use-kid-sound";
   import { useApi } from "~/composables/use-api";
 
   /**
-   * Album sticker của trẻ (`sticker-album.md`). Bề mặt trẻ: không navbar,
-   * không chữ hiển thị, không số đếm (`BR-STK-03`, `BR-STK-06`).
+   * Sân chơi dán sticker bối cảnh & Album của trẻ (`sticker-album.md`, `sticker-diorama.md`).
+   * Bề mặt trẻ: không navbar, không chữ hiển thị, không số đếm (`BR-STK-03`, `BR-STK-06`, `BR-SDM-06`).
    */
   definePageMeta({ layout: "kid" });
 
@@ -108,19 +151,127 @@
     themes: AlbumTheme[];
   }
 
-  /** Số màu dải chủ đề trong CSS (`album-theme-band--0..3`). */
   const BAND_COUNT = 4;
+  const SAVE_DEBOUNCE_MS = 450;
 
   const router = useRouter();
   const api = useApi();
+  const { playMarimba, playSfx, speakVi } = useKidSound();
 
   const themes = ref<AlbumTheme[]>([]);
+  const activeThemeCode = ref<string>("");
+  const placementsByTheme = ref<Record<string, StickerDioramaPlacementItem[]>>(
+    {}
+  );
+  const selectedSticker = ref<PendingTraySticker | null>(null);
+  const bouncingTrayKey = ref<string | null>(null);
   const isLoading = ref(true);
   const hasError = ref(false);
   const showParentGate = ref(false);
+  let saveTimer: ReturnType<typeof setTimeout> | null = null;
+
+  const activeScenePlacements = computed<
+    readonly StickerDioramaPlacementItem[]
+  >(() => placementsByTheme.value[activeThemeCode.value] ?? []);
 
   function themeLabel(themeCode: string): string {
     return `Chủ đề ${getTheme(themeCode)?.label_vi ?? themeCode}`;
+  }
+
+  function selectThemeScene(themeCode: string): void {
+    if (activeThemeCode.value !== themeCode) {
+      playSfx("wood_pickup");
+      activeThemeCode.value = themeCode;
+      selectedSticker.value = null;
+    }
+  }
+
+  function handleTrayStickerTap(
+    themeCode: string,
+    sticker: AlbumSticker,
+    index: number
+  ): void {
+    activeThemeCode.value = themeCode;
+    selectedSticker.value = {
+      theme_code: themeCode,
+      emoji: sticker.emoji,
+      label: sticker.label,
+    };
+    const key = `${themeCode}:${sticker.emoji}`;
+    bouncingTrayKey.value = key;
+    playMarimba(index);
+    speakVi(sticker.label);
+    setTimeout(() => {
+      if (bouncingTrayKey.value === key) {
+        bouncingTrayKey.value = null;
+      }
+    }, 450);
+  }
+
+  function scheduleSaveScene(
+    themeCode: string,
+    placements: StickerDioramaPlacementItem[]
+  ): void {
+    if (saveTimer !== null) {
+      clearTimeout(saveTimer);
+    }
+    saveTimer = setTimeout(() => {
+      api("/api/users/play/sticker-diorama", {
+        method: "PUT",
+        body: {
+          theme_code: themeCode,
+          placements: placements.map((item) => ({
+            emoji: item.emoji,
+            instance_index: item.instance_index,
+            norm_x: item.norm_x,
+            norm_y: item.norm_y,
+            scale: item.scale,
+          })),
+        },
+      }).catch(() => {
+        // Giữ nguyên bố cục đang chơi nếu mạng chập chờn (`sticker-diorama.md` §5)
+      });
+    }, SAVE_DEBOUNCE_MS);
+  }
+
+  function handleUpdateScenePlacements(
+    next: StickerDioramaPlacementItem[]
+  ): void {
+    const code = activeThemeCode.value;
+    if (!code) {
+      return;
+    }
+    placementsByTheme.value = {
+      ...placementsByTheme.value,
+      [code]: next,
+    };
+    scheduleSaveScene(code, next);
+  }
+
+  async function fetchSavedDiorama(): Promise<
+    Record<string, StickerDioramaPlacementItem[]>
+  > {
+    const diorama = await api<StickerDioramaResponse>(
+      "/api/users/play/sticker-diorama"
+    ).catch(() => null);
+    if (!diorama?.placements_by_theme) {
+      return {};
+    }
+    const normalized: Record<string, StickerDioramaPlacementItem[]> = {};
+    for (const [k, list] of Object.entries(diorama.placements_by_theme)) {
+      if (Array.isArray(list)) {
+        normalized[k] = [...list];
+      }
+    }
+    return normalized;
+  }
+
+  function isGuestOrMissingChildError(err: Error | object | null): boolean {
+    if (typeof err !== "object" || err === null || !("code" in err)) {
+      return false;
+    }
+    const code = Reflect.get(err, "code");
+    return code === "UNAUTHENTICATED" || code === "NO_ACTIVE_CHILD";
   }
 
   async function loadAlbum(): Promise<void> {
@@ -128,13 +279,16 @@
     hasError.value = false;
     try {
       const album = await api<StickerAlbum>("/api/users/play/stickers");
-      themes.value = album.themes;
+      themes.value = Array.isArray(album?.themes) ? album.themes : [];
+      const firstTheme = themes.value[0]?.theme_code ?? "";
+      if (!activeThemeCode.value && firstTheme) {
+        activeThemeCode.value = firstTheme;
+      }
+      if (themes.value.length > 0) {
+        placementsByTheme.value = await fetchSavedDiorama();
+      }
     } catch (err) {
-      const code =
-        typeof err === "object" && err !== null && "code" in err
-          ? Reflect.get(err, "code")
-          : undefined;
-      if (code === "UNAUTHENTICATED" || code === "NO_ACTIVE_CHILD") {
+      if (isGuestOrMissingChildError(err instanceof Object ? err : null)) {
         themes.value = [];
       } else {
         hasError.value = true;
@@ -144,12 +298,23 @@
     }
   }
 
+  function goPlayroom(): void {
+    playSfx("wood_pickup");
+    router.push("/play");
+  }
+
   function leaveAlbum(): void {
     showParentGate.value = false;
     router.push("/play");
   }
 
   onMounted(loadAlbum);
+
+  onUnmounted(() => {
+    if (saveTimer !== null) {
+      clearTimeout(saveTimer);
+    }
+  });
 </script>
 
 <style scoped>
@@ -159,11 +324,30 @@
     flex-direction: column;
     background-color: var(--color-surface-100);
     padding: 1rem;
+    user-select: none;
   }
 
   .album-hud {
     display: flex;
+    align-items: center;
     justify-content: flex-start;
+    gap: 0.75rem;
+    max-width: 48rem;
+    width: 100%;
+    margin-inline: auto;
+  }
+
+  .home-button {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 1rem;
+    border: 3px solid var(--color-brand-300);
+    background-color: var(--color-surface-50);
+    box-shadow: 0 4px 0 var(--color-brand-300);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
   }
 
   .album-main {
@@ -171,7 +355,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1.25rem;
     padding-block: 1rem;
   }
 
@@ -189,7 +373,7 @@
     height: 4.5rem;
     border-radius: 1.25rem;
     border: 3px solid var(--color-surface-300);
-    background-color: var(--color-surface-0);
+    background-color: var(--color-surface-50);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -215,14 +399,26 @@
     border-radius: 2rem;
     border: 3px solid var(--color-surface-300);
     background-color: var(--color-surface-50);
+    box-shadow: 0 5px 0 var(--color-surface-300);
+    cursor: pointer;
+    transition: border-color 160ms ease;
+  }
+
+  .album-theme--active {
+    border-color: var(--color-brand-400);
+    box-shadow: 0 5px 0 var(--color-brand-300);
   }
 
   .album-theme-band {
     align-self: stretch;
-    width: 0.75rem;
+    width: 1.5rem;
+    min-width: 1.5rem;
     min-height: 4.5rem;
     border-radius: 9999px;
+    border: none;
+    padding: 0;
     flex-shrink: 0;
+    cursor: pointer;
     background-color: var(--color-brand-300);
   }
 
@@ -250,9 +446,11 @@
   .album-sticker {
     width: 4.5rem;
     height: 4.5rem;
+    min-width: 4rem;
+    min-height: 4rem;
     border-radius: 1.25rem;
     border: 3px dashed var(--color-brand-300);
-    background-color: var(--color-surface-0);
+    background-color: var(--color-surface-50);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -260,13 +458,49 @@
       "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
     font-size: 2.75rem;
     line-height: 1;
+    cursor: pointer;
+    transition:
+      transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1),
+      border-color 160ms ease;
   }
 
-  .album-sticker:nth-child(odd) {
+  .album-sticker-cell:nth-child(odd) {
     transform: rotate(-4deg);
   }
 
-  .album-sticker:nth-child(even) {
+  .album-sticker-cell:nth-child(even) {
     transform: rotate(4deg);
+  }
+
+  .album-sticker--selected {
+    border-style: solid;
+    border-color: var(--color-cta);
+    background-color: var(--color-warning-50);
+    box-shadow: 0 4px 0 var(--color-cta);
+  }
+
+  .album-sticker--bounce {
+    animation: trayStickerBounce 420ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes trayStickerBounce {
+    0% {
+      transform: scale(1);
+    }
+    35% {
+      transform: scale(1.22, 0.85);
+    }
+    70% {
+      transform: scale(0.95, 1.08);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .album-sticker--bounce {
+      animation: none;
+    }
   }
 </style>

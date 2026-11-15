@@ -42,7 +42,8 @@ export function drawNatureScene(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
   w: number,
-  h: number
+  h: number,
+  timeMs = 0
 ): void {
   let grad = getCachedGradient(
     ctx,
@@ -66,9 +67,11 @@ export function drawNatureScene(
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, w, h);
 
-  // Clouds
-  drawScenicCloud(ctx, 140, 75, 1.0);
-  drawScenicCloud(ctx, 810, 85, 0.85);
+  // Clouds (gentle ambient breeze when timeMs > 0 — BR-ERC-17)
+  const cloudDrift =
+    timeMs > 0 ? Math.sin((timeMs / 9000) * Math.PI * 2) * 16 : 0;
+  drawScenicCloud(ctx, 140 + cloudDrift, 75, 1.0);
+  drawScenicCloud(ctx, 810 - cloudDrift * 0.75, 85, 0.85);
 
   // Far rolling hill
   ctx.fillStyle = alpha(designTokens.colors.semantic.success[300], 0.35);
@@ -91,14 +94,15 @@ export function drawNatureScene(
   ctx.fill();
 
   // Wildflower dots
-  drawScenicFlowerDots(ctx, NATURE_WILDFLOWER_DOTS);
+  drawScenicFlowerDots(ctx, NATURE_WILDFLOWER_DOTS, timeMs);
 }
 
 export function drawFarmScene(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
   w: number,
-  h: number
+  h: number,
+  timeMs = 0
 ): void {
   let grad = getCachedGradient(
     ctx,
@@ -122,10 +126,12 @@ export function drawFarmScene(
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, w, h);
 
-  // Morning Sun
+  // Morning Sun (warm breathing halo — BR-ERC-17)
+  const sunPulse =
+    timeMs > 0 ? 1 + Math.sin((timeMs / 5000) * Math.PI * 2) * 0.06 : 1;
   ctx.fillStyle = alpha(designTokens.colors.semantic.warning[200], 0.25);
   ctx.beginPath();
-  ctx.arc(860, 65, 54, 0, Math.PI * 2);
+  ctx.arc(860, 65, 54 * sunPulse, 0, Math.PI * 2);
   ctx.fill();
   ctx.fillStyle = alpha(designTokens.colors.semantic.warning[300], 0.4);
   ctx.beginPath();
@@ -160,7 +166,8 @@ export function drawOceanScene(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
   w: number,
-  h: number
+  h: number,
+  timeMs = 0
 ): void {
   let seaGrad = getCachedGradient(
     ctx,
@@ -225,19 +232,22 @@ export function drawOceanScene(
   ctx.arc(880, 480, 18, 0, Math.PI * 2);
   ctx.fill();
 
-  // Translucent bubbles
-  drawScenicBubble(ctx, 120, 320, 12);
-  drawScenicBubble(ctx, 280, 200, 16);
-  drawScenicBubble(ctx, 450, 120, 10);
-  drawScenicBubble(ctx, 660, 280, 14);
-  drawScenicBubble(ctx, 840, 160, 18);
+  // Translucent bubbles (gentle vertical bob when timeMs > 0 — BR-ERC-17)
+  const bob = (phase: number): number =>
+    timeMs > 0 ? Math.sin((timeMs / 4200) * Math.PI * 2 + phase) * 9 : 0;
+  drawScenicBubble(ctx, 120, 320 + bob(0), 12);
+  drawScenicBubble(ctx, 280, 200 + bob(1.1), 16);
+  drawScenicBubble(ctx, 450, 120 + bob(2.2), 10);
+  drawScenicBubble(ctx, 660, 280 + bob(3.3), 14);
+  drawScenicBubble(ctx, 840, 160 + bob(4.4), 18);
 }
 
 export function drawSpaceScene(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
   w: number,
-  h: number
+  h: number,
+  timeMs = 0
 ): void {
   let spaceGrad = getCachedGradient(
     ctx,
@@ -283,7 +293,7 @@ export function drawSpaceScene(
   ctx.stroke();
 
   // Stars
-  drawScenicStars(ctx, SPACE_STARS);
+  drawScenicStars(ctx, SPACE_STARS, timeMs);
 
   // Cosmic horizon crest
   ctx.fillStyle = alpha(designTokens.colors.scene.sky[400], 0.45);
@@ -354,7 +364,8 @@ export function drawVehicleScene(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
   w: number,
-  h: number
+  h: number,
+  timeMs = 0
 ): void {
   let grad = getCachedGradient(
     ctx,
@@ -379,8 +390,10 @@ export function drawVehicleScene(
   ctx.fillRect(0, 0, w, h);
 
   // Travel clouds
-  drawScenicCloud(ctx, 160, 65, 1.0);
-  drawScenicCloud(ctx, 750, 90, 0.85);
+  const cloudDrift =
+    timeMs > 0 ? Math.sin((timeMs / 8500) * Math.PI * 2) * 14 : 0;
+  drawScenicCloud(ctx, 160 + cloudDrift, 65, 1.0);
+  drawScenicCloud(ctx, 750 - cloudDrift * 0.8, 90, 0.85);
 
   // Winding paved travel road
   ctx.fillStyle = alpha(designTokens.colors.surface[600], 0.18);
@@ -407,7 +420,8 @@ export function drawWeatherScene(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
   w: number,
-  h: number
+  h: number,
+  timeMs = 0
 ): void {
   let grad = getCachedGradient(
     ctx,
@@ -455,6 +469,8 @@ export function drawWeatherScene(
   ctx.fill();
 
   // Puffy clouds
-  drawScenicCloud(ctx, 160, 80, 0.9);
-  drawScenicCloud(ctx, 780, 85, 0.95);
+  const cloudDrift =
+    timeMs > 0 ? Math.sin((timeMs / 9200) * Math.PI * 2) * 15 : 0;
+  drawScenicCloud(ctx, 160 + cloudDrift, 80, 0.9);
+  drawScenicCloud(ctx, 780 - cloudDrift * 0.7, 85, 0.95);
 }

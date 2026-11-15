@@ -263,4 +263,23 @@ export class AudioController {
   playExitSound(): void {
     this.play("longpress_exit");
   }
+
+  /** Play ascending pentatonic marimba note (1..5) for counting & Montessori rods */
+  playMarimbaNote(stepIndex: number): void {
+    const notes: readonly SFXType[] = [
+      "marimba_1",
+      "marimba_2",
+      "marimba_3",
+      "marimba_4",
+      "marimba_5",
+    ];
+    const safeIdx = Math.max(
+      0,
+      Math.min(notes.length - 1, Math.floor(stepIndex))
+    );
+    const cue = notes[safeIdx];
+    if (cue) {
+      this.play(cue);
+    }
+  }
 }

@@ -1,0 +1,29 @@
+# Checklist Thực Thi — Task #314
+
+- [x] **Phase 1: Spec-First & Đăng ký Business Rules**
+  - [x] Viết `docs/specs/04-play/daily-adventure-flow.md` (`BR-DAV-*`)
+  - [x] Viết `docs/specs/04-play/mascot-playroom.md` (`BR-MPR-*`)
+  - [x] Viết `docs/specs/04-play/sticker-diorama.md` (`BR-SDM-*`)
+  - [x] Viết `docs/specs/04-play/montessori-toybox.md` (`BR-TBX-*`)
+  - [x] Cập nhật `child-theme-map.md`, `feedback-and-celebration.md`, `engine-render-contract.md`, `play-stage-zones.md`, `business-rules.md`, `docs/specs/index.md`
+- [x] **Phase 2: Nâng cấp Tầng Dùng Chung Canvas 2D (`packages/game-engine`)**
+  - [x] `spring-physics.ts` + unit tests
+  - [x] `degradation.ts` (`ambient_motion_enabled`) + `designTokens.ts` (token gỗ & hào quang nam châm)
+  - [x] `scene-background.ts`, `scene-decor.ts`, `scene-themes-*.ts` (chuyển động vi mô theo `timeMs`)
+  - [x] `shared-render.ts` & `container-shapes.ts` (khối gỗ vân ấm, rãnh lõm đích, Magnetic Halo)
+  - [x] `gesture-overlay.ts` & `core.ts` (Ghost Hand Gấu Con L2/L3 minh hoạ chạm & kéo thật)
+  - [x] `sfx-engine.ts` (âm mộc cầm ngũ cung, gỗ khớp đích, mở hộp quà)
+- [x] **Phase 3: Schema, Shared Contracts, API & Phòng Chơi Gấu Con (`/play`)**
+  - [x] `packages/db/src/schema/kid-world.ts` (`child_sticker_placements`, `child_mascot_gear`) + migration cộng thêm
+  - [x] `packages/shared/src/constants/mascot-gear.ts` & `packages/shared/src/kid-world.ts`
+  - [x] Services & Routes: `adventure.get.ts`, `sticker-diorama.{get,put}.ts`, `mascot-gear.{get,put}.ts`
+  - [x] Tái thiết kế `/play` (`index.vue` + `playroom-stage.vue` + `adventure-launcher.vue` + `mascot-wardrobe-popover.vue`)
+  - [x] Nâng cấp `victory-modal.vue` + `gift-unbox-stage.vue` (Nghi thức chạm mở hộp quà Sticker)
+- [x] **Phase 4: Bản Đồ Đường Mòn (`/play/map`) & Sân Chơi Sticker (`/play/stickers`)**
+  - [x] `winding-theme-map.vue` + cập nhật `/play/map` (bỏ con số `x/y`, đường mòn uốn lượn 10 vùng đất)
+  - [x] `sticker-diorama-canvas.vue` + cập nhật `/play/stickers` (chạm đọc tên + kéo bày cảnh chủ đề)
+- [x] **Phase 5: Hộp Đồ Chơi Tự Do Montessori (`/play/toybox`)**
+  - [x] `/play/toybox/index.vue` & `/play/toybox/[tool].vue` (3 bàn đồ chơi mở: Cân gỗ, Thanh hạt & Khung 10, Bàn gương khối hình)
+- [x] **Phase 6: Nâng cấp Chiều sâu Nhóm Game Mẫu & Kiểm định Cổng Toàn Cục**
+  - [x] Bổ sung hiệu ứng vật lý, cốt truyện nói & phản hồi âm thanh cho nhóm engine tiêu biểu
+  - [x] Viết đầy đủ unit/integration/gate tests và chạy xanh `rtk proxy pnpm check` + `vitest` từng workspace

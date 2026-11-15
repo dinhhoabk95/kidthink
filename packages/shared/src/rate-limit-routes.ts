@@ -279,6 +279,10 @@ const BODY_SIZE_PATTERNS: ReadonlyArray<{ pattern: RegExp; limit: number }> = [
     pattern: /^\/api\/(?:guest|users)\/play-sessions\/[^/]+\/complete$/,
     limit: 16 * 1024,
   },
+  {
+    pattern: /^\/api\/users\/play\/(?:mascot-gear|sticker-diorama)$/,
+    limit: 16 * 1024,
+  },
   { pattern: /^\/api\/guest\/auth\//, limit: 16 * 1024 },
 ];
 

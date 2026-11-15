@@ -42,32 +42,42 @@ export function drawScenicBubble(
 
 export function drawScenicStars(
   ctx: CanvasRenderingContext2D,
-  stars: readonly [number, number, number][]
+  stars: readonly [number, number, number][],
+  timeMs = 0
 ): void {
-  for (const s of stars) {
+  for (let i = 0; i < stars.length; i++) {
+    const s = stars[i];
     if (!s) {
       continue;
     }
     const [sx, sy, sr] = s;
+    const twinkle =
+      timeMs > 0
+        ? 1 + Math.sin((timeMs / 3200) * Math.PI * 2 + i * 0.9) * 0.18
+        : 1;
     ctx.fillStyle = alpha(designTokens.colors.semantic.warning[200], 0.65);
     ctx.beginPath();
-    ctx.arc(sx, sy, sr, 0, Math.PI * 2);
+    ctx.arc(sx, sy, sr * twinkle, 0, Math.PI * 2);
     ctx.fill();
   }
 }
 
 export function drawScenicFlowerDots(
   ctx: CanvasRenderingContext2D,
-  dots: readonly [number, number, string][]
+  dots: readonly [number, number, string][],
+  timeMs = 0
 ): void {
-  for (const d of dots) {
+  for (let i = 0; i < dots.length; i++) {
+    const d = dots[i];
     if (!d) {
       continue;
     }
     const [dx, dy, color] = d;
+    const sway =
+      timeMs > 0 ? Math.sin((timeMs / 4500) * Math.PI * 2 + i * 0.7) * 2.4 : 0;
     ctx.fillStyle = color;
     ctx.beginPath();
-    ctx.arc(dx, dy, 4, 0, Math.PI * 2);
+    ctx.arc(dx + sway, dy, 4, 0, Math.PI * 2);
     ctx.fill();
   }
 }

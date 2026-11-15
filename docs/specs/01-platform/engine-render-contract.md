@@ -107,6 +107,7 @@ không vẽ nút nộp, nút nghe lại hay tiến độ vòng (`BR-PSZ-05`, `BR
 | `BR-ERC-14` (một vật, một nhãn) | Một phần tử BẮT BUỘC không được vẽ cùng một chuỗi hai lần trong cùng khung nhìn | `GT-007` truyền cả `text` lẫn `label` vào `drawSlotItem` nên mỗi nút number-bond hiện chữ số to trong vòng tròn và lặp lại chữ số bé 11 px ngay dưới; thấy rõ ở `docs/qa/engine-captures/2026-09-01/GT-007-mobile-390x844.png` |
 | `BR-ERC-15` (khung yêu cầu không đè nội dung) | Khung chữ yêu cầu BẮT BUỘC đo và vẽ bằng **cùng một** cỡ chữ, và BẮT BUỘC xuống dòng khi vượt bề rộng khả dụng của `LogicSpace` | `drawPromptText` đo bằng 24 px rồi vẽ bằng 22 px, kẹp bề rộng trong khoảng 360–860 px và không xuống dòng; trên không gian logic rộng 540 khung tràn và bị phần tử khác đè lên |
 | `BR-ERC-16` (không có màu thô trong tầng render) | Mọi màu trong tầng render BẮT BUỘC lấy từ `designTokens.ts`. Cấm — NEVER viết hằng hex trực tiếp | Đo ngày 2026-09-11 có 59 hằng hex thô trong hai file render (42 và 17), trái `BR-DSC-02`; cổng từng đo việc này đã bị gỡ cùng `packages/gates` |
+| `BR-ERC-17` (nền sống động có tuột & đàn hồi thuần) | Chuyển động vi mô của lớp nền cảnh (mây, nắng, sao, bọt nước) và nội suy lò xo vật lý (`spring-physics.ts`) BẮT BUỘC là hàm thuần của `timeMs` không cấp phát bộ nhớ động mỗi khung hình (`BR-PRF-05`), và nền động tự tắt khi `degradation.ambient_motion_enabled === false` hoặc `reducedMotion === true` | Đem lại cảm giác thế giới sống động ấm áp cho trẻ 3–6 tuổi mà vẫn bảo toàn cứng 60fps trên tablet Android 2GB (`BR-PRF-03`) |
 
 ## 7. Data
 
@@ -164,7 +165,7 @@ Bỏ dần theo thứ tự này, dừng ngay khi khung hình về ngân sách:
 
 1. Hạt và hiệu ứng trang trí của lớp 4.
 2. Đổ bóng và chuyển động mượt.
-3. Nền cảnh trang trí của lớp 1, giữ khung vùng — **chưa có gì để bỏ**: nền cảnh hiện vẽ tĩnh, nên `degradation.ts` không có cờ nền động (cờ không ai đọc đã gỡ, Task #313). Khi có nền động thật thì thêm cờ cùng chỗ đọc nó.
+3. Nền cảnh trang trí của lớp 1, giữ khung vùng — tắt chuyển động vi mô (`ambient_motion_enabled = false`) khi FPS tụt dưới ngưỡng 42 trong `degradation.ts`, giữ nền tĩnh (`BR-ERC-17`).
 4. Không bao giờ bỏ: lớp 3, vùng chạm của nó và nhịp gợi ý (scaffolding) — kênh phản hồi, không phải trang trí (`BR-PRF-03`).
 
 ### 7.5 Hình dạng cổng vẽ

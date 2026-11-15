@@ -3,31 +3,41 @@ import { resolveAssetLabels } from "#src/labels/spoken-keyword";
 import { computeStageZones } from "#src/layout/stage-zones";
 import { updateParticles } from "#src/render/particles";
 import { drawPromptZone } from "#src/render/prompt-zone";
+import { drawSceneBackground } from "#src/render/scene-background";
 import { DegradationManager } from "#src/systems/degradation";
 import { type Particle, RenderSystem } from "#src/systems/render-system";
 import { createFakeCanvas } from "./gates/fake-canvas";
 
-describe("Task 5 — Performance Budget Degradation (BR-PRF-03)", () => {
-  it("degrades non-essential visual elements in strict order when FPS drops below 45", () => {
+describe("Task 5 & #314 — Performance Budget Degradation (BR-PRF-03, BR-ERC-17)", () => {
+  it("degrades non-essential visual elements in strict order when FPS drops below 45, 42, and 40", () => {
     const mgr = new DegradationManager();
 
     const normal = mgr.updateFps(60);
     expect(normal.particles_enabled).toBe(true);
+    expect(normal.ambient_motion_enabled).toBe(true);
     expect(normal.soft_shadows_enabled).toBe(true);
 
     const lowFps = mgr.updateFps(42);
     expect(lowFps.particles_enabled).toBe(false);
+    expect(lowFps.ambient_motion_enabled).toBe(true);
     expect(lowFps.soft_shadows_enabled).toBe(true);
+
+    const lowerFps = mgr.updateFps(41);
+    expect(lowerFps.particles_enabled).toBe(false);
+    expect(lowerFps.ambient_motion_enabled).toBe(false);
+    expect(lowerFps.soft_shadows_enabled).toBe(true);
 
     const vLowFps = mgr.updateFps(38);
     expect(vLowFps.particles_enabled).toBe(false);
+    expect(vLowFps.ambient_motion_enabled).toBe(false);
     expect(vLowFps.soft_shadows_enabled).toBe(false);
   });
 
-  it("BR-PRF-03/BR-ERC-09: chỉ có hạt và bóng để bỏ — không có cờ nào không ai đọc, tụt sâu không bỏ thêm gì", () => {
+  it("BR-PRF-03/BR-ERC-09/BR-ERC-17: chỉ có hạt, nền động và bóng để bỏ — tụt sâu không bỏ thêm gì", () => {
     const mgr = new DegradationManager();
     const floor = mgr.updateFps(5);
     expect(Object.keys(floor).sort()).toEqual([
+      "ambient_motion_enabled",
       "audio_channel_degraded",
       "font_size_degraded",
       "particles_enabled",
@@ -35,6 +45,56 @@ describe("Task 5 — Performance Budget Degradation (BR-PRF-03)", () => {
       "touch_target_size_degraded",
     ]);
     expect(floor).toBe(mgr.updateFps(36));
+  });
+
+  it("BR-ERC-17: drawSceneBackground animates subtle scenic motion when ambientMotionEnabled, and freezes when disabled or reducedMotion", () => {
+    function captureArcCoords(
+      rs: RenderSystem,
+      theme: string,
+      timeMs: number
+    ): string[] {
+      const coords: string[] = [];
+      const rawCtx = createFakeCanvas(960, 540).getContext("2d");
+      if (!rawCtx) {
+        throw new Error("Missing fake 2d context");
+      }
+      const ctx = rawCtx as CanvasRenderingContext2D;
+      const origArc = ctx.arc.bind(ctx);
+      ctx.arc = (
+        x: number,
+        y: number,
+        r: number,
+        s: number,
+        e: number,
+        ccw?: boolean
+      ): void => {
+        coords.push(`${x.toFixed(2)},${y.toFixed(2)},${r.toFixed(2)}`);
+        origArc(x, y, r, s, e, ccw);
+      };
+      drawSceneBackground(ctx, rs, theme, timeMs);
+      return coords;
+    }
+
+    const activeRs = new RenderSystem();
+    activeRs.ambientMotionEnabled = true;
+    activeRs.reducedMotion = false;
+    const t0 = captureArcCoords(activeRs, "nature", 0);
+    const t2500 = captureArcCoords(activeRs, "nature", 2500);
+    expect(t2500).not.toEqual(t0);
+
+    const degradedRs = new RenderSystem();
+    degradedRs.ambientMotionEnabled = false;
+    degradedRs.reducedMotion = false;
+    expect(captureArcCoords(degradedRs, "nature", 0)).toEqual(
+      captureArcCoords(degradedRs, "nature", 2500)
+    );
+
+    const reducedRs = new RenderSystem();
+    reducedRs.ambientMotionEnabled = true;
+    reducedRs.reducedMotion = true;
+    expect(captureArcCoords(reducedRs, "ocean", 0)).toEqual(
+      captureArcCoords(reducedRs, "ocean", 2500)
+    );
   });
 
   it("BR-PRF-03: touch target size, audio channel, and font size are NEVER degraded", () => {

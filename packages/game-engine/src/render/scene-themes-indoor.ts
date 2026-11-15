@@ -388,7 +388,8 @@ export function drawDefaultScene(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
   w: number,
-  h: number
+  h: number,
+  timeMs = 0
 ): void {
   // Default / general / classroom: Cheerful sunny sky & paper base
   ctx.fillStyle = designTokens.colors.surface[50];
@@ -416,9 +417,11 @@ export function drawDefaultScene(
   ctx.fillRect(0, 0, w, h);
 
   // Playful sunny clouds
-  drawScenicCloud(ctx, 160, 68, 0.9);
-  drawScenicCloud(ctx, 800, 80, 0.75);
+  const cloudDrift =
+    timeMs > 0 ? Math.sin((timeMs / 9500) * Math.PI * 2) * 14 : 0;
+  drawScenicCloud(ctx, 160 + cloudDrift, 68, 0.9);
+  drawScenicCloud(ctx, 800 - cloudDrift * 0.75, 80, 0.75);
 
   // Cheerful pastel flower dots along bottom
-  drawScenicFlowerDots(ctx, DEFAULT_FLOWER_DOTS);
+  drawScenicFlowerDots(ctx, DEFAULT_FLOWER_DOTS, timeMs);
 }

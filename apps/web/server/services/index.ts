@@ -13,6 +13,7 @@ export * from "./content-search.js";
 export * from "./custom-game.js";
 export * from "./faq-service.js";
 export * from "./feature-flags.js";
+export * from "./kid-world.js";
 export * from "./library.js";
 export * from "./offline-pack.js";
 export * from "./personal-curriculum.js";

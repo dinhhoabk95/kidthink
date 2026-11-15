@@ -49,4 +49,21 @@ describe("SFX_RECIPES — cue đặc trưng (BR-FBK-10, BR-ENG-16)", () => {
 
     expect(freqs).toEqual([...freqs].sort((a, b) => a - b));
   });
+
+  it("Task #314: thang ngũ cung marimba_1..marimba_5 tăng dần cao độ và có đủ âm gỗ/hộp quà", () => {
+    const marimbaFreqs = [
+      SFX_RECIPES.marimba_1[0]?.freq ?? 0,
+      SFX_RECIPES.marimba_2[0]?.freq ?? 0,
+      SFX_RECIPES.marimba_3[0]?.freq ?? 0,
+      SFX_RECIPES.marimba_4[0]?.freq ?? 0,
+      SFX_RECIPES.marimba_5[0]?.freq ?? 0,
+    ];
+    expect(marimbaFreqs.every((f) => f > 0)).toBe(true);
+    expect(marimbaFreqs).toEqual([...marimbaFreqs].sort((a, b) => a - b));
+    expect(SFX_RECIPES.wood_pickup.length).toBeGreaterThan(0);
+    expect(SFX_RECIPES.wood_clack_snap.length).toBeGreaterThan(0);
+    expect(SFX_RECIPES.gift_rustle.length).toBeGreaterThan(0);
+    expect(SFX_RECIPES.gift_pop.length).toBeGreaterThan(0);
+    expect(SFX_RECIPES.mascot_giggle.length).toBeGreaterThan(0);
+  });
 });

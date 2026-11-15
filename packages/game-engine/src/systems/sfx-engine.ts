@@ -53,7 +53,17 @@ export type SFXType =
   | "yarn_pull"
   | "wood_beat"
   | "robot_beep"
-  | "bead_click";
+  | "bead_click"
+  | "wood_pickup"
+  | "wood_clack_snap"
+  | "marimba_1"
+  | "marimba_2"
+  | "marimba_3"
+  | "marimba_4"
+  | "marimba_5"
+  | "gift_rustle"
+  | "gift_pop"
+  | "mascot_giggle";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -851,6 +861,207 @@ export const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       volume: 0.06,
       durationSec: 0.07,
       rampOutSec: 0.04,
+    },
+  ],
+
+  /** Tactile Montessori pickup: nhấc quân cờ gỗ khỏi khay. */
+  wood_pickup: [
+    {
+      delaySec: 0,
+      type: "triangle",
+      freq: 360,
+      glideTo: { freq: 480, overSec: 0.06 },
+      volume: 0.11,
+      durationSec: 0.08,
+      rampOutSec: 0.04,
+    },
+  ],
+
+  /** Tactile Montessori snap: quân gỗ khớp vào hốc nam châm. */
+  wood_clack_snap: [
+    {
+      delaySec: 0,
+      type: "triangle",
+      freq: 520,
+      volume: 0.12,
+      durationSec: 0.07,
+      rampOutSec: 0.04,
+    },
+    {
+      delaySec: 0.04,
+      type: "sine",
+      freq: 780,
+      volume: 0.1,
+      durationSec: 0.09,
+      rampOutSec: 0.05,
+    },
+  ],
+
+  /** Pentatonic Marimba C5 — đếm bước 1 / que số Montessori. */
+  marimba_1: [
+    {
+      delaySec: 0,
+      type: "triangle",
+      freq: 523,
+      volume: 0.14,
+      durationSec: 0.22,
+      rampOutSec: 0.12,
+    },
+    {
+      delaySec: 0,
+      type: "sine",
+      freq: 1046,
+      volume: 0.05,
+      durationSec: 0.15,
+      rampOutSec: 0.08,
+    },
+  ],
+
+  /** Pentatonic Marimba D5 — đếm bước 2. */
+  marimba_2: [
+    {
+      delaySec: 0,
+      type: "triangle",
+      freq: 587,
+      volume: 0.14,
+      durationSec: 0.22,
+      rampOutSec: 0.12,
+    },
+    {
+      delaySec: 0,
+      type: "sine",
+      freq: 1174,
+      volume: 0.05,
+      durationSec: 0.15,
+      rampOutSec: 0.08,
+    },
+  ],
+
+  /** Pentatonic Marimba E5 — đếm bước 3. */
+  marimba_3: [
+    {
+      delaySec: 0,
+      type: "triangle",
+      freq: 659,
+      volume: 0.14,
+      durationSec: 0.22,
+      rampOutSec: 0.12,
+    },
+    {
+      delaySec: 0,
+      type: "sine",
+      freq: 1318,
+      volume: 0.05,
+      durationSec: 0.15,
+      rampOutSec: 0.08,
+    },
+  ],
+
+  /** Pentatonic Marimba G5 — đếm bước 4. */
+  marimba_4: [
+    {
+      delaySec: 0,
+      type: "triangle",
+      freq: 784,
+      volume: 0.14,
+      durationSec: 0.22,
+      rampOutSec: 0.12,
+    },
+    {
+      delaySec: 0,
+      type: "sine",
+      freq: 1568,
+      volume: 0.05,
+      durationSec: 0.15,
+      rampOutSec: 0.08,
+    },
+  ],
+
+  /** Pentatonic Marimba A5 — đếm bước 5 / mốc hoàn tất chuỗi. */
+  marimba_5: [
+    {
+      delaySec: 0,
+      type: "triangle",
+      freq: 880,
+      volume: 0.14,
+      durationSec: 0.24,
+      rampOutSec: 0.12,
+    },
+    {
+      delaySec: 0,
+      type: "sine",
+      freq: 1760,
+      volume: 0.05,
+      durationSec: 0.16,
+      rampOutSec: 0.08,
+    },
+  ],
+
+  /** Hộp quà gỗ rung nhẹ khi bé chạm vào nắp (`BR-FBK-18`). */
+  gift_rustle: [
+    {
+      delaySec: 0,
+      type: "triangle",
+      freq: 410,
+      volume: 0.09,
+      durationSec: 0.08,
+      rampOutSec: 0.04,
+    },
+    {
+      delaySec: 0.07,
+      type: "triangle",
+      freq: 490,
+      volume: 0.09,
+      durationSec: 0.08,
+      rampOutSec: 0.04,
+    },
+    {
+      delaySec: 0.14,
+      type: "triangle",
+      freq: 560,
+      volume: 0.1,
+      durationSec: 0.09,
+      rampOutSec: 0.04,
+    },
+  ],
+
+  /** Hộp quà bật mở tung sao và nhãn dán mới (`BR-FBK-18`). */
+  gift_pop: [523, 659, 784, 1047].map((freq, i) => ({
+    delaySec: i * 0.07,
+    type: "sine" as OscillatorType,
+    freq,
+    volume: 0.15,
+    durationSec: 0.24,
+    rampOutSec: 0.08,
+  })),
+
+  /** Gấu Con vẫy tay / đập tay khích lệ bé ở Góc Phòng Chơi (`BR-MPR-04`). */
+  mascot_giggle: [
+    {
+      delaySec: 0,
+      type: "sine",
+      freq: 587,
+      glideTo: { freq: 698, overSec: 0.08 },
+      volume: 0.11,
+      durationSec: 0.12,
+      rampOutSec: 0.05,
+    },
+    {
+      delaySec: 0.09,
+      type: "sine",
+      freq: 659,
+      glideTo: { freq: 784, overSec: 0.08 },
+      volume: 0.12,
+      durationSec: 0.12,
+      rampOutSec: 0.05,
+    },
+    {
+      delaySec: 0.18,
+      type: "triangle",
+      freq: 880,
+      volume: 0.11,
+      durationSec: 0.14,
+      rampOutSec: 0.06,
     },
   ],
 

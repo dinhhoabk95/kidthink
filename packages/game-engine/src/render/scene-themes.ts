@@ -18,11 +18,12 @@ import {
   drawWeatherScene,
 } from "./scene-themes-outdoor.js";
 
-type ScenePainter = (
+export type ScenePainter = (
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
   w: number,
-  h: number
+  h: number,
+  timeMs?: number
 ) => void;
 
 /** Hoạ sĩ nền theo chủ đề; chủ đề lạ rơi về nền mặc định. `Map` thay object: tra

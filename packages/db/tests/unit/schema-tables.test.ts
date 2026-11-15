@@ -39,12 +39,14 @@ function getColumnSqlNames(table: PgTable): string[] {
 
 describe("Dynamic Schema Tables Extraction (G6, Task #208)", () => {
   it("trích xuất đủ các bảng từ schema/ và không thiếu bảng mới", () => {
-    expect(TABLES.length).toBe(62);
+    expect(TABLES.length).toBe(64);
     expect(TABLES).toContain("skill_datasets");
     expect(TABLES).toContain("content_skill_map");
     expect(TABLES).toContain("users");
     expect(TABLES).toContain("game_levels");
     expect(TABLES).toContain("child_stickers");
+    expect(TABLES).toContain("child_sticker_placements");
+    expect(TABLES).toContain("child_mascot_gear");
     expect(TABLES).not.toContain("content_objective_map");
     expect(TABLES).not.toContain("worksheets");
     expect(TABLES).not.toContain("seo_pages");

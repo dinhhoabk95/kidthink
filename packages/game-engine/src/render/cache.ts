@@ -30,6 +30,7 @@ export const PRIMITIVE_GRADIENTS = {
   BG_FESTIVAL: 22,
   CONTAINER_AURA: 23,
   TARGET_HOVER_AURA: 24,
+  MAGNETIC_SNAP_HALO: 25,
 } as const;
 
 export type PrimitiveGradientId =

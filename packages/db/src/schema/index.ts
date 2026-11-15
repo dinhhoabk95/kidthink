@@ -11,6 +11,7 @@ export * from "./custom-game.ts";
 export * from "./exports.ts";
 export * from "./game.ts";
 export * from "./identity.ts";
+export * from "./kid-world.ts";
 export * from "./library.ts";
 export * from "./ops.ts";
 export * from "./personal-curriculum.ts";

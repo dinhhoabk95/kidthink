@@ -162,7 +162,9 @@ tham chiếu — cấm — NEVER còn lệnh nào đo tự động; reviewer tra
 | `BR-RSP` | [`round-sequence-play.md`](../04-play/round-sequence-play.md) | | `BR-CIR` | [`concept-intro-runner.md`](../04-play/concept-intro-runner.md) |
 | `BR-CIG` | [`concept-intro-gate.md`](../04-play/concept-intro-gate.md) | | `BR-PNR` | [`play-narration.md`](../04-play/play-narration.md) |
 | `BR-STK` | [`sticker-album.md`](../04-play/sticker-album.md) | | `BR-WTM` | [`child-theme-map.md`](../04-play/child-theme-map.md) |
-| `BR-CCE` | [`child-competency-explorer.md`](../04-play/child-competency-explorer.md) | | | |
+| `BR-CCE` | [`child-competency-explorer.md`](../04-play/child-competency-explorer.md) | | `BR-DAV` | [`daily-adventure-flow.md`](../04-play/daily-adventure-flow.md) |
+| `BR-MPR` | [`mascot-playroom.md`](../04-play/mascot-playroom.md) | | `BR-SDM` | [`sticker-diorama.md`](../04-play/sticker-diorama.md) |
+| `BR-TBX` | [`montessori-toybox.md`](../04-play/montessori-toybox.md) | | | |
 
 **Content**
 

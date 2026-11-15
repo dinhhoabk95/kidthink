@@ -116,13 +116,16 @@ describe("RenderSystem.renderGhostHand", () => {
     return { ctx, calls };
   }
 
-  it("vẽ bàn tay (fillText) khi toạ độ hợp lệ, bỏ qua khi NaN", () => {
+  it("vẽ bàn tay 2.5D kèm vệt bụi sao khi kéo từ nguồn sang đích, bỏ qua khi NaN", () => {
     const rs = new RenderSystem();
     const ok = recordingCtx();
     rs.renderGhostHand(ok.ctx, { x: 10, y: 10 }, { x: 100, y: 100 }, 0.5);
+    expect(ok.calls).toContain("arc");
+    expect(ok.calls).toContain("quadraticCurveTo");
     expect(ok.calls).toContain("fillText");
     const bad = recordingCtx();
     rs.renderGhostHand(bad.ctx, { x: Number.NaN, y: 10 }, null, 0.5);
     expect(bad.calls).not.toContain("fillText");
+    expect(bad.calls).not.toContain("arc");
   });
 });

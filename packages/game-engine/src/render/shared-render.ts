@@ -173,6 +173,59 @@ export function drawTargetHoverAura(
 }
 
 /**
+ * Hào quang hút nam châm xanh ngọc ấm khi quân cờ tiến vào bán kính bắt dính của đích (Task #314).
+ */
+export function drawMagneticSnapHalo(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  radius: number,
+  strength = 0.8,
+  phase = 0
+): void {
+  if (!(Number.isFinite(x) && Number.isFinite(y)) || radius <= 0) {
+    return;
+  }
+  const clampedStrength = Math.min(1, Math.max(0.15, strength));
+  const pulse = 1 + Math.sin(phase * Math.PI * 2) * 0.09;
+  const r = radius * pulse;
+  const slotIndex = Math.round(x) * 100_000 + Math.round(y) * 100;
+  const generation = getContextGeneration(ctx);
+  let snapGrad = getCachedGradient(
+    ctx,
+    generation,
+    PRIMITIVE_GRADIENTS.MAGNETIC_SNAP_HALO,
+    slotIndex
+  );
+  if (!snapGrad) {
+    snapGrad = ctx.createRadialGradient(x, y, r * 0.28, x, y, r * 1.42);
+    snapGrad.addColorStop(
+      0,
+      alpha(designTokens.colors.montessori.snapHalo, 0.46)
+    );
+    snapGrad.addColorStop(
+      0.65,
+      alpha(designTokens.colors.montessori.amberLight, 0.24)
+    );
+    snapGrad.addColorStop(1, alpha(designTokens.colors.surface[0], 0));
+    setCachedGradient(
+      ctx,
+      generation,
+      PRIMITIVE_GRADIENTS.MAGNETIC_SNAP_HALO,
+      slotIndex,
+      snapGrad
+    );
+  }
+  ctx.save();
+  ctx.globalAlpha *= 0.65 + clampedStrength * 0.35;
+  ctx.fillStyle = snapGrad;
+  ctx.beginPath();
+  ctx.arc(x, y, r * 1.42, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+/**
  * Ngắt dòng prompt văn bản tự động vừa với bề rộng tối đa của card (BR-ERC-15).
  */
 export function wrapPromptText(
@@ -551,13 +604,25 @@ export function drawWoodenTokenDock(
   ctx.restore();
 
   // 3. Dock Surface & Bevel
-  ctx.fillStyle = designTokens.colors.surface[50];
+  ctx.fillStyle = designTokens.colors.montessori.woodTray;
   ctx.strokeStyle = designTokens.colors.montessori.woodBevel;
   ctx.lineWidth = 3.5;
   ctx.beginPath();
   ctx.roundRect(dockX, dockY, dockW, dockH, radius);
   ctx.fill();
   ctx.stroke();
+
+  // 3b. Subtle Montessori wood-grain groove lines
+  if (dockH >= 48 && dockW >= 180) {
+    ctx.strokeStyle = alpha(designTokens.colors.montessori.woodGrain, 0.28);
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(dockX + radius + 8, dockY + dockH * 0.68);
+    ctx.lineTo(dockX + dockW * 0.38, dockY + dockH * 0.68);
+    ctx.moveTo(dockX + dockW * 0.62, dockY + dockH * 0.34);
+    ctx.lineTo(dockX + dockW - radius - 8, dockY + dockH * 0.34);
+    ctx.stroke();
+  }
 
   // 4. Specular highlight
   ctx.strokeStyle = alpha(designTokens.colors.surface[0], 0.85);

@@ -217,6 +217,13 @@ export function drawGT007OptionToken(
     ? WOOD.amber
     : (isTouch && COLORS.brand[400]) || WOOD.woodBorder;
   stroke(ctx, rim, isSel || isTouch ? 3.2 : 2.2);
+  fillDisk(
+    ctx,
+    s.x - r * 0.32,
+    cy - r * 0.32,
+    Math.max(2.5, r * 0.18),
+    alpha(COLORS.surface[0], 0.72)
+  );
   drawTextInSlot(ctx, txt, { ...s, y: cy });
   ctx.restore();
 }

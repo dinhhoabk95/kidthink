@@ -77,7 +77,7 @@ với lộ trình 36 tuần chuẩn của GDMN (`RM-*-year-01`, Task #272) và c
 | `BR-WTM-05` | Thoát khỏi bản đồ chỉ qua cổng phụ huynh `KidParentLockButton` | `BR-PSZ-11`, `BR-PGT-01` — bảo vệ trẻ trong không gian chơi an toàn |
 | `BR-WTM-06` | Bấm trạm màn chơi điều hướng tới `/play/[code]` | Tái sử dụng trọn vẹn luồng chơi màn chơi |
 | `BR-WTM-07` | Bản đồ cuộn tự do, không khoá cứng màn hình ở tuần hiện tại | Cho phép trẻ xem lại thành tích các tuần trước hoặc tò mò nhìn các chủ đề sắp tới |
-| `BR-WTM-08` | Mỗi tuần hiển thị tên chủ đề và tỉ lệ hoàn thành màn chơi trực quan | Giúp phụ huynh và trẻ nắm bắt được chủ đề học mầm non |
+| `BR-WTM-08` | Mỗi tuần hiển thị biểu tượng/tên vùng chủ đề và tín hiệu hoàn thành bằng hình ảnh (sao sáng, hoa nở, đường mòn nối trạm), **ẩn phân số chữ số `x/y`** trước mặt trẻ | Giúp nhận biết hành trình chủ đề mầm non mà vẫn tuân thủ cứng `BR-PRG-02` (trẻ không thấy con số đo lường) |
 
 ## 7. Data
 
@@ -182,10 +182,11 @@ Scenario: BR-WTM-07 — cuộn tự do
   When trẻ cuộn bản đồ về tuần 1 hoặc tới tuần 36
   Then bản đồ cuộn được, không bị khoá ở tuần 10
 
-Scenario: BR-WTM-08 — tuần có tên chủ đề và tỉ lệ hoàn thành
+Scenario: BR-WTM-08 — tuần có tên chủ đề và tín hiệu hình ảnh không lộ phân số chữ số
   When render một tuần
   Then hiện tên chủ đề của tuần
-  And hiện tỉ lệ màn chơi đã hoàn thành của tuần đó
+  And hiện tín hiệu hoàn thành bằng sao hoặc huy hiệu hình ảnh
+  And không hiện phân số chữ số hoàn thành trên tổng số bài
 
 Scenario: chưa chọn trẻ
   Given user đăng nhập chưa chọn trẻ

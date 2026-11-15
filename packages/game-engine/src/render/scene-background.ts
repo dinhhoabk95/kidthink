@@ -17,7 +17,8 @@ const SCENE_DESIGN_H = 540;
 export function drawSceneBackground(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
-  themeId?: string
+  themeId?: string,
+  timeMs?: number
 ): void {
   setContextGeneration(ctx, rs.paintGeneration);
   ctx.save();
@@ -25,6 +26,10 @@ export function drawSceneBackground(
   const w = rs.LOGIC_WIDTH;
   const h = rs.LOGIC_HEIGHT;
   const activeTheme = themeId ?? rs.themeId;
+  const ambientTimeMs =
+    rs.ambientMotionEnabled && !rs.reducedMotion
+      ? (timeMs ?? rs.frameTimeMs)
+      : 0;
 
   const paint = SCENE_PAINTERS.get(activeTheme ?? "") ?? drawDefaultScene;
   if (h > w) {
@@ -36,10 +41,10 @@ export function drawSceneBackground(
     ctx.save();
     ctx.translate((w - SCENE_DESIGN_W * scale) / 2, 0);
     ctx.scale(scale, scale);
-    paint(ctx, rs, SCENE_DESIGN_W, SCENE_DESIGN_H);
+    paint(ctx, rs, SCENE_DESIGN_W, SCENE_DESIGN_H, ambientTimeMs);
     ctx.restore();
   } else {
-    paint(ctx, rs, w, h);
+    paint(ctx, rs, w, h, ambientTimeMs);
   }
 
   // Soft subtle corner accents (Kinder-Tactile Montessori vignette)

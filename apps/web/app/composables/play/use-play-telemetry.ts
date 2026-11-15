@@ -10,11 +10,18 @@ import { useApi } from "~/composables/use-api";
 
 export type CelebrationTier = "great" | "good" | "nice_try";
 
+export interface SessionCompleteSticker {
+  readonly emoji: string;
+  readonly label: string;
+  readonly theme_code?: string;
+}
+
 export interface SessionCompleteResponse {
   readonly rounds_correct?: number;
   readonly rounds_total?: number;
   readonly celebration?: CelebrationTier;
   readonly stars?: number;
+  readonly sticker?: SessionCompleteSticker | null;
 }
 
 export type FinishSessionResult =

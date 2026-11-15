@@ -72,8 +72,11 @@ export const designTokens = {
       indigoLight: "#e0e7ff",
       woodBorder: "#827660",
       woodBevel: "#d4c5ab",
+      woodGrain: "#c8b79a",
+      woodShadowDeep: "#6b5f4b",
       woodTray: "#f5f3ef",
       woodTrayHigh: "#eae8e4",
+      slotRecess: "#ede9e1",
       paper: "#fbf9f5",
       amberGlow: "#fff5cc",
       amberDeep: "#b38600",
@@ -83,6 +86,9 @@ export const designTokens = {
       plateInner: "#efe5cc",
       plateInnerEdge: "#dfd3b4",
       basket: "#faebd7",
+      snapHalo: "#34d399",
+      pawCream: "#fff4de",
+      pawPad: "#f4a261",
     },
     // Màu cảnh nền theo chủ đề (biển, trời, vũ trụ, gỗ). Không mượn `semantic`
     // vì xanh lá của `success` là tín hiệu đúng/sai, không phải màu nước.

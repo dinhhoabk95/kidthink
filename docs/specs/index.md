@@ -32,12 +32,12 @@ ghi trong cột **Task mở** của từng bảng dưới. Thêm, xoá hay chuy�
 | `01-platform` | 42 | 32 | 13 |
 | `02-public` | 9 | 9 | 3 |
 | `03-account` | 23 | 19 | 18 |
-| `04-play` | 20 | 14 | 9 |
+| `04-play` | 24 | 14 | 9 |
 | `05-content` | 19 | 8 | 7 |
 | `06-admin` | 19 | 18 | 10 |
 | `07-addon` | 5 | 0 | 2 |
 | `08-quality` | 11 | 9 | 8 |
-| **Tổng** | **166** | **127** | **74** |
+| **Tổng** | **170** | **127** | **74** |
 
 Một outcome một file là chủ ý — xem [`CONVENTIONS.md`](CONVENTIONS.md) §1. Lịch sử thêm
 từng spec nằm trong git và ở `docs/tasks/`, không chép lại ở đây.
@@ -180,6 +180,10 @@ từng spec nằm trong git và ở `docs/tasks/`, không chép lại ở đây.
 | [child-theme-map](04-play/child-theme-map.md) | P4 | Bản đồ chủ đề tuần theo 10 chủ đề GDMN, trạm màn chơi, mascot định vị |  |
 | [child-competency-explorer](04-play/child-competency-explorer.md) | P4 | Khám phá trò chơi theo 6 năng lực tư duy trên Kid Surface, lọc theo tuổi, khoá trung tính | [#294](../tasks/294-play-surface-gaps-plan.md) |
 | **[play-narration](04-play/play-narration.md)** | P1 | Mọi yêu cầu trên bề mặt trẻ phải nghe được trước khi đọc được; bốn bậc dự phòng, cấm im lặng | [#296](../tasks/296-play-narration-debt-plan.md) |
+| [daily-adventure-flow](04-play/daily-adventure-flow.md) | P4 | Chuyến phiêu lưu một chạm tại sảnh `/play`, nối chuỗi 2–3 chặng hợp ZPD không áp lực streak |  |
+| [mascot-playroom](04-play/mascot-playroom.md) | P4 | Phòng chơi Gấu Con tương tác chạm tại sảnh, đội phụ kiện kỷ niệm mở từ huy hiệu, không tiền tệ |  |
+| [sticker-diorama](04-play/sticker-diorama.md) | P4 | Sân chơi dán sticker bối cảnh tại `/play/stickers`, chạm đọc tên và kéo bày tranh chủ đề |  |
+| [montessori-toybox](04-play/montessori-toybox.md) | P4 | Hộp đồ chơi tự do Montessori (`/play/toybox`), 3 bàn khám phá mở cô lập khỏi `mastery_state` |  |
 
 ## 05-content — ràng buộc biên tập
 

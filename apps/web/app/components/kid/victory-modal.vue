@@ -53,7 +53,7 @@
           </div>
         </div>
 
-        <!-- Sticker vừa nhận khi xong bài (`BR-STK-08`); tên chỉ ở aria-label (`BR-STK-06`). -->
+        <!-- Hộp quà Sticker vừa nhận khi xong bài (`BR-STK-08`, `BR-FBK-18`); tên chỉ ở aria-label (`BR-STK-06`). -->
         <div
           class="sticker-reward"
           data-testid="victory-sticker"
@@ -61,9 +61,10 @@
           v-if="sticker"
           :aria-label="`Sticker mới: ${sticker.label}`"
         >
-          <span aria-hidden="true" class="sticker-emoji">
-            <BrandEmoji hero :emoji="sticker.emoji" />
-          </span>
+          <KidGiftUnboxStage
+            :sticker="sticker"
+            @unboxed="(phrase) => emit('announce', phrase)"
+          />
         </div>
 
         <!-- Headline -->
@@ -119,8 +120,8 @@
 
 <script lang="ts" setup>
   import { FeedbackSystem } from "@mindkid/game-engine";
-  import BrandEmoji from "@mindkid/ui/brand-emoji";
   import { computed, ref, toRef, watch } from "vue";
+  import KidGiftUnboxStage from "~/components/kid/gift-unbox-stage.vue";
   import KidMascot from "~/components/kid/mascot.vue";
   import ParentGateModal from "~/components/parent-gate-modal.vue";
   import { useFocusTrap } from "~/composables/play/use-focus-trap";
