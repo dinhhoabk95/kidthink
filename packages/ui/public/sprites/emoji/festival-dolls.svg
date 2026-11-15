@@ -1,0 +1,94 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đôi búp bê lễ hội</title>
+  <defs>
+    <radialGradient cx="40%" cy="32%" id="fdSkin" r="68%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="65%" stop-color="#fde68a" />
+      <stop offset="100%" stop-color="#fcd34d" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#7f1d1d" opacity="0.25" rx="46" ry="5.5" />
+  <rect
+    fill="#ef4444"
+    height="11"
+    rx="5"
+    stroke="#7f1d1d"
+    stroke-width="3.8"
+    width="92"
+    x="14"
+    y="89"
+  />
+  <path
+    d="M18 89C19 67 28 57 39 57C50 57 59 67 60 89Z"
+    fill="#38bdf8"
+    stroke="#0c4a6e"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M60 89C61 67 70 57 81 57C92 57 101 67 102 89Z"
+    fill="#f472b6"
+    stroke="#831843"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M33 59L39 74L45 59M75 59L81 74L87 59"
+    stroke="#fde047"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-opacity="0.9"
+    stroke-width="3"
+  />
+  <circle
+    cx="39"
+    cy="43"
+    fill="url(#fdSkin)"
+    r="14"
+    stroke="#5c3d2e"
+    stroke-width="3.8"
+  />
+  <path
+    d="M25 40C26 26 52 26 53 40Z"
+    fill="#292524"
+    stroke="#1c1917"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <polygon
+    fill="#facc15"
+    points="35,27 39,18 43,27"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="81"
+    cy="43"
+    fill="url(#fdSkin)"
+    r="14"
+    stroke="#5c3d2e"
+    stroke-width="3.8"
+  />
+  <path
+    d="M66 43C66 26 96 26 96 43Z"
+    fill="#292524"
+    stroke="#1c1917"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <circle
+    cx="81"
+    cy="26"
+    fill="#facc15"
+    r="5"
+    stroke="#78350f"
+    stroke-width="3.2"
+  />
+  <path
+    d="M34 44C36 42 38 42 40 44M41 44C43 42 45 42 47 44M75 44C77 42 79 42 81 44M82 44C84 42 86 42 88 44"
+    stroke="#292524"
+    stroke-linecap="round"
+    stroke-width="2.4"
+  />
+</svg>

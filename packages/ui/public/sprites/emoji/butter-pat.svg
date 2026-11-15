@@ -1,0 +1,58 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Miếng bơ vàng</title>
+  <defs>
+    <linearGradient id="bpPlate" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#f8fafc" />
+      <stop offset="100%" stop-color="#cbd5e1" />
+    </linearGradient>
+    <linearGradient id="bpButter" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="55%" stop-color="#fde047" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="100" fill="#78350f" opacity="0.24" rx="44" ry="6.5" />
+  <ellipse
+    cx="60"
+    cy="80"
+    fill="url(#bpPlate)"
+    rx="46"
+    ry="16"
+    stroke="#334155"
+    stroke-width="4"
+  />
+  <path
+    d="M30 46L68 36L86 46V70L48 80L30 70V46Z"
+    fill="url(#bpButter)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M30 46L48 56L86 46M48 56V80"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <rect
+    fill="#fef08a"
+    height="19"
+    rx="3.5"
+    stroke="#78350f"
+    stroke-width="3.6"
+    transform="rotate(12 78 65)"
+    width="14"
+    x="78"
+    y="60"
+  />
+  <ellipse
+    cx="55"
+    cy="45"
+    fill="#ffffff"
+    fill-opacity="0.7"
+    rx="8"
+    ry="3"
+    transform="rotate(-14 55 45)"
+  />
+</svg>

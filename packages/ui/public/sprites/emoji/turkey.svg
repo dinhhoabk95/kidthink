@@ -1,0 +1,67 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Gà tây</title>
+  <defs>
+    <radialGradient cx="50%" cy="60%" id="tkFan" r="65%">
+      <stop offset="0%" stop-color="#fde047" />
+      <stop offset="48%" stop-color="#ea580c" />
+      <stop offset="100%" stop-color="#9a3412" />
+    </radialGradient>
+    <radialGradient cx="40%" cy="35%" id="tkBody" r="68%">
+      <stop offset="0%" stop-color="#b45309" />
+      <stop offset="100%" stop-color="#78350f" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#431407" opacity="0.25" rx="36" ry="6" />
+  <path
+    d="M22 68C16 42 34 20 60 20C86 20 104 42 98 68C90 78 30 78 22 68Z"
+    fill="url(#tkFan)"
+    stroke="#5c2d16"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M60 22V56M38 28L52 58M82 28L68 58M25 46L48 62M95 46L72 62"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="2.6"
+  />
+  <path
+    d="M51 88V100M46 100H56M69 88V100M64 100H74"
+    stroke="#b45309"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="60"
+    cy="70"
+    fill="url(#tkBody)"
+    r="21"
+    stroke="#431407"
+    stroke-width="4"
+  />
+  <circle
+    cx="60"
+    cy="46"
+    fill="#60a5fa"
+    r="12"
+    stroke="#1e3a8a"
+    stroke-width="3.8"
+  />
+  <path
+    d="M64 48C68 48 70 54 66 58C63 60 61 56 62 51Z"
+    fill="#ef4444"
+    stroke="#7f1d1d"
+    stroke-width="2.6"
+  />
+  <path
+    d="M55 47L60 53L65 47Z"
+    fill="#facc15"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="2.8"
+  />
+  <circle cx="55" cy="43" fill="#1c1917" r="2.4" />
+  <circle cx="65" cy="43" fill="#1c1917" r="2.4" />
+  <circle cx="54.3" cy="42.2" fill="#ffffff" r="0.9" />
+  <circle cx="64.3" cy="42.2" fill="#ffffff" r="0.9" />
+</svg>

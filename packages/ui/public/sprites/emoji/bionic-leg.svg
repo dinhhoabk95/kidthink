@@ -1,0 +1,48 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chân trợ lực</title>
+  <defs>
+    <linearGradient id="blShaft" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#e2e8f0" />
+      <stop offset="60%" stop-color="#94a3b8" />
+      <stop offset="100%" stop-color="#475569" />
+    </linearGradient>
+    <linearGradient id="blBlade" x1="0%" x2="100%" y1="0%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#2563eb" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="62" cy="104" fill="#1e293b" opacity="0.24" rx="36" ry="6" />
+  <path
+    d="M40 20H64L58 46H44Z"
+    fill="#fb923c"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="url(#blShaft)"
+    height="32"
+    rx="6"
+    stroke="#1e293b"
+    stroke-width="4"
+    width="14"
+    x="45"
+    y="48"
+  />
+  <circle
+    cx="52"
+    cy="48"
+    fill="#facc15"
+    r="11"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <circle cx="52" cy="48" fill="#78350f" r="4" />
+  <path
+    d="M52 78C52 92 64 96 88 94C94 93 96 87 90 86C72 86 62 82 60 74Z"
+    fill="url(#blBlade)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+</svg>

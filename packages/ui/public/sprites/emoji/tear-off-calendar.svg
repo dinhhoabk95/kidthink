@@ -1,0 +1,65 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Tờ lịch ngày</title>
+  <defs>
+    <linearGradient id="tcTop" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#f97316" />
+      <stop offset="100%" stop-color="#c2410c" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#7c2d12" opacity="0.23" rx="38" ry="5.5" />
+  <path
+    d="M24 24H96V74L76 96H24Z"
+    fill="#fffbeb"
+    stroke="#44403c"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M24 24H96V44H24Z"
+    fill="url(#tcTop)"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M76 96V74H96Z"
+    fill="#fde68a"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="42"
+    cy="34"
+    fill="#fff7ed"
+    r="4"
+    stroke="#7c2d12"
+    stroke-width="2.8"
+  />
+  <circle
+    cx="78"
+    cy="34"
+    fill="#fff7ed"
+    r="4"
+    stroke="#7c2d12"
+    stroke-width="2.8"
+  />
+  <rect
+    fill="#ea580c"
+    height="22"
+    rx="4"
+    stroke="#7c2d12"
+    stroke-width="3"
+    width="9"
+    x="45"
+    y="56"
+  />
+  <circle
+    cx="66"
+    cy="67"
+    fill="#fbbf24"
+    r="10"
+    stroke="#78350f"
+    stroke-width="3.4"
+  />
+</svg>

@@ -1,0 +1,100 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Gia đình bốn người</title>
+  <defs>
+    <radialGradient cx="40%" cy="30%" id="ffSkin" r="70%">
+      <stop offset="0%" stop-color="#fffbeb" />
+      <stop offset="60%" stop-color="#fed7aa" />
+      <stop offset="100%" stop-color="#fdba74" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#5c3d2e" opacity="0.24" rx="46" ry="5.5" />
+  <path
+    d="M16 94C16 76 27 66 40 66C53 66 62 76 62 94Z"
+    fill="#3b82f6"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M58 94C58 76 69 66 82 66C95 66 104 76 104 94Z"
+    fill="#fb7185"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="39"
+    cy="43"
+    fill="url(#ffSkin)"
+    r="17"
+    stroke="#5c3d2e"
+    stroke-width="3.8"
+  />
+  <path
+    d="M23 40C24 25 54 25 55 40C48 33 30 33 23 40Z"
+    fill="#451a03"
+    stroke="#292524"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <circle
+    cx="81"
+    cy="44"
+    fill="url(#ffSkin)"
+    r="16.5"
+    stroke="#5c3d2e"
+    stroke-width="3.8"
+  />
+  <path
+    d="M64 47C63 27 99 27 98 47C92 36 70 36 64 47Z"
+    fill="#5c3d2e"
+    stroke="#451a03"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M34 45C36 48 42 48 44 45M76 46C78 49 84 49 86 46"
+    stroke="#451a03"
+    stroke-linecap="round"
+    stroke-width="2.8"
+  />
+  <path
+    d="M22 102C22 86 32 78 44 78C56 78 64 86 64 102Z"
+    fill="#facc15"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M56 102C56 86 66 78 78 78C90 78 98 86 98 102Z"
+    fill="#4ade80"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="43"
+    cy="67"
+    fill="url(#ffSkin)"
+    r="13.5"
+    stroke="#5c3d2e"
+    stroke-width="3.6"
+  />
+  <circle cx="29" cy="62" fill="#451a03" r="5" />
+  <circle cx="57" cy="62" fill="#451a03" r="5" />
+  <circle
+    cx="77"
+    cy="68"
+    fill="url(#ffSkin)"
+    r="13"
+    stroke="#5c3d2e"
+    stroke-width="3.6"
+  />
+  <path d="M65 64C67 53 87 53 89 64Z" fill="#451a03" />
+  <path
+    d="M39 70C41 73 45 73 47 70M73 71C75 74 79 74 81 71"
+    stroke="#451a03"
+    stroke-linecap="round"
+    stroke-width="2.6"
+  />
+</svg>

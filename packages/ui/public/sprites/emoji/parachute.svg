@@ -1,0 +1,49 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Dù lượn bầu trời</title>
+  <defs>
+    <radialGradient cx="50%" cy="25%" id="pcCanopy" r="70%">
+      <stop offset="0%" stop-color="#fde047" />
+      <stop offset="55%" stop-color="#fb923c" />
+      <stop offset="100%" stop-color="#ef4444" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#1e3a8a" opacity="0.22" rx="28" ry="4.5" />
+  <path
+    d="M24 52L54 84M46 50L58 84M74 50L62 84M96 52L66 84"
+    stroke="#475569"
+    stroke-linecap="round"
+    stroke-width="3.2"
+  />
+  <path
+    d="M18 52C18 26 37 14 60 14C83 14 102 26 102 52C91 46 81 46 74 52C65 46 55 46 46 52C39 46 29 46 18 52Z"
+    fill="url(#pcCanopy)"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M46 52C47 30 53 16 60 14C67 16 73 30 74 52C65 46 55 46 46 52Z"
+    fill="#38bdf8"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <rect
+    fill="#fbbf24"
+    height="16"
+    rx="5"
+    stroke="#78350f"
+    stroke-width="3.8"
+    width="20"
+    x="50"
+    y="82"
+  />
+  <circle
+    cx="60"
+    cy="76"
+    fill="#fed7aa"
+    r="6"
+    stroke="#78350f"
+    stroke-width="3.2"
+  />
+</svg>

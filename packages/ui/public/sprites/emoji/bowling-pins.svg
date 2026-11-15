@@ -1,0 +1,60 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bóng và ky bô-linh</title>
+  <defs>
+    <linearGradient id="bpPin" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#e2e8f0" />
+    </linearGradient>
+    <radialGradient cx="36%" cy="32%" id="bpBall" r="68%">
+      <stop offset="0%" stop-color="#818cf8" />
+      <stop offset="55%" stop-color="#4338ca" />
+      <stop offset="100%" stop-color="#1e1b4b" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e1b4b" opacity="0.24" rx="42" ry="5.5" />
+  <path
+    d="M35 20C40 20 43 24 42 30L40 42C47 52 49 72 44 92H26C21 72 23 52 30 42L28 30C27 24 30 20 35 20Z"
+    fill="url(#bpPin)"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <rect
+    fill="#ef4444"
+    height="5"
+    rx="2"
+    stroke="#7f1d1d"
+    stroke-width="2.4"
+    width="12"
+    x="29"
+    y="38"
+  />
+  <path
+    d="M61 16C67 16 70 21 69 27L67 40C75 51 77 73 72 94H50C45 73 47 51 55 40L53 27C52 21 55 16 61 16Z"
+    fill="url(#bpPin)"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <rect
+    fill="#ef4444"
+    height="5"
+    rx="2"
+    stroke="#7f1d1d"
+    stroke-width="2.4"
+    width="14"
+    x="54"
+    y="36"
+  />
+  <circle
+    cx="82"
+    cy="76"
+    fill="url(#bpBall)"
+    r="22"
+    stroke="#1e1b4b"
+    stroke-width="4"
+  />
+  <circle cx="76" cy="67" fill="#c7d2fe" r="2.8" />
+  <circle cx="84" cy="65" fill="#c7d2fe" r="2.8" />
+  <circle cx="82" cy="73" fill="#c7d2fe" r="2.8" />
+</svg>

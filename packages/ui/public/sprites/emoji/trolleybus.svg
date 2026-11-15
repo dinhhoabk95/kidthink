@@ -1,0 +1,81 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Xe buýt điện</title>
+  <defs>
+    <linearGradient id="tbBus" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="52%" stop-color="#4ade80" />
+      <stop offset="100%" stop-color="#16a34a" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#14532d" opacity="0.24" rx="44" ry="5.5" />
+  <path
+    d="M18 20H102"
+    stroke="#475569"
+    stroke-linecap="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M52 40L74 20M64 40L86 20"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <rect
+    fill="url(#tbBus)"
+    height="48"
+    rx="10"
+    stroke="#14532d"
+    stroke-width="4"
+    width="88"
+    x="16"
+    y="40"
+  />
+  <rect
+    fill="#bae6fd"
+    height="17"
+    rx="3.5"
+    stroke="#1e3a8a"
+    stroke-width="3.2"
+    width="20"
+    x="23"
+    y="48"
+  />
+  <rect
+    fill="#bae6fd"
+    height="17"
+    rx="3.5"
+    stroke="#1e3a8a"
+    stroke-width="3.2"
+    width="20"
+    x="50"
+    y="48"
+  />
+  <rect
+    fill="#bae6fd"
+    height="17"
+    rx="3.5"
+    stroke="#1e3a8a"
+    stroke-width="3.2"
+    width="20"
+    x="77"
+    y="48"
+  />
+  <circle
+    cx="36"
+    cy="90"
+    fill="#334155"
+    r="10"
+    stroke="#1e293b"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="84"
+    cy="90"
+    fill="#334155"
+    r="10"
+    stroke="#1e293b"
+    stroke-width="3.8"
+  />
+  <circle cx="36" cy="90" fill="#fde047" r="4" />
+  <circle cx="84" cy="90" fill="#fde047" r="4" />
+</svg>

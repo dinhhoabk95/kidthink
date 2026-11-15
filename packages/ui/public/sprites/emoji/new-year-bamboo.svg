@@ -1,0 +1,73 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cây nêu tre Tết</title>
+  <defs>
+    <linearGradient id="nyBam" x1="0%" x2="100%" y1="0%" y2="0%">
+      <stop offset="0%" stop-color="#bbf7d0" />
+      <stop offset="55%" stop-color="#22c55e" />
+      <stop offset="100%" stop-color="#15803d" />
+    </linearGradient>
+    <linearGradient id="nyPot" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb7185" />
+      <stop offset="100%" stop-color="#b91c1c" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#14532d" opacity="0.25" rx="36" ry="5.5" />
+  <path
+    d="M40 70V28L52 20V70Z"
+    fill="url(#nyBam)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M68 70V32L80 24V70Z"
+    fill="url(#nyBam)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M53 70V19L67 12V70Z"
+    fill="url(#nyBam)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M40 46H52M53 38H67M53 54H67M68 48H80"
+    stroke="#14532d"
+    stroke-width="3.2"
+  />
+  <path
+    d="M26 68C32 56 44 58 48 68ZM94 68C88 56 76 58 72 68Z"
+    fill="#16a34a"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M31 68H89L84 99H36Z"
+    fill="url(#nyPot)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#facc15"
+    height="8"
+    rx="3"
+    stroke="#78350f"
+    stroke-width="3.4"
+    width="56"
+    x="32"
+    y="79"
+  />
+  <circle
+    cx="60"
+    cy="68"
+    fill="#fde047"
+    r="7.5"
+    stroke="#78350f"
+    stroke-width="3.4"
+  />
+</svg>

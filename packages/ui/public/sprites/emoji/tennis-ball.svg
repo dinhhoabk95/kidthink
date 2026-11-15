@@ -1,0 +1,48 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bóng quần vợt</title>
+  <defs>
+    <radialGradient cx="36%" cy="30%" id="tbFelt" r="70%">
+      <stop offset="0%" stop-color="#ecfccb" />
+      <stop offset="55%" stop-color="#a3e635" />
+      <stop offset="100%" stop-color="#65a30d" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#365314" opacity="0.24" rx="35" ry="5.5" />
+  <circle
+    cx="60"
+    cy="58"
+    fill="url(#tbFelt)"
+    r="39"
+    stroke="#365314"
+    stroke-width="4.2"
+  />
+  <path
+    d="M27 38C44 43 52 73 35 89"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.92"
+    stroke-width="5"
+  />
+  <path
+    d="M85 27C68 43 76 73 93 78"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.92"
+    stroke-width="5"
+  />
+  <path
+    d="M27 38C44 43 52 73 35 89M85 27C68 43 76 73 93 78"
+    stroke="#365314"
+    stroke-linecap="round"
+    stroke-width="2"
+  />
+  <ellipse
+    cx="45"
+    cy="34"
+    fill="#ffffff"
+    fill-opacity="0.5"
+    rx="8"
+    ry="3.8"
+    transform="rotate(-24 45 34)"
+  />
+</svg>

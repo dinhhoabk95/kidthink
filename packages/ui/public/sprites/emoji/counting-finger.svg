@@ -1,0 +1,86 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ngón tay đếm</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="cntSkin" r="70%">
+      <stop offset="0%" stop-color="#ffedd5" />
+      <stop offset="55%" stop-color="#fdba74" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </radialGradient>
+    <radialGradient cx="40%" cy="35%" id="cntStar" r="65%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="60%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#d97706" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="56" cy="105" fill="#7c2d12" opacity="0.24" rx="28" ry="5" />
+  <rect
+    fill="#2dd4bf"
+    height="15"
+    rx="7"
+    stroke="#134e4a"
+    stroke-width="3.8"
+    width="40"
+    x="36"
+    y="85"
+  />
+  <path
+    d="M36 52V22C36 16 40 12 45 12C50 12 54 16 54 22V48H74C81 48 86 54 86 62V73C86 83 78 89 66 89H46C36 89 31 82 31 72V60C31 55 33 53 36 52Z"
+    fill="url(#cntSkin)"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#fed7aa"
+    height="17"
+    rx="5.5"
+    stroke="#7c2d12"
+    stroke-width="3.6"
+    width="11"
+    x="54"
+    y="46"
+  />
+  <rect
+    fill="#fed7aa"
+    height="17"
+    rx="5.5"
+    stroke="#7c2d12"
+    stroke-width="3.6"
+    width="11"
+    x="65"
+    y="49"
+  />
+  <rect
+    fill="#fed7aa"
+    height="16"
+    rx="5.5"
+    stroke="#7c2d12"
+    stroke-width="3.6"
+    width="11"
+    x="75"
+    y="53"
+  />
+  <path
+    d="M31 66C31 59 38 56 45 60L53 65C56 68 54 74 49 74H35"
+    fill="#fdba74"
+    stroke="#7c2d12"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M84 14L88 22L97 23L90 29L92 38L84 33L76 38L78 29L71 23L80 22Z"
+    fill="url(#cntStar)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <ellipse
+    cx="45"
+    cy="20"
+    fill="#ffffff"
+    fill-opacity="0.7"
+    rx="3.2"
+    ry="4.2"
+  />
+</svg>

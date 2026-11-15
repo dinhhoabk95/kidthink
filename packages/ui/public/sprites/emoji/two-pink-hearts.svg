@@ -1,0 +1,52 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đôi trái tim hồng</title>
+  <defs>
+    <radialGradient cx="36%" cy="30%" id="tphA" r="70%">
+      <stop offset="0%" stop-color="#fce7f3" />
+      <stop offset="50%" stop-color="#f472b6" />
+      <stop offset="100%" stop-color="#db2777" />
+    </radialGradient>
+    <radialGradient cx="36%" cy="30%" id="tphB" r="70%">
+      <stop offset="0%" stop-color="#ffe4e6" />
+      <stop offset="52%" stop-color="#fb7185" />
+      <stop offset="100%" stop-color="#e11d48" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="52" cy="107" fill="#831843" opacity="0.22" rx="34" ry="5" />
+  <g transform="rotate(-12 44 68)">
+    <path
+      d="M44 98C41 98 12 78 12 56C12 43 22 35 33 35C39 35 42 39 44 43C46 39 49 35 55 35C66 35 76 43 76 56C76 78 47 98 44 98Z"
+      fill="url(#tphA)"
+      stroke="#831843"
+      stroke-linejoin="round"
+      stroke-width="3.8"
+    />
+    <ellipse
+      cx="28"
+      cy="48"
+      fill="#ffffff"
+      fill-opacity="0.65"
+      rx="6.5"
+      ry="3"
+      transform="rotate(-25 28 48)"
+    />
+  </g>
+  <g transform="rotate(14 84 39)">
+    <path
+      d="M84 61C82 61 62 47 62 32C62 23 69 18 76 18C80 18 83 20 84 24C85 20 88 18 92 18C99 18 106 23 106 32C106 47 86 61 84 61Z"
+      fill="url(#tphB)"
+      stroke="#881337"
+      stroke-linejoin="round"
+      stroke-width="3.6"
+    />
+    <ellipse
+      cx="73"
+      cy="27"
+      fill="#ffffff"
+      fill-opacity="0.65"
+      rx="4.5"
+      ry="2.2"
+      transform="rotate(-25 73 27)"
+    />
+  </g>
+</svg>

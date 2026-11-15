@@ -1,0 +1,44 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Áo sơ mi cà vạt</title>
+  <defs>
+    <linearGradient id="snShirt" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#e0f2fe" />
+      <stop offset="100%" stop-color="#7dd3fc" />
+    </linearGradient>
+    <linearGradient id="snTie" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb7185" />
+      <stop offset="100%" stop-color="#dc2626" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#1e3a8a" opacity="0.24" rx="38" ry="6" />
+  <rect
+    fill="url(#snShirt)"
+    height="68"
+    rx="12"
+    stroke="#1e3a8a"
+    stroke-width="4"
+    width="68"
+    x="26"
+    y="28"
+  />
+  <path
+    d="M38 24L60 44L46 52L32 32ZM82 24L60 44L74 52L88 32Z"
+    fill="#ffffff"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M54 42H66L63 52H57ZM57 52H63L68 80L60 90L52 80Z"
+    fill="url(#snTie)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M56 62L65 67M54 72L66 78"
+    stroke="#fef08a"
+    stroke-linecap="round"
+    stroke-width="2.6"
+  />
+</svg>

@@ -1,0 +1,28 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Dấu vô cực</title>
+  <defs>
+    <linearGradient id="ilGrad" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="52%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#a855f7" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="98" fill="#1e3a8a" opacity="0.24" rx="40" ry="5.5" />
+  <path
+    d="M36 37C47 37 54 44 60 51C66 44 73 37 84 37C98 37 108 47 108 60C108 73 98 83 84 83C73 83 66 76 60 69C54 76 47 83 36 83C22 83 12 73 12 60C12 47 22 37 36 37ZM36 51C30 51 26 55 26 60C26 65 30 69 36 69C42 69 46 65 51 60C46 55 42 51 36 51ZM84 51C78 51 74 55 69 60C74 65 78 69 84 69C90 69 94 65 94 60C94 55 90 51 84 51Z"
+    fill="url(#ilGrad)"
+    fill-rule="evenodd"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="32"
+    cy="43"
+    fill="#ffffff"
+    fill-opacity="0.65"
+    rx="7"
+    ry="2.8"
+    transform="rotate(-18 32 43)"
+  />
+</svg>

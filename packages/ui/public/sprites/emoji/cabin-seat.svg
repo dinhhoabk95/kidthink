@@ -1,0 +1,53 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ghế ngồi êm</title>
+  <defs>
+    <linearGradient id="csPad" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#60a5fa" />
+      <stop offset="100%" stop-color="#2563eb" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#1e3a8a" opacity="0.24" rx="36" ry="5" />
+  <path
+    d="M46 84V98M74 84V98M36 98H84"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <path
+    d="M34 24C34 18 39 14 45 14H57C63 14 68 18 68 24V68H34Z"
+    fill="url(#csPad)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#fef3c7"
+    height="12"
+    rx="5"
+    stroke="#78350f"
+    stroke-width="3.2"
+    width="24"
+    x="39"
+    y="20"
+  />
+  <rect
+    fill="url(#csPad)"
+    height="18"
+    rx="8"
+    stroke="#1e3a8a"
+    stroke-width="4"
+    width="58"
+    x="32"
+    y="68"
+  />
+  <rect
+    fill="#fb923c"
+    height="9"
+    rx="4.5"
+    stroke="#7c2d12"
+    stroke-width="3.4"
+    width="38"
+    x="42"
+    y="55"
+  />
+</svg>

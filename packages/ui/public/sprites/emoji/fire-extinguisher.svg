@@ -1,0 +1,70 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bình chữa cháy</title>
+  <defs>
+    <linearGradient id="feTank" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fca5a5" />
+      <stop offset="45%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#b91c1c" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#7f1d1d" opacity="0.25" rx="28" ry="5.5" />
+  <path
+    d="M52 28C34 28 24 40 24 60V82L32 82"
+    stroke="#44403c"
+    stroke-linecap="round"
+    stroke-width="4.5"
+  />
+  <path
+    d="M20 78H30L28 90H22L20 78Z"
+    fill="#57534e"
+    stroke="#292524"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M54 18H82L76 26H54V18ZM54 24L80 12"
+    stroke="#44403c"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <rect
+    fill="#94a3b8"
+    height="12"
+    rx="3"
+    stroke="#334155"
+    stroke-width="3.6"
+    width="16"
+    x="52"
+    y="23"
+  />
+  <rect
+    fill="url(#feTank)"
+    height="68"
+    rx="18"
+    stroke="#7f1d1d"
+    stroke-width="4"
+    width="44"
+    x="38"
+    y="34"
+  />
+  <rect
+    fill="#fef3c7"
+    height="22"
+    rx="5"
+    stroke="#78350f"
+    stroke-width="3.4"
+    width="28"
+    x="46"
+    y="56"
+  />
+  <circle
+    cx="60"
+    cy="28"
+    fill="#fde047"
+    r="5.5"
+    stroke="#78350f"
+    stroke-width="3.2"
+  />
+  <ellipse cx="48" cy="48" fill="#ffffff" fill-opacity="0.6" rx="4" ry="8" />
+</svg>

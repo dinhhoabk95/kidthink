@@ -1,0 +1,50 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Áo choàng bác sĩ</title>
+  <defs>
+    <linearGradient id="wlcCoat" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="65%" stop-color="#f8fafc" />
+      <stop offset="100%" stop-color="#cbd5e1" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#334155" opacity="0.24" rx="38" ry="6" />
+  <path
+    d="M46 24H74L60 54Z"
+    fill="#38bdf8"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M36 24L16 48L26 58L36 46V96H84V46L94 58L104 48L84 24H72L60 54L48 24Z"
+    fill="url(#wlcCoat)"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M48 24L38 46L56 54M72 24L82 46L64 54M60 54V96"
+    stroke="#475569"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <rect
+    fill="#f1f5f9"
+    height="14"
+    rx="3"
+    stroke="#475569"
+    stroke-width="3.2"
+    width="14"
+    x="66"
+    y="60"
+  />
+  <path
+    d="M73 63V71M69 67H77"
+    stroke="#0d9488"
+    stroke-linecap="round"
+    stroke-width="2.8"
+  />
+  <circle cx="55" cy="66" fill="#475569" r="2.4" />
+  <circle cx="55" cy="78" fill="#475569" r="2.4" />
+</svg>

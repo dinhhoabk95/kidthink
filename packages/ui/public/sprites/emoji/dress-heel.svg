@@ -1,0 +1,32 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Giày cao gót</title>
+  <defs>
+    <linearGradient id="dhRuby" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb7185" />
+      <stop offset="55%" stop-color="#e11d48" />
+      <stop offset="100%" stop-color="#9f1239" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#881337" opacity="0.24" rx="42" ry="6" />
+  <path
+    d="M22 36C32 34 38 44 48 62C60 78 74 78 90 78C100 78 104 86 98 92H58C48 92 42 74 34 66V92H24V50C20 44 18 38 22 36Z"
+    fill="url(#dhRuby)"
+    stroke="#6b1220"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M32 42C42 58 58 76 82 76"
+    stroke="#fde68a"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+  <circle
+    cx="88"
+    cy="74"
+    fill="#fde047"
+    r="5.5"
+    stroke="#78350f"
+    stroke-width="3.2"
+  />
+</svg>

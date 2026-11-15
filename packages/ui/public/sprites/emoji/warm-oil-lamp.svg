@@ -1,0 +1,40 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ngọn đèn gốm</title>
+  <defs>
+    <radialGradient cx="50%" cy="62%" id="olFlame" r="65%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="45%" stop-color="#fef08a" />
+      <stop offset="100%" stop-color="#f97316" />
+    </radialGradient>
+    <linearGradient id="olClay" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb923c" />
+      <stop offset="100%" stop-color="#9a3412" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#7c2d12" opacity="0.25" rx="38" ry="5.5" />
+  <path
+    d="M60 15C60 15 78 36 78 50C78 60 70 67 60 67C50 67 42 60 42 50C42 36 60 15 60 15Z"
+    fill="url(#olFlame)"
+    stroke="#9a3412"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M60 33C60 33 69 44 69 52C69 57 65 61 60 61C55 61 51 57 51 52C51 44 60 33 60 33Z"
+    fill="#fef9c3"
+  />
+  <path
+    d="M16 66C30 62 46 69 60 69C74 69 90 62 104 66C99 88 81 98 60 98C39 98 21 88 16 66Z"
+    fill="url(#olClay)"
+    stroke="#5c3d2e"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M27 77C42 84 78 84 93 77"
+    stroke="#fde047"
+    stroke-linecap="round"
+    stroke-opacity="0.88"
+    stroke-width="3"
+  />
+</svg>

@@ -1,0 +1,42 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Trái tim xanh lá</title>
+  <defs>
+    <radialGradient cx="36%" cy="28%" id="ghGrn" r="72%">
+      <stop offset="0%" stop-color="#bbf7d0" />
+      <stop offset="50%" stop-color="#22c55e" />
+      <stop offset="100%" stop-color="#15803d" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#14532d" opacity="0.24" rx="32" ry="5" />
+  <path
+    d="M60 99C56 99 17 73 17 45C17 29 30 19 44 19C52 19 57 24 60 30C63 24 68 19 76 19C90 19 103 29 103 45C103 73 64 99 60 99Z"
+    fill="#15803d"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+    transform="translate(0 4)"
+  />
+  <path
+    d="M60 95C56 95 17 69 17 41C17 25 30 15 44 15C52 15 57 20 60 26C63 20 68 15 76 15C90 15 103 25 103 41C103 69 64 95 60 95Z"
+    fill="url(#ghGrn)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M60 26C63 14 76 10 82 17C76 25 66 28 60 26Z"
+    fill="#86efac"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <ellipse
+    cx="37"
+    cy="34"
+    fill="#ffffff"
+    fill-opacity="0.65"
+    rx="9"
+    ry="4.5"
+    transform="rotate(-28 37 34)"
+  />
+</svg>

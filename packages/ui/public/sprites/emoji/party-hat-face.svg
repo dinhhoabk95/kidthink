@@ -1,0 +1,81 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đội mũ dự tiệc</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="phfFace" r="70%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="56%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#eab308" />
+    </radialGradient>
+    <linearGradient id="phfHat" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#f472b6" />
+      <stop offset="50%" stop-color="#a855f7" />
+      <stop offset="100%" stop-color="#3b82f6" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="56" cy="108" fill="#78350f" opacity="0.24" rx="35" ry="5" />
+  <circle
+    cx="55"
+    cy="66"
+    fill="url(#phfFace)"
+    r="35"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M26 42L44 12L69 36Z"
+    fill="url(#phfHat)"
+    stroke="#4c1d95"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M33 32L56 24"
+    stroke="#fde047"
+    stroke-linecap="round"
+    stroke-opacity="0.9"
+    stroke-width="3"
+  />
+  <circle
+    cx="44"
+    cy="11"
+    fill="#fde047"
+    r="6.5"
+    stroke="#78350f"
+    stroke-width="3.6"
+  />
+  <path
+    d="M36 61C39 56 45 56 48 61M61 61C64 56 70 56 73 61"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <circle cx="33" cy="71" fill="#fb7185" fill-opacity="0.55" r="6" />
+  <path d="M52 78C52 73 60 73 60 78C60 83 52 83 52 78Z" fill="#5c3d2e" />
+  <path
+    d="M58 77L92 71C99 70 105 75 104 82C103 88 96 90 92 85C89 81 94 77 98 79"
+    fill="#fb923c"
+    stroke="#7c2d12"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="94"
+    cy="40"
+    fill="#34d399"
+    r="4.5"
+    stroke="#14532d"
+    stroke-width="3.2"
+  />
+  <rect
+    fill="#fb7185"
+    height="8"
+    rx="2"
+    stroke="#881337"
+    stroke-width="3.2"
+    transform="rotate(25 18 32)"
+    width="8"
+    x="14"
+    y="28"
+  />
+</svg>

@@ -1,0 +1,61 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bình sữa em bé</title>
+  <defs>
+    <linearGradient id="bbMilk" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="65%" stop-color="#fef3c7" />
+      <stop offset="100%" stop-color="#fde68a" />
+    </linearGradient>
+    <linearGradient id="bbCap" x1="0%" x2="100%" y1="0%" y2="0%">
+      <stop offset="0%" stop-color="#7dd3fc" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="58" cy="106" fill="#0c4a6e" opacity="0.24" rx="32" ry="5.5" />
+  <g transform="rotate(26 60 60)">
+    <path
+      d="M51 28C51 17 55 12 60 12C65 12 69 17 69 28L74 36H46Z"
+      fill="#fbbf24"
+      stroke="#78350f"
+      stroke-linejoin="round"
+      stroke-width="3.8"
+    />
+    <rect
+      fill="url(#bbCap)"
+      height="13"
+      rx="6"
+      stroke="#0c4a6e"
+      stroke-width="3.8"
+      width="44"
+      x="38"
+      y="34"
+    />
+    <rect
+      fill="url(#bbMilk)"
+      height="54"
+      rx="14"
+      stroke="#475569"
+      stroke-width="4"
+      width="42"
+      x="39"
+      y="46"
+    />
+    <path
+      d="M41 64C50 60 70 68 79 64V86C79 93 73 98 66 98H54C47 98 41 93 41 86Z"
+      fill="#fffbeb"
+    />
+    <path
+      d="M65 58H73M65 70H73M65 82H73"
+      stroke="#475569"
+      stroke-linecap="round"
+      stroke-width="3.2"
+    />
+    <path
+      d="M47 54V86"
+      stroke="#ffffff"
+      stroke-linecap="round"
+      stroke-opacity="0.85"
+      stroke-width="4"
+    />
+  </g>
+</svg>

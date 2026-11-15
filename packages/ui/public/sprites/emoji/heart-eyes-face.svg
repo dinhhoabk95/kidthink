@@ -1,0 +1,47 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đôi mắt trái tim</title>
+  <defs>
+    <radialGradient cx="36%" cy="28%" id="hefGold" r="70%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="55%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#eab308" />
+    </radialGradient>
+    <linearGradient id="hefHeart" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb7185" />
+      <stop offset="100%" stop-color="#e11d48" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.24" rx="38" ry="6" />
+  <circle
+    cx="60"
+    cy="58"
+    fill="url(#hefGold)"
+    r="40"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M43 42C43 34 54 34 54 42C54 50 43 57 43 57C43 57 32 50 32 42C32 34 43 34 43 42Z"
+    fill="url(#hefHeart)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+    transform="rotate(-10 43 45)"
+  />
+  <path
+    d="M77 42C77 34 88 34 88 42C88 50 77 57 77 57C77 57 66 50 66 42C66 34 77 34 77 42Z"
+    fill="url(#hefHeart)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+    transform="rotate(10 77 45)"
+  />
+  <path
+    d="M42 68H78C77 82 69 88 60 88C51 88 43 82 42 68Z"
+    fill="#9f1239"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <ellipse cx="60" cy="83" fill="#fb7185" rx="11" ry="4.5" />
+</svg>

@@ -1,0 +1,43 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mây tuyết rơi</title>
+  <defs>
+    <linearGradient id="scTop" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#f0f9ff" />
+      <stop offset="100%" stop-color="#bae6fd" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#1e3a8a" opacity="0.22" rx="38" ry="5" />
+  <path
+    d="M28 68C17 68 13 57 19 48C21 36 33 30 43 34C50 20 70 18 80 31C92 31 102 40 101 52C100 63 92 68 82 68Z"
+    fill="url(#scTop)"
+    stroke="#1e3a5f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="38"
+    cy="84"
+    fill="#e0f2fe"
+    r="6"
+    stroke="#0369a1"
+    stroke-width="3.4"
+  />
+  <circle
+    cx="60"
+    cy="92"
+    fill="#e0f2fe"
+    r="6.5"
+    stroke="#0369a1"
+    stroke-width="3.4"
+  />
+  <circle
+    cx="82"
+    cy="83"
+    fill="#e0f2fe"
+    r="6"
+    stroke="#0369a1"
+    stroke-width="3.4"
+  />
+  <circle cx="49" cy="77" fill="#7dd3fc" r="3" />
+  <circle cx="72" cy="76" fill="#7dd3fc" r="3" />
+</svg>

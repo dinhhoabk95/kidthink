@@ -1,0 +1,42 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mũ cứu hộ</title>
+  <defs>
+    <radialGradient cx="38%" cy="28%" id="rhDome" r="70%">
+      <stop offset="0%" stop-color="#fb7185" />
+      <stop offset="55%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#b91c1c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="102" fill="#7f1d1d" opacity="0.24" rx="44" ry="6" />
+  <path
+    d="M20 74C20 42 36 24 60 24C84 24 100 42 100 74Z"
+    fill="url(#rhDome)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#fde047"
+    height="11"
+    rx="5.5"
+    stroke="#78350f"
+    stroke-width="3.8"
+    width="92"
+    x="14"
+    y="72"
+  />
+  <circle
+    cx="60"
+    cy="52"
+    fill="#ffffff"
+    r="15"
+    stroke="#7f1d1d"
+    stroke-width="3.6"
+  />
+  <path
+    d="M60 43V61M51 52H69"
+    stroke="#dc2626"
+    stroke-linecap="round"
+    stroke-width="5"
+  />
+</svg>

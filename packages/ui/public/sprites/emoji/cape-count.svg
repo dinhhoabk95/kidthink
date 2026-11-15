@@ -1,0 +1,76 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Nhân vật hoá trang đêm</title>
+  <defs>
+    <linearGradient id="ccCape" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#6d28d9" />
+      <stop offset="100%" stop-color="#312e81" />
+    </linearGradient>
+    <radialGradient cx="42%" cy="36%" id="ccFace" r="68%">
+      <stop offset="0%" stop-color="#fff7ed" />
+      <stop offset="100%" stop-color="#fed7aa" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#312e81" opacity="0.24" rx="38" ry="5.5" />
+  <path
+    d="M24 54L34 38H86L96 54L86 68H34Z"
+    fill="#be123c"
+    stroke="#4c1d95"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M20 99C24 75 38 66 60 66C82 66 96 75 100 99C78 103 42 103 20 99Z"
+    fill="url(#ccCape)"
+    stroke="#312e81"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M44 68L60 95L76 68Z"
+    fill="#fef3c7"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <polygon
+    fill="#f43f5e"
+    points="50,70 60,75 50,80"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3"
+  />
+  <polygon
+    fill="#f43f5e"
+    points="70,70 60,75 70,80"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3"
+  />
+  <circle
+    cx="60"
+    cy="48"
+    fill="url(#ccFace)"
+    r="20"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <path
+    d="M40 44C41 27 52 22 60 28C68 22 79 27 80 44C72 37 64 38 60 43C56 38 48 37 40 44Z"
+    fill="#292524"
+    stroke="#1c1917"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle cx="52" cy="49" fill="#1c1917" r="2.8" />
+  <circle cx="68" cy="49" fill="#1c1917" r="2.8" />
+  <circle cx="46" cy="54" fill="#fb7185" fill-opacity="0.5" r="3.4" />
+  <circle cx="74" cy="54" fill="#fb7185" fill-opacity="0.5" r="3.4" />
+  <path
+    d="M53 56C57 60 63 60 67 56"
+    stroke="#881337"
+    stroke-linecap="round"
+    stroke-width="2.8"
+  />
+  <circle cx="34" cy="86" fill="#fde047" r="2.6" />
+  <circle cx="85" cy="84" fill="#fde047" r="2.4" />
+</svg>

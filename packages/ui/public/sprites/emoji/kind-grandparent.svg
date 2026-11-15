@@ -1,0 +1,84 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ông bà hiền từ</title>
+  <defs>
+    <radialGradient cx="40%" cy="32%" id="kgSkin" r="70%">
+      <stop offset="0%" stop-color="#fffbeb" />
+      <stop offset="60%" stop-color="#fed7aa" />
+      <stop offset="100%" stop-color="#fdba74" />
+    </radialGradient>
+    <radialGradient cx="40%" cy="30%" id="kgHair" r="70%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="70%" stop-color="#e7e5e4" />
+      <stop offset="100%" stop-color="#cbd5e1" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#5c3d2e" opacity="0.24" rx="36" ry="5" />
+  <path
+    d="M28 102C30 85 43 78 60 78C77 78 90 85 92 102Z"
+    fill="#d97706"
+    stroke="#5c3d2e"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="60"
+    cy="19"
+    fill="url(#kgHair)"
+    r="12"
+    stroke="#57534e"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="60"
+    cy="56"
+    fill="url(#kgSkin)"
+    r="31"
+    stroke="#5c3d2e"
+    stroke-width="4"
+  />
+  <path
+    d="M28 52C26 29 44 21 60 23C76 21 94 29 92 52C83 39 71 36 60 39C49 36 37 39 28 52Z"
+    fill="url(#kgHair)"
+    stroke="#57534e"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="47"
+    cy="57"
+    fill="#ffffff"
+    fill-opacity="0.55"
+    r="9"
+    stroke="#5c3d2e"
+    stroke-width="3.4"
+  />
+  <circle
+    cx="73"
+    cy="57"
+    fill="#ffffff"
+    fill-opacity="0.55"
+    r="9"
+    stroke="#5c3d2e"
+    stroke-width="3.4"
+  />
+  <path
+    d="M56 57H64"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M44 57C46 54 49 54 51 57M69 57C71 54 74 54 76 57"
+    stroke="#451a03"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+  <circle cx="38" cy="67" fill="#fb7185" fill-opacity="0.5" r="5" />
+  <circle cx="82" cy="67" fill="#fb7185" fill-opacity="0.5" r="5" />
+  <path
+    d="M51 73C56 78 64 78 69 73"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+</svg>

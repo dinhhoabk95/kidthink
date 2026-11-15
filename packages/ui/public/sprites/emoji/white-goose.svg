@@ -1,0 +1,60 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Con ngỗng trắng</title>
+  <defs>
+    <radialGradient cx="36%" cy="30%" id="wgFeather" r="70%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="65%" stop-color="#f8fafc" />
+      <stop offset="100%" stop-color="#e2e8f0" />
+    </radialGradient>
+    <linearGradient id="wgBill" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fdba74" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="56" cy="104" fill="#475569" opacity="0.24" rx="34" ry="6" />
+  <path
+    d="M49 86V100M43 100H55M63 86V100M57 100H69"
+    stroke="#c2410c"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <path
+    d="M22 68C16 62 18 54 27 56L40 58C56 54 74 58 78 70C81 82 68 90 48 90C32 90 25 80 22 68Z"
+    fill="url(#wgFeather)"
+    stroke="#475569"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M66 64C64 48 67 30 74 23C80 18 88 21 88 29C88 36 81 42 79 54C78 62 79 68 75 73"
+    fill="url(#wgFeather)"
+    stroke="#475569"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="80"
+    cy="27"
+    fill="url(#wgFeather)"
+    r="11"
+    stroke="#475569"
+    stroke-width="4"
+  />
+  <path
+    d="M88 22C92 19 95 21 95 24C102 25 106 28 105 32C103 35 95 35 88 33Z"
+    fill="url(#wgBill)"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M36 67C46 62 60 64 64 73C56 80 42 80 36 67Z"
+    fill="#f1f5f9"
+    stroke="#475569"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle cx="81" cy="26" fill="#1c1917" r="2.8" />
+  <circle cx="80.2" cy="25" fill="#ffffff" r="1.1" />
+  <circle cx="76" cy="31" fill="#fb7185" fill-opacity="0.45" r="3.2" />
+</svg>

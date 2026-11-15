@@ -1,0 +1,44 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mắt xích nối</title>
+  <defs>
+    <linearGradient id="clMetal" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#e0f2fe" />
+      <stop offset="55%" stop-color="#94a3b8" />
+      <stop offset="100%" stop-color="#64748b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#1e293b" opacity="0.24" rx="38" ry="5.5" />
+  <g transform="rotate(-38 45 68)">
+    <path
+      d="M26 50H64C74 50 82 58 82 68C82 78 74 86 64 86H26C16 86 8 78 8 68C8 58 16 50 26 50ZM28 60C23 60 19 63.5 19 68C19 72.5 23 76 28 76H62C67 76 71 72.5 71 68C71 63.5 67 60 62 60Z"
+      fill="url(#clMetal)"
+      fill-rule="evenodd"
+      stroke="#1e293b"
+      stroke-linejoin="round"
+      stroke-width="4"
+    />
+  </g>
+  <g transform="rotate(-38 75 46)">
+    <path
+      d="M56 28H94C104 28 112 36 112 46C112 56 104 64 94 64H56C46 64 38 56 38 46C38 36 46 28 56 28ZM58 38C53 38 49 41.5 49 46C49 50.5 53 54 58 54H92C97 54 101 50.5 101 46C101 41.5 97 38 92 38Z"
+      fill="url(#clMetal)"
+      fill-rule="evenodd"
+      stroke="#1e293b"
+      stroke-linejoin="round"
+      stroke-width="4"
+    />
+  </g>
+  <rect
+    fill="#bae6fd"
+    height="10"
+    rx="5"
+    stroke="#1e3a8a"
+    stroke-width="3.6"
+    transform="rotate(-38 60 57)"
+    width="26"
+    x="47"
+    y="52"
+  />
+  <circle cx="31" cy="79" fill="#ffffff" fill-opacity="0.65" r="3" />
+  <circle cx="89" cy="35" fill="#ffffff" fill-opacity="0.65" r="3" />
+</svg>

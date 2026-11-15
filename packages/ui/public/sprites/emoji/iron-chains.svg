@@ -1,0 +1,80 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Dây xích đôi</title>
+  <defs>
+    <linearGradient id="icBar" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#cbd5e1" />
+      <stop offset="100%" stop-color="#64748b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#1e293b" opacity="0.23" rx="36" ry="5" />
+  <rect
+    fill="url(#icBar)"
+    height="12"
+    rx="6"
+    stroke="#1e293b"
+    stroke-width="3.8"
+    width="68"
+    x="26"
+    y="18"
+  />
+  <rect
+    fill="none"
+    height="22"
+    rx="8"
+    stroke="#334155"
+    stroke-width="4.2"
+    width="16"
+    x="34"
+    y="30"
+  />
+  <rect
+    fill="none"
+    height="22"
+    rx="8"
+    stroke="#475569"
+    stroke-width="4.2"
+    width="16"
+    x="34"
+    y="51"
+  />
+  <rect
+    fill="none"
+    height="22"
+    rx="8"
+    stroke="#334155"
+    stroke-width="4.2"
+    width="16"
+    x="34"
+    y="72"
+  />
+  <rect
+    fill="none"
+    height="22"
+    rx="8"
+    stroke="#334155"
+    stroke-width="4.2"
+    width="16"
+    x="70"
+    y="30"
+  />
+  <rect
+    fill="none"
+    height="22"
+    rx="8"
+    stroke="#475569"
+    stroke-width="4.2"
+    width="16"
+    x="70"
+    y="51"
+  />
+  <rect
+    fill="none"
+    height="22"
+    rx="8"
+    stroke="#334155"
+    stroke-width="4.2"
+    width="16"
+    x="70"
+    y="72"
+  />
+</svg>

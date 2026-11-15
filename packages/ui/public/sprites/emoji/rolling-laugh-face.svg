@@ -1,0 +1,51 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cười nghiêng ngả</title>
+  <defs>
+    <radialGradient cx="36%" cy="28%" id="rlfGold" r="70%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="55%" stop-color="#fde047" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.24" rx="38" ry="6" />
+  <g transform="rotate(-24 60 58)">
+    <circle
+      cx="60"
+      cy="58"
+      fill="url(#rlfGold)"
+      r="38"
+      stroke="#78350f"
+      stroke-width="4"
+    />
+    <path
+      d="M35 44L48 50L35 56M85 44L72 50L85 56"
+      stroke="#78350f"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="4.2"
+    />
+    <path
+      d="M36 63H84C82 82 72 88 60 88C48 88 38 82 36 63Z"
+      fill="#9f1239"
+      stroke="#78350f"
+      stroke-linejoin="round"
+      stroke-width="3.8"
+    />
+    <path d="M39 64H81L78 71H42Z" fill="#ffffff" />
+    <ellipse cx="60" cy="82" fill="#fb7185" rx="11" ry="4.5" />
+  </g>
+  <path
+    d="M24 64C12 68 8 78 14 84C20 88 26 78 24 64Z"
+    fill="#38bdf8"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M88 34C98 28 108 32 106 40C104 47 94 44 88 34Z"
+    fill="#38bdf8"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+</svg>

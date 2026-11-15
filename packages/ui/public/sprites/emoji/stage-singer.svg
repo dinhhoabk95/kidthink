@@ -1,0 +1,73 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cô ca sĩ</title>
+  <defs>
+    <radialGradient cx="40%" cy="35%" id="ssSkin" r="68%">
+      <stop offset="0%" stop-color="#ffedd5" />
+      <stop offset="100%" stop-color="#fdba74" />
+    </radialGradient>
+    <linearGradient id="ssHair" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#f472b6" />
+      <stop offset="55%" stop-color="#db2777" />
+      <stop offset="100%" stop-color="#9333ea" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="58" cy="106" fill="#4c1d95" opacity="0.24" rx="36" ry="5.5" />
+  <path
+    d="M26 46C18 62 24 82 36 84H80C92 82 96 60 88 46C80 24 36 24 26 46Z"
+    fill="url(#ssHair)"
+    stroke="#4c1d95"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M28 100C30 82 42 75 58 75C74 75 86 82 88 100H28Z"
+    fill="#a855f7"
+    stroke="#4c1d95"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="58"
+    cy="55"
+    fill="url(#ssSkin)"
+    r="19"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <path
+    d="M39 46C45 34 71 34 77 48C68 42 50 42 39 46Z"
+    fill="url(#ssHair)"
+    stroke="#4c1d95"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle cx="51" cy="55" fill="#1c1917" r="2.8" />
+  <circle cx="65" cy="55" fill="#1c1917" r="2.8" />
+  <path
+    d="M53 63C56 67 60 67 63 63"
+    stroke="#7c2d12"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+  <path
+    d="M88 76L98 96"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-width="4.5"
+  />
+  <circle
+    cx="85"
+    cy="70"
+    fill="#cbd5e1"
+    r="8"
+    stroke="#334155"
+    stroke-width="3.6"
+  />
+  <path
+    d="M92 32L95 38L101 40L95 42L92 48L89 42L83 40L89 38Z"
+    fill="#fde047"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+</svg>

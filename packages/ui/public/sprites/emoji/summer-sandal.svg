@@ -1,0 +1,50 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đôi xăng-đan</title>
+  <defs>
+    <linearGradient id="ssCork" x1="0%" x2="100%" y1="0%" y2="0%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+    <linearGradient id="ssStrap" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#5eead4" />
+      <stop offset="100%" stop-color="#0d9488" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#5c2d16" opacity="0.24" rx="44" ry="6" />
+  <path
+    d="M16 80H102C105 80 106 88 100 90H44V94H20C16 94 14 86 16 80Z"
+    fill="url(#ssCork)"
+    stroke="#5c2d16"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M22 80C20 56 30 46 42 52L36 80Z"
+    fill="url(#ssStrap)"
+    stroke="#134e4a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M34 56H66L60 66H32Z"
+    fill="url(#ssStrap)"
+    stroke="#134e4a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M72 80C74 64 88 64 92 80Z"
+    fill="url(#ssStrap)"
+    stroke="#134e4a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="48"
+    cy="61"
+    fill="#fde047"
+    r="4.5"
+    stroke="#78350f"
+    stroke-width="2.8"
+  />
+</svg>

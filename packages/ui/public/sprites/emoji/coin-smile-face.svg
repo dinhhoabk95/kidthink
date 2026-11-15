@@ -1,0 +1,70 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Tiết kiệm giỏi</title>
+  <defs>
+    <radialGradient cx="38%" cy="28%" id="cmFace" r="70%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="54%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#eab308" />
+    </radialGradient>
+    <linearGradient id="cmGold" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#78350f" opacity="0.24" rx="36" ry="5.5" />
+  <circle
+    cx="60"
+    cy="56"
+    fill="url(#cmFace)"
+    r="39"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <circle
+    cx="43"
+    cy="50"
+    fill="url(#cmGold)"
+    r="10.5"
+    stroke="#78350f"
+    stroke-width="3.6"
+  />
+  <path
+    d="M43 44V56M40 47H46M40 53H46"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="2.6"
+  />
+  <circle
+    cx="77"
+    cy="50"
+    fill="url(#cmGold)"
+    r="10.5"
+    stroke="#78350f"
+    stroke-width="3.6"
+  />
+  <path
+    d="M77 44V56M74 47H80M74 53H80"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="2.6"
+  />
+  <path
+    d="M43 69H77C77 80 68 85 60 85C52 85 43 80 43 69Z"
+    fill="#15803d"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="60"
+    cy="84"
+    fill="url(#cmGold)"
+    r="11"
+    stroke="#78350f"
+    stroke-width="3.6"
+  />
+  <polygon
+    fill="#fef9c3"
+    points="60,78 62,82 66,82 63,85 64,89 60,87 56,89 57,85 54,82 58,82"
+  />
+</svg>

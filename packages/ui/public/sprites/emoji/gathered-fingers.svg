@@ -1,0 +1,49 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chụm đầu ngón tay</title>
+  <defs>
+    <radialGradient cx="42%" cy="35%" id="gfSkin" r="68%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="55%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.25" rx="28" ry="5.5" />
+  <rect
+    fill="#a78bfa"
+    height="16"
+    rx="7"
+    stroke="#4c1d95"
+    stroke-width="3.8"
+    width="38"
+    x="41"
+    y="84"
+  />
+  <path
+    d="M40 84C34 72 34 52 48 26C52 19 60 19 62 27L60 54H40V84Z"
+    fill="#fde047"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M80 84C86 72 86 52 72 26C68 19 60 19 58 27L60 54H80V84Z"
+    fill="#fcd34d"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M42 84C38 66 44 44 55 24C58 19 64 19 66 25C76 44 82 66 78 84H42Z"
+    fill="url(#gfSkin)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M60 28V58M50 38L55 62M70 38L65 62"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.4"
+  />
+  <circle cx="60" cy="24" fill="#fffbeb" fill-opacity="0.7" r="3.5" />
+</svg>

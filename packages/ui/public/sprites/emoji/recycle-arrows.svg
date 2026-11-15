@@ -1,0 +1,36 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Biểu tượng tái chế</title>
+  <defs>
+    <linearGradient id="raGrn" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#86efac" />
+      <stop offset="52%" stop-color="#22c55e" />
+      <stop offset="100%" stop-color="#15803d" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#14532d" opacity="0.24" rx="38" ry="5" />
+  <path
+    d="M41 44L53 23C56 18 64 18 67 23L76 38L83 34L77 52L59 48L66 44L60 33L51 49Z"
+    fill="url(#raGrn)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <g transform="rotate(120 60 61)">
+    <path
+      d="M41 44L53 23C56 18 64 18 67 23L76 38L83 34L77 52L59 48L66 44L60 33L51 49Z"
+      fill="url(#raGrn)"
+      stroke="#14532d"
+      stroke-linejoin="round"
+      stroke-width="3.8"
+    />
+  </g>
+  <g transform="rotate(240 60 61)">
+    <path
+      d="M41 44L53 23C56 18 64 18 67 23L76 38L83 34L77 52L59 48L66 44L60 33L51 49Z"
+      fill="url(#raGrn)"
+      stroke="#14532d"
+      stroke-linejoin="round"
+      stroke-width="3.8"
+    />
+  </g>
+</svg>

@@ -1,0 +1,52 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bi số 8</title>
+  <defs>
+    <radialGradient cx="35%" cy="28%" id="ebSphere" r="72%">
+      <stop offset="0%" stop-color="#6366f1" />
+      <stop offset="45%" stop-color="#312e81" />
+      <stop offset="100%" stop-color="#1e1b4b" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e1b4b" opacity="0.26" rx="35" ry="5.5" />
+  <circle
+    cx="60"
+    cy="58"
+    fill="url(#ebSphere)"
+    r="39"
+    stroke="#1e1b4b"
+    stroke-width="4.2"
+  />
+  <circle
+    cx="60"
+    cy="58"
+    fill="#fffbeb"
+    r="18"
+    stroke="#312e81"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="60"
+    cy="52.5"
+    fill="none"
+    r="5"
+    stroke="#1e1b4b"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="60"
+    cy="63.5"
+    fill="none"
+    r="6"
+    stroke="#1e1b4b"
+    stroke-width="3.6"
+  />
+  <ellipse
+    cx="43"
+    cy="33"
+    fill="#ffffff"
+    fill-opacity="0.55"
+    rx="9"
+    ry="4.2"
+    transform="rotate(-28 43 33)"
+  />
+</svg>

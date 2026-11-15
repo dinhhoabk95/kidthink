@@ -1,0 +1,73 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Xe khách nhỏ</title>
+  <defs>
+    <linearGradient id="mbVan" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="58%" stop-color="#f8fafc" />
+      <stop offset="100%" stop-color="#38bdf8" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e3a8a" opacity="0.24" rx="44" ry="5.5" />
+  <path
+    d="M28 36H94C100 36 104 41 104 47V86H16V60L25 41C26 38 27 36 28 36Z"
+    fill="url(#mbVan)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#fb923c"
+    height="7"
+    rx="3"
+    stroke="#7c2d12"
+    stroke-width="3"
+    width="88"
+    x="16"
+    y="68"
+  />
+  <path
+    d="M21 60L28 43H46V60Z"
+    fill="#7dd3fc"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <rect
+    fill="#bae6fd"
+    height="17"
+    rx="3"
+    stroke="#1e3a8a"
+    stroke-width="3.4"
+    width="21"
+    x="52"
+    y="43"
+  />
+  <rect
+    fill="#bae6fd"
+    height="17"
+    rx="3"
+    stroke="#1e3a8a"
+    stroke-width="3.4"
+    width="18"
+    x="79"
+    y="43"
+  />
+  <circle
+    cx="36"
+    cy="89"
+    fill="#334155"
+    r="10.5"
+    stroke="#1e293b"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="84"
+    cy="89"
+    fill="#334155"
+    r="10.5"
+    stroke="#1e293b"
+    stroke-width="3.8"
+  />
+  <circle cx="36" cy="89" fill="#e2e8f0" r="4" />
+  <circle cx="84" cy="89" fill="#e2e8f0" r="4" />
+</svg>

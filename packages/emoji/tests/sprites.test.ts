@@ -3,6 +3,7 @@ import { join, resolve } from "node:path";
 import { REPO_ROOT } from "@mindkid/config/paths";
 import { describe, expect, it } from "vitest";
 import {
+  ALL_EMOJIS,
   CUSTOM_EMOJI_SPRITES,
   hasCustomEmojiSprite,
   listCustomEmojiSprites,
@@ -10,9 +11,10 @@ import {
 } from "#src/index";
 
 const PUBLIC_ROOT = join(REPO_ROOT, "packages/ui/public");
-const TOTAL_SPRITES = 661;
-const TOTAL_HERO_SPRITES = 32;
-const TOTAL_VECTOR_SPRITES = 629;
+const TOTAL_SPRITES = 915;
+const TOTAL_HERO_SPRITES = 40;
+const TOTAL_VECTOR_SPRITES = 875;
+const TOTAL_CATALOG_EMOJIS = 791;
 const MIN_SVG_BYTES = 200;
 const MAX_SVG_BYTES = 4500;
 const MIN_WEBP_BYTES = 1000;
@@ -31,6 +33,7 @@ const HERO_EMOJIS = new Set(
   `
   🍎 🐟 🐰 🐻 🦊 🐼 🦁 🐯 🐨 🐧 🦉 🐘 🐮 🍒 🌸 ☀️
   🐣 🍩 🍰 🪷 🐳 🍦 🤖 🐙 🧧 🐉 🍕 🥮 🐃 🦚 🦖 🧑‍🚀
+  🐻‍❄️ 🦛 🇻🇳 🍔 🎪 🧜 👸 🌞
 `
     .trim()
     .split(WHITESPACE_SPLIT_RE)
@@ -46,7 +49,11 @@ const LIGHT_SILHOUETTE_SLUGS = new Set(
   clipboard envelope zebra baby-chick swan snowman soap-bubbles full-moon
   yellow-heart science-flask bullet-train white-square rice-ball speedboat
   woman-chef thermometer flowing-hourglass capsule-pill guiding-cane memo-pad
-  cute-mouse-face commuter-train astronaut woman-scientist
+  cute-mouse-face commuter-train astronaut woman-scientist polar-bear
+  white-goose silver-haired-elder white-lab-coat
+  smiling-full-moon bowling-pins ice-skate tabbed-pages flip-calendar
+  tear-off-calendar garlic-bulb light-rail monorail minibus front-police-car
+  motor-yacht cruise-ship cloudy-sun snow-cloud snowy-snowman smiling-sun
 `
     .trim()
     .split(WHITESPACE_SPLIT_RE)
@@ -115,7 +122,7 @@ function readWebpDimensions(buffer: Buffer): { width: number; height: number } {
 }
 
 describe("@mindkid/emoji custom sprites registry", () => {
-  it("registers exactly 661 custom sprites with unique kebab-case slugs", () => {
+  it("registers exactly 915 custom sprites with unique kebab-case slugs", () => {
     expect(CUSTOM_EMOJI_SPRITES.size).toBe(TOTAL_SPRITES);
     const listed = listCustomEmojiSprites();
     expect(listed).toHaveLength(TOTAL_SPRITES);
@@ -149,7 +156,17 @@ describe("@mindkid/emoji custom sprites registry", () => {
     }
   });
 
-  it("assigns tier hero_webp to all 32 hero sprites and vector_craft to the 629 others", () => {
+  it("enforces permanent 100% custom sprite coverage across all 791 ALL_EMOJIS entries", () => {
+    expect(ALL_EMOJIS).toHaveLength(TOTAL_CATALOG_EMOJIS);
+    for (const entry of ALL_EMOJIS) {
+      expect(
+        hasCustomEmojiSprite(entry.emoji),
+        `uncovered catalog emoji: ${entry.emoji} (${entry.name})`
+      ).toBe(true);
+    }
+  });
+
+  it("assigns tier hero_webp to all 40 hero sprites and vector_craft to the 875 others", () => {
     expect(HERO_EMOJIS.size).toBe(TOTAL_HERO_SPRITES);
     let heroCount = 0;
     let vectorCount = 0;
@@ -203,6 +220,13 @@ describe("@mindkid/emoji custom sprites registry", () => {
       "↪️|↪|curve-right-arrow",
       "🏍️|🏍|motorbike",
       "⏱️|⏱|stopwatch",
+      "⛸️|⛸|ice-skate",
+      "⛏️|⛏|pickaxe",
+      "🌶️|🌶|chili-pepper",
+      "🛩️|🛩|propeller-plane",
+      "🛳️|🛳|cruise-ship",
+      "☃️|☃|snowy-snowman",
+      "🕵️|🕵|detective",
     ];
 
     for (const spec of vs16Specs) {
@@ -214,6 +238,9 @@ describe("@mindkid/emoji custom sprites registry", () => {
       expect(hasCustomEmojiSprite(a)).toBe(true);
       expect(hasCustomEmojiSprite(b)).toBe(true);
     }
+    expect(resolveCustomEmojiSprite("🧑‍🚒")?.slug).toBe("young-firefighter");
+    expect(resolveCustomEmojiSprite("🕵️")?.slug).toBe("detective");
+    expect(resolveCustomEmojiSprite("🕵")?.slug).toBe("detective");
   });
 
   it("returns null or false for empty or unsupported inputs", () => {
@@ -224,11 +251,12 @@ describe("@mindkid/emoji custom sprites registry", () => {
     expect(hasCustomEmojiSprite("")).toBe(false);
     expect(hasCustomEmojiSprite("🧿")).toBe(false);
     expect(hasCustomEmojiSprite("🪬")).toBe(false);
-    expect(hasCustomEmojiSprite("🛸")).toBe(true);
-    expect(hasCustomEmojiSprite("🦖")).toBe(true);
+    expect(hasCustomEmojiSprite("🧜")).toBe(true);
+    expect(hasCustomEmojiSprite("👸")).toBe(true);
+    expect(hasCustomEmojiSprite("🌞")).toBe(true);
   });
 
-  it("verifies all 661 SVG files exist on disk, stay < 4,500 B, and avoid #000000", () => {
+  it("verifies all 915 SVG files exist on disk, stay < 4,500 B, and avoid #000000", () => {
     for (const meta of listCustomEmojiSprites()) {
       const relativeSvg = meta.svgPath.replace(LEADING_SLASH_RE, "");
       const absSvg = resolve(PUBLIC_ROOT, relativeSvg);
@@ -279,7 +307,7 @@ describe("@mindkid/emoji custom sprites registry", () => {
     }
   });
 
-  it("verifies all 32 Tier-3 Hero WebP assets exist on disk, measure 360x360, and stay < 35 KB", () => {
+  it("verifies all 40 Tier-3 Hero WebP assets exist on disk, measure 360x360, and stay < 35 KB", () => {
     for (const emoji of HERO_EMOJIS) {
       const meta = resolveCustomEmojiSprite(emoji);
       expect(meta?.heroWebpPath).toBeDefined();

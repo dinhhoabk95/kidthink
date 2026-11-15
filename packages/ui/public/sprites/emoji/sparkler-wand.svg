@@ -1,0 +1,56 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Que pháo bông sáng</title>
+  <defs>
+    <radialGradient cx="50%" cy="50%" id="swGlow" r="55%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="45%" stop-color="#fef08a" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="44" cy="107" fill="#78350f" opacity="0.22" rx="28" ry="4.5" />
+  <path
+    d="M20 101L68 53"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="6"
+  />
+  <path
+    d="M46 75L68 53"
+    stroke="#a8a29e"
+    stroke-linecap="round"
+    stroke-opacity="0.9"
+    stroke-width="3"
+  />
+  <polygon
+    fill="url(#swGlow)"
+    points="74,16 80,36 101,31 86,46 102,61 81,56 75,77 69,56 48,61 63,46 48,31 69,36"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle cx="74" cy="46" fill="#ffffff" r="7" />
+  <circle
+    cx="39"
+    cy="44"
+    fill="#fb7185"
+    r="5"
+    stroke="#881337"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="99"
+    cy="80"
+    fill="#38bdf8"
+    r="5"
+    stroke="#0c4a6e"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="48"
+    cy="21"
+    fill="#facc15"
+    r="4.5"
+    stroke="#78350f"
+    stroke-width="3.2"
+  />
+</svg>

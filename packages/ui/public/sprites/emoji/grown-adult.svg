@@ -1,0 +1,71 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Người lớn</title>
+  <defs>
+    <radialGradient cx="40%" cy="32%" id="gaSkin" r="70%">
+      <stop offset="0%" stop-color="#ffedd5" />
+      <stop offset="65%" stop-color="#fdba74" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </radialGradient>
+    <linearGradient id="gaShirt" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#60a5fa" />
+      <stop offset="100%" stop-color="#2563eb" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e3a8a" opacity="0.24" rx="38" ry="6" />
+  <path
+    d="M26 98C28 80 42 74 60 74C78 74 92 80 94 98Z"
+    fill="url(#gaShirt)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M51 74L60 86L69 74"
+    fill="#eff6ff"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <circle
+    cx="35"
+    cy="52"
+    fill="#fdba74"
+    r="6"
+    stroke="#7c2d12"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="85"
+    cy="52"
+    fill="#fdba74"
+    r="6"
+    stroke="#7c2d12"
+    stroke-width="3.6"
+  />
+  <ellipse
+    cx="60"
+    cy="50"
+    fill="url(#gaSkin)"
+    rx="24"
+    ry="26"
+    stroke="#7c2d12"
+    stroke-width="4"
+  />
+  <path
+    d="M35 46C34 26 48 18 62 19C78 20 87 30 85 46C78 36 68 33 56 36C46 39 40 42 35 46Z"
+    fill="#78350f"
+    stroke="#431407"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle cx="50" cy="50" fill="#1c1917" r="3" />
+  <circle cx="70" cy="50" fill="#1c1917" r="3" />
+  <circle cx="49" cy="49" fill="#ffffff" r="1.1" />
+  <circle cx="69" cy="49" fill="#ffffff" r="1.1" />
+  <path
+    d="M52 62C56 66 64 66 68 62"
+    stroke="#7c2d12"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+</svg>

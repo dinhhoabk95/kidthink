@@ -1,0 +1,56 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ông mặt trời cười</title>
+  <defs>
+    <radialGradient cx="36%" cy="30%" id="smSun" r="70%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="52%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#9a3412" opacity="0.22" rx="34" ry="4.5" />
+  <polygon
+    fill="#fb923c"
+    points="60,8 69,24 86,15 84,34 103,35 92,50 108,60 92,70 103,85 84,86 86,105 69,96 60,112 51,96 34,105 36,86 17,85 28,70 12,60 28,50 17,35 36,34 34,15 51,24"
+    stroke="#9a3412"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="60"
+    cy="60"
+    fill="url(#smSun)"
+    r="31"
+    stroke="#9a3412"
+    stroke-width="4"
+  />
+  <path
+    d="M44 55C47 50 53 50 56 55"
+    stroke="#451a03"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M64 55C67 50 73 50 76 55"
+    stroke="#451a03"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <circle cx="42" cy="64" fill="#fb7185" fill-opacity="0.55" r="5" />
+  <circle cx="78" cy="64" fill="#fb7185" fill-opacity="0.55" r="5" />
+  <path
+    d="M49 67C53 75 67 75 71 67Z"
+    fill="#ef4444"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <ellipse
+    cx="48"
+    cy="41"
+    fill="#ffffff"
+    fill-opacity="0.6"
+    rx="7.5"
+    ry="3.4"
+    transform="rotate(-22 48 41)"
+  />
+</svg>

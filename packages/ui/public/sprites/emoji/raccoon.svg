@@ -1,0 +1,72 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Gấu mèo thông minh</title>
+  <defs>
+    <radialGradient cx="40%" cy="30%" id="rcGrey" r="70%">
+      <stop offset="0%" stop-color="#e2e8f0" />
+      <stop offset="60%" stop-color="#94a3b8" />
+      <stop offset="100%" stop-color="#475569" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#1e293b" opacity="0.25" rx="38" ry="6" />
+  <path
+    d="M82 88C98 88 108 74 102 60C96 50 86 58 82 72Z"
+    fill="#94a3b8"
+    stroke="#1e293b"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M88 64L101 69M84 74L98 80"
+    stroke="#1e293b"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <path
+    d="M28 42L24 20L44 30ZM92 42L96 20L76 30Z"
+    fill="#64748b"
+    stroke="#1e293b"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="60"
+    cy="60"
+    fill="url(#rcGrey)"
+    rx="34"
+    ry="29"
+    stroke="#1e293b"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="43"
+    cy="58"
+    fill="#334155"
+    rx="14"
+    ry="10"
+    stroke="#1e293b"
+    stroke-width="3.4"
+    transform="rotate(-10 43 58)"
+  />
+  <ellipse
+    cx="77"
+    cy="58"
+    fill="#334155"
+    rx="14"
+    ry="10"
+    stroke="#1e293b"
+    stroke-width="3.4"
+    transform="rotate(10 77 58)"
+  />
+  <path
+    d="M44 74L60 62L76 74C72 84 48 84 44 74Z"
+    fill="#f8fafc"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle cx="60" cy="72" fill="#1e293b" r="4.2" />
+  <circle cx="44" cy="58" fill="#ffffff" r="4.2" />
+  <circle cx="76" cy="58" fill="#ffffff" r="4.2" />
+  <circle cx="44.5" cy="58" fill="#1c1917" r="2.4" />
+  <circle cx="75.5" cy="58" fill="#1c1917" r="2.4" />
+</svg>

@@ -1,0 +1,88 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Tê giác con</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="rhHide" r="70%">
+      <stop offset="0%" stop-color="#cbd5e1" />
+      <stop offset="58%" stop-color="#94a3b8" />
+      <stop offset="100%" stop-color="#64748b" />
+    </radialGradient>
+    <linearGradient id="rhHorn" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fffbeb" />
+      <stop offset="100%" stop-color="#fde68a" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="56" cy="104" fill="#334155" opacity="0.24" rx="40" ry="6" />
+  <rect
+    fill="#64748b"
+    height="20"
+    rx="5"
+    stroke="#334155"
+    stroke-width="3.8"
+    width="11"
+    x="28"
+    y="80"
+  />
+  <rect
+    fill="#64748b"
+    height="20"
+    rx="5"
+    stroke="#334155"
+    stroke-width="3.8"
+    width="11"
+    x="58"
+    y="80"
+  />
+  <ellipse
+    cx="48"
+    cy="68"
+    fill="url(#rhHide)"
+    rx="29"
+    ry="21"
+    stroke="#334155"
+    stroke-width="4"
+  />
+  <path
+    d="M62 44C60 32 68 30 70 42"
+    fill="#cbd5e1"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <ellipse
+    cx="78"
+    cy="60"
+    fill="url(#rhHide)"
+    rx="21"
+    ry="17"
+    stroke="#334155"
+    stroke-width="4"
+  />
+  <path
+    d="M90 50C94 34 104 34 103 50C102 55 94 56 90 50Z"
+    fill="url(#rhHorn)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M81 48C83 40 89 40 88 49Z"
+    fill="url(#rhHorn)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M38 52C36 62 36 72 39 82M58 50C60 60 60 72 57 82"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-width="3.2"
+  />
+  <circle cx="77" cy="56" fill="#1c1917" r="2.8" />
+  <circle cx="76.2" cy="55" fill="#ffffff" r="1" />
+  <path
+    d="M78 68C83 71 89 70 92 67"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-width="2.6"
+  />
+</svg>

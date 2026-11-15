@@ -1,0 +1,71 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Công viên thiên nhiên</title>
+  <defs>
+    <linearGradient id="npSky" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#bae6fd" />
+      <stop offset="100%" stop-color="#e0f2fe" />
+    </linearGradient>
+    <linearGradient id="npGrass" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#86efac" />
+      <stop offset="100%" stop-color="#16a34a" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#14532d" opacity="0.25" rx="40" ry="5.5" />
+  <rect
+    fill="url(#npSky)"
+    height="78"
+    rx="16"
+    stroke="#14532d"
+    stroke-width="4"
+    width="84"
+    x="18"
+    y="20"
+  />
+  <circle
+    cx="82"
+    cy="36"
+    fill="#fde047"
+    r="8"
+    stroke="#78350f"
+    stroke-width="3.4"
+  />
+  <path
+    d="M22 68L46 40L68 68H22Z"
+    fill="#60a5fa"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M18 68C38 62 82 62 102 68V84C102 92 95 98 86 98H34C25 98 18 92 18 84V68Z"
+    fill="url(#npGrass)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M56 65C48 74 68 82 52 98H68C82 82 62 74 66 65H56Z"
+    fill="#38bdf8"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <rect
+    fill="#78350f"
+    height="14"
+    rx="2"
+    stroke="#44403c"
+    stroke-width="3.2"
+    width="6"
+    x="32"
+    y="64"
+  />
+  <circle
+    cx="35"
+    cy="56"
+    fill="#22c55e"
+    r="11"
+    stroke="#14532d"
+    stroke-width="3.6"
+  />
+</svg>

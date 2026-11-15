@@ -1,0 +1,71 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Tàu điện một ray</title>
+  <defs>
+    <linearGradient id="mrCab" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#e0e7ff" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#312e81" opacity="0.23" rx="42" ry="5" />
+  <rect
+    fill="#94a3b8"
+    height="28"
+    rx="3"
+    stroke="#334155"
+    stroke-width="3.8"
+    width="16"
+    x="52"
+    y="72"
+  />
+  <rect
+    fill="#cbd5e1"
+    height="12"
+    rx="4"
+    stroke="#334155"
+    stroke-width="3.8"
+    width="96"
+    x="12"
+    y="66"
+  />
+  <path
+    d="M18 66L30 34H98C103 34 106 38 106 44V66L96 74H82L78 66H42L38 74H22Z"
+    fill="url(#mrCab)"
+    stroke="#312e81"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M23 55H106V63H19Z"
+    fill="#8b5cf6"
+    stroke="#312e81"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <path
+    d="M33 40H52V51H28Z"
+    fill="#38bdf8"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <rect
+    fill="#7dd3fc"
+    height="11"
+    rx="2.5"
+    stroke="#1e3a8a"
+    stroke-width="3.2"
+    width="18"
+    x="59"
+    y="40"
+  />
+  <rect
+    fill="#7dd3fc"
+    height="11"
+    rx="2.5"
+    stroke="#1e3a8a"
+    stroke-width="3.2"
+    width="16"
+    x="83"
+    y="40"
+  />
+</svg>

@@ -1,0 +1,70 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Tập giấy dán nhãn</title>
+  <defs>
+    <linearGradient id="tpPage" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#e2e8f0" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="58" cy="106" fill="#334155" opacity="0.23" rx="36" ry="5" />
+  <rect
+    fill="#cbd5e1"
+    height="76"
+    rx="7"
+    stroke="#334155"
+    stroke-width="3.6"
+    width="58"
+    x="24"
+    y="22"
+  />
+  <rect
+    fill="#fb7185"
+    height="14"
+    rx="4"
+    stroke="#881337"
+    stroke-width="3.4"
+    width="22"
+    x="78"
+    y="30"
+  />
+  <rect
+    fill="#facc15"
+    height="14"
+    rx="4"
+    stroke="#78350f"
+    stroke-width="3.4"
+    width="22"
+    x="78"
+    y="50"
+  />
+  <rect
+    fill="#38bdf8"
+    height="14"
+    rx="4"
+    stroke="#1e3a8a"
+    stroke-width="3.4"
+    width="22"
+    x="78"
+    y="70"
+  />
+  <path
+    d="M28 18H70L84 32V94C84 97 81 100 78 100H28C25 100 22 97 22 94V24C22 21 25 18 28 18Z"
+    fill="url(#tpPage)"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M70 18V32H84Z"
+    fill="#cbd5e1"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M34 46H68M34 60H68M34 74H56"
+    stroke="#475569"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+</svg>

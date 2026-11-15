@@ -1,0 +1,52 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hộp thẻ phân loại</title>
+  <defs>
+    <linearGradient id="idBox" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+    <linearGradient id="idCard" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#f1f5f9" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.24" rx="44" ry="5.5" />
+  <path
+    d="M22 34H44L48 41H96V74H22Z"
+    fill="#86efac"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M20 44H46L50 37H72L76 44H98V80H20Z"
+    fill="#7dd3fc"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M18 52H72L76 45H98V86H18Z"
+    fill="url(#idCard)"
+    stroke="#475569"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M14 60H44L50 68H70L76 60H106L100 98H20Z"
+    fill="url(#idBox)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#fef3c7"
+    height="10"
+    rx="3"
+    stroke="#78350f"
+    stroke-width="3.2"
+    width="28"
+    x="46"
+    y="78"
+  />
+</svg>

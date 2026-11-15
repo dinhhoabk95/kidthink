@@ -1,0 +1,60 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Trái tim thắt nơ</title>
+  <defs>
+    <radialGradient cx="36%" cy="30%" id="rhPink" r="70%">
+      <stop offset="0%" stop-color="#fda4af" />
+      <stop offset="50%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#be123c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#881337" opacity="0.24" rx="34" ry="5" />
+  <path
+    d="M60 100C56 100 17 74 17 45C17 29 30 19 44 19C52 19 57 24 60 30C63 24 68 19 76 19C90 19 103 29 103 45C103 74 64 100 60 100Z"
+    fill="url(#rhPink)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#facc15"
+    height="12"
+    rx="3"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="82"
+    x="19"
+    y="46"
+  />
+  <rect
+    fill="#facc15"
+    height="64"
+    rx="3"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="12"
+    x="54"
+    y="30"
+  />
+  <path
+    d="M60 48C48 34 32 36 35 49C38 59 50 56 60 48Z"
+    fill="#fde047"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M60 48C72 34 88 36 85 49C82 59 70 56 60 48Z"
+    fill="#fde047"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="60"
+    cy="49"
+    fill="#fbbf24"
+    r="6.5"
+    stroke="#78350f"
+    stroke-width="3.4"
+  />
+</svg>

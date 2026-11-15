@@ -1,0 +1,67 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Nhân vật áo choàng</title>
+  <defs>
+    <radialGradient cx="40%" cy="35%" id="mcSkin" r="68%">
+      <stop offset="0%" stop-color="#ffedd5" />
+      <stop offset="100%" stop-color="#fdba74" />
+    </radialGradient>
+    <linearGradient id="mcCape" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#c084fc" />
+      <stop offset="55%" stop-color="#9333ea" />
+      <stop offset="100%" stop-color="#581c87" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#4c1d95" opacity="0.25" rx="38" ry="5.5" />
+  <path
+    d="M30 62L16 98H104L90 62C76 54 44 54 30 62Z"
+    fill="url(#mcCape)"
+    stroke="#4c1d95"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M33 100C35 82 46 74 60 74C74 74 85 82 87 100H33Z"
+    fill="#7c3aed"
+    stroke="#4c1d95"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="60"
+    cy="84"
+    fill="#fde047"
+    r="6"
+    stroke="#78350f"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="60"
+    cy="52"
+    fill="url(#mcSkin)"
+    r="19"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <path
+    d="M40 44C42 26 52 21 63 21C74 21 80 29 79 44C71 36 49 36 40 44Z"
+    fill="#4c1d95"
+    stroke="#3b0764"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M42 47C47 43 55 45 60 48C65 45 73 43 78 47C79 53 73 57 67 56C63 55 61 53 60 52C59 53 57 55 53 56C47 57 41 53 42 47Z"
+    fill="#a855f7"
+    stroke="#4c1d95"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <circle cx="52" cy="50" fill="#ffffff" r="2.6" />
+  <circle cx="68" cy="50" fill="#ffffff" r="2.6" />
+  <path
+    d="M54 62C58 66 62 66 66 62"
+    stroke="#7c2d12"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+</svg>

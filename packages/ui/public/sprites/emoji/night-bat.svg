@@ -1,0 +1,58 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chú dơi nhỏ</title>
+  <defs>
+    <radialGradient cx="42%" cy="32%" id="nbBody" r="68%">
+      <stop offset="0%" stop-color="#c084fc" />
+      <stop offset="58%" stop-color="#7e22ce" />
+      <stop offset="100%" stop-color="#4c1d95" />
+    </radialGradient>
+    <linearGradient id="nbWing" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#a855f7" />
+      <stop offset="100%" stop-color="#581c87" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#3b0764" opacity="0.24" rx="38" ry="6" />
+  <path
+    d="M44 54C28 40 12 46 10 66C18 62 24 68 26 74C32 68 38 72 44 76Z"
+    fill="url(#nbWing)"
+    stroke="#3b0764"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M76 54C92 40 108 46 110 66C102 62 96 68 94 74C88 68 82 72 76 76Z"
+    fill="url(#nbWing)"
+    stroke="#3b0764"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M42 42L34 20L52 34ZM78 42L86 20L68 34Z"
+    fill="#c084fc"
+    stroke="#3b0764"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <ellipse
+    cx="60"
+    cy="63"
+    fill="url(#nbBody)"
+    rx="21"
+    ry="23"
+    stroke="#3b0764"
+    stroke-width="4"
+  />
+  <circle cx="52" cy="56" fill="#fef08a" r="5" />
+  <circle cx="68" cy="56" fill="#fef08a" r="5" />
+  <circle cx="52" cy="56" fill="#1c1917" r="2.8" />
+  <circle cx="68" cy="56" fill="#1c1917" r="2.8" />
+  <circle cx="51" cy="54.8" fill="#ffffff" r="1.1" />
+  <circle cx="67" cy="54.8" fill="#ffffff" r="1.1" />
+  <path
+    d="M53 68C57 72 63 72 67 68"
+    stroke="#fef3c7"
+    stroke-linecap="round"
+    stroke-width="2.6"
+  />
+  <path d="M55 69L57 74L59 69Z" fill="#ffffff" />
+</svg>

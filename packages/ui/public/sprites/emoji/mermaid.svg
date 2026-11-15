@@ -1,0 +1,96 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Nàng tiên cá</title>
+  <defs>
+    <linearGradient id="mmHair" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb7185" />
+      <stop offset="100%" stop-color="#e11d48" />
+    </linearGradient>
+    <linearGradient id="mmTail" x1="20%" x2="80%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#5eead4" />
+      <stop offset="55%" stop-color="#14b8a6" />
+      <stop offset="100%" stop-color="#0f766e" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#134e4a" opacity="0.24" rx="38" ry="5" />
+  <path
+    d="M32 38C22 50 22 72 34 78H80C90 70 90 48 80 36C70 22 42 24 32 38Z"
+    fill="url(#mmHair)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M44 68H70C72 80 78 88 88 90C84 98 73 102 60 99C45 96 41 84 44 68Z"
+    fill="url(#mmTail)"
+    stroke="#134e4a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M84 88C94 79 105 83 101 94C107 101 95 108 84 98Z"
+    fill="#2dd4bf"
+    stroke="#134e4a"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M43 56C43 50 50 48 57 48C64 48 71 50 71 56V69H43Z"
+    fill="#fed7aa"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="51"
+    cy="61"
+    fill="#c084fc"
+    r="5.5"
+    stroke="#581c87"
+    stroke-width="3"
+  />
+  <circle
+    cx="63"
+    cy="61"
+    fill="#c084fc"
+    r="5.5"
+    stroke="#581c87"
+    stroke-width="3"
+  />
+  <circle
+    cx="57"
+    cy="38"
+    fill="#ffedd5"
+    r="16"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <path
+    d="M41 35C45 23 69 23 73 35C65 30 49 30 41 35Z"
+    fill="url(#mmHair)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <polygon
+    fill="#fde047"
+    points="72,22 75,27 81,28 76,32 78,38 72,35 67,38 68,32 64,28 70,27"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="2.8"
+  />
+  <circle cx="51" cy="39" fill="#1c1917" r="2.5" />
+  <circle cx="63" cy="39" fill="#1c1917" r="2.5" />
+  <path
+    d="M53 45C56 48 59 48 62 45"
+    stroke="#881337"
+    stroke-linecap="round"
+    stroke-width="2.6"
+  />
+  <path
+    d="M50 78C55 81 61 81 66 78M54 87C59 90 65 90 70 87"
+    stroke="#ccfbf1"
+    stroke-linecap="round"
+    stroke-opacity="0.7"
+    stroke-width="2.4"
+  />
+</svg>

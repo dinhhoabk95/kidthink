@@ -1,0 +1,72 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Kính thiên văn</title>
+  <defs>
+    <linearGradient id="tsTube" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#60a5fa" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#1e3a8a" opacity="0.24" rx="36" ry="5" />
+  <path
+    d="M58 60L36 99M58 60L58 101M58 60L80 99"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4.4"
+  />
+  <g transform="rotate(-24 58 46)">
+    <rect
+      fill="#fde047"
+      height="16"
+      rx="4"
+      stroke="#78350f"
+      stroke-width="3.6"
+      width="24"
+      x="18"
+      y="38"
+    />
+    <rect
+      fill="url(#tsTube)"
+      height="22"
+      rx="5"
+      stroke="#1e3a8a"
+      stroke-width="4"
+      width="52"
+      x="38"
+      y="35"
+    />
+    <rect
+      fill="#fbbf24"
+      height="28"
+      rx="5"
+      stroke="#78350f"
+      stroke-width="3.8"
+      width="14"
+      x="86"
+      y="32"
+    />
+    <ellipse
+      cx="99"
+      cy="46"
+      fill="#bae6fd"
+      rx="4"
+      ry="11"
+      stroke="#1e3a8a"
+      stroke-width="3.2"
+    />
+  </g>
+  <circle
+    cx="58"
+    cy="60"
+    fill="#f59e0b"
+    r="6.5"
+    stroke="#78350f"
+    stroke-width="3.4"
+  />
+  <polygon
+    fill="#fde047"
+    points="94,16 96,21 101,23 96,25 94,30 92,25 87,23 92,21"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="2.2"
+  />
+</svg>

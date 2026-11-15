@@ -1,0 +1,75 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cụng tay thân thiện</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="fbSkin" r="68%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="55%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#78350f" opacity="0.25" rx="34" ry="5.5" />
+  <path
+    d="M60 16V24M30 24L36 30M90 24L84 30"
+    stroke="#7c2d12"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="url(#fbSkin)"
+    height="52"
+    rx="18"
+    stroke="#78350f"
+    stroke-width="4"
+    width="68"
+    x="26"
+    y="38"
+  />
+  <rect
+    fill="#fde047"
+    height="34"
+    rx="7.5"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="16"
+    x="28"
+    y="42"
+  />
+  <rect
+    fill="#fde047"
+    height="36"
+    rx="7.5"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="16"
+    x="44"
+    y="41"
+  />
+  <rect
+    fill="#fde047"
+    height="36"
+    rx="7.5"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="16"
+    x="60"
+    y="41"
+  />
+  <rect
+    fill="#fde047"
+    height="33"
+    rx="7.5"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="16"
+    x="76"
+    y="43"
+  />
+  <path
+    d="M36 80H78C84 80 86 90 78 92H42C34 92 31 84 36 80Z"
+    fill="#fcd34d"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <ellipse cx="52" cy="49" fill="#ffffff" fill-opacity="0.6" rx="4" ry="6" />
+</svg>

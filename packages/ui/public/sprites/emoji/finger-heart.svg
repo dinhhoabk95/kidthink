@@ -1,0 +1,73 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bắn tim nhỏ</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="fhSkin" r="70%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="55%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </radialGradient>
+    <radialGradient cx="38%" cy="32%" id="fhHeart" r="68%">
+      <stop offset="0%" stop-color="#fda4af" />
+      <stop offset="55%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#be123c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.25" rx="28" ry="5.5" />
+  <path
+    d="M60 39C52 33 43 27 43 19C43 13 48 10 53 10C57 10 59 12 60 15C61 12 63 10 67 10C72 10 77 13 77 19C77 27 68 33 60 39Z"
+    fill="url(#fhHeart)"
+    stroke="#831843"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M36 68C36 60 42 56 52 56H76C84 56 90 62 90 72V82C90 92 81 98 66 98H50C39 98 34 91 34 80V68Z"
+    fill="url(#fhSkin)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#fde047"
+    height="30"
+    rx="7"
+    stroke="#78350f"
+    stroke-width="3.8"
+    transform="rotate(-28 53 54)"
+    width="14"
+    x="46"
+    y="39"
+  />
+  <rect
+    fill="url(#fhSkin)"
+    height="30"
+    rx="7"
+    stroke="#78350f"
+    stroke-width="3.8"
+    transform="rotate(28 65 54)"
+    width="14"
+    x="58"
+    y="39"
+  />
+  <rect
+    fill="#fcd34d"
+    height="16"
+    rx="5.5"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="12"
+    x="68"
+    y="55"
+  />
+  <rect
+    fill="#fcd34d"
+    height="15"
+    rx="5.5"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="12"
+    x="79"
+    y="59"
+  />
+  <circle cx="52" cy="17" fill="#ffffff" fill-opacity="0.7" r="2.5" />
+</svg>

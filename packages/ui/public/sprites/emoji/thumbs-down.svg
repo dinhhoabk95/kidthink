@@ -1,0 +1,35 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ngón cái hướng xuống</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="tdSkin" r="70%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="55%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#78350f" opacity="0.24" rx="30" ry="5" />
+  <rect
+    fill="#fb923c"
+    height="42"
+    rx="8"
+    stroke="#7c2d12"
+    stroke-width="3.8"
+    width="18"
+    x="22"
+    y="24"
+  />
+  <path
+    d="M40 66L52 94C54 100 62 101 65 95C67 90 66 81 63 72H86C93 72 97 66 94 59C97 54 95 47 91 44C93 39 90 33 85 31C86 26 82 22 75 22H40V66Z"
+    fill="url(#tdSkin)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M74 59H92M73 45H89M71 32H84"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <ellipse cx="57" cy="40" fill="#ffffff" fill-opacity="0.55" rx="7" ry="4" />
+</svg>

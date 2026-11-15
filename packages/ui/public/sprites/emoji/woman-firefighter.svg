@@ -1,0 +1,81 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cô lính cứu hoả</title>
+  <defs>
+    <radialGradient cx="40%" cy="35%" id="wfSkin" r="68%">
+      <stop offset="0%" stop-color="#ffedd5" />
+      <stop offset="100%" stop-color="#fdba74" />
+    </radialGradient>
+    <linearGradient id="wfHelm" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#f87171" />
+      <stop offset="60%" stop-color="#dc2626" />
+      <stop offset="100%" stop-color="#991b1b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#7f1d1d" opacity="0.24" rx="36" ry="5.5" />
+  <path
+    d="M31 50C25 60 27 76 36 80H84C93 76 95 60 89 50H31Z"
+    fill="#7c2d12"
+    stroke="#44403c"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M26 100C28 82 41 75 60 75C79 75 92 82 94 100H26Z"
+    fill="#ea580c"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#fde047"
+    height="7"
+    rx="3"
+    stroke="#78350f"
+    stroke-width="3.2"
+    width="60"
+    x="30"
+    y="88"
+  />
+  <circle
+    cx="60"
+    cy="58"
+    fill="url(#wfSkin)"
+    r="19"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <path
+    d="M32 42C34 22 46 15 60 15C74 15 86 22 88 42H32Z"
+    fill="url(#wfHelm)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#ef4444"
+    height="8"
+    rx="4"
+    stroke="#7f1d1d"
+    stroke-width="3.6"
+    width="68"
+    x="26"
+    y="38"
+  />
+  <path
+    d="M60 21L65 26L63 34H57L55 26L60 21Z"
+    fill="#facc15"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <circle cx="53" cy="58" fill="#1c1917" r="2.8" />
+  <circle cx="67" cy="58" fill="#1c1917" r="2.8" />
+  <circle cx="46" cy="63" fill="#fb7185" fill-opacity="0.5" r="3.5" />
+  <circle cx="74" cy="63" fill="#fb7185" fill-opacity="0.5" r="3.5" />
+  <path
+    d="M55 66C58 69 62 69 65 66"
+    stroke="#7c2d12"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+</svg>

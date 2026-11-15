@@ -1,0 +1,80 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Khoai tây chiên</title>
+  <defs>
+    <linearGradient id="ffBox" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb7185" />
+      <stop offset="35%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#b91c1c" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#7f1d1d" opacity="0.25" rx="34" ry="5.5" />
+  <rect
+    fill="#fde047"
+    height="44"
+    rx="4"
+    stroke="#78350f"
+    stroke-width="3.6"
+    transform="rotate(-10 34 40)"
+    width="11"
+    x="28"
+    y="22"
+  />
+  <rect
+    fill="#facc15"
+    height="48"
+    rx="4"
+    stroke="#78350f"
+    stroke-width="3.6"
+    transform="rotate(-4 46 38)"
+    width="11"
+    x="41"
+    y="16"
+  />
+  <rect
+    fill="#fde047"
+    height="50"
+    rx="4"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="12"
+    x="54"
+    y="14"
+  />
+  <rect
+    fill="#facc15"
+    height="48"
+    rx="4"
+    stroke="#78350f"
+    stroke-width="3.6"
+    transform="rotate(5 73 38)"
+    width="11"
+    x="68"
+    y="17"
+  />
+  <rect
+    fill="#fde047"
+    height="42"
+    rx="4"
+    stroke="#78350f"
+    stroke-width="3.6"
+    transform="rotate(11 86 42)"
+    width="11"
+    x="80"
+    y="23"
+  />
+  <path
+    d="M24 49C40 58 80 58 96 49L86 101H34Z"
+    fill="url(#ffBox)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="60"
+    cy="78"
+    fill="#fde047"
+    r="10"
+    stroke="#78350f"
+    stroke-width="3.4"
+  />
+</svg>

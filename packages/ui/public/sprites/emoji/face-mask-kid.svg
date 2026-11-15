@@ -1,0 +1,60 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đeo khẩu trang sạch</title>
+  <defs>
+    <radialGradient cx="38%" cy="28%" id="fmFace" r="70%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="56%" stop-color="#fde047" />
+      <stop offset="100%" stop-color="#eab308" />
+    </radialGradient>
+    <linearGradient id="fmMask" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#ccfbf1" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#78350f" opacity="0.24" rx="36" ry="5.5" />
+  <circle
+    cx="60"
+    cy="58"
+    fill="url(#fmFace)"
+    r="39"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M52 19C54 11 63 11 65 18C70 13 76 17 72 22"
+    fill="#78350f"
+    stroke="#451a03"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M38 48C41 42 48 42 51 48M69 48C72 42 79 42 82 48"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <path
+    d="M22 57L36 62M98 57L84 62M24 73L36 76M96 73L84 76"
+    stroke="#115e59"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <rect
+    fill="url(#fmMask)"
+    height="31"
+    rx="11"
+    stroke="#115e59"
+    stroke-width="3.8"
+    width="52"
+    x="34"
+    y="56"
+  />
+  <path
+    d="M41 66H79M41 75H79"
+    stroke="#5eead4"
+    stroke-linecap="round"
+    stroke-opacity="0.85"
+    stroke-width="2.8"
+  />
+</svg>

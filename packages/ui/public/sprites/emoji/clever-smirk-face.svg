@@ -1,0 +1,60 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cười hóm hỉnh</title>
+  <defs>
+    <radialGradient cx="38%" cy="28%" id="csFace" r="70%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="55%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#eab308" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#78350f" opacity="0.24" rx="36" ry="5.5" />
+  <circle
+    cx="60"
+    cy="58"
+    fill="url(#csFace)"
+    r="40"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M35 42H50M69 38C75 34 82 35 86 40"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <ellipse
+    cx="44"
+    cy="53"
+    fill="#ffffff"
+    rx="7.5"
+    ry="6"
+    stroke="#5c3d2e"
+    stroke-width="3.4"
+  />
+  <circle cx="47" cy="53" fill="#1c1917" r="3.6" />
+  <ellipse
+    cx="76"
+    cy="53"
+    fill="#ffffff"
+    rx="7.5"
+    ry="6"
+    stroke="#5c3d2e"
+    stroke-width="3.4"
+  />
+  <circle cx="79" cy="53" fill="#1c1917" r="3.6" />
+  <path
+    d="M47 74C58 75 70 72 77 64"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <ellipse
+    cx="43"
+    cy="29"
+    fill="#ffffff"
+    fill-opacity="0.65"
+    rx="10"
+    ry="4"
+    transform="rotate(-20 43 29)"
+  />
+</svg>

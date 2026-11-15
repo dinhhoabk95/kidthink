@@ -1,0 +1,38 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Giày búp bê</title>
+  <defs>
+    <linearGradient id="bfPink" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fbcfe8" />
+      <stop offset="55%" stop-color="#f472b6" />
+      <stop offset="100%" stop-color="#db2777" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="100" fill="#831843" opacity="0.24" rx="44" ry="6" />
+  <path
+    d="M14 74C14 60 24 56 32 62C42 72 64 72 78 62C88 56 104 62 106 76C106 86 96 90 80 90H26C18 90 14 84 14 74Z"
+    fill="url(#bfPink)"
+    stroke="#831843"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M30 63C44 74 66 74 80 63C72 57 40 57 30 63Z"
+    fill="#fef3c7"
+    stroke="#831843"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M54 58V72"
+    stroke="#831843"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M88 62L80 54L80 66ZM88 62L96 54L96 66Z"
+    fill="#fb7185"
+    stroke="#831843"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+</svg>

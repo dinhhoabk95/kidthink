@@ -1,0 +1,51 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Địa cầu châu Mỹ</title>
+  <defs>
+    <radialGradient cx="36%" cy="32%" id="agSea" r="70%">
+      <stop offset="0%" stop-color="#bae6fd" />
+      <stop offset="52%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e3a8a" opacity="0.24" rx="36" ry="5.5" />
+  <circle
+    cx="60"
+    cy="58"
+    fill="url(#agSea)"
+    r="41"
+    stroke="#1e3a8a"
+    stroke-width="4.2"
+  />
+  <path
+    d="M31 35C36 25 52 24 58 31C61 36 53 44 48 48C45 51 50 56 54 57C47 59 41 55 37 49C31 45 28 40 31 35Z"
+    fill="#4ade80"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M55 58C64 58 75 65 73 75C71 84 63 92 58 93C54 88 54 78 51 71C49 65 50 60 55 58Z"
+    fill="#22c55e"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <ellipse
+    cx="67"
+    cy="26"
+    fill="#bbf7d0"
+    rx="7"
+    ry="4"
+    stroke="#14532d"
+    stroke-width="3"
+  />
+  <ellipse
+    cx="43"
+    cy="34"
+    fill="#ffffff"
+    fill-opacity="0.5"
+    rx="9"
+    ry="4"
+    transform="rotate(-26 43 34)"
+  />
+</svg>

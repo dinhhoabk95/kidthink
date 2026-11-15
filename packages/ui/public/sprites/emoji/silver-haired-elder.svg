@@ -1,0 +1,79 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Người tóc bạc</title>
+  <defs>
+    <radialGradient cx="38%" cy="28%" id="sheSilver" r="70%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="62%" stop-color="#e2e8f0" />
+      <stop offset="100%" stop-color="#94a3b8" />
+    </radialGradient>
+    <radialGradient cx="45%" cy="38%" id="sheFace" r="65%">
+      <stop offset="0%" stop-color="#ffedd5" />
+      <stop offset="100%" stop-color="#fdba74" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#334155" opacity="0.24" rx="36" ry="6" />
+  <path
+    d="M30 98C34 84 46 78 60 78C74 78 86 84 90 98Z"
+    fill="#a78bfa"
+    stroke="#4c1d95"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="34"
+    cy="48"
+    fill="url(#sheSilver)"
+    r="12"
+    stroke="#475569"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="86"
+    cy="48"
+    fill="url(#sheSilver)"
+    r="12"
+    stroke="#475569"
+    stroke-width="3.8"
+  />
+  <ellipse
+    cx="60"
+    cy="56"
+    fill="url(#sheFace)"
+    rx="23"
+    ry="24"
+    stroke="#7c2d12"
+    stroke-width="4"
+  />
+  <path
+    d="M34 46C34 26 48 18 60 18C72 18 86 26 86 46C76 38 68 42 60 38C52 42 44 38 34 46Z"
+    fill="url(#sheSilver)"
+    stroke="#475569"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="50"
+    cy="56"
+    fill="none"
+    r="6.5"
+    stroke="#475569"
+    stroke-width="2.8"
+  />
+  <circle
+    cx="70"
+    cy="56"
+    fill="none"
+    r="6.5"
+    stroke="#475569"
+    stroke-width="2.8"
+  />
+  <path d="M56.5 56H63.5" stroke="#475569" stroke-width="2.6" />
+  <circle cx="50" cy="56" fill="#1c1917" r="2.4" />
+  <circle cx="70" cy="56" fill="#1c1917" r="2.4" />
+  <path
+    d="M52 69C56 73 64 73 68 69"
+    stroke="#7c2d12"
+    stroke-linecap="round"
+    stroke-width="2.8"
+  />
+</svg>

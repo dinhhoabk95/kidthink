@@ -1,0 +1,80 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Tàu điện thành phố</title>
+  <defs>
+    <linearGradient id="lrBody" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#e2e8f0" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#134e4a" opacity="0.24" rx="44" ry="5" />
+  <path
+    d="M48 34L60 22L72 34L60 39Z"
+    fill="none"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M16 94H104"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-width="4.4"
+  />
+  <path
+    d="M28 38H96C101 38 104 42 104 47V84H16L24 46C25 41 26 38 28 38Z"
+    fill="url(#lrBody)"
+    stroke="#134e4a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M17 72H104V84H16Z"
+    fill="#14b8a6"
+    stroke="#134e4a"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M26 46H45V65H22Z"
+    fill="#7dd3fc"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <rect
+    fill="#bae6fd"
+    height="19"
+    rx="3"
+    stroke="#1e3a8a"
+    stroke-width="3.4"
+    width="18"
+    x="53"
+    y="46"
+  />
+  <rect
+    fill="#bae6fd"
+    height="19"
+    rx="3"
+    stroke="#1e3a8a"
+    stroke-width="3.4"
+    width="18"
+    x="78"
+    y="46"
+  />
+  <circle
+    cx="36"
+    cy="88"
+    fill="#475569"
+    r="5.5"
+    stroke="#1e293b"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="84"
+    cy="88"
+    fill="#475569"
+    r="5.5"
+    stroke="#1e293b"
+    stroke-width="3.2"
+  />
+</svg>

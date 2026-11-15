@@ -1,0 +1,81 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bạn tóc xoăn</title>
+  <defs>
+    <radialGradient cx="40%" cy="30%" id="chpCurl" r="70%">
+      <stop offset="0%" stop-color="#92400e" />
+      <stop offset="60%" stop-color="#5c2d16" />
+      <stop offset="100%" stop-color="#3b1d0e" />
+    </radialGradient>
+    <radialGradient cx="42%" cy="36%" id="chpSkin" r="68%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="100%" stop-color="#d97706" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#3b1d0e" opacity="0.24" rx="36" ry="6" />
+  <circle
+    cx="34"
+    cy="44"
+    fill="url(#chpCurl)"
+    r="12"
+    stroke="#3b1d0e"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="86"
+    cy="44"
+    fill="url(#chpCurl)"
+    r="12"
+    stroke="#3b1d0e"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="44"
+    cy="28"
+    fill="url(#chpCurl)"
+    r="13"
+    stroke="#3b1d0e"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="76"
+    cy="28"
+    fill="url(#chpCurl)"
+    r="13"
+    stroke="#3b1d0e"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="60"
+    cy="24"
+    fill="url(#chpCurl)"
+    r="13"
+    stroke="#3b1d0e"
+    stroke-width="3.8"
+  />
+  <path
+    d="M32 98C36 84 46 78 60 78C74 78 84 84 88 98Z"
+    fill="#facc15"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="60"
+    cy="57"
+    fill="url(#chpSkin)"
+    rx="22"
+    ry="23"
+    stroke="#5c2d16"
+    stroke-width="4"
+  />
+  <circle cx="50" cy="55" fill="#1c1917" r="3" />
+  <circle cx="70" cy="55" fill="#1c1917" r="3" />
+  <circle cx="49" cy="54" fill="#ffffff" r="1.1" />
+  <circle cx="69" cy="54" fill="#ffffff" r="1.1" />
+  <path
+    d="M51 66C55 71 65 71 69 66"
+    stroke="#5c2d16"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+</svg>

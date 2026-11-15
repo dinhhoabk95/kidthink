@@ -1,0 +1,64 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hoa mắt chóng mặt</title>
+  <defs>
+    <radialGradient cx="38%" cy="28%" id="sdFace" r="70%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="56%" stop-color="#fde047" />
+      <stop offset="100%" stop-color="#eab308" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#78350f" opacity="0.24" rx="36" ry="5.5" />
+  <circle
+    cx="60"
+    cy="61"
+    fill="url(#sdFace)"
+    r="38"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M43 56C43 53 46 53 46 56C46 60 39 60 39 55C39 49 49 49 49 56C49 64 36 64 36 55"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M77 56C77 53 80 53 80 56C80 60 73 60 73 55C73 49 83 49 83 56C83 64 70 64 70 55"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="60"
+    cy="78"
+    fill="#fb7185"
+    r="8.5"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <ellipse
+    cx="60"
+    cy="18"
+    fill="none"
+    rx="28"
+    ry="7"
+    stroke="#b45309"
+    stroke-dasharray="5 5"
+    stroke-opacity="0.7"
+    stroke-width="2.6"
+  />
+  <polygon
+    fill="#facc15"
+    points="32,10 35,16 41,17 36,21 38,27 32,24 26,27 28,21 23,17 29,16"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <polygon
+    fill="#facc15"
+    points="88,12 90,17 95,18 91,21 92,26 88,23 84,26 85,21 81,18 86,17"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+</svg>

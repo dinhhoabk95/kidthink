@@ -1,0 +1,45 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Thẻ số 2</title>
+  <defs>
+    <linearGradient id="ktwTile" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffedd5" />
+      <stop offset="55%" stop-color="#fdba74" />
+      <stop offset="100%" stop-color="#fb923c" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#7c2d12" opacity="0.25" rx="38" ry="5.5" />
+  <rect
+    fill="#c2410c"
+    height="76"
+    rx="18"
+    stroke="#7c2d12"
+    stroke-width="4"
+    width="76"
+    x="22"
+    y="26"
+  />
+  <rect
+    fill="url(#ktwTile)"
+    height="70"
+    rx="16"
+    stroke="#7c2d12"
+    stroke-width="4"
+    width="76"
+    x="22"
+    y="20"
+  />
+  <path
+    d="M42 46C43 37 50 32 61 32C72 32 79 38 79 46C79 53 74 58 64 64L57 67H79V77H41V68L57 57C64 52 67 49 67 46C67 43 64 41 60 41C55 41 53 43 52 48L42 46Z"
+    fill="#ffffff"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M31 28H47"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.75"
+    stroke-width="3"
+  />
+</svg>

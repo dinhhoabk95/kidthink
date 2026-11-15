@@ -1,0 +1,55 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cờ đỏ sao vàng Việt Nam</title>
+  <defs>
+    <linearGradient id="vnRed" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb7185" />
+      <stop offset="35%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#b91c1c" />
+    </linearGradient>
+    <linearGradient id="vnGold" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="55%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#eab308" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="56" cy="107" fill="#7f1d1d" opacity="0.24" rx="38" ry="5" />
+  <path
+    d="M26 26C44 19 65 31 84 25C92 22 99 24 104 26V76C89 72 70 83 50 76C39 72 32 74 26 76Z"
+    fill="url(#vnRed)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M33 32C46 28 58 32 69 32"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.42"
+    stroke-width="3"
+  />
+  <polygon
+    fill="url(#vnGold)"
+    points="65,34.5 68.7,45.2 80,45.4 71,52.2 74.3,63 65,56.5 55.7,63 59,52.2 50,45.4 61.3,45.2"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <rect
+    fill="#b45309"
+    height="84"
+    rx="4"
+    stroke="#451a03"
+    stroke-width="3.8"
+    width="8"
+    x="19"
+    y="20"
+  />
+  <circle
+    cx="23"
+    cy="17"
+    fill="#facc15"
+    r="6"
+    stroke="#78350f"
+    stroke-width="3.6"
+  />
+</svg>

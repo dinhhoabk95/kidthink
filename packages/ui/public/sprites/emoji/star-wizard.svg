@@ -1,0 +1,76 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Phù thuỷ phép thuật</title>
+  <defs>
+    <linearGradient id="swHat" x1="20%" x2="80%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#8b5cf6" />
+      <stop offset="100%" stop-color="#4c1d95" />
+    </linearGradient>
+    <radialGradient cx="45%" cy="35%" id="swOrb" r="65%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="55%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="58" cy="106" fill="#312e81" opacity="0.24" rx="36" ry="5.5" />
+  <path
+    d="M26 99C30 76 42 68 58 68C74 68 86 76 90 99Z"
+    fill="url(#swHat)"
+    stroke="#312e81"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="58"
+    cy="53"
+    fill="#fed7aa"
+    r="17"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <path
+    d="M41 59C40 72 48 84 58 86C68 84 76 72 75 59C68 63 63 64 58 64C53 64 48 63 41 59Z"
+    fill="#f8fafc"
+    stroke="#475569"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M40 42L56 11L69 20L64 26L76 42Z"
+    fill="url(#swHat)"
+    stroke="#312e81"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="58"
+    cy="42"
+    fill="#6d28d9"
+    rx="28"
+    ry="6.5"
+    stroke="#312e81"
+    stroke-width="3.8"
+  />
+  <polygon
+    fill="#fde047"
+    points="57,24 59,29 65,29 60,33 62,38 57,35 52,38 54,33 49,29 55,29"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="2.4"
+  />
+  <circle cx="52" cy="52" fill="#1c1917" r="2.5" />
+  <circle cx="64" cy="52" fill="#1c1917" r="2.5" />
+  <circle
+    cx="93"
+    cy="74"
+    fill="url(#swOrb)"
+    r="11"
+    stroke="#1e3a8a"
+    stroke-width="3.6"
+  />
+  <path
+    d="M93 85V100"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+</svg>

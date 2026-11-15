@@ -1,0 +1,65 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bảng bấm cảnh phim</title>
+  <defs>
+    <linearGradient id="cbBoard" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#475569" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#334155" opacity="0.25" rx="38" ry="5.5" />
+  <g transform="rotate(-12 24 44)">
+    <rect
+      fill="#f8fafc"
+      height="15"
+      rx="4"
+      stroke="#1e293b"
+      stroke-width="3.8"
+      width="78"
+      x="20"
+      y="27"
+    />
+    <path
+      d="M34 27L42 42H54L46 27H34ZM60 27L68 42H80L72 27H60Z"
+      fill="#334155"
+    />
+  </g>
+  <rect
+    fill="url(#cbBoard)"
+    height="54"
+    rx="7"
+    stroke="#1e293b"
+    stroke-width="4"
+    width="80"
+    x="20"
+    y="46"
+  />
+  <rect
+    fill="#f8fafc"
+    height="13"
+    rx="3"
+    stroke="#1e293b"
+    stroke-width="3.6"
+    width="80"
+    x="20"
+    y="44"
+  />
+  <path
+    d="M34 44L26 57H38L46 44H34ZM60 44L52 57H64L72 44H60ZM86 44L78 57H90L96 47V44H86Z"
+    fill="#334155"
+  />
+  <path
+    d="M32 70H88M32 84H68"
+    stroke="#fef08a"
+    stroke-linecap="round"
+    stroke-opacity="0.85"
+    stroke-width="3"
+  />
+  <circle
+    cx="27"
+    cy="50"
+    fill="#fbbf24"
+    r="3.5"
+    stroke="#78350f"
+    stroke-width="2.6"
+  />
+</svg>

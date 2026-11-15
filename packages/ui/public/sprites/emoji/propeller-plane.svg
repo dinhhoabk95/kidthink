@@ -1,0 +1,70 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Máy bay cánh quạt</title>
+  <defs>
+    <linearGradient id="ppBody" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#fde68a" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#7c2d12" opacity="0.22" rx="40" ry="5" />
+  <polygon
+    fill="#ef4444"
+    points="18,46 31,46 35,62 20,62"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <rect
+    fill="url(#ppBody)"
+    height="22"
+    rx="11"
+    stroke="#78350f"
+    stroke-width="4"
+    width="72"
+    x="22"
+    y="52"
+  />
+  <path
+    d="M50 52L64 38H78L82 52Z"
+    fill="#7dd3fc"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <rect
+    fill="#ef4444"
+    height="11"
+    rx="5.5"
+    stroke="#7f1d1d"
+    stroke-width="3.8"
+    width="52"
+    x="34"
+    y="61"
+  />
+  <ellipse
+    cx="98"
+    cy="46"
+    fill="#94a3b8"
+    rx="4"
+    ry="15"
+    stroke="#334155"
+    stroke-width="3.2"
+  />
+  <ellipse
+    cx="98"
+    cy="80"
+    fill="#94a3b8"
+    rx="4"
+    ry="15"
+    stroke="#334155"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="97"
+    cy="63"
+    fill="#f97316"
+    r="6.5"
+    stroke="#7c2d12"
+    stroke-width="3.4"
+  />
+</svg>

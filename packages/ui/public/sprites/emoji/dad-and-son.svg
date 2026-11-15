@@ -1,0 +1,71 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bố và con trai</title>
+  <defs>
+    <radialGradient cx="40%" cy="30%" id="dsSkin" r="70%">
+      <stop offset="0%" stop-color="#fffbeb" />
+      <stop offset="60%" stop-color="#fed7aa" />
+      <stop offset="100%" stop-color="#fdba74" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#1e3a8a" opacity="0.24" rx="42" ry="5.5" />
+  <path
+    d="M16 100C16 76 29 64 46 64C63 64 74 76 74 100Z"
+    fill="#3b82f6"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="45"
+    cy="42"
+    fill="url(#dsSkin)"
+    r="20"
+    stroke="#5c3d2e"
+    stroke-width="3.8"
+  />
+  <path
+    d="M26 39C27 20 63 20 64 39C55 31 35 31 26 39Z"
+    fill="#451a03"
+    stroke="#292524"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle cx="38" cy="44" fill="#1c1917" r="3" />
+  <circle cx="52" cy="44" fill="#1c1917" r="3" />
+  <path
+    d="M39 52C43 56 47 56 51 52"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="3.2"
+  />
+  <path
+    d="M52 102C52 84 63 75 78 75C93 75 104 84 104 102Z"
+    fill="#facc15"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="78"
+    cy="60"
+    fill="url(#dsSkin)"
+    r="16"
+    stroke="#5c3d2e"
+    stroke-width="3.8"
+  />
+  <path
+    d="M62 56C64 41 92 41 94 56L101 56C96 50 66 50 62 56Z"
+    fill="#22c55e"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <circle cx="72" cy="62" fill="#1c1917" r="2.8" />
+  <circle cx="84" cy="62" fill="#1c1917" r="2.8" />
+  <path
+    d="M73 69C76 73 80 73 83 69"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+</svg>

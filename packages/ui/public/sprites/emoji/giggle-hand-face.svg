@@ -1,0 +1,47 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Che miệng cười khúc khích</title>
+  <defs>
+    <radialGradient cx="38%" cy="28%" id="ghFace" r="70%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="54%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#eab308" />
+    </radialGradient>
+    <linearGradient id="ghHand" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#78350f" opacity="0.24" rx="36" ry="5.5" />
+  <circle
+    cx="60"
+    cy="55"
+    fill="url(#ghFace)"
+    r="39"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="44"
+    cy="29"
+    fill="#ffffff"
+    fill-opacity="0.65"
+    rx="10"
+    ry="4"
+    transform="rotate(-22 44 29)"
+  />
+  <path
+    d="M37 49C40 43 47 43 50 49M70 49C73 43 80 43 83 49"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <circle cx="33" cy="60" fill="#fb7185" fill-opacity="0.62" r="7.5" />
+  <circle cx="87" cy="60" fill="#fb7185" fill-opacity="0.62" r="7.5" />
+  <path
+    d="M46 78C46 67 51 61 56 61C58 61 60 63 60 65C61 61 66 61 67 66C70 63 74 66 73 72L77 70C81 69 83 74 79 79C75 86 68 96 58 96C49 96 46 87 46 78Z"
+    fill="url(#ghHand)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+</svg>

@@ -1,0 +1,42 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hình chữ nhật ngang</title>
+  <defs>
+    <linearGradient id="wrBlock" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="60%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#0369a1" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="94" fill="#1e3a8a" opacity="0.24" rx="46" ry="5.5" />
+  <rect
+    fill="#075985"
+    height="40"
+    rx="10"
+    stroke="#1e3a8a"
+    stroke-width="4"
+    width="92"
+    x="14"
+    y="44"
+  />
+  <rect
+    fill="url(#wrBlock)"
+    height="38"
+    rx="10"
+    stroke="#1e3a8a"
+    stroke-width="4"
+    width="92"
+    x="14"
+    y="38"
+  />
+  <rect
+    fill="#bae6fd"
+    fill-opacity="0.45"
+    height="8"
+    rx="4"
+    width="74"
+    x="23"
+    y="44"
+  />
+  <circle cx="26" cy="57" fill="#e0f2fe" fill-opacity="0.55" r="3" />
+  <circle cx="94" cy="57" fill="#e0f2fe" fill-opacity="0.55" r="3" />
+</svg>

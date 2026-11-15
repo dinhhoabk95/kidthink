@@ -1,0 +1,40 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Nắng ấm mây nhẹ</title>
+  <defs>
+    <radialGradient cx="38%" cy="34%" id="msSun" r="68%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="55%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#f97316" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="62" cy="105" fill="#78350f" opacity="0.22" rx="38" ry="5" />
+  <path
+    d="M52 12V21M52 83V92M12 52H21M24 24L31 31M80 24L73 31M24 80L31 73"
+    stroke="#b45309"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <circle
+    cx="52"
+    cy="52"
+    fill="url(#msSun)"
+    r="25"
+    stroke="#9a3412"
+    stroke-width="4"
+  />
+  <circle cx="44" cy="49" fill="#451a03" r="2.8" />
+  <circle cx="60" cy="49" fill="#451a03" r="2.8" />
+  <path
+    d="M47 58C50 61 54 61 57 58"
+    stroke="#7c2d12"
+    stroke-linecap="round"
+    stroke-width="2.8"
+  />
+  <path
+    d="M54 92C46 92 43 83 49 78C50 69 61 64 69 69C75 62 89 65 91 75C99 76 101 86 95 91C92 92 88 92 84 92Z"
+    fill="#ffffff"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+</svg>

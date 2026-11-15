@@ -1,0 +1,28 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Dấu chấm than</title>
+  <defs>
+    <linearGradient id="emBody" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fda4af" />
+      <stop offset="50%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#dc2626" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#7f1d1d" opacity="0.25" rx="22" ry="5" />
+  <path
+    d="M44 26C44 17 51 12 60 12C69 12 76 17 76 26L71 64C70 70 66 74 60 74C54 74 50 70 49 64L44 26Z"
+    fill="url(#emBody)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4.2"
+  />
+  <circle
+    cx="60"
+    cy="91"
+    fill="url(#emBody)"
+    r="11.5"
+    stroke="#7f1d1d"
+    stroke-width="4.2"
+  />
+  <ellipse cx="54" cy="28" fill="#ffffff" fill-opacity="0.65" rx="4" ry="11" />
+  <circle cx="56" cy="87" fill="#ffffff" fill-opacity="0.65" r="3.2" />
+</svg>

@@ -1,0 +1,69 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Lạc đà không bướu</title>
+  <defs>
+    <radialGradient cx="36%" cy="30%" id="lmWool" r="70%">
+      <stop offset="0%" stop-color="#fffbeb" />
+      <stop offset="65%" stop-color="#fde68a" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </radialGradient>
+    <linearGradient id="lmBlanket" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#f43f5e" />
+      <stop offset="50%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#14b8a6" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="58" cy="104" fill="#78350f" opacity="0.24" rx="34" ry="6" />
+  <path
+    d="M38 80V100M48 82V100M68 80V100M78 82V100"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <circle
+    cx="28"
+    cy="64"
+    fill="url(#lmWool)"
+    r="7"
+    stroke="#78350f"
+    stroke-width="3.6"
+  />
+  <path
+    d="M71 25C68 14 72 10 76 18M81 25C83 14 88 12 86 22"
+    fill="#fde68a"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M30 71C30 62 36 58 44 58H67V32C67 24 73 20 81 20C89 20 94 25 94 31C94 37 89 41 84 41V71C84 79 78 84 70 84H43C35 84 30 79 30 71Z"
+    fill="url(#lmWool)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M44 58H65V75C65 78 62 80 59 80H50C47 80 44 78 44 75Z"
+    fill="url(#lmBlanket)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <ellipse
+    cx="89"
+    cy="32"
+    fill="#fffbeb"
+    rx="6"
+    ry="5"
+    stroke="#78350f"
+    stroke-width="2.8"
+  />
+  <circle cx="79" cy="29" fill="#1c1917" r="2.6" />
+  <circle cx="78.2" cy="28.1" fill="#ffffff" r="0.9" />
+  <path
+    d="M87 33C89 35 91 35 92 33"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="2.4"
+  />
+</svg>

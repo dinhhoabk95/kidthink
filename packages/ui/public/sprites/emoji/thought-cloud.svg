@@ -1,0 +1,43 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bong bóng suy nghĩ</title>
+  <defs>
+    <radialGradient cx="38%" cy="28%" id="tcBody" r="72%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="65%" stop-color="#f1f5f9" />
+      <stop offset="100%" stop-color="#cbd5e1" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="58" cy="109" fill="#334155" opacity="0.22" rx="34" ry="4.5" />
+  <path
+    d="M34 74C21 74 14 64 17 52C14 39 24 28 37 29C44 18 62 16 72 25C85 21 99 30 99 44C107 51 106 66 95 72C89 80 75 82 66 77C56 83 41 81 34 74Z"
+    fill="url(#tcBody)"
+    stroke="#475569"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="46"
+    cy="34"
+    fill="#ffffff"
+    fill-opacity="0.85"
+    rx="12"
+    ry="5"
+    transform="rotate(-14 46 34)"
+  />
+  <circle
+    cx="37"
+    cy="88"
+    fill="url(#tcBody)"
+    r="7.5"
+    stroke="#475569"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="24"
+    cy="99"
+    fill="url(#tcBody)"
+    r="5"
+    stroke="#475569"
+    stroke-width="3.6"
+  />
+</svg>

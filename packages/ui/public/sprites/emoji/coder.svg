@@ -1,0 +1,84 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Kỹ sư máy tính</title>
+  <defs>
+    <radialGradient cx="40%" cy="35%" id="cdSkin" r="68%">
+      <stop offset="0%" stop-color="#ffedd5" />
+      <stop offset="100%" stop-color="#fdba74" />
+    </radialGradient>
+    <linearGradient id="cdLap" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#f1f5f9" />
+      <stop offset="100%" stop-color="#94a3b8" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#134e4a" opacity="0.25" rx="38" ry="5.5" />
+  <path
+    d="M26 96C28 79 41 72 60 72C79 72 92 79 94 96H26Z"
+    fill="#14b8a6"
+    stroke="#134e4a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="60"
+    cy="49"
+    fill="url(#cdSkin)"
+    r="19"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <path
+    d="M40 43C40 26 50 20 62 20C74 20 80 28 79 43C71 35 50 35 40 43Z"
+    fill="#78350f"
+    stroke="#44403c"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="52"
+    cy="50"
+    fill="#e0f2fe"
+    r="6.5"
+    stroke="#1e3a8a"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="68"
+    cy="50"
+    fill="#e0f2fe"
+    r="6.5"
+    stroke="#1e3a8a"
+    stroke-width="3.2"
+  />
+  <circle cx="52" cy="50" fill="#1c1917" r="2.2" />
+  <circle cx="68" cy="50" fill="#1c1917" r="2.2" />
+  <path
+    d="M58 50H62"
+    stroke="#1e3a8a"
+    stroke-linecap="round"
+    stroke-width="3.2"
+  />
+  <path
+    d="M55 60C58 63 62 63 65 60"
+    stroke="#7c2d12"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+  <rect
+    fill="url(#cdLap)"
+    height="24"
+    rx="5"
+    stroke="#334155"
+    stroke-width="3.8"
+    width="48"
+    x="36"
+    y="76"
+  />
+  <circle
+    cx="60"
+    cy="88"
+    fill="#fde047"
+    r="4.5"
+    stroke="#78350f"
+    stroke-width="2.8"
+  />
+</svg>

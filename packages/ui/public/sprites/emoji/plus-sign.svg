@@ -1,0 +1,26 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Dấu cộng</title>
+  <defs>
+    <linearGradient id="psFill" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#86efac" />
+      <stop offset="55%" stop-color="#22c55e" />
+      <stop offset="100%" stop-color="#15803d" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#14532d" opacity="0.25" rx="30" ry="5.5" />
+  <path
+    d="M48 24H72C76 24 79 27 79 31V47H95C99 47 102 50 102 54V74C102 78 99 81 95 81H79V97C79 101 76 104 72 104H48C44 104 41 101 41 97V81H25C21 81 18 78 18 74V54C18 50 21 47 25 47H41V31C41 27 44 24 48 24Z"
+    fill="#15803d"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M48 18H72C76 18 79 21 79 25V41H95C99 41 102 44 102 48V68C102 72 99 75 95 75H79V91C79 95 76 98 72 98H48C44 98 41 95 41 91V75H25C21 75 18 72 18 68V48C18 44 21 41 25 41H41V25C41 21 44 18 48 18Z"
+    fill="url(#psFill)"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse cx="55" cy="27" fill="#ffffff" fill-opacity="0.65" rx="7" ry="3" />
+</svg>

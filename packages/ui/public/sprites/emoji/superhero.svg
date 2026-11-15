@@ -1,0 +1,69 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Siêu anh hùng nhí</title>
+  <defs>
+    <radialGradient cx="40%" cy="35%" id="shSkin" r="68%">
+      <stop offset="0%" stop-color="#ffedd5" />
+      <stop offset="100%" stop-color="#fdba74" />
+    </radialGradient>
+    <linearGradient id="shCape" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb7185" />
+      <stop offset="60%" stop-color="#e11d48" />
+      <stop offset="100%" stop-color="#9f1239" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#7f1d1d" opacity="0.25" rx="38" ry="5.5" />
+  <path
+    d="M34 68L18 98H102L86 68H34Z"
+    fill="url(#shCape)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M32 100C34 81 45 73 60 73C75 73 86 81 88 100H32Z"
+    fill="#3b82f6"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M60 80L63 86L70 87L65 91L66 97L60 94L54 97L55 91L50 87L57 86Z"
+    fill="#fde047"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="60"
+    cy="51"
+    fill="url(#shSkin)"
+    r="19"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <path
+    d="M40 44C41 26 52 20 64 21C75 22 80 30 79 44C70 36 50 36 40 44Z"
+    fill="#78350f"
+    stroke="#44403c"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <rect
+    fill="#ef4444"
+    height="10"
+    rx="5"
+    stroke="#7f1d1d"
+    stroke-width="3.4"
+    width="34"
+    x="43"
+    y="45"
+  />
+  <circle cx="53" cy="50" fill="#ffffff" r="2.6" />
+  <circle cx="67" cy="50" fill="#ffffff" r="2.6" />
+  <path
+    d="M55 61C58 64 62 64 65 61"
+    stroke="#7c2d12"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+</svg>

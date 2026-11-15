@@ -1,0 +1,92 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Công chúa nhỏ</title>
+  <defs>
+    <linearGradient id="prGown" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fbcfe8" />
+      <stop offset="55%" stop-color="#f472b6" />
+      <stop offset="100%" stop-color="#db2777" />
+    </linearGradient>
+    <linearGradient id="prTiara" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#831843" opacity="0.24" rx="38" ry="5.5" />
+  <path
+    d="M31 44C26 58 28 79 38 84H82C92 79 94 58 89 44C82 30 38 30 31 44Z"
+    fill="#b45309"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M25 99C30 80 42 72 60 72C78 72 90 80 95 99C73 103 47 103 25 99Z"
+    fill="url(#prGown)"
+    stroke="#831843"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="40"
+    cy="78"
+    fill="#fce7f3"
+    r="8"
+    stroke="#831843"
+    stroke-width="3.4"
+  />
+  <circle
+    cx="80"
+    cy="78"
+    fill="#fce7f3"
+    r="8"
+    stroke="#831843"
+    stroke-width="3.4"
+  />
+  <path
+    d="M51 73L60 84L69 73Z"
+    fill="#fff1f2"
+    stroke="#831843"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="60"
+    cy="53"
+    fill="#ffedd5"
+    r="19"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <path
+    d="M41 48C44 33 76 33 79 48C70 40 50 40 41 48Z"
+    fill="#d97706"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M44 36L49 21L56 29L60 16L64 29L71 21L76 36Z"
+    fill="url(#prTiara)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="60"
+    cy="29"
+    fill="#ec4899"
+    r="3.4"
+    stroke="#831843"
+    stroke-width="2"
+  />
+  <circle cx="53" cy="54" fill="#1c1917" r="2.7" />
+  <circle cx="67" cy="54" fill="#1c1917" r="2.7" />
+  <circle cx="47" cy="59" fill="#fb7185" fill-opacity="0.55" r="3.5" />
+  <circle cx="73" cy="59" fill="#fb7185" fill-opacity="0.55" r="3.5" />
+  <path
+    d="M55 62C58 65 62 65 65 62"
+    stroke="#831843"
+    stroke-linecap="round"
+    stroke-width="2.8"
+  />
+</svg>

@@ -1,0 +1,58 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Lạnh run cầm cập</title>
+  <defs>
+    <radialGradient cx="38%" cy="28%" id="ccFace" r="70%">
+      <stop offset="0%" stop-color="#e0f2fe" />
+      <stop offset="55%" stop-color="#7dd3fc" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#0c4a6e" opacity="0.25" rx="36" ry="5.5" />
+  <circle
+    cx="60"
+    cy="56"
+    fill="url(#ccFace)"
+    r="39"
+    stroke="#0c4a6e"
+    stroke-width="4"
+  />
+  <path
+    d="M35 40C40 36 46 36 51 40M69 40C74 36 80 36 85 40"
+    stroke="#0c4a6e"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <circle cx="44" cy="51" fill="#1c1917" r="5" />
+  <circle cx="45.5" cy="49.3" fill="#ffffff" r="1.8" />
+  <circle cx="76" cy="51" fill="#1c1917" r="5" />
+  <circle cx="77.5" cy="49.3" fill="#ffffff" r="1.8" />
+  <rect
+    fill="#ffffff"
+    height="16"
+    rx="7"
+    stroke="#0c4a6e"
+    stroke-width="3.8"
+    width="44"
+    x="38"
+    y="65"
+  />
+  <path
+    d="M39 73H81M50 66V80M60 66V80M70 66V80"
+    stroke="#0c4a6e"
+    stroke-width="2.6"
+  />
+  <path
+    d="M28 84L33 101L39 88Z"
+    fill="#e0f2fe"
+    stroke="#0c4a6e"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M81 88L87 102L92 84Z"
+    fill="#e0f2fe"
+    stroke="#0c4a6e"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+</svg>

@@ -1,0 +1,74 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đôi uyên ương</title>
+  <defs>
+    <radialGradient cx="40%" cy="30%" id="lcSkin" r="70%">
+      <stop offset="0%" stop-color="#fffbeb" />
+      <stop offset="60%" stop-color="#fed7aa" />
+      <stop offset="100%" stop-color="#fdba74" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#881337" opacity="0.22" rx="42" ry="5.5" />
+  <path
+    d="M60 36C57 36 44 26 44 17C44 11 49 7 54 7C57 7 59 9 60 12C61 9 63 7 66 7C71 7 76 11 76 17C76 26 63 36 60 36Z"
+    fill="#f43f5e"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M18 100C18 81 29 71 44 71C56 71 64 81 64 100Z"
+    fill="#60a5fa"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M56 100C56 81 66 71 80 71C93 71 102 81 102 100Z"
+    fill="#f472b6"
+    stroke="#831843"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="42"
+    cy="54"
+    fill="url(#lcSkin)"
+    r="19"
+    stroke="#5c3d2e"
+    stroke-width="3.8"
+  />
+  <path
+    d="M23 51C24 32 59 32 60 49C51 41 32 41 23 51Z"
+    fill="#451a03"
+    stroke="#292524"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <circle
+    cx="78"
+    cy="55"
+    fill="url(#lcSkin)"
+    r="18.5"
+    stroke="#5c3d2e"
+    stroke-width="3.8"
+  />
+  <path
+    d="M60 56C61 34 97 34 97 58C91 45 68 45 60 56Z"
+    fill="#5c3d2e"
+    stroke="#451a03"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M35 55C38 51 43 51 46 55M73 56C76 52 81 52 84 56"
+    stroke="#451a03"
+    stroke-linecap="round"
+    stroke-width="3.2"
+  />
+  <path
+    d="M37 63C40 67 45 67 48 63M72 64C75 68 80 68 83 64"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="2.8"
+  />
+</svg>

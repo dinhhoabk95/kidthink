@@ -1,0 +1,54 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Xiên bánh trôi ba màu</title>
+  <defs>
+    <radialGradient cx="36%" cy="32%" id="sdPink" r="68%">
+      <stop offset="0%" stop-color="#ffe4e6" />
+      <stop offset="55%" stop-color="#fb7185" />
+      <stop offset="100%" stop-color="#e11d48" />
+    </radialGradient>
+    <radialGradient cx="36%" cy="32%" id="sdCream" r="68%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="65%" stop-color="#fef3c7" />
+      <stop offset="100%" stop-color="#fcd34d" />
+    </radialGradient>
+    <radialGradient cx="36%" cy="32%" id="sdGreen" r="68%">
+      <stop offset="0%" stop-color="#dcfce7" />
+      <stop offset="55%" stop-color="#4ade80" />
+      <stop offset="100%" stop-color="#16a34a" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="64" cy="105" fill="#78350f" opacity="0.24" rx="30" ry="5" />
+  <path
+    d="M22 22L98 98"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4.5"
+  />
+  <circle
+    cx="74"
+    cy="74"
+    fill="url(#sdGreen)"
+    r="16"
+    stroke="#14532d"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="55"
+    cy="55"
+    fill="url(#sdCream)"
+    r="16"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="36"
+    cy="36"
+    fill="url(#sdPink)"
+    r="16"
+    stroke="#831843"
+    stroke-width="3.8"
+  />
+  <circle cx="31" cy="31" fill="#ffffff" fill-opacity="0.7" r="4" />
+  <circle cx="50" cy="50" fill="#ffffff" fill-opacity="0.75" r="4" />
+  <circle cx="69" cy="69" fill="#ffffff" fill-opacity="0.65" r="4" />
+</svg>

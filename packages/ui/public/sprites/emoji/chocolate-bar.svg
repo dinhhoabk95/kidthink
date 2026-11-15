@@ -1,0 +1,71 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Thanh sô-cô-la</title>
+  <defs>
+    <linearGradient id="cbChoc" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#b45309" />
+      <stop offset="55%" stop-color="#78350f" />
+      <stop offset="100%" stop-color="#451a03" />
+    </linearGradient>
+    <linearGradient id="cbWrap" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb7185" />
+      <stop offset="45%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#b91c1c" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#451a03" opacity="0.25" rx="34" ry="5.5" />
+  <g transform="rotate(-10 60 58)">
+    <rect
+      fill="url(#cbChoc)"
+      height="52"
+      rx="7"
+      stroke="#451a03"
+      stroke-width="4"
+      width="52"
+      x="34"
+      y="16"
+    />
+    <path d="M60 18V58M36 37H84" stroke="#451a03" stroke-width="3.8" />
+    <rect
+      fill="#d97706"
+      height="9"
+      opacity="0.55"
+      rx="2"
+      width="14"
+      x="40"
+      y="23"
+    />
+    <rect
+      fill="#d97706"
+      height="9"
+      opacity="0.55"
+      rx="2"
+      width="14"
+      x="66"
+      y="23"
+    />
+    <path
+      d="M31 54L60 49L89 55L86 66H34Z"
+      fill="#f1f5f9"
+      stroke="#475569"
+      stroke-linejoin="round"
+      stroke-width="3.6"
+    />
+    <rect
+      fill="url(#cbWrap)"
+      height="42"
+      rx="6"
+      stroke="#7f1d1d"
+      stroke-width="4"
+      width="56"
+      x="32"
+      y="59"
+    />
+    <path
+      d="M40 80H80"
+      stroke="#fde047"
+      stroke-linecap="round"
+      stroke-opacity="0.9"
+      stroke-width="4"
+    />
+  </g>
+</svg>

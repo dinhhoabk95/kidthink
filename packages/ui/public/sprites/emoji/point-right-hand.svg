@@ -1,0 +1,64 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ngón tay chỉ phải</title>
+  <defs>
+    <radialGradient cx="38%" cy="35%" id="prSkin" r="70%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="55%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="58" cy="103" fill="#78350f" opacity="0.25" rx="34" ry="5.5" />
+  <path
+    d="M62 44H98C104 44 107 48 107 53C107 58 104 62 98 62H66V80C66 86 61 90 54 90H40C27 90 18 79 18 64V48C18 36 27 30 39 30H50C57 30 62 36 62 44Z"
+    fill="url(#prSkin)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#fde047"
+    height="12"
+    rx="5.5"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="18"
+    x="53"
+    y="61"
+  />
+  <rect
+    fill="#fde047"
+    height="12"
+    rx="5.5"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="18"
+    x="50"
+    y="72"
+  />
+  <rect
+    fill="#fde047"
+    height="11"
+    rx="5"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="16"
+    x="48"
+    y="82"
+  />
+  <path
+    d="M48 31C56 31 60 37 56 44L51 51C48 54 42 52 42 47V35"
+    fill="#fcd34d"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <ellipse
+    cx="97"
+    cy="52"
+    fill="#fffbeb"
+    fill-opacity="0.65"
+    rx="4.5"
+    ry="3.2"
+  />
+</svg>

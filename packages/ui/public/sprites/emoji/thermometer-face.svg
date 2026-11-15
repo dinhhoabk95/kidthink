@@ -1,0 +1,56 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bạn nhỏ bị ốm</title>
+  <defs>
+    <radialGradient cx="38%" cy="28%" id="tmFace" r="70%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="56%" stop-color="#fde047" />
+      <stop offset="100%" stop-color="#eab308" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="58" cy="106" fill="#78350f" opacity="0.24" rx="36" ry="5.5" />
+  <circle
+    cx="57"
+    cy="58"
+    fill="url(#tmFace)"
+    r="39"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M35 43C39 40 45 39 49 41M79 43C75 40 69 39 65 41"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <circle cx="43" cy="53" fill="#1c1917" r="4.8" />
+  <circle cx="44.5" cy="51.3" fill="#ffffff" r="1.6" />
+  <circle cx="71" cy="53" fill="#1c1917" r="4.8" />
+  <circle cx="72.5" cy="51.3" fill="#ffffff" r="1.6" />
+  <circle cx="31" cy="64" fill="#fb7185" fill-opacity="0.62" r="7.5" />
+  <circle cx="83" cy="64" fill="#fb7185" fill-opacity="0.62" r="7.5" />
+  <path
+    d="M44 75C50 71 64 71 70 75"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <g transform="rotate(-24 82 69)">
+    <rect
+      fill="#fffbeb"
+      height="13"
+      rx="6.5"
+      stroke="#57534e"
+      stroke-width="3.8"
+      width="46"
+      x="59"
+      y="63"
+    />
+    <rect fill="#ef4444" height="5" rx="2.5" width="27" x="63" y="67" />
+    <path
+      d="M74 63V67M82 63V67M90 63V67"
+      stroke="#57534e"
+      stroke-linecap="round"
+      stroke-width="2.4"
+    />
+  </g>
+</svg>

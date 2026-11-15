@@ -1,0 +1,68 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Trụ bơm năng lượng</title>
+  <defs>
+    <linearGradient id="fpCase" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb7185" />
+      <stop offset="55%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#b91c1c" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="58" cy="106" fill="#7f1d1d" opacity="0.24" rx="38" ry="5" />
+  <path
+    d="M80 46H92C97 46 99 51 99 58V80C99 88 89 90 86 82V64H80"
+    stroke="#1e293b"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="4.4"
+  />
+  <rect
+    fill="url(#fpCase)"
+    height="70"
+    rx="9"
+    stroke="#7f1d1d"
+    stroke-width="4"
+    width="50"
+    x="30"
+    y="26"
+  />
+  <rect
+    fill="#e0f2fe"
+    height="22"
+    rx="4"
+    stroke="#1e3a8a"
+    stroke-width="3.6"
+    width="34"
+    x="38"
+    y="35"
+  />
+  <rect
+    fill="#fde047"
+    height="10"
+    rx="3"
+    stroke="#78350f"
+    stroke-width="3.2"
+    width="26"
+    x="42"
+    y="66"
+  />
+  <rect
+    fill="#64748b"
+    height="8"
+    rx="3"
+    stroke="#1e293b"
+    stroke-width="3.8"
+    width="62"
+    x="24"
+    y="92"
+  />
+  <rect
+    fill="#fbbf24"
+    height="14"
+    rx="3"
+    stroke="#78350f"
+    stroke-width="3.4"
+    width="9"
+    x="94"
+    y="38"
+  />
+</svg>

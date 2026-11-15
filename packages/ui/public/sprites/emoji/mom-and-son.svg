@@ -1,0 +1,79 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mẹ và con trai</title>
+  <defs>
+    <radialGradient cx="40%" cy="30%" id="msSkin" r="70%">
+      <stop offset="0%" stop-color="#fffbeb" />
+      <stop offset="60%" stop-color="#fed7aa" />
+      <stop offset="100%" stop-color="#fdba74" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#7c2d12" opacity="0.24" rx="42" ry="5.5" />
+  <circle
+    cx="44"
+    cy="24"
+    fill="#5c3d2e"
+    r="9"
+    stroke="#451a03"
+    stroke-width="3.4"
+  />
+  <path
+    d="M16 100C16 77 28 65 45 65C61 65 73 77 73 100Z"
+    fill="#fb923c"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="45"
+    cy="45"
+    fill="url(#msSkin)"
+    r="19"
+    stroke="#5c3d2e"
+    stroke-width="3.8"
+  />
+  <path
+    d="M26 45C27 26 63 26 64 45C55 36 35 36 26 45Z"
+    fill="#5c3d2e"
+    stroke="#451a03"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <circle cx="38" cy="47" fill="#1c1917" r="2.9" />
+  <circle cx="52" cy="47" fill="#1c1917" r="2.9" />
+  <path
+    d="M39 55C43 59 47 59 51 55"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+  <path
+    d="M53 102C53 84 64 76 79 76C94 76 104 84 104 102Z"
+    fill="#4ade80"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="79"
+    cy="61"
+    fill="url(#msSkin)"
+    r="15.5"
+    stroke="#5c3d2e"
+    stroke-width="3.8"
+  />
+  <path
+    d="M65 56C66 43 92 43 93 56C87 50 72 50 65 56Z"
+    fill="#451a03"
+    stroke="#292524"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <circle cx="73" cy="63" fill="#1c1917" r="2.7" />
+  <circle cx="85" cy="63" fill="#1c1917" r="2.7" />
+  <path
+    d="M74 70C77 73 81 73 84 70"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="2.8"
+  />
+</svg>

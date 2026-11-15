@@ -1,0 +1,57 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Quả cầu ánh sáng</title>
+  <defs>
+    <radialGradient cx="36%" cy="30%" id="mbSphere" r="70%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="48%" stop-color="#bae6fd" />
+      <stop offset="100%" stop-color="#818cf8" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#312e81" opacity="0.24" rx="34" ry="5" />
+  <path
+    d="M60 10V23"
+    stroke="#475569"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <rect
+    fill="#cbd5e1"
+    height="8"
+    rx="3"
+    stroke="#334155"
+    stroke-width="3.6"
+    width="18"
+    x="51"
+    y="19"
+  />
+  <circle
+    cx="60"
+    cy="62"
+    fill="url(#mbSphere)"
+    r="37"
+    stroke="#312e81"
+    stroke-width="4"
+  />
+  <path d="M25 50H95M24 63H96M28 76H92" stroke="#312e81" stroke-width="3.2" />
+  <path
+    d="M60 25V99M43 29C37 50 37 74 43 95M77 29C83 50 83 74 77 95"
+    stroke="#312e81"
+    stroke-width="3.2"
+  />
+  <rect fill="#fef08a" height="10" rx="1.5" width="12" x="45" y="51.5" />
+  <rect fill="#f9a8d4" height="10" rx="1.5" width="12" x="62" y="64.5" />
+  <polygon
+    fill="#fde047"
+    points="19,24 22,30 28,33 22,36 19,42 16,36 10,33 16,30"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <polygon
+    fill="#fde047"
+    points="101,28 103,33 108,35 103,37 101,42 99,37 94,35 99,33"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+</svg>

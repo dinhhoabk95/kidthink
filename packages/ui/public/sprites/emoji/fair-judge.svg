@@ -1,0 +1,68 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Thẩm phán</title>
+  <defs>
+    <radialGradient cx="40%" cy="35%" id="fjSkin" r="68%">
+      <stop offset="0%" stop-color="#ffedd5" />
+      <stop offset="100%" stop-color="#fdba74" />
+    </radialGradient>
+    <linearGradient id="fjRobe" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#475569" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="58" cy="106" fill="#334155" opacity="0.25" rx="38" ry="5.5" />
+  <path
+    d="M24 100C26 81 39 74 56 74C73 74 86 81 88 100H24Z"
+    fill="url(#fjRobe)"
+    stroke="#1e293b"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M48 74L56 90L64 74H48Z"
+    fill="#f8fafc"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <circle
+    cx="56"
+    cy="52"
+    fill="url(#fjSkin)"
+    r="19"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <path
+    d="M36 48C36 30 45 24 56 24C67 24 76 30 76 48C70 40 42 40 36 48Z"
+    fill="#78350f"
+    stroke="#44403c"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle cx="49" cy="53" fill="#1c1917" r="2.8" />
+  <circle cx="63" cy="53" fill="#1c1917" r="2.8" />
+  <path
+    d="M51 61C54 64 58 64 61 61"
+    stroke="#7c2d12"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+  <rect
+    fill="#b45309"
+    height="12"
+    rx="4"
+    stroke="#78350f"
+    stroke-width="3.6"
+    transform="rotate(-24 89 65)"
+    width="22"
+    x="78"
+    y="59"
+  />
+  <path
+    d="M89 70L98 94"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+</svg>

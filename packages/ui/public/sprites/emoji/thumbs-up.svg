@@ -1,0 +1,42 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ngón cái khen giỏi</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="tuSkin" r="70%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="55%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.25" rx="32" ry="5.5" />
+  <rect
+    fill="#38bdf8"
+    height="42"
+    rx="8"
+    stroke="#1e3a8a"
+    stroke-width="3.8"
+    width="18"
+    x="22"
+    y="54"
+  />
+  <path
+    d="M40 54L52 24C54 18 62 17 65 23C67 28 66 37 63 46H86C93 46 97 52 94 59C97 64 95 71 91 74C93 79 90 85 85 87C86 92 82 96 75 96H40V54Z"
+    fill="url(#tuSkin)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M74 59H92M73 73H89M71 86H84"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M84 20L87 26L93 29L87 32L84 38L81 32L75 29L81 26Z"
+    fill="#fde047"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <ellipse cx="58" cy="27" fill="#ffffff" fill-opacity="0.65" rx="3" ry="5" />
+</svg>

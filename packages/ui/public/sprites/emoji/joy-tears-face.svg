@@ -1,0 +1,52 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cười vui sướng</title>
+  <defs>
+    <radialGradient cx="36%" cy="28%" id="jtfGold" r="70%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="55%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#eab308" />
+    </radialGradient>
+    <linearGradient id="jtfTear" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#a5f3fc" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.24" rx="38" ry="6" />
+  <circle
+    cx="60"
+    cy="58"
+    fill="url(#jtfGold)"
+    r="39"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M37 49C41 42 48 42 52 49M68 49C72 42 79 42 83 49"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <path
+    d="M36 64H84C83 83 72 88 60 88C48 88 37 83 36 64Z"
+    fill="#9f1239"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path d="M39 65H81L79 72H41Z" fill="#ffffff" />
+  <ellipse cx="60" cy="83" fill="#fb7185" rx="12" ry="4.5" />
+  <path
+    d="M32 54C22 58 14 66 18 74C22 80 31 74 32 54Z"
+    fill="url(#jtfTear)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M88 54C98 58 106 66 102 74C98 80 89 74 88 54Z"
+    fill="url(#jtfTear)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+</svg>

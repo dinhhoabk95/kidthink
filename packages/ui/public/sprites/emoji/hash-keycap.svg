@@ -1,0 +1,39 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Thẻ dấu thăng</title>
+  <defs>
+    <linearGradient id="hkTile" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#e0e7ff" />
+      <stop offset="55%" stop-color="#818cf8" />
+      <stop offset="100%" stop-color="#4f46e5" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e3a8a" opacity="0.25" rx="38" ry="5.5" />
+  <rect
+    fill="#3730a3"
+    height="76"
+    rx="18"
+    stroke="#1e3a8a"
+    stroke-width="4"
+    width="76"
+    x="22"
+    y="26"
+  />
+  <rect
+    fill="url(#hkTile)"
+    height="70"
+    rx="16"
+    stroke="#1e3a8a"
+    stroke-width="4"
+    width="76"
+    x="22"
+    y="20"
+  />
+  <path
+    d="M49 34H58L56 45H66L68 34H77L75 45H83V53H73L71 61H81V69H69L67 78H58L60 69H50L48 78H39L41 69H35V61H43L45 53H37V45H47L49 34ZM54 53L52 61H62L64 53H54Z"
+    fill="#ffffff"
+    fill-rule="evenodd"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+</svg>

@@ -1,0 +1,86 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hoàng tử nhỏ</title>
+  <defs>
+    <linearGradient id="lpCoat" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+    <linearGradient id="lpCrown" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#1e3a8a" opacity="0.24" rx="36" ry="5.5" />
+  <path
+    d="M29 99C32 78 43 72 60 72C77 72 88 78 91 99Z"
+    fill="url(#lpCoat)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M41 74L75 99H85L51 73Z"
+    fill="#ef4444"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <ellipse
+    cx="35"
+    cy="77"
+    fill="#facc15"
+    rx="9"
+    ry="5"
+    stroke="#78350f"
+    stroke-width="3.4"
+  />
+  <ellipse
+    cx="85"
+    cy="77"
+    fill="#facc15"
+    rx="9"
+    ry="5"
+    stroke="#78350f"
+    stroke-width="3.4"
+  />
+  <circle
+    cx="60"
+    cy="53"
+    fill="#fed7aa"
+    r="19"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <path
+    d="M41 48C42 33 78 33 79 48C71 41 49 41 41 48Z"
+    fill="#92400e"
+    stroke="#451a03"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <polygon
+    fill="url(#lpCrown)"
+    points="42,36 45,19 54,28 60,15 66,28 75,19 78,36"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="60"
+    cy="29"
+    fill="#f43f5e"
+    r="3.2"
+    stroke="#881337"
+    stroke-width="2"
+  />
+  <circle cx="53" cy="54" fill="#1c1917" r="2.7" />
+  <circle cx="67" cy="54" fill="#1c1917" r="2.7" />
+  <circle cx="47" cy="59" fill="#fb7185" fill-opacity="0.5" r="3.4" />
+  <circle cx="73" cy="59" fill="#fb7185" fill-opacity="0.5" r="3.4" />
+  <path
+    d="M55 62C58 65 62 65 65 62"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="2.8"
+  />
+</svg>

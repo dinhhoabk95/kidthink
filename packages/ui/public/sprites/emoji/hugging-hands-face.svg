@@ -1,0 +1,61 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mặt cười dang tay ôm</title>
+  <defs>
+    <radialGradient cx="38%" cy="28%" id="hhFace" r="70%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="55%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#eab308" />
+    </radialGradient>
+    <linearGradient id="hhHand" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#78350f" opacity="0.24" rx="38" ry="5.5" />
+  <circle
+    cx="60"
+    cy="52"
+    fill="url(#hhFace)"
+    r="37"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="45"
+    cy="28"
+    fill="#ffffff"
+    fill-opacity="0.65"
+    rx="11"
+    ry="4.5"
+    transform="rotate(-20 45 28)"
+  />
+  <path
+    d="M39 46C42 40 49 40 52 46M68 46C71 40 78 40 81 46"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <circle cx="35" cy="56" fill="#fb7185" fill-opacity="0.58" r="6.5" />
+  <circle cx="85" cy="56" fill="#fb7185" fill-opacity="0.58" r="6.5" />
+  <path
+    d="M46 58C49 69 71 69 74 58Z"
+    fill="#f43f5e"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M18 76C15 67 22 61 28 65L31 58C34 54 40 57 38 63L45 66C50 69 49 85 38 91C27 95 20 87 18 76Z"
+    fill="url(#hhHand)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M102 76C105 67 98 61 92 65L89 58C86 54 80 57 82 63L75 66C70 69 71 85 82 91C93 95 100 87 102 76Z"
+    fill="url(#hhHand)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+</svg>

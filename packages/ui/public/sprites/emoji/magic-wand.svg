@@ -1,0 +1,58 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đũa thần ngôi sao</title>
+  <defs>
+    <radialGradient cx="42%" cy="38%" id="mwStar" r="65%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="55%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </radialGradient>
+    <linearGradient id="mwStick" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#6d28d9" />
+      <stop offset="100%" stop-color="#312e81" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="56" cy="105" fill="#312e81" opacity="0.22" rx="34" ry="5" />
+  <polygon
+    fill="url(#mwStick)"
+    points="20,92 28,100 76,52 68,44"
+    stroke="#312e81"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <polygon
+    fill="#fef3c7"
+    points="20,92 28,100 37,91 29,83"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <polygon
+    fill="#fef3c7"
+    points="60,52 68,60 76,52 68,44"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <polygon
+    fill="url(#mwStar)"
+    points="82,16 88,29 102,31 92,41 94,55 82,48 70,55 72,41 62,31 76,29"
+    stroke="#9a3412"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <polygon
+    fill="#fde047"
+    points="44,24 47,30 53,33 47,36 44,42 41,36 35,33 41,30"
+    stroke="#92400e"
+    stroke-linejoin="round"
+    stroke-width="2.6"
+  />
+  <polygon
+    fill="#f9a8d4"
+    points="96,68 98,73 103,75 98,77 96,82 94,77 89,75 94,73"
+    stroke="#831843"
+    stroke-linejoin="round"
+    stroke-width="2.6"
+  />
+  <circle cx="56" cy="19" fill="#38bdf8" r="3.5" />
+</svg>

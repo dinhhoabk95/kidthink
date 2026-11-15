@@ -1,6 +1,6 @@
 /**
  * @mindkid/emoji — Custom 2.5D "Giấy & Gỗ" Emoji-Art & Tier-3 Hero Sprite Registry
- * Phủ 661 emoji custom nội bộ (629 Vector Craft SVG + 32 Tier-3 Soft Clay Hero WebP).
+ * Phủ 915 emoji custom nội bộ (875 Vector Craft SVG + 40 Tier-3 Soft Clay Hero WebP).
  */
 
 import {
@@ -10,6 +10,7 @@ import {
   sprite,
 } from "./sprites-batch2";
 import { BATCH_3A_SPRITES } from "./sprites-batch3a";
+import { BATCH_3B_SPRITES } from "./sprites-batch3b";
 
 export type { CustomSpriteTier, EmojiSpriteMeta } from "./sprites-batch2";
 
@@ -159,6 +160,7 @@ const CUSTOM_SPRITE_LIST: readonly EmojiSpriteMeta[] = [
   ...BATCH_1_SPRITES,
   ...BATCH_2_SPRITES,
   ...BATCH_3A_SPRITES,
+  ...BATCH_3B_SPRITES,
 ];
 
 const VARIATION_SELECTOR_16_RE = /\uFE0F/g;
@@ -219,7 +221,7 @@ export function hasCustomEmojiSprite(emoji: string): boolean {
 }
 
 /**
- * Liệt kê toàn bộ 661 sprite custom theo thứ tự khai báo.
+ * Liệt kê toàn bộ 915 sprite custom theo thứ tự khai báo.
  */
 export function listCustomEmojiSprites(): readonly EmojiSpriteMeta[] {
   return CUSTOM_SPRITE_LIST;

@@ -1,0 +1,56 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Giày trượt băng</title>
+  <defs>
+    <linearGradient id="isBoot" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#dbeafe" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#1e3a8a" opacity="0.24" rx="42" ry="5" />
+  <path
+    d="M36 82V94M74 82V94"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <path
+    d="M22 95H88C97 95 102 89 99 83"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="4.4"
+  />
+  <path
+    d="M28 28H58V52L86 60C95 63 98 74 92 81H26V28Z"
+    fill="url(#isBoot)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#bae6fd"
+    height="12"
+    rx="6"
+    stroke="#1e3a8a"
+    stroke-width="3.6"
+    width="36"
+    x="25"
+    y="20"
+  />
+  <path
+    d="M52 40H62M52 49H64M62 56L68 62"
+    stroke="#0369a1"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <rect
+    fill="#92400e"
+    height="6"
+    rx="2"
+    stroke="#451a03"
+    stroke-width="3"
+    width="68"
+    x="25"
+    y="77"
+  />
+</svg>

@@ -1,0 +1,77 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cái ôm ấm áp</title>
+  <defs>
+    <linearGradient id="whLeft" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fdba74" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </linearGradient>
+    <linearGradient id="whRight" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#5eead4" />
+      <stop offset="100%" stop-color="#0d9488" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#431407" opacity="0.24" rx="40" ry="6" />
+  <path
+    d="M24 96C24 70 36 60 56 62V96Z"
+    fill="url(#whLeft)"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M96 96C96 70 84 60 64 62V96Z"
+    fill="url(#whRight)"
+    stroke="#134e4a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="46"
+    cy="45"
+    fill="#fed7aa"
+    r="15"
+    stroke="#7c2d12"
+    stroke-width="4"
+  />
+  <circle
+    cx="74"
+    cy="45"
+    fill="#fde68a"
+    r="15"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M41 44C43 41 47 41 49 44M71 44C73 41 77 41 79 44"
+    stroke="#5c2d16"
+    stroke-linecap="round"
+    stroke-width="2.6"
+  />
+  <path
+    d="M44 51C46 53 50 53 52 51M68 51C70 53 74 53 76 51"
+    stroke="#5c2d16"
+    stroke-linecap="round"
+    stroke-width="2.4"
+  />
+  <path
+    d="M30 74C46 68 66 70 84 78C86 83 82 88 76 86C60 80 44 80 30 84Z"
+    fill="url(#whLeft)"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M90 66C74 60 54 62 36 70C34 75 38 80 44 78C60 72 76 72 90 76Z"
+    fill="url(#whRight)"
+    stroke="#134e4a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M60 21C60 15 68 15 68 21C68 27 60 32 60 32C60 32 52 27 52 21C52 15 60 15 60 21Z"
+    fill="#fb7185"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+</svg>

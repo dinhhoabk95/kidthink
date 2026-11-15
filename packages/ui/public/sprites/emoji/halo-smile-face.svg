@@ -1,0 +1,41 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bé ngoan hiền</title>
+  <defs>
+    <radialGradient cx="36%" cy="28%" id="hsfGold" r="70%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="55%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#eab308" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#78350f" opacity="0.24" rx="36" ry="6" />
+  <circle
+    cx="60"
+    cy="63"
+    fill="url(#hsfGold)"
+    r="37"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M26 22C26 15 41 11 60 11C79 11 94 15 94 22C94 29 79 33 60 33C41 33 26 29 26 22ZM36 22C36 25 47 27 60 27C73 27 84 25 84 22C84 19 73 17 60 17C47 17 36 19 36 22Z"
+    fill="#38bdf8"
+    fill-rule="evenodd"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M39 58C43 51 50 51 54 58M66 58C70 51 77 51 81 58"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <circle cx="34" cy="68" fill="#fb7185" fill-opacity="0.5" r="6" />
+  <circle cx="86" cy="68" fill="#fb7185" fill-opacity="0.5" r="6" />
+  <path
+    d="M46 73C52 81 68 81 74 73"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+</svg>

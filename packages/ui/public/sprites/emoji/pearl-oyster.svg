@@ -1,0 +1,61 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Con hàu ngọc</title>
+  <defs>
+    <linearGradient id="poShell" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#e9d5ff" />
+      <stop offset="55%" stop-color="#a855f7" />
+      <stop offset="100%" stop-color="#6b21a8" />
+    </linearGradient>
+    <radialGradient cx="35%" cy="30%" id="poPearl" r="68%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="60%" stop-color="#fce7f3" />
+      <stop offset="100%" stop-color="#f9a8d4" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#3b0764" opacity="0.24" rx="40" ry="6" />
+  <path
+    d="M20 56C18 32 40 20 60 22C80 20 102 32 100 56C88 68 32 68 20 56Z"
+    fill="url(#poShell)"
+    stroke="#4c1d95"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M40 26L48 56M60 24V58M80 26L72 56"
+    stroke="#4c1d95"
+    stroke-linecap="round"
+    stroke-width="2.6"
+  />
+  <ellipse
+    cx="60"
+    cy="68"
+    fill="#fbcfe8"
+    rx="36"
+    ry="15"
+    stroke="#881337"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="60"
+    cy="62"
+    fill="url(#poPearl)"
+    r="15"
+    stroke="#881337"
+    stroke-width="3.8"
+  />
+  <circle cx="55" cy="56" fill="#ffffff" r="4.5" />
+  <path
+    d="M18 72C28 96 92 96 102 72C86 80 34 80 18 72Z"
+    fill="url(#poShell)"
+    stroke="#4c1d95"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M84 44L87 38L90 44L96 47L90 50L87 56L84 50L78 47Z"
+    fill="#fef08a"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="2.2"
+  />
+</svg>

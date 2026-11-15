@@ -1,0 +1,64 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Khuôn mặt lo lắng</title>
+  <defs>
+    <linearGradient id="wsBrows" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#bae6fd" />
+      <stop offset="42%" stop-color="#fef08a" />
+      <stop offset="100%" stop-color="#eab308" />
+    </linearGradient>
+    <linearGradient id="wsDrop" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#e0f2fe" />
+      <stop offset="100%" stop-color="#0ea5e9" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#78350f" opacity="0.24" rx="36" ry="5.5" />
+  <circle
+    cx="58"
+    cy="58"
+    fill="url(#wsBrows)"
+    r="39"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M35 44C39 39 45 38 50 41M81 44C77 39 71 38 66 41"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <ellipse
+    cx="44"
+    cy="54"
+    fill="#ffffff"
+    rx="6.5"
+    ry="7.5"
+    stroke="#5c3d2e"
+    stroke-width="3.4"
+  />
+  <circle cx="44" cy="55" fill="#1c1917" r="3.4" />
+  <ellipse
+    cx="72"
+    cy="54"
+    fill="#ffffff"
+    rx="6.5"
+    ry="7.5"
+    stroke="#5c3d2e"
+    stroke-width="3.4"
+  />
+  <circle cx="72" cy="55" fill="#1c1917" r="3.4" />
+  <path
+    d="M44 76C49 70 67 70 72 76C66 74 50 74 44 76Z"
+    fill="#fda4af"
+    stroke="#5c3d2e"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M95 25C95 25 106 41 106 49C106 55 101 60 95 60C89 60 84 55 84 49C84 41 95 25 95 25Z"
+    fill="url(#wsDrop)"
+    stroke="#0c4a6e"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle cx="92" cy="48" fill="#ffffff" fill-opacity="0.8" r="2.6" />
+</svg>

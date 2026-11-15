@@ -1,0 +1,127 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Lính cứu hoả</title>
+  <defs>
+    <radialGradient cx="42%" cy="35%" id="yfSkin" r="68%">
+      <stop offset="0%" stop-color="#fff7ed" />
+      <stop offset="100%" stop-color="#fdba74" />
+    </radialGradient>
+    <linearGradient id="yfHelm" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb7185" />
+      <stop offset="55%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#b91c1c" />
+    </linearGradient>
+    <linearGradient id="yfSuit" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb923c" />
+      <stop offset="100%" stop-color="#c2410c" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#7c2d12" opacity="0.24" rx="40" ry="5.5" />
+  <path
+    d="M26 42L20 58H92L86 42Z"
+    fill="#b91c1c"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M24 99C26 80 39 73 56 73C73 73 86 80 88 99Z"
+    fill="url(#yfSuit)"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#fde047"
+    height="23"
+    rx="2.5"
+    stroke="#78350f"
+    stroke-width="3.2"
+    width="8"
+    x="38"
+    y="76"
+  />
+  <rect
+    fill="#fde047"
+    height="23"
+    rx="2.5"
+    stroke="#78350f"
+    stroke-width="3.2"
+    width="8"
+    x="66"
+    y="76"
+  />
+  <rect
+    fill="#44403c"
+    height="9"
+    rx="3"
+    stroke="#1c1917"
+    stroke-width="3.2"
+    width="24"
+    x="44"
+    y="69"
+  />
+  <circle
+    cx="56"
+    cy="56"
+    fill="url(#yfSkin)"
+    r="18"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <path
+    d="M31 41C33 22 43 14 56 14C69 14 79 22 81 41Z"
+    fill="url(#yfHelm)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#facc15"
+    height="8"
+    rx="4"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="62"
+    x="25"
+    y="37"
+  />
+  <polygon
+    fill="#fef08a"
+    points="56,17 64,23 62,34 50,34 48,23"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <path
+    d="M56 21C58 24 60 26 60 28.5C60 30.7 58.2 32.5 56 32.5C53.8 32.5 52 30.7 52 28.5C52 26 54 24 56 21Z"
+    fill="#38bdf8"
+  />
+  <circle cx="49" cy="56" fill="#1c1917" r="2.7" />
+  <circle cx="63" cy="56" fill="#1c1917" r="2.7" />
+  <circle cx="43" cy="61" fill="#fb7185" fill-opacity="0.5" r="3.3" />
+  <circle cx="69" cy="61" fill="#fb7185" fill-opacity="0.5" r="3.3" />
+  <path
+    d="M51 63C54 66 58 66 61 63"
+    stroke="#7c2d12"
+    stroke-linecap="round"
+    stroke-width="2.8"
+  />
+  <rect
+    fill="#94a3b8"
+    height="18"
+    rx="4"
+    stroke="#334155"
+    stroke-width="3.6"
+    transform="rotate(-22 92 78)"
+    width="11"
+    x="86"
+    y="69"
+  />
+  <path
+    d="M95 65C98 55 104 51 108 55C108 61 102 65 95 65Z"
+    fill="#38bdf8"
+    stroke="#0369a1"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+</svg>

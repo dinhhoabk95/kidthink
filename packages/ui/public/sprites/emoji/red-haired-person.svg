@@ -1,0 +1,59 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bạn tóc hung đỏ</title>
+  <defs>
+    <radialGradient cx="38%" cy="28%" id="rhpHair" r="70%">
+      <stop offset="0%" stop-color="#fdba74" />
+      <stop offset="55%" stop-color="#ea580c" />
+      <stop offset="100%" stop-color="#9a3412" />
+    </radialGradient>
+    <radialGradient cx="45%" cy="38%" id="rhpFace" r="65%">
+      <stop offset="0%" stop-color="#fff7ed" />
+      <stop offset="100%" stop-color="#fed7aa" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#7c2d12" opacity="0.24" rx="36" ry="6" />
+  <path
+    d="M26 76C22 48 34 20 60 20C86 20 98 48 94 76Z"
+    fill="url(#rhpHair)"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M32 98C36 84 46 78 60 78C74 78 84 84 88 98Z"
+    fill="#38bdf8"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="60"
+    cy="56"
+    fill="url(#rhpFace)"
+    rx="23"
+    ry="24"
+    stroke="#7c2d12"
+    stroke-width="4"
+  />
+  <path
+    d="M36 48C42 32 58 28 72 34C80 38 84 44 84 50C74 42 54 40 36 48Z"
+    fill="url(#rhpHair)"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle cx="50" cy="55" fill="#1c1917" r="3" />
+  <circle cx="70" cy="55" fill="#1c1917" r="3" />
+  <circle cx="49" cy="54" fill="#ffffff" r="1.1" />
+  <circle cx="69" cy="54" fill="#ffffff" r="1.1" />
+  <circle cx="43" cy="61" fill="#ea580c" r="1.2" />
+  <circle cx="46" cy="63" fill="#ea580c" r="1.2" />
+  <circle cx="74" cy="63" fill="#ea580c" r="1.2" />
+  <circle cx="77" cy="61" fill="#ea580c" r="1.2" />
+  <path
+    d="M52 67C56 71 64 71 68 67"
+    stroke="#7c2d12"
+    stroke-linecap="round"
+    stroke-width="2.8"
+  />
+</svg>

@@ -1,0 +1,55 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đồng hồ đeo tay</title>
+  <defs>
+    <radialGradient cx="40%" cy="35%" id="wwDial" r="68%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#fef3c7" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#451a03" opacity="0.24" rx="28" ry="5" />
+  <rect
+    fill="#b45309"
+    height="84"
+    rx="9"
+    stroke="#451a03"
+    stroke-width="4"
+    width="28"
+    x="46"
+    y="16"
+  />
+  <rect
+    fill="#f59e0b"
+    height="10"
+    rx="3"
+    stroke="#78350f"
+    stroke-width="3.4"
+    width="8"
+    x="84"
+    y="53"
+  />
+  <circle
+    cx="60"
+    cy="58"
+    fill="#fbbf24"
+    r="27"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <circle
+    cx="60"
+    cy="58"
+    fill="url(#wwDial)"
+    r="21"
+    stroke="#78350f"
+    stroke-width="3.2"
+  />
+  <path
+    d="M60 45V58L70 63"
+    stroke="#1e293b"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle cx="60" cy="25" fill="#fef3c7" r="2.4" />
+  <circle cx="60" cy="91" fill="#fef3c7" r="2.4" />
+</svg>

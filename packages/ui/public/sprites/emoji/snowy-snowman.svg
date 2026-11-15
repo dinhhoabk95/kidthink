@@ -1,0 +1,70 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Người tuyết đội mũ</title>
+  <defs>
+    <radialGradient cx="38%" cy="32%" id="ssSnow" r="68%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="70%" stop-color="#f0f9ff" />
+      <stop offset="100%" stop-color="#bae6fd" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#1e3a5f" opacity="0.24" rx="36" ry="5" />
+  <path
+    d="M35 68L18 58M85 68L102 58"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="60"
+    cy="79"
+    fill="url(#ssSnow)"
+    r="23"
+    stroke="#1e3a5f"
+    stroke-width="4"
+  />
+  <circle
+    cx="60"
+    cy="46"
+    fill="url(#ssSnow)"
+    r="17"
+    stroke="#1e3a5f"
+    stroke-width="4"
+  />
+  <rect
+    fill="#22c55e"
+    height="8"
+    rx="4"
+    stroke="#14532d"
+    stroke-width="3.4"
+    width="34"
+    x="43"
+    y="57"
+  />
+  <path
+    d="M44 34C45 21 53 16 60 16C67 16 75 21 76 34Z"
+    fill="#3b82f6"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="60"
+    cy="14"
+    fill="#fde047"
+    r="5.5"
+    stroke="#78350f"
+    stroke-width="3"
+  />
+  <polygon
+    fill="#f97316"
+    points="60,45 73,48 60,51"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3"
+  />
+  <circle cx="54" cy="42" fill="#1c1917" r="2.5" />
+  <circle cx="66" cy="42" fill="#1c1917" r="2.5" />
+  <circle cx="24" cy="30" fill="#7dd3fc" r="3.2" />
+  <circle cx="96" cy="34" fill="#7dd3fc" r="3.2" />
+  <circle cx="22" cy="84" fill="#7dd3fc" r="3" />
+</svg>

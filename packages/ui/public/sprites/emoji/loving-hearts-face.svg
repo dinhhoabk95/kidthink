@@ -1,0 +1,54 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Khuôn mặt yêu thương</title>
+  <defs>
+    <radialGradient cx="36%" cy="28%" id="lhfGold" r="70%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="55%" stop-color="#fde047" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.24" rx="38" ry="6" />
+  <circle
+    cx="60"
+    cy="58"
+    fill="url(#lhfGold)"
+    r="38"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M40 52C44 46 50 46 54 52M66 52C70 46 76 46 80 52"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <circle cx="36" cy="63" fill="#fb7185" fill-opacity="0.55" r="6.5" />
+  <circle cx="84" cy="63" fill="#fb7185" fill-opacity="0.55" r="6.5" />
+  <path
+    d="M47 68C53 76 67 76 73 68"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M24 28C24 22 32 22 32 28C32 34 24 39 24 39C24 39 16 34 16 28C16 22 24 22 24 28Z"
+    fill="#fb7185"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M96 34C96 28 104 28 104 34C104 40 96 45 96 45C96 45 88 40 88 34C88 28 96 28 96 34Z"
+    fill="#f43f5e"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M26 80C26 75 33 75 33 80C33 85 26 89 26 89C26 89 19 85 19 80C19 75 26 75 26 80Z"
+    fill="#f43f5e"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+</svg>

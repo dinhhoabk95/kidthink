@@ -1,0 +1,86 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mẹ và con gái</title>
+  <defs>
+    <radialGradient cx="40%" cy="30%" id="mdSkin" r="70%">
+      <stop offset="0%" stop-color="#fffbeb" />
+      <stop offset="60%" stop-color="#fed7aa" />
+      <stop offset="100%" stop-color="#fdba74" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#831843" opacity="0.24" rx="42" ry="5.5" />
+  <path
+    d="M23 42C19 56 21 68 28 72H62C68 68 70 56 66 42Z"
+    fill="#451a03"
+    stroke="#292524"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M16 100C16 77 29 65 45 65C61 65 73 77 73 100Z"
+    fill="#f472b6"
+    stroke="#831843"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="45"
+    cy="43"
+    fill="url(#mdSkin)"
+    r="19.5"
+    stroke="#5c3d2e"
+    stroke-width="3.8"
+  />
+  <path
+    d="M26 43C27 23 63 23 64 43C56 33 35 33 26 43Z"
+    fill="#5c3d2e"
+    stroke="#451a03"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M37 44C39 41 42 41 44 44M47 44C49 41 52 41 54 44M39 53C43 57 48 57 52 53"
+    stroke="#451a03"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+  <path
+    d="M52 102C52 84 63 76 78 76C93 76 104 84 104 102Z"
+    fill="#c084fc"
+    stroke="#4c1d95"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="61"
+    cy="56"
+    fill="#451a03"
+    r="6.5"
+    stroke="#292524"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="95"
+    cy="56"
+    fill="#451a03"
+    r="6.5"
+    stroke="#292524"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="78"
+    cy="61"
+    fill="url(#mdSkin)"
+    r="15.5"
+    stroke="#5c3d2e"
+    stroke-width="3.8"
+  />
+  <path d="M63 58C66 44 90 44 93 58C86 52 70 52 63 58Z" fill="#451a03" />
+  <circle cx="72" cy="63" fill="#1c1917" r="2.7" />
+  <circle cx="84" cy="63" fill="#1c1917" r="2.7" />
+  <path
+    d="M73 70C76 73 80 73 83 70"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="2.8"
+  />
+</svg>

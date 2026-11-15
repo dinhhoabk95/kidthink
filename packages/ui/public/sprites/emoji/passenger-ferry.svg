@@ -1,0 +1,78 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chuyến phà qua sông</title>
+  <defs>
+    <linearGradient id="pfHull" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb923c" />
+      <stop offset="100%" stop-color="#c2410c" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e3a8a" opacity="0.24" rx="44" ry="5" />
+  <rect
+    fill="#f97316"
+    height="14"
+    rx="3"
+    stroke="#7c2d12"
+    stroke-width="3.6"
+    width="14"
+    x="53"
+    y="22"
+  />
+  <rect
+    fill="#ffffff"
+    height="16"
+    rx="4"
+    stroke="#334155"
+    stroke-width="3.8"
+    width="54"
+    x="33"
+    y="34"
+  />
+  <rect
+    fill="#f8fafc"
+    height="16"
+    rx="4"
+    stroke="#334155"
+    stroke-width="3.8"
+    width="74"
+    x="23"
+    y="49"
+  />
+  <path
+    d="M16 64H104L94 86H26Z"
+    fill="url(#pfHull)"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="38"
+    cy="57"
+    fill="#38bdf8"
+    r="3.2"
+    stroke="#1e3a8a"
+    stroke-width="2.2"
+  />
+  <circle
+    cx="60"
+    cy="57"
+    fill="#38bdf8"
+    r="3.2"
+    stroke="#1e3a8a"
+    stroke-width="2.2"
+  />
+  <circle
+    cx="82"
+    cy="57"
+    fill="#38bdf8"
+    r="3.2"
+    stroke="#1e3a8a"
+    stroke-width="2.2"
+  />
+  <path
+    d="M12 87C26 82 38 82 50 87C62 92 74 92 86 87C96 83 102 83 108 87V96H12Z"
+    fill="#38bdf8"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+</svg>

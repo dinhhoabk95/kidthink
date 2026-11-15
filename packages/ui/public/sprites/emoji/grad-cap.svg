@@ -1,0 +1,50 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mũ tốt nghiệp</title>
+  <defs>
+    <linearGradient id="gcTop" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#475569" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+    <linearGradient id="gcBand" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#334155" />
+      <stop offset="100%" stop-color="#1e1b4b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#1e293b" opacity="0.24" rx="40" ry="5.5" />
+  <path
+    d="M33 56V78C33 87 46 92 60 92C74 92 87 87 87 78V56Z"
+    fill="url(#gcBand)"
+    stroke="#1e1b4b"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <polygon
+    fill="url(#gcTop)"
+    points="60,24 108,46 60,68 12,46"
+    stroke="#1e1b4b"
+    stroke-linejoin="round"
+    stroke-width="4.2"
+  />
+  <path
+    d="M60 46L93 56V82"
+    stroke="#b45309"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="60"
+    cy="46"
+    fill="#facc15"
+    r="6"
+    stroke="#78350f"
+    stroke-width="3.2"
+  />
+  <polygon
+    fill="#facc15"
+    points="88,80 98,80 101,94 85,94"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+</svg>

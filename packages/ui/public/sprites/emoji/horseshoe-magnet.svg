@@ -1,0 +1,45 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Nam châm chữ U</title>
+  <defs>
+    <linearGradient id="hmRed" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fda4af" />
+      <stop offset="45%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#b91c1c" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#7f1d1d" opacity="0.24" rx="36" ry="5.5" />
+  <path
+    d="M24 24H44V62C44 72 51 78 60 78C69 78 76 72 76 62V24H96V62C96 84 80 99 60 99C40 99 24 84 24 62Z"
+    fill="url(#hmRed)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#e2e8f0"
+    height="20"
+    rx="3"
+    stroke="#334155"
+    stroke-width="3.8"
+    width="20"
+    x="24"
+    y="22"
+  />
+  <rect
+    fill="#e2e8f0"
+    height="20"
+    rx="3"
+    stroke="#334155"
+    stroke-width="3.8"
+    width="20"
+    x="76"
+    y="22"
+  />
+  <path
+    d="M53 16L49 26H56L52 36M68 16L64 26H71L67 36"
+    stroke="#b45309"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+</svg>

@@ -1,0 +1,89 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chú rái cá</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="roFur" r="70%">
+      <stop offset="0%" stop-color="#d97706" />
+      <stop offset="55%" stop-color="#92400e" />
+      <stop offset="100%" stop-color="#5c2d16" />
+    </radialGradient>
+    <radialGradient cx="50%" cy="40%" id="roBelly" r="65%">
+      <stop offset="0%" stop-color="#fffbeb" />
+      <stop offset="100%" stop-color="#fde68a" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#431407" opacity="0.25" rx="38" ry="6" />
+  <path
+    d="M80 86C96 86 104 74 98 66C92 60 84 68 78 76"
+    fill="url(#roFur)"
+    stroke="#431407"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="40"
+    cy="29"
+    fill="url(#roFur)"
+    r="7"
+    stroke="#431407"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="80"
+    cy="29"
+    fill="url(#roFur)"
+    r="7"
+    stroke="#431407"
+    stroke-width="3.8"
+  />
+  <ellipse
+    cx="60"
+    cy="74"
+    fill="url(#roFur)"
+    rx="25"
+    ry="24"
+    stroke="#431407"
+    stroke-width="4"
+  />
+  <ellipse cx="60" cy="77" fill="url(#roBelly)" rx="16" ry="17" />
+  <ellipse
+    cx="60"
+    cy="42"
+    fill="url(#roFur)"
+    rx="23"
+    ry="19"
+    stroke="#431407"
+    stroke-width="4"
+  />
+  <ellipse cx="53" cy="47" fill="#fef3c7" rx="8" ry="6" />
+  <ellipse cx="67" cy="47" fill="#fef3c7" rx="8" ry="6" />
+  <ellipse cx="60" cy="44" fill="#292524" rx="4.5" ry="3.2" />
+  <circle cx="49" cy="38" fill="#1c1917" r="2.8" />
+  <circle cx="71" cy="38" fill="#1c1917" r="2.8" />
+  <circle cx="48.2" cy="37" fill="#ffffff" r="1" />
+  <circle cx="70.2" cy="37" fill="#ffffff" r="1" />
+  <path
+    d="M51 74L60 66L69 74C66 82 54 82 51 74Z"
+    fill="#f472b6"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <ellipse
+    cx="44"
+    cy="73"
+    fill="url(#roFur)"
+    rx="7"
+    ry="5"
+    stroke="#431407"
+    stroke-width="3.6"
+  />
+  <ellipse
+    cx="76"
+    cy="73"
+    fill="url(#roFur)"
+    rx="7"
+    ry="5"
+    stroke="#431407"
+    stroke-width="3.6"
+  />
+</svg>

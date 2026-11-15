@@ -1,0 +1,70 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Khuôn mặt hiền</title>
+  <defs>
+    <radialGradient cx="38%" cy="28%" id="smhSkin" r="70%">
+      <stop offset="0%" stop-color="#fffbeb" />
+      <stop offset="58%" stop-color="#fed7aa" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#78350f" opacity="0.24" rx="36" ry="6" />
+  <path
+    d="M30 98C34 84 46 78 60 78C74 78 86 84 90 98Z"
+    fill="#4ade80"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="31"
+    cy="56"
+    fill="#fed7aa"
+    r="6.5"
+    stroke="#78350f"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="89"
+    cy="56"
+    fill="#fed7aa"
+    r="6.5"
+    stroke="#78350f"
+    stroke-width="3.6"
+  />
+  <ellipse
+    cx="60"
+    cy="52"
+    fill="url(#smhSkin)"
+    rx="27"
+    ry="29"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="49"
+    cy="33"
+    fill="#ffffff"
+    fill-opacity="0.65"
+    rx="9"
+    ry="4.5"
+    transform="rotate(-18 49 33)"
+  />
+  <path
+    d="M44 45C47 43 51 43 54 45M66 45C69 43 73 43 76 45"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="2.8"
+  />
+  <circle cx="49" cy="52" fill="#1c1917" r="3" />
+  <circle cx="71" cy="52" fill="#1c1917" r="3" />
+  <circle cx="48" cy="51" fill="#ffffff" r="1.1" />
+  <circle cx="70" cy="51" fill="#ffffff" r="1.1" />
+  <circle cx="41" cy="60" fill="#fb7185" fill-opacity="0.45" r="4.5" />
+  <circle cx="79" cy="60" fill="#fb7185" fill-opacity="0.45" r="4.5" />
+  <path
+    d="M51 64C55 68 65 68 69 64"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+</svg>

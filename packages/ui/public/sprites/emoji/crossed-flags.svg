@@ -1,0 +1,56 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đôi cờ giao lưu</title>
+  <ellipse cx="60" cy="107" fill="#5c3d2e" opacity="0.24" rx="36" ry="5" />
+  <path
+    d="M40 99L77 23M80 99L43 23"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="5"
+  />
+  <path
+    d="M45 27L15 38L24 67L57 54Z"
+    fill="#38bdf8"
+    stroke="#0c4a6e"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="36"
+    cy="48"
+    fill="#fde047"
+    r="7"
+    stroke="#78350f"
+    stroke-width="3.2"
+  />
+  <path
+    d="M75 27L105 38L96 67L63 54Z"
+    fill="#fb7185"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="84"
+    cy="48"
+    fill="#ffffff"
+    r="7"
+    stroke="#881337"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="43"
+    cy="22"
+    fill="#facc15"
+    r="4.5"
+    stroke="#78350f"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="77"
+    cy="22"
+    fill="#facc15"
+    r="4.5"
+    stroke="#78350f"
+    stroke-width="3.2"
+  />
+</svg>

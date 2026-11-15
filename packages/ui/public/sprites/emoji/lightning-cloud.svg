@@ -1,0 +1,33 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Mây có tia chớp</title>
+  <defs>
+    <linearGradient id="lcBody" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#e2e8f0" />
+      <stop offset="55%" stop-color="#94a3b8" />
+      <stop offset="100%" stop-color="#64748b" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#1e293b" opacity="0.24" rx="38" ry="5" />
+  <path
+    d="M28 70C17 70 13 59 19 50C21 38 33 32 43 36C50 22 70 20 80 33C92 33 102 42 101 54C100 65 92 70 82 70Z"
+    fill="url(#lcBody)"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <polygon
+    fill="#facc15"
+    points="58,64 43,84 55,84 49,102 73,79 60,79 68,64"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <polygon
+    fill="#fde047"
+    points="82,68 75,80 82,80 78,90 89,77 83,77"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="2.8"
+  />
+  <ellipse cx="48" cy="36" fill="#ffffff" fill-opacity="0.55" rx="9" ry="4" />
+</svg>

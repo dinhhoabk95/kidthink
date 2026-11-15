@@ -1,0 +1,52 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ngọn núi lửa</title>
+  <defs>
+    <linearGradient id="vcCone" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#a8a29e" />
+      <stop offset="55%" stop-color="#78716c" />
+      <stop offset="100%" stop-color="#44403c" />
+    </linearGradient>
+    <linearGradient id="vcLava" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="50%" stop-color="#f97316" />
+      <stop offset="100%" stop-color="#dc2626" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#44403c" opacity="0.26" rx="44" ry="6" />
+  <path
+    d="M40 30C34 26 35 16 44 16C48 10 62 10 67 16C76 15 80 24 73 29H40Z"
+    fill="#fed7aa"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M49 44C46 33 41 28 36 27M71 44C74 33 79 28 84 27"
+    stroke="#ea580c"
+    stroke-linecap="round"
+    stroke-opacity="0.85"
+    stroke-width="3"
+  />
+  <path
+    d="M16 98L42 44H78L104 98H16Z"
+    fill="url(#vcCone)"
+    stroke="#44403c"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M42 44H78L82 54C77 59 71 57 69 65C67 72 61 72 59 63C57 56 51 60 48 68C45 74 39 70 40 61L42 44Z"
+    fill="url(#vcLava)"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="60"
+    cy="24"
+    fill="#fde047"
+    r="4.5"
+    stroke="#7c2d12"
+    stroke-width="3.2"
+  />
+</svg>

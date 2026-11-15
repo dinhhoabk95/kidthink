@@ -1,0 +1,84 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chó dẫn đường</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="sdFur" r="70%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="60%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
+    </radialGradient>
+    <linearGradient id="sdVest" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb923c" />
+      <stop offset="100%" stop-color="#dc2626" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="58" cy="104" fill="#78350f" opacity="0.24" rx="38" ry="6" />
+  <path
+    d="M28 66C18 60 15 48 22 46C25 52 29 58 34 62"
+    fill="url(#sdFur)"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M36 78V98M46 80V98M70 78V98M80 80V98"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="4.4"
+  />
+  <rect
+    fill="url(#sdFur)"
+    height="26"
+    rx="13"
+    stroke="#78350f"
+    stroke-width="4"
+    width="54"
+    x="30"
+    y="56"
+  />
+  <path
+    d="M45 55H71L68 81H48Z"
+    fill="url(#sdVest)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M51 55V45H64V55"
+    stroke="#475569"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M48 68H68"
+    stroke="#fef08a"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+  <circle
+    cx="82"
+    cy="44"
+    fill="url(#sdFur)"
+    r="15"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M73 36C67 39 66 50 72 53C76 53 78 46 77 39Z"
+    fill="#b45309"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M92 42L104 45C104 51 98 54 91 52Z"
+    fill="#fef3c7"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle cx="102" cy="45" fill="#292524" r="2.8" />
+  <circle cx="86" cy="41" fill="#1c1917" r="2.6" />
+  <circle cx="85.2" cy="40.1" fill="#ffffff" r="1" />
+</svg>

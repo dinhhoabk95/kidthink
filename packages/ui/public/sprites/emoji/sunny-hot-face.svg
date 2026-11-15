@@ -1,0 +1,52 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Nóng bừng má đỏ</title>
+  <defs>
+    <radialGradient cx="38%" cy="28%" id="shFace" r="70%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="52%" stop-color="#fb923c" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="58" cy="106" fill="#7c2d12" opacity="0.25" rx="36" ry="5.5" />
+  <circle
+    cx="58"
+    cy="58"
+    fill="url(#shFace)"
+    r="39"
+    stroke="#7c2d12"
+    stroke-width="4"
+  />
+  <path
+    d="M34 42C39 38 45 38 50 42M66 42C71 38 77 38 82 42"
+    stroke="#7c2d12"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+  <circle cx="43" cy="52" fill="#1c1917" r="4.8" />
+  <circle cx="44.5" cy="50.5" fill="#ffffff" r="1.6" />
+  <circle cx="73" cy="52" fill="#1c1917" r="4.8" />
+  <circle cx="74.5" cy="50.5" fill="#ffffff" r="1.6" />
+  <circle cx="31" cy="63" fill="#f43f5e" fill-opacity="0.6" r="7.5" />
+  <circle cx="85" cy="63" fill="#f43f5e" fill-opacity="0.6" r="7.5" />
+  <path
+    d="M44 68H72C72 78 65 83 58 83C51 83 44 78 44 68Z"
+    fill="#881337"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M51 74H65V85C65 90 51 90 51 85Z"
+    fill="#fb7185"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M97 30C97 30 106 43 106 50C106 55 102 59 97 59C92 59 88 55 88 50C88 43 97 30 97 30Z"
+    fill="#38bdf8"
+    stroke="#0c4a6e"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+</svg>

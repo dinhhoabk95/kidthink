@@ -1,0 +1,37 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Củ tỏi trắng</title>
+  <defs>
+    <radialGradient cx="42%" cy="38%" id="gbClove" r="68%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="68%" stop-color="#fef3c7" />
+      <stop offset="100%" stop-color="#e9d5ff" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.23" rx="36" ry="5.5" />
+  <path
+    d="M53 94L49 102M60 95V103M67 94L71 102"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M60 22C55 37 22 44 22 70C22 86 38 95 60 95C82 95 98 86 98 70C98 44 65 37 60 22Z"
+    fill="url(#gbClove)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M60 24C51 44 43 58 45 93M60 24C69 44 77 58 75 93"
+    stroke="#92400e"
+    stroke-linecap="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M54 25L60 13L66 25Z"
+    fill="#4ade80"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+</svg>

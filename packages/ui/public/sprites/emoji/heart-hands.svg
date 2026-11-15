@@ -1,0 +1,37 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hai tay ghép trái tim</title>
+  <defs>
+    <radialGradient cx="45%" cy="35%" id="hhSkin" r="70%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="55%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </radialGradient>
+    <radialGradient cx="42%" cy="35%" id="hhCenter" r="65%">
+      <stop offset="0%" stop-color="#ffe4e6" />
+      <stop offset="60%" stop-color="#fb7185" />
+      <stop offset="100%" stop-color="#e11d48" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#78350f" opacity="0.25" rx="38" ry="5.5" />
+  <path
+    d="M60 32C46 18 20 24 16 48C13 68 30 86 54 94L60 82L66 94C90 86 107 68 104 48C100 24 74 18 60 32Z"
+    fill="url(#hhSkin)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M60 79C46 70 33 59 33 46C33 37 40 32 48 32C54 32 58 36 60 40C62 36 66 32 72 32C80 32 87 37 87 46C87 59 74 70 60 79Z"
+    fill="url(#hhCenter)"
+    stroke="#831843"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M22 52H30M24 64H34M98 52H90M96 64H86"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.4"
+  />
+  <circle cx="48" cy="43" fill="#ffffff" fill-opacity="0.65" r="4" />
+</svg>

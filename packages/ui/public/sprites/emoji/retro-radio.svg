@@ -1,0 +1,81 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đài ra-đi-ô</title>
+  <defs>
+    <linearGradient id="rrCase" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb923c" />
+      <stop offset="55%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#92400e" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#78350f" opacity="0.25" rx="40" ry="5.5" />
+  <path
+    d="M30 42L84 18"
+    stroke="#475569"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="86"
+    cy="17"
+    fill="#ef4444"
+    r="5"
+    stroke="#7f1d1d"
+    stroke-width="3.2"
+  />
+  <rect
+    fill="url(#rrCase)"
+    height="56"
+    rx="12"
+    stroke="#78350f"
+    stroke-width="4"
+    width="84"
+    x="18"
+    y="42"
+  />
+  <circle
+    cx="44"
+    cy="70"
+    fill="#fef3c7"
+    r="17"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <path
+    d="M34 65H54M32 70H56M34 75H54"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.2"
+  />
+  <rect
+    fill="#fffbeb"
+    height="14"
+    rx="4"
+    stroke="#78350f"
+    stroke-width="3.4"
+    width="26"
+    x="68"
+    y="52"
+  />
+  <path
+    d="M78 55V63"
+    stroke="#dc2626"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+  <circle
+    cx="74"
+    cy="80"
+    fill="#fde047"
+    r="6"
+    stroke="#78350f"
+    stroke-width="3.4"
+  />
+  <circle
+    cx="89"
+    cy="80"
+    fill="#fde047"
+    r="6"
+    stroke="#78350f"
+    stroke-width="3.4"
+  />
+</svg>

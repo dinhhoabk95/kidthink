@@ -1,0 +1,35 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bàn tay hướng phải</title>
+  <defs>
+    <radialGradient cx="40%" cy="38%" id="rpHand" r="68%">
+      <stop offset="0%" stop-color="#ffedd5" />
+      <stop offset="60%" stop-color="#fdba74" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#7c2d12" opacity="0.23" rx="38" ry="6" />
+  <rect
+    fill="#2dd4bf"
+    height="32"
+    rx="5"
+    stroke="#134e4a"
+    stroke-width="3.8"
+    width="14"
+    x="14"
+    y="51"
+  />
+  <path
+    d="M28 52C40 50 48 48 54 46L66 29C71 23 79 28 76 34L68 49H94C100 49 100 58 94 58H76H100C106 58 106 67 100 67H78H98C104 67 104 76 98 76H76H92C98 76 98 84 92 84H74C62 86 44 86 28 82Z"
+    fill="url(#rpHand)"
+    stroke="#7c2d12"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M52 58C56 65 56 73 50 78"
+    stroke="#9a3412"
+    stroke-linecap="round"
+    stroke-width="2.8"
+  />
+</svg>

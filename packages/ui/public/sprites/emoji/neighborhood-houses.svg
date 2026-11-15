@@ -1,0 +1,102 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Khu phố nhỏ</title>
+  <defs>
+    <linearGradient id="nhWall1" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fffbeb" />
+      <stop offset="100%" stop-color="#fde68a" />
+    </linearGradient>
+    <linearGradient id="nhWall2" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#fed7aa" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#14532d" opacity="0.24" rx="48" ry="5.5" />
+  <rect
+    fill="#e0f2fe"
+    height="34"
+    rx="4"
+    stroke="#0c4a6e"
+    stroke-width="3.6"
+    width="34"
+    x="68"
+    y="54"
+  />
+  <polygon
+    fill="#38bdf8"
+    points="63,56 85,35 107,56"
+    stroke="#0c4a6e"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <rect
+    fill="url(#nhWall1)"
+    height="36"
+    rx="4"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="34"
+    x="18"
+    y="52"
+  />
+  <polygon
+    fill="#fbbf24"
+    points="13,54 35,33 57,54"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <rect
+    fill="url(#nhWall2)"
+    height="42"
+    rx="5"
+    stroke="#7c2d12"
+    stroke-width="4"
+    width="42"
+    x="39"
+    y="58"
+  />
+  <polygon
+    fill="#f97316"
+    points="33,60 60,34 87,60"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#b45309"
+    height="21"
+    rx="4"
+    stroke="#451a03"
+    stroke-width="3.4"
+    width="14"
+    x="53"
+    y="79"
+  />
+  <rect
+    fill="#fef08a"
+    height="10"
+    rx="2"
+    stroke="#78350f"
+    stroke-width="3"
+    width="10"
+    x="28"
+    y="63"
+  />
+  <rect
+    fill="#fef08a"
+    height="10"
+    rx="2"
+    stroke="#0c4a6e"
+    stroke-width="3"
+    width="10"
+    x="82"
+    y="63"
+  />
+  <path
+    d="M14 100C20 91 31 92 35 100ZM85 100C89 92 100 91 106 100Z"
+    fill="#4ade80"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+</svg>

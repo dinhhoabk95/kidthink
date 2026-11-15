@@ -1,0 +1,55 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cố gắng hết sức</title>
+  <defs>
+    <radialGradient cx="38%" cy="28%" id="psFace" r="70%">
+      <stop offset="0%" stop-color="#fef3c7" />
+      <stop offset="52%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </radialGradient>
+    <radialGradient cx="40%" cy="35%" id="psSteam" r="68%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#e2e8f0" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#78350f" opacity="0.24" rx="38" ry="5.5" />
+  <circle
+    cx="60"
+    cy="54"
+    fill="url(#psFace)"
+    r="38"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M36 38L51 44M84 38L69 44"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="4.2"
+  />
+  <circle cx="44" cy="51" fill="#1c1917" r="4.8" />
+  <circle cx="45.5" cy="49.5" fill="#ffffff" r="1.6" />
+  <circle cx="76" cy="51" fill="#1c1917" r="4.8" />
+  <circle cx="77.5" cy="49.5" fill="#ffffff" r="1.6" />
+  <circle cx="33" cy="61" fill="#fb7185" fill-opacity="0.55" r="6" />
+  <circle cx="87" cy="61" fill="#fb7185" fill-opacity="0.55" r="6" />
+  <path
+    d="M48 70C53 65 67 65 72 70"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <path
+    d="M53 63L32 76C26 72 16 75 16 83C16 91 25 96 33 92C38 96 47 93 47 85L55 68Z"
+    fill="url(#psSteam)"
+    stroke="#57534e"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M67 63L88 76C94 72 104 75 104 83C104 91 95 96 87 92C82 96 73 93 73 85L65 68Z"
+    fill="url(#psSteam)"
+    stroke="#57534e"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+</svg>

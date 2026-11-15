@@ -1,0 +1,73 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ống tiêm y tế</title>
+  <defs>
+    <linearGradient id="msLiq" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fbcfe8" />
+      <stop offset="100%" stop-color="#f472b6" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="58" cy="105" fill="#134e4a" opacity="0.22" rx="36" ry="5" />
+  <g transform="rotate(45 60 60)">
+    <path
+      d="M60 12V26"
+      stroke="#334155"
+      stroke-linecap="round"
+      stroke-width="4"
+    />
+    <rect
+      fill="#e0f2fe"
+      height="48"
+      rx="6"
+      stroke="#0f766e"
+      stroke-width="4"
+      width="26"
+      x="47"
+      y="30"
+    />
+    <rect fill="url(#msLiq)" height="26" rx="3" width="20" x="50" y="49" />
+    <rect
+      fill="#2dd4bf"
+      height="7"
+      rx="3.5"
+      stroke="#134e4a"
+      stroke-width="3.6"
+      width="38"
+      x="41"
+      y="75"
+    />
+    <rect
+      fill="#99f6e4"
+      height="18"
+      rx="3"
+      stroke="#134e4a"
+      stroke-width="3.4"
+      width="10"
+      x="55"
+      y="82"
+    />
+    <rect
+      fill="#2dd4bf"
+      height="7"
+      rx="3.5"
+      stroke="#134e4a"
+      stroke-width="3.6"
+      width="26"
+      x="47"
+      y="98"
+    />
+    <path
+      d="M51 42H58M51 52H60M51 62H58"
+      stroke="#0f766e"
+      stroke-linecap="round"
+      stroke-width="3.2"
+    />
+  </g>
+  <circle
+    cx="92"
+    cy="24"
+    fill="#f9a8d4"
+    r="4.5"
+    stroke="#831843"
+    stroke-width="2.8"
+  />
+</svg>

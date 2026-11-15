@@ -1,0 +1,72 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Khóc nhè</title>
+  <defs>
+    <radialGradient cx="38%" cy="28%" id="bcFace" r="70%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="56%" stop-color="#fde047" />
+      <stop offset="100%" stop-color="#eab308" />
+    </radialGradient>
+    <linearGradient id="bcTear" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#bae6fd" />
+      <stop offset="100%" stop-color="#38bdf8" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#0c4a6e" opacity="0.24" rx="42" ry="5.5" />
+  <ellipse
+    cx="60"
+    cy="99"
+    fill="#7dd3fc"
+    rx="38"
+    ry="6.5"
+    stroke="#0c4a6e"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="60"
+    cy="55"
+    fill="url(#bcFace)"
+    r="38"
+    stroke="#78350f"
+    stroke-width="4"
+  />
+  <path
+    d="M35 51V95H46V51Z"
+    fill="url(#bcTear)"
+    stroke="#0c4a6e"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M74 51V95H85V51Z"
+    fill="url(#bcTear)"
+    stroke="#0c4a6e"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M33 43C38 39 44 39 49 43M71 43C76 39 82 39 87 43"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <path
+    d="M34 50H49M71 50H86"
+    stroke="#5c3d2e"
+    stroke-linecap="round"
+    stroke-width="4"
+  />
+  <path
+    d="M48 70C48 61 72 61 72 70C72 79 65 82 60 80C55 82 48 79 48 70Z"
+    fill="#fb7185"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M52 66H68"
+    stroke="#ffffff"
+    stroke-linecap="round"
+    stroke-opacity="0.85"
+    stroke-width="3"
+  />
+</svg>

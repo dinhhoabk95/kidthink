@@ -1,0 +1,36 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Củ lạc giòn</title>
+  <defs>
+    <radialGradient cx="38%" cy="34%" id="pnShell" r="70%">
+      <stop offset="0%" stop-color="#fef3c7" />
+      <stop offset="55%" stop-color="#fcd34d" />
+      <stop offset="100%" stop-color="#d97706" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.24" rx="36" ry="5.5" />
+  <g transform="rotate(-32 60 58)">
+    <path
+      d="M40 30C40 16 80 16 80 30C80 41 72 48 72 58C72 68 82 75 82 87C82 101 38 101 38 87C38 75 48 68 48 58C48 48 40 41 40 30Z"
+      fill="url(#pnShell)"
+      stroke="#78350f"
+      stroke-linejoin="round"
+      stroke-width="4.2"
+    />
+    <path
+      d="M52 24V92M68 24V92M45 36H75M49 58H71M44 80H76"
+      stroke="#92400e"
+      stroke-linecap="round"
+      stroke-opacity="0.55"
+      stroke-width="2.4"
+    />
+  </g>
+  <circle
+    cx="88"
+    cy="78"
+    fill="#fbbf24"
+    r="10"
+    stroke="#78350f"
+    stroke-width="3.4"
+  />
+  <ellipse cx="86" cy="75" fill="#fef9c3" rx="4" ry="2.2" />
+</svg>

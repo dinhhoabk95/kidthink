@@ -1,0 +1,53 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ngôi nhà mái lá</title>
+  <defs>
+    <linearGradient id="thRoof" x1="50%" x2="50%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fde047" />
+      <stop offset="55%" stop-color="#eab308" />
+      <stop offset="100%" stop-color="#a16207" />
+    </linearGradient>
+    <linearGradient id="thWall" x1="0%" x2="100%" y1="0%" y2="0%">
+      <stop offset="0%" stop-color="#fef3c7" />
+      <stop offset="60%" stop-color="#fed7aa" />
+      <stop offset="100%" stop-color="#fdba74" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#5c2d16" opacity="0.25" rx="42" ry="6" />
+  <rect
+    fill="url(#thWall)"
+    height="40"
+    rx="8"
+    stroke="#6c3b1c"
+    stroke-width="4"
+    width="64"
+    x="28"
+    y="60"
+  />
+  <path
+    d="M49 100V75C49 69 54 65 60 65C66 65 71 69 71 75V100Z"
+    fill="#78350f"
+    stroke="#431407"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <circle cx="66" cy="84" fill="#fde047" r="2.6" />
+  <path
+    d="M60 18L60 12"
+    stroke="#5c2d16"
+    stroke-linecap="round"
+    stroke-width="4.4"
+  />
+  <path
+    d="M60 18L104 62C88 68 32 68 16 62Z"
+    fill="url(#thRoof)"
+    stroke="#5c2d16"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M34 46C50 50 70 50 86 46M45 34C55 37 65 37 75 34M26 58L30 64M48 61L50 67M72 61L70 67M94 58L90 64"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="2.8"
+  />
+</svg>

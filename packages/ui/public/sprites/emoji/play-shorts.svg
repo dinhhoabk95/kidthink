@@ -1,0 +1,39 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Quần đùi mát</title>
+  <defs>
+    <linearGradient id="psTeal" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#1e3a8a" opacity="0.24" rx="40" ry="6" />
+  <path
+    d="M26 30H94L100 86L66 88L60 66L54 88L20 86Z"
+    fill="url(#psTeal)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#fde047"
+    height="12"
+    rx="4"
+    stroke="#78350f"
+    stroke-width="3.8"
+    width="70"
+    x="25"
+    y="28"
+  />
+  <path
+    d="M56 36L50 50M64 36L70 50"
+    stroke="#78350f"
+    stroke-linecap="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M27 52C34 52 38 58 36 66M93 52C86 52 82 58 84 66"
+    stroke="#1e3a8a"
+    stroke-linecap="round"
+    stroke-width="3.2"
+  />
+</svg>

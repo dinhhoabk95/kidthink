@@ -1,0 +1,51 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ca nô du lịch</title>
+  <defs>
+    <linearGradient id="myHull" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#dbeafe" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e3a8a" opacity="0.24" rx="44" ry="5" />
+  <path
+    d="M34 46L48 32H74L84 46Z"
+    fill="#f8fafc"
+    stroke="#1e3a5f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M26 60L36 46H88L96 60Z"
+    fill="#38bdf8"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M16 60H106L94 84H22Z"
+    fill="url(#myHull)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M20 70H99L95 76H21Z"
+    fill="#2563eb"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3"
+  />
+  <path
+    d="M12 86C24 80 36 80 48 86C60 92 72 92 84 86C94 81 102 81 108 86V96H12Z"
+    fill="#0ea5e9"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M56 24L52 32"
+    stroke="#334155"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+</svg>

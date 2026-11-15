@@ -1,0 +1,82 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cô chú công nhân</title>
+  <defs>
+    <radialGradient cx="40%" cy="35%" id="fwSkin" r="68%">
+      <stop offset="0%" stop-color="#ffedd5" />
+      <stop offset="100%" stop-color="#fdba74" />
+    </radialGradient>
+    <linearGradient id="fwHat" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="60%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="58" cy="106" fill="#1e3a8a" opacity="0.24" rx="36" ry="5.5" />
+  <path
+    d="M26 100C28 82 40 75 58 75C76 75 88 82 90 100H26Z"
+    fill="#3b82f6"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <rect
+    fill="#fde047"
+    height="22"
+    rx="3"
+    stroke="#78350f"
+    stroke-width="3.4"
+    width="8"
+    x="42"
+    y="78"
+  />
+  <rect
+    fill="#fde047"
+    height="22"
+    rx="3"
+    stroke="#78350f"
+    stroke-width="3.4"
+    width="8"
+    x="66"
+    y="78"
+  />
+  <circle
+    cx="58"
+    cy="57"
+    fill="url(#fwSkin)"
+    r="19"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <path
+    d="M35 41C37 22 47 16 58 16C69 16 79 22 81 41H35Z"
+    fill="url(#fwHat)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <rect
+    fill="#fbbf24"
+    height="7"
+    rx="3.5"
+    stroke="#78350f"
+    stroke-width="3.6"
+    width="54"
+    x="31"
+    y="38"
+  />
+  <circle cx="51" cy="57" fill="#1c1917" r="2.8" />
+  <circle cx="65" cy="57" fill="#1c1917" r="2.8" />
+  <path
+    d="M53 65C56 68 60 68 63 65"
+    stroke="#7c2d12"
+    stroke-linecap="round"
+    stroke-width="3"
+  />
+  <path
+    d="M96 58C91 58 88 63 91 68L91 96H99L99 68C102 63 99 58 96 58Z"
+    fill="#94a3b8"
+    stroke="#334155"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+</svg>

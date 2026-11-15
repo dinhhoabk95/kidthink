@@ -1,0 +1,62 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Xe bán tải</title>
+  <defs>
+    <linearGradient id="ptBody" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#60a5fa" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e3a8a" opacity="0.24" rx="45" ry="5.5" />
+  <rect
+    fill="#fbbf24"
+    height="18"
+    rx="3"
+    stroke="#78350f"
+    stroke-width="3.4"
+    width="24"
+    x="71"
+    y="45"
+  />
+  <path
+    d="M16 64L22 58L32 38H64V58H104V86H16Z"
+    fill="url(#ptBody)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M27 58L35 44H57V58Z"
+    fill="#bae6fd"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <rect
+    fill="#fde047"
+    height="8"
+    rx="3"
+    stroke="#78350f"
+    stroke-width="3"
+    width="7"
+    x="16"
+    y="67"
+  />
+  <circle
+    cx="36"
+    cy="89"
+    fill="#334155"
+    r="11"
+    stroke="#1e293b"
+    stroke-width="4"
+  />
+  <circle
+    cx="84"
+    cy="89"
+    fill="#334155"
+    r="11"
+    stroke="#1e293b"
+    stroke-width="4"
+  />
+  <circle cx="36" cy="89" fill="#cbd5e1" r="4.5" />
+  <circle cx="84" cy="89" fill="#cbd5e1" r="4.5" />
+</svg>

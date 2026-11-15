@@ -1,0 +1,48 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hoa cài áo</title>
+  <defs>
+    <radialGradient cx="40%" cy="35%" id="frPet" r="68%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="55%" stop-color="#fb923c" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="108" fill="#7c2d12" opacity="0.24" rx="32" ry="4.5" />
+  <path
+    d="M45 72L32 104L46 97L54 106L58 74Z"
+    fill="#ef4444"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M75 72L88 104L74 97L66 106L62 74Z"
+    fill="#ef4444"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M60 14C67 14 72 19 72 25C78 21 86 25 86 32C93 32 98 38 95 45C101 49 101 58 95 62C98 69 93 75 86 75C86 82 78 86 72 82C72 88 67 93 60 93C53 93 48 88 48 82C42 86 34 82 34 75C27 75 22 69 25 62C19 58 19 49 25 45C22 38 27 32 34 32C34 25 42 21 48 25C48 19 53 14 60 14Z"
+    fill="url(#frPet)"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="60"
+    cy="53"
+    fill="#fde047"
+    r="17"
+    stroke="#78350f"
+    stroke-width="3.8"
+  />
+  <circle
+    cx="60"
+    cy="53"
+    fill="#f97316"
+    r="9"
+    stroke="#7c2d12"
+    stroke-width="3.2"
+  />
+</svg>

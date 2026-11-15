@@ -1,0 +1,77 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Tàu du lịch biển</title>
+  <defs>
+    <linearGradient id="csHull" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="68%" stop-color="#e2e8f0" />
+      <stop offset="100%" stop-color="#93c5fd" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#1e3a8a" opacity="0.24" rx="44" ry="5" />
+  <polygon
+    fill="#ef4444"
+    points="36,20 50,20 46,36 32,36"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M24 36H76L84 48H22Z"
+    fill="#ffffff"
+    stroke="#1e3a5f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <path
+    d="M20 48H88L96 61H18Z"
+    fill="#f8fafc"
+    stroke="#1e3a5f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M14 61H108L94 86H20Z"
+    fill="url(#csHull)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M32 54H78"
+    stroke="#1e3a8a"
+    stroke-dasharray="6 6"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="36"
+    cy="72"
+    fill="#38bdf8"
+    r="3.4"
+    stroke="#1e3a8a"
+    stroke-width="2.4"
+  />
+  <circle
+    cx="54"
+    cy="72"
+    fill="#38bdf8"
+    r="3.4"
+    stroke="#1e3a8a"
+    stroke-width="2.4"
+  />
+  <circle
+    cx="72"
+    cy="72"
+    fill="#38bdf8"
+    r="3.4"
+    stroke="#1e3a8a"
+    stroke-width="2.4"
+  />
+  <path
+    d="M12 87C28 81 42 89 60 85C78 81 92 89 108 85V96H12Z"
+    fill="#0284c7"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+</svg>

@@ -1,0 +1,54 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đôi bạn đồng hành</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="tsFront" r="70%">
+      <stop offset="0%" stop-color="#818cf8" />
+      <stop offset="60%" stop-color="#4f46e5" />
+      <stop offset="100%" stop-color="#312e81" />
+    </radialGradient>
+    <radialGradient cx="40%" cy="30%" id="tsBack" r="70%">
+      <stop offset="0%" stop-color="#67e8f9" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#1e1b4b" opacity="0.24" rx="42" ry="6" />
+  <circle
+    cx="77"
+    cy="40"
+    fill="url(#tsBack)"
+    r="15"
+    stroke="#1e3a8a"
+    stroke-width="4"
+  />
+  <path
+    d="M54 92C56 72 66 64 78 64C92 64 102 72 104 92Z"
+    fill="url(#tsBack)"
+    stroke="#1e3a8a"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <circle
+    cx="46"
+    cy="44"
+    fill="url(#tsFront)"
+    r="17"
+    stroke="#1e1b4b"
+    stroke-width="4"
+  />
+  <path
+    d="M18 96C20 74 32 66 46 66C60 66 72 74 74 96Z"
+    fill="url(#tsFront)"
+    stroke="#1e1b4b"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="40"
+    cy="37"
+    fill="#ffffff"
+    fill-opacity="0.35"
+    rx="5"
+    ry="3"
+    transform="rotate(-20 40 37)"
+  />
+</svg>

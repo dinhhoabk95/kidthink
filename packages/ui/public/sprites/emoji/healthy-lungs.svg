@@ -1,0 +1,44 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Lá phổi hồng</title>
+  <defs>
+    <radialGradient cx="35%" cy="30%" id="hlLobe" r="70%">
+      <stop offset="0%" stop-color="#ffe4e6" />
+      <stop offset="58%" stop-color="#fb7185" />
+      <stop offset="100%" stop-color="#e11d48" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#881337" opacity="0.24" rx="40" ry="6" />
+  <path
+    d="M60 18V50M60 46L44 58M60 46L76 58"
+    stroke="#0f766e"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="4.5"
+  />
+  <path
+    d="M55 24H65M55 32H65M55 40H65"
+    stroke="#99f6e4"
+    stroke-linecap="round"
+    stroke-width="2.4"
+  />
+  <path
+    d="M52 40C34 36 20 54 20 78C20 90 32 94 46 90C52 88 54 80 54 68Z"
+    fill="url(#hlLobe)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M68 40C86 36 100 54 100 78C100 90 88 94 74 90C68 88 66 80 66 68Z"
+    fill="url(#hlLobe)"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M44 58L34 68M42 62L44 76M76 58L86 68M78 62L76 76"
+    stroke="#fecdd3"
+    stroke-linecap="round"
+    stroke-width="2.8"
+  />
+</svg>

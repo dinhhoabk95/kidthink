@@ -1,0 +1,53 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Thẻ điểm 100</title>
+  <defs>
+    <linearGradient id="hsCard" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fffbeb" />
+      <stop offset="100%" stop-color="#fde68a" />
+    </linearGradient>
+    <linearGradient id="hsInk" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb7185" />
+      <stop offset="100%" stop-color="#dc2626" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#78350f" opacity="0.25" rx="40" ry="5.5" />
+  <rect
+    fill="url(#hsCard)"
+    height="74"
+    rx="16"
+    stroke="#78350f"
+    stroke-width="4"
+    width="92"
+    x="14"
+    y="22"
+  />
+  <path
+    d="M27 36H36V66H27V44L22 47V39L27 36Z"
+    fill="url(#hsInk)"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M53 36C61 36 66 42 66 51C66 60 61 66 53 66C45 66 40 60 40 51C40 42 45 36 53 36ZM53 44C49 44 48 47 48 51C48 55 49 58 53 58C57 58 58 55 58 51C58 47 57 44 53 44Z"
+    fill="url(#hsInk)"
+    fill-rule="evenodd"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M83 36C91 36 96 42 96 51C96 60 91 66 83 66C75 66 70 60 70 51C70 42 75 36 83 36ZM83 44C79 44 78 47 78 51C78 55 79 58 83 58C87 58 88 55 88 51C88 47 87 44 83 44Z"
+    fill="url(#hsInk)"
+    fill-rule="evenodd"
+    stroke="#7f1d1d"
+    stroke-linejoin="round"
+    stroke-width="3.4"
+  />
+  <path
+    d="M26 76C48 72 72 72 94 76M32 84C50 81 70 81 88 84"
+    stroke="#7f1d1d"
+    stroke-linecap="round"
+    stroke-width="3.8"
+  />
+</svg>

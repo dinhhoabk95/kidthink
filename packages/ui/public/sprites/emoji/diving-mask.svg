@@ -1,0 +1,71 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Kính lặn biển</title>
+  <defs>
+    <linearGradient id="dmLens" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#a5f3fc" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="58" cy="106" fill="#1e3a8a" opacity="0.23" rx="38" ry="5" />
+  <path
+    d="M92 22V78C92 90 82 96 70 94"
+    stroke="#0369a1"
+    stroke-linecap="round"
+    stroke-width="8"
+  />
+  <path
+    d="M92 22V78C92 90 82 96 70 94"
+    stroke="#38bdf8"
+    stroke-linecap="round"
+    stroke-opacity="0.85"
+    stroke-width="3"
+  />
+  <rect
+    fill="#f97316"
+    height="14"
+    rx="4"
+    stroke="#7c2d12"
+    stroke-width="3.6"
+    width="12"
+    x="86"
+    y="16"
+  />
+  <path
+    d="M22 44H76C82 44 86 49 86 56V68C86 75 80 80 73 80H60L54 71H44L38 80H25C18 80 14 75 14 68V56C14 49 17 44 22 44Z"
+    fill="#facc15"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M22 51H76V69H62L55 61H43L36 69H22Z"
+    fill="url(#dmLens)"
+    stroke="#1e3a5f"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle
+    cx="64"
+    cy="94"
+    fill="#fb923c"
+    r="6.5"
+    stroke="#7c2d12"
+    stroke-width="3.4"
+  />
+  <circle
+    cx="32"
+    cy="30"
+    fill="#bae6fd"
+    r="4.5"
+    stroke="#0369a1"
+    stroke-width="2.8"
+  />
+  <circle
+    cx="44"
+    cy="22"
+    fill="#e0f2fe"
+    r="3"
+    stroke="#0369a1"
+    stroke-width="2.4"
+  />
+</svg>

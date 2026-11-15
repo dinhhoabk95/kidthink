@@ -1,0 +1,125 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hà mã con</title>
+  <defs>
+    <radialGradient cx="38%" cy="28%" id="hpSkin" r="70%">
+      <stop offset="0%" stop-color="#ddd6fe" />
+      <stop offset="58%" stop-color="#a78bfa" />
+      <stop offset="100%" stop-color="#7c3aed" />
+    </radialGradient>
+    <radialGradient cx="42%" cy="35%" id="hpSnout" r="68%">
+      <stop offset="0%" stop-color="#fce7f3" />
+      <stop offset="65%" stop-color="#f9a8d4" />
+      <stop offset="100%" stop-color="#ec4899" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#3b0764" opacity="0.24" rx="40" ry="6" />
+  <ellipse
+    cx="38"
+    cy="24"
+    fill="url(#hpSkin)"
+    rx="8"
+    ry="10"
+    stroke="#4c1d95"
+    stroke-width="3.8"
+    transform="rotate(-18 38 24)"
+  />
+  <ellipse
+    cx="82"
+    cy="24"
+    fill="url(#hpSkin)"
+    rx="8"
+    ry="10"
+    stroke="#4c1d95"
+    stroke-width="3.8"
+    transform="rotate(18 82 24)"
+  />
+  <ellipse
+    cx="38"
+    cy="25"
+    fill="#f9a8d4"
+    rx="4"
+    ry="5"
+    transform="rotate(-18 38 25)"
+  />
+  <ellipse
+    cx="82"
+    cy="25"
+    fill="#f9a8d4"
+    rx="4"
+    ry="5"
+    transform="rotate(18 82 25)"
+  />
+  <ellipse
+    cx="60"
+    cy="86"
+    fill="url(#hpSkin)"
+    rx="30"
+    ry="16"
+    stroke="#4c1d95"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="60"
+    cy="46"
+    fill="url(#hpSkin)"
+    rx="29"
+    ry="24"
+    stroke="#4c1d95"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="60"
+    cy="65"
+    fill="url(#hpSnout)"
+    rx="34"
+    ry="21"
+    stroke="#4c1d95"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="47"
+    cy="59"
+    fill="#4c1d95"
+    rx="3.5"
+    ry="5"
+    transform="rotate(-15 47 59)"
+  />
+  <ellipse
+    cx="73"
+    cy="59"
+    fill="#4c1d95"
+    rx="3.5"
+    ry="5"
+    transform="rotate(15 73 59)"
+  />
+  <path
+    d="M46 73C52 80 68 80 74 73"
+    stroke="#4c1d95"
+    stroke-linecap="round"
+    stroke-width="3.6"
+  />
+  <rect
+    fill="#fffbeb"
+    height="6"
+    rx="2"
+    stroke="#4c1d95"
+    stroke-width="2.4"
+    width="6"
+    x="49"
+    y="74"
+  />
+  <rect
+    fill="#fffbeb"
+    height="6"
+    rx="2"
+    stroke="#4c1d95"
+    stroke-width="2.4"
+    width="6"
+    x="65"
+    y="74"
+  />
+  <circle cx="46" cy="41" fill="#1c1917" r="3.4" />
+  <circle cx="74" cy="41" fill="#1c1917" r="3.4" />
+  <circle cx="44.8" cy="39.8" fill="#ffffff" r="1.3" />
+  <circle cx="72.8" cy="39.8" fill="#ffffff" r="1.3" />
+</svg>

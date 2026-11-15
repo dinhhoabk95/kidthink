@@ -1,0 +1,64 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ngựa giấy nhiều màu</title>
+  <ellipse cx="58" cy="107" fill="#4c1d95" opacity="0.24" rx="38" ry="5" />
+  <path
+    d="M90 54C102 48 108 56 104 68C98 65 93 62 90 54Z"
+    fill="#c084fc"
+    stroke="#4c1d95"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <rect
+    fill="#38bdf8"
+    height="24"
+    rx="5"
+    stroke="#0c4a6e"
+    stroke-width="3.8"
+    width="13"
+    x="35"
+    y="76"
+  />
+  <rect
+    fill="#facc15"
+    height="24"
+    rx="5"
+    stroke="#78350f"
+    stroke-width="3.8"
+    width="13"
+    x="68"
+    y="76"
+  />
+  <rect
+    fill="#4ade80"
+    height="26"
+    rx="11"
+    stroke="#14532d"
+    stroke-width="3.8"
+    width="58"
+    x="32"
+    y="54"
+  />
+  <path d="M33 65H89" stroke="#facc15" stroke-opacity="0.9" stroke-width="5" />
+  <path
+    d="M26 58L32 26L52 34L48 62Z"
+    fill="#fb7185"
+    stroke="#881337"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <path
+    d="M18 39L32 26L42 42L24 48Z"
+    fill="#fbbf24"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <polygon
+    fill="#a855f7"
+    points="32,26 36,13 44,28"
+    stroke="#4c1d95"
+    stroke-linejoin="round"
+    stroke-width="3.6"
+  />
+  <circle cx="30" cy="37" fill="#1c1917" r="3" />
+</svg>

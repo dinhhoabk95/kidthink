@@ -1,0 +1,70 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bánh cuộn rau củ</title>
+  <defs>
+    <linearGradient id="vwTortilla" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fffbeb" />
+      <stop offset="60%" stop-color="#fde68a" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+    <linearGradient id="vwFoil" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fed7aa" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#7c2d12" opacity="0.25" rx="34" ry="5.5" />
+  <path
+    d="M46 28L90 52L68 92C63 100 51 101 43 96L28 87C20 82 19 71 24 63L46 28Z"
+    fill="url(#vwTortilla)"
+    stroke="#78350f"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <path
+    d="M35 52L79 76L68 94C63 101 51 102 43 97L26 87C19 82 19 71 25 63L35 52Z"
+    fill="url(#vwFoil)"
+    stroke="#7c2d12"
+    stroke-linejoin="round"
+    stroke-width="4"
+  />
+  <ellipse
+    cx="68"
+    cy="40"
+    fill="#fef3c7"
+    rx="25"
+    ry="13"
+    stroke="#78350f"
+    stroke-width="3.8"
+    transform="rotate(29 68 40)"
+  />
+  <circle
+    cx="62"
+    cy="36"
+    fill="#22c55e"
+    r="6.5"
+    stroke="#14532d"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="75"
+    cy="43"
+    fill="#ef4444"
+    r="6"
+    stroke="#7f1d1d"
+    stroke-width="3.2"
+  />
+  <circle
+    cx="67"
+    cy="45"
+    fill="#facc15"
+    r="5"
+    stroke="#78350f"
+    stroke-width="3.2"
+  />
+  <path
+    d="M36 74L64 89"
+    stroke="#fffbeb"
+    stroke-linecap="round"
+    stroke-opacity="0.65"
+    stroke-width="2.6"
+  />
+</svg>

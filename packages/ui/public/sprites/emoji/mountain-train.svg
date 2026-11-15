@@ -1,0 +1,82 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Tàu hoả leo núi</title>
+  <defs>
+    <linearGradient id="mtHill" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#86efac" />
+      <stop offset="100%" stop-color="#16a34a" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#14532d" opacity="0.24" rx="44" ry="5" />
+  <polygon
+    fill="url(#mtHill)"
+    points="14,96 46,24 78,66 96,40 108,96"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.8"
+  />
+  <polygon
+    fill="#ffffff"
+    points="46,24 37,43 46,39 55,43"
+    stroke="#14532d"
+    stroke-linejoin="round"
+    stroke-width="3.2"
+  />
+  <g transform="rotate(-14 62 74)">
+    <rect
+      fill="#fbbf24"
+      height="30"
+      rx="7"
+      stroke="#78350f"
+      stroke-width="4"
+      width="68"
+      x="26"
+      y="56"
+    />
+    <rect
+      fill="#dc2626"
+      height="9"
+      rx="3"
+      stroke="#7f1d1d"
+      stroke-width="3.2"
+      width="68"
+      x="26"
+      y="77"
+    />
+    <rect
+      fill="#bae6fd"
+      height="12"
+      rx="2.5"
+      stroke="#1e3a8a"
+      stroke-width="3"
+      width="14"
+      x="34"
+      y="62"
+    />
+    <rect
+      fill="#bae6fd"
+      height="12"
+      rx="2.5"
+      stroke="#1e3a8a"
+      stroke-width="3"
+      width="14"
+      x="55"
+      y="62"
+    />
+    <rect
+      fill="#bae6fd"
+      height="12"
+      rx="2.5"
+      stroke="#1e3a8a"
+      stroke-width="3"
+      width="14"
+      x="74"
+      y="62"
+    />
+  </g>
+  <path
+    d="M16 96L106 73"
+    stroke="#451a03"
+    stroke-linecap="round"
+    stroke-width="4.4"
+  />
+</svg>

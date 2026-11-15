@@ -1,0 +1,50 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Nghiêng đầu ngộ nghĩnh</title>
+  <defs>
+    <radialGradient cx="38%" cy="28%" id="wbFace" r="70%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="55%" stop-color="#fde047" />
+      <stop offset="100%" stop-color="#eab308" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#78350f" opacity="0.24" rx="36" ry="5.5" />
+  <g transform="rotate(-9 60 57)">
+    <circle
+      cx="60"
+      cy="57"
+      fill="url(#wbFace)"
+      r="39"
+      stroke="#78350f"
+      stroke-width="4"
+    />
+    <path
+      d="M35 39C40 34 47 35 51 40M70 43H84"
+      stroke="#5c3d2e"
+      stroke-linecap="round"
+      stroke-width="3.8"
+    />
+    <circle
+      cx="44"
+      cy="52"
+      fill="#ffffff"
+      r="8"
+      stroke="#5c3d2e"
+      stroke-width="3.4"
+    />
+    <circle cx="45" cy="52" fill="#1c1917" r="3.8" />
+    <path
+      d="M70 53C74 49 80 49 84 53"
+      stroke="#5c3d2e"
+      stroke-linecap="round"
+      stroke-width="4"
+    />
+    <circle cx="32" cy="64" fill="#fb7185" fill-opacity="0.58" r="6.5" />
+    <circle cx="86" cy="64" fill="#fb7185" fill-opacity="0.58" r="6.5" />
+    <path
+      d="M42 73C48 67 55 79 61 73C67 67 73 78 79 71"
+      stroke="#5c3d2e"
+      stroke-linecap="round"
+      stroke-width="4"
+    />
+  </g>
+</svg>

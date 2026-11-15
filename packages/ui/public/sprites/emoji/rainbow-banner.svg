@@ -1,0 +1,40 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Lá cờ bảy sắc</title>
+  <ellipse cx="56" cy="107" fill="#4c1d95" opacity="0.24" rx="38" ry="5" />
+  <g>
+    <rect fill="#ef4444" height="9" width="76" x="26" y="25" />
+    <rect fill="#fb923c" height="9" width="76" x="26" y="34" />
+    <rect fill="#facc15" height="9" width="76" x="26" y="43" />
+    <rect fill="#22c55e" height="9" width="76" x="26" y="52" />
+    <rect fill="#3b82f6" height="9" width="76" x="26" y="61" />
+    <rect fill="#a855f7" height="9" width="76" x="26" y="70" />
+    <rect
+      fill="none"
+      height="54"
+      rx="5"
+      stroke="#451a03"
+      stroke-width="4"
+      width="76"
+      x="26"
+      y="25"
+    />
+  </g>
+  <rect
+    fill="#b45309"
+    height="83"
+    rx="4"
+    stroke="#451a03"
+    stroke-width="3.8"
+    width="8"
+    x="19"
+    y="21"
+  />
+  <circle
+    cx="23"
+    cy="18"
+    fill="#fde047"
+    r="5.5"
+    stroke="#78350f"
+    stroke-width="3.4"
+  />
+</svg>
