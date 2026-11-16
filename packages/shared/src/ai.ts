@@ -79,7 +79,10 @@ export type SuggestContentInput = z.infer<typeof suggestContentInputSchema>;
 
 export const rewriteGuideInputSchema = z.object({
   guide_text: z
-    .string({ required_error: "Văn bản hướng dẫn là bắt buộc." })
+    .string({
+      error: (iss) =>
+        iss.input === undefined ? "Văn bản hướng dẫn là bắt buộc." : undefined,
+    })
     .min(10, "Văn bản hướng dẫn phải có tối thiểu 10 ký tự.")
     .max(3000, "Văn bản hướng dẫn không được vượt quá 3000 ký tự."),
   // Ngữ cảnh dùng, không phải loại người — BR-GLOS-04.

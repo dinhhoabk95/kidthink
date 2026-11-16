@@ -29,7 +29,7 @@ MK_DEPLOY_LOG="${MK_LOG_DIR}/deploy.log"
 
 MK_SYSTEM_USER="${MK_SYSTEM_USER:-mindkid}"
 MK_KEEP_RELEASES="${MK_KEEP_RELEASES:-5}"
-MK_BUILD_IMAGE="${MK_BUILD_IMAGE:-node:24-bookworm}"
+MK_BUILD_IMAGE="${MK_BUILD_IMAGE:-node:26-bookworm}"
 # Loopback health of the web process. This is the liveness of one process, not
 # of the service: see MK_PUBLIC_HEALTH_URL below.
 MK_HEALTH_URL="${MK_HEALTH_URL:-http://127.0.0.1:3000/api/guest/health}"
@@ -63,7 +63,7 @@ MK_PORT_WEB=3000
 MK_PORT_WORKER=3099
 
 # Required component versions (server-provisioning.md §7.2). Drift stops provisioning.
-MK_NODE_MAJOR=24
-MK_PNPM_MAJOR=11
-MK_POSTGRES_MAJOR=17
+MK_NODE_MAJOR=26
+MK_PNPM_MAJOR=12
+MK_POSTGRES_MAJOR=18
 MK_VALKEY_MAJOR=9

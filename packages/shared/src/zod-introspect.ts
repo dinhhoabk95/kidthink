@@ -88,21 +88,26 @@ export interface UiHintResult {
   elementHint?: UiHintResult;
 }
 
-export function unwrapZodType(schema: z.ZodTypeAny): z.ZodTypeAny {
-  let current: z.ZodTypeAny = schema;
+export type AnyZodSchema = z.core.$ZodType;
+
+export function unwrapZodType(schema: AnyZodSchema): AnyZodSchema {
+  let current: AnyZodSchema = schema;
   while (true) {
-    if (current instanceof z.ZodOptional || current instanceof z.ZodNullable) {
+    if (
+      current instanceof z.ZodOptional ||
+      current instanceof z.ZodNullable ||
+      current instanceof z.ZodDefault ||
+      current instanceof z.ZodCatch ||
+      current instanceof z.ZodReadonly ||
+      current instanceof z.ZodPrefault ||
+      current instanceof z.ZodNonOptional
+    ) {
       current = current.unwrap();
-    } else if (current instanceof z.ZodDefault) {
-      current = current.removeDefault();
-    } else if (current instanceof z.ZodEffects) {
-      current = current.innerType();
-    } else if (current instanceof z.ZodCatch) {
-      current = current.removeCatch();
-    } else if (current instanceof z.ZodBranded) {
-      current = current.unwrap();
-    } else if (current instanceof z.ZodPipeline) {
-      current = current._def.out;
+    } else if (current instanceof z.ZodPipe) {
+      current =
+        current.def.out instanceof z.ZodTransform
+          ? current.def.in
+          : current.def.out;
     } else {
       break;
     }
@@ -112,7 +117,7 @@ export function unwrapZodType(schema: z.ZodTypeAny): z.ZodTypeAny {
 
 function resolveUiHintFromName(
   fieldName: string,
-  schema: z.ZodTypeAny,
+  schema: AnyZodSchema,
   depth: number,
   path: string
 ): UiHintResult | undefined {
@@ -161,7 +166,7 @@ function resolveUiHintFromName(
 
 function resolvePrimitiveHint(
   fieldName: string,
-  unwrapped: z.ZodTypeAny,
+  unwrapped: AnyZodSchema,
   depth: number,
   path: string
 ): UiHintResult | undefined {
@@ -171,17 +176,7 @@ function resolvePrimitiveHint(
       name: fieldName,
       hint: "select",
       depth,
-      options: unwrapped.options,
-    };
-  }
-
-  if (unwrapped instanceof z.ZodNativeEnum) {
-    return {
-      path,
-      name: fieldName,
-      hint: "select",
-      depth,
-      options: Object.values(unwrapped.enum),
+      options: unwrapped.options.map(String),
     };
   }
 
@@ -214,9 +209,27 @@ function resolvePrimitiveHint(
   return undefined;
 }
 
+function extractDiscriminatedUnionOptions(
+  unwrapped: z.ZodDiscriminatedUnion
+): string[] {
+  const discriminator = unwrapped.def.discriminator;
+  const options: string[] = [];
+  for (const option of unwrapped.options) {
+    if (option instanceof z.ZodObject) {
+      const discSchema = option.shape[discriminator];
+      if (discSchema instanceof z.ZodLiteral) {
+        for (const val of discSchema.values) {
+          options.push(String(val));
+        }
+      }
+    }
+  }
+  return options;
+}
+
 function resolveStructuralHint(
   fieldName: string,
-  unwrapped: z.ZodTypeAny,
+  unwrapped: AnyZodSchema,
   depth: number,
   path: string
 ): UiHintResult {
@@ -243,7 +256,7 @@ function resolveStructuralHint(
     for (const [key, fieldDef] of Object.entries(shape)) {
       children[key] = resolveUiHintForField(
         key,
-        fieldDef as z.ZodTypeAny,
+        fieldDef as AnyZodSchema,
         depth + 1,
         path ? `${path}.${key}` : key
       );
@@ -263,7 +276,7 @@ function resolveStructuralHint(
       name: fieldName,
       hint: "select",
       depth,
-      options: Array.from(unwrapped.optionsMap.keys() as Iterable<string>),
+      options: extractDiscriminatedUnionOptions(unwrapped),
     };
   }
 
@@ -272,7 +285,7 @@ function resolveStructuralHint(
 
 export function resolveUiHintForField(
   fieldName: string,
-  schema: z.ZodTypeAny,
+  schema: AnyZodSchema,
   depth = 1,
   path = fieldName
 ): UiHintResult {
@@ -291,7 +304,7 @@ export function resolveUiHintForField(
 }
 
 export function introspectZodSchema(
-  schema: z.ZodTypeAny,
+  schema: AnyZodSchema,
   rootName = ""
 ): Record<string, UiHintResult> {
   const unwrapped = unwrapZodType(schema);
@@ -309,7 +322,7 @@ export function introspectZodSchema(
   const shape = unwrapped.shape;
   const results: Record<string, UiHintResult> = {};
   for (const [key, fieldDef] of Object.entries(shape)) {
-    results[key] = resolveUiHintForField(key, fieldDef as z.ZodTypeAny, 1, key);
+    results[key] = resolveUiHintForField(key, fieldDef as AnyZodSchema, 1, key);
   }
   return results;
 }

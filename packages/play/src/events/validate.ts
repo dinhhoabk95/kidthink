@@ -18,11 +18,11 @@ const JsonPrimitiveSchema = z.union([
 export const EventPayloadValueSchema = z.union([
   JsonPrimitiveSchema,
   z.array(JsonPrimitiveSchema),
-  z.record(JsonPrimitiveSchema),
+  z.record(z.string(), JsonPrimitiveSchema),
 ]);
 export type EventPayloadValue = z.infer<typeof EventPayloadValueSchema>;
 
-export const EventPayloadSchema = z.record(EventPayloadValueSchema);
+export const EventPayloadSchema = z.record(z.string(), EventPayloadValueSchema);
 export type EventPayload = z.infer<typeof EventPayloadSchema>;
 
 export interface IngestEventItem {

@@ -9,7 +9,7 @@ import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 const endpointRegistrationSchema = z.object({
   provider: z.literal("fcm_web", {
-    errorMap: () => ({ message: "Provider phải là fcm_web" }),
+    error: "Provider phải là fcm_web",
   }),
   client_installation_id: z
     .string()

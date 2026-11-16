@@ -22,14 +22,23 @@ import { mutateUserEntitlements } from "#server/utils/entitlements-runtime";
  */
 const grantEntitlementSchema = z
   .object({
-    package_code: z.string({ required_error: "Mã gói là bắt buộc." }),
+    package_code: z.string({
+      error: (iss) =>
+        iss.input === undefined ? "Mã gói là bắt buộc." : undefined,
+    }),
     duration_days: z
-      .number({ required_error: "Thời hạn là bắt buộc." })
+      .number({
+        error: (iss) =>
+          iss.input === undefined ? "Thời hạn là bắt buộc." : undefined,
+      })
       .int("Thời hạn phải là số nguyên ngày.")
       .min(1, "Thời hạn tối thiểu là 1 ngày.")
       .max(365, "Thời hạn tối đa là 365 ngày một lần cấp (BR-EGR-04)."),
     grant_reason: z
-      .string({ required_error: "Lý do cấp là bắt buộc." })
+      .string({
+        error: (iss) =>
+          iss.input === undefined ? "Lý do cấp là bắt buộc." : undefined,
+      })
       .min(20, "Lý do cấp bắt buộc tối thiểu 20 ký tự (BR-EGR-02)."),
     notify_user: z.boolean().optional().default(true),
   })

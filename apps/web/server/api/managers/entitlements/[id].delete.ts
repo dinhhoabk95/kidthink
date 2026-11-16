@@ -9,7 +9,10 @@ import { revokeUserEntitlementById } from "#server/utils/entitlements-runtime";
 
 const revokeEntitlementSchema = z.object({
   reason: z
-    .string({ required_error: "Lý do thu hồi là bắt buộc." })
+    .string({
+      error: (iss) =>
+        iss.input === undefined ? "Lý do thu hồi là bắt buộc." : undefined,
+    })
     .min(10, "Lý do thu hồi bắt buộc tối thiểu 10 ký tự."),
 });
 

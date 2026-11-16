@@ -17,7 +17,10 @@ import { invalidateUserEntitlementsCache } from "#server/utils/entitlements-runt
 
 const rejectOrderSchema = z.object({
   admin_note: z
-    .string({ required_error: "Ghi chú từ chối là bắt buộc." })
+    .string({
+      error: (iss) =>
+        iss.input === undefined ? "Ghi chú từ chối là bắt buộc." : undefined,
+    })
     .min(
       MIN_ADMIN_NOTE_LENGTH,
       `Ghi chú từ chối bắt buộc tối thiểu ${MIN_ADMIN_NOTE_LENGTH} ký tự (BR-PAP-04).`

@@ -60,12 +60,12 @@ describe("Server Provisioning Contract (BR-SRV-01..11)", () => {
     expect(cmdProvision).not.toContain("6379/tcp");
   });
 
-  it("BR-SRV-05: enforces exact major versions (Node 24, pnpm 11, PostgreSQL 17, Valkey 9) and stops on drift", () => {
-    expect(pathsSh).toContain("MK_NODE_MAJOR=24");
-    expect(pathsSh).toContain("MK_PNPM_MAJOR=11");
-    expect(pathsSh).toContain("MK_POSTGRES_MAJOR=17");
+  it("BR-SRV-05: enforces exact major versions (Node 26, pnpm 12, PostgreSQL 18, Valkey 9) and stops on drift", () => {
+    expect(pathsSh).toContain("MK_NODE_MAJOR=26");
+    expect(pathsSh).toContain("MK_PNPM_MAJOR=12");
+    expect(pathsSh).toContain("MK_POSTGRES_MAJOR=18");
     expect(pathsSh).toContain("MK_VALKEY_MAJOR=9");
-    expect(composeProd).toContain("pgvector/pgvector:pg17");
+    expect(composeProd).toContain("pgvector/pgvector:pg18");
     expect(composeProd).toContain("valkey/valkey:9-bookworm");
     expect(cmdProvision).toContain("Not upgrading automatically.");
     expect(cmdProvision).toContain("drift) return 1 ;;");

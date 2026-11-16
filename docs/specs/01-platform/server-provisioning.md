@@ -45,7 +45,7 @@ Việt Nam, vì thứ nó cần chỉ là một bản Ubuntu 24.04 và một kho
 | `pnpm deploy provision --host <tên>` | Người vận hành | Lớp bọc SSH, chạy từ máy trạm                |
 | `infra/scripts/mindkid.sh provision` → `infra/scripts/lib/cmd-provision.sh` |                | Nội dung thật, chạy trên máy chủ bằng `root` |
 | `infra/nginx/`                       |                | Khuôn cấu hình, biến thay là tên miền        |
-| `infra/docker-compose.prod.yml`      |                | PostgreSQL 17 và Valkey 9                    |
+| `infra/docker-compose.prod.yml`      |                | PostgreSQL 18 và Valkey 9                    |
 
 ## 4. Main flow
 
@@ -54,9 +54,9 @@ Việt Nam, vì thứ nó cần chỉ là một bản Ubuntu 24.04 và một kho
 2. Cập nhật gói, đặt múi giờ, đặt tên máy
 3. Tạo người dùng hệ thống mindkid, không shell đăng nhập, không mật khẩu
 4. Tường lửa: chỉ mở 22, 80, 443; mọi cổng khác đóng
-5. Cài Docker, Node 24, pnpm 11, Nginx, certbot, PM2, các gói build
+5. Cài Docker, Node 26, pnpm 12, Nginx, certbot, PM2, các gói build
 6. Tạo bố cục thư mục §7.1, đặt chủ sở hữu và quyền
-7. Dựng PostgreSQL 17 và Valkey 9 bằng docker compose, bind loopback
+7. Dựng PostgreSQL 18 và Valkey 9 bằng docker compose, bind loopback
 8. Sinh cấu hình Nginx từ khuôn, kiểm cú pháp, nạp lại
 9. Xin chứng chỉ TLS, bật gia hạn tự động
 10. Đặt luân chuyển log, giới hạn dung lượng log
@@ -127,9 +127,9 @@ Một script nghĩa là một khoá, một tệp log, và một đích cho cổn
 | Thành phần | Phiên bản             | Cách chạy                                            |
 | ---------- | --------------------- | ---------------------------------------------------- |
 | Ubuntu     | 24.04 LTS             | Hệ điều hành máy chủ                                 |
-| Node       | 24                    | Chỉ để chạy trình giám sát tiến trình và mã đã build |
-| pnpm       | 11                    | Cài phụ thuộc trong container build                  |
-| PostgreSQL | 17                    | Docker, bind loopback, volume riêng                  |
+| Node       | 26                    | Chỉ để chạy trình giám sát tiến trình và mã đã build |
+| pnpm       | 12                    | Cài phụ thuộc trong container build                  |
+| PostgreSQL | 18                    | Docker, bind loopback, volume riêng                  |
 | Valkey     | 9                     | Docker, bind loopback, volume riêng                  |
 | Nginx      | bản của bản phân phối | Chạy trên máy, không trong Docker                    |
 | certbot    | bản của bản phân phối | Gia hạn tự động                                      |

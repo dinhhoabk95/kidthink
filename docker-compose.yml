@@ -3,7 +3,7 @@
 #   docker compose up -d
 #   psql -h localhost -p 5433 -U postgres -d mindkid
 #
-# BR-RBS-07: major version phải KHỚP production — PostgreSQL 17, Valkey 9.
+# BR-RBS-07: major version phải KHỚP production — PostgreSQL 18, Valkey 9.
 # Test trên version khác production là kiểm tra sai thứ.
 #
 # Host port lệch số container (5433/6380 thay vì 5432/6379, container giữ
@@ -12,7 +12,7 @@
 
 services:
   db:
-    image: pgvector/pgvector:pg17
+    image: pgvector/pgvector:pg18
     restart: unless-stopped
     # Bind loopback: app Node chạy trên host nên không cần lộ ra LAN.
     # "5433:5432" bind 0.0.0.0 — với creds postgres/postgres thì bất kỳ máy nào
@@ -24,7 +24,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: mindkid
     volumes:
-      - pgdata_dev:/var/lib/postgresql/data
+      - pgdata_dev:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s

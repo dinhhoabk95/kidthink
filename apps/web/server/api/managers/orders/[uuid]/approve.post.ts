@@ -22,36 +22,29 @@ import { invalidateUserEntitlementsCache } from "#server/utils/entitlements-runt
 
 const approveOrderSchema = z.object({
   admin_note: z
-    .string({ required_error: "Ghi chú duyệt là bắt buộc." })
+    .string({
+      error: (iss) =>
+        iss.input === undefined ? "Ghi chú duyệt là bắt buộc." : undefined,
+    })
     .min(
       MIN_ADMIN_NOTE_LENGTH,
       `Ghi chú duyệt bắt buộc tối thiểu ${MIN_ADMIN_NOTE_LENGTH} ký tự (BR-PAP-04).`
     ),
   checklist: z.object({
     amount_matches: z.literal(true, {
-      errorMap: () => ({
-        message: "Phải xác nhận số tiền trên chứng từ khớp với đơn.",
-      }),
+      error: "Phải xác nhận số tiền trên chứng từ khớp với đơn.",
     }),
     transfer_note_present: z.literal(true, {
-      errorMap: () => ({
-        message: "Phải xác nhận nội dung chuyển khoản chứa mã đơn.",
-      }),
+      error: "Phải xác nhận nội dung chuyển khoản chứa mã đơn.",
     }),
     bank_ref_unused: z.literal(true, {
-      errorMap: () => ({
-        message: "Phải xác nhận mã giao dịch chưa được dùng cho đơn khác.",
-      }),
+      error: "Phải xác nhận mã giao dịch chưa được dùng cho đơn khác.",
     }),
     transfer_time_valid: z.literal(true, {
-      errorMap: () => ({
-        message: "Phải xác nhận thời gian chuyển khoản hợp lệ sau lúc tạo đơn.",
-      }),
+      error: "Phải xác nhận thời gian chuyển khoản hợp lệ sau lúc tạo đơn.",
     }),
     proof_legible: z.literal(true, {
-      errorMap: () => ({
-        message: "Phải xác nhận ảnh chứng từ rõ ràng, không bị che khuất.",
-      }),
+      error: "Phải xác nhận ảnh chứng từ rõ ràng, không bị che khuất.",
     }),
   }),
   bonus_days: z

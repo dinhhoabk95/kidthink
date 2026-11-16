@@ -25,7 +25,7 @@ const GT035_COMMAND = z.enum([
   "go_left",
 ]);
 
-export const EVENT_PAYLOAD_SCHEMAS: Readonly<Record<string, z.AnyZodObject>> = {
+export const EVENT_PAYLOAD_SCHEMAS: Readonly<Record<string, z.ZodObject>> = {
   game_started: z.object({
     template_code: z.string().max(64),
     difficulty: z.union([z.string().max(32), NON_NEGATIVE_INT]),

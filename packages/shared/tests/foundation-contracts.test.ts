@@ -61,13 +61,13 @@ describe("P0 foundation contracts", () => {
       resolve(ROOT, "pnpm-workspace.yaml"),
       "utf8"
     );
-    expect(workspace).toContain("nodemailer: ^10.2.1");
+    expect(workspace).toContain("nodemailer: ^10.6.0");
     expect(workspace).toContain("mjml: ^5.4.1");
-    expect(workspace).toContain("rate-limiter-flexible: ^11.2.3");
+    expect(workspace).toContain("rate-limiter-flexible: ^11.5.0");
     expect(workspace).toContain("nuxt-security: ^2.7.0");
     expect(workspace).toContain('"@t3-oss/env-nuxt": ^0.13.11');
-    expect(workspace).toContain("otpauth: ^9.5.2");
-    expect(workspace).toContain("openid-client: ^6.8.8");
+    expect(workspace).toContain("otpauth: ^9.6.0");
+    expect(workspace).toContain("openid-client: ^6.9.0");
   });
 
   it("BR-GLOS-03 & BR-GLOS-04: the tooling glossary exposes every banned foundation term and replacement", () => {
@@ -118,8 +118,8 @@ describe("P0 foundation contracts", () => {
     expect(workspace).toContain("unhead: 3.4.3");
     expect(workspace).toContain('"@unhead/vue": 3.4.3');
 
-    expect(rootPkg.engines?.node).toBe(">=24.22.1");
-    expect(rootPkg.engines?.pnpm).toBe(">=11");
+    expect(rootPkg.engines?.node).toBe(">=26.13.1");
+    expect(rootPkg.engines?.pnpm).toBe(">=12");
   });
 
   it("BR-RBS-03: lefthook.yml configures pre-commit (format, lint-and-deps) and pre-push (typecheck)", () => {
@@ -136,10 +136,10 @@ describe("P0 foundation contracts", () => {
     expect(lefthook).toContain("pnpm typecheck");
   });
 
-  it("BR-RBS-07: docker-compose.yml uses pgvector/pgvector:pg17 and valkey/valkey:9-alpine", () => {
+  it("BR-RBS-07: docker-compose.yml uses pgvector/pgvector:pg18 and valkey/valkey:9-alpine", () => {
     const compose = readFileSync(resolve(ROOT, "docker-compose.yml"), "utf8");
-    expect(compose).toContain("pgvector/pgvector:pg17");
-    expect(compose).not.toContain("postgres:17-alpine");
+    expect(compose).toContain("pgvector/pgvector:pg18");
+    expect(compose).not.toContain("postgres:18-alpine");
     expect(compose).toContain("valkey/valkey:9-alpine");
   });
 

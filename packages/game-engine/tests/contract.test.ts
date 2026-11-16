@@ -3,6 +3,7 @@ import {
   RESERVED_MECHANICS,
 } from "@mindkid/shared/taxonomy-types";
 import { describe, expect, it } from "vitest";
+import { z } from "zod";
 import {
   ALL_TEMPLATES,
   exportTemplateContracts,
@@ -54,8 +55,17 @@ describe("Task 2 — Game Template Contracts (BR-GTC-01..07)", () => {
 
   it("BR-GTC-03: separates content and difficulty contracts (no mixing)", () => {
     for (const [_code, template] of Object.entries(MVP_TEMPLATES)) {
+      const jsonSchema = z.toJSONSchema(template.content_contract, {
+        unrepresentable: "any",
+      });
       const contentKeys = Object.keys(
-        (template.content_contract as any)._def?.shape?.() ?? {}
+        typeof jsonSchema === "object" &&
+          jsonSchema !== null &&
+          "properties" in jsonSchema &&
+          typeof jsonSchema.properties === "object" &&
+          jsonSchema.properties !== null
+          ? jsonSchema.properties
+          : {}
       );
       expect(contentKeys).not.toContain("distractor_count");
       expect(contentKeys).not.toContain("hint_after_ms");

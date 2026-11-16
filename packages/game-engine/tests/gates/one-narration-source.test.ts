@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { zodToJsonSchema } from "zod-to-json-schema";
+import { z } from "zod";
 import { ALL_TEMPLATES } from "#src/generated/template-registry";
 import { CONTENT_PACK_WITH_SECOND_NARRATION_SOURCE } from "./fixtures/turn-script-violations.js";
 
@@ -61,8 +61,9 @@ function contentPackFields(code: string): Set<string> {
   if (!template) {
     throw new Error(`Không có engine ${code} trong registry`);
   }
-  const jsonSchema = zodToJsonSchema(template.content_contract, {
-    $refStrategy: "none",
+  const jsonSchema = z.toJSONSchema(template.content_contract, {
+    unrepresentable: "any",
+    reused: "inline",
   });
   const fields = new Set<string>();
   collectPropertyNames(jsonSchema, fields);

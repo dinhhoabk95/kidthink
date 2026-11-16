@@ -17,10 +17,10 @@ node_major() {
 }
 
 NODE_MAJOR="$(node_major)"
-if [ -z "${NODE_MAJOR}" ] || [ "${NODE_MAJOR}" -lt 24 ]; then
+if [ -z "${NODE_MAJOR}" ] || [ "${NODE_MAJOR}" -lt 26 ]; then
   NVM_NODE_DIR="${NVM_DIR:-${HOME}/.nvm}/versions/node"
   if [ -d "${NVM_NODE_DIR}" ]; then
-    for candidate in $(ls -1 "${NVM_NODE_DIR}" | grep '^v24\.' | sort -V -r); do
+    for candidate in $(ls -1 "${NVM_NODE_DIR}" | grep '^v26\.' | sort -V -r); do
       candidate_bin="${NVM_NODE_DIR}/${candidate}/bin"
       if [ -x "${candidate_bin}/node" ] && "${candidate_bin}/node" --version >/dev/null 2>&1; then
         export PATH="${candidate_bin}:${PATH}"
@@ -105,7 +105,7 @@ setup_env() {
   export MK_CONF_FILE="${root}/etc/deploy.conf"
   export MK_FAKE_STATE="${root}/state"
   export MK_HEALTH_URL="http://127.0.0.1:3000/api/guest/health"
-  export MK_BUILD_IMAGE="node:24-bookworm"
+  export MK_BUILD_IMAGE="node:26-bookworm"
   export PATH="${HARNESS_DIR}/fakebin:${PATH}"
 
   mkdir -p "${MK_ROOT}" "${MK_ENV_DIR}" "${MK_LOG_DIR}" "${MK_FAKE_STATE}"

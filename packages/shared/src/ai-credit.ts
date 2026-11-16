@@ -25,12 +25,18 @@ export const MIN_MANUAL_GRANT_REASON_LENGTH = 20;
 export const manualGrantCreditsSchema = z
   .object({
     credits: z
-      .number({ required_error: "Số lượng credit là bắt buộc." })
+      .number({
+        error: (iss) =>
+          iss.input === undefined ? "Số lượng credit là bắt buộc." : undefined,
+      })
       .int("Số lượng credit phải là số nguyên.")
       .min(1, "Số lượng credit tối thiểu là 1.")
       .max(10_000, "Số lượng credit tối đa là 10.000 mỗi lần cấp."),
     grant_reason: z
-      .string({ required_error: "Lý do cấp bù là bắt buộc." })
+      .string({
+        error: (iss) =>
+          iss.input === undefined ? "Lý do cấp bù là bắt buộc." : undefined,
+      })
       .min(
         MIN_MANUAL_GRANT_REASON_LENGTH,
         `Lý do cấp bù bắt buộc tối thiểu ${MIN_MANUAL_GRANT_REASON_LENGTH} ký tự (BR-ACL-07).`

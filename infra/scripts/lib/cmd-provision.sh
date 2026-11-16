@@ -186,6 +186,7 @@ mk_prov_runtime() {
 
   if ! command -v pnpm >/dev/null 2>&1; then
     log_info "Enabling pnpm through corepack."
+    command -v corepack >/dev/null 2>&1 || npm install -g corepack
     corepack enable
     corepack prepare "pnpm@${MK_PNPM_MAJOR}" --activate
   else

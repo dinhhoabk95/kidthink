@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Dependency install and build (BR-DEP-05, BR-DEP-13, BR-DEP-15, BR-SRV-11).
 #
-# Both happen inside the node:24-bookworm container, never on the host:
+# Both happen inside the node:26-bookworm container, never on the host:
 #   - the workstation is macOS ARM and the server is Linux x86, and the image
 #     libraries ship platform-specific binaries;
 #   - keeping the toolchain in the container is what lets the host stay free of
@@ -37,7 +37,7 @@ build_release() {
     -w /workspace \
     -e CI=true \
     "${MK_BUILD_IMAGE}" \
-    bash -c "corepack enable && pnpm config set store-dir /pnpm-store --location project && pnpm install --frozen-lockfile" \
+    bash -c "command -v corepack >/dev/null 2>&1 || npm install -g corepack; corepack enable && pnpm config set store-dir /pnpm-store --location project && pnpm install --frozen-lockfile" \
     || return 1
 
   # APP-RUNTIME-BOUNDARY §4.1: admin là SPA tĩnh, nên `NUXT_PUBLIC_API_BASE_URL`
@@ -64,7 +64,7 @@ build_release() {
     -e NODE_ENV=production \
     "${build_env_args[@]}" \
     "${MK_BUILD_IMAGE}" \
-    bash -c "corepack enable && pnpm build" \
+    bash -c "command -v corepack >/dev/null 2>&1 || npm install -g corepack; corepack enable && pnpm build" \
     || return 1
 
   if ! release_has_artifacts "${release_dir}"; then
@@ -93,5 +93,5 @@ run_migrations() {
     -w /workspace \
     --env-file "${MK_ENV_DIR}/worker.env" \
     "${MK_BUILD_IMAGE}" \
-    bash -c "corepack enable && pnpm db:migrate"
+    bash -c "command -v corepack >/dev/null 2>&1 || npm install -g corepack; corepack enable && pnpm db:migrate"
 }

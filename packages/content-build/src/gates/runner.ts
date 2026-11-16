@@ -70,12 +70,16 @@ import {
 
 function parseContractIssues(
   prefix: string,
-  errorIssues: Array<{ path: Array<string | number>; message: string }>,
+  errorIssues: ReadonlyArray<{
+    readonly path: readonly PropertyKey[];
+    readonly message: string;
+  }>,
   targetIssues: GateIssue[],
   errorCode: string
 ): void {
   for (const issue of errorIssues) {
-    const fieldPath = issue.path.length > 0 ? issue.path.join(".") : "(root)";
+    const fieldPath =
+      issue.path.length > 0 ? issue.path.map(String).join(".") : "(root)";
     targetIssues.push({
       code: errorCode,
       message: `${prefix}.${fieldPath}: ${issue.message}`,

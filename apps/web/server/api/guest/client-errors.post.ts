@@ -72,7 +72,7 @@ const clientErrorSchema = z.object({
   code: z.string().max(80).optional(),
   message: z.string().max(500).optional(),
   fingerprint: z.string().max(120).optional(),
-  context: z.record(z.unknown()).optional(),
+  context: z.record(z.string(), z.unknown()).optional(),
 });
 
 export default defineApiRoute({

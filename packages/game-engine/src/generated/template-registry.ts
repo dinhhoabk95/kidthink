@@ -1,6 +1,6 @@
 /** @generated from TEMPLATES@a1b2c3d4 — DO NOT EDIT MANUALLY (BR-TAK-03) */
 
-import { zodToJsonSchema } from "zod-to-json-schema";
+import { z } from "zod";
 import type { AgeBand, GameTemplate } from "#src/contracts/types";
 import GT000Template from "#src/templates/GT-000/template";
 import GT001Template from "#src/templates/GT-001/template";
@@ -97,13 +97,13 @@ export function exportTemplateContracts(code: string) {
   }
   return {
     code: template.code,
-    content_contract_json_schema: zodToJsonSchema(template.content_contract, {
-      name: `${code.replace("-", "")}Content`,
+    content_contract_json_schema: z.toJSONSchema(template.content_contract, {
+      unrepresentable: "any",
     }),
-    difficulty_contract_json_schema: zodToJsonSchema(
+    difficulty_contract_json_schema: z.toJSONSchema(
       template.difficulty_contract,
       {
-        name: `${code.replace("-", "")}Difficulty`,
+        unrepresentable: "any",
       }
     ),
     limits: template.limits,

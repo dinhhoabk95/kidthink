@@ -1,14 +1,27 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "root": true,
-  "extends": ["ultracite/core", "ultracite/vue"],
+  "extends": ["ultracite/biome/core", "ultracite/biome/vue"],
   "vcs": {
     "enabled": true,
     "clientKind": "git",
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["apps/**", "packages/**", "scripts/**", "!**/*.md", "!.agents"]
+    "includes": [
+      "apps/**",
+      "packages/**",
+      "scripts/**",
+      "!**/*.md",
+      "!!**/*.yml",
+      "!!**/*.yaml",
+      "!.agents"
+    ]
+  },
+  "html": {
+    "formatter": {
+      "enabled": false
+    }
   },
   "javascript": {
     "globals": [
@@ -65,13 +78,107 @@
 
   // Zero-config là mặc định. Mỗi override dưới đây phải trỏ được về một contract
   // trong docs/specs/ — ❌ NEVER nới rule chỉ vì code hiện tại đang vi phạm.
+  //
+  // repo-bootstrap.md §7.1 (BR-RBS-08) & GEMINI.md ("Mỗi rule lint BẮT BUỘC trỏ
+  // về một BR-*. Không có BR sở hữu thì không thêm rule"): khi nâng ultracite
+  // 6.5.1 -> 8.2.1 + @biomejs/biome 2.5.15 -> 2.6.8, giữ nguyên tập rule đã chốt
+  // ở baseline 6.5.1, tắt các rule mới do preset 8.x tự bật thêm ngoài contract.
+  "assist": {
+    "actions": {
+      "source": {
+        "useSortedInterfaceMembers": "off",
+        "useSortedProperties": "off",
+        "useSortedPackageJson": "off"
+      }
+    }
+  },
+  "linter": {
+    "rules": {
+      "complexity": {
+        "noRedundantDefaultExport": "off",
+        "noUselessCatchBinding": "off",
+        "noUselessReturn": "off",
+        "noUselessUndefined": "off",
+        "useMathMinMax": "off"
+      },
+      "correctness": {
+        "noUndeclaredDependencies": "off",
+        "noUnusedInstantiation": "off"
+      },
+      "nursery": {
+        "useTailwindSortedClasses": "off"
+      },
+      "performance": {
+        "noAwaitInLoops": "off",
+        "noBarrelFile": "error",
+        "noNamespaceImport": "error"
+      },
+      "security": {
+        "useIframeSandbox": "off"
+      },
+      "style": {
+        "noExcessiveClassesPerFile": "off",
+        "noIncrementDecrement": "off",
+        "useConsistentArrowReturn": "off",
+        "useConsistentMethodSignatures": "off",
+        "useDestructuring": "off",
+        "useDomQuerySelector": "off",
+        "useErrorCause": "off",
+        "useImportsFirst": "off",
+        "useNamedCaptureGroup": "off",
+        "useReduceTypeParameter": "off",
+        "useThisInClassMethods": "off",
+        "useUnicodeRegex": "off",
+        "useVarsOnTop": "off"
+      },
+      "suspicious": {
+        "noEmptySource": "off",
+        "noEqualsToNull": "off",
+        "noImportCycles": "off",
+        "noLoopFunc": "off",
+        "noNestedPromises": "off",
+        "noShadow": "off",
+        "noUnnecessaryConditions": "off",
+        "noUnusedExpressions": "off",
+        "useBaseline": "off"
+      }
+    }
+  },
   "overrides": [
     {
       "includes": ["*.vue", "**/*.vue"],
       "linter": {
         "rules": {
+          "correctness": {
+            "noUnusedVariables": "off"
+          },
+          "style": {
+            "useConst": "off",
+            "useImportType": "off",
+            "useVueConsistentDefinePropsDeclaration": "off",
+            "useVueConsistentVBindStyle": "off",
+            "useVueConsistentVOnStyle": "off",
+            "useVueHyphenatedAttributes": "off",
+            "useVueMultiWordComponentNames": "off",
+            "useVueNextTickPromise": "off"
+          },
           "suspicious": {
+            "noVueArrowFuncInWatch": "off",
+            "useScopedStyles": "off",
             "useStrictMode": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "**/*.{test,spec,test-d,spec-d}.{ts,tsx,js,jsx,mts,cts,mjs,cjs}",
+        "**/__tests__/**/*"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noExplicitAny": "off"
           }
         }
       }

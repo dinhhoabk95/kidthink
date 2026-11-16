@@ -80,17 +80,58 @@ export function isJobName(name: string): name is JobName {
   return BY_NAME.has(name);
 }
 
+interface JobSchemaMap {
+  readonly "rollup:session": z.ZodType<JobPayloads["rollup:session"]>;
+  readonly "rollup:daily": z.ZodType<JobPayloads["rollup:daily"]>;
+  readonly "sweep:abandoned": z.ZodType<JobPayloads["sweep:abandoned"]>;
+  readonly "entitlement:expire": z.ZodType<JobPayloads["entitlement:expire"]>;
+  readonly "order:expire": z.ZodType<JobPayloads["order:expire"]>;
+  readonly "account:purge": z.ZodType<JobPayloads["account:purge"]>;
+  readonly "email:send": z.ZodType<JobPayloads["email:send"]>;
+  readonly "backup:postgres": z.ZodType<JobPayloads["backup:postgres"]>;
+  readonly "backup:verify": z.ZodType<JobPayloads["backup:verify"]>;
+  readonly "entitlement:soft-unlock-expire": z.ZodType<
+    JobPayloads["entitlement:soft-unlock-expire"]
+  >;
+  readonly "report:manual-grants-monthly": z.ZodType<
+    JobPayloads["report:manual-grants-monthly"]
+  >;
+  readonly "pdf:render": z.ZodType<JobPayloads["pdf:render"]>;
+  readonly "sweep:pdf-cleanup": z.ZodType<JobPayloads["sweep:pdf-cleanup"]>;
+  readonly "billing:renewal-reminder": z.ZodType<
+    JobPayloads["billing:renewal-reminder"]
+  >;
+  readonly "billing:renew": z.ZodType<JobPayloads["billing:renew"]>;
+  readonly "billing:dunning-sweep": z.ZodType<
+    JobPayloads["billing:dunning-sweep"]
+  >;
+}
+
+const JOB_SCHEMAS: JobSchemaMap = {
+  "rollup:session": rollupSession.payload,
+  "rollup:daily": rollupDaily.payload,
+  "sweep:abandoned": sweepAbandoned.payload,
+  "entitlement:expire": entitlementExpire.payload,
+  "order:expire": orderExpire.payload,
+  "account:purge": accountPurge.payload,
+  "email:send": emailSend.payload,
+  "backup:postgres": backupPostgres.payload,
+  "backup:verify": backupVerify.payload,
+  "entitlement:soft-unlock-expire": entitlementSoftUnlockExpire.payload,
+  "report:manual-grants-monthly": reportManualGrantsMonthly.payload,
+  "pdf:render": pdfRender.payload,
+  "sweep:pdf-cleanup": sweepPdfCleanup.payload,
+  "billing:renewal-reminder": billingRenewalReminder.payload,
+  "billing:renew": billingRenew.payload,
+  "billing:dunning-sweep": billingDunningSweep.payload,
+};
+
 /**
- * Schema của một job, giữ được liên hệ tên → payload.
- *
- * Đây là **chỗ duy nhất** trong hệ thống job phải xoá generic: bản đồ tra theo
- * chuỗi (`Map<string, ...>`) không mang theo được liên hệ đó, trong khi
- * `JOB_DEFINITIONS` thì có. Nhờ một chỗ này mà dispatcher của worker nối
- * payload với consumer hoàn toàn có kiểu, không cần ép kiểu nào nữa.
+ * Schema của một job, giữ được liên hệ tên → payload qua bảng ánh xạ khóa tĩnh
+ * `JOB_SCHEMAS` (không cần xóa generic hay ép kiểu).
  */
 export function jobSchema<Name extends JobName>(
   name: Name
 ): z.ZodType<JobPayloads[Name]> {
-  const schema: z.ZodTypeAny = requireJob(name).payload;
-  return schema;
+  return JOB_SCHEMAS[name] as z.ZodType<JobPayloads[Name]>;
 }

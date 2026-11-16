@@ -27,12 +27,12 @@ pre-commit:
       glob: "*.{ts,tsx,js,jsx,mjs,cjs,vue,json,jsonc,css}"
       stage_fixed: true
       run: |
-        [ -d "${HOME}/.nvm/versions/node/v24.15.0/bin" ] && export PATH="${HOME}/.nvm/versions/node/v24.15.0/bin:$PATH"
+        [ -d "${HOME}/.nvm/versions/node/v26.13.1/bin" ] && export PATH="${HOME}/.nvm/versions/node/v26.13.1/bin:$PATH"
         pnpm exec biome check --write --no-errors-on-unmatched {staged_files}
 
     - name: lint-and-deps
       run: |
-        [ -d "${HOME}/.nvm/versions/node/v24.15.0/bin" ] && export PATH="${HOME}/.nvm/versions/node/v24.15.0/bin:$PATH"
+        [ -d "${HOME}/.nvm/versions/node/v26.13.1/bin" ] && export PATH="${HOME}/.nvm/versions/node/v26.13.1/bin:$PATH"
         pnpm lint &
         PID_LINT=$!
         pnpm lint:deps &
@@ -47,5 +47,5 @@ pre-push:
   jobs:
     - name: check
       run: |
-        [ -d "${HOME}/.nvm/versions/node/v24.15.0/bin" ] && export PATH="${HOME}/.nvm/versions/node/v24.15.0/bin:$PATH"
+        [ -d "${HOME}/.nvm/versions/node/v26.13.1/bin" ] && export PATH="${HOME}/.nvm/versions/node/v26.13.1/bin:$PATH"
         pnpm typecheck

@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
     // undefined → `status` undefined → Nitro trả 500. `VALIDATION_ERROR` cũng
     // chưa đăng ký; mã 422 đã có là `VALIDATION_FAILED`.
     throw new ValidationError(
-      parsed.error.errors[0]?.message ?? "Dữ liệu yêu cầu huỷ không hợp lệ"
+      parsed.error.issues[0]?.message ?? "Dữ liệu yêu cầu huỷ không hợp lệ"
     );
   }
 

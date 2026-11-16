@@ -189,10 +189,7 @@ export const worksheetFormSchema = z.object({
     .optional(),
   title: z.string().min(3, "Tiêu đề worksheet phải từ 3 ký tự trở lên"),
   layout_template: z.enum(WORKSHEET_LAYOUT_TEMPLATES, {
-    errorMap: () => ({
-      message:
-        "Loại layout phải thuộc 1 trong 6 loại đóng của spec (BR-WSM-01)",
-    }),
+    error: "Loại layout phải thuộc 1 trong 6 loại đóng của spec (BR-WSM-01)",
   }),
   content_blocks: worksheetContentBlockSchema,
   instructions: z

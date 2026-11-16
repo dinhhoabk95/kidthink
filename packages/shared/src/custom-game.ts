@@ -11,7 +11,12 @@ export type CustomGameSafeParseResult =
   | { success: true; data: unknown }
   | {
       success: false;
-      error: { issues: Array<{ path: (string | number)[]; message: string }> };
+      error: {
+        issues: ReadonlyArray<{
+          readonly path: readonly PropertyKey[];
+          readonly message: string;
+        }>;
+      };
     };
 
 export interface CustomGameTemplateLike {
@@ -62,8 +67,8 @@ export const createCustomGameSchema = z.object({
     .string()
     .min(1, "Chỉ dẫn không được để trống")
     .max(500, "Chỉ dẫn tối đa 500 ký tự"),
-  content_pack: z.record(z.unknown()),
-  difficulty_params: z.record(z.unknown()).optional().default({}),
+  content_pack: z.record(z.string(), z.unknown()),
+  difficulty_params: z.record(z.string(), z.unknown()).optional().default({}),
   theme_id: z.string().min(1).max(50).optional().default("farm"),
   age_min: z.number().int().min(3).max(6).optional().default(3),
   age_max: z.number().int().min(3).max(6).optional().default(6),
@@ -87,8 +92,8 @@ export const updateCustomGameSchema = z.object({
     .min(1, "Chỉ dẫn không được để trống")
     .max(500, "Chỉ dẫn tối đa 500 ký tự")
     .optional(),
-  content_pack: z.record(z.unknown()).optional(),
-  difficulty_params: z.record(z.unknown()).optional(),
+  content_pack: z.record(z.string(), z.unknown()).optional(),
+  difficulty_params: z.record(z.string(), z.unknown()).optional(),
   theme_id: z.string().min(1).max(50).optional(),
   age_min: z.number().int().min(3).max(6).optional(),
   age_max: z.number().int().min(3).max(6).optional(),
@@ -227,7 +232,7 @@ function validateTemplateSchemaAndBands(
     missing.push("content_pack_invalid");
     for (const issue of contentParse.error.issues) {
       issues.push(
-        `Dữ liệu nội dung không hợp lệ: ${issue.path.join(".")} - ${issue.message}`
+        `Dữ liệu nội dung không hợp lệ: ${issue.path.map(String).join(".")} - ${issue.message}`
       );
     }
   }
@@ -239,7 +244,7 @@ function validateTemplateSchemaAndBands(
     missing.push("difficulty_params_invalid");
     for (const issue of difficultyParse.error.issues) {
       issues.push(
-        `Tham số độ khó không hợp lệ: ${issue.path.join(".")} - ${issue.message}`
+        `Tham số độ khó không hợp lệ: ${issue.path.map(String).join(".")} - ${issue.message}`
       );
     }
   }
