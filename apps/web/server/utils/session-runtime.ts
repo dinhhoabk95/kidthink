@@ -1,4 +1,10 @@
-import { getCookie, type H3Event, type SessionConfig, useSession } from "h3";
+import {
+  getCookie,
+  type H3Event,
+  isEvent,
+  type SessionConfig,
+  useSession,
+} from "h3";
 
 export const USER_SESSION_COOKIE = "mindkid-user-session";
 export const MANAGER_SESSION_COOKIE = "mindkid-manager-session";
@@ -14,12 +20,28 @@ function getSessionPassword(): string {
   return password;
 }
 
+export type RuntimeSessionConfig = SessionConfig & {
+  cookie: NonNullable<Exclude<SessionConfig["cookie"], false>>;
+};
+
+export interface ManagerSealedSessionData {
+  secure: {
+    session_token: string;
+  };
+}
+
+interface MockSessionEvent {
+  context?: {
+    userSession?: ManagerSealedSessionData;
+  };
+}
+
 /**
  * Cấu hình cookie phiên User. `nuxt-auth-utils` đọc cùng giá trị này qua
  * `runtimeConfig.session` (`nuxt.config.ts` import hằng số ở trên), nên tên
  * cookie chỉ được khai một lần.
  */
-export function getUserSessionConfig(): SessionConfig {
+export function getUserSessionConfig(): RuntimeSessionConfig {
   return {
     name: USER_SESSION_COOKIE,
     password: getSessionPassword(),
@@ -40,7 +62,7 @@ export function getUserSessionConfig(): SessionConfig {
  * (`window.open` xem PDF/export). Giữ `strict` như cấu hình admin trước đây;
  * hạ xuống `lax` sẽ nới CSRF surface mà topology này không cần.
  */
-export function getManagerSessionConfig(): SessionConfig {
+export function getManagerSessionConfig(): RuntimeSessionConfig {
   return {
     name: MANAGER_SESSION_COOKIE,
     password: getSessionPassword(),
@@ -59,5 +81,32 @@ export function getManagerSessionToken(event: H3Event): string | undefined {
 }
 
 export function getManagerSession(event: H3Event) {
-  return useSession(event, getManagerSessionConfig());
+  return useSession<ManagerSealedSessionData>(event, getManagerSessionConfig());
+}
+
+export async function setManagerSession(
+  event: H3Event | MockSessionEvent,
+  data: ManagerSealedSessionData
+): Promise<void> {
+  if (!isEvent(event)) {
+    if (event.context) {
+      event.context.userSession = data;
+    }
+    return;
+  }
+  const session = await getManagerSession(event);
+  await session.update(data);
+}
+
+export async function clearManagerSession(
+  event: H3Event | MockSessionEvent
+): Promise<void> {
+  if (!isEvent(event)) {
+    if (event.context) {
+      event.context.userSession = undefined;
+    }
+    return;
+  }
+  const session = await getManagerSession(event);
+  await session.clear();
 }

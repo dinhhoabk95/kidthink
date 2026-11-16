@@ -14,12 +14,12 @@
     "@mindkid/errors": "workspace:*",
     "@mindkid/shared": "workspace:*",
     "@mindkid/taxonomy": "workspace:*",
-    "drizzle-orm": "catalog:",
-    "postgres": "catalog:"
+    "drizzle-orm": "1.0.0-rc.5",
+    "postgres": "^4.1.1"
   },
   "devDependencies": {
-    "drizzle-kit": "catalog:",
-    "fast-check": "catalog:"
+    "drizzle-kit": "1.0.0-rc.5",
+    "fast-check": "^4.10.2"
   },
   "scripts": {
     "test": "vitest run",

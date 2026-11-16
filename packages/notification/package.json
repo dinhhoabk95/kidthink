@@ -10,17 +10,17 @@
     "@mindkid/db": "workspace:*",
     "@mindkid/queue": "workspace:*",
     "@mindkid/shared": "workspace:*",
-    "drizzle-orm": "catalog:",
-    "firebase-admin": "catalog:",
-    "mjml": "catalog:",
-    "nodemailer": "catalog:"
+    "drizzle-orm": "1.0.0-rc.5",
+    "firebase-admin": "^14.5.1",
+    "mjml": "^5.4.1",
+    "nodemailer": "^10.6.0"
   },
   "devDependencies": {
     "@mindkid/config": "workspace:*",
-    "@types/mjml": "catalog:",
-    "@types/nodemailer": "catalog:",
-    "typescript": "catalog:",
-    "vitest": "catalog:"
+    "@types/mjml": "^5.4.2",
+    "@types/nodemailer": "^8.0.2",
+    "typescript": "~6.0.3",
+    "vitest": "^5.1.0"
   },
   "exports": {
     ".": "./src/index.ts"

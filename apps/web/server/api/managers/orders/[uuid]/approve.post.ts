@@ -12,13 +12,16 @@ import {
   type PaymentOrderStatus,
 } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
-import type { PgTransaction } from "drizzle-orm/pg-core";
 import { defineEventHandler, getHeader, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 import { grantCredits } from "#server/services/index.js";
 import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
 import { invalidateUserEntitlementsCache } from "#server/utils/entitlements-runtime";
+
+type DbTx = Parameters<
+  Parameters<ReturnType<typeof getDb>["transaction"]>[0]
+>[0];
 
 const approveOrderSchema = z.object({
   admin_note: z
@@ -60,11 +63,7 @@ const approveOrderSchema = z.object({
   duration_days: z.number().optional(),
 });
 
-async function fetchAndLockOrder(
-  // biome-ignore lint/suspicious/noExplicitAny: generic drizzle transaction
-  tx: PgTransaction<any, any, any>,
-  orderUuid: string
-) {
+async function fetchAndLockOrder(tx: DbTx, orderUuid: string) {
   const [order] = await tx
     .select()
     .from(paymentOrders)
@@ -88,8 +87,7 @@ async function fetchAndLockOrder(
 }
 
 async function grantEntitlementsForOrder(
-  // biome-ignore lint/suspicious/noExplicitAny: generic drizzle transaction
-  tx: PgTransaction<any, any, any>,
+  tx: DbTx,
   orderUserId: number,
   orderUuid: string,
   managerId: number,
@@ -159,8 +157,7 @@ async function grantEntitlementsForOrder(
 }
 
 async function maybeGrantPackageCredits(
-  // biome-ignore lint/suspicious/noExplicitAny: generic drizzle transaction
-  tx: PgTransaction<any, any, any>,
+  tx: DbTx,
   userId: number,
   orderUuid: string,
   packageCode: string

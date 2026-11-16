@@ -25,7 +25,7 @@ import {
   setManagerRememberCookie,
 } from "#server/utils/admin-auth-runtime";
 import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
-import { getManagerSessionConfig } from "#server/utils/session-runtime";
+import { setManagerSession } from "#server/utils/session-runtime";
 
 const DUMMY_HASH =
   "$argon2id$v=19$m=19456,p=1,t=2$Zmx0piJSIcdd2b8oaF8ZUg$U60ArJk0sNteiIdlfZyr7G0shEXA+IqCyWIKs1La4WE";
@@ -133,15 +133,11 @@ export default defineEventHandler(async (event) => {
     ipAddress: getVerifiedRemoteIp(event),
   });
 
-  await setUserSession(
-    event,
-    {
-      secure: {
-        session_token: createdSession.sessionToken,
-      },
+  await setManagerSession(event, {
+    secure: {
+      session_token: createdSession.sessionToken,
     },
-    getManagerSessionConfig()
-  );
+  });
 
   if (createdSession.rememberToken) {
     setManagerRememberCookie(event, createdSession.rememberToken);

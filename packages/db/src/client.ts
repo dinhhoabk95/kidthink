@@ -46,9 +46,9 @@ export const getAppSql = lazy(() =>
   postgres(requireEnv("DATABASE_URL_APP"), POOL_OPTIONS)
 );
 
-export const getOwnerDb = lazy(() => drizzle(getOwnerSql()));
+export const getOwnerDb = lazy(() => drizzle({ client: getOwnerSql() }));
 
-export const getAppDb = lazy(() => drizzle(getAppSql()));
+export const getAppDb = lazy(() => drizzle({ client: getAppSql() }));
 
 export const getDb = getAppDb;
 

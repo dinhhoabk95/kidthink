@@ -22,7 +22,7 @@ export interface PublishedLevelCounts {
 }
 
 export async function countPublishedLevels(
-  db: PostgresJsDatabase<Record<string, unknown>>
+  db: PostgresJsDatabase
 ): Promise<PublishedLevelCounts> {
   const rows = await db
     .select({

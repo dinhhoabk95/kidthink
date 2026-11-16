@@ -6,7 +6,7 @@ import {
   clearManagerRememberCookie,
   validateManagerCsrf,
 } from "#server/utils/admin-auth-runtime";
-import { getManagerSessionConfig } from "#server/utils/session-runtime";
+import { clearManagerSession } from "#server/utils/session-runtime";
 
 /**
  * Logout tolerant có chủ đích (giữ nguyên hành vi trước Task #104): một phiên
@@ -39,7 +39,7 @@ export async function handleLogout(event: H3Event) {
     }
   }
 
-  await clearUserSession(event, getManagerSessionConfig());
+  await clearManagerSession(event);
   clearManagerRememberCookie(event);
 
   return { success: true };

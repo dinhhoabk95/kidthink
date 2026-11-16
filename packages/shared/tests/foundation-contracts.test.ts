@@ -56,18 +56,27 @@ describe("P0 foundation contracts", () => {
     expect(vitestBase).toContain("workspaceAliases");
   });
 
-  it("Task #83: pnpm-workspace.yaml pins all required core packages in catalog", () => {
-    const workspace = readFileSync(
-      resolve(ROOT, "pnpm-workspace.yaml"),
-      "utf8"
-    );
-    expect(workspace).toContain("nodemailer: ^10.6.0");
-    expect(workspace).toContain("mjml: ^5.4.1");
-    expect(workspace).toContain("rate-limiter-flexible: ^11.5.0");
-    expect(workspace).toContain("nuxt-security: ^2.7.0");
-    expect(workspace).toContain('"@t3-oss/env-nuxt": ^0.13.11');
-    expect(workspace).toContain("otpauth: ^9.6.0");
-    expect(workspace).toContain("openid-client: ^6.9.0");
+  it("Task #83: workspace packages pin all required core packages with explicit versions", () => {
+    const readDeps = (relPath: string): Record<string, string> => {
+      const pkg = JSON.parse(readFileSync(resolve(ROOT, relPath), "utf8")) as {
+        dependencies?: Record<string, string>;
+        devDependencies?: Record<string, string>;
+      };
+      return { ...pkg.dependencies, ...pkg.devDependencies };
+    };
+
+    const notifDeps = readDeps("packages/notification/package.json");
+    const cacheDeps = readDeps("packages/cache/package.json");
+    const webDeps = readDeps("apps/web/package.json");
+    const authDeps = readDeps("packages/auth/package.json");
+
+    expect(notifDeps.nodemailer).toBe("^10.6.0");
+    expect(notifDeps.mjml).toBe("^5.4.1");
+    expect(cacheDeps["rate-limiter-flexible"]).toBe("^11.5.0");
+    expect(webDeps["nuxt-security"]).toBe("^2.7.0");
+    expect(webDeps["@t3-oss/env-nuxt"]).toBe("^0.13.11");
+    expect(authDeps.otpauth).toBe("^9.6.0");
+    expect(authDeps["openid-client"]).toBe("^6.9.0");
   });
 
   it("BR-GLOS-03 & BR-GLOS-04: the tooling glossary exposes every banned foundation term and replacement", () => {
@@ -99,7 +108,7 @@ describe("P0 foundation contracts", () => {
     expect(TERM_REPLACEMENTS.domain).toBe("strand");
   });
 
-  it("BR-RBS-01, BR-RBS-06, BR-RBS-09: pnpm-workspace.yaml and package.json enforce workspace catalog, engines, allowBuilds, and unhead overrides", () => {
+  it("BR-RBS-01, BR-RBS-06, BR-RBS-09: pnpm-workspace.yaml and package.json enforce explicit synchronized versions, engines, allowBuilds, and overrides", () => {
     const workspace = readFileSync(
       resolve(ROOT, "pnpm-workspace.yaml"),
       "utf8"
@@ -113,10 +122,41 @@ describe("P0 foundation contracts", () => {
 
     expect(workspace).toContain("apps/*");
     expect(workspace).toContain("packages/*");
-    expect(workspace).toContain("catalog:");
+    expect(workspace).not.toContain("catalog:");
     expect(workspace).toContain("lefthook: false");
     expect(workspace).toContain("unhead: 3.4.3");
     expect(workspace).toContain('"@unhead/vue": 3.4.3');
+    expect(workspace).toContain("vue: 3.6.0-rc.15");
+
+    const manifests = ["package.json"].concat(
+      ["apps", "packages"].flatMap((group) =>
+        readdirSync(resolve(ROOT, group), { withFileTypes: true })
+          .filter((entry) => entry.isDirectory())
+          .map((entry) => `${group}/${entry.name}/package.json`)
+      )
+    );
+    const seenVersions = new Map<string, string>();
+    for (const manifest of manifests) {
+      const pkg = JSON.parse(readFileSync(resolve(ROOT, manifest), "utf8")) as {
+        dependencies?: Record<string, string>;
+        devDependencies?: Record<string, string>;
+      };
+      for (const [dep, ver] of Object.entries({
+        ...pkg.dependencies,
+        ...pkg.devDependencies,
+      })) {
+        expect(ver, `${manifest} -> ${dep}`).not.toBe("catalog:");
+        if (ver.startsWith("workspace:")) {
+          continue;
+        }
+        const prev = seenVersions.get(dep);
+        if (prev === undefined) {
+          seenVersions.set(dep, ver);
+        } else {
+          expect(ver, `version drift on ${dep} in ${manifest}`).toBe(prev);
+        }
+      }
+    }
 
     expect(rootPkg.engines?.node).toBe(">=26.13.1");
     expect(rootPkg.engines?.pnpm).toBe(">=12");

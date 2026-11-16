@@ -10,20 +10,20 @@
     "@mindkid/emoji": "workspace:*",
     "@mindkid/game-engine": "workspace:*",
     "@mindkid/shared": "workspace:*",
-    "@iconify-json/lucide": "catalog:",
-    "@nuxt/fonts": "catalog:",
-    "@nuxt/ui": "catalog:",
-    "tailwindcss": "catalog:"
+    "@iconify-json/lucide": "^1.2.155",
+    "@nuxt/fonts": "^1.2.0",
+    "@nuxt/ui": "^4.12.2",
+    "tailwindcss": "^4.3.5"
   },
   "devDependencies": {
     "@mindkid/config": "workspace:*",
-    "@vitejs/plugin-vue": "catalog:",
-    "@vue/test-utils": "catalog:",
-    "happy-dom": "catalog:",
-    "nuxt": "catalog:",
-    "typescript": "catalog:",
-    "vitest": "catalog:",
-    "vue": "catalog:"
+    "@vitejs/plugin-vue": "^6.0.11",
+    "@vue/test-utils": "^2.6.0",
+    "happy-dom": "^21.0.4",
+    "nuxt": "^4.6.4",
+    "typescript": "~6.0.3",
+    "vitest": "^5.1.0",
+    "vue": "3.6.0-rc.15"
   },
   "exports": {
     ".": "./src/index.ts",

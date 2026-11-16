@@ -15,6 +15,7 @@
       "!**/*.md",
       "!!**/*.yml",
       "!!**/*.yaml",
+      "!!packages/db/src/migrations/**/snapshot.json",
       "!.agents"
     ]
   },

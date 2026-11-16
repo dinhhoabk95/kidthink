@@ -11,12 +11,12 @@
   },
   "dependencies": {
     "@mindkid/config": "workspace:*",
-    "ioredis": "catalog:",
-    "rate-limiter-flexible": "catalog:"
+    "ioredis": "6.1.0-beta.1",
+    "rate-limiter-flexible": "^11.5.0"
   },
   "devDependencies": {
-    "@types/node": "catalog:",
-    "vitest": "catalog:"
+    "@types/node": "^26.6.6",
+    "vitest": "^5.1.0"
   },
   "imports": {
     "#src/*": "./src/*.ts",

@@ -7,7 +7,7 @@ import {
   validateManagerCsrf,
 } from "#server/utils/admin-auth-runtime";
 import { requireReauth } from "#server/utils/reauth-runtime";
-import { getManagerSessionConfig } from "#server/utils/session-runtime";
+import { clearManagerSession } from "#server/utils/session-runtime";
 
 export async function handleLogoutAll(event: H3Event) {
   validateManagerCsrf(event);
@@ -37,7 +37,7 @@ export async function handleLogoutAll(event: H3Event) {
     })
     .catch(() => null);
 
-  await clearUserSession(event, getManagerSessionConfig());
+  await clearManagerSession(event);
   clearManagerRememberCookie(event);
 
   return { success: true };

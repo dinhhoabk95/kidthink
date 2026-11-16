@@ -17,8 +17,8 @@ import {
 } from "#server/utils/auth-runtime";
 import {
   getManagerSession,
-  getManagerSessionConfig,
   getManagerSessionToken,
+  setManagerSession,
 } from "#server/utils/session-runtime";
 
 declare module "h3" {
@@ -111,11 +111,9 @@ async function resolveManagerSession(event: H3Event) {
         rememberToken,
       });
       if (restored?.manager) {
-        await setUserSession(
-          event,
-          { secure: { session_token: restored.sessionToken } },
-          getManagerSessionConfig()
-        );
+        await setManagerSession(event, {
+          secure: { session_token: restored.sessionToken },
+        });
         setManagerRememberCookie(event, restored.rememberToken);
         return restored.manager;
       }

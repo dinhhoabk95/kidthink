@@ -1,9 +1,10 @@
 import { createHash } from "node:crypto";
-import { auditLogs } from "@mindkid/db";
+import { type AppDb, auditLogs } from "@mindkid/db";
 import { AppError } from "@mindkid/errors/base";
 import type { AuditAction, AuditInput } from "@mindkid/shared";
 import { ACTIONS_REQUIRING_REASON } from "@mindkid/shared";
-import type { PgTransaction } from "drizzle-orm/pg-core";
+
+type DbTx = Parameters<Parameters<AppDb["transaction"]>[0]>[0];
 
 export class AuditError extends AppError {
   constructor(message: string, code: string) {
@@ -138,8 +139,7 @@ export interface AuditTx {
  * Requiring transaction `tx` as first parameter.
  */
 export async function writeAudit<A extends AuditAction>(
-  // biome-ignore lint/suspicious/noExplicitAny: PgTransaction requires generic arguments
-  tx: PgTransaction<any, any, any> | AuditTx,
+  tx: DbTx | AuditTx,
   input: AuditInput<A>
 ): Promise<typeof auditLogs.$inferSelect> {
   // Runtime reason check for actions requiring reason
@@ -198,8 +198,7 @@ export async function writeAudit<A extends AuditAction>(
  * BR-AUD-07: Batch helper — writes one audit row per entity item in tx.
  */
 export async function writeAuditBatch<A extends AuditAction>(
-  // biome-ignore lint/suspicious/noExplicitAny: PgTransaction requires generic arguments
-  tx: PgTransaction<any, any, any> | AuditTx,
+  tx: DbTx | AuditTx,
   items: AuditInput<A>[]
 ): Promise<(typeof auditLogs.$inferSelect)[]> {
   const results: (typeof auditLogs.$inferSelect)[] = [];

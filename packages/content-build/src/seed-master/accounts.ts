@@ -114,7 +114,7 @@ export interface SeedAccountsStats {
   entitlementCount: number;
 }
 
-type DatabaseClient = NodePgDatabase<Record<string, unknown>>;
+type DatabaseClient = NodePgDatabase;
 
 async function seedManagers(db: DatabaseClient): Promise<number> {
   let count = 0;

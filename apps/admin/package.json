@@ -17,15 +17,15 @@
   },
   "devDependencies": {
     "@mindkid/config": "workspace:*",
-    "@nuxt/fonts": "catalog:",
-    "@nuxt/ui": "catalog:",
-    "@t3-oss/env-nuxt": "catalog:",
-    "nuxt": "catalog:",
-    "tailwindcss": "catalog:",
-    "typescript": "catalog:",
-    "vitest": "catalog:",
-    "vue-tsc": "catalog:",
-    "vue": "catalog:",
-    "zod": "catalog:"
+    "@nuxt/fonts": "^1.2.0",
+    "@nuxt/ui": "^4.12.2",
+    "@t3-oss/env-nuxt": "^0.13.11",
+    "nuxt": "^4.6.4",
+    "tailwindcss": "^4.3.5",
+    "typescript": "~6.0.3",
+    "vitest": "^5.1.0",
+    "vue-tsc": "^3.3.14",
+    "vue": "3.6.0-rc.15",
+    "zod": "^4.6.7"
   }
 }

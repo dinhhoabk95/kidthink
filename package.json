@@ -31,22 +31,22 @@
     "deploy": "tsx scripts/deploy/cli.ts"
   },
   "devDependencies": {
-    "@biomejs/biome": "catalog:",
+    "@biomejs/biome": "~2.6.8",
     "@mindkid/config": "workspace:*",
     "@mindkid/content": "workspace:*",
     "@mindkid/content-build": "workspace:*",
     "@mindkid/game-engine": "workspace:*",
     "@mindkid/shared": "workspace:*",
-    "@types/node": "catalog:",
-    "@vitest/coverage-v8": "catalog:",
-    "dependency-cruiser": "catalog:",
-    "ioredis": "catalog:",
-    "lefthook": "catalog:",
-    "playwright": "catalog:",
-    "postgres": "catalog:",
-    "tsx": "catalog:",
-    "typescript": "catalog:",
-    "ultracite": "catalog:",
-    "vitest": "catalog:"
+    "@types/node": "^26.6.6",
+    "@vitest/coverage-v8": "5.1.0",
+    "dependency-cruiser": "18.8.0-beta-2",
+    "ioredis": "6.1.0-beta.1",
+    "lefthook": "^2.2.2",
+    "playwright": "1.65.1",
+    "postgres": "^4.1.1",
+    "tsx": "^4.23.15",
+    "typescript": "~6.0.3",
+    "ultracite": "~8.2.1",
+    "vitest": "^5.1.0"
   }
 }

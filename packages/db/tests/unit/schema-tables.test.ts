@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { hashPassword } from "@mindkid/auth";
 import { getTableColumns, getTableName, is } from "drizzle-orm";
@@ -15,6 +15,26 @@ import * as schema from "#src/schema/index";
 import { SEED_MANAGERS, SEED_USERS } from "#src/seed-accounts";
 import { SEED_ENTITLEMENT_KEYS, SEED_PACKAGES } from "#src/seed-catalog";
 import { extractTableNamesFromSchema, TABLES } from "#tests/global-setup";
+
+function readInitialMigrationSql(): string {
+  const migrationsDir = resolve(
+    import.meta.dirname,
+    "..",
+    "..",
+    "src",
+    "migrations"
+  );
+  const initialDir = readdirSync(migrationsDir).find((entry) =>
+    entry.endsWith("_initial_schema")
+  );
+  if (!initialDir) {
+    throw new Error("Initial schema migration folder not found");
+  }
+  return readFileSync(
+    resolve(migrationsDir, initialDir, "migration.sql"),
+    "utf8"
+  );
+}
 
 function findTablesMissingTimestamps(schemaObj: object): string[] {
   const missing: string[] = [];
@@ -95,17 +115,7 @@ describe("Dynamic Schema Tables Extraction (G6, Task #208)", () => {
   });
 
   it("migration 0000_initial_schema hợp nhất toàn bộ schema, không chứa bảng/trigger đa phiên bản nội dung và giữ UNIQUE(code) trực tiếp", () => {
-    const migrationSql = readFileSync(
-      resolve(
-        import.meta.dirname,
-        "..",
-        "..",
-        "src",
-        "migrations",
-        "0000_initial_schema.sql"
-      ),
-      "utf8"
-    );
+    const migrationSql = readInitialMigrationSql();
     expect(migrationSql).not.toContain("prevent_published_update");
     expect(migrationSql).toContain(
       'CONSTRAINT "game_levels_code_unique" UNIQUE("code")'
@@ -301,17 +311,7 @@ describe("Schema Identity & Billing Rules (BR-SIB-01..BR-SIB-13)", () => {
       expect(userFk?.onDelete).toBe("restrict");
     }
 
-    const migration0000 = readFileSync(
-      resolve(
-        import.meta.dirname,
-        "..",
-        "..",
-        "src",
-        "migrations",
-        "0000_initial_schema.sql"
-      ),
-      "utf8"
-    );
+    const migration0000 = readInitialMigrationSql();
     expect(migration0000).toContain("prevent_insert_only_mutation");
     expect(migration0000).toContain("ON DELETE restrict");
   });
@@ -459,7 +459,8 @@ describe("Schema Play & Telemetry Rules (BR-SPT-01..BR-SPT-08)", () => {
     );
 
     const tlmCols = getTableColumns(schema.telemetryEvents);
-    expect(tlmCols.payload.dataType).toBe("json");
+    expect(tlmCols.payload.dataType).toBe("object json");
+    expect(tlmCols.payload.getSQLType()).toBe("jsonb");
 
     const playCfg = getTableConfig(schema.playSessions);
     const checkNames = playCfg.checks.map((c) => c.name);

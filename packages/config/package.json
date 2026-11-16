@@ -17,7 +17,7 @@
     "./paths": "./src/repo-paths.ts"
   },
   "devDependencies": {
-    "vitest": "catalog:"
+    "vitest": "^5.1.0"
   },
   "scripts": {
     "test": "vitest run"

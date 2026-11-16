@@ -13,13 +13,13 @@
     "@mindkid/game-engine": "workspace:*",
     "@mindkid/queue": "workspace:*",
     "@mindkid/shared": "workspace:*",
-    "drizzle-orm": "catalog:",
-    "zod": "catalog:"
+    "drizzle-orm": "1.0.0-rc.5",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@mindkid/config": "workspace:*",
-    "typescript": "catalog:",
-    "vitest": "catalog:"
+    "typescript": "~6.0.3",
+    "vitest": "^5.1.0"
   },
   "exports": {
     ".": "./src/index.ts"

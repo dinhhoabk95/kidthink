@@ -97,7 +97,7 @@ function parseAgeBandRange(ageBand?: string): [number, number] {
 }
 
 async function resolveTier1CurriculumCandidate(
-  db: PostgresJsDatabase<Record<string, unknown>>,
+  db: PostgresJsDatabase,
   childId: number,
   allowedTiers: AccessTier[],
   publishedByEntityId: Map<number, PublishedGameLevel>,
@@ -204,7 +204,7 @@ async function resolveTier1CurriculumCandidate(
 }
 
 async function resolveReinforceCandidates(
-  db: PostgresJsDatabase<Record<string, unknown>>,
+  db: PostgresJsDatabase,
   skillIds: number[],
   targetMin: number,
   targetMax: number,
@@ -243,7 +243,7 @@ async function resolveReinforceCandidates(
 }
 
 async function resolveProgressionCandidates(
-  db: PostgresJsDatabase<Record<string, unknown>>,
+  db: PostgresJsDatabase,
   masteredSkillIds: number[],
   targetMin: number,
   targetMax: number,
@@ -293,7 +293,7 @@ async function resolveProgressionCandidates(
 }
 
 async function resolveRevisionCandidates(
-  db: PostgresJsDatabase<Record<string, unknown>>,
+  db: PostgresJsDatabase,
   revisionSkillIds: number[],
   targetMin: number,
   targetMax: number,
@@ -332,7 +332,7 @@ async function resolveRevisionCandidates(
 }
 
 async function resolveMasteryTiers2To4(
-  db: PostgresJsDatabase<Record<string, unknown>>,
+  db: PostgresJsDatabase,
   childId: number,
   targetAgeMin: number,
   targetAgeMax: number,
@@ -397,7 +397,7 @@ async function resolveMasteryTiers2To4(
 }
 
 async function resolvePopularCandidates(
-  db: PostgresJsDatabase<Record<string, unknown>>,
+  db: PostgresJsDatabase,
   unplayedMatching: PublishedGameLevel[]
 ): Promise<RawCandidateLevel[]> {
   const popularStats = await db
@@ -443,7 +443,7 @@ export interface PlayedLevelCodes {
  * bị archive sau khi nâng content_version, mà level đã chơi ở bản cũ vẫn là đã chơi.
  */
 export async function loadPlayedLevelCodes(
-  db: PostgresJsDatabase<Record<string, unknown>>,
+  db: PostgresJsDatabase,
   childId: number
 ): Promise<PlayedLevelCodes> {
   const sessions = await db
@@ -464,7 +464,7 @@ export async function loadPlayedLevelCodes(
  * P3.6 — Recommend Next Content for Enrolled Child (BR-REC-01..08, D-MQ..D-MX).
  */
 export async function getRecommendationsForChild(
-  db: PostgresJsDatabase<Record<string, unknown>>,
+  db: PostgresJsDatabase,
   options: GetChildRecommendationsOptions
 ): Promise<RecommendationsPayload> {
   const { childId, allowedTiers, limit = 5, now = new Date() } = options;
@@ -630,7 +630,7 @@ export async function getRecommendationsForChild(
  * P3.6 — Recommend Next Content for Guest (D-MW, BR-REC-04, BR-REC-06).
  */
 export async function getGuestRecommendations(
-  db: PostgresJsDatabase<Record<string, unknown>>,
+  db: PostgresJsDatabase,
   options: GetGuestRecommendationsOptions = {}
 ): Promise<RecommendationsPayload> {
   const { ageBand, limit = 5, seed = 42 } = options;

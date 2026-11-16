@@ -5,7 +5,7 @@ import {
   setManagerRememberCookie,
   validateManagerCsrf,
 } from "#server/utils/admin-auth-runtime";
-import { getManagerSessionConfig } from "#server/utils/session-runtime";
+import { setManagerSession } from "#server/utils/session-runtime";
 
 export async function handleRestore(event: H3Event) {
   validateManagerCsrf(event);
@@ -15,11 +15,9 @@ export async function handleRestore(event: H3Event) {
     rememberToken,
   });
 
-  await setUserSession(
-    event,
-    { secure: { session_token: restored.sessionToken } },
-    getManagerSessionConfig()
-  );
+  await setManagerSession(event, {
+    secure: { session_token: restored.sessionToken },
+  });
   setManagerRememberCookie(event, restored.rememberToken);
 
   return {

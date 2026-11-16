@@ -133,7 +133,7 @@ async function ensureTestDatabase(url: string): Promise<void> {
     },
   });
   try {
-    await migrate(drizzle(sql), {
+    await migrate(drizzle({ client: sql }), {
       migrationsFolder: path.resolve(
         import.meta.dirname,
         "..",

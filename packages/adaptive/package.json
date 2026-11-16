@@ -14,9 +14,9 @@
   },
   "devDependencies": {
     "@mindkid/config": "workspace:*",
-    "fast-check": "catalog:",
-    "typescript": "catalog:",
-    "vitest": "catalog:"
+    "fast-check": "^4.10.2",
+    "typescript": "~6.0.3",
+    "vitest": "^5.1.0"
   },
   "imports": {
     "#src/*": "./src/*.ts",

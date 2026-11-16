@@ -10,14 +10,14 @@
     "@mindkid/config": "workspace:*",
     "@mindkid/errors": "workspace:*",
     "@mindkid/shared": "workspace:*",
-    "argon2": "catalog:",
-    "ioredis": "catalog:",
-    "openid-client": "catalog:",
-    "otpauth": "catalog:"
+    "argon2": "^0.45.2",
+    "ioredis": "6.1.0-beta.1",
+    "openid-client": "^6.9.0",
+    "otpauth": "^9.6.0"
   },
   "devDependencies": {
-    "typescript": "catalog:",
-    "vitest": "catalog:"
+    "typescript": "~6.0.3",
+    "vitest": "^5.1.0"
   },
   "exports": {
     ".": "./src/index.ts",

@@ -190,9 +190,7 @@ const RAW_CONTENT_TAGS: TagSeedItem[] = [
 export const SEED_CONTENT_TAGS: TagSeedItem[] =
   dedupeByAxisPriority(RAW_CONTENT_TAGS);
 
-export async function seedContentTags(
-  db: NodePgDatabase<Record<string, unknown>>
-) {
+export async function seedContentTags(db: NodePgDatabase) {
   for (const tag of SEED_CONTENT_TAGS) {
     await db
       .insert(contentTags)

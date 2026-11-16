@@ -152,11 +152,12 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
+    // Nuxt 4.6+ / nuxt-auth-utils 0.6+ dẫn xuất khoá niêm phong phiên từ appSecret.
+    appSecret: env.NUXT_SESSION_PASSWORD,
     session: {
       name: USER_SESSION_COOKIE,
       maxAge: SESSION_MAX_AGE_SECONDS,
       cookie: {
-        name: USER_SESSION_COOKIE,
         sameSite: "lax",
         secure: isProduction,
         httpOnly: true,

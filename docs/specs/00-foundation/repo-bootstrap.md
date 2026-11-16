@@ -42,7 +42,7 @@ hệ sinh thái Nuxt đã kiểm chứng thay vì tự viết (quyết định D
 
 | Nơi | |
 |---|---|
-| `package.json`, `pnpm-workspace.yaml` | Gốc workspace: `engines`, `catalog:`, `overrides:`, `allowBuilds:` |
+| `package.json`, `pnpm-workspace.yaml` | Gốc workspace: `engines`, `overrides:`, `allowBuilds:`, và version tường minh từng `package.json` |
 | `apps/*`, `packages/*` | App và package dùng chung (cây đầy đủ ở §8 của [`SPEC.md`](../../SPEC.md)) |
 | `lefthook.yml` + `.git/hooks/pre-commit`·`pre-push` | Gate local. Không có cổng remote |
 | `scripts/check.sh` | Pipeline `pnpm check` (đầy đủ) và `pnpm check:fast` |
@@ -51,11 +51,11 @@ hệ sinh thái Nuxt đã kiểm chứng thay vì tự viết (quyết định D
 
 ## 4. Main flow — dựng và giữ workspace
 
-1. `pnpm-workspace.yaml` khai `apps/*`, `packages/*` và `catalog:` cho dependency dùng chung
-   (§7.1); `package.json` gốc khoá `engines.node >=26.13.1`, `engines.pnpm >=12`.
-2. Mỗi package con khai dependency bằng `catalog:`, không phiên bản rời (`BR-RBS-06`).
-3. Cài dependency theo §7.1 vào package/app cần nó — **không** cài bản thấp hơn bảng, và chỉ
-   thêm vào `catalog:` khi có package dùng tới.
+1. `pnpm-workspace.yaml` khai `apps/*`, `packages/*`, `overrides:` và `allowBuilds:`;
+   `package.json` gốc khoá `engines.node >=26.13.1`, `engines.pnpm >=12`.
+2. Mỗi `package.json` khai trực tiếp phiên bản tường minh đồng bộ trên toàn monorepo (không dùng
+   chuỗi `catalog:`, không khai hai phiên bản lệch nhau cho cùng một gói — `BR-RBS-06`).
+3. Cài dependency theo §7.1 vào package/app cần nó — **không** cài bản thấp hơn bảng.
 4. `pnpm install` chạy `prepare: lefthook install`, ghi `.git/hooks/*` tự động (`BR-RBS-03a`).
 5. `docker compose up -d` chạy PostgreSQL 18 + Valkey 9; `pnpm services` xác nhận kết nối được
    và đúng major trước khi chạy test cần DB (`BR-RBS-07`).
@@ -99,7 +99,7 @@ hệ sinh thái Nuxt đã kiểm chứng thay vì tự viết (quyết định D
 | `BR-RBS-03a` | `lefthook install` phải chạy tự động qua `prepare` script của `package.json` — không dựa vào người mới clone tự nhớ | Hook chỉ tồn tại trong `.git/hooks/` (không được commit). Người clone mà không cài hook thì gate im lặng biến mất, và git không báo gì |
 | `BR-RBS-04` | **Ngưng — 2026-10-18.** Rule chặn code nghiệp vụ trước khi foundation được duyệt; giai đoạn đó đã qua. Nguyên tắc "contract trước implementation" vẫn ở [`roadmap.md`](../roadmap.md). Không tái dùng số (`BR-REG2-02`) | Hết đối tượng |
 | `BR-RBS-05` | Dependency ở §7.1 **ưu tiên adopt** thư viện phổ biến; chỉ tự viết khi không có thư viện phù hợp hoặc cần bọc dùng chung nhiều app (driver) | Mục 0, quyết định D10 của [`SPEC.md`](../../SPEC.md) |
-| `BR-RBS-06` | Version pin ở `engines` (root) + pnpm `catalog:` — package con **không tự ý** khai version khác catalog | Version rải rác từng package là nguồn drift kinh điển trong monorepo |
+| `BR-RBS-06` | Version pin ở `engines` (root) và ghi trực tiếp phiên bản tường minh đồng nhất trong từng `package.json` (không dùng `catalog:`; cùng một dependency ngoại phải khớp chính xác chuỗi version giữa mọi workspace) | Khai trực tiếp giúp từng app/package hiển thị rõ phiên bản thật, còn kiểm đồng nhất chặn drift giữa các workspace |
 | `BR-RBS-07` | `docker-compose.yml` dev phải chạy **đúng major version** production (PG 18, Valkey 9) | Test trên version khác production là kiểm tra sai thứ |
 | `BR-RBS-08` | Đổi bảng §7.1 (thêm/gỡ thư viện nền, đổi major version) là đổi spec — **không** sửa âm thầm trong PR cài dependency | Bảng này là contract; sửa không qua Specify làm mất lý do quyết định |
 | `BR-RBS-09` | Thư viện nào bị **hai** phụ thuộc kéo về hai version phải chốt về một bản bằng `overrides` trong `pnpm-workspace.yaml`, kèm lý do | Hai bản cùng tồn tại là hai instance runtime. Đo 2026-08-29: nuxt 4.5.2 khai `unhead ^3.3.1`, `@nuxt/ui` 4.11 khai `@unhead/vue ^3.3.2`, lockfile chốt cả 3.3.1 lẫn 3.4.0 |
@@ -116,19 +116,19 @@ dạng object thường, và driver `redis` của `unstorage` hardcode `ioredis`
 | Lớp | Chọn | Version tối thiểu | Ghi chú |
 |---|---|---|---|
 | Runtime | Node | `>=26.13.1` (LTS Lithium) | `.nvmrc` và `apps/worker/Dockerfile` ghim `26.13.1`; container build `node:26-bookworm` |
-| Package manager | pnpm | 12 (`pnpm@12.21.0`) | Bật `catalog:`; SQLite store index; supply-chain cooldown mặc định |
-| Web framework | Nuxt | `^4.6.4` | Nitropack `^2.13.6` + `h3@^1.15.11` (`h3` giữ v1 khớp Nitro 2; `h3` v2 chỉ dùng cho Nitro 3) |
+| Package manager | pnpm | 12 (`pnpm@12.21.0`) | Ghi trực tiếp version trong từng `package.json`; SQLite store index |
+| Web framework | Nuxt | `^4.6.4` + `vue` `3.6.0-rc.15` | Nitropack `^2.13.6` + `h3@^1.15.11` (`h3` giữ v1 khớp Nitro 2); `overrides` hợp nhất `vue` về `3.6.0-rc.15` |
 | DB | PostgreSQL | 18 (`pgvector/pgvector:pg18`) | Mount volume `/var/lib/postgresql` theo layout chuẩn PG 18 |
-| ORM | Drizzle | `^0.45.4` (drizzle-kit `^0.31.11`, lockstep) + `postgres` `^4.1.1` | Driver `postgres.js` v4, singleton `postgres()`+`drizzle()` **một lần mỗi tiến trình PM2** |
+| ORM | Drizzle | `1.0.0-rc.5` (`drizzle-kit` `1.0.0-rc.5`, lockstep) + `postgres` `^4.1.1` | Driver `postgres.js` v4, singleton `postgres()`+`drizzle()` **một lần mỗi tiến trình PM2** |
 | Valkey server | Valkey | 9 (9.1) | Linux Foundation, tương thích Redis protocol ~90% (không còn 1:1) |
-| Valkey client (Node) | **`ioredis`** `^6.0.0` | — | Tương thích peer `bullmq@^6.7.6` (`ioredis >=5.0.0`) |
-| Ngôn ngữ | TypeScript | `~6.0.3` | Major cao nhất còn giữ JS Compiler API (`lib/typescript.js`) cho `vue-tsc@3.3.14` (`@volar/typescript` đòi `<7`) và `dependency-cruiser@18.7.2` |
+| Valkey client (Node) | **`ioredis`** `6.1.0-beta.1` | — | Tương thích peer `bullmq@^6.7.6` (`ioredis >=5.0.0`) |
+| Ngôn ngữ | TypeScript | `~6.0.3` | Major cao nhất còn giữ JS Compiler API (`lib/typescript.js`) cho `vue-tsc@3.3.14` (`@volar/typescript` đòi `<7`) và `dependency-cruiser@18.8.0-beta-2` |
 | Cache abstraction | `unstorage` | `^1.17` | Driver `redis` built-in, trỏ thẳng `host`/`port` Valkey — không cần workaround, không cần driver tự viết |
 | Rate limit | `rate-limiter-flexible` | `^11.5.0` | Chỉ dùng trong `packages/cache`, trên singleton `ioredis`; `unstorage` chỉ làm cache. Giữ hai trục, `Retry-After`, trusted-proxy và fail-open/closed của [`rate-limiting.md`](../01-platform/rate-limiting.md), không bật limiter của `nuxt-security` |
 | Queue | BullMQ | `^6.7.6` | `connection: {host, port, password}` — object thường, BullMQ tự dựng `ioredis` nội bộ (tự set `maxRetriesPerRequest: null` cho Worker). Không dùng `createValkeyGlideClient` (đó là path cho HA/cluster kiểu AWS, không cần ở self-host Docker) |
 | Queue — Nuxt wrapper | Không dùng `nuxt-simple-bullmq` | — | Solo-maintainer, README tự nhận chỉ test Node 21, tác giả khuyên dùng lựa chọn khác cho production. Nối BullMQ trực tiếp qua Nitro plugin trong `apps/worker` |
 | Auth — trạng thái Nuxt của web | `nuxt-auth-utils` | `^0.6.2` | **Chỉ dùng trong `apps/web`**. Module seal opaque locator và cung cấp projection/`useUserSession`; identity/role/reauth/remember nằm trong Redis. Admin SPA chỉ gọi API tuyệt đối với `credentials: "include"`. Cookie session host-only, tuyệt đối 1 giờ; remember tuỳ chọn, tuyệt đối tối đa 365 ngày |
-| Auth — Redis session authority | `ioredis` trong `packages/auth` | `^6.0.0` | Client process-long riêng, fail-closed; Lua/transaction nguyên tử cho rotate/revoke; production AOF + `noeviction`. Không đi qua cache API fail-open, không file/memory/DB fallback |
+| Auth — Redis session authority | `ioredis` trong `packages/auth` | `6.1.0-beta.1` | Client process-long riêng, fail-closed; Lua/transaction nguyên tử cho rotate/revoke; production AOF + `noeviction`. Không đi qua cache API fail-open, không file/memory/DB fallback |
 | Auth — OAuth/OIDC backend bridge | `openid-client` | `^6.9.0` | `packages/auth/src/oauth/` dùng cho discovery, PKCE, authorization URL, code exchange và token validation. Không dùng `defineOAuth*EventHandler` của `nuxt-auth-utils`, không đổi sang AuthJS và không tự viết protocol primitive |
 | Auth — TOTP (Manager bắt buộc, User P2 tuỳ chọn) | `otpauth` | `^9.6.0` | Dùng cho sinh secret, URI và validate RFC 4226/6238; cấm dùng password helper của `nuxt-auth-utils`, tự viết HMAC/Base32/TOTP hoặc dùng `speakeasy` |
 | HTTP hardening | `nuxt-security` + proxy headers | `^2.7.0` | `nuxt-security` chỉ khai ở `apps/web`; Nginx đặt header cho admin static. Web giữ CSP/nonce, SRI, security headers (HSTS 1 năm + preload, X-Frame-Options DENY, Referrer-Policy, Permissions-Policy, COOP/CORP), CORS và request-size. **Tắt** rate limiter, CSRF và xssValidator của module; các contract đó thuộc `packages/cache`, `packages/auth`, Zod (`BR-SEC-04`) và `packages/moderation` |
@@ -146,7 +146,7 @@ dạng object thường, và driver `redis` của `unstorage` hardcode `ioredis`
 | Error tracking | `@sentry/nuxt` (SaaS Team tier) | | GlitchTip self-host là fallback nếu chi phí/lưu trú dữ liệu VN sau này bắt buộc — cùng giao thức ingest, đổi DSN là xong |
 | Logging | `pino` + `pino-http` nối trực tiếp Nitro plugin | | Không dùng wrapper Nuxt (`nuxt-pino-log` bỏ hoang từ 2022) |
 | Alert tới người | Healthchecks.io (free) cho liveness job/cron + Telegram Bot API (`fetch` thô) cho ngưỡng/crash | | Email chỉ là kênh dự phòng — VN dev quen Telegram hơn, tới nhanh hơn |
-| Dependency-boundary | `dependency-cruiser` `^18.7.2` | | Duy nhất trong 4 lựa chọn khảo sát hỗ trợ cấm **thư viện ngoài cụ thể** theo từng zone (quy tắc `BR-MPA-01` của [`monorepo-package-architecture.md`](monorepo-package-architecture.md) — app không được import trực tiếp thư viện nền cho capability dùng chung từ ít nhất 2 app, phải qua package driver), không chỉ graph nội bộ |
+| Dependency-boundary | `dependency-cruiser` `18.8.0-beta-2` | | Duy nhất trong 4 lựa chọn khảo sát hỗ trợ cấm **thư viện ngoài cụ thể** theo từng zone (quy tắc `BR-MPA-01` của [`monorepo-package-architecture.md`](monorepo-package-architecture.md) — app không được import trực tiếp thư viện nền cho capability dùng chung từ ít nhất 2 app, phải qua package driver), không chỉ graph nội bộ |
 | Gate chất lượng | **`lefthook` `^2.2.2`** (git hook local) | — | **Không cổng remote** — không GitHub Actions, GitLab CI hay Jenkins (quyết định người dùng 2026-08-06, xem §11 Q5). pnpm: khai **`allowBuilds: {lefthook: false}`** ở `pnpm-workspace.yaml` |
 | Lint/format | `ultracite@~8.2.1` (**preset `ultracite/biome/core` + `ultracite/biome/vue`**) + `@biomejs/biome@~2.6.8` (**CLI chạy thật**) | Script `lint` gọi thẳng `biome check .`; `biome.jsonc` giữ nguyên tập rule baseline đã chốt (không bật các rule ngoài contract `BR-*` mà `ultracite` 8 mới thêm) |
 | Test | Vitest `^5.1.0` · Playwright `1.65.1` · `fast-check` `^4.10.2` · `@axe-core/playwright` `^4.14.0` | | `@vitest/coverage-v8` ghim cứng cùng bản `5.1.0` với `vitest` |
@@ -160,15 +160,14 @@ khác link tới, không copy).
 
 ### 7.1a Chốt version chồng chéo và cổng dev — thêm 2026-08-29
 
-`pnpm-workspace.yaml` sở hữu ba thứ, không chỉ `catalog:`:
+`pnpm-workspace.yaml` sở hữu hai khối cấu hình dùng chung cho toàn monorepo:
 
 | Khối | Dùng cho | Ghi chú |
 |---|---|---|
-| `catalog:` | Version của dependency dùng chung | Nguồn duy nhất (`BR-RBS-06`) |
-| `overrides:` | Ép về **một** bản khi hai phụ thuộc kéo hai version | `BR-RBS-09`. Hiện có: `unhead` và `@unhead/vue` chốt `3.4.0` |
+| `overrides:` | Ép về **một** bản khi hai phụ thuộc kéo hai version | `BR-RBS-09`. Hiện có: `unhead`/`@unhead/vue` chốt `3.4.3`, `vue`/`@vue/shared` chốt `3.6.0-rc.15`, `@biomejs/biome` chốt `2.6.8` |
 | `allowBuilds:` | Cho phép postinstall của native package | `lefthook: false` (§7.1 dòng "Gate chất lượng") |
 
-Bộ icon local của kit nằm trong `catalog:` (`@iconify-json/lucide`) chứ không để Nuxt Icon gọi
+Bộ icon local của kit khai trực tiếp trong `packages/ui/package.json` (`@iconify-json/lucide`) chứ không để Nuxt Icon gọi
 `api.iconify.design` lúc chạy — xem `BR-DSC-23` của
 [`design-system-contract.md`](../08-quality/design-system-contract.md).
 
@@ -255,7 +254,7 @@ Scenario: BR-RBS-10 — ca âm, admin gọi API cross-origin không vỡ CORS
 ## 10. Boundaries
 
 **Always**
-- Pin version qua `engines` + pnpm `catalog:`, không rải version rời.
+- Pin version qua `engines` (root) và khai phiên bản tường minh đồng bộ trong từng `package.json` (`BR-RBS-06`).
 - Chạy `pnpm check` đầy đủ (PG + Valkey đã bật) trước khi coi một thay đổi là xong; `pre-push`
   chạy đúng lệnh đó.
 - Thêm job vào `lefthook.yml` kèm ca âm đã đo.

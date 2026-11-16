@@ -11,13 +11,13 @@
   },
   "dependencies": {
     "@mindkid/config": "workspace:*",
-    "bullmq": "catalog:",
-    "ioredis": "catalog:",
-    "zod": "catalog:"
+    "bullmq": "^6.7.6",
+    "ioredis": "6.1.0-beta.1",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@types/node": "catalog:",
-    "vitest": "catalog:"
+    "@types/node": "^26.6.6",
+    "vitest": "^5.1.0"
   },
   "imports": {
     "#src/*": "./src/*.ts",

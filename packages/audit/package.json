@@ -10,12 +10,12 @@
     "@mindkid/db": "workspace:*",
     "@mindkid/errors": "workspace:*",
     "@mindkid/shared": "workspace:*",
-    "drizzle-orm": "catalog:"
+    "drizzle-orm": "1.0.0-rc.5"
   },
   "devDependencies": {
     "@mindkid/config": "workspace:*",
-    "typescript": "catalog:",
-    "vitest": "catalog:"
+    "typescript": "~6.0.3",
+    "vitest": "^5.1.0"
   },
   "exports": {
     ".": "./src/index.ts"

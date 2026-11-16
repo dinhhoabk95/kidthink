@@ -34,7 +34,7 @@ import {
   setManagerRememberCookie,
 } from "#server/utils/admin-auth-runtime";
 import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
-import { getManagerSessionConfig } from "#server/utils/session-runtime";
+import { setManagerSession } from "#server/utils/session-runtime";
 
 const MfaSchema = z
   .object({
@@ -285,15 +285,11 @@ export default defineEventHandler(async (event) => {
     ipAddress: getVerifiedRemoteIp(event),
   });
 
-  await setUserSession(
-    event,
-    {
-      secure: {
-        session_token: createdSession.sessionToken,
-      },
+  await setManagerSession(event, {
+    secure: {
+      session_token: createdSession.sessionToken,
     },
-    getManagerSessionConfig()
-  );
+  });
 
   if (createdSession.rememberToken) {
     setManagerRememberCookie(event, createdSession.rememberToken);

@@ -160,7 +160,9 @@ function findFiles(dir: string, filter: (file: string) => boolean): string[] {
         entry.name !== "node_modules" &&
         entry.name !== ".git" &&
         entry.name !== "dist" &&
-        entry.name !== ".build"
+        entry.name !== ".build" &&
+        entry.name !== ".nuxt" &&
+        entry.name !== ".output"
       ) {
         results.push(...findFiles(fullPath, filter));
       }
