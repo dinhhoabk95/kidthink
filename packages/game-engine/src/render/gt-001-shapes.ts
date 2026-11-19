@@ -43,6 +43,9 @@ export interface GT001TokenAnim {
   readonly winElapsedMs: number;
   readonly wrongProgress: number;
   readonly isActiveWrong: boolean;
+  readonly comparisonLabel?: string;
+  readonly isSoftDimmed?: boolean;
+  readonly isInFlightToBook?: boolean;
 }
 interface TokenPalette {
   readonly fill: string;
@@ -211,13 +214,22 @@ function resolveTokenPose(
   const dy = state === "idle" ? idleWave : 0;
   return { dx: 0, dy, scale: 1, slabDepth };
 }
-function drawTokenGlyph(ctx: CanvasCtx, slot: Slot, item: RenderItem): void {
+function drawTokenGlyph(
+  ctx: CanvasCtx,
+  slot: Slot,
+  item: RenderItem,
+  comparisonLabel?: string
+): void {
   if (item.text !== undefined) {
     drawTextInSlot(ctx, item.text, slot);
     return;
   }
   const emojiRef = item.asset?.kind === "emoji" ? item.asset.ref : undefined;
-  const cue = detectSlotVisualComparisonCue(item.label, item.id, emojiRef);
+  const cue = detectSlotVisualComparisonCue(
+    comparisonLabel ?? item.label,
+    item.id,
+    emojiRef
+  );
   if (cue) {
     drawSlotVisualComparisonCue(ctx, slot, cue);
   }
@@ -233,8 +245,26 @@ export function drawGT001OptionToken(
   item: RenderItem,
   anim: GT001TokenAnim
 ): void {
+  if (anim.isInFlightToBook) {
+    const wellR = Math.max(14, Math.min(slot.w, slot.h) / 2 - 6);
+    drawCircle(
+      ctx,
+      slot.x,
+      slot.y,
+      wellR,
+      alpha(SUCCESS[100], 0.65),
+      alpha(SUCCESS[500], 0.55),
+      2
+    );
+    return;
+  }
   const state = item.state ?? "idle";
-  const { fill, border, slab, lineWidth } = TOKEN_PALETTES[state];
+  const palette = TOKEN_PALETTES[state];
+  const isDimmedIdle = state === "idle" && anim.isSoftDimmed === true;
+  const fill = palette.fill;
+  const border = isDimmedIdle ? SURFACE[300] : palette.border;
+  const slab = palette.slab;
+  const lineWidth = isDimmedIdle ? 2 : palette.lineWidth;
   const pose = resolveTokenPose(state, slotIndex, rs.reducedMotion, anim);
   const maxHitRadius = Math.min(slot.hitW, slot.hitH) / 2 - 6;
   const radius = Math.min(
@@ -269,10 +299,15 @@ export function drawGT001OptionToken(
   ctx.stroke();
   const [x, y, w] = [centerX, centerY, Math.round(radius * 2)];
   const contentSlot: Slot = { ...slot, x, y, w, h: w };
+  ctx.save();
+  if (isDimmedIdle) {
+    ctx.globalAlpha = 0.72;
+  }
   const rep = item.representation;
   if (!(rep && drawQuantityRepresentation(ctx, rs, contentSlot, rep))) {
-    drawTokenGlyph(ctx, contentSlot, item);
+    drawTokenGlyph(ctx, contentSlot, item, anim.comparisonLabel);
   }
+  ctx.restore();
   if (item.label) {
     drawSlotLabel(ctx, item.label, contentSlot, rs);
   }

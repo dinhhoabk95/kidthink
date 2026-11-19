@@ -3,9 +3,12 @@ import {
   ACTION_IGNORED,
   type ActionResult,
   type GameAction,
+  type HintLevel,
+  type HintTarget,
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
+import { resolveGT001StoryLine } from "#src/labels/gt001-story-lines.js";
 import { resolveAssetLabels } from "#src/labels/spoken-keyword.js";
 import { resolveTouchFloor } from "#src/layout/constants";
 import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test.js";
@@ -14,12 +17,17 @@ import type { Slot } from "#src/layout/types";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
 import {
   drawGT001OptionToken,
-  drawGT001TargetShowcase,
   drawGT001WoodenDock,
 } from "#src/render/gt-001-shapes.js";
 import {
+  computeCoinFlightProgress,
+  drawGT001FlyingCoin,
+  drawGT001StorybookStage,
+} from "#src/render/gt-001-storybook.js";
+import {
   drawSceneBackground,
   type ItemVisualState,
+  type RenderItem,
   spawnParticlesAtSlot,
 } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
@@ -33,7 +41,14 @@ import {
   type GT001StageLayout,
   stepParticlesByDelta,
 } from "./layout.js";
+import {
+  resolveDimmedOptionIdsAtL2,
+  resolveEffectiveShowcase,
+} from "./story-showcase.js";
 import type { GT001Content, GT001Difficulty } from "./template.js";
+
+// biome-ignore lint/performance/noBarrelFile: preserve backward-compatible named export
+export { GT001_STORY_LINE } from "#src/labels/gt001-story-lines.js";
 
 type OptionItem = GT001Content["options"][number];
 
@@ -52,12 +67,24 @@ function writeClockMs(session: GT001Session, ms: number): void {
   }
 }
 
-/** Khung chuyện đọc một lần ở vòng đầu (`BR-E001-05`, `BR-FBK-16`). */
-export const GT001_STORY_LINE =
-  "Gấu Con đi chợ, bé giúp Gấu Con chọn đúng món nhé!";
-
-/** Tiền tố id của entity thẻ đề — tách khỏi không gian id của lựa chọn. */
+/** Tiền tố id của entity sách ngữ cảnh — tách khỏi không gian id của lựa chọn. */
 const PROMPT_CARD_ID_PREFIX = "prompt:";
+
+function toRenderItem(opt: OptionItem, state?: ItemVisualState): RenderItem {
+  return {
+    id: opt.item_id,
+    asset: opt.asset,
+    state,
+    representation: opt.representation
+      ? {
+          kind: opt.representation.kind,
+          count: opt.representation.count,
+          max: opt.representation.max,
+          min: opt.representation.min,
+        }
+      : undefined,
+  };
+}
 
 export class GT001Session extends TemplateGameSession<
   GT001Content,
@@ -74,12 +101,12 @@ export class GT001Session extends TemplateGameSession<
   private itemStates: Map<string, ItemVisualState> = new Map();
   private wrongItemId: string | null = null;
   private readonly wrongFlashes = new WrongFlashMap();
-  /** Đã chọn sai và chưa chọn đúng — Gấu Con còn ngó nghiêng (`BR-E001-05`). */
   private hasPickedWrong = false;
   private isRoundClosed = false;
   private pressedItemId: string | null = null;
   private winTriggeredAtMs: number | null = null;
   private activeAgeBand: AgeBand = "4-5";
+  private activeHintLevel: 0 | HintLevel = 0;
 
   constructor(
     content: GT001Content,
@@ -103,6 +130,7 @@ export class GT001Session extends TemplateGameSession<
     this.wrongFlashes.clearAll();
     writeClockMs(this, 0);
     this.hasPickedWrong = false;
+    this.activeHintLevel = 0;
     this.selectionItems = this.content.options.map((opt) => ({
       id: opt.item_id,
       isCorrect: opt.is_correct,
@@ -187,7 +215,6 @@ export class GT001Session extends TemplateGameSession<
     this.pressedItemId = null;
     this.mechanic.select(itemId);
     const isCorrect = this.findOption(itemId)?.is_correct === true;
-    // Token nằm trên khay gỗ: mỗi lần chạm có tiếng "cộc" (`BR-E001-05`).
     this.queueSfx("wood_tap");
     this.hasPickedWrong = !isCorrect;
     this.recordEvent("item_selected", {
@@ -254,11 +281,37 @@ export class GT001Session extends TemplateGameSession<
   }
 
   override storyLine(): string {
-    return GT001_STORY_LINE;
+    return resolveGT001StoryLine(this.themeId, this.content.story_theme_code);
   }
 
   override mascotMood(): MascotPose | null {
     return this.hasPickedWrong ? "wonder" : null;
+  }
+
+  override onScaffoldEscalated(level: HintLevel): void {
+    this.activeHintLevel = level;
+  }
+
+  override onHintCleared(): void {
+    this.activeHintLevel = 0;
+  }
+
+  override getHintTargetIndex(): number | null {
+    if (this.isWon || this.isRoundClosed) {
+      return null;
+    }
+    const idx = this.displayOptions.findIndex((opt) => opt.is_correct);
+    return idx >= 0 ? idx : null;
+  }
+
+  override getHintTargetForLevel(level: HintLevel): HintTarget | null {
+    if (this.isWon || this.isRoundClosed) {
+      return null;
+    }
+    if (level === 1) {
+      return { kind: "region", ids: ["storybook-showcase"] };
+    }
+    return this.getHintTarget();
   }
 
   override getView(): EngineView {
@@ -288,7 +341,7 @@ export class GT001Session extends TemplateGameSession<
         h: targetSlot.h,
         glyph,
         label,
-        spokenLabel,
+        spokenLabel: spokenLabel ?? this.content.showcase?.cue_label_vi,
         spokenAudioPath,
       });
     }
@@ -315,8 +368,8 @@ export class GT001Session extends TemplateGameSession<
         w: slot.w,
         h: slot.h,
         glyph,
-        label,
-        spokenLabel,
+        label: opt.label ?? label,
+        spokenLabel: spokenLabel ?? opt.label,
         spokenAudioPath,
       });
     }
@@ -349,14 +402,6 @@ export class GT001Session extends TemplateGameSession<
     }
 
     return null;
-  }
-
-  override getHintTargetIndex(): number | null {
-    if (this.isWon || this.isRoundClosed) {
-      return null;
-    }
-    const idx = this.displayOptions.findIndex((opt) => opt.is_correct);
-    return idx >= 0 ? idx : null;
   }
 
   override commit(action: GameAction): void {
@@ -406,6 +451,7 @@ export class GT001Session extends TemplateGameSession<
     this.pressedItemId = null;
     this.winTriggeredAtMs = null;
     this.isRoundClosed = false;
+    this.activeHintLevel = 0;
     writeClockMs(this, 0);
   }
 
@@ -423,32 +469,73 @@ export class GT001Session extends TemplateGameSession<
         ? 0
         : Math.max(0, frameMs - this.winTriggeredAtMs);
 
+    const showcase = resolveEffectiveShowcase(
+      this.content,
+      this.themeId,
+      this.activeAgeBand
+    );
+    const correctIndex = this.displayOptions.findIndex((opt) => opt.is_correct);
+    const correctOpt =
+      correctIndex >= 0 ? this.displayOptions[correctIndex] : undefined;
+    const wrongCueActive = this.displayOptions.some((opt) =>
+      this.wrongFlashes.isActive(opt.item_id, frameMs)
+    );
+
     drawSceneBackground(ctx, rs, this.themeId);
     if (this.content.target_item) {
-      drawGT001TargetShowcase(
-        ctx,
-        rs,
-        layout.cardSlot,
-        this.content.target_item.asset,
-        {
-          timeMs: frameMs,
-          isWon: this.isWon,
-          winElapsedMs,
-        }
-      );
+      drawGT001StorybookStage(ctx, rs, layout, showcase, {
+        timeMs: frameMs,
+        isWon: this.isWon,
+        isRevealedOnClose: this.isRoundClosed,
+        winElapsedMs,
+        wrongCueActive,
+        hintLevel: this.activeHintLevel,
+        solvedItem: correctOpt ? toRenderItem(correctOpt, "correct") : null,
+      });
     }
     drawGT001WoodenDock(ctx, rs, layout.dockRect, slots);
-    this.drawInteractive(rs, ctx, slots, frameMs, winElapsedMs);
+    this.drawInteractive(rs, ctx, layout, slots, frameMs, winElapsedMs);
+
+    const flightProgress = computeCoinFlightProgress(
+      this.isWon,
+      winElapsedMs,
+      rs.reducedMotion
+    );
+    const fromSlot = correctIndex >= 0 ? slots[correctIndex] : undefined;
+    if (
+      layout.isSpread &&
+      correctOpt &&
+      fromSlot &&
+      flightProgress > 0 &&
+      flightProgress < 1
+    ) {
+      drawGT001FlyingCoin(
+        ctx,
+        rs,
+        fromSlot,
+        layout.rightPageSlot,
+        layout.bookRect.y,
+        toRenderItem(correctOpt, "correct"),
+        flightProgress
+      );
+    }
+
     this.drawFeedback(rs, ctx);
   }
 
   private drawInteractive(
     rs: RenderSystem,
     ctx: CanvasRenderingContext2D,
+    layout: GT001StageLayout,
     slots: readonly Slot[],
     frameMs: number,
     winElapsedMs: number
   ): void {
+    const dimmedAtHint =
+      this.activeHintLevel >= 1
+        ? resolveDimmedOptionIdsAtL2(this.displayOptions)
+        : null;
+
     for (let i = 0; i < this.displayOptions.length; i++) {
       const opt = this.displayOptions[i];
       const slot = slots[i];
@@ -465,23 +552,15 @@ export class GT001Session extends TemplateGameSession<
         ? this.wrongFlashes.progress(opt.item_id, frameMs)
         : 0;
 
-      drawGT001OptionToken(
-        ctx,
-        rs,
-        slot,
-        i,
-        {
-          id: opt.item_id,
-          asset: opt.asset,
-          state,
-        },
-        {
-          timeMs: frameMs,
-          winElapsedMs,
-          wrongProgress,
-          isActiveWrong,
-        }
-      );
+      drawGT001OptionToken(ctx, rs, slot, i, toRenderItem(opt, state), {
+        timeMs: frameMs,
+        winElapsedMs,
+        wrongProgress,
+        isActiveWrong,
+        comparisonLabel: opt.label,
+        isSoftDimmed: dimmedAtHint?.has(opt.item_id) === true,
+        isInFlightToBook: state === "correct" && layout.isSpread,
+      });
     }
   }
 

@@ -81,6 +81,17 @@ export {
   type ViewEntity,
 } from "./interaction";
 export {
+  DONG_DAO_CELEBRATION_CHANTS,
+  type EncouragementMoment,
+  PRESCHOOL_ENCOURAGEMENT_BY_BAND,
+  pickEncouragementPhrase,
+} from "./labels/encouragement-phrases.js";
+export {
+  GT001_STORY_LINE,
+  GT001_THEME_STORIES,
+  resolveGT001StoryLine,
+} from "./labels/gt001-story-lines.js";
+export {
   type AssetLabels,
   type KeywordAsset,
   resolveAssetLabels,
@@ -217,7 +228,15 @@ export {
   registerImageSprite,
   unregisterImageSprite,
 } from "./render/index.js";
-export { drawMontessoriControlOfErrorPill } from "./render/montessori-feedback.js";
+export {
+  drawEncouragementBanner,
+  drawMontessoriControlOfErrorPill,
+  type EncouragementBannerKind,
+} from "./render/montessori-feedback.js";
+export {
+  SCENE_PAINTERS,
+  type ScenePainter,
+} from "./render/scene-themes.js";
 export { createRng, deriveStream } from "./rng/mulberry32.js";
 export { shuffle } from "./rng/shuffle.js";
 export type { Rng, RngStreamName } from "./rng/types.js";
@@ -256,6 +275,7 @@ export {
   FeedbackOverlay,
   type FeedbackPoint,
   MASCOT_FEEDBACK_HOLD_MS,
+  MILESTONE_BANNER_HOLD_MS,
   type OverlayFeedbackKind,
   resolveBaseMascotPose,
 } from "./systems/feedback-overlay";
@@ -345,7 +365,18 @@ export {
   type SceneObjectState,
   SceneSystem,
 } from "./systems/scene-system.js";
-export { SFXEngine, type SFXType } from "./systems/sfx-engine";
+export {
+  MAX_NOTE_VOLUME,
+  MIN_RAMP_OUT_SEC,
+  MINUS_ONE_DBTP_LINEAR,
+  type NoteRecipe,
+  RAMP_IN_SEC,
+  SFXEngine,
+  type SFXType,
+  TRUE_PEAK_CEILING_LINEAR,
+  VN_PENTATONIC_DEGREES,
+  VN_PENTATONIC_HZ,
+} from "./systems/sfx-engine";
 export {
   type SpeechOptions,
   SpeechSynthesisAdapter,

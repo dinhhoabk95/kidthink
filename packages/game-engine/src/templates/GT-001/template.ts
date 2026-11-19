@@ -18,18 +18,59 @@ function serializeAssetKey(
   return `image:${asset.path}`;
 }
 
+export const GT001QuantityRepSchema = z.object({
+  kind: z.enum([
+    "discrete-object",
+    "finger",
+    "number-rod",
+    "rekenrek",
+    "ten-frame",
+    "dot-pattern",
+    "tally",
+    "number-line",
+  ]),
+  count: z.number().int().min(0).max(20),
+  max: z.number().int().min(1).max(20).optional(),
+  min: z.number().int().min(0).max(20).optional(),
+});
+
+export const GT001ShowcaseModeSchema = z.enum([
+  "cpa_bridge",
+  "comparison_anchor",
+  "silhouette_clue",
+  "story_riddle",
+  "sequence_gap",
+]);
+
+export const GT001ShowcaseSchema = z.object({
+  mode: GT001ShowcaseModeSchema,
+  cue_asset: assetSchema().optional(),
+  cue_label_vi: z.string().max(40).optional(),
+  representation: GT001QuantityRepSchema.optional(),
+  sequence_preview: z.array(assetSchema()).min(2).max(4).optional(),
+  bridge_badge_vi: z.string().max(24).optional(),
+});
+
+export type GT001QuantityRep = z.infer<typeof GT001QuantityRepSchema>;
+export type GT001ShowcaseMode = z.infer<typeof GT001ShowcaseModeSchema>;
+export type GT001Showcase = z.infer<typeof GT001ShowcaseSchema>;
+
 export const GT001BaseContentSchema = z.object({
   ...promptFields(),
   target_item: z.object({
     item_id: z.string(),
     asset: assetSchema(),
   }),
+  showcase: GT001ShowcaseSchema.optional(),
+  story_theme_code: z.string().min(1).max(24).optional(),
   options: z
     .array(
       z.object({
         item_id: z.string(),
         asset: assetSchema(),
         is_correct: z.boolean(),
+        label: z.string().max(40).optional(),
+        representation: GT001QuantityRepSchema.optional(),
       })
     )
     .min(2)
@@ -69,6 +110,29 @@ export const GT001ContentSchema = GT001BaseContentSchema.refine(
       message:
         "BR-E001-03: Mồi nhử phải phân biệt rõ với đáp án đúng, không được trùng tài sản hiển thị.",
       path: ["options"],
+    }
+  )
+  .refine(
+    (content) => {
+      if (!content.showcase?.cue_asset) {
+        return true;
+      }
+      if (content.showcase.mode === "silhouette_clue") {
+        return true;
+      }
+      const correct = content.options.find((o) => o.is_correct);
+      if (!correct) {
+        return false;
+      }
+      return (
+        serializeAssetKey(content.showcase.cue_asset) !==
+        serializeAssetKey(correct.asset)
+      );
+    },
+    {
+      message:
+        "BR-E001-06: Thẻ ngữ cảnh thông minh (showcase) ở chế độ không bóng hình cấm vẽ trùng nguyên mẫu tài sản với đáp án đúng.",
+      path: ["showcase"],
     }
   );
 

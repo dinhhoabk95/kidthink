@@ -1,0 +1,194 @@
+{
+  "profile": "teacher-v1",
+  "updated_at": "2026-11-19T15:28:58.489Z",
+  "total_generated": 17,
+  "entries": {
+    "14f76591f0449d12": {
+      "hash": "14f76591f0449d12",
+      "relative_audio_path": "/audio/voice/teacher-v1/14/14f76591f0449d12.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Mở trang nắng ấm mây hồng, bé cùng Gấu Con nhìn trời nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3600,
+      "file_size_bytes": 29301,
+      "updated_at": "2026-11-19T15:21:35.273Z"
+    },
+    "45739bfddb8213e1": {
+      "hash": "45739bfddb8213e1",
+      "relative_audio_path": "/audio/voice/teacher-v1/45/45739bfddb8213e1.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Sách đôi tay xinh mở trang, bé cùng Gấu Con tinh mắt nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3561,
+      "file_size_bytes": 29092,
+      "updated_at": "2026-11-19T15:21:54.210Z"
+    },
+    "533646eb3d01b373": {
+      "hash": "533646eb3d01b373",
+      "relative_audio_path": "/audio/voice/teacher-v1/53/533646eb3d01b373.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Sách hội rước đèn mở rồi, bé cùng Gấu Con vui hội nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3685,
+      "file_size_bytes": 30137,
+      "updated_at": "2026-11-19T15:22:44.265Z"
+    },
+    "4af2bc4cdaac6845": {
+      "hash": "4af2bc4cdaac6845",
+      "relative_audio_path": "/audio/voice/teacher-v1/4a/4af2bc4cdaac6845.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Mở trang đường phố nhộn nhịp, bé cùng Gấu Con gọi xe nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3638,
+      "file_size_bytes": 29719,
+      "updated_at": "2026-11-19T15:22:49.159Z"
+    },
+    "7ae490eaa9eb6198": {
+      "hash": "7ae490eaa9eb6198",
+      "relative_audio_path": "/audio/voice/teacher-v1/7a/7ae490eaa9eb6198.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Sách biển xanh rì rào sóng, bé cùng Gấu Con lặn tìm nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3578,
+      "file_size_bytes": 29092,
+      "updated_at": "2026-11-19T15:24:28.834Z"
+    },
+    "9313abb1e01053b0": {
+      "hash": "9313abb1e01053b0",
+      "relative_audio_path": "/audio/voice/teacher-v1/93/9313abb1e01053b0.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Sách nhạc họa ngân vang tiếng, bé cùng Gấu Con chọn đúng nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3569,
+      "file_size_bytes": 29092,
+      "updated_at": "2026-11-19T15:24:56.798Z"
+    },
+    "aa8a807bd58484b3": {
+      "hash": "aa8a807bd58484b3",
+      "relative_audio_path": "/audio/voice/teacher-v1/aa/aa8a807bd58484b3.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Mở sách lớp học tre xanh, bé cùng Gấu Con tìm đúng nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3512,
+      "file_size_bytes": 28674,
+      "updated_at": "2026-11-19T15:25:15.498Z"
+    },
+    "ada639ebd384b768": {
+      "hash": "ada639ebd384b768",
+      "relative_audio_path": "/audio/voice/teacher-v1/ad/ada639ebd384b768.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Mở trang vườn xuân rực rỡ, bé giúp Gấu Con tìm đúng nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3689,
+      "file_size_bytes": 30137,
+      "updated_at": "2026-11-19T15:25:23.835Z"
+    },
+    "c447e0344f167d61": {
+      "hash": "c447e0344f167d61",
+      "relative_audio_path": "/audio/voice/teacher-v1/c4/c447e0344f167d61.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Gấu Con đi chợ, bé giúp Gấu Con chọn đúng món nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3408,
+      "file_size_bytes": 27838,
+      "updated_at": "2026-11-19T15:25:29.341Z"
+    },
+    "c627580d98e0a794": {
+      "hash": "c627580d98e0a794",
+      "relative_audio_path": "/audio/voice/teacher-v1/c6/c627580d98e0a794.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Mở sách quê hương tươi đẹp, bé cùng Gấu Con tự hào nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3567,
+      "file_size_bytes": 29092,
+      "updated_at": "2026-11-19T15:25:39.635Z"
+    },
+    "37b32d1e8a523922": {
+      "hash": "37b32d1e8a523922",
+      "relative_audio_path": "/audio/voice/teacher-v1/37/37b32d1e8a523922.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Mở sách du hành ngân hà, bé cùng Gấu Con bay cao nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3632,
+      "file_size_bytes": 29719,
+      "updated_at": "2026-11-19T15:27:30.723Z"
+    },
+    "38d47eed068cd006": {
+      "hash": "38d47eed068cd006",
+      "relative_audio_path": "/audio/voice/teacher-v1/38/38d47eed068cd006.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Sách rừng xanh mở trang mới, bé cùng Gấu Con khám phá nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3741,
+      "file_size_bytes": 30555,
+      "updated_at": "2026-11-19T15:27:40.433Z"
+    },
+    "7470e6e06939c400": {
+      "hash": "7470e6e06939c400",
+      "relative_audio_path": "/audio/voice/teacher-v1/74/7470e6e06939c400.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Mở trang cả nhà sum vầy, bé cùng Gấu Con chọn đúng nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3645,
+      "file_size_bytes": 29719,
+      "updated_at": "2026-11-19T15:27:46.066Z"
+    },
+    "75366914faa4a6d2": {
+      "hash": "75366914faa4a6d2",
+      "relative_audio_path": "/audio/voice/teacher-v1/75/75366914faa4a6d2.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Gấu Con mở sách chợ quê, bé chọn món ngon giúp bạn nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3615,
+      "file_size_bytes": 29510,
+      "updated_at": "2026-11-19T15:27:54.936Z"
+    },
+    "882befefcc9b645b": {
+      "hash": "882befefcc9b645b",
+      "relative_audio_path": "/audio/voice/teacher-v1/88/882befefcc9b645b.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Mở trang nghề quý quanh ta, bé cùng Gấu Con đoán tài nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3620,
+      "file_size_bytes": 29510,
+      "updated_at": "2026-11-19T15:28:46.935Z"
+    },
+    "f25cf8405d3f804e": {
+      "hash": "f25cf8405d3f804e",
+      "relative_audio_path": "/audio/voice/teacher-v1/f2/f25cf8405d3f804e.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Sách gỗ nông trại mở rồi, bé giúp Gấu Con chọn đúng nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3653,
+      "file_size_bytes": 29719,
+      "updated_at": "2026-11-19T15:28:51.817Z"
+    },
+    "f4d69d4e755c1936": {
+      "hash": "f4d69d4e755c1936",
+      "relative_audio_path": "/audio/voice/teacher-v1/f4/f4d69d4e755c1936.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Mở trang bếp ấm gia đình, bé giúp Gấu Con tìm đồ nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3585,
+      "file_size_bytes": 29301,
+      "updated_at": "2026-11-19T15:28:58.444Z"
+    }
+  }
+}

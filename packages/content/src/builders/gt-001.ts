@@ -1,5 +1,6 @@
 import { getEngineDifficultyParams } from "@mindkid/game-engine/contracts";
 import type {
+  DatasetItem,
   ProjectedPack,
   Projection,
   ProjectOptions,
@@ -7,11 +8,17 @@ import type {
 } from "@mindkid/shared";
 import { formatPromptLabel } from "@mindkid/shared";
 import {
+  buildGT001PedagogicalShowcase,
+  buildOptionQuantityRep,
+} from "./gt-001-showcase-projector.js";
+import {
   assetKey,
   createRng,
   type KeywordAsset,
   keywordAsset,
+  pickAgeBandPrompt,
   safeGetItem,
+  sanitizeChildPrompt,
   shuffleDeterministic,
 } from "./utils.js";
 
@@ -78,6 +85,7 @@ export const projectGT001: Projection<"GT-001"> = {
       id: string;
       asset: KeywordAsset;
       hasGlyph: boolean;
+      rawItem: DatasetItem;
     }> = [];
     for (let i = 0; i < expectedDistractorCount; i++) {
       const d = safeGetItem(shuffledPool, i % shuffledPool.length);
@@ -86,6 +94,7 @@ export const projectGT001: Projection<"GT-001"> = {
         id: uniqueId,
         asset: keywordAsset(d),
         hasGlyph: Boolean(d.glyph),
+        rawItem: d,
       });
     }
 
@@ -103,6 +112,7 @@ export const projectGT001: Projection<"GT-001"> = {
         id: glyphChoice.id,
         asset: keywordAsset(glyphChoice),
         hasGlyph: true,
+        rawItem: glyphChoice,
       };
     }
 
@@ -111,11 +121,15 @@ export const projectGT001: Projection<"GT-001"> = {
         item_id: targetItem.id,
         asset: targetAsset,
         is_correct: true,
+        label: targetItem.label.slice(0, 40),
+        representation: buildOptionQuantityRep(targetItem, opts),
       },
       ...chosenDistractors.map((d) => ({
         item_id: d.id,
         asset: d.asset,
         is_correct: false,
+        label: d.rawItem.label.slice(0, 40),
+        representation: buildOptionQuantityRep(d.rawItem, opts),
       })),
     ];
 
@@ -126,11 +140,33 @@ export const projectGT001: Projection<"GT-001"> = {
       glyph: targetItem.glyph,
     });
 
-    const rawPrompt = dataset.phrasing.prompt_template
-      ? dataset.phrasing.prompt_template.replace("{label}", targetLabel)
-      : `Bé hãy chọn ${targetLabel} nhé!`;
-    const prompt =
-      rawPrompt.length >= 4 ? rawPrompt : `Bé hãy chọn ${targetLabel} nhé!`;
+    const bandFallback = pickAgeBandPrompt(
+      opts.band,
+      {
+        mam: `Bé chạm vào ${targetLabel} nhé!`,
+        choi: `Đố bé tìm đúng ${targetLabel} nhé!`,
+        la: `Bé thử chọn đúng ${targetLabel} xem!`,
+      },
+      "Bé chạm chọn đáp án đúng nhé!",
+      { forbidConjunctionVa: true }
+    );
+    const prompt = dataset.phrasing.prompt_template
+      ? sanitizeChildPrompt(
+          dataset.phrasing.prompt_template.replace("{label}", targetLabel),
+          bandFallback,
+          { forbidConjunctionVa: true }
+        )
+      : bandFallback;
+
+    const showcase = buildGT001PedagogicalShowcase({
+      dataset,
+      orderedItems,
+      targetItem,
+      targetIdx,
+      targetKey,
+      prompt,
+      opts,
+    });
 
     return {
       content_pack: {
@@ -139,6 +175,8 @@ export const projectGT001: Projection<"GT-001"> = {
           item_id: targetItem.id,
           asset: targetAsset,
         },
+        showcase,
+        story_theme_code: opts.theme,
         options: shuffledOptions,
       },
       difficulty_params: {

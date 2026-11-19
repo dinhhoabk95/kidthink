@@ -1147,6 +1147,42 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
     label: "Chế độ hoàn thành lượt",
     help: "Cách kết thúc màn chơi khi tìm đủ ký hiệu mục tiêu.",
   },
+  showcase: {
+    label: "Thẻ ngữ cảnh thông minh trên sách Pop-up",
+    help: "Cấu hình trang trái cuốn sách gỗ: biểu diễn CPA đối ứng, mốc so sánh, bóng hình hoặc đạo cụ câu đố.",
+  },
+  cue_asset: {
+    label: "Hình gợi mở ngữ cảnh",
+    help: "Tài nguyên hình ảnh/emoji làm mốc đối chiếu hoặc đạo cụ câu chuyện.",
+  },
+  cue_label_vi: {
+    label: "Nhãn gợi mở tiếng Việt",
+    help: "Nhãn ngắn tiếng Việt đi kèm khung ngữ cảnh trên trang sách.",
+  },
+  sequence_preview: {
+    label: "Chuỗi bước dẫn nhập",
+    help: "2–4 phần tử đầu của dãy quy luật hoặc thứ tự trước ô khuyết.",
+  },
+  bridge_badge_vi: {
+    label: "Huy hiệu kết tinh kiến thức",
+    help: "Nhãn ghép đôi CPA hiển thị ngắn gọn khi đồng xu đúng đáp vào sách.",
+  },
+  story_theme_code: {
+    label: "Mã chủ đề câu chuyện",
+    help: "Mã chủ đề canonical điều khiển câu mở truyện của Gấu Con.",
+  },
+  count: {
+    label: "Số lượng biểu diễn",
+    help: "Số lượng đơn vị hiển thị trong giáo cụ số học CPA.",
+  },
+  min: {
+    label: "Giá trị nhỏ nhất",
+    help: "Mốc đầu của trục số hoặc khoảng giá trị.",
+  },
+  max: {
+    label: "Giá trị lớn nhất",
+    help: "Mốc cuối hoặc sức chứa tối đa của giáo cụ số học.",
+  },
 };
 
 /**
@@ -1279,6 +1315,12 @@ export const TEXT_FALLBACK_ALLOWLIST: Record<string, string> = {
   attributes:
     "Bản đồ tự do tên thuộc tính -> giá trị chuỗi ngắn (khoá do người soạn tự đặt, không có tập cố định); form builder chưa có widget key-value nên nhập dạng text.",
   scale_id: "Mã định danh kỹ thuật của cân mẫu trong content pack.",
+  story_theme_code:
+    "Mã chủ đề canonical điều khiển khung chuyện của màn chơi GT-001.",
+  mode: "Chế độ hiển thị ngữ cảnh sư phạm chuỗi enum.",
+  count: "Số lượng đơn vị số nguyên của giáo cụ biểu diễn lượng.",
+  min: "Cận dưới số nguyên trên trục biểu diễn lượng.",
+  max: "Cận trên số nguyên trên trục biểu diễn lượng.",
 };
 
 export function getFieldDictionaryEntry(

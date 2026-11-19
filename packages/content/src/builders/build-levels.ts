@@ -23,8 +23,10 @@ const REGEX_MONTESSORI_CODE = /-0[1-9]\d{2}$/;
  * v11: #313 Phase 25 — GT-013 đề "lá cờ số N" + `goal_glyph`, GT-009 tối đa 6 ứng viên,
  * GT-035 lưới tối đa 3 hàng (`BR-LAY-12`).
  * v12: #313 Phase 26 — GT-013 mê cung 3×3 (trần 3 cột, 4 hàng, `BR-E013-12`).
+ * v13: #315 — Bản địa hoá sư phạm vật thật Koguma-kai (Jibutsu/Taiwa) & Văn hoá Mầm non Việt Nam.
+ * v14: #317 — GT-001 Cuốn Sách Gỗ Pop-up 3 Chương, Thẻ Ngữ Cảnh Thông Minh (showcase) & CPA.
  */
-export const GENERATED_LEVEL_CONTENT_VERSION = 12;
+export const GENERATED_LEVEL_CONTENT_VERSION = 14;
 
 /**
  * Chỗ trống trong `phrasing.prompt_template` mà bộ dựng level thay được.
@@ -156,13 +158,14 @@ function projectRoundDistinct(
 function resolveRoundInstruction(
   dataset: SkillDataset,
   template: string,
-  packPrompt: string | number | boolean | null | undefined
+  packPrompt: string | number | boolean | null | undefined,
+  band?: string
 ): string {
   let instruction: string;
   if (typeof packPrompt === "string") {
     instruction = packPrompt;
   } else if (template === "GT-000") {
-    instruction = buildConceptIntroPrompt(dataset.concept_label);
+    instruction = buildConceptIntroPrompt(dataset.concept_label, band);
   } else {
     instruction = dataset.phrasing?.prompt_template || dataset.concept_label;
   }
@@ -206,7 +209,8 @@ function buildLevelRounds(
     const instruction = resolveRoundInstruction(
       dataset,
       levelPlan.template,
-      packWithPrompt?.prompt
+      packWithPrompt?.prompt,
+      levelPlan.band
     );
 
     if (
