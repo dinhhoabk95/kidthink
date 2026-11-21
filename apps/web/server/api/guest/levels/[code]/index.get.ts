@@ -1,4 +1,3 @@
-import { requireUserAuth } from "@mindkid/auth";
 import { childProfiles, gameLevels, getOwnerDb } from "@mindkid/db";
 import { GameLevelNotFoundError } from "@mindkid/errors/game-level";
 import { getGameTemplate } from "@mindkid/game-engine/registry";
@@ -20,6 +19,7 @@ import {
   setHeader,
 } from "h3";
 import { getOptionalActiveChildUuid } from "#server/utils/auth-runtime";
+import { resolveBetterAuthUserSession } from "#server/utils/better-auth";
 import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
 import {
   loadRoundSet,
@@ -35,7 +35,7 @@ interface CallerContext {
 
 async function resolveCallerContext(event: H3Event): Promise<CallerContext> {
   try {
-    const userSession = requireUserAuth(event);
+    const userSession = await resolveBetterAuthUserSession(event);
     if (userSession) {
       const candidateChildUuid = getOptionalActiveChildUuid(event);
       let activeChildId: string | null = null;

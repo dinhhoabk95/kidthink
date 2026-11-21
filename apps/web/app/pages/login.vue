@@ -24,15 +24,11 @@
           {{ isMfaStep ? "Xác thực hai bước (MFA)" : "Chào mừng trở lại!" }}
         </h1>
         <p class="mt-1 text-sm text-surface-600 dark:text-surface-400">
-          {{
-            isMfaStep
-              ? "Nhập mã xác thực 6 chữ số từ ứng dụng bảo mật của bạn."
-              : "Đăng nhập để tiếp tục hành trình học tập cùng bé"
-          }}
+          {{ subtitleText }}
         </p>
       </div>
 
-      <!-- Social Login Buttons (BR-REG-11, BR-LGN-10) -->
+      <!-- Social & Passkey Login Buttons (BR-REG-11, BR-LGN-10) -->
       <div class="mb-6 flex flex-col gap-3" v-if="!isMfaStep">
         <button
           class="flex min-h-11 w-full items-center justify-center gap-2.5 rounded-2xl border-2 border-surface-200 bg-surface-50 px-4 py-2.5 text-base font-semibold text-surface-800 transition-all hover:border-surface-300 hover:bg-surface-100 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 dark:border-surface-700 dark:bg-surface-800/80 dark:text-surface-100 dark:hover:bg-surface-700"
@@ -46,6 +42,17 @@
           <span>Tiếp tục với {{ provider.name }}</span>
         </button>
 
+        <button
+          class="flex min-h-11 w-full items-center justify-center gap-2.5 rounded-2xl border-2 border-brand-200 bg-brand-50/70 px-4 py-2.5 text-base font-semibold text-brand-700 transition-all hover:border-brand-300 hover:bg-brand-100/70 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 dark:border-brand-800 dark:bg-brand-950/40 dark:text-brand-300"
+          data-testid="passkey-login-btn"
+          type="button"
+          :disabled="isLoading"
+          @click="handlePasskeyLogin"
+        >
+          <UIcon class="h-5 w-5 shrink-0" name="i-lucide-fingerprint" />
+          <span>Đăng nhập bằng Passkey</span>
+        </button>
+
         <div class="relative my-1 text-center">
           <div class="absolute inset-0 flex items-center">
             <div
@@ -53,7 +60,7 @@
             />
           </div>
           <span
-            class="relative bg-white px-3 text-xs font-semibold text-surface-500 dark:bg-surface-800 dark:text-surface-400"
+            class="relative bg-white px-3 text-sm font-semibold text-surface-500 dark:bg-surface-800 dark:text-surface-400"
           >
             hoặc đăng nhập bằng email
           </span>
@@ -86,18 +93,18 @@
             class="text-sm font-bold text-surface-700 dark:text-surface-300"
             for="mfa-code"
           >
-            Mã xác thực
+            {{ isBackupCodeMode ? "Mã khôi phục dự phòng" : "Mã xác thực 6 số" }}
           </label>
           <input
             autocomplete="one-time-code"
             class="min-h-12 w-full rounded-2xl border-2 border-surface-300 bg-surface-50 px-3.5 py-2.5 text-center text-xl font-bold tracking-widest text-surface-900 transition-all placeholder:text-surface-400 focus:border-brand-600 focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-500/15 dark:border-surface-700 dark:bg-surface-900 dark:text-surface-100 dark:placeholder:text-surface-500 dark:focus:border-brand-500 dark:focus:bg-surface-900"
             id="mfa-code"
-            inputmode="numeric"
-            maxlength="16"
-            placeholder="123456"
+            maxlength="20"
             required
             type="text"
             v-model.trim="mfaCode"
+            :inputmode="isBackupCodeMode ? 'text' : 'numeric'"
+            :placeholder="isBackupCodeMode ? 'XXXXX-XXXXX' : '123456'"
           >
         </div>
 
@@ -110,14 +117,29 @@
           <span v-else>Xác nhận đăng nhập</span>
         </button>
 
-        <button
-          class="min-h-11 w-full text-center text-sm font-bold text-surface-600 underline transition-colors hover:text-brand-600 dark:text-surface-400 dark:hover:text-brand-400"
-          type="button"
-          :disabled="isLoading"
-          @click="cancelMfa"
-        >
-          Quay lại đăng nhập
-        </button>
+        <div class="flex items-center justify-between gap-2">
+          <button
+            class="min-h-11 text-sm font-bold text-brand-600 underline transition-colors hover:text-brand-500 dark:text-brand-400"
+            type="button"
+            :disabled="isLoading"
+            @click="toggleBackupCodeMode"
+          >
+            {{
+              isBackupCodeMode
+                ? "Dùng mã ứng dụng 6 số"
+                : "Dùng mã khôi phục dự phòng"
+            }}
+          </button>
+
+          <button
+            class="min-h-11 text-sm font-bold text-surface-600 underline transition-colors hover:text-brand-600 dark:text-surface-400 dark:hover:text-brand-400"
+            type="button"
+            :disabled="isLoading"
+            @click="cancelMfa"
+          >
+            Quay lại đăng nhập
+          </button>
+        </div>
       </form>
 
       <!-- Password Login Form -->
@@ -149,7 +171,7 @@
               Mật khẩu
             </label>
             <NuxtLink
-              class="inline-flex min-h-11 items-center text-xs font-bold text-brand-600 underline hover:text-brand-500 dark:text-brand-400 dark:hover:text-brand-300"
+              class="inline-flex min-h-11 items-center text-sm font-bold text-brand-600 underline hover:text-brand-500 dark:text-brand-400 dark:hover:text-brand-300"
               data-testid="forgot-password-link"
               to="/quen-mat-khau"
             >
@@ -175,7 +197,7 @@
             v-model="rememberMe"
           >
           <label
-            class="cursor-pointer text-xs font-semibold leading-relaxed text-surface-600 dark:text-surface-400"
+            class="cursor-pointer text-sm font-semibold leading-relaxed text-surface-600 dark:text-surface-400"
             for="remember-me"
           >
             Ghi nhớ đăng nhập trên thiết bị này
@@ -225,7 +247,6 @@
 </template>
 
 <script lang="ts" setup>
-  import { isApiError } from "@mindkid/errors/client";
   import {
     DEFAULT_REDIRECT_TARGET,
     sanitizeRedirectTarget,
@@ -233,12 +254,14 @@
   import { computed, onMounted, ref } from "vue";
   import {
     definePageMeta,
+    navigateTo,
     useRoute,
     useRouter,
     useSeoMeta,
     useUserSession,
   } from "#imports";
   import { useApi } from "~/composables/use-api";
+  import { useUserAuthClient } from "~/composables/use-auth-client";
 
   definePageMeta({
     layout: false,
@@ -263,24 +286,18 @@
     },
   ] as const;
 
-  interface LoginApiResponse {
-    user?: {
-      uuid: string;
-      displayName: string;
-      status: string;
-    };
-    status?: string;
-    challenge?: string;
-    mfa_enabled?: boolean;
-  }
-
   interface AccessContextResponse {
     has_active_child: boolean;
     active_keys: string[];
     allowed_tiers: string[];
   }
 
+  interface SignInDataWithTwoFactor {
+    twoFactorRedirect?: boolean;
+  }
+
   const api = useApi();
+  const authClient = useUserAuthClient();
   const route = useRoute();
   const router = useRouter();
   const { fetch: fetchSession } = useUserSession();
@@ -288,15 +305,23 @@
   const isLoading = ref(false);
   const errorMessage = ref("");
 
-  // Login form state
   const loginEmail = ref("");
   const loginPassword = ref("");
-  const rememberMe = ref(false); // BR-LGN-07: default false
+  const rememberMe = ref(false);
 
-  // MFA step state
   const isMfaStep = ref(false);
-  const mfaChallengeToken = ref<string | null>(null);
+  const isBackupCodeMode = ref(false);
   const mfaCode = ref("");
+
+  const subtitleText = computed<string>(() => {
+    if (!isMfaStep.value) {
+      return "Đăng nhập để tiếp tục hành trình học tập cùng bé";
+    }
+    if (isBackupCodeMode.value) {
+      return "Nhập một mã khôi phục dự phòng đã lưu của bạn.";
+    }
+    return "Nhập mã xác thực 6 chữ số từ ứng dụng bảo mật của bạn.";
+  });
 
   const targetDestination = computed(() => {
     const rawRedirect = route.query.redirect ?? route.query.return_to;
@@ -312,20 +337,70 @@
   });
 
   onMounted(async () => {
-    // If query tab=register, redirect to register page
     if (route.query.tab === "register") {
       await router.replace(registerLink.value);
+      return;
+    }
+    if (route.query.error === "social_conflict") {
+      errorMessage.value =
+        "Email này đã được đăng ký tài khoản MindKid. Vui lòng đăng nhập bằng mật khẩu hoặc Passkey trước, sau đó liên kết mạng xã hội trong phần Cài đặt.";
     }
   });
 
-  function startOAuth(providerId: string) {
-    const returnTo = encodeURIComponent(targetDestination.value);
-    window.location.href = `/api/guest/auth/oauth/${providerId}/start?intent=login&return_to=${returnTo}`;
+  async function startOAuth(providerId: "google" | "facebook"): Promise<void> {
+    errorMessage.value = "";
+    isLoading.value = true;
+    try {
+      const dest = targetDestination.value;
+      const consentFallback = `/register/consent?provider=${providerId}&redirect=${encodeURIComponent(dest)}`;
+      const res = await authClient.signIn.social({
+        provider: providerId,
+        callbackURL: dest,
+        errorCallbackURL: consentFallback,
+      });
+      if (res.error) {
+        errorMessage.value =
+          res.error.message ||
+          `Không thể khởi tạo đăng nhập với ${providerId}.`;
+      }
+    } catch {
+      errorMessage.value = "Không thể kết nối nhà cung cấp đăng nhập lúc này.";
+    } finally {
+      isLoading.value = false;
+    }
   }
 
-  function cancelMfa() {
+  async function handlePasskeyLogin(): Promise<void> {
+    errorMessage.value = "";
+    isLoading.value = true;
+    try {
+      const res = await authClient.signIn.passkey();
+      if (res.error) {
+        errorMessage.value =
+          res.error.message ||
+          "Đăng nhập bằng Passkey không thành công hoặc đã bị huỷ.";
+        return;
+      }
+      await fetchSession();
+      const nextDest = await resolvePostLoginDestination();
+      await navigateTo(nextDest);
+    } catch {
+      errorMessage.value =
+        "Thiết bị chưa hỗ trợ hoặc không tìm thấy Passkey phù hợp.";
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  function cancelMfa(): void {
     isMfaStep.value = false;
-    mfaChallengeToken.value = null;
+    isBackupCodeMode.value = false;
+    mfaCode.value = "";
+    errorMessage.value = "";
+  }
+
+  function toggleBackupCodeMode(): void {
+    isBackupCodeMode.value = !isBackupCodeMode.value;
     mfaCode.value = "";
     errorMessage.value = "";
   }
@@ -341,12 +416,10 @@
           destination = nestedRedirect;
         }
       } catch {
-        // bỏ qua nếu destination không phải định dạng URL query chuẩn
+        // Ignore malformed nested redirect URL
       }
     }
 
-    // BR-LGN-08: Nếu đích đến nằm trong khu vực chơi (/play) mà chưa có active_child_id,
-    // chuyển hướng qua màn hình chọn hồ sơ bé kèm destination.
     if (destination.startsWith("/play")) {
       try {
         const accessCtx = await api<AccessContextResponse>(
@@ -364,73 +437,46 @@
     return destination;
   }
 
-  function extractMfaChallenge(err: unknown): string | null {
-    if (
-      isApiError(err, "MFA_REQUIRED") ||
-      isApiError(err, "REAUTH_REQUIRED") ||
-      (isApiError(err) && err.statusCode === 428)
-    ) {
-      const challenge = isApiError(err)
-        ? (err.details?.challenge as string | undefined)
-        : undefined;
-      return challenge || null;
-    }
-    return null;
-  }
-
-  function extractWebLoginErrorMessage(err: unknown, fallback: string): string {
-    if (isApiError(err)) {
-      return err.message;
-    }
-    if (err instanceof Error) {
-      return err.message;
-    }
-    return fallback;
-  }
-
-  async function handleLogin() {
+  async function handleLogin(): Promise<void> {
     errorMessage.value = "";
     isLoading.value = true;
 
     try {
-      const res = await api<LoginApiResponse>("/api/guest/auth/users/login", {
-        method: "POST",
-        body: {
-          email: loginEmail.value,
-          password: loginPassword.value,
-          rememberMe: rememberMe.value,
-        },
-        credentials: "include",
+      const res = await authClient.signIn.email({
+        email: loginEmail.value,
+        password: loginPassword.value,
+        rememberMe: rememberMe.value,
       });
 
-      if (res.status === "MFA_REQUIRED" && res.challenge) {
+      if (res.error) {
+        errorMessage.value =
+          res.error.message ||
+          "Đăng nhập không thành công. Vui lòng kiểm tra lại email và mật khẩu.";
+        return;
+      }
+
+      const data = res.data as SignInDataWithTwoFactor | null;
+      if (data?.twoFactorRedirect) {
         isMfaStep.value = true;
-        mfaChallengeToken.value = res.challenge;
+        isBackupCodeMode.value = false;
+        mfaCode.value = "";
         return;
       }
 
       await fetchSession();
       const nextDest = await resolvePostLoginDestination();
       await navigateTo(nextDest);
-    } catch (err: unknown) {
-      const challenge = extractMfaChallenge(err);
-      if (challenge) {
-        isMfaStep.value = true;
-        mfaChallengeToken.value = challenge;
-        return;
-      }
-
-      errorMessage.value = extractWebLoginErrorMessage(
-        err,
-        "Đăng nhập không thành công. Vui lòng kiểm tra lại email và mật khẩu."
-      );
+    } catch {
+      errorMessage.value =
+        "Đăng nhập không thành công. Vui lòng kiểm tra lại email và mật khẩu.";
     } finally {
       isLoading.value = false;
     }
   }
 
-  async function handleMfaVerify() {
-    if (!(mfaChallengeToken.value && mfaCode.value)) {
+  async function handleMfaVerify(): Promise<void> {
+    const code = mfaCode.value.trim();
+    if (!code) {
       return;
     }
 
@@ -438,23 +484,23 @@
     isLoading.value = true;
 
     try {
-      await api("/api/guest/auth/users/mfa", {
-        method: "POST",
-        body: {
-          challenge: mfaChallengeToken.value,
-          code: mfaCode.value,
-        },
-        credentials: "include",
-      });
+      const res = isBackupCodeMode.value
+        ? await authClient.twoFactor.verifyBackupCode({ code })
+        : await authClient.twoFactor.verifyTotp({ code });
+
+      if (res.error) {
+        errorMessage.value =
+          res.error.message ||
+          "Mã xác thực không hợp lệ hoặc đã hết hạn. Vui lòng thử lại.";
+        return;
+      }
 
       await fetchSession();
       const nextDest = await resolvePostLoginDestination();
       await navigateTo(nextDest);
-    } catch (err: unknown) {
-      errorMessage.value = extractWebLoginErrorMessage(
-        err,
-        "Mã xác thực không hợp lệ hoặc đã hết hạn. Vui lòng thử lại."
-      );
+    } catch {
+      errorMessage.value =
+        "Mã xác thực không hợp lệ hoặc đã hết hạn. Vui lòng thử lại.";
     } finally {
       isLoading.value = false;
     }

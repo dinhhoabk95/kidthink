@@ -1,24 +1,36 @@
-import { getBrowserSessionService } from "@mindkid/auth";
+import { InMemoryRedisClient, setAuthRedisClient } from "@mindkid/auth";
 import { getOwnerDb, hardPurgeUser, users } from "@mindkid/db";
+import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import deleteAccountHandler from "#server/api/users/account/delete.post";
 import deleteSummaryHandler from "#server/api/users/account/delete-summary.get";
+import {
+  getUserAuth,
+  resetBetterAuthInstancesForTests,
+} from "#server/utils/better-auth";
+
+function collectCookie(res: Response): string {
+  return res.headers
+    .getSetCookie()
+    .map((raw) => raw.split(";")[0]?.trim() ?? "")
+    .filter((pair) => pair.length > 0 && !pair.endsWith("="))
+    .join("; ");
+}
 
 function mockEvent(
   method: string,
   userId = 403,
-  body: any = {},
+  body: Record<string, string | number | boolean> = {},
   options: { reauthAt?: Date | null; sessionId?: string } = {}
 ) {
-  const responseHeaders: Record<string, string> = {};
-  const csrfToken = "c".repeat(64);
+  const responseHeaders: Record<string, string | string[]> = {};
   return {
     method,
     node: {
       req: {
         headers: {
-          "x-csrf-token": csrfToken,
-          cookie: `tm_u_csrf=${csrfToken}`,
+          host: "localhost:3000",
+          origin: "http://localhost:3000",
           "sec-fetch-site": "same-origin",
         },
         socket: {
@@ -69,7 +81,6 @@ describe("Task 6 — Account Deletion & Purge Lifecycle (BR-ADL-01..10)", () => 
       expect(res.lost_data_items.length).toBeGreaterThan(0);
       expect(res.retained_legal_items.length).toBeGreaterThan(0);
 
-      // Verify specific legal mentions (Accounting, Decree 13, Cybersecurity)
       const legalText = res.retained_legal_items.join(" ");
       expect(legalText).toContain("Kế toán");
       expect(legalText).toContain("Nghị định 13/2023");
@@ -90,32 +101,45 @@ describe("Task 6 — Account Deletion & Purge Lifecycle (BR-ADL-01..10)", () => 
     });
 
     it("BR-ADL-01: revokes all Redis sessions when account deletion is requested", async () => {
+      setAuthRedisClient(new InMemoryRedisClient());
+      resetBetterAuthInstancesForTests();
+
       const db = getOwnerDb();
       const email = `del-sess-${Date.now()}-${Math.floor(Math.random() * 10_000)}@example.com`;
-      const [u] = await db
-        .insert(users)
-        .values({
-          email,
-          displayName: "Delete Session User",
-          status: "active",
+      const password = "DeleteSessionPass123!";
+
+      const signUpRes = await getUserAuth().handler(
+        new Request("http://localhost:3000/api/auth/users/sign-up/email", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            origin: "http://localhost:3000",
+          },
+          body: JSON.stringify({
+            name: "Delete Session User",
+            email,
+            password,
+            accept_terms: true,
+            accept_privacy: true,
+          }),
         })
-        .returning();
+      );
+      expect(signUpRes.status).toBe(200);
+      const sessionCookie = collectCookie(signUpRes);
+
+      const [u] = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.email, email))
+        .limit(1);
       if (!u) {
         throw new Error("Failed to insert test user");
       }
 
-      const sessionService = getBrowserSessionService();
-      const created = await sessionService.create({
-        namespace: "user",
-        accountId: u.id,
-        displayName: u.displayName,
+      const resolvedBefore = await getUserAuth().api.getSession({
+        headers: new Headers({ cookie: sessionCookie }),
       });
-
-      const resolvedBefore = await sessionService.resolve(
-        "user",
-        created.sessionToken
-      );
-      expect(resolvedBefore?.user?.user_id).toBe(u.id);
+      expect(Number(resolvedBefore?.user?.id)).toBe(u.id);
 
       const event = mockEvent(
         "POST",
@@ -123,17 +147,16 @@ describe("Task 6 — Account Deletion & Purge Lifecycle (BR-ADL-01..10)", () => 
         {},
         {
           reauthAt: new Date(),
-          sessionId: created.sessionId,
+          sessionId: String(resolvedBefore?.session?.id ?? "1"),
         }
       );
       const res = await deleteAccountHandler(event);
       expect(res.grace_period_days).toBe(30);
 
-      const resolvedAfter = await sessionService.resolve(
-        "user",
-        created.sessionToken
-      );
-      expect(resolvedAfter?.user).toBeUndefined();
+      const resolvedAfter = await getUserAuth().api.getSession({
+        headers: new Headers({ cookie: sessionCookie }),
+      });
+      expect(resolvedAfter).toBeNull();
     });
   });
 

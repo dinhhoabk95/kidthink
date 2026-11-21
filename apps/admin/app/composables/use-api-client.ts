@@ -37,14 +37,6 @@ interface ApiRequestOptions {
   [key: string]: ApiOptionValue;
 }
 
-interface ManagerSessionResponse {
-  manager: Record<
-    string,
-    string | number | boolean | null | undefined | object
-  >;
-  csrf_token: string;
-}
-
 const TRAILING_SLASH = /\/$/;
 const LEADING_SLASH = /^\//;
 const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
@@ -92,32 +84,11 @@ export function apiUrl(path: string): string {
   return `${baseUrl}/${path.replace(LEADING_SLASH, "")}`;
 }
 
-let loadingSession: Promise<void> | undefined;
-
 export function useApiClient() {
   const csrfToken = useState<string | undefined>("admin-csrf-token");
 
   function loadSession(): Promise<void> {
-    if (loadingSession) {
-      return loadingSession;
-    }
-
-    const sessionPromise = $fetch<ManagerSessionResponse>(
-      apiUrl("/api/managers/auth/session"),
-      { credentials: "include" }
-    )
-      .then((response: ManagerSessionResponse) => {
-        csrfToken.value = response.csrf_token;
-      })
-      .catch(() => {
-        csrfToken.value = undefined;
-      })
-      .finally(() => {
-        loadingSession = undefined;
-      });
-
-    loadingSession = sessionPromise;
-    return sessionPromise;
+    return Promise.resolve();
   }
 
   async function request<T>(
@@ -126,18 +97,13 @@ export function useApiClient() {
   ): Promise<T> {
     const method = String(options.method || "GET").toUpperCase();
     const isSafeMethod = SAFE_METHODS.has(method);
-    const normalizedPath = `/${path.replace(LEADING_SLASH, "")}`;
-    const isGuestRoute = normalizedPath.startsWith("/api/guest/");
-    if (!(csrfToken.value || isSafeMethod || isGuestRoute)) {
-      await loadSession();
-    }
 
     const headers = new Headers(options.headers);
     if (csrfToken.value && !isSafeMethod) {
       headers.set("x-csrf-token", csrfToken.value);
     }
 
-    return $fetch<T>(apiUrl(path), {
+    return await $fetch<T>(apiUrl(path), {
       ...options,
       credentials: "include",
       headers,

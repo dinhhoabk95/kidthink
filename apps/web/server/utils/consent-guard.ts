@@ -9,9 +9,11 @@ import { and, desc, eq } from "drizzle-orm";
  * All other /api/users/** routes must return 428 CONSENT_REQUIRED.
  */
 const EXEMPT_PATH_PREFIXES = [
+  "/api/auth/",
   "/api/guest/",
   "/api/managers/",
   "/api/users/consents",
+  "/api/users/profile",
   "/api/users/auth/reauth",
   "/api/users/auth/logout",
   "/api/users/auth/logout-all",

@@ -1,25 +1,9 @@
+import type { ManagerTokenPayload, UserTokenPayload } from "@mindkid/auth";
+import { defineEventHandler, getHeader, getRequestURL } from "h3";
 import {
-  getBrowserSessionService,
-  type ManagerTokenPayload,
-  type UserTokenPayload,
-} from "@mindkid/auth";
-import { isAppError } from "@mindkid/errors/base";
-import { defineEventHandler, getCookie, getHeader, type H3Event } from "h3";
-import {
-  clearManagerRememberCookie,
-  setManagerRememberCookie,
-} from "#server/utils/admin-auth-runtime";
-import {
-  clearUserRememberCookie,
-  MANAGER_REMEMBER_COOKIE,
-  setUserRememberCookie,
-  USER_REMEMBER_COOKIE,
-} from "#server/utils/auth-runtime";
-import {
-  getManagerSession,
-  getManagerSessionToken,
-  setManagerSession,
-} from "#server/utils/session-runtime";
+  resolveBetterAuthManagerSession,
+  resolveBetterAuthUserSession,
+} from "#server/utils/better-auth";
 
 declare module "h3" {
   interface H3EventContext {
@@ -28,126 +12,36 @@ declare module "h3" {
   }
 }
 
+const BEARER_HEADER_PREFIX = /^bearer\s+/i;
+
+function isAuthMountPath(path: string): boolean {
+  return path.startsWith("/api/auth/");
+}
+
 function isManagerApiPath(path: string): boolean {
   return path === "/api/managers" || path.startsWith("/api/managers/");
 }
 
-// BR-ARB-06 + BR-SLK-01: the user namespace owns every API path the manager
-// namespace does not. Guest routes keep the caller's identity (OAuth account
-// linking needs it), while page and asset requests resolve nothing at all.
-function isUserApiPath(path: string): boolean {
-  if (isManagerApiPath(path)) {
+function isUserOrGuestApiPath(path: string): boolean {
+  if (isAuthMountPath(path) || isManagerApiPath(path)) {
     return false;
   }
   return path === "/api" || path.startsWith("/api/");
 }
 
-function rethrowIfServiceUnavailable(err: object | null | undefined): void {
-  if (isAppError(err) && err.status === 503) {
-    throw err;
-  }
-}
-
-async function resolveUserSession(event: H3Event) {
-  const session = await getUserSession(event);
-  const secure = session.secure as { session_token?: string } | undefined;
-  const token = secure?.session_token;
-  if (typeof token === "string" && token.length > 0) {
-    const authContext = await getBrowserSessionService().resolve("user", token);
-    if (authContext?.user) {
-      return authContext.user;
-    }
-  }
-
-  // Session expired or missing. Auto-refresh session if remember token is present (Laravel-style)
-  const rememberToken = getCookie(event, USER_REMEMBER_COOKIE);
-  if (typeof rememberToken === "string" && rememberToken.length > 0) {
-    try {
-      const restored = await getBrowserSessionService().restore({
-        namespace: "user",
-        rememberToken,
-      });
-      if (restored?.user) {
-        await setUserSession(event, {
-          secure: { session_token: restored.sessionToken },
-        });
-        setUserRememberCookie(event, restored.rememberToken);
-        return restored.user;
-      }
-    } catch (err) {
-      rethrowIfServiceUnavailable(err as object | null | undefined);
-      clearUserRememberCookie(event);
-    }
-  }
-
-  return undefined;
-}
-
-async function resolveManagerSession(event: H3Event) {
-  const managerSessionToken = getManagerSessionToken(event);
-  if (managerSessionToken) {
-    const session = await getManagerSession(event);
-    const secure = session.data.secure as
-      | { session_token?: string }
-      | undefined;
-    const token = secure?.session_token;
-    if (typeof token === "string" && token.length > 0) {
-      const authContext = await getBrowserSessionService().resolve(
-        "manager",
-        token
-      );
-      if (authContext?.manager) {
-        return authContext.manager;
-      }
-    }
-  }
-
-  // Manager session expired or missing. Auto-refresh session if remember token is present (Laravel-style)
-  const rememberToken = getCookie(event, MANAGER_REMEMBER_COOKIE);
-  if (typeof rememberToken === "string" && rememberToken.length > 0) {
-    try {
-      const restored = await getBrowserSessionService().restore({
-        namespace: "manager",
-        rememberToken,
-      });
-      if (restored?.manager) {
-        await setManagerSession(event, {
-          secure: { session_token: restored.sessionToken },
-        });
-        setManagerRememberCookie(event, restored.rememberToken);
-        return restored.manager;
-      }
-    } catch (err) {
-      rethrowIfServiceUnavailable(err as object | null | undefined);
-      clearManagerRememberCookie(event);
-    }
-  }
-
-  return undefined;
-}
-
 export default defineEventHandler(async (event) => {
-  event.context.user = undefined;
-  event.context.manager = undefined;
-
-  // BR-AUT-36: Reject Bearer token / Authorization header on browser endpoints
+  const pathname = getRequestURL(event).pathname;
   const authHeader = getHeader(event, "authorization");
-  if (authHeader?.startsWith("Bearer ")) {
+  if (authHeader && BEARER_HEADER_PREFIX.test(authHeader)) {
     return;
   }
 
-  try {
-    if (isManagerApiPath(event.path)) {
-      event.context.manager = await resolveManagerSession(event);
-      return;
-    }
+  if (isManagerApiPath(pathname)) {
+    await resolveBetterAuthManagerSession(event);
+    return;
+  }
 
-    if (isUserApiPath(event.path)) {
-      event.context.user = await resolveUserSession(event);
-    }
-  } catch (err) {
-    event.context.user = undefined;
-    event.context.manager = undefined;
-    rethrowIfServiceUnavailable(err as object | null | undefined);
+  if (isUserOrGuestApiPath(pathname)) {
+    await resolveBetterAuthUserSession(event);
   }
 });

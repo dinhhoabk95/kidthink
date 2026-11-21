@@ -1,0 +1,23 @@
+# Task #319 — Better Auth Integration Checklist
+
+- [x] **WP1 — Canonical Specs, Rules & Dependency Boundaries**
+  - [x] Cập nhật `docs/specs/01-platform/auth-tokens-sessions.md` (`BR-AUT-39`..`45`)
+  - [x] Cập nhật `docs/specs/01-platform/schema-identity-billing.md`, `actors.md`, `business-rules.md`, `admin-auth.md`
+  - [x] Cập nhật `.agents/AGENTS.md`, `.agents/rules/{02-architecture,03-security,06-database-auth}.md`, `.dependency-cruiser.cjs`
+- [x] **WP2 — Schema Identity, Migration & Seeder (`packages/db`, `packages/content-build`)**
+  - [x] Tách 10 bảng FK tường minh (`user_*`, `manager_*`) với `idPk()` (`bigserial`) & `...timestamps()` (`BR-DM-08`, `BR-DM-14`)
+  - [x] Cập nhật `identity-relations.ts`, `purge.ts`, `purge-scope.ts`, `validators.ts`, `seed-accounts.ts`, `content-build/src/seed-master/accounts.ts`
+  - [x] Sinh migration Drizzle + backfill tài khoản hiện có + chạy `pnpm db:migrate` & pass `packages/db` tests (`41/41`)
+- [x] **WP3 — Driver `@mindkid/auth` (`packages/auth`)**
+  - [x] Cài đặt `redis-secondary-storage.ts` & `better-auth-error.ts` (fail-closed 503 + `InMemoryRedisClient` cho test)
+  - [x] Cài đặt `user-better-auth.ts` & `manager-better-auth.ts` (`argon2id`, `twoFactor`, `passkey`, OAuth hooks, consent gate, MFA lockout 5 lần, audit log)
+  - [x] Cài đặt `client.ts` (`@mindkid/auth/client` browser-safe dùng `better-auth/vue`)
+  - [x] Cập nhật và vượt qua toàn bộ unit tests trong `packages/auth` (`18/18` files, `68/68` tests)
+- [x] **WP4 — Server API & Middleware (`apps/web/server`)**
+  - [x] Gỡ `nuxt-auth-utils`, tạo `better-auth.ts` & `better-auth-callbacks.ts`, mount `/api/auth/users/[...all].ts` & `/api/auth/managers/[...all].ts`
+  - [x] Tạo `/api/guest/auth/users/social-consent.post.ts` & `/api/users/profile.get.ts`, cập nhật `reauth`, `define-api-route.ts`, `consent-guard.ts`, `guards.ts`, `session-revocation.ts`
+  - [x] Chuyển đổi các route quản trị & tài khoản còn lại sang bảng/API Better Auth, xoá route thủ công thừa
+- [x] **WP5 — Frontend Client UI (`apps/web` & `apps/admin`) & Swarm Verification**
+  - [x] Cập nhật `apps/web` (`use-auth-client.ts`, `login.vue`, `register/*`, `forgot-password.vue`, `reset-password.vue`, `verify-email.vue`, `me/settings/security.vue`, `security-mfa-card.vue`, `security-passkey-card.vue`, middlewares)
+  - [x] Cập nhật `apps/admin` (`use-manager-auth-client.ts`, `use-admin-auth.ts`, `use-api-client.ts`, `login.vue`, `settings/security.vue`, `nav-config.ts`)
+  - [x] Swarm Carbon + Hydrogen review (0 P0, 0 P1) & vượt cổng `pnpm check` EXIT 0 (`@mindkid/shared` 51/51, `@mindkid/auth` 18/18, `@mindkid/admin` 14/14, `@mindkid/db` 41/41, `@mindkid/web` auth/component/integration suites xanh 100%)

@@ -1,15 +1,12 @@
 import { useCookie } from "#imports";
 
 /**
- * Header CSRF cho request đổi trạng thái tới `/api/users/*`.
+ * Header bảo mật cho request đổi trạng thái tới `/api/users/*`.
  *
- * `requireWebUserSession` gọi `validateUserCsrf` **trước** `requireUserAuth`
- * (`server/utils/auth-runtime.ts`), nên thiếu header này là 403 chứ không phải
- * 401 — lỗi đó rất dễ đọc nhầm thành "chưa đăng nhập".
- *
- * Chỉ trả header chứ Cấm — NEVER bọc `$fetch`: Nitro suy kiểu response từ
- * chính đường dẫn route, một lớp bọc generic sẽ xoá mất suy kiểu đó và đẩy call
- * site vào chỗ phải ép kiểu.
+ * Dưới kiến trúc Better Auth (`BR-AUT-41`), server xác thực `Origin` /
+ * `Sec-Fetch-Site` tại `validateUserCsrf`. Composable giữ tương thích ngược
+ * cho các call-site hiện hữu; nếu môi trường test có sẵn cookie `tm_u_csrf`
+ * thì đính kèm, còn mặc định trả `{}` để không chặn request hợp lệ cùng origin.
  */
 const CSRF_COOKIE_NAME = "tm_u_csrf";
 const CSRF_HEADER_NAME = "x-csrf-token";
@@ -18,12 +15,10 @@ export function useCsrfHeaders() {
   const csrf = useCookie<string | null>(CSRF_COOKIE_NAME);
 
   function headers(): Record<string, string> {
-    if (!csrf.value) {
-      throw new Error(
-        "Phiên bảo mật chưa sẵn sàng. Anh chị tải lại trang rồi thử lại giúp em nhé."
-      );
+    if (csrf.value) {
+      return { [CSRF_HEADER_NAME]: csrf.value };
     }
-    return { [CSRF_HEADER_NAME]: csrf.value };
+    return {};
   }
 
   return { headers };

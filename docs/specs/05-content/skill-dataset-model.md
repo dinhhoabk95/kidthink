@@ -306,7 +306,7 @@ của [`schema-content-taxonomy.md`](../01-platform/schema-content-taxonomy.md) 
   [`advanced-report.ts:809`](../../../apps/web/server/services/advanced-report.ts). Giữ ở đây
   làm mốc: lệch chuỗi kiểu này làm truy vấn trả 0 mà không báo lỗi.
 - Bốn level `GT-000` mang mã ba đoạn (`GL-C1-INTRO-0001` và ba mã cùng dạng) không thoả
-  `CHECK` của `game_levels.code` ở mục 7 của
+  regex của `game_levels.code` ở mục 7 của
   [`id-conventions.md`](../00-foundation/id-conventions.md) và trượt `content_contract`.
 - `BR-STA-*` (ma trận tương thích kỹ năng-khuôn) và `BR-ALC-*` (phân bổ level) được mã dẫn
   trong code nhưng **không spec nào định nghĩa**, và không có trong bản đồ prefix ở mục 7.1

@@ -1,23 +1,21 @@
-import { getBrowserSessionService } from "@mindkid/auth";
 import {
-  activeSessions,
   auditLogs,
   getOwnerDb,
-  mfaRecoveryCodes,
   mfaRecoveryRequests,
-  mfaSettings,
   users,
+  userTwoFactors,
 } from "@mindkid/db";
 import { RestrictedModeError } from "@mindkid/errors/auth";
 import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import { InvalidStatusTransitionError } from "@mindkid/errors/content";
-import { and, eq, isNull, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { defineEventHandler, getHeader, getRouterParam } from "h3";
 import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
+import { revokeAllBetterAuthSessions } from "#server/utils/better-auth";
 
 export default defineEventHandler(async (event) => {
-  const session = await requireSuperAdminSession(event);
+  const session = requireSuperAdminSession(event);
   const userUuid = getRouterParam(event, "uuid");
   const reqUuid = getRouterParam(event, "reqUuid");
 
@@ -68,49 +66,20 @@ export default defineEventHandler(async (event) => {
     throw new ValidationError("Chưa đủ 48 giờ chờ kể từ thời điểm tạo yêu cầu");
   }
 
-  // Execute atomic complete: remove MFA, remove recovery codes, bump sessionVersion, mark complete
   await db.transaction(async (tx) => {
-    // 1. Delete mfaSettings
     await tx
-      .delete(mfaSettings)
-      .where(
-        and(
-          eq(mfaSettings.accountType, "user"),
-          eq(mfaSettings.accountId, targetUser.id)
-        )
-      );
+      .delete(userTwoFactors)
+      .where(eq(userTwoFactors.userId, targetUser.id));
 
-    // 2. Delete mfaRecoveryCodes
-    await tx
-      .delete(mfaRecoveryCodes)
-      .where(
-        and(
-          eq(mfaRecoveryCodes.accountType, "user"),
-          eq(mfaRecoveryCodes.accountId, targetUser.id)
-        )
-      );
-
-    // 3. Revoke all active sessions (bump sessionVersion + mark activeSessions revoked)
     await tx
       .update(users)
       .set({
+        twoFactorEnabled: false,
         sessionVersion: sql`${users.sessionVersion} + 1`,
         updatedAt: now,
       })
       .where(eq(users.id, targetUser.id));
 
-    await tx
-      .update(activeSessions)
-      .set({ revokedAt: now })
-      .where(
-        and(
-          eq(activeSessions.accountType, "user"),
-          eq(activeSessions.accountId, targetUser.id),
-          isNull(activeSessions.revokedAt)
-        )
-      );
-
-    // 4. Mark request completed
     await tx
       .update(mfaRecoveryRequests)
       .set({
@@ -121,7 +90,6 @@ export default defineEventHandler(async (event) => {
       })
       .where(eq(mfaRecoveryRequests.id, recoveryReq.id));
 
-    // 5. Insert audit log
     await tx.insert(auditLogs).values({
       actorType: "manager",
       actorId: session.manager_id,
@@ -134,12 +102,7 @@ export default defineEventHandler(async (event) => {
     });
   });
 
-  await getBrowserSessionService()
-    .revokeAll({
-      account_type: "user",
-      account_id: targetUser.id,
-    })
-    .catch(() => null);
+  await revokeAllBetterAuthSessions("user", targetUser.id).catch(() => null);
 
   return {
     success: true,

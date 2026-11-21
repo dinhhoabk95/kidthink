@@ -1,25 +1,71 @@
-import { hashPassword } from "@mindkid/auth";
-import { getAppDb, socialIdentities, users } from "@mindkid/db";
-import { describe, expect, it } from "vitest";
+import {
+  hashPassword,
+  InMemoryRedisClient,
+  setAuthRedisClient,
+} from "@mindkid/auth";
+import { getOwnerDb, userAccounts, users } from "@mindkid/db";
+import { beforeEach, describe, expect, it } from "vitest";
+import {
+  getUserAuth,
+  resetBetterAuthInstancesForTests,
+} from "#server/utils/better-auth";
+
+async function postUserAuth(
+  subpath: string,
+  body: Record<string, string | boolean>
+): Promise<{ status: number; payload: Record<string, string | boolean> }> {
+  const res = await getUserAuth().handler(
+    new Request(`http://localhost:3000/api/auth/users${subpath}`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        origin: "http://localhost:3000",
+        "x-real-ip": "127.0.0.1",
+      },
+      body: JSON.stringify(body),
+    })
+  );
+  const payload = (await res.json().catch(() => ({}))) as Record<
+    string,
+    string | boolean
+  >;
+  return { status: res.status, payload };
+}
 
 describe("Task 5 — Identity Disclosure Prevention Test Suite (D-EP)", () => {
-  it("returns identical 401 response and balanced response timing across existing, missing, and social users on login (BR-LGN-02, BR-LGN-03)", async () => {
-    const db = getAppDb();
+  beforeEach(() => {
+    setAuthRedisClient(new InMemoryRedisClient());
+    resetBetterAuthInstancesForTests();
+  });
+
+  it("returns identical 401 response and balanced Argon2id timing across existing, missing, and social-only users on login (BR-LGN-02, BR-LGN-03)", async () => {
+    const db = getOwnerDb();
     const passHash = await hashPassword("chuoixanh123");
-    const suffix = Math.floor(Math.random() * 900_000 + 100_000).toString();
+    const suffix = `${Date.now()}_${Math.floor(Math.random() * 900_000 + 100_000)}`;
     const passEmail = `password_user_${suffix}@example.com`;
     const socialEmail = `social_user_${suffix}@example.com`;
     const nonExistEmail = `nonexistent_${suffix}@example.com`;
 
-    // 1. Password user
-    await db.insert(users).values({
-      email: passEmail,
-      passwordHash: passHash,
-      displayName: "Password User",
-      status: "active",
+    const [pwdUser] = await db
+      .insert(users)
+      .values({
+        email: passEmail,
+        passwordHash: passHash,
+        displayName: "Password User",
+        status: "active",
+      })
+      .returning({ id: users.id });
+    if (!pwdUser) {
+      throw new Error("Expected password user");
+    }
+
+    await db.insert(userAccounts).values({
+      userId: pwdUser.id,
+      providerId: "credential",
+      accountId: String(pwdUser.id),
+      password: passHash,
     });
 
-    // 2. Social-only user (no passwordHash)
     const [socialUser] = await db
       .insert(users)
       .values({
@@ -28,134 +74,91 @@ describe("Task 5 — Identity Disclosure Prevention Test Suite (D-EP)", () => {
         displayName: "Social User",
         status: "active",
       })
-      .returning();
+      .returning({ id: users.id });
+    if (!socialUser) {
+      throw new Error("Expected social user");
+    }
 
-    await db.insert(socialIdentities).values({
+    await db.insert(userAccounts).values({
       userId: socialUser.id,
-      provider: "google",
-      providerUserId: `google_${suffix}`,
+      providerId: "google",
+      accountId: `google_${suffix}`,
     });
 
-    const { default: loginHandler } = await import(
-      "#server/api/guest/auth/users/login.post"
-    );
-
-    // Test 1: Non-existent user
     const start1 = performance.now();
-    const event1 = {
-      method: "POST",
-      node: { req: { headers: { "x-forwarded-for": "127.0.0.1" } } },
-      context: {
-        body: {
-          email: nonExistEmail,
-          password: "wrongpassword123",
-        },
-      },
-    } as any;
-
-    let err1: any;
-    try {
-      await loginHandler(event1);
-    } catch (e) {
-      err1 = e;
-    }
+    const r1 = await postUserAuth("/sign-in/email", {
+      email: nonExistEmail,
+      password: "wrongpassword123",
+    });
     const duration1 = performance.now() - start1;
-    expect(err1.statusCode).toBe(401);
-    expect(err1.data.code).toBe("INVALID_CREDENTIALS");
 
-    // Test 2: Social-only user with wrong password
     const start2 = performance.now();
-    const event2 = {
-      method: "POST",
-      node: { req: { headers: { "x-forwarded-for": "127.0.0.1" } } },
-      context: {
-        body: {
-          email: socialEmail,
-          password: "wrongpassword123",
-        },
-      },
-    } as any;
-
-    let err2: any;
-    try {
-      await loginHandler(event2);
-    } catch (e) {
-      err2 = e;
-    }
+    const r2 = await postUserAuth("/sign-in/email", {
+      email: socialEmail,
+      password: "wrongpassword123",
+    });
     const duration2 = performance.now() - start2;
-    expect(err2.statusCode).toBe(401);
-    expect(err2.data.code).toBe("INVALID_CREDENTIALS");
 
-    // Test 3: Password user with wrong password
     const start3 = performance.now();
-    const event3 = {
-      method: "POST",
-      node: { req: { headers: { "x-forwarded-for": "127.0.0.1" } } },
-      context: {
-        body: {
-          email: passEmail,
-          password: "wrongpassword123",
-        },
-      },
-    } as any;
-
-    let err3: any;
-    try {
-      await loginHandler(event3);
-    } catch (e) {
-      err3 = e;
-    }
+    const r3 = await postUserAuth("/sign-in/email", {
+      email: passEmail,
+      password: "wrongpassword123",
+    });
     const duration3 = performance.now() - start3;
-    expect(err3.statusCode).toBe(401);
-    expect(err3.data.code).toBe("INVALID_CREDENTIALS");
 
-    // D-EP timing delta check (< 150ms difference across execution paths)
-    const maxDuration = Math.max(duration1, duration2, duration3);
-    const minDuration = Math.min(duration1, duration2, duration3);
-    const delta = maxDuration - minDuration;
+    expect(r1.status).toBe(401);
+    expect(r2.status).toBe(401);
+    expect(r3.status).toBe(401);
 
+    const delta =
+      Math.max(duration1, duration2, duration3) -
+      Math.min(duration1, duration2, duration3);
     expect(delta).toBeLessThan(500);
   });
 
-  it("returns identical 200 response for forgot-password regardless of email presence (BR-PWR-02)", async () => {
-    const db = getAppDb();
+  it("returns identical 200 response for request-password-reset regardless of email presence (BR-PWR-02)", async () => {
+    const db = getOwnerDb();
     const passHash = await hashPassword("chuoixanh123");
-    const suffix = Math.floor(Math.random() * 900_000 + 100_000).toString();
+    const suffix = `${Date.now()}_${Math.floor(Math.random() * 900_000 + 100_000)}`;
     const existEmail = `exist_${suffix}@example.com`;
     const notExistEmail = `notexist_${suffix}@example.com`;
 
-    await db.insert(users).values({
+    const [u] = await db
+      .insert(users)
+      .values({
+        email: existEmail,
+        passwordHash: passHash,
+        displayName: "Exist User",
+        status: "active",
+      })
+      .returning({ id: users.id });
+    if (u) {
+      await db.insert(userAccounts).values({
+        userId: u.id,
+        providerId: "credential",
+        accountId: String(u.id),
+        password: passHash,
+      });
+    }
+
+    const r1 = await postUserAuth("/request-password-reset", {
       email: existEmail,
-      passwordHash: passHash,
-      displayName: "Exist User",
-      status: "active",
+      redirectTo: "/reset-password",
+    });
+    const r2 = await postUserAuth("/request-password-reset", {
+      email: notExistEmail,
+      redirectTo: "/reset-password",
     });
 
-    const { default: forgotHandler } = await import(
-      "#server/api/guest/auth/users/forgot-password.post"
-    );
-
-    const event1 = {
-      method: "POST",
-      node: { req: { headers: { "x-forwarded-for": "127.0.0.1" } } },
-      context: { body: { email: existEmail } },
-    } as any;
-    const res1 = await forgotHandler(event1);
-
-    const event2 = {
-      method: "POST",
-      node: { req: { headers: { "x-forwarded-for": "127.0.0.1" } } },
-      context: { body: { email: notExistEmail } },
-    } as any;
-    const res2 = await forgotHandler(event2);
-
-    expect(res1).toEqual(res2);
-    expect(res1).toEqual({ ok: true });
+    expect(r1.status).toBe(200);
+    expect(r2.status).toBe(200);
+    expect(r1.payload.status).toBe(true);
+    expect(r2.payload.status).toBe(true);
   });
 
   it("does not leak social provider name when registration collides with existing social user (BR-REG-10)", async () => {
-    const db = getAppDb();
-    const suffix = Math.floor(Math.random() * 900_000 + 100_000).toString();
+    const db = getOwnerDb();
+    const suffix = `${Date.now()}_${Math.floor(Math.random() * 900_000 + 100_000)}`;
     const googleEmail = `google_only_${suffix}@example.com`;
 
     const [socialUser] = await db
@@ -166,41 +169,24 @@ describe("Task 5 — Identity Disclosure Prevention Test Suite (D-EP)", () => {
         displayName: "Google User",
         status: "active",
       })
-      .returning();
-
-    await db.insert(socialIdentities).values({
-      userId: socialUser.id,
-      provider: "google",
-      providerUserId: `sub_${suffix}`,
-    });
-
-    const { default: registerHandler } = await import(
-      "#server/api/guest/auth/users/register.post"
-    );
-
-    const event = {
-      method: "POST",
-      node: { req: { headers: { "x-forwarded-for": "127.0.0.1" } } },
-      context: {
-        body: {
-          email: googleEmail,
-          password: "password123",
-          display_name: "Attacker",
-          accept_terms: true,
-          accept_privacy: true,
-        },
-      },
-    } as any;
-
-    let err: any;
-    try {
-      await registerHandler(event);
-    } catch (e) {
-      err = e;
+      .returning({ id: users.id });
+    if (socialUser) {
+      await db.insert(userAccounts).values({
+        userId: socialUser.id,
+        providerId: "google",
+        accountId: `sub_${suffix}`,
+      });
     }
 
-    expect(err.statusCode).toBe(409);
-    expect(err.data.code).toBe("EMAIL_ALREADY_REGISTERED");
-    expect(JSON.stringify(err)).not.toContain("google");
+    const res = await postUserAuth("/sign-up/email", {
+      name: "Attacker",
+      email: googleEmail,
+      password: "StrongPassword123!",
+      accept_terms: true,
+      accept_privacy: true,
+    });
+
+    expect(res.status).toBeGreaterThanOrEqual(400);
+    expect(JSON.stringify(res.payload).toLowerCase()).not.toContain("google");
   });
 });

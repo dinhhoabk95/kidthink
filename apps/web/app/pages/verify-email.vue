@@ -221,8 +221,17 @@
 <script lang="ts" setup>
   import { normalizeApiError } from "@mindkid/errors/client";
   import { computed, onMounted, ref } from "vue";
-  import { definePageMeta, useRoute, useRouter, useSeoMeta } from "#imports";
+  import {
+    definePageMeta,
+    useRoute,
+    useRouter,
+    useSeoMeta,
+  } from "#imports";
   import { useApi } from "~/composables/use-api";
+  import {
+    useUserAuthClient,
+    useUserSession,
+  } from "~/composables/use-auth-client";
 
   definePageMeta({
     layout: false,
@@ -243,22 +252,15 @@
     message: string;
   }
 
-  interface VerifyEmailResponse {
-    status: string;
-    already_verified?: boolean;
-    already_active?: boolean;
-  }
-
-  interface ResendVerificationResponse {
-    ok: boolean;
-  }
-
   const INVALID_TOKEN_MESSAGE =
     "Liên kết xác thực không hợp lệ. Vui lòng kiểm tra lại hộp thư hoặc yêu cầu gửi lại liên kết mới.";
   const EXPIRED_TOKEN_MESSAGE =
     "Liên kết xác thực đã hết hạn (hiệu lực 24 giờ). Bạn có thể yêu cầu gửi lại liên kết mới bên dưới.";
 
   const api = useApi();
+  const authClient = useUserAuthClient();
+  const { user: currentSessionUser, fetch: refreshUserSession } =
+    useUserSession();
   const route = useRoute();
   const router = typeof useRouter === "function" ? useRouter() : null;
 
@@ -325,29 +327,26 @@
     }
 
     try {
-      const res = await api<VerifyEmailResponse>(
-        "/api/guest/auth/users/verify-email",
-        {
-          method: "POST",
-          body: { token: token.value },
-        }
-      );
+      const res = await authClient.verifyEmail({
+        query: { token: token.value },
+      });
 
-      if (res.already_verified === true || res.already_active === true) {
-        state.value = "already_active";
-        await navigateToTarget("/me");
+      if (res.error) {
+        const code = res.error.code ?? "";
+        if (code === "TOKEN_EXPIRED" || res.error.status === 410) {
+          state.value = "expired";
+          errorMessage.value = EXPIRED_TOKEN_MESSAGE;
+          return;
+        }
+        state.value = "invalid";
+        errorMessage.value = INVALID_TOKEN_MESSAGE;
         return;
       }
 
+      await refreshUserSession();
       state.value = "verified";
       await navigateToTarget("/me/children/create");
-    } catch (err) {
-      const apiErr = normalizeApiError(err);
-      if (apiErr.code === "TOKEN_EXPIRED" || apiErr.statusCode === 410) {
-        state.value = "expired";
-        errorMessage.value = EXPIRED_TOKEN_MESSAGE;
-        return;
-      }
+    } catch {
       state.value = "invalid";
       errorMessage.value = INVALID_TOKEN_MESSAGE;
     }
@@ -358,26 +357,31 @@
     resendSuccessMessage.value = "";
     resendErrorMessage.value = "";
 
-    const trimmedEmail = resendEmail.value.trim();
-    const payload = trimmedEmail ? { email: trimmedEmail } : {};
+    const targetEmail =
+      resendEmail.value.trim() || currentSessionUser.value?.email || "";
+    if (!targetEmail) {
+      resendErrorMessage.value =
+        "Vui lòng nhập địa chỉ email hợp lệ để nhận lại liên kết xác thực.";
+      isResending.value = false;
+      return;
+    }
 
     try {
-      await api<ResendVerificationResponse>(
-        "/api/users/auth/resend-verification",
-        {
-          method: "POST",
-          body: payload,
-        }
-      );
+      const res = await authClient.sendVerificationEmail({
+        email: targetEmail,
+        callbackURL: "/verify-email",
+      });
+      if (res.error && res.error.status === 429) {
+        resendErrorMessage.value =
+          res.error.message ||
+          "Bạn đã gửi quá nhiều yêu cầu. Vui lòng thử lại sau ít phút.";
+        return;
+      }
       resendSuccessMessage.value =
         "Nếu tài khoản đang chờ xác thực, chúng tôi đã gửi liên kết mới vào hộp thư của bạn.";
-    } catch (err) {
-      const apiErr = normalizeApiError(err);
+    } catch {
       resendErrorMessage.value =
-        apiErr.code === "VALIDATION_ERROR"
-          ? "Vui lòng nhập địa chỉ email hợp lệ để nhận lại liên kết xác thực."
-          : apiErr.message ||
-            "Không thể gửi lại email xác thực lúc này. Vui lòng thử lại sau.";
+        "Không thể gửi lại email xác thực lúc này. Vui lòng thử lại sau.";
     } finally {
       isResending.value = false;
     }

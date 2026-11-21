@@ -28,7 +28,7 @@
         </p>
       </div>
 
-      <!-- Social Login Buttons (BR-REG-11) -->
+      <!-- Social Signup Buttons (BR-REG-11, BR-SCL-01) -->
       <div class="mb-6 flex flex-col gap-3">
         <button
           class="flex min-h-11 w-full items-center justify-center gap-2.5 rounded-2xl border-2 border-surface-200 bg-surface-50 px-4 py-2.5 text-base font-semibold text-surface-800 transition-all hover:border-surface-300 hover:bg-surface-100 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 dark:border-surface-700 dark:bg-surface-800/80 dark:text-surface-100 dark:hover:bg-surface-700"
@@ -36,7 +36,7 @@
           v-for="provider in OAUTH_PROVIDERS"
           :key="provider.id"
           :disabled="isLoading"
-          @click="startOAuth(provider.id)"
+          @click="startSocialSignup(provider.id)"
         >
           <UIcon class="h-5 w-5 shrink-0" :name="provider.icon" />
           <span>Đăng ký với {{ provider.name }}</span>
@@ -49,7 +49,7 @@
             />
           </div>
           <span
-            class="relative bg-white px-3 text-xs font-semibold text-surface-500 dark:bg-surface-800 dark:text-surface-400"
+            class="relative bg-white px-3 text-sm font-semibold text-surface-500 dark:bg-surface-800 dark:text-surface-400"
           >
             hoặc đăng ký bằng email
           </span>
@@ -71,7 +71,7 @@
         }}</span>
       </div>
 
-      <!-- Register Form (BR-REG-01: 3 fields) -->
+      <!-- Register Form (BR-REG-01: 3 fields + 2 consent checkboxes) -->
       <form class="flex flex-col gap-4" @submit.prevent="handleRegister">
         <div class="flex flex-col gap-1.5">
           <label
@@ -241,6 +241,7 @@
     useUserSession,
   } from "#imports";
   import { useApi } from "~/composables/use-api";
+  import { useUserAuthClient } from "~/composables/use-auth-client";
 
   definePageMeta({
     layout: false,
@@ -270,23 +271,15 @@
     privacy: { requirement_at: string | null };
   }
 
-  interface RegisterApiResponse {
-    user: {
-      uuid: string;
-      displayName: string;
-      status: string;
-    };
-  }
-
   const route = useRoute();
   const router = useRouter();
   const apiFetch = useApi();
+  const authClient = useUserAuthClient();
   const { fetch: fetchSession } = useUserSession();
 
   const isLoading = ref(false);
   const errorMessage = ref("");
 
-  // Form inputs
   const regName = ref("");
   const regEmail = ref("");
   const regPassword = ref("");
@@ -306,9 +299,12 @@
     return "/login";
   });
 
-  function startOAuth(providerId: string) {
-    const returnTo = encodeURIComponent(targetDestination.value);
-    window.location.href = `/api/guest/auth/oauth/${providerId}/start?intent=login&return_to=${returnTo}`;
+  function resolvePostSignupDestination(): string {
+    const dest = targetDestination.value;
+    if (dest.startsWith("/play")) {
+      return `/me/children/create?redirect=${encodeURIComponent(dest)}`;
+    }
+    return dest;
   }
 
   async function fetchActiveConsentRequirements(): Promise<ConsentRequirementsResponse> {
@@ -317,9 +313,56 @@
     );
   }
 
+  async function startSocialSignup(
+    providerId: "google" | "facebook"
+  ): Promise<void> {
+    if (!(acceptTerms.value && acceptPrivacy.value)) {
+      const dest = targetDestination.value;
+      await router.push(
+        `/register/consent?provider=${providerId}&redirect=${encodeURIComponent(dest)}`
+      );
+      return;
+    }
+
+    errorMessage.value = "";
+    isLoading.value = true;
+    try {
+      const consentReqs = await fetchActiveConsentRequirements();
+      await apiFetch("/api/guest/auth/users/social-consent", {
+        method: "POST",
+        body: {
+          accept_terms: true,
+          accept_privacy: true,
+          terms_requirement_at: consentReqs.terms.requirement_at,
+          privacy_requirement_at: consentReqs.privacy.requirement_at,
+        },
+        credentials: "include",
+      });
+
+      const res = await authClient.signIn.social({
+        provider: providerId,
+        requestSignUp: true,
+        callbackURL: resolvePostSignupDestination(),
+        errorCallbackURL: "/login?error=social_conflict",
+      });
+      if (res.error) {
+        errorMessage.value =
+          res.error.message ||
+          `Không thể khởi tạo đăng ký với ${providerId}.`;
+      }
+    } catch (err) {
+      errorMessage.value = parseRegisterError(
+        typeof err === "object" ? err : null
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   function parseRegisterError(err: Error | object | null): string {
     if (
       isApiError(err, "EMAIL_ALREADY_REGISTERED") ||
+      isApiError(err, "USER_ALREADY_EXISTS") ||
       (isApiError(err) && err.statusCode === 409)
     ) {
       return "Email này đã được đăng ký tài khoản. Vui lòng chuyển sang trang Đăng nhập hoặc sử dụng tính năng Quên mật khẩu.";
@@ -336,7 +379,7 @@
     return "Đăng ký không thành công. Vui lòng kiểm tra lại thông tin và thử lại.";
   }
 
-  async function handleRegister() {
+  async function handleRegister(): Promise<void> {
     if (!(acceptTerms.value && acceptPrivacy.value)) {
       errorMessage.value =
         "Vui lòng đồng ý với Điều khoản sử dụng và Chính sách quyền riêng tư để tiếp tục.";
@@ -349,30 +392,43 @@
     try {
       const consentReqs = await fetchActiveConsentRequirements();
 
-      await apiFetch<RegisterApiResponse>("/api/guest/auth/users/register", {
-        method: "POST",
-        body: {
-          display_name: regName.value,
+      const res = await authClient.signUp.email(
+        {
+          name: regName.value,
           email: regEmail.value,
           password: regPassword.value,
-          accept_terms: true,
-          accept_privacy: true,
-          terms_requirement_at: consentReqs.terms.requirement_at,
-          privacy_requirement_at: consentReqs.privacy.requirement_at,
         },
-        credentials: "include",
-      });
+        {
+          body: {
+            name: regName.value,
+            email: regEmail.value,
+            password: regPassword.value,
+            accept_terms: true,
+            accept_privacy: true,
+            terms_requirement_at: consentReqs.terms.requirement_at,
+            privacy_requirement_at: consentReqs.privacy.requirement_at,
+          },
+        }
+      );
+
+      if (res.error) {
+        const code = res.error.code ?? "";
+        if (
+          code === "USER_ALREADY_EXISTS" ||
+          code === "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL"
+        ) {
+          errorMessage.value =
+            "Email này đã được đăng ký tài khoản. Vui lòng chuyển sang trang Đăng nhập hoặc sử dụng tính năng Quên mật khẩu.";
+        } else {
+          errorMessage.value =
+            res.error.message ||
+            "Đăng ký không thành công. Vui lòng kiểm tra lại thông tin và thử lại.";
+        }
+        return;
+      }
 
       await fetchSession();
-
-      const dest = targetDestination.value;
-      if (dest.startsWith("/play")) {
-        await router.push(
-          `/me/children/create?redirect=${encodeURIComponent(dest)}`
-        );
-      } else {
-        await router.push(dest);
-      }
+      await router.push(resolvePostSignupDestination());
     } catch (err) {
       errorMessage.value = parseRegisterError(
         typeof err === "object" ? err : null

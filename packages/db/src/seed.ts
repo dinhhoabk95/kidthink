@@ -1,9 +1,9 @@
 import { hashPassword } from "@mindkid/auth";
-import { getOwnerDb } from "./client.ts";
-import { entitlementKeys, packages } from "./schema/billing.ts";
-import { consentRequirements, managers } from "./schema/identity.ts";
-import { seedInitialAccounts } from "./seed-accounts.ts";
-import { SEED_ENTITLEMENT_KEYS, SEED_PACKAGES } from "./seed-catalog.ts";
+import { getOwnerDb } from "#src/client";
+import { entitlementKeys, packages } from "#src/schema/billing";
+import { consentRequirements, managers } from "#src/schema/identity";
+import { seedInitialAccounts } from "#src/seed-accounts";
+import { SEED_ENTITLEMENT_KEYS, SEED_PACKAGES } from "#src/seed-catalog";
 
 export async function seed() {
   const db = getOwnerDb();

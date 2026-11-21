@@ -1,11 +1,11 @@
-import { MfaLockedError, TokenExpiredError } from "@mindkid/errors/auth";
+import { MfaLockedError } from "@mindkid/errors/auth";
+import { ServiceUnavailableError } from "@mindkid/errors/common";
 import { describe, expect, it } from "vitest";
 import {
   InMemoryRedisClient,
   MFA_LOCK_SECONDS,
   MFA_MAX_FAILURES,
   MfaAttemptGuard,
-  MfaChallengeService,
 } from "#src/index";
 
 describe("UC-052 BR-013 khoá 5 lần sai / 15 phút", () => {
@@ -59,23 +59,13 @@ describe("UC-052 BR-013 khoá 5 lần sai / 15 phút", () => {
       guard.assertNotLocked("user", 1, new Date(t0.getTime() + 901_000))
     ).resolves.toBeUndefined();
   });
-});
 
-describe("UC-052 A1 peekChallenge giữ thử thách để nhập lại mã", () => {
-  it("peek không tiêu thụ; consume xong thì peek ném TokenExpiredError", async () => {
-    const service = new MfaChallengeService(new InMemoryRedisClient());
-    const created = await service.createChallenge({
-      namespace: "user",
-      accountId: 3,
-      displayName: "U",
-    });
-    const first = await service.peekChallenge("user", created.challengeToken);
-    const second = await service.peekChallenge("user", created.challengeToken);
-    expect(first.accountId).toBe(3);
-    expect(second.accountId).toBe(3);
-    await service.consumeChallenge("user", created.challengeToken);
-    await expect(
-      service.peekChallenge("user", created.challengeToken)
-    ).rejects.toBeInstanceOf(TokenExpiredError);
+  it("BR-AUT-31: Redis outage ném ServiceUnavailableError (fail-closed)", async () => {
+    const redis = new InMemoryRedisClient();
+    redis.setFailMode(true);
+    const guard = new MfaAttemptGuard(redis);
+    await expect(guard.assertNotLocked("user", 1)).rejects.toBeInstanceOf(
+      ServiceUnavailableError
+    );
   });
 });

@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import {
   bigint,
   index,
@@ -7,7 +8,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { childProfiles } from "./child.ts";
-import { timestamps } from "./columns.ts";
+import { idPk, timestamps } from "./columns.ts";
 import { playSessions } from "./play.ts";
 
 /**
@@ -20,9 +21,7 @@ import { playSessions } from "./play.ts";
 export const childStickers = pgTable(
   "child_stickers",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     childProfileId: bigint("child_profile_id", { mode: "number" })
       .notNull()
       .references(() => childProfiles.id, { onDelete: "cascade" }),
@@ -38,11 +37,14 @@ export const childStickers = pgTable(
     ...timestamps(),
   },
   (table) => [
-    // Một sticker cho mỗi lượt chơi — `BR-STK-01`.
+    // Một sticker cho mỗi lượt chơi (`BR-STK-01`); tiền tố child_profile_id
+    // đã phủ mọi truy vấn danh sách sticker của trẻ.
     unique("uq_child_stickers_play").on(
       table.childProfileId,
       table.playSessionId
     ),
-    index("idx_child_stickers_child").on(table.childProfileId),
+    index("idx_child_stickers_play_session_id")
+      .on(table.playSessionId)
+      .where(sql`${table.playSessionId} IS NOT NULL`),
   ]
 );

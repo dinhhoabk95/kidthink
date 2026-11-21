@@ -2,7 +2,6 @@ import { sql } from "drizzle-orm";
 import {
   bigint,
   boolean,
-  check,
   index,
   pgEnum,
   pgTable,
@@ -14,8 +13,9 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { childProfiles } from "./child.ts";
-import { timestamps } from "./columns.ts";
+import { idPk, timestamps } from "./columns.ts";
 import { accessTierEnum } from "./game.ts";
+import { contentEntityTypeEnum } from "./tagging.ts";
 
 export const programTypeEnum = pgEnum("program_type", ["age_based", "journey"]);
 
@@ -32,37 +32,24 @@ export const curriculumProgressStatusEnum = pgEnum(
   ["not_started", "in_progress", "completed", "skipped"]
 );
 
-export const curricula = pgTable(
-  "curricula",
-  {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
-    code: varchar("code", { length: 50 }).notNull().unique(),
-    programType: programTypeEnum("program_type").notNull().default("age_based"),
-    targetAgeMin: smallint("target_age_min"),
-    targetAgeMax: smallint("target_age_max"),
-    durationWeeks: smallint("duration_weeks").notNull().default(8),
-    sessionsPerWeek: smallint("sessions_per_week").notNull().default(3),
-    title: varchar("title", { length: 200 }).notNull(),
-    description: text("description"),
-    accessTier: accessTierEnum("access_tier").notNull(),
-    ...timestamps(),
-  },
-  (table) => [
-    check(
-      "check_curricula_code_format",
-      sql`${table.code} ~ '^CUR-[A-Za-z0-9_-]+$'`
-    ),
-  ]
-);
+export const curricula = pgTable("curricula", {
+  id: idPk(),
+  code: varchar("code", { length: 50 }).notNull().unique(),
+  programType: programTypeEnum("program_type").notNull().default("age_based"),
+  targetAgeMin: smallint("target_age_min"),
+  targetAgeMax: smallint("target_age_max"),
+  durationWeeks: smallint("duration_weeks").notNull().default(8),
+  sessionsPerWeek: smallint("sessions_per_week").notNull().default(3),
+  title: varchar("title", { length: 200 }).notNull(),
+  description: text("description"),
+  accessTier: accessTierEnum("access_tier").notNull(),
+  ...timestamps(),
+});
 
 export const curriculumWeeks = pgTable(
   "curriculum_weeks",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     curriculumId: bigint("curriculum_id", { mode: "number" })
       .notNull()
       .references(() => curricula.id, { onDelete: "cascade" }),
@@ -81,16 +68,14 @@ export const curriculumWeeks = pgTable(
 export const curriculumItems = pgTable(
   "curriculum_items",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     curriculumId: bigint("curriculum_id", { mode: "number" })
       .notNull()
       .references(() => curricula.id, { onDelete: "cascade" }),
     weekNo: smallint("week_no").notNull(),
     sessionNo: smallint("session_no").notNull(),
     position: smallint("position").notNull(),
-    entityType: varchar("entity_type", { length: 50 }).notNull(),
+    entityType: contentEntityTypeEnum("entity_type").notNull(),
     entityId: bigint("entity_id", { mode: "number" }).notNull(),
     isRequired: boolean("is_required").notNull().default(true),
     ...timestamps(),
@@ -98,7 +83,6 @@ export const curriculumItems = pgTable(
   (table) => [
     // Cặp đa hình: index, không khoá ngoại (BR-DM-04).
     index("idx_curriculum_items_entity").on(table.entityType, table.entityId),
-
     unique("curriculum_items_curriculum_week_session_pos_unique").on(
       table.curriculumId,
       table.weekNo,
@@ -111,15 +95,13 @@ export const curriculumItems = pgTable(
 export const curriculumEnrollments = pgTable(
   "curriculum_enrollments",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     childId: bigint("child_id", { mode: "number" })
       .notNull()
       .references(() => childProfiles.id, { onDelete: "cascade" }),
     curriculumId: bigint("curriculum_id", { mode: "number" })
       .notNull()
-      .references(() => curricula.id),
+      .references(() => curricula.id, { onDelete: "restrict" }),
     enrolledAt: timestamp("enrolled_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
@@ -141,9 +123,7 @@ export const curriculumEnrollments = pgTable(
 export const curriculumItemProgress = pgTable(
   "curriculum_item_progress",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     enrollmentId: bigint("enrollment_id", { mode: "number" })
       .notNull()
       .references(() => curriculumEnrollments.id, { onDelete: "cascade" }),
@@ -165,6 +145,7 @@ export const curriculumItemProgress = pgTable(
       table.curriculumItemId
     ),
     index("idx_curriculum_item_progress_child_id").on(table.childId),
+    index("idx_curriculum_item_progress_item_id").on(table.curriculumItemId),
     index("idx_curriculum_item_progress_enrollment_status").on(
       table.enrollmentId,
       table.status

@@ -1,15 +1,34 @@
 // @vitest-environment happy-dom
-import { ApiError } from "@mindkid/errors/client";
 import { flushPromises, mount, type VueWrapper } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { ref } from "vue";
 
 const pageMetaMock = vi.fn();
 const fetchMock = vi.fn();
 const routerPushMock = vi.fn();
+const verifyEmailMock = vi.fn();
+const sendVerificationEmailMock = vi.fn();
+const refreshUserSessionMock = vi.fn();
+const currentSessionUser = ref<{ email: string } | null>(null);
 const routeState = {
   path: "/verify-email",
   query: {} as Record<string, string>,
 };
+
+vi.mock("~/composables/use-api", () => ({
+  useApi: () => fetchMock,
+}));
+
+vi.mock("~/composables/use-auth-client", () => ({
+  useUserAuthClient: () => ({
+    verifyEmail: verifyEmailMock,
+    sendVerificationEmail: sendVerificationEmailMock,
+  }),
+  useUserSession: () => ({
+    user: currentSessionUser,
+    fetch: refreshUserSessionMock,
+  }),
+}));
 
 vi.mock("#imports", () => ({
   definePageMeta: (meta: Record<string, string | string[]>) =>
@@ -54,6 +73,13 @@ describe("Trang xác thực email /verify-email & /xac-thuc (BR-EVF-01..08, #290
     vi.clearAllMocks();
     routeState.path = "/verify-email";
     routeState.query = { token: "valid-token-123" };
+    currentSessionUser.value = null;
+    refreshUserSessionMock.mockResolvedValue(true);
+    verifyEmailMock.mockResolvedValue({ data: { status: true }, error: null });
+    sendVerificationEmailMock.mockResolvedValue({
+      data: { status: true },
+      error: null,
+    });
   });
 
   afterEach(() => {
@@ -62,66 +88,49 @@ describe("Trang xác thực email /verify-email & /xac-thuc (BR-EVF-01..08, #290
   });
 
   it("xác thực token hợp lệ lần đầu và chuyển hướng sang /me/children/create (BR-EVF-08)", async () => {
-    fetchMock.mockImplementation((url: string) => {
-      if (url === "/api/guest/auth/users/verify-email") {
-        return Promise.resolve({
-          status: "active",
-          already_verified: false,
-        });
-      }
-      return Promise.resolve({});
-    });
-
     const page = await mountVerifyEmailPage();
 
-    expect(fetchMock).toHaveBeenCalledWith(
-      "/api/guest/auth/users/verify-email",
-      expect.objectContaining({
-        method: "POST",
-        body: { token: "valid-token-123" },
-      })
-    );
+    expect(verifyEmailMock).toHaveBeenCalledWith({
+      query: { token: "valid-token-123" },
+    });
+    expect(refreshUserSessionMock).toHaveBeenCalled();
     expect(page.find('[data-testid="verify-success"]').exists()).toBe(true);
     expect(routerPushMock).toHaveBeenCalledWith("/me/children/create");
   });
 
-  it("token đã dùng nhưng tài khoản đã active thì điều hướng êm về /me không báo lỗi (BR-EVF-04)", async () => {
-    fetchMock.mockImplementation((url: string) => {
-      if (url === "/api/guest/auth/users/verify-email") {
-        return Promise.resolve({
-          status: "active",
-          already_verified: true,
-        });
-      }
-      return Promise.resolve({});
-    });
+  it("thiếu token trên URL hiển thị lỗi và dùng email từ session để gửi lại khi bỏ trống ô nhập (BR-EVF-04, BR-EVF-07)", async () => {
+    routeState.query = {};
+    currentSessionUser.value = { email: "session.parent@example.com" };
 
     const page = await mountVerifyEmailPage();
 
-    expect(page.find('[data-testid="verify-already-active"]').exists()).toBe(
+    expect(verifyEmailMock).not.toHaveBeenCalled();
+    expect(page.find('[data-testid="verify-error-section"]').exists()).toBe(
       true
     );
-    expect(page.find('[data-testid="verify-error-section"]').exists()).toBe(
-      false
+
+    await page
+      .find('[data-testid="resend-verification-form"]')
+      .trigger("submit.prevent");
+    await flushPromises();
+
+    expect(sendVerificationEmailMock).toHaveBeenCalledWith({
+      email: "session.parent@example.com",
+      callbackURL: "/verify-email",
+    });
+    expect(page.find('[data-testid="resend-success-message"]').exists()).toBe(
+      true
     );
-    expect(routerPushMock).toHaveBeenCalledWith("/me");
   });
 
   it("token hết hạn (410 TOKEN_EXPIRED) hiển thị thông báo thân thiện, không lộ email và cho phép gửi lại (BR-EVF-05, BR-EVF-07)", async () => {
-    fetchMock.mockImplementation((url: string) => {
-      if (url === "/api/guest/auth/users/verify-email") {
-        return Promise.reject(
-          new ApiError({
-            code: "TOKEN_EXPIRED",
-            status: 410,
-            message: "Liên kết xác thực đã hết hạn.",
-          })
-        );
-      }
-      if (url === "/api/users/auth/resend-verification") {
-        return Promise.resolve({ ok: true });
-      }
-      return Promise.resolve({});
+    verifyEmailMock.mockResolvedValue({
+      data: null,
+      error: {
+        code: "TOKEN_EXPIRED",
+        status: 410,
+        message: "Liên kết xác thực đã hết hạn.",
+      },
     });
 
     const page = await mountVerifyEmailPage();
@@ -139,30 +148,23 @@ describe("Trang xác thực email /verify-email & /xac-thuc (BR-EVF-01..08, #290
       .trigger("submit.prevent");
     await flushPromises();
 
-    expect(fetchMock).toHaveBeenCalledWith(
-      "/api/users/auth/resend-verification",
-      expect.objectContaining({
-        method: "POST",
-        body: { email: "parent@example.com" },
-      })
-    );
+    expect(sendVerificationEmailMock).toHaveBeenCalledWith({
+      email: "parent@example.com",
+      callbackURL: "/verify-email",
+    });
     expect(page.find('[data-testid="resend-success-message"]').exists()).toBe(
       true
     );
   });
 
   it("token không hợp lệ (404) hiển thị lỗi chung không tiết lộ email (BR-EVF-05)", async () => {
-    fetchMock.mockImplementation((url: string) => {
-      if (url === "/api/guest/auth/users/verify-email") {
-        return Promise.reject(
-          new ApiError({
-            code: "NOT_FOUND",
-            status: 404,
-            message: "Token không hợp lệ.",
-          })
-        );
-      }
-      return Promise.resolve({});
+    verifyEmailMock.mockResolvedValue({
+      data: null,
+      error: {
+        code: "INVALID_TOKEN",
+        status: 404,
+        message: "Token không hợp lệ.",
+      },
     });
 
     const page = await mountVerifyEmailPage();
@@ -206,6 +208,37 @@ describe("Trang xác thực email /verify-email & /xac-thuc (BR-EVF-01..08, #290
     expect(
       page.find('[data-testid="email-change-verified-banner"]').exists()
     ).toBe(true);
+  });
+
+  it("hiển thị lỗi khi gửi lại quá giới hạn (429) trên trang verify-email", async () => {
+    verifyEmailMock.mockResolvedValue({
+      data: null,
+      error: {
+        code: "INVALID_TOKEN",
+        status: 400,
+        message: "Invalid token",
+      },
+    });
+    sendVerificationEmailMock.mockResolvedValue({
+      data: null,
+      error: {
+        status: 429,
+        message: "Bạn đã gửi quá nhiều yêu cầu.",
+      },
+    });
+
+    const page = await mountVerifyEmailPage();
+    await page
+      .find('[data-testid="resend-email-input"]')
+      .setValue("parent@example.com");
+    await page
+      .find('[data-testid="resend-verification-form"]')
+      .trigger("submit.prevent");
+    await flushPromises();
+
+    expect(page.find('[data-testid="resend-error-message"]').text()).toContain(
+      "Bạn đã gửi quá nhiều yêu cầu."
+    );
   });
 
   it("renderEmailTemplate('email_verification', { url }) hoạt động khi không truyền code (#289 S2)", async () => {

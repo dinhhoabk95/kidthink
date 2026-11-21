@@ -110,10 +110,9 @@
 </template>
 
 <script lang="ts" setup>
-  import { normalizeApiError } from "@mindkid/errors/client";
   import { ref } from "vue";
   import { definePageMeta, useSeoMeta } from "#imports";
-  import { useApi } from "~/composables/use-api";
+  import { useUserAuthClient } from "~/composables/use-auth-client";
 
   definePageMeta({
     layout: false,
@@ -123,7 +122,7 @@
   const FIXED_CONFIRMATION_MESSAGE =
     "Nếu email này đã đăng ký, chúng tôi đã gửi hướng dẫn đặt lại mật khẩu. Vui lòng kiểm tra hộp thư.";
 
-  const api = useApi();
+  const authClient = useUserAuthClient();
   const email = ref("");
   const isSubmitting = ref(false);
   const isSubmitted = ref(false);
@@ -138,15 +137,19 @@
     isSubmitting.value = true;
 
     try {
-      await api("/api/guest/auth/users/forgot-password", {
-        method: "POST",
-        body: { email: email.value },
+      const res = await authClient.requestPasswordReset({
+        email: email.value,
+        redirectTo: "/reset-password",
       });
+      if (res.error && res.error.status === 429) {
+        errorMessage.value =
+          res.error.message ||
+          "Bạn đã gửi quá nhiều yêu cầu. Vui lòng thử lại sau ít phút.";
+        return;
+      }
       isSubmitted.value = true;
-    } catch (err) {
-      const apiErr = normalizeApiError(err);
+    } catch {
       errorMessage.value =
-        apiErr.message ||
         "Không thể gửi yêu cầu lúc này. Vui lòng thử lại sau.";
     } finally {
       isSubmitting.value = false;

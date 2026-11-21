@@ -158,6 +158,22 @@ async function ensureTestDatabase(url: string): Promise<void> {
       ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO mindkid_app;
       REVOKE UPDATE, DELETE, TRUNCATE ON TABLE consent_logs FROM mindkid_app;
       REVOKE UPDATE, DELETE, TRUNCATE ON TABLE audit_logs FROM mindkid_app;
+      REVOKE UPDATE, DELETE, TRUNCATE ON TABLE telemetry_events FROM mindkid_app;
+
+      CREATE OR REPLACE FUNCTION prevent_insert_only_mutation()
+      RETURNS TRIGGER AS $$
+      BEGIN
+        RAISE EXCEPTION 'BR-DM-05 / BR-SIB-06: Table % is INSERT-only; UPDATE and DELETE are forbidden', TG_TABLE_NAME;
+      END;
+      $$ LANGUAGE plpgsql;
+
+      CREATE OR REPLACE TRIGGER trg_prevent_consent_logs_mutation
+        BEFORE UPDATE OR DELETE ON consent_logs
+        FOR EACH ROW EXECUTE FUNCTION prevent_insert_only_mutation();
+
+      CREATE OR REPLACE TRIGGER trg_prevent_audit_logs_mutation
+        BEFORE UPDATE OR DELETE ON audit_logs
+        FOR EACH ROW EXECUTE FUNCTION prevent_insert_only_mutation();
 
       CREATE OR REPLACE FUNCTION prevent_completed_play_session_update()
       RETURNS TRIGGER AS $$

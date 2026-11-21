@@ -7,13 +7,17 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@better-auth/drizzle-adapter": "1.7.27",
+    "@better-auth/passkey": "1.7.27",
     "@mindkid/config": "workspace:*",
     "@mindkid/errors": "workspace:*",
     "@mindkid/shared": "workspace:*",
     "argon2": "^0.45.2",
+    "better-auth": "1.7.27",
+    "drizzle-orm": "1.0.0-rc.5",
     "ioredis": "6.1.0-beta.1",
-    "openid-client": "^6.9.0",
-    "otpauth": "^9.6.0"
+    "vue": "3.6.0-rc.15",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "typescript": "~6.0.3",
@@ -21,6 +25,8 @@
   },
   "exports": {
     ".": "./src/index.ts",
+    "./server": "./src/index.ts",
+    "./client": "./src/client.ts",
     "./redirect-target": "./src/redirect-target.ts"
   },
   "imports": {

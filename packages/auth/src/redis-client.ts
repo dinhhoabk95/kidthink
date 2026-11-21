@@ -1,13 +1,8 @@
 import { requireValkeyUrl } from "@mindkid/config";
 import { Redis } from "ioredis";
-import {
-  type BrowserSessionService,
-  DefaultBrowserSessionService,
-} from "./browser-session";
-import type { MinimalRedisClient } from "./redis-session-store";
+import type { MinimalRedisClient } from "./redis-secondary-storage.js";
 
 let authRedisClient: MinimalRedisClient | undefined;
-let browserSessionService: BrowserSessionService | undefined;
 
 export function getAuthRedisClient(): MinimalRedisClient {
   if (!authRedisClient) {
@@ -20,11 +15,20 @@ export function getAuthRedisClient(): MinimalRedisClient {
     client.on("error", () => {
       /* fail-closed handled per operation */
     });
-    const created: MinimalRedisClient = client;
+    const created: MinimalRedisClient = {
+      get: (key) => client.get(key),
+      getdel: (key) => client.getdel(key),
+      set: (key, value, expiryMode, time) =>
+        expiryMode === "EX" && typeof time === "number"
+          ? client.set(key, value, "EX", time)
+          : client.set(key, value),
+      del: (...keys) => client.del(...keys),
+      incr: (key) => client.incr(key),
+      expire: (key, seconds) => client.expire(key, seconds),
+    };
     client.on("end", () => {
       if (authRedisClient === created) {
         authRedisClient = undefined;
-        browserSessionService = undefined;
       }
     });
     authRedisClient = created;
@@ -35,14 +39,4 @@ export function getAuthRedisClient(): MinimalRedisClient {
 
 export function setAuthRedisClient(client: MinimalRedisClient): void {
   authRedisClient = client;
-  browserSessionService = undefined;
-}
-
-export function getBrowserSessionService(): BrowserSessionService {
-  if (!browserSessionService) {
-    browserSessionService = new DefaultBrowserSessionService(
-      getAuthRedisClient()
-    );
-  }
-  return browserSessionService;
 }

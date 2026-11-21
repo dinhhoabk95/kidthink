@@ -1,5 +1,10 @@
 import { verifyPassword } from "@mindkid/auth";
-import { cancelUserDeletion, getOwnerDb, users } from "@mindkid/db";
+import {
+  cancelUserDeletion,
+  getOwnerDb,
+  userAccounts,
+  users,
+} from "@mindkid/db";
 import {
   AccountPurgedError,
   AccountSuspendedError,
@@ -10,7 +15,7 @@ import {
 } from "@mindkid/errors/auth";
 import { NotFoundError } from "@mindkid/errors/common";
 import { InvalidStatusTransitionError } from "@mindkid/errors/content";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import type { H3Event } from "h3";
 import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
@@ -61,15 +66,27 @@ async function resolveTargetUserId(
 
   // UC-027 BR-003: không phiên thì bắt buộc xác minh bằng mật khẩu. Thiếu mật
   // khẩu hoặc tài khoản không có mật khẩu đều bị từ chối, không đổi gì.
-  if (!foundUser?.passwordHash) {
+  let storedHash = foundUser?.passwordHash ?? null;
+  if (foundUser && !storedHash) {
+    const [cred] = await db
+      .select({ password: userAccounts.password })
+      .from(userAccounts)
+      .where(
+        and(
+          eq(userAccounts.userId, foundUser.id),
+          eq(userAccounts.providerId, "credential")
+        )
+      )
+      .limit(1);
+    storedHash = cred?.password ?? null;
+  }
+
+  if (!(foundUser && storedHash)) {
     await verifyPassword(parsed.data.password, DUMMY_HASH).catch(() => false);
     throw new InvalidCredentialsError();
   }
 
-  const isValid = await verifyPassword(
-    parsed.data.password,
-    foundUser.passwordHash
-  );
+  const isValid = await verifyPassword(parsed.data.password, storedHash);
   if (!isValid) {
     throw new InvalidCredentialsError();
   }

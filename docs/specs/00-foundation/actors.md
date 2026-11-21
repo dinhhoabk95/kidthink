@@ -165,14 +165,13 @@ qua `super_admin` khác.
 
 ## 8. API contract
 
-Guard là hàm, không phải route. Contract của guard:
+Guard là hàm server bất đồng bộ gọi trực tiếp Better Auth instance tương ứng (memoize trong phạm vi 1 request):
 
 ```ts
-// SYNC — đọc event.context. ❌ NEVER await.
-function requireUserAuth(event: H3Event): AuthenticatedUser;       // throw 401
-function requireManagerAuth(event: H3Event): AuthenticatedManager; // throw 401
-function requireRole(event: H3Event, role: ManagerRole): void;    // throw 403
-function assertActiveChild(event: H3Event): number;               // throw 428
+async function requireUserSession(event: H3Event): Promise<UserTokenPayload>;       // throw 401
+async function requireManagerSession(event: H3Event): Promise<ManagerTokenPayload>; // throw 401
+async function requireSuperAdminSession(event: H3Event): Promise<ManagerTokenPayload>; // throw 401/403
+function assertActiveChild(event: H3Event): number;                                 // throw 428
 async function hasEntitlement(userId: number, key: string): Promise<boolean>;
 ```
 

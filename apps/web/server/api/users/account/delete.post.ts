@@ -1,18 +1,11 @@
 import { writeAudit } from "@mindkid/audit";
-import {
-  activeSessions,
-  getOwnerDb,
-  requestUserDeletion,
-  users,
-} from "@mindkid/db";
+import { getOwnerDb, requestUserDeletion, users } from "@mindkid/db";
 import { UserAlreadyDeletedError } from "@mindkid/errors/account";
 import { NotFoundError } from "@mindkid/errors/common";
 import { dispatchTransactionalEmail } from "@mindkid/notification";
-import { and, eq, isNull } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { defineEventHandler, deleteCookie, getHeader } from "h3";
-
 import {
-  clearUserRememberCookie,
   getVerifiedRemoteIp,
   requireWebUserSession,
 } from "#server/utils/auth-runtime";
@@ -20,9 +13,8 @@ import { requireReauth } from "#server/utils/reauth-runtime";
 import { revokeAllUserSessions } from "#server/utils/session-revocation";
 
 export default defineEventHandler(async (event) => {
-  const userSession = await requireWebUserSession(event);
-  // BR-ADL-03: Reauth required before deletion
-  await requireReauth(event);
+  const userSession = requireWebUserSession(event);
+  requireReauth(event);
 
   const userId = Number(userSession.user_id);
   const db = getOwnerDb();
@@ -48,17 +40,6 @@ export default defineEventHandler(async (event) => {
   const userAgent = getHeader(event, "user-agent") ?? null;
 
   await db.transaction(async (tx) => {
-    await tx
-      .update(activeSessions)
-      .set({ revokedAt: now })
-      .where(
-        and(
-          eq(activeSessions.accountType, "user"),
-          eq(activeSessions.accountId, userId),
-          isNull(activeSessions.revokedAt)
-        )
-      );
-
     await writeAudit(tx, {
       actor_type: "user",
       actor_id: userId,
@@ -76,17 +57,14 @@ export default defineEventHandler(async (event) => {
     });
   });
 
-  // BR-ADL-01: Thu hồi toàn bộ phiên đăng nhập Redis và xoá cookie
   await revokeAllUserSessions(userId);
-  if (typeof clearUserSession === "function") {
-    await clearUserSession(event).catch(() => null);
-  }
-  clearUserRememberCookie(event);
-
-  // Clear active_child_id cookie
+  deleteCookie(event, "mindkid-user.session_token", { path: "/" });
+  deleteCookie(event, "__Secure-mindkid-user.session_token", {
+    path: "/",
+    secure: true,
+  });
   deleteCookie(event, "active_child_id", { path: "/" });
 
-  // Enqueue confirmation email with cancellation link (BR-ADL-01, BR-ADL-02)
   await dispatchTransactionalEmail({
     recipientType: "user",
     recipientId: userId,

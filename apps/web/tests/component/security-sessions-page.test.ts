@@ -1,15 +1,70 @@
 // @vitest-environment happy-dom
 import { flushPromises, mount, type VueWrapper } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { ref } from "vue";
 
 const pageMetaMock = vi.fn();
 const useHeadMock = vi.fn();
 const fetchMock = vi.fn();
 const routerPushMock = vi.fn();
+const getSessionMock = vi.fn();
+const listSessionsMock = vi.fn();
+const listUserPasskeysMock = vi.fn();
+const revokeSessionMock = vi.fn();
+const revokeSessionsMock = vi.fn();
+const signOutMock = vi.fn();
+const clearSessionMock = vi.fn();
+
+const mockSessionState = ref({
+  user: {
+    id: "1",
+    user_id: 1,
+    email: "parent@example.com",
+    name: "Phụ Huynh",
+    display_name: "Phụ Huynh",
+    email_verified: true,
+    two_factor_enabled: false,
+  },
+  id: "sess-current",
+  token: "tok-current",
+});
+
+vi.mock("~/composables/use-api", () => ({
+  useApi: () => fetchMock,
+}));
+
+vi.mock("~/composables/use-auth-client", () => ({
+  useUserAuthClient: () => ({
+    getSession: getSessionMock,
+    listSessions: listSessionsMock,
+    revokeSession: revokeSessionMock,
+    revokeSessions: revokeSessionsMock,
+    signOut: signOutMock,
+    passkey: {
+      listUserPasskeys: listUserPasskeysMock,
+      addPasskey: vi.fn(),
+      deletePasskey: vi.fn(),
+    },
+    twoFactor: {
+      enable: vi.fn(),
+      verifyTotp: vi.fn(),
+      disable: vi.fn(),
+      generateBackupCodes: vi.fn(),
+    },
+  }),
+  useUserSession: () => ({
+    session: mockSessionState,
+    clear: clearSessionMock,
+  }),
+}));
 
 vi.mock("#imports", () => ({
+  definePageMeta: (meta: Record<string, string | string[]>) =>
+    pageMetaMock(meta),
   useRoute: () => ({ path: "/me/settings/security" }),
+  useRouter: () => ({ push: routerPushMock }),
   useSeoMeta: vi.fn(),
+  useState: <T>(_key: string, init: () => T) => ref(init()),
 }));
 
 vi.stubGlobal("definePageMeta", pageMetaMock);
@@ -64,38 +119,55 @@ async function mountAccountLayout(): Promise<VueWrapper> {
 describe("Quản lý phiên đăng nhập & Đăng xuất (/me/settings/security & layouts/account.vue, BR-LGN-04, BR-LGN-05, BR-LGN-10, #290 S5)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    clearSessionMock.mockResolvedValue(undefined);
+    getSessionMock.mockResolvedValue({
+      data: {
+        user: { id: "1", email: "parent@example.com" },
+        session: { id: "sess-current", token: "tok-current" },
+      },
+      error: null,
+    });
+    listSessionsMock.mockResolvedValue({
+      data: [
+        {
+          id: "sess-current",
+          token: "tok-current",
+          userAgent:
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/125.0.0.0 Safari/537.36",
+          ipAddress: "113.161.72.99",
+          authMethod: "password",
+          createdAt: "2026-10-18T10:00:00.000Z",
+          updatedAt: "2026-10-18T11:00:00.000Z",
+        },
+        {
+          id: "sess-other",
+          token: "tok-other",
+          userAgent:
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) Safari/605.1.15",
+          ipAddress: "2001:ee0:4f89:1234::1",
+          authMethod: "google",
+          createdAt: "2026-10-17T08:00:00.000Z",
+          updatedAt: "2026-10-17T09:30:00.000Z",
+        },
+      ],
+      error: null,
+    });
+    listUserPasskeysMock.mockResolvedValue({ data: [], error: null });
+    revokeSessionMock.mockResolvedValue({
+      data: { status: true },
+      error: null,
+    });
+    revokeSessionsMock.mockResolvedValue({
+      data: { status: true },
+      error: null,
+    });
+    signOutMock.mockResolvedValue({ data: { success: true }, error: null });
+
     fetchMock.mockImplementation((url: string) => {
-      if (url === "/api/users/mfa/status") {
+      if (url === "/api/users/profile") {
         return Promise.resolve({
-          enabled: false,
-          confirmed_at: null,
-          recovery_codes_remaining: 0,
-        });
-      }
-      if (url === "/api/users/auth/sessions") {
-        return Promise.resolve({
-          sessions: [
-            {
-              id: "sess-current",
-              deviceLabel:
-                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/125.0.0.0 Safari/537.36",
-              ipAddress: "113.161.72.99",
-              authMethod: "password",
-              createdAt: "2026-10-18T10:00:00.000Z",
-              lastUsedAt: "2026-10-18T11:00:00.000Z",
-              isCurrent: true,
-            },
-            {
-              id: "sess-other",
-              deviceLabel:
-                "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) Safari/605.1.15",
-              ipAddress: "2001:ee0:4f89:1234::1",
-              authMethod: "google",
-              createdAt: "2026-10-17T08:00:00.000Z",
-              lastUsedAt: "2026-10-17T09:30:00.000Z",
-              isCurrent: false,
-            },
-          ],
+          two_factor_enabled: false,
+          two_factor_confirmed_at: null,
         });
       }
       if (url.startsWith("/api/users/notifications")) {
@@ -147,7 +219,7 @@ describe("Quản lý phiên đăng nhập & Đăng xuất (/me/settings/security
     expect(secondLoc).not.toContain("2001:ee0");
   });
 
-  it("thu hồi phiên đăng nhập đơn lẻ qua DELETE /api/users/auth/sessions/:id", async () => {
+  it("thu hồi phiên đăng nhập đơn lẻ qua authClient.revokeSession", async () => {
     const page = await mountSecurityPage();
 
     const revokeBtn = page.find(
@@ -158,16 +230,11 @@ describe("Quản lý phiên đăng nhập & Đăng xuất (/me/settings/security
     await revokeBtn.trigger("click");
     await flushPromises();
 
-    expect(fetchMock).toHaveBeenCalledWith(
-      "/api/users/auth/sessions/sess-other",
-      expect.objectContaining({
-        method: "DELETE",
-      })
-    );
+    expect(revokeSessionMock).toHaveBeenCalledWith({ token: "tok-other" });
     expect(page.findAll('[data-testid="session-row"]')).toHaveLength(1);
   });
 
-  it("đăng xuất mọi thiết bị yêu cầu reauth mật khẩu trước khi gọi POST /api/users/auth/logout-all (BR-LGN-04)", async () => {
+  it("đăng xuất mọi thiết bị yêu cầu reauth mật khẩu trước khi gọi authClient.revokeSessions & signOut (BR-LGN-04)", async () => {
     const page = await mountSecurityPage();
 
     await page
@@ -194,17 +261,13 @@ describe("Quản lý phiên đăng nhập & Đăng xuất (/me/settings/security
         body: { password: "MyCurrentPass123!" },
       })
     );
-    expect(fetchMock).toHaveBeenCalledWith(
-      "/api/users/auth/logout-all",
-      expect.objectContaining({
-        method: "POST",
-        body: {},
-      })
-    );
+    expect(revokeSessionsMock).toHaveBeenCalled();
+    expect(signOutMock).toHaveBeenCalled();
+    expect(clearSessionMock).toHaveBeenCalled();
     expect(routerPushMock).toHaveBeenCalledWith("/login");
   });
 
-  it("layout account hiển thị NotificationBell và nút Đăng xuất gọi POST /api/users/auth/logout (BR-LGN-04)", async () => {
+  it("layout account hiển thị NotificationBell và nút Đăng xuất gọi authClient.signOut (BR-LGN-04)", async () => {
     const layout = await mountAccountLayout();
 
     expect(layout.find('[data-testid="notification-bell-link"]').exists()).toBe(
@@ -217,13 +280,8 @@ describe("Quản lý phiên đăng nhập & Đăng xuất (/me/settings/security
     await logoutBtn.trigger("click");
     await flushPromises();
 
-    expect(fetchMock).toHaveBeenCalledWith(
-      "/api/users/auth/logout",
-      expect.objectContaining({
-        method: "POST",
-        body: {},
-      })
-    );
+    expect(signOutMock).toHaveBeenCalled();
+    expect(clearSessionMock).toHaveBeenCalled();
     expect(routerPushMock).toHaveBeenCalledWith("/login");
   });
 });

@@ -1,4 +1,3 @@
-import { relations } from "drizzle-orm/_relations";
 import {
   bigint,
   boolean,
@@ -8,15 +7,13 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
-import { timestamps } from "./columns.ts";
+import { idPk, timestamps } from "./columns.ts";
 import { users } from "./identity.ts";
 
 export const aiUsageLog = pgTable(
   "ai_usage_log",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     uuid: uuid("uuid").defaultRandom().notNull().unique(),
     userId: bigint("user_id", { mode: "number" })
       .notNull()
@@ -39,13 +36,6 @@ export const aiUsageLog = pgTable(
     ),
   ]
 );
-
-export const aiUsageLogRelations = relations(aiUsageLog, ({ one }) => ({
-  user: one(users, {
-    fields: [aiUsageLog.userId],
-    references: [users.id],
-  }),
-}));
 
 export type AiUsageLogEntry = typeof aiUsageLog.$inferSelect;
 export type NewAiUsageLogEntry = typeof aiUsageLog.$inferInsert;

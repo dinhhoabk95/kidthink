@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getOwnerDb } from "#src/index";
+import { assertSkillMapWeight, getOwnerDb } from "#src/index";
 import {
   contentEntityTypeEnum,
   contentSkillMap,
@@ -9,28 +9,12 @@ import {
 import { skills } from "#src/schema/taxonomy";
 
 describe("Tagging Schema Integration Tests", () => {
-  it("BR-SCT-07: content_skill_map.weight must be > 0 and <= 1", async () => {
-    const db = getOwnerDb();
-
-    // Inserting weight = 1.5 must fail CHECK
-    await expect(
-      db.insert(contentSkillMap).values({
-        entityType: "game_level",
-        entityId: 1,
-        skillId: 1,
-        weight: "1.50",
-      })
-    ).rejects.toThrow();
-
-    // Inserting weight = 0.00 must fail CHECK
-    await expect(
-      db.insert(contentSkillMap).values({
-        entityType: "game_level",
-        entityId: 1,
-        skillId: 1,
-        weight: "0.00",
-      })
-    ).rejects.toThrow();
+  it("BR-SCT-07 & BR-DM-14: content_skill_map.weight must be > 0 and <= 1 via domain validator", () => {
+    expect(() => assertSkillMapWeight("1.50")).toThrow();
+    expect(() => assertSkillMapWeight("0.00")).toThrow();
+    expect(() => assertSkillMapWeight("-0.25")).toThrow();
+    expect(() => assertSkillMapWeight("0.80")).not.toThrow();
+    expect(() => assertSkillMapWeight("1.00")).not.toThrow();
   });
 
   it("BR-SCT-08: content_tag_map and content_skill_map use content_entity_type enum with 2 values", async () => {

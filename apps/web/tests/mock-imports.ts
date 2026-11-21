@@ -1,10 +1,13 @@
-// Mock implementation of #imports (nuxt-auth-utils and Nitro auto-imports) for Vitest
-import { type H3Event, useSession } from "h3";
-import { getUserSessionConfig } from "../server/utils/session-runtime.js";
+import type { H3Event } from "h3";
 
 interface AuthError extends Error {
   statusCode: number;
 }
+
+type MockSessionBag = Record<
+  string,
+  string | number | boolean | object | null | undefined
+>;
 
 function createAuthError(message: string, statusCode: number): AuthError {
   const err = new Error(message) as AuthError;
@@ -12,64 +15,37 @@ function createAuthError(message: string, statusCode: number): AuthError {
   return err;
 }
 
-const sessions = new WeakMap<H3Event, Record<string, unknown>>();
+const sessions = new WeakMap<H3Event, MockSessionBag>();
 
-export async function setUserSession(
+export function setUserSession(
   event: H3Event,
-  data: Record<string, unknown>,
-  config?: ReturnType<typeof getUserSessionConfig>
+  data: MockSessionBag
 ): Promise<void> {
   sessions.set(event, data);
   if (event.context) {
     event.context.userSession = data;
   }
-  try {
-    const session = await useSession(event, config || getUserSessionConfig());
-    await session.update(data);
-  } catch {
-    // ignore
-  }
+  return Promise.resolve();
 }
 
-export async function getUserSession(
-  event: H3Event
-): Promise<Record<string, unknown>> {
+export function getUserSession(event: H3Event): Promise<MockSessionBag> {
   const mem =
     sessions.get(event) ||
-    (event.context?.userSession as Record<string, unknown>);
-  if (mem) {
-    return mem;
-  }
-  try {
-    const session = await useSession(event, getUserSessionConfig());
-    if (session?.data && Object.keys(session.data).length > 0) {
-      return session.data;
-    }
-  } catch {
-    // ignore
-  }
-  return {};
+    (event.context?.userSession as MockSessionBag | undefined);
+  return Promise.resolve(mem ?? {});
 }
 
-export async function clearUserSession(
-  event: H3Event,
-  config?: ReturnType<typeof getUserSessionConfig>
-): Promise<void> {
+export function clearUserSession(event: H3Event): Promise<void> {
   sessions.delete(event);
   if (event.context) {
     event.context.userSession = undefined;
   }
-  try {
-    const session = await useSession(event, config || getUserSessionConfig());
-    await session.clear();
-  } catch {
-    // ignore
-  }
+  return Promise.resolve();
 }
 
 export async function requireUserSession(
   event: H3Event
-): Promise<Record<string, unknown>> {
+): Promise<MockSessionBag> {
   const session = await getUserSession(event);
   if (!session?.user) {
     throw createAuthError("UNAUTHORIZED", 401);
@@ -79,9 +55,9 @@ export async function requireUserSession(
 
 export async function requireManagerSession(
   event: H3Event
-): Promise<Record<string, unknown>> {
+): Promise<MockSessionBag> {
   const session = await getUserSession(event);
-  const user = session?.user as Record<string, unknown> | undefined;
+  const user = session?.user as MockSessionBag | undefined;
   if (!(session?.manager || user?.manager_id)) {
     throw createAuthError("UNAUTHORIZED", 401);
   }
@@ -90,10 +66,10 @@ export async function requireManagerSession(
 
 export async function requireSuperAdminSession(
   event: H3Event
-): Promise<Record<string, unknown>> {
+): Promise<MockSessionBag> {
   const session = await getUserSession(event);
-  const user = session?.user as Record<string, unknown> | undefined;
-  const manager = session?.manager as Record<string, unknown> | undefined;
+  const user = session?.user as MockSessionBag | undefined;
+  const manager = session?.manager as MockSessionBag | undefined;
   const role = manager?.role || user?.role;
   if (!(manager || user?.manager_id)) {
     throw createAuthError("UNAUTHORIZED", 401);

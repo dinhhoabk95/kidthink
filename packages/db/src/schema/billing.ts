@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import {
   bigint,
   boolean,
@@ -13,7 +14,7 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
-import { timestamps } from "./columns.ts";
+import { idPk, timestamps } from "./columns.ts";
 import { managers, users } from "./identity.ts";
 
 export const entitlementGroupEnum = pgEnum("entitlement_group", [
@@ -82,15 +83,13 @@ export const packages = pgTable("packages", {
 export const entitlements = pgTable(
   "entitlements",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     userId: bigint("user_id", { mode: "number" })
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     entitlementKey: varchar("entitlement_key", { length: 60 })
       .notNull()
-      .references(() => entitlementKeys.key),
+      .references(() => entitlementKeys.key, { onDelete: "restrict" }),
     source: entitlementSourceEnum("source").notNull(),
     sourceRef: uuid("source_ref"),
     status: entitlementStatusEnum("status").notNull().default("pending"),
@@ -100,7 +99,7 @@ export const entitlements = pgTable(
     expiresAt: timestamp("expires_at", { withTimezone: true }),
     grantedByManagerId: bigint("granted_by_manager_id", {
       mode: "number",
-    }).references(() => managers.id),
+    }).references(() => managers.id, { onDelete: "set null" }),
     grantReason: text("grant_reason"),
     ...timestamps(),
   },
@@ -114,22 +113,24 @@ export const entitlements = pgTable(
       table.status,
       table.expiresAt
     ),
+    index("idx_entitlements_entitlement_key").on(table.entitlementKey),
+    index("idx_entitlements_granted_by_manager")
+      .on(table.grantedByManagerId)
+      .where(sql`${table.grantedByManagerId} IS NOT NULL`),
   ]
 );
 
 export const paymentOrders = pgTable(
   "payment_orders",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     uuid: uuid("uuid").defaultRandom().notNull().unique(),
     userId: bigint("user_id", { mode: "number" })
       .notNull()
       .references(() => users.id, { onDelete: "restrict" }),
     packageCode: varchar("package_code", { length: 40 })
       .notNull()
-      .references(() => packages.code),
+      .references(() => packages.code, { onDelete: "restrict" }),
     offerCode: varchar("offer_code", { length: 40 }).notNull(),
     amountVnd: bigint("amount_vnd", { mode: "number" }).notNull(),
     currency: varchar("currency", { length: 3 }).notNull().default("VND"),
@@ -141,13 +142,15 @@ export const paymentOrders = pgTable(
     reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
     reviewedByManagerId: bigint("reviewed_by_manager_id", {
       mode: "number",
-    }).references(() => managers.id),
+    }).references(() => managers.id, { onDelete: "set null" }),
     adminNote: text("admin_note"),
     expiresAt: timestamp("expires_at", { withTimezone: true }),
     ...timestamps(),
   },
   (table) => [
-    index("idx_payment_orders_bank_txn_ref").on(table.bankTxnRef),
+    index("idx_payment_orders_bank_txn_ref")
+      .on(table.bankTxnRef)
+      .where(sql`${table.bankTxnRef} IS NOT NULL`),
     index("idx_payment_orders_status_submitted_at").on(
       table.status,
       table.submittedAt
@@ -157,15 +160,17 @@ export const paymentOrders = pgTable(
       table.status,
       table.expiresAt
     ),
+    index("idx_payment_orders_package_code").on(table.packageCode),
+    index("idx_payment_orders_reviewed_by_manager")
+      .on(table.reviewedByManagerId)
+      .where(sql`${table.reviewedByManagerId} IS NOT NULL`),
   ]
 );
 
 export const quotaUsage = pgTable(
   "quota_usage",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     userId: bigint("user_id", { mode: "number" })
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
@@ -193,9 +198,7 @@ export const recurringSubscriptionStatusEnum = pgEnum(
 export const paymentTransactions = pgTable(
   "payment_transactions",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     provider: varchar("provider", { length: 30 }).notNull(),
     providerEventId: varchar("provider_event_id", { length: 120 }).notNull(),
     orderId: bigint("order_id", { mode: "number" }).references(
@@ -214,6 +217,9 @@ export const paymentTransactions = pgTable(
       table.provider,
       table.providerEventId
     ),
+    index("idx_payment_transactions_order_id")
+      .on(table.orderId)
+      .where(sql`${table.orderId} IS NOT NULL`),
     index("idx_payment_transactions_order_uuid").on(table.orderUuid),
     index("idx_payment_transactions_created_at").on(table.createdAt),
   ]
@@ -222,15 +228,13 @@ export const paymentTransactions = pgTable(
 export const recurringSubscriptions = pgTable(
   "recurring_subscriptions",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     userId: bigint("user_id", { mode: "number" })
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     packageCode: varchar("package_code", { length: 40 })
       .notNull()
-      .references(() => packages.code),
+      .references(() => packages.code, { onDelete: "restrict" }),
     offerCode: varchar("offer_code", { length: 40 }).notNull(),
     billingPeriod: varchar("billing_period", { length: 20 }).notNull(),
     priceVnd: bigint("price_vnd", { mode: "number" }).notNull(),
@@ -266,5 +270,6 @@ export const recurringSubscriptions = pgTable(
       table.status,
       table.nextBillingAt
     ),
+    index("idx_recurring_subscriptions_package_code").on(table.packageCode),
   ]
 );

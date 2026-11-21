@@ -38,6 +38,7 @@ try {
     ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO mindkid_app;
     REVOKE UPDATE, DELETE, TRUNCATE ON TABLE consent_logs FROM mindkid_app;
     REVOKE UPDATE, DELETE, TRUNCATE ON TABLE audit_logs FROM mindkid_app;
+    REVOKE UPDATE, DELETE, TRUNCATE ON TABLE telemetry_events FROM mindkid_app;
 
     CREATE OR REPLACE FUNCTION prevent_insert_only_mutation()
     RETURNS TRIGGER AS $$

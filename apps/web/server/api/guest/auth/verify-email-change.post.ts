@@ -1,12 +1,13 @@
-import { getBrowserSessionService, hashSecureToken } from "@mindkid/auth";
-import { getOwnerDb, users, verificationTokens } from "@mindkid/db";
+import { hashSecureToken } from "@mindkid/auth";
+import { getOwnerDb, users, userVerifications } from "@mindkid/db";
 import { EmailAlreadyInUseError } from "@mindkid/errors/account";
 import { TokenExpiredError } from "@mindkid/errors/auth";
 import { dispatchTransactionalEmail } from "@mindkid/notification";
-import { and, eq, gt, isNull, sql } from "drizzle-orm";
+import { and, eq, gt, sql } from "drizzle-orm";
 import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 import { throwValidationError } from "#server/utils/api-error";
+import { revokeAllBetterAuthSessions } from "#server/utils/better-auth";
 
 const VerifyEmailChangeSchema = z
   .object({
@@ -16,9 +17,9 @@ const VerifyEmailChangeSchema = z
   .strict();
 
 export default defineEventHandler(async (event) => {
-  const eventBody = (event.context as { body?: Record<string, unknown> })?.body;
+  const eventBody = (event.context as { body?: Record<string, string> })?.body;
   const rawBody =
-    eventBody || ((await readBody(event)) as Record<string, unknown>) || {};
+    eventBody || (await readBody<Record<string, string>>(event)) || {};
 
   const parsed = VerifyEmailChangeSchema.safeParse(rawBody);
   if (!parsed.success) {
@@ -29,21 +30,18 @@ export default defineEventHandler(async (event) => {
   const tokenHash = hashSecureToken(
     `email_change:${parsed.data.token}:${newEmail}`
   );
+  const identifier = `email_change:${tokenHash}`;
   const now = new Date();
 
   const db = getOwnerDb();
 
-  // Find token
   const [tokenRecord] = await db
     .select()
-    .from(verificationTokens)
+    .from(userVerifications)
     .where(
       and(
-        eq(verificationTokens.tokenHash, tokenHash),
-        eq(verificationTokens.purpose, "email_verify"),
-        eq(verificationTokens.accountType, "user"),
-        isNull(verificationTokens.usedAt),
-        gt(verificationTokens.expiresAt, now)
+        eq(userVerifications.identifier, identifier),
+        gt(userVerifications.expiresAt, now)
       )
     )
     .limit(1);
@@ -52,7 +50,11 @@ export default defineEventHandler(async (event) => {
     throw new TokenExpiredError();
   }
 
-  const userId = tokenRecord.accountId;
+  const parsedValue = JSON.parse(tokenRecord.value) as {
+    userId: number;
+    newEmail: string;
+  };
+  const userId = Number(parsedValue.userId);
 
   const [currentUser] = await db
     .select({ id: users.id, email: users.email })
@@ -66,7 +68,6 @@ export default defineEventHandler(async (event) => {
 
   const oldEmail = currentUser.email;
 
-  // Check if new_email was registered by someone else in the meantime
   const [conflict] = await db
     .select({ id: users.id })
     .from(users)
@@ -77,20 +78,13 @@ export default defineEventHandler(async (event) => {
     throw new EmailAlreadyInUseError();
   }
 
-  // Update user email and mark token used atomically
   await db.transaction(async (tx) => {
-    const [claimed] = await tx
-      .update(verificationTokens)
-      .set({ usedAt: now })
-      .where(
-        and(
-          eq(verificationTokens.id, tokenRecord.id),
-          isNull(verificationTokens.usedAt)
-        )
-      )
-      .returning({ id: verificationTokens.id });
+    const deleted = await tx
+      .delete(userVerifications)
+      .where(eq(userVerifications.id, tokenRecord.id))
+      .returning({ id: userVerifications.id });
 
-    if (!claimed) {
+    if (deleted.length === 0) {
       throw new TokenExpiredError();
     }
 
@@ -98,6 +92,7 @@ export default defineEventHandler(async (event) => {
       .update(users)
       .set({
         email: newEmail,
+        emailVerified: true,
         emailVerifiedAt: now,
         sessionVersion: sql`${users.sessionVersion} + 1`,
         updatedAt: now,
@@ -105,14 +100,8 @@ export default defineEventHandler(async (event) => {
       .where(eq(users.id, userId));
   });
 
-  await getBrowserSessionService()
-    .revokeAll({
-      account_type: "user",
-      account_id: userId,
-    })
-    .catch(() => null);
+  await revokeAllBetterAuthSessions("user", userId).catch(() => null);
 
-  // BR-ACS-05: Send notice to the OLD email address
   await dispatchTransactionalEmail({
     recipientType: "user",
     recipientId: userId,

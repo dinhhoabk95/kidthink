@@ -47,7 +47,7 @@ Không có.
 | `BR-SPT-04` | `telemetry_events.child_uuid` **nullable** — guest là NULL, và xoá tài khoản đặt về NULL | Ẩn danh hoá thay vì xoá cứng |
 | `BR-SPT-05` | `mastery_state` khoá theo `skill_id` **FK** (`skills.id`), không chuỗi tự do, không `skill_code` (D-AE) | `BR-TAX-07` |
 | `BR-SPT-07` | `telemetry_events` · `play_sessions` INSERT-only sau khi `completed` | `BR-DM-05`. Đây là dữ liệu **đã xảy ra** — sửa được nghĩa là báo cáo tiến bộ của một đứa trẻ không còn giải thích được bằng thứ nó thật sự đã chơi (D5). `play_sessions` mở cho UPDATE tới lúc `completed` vì phiên đang chạy còn ghi tiếp; sau đó đóng lại |
-| `BR-SPT-08` | `p_learn` CHECK 0–1 ở tầng DB | Bất biến quan trọng nhất của adaptive |
+| `BR-SPT-08` | `p_learn`, `ema_correct`, `hint_rate`, `best_p_learn` thuộc `[0, 1]` — ép ở `@mindkid/adaptive` và domain validator trước khi ghi DB (`BR-DM-14`: không dùng DB `CHECK`) | Bất biến quan trọng nhất của adaptive |
 
 ## 7. Data
 
@@ -59,7 +59,7 @@ Không có.
 | `uuid` | uuid | UNIQUE — đối ngoại và dùng làm `child_uuid` |
 | `user_id` | bigint FK | ON DELETE CASCADE |
 | `display_name` | varchar(40) | NOT NULL — tên gọi, không họ tên đầy đủ |
-| `birth_year` | smallint | NOT NULL, CHECK trong khoảng cho tuổi 3–6. Index đơn cho lookup theo tuổi |
+| `birth_year` | smallint | NOT NULL, khoảng năm sinh hợp lệ cho tuổi 3–6 kiểm ở Zod/service. Index đơn cho lookup theo tuổi |
 | `avatar_id` | varchar(24) | NOT NULL — FK logic tới preset |
 | `relationship` | enum | `child`\|`student`\|`other`, nullable |
 | `current_curriculum_id` | bigint | nullable — FK `curricula.id` |
@@ -90,7 +90,7 @@ Không có.
 | `device` | enum `tablet`\|`desktop`\|`mobile` |
 | `is_preview` | bool — phiên của Manager |
 
-CHECK: `(child_profile_id IS NOT NULL) OR (guest_device_id IS NOT NULL)`.
+Bất biến định danh phiên (`child_profile_id IS NOT NULL` hoặc `guest_device_id IS NOT NULL`) và miền `layout_seed` (`0..4294967295`) được kiểm ở Zod / domain validator lúc mở phiên (`BR-DM-14`).
 
 ### 7.3 `telemetry_events` — INSERT-only
 
@@ -129,9 +129,9 @@ Chi tiết cột: [`telemetry-pipeline.md`](telemetry-pipeline.md) §7.1.
 | Cột | Ràng buộc |
 |---|---|
 | `(child_profile_id, skill_id)` | PK ghép, cả hai FK |
-| `p_learn` | numeric CHECK `>= 0 AND <= 1` |
+| `p_learn` | numeric (`[0, 1]` qua `@mindkid/adaptive` & domain validator) |
 | `attempts_total` `attempts_recent` | int |
-| `ema_correct` | numeric CHECK 0–1 |
+| `ema_correct` | numeric (`[0, 1]` qua `@mindkid/adaptive` & domain validator) |
 | `hint_rate` | numeric |
 | `last_seen_at` | timestamptz |
 | `params_version` | varchar |
@@ -155,9 +155,9 @@ Scenario: BR-SPT-03 — event trùng bị DB chặn
   When chèn hai hàng telemetry_events cùng session_uuid và seq
   Then vi phạm khoá chính
 
-Scenario: BR-SPT-08 — p_learn bị ràng buộc ở DB
-  When chèn mastery_state với p_learn = 1.5
-  Then CHECK constraint từ chối
+Scenario: BR-SPT-08 — p_learn bị ràng buộc ở tầng domain/adaptive
+  When kiểm tra cập nhật mastery_state với p_learn = 1.5
+  Then domain validator từ chối
 
 Scenario: BR-SPT-05 — skill_id là FK thật
   When chèn mastery_state với skill_id không tồn tại
@@ -170,8 +170,8 @@ Scenario: BR-SPT-04 — ẩn danh hoá khi xoá tài khoản
   And số hàng telemetry_events không giảm
 
 Scenario: phiên phải thuộc trẻ hoặc thiết bị guest
-  When chèn play_sessions không có cả child_profile_id lẫn guest_device_id
-  Then CHECK constraint từ chối
+  When mở play_sessions không có cả child_profile_id lẫn guest_device_id
+  Then domain validator từ chối
 
 Scenario: D-Z — không FK trỏ vào telemetry_events
   When quét toàn bộ FK trong schema
@@ -182,7 +182,7 @@ Scenario: D-Z — không FK trỏ vào telemetry_events
 
 **Always**
 - Giữ `child_profiles` đúng danh sách đóng.
-- CHECK cho `p_learn` và `ema_correct` ở tầng DB.
+- Ép miền `[0, 1]` cho `p_learn` và `ema_correct` ở `@mindkid/adaptive` và domain validator (`BR-DM-14`: không dùng DB `CHECK`).
 - PK ghép `(session_uuid, seq)` cho telemetry.
 
 **Ask first**

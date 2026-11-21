@@ -118,7 +118,7 @@ function shuffle<T>(input: readonly T[], rng: Rng): T[];   // trả mảng mới
 
 | Field | Kiểu | Ràng buộc |
 |---|---|---|
-| `layout_seed` | integer | `CHECK (layout_seed >= 0 AND layout_seed <= 4294967295)` |
+| `layout_seed` | bigint | Số nguyên không âm 32-bit `0..4294967295` (kiểm ở Zod/domain validator theo `BR-DM-14`) |
 
 Đặt trên bảng phiên chơi của [`schema-play-telemetry.md`](schema-play-telemetry.md). Không đặt trên `game_levels` —
 seed thuộc lần chơi, không thuộc nội dung.

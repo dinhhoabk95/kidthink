@@ -1,6 +1,7 @@
 import { and, eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
+  assertCurriculumCode,
   childProfiles,
   curricula,
   curriculumEnrollments,
@@ -112,17 +113,9 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
       expect(row.sessionsPerWeek).toBe(3);
     });
 
-    it("enforces curriculum code format regex check constraint", async () => {
-      await expect(
-        db.insert(curricula).values({
-          code: "INVALID_CODE_123",
-          programType: "journey",
-          durationWeeks: 42,
-          sessionsPerWeek: 3,
-          title: "Invalid Code",
-          accessTier: "standard",
-        })
-      ).rejects.toThrow();
+    it("enforces curriculum code format regex via domain validator (BR-ID-05, BR-DM-14)", () => {
+      expect(() => assertCurriculumCode("INVALID_CODE_123")).toThrow();
+      expect(() => assertCurriculumCode(testCurriculumCode)).not.toThrow();
     });
   });
 

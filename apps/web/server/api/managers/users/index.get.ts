@@ -1,8 +1,8 @@
 import {
-  activeSessions,
   childProfiles,
   entitlements,
   getOwnerDb,
+  userSessions,
   users,
 } from "@mindkid/db";
 import {
@@ -190,19 +190,12 @@ async function fetchLastActiveMap(
 ): Promise<Map<number, Date>> {
   const sessionRows = await db
     .select({
-      accountId: activeSessions.accountId,
-      lastUsedAt: sql<Date>`max(${activeSessions.lastUsedAt})`.as(
-        "last_used_at"
-      ),
+      accountId: userSessions.userId,
+      lastUsedAt: sql<Date>`max(${userSessions.updatedAt})`.as("last_used_at"),
     })
-    .from(activeSessions)
-    .where(
-      and(
-        eq(activeSessions.accountType, "user"),
-        inArray(activeSessions.accountId, userIds)
-      )
-    )
-    .groupBy(activeSessions.accountId);
+    .from(userSessions)
+    .where(inArray(userSessions.userId, userIds))
+    .groupBy(userSessions.userId);
 
   const lastActiveMap = new Map<number, Date>();
   for (const row of sessionRows) {

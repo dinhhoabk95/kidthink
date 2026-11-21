@@ -1,3 +1,10 @@
 import { defineWorkspaceTest } from "@mindkid/config/vitest";
 
-export default defineWorkspaceTest({}, { database: false });
+export default defineWorkspaceTest(
+  {
+    test: {
+      pool: "forks",
+    },
+  },
+  { database: false }
+);

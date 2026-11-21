@@ -1,7 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
   bigint,
-  check,
   index,
   pgTable,
   primaryKey,
@@ -10,15 +9,14 @@ import {
   unique,
   varchar,
 } from "drizzle-orm/pg-core";
-import { timestamps } from "./columns.ts";
+import { idPk, timestamps } from "./columns.ts";
 import { users } from "./identity.ts";
+import { contentEntityTypeEnum } from "./tagging.ts";
 
 export const collections = pgTable(
   "collections",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     userId: bigint("user_id", { mode: "number" })
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
@@ -27,8 +25,7 @@ export const collections = pgTable(
     ...timestamps(),
   },
   (table) => [
-    // UNIQUE (user_id, name) đã phục vụ mọi tra cứu theo user_id — index
-    // (user_id) riêng chỉ thêm chi phí ghi.
+    // UNIQUE (user_id, name) đã phục vụ mọi tra cứu theo user_id.
     unique("collections_user_id_name_unique").on(table.userId, table.name),
   ]
 );
@@ -39,7 +36,7 @@ export const libraryItems = pgTable(
     userId: bigint("user_id", { mode: "number" })
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    entityType: varchar("entity_type", { length: 50 }).notNull(),
+    entityType: contentEntityTypeEnum("entity_type").notNull(),
     entityId: bigint("entity_id", { mode: "number" }).notNull(),
     collectionId: bigint("collection_id", { mode: "number" }).references(
       () => collections.id,
@@ -51,12 +48,10 @@ export const libraryItems = pgTable(
   (table) => [
     // PK (user_id, entity_type, entity_id) đã phủ tra cứu theo user_id.
     primaryKey({ columns: [table.userId, table.entityType, table.entityId] }),
-    index("idx_library_items_collection_id").on(table.collectionId),
+    index("idx_library_items_collection_id")
+      .on(table.collectionId)
+      .where(sql`${table.collectionId} IS NOT NULL`),
     index("idx_library_items_entity").on(table.entityType, table.entityId),
-    check(
-      "check_library_items_entity_type",
-      sql`${table.entityType} IN ('game_level', 'curriculum')`
-    ),
   ]
 );
 

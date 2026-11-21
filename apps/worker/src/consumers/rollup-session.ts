@@ -31,7 +31,7 @@ async function upsertChildSessionSummary(
     sessionUuid: string;
     gameLevelId: number;
     templateCode: string;
-    targetStatus: string;
+    targetStatus: (typeof childSessionSummaries.$inferInsert)["completionStatus"];
     rawScore: number;
     durationSec: number;
     stars: number;

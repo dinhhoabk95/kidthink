@@ -34,10 +34,7 @@ function makeEvent(options: {
     headers: { host: "mindkid.test", ...(options.headers ?? {}) },
     socket: { remoteAddress: options.ip ?? "198.51.100.7" },
   };
-  const event = createEvent(
-    req as never,
-    createResponse() as never
-  ) as unknown as H3Event;
+  const event = createEvent(req as never, createResponse() as never);
   event.context.user = options.userId
     ? ({ user_id: options.userId } as never)
     : undefined;
@@ -53,7 +50,7 @@ async function callUntilRejected(options: {
   method: string;
   ip: string;
   attempts: number;
-}): Promise<{ rejectedAt: number | null; error: unknown }> {
+}): Promise<{ rejectedAt: number | null; error: Error | null }> {
   for (let attempt = 1; attempt <= options.attempts; attempt++) {
     try {
       await rateLimitMiddleware(
@@ -64,7 +61,10 @@ async function callUntilRejected(options: {
         })
       );
     } catch (error) {
-      return { rejectedAt: attempt, error };
+      return {
+        rejectedAt: attempt,
+        error: error instanceof Error ? error : new Error(String(error)),
+      };
     }
   }
   return { rejectedAt: null, error: null };
@@ -84,8 +84,8 @@ const NEWLY_WIRED: ReadonlyArray<{
   },
   {
     className: "auth:refresh",
-    path: "/api/users/auth/restore",
-    method: "POST",
+    path: "/api/auth/users/get-session",
+    method: "GET",
   },
   { className: "search", path: "/api/users/ai/search", method: "GET" },
   {
@@ -129,7 +129,11 @@ describe("rate-limit middleware — BR-RTL-01/03/10", () => {
     for (let i = 0; i < 40; i++) {
       await expect(
         rateLimitMiddleware(
-          makeEvent({ path: "/api/guest/auth/users/login", method: "POST", ip })
+          makeEvent({
+            path: "/api/auth/users/sign-in/email",
+            method: "POST",
+            ip,
+          })
         )
       ).resolves.toBeUndefined();
     }

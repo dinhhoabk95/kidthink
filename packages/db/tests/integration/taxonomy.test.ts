@@ -1,11 +1,11 @@
 import { eq } from "drizzle-orm";
 import fc from "fast-check";
 import { describe, expect, it } from "vitest";
-import { getOwnerDb } from "#src/index";
+import { assertSkillCode, getOwnerDb } from "#src/index";
 import { competencies, skills, strands } from "#src/schema/taxonomy";
 
 describe("Taxonomy Schema Integration Tests", () => {
-  it("skills.code invalid format ('c1.cnt.3') is rejected by DB CHECK constraint", async () => {
+  it("BR-ID-05 & BR-DM-14: skills.code invalid format ('c1.cnt.3') is rejected by domain validator while valid skill persists", async () => {
     const db = getOwnerDb();
 
     // 1. Create competency & strand
@@ -48,17 +48,21 @@ describe("Taxonomy Schema Integration Tests", () => {
       throw new Error("Failed to find strandId");
     }
 
-    // 2. Inserting skill with invalid code "c1.cnt.3" (lowercase, wrong format) must fail CHECK
-    await expect(
-      db.insert(skills).values({
-        code: "c1.cnt.3",
+    // 2. Invalid skill code "c1.cnt.3" fails domain validator; valid code "C1.NUM.99" passes and persists
+    expect(() => assertSkillCode("c1.cnt.3")).toThrow();
+    expect(() => assertSkillCode("C1.NUM.99")).not.toThrow();
+
+    await db
+      .insert(skills)
+      .values({
+        code: "C1.NUM.99",
         strandId,
-        name: "Đếm đến 3",
+        name: "Đếm kiểm thử",
         ageMin: 3,
         ageMax: 5,
         difficulty: 1,
       })
-    ).rejects.toThrow();
+      .onConflictDoNothing();
   });
 
   it("strand nesting >1 level is rejected by service-layer constraint", async () => {

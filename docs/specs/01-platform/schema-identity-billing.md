@@ -52,7 +52,7 @@ Không có.
 | `BR-SIB-07` | `users.email` UNIQUE **case-insensitive** (`citext` hoặc index trên `lower()`) | `A@x.com` và `a@x.com` là một người |
 | `BR-SIB-08` (password nullable) | `users.password_hash` **nullable** — tài khoản chỉ có SNS là hợp lệ | [`auth-tokens-sessions.md`](auth-tokens-sessions.md) `BR-AUT-16`, [`social-login.md`](../03-account/social-login.md) `BR-SCL-08`. Bất biến thay thế là `login_methods ≥ 1` ([`social-account-linking.md`](../03-account/social-account-linking.md) `BR-SLK-04`), ép ở tầng service không ở cột |
 | `BR-SIB-09` (hai UNIQUE) | `social_identities` có **hai** UNIQUE: `(provider, provider_user_id)` và `(user_id, provider)` | Cái thứ nhất chặn một tài khoản SNS gắn hai User; cái thứ hai chặn hai tài khoản SNS cùng provider trên một User ([`social-account-linking.md`](../03-account/social-account-linking.md) `BR-SLK-02` — một User tối đa một tài khoản mỗi provider) |
-| `BR-SIB-10` (cấm cột token provider) | `social_identities` cấm — **NEVER có cột token** của nhà cung cấp | [`oauth-provider-registry.md`](oauth-provider-registry.md) `BR-OAP-07` (không lưu token provider). Cột không tồn tại thì không rò được |
+| `BR-SIB-10` (cấm lưu token provider) | `user_accounts` · `manager_accounts` cấm — **NEVER lưu giá trị `access_token`/`refresh_token`/`id_token`** của nhà cung cấp (`NULL` cưỡng chế qua `databaseHooks` + `assertNoOAuthProviderTokens`) | [`oauth-provider-registry.md`](oauth-provider-registry.md) `BR-OAP-07` (không lưu token provider). Xoá rỗng ngay trước mọi INSERT/UPDATE để không bao giờ rò token |
 | `BR-SIB-11` | Xoá `users` **cascade** xoá `social_identities` | Danh tính mồ côi làm `UNIQUE (provider, provider_user_id)` chặn người dùng đăng ký lại sau khi đã xoá tài khoản |
 | `BR-SIB-12` (singleton force marker) | `consent_requirements` có đúng ba khoá `terms` · `privacy` · `child_data`; marker chỉ UPDATE tiến tới, không có policy version | Một hàng cho mỗi loại cho phép kiểm consent bằng một so sánh thời gian, không fan-out theo User và không dựng kho version trá hình |
 | `BR-SIB-13` (seed test accounts) | Seeder cung cấp sẵn bộ tài khoản kiểm thử mặc định (1 Manager `super_admin`, 3 User, 5 Child) với mật khẩu ngẫu nhiên băm argon2id, không bắt buộc biến `.env` | Cho phép kiểm thử cục bộ và chạy dev trơn tru ngay từ lần seed đầu tiên |
@@ -83,46 +83,19 @@ Cấm: không `role`, không `package`, không `tier`.
 `role` enum (`super_admin`) NOT NULL · `mfa_enabled` bool ·
 `session_version` · `is_active` · `created_at` `updated_at`.
 
-### 7.3 Bảng auth phụ — polymorphic
+### 7.3 Bảng auth nhánh User & Manager — tách riêng cho 2 instance Better Auth
 
-| Bảng | Cột đặc thù |
-|---|---|
-| `active_sessions` | `device_id` UUID UNIQUE · `device_label` · `ip_address` · `auth_method` (`password`\|`social`) · `remembered` · `last_used_at` · `expires_at` · `revoked_at`; **không token/hash** |
-| `mfa_settings` | `secret_encrypted` · `confirmed_at` |
-| `mfa_recovery_codes` | `code_hash` · `used_at` |
-| `verification_tokens` | `purpose` (`email_verify`\|`password_reset`) · `token_hash` · `expires_at` · `used_at` |
+Thay thế 4 bảng đa hình cũ và `social_identities` bằng cặp bảng FK tường minh (`ON DELETE CASCADE`, `id` `bigserial` dùng `generateId: "serial"`, luôn có `created_at` & `updated_at` theo `BR-DM-08`, không dùng DB `CHECK` theo `BR-DM-14`):
 
-Chung: `(account_type, account_id)` — `account_type ∈ {user, manager}`.
-
-`active_sessions` chỉ là metadata/audit thiết bị; Redis là session authority và giữ reauth
-state — [`auth-tokens-sessions.md`](auth-tokens-sessions.md) §7.2, §7.5.
-
-### 7.3a `social_identities` — không phải polymorphic
-
-Chỉ User. Manager không liên kết SNS ([`auth-tokens-sessions.md`](auth-tokens-sessions.md) `BR-AUT-15`), nên bảng này FK thẳng tới `users` —
-không dùng `(account_type, account_id)` như 4 bảng trên.
-
-| Cột | Kiểu | Ràng buộc |
+| Nhánh User (`FK users.id`) | Nhánh Manager (`FK managers.id`) | Cột then chốt & Ràng buộc |
 |---|---|---|
-| `id` | bigserial | PK |
-| `user_id` | bigint | FK `users(id)` **ON DELETE CASCADE**, NOT NULL |
-| `provider` | enum | `google`\|`facebook` — danh sách đóng, [`oauth-provider-registry.md`](oauth-provider-registry.md) `BR-OAP-06` (chỉ hai provider) |
-| `provider_user_id` | text | NOT NULL — `sub` của provider, không phải email |
-| `email_at_provider` | citext | NULL được — Facebook có thể không trả |
-| `email_verified_at_provider` | bool | NOT NULL default false |
-| `display_name_at_provider` | varchar(60) | |
-| `linked_at` | timestamptz | NOT NULL |
-| `last_login_at` | timestamptz | |
-| `created_at` `updated_at` | timestamptz | |
+| `user_accounts` | `manager_accounts` | `account_id`, `provider_id`, `password` (nullable Argon2id), `email_at_provider`, `email_verified_at_provider`, `UNIQUE(provider_id, account_id)`, `UNIQUE(user_id\|manager_id, provider_id)`. Các cột token OAuth bị xoá rỗng bởi `databaseHooks` + validator (`BR-SIB-10`) |
+| `user_sessions` | `manager_sessions` | `token` UNIQUE, `expires_at`, `ip_address`, `user_agent`, `auth_method`, `reauth_at` |
+| `user_verifications` | `manager_verifications` | `identifier`, `value`, `expires_at` |
+| `user_two_factors` | `manager_two_factors` | `secret`, `backup_codes`, `UNIQUE(user_id\|manager_id)` |
+| `user_passkeys` | `manager_passkeys` | `name`, `public_key`, `credential_id` UNIQUE, `counter`, `device_type`, `backed_up`, `transports`, `aaguid` |
 
-```
-UNIQUE (provider, provider_user_id)   -- một tài khoản SNS → đúng một User
-UNIQUE (user_id, provider)            -- một User → tối đa một tài khoản mỗi provider
-INDEX  (user_id)
-```
-
-Cấm cột `access_token`, `refresh_token`, `id_token`, hay `avatar_url` — `BR-SIB-10` (cấm cột token provider),
-[`oauth-provider-registry.md`](oauth-provider-registry.md) `BR-OAP-15`.
+Valkey `secondaryStorage` là session authority ở chế độ fail-closed (`BR-AUT-31`); `user_sessions` / `manager_sessions` phục vụ liệt kê thiết bị và thu hồi đa thiết bị (`storeSessionInDatabase: true`).
 
 ### 7.4 `consent_logs` — INSERT-only
 
@@ -262,7 +235,7 @@ bắt Manager/Child/cross-user write.
 | `user_id` | bigint | FK `users(id)` ON DELETE CASCADE, NOT NULL |
 | `provider` | enum | Chỉ `fcm_web` trong P5 hiện hành |
 | `client_installation_id` | uuid | NOT NULL, UNIQUE `(user_id, client_installation_id)` |
-| `token_encrypted` | bytea | NOT NULL; không trả qua API |
+| `token_encrypted` | text | NOT NULL (`iv:authTag:ciphertext` AES-256-GCM); không trả qua API |
 | `token_fingerprint` | text | HMAC, UNIQUE NOT NULL; không token thô |
 | `status` | enum | `active`\|`invalid`\|`revoked` |
 | `last_seen_at` · `invalidated_at` | timestamptz | Lifecycle; không dùng làm tracking hành vi |

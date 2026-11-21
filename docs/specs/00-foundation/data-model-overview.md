@@ -75,6 +75,7 @@ Bốn quyết định định hình toàn bộ schema, mỗi cái là một ràn
 | `BR-DM-11` | Mỗi file schema ≤ **400 dòng**, chia theo domain, không theo kiểu | Một file 3.000 dòng là nơi mọi merge conflict gặp nhau |
 | `BR-DM-12` | Trần phân trang ép ở **server** | Một query không trần hạ cả instance trên t3.small |
 | `BR-DM-13` | FK/quan hệ đa hình **nội bộ** luôn lưu `id` (bigint) của bảng đích — **không có ngoại lệ**, kể cả taxonomy (`competencies`·`strands`·`skills`·`learning_objectives`·`content_tags`) và các bảng nội dung (`game_levels`, `curricula`, `skill_datasets`). Các bảng đó **vẫn giữ** cột `code` UNIQUE (định danh hiển thị/URL) nhưng bảng khác **không** được FK bằng `code` của chúng. Mỗi `code` trong `game_levels`, `curricula`, `skill_datasets` là duy nhất (1 dòng), dùng `id` trực tiếp (đã bỏ `entity_id` và `content_version`) | `BR-DM-10` nói về lớp đối ngoại; mọi FK nội bộ tham chiếu trực tiếp vào `id` (bigint) của bảng đích |
+| `BR-DM-14` | **Không dùng `CHECK` constraint trong PostgreSQL** — DB chỉ giữ ràng buộc cấu trúc (`NOT NULL`, `PRIMARY KEY`, `UNIQUE`, `FOREIGN KEY` kèm `onDelete` tường minh, `pgEnum`, trigger/REVOKE cho bảng INSERT-only); miền giá trị, khoảng số, regex mã và bất biến chéo cột được ép ở tầng Zod / domain validator + seeder gate | Tách biệt rõ trách nhiệm: DB tối ưu khóa ngoại, chỉ mục B-tree/partial và Drizzle `relations()`, còn luật miền nghiệp vụ tập trung một nơi ở TypeScript/Zod để đổi quy tắc không phải khóa bảng `ALTER TABLE` và trả thông báo lỗi thân thiện có mã chuẩn |
 
 ## 7. Data — bản đồ module
 
@@ -207,6 +208,7 @@ Scenario: BR-DM-12 — trần phân trang ép ở server
 
 **Never**
 - Raw SQL ngoài hai ngoại lệ.
+- `CHECK` constraint trong DB (`BR-DM-14`).
 - Mass assignment.
 - `DROP COLUMN` một phase.
 - `bigserial` trong payload công khai.

@@ -7,6 +7,8 @@ const pushMock = vi.fn();
 const fetchSessionMock = vi.fn();
 const refreshMock = vi.fn();
 const apiFetchMock = vi.fn();
+const signUpEmailMock = vi.fn();
+const signInSocialMock = vi.fn();
 
 const mockRouteQuery = ref<Record<string, string>>({});
 
@@ -88,6 +90,13 @@ vi.mock("~/composables/use-api", () => ({
   useApi: () => apiFetchMock,
 }));
 
+vi.mock("~/composables/use-auth-client", () => ({
+  useUserAuthClient: () => ({
+    signUp: { email: signUpEmailMock },
+    signIn: { social: signInSocialMock },
+  }),
+}));
+
 vi.mock("#imports", () => ({
   definePageMeta: vi.fn(),
   useSeoMeta: vi.fn(),
@@ -119,6 +128,8 @@ describe("Register Page & Subscription View Page (#290 S8, #291 S5, #292 S5)", (
     fetchSessionMock.mockReset();
     refreshMock.mockReset();
     apiFetchMock.mockReset();
+    signUpEmailMock.mockReset();
+    signInSocialMock.mockReset();
     mockRouteQuery.value = {};
     mockSubscriptionData.value = {
       packages: [],
@@ -133,7 +144,7 @@ describe("Register Page & Subscription View Page (#290 S8, #291 S5, #292 S5)", (
   });
 
   describe("Register Page (/register) — #290 S8", () => {
-    it("fetches /api/guest/consent-requirements and submits flat consent fields to /api/guest/auth/users/register", async () => {
+    it("fetches /api/guest/consent-requirements and calls authClient.signUp.email with flat consent fields", async () => {
       apiFetchMock.mockImplementation((url: string) => {
         if (url === "/api/guest/consent-requirements") {
           return Promise.resolve({
@@ -141,17 +152,19 @@ describe("Register Page & Subscription View Page (#290 S8, #291 S5, #292 S5)", (
             privacy: { requirement_at: "2026-01-02T00:00:00.000Z" },
           });
         }
-        if (url === "/api/guest/auth/users/register") {
-          return Promise.resolve({
-            user: {
-              uuid: "u-123",
-              displayName: "Phụ Huynh Test",
-              status: "pending_verification",
-            },
-          });
-        }
         return Promise.reject(new Error(`Unexpected URL: ${url}`));
       });
+      signUpEmailMock.mockResolvedValue({
+        data: {
+          user: {
+            id: "u-123",
+            name: "Phụ Huynh Test",
+            email: "phuhuynh@example.com",
+          },
+        },
+        error: null,
+      });
+      fetchSessionMock.mockResolvedValue(true);
 
       const RegisterPage = (await import("~/pages/register/index.vue")).default;
       const wrapper = mount(RegisterPage, { global: { stubs: globalStubs } });
@@ -171,12 +184,15 @@ describe("Register Page & Subscription View Page (#290 S8, #291 S5, #292 S5)", (
       expect(apiFetchMock).not.toHaveBeenCalledWith(
         "/api/guest/consents/requirements"
       );
-      expect(apiFetchMock).toHaveBeenCalledWith(
-        "/api/guest/auth/users/register",
+      expect(signUpEmailMock).toHaveBeenCalledWith(
         {
-          method: "POST",
+          name: "Phụ Huynh Test",
+          email: "phuhuynh@example.com",
+          password: "chuoixanh123",
+        },
+        {
           body: {
-            display_name: "Phụ Huynh Test",
+            name: "Phụ Huynh Test",
             email: "phuhuynh@example.com",
             password: "chuoixanh123",
             accept_terms: true,
@@ -184,9 +200,10 @@ describe("Register Page & Subscription View Page (#290 S8, #291 S5, #292 S5)", (
             terms_requirement_at: "2026-01-01T00:00:00.000Z",
             privacy_requirement_at: "2026-01-02T00:00:00.000Z",
           },
-          credentials: "include",
         }
       );
+      expect(fetchSessionMock).toHaveBeenCalled();
+      expect(pushMock).toHaveBeenCalledWith("/me");
 
       wrapper.unmount();
     });

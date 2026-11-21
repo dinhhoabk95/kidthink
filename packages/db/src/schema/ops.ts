@@ -2,7 +2,6 @@ import { sql } from "drizzle-orm";
 import {
   bigint,
   boolean,
-  check,
   index,
   integer,
   jsonb,
@@ -14,7 +13,7 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
-import { timestamps } from "./columns.ts";
+import { idPk, insertOnlyTimestamps, timestamps } from "./columns.ts";
 import { managers, users } from "./identity.ts";
 
 export const actorTypeEnum = pgEnum("actor_type", [
@@ -63,9 +62,7 @@ export const notificationStatusEnum = pgEnum("notification_status", [
 export const auditLogs = pgTable(
   "audit_logs",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     uuid: uuid("uuid").defaultRandom().notNull().unique(),
     actorType: actorTypeEnum("actor_type").notNull(),
     actorId: bigint("actor_id", { mode: "number" }),
@@ -77,7 +74,7 @@ export const auditLogs = pgTable(
     reason: text("reason"),
     ipAddress: text("ip_address"),
     userAgent: text("user_agent"),
-    ...timestamps(),
+    ...insertOnlyTimestamps(),
   },
   (table) => [
     index("idx_audit_logs_actor_created").on(
@@ -92,36 +89,31 @@ export const auditLogs = pgTable(
     ),
     index("idx_audit_logs_action_created").on(table.action, table.createdAt),
     index("idx_audit_logs_created_at").on(table.createdAt),
-    // actor_id chỉ NULL đúng khi actor là hệ thống. Không có CHECK thì một hàng
-    // `actor_type='user', actor_id=NULL` lọt vào và vết điều tra mất chủ thể.
-    check(
-      "chk_audit_logs_actor",
-      sql`(${table.actorType} = 'system' AND ${table.actorId} IS NULL)
-        OR (${table.actorType} <> 'system' AND ${table.actorId} IS NOT NULL)`
-    ),
   ]
 );
 
-export const backupLog = pgTable("backup_log", {
-  id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
-  backupType: backupTypeEnum("backup_type").notNull(),
-  status: backupStatusEnum("status").notNull(),
-  sizeBytes: bigint("size_bytes", { mode: "number" }),
-  storagePath: text("storage_path"),
-  checksum: varchar("checksum", { length: 64 }),
-  restoredRows: integer("restored_rows"),
-  startedAt: timestamp("started_at", { withTimezone: true }).notNull(),
-  finishedAt: timestamp("finished_at", { withTimezone: true }),
-  errorMessage: text("error_message"),
-  ...timestamps(),
-});
+export const backupLog = pgTable(
+  "backup_log",
+  {
+    id: idPk(),
+    backupType: backupTypeEnum("backup_type").notNull(),
+    status: backupStatusEnum("status").notNull(),
+    sizeBytes: bigint("size_bytes", { mode: "number" }),
+    storagePath: text("storage_path"),
+    checksum: varchar("checksum", { length: 64 }),
+    restoredRows: integer("restored_rows"),
+    startedAt: timestamp("started_at", { withTimezone: true }).notNull(),
+    finishedAt: timestamp("finished_at", { withTimezone: true }),
+    errorMessage: text("error_message"),
+    ...timestamps(),
+  },
+  (table) => [index("idx_backup_log_started_at").on(table.startedAt.desc())]
+);
 
 export const notifications = pgTable(
   "notifications",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     uuid: uuid("uuid").defaultRandom().notNull().unique(),
     recipientType: recipientTypeEnum("recipient_type").notNull(),
     recipientId: bigint("recipient_id", { mode: "number" }).notNull(),
@@ -130,10 +122,12 @@ export const notifications = pgTable(
     ...timestamps(),
   },
   (table) => [
-    // Cặp đa hình: index, không khoá ngoại (BR-DM-04).
+    // Cặp đa hình kèm phân trang con trỏ (created_at DESC, id DESC) (BR-DM-04).
     index("idx_notifications_recipient").on(
       table.recipientType,
-      table.recipientId
+      table.recipientId,
+      table.createdAt.desc(),
+      table.id.desc()
     ),
   ]
 );
@@ -141,9 +135,7 @@ export const notifications = pgTable(
 export const notificationDeliveries = pgTable(
   "notification_deliveries",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     uuid: uuid("uuid").defaultRandom().notNull().unique(),
     notificationId: bigint("notification_id", { mode: "number" })
       .notNull()
@@ -161,6 +153,9 @@ export const notificationDeliveries = pgTable(
       table.notificationId,
       table.channel
     ),
+    index("idx_notification_deliveries_queued")
+      .on(table.status, table.createdAt)
+      .where(sql`${table.status} = 'queued'`),
   ]
 );
 
@@ -175,9 +170,7 @@ export const notificationReads = pgTable("notification_reads", {
 export const notificationEndpoints = pgTable(
   "notification_endpoints",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     uuid: uuid("uuid").defaultRandom().notNull().unique(),
     userId: bigint("user_id", { mode: "number" })
       .notNull()
@@ -215,27 +208,33 @@ export const errorGroupStatusEnum = pgEnum("error_group_status", [
   "resolved",
 ]);
 
-export const featureFlags = pgTable("feature_flags", {
-  id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
-  key: varchar("key", { length: 100 }).notNull().unique(),
-  enabled: boolean("enabled").notNull().default(false),
-  scope: flagScopeEnum("scope").notNull().default("global"),
-  scopeValue: jsonb("scope_value"),
-  defaultValue: boolean("default_value").notNull().default(false),
-  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
-  updatedByManagerId: bigint("updated_by_manager_id", {
-    mode: "number",
-  }).references(() => managers.id),
-  updateReason: text("update_reason"),
-  ...timestamps(),
-});
+export const featureFlags = pgTable(
+  "feature_flags",
+  {
+    id: idPk(),
+    key: varchar("key", { length: 100 }).notNull().unique(),
+    enabled: boolean("enabled").notNull().default(false),
+    scope: flagScopeEnum("scope").notNull().default("global"),
+    scopeValue: jsonb("scope_value"),
+    defaultValue: boolean("default_value").notNull().default(false),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    updatedByManagerId: bigint("updated_by_manager_id", {
+      mode: "number",
+    }).references(() => managers.id, { onDelete: "set null" }),
+    updateReason: text("update_reason"),
+    ...timestamps(),
+  },
+  (table) => [
+    index("idx_feature_flags_updated_by_manager")
+      .on(table.updatedByManagerId)
+      .where(sql`${table.updatedByManagerId} IS NOT NULL`),
+  ]
+);
 
 export const errorLogs = pgTable(
   "error_logs",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     uuid: uuid("uuid").defaultRandom().notNull().unique(),
     source: errorSourceEnum("source").notNull().default("server"),
     level: errorLevelEnum("level").notNull().default("error"),
@@ -251,7 +250,7 @@ export const errorLogs = pgTable(
     resolvedNotes: text("resolved_notes"),
     resolvedByManagerId: bigint("resolved_by_manager_id", {
       mode: "number",
-    }).references(() => managers.id),
+    }).references(() => managers.id, { onDelete: "set null" }),
     ...timestamps(),
   },
   (table) => [
@@ -260,5 +259,11 @@ export const errorLogs = pgTable(
       table.status
     ),
     index("idx_error_logs_created_at").on(table.createdAt),
+    index("idx_error_logs_user_id")
+      .on(table.userId)
+      .where(sql`${table.userId} IS NOT NULL`),
+    index("idx_error_logs_resolved_by_manager")
+      .on(table.resolvedByManagerId)
+      .where(sql`${table.resolvedByManagerId} IS NOT NULL`),
   ]
 );

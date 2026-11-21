@@ -1,28 +1,23 @@
 import {
-  decryptTotpSecret,
   getAuthRedisClient,
   MfaAttemptGuard,
+  verifyBetterAuthTotp,
   verifyPassword,
-  verifyTotpCode,
 } from "@mindkid/auth";
-import { getOwnerDb, mfaSettings, socialIdentities, users } from "@mindkid/db";
+import { requireEnv } from "@mindkid/config";
+import { getOwnerDb, userAccounts, users, userTwoFactors } from "@mindkid/db";
 import {
   InvalidCredentialsError,
   MfaLockedError,
   PasswordNotSetError,
 } from "@mindkid/errors/auth";
-import { and, eq } from "drizzle-orm";
-import { defineEventHandler, type H3Event, readBody } from "h3";
+import { and, eq, ne } from "drizzle-orm";
+import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
-import { getMfaEncryptionKey } from "#server/utils/admin-auth-runtime";
 import {
   enforceTwoAxisRateLimit,
   requireWebUserSession,
 } from "#server/utils/auth-runtime";
-import {
-  clearOAuthTicketCookie,
-  readOAuthTicketProfile,
-} from "#server/utils/oauth-ticket";
 import { markCurrentSessionReauthenticated } from "#server/utils/reauth-runtime";
 
 const ReauthSchema = z
@@ -35,8 +30,6 @@ const ReauthSchema = z
   })
   .strict();
 
-type ReauthPayload = z.infer<typeof ReauthSchema>;
-
 async function verifyUserTotpReauth(
   db: ReturnType<typeof getOwnerDb>,
   userId: number,
@@ -46,20 +39,20 @@ async function verifyUserTotpReauth(
   await attemptGuard.assertNotLocked("user", userId);
   const [mfa] = await db
     .select()
-    .from(mfaSettings)
-    .where(
-      and(
-        eq(mfaSettings.accountType, "user"),
-        eq(mfaSettings.accountId, userId)
-      )
-    )
+    .from(userTwoFactors)
+    .where(eq(userTwoFactors.userId, userId))
     .limit(1);
 
-  if (!(mfa?.confirmedAt && mfa.secretEncrypted)) {
+  if (!mfa?.secret) {
     throw new InvalidCredentialsError();
   }
-  const secret = decryptTotpSecret(mfa.secretEncrypted, getMfaEncryptionKey());
-  if (!verifyTotpCode(totpCode, secret)) {
+  const ok = await verifyBetterAuthTotp({
+    storedSecret: mfa.secret,
+    rootSecret: requireEnv("NUXT_SESSION_PASSWORD"),
+    namespace: "user",
+    code: totpCode,
+  });
+  if (!ok) {
     const failure = await attemptGuard.recordFailure("user", userId);
     if (failure.locked) {
       throw new MfaLockedError();
@@ -67,43 +60,6 @@ async function verifyUserTotpReauth(
     throw new InvalidCredentialsError();
   }
   await attemptGuard.reset("user", userId);
-}
-
-async function verifyUserSocialReauth(
-  event: H3Event,
-  db: ReturnType<typeof getOwnerDb>,
-  userId: number,
-  sessionEmail: string | undefined,
-  passwordHash: string | null,
-  provider?: "google" | "facebook"
-): Promise<void> {
-  if (passwordHash) {
-    throw new InvalidCredentialsError();
-  }
-  const ticketProfile = readOAuthTicketProfile(event);
-  clearOAuthTicketCookie(event);
-  const ticketEmail = ticketProfile?.email_at_provider;
-  if (
-    !(ticketProfile && sessionEmail && ticketEmail) ||
-    ticketEmail.toLowerCase() !== sessionEmail.toLowerCase() ||
-    (provider && ticketProfile.provider !== provider)
-  ) {
-    throw new InvalidCredentialsError();
-  }
-  const [linked] = await db
-    .select({ id: socialIdentities.id })
-    .from(socialIdentities)
-    .where(
-      and(
-        eq(socialIdentities.userId, userId),
-        eq(socialIdentities.provider, ticketProfile.provider),
-        eq(socialIdentities.providerUserId, ticketProfile.provider_user_id)
-      )
-    )
-    .limit(1);
-  if (!linked) {
-    throw new InvalidCredentialsError();
-  }
 }
 
 async function verifyUserPasswordReauth(
@@ -122,48 +78,33 @@ async function verifyUserPasswordReauth(
   }
 }
 
-async function performUserReauthVerification(
-  event: H3Event,
+async function verifyUserSocialReauth(
   db: ReturnType<typeof getOwnerDb>,
   userId: number,
-  sessionEmail: string | undefined,
-  passwordHash: string | null,
-  data: ReauthPayload
+  provider?: "google" | "facebook"
 ): Promise<void> {
-  const totpCode = data.totp ?? data.code;
-  if (totpCode) {
-    await verifyUserTotpReauth(db, userId, totpCode);
-    return;
-  }
-  if (data.method === "social" || data.provider) {
-    const [mfa] = await db
-      .select({ confirmedAt: mfaSettings.confirmedAt })
-      .from(mfaSettings)
-      .where(
-        and(
-          eq(mfaSettings.accountType, "user"),
-          eq(mfaSettings.accountId, userId)
-        )
+  const whereClause = provider
+    ? and(
+        eq(userAccounts.userId, userId),
+        eq(userAccounts.providerId, provider)
       )
-      .limit(1);
-    if (mfa?.confirmedAt != null) {
-      throw new InvalidCredentialsError();
-    }
-    await verifyUserSocialReauth(
-      event,
-      db,
-      userId,
-      sessionEmail,
-      passwordHash,
-      data.provider
-    );
-    return;
+    : and(
+        eq(userAccounts.userId, userId),
+        ne(userAccounts.providerId, "credential")
+      );
+  const [linked] = await db
+    .select({ id: userAccounts.id })
+    .from(userAccounts)
+    .where(whereClause)
+    .limit(1);
+
+  if (!linked) {
+    throw new InvalidCredentialsError();
   }
-  await verifyUserPasswordReauth(data.password, passwordHash);
 }
 
 export default defineEventHandler(async (event) => {
-  const userSession = await requireWebUserSession(event);
+  const userSession = requireWebUserSession(event);
   const userId = Number(userSession.user_id);
 
   await enforceTwoAxisRateLimit(event, "auth:reauth", String(userId));
@@ -179,7 +120,7 @@ export default defineEventHandler(async (event) => {
 
   const db = getOwnerDb();
   const [account] = await db
-    .select({ email: users.email, passwordHash: users.passwordHash })
+    .select({ passwordHash: users.passwordHash })
     .from(users)
     .where(eq(users.id, userId))
     .limit(1);
@@ -188,14 +129,27 @@ export default defineEventHandler(async (event) => {
     throw new InvalidCredentialsError();
   }
 
-  await performUserReauthVerification(
-    event,
-    db,
-    userId,
-    account.email,
-    account.passwordHash,
-    parsed.data
-  );
+  const [cred] = await db
+    .select({ password: userAccounts.password })
+    .from(userAccounts)
+    .where(
+      and(
+        eq(userAccounts.userId, userId),
+        eq(userAccounts.providerId, "credential")
+      )
+    )
+    .limit(1);
+
+  const effectiveHash = cred?.password ?? account.passwordHash;
+  const totpCode = parsed.data.totp ?? parsed.data.code;
+
+  if (parsed.data.method === "social") {
+    await verifyUserSocialReauth(db, userId, parsed.data.provider);
+  } else if (totpCode) {
+    await verifyUserTotpReauth(db, userId, totpCode);
+  } else {
+    await verifyUserPasswordReauth(parsed.data.password, effectiveHash);
+  }
 
   const now = new Date();
   await markCurrentSessionReauthenticated(event, now);

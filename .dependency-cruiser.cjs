@@ -35,37 +35,30 @@ module.exports = {
       severity: "error",
       from: { path: "^apps/" },
       to: {
-        path: "node_modules/(ioredis|iovalkey|bullmq|jose|otpauth|unstorage|nodemailer|mjml|rate-limiter-flexible)(/|$)",
+        path: "node_modules/(ioredis|iovalkey|bullmq|jose|better-auth|@better-auth/[^/]+|unstorage|nodemailer|mjml|rate-limiter-flexible)(/|$)",
       },
     },
     {
-      // Danh sách này lấy nguyên văn từ auth-tokens-sessions.md §1 (quyết định
-      // D-CO, sửa lần cuối 2026-08-13). Bản trước cấm `nuxt-auth-utils` —
-      // ngược hẳn spec: nó LÀ module web khai trong nuxt.config.ts, chỉ seal
-      // locator. Rule cấm thứ repo bắt buộc dùng là rule không bao giờ đúng.
       name: "no-obsolete-auth-provider",
       comment:
-        "auth-tokens-sessions.md §1: session là opaque locator + Redis. NEVER " +
-        "thêm framework auth thứ hai — Supabase Auth, Better-Auth, Sidebase " +
-        "AuthJS, next-auth. Hai nguồn sự thật về phiên là hai cách hết hạn.",
+        "auth-tokens-sessions.md §1 (Task #319): hệ thống chuẩn hoá trên Better Auth " +
+        "bọc trong @mindkid/auth. Cấm thêm framework auth song song (nuxt-auth-utils, " +
+        "Supabase Auth, Sidebase AuthJS, next-auth, openid-client, otpauth).",
       severity: "error",
       from: {},
       to: {
-        path: "node_modules/(@supabase/auth-helpers[^/]*|better-auth|@sidebase/nuxt-auth|@auth/core|next-auth)(/|$)",
+        path: "node_modules/(@supabase/auth-helpers[^/]*|nuxt-auth-utils|openid-client|otpauth|@sidebase/nuxt-auth|@auth/core|next-auth)(/|$)",
       },
     },
     {
-      // §1 cấm helper OAuth/password/WebAuthn *của* nuxt-auth-utils, không cấm
-      // chính module. Argon2id + openid-client + OTPAuth là đường đã chốt.
-      name: "no-nuxt-auth-utils-credential-helpers",
+      name: "no-admin-server-auth",
       comment:
-        "auth-tokens-sessions.md §1: Cấm helper OAuth/password/WebAuthn tích " +
-        "hợp của nuxt-auth-utils. Password dùng Argon2id, OAuth dùng " +
-        "openid-client, TOTP dùng OTPAuth.",
+        "BR-ARB-04: apps/admin là static SPA, chỉ được import subpath browser-safe " +
+        "@mindkid/auth/client — cấm kéo server/Redis/Argon2 của packages/auth.",
       severity: "error",
-      from: {},
+      from: { path: "^apps/admin/" },
       to: {
-        path: "node_modules/nuxt-auth-utils/dist/runtime/server/lib/(oauth|webauthn)(/|$)",
+        path: "^packages/auth/src/(index|server|user-better-auth|manager-better-auth|redis-|password|parent-gate)",
       },
     },
     {

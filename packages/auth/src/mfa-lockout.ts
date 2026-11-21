@@ -1,9 +1,9 @@
 import { MfaLockedError } from "@mindkid/errors/auth";
 import { isAppError } from "@mindkid/errors/base";
 import { ServiceUnavailableError } from "@mindkid/errors/common";
-import type { AuthNamespace, MinimalRedisClient } from "./redis-session-store";
+import type { AuthInstanceNamespace } from "./hmac-secret.js";
+import type { MinimalRedisClient } from "./redis-secondary-storage.js";
 
-/** UC-052 BR-013: sai mã 5 lần thì khoá 15 phút. */
 export const MFA_MAX_FAILURES = 5;
 export const MFA_LOCK_SECONDS = 900;
 
@@ -11,10 +11,6 @@ export interface MfaFailureResult {
   readonly locked: boolean;
 }
 
-/**
- * Bộ đếm sai mã xác thực hai lớp theo tài khoản, lưu ở Redis. Cửa sổ đếm neo ở
- * lần sai đầu tiên và hết sau `MFA_LOCK_SECONDS`; lần sai thứ 5 đặt khoá.
- */
 export class MfaAttemptGuard {
   private readonly redis: MinimalRedisClient;
 
@@ -22,16 +18,16 @@ export class MfaAttemptGuard {
     this.redis = redis;
   }
 
-  private failKey(namespace: AuthNamespace, accountId: number): string {
-    return `auth:v1:${namespace}:mfa_fail:${accountId}`;
+  private failKey(namespace: AuthInstanceNamespace, accountId: number): string {
+    return `ba:v1:${namespace}:mfa_fail:${accountId}`;
   }
 
-  private lockKey(namespace: AuthNamespace, accountId: number): string {
-    return `auth:v1:${namespace}:mfa_lock:${accountId}`;
+  private lockKey(namespace: AuthInstanceNamespace, accountId: number): string {
+    return `ba:v1:${namespace}:mfa_lock:${accountId}`;
   }
 
   async assertNotLocked(
-    namespace: AuthNamespace,
+    namespace: AuthInstanceNamespace,
     accountId: number,
     now: Date = new Date()
   ): Promise<void> {
@@ -52,7 +48,7 @@ export class MfaAttemptGuard {
   }
 
   async recordFailure(
-    namespace: AuthNamespace,
+    namespace: AuthInstanceNamespace,
     accountId: number,
     now: Date = new Date()
   ): Promise<MfaFailureResult> {
@@ -85,7 +81,10 @@ export class MfaAttemptGuard {
     }
   }
 
-  async reset(namespace: AuthNamespace, accountId: number): Promise<void> {
+  async reset(
+    namespace: AuthInstanceNamespace,
+    accountId: number
+  ): Promise<void> {
     try {
       await this.redis.del(this.failKey(namespace, accountId));
     } catch (err) {

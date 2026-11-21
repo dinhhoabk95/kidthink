@@ -1,5 +1,5 @@
 import { hashSecureToken } from "@mindkid/auth";
-import { getOwnerDb, users, verificationTokens } from "@mindkid/db";
+import { getOwnerDb, users, userVerifications } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import type { H3Event } from "h3";
 import { describe, expect, it } from "vitest";
@@ -204,11 +204,13 @@ describe("Task 2 — Account Settings Endpoints (BR-ACS-01..11, BR-NOT-01)", () 
         })
         .returning({ id: users.id });
 
-      await db.insert(verificationTokens).values({
-        accountType: "user",
-        accountId: testUser.id,
-        purpose: "email_verify",
-        tokenHash: hashSecureToken(`email_change:${rawToken}:${intendedEmail}`),
+      const tokenHash = hashSecureToken(
+        `email_change:${rawToken}:${intendedEmail}`
+      );
+      const identifier = `email_change:${tokenHash}`;
+      await db.insert(userVerifications).values({
+        identifier,
+        value: JSON.stringify({ userId: testUser.id, newEmail: intendedEmail }),
         expiresAt: new Date(Date.now() + 3_600_000),
       });
 
@@ -224,8 +226,8 @@ describe("Task 2 — Account Settings Endpoints (BR-ACS-01..11, BR-NOT-01)", () 
         });
       } finally {
         await db
-          .delete(verificationTokens)
-          .where(eq(verificationTokens.accountId, testUser.id));
+          .delete(userVerifications)
+          .where(eq(userVerifications.identifier, identifier));
         await db.delete(users).where(eq(users.id, testUser.id));
       }
     });

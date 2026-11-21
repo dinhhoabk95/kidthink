@@ -19,6 +19,10 @@ import {
   DEFAULT_MAX_JSON_BODY_BYTES,
   requireWebUserSession,
 } from "./auth-runtime.js";
+import {
+  resolveBetterAuthManagerSession,
+  resolveBetterAuthUserSession,
+} from "./better-auth.js";
 import { readRequestBody, readRequestQuery } from "./request-body.js";
 
 export type ApiAuthMode = "user" | "manager" | "super_admin" | "guest";
@@ -57,12 +61,21 @@ async function resolveRouteAuth<TAuth extends ApiAuthMode>(
   authMode: TAuth
 ): Promise<ApiAuthContext<TAuth>> {
   if (authMode === "user") {
+    if (!event.context.user) {
+      await resolveBetterAuthUserSession(event);
+    }
     return (await requireWebUserSession(event)) as never;
   }
   if (authMode === "manager") {
+    if (!event.context.manager) {
+      await resolveBetterAuthManagerSession(event);
+    }
     return (await requireManagerSession(event)) as never;
   }
   if (authMode === "super_admin") {
+    if (!event.context.manager) {
+      await resolveBetterAuthManagerSession(event);
+    }
     return (await requireSuperAdminSession(event)) as never;
   }
   return null as never;

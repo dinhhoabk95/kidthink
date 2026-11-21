@@ -1,391 +1,176 @@
 import {
-  decryptTotpSecret,
-  encryptTotpSecret,
   generateTotpCode,
-  generateTotpSecret,
-  getAuthRedisClient,
-  hashPassword,
-  MfaChallengeService,
+  InMemoryRedisClient,
+  setAuthRedisClient,
 } from "@mindkid/auth";
+import { getOwnerDb, managers, managerTwoFactors } from "@mindkid/db";
+import { eq } from "drizzle-orm";
+import { beforeEach, describe, expect, it } from "vitest";
 import {
-  activeSessions,
-  auditLogs,
-  getOwnerDb,
-  managers,
-  mfaRecoveryCodes,
-  mfaSettings,
-} from "@mindkid/db";
-import { and, eq } from "drizzle-orm";
-import type { H3Event } from "h3";
-import { describe, expect, it } from "vitest";
-import loginHandler from "#server/api/guest/auth/managers/login.post";
-import mfaHandler from "#server/api/guest/auth/managers/mfa.post";
-import mfaSetupHandler from "#server/api/guest/auth/managers/mfa-setup.post";
+  getManagerAuth,
+  resetBetterAuthInstancesForTests,
+} from "#server/utils/better-auth";
 
-interface AppErrorLike {
-  statusCode?: number;
-  status?: number;
-  statusMessage?: string;
-  code?: string;
+function collectCookie(res: Response): string {
+  return res.headers
+    .getSetCookie()
+    .map((raw) => raw.split(";")[0]?.trim() ?? "")
+    .filter((pair) => pair.length > 0 && !pair.endsWith("="))
+    .join("; ");
 }
 
-function mockH3Event(body: Record<string, unknown>): H3Event {
+async function createLoggedInManager(tag: string) {
+  const db = getOwnerDb();
+  const email = `admin_enroll_${tag}_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@tinimath.test`;
+  const password = "AdminSecret123!";
+  const ctx = await getManagerAuth().$context;
+  const passwordHash = await ctx.password.hash(password);
+
+  const [manager] = await db
+    .insert(managers)
+    .values({
+      email,
+      passwordHash,
+      displayName: `Enroll Admin ${tag}`,
+      role: "super_admin",
+      isActive: true,
+      mfaEnabled: false,
+    })
+    .returning();
+  if (!manager) {
+    throw new Error("Expected manager");
+  }
+
+  await ctx.internalAdapter.linkAccount({
+    userId: String(manager.id),
+    providerId: "credential",
+    accountId: String(manager.id),
+    password: passwordHash,
+  });
+
+  const loginRes = await getManagerAuth().handler(
+    new Request("http://localhost:3000/api/auth/managers/sign-in/email", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        origin: "http://localhost:3000",
+      },
+      body: JSON.stringify({ email, password }),
+    })
+  );
   return {
-    method: "POST",
-    node: { req: { headers: {}, body }, res: {} },
-    context: { body },
-    _requestBody: body,
-    _body: body,
-  } as unknown as H3Event;
+    manager,
+    password,
+    cookie: collectCookie(loginRes),
+  };
 }
 
-async function createChallengeForManager(manager: {
-  id: number;
-  displayName: string;
-  role: "super_admin" | "content_reviewer";
-}): Promise<string> {
-  const mfaService = new MfaChallengeService(getAuthRedisClient());
-  const res = await mfaService.createChallenge({
-    namespace: "manager",
-    accountId: manager.id,
-    displayName: manager.displayName,
-    role: manager.role,
-    rememberMe: false,
-  });
-  return res.challengeToken;
-}
-
-describe("Manager MFA Enrollment Flow (BR-MME-01..07, Task #105)", () => {
-  it("Scenario 1 (BR-MME-01): Manager with MFA already enabled cannot enroll (returns 409 MFA_ALREADY_ENABLED and does not overwrite settings)", async () => {
-    const db = getOwnerDb();
-    const testEmail = `admin_already_mfa_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@tinimath.test`;
-    const passwordHash = await hashPassword("AdminSecret123!");
-    const initialSecret = generateTotpSecret();
-
-    const [manager] = await db
-      .insert(managers)
-      .values({
-        email: testEmail,
-        passwordHash,
-        displayName: "Already MFA Admin",
-        role: "super_admin",
-        mfaEnabled: true,
-      })
-      .returning();
-
-    const initialEncrypted = encryptTotpSecret(
-      initialSecret,
-      process.env.MFA_ENCRYPTION_KEY as string
-    );
-
-    await db.insert(mfaSettings).values({
-      accountType: "manager",
-      accountId: manager.id,
-      secretEncrypted: initialEncrypted,
-      confirmedAt: new Date(),
-    });
-
-    // Login step -> gives challenge
-    const loginRes = await loginHandler(
-      mockH3Event({ email: testEmail, password: "AdminSecret123!" })
-    );
-    expect(loginRes.status).toBe("MFA_REQUIRED");
-    expect(loginRes.mfa_enabled).toBe(true);
-
-    // Call mfa-setup with valid challenge -> Must throw 409 MFA_ALREADY_ENABLED
-    try {
-      await mfaSetupHandler(mockH3Event({ challenge: loginRes.challenge }));
-      expect.fail("Should have thrown 409 MFA_ALREADY_ENABLED");
-    } catch (error) {
-      const err = error as AppErrorLike;
-      expect(err.statusCode || err.status).toBe(409);
-      expect(err.statusMessage || err.code).toBe("MFA_ALREADY_ENABLED");
-    }
-
-    // Verify mfa_settings row was NOT overwritten
-    const [persistedSetting] = await db
-      .select()
-      .from(mfaSettings)
-      .where(
-        and(
-          eq(mfaSettings.accountType, "manager"),
-          eq(mfaSettings.accountId, manager.id)
-        )
-      );
-    expect(persistedSetting.secretEncrypted).toBe(initialEncrypted);
-    expect(persistedSetting.confirmedAt).not.toBeNull();
+describe("Manager MFA Enrollment Flow via Better Auth twoFactor Plugin (BR-MME-01..07)", () => {
+  beforeEach(() => {
+    setAuthRedisClient(new InMemoryRedisClient());
+    resetBetterAuthInstancesForTests();
   });
 
-  it("Scenario 2 (BR-MME-02): mfa-setup does NOT create sessions or active_session rows", async () => {
-    const db = getOwnerDb();
-    const testEmail = `admin_unconfirmed_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@tinimath.test`;
-    const passwordHash = await hashPassword("AdminSecret123!");
+  it("Scenario 1: enabling 2FA requires valid current password", async () => {
+    const { cookie } = await createLoggedInManager("wrong-pwd");
 
-    const [manager] = await db
-      .insert(managers)
-      .values({
-        email: testEmail,
-        passwordHash,
-        displayName: "New Unconfirmed Admin",
-        role: "super_admin",
-        mfaEnabled: false,
+    const res = await getManagerAuth().handler(
+      new Request("http://localhost:3000/api/auth/managers/two-factor/enable", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          origin: "http://localhost:3000",
+          cookie,
+        },
+        body: JSON.stringify({ password: "WrongPassword!" }),
       })
-      .returning();
-
-    const challenge = await createChallengeForManager(manager);
-
-    const setupRes = await mfaSetupHandler(mockH3Event({ challenge }));
-
-    expect(setupRes.otpauth_uri).toContain("otpauth://");
-    expect(setupRes.challenge).toBeDefined();
-
-    // Verify NO active_sessions created
-    const sessions = await db
-      .select()
-      .from(activeSessions)
-      .where(
-        and(
-          eq(activeSessions.accountType, "manager"),
-          eq(activeSessions.accountId, manager.id)
-        )
-      );
-    expect(sessions).toHaveLength(0);
+    );
+    expect(res.status).toBeGreaterThanOrEqual(400);
   });
 
-  it("Scenario 3 (BR-MME-03): Reusing old consumed challenge fails with INVALID_CREDENTIALS", async () => {
+  it("Scenario 2: two-factor/enable keeps mfaEnabled false until verify-totp succeeds", async () => {
     const db = getOwnerDb();
-    const testEmail = `admin_challenge_reuse_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@tinimath.test`;
-    const passwordHash = await hashPassword("AdminSecret123!");
+    const { manager, password, cookie } =
+      await createLoggedInManager("unconfirmed");
 
-    const [manager] = await db
-      .insert(managers)
-      .values({
-        email: testEmail,
-        passwordHash,
-        displayName: "Challenge Reuse Admin",
-        role: "super_admin",
-        mfaEnabled: false,
+    const enableRes = await getManagerAuth().handler(
+      new Request("http://localhost:3000/api/auth/managers/two-factor/enable", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          origin: "http://localhost:3000",
+          cookie,
+        },
+        body: JSON.stringify({ password }),
       })
-      .returning();
-
-    const challengeA = await createChallengeForManager(manager);
-
-    // Exchange challengeA for challengeB
-    const setupRes = await mfaSetupHandler(
-      mockH3Event({ challenge: challengeA })
     );
-    const challengeB = setupRes.challenge;
+    expect(enableRes.status).toBe(200);
+    const enablePayload = (await enableRes.json()) as {
+      totpURI: string;
+      backupCodes: string[];
+    };
+    expect(enablePayload.totpURI).toContain("otpauth://");
+    expect(enablePayload.backupCodes).toHaveLength(10);
 
-    // Attempting to use challengeA again in mfa or mfa-setup must throw 401 INVALID_CREDENTIALS
-    try {
-      await mfaHandler(mockH3Event({ challenge: challengeA, code: "123456" }));
-      expect.fail("Should have thrown 401");
-    } catch (error) {
-      const err = error as AppErrorLike;
-      expect(err.statusCode || err.status).toBe(401);
-    }
-
-    try {
-      await mfaSetupHandler(mockH3Event({ challenge: challengeA }));
-      expect.fail("Should have thrown 401");
-    } catch (error) {
-      const err = error as AppErrorLike;
-      expect(err.statusCode || err.status).toBe(401);
-    }
-
-    // But challengeB works for valid code
-    const [setting] = await db
-      .select()
-      .from(mfaSettings)
-      .where(eq(mfaSettings.accountId, manager.id));
-    const secret = decryptTotpSecret(
-      setting.secretEncrypted,
-      process.env.MFA_ENCRYPTION_KEY as string
-    );
-    const validCode = generateTotpCode(secret);
-
-    const mfaRes = await mfaHandler(
-      mockH3Event({ challenge: challengeB, code: validCode })
-    );
-    expect(mfaRes.status).toBe("ok");
-  });
-
-  it("Scenario 4 (BR-MME-04): Abandoned setup can be restarted, replacing unconfirmed secret", async () => {
-    const db = getOwnerDb();
-    const testEmail = `admin_abandoned_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@tinimath.test`;
-    const passwordHash = await hashPassword("AdminSecret123!");
-
-    const [manager] = await db
-      .insert(managers)
-      .values({
-        email: testEmail,
-        passwordHash,
-        displayName: "Abandoned Setup Admin",
-        role: "super_admin",
-        mfaEnabled: false,
-      })
-      .returning();
-
-    // First setup
-    const challenge1 = await createChallengeForManager(manager);
-    await mfaSetupHandler(mockH3Event({ challenge: challenge1 }));
-
-    const [firstSetting] = await db
-      .select()
-      .from(mfaSettings)
-      .where(eq(mfaSettings.accountId, manager.id));
-    expect(firstSetting.confirmedAt).toBeNull();
-    const firstSecretEncrypted = firstSetting.secretEncrypted;
-
-    // Manager abandons and setups again
-    const challenge2 = await createChallengeForManager(manager);
-    await mfaSetupHandler(mockH3Event({ challenge: challenge2 }));
-
-    const settings = await db
-      .select()
-      .from(mfaSettings)
-      .where(eq(mfaSettings.accountId, manager.id));
-    expect(settings).toHaveLength(1);
-    expect(settings[0].secretEncrypted).not.toBe(firstSecretEncrypted);
-    expect(settings[0].confirmedAt).toBeNull();
-  });
-
-  it("Scenario 5 & 6 (BR-MME-05, BR-MME-06): First confirmation commits in ONE transaction (confirmed_at, mfa_enabled, 10 recovery codes, audit log)", async () => {
-    const db = getOwnerDb();
-    const testEmail = `admin_tx_test_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@tinimath.test`;
-    const passwordHash = await hashPassword("AdminSecret123!");
-
-    const [manager] = await db
-      .insert(managers)
-      .values({
-        email: testEmail,
-        passwordHash,
-        displayName: "Tx Test Admin",
-        role: "super_admin",
-        mfaEnabled: false,
-      })
-      .returning();
-
-    const challengeInitial = await createChallengeForManager(manager);
-    const setupRes = await mfaSetupHandler(
-      mockH3Event({ challenge: challengeInitial })
-    );
-
-    // Negative branch: wrong TOTP code fails and does NOT confirm MFA
-    try {
-      await mfaHandler(
-        mockH3Event({ challenge: setupRes.challenge, code: "000000" })
-      );
-      expect.fail("Should have thrown on wrong code");
-    } catch (error) {
-      const err = error as AppErrorLike;
-      expect(err.statusCode || err.status).toBe(401);
-    }
-
-    const [stillUnconfirmed] = await db
-      .select()
-      .from(mfaSettings)
-      .where(eq(mfaSettings.accountId, manager.id));
-    expect(stillUnconfirmed.confirmedAt).toBeNull();
-
-    // Verify audit log manager_mfa_failed recorded
-    const failAudit = await db
-      .select()
-      .from(auditLogs)
-      .where(
-        and(
-          eq(auditLogs.action, "manager_mfa_failed"),
-          eq(auditLogs.entityId, manager.id.toString())
-        )
-      );
-    expect(failAudit.length).toBeGreaterThan(0);
-
-    // Now setup again for valid submission
-    const challengeValid = await createChallengeForManager(manager);
-    const setupValid = await mfaSetupHandler(
-      mockH3Event({ challenge: challengeValid })
-    );
-
-    const [setting] = await db
-      .select()
-      .from(mfaSettings)
-      .where(eq(mfaSettings.accountId, manager.id));
-    const secret = decryptTotpSecret(
-      setting.secretEncrypted,
-      process.env.MFA_ENCRYPTION_KEY as string
-    );
-    const validCode = generateTotpCode(secret);
-
-    const mfaRes = await mfaHandler(
-      mockH3Event({ challenge: setupValid.challenge, code: validCode })
-    );
-
-    expect(mfaRes.status).toBe("ok");
-    expect(mfaRes.recovery_codes).toBeDefined();
-    expect(mfaRes.recovery_codes).toHaveLength(10);
-
-    // Verify DB atomic state:
-    // 1. confirmedAt set
-    const [confirmedSetting] = await db
-      .select()
-      .from(mfaSettings)
-      .where(eq(mfaSettings.accountId, manager.id));
-    expect(confirmedSetting.confirmedAt).not.toBeNull();
-
-    // 2. managers.mfa_enabled = true
-    const [updatedManager] = await db
+    const [beforeVerify] = await db
       .select()
       .from(managers)
       .where(eq(managers.id, manager.id));
-    expect(updatedManager.mfaEnabled).toBe(true);
+    expect(beforeVerify?.mfaEnabled).toBe(false);
 
-    // 3. 10 recovery codes created
-    const recoveryRows = await db
+    // Wrong code fails and keeps mfaEnabled false
+    const wrongVerify = await getManagerAuth().handler(
+      new Request(
+        "http://localhost:3000/api/auth/managers/two-factor/verify-totp",
+        {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            origin: "http://localhost:3000",
+            cookie,
+          },
+          body: JSON.stringify({ code: "000000" }),
+        }
+      )
+    );
+    expect(wrongVerify.status).toBeGreaterThanOrEqual(400);
+
+    const [afterWrong] = await db
       .select()
-      .from(mfaRecoveryCodes)
-      .where(
-        and(
-          eq(mfaRecoveryCodes.accountType, "manager"),
-          eq(mfaRecoveryCodes.accountId, manager.id)
-        )
-      );
-    expect(recoveryRows).toHaveLength(10);
+      .from(managers)
+      .where(eq(managers.id, manager.id));
+    expect(afterWrong?.mfaEnabled).toBe(false);
 
-    // 4. Audit manager_mfa_enrolled created
-    const enrollAudit = await db
+    // Valid TOTP code flips mfaEnabled = true and persists encrypted secret in manager_two_factors
+    const secret =
+      new URL(enablePayload.totpURI).searchParams.get("secret") ?? "";
+    const okVerify = await getManagerAuth().handler(
+      new Request(
+        "http://localhost:3000/api/auth/managers/two-factor/verify-totp",
+        {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            origin: "http://localhost:3000",
+            cookie,
+          },
+          body: JSON.stringify({ code: generateTotpCode(secret) }),
+        }
+      )
+    );
+    expect(okVerify.status).toBe(200);
+
+    const [afterOk] = await db
       .select()
-      .from(auditLogs)
-      .where(
-        and(
-          eq(auditLogs.action, "manager_mfa_enrolled"),
-          eq(auditLogs.entityId, manager.id.toString())
-        )
-      );
-    expect(enrollAudit.length).toBeGreaterThan(0);
-  });
+      .from(managers)
+      .where(eq(managers.id, manager.id));
+    expect(afterOk?.mfaEnabled).toBe(true);
 
-  it("Scenario 7 (BR-MME-07): Rate limiting applies to mfa-setup endpoint", async () => {
-    const db = getOwnerDb();
-    const testEmail = `admin_rate_limit_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@tinimath.test`;
-    const passwordHash = await hashPassword("AdminSecret123!");
-
-    await db.insert(managers).values({
-      email: testEmail,
-      passwordHash,
-      displayName: "Rate Limit Admin",
-      role: "super_admin",
-      mfaEnabled: false,
-    });
-
-    // Invalid body or challenge triggers invalid credentials
-    try {
-      await mfaSetupHandler(
-        mockH3Event({ challenge: "non_existent_challenge_token" })
-      );
-      expect.fail("Should throw 401 on invalid challenge");
-    } catch (error) {
-      const err = error as AppErrorLike;
-      expect(err.statusCode || err.status).toBe(401);
-    }
+    const [tfRow] = await db
+      .select()
+      .from(managerTwoFactors)
+      .where(eq(managerTwoFactors.userId, manager.id));
+    expect(tfRow).toBeDefined();
+    expect(tfRow?.secret).not.toBe(secret);
   });
 });

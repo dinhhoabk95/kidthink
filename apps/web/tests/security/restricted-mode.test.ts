@@ -1,13 +1,13 @@
 import { hashPassword } from "@mindkid/auth";
 import { getAppDb, users } from "@mindkid/db";
+import { RestrictedModeError } from "@mindkid/errors/auth";
+import { createEvent } from "h3";
 import { describe, expect, it } from "vitest";
-import {
-  assertUnrestrictedUser,
-  respondToUserAuthError,
-} from "#server/utils/auth-runtime";
+import profileGetHandler from "#server/api/users/profile.get";
+import { assertUnrestrictedUser } from "#server/utils/auth-runtime";
 
 describe("Task 6 — Server-Enforced Restricted Mode (D-EQ)", () => {
-  it("permits pending_verification user to read session status but blocks restricted actions with 403 RESTRICTED_MODE (BR-REG-08)", async () => {
+  it("permits pending_verification user to read profile status but blocks restricted actions with 403 RESTRICTED_MODE (BR-REG-08)", async () => {
     const db = getAppDb();
     const passHash = await hashPassword("chuoixanh123");
 
@@ -21,48 +21,44 @@ describe("Task 6 — Server-Enforced Restricted Mode (D-EQ)", () => {
         status: "pending_verification",
       })
       .returning();
+    if (!user) {
+      throw new Error("Expected inserted user");
+    }
 
     expect(user.status).toBe("pending_verification");
 
-    // 1. Permitted action check (GET sessions)
-    const { default: sessionsHandler } = await import(
-      "#server/api/users/auth/sessions.get"
+    const event = createEvent(
+      {
+        method: "GET",
+        url: "/api/users/profile",
+        headers: { host: "localhost:3000" },
+      } as never,
+      {
+        statusCode: 200,
+        getHeader: () => undefined,
+        setHeader: () => undefined,
+      } as never
     );
-
-    const event = {
-      method: "GET",
-      node: { req: { headers: {} } },
-      context: {
-        user: {
-          user_id: user.id,
-          display_name: user.displayName,
-          session_id: "100",
-        },
-      },
-    } as any;
-
-    const res = await sessionsHandler(event);
-    expect(res.sessions).toBeDefined();
-
-    // 2. Restricted action guard test: assertUnrestrictedUser throwing 403 RESTRICTED_MODE
-    const restrictedAction = (event: any) => {
-      try {
-        assertUnrestrictedUser(user.status);
-        return { ok: true };
-      } catch (err) {
-        return respondToUserAuthError(event, err);
-      }
+    event.context.user = {
+      user_id: user.id,
+      display_name: user.displayName,
+      session_id: "100",
     };
 
-    let err: any;
+    const res = await profileGetHandler(event);
+    expect(res.status).toBe("pending_verification");
+    expect(res.email).toBe(email);
+
+    let caughtError: RestrictedModeError | null = null;
     try {
-      restrictedAction(event);
-    } catch (e) {
-      err = e;
+      assertUnrestrictedUser(user.status);
+    } catch (err) {
+      caughtError = err as RestrictedModeError;
     }
 
-    expect(err.statusCode).toBe(403);
-    expect(err.data.code).toBe("RESTRICTED_MODE");
+    expect(caughtError).toBeInstanceOf(RestrictedModeError);
+    expect(caughtError?.status).toBe(403);
+    expect(caughtError?.code).toBe("RESTRICTED_MODE");
   });
 
   it("permits active user to execute restricted actions without RESTRICTED_MODE error", async () => {
@@ -79,6 +75,9 @@ describe("Task 6 — Server-Enforced Restricted Mode (D-EQ)", () => {
         status: "active",
       })
       .returning();
+    if (!user) {
+      throw new Error("Expected active user");
+    }
 
     expect(() => assertUnrestrictedUser(user.status)).not.toThrow();
   });

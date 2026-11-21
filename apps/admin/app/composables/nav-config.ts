@@ -163,6 +163,15 @@ export const MANAGER_NAV_ITEMS: readonly ManagerNavItem[] = [
     roles: ["super_admin"],
     description: "Báo cáo chấp thuận Nghị định 13 bảo vệ trẻ",
   },
+  {
+    id: "security-settings",
+    label: "Bảo mật quản trị",
+    href: "/settings/security",
+    icon: "i-lucide-key-round",
+    category: "system",
+    roles: ["super_admin", "content_reviewer"],
+    description: "Quản lý MFA (TOTP), Passkey và phiên đăng nhập quản trị",
+  },
 ] as const;
 
 export function getNavItemsForRole(

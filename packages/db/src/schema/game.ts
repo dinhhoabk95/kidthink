@@ -1,7 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
   bigint,
-  check,
   index,
   integer,
   jsonb,
@@ -12,7 +11,7 @@ import {
   unique,
   varchar,
 } from "drizzle-orm/pg-core";
-import { timestamps } from "./columns.ts";
+import { idPk, timestamps } from "./columns.ts";
 import { skillDatasets } from "./taxonomy.ts";
 
 export const accessTierEnum = pgEnum("access_tier", [
@@ -25,9 +24,7 @@ export const accessTierEnum = pgEnum("access_tier", [
 export const gameLevels = pgTable(
   "game_levels",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     code: varchar("code", { length: 50 }).notNull().unique(),
     templateCode: varchar("template_code", { length: 20 }).notNull(),
     title: varchar("title", { length: 200 }).notNull(),
@@ -43,7 +40,8 @@ export const gameLevels = pgTable(
     accessTier: accessTierEnum("access_tier").notNull(),
     thumbnailEmoji: varchar("thumbnail_emoji", { length: 50 }),
     skillDatasetId: bigint("skill_dataset_id", { mode: "number" }).references(
-      () => skillDatasets.id
+      () => skillDatasets.id,
+      { onDelete: "set null" }
     ),
     projectionRef: varchar("projection_ref", { length: 100 }),
     ...timestamps(),
@@ -52,10 +50,13 @@ export const gameLevels = pgTable(
     // Tra cứu nội dung theo khoá JSONB (content-search) — không có GIN thì mỗi
     // truy vấn quét toàn bảng game_levels.
     index("idx_game_levels_content_pack_gin").using("gin", table.contentPack),
-    index("idx_game_levels_skill_dataset_id").on(table.skillDatasetId),
-    check(
-      "check_game_levels_code_format",
-      sql`${table.code} ~ '^GL-C[1-6]-[A-Z]{2,5}-[A-Z]{2,5}-\\d{4}$'`
+    index("idx_game_levels_skill_dataset_id")
+      .on(table.skillDatasetId)
+      .where(sql`${table.skillDatasetId} IS NOT NULL`),
+    index("idx_game_levels_catalog").on(
+      table.accessTier,
+      table.difficulty,
+      table.id
     ),
   ]
 );
@@ -63,9 +64,7 @@ export const gameLevels = pgTable(
 export const gameLevelRounds = pgTable(
   "game_level_rounds",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     gameLevelId: bigint("game_level_id", { mode: "number" })
       .notNull()
       .references(() => gameLevels.id, { onDelete: "cascade" }),
@@ -78,18 +77,10 @@ export const gameLevelRounds = pgTable(
     ...timestamps(),
   },
   (table) => [
+    // UNIQUE (game_level_id, round_index) đã phủ tra cứu theo game_level_id.
     unique("game_level_rounds_level_index_unique").on(
       table.gameLevelId,
       table.roundIndex
-    ),
-    index("idx_game_level_rounds_level_id").on(table.gameLevelId),
-    check(
-      "check_game_level_rounds_index_non_negative",
-      sql`${table.roundIndex} >= 0`
-    ),
-    check(
-      "check_game_level_rounds_difficulty_range",
-      sql`${table.difficulty} IS NULL OR (${table.difficulty} >= 1 AND ${table.difficulty} <= 5)`
     ),
   ]
 );

@@ -1,0 +1,4359 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "ebeda71c-f650-44da-b42e-f5f3a60ed8f8",
+  "prevIds": [
+    "0274aa4d-74ac-4a4b-a12c-a06f2f97f734"
+  ],
+  "footprints": [
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "manager_accounts"
+      ],
+      "writes": [
+        "s|tbl|public.manager_accounts",
+        "n|tbl|public.manager_accounts",
+        "e|tbl|public.manager_accounts",
+        "n|rel|public.manager_accounts",
+        "n|type|public.manager_accounts",
+        "n|rel|public.manager_accounts_pkey",
+        "n|rel|public.manager_accounts_provider_account_unique",
+        "n|rel|public.manager_accounts_manager_provider_unique"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "manager_passkeys"
+      ],
+      "writes": [
+        "s|tbl|public.manager_passkeys",
+        "n|tbl|public.manager_passkeys",
+        "e|tbl|public.manager_passkeys",
+        "n|rel|public.manager_passkeys",
+        "n|type|public.manager_passkeys",
+        "n|rel|public.manager_passkeys_pkey",
+        "n|rel|public.manager_passkeys_credential_id_key"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "manager_sessions"
+      ],
+      "writes": [
+        "s|tbl|public.manager_sessions",
+        "n|tbl|public.manager_sessions",
+        "e|tbl|public.manager_sessions",
+        "n|rel|public.manager_sessions",
+        "n|type|public.manager_sessions",
+        "n|rel|public.manager_sessions_pkey",
+        "n|rel|public.manager_sessions_token_key"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "manager_two_factors"
+      ],
+      "writes": [
+        "s|tbl|public.manager_two_factors",
+        "n|tbl|public.manager_two_factors",
+        "e|tbl|public.manager_two_factors",
+        "n|rel|public.manager_two_factors",
+        "n|type|public.manager_two_factors",
+        "n|rel|public.manager_two_factors_pkey",
+        "n|rel|public.manager_two_factors_manager_unique"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "manager_verifications"
+      ],
+      "writes": [
+        "s|tbl|public.manager_verifications",
+        "n|tbl|public.manager_verifications",
+        "e|tbl|public.manager_verifications",
+        "n|rel|public.manager_verifications",
+        "n|type|public.manager_verifications",
+        "n|rel|public.manager_verifications_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "user_accounts"
+      ],
+      "writes": [
+        "s|tbl|public.user_accounts",
+        "n|tbl|public.user_accounts",
+        "e|tbl|public.user_accounts",
+        "n|rel|public.user_accounts",
+        "n|type|public.user_accounts",
+        "n|rel|public.user_accounts_pkey",
+        "n|rel|public.user_accounts_provider_account_unique",
+        "n|rel|public.user_accounts_user_provider_unique"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "user_passkeys"
+      ],
+      "writes": [
+        "s|tbl|public.user_passkeys",
+        "n|tbl|public.user_passkeys",
+        "e|tbl|public.user_passkeys",
+        "n|rel|public.user_passkeys",
+        "n|type|public.user_passkeys",
+        "n|rel|public.user_passkeys_pkey",
+        "n|rel|public.user_passkeys_credential_id_key"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "user_sessions"
+      ],
+      "writes": [
+        "s|tbl|public.user_sessions",
+        "n|tbl|public.user_sessions",
+        "e|tbl|public.user_sessions",
+        "n|rel|public.user_sessions",
+        "n|type|public.user_sessions",
+        "n|rel|public.user_sessions_pkey",
+        "n|rel|public.user_sessions_token_key"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "user_two_factors"
+      ],
+      "writes": [
+        "s|tbl|public.user_two_factors",
+        "n|tbl|public.user_two_factors",
+        "e|tbl|public.user_two_factors",
+        "n|rel|public.user_two_factors",
+        "n|type|public.user_two_factors",
+        "n|rel|public.user_two_factors_pkey",
+        "n|rel|public.user_two_factors_user_unique"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "user_verifications"
+      ],
+      "writes": [
+        "s|tbl|public.user_verifications",
+        "n|tbl|public.user_verifications",
+        "e|tbl|public.user_verifications",
+        "n|rel|public.user_verifications",
+        "n|type|public.user_verifications",
+        "n|rel|public.user_verifications_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "drop_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "active_sessions"
+      ],
+      "writes": [
+        "s|tbl|public.active_sessions",
+        "n|tbl|public.active_sessions",
+        "e|tbl|public.active_sessions",
+        "n|rel|public.active_sessions",
+        "n|type|public.active_sessions"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "drop_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "mfa_recovery_codes"
+      ],
+      "writes": [
+        "s|tbl|public.mfa_recovery_codes",
+        "n|tbl|public.mfa_recovery_codes",
+        "e|tbl|public.mfa_recovery_codes",
+        "n|rel|public.mfa_recovery_codes",
+        "n|type|public.mfa_recovery_codes"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "drop_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "mfa_settings"
+      ],
+      "writes": [
+        "s|tbl|public.mfa_settings",
+        "n|tbl|public.mfa_settings",
+        "e|tbl|public.mfa_settings",
+        "n|rel|public.mfa_settings",
+        "n|type|public.mfa_settings"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "drop_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "social_identities"
+      ],
+      "writes": [
+        "s|tbl|public.social_identities",
+        "n|tbl|public.social_identities",
+        "e|tbl|public.social_identities",
+        "n|rel|public.social_identities",
+        "n|type|public.social_identities"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "drop_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "verification_tokens"
+      ],
+      "writes": [
+        "s|tbl|public.verification_tokens",
+        "n|tbl|public.verification_tokens",
+        "e|tbl|public.verification_tokens",
+        "n|rel|public.verification_tokens",
+        "n|type|public.verification_tokens"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "managers",
+        "email_verified"
+      ],
+      "writes": [
+        "s|col|public.managers.email_verified",
+        "n|col|public.managers.email_verified",
+        "e|col|public.managers.email_verified"
+      ],
+      "reads": [
+        "n|tbl|public.managers",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "managers",
+        "image"
+      ],
+      "writes": [
+        "s|col|public.managers.image",
+        "n|col|public.managers.image",
+        "e|col|public.managers.image"
+      ],
+      "reads": [
+        "n|tbl|public.managers",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "users",
+        "email_verified"
+      ],
+      "writes": [
+        "s|col|public.users.email_verified",
+        "n|col|public.users.email_verified",
+        "e|col|public.users.email_verified"
+      ],
+      "reads": [
+        "n|tbl|public.users",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "users",
+        "image"
+      ],
+      "writes": [
+        "s|col|public.users.image",
+        "n|col|public.users.image",
+        "e|col|public.users.image"
+      ],
+      "reads": [
+        "n|tbl|public.users",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "users",
+        "two_factor_enabled"
+      ],
+      "writes": [
+        "s|col|public.users.two_factor_enabled",
+        "n|col|public.users.two_factor_enabled",
+        "e|col|public.users.two_factor_enabled"
+      ],
+      "reads": [
+        "n|tbl|public.users",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "recreate_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "ai_credit_ledger",
+        "idx_ai_credit_ledger_granted_by_manager"
+      ],
+      "writes": [
+        "s|idx|public.idx_ai_credit_ledger_granted_by_manager",
+        "n|idx|public.idx_ai_credit_ledger_granted_by_manager",
+        "e|idx|public.idx_ai_credit_ledger_granted_by_manager",
+        "n|rel|public.idx_ai_credit_ledger_granted_by_manager"
+      ],
+      "reads": [
+        "n|tbl|public.ai_credit_ledger",
+        "n|sch|public",
+        "n|col|public.ai_credit_ledger.granted_by_manager_id"
+      ],
+      "sharedWrites": [],
+      "sqlHash": "526a35bf87ea028b"
+    },
+    {
+      "statementType": "recreate_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "ai_credit_ledger",
+        "idx_ai_credit_ledger_idempotency"
+      ],
+      "writes": [
+        "s|idx|public.idx_ai_credit_ledger_idempotency",
+        "n|idx|public.idx_ai_credit_ledger_idempotency",
+        "e|idx|public.idx_ai_credit_ledger_idempotency",
+        "n|rel|public.idx_ai_credit_ledger_idempotency"
+      ],
+      "reads": [
+        "n|tbl|public.ai_credit_ledger",
+        "n|sch|public",
+        "n|col|public.ai_credit_ledger.idempotency_key"
+      ],
+      "sharedWrites": [],
+      "sqlHash": "a6568e822b772e13"
+    },
+    {
+      "statementType": "recreate_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "entitlements",
+        "idx_entitlements_granted_by_manager"
+      ],
+      "writes": [
+        "s|idx|public.idx_entitlements_granted_by_manager",
+        "n|idx|public.idx_entitlements_granted_by_manager",
+        "e|idx|public.idx_entitlements_granted_by_manager",
+        "n|rel|public.idx_entitlements_granted_by_manager"
+      ],
+      "reads": [
+        "n|tbl|public.entitlements",
+        "n|sch|public",
+        "n|col|public.entitlements.granted_by_manager_id"
+      ],
+      "sharedWrites": [],
+      "sqlHash": "5169849b3475feeb"
+    },
+    {
+      "statementType": "recreate_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "payment_orders",
+        "idx_payment_orders_bank_txn_ref"
+      ],
+      "writes": [
+        "s|idx|public.idx_payment_orders_bank_txn_ref",
+        "n|idx|public.idx_payment_orders_bank_txn_ref",
+        "e|idx|public.idx_payment_orders_bank_txn_ref",
+        "n|rel|public.idx_payment_orders_bank_txn_ref"
+      ],
+      "reads": [
+        "n|tbl|public.payment_orders",
+        "n|sch|public",
+        "n|col|public.payment_orders.bank_txn_ref"
+      ],
+      "sharedWrites": [],
+      "sqlHash": "d889b2eadc3531c1"
+    },
+    {
+      "statementType": "recreate_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "payment_orders",
+        "idx_payment_orders_reviewed_by_manager"
+      ],
+      "writes": [
+        "s|idx|public.idx_payment_orders_reviewed_by_manager",
+        "n|idx|public.idx_payment_orders_reviewed_by_manager",
+        "e|idx|public.idx_payment_orders_reviewed_by_manager",
+        "n|rel|public.idx_payment_orders_reviewed_by_manager"
+      ],
+      "reads": [
+        "n|tbl|public.payment_orders",
+        "n|sch|public",
+        "n|col|public.payment_orders.reviewed_by_manager_id"
+      ],
+      "sharedWrites": [],
+      "sqlHash": "d1ee11e0cb02f2de"
+    },
+    {
+      "statementType": "recreate_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "payment_transactions",
+        "idx_payment_transactions_order_id"
+      ],
+      "writes": [
+        "s|idx|public.idx_payment_transactions_order_id",
+        "n|idx|public.idx_payment_transactions_order_id",
+        "e|idx|public.idx_payment_transactions_order_id",
+        "n|rel|public.idx_payment_transactions_order_id"
+      ],
+      "reads": [
+        "n|tbl|public.payment_transactions",
+        "n|sch|public",
+        "n|col|public.payment_transactions.order_id"
+      ],
+      "sharedWrites": [],
+      "sqlHash": "4a8b1c841e53deb1"
+    },
+    {
+      "statementType": "recreate_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "child_profiles",
+        "idx_child_profiles_status_purge_at"
+      ],
+      "writes": [
+        "s|idx|public.idx_child_profiles_status_purge_at",
+        "n|idx|public.idx_child_profiles_status_purge_at",
+        "e|idx|public.idx_child_profiles_status_purge_at",
+        "n|rel|public.idx_child_profiles_status_purge_at"
+      ],
+      "reads": [
+        "n|tbl|public.child_profiles",
+        "n|sch|public",
+        "n|col|public.child_profiles.status",
+        "n|col|public.child_profiles.purge_at"
+      ],
+      "sharedWrites": [],
+      "sqlHash": "1236f0bf55f2d202"
+    },
+    {
+      "statementType": "recreate_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "child_profiles",
+        "idx_child_profiles_current_curriculum_id"
+      ],
+      "writes": [
+        "s|idx|public.idx_child_profiles_current_curriculum_id",
+        "n|idx|public.idx_child_profiles_current_curriculum_id",
+        "e|idx|public.idx_child_profiles_current_curriculum_id",
+        "n|rel|public.idx_child_profiles_current_curriculum_id"
+      ],
+      "reads": [
+        "n|tbl|public.child_profiles",
+        "n|sch|public",
+        "n|col|public.child_profiles.current_curriculum_id"
+      ],
+      "sharedWrites": [],
+      "sqlHash": "34e845dce8027350"
+    },
+    {
+      "statementType": "recreate_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "child_stickers",
+        "idx_child_stickers_play_session_id"
+      ],
+      "writes": [
+        "s|idx|public.idx_child_stickers_play_session_id",
+        "n|idx|public.idx_child_stickers_play_session_id",
+        "e|idx|public.idx_child_stickers_play_session_id",
+        "n|rel|public.idx_child_stickers_play_session_id"
+      ],
+      "reads": [
+        "n|tbl|public.child_stickers",
+        "n|sch|public",
+        "n|col|public.child_stickers.play_session_id"
+      ],
+      "sharedWrites": [],
+      "sqlHash": "42ec435127727c90"
+    },
+    {
+      "statementType": "recreate_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "curriculum_enrollments",
+        "idx_curriculum_enrollments_child_active_unique"
+      ],
+      "writes": [
+        "s|idx|public.idx_curriculum_enrollments_child_active_unique",
+        "n|idx|public.idx_curriculum_enrollments_child_active_unique",
+        "e|idx|public.idx_curriculum_enrollments_child_active_unique",
+        "n|rel|public.idx_curriculum_enrollments_child_active_unique"
+      ],
+      "reads": [
+        "n|tbl|public.curriculum_enrollments",
+        "n|sch|public",
+        "n|col|public.curriculum_enrollments.child_id"
+      ],
+      "sharedWrites": [],
+      "sqlHash": "2b1d22badbc32bda"
+    },
+    {
+      "statementType": "recreate_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "export_jobs",
+        "idx_export_jobs_status"
+      ],
+      "writes": [
+        "s|idx|public.idx_export_jobs_status",
+        "n|idx|public.idx_export_jobs_status",
+        "e|idx|public.idx_export_jobs_status",
+        "n|rel|public.idx_export_jobs_status"
+      ],
+      "reads": [
+        "n|tbl|public.export_jobs",
+        "n|sch|public",
+        "n|col|public.export_jobs.status",
+        "n|col|public.export_jobs.created_at"
+      ],
+      "sharedWrites": [],
+      "sqlHash": "76a9cf5cd13521fe"
+    },
+    {
+      "statementType": "recreate_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "export_jobs",
+        "idx_export_jobs_expires_at"
+      ],
+      "writes": [
+        "s|idx|public.idx_export_jobs_expires_at",
+        "n|idx|public.idx_export_jobs_expires_at",
+        "e|idx|public.idx_export_jobs_expires_at",
+        "n|rel|public.idx_export_jobs_expires_at"
+      ],
+      "reads": [
+        "n|tbl|public.export_jobs",
+        "n|sch|public",
+        "n|col|public.export_jobs.expires_at"
+      ],
+      "sharedWrites": [],
+      "sqlHash": "84ce02606496cf63"
+    },
+    {
+      "statementType": "recreate_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "game_levels",
+        "idx_game_levels_skill_dataset_id"
+      ],
+      "writes": [
+        "s|idx|public.idx_game_levels_skill_dataset_id",
+        "n|idx|public.idx_game_levels_skill_dataset_id",
+        "e|idx|public.idx_game_levels_skill_dataset_id",
+        "n|rel|public.idx_game_levels_skill_dataset_id"
+      ],
+      "reads": [
+        "n|tbl|public.game_levels",
+        "n|sch|public",
+        "n|col|public.game_levels.skill_dataset_id"
+      ],
+      "sharedWrites": [],
+      "sqlHash": "fec0f1f7a7345481"
+    },
+    {
+      "statementType": "recreate_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "mfa_recovery_requests",
+        "idx_mfa_recovery_requests_token_hash"
+      ],
+      "writes": [
+        "s|idx|public.idx_mfa_recovery_requests_token_hash",
+        "n|idx|public.idx_mfa_recovery_requests_token_hash",
+        "e|idx|public.idx_mfa_recovery_requests_token_hash",
+        "n|rel|public.idx_mfa_recovery_requests_token_hash"
+      ],
+      "reads": [
+        "n|tbl|public.mfa_recovery_requests",
+        "n|sch|public",
+        "n|col|public.mfa_recovery_requests.verification_token_hash"
+      ],
+      "sharedWrites": [],
+      "sqlHash": "25c407d7c4187de6"
+    },
+    {
+      "statementType": "recreate_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "mfa_recovery_requests",
+        "idx_mfa_recovery_requests_completed_by_manager"
+      ],
+      "writes": [
+        "s|idx|public.idx_mfa_recovery_requests_completed_by_manager",
+        "n|idx|public.idx_mfa_recovery_requests_completed_by_manager",
+        "e|idx|public.idx_mfa_recovery_requests_completed_by_manager",
+        "n|rel|public.idx_mfa_recovery_requests_completed_by_manager"
+      ],
+      "reads": [
+        "n|tbl|public.mfa_recovery_requests",
+        "n|sch|public",
+        "n|col|public.mfa_recovery_requests.completed_by_manager_id"
+      ],
+      "sharedWrites": [],
+      "sqlHash": "8e0bd588685984b1"
+    },
+    {
+      "statementType": "recreate_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "users",
+        "idx_users_status_purge_at"
+      ],
+      "writes": [
+        "s|idx|public.idx_users_status_purge_at",
+        "n|idx|public.idx_users_status_purge_at",
+        "e|idx|public.idx_users_status_purge_at",
+        "n|rel|public.idx_users_status_purge_at"
+      ],
+      "reads": [
+        "n|tbl|public.users",
+        "n|sch|public",
+        "n|col|public.users.status",
+        "n|col|public.users.purge_at"
+      ],
+      "sharedWrites": [],
+      "sqlHash": "44595431b63ee68e"
+    },
+    {
+      "statementType": "recreate_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "library_items",
+        "idx_library_items_collection_id"
+      ],
+      "writes": [
+        "s|idx|public.idx_library_items_collection_id",
+        "n|idx|public.idx_library_items_collection_id",
+        "e|idx|public.idx_library_items_collection_id",
+        "n|rel|public.idx_library_items_collection_id"
+      ],
+      "reads": [
+        "n|tbl|public.library_items",
+        "n|sch|public",
+        "n|col|public.library_items.collection_id"
+      ],
+      "sharedWrites": [],
+      "sqlHash": "1dbcd295bed80d4d"
+    },
+    {
+      "statementType": "recreate_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "error_logs",
+        "idx_error_logs_user_id"
+      ],
+      "writes": [
+        "s|idx|public.idx_error_logs_user_id",
+        "n|idx|public.idx_error_logs_user_id",
+        "e|idx|public.idx_error_logs_user_id",
+        "n|rel|public.idx_error_logs_user_id"
+      ],
+      "reads": [
+        "n|tbl|public.error_logs",
+        "n|sch|public",
+        "n|col|public.error_logs.user_id"
+      ],
+      "sharedWrites": [],
+      "sqlHash": "d94020770bfec278"
+    },
+    {
+      "statementType": "recreate_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "error_logs",
+        "idx_error_logs_resolved_by_manager"
+      ],
+      "writes": [
+        "s|idx|public.idx_error_logs_resolved_by_manager",
+        "n|idx|public.idx_error_logs_resolved_by_manager",
+        "e|idx|public.idx_error_logs_resolved_by_manager",
+        "n|rel|public.idx_error_logs_resolved_by_manager"
+      ],
+      "reads": [
+        "n|tbl|public.error_logs",
+        "n|sch|public",
+        "n|col|public.error_logs.resolved_by_manager_id"
+      ],
+      "sharedWrites": [],
+      "sqlHash": "11004ab881ccb5da"
+    },
+    {
+      "statementType": "recreate_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "feature_flags",
+        "idx_feature_flags_updated_by_manager"
+      ],
+      "writes": [
+        "s|idx|public.idx_feature_flags_updated_by_manager",
+        "n|idx|public.idx_feature_flags_updated_by_manager",
+        "e|idx|public.idx_feature_flags_updated_by_manager",
+        "n|rel|public.idx_feature_flags_updated_by_manager"
+      ],
+      "reads": [
+        "n|tbl|public.feature_flags",
+        "n|sch|public",
+        "n|col|public.feature_flags.updated_by_manager_id"
+      ],
+      "sharedWrites": [],
+      "sqlHash": "1624fe8f434db994"
+    },
+    {
+      "statementType": "recreate_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "notification_deliveries",
+        "idx_notification_deliveries_queued"
+      ],
+      "writes": [
+        "s|idx|public.idx_notification_deliveries_queued",
+        "n|idx|public.idx_notification_deliveries_queued",
+        "e|idx|public.idx_notification_deliveries_queued",
+        "n|rel|public.idx_notification_deliveries_queued"
+      ],
+      "reads": [
+        "n|tbl|public.notification_deliveries",
+        "n|sch|public",
+        "n|col|public.notification_deliveries.status",
+        "n|col|public.notification_deliveries.created_at"
+      ],
+      "sharedWrites": [],
+      "sqlHash": "7e586955a54c667e"
+    },
+    {
+      "statementType": "recreate_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "personal_curriculum_enrollments",
+        "idx_personal_curriculum_enrollments_child_active_unique"
+      ],
+      "writes": [
+        "s|idx|public.idx_personal_curriculum_enrollments_child_active_unique",
+        "n|idx|public.idx_personal_curriculum_enrollments_child_active_unique",
+        "e|idx|public.idx_personal_curriculum_enrollments_child_active_unique",
+        "n|rel|public.idx_personal_curriculum_enrollments_child_active_unique"
+      ],
+      "reads": [
+        "n|tbl|public.personal_curriculum_enrollments",
+        "n|sch|public",
+        "n|col|public.personal_curriculum_enrollments.child_id"
+      ],
+      "sharedWrites": [],
+      "sqlHash": "7bc7c0602ae72aa4"
+    },
+    {
+      "statementType": "recreate_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "play_sessions",
+        "idx_play_sessions_child_started_at"
+      ],
+      "writes": [
+        "s|idx|public.idx_play_sessions_child_started_at",
+        "n|idx|public.idx_play_sessions_child_started_at",
+        "e|idx|public.idx_play_sessions_child_started_at",
+        "n|rel|public.idx_play_sessions_child_started_at"
+      ],
+      "reads": [
+        "n|tbl|public.play_sessions",
+        "n|sch|public",
+        "n|col|public.play_sessions.child_profile_id",
+        "n|col|public.play_sessions.started_at"
+      ],
+      "sharedWrites": [],
+      "sqlHash": "2771bc1ed7b9c65a"
+    },
+    {
+      "statementType": "recreate_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "play_sessions",
+        "idx_play_sessions_guest_status"
+      ],
+      "writes": [
+        "s|idx|public.idx_play_sessions_guest_status",
+        "n|idx|public.idx_play_sessions_guest_status",
+        "e|idx|public.idx_play_sessions_guest_status",
+        "n|rel|public.idx_play_sessions_guest_status"
+      ],
+      "reads": [
+        "n|tbl|public.play_sessions",
+        "n|sch|public",
+        "n|col|public.play_sessions.guest_device_id",
+        "n|col|public.play_sessions.completion_status"
+      ],
+      "sharedWrites": [],
+      "sqlHash": "17516d7cd33e98e5"
+    },
+    {
+      "statementType": "recreate_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "telemetry_events",
+        "idx_telemetry_events_child_uuid"
+      ],
+      "writes": [
+        "s|idx|public.idx_telemetry_events_child_uuid",
+        "n|idx|public.idx_telemetry_events_child_uuid",
+        "e|idx|public.idx_telemetry_events_child_uuid",
+        "n|rel|public.idx_telemetry_events_child_uuid"
+      ],
+      "reads": [
+        "n|tbl|public.telemetry_events",
+        "n|sch|public",
+        "n|col|public.telemetry_events.child_uuid"
+      ],
+      "sharedWrites": [],
+      "sqlHash": "c1fd9391fdf3ece6"
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "manager_accounts",
+        "idx_manager_accounts_manager_id"
+      ],
+      "writes": [
+        "s|idx|public.idx_manager_accounts_manager_id",
+        "n|idx|public.idx_manager_accounts_manager_id",
+        "e|idx|public.idx_manager_accounts_manager_id",
+        "n|rel|public.idx_manager_accounts_manager_id"
+      ],
+      "reads": [
+        "n|tbl|public.manager_accounts",
+        "n|sch|public",
+        "n|col|public.manager_accounts.manager_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "manager_passkeys",
+        "idx_manager_passkeys_manager_id"
+      ],
+      "writes": [
+        "s|idx|public.idx_manager_passkeys_manager_id",
+        "n|idx|public.idx_manager_passkeys_manager_id",
+        "e|idx|public.idx_manager_passkeys_manager_id",
+        "n|rel|public.idx_manager_passkeys_manager_id"
+      ],
+      "reads": [
+        "n|tbl|public.manager_passkeys",
+        "n|sch|public",
+        "n|col|public.manager_passkeys.manager_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "manager_sessions",
+        "idx_manager_sessions_manager_id"
+      ],
+      "writes": [
+        "s|idx|public.idx_manager_sessions_manager_id",
+        "n|idx|public.idx_manager_sessions_manager_id",
+        "e|idx|public.idx_manager_sessions_manager_id",
+        "n|rel|public.idx_manager_sessions_manager_id"
+      ],
+      "reads": [
+        "n|tbl|public.manager_sessions",
+        "n|sch|public",
+        "n|col|public.manager_sessions.manager_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "manager_two_factors",
+        "idx_manager_two_factors_secret"
+      ],
+      "writes": [
+        "s|idx|public.idx_manager_two_factors_secret",
+        "n|idx|public.idx_manager_two_factors_secret",
+        "e|idx|public.idx_manager_two_factors_secret",
+        "n|rel|public.idx_manager_two_factors_secret"
+      ],
+      "reads": [
+        "n|tbl|public.manager_two_factors",
+        "n|sch|public",
+        "n|col|public.manager_two_factors.secret"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "manager_verifications",
+        "idx_manager_verifications_identifier"
+      ],
+      "writes": [
+        "s|idx|public.idx_manager_verifications_identifier",
+        "n|idx|public.idx_manager_verifications_identifier",
+        "e|idx|public.idx_manager_verifications_identifier",
+        "n|rel|public.idx_manager_verifications_identifier"
+      ],
+      "reads": [
+        "n|tbl|public.manager_verifications",
+        "n|sch|public",
+        "n|col|public.manager_verifications.identifier"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "user_accounts",
+        "idx_user_accounts_user_id"
+      ],
+      "writes": [
+        "s|idx|public.idx_user_accounts_user_id",
+        "n|idx|public.idx_user_accounts_user_id",
+        "e|idx|public.idx_user_accounts_user_id",
+        "n|rel|public.idx_user_accounts_user_id"
+      ],
+      "reads": [
+        "n|tbl|public.user_accounts",
+        "n|sch|public",
+        "n|col|public.user_accounts.user_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "user_passkeys",
+        "idx_user_passkeys_user_id"
+      ],
+      "writes": [
+        "s|idx|public.idx_user_passkeys_user_id",
+        "n|idx|public.idx_user_passkeys_user_id",
+        "e|idx|public.idx_user_passkeys_user_id",
+        "n|rel|public.idx_user_passkeys_user_id"
+      ],
+      "reads": [
+        "n|tbl|public.user_passkeys",
+        "n|sch|public",
+        "n|col|public.user_passkeys.user_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "user_sessions",
+        "idx_user_sessions_user_id"
+      ],
+      "writes": [
+        "s|idx|public.idx_user_sessions_user_id",
+        "n|idx|public.idx_user_sessions_user_id",
+        "e|idx|public.idx_user_sessions_user_id",
+        "n|rel|public.idx_user_sessions_user_id"
+      ],
+      "reads": [
+        "n|tbl|public.user_sessions",
+        "n|sch|public",
+        "n|col|public.user_sessions.user_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "user_two_factors",
+        "idx_user_two_factors_secret"
+      ],
+      "writes": [
+        "s|idx|public.idx_user_two_factors_secret",
+        "n|idx|public.idx_user_two_factors_secret",
+        "e|idx|public.idx_user_two_factors_secret",
+        "n|rel|public.idx_user_two_factors_secret"
+      ],
+      "reads": [
+        "n|tbl|public.user_two_factors",
+        "n|sch|public",
+        "n|col|public.user_two_factors.secret"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "user_verifications",
+        "idx_user_verifications_identifier"
+      ],
+      "writes": [
+        "s|idx|public.idx_user_verifications_identifier",
+        "n|idx|public.idx_user_verifications_identifier",
+        "e|idx|public.idx_user_verifications_identifier",
+        "n|rel|public.idx_user_verifications_identifier"
+      ],
+      "reads": [
+        "n|tbl|public.user_verifications",
+        "n|sch|public",
+        "n|col|public.user_verifications.identifier"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "manager_accounts"
+      ],
+      "writes": [
+        "s|fk|public.manager_accounts.manager_accounts_manager_id_managers_id_fkey",
+        "n|fk|public.manager_accounts.manager_accounts_manager_id_managers_id_fkey",
+        "e|fk|public.manager_accounts.manager_accounts_manager_id_managers_id_fkey",
+        "n|con|public.manager_accounts.manager_accounts_manager_id_managers_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.manager_accounts",
+        "n|sch|public",
+        "n|tbl|public.managers",
+        "n|sch|public",
+        "n|col|public.manager_accounts.manager_id",
+        "n|col|public.managers.id",
+        "e|uniqueness|public.managers.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "manager_passkeys"
+      ],
+      "writes": [
+        "s|fk|public.manager_passkeys.manager_passkeys_manager_id_managers_id_fkey",
+        "n|fk|public.manager_passkeys.manager_passkeys_manager_id_managers_id_fkey",
+        "e|fk|public.manager_passkeys.manager_passkeys_manager_id_managers_id_fkey",
+        "n|con|public.manager_passkeys.manager_passkeys_manager_id_managers_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.manager_passkeys",
+        "n|sch|public",
+        "n|tbl|public.managers",
+        "n|sch|public",
+        "n|col|public.manager_passkeys.manager_id",
+        "n|col|public.managers.id",
+        "e|uniqueness|public.managers.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "manager_sessions"
+      ],
+      "writes": [
+        "s|fk|public.manager_sessions.manager_sessions_manager_id_managers_id_fkey",
+        "n|fk|public.manager_sessions.manager_sessions_manager_id_managers_id_fkey",
+        "e|fk|public.manager_sessions.manager_sessions_manager_id_managers_id_fkey",
+        "n|con|public.manager_sessions.manager_sessions_manager_id_managers_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.manager_sessions",
+        "n|sch|public",
+        "n|tbl|public.managers",
+        "n|sch|public",
+        "n|col|public.manager_sessions.manager_id",
+        "n|col|public.managers.id",
+        "e|uniqueness|public.managers.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "manager_two_factors"
+      ],
+      "writes": [
+        "s|fk|public.manager_two_factors.manager_two_factors_manager_id_managers_id_fkey",
+        "n|fk|public.manager_two_factors.manager_two_factors_manager_id_managers_id_fkey",
+        "e|fk|public.manager_two_factors.manager_two_factors_manager_id_managers_id_fkey",
+        "n|con|public.manager_two_factors.manager_two_factors_manager_id_managers_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.manager_two_factors",
+        "n|sch|public",
+        "n|tbl|public.managers",
+        "n|sch|public",
+        "n|col|public.manager_two_factors.manager_id",
+        "n|col|public.managers.id",
+        "e|uniqueness|public.managers.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "user_accounts"
+      ],
+      "writes": [
+        "s|fk|public.user_accounts.user_accounts_user_id_users_id_fkey",
+        "n|fk|public.user_accounts.user_accounts_user_id_users_id_fkey",
+        "e|fk|public.user_accounts.user_accounts_user_id_users_id_fkey",
+        "n|con|public.user_accounts.user_accounts_user_id_users_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.user_accounts",
+        "n|sch|public",
+        "n|tbl|public.users",
+        "n|sch|public",
+        "n|col|public.user_accounts.user_id",
+        "n|col|public.users.id",
+        "e|uniqueness|public.users.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "user_passkeys"
+      ],
+      "writes": [
+        "s|fk|public.user_passkeys.user_passkeys_user_id_users_id_fkey",
+        "n|fk|public.user_passkeys.user_passkeys_user_id_users_id_fkey",
+        "e|fk|public.user_passkeys.user_passkeys_user_id_users_id_fkey",
+        "n|con|public.user_passkeys.user_passkeys_user_id_users_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.user_passkeys",
+        "n|sch|public",
+        "n|tbl|public.users",
+        "n|sch|public",
+        "n|col|public.user_passkeys.user_id",
+        "n|col|public.users.id",
+        "e|uniqueness|public.users.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "user_sessions"
+      ],
+      "writes": [
+        "s|fk|public.user_sessions.user_sessions_user_id_users_id_fkey",
+        "n|fk|public.user_sessions.user_sessions_user_id_users_id_fkey",
+        "e|fk|public.user_sessions.user_sessions_user_id_users_id_fkey",
+        "n|con|public.user_sessions.user_sessions_user_id_users_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.user_sessions",
+        "n|sch|public",
+        "n|tbl|public.users",
+        "n|sch|public",
+        "n|col|public.user_sessions.user_id",
+        "n|col|public.users.id",
+        "e|uniqueness|public.users.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "user_two_factors"
+      ],
+      "writes": [
+        "s|fk|public.user_two_factors.user_two_factors_user_id_users_id_fkey",
+        "n|fk|public.user_two_factors.user_two_factors_user_id_users_id_fkey",
+        "e|fk|public.user_two_factors.user_two_factors_user_id_users_id_fkey",
+        "n|con|public.user_two_factors.user_two_factors_user_id_users_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.user_two_factors",
+        "n|sch|public",
+        "n|tbl|public.users",
+        "n|sch|public",
+        "n|col|public.user_two_factors.user_id",
+        "n|col|public.users.id",
+        "e|uniqueness|public.users.id"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "manager_accounts",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "manager_passkeys",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "manager_sessions",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "manager_two_factors",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "manager_verifications",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "user_accounts",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "user_passkeys",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "user_sessions",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "user_two_factors",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "user_verifications",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_accounts",
+        "name": "id",
+        "type": "bigint",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": {
+          "type": "always",
+          "name": "manager_accounts_id_seq",
+          "increment": "1",
+          "startWith": "1",
+          "minValue": "1",
+          "maxValue": "9223372036854775807",
+          "cache": 1,
+          "cycle": false
+        },
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_accounts",
+        "name": "account_id",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_accounts",
+        "name": "provider_id",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_accounts",
+        "name": "manager_id",
+        "type": "bigint",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_accounts",
+        "name": "access_token",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_accounts",
+        "name": "refresh_token",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_accounts",
+        "name": "id_token",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_accounts",
+        "name": "access_token_expires_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_accounts",
+        "name": "refresh_token_expires_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_accounts",
+        "name": "scope",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_accounts",
+        "name": "password_hash",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_accounts",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_accounts",
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_passkeys",
+        "name": "id",
+        "type": "bigint",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": {
+          "type": "always",
+          "name": "manager_passkeys_id_seq",
+          "increment": "1",
+          "startWith": "1",
+          "minValue": "1",
+          "maxValue": "9223372036854775807",
+          "cache": 1,
+          "cycle": false
+        },
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_passkeys",
+        "name": "name",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_passkeys",
+        "name": "public_key",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_passkeys",
+        "name": "manager_id",
+        "type": "bigint",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_passkeys",
+        "name": "credential_id",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_passkeys",
+        "name": "counter",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_passkeys",
+        "name": "device_type",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_passkeys",
+        "name": "backed_up",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "false",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_passkeys",
+        "name": "transports",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_passkeys",
+        "name": "aaguid",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_passkeys",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_passkeys",
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_sessions",
+        "name": "id",
+        "type": "bigint",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": {
+          "type": "always",
+          "name": "manager_sessions_id_seq",
+          "increment": "1",
+          "startWith": "1",
+          "minValue": "1",
+          "maxValue": "9223372036854775807",
+          "cache": 1,
+          "cycle": false
+        },
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_sessions",
+        "name": "manager_id",
+        "type": "bigint",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_sessions",
+        "name": "token",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_sessions",
+        "name": "expires_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_sessions",
+        "name": "ip_address",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_sessions",
+        "name": "user_agent",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_sessions",
+        "name": "auth_method",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "'password'",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_sessions",
+        "name": "reauth_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_sessions",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_sessions",
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_two_factors",
+        "name": "id",
+        "type": "bigint",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": {
+          "type": "always",
+          "name": "manager_two_factors_id_seq",
+          "increment": "1",
+          "startWith": "1",
+          "minValue": "1",
+          "maxValue": "9223372036854775807",
+          "cache": 1,
+          "cycle": false
+        },
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_two_factors",
+        "name": "manager_id",
+        "type": "bigint",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_two_factors",
+        "name": "secret",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_two_factors",
+        "name": "backup_codes",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_two_factors",
+        "name": "verified",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": "true",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_two_factors",
+        "name": "failed_verification_count",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_two_factors",
+        "name": "locked_until",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_two_factors",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_two_factors",
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_verifications",
+        "name": "id",
+        "type": "bigint",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": {
+          "type": "always",
+          "name": "manager_verifications_id_seq",
+          "increment": "1",
+          "startWith": "1",
+          "minValue": "1",
+          "maxValue": "9223372036854775807",
+          "cache": 1,
+          "cycle": false
+        },
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_verifications",
+        "name": "identifier",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_verifications",
+        "name": "value",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_verifications",
+        "name": "expires_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_verifications",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_verifications",
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "managers",
+        "name": "email_verified",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "true",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "managers",
+        "name": "image",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_accounts",
+        "name": "id",
+        "type": "bigint",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": {
+          "type": "always",
+          "name": "user_accounts_id_seq",
+          "increment": "1",
+          "startWith": "1",
+          "minValue": "1",
+          "maxValue": "9223372036854775807",
+          "cache": 1,
+          "cycle": false
+        },
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_accounts",
+        "name": "account_id",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_accounts",
+        "name": "provider_id",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_accounts",
+        "name": "user_id",
+        "type": "bigint",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_accounts",
+        "name": "access_token",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_accounts",
+        "name": "refresh_token",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_accounts",
+        "name": "id_token",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_accounts",
+        "name": "access_token_expires_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_accounts",
+        "name": "refresh_token_expires_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_accounts",
+        "name": "scope",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_accounts",
+        "name": "password_hash",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_accounts",
+        "name": "email_at_provider",
+        "type": "citext",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_accounts",
+        "name": "email_verified_at_provider",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "false",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_accounts",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_accounts",
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_passkeys",
+        "name": "id",
+        "type": "bigint",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": {
+          "type": "always",
+          "name": "user_passkeys_id_seq",
+          "increment": "1",
+          "startWith": "1",
+          "minValue": "1",
+          "maxValue": "9223372036854775807",
+          "cache": 1,
+          "cycle": false
+        },
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_passkeys",
+        "name": "name",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_passkeys",
+        "name": "public_key",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_passkeys",
+        "name": "user_id",
+        "type": "bigint",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_passkeys",
+        "name": "credential_id",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_passkeys",
+        "name": "counter",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_passkeys",
+        "name": "device_type",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_passkeys",
+        "name": "backed_up",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "false",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_passkeys",
+        "name": "transports",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_passkeys",
+        "name": "aaguid",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_passkeys",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_passkeys",
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_sessions",
+        "name": "id",
+        "type": "bigint",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": {
+          "type": "always",
+          "name": "user_sessions_id_seq",
+          "increment": "1",
+          "startWith": "1",
+          "minValue": "1",
+          "maxValue": "9223372036854775807",
+          "cache": 1,
+          "cycle": false
+        },
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_sessions",
+        "name": "user_id",
+        "type": "bigint",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_sessions",
+        "name": "token",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_sessions",
+        "name": "expires_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_sessions",
+        "name": "ip_address",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_sessions",
+        "name": "user_agent",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_sessions",
+        "name": "auth_method",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "'password'",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_sessions",
+        "name": "reauth_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_sessions",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_sessions",
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_two_factors",
+        "name": "id",
+        "type": "bigint",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": {
+          "type": "always",
+          "name": "user_two_factors_id_seq",
+          "increment": "1",
+          "startWith": "1",
+          "minValue": "1",
+          "maxValue": "9223372036854775807",
+          "cache": 1,
+          "cycle": false
+        },
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_two_factors",
+        "name": "user_id",
+        "type": "bigint",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_two_factors",
+        "name": "secret",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_two_factors",
+        "name": "backup_codes",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_two_factors",
+        "name": "verified",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": "true",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_two_factors",
+        "name": "failed_verification_count",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_two_factors",
+        "name": "locked_until",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_two_factors",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_two_factors",
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_verifications",
+        "name": "id",
+        "type": "bigint",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": {
+          "type": "always",
+          "name": "user_verifications_id_seq",
+          "increment": "1",
+          "startWith": "1",
+          "minValue": "1",
+          "maxValue": "9223372036854775807",
+          "cache": 1,
+          "cycle": false
+        },
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_verifications",
+        "name": "identifier",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_verifications",
+        "name": "value",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_verifications",
+        "name": "expires_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_verifications",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_verifications",
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "users",
+        "name": "email_verified",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "false",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "users",
+        "name": "image",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "users",
+        "name": "two_factor_enabled",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "false",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_accounts",
+        "name": "idx_manager_accounts_manager_id",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "manager_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_passkeys",
+        "name": "idx_manager_passkeys_manager_id",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "manager_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_sessions",
+        "name": "idx_manager_sessions_manager_id",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "manager_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_two_factors",
+        "name": "idx_manager_two_factors_secret",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "secret",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_verifications",
+        "name": "idx_manager_verifications_identifier",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "identifier",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_accounts",
+        "name": "idx_user_accounts_user_id",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "user_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_passkeys",
+        "name": "idx_user_passkeys_user_id",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "user_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_sessions",
+        "name": "idx_user_sessions_user_id",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "user_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_two_factors",
+        "name": "idx_user_two_factors_secret",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "secret",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_verifications",
+        "name": "idx_user_verifications_identifier",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "identifier",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_accounts",
+        "name": "manager_accounts_manager_id_managers_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "manager_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "managers",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_passkeys",
+        "name": "manager_passkeys_manager_id_managers_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "manager_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "managers",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_sessions",
+        "name": "manager_sessions_manager_id_managers_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "manager_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "managers",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_two_factors",
+        "name": "manager_two_factors_manager_id_managers_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "manager_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "managers",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_accounts",
+        "name": "user_accounts_user_id_users_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "user_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "users",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_passkeys",
+        "name": "user_passkeys_user_id_users_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "user_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "users",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_sessions",
+        "name": "user_sessions_user_id_users_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "user_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "users",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_two_factors",
+        "name": "user_two_factors_user_id_users_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "user_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "users",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_accounts",
+        "name": "manager_accounts_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_passkeys",
+        "name": "manager_passkeys_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_sessions",
+        "name": "manager_sessions_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_two_factors",
+        "name": "manager_two_factors_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_verifications",
+        "name": "manager_verifications_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_accounts",
+        "name": "user_accounts_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_passkeys",
+        "name": "user_passkeys_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_sessions",
+        "name": "user_sessions_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_two_factors",
+        "name": "user_two_factors_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_verifications",
+        "name": "user_verifications_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_accounts",
+        "name": "manager_accounts_provider_account_unique",
+        "nameExplicit": true,
+        "columns": [
+          "provider_id",
+          "account_id"
+        ],
+        "nullsNotDistinct": false,
+        "entityType": "uniques"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_accounts",
+        "name": "manager_accounts_manager_provider_unique",
+        "nameExplicit": true,
+        "columns": [
+          "manager_id",
+          "provider_id"
+        ],
+        "nullsNotDistinct": false,
+        "entityType": "uniques"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_two_factors",
+        "name": "manager_two_factors_manager_unique",
+        "nameExplicit": true,
+        "columns": [
+          "manager_id"
+        ],
+        "nullsNotDistinct": false,
+        "entityType": "uniques"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_accounts",
+        "name": "user_accounts_provider_account_unique",
+        "nameExplicit": true,
+        "columns": [
+          "provider_id",
+          "account_id"
+        ],
+        "nullsNotDistinct": false,
+        "entityType": "uniques"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_accounts",
+        "name": "user_accounts_user_provider_unique",
+        "nameExplicit": true,
+        "columns": [
+          "user_id",
+          "provider_id"
+        ],
+        "nullsNotDistinct": false,
+        "entityType": "uniques"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_two_factors",
+        "name": "user_two_factors_user_unique",
+        "nameExplicit": true,
+        "columns": [
+          "user_id"
+        ],
+        "nullsNotDistinct": false,
+        "entityType": "uniques"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_passkeys",
+        "name": "manager_passkeys_credential_id_key",
+        "nameExplicit": false,
+        "columns": [
+          "credential_id"
+        ],
+        "nullsNotDistinct": false,
+        "entityType": "uniques"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "manager_sessions",
+        "name": "manager_sessions_token_key",
+        "nameExplicit": false,
+        "columns": [
+          "token"
+        ],
+        "nullsNotDistinct": false,
+        "entityType": "uniques"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_passkeys",
+        "name": "user_passkeys_credential_id_key",
+        "nameExplicit": false,
+        "columns": [
+          "credential_id"
+        ],
+        "nullsNotDistinct": false,
+        "entityType": "uniques"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "user_sessions",
+        "name": "user_sessions_token_key",
+        "nameExplicit": false,
+        "columns": [
+          "token"
+        ],
+        "nullsNotDistinct": false,
+        "entityType": "uniques"
+      }
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"active_sessions\"]"
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"mfa_recovery_codes\"]"
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"mfa_settings\"]"
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"social_identities\"]"
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"verification_tokens\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"active_sessions\",\"id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"active_sessions\",\"account_type\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"active_sessions\",\"account_id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"active_sessions\",\"device_id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"active_sessions\",\"remembered\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"active_sessions\",\"device_label\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"active_sessions\",\"ip_address\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"active_sessions\",\"auth_method\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"active_sessions\",\"revoked_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"active_sessions\",\"last_used_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"active_sessions\",\"expires_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"active_sessions\",\"created_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"active_sessions\",\"updated_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"mfa_recovery_codes\",\"id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"mfa_recovery_codes\",\"account_type\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"mfa_recovery_codes\",\"account_id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"mfa_recovery_codes\",\"code_hash\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"mfa_recovery_codes\",\"used_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"mfa_recovery_codes\",\"created_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"mfa_recovery_codes\",\"updated_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"mfa_settings\",\"id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"mfa_settings\",\"account_type\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"mfa_settings\",\"account_id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"mfa_settings\",\"secret_encrypted\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"mfa_settings\",\"confirmed_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"mfa_settings\",\"created_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"mfa_settings\",\"updated_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"social_identities\",\"id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"social_identities\",\"user_id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"social_identities\",\"provider\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"social_identities\",\"provider_user_id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"social_identities\",\"email_at_provider\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"social_identities\",\"email_verified_at_provider\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"social_identities\",\"display_name_at_provider\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"social_identities\",\"linked_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"social_identities\",\"last_login_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"social_identities\",\"created_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"social_identities\",\"updated_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"verification_tokens\",\"id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"verification_tokens\",\"account_type\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"verification_tokens\",\"account_id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"verification_tokens\",\"purpose\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"verification_tokens\",\"token_hash\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"verification_tokens\",\"expires_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"verification_tokens\",\"used_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"verification_tokens\",\"created_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"verification_tokens\",\"updated_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "indexes\u0000[\"public\",\"idx_active_sessions_account\"]"
+    },
+    {
+      "op": "drop",
+      "key": "indexes\u0000[\"public\",\"idx_active_sessions_active_account\"]"
+    },
+    {
+      "op": "drop",
+      "key": "indexes\u0000[\"public\",\"idx_mfa_recovery_codes_account\"]"
+    },
+    {
+      "op": "drop",
+      "key": "indexes\u0000[\"public\",\"idx_verification_tokens_account\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"social_identities\",\"social_identities_user_id_users_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"active_sessions\",\"active_sessions_pkey\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"mfa_recovery_codes\",\"mfa_recovery_codes_pkey\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"mfa_settings\",\"mfa_settings_pkey\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"social_identities\",\"social_identities_pkey\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"verification_tokens\",\"verification_tokens_pkey\"]"
+    },
+    {
+      "op": "drop",
+      "key": "uniques\u0000[\"public\",\"mfa_settings\",\"mfa_settings_account_unique\"]"
+    },
+    {
+      "op": "drop",
+      "key": "uniques\u0000[\"public\",\"social_identities\",\"social_identities_provider_user_id_unique\"]"
+    },
+    {
+      "op": "drop",
+      "key": "uniques\u0000[\"public\",\"social_identities\",\"social_identities_user_id_provider_unique\"]"
+    },
+    {
+      "op": "drop",
+      "key": "uniques\u0000[\"public\",\"verification_tokens\",\"verification_tokens_token_hash_unique\"]"
+    },
+    {
+      "op": "alter",
+      "key": "indexes\u0000[\"public\",\"idx_ai_credit_ledger_granted_by_manager\"]",
+      "set": {
+        "where": "\"granted_by_manager_id\" IS NOT NULL"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "indexes\u0000[\"public\",\"idx_ai_credit_ledger_idempotency\"]",
+      "set": {
+        "where": "\"idempotency_key\" IS NOT NULL"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "indexes\u0000[\"public\",\"idx_entitlements_granted_by_manager\"]",
+      "set": {
+        "where": "\"granted_by_manager_id\" IS NOT NULL"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "indexes\u0000[\"public\",\"idx_payment_orders_bank_txn_ref\"]",
+      "set": {
+        "where": "\"bank_txn_ref\" IS NOT NULL"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "indexes\u0000[\"public\",\"idx_payment_orders_reviewed_by_manager\"]",
+      "set": {
+        "where": "\"reviewed_by_manager_id\" IS NOT NULL"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "indexes\u0000[\"public\",\"idx_payment_transactions_order_id\"]",
+      "set": {
+        "where": "\"order_id\" IS NOT NULL"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "indexes\u0000[\"public\",\"idx_child_profiles_status_purge_at\"]",
+      "set": {
+        "where": "\"purge_at\" IS NOT NULL"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "indexes\u0000[\"public\",\"idx_child_profiles_current_curriculum_id\"]",
+      "set": {
+        "where": "\"current_curriculum_id\" IS NOT NULL"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "indexes\u0000[\"public\",\"idx_child_stickers_play_session_id\"]",
+      "set": {
+        "where": "\"play_session_id\" IS NOT NULL"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "indexes\u0000[\"public\",\"idx_curriculum_enrollments_child_active_unique\"]",
+      "set": {
+        "where": "\"status\" = 'active'"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "indexes\u0000[\"public\",\"idx_export_jobs_status\"]",
+      "set": {
+        "where": "\"status\" IN ('queued', 'processing')"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "indexes\u0000[\"public\",\"idx_export_jobs_expires_at\"]",
+      "set": {
+        "where": "\"expires_at\" IS NOT NULL"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "indexes\u0000[\"public\",\"idx_game_levels_skill_dataset_id\"]",
+      "set": {
+        "where": "\"skill_dataset_id\" IS NOT NULL"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "indexes\u0000[\"public\",\"idx_mfa_recovery_requests_token_hash\"]",
+      "set": {
+        "where": "\"verification_token_hash\" IS NOT NULL"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "indexes\u0000[\"public\",\"idx_mfa_recovery_requests_completed_by_manager\"]",
+      "set": {
+        "where": "\"completed_by_manager_id\" IS NOT NULL"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "indexes\u0000[\"public\",\"idx_users_status_purge_at\"]",
+      "set": {
+        "where": "\"purge_at\" IS NOT NULL"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "indexes\u0000[\"public\",\"idx_library_items_collection_id\"]",
+      "set": {
+        "where": "\"collection_id\" IS NOT NULL"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "indexes\u0000[\"public\",\"idx_error_logs_user_id\"]",
+      "set": {
+        "where": "\"user_id\" IS NOT NULL"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "indexes\u0000[\"public\",\"idx_error_logs_resolved_by_manager\"]",
+      "set": {
+        "where": "\"resolved_by_manager_id\" IS NOT NULL"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "indexes\u0000[\"public\",\"idx_feature_flags_updated_by_manager\"]",
+      "set": {
+        "where": "\"updated_by_manager_id\" IS NOT NULL"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "indexes\u0000[\"public\",\"idx_notification_deliveries_queued\"]",
+      "set": {
+        "where": "\"status\" = 'queued'"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "indexes\u0000[\"public\",\"idx_personal_curriculum_enrollments_child_active_unique\"]",
+      "set": {
+        "where": "\"status\" = 'active'"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "indexes\u0000[\"public\",\"idx_play_sessions_child_started_at\"]",
+      "set": {
+        "where": "\"child_profile_id\" IS NOT NULL"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "indexes\u0000[\"public\",\"idx_play_sessions_guest_status\"]",
+      "set": {
+        "where": "\"guest_device_id\" IS NOT NULL"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "indexes\u0000[\"public\",\"idx_telemetry_events_child_uuid\"]",
+      "set": {
+        "where": "\"child_uuid\" IS NOT NULL"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "uniques\u0000[\"public\",\"child_badges\",\"child_badges_child_profile_id_badge_code_unique\"]",
+      "set": {
+        "nameExplicit": true
+      }
+    },
+    {
+      "op": "alter",
+      "key": "uniques\u0000[\"public\",\"curriculum_weeks\",\"curriculum_weeks_curriculum_id_week_no_unique\"]",
+      "set": {
+        "nameExplicit": true
+      }
+    },
+    {
+      "op": "alter",
+      "key": "uniques\u0000[\"public\",\"collections\",\"collections_user_id_name_unique\"]",
+      "set": {
+        "nameExplicit": true
+      }
+    }
+  ]
+}

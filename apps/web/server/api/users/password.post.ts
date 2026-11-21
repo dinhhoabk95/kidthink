@@ -1,12 +1,11 @@
 import { hashPassword, validatePasswordStrength } from "@mindkid/auth";
-import { getOwnerDb, users } from "@mindkid/db";
+import { getOwnerDb, userAccounts, users } from "@mindkid/db";
 import { PasswordNotSetError } from "@mindkid/errors/auth";
 import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import { dispatchTransactionalEmail } from "@mindkid/notification";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
-
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { requireReauth } from "#server/utils/reauth-runtime";
 import { revokeOtherUserSessions } from "#server/utils/session-revocation";
@@ -18,14 +17,14 @@ const ChangePasswordSchema = z
   .strict();
 
 export default defineEventHandler(async (event) => {
-  const userSession = await requireWebUserSession(event);
-  await requireReauth(event);
+  const userSession = requireWebUserSession(event);
+  requireReauth(event);
 
   const userId = Number(userSession.user_id);
 
-  const eventBody = (event.context as { body?: Record<string, unknown> })?.body;
+  const eventBody = (event.context as { body?: Record<string, string> })?.body;
   const rawBody =
-    eventBody || ((await readBody(event)) as Record<string, unknown>) || {};
+    eventBody || (await readBody<Record<string, string>>(event)) || {};
 
   const parsed = ChangePasswordSchema.safeParse(rawBody);
   if (!parsed.success) {
@@ -55,27 +54,51 @@ export default defineEventHandler(async (event) => {
     throw new NotFoundError("NOT_FOUND");
   }
 
-  // BR-ACS-09: Calling change password on account without password returns 409 PASSWORD_NOT_SET
-  if (!account.passwordHash) {
+  const [cred] = await db
+    .select({ id: userAccounts.id, password: userAccounts.password })
+    .from(userAccounts)
+    .where(
+      and(
+        eq(userAccounts.userId, userId),
+        eq(userAccounts.providerId, "credential")
+      )
+    )
+    .limit(1);
+
+  if (!(cred?.password || account.passwordHash)) {
     throw new PasswordNotSetError();
   }
 
   const newHash = await hashPassword(parsed.data.new_password);
   const now = new Date();
 
-  // BR-ACS-02: Increment session_version and revoke all other sessions
-  await db
-    .update(users)
-    .set({
-      passwordHash: newHash,
-      sessionVersion: account.sessionVersion + 1,
-      updatedAt: now,
-    })
-    .where(eq(users.id, userId));
+  await db.transaction(async (tx) => {
+    await tx
+      .update(users)
+      .set({
+        passwordHash: newHash,
+        sessionVersion: account.sessionVersion + 1,
+        updatedAt: now,
+      })
+      .where(eq(users.id, userId));
 
-  await revokeOtherUserSessions(event, now);
+    if (cred) {
+      await tx
+        .update(userAccounts)
+        .set({ password: newHash, updatedAt: now })
+        .where(eq(userAccounts.id, cred.id));
+    } else {
+      await tx.insert(userAccounts).values({
+        userId,
+        accountId: String(userId),
+        providerId: "credential",
+        password: newHash,
+      });
+    }
+  });
 
-  // Send notification to current email (BR-ACS-02, BR-NOT-01)
+  await revokeOtherUserSessions(event);
+
   await dispatchTransactionalEmail({
     recipientType: "user",
     recipientId: userId,

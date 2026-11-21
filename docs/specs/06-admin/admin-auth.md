@@ -33,10 +33,7 @@ Manager có quyền chạm tiền và nội dung mà trẻ sẽ chơi. Đó là 
 
 ## 3. Entry points
 
-`admin.{domain}/login` · `POST /api/guest/auth/managers/login` trên `{domain}` ·
-`POST /api/guest/auth/managers/mfa` · `POST /api/guest/auth/managers/mfa-setup` (xem [`manager-mfa-enrollment.md`](manager-mfa-enrollment.md)) ·
-`POST /api/managers/auth/restore` · `GET /api/managers/auth/session` ·
-`POST /api/managers/auth/reauth` · `/logout`.
+`admin.{domain}/login` · `admin.{domain}/settings/security` · `/api/auth/managers/**` trên `{domain}` (`managerAuth` instance của Better Auth: `sign-in/email`, `sign-in/passkey`, `two-factor/*`, `passkey/*`, `get-session`, `sign-out`, `list-sessions`, `revoke-session`, `revoke-other-sessions`) · `POST /api/managers/auth/reauth`.
 
 ## 4. Main flow
 

@@ -2,7 +2,6 @@ import { sql } from "drizzle-orm";
 import {
   bigint,
   boolean,
-  check,
   index,
   integer,
   pgEnum,
@@ -15,12 +14,13 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { childProfiles } from "./child.ts";
-import { timestamps } from "./columns.ts";
+import { idPk, timestamps } from "./columns.ts";
 import {
   curriculumProgressStatusEnum,
   enrollmentStatusEnum,
 } from "./curriculum.ts";
 import { users } from "./identity.ts";
+import { contentEntityTypeEnum } from "./tagging.ts";
 
 export const personalCurriculumStatusEnum = pgEnum(
   "personal_curriculum_status",
@@ -30,9 +30,7 @@ export const personalCurriculumStatusEnum = pgEnum(
 export const personalCurricula = pgTable(
   "personal_curricula",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     uuid: uuid("uuid").defaultRandom().notNull().unique(),
     userId: bigint("user_id", { mode: "number" })
       .notNull()
@@ -46,33 +44,20 @@ export const personalCurricula = pgTable(
     version: integer("version").notNull().default(1),
     ...timestamps(),
   },
-  (table) => [
-    index("idx_personal_curricula_user_id").on(table.userId),
-    check(
-      "check_personal_curricula_age_range",
-      sql`${table.ageMin} IS NULL OR ${table.ageMax} IS NULL OR ${table.ageMin} <= ${table.ageMax}`
-    ),
-    check("check_personal_curricula_duration", sql`${table.durationWeeks} > 0`),
-    check(
-      "check_personal_curricula_sessions",
-      sql`${table.sessionsPerWeek} > 0`
-    ),
-  ]
+  (table) => [index("idx_personal_curricula_user_id").on(table.userId)]
 );
 
 export const personalCurriculumItems = pgTable(
   "personal_curriculum_items",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     personalCurriculumId: bigint("personal_curriculum_id", { mode: "number" })
       .notNull()
       .references(() => personalCurricula.id, { onDelete: "cascade" }),
     weekNo: smallint("week_no").notNull(),
     sessionNo: smallint("session_no").notNull(),
     position: smallint("position").notNull(),
-    entityType: varchar("entity_type", { length: 50 }).notNull(),
+    entityType: contentEntityTypeEnum("entity_type").notNull(),
     entityId: bigint("entity_id", { mode: "number" }).notNull(),
     isRequired: boolean("is_required").notNull().default(true),
     ...timestamps(),
@@ -83,16 +68,13 @@ export const personalCurriculumItems = pgTable(
       table.entityType,
       table.entityId
     ),
-
+    // UNIQUE (personal_curriculum_id, week_no, session_no, position) đã phủ
+    // tra cứu theo (personal_curriculum_id, week_no).
     unique("personal_curriculum_items_week_session_pos_unique").on(
       table.personalCurriculumId,
       table.weekNo,
       table.sessionNo,
       table.position
-    ),
-    index("idx_personal_curriculum_items_curriculum_week").on(
-      table.personalCurriculumId,
-      table.weekNo
     ),
   ]
 );
@@ -100,9 +82,7 @@ export const personalCurriculumItems = pgTable(
 export const personalCurriculumEnrollments = pgTable(
   "personal_curriculum_enrollments",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     childId: bigint("child_id", { mode: "number" })
       .notNull()
       .references(() => childProfiles.id, { onDelete: "cascade" }),
@@ -132,9 +112,7 @@ export const personalCurriculumEnrollments = pgTable(
 export const personalCurriculumItemProgress = pgTable(
   "personal_curriculum_item_progress",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     enrollmentId: bigint("enrollment_id", { mode: "number" })
       .notNull()
       .references(() => personalCurriculumEnrollments.id, {
@@ -160,6 +138,9 @@ export const personalCurriculumItemProgress = pgTable(
       table.personalCurriculumItemId
     ),
     index("idx_personal_curriculum_item_progress_child_id").on(table.childId),
+    index("idx_personal_curriculum_item_progress_item_id").on(
+      table.personalCurriculumItemId
+    ),
     index("idx_personal_curriculum_item_progress_status").on(
       table.enrollmentId,
       table.status

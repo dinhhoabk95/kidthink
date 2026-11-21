@@ -1,23 +1,23 @@
 import { writeAudit } from "@mindkid/audit";
-import { getBrowserSessionService } from "@mindkid/auth";
-import { activeSessions, getOwnerDb, users } from "@mindkid/db";
+import { getOwnerDb, users } from "@mindkid/db";
 import {
   AdminNoteRequiredError,
   UserAlreadyDeletedError,
 } from "@mindkid/errors/account";
 import { InternalError, NotFoundError } from "@mindkid/errors/common";
-import { and, eq, isNull, sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { defineEventHandler, getHeader, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
+import { revokeAllBetterAuthSessions } from "#server/utils/better-auth";
 
 const suspendBodySchema = z.object({
   reason: z.string().min(10),
 });
 
 export default defineEventHandler(async (event) => {
-  const session = await requireSuperAdminSession(event);
+  const session = requireSuperAdminSession(event);
   const userUuid = getRouterParam(event, "uuid");
   if (!userUuid) {
     throw new NotFoundError();
@@ -27,7 +27,6 @@ export default defineEventHandler(async (event) => {
     event.context?.body ?? (await readBody(event).catch(() => ({}))) ?? {};
   const parsed = suspendBodySchema.safeParse(rawBody);
 
-  // BR-USM-03: reason must be >= 10 characters
   if (!parsed.success) {
     throw new AdminNoteRequiredError();
   }
@@ -51,8 +50,6 @@ export default defineEventHandler(async (event) => {
   const ipAddress = getVerifiedRemoteIp(event);
   const userAgent = getHeader(event, "user-agent") ?? "unknown";
 
-  // BR-USM-05 & BR-AUD-02: Increment session_version and writeAudit in same transaction
-  // BR-USM-04: Do NOT touch entitlements table
   const updatedUser = await db.transaction(async (tx) => {
     const [row] = await tx
       .update(users)
@@ -68,17 +65,6 @@ export default defineEventHandler(async (event) => {
     if (!row) {
       throw new InternalError("Đình chỉ tài khoản thất bại");
     }
-
-    await tx
-      .update(activeSessions)
-      .set({ revokedAt: new Date() })
-      .where(
-        and(
-          eq(activeSessions.accountType, "user"),
-          eq(activeSessions.accountId, targetUser.id),
-          isNull(activeSessions.revokedAt)
-        )
-      );
 
     await writeAudit(tx, {
       actor_type: "manager",
@@ -96,12 +82,9 @@ export default defineEventHandler(async (event) => {
     return row;
   });
 
-  await getBrowserSessionService()
-    .revokeAll({
-      account_type: "user",
-      account_id: targetUser.id,
-    })
-    .catch(() => null);
+  await revokeAllBetterAuthSessions("user", targetUser.id, {
+    incrementSessionVersion: false,
+  }).catch(() => null);
 
   return {
     success: true,

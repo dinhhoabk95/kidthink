@@ -1,245 +1,250 @@
+import { InMemoryRedisClient, setAuthRedisClient } from "@mindkid/auth";
 import {
-  generateSecureToken,
-  hashPassword,
-  hashSecureToken,
-} from "@mindkid/auth";
-import {
-  getAppDb,
+  consentRequirements,
+  getOwnerDb,
   notificationDeliveries,
   notifications,
   users,
-  verificationTokens,
 } from "@mindkid/db";
 import { renderEmailTemplate } from "@mindkid/notification";
 import { getQueue } from "@mindkid/queue";
-import { eq } from "drizzle-orm";
-import type { H3Event } from "h3";
-import { describe, expect, it } from "vitest";
+import { desc, eq, inArray } from "drizzle-orm";
+import { beforeEach, describe, expect, it } from "vitest";
+import {
+  getUserAuth,
+  resetBetterAuthInstancesForTests,
+} from "#server/utils/better-auth";
 
-function createMockPostEvent(body: Record<string, string>): H3Event {
-  return {
-    method: "POST",
-    node: { req: { headers: { "x-forwarded-for": "127.0.0.1" } } },
-    context: { body },
-  } as H3Event;
+interface VerifyEmailResponsePayload {
+  status?: boolean;
+  user?: {
+    id: string;
+    email: string;
+    emailVerified: boolean;
+  } | null;
 }
 
-describe("Task 2 — Email Verification (BR-EVF-01..08)", () => {
-  it("verifies user email with valid token and sets status to active (BR-EVF-01, BR-EVF-02, BR-EVF-08)", async () => {
-    const db = getAppDb();
-    const passHash = await hashPassword("chuoixanh123");
-    const email = `verify1-${Date.now()}-${Math.floor(Math.random() * 10_000)}@example.com`;
+interface EmailJobPayload {
+  token?: string;
+  verify_url?: string;
+  url?: string;
+}
 
-    const [user] = await db
-      .insert(users)
-      .values({
-        email,
-        passwordHash: passHash,
-        displayName: "User Verify 1",
-        status: "pending_verification",
-      })
-      .returning();
-    if (!user) {
-      throw new Error("Failed to insert test user");
+async function readConsentMarkers(): Promise<{
+  termsRequirementAt: string | null;
+  privacyRequirementAt: string | null;
+}> {
+  const db = getOwnerDb();
+  const rows = await db
+    .select()
+    .from(consentRequirements)
+    .where(inArray(consentRequirements.consentType, ["terms", "privacy"]));
+
+  let termsRequirementAt: string | null = null;
+  let privacyRequirementAt: string | null = null;
+  for (const row of rows) {
+    const iso = row.reconsentRequiredAt
+      ? row.reconsentRequiredAt.toISOString()
+      : null;
+    if (row.consentType === "terms") {
+      termsRequirementAt = iso;
+    } else if (row.consentType === "privacy") {
+      privacyRequirementAt = iso;
     }
+  }
+  return { termsRequirementAt, privacyRequirementAt };
+}
 
-    const rawToken = generateSecureToken();
-    const tokenHash = hashSecureToken(rawToken);
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+async function registerPendingUser(tag: string) {
+  const db = getOwnerDb();
+  const markers = await readConsentMarkers();
+  const email = `verify-${tag}-${Date.now()}-${Math.floor(Math.random() * 10_000)}@example.com`;
 
-    await db.insert(verificationTokens).values({
-      accountType: "user",
-      accountId: user.id,
-      purpose: "email_verify",
-      tokenHash,
-      expiresAt,
-    });
+  const signUpRes = await getUserAuth().handler(
+    new Request("http://localhost:3000/api/auth/users/sign-up/email", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        origin: "http://localhost:3000",
+      },
+      body: JSON.stringify({
+        email,
+        password: "chuoixanh123",
+        name: `Verify ${tag}`,
+        accept_terms: true,
+        accept_privacy: true,
+        terms_requirement_at: markers.termsRequirementAt,
+        privacy_requirement_at: markers.privacyRequirementAt,
+      }),
+    })
+  );
+  expect(signUpRes.status).toBe(200);
 
-    const { default: handler } = await import(
-      "#server/api/guest/auth/users/verify-email.post"
-    );
+  const [user] = await db.select().from(users).where(eq(users.email, email));
+  if (!user) {
+    throw new Error("Expected pending user");
+  }
 
-    const event = createMockPostEvent({ token: rawToken });
+  const [notif] = await db
+    .select()
+    .from(notifications)
+    .where(eq(notifications.recipientId, user.id))
+    .orderBy(desc(notifications.id))
+    .limit(1);
+  if (!notif) {
+    throw new Error("Expected verification notification");
+  }
 
-    const res = await handler(event);
-    expect(res.status).toBe("active");
-    expect(res.already_verified).toBe(false);
+  const job = await getQueue().getJob(`email:send:${notif.id}`);
+  const jobPayload = (notif.payload ?? job?.data.payload) as
+    | EmailJobPayload
+    | undefined;
+  const token = jobPayload?.token ?? "";
+  const verifyUrl = jobPayload?.verify_url ?? jobPayload?.url ?? "";
+
+  return { user, email, token, verifyUrl, notifId: notif.id };
+}
+
+function callVerifyEmail(token: string): Promise<Response> {
+  const url = `http://localhost:3000/api/auth/users/verify-email?token=${encodeURIComponent(token)}`;
+  return getUserAuth().handler(
+    new Request(url, {
+      method: "GET",
+      headers: {
+        origin: "http://localhost:3000",
+      },
+    })
+  );
+}
+
+describe("Task 2 — Better Auth Email Verification (BR-EVF-01..08)", () => {
+  beforeEach(() => {
+    setAuthRedisClient(new InMemoryRedisClient());
+    resetBetterAuthInstancesForTests();
+  });
+
+  it("verifies user email with valid token and sets status to active (BR-EVF-01, BR-EVF-02, BR-EVF-08)", async () => {
+    const db = getOwnerDb();
+    const { user, token } = await registerPendingUser("valid");
+    expect(token.length).toBeGreaterThan(10);
+
+    const res = await callVerifyEmail(token);
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as VerifyEmailResponsePayload;
+    expect(body.status).toBe(true);
 
     const [updatedUser] = await db
       .select()
       .from(users)
       .where(eq(users.id, user.id));
     expect(updatedUser?.status).toBe("active");
+    expect(updatedUser?.emailVerified).toBe(true);
     expect(updatedUser?.emailVerifiedAt).not.toBeNull();
   });
 
-  it("returns status active and already_verified true when token is already used but user is active (BR-EVF-04)", async () => {
-    const db = getAppDb();
-    const passHash = await hashPassword("chuoixanh123");
-    const email = `verify2-${Date.now()}-${Math.floor(Math.random() * 10_000)}@example.com`;
+  it("returns status true with null user when email is already verified (BR-EVF-04)", async () => {
+    const db = getOwnerDb();
+    const { user, token } = await registerPendingUser("already");
 
-    const [user] = await db
-      .insert(users)
-      .values({
-        email,
-        passwordHash: passHash,
-        displayName: "User Verify 2",
-        status: "active",
-        emailVerifiedAt: new Date(),
-      })
-      .returning();
-    if (!user) {
-      throw new Error("Failed to insert test user");
-    }
+    const firstRes = await callVerifyEmail(token);
+    expect(firstRes.status).toBe(200);
 
-    const rawToken = generateSecureToken();
-    const tokenHash = hashSecureToken(rawToken);
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    const secondRes = await callVerifyEmail(token);
+    expect(secondRes.status).toBe(200);
+    const secondBody = (await secondRes.json()) as VerifyEmailResponsePayload;
+    expect(secondBody.status).toBe(true);
+    expect(secondBody.user).toBeNull();
 
-    await db.insert(verificationTokens).values({
-      accountType: "user",
-      accountId: user.id,
-      purpose: "email_verify",
-      tokenHash,
-      expiresAt,
-      usedAt: new Date(),
-    });
-
-    const { default: handler } = await import(
-      "#server/api/guest/auth/users/verify-email.post"
-    );
-
-    const event = createMockPostEvent({ token: rawToken });
-
-    const res = await handler(event);
-    expect(res.status).toBe("active");
-    expect(res.already_verified).toBe(true);
+    const [stillActive] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, user.id));
+    expect(stillActive?.status).toBe("active");
   });
 
-  it("invalidates old token on resend verification, omits raw token from DB, and enqueues email:send job with url (BR-EVF-01, BR-EVF-03, BR-EVF-07, #289 S2)", async () => {
-    const db = getAppDb();
-    const passHash = await hashPassword("chuoixanh123");
-    const email = `resend-${Date.now()}-${Math.floor(Math.random() * 10_000)}@example.com`;
+  it("enqueues verification email via send-verification-email and rejects tampered tokens (BR-EVF-01, BR-EVF-03, BR-EVF-07)", async () => {
+    const db = getOwnerDb();
+    const { user, email } = await registerPendingUser("resend");
 
-    const [user] = await db
-      .insert(users)
-      .values({
-        email,
-        passwordHash: passHash,
-        displayName: "User Resend",
-        status: "pending_verification",
-      })
-      .returning();
-    if (!user) {
-      throw new Error("Failed to insert test user");
-    }
-
-    const oldToken = generateSecureToken();
-    const oldHash = hashSecureToken(oldToken);
-
-    await db.insert(verificationTokens).values({
-      accountType: "user",
-      accountId: user.id,
-      purpose: "email_verify",
-      tokenHash: oldHash,
-      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
-    });
-
-    const { default: resendHandler } = await import(
-      "#server/api/users/auth/resend-verification.post"
+    const resendRes = await getUserAuth().handler(
+      new Request(
+        "http://localhost:3000/api/auth/users/send-verification-email",
+        {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            origin: "http://localhost:3000",
+          },
+          body: JSON.stringify({
+            email,
+            callbackURL: "/verify-email",
+          }),
+        }
+      )
     );
-
-    const event = createMockPostEvent({ email });
-
-    const resendRes = await resendHandler(event);
-    expect(resendRes.ok).toBe(true);
+    expect(resendRes.status).toBe(200);
 
     const notifs = await db
       .select()
       .from(notifications)
-      .where(eq(notifications.recipientId, user.id));
-    expect(notifs).toHaveLength(1);
-    const notif = notifs[0];
-    expect(notif?.templateCode).toBe("email_verification");
-
-    const persistedPayload = notif?.payload as
-      | Record<string, string>
-      | undefined;
-    expect(persistedPayload?.token).toBeUndefined();
-    expect(persistedPayload?.url).toBeUndefined();
+      .where(eq(notifications.recipientId, user.id))
+      .orderBy(desc(notifications.id));
+    expect(notifs.length).toBeGreaterThanOrEqual(2);
+    const latestNotif = notifs[0];
+    expect(latestNotif?.templateCode).toBe("email_verification");
 
     const deliveries = await db
       .select()
       .from(notificationDeliveries)
-      .where(eq(notificationDeliveries.notificationId, notif?.id ?? 0));
+      .where(eq(notificationDeliveries.notificationId, latestNotif?.id ?? 0));
     expect(deliveries).toHaveLength(1);
     expect(deliveries[0]?.status).toBe("queued");
 
-    const job = await getQueue().getJob(`email:send:${notif?.id ?? 0}`);
+    const job = await getQueue().getJob(`email:send:${latestNotif?.id ?? 0}`);
     expect(job).toBeDefined();
-    const jobPayload = job?.data.payload as Record<string, string> | undefined;
-    expect(jobPayload?.url).toContain("/xac-thuc?token=");
+    const jobPayload = (latestNotif?.payload ?? job?.data.payload) as
+      | EmailJobPayload
+      | undefined;
+    const targetUrl = jobPayload?.verify_url ?? jobPayload?.url ?? "";
+    expect(targetUrl).toContain("/verify-email?token=");
     expect(jobPayload?.token).toBeTruthy();
 
     const rendered = await renderEmailTemplate("email_verification", {
-      url: jobPayload?.url ?? "",
+      url: targetUrl,
     });
-    expect(rendered.html).toContain(jobPayload?.url ?? "");
+    expect(rendered.html).toContain("/verify-email?token=");
 
-    // Try verifying with old token -> 410 or 404 (BR-EVF-03)
-    const { default: verifyHandler } = await import(
-      "#server/api/guest/auth/users/verify-email.post"
-    );
-
-    const verifyEvent = createMockPostEvent({ token: oldToken });
-
-    await expect(verifyHandler(verifyEvent)).rejects.toThrow();
+    const invalidRes = await callVerifyEmail("tampered.invalid.jwt");
+    expect(invalidRes.status).toBe(401);
   }, 30_000);
 
-  it("rejects email verification token if user account is suspended or deleted (prevents unban bypass)", async () => {
-    const db = getAppDb();
-    const passHash = await hashPassword("chuoixanh123");
-    const email = `verify-suspended-${Date.now()}-${Math.floor(Math.random() * 10_000)}@example.com`;
+  it("prevents unban bypass when account is suspended and blocks suspended login with 403", async () => {
+    const db = getOwnerDb();
+    const { user, email, token } = await registerPendingUser("suspended");
 
-    const [user] = await db
-      .insert(users)
-      .values({
-        email,
-        passwordHash: passHash,
-        displayName: "Suspended User",
-        status: "suspended",
-      })
-      .returning();
-    if (!user) {
-      throw new Error("Failed to insert test user");
-    }
+    await db
+      .update(users)
+      .set({ status: "suspended" })
+      .where(eq(users.id, user.id));
 
-    const rawToken = generateSecureToken();
-    const tokenHash = hashSecureToken(rawToken);
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
-
-    await db.insert(verificationTokens).values({
-      accountType: "user",
-      accountId: user.id,
-      purpose: "email_verify",
-      tokenHash,
-      expiresAt,
-    });
-
-    const { default: handler } = await import(
-      "#server/api/guest/auth/users/verify-email.post"
-    );
-
-    const event = createMockPostEvent({ token: rawToken });
-    await expect(handler(event)).rejects.toMatchObject({
-      statusCode: 403,
-      code: "ACCOUNT_SUSPENDED",
-    });
+    await callVerifyEmail(token);
 
     const [stillSuspended] = await db
       .select()
       .from(users)
       .where(eq(users.id, user.id));
     expect(stillSuspended?.status).toBe("suspended");
+
+    const loginRes = await getUserAuth().handler(
+      new Request("http://localhost:3000/api/auth/users/sign-in/email", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          origin: "http://localhost:3000",
+        },
+        body: JSON.stringify({ email, password: "chuoixanh123" }),
+      })
+    );
+    expect(loginRes.status).toBe(403);
   });
 });

@@ -1,9 +1,14 @@
-import { isOAuthProvider } from "@mindkid/auth";
-import { auditLogs, getOwnerDb, socialIdentities, users } from "@mindkid/db";
+import {
+  auditLogs,
+  getOwnerDb,
+  userAccounts,
+  userPasskeys,
+  users,
+} from "@mindkid/db";
 import { NotFoundError } from "@mindkid/errors/common";
 import { LastLoginMethodError } from "@mindkid/errors/social";
 import { dispatchTransactionalEmail } from "@mindkid/notification";
-import { eq } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 import { defineEventHandler, getHeader, getRouterParam } from "h3";
 import {
   getVerifiedRemoteIp,
@@ -11,15 +16,16 @@ import {
 } from "#server/utils/auth-runtime";
 import { requireReauth } from "#server/utils/reauth-runtime";
 
+const ALLOWED_PROVIDERS = new Set(["google", "facebook"]);
+
 export default defineEventHandler(async (event) => {
-  const userSession = await requireWebUserSession(event);
+  const userSession = requireWebUserSession(event);
   const userId = Number(userSession.user_id);
 
-  // BR-SLK-01: Reauth within 5 minutes is required for unlinking
-  await requireReauth(event);
+  requireReauth(event);
 
   const rawProvider = getRouterParam(event, "provider") || "";
-  if (!isOAuthProvider(rawProvider)) {
+  if (!ALLOWED_PROVIDERS.has(rawProvider)) {
     throw new NotFoundError("Không tìm thấy nhà cung cấp.");
   }
 
@@ -27,9 +33,7 @@ export default defineEventHandler(async (event) => {
   const remoteIp = getVerifiedRemoteIp(event);
   const userAgent = getHeader(event, "user-agent") || "unknown";
 
-  // D-IM & BR-SLK-04: Lock users row inside transaction to prevent race conditions
   const result = await db.transaction(async (tx) => {
-    // 1. Lock user row with FOR UPDATE
     const [user] = await tx
       .select({
         id: users.id,
@@ -44,42 +48,45 @@ export default defineEventHandler(async (event) => {
       throw new NotFoundError();
     }
 
-    // 2. Fetch current social identities for this user
-    const userIdentities = await tx
+    const accounts = await tx
       .select()
-      .from(socialIdentities)
-      .where(eq(socialIdentities.userId, userId));
+      .from(userAccounts)
+      .where(eq(userAccounts.userId, userId));
 
-    const targetIdentity = userIdentities.find(
-      (si) => si.provider === rawProvider
-    );
-    if (!targetIdentity) {
+    const [pkRow] = await tx
+      .select({ cnt: count(userPasskeys.id) })
+      .from(userPasskeys)
+      .where(eq(userPasskeys.userId, userId));
+
+    const targetAccount = accounts.find((a) => a.providerId === rawProvider);
+    if (!targetAccount) {
       throw new NotFoundError("Tài khoản chưa liên kết với nhà cung cấp này.");
     }
 
-    const hasPassword = Boolean(user.passwordHash);
-    const remainingIdentitiesCount = userIdentities.length - 1;
-    const loginMethodsLeft = (hasPassword ? 1 : 0) + remainingIdentitiesCount;
+    const hasCredentialRow = accounts.some(
+      (a) => a.providerId === "credential" && Boolean(a.password)
+    );
+    const hasLegacyPassword = !hasCredentialRow && Boolean(user.passwordHash);
+    const remainingAccounts = accounts.filter(
+      (a) => a.id !== targetAccount.id
+    ).length;
+    const loginMethodsLeft =
+      remainingAccounts + (hasLegacyPassword ? 1 : 0) + Number(pkRow?.cnt ?? 0);
 
-    // BR-SLK-04: NEVER remove the last login method
     if (loginMethodsLeft < 1) {
       throw new LastLoginMethodError(
         "Không thể gỡ phương thức đăng nhập cuối cùng. Vui lòng đặt mật khẩu trước khi gỡ."
       );
     }
 
-    // BR-SLK-10: Hard delete identity
-    await tx
-      .delete(socialIdentities)
-      .where(eq(socialIdentities.id, targetIdentity.id));
+    await tx.delete(userAccounts).where(eq(userAccounts.id, targetAccount.id));
 
-    // BR-SLK-05: Audit log (with provider, WITHOUT provider_user_id)
     await tx.insert(auditLogs).values({
       actorType: "user",
       actorId: userId,
       action: "social_identity.unlinked",
       entityType: "social_identity",
-      entityId: String(targetIdentity.id),
+      entityId: String(targetAccount.id),
       afterData: { provider: rawProvider },
       ipAddress: remoteIp,
       userAgent,

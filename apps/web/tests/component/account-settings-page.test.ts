@@ -5,6 +5,17 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const pageMetaMock = vi.fn();
 const fetchMock = vi.fn();
+const linkSocialMock = vi.fn();
+
+vi.mock("~/composables/use-api", () => ({
+  useApi: () => fetchMock,
+}));
+
+vi.mock("~/composables/use-auth-client", () => ({
+  useUserAuthClient: () => ({
+    linkSocial: linkSocialMock,
+  }),
+}));
 
 vi.stubGlobal("definePageMeta", pageMetaMock);
 vi.stubGlobal("$fetch", fetchMock);
@@ -30,19 +41,40 @@ async function mountSettingsPage(): Promise<VueWrapper> {
   return wrapper;
 }
 
+function mockDefaultSettingsReads(url: string) {
+  if (url === "/api/users/profile") {
+    return Promise.resolve({
+      email: "phuhuynh@example.com",
+      display_name: "Phụ Huynh",
+      has_password: true,
+      pending_email: null,
+    });
+  }
+  if (url === "/api/guest/auth/oauth/providers") {
+    return Promise.resolve({
+      providers: [{ provider: "google", label: "Google", is_enabled: true }],
+    });
+  }
+  if (url === "/api/users/social-identities") {
+    return Promise.resolve({ items: [] });
+  }
+  if (url === "/api/users/notification-preferences") {
+    return Promise.resolve({ weekly_progress: true, content_new: true });
+  }
+  return null;
+}
+
 describe("Trang cài đặt tài khoản /me/settings (BR-ACS-01..05, 09, 10)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    linkSocialMock.mockResolvedValue({
+      data: { url: "https://oauth" },
+      error: null,
+    });
     fetchMock.mockImplementation((url: string) => {
-      if (url === "/api/guest/auth/oauth/providers") {
-        return Promise.resolve({
-          providers: [
-            { provider: "google", label: "Google", is_enabled: true },
-          ],
-        });
-      }
-      if (url === "/api/users/social-identities") {
-        return Promise.resolve({ items: [] });
+      const readRes = mockDefaultSettingsReads(url);
+      if (readRes) {
+        return readRes;
       }
       return Promise.resolve({ ok: true });
     });
@@ -55,6 +87,10 @@ describe("Trang cài đặt tài khoản /me/settings (BR-ACS-01..05, 09, 10)", 
 
   it("mở modal đổi mật khẩu, gọi reauth + POST /api/users/password thành công (BR-ACS-01, BR-ACS-02)", async () => {
     fetchMock.mockImplementation((url: string) => {
+      const readRes = mockDefaultSettingsReads(url);
+      if (readRes) {
+        return readRes;
+      }
       if (url === "/api/users/auth/reauth") {
         return Promise.resolve({
           ok: true,
@@ -71,6 +107,7 @@ describe("Trang cài đặt tài khoản /me/settings (BR-ACS-01..05, 09, 10)", 
     });
 
     const page = await mountSettingsPage();
+    expect(fetchMock).toHaveBeenCalledWith("/api/users/profile");
     const openBtn = page.find('[data-testid="open-password-modal-btn"]');
     expect(openBtn.exists()).toBe(true);
 
@@ -136,6 +173,10 @@ describe("Trang cài đặt tài khoản /me/settings (BR-ACS-01..05, 09, 10)", 
 
   it("mở modal đổi email, gọi reauth + POST /api/users/email và giữ nguyên email hiện tại khi chờ xác nhận (BR-ACS-04)", async () => {
     fetchMock.mockImplementation((url: string) => {
+      const readRes = mockDefaultSettingsReads(url);
+      if (readRes) {
+        return readRes;
+      }
       if (url === "/api/users/auth/reauth") {
         return Promise.resolve({
           ok: true,
@@ -198,6 +239,10 @@ describe("Trang cài đặt tài khoản /me/settings (BR-ACS-01..05, 09, 10)", 
 
   it("hiển thị thông báo lỗi khi đổi sang email đã được sử dụng (409 EMAIL_ALREADY_IN_USE, BR-ACS-03)", async () => {
     fetchMock.mockImplementation((url: string) => {
+      const readRes = mockDefaultSettingsReads(url);
+      if (readRes) {
+        return readRes;
+      }
       if (url === "/api/users/auth/reauth") {
         return Promise.resolve({
           ok: true,
@@ -234,5 +279,21 @@ describe("Trang cài đặt tài khoản /me/settings (BR-ACS-01..05, 09, 10)", 
     expect(page.find('[data-testid="email-modal-error"]').text()).toContain(
       "Địa chỉ email này đã được sử dụng bởi tài khoản khác."
     );
+  });
+
+  it("gọi authClient.linkSocial khi bấm Liên kết mạng xã hội", async () => {
+    const page = await mountSettingsPage();
+    const linkBtn = page
+      .findAll("button")
+      .find((btn) => btn.text().trim() === "Liên kết");
+    expect(linkBtn?.exists()).toBe(true);
+
+    await linkBtn?.trigger("click");
+    await flushPromises();
+
+    expect(linkSocialMock).toHaveBeenCalledWith({
+      provider: "google",
+      callbackURL: "/me/settings",
+    });
   });
 });

@@ -1,16 +1,13 @@
-import { sql } from "drizzle-orm";
 import {
   bigint,
-  check,
   doublePrecision,
-  index,
   pgTable,
   smallint,
   unique,
   varchar,
 } from "drizzle-orm/pg-core";
 import { childProfiles } from "./child.ts";
-import { timestamps } from "./columns.ts";
+import { idPk, timestamps } from "./columns.ts";
 
 /**
  * Vị trí bày sticker trên bức tranh bối cảnh chủ đề (`sticker-diorama.md` §7.1).
@@ -21,9 +18,7 @@ import { timestamps } from "./columns.ts";
 export const childStickerPlacements = pgTable(
   "child_sticker_placements",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     childProfileId: bigint("child_profile_id", { mode: "number" })
       .notNull()
       .references(() => childProfiles.id, { onDelete: "cascade" }),
@@ -36,31 +31,13 @@ export const childStickerPlacements = pgTable(
     ...timestamps(),
   },
   (table) => [
+    // UNIQUE (child_profile_id, theme_code, emoji, instance_index) đã phủ
+    // tiền tố (child_profile_id, theme_code).
     unique("uq_child_sticker_placements_item").on(
       table.childProfileId,
       table.themeCode,
       table.emoji,
       table.instanceIndex
-    ),
-    index("idx_child_sticker_placements_child_theme").on(
-      table.childProfileId,
-      table.themeCode
-    ),
-    check(
-      "check_child_sticker_placements_instance",
-      sql`${table.instanceIndex} >= 0 AND ${table.instanceIndex} <= 23`
-    ),
-    check(
-      "check_child_sticker_placements_norm_x",
-      sql`${table.normX} >= 0.05 AND ${table.normX} <= 0.95`
-    ),
-    check(
-      "check_child_sticker_placements_norm_y",
-      sql`${table.normY} >= 0.05 AND ${table.normY} <= 0.95`
-    ),
-    check(
-      "check_child_sticker_placements_scale",
-      sql`${table.scale} >= 0.75 AND ${table.scale} <= 1.35`
     ),
   ]
 );

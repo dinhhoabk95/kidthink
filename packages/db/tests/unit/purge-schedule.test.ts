@@ -1,11 +1,11 @@
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { describe, expect, it } from "vitest";
+import type { DbExecutor } from "#src/client";
 import {
   cancelUserDeletion,
   hardPurgeUser,
   requestUserDeletion,
-} from "../../src/purge.ts";
-import { socialIdentities, users } from "../../src/schema/identity.ts";
+} from "#src/purge";
+import { userAccounts, users } from "#src/schema/identity";
 
 interface Captured {
   values: Record<string, Date | string | null | object>[];
@@ -13,7 +13,7 @@ interface Captured {
   updatedTables: object[];
 }
 
-function fakeDb(captured: Captured): PostgresJsDatabase {
+function fakeDb(captured: Captured): DbExecutor {
   const db = {
     select: () => ({
       from: () => ({
@@ -84,7 +84,7 @@ describe("UC-027 BR-001/BR-002/BR-ADL-09/BR-ADL-10: users.purge_at & hardPurgeUs
     const res = await hardPurgeUser(fakeDb(captured), 7, now, scheduled);
     expect(res.purged).toBe(true);
 
-    expect(captured.deletedTables).toContain(socialIdentities);
+    expect(captured.deletedTables).toContain(userAccounts);
     expect(captured.updatedTables).toContain(users);
 
     const userAnonymizeValues = captured.values.at(-1);

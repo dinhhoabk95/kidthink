@@ -1,58 +1,105 @@
-import { createHash } from "node:crypto";
+import { InMemoryRedisClient, setAuthRedisClient } from "@mindkid/auth";
 import {
-  getAppDb,
+  consentRequirements,
+  getOwnerDb,
   notifications,
+  userSessions,
   users,
-  verificationTokens,
 } from "@mindkid/db";
-import { and, eq } from "drizzle-orm";
-import { describe, expect, it } from "vitest";
+import { getQueue } from "@mindkid/queue";
+import { and, desc, eq, inArray } from "drizzle-orm";
+import { beforeEach, describe, expect, it } from "vitest";
+import {
+  getUserAuth,
+  resetBetterAuthInstancesForTests,
+} from "#server/utils/better-auth";
 
-describe("Task 7 — Real Human End-toEnd Test Scenario", () => {
+interface EmailJobPayload {
+  token?: string;
+}
+
+function collectCookie(res: Response): string {
+  return res.headers
+    .getSetCookie()
+    .map((raw) => raw.split(";")[0]?.trim() ?? "")
+    .filter((pair) => pair.length > 0 && !pair.endsWith("="))
+    .join("; ");
+}
+
+async function readConsentMarkers(): Promise<{
+  termsRequirementAt: string | null;
+  privacyRequirementAt: string | null;
+}> {
+  const db = getOwnerDb();
+  const rows = await db
+    .select()
+    .from(consentRequirements)
+    .where(inArray(consentRequirements.consentType, ["terms", "privacy"]));
+
+  let termsRequirementAt: string | null = null;
+  let privacyRequirementAt: string | null = null;
+  for (const row of rows) {
+    const iso = row.reconsentRequiredAt
+      ? row.reconsentRequiredAt.toISOString()
+      : null;
+    if (row.consentType === "terms") {
+      termsRequirementAt = iso;
+    } else if (row.consentType === "privacy") {
+      privacyRequirementAt = iso;
+    }
+  }
+  return { termsRequirementAt, privacyRequirementAt };
+}
+
+describe("Task 7 — Real Human End-to-End Better Auth Lifecycle", () => {
+  beforeEach(() => {
+    setAuthRedisClient(new InMemoryRedisClient());
+    resetBetterAuthInstancesForTests();
+  });
+
   it("executes complete lifecycle: Register -> Email Verify -> Login -> List Sessions -> Forgot Password -> Reset Password -> Re-login -> Logout", async () => {
-    const db = getAppDb();
-    const suffix = Math.floor(Math.random() * 900_000 + 100_000).toString();
+    const db = getOwnerDb();
+    const markers = await readConsentMarkers();
+    const suffix = `${Date.now()}_${Math.floor(Math.random() * 900_000 + 100_000)}`;
     const humanEmail = `realhuman_${suffix}@example.com`;
     const initialPass = "chuoixanh123";
     const newPass = "newchuoixanh456";
 
     // 1. REGISTER
-    const { default: registerHandler } = await import(
-      "#server/api/guest/auth/users/register.post"
-    );
-
-    const regEvent = {
-      method: "POST",
-      node: {
-        req: {
-          headers: {
-            "x-forwarded-for": "192.168.1.50",
-            "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)",
-          },
+    const regRes = await getUserAuth().handler(
+      new Request("http://localhost:3000/api/auth/users/sign-up/email", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          origin: "http://localhost:3000",
+          "x-real-ip": "192.168.1.50",
+          "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)",
         },
-      },
-      context: {
-        body: {
+        body: JSON.stringify({
           email: humanEmail,
           password: initialPass,
-          display_name: "Human Tester",
+          name: "Human Tester",
           accept_terms: true,
           accept_privacy: true,
-        },
-      },
-    } as any;
-
-    const regRes = await registerHandler(regEvent);
-    expect(regRes.user.uuid).toBeDefined();
-    expect(regRes.user.status).toBe("pending_verification");
+          terms_requirement_at: markers.termsRequirementAt,
+          privacy_requirement_at: markers.privacyRequirementAt,
+        }),
+      })
+    );
+    expect(regRes.status).toBe(200);
 
     const [createdUser] = await db
       .select()
       .from(users)
       .where(eq(users.email, humanEmail));
+    if (!createdUser) {
+      throw new Error("Expected created user");
+    }
+    expect(createdUser.uuid).toBeTruthy();
+    expect(createdUser.status).toBe("pending_verification");
 
-    // 2. READ VERIFICATION TOKEN FROM EMAIL INBOX (NOTIFICATIONS)
-    const emailNotifs = await db
+    // 2. READ VERIFICATION TOKEN FROM QUEUED NOTIFICATION
+    const [verifyNotif] = await db
       .select()
       .from(notifications)
       .where(
@@ -60,123 +107,85 @@ describe("Task 7 — Real Human End-toEnd Test Scenario", () => {
           eq(notifications.templateCode, "email_verification"),
           eq(notifications.recipientId, createdUser.id)
         )
-      );
+      )
+      .orderBy(desc(notifications.id))
+      .limit(1);
+    expect(verifyNotif).toBeDefined();
 
-    expect(emailNotifs).toHaveLength(1);
-    const verifyToken =
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
-    const verifyTokenHash = createHash("sha256")
-      .update(verifyToken)
-      .digest("hex");
-    await db
-      .update(verificationTokens)
-      .set({ tokenHash: verifyTokenHash })
-      .where(
-        and(
-          eq(verificationTokens.accountId, createdUser.id),
-          eq(verificationTokens.purpose, "email_verify")
-        )
-      );
+    const verifyJob = await getQueue().getJob(
+      `email:send:${verifyNotif?.id ?? 0}`
+    );
+    const verifyPayload = (verifyNotif?.payload ?? verifyJob?.data.payload) as
+      | EmailJobPayload
+      | undefined;
+    const verifyToken = verifyPayload?.token ?? "";
+    expect(verifyToken.length).toBeGreaterThan(10);
 
     // 3. VERIFY EMAIL
-    const { default: verifyEmailHandler } = await import(
-      "#server/api/guest/auth/users/verify-email.post"
+    const verifyRes = await getUserAuth().handler(
+      new Request(
+        `http://localhost:3000/api/auth/users/verify-email?token=${encodeURIComponent(verifyToken)}`,
+        {
+          method: "GET",
+          headers: { origin: "http://localhost:3000" },
+        }
+      )
     );
+    expect(verifyRes.status).toBe(200);
 
-    const verifyEvent = {
-      method: "POST",
-      node: { req: { headers: { "x-forwarded-for": "192.168.1.50" } } },
-      context: { body: { token: verifyToken } },
-    } as any;
-
-    const verifyRes = await verifyEmailHandler(verifyEvent);
-    expect(verifyRes.status).toBe("active");
+    const [verifiedUser] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, createdUser.id));
+    expect(verifiedUser?.status).toBe("active");
+    expect(verifiedUser?.emailVerified).toBe(true);
 
     // 4. LOGIN
-    const { default: loginHandler } = await import(
-      "#server/api/guest/auth/users/login.post"
-    );
-
-    const setCookies: string[] = [];
-    const loginEvent = {
-      method: "POST",
-      node: {
-        req: {
-          headers: {
-            "x-forwarded-for": "192.168.1.50",
-            "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)",
-          },
+    const loginRes = await getUserAuth().handler(
+      new Request("http://localhost:3000/api/auth/users/sign-in/email", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          origin: "http://localhost:3000",
+          "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)",
         },
-        res: {
-          getHeader: () => undefined,
-          setHeader: (name: string, value: any) => {
-            if (name.toLowerCase() === "set-cookie") {
-              if (Array.isArray(value)) {
-                setCookies.push(...value);
-              } else {
-                setCookies.push(value);
-              }
-            }
-          },
-        },
-      },
-      context: {
-        body: {
+        body: JSON.stringify({
           email: humanEmail,
           password: initialPass,
-        },
-      },
-    } as any;
-
-    const loginRes = await loginHandler(loginEvent);
-    expect(loginRes.user.displayName).toBe("Human Tester");
-    expect(loginRes.user.status).toBe("active");
+        }),
+      })
+    );
+    expect(loginRes.status).toBe(200);
+    const loginCookie = collectCookie(loginRes);
+    expect(loginCookie).toContain("mindkid-user.session_token=");
 
     // 5. LIST ACTIVE SESSIONS
-    const { default: sessionsHandler } = await import(
-      "#server/api/users/auth/sessions.get"
-    );
-
-    const csrf =
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
-    const getSessionsEvent = {
-      method: "GET",
-      node: {
-        req: {
-          headers: {
-            "x-csrf-token": csrf,
-            cookie: `tm_u_csrf=${csrf}`,
-          },
-        },
-      },
-      context: {
-        user: {
-          user_id: createdUser?.id ?? 0,
-          display_name: "Human Tester",
-          session_id: "1",
-        },
-      },
-    } as any;
-
-    const sessionsRes = await sessionsHandler(getSessionsEvent);
-    expect(sessionsRes.sessions.length).toBeGreaterThanOrEqual(1);
+    const sessionsList = await getUserAuth().api.listSessions({
+      headers: new Headers({ cookie: loginCookie }),
+    });
+    expect(sessionsList.length).toBeGreaterThanOrEqual(1);
 
     // 6. FORGOT PASSWORD
-    const { default: forgotHandler } = await import(
-      "#server/api/guest/auth/users/forgot-password.post"
+    const forgotRes = await getUserAuth().handler(
+      new Request(
+        "http://localhost:3000/api/auth/users/request-password-reset",
+        {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            origin: "http://localhost:3000",
+          },
+          body: JSON.stringify({
+            email: humanEmail,
+            redirectTo: "/reset-password",
+          }),
+        }
+      )
     );
+    expect(forgotRes.status).toBe(200);
 
-    const forgotEvent = {
-      method: "POST",
-      node: { req: { headers: { "x-forwarded-for": "192.168.1.50" } } },
-      context: { body: { email: humanEmail } },
-    } as any;
-
-    const forgotRes = await forgotHandler(forgotEvent);
-    expect(forgotRes.ok).toBe(true);
-
-    // 7. READ RESET TOKEN FROM NOTIFICATIONS
-    const resetNotifs = await db
+    // 7. READ RESET TOKEN FROM QUEUED NOTIFICATION
+    const [resetNotif] = await db
       .select()
       .from(notifications)
       .where(
@@ -184,91 +193,89 @@ describe("Task 7 — Real Human End-toEnd Test Scenario", () => {
           eq(notifications.templateCode, "password_reset"),
           eq(notifications.recipientId, createdUser.id)
         )
-      );
+      )
+      .orderBy(desc(notifications.id))
+      .limit(1);
+    expect(resetNotif).toBeDefined();
 
-    expect(resetNotifs).toHaveLength(1);
-    const resetToken =
-      "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789";
-    const resetTokenHash = createHash("sha256")
-      .update(resetToken)
-      .digest("hex");
-    await db
-      .update(verificationTokens)
-      .set({ tokenHash: resetTokenHash })
-      .where(
-        and(
-          eq(verificationTokens.accountId, createdUser.id),
-          eq(verificationTokens.purpose, "password_reset")
-        )
-      );
+    const resetJob = await getQueue().getJob(
+      `email:send:${resetNotif?.id ?? 0}`
+    );
+    const resetPayload = (resetNotif?.payload ?? resetJob?.data.payload) as
+      | EmailJobPayload
+      | undefined;
+    const resetToken = resetPayload?.token ?? "";
+    expect(resetToken.length).toBeGreaterThan(10);
 
     // 8. RESET PASSWORD
-    const { default: resetHandler } = await import(
-      "#server/api/guest/auth/users/reset-password.post"
+    const resetRes = await getUserAuth().handler(
+      new Request("http://localhost:3000/api/auth/users/reset-password", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          origin: "http://localhost:3000",
+        },
+        body: JSON.stringify({
+          token: resetToken,
+          newPassword: newPass,
+        }),
+      })
     );
-
-    const resetEvent = {
-      method: "POST",
-      node: { req: { headers: { "x-forwarded-for": "192.168.1.50" } } },
-      context: { body: { token: resetToken, new_password: newPass } },
-    } as any;
-
-    const resetRes = await resetHandler(resetEvent);
-    expect(resetRes.ok).toBe(true);
+    expect(resetRes.status).toBe(200);
 
     // 9. TRY LOGIN WITH OLD PASSWORD -> REJECTED 401
-    const oldPassLoginEvent = {
-      method: "POST",
-      node: { req: { headers: { "x-forwarded-for": "192.168.1.50" } } },
-      context: { body: { email: humanEmail, password: initialPass } },
-    } as any;
-
-    await expect(loginHandler(oldPassLoginEvent)).rejects.toThrow();
+    const oldPassLoginRes = await getUserAuth().handler(
+      new Request("http://localhost:3000/api/auth/users/sign-in/email", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          origin: "http://localhost:3000",
+        },
+        body: JSON.stringify({
+          email: humanEmail,
+          password: initialPass,
+        }),
+      })
+    );
+    expect(oldPassLoginRes.status).toBe(401);
 
     // 10. LOGIN WITH NEW PASSWORD -> SUCCESS
-    const newPassLoginEvent = {
-      method: "POST",
-      node: { req: { headers: { "x-forwarded-for": "192.168.1.50" } } },
-      context: { body: { email: humanEmail, password: newPass } },
-    } as any;
-
-    const newLoginRes = await loginHandler(newPassLoginEvent);
-    expect(newLoginRes.user.status).toBe("active");
+    const newPassLoginRes = await getUserAuth().handler(
+      new Request("http://localhost:3000/api/auth/users/sign-in/email", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          origin: "http://localhost:3000",
+        },
+        body: JSON.stringify({
+          email: humanEmail,
+          password: newPass,
+        }),
+      })
+    );
+    expect(newPassLoginRes.status).toBe(200);
+    const newCookie = collectCookie(newPassLoginRes);
 
     // 11. LOGOUT
-    const { default: logoutHandler } = await import(
-      "#server/api/users/auth/logout.post"
+    const logoutRes = await getUserAuth().handler(
+      new Request("http://localhost:3000/api/auth/users/sign-out", {
+        method: "POST",
+        headers: {
+          origin: "http://localhost:3000",
+          cookie: newCookie,
+        },
+      })
     );
+    expect(logoutRes.status).toBe(200);
 
-    const logoutResHeaders: Record<string, string> = {};
-    const logoutEvent = {
-      method: "POST",
-      node: {
-        req: {
-          headers: {
-            "x-csrf-token": csrf,
-            cookie: `tm_u_csrf=${csrf}`,
-          },
-        },
-        res: {
-          setHeader: (name: string, value: string) => {
-            logoutResHeaders[name.toLowerCase()] = value;
-          },
-          getHeader: (name: string) => logoutResHeaders[name.toLowerCase()],
-          removeHeader: () => undefined,
-          appendHeader: () => undefined,
-        },
-      },
-      context: {
-        user: {
-          user_id: createdUser.id,
-          display_name: "Human Tester",
-          session_id: "1",
-        },
-      },
-    } as any;
+    const sessionAfterLogout = await getUserAuth().api.getSession({
+      headers: new Headers({ cookie: newCookie }),
+    });
+    expect(sessionAfterLogout).toBeNull();
 
-    const logoutRes = await logoutHandler(logoutEvent);
-    expect(logoutRes.success).toBe(true);
-  });
+    // Cleanup remaining sessions if initial sign-up session existed
+    await db
+      .delete(userSessions)
+      .where(eq(userSessions.userId, createdUser.id));
+  }, 30_000);
 });

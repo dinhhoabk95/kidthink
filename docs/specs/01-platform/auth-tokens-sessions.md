@@ -25,27 +25,25 @@ depends_on:
 
 ## 1. Objective
 
-**Cập nhật 2026-08-13 theo quyết định sản phẩm mới:** xác thực trình duyệt của cả User và
-Manager dùng **opaque cookie session**, không phát JWT access token. Cookie `HttpOnly` chỉ mang
-một session locator ngẫu nhiên; payload phiên, chỉ mục account/thiết bị, trạng thái reauth và
-credential `remember_me` đều do Redis giữ làm authority duy nhất.
+**Cập nhật 2026-11-21 (Task #319 — Tích hợp Better Auth 2-instance):** xác thực trình duyệt của cả
+User và Manager chuẩn hoá trên **Better Auth** (`better-auth`, `@better-auth/drizzle-adapter`,
+`@better-auth/passkey`) được bọc hoàn toàn trong driver nội bộ `@mindkid/auth` (`SPEC.md` §0 D10).
+Hệ thống chạy **hai instance Better Auth tách biệt tuyệt đối**: `userAuth` tại
+`/api/auth/users/**` và `managerAuth` tại `/api/auth/managers/**`, dùng hai bộ bảng PostgreSQL riêng,
+hai tiền tố cookie riêng (`mindkid-user` và `mindkid-manager`), hai khoá HMAC dẫn xuất riêng và hai
+tiền tố Valkey `secondaryStorage` riêng (`ba:v1:user:*` và `ba:v1:manager:*`) ở chế độ **fail-closed**.
 
-Một session làm việc có hạn tuyệt đối **1 giờ**, không sliding. Khi người dùng chọn
-`remember_me`, backend cấp thêm credential opaque, xoay một lần mỗi lần khôi phục session và có
-hạn tuyệt đối tối đa **365 ngày** tính từ lần đăng nhập gốc; rotation không kéo dài mốc này.
-`active_sessions` trong PostgreSQL chỉ là metadata/audit thiết bị, không chứa credential và
-không được dùng để phục hồi phiên khi Redis thiếu dữ liệu.
+Phiên mặc định (`rememberMe=false`) là session cookie hết hạn tuyệt đối sau **1 giờ** (`3600s`),
+không sliding (`disableSessionRefresh: true`). Khi người dùng chọn `rememberMe=true`, phiên có hạn
+tuyệt đối tối đa **365 ngày** không sliding, đồng thời đồng bộ vào `user_sessions` /
+`manager_sessions` (`storeSessionInDatabase: true`) để liệt kê và thu hồi từng thiết bị tức thì.
+Cửa sổ phiên tươi `freshAge: 300` (**5 phút**) kết hợp mốc `reauthAt` bảo vệ các thao tác nhạy cảm.
 
-`nuxt-auth-utils` vẫn cung cấp `useUserSession()` và `/api/_auth/session`, nhưng không phải
-session store: H3 mặc định seal dữ liệu trong cookie và không có Redis store option. MindKid
-chỉ seal locator trong `secure`, rồi `sessionHooks.fetch` đọc safe projection từ Redis.
-MindKid không phát hoặc nhận first-party JWT cho session, remember, MFA challenge hay service
-auth hiện hành và gỡ dependency trực tiếp `jose`. Token OIDC do provider trả về chỉ là input
-protocol tạm thời do `openid-client` xác minh; không lưu, forward hoặc dùng làm MindKid session.
-
-OAuth Google/Facebook ở P1 tiếp tục dùng `openid-client`; password dùng Argon2id; TOTP dùng
-OTPAuth. Cấm OAuth/password/WebAuthn helper tích hợp của `nuxt-auth-utils`, Supabase Auth,
-Better-Auth, Sidebase AuthJS và `next-auth`.
+Mật khẩu tiếp tục dùng **Argon2id** qua custom `emailAndPassword.password`; TOTP + Backup Codes dùng
+plugin `twoFactor`; WebAuthn/Passkey dùng `@better-auth/passkey` cho cả User và Manager; OAuth
+Google/Facebook chỉ bật trên `userAuth` với `disableImplicitLinking: true` và
+`disableImplicitSignUp: true`. Nghỉ hưu hoàn toàn `nuxt-auth-utils`, `openid-client` và `otpauth`;
+cấm thêm bất kỳ framework auth song song nào khác (Supabase Auth, Sidebase AuthJS, `next-auth`).
 
 ## 2. Actors
 
@@ -146,10 +144,16 @@ credential của bước mật khẩu; client không thể thêm tuỳ chọn n�
 | `BR-AUT-35` | `nuxt-auth-utils` chỉ cung cấp projection/composable; cấm OAuth, password, WebAuthn helper và cấm tin data sealed ngoài locator | Module không có Redis store và không được tạo auth contract thứ hai |
 | `BR-AUT-36` | Redis auth store nằm trong `packages/auth`, dùng client riêng, AOF, `noeviction`, health check và alert; không đi qua `packages/cache` fail-open | Cache miss được phép, session authority thì không |
 | `BR-AUT-37` | PostgreSQL `active_sessions` chỉ là metadata/audit, không chứa session/remember token và không phục hồi auth | Tránh hai authority và cửa sổ revoke liên datastore |
-| `BR-AUT-38` | Mọi credential auth do MindKid phát đều opaque; MFA challenge nằm trong Redis, TTL tối đa 5 phút, one-time consume. Cấm direct dependency/import `jose` và cấm first-party JWT/JWS | Một cơ chế credential duy nhất giảm bề mặt crypto, tránh self-contained challenge sống ngoài revocation authority |
+| `BR-AUT-38` | Mọi phiên trình duyệt do MindKid phát đều là opaque cookie session; cấm first-party JWT/Bearer trên route User/Manager | Một cơ chế phiên duy nhất giảm bề mặt tấn công và đảm bảo thu hồi tập trung trên Redis |
+| `BR-AUT-39` | `userAuth` và `managerAuth` là **hai instance Better Auth tách biệt**, khác `basePath`, khác `cookiePrefix`, khác khoá HMAC dẫn xuất, khác Redis prefix và khác bảng PostgreSQL | Bảo toàn tuyệt đối ranh giới Actor (`BR-ACT-01`, `BR-SIB-01`) — cookie bề mặt này vô nghĩa trên bề mặt kia |
+| `BR-AUT-40` | Mọi truy cập `better-auth` và `@better-auth/*` chỉ đi qua driver `@mindkid/auth` (`/server` cho Nitro, `/client` cho trình duyệt); `apps/admin` cấm import nhánh server | Tuân thủ `BR-MPA-01` và giữ `apps/admin` thuần static SPA |
+| `BR-AUT-41` | Handler API xác thực trực tiếp qua `userAuth.api.getSession` / `managerAuth.api.getSession` (kèm memoize trong phạm vi 1 request) | Loại bỏ phụ thuộc ngầm vào middleware thứ tự file và chuẩn hoá trên Better Auth Server API |
+| `BR-AUT-42` | `disableSessionRefresh: true` trên cả hai instance; `rememberMe` mặc định `false` (`expiresAt = +1h`), chỉ khi `rememberMe = true` mới đặt `expiresAt = +365d` | Giữ đúng cam kết thời hạn tuyệt đối không trượt của `BR-AUT-27` và `BR-AUT-28` |
+| `BR-AUT-43` | `accountLinking.disableImplicitLinking = true` và `socialProviders.*.disableImplicitSignUp = true` trên `userAuth`; `managerAuth` không khai báo `socialProviders` | Chặn tự gộp tài khoản trùng email (`BR-SCL-04`), ép thu 2 consent trước khi tạo `users` (`BR-SCL-01`), và giữ `BR-AUT-15` |
+| `BR-AUT-44` | `databaseHooks.account.{create,update}.before` xoá rỗng `accessToken`, `refreshToken`, `idToken` trước khi ghi PostgreSQL | Ngăn lưu trữ token nhà cung cấp OAuth trong cơ sở dữ liệu (`BR-AUT-18`, `BR-SIB-10`) |
+| `BR-AUT-45` | Cả `userAuth` và `managerAuth` bật `twoFactor` (TOTP + Backup Codes) và `@better-auth/passkey` (WebAuthn) trên bảng tách riêng | Cung cấp xác thực đa yếu tố và không mật khẩu chuẩn FIDO2/WebAuthn cho cả hai tác nhân |
 
-Các ID `BR-AUT-01`, `BR-AUT-03`–`05`, `BR-AUT-07` và `BR-AUT-19`–`24` đã nghỉ cùng contract
-JWT/refresh trước đó; không tái sử dụng.
+Các ID `BR-AUT-01`–`05`, `BR-AUT-07`, `BR-AUT-19`–`24`, `BR-AUT-29` và `BR-AUT-35` đã ngưng; không tái sử dụng.
 
 ## 7. Data
 

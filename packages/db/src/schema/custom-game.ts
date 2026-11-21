@@ -1,8 +1,5 @@
-import { sql } from "drizzle-orm";
-import { relations } from "drizzle-orm/_relations";
 import {
   bigint,
-  check,
   index,
   integer,
   jsonb,
@@ -13,7 +10,7 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
-import { timestamps } from "./columns.ts";
+import { idPk, timestamps } from "./columns.ts";
 import { users } from "./identity.ts";
 
 export const customGameStatusEnum = pgEnum("custom_game_status", [
@@ -24,9 +21,7 @@ export const customGameStatusEnum = pgEnum("custom_game_status", [
 export const customGames = pgTable(
   "custom_games",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     uuid: uuid("uuid").defaultRandom().notNull().unique(),
     userId: bigint("user_id", { mode: "number" })
       .notNull()
@@ -47,19 +42,8 @@ export const customGames = pgTable(
   (table) => [
     index("idx_custom_games_user_status").on(table.userId, table.status),
     index("idx_custom_games_user_template").on(table.userId, table.templateId),
-    check(
-      "check_custom_games_age_range",
-      sql`${table.ageMin} <= ${table.ageMax} AND ${table.ageMin} >= 3 AND ${table.ageMax} <= 6`
-    ),
   ]
 );
-
-export const customGamesRelations = relations(customGames, ({ one }) => ({
-  user: one(users, {
-    fields: [customGames.userId],
-    references: [users.id],
-  }),
-}));
 
 export type CustomGame = typeof customGames.$inferSelect;
 export type NewCustomGame = typeof customGames.$inferInsert;

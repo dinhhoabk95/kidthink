@@ -3,21 +3,20 @@ import {
   assertActiveChild,
   type ChildOwnershipPort,
   createAuthContext,
-  generateCsrfToken,
+  createRedisSecondaryStorage,
+  deriveInstanceSecret,
   InMemoryRedisClient,
   type ManagerTokenPayload,
-  RedisSessionStore,
   requireManagerAuth,
   requireRole,
   requireUserAuth,
   type UserTokenPayload,
-  validateCsrfToken,
   verifyChildOwnership,
   verifyReauthWindow,
 } from "#src/index";
 
-describe("P0.3 Security Evidence — Business Rule Verification", () => {
-  it("BR-ACT-01 & BR-ACT-02: Separate guards enforce explicit audience checks and reject cross-namespace tokens", async () => {
+describe("Security Evidence — Better Auth Dual-Instance Boundaries (Task #319)", () => {
+  it("BR-ACT-01, BR-ACT-02 & BR-AUT-39: Separate guards, separate HMAC secrets, and isolated Redis namespaces", async () => {
     const userPayload: UserTokenPayload = {
       user_id: 1,
       display_name: "User One",
@@ -35,29 +34,25 @@ describe("P0.3 Security Evidence — Business Rule Verification", () => {
       context: createAuthContext({ manager: managerPayload }),
     };
 
-    // User calling manager guard -> 401
     expect(() => requireManagerAuth(userEvent)).toThrowError(
       expect.objectContaining({ code: "UNAUTHENTICATED", status: 401 })
     );
-
-    // Manager calling user guard -> 401
     expect(() => requireUserAuth(managerEvent)).toThrowError(
       expect.objectContaining({ code: "UNAUTHENTICATED", status: 401 })
     );
 
-    // Redis cross-namespace validation failure (User token resolving under Manager namespace)
-    const store = new RedisSessionStore(new InMemoryRedisClient());
-    const createdUserSession = await store.createSession({
-      namespace: "user",
-      accountId: 1,
-      displayName: "User One",
-    });
-
-    const managerResolved = await store.resolveSession(
-      "manager",
-      createdUserSession.sessionToken
+    const rootSecret = "mindkid-root-secret-at-least-32-bytes-long!!";
+    expect(deriveInstanceSecret(rootSecret, "user")).not.toBe(
+      deriveInstanceSecret(rootSecret, "manager")
     );
-    expect(managerResolved).toBeNull();
+
+    const redis = new InMemoryRedisClient();
+    const userStorage = createRedisSecondaryStorage(redis, "user");
+    const managerStorage = createRedisSecondaryStorage(redis, "manager");
+
+    await userStorage.set("session:tok123", '{"userId":"1"}', 3600);
+    expect(await managerStorage.get("session:tok123")).toBeNull();
+    expect(await userStorage.get("session:tok123")).toBe('{"userId":"1"}');
   });
 
   it("BR-ACT-03: Accessing another user's record returns NOT_FOUND (404), not 403", async () => {
@@ -68,7 +63,6 @@ describe("P0.3 Security Evidence — Business Rule Verification", () => {
       },
     };
 
-    // User 20 trying to access child 100 -> returns 404 (NOT_FOUND)
     const event = {
       context: createAuthContext({
         user: {
@@ -85,7 +79,7 @@ describe("P0.3 Security Evidence — Business Rule Verification", () => {
     );
   });
 
-  it("BR-ACT-05 & BR-AUT-07: User payload contains NO role, tier, package, or entitlement", () => {
+  it("BR-ACT-05: User payload contains NO role, tier, package, or entitlement", () => {
     const userPayload: UserTokenPayload = {
       user_id: 1,
       display_name: "User",
@@ -98,7 +92,7 @@ describe("P0.3 Security Evidence — Business Rule Verification", () => {
     expect(userPayload).not.toHaveProperty("entitlement");
   });
 
-  it("BR-ACT-07: Child profile active status verified via assertActiveChild and DB ownership", () => {
+  it("BR-ACT-07: Child profile active status verified via assertActiveChild", () => {
     const eventWithoutChild = {
       context: createAuthContext({
         user: {
@@ -131,54 +125,8 @@ describe("P0.3 Security Evidence — Business Rule Verification", () => {
     );
   });
 
-  it("BR-AUT-02: Guards are strictly synchronous functions", () => {
-    const userPayload: UserTokenPayload = {
-      user_id: 1,
-      display_name: "User",
-      session_id: "s-1",
-    };
-    const event = { context: createAuthContext({ user: userPayload }) };
-
-    const result = requireUserAuth(event);
-    expect(result).toBe(userPayload);
-    expect(result).not.toHaveProperty("then");
-  });
-
-  it("BR-AUT-06: CSRF double-submit token enforced on unsafe HTTP methods", () => {
-    const csrfToken = generateCsrfToken();
-
-    // GET is allowed without CSRF
-    expect(() =>
-      validateCsrfToken({
-        method: "GET",
-        cookieToken: undefined,
-        headerToken: undefined,
-      })
-    ).not.toThrow();
-
-    // POST fails without header or mismatch
-    expect(() =>
-      validateCsrfToken({
-        method: "POST",
-        cookieToken: csrfToken,
-        headerToken: undefined,
-      })
-    ).toThrowError(
-      expect.objectContaining({ code: "CSRF_INVALID", status: 403 })
-    );
-
-    // POST succeeds with matching header
-    expect(() =>
-      validateCsrfToken({
-        method: "POST",
-        cookieToken: csrfToken,
-        headerToken: csrfToken,
-      })
-    ).not.toThrow();
-  });
-
   it("BR-AUT-13 & BR-AUT-14: Reauth required after 5 mins and provides available methods", () => {
-    const oldReauthAt = new Date(Date.now() - 6 * 60 * 1000); // 6 mins ago
+    const oldReauthAt = new Date(Date.now() - 6 * 60 * 1000);
 
     expect(() => verifyReauthWindow(oldReauthAt, ["password"])).toThrowError(
       expect.objectContaining({

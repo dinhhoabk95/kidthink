@@ -1,7 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
   bigint,
-  check,
   index,
   pgEnum,
   pgTable,
@@ -10,7 +9,7 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
-import { timestamps } from "./columns.ts";
+import { idPk, timestamps } from "./columns.ts";
 import { users } from "./identity.ts";
 
 export const childRelationshipEnum = pgEnum("child_relationship", [
@@ -28,9 +27,7 @@ export const childStatusEnum = pgEnum("child_status", [
 export const childProfiles = pgTable(
   "child_profiles",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     uuid: uuid("uuid").defaultRandom().notNull().unique(),
     userId: bigint("user_id", { mode: "number" })
       .notNull()
@@ -48,12 +45,13 @@ export const childProfiles = pgTable(
     ...timestamps(),
   },
   (table) => [
-    check(
-      "check_child_profiles_birth_year",
-      sql`${table.birthYear} >= 2010 AND ${table.birthYear} <= 2035`
-    ),
     index("child_profiles_birth_year_idx").on(table.birthYear),
     index("idx_child_profiles_user_id").on(table.userId),
-    index("idx_child_profiles_status_purge_at").on(table.status, table.purgeAt),
+    index("idx_child_profiles_status_purge_at")
+      .on(table.status, table.purgeAt)
+      .where(sql`${table.purgeAt} IS NOT NULL`),
+    index("idx_child_profiles_current_curriculum_id")
+      .on(table.currentCurriculumId)
+      .where(sql`${table.currentCurriculumId} IS NOT NULL`),
   ]
 );

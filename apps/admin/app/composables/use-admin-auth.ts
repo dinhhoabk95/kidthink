@@ -1,13 +1,35 @@
 import { computed } from "vue";
 import { useState } from "#imports";
-import { useApiClient } from "./use-api-client";
+import { useApiClient } from "~/composables/use-api-client";
+import { useManagerAuthClient } from "~/composables/use-manager-auth-client";
 
 export interface AdminManager {
   id?: number;
   manager_id?: number;
+  uuid?: string;
   display_name?: string;
   role?: "super_admin" | "content_reviewer";
   email?: string;
+  mfa_enabled?: boolean;
+  session_id?: string;
+  session_token?: string;
+}
+
+interface RawManagerSessionPayload {
+  user?: {
+    id: string | number;
+    uuid?: string;
+    email: string;
+    name?: string;
+    role?: string;
+    isActive?: boolean;
+    twoFactorEnabled?: boolean;
+    mfaEnabled?: boolean;
+  };
+  session?: {
+    id: string | number;
+    token: string;
+  };
 }
 
 export function useAdminAuth() {
@@ -17,12 +39,37 @@ export function useAdminAuth() {
 
   async function fetchSession(): Promise<boolean> {
     try {
-      const response = await api.get<{
-        manager: AdminManager;
-        csrf_token: string;
-      }>("/api/managers/auth/session");
-      manager.value = response.manager;
-      csrfToken.value = response.csrf_token;
+      const authClient = useManagerAuthClient();
+      const res = await authClient.getSession();
+      const payload = (res?.data ?? null) as RawManagerSessionPayload | null;
+      if (
+        !(payload?.user && payload.session) ||
+        payload.user.isActive === false
+      ) {
+        manager.value = undefined;
+        csrfToken.value = undefined;
+        return false;
+      }
+
+      const numId = Number(payload.user.id);
+      const role: "super_admin" | "content_reviewer" =
+        payload.user.role === "content_reviewer"
+          ? "content_reviewer"
+          : "super_admin";
+
+      manager.value = {
+        id: numId,
+        manager_id: numId,
+        uuid: payload.user.uuid,
+        display_name: payload.user.name || payload.user.email,
+        email: payload.user.email,
+        role,
+        mfa_enabled: Boolean(
+          payload.user.twoFactorEnabled ?? payload.user.mfaEnabled
+        ),
+        session_id: String(payload.session.id),
+        session_token: payload.session.token,
+      };
       return true;
     } catch {
       manager.value = undefined;
@@ -33,7 +80,8 @@ export function useAdminAuth() {
 
   async function clear(): Promise<void> {
     try {
-      await api.post("/api/managers/auth/logout");
+      const authClient = useManagerAuthClient();
+      await authClient.signOut();
     } finally {
       manager.value = undefined;
       csrfToken.value = undefined;
@@ -41,7 +89,7 @@ export function useAdminAuth() {
   }
 
   async function reauth(password: string): Promise<void> {
-    await api.post("/api/managers/auth/reauth", { password });
+    await api.post("api/managers/auth/reauth", { body: { password } });
   }
 
   return {

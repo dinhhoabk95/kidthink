@@ -1,47 +1,84 @@
-import { encodeOAuthTicket, type NormalizedProfile } from "@mindkid/auth";
-import type { H3Event } from "h3";
-import { describe, expect, it } from "vitest";
-import { readOAuthTicketProfile } from "#server/utils/oauth-ticket";
+import {
+  consumeSocialSignupConsentTicket,
+  createSocialSignupConsentTicket,
+  InMemoryRedisClient,
+  SOCIAL_SIGNUP_CONSENT_COOKIE,
+  setAuthRedisClient,
+} from "@mindkid/auth";
+import { createEvent, getResponseHeader } from "h3";
+import { beforeEach, describe, expect, it } from "vitest";
+import socialConsentHandler from "#server/api/guest/auth/users/social-consent.post";
 
-const SECRET = process.env.NUXT_SESSION_PASSWORD ?? "";
+describe("UC-028 vé đồng ý đăng ký MXH qua Better Auth (BR-SCL-01, BR-SCL-12)", () => {
+  let redis: InMemoryRedisClient;
 
-const PROFILE: NormalizedProfile = {
-  provider: "google",
-  provider_user_id: "g-1",
-  email_at_provider: "victim@example.com",
-  email_verified_at_provider: true,
-  display_name_at_provider: "V",
-};
-
-function eventWithTicket(value: string): H3Event {
-  const headers: Record<string, string> = {
-    cookie: `tm_oauth_ticket=${value}`,
-  };
-  return { node: { req: { headers } }, context: {} } as H3Event;
-}
-
-describe("UC-028 vé đăng ký MXH (R3 G1)", () => {
-  it("chấp nhận vé đã ký", () => {
-    const token = encodeOAuthTicket(
-      { profile: PROFILE, created_at: Date.now() },
-      SECRET
-    );
-    expect(readOAuthTicketProfile(eventWithTicket(token))).toEqual(PROFILE);
+  beforeEach(() => {
+    redis = new InMemoryRedisClient();
+    setAuthRedisClient(redis);
   });
 
-  it("từ chối cookie JSON base64url tự dựng, không có chữ ký", () => {
-    const forged = Buffer.from(
-      JSON.stringify({ profile: PROFILE, created_at: Date.now() }),
-      "utf8"
-    ).toString("base64url");
-    expect(readOAuthTicketProfile(eventWithTicket(forged))).toBeNull();
+  it("chấp nhận vé hợp lệ đúng một lần duy nhất (one-time consume)", async () => {
+    const token = await createSocialSignupConsentTicket(redis, {
+      termsRequirementAt: null,
+      privacyRequirementAt: null,
+      ipAddress: "127.0.0.1",
+      userAgent: "VitestBrowser/1.0",
+    });
+
+    const first = await consumeSocialSignupConsentTicket(redis, token);
+    expect(first).toEqual({
+      termsRequirementAt: null,
+      privacyRequirementAt: null,
+      ipAddress: "127.0.0.1",
+      userAgent: "VitestBrowser/1.0",
+    });
+
+    const second = await consumeSocialSignupConsentTicket(redis, token);
+    expect(second).toBeNull();
   });
 
-  it("từ chối vé đã quá hạn 10 phút", () => {
-    const token = encodeOAuthTicket(
-      { profile: PROFILE, created_at: Date.now() - 11 * 60 * 1000 },
-      SECRET
+  it("từ chối vé giả mạo hoặc rỗng", async () => {
+    expect(await consumeSocialSignupConsentTicket(redis, null)).toBeNull();
+    expect(
+      await consumeSocialSignupConsentTicket(redis, "forged-token-value")
+    ).toBeNull();
+  });
+
+  it("POST /api/guest/auth/users/social-consent cấp cookie HttpOnly tm_ba_signup_consent", async () => {
+    const resHeaders = new Map<string, string | string[]>();
+    const body = {
+      accept_terms: true,
+      accept_privacy: true,
+      terms_requirement_at: null,
+      privacy_requirement_at: null,
+    };
+    const event = createEvent(
+      {
+        method: "POST",
+        url: "/api/guest/auth/users/social-consent",
+        headers: {
+          host: "localhost:3000",
+          origin: "http://localhost:3000",
+          "user-agent": "VitestBrowser/1.0",
+        },
+        socket: { remoteAddress: "127.0.0.1" },
+      } as never,
+      {
+        statusCode: 200,
+        getHeader: (k: string) => resHeaders.get(k.toLowerCase()),
+        setHeader: (k: string, v: string | string[]) => {
+          resHeaders.set(k.toLowerCase(), v);
+        },
+        removeHeader: (k: string) => resHeaders.delete(k.toLowerCase()),
+      } as never
     );
-    expect(readOAuthTicketProfile(eventWithTicket(token))).toBeNull();
+    event.context.body = body;
+
+    const res = await socialConsentHandler(event);
+    expect(res).toEqual({ ok: true });
+
+    const setCookie = String(getResponseHeader(event, "set-cookie") ?? "");
+    expect(setCookie).toContain(`${SOCIAL_SIGNUP_CONSENT_COOKIE}=`);
+    expect(setCookie).toContain("HttpOnly");
   });
 });

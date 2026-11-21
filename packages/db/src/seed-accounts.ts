@@ -1,10 +1,16 @@
 import { hashPassword } from "@mindkid/auth";
 import { type EntitlementKey, PACKAGE_CATALOG } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
-import type { NodePgDatabase } from "drizzle-orm/node-postgres";
+import type { DbExecutor } from "#src/client";
 import { entitlements } from "#src/schema/billing";
 import { childProfiles } from "#src/schema/child";
-import { consentLogs, managers, users } from "#src/schema/identity";
+import {
+  consentLogs,
+  managerAccounts,
+  managers,
+  userAccounts,
+  users,
+} from "#src/schema/identity";
 
 export interface SeedManagerAccount {
   email: string;
@@ -110,7 +116,7 @@ export interface SeedAccountsStats {
   entitlementCount: number;
 }
 
-type DatabaseClient = NodePgDatabase;
+type DatabaseClient = DbExecutor;
 
 async function seedManagers(db: DatabaseClient): Promise<number> {
   let count = 0;
@@ -122,12 +128,32 @@ async function seedManagers(db: DatabaseClient): Promise<number> {
         email: mgr.email,
         passwordHash,
         displayName: mgr.displayName,
+        emailVerified: true,
         role: mgr.role,
         mfaEnabled: mgr.mfaEnabled,
         isActive: mgr.isActive,
       })
       .onConflictDoNothing({ target: managers.email });
-    count++;
+
+    const [mgrRecord] = await db
+      .select({ id: managers.id })
+      .from(managers)
+      .where(eq(managers.email, mgr.email));
+
+    if (mgrRecord) {
+      await db
+        .insert(managerAccounts)
+        .values({
+          userId: mgrRecord.id,
+          accountId: String(mgrRecord.id),
+          providerId: "credential",
+          password: passwordHash,
+        })
+        .onConflictDoNothing({
+          target: [managerAccounts.userId, managerAccounts.providerId],
+        });
+      count++;
+    }
   }
   return count;
 }
@@ -233,12 +259,6 @@ async function seedUserEntitlements(
   return createdCount;
 }
 
-/**
- * Seeds initial hardcoded test accounts for Managers and Users (Parents),
- * including child profiles, consent logs, and package entitlements.
- *
- * Fully idempotent according to unique constraints.
- */
 export async function seedInitialAccounts(
   db: DatabaseClient
 ): Promise<SeedAccountsStats> {
@@ -260,6 +280,7 @@ export async function seedInitialAccounts(
         email: usr.email,
         passwordHash,
         displayName: usr.displayName,
+        emailVerified: true,
         status: "active",
         emailVerifiedAt: now,
       })
@@ -274,6 +295,18 @@ export async function seedInitialAccounts(
       continue;
     }
     userCount++;
+
+    await db
+      .insert(userAccounts)
+      .values({
+        userId: userRecord.id,
+        accountId: String(userRecord.id),
+        providerId: "credential",
+        password: passwordHash,
+      })
+      .onConflictDoNothing({
+        target: [userAccounts.userId, userAccounts.providerId],
+      });
 
     await ensureUserConsents(db, userRecord.id);
 

@@ -3,8 +3,8 @@ import {
   auditLogs,
   getOwnerDb,
   mfaRecoveryRequests,
-  mfaSettings,
   users,
+  userTwoFactors,
 } from "@mindkid/db";
 import {
   AdminNoteRequiredError,
@@ -27,7 +27,7 @@ const createMfaRecoverySchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
-  const session = await requireSuperAdminSession(event);
+  const session = requireSuperAdminSession(event);
   const userUuid = getRouterParam(event, "uuid");
   if (!userUuid) {
     throw new NotFoundError();
@@ -59,24 +59,18 @@ export default defineEventHandler(async (event) => {
     throw new UserAlreadyDeletedError();
   }
 
-  // Check user has MFA enabled
   const [mfa] = await db
-    .select()
-    .from(mfaSettings)
-    .where(
-      and(
-        eq(mfaSettings.accountType, "user"),
-        eq(mfaSettings.accountId, targetUser.id)
-      )
-    );
+    .select({ id: userTwoFactors.id })
+    .from(userTwoFactors)
+    .where(eq(userTwoFactors.userId, targetUser.id))
+    .limit(1);
 
-  if (!mfa?.confirmedAt) {
+  if (!(targetUser.twoFactorEnabled || mfa)) {
     throw new MfaRequiredError(
       "Tài khoản người dùng này chưa bật xác thực hai lớp"
     );
   }
 
-  // Check active request does not already exist (BR-MFA-11)
   const [activeReq] = await db
     .select()
     .from(mfaRecoveryRequests)
@@ -94,10 +88,9 @@ export default defineEventHandler(async (event) => {
   }
 
   const now = new Date();
-  const eligibleAt = new Date(now.getTime() + 48 * 60 * 60 * 1000); // 48 hours delay
-  const tokenExpiresAt = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24h token validity
+  const eligibleAt = new Date(now.getTime() + 48 * 60 * 60 * 1000);
+  const tokenExpiresAt = new Date(now.getTime() + 24 * 60 * 60 * 1000);
 
-  // Generate random 32-byte token for email verification
   const rawToken = crypto.randomBytes(32).toString("hex");
   const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex");
 

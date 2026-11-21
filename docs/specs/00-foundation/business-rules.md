@@ -250,6 +250,8 @@ còn trích mã ngưng thì task ghi ở cột cuối đổi chỗ trích.
 | `BR-TCL-06` | Ngưng | Trùng `BR-GLM-01` | 2026-10-18 |
 | `BR-CIR-23` | Mới | Tập nói: máy không nghe, step `echo` — trước dùng nhầm số `BR-CIR-21` (số đó giữ nghĩa "tên event đã đăng ký") | 2026-10-18 |
 | `BR-LVC-06` | Mới | Cấm lưu `legacy_v1_ref` trong `content_pack` — luật có từ trước, nay mới đánh số | 2026-10-18 |
+| `BR-AUT-02`, `BR-AUT-29`, `BR-AUT-35`, `BR-SIB-04` | Ngưng | Chuyển sang chuẩn Better Auth 2-instance (`Task #319`): guard gọi bất đồng bộ `auth.api.getSession`, gỡ `nuxt-auth-utils` và thay 4 bảng đa hình bằng 10 bảng FK tường minh | 2026-11-21 |
+| `BR-AUT-39`..`BR-AUT-45` | Mới | Quy tắc cô lập 2 instance Better Auth (`userAuth`/`managerAuth`), driver `@mindkid/auth`, Valkey `secondaryStorage` fail-closed, tắt implicit linking/signup, xoá rỗng OAuth token, bật `twoFactor` + `passkey` | 2026-11-21 |
 
 ### 7.2a Thống kê
 

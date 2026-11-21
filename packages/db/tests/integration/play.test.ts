@@ -1,6 +1,6 @@
 import { eq, sql } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import { getOwnerDb } from "#src/index";
+import { assertPlaySessionInvariants, getOwnerDb } from "#src/index";
 import { childProfiles } from "#src/schema/child";
 import { gameLevels } from "#src/schema/game";
 import { users } from "#src/schema/identity";
@@ -29,15 +29,29 @@ describe("Play Schema Integration Tests", () => {
     ).rejects.toThrow();
   });
 
-  it("BR-SPT-06 & CHECK: play_sessions enforces child_profile_id OR guest_device_id", async () => {
-    // Missing both child_profile_id and guest_device_id must fail CHECK constraint
+  it("BR-SPT-06 & BR-DM-14: play_sessions enforces child_profile_id OR guest_device_id via domain validator with zero DB CHECK constraints", async () => {
     const db = getOwnerDb();
-    await expect(
-      db.insert(playSessions).values({
-        gameLevelId: 1,
-        templateCode: "GT-001",
+    const checkRows = await db.execute<{ constraint_name: string }>(sql`
+      SELECT constraint_name
+      FROM information_schema.table_constraints
+      WHERE table_schema = 'public'
+        AND constraint_type = 'CHECK'
+        AND constraint_name NOT LIKE '%_not_null'
+    `);
+    expect(Array.from(checkRows)).toEqual([]);
+
+    expect(() =>
+      assertPlaySessionInvariants({
+        childProfileId: null,
+        guestDeviceId: null,
       })
-    ).rejects.toThrow();
+    ).toThrow();
+    expect(() =>
+      assertPlaySessionInvariants({
+        guestDeviceId: "guest-device-001",
+        layoutSeed: 12_345,
+      })
+    ).not.toThrow();
   });
 
   it("BR-SPT-07: trigger prevents UPDATE when OLD.completion_status = 'completed', but allows in_progress", async () => {

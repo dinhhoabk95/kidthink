@@ -1,13 +1,8 @@
 import { fileURLToPath } from "node:url";
 import { defineNuxtConfig } from "nuxt/config";
 import { env } from "./env";
-import {
-  SESSION_MAX_AGE_SECONDS,
-  USER_SESSION_COOKIE,
-} from "./server/utils/session-runtime";
 
 const isDevelopment = env.NODE_ENV === "development";
-const isProduction = env.NODE_ENV === "production";
 
 const allowedOrigins = env.NUXT_ALLOWED_ORIGINS.split(",")
   .map((origin) => origin.trim())
@@ -22,7 +17,7 @@ export default defineNuxtConfig({
   alias: {
     "#server": fileURLToPath(new URL("./server", import.meta.url)),
   },
-  modules: ["nuxt-auth-utils", "nuxt-security"],
+  modules: ["nuxt-security"],
   nitro: {
     alias: {
       "#server": fileURLToPath(new URL("./server", import.meta.url)),
@@ -152,17 +147,7 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
-    // Nuxt 4.6+ / nuxt-auth-utils 0.6+ dẫn xuất khoá niêm phong phiên từ appSecret.
     appSecret: env.NUXT_SESSION_PASSWORD,
-    session: {
-      name: USER_SESSION_COOKIE,
-      maxAge: SESSION_MAX_AGE_SECONDS,
-      cookie: {
-        sameSite: "lax",
-        secure: isProduction,
-        httpOnly: true,
-      },
-    },
     // Ranh giới public/private rõ ràng (BR-CFO-12)
     public: {
       apiBaseUrl: env.NUXT_PUBLIC_API_BASE_URL ?? "",

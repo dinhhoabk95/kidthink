@@ -1,11 +1,10 @@
 import { hashPassword, validatePasswordStrength } from "@mindkid/auth";
-import { getOwnerDb, users } from "@mindkid/db";
+import { getOwnerDb, userAccounts, users } from "@mindkid/db";
 import { PasswordAlreadySetError } from "@mindkid/errors/auth";
 import { NotFoundError, ValidationError } from "@mindkid/errors/common";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
 import { z } from "zod";
-
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { requireReauth } from "#server/utils/reauth-runtime";
 
@@ -16,14 +15,14 @@ const SetPasswordSchema = z
   .strict();
 
 export default defineEventHandler(async (event) => {
-  const userSession = await requireWebUserSession(event);
-  await requireReauth(event);
+  const userSession = requireWebUserSession(event);
+  requireReauth(event);
 
   const userId = Number(userSession.user_id);
 
-  const eventBody = (event.context as { body?: Record<string, unknown> })?.body;
+  const eventBody = (event.context as { body?: Record<string, string> })?.body;
   const rawBody =
-    eventBody || ((await readBody(event)) as Record<string, unknown>) || {};
+    eventBody || (await readBody<Record<string, string>>(event)) || {};
 
   const parsed = SetPasswordSchema.safeParse(rawBody);
   if (!parsed.success) {
@@ -51,21 +50,46 @@ export default defineEventHandler(async (event) => {
     throw new NotFoundError("NOT_FOUND");
   }
 
-  // If account already has a password, reject with 409 PASSWORD_ALREADY_SET
-  if (account.passwordHash) {
+  const [cred] = await db
+    .select({ id: userAccounts.id, password: userAccounts.password })
+    .from(userAccounts)
+    .where(
+      and(
+        eq(userAccounts.userId, userId),
+        eq(userAccounts.providerId, "credential")
+      )
+    )
+    .limit(1);
+
+  if (cred?.password || account.passwordHash) {
     throw new PasswordAlreadySetError();
   }
 
   const newHash = await hashPassword(parsed.data.new_password);
+  const now = new Date();
 
-  // BR-ACS-10: Initial password setup does NOT increment session_version
-  await db
-    .update(users)
-    .set({
-      passwordHash: newHash,
-      updatedAt: new Date(),
-    })
-    .where(eq(users.id, userId));
+  await db.transaction(async (tx) => {
+    await tx
+      .update(users)
+      .set({
+        passwordHash: newHash,
+        updatedAt: now,
+      })
+      .where(eq(users.id, userId));
+
+    await tx
+      .insert(userAccounts)
+      .values({
+        userId,
+        accountId: String(userId),
+        providerId: "credential",
+        password: newHash,
+      })
+      .onConflictDoUpdate({
+        target: [userAccounts.userId, userAccounts.providerId],
+        set: { password: newHash, updatedAt: now },
+      });
+  });
 
   setResponseStatus(event, 201);
   return {

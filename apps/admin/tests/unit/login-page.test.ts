@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
-describe("Task #105 — Admin Login Page (BR-ADA-01..03, BR-MME-01..07)", () => {
+describe("Admin Login Page — Better Auth Manager Instance (BR-ADA-01..03, BR-AUT-39..45)", () => {
   const loginSource = readFileSync(
     join(import.meta.dirname, "../../app/pages/login.vue"),
     "utf-8"
@@ -13,21 +13,22 @@ describe("Task #105 — Admin Login Page (BR-ADA-01..03, BR-MME-01..07)", () => 
     expect(loginSource).not.toContain('layout: "manager"');
   });
 
-  it("Scenario: contains password and mfa states without forced otpauth enrollment on login", () => {
+  it("Scenario: contains password, passkey, and mfa states without forced otpauth enrollment on login", () => {
     expect(loginSource).toContain("authState === 'password'");
     expect(loginSource).toContain("authState === 'mfa'");
+    expect(loginSource).toContain("authClient.signIn.passkey()");
     expect(loginSource).not.toContain("otpauthUri");
-    expect(loginSource).not.toContain('"/api/guest/auth/managers/mfa-setup"');
   });
 
-  it("Scenario: calls guest auth endpoints via useApiClient", () => {
-    expect(loginSource).toContain('"/api/guest/auth/managers/login"');
-    expect(loginSource).toContain('"/api/guest/auth/managers/mfa"');
-    expect(loginSource).toContain("useApiClient()");
+  it("Scenario: authenticates via useManagerAuthClient (signIn.email, twoFactor.verifyTotp, twoFactor.verifyBackupCode)", () => {
+    expect(loginSource).toContain("useManagerAuthClient()");
+    expect(loginSource).toContain("authClient.signIn.email(");
+    expect(loginSource).toContain("authClient.twoFactor.verifyTotp(");
+    expect(loginSource).toContain("authClient.twoFactor.verifyBackupCode(");
   });
 
-  it("Scenario: redirects directly to dashboard when login returns status ok", () => {
-    expect(loginSource).toContain('res.status === "ok"');
+  it("Scenario: transitions to mfa state on twoFactorRedirect or redirects to dashboard", () => {
+    expect(loginSource).toContain("twoFactorRedirect");
     expect(loginSource).toContain("finishLoginAndRedirect");
   });
 

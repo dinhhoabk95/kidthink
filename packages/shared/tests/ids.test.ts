@@ -220,9 +220,9 @@ describe("EmojiRefSchema", () => {
   });
 });
 
-// ─── BR-ID-05: DB CHECK constraints parity ───────────────────────────
-describe("BR-ID-05: Drizzle schema enforces CHECK constraints matching ID regexes", () => {
-  it("declares check_*_code_format across taxonomy, game, and curriculum schemas", () => {
+// ─── BR-ID-05 & BR-DM-14: TypeScript domain validators parity (zero DB CHECK) ─
+describe("BR-ID-05 & BR-DM-14: Drizzle schema has zero DB CHECK constraints and validators enforce ID regexes", () => {
+  it("keeps taxonomy, game, and curriculum schemas free of DB check() while exposing domain validators in @mindkid/db", () => {
     const taxonomySchema = readFileSync(
       resolve(ROOT, "packages/db/src/schema/taxonomy.ts"),
       "utf8"
@@ -235,15 +235,20 @@ describe("BR-ID-05: Drizzle schema enforces CHECK constraints matching ID regexe
       resolve(ROOT, "packages/db/src/schema/curriculum.ts"),
       "utf8"
     );
+    const dbValidators = readFileSync(
+      resolve(ROOT, "packages/db/src/validators.ts"),
+      "utf8"
+    );
 
-    expect(taxonomySchema).toContain("check_competencies_code_format");
-    expect(taxonomySchema).toContain("check_strands_code_format");
-    expect(taxonomySchema).toContain("check_skills_code_format");
-    expect(taxonomySchema).toContain("check_learning_objectives_code_format");
-    expect(taxonomySchema).toContain("check_skill_datasets_code_format");
+    expect(taxonomySchema).not.toContain("check(");
+    expect(gameSchema).not.toContain("check(");
+    expect(curriculumSchema).not.toContain("check(");
 
-    expect(gameSchema).toContain("check_game_levels_code_format");
-
-    expect(curriculumSchema).toContain("check_curricula_code_format");
+    expect(dbValidators).toContain("assertCompetencyCode");
+    expect(dbValidators).toContain("assertStrandCode");
+    expect(dbValidators).toContain("assertSkillCode");
+    expect(dbValidators).toContain("assertLearningObjectiveCode");
+    expect(dbValidators).toContain("assertGameLevelCode");
+    expect(dbValidators).toContain("assertCurriculumCode");
   });
 });

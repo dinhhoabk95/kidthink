@@ -21,158 +21,118 @@
         <h1
           class="font-heading text-2xl font-bold text-surface-900 dark:text-surface-50"
         >
-          Hoàn tất đăng ký
+          Xác nhận điều khoản đăng ký
         </h1>
         <p class="mt-1 text-sm text-surface-600 dark:text-surface-400">
-          Xác nhận thông tin từ tài khoản {{ providerLabel }} của bạn để tiếp
-          tục
+          Trước khi tạo tài khoản mới qua {{ providerLabel }}, vui lòng đọc và
+          đồng ý với các điều khoản pháp lý bảo vệ dữ liệu của MindKid.
         </p>
       </div>
 
       <!-- Loading State -->
-      <div class="py-12 text-center" v-if="isLoadingTicket">
+      <div class="py-12 text-center" v-if="isLoadingRequirements">
         <UIcon
           class="mx-auto h-8 w-8 animate-spin text-brand-600"
           name="i-lucide-loader-2"
         />
         <p class="mt-2 text-sm text-surface-600 dark:text-surface-400">
-          Đang xác thực thông tin đăng ký...
+          Đang tải thông tin điều khoản pháp lý...
         </p>
       </div>
 
-      <!-- Error Alert -->
-      <div
-        class="mb-5 flex items-center gap-3 rounded-2xl border-2 border-danger-200 bg-danger-50 p-3.5 text-danger-700 dark:border-danger-800/60 dark:bg-danger-950/40 dark:text-danger-300"
-        role="alert"
-        v-else-if="errorMessage"
-      >
-        <UIcon
-          class="h-5 w-5 shrink-0 text-danger-600 dark:text-danger-400"
-          name="i-lucide-alert-circle"
-        />
-        <span class="text-sm font-semibold leading-snug">{{
-          errorMessage
-        }}</span>
-      </div>
-
-      <!-- Registration Form -->
-      <form
-        class="flex flex-col gap-4"
-        v-if="!isLoadingTicket"
-        @submit.prevent="handleCompleteSocialRegister"
-      >
-        <div class="flex flex-col gap-1.5">
-          <label
-            class="text-sm font-bold text-surface-700 dark:text-surface-300"
-            for="social-display-name"
-          >
-            Tên phụ huynh / Người giám hộ
-          </label>
-          <input
-            autocomplete="name"
-            class="min-h-11 w-full rounded-2xl border-2 border-surface-300 bg-surface-50 px-3.5 py-2.5 text-base text-surface-900 transition-all placeholder:text-surface-400 focus:border-brand-600 focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-500/15 dark:border-surface-700 dark:bg-surface-900 dark:text-surface-100 dark:placeholder:text-surface-500 dark:focus:border-brand-500 dark:focus:bg-surface-900"
-            id="social-display-name"
-            maxlength="60"
-            minlength="2"
-            placeholder="Bố Mẹ Bé Gấu"
-            required
-            type="text"
-            v-model.trim="displayName"
-          >
-        </div>
-
-        <div class="flex flex-col gap-1.5">
-          <label
-            class="text-sm font-bold text-surface-700 dark:text-surface-300"
-            for="social-email"
-          >
-            Email liên hệ
-          </label>
-          <input
-            autocomplete="email"
-            class="min-h-11 w-full rounded-2xl border-2 border-surface-300 bg-surface-50 px-3.5 py-2.5 text-base text-surface-900 transition-all placeholder:text-surface-400 focus:border-brand-600 focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-500/15 disabled:cursor-not-allowed disabled:opacity-75 dark:border-surface-700 dark:bg-surface-900 dark:text-surface-100 dark:placeholder:text-surface-500 dark:focus:border-brand-500 dark:focus:bg-surface-900"
-            id="social-email"
-            placeholder="phuhuynh@example.com"
-            required
-            type="email"
-            v-model.trim="email"
-            :disabled="isEmailReadonly"
-          >
-          <span
-            class="text-sm text-surface-500 dark:text-surface-400"
-            v-if="isEmailReadonly"
-          >
-            Email được cung cấp và xác thực bởi {{ providerLabel }}.
-          </span>
-        </div>
-
-        <!-- Checkbox 1: Terms (BR-REG-02, BR-SCL-01) -->
-        <div class="mt-1 flex items-start gap-2.5">
-          <input
-            class="mt-0.5 h-6 w-6 shrink-0 rounded-xl border-2 border-surface-300 accent-brand-600 dark:border-surface-600"
-            id="social-terms"
-            required
-            type="checkbox"
-            v-model="acceptTerms"
-          >
-          <label
-            class="cursor-pointer text-sm font-semibold leading-relaxed text-surface-600 dark:text-surface-400"
-            for="social-terms"
-          >
-            Tôi đồng ý với
-            <NuxtLink
-              class="font-bold text-brand-600 underline hover:text-brand-500 dark:text-brand-400 dark:hover:text-brand-300"
-              target="_blank"
-              to="/terms"
-            >
-              Điều khoản sử dụng
-            </NuxtLink>
-            của MindKid.
-          </label>
-        </div>
-
-        <!-- Checkbox 2: Privacy (BR-REG-02, BR-SCL-01) -->
-        <div class="flex items-start gap-2.5">
-          <input
-            class="mt-0.5 h-6 w-6 shrink-0 rounded-xl border-2 border-surface-300 accent-brand-600 dark:border-surface-600"
-            id="social-privacy"
-            required
-            type="checkbox"
-            v-model="acceptPrivacy"
-          >
-          <label
-            class="cursor-pointer text-sm font-semibold leading-relaxed text-surface-600 dark:text-surface-400"
-            for="social-privacy"
-          >
-            Tôi đồng ý với
-            <NuxtLink
-              class="font-bold text-brand-600 underline hover:text-brand-500 dark:text-brand-400 dark:hover:text-brand-300"
-              target="_blank"
-              to="/privacy"
-            >
-              Chính sách quyền riêng tư
-            </NuxtLink>
-            và
-            <NuxtLink
-              class="font-bold text-brand-600 underline hover:text-brand-500 dark:text-brand-400 dark:hover:text-brand-300"
-              target="_blank"
-              to="/child-privacy"
-            >
-              Bảo vệ dữ liệu trẻ em
-            </NuxtLink
-            >.
-          </label>
-        </div>
-
-        <button
-          class="mt-2 flex min-h-12 w-full items-center justify-center rounded-2xl border-[3px] border-brand-700 bg-brand-600 px-6 py-3 font-heading text-base font-bold text-white shadow-[0_4px_0_var(--color-brand-700)] transition-all hover:bg-brand-500 active:translate-y-[2px] active:shadow-[0_2px_0_var(--color-brand-700)] disabled:cursor-not-allowed disabled:opacity-60"
-          type="submit"
-          :disabled="isSubmitting || !acceptTerms || !acceptPrivacy"
+      <template v-else>
+        <!-- Error Alert -->
+        <div
+          class="mb-5 flex items-center gap-3 rounded-2xl border-2 border-danger-200 bg-danger-50 p-3.5 text-danger-700 dark:border-danger-800/60 dark:bg-danger-950/40 dark:text-danger-300"
+          role="alert"
+          v-if="errorMessage"
         >
-          <span v-if="isSubmitting">Đang hoàn tất...</span>
-          <span v-else>Xác nhận và bắt đầu học</span>
-        </button>
-      </form>
+          <UIcon
+            class="h-5 w-5 shrink-0 text-danger-600 dark:text-danger-400"
+            name="i-lucide-alert-circle"
+          />
+          <span class="text-sm font-semibold leading-snug">{{
+            errorMessage
+          }}</span>
+        </div>
+
+        <!-- Consent Form (BR-REG-02, BR-SCL-01, BR-SCL-12) -->
+        <form
+          class="flex flex-col gap-4"
+          @submit.prevent="handleCompleteSocialRegister"
+        >
+          <!-- Checkbox 1: Terms -->
+          <div class="mt-1 flex items-start gap-2.5">
+            <input
+              class="mt-0.5 h-6 w-6 shrink-0 rounded-xl border-2 border-surface-300 accent-brand-600 dark:border-surface-600"
+              id="social-terms"
+              required
+              type="checkbox"
+              v-model="acceptTerms"
+            >
+            <label
+              class="cursor-pointer text-sm font-semibold leading-relaxed text-surface-600 dark:text-surface-400"
+              for="social-terms"
+            >
+              Tôi đồng ý với
+              <NuxtLink
+                class="font-bold text-brand-600 underline hover:text-brand-500 dark:text-brand-400 dark:hover:text-brand-300"
+                target="_blank"
+                to="/terms"
+              >
+                Điều khoản sử dụng
+              </NuxtLink>
+              của MindKid.
+            </label>
+          </div>
+
+          <!-- Checkbox 2: Privacy & Child Data -->
+          <div class="flex items-start gap-2.5">
+            <input
+              class="mt-0.5 h-6 w-6 shrink-0 rounded-xl border-2 border-surface-300 accent-brand-600 dark:border-surface-600"
+              id="social-privacy"
+              required
+              type="checkbox"
+              v-model="acceptPrivacy"
+            >
+            <label
+              class="cursor-pointer text-sm font-semibold leading-relaxed text-surface-600 dark:text-surface-400"
+              for="social-privacy"
+            >
+              Tôi đồng ý với
+              <NuxtLink
+                class="font-bold text-brand-600 underline hover:text-brand-500 dark:text-brand-400 dark:hover:text-brand-300"
+                target="_blank"
+                to="/privacy"
+              >
+                Chính sách quyền riêng tư
+              </NuxtLink>
+              và
+              <NuxtLink
+                class="font-bold text-brand-600 underline hover:text-brand-500 dark:text-brand-400 dark:hover:text-brand-300"
+                target="_blank"
+                to="/child-privacy"
+              >
+                Bảo vệ dữ liệu trẻ em
+              </NuxtLink
+              >.
+            </label>
+          </div>
+
+          <button
+            class="mt-2 flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl border-[3px] border-brand-700 bg-brand-600 px-6 py-3 font-heading text-base font-bold text-white shadow-[0_4px_0_var(--color-brand-700)] transition-all hover:bg-brand-500 active:translate-y-[2px] active:shadow-[0_2px_0_var(--color-brand-700)] disabled:cursor-not-allowed disabled:opacity-60"
+            type="submit"
+            :disabled="isSubmitting || !acceptTerms || !acceptPrivacy"
+          >
+            <UIcon
+              class="h-5 w-5 shrink-0"
+              :name="provider === 'google' ? 'i-lucide-chrome' : 'i-lucide-facebook'"
+            />
+            <span v-if="isSubmitting">Đang chuyển tới {{ providerLabel }}...</span>
+            <span v-else>Đồng ý & Tiếp tục với {{ providerLabel }}</span>
+          </button>
+        </form>
+      </template>
 
       <!-- Card Footer -->
       <div
@@ -192,36 +152,23 @@
 
 <script lang="ts" setup>
   import { isApiError } from "@mindkid/errors/client";
+  import {
+    DEFAULT_REDIRECT_TARGET,
+    sanitizeRedirectTarget,
+  } from "@mindkid/shared/client";
   import { computed, onMounted, ref, watch } from "vue";
-  import { type LocationQueryValue, useRoute, useRouter } from "vue-router";
-  import { definePageMeta, useSeoMeta, useUserSession } from "#imports";
+  import { type LocationQueryValue, useRoute } from "vue-router";
+  import { definePageMeta, useSeoMeta } from "#imports";
   import { useApi } from "~/composables/use-api";
+  import { useUserAuthClient } from "~/composables/use-auth-client";
 
   definePageMeta({
     layout: false,
   });
 
-  interface SocialTicketPayload {
-    provider: "google" | "facebook";
-    email: string | null;
-    display_name: string;
-  }
-
-  interface SocialTicketApiResponse {
-    ticket: SocialTicketPayload | null;
-  }
-
   interface ConsentRequirementsResponse {
     terms: { requirement_at: string | null };
     privacy: { requirement_at: string | null };
-  }
-
-  interface SocialLoginApiResponse {
-    user: {
-      uuid: string;
-      displayName: string;
-      status: string;
-    };
   }
 
   function resolveProviderParam(
@@ -234,27 +181,35 @@
   }
 
   const route = useRoute();
-  const router = useRouter();
   const apiFetch = useApi();
-  const { fetch: fetchSession } = useUserSession();
+  const authClient = useUserAuthClient();
 
-  const isLoadingTicket = ref(true);
+  const isLoadingRequirements = ref(true);
   const isSubmitting = ref(false);
   const errorMessage = ref("");
 
   const provider = ref<"google" | "facebook">(
     resolveProviderParam(route.query.provider)
   );
-  const displayName = ref("");
-  const email = ref("");
-  const isEmailReadonly = ref(false);
   const acceptTerms = ref(false);
   const acceptPrivacy = ref(false);
   const termsRequirementAt = ref<string | null>(null);
   const privacyRequirementAt = ref<string | null>(null);
 
-  const providerLabel = computed(() => {
-    return provider.value === "google" ? "Google" : "Facebook";
+  const providerLabel = computed(() =>
+    provider.value === "google" ? "Google" : "Facebook"
+  );
+
+  const callbackDestination = computed(() => {
+    const rawRedirect = route.query.redirect ?? route.query.return_to;
+    const sanitized = sanitizeRedirectTarget(
+      rawRedirect,
+      DEFAULT_REDIRECT_TARGET
+    );
+    if (sanitized.startsWith("/play")) {
+      return `/me/children/create?redirect=${encodeURIComponent(sanitized)}`;
+    }
+    return sanitized;
   });
 
   watch(
@@ -279,37 +234,8 @@
 
   onMounted(async () => {
     provider.value = resolveProviderParam(route.query.provider);
-
-    try {
-      const [res] = await Promise.all([
-        apiFetch<SocialTicketApiResponse>(
-          "/api/guest/auth/users/social-ticket",
-          { credentials: "include" }
-        ),
-        loadConsentRequirements(),
-      ]);
-
-      if (res?.ticket) {
-        errorMessage.value = "";
-        provider.value = res.ticket.provider;
-        displayName.value = res.ticket.display_name || "";
-        if (res.ticket.email) {
-          email.value = res.ticket.email;
-          isEmailReadonly.value = true;
-        } else {
-          email.value = "";
-          isEmailReadonly.value = false;
-        }
-      } else {
-        errorMessage.value =
-          "Phiên xác thực mạng xã hội đã hết hạn hoặc không hợp lệ. Vui lòng quay lại và thử lại.";
-      }
-    } catch {
-      errorMessage.value =
-        "Phiên xác thực mạng xã hội đã hết hạn hoặc không hợp lệ. Vui lòng quay lại và thử lại.";
-    } finally {
-      isLoadingTicket.value = false;
-    }
+    await loadConsentRequirements();
+    isLoadingRequirements.value = false;
   });
 
   function extractSocialErrorMessage(err: Error | object | null): string {
@@ -328,7 +254,7 @@
     return "Đăng ký không thành công. Vui lòng thử lại.";
   }
 
-  async function handleCompleteSocialRegister() {
+  async function handleCompleteSocialRegister(): Promise<void> {
     if (!(acceptTerms.value && acceptPrivacy.value)) {
       errorMessage.value =
         "Vui lòng đồng ý với Điều khoản sử dụng và Chính sách quyền riêng tư.";
@@ -339,25 +265,28 @@
     isSubmitting.value = true;
 
     try {
-      await apiFetch<SocialLoginApiResponse>(
-        "/api/guest/auth/users/social-login",
-        {
-          method: "POST",
-          body: {
-            provider: provider.value,
-            display_name: displayName.value,
-            email: email.value || undefined,
-            accept_terms: acceptTerms.value,
-            accept_privacy: acceptPrivacy.value,
-            terms_requirement_at: termsRequirementAt.value,
-            privacy_requirement_at: privacyRequirementAt.value,
-          },
-          credentials: "include",
-        }
-      );
+      await apiFetch("/api/guest/auth/users/social-consent", {
+        method: "POST",
+        body: {
+          accept_terms: true,
+          accept_privacy: true,
+          terms_requirement_at: termsRequirementAt.value,
+          privacy_requirement_at: privacyRequirementAt.value,
+        },
+        credentials: "include",
+      });
 
-      await fetchSession();
-      await router.push("/me");
+      const res = await authClient.signIn.social({
+        provider: provider.value,
+        requestSignUp: true,
+        callbackURL: callbackDestination.value,
+        errorCallbackURL: "/login?error=social_conflict",
+      });
+
+      if (res.error) {
+        errorMessage.value =
+          res.error.message || "Không thể khởi tạo đăng ký mạng xã hội.";
+      }
     } catch (err) {
       const errorObj = typeof err === "object" ? err : null;
       if (isApiError(errorObj, "CONSENT_REQUIREMENT_CHANGED")) {

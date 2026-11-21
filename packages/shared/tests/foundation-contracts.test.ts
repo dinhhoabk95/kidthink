@@ -75,8 +75,14 @@ describe("P0 foundation contracts", () => {
     expect(cacheDeps["rate-limiter-flexible"]).toBe("^11.5.0");
     expect(webDeps["nuxt-security"]).toBe("^2.7.0");
     expect(webDeps["@t3-oss/env-nuxt"]).toBe("^0.13.11");
-    expect(authDeps.otpauth).toBe("^9.6.0");
-    expect(authDeps["openid-client"]).toBe("^6.9.0");
+    expect(webDeps["nuxt-auth-utils"]).toBeUndefined();
+    expect(authDeps["better-auth"]).toBe("1.7.27");
+    expect(authDeps["@better-auth/drizzle-adapter"]).toBe("1.7.27");
+    expect(authDeps["@better-auth/passkey"]).toBe("1.7.27");
+    expect(authDeps.argon2).toBe("^0.45.2");
+    expect(authDeps["nuxt-auth-utils"]).toBeUndefined();
+    expect(authDeps.otpauth).toBeUndefined();
+    expect(authDeps["openid-client"]).toBeUndefined();
   });
 
   it("BR-GLOS-03 & BR-GLOS-04: the tooling glossary exposes every banned foundation term and replacement", () => {

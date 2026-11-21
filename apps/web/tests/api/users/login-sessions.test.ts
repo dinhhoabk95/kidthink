@@ -1,183 +1,197 @@
-import { hashPassword } from "@mindkid/auth";
-import { activeSessions, getAppDb, users } from "@mindkid/db";
-import { and, eq } from "drizzle-orm";
-import { describe, expect, it } from "vitest";
+import { InMemoryRedisClient, setAuthRedisClient } from "@mindkid/auth";
+import { getOwnerDb, userSessions, users } from "@mindkid/db";
+import { eq } from "drizzle-orm";
+import { beforeEach, describe, expect, it } from "vitest";
+import {
+  getUserAuth,
+  resetBetterAuthInstancesForTests,
+} from "#server/utils/better-auth";
 
-describe("Task 3 — Login & Session Management (BR-LGN-01..12)", () => {
-  it("authenticates valid credentials and creates active session + auth cookies (BR-LGN-01, BR-LGN-06)", async () => {
-    const db = getAppDb();
-    const passHash = await hashPassword("chuoixanh123");
-    const email = `login1-${Date.now()}-${Math.floor(Math.random() * 10_000)}@example.com`;
+interface SignInResponsePayload {
+  user?: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  code?: string;
+}
 
-    const [createdUser] = await db
-      .insert(users)
-      .values({
-        email,
-        passwordHash: passHash,
-        displayName: "Login User 1",
-        status: "active",
-      })
-      .returning();
+function collectCookie(res: Response): string {
+  return res.headers
+    .getSetCookie()
+    .map((raw) => raw.split(";")[0]?.trim() ?? "")
+    .filter((pair) => pair.length > 0 && !pair.endsWith("="))
+    .join("; ");
+}
 
-    const { default: loginHandler } = await import(
-      "#server/api/guest/auth/users/login.post"
-    );
+async function seedUserWithPassword(
+  tag: string,
+  status: "active" | "suspended" | "deleted" = "active",
+  password = "chuoixanh123"
+) {
+  const db = getOwnerDb();
+  const email = `login-${tag}-${Date.now()}-${Math.floor(Math.random() * 10_000)}@example.com`;
+  const ctx = await getUserAuth().$context;
+  const passwordHash = await ctx.password.hash(password);
 
-    const event = {
+  const [createdUser] = await db
+    .insert(users)
+    .values({
+      email,
+      passwordHash,
+      displayName: `Login User ${tag}`,
+      status,
+      emailVerified: true,
+      emailVerifiedAt: new Date(),
+    })
+    .returning();
+  if (!createdUser) {
+    throw new Error("Expected created user");
+  }
+
+  await ctx.internalAdapter.linkAccount({
+    userId: String(createdUser.id),
+    providerId: "credential",
+    accountId: String(createdUser.id),
+    password: passwordHash,
+  });
+
+  return { user: createdUser, email, password };
+}
+
+function postSignIn(
+  email: string,
+  password: string,
+  userAgent = "MindKidTest/1.0",
+  rememberMe = false
+): Promise<Response> {
+  return getUserAuth().handler(
+    new Request("http://localhost:3000/api/auth/users/sign-in/email", {
       method: "POST",
-      node: { req: { headers: { "x-forwarded-for": "127.0.0.1" } } },
-      context: {
-        body: { email, password: "chuoixanh123" },
+      headers: {
+        "content-type": "application/json",
+        origin: "http://localhost:3000",
+        "user-agent": userAgent,
       },
-    } as any;
+      body: JSON.stringify({ email, password, rememberMe }),
+    })
+  );
+}
 
-    const res = await loginHandler(event);
-    expect(res.user.displayName).toBe("Login User 1");
+describe("Task 3 — Better Auth Login & Session Management (BR-LGN-01..12)", () => {
+  beforeEach(() => {
+    setAuthRedisClient(new InMemoryRedisClient());
+    resetBetterAuthInstancesForTests();
+  });
+
+  it("authenticates valid credentials and creates user_sessions row + mindkid-user cookie (BR-LGN-01, BR-LGN-06)", async () => {
+    const db = getOwnerDb();
+    const { user, email, password } = await seedUserWithPassword("ok");
+
+    const res = await postSignIn(email, password, "Device-1", false);
+    expect(res.status).toBe(200);
+    const cookie = collectCookie(res);
+    expect(cookie).toContain("mindkid-user.session_token=");
+
+    const body = (await res.json()) as SignInResponsePayload;
+    expect(body.user?.name).toBe("Login User ok");
 
     const [session] = await db
       .select()
-      .from(activeSessions)
-      .where(
-        and(
-          eq(activeSessions.accountType, "user"),
-          eq(activeSessions.accountId, createdUser.id)
-        )
-      );
+      .from(userSessions)
+      .where(eq(userSessions.userId, user.id));
     expect(session).toBeDefined();
-    expect(session.accountType).toBe("user");
+    expect(session?.authMethod).toBe("password");
+    expect(session?.reauthAt).toBeInstanceOf(Date);
   });
 
-  it("rejects wrong password or non-existent email with 401 INVALID_CREDENTIALS (BR-LGN-02)", async () => {
-    const db = getAppDb();
-    const passHash = await hashPassword("chuoixanh123");
-    const email = `login2-${Date.now()}-${Math.floor(Math.random() * 10_000)}@example.com`;
+  it("rejects wrong password or unknown email with 401 INVALID_CREDENTIALS and blocks suspended/deleted accounts (BR-LGN-02..04)", async () => {
+    const { email } = await seedUserWithPassword("wrong");
 
-    await db.insert(users).values({
-      email,
-      passwordHash: passHash,
-      displayName: "Login User 2",
-      status: "active",
+    const wrongPassRes = await postSignIn(email, "wrongpassword123");
+    expect(wrongPassRes.status).toBe(401);
+
+    const noUserRes = await postSignIn(
+      `nonexistent-${Date.now()}@example.com`,
+      "chuoixanh123"
+    );
+    expect(noUserRes.status).toBe(401);
+    const noUserBody = (await noUserRes.json()) as SignInResponsePayload;
+    expect(noUserBody.code).toBe("INVALID_CREDENTIALS");
+
+    const suspended = await seedUserWithPassword("susp", "suspended");
+    const suspRes = await postSignIn(suspended.email, suspended.password);
+    expect(suspRes.status).toBe(403);
+    const suspBody = (await suspRes.json()) as SignInResponsePayload;
+    expect(suspBody.code).toBe("ACCOUNT_SUSPENDED");
+
+    const deleted = await seedUserWithPassword("del", "deleted");
+    const delRes = await postSignIn(deleted.email, deleted.password);
+    expect(delRes.status).toBe(403);
+    const delBody = (await delRes.json()) as SignInResponsePayload;
+    expect(delBody.code).toBe("ACCOUNT_DELETED");
+  });
+
+  it("lists sessions, revokes single session, and revokes all sessions via Better Auth (BR-LGN-07..10)", async () => {
+    const db = getOwnerDb();
+    const { user, email, password } = await seedUserWithPassword("multi");
+
+    const s1Res = await postSignIn(email, password, "Device-One");
+    const s2Res = await postSignIn(email, password, "Device-Two");
+    const cookie1 = collectCookie(s1Res);
+    const cookie2 = collectCookie(s2Res);
+    expect(cookie1).toBeTruthy();
+    expect(cookie2).toBeTruthy();
+
+    const listBefore = await getUserAuth().api.listSessions({
+      headers: new Headers({ cookie: cookie1 }),
     });
+    expect(listBefore).toHaveLength(2);
 
-    const { default: loginHandler } = await import(
-      "#server/api/guest/auth/users/login.post"
+    const secondSession = listBefore.find((s) =>
+      s.userAgent?.includes("Device-Two")
     );
+    if (!secondSession) {
+      throw new Error("Expected second session");
+    }
 
-    const wrongPassEvent = {
-      method: "POST",
-      node: { req: { headers: { "x-forwarded-for": "127.0.0.1" } } },
-      context: {
-        body: { email, password: "wrongpassword123" },
-      },
-    } as any;
-
-    await expect(loginHandler(wrongPassEvent)).rejects.toThrow();
-
-    const noUserEvent = {
-      method: "POST",
-      node: { req: { headers: { "x-forwarded-for": "127.0.0.1" } } },
-      context: {
-        body: {
-          email: `nonexistent-${Date.now()}@example.com`,
-          password: "chuoixanh123",
+    const revokeOneRes = await getUserAuth().handler(
+      new Request("http://localhost:3000/api/auth/users/revoke-session", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          origin: "http://localhost:3000",
+          cookie: cookie1,
         },
-      },
-    } as any;
-
-    await expect(loginHandler(noUserEvent)).rejects.toThrow();
-  });
-
-  it("lists sessions and revokes session or logout-all (BR-LGN-07..10)", async () => {
-    const db = getAppDb();
-    const passHash = await hashPassword("chuoixanh123");
-    const email = `sessions-${Date.now()}-${Math.floor(Math.random() * 10_000)}@example.com`;
-
-    const [user] = await db
-      .insert(users)
-      .values({
-        email,
-        passwordHash: passHash,
-        displayName: "Sessions User",
-        status: "active",
+        body: JSON.stringify({ token: secondSession.token }),
       })
-      .returning();
-
-    // Create 2 sessions directly
-    const [s1] = await db
-      .insert(activeSessions)
-      .values({
-        accountType: "user",
-        accountId: user.id,
-        deviceId: "dev_s1",
-        authMethod: "password",
-        expiresAt: new Date(Date.now() + 86_400_000),
-      })
-      .returning();
-
-    const [s2] = await db
-      .insert(activeSessions)
-      .values({
-        accountType: "user",
-        accountId: user.id,
-        deviceId: "dev_s2",
-        authMethod: "password",
-        expiresAt: new Date(Date.now() + 86_400_000),
-      })
-      .returning();
-
-    const { default: sessionsHandler } = await import(
-      "#server/api/users/auth/sessions.get"
     );
+    expect(revokeOneRes.status).toBe(200);
 
-    const getEvent = {
-      method: "GET",
-      node: { req: { headers: {} } },
-      context: {
-        user: {
-          user_id: user.id,
-          display_name: user.displayName,
-          session_id: String(s1.id),
+    const listAfterOne = await getUserAuth().api.listSessions({
+      headers: new Headers({ cookie: cookie1 }),
+    });
+    expect(listAfterOne).toHaveLength(1);
+    expect(listAfterOne[0]?.userAgent).toContain("Device-One");
+
+    await postSignIn(email, password, "Device-Three");
+    const revokeAllRes = await getUserAuth().handler(
+      new Request("http://localhost:3000/api/auth/users/revoke-sessions", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          origin: "http://localhost:3000",
+          cookie: cookie1,
         },
-      },
-    } as any;
-
-    const sessionList = await sessionsHandler(getEvent);
-    expect(sessionList.sessions).toHaveLength(2);
-
-    // Revoke s2
-    const { default: deleteSessionHandler } = await import(
-      "#server/api/users/auth/sessions/[id].delete"
+        body: JSON.stringify({}),
+      })
     );
+    expect(revokeAllRes.status).toBe(200);
 
-    const csrf =
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
-    const deleteEvent = {
-      method: "DELETE",
-      node: {
-        req: {
-          headers: {
-            "x-csrf-token": csrf,
-            cookie: `tm_u_csrf=${csrf}`,
-          },
-        },
-      },
-      context: {
-        user: {
-          user_id: user.id,
-          display_name: user.displayName,
-          session_id: String(s1.id),
-        },
-        params: { id: String(s2.id) },
-      },
-    } as any;
-
-    await deleteSessionHandler(deleteEvent);
-
-    const remainingSessions = await db
+    const remainingDbSessions = await db
       .select()
-      .from(activeSessions)
-      .where(eq(activeSessions.accountId, user.id));
-    expect(remainingSessions).toHaveLength(1);
-    expect(remainingSessions[0].id).toBe(s1.id);
+      .from(userSessions)
+      .where(eq(userSessions.userId, user.id));
+    expect(remainingDbSessions).toHaveLength(0);
   });
 });

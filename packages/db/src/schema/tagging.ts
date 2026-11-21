@@ -1,7 +1,5 @@
-import { sql } from "drizzle-orm";
 import {
   bigint,
-  check,
   index,
   numeric,
   pgEnum,
@@ -9,7 +7,7 @@ import {
   primaryKey,
   varchar,
 } from "drizzle-orm/pg-core";
-import { timestamps } from "./columns.ts";
+import { idPk, timestamps } from "./columns.ts";
 import { skills } from "./taxonomy.ts";
 
 export const tagAxisEnum = pgEnum("tag_axis", [
@@ -27,7 +25,7 @@ export const contentEntityTypeEnum = pgEnum("content_entity_type", [
 ]);
 
 export const contentTags = pgTable("content_tags", {
-  id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+  id: idPk(),
   code: varchar("code", { length: 50 }).notNull().unique(),
   axis: tagAxisEnum("axis").notNull(),
   label: varchar("label", { length: 100 }).notNull(),
@@ -67,10 +65,6 @@ export const contentSkillMap = pgTable(
     index("idx_content_skill_map_skill_entity").on(
       table.skillId,
       table.entityType
-    ),
-    check(
-      "check_content_skill_map_weight",
-      sql`${table.weight} > 0 AND ${table.weight} <= 1`
     ),
   ]
 );

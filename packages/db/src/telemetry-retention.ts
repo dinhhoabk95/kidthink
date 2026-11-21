@@ -24,19 +24,17 @@ export async function runRawEventRetentionCleanup(
   let deletedCount = 0;
 
   while (true) {
-    const deletedBatch = await db
-      .delete(telemetryEvents)
-      .where(
-        sql`ctid IN (
-          SELECT ctid FROM ${telemetryEvents}
-          WHERE ${telemetryEvents.createdAt} < ${cutoffDate.toISOString()}
-          LIMIT ${RETENTION_DELETE_BATCH_SIZE}
-        )`
-      )
-      .returning({ seq: telemetryEvents.seq });
+    const deletedBatch = await db.delete(telemetryEvents).where(
+      sql`ctid IN (
+        SELECT ctid FROM ${telemetryEvents}
+        WHERE ${telemetryEvents.createdAt} < ${cutoffDate.toISOString()}
+        LIMIT ${RETENTION_DELETE_BATCH_SIZE}
+      )`
+    );
 
-    deletedCount += deletedBatch.length;
-    if (deletedBatch.length < RETENTION_DELETE_BATCH_SIZE) {
+    const batchCount = Number(deletedBatch.count ?? 0);
+    deletedCount += batchCount;
+    if (batchCount < RETENTION_DELETE_BATCH_SIZE) {
       break;
     }
   }

@@ -1,28 +1,43 @@
-import { getOwnerDb, socialIdentities } from "@mindkid/db";
-import { eq } from "drizzle-orm";
+import { getOwnerDb, userAccounts } from "@mindkid/db";
+import { and, eq, inArray } from "drizzle-orm";
 import { defineEventHandler } from "h3";
-import { maskEmail } from "#server/api/guest/auth/oauth/[provider]/callback.get";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 
+export function maskEmail(email: string | null | undefined): string | null {
+  if (!email) {
+    return null;
+  }
+  const [local, domain] = email.split("@");
+  if (!(local && domain)) {
+    return null;
+  }
+  const head = local.slice(0, Math.min(2, local.length));
+  return `${head}***@${domain}`;
+}
+
 export default defineEventHandler(async (event) => {
-  const userSession = await requireWebUserSession(event);
+  const userSession = requireWebUserSession(event);
   const userId = Number(userSession.user_id);
 
   const db = getOwnerDb();
   const rows = await db
     .select({
-      provider: socialIdentities.provider,
-      emailAtProvider: socialIdentities.emailAtProvider,
-      linkedAt: socialIdentities.linkedAt,
+      providerId: userAccounts.providerId,
+      emailAtProvider: userAccounts.emailAtProvider,
+      createdAt: userAccounts.createdAt,
     })
-    .from(socialIdentities)
-    .where(eq(socialIdentities.userId, userId));
+    .from(userAccounts)
+    .where(
+      and(
+        eq(userAccounts.userId, userId),
+        inArray(userAccounts.providerId, ["google", "facebook"])
+      )
+    );
 
-  // BR-SLK-09: Return provider, masked_email, linked_at; NEVER return provider_user_id
   const items = rows.map((row) => ({
-    provider: row.provider,
+    provider: row.providerId,
     masked_email: maskEmail(row.emailAtProvider),
-    linked_at: row.linkedAt.toISOString(),
+    linked_at: row.createdAt.toISOString(),
   }));
 
   return { items };

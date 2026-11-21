@@ -2,7 +2,7 @@
   <div
     class="bg-white border-2 border-surface-200 rounded-3xl p-6 sm:p-8 shadow-sm w-full min-w-0"
   >
-    <!-- State 1: Email + Password -->
+    <!-- State 1: Email + Password / Passkey -->
     <div class="space-y-6" v-if="authState === 'password'">
       <div class="text-center space-y-1">
         <h1 class="text-xl font-bold font-heading text-surface-900">
@@ -19,8 +19,28 @@
         role="alert"
         v-if="errorMessage"
       >
-        <span aria-hidden="true" class="font-bold">!</span>
+        <UIcon class="w-4 h-4 shrink-0" name="i-lucide-alert-circle" />
         <span>{{ errorMessage }}</span>
+      </div>
+
+      <button
+        class="min-h-11 w-full py-2.5 px-4 rounded-2xl border-2 border-brand-200 bg-brand-50/70 hover:bg-brand-100/70 text-brand-700 font-semibold text-base inline-flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
+        data-testid="admin-passkey-login-btn"
+        type="button"
+        :disabled="isLoading"
+        @click="handlePasskeyLogin"
+      >
+        <UIcon class="w-5 h-5 shrink-0" name="i-lucide-fingerprint" />
+        <span>Đăng nhập bằng Passkey</span>
+      </button>
+
+      <div class="relative text-center">
+        <div class="absolute inset-0 flex items-center">
+          <div class="w-full border-t border-surface-200" />
+        </div>
+        <span class="relative bg-white px-3 text-sm font-medium text-surface-500">
+          hoặc bằng email quản trị
+        </span>
       </div>
 
       <form class="space-y-4" @submit.prevent="handlePasswordLogin">
@@ -107,7 +127,7 @@
         role="alert"
         v-if="errorMessage"
       >
-        <span aria-hidden="true" class="font-bold">!</span>
+        <UIcon class="w-4 h-4 shrink-0" name="i-lucide-alert-circle" />
         <span>{{ errorMessage }}</span>
       </div>
 
@@ -119,7 +139,7 @@
           >
             {{
               isRecoveryMode
-                ? "Mã khôi phục (vd: ABCD-1234-EFGH)"
+                ? "Mã khôi phục (vd: XXXXX-XXXXX)"
                 : "Mã xác thực 6 số"
             }}
           </label>
@@ -131,7 +151,7 @@
             type="text"
             v-model="totpCode"
             :maxlength="isRecoveryMode ? 20 : 6"
-            :placeholder="isRecoveryMode ? 'ABCD-1234-EFGH' : '123456'"
+            :placeholder="isRecoveryMode ? 'XXXXX-XXXXX' : '123456'"
           >
         </div>
 
@@ -166,11 +186,10 @@
 </template>
 
 <script lang="ts" setup>
-  import { type ApiError, normalizeApiError } from "@mindkid/errors/client";
   import { ref } from "vue";
   import { definePageMeta, navigateTo, useHead } from "#imports";
   import { useAdminAuth } from "~/composables/use-admin-auth";
-  import { useApiClient } from "~/composables/use-api-client";
+  import { useManagerAuthClient } from "~/composables/use-manager-auth-client";
 
   definePageMeta({
     layout: "auth",
@@ -180,7 +199,11 @@
     title: "Đăng nhập quản trị",
   });
 
-  const api = useApiClient();
+  interface SignInDataWithTwoFactor {
+    twoFactorRedirect?: boolean;
+  }
+
+  const authClient = useManagerAuthClient();
   const { fetchSession } = useAdminAuth();
 
   type AuthStep = "password" | "mfa";
@@ -189,117 +212,99 @@
   const email = ref("");
   const password = ref("");
   const rememberMe = ref(false);
-  const currentChallenge = ref("");
   const totpCode = ref("");
   const isRecoveryMode = ref(false);
 
   const isLoading = ref(false);
   const errorMessage = ref("");
 
-  interface LoginSuccessResponse {
-    status: string;
-    challenge?: string;
-    mfa_enabled?: boolean;
-  }
-
-  function extractManagerChallenge(apiErr: ApiError): string {
-    if (apiErr.code === "MFA_REQUIRED" || apiErr.statusCode === 428) {
-      const challengeVal = apiErr.details?.challenge;
-      return typeof challengeVal === "string" ? challengeVal : "";
-    }
-    throw apiErr;
-  }
-
-  async function handlePasswordLogin() {
+  async function handlePasskeyLogin(): Promise<void> {
     errorMessage.value = "";
     isLoading.value = true;
     try {
-      let challenge = "";
-
-      try {
-        const res = await api.post<LoginSuccessResponse>(
-          "/api/guest/auth/managers/login",
-          {
-            body: {
-              email: email.value,
-              password: password.value,
-              rememberMe: rememberMe.value,
-            },
-          }
-        );
-        if (res.status === "ok") {
-          await finishLoginAndRedirect();
-          return;
-        }
-        challenge = res.challenge ?? "";
-      } catch (err) {
-        const apiErr = normalizeApiError(err);
-        challenge = extractManagerChallenge(apiErr);
+      const res = await authClient.signIn.passkey();
+      if (res.error) {
+        errorMessage.value =
+          res.error.message ||
+          "Đăng nhập bằng Passkey không thành công hoặc đã bị huỷ.";
+        return;
       }
-
-      currentChallenge.value = challenge;
-      totpCode.value = "";
-      authState.value = "mfa";
-    } catch (err) {
-      const apiErr = normalizeApiError(err);
-      errorMessage.value = extractLoginErrorMessage(
-        apiErr,
-        "Email hoặc mật khẩu không chính xác."
-      );
+      await finishLoginAndRedirect();
+    } catch {
+      errorMessage.value =
+        "Thiết bị chưa hỗ trợ hoặc không tìm thấy Passkey quản trị.";
     } finally {
       isLoading.value = false;
     }
   }
 
-  function extractLoginErrorMessage(
-    apiErr: ApiError,
-    fallback: string
-  ): string {
-    if (apiErr.message && apiErr.code !== "INTERNAL_ERROR") {
-      return apiErr.message;
-    }
-    return fallback;
-  }
-
-  async function handleMfaSubmit() {
+  async function handlePasswordLogin(): Promise<void> {
     errorMessage.value = "";
     isLoading.value = true;
     try {
-      await api.post<{
-        status: string;
-      }>("/api/guest/auth/managers/mfa", {
-        body: {
-          challenge: currentChallenge.value,
-          code: totpCode.value.trim(),
-        },
+      const res = await authClient.signIn.email({
+        email: email.value.trim(),
+        password: password.value,
+        rememberMe: rememberMe.value,
       });
 
+      if (res.error) {
+        errorMessage.value =
+          res.error.message || "Email hoặc mật khẩu không chính xác.";
+        return;
+      }
+
+      const data = res.data as SignInDataWithTwoFactor | null;
+      if (data?.twoFactorRedirect) {
+        totpCode.value = "";
+        authState.value = "mfa";
+        return;
+      }
+
       await finishLoginAndRedirect();
-    } catch (err) {
-      const apiErr = normalizeApiError(err);
-      errorMessage.value = extractLoginErrorMessage(
-        apiErr,
-        "Mã xác thực không hợp lệ. Vui lòng thử lại."
-      );
+    } catch {
+      errorMessage.value = "Email hoặc mật khẩu không chính xác.";
     } finally {
       isLoading.value = false;
     }
   }
 
-  async function finishLoginAndRedirect() {
+  async function handleMfaSubmit(): Promise<void> {
+    errorMessage.value = "";
+    isLoading.value = true;
+    try {
+      const code = totpCode.value.trim();
+      const res = isRecoveryMode.value
+        ? await authClient.twoFactor.verifyBackupCode({ code })
+        : await authClient.twoFactor.verifyTotp({ code });
+
+      if (res.error) {
+        errorMessage.value =
+          res.error.message || "Mã xác thực không hợp lệ. Vui lòng thử lại.";
+        return;
+      }
+
+      await finishLoginAndRedirect();
+    } catch {
+      errorMessage.value = "Mã xác thực không hợp lệ. Vui lòng thử lại.";
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  async function finishLoginAndRedirect(): Promise<void> {
     await fetchSession();
     await navigateTo("/");
   }
 
-  function resetToPassword() {
+  function resetToPassword(): void {
     authState.value = "password";
-    currentChallenge.value = "";
     totpCode.value = "";
     errorMessage.value = "";
     isRecoveryMode.value = false;
   }
 
-  function toggleRecoveryMode() {
+  function toggleRecoveryMode(): void {
     isRecoveryMode.value = !isRecoveryMode.value;
     totpCode.value = "";
     errorMessage.value = "";

@@ -1,8 +1,17 @@
 import { ValidationError } from "@mindkid/errors/common";
-
-import { and, eq, inArray, sql } from "drizzle-orm";
-import type { NodePgDatabase } from "drizzle-orm/node-postgres";
-import { contentTagMap, contentTags } from "#src/schema/tagging";
+import {
+  MECHANIC_TAG_MAP as TAXONOMY_MECHANIC_TAG_MAP,
+  normalizeMechanicTagCode as taxonomyNormalizeMechanicTagCode,
+} from "@mindkid/taxonomy";
+import { and, eq, inArray, isNull, or, sql } from "drizzle-orm";
+import type { DbExecutor } from "#src/client";
+import { curricula } from "#src/schema/curriculum";
+import { gameLevels } from "#src/schema/game";
+import {
+  contentSkillMap,
+  contentTagMap,
+  contentTags,
+} from "#src/schema/tagging";
 
 export interface SkillMapInput {
   skillId: number;
@@ -20,17 +29,12 @@ export interface TagAssignmentInput {
  * BR-TAG-01: Reject tag codes outside active content_tags vocabulary with 422 UNPROCESSABLE_ENTITY.
  * BR-TAG-02: Require >= 1 tag on each pedagogical axis (what, thinking, mechanic) before publication. (theme exempt - D-HB).
  */
-import {
-  MECHANIC_TAG_MAP as TAXONOMY_MECHANIC_TAG_MAP,
-  normalizeMechanicTagCode as taxonomyNormalizeMechanicTagCode,
-} from "@mindkid/taxonomy";
-
 export const MECHANIC_TAG_MAP: Record<string, string> =
   TAXONOMY_MECHANIC_TAG_MAP;
 export const normalizeMechanicTagCode: (code?: string) => string | undefined =
   taxonomyNormalizeMechanicTagCode;
 
-async function resolveAndEnsureTags(db: NodePgDatabase, tagList: string[]) {
+async function resolveAndEnsureTags(db: DbExecutor, tagList: string[]) {
   const matchedTags = await db
     .select()
     .from(contentTags)
@@ -66,12 +70,12 @@ function validatePublishAxes(matchedTags: Array<{ axis: string }>) {
 }
 
 export async function assignTagsToEntity(
-  db: NodePgDatabase,
+  db: DbExecutor,
   entityType: TagAssignmentInput["entityType"],
   entityId: number,
   tagIds: number[]
 ) {
-  const runAssign = async (tx: NodePgDatabase) => {
+  const runAssign = async (tx: DbExecutor) => {
     await tx
       .delete(contentTagMap)
       .where(
@@ -94,7 +98,7 @@ export async function assignTagsToEntity(
 
   if (typeof db.transaction === "function") {
     await db.transaction(async (tx) => {
-      await runAssign(tx as NodePgDatabase);
+      await runAssign(tx);
     });
   } else {
     await runAssign(db);
@@ -102,7 +106,7 @@ export async function assignTagsToEntity(
 }
 
 export async function validateAndAssignTags(
-  db: NodePgDatabase,
+  db: DbExecutor,
   input: TagAssignmentInput,
   isPublishing = false
 ) {
@@ -167,15 +171,72 @@ export function validateContentSkillMap(entries: SkillMapInput[]) {
 }
 
 /**
- * BR-TAG-07: Detect orphaned content_tag_map entries where referenced entity does not exist.
+ * BR-TAG-07 & BR-DM-04: Phát hiện hàng mồ côi trong `content_tag_map` trên cả
+ * hai nhánh đa hình (`game_level` và `curriculum`) thuần bằng Drizzle query builder.
  */
-export async function detectOrphanedContentTags(db: NodePgDatabase) {
-  const result = await db.execute<{ count: number }>(sql`
-    SELECT COUNT(*)::int AS count
-    FROM content_tag_map ctm
-    LEFT JOIN game_levels gl ON ctm.entity_type = 'game_level' AND ctm.entity_id = gl.id
-    WHERE ctm.entity_type = 'game_level' AND gl.id IS NULL
-  `);
+export async function detectOrphanedContentTags(
+  db: DbExecutor
+): Promise<number> {
+  const [row] = await db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(contentTagMap)
+    .leftJoin(
+      gameLevels,
+      and(
+        eq(contentTagMap.entityType, "game_level"),
+        eq(contentTagMap.entityId, gameLevels.id)
+      )
+    )
+    .leftJoin(
+      curricula,
+      and(
+        eq(contentTagMap.entityType, "curriculum"),
+        eq(contentTagMap.entityId, curricula.id)
+      )
+    )
+    .where(
+      or(
+        and(eq(contentTagMap.entityType, "game_level"), isNull(gameLevels.id)),
+        and(eq(contentTagMap.entityType, "curriculum"), isNull(curricula.id))
+      )
+    );
 
-  return Number(result[0]?.count ?? 0);
+  return Number(row?.count ?? 0);
+}
+
+/**
+ * BR-DM-04: Phát hiện hàng mồ côi trong `content_skill_map` trên cả hai nhánh
+ * đa hình (`game_level` và `curriculum`).
+ */
+export async function detectOrphanedContentSkillMaps(
+  db: DbExecutor
+): Promise<number> {
+  const [row] = await db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(contentSkillMap)
+    .leftJoin(
+      gameLevels,
+      and(
+        eq(contentSkillMap.entityType, "game_level"),
+        eq(contentSkillMap.entityId, gameLevels.id)
+      )
+    )
+    .leftJoin(
+      curricula,
+      and(
+        eq(contentSkillMap.entityType, "curriculum"),
+        eq(contentSkillMap.entityId, curricula.id)
+      )
+    )
+    .where(
+      or(
+        and(
+          eq(contentSkillMap.entityType, "game_level"),
+          isNull(gameLevels.id)
+        ),
+        and(eq(contentSkillMap.entityType, "curriculum"), isNull(curricula.id))
+      )
+    );
+
+  return Number(row?.count ?? 0);
 }

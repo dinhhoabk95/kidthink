@@ -2,10 +2,10 @@ import { sql } from "drizzle-orm";
 import {
   bigint,
   boolean,
-  check,
   index,
   integer,
   jsonb,
+  pgEnum,
   pgTable,
   primaryKey,
   smallint,
@@ -16,16 +16,20 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { childProfiles } from "./child.ts";
-import { timestamps } from "./columns.ts";
-import { gameLevels } from "./game.ts";
+import { idPk, insertOnlyTimestamps, timestamps } from "./columns.ts";
+import { accessTierEnum, gameLevels } from "./game.ts";
 import { skills } from "./taxonomy.ts";
+
+export const playCompletionStatusEnum = pgEnum("play_completion_status", [
+  "in_progress",
+  "completed",
+  "abandoned",
+]);
 
 export const playSessions = pgTable(
   "play_sessions",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     sessionUuid: uuid("session_uuid").defaultRandom().notNull(),
     childProfileId: bigint("child_profile_id", { mode: "number" }).references(
       () => childProfiles.id,
@@ -34,13 +38,13 @@ export const playSessions = pgTable(
     guestDeviceId: varchar("guest_device_id", { length: 100 }),
     gameLevelId: bigint("game_level_id", { mode: "number" })
       .notNull()
-      .references(() => gameLevels.id),
+      .references(() => gameLevels.id, { onDelete: "restrict" }),
     templateCode: varchar("template_code", { length: 20 }).notNull(),
     isPreview: boolean("is_preview").notNull().default(false),
-    completionStatus: varchar("completion_status", { length: 20 })
+    completionStatus: playCompletionStatusEnum("completion_status")
       .notNull()
       .default("in_progress"),
-    accessTierAtStart: varchar("access_tier_at_start", { length: 20 }),
+    accessTierAtStart: accessTierEnum("access_tier_at_start"),
     layoutSeed: bigint("layout_seed", { mode: "number" }),
     starsEarned: smallint("stars_earned").default(0),
     score: integer("score").default(0),
@@ -52,28 +56,18 @@ export const playSessions = pgTable(
     ...timestamps(),
   },
   (table) => [
-    check(
-      "check_play_sessions_identity",
-      sql`${table.childProfileId} IS NOT NULL OR ${table.guestDeviceId} IS NOT NULL`
-    ),
-    check(
-      "check_play_sessions_layout_seed",
-      sql`${table.layoutSeed} IS NULL OR (${table.layoutSeed} >= 0 AND ${table.layoutSeed} <= 4294967295)`
-    ),
     uniqueIndex("idx_play_sessions_session_uuid").on(table.sessionUuid),
     index("idx_play_sessions_game_level_id").on(table.gameLevelId),
     index("idx_play_sessions_status_started_at").on(
       table.completionStatus,
       table.startedAt
     ),
-    index("idx_play_sessions_child_started_at").on(
-      table.childProfileId,
-      table.startedAt
-    ),
-    index("idx_play_sessions_guest_status").on(
-      table.guestDeviceId,
-      table.completionStatus
-    ),
+    index("idx_play_sessions_child_started_at")
+      .on(table.childProfileId, table.startedAt)
+      .where(sql`${table.childProfileId} IS NOT NULL`),
+    index("idx_play_sessions_guest_status")
+      .on(table.guestDeviceId, table.completionStatus)
+      .where(sql`${table.guestDeviceId} IS NOT NULL`),
   ]
 );
 
@@ -92,7 +86,7 @@ export const telemetryEvents = pgTable(
     ingestedAt: timestamp("ingested_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
-    ...timestamps(),
+    ...insertOnlyTimestamps(),
   },
   (table) => [
     primaryKey({ columns: [table.sessionUuid, table.seq] }),
@@ -106,18 +100,16 @@ export const telemetryEvents = pgTable(
 export const childSessionSummaries = pgTable(
   "child_session_summaries",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     childProfileId: bigint("child_profile_id", { mode: "number" })
       .notNull()
       .references(() => childProfiles.id, { onDelete: "cascade" }),
     sessionUuid: uuid("session_uuid").notNull(),
     gameLevelId: bigint("game_level_id", { mode: "number" })
       .notNull()
-      .references(() => gameLevels.id),
+      .references(() => gameLevels.id, { onDelete: "restrict" }),
     templateCode: varchar("template_code", { length: 20 }).notNull(),
-    completionStatus: varchar("completion_status", { length: 20 }).notNull(),
+    completionStatus: playCompletionStatusEnum("completion_status").notNull(),
     score: integer("score").notNull().default(0),
     durationSeconds: integer("duration_seconds").notNull().default(0),
     starsEarned: smallint("stars_earned").notNull().default(0),
@@ -139,9 +131,7 @@ export const childSessionSummaries = pgTable(
 export const childDailyStats = pgTable(
   "child_daily_stats",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     childProfileId: bigint("child_profile_id", { mode: "number" })
       .notNull()
       .references(() => childProfiles.id, { onDelete: "cascade" }),
@@ -170,9 +160,7 @@ export const childDailyStats = pgTable(
 export const levelDailyStats = pgTable(
   "level_daily_stats",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     levelCode: varchar("level_code", { length: 50 }).notNull(),
     dateIct: varchar("date_ict", { length: 10 }).notNull(),
     playsCount: integer("plays_count").notNull().default(0),
@@ -193,9 +181,7 @@ export const levelDailyStats = pgTable(
 export const skillDailyStats = pgTable(
   "skill_daily_stats",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     skillId: bigint("skill_id", { mode: "number" })
       .notNull()
       .references(() => skills.id, { onDelete: "cascade" }),

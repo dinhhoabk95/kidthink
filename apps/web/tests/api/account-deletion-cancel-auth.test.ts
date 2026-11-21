@@ -25,11 +25,18 @@ vi.mock("@mindkid/db", () => ({
   cancelUserDeletion: cancelSpy,
   getOwnerDb: () => ({
     select: () => ({
-      from: () => ({
-        where: () => ({ limit: () => Promise.resolve([state.user]) }),
+      from: (table: { id?: string }) => ({
+        where: () => ({
+          limit: () => Promise.resolve(table?.id === "id" ? [state.user] : []),
+        }),
       }),
     }),
   }),
+  userAccounts: {
+    userId: "user_id",
+    providerId: "provider_id",
+    password: "password_hash",
+  },
   users: { id: "id", email: "email", status: "status", purgeAt: "purge_at" },
 }));
 

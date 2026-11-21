@@ -1,272 +1,67 @@
 import { describe, expect, it } from "vitest";
 import {
+  consumeSocialSignupConsentTicket,
+  createRedisSecondaryStorage,
+  createSocialSignupConsentTicket,
   InMemoryRedisClient,
-  MfaChallengeService,
-  RedisSessionStore,
-  sha256,
+  REAUTH_FRESH_AGE_SECONDS,
+  REMEMBER_MAX_TTL_SECONDS,
+  SESSION_DEFAULT_TTL_SECONDS,
 } from "#src/index";
 
-describe("T1 Opaque Redis Session Foundation (BR-AUT-25 .. BR-AUT-38)", () => {
-  it("creates a 1-hour opaque session without rememberMe by default (BR-AUT-25, BR-AUT-26, BR-AUT-27)", async () => {
-    const redis = new InMemoryRedisClient();
-    const store = new RedisSessionStore(redis);
-
-    const now = new Date("2026-08-13T12:00:00Z");
-    const created = await store.createSession({
-      namespace: "user",
-      accountId: 101,
-      displayName: "Người dùng A",
-      rememberMe: false,
-      now,
-    });
-
-    expect(created.sessionToken).toHaveLength(64); // 256-bit hex
-    expect(created.rememberToken).toBeUndefined();
-    expect(created.expiresAt.toISOString()).toBe("2026-08-13T13:00:00.000Z");
-
-    const resolved = await store.resolveSession(
-      "user",
-      created.sessionToken,
-      now
-    );
-    expect(resolved).toEqual({
-      user: {
-        user_id: 101,
-        display_name: "Người dùng A",
-        session_id: sha256(created.sessionToken),
-        active_child_db_id: undefined,
-      },
-    });
+describe("Better Auth Valkey SecondaryStorage Foundation (BR-AUT-27, BR-AUT-28, BR-AUT-31, BR-AUT-39)", () => {
+  it("defines exact 1-hour default, 365-day remember cap, and 5-minute fresh window constants", () => {
+    expect(SESSION_DEFAULT_TTL_SECONDS).toBe(3600);
+    expect(REMEMBER_MAX_TTL_SECONDS).toBe(365 * 24 * 60 * 60);
+    expect(REAUTH_FRESH_AGE_SECONDS).toBe(300);
   });
 
-  it("rotates verifier on remember restore and maintains absolute 365-day cutoff (BR-AUT-28)", async () => {
+  it("isolates user and manager namespaces in secondaryStorage and respects delete", async () => {
     const redis = new InMemoryRedisClient();
-    const store = new RedisSessionStore(redis);
+    const userStore = createRedisSecondaryStorage(redis, "user");
+    const managerStore = createRedisSecondaryStorage(redis, "manager");
 
-    const now1 = new Date("2026-01-01T00:00:00Z");
-    const created = await store.createSession({
-      namespace: "user",
-      accountId: 102,
-      displayName: "Người dùng B",
-      rememberMe: true,
-      now: now1,
-    });
+    await userStore.set("active:1", '{"id":1}', 3600);
+    await managerStore.set("active:1", '{"id":99}', 3600);
 
-    const initialRememberToken = created.rememberToken ?? "";
-    expect(initialRememberToken).not.toBe("");
+    expect(await userStore.get("active:1")).toBe('{"id":1}');
+    expect(await managerStore.get("active:1")).toBe('{"id":99}');
 
-    const restored1 = await store.restoreRemember({
-      namespace: "user",
-      rememberToken: initialRememberToken,
-      now: new Date("2026-01-02T00:00:00Z"),
-    });
-
-    expect(restored1.rememberToken).not.toBe(initialRememberToken);
-    expect(restored1.sessionToken).toBeDefined();
-
-    // Replay of old rememberToken must fail and trigger reuse detection after grace period (BR-AUT-29)
-    await expect(
-      store.restoreRemember({
-        namespace: "user",
-        rememberToken: initialRememberToken,
-        now: new Date("2026-01-02T00:01:01Z"),
-      })
-    ).rejects.toThrowError(
-      expect.objectContaining({ code: "SESSION_REVOKED", status: 401 })
-    );
-
-    // After reuse detection, all sessions for account are revoked!
-    await expect(
-      store.restoreRemember({
-        namespace: "user",
-        rememberToken: restored1.rememberToken,
-        now: new Date("2026-01-02T00:02:00Z"),
-      })
-    ).rejects.toThrowError(
-      expect.objectContaining({ code: "SESSION_REVOKED", status: 401 })
-    );
+    await userStore.delete("active:1");
+    expect(await userStore.get("active:1")).toBeNull();
+    expect(await managerStore.get("active:1")).toBe('{"id":99}');
   });
 
-  it("allows concurrent remember token restoration within 60s grace period", async () => {
+  it("BR-AUT-31: fails closed with 503 SERVICE_UNAVAILABLE on Redis outage", async () => {
     const redis = new InMemoryRedisClient();
-    const store = new RedisSessionStore(redis);
+    const userStore = createRedisSecondaryStorage(redis, "user");
+    redis.setFailMode(true);
 
-    const created = await store.createSession({
-      namespace: "user",
-      accountId: 105,
-      displayName: "Người dùng Grace",
-      rememberMe: true,
-      now: new Date("2026-01-01T00:00:00Z"),
-    });
-
-    const initialToken = created.rememberToken ?? "";
-
-    // First request rotates token at T+0s
-    const restored1 = await store.restoreRemember({
-      namespace: "user",
-      rememberToken: initialToken,
-      now: new Date("2026-01-02T00:00:00Z"),
-    });
-
-    expect(restored1.rememberToken).not.toBe(initialToken);
-
-    // Second concurrent request with old token arrives within 30s (inside 60s grace period)
-    const restoredConcurrent = await store.restoreRemember({
-      namespace: "user",
-      rememberToken: initialToken,
-      now: new Date("2026-01-02T00:00:30Z"),
-    });
-
-    expect(restoredConcurrent.sessionToken).toBeDefined();
-    expect(restoredConcurrent.user?.user_id).toBe(105);
-  });
-
-  it("returns 401 on unknown remember selector miss without revoking account (BR-AUT-29)", async () => {
-    const redis = new InMemoryRedisClient();
-    const store = new RedisSessionStore(redis);
-
-    const fakeToken = `${"a".repeat(64)}:${"b".repeat(64)}`;
-    await expect(
-      store.restoreRemember({
-        namespace: "user",
-        rememberToken: fakeToken,
-      })
-    ).rejects.toThrowError(
-      expect.objectContaining({ code: "SESSION_REVOKED", status: 401 })
+    await expect(userStore.get("any-key")).rejects.toThrowError(
+      expect.objectContaining({ code: "SERVICE_UNAVAILABLE", status: 503 })
     );
-  });
-
-  it("revokes device session cleanly (BR-AUT-30)", async () => {
-    const redis = new InMemoryRedisClient();
-    const store = new RedisSessionStore(redis);
-
-    const created = await store.createSession({
-      namespace: "user",
-      accountId: 103,
-      displayName: "Người dùng C",
-      rememberMe: true,
-      deviceId: "dev_phone_1",
-    });
-
-    await store.revokeDevice("user", 103, "dev_phone_1");
-
-    const resolved = await store.resolveSession("user", created.sessionToken);
-    expect(resolved).toBeNull();
-
-    await expect(
-      store.restoreRemember({
-        namespace: "user",
-        rememberToken: created.rememberToken ?? "",
-      })
-    ).rejects.toThrowError(
-      expect.objectContaining({ code: "SESSION_REVOKED", status: 401 })
+    await expect(userStore.set("any-key", "val", 60)).rejects.toThrowError(
+      expect.objectContaining({ code: "SERVICE_UNAVAILABLE", status: 503 })
     );
-  });
-
-  it("fails closed with 503 on Redis outage (BR-AUT-32)", async () => {
-    const brokenRedis = {
-      get: () => Promise.reject(new Error("Redis connection refused")),
-      set: () => Promise.reject(new Error("Redis connection refused")),
-      del: () => Promise.reject(new Error("Redis connection refused")),
-      sadd: () => Promise.reject(new Error("Redis connection refused")),
-      srem: () => Promise.reject(new Error("Redis connection revoked")),
-      smembers: () => Promise.reject(new Error("Redis connection refused")),
-      incr: () => Promise.reject(new Error("Redis connection refused")),
-    };
-
-    const store = new RedisSessionStore(brokenRedis);
-
-    await expect(
-      store.resolveSession("user", "some_token")
-    ).rejects.toThrowError(
+    await expect(userStore.delete("any-key")).rejects.toThrowError(
       expect.objectContaining({ code: "SERVICE_UNAVAILABLE", status: 503 })
     );
   });
 
-  it("issues opaque MFA challenge with 5-min TTL and atomic consume (BR-AUT-35)", async () => {
+  it("BR-SCL-01 & BR-SCL-12: issues one-time social signup consent ticket in Valkey", async () => {
     const redis = new InMemoryRedisClient();
-    const mfaService = new MfaChallengeService(redis);
-
-    const created = await mfaService.createChallenge({
-      namespace: "manager",
-      accountId: 201,
-      displayName: "Admin X",
-      role: "super_admin",
-      rememberMe: true,
+    const token = await createSocialSignupConsentTicket(redis, {
+      termsRequirementAt: "2026-08-01T00:00:00.000Z",
+      privacyRequirementAt: null,
+      ipAddress: "127.0.0.1",
+      userAgent: "TestBrowser",
     });
 
-    expect(created.challengeToken).toHaveLength(64);
+    const first = await consumeSocialSignupConsentTicket(redis, token);
+    expect(first?.termsRequirementAt).toBe("2026-08-01T00:00:00.000Z");
+    expect(first?.ipAddress).toBe("127.0.0.1");
 
-    const payload = await mfaService.consumeChallenge(
-      "manager",
-      created.challengeToken
-    );
-    expect(payload.accountId).toBe(201);
-    expect(payload.displayName).toBe("Admin X");
-    expect(payload.rememberMe).toBe(true);
-
-    // One-time consume: second consume must fail with TOKEN_EXPIRED (410)
-    await expect(
-      mfaService.consumeChallenge("manager", created.challengeToken)
-    ).rejects.toThrowError(
-      expect.objectContaining({ code: "TOKEN_EXPIRED", status: 410 })
-    );
-  });
-
-  it("preserves activeChildId in remember token and cleans up orphaned session on re-login", async () => {
-    const redis = new InMemoryRedisClient();
-    const store = new RedisSessionStore(redis);
-
-    const now = new Date("2026-08-13T12:00:00Z");
-    const deviceId = "test_dev_1";
-
-    const s1 = await store.createSession({
-      namespace: "user",
-      accountId: 101,
-      displayName: "User A",
-      rememberMe: true,
-      deviceId,
-      activeChildId: 77,
-      now,
-    });
-
-    expect(s1.rememberToken).toBeDefined();
-
-    // Resolving s1 has active_child_db_id = 77
-    const r1 = await store.resolveSession("user", s1.sessionToken, now);
-    expect(r1?.user?.active_child_db_id).toBe(77);
-
-    // Restoring remember token also retains active_child_db_id = 77
-    const restored = await store.restoreRemember({
-      namespace: "user",
-      rememberToken: s1.rememberToken ?? "",
-      now: new Date("2026-08-13T12:30:00Z"),
-    });
-    expect(restored.user?.active_child_db_id).toBe(77);
-
-    // Creating s2 on same device cleans up old session
-    const s2 = await store.createSession({
-      namespace: "user",
-      accountId: 101,
-      displayName: "User A",
-      deviceId,
-      now: new Date("2026-08-13T13:00:00Z"),
-    });
-
-    // Old s1 session should be gone
-    const oldSession = await store.resolveSession("user", s1.sessionToken, now);
-    expect(oldSession).toBeNull();
-
-    // Trying to revoke session using wrong accountId should do nothing
-    await store.revokeSession(s2.sessionId, {
-      account_type: "user",
-      account_id: 999, // wrong account
-    });
-    const stillActive = await store.resolveSession(
-      "user",
-      s2.sessionToken,
-      new Date("2026-08-13T13:05:00Z")
-    );
-    expect(stillActive).not.toBeNull();
+    const replay = await consumeSocialSignupConsentTicket(redis, token);
+    expect(replay).toBeNull();
   });
 });

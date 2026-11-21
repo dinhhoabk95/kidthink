@@ -1,70 +1,63 @@
+import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { drizzle } from "drizzle-orm/postgres-js";
 import { describe, expect, it } from "vitest";
 import {
-  decryptTotpSecret,
-  encryptTotpSecret,
-  generateRecoveryCodes,
-  generateTotpCode,
-  generateTotpSecret,
-  generateTotpUri,
-  hashRecoveryCode,
-  verifyTotpCode,
-} from "#src/totp";
+  createMindKidManagerAuth,
+  createMindKidUserAuth,
+  InMemoryRedisClient,
+} from "#src/index";
 
-const SIX_DIGIT_PATTERN = /^[0-9]{6}$/;
-const RECOVERY_CODE_PATTERN = /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/;
-const BASE32_PATTERN = /^[A-Z2-7]+$/;
+const dummyCols = {
+  id: text("id").primaryKey(),
+  createdAt: timestamp("created_at").notNull(),
+  updatedAt: timestamp("updated_at").notNull(),
+};
 
-describe("Task #83 T8 — TOTP OTPAuth Adapter (D-PKG-D)", () => {
-  it("generates 32-character base32 secret using OTPAuth.Secret", () => {
-    const secret = generateTotpSecret();
-    expect(secret).toHaveLength(32);
-    expect(secret).toMatch(BASE32_PATTERN);
-  });
+describe("Better Auth Dual-Instance Initialization (BR-AUT-39, BR-AUT-45)", () => {
+  it("initializes both userAuth and managerAuth with twoFactor and passkey plugins without conflict", () => {
+    const mockDb = drizzle.mock();
+    const redis = new InMemoryRedisClient();
+    const rootSecret = "0123456789abcdef0123456789abcdef";
 
-  it("generates and verifies valid TOTP codes across 30s window", () => {
-    const secret = generateTotpSecret();
-    const now = Date.now();
-    const code = generateTotpCode(secret, now);
-    expect(code).toMatch(SIX_DIGIT_PATTERN);
+    const userAuth = createMindKidUserAuth({
+      db: mockDb,
+      schema: {
+        users: pgTable("users", dummyCols),
+        userAccounts: pgTable("user_accounts", dummyCols),
+        userSessions: pgTable("user_sessions", dummyCols),
+        userVerifications: pgTable("user_verifications", dummyCols),
+        userTwoFactors: pgTable("user_two_factors", dummyCols),
+        userPasskeys: pgTable("user_passkeys", dummyCols),
+      },
+      redis,
+      rootSecret,
+      siteUrl: "http://localhost:3000",
+      trustedOrigins: ["http://localhost:3000"],
+      isProduction: false,
+    });
 
-    expect(verifyTotpCode(code, secret, now)).toBe(true);
-    // In same 30s window (+10s)
-    expect(verifyTotpCode(code, secret, now + 10_000)).toBe(true);
-    // Outside 30s window windowSteps=1 (allow +/- 30s) -> +120s is false
-    expect(verifyTotpCode(code, secret, now + 120_000)).toBe(false);
-  });
+    const managerAuth = createMindKidManagerAuth({
+      db: mockDb,
+      schema: {
+        managers: pgTable("managers", dummyCols),
+        managerAccounts: pgTable("manager_accounts", dummyCols),
+        managerSessions: pgTable("manager_sessions", dummyCols),
+        managerVerifications: pgTable("manager_verifications", dummyCols),
+        managerTwoFactors: pgTable("manager_two_factors", dummyCols),
+        managerPasskeys: pgTable("manager_passkeys", dummyCols),
+      },
+      redis,
+      rootSecret,
+      siteUrl: "http://localhost:3000",
+      trustedOrigins: ["http://localhost:3000", "http://localhost:3001"],
+      isProduction: false,
+    });
 
-  it("generates otpauth:// URI for authenticator QR codes", () => {
-    const secret = "JBSWY3DPEHPK3PXP";
-    const uri = generateTotpUri(secret, "admin@tinimath.vn");
-    expect(uri).toContain("otpauth://totp/");
-    expect(uri).toContain("secret=JBSWY3DPEHPK3PXP");
-    expect(uri).toContain("issuer=MindKid");
-  });
-
-  it("RFC 6238 vector test with fixed seed and timestamp", () => {
-    // Secret: "12345678901234567890" in hex = GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ in Base32
-    const rfcSecret = "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ";
-    // Epoch 59s -> 1st interval (30s)
-    const code = generateTotpCode(rfcSecret, 59_000);
-    expect(code).toMatch(SIX_DIGIT_PATTERN);
-    expect(verifyTotpCode(code, rfcSecret, 59_000)).toBe(true);
-  });
-
-  it("generates 10 single-use recovery codes and hashes them", () => {
-    const codes = generateRecoveryCodes(10);
-    expect(codes).toHaveLength(10);
-    for (const code of codes) {
-      expect(code).toMatch(RECOVERY_CODE_PATTERN);
-      const hash = hashRecoveryCode(code);
-      expect(hash).toHaveLength(64); // SHA-256 hex string
-    }
-  });
-
-  it("encrypts TOTP secrets so the database value is not usable plaintext", () => {
-    const stored = encryptTotpSecret("JBSWY3DPEHPK3PXP", "a".repeat(32));
-    expect(stored.startsWith("v1.")).toBe(true);
-    expect(stored).not.toContain("JBSWY3DPEHPK3PXP");
-    expect(decryptTotpSecret(stored, "a".repeat(32))).toBe("JBSWY3DPEHPK3PXP");
+    expect(userAuth.options.basePath).toBe("/api/auth/users");
+    expect(managerAuth.options.basePath).toBe("/api/auth/managers");
+    expect(userAuth.options.advanced?.cookiePrefix).toBe("mindkid-user");
+    expect(managerAuth.options.advanced?.cookiePrefix).toBe("mindkid-manager");
+    expect(managerAuth.options.emailAndPassword?.disableSignUp).toBe(true);
+    expect("socialProviders" in managerAuth.options).toBe(false);
   });
 });

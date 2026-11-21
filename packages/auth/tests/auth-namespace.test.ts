@@ -1,33 +1,21 @@
 import { describe, expect, it } from "vitest";
-import { getAuthNamespaceConfig } from "#src/auth-namespace";
+import { deriveInstanceSecret } from "#src/index";
 
-describe("auth namespace runtime contract", () => {
-  it("keeps User and Manager CSRF cookies separate", () => {
-    expect(getAuthNamespaceConfig("user")).toEqual({
-      namespace: "user",
-      csrfCookieName: "tm_u_csrf",
-    });
-    expect(getAuthNamespaceConfig("manager")).toEqual({
-      namespace: "manager",
-      csrfCookieName: "tm_m_csrf",
-    });
+describe("Better Auth Instance Domain-Separated Secrets (BR-AUT-39)", () => {
+  const ROOT_SECRET = "0123456789abcdef0123456789abcdef";
+
+  it("derives distinct deterministic secrets for user and manager instances", () => {
+    const userSecret = deriveInstanceSecret(ROOT_SECRET, "user");
+    const managerSecret = deriveInstanceSecret(ROOT_SECRET, "manager");
+
+    expect(userSecret).not.toBe(managerSecret);
+    expect(userSecret.length).toBeGreaterThanOrEqual(43);
+    expect(deriveInstanceSecret(ROOT_SECRET, "user")).toBe(userSecret);
   });
 
-  /**
-   * Ca âm cho quyết định bỏ refresh token: phiên là session opaque trong Redis
-   * cộng cookie remember-me, không còn cặp access/refresh cookie. Test này đỏ
-   * ngay nếu ai đó dựng lại vòng đời token thứ hai qua đường config.
-   */
-  it("does not reintroduce access or refresh token config", () => {
-    for (const namespace of ["user", "manager"] as const) {
-      const config = getAuthNamespaceConfig(namespace) as unknown as Record<
-        string,
-        unknown
-      >;
-      expect(Object.keys(config).sort()).toEqual([
-        "csrfCookieName",
-        "namespace",
-      ]);
-    }
+  it("rejects root secrets shorter than 32 bytes", () => {
+    expect(() => deriveInstanceSecret("short-secret", "user")).toThrow(
+      "at least 32 bytes"
+    );
   });
 });

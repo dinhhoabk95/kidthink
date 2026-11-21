@@ -11,10 +11,11 @@ import {
   assertSameOriginRequest as userAssertSameOriginRequest,
 } from "../../server/utils/auth-runtime.js";
 import {
-  createAuthRuntime,
+  factoryAssertPayloadSize,
   factoryAssertRateLimitAllowed,
   factoryAssertRequestBodySize,
   factoryAssertSameOriginRequest,
+  factoryIsAllowedApiOrigin,
 } from "../../server/utils/auth-runtime-factory.js";
 
 function createMockEvent(
@@ -77,15 +78,14 @@ describe("auth-runtime-factory", () => {
     });
   });
 
-  describe("createAuthRuntime namespace cookies", () => {
-    it("creates distinct runtimes for user and manager namespaces", () => {
-      const userRuntime = createAuthRuntime("user");
-      const managerRuntime = createAuthRuntime("manager");
-
-      expect(typeof userRuntime.ensureCsrfCookie).toBe("function");
-      expect(typeof managerRuntime.ensureCsrfCookie).toBe("function");
-      expect(typeof userRuntime.validateCsrf).toBe("function");
-      expect(typeof managerRuntime.validateCsrf).toBe("function");
+  describe("origin & payload guards", () => {
+    it("validates allowed API origin and enforces JSON payload size limit", () => {
+      expect(
+        factoryIsAllowedApiOrigin("https://mindkid.local", "mindkid.local")
+      ).toBe(true);
+      expect(() =>
+        factoryAssertPayloadSize({ note: "x".repeat(2048) }, 512)
+      ).toThrowError();
     });
   });
 });

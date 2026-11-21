@@ -1,11 +1,12 @@
 // @vitest-environment happy-dom
-import { ApiError } from "@mindkid/errors/client";
 import { flushPromises, mount, type VueWrapper } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const pageMetaMock = vi.fn();
 const fetchMock = vi.fn();
 const routerPushMock = vi.fn();
+const requestPasswordResetMock = vi.fn();
+const resetPasswordMock = vi.fn();
 
 let currentMockRoute: {
   path: string;
@@ -16,6 +17,17 @@ let currentMockRoute: {
   params: {},
   query: {},
 };
+
+vi.mock("~/composables/use-api", () => ({
+  useApi: () => fetchMock,
+}));
+
+vi.mock("~/composables/use-auth-client", () => ({
+  useUserAuthClient: () => ({
+    requestPasswordReset: requestPasswordResetMock,
+    resetPassword: resetPasswordMock,
+  }),
+}));
 
 vi.mock("#imports", () => ({
   definePageMeta: (meta: Record<string, string | string[]>) =>
@@ -48,6 +60,14 @@ describe("Password Recovery Pages — /login, /forgot-password, /reset-password 
   beforeEach(() => {
     vi.clearAllMocks();
     currentMockRoute = { path: "/", params: {}, query: {} };
+    requestPasswordResetMock.mockResolvedValue({
+      data: { status: true },
+      error: null,
+    });
+    resetPasswordMock.mockResolvedValue({
+      data: { status: true },
+      error: null,
+    });
   });
 
   afterEach(() => {
@@ -66,8 +86,7 @@ describe("Password Recovery Pages — /login, /forgot-password, /reset-password 
     expect(forgotLink.attributes("href")).toBe("/quen-mat-khau");
   });
 
-  it("trang /forgot-password gửi POST /api/guest/auth/users/forgot-password và hiển thị thông báo trung lập (BR-PWR-02)", async () => {
-    fetchMock.mockResolvedValue({ ok: true });
+  it("trang /forgot-password gọi authClient.requestPasswordReset và hiển thị thông báo trung lập (BR-PWR-02)", async () => {
     const ForgotPage = (await import("~/pages/forgot-password.vue")).default;
     wrapper = mount(ForgotPage, { global: { stubs } });
     await flushPromises();
@@ -80,13 +99,10 @@ describe("Password Recovery Pages — /login, /forgot-password, /reset-password 
       .trigger("submit.prevent");
     await flushPromises();
 
-    expect(fetchMock).toHaveBeenCalledWith(
-      "/api/guest/auth/users/forgot-password",
-      expect.objectContaining({
-        method: "POST",
-        body: { email: "parent@example.com" },
-      })
-    );
+    expect(requestPasswordResetMock).toHaveBeenCalledWith({
+      email: "parent@example.com",
+      redirectTo: "/reset-password",
+    });
     expect(
       wrapper.find('[data-testid="forgot-success-message"]').exists()
     ).toBe(true);
@@ -106,16 +122,12 @@ describe("Password Recovery Pages — /login, /forgot-password, /reset-password 
     ).toBe("/quen-mat-khau");
   });
 
-  it("trang /reset-password gửi POST /api/guest/auth/users/reset-password và chuyển về /login (BR-PWR-09)", async () => {
+  it("trang /reset-password gọi authClient.resetPassword và chuyển về /login (BR-PWR-09)", async () => {
     currentMockRoute = {
       path: "/dat-lai-mat-khau",
       params: {},
       query: { token: "valid-reset-token-123" },
     };
-    fetchMock.mockResolvedValue({
-      ok: true,
-      message: "Đặt lại mật khẩu thành công. Vui lòng đăng nhập lại.",
-    });
 
     const ResetPage = (await import("~/pages/reset-password.vue")).default;
     wrapper = mount(ResetPage, { global: { stubs } });
@@ -132,35 +144,30 @@ describe("Password Recovery Pages — /login, /forgot-password, /reset-password 
       .trigger("submit.prevent");
     await flushPromises();
 
-    expect(fetchMock).toHaveBeenCalledWith(
-      "/api/guest/auth/users/reset-password",
-      expect.objectContaining({
-        method: "POST",
-        body: {
-          token: "valid-reset-token-123",
-          new_password: "NewSecurePass123!",
-        },
-      })
-    );
+    expect(resetPasswordMock).toHaveBeenCalledWith({
+      token: "valid-reset-token-123",
+      newPassword: "NewSecurePass123!",
+    });
     expect(wrapper.find('[data-testid="reset-success-banner"]').exists()).toBe(
       true
     );
     expect(routerPushMock).toHaveBeenCalledWith("/login");
   });
 
-  it("trang /reset-password hiển thị trạng thái hết hạn khi API trả TOKEN_EXPIRED", async () => {
+  it("trang /reset-password hiển thị trạng thái hết hạn khi API trả INVALID_TOKEN / 410", async () => {
     currentMockRoute = {
       path: "/dat-lai-mat-khau",
       params: {},
       query: { token: "expired-token-999" },
     };
-    fetchMock.mockRejectedValue(
-      new ApiError({
-        code: "TOKEN_EXPIRED",
+    resetPasswordMock.mockResolvedValue({
+      data: null,
+      error: {
+        code: "INVALID_TOKEN",
         message: "Liên kết đặt lại mật khẩu đã hết hạn.",
         status: 410,
-      })
-    );
+      },
+    });
 
     const ResetPage = (await import("~/pages/reset-password.vue")).default;
     wrapper = mount(ResetPage, { global: { stubs } });

@@ -4,7 +4,13 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { getOwnerDb } from "#src/client";
 import { entitlementKeys, entitlements, packages } from "#src/schema/billing";
 import { childProfiles } from "#src/schema/child";
-import { consentLogs, managers, users } from "#src/schema/identity";
+import {
+  consentLogs,
+  managerAccounts,
+  managers,
+  userAccounts,
+  users,
+} from "#src/schema/identity";
 import {
   SEED_MANAGERS,
   SEED_USERS,
@@ -55,6 +61,13 @@ describe("Seed Initial Accounts Integration Tests", () => {
         record.passwordHash
       );
       expect(isValidPassword).toBe(true);
+
+      const [mgrAcc] = await db
+        .select()
+        .from(managerAccounts)
+        .where(eq(managerAccounts.userId, record.id));
+      expect(mgrAcc?.providerId).toBe("credential");
+      expect(mgrAcc?.password?.startsWith("$argon2id$")).toBe(true);
     }
 
     // 3. Verify Users in DB
@@ -84,6 +97,13 @@ describe("Seed Initial Accounts Integration Tests", () => {
       );
       expect(isValidPassword).toBe(true);
 
+      const [usrAcc] = await db
+        .select()
+        .from(userAccounts)
+        .where(eq(userAccounts.userId, record.id));
+      expect(usrAcc?.providerId).toBe("credential");
+      expect(usrAcc?.password?.startsWith("$argon2id$")).toBe(true);
+
       // Verify consent logs for this user
       const userConsents = await db
         .select()
@@ -110,7 +130,7 @@ describe("Seed Initial Accounts Integration Tests", () => {
 
     // 4. Idempotency test — running seed again should not error or duplicate
     const secondRunStats = await seedInitialAccounts(db);
-    expect(secondRunStats.managerCount).toBe(2);
+    expect(secondRunStats.managerCount).toBe(1);
     expect(secondRunStats.userCount).toBe(3);
   });
 });

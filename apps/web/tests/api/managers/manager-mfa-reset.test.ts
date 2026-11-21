@@ -1,25 +1,18 @@
 import {
-  encryptTotpSecret,
-  generateTotpSecret,
-  getBrowserSessionService,
   hashPassword,
-  hashRecoveryCode,
+  InMemoryRedisClient,
+  setAuthRedisClient,
 } from "@mindkid/auth";
-import { requireEnv } from "@mindkid/config";
 import {
   auditLogs,
   getOwnerDb,
+  managerSessions,
   managers,
-  mfaRecoveryCodes,
-  mfaSettings,
+  managerTwoFactors,
 } from "@mindkid/db";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import resetMfaHandler from "#server/api/managers/managers/[uuid]/reset-mfa.post";
-
-// UC-010: Super Admin đặt lại xác thực hai lớp của Manager khác. Cần Postgres.
-const CSRF_TOKEN =
-  "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 
 interface Actor {
   id: number;
@@ -44,44 +37,37 @@ async function createManager(tag: string, mfaEnabled: boolean): Promise<Actor> {
       mfaEnabled,
     })
     .returning({ id: managers.id, uuid: managers.uuid });
+  if (!row) {
+    throw new Error("Failed to insert manager");
+  }
   return row;
 }
 
 beforeAll(async () => {
+  setAuthRedisClient(new InMemoryRedisClient());
   admin = await createManager("admin", true);
   reviewer = await createManager("reviewer", true);
   target = await createManager("target", true);
   plain = await createManager("plain", false);
 
   const db = getOwnerDb();
-  await db.insert(mfaSettings).values({
-    accountType: "manager",
-    accountId: target.id,
-    secretEncrypted: encryptTotpSecret(
-      generateTotpSecret(),
-      requireEnv("MFA_ENCRYPTION_KEY")
-    ),
-    confirmedAt: new Date(),
+  await db.insert(managerTwoFactors).values({
+    userId: target.id,
+    secret: "encrypted-totp-secret",
+    backupCodes: "encrypted-backup-codes",
+    verified: true,
   });
-  await db.insert(mfaRecoveryCodes).values({
-    accountType: "manager",
-    accountId: target.id,
-    codeHash: hashRecoveryCode("AAAA-BBBB"),
+  await db.insert(managerSessions).values({
+    userId: target.id,
+    token: `mgr-sess-tok-${Date.now()}`,
+    expiresAt: new Date(Date.now() + 3_600_000),
+    authMethod: "password",
   });
 });
 
 afterAll(async () => {
   const db = getOwnerDb();
   for (const m of [admin, reviewer, target, plain]) {
-    await db
-      .delete(mfaSettings)
-      .where(
-        and(
-          eq(mfaSettings.accountType, "manager"),
-          eq(mfaSettings.accountId, m.id)
-        )
-      )
-      .catch(() => undefined);
     await db
       .delete(managers)
       .where(eq(managers.id, m.id))
@@ -102,9 +88,10 @@ function eventFor(
         method: "POST",
         url: "/api/managers/managers/x/reset-mfa",
         headers: {
+          host: "localhost:3000",
+          origin: "http://localhost:3000",
+          "sec-fetch-site": "same-origin",
           "user-agent": "VitestRunner/1.0",
-          "x-csrf-token": CSRF_TOKEN,
-          cookie: `tm_m_csrf=${CSRF_TOKEN}`,
         },
       },
       res: { statusCode: 200, setHeader: () => undefined },
@@ -122,7 +109,7 @@ function eventFor(
   } as never;
 }
 
-async function statusOf(code: () => Promise<unknown>): Promise<number> {
+async function statusOf(code: () => Promise<object>): Promise<number> {
   try {
     await code();
   } catch (err) {
@@ -132,7 +119,7 @@ async function statusOf(code: () => Promise<unknown>): Promise<number> {
   return 200;
 }
 
-describe("UC-010 Super Admin đặt lại MFA của Manager", () => {
+describe("UC-010 Super Admin đặt lại MFA của Manager (Better Auth)", () => {
   it("A1/BR-002: vai trò khác Super Admin bị từ chối, MFA không đổi", async () => {
     const status = await statusOf(() =>
       resetMfaHandler(
@@ -144,7 +131,7 @@ describe("UC-010 Super Admin đặt lại MFA của Manager", () => {
       .select()
       .from(managers)
       .where(eq(managers.id, target.id));
-    expect(row.mfaEnabled).toBe(true);
+    expect(row?.mfaEnabled).toBe(true);
   });
 
   it("A2/BR-003: quá 5 phút xác minh lại thì 428 và MFA không đổi", async () => {
@@ -174,16 +161,8 @@ describe("UC-010 Super Admin đặt lại MFA của Manager", () => {
     ).toBeGreaterThanOrEqual(400);
   });
 
-  it("BR-001: đặt lại xoá MFA và mã khôi phục, thu hồi phiên, ghi audit ai-cho-ai", async () => {
+  it("BR-001: đặt lại xoá manager_two_factors, tắt mfaEnabled, thu hồi manager_sessions và ghi audit", async () => {
     const db = getOwnerDb();
-    const sessions = getBrowserSessionService();
-    const old = await sessions.create({
-      namespace: "manager",
-      accountId: target.id,
-      displayName: "target",
-      role: "content_reviewer",
-      rememberMe: true,
-    });
 
     const res = (await resetMfaHandler(
       eventFor(admin, "super_admin", target.uuid, new Date())
@@ -194,30 +173,19 @@ describe("UC-010 Super Admin đặt lại MFA của Manager", () => {
       .select()
       .from(managers)
       .where(eq(managers.id, target.id));
-    expect(row.mfaEnabled).toBe(false);
+    expect(row?.mfaEnabled).toBe(false);
 
-    const settings = await db
+    const tfRows = await db
       .select()
-      .from(mfaSettings)
-      .where(
-        and(
-          eq(mfaSettings.accountType, "manager"),
-          eq(mfaSettings.accountId, target.id)
-        )
-      );
-    expect(settings).toHaveLength(0);
-    const codes = await db
-      .select()
-      .from(mfaRecoveryCodes)
-      .where(
-        and(
-          eq(mfaRecoveryCodes.accountType, "manager"),
-          eq(mfaRecoveryCodes.accountId, target.id)
-        )
-      );
-    expect(codes).toHaveLength(0);
+      .from(managerTwoFactors)
+      .where(eq(managerTwoFactors.userId, target.id));
+    expect(tfRows).toHaveLength(0);
 
-    expect(await sessions.resolve("manager", old.sessionToken)).toBeNull();
+    const sessRows = await db
+      .select()
+      .from(managerSessions)
+      .where(eq(managerSessions.userId, target.id));
+    expect(sessRows).toHaveLength(0);
 
     const logs = await db
       .select()

@@ -1,7 +1,12 @@
 import crypto from "node:crypto";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
-import { exportJobs, getOwnerDb, users } from "#src/index";
+import {
+  assertExportJobPageCount,
+  exportJobs,
+  getOwnerDb,
+  users,
+} from "#src/index";
 
 describe("Task P4.2 — Database Schema & Invariants Integration Tests (BR-PDF-01..09)", () => {
   const db = getOwnerDb();
@@ -71,25 +76,11 @@ describe("Task P4.2 — Database Schema & Invariants Integration Tests (BR-PDF-0
       .returning();
     expect(jobValidMax?.pageCount).toBe(20);
 
-    // Invalid pageCount = 0 -> throws check constraint violation
-    await expect(
-      db.insert(exportJobs).values({
-        userId: testUserId,
-        kind: "curriculum_plan",
-        refId: "plan-0",
-        pageCount: 0,
-      })
-    ).rejects.toThrow();
-
-    // Invalid pageCount = 21 -> throws check constraint violation
-    await expect(
-      db.insert(exportJobs).values({
-        userId: testUserId,
-        kind: "curriculum_plan",
-        refId: "plan-21",
-        pageCount: 21,
-      })
-    ).rejects.toThrow();
+    // Invalid pageCount = 0 or 21 -> throws domain validator error (BR-DM-14)
+    expect(() => assertExportJobPageCount(0)).toThrow();
+    expect(() => assertExportJobPageCount(21)).toThrow();
+    expect(() => assertExportJobPageCount(1)).not.toThrow();
+    expect(() => assertExportJobPageCount(20)).not.toThrow();
   });
 
   it("cascades deletion of export_jobs when user is deleted", async () => {

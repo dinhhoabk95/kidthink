@@ -1,7 +1,5 @@
-import { sql } from "drizzle-orm";
 import {
   bigint,
-  check,
   index,
   integer,
   numeric,
@@ -11,15 +9,13 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { childProfiles } from "./child.ts";
-import { timestamps } from "./columns.ts";
+import { idPk, timestamps } from "./columns.ts";
 import { skills } from "./taxonomy.ts";
 
 export const masteryState = pgTable(
   "mastery_state",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     childProfileId: bigint("child_profile_id", { mode: "number" })
       .notNull()
       .references(() => childProfiles.id, { onDelete: "cascade" }),
@@ -51,31 +47,13 @@ export const masteryState = pgTable(
       table.skillId
     ),
     index("idx_mastery_state_skill_id").on(table.skillId),
-    check(
-      "check_mastery_state_p_learn",
-      sql`${table.pLearn} >= 0 AND ${table.pLearn} <= 1`
-    ),
-    check(
-      "check_mastery_state_ema_correct",
-      sql`${table.emaCorrect} >= 0 AND ${table.emaCorrect} <= 1`
-    ),
-    check(
-      "check_mastery_state_hint_rate",
-      sql`${table.hintRate} >= 0 AND ${table.hintRate} <= 1`
-    ),
-    check(
-      "check_mastery_state_best_p_learn",
-      sql`${table.bestPLearn} >= 0 AND ${table.bestPLearn} <= 1`
-    ),
   ]
 );
 
 export const childBadges = pgTable(
   "child_badges",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     childProfileId: bigint("child_profile_id", { mode: "number" })
       .notNull()
       .references(() => childProfiles.id, { onDelete: "cascade" }),

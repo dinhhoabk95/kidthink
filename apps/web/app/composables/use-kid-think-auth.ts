@@ -1,35 +1,23 @@
-import { useCookie, useUserSession } from "#imports";
-import { useApi } from "~/composables/use-api";
+import {
+  useUserAuthClient,
+  useUserSession,
+} from "~/composables/use-auth-client";
 import { clearOfflinePackClientData } from "~/composables/use-offline-pack";
 
 export function useMindKidAuth() {
-  const api = useApi();
+  const authClient = useUserAuthClient();
   const { fetch: fetchSession, clear: clearSession } = useUserSession();
-  const csrf = useCookie<string | null>("tm_u_csrf");
-
-  async function getSession(_options?: { force?: boolean }): Promise<void> {
-    await fetchSession();
-  }
 
   async function refreshSession(): Promise<void> {
-    if (!csrf.value) {
-      await getSession({ force: true });
-    }
-    if (!csrf.value) {
+    const ok = await fetchSession();
+    if (!ok) {
       throw new Error("Không thể khởi tạo phiên bảo mật.");
     }
-    await api("/api/users/auth/restore", {
-      method: "POST",
-      headers: { "x-csrf-token": csrf.value },
-    });
-    await getSession({ force: true });
   }
 
   async function logout(): Promise<void> {
     try {
-      await api("/api/users/auth/logout", {
-        method: "POST",
-      });
+      await authClient.signOut();
     } finally {
       await clearOfflinePackClientData({ reason: "logout" });
       await clearSession();
@@ -38,9 +26,8 @@ export function useMindKidAuth() {
 
   async function logoutAll(): Promise<void> {
     try {
-      await api("/api/users/auth/logout-all", {
-        method: "POST",
-      });
+      await authClient.revokeSessions();
+      await authClient.signOut();
     } finally {
       await clearOfflinePackClientData({ reason: "logout" });
       await clearSession();

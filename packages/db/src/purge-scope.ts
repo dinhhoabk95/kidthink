@@ -24,35 +24,35 @@ export const PURGE_TABLE_CLASSIFICATIONS: readonly TablePurgeMetadata[] = [
     legalBasis: "Nghị định 13/2023/NĐ-CP Điều 16 (Quyền xoá dữ liệu cá nhân)",
   },
   {
-    tableName: "active_sessions",
+    tableName: "user_accounts",
     classification: "delete",
-    reason: "Thu hồi toàn bộ phiên đăng nhập của tài khoản",
+    reason:
+      "Xoá cứng tài khoản đăng nhập mật khẩu và liên kết SNS của người dùng (BR-ADL-10)",
+    legalBasis: "BR-ADL-10 & BR-SLK-01",
+  },
+  {
+    tableName: "user_sessions",
+    classification: "delete",
+    reason: "Thu hồi và xoá toàn bộ phiên đăng nhập của người dùng",
     legalBasis: "BR-LGN-06 & BR-ADL-01",
   },
   {
-    tableName: "verification_tokens",
+    tableName: "user_verifications",
     classification: "delete",
     reason: "Xoá token xác thực email và đặt lại mật khẩu của người dùng",
     legalBasis: "BR-ADL-01",
   },
   {
-    tableName: "mfa_settings",
+    tableName: "user_two_factors",
     classification: "delete",
-    reason: "Xoá cấu hình xác thực đa yếu tố của tài khoản",
+    reason: "Xoá cấu hình TOTP và mã khôi phục của người dùng",
     legalBasis: "BR-ADL-01",
   },
   {
-    tableName: "mfa_recovery_codes",
+    tableName: "user_passkeys",
     classification: "delete",
-    reason: "Xoá mã khôi phục xác thực đa yếu tố",
+    reason: "Xoá khoá công khai Passkey/WebAuthn của người dùng",
     legalBasis: "BR-ADL-01",
-  },
-  {
-    tableName: "social_identities",
-    classification: "delete",
-    reason:
-      "Xoá cứng danh tính SNS để giải phóng ràng buộc UNIQUE provider_user_id (BR-ADL-10)",
-    legalBasis: "BR-ADL-10 & BR-SLK-01",
   },
   {
     tableName: "entitlements",
@@ -272,6 +272,37 @@ export const PURGE_TABLE_CLASSIFICATIONS: readonly TablePurgeMetadata[] = [
     tableName: "managers",
     classification: "retain",
     reason: "Tài khoản quản trị viên và người duyệt nội dung nội bộ",
+    legalBasis: "BR-ADA-01",
+  },
+  {
+    tableName: "manager_accounts",
+    classification: "retain",
+    reason: "Thông tin xác thực nội bộ của tài khoản quản trị viên",
+    legalBasis: "BR-ADA-01",
+  },
+  {
+    tableName: "manager_sessions",
+    classification: "retain",
+    reason:
+      "Phiên làm việc nội bộ của quản trị viên (không thuộc phạm vi xoá người dùng)",
+    legalBasis: "BR-ADA-01",
+  },
+  {
+    tableName: "manager_verifications",
+    classification: "retain",
+    reason: "Bản ghi xác minh nội bộ của quản trị viên",
+    legalBasis: "BR-ADA-01",
+  },
+  {
+    tableName: "manager_two_factors",
+    classification: "retain",
+    reason: "Cấu hình xác thực hai yếu tố TOTP của quản trị viên",
+    legalBasis: "BR-ADA-01",
+  },
+  {
+    tableName: "manager_passkeys",
+    classification: "retain",
+    reason: "Khoá công khai Passkey/WebAuthn của quản trị viên",
     legalBasis: "BR-ADA-01",
   },
   {

@@ -39,6 +39,10 @@ export function normalizeRateLimitPath(rawPath: string): string {
  * đặt lại mật khẩu.
  */
 const IN_ROUTE_CLASSES: Readonly<Record<string, RouteClassName>> = {
+  "/api/auth/users/sign-in/email": "auth:login",
+  "/api/auth/managers/sign-in/email": "auth:login",
+  "/api/auth/users/sign-up/email": "auth:register",
+  "/api/auth/users/request-password-reset": "auth:forgot-password",
   "/api/guest/auth/users/login": "auth:login",
   "/api/guest/auth/managers/login": "auth:login",
   "/api/guest/auth/users/register": "auth:register",
@@ -51,6 +55,11 @@ const IN_ROUTE_CLASSES: Readonly<Record<string, RouteClassName>> = {
 
 const OAUTH_START_PATH = /^\/api\/guest\/auth\/oauth\/[^/]+\/start$/;
 const OAUTH_CALLBACK_PATH = /^\/api\/guest\/auth\/oauth\/[^/]+\/callback$/;
+const BETTER_AUTH_OAUTH_CALLBACK_PATH = /^\/api\/auth\/users\/callback\/[^/]+$/;
+const BETTER_AUTH_MFA_OR_PASSKEY_PATH =
+  /^\/api\/auth\/(?:users|managers)\/(?:two-factor|passkey)(?:\/|$)/;
+const BETTER_AUTH_SESSION_OPS_PATH =
+  /^\/api\/auth\/(?:users|managers)\/(?:get-session|list-sessions|sign-out|revoke-session|revoke-sessions|revoke-other-sessions)$/;
 
 export const GUEST_POST_ROUTE_MAP: Readonly<Record<string, string>> = {
   "/api/guest/auth/users/login": "auth_login",
@@ -81,6 +90,12 @@ function resolveInRoute(path: string): RateLimitRouteResolution | null {
 
 /** Route auth không tự giới hạn: middleware phủ, trục IP là trục duy nhất. */
 const GUEST_AUTH_CLASSES: Readonly<Record<string, RouteClassName>> = {
+  "/api/auth/users/reset-password": "auth:forgot-password",
+  "/api/auth/users/verify-email": "auth:forgot-password",
+  "/api/auth/users/send-verification-email": "auth:forgot-password",
+  "/api/auth/users/sign-in/social": "auth:oauth:start",
+  "/api/auth/users/link-social": "auth:oauth:start",
+  "/api/guest/auth/users/social-consent": "auth:social-login",
   "/api/guest/auth/users/mfa": "auth:mfa",
   "/api/guest/auth/users/mfa-recovery/verify": "auth:mfa",
   "/api/guest/auth/users/reset-password": "auth:forgot-password",
@@ -91,7 +106,19 @@ const GUEST_AUTH_CLASSES: Readonly<Record<string, RouteClassName>> = {
 
 function resolveGuestAuthRoute(path: string): RateLimitRouteResolution | null {
   const className = GUEST_AUTH_CLASSES[path];
-  return className ? { mode: "middleware", className } : null;
+  if (className) {
+    return { mode: "middleware", className };
+  }
+  if (BETTER_AUTH_OAUTH_CALLBACK_PATH.test(path)) {
+    return { mode: "middleware", className: "auth:oauth:callback" };
+  }
+  if (BETTER_AUTH_MFA_OR_PASSKEY_PATH.test(path)) {
+    return { mode: "middleware", className: "auth:mfa" };
+  }
+  if (BETTER_AUTH_SESSION_OPS_PATH.test(path)) {
+    return { mode: "middleware", className: "auth:refresh" };
+  }
+  return null;
 }
 
 function resolveExempt(path: string): RateLimitRouteResolution | null {
@@ -284,6 +311,7 @@ const BODY_SIZE_PATTERNS: ReadonlyArray<{ pattern: RegExp; limit: number }> = [
     limit: 16 * 1024,
   },
   { pattern: /^\/api\/guest\/auth\//, limit: 16 * 1024 },
+  { pattern: /^\/api\/auth\/(?:users|managers)\//, limit: 32 * 1024 },
 ];
 
 export function resolveRequestBodySizeLimit(path: string): number | null {

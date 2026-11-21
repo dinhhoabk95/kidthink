@@ -53,9 +53,13 @@
   import { ref } from "vue";
   import NotificationBell from "~/components/notification-bell.vue";
   import PwaInstallBanner from "~/components/pwa/pwa-install-banner.vue";
-  import { useApi } from "~/composables/use-api";
+  import {
+    useUserAuthClient,
+    useUserSession,
+  } from "~/composables/use-auth-client";
 
-  const api = useApi();
+  const authClient = useUserAuthClient();
+  const { clear: clearUserSessionState } = useUserSession();
   const route = useRoute();
   const router = typeof useRouter === "function" ? useRouter() : null;
   const isLoggingOut = ref(false);
@@ -70,10 +74,8 @@
   async function handleLogout(): Promise<void> {
     isLoggingOut.value = true;
     try {
-      await api("/api/users/auth/logout", {
-        method: "POST",
-        body: {},
-      });
+      await authClient.signOut();
+      await clearUserSessionState();
     } finally {
       isLoggingOut.value = false;
       if (router && typeof router.push === "function") {

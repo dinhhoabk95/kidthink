@@ -111,6 +111,13 @@
         @success="successMessage = $event"
       />
 
+      <SecurityPasskeyCard
+        :passkeys="passkeys"
+        @error="errorMessage = $event"
+        @reload="loadSecurityData"
+        @success="successMessage = $event"
+      />
+
       <!-- Active Sessions Card (BR-LGN-04, BR-LGN-05, BR-LGN-10) -->
       <div
         class="bg-white rounded-2xl border-2 border-surface-200 p-5 md:p-6 space-y-5 shadow-sm"
@@ -205,7 +212,7 @@
               v-if="!isCurrentSession(sess)"
               :data-testid="`revoke-session-btn-${sess.id}`"
               :disabled="revokingSessionId === sess.id"
-              @click="handleRevokeSession(sess.id)"
+              @click="handleRevokeSession(sess)"
             >
               {{
                 revokingSessionId === sess.id ? "Đang thu hồi..." : "Thu hồi"
@@ -462,47 +469,35 @@
   import SecurityMfaCard, {
     type MfaStatusResponse,
   } from "~/components/security-mfa-card.vue";
+  import SecurityPasskeyCard, {
+    type PasskeyListItem,
+  } from "~/components/security-passkey-card.vue";
   import { useApi } from "~/composables/use-api";
+  import {
+    useUserAuthClient,
+    useUserSession,
+  } from "~/composables/use-auth-client";
+  import {
+    formatSecurityAuthMethod as formatAuthMethod,
+    formatSecurityDate as formatDate,
+    formatSecurityDeviceLabel as formatDeviceLabel,
+    formatSecurityLocation as formatLocation,
+    isCurrentSecuritySession as isCurrentSession,
+    type SecuritySessionItem as SessionItem,
+  } from "~/utils/security-session-format";
 
   definePageMeta({
     middleware: ["user-auth"],
   });
 
-  interface SessionItem {
-    id: string;
-    deviceLabel?: string | null;
-    device_label?: string | null;
-    ipAddress?: string | null;
-    ip_address?: string | null;
-    locationLabel?: string | null;
-    location_label?: string | null;
-    authMethod?: string | null;
-    auth_method?: string | null;
-    lastUsedAt?: string | null;
-    last_used_at?: string | null;
-    createdAt?: string | null;
-    created_at?: string | null;
-    isCurrent?: boolean;
-    is_current?: boolean;
+  interface ProfileSecuritySnapshot {
+    two_factor_enabled?: boolean;
+    two_factor_confirmed_at?: string | null;
   }
 
-  const IPV4_FULL_REGEX = /^(\d{1,3})\.(\d{1,3})\.\d{1,3}\.\d{1,3}$/;
-  const BROWSER_MATCHERS: [string, string][] = [
-    ["Edg/", "Edge"],
-    ["Chrome/", "Chrome"],
-    ["Firefox/", "Firefox"],
-    ["Safari/", "Safari"],
-  ];
-  const OS_MATCHERS: [string, string][] = [
-    ["Android", "Android"],
-    ["iPhone", "iOS"],
-    ["iPad", "iOS"],
-    ["Mac OS", "macOS"],
-    ["Windows", "Windows"],
-    ["Linux", "Linux"],
-  ];
-
   const api = useApi();
+  const authClient = useUserAuthClient();
+  const { session: activeSession, clear: clearUserSession } = useUserSession();
   const router = typeof useRouter === "function" ? useRouter() : null;
   const loading = ref(true);
   const submitting = ref(false);
@@ -511,6 +506,7 @@
   const errorMessage = ref("");
   const successMessage = ref("");
   const mfaStatus = ref<MfaStatusResponse | null>(null);
+  const passkeys = ref<PasskeyListItem[]>([]);
   const sessions = ref<SessionItem[]>([]);
   const passwordFieldErrors = ref<Record<string, string>>({});
 
@@ -528,90 +524,55 @@
     error: "",
   });
 
-  function formatDate(iso: string): string {
-    try {
-      return new Date(iso).toLocaleDateString("vi-VN", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-    } catch {
-      return iso;
-    }
-  }
-
-  function isCurrentSession(sess: SessionItem): boolean {
-    return Boolean(sess.isCurrent ?? sess.is_current);
-  }
-
-  function formatAuthMethod(sess: SessionItem): string {
-    const raw = (sess.authMethod ?? sess.auth_method ?? "password")
-      .toLowerCase()
-      .trim();
-    if (raw === "google") {
-      return "Google";
-    }
-    if (raw === "facebook") {
-      return "Facebook";
-    }
-    return "Mật khẩu";
-  }
-
-  function matchToken(
-    raw: string,
-    pairs: [string, string][],
-    fallback: string
-  ): string {
-    const hit = pairs.find(([token]) => raw.includes(token));
-    return hit ? hit[1] : fallback;
-  }
-
-  function formatDeviceLabel(sess: SessionItem): string {
-    const raw = (sess.deviceLabel ?? sess.device_label ?? "").trim();
-    if (!raw) {
-      return "Trình duyệt web";
-    }
-    if (!raw.includes("Mozilla/")) {
-      return raw;
-    }
-    const browser = matchToken(raw, BROWSER_MATCHERS, "Trình duyệt");
-    const os = matchToken(raw, OS_MATCHERS, "Thiết bị");
-    return `${browser} trên ${os}`;
-  }
-
-  function formatLocation(sess: SessionItem): string {
-    const loc = (sess.locationLabel ?? sess.location_label ?? "").trim();
-    if (loc) {
-      return loc;
-    }
-    const ip = (sess.ipAddress ?? sess.ip_address ?? "").trim();
-    if (!ip) {
-      return "Không xác định";
-    }
-    const match = IPV4_FULL_REGEX.exec(ip);
-    if (match) {
-      return `${match[1]}.${match[2]}.x.x`;
-    }
-    return ip.includes(":") ? "Mạng IPv6" : ip;
-  }
-
   async function loadSecurityData(): Promise<void> {
     loading.value = true;
     errorMessage.value = "";
     try {
-      const [mfaRes, sessRes] = await Promise.all([
-        api<MfaStatusResponse>("/api/users/mfa/status").catch(() => null),
-        api<{ sessions: SessionItem[] }>("/api/users/auth/sessions").catch(
-          () => null
-        ),
-      ]);
-      if (mfaRes) {
-        mfaStatus.value = mfaRes;
+      const [profileRes, currentSessRes, sessListRes, passkeysRes] =
+        await Promise.all([
+          api<ProfileSecuritySnapshot>("/api/users/profile").catch(() => null),
+          authClient.getSession().catch(() => null),
+          authClient.listSessions().catch(() => null),
+          authClient.passkey.listUserPasskeys().catch(() => null),
+        ]);
+
+      if (profileRes) {
+        mfaStatus.value = {
+          enabled: Boolean(profileRes.two_factor_enabled),
+          confirmed_at: profileRes.two_factor_confirmed_at ?? null,
+        };
       }
-      if (sessRes?.sessions) {
-        sessions.value = sessRes.sessions;
+
+      const currentToken =
+        currentSessRes?.data?.session?.token ?? activeSession.value.token;
+      const currentId = String(
+        currentSessRes?.data?.session?.id ?? activeSession.value.id ?? ""
+      );
+
+      if (Array.isArray(sessListRes?.data)) {
+        sessions.value = sessListRes.data.map((raw) => ({
+          id: String(raw.id),
+          token: raw.token,
+          userAgent: raw.userAgent ?? null,
+          ipAddress: raw.ipAddress ?? null,
+          authMethod:
+            (raw as { authMethod?: string | null }).authMethod ?? "password",
+          createdAt: raw.createdAt ? String(raw.createdAt) : null,
+          lastUsedAt: raw.updatedAt ? String(raw.updatedAt) : null,
+          isCurrent:
+            Boolean(currentToken && raw.token === currentToken) ||
+            Boolean(currentId && String(raw.id) === currentId),
+        }));
+      }
+
+      if (Array.isArray(passkeysRes?.data)) {
+        passkeys.value = passkeysRes.data.map((pk) => ({
+          id: pk.id,
+          name: pk.name ?? null,
+          deviceType: pk.deviceType ?? null,
+          backedUp: pk.backedUp,
+          createdAt: pk.createdAt ?? null,
+        }));
       }
     } catch (err) {
       errorMessage.value =
@@ -682,12 +643,20 @@
     }
   }
 
-  async function handleRevokeSession(sessionId: string): Promise<void> {
-    revokingSessionId.value = sessionId;
+  async function handleRevokeSession(sess: SessionItem): Promise<void> {
+    if (!sess.token) {
+      return;
+    }
+    revokingSessionId.value = sess.id;
     errorMessage.value = "";
     try {
-      await api(`/api/users/auth/sessions/${sessionId}`, { method: "DELETE" });
-      sessions.value = sessions.value.filter((s) => s.id !== sessionId);
+      const res = await authClient.revokeSession({ token: sess.token });
+      if (res.error) {
+        errorMessage.value =
+          res.error.message || "Không thể thu hồi phiên đăng nhập này.";
+        return;
+      }
+      sessions.value = sessions.value.filter((s) => s.id !== sess.id);
       successMessage.value = "Đã thu hồi phiên đăng nhập của thiết bị.";
     } catch (err) {
       errorMessage.value =
@@ -715,7 +684,9 @@
         method: "POST",
         body: { password: logoutAllModal.password },
       });
-      await api("/api/users/auth/logout-all", { method: "POST", body: {} });
+      await authClient.revokeSessions();
+      await authClient.signOut();
+      await clearUserSession();
       logoutAllModal.isOpen = false;
       sessions.value = [];
       successMessage.value = "Đã đăng xuất khỏi tất cả các thiết bị.";

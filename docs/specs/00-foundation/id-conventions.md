@@ -61,7 +61,7 @@ File này chốt định dạng, ai cấp, và cái gì không bao giờ đượ
 | `BR-ID-02` | **NEVER tái dùng** mã của bản đã xoá | Mã cũ có thể còn trong telemetry và báo cáo đã xuất |
 | `BR-ID-03` | **NEVER chèn mã vào giữa dãy** | Thứ tự mã là thứ tự tạo, không phải thứ tự sư phạm. Thứ tự sư phạm nằm ở `curriculum_items.position` |
 | `BR-ID-04` | Mã Lớp 2 do **server** sinh, không nhận từ client | Client gửi mã là đường để ghi đè content của người khác |
-| `BR-ID-05` | Mọi mã kiểm bằng regex ở **cả** Zod và DB `CHECK` | Zod bảo vệ API; `CHECK` bảo vệ seeder và migration |
+| `BR-ID-05` | Mọi mã kiểm bằng regex ở Zod và cổng domain/seeder validator (`BR-DM-14`: không dùng DB `CHECK`) | Zod bảo vệ biên API; validator ở `@mindkid/db` và `@mindkid/content-build` bảo vệ seeder trước khi ghi DB |
 | `BR-ID-06` | ID nội bộ (`bigserial`) **không bao giờ** xuất hiện trong URL công khai hay payload cho client | ID tự tăng để lộ quy mô kinh doanh và mời enumeration |
 
 ## 7. Data
@@ -140,10 +140,10 @@ Scenario: BR-ID-02 — mã đã xoá không tái dùng
   Then mã mới là "GL-C1-CNT-MATCH-0008"
   And không phải "GL-C1-CNT-MATCH-0007"
 
-Scenario: BR-ID-05 — regex ép ở cả hai tầng
-  Given một seeder cố ghi skill code "c1.cnt.3"
-  When migration chạy
-  Then DB CHECK constraint từ chối
+Scenario: BR-ID-05 — regex ép ở Zod và cổng domain/seeder
+  Given một seeder hoặc payload cố ghi skill code "c1.cnt.3"
+  When chạy bộ kiểm tra mã định danh trước khi ghi DB
+  Then Zod / domain validator từ chối
   And thông báo nêu rõ regex mong đợi
 
 Scenario: BR-ID-01 — không sửa được mã đã publish
@@ -156,7 +156,7 @@ Scenario: BR-ID-01 — không sửa được mã đã publish
 
 **Always**
 - Sinh mã Lớp 2 ở server, hiện read-only trên form.
-- Ép regex ở cả Zod và DB `CHECK`.
+- Ép regex ở Zod và validator domain/seeder (không dùng DB `CHECK` theo `BR-DM-14`).
 - Dùng `code` hoặc `uuid` cho định danh đối ngoại.
 
 **Ask first**

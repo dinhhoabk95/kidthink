@@ -20,8 +20,8 @@ describe("Task 5 — Purge Scope 3-Group Classification Gate (BR-ADL-01..10, D-I
     }
   });
 
-  it("BR-ADL-10: social_identities is strictly classified as 'delete'", () => {
-    const entry = PURGE_TABLE_MAP.get("social_identities");
+  it("BR-ADL-10: user_accounts is strictly classified as 'delete'", () => {
+    const entry = PURGE_TABLE_MAP.get("user_accounts");
     expect(entry).toBeDefined();
     expect(entry?.classification).toBe("delete");
   });

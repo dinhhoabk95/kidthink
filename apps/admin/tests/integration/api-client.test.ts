@@ -1,69 +1,64 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-/**
- * Hai test cũ ở đây đọc source bằng `readFileSync` rồi assert chuỗi
- * (`toContain("ssr: false")`). Chúng trùng với cổng `lint:runtime-boundary` và
- * vẫn xanh khi client gọi API bằng URL tương đối — nghĩa là không chứng minh
- * hành vi nào. Thay bằng test chạy thật `useApiClient`.
- */
+interface RecordedFetchCall {
+  url: string;
+  options: {
+    credentials?: string;
+    headers?: Headers;
+  };
+}
 
-const fetchCalls: Array<{ url: string; options: Record<string, unknown> }> = [];
+const fetchCalls: RecordedFetchCall[] = [];
 let apiBaseUrl = "https://mindkid.test";
-let sessionFails = false;
-let sessionResponse: unknown = {
-  manager: { manager_id: 1 },
-  csrf_token: "t0",
-};
 
 vi.mock("#imports", () => {
-  // `useState` chỉ cần một ô có `.value`; `vue` không phải dependency trực tiếp
-  // của apps/admin nên không import được từ test.
-  const states = new Map<string, { value: unknown }>();
+  const states = new Map<string, { value: string | undefined }>();
 
   return {
-    $fetch: (url: string, options: Record<string, unknown> = {}) => {
+    $fetch: (
+      url: string,
+      options: { credentials?: string; headers?: Headers } = {}
+    ) => {
       fetchCalls.push({ url, options });
-      if (url.endsWith("/api/managers/auth/session")) {
-        return sessionFails
-          ? Promise.reject(new Error("UNAUTHENTICATED"))
-          : Promise.resolve(sessionResponse);
-      }
       return Promise.resolve({ ok: true });
     },
+    navigateTo: vi.fn(),
     useRuntimeConfig: () => ({ public: { apiBaseUrl } }),
     useState: (key: string) => {
       const found = states.get(key) ?? { value: undefined };
       states.set(key, found);
       return found;
     },
-    useAsyncData: (_key: string, handler: () => Promise<unknown>) =>
+    useAsyncData: (_key: string, handler: () => Promise<object>) =>
       handler().then((data) => ({ data })),
-    // `useState` là state dùng chung của SPA; test phải xoá giữa các ca, nếu
-    // không token CSRF của ca trước sẽ làm ca sau bỏ qua bước nạp session.
     __resetSharedState: () => states.clear(),
+    __setSharedState: (key: string, val: string | undefined) => {
+      states.set(key, { value: val });
+    },
   };
 });
 
-const { __resetSharedState } = (await import("#imports")) as unknown as {
+interface MockedImportsModule {
   __resetSharedState: () => void;
-};
+  __setSharedState: (key: string, val: string | undefined) => void;
+}
+
+const mockedImports = (await import("#imports")) as MockedImportsModule;
 
 const { apiUrl, useApiClient } = await import("~/composables/use-api-client");
 
 type FetchCall = (typeof fetchCalls)[number] | undefined;
 
 function headerOf(call: FetchCall): string | null {
-  const headers = call?.options.headers as Headers | undefined;
+  const headers = call?.options.headers;
   return headers ? headers.get("x-csrf-token") : null;
 }
 
 describe("admin API client", () => {
   beforeEach(() => {
-    __resetSharedState();
+    mockedImports.__resetSharedState();
     fetchCalls.length = 0;
     apiBaseUrl = "https://mindkid.test";
-    sessionFails = false;
-    sessionResponse = { manager: { manager_id: 1 }, csrf_token: "t0" };
   });
 
   // BR-ARB-04: admin.{domain} là host tĩnh, URL tương đối sẽ trỏ về chính nó.
@@ -97,30 +92,21 @@ describe("admin API client", () => {
     expect(headerOf(call)).toBeNull();
   });
 
-  // Token CSRF của manager sống trong memory: cookie CSRF là host-only trên
-  // {domain} nên JS ở admin.{domain} không đọc được nó.
-  it("loads the session once and then signs mutations with its CSRF token", async () => {
+  it("sends credentials: include on mutations without calling legacy /api/managers/auth/session", async () => {
     const api = useApiClient();
     await api.post("/api/managers/users", { body: { name: "A" } });
 
     expect(fetchCalls.map((call) => call.url)).toEqual([
-      "https://mindkid.test/api/managers/auth/session",
       "https://mindkid.test/api/managers/users",
     ]);
-    expect(headerOf(fetchCalls[1])).toBe("t0");
-
-    await api.post("/api/managers/users", { body: { name: "B" } });
-    expect(fetchCalls).toHaveLength(3);
-    expect(headerOf(fetchCalls[2])).toBe("t0");
+    expect(fetchCalls[0]?.options.credentials).toBe("include");
   });
 
-  it("still issues the request when the session cannot be loaded", async () => {
-    sessionFails = true;
-    await useApiClient().post("/api/managers/users");
+  it("forwards in-memory x-csrf-token header on mutations when present", async () => {
+    mockedImports.__setSharedState("admin-csrf-token", "t0");
+    await useApiClient().post("/api/managers/users", { body: { name: "B" } });
 
-    expect(fetchCalls.map((call) => call.url)).toEqual([
-      "https://mindkid.test/api/managers/auth/session",
-      "https://mindkid.test/api/managers/users",
-    ]);
+    expect(fetchCalls).toHaveLength(1);
+    expect(headerOf(fetchCalls[0])).toBe("t0");
   });
 });

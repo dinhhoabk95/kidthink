@@ -1,21 +1,24 @@
 import {
-  decryptTotpSecret,
   getAuthRedisClient,
   MfaAttemptGuard,
+  verifyBetterAuthTotp,
   verifyPassword,
-  verifyTotpCode,
 } from "@mindkid/auth";
-import { getOwnerDb, managers, mfaSettings } from "@mindkid/db";
+import { requireEnv } from "@mindkid/config";
+import {
+  getOwnerDb,
+  managerAccounts,
+  managers,
+  managerTwoFactors,
+} from "@mindkid/db";
 import { InvalidCredentialsError, MfaLockedError } from "@mindkid/errors/auth";
 import { and, eq } from "drizzle-orm";
 import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 import {
   enforceTwoAxisRateLimit,
-  getMfaEncryptionKey,
   requireManagerSession,
 } from "#server/utils/admin-auth-runtime";
-
 import { markCurrentSessionReauthenticated } from "#server/utils/reauth-runtime";
 
 const ReauthSchema = z
@@ -23,6 +26,7 @@ const ReauthSchema = z
     password: z.string().min(1).max(1024).optional(),
     totp: z.string().length(6).optional(),
     code: z.string().length(6).optional(),
+    method: z.enum(["password", "totp"]).optional(),
   })
   .strict();
 
@@ -35,20 +39,20 @@ async function verifyManagerTotpReauth(
   await attemptGuard.assertNotLocked("manager", managerId);
   const [mfa] = await db
     .select()
-    .from(mfaSettings)
-    .where(
-      and(
-        eq(mfaSettings.accountType, "manager"),
-        eq(mfaSettings.accountId, managerId)
-      )
-    )
+    .from(managerTwoFactors)
+    .where(eq(managerTwoFactors.userId, managerId))
     .limit(1);
 
-  if (!(mfa?.confirmedAt && mfa.secretEncrypted)) {
+  if (!mfa?.secret) {
     throw new InvalidCredentialsError();
   }
-  const secret = decryptTotpSecret(mfa.secretEncrypted, getMfaEncryptionKey());
-  if (!verifyTotpCode(totpCode, secret)) {
+  const ok = await verifyBetterAuthTotp({
+    storedSecret: mfa.secret,
+    rootSecret: requireEnv("NUXT_SESSION_PASSWORD"),
+    namespace: "manager",
+    code: totpCode,
+  });
+  if (!ok) {
     const failure = await attemptGuard.recordFailure("manager", managerId);
     if (failure.locked) {
       throw new MfaLockedError();
@@ -100,14 +104,24 @@ export default defineEventHandler(async (event) => {
     throw new InvalidCredentialsError();
   }
 
+  const [cred] = await db
+    .select({ password: managerAccounts.password })
+    .from(managerAccounts)
+    .where(
+      and(
+        eq(managerAccounts.userId, managerId),
+        eq(managerAccounts.providerId, "credential")
+      )
+    )
+    .limit(1);
+
+  const effectiveHash = cred?.password ?? manager.passwordHash;
   const totpCode = parsed.data.totp ?? parsed.data.code;
+
   if (totpCode) {
     await verifyManagerTotpReauth(db, managerId, totpCode);
   } else {
-    await verifyManagerPasswordReauth(
-      parsed.data.password,
-      manager.passwordHash
-    );
+    await verifyManagerPasswordReauth(parsed.data.password, effectiveHash);
   }
 
   const now = new Date();

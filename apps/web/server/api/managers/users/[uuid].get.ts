@@ -1,17 +1,16 @@
 import {
-  activeSessions,
   auditLogs,
   childProfiles,
   entitlements,
   getOwnerDb,
   managers,
-  mfaSettings,
   paymentOrders,
+  userSessions,
   users,
 } from "@mindkid/db";
 import { NotFoundError } from "@mindkid/errors/common";
 import { projectChildForAdmin } from "@mindkid/shared";
-import { and, count, desc, eq, gt, isNull, sql } from "drizzle-orm";
+import { and, count, desc, eq, gt, sql } from "drizzle-orm";
 import { defineEventHandler, getHeader, getRouterParam, setHeader } from "h3";
 import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
@@ -38,6 +37,7 @@ export default defineEventHandler(async (event) => {
       displayName: users.displayName,
       status: users.status,
       emailVerifiedAt: users.emailVerifiedAt,
+      twoFactorEnabled: users.twoFactorEnabled,
       suspendedReason: users.suspendedReason,
       purgeAt: users.purgeAt,
       createdAt: users.createdAt,
@@ -56,18 +56,14 @@ export default defineEventHandler(async (event) => {
   // 1. Active sessions count & last active
   const sessionRows = await db
     .select({
-      activeCount: count(activeSessions.id),
-      lastUsedAt: sql<Date>`max(${activeSessions.lastUsedAt})`.as(
-        "last_used_at"
-      ),
+      activeCount: count(userSessions.id),
+      lastUsedAt: sql<Date>`max(${userSessions.updatedAt})`.as("last_used_at"),
     })
-    .from(activeSessions)
+    .from(userSessions)
     .where(
       and(
-        eq(activeSessions.accountType, "user"),
-        eq(activeSessions.accountId, targetUser.id),
-        isNull(activeSessions.revokedAt),
-        gt(activeSessions.expiresAt, now)
+        eq(userSessions.userId, targetUser.id),
+        gt(userSessions.expiresAt, now)
       )
     );
 
@@ -79,17 +75,6 @@ export default defineEventHandler(async (event) => {
     lastActiveAt = targetUser.updatedAt.toISOString();
   }
 
-  // Query MFA status
-  const [mfaSetting] = await db
-    .select({ id: mfaSettings.id, confirmedAt: mfaSettings.confirmedAt })
-    .from(mfaSettings)
-    .where(
-      and(
-        eq(mfaSettings.accountType, "user"),
-        eq(mfaSettings.accountId, targetUser.id)
-      )
-    );
-
   const account = {
     id: targetUser.id,
     uuid: targetUser.uuid,
@@ -100,7 +85,7 @@ export default defineEventHandler(async (event) => {
     email_verified_at: targetUser.emailVerifiedAt
       ? targetUser.emailVerifiedAt.toISOString()
       : null,
-    mfa_enabled: Boolean(mfaSetting?.confirmedAt),
+    mfa_enabled: Boolean(targetUser.twoFactorEnabled),
     suspended_reason: targetUser.suspendedReason ?? null,
     purge_at: targetUser.purgeAt ? targetUser.purgeAt.toISOString() : null,
     active_session_count: activeSessionCount,

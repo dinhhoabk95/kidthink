@@ -224,13 +224,14 @@
                 >
                   Gỡ liên kết
                 </button>
-                <a
+                <button
                   class="inline-flex min-h-11 items-center justify-center rounded-xl bg-brand-50 px-4 py-2 font-semibold text-brand-600 text-sm transition-colors hover:bg-brand-100 hover:text-brand-700"
+                  type="button"
                   v-else-if="prov.is_enabled"
-                  :href="`/api/guest/auth/oauth/${prov.provider}/start?intent=link`"
+                  @click="() => handleLinkSocial(prov.provider)"
                 >
                   Liên kết
-                </a>
+                </button>
               </div>
             </div>
           </div>
@@ -517,6 +518,7 @@
   import { normalizeApiError } from "@mindkid/errors/client";
   import { computed, onMounted, reactive, ref } from "vue";
   import { useApi } from "~/composables/use-api";
+  import { useUserAuthClient } from "~/composables/use-auth-client";
   import {
     buildPasswordModalFields,
     DEFAULT_SETTINGS_PROVIDERS,
@@ -542,6 +544,7 @@
   });
 
   const api = useApi();
+  const authClient = useUserAuthClient();
   const isSavingProfile = ref(false);
   const isUnlinking = ref(false);
   const hasPassword = ref(true);
@@ -593,7 +596,7 @@
   onMounted(async () => {
     try {
       const [user, prov, ident, notif] = await Promise.all([
-        api<UserSessionData>("/api/users/auth/session").catch(() => null),
+        api<UserSessionData>("/api/users/profile").catch(() => null),
         api<{ providers: ProviderItem[] }>(
           "/api/guest/auth/oauth/providers"
         ).catch(() => null),
@@ -620,6 +623,25 @@
       // Ignore initial optional fetch failure
     }
   });
+
+  async function handleLinkSocial(provider: string): Promise<void> {
+    if (provider !== "google" && provider !== "facebook") {
+      return;
+    }
+    statusBanner.value = "";
+    try {
+      const res = await authClient.linkSocial({
+        provider,
+        callbackURL: "/me/settings",
+      });
+      if (res.error) {
+        statusBanner.value =
+          res.error.message || "Không thể khởi tạo liên kết mạng xã hội.";
+      }
+    } catch {
+      statusBanner.value = "Không thể kết nối nhà cung cấp đăng nhập lúc này.";
+    }
+  }
 
   async function handleUnlink(provider: string): Promise<void> {
     isUnlinking.value = true;

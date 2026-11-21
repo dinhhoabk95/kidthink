@@ -1,13 +1,12 @@
 import { generateSecureToken, hashSecureToken } from "@mindkid/auth";
-import { getOwnerDb, users, verificationTokens } from "@mindkid/db";
+import { getOwnerDb, users, userVerifications } from "@mindkid/db";
 import { EmailAlreadyInUseError } from "@mindkid/errors/account";
 import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import { dispatchTransactionalEmail } from "@mindkid/notification";
 import { enforceTwoAxisRateLimit } from "@mindkid/shared";
-import { and, eq, isNull } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { defineEventHandler } from "h3";
 import { z } from "zod";
-
 import { buildAccountActionUrl } from "#server/utils/account-action-url";
 import {
   assertRateLimitAllowed,
@@ -24,8 +23,8 @@ const ChangeEmailSchema = z
   .strict();
 
 export default defineEventHandler(async (event) => {
-  const userSession = await requireWebUserSession(event);
-  await requireReauth(event);
+  const userSession = requireWebUserSession(event);
+  requireReauth(event);
 
   const userId = Number(userSession.user_id);
   const rateLimitRes = await enforceTwoAxisRateLimit({
@@ -36,7 +35,6 @@ export default defineEventHandler(async (event) => {
   assertRateLimitAllowed(rateLimitRes.statusCode);
 
   const rawBody = await readBodyWithLimit(event);
-
   const parsed = ChangeEmailSchema.safeParse(rawBody);
   if (!parsed.success) {
     throw new ValidationError("Địa chỉ email không hợp lệ.");
@@ -59,7 +57,6 @@ export default defineEventHandler(async (event) => {
     throw new ValidationError("Địa chỉ email mới trùng với địa chỉ hiện tại.");
   }
 
-  // Check if new_email is already used by another user
   const [existing] = await db
     .select({ id: users.id })
     .from(users)
@@ -70,30 +67,14 @@ export default defineEventHandler(async (event) => {
     throw new EmailAlreadyInUseError();
   }
 
-  // Generate token valid for 24h (BR-ACS-03, BR-ACS-04)
   const rawToken = generateSecureToken();
   const tokenHash = hashSecureToken(`email_change:${rawToken}:${newEmail}`);
   const now = new Date();
   const expiresAt = new Date(now.getTime() + 24 * 60 * 60 * 1000);
 
-  // Invalidate previous pending verification tokens for this user
-  await db
-    .delete(verificationTokens)
-    .where(
-      and(
-        eq(verificationTokens.accountType, "user"),
-        eq(verificationTokens.accountId, userId),
-        eq(verificationTokens.purpose, "email_verify"),
-        isNull(verificationTokens.usedAt)
-      )
-    )
-    .catch(() => null);
-
-  await db.insert(verificationTokens).values({
-    accountType: "user",
-    accountId: userId,
-    purpose: "email_verify",
-    tokenHash,
+  await db.insert(userVerifications).values({
+    identifier: `email_change:${tokenHash}`,
+    value: JSON.stringify({ userId, newEmail }),
     expiresAt,
   });
 
@@ -101,7 +82,6 @@ export default defineEventHandler(async (event) => {
     email: newEmail,
   });
 
-  // Enqueue verification email to the NEW email address (BR-ACS-03)
   await dispatchTransactionalEmail({
     recipientType: "user",
     recipientId: userId,

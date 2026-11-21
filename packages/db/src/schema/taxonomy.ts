@@ -1,8 +1,6 @@
-import { sql } from "drizzle-orm";
 import {
   type AnyPgColumn,
   bigint,
-  check,
   index,
   integer,
   jsonb,
@@ -14,7 +12,7 @@ import {
   text,
   varchar,
 } from "drizzle-orm/pg-core";
-import { timestamps } from "./columns.ts";
+import { idPk, timestamps } from "./columns.ts";
 
 /**
  * Bậc tiến triển trong strand.
@@ -29,37 +27,28 @@ export const skillTierEnum = pgEnum("skill_tier", [
   "advanced",
 ]);
 
-export const competencies = pgTable(
-  "competencies",
-  {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
-    code: varchar("code", { length: 20 }).notNull().unique(),
-    name: varchar("name", { length: 100 }).notNull(),
-    description: text("description"),
-    colorToken: varchar("color_token", { length: 50 }).notNull(),
-    icon: varchar("icon", { length: 50 }).notNull(),
-    position: integer("position").notNull().default(0),
-    ...timestamps(),
-  },
-  (table) => [
-    check("check_competencies_code_format", sql`${table.code} ~ '^C[1-6]$'`),
-  ]
-);
+export const competencies = pgTable("competencies", {
+  id: idPk(),
+  code: varchar("code", { length: 20 }).notNull().unique(),
+  name: varchar("name", { length: 100 }).notNull(),
+  description: text("description"),
+  colorToken: varchar("color_token", { length: 50 }).notNull(),
+  icon: varchar("icon", { length: 50 }).notNull(),
+  position: integer("position").notNull().default(0),
+  ...timestamps(),
+});
 
 export const strands = pgTable(
   "strands",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     code: varchar("code", { length: 30 }).notNull().unique(),
     competencyId: bigint("competency_id", { mode: "number" })
       .notNull()
       .references(() => competencies.id, { onDelete: "cascade" }),
     parentStrandId: bigint("parent_strand_id", { mode: "number" }).references(
-      (): AnyPgColumn => strands.id
+      (): AnyPgColumn => strands.id,
+      { onDelete: "restrict" }
     ),
     name: varchar("name", { length: 100 }).notNull(),
     description: text("description"),
@@ -69,19 +58,13 @@ export const strands = pgTable(
   (table) => [
     index("idx_strands_competency_id").on(table.competencyId),
     index("idx_strands_parent_strand_id").on(table.parentStrandId),
-    check(
-      "check_strands_code_format",
-      sql`${table.code} ~ '^C[1-6]\\.[A-Z]{2,5}$'`
-    ),
   ]
 );
 
 export const skills = pgTable(
   "skills",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     code: varchar("code", { length: 40 }).notNull().unique(),
     strandId: bigint("strand_id", { mode: "number" })
       .notNull()
@@ -97,26 +80,7 @@ export const skills = pgTable(
     position: integer("position").notNull().default(0),
     ...timestamps(),
   },
-  (table) => [
-    index("idx_skills_strand_id").on(table.strandId),
-    check(
-      "check_skills_code_format",
-      sql`${table.code} ~ '^C[1-6]\\.[A-Z]{2,5}\\.\\d{2}$'`
-    ),
-    check(
-      "check_skills_age_min",
-      sql`${table.ageMin} >= 3 AND ${table.ageMin} <= 7`
-    ),
-    check(
-      "check_skills_age_max",
-      sql`${table.ageMax} >= 3 AND ${table.ageMax} <= 7`
-    ),
-    check("check_skills_age_range", sql`${table.ageMin} <= ${table.ageMax}`),
-    check(
-      "check_skills_difficulty",
-      sql`${table.difficulty} >= 1 AND ${table.difficulty} <= 5`
-    ),
-  ]
+  (table) => [index("idx_skills_strand_id").on(table.strandId)]
 );
 
 export const skillPrerequisites = pgTable(
@@ -136,19 +100,13 @@ export const skillPrerequisites = pgTable(
   (table) => [
     primaryKey({ columns: [table.skillId, table.prerequisiteId] }),
     index("idx_skill_prerequisites_prerequisite_id").on(table.prerequisiteId),
-    check(
-      "check_skill_prerequisites_strength",
-      sql`${table.strength} >= 0 AND ${table.strength} <= 1`
-    ),
   ]
 );
 
 export const learningObjectives = pgTable(
   "learning_objectives",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     code: varchar("code", { length: 50 }).notNull().unique(),
     skillId: bigint("skill_id", { mode: "number" })
       .notNull()
@@ -158,21 +116,13 @@ export const learningObjectives = pgTable(
     position: integer("position").notNull().default(0),
     ...timestamps(),
   },
-  (table) => [
-    index("idx_learning_objectives_skill_id").on(table.skillId),
-    check(
-      "check_learning_objectives_code_format",
-      sql`${table.code} ~ '^LO-C[1-6]\\.[A-Z]{2,5}\\.\\d{2}-\\d{2}$'`
-    ),
-  ]
+  (table) => [index("idx_learning_objectives_skill_id").on(table.skillId)]
 );
 
 export const skillDatasets = pgTable(
   "skill_datasets",
   {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
+    id: idPk(),
     code: varchar("code", { length: 50 }).notNull().unique(),
     skillId: bigint("skill_id", { mode: "number" })
       .notNull()
@@ -187,11 +137,5 @@ export const skillDatasets = pgTable(
     extendsSkillCode: varchar("extends_skill_code", { length: 50 }),
     ...timestamps(),
   },
-  (table) => [
-    index("idx_skill_datasets_skill_id").on(table.skillId),
-    check(
-      "check_skill_datasets_code_format",
-      sql`${table.code} ~ '^C[1-6]\\.[A-Z]{2,5}\\.\\d{2}$'`
-    ),
-  ]
+  (table) => [index("idx_skill_datasets_skill_id").on(table.skillId)]
 );

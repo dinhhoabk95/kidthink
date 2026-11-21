@@ -1,114 +1,103 @@
 import {
-  encryptTotpSecret,
   generateTotpCode,
-  generateTotpSecret,
-  hashPassword,
-  hashRecoveryCode,
+  InMemoryRedisClient,
+  setAuthRedisClient,
 } from "@mindkid/auth";
+import { auditLogs, getOwnerDb, managerSessions, managers } from "@mindkid/db";
+import { eq } from "drizzle-orm";
+import { beforeEach, describe, expect, it } from "vitest";
 import {
-  activeSessions,
-  auditLogs,
-  getOwnerDb,
-  managers,
-  mfaRecoveryCodes,
-  mfaSettings,
-} from "@mindkid/db";
+  getManagerAuth,
+  resetBetterAuthInstancesForTests,
+} from "#server/utils/better-auth";
 
-import { and, eq } from "drizzle-orm";
-import { describe, expect, it } from "vitest";
-import loginHandler from "#server/api/guest/auth/managers/login.post";
-import mfaHandler from "#server/api/guest/auth/managers/mfa.post";
-
-function mockEvent(body: unknown) {
-  return {
-    method: "POST",
-    node: { req: { headers: {}, body }, res: {} },
-    context: { body },
-    _requestBody: body,
-    _body: body,
-  } as any;
+function collectCookie(res: Response): string {
+  return res.headers
+    .getSetCookie()
+    .map((raw) => raw.split(";")[0]?.trim() ?? "")
+    .filter((pair) => pair.length > 0 && !pair.endsWith("="))
+    .join("; ");
 }
 
-describe("Task 2 & 3 — Manager Login & MFA Handler (BR-ADA-01..08)", () => {
-  it("Task 2: correct password returns 428 MFA_REQUIRED + challenge without creating active_session", async () => {
-    const db = getOwnerDb();
-    const testEmail = `admin_login_test_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@tinimath.test`;
-    const passwordHash = await hashPassword("AdminSecret123!");
+async function seedManagerWithPassword(
+  tag: string,
+  password = "AdminSecret123!"
+) {
+  const db = getOwnerDb();
+  const email = `admin_${tag}_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@tinimath.test`;
+  const ctx = await getManagerAuth().$context;
+  const passwordHash = await ctx.password.hash(password);
 
-    const [manager] = await db
-      .insert(managers)
-      .values({
-        email: testEmail,
-        passwordHash,
-        displayName: "Test Admin",
-        role: "super_admin",
-        mfaEnabled: true,
-      })
-      .returning();
+  const [manager] = await db
+    .insert(managers)
+    .values({
+      email,
+      passwordHash,
+      displayName: `Admin ${tag}`,
+      role: "super_admin",
+      isActive: true,
+      mfaEnabled: false,
+    })
+    .returning();
+  if (!manager) {
+    throw new Error("Expected manager");
+  }
 
-    const event = mockEvent({
-      email: testEmail,
-      password: "AdminSecret123!",
-    });
-
-    const res = await loginHandler(event);
-    expect(res).toBeDefined();
-    expect(res.status).toBe("MFA_REQUIRED");
-    expect(res.challenge).toBeDefined();
-
-    // Verify NO active_sessions created yet
-    const sessions = await db
-      .select()
-      .from(activeSessions)
-      .where(
-        and(
-          eq(activeSessions.accountType, "manager"),
-          eq(activeSessions.accountId, manager.id)
-        )
-      );
-    expect(sessions).toHaveLength(0);
+  await ctx.internalAdapter.linkAccount({
+    userId: String(manager.id),
+    providerId: "credential",
+    accountId: String(manager.id),
+    password: passwordHash,
   });
 
-  it("BR-ADA-01: manager chưa bật MFA đăng nhập thẳng bằng mật khẩu, tạo phiên và ghi audit manager_login", async () => {
-    const db = getOwnerDb();
-    const testEmail = `admin_direct_login_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@tinimath.test`;
-    const passwordHash = await hashPassword("AdminSecret123!");
+  return { manager, email, password };
+}
 
-    const [manager] = await db
-      .insert(managers)
-      .values({
-        email: testEmail,
-        passwordHash,
-        displayName: "Direct Login Admin",
-        role: "super_admin",
-        mfaEnabled: false,
+describe("Manager Better Auth Login & 2FA Handler (BR-ADA-01..08)", () => {
+  beforeEach(() => {
+    setAuthRedisClient(new InMemoryRedisClient());
+    resetBetterAuthInstancesForTests();
+  });
+
+  it("BR-ADA-03: blocks public sign-up on manager Better Auth instance with 403", async () => {
+    const res = await getManagerAuth().handler(
+      new Request("http://localhost:3000/api/auth/managers/sign-up/email", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          origin: "http://localhost:3000",
+        },
+        body: JSON.stringify({
+          name: "Rogue Admin",
+          email: "rogue@tinimath.test",
+          password: "AdminSecret123!",
+        }),
       })
-      .returning();
+    );
+    expect(res.status).toBe(403);
+  });
 
-    const event = mockEvent({
-      email: testEmail,
-      password: "AdminSecret123!",
-      rememberMe: true,
-    });
+  it("BR-ADA-01: manager without MFA logs in directly, creates manager_sessions row, and audits manager_login", async () => {
+    const db = getOwnerDb();
+    const { manager, email, password } =
+      await seedManagerWithPassword("direct");
 
-    const res = await loginHandler(event);
-    expect(res.status).toBe("ok");
-    expect(res.manager).toEqual({
-      id: manager.id,
-      email: testEmail,
-      display_name: "Direct Login Admin",
-      role: "super_admin",
-    });
+    const res = await getManagerAuth().handler(
+      new Request("http://localhost:3000/api/auth/managers/sign-in/email", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          origin: "http://localhost:3000",
+        },
+        body: JSON.stringify({ email, password, rememberMe: true }),
+      })
+    );
+    expect(res.status).toBe(200);
 
     const sessions = await db
       .select()
-      .from(activeSessions)
-      .where(
-        and(
-          eq(activeSessions.accountType, "manager"),
-          eq(activeSessions.accountId, manager.id)
-        )
-      );
+      .from(managerSessions)
+      .where(eq(managerSessions.userId, manager.id));
     expect(sessions.length).toBeGreaterThan(0);
 
     const logs = await db
@@ -118,31 +107,25 @@ describe("Task 2 & 3 — Manager Login & MFA Handler (BR-ADA-01..08)", () => {
     expect(logs.some((l) => l.entityId === manager.id.toString())).toBe(true);
   });
 
-  it("Task 2: wrong password returns 401 INVALID_CREDENTIALS + audits manager_login_failed", async () => {
+  it("wrong password returns 401 and audits manager_login_failed for unknown email", async () => {
     const db = getOwnerDb();
-    const testEmail = `admin_wrong_pass_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@tinimath.test`;
-    const passwordHash = await hashPassword("AdminSecret123!");
+    const missingEmail = `missing_admin_${Date.now()}@tinimath.test`;
 
-    await db.insert(managers).values({
-      email: testEmail,
-      passwordHash,
-      displayName: "Wrong Pass Admin",
-      role: "super_admin",
-    });
+    const res = await getManagerAuth().handler(
+      new Request("http://localhost:3000/api/auth/managers/sign-in/email", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          origin: "http://localhost:3000",
+        },
+        body: JSON.stringify({
+          email: missingEmail,
+          password: "WrongPassword!",
+        }),
+      })
+    );
+    expect(res.status).toBe(401);
 
-    const event = mockEvent({
-      email: testEmail,
-      password: "WrongPassword!",
-    });
-
-    try {
-      await loginHandler(event);
-      expect.fail("Should have thrown 401");
-    } catch (err: any) {
-      expect(err.statusCode || err.status).toBe(401);
-    }
-
-    // Verify audit log for manager_login_failed
     const logs = await db
       .select()
       .from(auditLogs)
@@ -150,113 +133,115 @@ describe("Task 2 & 3 — Manager Login & MFA Handler (BR-ADA-01..08)", () => {
     expect(logs.length).toBeGreaterThan(0);
   });
 
-  it("Task 3: valid TOTP code completes login without JSON tokens + audits manager_login", async () => {
+  it("enables TOTP + backup codes, requires 2FA on next login, and verifies both TOTP and single-use backup code", async () => {
     const db = getOwnerDb();
-    const testEmail = `admin_mfa_success_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@tinimath.test`;
-    const passwordHash = await hashPassword("AdminSecret123!");
-    const secret = generateTotpSecret();
+    const { manager, email, password } = await seedManagerWithPassword("mfa");
 
-    const [manager] = await db
-      .insert(managers)
-      .values({
-        email: testEmail,
-        passwordHash,
-        displayName: "MFA Success Admin",
-        role: "super_admin",
-        mfaEnabled: true,
+    // 1. Initial login to enable 2FA
+    const initLogin = await getManagerAuth().handler(
+      new Request("http://localhost:3000/api/auth/managers/sign-in/email", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          origin: "http://localhost:3000",
+        },
+        body: JSON.stringify({ email, password }),
       })
-      .returning();
-
-    await db.insert(mfaSettings).values({
-      accountType: "manager",
-      accountId: manager.id,
-      secretEncrypted: encryptTotpSecret(
-        secret,
-        process.env.MFA_ENCRYPTION_KEY as string
-      ),
-      confirmedAt: new Date(),
-    });
-
-    // Step 1: Login to get challenge
-    const loginEvent = mockEvent({
-      email: testEmail,
-      password: "AdminSecret123!",
-    });
-    const loginRes = await loginHandler(loginEvent);
-
-    // Step 2: MFA submit
-    const totpCode = generateTotpCode(secret);
-    const mfaEvent = mockEvent({
-      challenge: loginRes.challenge,
-      code: totpCode,
-    });
-
-    const mfaRes = await mfaHandler(mfaEvent);
-    expect(mfaRes.status).toBe("ok");
-    expect(mfaRes.access_token).toBeUndefined();
-
-    // Verify active_sessions row created
-    const sessions = await db
-      .select()
-      .from(activeSessions)
-      .where(eq(activeSessions.accountId, manager.id));
-    expect(sessions.length).toBeGreaterThan(0);
-
-    // Verify audit log manager_login created
-    const logs = await db
-      .select()
-      .from(auditLogs)
-      .where(eq(auditLogs.action, "manager_login"));
-    expect(logs.some((l) => l.entityId === manager.id.toString())).toBe(true);
-  });
-
-  it("Task 3: valid single-use recovery code completes login and marks code used", async () => {
-    const db = getOwnerDb();
-    const testEmail = `admin_recovery_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@tinimath.test`;
-    const passwordHash = await hashPassword("AdminSecret123!");
-    const recoveryCode = "ABCD-1234-EFGH";
-    const codeHash = hashRecoveryCode(recoveryCode);
-
-    const [manager] = await db
-      .insert(managers)
-      .values({
-        email: testEmail,
-        passwordHash,
-        displayName: "Recovery Admin",
-        role: "super_admin",
-        mfaEnabled: true,
-      })
-      .returning();
-
-    const [recRow] = await db
-      .insert(mfaRecoveryCodes)
-      .values({
-        accountType: "manager",
-        accountId: manager.id,
-        codeHash,
-      })
-      .returning();
-
-    // Login
-    const loginRes = await loginHandler(
-      mockEvent({ email: testEmail, password: "AdminSecret123!" })
     );
+    const sessionCookie = collectCookie(initLogin);
 
-    // MFA submit recovery code
-    const mfaRes = await mfaHandler(
-      mockEvent({
-        challenge: loginRes.challenge,
-        code: recoveryCode,
+    const enableRes = await getManagerAuth().handler(
+      new Request("http://localhost:3000/api/auth/managers/two-factor/enable", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          origin: "http://localhost:3000",
+          cookie: sessionCookie,
+        },
+        body: JSON.stringify({ password }),
+      })
+    );
+    expect(enableRes.status).toBe(200);
+    const enableData = (await enableRes.json()) as {
+      totpURI: string;
+      backupCodes: string[];
+    };
+    const secret = new URL(enableData.totpURI).searchParams.get("secret") ?? "";
+    expect(secret.length).toBeGreaterThan(10);
+    expect(enableData.backupCodes).toHaveLength(10);
+
+    const confirmRes = await getManagerAuth().handler(
+      new Request(
+        "http://localhost:3000/api/auth/managers/two-factor/verify-totp",
+        {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            origin: "http://localhost:3000",
+            cookie: sessionCookie,
+          },
+          body: JSON.stringify({ code: generateTotpCode(secret) }),
+        }
+      )
+    );
+    expect(confirmRes.status).toBe(200);
+    const rotatedSessionCookie = collectCookie(confirmRes) || sessionCookie;
+
+    // Sign out initial session
+    await getManagerAuth().handler(
+      new Request("http://localhost:3000/api/auth/managers/sign-out", {
+        method: "POST",
+        headers: {
+          origin: "http://localhost:3000",
+          cookie: rotatedSessionCookie,
+        },
       })
     );
 
-    expect(mfaRes.status).toBe("ok");
+    // 2. Password sign-in now returns twoFactorRedirect without creating an active session yet
+    const step1 = await getManagerAuth().handler(
+      new Request("http://localhost:3000/api/auth/managers/sign-in/email", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          origin: "http://localhost:3000",
+        },
+        body: JSON.stringify({ email, password }),
+      })
+    );
+    expect(step1.status).toBe(200);
+    const step1Body = (await step1.json()) as { twoFactorRedirect?: boolean };
+    expect(step1Body.twoFactorRedirect).toBe(true);
+    const twoFactorCookie = collectCookie(step1);
 
-    // Verify recovery code marked as used
-    const [updatedRec] = await db
+    const pendingSessions = await db
       .select()
-      .from(mfaRecoveryCodes)
-      .where(eq(mfaRecoveryCodes.id, recRow.id));
-    expect(updatedRec.usedAt).not.toBeNull();
+      .from(managerSessions)
+      .where(eq(managerSessions.userId, manager.id));
+    expect(pendingSessions).toHaveLength(0);
+
+    // 3. Complete login using single-use backup code
+    const firstBackup = enableData.backupCodes[0] ?? "";
+    const backupVerify = await getManagerAuth().handler(
+      new Request(
+        "http://localhost:3000/api/auth/managers/two-factor/verify-backup-code",
+        {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            origin: "http://localhost:3000",
+            cookie: twoFactorCookie,
+          },
+          body: JSON.stringify({ code: firstBackup }),
+        }
+      )
+    );
+    expect(backupVerify.status).toBe(200);
+
+    const afterSessions = await db
+      .select()
+      .from(managerSessions)
+      .where(eq(managerSessions.userId, manager.id));
+    expect(afterSessions.length).toBeGreaterThan(0);
   });
 });

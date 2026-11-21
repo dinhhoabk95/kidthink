@@ -1,12 +1,10 @@
-import {
-  getBrowserSessionService,
-  REAUTH_MAX_AGE_SECONDS,
-} from "@mindkid/auth";
+import { REAUTH_MAX_AGE_SECONDS } from "@mindkid/auth";
 import {
   ReauthRequiredError,
   UnauthenticatedError,
 } from "@mindkid/errors/auth";
 import type { H3Event } from "h3";
+import { recordSessionReauthInStore } from "./better-auth.js";
 
 function reauthRequired(): Error {
   return new ReauthRequiredError({
@@ -14,10 +12,6 @@ function reauthRequired(): Error {
   });
 }
 
-/**
- * UC-004 BR-022: mốc xác minh lại nằm trong bản ghi phiên Redis; middleware
- * `auth` nạp nó vào `event.context.user|manager.reauth_at` ở mỗi request.
- */
 export function requireReauth(
   event: H3Event,
   now: Date = new Date(),
@@ -25,11 +19,7 @@ export function requireReauth(
 ): void {
   const reauthAt =
     event.context.user?.reauth_at ?? event.context.manager?.reauth_at;
-  if (!reauthAt) {
-    throw reauthRequired();
-  }
-
-  if (Number.isNaN(reauthAt.getTime())) {
+  if (!reauthAt || Number.isNaN(reauthAt.getTime())) {
     throw reauthRequired();
   }
 
@@ -39,30 +29,18 @@ export function requireReauth(
   }
 }
 
-/** Ghi mốc xác minh lại vào phiên Redis, rồi phản chiếu vào request hiện tại. */
 export async function markCurrentSessionReauthenticated(
   event: H3Event,
   now: Date = new Date()
 ): Promise<void> {
-  const service = getBrowserSessionService();
   const { user, manager } = event.context;
   if (user) {
-    await service.markReauthenticated(
-      "user",
-      user.user_id,
-      user.session_id,
-      now
-    );
+    await recordSessionReauthInStore("user", user.session_id, now);
     event.context.user = { ...user, reauth_at: now };
     return;
   }
   if (manager) {
-    await service.markReauthenticated(
-      "manager",
-      manager.manager_id,
-      manager.session_id,
-      now
-    );
+    await recordSessionReauthInStore("manager", manager.session_id, now);
     event.context.manager = { ...manager, reauth_at: now };
     return;
   }

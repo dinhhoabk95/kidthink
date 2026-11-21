@@ -1,6 +1,13 @@
 import { requireEnv } from "@mindkid/config";
-import { drizzle } from "drizzle-orm/postgres-js";
+import { defineRelations } from "drizzle-orm";
+import type { PgAsyncDatabase } from "drizzle-orm/pg-core";
+import {
+  drizzle,
+  type PostgresJsQueryResultHKT,
+} from "drizzle-orm/postgres-js";
 import postgres from "postgres";
+// biome-ignore lint/performance/noNamespaceImport: Drizzle relational query builder requires schema namespace object
+import * as schema from "#src/schema/index";
 
 /**
  * Hai kết nối, hai role khác nhau — không phải hai bản sao của một thứ.
@@ -46,11 +53,21 @@ export const getAppSql = lazy(() =>
   postgres(requireEnv("DATABASE_URL_APP"), POOL_OPTIONS)
 );
 
-export const getOwnerDb = lazy(() => drizzle({ client: getOwnerSql() }));
+export const dbRelations = defineRelations(schema);
 
-export const getAppDb = lazy(() => drizzle({ client: getAppSql() }));
+export const getOwnerDb = lazy(() =>
+  drizzle({ client: getOwnerSql(), relations: dbRelations })
+);
+
+export const getAppDb = lazy(() =>
+  drizzle({ client: getAppSql(), relations: dbRelations })
+);
 
 export const getDb = getAppDb;
 
+export type DbSchema = typeof schema;
+export type DbRelations = typeof dbRelations;
 export type AppDb = ReturnType<typeof getAppDb>;
 export type OwnerDb = ReturnType<typeof getOwnerDb>;
+/** Kiểu chung nhận được cả `AppDb`, `OwnerDb` lẫn `tx` bên trong `db.transaction(...)`. */
+export type DbExecutor = PgAsyncDatabase<PostgresJsQueryResultHKT, DbRelations>;

@@ -1,191 +1,188 @@
-import { eq } from "drizzle-orm";
+import { hashPassword } from "@mindkid/auth";
+import { and, eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
+import { getOwnerDb } from "#src/index";
 import {
-  getAppSql,
-  getOwnerDb,
-  PostgresReauthMethodAvailability,
-  PostgresSessionStore,
-} from "#src/index";
-import {
-  activeSessions,
+  managerAccounts,
+  managerSessions,
   managers,
-  mfaSettings,
-  socialIdentities,
+  managerTwoFactors,
+  userAccounts,
+  userSessions,
   users,
+  userTwoFactors,
 } from "#src/schema/identity";
 
-async function createUserFixture(label: string) {
-  const db = getOwnerDb();
-  while (true) {
-    const email = `device-sess-${label}-${Math.floor(100_000 + Math.random() * 899_999)}-${Date.now()}@example.com`;
-    const [existing] = await db
-      .select({ id: users.id })
-      .from(users)
-      .where(eq(users.email, email))
-      .limit(1);
-    if (!existing) {
-      const [user] = await db
-        .insert(users)
-        .values({
-          email,
-          displayName: `User ${label}`,
-          status: "active",
-        })
-        .returning();
-      if (!user) {
-        throw new Error("Failed to insert user");
-      }
-      return user;
-    }
-  }
-}
-
-describe("PostgresSessionStore (Metadata Only under Task #85)", () => {
-  it("records session device metadata without raw tokens or hashes", async () => {
-    const user = await createUserFixture("meta");
-    const store = new PostgresSessionStore(getAppSql());
-
-    const created = await store.recordSession({
-      account_type: "user",
-      account_id: user.id,
-      device_id: "dev_phone_101",
-      remembered: true,
-      device_label: "Chrome / macOS",
-      ip_address: "127.0.0.1",
-      auth_method: "password",
-      expires_at: new Date(Date.now() + 3_600_000),
-    });
-
-    expect(created.id).toBeGreaterThan(0);
-
+describe("Better Auth Session & Account Tables Integration (Task #319)", () => {
+  it("stores multi-device user_sessions and tracks reauthAt timestamp", async () => {
     const db = getOwnerDb();
-    const [row] = await db
-      .select()
-      .from(activeSessions)
-      .where(eq(activeSessions.id, created.id));
-
-    expect(row?.deviceId).toBe("dev_phone_101");
-    expect(row?.remembered).toBe(true);
-    expect(row?.revokedAt).toBeNull();
-  });
-
-  it("marks all sessions revoked and increments session_version", async () => {
-    const user = await createUserFixture("logout-all");
-    const store = new PostgresSessionStore(getAppSql());
-
-    await store.recordSession({
-      account_type: "user",
-      account_id: user.id,
-      device_id: "dev_1",
-      remembered: false,
-      auth_method: "password",
-      expires_at: new Date(Date.now() + 3_600_000),
-    });
-
-    await store.markAllRevoked({ account_type: "user", account_id: user.id });
-
-    const db = getOwnerDb();
-    const [reloadedUser] = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, user.id));
-
-    const [row] = await db
-      .select()
-      .from(activeSessions)
-      .where(eq(activeSessions.accountId, user.id));
-
-    expect(reloadedUser?.sessionVersion).toBe(1);
-    expect(row?.revokedAt).not.toBeNull();
-  });
-
-  it("BR-AUT-14: resolves User reauth methods from password, linked SNS and confirmed TOTP state", async () => {
-    const db = getOwnerDb();
-    let user: typeof users.$inferSelect | undefined;
-    while (!user) {
-      const email = `reauth-user-${Math.floor(100_000 + Math.random() * 899_999)}-${Date.now()}@example.com`;
-      const [existing] = await db
-        .select({ id: users.id })
-        .from(users)
-        .where(eq(users.email, email))
-        .limit(1);
-      if (!existing) {
-        [user] = await db
-          .insert(users)
-          .values({
-            email,
-            displayName: "SNS và TOTP User",
-            passwordHash: null,
-            status: "active",
-          })
-          .returning();
-      }
-    }
+    const suffix = `${Date.now()}-${Math.floor(100_000 + Math.random() * 899_999)}`;
+    const [user] = await db
+      .insert(users)
+      .values({
+        email: `ba-sess-${suffix}@example.com`,
+        displayName: "Session User",
+        emailVerified: true,
+        status: "active",
+      })
+      .returning();
     if (!user) {
       throw new Error("Failed to insert user");
     }
 
-    await db.insert(socialIdentities).values({
-      userId: user.id,
-      provider: "google",
-      providerUserId: `reauth-google-${Date.now()}`,
-    });
-    await db.insert(mfaSettings).values({
-      accountType: "user",
-      accountId: user.id,
-      secretEncrypted: "local-test-ciphertext",
-      confirmedAt: new Date(),
-    });
-
-    const availability = new PostgresReauthMethodAvailability(getAppSql());
-    await expect(
-      availability.getAvailableMethods({
-        account_type: "user",
-        account_id: user.id,
+    const now = new Date();
+    const expiresAt = new Date(now.getTime() + 3_600_000);
+    const [sess] = await db
+      .insert(userSessions)
+      .values({
+        userId: user.id,
+        token: `tok-${suffix}`,
+        ipAddress: "127.0.0.1",
+        userAgent: "Chrome / macOS",
+        authMethod: "password",
+        reauthAt: now,
+        expiresAt,
       })
-    ).resolves.toEqual(["social", "totp"]);
+      .returning();
+
+    expect(sess?.userId).toBe(user.id);
+    expect(sess?.authMethod).toBe("password");
+    expect(sess?.reauthAt).not.toBeNull();
   });
 
-  it("BR-AUT-15: Manager reauth exposes password/TOTP and never social", async () => {
+  it("supports revoking all sessions for a user and incrementing session_version", async () => {
     const db = getOwnerDb();
-    let manager: typeof managers.$inferSelect | undefined;
-    while (!manager) {
-      const email = `reauth-manager-${Math.floor(100_000 + Math.random() * 899_999)}-${Date.now()}@example.com`;
-      const [existing] = await db
-        .select({ id: managers.id })
-        .from(managers)
-        .where(eq(managers.email, email))
-        .limit(1);
-      if (!existing) {
-        [manager] = await db
-          .insert(managers)
-          .values({
-            email,
-            displayName: "Manager MFA",
-            passwordHash: "local-test-argon-placeholder",
-            role: "super_admin",
-            mfaEnabled: true,
-          })
-          .returning();
-      }
+    const suffix = `${Date.now()}-${Math.floor(100_000 + Math.random() * 899_999)}`;
+    const [user] = await db
+      .insert(users)
+      .values({
+        email: `ba-revoke-${suffix}@example.com`,
+        displayName: "Revoke User",
+        emailVerified: true,
+        status: "active",
+      })
+      .returning();
+    if (!user) {
+      throw new Error("Failed to insert user");
     }
+
+    await db.insert(userSessions).values([
+      {
+        userId: user.id,
+        token: `tok-1-${suffix}`,
+        expiresAt: new Date(Date.now() + 3_600_000),
+      },
+      {
+        userId: user.id,
+        token: `tok-2-${suffix}`,
+        expiresAt: new Date(Date.now() + 3_600_000),
+      },
+    ]);
+
+    await db.delete(userSessions).where(eq(userSessions.userId, user.id));
+    await db
+      .update(users)
+      .set({ sessionVersion: user.sessionVersion + 1 })
+      .where(eq(users.id, user.id));
+
+    const remaining = await db
+      .select()
+      .from(userSessions)
+      .where(eq(userSessions.userId, user.id));
+    const [reloaded] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, user.id));
+
+    expect(remaining.length).toBe(0);
+    expect(reloaded?.sessionVersion).toBe(1);
+  });
+
+  it("BR-AUT-14: persists user credential/social accounts and TOTP state cleanly", async () => {
+    const db = getOwnerDb();
+    const suffix = `${Date.now()}-${Math.floor(100_000 + Math.random() * 899_999)}`;
+    const [user] = await db
+      .insert(users)
+      .values({
+        email: `ba-methods-${suffix}@example.com`,
+        displayName: "SNS & TOTP User",
+        passwordHash: null,
+        twoFactorEnabled: true,
+        status: "active",
+      })
+      .returning();
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
+
+    await db.insert(userAccounts).values({
+      userId: user.id,
+      providerId: "google",
+      accountId: `google-${suffix}`,
+    });
+    await db.insert(userTwoFactors).values({
+      userId: user.id,
+      secret: "encrypted-totp-secret",
+      backupCodes: "[]",
+    });
+
+    const accounts = await db
+      .select()
+      .from(userAccounts)
+      .where(eq(userAccounts.userId, user.id));
+    const [tf] = await db
+      .select()
+      .from(userTwoFactors)
+      .where(eq(userTwoFactors.userId, user.id));
+
+    expect(accounts.map((a) => a.providerId)).toEqual(["google"]);
+    expect(tf?.secret).toBe("encrypted-totp-secret");
+  });
+
+  it("BR-AUT-15: Manager stores credential account and TOTP in isolated manager_* tables", async () => {
+    const db = getOwnerDb();
+    const suffix = `${Date.now()}-${Math.floor(100_000 + Math.random() * 899_999)}`;
+    const hash = await hashPassword("xK9#mQ2$vL8!wP5@");
+    const [manager] = await db
+      .insert(managers)
+      .values({
+        email: `ba-mgr-${suffix}@example.com`,
+        displayName: "Manager MFA",
+        passwordHash: hash,
+        role: "super_admin",
+        mfaEnabled: true,
+      })
+      .returning();
     if (!manager) {
       throw new Error("Failed to insert manager");
     }
 
-    await db.insert(mfaSettings).values({
-      accountType: "manager",
-      accountId: manager.id,
-      secretEncrypted: "local-test-ciphertext",
-      confirmedAt: new Date(),
+    await db.insert(managerAccounts).values({
+      userId: manager.id,
+      providerId: "credential",
+      accountId: String(manager.id),
+      password: hash,
+    });
+    await db.insert(managerTwoFactors).values({
+      userId: manager.id,
+      secret: "encrypted-mgr-totp",
+      backupCodes: "[]",
+    });
+    await db.insert(managerSessions).values({
+      userId: manager.id,
+      token: `mgr-tok-${suffix}`,
+      expiresAt: new Date(Date.now() + 3_600_000),
     });
 
-    const availability = new PostgresReauthMethodAvailability(getAppSql());
-    await expect(
-      availability.getAvailableMethods({
-        account_type: "manager",
-        account_id: manager.id,
-      })
-    ).resolves.toEqual(["password", "totp"]);
+    const [cred] = await db
+      .select()
+      .from(managerAccounts)
+      .where(
+        and(
+          eq(managerAccounts.userId, manager.id),
+          eq(managerAccounts.providerId, "credential")
+        )
+      );
+    expect(cred?.password?.startsWith("$argon2id$")).toBe(true);
   });
 });

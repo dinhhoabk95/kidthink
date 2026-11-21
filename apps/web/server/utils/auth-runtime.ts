@@ -1,4 +1,8 @@
-import { requireUserAuth } from "@mindkid/auth";
+import {
+  type ManagerTokenPayload,
+  requireUserAuth,
+  type UserTokenPayload,
+} from "@mindkid/auth";
 import { requireEnv } from "@mindkid/config";
 import { RestrictedModeError } from "@mindkid/errors/auth";
 import { NoActiveChildError } from "@mindkid/errors/child";
@@ -8,8 +12,15 @@ import {
   enforceTwoAxisRateLimit as sharedEnforceTwoAxisRateLimit,
 } from "@mindkid/shared";
 import { getCookie, getHeader, type H3Event, setCookie } from "h3";
+
+declare module "h3" {
+  interface H3EventContext {
+    user?: UserTokenPayload;
+    manager?: ManagerTokenPayload;
+  }
+}
+
 import {
-  createAuthRuntime,
   DEFAULT_MAX_JSON_BODY_BYTES as FACTORY_DEFAULT_MAX_JSON_BODY_BYTES,
   factoryAssertPayloadSize,
   factoryAssertRateLimitAllowed,
@@ -48,9 +59,6 @@ export async function enforceTwoAxisRateLimit(
   context._rateLimitChecked = true;
 }
 
-export const USER_REMEMBER_COOKIE = "tm_u_remember";
-export const MANAGER_REMEMBER_COOKIE = "tm_m_remember";
-
 const DEFAULT_TRUSTED_PROXY_IPS = "127.0.0.1,::1";
 const IPV4_MAPPED_PREFIX = "::ffff:";
 
@@ -63,7 +71,6 @@ interface TrustedProxyConfig {
 let trustedProxyCache: TrustedProxyConfig | null = null;
 let hasLoggedFirstPeerIp = false;
 
-/** Node báo IPv4 qua socket IPv6 dưới dạng `::ffff:127.0.0.1`. */
 function normalizeIp(value: string | undefined): string {
   const trimmed = (value ?? "").trim().toLowerCase();
   return trimmed.startsWith(IPV4_MAPPED_PREFIX)
@@ -161,17 +168,6 @@ function logFirstPeerIpOnce(socketIp: string, isTrusted: boolean): void {
   );
 }
 
-/**
- * BR-RTL-11 — IP dùng cho giới hạn tần suất.
- *
- * nginx là edge và proxy tới loopback, đặt `X-Real-IP $remote_addr`
- * (`infra/nginx/mindkid-proxy.conf:8`). Nếu chỉ đọc địa chỉ socket thì mọi
- * request trong production đều là `127.0.0.1` và trục IP sụp thành một bucket
- * toàn cục. Nhưng header chỉ đáng tin khi **peer là proxy đã cấu hình** — đọc
- * nó vô điều kiện là để client tự khai IP.
- *
- * Cấm — NEVER đọc `X-Forwarded-For`: nó nối thêm được từ phía client.
- */
 export function getVerifiedRemoteIp(event: H3Event): string {
   const request = event.node?.req as
     | { socket?: { remoteAddress?: string } }
@@ -188,18 +184,15 @@ export function getVerifiedRemoteIp(event: H3Event): string {
   return normalizeIp(getHeader(event, "x-real-ip")) || socketIp;
 }
 
-const userRuntime = createAuthRuntime("user");
+const MUTATING_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 
-export const {
-  ensureCsrfCookie: ensureUserCsrfCookie,
-  validateCsrf: validateUserCsrf,
-  setRememberCookie: setUserRememberCookie,
-  clearRememberCookie: clearUserRememberCookie,
-  getRememberCookie: getUserRememberCookie,
-  respondToAuthError: respondToUserAuthError,
-} = userRuntime;
+export function validateUserCsrf(event: H3Event): void {
+  if (event.method && MUTATING_METHODS.has(event.method.toUpperCase())) {
+    factoryAssertSameOriginRequest(event);
+  }
+}
 
-export function requireWebUserSession(event: H3Event) {
+export function requireWebUserSession(event: H3Event): UserTokenPayload {
   validateUserCsrf(event);
   return requireUserAuth(event);
 }
@@ -210,14 +203,6 @@ export function assertUnrestrictedUser(status: string): void {
   }
 }
 
-/**
- * Cookie `active_child_id` mang **UUID** của hồ sơ trẻ, không phải khoá chính.
- * Mọi consumer tra bằng `childProfiles.uuid` (`game-config-runtime.ts`).
- *
- * Cấm — NEVER lấy lại giá trị này từ `event.context`: `UserTokenPayload` mang
- * `active_child_db_id` kiểu số, và không route nào ghi nó. Nhánh fallback cũ
- * `String()` một id số vào ô chờ UUID, làm mọi level bậc ≥ login trả 404.
- */
 export function getOptionalActiveChildUuid(event: H3Event): string | null {
   const cookieVal =
     getCookie(event, "active_child_id") ||

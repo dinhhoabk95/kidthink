@@ -44,8 +44,8 @@ Không có.
 | `BR-SCT-03` (Mỗi `code` là UNIQUE) | Mỗi `code` trong `game_levels`, `curricula`, `skill_datasets` có ràng buộc `UNIQUE` trực tiếp (1 dòng duy nhất mỗi mã) | Đảm bảo mỗi mã nội dung tương ứng đúng 1 bản ghi duy nhất trong DB |
 | `BR-SCT-04` | `content_pack` và `difficulty_params` là **hai cột JSONB riêng** | `BR-DM-02` |
 | `BR-SCT-06` (Tham chiếu trực tiếp bằng `id`) | `curriculum_items` trỏ tới nội dung bằng `(entity_type, entity_id)` trong đó `entity_id` là `id` (bigint) trực tiếp của `game_levels` | Không còn đa version nên không cần cột neo dòng dõi riêng; tham chiếu thẳng vào `id` của bản ghi |
-| `BR-SCT-07` (weight CHECK) | `content_skill_map.weight` có `CHECK (weight > 0 AND weight <= 1)` | [`data-model-overview.md`](../00-foundation/data-model-overview.md) `BR-DM-03` định nghĩa miền `[0,1]`; `CHECK` là chỗ **duy nhất** ép được — miền ghi trong prose không chặn một seeder ghi `weight = 5`. Cận dưới **loại trừ 0**: một hàng `weight = 0` nghĩa là "có ánh xạ nhưng không đóng góp gì", mâu thuẫn với chính việc hàng đó tồn tại, và nó làm mọi phép chuẩn hoá mastery chia cho tổng bằng 0 |
-| `BR-SCT-08` (từ vựng `entity_type` đóng) | `entity_type` (`content_entity_type`) của `content_skill_map`, `content_tag_map` nhận đúng bộ giá trị `game_level` · `curriculum`, ép bằng enum ở tầng database | Đã xóa `content.ts` (`worksheets`, `lessons`, `activities`) và `content_objective_map`; enum ở tầng DB chặn mọi chuỗi sai chính tả |
+| `BR-SCT-07` (weight miền `(0,1]`) | `content_skill_map.weight` bắt buộc thuộc nửa khoảng `(0, 1]`, kiểm tra ở Zod / domain validator và cổng seeder (`BR-DM-14`: không dùng DB `CHECK`) | [`data-model-overview.md`](../00-foundation/data-model-overview.md) `BR-DM-03` định nghĩa miền `(0,1]`. Cận dưới **loại trừ 0**: một hàng `weight = 0` nghĩa là "có ánh xạ nhưng không đóng góp gì", mâu thuẫn với chính việc hàng đó tồn tại, và nó làm mọi phép chuẩn hoá mastery chia cho tổng bằng 0 |
+| `BR-SCT-08` (từ vựng `entity_type` đóng) | `entity_type` (`content_entity_type`) của `content_skill_map`, `content_tag_map`, `library_items`, `curriculum_items`, `personal_curriculum_items` nhận đúng bộ giá trị `game_level` · `curriculum`, ép bằng `pgEnum` ở tầng database | Đã xóa `content.ts` (`worksheets`, `lessons`, `activities`) và `content_objective_map`; enum ở tầng DB chặn mọi chuỗi sai chính tả mà không cần `CHECK` |
 
 ## 7. Data
 
@@ -61,8 +61,8 @@ Không có.
 |---|---|
 | `competencies` | `id` bigserial PK · `code` UNIQUE (`C1`..`C6`, hiển thị) · `name` · `description` · `color_token` · `icon` · `position` |
 | `strands` | `id` bigserial PK · `code` UNIQUE (hiển thị) · `competency_id` FK · `parent_strand_id` FK self (≤1 tầng) · `name` · `description` · `position` |
-| `skills` | `id` bigserial PK · `code` UNIQUE (hiển thị) · `strand_id` FK · `name` · `description` · `age_min` `age_max` smallint CHECK 3–6 · `difficulty` smallint CHECK 1–5 · `thinking_processes` text[] · `what_axis` text[] · `status` enum (`seeded`\|`deprecated`) · `position` |
-| `skill_prerequisites` | `(skill_id, prerequisite_id)` PK · `strength` numeric CHECK 0–1 |
+| `skills` | `id` bigserial PK · `code` UNIQUE (hiển thị) · `strand_id` FK · `name` · `description` · `age_min` `age_max` smallint (3–6 qua Zod/seeder) · `difficulty` smallint (1–5 qua Zod/seeder) · `thinking_processes` text[] · `what_axis` text[] · `status` enum (`seeded`\|`deprecated`) · `position` |
+| `skill_prerequisites` | `(skill_id, prerequisite_id)` PK · `strength` numeric (0–1 qua Zod/seeder) |
 | `learning_objectives` | `id` bigserial PK · `code` UNIQUE (hiển thị) · `skill_id` FK · `behaviour` · `observable_criteria` · `position` |
 | `skill_datasets` | `id` bigserial PK · `code` UNIQUE (= `skill_code`, hiển thị) · `skill_id` FK · `concept_label` · `surface` enum (`game`\|`worksheet`) · `items` jsonb · `axes` jsonb · `ladder` jsonb · `phrasing` jsonb · `created_at` `updated_at` — hình dạng ở mục 7.1 của [`skill-dataset-model.md`](../05-content/skill-dataset-model.md) |
 
@@ -72,7 +72,7 @@ Không có.
 |---|---|
 | `content_tags` | `id` bigserial PK · `code` UNIQUE (hiển thị) · `axis` enum (`what`\|`thinking`\|`mechanic`\|`theme`) · `label` · `status` |
 | `content_tag_map` | `(entity_type, entity_id, tag_id)` PK ghép — `entity_type` thuộc `content_entity_type` (`game_level`\|`curriculum`) |
-| `content_skill_map` | `(entity_type, entity_id, skill_id)` PK ghép · `weight` numeric CHECK — `entity_type` thuộc `content_entity_type` (`game_level`\|`curriculum`) |
+| `content_skill_map` | `(entity_type, entity_id, skill_id)` PK ghép · `weight` numeric (`(0,1]` qua Zod/seeder) — `entity_type` thuộc `content_entity_type` (`game_level`\|`curriculum`) |
 
 Đã xóa `content_objective_map`, `user_tags`, `user_tag_map`.
 
@@ -94,7 +94,7 @@ Mỗi template định nghĩa `code`, `name`, `mechanic`, `layouts`, `content_co
 | `content_pack` | JSONB NOT NULL |
 | `difficulty_params` | JSONB NOT NULL |
 | `theme_id` | |
-| `age_min` `age_max` `difficulty` | CHECK như `skills` |
+| `age_min` `age_max` `difficulty` | Miền số như `skills` (ép qua Zod/seeder, không dùng DB `CHECK`) |
 | `access_tier` | enum NOT NULL — cấm default `free` |
 | `thumbnail_emoji` | ký tự UTF-8 |
 | `skill_dataset_id` | FK `skill_datasets(id)` nullable — level chiếu từ dataset nào |
@@ -142,9 +142,9 @@ Scenario: BR-SCT-08 — entity_type ngoài từ vựng bị chặn
   When ghi vào database
   Then database từ chối vì giá trị không thuộc enum content_entity_type (game_level, curriculum)
 
-Scenario: BR-SCT-07 — weight bị ràng buộc
-  When chèn content_skill_map với weight = 1.5
-  Then CHECK constraint từ chối
+Scenario: BR-SCT-07 — weight bị ràng buộc ở validator
+  When kiểm tra đầu vào content_skill_map với weight = 1.5 hoặc weight = 0
+  Then domain/seeder validator từ chối
 
 Scenario: BR-SCT-06 — curriculum_items trỏ trực tiếp vào id của game_levels
   When đọc định nghĩa curriculum_items và game_levels
@@ -152,8 +152,8 @@ Scenario: BR-SCT-06 — curriculum_items trỏ trực tiếp vào id của game_
   And curriculum_items.entity_id lưu id (bigint) của game_levels
 
 Scenario: skill code đúng định dạng
-  When chèn skills với code "c1.cnt.3"
-  Then CHECK regex từ chối
+  When kiểm tra đầu vào skills với code "c1.cnt.3"
+  Then domain/seeder regex validator từ chối
 
 Scenario: strand lồng tối đa một tầng
   Given strand A có parent là strand B
@@ -166,7 +166,7 @@ Scenario: strand lồng tối đa một tầng
 **Always**
 - `access_tier` NOT NULL không default.
 - `code` UNIQUE trên `game_levels`, `curricula`, `skill_datasets`.
-- CHECK cho mọi enum số (`age`, `difficulty`, `weight`).
+- Zod/seeder validator cho mọi miền số và mã định danh (`age`, `difficulty`, `weight`, `code`), không dùng DB `CHECK` (`BR-DM-14`).
 
 **Ask first**
 - Thêm cột vào `game_levels`, `curricula`, `skill_datasets`.

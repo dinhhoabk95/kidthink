@@ -7,18 +7,29 @@ export type ManagerRole = "super_admin" | "content_reviewer";
 
 export interface UserTokenPayload {
   readonly user_id: number;
+  readonly uuid?: string;
+  readonly email?: string;
+  readonly status?: string;
+  readonly email_verified?: boolean;
+  readonly two_factor_enabled?: boolean;
   readonly display_name: string;
   readonly session_id: string;
+  readonly session_token?: string;
   readonly active_child_db_id?: number;
-  /** Mốc xác minh lại gần nhất của phiên, đọc từ Redis (UC-004 BR-022). */
+  readonly created_at?: Date;
   readonly reauth_at?: Date;
 }
 
 export interface ManagerTokenPayload {
   readonly manager_id: number;
+  readonly uuid?: string;
+  readonly email?: string;
+  readonly mfa_enabled?: boolean;
   readonly display_name: string;
   readonly session_id: string;
+  readonly session_token?: string;
   readonly role: ManagerRole;
+  readonly created_at?: Date;
   readonly reauth_at?: Date;
 }
 
@@ -42,14 +53,13 @@ export type AuthContext =
   | ManagerAuthContext
   | GuestAuthContext;
 
+export interface AuthEventContextShape {
+  user?: UserTokenPayload;
+  manager?: ManagerTokenPayload;
+}
+
 export interface AuthEvent {
-  readonly context:
-    | AuthContext
-    | {
-        readonly user?: UserTokenPayload;
-        readonly manager?: ManagerTokenPayload;
-        readonly [key: string]: unknown;
-      };
+  readonly context: AuthContext | AuthEventContextShape;
 }
 
 export function createAuthContext(context: AuthContext): AuthContext {

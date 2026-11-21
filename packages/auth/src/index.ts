@@ -4,17 +4,6 @@ export {
   verifyChildOwnership,
 } from "./actor-boundaries.js";
 export {
-  type AuthNamespaceConfig,
-  getAuthNamespaceConfig,
-} from "./auth-namespace.js";
-export {
-  type BrowserSessionService,
-  type CreateBrowserSessionInput,
-  DefaultBrowserSessionService,
-  type RestoreRememberSessionInput,
-  type RevokeDeviceInput,
-} from "./browser-session.js";
-export {
   type AuthContext,
   type AuthEvent,
   createAuthContext,
@@ -29,59 +18,24 @@ export {
   type UserTokenPayload,
 } from "./contracts.js";
 export {
-  CSRF_HEADER_NAME,
-  generateCsrfToken,
-  MANAGER_CSRF_COOKIE_NAME,
-  USER_CSRF_COOKIE_NAME,
-  type ValidateCsrfOptions,
-  validateCsrfToken,
-} from "./csrf.js";
+  type AuthInstanceNamespace,
+  deriveInstanceSecret,
+} from "./hmac-secret.js";
 export {
-  type CreatedMfaChallengeOutput,
-  type CreateMfaChallengeInput,
-  MFA_CHALLENGE_TTL_SECONDS,
-  type MfaChallengePayload,
-  MfaChallengeService,
-} from "./mfa-challenge.js";
+  type CreateMindKidManagerAuthDeps,
+  createMindKidManagerAuth,
+  type ManagerAuditAction,
+  type ManagerAuthCallbacks,
+  type ManagerAuthSchemaTables,
+  type ManagerStatusSnapshot,
+  type MindKidManagerAuth,
+} from "./manager-better-auth.js";
 export {
   MFA_LOCK_SECONDS,
   MFA_MAX_FAILURES,
   MfaAttemptGuard,
   type MfaFailureResult,
 } from "./mfa-lockout.js";
-export {
-  type CompleteMfaChallengeInput,
-  completeMfaChallenge,
-} from "./mfa-verification.js";
-export {
-  getOAuthRegistry,
-  type OAuthProviderConfig,
-  OAuthProviderRegistry,
-  type OAuthRegistryOptions,
-} from "./oauth/registry.js";
-export {
-  decodeOAuthStatePayload,
-  encodeOAuthStatePayload,
-  generateOAuthState,
-  OAUTH_COOKIE_NAME,
-  OAUTH_STATE_TTL_SECONDS,
-  sanitizeReturnTo,
-} from "./oauth/state-store.js";
-export {
-  decodeOAuthTicket,
-  encodeOAuthTicket,
-  OAUTH_TICKET_COOKIE_NAME,
-  OAUTH_TICKET_TTL_SECONDS,
-  type OAuthTicketPayload,
-} from "./oauth/ticket-store.js";
-export {
-  isOAuthProvider,
-  type NormalizedProfile,
-  OAUTH_PROVIDERS,
-  type OAuthProvider,
-  type OAuthProviderPublicInfo,
-  type OAuthStatePayload,
-} from "./oauth/types.js";
 export {
   createParentGateToken,
   generateParentGateChallenge,
@@ -125,35 +79,36 @@ export {
   SENSITIVE_REAUTH_ROUTES,
   type SensitiveRouteDefinition,
 } from "./reauth-routes.js";
+export { getAuthRedisClient, setAuthRedisClient } from "./redis-client.js";
 export {
-  getAuthRedisClient,
-  getBrowserSessionService,
-  setAuthRedisClient,
-} from "./redis-client.js";
-export {
-  type AuthNamespace as RedisAuthNamespace,
   buildAuthSentinelKey,
-  type CreatedSessionOutput,
-  type CreateSessionOptions,
+  consumeSocialSignupConsentTicket,
+  createRedisSecondaryStorage,
+  createSocialSignupConsentTicket,
   generateTokenHex,
   InMemoryRedisClient,
   type MinimalRedisClient,
-  REMEMBER_MAX_TTL_SECONDS,
-  RedisSessionStore,
-  type RememberData,
-  type RestoredSessionOutput,
-  type RestoreOptions,
-  SESSION_TTL_SECONDS,
-  type SessionData,
-  sha256,
-} from "./redis-session-store.js";
+  SOCIAL_SIGNUP_CONSENT_COOKIE,
+  SOCIAL_SIGNUP_CONSENT_TTL_SECONDS,
+  type SocialSignupConsentPayload,
+  sha256Hex,
+} from "./redis-secondary-storage.js";
+export { AppError, appError } from "./server.js";
+export { generateTotpCode, verifyBetterAuthTotp } from "./totp-verify.js";
+export type {
+  EmailSignupConsentInput,
+  OAuthClientCredentials,
+  UserAuthCallbacks,
+  UserAuthSchemaTables,
+  UserEmailCallbackInput,
+  UserStatusSnapshot,
+} from "./user-auth-types.js";
 export {
-  decryptTotpSecret,
-  encryptTotpSecret,
-  generateRecoveryCodes,
-  generateTotpCode,
-  generateTotpSecret,
-  generateTotpUri,
-  hashRecoveryCode,
-  verifyTotpCode,
-} from "./totp.js";
+  type CreateMindKidUserAuthDeps,
+  createMindKidUserAuth,
+  getEnabledOAuthProviders,
+  type MindKidUserAuth,
+  REAUTH_FRESH_AGE_SECONDS,
+  REMEMBER_MAX_TTL_SECONDS,
+  SESSION_DEFAULT_TTL_SECONDS,
+} from "./user-better-auth.js";

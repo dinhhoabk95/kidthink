@@ -1,27 +1,14 @@
-import {
-  CSRF_HEADER_NAME,
-  generateCsrfToken,
-  getAuthNamespaceConfig,
-  validateCsrfToken,
-} from "@mindkid/auth";
 import { requireEnv } from "@mindkid/config";
-import { CsrfInvalidError, SessionRevokedError } from "@mindkid/errors/auth";
+import { CsrfInvalidError } from "@mindkid/errors/auth";
 import { isAppError } from "@mindkid/errors/base";
 import {
   PayloadTooLargeError,
   RateLimitedError,
   ServiceUnavailableError,
 } from "@mindkid/errors/common";
-import {
-  deleteCookie,
-  getCookie,
-  getHeader,
-  type H3Event,
-  setCookie,
-} from "h3";
+import { getHeader, type H3Event } from "h3";
 
 export type AuthNamespace = "user" | "manager";
-const CSRF_TOKEN = /^[0-9a-f]{64}$/;
 const INTEGER_TEXT = /^\d+$/;
 const ORIGIN_TRAILING_SLASH = /\/$/;
 
@@ -125,134 +112,4 @@ export function factoryAssertSameOriginRequest(event: H3Event): void {
     }
     throw new CsrfInvalidError();
   }
-}
-
-type HeaderRawValue = number | string | readonly string[] | undefined;
-
-function toHeaderList(value: HeaderRawValue): string[] {
-  if (value === undefined) {
-    return [];
-  }
-  if (Array.isArray(value)) {
-    return value.map(String);
-  }
-  return [String(value)];
-}
-
-function ensureResponseAppendHeader(response: {
-  setHeader?: (name: string, value: string | string[]) => void;
-  getHeader?: (name: string) => HeaderRawValue;
-  appendHeader?: (name: string, value: string | readonly string[]) => void;
-}): boolean {
-  if (typeof response.setHeader !== "function") {
-    return false;
-  }
-  if (typeof response.appendHeader === "function") {
-    return true;
-  }
-  const setHeaderFn = response.setHeader.bind(response);
-  const getHeaderFn = response.getHeader?.bind(response);
-  response.appendHeader = (name: string, value: string | readonly string[]) => {
-    const prev = getHeaderFn ? toHeaderList(getHeaderFn(name)) : [];
-    const additions = toHeaderList(value);
-    setHeaderFn(name, [...prev, ...additions]);
-  };
-  return true;
-}
-
-export function createAuthRuntime(namespace: AuthNamespace) {
-  const config = getAuthNamespaceConfig(namespace);
-  const rememberCookieName =
-    namespace === "manager" ? "tm_m_remember" : "tm_u_remember";
-
-  function ensureCsrfCookie(event: H3Event): string {
-    const current = getCookie(event, config.csrfCookieName);
-    if (current && CSRF_TOKEN.test(current)) {
-      return current;
-    }
-
-    const token = generateCsrfToken();
-    const response = event.node?.res as
-      | {
-          setHeader?: (name: string, value: string | string[]) => void;
-          getHeader?: (name: string) => HeaderRawValue;
-          appendHeader?: (
-            name: string,
-            value: string | readonly string[]
-          ) => void;
-        }
-      | undefined;
-    if (!(response && ensureResponseAppendHeader(response))) {
-      return token;
-    }
-    setCookie(event, config.csrfCookieName, token, {
-      httpOnly: false,
-      maxAge: 365 * 24 * 60 * 60,
-      path: "/",
-      sameSite: "strict",
-      secure: process.env.NODE_ENV === "production",
-    });
-    return token;
-  }
-
-  function validateCsrf(event: H3Event): void {
-    validateCsrfToken({
-      method: event.method,
-      cookieToken: getCookie(event, config.csrfCookieName),
-      headerToken: getHeader(event, CSRF_HEADER_NAME),
-    });
-  }
-
-  const sameSite =
-    namespace === "manager" ? ("strict" as const) : ("lax" as const);
-
-  function setRememberCookie(event: H3Event, rememberToken: string): void {
-    const response = event.node?.res as
-      | {
-          setHeader?: (name: string, value: string | string[]) => void;
-          getHeader?: (name: string) => HeaderRawValue;
-          appendHeader?: (
-            name: string,
-            value: string | readonly string[]
-          ) => void;
-        }
-      | undefined;
-    if (!(response && ensureResponseAppendHeader(response))) {
-      return;
-    }
-    setCookie(event, rememberCookieName, rememberToken, {
-      httpOnly: true,
-      maxAge: 365 * 24 * 3600,
-      path: "/",
-      sameSite,
-      secure: process.env.NODE_ENV === "production",
-    });
-  }
-
-  function clearRememberCookie(event: H3Event): void {
-    deleteCookie(event, rememberCookieName, {
-      path: "/",
-    });
-  }
-
-  function getRememberCookie(event: H3Event): string {
-    const token = getCookie(event, rememberCookieName);
-    if (!token) {
-      throw new SessionRevokedError();
-    }
-    return token;
-  }
-
-  function respondToAuthError(_event: H3Event, error: Error): never {
-    throw error;
-  }
-
-  return {
-    ensureCsrfCookie,
-    validateCsrf,
-    setRememberCookie,
-    clearRememberCookie,
-    getRememberCookie,
-    respondToAuthError,
-  };
 }

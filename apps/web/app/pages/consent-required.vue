@@ -219,6 +219,7 @@
     useUserSession,
   } from "#imports";
   import { useApi } from "~/composables/use-api";
+  import { useUserAuthClient } from "~/composables/use-auth-client";
 
   definePageMeta({
     middleware: ["user-auth"],
@@ -268,6 +269,7 @@
   ];
 
   const api = useApi();
+  const authClient = useUserAuthClient();
   const route = useRoute();
   const router = useRouter();
   const { clear: clearUserSessionState } = useUserSession();
@@ -427,7 +429,7 @@
 
   async function handleLogout(): Promise<void> {
     try {
-      await api("/api/users/auth/logout", { method: "POST" });
+      await authClient.signOut();
       await clearUserSessionState();
     } catch {
       // Bỏ qua lỗi mạng khi đăng xuất

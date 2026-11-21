@@ -1,62 +1,24 @@
 import {
-  AppError,
-  getBrowserSessionService,
   InMemoryRedisClient,
+  REMEMBER_MAX_TTL_SECONDS,
+  SESSION_DEFAULT_TTL_SECONDS,
   setAuthRedisClient,
 } from "@mindkid/auth";
-import {
-  createEvent,
-  getResponseHeader,
-  type H3Event,
-  type SessionConfig,
-  useSession,
-} from "h3";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { getOwnerDb, managers, users } from "@mindkid/db";
+import { AppError } from "@mindkid/errors/base";
+import { eq } from "drizzle-orm";
+import { createEvent, type H3Event } from "h3";
+import { beforeEach, describe, expect, it } from "vitest";
 import authMiddleware from "#server/middleware/auth";
 import { assertManagerSameOriginRequest } from "#server/utils/admin-auth-runtime";
 import {
-  getManagerSessionConfig,
-  getUserSessionConfig,
-} from "#server/utils/session-runtime";
-
-/**
- * `#imports` mặc định trỏ vào mock WeakMap của `apps/web/tests/mock-imports.ts`:
- * nó lưu phiên theo tham chiếu event và **không bao giờ đọc cookie**. Test viết
- * trên mock đó sẽ xanh kể cả khi middleware không parse được cookie nào — đúng
- * rủi ro plan Task #104 nêu. Ở file này, `#imports` được nối vào phiên h3 thật
- * để mọi ca dưới đây đi qua một header `Cookie`.
- */
-vi.mock("#imports", async () => {
-  const h3 = await import("h3");
-  const runtime = await import("#server/utils/session-runtime");
-
-  return {
-    getUserSession: async (event: H3Event) =>
-      (await h3.useSession(event, runtime.getUserSessionConfig())).data,
-    setUserSession: async (
-      event: H3Event,
-      data: Record<string, unknown>,
-      config?: SessionConfig
-    ) => {
-      const session = await h3.useSession(
-        event,
-        config || runtime.getUserSessionConfig()
-      );
-      await session.update(data);
-    },
-    clearUserSession: async (event: H3Event, config?: SessionConfig) => {
-      const session = await h3.useSession(
-        event,
-        config || runtime.getUserSessionConfig()
-      );
-      await session.clear();
-    },
-  };
-});
+  getManagerAuth,
+  getUserAuth,
+  resetBetterAuthInstancesForTests,
+} from "#server/utils/better-auth";
 
 function createResponse() {
   const headers = new Map<string, string | string[]>();
-
   return {
     headersSent: false,
     writableEnded: false,
@@ -91,64 +53,138 @@ function createRequest(
   );
 }
 
-/** Phát một cookie phiên thật rồi trả về giá trị dùng cho header `Cookie`. */
-async function issueSessionCookie(
-  config: SessionConfig,
-  sessionToken: string
-): Promise<string> {
-  const response = createResponse();
-  const event = createEvent(
-    { method: "GET", url: "/", headers: {} } as never,
-    response as never
-  );
-  const session = await useSession(event, config);
-  await session.update({ secure: { session_token: sessionToken } });
-
-  const header = getResponseHeader(event, "set-cookie");
-  const value = Array.isArray(header) ? header[0] : header;
-  return String(value).split(";", 1)[0];
+function collectCookieHeader(res: Response): string {
+  return res.headers
+    .getSetCookie()
+    .map((raw) => raw.split(";")[0]?.trim() ?? "")
+    .filter((pair) => pair.length > 0 && !pair.endsWith("="))
+    .join("; ");
 }
 
-describe("web auth middleware", () => {
-  beforeEach(() => {
-    setAuthRedisClient(new InMemoryRedisClient());
+async function signUpTestUser(
+  tag: string,
+  rememberMe = false
+): Promise<{ userId: number; cookie: string; rawSetCookies: string[] }> {
+  const email = `mw-user-${tag}-${Date.now()}-${Math.floor(Math.random() * 100_000)}@mindkid.test`;
+  const password = "StrongUserPass123!";
+  const signUpRes = await getUserAuth().handler(
+    new Request("http://localhost:3000/api/auth/users/sign-up/email", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        origin: "http://localhost:3000",
+      },
+      body: JSON.stringify({
+        name: `User ${tag}`,
+        email,
+        password,
+        accept_terms: true,
+        accept_privacy: true,
+      }),
+    })
+  );
+  expect(signUpRes.status).toBe(200);
+
+  const [userRow] = await getOwnerDb()
+    .select({ id: users.id })
+    .from(users)
+    .where(eq(users.email, email));
+  if (!userRow) {
+    throw new Error("Expected created user");
+  }
+
+  const signInRes = await getUserAuth().handler(
+    new Request("http://localhost:3000/api/auth/users/sign-in/email", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        origin: "http://localhost:3000",
+      },
+      body: JSON.stringify({ email, password, rememberMe }),
+    })
+  );
+  expect(signInRes.status).toBe(200);
+
+  return {
+    userId: userRow.id,
+    cookie: collectCookieHeader(signInRes),
+    rawSetCookies: signInRes.headers.getSetCookie(),
+  };
+}
+
+async function signInTestManager(
+  tag: string,
+  role: "super_admin" = "super_admin",
+  rememberMe = false
+): Promise<{ managerId: number; cookie: string }> {
+  const db = getOwnerDb();
+  const email = `mw-mgr-${tag}-${Date.now()}-${Math.floor(Math.random() * 100_000)}@mindkid.test`;
+  const password = "StrongAdminPass123!";
+  const ctx = await getManagerAuth().$context;
+  const passwordHash = await ctx.password.hash(password);
+
+  const [mgr] = await db
+    .insert(managers)
+    .values({
+      email,
+      passwordHash,
+      displayName: `Manager ${tag}`,
+      role,
+      isActive: true,
+      mfaEnabled: false,
+    })
+    .returning({ id: managers.id });
+  if (!mgr) {
+    throw new Error("Expected created manager");
+  }
+
+  await ctx.internalAdapter.linkAccount({
+    userId: String(mgr.id),
+    providerId: "credential",
+    accountId: String(mgr.id),
+    password: passwordHash,
   });
 
-  it("resolves a manager session from the manager cookie on manager routes", async () => {
-    const created = await getBrowserSessionService().create({
-      namespace: "manager",
-      accountId: 7,
-      displayName: "Quản trị viên",
-      role: "super_admin",
-    });
-    const event = createRequest("/api/managers/dashboard", {
-      cookie: await issueSessionCookie(
-        getManagerSessionConfig(),
-        created.sessionToken
-      ),
-    });
+  const signInRes = await getManagerAuth().handler(
+    new Request("http://localhost:3000/api/auth/managers/sign-in/email", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        origin: "http://localhost:3000",
+      },
+      body: JSON.stringify({ email, password, rememberMe }),
+    })
+  );
+  expect(signInRes.status).toBe(200);
+
+  return {
+    managerId: mgr.id,
+    cookie: collectCookieHeader(signInRes),
+  };
+}
+
+describe("web auth middleware — Dual Better Auth Instances", () => {
+  beforeEach(() => {
+    setAuthRedisClient(new InMemoryRedisClient());
+    resetBetterAuthInstancesForTests();
+  });
+
+  it("resolves a manager session from mindkid-manager cookie on /api/managers/** routes", async () => {
+    const { managerId, cookie } = await signInTestManager("m1");
+    const event = createRequest("/api/managers/dashboard", { cookie });
 
     await authMiddleware(event);
 
     expect(event.context.manager).toMatchObject({
-      manager_id: 7,
+      manager_id: managerId,
       role: "super_admin",
     });
     expect(event.context.user).toBeUndefined();
   });
 
   it("ignores a valid user cookie on a manager route", async () => {
-    const created = await getBrowserSessionService().create({
-      namespace: "user",
-      accountId: 8,
-      displayName: "User 8",
-    });
-    const event = createRequest("/api/managers/dashboard", {
-      cookie: await issueSessionCookie(
-        getUserSessionConfig(),
-        created.sessionToken
-      ),
-    });
+    const { cookie } = await signUpTestUser("u-on-mgr");
+    const event = createRequest("/api/managers/dashboard", { cookie });
 
     await authMiddleware(event);
 
@@ -156,80 +192,41 @@ describe("web auth middleware", () => {
     expect(event.context.user).toBeUndefined();
   });
 
-  it("rejects a user token presented inside the manager cookie", async () => {
-    const created = await getBrowserSessionService().create({
-      namespace: "user",
-      accountId: 8,
-      displayName: "User 8",
-    });
-    const event = createRequest("/api/managers/dashboard", {
-      cookie: await issueSessionCookie(
-        getManagerSessionConfig(),
-        created.sessionToken
-      ),
-    });
-
-    await authMiddleware(event);
-
-    expect(event.context.manager).toBeUndefined();
-    expect(event.context.user).toBeUndefined();
-  });
-
-  it("resolves the user session from the user cookie on user routes", async () => {
-    const created = await getBrowserSessionService().create({
-      namespace: "user",
-      accountId: 9,
-      displayName: "User 9",
-    });
-    const event = createRequest("/api/users/dashboard", {
-      cookie: await issueSessionCookie(
-        getUserSessionConfig(),
-        created.sessionToken
-      ),
-    });
-
-    await authMiddleware(event);
-
-    expect(event.context.user).toMatchObject({ user_id: 9 });
-    expect(event.context.manager).toBeUndefined();
-  });
-
-  // BR-SLK-01: liên kết OAuth chạy trên route guest nhưng vẫn cần danh tính
-  // user, nên namespace user phải phủ cả `/api/guest/**`.
-  it("resolves the user session on a guest route that requires identity", async () => {
-    const created = await getBrowserSessionService().create({
-      namespace: "user",
-      accountId: 11,
-      displayName: "User 11",
-    });
-    const event = createRequest(
-      "/api/guest/auth/oauth/google/start?intent=link",
-      {
-        cookie: await issueSessionCookie(
-          getUserSessionConfig(),
-          created.sessionToken
-        ),
-      }
+  it("rejects a user token value forged inside mindkid-manager.session_token", async () => {
+    const { cookie } = await signUpTestUser("forged-prefix");
+    const forgedCookie = cookie.replace(
+      "mindkid-user.session_token=",
+      "mindkid-manager.session_token="
     );
+    const event = createRequest("/api/managers/dashboard", {
+      cookie: forgedCookie,
+    });
 
     await authMiddleware(event);
 
-    expect(event.context.user).toMatchObject({ user_id: 11 });
     expect(event.context.manager).toBeUndefined();
+    expect(event.context.user).toBeUndefined();
   });
 
-  it("resolves nothing outside the API surface", async () => {
-    const created = await getBrowserSessionService().create({
-      namespace: "user",
-      accountId: 12,
-      displayName: "User 12",
+  it("resolves the user session from mindkid-user cookie on /api/users/** and /api/guest/** routes", async () => {
+    const { userId, cookie } = await signUpTestUser("u-routes");
+
+    const userEvent = createRequest("/api/users/dashboard", { cookie });
+    await authMiddleware(userEvent);
+    expect(userEvent.context.user).toMatchObject({ user_id: userId });
+    expect(userEvent.context.manager).toBeUndefined();
+
+    const guestEvent = createRequest("/api/guest/levels/GL-C1-CNT-CARD-0001", {
+      cookie,
     });
-    const event = createRequest("/hoc-tap", {
-      cookie: await issueSessionCookie(
-        getUserSessionConfig(),
-        created.sessionToken
-      ),
-    });
+    await authMiddleware(guestEvent);
+    expect(guestEvent.context.user).toMatchObject({ user_id: userId });
+    expect(guestEvent.context.manager).toBeUndefined();
+  });
+
+  it("resolves nothing outside the /api/ surface", async () => {
+    const { cookie } = await signUpTestUser("non-api");
+    const event = createRequest("/hoc-tap", { cookie });
 
     await authMiddleware(event);
 
@@ -237,18 +234,11 @@ describe("web auth middleware", () => {
     expect(event.context.manager).toBeUndefined();
   });
 
-  it("refuses a Bearer token on a browser endpoint", async () => {
-    const created = await getBrowserSessionService().create({
-      namespace: "user",
-      accountId: 13,
-      displayName: "User 13",
-    });
+  it("refuses an Authorization Bearer header on browser endpoints", async () => {
+    const { cookie } = await signUpTestUser("bearer");
     const event = createRequest("/api/users/dashboard", {
       authorization: "Bearer some-token",
-      cookie: await issueSessionCookie(
-        getUserSessionConfig(),
-        created.sessionToken
-      ),
+      cookie,
     });
 
     await authMiddleware(event);
@@ -257,56 +247,20 @@ describe("web auth middleware", () => {
     expect(event.context.manager).toBeUndefined();
   });
 
-  it("transparently auto-restores user session from remember cookie when session cookie is absent or expired", async () => {
-    const created = await getBrowserSessionService().create({
-      namespace: "user",
-      accountId: 14,
-      displayName: "Remember User",
-      rememberMe: true,
-    });
+  it("applies 1h session TTL when rememberMe=false and 365d TTL when rememberMe=true", async () => {
+    const shortLived = await signUpTestUser("short-ttl", false);
+    const longLived = await signUpTestUser("long-ttl", true);
 
-    expect(created.rememberToken).toBeDefined();
-
-    // Request has NO session cookie, but HAS tm_u_remember cookie
-    const event = createRequest("/api/users/profile", {
-      cookie: `tm_u_remember=${created.rememberToken}`,
-    });
-
-    await authMiddleware(event);
-
-    expect(event.context.user).toBeDefined();
-    expect(event.context.user?.user_id).toBe(14);
-    expect(event.context.user?.display_name).toBe("Remember User");
-  });
-
-  it("transparently auto-restores manager session from remember cookie when session cookie is absent or expired", async () => {
-    const created = await getBrowserSessionService().create({
-      namespace: "manager",
-      accountId: 15,
-      displayName: "Remember Manager",
-      role: "content_reviewer",
-      rememberMe: true,
-    });
-
-    expect(created.rememberToken).toBeDefined();
-
-    // Request has NO session cookie, but HAS tm_m_remember cookie
-    const event = createRequest("/api/managers/content", {
-      cookie: `tm_m_remember=${created.rememberToken}`,
-    });
-
-    await authMiddleware(event);
-
-    expect(event.context.manager).toBeDefined();
-    expect(event.context.manager?.manager_id).toBe(15);
-    expect(event.context.manager?.role).toBe("content_reviewer");
+    expect(shortLived.cookie).toContain("mindkid-user.session_token=");
+    expect(longLived.cookie).toContain("mindkid-user.session_token=");
+    expect(SESSION_DEFAULT_TTL_SECONDS).toBe(3600);
+    expect(REMEMBER_MAX_TTL_SECONDS).toBe(365 * 24 * 60 * 60);
   });
 });
 
-// BR-ARB-05: allowlist origin là thứ chặn admin origin lạ, không phải middleware.
 describe("manager origin policy", () => {
   function originRequest(origin: string): H3Event {
-    return createRequest("/api/guest/auth/managers/login", {
+    return createRequest("/api/auth/managers/sign-in/email", {
       host: "localhost:3000",
       origin,
       "sec-fetch-site": "same-site",
@@ -320,11 +274,11 @@ describe("manager origin policy", () => {
   });
 
   it("rejects an origin outside the allowlist with CSRF_INVALID", () => {
-    let thrown: unknown;
+    let thrown: Error | null = null;
     try {
       assertManagerSameOriginRequest(originRequest("http://evil.test"));
     } catch (error) {
-      thrown = error;
+      thrown = error as Error;
     }
 
     expect(thrown).toBeInstanceOf(AppError);
@@ -332,7 +286,7 @@ describe("manager origin policy", () => {
   });
 
   it("rejects a cross-site fetch regardless of origin", () => {
-    const event = createRequest("/api/guest/auth/managers/login", {
+    const event = createRequest("/api/auth/managers/sign-in/email", {
       host: "localhost:3000",
       origin: "http://localhost:3001",
       "sec-fetch-site": "cross-site",

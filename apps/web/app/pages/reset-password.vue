@@ -160,21 +160,16 @@
 </template>
 
 <script lang="ts" setup>
-  import { normalizeApiError } from "@mindkid/errors/client";
   import { computed, ref } from "vue";
   import { definePageMeta, navigateTo, useRoute, useSeoMeta } from "#imports";
-  import { useApi } from "~/composables/use-api";
+  import { useUserAuthClient } from "~/composables/use-auth-client";
 
   definePageMeta({
     layout: false,
     alias: ["/dat-lai-mat-khau"],
   });
 
-  interface ResetPasswordResponse {
-    ok: boolean;
-  }
-
-  const api = useApi();
+  const authClient = useUserAuthClient();
   const route = useRoute();
 
   const token = computed<string>(() => {
@@ -208,27 +203,29 @@
 
     isSubmitting.value = true;
     try {
-      await api<ResetPasswordResponse>("/api/guest/auth/users/reset-password", {
-        method: "POST",
-        body: {
-          token: token.value,
-          new_password: newPassword.value,
-        },
+      const res = await authClient.resetPassword({
+        token: token.value,
+        newPassword: newPassword.value,
       });
-      isSuccess.value = true;
-      await navigateTo("/login");
-    } catch (err) {
-      const apiErr = normalizeApiError(err);
-      if (
-        apiErr.code === "TOKEN_EXPIRED" ||
-        apiErr.statusCode === 410 ||
-        apiErr.statusCode === 404
-      ) {
-        isExpiredFromApi.value = true;
+      if (res.error) {
+        const code = res.error.code ?? "";
+        if (
+          code === "INVALID_TOKEN" ||
+          res.error.status === 400 ||
+          res.error.status === 410 ||
+          res.error.status === 404
+        ) {
+          isExpiredFromApi.value = true;
+          return;
+        }
+        errorMessage.value =
+          res.error.message || "Không thể đặt lại mật khẩu. Vui lòng thử lại.";
         return;
       }
-      errorMessage.value =
-        apiErr.message || "Không thể đặt lại mật khẩu. Vui lòng thử lại.";
+      isSuccess.value = true;
+      await navigateTo("/login");
+    } catch {
+      errorMessage.value = "Không thể đặt lại mật khẩu. Vui lòng thử lại.";
     } finally {
       isSubmitting.value = false;
     }

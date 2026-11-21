@@ -1,8 +1,8 @@
-// Auto-generated or master barrel for database schemas
 export * from "./adaptive.ts";
 export * from "./ai.ts";
 export * from "./ai-credit.ts";
 export * from "./billing.ts";
+export * from "./billing-ops-relations.ts";
 export * from "./child.ts";
 export * from "./child-stickers.ts";
 export * from "./columns.ts";
@@ -11,10 +11,13 @@ export * from "./custom-game.ts";
 export * from "./exports.ts";
 export * from "./game.ts";
 export * from "./identity.ts";
+export * from "./identity-relations.ts";
 export * from "./kid-world.ts";
 export * from "./library.ts";
 export * from "./ops.ts";
 export * from "./personal-curriculum.ts";
 export * from "./play.ts";
+export * from "./play-child-relations.ts";
 export * from "./tagging.ts";
 export * from "./taxonomy.ts";
+export * from "./taxonomy-content-relations.ts";

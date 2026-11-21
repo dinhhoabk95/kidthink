@@ -1,17 +1,19 @@
 import { hashPassword } from "@mindkid/auth";
 import { eq, getTableColumns } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import { getAppDb, getOwnerDb } from "#src/index";
+import { assertNoOAuthProviderTokens, getAppDb, getOwnerDb } from "#src/index";
 import {
-  activeSessions,
   consentLogs,
   consentRequirements,
+  managerPasskeys,
+  managerSessions,
   managers,
-  mfaRecoveryCodes,
-  mfaSettings,
-  socialIdentities,
+  managerTwoFactors,
+  userAccounts,
+  userPasskeys,
+  userSessions,
   users,
-  verificationTokens,
+  userTwoFactors,
 } from "#src/schema/identity";
 
 describe("Identity Schema Integration Tests", () => {
@@ -25,75 +27,99 @@ describe("Identity Schema Integration Tests", () => {
     expect(cols).not.toContain("tenant_id");
   });
 
-  it("BR-SIB-04: polymorphic auth tables (active_sessions, mfa_settings, mfa_recovery_codes, verification_tokens) store (account_type, account_id) for both user and manager", async () => {
+  it("BR-AUT-39 & BR-AUT-45: explicit Better Auth tables isolate user and manager sessions, 2FA, and passkeys", async () => {
     const db = getOwnerDb();
     const suffix = `${Date.now()}-${Math.floor(Math.random() * 100_000)}`;
     const [u] = await db
       .insert(users)
       .values({
-        email: `sib04-u-${suffix}@example.com`,
-        displayName: "SIB04 User",
+        email: `ba-u-${suffix}@example.com`,
+        displayName: "BA User",
       })
       .returning();
     const [m] = await db
       .insert(managers)
       .values({
-        email: `sib04-m-${suffix}@example.com`,
+        email: `ba-m-${suffix}@example.com`,
         passwordHash: await hashPassword("xK9#mQ2$vL8!wP5@"),
-        displayName: "SIB04 Manager",
+        displayName: "BA Manager",
         role: "super_admin",
       })
       .returning();
     if (!(u && m)) {
-      throw new Error("Failed to insert user/manager for BR-SIB-04");
+      throw new Error("Failed to insert user/manager");
     }
 
     const expiresAt = new Date(Date.now() + 3_600_000);
-    const [sess] = await db
-      .insert(activeSessions)
+    const [uSess] = await db
+      .insert(userSessions)
       .values({
-        accountType: "user",
-        accountId: u.id,
-        deviceId: `dev-${suffix}`,
+        userId: u.id,
+        token: `u-tok-${suffix}`,
         authMethod: "password",
         expiresAt,
       })
       .returning();
-    expect(sess?.accountType).toBe("user");
-    expect(sess?.accountId).toBe(u.id);
+    expect(uSess?.userId).toBe(u.id);
 
-    const [mfa] = await db
-      .insert(mfaSettings)
+    const [mSess] = await db
+      .insert(managerSessions)
       .values({
-        accountType: "manager",
-        accountId: m.id,
-        secretEncrypted: "enc-secret",
-      })
-      .returning();
-    expect(mfa?.accountType).toBe("manager");
-    expect(mfa?.accountId).toBe(m.id);
-
-    const [rec] = await db
-      .insert(mfaRecoveryCodes)
-      .values({
-        accountType: "manager",
-        accountId: m.id,
-        codeHash: `hash-${suffix}`,
-      })
-      .returning();
-    expect(rec?.accountType).toBe("manager");
-
-    const [tok] = await db
-      .insert(verificationTokens)
-      .values({
-        accountType: "user",
-        accountId: u.id,
-        purpose: "email_verify",
-        tokenHash: `tok-${suffix}`,
+        userId: m.id,
+        token: `m-tok-${suffix}`,
+        authMethod: "password",
         expiresAt,
       })
       .returning();
-    expect(tok?.accountType).toBe("user");
+    expect(mSess?.userId).toBe(m.id);
+
+    const [u2fa] = await db
+      .insert(userTwoFactors)
+      .values({
+        userId: u.id,
+        secret: `u-sec-${suffix}`,
+        backupCodes: "[]",
+      })
+      .returning();
+    expect(u2fa?.userId).toBe(u.id);
+
+    const [m2fa] = await db
+      .insert(managerTwoFactors)
+      .values({
+        userId: m.id,
+        secret: `m-sec-${suffix}`,
+        backupCodes: "[]",
+      })
+      .returning();
+    expect(m2fa?.userId).toBe(m.id);
+
+    const [uPk] = await db
+      .insert(userPasskeys)
+      .values({
+        userId: u.id,
+        name: "Touch ID",
+        publicKey: "pub-u",
+        credentialID: `cred-u-${suffix}`,
+        counter: 0,
+        deviceType: "singleDevice",
+        backedUp: false,
+      })
+      .returning();
+    expect(uPk?.userId).toBe(u.id);
+
+    const [mPk] = await db
+      .insert(managerPasskeys)
+      .values({
+        userId: m.id,
+        name: "YubiKey",
+        publicKey: "pub-m",
+        credentialID: `cred-m-${suffix}`,
+        counter: 0,
+        deviceType: "multiDevice",
+        backedUp: true,
+      })
+      .returning();
+    expect(mPk?.userId).toBe(m.id);
   });
 
   it("BR-SIB-05: users and managers store Argon2id password_hash ($argon2id$)", async () => {
@@ -142,7 +168,6 @@ describe("Identity Schema Integration Tests", () => {
       status: "active",
     });
 
-    // Inserting uppercase version of same email should throw duplicate key error
     await expect(
       db.insert(users).values({
         email: email.toUpperCase(),
@@ -173,7 +198,7 @@ describe("Identity Schema Integration Tests", () => {
     expect(inserted.passwordHash).toBeNull();
   });
 
-  it("BR-SIB-09: enforces both UNIQUE constraints on social_identities", async () => {
+  it("BR-SIB-09: enforces both UNIQUE constraints on user_accounts", async () => {
     const db = getOwnerDb();
     const email1 = `sns-u1-${Date.now()}@example.com`;
     const email2 = `sns-u2-${Date.now()}@example.com`;
@@ -184,61 +209,51 @@ describe("Identity Schema Integration Tests", () => {
       .insert(users)
       .values({ email: email1, displayName: "U1" })
       .returning();
-    if (!u1) {
-      throw new Error("Failed to insert u1");
-    }
-
     const [u2] = await db
       .insert(users)
       .values({ email: email2, displayName: "U2" })
       .returning();
-    if (!u2) {
-      throw new Error("Failed to insert u2");
+    if (!(u1 && u2)) {
+      throw new Error("Failed to insert u1/u2");
     }
 
-    // 1. First social identity
-    await db.insert(socialIdentities).values({
+    await db.insert(userAccounts).values({
       userId: u1.id,
-      provider: "google",
-      providerUserId: sub1,
-      linkedAt: new Date(),
+      providerId: "google",
+      accountId: sub1,
     });
 
-    // Test UNIQUE 1: (provider, provider_user_id) — u2 trying same google sub should fail
     await expect(
-      db.insert(socialIdentities).values({
+      db.insert(userAccounts).values({
         userId: u2.id,
-        provider: "google",
-        providerUserId: sub1,
-        linkedAt: new Date(),
+        providerId: "google",
+        accountId: sub1,
       })
     ).rejects.toThrow();
 
-    // Test UNIQUE 2: (user_id, provider) — u1 trying another google account should fail
     await expect(
-      db.insert(socialIdentities).values({
+      db.insert(userAccounts).values({
         userId: u1.id,
-        provider: "google",
-        providerUserId: sub2,
-        linkedAt: new Date(),
+        providerId: "google",
+        accountId: sub2,
       })
     ).rejects.toThrow();
   });
 
-  it("BR-SIB-10: social_identities schema has NO provider token columns", () => {
-    // Check columns defined on socialIdentities table
-    const columns = Object.keys(socialIdentities);
-    expect(columns).not.toContain("accessToken");
-    expect(columns).not.toContain("access_token");
-    expect(columns).not.toContain("refreshToken");
-    expect(columns).not.toContain("refresh_token");
-    expect(columns).not.toContain("idToken");
-    expect(columns).not.toContain("id_token");
-    expect(columns).not.toContain("avatarUrl");
-    expect(columns).not.toContain("avatar_url");
+  it("BR-SIB-10: validator rejects non-null OAuth provider tokens", () => {
+    expect(() =>
+      assertNoOAuthProviderTokens({
+        accessToken: null,
+        refreshToken: null,
+        idToken: null,
+      })
+    ).not.toThrow();
+    expect(() =>
+      assertNoOAuthProviderTokens({ refreshToken: "oauth-refresh" })
+    ).toThrow("BR-SIB-10");
   });
 
-  it("BR-SIB-11: CASCADE deletes social_identities when user is deleted", async () => {
+  it("BR-SIB-11: CASCADE deletes user_accounts when user is deleted", async () => {
     const db = getOwnerDb();
     const email = `delete-me-${Date.now()}@example.com`;
 
@@ -250,21 +265,18 @@ describe("Identity Schema Integration Tests", () => {
       throw new Error("Failed to insert u");
     }
 
-    await db.insert(socialIdentities).values({
+    await db.insert(userAccounts).values({
       userId: u.id,
-      provider: "facebook",
-      providerUserId: `fb-${Date.now()}`,
-      linkedAt: new Date(),
+      providerId: "facebook",
+      accountId: `fb-${Date.now()}`,
     });
 
-    // Delete user
     await db.delete(users).where(eq(users.id, u.id));
 
-    // Verify social identity is cascade deleted
     const remaining = await db
       .select()
-      .from(socialIdentities)
-      .where(eq(socialIdentities.userId, u.id));
+      .from(userAccounts)
+      .where(eq(userAccounts.userId, u.id));
 
     expect(remaining.length).toBe(0);
   });
@@ -298,7 +310,6 @@ describe("Identity Schema Integration Tests", () => {
 
     expect(log).toBeDefined();
 
-    // App role UPDATE must be rejected by PostgreSQL permission check
     await expect(
       appDb
         .update(consentLogs)
@@ -306,7 +317,6 @@ describe("Identity Schema Integration Tests", () => {
         .where(eq(consentLogs.id, log.id))
     ).rejects.toThrow();
 
-    // App role DELETE must be rejected by PostgreSQL permission check
     await expect(
       appDb.delete(consentLogs).where(eq(consentLogs.id, log.id))
     ).rejects.toThrow();
@@ -324,14 +334,12 @@ describe("Identity Schema Integration Tests", () => {
       throw new Error("Failed to insert u");
     }
 
-    // 1. Missing consent -> CONSENT_REQUIRED (428)
     const emptyLogs = await ownerDb
       .select()
       .from(consentLogs)
       .where(eq(consentLogs.userId, u.id));
     expect(emptyLogs.length).toBe(0);
 
-    // 2. Insert consent with action accepted
     const [c1] = await ownerDb
       .insert(consentLogs)
       .values({
@@ -349,7 +357,6 @@ describe("Identity Schema Integration Tests", () => {
     expect(c1.action).toBe("accepted");
     expect(c1.consentType).toBe("child_data");
 
-    // 3. Withdrawal consent -> INSERTS new row with action 'withdrawn', previous row untouched (BR-CSM-01)
     await ownerDb.insert(consentLogs).values({
       userId: u.id,
       consentType: "child_data",
@@ -364,7 +371,6 @@ describe("Identity Schema Integration Tests", () => {
       .where(eq(consentLogs.userId, u.id))
       .orderBy(consentLogs.id);
 
-    // Both rows must exist intact (INSERT-only)
     expect(allLogs.length).toBe(2);
     expect(allLogs[0]?.action).toBe("accepted");
     expect(allLogs[1]?.action).toBe("withdrawn");

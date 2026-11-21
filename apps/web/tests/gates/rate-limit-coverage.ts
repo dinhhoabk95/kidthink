@@ -42,10 +42,66 @@ function toRoute(file: string): ApiRoute | null {
   };
 }
 
+const BETTER_AUTH_USER_ENDPOINTS: ReadonlyArray<{
+  readonly method: string;
+  readonly subpath: string;
+}> = [
+  { method: "POST", subpath: "sign-in/email" },
+  { method: "POST", subpath: "sign-up/email" },
+  { method: "POST", subpath: "request-password-reset" },
+  { method: "POST", subpath: "reset-password" },
+  { method: "GET", subpath: "verify-email" },
+  { method: "POST", subpath: "send-verification-email" },
+  { method: "POST", subpath: "sign-in/social" },
+  { method: "POST", subpath: "link-social" },
+  { method: "GET", subpath: "callback/google" },
+  { method: "POST", subpath: "two-factor/enable" },
+  { method: "POST", subpath: "two-factor/verify-totp" },
+  { method: "POST", subpath: "passkey/delete-passkey" },
+  { method: "GET", subpath: "get-session" },
+  { method: "GET", subpath: "list-sessions" },
+  { method: "POST", subpath: "sign-out" },
+];
+
+const BETTER_AUTH_MANAGER_ENDPOINTS: ReadonlyArray<{
+  readonly method: string;
+  readonly subpath: string;
+}> = [
+  { method: "POST", subpath: "sign-in/email" },
+  { method: "POST", subpath: "two-factor/verify-totp" },
+  { method: "POST", subpath: "passkey/delete-passkey" },
+  { method: "GET", subpath: "get-session" },
+  { method: "POST", subpath: "sign-out" },
+];
+
 export function listApiRoutes(): ApiRoute[] {
-  return listFiles(API_ROOT)
+  const allFiles = listFiles(API_ROOT);
+  const discovered = allFiles
     .map(toRoute)
     .filter((route): route is ApiRoute => route !== null);
+
+  for (const file of allFiles) {
+    const rel = relative(API_ROOT, file);
+    if (rel === "auth/users/[...all].ts") {
+      for (const ep of BETTER_AUTH_USER_ENDPOINTS) {
+        discovered.push({
+          file: rel,
+          path: `/api/auth/users/${ep.subpath}`,
+          method: ep.method,
+        });
+      }
+    } else if (rel === "auth/managers/[...all].ts") {
+      for (const ep of BETTER_AUTH_MANAGER_ENDPOINTS) {
+        discovered.push({
+          file: rel,
+          path: `/api/auth/managers/${ep.subpath}`,
+          method: ep.method,
+        });
+      }
+    }
+  }
+
+  return discovered;
 }
 
 export interface RouteClassCoverage {
