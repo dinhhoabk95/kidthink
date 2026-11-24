@@ -41,12 +41,7 @@ describe("Task 6 — GET /api/managers/audit-logs (BR-AUD-09)", () => {
   it("BR-AUD-09: rejects content_reviewer with 403 INSUFFICIENT_ROLE", async () => {
     const event = mockEvent("content_reviewer");
 
-    try {
-      await handler(event);
-      expect.fail("Should have thrown 403");
-    } catch (err: any) {
-      expect(err.statusCode || err.status).toBe(403);
-    }
+    await expect(handler(event)).rejects.toMatchObject({ statusCode: 403 });
   });
 
   it("permits super_admin and returns audit log items with filters", async () => {
@@ -82,11 +77,6 @@ describe("Task 6 — GET /api/managers/audit-logs (BR-AUD-09)", () => {
       "super_admin",
       "/api/managers/audit-logs?limit=abc"
     );
-    try {
-      await handler(event);
-      expect.fail("Should have thrown 422");
-    } catch (err: any) {
-      expect(err.statusCode || err.status).toBe(422);
-    }
+    await expect(handler(event)).rejects.toMatchObject({ statusCode: 422 });
   });
 });

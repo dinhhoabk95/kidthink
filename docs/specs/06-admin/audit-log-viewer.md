@@ -62,7 +62,7 @@ thay vì để "sau này viết query tay".
 ### 7.1 Bộ lọc
 
 `actor_type` · `actor_id` · `action` (multi-select từ 28 hành động) · `entity_type` ·
-`entity_id` · `from` `to` (trần 90 ngày) · `q` (tìm trong `reason`) · `limit` ≤200 · `cursor`. Toàn bộ query đi qua Zod ở route (`BR-SEC-04`): `limit` không phải số nguyên ≥1 → **422**; `limit` > 200 thì bị cắt về 200, không từ chối.
+`entity_id` · `from` `to` (trần 90 ngày) · `q` (tìm trong `reason`) · `limit` ≤200. Toàn bộ query đi qua Zod ở route (`BR-SEC-04`): `limit` không phải số nguyên ≥1 → **422**; `limit` > 200 thì bị cắt về 200, không từ chối.
 
 ### 7.2 Cột
 
