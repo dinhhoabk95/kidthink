@@ -19,6 +19,7 @@ import { wireCloudflareEnv } from "#server/plugins/00-cloudflare-bindings";
 
 const AUTH_COORDINATOR_RE = /AUTH_COORDINATOR/;
 const DB_BLOBS_RE = /DB_BLOBS/;
+const JOB_QUEUE_DO_RE = /JOB_QUEUE_DO/;
 
 const fakeD1 = {
   prepare: vi.fn(),
@@ -50,14 +51,32 @@ describe("00-cloudflare-bindings fail-closed (BR-JOB-12)", () => {
   });
 
   it("thiếu AUTH_COORDINATOR → ném lỗi rõ ràng và KHÔNG đánh dấu env đã nối", () => {
-    const env = { DB_CORE: fakeD1, DB_BLOBS: fakeD1 };
+    const env = {
+      DB_CORE: fakeD1,
+      DB_BLOBS: fakeD1,
+      JOB_QUEUE_DO: makeNamespace(),
+    };
     expect(() => wireCloudflareEnv(env)).toThrow(AUTH_COORDINATOR_RE);
     expect(() => wireCloudflareEnv(env)).toThrow(AUTH_COORDINATOR_RE);
   });
 
   it("thiếu DB_BLOBS → ném lỗi rõ ràng", () => {
-    const env = { DB_CORE: fakeD1, AUTH_COORDINATOR: makeNamespace() };
+    const env = {
+      DB_CORE: fakeD1,
+      AUTH_COORDINATOR: makeNamespace(),
+      JOB_QUEUE_DO: makeNamespace(),
+    };
     expect(() => wireCloudflareEnv(env)).toThrow(DB_BLOBS_RE);
+  });
+
+  it("thiếu JOB_QUEUE_DO → ném lỗi rõ ràng, không nối nửa vời", () => {
+    const env = {
+      DB_CORE: fakeD1,
+      DB_BLOBS: fakeD1,
+      AUTH_COORDINATOR: makeNamespace(),
+    };
+    expect(() => wireCloudflareEnv(env)).toThrow(JOB_QUEUE_DO_RE);
+    expect(dbMock.registerCloudflareD1Bindings).not.toHaveBeenCalled();
   });
 
   it("đủ binding → nối một lần cho mỗi env", () => {
@@ -66,6 +85,7 @@ describe("00-cloudflare-bindings fail-closed (BR-JOB-12)", () => {
       DB_CORE: fakeD1,
       DB_BLOBS: fakeD1,
       AUTH_COORDINATOR: auth,
+      JOB_QUEUE_DO: makeNamespace(),
     };
     wireCloudflareEnv(env);
     wireCloudflareEnv(env);
@@ -79,6 +99,7 @@ describe("00-cloudflare-bindings fail-closed (BR-JOB-12)", () => {
       DB_CORE: fakeD1,
       DB_BLOBS: fakeD1,
       AUTH_COORDINATOR: auth,
+      JOB_QUEUE_DO: makeNamespace(),
     };
     wireCloudflareEnv(env);
     // Lúc nối chưa được lấy stub nào (stub gắn với I/O context của request tạo ra nó).

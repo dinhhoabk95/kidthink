@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@mindkid/config": "workspace:*",
+    "@mindkid/errors": "workspace:*",
     "bullmq": "^6.7.6",
     "ioredis": "6.1.0-beta.1",
     "zod": "^4.6.7"

@@ -1,7 +1,9 @@
 import { getQueueDriverKind } from "@mindkid/config";
+import { ServiceUnavailableError } from "@mindkid/errors/common";
 import type { Job } from "bullmq";
 import {
   getCloudflareQueuePort,
+  type JobQueueCoordinatorPort,
   type QueuedJobEnvelope,
 } from "./do-queue-driver.js";
 import { type JobName, type JobPayloads, requireJob } from "./jobs/index.js";
@@ -78,13 +80,28 @@ function buildEnvelope<T extends JobName>(
   };
 }
 
+/**
+ * Đóng-khi-lỗi (BR-JOB-12): driver `cloudflare-do` mà chưa nối port thì KHÔNG rơi về BullMQ
+ * (Workers không có Valkey, job sẽ mất im lặng) — trả 503 để caller biết.
+ */
+function resolveCloudflareQueuePort(): JobQueueCoordinatorPort | undefined {
+  if (getQueueDriverKind() !== "cloudflare-do") {
+    return undefined;
+  }
+  const port = getCloudflareQueuePort();
+  if (!port) {
+    throw new ServiceUnavailableError();
+  }
+  return port;
+}
+
 export async function enqueue<T extends JobName>(
   name: T,
   payload: JobPayloads[T],
   options?: EnqueueOptions
 ): Promise<Job | { id: string; name: T }> {
-  const cfPort = getCloudflareQueuePort();
-  if (getQueueDriverKind() === "cloudflare-do" && cfPort) {
+  const cfPort = resolveCloudflareQueuePort();
+  if (cfPort) {
     const envelope = buildEnvelope(name, payload, options);
     await cfPort.enqueueBatch([envelope]);
     return { id: envelope.jobId, name };
@@ -109,8 +126,8 @@ export async function enqueueBatch(
   if (items.length === 0) {
     return { accepted: 0 };
   }
-  const cfPort = getCloudflareQueuePort();
-  if (getQueueDriverKind() === "cloudflare-do" && cfPort) {
+  const cfPort = resolveCloudflareQueuePort();
+  if (cfPort) {
     const envelopes = items.map((item) =>
       buildEnvelope(item.name, item.payload, item.options)
     );

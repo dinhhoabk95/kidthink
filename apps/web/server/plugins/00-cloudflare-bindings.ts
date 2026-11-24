@@ -143,13 +143,12 @@ export function wireCloudflareEnv(env: CloudflareEnvBindings): void {
   const core = requireBinding(env.DB_CORE, "DB_CORE");
   const blobs = requireBinding(env.DB_BLOBS, "DB_BLOBS");
   const auth = requireBinding(env.AUTH_COORDINATOR, "AUTH_COORDINATOR");
+  const queue = requireBinding(env.JOB_QUEUE_DO, "JOB_QUEUE_DO");
 
   registerCloudflareD1Bindings(core);
   installBlobStorageDriver(blobs);
   wireAuthCoordinator(auth);
-  if (env.JOB_QUEUE_DO) {
-    wireJobQueueCoordinator(env.JOB_QUEUE_DO);
-  }
+  wireJobQueueCoordinator(queue);
   wiredEnvs.add(env);
 }
 

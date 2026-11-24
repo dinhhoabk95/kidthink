@@ -839,6 +839,9 @@ importers:
       '@mindkid/config':
         specifier: workspace:*
         version: link:../config
+      '@mindkid/errors':
+        specifier: workspace:*
+        version: link:../errors
       bullmq:
         specifier: ^6.7.6
         version: 6.7.6(ioredis@6.1.0-beta.1(supports-color@10.2.2))
