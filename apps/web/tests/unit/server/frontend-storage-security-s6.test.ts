@@ -117,12 +117,12 @@ describe("Slice S6 Security Fixes ([M-07], [M-09], [M-10], [M-12], [L-05..L-07])
     expect(result.limit).toBe(200);
   });
 
-  it("[L-05 & L-07] mindkid-admin.conf.tmpl declares Content-Security-Policy and pnpm-workspace.yaml removes jose", () => {
-    const nginxAdmin = fs.readFileSync(
-      path.join(ROOT_DIR, "infra/nginx/mindkid-admin.conf.tmpl"),
+  it("[L-05 & L-07] admin _headers declares Content-Security-Policy and pnpm-workspace.yaml removes jose", () => {
+    const adminHeaders = fs.readFileSync(
+      path.join(ROOT_DIR, "apps/admin/public/_headers"),
       "utf-8"
     );
-    expect(nginxAdmin).toContain("add_header Content-Security-Policy");
+    expect(adminHeaders).toContain("Content-Security-Policy:");
 
     const workspaceYaml = fs.readFileSync(
       path.join(ROOT_DIR, "pnpm-workspace.yaml"),

@@ -171,24 +171,24 @@ describe("Health Check API (BR-HLT-01..06)", () => {
     );
   });
 
-  it("BR-HLT-06: khi smoke nhận non-200 (503) từ health check, quy trình release abort và rollback", async () => {
+  it("BR-HLT-06: khi smoke nhận non-200 (503) từ health check, workflow deploy abort và wrangler rollback", async () => {
     mockRedisSet.mockRejectedValue(new Error("READONLY You can't write"));
 
     const response = await handler(mockEvent);
     expect(response).toEqual({ status: "error" });
     expect(setResponseStatus).toHaveBeenCalledWith(mockEvent, 503);
 
-    const smokeSh = fs.readFileSync(
-      repoPath("infra/scripts/lib/smoke.sh"),
-      "utf-8"
-    );
-    const releaseSh = fs.readFileSync(
-      repoPath("infra/scripts/lib/cmd-release.sh"),
+    const workflow = fs.readFileSync(
+      repoPath(".github/workflows/deploy-cloudflare.yml"),
       "utf-8"
     );
 
-    expect(smokeSh).toContain('= "200" ]; then');
-    expect(releaseSh).toContain("if ! run_release_smoke 10 3; then");
-    expect(releaseSh).toContain("mk_release_rollback_to");
+    expect(workflow).toContain('if [ "$STATUS" != "200" ]; then');
+    expect(workflow).toContain(
+      "wrangler rollback --config apps/web/wrangler.jsonc"
+    );
+    expect(workflow).toContain(
+      "wrangler rollback --config apps/worker/wrangler.jsonc"
+    );
   });
 });

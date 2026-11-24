@@ -1,7 +1,5 @@
-import fs from "node:fs";
 // biome-ignore lint/performance/noNamespaceImport: spy on module exports in test
 import * as adaptive from "@mindkid/adaptive";
-import { repoPath } from "@mindkid/config/paths";
 import {
   ACCESS_TIER,
   CHILD_STATUS,
@@ -513,24 +511,8 @@ describe("Task P1.6 / #250 — Event Ingestion Gates (BR-ING, BR-EVT, BR-TRX)", 
     expect(rows[2]?.occurredAtMs).toBe(2_147_483_647);
   });
 
-  // BR-ING-07 (Task #294 S2): Rate limit riêng cho route nhận event (600/IP · 300/tài khoản)
-  it("BR-ING-07: nginx defines play_events_ip zone (600r/m) and dedicated location for play-sessions events", () => {
-    const limitsConf = fs.readFileSync(
-      repoPath("infra/nginx/mindkid-limits.conf"),
-      "utf-8"
-    );
-    expect(limitsConf).toContain("zone=play_events_ip:10m rate=600r/m");
-
-    const siteConf = fs.readFileSync(
-      repoPath("infra/nginx/mindkid-site.conf.tmpl"),
-      "utf-8"
-    );
-    expect(siteConf).toContain(
-      "location ~* ^/api/(?:users|guest)/play-sessions/[^/]+/events$"
-    );
-    expect(siteConf).toContain("limit_req zone=play_events_ip");
-  });
-
+  // BR-ING-07 (Task #294 S2): Rate limit riêng cho route nhận event (600/IP · 300/tài khoản).
+  // Vùng Nginx `play_events_ip` đã gỡ theo D14; hạn mức còn lại do limiter trong app.
   it("BR-ING-07: play:events route class enforces 600/IP and 300/account and returns 429 when account exceeds 300", async () => {
     expect(
       resolveRateLimitRouteClass(

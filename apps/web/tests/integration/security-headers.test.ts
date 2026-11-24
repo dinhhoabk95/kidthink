@@ -124,17 +124,6 @@ describe("nuxt.config CSP — nonce placeholder is required", () => {
       `"frame-ancestors": ["'self'", ...allowedOrigins]`
     );
     expect(config).toContain("xFrameOptions: false");
-
-    const nginxSiteConf = readFileSync(
-      join(REPO_ROOT, "infra/nginx/mindkid-site.conf.tmpl"),
-      "utf8"
-    );
-    expect(nginxSiteConf).toContain("location = /play/preview-sandbox");
-    const sandboxLocationBlock =
-      nginxSiteConf
-        .split("location = /play/preview-sandbox")[1]
-        ?.split("}")[0] ?? "";
-    expect(sandboxLocationBlock).not.toContain("X-Frame-Options");
   });
 
   it("BR-SEC-10 — nuxt.config.ts aligns security.headers with middleware and disables built-in rateLimiter, csrf, and xssValidator", () => {
