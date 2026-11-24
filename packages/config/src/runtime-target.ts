@@ -1,6 +1,5 @@
 export type MindKidRuntimeTarget = "cloudflare" | "vps";
 export type DbConnectionName = "sqlite" | "d1" | "pgsql";
-export type StorageDriverKind = "d1-blobs" | "s3";
 export type QueueDriverKind = "cloudflare-do" | "bullmq";
 export type AuthStoreDriverKind = "do" | "valkey";
 
@@ -30,16 +29,6 @@ export function isCloudflareRuntime(
   envValue = process.env.MINDKID_RUNTIME
 ): boolean {
   return getRuntimeTarget(envValue) === "cloudflare";
-}
-
-export function getStorageDriverKind(
-  runtimeEnv = process.env.MINDKID_RUNTIME,
-  driverOverride = process.env.STORAGE_DRIVER
-): StorageDriverKind {
-  if (driverOverride === "d1-blobs" || driverOverride === "s3") {
-    return driverOverride;
-  }
-  return isCloudflareRuntime(runtimeEnv) ? "d1-blobs" : "s3";
 }
 
 export function getQueueDriverKind(
