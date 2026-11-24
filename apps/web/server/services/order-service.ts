@@ -6,6 +6,7 @@ import {
 import {
   ENTITLEMENT_SOURCE,
   ENTITLEMENT_STATUS,
+  isUniqueConstraintError,
   type JsonValue,
   PAYMENT_ORDER_STATUS,
   PAYMENT_ORDER_STATUS_CODEC,
@@ -199,36 +200,14 @@ function parseDbPackageOffers(rawOffers: JsonValue | undefined): Offer[] {
   return offers;
 }
 
-function hasConstraintMarker(target: object, constraintName: string): boolean {
-  const code = Reflect.get(target, "code");
-  const message = Reflect.get(target, "message");
-  const constraint = Reflect.get(target, "constraint");
-  if (constraint === constraintName) {
-    return true;
-  }
-  if (typeof message === "string" && message.includes(constraintName)) {
-    return true;
-  }
-  return (
-    code === "23505" ||
-    code === "SQLITE_CONSTRAINT_UNIQUE" ||
-    code === "SQLITE_CONSTRAINT"
-  );
-}
-
-function isConstraintViolationError(
-  error: Error,
-  constraintName: string
-): boolean {
-  if (hasConstraintMarker(error, constraintName)) {
-    return true;
-  }
-  const cause = Reflect.get(error, "cause");
-  if (typeof cause === "object" && cause !== null) {
-    return hasConstraintMarker(cause, constraintName);
-  }
-  return false;
-}
+const OPEN_ORDER_UNIQUE_COLUMNS = [
+  "payment_orders.user_id",
+  "payment_orders.package_code",
+] as const;
+const LIVE_ENTITLEMENT_UNIQUE_COLUMNS = [
+  "entitlements.user_id",
+  "entitlements.entitlement_key",
+] as const;
 
 function buildVietQrOrThrow(
   amountVnd: number,
@@ -334,10 +313,7 @@ export async function createUserOrder(
       return created;
     });
   } catch (err) {
-    if (
-      err instanceof Error &&
-      isConstraintViolationError(err, "uq_payment_orders_user_pkg_open")
-    ) {
+    if (isUniqueConstraintError(err, OPEN_ORDER_UNIQUE_COLUMNS)) {
       const existingOrder = await repos.orders.findActivePendingForUserPackage(
         userRecord.id,
         input.packageCode
@@ -641,10 +617,7 @@ async function tryGrantSoftUnlockForKey(
     });
     return true;
   } catch (err) {
-    if (
-      err instanceof Error &&
-      isConstraintViolationError(err, "uq_entitlements_user_key_live")
-    ) {
+    if (isUniqueConstraintError(err, LIVE_ENTITLEMENT_UNIQUE_COLUMNS)) {
       return false;
     }
     throw err;

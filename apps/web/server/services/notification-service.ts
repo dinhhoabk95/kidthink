@@ -1,5 +1,6 @@
 import { writeAudit } from "@mindkid/audit";
 import {
+  isUniqueConstraintError,
   type JsonRecord,
   NOTIFICATION_CHANNEL_CODEC,
   NOTIFICATION_ENDPOINT_PROVIDER,
@@ -294,32 +295,6 @@ export async function markAllUserNotificationsRead(
   };
 }
 
-function isUniqueTokenFingerprintError(err: Error | object | null): boolean {
-  if (!err || typeof err !== "object") {
-    return false;
-  }
-  const shaped = err as {
-    readonly code?: string;
-    readonly message?: string;
-    readonly constraint?: string;
-    readonly cause?: {
-      readonly code?: string;
-      readonly message?: string;
-      readonly constraint?: string;
-    };
-  };
-  const code = shaped.code ?? shaped.cause?.code ?? "";
-  const constraint = shaped.constraint ?? shaped.cause?.constraint ?? "";
-  const message = `${shaped.message ?? ""} ${shaped.cause?.message ?? ""}`;
-  return (
-    code === "23505" ||
-    code === "SQLITE_CONSTRAINT_UNIQUE" ||
-    constraint.includes("token_fingerprint") ||
-    message.includes("token_fingerprint") ||
-    message.includes("UNIQUE constraint failed")
-  );
-}
-
 export async function registerUserNotificationEndpoint(
   userId: number,
   input: {
@@ -368,7 +343,7 @@ export async function registerUserNotificationEndpoint(
     if (err instanceof ValidationError) {
       throw err;
     }
-    if (isUniqueTokenFingerprintError(err instanceof Object ? err : null)) {
+    if (isUniqueConstraintError(err, ["token_fingerprint"])) {
       throw new ValidationError(
         "Token thông báo của thiết bị này đã được đăng ký trước đó."
       );

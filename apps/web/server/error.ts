@@ -1,3 +1,4 @@
+import { isUniqueConstraintError } from "@mindkid/db";
 import {
   type ApiErrorBody,
   type AppError,
@@ -12,7 +13,6 @@ import {
   setResponseStatus,
 } from "h3";
 import type { NitroErrorHandler } from "nitropack";
-import { readPostgresErrorCode } from "#server/utils/pg-error";
 
 /**
  * Handler lỗi chung của tầng API — chỗ **duy nhất** dựng body lỗi, theo
@@ -41,7 +41,6 @@ const ERROR_HEADERS: Readonly<Record<string, string>> = {
 
 const ERROR_CODE_TEXT = /^[A-Z][A-Z0-9_]*$/;
 const SERVER_ERROR_STATUS = 500;
-const PG_UNIQUE_VIOLATION = "23505";
 
 /** Thông báo chung cho lỗi 5xx — ❌ NEVER lộ chi tiết nội bộ (`BR-ERR-03`). */
 const INTERNAL_ERROR_BODY: ApiErrorBody = {
@@ -76,14 +75,13 @@ function resolveAppError(error: unknown): AppError | null {
 }
 
 /**
- * Map lỗi Postgres qua `readPostgresErrorCode` → mã nghiệp vụ.
+ * Map lỗi UNIQUE của SQLite/D1 qua `isUniqueConstraintError` → mã nghiệp vụ.
  * ❌ NEVER lộ tên constraint, tên bảng hay stack trace (`BR-ERR-03`).
  */
-function mapPostgresError(
-  error: unknown
+function mapUniqueViolationError(
+  error: Error
 ): { statusCode: number; body: ApiErrorBody } | null {
-  const code = readPostgresErrorCode(error);
-  if (code === PG_UNIQUE_VIOLATION) {
+  if (isUniqueConstraintError(error)) {
     return {
       statusCode: 409,
       body: {
@@ -187,11 +185,11 @@ const errorHandler: NitroErrorHandler = (error, event) => {
   }
 
   const appError = resolveAppError(error);
-  const pgMapped = appError ? null : mapPostgresError(error);
+  const uniqueMapped = appError ? null : mapUniqueViolationError(error);
 
   const statusCode =
     appError?.status ??
-    pgMapped?.statusCode ??
+    uniqueMapped?.statusCode ??
     (isErrorObject(error) && typeof error.statusCode === "number"
       ? error.statusCode
       : SERVER_ERROR_STATUS);
@@ -205,8 +203,8 @@ const errorHandler: NitroErrorHandler = (error, event) => {
   let body: ApiErrorBody;
   if (appError && (statusCode < SERVER_ERROR_STATUS || statusCode === 503)) {
     body = appError.toResponse();
-  } else if (pgMapped) {
-    body = pgMapped.body;
+  } else if (uniqueMapped) {
+    body = uniqueMapped.body;
   } else {
     body = bodyFromH3Error(isErrorObject(error) ? error : {}, statusCode);
   }

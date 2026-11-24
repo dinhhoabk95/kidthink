@@ -54,7 +54,7 @@ Mọi handler API. Mọi spec khai báo mã lỗi phải đăng ký ở đây.
 |---|---|---|
 | `BR-ERR-01` | Mã lỗi là `SCREAMING_SNAKE`, đăng ký ở §7 trước khi dùng | Mã không đăng ký sẽ trùng nghĩa với mã khác |
 | `BR-ERR-02` | **NEVER thông báo lỗi tiết lộ tài khoản có tồn tại hay không** | Enumeration email |
-| `BR-ERR-03` | **NEVER stack trace, tên bảng, tên constraint, hay id nội bộ** trong body | Rò rỉ chi tiết hạ tầng tạo bề mặt tấn công cho kẻ xấu |
+| `BR-ERR-03` | **NEVER stack trace, tên bảng, tên constraint, hay id nội bộ** trong body | Rò rỉ chi tiết hạ tầng tạo bề mặt tấn công cho kẻ xấu. Nguồn lỗi unique là **SQLite/D1** (`UNIQUE constraint failed: ...`, `errcode` 2067/1555), nhận diện bằng `isUniqueConstraintError` của `@mindkid/db`; không dùng SQLSTATE Postgres `23505` |
 | `BR-ERR-04` | Thông báo hướng người dùng là **tiếng Việt thân thiện**, nói được **làm gì tiếp** | "Đã xảy ra lỗi" không giúp ai |
 | `BR-ERR-05` | Record của người khác → `NOT_FOUND` 404, không `FORBIDDEN` 403 | 403 xác nhận record tồn tại |
 | `BR-ERR-06` | Client bắt theo **mã**, không theo chuỗi | Chuỗi tiếng Việt có thể đổi cho UX; mã lỗi bất biến để logic client không bị vỡ |
@@ -251,9 +251,10 @@ Scenario: BR-ERR-02 — quên mật khẩu luôn 200
   And thông báo giống hệt trường hợp email đã đăng ký
 
 Scenario: BR-ERR-03 — body lỗi không lộ nội bộ
-  Given một lỗi vi phạm unique constraint xảy ra
+  Given một lệnh INSERT thật vi phạm UNIQUE của SQLite/D1 (không phải lỗi domain)
   When đọc body response
-  Then body không chứa tên bảng, tên constraint, hay stack trace
+  Then status là 409 CODE_ALREADY_EXISTS
+  And body không chứa tên bảng, tên constraint, hay stack trace
 
 Scenario: BR-ERR-05 — record người khác trả NOT_FOUND
   Given child profile X thuộc user B

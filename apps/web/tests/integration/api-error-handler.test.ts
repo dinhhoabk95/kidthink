@@ -1,3 +1,4 @@
+import { getOwnerDb, users } from "@mindkid/db";
 import {
   ChildNotFoundError,
   CsrfInvalidError,
@@ -5,6 +6,7 @@ import {
   TierLockedError,
   UnauthenticatedError,
 } from "@mindkid/errors";
+import { eq } from "drizzle-orm";
 import { createError } from "h3";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import errorHandler from "#server/error";
@@ -164,21 +166,37 @@ describe("handler lỗi chung /api/*", () => {
     });
   });
 
-  it("lỗi unique Postgres map sang mã nghiệp vụ CODE_ALREADY_EXISTS và không chứa tên constraint", async () => {
-    const pgError = Object.assign(
-      new Error(
-        'duplicate key value violates unique constraint "users_email_unique"'
-      ),
-      { code: "23505" }
-    );
-    await callHandler(pgError);
+  it("lỗi UNIQUE thật của SQLite/D1 map sang CODE_ALREADY_EXISTS và không lộ tên bảng/cột", async () => {
+    const db = getOwnerDb();
+    const uuid = crypto.randomUUID();
+    await db.insert(users).values({
+      uuid,
+      email: `dup-a-${uuid}@example.com`,
+      displayName: "Dup A",
+    });
+    let dupError: Error | null = null;
+    try {
+      await db.insert(users).values({
+        uuid,
+        email: `dup-b-${uuid}@example.com`,
+        displayName: "Dup B",
+      });
+    } catch (error) {
+      dupError = error instanceof Error ? error : null;
+    }
+    expect(dupError).not.toBeNull();
+    expect(dupError?.message).toContain("UNIQUE constraint failed");
+
+    await callHandler(dupError);
 
     expect(sent.status).toBe(409);
     expect(sent.statusText).toBe("CODE_ALREADY_EXISTS");
     const body = bodyOf();
     expect(body.code).toBe("CODE_ALREADY_EXISTS");
-    expect(JSON.stringify(body)).not.toContain("users_email_unique");
-    expect(JSON.stringify(body)).not.toContain("23505");
+    expect(JSON.stringify(body)).not.toContain("users");
+    expect(JSON.stringify(body)).not.toContain("UNIQUE");
+    expect(JSON.stringify(body)).not.toContain("2067");
+    await db.delete(users).where(eq(users.uuid, uuid));
   });
 
   it("đặt đủ header bảo vệ trang lỗi", async () => {
