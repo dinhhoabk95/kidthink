@@ -131,7 +131,7 @@ export admin hạn 1 ngày — `BR-IMG-15`).
 ### 7.4 Scheduler trên Cloudflare
 
 `scheduled()` (mỗi 5 phút) → `scheduledEnvelopesAt(ms)` → `JobQueueDO.enqueueBatch`. Pattern hỗ trợ:
-`*`, `*/n`, số, danh sách phân cách dấu phẩy, khoảng `a-b`; field ngày-trong-tháng và thứ cùng bị
+`*`, `*/n`, số, danh sách phân cách dấu phẩy, khoảng `a-b` (field thứ: `7` là Chủ nhật nên `a-7` khớp cả Chủ nhật); field ngày-trong-tháng và thứ cùng bị
 giới hạn thì khớp khi **một trong hai** khớp (đúng cron chuẩn). Mọi pattern hiện có có phút là bội
 số của 5; pattern lệch 5 phút được dispatch ở tick 5 phút phủ nó. Cảm biến `ops:graduation-check`
 chạy ở tick 02:00 ICT.

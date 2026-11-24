@@ -45,6 +45,22 @@ describe("isCronDue (ICT, BR-JOB-09)", () => {
     ["ngày 1 hàng tháng", "0 0 1 * *", ict(2026, 12, 1, 0, 0), true],
     ["ngày 2 không khớp", "0 0 1 * *", ict(2026, 12, 2, 0, 0), false],
     ["Chủ nhật = 0 và 7", "0 0 * * 7", ict(2026, 11, 22, 0, 0), true],
+    // 2026-11-22 là Chủ nhật, 2026-11-23 thứ hai, 2026-11-28 thứ bảy.
+    ["khoảng 5-7 khớp Chủ nhật", "0 0 * * 5-7", ict(2026, 11, 22, 0, 0), true],
+    ["khoảng 5-7 khớp thứ bảy", "0 0 * * 5-7", ict(2026, 11, 28, 0, 0), true],
+    [
+      "khoảng 5-7 không khớp thứ hai",
+      "0 0 * * 5-7",
+      ict(2026, 11, 23, 0, 0),
+      false,
+    ],
+    ["khoảng 0-7 khớp Chủ nhật", "0 0 * * 0-7", ict(2026, 11, 22, 0, 0), true],
+    [
+      "khoảng 1-5 không khớp Chủ nhật",
+      "0 0 * * 1-5",
+      ict(2026, 11, 22, 0, 0),
+      false,
+    ],
     ["tháng", "0 0 1 12 *", ict(2026, 12, 1, 0, 0), true],
     ["tháng không khớp", "0 0 1 12 *", ict(2026, 11, 1, 0, 0), false],
   ];

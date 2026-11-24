@@ -69,7 +69,11 @@ function fieldMatches(
       const [lo = "", hi = ""] = range.split("-");
       const from = normalize(parseNumber(lo, pattern));
       const to = parseNumber(hi, pattern);
-      return value >= from && value <= to && (value - from) % step === 0;
+      // Field thứ: `a-7` phải khớp Chủ nhật (0) — thử thêm giá trị 7 cho 0.
+      const candidates = value === 0 && normalize(7) === 0 ? [0, 7] : [value];
+      return candidates.some(
+        (v) => v >= from && v <= to && (v - from) % step === 0
+      );
     }
     const exact = normalize(parseNumber(range, pattern));
     return stepRaw === undefined
