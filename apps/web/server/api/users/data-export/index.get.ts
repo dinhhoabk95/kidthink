@@ -1,9 +1,6 @@
 import { defineEventHandler, setHeader } from "h3";
 import { exportUserPersonalData } from "#server/services/account-lifecycle-service";
-import {
-  enforceTwoAxisRateLimit,
-  requireWebUserSession,
-} from "#server/utils/auth-runtime";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { requireReauth } from "#server/utils/reauth-runtime";
 
 export default defineEventHandler(async (event) => {
@@ -11,7 +8,6 @@ export default defineEventHandler(async (event) => {
   const userId = Number(userSession.user_id);
 
   requireReauth(event);
-  await enforceTwoAxisRateLimit(event, "export:data", String(userId));
 
   const payload = await exportUserPersonalData(userId);
 

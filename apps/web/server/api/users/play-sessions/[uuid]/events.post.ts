@@ -5,7 +5,6 @@ import { defineEventHandler, getRouterParam } from "h3";
 import { z } from "zod";
 
 import {
-  enforceTwoAxisRateLimit,
   getOrSetGuestDeviceId,
   requireWebUserSession,
 } from "#server/utils/auth-runtime";
@@ -38,7 +37,6 @@ export default defineEventHandler(async (event) => {
     throw new NotFoundError("NOT_FOUND");
   }
 
-  await enforceTwoAxisRateLimit(event, "play:events", String(user.user_id));
   await requireCurrentConsent(Number(user.user_id), "child_data");
 
   const rawBody = await readJsonBodyWithLimit(event);

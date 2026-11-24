@@ -12,7 +12,6 @@ import {
   submitUserOrderProof,
 } from "#server/services/order-service";
 import {
-  enforceTwoAxisRateLimit,
   getVerifiedRemoteIp,
   requireWebUserSession,
 } from "#server/utils/auth-runtime";
@@ -52,11 +51,6 @@ async function extractProofFormData(event: H3Event): Promise<ParsedProofInput> {
 
 export default defineEventHandler(async (event) => {
   const session = requireWebUserSession(event);
-  await enforceTwoAxisRateLimit(
-    event,
-    "payment:proof",
-    String(session.user_id)
-  );
   const orderUuid = getRouterParam(event, "uuid");
   if (!orderUuid) {
     throw new ValidationError("Order UUID is required");

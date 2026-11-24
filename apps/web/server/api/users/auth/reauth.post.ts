@@ -2,10 +2,7 @@ import { InvalidCredentialsError } from "@mindkid/errors/auth";
 import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 import { verifyUserReauthCredentials } from "#server/services/identity-service";
-import {
-  enforceTwoAxisRateLimit,
-  requireWebUserSession,
-} from "#server/utils/auth-runtime";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { markCurrentSessionReauthenticated } from "#server/utils/reauth-runtime";
 
 const ReauthSchema = z
@@ -20,8 +17,6 @@ const ReauthSchema = z
 export default defineEventHandler(async (event) => {
   const userSession = requireWebUserSession(event);
   const userId = Number(userSession.user_id);
-
-  await enforceTwoAxisRateLimit(event, "auth:reauth", String(userId));
 
   const eventBody = (event.context as { body?: Record<string, string> })?.body;
   const rawBody =

@@ -3,7 +3,6 @@ import { z } from "zod";
 import { createUserOrder } from "#server/services/order-service";
 import { throwValidationError } from "#server/utils/api-error";
 import {
-  enforceTwoAxisRateLimit,
   getVerifiedRemoteIp,
   requireWebUserSession,
 } from "#server/utils/auth-runtime";
@@ -17,11 +16,6 @@ const createOrderSchema = z.object({
 
 export default defineEventHandler(async (event) => {
   const session = requireWebUserSession(event);
-  await enforceTwoAxisRateLimit(
-    event,
-    "payment:create",
-    String(session.user_id)
-  );
 
   const rawBody = await readJsonBodyWithLimit(event);
   const parsed = createOrderSchema.safeParse(rawBody);

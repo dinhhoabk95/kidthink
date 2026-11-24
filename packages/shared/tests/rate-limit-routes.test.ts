@@ -22,6 +22,24 @@ describe("resolveRateLimitRouteClass — RATE-LIMITING §7.2 / BR-RTL-10", () =>
     });
   });
 
+  it("routes that no longer call the limiter themselves are covered by middleware", () => {
+    const covered: ReadonlyArray<readonly [string, string, string]> = [
+      ["POST", "/api/users/auth/reauth", "auth:login"],
+      ["POST", "/api/managers/auth/reauth", "auth:login"],
+      ["GET", "/api/users/data-export", "export:data"],
+      ["POST", "/api/users/play-sessions/x/events", "play:events"],
+      ["POST", "/api/guest/play-sessions/x/events", "play:events"],
+      ["POST", "/api/users/orders", "payment:create"],
+      ["POST", "/api/users/orders/x/proof", "payment:proof"],
+    ];
+    for (const [method, path, className] of covered) {
+      expect(resolve(path, method), `${method} ${path}`).toEqual({
+        mode: "middleware",
+        className,
+      });
+    }
+  });
+
   it("rule 1 — non-API paths are exempt", () => {
     expect(resolve("/")).toEqual({ mode: "exempt", reason: "not-api" });
     expect(resolve("/sitemap.xml")).toEqual({

@@ -3,10 +3,7 @@ import { SessionNotFoundError } from "@mindkid/errors/play";
 import { EventPayloadSchema, ingestPlayEvents } from "@mindkid/play";
 import { defineEventHandler, getRouterParam } from "h3";
 import { z } from "zod";
-import {
-  enforceTwoAxisRateLimit,
-  getOrSetGuestDeviceId,
-} from "#server/utils/auth-runtime";
+import { getOrSetGuestDeviceId } from "#server/utils/auth-runtime";
 import { readJsonBodyWithLimit } from "#server/utils/request-body";
 
 const EventsSchema = z
@@ -33,8 +30,6 @@ export default defineEventHandler(async (event) => {
   if (!uuid) {
     throw new SessionNotFoundError();
   }
-
-  await enforceTwoAxisRateLimit(event, "play:events", uuid);
 
   const guestDeviceId = getOrSetGuestDeviceId(event);
   const rawBody = await readJsonBodyWithLimit(event);
