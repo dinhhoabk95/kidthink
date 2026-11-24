@@ -34,6 +34,13 @@ export default defineNuxtConfig({
           bullmq: fileURLToPath(
             new URL("./server/utils/cloudflare-bullmq-stub.ts", import.meta.url)
           ),
+          // htmlnano (qua mjml-core, chỉ dùng khi `minify`) nạp module động mà wrangler không giải được.
+          htmlnano: fileURLToPath(
+            new URL(
+              "./server/utils/cloudflare-htmlnano-stub.ts",
+              import.meta.url
+            )
+          ),
           ioredis: fileURLToPath(
             new URL(
               "./server/utils/cloudflare-ioredis-stub.ts",

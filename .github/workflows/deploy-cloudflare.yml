@@ -68,6 +68,8 @@ jobs:
         env:
           NUXT_PUBLIC_API_BASE_URL: "https://${{ vars.MINDKID_DOMAIN }}"
           NUXT_ALLOWED_ORIGINS: "https://${{ vars.MINDKID_DOMAIN }},https://admin.${{ vars.MINDKID_DOMAIN }}"
+          # Nitro cloudflare_module bundle ~13 MB: heap mặc định của Node không đủ.
+          NODE_OPTIONS: "--max-old-space-size=10240"
         run: |
           pnpm build
           npx tsx scripts/deploy/verify-cf-budget.ts
