@@ -2,7 +2,7 @@
 # Admin không có Nitro server nên `nuxt-security` không chạy; file này là owner duy nhất của header.
 # Spec: docs/SPEC.md D14, docs/specs/01-platform/release-deploy.md §7.2, BR-SEC-10.
 # Placeholder trong script-src được thay lúc build bằng sha256 của inline script Nuxt (scripts/csp-hashes.ts).
-# Giá trị chép từ cấu hình Nginx admin đã gỡ (infra/nginx/mindkid-admin.conf.tmpl).
+# Giá trị gốc chép từ cấu hình Nginx admin đã gỡ theo D14 (không còn infra/nginx/ trong kho); file này là nguồn duy nhất.
 
 /*
   Strict-Transport-Security: max-age=31536000; includeSubDomains

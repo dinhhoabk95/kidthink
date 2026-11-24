@@ -117,7 +117,7 @@ thành hình phạt.
 | `BR-CIG-14` (Cấm nới để qua cổng) | Cấm — **NEVER** thêm kỹ năng vào danh sách miễn trừ chỉ để một đợt nội dung kịp phát hành | `AGENTS.md`: không nới rule chỉ để code hiện tại qua được cổng |
 | `BR-CIG-15` (thứ tự nền trước) | Hàng đợi sắp theo **thứ tự topo trên kỹ năng**, cạnh lấy thẳng từ `skill_prerequisites`. Hai tiết cùng một chủ đề — không có cạnh nào giữa chúng — sắp theo `concept.sequence_no` | Dạy từ trước khi dạy ký tự là dạy ngược. Prerequisite là ràng buộc sư phạm không được nới. Topo không phân biệt được hai tiết cùng chủ đề, nên phải có số thứ tự tường minh — `BR-CIM-20` |
 | `BR-CIG-16` (tối đa 2 bài mỗi lần vào) | Một lần vào trả tối đa **2** bài trong `intro_queue`; phần còn lại đòi ở lần vào sau, kèm `intro_remaining` | Bao đóng prerequisite có thể dài. Chắn một đứa trẻ sau sáu phút bài dạy để tới màn chơi 90 giây là cách chắc chắn nhất làm nó bỏ. Trẻ đi dần vẫn phải qua hết, chỉ là không qua hết trong một hơi |
-| `BR-CIG-18` (cổng phải có người gọi) | Cổng bậc thang mục 7.4 BẮT BUỘC được gọi bởi một script có tên trong `package.json` và chạy trong gate tự động (`scripts/check.sh` đã gỡ 2026-10-31, hiện chưa có cổng). Ca âm mục 7.4 BẮT BUỘC tồn tại | Đo 2026-09-06: `scripts/check-intro-coverage.ts` cài đặt đúng `BR-CIG-13` nhưng **không script nào gọi nó** — không `package.json`, không `lefthook.yml`, không `check.sh`. Nợ 392 tăng tự do suốt thời gian đó. Một cổng không ai gọi là tài liệu, không phải cổng |
+| `BR-CIG-18` (cổng phải có người gọi) | Cổng bậc thang mục 7.4 BẮT BUỘC được gọi bởi một script có tên trong `package.json` và chạy trong gate tự động (`scripts/check.sh` và `check:intro-coverage` **đã gỡ** 2026-10-31: hiện **chưa có cổng nào chạy**, luật giữ bằng review cho tới khi dựng lại cổng trong `tests/gates/` của workspace). Ca âm mục 7.4 BẮT BUỘC tồn tại | Đo 2026-09-06: `scripts/check-intro-coverage.ts` cài đặt đúng `BR-CIG-13` nhưng **không script nào gọi nó** — không `package.json`, không `lefthook.yml`, không `check.sh`. Nợ 392 tăng tự do suốt thời gian đó. Một cổng không ai gọi là tài liệu, không phải cổng |
 | `BR-CIG-17` (bao đóng, không phải một tầng) | Tập kỹ năng gồm cả prerequisite **bắc cầu**, không chỉ tầng liền kề. Cấm — **NEVER** gom về strand ở bất cứ bước nào | Chặn ở một tầng thì trẻ vào được màn chơi mà vẫn thiếu nền hai tầng dưới — đúng lỗ hổng file này đang vá. Gom về strand thì mất cạnh giữa hai kỹ năng cùng strand, và một bài dạy của strand mở khoá cho cả 11 kỹ năng khác chưa được dạy |
 
 ## 7. Data
@@ -300,9 +300,9 @@ Scenario: BR-CIG-17 — hai kỹ năng cùng strand không nuốt mất bao đó
 
 Scenario: BR-CIG-18 — cổng bậc thang phải có người gọi
   Given repo ở trạng thái hiện hành
-  When đọc package.json và scripts/check.sh
-  Then có script check:intro-coverage
-  And check.sh gọi script đó
+  When đọc package.json (scripts/check.sh và check:intro-coverage đã gỡ 2026-10-31)
+  Then hiện chưa có cổng nào gọi bậc thang này — luật chưa được cưỡng chế bằng máy
+  And dựng lại phải đặt trong tests/gates/ của workspace kèm ca âm
 
 Scenario: BR-CIG-18 — ca âm của cổng bậc thang
   Given một kỹ năng chưa có bài làm quen nào

@@ -80,6 +80,10 @@ describe("BR-MON-01: a process must not run deaf", () => {
     expect(deaf.isLogOnly()).toBe(true);
   });
 
+  it("the log-only adapter admits it is log-only (BR-MON-01: không giả vờ đã báo cho người)", () => {
+    expect(new LogOnlyAlertAdapter().isLogOnly()).toBe(true);
+  });
+
   it("Healthchecks with no ping URL is log-only", () => {
     expect(
       new HealthchecksAlertAdapter({ pingUrl: "", checkUuid: "" }).isLogOnly()
