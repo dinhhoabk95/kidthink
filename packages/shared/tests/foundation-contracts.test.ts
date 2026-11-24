@@ -183,11 +183,11 @@ describe("P0 foundation contracts", () => {
     expect(lefthook).not.toContain("pre-push:");
   });
 
-  it("BR-RBS-07: docker-compose.yml uses pgvector/pgvector:pg18 and valkey/valkey:9-alpine", () => {
+  it("BR-RBS-07: docker-compose.yml uses pgvector/pgvector:pg18 and no longer ships Valkey (D15)", () => {
     const compose = readFileSync(resolve(ROOT, "docker-compose.yml"), "utf8");
     expect(compose).toContain("pgvector/pgvector:pg18");
     expect(compose).not.toContain("postgres:18-alpine");
-    expect(compose).toContain("valkey/valkey:9-alpine");
+    expect(compose.toLowerCase()).not.toContain("valkey/valkey");
   });
 
   it("BR-RBS-10: apps/web runs on port 3000 and apps/admin runs on port 3001 in dev", () => {

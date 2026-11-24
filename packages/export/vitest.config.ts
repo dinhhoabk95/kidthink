@@ -1,3 +1,8 @@
-import { defineWorkspaceTest } from "@mindkid/config/vitest";
+import {
+  defineWorkspaceTest,
+  LOCAL_RUNTIME_SETUP_FILE,
+} from "@mindkid/config/vitest";
 
-export default defineWorkspaceTest();
+export default defineWorkspaceTest({
+  test: { setupFiles: [LOCAL_RUNTIME_SETUP_FILE] },
+});

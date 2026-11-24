@@ -704,6 +704,9 @@ importers:
       '@mindkid/config':
         specifier: workspace:*
         version: link:../config
+      '@mindkid/local-runtime':
+        specifier: workspace:*
+        version: link:../local-runtime
       typescript:
         specifier: ~6.0.3
         version: 6.0.3
