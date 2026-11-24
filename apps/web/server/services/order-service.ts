@@ -1,5 +1,6 @@
 import { writeAudit } from "@mindkid/audit";
 import {
+  MissingEnvError,
   PROOF_ALLOWED_MIME_TYPES,
   PROOF_MAX_IMAGE_SIZE_BYTES,
 } from "@mindkid/config";
@@ -209,13 +210,24 @@ const LIVE_ENTITLEMENT_UNIQUE_COLUMNS = [
   "entitlements.entitlement_key",
 ] as const;
 
-function buildVietQrOrThrow(
+export function buildVietQrOrThrow(
   amountVnd: number,
   transferNote: string
 ): VietQrPayloadResult {
   try {
     return generateVietQrPayload({ amountVnd, transferNote });
-  } catch {
+  } catch (error) {
+    // Chỉ lỗi thiếu cấu hình mới đổi thành 503; lỗi khác (bug) phải nổi lên nguyên trạng.
+    if (!(error instanceof MissingEnvError)) {
+      throw error;
+    }
+    console.error(
+      JSON.stringify({
+        level: "ERROR",
+        event: "order.vietqr_env_missing",
+        missingEnv: error.varName,
+      })
+    );
     throw new ServiceUnavailableError(
       "Hệ thống thanh toán tạm thời chưa cấu hình tài khoản nhận chuyển khoản."
     );
