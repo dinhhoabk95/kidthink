@@ -1,20 +1,22 @@
 import {
   type AuthCoordinatorRpcPort,
-  enterAuthCoordinatorPort,
+  registerAuthCoordinatorPort,
 } from "@mindkid/auth";
 import {
   type CacheKvPort,
-  enterCloudflareCachePort,
-  enterCloudflareRateLimitPort,
   type RateLimitCheckResult,
   type RateLimitCoordinatorPort,
+  registerCloudflareCachePort,
+  registerCloudflareRateLimitPort,
 } from "@mindkid/cache";
 import { isCloudflareRuntime } from "@mindkid/config";
-import { enterCloudflareD1Binding, type MinimalD1Database } from "@mindkid/db";
 import {
-  enterCloudflareQueuePort,
+  type MinimalD1Database,
+  registerCloudflareD1Bindings,
+} from "@mindkid/db";
+import {
   type JobQueueCoordinatorPort,
-  type QueuedJobEnvelope,
+  registerCloudflareQueuePort,
 } from "@mindkid/queue";
 import {
   createD1BlobSqlPort,
@@ -46,21 +48,22 @@ interface CloudflareEnvBindings {
 
 interface CloudflareRequestContext {
   readonly env?: CloudflareEnvBindings;
-  readonly ctx?: {
-    waitUntil(promise: Promise<void>): void;
-  };
 }
+
+/** Tên DO phải khớp `AUTH_DO_NAME` / `QUEUE_DO_NAME` ở `apps/worker` (BR-JOB-11). */
+const AUTH_DO_NAME = "global-auth-v1";
+const QUEUE_DO_NAME = "queue-v1";
 
 function wireAuthCoordinator(
   namespace: DurableObjectNamespaceBinding<AuthDoStub>
 ): void {
-  const authStub = namespace.get(namespace.idFromName("global-auth-v1"));
-  enterAuthCoordinatorPort(authStub);
+  const authStub = namespace.get(namespace.idFromName(AUTH_DO_NAME));
+  registerAuthCoordinatorPort(authStub);
 
   const rlPort: RateLimitCoordinatorPort = {
     consumeRateLimit: (input) => authStub.consumeRateLimit(input),
   };
-  enterCloudflareRateLimitPort(rlPort);
+  registerCloudflareRateLimitPort(rlPort);
 
   const kvPort: CacheKvPort = {
     get: (key) => authStub.kvGet(key),
@@ -70,33 +73,20 @@ function wireAuthCoordinator(
     del: (...keys) => authStub.kvDel(keys),
     deleteByPrefix: (prefix) => authStub.kvDeleteByPrefix(prefix),
   };
-  enterCloudflareCachePort(kvPort);
+  registerCloudflareCachePort(kvPort);
 }
 
 function wireJobQueueCoordinator(
-  namespace: DurableObjectNamespaceBinding<JobQueueCoordinatorPort>,
-  cf: CloudflareRequestContext | undefined
+  namespace: DurableObjectNamespaceBinding<JobQueueCoordinatorPort>
 ): void {
-  const shardedPort: JobQueueCoordinatorPort = {
-    async enqueueBatch(jobs: readonly QueuedJobEnvelope[]) {
-      const shardIdx =
-        jobs.length > 0 ? Math.abs(jobs[0]?.jobId.charCodeAt(0) ?? 0) % 4 : 0;
-      const stub = namespace.get(
-        namespace.idFromName(`queue-shard-${shardIdx}`)
-      );
-      return await stub.enqueueBatch(jobs);
-    },
-    async getStats() {
-      const stub = namespace.get(namespace.idFromName("queue-shard-0"));
-      return await stub.getStats();
-    },
-  };
-  const waitUntilFn = cf?.ctx
-    ? (promise: Promise<void>) => {
-        cf.ctx?.waitUntil(promise);
-      }
-    : undefined;
-  enterCloudflareQueuePort(shardedPort, waitUntilFn);
+  // Một DO duy nhất `queue-v1`, không sharding (BR-JOB-11). Không đăng ký
+  // `waitUntil`: nó thuộc về từng request nên không đặt toàn cục được; enqueue
+  // là một RPC ngắn nên được await trực tiếp.
+  const stub = namespace.get(namespace.idFromName(QUEUE_DO_NAME));
+  registerCloudflareQueuePort({
+    enqueueBatch: (jobs) => stub.enqueueBatch(jobs),
+    getStats: () => stub.getStats(),
+  });
 }
 
 let blobDriverInstalled = false;
@@ -112,30 +102,37 @@ function installBlobStorageDriver(db: MinimalD1Database): void {
   blobDriverInstalled = true;
 }
 
+/**
+ * Binding ổn định theo isolate nên nối port bằng `register*` toàn cục đúng một
+ * lần cho mỗi `env`, không dùng `AsyncLocalStorage.enterWith` (workerd không
+ * bảo đảm giữ store qua ranh giới await của handler).
+ */
+const wiredEnvs = new WeakSet<object>();
+
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook("request", (event) => {
     if (!isCloudflareRuntime()) {
       return;
     }
+    // Nitro `cloudflare_module`: `event.context.cloudflare = { request, env, context, url }`.
     const cf = (event.context as { cloudflare?: CloudflareRequestContext })
       .cloudflare;
     const env = cf?.env;
-    if (!env?.DB_CORE) {
+    if (!env?.DB_CORE || wiredEnvs.has(env)) {
       return;
     }
+    wiredEnvs.add(env);
 
-    enterCloudflareD1Binding(env.DB_CORE);
+    registerCloudflareD1Bindings(env.DB_CORE);
 
     if (env.DB_BLOBS) {
       installBlobStorageDriver(env.DB_BLOBS);
     }
-
     if (env.AUTH_COORDINATOR) {
       wireAuthCoordinator(env.AUTH_COORDINATOR);
     }
-
     if (env.JOB_QUEUE_DO) {
-      wireJobQueueCoordinator(env.JOB_QUEUE_DO, cf);
+      wireJobQueueCoordinator(env.JOB_QUEUE_DO);
     }
   });
 });

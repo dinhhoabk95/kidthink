@@ -37,7 +37,8 @@
     "bindings": [
       {
         "name": "AUTH_COORDINATOR",
-        "class_name": "AuthCoordinatorDO"
+        "class_name": "AuthCoordinatorDO",
+        "script_name": "mindkid-worker"
       },
       {
         "name": "JOB_QUEUE_DO",
@@ -45,11 +46,5 @@
         "script_name": "mindkid-worker"
       }
     ]
-  },
-  "migrations": [
-    {
-      "tag": "v1-sqlite-auth",
-      "new_sqlite_classes": ["AuthCoordinatorDO"]
-    }
-  ]
+  }
 }
