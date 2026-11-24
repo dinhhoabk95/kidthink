@@ -76,7 +76,15 @@ describe("Cloudflare, SQLite DO & Path Canonicalization Security (NEW-1, NEW-6, 
             "x-real-ip": "198.51.100.98",
           },
         });
+        const warn = vi.spyOn(console, "warn").mockImplementation(() => {
+          /* im lặng trong test */
+        });
         expect(getVerifiedRemoteIp(missingCfHeaderEvent)).toBe("unknown");
+        expect(warn).toHaveBeenCalledTimes(1);
+        expect(String(warn.mock.calls[0]?.[0])).toContain(
+          "rate_limit.cf_connecting_ip_missing"
+        );
+        warn.mockRestore();
       } finally {
         restoreEnv("MINDKID_RUNTIME", prevRuntime);
       }

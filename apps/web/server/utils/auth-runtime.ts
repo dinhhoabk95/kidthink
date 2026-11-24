@@ -80,7 +80,20 @@ function normalizeIp(value: string | undefined): string {
  */
 export function getVerifiedRemoteIp(event: H3Event): string {
   if (isCloudflareRuntime()) {
-    return normalizeIp(getHeader(event, "cf-connecting-ip")) || "unknown";
+    const cfIp = normalizeIp(getHeader(event, "cf-connecting-ip"));
+    if (!cfIp) {
+      // Request từ internet luôn có CF-Connecting-IP; thiếu = subrequest nội bộ / service binding.
+      // Không fail-closed (sẽ làm gãy lời gọi nội bộ hợp lệ) — chỉ cảnh báo để thấy bucket `unknown` bị dùng chung.
+      console.warn(
+        JSON.stringify({
+          level: "warn",
+          event: "rate_limit.cf_connecting_ip_missing",
+          path: event.path,
+        })
+      );
+      return "unknown";
+    }
+    return cfIp;
   }
   const request = event.node?.req as
     | { socket?: { remoteAddress?: string } }

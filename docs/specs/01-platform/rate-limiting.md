@@ -140,7 +140,7 @@ Mọi dòng ánh xạ theo path cụ thể (bảng trong `rate-limit-routes.ts`)
 
 ### 7.3 IP dùng để giới hạn
 
-`BR-RTL-11`: trên Cloudflare IP client là `CF-Connecting-IP`; thiếu header thì `unknown`. Ngoài
+`BR-RTL-11`: trên Cloudflare IP client là `CF-Connecting-IP`; thiếu header thì `unknown` **và** ghi một dòng JSON cảnh báo `rate_limit.cf_connecting_ip_missing` (không fail-closed). Request từ internet luôn có header này nên thiếu = subrequest nội bộ / service binding; bucket `ip:<class>:unknown` chỉ chung cho các lời gọi nội bộ đó, dòng cảnh báo là tín hiệu nếu nó bị dùng cho traffic thật. Ngoài
 Cloudflare là địa chỉ socket. Cấm — **NEVER** đọc `X-Forwarded-For` hay `X-Real-IP` từ request để
 giới hạn, ở bất kỳ đâu.
 
@@ -212,6 +212,8 @@ Scenario: BR-RTL-11 — IP lấy từ nguồn đúng theo runtime
   When request đến từ socket 198.51.100.4 kèm X-Real-IP 203.0.113.9 và CF-Connecting-IP giả
   Then IP dùng để giới hạn là 198.51.100.4
   And X-Forwarded-For không được đọc trong cả hai trường hợp
+  Given runtime là cloudflare và request thiếu CF-Connecting-IP
+  Then IP là `unknown` và có đúng một dòng cảnh báo `rate_limit.cf_connecting_ip_missing`
 
 Scenario: BR-RTL-09 — key không chứa định danh thô
   Given login bằng email Parent@Example.com
