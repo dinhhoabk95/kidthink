@@ -29,7 +29,7 @@ ghi trong cột **Task mở** của từng bảng dưới. Thêm, xoá hay chuy�
 | Khu vực | Spec | MVP | Còn mở |
 |---|---:|---:|---:|
 | `00-foundation` | 18 | 18 | 4 |
-| `01-platform` | 42 | 32 | 13 |
+| `01-platform` | 43 | 33 | 13 |
 | `02-public` | 9 | 9 | 3 |
 | `03-account` | 23 | 19 | 18 |
 | `04-play` | 24 | 14 | 9 |
@@ -37,7 +37,7 @@ ghi trong cột **Task mở** của từng bảng dưới. Thêm, xoá hay chuy�
 | `06-admin` | 19 | 18 | 10 |
 | `07-addon` | 5 | 0 | 2 |
 | `08-quality` | 11 | 9 | 8 |
-| **Tổng** | **171** | **127** | **74** |
+| **Tổng** | **172** | **128** | **74** |
 
 Một outcome một file là chủ ý — xem [`CONVENTIONS.md`](CONVENTIONS.md) §1. Lịch sử thêm
 từng spec nằm trong git và ở `docs/tasks/`, không chép lại ở đây.
@@ -104,6 +104,7 @@ từng spec nằm trong git và ở `docs/tasks/`, không chép lại ở đây.
 | [play-stage-zones](01-platform/play-stage-zones.md) | P4 | Bàn chơi năm vùng: HUD, lời dẫn, sân khấu, khay, nút hành động; sàn chạm trên px thật; khay nhiều hàng không phân trang, lời dẫn cột ở điện thoại ngang (`BR-PSZ-13`) |  |
 | [telemetry-pipeline](01-platform/telemetry-pipeline.md) | P1 | Rollup, KPI nội dung |  |
 | [content-search](01-platform/content-search.md) | P1 | Bộ lọc, lọc theo quyền |  |
+| [image-storage](01-platform/image-storage.md) | P1 | Driver D1/in-memory, URL ký `/private` |  |
 | [job-queue](01-platform/job-queue.md) | P1 | 10 job, alert khi worker chết |  |
 | [monitoring-and-alerting](01-platform/monitoring-and-alerting.md) | P1 | Alert **tới người** |  |
 | [offline-play](01-platform/offline-play.md) | P1 | Buffer IndexedDB, không ngắt phiên | [#303](../tasks/303-offline-play-buffer-plan.md) |
