@@ -1,7 +1,7 @@
 # MindKid — context cho agent
 
-Monorepo pnpm. Nuxt 4.5 + Nitro 2 + h3 v1 · Drizzle · SQLite (`node:sqlite`) dev/test, D1 trên Cloudflare · Valkey (dev) ·
-BullMQ (dev) · Zod 4 (dòng `zod@3.25`, API cổ điển) · Biome 2 qua `ultracite`.
+Monorepo pnpm. Nuxt 4.5 + Nitro 2 + h3 v1 · Drizzle · SQLite (`node:sqlite`) dev/test, D1 trên Cloudflare · engine DO chạy cả dev/test
+(`packages/local-runtime`, `D15`) · Zod 4 (dòng `zod@3.25`, API cổ điển) · Biome 2 qua `ultracite`.
 
 Runtime production: Cloudflare Workers + D1 + Durable Objects (`D14`, `docs/SPEC.md` §0).
 
@@ -52,11 +52,11 @@ Chỗ skill có mặc định khác repo — **repo thắng**:
 - `{domain}` là Worker `apps/web` (Nitro `cloudflare_module`): SSR + toàn bộ `/api/*`. `admin.{domain}` là
   Workers static assets từ `apps/admin/.output/public`; không có Nitro server, DB package hay auth module.
   Header bảo mật ở `apps/admin/public/_headers`, CSP hash sinh lúc build.
-- `apps/worker` là Worker riêng: queue Durable Object (`JobQueueDO`) + cron `*/5 * * * *`. Redis/BullMQ chỉ còn
-  cho dev (gỡ đợt sau).
+- `apps/worker` là Worker riêng: queue Durable Object (`JobQueueDO`) + cron `*/5 * * * *`. Dev/test chạy cùng
+  engine (`JobQueueSqlEngine`) trong tiến trình trên SQLite; không còn Redis/Valkey/BullMQ (`D15`).
 - Admin gọi absolute `NUXT_PUBLIC_API_BASE_URL` với `credentials: include`; CSRF token manager
   giữ trong memory. Cookie Manager là host-only trên `{domain}`; session do web resolve qua `AuthCoordinatorDO`
-  (Valkey ở dev), namespace `manager`.
+  (dev/test: cùng `AuthCoordinatorEngine` trên SQLite), namespace `manager`.
 - `nuxt-auth-utils` chỉ dùng trong web. Browser auth dùng opaque locator, không first-party JWT hoặc
   refresh route. IP client trên Cloudflare = `cf-connecting-ip`.
 
@@ -137,7 +137,9 @@ nào đo (gỡ 2026-08-29); giữ bằng lượt review. `apps/web`/`apps/admin`
 - Node **26.13.1** (`.nvmrc`), pnpm 12. Node mặc định của máy là v20 → `pnpm` sẽ chết với
   `ERR_UNKNOWN_BUILTIN_MODULE: node:sqlite`.
 - `vitest 4` đã bỏ `--reporter=basic`; dùng `dot` hoặc `json`.
-- DB dev/test là SQLite (`node:sqlite`), không cần server. Valkey `127.0.0.1:6380`.
+- DB dev/test là SQLite (`node:sqlite`), không cần server hay Docker. Auth keyspace, rate limit, cache và queue dev/test
+  là engine DO chạy trong tiến trình (`packages/local-runtime`): file `.data/sqlite/do-auth.sqlite`, `do-queue.sqlite`
+  (web đẩy job, `pnpm dev:worker` drain); test dùng `:memory:` qua `@mindkid/local-runtime/vitest-setup`.
 - Lệnh đo cổng chạy qua `rtk proxy` — xem "Luật đo cổng" ở trên.
 
 ## Cổng lint tuỳ biến đã bị gỡ (2026-08-29)

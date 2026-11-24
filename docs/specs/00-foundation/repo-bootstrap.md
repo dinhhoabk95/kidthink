@@ -46,7 +46,7 @@ hệ sinh thái Nuxt đã kiểm chứng thay vì tự viết (quyết định D
 | `apps/*`, `packages/*` | App và package dùng chung (cây đầy đủ ở §8 của [`SPEC.md`](../../SPEC.md)) |
 | `lefthook.yml` + `.git/hooks/pre-commit` | Gate local. Không có cổng remote |
 | `package.json` gốc, script `check` | `pnpm check` = `lint` + `lint:deps` + `typecheck` (không chạy test). `scripts/check.sh`, `check:fast`, `pnpm services` đã gỡ |
-| `docker-compose.yml` | Đã gỡ (D15): không còn dịch vụ ngoài nào cho dev/test (DB, auth keyspace, rate limit, cache, queue đều chạy trong tiến trình trên SQLite) |
+| `docker-compose.yml` | Hạ tầng dev cũ: Valkey đã gỡ (D15); chỉ còn service Postgres không dùng (DB dev/test là SQLite, `node:sqlite`) và sẽ gỡ khi người quyết định. Auth keyspace, rate limit, cache, queue dev/test chạy trong tiến trình trên SQLite |
 
 ## 4. Main flow — dựng và giữ workspace
 
