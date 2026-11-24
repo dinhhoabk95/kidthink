@@ -1,26 +1,15 @@
 import { Buffer } from "node:buffer";
-import { beforeAll, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
   AUDIO_LOUDNESS_TARGET_LUFS,
   AUDIO_RAMP_IN_MS,
   AUDIO_RAMP_OUT_MS,
   AUDIO_TRUE_PEAK_DBTP,
-  buildRelativeAudioPath,
-  deletePublicAudio,
   detectAudioMimeType,
-  getPublicAudio,
   MAX_AUDIO_DURATION_MS,
   MAX_AUDIO_FILE_SIZE_BYTES,
   normalizeAudioAsset,
-  uploadPublicAudio,
-  url,
 } from "#src/index";
-
-const BASE_URL = "https://assets.example.test";
-
-beforeAll(() => {
-  process.env.STORAGE_BASE_URL = BASE_URL;
-});
 
 function audioHeader(bytes: number[], totalLength = 64): Buffer {
   return Buffer.concat([
@@ -121,67 +110,5 @@ describe("normalizeAudioAsset (BR-AST-01, BR-AST-02, BR-AST-03)", () => {
   it("BR-AST-07: từ chối file giả mạo đuôi .mp3 nhưng sai magic bytes (AUDIO_FORMAT_INVALID)", () => {
     const fakeMp3 = Buffer.from("<!DOCTYPE html><script>alert(1)</script>");
     expect(() => normalizeAudioAsset(fakeMp3)).toThrow("AUDIO_FORMAT_INVALID");
-  });
-});
-
-describe("buildRelativeAudioPath & uploadPublicAudio (BR-AST-05, BR-AST-06)", () => {
-  it("BR-AST-05: sinh đường dẫn tương đối audio/{year}/{month}/{hash}_{suffix}.{ext} và dựng URL qua storage.url()", () => {
-    const relPath = buildRelativeAudioPath(
-      "abcdef0123456789abcdef0123456789",
-      "11223344-5566",
-      "ogg",
-      new Date("2026-10-18T00:00:00.000Z")
-    );
-    expect(relPath).toBe("audio/2026/10/abcdef0123456789_11223344.ogg");
-    expect(relPath.startsWith("http://")).toBe(false);
-    expect(relPath.startsWith("https://")).toBe(false);
-    expect(url(relPath)).toBe(
-      `${BASE_URL}/audio/2026/10/abcdef0123456789_11223344.ogg`
-    );
-  });
-
-  it("BR-AST-05 & BR-AST-06: lưu và xoá file audio trong kho public, cấm ghi đè key đã tồn tại và cấm URL tuyệt đối", async () => {
-    const key = "audio/2026/10/test_unique_01.ogg";
-    const body = audioHeader([0x4f, 0x67, 0x67, 0x53], 32);
-
-    await uploadPublicAudio({
-      key,
-      body,
-      contentType: "audio/ogg",
-    });
-
-    const stored = getPublicAudio(key);
-    expect(stored?.contentType).toBe("audio/ogg");
-    expect(Buffer.from(stored?.body ?? []).equals(body)).toBe(true);
-
-    // BR-AST-06: Cấm ghi đè file âm thanh đã tồn tại
-    await expect(
-      uploadPublicAudio({
-        key,
-        body,
-        contentType: "audio/ogg",
-      })
-    ).rejects.toThrow("BR-AST-06");
-
-    // BR-AST-05: Cấm lưu URL tuyệt đối
-    await expect(
-      uploadPublicAudio({
-        key: "https://cdn.example.test/audio/bad.ogg",
-        body,
-        contentType: "audio/ogg",
-      })
-    ).rejects.toThrow("BR-AST-05");
-
-    // [M-12] BR-IMG-05: Cấm path traversal trong uploadPublicAudio
-    await expect(
-      uploadPublicAudio({
-        key: "audio/2026/../../etc/passwd.ogg",
-        body,
-        contentType: "audio/ogg",
-      })
-    ).rejects.toThrow("BR-IMG-05");
-
-    expect(deletePublicAudio(key)).toBe(true);
-    expect(getPublicAudio(key)).toBeUndefined();
   });
 });

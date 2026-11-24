@@ -8,8 +8,7 @@
   },
   "dependencies": {
     "@mindkid/config": "workspace:*",
-    "@mindkid/errors": "workspace:*",
-    "sharp": "^0.35.5"
+    "@mindkid/errors": "workspace:*"
   },
   "imports": {
     "#src/*": "./src/*.ts",

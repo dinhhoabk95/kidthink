@@ -19,9 +19,8 @@ depends_on:
 ## 1. Objective
 
 Một chỗ duy nhất định nghĩa nơi byte của ảnh chứng từ thanh toán và PDF export được lưu, và
-cách chúng được đọc lại. Tệp **private** (chứng từ, PDF) chỉ đọc được qua URL ký có hạn; tệp
-**public** là ảnh nội dung gắn content item. Pipeline WebP/crop ảnh nội dung nằm ở
-`06-admin/image-upload.md`, không ở đây.
+cách chúng được đọc lại. Tệp **private** (chứng từ, PDF) chỉ đọc được qua URL ký có hạn. Không còn kho tệp public ghi lúc
+chạy (đường `/api/guest/storage/*` và hàm upload/get/delete public đã gỡ, xem `BR-IMG-06`).
 
 ## 2. Actors
 
@@ -56,8 +55,8 @@ cách chúng được đọc lại. Tệp **private** (chứng từ, PDF) chỉ 
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-IMG-05` | Khoá storage là đường dẫn **tương đối**, không chứa `..`, `\`, ký tự điều khiển | Chặn path traversal |
-| `BR-IMG-06` | Ảnh public không bị ghi đè | Cache vĩnh viễn theo đường dẫn |
+| `BR-IMG-05` | Khoá storage private là đường dẫn **tương đối**, không chứa `..`, `\`, ký tự điều khiển (`sanitizeRelativeStoragePath`). Phần đường dẫn **public** đã ngưng cùng `BR-IMG-06` | Chặn path traversal |
+| `BR-IMG-06` | **NGƯNG** — Ảnh public không bị ghi đè. Pipeline ảnh/audio public (`uploadPublicImage`, `getPublicImage`, `deletePublicImage`, `uploadPublicAudio`, `getPublicAudio`, `deletePublicAudio`, `GET /api/guest/storage/*`) đã gỡ: MVP không có tệp public ghi lúc chạy, nội dung tĩnh đi theo build | Số hiệu giữ nguyên để không vỡ tham chiếu lịch sử |
 | `BR-IMG-10` | Tệp private chỉ đọc được qua `GET /private/<path>` với HMAC-SHA256 trên `<path>:<expires>`, khoá `STORAGE_SIGNING_SECRET`, chữ ký phải khớp đúng `^[0-9a-f]{64}$` (không nhận đuôi rác), so sánh hằng thời gian | Chứng từ chứa dữ liệu tài chính |
 | `BR-IMG-11` | Driver đang hoạt động: **D1 blobs** (`private_blobs` trên `mindkid-blobs`) trên Cloudflare; **in-memory** (giới hạn 200 mục) ở dev/test khi chưa đặt driver. Mọi upload/đọc/xoá private đi qua driver, không có đường song song | Bản in-memory riêng làm chứng từ biến mất khi isolate khởi động lại |
 | `BR-IMG-12` | Response `/private/*` luôn có `Cache-Control: private, no-store`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer` và `Content-Security-Policy: sandbox`; chỉ `image/jpeg`, `image/png`, `image/webp` (không phân biệt hoa thường, đúng nguyên giá trị) được hiển thị inline, mọi loại khác là `Content-Disposition: attachment` | Chống cache chung và đoán kiểu |

@@ -111,7 +111,7 @@ tiếp `jose`; mọi first-party auth credential đều opaque.
 | Email | `packages/notification` | HTTP email driver (Brevo, qua `fetch`) + `mjml` renderer | [`notification-service.md`](../01-platform/notification-service.md) |
 | Browser push (P5) | `packages/notification` cho server driver; plugin/service worker trong `apps/web` | FCM HTTP v1 qua `fetch` (server, không dùng SDK `firebase-admin`) + `firebase` (web); chỉ cài khi Task #84 bắt đầu | [`browser-push.md`](../01-platform/browser-push.md) |
 | HTTP hardening | **Không cần driver** — cấu hình tại web và `apps/admin/public/_headers` | `nuxt-security` ở web; `_headers` (Workers Static Assets) ở admin, tắt limiter/CSRF tích hợp | [`security-checklist.md`](../08-quality/security-checklist.md) |
-| Storage ảnh | `packages/storage` | S3 SDK + `sharp` (xử lý server) | [`image-storage.md`](../01-platform/image-storage.md) |
+| Storage ảnh | `packages/storage` | driver D1 blobs / in-memory, URL ký private | [`image-storage.md`](../01-platform/image-storage.md) |
 | Error tracking | **Không cần driver riêng** — SDK gắn ở entry mỗi app | `@sentry/nuxt` | [`monitoring-and-alerting.md`](../01-platform/monitoring-and-alerting.md) |
 | Logging | `packages/config` (factory logger dùng chung) hoặc `packages/observability` nếu tách | `pino` + `pino-http` (Nitro plugin) | [`monitoring-and-alerting.md`](../01-platform/monitoring-and-alerting.md) |
 | Alert tới người | `apps/worker` (job định kỳ ping) + script cổng tự động | Healthchecks.io (`fetch` ping) + Telegram Bot API (`fetch` thô) | [`monitoring-and-alerting.md`](../01-platform/monitoring-and-alerting.md), [`job-queue.md`](../01-platform/job-queue.md) |

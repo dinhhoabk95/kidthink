@@ -1,6 +1,5 @@
 import { requireFirstEnv } from "@mindkid/config";
 
-export const EXTENSION_REGEX = /\.[a-zA-Z0-9]+$/;
 export const TRAILING_SLASHES_REGEX = /\/+$/;
 const LEADING_SLASHES_REGEX = /^\/+/;
 
@@ -14,13 +13,8 @@ function hasControlCharacter(str: string): boolean {
   return false;
 }
 
-// In-memory store for local testing/dev when S3 is not configured (capped to prevent OOM)
+/** Trần số mục của driver in-memory (chống OOM ở dev/test). */
 export const MAX_IN_MEMORY_STORE_ENTRIES = 200;
-
-export const inMemoryPublicStore = new Map<
-  string,
-  { body: Buffer | Uint8Array; contentType: string; createdAt: Date }
->();
 
 export function sanitizeRelativeStoragePath(rawPath: string): string {
   const trimmed = rawPath.replace(LEADING_SLASHES_REGEX, "");
@@ -35,23 +29,6 @@ export function sanitizeRelativeStoragePath(rawPath: string): string {
 }
 
 export const assertSafeStorageKey = sanitizeRelativeStoragePath;
-
-export function setBoundedStoreEntry(
-  store: Map<
-    string,
-    { body: Buffer | Uint8Array; contentType: string; createdAt: Date }
-  >,
-  key: string,
-  entry: { body: Buffer | Uint8Array; contentType: string; createdAt: Date }
-): void {
-  if (!store.has(key) && store.size >= MAX_IN_MEMORY_STORE_ENTRIES) {
-    const oldestKey = store.keys().next().value;
-    if (oldestKey !== undefined) {
-      store.delete(oldestKey);
-    }
-  }
-  store.set(key, entry);
-}
 
 /**
  * Key used to sign private asset URLs (BR-ENV-03).

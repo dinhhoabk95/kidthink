@@ -175,10 +175,9 @@ export default defineNuxtConfig({
         // trong khi chính sách không liệt kê nonce nào — trình duyệt chặn cả
         // hai khối inline của Nuxt và trang không hydrate.
         //
-        // `strict-dynamic` bịt lỗ của `'self'`: `/api/guest/storage/[...path]`
-        // phục vụ file đã lưu từ **cùng origin**, nên `'self'` tin mọi thứ đọc
-        // được qua đường đó. Với `strict-dynamic`, chỉ script mang nonce và
-        // script do chúng nạp mới chạy.
+        // `strict-dynamic` bịt lỗ của `'self'`: mọi đường phục vụ file từ
+        // **cùng origin** đều được `'self'` tin. Với `strict-dynamic`, chỉ
+        // script mang nonce và script do chúng nạp mới chạy.
         "script-src": [
           "'self'",
           "'wasm-unsafe-eval'",

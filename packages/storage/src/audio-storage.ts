@@ -1,9 +1,3 @@
-import {
-  inMemoryPublicStore,
-  sanitizeRelativeStoragePath,
-  setBoundedStoreEntry,
-} from "#src/storage-common";
-
 export const ALLOWED_AUDIO_MIME_TYPES = [
   "audio/mpeg",
   "audio/ogg",
@@ -20,12 +14,6 @@ export const AUDIO_LOUDNESS_TARGET_LUFS = -16;
 export const AUDIO_TRUE_PEAK_DBTP = -1;
 export const AUDIO_RAMP_IN_MS = 20;
 export const AUDIO_RAMP_OUT_MS = 40;
-
-export interface PublicAudioUploadOptions {
-  key: string;
-  body: Buffer | Uint8Array;
-  contentType: string;
-}
 
 export interface NormalizedAudioAsset {
   buffer: Buffer;
@@ -202,53 +190,4 @@ export function normalizeAudioAsset(
     rampInMs: AUDIO_RAMP_IN_MS,
     rampOutMs: AUDIO_RAMP_OUT_MS,
   };
-}
-
-export function buildRelativeAudioPath(
-  contentHashHex: string,
-  uniqueSuffix: string,
-  extension: "ogg" | "mp3" | "m4a",
-  now = new Date()
-): string {
-  const year = now.getUTCFullYear();
-  const month = String(now.getUTCMonth() + 1).padStart(2, "0");
-  const cleanHash = contentHashHex.replace(/[^a-f0-9]/gi, "").slice(0, 16);
-  const cleanSuffix = uniqueSuffix.replace(/[^a-zA-Z0-9]/g, "").slice(0, 8);
-  return `audio/${year}/${month}/${cleanHash}_${cleanSuffix}.${extension}`;
-}
-
-export async function uploadPublicAudio(
-  options: PublicAudioUploadOptions
-): Promise<{ path: string }> {
-  await Promise.resolve();
-  if (options.key.startsWith("http://") || options.key.startsWith("https://")) {
-    throw new Error("BR-AST-05: Audio path must be relative");
-  }
-  const normalizedPath = sanitizeRelativeStoragePath(options.key);
-
-  if (inMemoryPublicStore.has(normalizedPath)) {
-    throw new Error("BR-AST-06: Audio file overwrite is forbidden");
-  }
-
-  setBoundedStoreEntry(inMemoryPublicStore, normalizedPath, {
-    body: options.body,
-    contentType: options.contentType,
-    createdAt: new Date(),
-  });
-
-  return {
-    path: normalizedPath,
-  };
-}
-
-export function getPublicAudio(
-  path: string
-): { body: Buffer | Uint8Array; contentType: string } | undefined {
-  const normalizedPath = sanitizeRelativeStoragePath(path);
-  return inMemoryPublicStore.get(normalizedPath);
-}
-
-export function deletePublicAudio(path: string): boolean {
-  const normalizedPath = sanitizeRelativeStoragePath(path);
-  return inMemoryPublicStore.delete(normalizedPath);
 }
