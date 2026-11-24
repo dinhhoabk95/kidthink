@@ -76,18 +76,66 @@ function isAsyncIterable(
  * (`event.web.request.body`). Thân đã đọc được gắn lại vào event để `readRawBody`/`readBody`
  * phía sau dùng tiếp mà không đọc lần hai.
  */
-export async function readBoundedRawBody(
+function isWebStream(
+  value: object | string | undefined
+): value is ReadableStream<Uint8Array> {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "getReader" in value &&
+    typeof value.getReader === "function"
+  );
+}
+
+/** Thân nằm sẵn trong bộ nhớ (workerd/unenv gắn `req.body` là chuỗi hoặc byte). */
+function readInMemory(
+  value: string | Uint8Array,
+  maxBytes: number
+): Uint8Array {
+  const bytes = toBytes(value);
+  if (bytes.byteLength > maxBytes) {
+    throw new PayloadTooLargeError();
+  }
+  return bytes;
+}
+
+async function readFromEvent(
   event: H3Event,
   maxBytes: number
 ): Promise<Uint8Array | undefined> {
   const webBody = (event as H3Event & WebBodyHolder).web?.request?.body;
-  const nodeReq: object | undefined = event.node?.req;
-  let bytes: Uint8Array | undefined;
   if (webBody) {
-    bytes = await readWebStream(webBody, maxBytes);
-  } else if (isAsyncIterable(nodeReq)) {
-    bytes = await readNodeStream(nodeReq, maxBytes);
+    return await readWebStream(webBody, maxBytes);
   }
+  const nodeReq = event.node?.req as
+    | (object & { rawBody?: string | Uint8Array; body?: object | string })
+    | undefined;
+  // Trên workerd `event.node.req` là Readable của unenv: `Symbol.asyncIterator` có mặt nhưng
+  // ném "not implemented"; thân thật nằm ở `req.body` (web stream) — đọc nó trước.
+  const held = nodeReq?.rawBody ?? nodeReq?.body;
+  if (isWebStream(held)) {
+    return await readWebStream(held, maxBytes);
+  }
+  if (typeof held === "string" || held instanceof Uint8Array) {
+    return readInMemory(held, maxBytes);
+  }
+  if (isAsyncIterable(nodeReq)) {
+    return await readNodeStream(nodeReq, maxBytes);
+  }
+  return undefined;
+}
+
+/**
+ * BR-SEC-13: đọc thân request **theo luồng, đếm byte**, ném 413 ngay khi vượt `maxBytes`
+ * thay vì buffer hết rồi mới so. Chạy trên Node (stream của `event.node.req`) và workerd
+ * (`event.web.request.body` hoặc `event.node.req.body`). Thân đã đọc được gắn lại vào event
+ * để `readRawBody`/`readBody` phía sau dùng tiếp mà không đọc lần hai.
+ */
+export async function readBoundedRawBody(
+  event: H3Event,
+  maxBytes: number
+): Promise<Uint8Array | undefined> {
+  const bytes = await readFromEvent(event, maxBytes);
   if (bytes === undefined) {
     return undefined;
   }

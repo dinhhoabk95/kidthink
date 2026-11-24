@@ -45,7 +45,7 @@ describe("BR-HLT-07 — health công khai chỉ là liveness nông", () => {
 
   it("HEAD trả 200 không body và cũng không chạm dịch vụ nào", async () => {
     const result = await headHandler(makeEvent("HEAD"));
-    expect(result).toBeNull();
+    expect(result).toBe("");
     expect(getOwnerDb).not.toHaveBeenCalled();
     expect(getAuthRedisClient).not.toHaveBeenCalled();
   });

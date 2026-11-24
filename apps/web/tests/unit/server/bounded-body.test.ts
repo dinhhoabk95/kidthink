@@ -66,4 +66,47 @@ describe("BR-SEC-13 — readBoundedRawBody đếm byte theo luồng", () => {
     expect(cancelled).toBe(true);
     expect(pulls).toBeLessThan(10);
   });
+
+  it("workerd: req.body là web stream còn asyncIterator của unenv ném lỗi — vẫn đếm byte và 413", async () => {
+    let pulls = 0;
+    const body = new ReadableStream<Uint8Array>({
+      pull(controller) {
+        pulls += 1;
+        controller.enqueue(new Uint8Array(CHUNK_BYTES));
+      },
+    });
+    const req = {
+      method: "POST",
+      url: "/api/x",
+      headers: { host: "mindkid.test", "transfer-encoding": "chunked" },
+      body,
+      [Symbol.asyncIterator]() {
+        throw new Error("Readable.asyncIterator is not implemented yet!");
+      },
+    };
+    const event = createEvent(req as never, {} as never);
+
+    await expect(readBoundedRawBody(event, 32 * 1024)).rejects.toBeInstanceOf(
+      PayloadTooLargeError
+    );
+    expect(pulls).toBeLessThan(10);
+  });
+
+  it("workerd: req.body dạng chuỗi/byte trong bộ nhớ vượt trần cũng 413, trong trần thì trả đủ", async () => {
+    const make = (bodyValue: string): H3Event =>
+      createEvent(
+        {
+          method: "POST",
+          url: "/api/x",
+          headers: { host: "mindkid.test" },
+          body: bodyValue,
+        } as never,
+        {} as never
+      );
+    await expect(
+      readBoundedRawBody(make("x".repeat(100)), 10)
+    ).rejects.toBeInstanceOf(PayloadTooLargeError);
+    const bytes = await readBoundedRawBody(make("abc"), 10);
+    expect(new TextDecoder().decode(bytes)).toBe("abc");
+  });
 });

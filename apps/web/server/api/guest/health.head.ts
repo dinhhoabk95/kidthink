@@ -4,5 +4,6 @@ import { defineEventHandler, setHeader, setResponseStatus } from "h3";
 export default defineEventHandler((event) => {
   setHeader(event, "Cache-Control", "no-store");
   setResponseStatus(event, 200);
-  return null;
+  // Chuỗi rỗng (không phải null): null làm Nitro đổi thành 204.
+  return "";
 });
