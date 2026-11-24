@@ -389,7 +389,6 @@ export async function resolveBetterAuthManagerSession(
     const reauthAt = await resolveReauthTimestamp(
       "manager",
       sessionId,
-      createdAt,
       dbReauthAt
     );
     const role: ManagerRole = decodeManagerRoleValue(liveManager.role);

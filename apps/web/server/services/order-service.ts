@@ -313,7 +313,10 @@ export async function createUserOrder(
       return created;
     });
   } catch (err) {
-    if (isUniqueConstraintError(err, OPEN_ORDER_UNIQUE_COLUMNS)) {
+    if (
+      err instanceof Error &&
+      isUniqueConstraintError(err, OPEN_ORDER_UNIQUE_COLUMNS)
+    ) {
       const existingOrder = await repos.orders.findActivePendingForUserPackage(
         userRecord.id,
         input.packageCode
@@ -617,7 +620,10 @@ async function tryGrantSoftUnlockForKey(
     });
     return true;
   } catch (err) {
-    if (isUniqueConstraintError(err, LIVE_ENTITLEMENT_UNIQUE_COLUMNS)) {
+    if (
+      err instanceof Error &&
+      isUniqueConstraintError(err, LIVE_ENTITLEMENT_UNIQUE_COLUMNS)
+    ) {
       return false;
     }
     throw err;

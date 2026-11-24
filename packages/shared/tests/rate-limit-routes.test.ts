@@ -42,7 +42,7 @@ describe("resolveRateLimitRouteClass — RATE-LIMITING §7.2 / BR-RTL-10", () =>
   });
 
   it("rules 4-5 — webhooks and the health probe are exempt for a named reason", () => {
-    expect(resolve("/api/guest/webhooks/ses-sns", "POST")).toEqual({
+    expect(resolve("/api/guest/webhooks/payments/payos", "POST")).toEqual({
       mode: "exempt",
       reason: "provider-webhook",
     });

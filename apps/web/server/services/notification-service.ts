@@ -5,7 +5,6 @@ import {
   NOTIFICATION_CHANNEL_CODEC,
   NOTIFICATION_ENDPOINT_PROVIDER,
   NOTIFICATION_ENDPOINT_STATUS_CODEC,
-  NOTIFICATION_STATUS,
   NOTIFICATION_STATUS_CODEC,
   type NotificationChannel,
   type NotificationStatus,
@@ -18,52 +17,20 @@ import {
   NotificationNotFoundError,
   UserAlreadyDeletedError,
 } from "@mindkid/errors/account";
-import { WebhookSignatureInvalidError } from "@mindkid/errors/billing";
 import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import {
   type EmailTemplateCode,
   encryptFcmToken,
   getNotificationTemplateState,
   publishNotificationTemplate,
-  type SnsMessage,
   saveNotificationTemplateDraft,
   TEMPLATE_REGISTRY,
-  verifySnsEnvelopeClaims,
-  verifySnsSignature,
 } from "@mindkid/notification";
 import { enqueue } from "@mindkid/queue";
 import { NOTIFICATION_TYPES, type NotificationCode } from "@mindkid/shared";
 import { z } from "zod";
 import { getUserNotificationPreferences } from "#server/utils/notification-preferences-runtime";
 import { useOwnerRepositories } from "#server/utils/repositories";
-
-const SesEventSchema = z.object({
-  notificationType: z.enum(["Delivery", "Bounce", "Complaint"]).optional(),
-  eventType: z.enum(["Delivery", "Bounce", "Complaint"]).optional(),
-  mail: z.object({
-    messageId: z.string().min(1),
-    destination: z.array(z.string()).optional(),
-  }),
-  bounce: z
-    .object({
-      bounceType: z.string().optional(),
-      bounceSubType: z.string().optional(),
-      bouncedRecipients: z
-        .array(
-          z.object({
-            emailAddress: z.string().optional(),
-            diagnosticCode: z.string().optional(),
-          })
-        )
-        .optional(),
-    })
-    .optional(),
-  complaint: z
-    .object({
-      complaintFeedbackType: z.string().optional(),
-    })
-    .optional(),
-});
 
 const NotificationPayloadSchema = z.object({
   title: z.string().optional(),
@@ -123,72 +90,6 @@ function parseDeliveryChannel(val: string): NotificationChannel | undefined {
   return VALID_DELIVERY_CHANNELS.some((c) => c === val)
     ? NOTIFICATION_CHANNEL_CODEC.toCode(val as "email" | "in_app" | "fcm_web")
     : undefined;
-}
-
-function parseJsonPayload(
-  raw: string
-): Record<string, string | number | boolean | null | object> | null {
-  try {
-    const parsed: Record<string, string | number | boolean | null | object> =
-      JSON.parse(raw);
-    return parsed;
-  } catch {
-    return null;
-  }
-}
-
-export async function processSesSnsNotification(message: SnsMessage) {
-  const claims = verifySnsEnvelopeClaims(message);
-  if (!claims.valid) {
-    throw new WebhookSignatureInvalidError(
-      "TopicArn hoặc Timestamp của phong bì SNS không hợp lệ."
-    );
-  }
-
-  if (!(await verifySnsSignature(message))) {
-    throw new WebhookSignatureInvalidError(
-      "Chữ ký SNS không hợp lệ hoặc chứng chỉ ký không thuộc AWS."
-    );
-  }
-
-  if (message.Type !== "Notification") {
-    return { status: "subscription_confirmed" };
-  }
-
-  const parsedMessage = parseJsonPayload(message.Message);
-  const sesEvent = SesEventSchema.safeParse(parsedMessage);
-  if (!sesEvent.success) {
-    return { status: "no_message_id" };
-  }
-
-  const repos = useOwnerRepositories();
-  const messageId = sesEvent.data.mail.messageId;
-  const kind = sesEvent.data.notificationType ?? sesEvent.data.eventType;
-
-  if (kind === "Delivery") {
-    await repos.notifications.updateDeliveryByProviderMessageId(messageId, {
-      status: NOTIFICATION_STATUS.DISPATCHED,
-      dispatchedAt: new Date(),
-    });
-  } else if (kind === "Bounce") {
-    const bounceReason =
-      sesEvent.data.bounce?.bouncedRecipients?.[0]?.diagnosticCode ||
-      sesEvent.data.bounce?.bounceType ||
-      "Bounced";
-    await repos.notifications.updateDeliveryByProviderMessageId(messageId, {
-      status: NOTIFICATION_STATUS.FAILED,
-      error: bounceReason,
-    });
-  } else if (kind === "Complaint") {
-    const complaintReason =
-      sesEvent.data.complaint?.complaintFeedbackType || "Spam complaint";
-    await repos.notifications.updateDeliveryByProviderMessageId(messageId, {
-      status: NOTIFICATION_STATUS.SUPPRESSED,
-      suppressedReason: complaintReason,
-    });
-  }
-
-  return { status: "processed", message_id: messageId };
 }
 
 function sanitizeActionUrl(
@@ -343,7 +244,10 @@ export async function registerUserNotificationEndpoint(
     if (err instanceof ValidationError) {
       throw err;
     }
-    if (isUniqueConstraintError(err, ["token_fingerprint"])) {
+    if (
+      err instanceof Error &&
+      isUniqueConstraintError(err, ["token_fingerprint"])
+    ) {
       throw new ValidationError(
         "Token thông báo của thiết bị này đã được đăng ký trước đó."
       );

@@ -14,7 +14,6 @@ import {
 import { eq } from "drizzle-orm";
 import type { H3Event } from "h3";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
-import sesSnsWebhookHandler from "#server/api/guest/webhooks/ses-sns.post";
 import exportsHandler from "#server/api/managers/exports/[kind].get";
 import flagsPatchHandler from "#server/api/managers/feature-flags/[key].patch";
 import flagsGetHandler from "#server/api/managers/feature-flags/index.get";
@@ -178,31 +177,6 @@ function mockManagerEvent(
     _requestBody: body,
     _body: body,
   } as H3Event;
-}
-
-function mockWebhookEvent(body: unknown) {
-  return {
-    method: "POST",
-    path: "/api/guest/webhooks/ses-sns",
-    url: "/api/guest/webhooks/ses-sns",
-    node: {
-      req: {
-        method: "POST",
-        url: "/api/guest/webhooks/ses-sns",
-        headers: {
-          "user-agent": "Amazon Simple Notification Service Agent",
-          "content-type": "application/json",
-        },
-        body,
-      },
-      res: {},
-    },
-    context: {
-      body,
-    },
-    _requestBody: body,
-    _body: body,
-  } as any;
 }
 
 describe("Feature Flags, Data Export & Notification Admin (P2.9)", () => {
@@ -569,47 +543,6 @@ describe("Feature Flags, Data Export & Notification Admin (P2.9)", () => {
       } catch (err: any) {
         expect(err.statusCode || err.status).toBe(409);
       }
-    });
-
-    // Đường thành công có chữ ký hợp lệ sống ở
-    // `tests/api/guest/webhooks-ses-sns.test.ts`. Ca này giữ lại đúng hình dạng
-    // payload mà route **từng** chấp nhận — sự kiện SES trần, không phong bì
-    // SNS, không chữ ký — để nếu ai đó nới lại thì cổng đỏ ngay.
-    it("refuses an unsigned SES event and leaves the delivery queued", async () => {
-      const db = getOwnerDb();
-      const messageId = `msg-ses-${Date.now()}`;
-
-      const [n] = await db
-        .insert(notifications)
-        .values({
-          recipientType: RECIPIENT_TYPE.USER,
-          recipientId: testUserId,
-          templateCode: "welcome_user",
-        })
-        .returning();
-
-      await db.insert(notificationDeliveries).values({
-        notificationId: n.id,
-        channel: NOTIFICATION_CHANNEL.EMAIL,
-        status: NOTIFICATION_STATUS.QUEUED,
-        providerMessageId: messageId,
-      });
-
-      const webhookEvt = mockWebhookEvent({
-        notificationType: "Delivery",
-        mail: {
-          messageId,
-          destination: ["p29-user@test.mindkid.vn"],
-        },
-      });
-
-      await expect(sesSnsWebhookHandler(webhookEvt)).rejects.toThrow();
-
-      const [delivery] = await db
-        .select()
-        .from(notificationDeliveries)
-        .where(eq(notificationDeliveries.providerMessageId, messageId));
-      expect(delivery.status).toBe(NOTIFICATION_STATUS.QUEUED);
     });
   });
 

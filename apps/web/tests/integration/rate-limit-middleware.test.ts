@@ -145,7 +145,7 @@ describe("rate-limit middleware — BR-RTL-01/03/10", () => {
       await expect(
         rateLimitMiddleware(
           makeEvent({
-            path: "/api/guest/webhooks/ses-sns",
+            path: "/api/guest/webhooks/payments/vietqr",
             method: "POST",
             ip,
           })

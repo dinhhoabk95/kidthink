@@ -44,7 +44,6 @@ Task #83.
 | `packages/notification` | Domain event, typed renderer, channel driver và provider adapter |
 | `notifications` · `notification_deliveries` | Logical notification và trạng thái từng kênh |
 | Job `email:send` | Consumer của delivery `email` |
-| `POST /api/guest/webhooks/ses-sns` | Nhận delivery/bounce/complaint từ SES→SNS |
 | `/me/settings/notifications` | User bật/tắt loại định kỳ |
 
 **D-BU** (T15, 2026-08-09): `depends_on: JOB-QUEUE` (P1) là cạnh đảo phase thật, đã xử lý ở
@@ -61,8 +60,10 @@ tối thiểu mà [`backup-and-restore.md`](backup-and-restore.md) (`D-BT`) đã
    SMTP TLS của Nodemailer tới endpoint SES đúng region.
 4. Thành công → ghi `dispatched_at`, `provider_message_id` và stable `message_id`. Fail → retry
    tối đa 5 lần với backoff; hết retry → `failed` + alert.
-5. SES gửi delivery/bounce/complaint qua SNS; webhook xác minh chữ ký trước khi cập nhật delivery
-   và suppression state.
+5. ~~SES→SNS webhook cập nhật delivery/bounce/complaint~~ — **đã gỡ** (endpoint
+   `/api/guest/webhooks/ses-sns` và verifier SNS bị xoá; email gửi qua Brevo). Trạng thái
+   `dispatched`/`failed` chỉ do consumer `email:send` ghi; bounce/complaint do webhook của provider
+   hiện tại xử lý khi được spec riêng.
 
 SMTP không có giao dịch nguyên tử với PostgreSQL. Nếu SES đã nhận mail nhưng worker chết trước
 khi commit kết quả, retry có thể tạo bản trùng. `jobId`, conditional claim và stable `Message-ID`
@@ -75,7 +76,6 @@ giảm duplicate trong phạm vi ứng dụng nhưng **không được mô tả 
 | User đã opt-out loại đó | Ghi logical notification + delivery `suppressed`; không gửi |
 | Email bounce cứng/complaint | Đánh dấu địa chỉ `bouncing`, dừng loại định kỳ; email bảo mật giao dịch chỉ retry khi policy cho phép |
 | Provider lỗi trước khi nhận mail | Retry; backlog cao → alert |
-| SNS signature sai hoặc topic không allow-list | 401 `WEBHOOK_SIGNATURE_INVALID`, không cập nhật state, log security event không chứa payload nhạy cảm |
 | Tài khoản `deleted` | Cấm tạo delivery; event tồn tại trước đó bị suppress |
 | Kênh chưa kích hoạt (`fcm_web`) | Producer không enqueue; không fallback âm thầm từ email sang push |
 
@@ -93,7 +93,7 @@ giảm duplicate trong phạm vi ứng dụng nhưng **không được mô tả 
 | `BR-NOT-08` | Cấm — **NEVER tracking pixel** trong email tới người dùng của sản phẩm trẻ em | Tracking pixel thu dữ liệu hành vi không cần thiết từ sản phẩm hướng trẻ em |
 | `BR-NOT-09` | Producer chỉ tạo logical notification + delivery theo interface domain; Cấm import Nodemailer, MJML hay SDK provider ngoài `packages/notification` | Đa hình chỉ có giá trị khi producer không biết provider cụ thể |
 | `BR-NOT-10` | Email production dùng Nodemailer pool tới **AWS SES SMTP** qua TLS; SMTP credential theo region, tách khỏi AWS credential và không vào repo | Đây là provider/transport đã chốt; nhầm credential hoặc bỏ TLS làm mất mail hay lộ secret |
-| `BR-NOT-11` | Sự kiện SES→SNS chỉ được xử lý sau khi xác minh signature, topic ARN, timestamp và certificate URL thuộc AWS allow-list | Webhook giả có thể suppress email hoặc làm sai lịch sử delivery; certificate URL tuỳ ý còn mở SSRF |
+| `BR-NOT-11` | ~~Sự kiện SES→SNS chỉ xử lý sau khi xác minh signature…~~ **Đã retire** — webhook SES/SNS bị gỡ (email gửi qua Brevo). Giữ mã để không đánh số lại | Số `BR-NOT-*` là định danh ổn định; không tái sử dụng |
 | `BR-NOT-12` | Một logical notification có tối đa một delivery active trên mỗi channel; trạng thái provider nằm ở `notification_deliveries`, không nhân bản notification | Tách nội dung cần xem lại khỏi trạng thái kỹ thuật của từng kênh |
 | `BR-NOT-13` | FCM Web là kênh P5 best-effort; inbox là nguồn xem lại. Cấm — **NEVER** gửi FCM tới Child profile | Push có thể bị trình duyệt/OS bỏ; trẻ không phải recipient hệ thống |
 
@@ -150,13 +150,7 @@ escape; không nhận template/HTML do User hay Manager gửi thẳng. Bắt bu�
 
 Body `{ weekly_progress: bool, content_new: bool }`. Loại giao dịch không xuất hiện.
 
-### `POST /api/guest/webhooks/ses-sns`
-
-Nằm dưới `/api/guest/` vì người gọi là AWS, không có phiên: chữ ký SNS là danh tính duy nhất.
-Nhận SNS envelope từ topic allow-list. Xác minh signature trước parse event; xử lý idempotent theo
-SNS message id + SES message id. 200 kèm `{ status }` cho event hợp lệ đã xử lý hoặc đã thấy
-(`processed`, `subscription_confirmed`, `no_message_id`); envelope sai hoặc chữ ký sai → 401
-`WEBHOOK_SIGNATURE_INVALID` (`WebhookSignatureInvalidError`), không cập nhật state.
+### ~~`POST /api/guest/webhooks/ses-sns`~~ (đã gỡ, `BR-NOT-11` retire)
 
 Inbox API thuộc [`notification-inbox.md`](../03-account/notification-inbox.md), không đặt ở đây.
 
@@ -198,17 +192,6 @@ Scenario: BR-NOT-10 — SMTP dùng TLS và pool
   Then Nodemailer dùng pool tới SES SMTP endpoint theo region
   And TLS certificate được xác minh
 
-Scenario: BR-NOT-11 — SNS giả không đổi delivery
-  Given request có SNS signature sai
-  When gọi SES event webhook
-  Then trả 401 `WEBHOOK_SIGNATURE_INVALID`
-  And không notification_deliveries nào đổi trạng thái
-
-Scenario: BR-NOT-11 — certificate URL ngoài AWS bị chặn
-  Given SNS envelope trỏ SigningCertURL tới host không thuộc allow-list AWS
-  When gọi SES event webhook
-  Then trả 401 `WEBHOOK_SIGNATURE_INVALID` trước khi fetch URL
-
 Scenario: opt-out được tôn trọng
   Given user tắt weekly_progress
   When job sinh báo cáo tuần chạy
@@ -222,7 +205,6 @@ Scenario: opt-out được tôn trọng
 - INSERT logical notification + delivery trong cùng transaction với sự kiện.
 - Channel driver nằm sau interface của `packages/notification`.
 - Email qua SES SMTP có TLS, pool, typed MJML renderer và plain-text fallback.
-- Xác minh SES→SNS trước khi cập nhật delivery.
 
 **Ask first**
 - Thêm loại thông báo.
