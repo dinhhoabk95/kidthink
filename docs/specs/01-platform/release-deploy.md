@@ -1,136 +1,122 @@
 ---
 spec: RELEASE-DEPLOY
-title: Quy trình phát hành không gián đoạn
+title: Quy trình phát hành lên Cloudflare
 area: platform
 status: implemented
 mvp: true
 phase: P0
-reviewed: 2026-10-18
+reviewed: 2026-11-24
 owns:
   - Quy trình phát hành và điều kiện dừng của từng bước
-  - Nguồn code được phép đi lên máy chủ
+  - Nguồn code được phép đi lên Cloudflare
   - Cổng khói sau khi đổi bản
 depends_on:
   - ENV-CONTRACT
-  - SERVER-PROVISIONING
-  - PROCESS-SUPERVISION
   - HEALTH-CHECK
   - MONITORING-AND-ALERTING
 ---
 
-# Phát hành lên máy chủ bằng một lệnh
+# Phát hành lên Cloudflare bằng một lần đẩy `main`
 
 ## 1. Objective
 
-Người vận hành chạy **một lệnh** và bản mới lên máy chủ, hoặc không lên chút nào. Không có trạng
-thái giữa — không có "đã copy được nửa", không có "đã chạy migration nhưng chưa đổi bản", không
-có "bản mới lên nhưng chết và không ai biết".
+Một lần đẩy commit lên `main` (hoặc một lần chạy tay `workflow_dispatch`) đưa bản mới lên
+Cloudflare, hoặc không lên chút nào. Không có trạng thái giữa — không có "đã áp DDL nhưng chưa đổi
+bản", không có "bản mới lên nhưng chết và không ai biết".
 
-Yêu cầu thứ hai, quan trọng ngang: **trạng thái máy phát triển không có đường nào chạm tới máy
-chủ.** Không phải bằng nội quy nhắc nhau, mà bằng cấu trúc — nguồn code duy nhất là commit đã đẩy
-lên kho, nên tệp chưa commit, thư mục phụ thuộc của máy trạm, tệp cấu hình dev và cơ sở dữ liệu
-dev **không có phương tiện** để đi lên.
+Quyết định `D14` ([`SPEC.md`](../../SPEC.md) §0): MVP chỉ có **một** đường phát hành — Cloudflare
+Workers + D1 + Durable Objects. Đường VPS (SSH + Nginx + PM2 + `mindkid.sh`) đã gỡ; spec
+`server-provisioning` và `process-supervision` bị xoá cùng nó.
+
+Yêu cầu thứ hai: **trạng thái máy phát triển không có đường nào chạm tới Cloudflare production.**
+Nguồn code duy nhất là commit đã đẩy lên kho — runner GitHub checkout đúng commit đó, nên tệp chưa
+commit, thư mục phụ thuộc của máy trạm, tệp cấu hình dev và cơ sở dữ liệu dev không có phương tiện
+để đi lên.
 
 ## 2. Actors
 
-| Actor                     | Quyền cần     | Làm được gì ở đây                   |
-| ------------------------- | ------------- | ----------------------------------- |
-| Người vận hành            | Khoá SSH      | Chạy lệnh phát hành từ máy trạm     |
-| Máy chủ                   | Quyền đọc kho | Tự lấy commit về, tự build          |
-| Trình giám sát tiến trình |               | Nạp lại web và worker sau khi đổi bản |
-| Kênh thông báo            |               | Nhận tin khi phát hành thất bại     |
+| Actor            | Quyền cần                       | Làm được gì ở đây                               |
+| ---------------- | ------------------------------- | ----------------------------------------------- |
+| Người vận hành   | Quyền đẩy `main` / chạy workflow | Kích hoạt phát hành, đọc log, chạy `wrangler rollback` tay |
+| GitHub Actions   | Secret Cloudflare               | Tự checkout, build, áp DDL, deploy, chạy cổng khói |
+| Cloudflare       |                                 | Giữ lịch sử version Worker để quay lui          |
 
 ## 3. Entry points
 
-| Nơi                                           | Actor          | Ghi chú                                              |
-| --------------------------------------------- | -------------- | ---------------------------------------------------- |
-| `pnpm deploy --host <tên>`                    | Người vận hành | Lớp bọc SSH; mặc định phát hành nhánh chính trên kho |
-| `pnpm deploy init --host <tên> --remote <url>` | Người vận hành | Dựng máy trắng: người dùng hệ thống, cây thư mục, bản sao kho |
-| `pnpm deploy --host <tên> --ref <tham chiếu>` | Người vận hành | Thẻ hoặc mã commit                                   |
-| `pnpm deploy --host <tên> --dry-run`          | Người vận hành | In kế hoạch, không đổi gì trên máy chủ               |
-| `mindkid.sh release --ref <tham chiếu>`       |                | Nội dung thật cho đích `vps`, chạy trên máy chủ tại `/opt/mindkid/bin/` |
-| `.github/workflows/deploy-cloudflare.yml`     | GitHub Actions | Pipeline tự động Giai đoạn 1 (`cloudflare`): `pnpm check` → `test` → `verify-cf-budget` → `terraform apply` → D1 migration + Hash-Gated Seed → `wrangler deploy` → smoke `/api/guest/health` |
-| `pnpm cutover:cf-to-vps`                      | Người vận hành | Quy trình 6 bước di trú dữ liệu D1/Blobs sang PostgreSQL 18 + Garage S3 trên VPS và chuyển mạch Terraform `backend_mode=vps` ở mốc `1.000 DAU` |
-| `/var/log/mindkid/deploy.log`                 | Người vận hành | Bản ghi mọi lần chạy                                 |
+| Nơi                                       | Actor          | Ghi chú                                                                                                                                                                                              |
+| ----------------------------------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.github/workflows/deploy-cloudflare.yml` | GitHub Actions | Kích hoạt khi đẩy `main` hoặc `workflow_dispatch`. `pnpm check` → Terraform → D1 DDL cộng thêm → build web + admin + `verify-cf-budget` → `wrangler deploy` worker, web, admin → smoke `/api/guest/health` |
+| `npx wrangler rollback --config apps/<app>/wrangler.jsonc` | Người vận hành | Quay lui tay, xem [`release-rollback.md`](release-rollback.md)                                                                                                                       |
+| `pnpm verify:cf-budget`                   | Người vận hành / CI | Kiểm kích thước bundle Worker so với trần gói Free                                                                                                                                              |
 
 ## 4. Main flow
 
 ```
-1. Khoá  — một lần phát hành tại một thời điểm; lần thứ hai thoát ngay
-2. Chốt commit  — máy chủ tự lấy về, giải tham chiếu thành mã commit đầy đủ
-3. Kiểm biến môi trường  — thiếu, rỗng, sai kiểu thì DỪNG, chưa build gì
-4. Bày bản  — bung đúng cây tệp của commit đó vào releases/<mốc>-<sha>
-5. Cài phụ thuộc  — trong container build, khoá phiên bản, không dùng thư mục của máy trạm
-6. Build  — web runtime, worker và static admin SPA trong cùng container build
-7. Migration  — chạy trước khi đổi bản; chỉ migration cộng thêm
-8. Đổi bản  — đổi liên kết mềm bằng một thao tác nguyên tử, rồi nạp lại worker và web; Nginx đọc static admin từ release
-9. Cổng khói  — gọi endpoint sức khoẻ; không phải 200 thì quay lui và thoát khác 0
-10. Dọn  — giữ 5 bản gần nhất
+1. Khoá  — nhóm concurrency `mindkid-cloudflare-prod`, không huỷ lần đang chạy
+2. Chốt commit  — actions/checkout đúng commit kích hoạt
+3. Cài phụ thuộc  — `pnpm install --frozen-lockfile`, Node theo `.nvmrc`
+4. Cổng tĩnh  — `pnpm check` (lint, ranh giới package, typecheck)
+5. Terraform  — áp biên Cloudflare (WAF, cache) và 3 D1 (`core`, `logs`, `blobs`)
+6. Đồng bộ ID D1 vào `wrangler.jsonc` và xuất DDL
+7. Migration  — áp DDL cộng thêm lên D1, trước khi đổi bản
+8. Build  — web (Nitro `cloudflare_module`) và admin static SPA, rồi `verify-cf-budget`
+9. Đổi bản  — `wrangler deploy` worker, web, admin
+10. Cổng khói  — gọi `/api/guest/health`; không phải 200 thì `wrangler rollback` web + worker, thoát khác 0
 ```
 
-Mỗi bước ghi một dòng vào tệp log kèm mốc thời gian. Bước nào lỗi thì dừng cả quy trình; không có
-bước nào được bỏ qua để đi tiếp.
+Mỗi bước là một step của workflow; bước nào lỗi thì job dừng, không bước nào được bỏ qua để đi tiếp.
 
 ## 5. Alternative flows
 
-| Nhánh                             | Điều kiện                                | Hành vi                                                                                                                            |
-| --------------------------------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| Tham chiếu không có trên kho      | Nhánh chưa đẩy lên                       | Dừng ở bước 2, chưa tạo thư mục bản nào, in cách xử lý                                                                             |
-| Máy trạm có tệp chưa commit       | Cây làm việc bẩn                         | Vẫn phát hành đúng commit trên kho, in cảnh báo kèm số tệp khác biệt. Cấm tự commit, cấm tự đẩy                                    |
-| Thiếu biến bắt buộc               | Xem [`env-contract.md`](env-contract.md) | Dừng ở bước 3; bản đang chạy nguyên vẹn                                                                                            |
-| Khoá phiên bản lệch tệp mô tả gói | Bước 5 tự thất bại                       | Dừng; đây là hành vi muốn có, không phải lỗi cần nới                                                                               |
-| Build hết bộ nhớ                  | Máy thiếu vùng nhớ                       | Dừng ở bước 6; bản đang chạy nguyên vẹn                                                                                            |
-| Migration thất bại                | Bước 7                                   | Dừng trước khi đổi bản; bản cũ vẫn phục vụ cơ sở dữ liệu ở trạng thái sau migration một phần, và bản ghi log nêu rõ để người xử lý |
-| Cổng khói thất bại                | Bước 9                                   | Đưa liên kết mềm về bản trước, nạp lại, phát thông báo, thoát khác 0                                                               |
-| Phát hành đang chạy               | Bước 1                                   | Lần thứ hai thoát ngay, không xếp hàng chờ                                                                                         |
-| Bị ngắt giữa đường                | Mất kết nối SSH                          | Liên kết mềm vẫn trỏ bản cũ; thư mục bản dở dang bị dọn ở lần chạy sau                                                             |
+| Nhánh                              | Điều kiện                                | Hành vi                                                                                                                  |
+| ---------------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Máy trạm có tệp chưa commit        | Cây làm việc bẩn                         | Không ảnh hưởng: runner chỉ thấy commit đã đẩy                                                                           |
+| Thiếu biến bắt buộc                | Xem [`env-contract.md`](env-contract.md) | `createWebEnv()` chạy lúc `nuxt build` và dừng ở bước 8; bản đang chạy nguyên vẹn                                       |
+| Khoá phiên bản lệch tệp mô tả gói  | Bước 3 tự thất bại                       | Dừng; đây là hành vi muốn có, không phải lỗi cần nới                                                                     |
+| Build hết bộ nhớ                   | Runner thiếu heap                        | Dừng ở bước 8; bản đang chạy nguyên vẹn. Workflow đặt `NODE_OPTIONS=--max-old-space-size=10240`                          |
+| Migration thất bại                 | Bước 7                                   | Dừng trước khi đổi bản; bản cũ vẫn phục vụ cơ sở dữ liệu ở trạng thái sau DDL một phần (DDL chỉ cộng thêm nên bản cũ chạy được) |
+| Cổng khói thất bại                 | Bước 10                                  | `wrangler rollback` web và worker, thoát khác 0                                                                          |
+| Phát hành đang chạy                | Bước 1                                   | Lần thứ hai xếp hàng theo nhóm concurrency, không chạy song song                                                         |
+| Runner bị ngắt giữa đường          | Mất runner                               | Worker vẫn chạy version cũ cho tới khi `wrangler deploy` hoàn tất; chạy lại workflow                                     |
 
 ## 6. Business rules
 
-| ID          | Rule                                                                                                 | Vì sao                                                                                                                                                                                                                                                                                            |
-| ----------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `BR-DEP-01` | Nguồn code lên máy chủ **chỉ** là commit đã có trên kho; cấm mọi hình thức truyền tệp từ máy trạm    | Đây là điều làm cho "code dev không ảnh hưởng máy chủ" thành sự thật kiểm được, thay vì một lời hứa. Không có kênh truyền tệp thì tệp chưa commit không có cách nào đi lên                                                                                                                        |
-| `BR-DEP-02` | Cây làm việc bẩn trên máy trạm **không** chặn phát hành, nhưng phải in cảnh báo                      | Chặn thì người ta sẽ commit rác để qua cổng. In cảnh báo giữ được sự thật: cái đang lên là commit nào                                                                                                                                                                                             |
-| `BR-DEP-03` | Cấm quy trình phát hành tự commit, tự đẩy, hay tự sửa mã                                             | Một quy trình vừa được phép sửa mã vừa được phép phát hành là một quy trình có thể phát hành thứ chưa ai đọc                                                                                                                                                                                      |
-| `BR-DEP-04` | Kiểm biến môi trường chạy **trước** bước build                                                       | Dừng sau khi build là tốn vài phút để phát hiện một dòng thiếu. Dừng trước khi build thì máy chủ chưa mất gì                                                                                                                                                                                      |
-| `BR-DEP-05` | Cài phụ thuộc và build diễn ra **trên máy chủ, trong container**, không trên máy trạm                | Máy trạm là macOS trên chip ARM, máy chủ là Linux trên x86. Thư viện xử lý ảnh có phần nhị phân theo nền tảng, nên artefact build ở máy trạm không dùng được — xem [`repo-bootstrap.md`](../00-foundation/repo-bootstrap.md). Build trong container cũng cắt luôn khác biệt phiên bản của máy chủ |
-| `BR-DEP-06` | Migration chạy **trước** khi đổi bản, và chỉ được là migration cộng thêm                             | Đổi bản trước migration nghĩa là mã mới nói chuyện với lược đồ cũ. Ràng buộc cộng thêm là điều kiện để quay lui được, xem [`release-rollback.md`](release-rollback.md)                                                                                                                            |
-| `BR-DEP-07` | Đổi bản bằng **một** thao tác nguyên tử                                                              | Nếu có khoảnh khắc liên kết mềm không trỏ đâu, thì có khoảnh khắc site trả lỗi. Một thao tác nguyên tử làm khoảnh khắc đó không tồn tại                                                                                                                                                           |
-| `BR-DEP-08` | Sau khi nạp lại phải chạy cổng khói; không phải 200 thì **quay lui**                                 | Phát hành xong mà không kiểm nghĩa là để người dùng làm người kiểm. Luật gốc là `BR-HLT-06` của [`health-check.md`](health-check.md)                                                                                                                                                              |
-| `BR-DEP-09` | Một lần phát hành tại một thời điểm, cưỡng chế bằng khoá trên máy chủ                                | Hai lần phát hành song song ghi chồng nhau ở bước migration và bước đổi bản. Hàng đợi chờ không giúp gì: lần sau sẽ chạy lại từ đầu với commit mới hơn                                                                                                                                            |
-| `BR-DEP-10` | Mọi bước ghi log kèm mốc thời gian; log cấm chứa giá trị biến bí mật                                 | Không có bản ghi thì không truy được lần phát hành nào làm hỏng. Thi hành `BR-ENV-08` tại nơi log được ghi                                                                                                                                                                                        |
-| `BR-DEP-11` | Thất bại phải phát thông báo qua kênh của [`monitoring-and-alerting.md`](monitoring-and-alerting.md) | Một lần phát hành thất bại lúc 23 giờ mà không ai biết là một đêm site chạy bản cũ trong khi người ta tin bản mới đã lên                                                                                                                                                                          |
-| `BR-DEP-12` | Phát hành hai lần cùng một commit phải cho cùng kết quả, không được lỗi                              | Đây là tính chất rẻ nhất để kiểm rằng quy trình không dựa vào trạng thái còn sót của lần trước                                                                                                                                                                                                    |
-| `BR-DEP-13` | Cấm build hay chạy `pnpm` trong thư mục bản đang phục vụ                                             | Cài phụ thuộc trực tiếp vào bản đang chạy làm nó thay đổi dưới chân tiến trình đang phục vụ. Bản đã bày phải là thứ chỉ-đọc                                                                                                                                                                       |
-| `BR-DEP-14` | Chế độ in kế hoạch phải không đổi gì trên máy chủ                                                    | Người vận hành cần một cách xem sắp làm gì mà không phải tin lời mô tả                                                                                                                                                                                                                            |
-| `BR-DEP-15` | Cổng khói của bước build phải kiểm **artifact**, không chỉ mã thoát: server ESM khởi động được, static SPA có entry CSS, và chunk client không chứa code máy chủ | `nuxt build` trả 0 trong khi `.output/server/index.mjs` chết ngay lúc khởi động vì native addon bị inline (`BR-MPA-10`), và `nuxt generate` trả 0 trong khi không sinh byte CSS nào vì layer thiết kế bị bỏ qua (`BR-DSC-21`). Cả hai đã xảy ra thật 2026-08-29 |
+| ID          | Rule                                                                                                                                       | Vì sao                                                                                                                                                                                                                                                    |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `BR-DEP-01` | Nguồn code lên Cloudflare **chỉ** là commit đã có trên kho; cấm mọi đường deploy từ máy trạm cho production                              | Đây là điều làm cho "code dev không ảnh hưởng production" thành sự thật kiểm được. Không có kênh truyền tệp từ máy trạm thì tệp chưa commit không có cách nào đi lên                                                                                       |
+| `BR-DEP-03` | Cấm workflow tự commit, tự đẩy, hay tự sửa mã                                                                                              | Một quy trình vừa được phép sửa mã vừa được phép phát hành là một quy trình có thể phát hành thứ chưa ai đọc                                                                                                                                              |
+| `BR-DEP-04` | Kiểm biến môi trường chạy **trước** khi có artifact deploy: `createWebEnv()` dừng `nuxt build` khi thiếu biến production (`BR-ENV-15`)     | Dừng sau khi deploy là để người dùng phát hiện dòng thiếu. Dừng ở build thì Cloudflare chưa mất gì                                                                                                                                                        |
+| `BR-DEP-06` | DDL D1 chạy **trước** `wrangler deploy`, và chỉ được là DDL cộng thêm                                                                      | Đổi bản trước DDL nghĩa là mã mới nói chuyện với lược đồ cũ. Ràng buộc cộng thêm là điều kiện để quay lui được, xem [`release-rollback.md`](release-rollback.md)                                                                                           |
+| `BR-DEP-08` | Sau khi deploy phải chạy cổng khói; không phải 200 thì **quay lui** web và worker                                                          | Phát hành xong mà không kiểm nghĩa là để người dùng làm người kiểm. Luật gốc là `BR-HLT-06` của [`health-check.md`](health-check.md)                                                                                                                      |
+| `BR-DEP-09` | Một lần phát hành tại một thời điểm, cưỡng chế bằng `concurrency.group` và `cancel-in-progress: false`                                     | Hai lần phát hành song song ghi chồng nhau ở bước DDL và bước deploy. Không huỷ lần đang chạy vì huỷ giữa `wrangler deploy` để lại ba Worker ở ba version khác nhau                                                                                        |
+| `BR-DEP-10` | Log workflow cấm chứa giá trị biến bí mật; mọi giá trị bí mật đi qua `secrets.*`                                                           | Không có bản ghi thì không truy được lần phát hành nào làm hỏng; nhưng bản ghi chứa bí mật là sự cố mới. Thi hành `BR-ENV-08` tại nơi log được ghi                                                                                                        |
+| `BR-DEP-11` | Thất bại phải thấy được: job đỏ trên GitHub là kênh tối thiểu; kênh [`monitoring-and-alerting.md`](monitoring-and-alerting.md) là kênh chủ động | Một lần phát hành thất bại lúc 23 giờ mà không ai biết là một đêm site chạy bản cũ trong khi người ta tin bản mới đã lên. Phần chủ động (Telegram từ workflow) chưa làm — xem §11                                                                         |
+| `BR-DEP-12` | Phát hành lại cùng một commit phải cho cùng kết quả, không được lỗi                                                                        | Đây là tính chất rẻ nhất để kiểm rằng quy trình không dựa vào trạng thái còn sót của lần trước. Terraform idempotent, `wrangler deploy` ghi đè version                                                                          |
+| `BR-DEP-15` | Cổng build phải kiểm **artifact**, không chỉ mã thoát: bundle Worker khởi động được dưới trần Free, static SPA có entry CSS, chunk client không chứa code máy chủ | `nuxt build` trả 0 trong khi server chết ngay lúc khởi động vì native addon bị inline (`BR-MPA-10`), và `nuxt generate` trả 0 trong khi không sinh byte CSS nào vì layer thiết kế bị bỏ qua (`BR-DSC-21`). Cả hai đã xảy ra thật 2026-08-29                |
+
+Các luật `BR-DEP-02`, `-05`, `-07`, `-13`, `-14` thuộc đường VPS (cây làm việc bẩn trên máy trạm,
+build trong container, đổi liên kết mềm, thư mục bản đang phục vụ, in kế hoạch) đã gỡ theo `D14`;
+số thứ tự giữ nguyên để không vỡ tham chiếu lịch sử.
 
 ## 7. Data
 
-**Đọc:** kho trên máy chủ, hai file env runtime, public API build config và tệp cấu hình máy chủ trên máy trạm.
-**Ghi:** thư mục bản mới, liên kết mềm bản hiện hành, tệp log phát hành. Cơ sở dữ liệu chỉ bị ghi
-bởi bước migration.
+**Đọc:** commit trên kho, secret và variable của GitHub, output Terraform.
+**Ghi:** D1 (`core`, `logs`, `blobs`) qua DDL cộng thêm; version Worker trên Cloudflare; không ghi
+gì lên kho.
 
-### 7.1 Tên và vòng đời của một bản
+### 7.1 Thứ tự deploy
 
-| Field           | Kiểu         | Ràng buộc                                                       |
-| --------------- | ------------ | --------------------------------------------------------------- |
-| Tên thư mục bản | text         | Mốc thời gian theo giờ quốc tế cộng bảy ký tự đầu của mã commit |
-| Mã commit       | text         | Bốn mươi ký tự, giải từ tham chiếu ở bước 2                     |
-| Số bản giữ lại  | số           | 5                                                               |
-| Bản hiện hành   | liên kết mềm | Trỏ vào một thư mục trong `releases/`                           |
+| Thứ tự | Ứng dụng | Vì sao                                                                                      |
+| ------ | -------- | ------------------------------------------------------------------------------------------- |
+| 1      | `worker` | Không phục vụ người dùng; lên trước để mã tiêu thụ việc khớp lược đồ mới                    |
+| 2      | `web`    | Bề mặt công khai và toàn bộ `/api/*`                                                        |
+| 3      | `admin`  | Static SPA (Workers Static Assets); header bảo mật lấy từ `apps/admin/public/_headers`      |
 
-### 7.2 Thứ tự nạp lại
+### 7.2 Header bảo mật của admin
 
-| Thứ tự | Ứng dụng | Vì sao trước                                                             |
-| ------ | -------- | ------------------------------------------------------------------------ |
-| 1      | `worker` | Không phục vụ người dùng; nạp trước để mã tiêu thụ việc khớp lược đồ mới |
-| 2      | `web`    | Bề mặt công khai, nạp cuối                                               |
-
-### 7.3 Nội dung một dòng log
-
-Mốc thời gian quốc tế, tên bước, kết quả, và khi thất bại thì thêm nguyên nhân. Cấm giá trị bí
-mật. Tệp log luân chuyển cùng chính sách ở [`process-supervision.md`](process-supervision.md).
+Admin không có Nitro server nên `nuxt-security` không chạy. Header (CSP, HSTS, `X-Frame-Options:
+DENY`, `nosniff`, `Referrer-Policy`, COOP, `Permissions-Policy`, cache `immutable` cho `/_nuxt/*`)
+nằm ở `apps/admin/public/_headers`; build admin phải sinh `.output/public/_headers`.
 
 ## 8. API contract
 
@@ -142,64 +128,49 @@ Không có route công khai. Quy trình phát hành **gọi** endpoint sức kho
 ```gherkin
 Scenario: BR-DEP-15 — artifact chạy được, không chỉ build xanh
   Given bước build vừa xong với mã thoát 0
-  When chạy node .output/server/index.mjs của apps/web rồi gọi GET /
-  Then trả 200 và tiến trình không ném ReferenceError về __dirname
-  And .output/public/_nuxt của apps/admin có đúng một entry CSS lớn hơn 100KB
+  Then .output/public/_nuxt của apps/admin có đúng một entry CSS lớn hơn 100KB
   And không chunk nào trong .output/public/_nuxt chứa node-gyp-build
+  And .output/public/_headers của apps/admin tồn tại
+  And verify-cf-budget báo bundle Worker dưới trần
   And Cấm — NEVER coi mã thoát 0 của lệnh build là đã qua cổng này
 
-Scenario: BR-DEP-01 — tệp chưa commit không lên máy chủ
+Scenario: BR-DEP-01 — tệp chưa commit không lên Cloudflare
   Given máy trạm có một tệp đã sửa nhưng chưa commit
-  When chạy lệnh phát hành
-  Then thư mục bản trên máy chủ khớp đúng commit trên kho
-  And tệp chưa commit không có trong thư mục bản
+  When đẩy commit khác lên main
+  Then bản trên Cloudflare khớp đúng commit đã đẩy
+  And tệp chưa commit không có trong bundle
 
-Scenario: BR-DEP-02 — cây làm việc bẩn được cảnh báo
-  Given máy trạm có ba tệp chưa commit
-  When chạy lệnh phát hành
-  Then đầu ra chứa cảnh báo nêu số tệp khác biệt
-  And lần phát hành vẫn tiếp tục
-
-Scenario: BR-DEP-04 — thiếu biến thì dừng trước khi build
-  Given file env trên máy chủ thiếu một biến bắt buộc
-  When chạy lệnh phát hành
-  Then quy trình dừng ở bước kiểm biến
-  And không có thư mục bản mới nào được tạo
+Scenario: BR-DEP-04 — thiếu biến thì dừng trước khi deploy
+  Given secret production thiếu một biến bắt buộc
+  When workflow chạy
+  Then bước build dừng với tên biến thiếu
+  And không có wrangler deploy nào chạy
   And endpoint sức khoẻ của bản đang chạy vẫn trả 200
 
 Scenario: BR-DEP-08 — cổng khói thất bại thì quay lui
-  Given bản mới khởi động nhưng endpoint sức khoẻ trả 503
-  When quy trình phát hành tới bước cổng khói
-  Then liên kết mềm trỏ về bản trước
-  And endpoint sức khoẻ trả 200 trở lại
+  Given bản mới lên nhưng endpoint sức khoẻ trả 503
+  When workflow tới bước cổng khói
+  Then web và worker được wrangler rollback về version trước
   And mã thoát khác 0
-  And một thông báo được phát
 
 Scenario: BR-DEP-09 — hai lần phát hành song song
   Given một lần phát hành đang chạy
-  When chạy lệnh phát hành lần thứ hai
-  Then lần thứ hai thoát ngay với thông báo đang có lần phát hành khác
+  When đẩy commit thứ hai lên main
+  Then lần thứ hai chờ, không chạy song song và không huỷ lần đầu
 
 Scenario: BR-DEP-12 — phát hành lại cùng commit
   Given một lần phát hành thành công với commit X
-  When phát hành lại đúng commit X
+  When chạy lại workflow cho đúng commit X
   Then lần thứ hai thành công
-  And endpoint sức khoẻ trả 200 suốt quá trình
 
-Scenario: BR-DEP-14 — in kế hoạch không đổi gì
-  Given một máy chủ đang chạy
-  When chạy lệnh phát hành ở chế độ in kế hoạch
-  Then liên kết mềm bản hiện hành không đổi
-  And số thư mục trong releases không đổi
-
-Scenario: BR-DEP-06 — migration chạy trước khi đổi bản
-  Given một bản mới có một migration cộng thêm
+Scenario: BR-DEP-06 — DDL chạy trước khi đổi bản
+  Given một bản mới có một DDL cộng thêm
   When phát hành thành công
-  Then thứ tự trong log là migration trước, đổi bản sau
+  Then thứ tự step là d1 execute trước, wrangler deploy sau
 
 Scenario: BR-DEP-10 — log không lộ bí mật
   Given một lần phát hành thành công
-  When tìm giá trị của các biến bí mật trong tệp log
+  When tìm giá trị của các secret trong log workflow
   Then không có kết quả nào
 ```
 
@@ -207,37 +178,35 @@ Scenario: BR-DEP-10 — log không lộ bí mật
 
 **Always**
 
-- Lấy code từ kho, bằng mã commit đầy đủ.
-- Kiểm biến môi trường trước khi build.
+- Lấy code từ kho, bằng commit kích hoạt workflow.
+- Để `createWebEnv()` kiểm biến môi trường lúc build.
 - Nếu đổi `MFA_ENCRYPTION_KEY`: chạy `npx tsx packages/db/scripts/count-mfa-rows.ts` trên
   production, kiểm số hàng `mfa_settings` đã `confirmed_at`. Có hàng → re-encrypt hoặc re-enroll
   trước khi đổi khoá (`BR-MFA-13`).
-- Chạy migration trước khi đổi bản.
-- Đổi bản bằng thao tác nguyên tử rồi nạp lại theo thứ tự ở §7.2.
+- Áp DDL trước khi `wrangler deploy`.
 - Chạy cổng khói và quay lui khi thất bại.
-- Ghi log từng bước.
 
 **Ask first**
 
 - Bỏ qua cổng khói cho một lần phát hành.
-- Phát hành một tham chiếu không phải nhánh chính.
-- Đổi số bản giữ lại.
-- Thêm bước mới vào quy trình.
+- Phát hành từ nhánh không phải `main`.
+- Thêm bước mới vào workflow.
+- Thêm lại một đường phát hành thứ hai (VPS hay nơi khác) — đó là quyết định `D14` mới.
 
 **Never**
 
-- Truyền tệp từ máy trạm lên máy chủ.
-- Tự commit, tự đẩy, hay tự sửa mã trong quy trình phát hành.
-- Cài phụ thuộc hay build trong thư mục bản đang phục vụ.
-- Đổi bản trước khi chạy migration.
+- `wrangler deploy` production từ máy trạm.
+- Tự commit, tự đẩy, hay tự sửa mã trong workflow.
+- Deploy trước khi áp DDL.
 - Bỏ qua thất bại của một bước để đi tiếp.
-- In giá trị biến bí mật ra log hay ra màn hình.
+- In giá trị biến bí mật ra log.
 
 ## 11. Open questions
 
-| #   | Câu hỏi                                                                                                                                                                                                                                                       | Chặn gì                      | Chặn phase | Chủ                                                        |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- | ---------- | ---------------------------------------------------------- |
-| 1   | Migration thất bại giữa đường để lược đồ ở trạng thái một phần. Có cần bọc mỗi lần migration trong một giao dịch duy nhất, hay chấp nhận xử lý tay theo bản ghi log?                                                                                          | Điều kiện go-live            | go-live    | người quyết                                                |
-| 2   | Cổng lint và kiểm thử của kho hiện chưa có nơi chạy tự động trên kho từ xa. Quy trình phát hành có phải tự chạy `pnpm check` và `pnpm test` trên máy chủ trước khi build, hay tin vào cổng chạy ở máy trạm? Hai phương án đổi thời gian phát hành lấy độ chắc | Mức bảo vệ của lần phát hành | go-live    | người quyết                                                |
-| 3   | Thời gian gián đoạn mục tiêu khi nạp lại là bao nhiêu? Chưa đo được vì chưa có máy chủ thật                                                                                                                                                                   | Không chặn                   | chờ P1     | Infra                                                      |
-| 4   | Có cần một bước hâm nóng bản mới trước khi đổi liên kết mềm, để yêu cầu đầu tiên không gánh chi phí khởi động?                                                                                                                                                | Không chặn                   | chờ P2     | hoãn — mở lại nếu đo thấy yêu cầu đầu tiên chậm quá ngưỡng |
+| #   | Câu hỏi                                                                                                                                                                                  | Chặn gì                      | Chặn phase | Chủ         |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- | ---------- | ----------- |
+| 1   | DDL thất bại giữa đường để lược đồ ở trạng thái một phần. D1 chạy `--file` theo batch nên có thể một phần; chấp nhận xử lý tay theo log hay thêm bước kiểm?                              | Điều kiện go-live            | go-live    | người quyết |
+| 2   | Workflow đã chạy `pnpm check` nhưng chưa chạy vitest. Có thêm `pnpm test` vào workflow trước `wrangler deploy` không? Đổi thời gian phát hành lấy độ chắc                               | Mức bảo vệ của lần phát hành | go-live    | người quyết |
+| 3   | Gửi thông báo Telegram chủ động từ workflow khi thất bại (phần chủ động của `BR-DEP-11`) chưa làm                                                                                        | Không chặn                   | chờ P1     | Infra       |
+| 4   | **NEEDS-VALIDATION** — rate limit ở biên: xem mục NEEDS-VALIDATION trong [`rate-limiting.md`](rate-limiting.md) §11. Mất giới hạn theo IP của Nginx khi gỡ VPS; cần rule WAF hoặc xác nhận limiter trong app trước go-live | Điều kiện go-live            | go-live    | người quyết |
+| 5   | Smoke artifact admin (entry CSS > 100KB, chunk không chứa `node-gyp-build`) của `BR-DEP-15` từng nằm trong `infra/scripts/lib/smoke.sh` đã xoá; hiện chỉ phần bundle Worker (`verify-cf-budget`) và `_headers` còn cổng. Cần cổng thay thế trước go-live | Điều kiện go-live            | go-live    | người quyết |

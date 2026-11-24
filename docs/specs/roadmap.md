@@ -42,7 +42,7 @@ suy ra từ `depends_on` của các spec.
                                                  └──→ audit-log ──→ admin-auth
 
    auth-tokens-sessions ──→ app-runtime-boundary ──→ admin-auth
-   env-contract ──→ server-provisioning · process-supervision ──→ release-deploy ──→ release-rollback
+   env-contract ──→ release-deploy ──→ release-rollback
 ```
 
 Thứ tự làm:
@@ -65,7 +65,7 @@ Thứ tự làm:
 | 11 | Audit log (trước mọi hành động cần audit) | [`audit-log.md`](01-platform/audit-log.md) |
 | 11b | Đăng nhập admin | [`admin-auth.md`](06-admin/admin-auth.md) |
 | 11c | Chốt boundary runtime admin static và web API owner | [`app-runtime-boundary.md`](00-foundation/app-runtime-boundary.md) |
-| 12 | Phát hành lên máy chủ bằng một lệnh, và ranh giới máy trạm với máy chủ | [`env-contract.md`](01-platform/env-contract.md) → [`server-provisioning.md`](01-platform/server-provisioning.md) · [`process-supervision.md`](01-platform/process-supervision.md) → [`release-deploy.md`](01-platform/release-deploy.md) → [`release-rollback.md`](01-platform/release-rollback.md) |
+| 12 | Phát hành lên Cloudflare bằng một lần đẩy `main` (`D14`), và ranh giới máy trạm với production | [`env-contract.md`](01-platform/env-contract.md) → [`release-deploy.md`](01-platform/release-deploy.md) → [`release-rollback.md`](01-platform/release-rollback.md) |
 
 Ghi chú:
 - Registry: [`business-rules.md`](00-foundation/business-rules.md), [`error-codes.md`](00-foundation/error-codes.md), [`event-catalog.md`](00-foundation/event-catalog.md) không thành bước riêng mà được tra cứu và tuân thủ ở **mọi** bước.
@@ -99,7 +99,7 @@ của Task #83 và trước khi mở P1.15. Session tuyệt đối 1 giờ, reme
 Redis fail-closed và toàn bộ legacy runtime đã được gỡ.
 
 Bước 12 vào P0 vì nó là điều kiện go-live, không phải việc dọn sau: đo ngày 2026-08-18,
-`infra/scripts/deploy.sh` có 50 dòng với mọi bước thật bị chú thích, và `.env.example` khai 2
+`infra/scripts/deploy.sh` có 50 dòng với mọi bước thật bị chú thích (đường VPS này đã gỡ theo `D14`; phát hành nay là `.github/workflows/deploy-cloudflare.yml`), và `.env.example` khai 2
 trong 56 biến môi trường mà code đang đọc. Hồ sơ task:
 [`Task #90`](../tasks/90-vps-deploy-plan.md).
 
@@ -275,7 +275,7 @@ task riêng. Khoản nợ đó nằm ở [`08-quality/runtime-gates.md`](08-qual
 
 | Task | Spec đóng | Chặn bởi |
 |---|---|---|
-| [#90](../tasks/90-vps-deploy-plan.md) | năm spec phát hành ở bước 12 của P0 | tên thương hiệu đang đổi, nhà cung cấp máy, tên miền |
+| [#90](../tasks/90-vps-deploy-plan.md) | các spec phát hành ở bước 12 của P0 (hai spec VPS đã gỡ theo `D14`) | tên thương hiệu đang đổi, nhà cung cấp máy, tên miền |
 | #91 | [`security-checklist.md`](08-quality/security-checklist.md) · [`business-rules.md`](00-foundation/business-rules.md) | 24 route còn nợ validate body |
 | #92 | [`game-layout-engine.md`](01-platform/game-layout-engine.md) | câu hỏi §11 Q2: 12 giá trị layout có gộp được không |
 | #93 | [`deterministic-randomness.md`](01-platform/deterministic-randomness.md) | Task #92, và migration thêm cột seed vào bảng phiên chơi |

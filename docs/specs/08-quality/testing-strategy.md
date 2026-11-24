@@ -144,7 +144,7 @@ thật) và **ca âm** — một mẫu vi phạm phải làm test đỏ. Mẫu v
 Không có. Ràng buộc lên cổng tự động:
 
 ```
-pnpm check            → lint + lint:deps + typecheck + test + test:deploy
+pnpm check            → lint + lint:deps + typecheck (không chạy test; chạy vitest từng workspace riêng)
 pnpm lint             → Biome
 pnpm lint:deps        → ranh giới package (dependency-cruiser)
 pnpm typecheck        → tsc + vue-tsc trên 10 project, bậc thang nợ

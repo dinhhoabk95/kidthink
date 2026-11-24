@@ -47,11 +47,10 @@ nó thành một cổng chặn phát hành.
 | ------------------------------------------------------- | ---------------- | ------------------------------------------ |
 | `packages/config/src/env-contract.ts`                   | Người phát triển | Registry — nguồn sự thật duy nhất          |
 | `apps/web/env.ts` · `apps/admin/env.ts`                 | Tiến trình Nuxt  | Schema `@t3-oss/env-nuxt` + Zod khớp `ENV_REGISTRY` cho Nuxt build/runtime |
-| `/etc/mindkid/env/web.env` · `worker.env`              | Người vận hành   | Chỉ trên máy chủ, quyền `0600`, chủ `root` |
+| GitHub Secrets / Variables · secret của Worker         | Người vận hành   | Production Cloudflare (`D14`); không có file env trên máy chủ |
 | `.env` ở gốc repo                                       | Người phát triển | Chỉ máy trạm, đã bị `.gitignore` chặn      |
 | `apps/<app>/.env`                                       | Người phát triển | Chỉ máy trạm, **tuỳ chọn** — lớp đè lên `.env` gốc |
 | `apps/<app>/.env.example`                               | Người vận hành   | Mẫu sinh ra của file runtime ở §7.3        |
-| `pnpm deploy env --host <tên> --check`                  | Người vận hành   | Đối chiếu máy chủ với registry             |
 
 Trên máy trạm, bộ nạp đi từ `process.cwd()` lên gốc và nạp **mọi** `.env` gặp trên đường. Node
 không bao giờ ghi đè một tên đã có giá trị, nên file gần `cwd` nhất thắng, `.env` gốc chỉ lấp chỗ trống,
@@ -64,9 +63,9 @@ tạo nó khi một tên phải khác nhau giữa các app.
 1. Khai biến trong registry: tên, tiến trình nào đọc, bắt buộc ở môi trường nào,
    kiểu (url | secret | email | port | enum | text), có phải bí mật hay không
 2. Sinh .env.example từ registry — không sửa tay file đó
-3. Người vận hành ghi hai file env runtime trên máy chủ theo bảng sinh ra ở §7.1
-4. Phát hành: validator đọc nội dung hai file runtime, đối chiếu registry; build admin nhận public API origin
-      thiếu | rỗng | sai kiểu | biến lạ  →  dừng, chưa build, máy vẫn chạy bản cũ
+3. Người vận hành khai giá trị vào GitHub Secrets/Variables và secret của Worker theo bảng sinh ra ở §7.1
+4. Phát hành: `createWebEnv()` chạy lúc `nuxt build` và đối chiếu registry; build admin nhận public API origin
+      thiếu | rỗng | sai kiểu | biến lạ  →  dừng ở build, chưa deploy, Cloudflare vẫn chạy bản cũ
 5. Tiến trình khởi động: kiểm lại danh mục của chính nó, thiếu thì nổ ngay
 ```
 
@@ -87,9 +86,9 @@ tạo nó khi một tên phải khác nhau giữa các app.
 | `BR-ENV-02` | Mỗi khái niệm đúng **một** tên chính thức; tên đồng nghĩa bị cấm                                                  | Sáu nhóm ở §7.2 khiến "đã đặt biến" không đồng nghĩa với "code đọc được". Bốn tên cho một chuỗi kết nối là bốn cơ hội cấu hình đúng một nửa                                    |
 | `BR-ENV-03` | Biến bắt buộc mà thiếu thì tiến trình nổ lúc khởi động; cấm mọi fallback literal hoặc fallback toán tử sau khi đọc env | Fallback làm thiếu setup trông như cấu hình hợp lệ; kể cả địa chỉ nội bộ, key test hay fallback sang tên env khác cũng che mất lỗi vận hành và làm contract khó truy |
 | `BR-ENV-04` | Mỗi tiến trình chỉ nhận biến nó thật sự đọc                                                                       | Tiến trình bị chiếm quyền chỉ để lộ những bí mật nó có. `worker` không cần khoá session, `web` không cần khoá mã hoá backup                                                    |
-| `BR-ENV-05` | File env production nằm ngoài thư mục release, quyền `0600`, chủ `root`                                           | Thư mục release bị tạo lại mỗi lần phát hành và bị xoá khi dọn bản cũ. Bí mật không được sống trong thứ có vòng đời của một lần build                                          |
+| `BR-ENV-05` | Bí mật production nằm ngoài repo: GitHub Secrets và secret của Worker, không có trong commit hay bundle build                                           | Bundle build được đẩy lên Cloudflare và nằm trong log CI; bí mật không được sống trong thứ có vòng đời của một lần build                                          |
 | `BR-ENV-06` | Validator **không** đọc biến môi trường của tiến trình đang chạy; chỉ nhận nội dung file được truyền vào          | Cổng nào đọc môi trường của người chạy sẽ xanh giả trên máy trạm — nơi có sẵn `.env` của dev. Đây là cách một cổng trở thành cổng trang trí                                    |
-| `BR-ENV-07` | Kiểm env chạy **trước** bước build của quy trình phát hành                                                        | Dừng sau khi build là đã tốn 5 phút để phát hiện một dòng thiếu. Xem [`release-deploy.md`](release-deploy.md) §4 bước 3                                                        |
+| `BR-ENV-07` | Kiểm env chạy **trước** bước build của quy trình phát hành                                                        | Dừng sau khi build là đã tốn 5 phút để phát hiện một dòng thiếu. Xem [`release-deploy.md`](release-deploy.md) §4 bước 8                                                        |
 | `BR-ENV-08` | Log, thông báo và thông báo lỗi chỉ được in **tên** biến                                                          | In giá trị nghĩa là bí mật rò vào tệp log, rồi rò vào ảnh chụp màn hình, rồi rò vào phiếu hỗ trợ                                                                               |
 | `BR-ENV-09` | `.env.example` sinh từ registry, cấm sửa tay                                                                      | Hai nguồn sự thật thì cái không ai chạy sẽ mục. Bằng chứng: nó đang khai 2 trong 56 biến                                                                                       |
 | `BR-ENV-10` | Đổi tên biến đang chạy production phải qua **hai** lần phát hành                                                  | Một lần phát hành không thể vừa đổi tên biến vừa giữ tiến trình cũ sống. Lần một đọc cả hai tên, lần hai bỏ tên cũ                                                             |
@@ -145,7 +144,10 @@ Tiền tố `NUXT_PUBLIC_` trong danh sách trên là tên gây hiểu nhầm, k
 duyệt: cả 10 chỗ đọc nó đều nằm trong thư mục `server/` hoặc trong `packages/`. Không có biến nào
 bị nướng vào bundle của trình duyệt.
 
-### 7.3 Hai file runtime trên máy chủ
+### 7.3 Hai tập biến runtime (`web`, `worker`)
+
+Trên production Cloudflare (`D14`) hai tập này là secret/variable của hai Worker thay vì file trên
+máy chủ; cột quyền `0600 root:root` bên dưới là lịch sử của đường VPS đã gỡ và không còn áp dụng.
 
 | File         | Nội dung                               | Quyền            |
 | ------------ | -------------------------------------- | ---------------- |

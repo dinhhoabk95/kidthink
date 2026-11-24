@@ -173,7 +173,7 @@ Scenario: BR-ARB-07 — proxy phục vụ admin tĩnh
 **Ask first**
 
 - Đổi host, domain, cookie name hoặc session password.
-- Đổi proxy implementation hoặc chuyển rate limit ra khỏi Nginx.
+- Đổi proxy implementation hoặc chuyển rate limit ra khỏi limiter trong app / WAF Cloudflare.
 - Thêm dependency cho auth, CORS hoặc static hosting.
 
 **Never**

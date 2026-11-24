@@ -27,8 +27,8 @@ tin vào nó, nên nó không được nói dối.
 
 | Actor | Dùng để |
 |---|---|
-| Nginx / LB | Quyết định gửi traffic |
-| Deploy script | Smoke sau khi reload |
+| Cloudflare | Quyết định gửi traffic |
+| Workflow deploy | Smoke sau khi deploy |
 | Giám sát | Phát alert |
 
 ## 3. Entry points

@@ -86,12 +86,6 @@ các job chạy song song.
 | --- | --- | --- |
 | `pnpm check:bundle` | Chỉ khi đã có `apps/web/.output` | Ngân sách bundle theo `BR-PRF-01` & `BR-ENG-17`: từng chunk client + preload template `GT-*` ≤ 80 KB gzip, app shell web/admin ≤ 180 KB gzip, trang public ≤ 500 KB gzip, payload level ≤ 200 KB. Không có build thì bước này bị bỏ qua mà không in gì |
 
-### Không nằm trong `pnpm check`
-
-| Lệnh | Chạy ở đâu |
-| --- | --- |
-| `pnpm test:deploy` | Chạy tay khi phát hành (`infra/scripts/tests/run.sh`); không dựng lại trong `check.sh` hay `lefthook.yml` |
-
 ## 2. Cổng trong `<workspace>/tests/gates/`
 
 Các cổng này chạy trong phase 3 qua `pnpm check:test-ratchet`. Bảng chỉ ghi cổng trỏ tới luật

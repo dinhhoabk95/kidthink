@@ -110,7 +110,7 @@ tiếp `jose`; mọi first-party auth credential đều opaque.
 | Payment QR | `packages/payment` (nếu ≥2 app cần) hoặc inline `apps/web/server` (nếu chỉ web) | Gọi API `img.vietqr.io`, không thư viện QR local | [`payment-order-create.md`](../03-account/payment-order-create.md) |
 | Email | `packages/notification` | `nodemailer` SMTP transport tới AWS SES + `mjml` renderer | [`notification-service.md`](../01-platform/notification-service.md) |
 | Browser push (P5) | `packages/notification` cho server driver; plugin/service worker trong `apps/web` | `firebase-admin` (server) + `firebase` (web); chỉ cài khi Task #84 bắt đầu | [`browser-push.md`](../01-platform/browser-push.md) |
-| HTTP hardening | **Không cần driver** — cấu hình tại web và Nginx | `nuxt-security` ở web; Nginx header/static ở admin, tắt limiter/CSRF tích hợp | [`security-checklist.md`](../08-quality/security-checklist.md) |
+| HTTP hardening | **Không cần driver** — cấu hình tại web và `apps/admin/public/_headers` | `nuxt-security` ở web; `_headers` (Workers Static Assets) ở admin, tắt limiter/CSRF tích hợp | [`security-checklist.md`](../08-quality/security-checklist.md) |
 | Storage ảnh | `packages/storage` | S3 SDK + `sharp` (xử lý server) | [`image-storage.md`](../01-platform/image-storage.md) |
 | Error tracking | **Không cần driver riêng** — SDK gắn ở entry mỗi app | `@sentry/nuxt` | [`monitoring-and-alerting.md`](../01-platform/monitoring-and-alerting.md) |
 | Logging | `packages/config` (factory logger dùng chung) hoặc `packages/observability` nếu tách | `pino` + `pino-http` (Nitro plugin) | [`monitoring-and-alerting.md`](../01-platform/monitoring-and-alerting.md) |

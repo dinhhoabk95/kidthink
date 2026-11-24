@@ -21,7 +21,7 @@ Bắt đầu từ [`../SPEC.md`](../SPEC.md) — contract toàn dự án. Rồi 
 
 ## Tổng
 
-Đếm 2026-10-18 từ frontmatter: một spec là một file `.md` có khoá `spec:` nằm trực tiếp trong
+Đếm 2026-11-24 từ frontmatter: một spec là một file `.md` có khoá `spec:` nằm trực tiếp trong
 thư mục khu vực (không tính phiếu engine ở `01-platform/engines/`). Cột **MVP** đếm `mvp: true`;
 cột **Còn mở** đếm spec có khoá `open_tasks` — code chưa khớp contract, việc còn lại nằm ở task
 ghi trong cột **Task mở** của từng bảng dưới. Thêm, xoá hay chuyển spec thì đếm lại bảng này.
@@ -29,7 +29,7 @@ ghi trong cột **Task mở** của từng bảng dưới. Thêm, xoá hay chuy�
 | Khu vực | Spec | MVP | Còn mở |
 |---|---:|---:|---:|
 | `00-foundation` | 18 | 18 | 4 |
-| `01-platform` | 43 | 33 | 13 |
+| `01-platform` | 41 | 31 | 13 |
 | `02-public` | 9 | 9 | 3 |
 | `03-account` | 23 | 19 | 18 |
 | `04-play` | 24 | 14 | 9 |
@@ -37,7 +37,7 @@ ghi trong cột **Task mở** của từng bảng dưới. Thêm, xoá hay chuy�
 | `06-admin` | 19 | 18 | 10 |
 | `07-addon` | 5 | 0 | 2 |
 | `08-quality` | 11 | 9 | 8 |
-| **Tổng** | **172** | **128** | **74** |
+| **Tổng** | **170** | **126** | **74** |
 
 Một outcome một file là chủ ý — xem [`CONVENTIONS.md`](CONVENTIONS.md) §1. Lịch sử thêm
 từng spec nằm trong git và ở `docs/tasks/`, không chép lại ở đây.
@@ -82,9 +82,7 @@ từng spec nằm trong git và ở `docs/tasks/`, không chép lại ở đây.
 | [health-check](01-platform/health-check.md) | P0 | Cấm 200 cứng | [#304](../tasks/304-platform-ops-gaps-plan.md) |
 | [backup-and-restore](01-platform/backup-and-restore.md) | P0 | Verify hàng tuần, chặn go-live | [#304](../tasks/304-platform-ops-gaps-plan.md) |
 | [env-contract](01-platform/env-contract.md) | P0 | Runtime env tách khỏi public API build config, kiểm trước khi build |  |
-| [server-provisioning](01-platform/server-provisioning.md) | P0 | Máy trắng thành máy chạy được, chạy lại nhiều lần |  |
-| [process-supervision](01-platform/process-supervision.md) | P0 | Hai tiến trình runtime, admin static, nạp lại không cắt, log có giới hạn | [#304](../tasks/304-platform-ops-gaps-plan.md) |
-| [release-deploy](01-platform/release-deploy.md) | P0 | Một lệnh, nguồn là commit trên kho, cổng khói | [#304](../tasks/304-platform-ops-gaps-plan.md) |
+| [release-deploy](01-platform/release-deploy.md) | P0 | Một lần đẩy `main` lên Cloudflare, nguồn là commit trên kho, cổng khói | [#304](../tasks/304-platform-ops-gaps-plan.md) |
 | [release-rollback](01-platform/release-rollback.md) | P0 | Quay lui dưới 60 giây, chỉ migration cộng thêm |  |
 | **[ai-codegen-pipeline](01-platform/ai-codegen-pipeline.md)** | P0 | **Sinh code từ spec**, vùng cấm | [#307](../tasks/307-ai-codegen-pipeline-plan.md) |
 | **[content-seed-authoring](01-platform/content-seed-authoring.md)** | P1 | **Seeder nội dung nền**, 10 cổng tự động, PR review là cổng người |  |

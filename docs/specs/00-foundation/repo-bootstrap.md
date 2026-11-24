@@ -117,7 +117,7 @@ dạng object thường, và driver `redis` của `unstorage` hardcode `ioredis`
 | Auth — Redis session authority | `ioredis` trong `packages/auth` | `6.1.0-beta.1` | Client process-long riêng, fail-closed; Lua/transaction nguyên tử cho rotate/revoke; production AOF + `noeviction`. Không đi qua cache API fail-open, không file/memory/DB fallback |
 | Auth — OAuth/OIDC backend bridge | `openid-client` | `^6.9.0` | `packages/auth/src/oauth/` dùng cho discovery, PKCE, authorization URL, code exchange và token validation. Không dùng `defineOAuth*EventHandler` của `nuxt-auth-utils`, không đổi sang AuthJS và không tự viết protocol primitive |
 | Auth — TOTP (Manager bắt buộc, User P2 tuỳ chọn) | `otpauth` | `^9.6.0` | Dùng cho sinh secret, URI và validate RFC 4226/6238; cấm dùng password helper của `nuxt-auth-utils`, tự viết HMAC/Base32/TOTP hoặc dùng `speakeasy` |
-| HTTP hardening | `nuxt-security` + proxy headers | `^2.7.0` | `nuxt-security` chỉ khai ở `apps/web`; Nginx đặt header cho admin static. Web giữ CSP/nonce, SRI, security headers (HSTS 1 năm + preload, X-Frame-Options DENY, Referrer-Policy, Permissions-Policy, COOP/CORP), CORS và request-size. **Tắt** rate limiter, CSRF và xssValidator của module; các contract đó thuộc `packages/cache`, `packages/auth`, Zod (`BR-SEC-04`) và `packages/moderation` |
+| HTTP hardening | `nuxt-security` + proxy headers | `^2.7.0` | `nuxt-security` chỉ khai ở `apps/web`; `apps/admin/public/_headers` đặt header cho admin static. Web giữ CSP/nonce, SRI, security headers (HSTS 1 năm + preload, X-Frame-Options DENY, Referrer-Policy, Permissions-Policy, COOP/CORP), CORS và request-size. **Tắt** rate limiter, CSRF và xssValidator của module; các contract đó thuộc `packages/cache`, `packages/auth`, Zod (`BR-SEC-04`) và `packages/moderation` |
 | Env validation & Schema | `@t3-oss/env-nuxt` `^0.13.11` + `zod` `^4.6.7` | — | Zod 4 native (`z.toJSONSchema` tích hợp sẵn). Khai `env.ts` ở `apps/web` và `apps/admin` đồng bộ với `ENV_REGISTRY` (`@mindkid/config` giữ vai trò zero-dep validator trước `pnpm install`, xem [`env-contract.md`](../01-platform/env-contract.md)) |
 | SEO | `@nuxtjs/seo` | `^5.3` (pin chính xác, không float `^`) | Bundle: `@nuxtjs/robots` `@nuxtjs/sitemap` `nuxt-og-image` (renderer **Takumi**, cài thêm `@takumi-rs/core`) `nuxt-schema-org` `nuxt-site-config`. Sitemap động qua `defineSitemapEventHandler()` + `chunks: 5000` (tính trước cho lúc scale ngàn trang). Thứ tự module: `@nuxt/ui` → `@nuxtjs/seo` → layer khác |
 | UI kit | Nuxt UI v4 (`^4.12.2`) + Tailwind v4 (`^4.3.5`) | | Ép light-mode `pages/play/**` qua `middleware/force-play-light.global.ts` set `to.meta.colorMode = 'light'` (route-group, không phải `definePageMeta` từng file) |
@@ -137,7 +137,7 @@ dạng object thường, và driver `redis` của `unstorage` hardcode `ioredis`
 | Lint/format | `ultracite@~8.2.1` (**preset `ultracite/biome/core` + `ultracite/biome/vue`**) + `@biomejs/biome@~2.6.8` (**CLI chạy thật**) | Script `lint` gọi thẳng `biome check .`; `biome.jsonc` giữ nguyên tập rule baseline đã chốt (không bật các rule ngoài contract `BR-*` mà `ultracite` 8 mới thêm) |
 | Test | Vitest `^5.1.0` · Playwright `1.65.1` · `fast-check` `^4.10.2` · `@axe-core/playwright` `^4.14.0` | | `@vitest/coverage-v8` ghim cứng cùng bản `5.1.0` với `vitest` |
 | Storage | S3 SDK | giữ nguyên | |
-| Deploy | Docker (PG 18 + Valkey 9) · PM2 · Nginx · EC2 | giữ nguyên | |
+| Deploy | Cloudflare Workers + D1 + Durable Objects (`D14`); Docker (PG + Valkey) chỉ cho dev | đổi theo `D14` | |
 
 Version cụ thể ở bảng trên là **version tối thiểu được rà lại tại 2026-08-13**. Khi cài, lấy bản
 vá/minor mới nhất cùng major đã chốt — không hạ version, không tự ý nhảy major (`BR-RBS-08`).
@@ -158,8 +158,8 @@ Bộ icon local của kit khai trực tiếp trong `packages/ui/package.json` (`
 [`design-system-contract.md`](../08-quality/design-system-contract.md).
 
 Cổng dev (`BR-RBS-10`) — đây là cổng **máy trạm**, không phải bảng cổng production ở §7.3 của
-[`server-provisioning.md`](../01-platform/server-provisioning.md) (production không có cổng cho
-admin: nginx phục vụ static trực tiếp):
+[`release-deploy.md`](../01-platform/release-deploy.md) (production không có cổng cho
+admin: Workers Static Assets phục vụ static trực tiếp):
 
 | App | Script | Cổng |
 |---|---|---|
@@ -255,7 +255,7 @@ Scenario: BR-RBS-10 — ca âm, admin gọi API cross-origin không vỡ CORS
 | 6 | Chấp nhận phụ thuộc runtime vào `img.vietqr.io` (bên thứ ba, ngoài tầm kiểm soát) cho toàn bộ luồng thanh toán MVP? Không có lựa chọn tự-host tương đương đủ tin cậy ở §7.1 | [`payment-order-create.md`](../03-account/payment-order-create.md) | Hoãn, chặn phase P2 | hoãn |
 | 7 | Xin production access AWS SES trước khi nào — cần review thời gian duyệt của AWS trước go-live P2 (không tự chốt được, phụ thuộc AWS) | Go-live P2, [`notification-service.md`](../01-platform/notification-service.md) | Hoãn, chặn go-live | người quyết |
 | 8 | Sentry SaaS Team tier ($26/mo) hay tự host GlitchTip ngay từ đầu — quyết định chi phí, không phải kỹ thuật (đổi qua lại chỉ là đổi DSN) | Ngân sách vận hành | Hoãn, chặn phase P1 | hoãn |
-| 9 | Kích thước pool `postgres.js` (`max`) và `PG max_connections` phải tính theo **loại EC2 instance thật** (số vCPU × số PM2 instance) — chưa chốt vì chưa biết instance type production | [`data-model-overview.md`](data-model-overview.md), deploy | Hoãn, chặn phase P1 | hoãn |
+| 9 | Kích thước pool `postgres.js` (`max`) và `PG max_connections` phải tính theo **loại EC2 instance thật** (số vCPU × số instance; chỉ còn áp dụng cho chế độ dev/test, production dùng D1) — chưa chốt vì chưa biết instance type production | [`data-model-overview.md`](data-model-overview.md), deploy | Hoãn, chặn phase P1 | hoãn |
 | ~~10~~ | ~~Chiến lược version control cho corpus spec~~ **Đóng 2026-08-09 (`D-U`)**: corpus spec ([`SPEC.md`](../../SPEC.md) + `docs/specs/` + `docs/tasks/` + `docs/taxonomy/` + `docs/montessori/`) nằm trong `mindkid/docs/`, cùng git repo và dòng lịch sử với code. `mindkid/SPEC.md` là symlink → `docs/SPEC.md` | — | Đã đóng | D-U |
 | ~~11~~ | ~~Bật lại CI cổng tự động khi nào~~ **Đóng 2026-08-06**: không còn CI để bật. `BR-RBS-03` đo bằng hook thật + ca âm tại máy | — | Đã đóng | D-S (T1) |
 | ~~12~~ | ~~Gate local bỏ qua được bằng `--no-verify`~~ **Đóng 2026-08-09 (`D-CL`)**: giữ lefthook làm phản hồi nhanh local; `main` cấm direct/force push, bắt buộc PR + ít nhất một approving human review và dismiss approval khi có commit mới. **Thay thế 2026-10-18**: `CLAUDE.md` mục "Git workflow" chốt commit thẳng vào `main`; không còn PR bắt buộc hay branch protection. Lefthook (`BR-RBS-03`) là gate duy nhất, `--no-verify` vẫn bỏ qua được | — | Đã đóng | D-CL (đã thay) |

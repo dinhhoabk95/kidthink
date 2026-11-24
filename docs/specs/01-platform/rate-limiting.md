@@ -50,7 +50,7 @@ Middleware trước mọi route. `packages/cache` cung cấp giao diện giới 
 | Nhánh | Hành vi |
 |---|---|
 | Valkey mất | **Fail open** cho route thường, **fail closed** cho auth và thanh toán |
-| Sau CDN/proxy | Lấy IP từ header tin cậy đã cấu hình, không tin `X-Forwarded-For` thô |
+| Sau Cloudflare | Lấy IP từ `CF-Connecting-IP` (Cloudflare đè header này ở biên), không tin `X-Forwarded-For` thô |
 | Đăng nhập sai liên tiếp | Khoá account tạm, tăng dần |
 
 ## 6. Business rules
@@ -67,7 +67,7 @@ Middleware trước mọi route. `packages/cache` cung cấp giao diện giới 
 | `BR-RTL-08` | Mọi consume/penalty/block đi qua `rate-limiter-flexible` trong `packages/cache` và dùng singleton `ioredis`; Cấm — **NEVER** tự ghép `INCR` + `EXPIRE` hay tạo Redis client theo request | Hai lệnh rời có thể mất TTL khi tiến trình chết; nhiều client theo request làm cạn connection trên t3.small |
 | `BR-RTL-09` | Key account chưa xác thực là HMAC của identifier đã normalize; Cấm — **NEVER** để email/identifier thô trong Valkey key, metric hay log | Redis key và log vận hành không được trở thành kho PII phụ |
 | `BR-RTL-10` | Mọi path `/api/*` giải ra đúng một lớp ở §7.2, hoặc một lý do miễn **đã liệt kê**; Cấm — **NEVER** để nhánh mặc định không giới hạn | Một lớp khai trong registry mà không route nào gọi là hạn mức trên giấy |
-| `BR-RTL-11` | IP client lấy từ `X-Real-IP` chỉ khi peer nằm trong `TRUSTED_PROXY_IPS`, còn lại dùng địa chỉ socket | Sau nginx, địa chỉ socket là loopback — trục IP sụp thành một bucket toàn cục và một người khoá được cả site |
+| `BR-RTL-11` | IP client: trên Cloudflare lấy từ `CF-Connecting-IP`; ngoài Cloudflare (dev, test) lấy địa chỉ socket và **không** đọc header IP nào | Production chỉ chạy sau Cloudflare, nơi `CF-Connecting-IP` do biên đặt và client không giả được. Ngoài Cloudflare không có proxy tin cậy nào, nên mọi header IP (`X-Real-IP`, `X-Forwarded-For`) là input của kẻ tấn công. Danh sách `TRUSTED_PROXY_IPS` thuộc đường Nginx đã gỡ theo `D14` |
 | `BR-RTL-12` | Trên Cloudflare, `checkRateLimit` chưa có port coordinator → **fail closed**: ném `ServiceUnavailableError`, bất kể `failOpen`. Chỉ lỗi tạm thời của port mới theo `failOpen` | Thiếu port là lỗi cấu hình; fail open ở đó là tắt toàn bộ giới hạn mà không ai biết |
 
 ## 7. Data
@@ -110,7 +110,7 @@ Luật đọc **theo thứ tự**, luật đầu tiên khớp thì thắng. Ngu�
 
 | # | Path (method) | Kết quả | Vì sao |
 |---|---|---|---|
-| 1 | không bắt đầu bằng `/api/` | miễn — `not-api` | trang SSR và tài sản tĩnh; nginx đã chặn theo IP |
+| 1 | không bắt đầu bằng `/api/` | miễn — `not-api` | trang SSR và tài sản tĩnh; biên Cloudflare (WAF, cache) đứng trước |
 | 2 | 9 route auth **đang tự gọi**: `users/login` · `managers/login` · `users/register` · `users/forgot-password` · `users/social-login` · `managers/mfa` · `managers/mfa-setup` · `oauth/{p}/start` · `oauth/{p}/callback` | **trong route** | handler tự gọi vì trục account cần email trong body, middleware không đọc body |
 | 2b | 6 route auth còn lại: `users/mfa` → `auth:mfa` · `users/mfa-recovery/verify` → `auth:mfa` · `users/reset-password` → `auth:forgot-password` · `users/verify-email` → `auth:forgot-password` · `verify-email-change` → `auth:forgot-password` · `oauth/providers` → `read:public` | lớp tương ứng | không handler nào tự giới hạn; `reset-password` là bề mặt dò mã đặt lại mật khẩu |
 | 3 | `/api/users/auth/resend-verification` | **trong route** | như luật 2, `auth:forgot-password` |
@@ -135,16 +135,13 @@ là bịa hạn mức, nên bảng ghi thẳng chúng là miễn và đẩy sang
 
 ### 7.3 IP dùng để giới hạn
 
-`BR-RTL-11`: IP client là `X-Real-IP` **chỉ khi** peer của kết nối nằm trong
-`TRUSTED_PROXY_IPS`; mọi trường hợp khác dùng địa chỉ socket. Cấm — **NEVER** đọc
-`X-Forwarded-For` thô ở bất kỳ đâu.
+`BR-RTL-11`: trên Cloudflare IP client là `CF-Connecting-IP`; thiếu header thì `unknown`. Ngoài
+Cloudflare là địa chỉ socket. Cấm — **NEVER** đọc `X-Forwarded-For` hay `X-Real-IP` từ request để
+giới hạn, ở bất kỳ đâu.
 
-Vì sao cần: nginx là edge và proxy tới loopback (`infra/nginx/mindkid-proxy.conf:8`
-đặt `X-Real-IP $remote_addr`). Nếu đọc `socket.remoteAddress`, mọi request trong
-production đều mang IP `127.0.0.1` — trục IP sụp thành **một bucket toàn cục**, và 20 lần
-đăng nhập sai của một người khoá cả site trong 15 phút.
-
-`TRUSTED_PROXY_IPS` mặc định `127.0.0.1,::1` khi không khai, khớp cách triển khai hiện tại.
+Vì sao: không còn reverse proxy riêng của dự án (Nginx đã gỡ theo `D14`). Cloudflare ghi đè
+`CF-Connecting-IP` ở biên, nên header đó tin được **chỉ khi** request thật sự đi qua Cloudflare; chạy
+ngoài Cloudflare mà tin nó là để client tự chọn bucket của mình.
 
 Khoá tăng dần khi sai đăng nhập: 5 lần → 1 phút · 10 → 5 phút · 15 → 30 phút · reset sau
 24 giờ không sai.
@@ -180,7 +177,7 @@ Scenario: BR-RTL-03 — 429 kèm Retry-After
 
 Scenario: BR-RTL-04 — không tin XFF thô
   When gửi request kèm X-Forwarded-For giả
-  Then IP dùng để giới hạn lấy từ nguồn tin cậy đã cấu hình
+  Then IP dùng để giới hạn không lấy từ X-Forwarded-For
 
 Scenario: BR-RTL-06 — trẻ chơi liên tục không bị chặn
   Given một phiên chơi 30 phút gửi event đều đặn
@@ -202,11 +199,12 @@ Scenario: BR-RTL-10 — không path nào rơi vào nhánh không giới hạn
   Then mỗi path trả về một lớp trong §7.1 hoặc một lý do miễn đã liệt kê
   And không path nào trả về undefined
 
-Scenario: BR-RTL-11 — chỉ tin X-Real-IP sau proxy tin cậy
-  Given TRUSTED_PROXY_IPS chứa 127.0.0.1
-  When request đến từ socket 127.0.0.1 kèm X-Real-IP 203.0.113.9
+Scenario: BR-RTL-11 — IP lấy từ nguồn đúng theo runtime
+  Given runtime là cloudflare
+  When request mang CF-Connecting-IP 203.0.113.9 và X-Forwarded-For giả
   Then IP dùng để giới hạn là 203.0.113.9
-  When request đến thẳng từ socket 198.51.100.4 kèm X-Real-IP 203.0.113.9
+  Given runtime không phải cloudflare
+  When request đến từ socket 198.51.100.4 kèm X-Real-IP 203.0.113.9 và CF-Connecting-IP giả
   Then IP dùng để giới hạn là 198.51.100.4
   And X-Forwarded-For không được đọc trong cả hai trường hợp
 
@@ -221,7 +219,7 @@ Scenario: BR-RTL-09 — key không chứa định danh thô
 **Always**
 - Hai trục cho route nhạy cảm.
 - `Retry-After` trong response.
-- Lấy IP từ nguồn tin cậy đã cấu hình.
+- Lấy IP từ `CF-Connecting-IP` trên Cloudflare, từ socket ngoài Cloudflare.
 - Bọc `rate-limiter-flexible` trong `packages/cache`; tái dùng singleton `ioredis`.
 - HMAC identifier trước khi tạo account key.
 - Suy lớp từ path bằng `resolveRateLimitRouteClass()`, không rải hằng số lớp khắp route.
@@ -238,7 +236,7 @@ Scenario: BR-RTL-09 — key không chứa định danh thô
 - `INCR` + `EXPIRE` tự ghép hoặc Redis client theo request.
 - Email/identifier thô trong key hay log.
 - Nhánh mặc định không giới hạn cho một path `/api/*`.
-- Đọc `X-Real-IP` khi peer không nằm trong `TRUSTED_PROXY_IPS`.
+- Đọc `X-Real-IP` hay `CF-Connecting-IP` ngoài runtime Cloudflare.
 
 ## 11. Open questions
 
@@ -246,4 +244,5 @@ Scenario: BR-RTL-09 — key không chứa định danh thô
 |---|---|---|---|---|
 | 1 | Có dùng CAPTCHA cho đăng ký không? CAPTCHA bên thứ ba đụng ràng buộc tracking | Đăng ký P1 | P1 | người quyết |
 | 2 | Hạn mức `play:events` đủ cho trẻ chơi nhanh không? Cần đo thực tế | Gameplay P1 | P1 | Studio UI |
-| 3 | §7.1 không có lớp nào cho traffic chung của user đã đăng nhập (~130 route `/api/users/**` ngoài payment/export/play/search). Cần một lớp `users:*` với hạn mức đo được, hay giữ nguyên nginx 20r/s? | Luật 16 của §7.2 | P1 | người quyết |
+| 3 | §7.1 không có lớp nào cho traffic chung của user đã đăng nhập (~130 route `/api/users/**` ngoài payment/export/play/search). Cần một lớp `users:*` với hạn mức đo được, hay chấp nhận không giới hạn theo user ở app khi Nginx 20r/s đã gỡ (`D14`)? | Luật 16 của §7.2 | P1 | người quyết |
+| 4 | **NEEDS-VALIDATION** — Nginx từng chặn theo IP ở biên (`limit_req`, 20r/s cho `/api/`, 5r/s cho auth, 600 req/phút cho ingest event chơi) và đã gỡ theo `D14`. Hiện còn: limiter trong app (§7.1, §7.2) và 5 rule WAF trong `infra/cloudflare/waf.tf`, **không** có rule rate limit theo IP ở Cloudflare. Trước go-live phải hoặc (a) thêm rate rule ở Cloudflare WAF cho `/api/*` (đặc biệt `/api/auth/*`, `/api/guest/*`), hoặc (b) chứng minh bằng đo đạc rằng limiter trong app đủ, kể cả luật 16 của §7.2 (`/api/users/**` còn lại đang miễn) | Điều kiện go-live | go-live | người quyết |

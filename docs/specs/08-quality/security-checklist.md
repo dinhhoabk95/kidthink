@@ -57,7 +57,7 @@ Checklist trong PR template · `pnpm check` · rà soát trước release.
 | `BR-SEC-07` | Record của người khác → **404** | `BR-ACT-03` |
 | `BR-SEC-08` | Code chạm auth, payment, hoặc dữ liệu trẻ → **bắt buộc review** người thứ hai | Một người viết và merge là một người quyết định; hai mắt thấy lỗi mà một mắt bỏ qua |
 | `BR-SEC-09` | Cấm — **NEVER dữ liệu trẻ ra khỏi hạ tầng** | `BR-CDC-06` |
-| `BR-SEC-10` | `apps/web` dùng `nuxt-security` cho CSP, SRI, security headers (HSTS 1 năm + preload, X-Frame-Options DENY, Referrer-Policy, Permissions-Policy, COOP/CORP), API CORS và request-size (tắt `rateLimiter`, `csrf`, `xssValidator` nội bộ module); admin static nhận security headers từ Nginx | Web là owner duy nhất của API; admin không có Nitro server để tạo middleware hoặc auth boundary thứ hai; rate limit/CSRF/validation thuộc domain packages và Zod (`BR-SEC-04`) |
+| `BR-SEC-10` | `apps/web` dùng `nuxt-security` cho CSP, SRI, security headers (HSTS 1 năm + preload, X-Frame-Options DENY, Referrer-Policy, Permissions-Policy, COOP/CORP), API CORS và request-size (tắt `rateLimiter`, `csrf`, `xssValidator` nội bộ module); admin static nhận security headers từ `apps/admin/public/_headers` | Web là owner duy nhất của API; admin không có Nitro server để tạo middleware hoặc auth boundary thứ hai; rate limit/CSRF/validation thuộc domain packages và Zod (`BR-SEC-04`) |
 | `BR-SEC-11` | `script-src` của trang phải khai `'nonce-{{nonce}}'` và `'strict-dynamic'`; Cấm — **NEVER** `'unsafe-inline'` cho script | `defuReplaceArray` **thay** mảng mặc định của module, nên thiếu placeholder thì header không có nonce nào trong khi trang vẫn gắn nonce vào `<script>` — hai khối inline của Nuxt bị chặn và trang không hydrate. `'strict-dynamic'` bịt lỗ `'self'`: `/api/guest/storage/[...path]` phục vụ file đã lưu từ cùng origin |
 | `BR-SEC-12` | Chỉ **một** nơi đặt CSP cho mỗi loại response: `nuxt-security` cho trang, `server/middleware/security-headers.ts` cho `/api/*`; Cấm — **NEVER** đặt CSP trang ở middleware | Hook `render:response` đè mọi header của middleware. Chính sách thứ hai không biến mất — nó thành mã chết mà người đọc tưởng là chính sách thật (đo 2026-08-28: middleware khai `script-src 'self' 'unsafe-inline'` suốt nhiều tháng và chưa bao giờ tới trình duyệt trên response trang) |
 | `BR-SEC-13` | Trần kích thước body đo trên **byte thực**: request mutating không có `Content-Length` (chunked) vẫn bị đọc thân thô ở `guards` và trả **413** `PAYLOAD_TOO_LARGE` nếu vượt trần theo route | Header `Content-Length` do client khai; chunked bỏ qua nó nên chỉ kiểm header là không kiểm gì |
@@ -100,7 +100,7 @@ dung là checklist an ninh áp cho mọi PR, chia theo mức độ chặn merge.
 - [ ] `v-html` chỉ với hằng số trong repo
 - [ ] Audit ghi cho hành động trong [`audit-log.md`](../01-platform/audit-log.md) §7.2
 - [ ] Cấm cache response chứa nội dung trả phí
-- [ ] Web bật `nuxt-security` cho CSP/CORS/request-size; admin không mang server module và Nginx phục vụ header static
+- [ ] Web bật `nuxt-security` cho CSP/CORS/request-size; admin không mang server module và `apps/admin/public/_headers` đặt header static
 - [ ] `script-src` production không có `unsafe-inline`; script runtime dùng nonce/strict-dynamic theo config đã test
 
 ### 7.3 MEDIUM
@@ -187,9 +187,9 @@ Scenario: BR-SEC-12 — middleware không đặt CSP cho trang
   Then nó đặt default-src 'none'
 
 Scenario: BR-SEC-10 — một owner cho rate limit và CSRF
-  When đọc cấu hình web và Nginx của admin
+  When đọc cấu hình web và `_headers` của admin
   Then web có CSP, CORS và request-size
-  And Nginx có security headers cho admin static
+  And `_headers` có security headers cho admin static
   And rateLimiter và csrf của module bị tắt
   And route vẫn đi qua packages/cache và packages/auth tương ứng
 ```
@@ -200,7 +200,7 @@ Scenario: BR-SEC-10 — một owner cho rate limit và CSRF
 - Chạy checklist cho code chạm vùng nhạy cảm.
 - Xoay secret ngay khi nghi lộ.
 - Review người thứ hai cho auth, payment, dữ liệu trẻ.
-- Khai `nuxt-security` trực tiếp trong `apps/web`; Nginx là owner header static, web là owner CORS/CSRF/rate limit.
+- Khai `nuxt-security` trực tiếp trong `apps/web`; `_headers` là owner header static, web là owner CORS/CSRF/rate limit.
 
 **Ask first**
 - Bỏ qua một mục CRITICAL.

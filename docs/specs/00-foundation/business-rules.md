@@ -112,8 +112,7 @@ tham chiếu — cấm — NEVER còn lệnh nào đo tự động; reviewer tra
 | `BR-APM` | [`automated-payment.md`](../01-platform/automated-payment.md) | | | |
 | `BR-AST` | [`audio-storage.md`](../01-platform/audio-storage.md) | | `BR-LAY` | [`game-layout-engine.md`](../01-platform/game-layout-engine.md) |
 | `BR-RNG` | [`deterministic-randomness.md`](../01-platform/deterministic-randomness.md) | | `BR-TAK` | [`template-authoring-kit.md`](../01-platform/template-authoring-kit.md) |
-| `BR-ENV` | [`env-contract.md`](../01-platform/env-contract.md) | | `BR-SRV` | [`server-provisioning.md`](../01-platform/server-provisioning.md) |
-| `BR-SUP` | [`process-supervision.md`](../01-platform/process-supervision.md) | | `BR-DEP` | [`release-deploy.md`](../01-platform/release-deploy.md) |
+| `BR-ENV` | [`env-contract.md`](../01-platform/env-contract.md) | | `BR-DEP` | [`release-deploy.md`](../01-platform/release-deploy.md) |
 | `BR-RBK` | [`release-rollback.md`](../01-platform/release-rollback.md) | | | |
 | `BR-ESS` | [`engine-spec-sheet.md`](../01-platform/engine-spec-sheet.md) | | `BR-LGK` | [`level-generator-kit.md`](../01-platform/level-generator-kit.md) |
 | `BR-ERC` | [`engine-render-contract.md`](../01-platform/engine-render-contract.md) | | `BR-EPL` | [`engine-play-language.md`](../01-platform/engine-play-language.md) |
