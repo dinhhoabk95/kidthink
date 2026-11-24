@@ -301,15 +301,19 @@ describe("@t3-oss/env-nuxt schema synchronization (BR-ENV-01, BR-ENV-08, BR-ENV-
     }
   });
 
-  it("BR-ENV-13 — rejects invalid URL protocol on DATABASE_URL_APP", () => {
-    const original = process.env.DATABASE_URL_APP;
-    process.env.DATABASE_URL_APP = "https://example.com/not-postgres";
+  it("BR-ENV-13 — rejects invalid URL protocol on VALKEY_URL", () => {
+    const original = process.env.VALKEY_URL;
+    process.env.VALKEY_URL = "https://example.com/not-valkey";
     try {
       expect(() =>
         createWebEnv({ isProduction: false, isServer: true })
-      ).toThrow("DATABASE_URL_APP");
+      ).toThrow("VALKEY_URL");
     } finally {
-      process.env.DATABASE_URL_APP = original;
+      if (original === undefined) {
+        delete process.env.VALKEY_URL;
+      } else {
+        process.env.VALKEY_URL = original;
+      }
     }
   });
 });

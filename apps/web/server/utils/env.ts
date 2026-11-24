@@ -147,9 +147,9 @@ export function createWebEnv(options: CreateWebEnvOptions = {}) {
       TRUSTED_PROXY_IPS: nonEmptyString.optional(),
 
       // ---- Dữ liệu ----------------------------------------------------------
-      DATABASE_URL: urlWithProtocols(["postgres:", "postgresql:"]),
-      DATABASE_URL_APP: urlWithProtocols(["postgres:", "postgresql:"]),
-      VALKEY_URL: urlWithProtocols(["valkey:", "redis:", "rediss:"]),
+      // Cloudflare dùng D1 (binding) — không có chuỗi kết nối Postgres. Valkey chỉ cần ở
+      // runtime VPS/dev nên không chặn build.
+      VALKEY_URL: urlWithProtocols(["valkey:", "redis:", "rediss:"]).optional(),
 
       // ---- Bí mật phiên và token --------------------------------------------
       NUXT_SESSION_PASSWORD: secretSchema,
@@ -180,8 +180,8 @@ export function createWebEnv(options: CreateWebEnvOptions = {}) {
         isProduction
       ),
       STORAGE_SIGNING_SECRET: secretSchema,
-      AWS_S3_PUBLIC_BUCKET: productionRequired(nonEmptyString, isProduction),
-      AWS_S3_PRIVATE_BUCKET: productionRequired(nonEmptyString, isProduction),
+      AWS_S3_PUBLIC_BUCKET: nonEmptyString.optional(),
+      AWS_S3_PRIVATE_BUCKET: nonEmptyString.optional(),
       AWS_ACCESS_KEY_ID: nonEmptyString.optional(),
       AWS_SECRET_ACCESS_KEY: secretSchema.optional(),
 

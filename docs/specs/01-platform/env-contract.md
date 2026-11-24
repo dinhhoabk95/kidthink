@@ -95,7 +95,8 @@ tạo nó khi một tên phải khác nhau giữa các app.
 | `BR-ENV-10` | Đổi tên biến đang chạy production phải qua **hai** lần phát hành                                                  | Một lần phát hành không thể vừa đổi tên biến vừa giữ tiến trình cũ sống. Lần một đọc cả hai tên, lần hai bỏ tên cũ                                                             |
 | `BR-ENV-11` | Biến kiểu `secret` phải dài tối thiểu 32 byte và sinh bằng máy                                                    | Khoá do người nghĩ ra là khoá đoán được, và độ dài là thứ duy nhất kiểm được bằng máy                                                                                          |
 | `BR-ENV-12` | Cấm ghi hay sinh file env tự động trong quy trình phát hành                                                       | Quy trình phát hành chỉ **đọc để kiểm**. Nếu nó ghi được thì một lần chạy sai có thể xoá bí mật production, và không có bản sao nào ở nơi khác                                 |
-| `BR-ENV-13` | Biến `kind: url` phải khai `urlProtocols`; validator khẳng định giao thức của giá trị nằm trong danh sách đó | `new URL()` chấp mọi scheme, nên `DATABASE_URL_APP=https://example.com/endpoint` đi qua cổng env màu xanh rồi mới chết ở runtime — `getAppDb()` treo tới hết timeout. Kiểu chỉ nói *dạng*; giao thức mới nói **nó nối tới cái gì** |
+| `BR-ENV-13` | Biến `kind: url` phải khai `urlProtocols`; validator khẳng định giao thức của giá trị nằm trong danh sách đó | `new URL()` chấp mọi scheme, nên `VALKEY_URL=https://example.com/endpoint` đi qua cổng env màu xanh rồi mới chết ở runtime — client Valkey treo tới hết timeout. Kiểu chỉ nói *dạng*; giao thức mới nói **nó nối tới cái gì** |
+| `BR-ENV-14` | Runtime Cloudflare (D1) **không có** `DATABASE_URL`/`DATABASE_URL_APP` (đã gỡ khỏi registry); `VALKEY_URL` và `AWS_S3_*` là `optional`, để build production trên Cloudflare chỉ cần tập biến cốt lõi | Build nhập `env.ts` qua `nuxt.config`; đòi biến của hạ tầng không dùng làm hỏng build Cloudflare |
 
 ## 7. Data
 
@@ -182,8 +183,8 @@ Scenario: BR-ENV-06 — validator không dựa vào môi trường của ngườ
   Then validator báo thiếu biến đó
 
 Scenario: BR-ENV-13 — URL sai giao thức bị chặn ở cổng, không ở runtime
-  Given DATABASE_URL_APP khai `urlProtocols` là postgres: và postgresql:
-  And file env đặt DATABASE_URL_APP thành một địa chỉ https
+  Given VALKEY_URL khai `urlProtocols` là valkey:, redis: và rediss:
+  And file env đặt VALKEY_URL thành một địa chỉ https
   When chạy validator
   Then validator báo lỗi và nêu tên biến
 

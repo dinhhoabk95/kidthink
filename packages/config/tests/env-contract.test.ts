@@ -242,30 +242,31 @@ describe("BR-ENV-13 — url phải khai và khớp giao thức", () => {
     expect(missing).toEqual([]);
   });
 
-  it("từ chối một địa chỉ https đặt vào biến chuỗi kết nối Postgres", () => {
+  it("từ chối một địa chỉ https đặt vào biến chuỗi kết nối Valkey", () => {
     const parsed = envFor("web");
-    parsed.set("DATABASE_URL_APP", "https://example.com/endpoint");
+    parsed.set("VALKEY_URL", "https://example.com/endpoint");
 
     const result = validateEnvFile("web", parsed);
 
     expect(result.valid).toBe(false);
-    expect(
-      result.errors.some((error) => error.varName === "DATABASE_URL_APP")
-    ).toBe(true);
+    expect(result.errors.some((error) => error.varName === "VALKEY_URL")).toBe(
+      true
+    );
   });
 
-  it("nhận postgres: và postgresql: cho cùng biến đó", () => {
+  it("nhận valkey:, redis: và rediss: cho cùng biến đó", () => {
     for (const value of [
-      "postgres://u:p@localhost:5433/mindkid",
-      "postgresql://u:p@localhost:5433/mindkid",
+      "valkey://127.0.0.1:6380",
+      "redis://127.0.0.1:6380",
+      "rediss://127.0.0.1:6380",
     ]) {
       const parsed = envFor("web");
-      parsed.set("DATABASE_URL_APP", value);
+      parsed.set("VALKEY_URL", value);
 
       const result = validateEnvFile("web", parsed);
 
       expect(
-        result.errors.filter((error) => error.varName === "DATABASE_URL_APP")
+        result.errors.filter((error) => error.varName === "VALKEY_URL")
       ).toEqual([]);
     }
   });
@@ -273,11 +274,11 @@ describe("BR-ENV-13 — url phải khai và khớp giao thức", () => {
   it("BR-ENV-08 — báo lỗi giao thức không in giá trị", () => {
     const secretValue = "https://user:hunter2@example.com/endpoint";
     const parsed = envFor("web");
-    parsed.set("DATABASE_URL_APP", secretValue);
+    parsed.set("VALKEY_URL", secretValue);
 
     const result = validateEnvFile("web", parsed);
     const issue = result.errors.find(
-      (error) => error.varName === "DATABASE_URL_APP"
+      (error) => error.varName === "VALKEY_URL"
     )?.issue;
 
     expect(issue).toBeDefined();

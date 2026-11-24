@@ -28,7 +28,7 @@ export interface EnvVarDef {
    * BR-ENV-13 — bắt buộc khi `kind` là `url`.
    *
    * `new URL()` chấp mọi scheme, nên nếu chỉ kiểm "phân tích được" thì
-   * `DATABASE_URL_APP=https://example.com/endpoint` qua cổng env màu xanh rồi
+   * `VALKEY_URL=https://example.com/endpoint` qua cổng env màu xanh rồi
    * mới chết ở runtime. Cổng giữ ràng buộc này là
    * `packages/config/tests/env-contract.test.ts`.
    */
@@ -94,27 +94,9 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
 
   // ---- Dữ liệu ------------------------------------------------------------
   {
-    name: "DATABASE_URL",
-    apps: ALL_APPS,
-    required: "always",
-    kind: "url",
-    urlProtocols: ["postgres:", "postgresql:"],
-    secret: true,
-    note: "Chuỗi kết nối PostgreSQL của tiến trình di trú và ứng dụng",
-  },
-  {
-    name: "DATABASE_URL_APP",
-    apps: ALL_APPS,
-    required: "always",
-    kind: "url",
-    urlProtocols: ["postgres:", "postgresql:"],
-    secret: true,
-    note: "Chuỗi kết nối quyền hẹp cho ứng dụng",
-  },
-  {
     name: "VALKEY_URL",
     apps: ALL_APPS,
-    required: "always",
+    required: "optional",
     kind: "url",
     urlProtocols: ["valkey:", "redis:", "rediss:"],
     secret: true,
@@ -276,7 +258,7 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
   {
     name: "AWS_S3_PUBLIC_BUCKET",
     apps: ["web", "worker"],
-    required: "production",
+    required: "optional",
     kind: "text",
     secret: false,
     note: "Tên bucket chứa tài sản công khai",
@@ -284,7 +266,7 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
   {
     name: "AWS_S3_PRIVATE_BUCKET",
     apps: ["web", "worker"],
-    required: "production",
+    required: "optional",
     kind: "text",
     secret: false,
     note: "Tên bucket chứa tài sản riêng tư",
