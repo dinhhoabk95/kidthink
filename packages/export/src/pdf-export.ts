@@ -364,7 +364,7 @@ export async function runPdfCleanupJob(): Promise<{
 
   for (const job of expiredJobs) {
     if (job.filePath) {
-      storage.deletePrivateAsset(job.filePath);
+      await storage.deletePrivateAsset(job.filePath);
       cleanedIds.push(job.id);
     }
   }

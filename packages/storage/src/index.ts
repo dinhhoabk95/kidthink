@@ -12,6 +12,7 @@ import {
   normalizeAudioAsset,
   uploadPublicAudio,
 } from "#src/audio-storage";
+import { InMemoryObjectStorageDriver } from "#src/in-memory-driver";
 import {
   getActiveObjectStorageDriver,
   type ObjectStorageDriver,
@@ -20,7 +21,6 @@ import {
   assetBaseUrl,
   assetSigningSecret,
   EXTENSION_REGEX,
-  inMemoryPrivateStore,
   inMemoryPublicStore,
   sanitizeRelativeStoragePath,
   setBoundedStoreEntry,
@@ -28,6 +28,8 @@ import {
 } from "#src/storage-common";
 
 export * from "#src/audio-storage";
+export * from "#src/d1-blob-port";
+export * from "#src/in-memory-driver";
 export * from "#src/object-storage-driver";
 export { sanitizeRelativeStoragePath } from "#src/storage-common";
 
@@ -387,39 +389,55 @@ export function deletePublicImage(path: string): boolean {
   return inMemoryPublicStore.delete(normalizedPath);
 }
 
+let defaultStorageDriver: ObjectStorageDriver | undefined;
+
+/** Driver đang hoạt động, hoặc driver in-memory mặc định (BR-IMG-11). */
+function resolvePrivateDriver(): ObjectStorageDriver {
+  const active = getActiveObjectStorageDriver();
+  if (active) {
+    return active;
+  }
+  defaultStorageDriver ??= new InMemoryObjectStorageDriver();
+  return defaultStorageDriver;
+}
+
 export async function uploadPrivateAsset(
   options: UploadPrivateAssetOptions
 ): Promise<PrivateUploadResult> {
   const normalizedPath = sanitizeRelativeStoragePath(options.key);
-  const driver: ObjectStorageDriver | undefined =
-    getActiveObjectStorageDriver();
-  if (driver) {
-    await driver.putObject({
-      bucket: "private",
-      key: normalizedPath,
-      body:
-        options.body instanceof Uint8Array
-          ? options.body
-          : new Uint8Array(options.body),
-      contentType: options.contentType,
-    });
-    return { path: normalizedPath };
-  }
-
-  setBoundedStoreEntry(inMemoryPrivateStore, normalizedPath, {
-    body: options.body,
+  await resolvePrivateDriver().putObject({
+    bucket: "private",
+    key: normalizedPath,
+    body:
+      options.body instanceof Uint8Array
+        ? options.body
+        : new Uint8Array(options.body),
     contentType: options.contentType,
-    createdAt: new Date(),
   });
-
-  return {
-    path: normalizedPath,
-  };
+  return { path: normalizedPath };
 }
 
-export function deletePrivateAsset(path: string): boolean {
+export async function readPrivateAsset(
+  path: string
+): Promise<{ body: Uint8Array; contentType: string } | undefined> {
   const normalizedPath = sanitizeRelativeStoragePath(path);
-  return inMemoryPrivateStore.delete(normalizedPath);
+  const found = await resolvePrivateDriver().getObject(
+    "private",
+    normalizedPath
+  );
+  return found
+    ? { body: found.body, contentType: found.contentType }
+    : undefined;
+}
+
+export async function deletePrivateAsset(path: string): Promise<boolean> {
+  const normalizedPath = sanitizeRelativeStoragePath(path);
+  return await resolvePrivateDriver().deleteObject("private", normalizedPath);
+}
+
+/** Chỉ dùng cho test: bỏ driver in-memory mặc định đã tạo. */
+export function resetDefaultObjectStorageDriver(): void {
+  defaultStorageDriver = undefined;
 }
 
 /**
@@ -546,6 +564,7 @@ export const storage = {
   uploadPublicImage,
   uploadPublicAudio,
   uploadPrivateAsset,
+  readPrivateAsset,
   getPublicImage,
   getPublicAudio,
   deletePublicImage,

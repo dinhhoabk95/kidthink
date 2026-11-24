@@ -17,11 +17,6 @@ function hasControlCharacter(str: string): boolean {
 // In-memory store for local testing/dev when S3 is not configured (capped to prevent OOM)
 export const MAX_IN_MEMORY_STORE_ENTRIES = 200;
 
-export const inMemoryPrivateStore = new Map<
-  string,
-  { body: Buffer | Uint8Array; contentType: string; createdAt: Date }
->();
-
 export const inMemoryPublicStore = new Map<
   string,
   { body: Buffer | Uint8Array; contentType: string; createdAt: Date }
