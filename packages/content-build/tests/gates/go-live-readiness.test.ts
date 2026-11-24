@@ -1,5 +1,7 @@
 import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 import { describe, expect, it } from "vitest";
+import { runEngineDepthGate } from "#src/cli/check-engine-depth";
+import { runGoLiveGate } from "#src/cli/check-go-live";
 import {
   evaluateGoLiveReadiness,
   formatGoLiveReport,
@@ -297,5 +299,15 @@ describe("Cổng Điều Kiện Sẵn Sàng Go-Live — Task #125 & #310 (BR-GLR
       expect(res.violations.some((v) => v.includes("BR-CTR-01"))).toBe(true);
       expect(res.violations.some((v) => v.includes("BR-ECD-13"))).toBe(true);
     });
+  });
+});
+
+describe("Cổng CLI chạy thật trong pnpm test", () => {
+  it("check:engine-depth chạy và trả mã thoát", () => {
+    expect(typeof runEngineDepthGate({ quiet: true })).toBe("number");
+  });
+
+  it("check:go-live chạy và xác nhận trạng thái sẵn sàng (exit 0)", () => {
+    expect(runGoLiveGate({ quiet: true })).toBe(0);
   });
 });

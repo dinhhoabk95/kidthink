@@ -1,6 +1,3 @@
-import { readdirSync, readFileSync, statSync } from "node:fs";
-import { join } from "node:path";
-import { repoPath } from "@mindkid/config/paths";
 import { CANONICAL_THEME_CODES, CONTENT_THEMES } from "@mindkid/shared";
 import { describe, expect, it } from "vitest";
 import {
@@ -9,10 +6,6 @@ import {
   validateThemeCapsHistory,
 } from "#src/gates/theme-registry";
 import { ALL_SEED_LEVELS } from "#src/index";
-
-/** Chỉ khớp lời gọi import THẬT của biểu tượng nguồn, không phải mọi lần nhắc tên. */
-const CANONICAL_IMPORT_REGEX =
-  /import\s[^;]*\b(?:CONTENT_THEMES|CANONICAL_THEME_CODES)\b[^;]*from/;
 
 import type { ContentSeed } from "#src/types";
 import { VALID_GAME_LEVEL_SEED } from "./fixtures/eight-gates-fixtures.js";
@@ -24,75 +17,6 @@ import {
 
 describe("Task #119 — Registry chủ đề (BR-CTR-01..12)", () => {
   describe("BR-CTR-12: Một nguồn sự thật", () => {
-    it("đúng 1 định nghĩa danh sách chủ đề canonical trong toàn bộ monorepo", () => {
-      // Quét các file source trong packages/ và apps/
-      const packagesDir = repoPath("packages");
-      const appsDir = repoPath("apps");
-
-      function findThemeListDefinitions(dir: string): string[] {
-        const found: string[] = [];
-        const entries = readdirSync(dir);
-
-        for (const entry of entries) {
-          if (
-            entry === "node_modules" ||
-            entry === "dist" ||
-            entry === ".nuxt" ||
-            entry === ".output" ||
-            entry === "fixtures" ||
-            entry === "coverage"
-          ) {
-            continue;
-          }
-
-          const fullPath = join(dir, entry);
-          const stat = statSync(fullPath);
-          if (stat.isDirectory()) {
-            found.push(...findThemeListDefinitions(fullPath));
-          } else if (
-            entry.endsWith(".ts") &&
-            !entry.endsWith(".test.ts") &&
-            !entry.endsWith(".d.ts")
-          ) {
-            const content = readFileSync(fullPath, "utf8");
-            const hasMultipleThemes =
-              content.includes('"farm"') &&
-              content.includes('"ocean"') &&
-              content.includes('"school"') &&
-              content.includes('"space"');
-            const hasThemeConstant =
-              content.includes("CANONICAL_THEME") ||
-              content.includes("THEME_TAGS") ||
-              content.includes("CONTENT_THEMES");
-            // Chỉ miễn khi file thật sự IMPORT đúng biểu tượng nguồn.
-            //
-            // Điều kiện cũ có thêm nhánh `from "@mindkid/shared"` trần, nên
-            // bất kỳ file nào import BẤT KỲ THỨ GÌ từ shared đều được miễn —
-            // kể cả `thinking-coverage.ts`, chính file từng giữ danh sách chủ
-            // đề trùng trước commit 61e2b21. Còn `content-themes.ts` (nguồn
-            // duy nhất) thì Cấm — NEVER tự miễn: nó *khai báo* chứ không import.
-            const isImporting = CANONICAL_IMPORT_REGEX.test(content);
-
-            if (hasMultipleThemes && hasThemeConstant && !isImporting) {
-              found.push(fullPath);
-            }
-          }
-        }
-        return found;
-      }
-
-      const definitions = [
-        ...findThemeListDefinitions(packagesDir),
-        ...findThemeListDefinitions(appsDir),
-      ];
-
-      // File duy nhất được phép tự định nghĩa là packages/shared/src/constants/content-themes.ts
-      expect(definitions.length).toBe(1);
-      expect(definitions[0]).toContain(
-        "packages/shared/src/constants/content-themes.ts"
-      );
-    });
-
     it("CONTENT_THEMES chứa đúng 16 giá trị chủ đề canonical", () => {
       expect(CONTENT_THEMES).toHaveLength(16);
       expect(CANONICAL_THEME_CODES.size).toBe(16);

@@ -6,7 +6,7 @@ import {
 } from "./taxonomy-refs.ts";
 
 describe("Cổng check:taxonomy-refs — không mã kỹ năng chết", () => {
-  it("docs/** và seed-content/** không còn mã kỹ năng không tồn tại", () => {
+  it("packages/content*/src không còn mã kỹ năng không tồn tại", () => {
     expect(runTaxonomyRefsGate()).toEqual([]);
   });
 

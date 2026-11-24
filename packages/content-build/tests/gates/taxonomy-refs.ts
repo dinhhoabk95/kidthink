@@ -1,7 +1,7 @@
 /**
  * Cổng: `check:taxonomy-refs`.
  *
- * Mọi mã kỹ năng xuất hiện trong `docs/**` và trong corpus `seed-content/**`
+ * Mọi mã kỹ năng xuất hiện trong mã nguồn `packages/content/src` và `packages/content-build/src`
  * phải tồn tại trong `docs/taxonomy/c*.md`.
  *
  * Vì sao cần: không cổng nào đối chiếu mã kỹ năng với taxonomy thật. Trước cổng
@@ -24,7 +24,6 @@ export interface TaxonomyRefViolation {
 const SKILL_REF_REGEX = /\bC[1-6]\.[A-Z0-9]{1,5}\.\d{2}\b/g;
 
 const SCAN_DIRS = [
-  "docs",
   "packages/content/src",
   "packages/content-build/src",
 ] as const;

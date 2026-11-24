@@ -101,6 +101,32 @@ describe("Tám cổng thẩm định nội dung seed (BR-CSA-02, Task #117)", ()
       ).toBe(true);
     });
 
+    it("fails when emoji ref is empty (BR-CSA-13)", () => {
+      const seedWithEmptyEmoji: ContentSeed = {
+        ...VALID_GAME_LEVEL_SEED,
+        content_pack: {
+          prompt: "Bé chạm vào hình nhé",
+          target_item: {
+            item_id: "item_fake",
+            asset: { kind: "emoji", ref: "" },
+          },
+          options: [
+            {
+              item_id: "opt_1",
+              asset: { kind: "emoji", ref: "" },
+              is_correct: true,
+            },
+          ],
+        },
+      };
+      const results = runEightGates(seedWithEmptyEmoji, new Set());
+      const gate3 = results.find((r) => r.gate === 3);
+      expect(gate3?.passed).toBe(false);
+      expect(gate3?.issues.some((i) => i.code === "ASSET_REF_INVALID")).toBe(
+        true
+      );
+    });
+
     it("fails when emoji ref uses intermediate EMJ-* code (BR-CSA-13)", () => {
       const seedWithEmjCode: ContentSeed = {
         ...VALID_GAME_LEVEL_SEED,

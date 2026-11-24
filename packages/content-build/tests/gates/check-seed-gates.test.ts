@@ -22,6 +22,12 @@ describe("Cổng thẩm định seed gates runner (Task #271 LA)", () => {
     expect(totalViolations).toBeLessThanOrEqual(baseline.maxTotalViolations);
   });
 
+  it("Cổng 0..8 sạch trên toàn bộ ALL_SEED_LEVELS (gồm lệch band tuổi BR-ECD-13 và contract BR-CSA-16)", () => {
+    // Tách khỏi phép đo Cổng 9 ở trên để một level lệch band/contract luôn
+    // làm test này đỏ, kể cả khi Cổng 9 đang đỏ sẵn.
+    expect(evaluateSeedGates().otherIssues).toEqual([]);
+  });
+
   describe("Ca âm Cổng 9 (TA.5)", () => {
     it("cổng đỏ và nêu đúng mã level và mã kỹ năng khi level không hiển thị bất kỳ glyph nào", () => {
       const skillCode = "C1.NREC.02";
