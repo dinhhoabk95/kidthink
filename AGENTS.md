@@ -48,12 +48,12 @@ Chỗ skill có mặc định khác repo — **repo thắng**:
 ## Runtime boundary — Task #104
 
 - `{domain}` chạy `apps/web` SSR và toàn bộ API. `admin.{domain}` chỉ nhận static files từ
-  `apps/admin/.output/public`; không có Nitro server, PM2 process, DB package hay auth module.
+  `apps/admin/.output/public`; không có Nitro server, process nền, DB package hay auth module.
 - Admin gọi absolute `NUXT_PUBLIC_API_BASE_URL` với `credentials: include`; CSRF token manager
   giữ trong memory. Cookie Manager là host-only trên `{domain}` và được web resolve trong Redis
   namespace `manager`.
 - `nuxt-auth-utils` chỉ dùng trong web. Browser auth dùng opaque locator + Redis, không first-party
-  JWT hoặc refresh route. Nginx giữ proxy API, rate limit và static admin; Caddy chỉ là nghiên cứu.
+  JWT hoặc refresh route. Admin là Workers Static Assets, header bảo mật ở `apps/admin/public/_headers`; production chỉ deploy Cloudflare (`D14`).
 
 ## Spec là contract, không phải tài liệu
 
@@ -151,7 +151,6 @@ Cổng hiện có — đọc `package.json` gốc, đừng tin bảng này là �
 | `pnpm lint:deps` | Ranh giới package (dependency-cruiser) |
 | `pnpm typecheck` | `tsc` gốc + `tsc`/`vue-tsc` từng app, không baseline |
 | vitest từng workspace | Gồm test cổng trong `**/tests/gates/` (vd. `packages/game-engine/tests/gates/render.test.ts`, `apps/web/tests/gates/`) |
-| `pnpm test:deploy` | Script hạ tầng (đang tắt) |
 | lefthook pre-commit | `lint` + `lint:deps` |
 
 `pnpm check` **không** chạy test: trước khi xong phải chạy thêm vitest của các workspace

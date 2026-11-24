@@ -7,7 +7,7 @@
  * only operation needed is one authenticated PUT, and staying on plain HTTPS
  * keeps every S3-compatible endpoint — AWS, R2, B2, MinIO — a configuration
  * change rather than a dependency change. The provider for this deployment is
- * still open (server-provisioning.md §11 question 1); binding the backup path
+ * still open (`docs/specs/01-platform/backup-and-restore.md`); binding the backup path
  * to one vendor's SDK before that decision would be the wrong order.
  */
 import crypto from "node:crypto";

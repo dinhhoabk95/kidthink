@@ -7,14 +7,13 @@ import { readErrorMessage } from "./errors.js";
 import { runWithTimeout } from "./run-with-timeout.js";
 
 /**
- * `BR-SUP-03` — worker chạy fork một bản (`ecosystem.config.cjs` đặt
- * `instances: 1`), nên song song là việc của hàng đợi, không phải của process
- * manager. Bản cũ không đặt gì cả nên BullMQ mặc định 1, và một
+ * Worker chạy một tiến trình, nên song song là việc của hàng đợi, không phải
+ * của process manager. Bản cũ không đặt gì cả nên BullMQ mặc định 1, và một
  * `backup:postgres` 30 phút chặn mọi `email:send` xếp sau nó.
  */
 const WORKER_CONCURRENCY = 5;
 
-/** Thời gian chờ tối đa cho worker tắt sạch, khớp `kill_timeout` của pm2. */
+/** Thời gian chờ tối đa cho worker tắt sạch. */
 const SHUTDOWN_TIMEOUT_MS = 10_000;
 
 let worker: Worker | undefined;

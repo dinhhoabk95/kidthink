@@ -7,13 +7,9 @@ import { build } from "esbuild";
  * `tsc` không dùng được ở đây: các package workspace export TS thô
  * (`packages/queue/package.json` exports `./src/index.ts`), nên `tsc` hoặc
  * từ chối vì `rootDir`, hoặc rải output ra `dist/apps/worker/src/`. Ba nơi
- * đều đóng đinh đúng đường dẫn `apps/worker/dist/index.js`:
- *   - `infra/scripts/lib/releases.sh:30` coi release hợp lệ khi file này tồn tại
- *   - `infra/pm2/ecosystem.config.cjs:62` chạy đúng file này
- *   - `packages/gates/tests/ecosystem.test.ts` assert đúng đường dẫn này
- *
- * `BR-SUP-09` (`process-supervision.md`) cấm chạy TypeScript qua loader trên
- * máy chủ, nên bước này bắt buộc phải có thật.
+ * đều đóng đinh đúng đường dẫn `apps/worker/dist/index.js`. Đường phát hành VPS
+ * (PM2, `D14` đã gỡ) từng chạy đúng file này; giữ nguyên đường dẫn cho `pnpm start`
+ * của worker ở dev.
  */
 
 const manifest = JSON.parse(readFileSync("package.json", "utf8"));
