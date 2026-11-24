@@ -1,11 +1,12 @@
 import { EntitlementRequiredError } from "@mindkid/errors/billing";
 import { ValidationError } from "@mindkid/errors/common";
 
-import { defineEventHandler, getQuery, getRouterParam } from "h3";
+import { defineEventHandler, getRouterParam } from "h3";
 import { z } from "zod";
 import { generateOfflineCurriculumPackManifest } from "#server/services/index.js";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
+import { readRequestQuery } from "#server/utils/request-body";
 
 const OfflinePackQuerySchema = z.object({
   week: z.coerce.number().int().min(1).max(42),
@@ -15,9 +16,7 @@ export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);
   const userId = Number(user.user_id);
   const uuid = getRouterParam(event, "uuid") || "";
-  const eventQuery =
-    Reflect.get(event.context, "query") || Reflect.get(event, "_query");
-  const query = eventQuery || getQuery(event) || {};
+  const query = readRequestQuery(event);
   const parsedQuery = OfflinePackQuerySchema.safeParse(query);
 
   if (!parsedQuery.success) {

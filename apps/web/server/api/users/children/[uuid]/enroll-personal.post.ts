@@ -3,7 +3,6 @@ import {
   defineEventHandler,
   getRequestHeader,
   getRouterParam,
-  readBody,
   setResponseStatus,
 } from "h3";
 import { enrollChildInPersonalCurriculum } from "#server/services/index.js";
@@ -13,15 +12,14 @@ import {
   requireWebUserSession,
 } from "#server/utils/auth-runtime";
 import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
+import { readRequestBody } from "#server/utils/request-body";
 
 export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);
   const userId = Number(user.user_id);
   const childUuid = getRouterParam(event, "uuid") || "";
 
-  const eventBody =
-    Reflect.get(event.context, "body") || Reflect.get(event, "_body");
-  const body = eventBody || (await readBody(event)) || {};
+  const body = await readRequestBody(event);
   const parsed = enrollPersonalCurriculumSchema.safeParse(body);
   if (!parsed.success) {
     throwValidationError(parsed.error);

@@ -1,9 +1,10 @@
 import { ValidationError } from "@mindkid/errors/common";
 
-import { defineEventHandler, readBody } from "h3";
+import { defineEventHandler } from "h3";
 import { z } from "zod";
 import { userCancelRecurringSubscription } from "#server/services/index.js";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
+import { readRequestBody } from "#server/utils/request-body";
 
 const cancelSubscriptionSchema = z.object({
   subscription_id: z.number().int().positive({
@@ -14,16 +15,7 @@ const cancelSubscriptionSchema = z.object({
 export default defineEventHandler(async (event) => {
   const session = requireWebUserSession(event);
 
-  const rawBody =
-    ((event.context as { body?: unknown })?.body as Record<string, unknown>) ??
-    ((await readBody(event).catch(() => undefined)) as Record<
-      string,
-      unknown
-    >) ??
-    ((event as unknown as { _body?: unknown })._body as Record<
-      string,
-      unknown
-    >);
+  const rawBody = await readRequestBody(event);
   const parsed = cancelSubscriptionSchema.safeParse(rawBody);
 
   if (!parsed.success) {

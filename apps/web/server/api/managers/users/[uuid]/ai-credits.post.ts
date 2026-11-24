@@ -4,13 +4,13 @@ import {
   defineEventHandler,
   getHeader,
   getRouterParam,
-  readBody,
   setResponseStatus,
 } from "h3";
 import { manualGrantCredits } from "#server/services/index.js";
 import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 import { throwValidationError } from "#server/utils/api-error";
 import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
+import { readRequestBody } from "#server/utils/request-body";
 
 export default defineEventHandler(async (event) => {
   const session = requireSuperAdminSession(event);
@@ -19,14 +19,7 @@ export default defineEventHandler(async (event) => {
     throw new UserNotFoundError();
   }
 
-  const customEvent = event as {
-    _body?: Record<string, unknown>;
-    context?: { body?: Record<string, unknown> };
-  };
-  const rawBody =
-    (await readBody(event).catch(() => undefined)) ??
-    customEvent._body ??
-    customEvent.context?.body;
+  const rawBody = await readRequestBody(event);
 
   const parsed = manualGrantCreditsSchema.safeParse(rawBody);
   if (!parsed.success) {

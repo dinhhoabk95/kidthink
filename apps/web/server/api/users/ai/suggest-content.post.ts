@@ -1,17 +1,15 @@
 import { suggestContentInputSchema } from "@mindkid/shared";
-import { defineEventHandler, readBody, setHeader } from "h3";
+import { defineEventHandler, setHeader } from "h3";
 import { aiAssistantService } from "#server/services/index.js";
 import { throwValidationError } from "#server/utils/api-error";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
+import { readRequestBody } from "#server/utils/request-body";
 
 export default defineEventHandler(async (event) => {
   const session = await requireWebUserSession(event);
   const userId = Number(session.user_id);
 
-  const eventBody =
-    (event.context as { body?: Record<string, unknown> })?.body ||
-    (event as { _body?: Record<string, unknown> })._body;
-  const body = eventBody || (await readBody(event)) || {};
+  const body = await readRequestBody(event);
 
   const parsed = suggestContentInputSchema.safeParse(body);
   if (!parsed.success) {

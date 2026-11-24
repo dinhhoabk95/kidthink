@@ -1,10 +1,5 @@
 import { replacePersonalCurriculumItemsSchema } from "@mindkid/shared";
-import {
-  defineEventHandler,
-  getRequestHeader,
-  getRouterParam,
-  readBody,
-} from "h3";
+import { defineEventHandler, getRequestHeader, getRouterParam } from "h3";
 import { replacePersonalCurriculumItems } from "#server/services/index.js";
 import { throwValidationError } from "#server/utils/api-error";
 import {
@@ -12,15 +7,14 @@ import {
   requireWebUserSession,
 } from "#server/utils/auth-runtime";
 import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
+import { readRequestBody } from "#server/utils/request-body";
 
 export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);
   const userId = Number(user.user_id);
   const uuid = getRouterParam(event, "uuid") || "";
 
-  const eventBody =
-    Reflect.get(event.context, "body") || Reflect.get(event, "_body");
-  const body = eventBody || (await readBody(event)) || {};
+  const body = await readRequestBody(event);
   const parsed = replacePersonalCurriculumItemsSchema.safeParse(body);
   if (!parsed.success) {
     throwValidationError(parsed.error);

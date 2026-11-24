@@ -297,7 +297,8 @@ vi.mock("#server/utils/round-set-runtime", () => ({
   loadRoundSet: vi.fn(() => []),
 }));
 
-vi.mock("#server/utils/auth-runtime", () => ({
+vi.mock("#server/utils/auth-runtime", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("#server/utils/auth-runtime")>()),
   requireWebUserSession: vi.fn(async () => ({
     user_id: "42",
     session_id: "sess-42",

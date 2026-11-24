@@ -1,11 +1,12 @@
 import { ValidationError } from "@mindkid/errors/common";
 
-import { defineEventHandler, getHeader, getRouterParam, readBody } from "h3";
+import { defineEventHandler, getHeader, getRouterParam } from "h3";
 import { z } from "zod";
 import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 import { throwValidationError } from "#server/utils/api-error";
 import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
 import { revokeUserEntitlementById } from "#server/utils/entitlements-runtime";
+import { readRequestBody } from "#server/utils/request-body";
 
 const revokeEntitlementSchema = z.object({
   reason: z
@@ -24,14 +25,7 @@ export default defineEventHandler(async (event) => {
     throw new ValidationError("Mã entitlement không hợp lệ.");
   }
 
-  const customEvent = event as {
-    _body?: Record<string, unknown>;
-    context?: { body?: Record<string, unknown> };
-  };
-  const rawBody =
-    (await readBody(event).catch(() => undefined)) ??
-    customEvent._body ??
-    customEvent.context?.body;
+  const rawBody = await readRequestBody(event);
 
   const parsed = revokeEntitlementSchema.safeParse(rawBody);
   if (!parsed.success) {

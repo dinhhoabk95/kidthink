@@ -1,10 +1,11 @@
 import { EntitlementRequiredError } from "@mindkid/errors/billing";
 import { updateCustomGameSchema } from "@mindkid/shared";
-import { defineEventHandler, getRouterParam, readBody } from "h3";
+import { defineEventHandler, getRouterParam } from "h3";
 import { updateCustomGame } from "#server/services/index.js";
 import { throwValidationError } from "#server/utils/api-error";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
+import { readRequestBody } from "#server/utils/request-body";
 
 export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);
@@ -20,9 +21,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const eventBody =
-    Reflect.get(event.context ?? {}, "body") || Reflect.get(event, "_body");
-  const body = eventBody || (await readBody(event)) || {};
+  const body = await readRequestBody(event);
   const parsed = updateCustomGameSchema.safeParse(body);
   if (!parsed.success) {
     throwValidationError(parsed.error);
