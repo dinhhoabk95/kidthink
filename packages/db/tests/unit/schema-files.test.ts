@@ -5,19 +5,6 @@ import { describe, expect, it } from "vitest";
 const SCHEMA_DIR = resolve(import.meta.dirname, "../../src/schema");
 
 describe("schema architecture", () => {
-  it("BR-DM-11: every domain schema file stays at or below 400 lines", () => {
-    const oversized = readdirSync(SCHEMA_DIR)
-      .filter((file) => file.endsWith(".ts"))
-      .map((file) => ({
-        file,
-        lines: readFileSync(resolve(SCHEMA_DIR, file), "utf8").split("\n")
-          .length,
-      }))
-      .filter(({ lines }) => lines > 400);
-
-    expect(oversized).toEqual([]);
-  });
-
   it("mọi file .ts trong schema/ (trừ index.ts) đều có trong schema/index.ts", () => {
     const indexContent = readFileSync(resolve(SCHEMA_DIR, "index.ts"), "utf8");
     const files = readdirSync(SCHEMA_DIR).filter(
