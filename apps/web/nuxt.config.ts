@@ -1,8 +1,9 @@
-import { readdirSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineNuxtConfig } from "nuxt/config";
+import { dropOversizedHeaderLines } from "./cloudflare/headers";
 import { env } from "./env";
 
 const isDevelopment = env.NODE_ENV === "development";
@@ -46,6 +47,25 @@ export default defineNuxtConfig({
     "#server": fileURLToPath(new URL("./server", import.meta.url)),
   },
   modules: ["nuxt-security"],
+  hooks: {
+    // Đăng ký SAU các hook của preset Cloudflare (hook `compiled` khai trong `nitro.hooks` sẽ
+    // đè hook của preset và làm mất `_headers`/wrangler config). `_headers` được ghi ở `compiled`;
+    // bỏ dòng vượt 2000 ký tự mà wrangler sẽ bỏ qua cả rule.
+    "nitro:init": (nitro) => {
+      nitro.hooks.hook("compiled", () => {
+        const headersFile = join(nitro.options.output.publicDir, "_headers");
+        if (!existsSync(headersFile)) {
+          return;
+        }
+        const { text, dropped } = dropOversizedHeaderLines(
+          readFileSync(headersFile, "utf8")
+        );
+        if (dropped.length > 0) {
+          writeFileSync(headersFile, text);
+        }
+      });
+    },
+  },
   nitro: {
     preset: isCloudflareTarget ? "cloudflare_module" : undefined,
     alias: isCloudflareTarget
@@ -103,6 +123,10 @@ export default defineNuxtConfig({
   security: {
     nonce: true,
     sri: true,
+    // Trang prerender (/guide, /terms, ...) không có nonce nên CSP mang hash của mọi script
+    // (~2,3 KB) — vượt giới hạn 2000 ký tự/dòng của `_headers` trên Cloudflare Assets.
+    // Đưa CSP vào `<meta http-equiv>` của HTML tĩnh; xem `cloudflare/headers.ts`.
+    ssg: { meta: true },
     hidePoweredBy: true,
     headers: {
       crossOriginResourcePolicy: "same-origin",
