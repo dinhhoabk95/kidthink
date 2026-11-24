@@ -93,7 +93,6 @@ export {
 export {
   type AuthCoordinatorRpcPort,
   createDurableObjectRedisClient,
-  enterAuthCoordinatorPort,
   getAuthRedisClient,
   registerAuthCoordinatorPort,
   setAuthRedisClient,

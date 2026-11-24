@@ -1,7 +1,6 @@
 import { getQueueDriverKind } from "@mindkid/config";
 import type { Job } from "bullmq";
 import {
-  dispatchWaitUntilIfPresent,
   getCloudflareQueuePort,
   type QueuedJobEnvelope,
 } from "./do-queue-driver.js";
@@ -87,9 +86,7 @@ export async function enqueue<T extends JobName>(
   const cfPort = getCloudflareQueuePort();
   if (getQueueDriverKind() === "cloudflare-do" && cfPort) {
     const envelope = buildEnvelope(name, payload, options);
-    await dispatchWaitUntilIfPresent(
-      cfPort.enqueueBatch([envelope]).then(() => undefined)
-    );
+    await cfPort.enqueueBatch([envelope]);
     return { id: envelope.jobId, name };
   }
 
@@ -117,9 +114,7 @@ export async function enqueueBatch(
     const envelopes = items.map((item) =>
       buildEnvelope(item.name, item.payload, item.options)
     );
-    await dispatchWaitUntilIfPresent(
-      cfPort.enqueueBatch(envelopes).then(() => undefined)
-    );
+    await cfPort.enqueueBatch(envelopes);
     return { accepted: envelopes.length };
   }
 

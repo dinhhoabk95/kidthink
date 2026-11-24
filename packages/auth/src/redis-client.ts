@@ -1,4 +1,3 @@
-import { AsyncLocalStorage } from "node:async_hooks";
 import {
   getAuthStoreDriverKind,
   isCloudflareRuntime,
@@ -20,7 +19,6 @@ export interface AuthCoordinatorRpcPort {
   readonly kvDeleteByPrefix?: (prefix: string) => Promise<number>;
 }
 
-const doPortAls = new AsyncLocalStorage<AuthCoordinatorRpcPort | undefined>();
 let overrideRedisClient: MinimalRedisClient | undefined;
 let registeredDoPort: AuthCoordinatorRpcPort | undefined;
 let lazyIoRedisClient: MinimalRedisClient | undefined;
@@ -51,12 +49,6 @@ export function createDurableObjectRedisClient(
         ? port.kvDeleteByPrefix(prefix)
         : Promise.resolve(0),
   };
-}
-
-export function enterAuthCoordinatorPort(
-  port: AuthCoordinatorRpcPort | undefined
-): void {
-  doPortAls.enterWith(port);
 }
 
 export function registerAuthCoordinatorPort(
@@ -130,7 +122,7 @@ function resolveActiveClient(): MinimalRedisClient {
   if (overrideRedisClient) {
     return overrideRedisClient;
   }
-  const activeDoPort = doPortAls.getStore() ?? registeredDoPort;
+  const activeDoPort = registeredDoPort;
   if (activeDoPort) {
     return createDurableObjectRedisClient(activeDoPort);
   }

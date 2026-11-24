@@ -48,6 +48,45 @@ describe("GET /private/<path> (BR-IMG-10, BR-IMG-12)", () => {
     expect(res.headers.get("content-disposition")).toBeNull();
   });
 
+  it("BR-IMG-12: mọi response có Referrer-Policy no-referrer và CSP sandbox", async () => {
+    await uploadPrivateAsset({
+      key: "proofs/headers.webp",
+      body: bytes,
+      contentType: "image/webp",
+    });
+    const { url } = await getPrivateSignedUrl({ path: "proofs/headers.webp" });
+    const res = await fetchPath(signedPathAndQuery(url));
+    expect(res.headers.get("referrer-policy")).toBe("no-referrer");
+    expect(res.headers.get("content-security-policy")).toBe("sandbox");
+  });
+
+  it.each([
+    ["image/gif"],
+    ["image/svg+xml"],
+    ["image/avif"],
+    ["text/html"],
+    ["image/jpeg; charset=binary-evil"],
+  ])("BR-IMG-12: %s không được inline (attachment)", async (contentType) => {
+    const key = `proofs/inline-${contentType.replace(/\W/g, "_")}.bin`;
+    await uploadPrivateAsset({ key, body: bytes, contentType });
+    const { url } = await getPrivateSignedUrl({ path: key });
+    const res = await fetchPath(signedPathAndQuery(url));
+    expect(res.status).toBe(200);
+    expect(res.headers.get("content-disposition")).toBe("attachment");
+  });
+
+  it.each([["image/jpeg"], ["image/png"], ["IMAGE/WEBP"]])(
+    "BR-IMG-12: %s được inline",
+    async (contentType) => {
+      const key = `proofs/ok-${contentType.replace("/", "_")}.bin`;
+      await uploadPrivateAsset({ key, body: bytes, contentType });
+      const { url } = await getPrivateSignedUrl({ path: key });
+      const res = await fetchPath(signedPathAndQuery(url));
+      expect(res.status).toBe(200);
+      expect(res.headers.get("content-disposition")).toBeNull();
+    }
+  );
+
   it("forces attachment for non-image content", async () => {
     await uploadPrivateAsset({
       key: "exports/a.pdf",

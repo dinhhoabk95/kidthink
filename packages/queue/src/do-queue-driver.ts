@@ -390,21 +390,8 @@ export class JobQueueSqlEngine implements JobQueueCoordinatorPort {
   }
 }
 
-interface ScopedCloudflareQueueContext {
-  readonly port: JobQueueCoordinatorPort | undefined;
-  readonly waitUntilFn: ((promise: Promise<void>) => void) | undefined;
-}
-
-const cfQueueAls = new AsyncLocalStorage<ScopedCloudflareQueueContext>();
+const cfQueueAls = new AsyncLocalStorage<JobQueueCoordinatorPort>();
 let cloudflareQueuePort: JobQueueCoordinatorPort | undefined;
-let waitUntilDispatcher: ((promise: Promise<void>) => void) | undefined;
-
-export function enterCloudflareQueuePort(
-  port: JobQueueCoordinatorPort | undefined,
-  waitUntilFn?: (promise: Promise<void>) => void
-): void {
-  cfQueueAls.enterWith({ port, waitUntilFn });
-}
 
 /**
  * Chạy `fn` với `port` chỉ hiệu lực trong ngữ cảnh async của nó (`ALS.run`, workerd hỗ trợ;
@@ -415,34 +402,15 @@ export function runWithCloudflareQueuePort<T>(
   port: JobQueueCoordinatorPort,
   fn: () => T
 ): T {
-  return cfQueueAls.run({ port, waitUntilFn: undefined }, fn);
+  return cfQueueAls.run(port, fn);
 }
 
 export function registerCloudflareQueuePort(
-  port: JobQueueCoordinatorPort | undefined,
-  waitUntilFn?: (promise: Promise<void>) => void
+  port: JobQueueCoordinatorPort | undefined
 ): void {
   cloudflareQueuePort = port;
-  waitUntilDispatcher = waitUntilFn;
 }
 
 export function getCloudflareQueuePort(): JobQueueCoordinatorPort | undefined {
-  const scoped = cfQueueAls.getStore();
-  if (scoped !== undefined) {
-    return scoped.port;
-  }
-  return cloudflareQueuePort;
-}
-
-export function dispatchWaitUntilIfPresent(
-  promise: Promise<void>
-): Promise<void> {
-  const scoped = cfQueueAls.getStore();
-  const dispatcher =
-    scoped === undefined ? waitUntilDispatcher : scoped.waitUntilFn;
-  if (dispatcher) {
-    dispatcher(promise);
-    return Promise.resolve();
-  }
-  return promise;
+  return cfQueueAls.getStore() ?? cloudflareQueuePort;
 }

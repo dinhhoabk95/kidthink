@@ -20,7 +20,7 @@ depends_on:
 
 Việc chậm, việc theo lịch, và việc được phép thất bại không nằm trong đường request.
 Producer ở `packages/queue`, consumer ở `apps/worker` qua giao diện Pluggable `QueueDriver`:
-- **Giai đoạn 1 (`QUEUE_DRIVER=cloudflare-do`, `< 1.000 DAU`):** Đẩy lô qua `waitUntil` vào `JobQueueDO` (Durable Objects SQLite + cơ chế `Single-Pending-Alarm` gom lô cửa sổ `3–5s`, đáp ứng `50.000–200.000+ jobs/ngày` trên gói Free) kết hợp 1 Cron Dispatcher `*/5 * * * *` và cảm biến `ops:graduation-check` (cảnh báo ở `850 DAU` hoặc `65%` quota ngày).
+- **Giai đoạn 1 (`QUEUE_DRIVER=cloudflare-do`, `< 1.000 DAU`):** Producer `await` RPC `enqueueBatch` vào `JobQueueDO` ngay trong request/cron (không dùng `waitUntil`: nó thuộc về từng request nên không đặt toàn cục được, và enqueue là một RPC ngắn) (Durable Objects SQLite + cơ chế `Single-Pending-Alarm` gom lô cửa sổ `3–5s`, đáp ứng `50.000–200.000+ jobs/ngày` trên gói Free) kết hợp 1 Cron Dispatcher `*/5 * * * *` và cảm biến `ops:graduation-check` (cảnh báo ở `850 DAU` hoặc `65%` quota ngày).
 - **Giai đoạn 2 (`QUEUE_DRIVER=bullmq`, `≥ 1.000 DAU`):** BullMQ trên Valkey 9 chạy trong tiến trình `apps/worker` trên VPS.
 
 Hỏng đắt nhất của job nền: **worker bị tắt mà không ai biết**. Producer vẫn đẩy job, không
@@ -135,6 +135,13 @@ export admin hạn 1 ngày — `BR-IMG-15`).
 giới hạn thì khớp khi **một trong hai** khớp (đúng cron chuẩn). Mọi pattern hiện có có phút là bội
 số của 5; pattern lệch 5 phút được dispatch ở tick 5 phút phủ nó. Cảm biến `ops:graduation-check`
 chạy ở tick 02:00 ICT.
+
+**Không bù tick bị lỡ (no catch-up):** nếu một tick `*/5` không chạy (outage Cloudflare, deploy lỗi),
+job đến hạn trong tick đó **không** được dispatch bù ở tick sau — `scheduledEnvelopesAt` chỉ xét đúng
+phút của tick. Hậu quả: job theo lịch có thể bỏ lỡ một chu kỳ (vd. `billing:renew` 00:30 ICT). Các job
+quét trạng thái (`billing:*`, `order:expire`, `entitlement:expire`) tự bắt kịp ở lần chạy kế tiếp vì
+chọn theo điều kiện thời gian, không theo tick; job chạy một lần mỗi chu kỳ dài (`rollup:daily`,
+`account:purge`) cần người vận hành chạy lại tay khi phát hiện tick lỡ.
 
 Port (D1, auth, cache, queue, storage) nối bằng `register*Port` toàn cục một lần cho mỗi `env`,
 không dùng `AsyncLocalStorage.enterWith`: workerd báo `enterWith() is not implemented` (đã đo

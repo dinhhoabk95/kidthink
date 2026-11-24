@@ -81,7 +81,7 @@ Diff field-by-field · `reason` · IP · user agent · `request_id` để nối 
 |---|---|
 | Auth | `requireManagerAuth()` + `super_admin` |
 | Query | §7.1 |
-| 200 | `{ items, next_cursor }` |
+| 200 | `{ items, total }` — `total` là số hàng trong trang trả về (`items.length`); API chưa có phân trang con trỏ, trần `limit` 200 (`BR-ALV-03`) |
 | 403 | `INSUFFICIENT_ROLE` |
 | 422 | Khoảng thời gian > 90 ngày |
 

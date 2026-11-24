@@ -1,4 +1,3 @@
-import { AsyncLocalStorage } from "node:async_hooks";
 import { isCloudflareRuntime, requireValkeyUrl } from "@mindkid/config";
 import { Redis } from "ioredis";
 
@@ -9,12 +8,7 @@ export interface CacheKvPort {
   deleteByPrefix?(prefix: string): Promise<number>;
 }
 
-const cfCacheAls = new AsyncLocalStorage<CacheKvPort | undefined>();
 let cloudflareCachePort: CacheKvPort | undefined;
-
-export function enterCloudflareCachePort(port: CacheKvPort | undefined): void {
-  cfCacheAls.enterWith(port);
-}
 
 export function registerCloudflareCachePort(
   port: CacheKvPort | undefined
@@ -23,7 +17,7 @@ export function registerCloudflareCachePort(
 }
 
 export function getCloudflareCachePort(): CacheKvPort | undefined {
-  return cfCacheAls.getStore() ?? cloudflareCachePort;
+  return cloudflareCachePort;
 }
 
 let client: Redis | undefined;

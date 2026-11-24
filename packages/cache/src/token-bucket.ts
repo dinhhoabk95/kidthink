@@ -1,4 +1,3 @@
-import { AsyncLocalStorage } from "node:async_hooks";
 import { createHmac } from "node:crypto";
 import { isCloudflareRuntime, requireEnv } from "@mindkid/config";
 import { ServiceUnavailableError } from "@mindkid/errors/common";
@@ -13,16 +12,7 @@ export interface RateLimitCoordinatorPort {
   }): Promise<RateLimitCheckResult>;
 }
 
-const cfRateLimitAls = new AsyncLocalStorage<
-  RateLimitCoordinatorPort | undefined
->();
 let cloudflareRateLimitPort: RateLimitCoordinatorPort | undefined;
-
-export function enterCloudflareRateLimitPort(
-  port: RateLimitCoordinatorPort | undefined
-): void {
-  cfRateLimitAls.enterWith(port);
-}
 
 export function registerCloudflareRateLimitPort(
   port: RateLimitCoordinatorPort | undefined
@@ -177,7 +167,7 @@ export async function checkRateLimit(
   failOpen = true
 ): Promise<RateLimitCheckResult> {
   if (isCloudflareRuntime()) {
-    const port = cfRateLimitAls.getStore() ?? cloudflareRateLimitPort;
+    const port = cloudflareRateLimitPort;
     if (!port) {
       // BR-RTL-12: thiếu port là lỗi cấu hình — fail closed bất kể `failOpen`.
       throw new ServiceUnavailableError(

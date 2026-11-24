@@ -532,6 +532,9 @@ export async function getPrivateSignedUrl(options: {
   };
 }
 
+/** HMAC-SHA256 hex: đúng 64 ký tự thường — `Buffer.from(_, "hex")` nuốt đuôi rác nên phải kiểm trước. */
+const SIGNATURE_HEX_REGEX = /^[0-9a-f]{64}$/;
+
 /**
  * Verify a signed URL request token
  */
@@ -543,7 +546,7 @@ export function verifySignedUrlToken(
   if (!Number.isFinite(expiresTimestamp) || Date.now() > expiresTimestamp) {
     return false; // Expired or invalid timestamp
   }
-  if (!signature || typeof signature !== "string") {
+  if (typeof signature !== "string" || !SIGNATURE_HEX_REGEX.test(signature)) {
     return false;
   }
 

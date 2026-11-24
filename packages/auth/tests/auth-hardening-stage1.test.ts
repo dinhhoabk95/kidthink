@@ -25,7 +25,6 @@ import {
   decodeManagerRoleValue,
   decodeUserStatusValue,
   encodeUserStatusValue,
-  enterAuthCoordinatorPort,
   generateTotpCode,
   getAuthRedisClient,
   getDummyPasswordHash,
@@ -918,7 +917,7 @@ describe("Stage 1 Track 2 Auth Hardening", () => {
       await client.set("ba:v1:user:k1", "val-a", "EX", 60);
       expect(storeA.get("ba:v1:user:k1")).toBe("val-a");
 
-      enterAuthCoordinatorPort(portB);
+      registerAuthCoordinatorPort(portB);
       await client.set("ba:v1:user:k2", "val-b", "EX", 60);
       expect(storeB.get("ba:v1:user:k2")).toBe("val-b");
       expect(storeA.has("ba:v1:user:k2")).toBe(false);
@@ -927,7 +926,7 @@ describe("Stage 1 Track 2 Auth Hardening", () => {
       expect(deleted).toBe(1);
       expect(storeB.size).toBe(0);
 
-      enterAuthCoordinatorPort(undefined);
+      registerAuthCoordinatorPort(undefined);
       const mem = new InMemoryRedisClient();
       await mem.set("p:1", "a", "EX", 60);
       await mem.set("p:2", "b", "EX", 60);
@@ -935,7 +934,6 @@ describe("Stage 1 Track 2 Auth Hardening", () => {
       expect(await mem.deleteByPrefix("p:")).toBe(2);
       expect(await mem.get("other:1")).toBe("c");
     } finally {
-      enterAuthCoordinatorPort(undefined);
       registerAuthCoordinatorPort(undefined);
       process.env.MINDKID_RUNTIME = prevRuntime;
       process.env.AUTH_STORE_DRIVER = prevDriver;

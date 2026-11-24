@@ -175,6 +175,24 @@ describe("url & signedUrl (BR-IMG-05, BR-IMG-10)", () => {
       verifySignedUrlToken("proofs/../../etc/passwd", expires, signature)
     ).toBe(false);
   });
+
+  it("chỉ chấp nhận chữ ký đúng 64 ký tự hex, không nhận đuôi rác (BR-IMG-10)", () => {
+    const signed = signedUrl("proofs/2026/08/order_11.webp", 900);
+    const parsed = new URL(signed);
+    const expires = Number(parsed.searchParams.get("expires"));
+    const signature = parsed.searchParams.get("signature") ?? "";
+    const path = "proofs/2026/08/order_11.webp";
+
+    expect(verifySignedUrlToken(path, expires, signature)).toBe(true);
+    expect(verifySignedUrlToken(path, expires, `${signature}zz`)).toBe(false);
+    expect(verifySignedUrlToken(path, expires, `${signature}00`)).toBe(false);
+    expect(verifySignedUrlToken(path, expires, signature.slice(0, 62))).toBe(
+      false
+    );
+    expect(verifySignedUrlToken(path, expires, signature.toUpperCase())).toBe(
+      false
+    );
+  });
 });
 
 describe("kho ảnh public trong bộ nhớ (BR-IMG-05, BR-IMG-06)", () => {

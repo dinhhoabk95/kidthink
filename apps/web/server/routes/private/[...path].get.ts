@@ -17,7 +17,8 @@ import {
  * Route ngoài `/api/*`: không dùng body lỗi `/api`, chỉ trả mã trạng thái.
  */
 const NON_NEGATIVE_INT = /^\d+$/;
-const INLINE_IMAGE_TYPE = /^image\/(?!svg)/;
+/** BR-IMG-12: chỉ ba định dạng ảnh chứng từ được hiển thị inline; mọi thứ khác là attachment. */
+const INLINE_IMAGE_TYPE = /^image\/(?:jpeg|png|webp)$/i;
 
 function firstQueryValue(value: string | string[] | undefined): string {
   return (Array.isArray(value) ? value[0] : value) ?? "";
@@ -49,6 +50,8 @@ export default defineEventHandler(async (event) => {
   setResponseHeaders(event, {
     "Cache-Control": "private, no-store",
     "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "no-referrer",
+    "Content-Security-Policy": "sandbox",
   });
 
   if (!signedOk) {
