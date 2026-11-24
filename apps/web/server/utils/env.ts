@@ -144,7 +144,6 @@ export function createWebEnv(options: CreateWebEnvOptions = {}) {
       PORT: isProduction ? portSchema : portSchema.default("3000"),
       SITE_URL: urlWithProtocols(["http:", "https:"]),
       NUXT_ALLOWED_ORIGINS: nonEmptyString,
-      TRUSTED_PROXY_IPS: nonEmptyString.optional(),
 
       // ---- Dữ liệu ----------------------------------------------------------
       // Cloudflare dùng D1 (binding) — không có chuỗi kết nối Postgres. Valkey chỉ cần ở

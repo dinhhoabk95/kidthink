@@ -8,8 +8,8 @@
  * reading module (BR-ENV-04). A name nothing reads does not belong here: the
  * validator would demand a value no process consumes.
  *
- * This module must stay dependency-free. The release workflow runs it through
- * `packages/config/scripts/validate-env-file.ts` BEFORE `pnpm install` (BR-DEP-04).
+ * This module must stay dependency-free: it is imported by `createWebEnv()`, which
+ * runs at `nuxt build` time and stops a release before deploy (BR-DEP-04).
  */
 
 export type AppType = "web" | "admin" | "worker";
@@ -55,7 +55,7 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
     required: "always",
     kind: "port",
     secret: false,
-    note: "Cổng loopback của tiến trình, xem server-provisioning.md §7.3",
+    note: "Cổng lắng nghe của tiến trình (dev/test); Cloudflare Workers không dùng",
   },
   {
     name: "SITE_URL",
@@ -73,14 +73,6 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
     kind: "text",
     secret: false,
     note: "Danh sách origin được phép gọi API; web dùng cho CORS và CSRF allowlist",
-  },
-  {
-    name: "TRUSTED_PROXY_IPS",
-    apps: ["web"],
-    required: "optional",
-    kind: "text",
-    secret: false,
-    note: "Danh sách IP proxy tin cậy; chỉ peer trong danh sách này mới được đọc X-Real-IP (BR-RTL-11). Vắng mặt thì mặc định 127.0.0.1,::1",
   },
   {
     name: "NUXT_PUBLIC_API_BASE_URL",

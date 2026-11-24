@@ -1,7 +1,7 @@
 import { AppError } from "@mindkid/errors/base";
 import { RATE_LIMIT_CONFIGS, type RouteClassName } from "@mindkid/shared";
 import { createEvent, type H3Event } from "h3";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import rateLimitMiddleware from "#server/middleware/rate-limit";
 import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
 
@@ -181,79 +181,95 @@ describe("rate-limit middleware — BR-RTL-01/03/10", () => {
 });
 
 describe("getVerifiedRemoteIp — BR-RTL-04/11", () => {
-  const original = process.env.TRUSTED_PROXY_IPS;
+  const originalRuntime = process.env.MINDKID_RUNTIME;
   afterEach(() => {
-    if (original === undefined) {
-      process.env.TRUSTED_PROXY_IPS = undefined;
-      delete process.env.TRUSTED_PROXY_IPS;
+    if (originalRuntime === undefined) {
+      delete process.env.MINDKID_RUNTIME;
     } else {
-      process.env.TRUSTED_PROXY_IPS = original;
+      process.env.MINDKID_RUNTIME = originalRuntime;
     }
   });
 
-  it("reads X-Real-IP when the peer is a configured trusted proxy", () => {
-    process.env.TRUSTED_PROXY_IPS = "127.0.0.1,::1";
-    const event = makeEvent({
-      path: "/api/guest/home",
-      ip: "127.0.0.1",
-      headers: { "x-real-ip": "203.0.113.9" },
+  describe("ngoài Cloudflare", () => {
+    beforeEach(() => {
+      process.env.MINDKID_RUNTIME = "vps";
     });
-    expect(getVerifiedRemoteIp(event)).toBe("203.0.113.9");
+
+    it("dùng địa chỉ socket", () => {
+      const event = makeEvent({ path: "/api/guest/home", ip: "198.51.100.4" });
+      expect(getVerifiedRemoteIp(event)).toBe("198.51.100.4");
+    });
+
+    it("chuẩn hoá dạng IPv4-mapped của socket", () => {
+      const event = makeEvent({
+        path: "/api/guest/home",
+        ip: "::ffff:198.51.100.4",
+      });
+      expect(getVerifiedRemoteIp(event)).toBe("198.51.100.4");
+    });
+
+    it("negative — không đọc X-Real-IP, kể cả khi socket là loopback", () => {
+      const event = makeEvent({
+        path: "/api/guest/home",
+        ip: "127.0.0.1",
+        headers: { "x-real-ip": "203.0.113.9" },
+      });
+      expect(getVerifiedRemoteIp(event)).toBe("127.0.0.1");
+    });
+
+    it("negative — không đọc X-Forwarded-For thô", () => {
+      const event = makeEvent({
+        path: "/api/guest/home",
+        ip: "127.0.0.1",
+        headers: { "x-forwarded-for": "203.0.113.9, 10.0.0.1" },
+      });
+      expect(getVerifiedRemoteIp(event)).toBe("127.0.0.1");
+    });
+
+    it("negative — không đọc CF-Connecting-IP giả", () => {
+      const event = makeEvent({
+        path: "/api/guest/home",
+        ip: "198.51.100.4",
+        headers: { "cf-connecting-ip": "203.0.113.9" },
+      });
+      expect(getVerifiedRemoteIp(event)).toBe("198.51.100.4");
+    });
   });
 
-  it("normalizes the IPv4-mapped form nginx hands over", () => {
-    process.env.TRUSTED_PROXY_IPS = "127.0.0.1";
-    const event = makeEvent({
-      path: "/api/guest/home",
-      ip: "::ffff:127.0.0.1",
-      headers: { "x-real-ip": "203.0.113.9" },
+  describe("trên Cloudflare", () => {
+    beforeEach(() => {
+      process.env.MINDKID_RUNTIME = "cloudflare";
     });
-    expect(getVerifiedRemoteIp(event)).toBe("203.0.113.9");
-  });
 
-  it("negative — ignores X-Real-IP from an untrusted peer", () => {
-    process.env.TRUSTED_PROXY_IPS = "127.0.0.1";
-    const event = makeEvent({
-      path: "/api/guest/home",
-      ip: "198.51.100.4",
-      headers: { "x-real-ip": "203.0.113.9" },
+    it("dùng CF-Connecting-IP", () => {
+      const event = makeEvent({
+        path: "/api/guest/home",
+        ip: "198.51.100.4",
+        headers: { "cf-connecting-ip": "203.0.113.9" },
+      });
+      expect(getVerifiedRemoteIp(event)).toBe("203.0.113.9");
     });
-    expect(getVerifiedRemoteIp(event)).toBe("198.51.100.4");
-  });
 
-  it("negative — never reads raw X-Forwarded-For", () => {
-    process.env.TRUSTED_PROXY_IPS = "127.0.0.1";
-    const event = makeEvent({
-      path: "/api/guest/home",
-      ip: "127.0.0.1",
-      headers: { "x-forwarded-for": "203.0.113.9, 10.0.0.1" },
+    it("negative — X-Forwarded-For và X-Real-IP giả không được dùng", () => {
+      const event = makeEvent({
+        path: "/api/guest/home",
+        ip: "198.51.100.4",
+        headers: {
+          "cf-connecting-ip": "203.0.113.9",
+          "x-forwarded-for": "192.0.2.1",
+          "x-real-ip": "192.0.2.2",
+        },
+      });
+      expect(getVerifiedRemoteIp(event)).toBe("203.0.113.9");
     });
-    expect(getVerifiedRemoteIp(event)).toBe("127.0.0.1");
-  });
 
-  it("falls back to the socket address when the trusted proxy sends no header", () => {
-    process.env.TRUSTED_PROXY_IPS = "127.0.0.1";
-    const event = makeEvent({ path: "/api/guest/home", ip: "127.0.0.1" });
-    expect(getVerifiedRemoteIp(event)).toBe("127.0.0.1");
-  });
-
-  it("reads X-Real-IP when the peer matches a CIDR range", () => {
-    process.env.TRUSTED_PROXY_IPS = "172.16.0.0/12,127.0.0.1";
-    const event = makeEvent({
-      path: "/api/guest/home",
-      ip: "172.18.0.2",
-      headers: { "x-real-ip": "203.0.113.9" },
+    it("thiếu CF-Connecting-IP thì unknown, không rơi về header giả", () => {
+      const event = makeEvent({
+        path: "/api/guest/home",
+        ip: "198.51.100.4",
+        headers: { "x-forwarded-for": "192.0.2.1", "x-real-ip": "192.0.2.2" },
+      });
+      expect(getVerifiedRemoteIp(event)).toBe("unknown");
     });
-    expect(getVerifiedRemoteIp(event)).toBe("203.0.113.9");
-  });
-
-  it("negative — ignores X-Real-IP from peer outside CIDR range", () => {
-    process.env.TRUSTED_PROXY_IPS = "172.16.0.0/12";
-    const event = makeEvent({
-      path: "/api/guest/home",
-      ip: "192.168.1.100",
-      headers: { "x-real-ip": "203.0.113.9" },
-    });
-    expect(getVerifiedRemoteIp(event)).toBe("192.168.1.100");
   });
 });

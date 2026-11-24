@@ -64,17 +64,7 @@ export async function enforceTwoAxisRateLimit(
   context._rateLimitChecked = true;
 }
 
-const DEFAULT_TRUSTED_PROXY_IPS = "127.0.0.1,::1";
 const IPV4_MAPPED_PREFIX = "::ffff:";
-
-interface TrustedProxyConfig {
-  readonly raw: string;
-  readonly exact: ReadonlySet<string>;
-  readonly cidrs: readonly string[];
-}
-
-let trustedProxyCache: TrustedProxyConfig | null = null;
-let hasLoggedFirstPeerIp = false;
 
 function normalizeIp(value: string | undefined): string {
   const trimmed = (value ?? "").trim().toLowerCase();
@@ -83,96 +73,13 @@ function normalizeIp(value: string | undefined): string {
     : trimmed;
 }
 
-function parseIpv4ToNumber(ip: string): number | null {
-  const parts = ip.split(".");
-  if (parts.length !== 4) {
-    return null;
-  }
-  let num = 0;
-  for (const part of parts) {
-    const n = Number(part);
-    if (!Number.isInteger(n) || n < 0 || n > 255) {
-      return null;
-    }
-    // biome-ignore lint/suspicious/noBitwiseOperators: IPv4 calculation
-    num = (num << 8) + n;
-  }
-  // biome-ignore lint/suspicious/noBitwiseOperators: IPv4 calculation
-  return num >>> 0;
-}
-
-function matchesCidr(ip: string, cidr: string): boolean {
-  const [range, prefixStr] = cidr.split("/");
-  if (!(range && prefixStr)) {
-    return false;
-  }
-  const prefix = Number(prefixStr);
-  if (!Number.isInteger(prefix) || prefix < 0 || prefix > 32) {
-    return false;
-  }
-  const ipNum = parseIpv4ToNumber(ip);
-  const rangeNum = parseIpv4ToNumber(range);
-  if (ipNum === null || rangeNum === null) {
-    return false;
-  }
-  if (prefix === 0) {
-    return true;
-  }
-  // biome-ignore lint/suspicious/noBitwiseOperators: CIDR mask calculation
-  const mask = (0xff_ff_ff_ff << (32 - prefix)) >>> 0;
-  // biome-ignore lint/suspicious/noBitwiseOperators: CIDR mask calculation
-  return (ipNum & mask) === (rangeNum & mask);
-}
-
-function getTrustedProxyIps(): TrustedProxyConfig {
-  const raw =
-    process.env.TRUSTED_PROXY_IPS?.trim() || DEFAULT_TRUSTED_PROXY_IPS;
-  if (trustedProxyCache?.raw === raw) {
-    return trustedProxyCache;
-  }
-  const items = raw
-    .split(",")
-    .map((item) => normalizeIp(item))
-    .filter((item) => item.length > 0);
-
-  const exact = new Set<string>();
-  const cidrs: string[] = [];
-
-  for (const item of items) {
-    if (item.includes("/")) {
-      cidrs.push(item);
-    } else {
-      exact.add(item);
-    }
-  }
-
-  trustedProxyCache = { raw, exact, cidrs };
-  return trustedProxyCache;
-}
-
-function isTrustedProxy(socketIp: string): boolean {
-  const config = getTrustedProxyIps();
-  if (config.exact.has(socketIp)) {
-    return true;
-  }
-  for (const cidr of config.cidrs) {
-    if (matchesCidr(socketIp, cidr)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-function logFirstPeerIpOnce(socketIp: string, isTrusted: boolean): void {
-  if (hasLoggedFirstPeerIp) {
-    return;
-  }
-  hasLoggedFirstPeerIp = true;
-  console.info(
-    `[proxy-ip:startup] First peer IP observed: "${socketIp}", in TRUSTED_PROXY_IPS: ${isTrusted}`
-  );
-}
-
+/**
+ * IP client dùng cho rate limit và audit (BR-RTL-04, BR-RTL-11).
+ *
+ * - Cloudflare: `CF-Connecting-IP` — biên Cloudflare tự đặt, client không giả được.
+ * - Ngoài Cloudflare (dev/test): địa chỉ socket. Không đọc header IP nào vì không có
+ *   proxy tin cậy; `X-Forwarded-For` và `X-Real-IP` là input của kẻ tấn công.
+ */
 export function getVerifiedRemoteIp(event: H3Event): string {
   if (isCloudflareRuntime()) {
     return normalizeIp(getHeader(event, "cf-connecting-ip")) || "unknown";
@@ -180,16 +87,7 @@ export function getVerifiedRemoteIp(event: H3Event): string {
   const request = event.node?.req as
     | { socket?: { remoteAddress?: string } }
     | undefined;
-  const socketIp = normalizeIp(request?.socket?.remoteAddress);
-  if (!socketIp) {
-    return "unknown";
-  }
-  const trusted = isTrustedProxy(socketIp);
-  logFirstPeerIpOnce(socketIp, trusted);
-  if (!trusted) {
-    return socketIp;
-  }
-  return normalizeIp(getHeader(event, "x-real-ip")) || socketIp;
+  return normalizeIp(request?.socket?.remoteAddress) || "unknown";
 }
 
 const MUTATING_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
