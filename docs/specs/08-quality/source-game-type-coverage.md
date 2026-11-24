@@ -42,13 +42,13 @@ lên một level hỏng không làm tăng độ phủ.
 |---|---|---|
 | Người viết seed nội dung | Ghi `packages/content` | Gắn `legacy_v1_ref` vào header level |
 | Dev | Ghi `packages/content-build`, `packages/shared` | Sửa registry, cổng, bậc thang |
-| Cổng tự động | — | `pnpm check:legacy-v1` trong phase 1 của `scripts/check.sh`; Gate 2 của seed pipeline |
+| Cổng tự động | — | Gate 2 của seed pipeline (`check:legacy-v1` và `scripts/check.sh` đã gỡ 2026-10-31) |
 
 ## 3. Entry points
 
 | Route / màn hình | Actor | Ghi chú |
 |---|---|---|
-| `pnpm check:legacy-v1` | Cổng, dev | Gọi `pnpm --filter @mindkid/content-build check:legacy-v1` → `tsx src/gates/legacy-v1-coverage.ts` |
+| ~~`pnpm check:legacy-v1`~~ | — | **Đã gỡ** (2026-10-31); còn Gate 2 của seed pipeline |
 | `pnpm --filter @mindkid/content-build seed:check` | Dev | Seed pipeline; Gate 2 từ chối mã lạ (`BR-LVC-02`) |
 | `packages/shared/src/constants/legacy-v1-game-types.ts` | Dev | Registry 60 dạng game nguồn |
 | `packages/content-build/src/thresholds/legacy-v1-coverage.json` | Dev | Bậc thang; `packages/db/config/legacy-v1-coverage.json` là symlink tới file này |
@@ -143,7 +143,7 @@ của [`engine-spec-sheet.md`](../01-platform/engine-spec-sheet.md)).
 Không có route. Ràng buộc lên cổng:
 
 ```
-pnpm check:legacy-v1                     → BR-LVC-03..05, phase 1 của scripts/check.sh
+(đã gỡ) check:legacy-v1                  → BR-LVC-03..05 không còn cổng riêng
 Gate 2 (content-build runner)            → BR-LVC-02, lỗi LEGACY_V1_REF_INVALID
 packages/shared/tests/legacy-v1-game-types.test.ts         → BR-LVC-01, BR-LVB-15 (template_code có trong registry)
 packages/content-build/tests/gates/legacy-v1-coverage.test.ts → BR-LVC-03/04, hai ca âm

@@ -49,7 +49,7 @@ bắt buộc, 11–20 là mở rộng cho band 5-6.
 |---|---|---|
 | Người biên soạn | `content_author` | Soạn dataset bám sát kho giá trị, không tự phát minh giá trị ngoài kho |
 | Người duyệt | `content_reviewer` | Đối chiếu danh sách giá trị trước khi duyệt |
-| Cổng kiểm tra | CI / `check.sh` | Cưỡng chế hai chiều: dataset ⊆ kho và kho ⊆ hợp các dataset |
+| Cổng kiểm tra | — | (đã gỡ 2026-10-31 cùng `scripts/check.sh`; không còn cổng tự động) Từng cưỡng chế hai chiều: dataset ⊆ kho và kho ⊆ hợp các dataset |
 
 ## 3. Entry points
 

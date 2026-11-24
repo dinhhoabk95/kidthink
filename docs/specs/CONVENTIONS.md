@@ -326,7 +326,7 @@ Sai:   Xem `access-ladder` §7.3.
 ```
 
 Với mã nguồn, trỏ dòng cụ thể dạng `đường-dẫn:số-dòng`, ví dụ
-[`scripts/typecheck/typecheck-gate.ts:48`](../../scripts/typecheck/typecheck-gate.ts).
+[`packages/db/src/db-errors.ts:50`](../../packages/db/src/db-errors.ts).
 
 ### 11.5 Mã hợp đồng luôn kèm tên đọc được
 

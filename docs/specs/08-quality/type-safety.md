@@ -5,7 +5,7 @@ area: quality
 status: implemented
 mvp: true
 phase: P0
-reviewed: 2026-10-18
+reviewed: 2026-11-24
 owns:
   - Ngưỡng dùng any, unknown và ép kiểu, cùng cổng ép ngưỡng
   - Quy tắc dữ liệu vào phải qua schema trước khi đọc
@@ -35,7 +35,7 @@ Dev · reviewer · cổng tự động `pnpm check`.
 
 ## 3. Entry points
 
-`pnpm lint` (Biome) · `pnpm typecheck` (tsc + vue-tsc) · `scripts/check-type-safety.ts` (`scripts/check-type-safety.test.ts`) · rà soát trong code review.
+`pnpm lint` (Biome) · `pnpm typecheck` (tsc + vue-tsc) · rà soát trong code review.
 
 ## 4. Main flow
 
@@ -61,14 +61,14 @@ Dev · reviewer · cổng tự động `pnpm check`.
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-TYP-01` | Cấm — **NEVER `any` tường minh** trong production code của `apps/*`, `packages/*` và `scripts/`. Ép bằng Biome `noExplicitAny` mức error và `scripts/check-type-safety.ts`. File test thuộc `BR-TYP-08` | `any` tắt mọi kiểm tra kiểu ở mọi chỗ giá trị đó đi qua, không chỉ dòng khai báo |
-| `BR-TYP-02` | Ép kiểu (`as T`, `<T>x`, `as unknown as T`) là **nợ chỉ được giảm** — phần `as unknown as` được kiểm soát ratchet theo file bởi `scripts/check-type-safety.ts` | Không thêm chỗ ép kiểu mù mới; nợ hiện có chỉ được giảm |
+| `BR-TYP-01` | Cấm — **NEVER `any` tường minh** trong production code của `apps/*`, `packages/*` và `scripts/`. Ép bằng Biome `noExplicitAny` mức error (cổng `scripts/check-type-safety.ts` đã gỡ 2026-10-31). File test thuộc `BR-TYP-08` | `any` tắt mọi kiểm tra kiểu ở mọi chỗ giá trị đó đi qua, không chỉ dòng khai báo |
+| `BR-TYP-02` | Ép kiểu (`as T`, `<T>x`, `as unknown as T`) là **nợ chỉ được giảm** — không còn cổng đếm (`scripts/check-type-safety.ts` đã gỡ 2026-10-31); giữ bằng review | Không thêm chỗ ép kiểu mù mới; nợ hiện có chỉ được giảm |
 | `BR-TYP-03` | Cấm — **NEVER khai báo `unknown` mới** (biến, tham số, kiểu trả về, field, type alias). Bắt buộc khai interface/type cụ thể, kiểu suy ra từ schema Zod, hoặc generic có ràng buộc. Chỗ `unknown` đã có là nợ chỉ được giảm qua `scripts/type-safety-baseline.json`. Không tính `catch (err)` — kiểu đó do TypeScript gán, không phải do người viết khai | `unknown` không mô tả hình dạng nào; mỗi chỗ khai `unknown` là một chỗ người đọc sau phải tự đoán dữ liệu. Khai kiểu cụ thể buộc người viết trả lời câu hỏi đó ngay, ở chỗ họ biết rõ nhất |
 | `BR-TYP-04` | Mọi route `/api/*` đọc **body** phải Zod parse trong cùng file. Ép bằng `apps/web/tests/security/security-checklist.test.ts` | `BR-SEC-04` đã yêu cầu điều này từ P0 |
 | `BR-TYP-05` | Cấm — **NEVER `as const` bị tính là nợ** | `as const` làm kiểu **hẹp lại**, không nói dối; ngược hoàn toàn với `as T` |
 | `BR-TYP-06` | Cấm — **NEVER mass assignment**: map từng field từ dữ liệu đã parse sang bản ghi | `BR-SEC-05` |
 | `BR-TYP-07` | Cổng mới BẮT BUỘC có **ca âm** trong test: một mẫu vi phạm phải làm cổng fail | Cổng không có ca âm là cổng chưa biết mình có chạy hay không (`ultracite check` từng exit 0 với lỗi lint thật) |
-| `BR-TYP-08` | Cấm — **NEVER `any` tường minh trong file test**, giống production code. Cưỡng chế bằng cổng ratchet theo file tại `scripts/check-type-safety.ts` + `scripts/check-type-safety.test.ts` | Test dùng `any` thì mock lệch kiểu thật mà vẫn xanh — test khẳng định một hình dạng không còn tồn tại |
+| `BR-TYP-08` | Cấm — **NEVER `any` tường minh trong file test**, giống production code. Không còn cổng tự động (`scripts/check-type-safety.ts` đã gỡ 2026-10-31); giữ bằng review | Test dùng `any` thì mock lệch kiểu thật mà vẫn xanh — test khẳng định một hình dạng không còn tồn tại |
 
 ## 7. Data
 
@@ -108,7 +108,7 @@ bằng rỗng — thêm route đọc body mà quên parse là test đỏ ngay, K
 | Thay vì | Dùng |
 |---|---|
 | `(body.x as string)` | Zod schema rồi đọc `input.x` |
-| `(err as { code?: string }).code` | `readPostgresErrorCode(err)` — `Reflect.get` + `typeof` |
+| `(err as { code?: string }).code` | `isUniqueConstraintError(err)` (`@mindkid/db`) — `Reflect.get` + `typeof` |
 | `(event as Record<string, unknown>)._body` | `readRequestBody(event)` rồi parse bằng schema của route |
 | `data as ApiResponse` | `apiResponseSchema.parse(data)` |
 | `x as unknown as T` | Hàm hẹp kiểu `isT(x): x is T` |
@@ -130,8 +130,8 @@ Không có route. Ràng buộc lên cổng tự động:
 
 ```
 biome noExplicitAny                              → BR-TYP-01, mức error, đã bật (trừ file test)
-scripts/typecheck/typecheck-gate.ts              → tsc + vue-tsc, nợ chỉ được giảm
-scripts/check-type-safety.ts                     → BR-TYP-01, BR-TYP-02 (as unknown as), BR-TYP-03 (unknown), BR-TYP-08 (test any)
+pnpm typecheck                                   → tsc + vue-tsc, không baseline (mọi lỗi đều đỏ)
+(BR-TYP-02/03/08: không còn cổng, giữ bằng review — runtime-gates.md §3)
 apps/web/tests/security/security-checklist.test  → BR-TYP-04 (body), qua BR-SEC-04
 ```
 

@@ -54,7 +54,7 @@ câu trả lời sai trở nên đỏ được.
 |---|---|---|
 | Dev | — | Tra cây quyết định mục 7.1 trước khi đặt một hằng số mới |
 | Người duyệt | reviewer | Từ chối thay đổi đặt hằng số sai hạng |
-| Cổng kiểm tra | `scripts/check.sh` | Chạy `check:config-ownership` ở Phase 1 |
+| Cổng kiểm tra | `pnpm check` (lint + lint:deps + typecheck) | `check:config-ownership` và `scripts/check.sh` đã gỡ (2026-10-31): luật giữ bằng lượt review, không còn cổng tự động |
 
 ## 3. Entry points
 
@@ -65,7 +65,7 @@ câu trả lời sai trở nên đỏ được.
 | `packages/content-build/src/thresholds/*.json` | Dev / Nội dung | Ngưỡng biên soạn nội dung |
 | `packages/game-engine/config/*.json` | Dev | Tham số engine |
 | `scripts/*-baseline.json` | Dev | Ratchet cổng chất lượng |
-| `scripts/check-config-ownership.ts` | `check.sh` / Dev | Script cổng, test ca âm ở `scripts/check-config-ownership.test.ts` |
+| ~~`scripts/check-config-ownership.ts`~~ | — | **Đã gỡ** cùng `scripts/check.sh` (2026-10-31) |
 
 ## 4. Main flow
 
@@ -97,14 +97,14 @@ câu trả lời sai trở nên đỏ được.
 | `BR-CFO-06` (band tuổi một nguồn) | Danh sách band tuổi BẮT BUỘC khai đúng một lần và mọi nơi khác dẫn xuất từ đó | Tám định nghĩa độc lập nghĩa là thêm một band là sửa tám chỗ, và quên một chỗ thì lỗi chỉ hiện ở đúng màn hình đó |
 | `BR-CFO-07` (sàn chạm một nguồn) | Sàn chạm theo band tuổi BẮT BUỘC khai đúng một lần, kể cả bản viết dưới dạng lớp Tailwind | Bốn bản hiện có là bốn cơ hội để một bề mặt trẻ tụt xuống dưới sàn `BR-A11-04` mà cổng không thấy |
 | `BR-CFO-08` (token thiết kế một nguồn) | Bảng màu và phông BẮT BUỘC sinh từ một nguồn duy nhất cho cả `packages/ui/assets/css/tailwind.css` và `packages/game-engine/src/systems/designTokens.ts` | Hai file đã drift: họ `surface` khác nhau, và `designTokens.ts` khai `Quicksand`/`Fredoka` trong khi chỉ `Baloo 2` và `Be Vietnam Pro` được nạp, nên mọi `ctx.font` của canvas rơi fallback âm thầm |
-| `BR-CFO-09` (không chạy thì không phải cổng) | Mọi script `check:*` khai trong `package.json` BẮT BUỘC có call site trong `scripts/check.sh` hoặc `lefthook.yml`; script không có call site BẮT BUỘC bị xoá hoặc được nối | Mười một cổng hiện có script mà không ai gọi; `check:taxonomy-docs` là một trong số đó, và hệ quả đo được là dòng tóm tắt của 5/6 file `docs/taxonomy/c*.md` sai |
+| `BR-CFO-09` (không chạy thì không phải cổng) | **Ngưng — 2026-11-24.** `check.sh` và mọi script `check:*` đã gỡ nên rule không còn đối tượng. Nguyên văn cũ: mọi script `check:*` khai trong `package.json` BẮT BUỘC có call site trong `scripts/check.sh` hoặc `lefthook.yml`; script không có call site BẮT BUỘC bị xoá hoặc được nối | Mười một cổng hiện có script mà không ai gọi; `check:taxonomy-docs` là một trong số đó, và hệ quả đo được là dòng tóm tắt của 5/6 file `docs/taxonomy/c*.md` sai |
 | `BR-CFO-10` (job có glob phải khai điểm mù) | Mọi job cổng gắn glob trong `lefthook.yml` BẮT BUỘC ghi trong chú thích việc nó bỏ qua commit nào | Job `engine-gates` chỉ chạy khi commit đụng bốn thư mục; một commit đổi `scripts/` bỏ qua trọn bộ cổng engine mà không báo gì |
 | `BR-CFO-11` | **Ngưng — 2026-11-24.** Rule cấm khối `pre-push` nằm trong comment; `lefthook.yml` không còn `pre-push` (xem `BR-RBS-03` ở [`repo-bootstrap.md`](repo-bootstrap.md)). Không tái dùng số (`BR-REG2-02`) | Hết đối tượng |
 | `BR-CFO-12` (ranh giới public và private có kiểu) | Giá trị cấu hình lộ ra client BẮT BUỘC đi qua `runtimeConfig.public` của Nuxt, không chỉ dựa vào quy ước đặt tên | `runtimeConfig` hiện gần như không dùng; ranh giới public và private chỉ tồn tại bằng tên biến, nên một lần đặt tên sai là một lần rò bí mật |
 
 ## 7. Data
 
-**Đọc:** `package.json` gốc; `scripts/check.sh`; `lefthook.yml`; nội dung mọi file `*.json` cấu
+**Đọc:** `package.json` gốc; `lefthook.yml`; nội dung mọi file `*.json` cấu
 hình; AST của `packages/*/src/**/*.ts`.
 **Ghi:** `scripts/config-ownership-baseline.json`.
 
@@ -227,7 +227,7 @@ Scenario: BR-CFO-08 — phông khai mà không nạp thì cổng đỏ
 
 Scenario: BR-CFO-09 — script check không có call site thì cổng đỏ
   Given package.json khai script check:taxonomy-docs
-  And scripts/check.sh và lefthook.yml đều không gọi nó
+  And lefthook.yml không gọi nó (scenario lịch sử: `scripts/check.sh` đã gỡ)
   When chạy pnpm check:config-ownership
   Then cổng thoát khác 0
   And báo cáo liệt kê check:taxonomy-docs là cổng mồ côi
@@ -272,5 +272,5 @@ Scenario: BR-CFO-04 — số trần trong thân hàm thì cổng đỏ
 |---|---|---|---|---|
 | 1 | Nguồn duy nhất của token thiết kế là file CSS rồi sinh ra TypeScript, hay ngược lại; CSS sinh ra TS thì cần một bước build mới, TS sinh ra CSS thì Tailwind mất khả năng đọc tĩnh `@theme` | `BR-CFO-08` | P1 | Studio UI |
 | ~~2~~ | ~~Sáu file trong `packages/db/config/` đổi thành symlink hay bỏ hẳn?~~ **Đóng 2026-10-18**: chọn symlink — cả 9/9 entry trong `packages/db/config/` trỏ về `packages/content-build/src/thresholds/`; trục `duplicate_config_files` = 0 | — | Đã đóng | Infra |
-| ~~3~~ | ~~Mười một cổng mồ côi: nối tất cả hay chỉ một phần?~~ **Đóng 2026-10-18**: trục `orphan_check_scripts` = 0 — mọi script `check:*` đều có call site trong `scripts/check.sh` hoặc `lefthook.yml` | — | Đã đóng | người quyết |
-| ~~4~~ | ~~`pre-push` mở lại với nội dung gì?~~ **Đóng 2026-10-18**: `pre-push` chạy `pnpm check:fast` (không cần Postgres/Valkey), xem §4 bước 6 của [`repo-bootstrap.md`](repo-bootstrap.md); trục `commented_lefthook_blocks` = 0 | — | Đã đóng | Infra |
+| ~~3~~ | ~~Mười một cổng mồ côi: nối tất cả hay chỉ một phần?~~ **Đóng 2026-10-18**: trục `orphan_check_scripts` = 0 — (lịch sử) mọi script `check:*` đều có call site trong `scripts/check.sh` hoặc `lefthook.yml`; 2026-10-31 `check.sh` và các script này đã gỡ | — | Đã đóng | người quyết |
+| ~~4~~ | ~~`pre-push` mở lại với nội dung gì?~~ **Đóng 2026-10-18, thay thế 2026-11-24**: `pre-push` đã gỡ, lefthook chỉ còn `pre-commit` `biome-staged`; xem §4 bước 6 của [`repo-bootstrap.md`](repo-bootstrap.md); trục `commented_lefthook_blocks` = 0 | — | Đã đóng | Infra |

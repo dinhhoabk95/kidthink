@@ -1,5 +1,7 @@
 # Task #313 — Todo: game-engine cho trẻ mầm non
 
+> **Superseded (2026-11-24)** — Các cổng `check:engine-specs`, `check:engine-turn`, `check:engine-behavior`, `check:hint-target`, `check:test-ratchet` và `scripts/check.sh` nhắc trong tài liệu này đã gỡ (xem `docs/specs/08-quality/runtime-gates.md` §3, §3b). Giữ làm lịch sử, không dùng làm quy trình hiện hành.
+
 Nguồn: `313-game-engine-preschool-plan.md`. Mỗi mục: spec trước (nếu đổi hành vi đã chốt) → test đỏ → sửa → `rtk proxy pnpm check`.
 
 ## Phase 0 — Level không thắng được

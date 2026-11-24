@@ -117,7 +117,7 @@ thành hình phạt.
 | `BR-CIG-14` (Cấm nới để qua cổng) | Cấm — **NEVER** thêm kỹ năng vào danh sách miễn trừ chỉ để một đợt nội dung kịp phát hành | `AGENTS.md`: không nới rule chỉ để code hiện tại qua được cổng |
 | `BR-CIG-15` (thứ tự nền trước) | Hàng đợi sắp theo **thứ tự topo trên kỹ năng**, cạnh lấy thẳng từ `skill_prerequisites`. Hai tiết cùng một chủ đề — không có cạnh nào giữa chúng — sắp theo `concept.sequence_no` | Dạy từ trước khi dạy ký tự là dạy ngược. Prerequisite là ràng buộc sư phạm không được nới. Topo không phân biệt được hai tiết cùng chủ đề, nên phải có số thứ tự tường minh — `BR-CIM-20` |
 | `BR-CIG-16` (tối đa 2 bài mỗi lần vào) | Một lần vào trả tối đa **2** bài trong `intro_queue`; phần còn lại đòi ở lần vào sau, kèm `intro_remaining` | Bao đóng prerequisite có thể dài. Chắn một đứa trẻ sau sáu phút bài dạy để tới màn chơi 90 giây là cách chắc chắn nhất làm nó bỏ. Trẻ đi dần vẫn phải qua hết, chỉ là không qua hết trong một hơi |
-| `BR-CIG-18` (cổng phải có người gọi) | Cổng bậc thang mục 7.4 BẮT BUỘC được gọi bởi một script có tên trong `package.json` và chạy trong `scripts/check.sh`. Ca âm mục 7.4 BẮT BUỘC tồn tại | Đo 2026-09-06: `scripts/check-intro-coverage.ts` cài đặt đúng `BR-CIG-13` nhưng **không script nào gọi nó** — không `package.json`, không `lefthook.yml`, không `check.sh`. Nợ 392 tăng tự do suốt thời gian đó. Một cổng không ai gọi là tài liệu, không phải cổng |
+| `BR-CIG-18` (cổng phải có người gọi) | Cổng bậc thang mục 7.4 BẮT BUỘC được gọi bởi một script có tên trong `package.json` và chạy trong gate tự động (`scripts/check.sh` đã gỡ 2026-10-31, hiện chưa có cổng). Ca âm mục 7.4 BẮT BUỘC tồn tại | Đo 2026-09-06: `scripts/check-intro-coverage.ts` cài đặt đúng `BR-CIG-13` nhưng **không script nào gọi nó** — không `package.json`, không `lefthook.yml`, không `check.sh`. Nợ 392 tăng tự do suốt thời gian đó. Một cổng không ai gọi là tài liệu, không phải cổng |
 | `BR-CIG-17` (bao đóng, không phải một tầng) | Tập kỹ năng gồm cả prerequisite **bắc cầu**, không chỉ tầng liền kề. Cấm — **NEVER** gom về strand ở bất cứ bước nào | Chặn ở một tầng thì trẻ vào được màn chơi mà vẫn thiếu nền hai tầng dưới — đúng lỗ hổng file này đang vá. Gom về strand thì mất cạnh giữa hai kỹ năng cùng strand, và một bài dạy của strand mở khoá cho cả 11 kỹ năng khác chưa được dạy |
 
 ## 7. Data
@@ -180,7 +180,7 @@ lỗi kiểu bằng đúng cơ chế đó.
 | Đo gì | Số **kỹ năng** có ít nhất một level `kind = 'assess'` nhưng **không có** level `kind = 'teach'` nào gắn vào |
 | Cài đặt | [`scripts/check-intro-coverage.ts`](../../../scripts/check-intro-coverage.ts) — `measureIntroCoverageDebt()` |
 | Baseline | **392**, đo 2026-09-06. Mốc khởi điểm là 408 |
-| Ai gọi | `pnpm check:intro-coverage`, chạy trong Phase 1 của [`scripts/check.sh`](../../../scripts/check.sh) — `BR-CIG-18` |
+| Ai gọi | `pnpm check:intro-coverage` (**đã gỡ** 2026-10-31 cùng `scripts/check.sh`) — `BR-CIG-18` |
 | Tăng | **Đỏ.** Muốn tăng phải có cờ tường minh kèm lý do trong PR |
 | Giảm | Xanh, kèm nhắc hạ baseline bằng `--update` |
 | Ca âm bắt buộc | Thêm một level chấm cho kỹ năng chưa có bài làm quen → cổng phải đỏ |

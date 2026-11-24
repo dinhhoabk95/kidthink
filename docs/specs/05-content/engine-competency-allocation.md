@@ -19,6 +19,8 @@ depends_on:
 
 # Ma trận phân bổ lĩnh vực tư duy theo engine và band tuổi
 
+> **Cập nhật 2026-11-24** — Các cổng `check:*` và `scripts/check.sh` nhắc trong file này đã gỡ (2026-10-31, xem [`runtime-gates.md`](../08-quality/runtime-gates.md) §3, §3b). Luật vẫn là contract nhưng hiện không còn cổng tự động; lệnh `check:*` bên dưới là mô tả lịch sử.
+
 ## 1. Objective
 
 [`engine-content-depth.md`](engine-content-depth.md) sở hữu câu hỏi *"engine này có đủ nội dung không"*, đo bằng sáu chỉ số kỹ thuật: `thinking` · `what` · `theme` · `difficulty`. Các chỉ số đó không đo **competency** — sáu lĩnh vực tư duy `C1`…`C6` vốn là bộ khung sư phạm cốt lõi của toàn bộ chương trình giáo dục mầm non.

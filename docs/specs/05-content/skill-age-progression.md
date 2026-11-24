@@ -37,7 +37,7 @@ Bảng này là **gợi ý định hướng sư phạm**, tuyệt đối cấm �
 
 | Route / màn hình | Actor | Ghi chú |
 |---|---|---|
-| `pnpm check:skill-progression` (`packages/content-build/src/gates/skill-progression.ts`) | Cổng tiến trình | Chạy trong `scripts/check.sh` |
+| `pnpm check:skill-progression` (`packages/content-build/src/gates/skill-progression.ts`) | Cổng tiến trình | **Đã gỡ** (đã gỡ 2026-10-31 cùng `scripts/check.sh`; không còn cổng tự động) |
 
 **Điều kiện trước:**
 

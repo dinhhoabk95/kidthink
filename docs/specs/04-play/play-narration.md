@@ -53,7 +53,7 @@ asset; spec này sở hữu hợp đồng **phát** trên bề mặt trẻ.
 | Trẻ 3–6 tuổi | không cần đăng nhập tới tier `free` | Nghe yêu cầu, nghe tên vật, bấm nghe lại |
 | Người biên soạn | `content_author` | Gắn `audio_path` / `instruction_audio_path` hoặc kiểm duyệt kho giọng `teacher-v1` |
 | Dev engine | — | Gọi narration ở đúng nhịp của kịch bản lượt |
-| Cổng kiểm tra | CI / `check.sh` | Chạy `check:narration-coverage` |
+| Cổng kiểm tra | — | `check:narration-coverage` (đã gỡ 2026-10-31 cùng `scripts/check.sh`; không còn cổng tự động) |
 
 ## 3. Entry points
 

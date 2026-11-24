@@ -1,5 +1,7 @@
 # Đánh giá `packages/game-engine` + roadmap sửa (Task #313)
 
+> **Superseded (2026-11-24)** — Các cổng `check:engine-specs`, `check:engine-turn`, `check:engine-behavior`, `check:hint-target`, `check:test-ratchet` và `scripts/check.sh` nhắc trong tài liệu này đã gỡ (xem `docs/specs/08-quality/runtime-gates.md` §3, §3b). Giữ làm lịch sử, không dùng làm quy trình hiện hành.
+
 ## Context
 
 Người dùng yêu cầu đánh giá toàn bộ game-engine (~60K dòng, 38 template GT-000…037) cho trẻ mầm non 3–6 tuổi: UI/UX, logic, base chung, flow chung, rồi nét riêng/sáng tạo từng game. Đầu ra đã chốt: **báo cáo + roadmap sửa**, ý tưởng sáng tạo **được phép thêm asset/cơ chế mới**.

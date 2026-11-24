@@ -55,7 +55,7 @@ nghĩa vụ.
 |---|---|---|
 | Người biên soạn | `content_author` | Soạn `relations` và `axes` cho dataset theo bảng nghĩa vụ ở mục 7.1 |
 | Người duyệt | `content_reviewer` | Đọc báo cáo cổng thay vì đọc tay 443 file |
-| Cổng kiểm tra | CI / `check.sh` | Chạy `check:thinking-structure`, đỏ khi một kỹ năng khai tư duy mà dataset không mang cấu trúc tương ứng |
+| Cổng kiểm tra | — | `check:thinking-structure` (đã gỡ 2026-10-31 cùng `scripts/check.sh`; không còn cổng tự động), từng đỏ khi một kỹ năng khai tư duy mà dataset không mang cấu trúc tương ứng |
 | Seeder | `packages/content-build` | Ghi `relations` và `axes` xuống `skill_datasets`; hiện `axes` không nằm trong câu `INSERT` |
 
 ## 3. Entry points
@@ -67,7 +67,7 @@ nghĩa vụ.
 | `packages/content/src/builders/build-levels.ts` | Dev | `normalizeThinkingTags` — chỗ dữ liệu tư duy bị mất |
 | `packages/content-build/src/seed-master/taxonomy/index.ts` | Dev | `seedSkillDatasetsStep` — chỗ `axes` bị bỏ khỏi `INSERT` |
 | `scripts/check-thinking-structure.ts` | CI / Dev | Script cổng, phải dựng mới |
-| `pnpm check:thinking-structure` | CI / Dev | Lệnh chạy cổng, thêm vào `scripts/check.sh` Phase 1 |
+| `pnpm check:thinking-structure` | CI / Dev | Lệnh cổng cũ, **đã gỡ** 2026-10-31 |
 
 ## 4. Main flow
 

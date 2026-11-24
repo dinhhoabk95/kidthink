@@ -161,7 +161,7 @@ thêm vào để bật cổng — `BR-CTM-05`.
 | Baseline | **392**, đo 2026-09-06 |
 | Tăng | Đỏ |
 | Giảm | Xanh, hạ baseline bằng `--update` |
-| Ai gọi | `pnpm check:intro-coverage`, chạy trong Phase 1 của `scripts/check.sh` — `BR-CIG-18` |
+| Ai gọi | `pnpm check:intro-coverage` (**đã gỡ** 2026-10-31 cùng `scripts/check.sh`) — `BR-CIG-18` |
 | Ca âm bắt buộc | Thêm một level chấm cho kỹ năng chưa có bài dạy → cổng phải đỏ |
 
 ### 7.6 Checklist người duyệt

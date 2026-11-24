@@ -45,9 +45,8 @@ hệ sinh thái Nuxt đã kiểm chứng thay vì tự viết (quyết định D
 | `package.json`, `pnpm-workspace.yaml` | Gốc workspace: `engines`, `overrides:`, `allowBuilds:`, và version tường minh từng `package.json` |
 | `apps/*`, `packages/*` | App và package dùng chung (cây đầy đủ ở §8 của [`SPEC.md`](../../SPEC.md)) |
 | `lefthook.yml` + `.git/hooks/pre-commit` | Gate local. Không có cổng remote |
-| `scripts/check.sh` | Pipeline `pnpm check` (đầy đủ) và `pnpm check:fast` |
-| `docker-compose.yml` | PostgreSQL 18 (`pgvector/pgvector:pg18`) + Valkey 9 cho dev local |
-| `scripts/check-services.ts` | `pnpm services`: kiểm PG + Valkey đang chạy đúng major |
+| `package.json` gốc, script `check` | `pnpm check` = `lint` + `lint:deps` + `typecheck` (không chạy test). `scripts/check.sh`, `check:fast`, `pnpm services` đã gỡ |
+| `docker-compose.yml` | Hạ tầng dev cũ (Postgres + Valkey); dev/test nay dùng SQLite (`node:sqlite`) + Valkey `:6380`, file này sẽ gỡ đợt sau |
 
 ## 4. Main flow — dựng và giữ workspace
 
@@ -57,8 +56,8 @@ hệ sinh thái Nuxt đã kiểm chứng thay vì tự viết (quyết định D
    chuỗi `catalog:`, không khai hai phiên bản lệch nhau cho cùng một gói — `BR-RBS-06`).
 3. Cài dependency theo §7.1 vào package/app cần nó — **không** cài bản thấp hơn bảng.
 4. `pnpm install` chạy `prepare: lefthook install`, ghi `.git/hooks/*` tự động (`BR-RBS-03a`).
-5. `docker compose up -d` chạy PostgreSQL 18 + Valkey 9; `pnpm services` xác nhận kết nối được
-   và đúng major trước khi chạy test cần DB (`BR-RBS-07`).
+5. Dev/test chạy SQLite qua `node:sqlite` (không cần dịch vụ ngoài); Valkey `127.0.0.1:6380` cho cache/queue dev.
+   Production là Cloudflare D1 (`BR-RBS-07` đã ngưng, xem §6).
 6. Gate local theo `lefthook.yml`: `pre-commit` chỉ có job `biome-staged` — `biome check --write
    --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}`, `stage_fixed: true`. Không có
    `pre-push`, không nạp PATH nvm trong hook. `pnpm check` (lint + lint:deps + typecheck) và
@@ -73,7 +72,6 @@ hệ sinh thái Nuxt đã kiểm chứng thay vì tự viết (quyết định D
 | Thư viện ở §7.1 ngừng bảo trì | Phát hiện lúc cài hoặc rà | Dừng, quay lại Specify — sửa bảng §7.1 trước, không âm thầm đổi trong PR code (`BR-RBS-08`) |
 | Gate local đỏ mà cần commit/push gấp | Áp lực lịch trình | Không dùng `--no-verify`. Sửa lỗi, hoặc `git stash` phần chưa xong — xem Boundaries |
 | Người clone repo mới nhưng `.git/hooks/` rỗng | Chưa chạy `pnpm install` | Hook **không tồn tại** và git im lặng. `pnpm install` kéo `lefthook install` theo (`prepare` script) — đây là điểm hỏng mặc định của mọi gate local |
-| `pnpm services` exit 1 khi chạy `pnpm check` | PG/Valkey chưa bật | `check.sh` **đỏ**, in hướng dẫn `docker compose up -d`; không tự hạ xuống tập con `--fast` |
 
 ## 6. Business rules
 
@@ -86,7 +84,7 @@ hệ sinh thái Nuxt đã kiểm chứng thay vì tự viết (quyết định D
 | `BR-RBS-04` | **Ngưng — 2026-10-18.** Rule chặn code nghiệp vụ trước khi foundation được duyệt; giai đoạn đó đã qua. Nguyên tắc "contract trước implementation" vẫn ở [`roadmap.md`](../roadmap.md). Không tái dùng số (`BR-REG2-02`) | Hết đối tượng |
 | `BR-RBS-05` | Dependency ở §7.1 **ưu tiên adopt** thư viện phổ biến; chỉ tự viết khi không có thư viện phù hợp hoặc cần bọc dùng chung nhiều app (driver) | Mục 0, quyết định D10 của [`SPEC.md`](../../SPEC.md) |
 | `BR-RBS-06` | Version pin ở `engines` (root) và ghi trực tiếp phiên bản tường minh đồng nhất trong từng `package.json` (không dùng `catalog:`; cùng một dependency ngoại phải khớp chính xác chuỗi version giữa mọi workspace) | Khai trực tiếp giúp từng app/package hiển thị rõ phiên bản thật, còn kiểm đồng nhất chặn drift giữa các workspace |
-| `BR-RBS-07` | `docker-compose.yml` dev phải chạy **đúng major version** production (PG 18, Valkey 9) | Test trên version khác production là kiểm tra sai thứ |
+| `BR-RBS-07` | **Ngưng — 2026-11-24.** Production là Cloudflare D1 (SQLite) nên Postgres không còn là bản production để khớp. Nguyên văn cũ: `docker-compose.yml` dev phải chạy **đúng major version** production (PG 18, Valkey 9) | Test trên version khác production là kiểm tra sai thứ |
 | `BR-RBS-08` | Đổi bảng §7.1 (thêm/gỡ thư viện nền, đổi major version) là đổi spec — **không** sửa âm thầm trong PR cài dependency | Bảng này là contract; sửa không qua Specify làm mất lý do quyết định |
 | `BR-RBS-09` | Thư viện nào bị **hai** phụ thuộc kéo về hai version phải chốt về một bản bằng `overrides` trong `pnpm-workspace.yaml`, kèm lý do | Hai bản cùng tồn tại là hai instance runtime. Đo 2026-08-29: nuxt 4.5.2 khai `unhead ^3.3.1`, `@nuxt/ui` 4.11 khai `@unhead/vue ^3.3.2`, lockfile chốt cả 3.3.1 lẫn 3.4.0 |
 | `BR-RBS-10` | Cổng dev của từng app pin bằng **cờ CLI** trong `dev` script, không để rơi vào biến `PORT` | `PORT=3000` ở `.env` gốc được `require-env` nạp cho mọi tiến trình, nên `pnpm dev:all` cho web và admin tranh nhau 3000 — ai khởi động trước thắng, và `NUXT_PUBLIC_API_BASE_URL=http://localhost:3000` có lúc trỏ ngược vào chính admin |
@@ -101,11 +99,11 @@ dạng object thường, và driver `redis` của `unstorage` hardcode `ioredis`
 
 | Lớp | Chọn | Version tối thiểu | Ghi chú |
 |---|---|---|---|
-| Runtime | Node | `>=26.13.1` (LTS Lithium) | `.nvmrc` và `apps/worker/Dockerfile` ghim `26.13.1`; container build `node:26-bookworm` |
+| Runtime | Node | `>=26.13.1` (LTS Lithium) | `.nvmrc` ghim `26.13.1` (CI dùng `node-version-file: .nvmrc`) |
 | Package manager | pnpm | 12 (`pnpm@12.21.0`) | Ghi trực tiếp version trong từng `package.json`; SQLite store index |
 | Web framework | Nuxt | `^4.6.4` + `vue` `3.6.0-rc.15` | Nitropack `^2.13.6` + `h3@^1.15.11` (`h3` giữ v1 khớp Nitro 2); `overrides` hợp nhất `vue` về `3.6.0-rc.15` |
-| DB | PostgreSQL | 18 (`pgvector/pgvector:pg18`) | Mount volume `/var/lib/postgresql` theo layout chuẩn PG 18 |
-| ORM | Drizzle | `1.0.0-rc.5` (`drizzle-kit` `1.0.0-rc.5`, lockstep) + `postgres` `^4.1.1` | Driver `postgres.js` v4, singleton `postgres()`+`drizzle()` **một lần mỗi tiến trình PM2** |
+| DB | SQLite (`node:sqlite`) dev/test · Cloudflare D1 production | Node 26 built-in / D1 | Không có server DB cục bộ |
+| ORM | Drizzle | `1.0.0-rc.5` (`drizzle-kit` `1.0.0-rc.5`, lockstep) | Driver SQLite/D1; singleton `drizzle()` một lần mỗi tiến trình/isolate |
 | Valkey server | Valkey | 9 (9.1) | Linux Foundation, tương thích Redis protocol ~90% (không còn 1:1) |
 | Valkey client (Node) | **`ioredis`** `6.1.0-beta.1` | — | Tương thích peer `bullmq@^6.7.6` (`ioredis >=5.0.0`) |
 | Ngôn ngữ | TypeScript | `~6.0.3` | Major cao nhất còn giữ JS Compiler API (`lib/typescript.js`) cho `vue-tsc@3.3.14` (`@volar/typescript` đòi `<7`) và `dependency-cruiser@18.8.0-beta-2` |
@@ -200,7 +198,7 @@ Scenario: BR-RBS-02 — một scope package duy nhất
   Then mọi name khớp ^@mindkid/
   And pnpm-workspace.yaml không chứa scope nào khác
 
-Scenario: BR-RBS-07 — docker compose đúng version production
+Scenario: BR-RBS-07 — (ngưng 2026-11-24) docker compose đúng version production
   When chạy `docker compose up -d` ở gốc repo
   Then Postgres báo version 18
   And Valkey báo version 9
@@ -227,14 +225,13 @@ Scenario: BR-RBS-10 — ca âm, admin gọi API cross-origin không vỡ CORS
 
 **Always**
 - Pin version qua `engines` (root) và khai phiên bản tường minh đồng bộ trong từng `package.json` (`BR-RBS-06`).
-- Chạy `pnpm check` đầy đủ (PG + Valkey đã bật) trước khi coi một thay đổi là xong; `pre-push`
-  chạy đúng lệnh đó.
+- Chạy `pnpm check` và vitest của workspace đã đụng trước khi coi một thay đổi là xong (không còn `pre-push`).
 - Thêm job vào `lefthook.yml` kèm ca âm đã đo.
 
 **Ask first**
 - Đổi major version bất kỳ dòng nào trong §7.1.
 - Thêm dependency mới ngoài bảng §7.1 trước khi có spec cần nó.
-- Đổi phân tầng `pre-commit`/`pre-push` ở §4 bước 6.
+- Thêm lại `pre-push` hoặc thêm job nặng vào `pre-commit` (§4 bước 6).
 
 **Never**
 - Merge thay đổi khi gate local chưa xanh.

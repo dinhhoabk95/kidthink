@@ -55,7 +55,7 @@ nào, tầng nào hợp lệ ở band tuổi nào, và khi nào ký hiệu số 
 | Trẻ 3–6 tuổi | không cần đăng nhập tới tier `free` | Nhìn thấy lượng ở tầng biểu diễn phù hợp tuổi mình |
 | Người biên soạn | `content_author` | Khai `representation` cho dataset số học theo kho `c1-quantity-rep` |
 | Dev engine | — | Hiện thực primitive vẽ cho mỗi `kind` trong kho |
-| Cổng kiểm tra | CI / `check.sh` | Chạy `check:numeracy-ladder` |
+| Cổng kiểm tra | — | `check:numeracy-ladder` đã gỡ 2026-10-31 cùng `scripts/check.sh`; không còn cổng tự động |
 
 ## 3. Entry points
 

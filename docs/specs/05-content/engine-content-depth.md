@@ -22,6 +22,8 @@ depends_on:
 
 # Chiều sâu nội dung mỗi engine — sàn theo bậc thang
 
+> **Cập nhật 2026-11-24** — Các cổng `check:*` và `scripts/check.sh` nhắc trong file này đã gỡ (2026-10-31, xem [`runtime-gates.md`](../08-quality/runtime-gates.md) §3, §3b). Luật vẫn là contract nhưng hiện không còn cổng tự động; lệnh `check:*` bên dưới là mô tả lịch sử.
+
 ## 1. Objective
 
 [`thinking-coverage-matrix.md`](../08-quality/thinking-coverage-matrix.md) đo phủ theo trục
