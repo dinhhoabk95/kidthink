@@ -2,9 +2,14 @@ import { readdirSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 import { REPO_ROOT } from "@mindkid/config/paths";
 import {
+  GUEST_AUTH_CLASSES,
+  IN_ROUTE_CLASSES,
   RATE_LIMIT_CONFIGS,
   type RateLimitRouteResolution,
   resolveRateLimitRouteClass,
+  SESSION_ROUTE_CLASSES,
+  USER_LITERAL_RULES,
+  USER_PREFIX_RULES,
 } from "@mindkid/shared";
 
 const API_ROOT = join(REPO_ROOT, "apps/web/server/api");
@@ -134,4 +139,59 @@ export function computeRouteClassCoverage(
     .sort();
 
   return { resolutions, coveredClasses, deadClasses };
+}
+
+export interface RateLimitRuleEntries {
+  /** `method` là `*` khi luật áp cho mọi method. */
+  readonly literals: readonly {
+    readonly method: string;
+    readonly path: string;
+  }[];
+  readonly prefixes: readonly string[];
+}
+
+/** Mọi dòng ánh xạ theo path cụ thể trong `rate-limit-routes.ts`. */
+export function listRateLimitRuleEntries(): RateLimitRuleEntries {
+  const tableKeys = [
+    ...Object.keys(IN_ROUTE_CLASSES),
+    ...Object.keys(GUEST_AUTH_CLASSES),
+    ...Object.keys(SESSION_ROUTE_CLASSES),
+  ];
+  return {
+    literals: [
+      ...tableKeys.map((path) => ({ method: "*", path })),
+      ...USER_LITERAL_RULES.map(({ method, path }) => ({ method, path })),
+    ],
+    prefixes: USER_PREFIX_RULES.map((rule) => rule.prefix),
+  };
+}
+
+/**
+ * Dòng ánh xạ không trỏ về route thật là dòng nói dối về mức bảo vệ (route đã
+ * đổi tên hoặc chưa từng có file). Trả về mô tả từng dòng chết.
+ */
+export function findDeadRuleEntries(
+  routes: readonly ApiRoute[],
+  entries: RateLimitRuleEntries
+): string[] {
+  const dead: string[] = [];
+  for (const entry of entries.literals) {
+    const hit = routes.some(
+      (route) =>
+        route.path === entry.path &&
+        (entry.method === "*" || entry.method === route.method)
+    );
+    if (!hit) {
+      dead.push(`${entry.method} ${entry.path}`);
+    }
+  }
+  for (const prefix of entries.prefixes) {
+    const hit = routes.some(
+      (route) => route.path === prefix || route.path.startsWith(`${prefix}/`)
+    );
+    if (!hit) {
+      dead.push(`${prefix}/**`);
+    }
+  }
+  return dead;
 }

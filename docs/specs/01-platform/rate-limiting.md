@@ -111,12 +111,12 @@ Luật đọc **theo thứ tự**, luật đầu tiên khớp thì thắng. Ngu�
 | # | Path (method) | Kết quả | Vì sao |
 |---|---|---|---|
 | 1 | không bắt đầu bằng `/api/` | miễn — `not-api` | trang SSR và tài sản tĩnh; biên Cloudflare (WAF, cache) đứng trước |
-| 2 | 9 route auth **đang tự gọi**: `users/login` · `managers/login` · `users/register` · `users/forgot-password` · `users/social-login` · `managers/mfa` · `managers/mfa-setup` · `oauth/{p}/start` · `oauth/{p}/callback` | **trong route** | handler tự gọi vì trục account cần email trong body, middleware không đọc body |
-| 2b | 6 route auth còn lại: `users/mfa` → `auth:mfa` · `users/mfa-recovery/verify` → `auth:mfa` · `users/reset-password` → `auth:forgot-password` · `users/verify-email` → `auth:forgot-password` · `verify-email-change` → `auth:forgot-password` · `oauth/providers` → `read:public` | lớp tương ứng | không handler nào tự giới hạn; `reset-password` là bề mặt dò mã đặt lại mật khẩu |
-| 3 | `/api/users/auth/resend-verification` | **trong route** | như luật 2, `auth:forgot-password` |
+| 2 | route auth **đang tự gọi**: Better Auth `sign-in/email` · `sign-up/email` · `request-password-reset` (`/api/auth/users/*`, riêng `sign-in/email` cả `/api/auth/managers/*`) và `POST /api/users/account/delete/cancel` | **trong route** | handler tự gọi vì trục account cần email trong body, middleware không đọc body |
+| 2b | route auth còn lại: Better Auth `reset-password` · `verify-email` · `send-verification-email` → `auth:forgot-password`, `sign-in/social` · `link-social` → `auth:oauth:start`, `callback/*` → `auth:oauth:callback`, `two-factor`/`passkey` → `auth:mfa`, `get-session`/`list-sessions`/`sign-out`/`revoke-*` → `auth:refresh`; `guest/auth/users/social-consent` → `auth:social-login` · `guest/auth/users/mfa-recovery/verify` → `auth:mfa` · `guest/auth/verify-email-change` → `auth:forgot-password` · `guest/auth/oauth/providers` → `read:public` | lớp tương ứng | không handler nào tự giới hạn; `reset-password` là bề mặt dò mã đặt lại mật khẩu |
+| ~~3~~ | ~~`/api/users/auth/resend-verification`~~ | ~~trong route~~ | route chưa có file nên không có dòng ánh xạ; khi thêm route phải thêm dòng này cùng route (gate `rate-limit-coverage` đỏ nếu dòng không trỏ về route thật). Số thứ tự giữ nguyên để không vỡ tham chiếu. |
 | 4 | `/api/guest/webhooks/**` | miễn — `provider-webhook` | callback nhà cung cấp đã xác thực bằng chữ ký (`BR-APM-01`: chữ ký, replay window, livemode, merchant ID); giới hạn theo IP sẽ rớt burst thật từ IP dùng chung của nhà cung cấp |
 | 5 | `/api/guest/health` | miễn — `health-probe` | probe giám sát chạy mỗi phút, chặn nó là tự làm mù mình |
-| 6 | `/api/{users,managers}/auth/restore` | `auth:refresh` | khôi phục phiên bằng remember-me |
+| ~~6~~ | ~~`/api/{users,managers}/auth/restore`~~ | ~~`auth:refresh`~~ | route chưa có file (phiên do Better Auth giữ, `get-session` đã nằm ở luật 2b) nên không có dòng ánh xạ; thêm route thì thêm dòng cùng lúc. Số thứ tự giữ nguyên. |
 | 7 | `/api/{users,managers}/auth/reauth` | `auth:login` | xác minh lại mật khẩu — cùng primitive, cùng mối đe doạ, nên **cùng bucket** với login |
 | ~~8~~ | ~~`POST /api/managers/images`~~ | ~~`upload:image`~~ | gỡ theo quyết định `D4` ([SPEC.md §0](../../SPEC.md)): không có thư viện ảnh hay kho asset động, bỏ pipeline upload ảnh/audio. Route `POST /api/managers/images\|audio`, spec `IMAGE-STORAGE`/`AUDIO-STORAGE` và UI upload của admin đã xoá ở commit `1dc7b60f`; lớp `upload:image` không còn call site nên gỡ khỏi registry. Path cũ giờ rơi về `managers:*` (luật 9). Số thứ tự các luật giữ nguyên để không vỡ tham chiếu. |
 | 9 | `/api/managers/**` | `managers:*` | gồm cả `managers/exports/*` và `managers/audit-logs/export` |
@@ -132,6 +132,11 @@ Luật đọc **theo thứ tự**, luật đầu tiên khớp thì thắng. Ngu�
 Luật 16 là **lỗ đã biết, không phải quyết định đã chốt**: §7.1 không có lớp nào mô tả
 traffic chung của người dùng đã đăng nhập. Ánh xạ tạm chúng vào `search` hay `read:public`
 là bịa hạn mức, nên bảng ghi thẳng chúng là miễn và đẩy sang §11.
+
+Mọi dòng ánh xạ theo path cụ thể (bảng trong `rate-limit-routes.ts`) **phải trỏ về một route thật** trong
+`apps/web/server/api` (catch-all Better Auth tính cho `/api/auth/{users,managers}/*`). Gate
+`apps/web/tests/gates/rate-limit-coverage.test.ts` đo điều này và có ca âm (fixture trong
+`tests/gates/fixtures/rate-limit-coverage/`): dòng chết là dòng nói dối về mức bảo vệ.
 
 ### 7.3 IP dùng để giới hạn
 

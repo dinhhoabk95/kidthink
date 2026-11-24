@@ -49,14 +49,28 @@ describe("resolveRateLimitRouteClass — RATE-LIMITING §7.2 / BR-RTL-10", () =>
     expect(resolve("/apibogus")).toEqual({ mode: "exempt", reason: "not-api" });
   });
 
-  it("rules 2-3 — auth routes stay enforced inside the handler", () => {
-    expect(resolve("/api/guest/auth/users/login", "POST").mode).toBe(
+  it("rule 2 — auth routes that call the limiter themselves stay in-route", () => {
+    expect(resolve("/api/auth/users/sign-in/email", "POST").mode).toBe(
       "in-route"
     );
-    expect(resolve("/api/guest/auth/oauth/google/start").mode).toBe("in-route");
-    expect(resolve("/api/users/auth/resend-verification", "POST").mode).toBe(
+    expect(resolve("/api/auth/managers/sign-in/email", "POST").mode).toBe(
       "in-route"
     );
+    expect(resolve("/api/users/account/delete/cancel", "POST").mode).toBe(
+      "in-route"
+    );
+  });
+
+  it("rule 3 — paths of routes that do not exist have no dedicated rule", () => {
+    // Dòng chết đã gỡ (O2): path không có route thật rơi về nhánh đáy, không ở "trong route".
+    expect(resolve("/api/guest/auth/users/login", "POST")).toEqual({
+      mode: "middleware",
+      className: "read:public",
+    });
+    expect(resolve("/api/users/auth/resend-verification", "POST")).toEqual({
+      mode: "exempt",
+      reason: "unclassified-user-route",
+    });
   });
 
   it("rules 4-5 — webhooks and the health probe are exempt for a named reason", () => {
@@ -74,16 +88,7 @@ describe("resolveRateLimitRouteClass — RATE-LIMITING §7.2 / BR-RTL-10", () =>
     });
   });
 
-  it("rules 6-7 — session restore and reauth map to their classes", () => {
-    for (const path of [
-      "/api/users/auth/restore",
-      "/api/managers/auth/restore",
-    ]) {
-      expect(resolve(path, "POST")).toEqual({
-        mode: "middleware",
-        className: "auth:refresh",
-      });
-    }
+  it("rule 7 — reauth maps to the login class", () => {
     for (const path of [
       "/api/users/auth/reauth",
       "/api/managers/auth/reauth",
@@ -192,7 +197,6 @@ describe("resolveRateLimitRouteClass — RATE-LIMITING §7.2 / BR-RTL-10", () =>
       "/api/users/ai/search",
       "/api/managers/dashboard",
       "/api/users/play-sessions/s/events",
-      "/api/users/auth/restore",
       "/api/users/auth/reauth",
       "/api/unknown",
     ];

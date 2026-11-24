@@ -1,9 +1,19 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   type ApiRoute,
   computeRouteClassCoverage,
+  findDeadRuleEntries,
   listApiRoutes,
+  listRateLimitRuleEntries,
+  type RateLimitRuleEntries,
 } from "./rate-limit-coverage.ts";
+
+const DEAD_RULES_FIXTURE = resolve(
+  import.meta.dirname,
+  "fixtures/rate-limit-coverage/dead-rules.txt"
+);
 
 const routes = listApiRoutes();
 
@@ -80,5 +90,20 @@ describe("BR-RTL-10: every API route resolves to a rate limit class", () => {
         expect(allowed.has(resolution.reason), key).toBe(true);
       }
     }
+  });
+
+  it("every path rule in rate-limit-routes.ts points at a real route", () => {
+    expect(findDeadRuleEntries(routes, listRateLimitRuleEntries())).toEqual([]);
+  });
+
+  it("negative case — a rule whose route does not exist is reported", () => {
+    const fixture: RateLimitRuleEntries = JSON.parse(
+      readFileSync(DEAD_RULES_FIXTURE, "utf8")
+    );
+    expect(findDeadRuleEntries(routes, fixture)).toEqual([
+      "* /api/guest/auth/users/login",
+      "POST /api/users/orders/dead",
+      "/api/users/mfa/**",
+    ]);
   });
 });

@@ -1,0 +1,8 @@
+{
+  "literals": [
+    { "method": "*", "path": "/api/guest/auth/users/login" },
+    { "method": "POST", "path": "/api/users/orders" },
+    { "method": "POST", "path": "/api/users/orders/dead" }
+  ],
+  "prefixes": ["/api/users/mfa", "/api/users/parent-gate"]
+}

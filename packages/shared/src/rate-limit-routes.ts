@@ -88,24 +88,14 @@ export function normalizeRateLimitPath(rawPath: string): string {
  * phủ ở `resolveGuestAuthRoute` — trong đó `reset-password` là bề mặt dò mã
  * đặt lại mật khẩu.
  */
-const IN_ROUTE_CLASSES: Readonly<Record<string, RouteClassName>> = {
+export const IN_ROUTE_CLASSES: Readonly<Record<string, RouteClassName>> = {
   "/api/auth/users/sign-in/email": "auth:login",
   "/api/auth/managers/sign-in/email": "auth:login",
   "/api/auth/users/sign-up/email": "auth:register",
   "/api/auth/users/request-password-reset": "auth:forgot-password",
-  "/api/guest/auth/users/login": "auth:login",
-  "/api/guest/auth/managers/login": "auth:login",
-  "/api/guest/auth/users/register": "auth:register",
-  "/api/guest/auth/users/forgot-password": "auth:forgot-password",
-  "/api/guest/auth/users/social-login": "auth:social-login",
-  "/api/guest/auth/managers/mfa": "auth:mfa",
-  "/api/guest/auth/managers/mfa-setup": "auth:mfa",
   "/api/users/account/delete/cancel": "auth:login",
-  "/api/users/auth/resend-verification": "auth:forgot-password",
 };
 
-const OAUTH_START_PATH = /^\/api\/guest\/auth\/oauth\/[^/]+\/start$/;
-const OAUTH_CALLBACK_PATH = /^\/api\/guest\/auth\/oauth\/[^/]+\/callback$/;
 const BETTER_AUTH_OAUTH_CALLBACK_PATH = /^\/api\/auth\/users\/callback\/[^/]+$/;
 const BETTER_AUTH_MFA_OR_PASSKEY_PATH =
   /^\/api\/auth\/(?:users|managers)\/(?:two-factor|passkey)(?:\/|$)/;
@@ -118,45 +108,20 @@ const BETTER_AUTH_SIGN_UP_PATH =
 const BETTER_AUTH_PASSWORD_RESET_PATH =
   /^\/api\/auth\/(?:users|managers)\/(?:request-password-reset|forget-password|forgot-password|reset-password|verify-email|send-verification-email)(?:\/|$)/;
 
-export const GUEST_POST_ROUTE_MAP: Readonly<Record<string, string>> = {
-  "/api/guest/auth/users/login": "auth_login",
-  "/api/guest/auth/managers/login": "auth_login",
-  "/api/guest/auth/users/register": "auth_register",
-  "/api/guest/auth/users/forgot-password": "auth_forgot_password",
-  "/api/guest/auth/users/social-login": "auth_social_login",
-  "/api/guest/auth/users/reset-password": "auth_reset_password",
-  "/api/guest/auth/users/verify-email": "auth_verify_email",
-  "/api/guest/auth/users/mfa": "auth_mfa",
-  "/api/guest/auth/managers/mfa": "auth_mfa",
-  "/api/guest/auth/managers/mfa-setup": "auth_mfa",
-};
-
 function resolveInRoute(path: string): RateLimitRouteResolution | null {
   const className = IN_ROUTE_CLASSES[path];
-  if (className) {
-    return { mode: "in-route", className };
-  }
-  if (OAUTH_START_PATH.test(path)) {
-    return { mode: "in-route", className: "auth:oauth:start" };
-  }
-  if (OAUTH_CALLBACK_PATH.test(path)) {
-    return { mode: "in-route", className: "auth:oauth:callback" };
-  }
-  return null;
+  return className ? { mode: "in-route", className } : null;
 }
 
 /** Route auth không tự giới hạn: middleware phủ, trục IP là trục duy nhất. */
-const GUEST_AUTH_CLASSES: Readonly<Record<string, RouteClassName>> = {
+export const GUEST_AUTH_CLASSES: Readonly<Record<string, RouteClassName>> = {
   "/api/auth/users/reset-password": "auth:forgot-password",
   "/api/auth/users/verify-email": "auth:forgot-password",
   "/api/auth/users/send-verification-email": "auth:forgot-password",
   "/api/auth/users/sign-in/social": "auth:oauth:start",
   "/api/auth/users/link-social": "auth:oauth:start",
   "/api/guest/auth/users/social-consent": "auth:social-login",
-  "/api/guest/auth/users/mfa": "auth:mfa",
   "/api/guest/auth/users/mfa-recovery/verify": "auth:mfa",
-  "/api/guest/auth/users/reset-password": "auth:forgot-password",
-  "/api/guest/auth/users/verify-email": "auth:forgot-password",
   "/api/guest/auth/verify-email-change": "auth:forgot-password",
   "/api/guest/auth/oauth/providers": "read:public",
 };
@@ -203,20 +168,14 @@ function resolveExempt(path: string): RateLimitRouteResolution | null {
   return null;
 }
 
+export const SESSION_ROUTE_CLASSES: Readonly<Record<string, RouteClassName>> = {
+  "/api/users/auth/reauth": "auth:login",
+  "/api/managers/auth/reauth": "auth:login",
+};
+
 function resolveSessionRoute(path: string): RateLimitRouteResolution | null {
-  if (
-    path === "/api/users/auth/restore" ||
-    path === "/api/managers/auth/restore"
-  ) {
-    return { mode: "middleware", className: "auth:refresh" };
-  }
-  if (
-    path === "/api/users/auth/reauth" ||
-    path === "/api/managers/auth/reauth"
-  ) {
-    return { mode: "middleware", className: "auth:login" };
-  }
-  return null;
+  const className = SESSION_ROUTE_CLASSES[path];
+  return className ? { mode: "middleware", className } : null;
 }
 
 function resolveManagerRoute(path: string): RateLimitRouteResolution | null {
@@ -226,66 +185,67 @@ function resolveManagerRoute(path: string): RateLimitRouteResolution | null {
   return { mode: "middleware", className: "managers:*" };
 }
 
-const USER_SENSITIVE_AUTH_POST_PATHS = new Set([
-  "/api/users/password",
-  "/api/users/email",
-  "/api/users/account/delete",
-]);
-
-function isUserSensitiveAuthRoute(path: string, method: string): boolean {
-  if (path === "/api/users/password" && method === "PUT") {
-    return true;
-  }
-  return method === "POST" && USER_SENSITIVE_AUTH_POST_PATHS.has(path);
+export interface UserLiteralRateLimitRule {
+  /** `*` = mọi method. */
+  readonly method: string;
+  readonly path: string;
+  readonly className: RouteClassName;
 }
 
-function isUserMfaOrParentGateRoute(path: string): boolean {
-  return (
-    path === "/api/users/mfa" ||
-    path.startsWith("/api/users/mfa/") ||
-    path === "/api/users/parent-gate" ||
-    path.startsWith("/api/users/parent-gate/")
-  );
-}
+/** Path `/api/users/*` khớp đúng chuỗi; mỗi dòng phải trỏ về một route thật (gate `rate-limit-coverage`). */
+export const USER_LITERAL_RULES: readonly UserLiteralRateLimitRule[] = [
+  { method: "POST", path: "/api/users/orders", className: "payment:create" },
+  {
+    method: "POST",
+    path: "/api/users/subscriptions/recurring/opt-in",
+    className: "payment:create",
+  },
+  { method: "POST", path: "/api/users/offline/sync", className: "play:events" },
+  {
+    method: "POST",
+    path: "/api/users/notification-endpoints",
+    className: "search",
+  },
+  { method: "PUT", path: "/api/users/password", className: "auth:login" },
+  { method: "POST", path: "/api/users/password", className: "auth:login" },
+  { method: "POST", path: "/api/users/email", className: "auth:login" },
+  {
+    method: "POST",
+    path: "/api/users/account/delete",
+    className: "auth:login",
+  },
+  { method: "*", path: "/api/users/data-export", className: "export:data" },
+  { method: "POST", path: "/api/users/exports", className: "export:data" },
+];
+
+/** Tiền tố `/api/users/*` — mỗi tiền tố phải có ít nhất một route thật bên dưới. */
+export const USER_PREFIX_RULES: ReadonlyArray<{
+  readonly prefix: string;
+  readonly className: RouteClassName;
+}> = [
+  { prefix: "/api/users/parent-gate", className: "auth:mfa" },
+  { prefix: "/api/users/ai", className: "search" },
+];
 
 function resolveUserRoute(
   path: string,
   method: string
 ): RateLimitRouteResolution | null {
-  if (
-    (path === "/api/users/orders" ||
-      path === "/api/users/subscriptions/recurring/opt-in") &&
-    method === "POST"
-  ) {
-    return { mode: "middleware", className: "payment:create" };
+  const literal = USER_LITERAL_RULES.find(
+    (rule) =>
+      rule.path === path && (rule.method === "*" || rule.method === method)
+  );
+  if (literal) {
+    return { mode: "middleware", className: literal.className };
   }
   if (ORDER_PROOF_PATH.test(path) && method === "POST") {
     return { mode: "middleware", className: "payment:proof" };
   }
-  if (path === "/api/users/offline/sync" && method === "POST") {
-    return { mode: "middleware", className: "play:events" };
-  }
-  if (path === "/api/users/notification-endpoints" && method === "POST") {
-    return { mode: "middleware", className: "search" };
-  }
-  if (isUserSensitiveAuthRoute(path, method)) {
-    return { mode: "middleware", className: "auth:login" };
-  }
-  if (isUserMfaOrParentGateRoute(path)) {
-    return { mode: "middleware", className: "auth:mfa" };
-  }
-  if (
-    path === "/api/users/ai/search" ||
-    path.startsWith("/api/users/ai/") ||
-    path === "/api/users/custom-games/ai-draft"
-  ) {
-    return { mode: "middleware", className: "search" };
-  }
-  if (
-    path === "/api/users/data-export" ||
-    (path === "/api/users/exports" && method === "POST")
-  ) {
-    return { mode: "middleware", className: "export:data" };
+  const prefixed = USER_PREFIX_RULES.find(
+    (rule) => path === rule.prefix || path.startsWith(`${rule.prefix}/`)
+  );
+  if (prefixed) {
+    return { mode: "middleware", className: prefixed.className };
   }
   return null;
 }
