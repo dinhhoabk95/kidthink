@@ -7,7 +7,20 @@ import type { DatabaseSync as NodeDatabaseSync } from "node:sqlite";
  * tính sớm làm cả bundle Cloudflare chết lúc khởi động (cả lúc prerender).
  */
 function migrationsDir(): string {
-  return path.resolve(import.meta.dirname, "..", "migrations");
+  const here: string | undefined = import.meta.dirname;
+  if (typeof here === "string") {
+    return path.resolve(here, "..", "migrations");
+  }
+  // Nitro dev gói module nên mất `import.meta.dirname`: lấy theo gốc workspace.
+  let dir = process.cwd();
+  while (!fs.existsSync(path.join(dir, "pnpm-workspace.yaml"))) {
+    const parent = path.dirname(dir);
+    if (parent === dir) {
+      break;
+    }
+    dir = parent;
+  }
+  return path.resolve(dir, "packages", "db", "src", "migrations");
 }
 
 const CREATE_IF_NOT_EXISTS_REGEX =

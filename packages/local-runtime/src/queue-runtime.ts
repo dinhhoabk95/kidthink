@@ -159,7 +159,8 @@ export function startLocalQueueConsumer(
       console.error(`[local-runtime] drain failed: ${error.message}`)
     );
   }, options.pollIntervalMs ?? DEFAULT_POLL_INTERVAL_MS);
-  poll.unref();
+  // Không `unref`: worker dev chỉ sống nhờ vòng poll này (trước đây BullMQ giữ
+  // tiến trình). `close()` gỡ timer.
 
   registerQueuePort(engine);
   currentRuntime = buildRuntime(engine, sql, () => {

@@ -29,17 +29,27 @@ interface NodeSqliteModule {
 const TX_CONTROL_REGEX =
   /^\s*(?:BEGIN|COMMIT|ROLLBACK|SAVEPOINT|RELEASE\s+SAVEPOINT|ROLLBACK\s+TO\s+SAVEPOINT)\b/i;
 
+/** Gốc monorepo: đi ngược từ cwd tới `pnpm-workspace.yaml` (Nitro dev không có `import.meta.dirname`). */
+function findWorkspaceRoot(start: string): string {
+  let dir = start;
+  while (!fs.existsSync(path.join(dir, "pnpm-workspace.yaml"))) {
+    const parent = path.dirname(dir);
+    if (parent === dir) {
+      return start;
+    }
+    dir = parent;
+  }
+  return dir;
+}
+
 /** Tính lười: `import.meta.dirname` không có ở cấp module trong Nitro/workerd. */
 function defaultRepoSqliteDir(): string {
-  return path.resolve(
-    import.meta.dirname,
-    "..",
-    "..",
-    "..",
-    "..",
-    ".data",
-    "sqlite"
-  );
+  const here: string | undefined = import.meta.dirname;
+  const root =
+    typeof here === "string"
+      ? path.resolve(here, "..", "..", "..", "..")
+      : findWorkspaceRoot(process.cwd());
+  return path.resolve(root, ".data", "sqlite");
 }
 
 let cachedSqliteModule: NodeSqliteModule | undefined;
