@@ -1,5 +1,5 @@
-import { PayloadTooLargeError } from "@mindkid/errors";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { PayloadTooLargeError, ServiceUnavailableError } from "@mindkid/errors";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   type BlobD1Database,
   createD1BlobSqlPort,
@@ -141,6 +141,46 @@ describe("private asset storage via active driver (BR-IMG-11)", () => {
     );
     expect(await deletePrivateAsset("x/y.pdf")).toBe(true);
     expect(calls).toEqual(["put", "get", "del"]);
+  });
+});
+
+describe("Cloudflare chưa có driver (BR-IMG-16)", () => {
+  beforeEach(() => {
+    setActiveObjectStorageDriver(undefined);
+    resetDefaultObjectStorageDriver();
+    vi.stubEnv("MINDKID_RUNTIME", "cloudflare");
+  });
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("upload/read/delete ném ServiceUnavailableError, không rơi về in-memory", async () => {
+    await expect(
+      uploadPrivateAsset({
+        key: "proofs/a.webp",
+        body: new Uint8Array([1]),
+        contentType: "image/webp",
+      })
+    ).rejects.toBeInstanceOf(ServiceUnavailableError);
+    await expect(readPrivateAsset("proofs/a.webp")).rejects.toBeInstanceOf(
+      ServiceUnavailableError
+    );
+    await expect(deletePrivateAsset("proofs/a.webp")).rejects.toBeInstanceOf(
+      ServiceUnavailableError
+    );
+  });
+
+  it("có driver thì chạy bình thường", async () => {
+    const { db } = createFakeD1();
+    setActiveObjectStorageDriver(
+      new D1BlobObjectStorageDriver(createD1BlobSqlPort(db))
+    );
+    await uploadPrivateAsset({
+      key: "proofs/a.webp",
+      body: new Uint8Array([1]),
+      contentType: "image/webp",
+    });
+    expect(await readPrivateAsset("proofs/a.webp")).toBeDefined();
   });
 });
 

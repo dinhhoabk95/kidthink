@@ -68,6 +68,7 @@ Middleware trước mọi route. `packages/cache` cung cấp giao diện giới 
 | `BR-RTL-09` | Key account chưa xác thực là HMAC của identifier đã normalize; Cấm — **NEVER** để email/identifier thô trong Valkey key, metric hay log | Redis key và log vận hành không được trở thành kho PII phụ |
 | `BR-RTL-10` | Mọi path `/api/*` giải ra đúng một lớp ở §7.2, hoặc một lý do miễn **đã liệt kê**; Cấm — **NEVER** để nhánh mặc định không giới hạn | Một lớp khai trong registry mà không route nào gọi là hạn mức trên giấy |
 | `BR-RTL-11` | IP client lấy từ `X-Real-IP` chỉ khi peer nằm trong `TRUSTED_PROXY_IPS`, còn lại dùng địa chỉ socket | Sau nginx, địa chỉ socket là loopback — trục IP sụp thành một bucket toàn cục và một người khoá được cả site |
+| `BR-RTL-12` | Trên Cloudflare, `checkRateLimit` chưa có port coordinator → **fail closed**: ném `ServiceUnavailableError`, bất kể `failOpen`. Chỉ lỗi tạm thời của port mới theo `failOpen` | Thiếu port là lỗi cấu hình; fail open ở đó là tắt toàn bộ giới hạn mà không ai biết |
 
 ## 7. Data
 

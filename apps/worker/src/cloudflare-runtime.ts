@@ -57,7 +57,7 @@ export interface JobQueueStub {
 export interface CloudflareWorkerEnv {
   readonly DB_CORE: MinimalD1Database;
   readonly DB_LOGS: MinimalD1Database;
-  readonly DB_BLOBS: MinimalD1Database;
+  readonly DB_BLOBS?: MinimalD1Database;
   readonly MINDKID_RUNTIME?: string;
   readonly AUTH_COORDINATOR?: DurableObjectNamespaceBinding<WorkerAuthCoordinatorStub>;
   readonly JOB_QUEUE_DO?: DurableObjectNamespaceBinding<JobQueueStub>;
@@ -84,13 +84,17 @@ export function wireCloudflareIsolatePorts(
     getStats(): Promise<{ readonly waiting: number; readonly failed: number }>;
   }
 ): void {
-  DB.registerD1Bindings(env.DB_CORE);
+  // Đóng-khi-lỗi (`BR-JOB-12`): kiểm binding trước, đánh dấu `env` đã nối sau cùng.
+  const blobs = requireWorkerBinding(env.DB_BLOBS, "DB_BLOBS");
+  const authNamespace = requireWorkerBinding(
+    env.AUTH_COORDINATOR,
+    "AUTH_COORDINATOR"
+  );
 
-  if (env.DB_BLOBS) {
-    setActiveObjectStorageDriver(
-      new D1BlobObjectStorageDriver(createD1BlobSqlPort(env.DB_BLOBS))
-    );
-  }
+  DB.registerD1Bindings(env.DB_CORE);
+  setActiveObjectStorageDriver(
+    new D1BlobObjectStorageDriver(createD1BlobSqlPort(blobs))
+  );
   if (queuePort) {
     registerCloudflareQueuePort(queuePort);
   }
@@ -98,14 +102,8 @@ export function wireCloudflareIsolatePorts(
   if (wiredEnvs.has(env)) {
     return;
   }
-  wiredEnvs.add(env);
 
-  if (!env.AUTH_COORDINATOR) {
-    return;
-  }
-  const authStub = env.AUTH_COORDINATOR.get(
-    env.AUTH_COORDINATOR.idFromName(AUTH_DO_NAME)
-  );
+  const authStub = authNamespace.get(authNamespace.idFromName(AUTH_DO_NAME));
   registerAuthCoordinatorPort(authStub);
 
   const cachePort: CacheKvPort = {
@@ -125,6 +123,16 @@ export function wireCloudflareIsolatePorts(
     consumeRateLimit: (input) => authStub.consumeRateLimit(input),
   };
   registerCloudflareRateLimitPort(rateLimitPort);
+  wiredEnvs.add(env);
+}
+
+function requireWorkerBinding<T>(value: T | undefined, name: string): T {
+  if (value === undefined) {
+    throw new Error(
+      `Cloudflare binding ${name} is missing on mindkid-worker (BR-JOB-12)`
+    );
+  }
+  return value;
 }
 
 function isCloudflareSkippedJob(name: string): boolean {

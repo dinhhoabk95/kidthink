@@ -4,6 +4,7 @@ import {
   PROOF_SIGNED_URL_TTL_MINUTES,
   requireEnv,
 } from "@mindkid/config";
+import { ServiceUnavailableError } from "@mindkid/errors";
 import {
   buildRelativeAudioPath,
   deletePublicAudio,
@@ -398,6 +399,12 @@ function resolvePrivateDriver(): ObjectStorageDriver {
   const active = getActiveObjectStorageDriver();
   if (active) {
     return active;
+  }
+  // BR-IMG-16: trên Cloudflare không có driver thì đóng-khi-lỗi, không rơi về in-memory.
+  if (isCloudflareRuntime()) {
+    throw new ServiceUnavailableError(
+      "Cloudflare object storage driver is not configured (BR-IMG-16)"
+    );
   }
   defaultStorageDriver ??= new InMemoryObjectStorageDriver();
   return defaultStorageDriver;

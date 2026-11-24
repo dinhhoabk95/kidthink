@@ -549,6 +549,9 @@ importers:
       '@mindkid/config':
         specifier: workspace:*
         version: link:../config
+      '@mindkid/errors':
+        specifier: workspace:*
+        version: link:../errors
       ioredis:
         specifier: 6.1.0-beta.1
         version: 6.1.0-beta.1(supports-color@10.2.2)

@@ -1,6 +1,7 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 import { createHmac } from "node:crypto";
 import { isCloudflareRuntime, requireEnv } from "@mindkid/config";
+import { ServiceUnavailableError } from "@mindkid/errors/common";
 import { RateLimiterMemory, RateLimiterRedis } from "rate-limiter-flexible";
 import { getClient, onClientDisconnect } from "./client.js";
 
@@ -178,14 +179,8 @@ export async function checkRateLimit(
   if (isCloudflareRuntime()) {
     const port = cfRateLimitAls.getStore() ?? cloudflareRateLimitPort;
     if (!port) {
-      if (failOpen) {
-        return {
-          allowed: true,
-          remaining: 1,
-          resetSeconds: windowSeconds,
-        };
-      }
-      throw new Error(
+      // BR-RTL-12: thiếu port là lỗi cấu hình — fail closed bất kể `failOpen`.
+      throw new ServiceUnavailableError(
         "Cloudflare rate limit coordinator port is not registered"
       );
     }

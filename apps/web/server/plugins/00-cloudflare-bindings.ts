@@ -106,8 +106,37 @@ function installBlobStorageDriver(db: MinimalD1Database): void {
  * Binding ổn định theo isolate nên nối port bằng `register*` toàn cục đúng một
  * lần cho mỗi `env`, không dùng `AsyncLocalStorage.enterWith` (workerd không
  * bảo đảm giữ store qua ranh giới await của handler).
+ *
+ * Đóng-khi-lỗi (`BR-JOB-12`): `env` chỉ được ghi nhận là đã nối SAU KHI mọi port
+ * nối xong; thiếu binding bắt buộc thì ném lỗi rõ ràng thay vì chạy nửa vời.
  */
 const wiredEnvs = new WeakSet<object>();
+
+function requireBinding<T>(value: T | undefined, name: string): T {
+  if (value === undefined) {
+    throw new Error(
+      `Cloudflare binding ${name} is missing on mindkid-web (BR-JOB-12)`
+    );
+  }
+  return value;
+}
+
+export function wireCloudflareEnv(env: CloudflareEnvBindings): void {
+  if (wiredEnvs.has(env)) {
+    return;
+  }
+  const core = requireBinding(env.DB_CORE, "DB_CORE");
+  const blobs = requireBinding(env.DB_BLOBS, "DB_BLOBS");
+  const auth = requireBinding(env.AUTH_COORDINATOR, "AUTH_COORDINATOR");
+
+  registerCloudflareD1Bindings(core);
+  installBlobStorageDriver(blobs);
+  wireAuthCoordinator(auth);
+  if (env.JOB_QUEUE_DO) {
+    wireJobQueueCoordinator(env.JOB_QUEUE_DO);
+  }
+  wiredEnvs.add(env);
+}
 
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook("request", (event) => {
@@ -117,22 +146,8 @@ export default defineNitroPlugin((nitroApp) => {
     // Nitro `cloudflare_module`: `event.context.cloudflare = { request, env, context, url }`.
     const cf = (event.context as { cloudflare?: CloudflareRequestContext })
       .cloudflare;
-    const env = cf?.env;
-    if (!env?.DB_CORE || wiredEnvs.has(env)) {
-      return;
-    }
-    wiredEnvs.add(env);
-
-    registerCloudflareD1Bindings(env.DB_CORE);
-
-    if (env.DB_BLOBS) {
-      installBlobStorageDriver(env.DB_BLOBS);
-    }
-    if (env.AUTH_COORDINATOR) {
-      wireAuthCoordinator(env.AUTH_COORDINATOR);
-    }
-    if (env.JOB_QUEUE_DO) {
-      wireJobQueueCoordinator(env.JOB_QUEUE_DO);
+    if (cf?.env) {
+      wireCloudflareEnv(cf.env);
     }
   });
 });

@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@mindkid/config": "workspace:*",
+    "@mindkid/errors": "workspace:*",
     "ioredis": "6.1.0-beta.1",
     "rate-limiter-flexible": "^11.5.0"
   },
