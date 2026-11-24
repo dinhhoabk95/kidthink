@@ -11,6 +11,7 @@ import { buildDeterministicJobId } from "./registry.js";
 
 export * from "./alert.js";
 export * from "./connection.js";
+export * from "./cron-match.js";
 export * from "./do-queue-driver.js";
 export * from "./jobs/define.js";
 export * from "./jobs/index.js";
