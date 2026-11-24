@@ -196,7 +196,7 @@
       // duy nhất buộc trang Vue phía client phải nuốt cả 11 module chạm node:
       // builtin và package máy chủ trong barrel `@mindkid/shared` (Vite không
       // tree-shake ở dev) — apps/web chết lúc khởi tạo, và bản build từng ship
-      // native addon argon2 xuống trình duyệt. `client.ts` vẫn là bề mặt export
+      // native addon (argon2, nay đã gỡ) xuống trình duyệt. `client.ts` vẫn là bề mặt export
       // được khai báo trong `exports`, không phải path sâu vào internal.
       "includes": [
         "packages/*/src/index.ts",

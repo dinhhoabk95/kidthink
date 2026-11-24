@@ -113,7 +113,7 @@ Luật đọc **theo thứ tự**, luật đầu tiên khớp thì thắng. Ngu�
 | 2 | 9 route auth **đang tự gọi**: `users/login` · `managers/login` · `users/register` · `users/forgot-password` · `users/social-login` · `managers/mfa` · `managers/mfa-setup` · `oauth/{p}/start` · `oauth/{p}/callback` | **trong route** | handler tự gọi vì trục account cần email trong body, middleware không đọc body |
 | 2b | 6 route auth còn lại: `users/mfa` → `auth:mfa` · `users/mfa-recovery/verify` → `auth:mfa` · `users/reset-password` → `auth:forgot-password` · `users/verify-email` → `auth:forgot-password` · `verify-email-change` → `auth:forgot-password` · `oauth/providers` → `read:public` | lớp tương ứng | không handler nào tự giới hạn; `reset-password` là bề mặt dò mã đặt lại mật khẩu |
 | 3 | `/api/users/auth/resend-verification` | **trong route** | như luật 2, `auth:forgot-password` |
-| 4 | `/api/guest/webhooks/**` | miễn — `provider-webhook` | callback nhà cung cấp đã xác thực bằng chữ ký (`BR-APM-01`, SNS RSA); giới hạn theo IP sẽ rớt burst thật từ IP dùng chung của nhà cung cấp |
+| 4 | `/api/guest/webhooks/**` | miễn — `provider-webhook` | callback nhà cung cấp đã xác thực bằng chữ ký (`BR-APM-01`: chữ ký, replay window, livemode, merchant ID); giới hạn theo IP sẽ rớt burst thật từ IP dùng chung của nhà cung cấp |
 | 5 | `/api/guest/health` | miễn — `health-probe` | probe giám sát chạy mỗi phút, chặn nó là tự làm mù mình |
 | 6 | `/api/{users,managers}/auth/restore` | `auth:refresh` | khôi phục phiên bằng remember-me |
 | 7 | `/api/{users,managers}/auth/reauth` | `auth:login` | xác minh lại mật khẩu — cùng primitive, cùng mối đe doạ, nên **cùng bucket** với login |

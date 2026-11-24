@@ -24,7 +24,7 @@ const manifest = JSON.parse(readFileSync("package.json", "utf8"));
  * Ranh giới này không tuỳ tiện, nó là ranh giới pnpm giải được lúc chạy: chỉ
  * dependency khai trong `package.json` mới được liên kết cạnh `dist/index.js`.
  * Hai chiều đều đã vấp phải khi dựng file này:
- *   - gói tất cả → `argon2` (native, CJS) đọc `__dirname`, và `bullmq` gọi
+ *   - gói tất cả → một package native CJS (trước đây là `argon2`, nay đã gỡ) đọc `__dirname`, và `bullmq` gọi
  *     `require("child_process")` động, cả hai vỡ trong ES module;
  *   - để tất cả ra ngoài → `zod` không giải được, vì nó là dependency của
  *     `@mindkid/queue` chứ không phải của worker.

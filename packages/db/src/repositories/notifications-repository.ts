@@ -314,33 +314,6 @@ export class NotificationsRepository extends BaseRepository {
     );
   }
 
-  async updateDeliveryByProviderMessageId(
-    providerMessageId: string,
-    patch: {
-      readonly status: NotificationStatus;
-      readonly error?: string | null;
-      readonly suppressedReason?: string | null;
-      readonly dispatchedAt?: Date | null;
-    }
-  ): Promise<number> {
-    const updated = await this.db
-      .update(notificationDeliveries)
-      .set({
-        status: patch.status,
-        ...(patch.error === undefined ? {} : { error: patch.error }),
-        ...(patch.suppressedReason === undefined
-          ? {}
-          : { suppressedReason: patch.suppressedReason }),
-        ...(patch.dispatchedAt === undefined
-          ? {}
-          : { dispatchedAt: patch.dispatchedAt }),
-        updatedAt: new Date(),
-      })
-      .where(eq(notificationDeliveries.providerMessageId, providerMessageId))
-      .returning({ id: notificationDeliveries.id });
-    return updated.length;
-  }
-
   async listUserInbox(
     userId: number,
     options: {

@@ -147,4 +147,4 @@ Scenario: BR-NTA-05 — content_reviewer bị chặn
 
 | # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
 |---|---|---|---|---|
-| ~~1~~ | ~~Provider nào cung cấp trạng thái bounce/delivery?~~ **Đóng lại 2026-08-13**: AWS SES qua **SMTP**; `packages/notification` dùng Nodemailer pool + MJML, không dùng `@aws-sdk/client-ses` cho đường gửi. SES→SNS cung cấp delivery/bounce/complaint, webhook xác minh chữ ký rồi lưu ở `notification_deliveries` | P2 | Đã đóng | D-CE |
+| ~~1~~ | ~~Provider nào cung cấp trạng thái bounce/delivery?~~ **Đóng lại 2026-08-13**: AWS SES qua **SMTP**; `packages/notification` dùng Nodemailer pool + MJML, không dùng `@aws-sdk/client-ses` cho đường gửi. SES→SNS có thể cung cấp delivery/bounce/complaint, nhưng **chưa có route webhook SNS nào được triển khai** (`/api/guest/webhooks/` hiện chỉ có `payments/`); trạng thái giao nhận hiện do driver gửi ghi vào `notification_deliveries` khi dispatch | P2 | Đã đóng | D-CE |
