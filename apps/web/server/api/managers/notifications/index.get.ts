@@ -1,4 +1,3 @@
-import { InsufficientRoleError } from "@mindkid/errors/auth";
 import { defineEventHandler, getQuery } from "h3";
 import { z } from "zod";
 import {
@@ -6,7 +5,7 @@ import {
   type NotificationPayloadObject,
   sanitizeNotificationPayload as sanitizePayload,
 } from "#server/services/notification-service";
-import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 
 export function sanitizeNotificationPayload(
   payload: NotificationPayloadObject | null,
@@ -26,14 +25,8 @@ const ManagerNotificationsQuerySchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
-  const manager = await requireManagerSession(event);
-
   // BR-NTA-05: super_admin only
-  if (manager.role !== "super_admin") {
-    throw new InsufficientRoleError(
-      "Chỉ super_admin mới có quyền xem lịch sử thông báo (BR-NTA-05)"
-    );
-  }
+  requireSuperAdminSession(event);
 
   const parsedQuery = ManagerNotificationsQuerySchema.safeParse(
     getQuery(event)

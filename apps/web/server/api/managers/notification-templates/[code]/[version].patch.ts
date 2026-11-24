@@ -1,9 +1,8 @@
-import { InsufficientRoleError } from "@mindkid/errors/auth";
 import { ValidationError } from "@mindkid/errors/common";
 import { defineEventHandler, getRouterParam } from "h3";
 import { z } from "zod";
 import { patchManagerNotificationTemplate } from "#server/services/notification-service";
-import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 import { readRequestBody } from "#server/utils/request-body";
 
 const patchNotificationTemplateSchema = z.object({
@@ -15,14 +14,8 @@ const patchNotificationTemplateSchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
-  const manager = await requireManagerSession(event);
-
   // BR-NTA-05: super_admin only
-  if (manager.role !== "super_admin") {
-    throw new InsufficientRoleError(
-      "Chỉ super_admin mới có quyền cập nhật mẫu thông báo (BR-NTA-05)"
-    );
-  }
+  const manager = await requireSuperAdminSession(event);
 
   const rawCode = getRouterParam(event, "code") ?? "";
   const version = Number(getRouterParam(event, "version")) || 1;

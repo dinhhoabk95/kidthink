@@ -42,7 +42,7 @@ vi.mock("@mindkid/db", () => {
 });
 
 vi.mock("#server/utils/admin-auth-runtime", () => ({
-  requireManagerSession: vi.fn(async () => ({
+  requireSuperAdminSession: vi.fn(() => ({
     manager_id: "1",
     role: "super_admin",
     session_id: "mgr-sess-1",

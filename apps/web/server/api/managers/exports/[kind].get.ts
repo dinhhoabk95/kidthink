@@ -1,5 +1,4 @@
 import { AdminNoteRequiredError } from "@mindkid/errors/account";
-import { InsufficientRoleError } from "@mindkid/errors/auth";
 import { NotFoundError } from "@mindkid/errors/common";
 import { defineEventHandler, getQuery, getRouterParam } from "h3";
 import {
@@ -10,7 +9,7 @@ import {
   checkExportRateLimit as serviceCheckExportRateLimit,
   parseExportDateRange as serviceParseExportDateRange,
 } from "#server/services/admin-export-service";
-import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 
 export type { ExportFilterOptions } from "#server/services/admin-export-service";
 
@@ -35,13 +34,7 @@ export function assertRowCountWithinLimit(
 }
 
 export default defineEventHandler(async (event) => {
-  const manager = requireManagerSession(event);
-
-  if (manager.role !== "super_admin") {
-    throw new InsufficientRoleError(
-      "Chỉ super_admin mới có quyền trích xuất dữ liệu (BR-EXP-06)"
-    );
-  }
+  const manager = requireSuperAdminSession(event);
 
   const kind = getRouterParam(event, "kind");
   if (!(kind && isAdminExportKind(kind))) {

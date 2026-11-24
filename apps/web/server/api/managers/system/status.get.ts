@@ -1,4 +1,3 @@
-import { InsufficientRoleError } from "@mindkid/errors/auth";
 import { defineEventHandler, setResponseHeader } from "h3";
 import {
   getManagerSystemStatus,
@@ -9,7 +8,7 @@ import {
   probeQueue as serviceProbeQueue,
   probeValkey as serviceProbeValkey,
 } from "#server/services/system-status-service";
-import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 
 export type {
   QueueCountsSnapshot,
@@ -45,13 +44,8 @@ export function probeQueue(
 }
 
 export default defineEventHandler(async (event) => {
-  const manager = await requireManagerSession(event);
-
-  if (manager.role !== "super_admin") {
-    throw new InsufficientRoleError(
-      "Chỉ super_admin mới có quyền xem trạng thái hệ thống (BR-SYS-05)"
-    );
-  }
+  // BR-SYS-05: super_admin only
+  requireSuperAdminSession(event);
 
   setResponseHeader(event, "Cache-Control", "no-store");
   return await getManagerSystemStatus();

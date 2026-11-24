@@ -1,9 +1,8 @@
-import { InsufficientRoleError } from "@mindkid/errors/auth";
 import { ValidationError } from "@mindkid/errors/common";
 import { defineEventHandler } from "h3";
 import { z } from "zod";
 import { listAuditLogs } from "#server/services/audit-log-service";
-import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 import { readRequestQuery } from "#server/utils/request-body";
 
 export type {
@@ -32,13 +31,8 @@ const AuditQuerySchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
-  const manager = await requireManagerSession(event);
-
-  if (manager.role !== "super_admin") {
-    throw new InsufficientRoleError(
-      "Chỉ super_admin mới có quyền xem nhật ký kiểm toán (BR-ALV-02)"
-    );
-  }
+  // BR-ALV-02: super_admin only
+  requireSuperAdminSession(event);
 
   const query = readRequestQuery(event);
   const validatedQuery = AuditQuerySchema.safeParse(query);

@@ -1,4 +1,3 @@
-import { InsufficientRoleError } from "@mindkid/errors/auth";
 import { InternalError, NotFoundError } from "@mindkid/errors/common";
 import {
   type EmailTemplateCode,
@@ -8,7 +7,7 @@ import {
 } from "@mindkid/notification";
 import { defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
-import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 import { throwValidationError } from "#server/utils/api-error";
 
 const templateScalarSchema = z.union([
@@ -28,14 +27,8 @@ const previewTemplateSchema = z
   .optional();
 
 export default defineEventHandler(async (event) => {
-  const manager = await requireManagerSession(event);
-
   // BR-NTA-05: super_admin only
-  if (manager.role !== "super_admin") {
-    throw new InsufficientRoleError(
-      "Chỉ super_admin mới có quyền xem trước mẫu thông báo (BR-NTA-05)"
-    );
-  }
+  requireSuperAdminSession(event);
 
   const rawCode = getRouterParam(event, "code") ?? "";
   if (!(rawCode && rawCode in TEMPLATE_REGISTRY)) {

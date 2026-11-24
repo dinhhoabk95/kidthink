@@ -1,8 +1,7 @@
-import { InsufficientRoleError } from "@mindkid/errors/auth";
 import { defineEventHandler, getQuery } from "h3";
 import { z } from "zod";
 import { listErrorGroups } from "#server/services/error-log-service";
-import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 
 export type { ErrorGroupItem } from "#server/services/error-log-service";
 
@@ -17,13 +16,8 @@ const ErrorLogsQuerySchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
-  const manager = await requireManagerSession(event);
-
-  if (manager.role !== "super_admin") {
-    throw new InsufficientRoleError(
-      "Chỉ super_admin mới có quyền xem nhật ký lỗi hệ thống (BR-ELV-06)"
-    );
-  }
+  // BR-ELV-06: super_admin only
+  requireSuperAdminSession(event);
 
   const parsedQuery = ErrorLogsQuerySchema.safeParse(getQuery(event));
   const query = parsedQuery.success ? parsedQuery.data : {};
