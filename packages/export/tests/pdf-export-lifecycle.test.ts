@@ -198,9 +198,15 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
       contentType: "text/csv",
       expiresAt: new Date(Date.now() + 30),
     });
-    await new Promise((resolve) => setTimeout(resolve, 60));
-    const result = await runPdfCleanupJob();
-    expect(result.expiredBlobCount).toBeGreaterThanOrEqual(1);
+    // Chỉ giả đồng hồ `Date` (không chờ thật): tua 1 phút để blob quá hạn.
+    vi.useFakeTimers({ toFake: ["Date"] });
+    try {
+      vi.setSystemTime(new Date(Date.now() + 60_000));
+      const result = await runPdfCleanupJob();
+      expect(result.expiredBlobCount).toBeGreaterThanOrEqual(1);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("[BR-IMG-14] PDF vượt giới hạn lưu trữ: job failed với lỗi rõ ràng, không ném lại (không lặp retry)", async () => {
