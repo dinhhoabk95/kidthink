@@ -1,7 +1,9 @@
 # MindKid — context cho agent
 
-Monorepo pnpm. Nuxt 4.5 + Nitro 2 + h3 v1 · Drizzle + PostgreSQL 17 · Valkey ·
-BullMQ · Zod 4 (dòng `zod@3.25`, API cổ điển) · Biome 2 qua `ultracite`.
+Monorepo pnpm. Nuxt 4.5 + Nitro 2 + h3 v1 · Drizzle · SQLite (`node:sqlite`) dev/test, D1 trên Cloudflare · Valkey (dev) ·
+BullMQ (dev) · Zod 4 (dòng `zod@3.25`, API cổ điển) · Biome 2 qua `ultracite`.
+
+Runtime production: Cloudflare Workers + D1 + Durable Objects (`D14`, `docs/SPEC.md` §0).
 
 `apps/web` (bề mặt người dùng + toàn bộ `/api/*`) · `apps/admin` (static SPA) · `apps/worker` ·
 `packages/*` (driver dùng chung).
@@ -47,13 +49,16 @@ Chỗ skill có mặc định khác repo — **repo thắng**:
 
 ## Runtime boundary — Task #104
 
-- `{domain}` chạy `apps/web` SSR và toàn bộ API. `admin.{domain}` chỉ nhận static files từ
-  `apps/admin/.output/public`; không có Nitro server, process nền, DB package hay auth module.
+- `{domain}` là Worker `apps/web` (Nitro `cloudflare_module`): SSR + toàn bộ `/api/*`. `admin.{domain}` là
+  Workers static assets từ `apps/admin/.output/public`; không có Nitro server, DB package hay auth module.
+  Header bảo mật ở `apps/admin/public/_headers`, CSP hash sinh lúc build.
+- `apps/worker` là Worker riêng: queue Durable Object (`JobQueueDO`) + cron `*/5 * * * *`. Redis/BullMQ chỉ còn
+  cho dev (gỡ đợt sau).
 - Admin gọi absolute `NUXT_PUBLIC_API_BASE_URL` với `credentials: include`; CSRF token manager
-  giữ trong memory. Cookie Manager là host-only trên `{domain}` và được web resolve trong Redis
-  namespace `manager`.
-- `nuxt-auth-utils` chỉ dùng trong web. Browser auth dùng opaque locator + Redis, không first-party
-  JWT hoặc refresh route. Admin là Workers Static Assets, header bảo mật ở `apps/admin/public/_headers`; production chỉ deploy Cloudflare (`D14`).
+  giữ trong memory. Cookie Manager là host-only trên `{domain}`; session do web resolve qua `AuthCoordinatorDO`
+  (Valkey ở dev), namespace `manager`.
+- `nuxt-auth-utils` chỉ dùng trong web. Browser auth dùng opaque locator, không first-party JWT hoặc
+  refresh route. IP client trên Cloudflare = `cf-connecting-ip`.
 
 ## Spec là contract, không phải tài liệu
 
@@ -85,8 +90,8 @@ try { ... } catch (err) {
 Lớp exception theo model nằm ở `@mindkid/errors`
 (`ModelNotFoundError`, `ValidationError`, và lớp con cho từng model).
 
-Các khối `catch` còn lại trong `apps/web/server` đều có logic thật (retry SQLSTATE
-23505, health check, webhook). Đừng bỏ chúng.
+Các khối `catch` còn lại trong `apps/web/server` đều có logic thật (retry khi vi phạm
+UNIQUE SQLite/D1 qua `isUniqueConstraintError`, health check, webhook). Đừng bỏ chúng.
 
 ## An toàn kiểu — `docs/specs/08-quality/type-safety.md`
 
@@ -129,10 +134,10 @@ nào đo (gỡ 2026-08-29); giữ bằng lượt review. `apps/web`/`apps/admin`
 
 ## Môi trường
 
-- Node **24** (`.nvmrc`). Node mặc định của máy là v20 → `pnpm` sẽ chết với
+- Node **26.13.1** (`.nvmrc`), pnpm 12. Node mặc định của máy là v20 → `pnpm` sẽ chết với
   `ERR_UNKNOWN_BUILTIN_MODULE: node:sqlite`.
 - `vitest 4` đã bỏ `--reporter=basic`; dùng `dot` hoặc `json`.
-- Postgres dev ở `127.0.0.1:5433`, Valkey `6380` (container giữ cổng mặc định).
+- DB dev/test là SQLite (`node:sqlite`), không cần server. Valkey `127.0.0.1:6380`.
 - Lệnh đo cổng chạy qua `rtk proxy` — xem "Luật đo cổng" ở trên.
 
 ## Cổng lint tuỳ biến đã bị gỡ (2026-08-29)
@@ -151,7 +156,8 @@ Cổng hiện có — đọc `package.json` gốc, đừng tin bảng này là �
 | `pnpm lint:deps` | Ranh giới package (dependency-cruiser) |
 | `pnpm typecheck` | `tsc` gốc + `tsc`/`vue-tsc` từng app, không baseline |
 | vitest từng workspace | Gồm test cổng trong `**/tests/gates/` (vd. `packages/game-engine/tests/gates/render.test.ts`, `apps/web/tests/gates/`) |
-| lefthook pre-commit | `lint` + `lint:deps` |
+| lefthook `pre-commit` | `biome-staged`: Biome `check --write` trên file staged. Không có `pre-push` |
+| CI (`deploy-cloudflare.yml`) | `nuxt prepare` (web, admin) → `pnpm check` → build + `verify-cf-budget`. Không chạy vitest |
 
 `pnpm check` **không** chạy test: trước khi xong phải chạy thêm vitest của các workspace
 đã đụng (`cd <workspace> && rtk proxy npx vitest run --reporter=dot; echo EXIT=$?`).
