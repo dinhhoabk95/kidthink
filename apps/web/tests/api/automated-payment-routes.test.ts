@@ -58,6 +58,7 @@ function buildManagerEvent(options: {
   method: "GET" | "POST";
   url: string;
   manager: {
+    mfa_enabled?: boolean;
     manager_id: number;
     display_name: string;
     role: "super_admin" | "content_reviewer";
@@ -242,6 +243,7 @@ describe("Automated Payment Routes (Task #305 S4 — BR-APM-03, BR-APM-06)", () 
       method: "GET",
       url: "/api/managers/payments/reconciliation?provider=payos&limit=20",
       manager: {
+        mfa_enabled: true,
         manager_id: 1,
         display_name: "Super Admin",
         role: "super_admin",
@@ -262,6 +264,7 @@ describe("Automated Payment Routes (Task #305 S4 — BR-APM-03, BR-APM-06)", () 
       method: "POST",
       url: "/api/managers/payments/reconciliation/run",
       manager: {
+        mfa_enabled: true,
         manager_id: 1,
         display_name: "Super Admin",
         role: "super_admin",
@@ -310,6 +313,7 @@ describe("Automated Payment Routes (Task #305 S4 — BR-APM-03, BR-APM-06)", () 
       method: "POST",
       url: "/api/managers/payments/reconciliation/run",
       manager: {
+        mfa_enabled: true,
         manager_id: 2,
         display_name: "Reviewer",
         role: "content_reviewer",

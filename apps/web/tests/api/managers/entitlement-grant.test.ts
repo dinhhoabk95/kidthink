@@ -46,6 +46,7 @@ function mockManagerEvent(
       ...(managerRole
         ? {
             manager: {
+              mfa_enabled: true,
               manager_id: 999,
               display_name: "Test Super Admin",
               session_id: "sess_test_sa",

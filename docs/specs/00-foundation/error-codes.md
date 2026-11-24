@@ -92,6 +92,7 @@ Mọi handler API. Mọi spec khai báo mã lỗi phải đăng ký ở đây.
 | `CONSENT_REQUIRED` | 428 | Thiếu consent hợp lệ sau marker bắt buộc của một hay nhiều loại; `details.types[]` và `details.url` chỉ ra việc cần làm | "Vui lòng xem và đồng ý điều khoản hiện hành để tiếp tục." |
 | `CONSENT_REQUIREMENT_CHANGED` | 409 | Marker bắt buộc đã đổi sau khi form được tải; client phải tải lại tài liệu và trạng thái mới | "Yêu cầu đồng ý vừa được cập nhật. Vui lòng xem lại." |
 | `MFA_REQUIRED` | 428 | Manager chưa qua MFA; hoặc User đã bật MFA và mới qua yếu tố thứ nhất — kể cả khi yếu tố đó là SNS (`BR-MFA-09`) | — |
+| `MFA_ENROLLMENT_REQUIRED` | 403 | Manager có phiên nhưng `mfa_enabled = false` gọi `/api/managers/**` ngoài allowlist thiết lập (`BR-ADA-01`) | "Tài khoản quản trị cần thiết lập xác thực hai yếu tố trước." |
 | `MFA_ALREADY_ENABLED` | 409 | Manager gọi enrollment khi đã có MFA xác nhận (`BR-MME-01`) | "Tài khoản quản trị đã thiết lập xác thực hai yếu tố." |
 | `MFA_INVALID_CODE` | 401 | Mã TOTP sai, hoặc mã khôi phục sai / đã dùng | "Mã không đúng. Thử lại hoặc dùng mã khôi phục." |
 | `MFA_LOCKED` | 429 | Sai mã 5 lần, `details.retry_after_s` | "Sai mã quá nhiều lần. Thử lại sau 15 phút." |

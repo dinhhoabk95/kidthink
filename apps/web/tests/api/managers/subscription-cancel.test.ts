@@ -51,6 +51,7 @@ function mockManagerEvent(
               ...(reauthAt ? { reauth_at: reauthAt } : {}),
             },
             manager: {
+              mfa_enabled: true,
               manager_id: 1,
               display_name: "Test Admin",
               session_id: "sess_admin_test",

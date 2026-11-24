@@ -170,6 +170,7 @@ function buildManagerH3Event(
   const res = new ServerResponse(req);
   const event = createEvent(req, res);
   event.context.manager = {
+    mfa_enabled: true,
     manager_id: managerId,
     display_name: "Super Admin Test",
     role: "super_admin",

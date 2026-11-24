@@ -99,6 +99,7 @@ function eventFor(
     },
     context: {
       manager: {
+        mfa_enabled: true,
         manager_id: actor.id,
         display_name: "x",
         role,

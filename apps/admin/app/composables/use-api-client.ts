@@ -137,6 +137,10 @@ export function useApiClient() {
           await navigateTo("/login");
         }
 
+        if (apiError.code === "MFA_ENROLLMENT_REQUIRED") {
+          await navigateTo("/settings/security");
+        }
+
         throw apiError;
       },
     } as never);

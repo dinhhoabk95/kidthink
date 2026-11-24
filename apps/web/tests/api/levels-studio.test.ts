@@ -72,6 +72,7 @@ function mockEvent(
       ...(managerRole
         ? {
             manager: {
+              mfa_enabled: true,
               id: testManagerId,
               manager_id: testManagerId,
               display_name: "Manager Tester",

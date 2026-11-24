@@ -163,6 +163,7 @@ function mockManagerEvent(
     },
     context: {
       manager: {
+        mfa_enabled: true,
         manager_id: managerId,
         display_name: `Manager ${role}`,
         session_id: "sess_p29_mgr",

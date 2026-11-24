@@ -68,6 +68,7 @@ function mockUserAuth(userId = 1) {
 function mockManagerAuth(managerId = 1) {
   return {
     manager: {
+      mfa_enabled: true,
       manager_id: managerId,
       display_name: "Manager One",
       session_id: `mgr_sess_${managerId}`,

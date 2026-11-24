@@ -18,6 +18,7 @@ function mockEvent(
       ...(managerRole
         ? {
             manager: {
+              mfa_enabled: true,
               manager_id: 1,
               display_name: "Manager Name",
               session_id: "sess_manager_123",

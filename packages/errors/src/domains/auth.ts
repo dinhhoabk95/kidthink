@@ -38,6 +38,12 @@ export const InsufficientRoleError = defineError({
   status: 403,
 });
 
+export const MfaEnrollmentRequiredError = defineError({
+  code: "MFA_ENROLLMENT_REQUIRED",
+  message: "Tài khoản quản trị cần thiết lập xác thực hai yếu tố trước.",
+  status: 403,
+});
+
 export const CsrfInvalidError = defineError({
   code: "CSRF_INVALID",
   message: "Phiên bảo mật không hợp lệ. Vui lòng tải lại trang và thử lại.",

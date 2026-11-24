@@ -73,6 +73,7 @@ function mockEvent(
   if (options.isManager) {
     const managerId = options.managerId || 101;
     event.context.manager = {
+      mfa_enabled: true,
       manager_id: managerId,
       display_name: "Super Admin Tester",
       session_id: `sess_manager_${managerId}`,

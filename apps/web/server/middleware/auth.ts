@@ -1,4 +1,5 @@
 import type { ManagerTokenPayload, UserTokenPayload } from "@mindkid/auth";
+import { MfaEnrollmentRequiredError } from "@mindkid/errors/auth";
 import { canonicalizeRequestPath } from "@mindkid/shared";
 import { defineEventHandler, getHeader, getRequestURL } from "h3";
 import {
@@ -33,6 +34,11 @@ function isManagerApiPath(path: string): boolean {
   return path === "/api/managers" || path.startsWith("/api/managers/");
 }
 
+/** Allowlist thiết lập MFA (BR-ADA-01): chỉ reauth, cần trước khi bật MFA. */
+const MANAGER_MFA_ENROLLMENT_PATHS: readonly string[] = [
+  "/api/managers/auth/reauth",
+];
+
 function isUserOrGuestApiPath(path: string): boolean {
   if (isAuthMountPath(path) || isManagerApiPath(path)) {
     return false;
@@ -65,7 +71,14 @@ export default defineEventHandler(async (event) => {
   }
 
   if (isManagerApiPath(pathname)) {
-    await resolveBetterAuthManagerSession(event);
+    const manager = await resolveBetterAuthManagerSession(event);
+    if (
+      manager &&
+      manager.mfa_enabled !== true &&
+      !MANAGER_MFA_ENROLLMENT_PATHS.includes(pathname)
+    ) {
+      throw new MfaEnrollmentRequiredError();
+    }
     return;
   }
 

@@ -107,6 +107,7 @@ describe("Payment Flow Full E2E & Boundary Tests (P2.3)", () => {
       method,
       context: {
         manager: {
+          mfa_enabled: true,
           manager_id: testManager.id,
           display_name: "Test Manager",
           role,

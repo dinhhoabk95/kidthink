@@ -27,6 +27,7 @@ function mockEvent(
   const event = createEvent(req, res);
   if (managerContext) {
     event.context.manager = {
+      mfa_enabled: true,
       manager_id: managerContext.id,
       display_name: managerContext.displayName,
       session_id: "m_session_analytics",

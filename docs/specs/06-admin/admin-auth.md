@@ -67,7 +67,7 @@ Manager có quyền chạm tiền và nội dung mà trẻ sẽ chơi. Đó là 
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-ADA-01` | Mọi trang Admin ngoài `/login` bắt buộc có phiên Manager hợp lệ; MFA (TOTP / Passkey) chỉ thử thách khi tài khoản đã bật (`mfa_enabled = true`), thiết lập tại màn hình Settings riêng | Cho phép đăng nhập quản trị mượt mà ban đầu, tách luồng cấu hình TOTP + Passkey sang trang Cài đặt bảo mật riêng thay vì chặn ở `/login` |
+| `BR-ADA-01` | Mọi trang Admin ngoài `/login` bắt buộc có phiên Manager hợp lệ. Manager chưa `mfa_enabled = true` đăng nhập được nhưng **server** từ chối mọi `/api/managers/**` bằng 403 `MFA_ENROLLMENT_REQUIRED`, trừ allowlist thiết lập: `/api/auth/managers/*` (two-factor, get-session, sign-out) và `POST /api/managers/auth/reauth`. Admin UI thấy mã này thì chuyển tới Settings → Bảo mật để thiết lập TOTP/Passkey. Ép ở `requireManagerSession`/`requireSuperAdminSession` và middleware `auth.ts`, không chỉ ở UI | [`actors.md`](../00-foundation/actors.md) §11 yêu cầu ép ở tầng service; chỉ ẩn trang ở UI thì gọi API trực tiếp vẫn bỏ qua được MFA |
 | `BR-ADA-02` | Cookie Manager là host-only trên `{domain}`; admin gọi API tuyệt đối với credentials và CSRF header | Admin static không được đọc hoặc phát hành cookie, còn API vẫn nhận đúng namespace |
 | `BR-ADA-03` | Cấm — **NEVER endpoint public tạo Manager** | Ngăn ngừa rò rỉ tài khoản quản trị và tự nâng cấp quyền |
 | `BR-ADA-04` | `requireRole()` kiểm ở **server route**, không chỉ ẩn menu | Ẩn menu không phải phân quyền |
