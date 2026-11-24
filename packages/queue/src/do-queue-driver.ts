@@ -358,6 +358,18 @@ export function enterCloudflareQueuePort(
   cfQueueAls.enterWith({ port, waitUntilFn });
 }
 
+/**
+ * Chạy `fn` với `port` chỉ hiệu lực trong ngữ cảnh async của nó (`ALS.run`, workerd hỗ trợ;
+ * `enterWith` thì không). Dùng cho consumer chạy trong `JobQueueDO`: engine của DO KHÔNG
+ * được đăng ký toàn cục để mã ngoài DO (cron, web) không vô tình chạm vào nó.
+ */
+export function runWithCloudflareQueuePort<T>(
+  port: JobQueueCoordinatorPort,
+  fn: () => T
+): T {
+  return cfQueueAls.run({ port, waitUntilFn: undefined }, fn);
+}
+
 export function registerCloudflareQueuePort(
   port: JobQueueCoordinatorPort | undefined,
   waitUntilFn?: (promise: Promise<void>) => void

@@ -4,6 +4,10 @@ import type {
   MinimalD1PreparedStatement,
 } from "@mindkid/db";
 import type { MinimalDoSqlStorage, QueueRowCell } from "@mindkid/queue";
+import type {
+  DurableObjectNamespaceBinding,
+  WorkerAuthCoordinatorStub,
+} from "#src/cloudflare-runtime";
 
 export function createFakeDoSql(): MinimalDoSqlStorage {
   const rows: Record<string, QueueRowCell>[] = [];
@@ -26,6 +30,9 @@ export function createFakeDoSql(): MinimalDoSqlStorage {
           created_at_ms: bindings[9] ?? 0,
         });
         return { toArray: () => [] };
+      }
+      if (query.includes("COUNT(*) AS cnt FROM queued_jobs")) {
+        return { toArray: () => [{ cnt: rows.length }] };
       }
       if (
         query.includes("FROM queued_jobs") &&
@@ -79,4 +86,20 @@ export function createFakeD1(): MinimalD1Database {
     batch: () => Promise.resolve([]),
     exec: () => Promise.resolve({ count: 0, duration: 0 }),
   };
+}
+
+/** Namespace `AUTH_COORDINATOR` giả: đủ cho các test chỉ cần binding tồn tại. */
+export function createFakeAuthCoordinator(): DurableObjectNamespaceBinding<WorkerAuthCoordinatorStub> {
+  const stub: WorkerAuthCoordinatorStub = {
+    kvGet: () => Promise.resolve(null),
+    kvGetDel: () => Promise.resolve(null),
+    kvSet: () => Promise.resolve("OK"),
+    kvDel: () => Promise.resolve(0),
+    kvIncr: () => Promise.resolve(1),
+    kvExpire: () => Promise.resolve(1),
+    kvDeleteByPrefix: () => Promise.resolve(0),
+    consumeRateLimit: () =>
+      Promise.resolve({ allowed: true, remaining: 1, resetSeconds: 60 }),
+  };
+  return { idFromName: () => ({}), get: () => stub };
 }

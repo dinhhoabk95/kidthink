@@ -1,6 +1,14 @@
-import { getCloudflareQueuePort, type QueuedJobEnvelope } from "@mindkid/queue";
+import {
+  getCloudflareQueuePort,
+  type QueuedJobEnvelope,
+  registerCloudflareQueuePort,
+} from "@mindkid/queue";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createFakeD1, createFakeDoSql } from "./__tests__/cloudflare-fakes.js";
+import {
+  createFakeAuthCoordinator,
+  createFakeD1,
+  createFakeDoSql,
+} from "./__tests__/cloudflare-fakes.js";
 
 // `BR-JOB-11`: nạp bullmq ở bất kỳ đâu trong đồ thị import của entry là lỗi.
 vi.mock("bullmq", () => {
@@ -63,6 +71,7 @@ describe("cloudflare-entry (mindkid-worker)", () => {
         DB_CORE: fakeD1,
         DB_LOGS: fakeD1,
         DB_BLOBS: fakeD1,
+        AUTH_COORDINATOR: createFakeAuthCoordinator(),
         JOB_QUEUE_DO: {
           idFromName,
           get: () => ({
@@ -70,6 +79,7 @@ describe("cloudflare-entry (mindkid-worker)", () => {
               received.push([...jobs]);
               return Promise.resolve({ accepted: jobs.length });
             },
+            getStats: () => Promise.resolve({ waiting: 42, failed: 7 }),
           }),
         },
       },
@@ -83,10 +93,17 @@ describe("cloudflare-entry (mindkid-worker)", () => {
     expect(names).not.toContain("backup:postgres");
     const renew = received.flat().find((j) => j.name === "billing:renew");
     expect(renew?.jobId).toBe("billing:renew:2026-11-24T00:30");
+
+    // G4: cổng queue toàn cục ở đường cron là STUB của JobQueueDO, không phải engine.
+    expect(await getCloudflareQueuePort()?.getStats()).toEqual({
+      waiting: 42,
+      failed: 7,
+    });
   });
 
   it("enqueue() inside a JobQueueDO handler stays local and never touches BullMQ", async () => {
     const { enqueue } = await import("@mindkid/queue");
+    registerCloudflareQueuePort(undefined);
     const { JobQueueDO } = await import("./cloudflare-entry.js");
     enqueueFromConsumer.fn.mockImplementation(() =>
       enqueue("email:send", {
@@ -111,7 +128,12 @@ describe("cloudflare-entry (mindkid-worker)", () => {
           },
         },
       },
-      { DB_CORE: fakeD1, DB_LOGS: fakeD1, DB_BLOBS: fakeD1 }
+      {
+        DB_CORE: fakeD1,
+        DB_LOGS: fakeD1,
+        DB_BLOBS: fakeD1,
+        AUTH_COORDINATOR: createFakeAuthCoordinator(),
+      }
     );
     await dO.enqueueBatch([
       {
@@ -132,6 +154,9 @@ describe("cloudflare-entry (mindkid-worker)", () => {
       id: "email:send:7",
       name: "email:send",
     });
-    expect(getCloudflareQueuePort()).toBeDefined();
+    // G4: enqueue trong consumer đi vào engine của chính DO (waiting có email:send)...
+    expect((await dO.getStats()).waiting).toBe(1);
+    // ...nhưng engine KHÔNG được đăng ký toàn cục ra ngoài DO.
+    expect(getCloudflareQueuePort()).toBeUndefined();
   });
 });

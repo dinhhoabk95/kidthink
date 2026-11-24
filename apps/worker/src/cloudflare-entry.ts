@@ -117,10 +117,6 @@ export default {
       throw new Error("JOB_QUEUE_DO binding is missing on mindkid-worker");
     }
     const stub = namespace.get(namespace.idFromName(QUEUE_DO_NAME));
-    ctx.waitUntil(
-      runUnifiedCronTick(controller.scheduledTime, env, (jobs) =>
-        stub.enqueueBatch(jobs)
-      )
-    );
+    ctx.waitUntil(runUnifiedCronTick(controller.scheduledTime, env, stub));
   },
 };

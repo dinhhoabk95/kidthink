@@ -77,6 +77,7 @@ consumer nào lấy ra, email và export im lặng không chạy. Spec này ép 
 | `BR-JOB-10` | Trên Cloudflare `backup:postgres` và `backup:verify` **không** được dispatch (`CLOUDFLARE_SKIPPED_JOBS`); mọi job theo lịch còn lại phải được dispatch ít nhất một lần/chu kỳ của nó | Backup D1 do workflow riêng ([`backup-and-restore.md`](backup-and-restore.md) `BR-BAK-09`); test drift chặn việc thêm job mà quên scheduler |
 | `BR-JOB-11` | Trên Cloudflare chỉ có **một** Durable Object hàng đợi (`JobQueueDO`, tên `queue-v1`), không sharding; `JobQueueDO` và `AuthCoordinatorDO` cùng nằm trong Worker `mindkid-worker`, web gọi qua binding `script_name: "mindkid-worker"` | Sharding theo ký tự đầu `jobId` làm job trùng khử không được (`BR-JOB-02`) và vỡ `getStats`; hai DO chung một script để có một migration, một bundle |
 | `BR-JOB-12` | Trên Cloudflare, nối port **đóng-khi-lỗi**: `env` chỉ được ghi nhận là đã nối **sau khi** mọi port nối xong; thiếu binding `AUTH_COORDINATOR` hoặc `DB_BLOBS` (web) / `DB_CORE`, `DB_BLOBS`, `AUTH_COORDINATOR` (worker) thì ném lỗi rõ ràng, không chạy nửa vời | Nối dở rồi đánh dấu xong làm mọi request sau đó chạy với port thiếu mà không ai biết |
+| `BR-JOB-13` | Engine của `JobQueueDO` không bao giờ được đăng ký toàn cục; `scheduled()` và web enqueue qua stub DO | Engine gắn với I/O context của DO — dùng từ ngoài DO là lỗi "different request" hoặc ghi sai chỗ |
 
 ## 7. Data
 
@@ -137,6 +138,11 @@ chạy ở tick 02:00 ICT.
 Port (D1, auth, cache, queue, storage) nối bằng `register*Port` toàn cục một lần cho mỗi `env`,
 không dùng `AsyncLocalStorage.enterWith`: workerd báo `enterWith() is not implemented` (đã đo
 bằng `wrangler dev`).
+
+Cổng queue **không** đăng ký chung một chỗ: ngoài `JobQueueDO` (web, `scheduled()`) là **stub** của DO
+(`namespace.get(idFromName("queue-v1"))`); engine SQLite chỉ hiệu lực **bên trong** ngữ cảnh async của
+consumer chạy trong DO (`runWithCloudflareQueuePort`, dùng `AsyncLocalStorage.run`, khác `enterWith`).
+Không biến toàn cục nào trỏ vào engine của DO từ ngoài DO (`BR-JOB-13`).
 
 ## 8. API contract
 

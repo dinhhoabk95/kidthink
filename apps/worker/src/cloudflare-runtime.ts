@@ -19,6 +19,7 @@ import {
   type QueuedJobEnvelope,
   registerCloudflareQueuePort,
   requireJob,
+  runWithCloudflareQueuePort,
   scheduledEnvelopesAt,
 } from "@mindkid/queue";
 import {
@@ -52,6 +53,7 @@ export interface JobQueueStub {
   enqueueBatch(
     jobs: readonly QueuedJobEnvelope[]
   ): Promise<{ readonly accepted: number }>;
+  getStats(): Promise<{ readonly waiting: number; readonly failed: number }>;
 }
 
 export interface CloudflareWorkerEnv {
@@ -78,12 +80,7 @@ export interface DurableObjectStateLike {
  */
 const wiredEnvs = new WeakSet<object>();
 
-export function wireCloudflareIsolatePorts(
-  env: CloudflareWorkerEnv,
-  queuePort?: JobQueueStub & {
-    getStats(): Promise<{ readonly waiting: number; readonly failed: number }>;
-  }
-): void {
+export function wireCloudflareIsolatePorts(env: CloudflareWorkerEnv): void {
   // Đóng-khi-lỗi (`BR-JOB-12`): kiểm binding trước, đánh dấu `env` đã nối sau cùng.
   const blobs = requireWorkerBinding(env.DB_BLOBS, "DB_BLOBS");
   const authNamespace = requireWorkerBinding(
@@ -95,10 +92,6 @@ export function wireCloudflareIsolatePorts(
   setActiveObjectStorageDriver(
     new D1BlobObjectStorageDriver(createD1BlobSqlPort(blobs))
   );
-  if (queuePort) {
-    registerCloudflareQueuePort(queuePort);
-  }
-
   if (wiredEnvs.has(env)) {
     return;
   }
@@ -161,12 +154,15 @@ export class CloudflareJobQueueController {
           // (`wrangler d1 export` + AES-256-GCM) và D1 Time Travel 7 ngày đảm nhiệm.
           return;
         }
-        wireCloudflareIsolatePorts(this.env, this.engine);
+        wireCloudflareIsolatePorts(this.env);
         const def = requireJob(name);
         const validated = def.parse(payload);
-        await runWithTimeout(name, timeoutSeconds, async (signal) => {
-          await CONSUMERS[name](validated, { jobId, attempt, signal });
-        });
+        // Engine của DO chỉ hiệu lực trong ngữ cảnh async của consumer, không đăng ký toàn cục.
+        await runWithCloudflareQueuePort(this.engine, () =>
+          runWithTimeout(name, timeoutSeconds, async (signal) => {
+            await CONSUMERS[name](validated, { jobId, attempt, signal });
+          })
+        );
       },
       onDeadLetter: async (info) => {
         await alert(
@@ -205,13 +201,15 @@ export class CloudflareJobQueueController {
 export async function runUnifiedCronTick(
   scheduledTimeMs: number,
   env: CloudflareWorkerEnv,
-  enqueueToDo: (jobs: readonly QueuedJobEnvelope[]) => Promise<unknown>
+  queueStub: JobQueueStub
 ): Promise<{ readonly dispatchedJobs: JobName[] }> {
   wireCloudflareIsolatePorts(env);
+  // Ngoài DO, hàng đợi luôn đi qua STUB của `JobQueueDO` (idFromName("queue-v1")).
+  registerCloudflareQueuePort(queueStub);
 
   const envelopes = scheduledEnvelopesAt(scheduledTimeMs);
   if (envelopes.length > 0) {
-    await enqueueToDo(envelopes);
+    await queueStub.enqueueBatch(envelopes);
   }
 
   const ict = new Date(scheduledTimeMs + 7 * 3600 * 1000);
