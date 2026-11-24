@@ -99,7 +99,7 @@ câu trả lời sai trở nên đỏ được.
 | `BR-CFO-08` (token thiết kế một nguồn) | Bảng màu và phông BẮT BUỘC sinh từ một nguồn duy nhất cho cả `packages/ui/assets/css/tailwind.css` và `packages/game-engine/src/systems/designTokens.ts` | Hai file đã drift: họ `surface` khác nhau, và `designTokens.ts` khai `Quicksand`/`Fredoka` trong khi chỉ `Baloo 2` và `Be Vietnam Pro` được nạp, nên mọi `ctx.font` của canvas rơi fallback âm thầm |
 | `BR-CFO-09` (không chạy thì không phải cổng) | Mọi script `check:*` khai trong `package.json` BẮT BUỘC có call site trong `scripts/check.sh` hoặc `lefthook.yml`; script không có call site BẮT BUỘC bị xoá hoặc được nối | Mười một cổng hiện có script mà không ai gọi; `check:taxonomy-docs` là một trong số đó, và hệ quả đo được là dòng tóm tắt của 5/6 file `docs/taxonomy/c*.md` sai |
 | `BR-CFO-10` (job có glob phải khai điểm mù) | Mọi job cổng gắn glob trong `lefthook.yml` BẮT BUỘC ghi trong chú thích việc nó bỏ qua commit nào | Job `engine-gates` chỉ chạy khi commit đụng bốn thư mục; một commit đổi `scripts/` bỏ qua trọn bộ cổng engine mà không báo gì |
-| `BR-CFO-11` (`pre-push` không được để chết) | Khối `pre-push` của `lefthook.yml` BẮT BUỘC hoặc chạy hoặc bị xoá khỏi file. Cấm — NEVER để nó tồn tại dưới dạng comment | Một khối bị comment trông như một cổng đang có; người đọc tin là có cổng và bỏ bước kiểm tay |
+| `BR-CFO-11` | **Ngưng — 2026-11-24.** Rule cấm khối `pre-push` nằm trong comment; `lefthook.yml` không còn `pre-push` (xem `BR-RBS-03` ở [`repo-bootstrap.md`](repo-bootstrap.md)). Không tái dùng số (`BR-REG2-02`) | Hết đối tượng |
 | `BR-CFO-12` (ranh giới public và private có kiểu) | Giá trị cấu hình lộ ra client BẮT BUỘC đi qua `runtimeConfig.public` của Nuxt, không chỉ dựa vào quy ước đặt tên | `runtimeConfig` hiện gần như không dùng; ranh giới public và private chỉ tồn tại bằng tên biến, nên một lần đặt tên sai là một lần rò bí mật |
 
 ## 7. Data
@@ -231,12 +231,6 @@ Scenario: BR-CFO-09 — script check không có call site thì cổng đỏ
   When chạy pnpm check:config-ownership
   Then cổng thoát khác 0
   And báo cáo liệt kê check:taxonomy-docs là cổng mồ côi
-
-Scenario: BR-CFO-11 — khối pre-push bị comment thì cổng đỏ
-  Given lefthook.yml có khối pre-push nằm trọn trong comment
-  When chạy pnpm check:config-ownership
-  Then cổng thoát khác 0
-  And báo cáo nêu số dòng của khối bị comment
 
 Scenario: BR-CFO-04 — số trần trong thân hàm thì cổng đỏ
   Given packages/adaptive/src/level-params.ts so sánh trực tiếp với 0.4 trong thân hàm

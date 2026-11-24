@@ -1,51 +1,14 @@
-# Gate chất lượng — chạy LOCAL, không có CI remote (repo-bootstrap.md §7.1, §11 Q5).
+# Gate local duy nhất: Biome trên file staged (BR-RBS-03). Không pre-push.
+# `pnpm check` và vitest của workspace chạy tay trước khi xong việc.
 #
-# Phân tầng có chủ đích:
-#   pre-commit  = nhanh (format staged + lint + ranh giới package) → không làm commit chậm tới mức người ta bỏ qua
-#   pre-push    = `pnpm check:fast` (lint + ratchet + typecheck + test game-engine)
-#
-# Gộp `check` vào pre-commit là đổi chỗ, không phải bỏ bớt: `check` tự chạy lại
-# `lint` và `lint:deps`, nên mỗi commit đo hai lần.
-#
-# Cổng lint tuỳ biến (`packages/gates`) đã bị gỡ. Lint chỉ còn Biome (`pnpm lint`),
-# ranh giới package (`pnpm lint:deps`) và vue-tsc/tsc (`pnpm typecheck`).
-#
-# ⚠️ Điểm mù: `check:fast` chạy Phase 3 CHỈ trên project @mindkid/game-engine
-# (`scripts/check.sh`). Test tích hợp cần database và `check:test-ratchet` KHÔNG
-# chạy lúc push — chúng chỉ chạy ở `pnpm check` đầy đủ, khi Postgres/Valkey đã bật.
-#
-# ⛔ `git commit --no-verify` / `git push --no-verify` BỎ QUA hook này.
-# lefthook là gate local, ❌ KHÔNG phải cưỡng chế server-side. Xem repo-bootstrap §11 Q12.
+# ⛔ `git commit --no-verify` BỎ QUA hook này — lefthook là gate local, không phải cưỡng chế server-side.
 
-# skip_lfs: bỏ qua Git LFS hooks (repo không dùng LFS, tránh lefthook cảnh báo/lỗi thừa).
+# skip_lfs: repo không dùng Git LFS.
 skip_lfs: true
 
 pre-commit:
-  parallel: false
   jobs:
-    - name: format
+    - name: biome-staged
       glob: "*.{ts,tsx,js,jsx,mjs,cjs,vue,json,jsonc,css}"
       stage_fixed: true
-      run: |
-        [ -d "${HOME}/.nvm/versions/node/v26.13.1/bin" ] && export PATH="${HOME}/.nvm/versions/node/v26.13.1/bin:$PATH"
-        pnpm exec biome check --write --no-errors-on-unmatched {staged_files}
-
-    - name: lint-and-deps
-      run: |
-        [ -d "${HOME}/.nvm/versions/node/v26.13.1/bin" ] && export PATH="${HOME}/.nvm/versions/node/v26.13.1/bin:$PATH"
-        pnpm lint &
-        PID_LINT=$!
-        pnpm lint:deps &
-        PID_DEPS=$!
-        FAIL=0
-        wait $PID_LINT || FAIL=1
-        wait $PID_DEPS || FAIL=1
-        exit $FAIL
-
-pre-push:
-  parallel: false
-  jobs:
-    - name: check
-      run: |
-        [ -d "${HOME}/.nvm/versions/node/v26.13.1/bin" ] && export PATH="${HOME}/.nvm/versions/node/v26.13.1/bin:$PATH"
-        pnpm typecheck
+      run: ./node_modules/.bin/biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}

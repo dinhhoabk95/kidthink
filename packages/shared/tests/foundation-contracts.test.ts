@@ -168,7 +168,7 @@ describe("P0 foundation contracts", () => {
     expect(rootPkg.engines?.pnpm).toBe(">=12");
   });
 
-  it("BR-RBS-03: lefthook.yml configures pre-commit (format, lint-and-deps) and pre-push (typecheck)", () => {
+  it("BR-RBS-03: lefthook.yml chỉ có pre-commit job biome-staged, không pre-push", () => {
     const rootPkg = JSON.parse(
       readFileSync(resolve(ROOT, "package.json"), "utf8")
     ) as { scripts?: Record<string, string> };
@@ -176,10 +176,10 @@ describe("P0 foundation contracts", () => {
 
     const lefthook = readFileSync(resolve(ROOT, "lefthook.yml"), "utf8");
     expect(lefthook).toContain("pre-commit:");
-    expect(lefthook).toContain("- name: format");
-    expect(lefthook).toContain("- name: lint-and-deps");
-    expect(lefthook).toContain("pre-push:");
-    expect(lefthook).toContain("pnpm typecheck");
+    expect(lefthook).toContain("- name: biome-staged");
+    expect(lefthook).toContain("biome check --write");
+    expect(lefthook).toContain("stage_fixed: true");
+    expect(lefthook).not.toContain("pre-push:");
   });
 
   it("BR-RBS-07: docker-compose.yml uses pgvector/pgvector:pg18 and valkey/valkey:9-alpine", () => {

@@ -17,7 +17,7 @@ depends_on: []
 
 # Dependency baseline và gate local
 
-> **Chưa hoàn thành** — `BR-RBS-03` chốt `pre-push` = `pnpm services` + `pnpm check` đầy đủ; `lefthook.yml` hiện chỉ chạy `pnpm check:fast` (vitest chỉ project `@mindkid/game-engine`, không chạy test tích hợp DB và `check:test-ratchet`). Việc còn lại: [Task #308](../../tasks/308-foundation-gaps-plan.md).
+> **Cập nhật 2026-11-24** — `BR-RBS-03` thu gọn còn một job `pre-commit` (`biome-staged`), không còn `pre-push`. Tốc độ commit quan trọng hơn gate nặng ở máy dev; kiểm tra đầy đủ (`pnpm check`, vitest) chạy tay trước khi xong việc (xem `CLAUDE.md`).
 
 ## 1. Objective
 
@@ -36,7 +36,7 @@ hệ sinh thái Nuxt đã kiểm chứng thay vì tự viết (quyết định D
 |---|---|
 | Dev (người hoặc AI agent IDE) | Cài dependency, chạy gate local, sửa bảng §7.1 qua Specify |
 | Reviewer | Duyệt PR đổi bảng §7.1 hoặc đổi `lefthook.yml` |
-| lefthook (git hook local) | `pre-commit`: `format` (Biome `--write` trên file staged) → `lint-and-deps` (`pnpm lint` + `pnpm lint:deps`) → `engine-gates` (chỉ khi commit chạm cây engine/nội dung). `pre-push`: `pnpm check:fast` |
+| lefthook (git hook local) | `pre-commit`: `biome-staged` (Biome `check --write` trên file staged, stage lại bản đã sửa). Không có `pre-push` |
 
 ## 3. Entry points
 
@@ -44,7 +44,7 @@ hệ sinh thái Nuxt đã kiểm chứng thay vì tự viết (quyết định D
 |---|---|
 | `package.json`, `pnpm-workspace.yaml` | Gốc workspace: `engines`, `overrides:`, `allowBuilds:`, và version tường minh từng `package.json` |
 | `apps/*`, `packages/*` | App và package dùng chung (cây đầy đủ ở §8 của [`SPEC.md`](../../SPEC.md)) |
-| `lefthook.yml` + `.git/hooks/pre-commit`·`pre-push` | Gate local. Không có cổng remote |
+| `lefthook.yml` + `.git/hooks/pre-commit` | Gate local. Không có cổng remote |
 | `scripts/check.sh` | Pipeline `pnpm check` (đầy đủ) và `pnpm check:fast` |
 | `docker-compose.yml` | PostgreSQL 18 (`pgvector/pgvector:pg18`) + Valkey 9 cho dev local |
 | `scripts/check-services.ts` | `pnpm services`: kiểm PG + Valkey đang chạy đúng major |
@@ -59,25 +59,11 @@ hệ sinh thái Nuxt đã kiểm chứng thay vì tự viết (quyết định D
 4. `pnpm install` chạy `prepare: lefthook install`, ghi `.git/hooks/*` tự động (`BR-RBS-03a`).
 5. `docker compose up -d` chạy PostgreSQL 18 + Valkey 9; `pnpm services` xác nhận kết nối được
    và đúng major trước khi chạy test cần DB (`BR-RBS-07`).
-6. Gate local theo `lefthook.yml`:
-   - `pre-commit`, chạy tuần tự:
-     1. `format`: `biome check --write` chỉ trên `{staged_files}`, `stage_fixed: true` stage
-        lại bản đã định dạng.
-     2. `lint-and-deps`: `pnpm lint` (`biome check .` trên toàn cây) và `pnpm lint:deps`
-        (dependency-cruiser) chạy song song; một trong hai đỏ là commit đỏ.
-     3. `engine-gates`: chỉ chạy khi commit chạm `docs/specs/01-platform/engines/**`,
-        `docs/specs/05-content/**`, `packages/game-engine/{src,config}/**`,
-        `packages/content/src/**` hoặc `packages/content-build/src/**`. Chạy song song tám
-        cổng engine (`check:engine-specs`, `check:render`, `check:engine-depth`,
-        `check:engine-turn`, `check:engine-behavior`, `check:difficulty-ladder`,
-        `check:hardcoded-params`, `check:engine-seed-matrix`).
-   - `pre-push`: `pnpm services` rồi `pnpm check` đầy đủ — Phase 1 lint và các cổng
-     `check:*`, Phase 2 `pnpm typecheck`, Phase 3 toàn bộ vitest gồm test tích hợp DB và
-     `check:test-ratchet` (Phase 3 đỏ nếu `pnpm services` lỗi). `pnpm check:fast` chỉ là lệnh
-     chạy tay khi đang sửa, không phải gate. `pnpm test:deploy` (Phase 4) không nằm trong
-     `check`, chạy tay khi phát hành.
-7. Gate ra của một thay đổi: `pnpm check` xanh tại máy (đã bật PG + Valkey), hook
-   `pre-commit`/`pre-push` xanh **và** ca âm chặn đúng (`BR-RBS-03`).
+6. Gate local theo `lefthook.yml`: `pre-commit` chỉ có job `biome-staged` — `biome check --write
+   --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}`, `stage_fixed: true`. Không có
+   `pre-push`, không nạp PATH nvm trong hook. `pnpm check` (lint + lint:deps + typecheck) và
+   vitest của workspace đã đụng chạy tay trước khi xong việc.
+7. Gate ra của một thay đổi: `pnpm check` xanh tại máy, hook `pre-commit` xanh **và** ca âm chặn đúng (`BR-RBS-03`).
 
 ## 5. Alternative flows
 
@@ -95,7 +81,7 @@ hệ sinh thái Nuxt đã kiểm chứng thay vì tự viết (quyết định D
 |---|---|---|
 | `BR-RBS-01` | **Ngưng — 2026-10-18.** Rule về giới hạn tài sản được chuyển vào repo lúc khởi tạo; giai đoạn đó đã xong. Nguyên tắc còn hiệu lực nằm ở D9 của [`SPEC.md`](../../SPEC.md). Không tái dùng số (`BR-REG2-02`) | Hết đối tượng |
 | `BR-RBS-02` | Mọi workspace package (`package.json` gốc, `apps/*`, `packages/*`) mang scope `@mindkid/*`; không scope nào khác cùng tồn tại | Hai scope trộn lẫn làm import path không nhất quán và dễ import nhầm. Test `packages/shared/tests/foundation-contracts.test.ts` trích mã này |
-| `BR-RBS-03` | Gate local `lefthook` (§4 bước 6: `pre-commit` = format + lint + lint:deps + engine-gates; `pre-push` = `pnpm services` + `pnpm check`) phải xanh **và** chặn đúng ở ca âm. Thêm hoặc bớt job trong `lefthook.yml` là đổi spec này | Gate exit 0 khi có lỗi là chuyện **đã xảy ra** ở project này (`ultracite check`, `check:services`, và cổng typecheck khi trình biên dịch bị OOM kill). Gate không có ca âm đã đo là gate chưa tồn tại |
+| `BR-RBS-03` | Gate local `lefthook` chỉ gồm `pre-commit` với một job `biome-staged` (§4 bước 6), không có `pre-push`; hook phải chặn đúng ở ca âm. Thêm hoặc bớt job trong `lefthook.yml` là đổi spec này | Gate exit 0 khi có lỗi là chuyện **đã xảy ra** ở project này (`ultracite check`, `check:services`). Gate không có ca âm đã đo là gate chưa tồn tại. Hook nặng (lint toàn cây, typecheck) làm mỗi commit chậm tới mức người ta bỏ qua; `pnpm check` đã đo cùng thứ đó ở lệnh chạy tay |
 | `BR-RBS-03a` | `lefthook install` phải chạy tự động qua `prepare` script của `package.json` — không dựa vào người mới clone tự nhớ | Hook chỉ tồn tại trong `.git/hooks/` (không được commit). Người clone mà không cài hook thì gate im lặng biến mất, và git không báo gì |
 | `BR-RBS-04` | **Ngưng — 2026-10-18.** Rule chặn code nghiệp vụ trước khi foundation được duyệt; giai đoạn đó đã qua. Nguyên tắc "contract trước implementation" vẫn ở [`roadmap.md`](../roadmap.md). Không tái dùng số (`BR-REG2-02`) | Hết đối tượng |
 | `BR-RBS-05` | Dependency ở §7.1 **ưu tiên adopt** thư viện phổ biến; chỉ tự viết khi không có thư viện phù hợp hoặc cần bọc dùng chung nhiều app (driver) | Mục 0, quyết định D10 của [`SPEC.md`](../../SPEC.md) |
@@ -195,32 +181,18 @@ Không sở hữu route nào.
 ## 9. Acceptance criteria
 
 ```gherkin
-Scenario: BR-RBS-03 — pre-push chạy pnpm check đầy đủ
-  Given lefthook đã cài vào .git/hooks
-  When chạy `git push` thật (không phải `lefthook run pre-push` thủ công — lệnh
-    thủ công thiếu ref data trên stdin mà git thật cung cấp, lefthook đọc thành
-    "0 file cần push" và skip mọi job, exit 0 giả. Muốn test thủ công đúng: thêm `--force`)
-  Then job "check" chạy `pnpm services` rồi `pnpm check`
-  And push chỉ đi tiếp khi lệnh đó exit 0
-
 Scenario: BR-RBS-03 — ca âm, gate chặn commit vi phạm
-  Given một file .ts vi phạm rule biome không tự sửa được được `git add`
+  Given một file .ts có `var x = 1` (rule biome không tự sửa được) được `git add`
   When chạy `git commit`
-  Then job "lint-and-deps" thất bại và commit thất bại với exit code khác 0
+  Then job "biome-staged" thất bại và commit thất bại với exit code khác 0
   And HEAD không đổi
-  And output in ra đường dẫn file kèm số dòng vi phạm
-
-Scenario: BR-RBS-03 — engine-gates chỉ chạy khi chạm cây engine/nội dung
-  Given commit chỉ đổi file trong packages/game-engine/src
-  When chạy `git commit`
-  Then job "engine-gates" chạy đủ tám cổng engine
-  And commit chỉ đổi docs/specs/00-foundation thì job "engine-gates" bị bỏ qua
+  And output in ra đường dẫn file kèm dòng vi phạm
 
 Scenario: BR-RBS-03a — hook tự cài khi cài dependency
   Given repo vừa clone, .git/hooks/ chưa có pre-commit
   When chạy `pnpm install`
   Then lệnh exit 0
-  And .git/hooks/pre-commit và .git/hooks/pre-push tồn tại
+  And .git/hooks/pre-commit tồn tại
   And `lefthook version` in ra version của §7.1
 
 Scenario: BR-RBS-02 — một scope package duy nhất

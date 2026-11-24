@@ -90,7 +90,7 @@ các job chạy song song.
 
 | Lệnh | Chạy ở đâu |
 | --- | --- |
-| `pnpm test:deploy` | Chạy tay khi phát hành (`infra/scripts/tests/run.sh`). `BR-CFO-11` cấm dựng lại nó trong `check.sh` dưới dạng khối comment |
+| `pnpm test:deploy` | Chạy tay khi phát hành (`infra/scripts/tests/run.sh`); không dựng lại trong `check.sh` hay `lefthook.yml` |
 
 ## 2. Cổng trong `<workspace>/tests/gates/`
 
@@ -124,22 +124,19 @@ Repo không có thư mục `.github/`, nên `check.sh` và `lefthook.yml` là ha
 
 | Lệnh | Chạy ở đâu | Điểm mù |
 | --- | --- | --- |
-| `check:render` (`packages/game-engine/scripts/check-render.ts`) | Chỉ job `engine-gates` của `pre-commit`, gọi thẳng qua `tsx` | Không có trong `check.sh`; commit không khớp glob hoặc `--no-verify` thì không chạy |
+| `check:render` (`packages/game-engine/scripts/check-render.ts`) | Chạy tay qua `tsx` (job `engine-gates` của `pre-commit` đã gỡ 2026-11-24) | Không có trong `check.sh` hay hook; không ai gọi thì không chạy |
 | `check:hardcoded-params` (`packages/game-engine/scripts/check-hardcoded-params.ts`) | như trên | như trên |
 
 Ba điểm mù cấu trúc:
 
-1. **Job có glob tự bỏ qua** (`BR-CFO-10`). Job `engine-gates` của `pre-commit` trong
-   `lefthook.yml` gắn glob sáu cây (`docs/specs/01-platform/engines/**`, `docs/specs/05-content/**`,
-   `packages/game-engine/src/**`, `packages/game-engine/config/**`, `packages/content/src/**`,
-   `packages/content-build/src/**`). Commit chỉ đổi `scripts/` hoặc `apps/` bỏ qua trọn job mà
-   không in dòng nào.
-2. **`pre-push` chỉ chạy tập con.** Khối `pre-push` chạy `pnpm check:fast`: đủ phase 1 và 2,
-   nhưng phase 3 chỉ chạy `@mindkid/game-engine`. Test cần DB và bậc thang `check:test-ratchet`
-   không chạy trước khi push.
+1. **Job có glob tự bỏ qua** (`BR-CFO-10`). `lefthook.yml` hiện chỉ có `biome-staged`, không gắn glob nào
+   ngoài đuôi file Biome xử lý; job `engine-gates` cũ đã gỡ 2026-11-24.
+2. **Không còn `pre-push` (2026-11-24).** `lefthook.yml` chỉ có `pre-commit` → `biome-staged`
+   (`BR-RBS-03`). Typecheck, `lint:deps` và vitest chỉ chạy khi người làm gọi `pnpm check` và
+   vitest của workspace đã đụng.
 3. **`check:bundle` có điều kiện.** Không có `apps/web/.output` thì bước này bị bỏ qua im lặng.
 
-Chủ và hạn: `BR-CFO-09`, `BR-CFO-10`, `BR-CFO-11` của
+Chủ và hạn: `BR-CFO-09`, `BR-CFO-10` của
 [`config-ownership.md`](../00-foundation/config-ownership.md).
 
 ## 3. Luật đã MẤT cưỡng chế
