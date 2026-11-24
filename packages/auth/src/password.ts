@@ -6,7 +6,6 @@ import {
   timingSafeEqual,
 } from "node:crypto";
 import { promisify } from "node:util";
-import { isCloudflareRuntime } from "@mindkid/config";
 
 const scrypt = promisify(scryptCb);
 const pbkdf2Async = promisify(pbkdf2Cb);
@@ -16,13 +15,12 @@ const PBKDF2_MAX_ITERATIONS = 1_000_000;
 const PBKDF2_KEYLEN_BYTES = 32;
 const HEX_STRING_PATTERN = /^[0-9a-f]+$/i;
 
-const DUMMY_ARGON2_HASH =
-  "$argon2id$v=19$m=19456,p=1,t=2$Zmx0piJSIcdd2b8oaF8ZUg$U60ArJk0sNteiIdlfZyr7G0shEXA+IqCyWIKs1La4WE";
 const DUMMY_PBKDF2_HASH =
   "pbkdf2$100000$0123456789abcdef0123456789abcdef$4fc1115a50a569179c26ba51bc52313c885eaf76908c93f75bce685ba9637568";
 
+/** Dummy hash PBKDF2 cho verify giả (chống đo thời gian phân biệt tài khoản) ở mọi runtime. */
 export function getDummyPasswordHash(): string {
-  return isCloudflareRuntime() ? DUMMY_PBKDF2_HASH : DUMMY_ARGON2_HASH;
+  return DUMMY_PBKDF2_HASH;
 }
 
 const COMMON_PASSWORDS = new Set([
@@ -162,28 +160,16 @@ async function verifyPbkdf2Hash(
 }
 
 /**
- * Băm mật khẩu thích ứng theo giai đoạn hạ tầng:
- * - Giai đoạn 1 (`MINDKID_RUNTIME=cloudflare`): WebCrypto `PBKDF2-SHA256` (~0ms JS CPU trên Workers Free).
- * - Giai đoạn 2 (`MINDKID_RUNTIME=vps`): `Argon2id` nạp động (không kéo C++ addon vào bundle Cloudflare).
+ * Băm mật khẩu luôn là `pbkdf2$<iter>$<saltHex>$<hashHex>` (PBKDF2-SHA256, ưu tiên WebCrypto) —
+ * Node, Cloudflare Workers và Postgres sau này đều verify được cùng một chuỗi, không cần rehash.
  */
 export async function hashPassword(password: string): Promise<string> {
-  if (isCloudflareRuntime()) {
-    return await hashPasswordPbkdf2(password);
-  }
-  const argon2Mod = await import("argon2");
-  const argon2 = argon2Mod.default;
-  return await argon2.hash(password, {
-    type: argon2.argon2id,
-    memoryCost: 19_456,
-    timeCost: 2,
-    parallelism: 1,
-    hashLength: 32,
-  });
+  return await hashPasswordPbkdf2(password);
 }
 
 /**
- * Xác thực được cả `pbkdf2$...` (từ Giai đoạn 1 Cloudflare chuyển về VPS),
- * `$argon2id$...` (Giai đoạn 2 VPS) và `scrypt$...` (legacy).
+ * Xác thực `pbkdf2$...` (chuẩn hiện tại) và `scrypt$...` (legacy). Hash `$argon2id$...` không còn
+ * được hỗ trợ (đã gỡ phụ thuộc native) nên trả `false`.
  */
 export async function verifyPassword(
   password: string,
@@ -195,17 +181,6 @@ export async function verifyPassword(
   if (hash.startsWith("pbkdf2$")) {
     try {
       return await verifyPbkdf2Hash(password, hash);
-    } catch {
-      return false;
-    }
-  }
-  if (hash.startsWith("$argon2id$")) {
-    if (isCloudflareRuntime()) {
-      return false;
-    }
-    try {
-      const argon2Mod = await import("argon2");
-      return await argon2Mod.default.verify(hash, password);
     } catch {
       return false;
     }
@@ -233,14 +208,15 @@ export async function verifyPassword(
 }
 
 /**
- * Trả về `true` khi chạy trên VPS (Giai đoạn 2) mà tài khoản còn giữ hash `pbkdf2$`
- * từ Giai đoạn 1 Cloudflare, cho phép nâng cấp ngầm lên Argon2id ngay khi đăng nhập.
+ * `true` khi hash không phải PBKDF2 hoặc số vòng lặp thấp hơn `PBKDF2_ITERATIONS`: nâng cấp ngầm
+ * ngay khi đăng nhập thành công.
  */
 export function needsPasswordRehash(hash: string): boolean {
-  if (isCloudflareRuntime()) {
-    return !hash.startsWith("pbkdf2$");
+  if (!hash.startsWith("pbkdf2$")) {
+    return true;
   }
-  return !hash.startsWith("$argon2id$");
+  const iterations = Number(hash.split("$")[1]);
+  return !Number.isInteger(iterations) || iterations < PBKDF2_ITERATIONS;
 }
 
 export function generateSecureToken(): string {

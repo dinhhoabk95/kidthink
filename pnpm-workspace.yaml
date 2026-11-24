@@ -13,7 +13,6 @@ onlyBuiltDependencies:
 # `pnpm install` trên clone MỚI exit 1 (ERR_PNPM_IGNORED_BUILDS).
 allowBuilds:
   '@firebase/util': false
-  argon2: true
   esbuild: true
   lefthook: false
   msgpackr-extract: false

@@ -246,7 +246,7 @@ describe("Task 4 — Better Auth Password Recovery (BR-PWR-01..09)", () => {
           eq(userAccounts.providerId, "credential")
         )
       );
-    expect(credRow?.password?.startsWith("$argon2id$")).toBe(true);
+    expect(credRow?.password?.startsWith("pbkdf2$")).toBe(true);
     expect(credRow?.password).not.toBe(user.passwordHash);
 
     const oldLogin = await getUserAuth().handler(

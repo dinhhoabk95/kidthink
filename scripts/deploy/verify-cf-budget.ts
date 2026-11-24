@@ -7,7 +7,6 @@ const MAX_WORKER_BUNDLE_BYTES = 64 * 1024 * 1024; // 64 MiB uncompressed Cloudfl
 const TARGET_WARN_BUNDLE_BYTES = 18 * 1024 * 1024; // 18 MiB internal budget
 
 const FORBIDDEN_EDGE_ADDONS = [
-  "argon2.node",
   "sharp-darwin",
   "sharp-linux",
   "pg_dump",

@@ -183,6 +183,6 @@ describe("Better Auth Session & Account Tables Integration (Task #319)", () => {
           eq(managerAccounts.providerId, "credential")
         )
       );
-    expect(cred?.password?.startsWith("$argon2id$")).toBe(true);
+    expect(cred?.password?.startsWith("pbkdf2$")).toBe(true);
   });
 });

@@ -125,7 +125,7 @@ describe("BR-ENT-03 & BR-PKG-04 & BR-PKG-05: Seed Integration & Two-way Matching
       }
       expect(prodAdmin.role).toBe(MANAGER_ROLE.SUPER_ADMIN);
       expect(prodAdmin.isActive).toBe(true);
-      expect(prodAdmin.passwordHash.startsWith("$argon2id$")).toBe(true);
+      expect(prodAdmin.passwordHash.startsWith("pbkdf2$")).toBe(true);
       expect(
         await verifyPassword(prodAdminPassword, prodAdmin.passwordHash)
       ).toBe(true);
@@ -137,7 +137,7 @@ describe("BR-ENT-03 & BR-PKG-04 & BR-PKG-05: Seed Integration & Two-way Matching
       expect(prodAdminAccount).toBeDefined();
       expect(prodAdminAccount?.providerId).toBe("credential");
       expect(prodAdminAccount?.accountId).toBe(String(prodAdmin.id));
-      expect(prodAdminAccount?.password?.startsWith("$argon2id$")).toBe(true);
+      expect(prodAdminAccount?.password?.startsWith("pbkdf2$")).toBe(true);
       if (!prodAdminAccount?.password) {
         throw new Error("Expected credential password on managerAccounts");
       }

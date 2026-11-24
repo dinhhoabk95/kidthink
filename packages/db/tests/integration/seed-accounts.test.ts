@@ -58,7 +58,7 @@ describe("Seed Initial Accounts Integration Tests", () => {
       expect(record.role).toBe(mgr.role);
       expect(record.mfaEnabled).toBe(false);
       expect(record.isActive).toBe(true);
-      expect(record.passwordHash.startsWith("$argon2id$")).toBe(true);
+      expect(record.passwordHash.startsWith("pbkdf2$")).toBe(true);
 
       const isValidPassword = await verifyPassword(
         mgr.passwordRaw,
@@ -71,7 +71,7 @@ describe("Seed Initial Accounts Integration Tests", () => {
         .from(managerAccounts)
         .where(eq(managerAccounts.userId, record.id));
       expect(mgrAcc?.providerId).toBe("credential");
-      expect(mgrAcc?.password?.startsWith("$argon2id$")).toBe(true);
+      expect(mgrAcc?.password?.startsWith("pbkdf2$")).toBe(true);
     }
 
     // 3. Verify Users in DB
@@ -106,7 +106,7 @@ describe("Seed Initial Accounts Integration Tests", () => {
         .from(userAccounts)
         .where(eq(userAccounts.userId, record.id));
       expect(usrAcc?.providerId).toBe("credential");
-      expect(usrAcc?.password?.startsWith("$argon2id$")).toBe(true);
+      expect(usrAcc?.password?.startsWith("pbkdf2$")).toBe(true);
 
       // Verify consent logs for this user
       const userConsents = await db

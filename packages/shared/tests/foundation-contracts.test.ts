@@ -79,7 +79,7 @@ describe("P0 foundation contracts", () => {
     expect(authDeps["better-auth"]).toBe("1.7.27");
     expect(authDeps["@better-auth/drizzle-adapter"]).toBe("1.7.27");
     expect(authDeps["@better-auth/passkey"]).toBe("1.7.27");
-    expect(authDeps.argon2).toBe("^0.45.2");
+    expect(authDeps.argon2).toBeUndefined();
     expect(authDeps["nuxt-auth-utils"]).toBeUndefined();
     expect(authDeps.otpauth).toBeUndefined();
     expect(authDeps["openid-client"]).toBeUndefined();

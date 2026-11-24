@@ -22,7 +22,6 @@
     "@mindkid/queue": "workspace:*",
     "@mindkid/shared": "workspace:*",
     "@mindkid/storage": "workspace:*",
-    "argon2": "^0.45.2",
     "bullmq": "^6.7.6",
     "drizzle-orm": "1.0.0-rc.5",
     "ioredis": "6.1.0-beta.1"

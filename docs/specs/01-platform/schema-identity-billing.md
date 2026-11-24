@@ -47,7 +47,7 @@ Không có.
 | `BR-SIB-02` | `entitlements.entitlement_key` là **FK thật** tới `entitlement_keys` | Sai chính tả bị chặn ở FK |
 | `BR-SIB-03` (snapshot giá) | `payment_orders.amount_vnd` là **snapshot** lúc tạo đơn | Giá đổi sau không ảnh hưởng đơn đã tạo |
 | `BR-SIB-04` (test orphan bắt buộc) | 4 bảng auth phụ polymorphic → **bắt buộc** test bắt orphan | [`data-model-overview.md`](../00-foundation/data-model-overview.md) `BR-DM-04` (polymorphic phải có test toàn vẹn) |
-| `BR-SIB-05` (chỉ argon2id) | `password_hash` argon2id; cấm — **NEVER** cột mật khẩu dạng khác | [`auth-tokens-sessions.md`](auth-tokens-sessions.md) `BR-AUT-08`. Ghi ở tầng cột vì đây là chỗ vi phạm để lại dấu vĩnh viễn: một cột `password` plaintext hay `password_md5` lọt vào migration thì mọi hàng đã ghi không hash ngược lại được |
+| `BR-SIB-05` (chỉ PBKDF2) | `password_hash` dạng `pbkdf2$<iter>$<salt>$<hash>`; cấm — **NEVER** cột mật khẩu dạng khác | [`auth-tokens-sessions.md`](auth-tokens-sessions.md) `BR-AUT-08`. Ghi ở tầng cột vì đây là chỗ vi phạm để lại dấu vĩnh viễn: một cột `password` plaintext hay `password_md5` lọt vào migration thì mọi hàng đã ghi không hash ngược lại được |
 | `BR-SIB-06` (INSERT-only cho log pháp lý) | `consent_logs` · `audit_logs` INSERT-only, ép bằng quyền DB | [`data-model-overview.md`](../00-foundation/data-model-overview.md) `BR-DM-05` (bảng INSERT-only). Hai bảng này là bằng chứng pháp lý theo Luật 91/2025/QH15 và Nghị định 13/2023 cùng vết điều tra — sửa được nghĩa là không chứng minh được điều gì. Quyền DB ép, không phải quy ước code |
 | `BR-SIB-07` | `users.email` UNIQUE **case-insensitive** (`citext` hoặc index trên `lower()`) | `A@x.com` và `a@x.com` là một người |
 | `BR-SIB-08` (password nullable) | `users.password_hash` **nullable** — tài khoản chỉ có SNS là hợp lệ | [`auth-tokens-sessions.md`](auth-tokens-sessions.md) `BR-AUT-16`, [`social-login.md`](../03-account/social-login.md) `BR-SCL-08`. Bất biến thay thế là `login_methods ≥ 1` ([`social-account-linking.md`](../03-account/social-account-linking.md) `BR-SLK-04`), ép ở tầng service không ở cột |
@@ -55,7 +55,7 @@ Không có.
 | `BR-SIB-10` (cấm lưu token provider) | `user_accounts` · `manager_accounts` cấm — **NEVER lưu giá trị `access_token`/`refresh_token`/`id_token`** của nhà cung cấp (`NULL` cưỡng chế qua `databaseHooks` + `assertNoOAuthProviderTokens`) | [`oauth-provider-registry.md`](oauth-provider-registry.md) `BR-OAP-07` (không lưu token provider). Xoá rỗng ngay trước mọi INSERT/UPDATE để không bao giờ rò token |
 | `BR-SIB-11` | Xoá `users` **cascade** xoá `social_identities` | Danh tính mồ côi làm `UNIQUE (provider, provider_user_id)` chặn người dùng đăng ký lại sau khi đã xoá tài khoản |
 | `BR-SIB-12` (singleton force marker) | `consent_requirements` có đúng ba khoá `terms` · `privacy` · `child_data`; marker chỉ UPDATE tiến tới, không có policy version | Một hàng cho mỗi loại cho phép kiểm consent bằng một so sánh thời gian, không fan-out theo User và không dựng kho version trá hình |
-| `BR-SIB-13` (seed test accounts) | Seeder cung cấp sẵn bộ tài khoản kiểm thử mặc định (1 Manager `super_admin`, 3 User, 5 Child) với mật khẩu ngẫu nhiên băm argon2id, không bắt buộc biến `.env` | Cho phép kiểm thử cục bộ và chạy dev trơn tru ngay từ lần seed đầu tiên |
+| `BR-SIB-13` (seed test accounts) | Seeder cung cấp sẵn bộ tài khoản kiểm thử mặc định (1 Manager `super_admin`, 3 User, 5 Child) với mật khẩu ngẫu nhiên băm PBKDF2, không bắt buộc biến `.env` | Cho phép kiểm thử cục bộ và chạy dev trơn tru ngay từ lần seed đầu tiên |
 
 ## 7. Data
 
@@ -66,7 +66,7 @@ Không có.
 | `id` | bigserial | PK |
 | `uuid` | uuid | UNIQUE, đối ngoại |
 | `email` | citext | UNIQUE NOT NULL |
-| `password_hash` | text | **NULL được** — argon2id khi có. `BR-SIB-08` |
+| `password_hash` | text | **NULL được** — PBKDF2 khi có. `BR-SIB-08` |
 | `display_name` | varchar(60) | NOT NULL |
 | `status` | enum | `pending_verification`\|`active`\|`suspended`\|`deleted` |
 | `email_verified_at` | timestamptz | |
@@ -89,7 +89,7 @@ Thay thế 4 bảng đa hình cũ và `social_identities` bằng cặp bảng FK
 
 | Nhánh User (`FK users.id`) | Nhánh Manager (`FK managers.id`) | Cột then chốt & Ràng buộc |
 |---|---|---|
-| `user_accounts` | `manager_accounts` | `account_id`, `provider_id`, `password` (nullable Argon2id), `email_at_provider`, `email_verified_at_provider`, `UNIQUE(provider_id, account_id)`, `UNIQUE(user_id\|manager_id, provider_id)`. Các cột token OAuth bị xoá rỗng bởi `databaseHooks` + validator (`BR-SIB-10`) |
+| `user_accounts` | `manager_accounts` | `account_id`, `provider_id`, `password` (nullable PBKDF2), `email_at_provider`, `email_verified_at_provider`, `UNIQUE(provider_id, account_id)`, `UNIQUE(user_id\|manager_id, provider_id)`. Các cột token OAuth bị xoá rỗng bởi `databaseHooks` + validator (`BR-SIB-10`) |
 | `user_sessions` | `manager_sessions` | `token` UNIQUE, `expires_at`, `ip_address`, `user_agent`, `auth_method`, `reauth_at` |
 | `user_verifications` | `manager_verifications` | `identifier`, `value`, `expires_at` |
 | `user_two_factors` | `manager_two_factors` | `secret`, `backup_codes`, `UNIQUE(user_id\|manager_id)` |

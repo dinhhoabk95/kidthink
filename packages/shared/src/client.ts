@@ -5,7 +5,7 @@
 // @mindkid/cache, @mindkid/auth, @mindkid/moderation). Vite KHÔNG tree-shake ở dev,
 // nên một trang Vue import `@mindkid/shared` là kéo nguyên cụm đó xuống trình duyệt:
 // app chết lúc khởi tạo ("does not provide an export named 'readFileSync'"), và bản
-// build từng nhét cả native addon argon2 vào chunk client.
+// build từng nhét cả native addon vào chunk client.
 //
 // Cấm — NEVER thêm re-export của module chạm node: builtin hoặc package máy chủ.
 // Cũng Cấm — NEVER thêm module chỉ để một package khác import cho tiện: Vite không

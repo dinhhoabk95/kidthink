@@ -39,7 +39,7 @@ tuyệt đối tối đa **365 ngày** không sliding, đồng thời đồng b�
 `manager_sessions` (`storeSessionInDatabase: true`) để liệt kê và thu hồi từng thiết bị tức thì.
 Cửa sổ phiên tươi `freshAge: 300` (**5 phút**) kết hợp mốc `reauthAt` bảo vệ các thao tác nhạy cảm.
 
-Mật khẩu dùng giao diện băm tương thích hai chiều: ở Giai đoạn 1 (`MINDKID_RUNTIME=cloudflare`) băm mới bằng **WebCrypto `PBKDF2-SHA256`** (`100.000` vòng lặp, định dạng `pbkdf2$100000$<salt>$<hash>`) để nằm gọn dưới trần `10ms` CPU của Workers Free; ở Giai đoạn 2 (`MINDKID_RUNTIME=vps`) băm mới bằng **Argon2id**, đồng thời `verifyPassword` xác thực mượt cả hai định dạng và tự động nâng cấp ngầm từ `PBKDF2` lên `Argon2id` khi đăng nhập trên VPS. Kho `secondaryStorage` (`ba:v1:user:*` và `ba:v1:manager:*`) chạy trên `AuthCoordinatorDO` (Durable Object SQLite nhất quán mạnh) ở Giai đoạn 1 và trên Valkey 9 ở Giai đoạn 2, cả hai đều **fail-closed**. TOTP + Backup Codes dùng
+Mật khẩu **luôn** băm bằng **PBKDF2-SHA256** (ưu tiên WebCrypto, `100.000` vòng lặp, định dạng `pbkdf2$<iter>$<saltHex>$<hashHex>`) ở mọi runtime: Node, Cloudflare Workers và Postgres sau này đều verify cùng một chuỗi, nên chuyển hạ tầng không cần rehash hay reset mật khẩu. `verifyPassword` đọc `pbkdf2$` và `scrypt$` (legacy); hash argon2id không còn được hỗ trợ (đã gỡ phụ thuộc native). `needsPasswordRehash` chỉ true khi hash không phải PBKDF2 hoặc số vòng lặp thấp hơn chuẩn. Kho `secondaryStorage` (`ba:v1:user:*` và `ba:v1:manager:*`) chạy trên `AuthCoordinatorDO` (Durable Object SQLite nhất quán mạnh) ở Giai đoạn 1 và trên Valkey 9 ở Giai đoạn 2, cả hai đều **fail-closed**. TOTP + Backup Codes dùng
 plugin `twoFactor`; WebAuthn/Passkey dùng `@better-auth/passkey` cho cả User và Manager; OAuth
 Google/Facebook chỉ bật trên `userAuth` với `disableImplicitLinking: true` và
 `disableImplicitSignUp: true`. Nghỉ hưu hoàn toàn `nuxt-auth-utils`, `openid-client` và `otpauth`;
@@ -57,7 +57,7 @@ cấm thêm bất kỳ framework auth song song nào khác (Supabase Auth, Sideb
 
 | Nơi | Trách nhiệm |
 |---|---|
-| `packages/auth/` | Sở hữu credential opaque, Redis session/remember/challenge adapter fail-closed, CSRF, domain context, Argon2id và TOTP |
+| `packages/auth/` | Sở hữu credential opaque, Redis session/remember/challenge adapter fail-closed, CSRF, domain context, PBKDF2 và TOTP |
 | `apps/web/server/plugins/auth-session.ts` | Nối adapter và `sessionHooks.fetch` cho user projection; hook chỉ chạy ở session introspection |
 | `apps/web/nuxt.config.ts` | Khai `nuxt-auth-utils`, user cookie locator và TTL một giờ |
 | `apps/web/server/middleware/auth.ts` | Chọn namespace theo `/api/users` hoặc `/api/managers`, đọc đúng cookie, lookup Redis một lần, gắn context |
@@ -120,7 +120,7 @@ credential của bước mật khẩu; client không thể thêm tuỳ chọn n�
 |---|---|---|
 | `BR-AUT-02` | Guard là hàm **sync**, đọc `event.context`. Cấm — NEVER `await requireUserAuth()` | Guard trả Promise mời quên `await`, và quên `await` nghĩa là không có guard |
 | `BR-AUT-06` | CSRF token **không** HttpOnly, gửi qua header `x-csrf-token` trên **mọi** route đổi trạng thái | Cookie auth tự động đi kèm request từ site khác; header thì không |
-| `BR-AUT-08` | Mật khẩu hash bằng **argon2id**; không bcrypt, MD5 hoặc SHA | Argon2id chống dò offline bằng chi phí memory-hard |
+| `BR-AUT-08` | Mật khẩu hash bằng **PBKDF2-SHA256** (WebCrypto, ≥100.000 vòng, định dạng `pbkdf2$<iter>$<salt>$<hash>`); không bcrypt, MD5, SHA trần hay argon2id | Một định dạng di động giữa Node, Workers và Postgres, không cần rehash khi đổi hạ tầng; salt ngẫu nhiên + vòng lặp chống dò offline |
 | `BR-AUT-09` | Rate limit đăng nhập theo **IP và account** | Hai trục chặn cả quét diện rộng lẫn nhắm một tài khoản |
 | `BR-AUT-10` | Lỗi đăng nhập không tiết lộ tài khoản tồn tại; thời gian phản hồi không lệch | Ngăn enumeration email |
 | `BR-AUT-11` | Manager không có endpoint đăng ký công khai | Manager là tài khoản vận hành, chỉ tạo qua luồng kiểm soát |

@@ -970,11 +970,11 @@ describe("Stage 1 Track 2 Auth Hardening", () => {
     );
   });
 
-  it("[NEW-4] selects runtime dummy hash and rejects PBKDF2 hashes above 1M iterations", async () => {
+  it("[NEW-4] uses a PBKDF2 dummy hash on every runtime and rejects PBKDF2 hashes above 1M iterations", async () => {
     const prev = process.env.MINDKID_RUNTIME;
     try {
       process.env.MINDKID_RUNTIME = "vps";
-      expect(getDummyPasswordHash().startsWith("$argon2id$")).toBe(true);
+      expect(getDummyPasswordHash().startsWith("pbkdf2$100000$")).toBe(true);
 
       process.env.MINDKID_RUNTIME = "cloudflare";
       const cfDummy = getDummyPasswordHash();

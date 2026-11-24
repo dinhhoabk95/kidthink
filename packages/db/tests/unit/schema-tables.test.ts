@@ -521,7 +521,7 @@ describe("Schema Identity, Sensitive Hiding, & Billing Rules (BR-SIB-01..BR-SIB-
     }
 
     const sampleHash = await hashPassword("xK9#mQ2$vL8!wP5@");
-    expect(sampleHash.startsWith("$argon2id$")).toBe(true);
+    expect(sampleHash.startsWith("pbkdf2$")).toBe(true);
   });
 
   it("BR-SIB-06: audit_logs và consent_logs là bảng INSERT-only có created_at NOT NULL, và consent_logs / payment_orders / ai_credit_ledger giữ onDelete=restrict trên user_id", () => {

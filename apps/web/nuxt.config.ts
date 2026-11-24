@@ -24,12 +24,6 @@ export default defineNuxtConfig({
     alias: isCloudflareTarget
       ? {
           "#server": fileURLToPath(new URL("./server", import.meta.url)),
-          argon2: fileURLToPath(
-            new URL(
-              "./server/utils/cloudflare-empty-addon-stub.ts",
-              import.meta.url
-            )
-          ),
           sharp: fileURLToPath(
             new URL(
               "./server/utils/cloudflare-empty-addon-stub.ts",
@@ -43,8 +37,8 @@ export default defineNuxtConfig({
     externals: isCloudflareTarget
       ? undefined
       : {
-          // argon2 là native addon phát bằng CommonJS + node-gyp-build (chỉ dùng khi MINDKID_RUNTIME=vps).
-          external: ["argon2", "sharp"],
+          // sharp là native addon (chỉ dùng khi MINDKID_RUNTIME=vps).
+          external: ["sharp"],
         },
     // ERROR-CODES §4 + §8: chỗ duy nhất dựng body lỗi cho `/api/*`.
     // Nitro nối handler mặc định vào cuối chuỗi, nên trang lỗi Nuxt (SSR, 404

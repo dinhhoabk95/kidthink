@@ -89,7 +89,7 @@ chỗ thay vì một.
 | `BR-MPA-07` | Hai `apps/*` **NEVER** phụ thuộc thẳng vào nhau — chia sẻ luôn qua `packages/*` | `apps/admin` gọi thẳng code của `apps/web` là dấu hiệu thiếu một package |
 | `BR-MPA-08` | Cấm parent-relative (`../`) module specifier, cấm relative import xuyên package, bắt buộc dùng đúng alias token canonical của từng cây (`~` cho app, `#server` cho web nitro, `#src`/`#tests`/`#scripts` cho `packages/*`) | Import tương đối sâu làm vỡ liên kết khi di chuyển file và che giấu cấu trúc module |
 | `BR-MPA-09` | Barrel mà code client (`apps/*/app/**`) import **NEVER** được với tới `node:` builtin hay package chỉ chạy máy chủ, kể cả **gián tiếp**. Package nào vừa phục vụ máy chủ vừa phục vụ trình duyệt phải mở entry thứ hai `./client` chỉ chứa tập con an toàn | Vite **không tree-shake ở chế độ dev**: một trang Vue import barrel là kéo cả cụm máy chủ vào bundle trình duyệt. Đo 2026-08-29 trên `@mindkid/shared`: 11/56 module chạm `node:fs/path/zlib/buffer/crypto` hoặc `@mindkid/config`, `@mindkid/cache`, `@mindkid/auth`, `@mindkid/moderation`; `apps/web` chết lúc khởi tạo (`does not provide an export named 'randomBytes'`) và bản build ship nguyên native addon argon2 xuống trình duyệt |
-| `BR-MPA-10` | Native addon (CommonJS + `node-gyp-build`, ví dụ `argon2`) bắt buộc khai external trong `nitro.externals.external` của app nào có nó trong cây phụ thuộc | Nó tới qua workspace package nên Nitro inline mặc định; thân CJS giữ nguyên `__dirname` và server build ESM chết ngay lúc khởi động: `__dirname is not defined in ES module scope` |
+| `BR-MPA-10` | Native addon (CommonJS + `node-gyp-build`, ví dụ `sharp`) bắt buộc khai external trong `nitro.externals.external` của app nào có nó trong cây phụ thuộc | Nó tới qua workspace package nên Nitro inline mặc định; thân CJS giữ nguyên `__dirname` và server build ESM chết ngay lúc khởi động: `__dirname is not defined in ES module scope` |
 
 ## 7. Data
 
@@ -212,7 +212,7 @@ Scenario: BR-MPA-04 — module cấu hình thuần không bị ép bọc driver
 
 Scenario: BR-MPA-09 — bundle trình duyệt không chứa code máy chủ
   When build production apps/web rồi quét mọi chunk trong .output/public/_nuxt
-  Then không chunk nào chứa "node-gyp-build", "__dirname", hay thân CJS của argon2
+  Then không chunk nào chứa "node-gyp-build", "__dirname", hay thân CJS của native addon (sharp)
   And không chunk nào tham chiếu "node:fs", "node:crypto", hay "node:zlib"
 
 Scenario: BR-MPA-09 — ca âm, dev phải chết chứ không im lặng

@@ -12,7 +12,6 @@
     "@mindkid/config": "workspace:*",
     "@mindkid/errors": "workspace:*",
     "@mindkid/shared": "workspace:*",
-    "argon2": "^0.45.2",
     "better-auth": "1.7.27",
     "drizzle-orm": "1.0.0-rc.5",
     "ioredis": "6.1.0-beta.1",

@@ -131,9 +131,9 @@ describe("Identity Schema Integration Tests", () => {
     expect(mPk?.userId).toBe(m.id);
   });
 
-  it("BR-SIB-05: users and managers store Argon2id password_hash ($argon2id$)", async () => {
+  it("BR-SIB-05: users and managers store PBKDF2 password_hash (pbkdf2$)", async () => {
     const hash = await hashPassword("xK9#mQ2$vL8!wP5@");
-    expect(hash.startsWith("$argon2id$")).toBe(true);
+    expect(hash.startsWith("pbkdf2$")).toBe(true);
   });
 
   it("BR-SIB-12: consent_requirements stores 3 consent types (terms, privacy, child_data) with forward-only reconsent_required_at marker", async () => {

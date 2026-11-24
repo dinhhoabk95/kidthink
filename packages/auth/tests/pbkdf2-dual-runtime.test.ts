@@ -9,7 +9,7 @@ import {
 } from "#src/index";
 
 describe("Dual-Runtime Password Crypto & Durable Object Auth Store", () => {
-  it("hashes with PBKDF2 on cloudflare runtime and verifies seamlessly on VPS runtime with rehash signal", async () => {
+  it("hash luôn là PBKDF2 ở cả hai runtime và verify chéo không cần rehash", async () => {
     const prev = process.env.MINDKID_RUNTIME;
     try {
       process.env.MINDKID_RUNTIME = "cloudflare";
@@ -19,13 +19,12 @@ describe("Dual-Runtime Password Crypto & Durable Object Auth Store", () => {
       expect(await verifyPassword("SaiMatKhau123!", cfHash)).toBe(false);
       expect(needsPasswordRehash(cfHash)).toBe(false);
 
-      // Chuyển sang Giai đoạn 2 (VPS): user cũ từ Cloudflare đăng nhập bình thường 100%, không cần reset mật khẩu!
       process.env.MINDKID_RUNTIME = "vps";
       expect(await verifyPassword("MatKhauAnToan!2026", cfHash)).toBe(true);
-      expect(needsPasswordRehash(cfHash)).toBe(true);
+      expect(needsPasswordRehash(cfHash)).toBe(false);
 
       const vpsHash = await hashPassword("MatKhauAnToan!2026");
-      expect(vpsHash.startsWith("$argon2id$")).toBe(true);
+      expect(vpsHash.startsWith("pbkdf2$100000$")).toBe(true);
       expect(await verifyPassword("MatKhauAnToan!2026", vpsHash)).toBe(true);
       expect(needsPasswordRehash(vpsHash)).toBe(false);
     } finally {

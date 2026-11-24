@@ -127,7 +127,7 @@ describe("Task 1 — Better Auth POST /api/auth/users/sign-up/email (BR-REG-01..
 
     expect(createdUser.status).toBe(USER_STATUS.PENDING_VERIFICATION);
     expect(createdUser.uuid).toBeTruthy();
-    expect(createdUser.passwordHash?.startsWith("$argon2id$")).toBe(true);
+    expect(createdUser.passwordHash?.startsWith("pbkdf2$")).toBe(true);
 
     const [credAccount] = await db
       .select()
@@ -138,7 +138,7 @@ describe("Task 1 — Better Auth POST /api/auth/users/sign-up/email (BR-REG-01..
           eq(userAccounts.providerId, "credential")
         )
       );
-    expect(credAccount?.password?.startsWith("$argon2id$")).toBe(true);
+    expect(credAccount?.password?.startsWith("pbkdf2$")).toBe(true);
 
     const sessionRows = await db
       .select()
