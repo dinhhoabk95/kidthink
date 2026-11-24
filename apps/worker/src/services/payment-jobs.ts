@@ -109,8 +109,6 @@ export async function runExpirePaymentOrders(
   };
 }
 
-export const expireStalePaymentOrders = runExpirePaymentOrders;
-
 /**
  * Sweeps soft_unlock entitlements older than 3 days (expires_at < now)
  * Transitions status: soft_unlock -> expired
@@ -131,8 +129,6 @@ export async function runExpireSoftUnlockEntitlements(
   }
   return result;
 }
-
-export const sweepExpiredEntitlements = runExpireSoftUnlockEntitlements;
 
 /**
  * BR-RBL-02: Sends renewal reminder email 3 days before nextBillingAt.

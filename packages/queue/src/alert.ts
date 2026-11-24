@@ -1,4 +1,4 @@
-import { optionalEnv, requireEnv } from "@mindkid/config";
+import { optionalEnv } from "@mindkid/config";
 export type AlertSeverity =
   | "P0"
   | "P1"
@@ -75,40 +75,6 @@ export class LogOnlyAlertAdapter implements AlertPort {
 
   isLogOnly(): boolean {
     return true;
-  }
-}
-
-export class EmailAlertAdapter implements AlertPort {
-  readonly opsEmail: string;
-
-  constructor(opsEmail?: string) {
-    this.opsEmail =
-      opsEmail === undefined ? requireEnv("OPERATIONS_ALERT_EMAIL") : opsEmail;
-  }
-
-  async sendAlert(payload: AlertPayload): Promise<void> {
-    if (activeDispatcher) {
-      await activeDispatcher(this.opsEmail, payload);
-      return;
-    }
-    console.warn(
-      `[ALERT_DISPATCHED_TO_EMAIL:${this.opsEmail}] ${payload.severity.toUpperCase()}: ${payload.message}`,
-      payload.context
-    );
-  }
-
-  /**
-   * True in production, and that is the point.
-   *
-   * There is no email transport in this repository yet — the notification path
-   * ends at LocalFileEmailAdapter — so without a dispatcher registered this
-   * class writes a line to a log file and nothing else. Claiming otherwise is
-   * what let a P0 alert channel look configured while nobody could receive
-   * anything: assertAlertingReachable() below can only work if this answer is
-   * honest.
-   */
-  isLogOnly(): boolean {
-    return activeDispatcher === undefined;
   }
 }
 

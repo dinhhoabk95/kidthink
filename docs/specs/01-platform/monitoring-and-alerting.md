@@ -26,7 +26,7 @@ Alert phải **tới được người**, không chỉ ghi vào log mà không a
 
 > **Hiện trạng đo được 2026-08-28 (Task #109).** Spec này ghi `status: implemented` trong khi
 > mọi cảnh báo P0 thực tế dừng ở `console.warn`: `TELEGRAM_BOT_TOKEN` khai `optional` nên cổng env
-> xanh khi thiếu, `EmailAlertAdapter` chỉ ghi log mà vẫn khai `isLogOnly(): false`, nên cả ca âm
+> xanh khi thiếu, adapter email (`EmailAlertAdapter`, nay đã gỡ vì chưa từng được nối vào đường chạy) chỉ ghi log mà vẫn khai `isLogOnly(): false`, nên cả ca âm
 > "không được là kênh chỉ-ghi-log" cũng qua. Task #109 sửa ba chỗ: biến kênh lên mức `production`,
 > `isLogOnly()` nói đúng khả năng thật của từng adapter, và `assertAlertingReachable()` chặn
 > `apps/worker` khởi động ở production khi không kênh nào tới được người.

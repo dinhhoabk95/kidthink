@@ -1,12 +1,10 @@
 import type {
   managerAccounts,
-  managerSessions,
   managers,
   managerTwoFactors,
   mfaRecoveryRequests,
   notificationEndpoints,
   userAccounts,
-  userSessions,
   users,
   userTwoFactors,
 } from "#src/schema/index";
@@ -25,8 +23,6 @@ export const PUBLIC_MANAGER_ACCOUNT_COLUMNS = {
   refreshToken: false,
   idToken: false,
 } as const;
-export const PUBLIC_USER_SESSION_COLUMNS = { token: false } as const;
-export const PUBLIC_MANAGER_SESSION_COLUMNS = { token: false } as const;
 export const PUBLIC_TWO_FACTOR_COLUMNS = {
   secret: false,
   backupCodes: false,
@@ -47,8 +43,6 @@ export const ACCOUNT_SENSITIVE_KEYS = [
   "refreshToken",
   "idToken",
 ] as const;
-export const SESSION_SENSITIVE_KEYS = ["token"] as const;
-export const TWO_FACTOR_SENSITIVE_KEYS = ["secret", "backupCodes"] as const;
 export const MFA_RECOVERY_SENSITIVE_KEYS = ["verificationTokenHash"] as const;
 export const NOTIFICATION_ENDPOINT_SENSITIVE_KEYS = [
   "tokenEncrypted",
@@ -64,11 +58,6 @@ export type PublicUserAccount = Omit<
 export type PublicManagerAccount = Omit<
   typeof managerAccounts.$inferSelect,
   "password" | "accessToken" | "refreshToken" | "idToken"
->;
-export type PublicUserSession = Omit<typeof userSessions.$inferSelect, "token">;
-export type PublicManagerSession = Omit<
-  typeof managerSessions.$inferSelect,
-  "token"
 >;
 export type PublicUserTwoFactor = Omit<
   typeof userTwoFactors.$inferSelect,

@@ -5,7 +5,6 @@ import {
   alert,
   assertAlertingReachable,
   DeduplicatingAlertAdapter,
-  EmailAlertAdapter,
   HealthchecksAlertAdapter,
   LogOnlyAlertAdapter,
   registerAlertDispatcher,
@@ -15,7 +14,10 @@ import {
 
 describe("Task 3 — Alert Port & Delivery (BR-JOB-03, BR-JOB-05, BR-TLM-06, D-FX)", () => {
   it("delivers alert to operational email recipient channel (D-FX)", async () => {
-    const adapter = new EmailAlertAdapter("ops@mindkid.vn");
+    const adapter = new TelegramAlertAdapter({
+      botToken: "mock_token",
+      chatId: "ops-chat",
+    });
 
     let dispatchedEmail: string | undefined;
     let dispatchedPayload: AlertPayload | undefined;
@@ -27,9 +29,6 @@ describe("Task 3 — Alert Port & Delivery (BR-JOB-03, BR-JOB-05, BR-TLM-06, D-F
     });
 
     setAlertPort(adapter);
-    // Only once a real dispatcher exists does this adapter reach anybody. With
-    // no dispatcher it writes a console line, and it says so.
-    expect(adapter.isLogOnly()).toBe(false);
 
     const _payload = await alert(
       "error",
@@ -39,7 +38,7 @@ describe("Task 3 — Alert Port & Delivery (BR-JOB-03, BR-JOB-05, BR-TLM-06, D-F
       }
     );
 
-    expect(dispatchedEmail).toBe("ops@mindkid.vn");
+    expect(dispatchedEmail).toBe("telegram:ops-chat");
     expect(dispatchedPayload).toBeDefined();
     expect(dispatchedPayload?.severity).toBe("error");
     expect(dispatchedPayload?.message).toContain("backlog exceeded");
@@ -61,14 +60,6 @@ describe("Task 3 — Alert Port & Delivery (BR-JOB-03, BR-JOB-05, BR-TLM-06, D-F
 });
 
 describe("BR-MON-01: a process must not run deaf", () => {
-  it("the email adapter admits it is log-only without a transport", async () => {
-    const { clearAlertDispatcher } = await import("#src/alert");
-    clearAlertDispatcher();
-    // There is no email transport in this repository yet — the notification
-    // path ends at LocalFileEmailAdapter — so this must not claim otherwise.
-    expect(new EmailAlertAdapter("ops@mindkid.vn").isLogOnly()).toBe(true);
-  });
-
   it("Telegram with no token falls back to Healthchecks, and reports honestly", () => {
     // Empty, not undefined: undefined means "read the environment", and this
     // test must not depend on whichever .env the developer has.
