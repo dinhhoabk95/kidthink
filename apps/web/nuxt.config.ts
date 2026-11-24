@@ -184,10 +184,11 @@ export default defineNuxtConfig({
     corsHandler: false,
   },
   // BR-SEO2-01: Bề mặt tài khoản và bề mặt trẻ không được index
+  // Trang `/` KHÔNG prerender: nó gọi `/api/guest/home` (cần D1) nên prerender lúc build
+  // vỡ "D1 binding is not registered". Chỉ prerender các trang tĩnh thuần (BR-LND-03).
   routeRules: {
     ...(isCloudflareTarget
       ? {
-          "/": { prerender: true },
           "/guide": { prerender: true },
           "/terms": { prerender: true },
           "/privacy": { prerender: true },

@@ -52,7 +52,7 @@ Guest — người lớn. Cấm Trẻ không phải đối tượng của trang 
 |---|---|---|
 | `BR-LND-01` | Nút **chơi thử** ở màn hình đầu, không cần cuộn | Trải nghiệm thuyết phục hơn mô tả |
 | `BR-LND-02` | Chơi thử **không cần đăng ký** | Đăng ký trước khi thấy giá trị là rào cản lớn nhất |
-| `BR-LND-03` | Trang **prerender tĩnh**, không phụ thuộc JS để hiện nội dung chính | SEO và mạng chậm |
+| `BR-LND-03` | Trang **SSR theo từng request** (không prerender lúc build vì cần D1 cho `/api/guest/home`), HTML đầu tiên đã có nội dung chính, không phụ thuộc JS | SEO và mạng chậm; build Cloudflare không có binding D1 |
 | `BR-LND-04` | Cấm — **NEVER tracking bên thứ ba** trên trang có link tới chính sách trẻ em | `BR-CDC-08` |
 | `BR-LND-05` | Giá lấy từ **`PACKAGE_CATALOG`** | `BR-PKG-02` |
 | `BR-LND-06` | Cấm — **NEVER hứa hẹn kết quả học tập** — không "giúp bé thông minh hơn", không "tăng IQ" | Vượt ranh giới của một sản phẩm giáo dục và có rủi ro pháp lý |
@@ -88,7 +88,7 @@ gì**.
 
 200 → `{ featured_levels, programs, packages, faq }`. Cache `public, max-age=300`.
 
-Nội dung tĩnh prerender; chỉ phần động (game nổi bật) gọi API.
+Trang `/` SSR (không prerender); chỉ phần động (game nổi bật) gọi API.
 
 ## 9. Acceptance criteria
 
