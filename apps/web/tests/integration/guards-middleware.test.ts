@@ -174,6 +174,23 @@ describe("middleware/guards", () => {
     ).rejects.toBeInstanceOf(PayloadTooLargeError);
   });
 
+  it("BR-SEC-13/BR-CSRF-02: chunked cross-site bị 403 trước khi đọc thân", () => {
+    const event = makeEvent({
+      path: "/api/users/collections",
+      method: "POST",
+      headers: {
+        "transfer-encoding": "chunked",
+        "sec-fetch-site": "cross-site",
+        origin: "https://evil.com",
+      },
+      body: Buffer.alloc(200 * 1024, 97),
+    });
+
+    expect(() => guardsMiddleware(event)).toThrow(CsrfInvalidError);
+    // Stream chưa bị kéo: chưa ai đọc thân request.
+    expect(event.node.req.readableFlowing).toBeNull();
+  });
+
   it("BR-SEC-13: chunked body nhỏ không có Content-Length đi qua", async () => {
     const event = makeEvent({
       path: "/api/users/collections",

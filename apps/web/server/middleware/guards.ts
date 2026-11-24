@@ -15,7 +15,7 @@ import {
 } from "#server/utils/auth-runtime";
 
 /**
- * Middleware phổ quát bảo vệ request cho mọi `/api/*` — Task #264, BR-CSRF-02, BR-SEC-03.
+ * Middleware phổ quát bảo vệ request cho mọi `/api/*` — Task #264, BR-CSRF-02, BR-SEC-13.
  *
  * Thứ tự middleware của Nitro theo bảng chữ cái tên file:
  * `auth` → `consent-gate` → `guards` → `rate-limit` → `security-headers`.
@@ -69,14 +69,14 @@ export default defineEventHandler((event): Promise<void> | undefined => {
     return undefined;
   }
 
-  // 1. Trần kích thước request body (T3.1d, BR-SEC-03)
+  // 1. Trần kích thước request body (T3.1d, BR-SEC-13)
   const maxBytes = resolveRequestBodySizeLimit(pathname);
   if (maxBytes !== null) {
     assertRequestBodySize(event, maxBytes);
     if (!event.node.req.headers["content-length"]) {
-      return assertActualBodySize(event, maxBytes).then(() =>
-        assertSameOriginRequest(event)
-      );
+      // Chặn cross-site TRƯỚC khi đọc thân: không tốn tài nguyên đọc body của kẻ tấn công.
+      assertSameOriginRequest(event);
+      return assertActualBodySize(event, maxBytes);
     }
   }
 
